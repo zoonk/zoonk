@@ -275,8 +275,16 @@ export function getCoverage({
   const total = skills.reduce((sum, skill) => sum + skill.worth, 0);
   const covered = skills.reduce((sum, skill) => sum + skill.worth * getSkillValue(skill), 0);
 
+  // Every topic is in by the deadline (see `hasEveryTopic`): a lesson still to do brings its topic
+  // in only with time before it, so one a plan that studies everything teaches after the exam, or
+  // one dated without time, leaves its topic out by then.
   const coreFits = hasEveryTopic({
-    built,
+    built: {
+      ...built,
+      items: built.items.filter(
+        (item) => item.status !== "todo" || sumRawBefore({ built, deadline, item }) > EPSILON,
+      ),
+    },
     known: input.knownSkillIds ?? new Set(),
     skills: input.graph.skills,
   });

@@ -27,10 +27,11 @@ import { getSelectedCoverage } from "./selected-plan-summary";
 export type PlanFeasibility = {
   alternative: { dailyMinutes: number; endDate: Date | null } | null;
   /**
-   * Every topic is in the plan (`hasEveryTopic`): each skill it teaches has lessons in it, with its
-   * core first (see `putCoresFirst`), or its topics are taught by another skill that has. The
-   * learner studies every topic, the ones worth more in more depth. False when a topic waits for
-   * lack of time, which its subject page says too.
+   * Every topic is in the plan by its deadline (`hasEveryTopic`, as `getSelectedCoverage` counts
+   * it): each skill it teaches has lesson time before it, with its core first (see
+   * `putCoresFirst`), or its topics are taught by another skill that has. The learner studies every
+   * topic, the ones worth more in more depth. False when a topic waits for lack of time, which its
+   * subject page says too.
    */
   coreFits: boolean;
   /** When a topic waits: the fewest daily minutes that bring every one in, if any do. */
@@ -221,7 +222,10 @@ export function getPlanFeasibility({
   const known = input.knownSkillIds ?? new Set<string>();
   const coverage = getSelectedCoverage({ built: planned, examSubjects, input });
   const deadline = coverage ? fromIsoDate(coverage.deadline) : null;
-  const coreFits = hasEveryTopic({ built: planned, known, skills: input.graph.skills });
+
+  const coreFits =
+    coverage?.coreFits ?? hasEveryTopic({ built: planned, known, skills: input.graph.skills });
+
   const fits = coverage?.fits ?? coreFits;
   const coveredShare = coverage?.coveredShare ?? 1;
   const skillFits = toSkillFits(coverage);
@@ -266,6 +270,7 @@ export function getPlanFeasibility({
       : findFittingMinutes({
           above: 0,
           fits: (minutes) =>
+            coverageAt(minutes)?.coreFits ??
             hasEveryTopic({ built: plannedAt()(minutes), known, skills: input.graph.skills }),
         }),
   );

@@ -70,6 +70,32 @@ describe(getPlanFeasibility, () => {
   // phase she's in open, so its final stretch starts November 10, where a calendar from the plan's
   // start puts it on November 7 (see `getKeptExamWindows`). What the plan covers is counted up to
   // its own final stretch, so that's the deadline it says.
+  // A plan that studies everything goes on after the exam with what doesn't fit before it: those
+  // topics come after the exam, so it says, as without it, that not every topic is in by then.
+  it("counts a topic in only when it gets lesson time before the deadline", () => {
+    const ids = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"];
+
+    const input = planInput({
+      goal: { dailyMinutes: 10, kind: "exam", targetDate: fromIsoDate("2026-10-26") },
+      graph: {
+        phases: [{ milestone: null, name: "Everything" }],
+        skills: ids.map((id) => skill(id, { area: id.toUpperCase(), lessons: 3 })),
+      },
+      lessons: ids.flatMap((id) => lessonsFor(id, 3, 15)),
+    });
+
+    const byExam = getPlanFeasibility({ input });
+
+    const everything = getPlanFeasibility({
+      input: { ...input, settings: { ...input.settings, fullCourse: true } },
+    });
+
+    expect({ byExam: byExam.coreFits, everything: everything.coreFits }).toStrictEqual({
+      byExam: false,
+      everything: false,
+    });
+  });
+
   it("says the deadline its share is measured to when an exam's moved date keeps its phases", () => {
     const planStart = fromIsoDate("2026-09-26");
 
