@@ -9,11 +9,6 @@ import { TaskFrame, TaskMainLink } from "../shell/task-frame";
 import { useChallengeScreen } from "./challenge-context";
 import { MoveFailed } from "./challenge-move-failed";
 
-/** The new day in the title, in the mono face like every date. */
-function renderMono(chunks: React.ReactNode) {
-  return <span className="font-mono font-medium tracking-[-0.04em]">{chunks}</span>;
-}
-
 /**
  * Right after "Move to Monday" on the week's challenge or mock: its new day, that the lessons it
  * displaced moved too and nothing is lost, like any result, with Back to Today as the way on and
@@ -49,12 +44,8 @@ export function ChallengeMovedScreen({ changeId }: { changeId: string }) {
     >
       <StepCard role="status">
         <StepHeader>
-          <StepTitle>
-            {t.rich("Moved to <mono>{date}</mono>", {
-              date: formatDate(date, "weekdayDay"),
-              mono: renderMono,
-            })}
-          </StepTitle>
+          {/* One face: a mono date read as a second font in the title ("Moved to Mon, Oct 20"). */}
+          <StepTitle>{t("Moved to {date}", { date: formatDate(date, "weekdayDay") })}</StepTitle>
           <StepDetail>
             {t(
               "Your plan made room for it and moved any lessons that didn't fit. Nothing is lost.",
