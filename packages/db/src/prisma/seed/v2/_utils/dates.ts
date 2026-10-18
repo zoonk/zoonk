@@ -60,7 +60,14 @@ export function atLocalHour({
 
   const shifted = new Date(day.getTime() + hours * MS_PER_HOUR);
 
-  return shifted > now ? minutesBefore(now, 45) : shifted;
+  if (shifted <= now) {
+    return shifted;
+  }
+
+  const earlier = minutesBefore(now, 45);
+
+  // Just after midnight, the usual lead time would put today's activity on yesterday.
+  return localDay(earlier, timeZone).getTime() === target.getTime() ? earlier : now;
 }
 
 /** Learner-local date, hour and weekday of an instant, as attempts and ledger rows store them. */

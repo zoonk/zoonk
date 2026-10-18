@@ -24,7 +24,8 @@ export function studyMoment(
     timeZone: scope.learner.timeZone,
   });
 
-  return minutesBefore(start, -order);
+  const moment = minutesBefore(start, -order);
+  return moment > scope.now ? scope.now : moment;
 }
 
 /** Each skill's memory, from New to Mastered or fading, as cards and skill lists read it. */
