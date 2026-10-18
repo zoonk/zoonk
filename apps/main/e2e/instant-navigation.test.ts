@@ -19,6 +19,7 @@ import { expect, test } from "./fixtures";
 import { createLanguageChallenge } from "./language-challenge-fixtures";
 import { asPersona, findPlanChapterId } from "./learn-personas";
 import { createMistakeLearner, drillQuestion } from "./mistake-drill-days";
+import { runtimePrefetchRead } from "./runtime-prefetch";
 import { openAs } from "./study-day";
 
 /** A chapter of Maya's plan with a lesson up next. */
@@ -59,17 +60,11 @@ async function pagePrefetched(page: Page, path: string) {
 
 /**
  * Like `pagePrefetched`, for a page with the learner's own facts (their goal limit): those come
- * with the link's runtime prefetch, which can land after the page's static part. The server renders
- * that prefetch whole before it answers, so its answer coming in is the signal. Playwright never
- * sees these streamed answers finish, so waiting for `finished()` would hang.
+ * with the link's runtime prefetch, which can land after the page's static part, and the page is
+ * ready to tap once the router has read it (`runtimePrefetchRead`).
  */
 async function pageAndOwnFactsPrefetched(page: Page, path: string) {
-  const ownFacts = page.waitForResponse(
-    (response) =>
-      new URL(response.url()).pathname === path &&
-      response.request().headers()["next-router-prefetch"] === "2",
-  );
-
+  const ownFacts = runtimePrefetchRead(page, path);
   await pagePrefetched(page, path);
   await ownFacts;
 }
