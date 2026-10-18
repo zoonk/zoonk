@@ -60,6 +60,7 @@
 - “Gold” (card remembered on three different days): “Or”
 - “Overview” (course level): “Vue d’ensemble”
 - “Focus test”: “Test de priorités”
+- Belts: “White belt”: “Ceinture blanche”, the color in lowercase
 
 ## Plan terminology
 
@@ -86,3 +87,4 @@
 
 - Match the app's compact durations: “2 h 30 min”, “30 s”.
 - Use a no-break space (U+00A0) before “?”, “!”, “;”, and “:” and inside « ».
+- Use the typographic apostrophe (’), never the straight one (').

@@ -10,8 +10,8 @@ export type PlanChangeContent = Omit<PlanChangeView, "id">;
 
 /**
  * The sentence of a change the learner didn't make, said from its kind, with the notice topics it
- * moves into or out of the plan after what it did: "Lessons earlier days left come first, and the
- * rest of your plan moved forward. Genetics no longer fits by your date." Missed days and a
+ * moves into or out of the plan after what it did: "Lessons left from earlier days come first, and
+ * the rest of your plan moved later. Genetics no longer fits by your date." Missed days and a
  * test-out moved topics without a word. A missed day says the phase end it moved (several are
  * listed under it, see `PhaseEndMoves`). A change a closer estimate of how long lessons take made
  * says why after what it did (see `useEstimateSentence`), then the phase end it moved: lessons that
@@ -36,7 +36,7 @@ export function useSystemChangeSentence({
       case "missedDays":
         return withTopics(
           [
-            t("Lessons earlier days left come first, and the rest of your plan moved forward."),
+            t("Lessons left from earlier days come first, and the rest of your plan moved later."),
             phaseEndsText(change.effect),
           ]
             .filter(Boolean)

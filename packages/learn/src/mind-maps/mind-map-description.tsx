@@ -4,13 +4,22 @@ import { type MindMapOutline as Outline } from "@zoonk/core/mind-maps/contract";
 import { useExtracted } from "next-intl";
 import { MindMapOutline } from "./mind-map-outline";
 
+/** A title that ends its own sentence ("How small is an atom?") takes no period after it. */
+const SENTENCE_END = /[.!?…]$/u;
+
 /** The picture's short text alternative: the map's title and central idea. */
 export function useMindMapAlt({ outline, title }: { outline: Outline | null; title: string }) {
   const t = useExtracted();
 
-  return outline
-    ? t("Mind map: {title}. {idea}", { idea: outline.centralIdea, title: outline.title })
-    : t("Mind map of {chapter}", { chapter: title });
+  if (!outline) {
+    return t("Mind map of {chapter}", { chapter: title });
+  }
+
+  const values = { idea: outline.centralIdea, title: outline.title };
+
+  return SENTENCE_END.test(outline.title.trim())
+    ? t("Mind map: {title} {idea}", values)
+    : t("Mind map: {title}. {idea}", values);
 }
 
 /**

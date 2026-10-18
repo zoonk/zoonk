@@ -165,10 +165,19 @@ function MistakeNote({
 }
 
 /**
- * The verdict's words and tone: right, wrong, or left blank where a wrong answer costs a point
- * (blank is neither, never red). Mistake practice says its verdicts the same way.
+ * The verdict's words and tone: right, wrong, left blank where a wrong answer costs a point (blank
+ * is neither, never red), or the learner's own "I don't know yet" (`notSure`), never called "Not
+ * quite". Mistake practice says its verdicts the same way.
  */
-export function useVerdict({ blank = false, isCorrect }: { blank?: boolean; isCorrect: boolean }) {
+export function useVerdict({
+  blank = false,
+  isCorrect,
+  notSure = false,
+}: {
+  blank?: boolean;
+  isCorrect: boolean;
+  notSure?: boolean;
+}) {
   const t = useExtracted();
 
   if (isCorrect) {
@@ -177,6 +186,10 @@ export function useVerdict({ blank = false, isCorrect }: { blank?: boolean; isCo
 
   if (blank) {
     return { label: t("Left blank"), tone: "neutral" as const };
+  }
+
+  if (notSure) {
+    return { label: t("I don't know yet"), tone: "neutral" as const };
   }
 
   return { label: t("Not quite"), tone: "wrong" as const };
@@ -201,24 +214,31 @@ function StreakNote({ streak }: { streak: number }) {
  * was saved or fixed.
  */
 export function QuestionFeedback({
+  answer,
   children,
   examTomorrow,
   feedback,
   question,
+  timedOut,
   trueFalseLabels,
 }: {
+  /** What the learner sent: their own "I don't know yet" is said back to them. */
+  answer: StudyQuestionAnswer;
   /** Notes a mistake's drill adds after the grade, such as the trap it set. */
   children?: React.ReactNode;
   /** The goal's exam is tomorrow: a saved mistake doesn't come back then. */
   examTomorrow: boolean;
   feedback: StudyAnswerFeedback;
   question: StudyQuestion;
+  /** A drill's time ran out: its "I don't know yet" is the clock's, not the learner's. */
+  timedOut: boolean;
   trueFalseLabels: TrueFalseLabels;
 }) {
   const t = useExtracted();
   const correct = useCorrectAnswerLine({ feedback, question, trueFalseLabels });
   const streak = feedback.isCorrect ? feedback.hyperdrive.streak : 0;
-  const verdict = useVerdict(feedback);
+  const notSure = "dontKnow" in answer && !timedOut;
+  const verdict = useVerdict({ ...feedback, notSure });
 
   return (
     <FeedbackPanel aria-label={t("Answer feedback")} aria-live="polite">

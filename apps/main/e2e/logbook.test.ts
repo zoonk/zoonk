@@ -3,6 +3,7 @@ import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
 import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
 import { createGoalLearner } from "./checkpoint-fixtures";
 import { expect, test } from "./fixtures";
+import { openUserAsGuest } from "./guest-session";
 import { openAs } from "./study-day";
 
 const DAYS_PER_WEEK = 7;
@@ -99,5 +100,23 @@ test.describe("Logbook", () => {
     await expect(page.getByRole("link", { name: "Let's go" })).toHaveAttribute("href", "/today");
 
     await page.context().close();
+  });
+
+  // A guest has no name of their own yet: their account's placeholder read "What a week, Guest!".
+  test("greets a guest's week without a name", async ({ browser }) => {
+    const { user } = await createGoalLearner();
+
+    await dailyProgressFixtureMany([
+      { date: getToldWeekStart(), timeSpentSeconds: 900, userId: user.id },
+    ]);
+
+    const { context, page } = await openUserAsGuest(browser, user);
+    await page.goto("/logbook");
+
+    const heading = page.getByRole("heading", { level: 1 });
+    await expect(heading).toHaveText(/^What a week/u);
+    await page.screenshot({ path: test.info().outputPath("logbook-guest.png") });
+    await expect(heading).toHaveText("What a week!");
+    await context.close();
   });
 });

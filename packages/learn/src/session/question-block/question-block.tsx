@@ -267,9 +267,11 @@ export function QuestionBlock({
         {phase.kind === "feedback" && question && (
           <>
             <QuestionFeedback
+              answer={phase.answer}
               examTomorrow={session.examTomorrow}
               feedback={phase.feedback}
               question={question}
+              timedOut={blockDrill.timedOut}
               trueFalseLabels={detail.trueFalseLabels}
             >
               <BlockDrillNotes blockDrill={blockDrill} feedback={phase.feedback} phase={phase} />

@@ -174,11 +174,13 @@ function SessionNumbers() {
         />
       )}
 
+      {/* The ideas that come back, beside the days they do: "To review 0 · Back Oct 18" counted the
+          mistakes saved instead. */}
       <StatTile
         detail={<ComesBackDetail comesBack={summary.comesBack} />}
         icon={<RotateCcwIcon />}
         label={t("To review")}
-        value={format.number(summary.mistakesSaved)}
+        value={format.number(summary.comesBack.reduce((sum, day) => sum + day.skills, 0))}
       />
 
       <StatTile

@@ -53,7 +53,7 @@ test.describe("Locale Detection", () => {
       await expect(page).toHaveURL(/\/fr\/start$/u);
 
       await expect(
-        page.getByRole("heading", { name: "Qu'est-ce que tu veux accomplir ?" }),
+        page.getByRole("heading", { name: "Qu’est-ce que tu veux accomplir ?" }),
       ).toBeVisible();
     } finally {
       await context.close();

@@ -200,8 +200,10 @@ export function NotWritten({
 }
 
 /**
- * A ready block to do while the lesson is written ("while you wait") or instead of one that won't
- * be written now ("instead"): the screen's next step, so it's the main action and Enter starts it.
+ * A ready block to do while the lesson is written ("While you wait: Mixed practice") or instead of
+ * one that won't be written now ("Instead: …"): the screen's next step, so it's the main action and
+ * Enter starts it. The block's name follows a label: inside a sentence, "Do What you already know"
+ * read wrong in every language.
  */
 export function AlternativeButton({
   actions,
@@ -224,8 +226,8 @@ export function AlternativeButton({
       onClick={other.run}
     >
       {reason === "instead"
-        ? t("Do {title} instead", { title: title(alternative) })
-        : t("Do {title} while you wait", { title: title(alternative) })}
+        ? t("Instead: {title}", { title: title(alternative) })
+        : t("While you wait: {title}", { title: title(alternative) })}
     </EnterButton>
   );
 }

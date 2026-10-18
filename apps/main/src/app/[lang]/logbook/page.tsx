@@ -61,7 +61,8 @@ async function LogbookContent() {
     <MainLearnProvider>
       <LogbookScreen
         hrefs={{ close: "/buddy", start: "/today" }}
-        learnerName={session?.user.name.split(" ")[0] || null}
+        // A guest has no name of their own: their placeholder would read "What a week, Guest!".
+        learnerName={(!session?.user.isAnonymous && session?.user.name.split(" ")[0]) || null}
         recap={result.recap}
       />
     </MainLearnProvider>

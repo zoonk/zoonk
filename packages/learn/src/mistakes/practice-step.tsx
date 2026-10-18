@@ -130,14 +130,12 @@ function PracticeFeedback({
   notes: React.ReactNode;
 }) {
   const t = useExtracted();
-  const verdict = useVerdict(feedback);
+  const verdict = useVerdict({ ...feedback, notSure });
   const fixed = feedback.fixedMistakeIds.length;
 
   return (
     <FeedbackPanel aria-label={t("Answer feedback")} aria-live="polite">
-      <FeedbackVerdict tone={notSure ? "neutral" : verdict.tone}>
-        {notSure ? t("I don't know yet") : verdict.label}
-      </FeedbackVerdict>
+      <FeedbackVerdict tone={verdict.tone}>{verdict.label}</FeedbackVerdict>
 
       {feedback.explanation && (
         <FeedbackExplanation>

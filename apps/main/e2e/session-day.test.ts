@@ -180,7 +180,13 @@ async function answerPlacement(page: Page) {
   ).toBeVisible();
 
   await page.getByRole("button", { name: "I don't know yet" }).click();
-  await expect(page.getByRole("region", { name: "Answer feedback" })).toBeVisible();
+
+  // The learner's own "I don't know yet" is said back to them, never graded "Not quite".
+  const feedback = page.getByRole("region", { name: "Answer feedback" });
+  await expect(feedback).toBeVisible();
+  await feedback.screenshot({ path: test.info().outputPath("placement-dont-know-feedback.png") });
+  await expect(feedback.getByText("I don't know yet")).toBeVisible();
+  await expect(feedback.getByText("Not quite")).toBeHidden();
   await page.keyboard.press("Enter");
 
   await expect(page.getByRole("heading", { name: /^Capsule one/u })).toBeVisible();
@@ -387,6 +393,17 @@ test.describe("Today's session", () => {
         .getByRole("listitem")
         .filter({ hasText: /^Right\b/u }),
     ).toHaveText(/^Right \d+\/\d+/u);
+
+    // What comes back for review is counted beside the days it does: no mistake was saved, and
+    // "To review 0 · Back Oct 18" read as nothing to review.
+    await page.screenshot({ path: test.info().outputPath("session-summary-numbers.png") });
+
+    await expect(
+      page
+        .getByRole("main")
+        .getByRole("listitem")
+        .filter({ hasText: /^To review\b/u }),
+    ).toHaveText(/^To review [1-9]\d* Back /u);
 
     await expectAccessibleScreen(page, "the session's summary");
 
@@ -917,7 +934,7 @@ test.describe("Today's session", () => {
     ).toHaveText([/^Planning the lesson, done/u, /^Writing the lesson, in progress/u]);
 
     await expect(
-      page.getByRole("button", { name: "Do Mixed practice while you wait" }),
+      page.getByRole("button", { name: "While you wait: Mixed practice" }),
     ).toBeVisible();
 
     // The run says it's ready: the screen reads the session again and opens the lesson.
@@ -942,7 +959,7 @@ test.describe("Today's session", () => {
     await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
 
     // Never a dead end: the ready block can come first.
-    await page.getByRole("button", { name: "Do Mixed practice while you wait" }).click();
+    await page.getByRole("button", { name: "While you wait: Mixed practice" }).click();
     await answerRight(page, /^Practice one/u);
     await page.context().close();
   });
@@ -1113,7 +1130,7 @@ test.describe("Today's session", () => {
     await expect(page.getByRole("progressbar", { name: "Writing your lesson" })).toBeHidden();
 
     // Nothing to wait for: the ready block comes instead.
-    await page.getByRole("button", { name: "Do Mixed practice instead" }).click();
+    await page.getByRole("button", { name: "Instead: Mixed practice" }).click();
     await answerRight(page, /^Practice one/u);
     await page.context().close();
   });
@@ -1169,7 +1186,7 @@ test.describe("Today's session", () => {
 
     await expect(page.getByText("This lesson isn't available")).toBeVisible();
     await expect(page.getByRole("button", { name: "Try again" })).toBeHidden();
-    await expect(page.getByRole("button", { name: "Do Mixed practice instead" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Instead: Mixed practice" })).toBeVisible();
     await page.context().close();
   });
 });
