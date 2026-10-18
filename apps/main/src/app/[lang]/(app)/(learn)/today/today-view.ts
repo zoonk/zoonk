@@ -17,13 +17,13 @@ import { type DayBlockRef, getDayBlockScreen, toDayBlockRef } from "@zoonk/core/
 import { type LanguageTodayView } from "@zoonk/core/view-models/language/contract";
 import { getLanguageTodayView } from "@zoonk/core/view-models/language/today";
 import { getPlanTabView } from "@zoonk/core/view-models/plan/get";
-import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { getSyllabusView } from "@zoonk/core/view-models/syllabus/get";
 import {
   type TodayView,
   type TodayViewResult,
   getTodayView,
 } from "@zoonk/core/view-models/today/get";
+import { type TodaySyllabus } from "@zoonk/learn/today";
 
 /**
  * Where a step of the day plays and the work it is (`ref`), worked out here with core's own rules
@@ -49,7 +49,7 @@ export type TodayScreenData = {
   planEnd: string | null;
   /** One per block of the day, in the same order. */
   steps: TodayStep[];
-  syllabus: SyllabusView | null;
+  syllabus: TodaySyllabus | null;
   today: TodayView;
 };
 
@@ -107,11 +107,33 @@ async function loadTodayMocks(goal: TodayView["goal"]) {
 
 /**
  * The goal's subjects for Today's aside, read as the Plan reads them, so the aside's rows are the
- * Plan's own (the same names, bars and shares) under its "See your plan".
+ * Plan's own (the same names, bars and shares) under its "See your plan". Only what the rows draw
+ * goes to the browser (`TodaySyllabus`), never every topic and chapter.
  */
-async function loadSyllabus(goalId: string) {
+async function loadSyllabus(goalId: string): Promise<TodaySyllabus | null> {
   const result = await getSyllabusView({ goalId });
-  return result.status === "ready" ? result.syllabus : null;
+
+  if (result.status !== "ready") {
+    return null;
+  }
+
+  const { goal, kind, lessons, subjects } = result.syllabus;
+
+  return {
+    goal,
+    kind,
+    lessons,
+    subjects: subjects.map((subject) => ({
+      key: subject.key,
+      lessonsDone: subject.lessonsDone,
+      lessonsKnown: subject.lessonsKnown,
+      lessonsTotal: subject.lessonsTotal,
+      name: subject.name,
+      notPlannedReason: subject.notPlannedReason,
+      preparation: subject.preparation,
+      shortName: subject.shortName,
+    })),
+  };
 }
 
 /** Open entries in the goal's mistakes notebook, which Today offers under "Practice anytime". */

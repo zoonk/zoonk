@@ -1,13 +1,12 @@
 "use client";
 
-import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { type TodayView } from "@zoonk/core/view-models/today/get";
 import { useExtracted } from "next-intl";
 import { CoverageLegend } from "../_components/coverage-bar";
 import { LessonCells } from "../_components/progress-cells";
 import { useFormatShare } from "../_utils/percent";
 import { ProgressCard, useCardIds } from "./today-progress-card";
-import { SubjectRows, useSubjectRows } from "./today-subject-rows";
+import { SubjectRows, type TodaySyllabus, useSubjectRows } from "./today-subject-rows";
 
 /** The plan's lessons as Today measures them: done of the total, and today's still to do. */
 type TodayLessons = Extract<NonNullable<TodayView["progress"]>, { measure: "lessons" }>["lessons"];
@@ -22,7 +21,7 @@ function getLessonCounts({
   syllabus,
 }: {
   lessons: TodayLessons;
-  syllabus: SyllabusView | null;
+  syllabus: TodaySyllabus | null;
 }) {
   const known = Math.min(lessons.done, syllabus?.lessons.known ?? 0);
 
@@ -48,7 +47,7 @@ export function LessonsCard({
 }: {
   className?: string;
   lessons: TodayLessons;
-  syllabus: SyllabusView | null;
+  syllabus: TodaySyllabus | null;
   value: number;
 }) {
   const t = useExtracted();

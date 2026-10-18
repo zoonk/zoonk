@@ -1,7 +1,6 @@
 "use client";
 
 import { type LanguageTodayView } from "@zoonk/core/view-models/language/contract";
-import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { useExtracted } from "next-intl";
 import { useFormatShare } from "../_utils/percent";
 import { LevelLadder } from "../language/progress/level-ladder";
@@ -9,7 +8,7 @@ import { LevelValue } from "../language/progress/level-value";
 import { useTodayScreen } from "./today-context";
 import { LessonsCard } from "./today-lessons-card";
 import { ProgressCard, useCardIds } from "./today-progress-card";
-import { SubjectRows, useSubjectRows } from "./today-subject-rows";
+import { SubjectRows, type TodaySyllabus, useSubjectRows } from "./today-subject-rows";
 
 const PERCENT = 100;
 
@@ -43,7 +42,7 @@ function PreparationCard({
   weekGain,
 }: {
   className?: string;
-  syllabus: SyllabusView | null;
+  syllabus: TodaySyllabus | null;
   value: number;
   weekGain: number;
 }) {
@@ -106,7 +105,7 @@ export function TodayPreparation({
   className?: string;
   /** A language goal's level and the one it aims for; null for other goals and before any. */
   level?: LanguageTodayView["level"];
-  syllabus: SyllabusView | null;
+  syllabus: TodaySyllabus | null;
 }) {
   const { today } = useTodayScreen();
   const { progress } = today;

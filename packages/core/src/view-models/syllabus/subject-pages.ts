@@ -11,7 +11,7 @@ export function hasSubjectPages({
   syllabus,
 }: {
   goalKind: GoalKind;
-  syllabus: Pick<SyllabusView, "kind" | "subjects">;
+  syllabus: { kind: SyllabusView["kind"]; subjects: readonly unknown[] };
 }): boolean {
   if (goalKind === "language") {
     return false;

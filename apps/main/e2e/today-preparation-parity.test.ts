@@ -1,5 +1,6 @@
 import { type Locator, type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
+import { z } from "zod";
 import { expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
 
@@ -42,6 +43,30 @@ async function clickWhereDrawn(locator: Locator) {
 function planNumbers(page: Page) {
   return page.locator('[data-slot="journey-standing"]').filter({ visible: true });
 }
+
+/** A Today read, as far as the budget below looks into it. */
+const todayReadSchema = z.object({
+  copy: z.object({
+    view: z.object({
+      syllabus: z.object({ subjects: z.array(z.record(z.string(), z.unknown())).min(1) }),
+    }),
+  }),
+});
+
+// Ana's Today carried her whole syllabus, every topic and chapter (94 KB of a 107 KB read), for the
+// few rows its aside draws: each read now carries only those rows.
+test("Today's read carries its subjects' rows, not the whole syllabus", async ({ browser }) => {
+  await asPersona(browser, { persona: "exam" }, async ({ page }) => {
+    const response = await page.request.get("/api/learner/views/today");
+    await expect(response).toBeOK();
+
+    const body = await response.text();
+    const read = todayReadSchema.parse(JSON.parse(body));
+
+    expect(body.length).toBeLessThan(40_000);
+    expect(read.copy.view.syllabus.subjects.every((subject) => !("topics" in subject))).toBe(true);
+  });
+});
 
 // Ana's Today read "Preparation 12%" over five subjects at "<1%": the bars counted lessons.
 test("An exam's subjects read their preparation, which the overall number sums up", async ({

@@ -5,18 +5,35 @@ import { hasSubjectPages } from "@zoonk/core/view-models/syllabus/subject-pages"
 import { useExtracted } from "next-intl";
 import { CoverageBar } from "../_components/coverage-bar";
 import { useFormatProgressShare } from "../_utils/percent";
-import {
-  type SubjectBar,
-  getSubjectShare,
-  useSubjectProgress,
-} from "../syllabus/use-subject-progress";
+import { type SubjectBar, getSubjectBar, getSubjectShare } from "../syllabus/use-subject-progress";
 import { useTodayScreen } from "./today-context";
 import { isFinished } from "./today-queue";
 
 /** Subjects in sight beside the session; the Plan has every one. */
 const SHOWN_SUBJECTS = 5;
 
-type SubjectRowView = { bar: SubjectBar; subject: SyllabusSubject; today: boolean };
+/**
+ * A subject as Today's aside draws it: its names and its bar's measures. Its topics and chapters
+ * stay on the Plan, which lists them: a big exam's ran to about 90 KB in every Today read.
+ */
+export type TodaySubject = Pick<
+  SyllabusSubject,
+  | "key"
+  | "lessonsDone"
+  | "lessonsKnown"
+  | "lessonsTotal"
+  | "name"
+  | "notPlannedReason"
+  | "preparation"
+  | "shortName"
+>;
+
+/** The goal's syllabus as Today reads it: its kind, its lessons and its subjects' rows. */
+export type TodaySyllabus = Pick<SyllabusView, "goal" | "kind" | "lessons"> & {
+  subjects: TodaySubject[];
+};
+
+type SubjectRowView = { bar: SubjectBar; subject: TodaySubject; today: boolean };
 
 /** The subjects today's session still studies, by their short names, as its blocks name them. */
 function useTodaySubjects(): Set<string> {
@@ -34,18 +51,19 @@ function useTodaySubjects(): Set<string> {
  * own (a language, or a plan from one course), and never one the plan leaves out. Each says
  * whether today's session still studies it.
  */
-export function useSubjectRows(syllabus: SyllabusView | null): SubjectRowView[] {
-  const progressOf = useSubjectProgress();
+export function useSubjectRows(syllabus: TodaySyllabus | null): SubjectRowView[] {
   const todaySubjects = useTodaySubjects();
 
   if (!syllabus || !hasSubjectPages({ goalKind: syllabus.goal.kind, syllabus })) {
     return [];
   }
 
-  return syllabus.subjects.flatMap((subject) => {
-    const { bar } = progressOf(subject);
-    return bar ? [{ bar, subject, today: todaySubjects.has(subject.shortName) }] : [];
-  });
+  // A subject the plan leaves out has no bar, as on the Plan (see `useSubjectProgress`).
+  return syllabus.subjects.flatMap((subject) =>
+    subject.notPlannedReason
+      ? []
+      : [{ bar: getSubjectBar(subject), subject, today: todaySubjects.has(subject.shortName) }],
+  );
 }
 
 /**

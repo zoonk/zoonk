@@ -20,7 +20,9 @@ export type SubjectBar = { known: number; studied: number };
 export type SubjectProgress = { bar: SubjectBar | null; known: string | null; label: string };
 
 /** The subject's bar in its goal's measure (see `SubjectBar`). */
-export function getSubjectBar(subject: SyllabusSubject): SubjectBar {
+export function getSubjectBar(
+  subject: Pick<SyllabusSubject, "lessonsDone" | "lessonsKnown" | "lessonsTotal" | "preparation">,
+): SubjectBar {
   if (subject.preparation !== null) {
     return { known: 0, studied: subject.preparation };
   }

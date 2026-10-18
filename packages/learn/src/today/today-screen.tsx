@@ -2,7 +2,6 @@
 
 import { type MistakeAvailability } from "@zoonk/core/mistakes/contract";
 import { type LanguageTodayView } from "@zoonk/core/view-models/language/contract";
-import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { type TodayView } from "@zoonk/core/view-models/today/get";
 import { useExtracted } from "next-intl";
 import { useEffect } from "react";
@@ -28,10 +27,12 @@ import { TodayNotice } from "./today-notice";
 import { TodayPractice } from "./today-practice";
 import { TodayPreparation } from "./today-preparation";
 import { TodaySession } from "./today-session-card";
+import { type TodaySyllabus } from "./today-subject-rows";
 import { TodayWeek } from "./today-week";
 import { isStopBeingWritten } from "./use-today-copy";
 
 export type { TodayHostNotices } from "./today-context";
+export type { TodaySyllabus } from "./today-subject-rows";
 
 /** A stop whose lesson is being written is checked this often, so it updates once it's written. */
 const WRITING_REFRESH_MS = 5000;
@@ -109,7 +110,7 @@ export function TodayScreen({
   /** A language goal's exam-style speaking tasks, under "Practice anytime" (`SpeakingPracticeRow`). */
   speakingEntry?: React.ReactNode;
   /** The goal's subjects as the Plan lists them, beside the session; null when the host has none. */
-  syllabus?: SyllabusView | null;
+  syllabus?: TodaySyllabus | null;
   today: TodayView;
 }) {
   const t = useExtracted();
