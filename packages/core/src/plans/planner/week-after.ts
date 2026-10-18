@@ -196,7 +196,22 @@ export function layOutAfterThisWeek<T extends LaidOut>({
     scheduled.every((unit) => thisWeek.has(unit.key) || unit.date >= start) &&
     begins.every((unit) => unit.date < start);
 
-  if (keepsThisWeek) {
+  /** A skill's unwritten continuation cannot run before its first kept lesson. */
+  const invertsSkill = scheduled.some((unit) => {
+    if (!isStandIn(unit)) {
+      return false;
+    }
+
+    const lesson = own.find((part) => part.skillId === unit.skillId && part.lessonId !== null);
+    const firstKept = kept.find((piece) => piece.key === lesson?.key);
+
+    return (
+      firstKept !== undefined &&
+      unit.studyPortions?.some((part) => part.date < toIsoDate(firstKept.date)) === true
+    );
+  });
+
+  if (keepsThisWeek && !invertsSkill) {
     const parts = own.filter((unit) => isStandIn(unit));
     const last = Math.max(...parts.map((unit) => unit.date.getTime()));
 
