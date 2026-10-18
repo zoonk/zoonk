@@ -1,5 +1,10 @@
 import { prisma } from "@zoonk/db";
-import { goalFixture, planFixture, suggestedGoalFixture } from "@zoonk/testing/fixtures/goals";
+import {
+  goalFixture,
+  planChangeFixture,
+  planFixture,
+  suggestedGoalFixture,
+} from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { memoryInsightFixture } from "@zoonk/testing/fixtures/memory";
 import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
@@ -137,6 +142,55 @@ describe(getTodayView, () => {
     );
 
     expect(delayedFirst?.session.missions).toStrictEqual(firstToday?.session.missions);
+  });
+
+  it("keeps a proposal pending while the expired Free exam trial owns the suggestion slot", async () => {
+    const user = await userFixture();
+
+    const { goal, plan } = await sessionGoalFixture({
+      goal: { createdAt: daysAgo(14), kind: "exam" },
+      userId: user.id,
+    });
+
+    mockSession(user.id);
+
+    const proposal = await planChangeFixture({
+      payload: { operations: [{ kind: "setDailyMinutes", minutes: 20 }], source: "memory" },
+      planId: plan.id,
+      reason: "Make room for your Saturday class.",
+      status: "proposed",
+    });
+
+    const insight = await memoryInsightFixture({
+      goalId: goal.id,
+      kind: "planChange",
+      payload: { planChangeId: proposal.id, planChangeStatus: "proposed" },
+      userId: user.id,
+    });
+
+    const free = await getTodayView({ goalId: goal.id });
+
+    expect(free).toMatchObject({
+      status: "ready",
+      today: { insight: null, planChange: null, session: { examAccess: { trialEnded: true } } },
+    });
+
+    await prisma.subscription.create({
+      data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
+    });
+
+    await expect(getTodayView({ goalId: goal.id })).resolves.toMatchObject({
+      status: "ready",
+      today: {
+        insight: { id: insight.id, planChange: { id: proposal.id, status: "proposed" } },
+        planChange: { id: proposal.id, source: "memory", status: "proposed" },
+        session: { examAccess: { trialEnded: false } },
+      },
+    });
+
+    await expect(
+      prisma.planChange.findUniqueOrThrow({ where: { id: proposal.id } }),
+    ).resolves.toMatchObject({ status: "proposed" });
   });
 
   it("shows the active goal's countdown, status and today's session", async () => {

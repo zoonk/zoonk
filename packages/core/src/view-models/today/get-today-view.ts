@@ -109,6 +109,7 @@ export type TodayView = {
   /**
    * The plan change to answer on Today: the newest proposal waiting for an OK, or an automatic
    * change of the last day (a rebalance, missed days, a test-out) until the learner says "Got it".
+   * Proposals wait while the expired Free exam trial owns the suggestion slot.
    */
   planChange: TodayPlanChangeView | null;
   progress: TodayProgress | null;
@@ -270,6 +271,8 @@ async function readAdmittedToday({
     ]);
 
   const { exam, lessonStates, shortPlan, studied, studySession } = sessionDay;
+  const proposalsOpen = !studySession.examAccess.trialEnded;
+  const insight = around.insight.status === "ready" ? around.insight.insight : null;
 
   const lessonsToday = around.lessons
     ? await countLessonsLeftToday({ selectedItems: day.selection?.items, session: studySession })
@@ -289,13 +292,13 @@ async function readAdmittedToday({
         targetDate,
         title,
       },
-      insight: around.insight.status === "ready" ? around.insight.insight : null,
+      insight: !proposalsOpen && insight?.planChange?.status === "proposed" ? null : insight,
       lessonStatus: Object.fromEntries(
         [...lessonStates].map(([lessonId, state]) => [lessonId, state.status]),
       ),
       mockFunding,
       pattern: selectDayPattern({ day: studySession, pattern: noticedPattern }),
-      planChange,
+      planChange: !proposalsOpen && planChange?.status === "proposed" ? null : planChange,
       progress: toTodayProgress({ ...around, lessonsToday }),
       session: studySession,
       shortPlan,
