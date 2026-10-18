@@ -4,8 +4,11 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { TargetIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useTransition } from "react";
+import { KindMark } from "../_components/kind-tile";
+import { PlusMark } from "../_components/plus-lock";
 import { TestOutStartLink } from "../_components/test-out-start-link";
 import { useFormatDuration } from "../_utils/time-format";
+import { LearnLink } from "../learn-link";
 import { type MissionView } from "../missions/mission-links";
 import { BlockMark } from "../session/block-mark";
 import { type DayStep } from "../session/session-types";
@@ -243,9 +246,10 @@ function useCountsTowardMission(step: DayStep) {
  * with its chapter's test (its own link, above the row's). A phase's challenge with lessons still
  * before it says it waits for them instead of opening. A finished one is one quiet line that opens
  * nothing: the done mark (or a skipped one's ring) and its name, muted and never struck, since the
- * mark already says it. A folded row hides on a phone, or on every screen once a long day passes
- * `WIDE_UPCOMING_ROWS`, until its fold opens. Once today's study time is used up, no row opens
- * (`opens`).
+ * mark already says it, and no minutes: those were the plan's estimate, and "✓ Reviews 8 min"
+ * above "2 min studied" read as time studied. A folded row hides on a phone, or on every screen
+ * once a long day passes `WIDE_UPCOMING_ROWS`, until its fold opens. Once today's study time is
+ * used up, no row opens (`opens`).
  */
 export function BlockRow({
   block,
@@ -286,16 +290,49 @@ export function BlockRow({
         {!finished && <RowLines block={block} isNext={isNext} wait={wait} />}
       </div>
 
-      <span className="text-muted-foreground flex h-5 shrink-0 items-center gap-1.5 font-mono text-xs tabular-nums">
-        {!finished && countsTowardMission && (
-          <TargetIcon
-            aria-hidden="true"
-            className="text-brain size-3.5"
-            data-slot="mission-row-mark"
-          />
-        )}
-        {formatDuration(block.estimatedMinutes)}
+      {!finished && (
+        <span className="text-muted-foreground flex h-5 shrink-0 items-center gap-1.5 font-mono text-xs tabular-nums">
+          {countsTowardMission && (
+            <TargetIcon
+              aria-hidden="true"
+              className="text-brain size-3.5"
+              data-slot="mission-row-mark"
+            />
+          )}
+          {formatDuration(block.estimatedMinutes)}
+        </span>
+      )}
+    </li>
+  );
+}
+
+/**
+ * One of the lessons the plan dates today that the learner's plan holds for Plus, after the day's
+ * blocks: drawn as a lesson still to do, the Plus mark where its minutes would be, opening the Plus
+ * page. It isn't part of the session: never the next block, no mission mark, and the day's
+ * segments, time and action leave it out. It folds with the day's other upcoming rows.
+ */
+export function PlusLessonRow({ fold = NO_FOLD, title }: { fold?: RowFold; title: string }) {
+  const { actions } = useTodayScreen();
+
+  return (
+    <li
+      className={cn(
+        getRowClass({ finished: false, fold, isNext: false }),
+        "has-[a:hover]:before:bg-muted/70",
+      )}
+    >
+      <span className="flex h-5 w-3 shrink-0 items-center justify-center">
+        <KindMark kind="lesson" />
       </span>
+
+      <div className="flex min-w-0 flex-1 flex-col gap-px">
+        <LearnLink className={cn(ROW_OPEN_CLASS, "after:-inset-x-2.5")} href={actions.plusHref}>
+          <span className="truncate text-sm leading-5 font-medium">{title}</span>
+        </LearnLink>
+      </div>
+
+      <PlusMark />
     </li>
   );
 }

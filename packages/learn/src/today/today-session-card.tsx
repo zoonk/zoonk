@@ -4,7 +4,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { type DayStep } from "../session/session-types";
-import { BlockRow, type RowFold } from "./today-block-row";
+import { BlockRow, PlusLessonRow, type RowFold } from "./today-block-row";
 import { useTodayScreen } from "./today-context";
 import { DayMeta, DayProgress } from "./today-day-progress";
 import { TodayDayStatus } from "./today-day-status";
@@ -48,7 +48,8 @@ function getUpcomingFold({ index, open }: { index: number; open: boolean }): Row
 }
 
 /**
- * The day as a queue, flat on the page: every block, the next one highlighted. A phone keeps the
+ * The day as a queue, flat on the page: every block, the next one highlighted, then the plan's
+ * lessons for today that the learner's plan holds for Plus (`PlusLessonRow`). A phone keeps the
  * day on its first screen: more than two blocks done fold into one row, and past six after the
  * next one the rest fold into "+3 more". From `sm` the whole day shows (a day longer than 12 after
  * the next block folds the rest the same way).
@@ -56,14 +57,15 @@ function getUpcomingFold({ index, open }: { index: number; open: boolean }): Row
 function SessionQueue({ next }: { next: DayStep }) {
   const t = useExtracted();
   const { today } = useTodayScreen();
-  const { blocks, lessonsComing } = today.session;
+  const { blocks, lessonsComing, plusLessons } = today.session;
   const daySoFar = useDaySoFar(blocks);
   const [doneOpen, setDoneOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const { after, before, done } = splitTodayQueue({ blocks, nextPosition: next.position });
   const foldsDone = done.length > PHONE_DONE_ROWS;
-  const phoneMore = after.slice(PHONE_UPCOMING_ROWS);
-  const wideMore = after.slice(WIDE_UPCOMING_ROWS);
+  const upcoming = after.length + plusLessons.length;
+  const phoneMore = Math.max(0, upcoming - PHONE_UPCOMING_ROWS);
+  const wideMore = Math.max(0, upcoming - WIDE_UPCOMING_ROWS);
 
   return (
     <div className="flex flex-col" data-slot="today-session-list">
@@ -72,7 +74,6 @@ function SessionQueue({ next }: { next: DayStep }) {
           className="sm:hidden"
           done
           label={t("{count, plural, one {# done} other {# done}}", { count: done.length })}
-          minutes={sumMinutes(done)}
           onToggle={() => setDoneOpen((open) => !open)}
           open={doneOpen}
         />
@@ -102,25 +103,34 @@ function SessionQueue({ next }: { next: DayStep }) {
             key={block.position}
           />
         ))}
+
+        {plusLessons.map((lesson, index) => (
+          <PlusLessonRow
+            fold={getUpcomingFold({ index: after.length + index, open: moreOpen })}
+            // oxlint-disable-next-line react/no-array-index-key -- two plan items can share a title, and a read replaces the list whole.
+            key={index}
+            title={lesson.title}
+          />
+        ))}
       </ol>
 
-      {phoneMore.length > 0 && (
+      {phoneMore > 0 && (
         <FoldRow
           className="sm:hidden"
           done={false}
-          label={t("+{count, number} more", { count: phoneMore.length })}
-          minutes={sumMinutes(phoneMore)}
+          label={t("+{count, number} more", { count: phoneMore })}
+          minutes={sumMinutes(after.slice(PHONE_UPCOMING_ROWS))}
           onToggle={() => setMoreOpen((open) => !open)}
           open={moreOpen}
         />
       )}
 
-      {wideMore.length > 0 && (
+      {wideMore > 0 && (
         <FoldRow
           className="max-sm:hidden"
           done={false}
-          label={t("+{count, number} more", { count: wideMore.length })}
-          minutes={sumMinutes(wideMore)}
+          label={t("+{count, number} more", { count: wideMore })}
+          minutes={sumMinutes(after.slice(WIDE_UPCOMING_ROWS))}
           onToggle={() => setMoreOpen((open) => !open)}
           open={moreOpen}
         />
@@ -134,14 +144,15 @@ function SessionQueue({ next }: { next: DayStep }) {
 }
 
 /**
- * The day's queue once there's nothing to start (it's done, or today's study time ran out): every
- * block, the done ones with their check, so the learner sees what they did. Nothing opens from it.
+ * The day's queue once there's nothing to start (it's done, today's study time ran out, or a free
+ * plan has nothing to review): every block, the done ones with their check, so the learner sees
+ * what they did, then the plan's lessons for today held for Plus. No block opens from it.
  */
 function DayQueue() {
   const { today } = useTodayScreen();
-  const { blocks } = today.session;
+  const { blocks, plusLessons } = today.session;
 
-  if (blocks.length === 0) {
+  if (blocks.length === 0 && plusLessons.length === 0) {
     return null;
   }
 
@@ -149,6 +160,11 @@ function DayQueue() {
     <ol className="flex flex-col" data-slot="today-session-list">
       {blocks.map((block) => (
         <BlockRow block={block} isNext={false} key={block.position} opens={false} />
+      ))}
+
+      {plusLessons.map((lesson, index) => (
+        // oxlint-disable-next-line react/no-array-index-key -- two plan items can share a title, and a read replaces the list whole.
+        <PlusLessonRow key={index} title={lesson.title} />
       ))}
     </ol>
   );

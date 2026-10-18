@@ -23,12 +23,10 @@ import { type StudySessionSummary } from "../session-types";
 import { getRisenSkills } from "./risen-skills";
 import { useIsStopped, useSessionSummary } from "./summary-context";
 
-/** The time in the title, in the mono face like every number. */
-function renderMono(chunks: React.ReactNode) {
-  return <span className="font-mono font-medium tracking-[-0.04em]">{chunks}</span>;
-}
-
-/** "Done in 49 min"; a day stopped early can be shorter than a minute, and "0" would read as none. */
+/**
+ * "Done in 49 min", in the title's one face: the mono face's wide space read as "Done in 13  min"
+ * beside a sans "13". A day stopped early can be shorter than a minute, and "0" would read as none.
+ */
 function DoneTitle() {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
@@ -38,10 +36,7 @@ function DoneTitle() {
     return t("Done in under a minute");
   }
 
-  return t.rich("Done in <mono>{time}</mono>", {
-    mono: renderMono,
-    time: formatDuration(summary.minutes),
-  });
+  return t("Done in {time}", { time: formatDuration(summary.minutes) });
 }
 
 /**

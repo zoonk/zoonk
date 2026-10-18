@@ -75,7 +75,10 @@ export function DayProgress({ className }: { className?: string }) {
   );
 }
 
-/** The minutes studied today, from the week's day, which counts at least the session's progress. */
+/**
+ * The minutes the learner actually studied today, as the week and the session's summary count them:
+ * never the plan's minutes for the blocks done ("54 min studied" after a 14-minute session).
+ */
 export function useStudiedToday(): number {
   const { today } = useTodayScreen();
   return today.session.week.days.find((day) => day.isToday)?.minutes ?? 0;

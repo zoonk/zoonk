@@ -725,7 +725,7 @@ test.describe("Today", () => {
   test("shows the whole day on a wide screen and folds long queues on a phone", async ({
     browser,
   }) => {
-    const { lesson, session, user } = await createStudyDay();
+    const { session, user } = await createStudyDay();
 
     // A re-planned day full of short lessons: the first three blocks are done.
     await Promise.all([
@@ -765,10 +765,9 @@ test.describe("Today", () => {
     await expect(day.nth(0)).toHaveAttribute("aria-current", "step");
     await expect(day.nth(6)).toContainText("Short lesson 7");
 
-    // From the keyboard too: the done fold opens three finished rows and closes them again.
-    const doneFold = card.getByRole("button", {
-      name: new RegExp(`^3 done\\s+${lesson.estimatedMinutes + 4} min$`, "u"),
-    });
+    // From the keyboard too: the done fold opens three finished rows and closes them again. It
+    // names no minutes: a done row's are the plan's estimate, not the time it took.
+    const doneFold = card.getByRole("button", { exact: true, name: "3 done" });
 
     await expect(doneFold).toHaveAttribute("aria-expanded", "false");
     await tabTo(page, doneFold);

@@ -39,14 +39,20 @@ export function useFreshStartText(): string | null {
   const { today } = useTodayScreen();
   const { blocks, freshStart } = today.session;
 
+  // The time stays on one line: "about 55" ending a line and "min" starting the next.
+  const time = formatDuration(
+    blocks.reduce((sum, block) => sum + block.estimatedMinutes, 0),
+  ).replaceAll(" ", NO_BREAK_SPACE);
+
   switch (freshStart) {
     case "welcomeBack":
-      // The time stays on one line: "about 55" ending a line and "min" starting the next.
-      return t("Welcome back! Today is lighter, about {time}, so it's easy to pick up again.", {
-        time: formatDuration(
-          blocks.reduce((sum, block) => sum + block.estimatedMinutes, 0),
-        ).replaceAll(" ", NO_BREAK_SPACE),
-      });
+      // A free exam plan past its first week is shorter for what Plus holds, not lighter for the
+      // break: Ana's 11 minutes read as a gentle return while her plan's lessons were locked.
+      return today.session.examAccess.trialEnded
+        ? t("Welcome back! Today takes about {time}, so it's easy to pick up again.", { time })
+        : t("Welcome back! Today is lighter, about {time}, so it's easy to pick up again.", {
+            time,
+          });
     case "newPhase":
       return t("A new phase starts today, with an easy warm-up first.");
     case "newWeek":

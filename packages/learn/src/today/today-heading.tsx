@@ -3,6 +3,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { PageEyebrow, PageHeader, PageHeaderContent, PageTitle } from "../_components/page";
+import { PlusMark } from "../_components/plus-lock";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { usePlanStatusText } from "../plan/plan-status-label";
 import { useShortDayRange, useShortFocusName } from "../plan/use-short-plan";
@@ -130,7 +131,9 @@ function ExamDayPart() {
 /**
  * Why a study day is lighter than the learner's time: it sets some aside for a mock exam longer
  * than their day, which the Plan shows at its real length on its date. A return after a break
- * already says its day is lighter (see `useFreshStartText`), so it only names the mock.
+ * already says its day is lighter (see `useFreshStartText`), so it only names the mock. Every plan
+ * saves that time; a mock the learner's plan doesn't include wears the Plus mark beside its words,
+ * so the line never reads as a mock they can take.
  */
 function MockFundingPart() {
   const t = useExtracted();
@@ -145,9 +148,14 @@ function MockFundingPart() {
 
   return (
     <TodayEyebrowPart>
-      {isWelcomeBackDay(today.session)
-        ? t("Saving time for {date}'s mock exam", { date })
-        : t("Lighter day: saving time for {date}'s mock exam", { date })}
+      <span>
+        {isWelcomeBackDay(today.session)
+          ? t("Saving time for {date}'s mock exam", { date })
+          : t("Lighter day: saving time for {date}'s mock exam", { date })}
+      </span>
+      {!today.session.examAccess.includesMockExams && (
+        <PlusMark className="ml-2 align-middle font-sans normal-case" />
+      )}
     </TodayEyebrowPart>
   );
 }

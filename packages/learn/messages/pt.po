@@ -11678,9 +11678,9 @@ msgid "Done in under a minute"
 msgstr "Concluído em menos de um minuto"
 
 #: src/session/summary/summary-parts.tsx
-msgctxt "df7V5f"
-msgid "Done in <mono>{time}</mono>"
-msgstr "Concluído em <mono>{time}</mono>"
+msgctxt "dQnLX6"
+msgid "Done in {time}"
+msgstr "Concluído em {time}"
 
 #: src/session/summary/summary-parts.tsx
 msgctxt "KxAe8j"
@@ -12430,6 +12430,11 @@ msgid "Enjoy your day off!"
 msgstr "Aproveite seu dia de folga!"
 
 #: src/today/today-day-status.tsx
+msgctxt "2PMQ3_"
+msgid "Nothing to review today."
+msgstr "Nada para revisar hoje."
+
+#: src/today/today-day-status.tsx
 msgctxt "wqqp3S"
 msgid "Nothing new for today."
 msgstr "Nada novo para hoje."
@@ -12743,6 +12748,11 @@ msgstr "{studied} de {planned} estudados nesta semana"
 msgctxt "AmPZix"
 msgid "{done, number} of {total, plural, one {# day} other {# days}}"
 msgstr "{done, number} de {total, plural, one {# dia} other {# dias}}"
+
+#: src/today/use-today-copy.ts
+msgctxt "QyI7sJ"
+msgid "Welcome back! Today takes about {time}, so it's easy to pick up again."
+msgstr "Que bom ter você de volta! Hoje leva cerca de {time}, então fica fácil retomar."
 
 #: src/today/use-today-copy.ts
 msgctxt "x6Er4-"

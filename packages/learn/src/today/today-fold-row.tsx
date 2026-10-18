@@ -7,8 +7,9 @@ import { useFormatDuration } from "../_utils/time-format";
 import { SESSION_LIST_ID } from "./today-ids";
 
 /**
- * A folded part of the day as one row that opens it in place: the blocks done ("✓ 3 done · 14
- * min") or the ones past what's in sight ("+3 more · 14 min").
+ * A folded part of the day as one row that opens it in place: the blocks done ("✓ 3 done") or the
+ * ones past what's in sight ("+3 more · 14 min"). Only time still ahead says its minutes: a done
+ * row's are the plan's estimate, not the time it took.
  */
 export function FoldRow({
   className,
@@ -21,7 +22,7 @@ export function FoldRow({
   className?: string;
   done: boolean;
   label: string;
-  minutes: number;
+  minutes?: number;
   onToggle: () => void;
   open: boolean;
 }) {
@@ -46,7 +47,9 @@ export function FoldRow({
             className={cn("size-3.5 shrink-0 transition-transform", open && "rotate-180")}
           />
         </span>
-        <span className="shrink-0 font-mono text-xs tabular-nums">{formatDuration(minutes)}</span>
+        {minutes ? (
+          <span className="shrink-0 font-mono text-xs tabular-nums">{formatDuration(minutes)}</span>
+        ) : null}
       </button>
     </div>
   );

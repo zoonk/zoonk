@@ -143,6 +143,16 @@ export function TodayDayStatus({ className }: { className?: string }) {
         </TodayStatusLine>
       );
     case "ahead":
+      // A free exam plan past its first week has nothing to review or fix today: its new lessons,
+      // listed locked above, come with Plus, so it never claims they're all done.
+      if (today.session.examAccess.trialEnded) {
+        return (
+          <TodayStatusLine className={className} icon={<SparklesIcon />}>
+            <TodayStatusSentence>{t("Nothing to review today.")}</TodayStatusSentence>
+          </TodayStatusLine>
+        );
+      }
+
       return (
         <TodayStatusLine className={className} icon={<SparklesIcon />}>
           <TodayStatusSentence>{t("Nothing new for today.")}</TodayStatusSentence>
