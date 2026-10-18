@@ -156,7 +156,7 @@ async function canMoveMock(owned: OwnedMock): Promise<boolean> {
   ]);
 
   const today = getDateInTimeZone({ date: new Date(), timeZone: getAnswerTimeZone({ goal }) });
-  return getMovableDay({ item, rules, today }) !== null;
+  return rules.mondayOpen && getMovableDay({ item, rules, today }) !== null;
 }
 
 function getStatus(mock: MockSitting | null): MockView["status"] {

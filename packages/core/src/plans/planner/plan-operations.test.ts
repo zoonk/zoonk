@@ -228,6 +228,15 @@ describe(applyPlanOperations, () => {
     ).toStrictEqual({ error: "badMove" });
   });
 
+  it("refuses to move the week's challenge onto a rest day", () => {
+    expect(
+      apply(
+        [{ from: "2026-10-04", kind: "moveWeeklyEvent", to: "2026-10-05" }],
+        state({ weekdayMinutes: [45, 0, 45, 45, 45, 45, 45] }),
+      ),
+    ).toStrictEqual({ error: "badMove" });
+  });
+
   it("refuses to move a mock onto or past the test day", () => {
     const friday = { ...state(), goal: { dailyMinutes: 30, targetDate: "2026-10-09" } };
 

@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../plans/create-goal-plan";
+import { getChallenge } from "./get-challenge";
 import { moveChallenge, undoChallengeMove } from "./move-challenge";
 
 /** A real planner plan whose learner finished work early, as Lucas did before moving a future week. */
@@ -67,57 +68,64 @@ describe(moveChallenge, () => {
     vi.useRealTimers();
   });
 
-  it.each([false, true])(
-    "moves a future weekly challenge to its next Monday without pulling phase challenges earlier (Monday rests: %s)",
-    async (mondayRests) => {
-      const { plan, weekly } = await setup({ mondayRests });
-      const before = await phaseChallenges(plan.id);
+  it("moves a future weekly challenge to its next Monday without pulling phase challenges earlier", async () => {
+    const { plan, weekly } = await setup();
+    const before = await phaseChallenges(plan.id);
 
-      const moved = await moveChallenge({ input: { timeZone: "UTC" }, planItemId: weekly.id });
+    const moved = await moveChallenge({ input: { timeZone: "UTC" }, planItemId: weekly.id });
 
-      expect(moved).toMatchObject({ move: { date: "2020-10-19" }, status: "moved" });
-      expect(moved.status === "moved" && moved.move.planItemId).toStrictEqual(expect.any(String));
+    expect(moved).toMatchObject({ move: { date: "2020-10-19" }, status: "moved" });
+    expect(moved.status === "moved" && moved.move.planItemId).toStrictEqual(expect.any(String));
 
-      if (moved.status !== "moved" || !moved.move.planItemId || !moved.move.changeId) {
-        throw new Error("Expected the moved challenge and its Undo");
-      }
+    if (moved.status !== "moved" || !moved.move.planItemId || !moved.move.changeId) {
+      throw new Error("Expected the moved challenge and its Undo");
+    }
 
-      await expect(
-        prisma.planItem.findUniqueOrThrow({ where: { id: moved.move.planItemId } }),
-      ).resolves.toMatchObject({ kind: "checkpoint", scheduledFor: new Date("2020-10-19") });
+    await expect(
+      prisma.planItem.findUniqueOrThrow({ where: { id: moved.move.planItemId } }),
+    ).resolves.toMatchObject({ kind: "checkpoint", scheduledFor: new Date("2020-10-19") });
 
-      await expect(phaseChallenges(plan.id)).resolves.toStrictEqual(before);
+    await expect(phaseChallenges(plan.id)).resolves.toStrictEqual(before);
 
-      const pending = await prisma.planItem.findMany({
-        where: { planId: plan.id, scheduledFor: { gte: new Date("2020-10-05") }, status: "todo" },
-      });
+    const undone = await undoChallengeMove({
+      changeId: moved.move.changeId,
+      input: { timeZone: "UTC" },
+      planItemId: moved.move.planItemId,
+    });
 
-      const restWeekdays = mondayRests ? [1] : [];
+    expect(undone.status).toBe("undone");
+    await expect(phaseChallenges(plan.id)).resolves.toStrictEqual(before);
 
-      const restDays = pending.filter((item) =>
-        restWeekdays.includes(item.scheduledFor?.getUTCDay() ?? -1),
-      );
+    await expect(
+      prisma.planItem.findUniqueOrThrow({
+        where: { id: undone.status === "undone" ? (undone.planItemId ?? "") : "" },
+      }),
+    ).resolves.toMatchObject({ scheduledFor: weekly.scheduledFor });
+  });
 
-      expect(restDays.map(({ id, kind }) => ({ id, kind }))).toStrictEqual(
-        mondayRests ? [{ id: moved.move.planItemId, kind: "checkpoint" }] : [],
-      );
+  it("does not offer a move onto a resting Monday and refuses a stale move without writing", async () => {
+    const { plan, weekly } = await setup({ mondayRests: true });
 
-      const undone = await undoChallengeMove({
-        changeId: moved.move.changeId,
-        input: { timeZone: "UTC" },
-        planItemId: moved.move.planItemId,
-      });
+    const before = await prisma.plan.findUniqueOrThrow({
+      include: { items: { orderBy: { position: "asc" } } },
+      where: { id: plan.id },
+    });
 
-      expect(undone.status).toBe("undone");
-      await expect(phaseChallenges(plan.id)).resolves.toStrictEqual(before);
+    await expect(
+      getChallenge({ input: { timeZone: "UTC" }, planItemId: weekly.id }),
+    ).resolves.toMatchObject({ challenge: { canMove: false }, status: "ready" });
 
-      await expect(
-        prisma.planItem.findUniqueOrThrow({
-          where: { id: undone.status === "undone" ? (undone.planItemId ?? "") : "" },
-        }),
-      ).resolves.toMatchObject({ scheduledFor: weekly.scheduledFor });
-    },
-  );
+    await expect(
+      moveChallenge({ input: { timeZone: "UTC" }, planItemId: weekly.id }),
+    ).resolves.toStrictEqual({ error: "badMove", status: "invalid" });
+
+    await expect(
+      prisma.plan.findUniqueOrThrow({
+        include: { items: { orderBy: { position: "asc" } } },
+        where: { id: plan.id },
+      }),
+    ).resolves.toStrictEqual(before);
+  });
 
   it("keeps the requested challenge when its Monday is beyond the remaining work", async () => {
     const { plan, weekly } = await setup();

@@ -161,9 +161,14 @@ export const todayResponseSchema = z
             description:
               "The challenge's saved plan item, or null for selected work that remains visible without an action until Open persists it",
           }),
-        questions: z.number().int().min(0),
+        questions: z
+          .number()
+          .int()
+          .min(0)
+          .nullable()
+          .meta({ description: "Null while the challenge's size is unknown" }),
         timeLimitMinutes: z.number().int().min(0).nullable(),
-        title: z.string(),
+        title: z.string().nullable().meta({ description: "Null while the challenge has no title" }),
       })
       .nullable()
       .meta({ description: "The goal's next weekly checkpoint: a mock exam or a mixed challenge" }),

@@ -30,17 +30,17 @@ type WeeklyChallenge = {
   date: Date | null;
   kind: "mixed" | "mock";
   planItemId: string;
-  questions: number;
+  questions: number | null;
   /** The real exam's start time for a mock when the notice gives it; otherwise the study time. */
   startTime: string | null;
   /** The zone of an exam's start time; null for the learner's own study time. */
   timeZone: string | null;
-  title: string;
+  title: string | null;
 };
 
 /**
  * What a weekly challenge asks, as its intro says it: the mock's conditions, or the questions its
- * saved bank holds; 0 (no number shown) while that's unknown or it can't be asked yet.
+ * saved bank holds; null while its size is unknown.
  */
 export function getWeeklyQuestions({
   conditions,
@@ -48,8 +48,8 @@ export function getWeeklyQuestions({
 }: {
   conditions?: Pick<MockConditions, "questions"> | null;
   item: Pick<PlanItem, "facts" | "kind">;
-}): number {
-  return conditions?.questions ?? getOfferQuestions(readBossOffer({ item })) ?? 0;
+}): number | null {
+  return conditions?.questions ?? getOfferQuestions(readBossOffer({ item }));
 }
 
 export type WeeklyChallengeResult =
@@ -114,7 +114,7 @@ export async function getWeeklyChallenge({
       questions: getWeeklyQuestions({ conditions, item }),
       startTime: card?.startTime ?? goal.studyTime,
       timeZone: card?.startTime ? card.timeZone : null,
-      title: item.titleSnapshot,
+      title: item.titleSnapshot.trim() || null,
     },
     status: "ready",
   };

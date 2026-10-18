@@ -200,6 +200,7 @@ function DailyMinutes({
             value: String(minutes),
           }))}
           label={t("Time a day")}
+          manualActivation
           numberKeys={false}
           onChange={(value) => setMinutes(Number(value))}
           value={String(time.shown)}

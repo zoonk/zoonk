@@ -3,7 +3,12 @@ import { type PlanItem, type StudySessionBlock, prisma } from "@zoonk/db";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { parsePlanChangePayload } from "../../plans/_utils/plan-change-payload";
 import { changeGoalPlan } from "../../plans/change-goal-plan";
-import { addDays, fromIsoDate, toIsoDate } from "../../plans/planner/plan-calendar";
+import {
+  addDays,
+  fromIsoDate,
+  getWeekdayMinutes,
+  toIsoDate,
+} from "../../plans/planner/plan-calendar";
 import { type PlanChangeRefusal } from "../../plans/planner/plan-operations";
 import { parsePlanGraph, parsePlanSettings } from "../../plans/planner/plan-state";
 import { readBlockPayload } from "../../sessions/block-payload";
@@ -32,16 +37,35 @@ function getNextMonday(date: Date): Date {
  * graph) can move it, since the planner places it again, a challenge it already moved stays on
  * its new day (its undo brings it back), and nothing moves onto or past the goal's date.
  */
-export type ChallengeMoveRules = { movedTo: string[]; planned: boolean; targetDate: Date | null };
+export type ChallengeMoveRules = {
+  mondayOpen: boolean;
+  movedTo: string[];
+  planned: boolean;
+  targetDate: Date | null;
+};
 
 export async function loadChallengeMoveRules(goalId: string): Promise<ChallengeMoveRules> {
   const plan = await prisma.plan.findUnique({
-    select: { goal: { select: { targetDate: true } }, graph: true, settings: true },
+    select: {
+      goal: { select: { dailyMinutes: true, targetDate: true } },
+      graph: true,
+      settings: true,
+    },
     where: { goalId },
   });
 
+  const settings = parsePlanSettings(plan?.settings);
+
   return {
-    movedTo: parsePlanSettings(plan?.settings).movedEvents.map((move) => move.to),
+    mondayOpen:
+      getWeekdayMinutes({
+        calendar: {
+          dailyMinutes: plan?.goal.dailyMinutes ?? 0,
+          weekdayMinutes: settings.weekdayMinutes,
+        },
+        weekday: MONDAY,
+      }) > 0,
+    movedTo: settings.movedEvents.map((move) => move.to),
     planned: parsePlanGraph(plan?.graph).skills.length > 0,
     targetDate: plan?.goal.targetDate ?? null,
   };

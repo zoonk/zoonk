@@ -851,7 +851,7 @@ describe(getWeeklyChallenge, () => {
       ];
     };
 
-    await expect(readSizes()).resolves.toStrictEqual([0, 0]);
+    await expect(readSizes()).resolves.toStrictEqual([null, null]);
 
     const skillIds = skills.map((skill) => skill.id);
 

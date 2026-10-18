@@ -13,6 +13,7 @@ import {
 } from "../sessions/_test-utils/session-goal";
 import { readBlockPayload } from "../sessions/block-payload";
 import { getChallenge } from "./get-challenge";
+import { getWeeklyChallenge } from "./get-weekly-challenge";
 import { startChallenge } from "./start-challenge";
 
 async function completedTeaching({ itemsPerSkill = 10, lessons = 3 } = {}) {
@@ -89,6 +90,13 @@ describe("checkpoint previews follow the day Start actually opens", () => {
       kind: "checkpoint",
       planId: plan.id,
       position: 1,
+    });
+
+    await prisma.planItem.update({ data: { titleSnapshot: "" }, where: { id: weekly.id } });
+
+    await expect(getWeeklyChallenge({ goalId: goal.id, timeZone: "UTC" })).resolves.toMatchObject({
+      challenge: { planItemId: weekly.id, questions: null, title: null },
+      status: "ready",
     });
 
     const preview = await getChallenge({ input: { timeZone: "UTC" }, planItemId: weekly.id });

@@ -81,6 +81,7 @@ type ChoiceListVariant = "chips" | "rows";
 export function ChoiceList<Value extends string>({
   choices,
   label,
+  manualActivation = false,
   numberKeys = true,
   onChange,
   onPick,
@@ -90,6 +91,8 @@ export function ChoiceList<Value extends string>({
 }: {
   choices: Choice<Value>[];
   label: string;
+  /** Presets that save at once: arrows move focus; Enter, Space or a click applies. */
+  manualActivation?: boolean;
   /** Off for a second list on the same screen: number keys pick from the first. */
   numberKeys?: boolean;
   onChange: (value: Value) => void;
@@ -176,6 +179,22 @@ export function ChoiceList<Value extends string>({
               {/* A chip shows it's picked by its fill; its radio, invisible, still takes focus. */}
               <RadioGroupItem
                 className="pointer-events-none absolute inset-0 size-full opacity-0"
+                onFocus={(event) => {
+                  /** Base UI's composite still tracks focus; its radio must not select on focus. */
+                  if (manualActivation) {
+                    event.preventDefault();
+                  }
+                }}
+                onKeyDown={(event) => {
+                  if (manualActivation && event.key === "Enter") {
+                    event.preventDefault();
+                    event.preventBaseUIHandler();
+
+                    if (!readOnly) {
+                      onChange(choice.value);
+                    }
+                  }
+                }}
                 value={choice.value}
               />
             </RadioGroupOption>

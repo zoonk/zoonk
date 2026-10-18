@@ -112,7 +112,8 @@ export function ChallengeRow({ challenge, date }: { challenge: Challenge; date: 
 
   const facts = [
     weekdayLabel(date),
-    challenge.questions > 0 &&
+    challenge.questions !== null &&
+      challenge.questions > 0 &&
       t("{count, plural, one {# question} other {# questions}}", { count: challenge.questions }),
     challenge.timeLimitMinutes !== null && formatDuration(challenge.timeLimitMinutes),
   ].filter(Boolean);

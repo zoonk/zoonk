@@ -74,7 +74,12 @@ export const weeklyChallengeResponseSchema = z
         date: logicalDateSchema.nullable(),
         kind: z.enum(["mixed", "mock"]),
         planItemId: idSchema,
-        questions: z.number().int().min(0),
+        questions: z
+          .number()
+          .int()
+          .min(0)
+          .nullable()
+          .meta({ description: "Null while the challenge's size is unknown" }),
         startTime: z
           .string()
           .nullable()
@@ -86,7 +91,7 @@ export const weeklyChallengeResponseSchema = z
           .string()
           .nullable()
           .meta({ description: "The IANA zone of an exam's start time; null for study time" }),
-        title: z.string(),
+        title: z.string().nullable().meta({ description: "Null while the challenge has no title" }),
       })
       .nullable(),
   })

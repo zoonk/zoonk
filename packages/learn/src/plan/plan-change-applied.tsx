@@ -8,7 +8,7 @@ import { useExtracted } from "next-intl";
 import { PhaseEndMoves } from "./phase-end-moves";
 import { usePlanScreen } from "./plan-context";
 import { PlanFailedMessage } from "./plan-failed-message";
-import { useChangeSentence } from "./use-change-sentence";
+import { useAppliedLine, useChangeSentence } from "./use-change-sentence";
 import { useAppliedEffectText } from "./use-effect-text";
 import { useUndoChange } from "./use-undo-change";
 
@@ -26,6 +26,7 @@ export function PlanChangeSummary({
 }) {
   const t = useExtracted();
   const sentence = useChangeSentence();
+  const appliedLine = useAppliedLine();
   const effectText = useAppliedEffectText();
   const { plan } = usePlanScreen();
   // A choice that sets back what the latest change set is its Undo (see `changeGoalPlan`).
@@ -42,6 +43,9 @@ export function PlanChangeSummary({
           {undone ? t("Undone. Your plan is back as it was.") : sentence(change)}
         </p>
         {effect && <p className="text-muted-foreground text-sm">{effect}</p>}
+        {!undone && (
+          <p className="text-muted-foreground text-sm">{appliedLine(change.todaySession)}</p>
+        )}
         {!undone && <PhaseEndMoves effect={change.effect} />}
       </div>
     </div>

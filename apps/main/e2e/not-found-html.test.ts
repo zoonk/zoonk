@@ -26,7 +26,7 @@ test.describe("Pages with nothing to show", () => {
     // One address per route group whose pages are drawn per request: each sends its loading
     // placeholder first, then the group's not-found message in its place.
     const addresses = [
-      { path: `/challenge/${randomUUID()}`, signedIn: true },
+      { path: `/checkpoint/${randomUUID()}`, signedIn: true },
       { path: `/content/chapters/${randomUUID()}`, signedIn: true },
       { path: `/start/${randomUUID()}`, signedIn: true },
       { path: `/plan-link/${randomUUID()}`, signedIn: false },

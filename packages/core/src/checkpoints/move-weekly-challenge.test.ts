@@ -132,6 +132,24 @@ describe(moveWeeklyChallenge, () => {
     vi.useRealTimers();
   });
 
+  it("refuses a stale session move onto a closed Monday without skipping its block", async () => {
+    const { block, plan, session } = await setup();
+
+    await prisma.plan.update({
+      data: { settings: { startDate: "2020-09-28", weekdayMinutes: [12, 0, 12, 12, 12, 12, 12] } },
+      where: { id: plan.id },
+    });
+
+    const [beforePlan, beforeToday] = await Promise.all([readPlan(plan.id), readToday(session.id)]);
+
+    await expect(
+      moveWeeklyChallenge({ blockId: block.id, input: { timeZone: "UTC" } }),
+    ).resolves.toStrictEqual({ error: "badMove", status: "invalid" });
+
+    await expect(readPlan(plan.id)).resolves.toStrictEqual(beforePlan);
+    await expect(readToday(session.id)).resolves.toStrictEqual(beforeToday);
+  });
+
   it("moves the week's challenge to Monday through the plan, and undo brings it back", async () => {
     const { block, challenge, plan } = await setup();
 

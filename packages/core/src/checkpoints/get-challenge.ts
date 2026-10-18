@@ -77,7 +77,11 @@ async function canMove({
   }
 
   const rules = await loadChallengeMoveRules(challenge.goal.id);
-  return getMovableDay({ item: challenge.item, rules, today: challenge.today }) !== null;
+
+  return (
+    rules.mondayOpen &&
+    getMovableDay({ item: challenge.item, rules, today: challenge.today }) !== null
+  );
 }
 
 function findPhase(challenge: OwnedChallenge) {

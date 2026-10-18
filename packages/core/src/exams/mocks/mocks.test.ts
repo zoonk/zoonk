@@ -4,6 +4,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { readLearnerRevision } from "../../_test-utils/learner-revision";
 import { mockSession } from "../../_test-utils/mock-session";
+import { parsePlanSettings } from "../../plans/planner/plan-state";
 import { SESSION_NOW } from "../../sessions/_test-utils/session-goal";
 import {
   MINUTE_MS,
@@ -25,6 +26,64 @@ describe("mock exams", () => {
 
   afterEach(() => {
     vi.useRealTimers();
+  });
+
+  it("does not offer a scheduled mock move onto a resting Monday", async () => {
+    const { blockId, goal, plan, skills } = await scheduledMockSetup();
+    const settings = parsePlanSettings(plan.settings);
+
+    await prisma.plan.update({
+      data: {
+        graph: {
+          phases: [{ milestone: null, name: "Basics" }],
+          skills: skills.map((skill) => ({
+            area: null,
+            lessons: 1,
+            name: skill.name,
+            phase: 0,
+            skillId: skill.id,
+            weight: null,
+          })),
+        },
+        settings: { ...settings, weekdayMinutes: null },
+      },
+      where: { id: plan.id },
+    });
+
+    await expect(getMock(blockId)).resolves.toMatchObject({
+      mock: { canMove: true, status: "ready" },
+      status: "ready",
+    });
+
+    const minutes = goal.dailyMinutes;
+
+    await prisma.plan.update({
+      data: {
+        settings: {
+          ...settings,
+          weekdayMinutes: [minutes, 0, minutes, minutes, minutes, minutes, minutes],
+        },
+      },
+      where: { id: plan.id },
+    });
+
+    const [beforePlan, beforeBlock] = await Promise.all([
+      prisma.plan.findUniqueOrThrow({ where: { id: plan.id } }),
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: blockId } }),
+    ]);
+
+    await expect(getMock(blockId)).resolves.toMatchObject({
+      mock: { canMove: false, status: "ready" },
+      status: "ready",
+    });
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toStrictEqual(
+      beforePlan,
+    );
+
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: blockId } }),
+    ).resolves.toStrictEqual(beforeBlock);
   });
 
   it("shows the conditions, runs without feedback and grades once handed in", async () => {

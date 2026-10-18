@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
+import { isJsonObject } from "@zoonk/utils/json";
 import {
   CHECKPOINT_PASS_MARK,
   CHECKPOINT_QUESTIONS,
@@ -772,6 +773,62 @@ async function blockStatus(blockId: string) {
 }
 
 test.describe("Move to Monday", () => {
+  test("hides Move to Monday when Monday is a rest day", async ({ browser }) => {
+    const { boss, plan, user } = await createCheckpointLearner({
+      kind: "weekly",
+      planned: true,
+      weeklyKind: "checkpoint",
+    });
+
+    if (!isJsonObject(plan.settings) || !Array.isArray(plan.settings.weekdayMinutes)) {
+      throw new Error("Expected the planned study week");
+    }
+
+    await prisma.plan.update({
+      data: {
+        settings: {
+          ...plan.settings,
+          weekdayMinutes: plan.settings.weekdayMinutes.map((minutes, weekday) =>
+            weekday === 1 ? 0 : minutes,
+          ),
+        },
+      },
+      where: { id: plan.id },
+    });
+
+    const page = await openAs(browser, user);
+
+    try {
+      await page.goto(`/challenge/${boss.id}`);
+      await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+      await expect(page.getByRole("button", { name: "Move to Monday" })).toHaveCount(0);
+
+      await page.screenshot({
+        path: "/tmp/zoonk-review/final-walkthrough/W2/after-closed-monday.png",
+      });
+    } finally {
+      await page.context().close();
+    }
+  });
+
+  test("an old challenge URL returns to Today after its plan item is replaced", async ({
+    browser,
+  }) => {
+    const { boss, user } = await createCheckpointLearner({ kind: "weekly" });
+    const page = await openAs(browser, user);
+
+    try {
+      await page.goto(`/challenge/${boss.id}`);
+      await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+      await prisma.planItem.delete({ where: { id: boss.id } });
+      await page.reload();
+      await expect(page).toHaveURL(/\/today$/u);
+      await expect(page.getByRole("heading", { exact: true, name: "Today" })).toBeVisible();
+    } finally {
+      await page.context().close();
+    }
+  });
+
   test("the week's challenge moves to Monday through the plan, with undo", async ({ browser }) => {
     // A learn goal's week ends in its own checkpoint, which the plan moves without saving time.
     const { block, boss, plan, user } = await createCheckpointLearner({

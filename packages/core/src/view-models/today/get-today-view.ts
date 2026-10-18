@@ -72,9 +72,9 @@ type TodayWeeklyChallenge = {
   kind: "mixed" | "mock";
   /** An unsaved selected challenge stays visible without an intro action until Open persists it. */
   planItemId: string | null;
-  questions: number;
+  questions: number | null;
   timeLimitMinutes: number | null;
-  title: string;
+  title: string | null;
 };
 
 /**

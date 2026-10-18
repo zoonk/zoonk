@@ -2,7 +2,8 @@ import { type GoalKind } from "@zoonk/db";
 import { type AddedSkill, type PlanOperation } from "../plan-contract";
 import { type UnfundedMove } from "../plan-error-contract";
 import { applyAreaOperation, isAreaOperation } from "./area-operations";
-import { addDays, daysBetween, fromIsoDate, scaleWeekdayMinutes, toIsoDate } from "./plan-calendar";
+import { moveWeeklyEvent } from "./move-weekly-event";
+import { addDays, fromIsoDate, scaleWeekdayMinutes, toIsoDate } from "./plan-calendar";
 import { DAYS_PER_WEEK, type PlanGraph, type PlanState } from "./plan-state";
 import { setTools } from "./plan-tools";
 import { applyStudyOperation, isStudyOperation } from "./study-operations";
@@ -192,40 +193,6 @@ function withTargetDate({
         ...(passed ? { startDate: today } : {}),
       },
     },
-  };
-}
-
-/**
- * "Move to Monday": the week's checkpoint or mock goes to a later day, at most a week later and
- * before the goal's date (a mock moved onto or past the test day no longer prepares for it).
- * Moving the same day again replaces the earlier move, and undo brings it back.
- */
-function moveWeeklyEvent({
-  from,
-  state,
-  to,
-  today,
-}: {
-  from: string;
-  state: PlanState;
-  to: string;
-  today: string;
-}): OperationResult {
-  if (from < today) {
-    return { error: "pastDate" };
-  }
-
-  const days = daysBetween(fromIsoDate(from), fromIsoDate(to));
-  const { targetDate } = state.goal;
-
-  if (days < 1 || days > DAYS_PER_WEEK || (targetDate && to >= targetDate)) {
-    return { error: "badMove" };
-  }
-
-  const others = state.settings.movedEvents.filter((move) => move.from !== from);
-
-  return {
-    state: { ...state, settings: { ...state.settings, movedEvents: [...others, { from, to }] } },
   };
 }
 

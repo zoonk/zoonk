@@ -66,7 +66,7 @@ async function readSelectedCard({
     planItemId: item.id,
     questions: getWeeklyQuestions({ conditions: card?.conditions, item }),
     timeLimitMinutes: card?.conditions.timeLimitMinutes ?? null,
-    title: item.titleSnapshot,
+    title: item.titleSnapshot.trim() || null,
   };
 }
 
@@ -109,7 +109,7 @@ export async function readTodayWeeklyChallenge({
       planItemId: item.id,
       questions: block.questions,
       timeLimitMinutes: block.checkpoint.timeLimitMinutes,
-      title: item.titleSnapshot,
+      title: item.titleSnapshot.trim() || null,
     };
   }
 
