@@ -16,7 +16,7 @@ const SHOWN_SUBJECTS = 5;
  * A subject as Today's aside draws it: its names and its bar's measures. Its topics and chapters
  * stay on the Plan, which lists them: a big exam's ran to about 90 KB in every Today read.
  */
-export type TodaySubject = Pick<
+type TodaySubject = Pick<
   SyllabusSubject,
   | "key"
   | "lessonsDone"
