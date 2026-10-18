@@ -17,6 +17,7 @@ import { getTodayStudySession } from "./_test-utils/open-today";
 import { answerStudyQuestion } from "./answer-study-question";
 import { finishStudyBlock } from "./finish-study-block";
 import { getStudyBlock } from "./get-study-block";
+import { getStudySessionSummary } from "./get-study-session-summary";
 import { startStudyBlock } from "./start-study-block";
 
 const TIME_ZONE = "UTC";
@@ -187,6 +188,32 @@ describe("placement in the first week's sessions", () => {
         ]),
       },
       status: "ready",
+    });
+  });
+
+  // A first-week review can hold only placement questions (no capsule is due yet): the time spent
+  // answering them is time studied, so the summary says it as Today and the week count it.
+  it("counts the time spent on placement questions in the session's summary", async () => {
+    const { goal, placementItemId } = await setup();
+    const { blockId, sessionId } = await openPlacementBlock(goal.id);
+
+    await answerStudyQuestion({
+      blockId,
+      input: {
+        answer: { dontKnow: true },
+        durationMs: 3000,
+        itemId: placementItemId,
+        timeZone: TIME_ZONE,
+      },
+      sessionId,
+    });
+
+    vi.setSystemTime(Date.now() + 90_000);
+    await finishStudyBlock({ blockId, input: {}, sessionId });
+
+    await expect(getStudySessionSummary({ input: {}, sessionId })).resolves.toMatchObject({
+      status: "ready",
+      summary: { minutes: 1 },
     });
   });
 

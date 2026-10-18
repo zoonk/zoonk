@@ -55,42 +55,74 @@ function getIds({ block, payload }: Pick<BlockEventContext, "block" | "payload">
   };
 }
 
+/** A placement answer's ledger kind: the first week's sessions open with a few of them. */
+const PLACEMENT_LEDGER_KIND = "placement";
+
+/** A review row's answers: their points, their counts and their share of the block's time. */
+function getReviewRow(context: BlockEventContext, own: readonly SessionAnswer[]) {
+  const { answers, points } = context;
+
+  return {
+    brainPower: answers.reduce(
+      (sum, answer, index) => (own.includes(answer) ? sum + (points[index] ?? 0) : sum),
+      0,
+    ),
+    ...countAnswers(own),
+    kind: "review" as const,
+    seconds: Math.round((context.seconds * own.length) / Math.max(1, answers.length)),
+  };
+}
+
 /**
  * Opened capsules each get a `review` row, so the ledger counts capsules (Retro glasses) and
- * reviews without reading content. Each row carries its answers' points and the capsule bonus;
- * whatever the block earned beyond that (mastery, caps) lands on the last row.
+ * reviews without reading content, and the block's placement answers get one, so their time counts
+ * as studied. Each row carries its answers' points and a capsule its bonus; whatever the block
+ * earned beyond that (mastery, caps) lands on the last row.
  */
-function getCapsuleEvents(context: BlockEventContext): BlockEvent[] {
-  const { answers, block, payload, points } = context;
-  const total = Math.max(1, answers.length);
+function getReviewEvents(context: BlockEventContext): BlockEvent[] {
+  const { answers, block, payload } = context;
 
-  const opened = payload.capsules.flatMap((capsule) => {
+  const capsules = payload.capsules.flatMap((capsule) => {
     const own = answers.filter(
       (answer) => answer.itemId && capsule.itemIds.includes(answer.itemId),
     );
 
-    const ownPoints = answers.reduce(
-      (sum, answer, index) => (own.includes(answer) ? sum + (points[index] ?? 0) : sum),
-      0,
-    );
+    if (own.length === 0) {
+      return [];
+    }
 
-    return own.length === 0
-      ? []
+    const row = getReviewRow(context, own);
+
+    return [
+      {
+        ...row,
+        brainPower: row.brainPower + BRAIN_POWER_BONUS.capsuleOpened,
+        contentIds: {
+          ...getIds({ block, payload }),
+          ...(capsule.lessonId ? { lessonId: capsule.lessonId } : {}),
+        },
+        lessonKind: CAPSULE_LEDGER_KIND,
+        titleSnapshot: capsule.title,
+      },
+    ];
+  });
+
+  const placement = answers.filter(
+    (answer) => answer.itemId && payload.placementItemIds.includes(answer.itemId),
+  );
+
+  const opened =
+    placement.length === 0
+      ? capsules
       : [
+          ...capsules,
           {
-            brainPower: ownPoints + BRAIN_POWER_BONUS.capsuleOpened,
-            contentIds: {
-              ...getIds({ block, payload }),
-              ...(capsule.lessonId ? { lessonId: capsule.lessonId } : {}),
-            },
-            ...countAnswers(own),
-            kind: "review" as const,
-            lessonKind: CAPSULE_LEDGER_KIND,
-            seconds: Math.round((context.seconds * own.length) / total),
-            titleSnapshot: capsule.title,
+            ...getReviewRow(context, placement),
+            contentIds: getIds({ block, payload }),
+            lessonKind: PLACEMENT_LEDGER_KIND,
+            titleSnapshot: payload.title,
           },
         ];
-  });
 
   const split = opened.reduce((sum, event) => sum + event.brainPower, 0);
   const rest = context.brainPower - split;
@@ -127,10 +159,10 @@ function getPracticeKind(payload: BlockEventContext["payload"]): string {
   return payload.fullReview ? FULL_REVIEW_LEDGER_KIND : "practice";
 }
 
-/** The ledger rows for a finished question block: capsules, practice or a checkpoint. */
+/** The ledger rows for a finished question block: a review, practice or a checkpoint. */
 export function getBlockEvents(context: BlockEventContext): BlockEvent[] {
   if (context.block.kind === "review") {
-    return getCapsuleEvents(context);
+    return getReviewEvents(context);
   }
 
   if (context.block.kind === "checkpoint") {
