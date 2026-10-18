@@ -375,7 +375,7 @@ msgstr "{done, number} von {total, number}"
 #: src/plan/use-time-to-cover.ts
 #: src/session/lesson-moment.tsx
 #: src/session/open-next-step.tsx
-#: src/session/question-block/question-block.tsx
+#: src/session/question-block/question-block-status.tsx
 #: src/shell/task-frame.tsx
 #: src/speech/speech-parts.tsx
 #: src/topic-outline/far-topic-sheet.tsx
@@ -6641,7 +6641,7 @@ msgid "End practice. What you answered counts."
 msgstr "Übung beenden. Deine Antworten zählen."
 
 #: src/mistakes/mistake-practice-run.tsx
-#: src/session/question-block/question-block.tsx
+#: src/session/question-block/question-block-status.tsx
 msgctxt "wheSfB"
 msgid "We couldn't save that answer. Check it again."
 msgstr "Die Antwort konnte nicht gespeichert werden. Versuch es noch einmal."
@@ -11522,11 +11522,17 @@ msgctxt "JJytYK"
 msgid "Close. Your answers are saved."
 msgstr "Schließen. Deine Antworten sind gespeichert."
 
-#: src/session/question-block/question-block.tsx
+#: src/session/question-block/question-block-status.tsx
+msgctxt "iMYxZV"
+msgid "You already answered this question."
+msgstr "Du hast diese Frage bereits beantwortet."
+
+#: src/session/question-block/question-block-status.tsx
 msgctxt "zOi8iy"
 msgid "We couldn't save this block yet."
 msgstr "Dieser Abschnitt konnte noch nicht gespeichert werden."
 
+#: src/session/question-block/question-block-status.tsx
 #: src/session/question-block/question-block.tsx
 msgctxt "8H-sBj"
 msgid "Saving your answers…"

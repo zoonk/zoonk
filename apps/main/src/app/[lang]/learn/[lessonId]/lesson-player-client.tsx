@@ -4,7 +4,7 @@ import { LESSON_FEEDBACK_SLOTS } from "@/components/feedback/lesson-feedback-slo
 import { LearningLink } from "@/components/learn/learning-link";
 import { type TutorViewer } from "@/components/learn/main-ask-tutor";
 import { useLessonSessionSlots } from "@/components/session/use-lesson-session-slots";
-import { useRouter } from "@/i18n/navigation";
+import { redirect, useRouter } from "@/i18n/navigation";
 import { forgetAppWrites } from "@/lib/http/app-write-ledger";
 import { useRefreshAfterAppWrites } from "@/lib/http/app-writes";
 import { getTutorConfig } from "@/lib/learn/tutor-config";
@@ -31,7 +31,8 @@ import {
   type PlayableLibraryLesson,
 } from "@zoonk/player/lesson/types";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
-import { useMemo } from "react";
+import { useLocale } from "next-intl";
+import { useMemo, useState } from "react";
 import { completeLibraryLessonAction, getLessonPicturesAction } from "./lesson-player-actions";
 import { startLibraryLesson } from "./start-library-lesson";
 
@@ -140,7 +141,19 @@ export function LessonPlayerClient({
   tutorSuggestions?: readonly LessonTutorSuggestion[];
 }) {
   const router = useRouter();
+  const locale = useLocale();
   useRefreshAfterAppWrites();
+
+  /** A completion action refreshes props in place; only a newly opened finished lesson redirects. */
+  const [reopenedBlockId, setReopenedBlockId] = useState(
+    () =>
+      sessionContext?.blocks.find(
+        (block) =>
+          block.kind === "learn" && block.lessonId === lesson.id && block.status === "completed",
+      )?.id ?? null,
+  );
+
+  void setReopenedBlockId;
 
   const adapters = useMemo(
     () => createAdapters({ lessonId: lesson.id, studySessionId }),
@@ -163,6 +176,10 @@ export function LessonPlayerClient({
   );
 
   const routes = useMemo(() => ({ ...ROUTES, ...routing }), [routing]);
+
+  if (reopenedBlockId) {
+    redirect({ href: `/session?block=${reopenedBlockId}`, locale });
+  }
 
   return (
     <LessonPlayerProvider

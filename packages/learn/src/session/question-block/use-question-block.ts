@@ -23,6 +23,7 @@ export type QuestionBlockActions = {
     itemId: string;
   }) => Promise<StudyAnswerOutcome>;
   finish: () => Promise<StudyFinishOutcome>;
+  refresh: () => void;
 };
 
 /**
@@ -100,10 +101,14 @@ export function useQuestionBlock({
       return;
     }
 
-    // This session already has an answer to it (another tab, or a retry), so move on.
     if (outcome.status === "alreadyAnswered") {
-      shownAt.current = performance.now();
-      dispatch({ type: "next" });
+      dispatch({ type: "alreadyAnswered" });
+      return;
+    }
+
+    /** A finished or skipped block has no answer to retry; read where this session stands now. */
+    if (outcome.status === "blockNotActive") {
+      actions.refresh();
       return;
     }
 

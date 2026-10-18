@@ -1,7 +1,5 @@
 "use client";
 
-import { Button } from "@zoonk/ui/components/button";
-import { Spinner } from "@zoonk/ui/components/spinner";
 import { useExtracted } from "next-intl";
 import { type TaskSegment } from "../../_components/task-header";
 import { TaskActionBar, TaskBody } from "../../_components/task-layout";
@@ -30,6 +28,7 @@ import { PauseSuggestion } from "./pause-suggestion";
 import { ContinueButton, QuestionActionsRow } from "./question-actions";
 import { QuestionBlockClose, QuestionBlockHeader } from "./question-block-header";
 import { type QuestionBlockPhase, type QuestionBlockState } from "./question-block-state";
+import { QuestionBlockStatus } from "./question-block-status";
 import { QuestionFeedback } from "./question-feedback";
 import { isNetScoredQuestion } from "./question-view";
 import { SwipeScore } from "./swipe-score";
@@ -67,45 +66,9 @@ function getQuestionSegments({
 type SessionContext = Pick<StudySession, "blocks" | "examTomorrow" | "id" | "missions">;
 
 type SessionActions = QuestionBlockActions & {
-  refresh: () => void;
   continueSession: () => Promise<boolean>;
   stop: () => Promise<boolean>;
 };
-
-/** What the bar says above its actions while an answer or the block is being saved, or failed. */
-function PhaseMessage({ onRetry, phase }: { onRetry: () => void; phase: QuestionBlockPhase }) {
-  const t = useExtracted();
-
-  if (phase.kind === "answerFailed") {
-    return (
-      <p className="text-destructive-text text-sm" role="alert">
-        {t("We couldn't save that answer. Check it again.")}
-      </p>
-    );
-  }
-
-  if (phase.kind === "finishFailed") {
-    return (
-      <div className="flex flex-col items-start gap-2" role="alert">
-        <p className="text-destructive-text text-sm">{t("We couldn't save this block yet.")}</p>
-        <Button onClick={onRetry} size="sm" variant="outline">
-          {t("Try again")}
-        </Button>
-      </div>
-    );
-  }
-
-  if (phase.kind === "finishing") {
-    return (
-      <p className="text-muted-foreground flex items-center gap-2 text-sm" role="status">
-        <Spinner />
-        {t("Saving your answers…")}
-      </p>
-    );
-  }
-
-  return null;
-}
 
 function FinishedBlock({
   actions,
@@ -327,7 +290,11 @@ export function QuestionBlock({
       {/* A gap's idea screen has its own Start. */}
       {showsQuestionActions({ phase, stage: blockDrill.stage }) && (
         <TaskActionBar>
-          <PhaseMessage onRetry={run.retryFinish} phase={phase} />
+          <QuestionBlockStatus
+            onContinue={actions.refresh}
+            onRetry={run.retryFinish}
+            phase={phase}
+          />
 
           <FinishReadyActions onFinish={run.retryFinish} phase={phase} />
 

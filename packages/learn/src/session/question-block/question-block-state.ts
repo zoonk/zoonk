@@ -11,6 +11,7 @@ export type QuestionBlockPhase =
   | { kind: "checking" }
   | { answer: StudyQuestionAnswer; feedback: StudyAnswerFeedback; kind: "feedback" }
   | { kind: "answerFailed" }
+  | { kind: "alreadyAnswered" }
   | { kind: "finishing" }
   | { kind: "finishReady" }
   | { kind: "finishFailed" }
@@ -28,6 +29,7 @@ type QuestionBlockAction =
   | { type: "check" }
   | { answer: StudyQuestionAnswer; feedback: StudyAnswerFeedback; itemId: string; type: "answered" }
   | { type: "answerFailed" }
+  | { type: "alreadyAnswered" }
   | { type: "next" }
   | { type: "finish" }
   | { type: "finishFailed" }
@@ -84,6 +86,8 @@ export function questionBlockReducer(
         };
       case "next":
         return advance({ state, total });
+      case "alreadyAnswered":
+        return { ...state, phase: { kind: "alreadyAnswered" } };
       case "answerFailed":
         return { ...state, phase: { kind: "answerFailed" } };
       case "finish":

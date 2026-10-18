@@ -62,6 +62,7 @@ export function SessionBlockClient({
   const lessonHref = useLessonPlayerHref();
   const questionTutor = useQuestionTutor(tutor);
   const ids = { blockId: detail.block.id, sessionId: session.id };
+  const firstUnanswered = detail.questions.find((question) => question.answered === null)?.itemId;
   useRefreshAfterAppWrites();
 
   // The question block a tap opened is on screen: the tap is done.
@@ -80,7 +81,7 @@ export function SessionBlockClient({
       }}
       detail={detail}
       exitHref={EXIT_HREF}
-      key={detail.block.id}
+      key={`${detail.block.id}:${firstUnanswered ?? "answered"}`}
       lessonHref={lessonHref}
       session={{
         blocks: session.blocks,

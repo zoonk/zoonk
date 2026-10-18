@@ -30,6 +30,8 @@ export const POST = appPostRoute<{ blockId: string; sessionId: string }>(
       return { feedback: result.feedback, status: "answered" };
     }
 
-    return result.status === "alreadyAnswered" ? result : { status: "failed" };
+    return result.status === "alreadyAnswered" || result.status === "blockNotActive"
+      ? result
+      : { status: "failed" };
   },
 );

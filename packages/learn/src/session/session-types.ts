@@ -42,7 +42,7 @@ export type StudyQuestionAnswer = QuestionAnswer;
 /** What answering can come back with, as the host maps it for the screen. */
 export type StudyAnswerOutcome =
   | { feedback: StudyAnswerFeedback; status: "answered" }
-  | { status: "alreadyAnswered" }
+  | { status: "alreadyAnswered" | "blockNotActive" }
   | { status: "failed" };
 
 export type StudyFinishOutcome =
