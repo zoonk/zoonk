@@ -8,6 +8,7 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
 import { ANSWERED, createMappedGoal } from "./onboarding-fixtures";
+import { REPLAN_TIMEOUT_MS } from "./plan-timeouts";
 import { routeTimeToCover } from "./time-to-cover-routes";
 
 /**
@@ -255,14 +256,22 @@ test.describe("Exam date", () => {
 
       // One tap takes the notice's day.
       await editor.getByRole("button", { name: "Use this date" }).click();
-      await expect.poll(() => readTargetDate(user.goalId)).toBe(noticeDay);
+      // Saving a date plans again (see `plan-timeouts.ts`).
+      await expect
+        .poll(() => readTargetDate(user.goalId), { timeout: REPLAN_TIMEOUT_MS })
+        .toBe(noticeDay);
+
       await expect(offer).toBeHidden();
       await expect(date).toHaveValue(noticeDay);
 
       // Any full date of her own, saved when she says so; the notice's day is offered again.
       await date.fill(laterDay);
       await editor.getByRole("button", { name: "Save" }).click();
-      await expect.poll(() => readTargetDate(user.goalId)).toBe(laterDay);
+
+      await expect
+        .poll(() => readTargetDate(user.goalId), { timeout: REPLAN_TIMEOUT_MS })
+        .toBe(laterDay);
+
       await expect(offer).toBeVisible();
       await expect(editor.getByRole("button", { name: "Save" })).toBeHidden();
     });
