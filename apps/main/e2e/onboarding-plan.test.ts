@@ -879,7 +879,7 @@ async function expectNoticeDayTaken({
 
   await expect(page.getByRole("heading", { exact: true, level: 1, name: "Plan" })).toBeVisible();
 
-  await expect(page.getByRole("list", { name: "Your path" })).toBeVisible();
+  await expect(page.getByRole("region", { exact: true, name: "Your plan" })).toBeVisible();
   await expect(page.getByText(/^The exam notice says .+\.$/u)).toHaveCount(0);
 
   await expect(
