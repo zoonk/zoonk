@@ -210,7 +210,10 @@ function useAnswer(opened: Change, onHold: (held: boolean) => void) {
       setFailed(!saved);
 
       if (!saved) {
-        onHold(false);
+        if (answered === null && restored === null) {
+          onHold(false);
+        }
+
         return;
       }
 

@@ -1,4 +1,4 @@
-import { type Page, type Request } from "@playwright/test";
+import { type Page, type Request, type Route } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { planChangeFixture } from "@zoonk/testing/fixtures/goals";
 import { expect, test } from "./fixtures";
@@ -79,6 +79,103 @@ test.describe("Undoing a plan change on Today", () => {
       await viewed;
 
       await expect.poll(() => readDayNames(day)).toStrictEqual(names);
+    });
+  });
+
+  test("keeps the applied confirmation and Undo retry when Undo cannot save", async ({
+    browser,
+  }) => {
+    await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
+      const [plan, original] = await Promise.all([
+        prisma.plan.findUniqueOrThrow({ where: { goalId: user.goalId } }),
+        prisma.goal.findUniqueOrThrow({ where: { id: user.goalId } }),
+      ]);
+
+      // Only this proposal waits, so the fresh view has no change once Apply saves it.
+      await prisma.planChange.updateMany({
+        data: { status: "declined" },
+        where: { planId: plan.id, status: "proposed" },
+      });
+
+      const change = await planChangeFixture({
+        kind: "edited",
+        payload: { operations: [{ kind: "setDailyMinutes", minutes: 90 }], source: "planEdit" },
+        planId: plan.id,
+        reason: PROPOSAL,
+        status: "proposed",
+      });
+
+      await page.setViewportSize({ height: 900, width: 1440 });
+      await page.goto("/today");
+      const note = page.getByRole("region", { name: "Suggested change" });
+
+      const freshRead = page.waitForResponse(async (response) => {
+        if (
+          new URL(response.url()).pathname !== TODAY_VIEW_PATH ||
+          response.request().method() !== "GET" ||
+          !response.ok()
+        ) {
+          return false;
+        }
+
+        const body = await response.json();
+        return body.status === "ready" && body.copy.view.today.planChange === null;
+      });
+
+      await note.getByRole("button", { name: "Apply" }).click();
+
+      await expect(note.getByRole("status")).toHaveText(
+        "It's in your plan, and today's session follows it.",
+        { timeout: REPLAN_TIMEOUT_MS },
+      );
+
+      await freshRead;
+
+      const isUndo = (request: Request) => {
+        const body = request.postData() ?? "";
+        return request.method() === "POST" && body.includes(change.id) && body.includes('"undone"');
+      };
+
+      const failUndoOnce = async (route: Route) => {
+        if (!isUndo(route.request())) {
+          await route.continue();
+          return;
+        }
+
+        await route.abort("failed");
+        await page.unroute("**/today", failUndoOnce);
+      };
+
+      await page.route("**/today", failUndoOnce);
+      const failedUndo = page.waitForEvent("requestfailed", { predicate: isUndo });
+      await note.getByRole("button", { name: "Undo" }).click();
+      const failed = await failedUndo;
+      expect(failed.failure()?.errorText).toContain("ERR_FAILED");
+
+      await expect
+        .poll(() => prisma.planChange.findUniqueOrThrow({ where: { id: change.id } }))
+        .toMatchObject({ status: "applied" });
+
+      // The failed Undo saved nothing: her applied answer, the error and Undo must stay together.
+      await expect(note.getByRole("status")).toHaveText(
+        "It's in your plan, and today's session follows it.",
+      );
+
+      await expect(note.getByText("We couldn't save that. Try again.")).toBeVisible();
+      await expect(note.getByRole("button", { name: "Undo" })).toBeVisible();
+
+      await note.getByRole("button", { name: "Undo" }).click();
+
+      await expect
+        .poll(() => prisma.planChange.findUniqueOrThrow({ where: { id: change.id } }))
+        .toMatchObject({ status: "proposed" });
+
+      await expect
+        .poll(() => prisma.goal.findUniqueOrThrow({ where: { id: user.goalId } }))
+        .toMatchObject({ dailyMinutes: original.dailyMinutes });
+
+      await expect(note.getByRole("button", { name: "Apply" })).toBeVisible();
+      await expect(note.getByText("We couldn't save that. Try again.")).toHaveCount(0);
     });
   });
 });
