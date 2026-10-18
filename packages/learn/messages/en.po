@@ -1475,12 +1475,6 @@ msgid "Mock exam {number}"
 msgstr "Mock exam {number}"
 
 #: src/challenge/challenge-intro.tsx
-#: src/exam/exam-next-mock.tsx
-msgctxt "3wnnPL"
-msgid "Half an exam day"
-msgstr "Half an exam day"
-
-#: src/challenge/challenge-intro.tsx
 msgctxt "8uKw6W"
 msgid "Objective part only"
 msgstr "Objective part only"
@@ -2776,11 +2770,6 @@ msgstr "Add your result"
 msgctxt "0LZY2s"
 msgid "See your exam"
 msgstr "See your exam"
-
-#: src/exam/exam-next-mock.tsx
-msgctxt "Fouwf4"
-msgid "A full exam day"
-msgstr "A full exam day"
 
 #: src/exam/exam-result-section.tsx
 msgctxt "JoUgIU"
@@ -7059,14 +7048,14 @@ msgid "time left"
 msgstr "time left"
 
 #: src/mock/mock-entry.tsx
-msgctxt "--4Qib"
-msgid "Whenever you want: the full exam, half of it or one subject"
-msgstr "Whenever you want: the full exam, half of it or one subject"
+msgctxt "gaCKXR"
+msgid "Whenever you want: a full exam day, half a day or one subject"
+msgstr "Whenever you want: a full exam day, half a day or one subject"
 
 #: src/mock/mock-entry.tsx
-msgctxt "G8BhFL"
-msgid "Whenever you want: the full test or half of it"
-msgstr "Whenever you want: the full test or half of it"
+msgctxt "HVwCpv"
+msgid "Whenever you want: a full exam day or half a day"
+msgstr "Whenever you want: a full exam day or half a day"
 
 #: src/mock/mock-entry.tsx
 msgctxt "v_VKuk"
@@ -7161,21 +7150,29 @@ msgid "Keep answering"
 msgstr "Keep answering"
 
 #: src/mock/mock-labels.tsx
+msgctxt "6i2nIX"
+msgid "A full exam day, day {day}"
+msgstr "A full exam day, day {day}"
+
+#: src/mock/mock-labels.tsx
+msgctxt "oy9OZy"
+msgid "Half an exam day, day {day}"
+msgstr "Half an exam day, day {day}"
+
+#: src/mock/mock-labels.tsx
+msgctxt "Fouwf4"
+msgid "A full exam day"
+msgstr "A full exam day"
+
+#: src/mock/mock-labels.tsx
+msgctxt "3wnnPL"
+msgid "Half an exam day"
+msgstr "Half an exam day"
+
+#: src/mock/mock-labels.tsx
 msgctxt "y6i0c4"
 msgid "Starting point"
 msgstr "Starting point"
-
-#: src/mock/mock-labels.tsx
-#: src/mock/mock-option-labels.ts
-msgctxt "qVp-s4"
-msgid "Half the exam"
-msgstr "Half the exam"
-
-#: src/mock/mock-labels.tsx
-#: src/mock/mock-option-labels.ts
-msgctxt "rbqmIS"
-msgid "Full exam"
-msgstr "Full exam"
 
 #: src/mock/mock-moves.tsx
 msgctxt "ny5qRG"
@@ -7291,16 +7288,6 @@ msgstr "Your real result depends on how everyone in your sitting does."
 msgctxt "wWPWJY"
 msgid "This mock shows how many you got right."
 msgstr "This mock shows how many you got right."
-
-#: src/mock/mock-option-labels.ts
-msgctxt "uA-NJP"
-msgid "Half the exam, day {day}"
-msgstr "Half the exam, day {day}"
-
-#: src/mock/mock-option-labels.ts
-msgctxt "stKKAw"
-msgid "Full exam, day {day}"
-msgstr "Full exam, day {day}"
 
 #: src/mock/mock-option-labels.ts
 msgctxt "rkZNO0"

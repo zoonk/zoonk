@@ -150,7 +150,7 @@ test.describe("Mock listening sections", () => {
 
     // The full mock asks the listening section: it's not among what mocks leave out.
     await page.goto("/mock/new");
-    await expect(page.getByRole("radio", { name: /^Full exam\b.*7 q/u })).toBeVisible();
+    await expect(page.getByRole("radio", { name: /^A full exam day\b.*7 q/u })).toBeVisible();
     await expect(page.getByText(/isn't in mocks yet/u)).toBeHidden();
     await page.getByRole("button", { name: "Start" }).click();
 

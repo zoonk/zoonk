@@ -18,7 +18,7 @@ export function MockFrame(
   return <TaskFrame {...props} beforeExit={runner.savesInFlight} exitHref={hrefs.exit} />;
 }
 
-/** "Mock exam · Half the exam": the quiet line over the title of a step the mock's time ends. */
+/** "Mock exam · Half an exam day": the quiet line over the title of a step the mock's time ends. */
 export function MockEyebrow() {
   const t = useExtracted();
   const shapeLabel = useMockShapeLabel();

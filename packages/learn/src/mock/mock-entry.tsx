@@ -25,13 +25,13 @@ export function useMockEntryDescription({ bySubject }: { bySubject: boolean }): 
   const t = useExtracted();
 
   return bySubject
-    ? t("Whenever you want: the full exam, half of it or one subject")
-    : t("Whenever you want: the full test or half of it");
+    ? t("Whenever you want: a full exam day, half a day or one subject")
+    : t("Whenever you want: a full exam day or half a day");
 }
 
 /**
  * "Take a mock exam" whenever the learner wants, as a row of its page's list (`ListGroup`): what it
- * offers in a line (the full exam, half of it, one subject) and, when the learner's plan doesn't
+ * offers in a line (a full exam day, half a day, one subject) and, when the learner's plan doesn't
  * include mocks, the Plus mark (the chooser it opens shows them locked, with what Plus unlocks), or
  * the mock they started, to continue it. Nothing while no mock can be built.
  */

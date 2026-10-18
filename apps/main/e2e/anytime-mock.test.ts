@@ -36,14 +36,14 @@ test.describe("Mocks whenever the learner wants", () => {
 
     // Each mock with its honest size: the day, half of it, and each subject.
     await expect(page.getByRole("heading", { level: 1, name: "Take a mock exam" })).toBeVisible();
-    await expect(page.getByRole("radio", { name: /^Full exam/u })).toBeChecked();
+    await expect(page.getByRole("radio", { name: /^A full exam day/u })).toBeChecked();
     await expect(page.getByText("16 q · ~24 min")).toBeVisible();
-    await expect(page.getByRole("radio", { name: /^Half the exam/u })).toBeVisible();
+    await expect(page.getByRole("radio", { name: /^Half an exam day/u })).toBeVisible();
     await expectAccessibleScreen(page, "the mocks to pick from");
 
     // The exam's mocks answer to their number; Enter starts the one picked.
     await page.keyboard.press("2");
-    await expect(page.getByRole("radio", { name: /^Half the exam/u })).toBeChecked();
+    await expect(page.getByRole("radio", { name: /^Half an exam day/u })).toBeChecked();
     await pickMock(page, /^Mathematics/u);
     await page.keyboard.press("Enter");
 
@@ -186,7 +186,7 @@ test.describe("Mocks whenever the learner wants", () => {
     await page.goto("/mock/new");
 
     // The whole exam day, the discursive test with its own half hour included.
-    await expect(page.getByRole("radio", { name: /^Full exam/u })).toBeChecked();
+    await expect(page.getByRole("radio", { name: /^A full exam day/u })).toBeChecked();
     await expect(page.getByText("+ Prova discursiva", { exact: true })).toBeVisible();
     await expect(page.getByText("8 q · ~42 min")).toBeVisible();
 
@@ -302,7 +302,7 @@ test.describe("Mocks whenever the learner wants", () => {
 
     // The full exam says what it leaves out of the real one, and why.
     await page.goto("/mock/new");
-    await expect(page.getByRole("radio", { name: /^Full exam/u })).toBeChecked();
+    await expect(page.getByRole("radio", { name: /^A full exam day/u })).toBeChecked();
 
     await expect(
       page.getByText("Lab practical can't be part of a mock: it's a practical test."),
@@ -599,7 +599,7 @@ test.describe("Mocks whenever the learner wants", () => {
     // A full mock is the real exam: answered questions never pad it. With every Mathematics
     // question answered and nothing more to write today, the chooser says what's ready first.
     await page.goto("/mock/new");
-    await pickMock(page, /^Full exam/u);
+    await pickMock(page, /^A full exam day/u);
     await page.getByRole("button", { name: "Start" }).click();
 
     await expect(
@@ -621,7 +621,9 @@ test.describe("Mocks whenever the learner wants", () => {
     await page.goto("/exam");
 
     await expect(
-      page.getByRole("list", { name: "Mock exams" }).getByText(/Full exam, 8 of 16 questions/u),
+      page
+        .getByRole("list", { name: "Mock exams" })
+        .getByText(/A full exam day, 8 of 16 questions/u),
     ).toBeVisible();
   });
 

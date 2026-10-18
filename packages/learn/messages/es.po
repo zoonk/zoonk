@@ -1475,12 +1475,6 @@ msgid "Mock exam {number}"
 msgstr "Simulacro {number}"
 
 #: src/challenge/challenge-intro.tsx
-#: src/exam/exam-next-mock.tsx
-msgctxt "3wnnPL"
-msgid "Half an exam day"
-msgstr "Media jornada de examen"
-
-#: src/challenge/challenge-intro.tsx
 msgctxt "8uKw6W"
 msgid "Objective part only"
 msgstr "Solo la parte objetiva"
@@ -2776,11 +2770,6 @@ msgstr "Añadir mi resultado"
 msgctxt "0LZY2s"
 msgid "See your exam"
 msgstr "Ver mi examen"
-
-#: src/exam/exam-next-mock.tsx
-msgctxt "Fouwf4"
-msgid "A full exam day"
-msgstr "Una jornada completa de examen"
 
 #: src/exam/exam-result-section.tsx
 msgctxt "JoUgIU"
@@ -7059,14 +7048,14 @@ msgid "time left"
 msgstr "tiempo restante"
 
 #: src/mock/mock-entry.tsx
-msgctxt "--4Qib"
-msgid "Whenever you want: the full exam, half of it or one subject"
-msgstr "Cuando quieras: el examen completo, la mitad o una asignatura"
+msgctxt "gaCKXR"
+msgid "Whenever you want: a full exam day, half a day or one subject"
+msgstr "Cuando quieras: un día completo de examen, medio día o una asignatura"
 
 #: src/mock/mock-entry.tsx
-msgctxt "G8BhFL"
-msgid "Whenever you want: the full test or half of it"
-msgstr "Cuando quieras: el examen completo o la mitad"
+msgctxt "HVwCpv"
+msgid "Whenever you want: a full exam day or half a day"
+msgstr "Cuando quieras: un día completo de examen o medio día"
 
 #: src/mock/mock-entry.tsx
 msgctxt "v_VKuk"
@@ -7161,21 +7150,29 @@ msgid "Keep answering"
 msgstr "Seguir respondiendo"
 
 #: src/mock/mock-labels.tsx
+msgctxt "6i2nIX"
+msgid "A full exam day, day {day}"
+msgstr "Día completo de examen, día {day}"
+
+#: src/mock/mock-labels.tsx
+msgctxt "oy9OZy"
+msgid "Half an exam day, day {day}"
+msgstr "Medio día de examen, día {day}"
+
+#: src/mock/mock-labels.tsx
+msgctxt "Fouwf4"
+msgid "A full exam day"
+msgstr "Una jornada completa de examen"
+
+#: src/mock/mock-labels.tsx
+msgctxt "3wnnPL"
+msgid "Half an exam day"
+msgstr "Media jornada de examen"
+
+#: src/mock/mock-labels.tsx
 msgctxt "y6i0c4"
 msgid "Starting point"
 msgstr "Punto de partida"
-
-#: src/mock/mock-labels.tsx
-#: src/mock/mock-option-labels.ts
-msgctxt "qVp-s4"
-msgid "Half the exam"
-msgstr "La mitad del examen"
-
-#: src/mock/mock-labels.tsx
-#: src/mock/mock-option-labels.ts
-msgctxt "rbqmIS"
-msgid "Full exam"
-msgstr "Examen completo"
 
 #: src/mock/mock-moves.tsx
 msgctxt "ny5qRG"
@@ -7291,16 +7288,6 @@ msgstr "Tu resultado real depende de cómo les vaya a los demás en tu convocato
 msgctxt "wWPWJY"
 msgid "This mock shows how many you got right."
 msgstr "Este simulacro muestra cuántas has acertado."
-
-#: src/mock/mock-option-labels.ts
-msgctxt "uA-NJP"
-msgid "Half the exam, day {day}"
-msgstr "La mitad del examen, día {day}"
-
-#: src/mock/mock-option-labels.ts
-msgctxt "stKKAw"
-msgid "Full exam, day {day}"
-msgstr "Examen completo, día {day}"
 
 #: src/mock/mock-option-labels.ts
 msgctxt "rkZNO0"

@@ -1122,7 +1122,7 @@ test.describe("Buddy tab", () => {
       const mock = conversation.getByRole("region", { name: "Take a mock exam" });
 
       await expect(mock).toContainText(
-        "Whenever you want: the full exam, half of it or one subject",
+        "Whenever you want: a full exam day, half a day or one subject",
       );
 
       await expect(mock.getByRole("link", { name: "Choose" })).toHaveAttribute("href", "/mock/new");

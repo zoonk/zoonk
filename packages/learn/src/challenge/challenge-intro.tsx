@@ -12,6 +12,7 @@ import { useFormatShare } from "../_utils/percent";
 import { useFormatDuration } from "../_utils/time-format";
 import { useCheckpointEyebrow } from "../checkpoints/checkpoint-labels";
 import { TricksterArt } from "../checkpoints/trickster-art";
+import { useMockDaySizeLabel } from "../mock/mock-labels";
 import { MockLeftOutNote } from "../mock/mock-notes";
 import { type TaskFrameAside } from "../shell/task-frame";
 import { CallIntro, WonCallIntro } from "./challenge-call-intro";
@@ -231,16 +232,17 @@ function PenaltyRule() {
 
 /**
  * The week's mock: when it is (with the real exam's start time), its size and about how long it
- * takes (half the exam before the final stretch), and the one rule that changes how to take it.
+ * takes (half an exam day before the final stretch), and the one rule that changes how to take it.
  */
 function MockIntro() {
   const t = useExtracted();
+  const daySize = useMockDaySizeLabel();
   const duration = useFormatDuration();
   const { challenge } = useChallengeScreen();
   const when = useChallengeWhen(challenge);
   const questions = useQuestionsFact();
   const [section] = challenge.sections;
-  // Half the exam leaves the day's written part for the full mocks: the day's name ("Linguagens,
+  // Half an exam day leaves the day's written part for the full mocks: the day's name ("Linguagens,
   // Ciências Humanas e redação") would say it's asked.
   const objectiveOnly = challenge.leftOut.some((part) => part.part === "writtenInFull");
   // One section names the mock's area; a day with a written part is the whole exam day.
@@ -262,7 +264,7 @@ function MockIntro() {
           challenge.questions !== null && challenge.questions > 0 && questions(challenge.questions),
           // The time on its clock, the same the plan saves for it and the real exam gives.
           challenge.minutes !== null && duration(challenge.minutes),
-          !challenge.fullLength && t("Half an exam day"),
+          !challenge.fullLength && daySize({ fullLength: false }),
           objectiveOnly && t("Objective part only"),
         ]}
       />

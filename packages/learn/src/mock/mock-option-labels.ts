@@ -8,26 +8,24 @@ import {
 import { useExtracted, useFormatter } from "next-intl";
 import { useFormatDuration } from "../_utils/time-format";
 import { type MockChoice } from "./mock-chooser-parts";
+import { useMockDaySizeLabel } from "./mock-labels";
 
 /**
- * A mock's name as the learner picks it: the full exam (one of its days, when it has several),
- * half of it, or the subject.
+ * A mock's name as the learner picks it: a full exam day, half of it, or the subject.
  */
 export function useMockOptionName() {
   const t = useExtracted();
+  const daySize = useMockDaySizeLabel();
 
   return ({ option, severalDays }: { option: MockOptionView; severalDays: boolean }): string => {
-    const day = String(option.day ?? 1);
-
     if (option.kind === "area") {
       return option.areas[0] ?? option.area ?? t("One subject");
     }
 
-    if (option.kind === "half") {
-      return severalDays ? t("Half the exam, day {day}", { day }) : t("Half the exam");
-    }
-
-    return severalDays ? t("Full exam, day {day}", { day }) : t("Full exam");
+    return daySize({
+      day: severalDays ? (option.day ?? 1) : null,
+      fullLength: option.kind === "full",
+    });
   };
 }
 

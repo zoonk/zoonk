@@ -13,12 +13,13 @@ import {
 } from "../_components/list-group";
 import { PlusMark } from "../_components/plus-lock";
 import { StatusMark } from "../_components/status-mark";
+import { useMockDaySizeLabel } from "../mock/mock-labels";
 import { useExamScreen } from "./exam-context";
 import { useExamDayDate } from "./exam-labels";
 
 /**
  * The next weekly mock exam as a row of the mocks' list, one tap from its intro, when one is
- * coming: half the exam (as the chooser names it) on regular weeks, the full exam in the final
+ * coming: half an exam day on regular weeks, a full exam day in the final
  * stretch, its questions under it and its day at the row's end, as the taken ones' results are.
  * It's highlighted as the list's next one (`current`, the caller marking its item `aria-current`)
  * unless a mock the learner left running comes first. Without Plus it's there all the same, marked
@@ -27,6 +28,7 @@ import { useExamDayDate } from "./exam-labels";
 export function ExamNextMock({ current }: { current: boolean }) {
   const t = useExtracted();
   const dayDate = useExamDayDate();
+  const daySize = useMockDaySizeLabel();
   const { exam, hrefs } = useExamScreen();
   const next = exam.nextMock;
 
@@ -44,7 +46,7 @@ export function ExamNextMock({ current }: { current: boolean }) {
       </ListRowLeading>
       <ListRowContent>
         <ListRowTitle className="flex items-center gap-2">
-          {next.fullLength ? t("A full exam day") : t("Half an exam day")}
+          {daySize({ fullLength: next.fullLength })}
           {exam.mocksRequirePlus && <PlusMark />}
         </ListRowTitle>
         <ListRowDescription>

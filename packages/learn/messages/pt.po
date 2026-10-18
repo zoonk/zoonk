@@ -1475,12 +1475,6 @@ msgid "Mock exam {number}"
 msgstr "Simulado {number}"
 
 #: src/challenge/challenge-intro.tsx
-#: src/exam/exam-next-mock.tsx
-msgctxt "3wnnPL"
-msgid "Half an exam day"
-msgstr "Meio dia de prova"
-
-#: src/challenge/challenge-intro.tsx
 msgctxt "8uKw6W"
 msgid "Objective part only"
 msgstr "Só a parte objetiva"
@@ -2776,11 +2770,6 @@ msgstr "Adicionar resultado"
 msgctxt "0LZY2s"
 msgid "See your exam"
 msgstr "Ver sua prova"
-
-#: src/exam/exam-next-mock.tsx
-msgctxt "Fouwf4"
-msgid "A full exam day"
-msgstr "Um dia inteiro de prova"
 
 #: src/exam/exam-result-section.tsx
 msgctxt "JoUgIU"
@@ -7059,14 +7048,14 @@ msgid "time left"
 msgstr "tempo restante"
 
 #: src/mock/mock-entry.tsx
-msgctxt "--4Qib"
-msgid "Whenever you want: the full exam, half of it or one subject"
-msgstr "Quando quiser: a prova completa, metade dela ou uma matéria"
+msgctxt "gaCKXR"
+msgid "Whenever you want: a full exam day, half a day or one subject"
+msgstr "Quando quiser: um dia inteiro de prova, meio dia ou uma matéria"
 
 #: src/mock/mock-entry.tsx
-msgctxt "G8BhFL"
-msgid "Whenever you want: the full test or half of it"
-msgstr "Quando quiser: a prova completa ou metade dela"
+msgctxt "HVwCpv"
+msgid "Whenever you want: a full exam day or half a day"
+msgstr "Quando quiser: um dia inteiro de prova ou meio dia"
 
 #: src/mock/mock-entry.tsx
 msgctxt "v_VKuk"
@@ -7161,21 +7150,29 @@ msgid "Keep answering"
 msgstr "Continuar respondendo"
 
 #: src/mock/mock-labels.tsx
+msgctxt "6i2nIX"
+msgid "A full exam day, day {day}"
+msgstr "Dia inteiro de prova, dia {day}"
+
+#: src/mock/mock-labels.tsx
+msgctxt "oy9OZy"
+msgid "Half an exam day, day {day}"
+msgstr "Meio dia de prova, dia {day}"
+
+#: src/mock/mock-labels.tsx
+msgctxt "Fouwf4"
+msgid "A full exam day"
+msgstr "Um dia inteiro de prova"
+
+#: src/mock/mock-labels.tsx
+msgctxt "3wnnPL"
+msgid "Half an exam day"
+msgstr "Meio dia de prova"
+
+#: src/mock/mock-labels.tsx
 msgctxt "y6i0c4"
 msgid "Starting point"
 msgstr "Ponto de partida"
-
-#: src/mock/mock-labels.tsx
-#: src/mock/mock-option-labels.ts
-msgctxt "qVp-s4"
-msgid "Half the exam"
-msgstr "Metade da prova"
-
-#: src/mock/mock-labels.tsx
-#: src/mock/mock-option-labels.ts
-msgctxt "rbqmIS"
-msgid "Full exam"
-msgstr "Prova completa"
 
 #: src/mock/mock-moves.tsx
 msgctxt "ny5qRG"
@@ -7291,16 +7288,6 @@ msgstr "Seu resultado na prova real depende do desempenho das outras pessoas na 
 msgctxt "wWPWJY"
 msgid "This mock shows how many you got right."
 msgstr "Este simulado mostra quantas respostas você acertou."
-
-#: src/mock/mock-option-labels.ts
-msgctxt "uA-NJP"
-msgid "Half the exam, day {day}"
-msgstr "Metade da prova, dia {day}"
-
-#: src/mock/mock-option-labels.ts
-msgctxt "stKKAw"
-msgid "Full exam, day {day}"
-msgstr "Prova completa, dia {day}"
 
 #: src/mock/mock-option-labels.ts
 msgctxt "rkZNO0"
