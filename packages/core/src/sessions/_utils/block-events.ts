@@ -58,7 +58,7 @@ function getIds({ block, payload }: Pick<BlockEventContext, "block" | "payload">
 /** A placement answer's ledger kind: the first week's sessions open with a few of them. */
 const PLACEMENT_LEDGER_KIND = "placement";
 
-/** A review row's answers: their points, their counts and their share of the block's time. */
+/** A review row's answers: their points, counts and whole seconds of the block's time. */
 function getReviewRow(context: BlockEventContext, own: readonly SessionAnswer[]) {
   const { answers, points } = context;
 
@@ -69,7 +69,7 @@ function getReviewRow(context: BlockEventContext, own: readonly SessionAnswer[])
     ),
     ...countAnswers(own),
     kind: "review" as const,
-    seconds: Math.round((context.seconds * own.length) / Math.max(1, answers.length)),
+    seconds: Math.floor((context.seconds * own.length) / Math.max(1, answers.length)),
   };
 }
 
@@ -77,7 +77,8 @@ function getReviewRow(context: BlockEventContext, own: readonly SessionAnswer[])
  * Opened capsules each get a `review` row, so the ledger counts capsules (Retro glasses) and
  * reviews without reading content, and the block's placement answers get one, so their time counts
  * as studied. Each row carries its answers' points and a capsule its bonus; whatever the block
- * earned beyond that (mastery, caps) lands on the last row.
+ * earned beyond that (mastery, caps) lands on the last row, as do the seconds the rows' shares
+ * leave, so the rows add up to the block's time (59.5 + 59.5 rounded each read 120 of 119).
  */
 function getReviewEvents(context: BlockEventContext): BlockEvent[] {
   const { answers, block, payload } = context;
@@ -124,11 +125,13 @@ function getReviewEvents(context: BlockEventContext): BlockEvent[] {
           },
         ];
 
-  const split = opened.reduce((sum, event) => sum + event.brainPower, 0);
-  const rest = context.brainPower - split;
+  const rest = context.brainPower - opened.reduce((sum, event) => sum + event.brainPower, 0);
+  const restSeconds = context.seconds - opened.reduce((sum, event) => sum + event.seconds, 0);
 
   return opened.map((event, index) =>
-    index === opened.length - 1 ? { ...event, brainPower: event.brainPower + rest } : event,
+    index === opened.length - 1
+      ? { ...event, brainPower: event.brainPower + rest, seconds: event.seconds + restSeconds }
+      : event,
   );
 }
 

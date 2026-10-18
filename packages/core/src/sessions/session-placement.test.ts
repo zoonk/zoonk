@@ -15,6 +15,7 @@ import { getRequestProgressDateContext } from "../progress/get-request-date-cont
 import { getTodayView } from "../view-models/today/get-today-view";
 import { getTodayStudySession } from "./_test-utils/open-today";
 import { answerStudyQuestion } from "./answer-study-question";
+import { readBlockPayload } from "./block-payload";
 import { finishStudyBlock } from "./finish-study-block";
 import { getStudyBlock } from "./get-study-block";
 import { getStudySessionSummary } from "./get-study-session-summary";
@@ -209,6 +210,66 @@ describe("placement in the first week's sessions", () => {
     });
 
     vi.setSystemTime(Date.now() + 90_000);
+    await finishStudyBlock({ blockId, input: {}, sessionId });
+
+    await expect(getStudySessionSummary({ input: {}, sessionId })).resolves.toMatchObject({
+      status: "ready",
+      summary: { minutes: 1 },
+    });
+  });
+
+  // Its rows split the block's time: a capsule's answer and a placement answer in 119 seconds each
+  // rounded 59.5 up, so the summary said 2 minutes of a day Today counted as 1.
+  it("splits a review's time between its capsules and placement without adding a second", async () => {
+    const { goal, items, placementItemId } = await setup();
+    const { blockId, sessionId } = await openPlacementBlock(goal.id);
+    const capsuleItem = items[0];
+    const block = await prisma.studySessionBlock.findUniqueOrThrow({ where: { id: blockId } });
+
+    await prisma.studySessionBlock.update({
+      data: {
+        payload: {
+          ...readBlockPayload(block),
+          capsules: [
+            {
+              format: "rapidFire",
+              itemIds: [capsuleItem?.id ?? ""],
+              key: `skill:${capsuleItem?.skillId}`,
+              lessonId: null,
+              skillIds: [capsuleItem?.skillId ?? ""],
+              title: "Skill 1",
+            },
+          ],
+        },
+      },
+      where: { id: blockId },
+    });
+
+    const placement = await answerStudyQuestion({
+      blockId,
+      input: {
+        answer: { dontKnow: true },
+        durationMs: 3000,
+        itemId: placementItemId,
+        timeZone: TIME_ZONE,
+      },
+      sessionId,
+    });
+
+    const capsule = await answerStudyQuestion({
+      blockId,
+      input: {
+        answer: { selectedIndex: 0 },
+        durationMs: 3000,
+        itemId: capsuleItem?.id ?? "",
+        timeZone: TIME_ZONE,
+      },
+      sessionId,
+    });
+
+    expect([placement.status, capsule.status]).toStrictEqual(["ready", "ready"]);
+
+    vi.setSystemTime(Date.now() + 119_000);
     await finishStudyBlock({ blockId, input: {}, sessionId });
 
     await expect(getStudySessionSummary({ input: {}, sessionId })).resolves.toMatchObject({
