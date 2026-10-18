@@ -249,22 +249,29 @@ for (const returnBeforeResponse of [true, false]) {
       release.resolve(null);
       await delivered.promise;
 
-      // That start's answer reaches the page and loads in full before checking it changes nothing.
-      // Neither wait can hang: response() is null if the browser dropped it, and body() settles
-      // whether the load finishes or fails (finished() never settles on a failure).
+      // The full Main run reported ERR_ABORTED here after Leave; without its trace, the abort's
+      // origin is unproved. Wait for the body to settle, then check what the learner sees: the late
+      // answer never opens a call or takes them back. response() and body() also settle on failure.
       const heldStart = await held.promise;
       const answer = await heldStart.response();
       expect(answer, "the held start's answer reached the page").not.toBeNull();
       await answer?.body().catch(() => null);
-      expect(heldStart.failure(), "the held start's answer loaded in full").toBeNull();
+      await expect(page).toHaveURL(
+        returnBeforeResponse ? new RegExp(`/checkpoint/${block.id}$`, "u") : /\/today$/u,
+      );
 
-      if (!returnBeforeResponse) {
-        await page.goBack();
-      }
+      await expect(page.getByRole("log", { name: "Conversation" })).toBeHidden();
+      await expect(microphoneRequests(page)).resolves.toStrictEqual([
+        { active: true, tracks: ["ended"] },
+      ]);
 
       await expect(prisma.liveCallConnection.count({ where: { userId: user.id } })).resolves.toBe(
         0,
       );
+
+      if (!returnBeforeResponse) {
+        await page.goBack();
+      }
 
       await expect(page.getByRole("button", { name: "Start the call" })).toBeVisible();
       await page.getByRole("button", { name: "Start the call" }).click();

@@ -1124,7 +1124,7 @@ test("after an answer, placement waits for its next questions instead of repeati
   noProgressUser,
   userWithoutProgress: page,
 }) => {
-  const id = randomUUID().slice(0, 8);
+  const id = `q${randomUUID().slice(0, 8)}`;
 
   const goal = await goalFixture({
     details: { answered: ANSWERED, subject: "algebra" },
