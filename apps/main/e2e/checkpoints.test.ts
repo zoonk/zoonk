@@ -49,10 +49,6 @@ test.describe("Checkpoints", () => {
     await expect(page.getByRole("meter", { name: "The Trickster's shield" })).toHaveCount(0);
     await expect(page.getByText("Brain Power", { exact: true })).toHaveCount(0);
 
-    await page.screenshot({
-      path: "/tmp/zoonk-review/round-am/challenge-recovery-empty-phone.png",
-    });
-
     await page.getByRole("button", { name: "See how it went" }).click();
     await expect(page.getByRole("link", { exact: true, name: "Continue" })).toBeVisible();
 
@@ -154,10 +150,6 @@ test.describe("Checkpoints", () => {
       await expect(page.getByText(outcome.score, { exact: true })).toBeVisible();
       await expect(page.getByText(/right to win/u)).toHaveCount(0);
       await expect(page.getByRole("link", { exact: true, name: "Continue" })).toBeVisible();
-
-      await page.screenshot({
-        path: `/tmp/zoonk-review/round-am/challenge-recovery-${outcome.kind}-desktop.png`,
-      });
 
       await page.context().close();
     });
@@ -802,10 +794,6 @@ test.describe("Move to Monday", () => {
       await page.goto(`/challenge/${boss.id}`);
       await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
       await expect(page.getByRole("button", { name: "Move to Monday" })).toHaveCount(0);
-
-      await page.screenshot({
-        path: "/tmp/zoonk-review/final-walkthrough/W2/after-closed-monday.png",
-      });
     } finally {
       await page.context().close();
     }

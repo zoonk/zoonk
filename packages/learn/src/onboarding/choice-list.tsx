@@ -164,6 +164,13 @@ export function ChoiceList<Value extends string>({
             <RadioGroupOption
               className={cn(CHIP_CLASS, "relative min-h-11 justify-center px-1 py-1.5 text-center")}
               key={choice.value}
+              onClick={(event) => {
+                // Base UI consumes Space on the radio. A label click needs its own activation.
+                if (manualActivation && !readOnly && !event.defaultPrevented) {
+                  event.preventDefault();
+                  onChange(choice.value);
+                }
+              }}
             >
               <span className="flex min-w-0 flex-col gap-0.5">
                 <span className="font-mono text-[0.8125rem] font-medium tabular-nums">

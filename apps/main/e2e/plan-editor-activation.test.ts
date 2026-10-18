@@ -36,8 +36,6 @@ test("time presets move focus without saving; Enter, Space and clicks apply a si
       prisma.plan.findUniqueOrThrow({ where: { id: before.id } }),
     ).resolves.toStrictEqual(before);
 
-    await page.screenshot({ path: "/tmp/zoonk-review/final-walkthrough/W2/after-arrow-focus.png" });
-
     await page.keyboard.press("Enter");
     await expect(time.getByRole("radio", { exact: true, name: "15 min" })).toBeChecked();
 
@@ -56,10 +54,6 @@ test("time presets move focus without saving; Enter, Space and clicks apply a si
     ).toBeVisible();
 
     expect(saves).toHaveLength(1);
-
-    await page.screenshot({
-      path: "/tmp/zoonk-review/final-walkthrough/W2/after-editor-confirmation.png",
-    });
 
     await time.getByRole("radio", { exact: true, name: "30 min" }).focus();
     await page.keyboard.press("Space");
@@ -89,5 +83,53 @@ test("time presets move focus without saving; Enter, Space and clicks apply a si
       .toBe(60);
 
     expect(saves).toHaveLength(3);
+
+    // A resized desktop page does not exercise touch's label activation.
+    const phone = await browser.newContext({
+      hasTouch: true,
+      storageState: user.storageState,
+      timezoneId: user.timeZone,
+      viewport: { height: 844, width: 390 },
+    });
+
+    try {
+      const phonePage = await phone.newPage();
+
+      phonePage.on("request", (request) => {
+        const body = request.postData() ?? "";
+
+        if (request.method() === "POST" && body.includes('"setDailyMinutes"')) {
+          saves.push(body);
+        }
+      });
+
+      await phonePage.goto("/plan");
+      await phonePage.getByRole("button", { name: "Adjust plan" }).click();
+      const phoneEditor = phonePage.getByRole("dialog", { name: "Adjust your plan" });
+      const phoneTime = phoneEditor.getByRole("radiogroup", { name: "Time a day" });
+      await expect(phoneTime.getByRole("radio", { exact: true, name: "1 hr" })).toBeChecked();
+      await phoneTime.getByText("45 min", { exact: true }).tap();
+      await expect(phoneTime.getByRole("radio", { exact: true, name: "45 min" })).toBeChecked();
+
+      await expect
+        .poll(
+          async () => {
+            const goal = await prisma.goal.findUniqueOrThrow({ where: { id: user.goalId } });
+            return goal.dailyMinutes;
+          },
+          { timeout: REPLAN_TIMEOUT_MS },
+        )
+        .toBe(45);
+
+      expect(saves).toHaveLength(4);
+      await phonePage.reload();
+      await phonePage.getByRole("button", { name: "Adjust plan" }).click();
+
+      await expect(phoneEditor.getByRole("radio", { exact: true, name: "45 min" })).toBeChecked();
+
+      expect(saves).toHaveLength(4);
+    } finally {
+      await phone.close();
+    }
   });
 });
