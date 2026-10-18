@@ -117,7 +117,9 @@ function MissionsLine({ children, className }: { children: React.ReactNode; clas
  * (`collapseWhenDone`) the card then folds to one line and gives the room back to the day. When
  * another goal already earned today's bonus it says so in one quiet line, since nothing is at
  * stake. A day without missions shows nothing; before today's session exists the buddy's day says
- * when they start.
+ * when they start. `rowsInQueue`: where the card follows Today's queue (under 72rem) and every
+ * mission only opens one of its blocks, it keeps its header and track and leaves the rows to the
+ * queue, whose violet marks name those blocks: Ana's phone listed her two blocks twice.
  */
 export function MissionsCard({
   brainPower,
@@ -126,6 +128,7 @@ export function MissionsCard({
   showBuddy = true,
   collapseWhenDone = false,
   links,
+  rowsInQueue = false,
   today,
 }: {
   brainPower: number | null;
@@ -133,6 +136,7 @@ export function MissionsCard({
   className?: string;
   collapseWhenDone?: boolean;
   links: MissionLinks;
+  rowsInQueue?: boolean;
   /** In the buddy's own day its face is already there: the card leaves it out. */
   showBuddy?: boolean;
   today: MissionsDay | null;
@@ -188,7 +192,12 @@ export function MissionsCard({
   return (
     <section
       aria-labelledby={titleId}
-      className={cn(SURFACE_CLASS, "flex flex-col px-4 pt-3.5 pb-1", className)}
+      className={cn(
+        SURFACE_CLASS,
+        "flex flex-col px-4 pt-3.5 pb-1",
+        rowsInQueue && "max-[72rem]:pb-3.5",
+        className,
+      )}
       data-slot="missions-card"
     >
       <div className="flex items-start gap-2.5">
@@ -213,7 +222,7 @@ export function MissionsCard({
 
       <MissionTrack className="mt-3.5" missions={missions} />
 
-      <ListGroup className="mt-1.5">
+      <ListGroup className={cn("mt-1.5", rowsInQueue && "max-[72rem]:hidden")}>
         <ul>
           {missions.map((mission) => (
             <li key={mission.kind}>

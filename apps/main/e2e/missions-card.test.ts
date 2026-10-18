@@ -126,7 +126,8 @@ test.describe("Today's missions card", () => {
     await page.context().close();
   });
 
-  test("on a phone, the missions show once, as their card after the day's action", async ({
+  // Ana's phone listed her two blocks twice: in the day's queue, then as the missions' rows.
+  test("on a phone, missions that only open the day's blocks show once, their card's header after the day's action", async ({
     browser,
   }) => {
     const { user } = await createStudyDay();
@@ -138,13 +139,27 @@ test.describe("Today's missions card", () => {
 
     await expect(missions).toBeInViewport();
     await expect(page.getByText(/^Missions · /u)).toHaveCount(0);
+    await expect(missions).toContainText(/2 missions\s·\s~5\smin/u);
+    await expect(missions.getByRole("listitem")).toHaveCount(0);
 
-    // Named in one run, without a space before the comma, and described by its line.
+    // The queue lists those blocks, marked as counting toward a mission.
+    await expect(
+      page
+        .getByRole("region", { name: "Today's session" })
+        .getByRole("button", { exact: true, name: "Quick review, counts toward a mission" }),
+    ).toBeVisible();
+
+    await missions.screenshot({ path: test.info().outputPath("today-missions-phone.png") });
+
+    // Beside the queue, the card keeps its rows: each named in one run, without a space before the
+    // comma, and described by its line.
+    await page.setViewportSize(LAPTOP);
+    await expect(missions.getByRole("listitem")).toHaveCount(2);
+
     await expect(
       missions.getByRole("button", { name: "Review, go to today's review" }),
     ).toHaveAccessibleDescription(/^Quick review\s·\s2\smin$/u);
 
-    await missions.screenshot({ path: test.info().outputPath("today-missions-phone.png") });
     await page.context().close();
   });
 });
