@@ -171,8 +171,10 @@ export function hasSameBlocks({
 /**
  * Replaces the day's blocks not kept with the new plan's, after the kept ones, under the session's
  * lock: the session keeps its id, so a screen showing it still reaches it. When a block was started
- * meanwhile, the day stays as it was. Only an actual queue change records the plan version;
- * unchanged content lets the append lock roll back its early revision mark.
+ * meanwhile, the day stays as it was. Only an actual queue change records the plan version. The
+ * append lock marks the learner changed before it reads the queue and commits that mark even when
+ * the content is unchanged: a refresh that changes nothing still bumps the learner revision once,
+ * so clients may refetch once.
  */
 async function replaceNotStartedBlocks({ day }: { day: DaySession }): Promise<DaySessionRefresh> {
   const { session } = day;
