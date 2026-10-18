@@ -10,23 +10,18 @@ import { getFocusTargets } from "../planner/focus-targets";
 import { toIsoDate } from "../planner/plan-calendar";
 import { needsApproval } from "../planner/plan-effect";
 import { type PlanChangeRefusal } from "../planner/plan-operations";
-import { type PlanGraph } from "../planner/plan-state";
-import { getChangeLevers, replacesProposal } from "./change-levers";
+import { type PlanGraph, type PlanState } from "../planner/plan-state";
 import { type ComputedChange, computeChange } from "./compute-change";
 import { followPlanToday } from "./follow-plan-today";
 import { findUnfundedMove, hasMissingWeeklyMove } from "./missing-weekly-move";
 import { applyChangeOperations } from "./part-areas";
 import { askPhaseDatesAfterChange } from "./phase-dates-proposal";
-import {
-  type PlanChangeSource,
-  parsePlanChangePayload,
-  toPlanChangePayload,
-} from "./plan-change-payload";
-import { type PlanContext } from "./plan-context";
+import { type PlanChangeSource, toPlanChangePayload } from "./plan-change-payload";
+import { type PlanContext, getStateTargetDate } from "./plan-context";
 import { writePlanMetadata } from "./plan-metadata-write";
 import { ensureQuickBaseLessons } from "./quick-bases";
+import { replaceWaitingProposals } from "./replace-waiting-proposals";
 import { type PlanChangeRecord, commitPlan, revalidatePlanTags } from "./replan";
-import { savePlanState } from "./save-plan-state";
 import { getAskedAreas } from "./steered-areas";
 
 type Provenance = NonNullable<PlanChangeRecord["provenance"]>;
@@ -85,61 +80,6 @@ type ChangeRequest = {
   source: PlanChangeSource;
 };
 
-/**
- * A change applied re-plans from today and lays the phase dates out again, so it changes the phase
- * dates too: a proposal to move the ones the learner saw no longer describes the plan (the next
- * system refresh asks again when keeping the new ones leaves lessons out).
- */
-const APPLIED_LEVERS = ["phaseDates"];
-
-/**
- * One rule for every proposal, whoever made it (the buddy, the exam's notice, memory, a
- * rebalance): it waits for the learner's own answer until a newer change, proposed or made,
- * changes the same thing (see `getChangeLevers`, and `APPLIED_LEVERS` for a change applied). Then
- * it's `replaced`, so the learner never answers two changes that contradict, and its card says so.
- * Proposals about other things stay answerable. Returns the ones it replaced.
- */
-export async function replaceWaitingProposals({
-  applied,
-  except = null,
-  operations,
-  planId,
-  source,
-  tx,
-}: {
-  applied: boolean;
-  except?: string | null;
-  operations: readonly PlanOperation[];
-  planId: string;
-  source: PlanChangeSource;
-  tx: TransactionClient;
-}): Promise<string[]> {
-  const newer = new Set([
-    ...getChangeLevers({ operations, source }),
-    ...(applied ? APPLIED_LEVERS : []),
-  ]);
-
-  const waiting = await tx.planChange.findMany({
-    select: { id: true, payload: true },
-    where: { planId, status: "proposed", ...(except ? { id: { not: except } } : {}) },
-  });
-
-  const replaced = waiting.flatMap((change) => {
-    const payload = parsePlanChangePayload(change.payload);
-    const levers = getChangeLevers({ operations: payload.operations, source: payload.source });
-    return replacesProposal({ newer, waiting: levers }) ? [change.id] : [];
-  });
-
-  if (replaced.length > 0) {
-    await tx.planChange.updateMany({
-      data: { status: "replaced" },
-      where: { id: { in: replaced }, status: "proposed" },
-    });
-  }
-
-  return replaced;
-}
-
 /** Saves a computed edit and records it with the state its undo restores. */
 async function commitEdit({
   change: { bringsBackSetAside, computed, effect },
@@ -190,11 +130,40 @@ async function commitEdit({
   return { changeId: changeId ?? "", replaced, status: "applied" };
 }
 
+/** Saves settings without laying out a plan, answering proposals about the same choices. */
+async function savePlanState({
+  context,
+  operations,
+  source,
+  state,
+}: Pick<ChangeRequest, "context" | "operations" | "source"> & { state: PlanState }) {
+  await writePlanMetadata({
+    plan: context.plan,
+    write: async (tx) => {
+      await tx.goal.update({
+        data: { dailyMinutes: state.goal.dailyMinutes, targetDate: getStateTargetDate(state) },
+        where: { id: context.goal.id },
+      });
+
+      await tx.plan.update({ data: { settings: state.settings }, where: { id: context.plan.id } });
+
+      await replaceWaitingProposals({
+        applied: false,
+        operations,
+        planId: context.plan.id,
+        source,
+        tx,
+      });
+    },
+  });
+}
+
 /** A change's operations applied to the plan's state and planned, or why they can't be. */
 async function computeRequest({
   context,
   operations,
-}: Pick<ChangeRequest, "context" | "operations">): Promise<
+  source,
+}: Pick<ChangeRequest, "context" | "operations" | "source">): Promise<
   { change: ComputedChange; status: "computed" } | PlanChangeRefusal | { status: "saved" }
 > {
   const result = await applyChangeOperations({ context, operations });
@@ -204,7 +173,7 @@ async function computeRequest({
   }
 
   if (!isPlanReady(context)) {
-    await savePlanState({ context, state: result.state });
+    await savePlanState({ context, operations, source, state: result.state });
     revalidatePlanTags(context.goal.userId);
     return { status: "saved" };
   }
@@ -237,7 +206,7 @@ async function computeRequest({
   // quick lesson for a base whose core the learner studied re-planned the day and let cell theory
   // go for work missed days had set aside.
   if (change.unchanged && operations.every((operation) => operation.kind === "setBaseChoices")) {
-    await savePlanState({ context, state: result.state });
+    await savePlanState({ context, operations, source, state: result.state });
     revalidatePlanTags(context.goal.userId);
     return { status: "saved" };
   }

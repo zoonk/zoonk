@@ -1,5 +1,5 @@
 import { type Skill, prisma } from "@zoonk/db";
-import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planChangeFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { skillPrerequisiteFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -273,6 +273,24 @@ describe("bases a learner chooses how to study", () => {
 
     expect(preview).toMatchObject({ preview: { ready: true, unchanged: true }, status: "ready" });
 
+    const [phaseAdvice, baseAdvice] = await Promise.all([
+      planChangeFixture({
+        kind: "edited",
+        payload: { operations: [{ kind: "fitPhaseDates" }], source: "phaseDates" },
+        planId: plan.id,
+        status: "proposed",
+      }),
+      planChangeFixture({
+        kind: "edited",
+        payload: {
+          operations: [{ choices: quickChoice, kind: "setBaseChoices" }],
+          source: "planEdit",
+        },
+        planId: plan.id,
+        status: "proposed",
+      }),
+    ]);
+
     await expect(
       change(goal.id, [{ choices: quickChoice, kind: "setBaseChoices" }]),
     ).resolves.toStrictEqual({ change: null, status: "applied" });
@@ -286,6 +304,14 @@ describe("bases a learner chooses how to study", () => {
     expect(after.version).toBe(before.version);
     expect(after.items).toStrictEqual(before.items);
     expect(after.settings).toMatchObject({ baseChoices: quickChoice });
+
+    await expect(
+      prisma.planChange.findUniqueOrThrow({ where: { id: baseAdvice.id } }),
+    ).resolves.toMatchObject({ status: "replaced" });
+
+    await expect(
+      prisma.planChange.findUniqueOrThrow({ where: { id: phaseAdvice.id } }),
+    ).resolves.toMatchObject({ status: "proposed" });
   });
 
   // Lucas switched a base from its quick lesson to deep study and back, then to its core and back.

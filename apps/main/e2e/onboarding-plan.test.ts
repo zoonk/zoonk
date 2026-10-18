@@ -11,7 +11,7 @@ import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { expect, test } from "./fixtures";
+import { type Page, expect, test } from "./fixtures";
 import { tabTo } from "./keyboard-focus";
 import { ANSWERED, createMappedGoal } from "./onboarding-fixtures";
 import { routeTimeToCover } from "./time-to-cover-routes";
@@ -749,13 +749,50 @@ function isoDaysFromNow(days: number): string {
     .slice(0, "YYYY-MM-DD".length);
 }
 
-test("the reveal offers the exam notice's day over the learner's own, and takes it in one tap", async ({
-  noProgressUser,
-  userWithoutProgress: page,
-}) => {
-  const goal = await createMappedGoal(noProgressUser.id);
+/** Taking the notice day answers the same advice on Today, with or without a saved graph. */
+async function expectNoticeDayTaken({
+  hasGraph,
+  page,
+  userId,
+}: {
+  hasGraph: boolean;
+  page: Page;
+  userId: string;
+}) {
+  const goal = await createMappedGoal(userId);
   const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
   const noticeDay = isoDaysFromNow(90);
+
+  if (hasGraph) {
+    const items = await prisma.planItem.findMany({
+      include: { skill: true },
+      orderBy: { position: "asc" },
+      where: { planId: plan.id },
+    });
+
+    await prisma.plan.update({
+      data: {
+        graph: {
+          phases: [{ name: "Stage 1" }, { name: "Stage 2" }],
+          skills: items.flatMap((item) =>
+            item.skill
+              ? [
+                  {
+                    area: null,
+                    lessons: 1,
+                    name: item.skill.name,
+                    phase: item.phase,
+                    skillId: item.skill.id,
+                    weight: null,
+                  },
+                ]
+              : [],
+          ),
+        },
+      },
+      where: { id: plan.id },
+    });
+  }
 
   const blueprint = await examBlueprintFixture({
     edition: {
@@ -778,7 +815,7 @@ test("the reveal offers the exam notice's day over the learner's own, and takes 
   });
 
   // Her plan counts down to a day of her own; Today would ask about the notice's day too.
-  await Promise.all([
+  const [, proposal] = await Promise.all([
     prisma.goal.update({
       data: {
         details: {
@@ -821,10 +858,47 @@ test("the reveal offers the exam notice's day over the learner's own, and takes 
     })
     .toBe(noticeDay);
 
+  await expect(
+    prisma.planChange.findUniqueOrThrow({ where: { id: proposal.id } }),
+  ).resolves.toMatchObject({ status: "replaced" });
+
   // Taking it answered Today's question about the same date.
   await page.getByRole("link", { name: "Start" }).click();
   await expect(page).toHaveURL(/\/today$/u);
+
+  await expect(page.getByRole("region", { exact: true, name: "Today's session" })).toBeVisible();
+
   await expect(page.getByRole("region", { name: "Suggested change" })).toHaveCount(0);
+
+  await expect(
+    page.getByText("A newer suggestion replaced this one.", { exact: true }),
+  ).toHaveCount(0);
+
+  // Coming back to Plan shows the date she took without asking about the same notice again.
+  await page.goto("/plan");
+
+  await expect(page.getByRole("heading", { exact: true, level: 1, name: "Plan" })).toBeVisible();
+
+  await expect(page.getByRole("list", { name: "Your path" })).toBeVisible();
+  await expect(page.getByText(/^The exam notice says .+\.$/u)).toHaveCount(0);
+
+  await expect(
+    page.getByText("A newer suggestion replaced this one.", { exact: true }),
+  ).toHaveCount(0);
+}
+
+test("the reveal offers the exam notice's day over the learner's own, and takes it in one tap", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}) => {
+  await expectNoticeDayTaken({ hasGraph: false, page, userId: noProgressUser.id });
+});
+
+test("the reveal offers the exam notice's day over the learner's own, and takes it in one tap, with its saved skill graph", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}) => {
+  await expectNoticeDayTaken({ hasGraph: true, page, userId: noProgressUser.id });
 });
 
 // Dele said February; DELE B2 sits in November and April. Nothing told her.

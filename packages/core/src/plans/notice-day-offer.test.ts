@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { planChangeFixture } from "@zoonk/testing/fixtures/goals";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -134,6 +135,44 @@ describe("the notice's day where the exam date shows", () => {
 
   afterEach(() => {
     vi.useRealTimers();
+  });
+
+  it("taking the notice's day answers its waiting proposal before the plan is built", async () => {
+    const user = await userFixture();
+
+    const { goal, plan } = await unplannedGoalFixture({
+      kind: "exam",
+      targetDate: new Date("2020-12-20T00:00:00Z"),
+      timezone: "UTC",
+      userId: user.id,
+    });
+
+    const proposal = await planChangeFixture({
+      kind: "edited",
+      payload: {
+        operations: [{ estimated: false, kind: "setNoticeDate", targetDate: NOTICE_DAY }],
+        source: "notice",
+      },
+      planId: plan.id,
+      status: "proposed",
+    });
+
+    mockSession(user.id);
+
+    await expect(
+      changeGoalPlan({
+        goalId: goal.id,
+        input: { operations: [{ kind: "setTargetDate", targetDate: NOTICE_DAY }], timeZone: "UTC" },
+      }),
+    ).resolves.toStrictEqual({ change: null, status: "applied" });
+
+    const [saved, waiting] = await Promise.all([
+      prisma.goal.findUniqueOrThrow({ where: { id: goal.id } }),
+      prisma.planChange.findUniqueOrThrow({ where: { id: proposal.id } }),
+    ]);
+
+    expect(saved.targetDate).toStrictEqual(new Date(`${NOTICE_DAY}T00:00:00Z`));
+    expect(waiting.status).toBe("replaced");
   });
 
   it("is offered over the month the learner named, which the exam page says as a month, until she takes it", async () => {

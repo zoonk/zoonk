@@ -1,7 +1,6 @@
 import "server-only";
 import { type PlanChange, prisma } from "@zoonk/db";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
-import { replaceWaitingProposals } from "./_utils/apply-plan-change";
 import { computeChange } from "./_utils/compute-change";
 import { followPlanToday } from "./_utils/follow-plan-today";
 import { findOwnedPlan, loadPlanChangeView } from "./_utils/owned-plan";
@@ -10,6 +9,7 @@ import { askPhaseDatesAfterChange } from "./_utils/phase-dates-proposal";
 import { parsePlanChangePayload, toPlanChangePayload } from "./_utils/plan-change-payload";
 import { canUndoChange } from "./_utils/plan-change-view";
 import { type PlanContext } from "./_utils/plan-context";
+import { replaceWaitingProposals } from "./_utils/replace-waiting-proposals";
 import { commitPlan, revalidatePlanTags } from "./_utils/replan";
 import { undoChange } from "./_utils/undo-change";
 import { PlanConflictError, withPlanRetry } from "./plan-conflict";
