@@ -281,7 +281,8 @@ function useMissionStep() {
       return detail.title;
     }
 
-    if (block) {
+    // A weekly challenge or mock block is named after the mission itself: no second name.
+    if (block && kind !== "weeklyChallenge" && kind !== "mock") {
       return blockTitle(block);
     }
 

@@ -243,7 +243,9 @@ function NextStopActionBar({
       {/* Empty, it takes back the bar's gap but stays in the page, so it's heard when it speaks. */}
       <OpeningWaitLine className="text-sm empty:-mt-2" wait={start.wait} />
 
-      <TaskActions>
+      <TaskActions
+        className={!isReady && alternative ? "max-lg:flex-col max-lg:items-stretch" : undefined}
+      >
         {canStop && (
           <Button disabled={stop.isPending} onClick={stop.run} size="xl" variant="outline">
             {t("Stop for today")}
