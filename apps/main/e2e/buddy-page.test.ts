@@ -21,6 +21,7 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
 import { createGoalLearner } from "./checkpoint-fixtures";
+import { runCoreSeedScript } from "./core-seed-script";
 import { expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
 import { captureMissionEnding } from "./mission-ending-captures";
@@ -1320,6 +1321,25 @@ test.describe("Buddy tab", () => {
     browser,
   }) => {
     await asPersona(browser, { persona: "buddy" }, async ({ page, user }) => {
+      // The hand-authored seed week omits Sunday's challenge; use the planner and a normal Open.
+      const seeded = await prisma.studySession.findFirstOrThrow({
+        orderBy: { localDate: "desc" },
+        where: { goalId: user.goalId },
+      });
+
+      await prisma.studySession.delete({ where: { id: seeded.id } });
+      await runCoreSeedScript("e2e-goal-plan.ts", ["--goal", user.goalId]);
+      await page.goto("/today");
+      await page.getByRole("button", { name: "Start session" }).click();
+
+      await expect
+        .poll(() =>
+          prisma.studySession.count({
+            where: { goalId: user.goalId, localDate: seeded.localDate },
+          }),
+        )
+        .toBe(1);
+
       const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: user.goalId } });
       const { change, name: day, weekday } = await proposeFutureRestDay(plan.id);
 

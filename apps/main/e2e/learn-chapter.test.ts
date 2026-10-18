@@ -1,6 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { studySessionBlockFixture } from "@zoonk/testing/fixtures/study-sessions";
+import { runCoreSeedScript } from "./core-seed-script";
 import { expect, test } from "./fixtures";
 import { asPersona, findPlanChapterId } from "./learn-personas";
 import { askSuggestion, stubScreenTutor } from "./screen-tutor";
@@ -227,6 +228,25 @@ test.describe("Chapter page", () => {
     browser,
   }) => {
     await asPersona(browser, { persona: "hugeGoal" }, async ({ page, user }) => {
+      // The hand-authored seed week omits Sunday's challenge; use the planner and a normal Open.
+      const seeded = await prisma.studySession.findFirstOrThrow({
+        orderBy: { localDate: "desc" },
+        where: { goalId: user.goalId },
+      });
+
+      await prisma.studySession.delete({ where: { id: seeded.id } });
+      await runCoreSeedScript("e2e-goal-plan.ts", ["--goal", user.goalId]);
+      await page.goto("/today");
+      await page.getByRole("button", { name: "Start session" }).click();
+
+      await expect
+        .poll(() =>
+          prisma.studySession.count({
+            where: { goalId: user.goalId, localDate: seeded.localDate },
+          }),
+        )
+        .toBe(1);
+
       const [chapterId, plan] = await Promise.all([
         findPlanChapterId(user.goalId, CHAPTER),
         prisma.plan.findUniqueOrThrow({ where: { goalId: user.goalId } }),

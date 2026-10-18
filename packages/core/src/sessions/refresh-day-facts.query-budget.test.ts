@@ -200,11 +200,12 @@ describe("a changed day's queue and missions share its post-commit plan facts", 
         const undone = await readDay();
         expect(undone.blocks).toStrictEqual(original.blocks);
         expect(undone.missions).toStrictEqual(original.missions);
-        expect(measured.statements).toBeLessThanOrEqual(174);
+        // An unstarted day's refresh reads its day selection, as Open does (+2 measured statements).
+        expect(measured.statements).toBeLessThanOrEqual(176);
       }),
   );
 
-  it("rebuilds the opened day when Undo has no saved session snapshot, replacing impossible targets", () =>
+  it("rebuilds the opened day when Undo has no saved session snapshot, preserving eligible targets", () =>
     runBody(async () => {
       const { goal, readDay, user } = await setup(0, false);
 
@@ -224,6 +225,13 @@ describe("a changed day's queue and missions share its post-commit plan facts", 
       const before = await readDay();
       expect(before.plannedMinutes).toBeGreaterThan(12);
 
+      expect(before.missions).toMatchObject({
+        picks: [
+          { kind: "askBuddy", total: 1 },
+          { kind: "somethingNew", total: 1 },
+        ],
+      });
+
       await expect(
         decidePlanChange({
           changeId: applied.change.id,
@@ -237,7 +245,8 @@ describe("a changed day's queue and missions share its post-commit plan facts", 
       expect(after.plannedMinutes).toBeLessThanOrEqual(12);
       expect(after.blocks.length).toBeGreaterThan(0);
       expect(after.blocks.length).toBeLessThan(before.blocks.length);
-      expect(after.missions).not.toStrictEqual(before.missions);
+      // One anchored lesson and a Buddy question still fit the smaller selected day.
+      expect(after.missions).toStrictEqual(before.missions);
 
       expect(after.blocks.map((block) => block.position)).toStrictEqual(
         after.blocks.map((_, index) => index),

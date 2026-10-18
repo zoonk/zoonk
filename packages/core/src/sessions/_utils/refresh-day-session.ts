@@ -3,11 +3,13 @@ import { type Goal, type StudySessionBlock, prisma } from "@zoonk/db";
 import { getBlockItemIds, readBlockPayload } from "../block-payload";
 import { loadRebuildMissionFacts, rebuildMissions } from "../missions/rebuild-missions";
 import { type PlannedBlock, type SessionBuildInput, buildSessionBlocks } from "../session-builder";
-import { hasSameContent } from "./day-block-content";
+import { ONE_PER_DAY, hasSameContent } from "./day-block-content";
 import { loadDayPlan } from "./day-plan";
 import { AWAITING_OUTLINES_VERSION, loadDayPlanVersion } from "./day-plan-version";
 import { withSessionAppendLock } from "./extra-blocks";
 import { loadSessionBuildInput } from "./load-build-inputs";
+import { planStudyDay } from "./plan-study-day";
+import { selectDayPlan } from "./selected-day-plan";
 import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-access";
 
 /**
@@ -21,14 +23,6 @@ import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-acc
 export type DaySessionRefresh = "kept" | "notBuilt" | "rebuilt" | "same";
 
 type DaySession = { goal: Goal; session: StudySessionRow; timeZone: string };
-
-/**
- * A day holds one review, one practice and one essay; lessons can be many, and so can challenges
- * (each one due today, see `loadSessionBosses`).
- */
-export const ONE_PER_DAY: ReadonlySet<StudySessionBlock["kind"]> = new Set<
-  StudySessionBlock["kind"]
->(["practice", "produce", "review"]);
 
 /** The blocks a learner's change keeps: those they started or finished. */
 function getKeptBlocks(blocks: readonly StudySessionBlock[]): StudySessionBlock[] {
@@ -186,7 +180,23 @@ async function replaceNotStartedBlocks({ day }: { day: DaySession }): Promise<Da
   const keptIds = new Set(kept.map((block) => block.id));
   const replaced = session.blocks.filter((block) => !keptIds.has(block.id));
   const planVersion = await loadDayPlanVersion({ goal: day.goal, localDate: session.localDate });
-  const { blocks: planned, plan } = await planRestOfDayWithPlan({ day, kept });
+  const context = {
+    goal: day.goal,
+    localDate: session.localDate,
+    now: new Date(),
+    timeZone: day.timeZone,
+    userId: session.userId,
+  };
+
+  // Only an unstarted refresh follows the same selected allocation as Open.
+  const selection =
+    session.status === "planned" && session.startedAt === null && kept.length === 0
+      ? await selectDayPlan(context)
+      : null;
+
+  const { blocks: planned, plan } = selection
+    ? await planStudyDay({ ...context, selection })
+    : await planRestOfDayWithPlan({ day, kept });
   const unchanged = hasSameContent({ anyOrder: kept.length > 0, planned, replaced });
 
   const facts = await loadRebuildMissionFacts({
