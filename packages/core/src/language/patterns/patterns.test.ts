@@ -55,45 +55,57 @@ async function languageMistakes(count: number) {
     throw new Error("No lesson");
   }
 
-  const step = await libraryStepFixture({ kind: "typedAnswer", lessonId: lesson.id });
+  const now = Date.now();
 
-  for (let index = 0; index < count; index += 1) {
-    // oxlint-disable-next-line no-await-in-loop -- Mistakes are created in order, so the newest comes first.
-    await mistakeFixture({
-      snapshot: {
-        answer: `I live here since 20${20 + index}`,
-        correctAnswer: `I've lived here since 20${20 + index}`,
-        format: "typedAnswer",
-        question: "Moro aqui desde…",
-      },
-      stepId: step.id,
-      userId: setup.user.id,
-    });
-  }
+  const mistakes = await Promise.all(
+    Array.from({ length: count }, async (_, index) => {
+      const step = await libraryStepFixture({
+        kind: "typedAnswer",
+        lessonId: lesson.id,
+        position: index,
+      });
 
-  return setup;
+      return mistakeFixture({
+        createdAt: new Date(now - (count - index) * 60_000),
+        snapshot: {
+          answer: `I live here since 20${20 + index}`,
+          correctAnswer: `I've lived here since 20${20 + index}`,
+          format: "typedAnswer",
+          question: "Moro aqui desde…",
+        },
+        stepId: step.id,
+        userId: setup.user.id,
+      });
+    }),
+  );
+
+  return { ...setup, mistakes };
+}
+
+function mockPatternFound() {
+  vi.mocked(findMistakePattern).mockResolvedValue({
+    data: PATTERN_OUTPUT,
+    provenance: {
+      generatedAt: new Date().toISOString(),
+      latencyMs: 1,
+      model: "m",
+      promptVersion: "v",
+      provider: "p",
+      requestedModel: "m",
+      runId: "r",
+      usage: {},
+    },
+    systemPrompt: "",
+    usage: undefined as never,
+    userPrompt: "",
+  });
 }
 
 describe("mistake patterns", () => {
   it("checks every third new mistake and saves the pattern it finds", async () => {
     const { goal, user } = await languageMistakes(3);
 
-    vi.mocked(findMistakePattern).mockResolvedValue({
-      data: PATTERN_OUTPUT,
-      provenance: {
-        generatedAt: new Date().toISOString(),
-        latencyMs: 1,
-        model: "m",
-        promptVersion: "v",
-        provider: "p",
-        requestedModel: "m",
-        runId: "r",
-        usage: {},
-      },
-      systemPrompt: "",
-      usage: undefined as never,
-      userPrompt: "",
-    });
+    mockPatternFound();
 
     scheduleMistakePatternCheck({ language: "en", userId: user.id });
     await runScheduledCheck();
@@ -123,6 +135,47 @@ describe("mistake patterns", () => {
     await runScheduledCheck();
 
     expect(findMistakePattern).not.toHaveBeenCalled();
+    await expect(readLearnerRevision(user.id)).resolves.toBe(0n);
+  });
+
+  it("checks 21 eligible mistakes using only the newest 20 and saves their pattern", async () => {
+    const { goal, mistakes, user } = await languageMistakes(21);
+    mockPatternFound();
+
+    scheduleMistakePatternCheck({ language: "en", userId: user.id });
+    await runScheduledCheck();
+
+    expect(findMistakePattern).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        mistakes: mistakes
+          .slice(-20)
+          .toReversed()
+          .map((mistake) => mistake.snapshot),
+        targetLanguage: "en",
+      }),
+    );
+
+    const saved = await prisma.mistakePattern.findFirstOrThrow({ where: { userId: user.id } });
+
+    expect(saved).toMatchObject({
+      goalId: goal.id,
+      kind: "pattern",
+      mistakeIds: [mistakes[20]?.id, mistakes[18]?.id],
+      title: PATTERN_OUTPUT.title,
+    });
+
+    await expect(readLearnerRevision(user.id)).resolves.toBe(1n);
+  });
+
+  it("waits at 22 eligible mistakes even when the newest sample is full", async () => {
+    const { user } = await languageMistakes(22);
+    mockPatternFound();
+
+    scheduleMistakePatternCheck({ language: "en", userId: user.id });
+    await runScheduledCheck();
+
+    expect(findMistakePattern).not.toHaveBeenCalled();
+    await expect(prisma.mistakePattern.count({ where: { userId: user.id } })).resolves.toBe(0);
     await expect(readLearnerRevision(user.id)).resolves.toBe(0n);
   });
 

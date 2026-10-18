@@ -30,19 +30,30 @@ async function loadNewMistakes({ language, userId }: { language: string; userId:
     Math.max(Date.now() - RECENT_DAYS * MS_PER_DAY, latest?.createdAt.getTime() ?? 0),
   );
 
-  return prisma.mistake.findMany({
-    orderBy: { createdAt: "desc" },
-    select: { id: true, snapshot: true },
-    take: MAX_MISTAKES,
-    where: { createdAt: { gt: since }, step: { lesson: { targetLanguage: language } }, userId },
-  });
+  const where = {
+    createdAt: { gt: since },
+    step: { lesson: { targetLanguage: language } },
+    userId,
+  };
+
+  const [count, mistakes] = await Promise.all([
+    prisma.mistake.count({ where }),
+    prisma.mistake.findMany({
+      orderBy: { createdAt: "desc" },
+      select: { id: true, snapshot: true },
+      take: MAX_MISTAKES,
+      where,
+    }),
+  ]);
+
+  return { count, mistakes };
 }
 
 async function checkForPattern({ language, userId }: { language: string; userId: string }) {
-  const mistakes = await loadNewMistakes({ language, userId });
+  const { count, mistakes } = await loadNewMistakes({ language, userId });
 
   // Every third new mistake, so a learner is checked at most once per few mistakes.
-  if (mistakes.length < MISTAKES_PER_CHECK || mistakes.length % MISTAKES_PER_CHECK !== 0) {
+  if (count < MISTAKES_PER_CHECK || count % MISTAKES_PER_CHECK !== 0) {
     return;
   }
 
