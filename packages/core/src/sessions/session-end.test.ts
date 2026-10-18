@@ -4,7 +4,7 @@ import { prisma } from "@zoonk/db";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
-import { userProgressFixture } from "@zoonk/testing/fixtures/progress";
+import { dailyProgressFixtureMany, userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -248,20 +248,30 @@ describe("ending a session", () => {
 
     const [first, ...rest] = today.session.blocks;
 
-    await prisma.studySessionBlock.updateMany({
-      data: { status: "skipped" },
-      where: { id: { in: rest.map((block) => block.id) } },
-    });
+    // The plan gives the lesson 8 minutes; it takes 2 min 50 s, recorded as the day's time too.
+    await Promise.all([
+      prisma.studySessionBlock.updateMany({
+        data: { status: "skipped" },
+        where: { id: { in: rest.map((block) => block.id) } },
+      }),
+      prisma.studySessionBlock.update({
+        data: { estimatedMinutes: 8 },
+        where: { id: first?.id ?? "" },
+      }),
+    ]);
 
     await startStudyBlock({ blockId: first?.id ?? "", input: {}, sessionId: today.session.id });
 
-    await learningEventFixture({
-      brainPower: 40,
-      contentIds: { lessonId: lessons[0]?.id ?? "", studySessionId: today.session.id },
-      endedAt: new Date(),
-      seconds: 200,
-      userId: user.id,
-    });
+    await Promise.all([
+      learningEventFixture({
+        brainPower: 40,
+        contentIds: { lessonId: lessons[0]?.id ?? "", studySessionId: today.session.id },
+        endedAt: new Date(),
+        seconds: 170,
+        userId: user.id,
+      }),
+      dailyProgressFixtureMany([{ date: SESSION_TODAY, timeSpentSeconds: 170, userId: user.id }]),
+    ]);
 
     const finished = await finishStudyBlock({
       blockId: first?.id ?? "",
@@ -297,19 +307,22 @@ describe("ending a session", () => {
 
     expect(later).toStrictEqual(ended);
 
-    // The time the session took is the time its lesson took, in its summary and its ledger row.
-    expect(ended.status === "ready" && ended.summary.minutes).toBe(3);
+    // The time the session took is the time its lesson took, in its summary and its ledger row,
+    // in whole minutes as the week counts them.
+    expect(ended.status === "ready" && ended.summary.minutes).toBe(2);
 
     await expect(
       prisma.learningEvent.findFirst({ where: { kind: "session", userId: user.id } }),
-    ).resolves.toMatchObject({ seconds: 200 });
+    ).resolves.toMatchObject({ seconds: 170 });
 
     const view = await getTodayStudySession({ goalId: goal.id });
 
-    // 45 minutes a day, done in less: finishing the session counts the day.
+    // 45 minutes a day, done in less: finishing the session counts the day. Today says the time
+    // studied, the summary's 2 minutes: "11 min studied" beside a 3-minute summary and a week that
+    // grew by 2 counted the plan's minutes for the blocks done.
     expect(
       view.status === "ready" && view.session.week.days.find((day) => day.isToday),
-    ).toMatchObject({ hitGoal: true });
+    ).toMatchObject({ hitGoal: true, minutes: 2 });
   });
 
   it("lets memory read the session once, however often the learner stops", async () => {

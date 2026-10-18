@@ -105,6 +105,12 @@ export const studySessionResponseSchema = z
     nextBlockId: idSchema.nullable(),
     nextPosition: z.number().int().nonnegative().nullable(),
     pauseSuggested: z.boolean(),
+    plusLessons: z
+      .array(z.object({ title: z.string() }))
+      .meta({
+        description:
+          "The lessons the plan dates on this day that a free exam plan past its first week holds for Plus, by the title the plan shows. They aren't part of the session: list them after its blocks, locked, with a way to Plus, as Plus learners see them open. Empty on any other plan",
+      }),
     sessionBar: z
       .object({ completed: z.number().int().min(0), total: z.number().int().min(0) })
       .meta({ description: "One step per block still in the day, filled as blocks are done" }),
@@ -130,7 +136,14 @@ export const studySessionResponseSchema = z
                 description:
                   "What the learner's plans make of the day: a study day, a rest day they chose, an exam's day or another goal's date, or a day with nothing planned before they began (`beforeStart`) or after every one of their dates (`afterEnd`). A plan whose date came with lessons left goes on once the learner moves its date, so say an `afterEnd` day is after their date, never that their plan ended",
               }),
-            minutes: z.number().int().min(0),
+            minutes: z
+              .number()
+              .int()
+              .min(0)
+              .meta({
+                description:
+                  "The time the learner actually studied that day, rounded down to whole minutes, as the session summary counts it",
+              }),
             studied: z.boolean().meta({ description: "Any study counts, partial days included" }),
           }),
         ),

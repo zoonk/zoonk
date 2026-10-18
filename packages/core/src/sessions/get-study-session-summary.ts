@@ -211,7 +211,7 @@ export async function getStudySessionSummary({
       extraTime,
       finished: view.nextBlockId === null,
       fullMeal: view.fullMeal.earned,
-      minutes: Math.round(seconds / SECONDS_PER_MINUTE),
+      minutes: Math.floor(seconds / SECONDS_PER_MINUTE),
       missions: view.missions,
       mistakesSaved,
       netScore,

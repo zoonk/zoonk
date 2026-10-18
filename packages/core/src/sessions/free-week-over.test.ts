@@ -13,6 +13,7 @@ import { startLibraryLesson } from "../lesson-player/start-library-lesson";
 import { requestLessonGeneration } from "../lookahead/request-lesson-generation";
 import { getGoalPlan } from "../plans/get-goal-plan";
 import { getGoalPreparation } from "../preparation/get-goal-preparation";
+import { getTodayView } from "../view-models/today/get-today-view";
 import { getTodayStudySession } from "./_test-utils/open-today";
 import {
   SESSION_NOW,
@@ -246,6 +247,47 @@ describe("a free exam plan past its first week", () => {
     });
 
     await expect(getGoalPlan(plus.goal.id)).resolves.toMatchObject({ plan: { status: behind } });
+  });
+
+  // Ana's Today back after a week: "Today is lighter, about 11 min" and "2 activities so far ·
+  // more as you go", while the lessons her plan dated that day went unmentioned. Today lists them
+  // locked for Plus, as Plus learners see them open, both before and after she opens the day.
+  it("lists the lessons the plan dates today that it holds for Plus, while Plus has none", async () => {
+    const free = await examPastFreeWeek();
+    await scheduleToday(free.plan.id);
+
+    const read = await getTodayView({ goalId: free.goal.id, timeZone: TIME_ZONE });
+
+    if (read.status !== "ready") {
+      throw new Error(`Expected Today, got ${read.status}`);
+    }
+
+    const day = await openToday(free.goal.id);
+
+    // The plan's lessons dated today still to do, but the one she began during the free week.
+    const dated = await prisma.planItem.findMany({
+      orderBy: { position: "asc" },
+      where: {
+        kind: { in: ["lesson", "chapter"] },
+        plan: { goalId: free.goal.id },
+        scheduledFor: SESSION_TODAY,
+        status: "todo",
+      },
+    });
+
+    const titles = dated
+      .filter((item) => item.lessonId !== free.begun.id)
+      .map((item) => ({ title: item.titleSnapshot }));
+
+    expect(titles).toContainEqual({ title: free.next.title });
+    expect(read.today.session.plusLessons).toStrictEqual(titles);
+    expect(day.plusLessons).toStrictEqual(titles);
+    expect(day.lessonsComing).toBe(false);
+
+    const plus = await examPastFreeWeek({ plus: true });
+    await scheduleToday(plus.plan.id);
+
+    await expect(openToday(plus.goal.id)).resolves.toMatchObject({ plusLessons: [] });
   });
 
   it("holds a phase challenge for Plus, as the day's session does", async () => {

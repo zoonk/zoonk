@@ -13,6 +13,7 @@ import { toDayViewFields } from "./day-view-fields";
 import { getExamPrepAccess } from "./exam-access";
 import { withExtraStudyCheck } from "./extra-blocks";
 import { type PlannedStudyDay } from "./plan-study-day";
+import { loadDayPlusLessons } from "./plus-only-lessons";
 import { type SelectedDayPlan, getSelectedCatchUpItems } from "./selected-day-plan";
 import { type SessionDayContext } from "./session-placement";
 import { getSessionBar } from "./session-view";
@@ -56,34 +57,44 @@ export async function loadUnstartedDayView({
   }));
 
   const missionDay = { blocks, localDate, userId };
+  const { dayMinutes, examPrep } = day.plan;
+  const examAccess = getExamPrepAccess({ examPrep, goal, timeZone, today: localDate });
 
-  const [week, subjects, oftenTestedSkillIds, blockedTestOutChapters, missionViews, earned] =
-    await Promise.all([
-      loadStudyWeek({
-        localDate,
-        selectedPlan: { goalId: goal.id, settings: selection.state.settings },
-        userId,
-      }),
-      loadBlockSubjects({ blocks, blueprint, goal }),
-      loadOftenTestedSkillIds(goal),
-      loadBlockedTestOutChapters({
-        chapterIds: [...new Set(day.blocks.flatMap((block) => block.payload.chapterId ?? []))],
-        goalId: goal.id,
-        now,
-        timeZone,
-        userId,
-      }),
-      loadMissionDayViews({
-        picks: day.missions.picks,
-        session: missionDay,
-        through: now,
-        timeZone,
-      }),
-      hasDayMissionBonus({ now, session: { fullMealAt: null, localDate, userId }, timeZone }),
-    ]);
+  const [
+    week,
+    subjects,
+    oftenTestedSkillIds,
+    blockedTestOutChapters,
+    missionViews,
+    earned,
+    plusLessons,
+  ] = await Promise.all([
+    loadStudyWeek({
+      localDate,
+      selectedPlan: { goalId: goal.id, settings: selection.state.settings },
+      userId,
+    }),
+    loadBlockSubjects({ blocks, blueprint, goal }),
+    loadOftenTestedSkillIds(goal),
+    loadBlockedTestOutChapters({
+      chapterIds: [...new Set(day.blocks.flatMap((block) => block.payload.chapterId ?? []))],
+      goalId: goal.id,
+      now,
+      timeZone,
+      userId,
+    }),
+    loadMissionDayViews({ picks: day.missions.picks, session: missionDay, through: now, timeZone }),
+    hasDayMissionBonus({ now, session: { fullMealAt: null, localDate, userId }, timeZone }),
+    loadDayPlusLessons({
+      access: examAccess,
+      goalId: goal.id,
+      items: selection.items,
+      localDate,
+      userId,
+    }),
+  ]);
 
   const missions = missionViews.map((mission) => asDayMission(mission));
-  const { dayMinutes, examPrep } = day.plan;
 
   const emptyDay = getEmptyDay({ dayMinutes, selection });
 
@@ -95,10 +106,11 @@ export async function loadUnstartedDayView({
     dailyLimit: day.plan.limit,
     dayMinutes,
     emptyDay,
-    examAccess: getExamPrepAccess({ examPrep, goal, timeZone, today: localDate }),
+    examAccess,
     fullMealEarned: earned,
     lessonsComing: hasRoom && emptyDay === "lessonsComing",
     missions,
+    plusLessons,
     session: {
       blocks,
       freshStart: day.input.freshStart,

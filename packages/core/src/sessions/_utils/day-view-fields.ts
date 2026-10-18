@@ -4,7 +4,7 @@ import { addDays } from "../../plans/planner/plan-calendar";
 import { type StudyWeek } from "../../progress/_utils/load-study-week";
 import { readBlockPayload } from "../block-payload";
 import { BRAIN_POWER_BONUS, getHyperdriveLevel, scoreAnswers } from "../brain-power";
-import { type WeekDay, getSessionMinutesDone } from "../daily-goal";
+import { getSessionMinutesDone } from "../daily-goal";
 import { getExtraTime } from "../extra-time";
 import { type DailyTimeLimitStatus } from "../get-daily-time-limit";
 import { type Mission, getMissionBonus, isFullMeal } from "../missions";
@@ -12,6 +12,7 @@ import { shouldSuggestPause } from "../pause-suggestion";
 import { type DayBlockInput } from "./day-block-view";
 import { type ExamPrepAccess } from "./exam-access";
 import { isExamTomorrow } from "./exam-tomorrow";
+import { type PlusLesson } from "./plus-only-lessons";
 import { type SessionAnswer } from "./session-answers";
 import { type EmptyDay, type StudySessionView } from "./session-view";
 
@@ -26,6 +27,7 @@ export type DayViewFieldsInput = {
   fullMealEarned?: boolean;
   lessonsComing?: boolean;
   missions: readonly Pick<Mission, "status">[];
+  plusLessons?: PlusLesson[];
   sessionBar: StudySessionView["sessionBar"];
   session: {
     blocks: readonly DayBlockInput[];
@@ -51,35 +53,6 @@ function getNextPosition(
   );
 }
 
-/**
- * The session's day counts at least its progress (see `getSessionMinutesDone`). A session carried
- * across midnight never fills the new day's ring with the previous day's completed blocks.
- */
-function withSessionDay({
-  current,
-  days,
-  done,
-  localDate,
-}: {
-  current: boolean;
-  days: readonly WeekDay[];
-  done: number;
-  localDate: Date;
-}): WeekDay[] {
-  return days.map((day) => {
-    if (!current || day.date.getTime() !== localDate.getTime() || done <= day.minutes) {
-      return day;
-    }
-
-    return {
-      ...day,
-      hitGoal: day.hitGoal || (day.goalMinutes > 0 && done >= day.goalMinutes),
-      minutes: done,
-      studied: true,
-    };
-  });
-}
-
 /** The same day numbers before and after persistence, without inventing a session row. */
 export function toDayViewFields({
   answers,
@@ -92,6 +65,7 @@ export function toDayViewFields({
   fullMealEarned,
   lessonsComing = false,
   missions,
+  plusLessons = [],
   session,
   sessionBar,
   timeZone = "UTC",
@@ -101,14 +75,12 @@ export function toDayViewFields({
   "blocks" | "id" | "missions" | "nextBlockId" | "status"
 > {
   const streak = scoreAnswers({ answers }).streak;
-  const minutesDone = Math.round(getSessionMinutesDone(session.blocks));
 
-  const days = withSessionDay({
-    current,
-    days: week.days,
-    done: minutesDone,
-    localDate: session.localDate,
-  });
+  // A free exam plan past its first week adds no new lessons: an empty day has nothing new for
+  // it, never lessons on the way.
+  const empty = examAccess.trialEnded && emptyDay ? "nothingNew" : emptyDay;
+  const minutesDone = Math.round(getSessionMinutesDone(session.blocks));
+  const { days } = week;
 
   const blocksPower = session.blocks.reduce((sum, block) => sum + block.brainPower, 0);
 
@@ -120,7 +92,7 @@ export function toDayViewFields({
     dayEndsAt:
       dayEndsAt ??
       getStartOfLocalDay({ localDate: addDays(session.localDate, 1), timeZone }).getTime(),
-    emptyDay: session.blocks.length === 0 && dayMinutes > 0 ? emptyDay : null,
+    emptyDay: session.blocks.length === 0 && dayMinutes > 0 ? empty : null,
     examAccess,
     examTomorrow: isExamTomorrow({ day: session.localDate, goal: session.goal }),
     extraTime: getExtraTime({
@@ -138,11 +110,13 @@ export function toDayViewFields({
     },
     goalId: session.goalId,
     hyperdrive: { level: getHyperdriveLevel(streak), streak },
-    lessonsComing: lessonsComing && session.blocks.length > 0,
+    // A free exam plan past its first week adds no new lessons: none are coming.
+    lessonsComing: lessonsComing && session.blocks.length > 0 && !examAccess.trialEnded,
     localDate: session.localDate,
     minutes: { dailyGoal: dayMinutes, done: minutesDone, planned: session.plannedMinutes },
     nextPosition: getNextPosition(session.blocks),
     pauseSuggested: shouldSuggestPause(answers.map((answer) => answer.isCorrect)),
+    plusLessons,
     sessionBar,
     week: {
       days,

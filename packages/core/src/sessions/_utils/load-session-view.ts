@@ -20,6 +20,7 @@ import { withExtraStudyCheck } from "./extra-blocks";
 import { withLessonDisplayMinutes } from "./lesson-display-minutes";
 import { isDayAwaitingOutlines } from "./outlining-stand-ins";
 import { type PlannedStudyDay } from "./plan-study-day";
+import { loadDayPlusLessons } from "./plus-only-lessons";
 import { loadSessionAnswers } from "./session-answers";
 import { type EmptyDay, type StudySessionView, toStudySessionView } from "./session-view";
 import { type StudySessionRow } from "./study-session-access";
@@ -190,13 +191,6 @@ export async function loadStudySessionView({
   const dayEndsAt =
     current && session.localDate < today ? getCarryOverEnd(session).getTime() : undefined;
 
-  const [emptyDay, lessonsComing, missions, fullMealEarned] = await Promise.all([
-    loadEmptyDay({ dayMinutes, session }),
-    loadLessonsComing({ current, dayMinutes, session }),
-    getDayMissions({ displayBlocks, session, timeZone, ...(current && { through: new Date() }) }),
-    hasDayMissionBonus({ session, timeZone, ...(current && { now: new Date() }) }),
-  ]);
-
   const examAccess = session.goal
     ? getExamPrepAccess({
         examPrep: viewer ? getTierExamPrep(viewer.tier) : null,
@@ -205,6 +199,19 @@ export async function loadStudySessionView({
         today: session.localDate,
       })
     : { includesMockExams: true, trialEnded: false };
+
+  const [emptyDay, lessonsComing, missions, fullMealEarned, plusLessons] = await Promise.all([
+    loadEmptyDay({ dayMinutes, session }),
+    loadLessonsComing({ current, dayMinutes, session }),
+    getDayMissions({ displayBlocks, session, timeZone, ...(current && { through: new Date() }) }),
+    hasDayMissionBonus({ session, timeZone, ...(current && { now: new Date() }) }),
+    loadDayPlusLessons({
+      access: examAccess,
+      goalId: session.goalId,
+      localDate: session.localDate,
+      userId,
+    }),
+  ]);
 
   const view = toStudySessionView({
     answers,
@@ -220,6 +227,7 @@ export async function loadStudySessionView({
     lessonsComing,
     missions,
     oftenTestedSkillIds,
+    plusLessons,
     session,
     timeZone,
     week,

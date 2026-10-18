@@ -6,14 +6,14 @@ export const emptyDaySchema = z
   .nullable()
   .meta({
     description:
-      "Why a day with study time has no blocks: `lessonsComing` while its lessons are still being outlined (the day fills in on its own; read it again), `nothingNew` when every lesson of the plan is done or one the learner showed they know, so offer practice (`extraTime`), the week's challenge or the buddy instead. Null when the day has blocks or no study time",
+      "Why a day with study time has no blocks: `lessonsComing` while its lessons are still being outlined (the day fills in on its own; read it again), `nothingNew` when every lesson of the plan is done or one the learner showed they know, so offer practice (`extraTime`), the week's challenge or the buddy instead (on a free exam plan past its first week, whose new lessons come with Plus: nothing to review or fix today). Null when the day has blocks or no study time",
   });
 
 export const lessonsComingSchema = z
   .boolean()
   .meta({
     description:
-      "The day has blocks and holds time for more lessons still being outlined: they join the end of its blocks on their own once they land (read it again), so say more is on the way. False otherwise, and on a day without blocks (`emptyDay` says why)",
+      "The day has blocks and holds time for more lessons still being outlined: they join the end of its blocks on their own once they land (read it again), so say more is on the way. False otherwise, on a free exam plan past its first week (it adds no new lessons), and on a day without blocks (`emptyDay` says why)",
   });
 
 export const examTomorrowSchema = z

@@ -10,6 +10,7 @@ import { type Mission } from "../missions";
 import { toDayBlockView } from "./day-block-view";
 import { type DayViewFieldsInput, toDayViewFields } from "./day-view-fields";
 import { type ExamPrepAccess } from "./exam-access";
+import { type PlusLesson } from "./plus-only-lessons";
 import { type StudySessionRow } from "./study-session-access";
 
 type CapsuleView = {
@@ -151,6 +152,12 @@ export type StudySessionView = {
   nextBlockId: string | null;
   nextPosition: number | null;
   pauseSuggested: boolean;
+  /**
+   * The lessons the plan dates on this day that a free exam plan past its first week holds for
+   * Plus (see `loadDayPlusLessons`): not part of the session, shown locked after its blocks, as
+   * Plus learners see them open. Empty on any other plan.
+   */
+  plusLessons: PlusLesson[];
   sessionBar: { completed: number; total: number };
   status: StudySessionRow["status"];
   week: {

@@ -78630,7 +78630,7 @@
           },
           "emptyDay": {
             "nullable": true,
-            "description": "Why a day with study time has no blocks: `lessonsComing` while its lessons are still being outlined (the day fills in on its own; read it again), `nothingNew` when every lesson of the plan is done or one the learner showed they know, so offer practice (`extraTime`), the week's challenge or the buddy instead. Null when the day has blocks or no study time",
+            "description": "Why a day with study time has no blocks: `lessonsComing` while its lessons are still being outlined (the day fills in on its own; read it again), `nothingNew` when every lesson of the plan is done or one the learner showed they know, so offer practice (`extraTime`), the week's challenge or the buddy instead (on a free exam plan past its first week, whose new lessons come with Plus: nothing to review or fix today). Null when the day has blocks or no study time",
             "type": "string",
             "enum": [
               "lessonsComing",
@@ -78725,7 +78725,7 @@
           },
           "lessonsComing": {
             "type": "boolean",
-            "description": "The day has blocks and holds time for more lessons still being outlined: they join the end of its blocks on their own once they land (read it again), so say more is on the way. False otherwise, and on a day without blocks (`emptyDay` says why)"
+            "description": "The day has blocks and holds time for more lessons still being outlined: they join the end of its blocks on their own once they land (read it again), so say more is on the way. False otherwise, on a free exam plan past its first week (it adds no new lessons), and on a day without blocks (`emptyDay` says why)"
           },
           "localDate": {
             "type": "string",
@@ -78781,6 +78781,22 @@
           },
           "pauseSuggested": {
             "type": "boolean"
+          },
+          "plusLessons": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "title"
+              ],
+              "additionalProperties": false
+            },
+            "description": "The lessons the plan dates on this day that a free exam plan past its first week holds for Plus, by the title the plan shows. They aren't part of the session: list them after its blocks, locked, with a way to Plus, as Plus learners see them open. Empty on any other plan"
           },
           "sessionBar": {
             "type": "object",
@@ -78852,7 +78868,8 @@
                     "minutes": {
                       "type": "integer",
                       "minimum": 0,
-                      "maximum": 9007199254740991
+                      "maximum": 9007199254740991,
+                      "description": "The time the learner actually studied that day, rounded down to whole minutes, as the session summary counts it"
                     },
                     "studied": {
                       "type": "boolean",
@@ -78946,6 +78963,7 @@
           "nextBlockId",
           "nextPosition",
           "pauseSuggested",
+          "plusLessons",
           "sessionBar",
           "status",
           "week"
@@ -81045,7 +81063,7 @@
           },
           "emptyDay": {
             "nullable": true,
-            "description": "Why a day with study time has no blocks: `lessonsComing` while its lessons are still being outlined (the day fills in on its own; read it again), `nothingNew` when every lesson of the plan is done or one the learner showed they know, so offer practice (`extraTime`), the week's challenge or the buddy instead. Null when the day has blocks or no study time",
+            "description": "Why a day with study time has no blocks: `lessonsComing` while its lessons are still being outlined (the day fills in on its own; read it again), `nothingNew` when every lesson of the plan is done or one the learner showed they know, so offer practice (`extraTime`), the week's challenge or the buddy instead (on a free exam plan past its first week, whose new lessons come with Plus: nothing to review or fix today). Null when the day has blocks or no study time",
             "type": "string",
             "enum": [
               "lessonsComing",
@@ -81135,7 +81153,7 @@
           },
           "lessonsComing": {
             "type": "boolean",
-            "description": "The day has blocks and holds time for more lessons still being outlined: they join the end of its blocks on their own once they land (read it again), so say more is on the way. False otherwise, and on a day without blocks (`emptyDay` says why)"
+            "description": "The day has blocks and holds time for more lessons still being outlined: they join the end of its blocks on their own once they land (read it again), so say more is on the way. False otherwise, on a free exam plan past its first week (it adds no new lessons), and on a day without blocks (`emptyDay` says why)"
           },
           "localDate": {
             "type": "string",
@@ -81178,6 +81196,22 @@
           },
           "pauseSuggested": {
             "type": "boolean"
+          },
+          "plusLessons": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "title"
+              ],
+              "additionalProperties": false
+            },
+            "description": "The lessons the plan dates on this day that a free exam plan past its first week holds for Plus, by the title the plan shows. They aren't part of the session: list them after its blocks, locked, with a way to Plus, as Plus learners see them open. Empty on any other plan"
           },
           "sessionBar": {
             "type": "object",
@@ -81241,7 +81275,8 @@
                     "minutes": {
                       "type": "integer",
                       "minimum": 0,
-                      "maximum": 9007199254740991
+                      "maximum": 9007199254740991,
+                      "description": "The time the learner actually studied that day, rounded down to whole minutes, as the session summary counts it"
                     },
                     "studied": {
                       "type": "boolean",
@@ -81980,6 +82015,7 @@
           "minutes",
           "nextPosition",
           "pauseSuggested",
+          "plusLessons",
           "sessionBar",
           "week",
           "blocks",
