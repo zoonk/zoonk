@@ -1,5 +1,6 @@
 "use client";
 
+import { checkActivityAnswer } from "@zoonk/core/library/activities/answers";
 import { evaluateFormula } from "@zoonk/core/library/activities/expression/evaluate";
 import { useFormatNumber } from "@zoonk/learn/format-number";
 import { Lightbulb } from "lucide-react";
@@ -54,6 +55,7 @@ export function GuessRevealActivity({
       actual={computeActivityValue(content)}
       guess={answer?.kind === "numeric" ? answer.value : null}
       isChecked={phase === "checked"}
+      isCorrect={answer !== null && checkActivityAnswer(content, answer)}
       labelId={labelId}
       onGuessChange={(value) => onAnswerChange({ kind: "numeric", value })}
       scale={fields}

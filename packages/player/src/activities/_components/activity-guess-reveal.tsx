@@ -16,6 +16,7 @@ export function ActivityGuessReveal({
   children,
   guess,
   isChecked,
+  isCorrect,
   labelId,
   onGuessChange,
   scale,
@@ -25,6 +26,7 @@ export function ActivityGuessReveal({
   children: React.ReactNode;
   guess: number | null;
   isChecked: boolean;
+  isCorrect: boolean;
   labelId: string;
   onGuessChange: (value: number) => void;
   scale: GuessScale;
@@ -49,7 +51,12 @@ export function ActivityGuessReveal({
       {revealed !== null && (
         <div className="flex flex-col gap-3">
           {guess !== null && (
-            <ActivityGuessComparison actual={revealed} guess={guess} unit={unit} />
+            <ActivityGuessComparison
+              actual={revealed}
+              guess={guess}
+              isCorrect={isCorrect}
+              unit={unit}
+            />
           )}
           {children}
         </div>

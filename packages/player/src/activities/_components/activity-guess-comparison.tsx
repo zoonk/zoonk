@@ -8,15 +8,17 @@ import { compareGuess } from "../_utils/guess-scale";
 export function ActivityGuessComparison({
   actual,
   guess,
+  isCorrect,
   unit,
 }: {
   actual: number;
   guess: number;
+  isCorrect: boolean;
   unit: string;
 }) {
   const t = useExtracted();
   const format = useFormatNumber();
-  const comparison = compareGuess(guess, actual);
+  const comparison = compareGuess({ actual, guess, isCorrect });
 
   if (comparison.kind === "close") {
     return <p className="text-sm font-medium">{t("Your guess is close to the real value.")}</p>;

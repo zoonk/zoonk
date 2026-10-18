@@ -83,7 +83,9 @@ export function LessonAnswerField({
 
   useEffect(() => {
     if (autoFocusOnPointer && globalThis.matchMedia("(pointer: fine)").matches) {
-      fieldRef.current?.querySelector<HTMLElement>("input, textarea")?.focus();
+      fieldRef.current
+        ?.querySelector<HTMLElement>("input, textarea")
+        ?.focus({ preventScroll: true });
     }
   }, [autoFocusOnPointer]);
 

@@ -1,8 +1,12 @@
 "use client";
 
-import { formatLocalizedNumber, fractionDigitsFor } from "@zoonk/utils/localized-number";
+import {
+  formatLocalizedNumber,
+  fractionDigitsFor,
+  parseLocalizedNumber,
+} from "@zoonk/utils/localized-number";
 import { currencyFor, formatMoney, withUnit } from "@zoonk/utils/math-answer";
-import { useLocale } from "next-intl";
+import { useExtracted, useLocale } from "next-intl";
 
 type FormatOptions = {
   /** Short forms like "1.2M" for axis ticks. */
@@ -38,6 +42,13 @@ function splitMoneyUnit(unit?: string): { currency: string; rest: string } | nul
  */
 export function useFormatNumber() {
   const locale = useLocale();
+  const t = useExtracted();
+
+  const seconds = (count: number) =>
+    t("{count, plural, =0 {seconds} one {second} other {seconds}}", { count });
+
+  const atoms = (count: number) =>
+    t("{count, plural, =0 {atoms} one {atom} other {atoms}}", { count });
 
   return (value: number, options: FormatOptions = {}) => {
     const money = splitMoneyUnit(options.unit);
@@ -55,16 +66,28 @@ export function useFormatNumber() {
       return money.rest ? `${amount} ${money.rest}` : amount;
     }
 
-    return withUnit(
-      formatLocalizedNumber({
-        compact: options.compact,
-        grouping: options.grouping,
-        locale,
-        maximumFractionDigits: options.maximumFractionDigits ?? fractionDigitsFor(value),
-        signed: options.signed,
-        value,
-      }),
-      options.unit,
+    const formatted = formatLocalizedNumber({
+      compact: options.compact,
+      grouping: options.grouping,
+      locale,
+      maximumFractionDigits: options.maximumFractionDigits ?? fractionDigitsFor(value),
+      signed: options.signed,
+      value,
+    });
+
+    if (!options.unit) {
+      return formatted;
+    }
+
+    const formatUnit = [seconds, atoms].find(
+      (unit) => options.unit === unit(1) || options.unit === unit(2),
     );
+
+    if (!formatUnit) {
+      return withUnit(formatted, options.unit);
+    }
+
+    const count = Math.abs(parseLocalizedNumber({ locale, text: formatted }) ?? value);
+    return withUnit(formatted, formatUnit(count));
   };
 }

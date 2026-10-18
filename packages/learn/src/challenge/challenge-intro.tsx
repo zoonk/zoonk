@@ -262,7 +262,7 @@ function MockIntro() {
           challenge.questions !== null && challenge.questions > 0 && questions(challenge.questions),
           // The time on its clock, the same the plan saves for it and the real exam gives.
           challenge.minutes !== null && duration(challenge.minutes),
-          !challenge.fullLength && t("Half the exam"),
+          !challenge.fullLength && t("Half an exam day"),
           objectiveOnly && t("Objective part only"),
         ]}
       />

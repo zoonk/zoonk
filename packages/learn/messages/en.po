@@ -590,6 +590,16 @@ msgctxt "belts.E1okmE"
 msgid "White belt"
 msgstr "White belt"
 
+#: src/_utils/use-format-number.ts
+msgctxt "SryZKb"
+msgid "{count, plural, =0 {seconds} one {second} other {seconds}}"
+msgstr "{count, plural, =0 {seconds} one {second} other {seconds}}"
+
+#: src/_utils/use-format-number.ts
+msgctxt "UAppyx"
+msgid "{count, plural, =0 {atoms} one {atom} other {atoms}}"
+msgstr "{count, plural, =0 {atoms} one {atom} other {atoms}}"
+
 #: src/_utils/use-pass-marks-note.ts
 msgctxt "Yc8HfI"
 msgid "In {language}, as the exam's documents say it."
@@ -1466,11 +1476,9 @@ msgstr "Mock exam {number}"
 
 #: src/challenge/challenge-intro.tsx
 #: src/exam/exam-next-mock.tsx
-#: src/mock/mock-labels.tsx
-#: src/mock/mock-option-labels.ts
-msgctxt "qVp-s4"
-msgid "Half the exam"
-msgstr "Half the exam"
+msgctxt "3wnnPL"
+msgid "Half an exam day"
+msgstr "Half an exam day"
 
 #: src/challenge/challenge-intro.tsx
 msgctxt "8uKw6W"
@@ -2770,11 +2778,9 @@ msgid "See your exam"
 msgstr "See your exam"
 
 #: src/exam/exam-next-mock.tsx
-#: src/mock/mock-labels.tsx
-#: src/mock/mock-option-labels.ts
-msgctxt "rbqmIS"
-msgid "Full exam"
-msgstr "Full exam"
+msgctxt "Fouwf4"
+msgid "A full exam day"
+msgstr "A full exam day"
 
 #: src/exam/exam-result-section.tsx
 msgctxt "JoUgIU"
@@ -7158,6 +7164,18 @@ msgstr "Keep answering"
 msgctxt "y6i0c4"
 msgid "Starting point"
 msgstr "Starting point"
+
+#: src/mock/mock-labels.tsx
+#: src/mock/mock-option-labels.ts
+msgctxt "qVp-s4"
+msgid "Half the exam"
+msgstr "Half the exam"
+
+#: src/mock/mock-labels.tsx
+#: src/mock/mock-option-labels.ts
+msgctxt "rbqmIS"
+msgid "Full exam"
+msgstr "Full exam"
 
 #: src/mock/mock-moves.tsx
 msgctxt "ny5qRG"

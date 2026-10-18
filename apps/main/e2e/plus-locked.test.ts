@@ -107,7 +107,9 @@ async function expectLockedMocksOnExamPage(page: Page) {
   const mocks = page.getByRole("region", { name: "Mock exams" });
 
   await expect(
-    mocks.getByRole("link", { name: /^(?<size>Half the exam|Full exam).*Available with Plus/u }),
+    mocks.getByRole("link", {
+      name: /^(?<size>Half an exam day|A full exam day).*Available with Plus/u,
+    }),
   ).toHaveAttribute("href", /^\/challenge\/[\da-f-]{36}$/u);
 
   await expect(
@@ -167,7 +169,7 @@ test.describe("Plus features are never hidden", () => {
 
     // With the keyboard, the next mock opens its intro, which says what Plus unlocks: "See Plus"
     // is its one action, never a start that would be refused.
-    const next = page.getByRole("link", { name: /^(?<size>Half the exam|Full exam)/u });
+    const next = page.getByRole("link", { name: /^(?<size>Half an exam day|A full exam day)/u });
     await next.focus();
     await page.keyboard.press("Enter");
     await expect(page).toHaveURL(/\/challenge\/[\da-f-]{36}$/u);
@@ -222,7 +224,7 @@ test.describe("Plus features are never hidden", () => {
     }
 
     await expect(
-      page.getByRole("link", { name: /^(?<size>Half the exam|Full exam)/u }),
+      page.getByRole("link", { name: /^(?<size>Half an exam day|A full exam day)/u }),
     ).toBeVisible();
 
     await expect(page.getByRole("link", { name: /^Take a mock exam/u })).toBeVisible();

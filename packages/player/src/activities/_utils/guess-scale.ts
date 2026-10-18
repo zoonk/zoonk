@@ -5,7 +5,7 @@ import { clamp } from "./snap-value";
 export const SCALE_POSITIONS = 200;
 
 const GUESS_DIGITS = 2;
-const CLOSE_RATIO = 1.5;
+const RATIO_COMPARISON_MIN = 1.5;
 const MAX_LOG_TICKS = 6;
 const LINEAR_TICKS = 4;
 /** Round labels this close to an end would crowd the end's own label. */
@@ -76,20 +76,33 @@ type GuessComparison =
 
 /**
  * How a guess compares with the real value, in the terms people use for estimates: close, or
- * how many times too big or too small. Without a ratio (zero or mixed signs) it's the difference.
+ * how many times too big or too small. Only grading decides whether it is close; a rejected
+ * estimate gives its difference unless a ratio makes the gap easier to understand.
  */
-export function compareGuess(guess: number, actual: number): GuessComparison {
+export function compareGuess({
+  actual,
+  guess,
+  isCorrect,
+}: {
+  actual: number;
+  guess: number;
+  isCorrect: boolean;
+}): GuessComparison {
+  if (isCorrect) {
+    return { kind: "close" };
+  }
+
   if (guess <= 0 || actual <= 0) {
-    return guess === actual ? { kind: "close" } : { difference: guess - actual, kind: "off" };
+    return { difference: guess - actual, kind: "off" };
   }
 
   const ratio = guess / actual;
 
-  if (ratio >= CLOSE_RATIO) {
+  if (ratio >= RATIO_COMPARISON_MIN) {
     return { kind: "tooBig", times: roundGuess(ratio) };
   }
 
-  return ratio <= 1 / CLOSE_RATIO
+  return ratio <= 1 / RATIO_COMPARISON_MIN
     ? { kind: "tooSmall", times: roundGuess(1 / ratio) }
-    : { kind: "close" };
+    : { difference: guess - actual, kind: "off" };
 }

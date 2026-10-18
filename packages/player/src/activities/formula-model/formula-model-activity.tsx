@@ -129,8 +129,9 @@ function FormulaModelBoard({
 
       {view.compared && (
         <ActivityCanvasLabel aria-hidden="true" className="tabular-nums">
-          {t("At {input}: {value}", {
+          {t("{output} at {input}: {value}", {
             input: formatX(view.compared.x),
+            output: charted.label,
             value: formatOutput(charted, view.compared.y),
           })}
         </ActivityCanvasLabel>

@@ -53,16 +53,34 @@ describe(scaleTicks, () => {
 
 describe(compareGuess, () => {
   it("says how many times too big or too small a guess is", () => {
-    expect(compareGuess(92, 11.57)).toStrictEqual({ kind: "tooBig", times: 8 });
-    expect(compareGuess(2, 11.57)).toStrictEqual({ kind: "tooSmall", times: 5.8 });
+    expect(compareGuess({ actual: 11.57, guess: 92, isCorrect: false })).toStrictEqual({
+      kind: "tooBig",
+      times: 8,
+    });
+
+    expect(compareGuess({ actual: 11.57, guess: 2, isCorrect: false })).toStrictEqual({
+      kind: "tooSmall",
+      times: 5.8,
+    });
   });
 
-  it("calls a guess within half again of the real value close", () => {
-    expect(compareGuess(15, 11.57)).toStrictEqual({ kind: "close" });
+  it("calls only a guess accepted by grading close", () => {
+    expect(compareGuess({ actual: 11.57, guess: 15, isCorrect: true })).toStrictEqual({
+      kind: "close",
+    });
+
+    expect(compareGuess({ actual: 11.57, guess: 15, isCorrect: false })).toStrictEqual({
+      difference: 15 - 11.57,
+      kind: "off",
+    });
   });
 
   it("falls back to the difference when there's no ratio", () => {
-    expect(compareGuess(-4, 3)).toStrictEqual({ difference: -7, kind: "off" });
-    expect(compareGuess(0, 0)).toStrictEqual({ kind: "close" });
+    expect(compareGuess({ actual: 3, guess: -4, isCorrect: false })).toStrictEqual({
+      difference: -7,
+      kind: "off",
+    });
+
+    expect(compareGuess({ actual: 0, guess: 0, isCorrect: true })).toStrictEqual({ kind: "close" });
   });
 });

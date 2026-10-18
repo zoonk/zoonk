@@ -1225,9 +1225,9 @@ msgid "A worked answer in {count} steps. One step is wrong; pick it."
 msgstr "Une solution détaillée en {count} étapes. Une étape est incorrecte ; sélectionne-la."
 
 #: src/activities/formula-model/formula-model-activity.tsx
-msgctxt "99zN0Y"
-msgid "At {input}: {value}"
-msgstr "Pour {input} : {value}"
+msgctxt "erkNmC"
+msgid "{output} at {input}: {value}"
+msgstr "{output} pour {input} : {value}"
 
 #: src/activities/formula-model/formula-model-description.tsx
 msgctxt "6IiaDB"
@@ -3903,26 +3903,6 @@ msgctxt "EaucLA"
 msgid "View plans"
 msgstr "Voir les formules"
 
-#: src/questions/lesson-question-markdown.tsx
-msgctxt "13bnyN"
-msgid "Open this link?"
-msgstr "Ouvrir ce lien ?"
-
-#: src/questions/lesson-question-markdown.tsx
-msgctxt "YGP6Yl"
-msgid "This link opens a website outside Zoonk."
-msgstr "Ce lien ouvre un site web extérieur à Zoonk."
-
-#: src/questions/lesson-question-markdown.tsx
-msgctxt "47FYwb"
-msgid "Cancel"
-msgstr "Annuler"
-
-#: src/questions/lesson-question-markdown.tsx
-msgctxt "YtFTtA"
-msgid "Open link"
-msgstr "Ouvrir le lien"
-
 #: src/questions/lesson-question-panel.tsx
 msgctxt "BIwI4b"
 msgid "Ask about your answer"
@@ -4142,6 +4122,26 @@ msgstr "Charger les messages précédents"
 msgctxt "WGAYmP"
 msgid "Conversation with {name}"
 msgstr "Conversation avec {name}"
+
+#: src/questions/tutor-markdown.tsx
+msgctxt "13bnyN"
+msgid "Open this link?"
+msgstr "Ouvrir ce lien ?"
+
+#: src/questions/tutor-markdown.tsx
+msgctxt "YGP6Yl"
+msgid "This link opens a website outside Zoonk."
+msgstr "Ce lien ouvre un site web extérieur à Zoonk."
+
+#: src/questions/tutor-markdown.tsx
+msgctxt "47FYwb"
+msgid "Cancel"
+msgstr "Annuler"
+
+#: src/questions/tutor-markdown.tsx
+msgctxt "YtFTtA"
+msgid "Open link"
+msgstr "Ouvrir le lien"
 
 #: src/questions/tutor-suggestion-words.ts
 msgctxt "tutorSuggestions.s6QqT3"

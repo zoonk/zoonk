@@ -44,7 +44,7 @@ export function ExamNextMock({ current }: { current: boolean }) {
       </ListRowLeading>
       <ListRowContent>
         <ListRowTitle className="flex items-center gap-2">
-          {next.fullLength ? t("Full exam") : t("Half the exam")}
+          {next.fullLength ? t("A full exam day") : t("Half an exam day")}
           {exam.mocksRequirePlus && <PlusMark />}
         </ListRowTitle>
         <ListRowDescription>

@@ -77,6 +77,7 @@ export function TypedAnswerStepView({
       </div>
 
       <LessonAnswerField
+        autoFocusOnPointer
         isLocked={isLocked}
         isNumber={isNumber}
         label={step.content.question}
