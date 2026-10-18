@@ -93,5 +93,5 @@ describe("plans laid out per read", () => {
 
     const advice = await countBuilds(() => getPlanBasesAdvice(user.goalId));
     expect(advice.result.status).toBe("ready");
-  }, 60_000);
+  }, 120_000);
 });

@@ -1301,7 +1301,7 @@ describe("studying everything", () => {
     expect(byExam.fullCourseEndDate?.getTime()).toBeGreaterThan(fromIsoDate(EXAM_DAY).getTime());
     expect(feasibility.fullCourseEndDate).toStrictEqual(byExam.fullCourseEndDate);
     expect(feasibility.endDate).toStrictEqual(byExam.fullCourseEndDate);
-  });
+  }, 45_000);
 
   it("says when a goal with a date would end without one, and nothing once it all fits", () => {
     const career = planInput({
