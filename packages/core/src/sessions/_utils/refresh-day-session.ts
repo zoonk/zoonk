@@ -180,6 +180,7 @@ async function replaceNotStartedBlocks({ day }: { day: DaySession }): Promise<Da
   const keptIds = new Set(kept.map((block) => block.id));
   const replaced = session.blocks.filter((block) => !keptIds.has(block.id));
   const planVersion = await loadDayPlanVersion({ goal: day.goal, localDate: session.localDate });
+
   const context = {
     goal: day.goal,
     localDate: session.localDate,
@@ -197,6 +198,7 @@ async function replaceNotStartedBlocks({ day }: { day: DaySession }): Promise<Da
   const { blocks: planned, plan } = selection
     ? await planStudyDay({ ...context, selection })
     : await planRestOfDayWithPlan({ day, kept });
+
   const unchanged = hasSameContent({ anyOrder: kept.length > 0, planned, replaced });
 
   const facts = await loadRebuildMissionFacts({
