@@ -1613,6 +1613,8 @@ test.describe("Plan reveal", () => {
       const details = z.record(z.string(), z.unknown()).parse(goal.details ?? {});
 
       // Every question is answered, so onboarding opens on the plan, two months before the exam.
+      // A new time and date are new inputs for her plan, as a learner's change makes them, so it
+      // plans again for them instead of keeping the one she was shown.
       await prisma.goal.update({
         data: {
           dailyMinutes: 10,
@@ -1620,6 +1622,11 @@ test.describe("Plan reveal", () => {
           targetDate: new Date(toUTCMidnight(new Date()).getTime() + 60 * MS_PER_DAY),
         },
         where: { id: goal.id },
+      });
+
+      await prisma.plan.update({
+        data: { inputVersion: { increment: 1 } },
+        where: { goalId: goal.id },
       });
 
       await page.goto(`/start/${goal.id}`);
