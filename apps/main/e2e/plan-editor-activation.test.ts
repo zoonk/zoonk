@@ -70,6 +70,8 @@ test("time presets move focus without saving; Enter, Space and clicks apply a si
 
     expect(saves).toHaveLength(2);
 
+    // A pick while a save is still pending is ignored on purpose: wait for this one to settle.
+    await expect(editor.getByText("Daily time changed to 30 min.", { exact: true })).toBeVisible();
     await time.getByText("1 hr", { exact: true }).click();
 
     await expect
