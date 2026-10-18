@@ -1527,9 +1527,9 @@ msgid "Undo"
 msgstr "Undo"
 
 #: src/challenge/challenge-moved-screen.tsx
-msgctxt "jZOK3Z"
-msgid "Moved to <mono>{date}</mono>"
-msgstr "Moved to <mono>{date}</mono>"
+msgctxt "smtXcI"
+msgid "Moved to {date}"
+msgstr "Moved to {date}"
 
 #: src/challenge/challenge-moved-screen.tsx
 msgctxt "Mlb61X"
@@ -6028,15 +6028,20 @@ msgid "Its picture had mistakes, so here's the mind map as text."
 msgstr "Its picture had mistakes, so here's the mind map as text."
 
 #: src/mind-maps/mind-map-description.tsx
-msgctxt "O36UiH"
-msgid "Mind map: {title}. {idea}"
-msgstr "Mind map: {title}. {idea}"
-
-#: src/mind-maps/mind-map-description.tsx
 #: src/mind-maps/mind-map-tiles.tsx
 msgctxt "v3MXM4"
 msgid "Mind map of {chapter}"
 msgstr "Mind map of {chapter}"
+
+#: src/mind-maps/mind-map-description.tsx
+msgctxt "iSBZiC"
+msgid "Mind map: {title} {idea}"
+msgstr "Mind map: {title} {idea}"
+
+#: src/mind-maps/mind-map-description.tsx
+msgctxt "O36UiH"
+msgid "Mind map: {title}. {idea}"
+msgstr "Mind map: {title}. {idea}"
 
 #: src/mind-maps/mind-map-outline.tsx
 msgctxt "DTMTVD"
@@ -6791,6 +6796,7 @@ msgstr "Saving your practice…"
 #: src/onboarding/steps/placement-question.tsx
 #: src/questions/choice-questions-run.tsx
 #: src/session/question-block/block-question.tsx
+#: src/session/question-block/question-feedback.tsx
 msgctxt "h5CuXu"
 msgid "I don't know yet"
 msgstr "I don't know yet"
@@ -10963,9 +10969,9 @@ msgid "Days {first, number} to {last, number} of {days, number}"
 msgstr "Days {first, number} to {last, number} of {days, number}"
 
 #: src/plan/use-system-change-sentence.ts
-msgctxt "bk-hcF"
-msgid "Lessons earlier days left come first, and the rest of your plan moved forward."
-msgstr "Lessons earlier days left come first, and the rest of your plan moved forward."
+msgctxt "TPmKpi"
+msgid "Lessons left from earlier days come first, and the rest of your plan moved later."
+msgstr "Lessons left from earlier days come first, and the rest of your plan moved later."
 
 #: src/plan/use-system-change-sentence.ts
 msgctxt "ARyfXf"
@@ -11413,14 +11419,14 @@ msgid "This lesson is being written for you. It's usually ready in about two min
 msgstr "This lesson is being written for you. It's usually ready in about two minutes."
 
 #: src/session/next-stop-wait.tsx
-msgctxt "66uU22"
-msgid "Do {title} instead"
-msgstr "Do {title} instead"
+msgctxt "J05b6v"
+msgid "Instead: {title}"
+msgstr "Instead: {title}"
 
 #: src/session/next-stop-wait.tsx
-msgctxt "aOibca"
-msgid "Do {title} while you wait"
-msgstr "Do {title} while you wait"
+msgctxt "ZqQr3A"
+msgid "While you wait: {title}"
+msgstr "While you wait: {title}"
 
 #: src/session/next-stop.tsx
 msgctxt "xpHtfD"

@@ -1527,9 +1527,9 @@ msgid "Undo"
 msgstr "Rückgängig"
 
 #: src/challenge/challenge-moved-screen.tsx
-msgctxt "jZOK3Z"
-msgid "Moved to <mono>{date}</mono>"
-msgstr "Auf <mono>{date}</mono> verschoben"
+msgctxt "smtXcI"
+msgid "Moved to {date}"
+msgstr "Auf {date} verschoben"
 
 #: src/challenge/challenge-moved-screen.tsx
 msgctxt "Mlb61X"
@@ -3989,7 +3989,7 @@ msgstr "Als Nächstes auf deinem Weg"
 #: src/today/today-week.tsx
 msgctxt "LeNKyW"
 msgid "not studied"
-msgstr "Nicht gelernt"
+msgstr "nicht gelernt"
 
 #: src/journey/pace-details.tsx
 #: src/today/today-week.tsx
@@ -6028,15 +6028,20 @@ msgid "Its picture had mistakes, so here's the mind map as text."
 msgstr "In der Abbildung waren Fehler, deshalb findest du die Mindmap hier als Text."
 
 #: src/mind-maps/mind-map-description.tsx
-msgctxt "O36UiH"
-msgid "Mind map: {title}. {idea}"
-msgstr "Mindmap: {title}. {idea}"
-
-#: src/mind-maps/mind-map-description.tsx
 #: src/mind-maps/mind-map-tiles.tsx
 msgctxt "v3MXM4"
 msgid "Mind map of {chapter}"
 msgstr "Mindmap zu {chapter}"
+
+#: src/mind-maps/mind-map-description.tsx
+msgctxt "iSBZiC"
+msgid "Mind map: {title} {idea}"
+msgstr "Mindmap: {title} {idea}"
+
+#: src/mind-maps/mind-map-description.tsx
+msgctxt "O36UiH"
+msgid "Mind map: {title}. {idea}"
+msgstr "Mindmap: {title}. {idea}"
 
 #: src/mind-maps/mind-map-outline.tsx
 msgctxt "DTMTVD"
@@ -6791,6 +6796,7 @@ msgstr "Deine Übung wird gespeichert…"
 #: src/onboarding/steps/placement-question.tsx
 #: src/questions/choice-questions-run.tsx
 #: src/session/question-block/block-question.tsx
+#: src/session/question-block/question-feedback.tsx
 msgctxt "h5CuXu"
 msgid "I don't know yet"
 msgstr "Das weiß ich noch nicht"
@@ -10385,12 +10391,12 @@ msgstr "Für {area} kommen ungefähr {count, plural, one {# weitere Lektion} oth
 #: src/plan/use-area-start-texts.ts
 msgctxt "WncCQq"
 msgid "{area} gets {count, plural, one {# more lesson} other {# more lessons}}, so you finish it around {after} instead of {before}."
-msgstr "Für {area} kommen {count, plural, one {# zusätzliche Lektion} other {# zusätzliche Lektionen}} dazu. Deshalb bist du damit voraussichtlich um {after} statt um {before} fertig."
+msgstr "Für {area} kommen {count, plural, one {# zusätzliche Lektion} other {# zusätzliche Lektionen}} dazu. Deshalb bist du damit voraussichtlich am {after} statt am {before} fertig."
 
 #: src/plan/use-area-start-texts.ts
 msgctxt "_Q4kxN"
 msgid "{area} has {count, plural, one {# lesson} other {# lessons}} fewer to go, so you finish it around {after} instead of {before}."
-msgstr "Für {area} stehen {count, plural, one {# Lektion} other {# Lektionen}} weniger an. Deshalb bist du damit voraussichtlich um {after} statt um {before} fertig."
+msgstr "Für {area} stehen {count, plural, one {# Lektion} other {# Lektionen}} weniger an. Deshalb bist du damit voraussichtlich am {after} statt am {before} fertig."
 
 #: src/plan/use-area-start-texts.ts
 msgctxt "KerAfr"
@@ -10963,9 +10969,9 @@ msgid "Days {first, number} to {last, number} of {days, number}"
 msgstr "Tage {first, number} bis {last, number} von {days, number}"
 
 #: src/plan/use-system-change-sentence.ts
-msgctxt "bk-hcF"
-msgid "Lessons earlier days left come first, and the rest of your plan moved forward."
-msgstr "Offene Lektionen aus früheren Tagen kommen zuerst dran, der Rest deines Plans verschiebt sich nach hinten."
+msgctxt "TPmKpi"
+msgid "Lessons left from earlier days come first, and the rest of your plan moved later."
+msgstr "Offene Lektionen aus früheren Tagen kommen zuerst dran, und der Rest deines Plans hat sich nach hinten verschoben."
 
 #: src/plan/use-system-change-sentence.ts
 msgctxt "ARyfXf"
@@ -11413,14 +11419,14 @@ msgid "This lesson is being written for you. It's usually ready in about two min
 msgstr "Wir erstellen gerade deine Lektion. Meistens ist sie nach etwa zwei Minuten fertig."
 
 #: src/session/next-stop-wait.tsx
-msgctxt "66uU22"
-msgid "Do {title} instead"
-msgstr "Mach stattdessen {title}"
+msgctxt "J05b6v"
+msgid "Instead: {title}"
+msgstr "Stattdessen: {title}"
 
 #: src/session/next-stop-wait.tsx
-msgctxt "aOibca"
-msgid "Do {title} while you wait"
-msgstr "Mach {title}, solange du wartest"
+msgctxt "ZqQr3A"
+msgid "While you wait: {title}"
+msgstr "Solange du wartest: {title}"
 
 #: src/session/next-stop.tsx
 msgctxt "xpHtfD"
@@ -12719,7 +12725,7 @@ msgstr "Ziel erreicht"
 #: src/today/today-week.tsx
 msgctxt "F8phHs"
 msgid "studied"
-msgstr "Gelernt"
+msgstr "gelernt"
 
 #: src/today/today-week.tsx
 msgctxt "uMBOLl"

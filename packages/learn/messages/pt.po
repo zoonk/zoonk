@@ -544,52 +544,52 @@ msgstr "Tempo diferente nos fins de semana"
 #: src/_utils/use-belt-name.ts
 msgctxt "belts.kZw3xs"
 msgid "Yellow belt"
-msgstr "Faixa Amarela"
+msgstr "Faixa amarela"
 
 #: src/_utils/use-belt-name.ts
 msgctxt "belts.ztJsyS"
 msgid "Orange belt"
-msgstr "Faixa Laranja"
+msgstr "Faixa laranja"
 
 #: src/_utils/use-belt-name.ts
 msgctxt "belts.wBbJPU"
 msgid "Green belt"
-msgstr "Faixa Verde"
+msgstr "Faixa verde"
 
 #: src/_utils/use-belt-name.ts
 msgctxt "belts.AUNcSQ"
 msgid "Blue belt"
-msgstr "Faixa Azul"
+msgstr "Faixa azul"
 
 #: src/_utils/use-belt-name.ts
 msgctxt "belts.3yO7bH"
 msgid "Purple belt"
-msgstr "Faixa Roxa"
+msgstr "Faixa roxa"
 
 #: src/_utils/use-belt-name.ts
 msgctxt "belts.yzB6LM"
 msgid "Brown belt"
-msgstr "Faixa Marrom"
+msgstr "Faixa marrom"
 
 #: src/_utils/use-belt-name.ts
 msgctxt "belts.Ie50iU"
 msgid "Red belt"
-msgstr "Faixa Vermelha"
+msgstr "Faixa vermelha"
 
 #: src/_utils/use-belt-name.ts
 msgctxt "belts.6MwFDK"
 msgid "Gray belt"
-msgstr "Faixa Cinza"
+msgstr "Faixa cinza"
 
 #: src/_utils/use-belt-name.ts
 msgctxt "belts.0PP6_g"
 msgid "Black belt"
-msgstr "Faixa Preta"
+msgstr "Faixa preta"
 
 #: src/_utils/use-belt-name.ts
 msgctxt "belts.E1okmE"
 msgid "White belt"
-msgstr "Faixa Branca"
+msgstr "Faixa branca"
 
 #: src/_utils/use-format-number.ts
 msgctxt "SryZKb"
@@ -1527,9 +1527,9 @@ msgid "Undo"
 msgstr "Desfazer"
 
 #: src/challenge/challenge-moved-screen.tsx
-msgctxt "jZOK3Z"
-msgid "Moved to <mono>{date}</mono>"
-msgstr "Remarcado para <mono>{date}</mono>"
+msgctxt "smtXcI"
+msgid "Moved to {date}"
+msgstr "Remarcado para {date}"
 
 #: src/challenge/challenge-moved-screen.tsx
 msgctxt "Mlb61X"
@@ -6028,15 +6028,20 @@ msgid "Its picture had mistakes, so here's the mind map as text."
 msgstr "A imagem tinha erros, então aqui está o mapa mental em texto."
 
 #: src/mind-maps/mind-map-description.tsx
-msgctxt "O36UiH"
-msgid "Mind map: {title}. {idea}"
-msgstr "Mapa mental: {title}. {idea}"
-
-#: src/mind-maps/mind-map-description.tsx
 #: src/mind-maps/mind-map-tiles.tsx
 msgctxt "v3MXM4"
 msgid "Mind map of {chapter}"
 msgstr "Mapa mental de {chapter}"
+
+#: src/mind-maps/mind-map-description.tsx
+msgctxt "iSBZiC"
+msgid "Mind map: {title} {idea}"
+msgstr "Mapa mental: {title} {idea}"
+
+#: src/mind-maps/mind-map-description.tsx
+msgctxt "O36UiH"
+msgid "Mind map: {title}. {idea}"
+msgstr "Mapa mental: {title}. {idea}"
 
 #: src/mind-maps/mind-map-outline.tsx
 msgctxt "DTMTVD"
@@ -6791,6 +6796,7 @@ msgstr "Salvando sua prática…"
 #: src/onboarding/steps/placement-question.tsx
 #: src/questions/choice-questions-run.tsx
 #: src/session/question-block/block-question.tsx
+#: src/session/question-block/question-feedback.tsx
 msgctxt "h5CuXu"
 msgid "I don't know yet"
 msgstr "Ainda não sei"
@@ -10963,8 +10969,8 @@ msgid "Days {first, number} to {last, number} of {days, number}"
 msgstr "Dias {first, number} a {last, number} de {days, number}"
 
 #: src/plan/use-system-change-sentence.ts
-msgctxt "bk-hcF"
-msgid "Lessons earlier days left come first, and the rest of your plan moved forward."
+msgctxt "TPmKpi"
+msgid "Lessons left from earlier days come first, and the rest of your plan moved later."
 msgstr "As aulas que ficaram pendentes dos dias anteriores vêm primeiro, e o restante do plano foi adiado."
 
 #: src/plan/use-system-change-sentence.ts
@@ -11413,14 +11419,14 @@ msgid "This lesson is being written for you. It's usually ready in about two min
 msgstr "A gente está criando esta aula para você. Ela costuma ficar pronta em cerca de dois minutos."
 
 #: src/session/next-stop-wait.tsx
-msgctxt "66uU22"
-msgid "Do {title} instead"
-msgstr "Faça {title} no lugar"
+msgctxt "J05b6v"
+msgid "Instead: {title}"
+msgstr "Em vez disso: {title}"
 
 #: src/session/next-stop-wait.tsx
-msgctxt "aOibca"
-msgid "Do {title} while you wait"
-msgstr "Faça {title} enquanto espera"
+msgctxt "ZqQr3A"
+msgid "While you wait: {title}"
+msgstr "Enquanto espera: {title}"
 
 #: src/session/next-stop.tsx
 msgctxt "xpHtfD"

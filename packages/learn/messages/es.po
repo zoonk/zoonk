@@ -1527,9 +1527,9 @@ msgid "Undo"
 msgstr "Deshacer"
 
 #: src/challenge/challenge-moved-screen.tsx
-msgctxt "jZOK3Z"
-msgid "Moved to <mono>{date}</mono>"
-msgstr "Se ha cambiado a <mono>{date}</mono>"
+msgctxt "smtXcI"
+msgid "Moved to {date}"
+msgstr "Se ha cambiado a {date}"
 
 #: src/challenge/challenge-moved-screen.tsx
 msgctxt "Mlb61X"
@@ -4007,7 +4007,7 @@ msgstr "hoy"
 #: src/today/today-week.tsx
 msgctxt "sl8z6d"
 msgid "planned"
-msgstr "Planificado"
+msgstr "planificado"
 
 #: src/journey/pace-details.tsx
 msgctxt "v4LcAP"
@@ -6028,15 +6028,20 @@ msgid "Its picture had mistakes, so here's the mind map as text."
 msgstr "La imagen tenía errores, así que aquí tienes el mapa mental en texto."
 
 #: src/mind-maps/mind-map-description.tsx
-msgctxt "O36UiH"
-msgid "Mind map: {title}. {idea}"
-msgstr "Mapa mental: {title}. {idea}"
-
-#: src/mind-maps/mind-map-description.tsx
 #: src/mind-maps/mind-map-tiles.tsx
 msgctxt "v3MXM4"
 msgid "Mind map of {chapter}"
 msgstr "Mapa mental de {chapter}"
+
+#: src/mind-maps/mind-map-description.tsx
+msgctxt "iSBZiC"
+msgid "Mind map: {title} {idea}"
+msgstr "Mapa mental: {title} {idea}"
+
+#: src/mind-maps/mind-map-description.tsx
+msgctxt "O36UiH"
+msgid "Mind map: {title}. {idea}"
+msgstr "Mapa mental: {title}. {idea}"
 
 #: src/mind-maps/mind-map-outline.tsx
 msgctxt "DTMTVD"
@@ -6791,6 +6796,7 @@ msgstr "Guardando tu práctica…"
 #: src/onboarding/steps/placement-question.tsx
 #: src/questions/choice-questions-run.tsx
 #: src/session/question-block/block-question.tsx
+#: src/session/question-block/question-feedback.tsx
 msgctxt "h5CuXu"
 msgid "I don't know yet"
 msgstr "Aún no lo sé"
@@ -10380,17 +10386,17 @@ msgstr "Aun así, terminarás {area} más o menos el {after}, con todas sus lecc
 #: src/plan/use-area-start-texts.ts
 msgctxt "jUTbla"
 msgid "{area} gets about {count, plural, one {# more lesson} other {# more lessons}}, so you finish it around {after} instead of {before}."
-msgstr "A {area} se le añade aproximadamente {count, plural, one {# lección más} other {# lecciones más}}, así que la terminarás hacia {after} en vez de {before}."
+msgstr "Con aproximadamente {count, plural, one {# lección más} other {# lecciones más}}, terminarás {area} alrededor del {after}, en lugar del {before}."
 
 #: src/plan/use-area-start-texts.ts
 msgctxt "WncCQq"
 msgid "{area} gets {count, plural, one {# more lesson} other {# more lessons}}, so you finish it around {after} instead of {before}."
-msgstr "{area} incluye {count, plural, one {# lección más} other {# lecciones más}}, así que la terminarás hacia {after} en vez de {before}."
+msgstr "Con {count, plural, one {# lección más} other {# lecciones más}}, terminarás {area} alrededor del {after}, en lugar del {before}."
 
 #: src/plan/use-area-start-texts.ts
 msgctxt "_Q4kxN"
 msgid "{area} has {count, plural, one {# lesson} other {# lessons}} fewer to go, so you finish it around {after} instead of {before}."
-msgstr "A {area} le quedan {count, plural, one {# lección} other {# lecciones}} menos, así que la terminarás hacia {after} en vez de {before}."
+msgstr "Con {count, plural, one {# lección menos} other {# lecciones menos}} por hacer, terminarás {area} alrededor del {after}, en lugar del {before}."
 
 #: src/plan/use-area-start-texts.ts
 msgctxt "KerAfr"
@@ -10963,9 +10969,9 @@ msgid "Days {first, number} to {last, number} of {days, number}"
 msgstr "Días {first, number} a {last, number} de {days, number}"
 
 #: src/plan/use-system-change-sentence.ts
-msgctxt "bk-hcF"
-msgid "Lessons earlier days left come first, and the rest of your plan moved forward."
-msgstr "Las lecciones pendientes de días anteriores van primero y el resto del plan se retrasa."
+msgctxt "TPmKpi"
+msgid "Lessons left from earlier days come first, and the rest of your plan moved later."
+msgstr "Las lecciones pendientes de días anteriores van primero y el resto de tu plan se ha retrasado."
 
 #: src/plan/use-system-change-sentence.ts
 msgctxt "ARyfXf"
@@ -11413,14 +11419,14 @@ msgid "This lesson is being written for you. It's usually ready in about two min
 msgstr "Estamos preparando esta lección para ti. Suele estar lista en unos dos minutos."
 
 #: src/session/next-stop-wait.tsx
-msgctxt "66uU22"
-msgid "Do {title} instead"
-msgstr "Haz {title} en su lugar"
+msgctxt "J05b6v"
+msgid "Instead: {title}"
+msgstr "En su lugar: {title}"
 
 #: src/session/next-stop-wait.tsx
-msgctxt "aOibca"
-msgid "Do {title} while you wait"
-msgstr "Haz {title} mientras esperas"
+msgctxt "ZqQr3A"
+msgid "While you wait: {title}"
+msgstr "Mientras esperas: {title}"
 
 #: src/session/next-stop.tsx
 msgctxt "xpHtfD"
@@ -11697,7 +11703,7 @@ msgstr "Completado en {time}"
 #: src/session/summary/summary-parts.tsx
 msgctxt "KxAe8j"
 msgid "Back {days}"
-msgstr "Vuelve el {days}"
+msgstr "De vuelta: {days}"
 
 #: src/session/summary/summary-parts.tsx
 #: src/session/summary/summary-rewards.tsx

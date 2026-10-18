@@ -682,7 +682,7 @@ msgstr "Aucun cours disponible pour le moment."
 #: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
 msgctxt "T0mfNV"
 msgid "Loading more courses…"
-msgstr "Chargement d'autres cours…"
+msgstr "Chargement d’autres cours…"
 
 #: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
 msgctxt "W_5hwr"
@@ -706,7 +706,7 @@ msgstr "Commence par un cours ou dis à Zoonk ce que tu veux préparer."
 #: src/app/[lang]/(app)/(catalog)/courses/page.tsx
 msgctxt "WgPMAP"
 msgid "Explore all Zoonk courses to learn anything using AI. Find interactive lessons to learn subjects like science, math, technology, and more."
-msgstr "Explore tous les cours Zoonk pour tout apprendre avec l'IA. Trouve des leçons interactives pour apprendre les sciences, les maths, la technologie et plus encore."
+msgstr "Explore tous les cours Zoonk pour tout apprendre avec l’IA. Trouve des leçons interactives pour apprendre les sciences, les maths, la technologie et plus encore."
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-bar-end.tsx
 msgctxt "yAw6p8"
@@ -727,7 +727,7 @@ msgstr "Commence par te fixer un objectif"
 #: src/app/[lang]/(app)/(learn)/plan/plan-no-goal.tsx
 msgctxt "FqgLH3"
 msgid "Tell us what you want to learn, and we'll plan every day until you get there."
-msgstr "Dis-nous ce que tu veux apprendre et on te proposera un programme quotidien pour t'aider à avancer."
+msgstr "Dis-nous ce que tu veux apprendre, et on planifiera chaque jour jusqu’à ce que tu y arrives."
 
 #: src/app/[lang]/(app)/(learn)/_components/learn-sidebar-learner.tsx
 msgctxt "vj_mVz"
@@ -1076,7 +1076,7 @@ msgstr "Se reconnecter"
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
 msgctxt "OR6zpA"
 msgid "We couldn't delete your account. Try again or email hello@zoonk.com."
-msgstr "On n'a pas pu supprimer ton compte. Réessaie ou écris à hello@zoonk.com."
+msgstr "On n’a pas pu supprimer ton compte. Réessaie ou écris à hello@zoonk.com."
 
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
@@ -1337,7 +1337,7 @@ msgstr "Stripe confirme ton paiement. Ça ne prend généralement que quelques s
 #: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
 msgctxt "gDgnVG"
 msgid "This is taking longer than usual. If your payment went through, Plus shows up here as soon as Stripe confirms it."
-msgstr "Ça prend plus de temps que d'habitude. Si ton paiement est bien passé, Plus s'affichera ici dès que Stripe l'aura confirmé."
+msgstr "Ça prend plus de temps que d’habitude. Si ton paiement est bien passé, Plus s’affichera ici dès que Stripe l’aura confirmé."
 
 #: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
 msgctxt "QI17io"
@@ -2711,12 +2711,12 @@ msgstr "{move, select, london {Mets l’accent sur la première syllabe : <b>SA
 #: src/app/[lang]/(home)/_components/practice-move.tsx
 msgctxt "waQKY7"
 msgid "Practice call"
-msgstr "Appel d'entraînement"
+msgstr "Appel d’entraînement"
 
 #: src/app/[lang]/(home)/_components/practice-move.tsx
 msgctxt "53_ATX"
 msgid "Goals of the call"
-msgstr "Objectifs de l'appel"
+msgstr "Objectifs de l’appel"
 
 #: src/app/[lang]/(home)/_components/practice-move.tsx
 msgctxt "JXdbo8"
@@ -2861,7 +2861,7 @@ msgstr "On passera ce que tu sais déjà"
 #: src/app/[lang]/(home)/_components/stop-day-one.tsx
 msgctxt "koLFLL"
 msgid "I studied it before"
-msgstr "Je l'ai déjà étudié"
+msgstr "Je l’ai déjà étudié"
 
 #: src/app/[lang]/(home)/_components/stop-day-one.tsx
 msgctxt "47D0tB"
@@ -3155,7 +3155,7 @@ msgstr "Test de priorités"
 #: src/components/public/start-lesson-button.tsx
 msgctxt "K6x1SC"
 msgid "We couldn't open the lesson. Try again, or log in to keep going."
-msgstr "Impossible d'ouvrir la leçon. Réessaie ou connecte-toi pour continuer."
+msgstr "Impossible d’ouvrir la leçon. Réessaie ou connecte-toi pour continuer."
 
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
 #: src/components/public/start-lesson-button.tsx
@@ -3191,7 +3191,7 @@ msgstr "{count, plural, one {Revoir # idée} other {Revoir # idées}}"
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "X6rSIT"
 msgid "It usually takes a minute or two. The lesson opens here as soon as it's ready."
-msgstr "Ça prend généralement une ou deux minutes. La leçon s'ouvrira ici dès qu'elle sera prête."
+msgstr "Ça prend généralement une ou deux minutes. La leçon s’ouvrira ici dès qu’elle sera prête."
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "Dr8j6a"
@@ -3988,7 +3988,7 @@ msgstr "Continuer ton plan"
 #: src/lib/belt-label.ts
 msgctxt "_6Vlf7"
 msgid "{color, select, white {White belt} yellow {Yellow belt} orange {Orange belt} green {Green belt} blue {Blue belt} purple {Purple belt} brown {Brown belt} red {Red belt} gray {Gray belt} black {Black belt} other {Belt}}"
-msgstr "{color, select, white {Ceinture Blanche} yellow {Ceinture Jaune} orange {Ceinture Orange} green {Ceinture Verte} blue {Ceinture Bleue} purple {Ceinture Violette} brown {Ceinture Marron} red {Ceinture Rouge} gray {Ceinture Grise} black {Ceinture Noire} other {Ceinture}}"
+msgstr "{color, select, white {Ceinture blanche} yellow {Ceinture jaune} orange {Ceinture orange} green {Ceinture verte} blue {Ceinture bleue} purple {Ceinture violette} brown {Ceinture marron} red {Ceinture rouge} gray {Ceinture grise} black {Ceinture noire} other {Ceinture}}"
 
 #: src/lib/categories/category.ts
 msgctxt "fFt3il"
