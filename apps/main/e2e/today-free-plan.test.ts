@@ -20,10 +20,13 @@ function toIsoDay(date: Date): string {
 /**
  * Ana on the free plan past its first week of exam prep, back after a break, on her phone's Today:
  * her plan dates two new lessons today, which only Plus opens, and saves time today for a mock her
- * plan doesn't include.
+ * plan doesn't include. `done`: her session is done; `empty`: her day has nothing to review or fix.
  */
-async function openFreeDayBack(browser: Browser) {
-  const { goal, user } = await createStudyDay({ freshStart: "welcomeBack" });
+async function openFreeDayBack(
+  browser: Browser,
+  { done = false, empty = false }: { done?: boolean; empty?: boolean } = {},
+) {
+  const { goal, session, user } = await createStudyDay({ freshStart: "welcomeBack" });
   const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
   const today = toUTCMidnight(new Date());
   const mockDay = new Date(today.getTime() + MOCK_IN_DAYS * MS_PER_DAY);
@@ -61,6 +64,13 @@ async function openFreeDayBack(browser: Browser) {
       },
       where: { id: plan.id },
     }),
+    // Her session done, or a day with nothing to review or fix.
+    done &&
+      prisma.studySessionBlock.updateMany({
+        data: { status: "completed" },
+        where: { sessionId: session.id },
+      }),
+    empty && prisma.studySessionBlock.deleteMany({ where: { sessionId: session.id } }),
   ]);
 
   const page = await openAs(browser, user);
@@ -108,12 +118,11 @@ test.describe("Today on a free exam plan past its first week", () => {
       LOCKED_LESSONS.map(async (title) => {
         const row = card.getByRole("listitem").filter({ hasText: title });
 
-        await expect(row).toContainText("Available with Plus");
-
-        await expect(row.getByRole("link", { name: title })).toHaveAttribute(
-          "href",
-          "/subscription",
+        await expect(row.getByRole("link")).toHaveAccessibleName(
+          new RegExp(`^${title}\\s*Available with Plus$`, "u"),
         );
+
+        await expect(row.getByRole("link")).toHaveAttribute("href", "/subscription");
       }),
     );
 
@@ -135,6 +144,42 @@ test.describe("Today on a free exam plan past its first week", () => {
     ).toBeVisible();
 
     await expect(page.getByRole("main").getByText(/lighter/iu)).toHaveCount(0);
+    await page.context().close();
+  });
+
+  // Ana's Today after her session: "Today's session is complete", and her plan's lessons for the
+  // day gone from sight.
+  test("keeps today's locked lessons in sight once the day's session is done", async ({
+    browser,
+  }) => {
+    const page = await openFreeDayBack(browser, { done: true });
+    const card = page.getByRole("region", { name: "Today's session" });
+
+    await expect(card.getByRole("listitem").filter({ hasText: LOCKED_LESSONS[0] })).toContainText(
+      "Available with Plus",
+    );
+
+    await expect(card.getByText("Today's session is complete.")).toBeVisible();
+    await page.screenshot({ fullPage: true, path: test.info().outputPath("today-free-done.png") });
+    await page.context().close();
+  });
+
+  // A free day with nothing to review said "Getting today's lessons ready…" and waited for
+  // lessons the free plan never adds.
+  test("says there's nothing to review on a free day without reviews, its lessons locked", async ({
+    browser,
+  }) => {
+    const page = await openFreeDayBack(browser, { empty: true });
+    const card = page.getByRole("region", { name: "Today's session" });
+
+    await expect(card.getByText("Nothing to review today.")).toBeVisible();
+
+    await expect(card.getByRole("listitem").filter({ hasText: LOCKED_LESSONS[0] })).toContainText(
+      "Available with Plus",
+    );
+
+    await expect(card.getByText(/Getting today's lessons ready/u)).toHaveCount(0);
+    await page.screenshot({ fullPage: true, path: test.info().outputPath("today-free-empty.png") });
     await page.context().close();
   });
 

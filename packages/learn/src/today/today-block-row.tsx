@@ -309,8 +309,9 @@ export function BlockRow({
 /**
  * One of the lessons the plan dates today that the learner's plan holds for Plus, after the day's
  * blocks: drawn as a lesson still to do, the Plus mark where its minutes would be, opening the Plus
- * page. It isn't part of the session: never the next block, no mission mark, and the day's
- * segments, time and action leave it out. It folds with the day's other upcoming rows.
+ * page. The mark is part of the link, so its name says "Available with Plus" wherever it's read.
+ * It isn't part of the session: never the next block, no mission mark, and the day's segments,
+ * time and action leave it out. It folds with the day's other upcoming rows.
  */
 export function PlusLessonRow({ fold = NO_FOLD, title }: { fold?: RowFold; title: string }) {
   const { actions } = useTodayScreen();
@@ -326,13 +327,13 @@ export function PlusLessonRow({ fold = NO_FOLD, title }: { fold?: RowFold; title
         <KindMark kind="lesson" />
       </span>
 
-      <div className="flex min-w-0 flex-1 flex-col gap-px">
-        <LearnLink className={cn(ROW_OPEN_CLASS, "after:-inset-x-2.5")} href={actions.plusHref}>
-          <span className="truncate text-sm leading-5 font-medium">{title}</span>
-        </LearnLink>
-      </div>
-
-      <PlusMark />
+      <LearnLink
+        className={cn(ROW_OPEN_CLASS, "flex-1 items-center gap-3 after:-inset-x-2.5")}
+        href={actions.plusHref}
+      >
+        <span className="min-w-0 flex-1 truncate text-sm leading-5 font-medium">{title}</span>
+        <PlusMark />
+      </LearnLink>
     </li>
   );
 }
