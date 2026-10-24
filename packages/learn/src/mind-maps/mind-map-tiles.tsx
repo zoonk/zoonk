@@ -137,7 +137,7 @@ function MapRequestTile({
       <span
         className={cn(
           TILE_CLASS,
-          "border-border flex flex-col items-center justify-center gap-3 border border-dashed p-3 text-center",
+          "border-input flex flex-col items-center justify-center gap-3 border border-dashed p-3 text-center",
         )}
       >
         <NetworkIcon aria-hidden="true" className="text-muted-foreground size-5" />
