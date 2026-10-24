@@ -1397,9 +1397,9 @@ msgid "{count} right to win"
 msgstr "{count} aciertos para ganar"
 
 #: src/challenge/challenge-intro.tsx
-msgctxt "oP0yk0"
-msgid "You'll see why each answer was right or wrong at the end, with the traps he set."
-msgstr "Al final verás por qué cada respuesta era correcta o incorrecta y qué trampas había preparado."
+msgctxt "Aw7qrt"
+msgid "You'll see right or wrong after each answer, and why at the end, with the traps he set."
+msgstr "Después de cada respuesta sabrás si has acertado o no; al final, descubrirás por qué y qué trampas ha preparado."
 
 #: src/challenge/challenge-intro.tsx
 #: src/checkpoints/checkpoint-result-view.tsx
@@ -1429,9 +1429,9 @@ msgid "Weekly challenge"
 msgstr "Desafío semanal"
 
 #: src/challenge/challenge-intro.tsx
-msgctxt "47VvzZ"
-msgid "You'll see why each answer was right or wrong at the end."
-msgstr "Al final verás por qué cada respuesta era correcta o incorrecta."
+msgctxt "YrQkK2"
+msgid "You'll see right or wrong after each answer, and why at the end."
+msgstr "Después de cada respuesta sabrás si has acertado o no; al final, descubrirás por qué."
 
 #: src/challenge/challenge-intro.tsx
 #: src/mock/mock-answer-sheet.tsx
@@ -1764,14 +1764,14 @@ msgid "{count, plural, =0 {No questions left} one {# question left} other {# que
 msgstr "{count, plural, =0 {No quedan preguntas} one {Queda # pregunta} other {Quedan # preguntas}}"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
-msgctxt "qau1dM"
-msgid "No hints. You'll see why each answer was right or wrong at the end, with the traps he set."
-msgstr "Sin pistas. Al final verás por qué cada respuesta era correcta o incorrecta y qué trampas había preparado."
+msgctxt "nJFH0r"
+msgid "No hints. You'll see right or wrong after each answer, and why at the end, with the traps he set."
+msgstr "Sin pistas. Después de cada respuesta sabrás si has acertado o no; al final, descubrirás por qué y qué trampas ha preparado."
 
 #: src/checkpoints/checkpoint-duel-view.tsx
-msgctxt "lBIHEm"
-msgid "No hints. You'll see why each answer was right or wrong at the end."
-msgstr "Sin pistas. Al final verás por qué cada respuesta era correcta o incorrecta."
+msgctxt "x3He4J"
+msgid "No hints. You'll see right or wrong after each answer, and why at the end."
+msgstr "Sin pistas. Después de cada respuesta sabrás si has acertado o no; al final, descubrirás por qué."
 
 #: src/checkpoints/checkpoint-duel-view.tsx
 #: src/language/pattern/language-pattern-screen.tsx

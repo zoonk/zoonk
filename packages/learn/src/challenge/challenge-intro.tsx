@@ -71,7 +71,9 @@ function TricksterIntro() {
       />
 
       <DuelBriefing
-        rule={t("You'll see why each answer was right or wrong at the end, with the traps he set.")}
+        rule={t(
+          "You'll see right or wrong after each answer, and why at the end, with the traps he set.",
+        )}
       />
     </StepCard>
   );
@@ -135,7 +137,7 @@ function WeeklyIntro() {
         reward={prize}
       />
 
-      <DuelBriefing rule={t("You'll see why each answer was right or wrong at the end.")} />
+      <DuelBriefing rule={t("You'll see right or wrong after each answer, and why at the end.")} />
     </StepCard>
   );
 }

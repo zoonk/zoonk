@@ -255,7 +255,7 @@ function TricksterPanel() {
 
         <p className="text-muted-foreground text-[0.8125rem] leading-5 text-pretty">
           {t(
-            "No hints. You'll see why each answer was right or wrong at the end, with the traps he set.",
+            "No hints. You'll see right or wrong after each answer, and why at the end, with the traps he set.",
           )}
         </p>
       </div>
@@ -272,7 +272,7 @@ function WeeklyPanel() {
   return (
     <>
       <p className="text-muted-foreground text-[0.8125rem] leading-5 text-pretty">
-        {t("No hints. You'll see why each answer was right or wrong at the end.")}
+        {t("No hints. You'll see right or wrong after each answer, and why at the end.")}
       </p>
 
       <PrizeRow />

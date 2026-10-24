@@ -1397,9 +1397,9 @@ msgid "{count} right to win"
 msgstr "{count} bonnes réponses pour gagner"
 
 #: src/challenge/challenge-intro.tsx
-msgctxt "oP0yk0"
-msgid "You'll see why each answer was right or wrong at the end, with the traps he set."
-msgstr "À la fin, tu verras pourquoi chaque réponse était correcte ou incorrecte, ainsi que les pièges qu’il a tendus."
+msgctxt "Aw7qrt"
+msgid "You'll see right or wrong after each answer, and why at the end, with the traps he set."
+msgstr "Tu verras après chaque réponse si elle est juste ou fausse, puis à la fin pourquoi et quels pièges il a tendus."
 
 #: src/challenge/challenge-intro.tsx
 #: src/checkpoints/checkpoint-result-view.tsx
@@ -1429,9 +1429,9 @@ msgid "Weekly challenge"
 msgstr "Défi hebdomadaire"
 
 #: src/challenge/challenge-intro.tsx
-msgctxt "47VvzZ"
-msgid "You'll see why each answer was right or wrong at the end."
-msgstr "À la fin, tu verras pourquoi chaque réponse était correcte ou incorrecte."
+msgctxt "YrQkK2"
+msgid "You'll see right or wrong after each answer, and why at the end."
+msgstr "Tu verras après chaque réponse si elle est juste ou fausse, puis à la fin pourquoi."
 
 #: src/challenge/challenge-intro.tsx
 #: src/mock/mock-answer-sheet.tsx
@@ -1764,14 +1764,14 @@ msgid "{count, plural, =0 {No questions left} one {# question left} other {# que
 msgstr "{count, plural, =0 {Aucune question restante} one {# question restante} other {# questions restantes}}"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
-msgctxt "qau1dM"
-msgid "No hints. You'll see why each answer was right or wrong at the end, with the traps he set."
-msgstr "Aucun indice. À la fin, tu verras pourquoi chaque réponse était correcte ou incorrecte, ainsi que les pièges qu’il a tendus."
+msgctxt "nJFH0r"
+msgid "No hints. You'll see right or wrong after each answer, and why at the end, with the traps he set."
+msgstr "Aucun indice. Tu verras après chaque réponse si elle est juste ou fausse, puis à la fin pourquoi et quels pièges il a tendus."
 
 #: src/checkpoints/checkpoint-duel-view.tsx
-msgctxt "lBIHEm"
-msgid "No hints. You'll see why each answer was right or wrong at the end."
-msgstr "Aucun indice. À la fin, tu verras pourquoi chaque réponse était correcte ou incorrecte."
+msgctxt "x3He4J"
+msgid "No hints. You'll see right or wrong after each answer, and why at the end."
+msgstr "Aucun indice. Tu verras après chaque réponse si elle est juste ou fausse, puis à la fin pourquoi."
 
 #: src/checkpoints/checkpoint-duel-view.tsx
 #: src/language/pattern/language-pattern-screen.tsx
