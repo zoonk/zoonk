@@ -2,6 +2,7 @@
 
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { useEscapeClick } from "@zoonk/ui/hooks/keyboard";
+import { useScrolled } from "@zoonk/ui/hooks/scrolled";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronLeftIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -16,20 +17,6 @@ const BAR_HEIGHT_PX = 64;
 
 const BAR_SURFACE_CLASS =
   "bg-background/95 supports-backdrop-filter:bg-background/80 border-b backdrop-blur transition-colors motion-reduce:transition-none";
-
-/** Whether the page has scrolled at all, which draws the bar's bottom edge. */
-function useScrolled() {
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const update = () => setScrolled(globalThis.scrollY > 0);
-    update();
-    globalThis.addEventListener("scroll", update, { passive: true });
-    return () => globalThis.removeEventListener("scroll", update);
-  }, []);
-
-  return scrolled;
-}
 
 /**
  * A page bar's surface: sticky at the page's top over the frame's padding, as wide as the page's

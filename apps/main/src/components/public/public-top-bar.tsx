@@ -3,6 +3,7 @@ import { ZoonkLogo } from "@zoonk/ui/components/zoonk-logo";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type ReactNode } from "react";
 import { PUBLIC_CONTAINER_CLASS } from "./landing-styles";
+import { PublicTopBarSurface } from "./public-top-bar-surface";
 
 /** The product's name, the same in every language. */
 const BRAND_NAME = "Zoonk";
@@ -25,9 +26,9 @@ export function PublicHomeLink() {
 
 /**
  * The public top bar: the brain goes home (or what `start` puts there instead), and the page's
- * actions on the right, on the public pages' one container. Pages that never show the account menu
- * (the visitor home) use it directly, so its code never ships to them; the others use
- * `PublicHeader`.
+ * actions on the right, on the public pages' one container, over a hairline once the page scrolls.
+ * Pages that never show the account menu (the visitor home) use it directly, so its code never
+ * ships to them; the others use `PublicHeader`.
  */
 export function PublicTopBar({
   actions,
@@ -39,16 +40,11 @@ export function PublicTopBar({
   start?: ReactNode;
 }) {
   return (
-    <header
-      className={cn(
-        "bg-background/85 supports-backdrop-filter:bg-background/70 sticky top-0 z-40 backdrop-blur-md",
-        className,
-      )}
-    >
+    <PublicTopBarSurface className={className}>
       <div className={cn(PUBLIC_CONTAINER_CLASS, "flex h-14 items-center gap-8 sm:h-[72px]")}>
         <div className="flex min-w-0 items-center">{start ?? <PublicHomeLink />}</div>
         <div className="ml-auto flex shrink-0 items-center gap-2">{actions}</div>
       </div>
-    </header>
+    </PublicTopBarSurface>
   );
 }
