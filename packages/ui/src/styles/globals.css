@@ -119,14 +119,16 @@
  * inverted). Color appears only where it means something: a kind's dot, a status's icon, green for
  * progress made, red for wrong or removed, amber for a flag, blue for the learner's own pick and
  * place, violet for Brain Power; never a button, a hover or a screen's background.
- * The page is a step darker than the cards on it, in both themes, so a card reads as one without a
- * shadow. Text meets WCAG AA on every surface, colored text through its `-text` token and the faint
- * labels included (quieter than what they name by size and a lighter step, never below 4.5:1); a
- * device asking for more contrast gets the blocks below. The rules: `.agents/skills/zoonk-design/references/color.md`.
+ * In light the page is white like the cards on it, so a card reads by its hairline, and the sidebar
+ * is a step dimmer; in dark the page is a step darker than the cards, so a card reads as one
+ * without a shadow. Text meets WCAG AA on every surface, colored text through its `-text` token
+ * and the faint labels included (quieter than what they name by size and a lighter step, never
+ * below 4.5:1); a device asking for more contrast gets the blocks below. The rules:
+ * `.agents/skills/zoonk-design/references/color.md`.
  */
 :root {
   --radius: 0.625rem;
-  --background: oklch(0.985 0.001 106);
+  --background: var(--color-white);
   --foreground: oklch(0.185 0.004 286);
   --card: var(--color-white);
   --card-foreground: oklch(0.185 0.004 286);
@@ -176,7 +178,7 @@
   --border: oklch(0 0 0 / 7%);
   --input: oklch(0 0 0 / 13%);
   --ring: var(--color-primary);
-  --sidebar: oklch(0.975 0.0015 106);
+  --sidebar: oklch(0.97 0.0015 106);
   --sidebar-foreground: var(--color-foreground);
   --sidebar-primary: var(--color-primary);
   --sidebar-primary-foreground: var(--color-primary-foreground);
