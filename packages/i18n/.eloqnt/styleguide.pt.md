@@ -33,7 +33,7 @@
 - “mind map”: “mapa mental”
 - “learning path”: “trilha”
 - “prerequisite”: “base”, not “pré-requisito”
-- Prerequisite choices “In depth” / “Essential” / “Quick lesson” / “Skip”: “A fundo” / “Essencial” / “Aula rápida” / “Pular”
+- Prerequisite choices “In depth” / “Essentials” / “Quick lesson” / “Skip”: “A fundo” / “Essencial” / “Aula rápida” / “Pular”
 - “Brain Power”: “Poder Mental”
 - “BP”: “PM”
 - “Energy”: “Energia”

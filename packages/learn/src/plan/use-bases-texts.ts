@@ -46,12 +46,8 @@ export function useAdviceText() {
     }
 
     return isExam
-      ? t(
-          "We recommend the essentials of each prerequisite, the first third of its lessons, so the topics that build on it make sense.",
-        )
-      : t(
-          "We recommend the essentials of each prerequisite, the first third of its lessons, so what builds on it makes sense.",
-        );
+      ? t("We recommend the essentials, so the topics that build on them make sense.")
+      : t("We recommend the essentials, so what builds on them makes sense.");
   };
 }
 
@@ -61,8 +57,8 @@ export function usePrerequisitesDescription() {
   const { goal } = usePlanScreen();
 
   return goal.kind === "exam"
-    ? t("Topics that come up a lot build on these. Choose how to study each one.")
-    : t("Your goal's final work builds on these. Choose how to study each one.");
+    ? t("Topics that come up a lot build on these.")
+    : t("Your goal's final work builds on these.");
 }
 
 /** That what the learner showed they know is out of the plan already. */
@@ -75,7 +71,7 @@ export function useKnownText() {
           "{count, plural, one {# prerequisite you showed you know is already out of your plan.} other {# prerequisites you showed you know are already out of your plan.}}",
           { count: bases.knownCount },
         )
-      : t("Prerequisites you show you know in a test leave your plan on their own.");
+      : t("Already know some? Show it in a test and they leave your plan on their own.");
 }
 
 /** What a prerequisite takes as the learner chose to study it. */
@@ -84,25 +80,54 @@ function minutesOf(item: PlanBasesView["items"][number]): number {
 }
 
 /**
- * "12 prerequisites, 2 h 30 min for their essentials", or, once some have another choice, the time
- * the learner's choices take.
+ * "12 prerequisites, 2 h 30 min for their essentials": how many and the time they take, with the
+ * way they're all studied, which the app chose for a new plan, or, once they differ, the time the
+ * learner's choices take.
  */
 export function useSummaryText() {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
 
   return (bases: PlanBasesView): string => {
-    const chosen = bases.items.reduce((sum, item) => sum + minutesOf(item), 0);
-    const count = bases.items.length;
+    const values = {
+      count: bases.items.length,
+      time: formatDuration(bases.items.reduce((sum, item) => sum + minutesOf(item), 0)),
+    };
 
-    return bases.items.every((item) => item.choice === "essential")
-      ? t(
-          "{count, plural, one {# prerequisite, {time} for its essentials.} other {# prerequisites, {time} for their essentials.}}",
-          { count, time: formatDuration(chosen) },
-        )
-      : t(
-          "{count, plural, one {# prerequisite, {time} with your choice.} other {# prerequisites, {time} with your choices.}}",
-          { count, time: formatDuration(chosen) },
-        );
+    const choices = new Set(bases.items.map((item) => item.choice));
+    const [shared] = choices;
+
+    if (choices.size > 1) {
+      return t(
+        "{count, plural, one {# prerequisite, {time} with your choice.} other {# prerequisites, {time} with your choices.}}",
+        values,
+      );
+    }
+
+    if (shared === "deep") {
+      return t(
+        "{count, plural, one {# prerequisite, {time} in depth.} other {# prerequisites, {time} in depth.}}",
+        values,
+      );
+    }
+
+    if (shared === "quick") {
+      return t(
+        "{count, plural, one {# prerequisite, {time} for its quick lesson.} other {# prerequisites, {time} for a quick lesson each.}}",
+        values,
+      );
+    }
+
+    if (shared === "skip") {
+      return t(
+        "{count, plural, one {# prerequisite, skipped.} other {# prerequisites, all skipped.}}",
+        values,
+      );
+    }
+
+    return t(
+      "{count, plural, one {# prerequisite, {time} for its essentials.} other {# prerequisites, {time} for their essentials.}}",
+      values,
+    );
   };
 }

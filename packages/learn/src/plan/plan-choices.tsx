@@ -55,7 +55,7 @@ export function PlanChoices() {
           </ListRowLeading>
           <ListRowContent>
             <ListRowTitle>{summaryText(bases)}</ListRowTitle>
-            <ListRowDescription>{t("Choose how to study each one.")}</ListRowDescription>
+            <ListRowDescription>{t("Change how you study them.")}</ListRowDescription>
           </ListRowContent>
         </ListRowButton>
       )}

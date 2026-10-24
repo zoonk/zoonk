@@ -15,9 +15,14 @@ import {
 import { LayersIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
-import { BASES_SAVE_ID, BasesAdvice } from "./plan-bases-advice";
+import { BasesAdvice, useBasesAdvice } from "./plan-bases-advice";
+import {
+  AllBasesChoice,
+  type BaseChoice,
+  BasesBySubject,
+  getSharedChoice,
+} from "./plan-bases-choices";
 import { useBasesEffectLines } from "./plan-bases-effect";
-import { type BaseChoice, BaseGroup } from "./plan-bases-group";
 import { PlanChangeApplied } from "./plan-change-applied";
 import { type PlanChangeOutcome, usePlanScreen } from "./plan-context";
 import { PlanFailedMessage } from "./plan-failed-message";
@@ -135,7 +140,6 @@ function BasesFooter({
       <Button
         disabled={isPending || changed.length === 0 || preview.status !== "ready"}
         focusableWhenDisabled
-        id={BASES_SAVE_ID}
         onClick={onSave}
         ref={saveButton}
       >
@@ -148,17 +152,21 @@ function BasesFooter({
 }
 
 /**
- * The prerequisites' choices by subject, each subject one choice that opens to choose each
- * prerequisite, with what they'd do before saving them.
+ * How to study the prerequisites: one choice for all of them, with the time each way takes and the
+ * one the app recommends when the learner asks, then each subject's own choice, folded until asked,
+ * with what the choices would do before saving them.
  */
 function BasesChoices({ bases, onDone }: { bases: PlanBasesView; onDone: () => void }) {
+  const t = useExtracted();
   const knownText = useKnownText();
+  const advice = useBasesAdvice();
   const { change, failed, isPending } = usePlanChange();
   const [draft, setDraft] = useState<Choices>(() => toChoices(bases.items));
   const [outcome, setOutcome] = useState<PlanChangeOutcome | null>(null);
+  const choiceOf = (item: PlanBaseView) => draft.get(item.skillId) ?? item.choice;
 
   const changed = bases.items.flatMap((item) => {
-    const choice = draft.get(item.skillId) ?? item.choice;
+    const choice = choiceOf(item);
     return choice === item.choice ? [] : [{ choice, skillId: item.skillId }];
   });
 
@@ -168,7 +176,8 @@ function BasesChoices({ bases, onDone }: { bases: PlanBasesView; onDone: () => v
     return <PlanChangeApplied change={outcome.change} icon={LayersIcon} onDone={onDone} />;
   }
 
-  const areas = Map.groupBy(bases.items, (item) => item.area);
+  const areas = [...Map.groupBy(bases.items, (item) => item.area)];
+  const shared = getSharedChoice(bases.items, choiceOf);
 
   const save = () => {
     if (isPending || preview.status !== "ready" || changed.length === 0) {
@@ -188,26 +197,47 @@ function BasesChoices({ bases, onDone }: { bases: PlanBasesView; onDone: () => v
   const choose = (skillIds: string[], choice: BaseChoice) =>
     setDraft(new Map([...draft, ...skillIds.map((skillId) => [skillId, choice] as const)]));
 
-  const recommend = (recommended: BaseChoice) =>
-    setDraft(new Map(bases.items.map((item) => [item.skillId, recommended])));
-
   return (
     <>
       <DrawerContent className="flex flex-col gap-5 pt-2">
-        <BasesAdvice bases={bases} choices={draft} onUse={recommend} />
+        <div className="flex flex-col gap-3">
+          <AllBasesChoice
+            items={bases.items}
+            onChoose={(choice) =>
+              choose(
+                bases.items.map((item) => item.skillId),
+                choice,
+              )
+            }
+            readOnly={isPending}
+            recommended={advice.recommended}
+            value={shared}
+          />
+
+          {shared === null && (
+            <p className="text-muted-foreground text-sm text-pretty">
+              {t("Your prerequisites have different choices. Picking one above applies it to all.")}
+            </p>
+          )}
+
+          <BasesAdvice
+            ask={() => void advice.ask()}
+            followed={changed.length === 0 && shared !== null && shared === advice.recommended}
+            state={advice.state}
+          />
+        </div>
+
+        {areas.length > 1 && (
+          <BasesBySubject
+            areas={areas}
+            choiceOf={choiceOf}
+            defaultOpen={getSharedChoice(bases.items, (item) => item.choice) === null}
+            onChoose={choose}
+            readOnly={isPending}
+          />
+        )}
 
         <p className="text-muted-foreground text-sm text-pretty">{knownText(bases)}</p>
-
-        {[...areas].map(([area, items]) => (
-          <BaseGroup
-            area={area}
-            choiceOf={(item) => draft.get(item.skillId) ?? item.choice}
-            disabled={isPending}
-            items={items}
-            key={area}
-            onChoose={choose}
-          />
-        ))}
       </DrawerContent>
 
       <BasesFooter
@@ -224,9 +254,10 @@ function BasesChoices({ bases, onDone }: { bases: PlanBasesView; onDone: () => v
 
 /**
  * The prerequisites' sheet: the skills the goal's topics or final work build on, worth less to it
- * than what builds on them, each to learn first, study for its essentials or skip, with the time
- * each takes, what the app recommends when the learner asks, and what the choices do before
- * they're saved. Each opening starts from the plan's own choices.
+ * than what builds on them, all studied one way (in depth, their essentials, a quick lesson each,
+ * or not at all) or each subject its own, with the time each way takes, what the app recommends
+ * when the learner asks, and what the choices do before they're saved. Each opening starts from
+ * the plan's own choices.
  */
 export function PlanBasesSheet({
   bases,

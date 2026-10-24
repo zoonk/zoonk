@@ -1,4 +1,4 @@
-import { type Browser } from "@playwright/test";
+import { type Browser, type Locator } from "@playwright/test";
 import { ONBOARDING_QUESTIONS } from "@zoonk/core/view-models/onboarding/contract";
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
@@ -10,6 +10,15 @@ import { expect, test } from "./fixtures";
 import { REPLAN_TIMEOUT_MS } from "./plan-timeouts";
 import { openAs } from "./study-day";
 import { routeTimeToCover } from "./time-to-cover-routes";
+
+/** Picks "In depth" for every prerequisite with a tap on its row: the radio is for assistive tech. */
+function pickInDepth(sheet: Locator) {
+  return sheet
+    .getByRole("radiogroup", { name: "All prerequisites" })
+    .locator("label")
+    .filter({ has: sheet.page().getByRole("radio", { name: /^In depth/u }) })
+    .click();
+}
 
 async function openBasesPlan(browser: Browser) {
   const user = await createE2EUser(getBaseURL());
@@ -120,7 +129,7 @@ test("coverage Apply requires a fresh preview after Adjust plan changes the sche
 });
 
 test("a failed prerequisite preview is retryable and cannot save choices", async ({ browser }) => {
-  const { area, goal, page } = await openBasesPlan(browser);
+  const { goal, page } = await openBasesPlan(browser);
   await page.getByRole("button", { name: "Adjust plan" }).click();
   const editor = page.getByRole("dialog", { name: "Adjust your plan" });
   await editor.getByRole("button", { name: "Choose prerequisites" }).click();
@@ -142,10 +151,7 @@ test("a failed prerequisite preview is retryable and cannot save choices", async
     await route.continue();
   });
 
-  await sheet
-    .getByRole("group", { exact: true, name: area })
-    .getByRole("button", { name: /^In depth/u })
-    .click();
+  await pickInDepth(sheet);
 
   await requested.promise;
   await expect(sheet.getByRole("button", { name: "Save choices" })).toBeDisabled();
@@ -175,7 +181,7 @@ test("a failed prerequisite preview is retryable and cannot save choices", async
 test("a prerequisite preview carries on when the Plan reads itself again unchanged", async ({
   browser,
 }) => {
-  const { area, goal, page } = await openBasesPlan(browser);
+  const { goal, page } = await openBasesPlan(browser);
   await page.getByRole("button", { name: "Adjust plan" }).click();
   const editor = page.getByRole("dialog", { name: "Adjust your plan" });
   await editor.getByRole("button", { name: "Choose prerequisites" }).click();
@@ -203,10 +209,7 @@ test("a prerequisite preview carries on when the Plan reads itself again unchang
       await route.continue();
     });
 
-    await sheet
-      .getByRole("group", { exact: true, name: area })
-      .getByRole("button", { name: /^In depth/u })
-      .click();
+    await pickInDepth(sheet);
 
     await page.clock.fastForward(350);
     await requested.promise;
@@ -241,7 +244,7 @@ test("a prerequisite preview carries on when the Plan reads itself again unchang
 test("an unavailable prerequisite preview eventually offers retry instead of blocking forever", async ({
   browser,
 }) => {
-  const { area, page } = await openBasesPlan(browser);
+  const { page } = await openBasesPlan(browser);
   await page.getByRole("button", { name: "Adjust plan" }).click();
   const editor = page.getByRole("dialog", { name: "Adjust your plan" });
   await editor.getByRole("button", { name: "Choose prerequisites" }).click();
@@ -265,10 +268,7 @@ test("an unavailable prerequisite preview eventually offers retry instead of blo
       await route.continue();
     });
 
-    await sheet
-      .getByRole("group", { exact: true, name: area })
-      .getByRole("button", { name: /^In depth/u })
-      .click();
+    await pickInDepth(sheet);
 
     await page.clock.fastForward(350);
     await requested.promise;

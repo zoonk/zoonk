@@ -1102,7 +1102,7 @@ msgstr "Zu"
 
 #: src/ceremonies/milestone-ceremony.tsx
 #: src/onboarding/steps/step-form.tsx
-#: src/plan/plan-bases-group.tsx
+#: src/plan/plan-bases-choices.tsx
 msgctxt "_4tOwT"
 msgid "Skip"
 msgstr "Passer"
@@ -9666,14 +9666,74 @@ msgid "Getting a recommendation…"
 msgstr "Préparation d’une recommandation…"
 
 #: src/plan/plan-bases-advice.tsx
-msgctxt "iSoork"
-msgid "Use the recommendation"
-msgstr "Utiliser la recommandation"
+msgctxt "EgPIKi"
+msgid "Your plan already follows it."
+msgstr "Ton plan la suit déjà."
 
 #: src/plan/plan-bases-advice.tsx
 msgctxt "IdA8la"
 msgid "Get a recommendation"
 msgstr "Obtenir une recommandation"
+
+#: src/plan/plan-bases-choices.tsx
+msgctxt "Lp5uON"
+msgid "In depth"
+msgstr "En profondeur"
+
+#: src/plan/plan-bases-choices.tsx
+msgctxt "eXbuB9"
+msgid "Essentials"
+msgstr "L’essentiel"
+
+#: src/plan/plan-bases-choices.tsx
+msgctxt "erH3RF"
+msgid "Quick lesson"
+msgstr "Leçon rapide"
+
+#: src/plan/plan-bases-choices.tsx
+msgctxt "beOzyz"
+msgid "Every lesson"
+msgstr "Toutes les leçons"
+
+#: src/plan/plan-bases-choices.tsx
+msgctxt "IVFaot"
+msgid "The first third of the lessons"
+msgstr "Le premier tiers des leçons"
+
+#: src/plan/plan-bases-choices.tsx
+msgctxt "5EBgSS"
+msgid "One short lesson each"
+msgstr "Une courte leçon par prérequis"
+
+#: src/plan/plan-bases-choices.tsx
+msgctxt "mcsKQc"
+msgid "Leave them out of your plan"
+msgstr "Les retirer de ton plan"
+
+#: src/plan/plan-bases-choices.tsx
+msgctxt "VKfWR3"
+msgid "Recommended"
+msgstr "Recommandé"
+
+#: src/plan/plan-bases-choices.tsx
+msgctxt "gQH2DZ"
+msgid "All prerequisites"
+msgstr "Tous les prérequis"
+
+#: src/plan/plan-bases-choices.tsx
+msgctxt "Mz9DHY"
+msgid "{names} · {time}"
+msgstr "{names} · {time}"
+
+#: src/plan/plan-bases-choices.tsx
+msgctxt "ex6-sv"
+msgid "Different choices"
+msgstr "Choix différents"
+
+#: src/plan/plan-bases-choices.tsx
+msgctxt "V8qBJk"
+msgid "Choose by subject"
+msgstr "Choisir par matière"
 
 #: src/plan/plan-bases-effect.tsx
 msgctxt "W3ruGP"
@@ -9716,46 +9776,6 @@ msgctxt "UYxfzC"
 msgid "Your lessons end on {after} instead of {before}."
 msgstr "Tes leçons se terminent le {after} au lieu du {before}."
 
-#: src/plan/plan-bases-group.tsx
-msgctxt "kQ1-S_"
-msgid "For {topics} and {count, plural, one {# more} other {# more}}"
-msgstr "Pour {topics} et {count, plural, one {# autre} other {# autres}}"
-
-#: src/plan/plan-bases-group.tsx
-msgctxt "LOouuk"
-msgid "For {topics}"
-msgstr "Pour {topics}"
-
-#: src/plan/plan-bases-group.tsx
-msgctxt "Lp5uON"
-msgid "In depth"
-msgstr "En profondeur"
-
-#: src/plan/plan-bases-group.tsx
-msgctxt "rfzuQv"
-msgid "Essential"
-msgstr "L’essentiel"
-
-#: src/plan/plan-bases-group.tsx
-msgctxt "erH3RF"
-msgid "Quick lesson"
-msgstr "Leçon rapide"
-
-#: src/plan/plan-bases-group.tsx
-msgctxt "OU1lKu"
-msgid "{count, plural, one {# prerequisite} other {# prerequisites}}"
-msgstr "{count, plural, one {# base nécessaire} other {# bases nécessaires}}"
-
-#: src/plan/plan-bases-group.tsx
-msgctxt "TWZbqv"
-msgid "Different choices for each one."
-msgstr "Des choix différents pour chaque élément."
-
-#: src/plan/plan-bases-group.tsx
-msgctxt "hmGmiY"
-msgid "Choose each one"
-msgstr "Choisir chaque élément"
-
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-offer-preview.tsx
 msgctxt "g_RDWS"
@@ -9776,6 +9796,11 @@ msgid "Save choices"
 msgstr "Enregistrer les choix"
 
 #: src/plan/plan-bases-sheet.tsx
+msgctxt "Ey0ZIg"
+msgid "Your prerequisites have different choices. Picking one above applies it to all."
+msgstr "Tes prérequis n’ont pas tous la même option. Choisis-en une ci-dessus pour l’appliquer à tous."
+
+#: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-bases.tsx
 msgctxt "KOMCPT"
 msgid "Prerequisites"
@@ -9792,9 +9817,9 @@ msgid "Your choices"
 msgstr "Tes choix"
 
 #: src/plan/plan-choices.tsx
-msgctxt "zrPr7y"
-msgid "Choose how to study each one."
-msgstr "Choisis comment étudier chacun."
+msgctxt "MYtZfb"
+msgid "Change how you study them."
+msgstr "Change ta façon de les étudier."
 
 #: src/plan/plan-choices.tsx
 msgctxt "sYz0WW"
@@ -10439,24 +10464,24 @@ msgid "{days, plural, one {# day left} other {# days left}}: we recommend a quic
 msgstr "{days, plural, one {# jour restant} other {# jours restants}} : on te recommande une leçon rapide pour chaque prérequis, afin d’avoir le temps de te concentrer sur ce qui compte le plus pour ton objectif."
 
 #: src/plan/use-bases-texts.ts
-msgctxt "2mGHGe"
-msgid "We recommend the essentials of each prerequisite, the first third of its lessons, so the topics that build on it make sense."
-msgstr "On te recommande de voir l’essentiel de chaque prérequis, c’est-à-dire le premier tiers de ses leçons, pour mieux comprendre les sujets qui s’appuient dessus."
+msgctxt "L-5EDu"
+msgid "We recommend the essentials, so the topics that build on them make sense."
+msgstr "On te recommande l’essentiel, pour mieux comprendre les sujets qui s’appuient dessus."
 
 #: src/plan/use-bases-texts.ts
-msgctxt "eBe4Go"
-msgid "We recommend the essentials of each prerequisite, the first third of its lessons, so what builds on it makes sense."
-msgstr "On te recommande de voir l’essentiel de chaque prérequis, c’est-à-dire le premier tiers de ses leçons, pour que la suite soit plus claire."
+msgctxt "ZQDb1Q"
+msgid "We recommend the essentials, so what builds on them makes sense."
+msgstr "On te recommande l’essentiel, pour mieux comprendre ce qui s’appuie dessus."
 
 #: src/plan/use-bases-texts.ts
-msgctxt "68iVD_"
-msgid "Topics that come up a lot build on these. Choose how to study each one."
-msgstr "Les sujets qui reviennent souvent s’appuient sur ces prérequis. Choisis comment étudier chacun."
+msgctxt "k_tJu8"
+msgid "Topics that come up a lot build on these."
+msgstr "Les sujets qui reviennent souvent s’appuient sur ces prérequis."
 
 #: src/plan/use-bases-texts.ts
-msgctxt "s99xBH"
-msgid "Your goal's final work builds on these. Choose how to study each one."
-msgstr "Le travail final lié à ton objectif s’appuie sur ces prérequis. Choisis comment étudier chacun."
+msgctxt "Ao6Fag"
+msgid "Your goal's final work builds on these."
+msgstr "Le travail final de ton objectif s’appuie sur ces prérequis."
 
 #: src/plan/use-bases-texts.ts
 msgctxt "9N60CL"
@@ -10464,19 +10489,34 @@ msgid "{count, plural, one {# prerequisite you showed you know is already out of
 msgstr "{count, plural, one {# prérequis dont tu as prouvé la maîtrise a déjà été retiré de ton plan.} other {# prérequis dont tu as prouvé la maîtrise ont déjà été retirés de ton plan.}}"
 
 #: src/plan/use-bases-texts.ts
-msgctxt "OJtoRa"
-msgid "Prerequisites you show you know in a test leave your plan on their own."
-msgstr "Les prérequis que tu prouves connaître lors d’un test sont automatiquement retirés de ton plan."
-
-#: src/plan/use-bases-texts.ts
-msgctxt "7sIzM8"
-msgid "{count, plural, one {# prerequisite, {time} for its essentials.} other {# prerequisites, {time} for their essentials.}}"
-msgstr "{count, plural, one {# prérequis, {time} pour étudier l’essentiel.} other {# prérequis, {time} pour étudier l’essentiel.}}"
+msgctxt "Go6YMb"
+msgid "Already know some? Show it in a test and they leave your plan on their own."
+msgstr "Tu en connais déjà certains ? Montre-le lors d’un test et ils sortiront tout seuls de ton plan."
 
 #: src/plan/use-bases-texts.ts
 msgctxt "WVfKOh"
 msgid "{count, plural, one {# prerequisite, {time} with your choice.} other {# prerequisites, {time} with your choices.}}"
 msgstr "{count, plural, one {# prérequis, {time} avec ton choix.} other {# prérequis, {time} avec tes choix.}}"
+
+#: src/plan/use-bases-texts.ts
+msgctxt "TOeHho"
+msgid "{count, plural, one {# prerequisite, {time} in depth.} other {# prerequisites, {time} in depth.}}"
+msgstr "{count, plural, one {# prérequis, {time} pour l’étudier en profondeur.} other {# prérequis, {time} pour les étudier en profondeur.}}"
+
+#: src/plan/use-bases-texts.ts
+msgctxt "TJA_yI"
+msgid "{count, plural, one {# prerequisite, {time} for its quick lesson.} other {# prerequisites, {time} for a quick lesson each.}}"
+msgstr "{count, plural, one {# prérequis, {time} pour sa leçon rapide.} other {# prérequis, {time} pour une leçon rapide sur chacun.}}"
+
+#: src/plan/use-bases-texts.ts
+msgctxt "XpCEl_"
+msgid "{count, plural, one {# prerequisite, skipped.} other {# prerequisites, all skipped.}}"
+msgstr "{count, plural, one {# prérequis, sauté.} other {# prérequis, tous sautés.}}"
+
+#: src/plan/use-bases-texts.ts
+msgctxt "7sIzM8"
+msgid "{count, plural, one {# prerequisite, {time} for its essentials.} other {# prerequisites, {time} for their essentials.}}"
+msgstr "{count, plural, one {# prérequis, {time} pour étudier l’essentiel.} other {# prérequis, {time} pour étudier l’essentiel.}}"
 
 #: src/plan/use-change-sentence.ts
 msgctxt "hFKPQ9"

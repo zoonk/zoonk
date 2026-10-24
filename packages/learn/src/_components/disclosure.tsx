@@ -18,7 +18,8 @@ import {
 /**
  * Something a page keeps folded until asked (a chapter's summary, a unit's words): a row of its
  * page's list (`ListGroup`) with its icon, title and an optional count, opening in place under it.
- * Closed by default, so the page leads with what to do.
+ * Closed by default, so the page leads with what to do; open on arrival (`defaultOpen`) when what it
+ * holds already differs from what the page leads with.
  *
  * ```tsx
  * <ListGroup>
@@ -32,6 +33,7 @@ export function Disclosure({
   aside,
   children,
   className,
+  defaultOpen = false,
   icon,
   title,
 }: {
@@ -39,11 +41,12 @@ export function Disclosure({
   aside?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
+  defaultOpen?: boolean;
   icon: React.ReactNode;
   title: string;
 }) {
   return (
-    <Collapsible className={className} data-slot="disclosure">
+    <Collapsible className={className} data-slot="disclosure" defaultOpen={defaultOpen}>
       <CollapsibleTrigger className={cn(LIST_ROW_INTERACTIVE_CLASS, "group/disclosure")}>
         <ListRowLeading>{icon}</ListRowLeading>
         <ListRowContent>

@@ -6,8 +6,8 @@ import {
   type PlacementMockOptionView,
 } from "@zoonk/core/exams/mocks/contract";
 import { useExtracted, useFormatter } from "next-intl";
+import { type RowChoice } from "../_components/choice-rows";
 import { useFormatDuration } from "../_utils/time-format";
-import { type MockChoice } from "./mock-chooser-parts";
 import { useMockDaySizeLabel } from "./mock-labels";
 
 /**
@@ -110,7 +110,7 @@ export function usePlacementLengthChoices({
 }: {
   options: readonly PlacementMockOptionView[];
   recommended: PlacementMockLength;
-}): MockChoice<PlacementMockLength>[] {
+}): RowChoice<PlacementMockLength>[] {
   const t = useExtracted();
   const duration = useFormatDuration();
   const precision = usePlacementPrecision();

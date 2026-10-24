@@ -33,34 +33,41 @@ const SKILL_NAMES = [
   ...TOPICS.map((topic) => topic.name),
 ];
 
-function frequency({ level, topic }: { level: "high" | "low"; topic: string }) {
-  return {
+/**
+ * Each skill's subject: all in biology, or (`subjectPerTopic`) each topic with its base in a subject
+ * named after the topic, the scientific method staying in biology.
+ */
+function getSubject({ name, subjectPerTopic }: { name: string; subjectPerTopic: boolean }) {
+  const topic = TOPICS.find((entry) => entry.name === name || entry.base === name);
+  return subjectPerTopic && topic ? topic.name : AREA;
+}
+
+/** A biology exam that asks heredity and ecology a lot, and cell structure and living things less. */
+function biologyExamFixture({ subjectPerTopic }: { subjectPerTopic: boolean }) {
+  const subjectOf = (name: string) => getSubject({ name, subjectPerTopic });
+
+  const frequency = ({ level, topic }: { level: "high" | "low"; topic: string }) => ({
     appearances: null,
     basis: "Past papers",
     citation: { passage: topic, sourceId: "papers" },
     level,
-    subject: AREA,
+    subject: subjectOf(topic),
     topic,
-  };
-}
+  });
 
-/** A biology exam that asks heredity and ecology a lot, and cell structure and living things less. */
-function biologyExamFixture() {
   return examBlueprintFixture({
     name: "Biology exam",
     structure: {
       formats: [],
       mock: null,
       rules: [],
-      subjects: [
-        {
-          citation: { passage: AREA, sourceId: "notice" },
-          name: AREA,
-          questions: null,
-          topics: SKILL_NAMES,
-          weight: null,
-        },
-      ],
+      subjects: [...Map.groupBy(SKILL_NAMES, subjectOf)].map(([name, topics]) => ({
+        citation: { passage: name, sourceId: "notice" },
+        name,
+        questions: null,
+        topics,
+        weight: null,
+      })),
     },
     topicFrequency: [
       frequency({ level: "high", topic: SETTLED }),
@@ -113,14 +120,16 @@ async function createSkill({
  * A goal `days` away whose plan builds on bases, as the goal-driven workflow writes it (its graph,
  * not built yet, with the scientific method placement settled): an exam asks heredity and ecology
  * a lot and their bases (cell structure, living things) less; any other goal's outcome skills are
- * heredity and ecology. All in one area, each skill with three short Library lessons and a graph
- * sized far beyond a short daily time.
+ * heredity and ecology. All in one area, or each topic with its base in an area of its own
+ * (`subjectPerTopic`), each skill with three short Library lessons and a graph sized far beyond a
+ * short daily time.
  */
 export async function goalWithBasesFixture({
   dailyMinutes = SHORT_DAILY_MINUTES,
   days,
   details = {},
   kind,
+  subjectPerTopic = false,
   userId,
 }: {
   dailyMinutes?: number;
@@ -128,13 +137,14 @@ export async function goalWithBasesFixture({
   /** Adds to what onboarding stored on the goal, such as the questions it answered. */
   details?: Record<string, unknown>;
   kind: Extract<GoalKind, "exam" | "learn">;
+  subjectPerTopic?: boolean;
   userId: string;
 }) {
   const isExam = kind === "exam";
 
   const [chapter, blueprint] = await Promise.all([
     libraryChapterFixture({ title: AREA }),
-    isExam ? biologyExamFixture() : null,
+    isExam ? biologyExamFixture({ subjectPerTopic }) : null,
   ]);
 
   const skills = await Promise.all(
@@ -160,7 +170,7 @@ export async function goalWithBasesFixture({
     graph: {
       phases: [{ milestone: isExam ? null : "Explain how life works", name: AREA }],
       skills: skills.map((skill) => ({
-        area: AREA,
+        area: getSubject({ name: skill.name, subjectPerTopic }),
         lessons: GRAPH_LESSONS,
         name: skill.name,
         outcome: !isExam && topicNames.has(skill.name),
@@ -193,7 +203,11 @@ export async function goalWithBasesFixture({
 
   return {
     area: AREA,
-    bases: TOPICS.map((topic) => ({ name: topic.base, skillId: byName.get(topic.base) ?? "" })),
+    bases: TOPICS.map((topic) => ({
+      area: getSubject({ name: topic.base, subjectPerTopic }),
+      name: topic.base,
+      skillId: byName.get(topic.base) ?? "",
+    })),
     goal,
     plan,
   };

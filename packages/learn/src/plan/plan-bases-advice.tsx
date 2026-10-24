@@ -1,29 +1,12 @@
 "use client";
 
-import { type PlanBasesView } from "@zoonk/core/plans/view-contract";
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
-import { useId, useLayoutEffect, useRef, useState } from "react";
-import { type BaseChoice } from "./plan-bases-group";
+import { useLayoutEffect, useRef, useState } from "react";
 import { usePlanScreen } from "./plan-context";
 import { PendingLabel } from "./plan-coverage";
 import { type RecommendedBases, useAdviceText } from "./use-bases-texts";
 import { requestWithin } from "./use-time-to-cover";
-
-/** The learner's choices for the bases being chosen, by skill. */
-type Choices = ReadonlyMap<string, BaseChoice>;
-
-function followsRecommendation({
-  bases,
-  choices,
-  recommended,
-}: {
-  bases: PlanBasesView;
-  choices: Choices;
-  recommended: BaseChoice;
-}): boolean {
-  return bases.items.every((item) => choices.get(item.skillId) === recommended);
-}
 
 /** Where asking for the recommendation stands (see `useBasesAdvice`). */
 type AdviceState =
@@ -35,7 +18,7 @@ type AdviceState =
  * recommends (see `PlanActions.adviseOnBases`), only when the learner asks, never for the page.
  * Nothing is saved, so the plan isn't read again.
  */
-function useBasesAdvice() {
+export function useBasesAdvice() {
   const { actions } = usePlanScreen();
   const [state, setState] = useState<AdviceState>({ status: "idle" });
 
@@ -55,36 +38,29 @@ function useBasesAdvice() {
     setState({ status: data ? "building" : "failed" });
   };
 
-  return { ask, state };
+  return { ask, recommended: state.status === "answered" ? state.advice.recommended : null, state };
 }
 
-/** Save choices, where the keyboard goes once the recommendation fills the choices in. */
-export const BASES_SAVE_ID = "bases-save-choices";
-
 /**
- * The box at the top of the sheet: "Get a recommendation" until the learner asks, its spinner while
- * the app works it out, then what it recommends, with "Use the recommendation" while the choices
- * differ from it, which fills them in (their preview then runs as for any choice) and moves the
- * keyboard on to Save choices. Once it answers, focus moves to that button, read with the advice,
- * or to the advice itself, since the button that had it is gone; waiting and failing are said once,
- * in their own status line. When it couldn't be worked out, Try again takes the button's place, so
- * focus stays on it.
+ * Under the prerequisites' choice: "Get a recommendation" until the learner asks, its spinner while
+ * the app works it out, then why it recommends the way the choice now marks, which one tap picks
+ * (its preview then runs as for any choice), and that the plan already follows it when it does
+ * (`followed`): a new plan starts on it, so asking right after often confirms what's picked. Once it answers, focus moves to the answer, since the
+ * button that had it is gone; waiting and failing are said once, in their own status line. When it
+ * couldn't be worked out, Try again takes the button's place, so focus stays on it.
  */
 export function BasesAdvice({
-  bases,
-  choices,
-  onUse,
+  ask,
+  followed,
+  state,
 }: {
-  bases: PlanBasesView;
-  choices: Choices;
-  onUse: (recommended: BaseChoice) => void;
+  ask: () => void;
+  followed: boolean;
+  state: AdviceState;
 }) {
   const t = useExtracted();
   const adviceText = useAdviceText();
-  const { ask, state } = useBasesAdvice();
-  const answerId = useId();
   const answer = useRef<HTMLParagraphElement>(null);
-  const use = useRef<HTMLButtonElement>(null);
   const pending = state.status === "pending";
   const retry = state.status === "failed" || state.status === "building";
   const answered = state.status === "answered";
@@ -98,45 +74,21 @@ export function BasesAdvice({
   // focus back from the page on its own, again a frame later, over a focus moved after paint.
   useLayoutEffect(() => {
     if (answered) {
-      (use.current ?? answer.current)?.focus();
+      answer.current?.focus();
     }
   }, [answered]);
 
-  const applyRecommendation = (recommended: BaseChoice) => {
-    onUse(recommended);
-    document.querySelector<HTMLElement>(`#${BASES_SAVE_ID}`)?.focus();
-  };
-
   return (
-    <div className="bg-muted/60 flex flex-col items-start gap-2 rounded-xl p-4 text-sm">
+    <div className="text-muted-foreground flex flex-col items-start gap-2 text-sm">
       <p aria-live="polite" className="sr-only">
         {pending && t("Getting a recommendation…")}
         {retry && retryText}
       </p>
 
       {state.status === "answered" && (
-        <>
-          <p
-            className="text-pretty focus-visible:outline-none"
-            id={answerId}
-            ref={answer}
-            tabIndex={-1}
-          >
-            {adviceText(state.advice)}
-          </p>
-
-          {!followsRecommendation({ bases, choices, recommended: state.advice.recommended }) && (
-            <Button
-              aria-describedby={answerId}
-              onClick={() => applyRecommendation(state.advice.recommended)}
-              ref={use}
-              size="sm"
-              variant="secondary"
-            >
-              {t("Use the recommendation")}
-            </Button>
-          )}
-        </>
+        <p className="text-pretty focus-visible:outline-none" ref={answer} tabIndex={-1}>
+          {adviceText(state.advice)} {followed && t("Your plan already follows it.")}
+        </p>
       )}
 
       {retry && (
@@ -150,10 +102,9 @@ export function BasesAdvice({
           aria-busy={pending || undefined}
           disabled={pending}
           focusableWhenDisabled
-          key="ask"
-          onClick={() => void ask()}
+          onClick={ask}
           size="sm"
-          variant="secondary"
+          variant="outline"
         >
           <PendingLabel pending={pending}>
             {retry ? t("Try again") : t("Get a recommendation")}

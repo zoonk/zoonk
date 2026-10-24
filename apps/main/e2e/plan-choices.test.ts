@@ -8,15 +8,16 @@ import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profile
 import { goalWithBasesFixture } from "@zoonk/testing/fixtures/plan-bases";
 import { isJsonObject } from "@zoonk/utils/json";
 import { expect, test } from "./fixtures";
+import { REPLAN_TIMEOUT_MS } from "./plan-timeouts";
 import { dayFromToday } from "./short-exam-fixtures";
 import { openAs } from "./study-day";
 import { routeBasesAdvice } from "./time-to-cover-routes";
 
 /**
  * When time is short, the learner chooses: how to study the prerequisites the plan builds on
- * (learn them first, only their essentials, or skip them; a subject at once or each one), with
- * what the choices do before they're saved, and studying everything at their own pace (an exam's
- * after it, keeping its date; any other goal without its deadline, which can come back).
+ * (learn them first, only their essentials, or skip them; all of them at once or a subject at a
+ * time), with what the choices do before they're saved, and studying everything at their own pace
+ * (an exam's after it, keeping its date; any other goal without its deadline, which can come back).
  */
 
 /** Every onboarding screen before the plan, so the goal has its Plan. */
@@ -66,7 +67,11 @@ async function startTodaysDay({ goalId, page }: { goalId: string; page: Page }) 
 /** A learner whose plan builds on bases, with it as their active goal, who started their day. */
 async function openLearnerWithBases(
   browser: Browser,
-  { days, kind }: { days: number; kind: "exam" | "learn" },
+  {
+    days,
+    kind,
+    subjectPerTopic,
+  }: { days: number; kind: "exam" | "learn"; subjectPerTopic?: boolean },
 ) {
   const user = await createE2EUser(getBaseURL());
 
@@ -74,6 +79,7 @@ async function openLearnerWithBases(
     days,
     details: { answered: ALL_ANSWERED },
     kind,
+    subjectPerTopic,
     userId: user.id,
   });
 
@@ -88,23 +94,34 @@ async function openLearnerWithBases(
   return { ...fixture, page };
 }
 
-function choiceButton({
-  choice,
-  group,
-}: {
-  choice: "Essential" | "In depth" | "Quick lesson" | "Skip";
-  group: Locator;
-}) {
-  return group.getByRole("button", { name: new RegExp(`^${choice}`, "u") });
+type AllChoice = "Essentials" | "In depth" | "Quick lesson" | "Skip";
+
+/** The sheet's one choice for every prerequisite. */
+function allChoices(sheet: Locator) {
+  return sheet.getByRole("radiogroup", { name: "All prerequisites" });
+}
+
+/** One way to study every prerequisite, by the name its row starts with. */
+function allChoice({ choice, sheet }: { choice: AllChoice; sheet: Locator }) {
+  return allChoices(sheet).getByRole("radio", { name: new RegExp(`^${choice}`, "u") });
+}
+
+/** Picks a way for all of them as a learner does, with a tap on its row: the radio is for assistive tech. */
+function pickForAll({ choice, sheet }: { choice: AllChoice; sheet: Locator }) {
+  return allChoices(sheet)
+    .locator("label")
+    .filter({ has: sheet.page().getByRole("radio", { name: new RegExp(`^${choice}`, "u") }) })
+    .click();
 }
 
 test.describe("Plan choices", () => {
-  test("an exam a month away: prerequisites by subject or one by one, with their effect, then studying everything after the exam", async ({
+  test("an exam a month away: prerequisites all at once or by subject, with their effect, then studying everything after the exam", async ({
     browser,
   }) => {
-    const { area, bases, goal, page } = await openLearnerWithBases(browser, {
+    const { bases, goal, page } = await openLearnerWithBases(browser, {
       days: 30,
       kind: "exam",
+      subjectPerTopic: true,
     });
 
     const [cells, living] = bases;
@@ -121,62 +138,63 @@ test.describe("Plan choices", () => {
     await editor.getByRole("button", { name: "Choose prerequisites" }).click();
 
     const sheet = page.getByRole("dialog", { name: "Prerequisites" });
+    const all = allChoices(sheet);
 
     const advice =
       "30 days left: we recommend a quick lesson for each prerequisite, so there's time for what comes up most.";
 
+    // One choice for all of them leads, with the time each of the four ways takes; the plan
+    // studies their essentials until the learner chooses. The subjects wait, folded.
+    await expect(all.getByRole("radio")).toHaveCount(4);
+    await expect(allChoice({ choice: "Essentials", sheet })).toBeChecked();
+    await expect(sheet.getByRole("combobox")).toHaveCount(0);
+
     // Nothing is recommended until she asks: no page works it out.
     await expect(sheet.getByText(advice)).toHaveCount(0);
+    await expect(sheet.getByText("Recommended")).toHaveCount(0);
     expect(advised).toHaveLength(0);
     await sheet.getByRole("button", { name: "Get a recommendation" }).click();
 
-    // A month away with little time, the app recommends a quick lesson for each and says why.
+    // A month away with little time, the app recommends a quick lesson for each, marks it among
+    // the choices and says why; the answer takes the keyboard from the button that asked.
     await expect(sheet.getByText(advice)).toBeVisible();
-    await expect(sheet.getByRole("button", { name: "Use the recommendation" })).toBeFocused();
+    await expect(sheet.getByText(advice)).toBeFocused();
 
-    // The subject is one choice for both, with the time each of the four ways takes; the plan
-    // studies their essentials until the learner chooses.
-    const subject = sheet.getByRole("group", { exact: true, name: area });
-
-    await expect(sheet.getByText("2 prerequisites")).toBeVisible();
-    await expect(sheet.getByText("For Heredity and Ecology")).toBeVisible();
-
-    await expect(choiceButton({ choice: "Essential", group: subject })).toHaveAttribute(
-      "aria-pressed",
-      "true",
+    await expect(all.getByRole("radio", { name: /Recommended/u })).toHaveAccessibleName(
+      /^Quick lesson/u,
     );
 
-    await expect(subject.getByRole("button")).toHaveCount(4);
     await expectAccessibleScreen(page, "the prerequisites sheet");
 
-    // The recommendation is one tap, and its effect shows before anything is saved. The keyboard
-    // moves on to Save choices, which opens once the check is done.
-    await sheet.getByRole("button", { name: "Use the recommendation" }).click();
-    await expect(sheet.getByRole("button", { name: "Save choices" })).toBeFocused();
-
-    await expect(choiceButton({ choice: "Quick lesson", group: subject })).toHaveAttribute(
-      "aria-pressed",
-      "true",
-    );
-
+    // The recommendation is one tap, and its effect shows before anything is saved.
+    await pickForAll({ choice: "Quick lesson", sheet });
+    await expect(allChoice({ choice: "Quick lesson", sheet })).toBeChecked();
     await expect(sheet.getByText(/^By your date: \d+% of the exam, /u)).toBeVisible();
     await expect(loadBaseChoices(goal.id)).resolves.toStrictEqual([]);
 
-    // Opened, the subject chooses each one: skipping one leaves the subject without one choice.
-    await sheet.getByRole("button", { name: "Choose each one" }).click();
+    // By subject, each has its own choice: skipping one leaves them without one choice for all.
+    await sheet.getByRole("button", { name: /^Choose by subject/u }).click();
+    const ecology = sheet.getByRole("combobox", { exact: true, name: living?.area });
+    await expect(ecology).toHaveValue("quick");
+    await ecology.selectOption({ label: "Skip" });
 
-    await choiceButton({
-      choice: "Skip",
-      group: sheet.getByRole("group", { name: living?.name }),
-    }).click();
+    await expect(
+      sheet.getByText(
+        "Your prerequisites have different choices. Picking one above applies it to all.",
+      ),
+    ).toBeVisible();
 
-    await expect(sheet.getByText("Different choices for each one.")).toBeVisible();
-    await expect(subject.getByRole("button", { pressed: true })).toHaveCount(0);
+    await expect(all.getByRole("radio", { checked: true })).toHaveCount(0);
+
+    await expect(sheet.getByRole("combobox", { exact: true, name: cells?.area })).toHaveValue(
+      "quick",
+    );
 
     await sheet.getByRole("button", { name: "Save choices" }).click();
 
     await expect(sheet.getByRole("status")).toContainText(
       "1 prerequisite gets a quick lesson. 1 prerequisite is skipped.",
+      { timeout: REPLAN_TIMEOUT_MS },
     );
 
     await expect
@@ -212,6 +230,7 @@ test.describe("Plan choices", () => {
 
     await expect(everything.getByRole("status")).toContainText(
       "You study everything: what doesn't fit before the exam comes after it.",
+      { timeout: REPLAN_TIMEOUT_MS },
     );
 
     await everything.getByRole("button", { name: "Done" }).click();
@@ -238,23 +257,40 @@ test.describe("Plan choices", () => {
   test("prerequisites switched back save what their preview said, lessons included", async ({
     browser,
   }) => {
-    const { area, page } = await openLearnerWithBases(browser, { days: 30, kind: "exam" });
+    const { goal, page } = await openLearnerWithBases(browser, { days: 30, kind: "exam" });
+
+    await routeBasesAdvice(page, {
+      advice: { daysLeft: 30, ready: true, recommended: "essential" },
+      goalId: goal.id,
+    });
 
     await page.getByRole("button", { name: "Adjust plan" }).click();
     const editor = page.getByRole("dialog", { name: "Adjust your plan" });
     const sheet = page.getByRole("dialog", { name: "Prerequisites" });
-    const subject = sheet.getByRole("group", { exact: true, name: area });
-    // The preview's live region: the recommendation's box, asked for, is one too.
+
+    // The recommendation can be what the plan already does, as a new plan's is: it says so.
+    await editor.getByRole("button", { name: "Choose prerequisites" }).click();
+    await sheet.getByRole("button", { name: "Get a recommendation" }).click();
+
+    await expect(
+      sheet.getByText(
+        "We recommend the essentials, so the topics that build on them make sense. Your plan already follows it.",
+      ),
+    ).toBeVisible();
+
+    await sheet.getByRole("button", { name: "Close" }).click();
+    await expect(sheet).toBeHidden();
+    // The preview's live region: the recommendation's status line, asked for, is one too.
     const preview = sheet.locator('[aria-live="polite"][aria-busy]');
 
-    /** Chooses for the subject, saves after reading the preview, and returns what it said. */
-    const chooseAndSave = async (choice: "Essential" | "In depth") => {
+    /** Chooses for all of them, saves after reading the preview, and returns what it said. */
+    const chooseAndSave = async (choice: "Essentials" | "In depth") => {
       await editor.getByRole("button", { name: "Choose prerequisites" }).click();
-      await choiceButton({ choice, group: subject }).click();
+      await pickForAll({ choice, sheet });
       await expect(preview).toHaveAttribute("aria-busy", "false");
       const lines = await preview.getByRole("paragraph").allTextContents();
       await sheet.getByRole("button", { name: "Save choices" }).click();
-      await expect(sheet.getByRole("status")).toBeVisible();
+      await expect(sheet.getByRole("status")).toBeVisible({ timeout: REPLAN_TIMEOUT_MS });
       return lines;
     };
 
@@ -262,9 +298,14 @@ test.describe("Plan choices", () => {
     await sheet.getByRole("button", { name: "Done" }).click();
     await expect(sheet).toBeHidden();
 
+    // The editor names the way they're all studied now.
+    await expect(editor.getByText(/^2 prerequisites, .+ in depth\.$/u)).toBeVisible({
+      timeout: REPLAN_TIMEOUT_MS,
+    });
+
     // Back to the essentials: the preview names the lessons that leave, and saving does just
     // that instead of undoing the change before it.
-    const lines = await chooseAndSave("Essential");
+    const lines = await chooseAndSave("Essentials");
     const lessons = lines.find((line) => /^(?:Adds|Leaves out) /u.test(line));
 
     expect(lessons).toBeDefined();
@@ -293,6 +334,7 @@ test.describe("Plan choices", () => {
 
     await expect(everything.getByRole("status")).toContainText(
       "No deadline: you study everything at your own pace.",
+      { timeout: REPLAN_TIMEOUT_MS },
     );
 
     await expect(everything.getByRole("status")).toContainText(/You finish around .+\./u);

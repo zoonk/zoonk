@@ -7,6 +7,7 @@ import {
 } from "@zoonk/core/exams/mocks/contract";
 import { useExtracted } from "next-intl";
 import { type ReactNode, useState } from "react";
+import { ChoiceRows } from "../_components/choice-rows";
 import { DetailAsideSection, DetailContent } from "../_components/detail-page";
 import { SectionLabel } from "../_components/section-label";
 import {
@@ -17,7 +18,7 @@ import {
   ChooserStartButton,
   MockWriting,
 } from "./mock-chooser-page";
-import { MockChoiceRows, type MockChooserStatus, MockPlusNotice } from "./mock-chooser-parts";
+import { type MockChooserStatus, MockPlusNotice } from "./mock-chooser-parts";
 import { ChooserPicked, type MockChooserHrefs, PickedMock } from "./mock-chooser-picked";
 import {
   useMockOptionDetail,
@@ -80,7 +81,7 @@ function MockOptionLists({
 
   return (
     <div className="flex flex-col gap-6">
-      <MockChoiceRows
+      <ChoiceRows
         choices={examChoices}
         label={t("The exam")}
         onChange={onPick}
@@ -90,7 +91,7 @@ function MockOptionLists({
       {subjectChoices.length > 0 && (
         <section aria-labelledby="mock-subjects-title" className="flex flex-col gap-1">
           <SectionLabel id="mock-subjects-title">{t("One subject")}</SectionLabel>
-          <MockChoiceRows
+          <ChoiceRows
             choices={subjectChoices}
             label={t("One subject")}
             numberKeys={false}
@@ -253,12 +254,7 @@ function PlacementChooser({
 
       <DetailContent>
         <ChooserRefusal status={status} />
-        <MockChoiceRows
-          choices={choices}
-          label={t("How long")}
-          onChange={setLength}
-          value={length}
-        />
+        <ChoiceRows choices={choices} label={t("How long")} onChange={setLength} value={length} />
 
         {open ? (
           <p className="text-muted-foreground text-[0.8125rem] leading-5">
