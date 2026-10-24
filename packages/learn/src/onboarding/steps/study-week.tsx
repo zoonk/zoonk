@@ -17,6 +17,7 @@ import {
 import { WeekdayToggle } from "../../_components/weekday-toggle";
 import { WeekendTime } from "../../_components/weekend-time";
 import { type Choice, ChoiceList } from "../choice-list";
+import { OtherTimeSelect } from "./daily-minutes";
 
 const DAYS_PER_WEEK = 7;
 
@@ -73,7 +74,7 @@ export function WeekdayToggles({
   );
 }
 
-/** Saturday and Sunday's own time, in the same chips as the rest of the week. */
+/** Saturday and Sunday's own time, in the same chips and "Other time…" as the rest of the week. */
 export function WeekendMinutes({
   choices,
   minutes,
@@ -95,20 +96,25 @@ export function WeekendMinutes({
       onCheckedChange={(checked) => onChange(checked ? weekdayMinutes : null)}
     >
       {minutes !== null && (
-        <ChoiceList
-          choices={choices}
-          label={t("Minutes on weekends")}
-          numberKeys={false}
-          onChange={onChange}
-          value={minutes}
-          variant="chips"
-        />
+        <div className="flex flex-col gap-2">
+          <ChoiceList
+            choices={choices}
+            label={t("Minutes on weekends")}
+            numberKeys={false}
+            onChange={onChange}
+            value={minutes}
+            variant="chips"
+          />
+          <OtherTimeSelect
+            label={t("Other time on weekends")}
+            minutes={Number(minutes)}
+            onPick={(next) => onChange(String(next))}
+          />
+        </div>
       )}
     </WeekendTime>
   );
 }
-
-/** The time picked, large in the mono face, so the choice reads at a glance. */
 
 /**
  * Which days, and the weekend's own time, folded into one row that says the week as it stands

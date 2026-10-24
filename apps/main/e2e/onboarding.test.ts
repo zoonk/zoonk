@@ -255,7 +255,12 @@ test.describe("Onboarding from a typed goal", () => {
         await expect(page.getByRole("img", { name: "Step 7 of 7" })).toBeVisible();
 
         await expect(page.getByText("When will you study?")).toBeHidden();
-        await page.getByText("30 min", { exact: true }).click();
+
+        await page
+          .getByRole("radiogroup", { name: "Minutes a day" })
+          .getByText("30 min", { exact: true })
+          .click();
+
         // The days and the weekend's time are folded into one row under the time a day; the week
         // starts Monday to Friday, which nobody has to undo.
         await page.getByRole("button", { name: /^Which days\?/u }).click();

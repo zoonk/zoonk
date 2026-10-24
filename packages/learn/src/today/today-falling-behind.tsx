@@ -1,6 +1,5 @@
 "use client";
 
-import { MAX_DAILY_MINUTES } from "@zoonk/core/plans/time-advice-contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { type TodayView } from "@zoonk/core/view-models/today/get";
 import { safeAsync } from "@zoonk/utils/error";
@@ -62,36 +61,24 @@ function useBehindSentence() {
 }
 
 /**
- * The one link to the plan editor's time a day, from facts the card knows exactly: an exam asks for
- * more time a day while the learner gives less than the most; any other goal can also move its date
- * ("More time or a later date"), the one way left at the most time a day ("Move your date"). The
- * editor finds what covers everything when the learner asks. Null when there's nowhere to go.
+ * The one link to the plan editor's time a day: an exam asks for more time a day; any other goal
+ * can also move its date ("More time or a later date"). The editor finds what covers everything
+ * when the learner asks.
  */
-function useAdjustTimeLabel(behind: Behind): string | null {
+function useAdjustTimeLabel(): string {
   const t = useExtracted();
   const { today } = useTodayScreen();
-  const moreTime = behind.currentMinutes < MAX_DAILY_MINUTES;
-
-  if (today.goal.kind === "exam") {
-    return moreTime ? t("More time a day") : null;
-  }
-
-  return moreTime ? t("More time or a later date") : t("Move your date");
+  return today.goal.kind === "exam" ? t("More time a day") : t("More time or a later date");
 }
 
 /**
  * The choices in order, and the one drawn as the main action. On a return after a break nothing
  * that asks for more hours leads: Rafaela, back after a month, was offered twice her time first.
  */
-function getOptionOrder({
-  adjustTime,
-  behind,
-  returnDay,
-}: {
-  adjustTime: boolean;
-  behind: Behind;
-  returnDay: boolean;
-}): { order: Option[]; primary: Option | null } {
+function getOptionOrder({ behind, returnDay }: { behind: Behind; returnDay: boolean }): {
+  order: Option[];
+  primary: Option | null;
+} {
   if (returnDay) {
     return {
       order: ["focus", "keep", "adjustTime", "studyEverything"],
@@ -99,10 +86,7 @@ function getOptionOrder({
     };
   }
 
-  return {
-    order: ["adjustTime", "focus", "studyEverything", "keep"],
-    primary: adjustTime ? "adjustTime" : null,
-  };
+  return { order: ["adjustTime", "focus", "studyEverything", "keep"], primary: "adjustTime" };
 }
 
 /**
@@ -121,14 +105,9 @@ function BehindChoices({
   keep: () => void;
 }) {
   const t = useExtracted();
-  const adjustTimeLabel = useAdjustTimeLabel(behind);
+  const adjustTimeLabel = useAdjustTimeLabel();
   const { actions, today } = useTodayScreen();
-
-  const { order, primary } = getOptionOrder({
-    adjustTime: adjustTimeLabel !== null,
-    behind,
-    returnDay: isWelcomeBackDay(today.session),
-  });
+  const { order, primary } = getOptionOrder({ behind, returnDay: isWelcomeBackDay(today.session) });
 
   const variant = (option: Option) => (option === primary ? "default" : "outline");
 
@@ -139,7 +118,7 @@ function BehindChoices({
   );
 
   const options: Record<Option, ReactNode> = {
-    adjustTime: adjustTimeLabel && link("adjustTime", actions.adjustTimeHref, adjustTimeLabel),
+    adjustTime: link("adjustTime", actions.adjustTimeHref, adjustTimeLabel),
     focus: behind.canFocus && link("focus", actions.chooseFocusHref, t("Choose where to focus")),
     keep: (
       <SuggestionAction disabled={isPending} key="keep" onClick={keep} variant={variant("keep")}>

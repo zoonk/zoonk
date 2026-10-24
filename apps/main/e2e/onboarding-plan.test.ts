@@ -140,7 +140,10 @@ test("the plan right after the learner's time shows that time, never the plan th
     page.getByRole("heading", { name: "How much time can you study each day?" }),
   ).toBeVisible();
 
-  await page.getByText("1 hr", { exact: true }).click();
+  await page
+    .getByRole("radiogroup", { name: "Minutes a day" })
+    .getByText("1 hr", { exact: true })
+    .click();
 
   // From here on, any moment the page says the old 30 minutes a day is remembered.
   await page.evaluate(() => {
@@ -247,7 +250,10 @@ test("keeps the learner's time when saving it fails, and saves it on the next tr
     page.getByRole("heading", { name: "How much time can you study each day?" }),
   ).toBeVisible();
 
-  await page.getByText("45 min", { exact: true }).click();
+  await page
+    .getByRole("radiogroup", { name: "Minutes a day" })
+    .getByText("45 min", { exact: true })
+    .click();
 
   // The first save of the time doesn't reach the server.
   let failSave = true;
@@ -441,6 +447,29 @@ async function createTimeStepGoal(userId: string) {
   return { goal, isoDate: targetDate.toISOString().slice(0, "YYYY-MM-DD".length) };
 }
 
+/**
+ * What an exam's time covers on Sundays alone, as the real fourteen-lesson, 69-minute-mock planner
+ * has it: under 65 minutes topics are left out and 65 fits, but adding a mock at higher budgets
+ * makes 90 cover only 12 lessons. Any other week covers everything.
+ */
+function readSundayExamShare({
+  dailyMinutes,
+  studyDays,
+}: {
+  dailyMinutes: number;
+  studyDays: string;
+}) {
+  if (studyDays !== "0") {
+    return 1;
+  }
+
+  if (dailyMinutes === 90) {
+    return 12 / 14;
+  }
+
+  return dailyMinutes < 65 ? 0.5 : 1;
+}
+
 test("the time step asks what a larger Sunday exam budget covers instead of assuming it fits", async ({
   noProgressUser,
   userWithoutProgress: page,
@@ -450,8 +479,7 @@ test("the time step asks what a larger Sunday exam budget covers instead of assu
 
   const requests: { dailyMinutes: number; studyDays: string }[] = [];
 
-  // Main runs without the API. These are the real fourteen-lesson, 69-minute-mock planner's
-  // shares: Sunday 65 fits, but adding a mock at higher budgets makes 90 cover only 12 lessons.
+  // Main runs without the API (see `readSundayExamShare`).
   await page.route(`**/v1/goals/${goal.id}/plan/time-advice**`, (route) => {
     const params = new URL(route.request().url()).searchParams;
     const dailyMinutes = Number(params.get("dailyMinutes"));
@@ -460,7 +488,7 @@ test("the time step asks what a larger Sunday exam budget covers instead of assu
 
     return route.fulfill({
       json: {
-        coveredShare: studyDays === "0" && dailyMinutes === 90 ? 12 / 14 : 1,
+        coveredShare: readSundayExamShare({ dailyMinutes, studyDays }),
         measure: "exam",
         numbers: null,
         readingNotice: false,
@@ -490,6 +518,12 @@ test("the time step asks what a larger Sunday exam budget covers instead of assu
   await page.getByRole("button", { exact: true, name: "Wednesday" }).click();
   await page.getByRole("button", { exact: true, name: "Thursday" }).click();
   await page.getByRole("button", { exact: true, name: "Friday" }).click();
+
+  // Half an hour on Sundays leaves topics out, so Find is there to say what covers them all.
+  await page
+    .getByRole("radiogroup", { name: "Minutes a day" })
+    .getByText("30 min", { exact: true })
+    .click();
 
   // The time Find finds is marked, never picked for the learner: they pick it.
   await page.getByRole("button", { name: "Find the time that covers everything" }).click();
@@ -526,6 +560,149 @@ test("the time step asks what a larger Sunday exam budget covers instead of assu
     .click();
 
   await expect(estimate.getByText(/^100% of the plan's exam topics/u)).toBeVisible();
+});
+
+/**
+ * The time step's estimate for a goal at its time question (see `createTimeStepGoal`): from 2
+ * hours a day the plan covers everything, under it `short` of it. Main runs without the API.
+ */
+async function routeTwoHourAdvice(
+  page: Page,
+  {
+    goalId,
+    isoDate,
+    measure,
+    short,
+  }: { goalId: string; isoDate: string; measure: "exam" | "goal"; short: number },
+) {
+  await page.route(`**/v1/goals/${goalId}/plan/time-advice**`, (route) => {
+    const dailyMinutes = Number(new URL(route.request().url()).searchParams.get("dailyMinutes"));
+
+    return route.fulfill({
+      json: {
+        coveredShare: dailyMinutes >= 120 ? 1 : short,
+        measure,
+        numbers: null,
+        readingNotice: false,
+        ready: true,
+        targetDate: isoDate,
+        targetDateNamedMonth: false,
+      },
+    });
+  });
+}
+
+/** The time step's answer, once Continue sends it. */
+function waitForScheduleAnswer(page: Page, goalId: string) {
+  return page.waitForRequest(
+    (request) =>
+      request.method() === "POST" &&
+      new URL(request.url()).pathname.endsWith(`/start/${goalId}`) &&
+      (request.postData()?.includes('"schedule"') ?? false),
+  );
+}
+
+test("an exam's time step offers what covers everything only while the time picked leaves something out", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}) => {
+  const { goal, isoDate } = await createTimeStepGoal(noProgressUser.id);
+  await prisma.goal.update({ data: { kind: "exam" }, where: { id: goal.id } });
+  await routeTwoHourAdvice(page, { goalId: goal.id, isoDate, measure: "exam", short: 0.5 });
+
+  await page.goto(`/start/${goal.id}`);
+  await page.getByRole("button", { name: "Start from zero" }).click();
+
+  const minutes = page.getByRole("radiogroup", { name: "Minutes a day" });
+  const estimate = page.getByRole("region", { name: "Estimate" });
+  const find = page.getByRole("button", { name: "Find the time that covers everything" });
+  const everything = page.getByRole("switch", { name: "Study everything, even after the exam" });
+
+  // Half an hour leaves topics out: the estimate says how much it covers, and under it are the
+  // two ways to everything, more time or going on after the exam.
+  await minutes.getByText("30 min", { exact: true }).click();
+  await expect(estimate.getByText(/^~50% of the plan's exam topics/u)).toBeVisible();
+  await expect(find).toBeVisible();
+  await everything.click();
+  await expect(everything).toBeChecked();
+
+  // A time the presets don't have joins them, picked. It covers everything, so nothing else
+  // says so again, and there's nothing to go on with after the exam.
+  const other = page.getByRole("combobox", { name: "Other time a day" });
+  await other.selectOption("150");
+  await expect(minutes.getByRole("radio", { exact: true, name: "2 hr 30 min" })).toBeChecked();
+  await expect(other).toHaveValue("150");
+  await expect(estimate.getByText(/^100% of the plan's exam topics/u)).toBeVisible();
+  await expect(find).toHaveCount(0);
+  await expect(everything).toHaveCount(0);
+
+  // The switch she can't see isn't her choice: the plan ends at the exam.
+  const answer = waitForScheduleAnswer(page, goal.id);
+  await page.getByRole("button", { exact: true, name: "Continue" }).click();
+  const sent = await answer;
+  const body = sent.postData() ?? "";
+  expect(body).toContain('"dailyMinutes":150');
+  expect(body).toContain('"fullCourse":false');
+});
+
+test("when no time covers an exam by its date, Find hands the keyboard to studying everything after it", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}) => {
+  const { goal, isoDate } = await createTimeStepGoal(noProgressUser.id);
+  await prisma.goal.update({ data: { kind: "exam" }, where: { id: goal.id } });
+  await routeTwoHourAdvice(page, { goalId: goal.id, isoDate, measure: "exam", short: 0.5 });
+  await routeTimeToCover(page, { goalId: goal.id, time: { targetDate: isoDate } });
+
+  await page.goto(`/start/${goal.id}`);
+  await page.getByRole("button", { name: "Start from zero" }).click();
+
+  await page
+    .getByRole("radiogroup", { name: "Minutes a day" })
+    .getByText("30 min", { exact: true })
+    .click();
+
+  await page.getByRole("button", { name: "Find the time that covers everything" }).click();
+
+  const everything = page.getByRole("switch", { name: "Study everything, even after the exam" });
+  await expect(everything).toBeFocused();
+  await page.keyboard.press("Space");
+  await expect(everything).toBeChecked();
+
+  const answer = waitForScheduleAnswer(page, goal.id);
+  await page.getByRole("button", { exact: true, name: "Continue" }).click();
+  const sent = await answer;
+  expect(sent.postData()).toContain('"fullCourse":true');
+});
+
+test("a goal's time step says the next screen moves its date only while the time leaves something out", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}) => {
+  const { goal, isoDate } = await createTimeStepGoal(noProgressUser.id);
+  await routeTwoHourAdvice(page, { goalId: goal.id, isoDate, measure: "goal", short: 0.4 });
+
+  await page.goto(`/start/${goal.id}`);
+  await page.getByRole("button", { name: "Start from zero" }).click();
+
+  const minutes = page.getByRole("radiogroup", { name: "Minutes a day" });
+  const estimate = page.getByRole("region", { name: "Estimate" });
+  const find = page.getByRole("button", { name: "Find the time that covers everything" });
+
+  const moveDate = page.getByText(
+    /^To cover everything at 30\smin a day, move your date on the next screen\.$/u,
+  );
+
+  await minutes.getByText("30 min", { exact: true }).click();
+  await expect(estimate.getByText(/^~40% of your goal in depth by /u)).toBeVisible();
+  await expect(find).toBeVisible();
+  await expect(moveDate).toBeVisible();
+  await expect(page.getByRole("switch", { name: /Study everything/u })).toHaveCount(0);
+
+  await minutes.getByText("2 hr", { exact: true }).click();
+  await expect(estimate.getByText(/^100% of your goal in depth by /u)).toBeVisible();
+  await expect(find).toHaveCount(0);
+  await expect(page.getByText(/move your date on the next screen/u)).toHaveCount(0);
 });
 
 test("the time step keeps asking while a slow plan is still being built, and finds its time once it's ready", async ({

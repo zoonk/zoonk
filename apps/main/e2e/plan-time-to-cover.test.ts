@@ -376,6 +376,30 @@ test.describe("Find the time that covers everything", () => {
     });
   });
 
+  test("when no time covers the exam by its date, the coverage card leads with studying everything after it", async ({
+    browser,
+  }) => {
+    await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
+      const { editor, isoDate } = await shortOnTime(page, user.goalId);
+      await routeTimeToCover(page, { goalId: user.goalId, time: { targetDate: isoDate } });
+
+      await editor.getByRole("button", { name: "Close" }).click();
+      await expect(editor).toBeHidden();
+
+      const panel = suggestionPanel(page);
+      await panel.getByRole("button", { name: FIND }).click();
+
+      // The button Find was pressed on becomes the one way to everything, and keeps the keyboard.
+      const everything = panel.getByRole("button", {
+        name: "Study everything, even after the exam",
+      });
+
+      await expect(everything).toBeFocused();
+      await page.keyboard.press("Enter");
+      await expect(page.getByRole("dialog", { name: "Study everything" })).toBeVisible();
+    });
+  });
+
   test("the coverage card finds the time, previews what it changes and applies it", async ({
     browser,
   }) => {

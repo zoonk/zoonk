@@ -3,6 +3,41 @@ import { expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
 import { REPLAN_TIMEOUT_MS } from "./plan-timeouts";
 
+function readDailyMinutes(goalId: string) {
+  return prisma.goal.findUniqueOrThrow({ where: { id: goalId } }).then((goal) => goal.dailyMinutes);
+}
+
+test("Other time a day applies a time the presets don't have, which joins them, picked", async ({
+  browser,
+}) => {
+  await asPersona(browser, { persona: "hugeGoal" }, async ({ page, user }) => {
+    await page.goto("/today");
+    await page.goto("/plan");
+    await page.getByRole("button", { name: "Adjust plan" }).click();
+    const editor = page.getByRole("dialog", { name: "Adjust your plan" });
+    const time = editor.getByRole("radiogroup", { name: "Time a day" });
+    const other = editor.getByRole("combobox", { name: "Other time a day" });
+    const picked = time.getByRole("radio", { name: /^1 hr 15 min/u });
+    await expect(picked).toHaveCount(0);
+
+    await other.selectOption("75");
+    await expect.poll(() => readDailyMinutes(user.goalId), { timeout: REPLAN_TIMEOUT_MS }).toBe(75);
+
+    await expect(
+      editor.getByText("Daily time changed to 1 hr 15 min.", { exact: true }),
+    ).toBeVisible();
+
+    await expect(picked).toBeChecked();
+    await expect(other).toHaveValue("75");
+
+    // A preset picked next takes its place: the select goes back to asking.
+    await time.getByText("45 min", { exact: true }).click();
+    await expect.poll(() => readDailyMinutes(user.goalId), { timeout: REPLAN_TIMEOUT_MS }).toBe(45);
+    await expect(other).toHaveValue("");
+    await expect(picked).toHaveCount(0);
+  });
+});
+
 test("time presets move focus without saving; Enter, Space and clicks apply a single choice", async ({
   browser,
 }) => {

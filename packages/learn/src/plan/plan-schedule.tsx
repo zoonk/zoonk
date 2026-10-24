@@ -1,8 +1,6 @@
 "use client";
 
-import { MAX_DAILY_MINUTES } from "@zoonk/core/plans/time-advice-contract";
 import { getWeekShape, isWeekend } from "@zoonk/core/plans/week-shape";
-import { NativeSelect, NativeSelectOption } from "@zoonk/ui/components/native-select";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
@@ -11,7 +9,7 @@ import { WeekendTime } from "../_components/weekend-time";
 import { useFormatGoalDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { ChoiceList } from "../onboarding/choice-list";
-import { MINUTE_OPTIONS } from "../onboarding/steps/daily-minutes";
+import { OtherTimeSelect, TimeSelect, getTimeChoices } from "../onboarding/steps/daily-minutes";
 import { usePlanScreen } from "./plan-context";
 import {
   CoveredSentence,
@@ -35,17 +33,6 @@ import { useTappedChoice } from "./use-tapped-choice";
 import { useTimeToCoverTexts } from "./use-time-to-cover";
 
 const DAYS_PER_WEEK = 7;
-
-/**
- * Choices are onboarding's presets, and always include the learner's own daily time, even an
- * unusual one, and the time Find found (`found`): it was planned, so it's exact, and it shows as
- * it is (1 hr 25 min) rather than as the preset above it, which more time can cover less with (a
- * mock can take a study day).
- */
-function getMinuteChoices(current: number, found?: number | null): number[] {
-  const times = found ? [...MINUTE_OPTIONS, current, found] : [...MINUTE_OPTIONS, current];
-  return [...new Set(times)].toSorted((a, b) => a - b);
-}
 
 /**
  * What the chosen time covers, under the presets, so each change shows its effect right away: the
@@ -138,12 +125,14 @@ function useWeekShape() {
 }
 
 /**
- * The time of a study weekday, as onboarding's presets. Once Find answers, the time it found says
- * "Covers everything" under it, or, when no time does, the most time a day says what it covers;
- * none is picked for the learner. While the weekend has its own time (`weekendOn`), it changes the
- * weekdays alone, so the weekend keeps what the learner gave it; otherwise every study day moves
- * with it. The tapped preset shows picked while its change saves (see `useTappedChoice`); another
- * tap waits for it.
+ * The time of a study weekday, as onboarding asks it: the presets, with the learner's own time
+ * among them, even an unusual one, and "Other time…" for any other, which joins them. Once Find
+ * answers, the time it found joins them too, as it is (1 hr 25 min: it was planned, so it's exact,
+ * where the preset above it can cover less, as a mock can take a study day), and says "Covers
+ * everything"; none is picked for the learner. While the weekend has its own time (`weekendOn`),
+ * it changes the weekdays alone, so the weekend keeps what the learner gave it; otherwise every
+ * study day moves with it. The time picked shows picked while its change saves (see
+ * `useTappedChoice`); another pick waits for it.
  */
 function DailyMinutes({
   moving,
@@ -167,7 +156,8 @@ function DailyMinutes({
   const answer = useFindAnswer();
   const current = shape.weekdays;
   const time = useTappedChoice(current);
-  const choices = getMinuteChoices(current, answer?.kind === "covers" ? answer.minutes : null);
+  const found = answer?.kind === "covers" ? answer.minutes : null;
+  const choices = getTimeChoices(current, time.shown, found);
   const onAsk = useFocusFindAnswer(choices);
 
   const setMinutes = (minutes: number) => {
@@ -192,24 +182,33 @@ function DailyMinutes({
         {t("Time a day")}
       </span>
 
-      <div aria-busy={isPending} className="aria-busy:opacity-80">
-        <ChoiceList
-          choices={choices.map((minutes) => ({
-            description: (answer && texts.note(answer, minutes)) ?? undefined,
-            label: formatDuration(minutes),
-            value: String(minutes),
-          }))}
-          label={t("Time a day")}
-          manualActivation
-          numberKeys={false}
-          onChange={(value) => setMinutes(Number(value))}
-          value={String(time.shown)}
-          variant="chips"
+      <div className="flex flex-col gap-2">
+        <div aria-busy={isPending} className="aria-busy:opacity-80">
+          <ChoiceList
+            choices={choices.map((minutes) => ({
+              description: (answer && texts.note(answer, minutes)) ?? undefined,
+              label: formatDuration(minutes),
+              value: String(minutes),
+            }))}
+            label={t("Time a day")}
+            manualActivation
+            numberKeys={false}
+            onChange={(value) => setMinutes(Number(value))}
+            value={String(time.shown)}
+            variant="chips"
+          />
+        </div>
+
+        <OtherTimeSelect
+          disabled={isPending}
+          label={t("Other time a day")}
+          minutes={time.shown}
+          onPick={setMinutes}
         />
       </div>
 
       <DailyCoverage
-        canFind={current < MAX_DAILY_MINUTES && !timeEnough}
+        canFind={!timeEnough}
         onAsk={onAsk}
         onMoving={onMoving}
         planChange={planChange}
@@ -277,9 +276,9 @@ function StudyDays({ planChange: { change, isPending } }: { planChange: PlanChan
 }
 
 /**
- * Saturday and Sunday's own time, as onboarding asks it: switched on, the weekend gets its time in
- * the same choices as the rest of the week; switched off, it goes back to the weekdays' time. Only
- * for a week studied both on weekdays and on the weekend. The time picked shows while it saves.
+ * Saturday and Sunday's own time: switched on, the weekend gets its time from every time a day,
+ * in one select; switched off, it goes back to the weekdays' time. Only for a week studied both on
+ * weekdays and on the weekend. The time picked shows while it saves.
  */
 function WeekendMinutes({
   checked,
@@ -291,7 +290,6 @@ function WeekendMinutes({
   planChange: PlanChange;
 }) {
   const t = useExtracted();
-  const formatDuration = useFormatDuration();
   const shape = useWeekShape();
   const current = shape.weekend ?? shape.weekdays;
   const weekend = useTappedChoice(current);
@@ -321,19 +319,12 @@ function WeekendMinutes({
         }
       }}
     >
-      <NativeSelect
-        aria-label={t("Time on weekends")}
+      <TimeSelect
         disabled={isPending}
-        focusableWhenDisabled
-        onChange={(event) => setWeekend(Number(event.target.value))}
+        label={t("Time on weekends")}
+        onChange={(minutes) => void setWeekend(minutes)}
         value={weekend.shown}
-      >
-        {getMinuteChoices(current).map((minutes) => (
-          <NativeSelectOption key={minutes} value={minutes}>
-            {formatDuration(minutes)}
-          </NativeSelectOption>
-        ))}
-      </NativeSelect>
+      />
     </WeekendTime>
   );
 }

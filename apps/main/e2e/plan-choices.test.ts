@@ -386,7 +386,7 @@ test.describe("Plan choices", () => {
     const editor = page.getByRole("dialog", { name: "Adjust your plan" });
 
     await expect(
-      editor.getByRole("switch", { name: "Keep studying after the exam" }),
+      editor.getByRole("switch", { name: "Study everything, even after the exam" }),
     ).toBeVisible();
 
     await page.context().close();

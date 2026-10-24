@@ -11,12 +11,16 @@ import { BigQuantity } from "../../_components/big-quantity";
 import { useFormatDuration } from "../../_utils/time-format";
 import { type GenerationRun } from "../../generation/generation-run";
 import { type FindStatus, findPickedChip, findTimeChip } from "../../plan/plan-coverage";
-import { readTimeToCover, useTimeToCoverTexts } from "../../plan/use-time-to-cover";
+import {
+  type TimeToCoverAnswer,
+  readTimeToCover,
+  useTimeToCoverTexts,
+} from "../../plan/use-time-to-cover";
 import { type Choice, ChoiceList } from "../choice-list";
 import { PlanReceipt, PlanReceiptChips } from "../plan-receipt";
 import { AdviceSentence } from "./advice-sentence";
-import { MINUTE_OPTIONS } from "./daily-minutes";
-import { FullCourseToggle } from "./full-course-toggle";
+import { CoverEverything, FULL_COURSE_ID, getShownShare, isShort } from "./cover-everything";
+import { OtherTimeSelect, getTimeChoices } from "./daily-minutes";
 import { StepForm } from "./step-form";
 import {
   EVERY_DAY,
@@ -40,23 +44,17 @@ import {
 } from "./use-time-advice";
 import { isRunStopped } from "./wait-run";
 
-/** Adds a time to the chips when it isn't one of them, in order. */
-function withOption(options: number[], minutes: number): number[] {
-  return options.includes(minutes) ? options : [...options, minutes].toSorted((a, b) => a - b);
-}
-
 /**
- * The time chips: the usual amounts and the learner's own pick (a time picked on a course's page
- * may be none of them). Once Find answers for the week shown, the time it found joins them as it
- * is (1 hr 25 min: it was planned, so it's exact) and says "Covers everything", or, when no time
- * does, the most time a day says what it covers. None is picked for the learner.
+ * The time chips: the usual amounts and the learner's own pick (a time picked in "Other time…" or
+ * on a course's page may be none of them). Once Find answers for the week shown, the time it found
+ * joins them as it is (1 hr 25 min: it was planned, so it's exact) and says "Covers everything".
+ * None is picked for the learner.
  */
 function useMinuteChoices({ found, picked }: { found: PlanTimeToCover | null; picked: number }) {
   const texts = useTimeToCoverTexts();
   const formatDuration = useFormatDuration();
   const answer = found && readTimeToCover(found);
-  const presets = withOption([...MINUTE_OPTIONS], picked);
-  const options = answer?.kind === "covers" ? withOption(presets, answer.minutes) : presets;
+  const options = getTimeChoices(picked, answer?.kind === "covers" ? answer.minutes : null);
 
   return {
     choices: options.map((value) => ({
@@ -77,20 +75,40 @@ function useWeekendChoices({
   weekend: string | null;
 }): Choice<string>[] {
   const formatDuration = useFormatDuration();
-  const picked = withOption([...MINUTE_OPTIONS], minutes);
-  const options = weekend === null ? picked : withOption(picked, Number(weekend));
+  const options = getTimeChoices(minutes, weekend === null ? null : Number(weekend));
 
   return options.map((value) => ({ label: formatDuration(value), value: String(value) }));
 }
 
-/** The time chips and the line under them, where focus goes once Find answers. */
+/** Where focus goes once Find answers: the time chips, and Find's line. */
 const MINUTES_ID = "onboarding-minutes";
 const FIND_LINE_ID = "onboarding-find";
 
 /**
- * Once Find answers, focus moves to the chip it marks, so Space picks it: the time that covers
- * everything, or the most time a day; when no time covers more, to the answer itself. Only when
- * this step asked (`ask`), and a failed search keeps focus on Try again, in Find's own place.
+ * Where Find's answer sends the keyboard: the chip of the time that covers everything, so Space
+ * picks it; when no time does, an exam's one way to study it all, "Study everything, even after
+ * the exam" (only an exam has it). Null when neither is there.
+ */
+function findAnswerTarget({
+  answer,
+  minutes,
+  options,
+}: {
+  answer: TimeToCoverAnswer;
+  minutes: HTMLElement | null;
+  options: number[];
+}): HTMLElement | null {
+  if (answer.kind === "none") {
+    return document.querySelector<HTMLElement>(`#${FULL_COURSE_ID} [role="switch"]`);
+  }
+
+  return findTimeChip({ choices: options, container: minutes, minutes: answer.minutes });
+}
+
+/**
+ * Once Find answers, focus moves to what the learner can do with it (see `findAnswerTarget`), or
+ * else to the chip picked, or to the answer itself. Only when this step asked (`ask`), and a
+ * failed search keeps focus on Try again, in Find's own place.
  */
 function useFocusFound({
   found,
@@ -114,16 +132,10 @@ function useFocusFound({
       return;
     }
 
-    const answer = readTimeToCover(found);
     const minutes = document.querySelector<HTMLElement>(`#${MINUTES_ID}`);
 
-    const chip =
-      answer.kind === "none"
-        ? null
-        : findTimeChip({ choices: options, container: minutes, minutes: answer.minutes });
-
     (
-      chip ??
+      findAnswerTarget({ answer: readTimeToCover(found), minutes, options }) ??
       findPickedChip(minutes) ??
       document.querySelector<HTMLElement>(`#${FIND_LINE_ID}`)
     )?.focus();
@@ -146,18 +158,59 @@ function MinutesReadout({ minutes }: { minutes: number }) {
   );
 }
 
+/** The time picked, large, the chips under it and "Other time…" for any time they don't have. */
+function TimeChoices({
+  choices,
+  minutes,
+  onChange,
+}: {
+  choices: Choice<string>[];
+  minutes: string;
+  onChange: (minutes: string) => void;
+}) {
+  const t = useExtracted();
+
+  return (
+    <div className="flex flex-col gap-4">
+      <MinutesReadout minutes={Number(minutes)} />
+
+      <div className="flex flex-col gap-2">
+        <div id={MINUTES_ID}>
+          <ChoiceList
+            choices={choices}
+            label={t("Minutes a day")}
+            onChange={onChange}
+            value={minutes}
+            variant="chips"
+          />
+        </div>
+
+        <OtherTimeSelect
+          label={t("Other time a day")}
+          minutes={Number(minutes)}
+          onPick={(next) => onChange(String(next))}
+        />
+      </div>
+    </div>
+  );
+}
+
 /**
  * How much time a day and on which days. It comes after placement, once the plan knows what the
  * learner already knows. The goal's facts lead (as chips, in the page's aside beside it from
- * 72rem), then the time picked, large, the presets under it, and the estimate: what the time
- * picked covers by the date, exactly as the plan would have it, which follows every pick at once,
- * so the learner decides with the number in front of them. Under the presets, "Find the time that
+ * 72rem), then the time picked, large, the presets under it with "Other time…" for any other, and
+ * the estimate (in the aside from 72rem): what the time picked covers by the date, exactly as the
+ * plan would have it, which follows every pick at once, so the learner decides with the number in
+ * front of them. Each thing is said once: the estimate says what their time covers; the line
+ * after it, only while that's less than everything, says what they'd need: "Find the time that
  * covers everything" plans the goal at each daily time, in the week shown (its days, and the
- * weekend's own time, which counts too), only when the learner asks: the time it finds is marked,
- * never picked for them, so nothing changes under them while they read. The days and the weekend's
- * time stay one tap away. It opens on the goal's starting pick (the time a course's page had
- * picked, or one from the goal's size) and on weekdays. Without a date there's nothing to cover
- * by, so there's no estimate and nothing to find.
+ * weekend's own time, which counts too), only when the learner asks, and the time it finds is
+ * marked, never picked for them, so nothing changes under them while they read. Under it, the
+ * other way to study everything: an exam's switch to go on after the exam, or for any other goal,
+ * that the next screen moves its date. The days and the weekend's time stay one tap away. It opens
+ * on the goal's starting pick (the time a course's page had picked, or one from the goal's size)
+ * and on weekdays. Without a date there's nothing to cover by, so there's no estimate and nothing
+ * to find.
  */
 export function ScheduleStep({
   dated,
@@ -245,6 +298,7 @@ export function ScheduleStep({
 
   const estimateProps = { ...estimate, minutes: Number(minutes), onRetry: asking.restart };
   const showsEstimate = dated && hasEstimate({ estimate, pickedShare, status: asking.status });
+  const share = getShownShare(estimate);
 
   const weekly = days.reduce(
     (total, day) => total + Number(isWeekend(day) && weekend ? weekend : minutes),
@@ -257,7 +311,8 @@ export function ScheduleStep({
       onContinue={() =>
         onAnswer({
           dailyMinutes: Number(minutes),
-          fullCourse: exam ? fullCourse : undefined,
+          // The switch shows only while the time leaves something out: hidden, it isn't chosen.
+          fullCourse: exam ? fullCourse && isShort(share) : undefined,
           question: "schedule",
           studyDays: days.length === EVERY_DAY.length ? undefined : days,
           timeZone: getLocalTimeZone(),
@@ -275,36 +330,30 @@ export function ScheduleStep({
     >
       <PlanReceiptChips className="min-[72rem]:hidden" goal={goal} />
 
-      <div className="flex flex-col gap-4">
-        <MinutesReadout minutes={Number(minutes)} />
-
-        <div id={MINUTES_ID}>
-          <ChoiceList
-            choices={choices}
-            label={t("Minutes a day")}
-            onChange={setMinutes}
-            value={minutes}
-            variant="chips"
-          />
-        </div>
-
-        <div className="text-muted-foreground text-sm text-pretty">
-          <AdviceSentence
-            dated={dated}
-            find={finder.status}
-            found={found}
-            id={FIND_LINE_ID}
-            onFind={() => {
-              askFocus();
-              void finder.find();
-            }}
-            planReady={planReady}
-            readingNotice={answer?.advice.readingNotice ?? false}
-          />
-        </div>
-      </div>
+      <TimeChoices choices={choices} minutes={minutes} onChange={setMinutes} />
 
       {showsEstimate && <TimeEstimatePanel {...estimateProps} />}
+
+      <CoverEverything
+        exam={exam}
+        fullCourse={fullCourse}
+        minutes={Number(minutes)}
+        onFullCourseChange={setFullCourse}
+        share={share}
+      >
+        <AdviceSentence
+          dated={dated}
+          find={finder.status}
+          found={found}
+          id={FIND_LINE_ID}
+          onFind={() => {
+            askFocus();
+            void finder.find();
+          }}
+          planReady={planReady}
+          readingNotice={answer?.advice.readingNotice ?? false}
+        />
+      </CoverEverything>
 
       <WeekDisclosure
         summary={t("{days, plural, one {# day} other {# days}} · {time} a week", {
@@ -323,8 +372,6 @@ export function ScheduleStep({
           />
         )}
       </WeekDisclosure>
-
-      {exam && <FullCourseToggle checked={fullCourse} onCheckedChange={setFullCourse} />}
     </StepForm>
   );
 }

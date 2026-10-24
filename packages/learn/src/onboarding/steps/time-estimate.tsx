@@ -162,8 +162,8 @@ type TimeEstimateProps = {
 };
 
 /**
- * The estimate on the screen, under the recommendation, until the page's aside shows it from
- * 72rem: one panel, the only one there.
+ * The estimate on the screen, under the time chips and above what the learner would need, until
+ * the page's aside shows it from 72rem: one panel, the only one there.
  */
 export function TimeEstimatePanel(props: TimeEstimateProps) {
   const t = useExtracted();

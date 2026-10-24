@@ -1,7 +1,6 @@
 "use client";
 
 import { MAX_DAILY_MINUTES, type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
-import { getWeekShape } from "@zoonk/core/plans/week-shape";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
 import { DoneMark } from "../_components/status-mark";
@@ -19,6 +18,7 @@ import {
 } from "../_components/suggestion";
 import { usePlanScreen } from "./plan-context";
 import { type FindStatus, PendingLabel, useCoveredText, usePlanCoverage } from "./plan-coverage";
+import { useFullCourse } from "./plan-full-course";
 import {
   CheckingChange,
   type CoverageOffer,
@@ -40,7 +40,8 @@ import {
   useSlotAnswer,
   useSlotAnswered,
 } from "./plan-suggestion-context";
-import { useTimeToCover, useTimeToCoverTexts } from "./use-time-to-cover";
+import { useStudyEverything } from "./study-everything";
+import { readTimeToCover, useTimeToCover, useTimeToCoverTexts } from "./use-time-to-cover";
 
 type Coverage = NonNullable<ReturnType<typeof usePlanCoverage>>;
 
@@ -48,18 +49,17 @@ type Coverage = NonNullable<ReturnType<typeof usePlanCoverage>>;
 type CardFlags = {
   /** Find (or its Try again) leads: nothing found or offered yet. */
   findsTime: boolean;
-  /** At the most time a day, moving a goal's date leads instead of Find. */
-  leadsWithDate: boolean;
   /** Moving the date is a way on: a goal whose answer didn't say no date covers it. */
   moveDate: boolean;
   /** Asked for a date, the search found none. */
   noDate: boolean;
   pending: boolean;
   retry: boolean;
+  /** No time covers an exam by its date: going on after it leads, as the one way to it all. */
+  studiesEverything: boolean;
 };
 
 function getCardFlags({
-  canFind,
   course,
   found,
   intent,
@@ -67,7 +67,6 @@ function getCardFlags({
   offer,
   status,
 }: {
-  canFind: boolean;
   /** An exam studying everything, offered to end at the exam again. */
   course: boolean;
   found: PlanTimeToCover | null;
@@ -79,17 +78,16 @@ function getCardFlags({
   const retry = status === "failed" || status === "building";
   const dateless = isGoal && found !== null && found.fittingDate === null;
   const offersDate = offer?.operations[0]?.kind === "setTargetDate";
-  const moveDate = isGoal && !course && !dateless && !offersDate;
   const asked = offer !== null || found !== null;
-  const findsTime = (canFind || retry) && !asked;
+  const noTime = found !== null && readTimeToCover(found).kind === "none";
 
   return {
-    findsTime,
-    leadsWithDate: !findsTime && !asked && moveDate,
-    moveDate,
+    findsTime: !asked,
+    moveDate: isGoal && !course && !dateless && !offersDate,
     noDate: dateless && intent === "date",
     pending: status === "pending",
     retry,
+    studiesEverything: !isGoal && !course && noTime,
   };
 }
 
@@ -131,8 +129,8 @@ function useCardLines({
 
 /**
  * The card's actions: the offer's diff with Apply once previewed, "Checking what changes…" while a
- * goal's date is found, or Preview, Find (or Move your date at the most time a day) and the other
- * ways.
+ * goal's date is found, or Preview, Find (or, once no time covers an exam, "Study everything, even
+ * after the exam") and the other ways.
  */
 function CoverageBody({
   applying,
@@ -158,7 +156,9 @@ function CoverageBody({
   const coverage = usePlanCoverage();
   const { plan } = usePlanScreen();
   const { requestPreview } = usePlanSuggestionSlot();
-  const { findsTime, leadsWithDate, moveDate, pending, retry } = flags;
+  const fullCourse = useFullCourse();
+  const studyEverything = useStudyEverything();
+  const { findsTime, moveDate, pending, retry } = flags;
 
   if (preview.status !== "idle" && offer) {
     return (
@@ -199,21 +199,14 @@ function CoverageBody({
         </SuggestionAction>
       )}
 
-      {leadsWithDate && (
-        <SuggestionAction
-          aria-busy={pending || undefined}
-          disabled={pending}
-          focusableWhenDisabled
-          key="move"
-          onClick={() => ask("date")}
-        >
-          <PendingLabel pending={pending}>{t("Move your date to cover everything")}</PendingLabel>
+      {/* Keyed as Find, so the button Find was pressed on becomes it and keeps the keyboard. */}
+      {flags.studiesEverything && fullCourse && (
+        <SuggestionAction key="find" onClick={() => studyEverything(fullCourse)}>
+          {t("Study everything, even after the exam")}
         </SuggestionAction>
       )}
 
-      {coverage && (
-        <OtherOptions onMoveDate={moveDate && !leadsWithDate ? () => ask("date") : null} />
-      )}
+      {coverage && <OtherOptions onMoveDate={moveDate ? () => ask("date") : null} />}
     </SuggestionActions>
   );
 }
@@ -224,7 +217,8 @@ function CoverageBody({
  * (never for the page) and, with one tap, shows what the change it found moves, as a diff (see
  * `useAnswerOffer`); Apply saves it, and the slot says "Plan updated" with what it did and Undo,
  * in the same place, even once the plan covers everything (`coverage` null). A goal's menu moves
- * its date the same way. An exam studying everything is offered the exam's end again instead.
+ * its date the same way. When no time covers an exam by its date, studying everything, even after
+ * it, leads instead, in its sheet. An exam studying everything is offered the exam's end again.
  */
 export function CoverageSuggestion({ coverage }: { coverage: Coverage | null }) {
   const t = useExtracted();
@@ -249,7 +243,6 @@ export function CoverageSuggestion({ coverage }: { coverage: Coverage | null }) 
   const title = offer?.title ?? covered;
 
   const flags = getCardFlags({
-    canFind: !courseOffer && getWeekShape(plan.schedule).weekdays < MAX_DAILY_MINUTES,
     course: courseOffer !== null,
     found,
     intent,

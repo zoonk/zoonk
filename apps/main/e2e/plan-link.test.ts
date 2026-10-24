@@ -96,7 +96,11 @@ test.describe("Plan links", () => {
     await page.goto(`/plan-link/${plan.id}`);
 
     // The time is a chip, picked by tapping it as onboarding's are.
-    await page.getByText("30 min", { exact: true }).click();
+    await page
+      .getByRole("radiogroup", { name: "Minutes a day" })
+      .getByText("30 min", { exact: true })
+      .click();
+
     await expect(page.getByRole("radio", { exact: true, name: "30 min" })).toBeChecked();
     await page.getByRole("button", { name: "Start from this plan" }).click();
 

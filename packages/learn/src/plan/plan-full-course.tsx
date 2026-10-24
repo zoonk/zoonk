@@ -101,9 +101,10 @@ export function useFullCourseText() {
 }
 
 /**
- * "Keep studying after the exam" in the plan editor, for an exam whose time doesn't cover it by its
- * date: on, what doesn't fit goes on after the exam, and it says when everything ends; off, what
- * doesn't fit by the exam is left out. Each switch re-plans from today.
+ * "Study everything, even after the exam" in the plan editor, as onboarding names it, for an exam
+ * whose time doesn't cover it by its date: on, what doesn't fit goes on after the exam, and it
+ * says when everything ends; off, what doesn't fit by the exam is left out. Each switch re-plans
+ * from today.
  */
 export function FullCourseSwitch() {
   const t = useExtracted();
@@ -121,7 +122,7 @@ export function FullCourseSwitch() {
     <div className="flex flex-col gap-2">
       <div className="flex min-h-11 items-center justify-between gap-3">
         <label className="cursor-pointer text-sm font-medium" htmlFor={switchId}>
-          {t("Keep studying after the exam")}
+          {t("Study everything, even after the exam")}
         </label>
         <Switch
           aria-busy={isPending || undefined}
