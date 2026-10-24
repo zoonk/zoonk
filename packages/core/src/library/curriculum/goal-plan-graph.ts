@@ -10,6 +10,7 @@ import { type GoalSkillGraph } from "./save-goal-skills";
  * again keeps both.
  */
 export type PlannedSkillGraph = Omit<GoalSkillGraph, "skills"> & {
+  courseOutline?: PlanGraph["courseOutline"];
   skills: (GoalSkillGraph["skills"][number] & { outlined?: boolean; topicsUnknown?: boolean })[];
 };
 
@@ -106,6 +107,7 @@ export function toGoalPlanGraph({
   });
 
   return {
+    ...(graph.courseOutline && { courseOutline: graph.courseOutline }),
     phases: graph.phases.map((phase) => ({ milestone: phase.milestone, name: phase.title })),
     skills: mergeDuplicateSkills(skills),
   };

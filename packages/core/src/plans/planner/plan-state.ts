@@ -1,3 +1,4 @@
+import { CourseLevel } from "@zoonk/db/enums";
 import { isJsonObject } from "@zoonk/utils/json";
 import { z } from "zod";
 import { examChoicePickSchema } from "../../exams/choices/exam-choice-contract";
@@ -108,6 +109,14 @@ const optionSkillSchema = graphSkillSchema.extend({ after: z.string().nullable()
  * in `optionSkills` (see `setAsideOptionSkills`), so nothing that reads the plan's skills sees them.
  */
 export const planGraphSchema = z.object({
+  /** A published curriculum's levels remain its phases as its outline changes. */
+  courseOutline: z
+    .object({
+      courseId: z.string(),
+      levels: z.array(z.enum(CourseLevel)),
+      startChapterId: z.string().nullable(),
+    })
+    .optional(),
   optionSkills: z.array(optionSkillSchema).optional(),
   phases: z.array(graphPhaseSchema).default([]),
   skills: z.array(graphSkillSchema).default([]),

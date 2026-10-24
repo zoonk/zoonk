@@ -1,5 +1,9 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
+import { isJsonObject } from "@zoonk/utils/json";
+import { loadCourseOutline } from "../../goals/_utils/course-outline";
+import { type CourseOutlineChapter } from "../../goals/_utils/course-plan-graph";
+import { readCourseStart } from "../../goals/course-start-details";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { needsTool } from "../../library/chapters/chapter-tools";
 import {
@@ -11,6 +15,7 @@ import {
 import { QUICK_LESSON_KEY_WHERE } from "../../library/quick-lessons/quick-lesson-identity";
 import { type PlanGraph } from "../planner/plan-state";
 import { type PlannerLesson } from "../planner/plan-units";
+import { withCourseLessonOrder } from "./course-lesson-order";
 import { goalUsesTools } from "./plan-tools";
 import { type SkillCourses, getSkillCourses, pickSkillPlaces } from "./skill-courses";
 
@@ -219,11 +224,13 @@ async function withGoalCourse({
  * the lessons the planner plans and its stand-ins count against.
  */
 export async function loadGoalPlannerLessons({
+  courseChapters,
   goal,
   graph,
   userId,
 }: {
-  goal: Pick<Goal, "examBlueprintId" | "kind" | "primaryCourseId">;
+  courseChapters?: readonly CourseOutlineChapter[];
+  goal: Pick<Goal, "examBlueprintId" | "kind" | "primaryCourseId"> & Partial<Pick<Goal, "details">>;
   graph: PlanGraph;
   userId: string | null;
 }): Promise<PlannerLesson[]> {
@@ -236,5 +243,33 @@ export async function loadGoalPlannerLessons({
     userId,
   });
 
-  return loadSkillLessons({ goal, skillCourses, skillIds, userId });
+  const lessons = await loadSkillLessons({ goal, skillCourses, skillIds, userId });
+  const start = readCourseStart(isJsonObject(goal.details) ? goal.details : {});
+
+  /** Skill-graph curricula keep their own phases until they plan from a settled course outline. */
+  const source = graph.courseOutline;
+
+  const originalSkills = graph.skills.filter((skill) =>
+    skill.courseIds?.includes(goal.primaryCourseId ?? ""),
+  );
+
+  const legacyOutline =
+    originalSkills.length > 0 && originalSkills.every((skill) => skill.outlined);
+
+  if (!source && ((!start && !courseChapters) || !legacyOutline)) {
+    return lessons;
+  }
+
+  const sourceCourseId = source?.courseId ?? goal.primaryCourseId;
+
+  const chapters =
+    courseChapters ??
+    (sourceCourseId ? await loadCourseOutline({ courseId: sourceCourseId, userId }) : []);
+
+  return withCourseLessonOrder({
+    chapters,
+    lessons,
+    levels: source?.levels,
+    startChapterId: source?.startChapterId ?? start?.chapterId ?? null,
+  });
 }

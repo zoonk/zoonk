@@ -5,6 +5,7 @@ import {
 } from "../../checkpoints/checkpoint-rules";
 import { getPlannedBossMinutes } from "./boss-minutes";
 import { fundMocks } from "./mock-funding";
+import { addPhaseCheckpoints } from "./phase-checkpoints";
 import {
   type StudyCalendar,
   addDays,
@@ -14,7 +15,6 @@ import {
 } from "./plan-calendar";
 import { getExamDayRules, getPlannedMinutes } from "./plan-days";
 import { parsePlanSettings } from "./plan-state";
-import { addPhaseCheckpoints } from "./plan-units";
 import {
   type DayShape,
   type PlanDay,

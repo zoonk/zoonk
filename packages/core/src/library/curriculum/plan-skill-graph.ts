@@ -116,6 +116,7 @@ export async function buildPlanSkillGraph({
   return {
     courseIdsByKey: Object.fromEntries(courseIds.map((id) => [id, id])),
     graph: {
+      ...(planGraph.courseOutline && { courseOutline: planGraph.courseOutline }),
       courses: courses.map((course) => ({ key: course.id, levels: [], title: course.title })),
       estimatedHours: toHours(planGraph.skills),
       phases: planGraph.phases.map((phase, index) => ({

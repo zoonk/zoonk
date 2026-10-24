@@ -119,7 +119,7 @@ export const loadCourseEstimateData = cache(async (courseId: string, today: stri
   const skillIds = graph.skills.map((skill) => skill.skillId);
 
   const [lessons, prerequisites, facts, skills, quickLessons] = await Promise.all([
-    loadGoalPlannerLessons({ goal, graph, userId: null }),
+    loadGoalPlannerLessons({ courseChapters: chapters, goal, graph, userId: null }),
     loadSkillPrerequisites(skillIds),
     loadExamFacts({ goal, graph }),
     prisma.skill.findMany({ where: { id: { in: skillIds } } }),

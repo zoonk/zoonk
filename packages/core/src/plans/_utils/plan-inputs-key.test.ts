@@ -127,6 +127,23 @@ describe(getPlanInputsKey, () => {
     expect(getPlanInputsKey({ input: { ...input, courseStart: true }, items: [] })).not.toBe(key);
   });
 
+  it("reads a course lesson's published position and phase", () => {
+    const keys = [
+      { phase: 0, position: 0 },
+      { phase: 0, position: 1 },
+      { phase: 1, position: 0 },
+    ].map((courseOrder) =>
+      getPlanInputsKey({
+        input: { ...input, lessons: input.lessons.map((lesson) => ({ ...lesson, courseOrder })) },
+        items: [],
+      }),
+    );
+
+    expect(keys[0]).not.toBe(key);
+    expect(keys[1]).not.toBe(keys[0]);
+    expect(keys[2]).not.toBe(keys[0]);
+  });
+
   // The first exam day's clock sizes `mockMinutes`; the second day's mocks are sized by their own.
   it("changes when an exam day's mock clock does, the first day's unchanged", () => {
     const clocks = [

@@ -202,7 +202,7 @@ function scheduleWith({
  * everything it asks (see `putBeyondNoticeLast`).
  */
 function putBeyondNoticeUnitsLast(input: RestInput): readonly QueueUnit[] {
-  if (input.goal.kind !== "exam") {
+  if (input.goal.kind !== "exam" || input.queue.rates === null) {
     return input.units;
   }
 

@@ -246,7 +246,7 @@ describe(startCourseGoal, () => {
     expect(goal?.details).not.toHaveProperty("level");
   });
 
-  it("teaches a skill several chapters share where the course first does, in the course's order", async () => {
+  it("keeps shared-skill lessons in their published chapters and levels", async () => {
     const [{ course }, user] = await Promise.all([
       outlinedCourse({}, [
         ...ROBOTICS_OUTLINE.slice(0, 2),
@@ -264,10 +264,10 @@ describe(startCourseGoal, () => {
     expect(plan.lessons).toStrictEqual([
       "Lesson on Sensors",
       "Lesson on Motors",
-      "Lesson on Kinematics and Motors",
       "Challenge: What robots are made of",
       "Lesson on Control loops",
       "Lesson on Feedback",
+      "Lesson on Kinematics and Motors",
       "Lesson on Path planning",
       "Lesson on Robot learning",
     ]);

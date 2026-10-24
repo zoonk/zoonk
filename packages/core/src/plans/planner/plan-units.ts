@@ -1,8 +1,11 @@
 import { type CourseLevel } from "@zoonk/db";
+import { followCourseLessonOrder } from "./course-unit-order";
 import { countStandInLessons } from "./stand-in-size";
 
 /** A Library lesson that teaches some of the goal's skills, in its chapter's order. */
 export type PlannerLesson = {
+  /** Its published place in a course-start curriculum, independent of its shared skills. */
+  courseOrder?: { phase: number; position: number };
   /** The band of the course chapter the plan takes it from; null or absent when unplaced. */
   band?: CourseLevel | null;
   chapterId: string | null;
@@ -371,11 +374,13 @@ function getPlannedSkillId({
 export function buildLessonUnits({
   lessons,
   paceFactor,
+  preserveCourseOrder = false,
   prerequisites = new Map(),
   skills,
 }: {
   lessons: readonly PlannerLesson[];
   paceFactor: number;
+  preserveCourseOrder?: boolean;
   /** What each skill builds on, by skill id. */
   prerequisites?: ReadonlyMap<string, readonly string[]>;
   skills: readonly UnitSkill[];
@@ -404,7 +409,7 @@ export function buildLessonUnits({
   // skill of a real-size exam was a twentieth of each plan built.
   const byFirstSkill = Map.groupBy(lessons, (lesson) => firstSkill.get(lesson.lessonId));
 
-  return skills.flatMap((skill) => {
+  const units = skills.flatMap((skill) => {
     const own = (byFirstSkill.get(skill.skillId) ?? [])
       .filter((lesson) => lesson.skillIds.includes(skill.skillId))
       .map((lesson) =>
@@ -424,41 +429,6 @@ export function buildLessonUnits({
 
     return missing > 0 ? [...own, toPlaceholderUnit({ lessons: missing, paceFactor, skill })] : own;
   });
-}
 
-/**
- * Adds a phase checkpoint after the last lesson of each phase. Units arrive grouped by phase, so
- * the checkpoint goes where the next phase begins; the last one closes the plan.
- */
-export function addPhaseCheckpoints({
-  getMinutes,
-  phaseNames,
-  units,
-}: {
-  /** A phase's boss's minutes (see `getPlannedBossMinutes`). */
-  getMinutes: (phase: number) => number;
-  phaseNames: readonly string[];
-  units: readonly QueueUnit[];
-}): QueueUnit[] {
-  return units.flatMap((unit, index) => {
-    const next = units[index + 1];
-
-    if (next && next.phase === unit.phase) {
-      return [unit];
-    }
-
-    const boss: QueueUnit = {
-      area: unit.area,
-      chapterId: null,
-      key: getBossKey(unit.phase),
-      kind: "boss",
-      lessonId: null,
-      minutes: getMinutes(unit.phase),
-      phase: unit.phase,
-      skillId: null,
-      title: phaseNames[unit.phase] ?? "",
-    };
-
-    return [unit, boss];
-  });
+  return preserveCourseOrder ? followCourseLessonOrder({ lessons, units }) : units;
 }

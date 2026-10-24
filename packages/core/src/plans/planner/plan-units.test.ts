@@ -31,6 +31,88 @@ function plannedLessons(input: Omit<Parameters<typeof buildLessonUnits>[0], "pac
 }
 
 describe(buildLessonUnits, () => {
+  it("keeps a foundation before every dependent when exam priority changes their order", () => {
+    const lessons = [
+      { ...lessonsOf("first", 1, ["shared"])[0]!, courseOrder: { phase: 0, position: 0 } },
+      { ...lessonsOf("second", 1, ["dependent"])[0]!, courseOrder: { phase: 0, position: 1 } },
+      { ...lessonsOf("third", 1, ["shared"])[0]!, courseOrder: { phase: 0, position: 2 } },
+      { ...lessonsOf("fourth", 1, ["ranked"])[0]!, courseOrder: { phase: 0, position: 3 } },
+      ...lessonsOf("foundation", 1, ["foundation"]),
+    ];
+
+    const units = buildLessonUnits({
+      lessons,
+      paceFactor: 1,
+      prerequisites: new Map([
+        ["dependent", ["foundation"]],
+        ["ranked", ["foundation"]],
+      ]),
+      preserveCourseOrder: true,
+      skills: [
+        ...skillsOf({ shared: 2 }),
+        ...skillsOf({ foundation: 1 }),
+        ...skillsOf({ ranked: 1 }),
+        ...skillsOf({ dependent: 1 }),
+      ],
+    });
+
+    expect(units.map((unit) => unit.lessonId)).toStrictEqual([
+      "first-1",
+      "foundation-1",
+      "second-1",
+      "third-1",
+      "fourth-1",
+    ]);
+  });
+
+  it("keeps an added foundation before its dependent course lesson", () => {
+    const lessons = [
+      { ...lessonsOf("first", 1, ["shared"])[0]!, courseOrder: { phase: 0, position: 0 } },
+      { ...lessonsOf("second", 1, ["dependent"])[0]!, courseOrder: { phase: 0, position: 1 } },
+      { ...lessonsOf("third", 1, ["shared"])[0]!, courseOrder: { phase: 0, position: 2 } },
+      ...lessonsOf("foundation", 1, ["foundation"]),
+    ];
+
+    const skills = [
+      ...skillsOf({ shared: 2 }),
+      ...skillsOf({ foundation: 1 }),
+      ...skillsOf({ dependent: 1 }),
+    ];
+
+    const units = buildLessonUnits({
+      lessons,
+      paceFactor: 1,
+      prerequisites: new Map([["dependent", ["foundation"]]]),
+      preserveCourseOrder: true,
+      skills,
+    });
+
+    expect(units.map((unit) => unit.lessonId)).toStrictEqual([
+      "first-1",
+      "foundation-1",
+      "second-1",
+      "third-1",
+    ]);
+  });
+
+  it("keeps course levels grouped around a quick lesson without changing skill credit", () => {
+    const skills = skillsOf({ quick: 1, shared: 2 });
+
+    const lessons = [
+      { ...lessonsOf("opening", 1, ["shared"])[0]!, courseOrder: { phase: 0, position: 0 } },
+      { ...lessonsOf("later", 1, ["shared"])[0]!, courseOrder: { phase: 1, position: 1 } },
+      ...lessonsOf("quick", 1, ["quick"]),
+    ];
+
+    const units = buildLessonUnits({ lessons, paceFactor: 1, preserveCourseOrder: true, skills });
+
+    expect(units.map((unit) => [unit.lessonId, unit.phase, unit.skillId])).toStrictEqual([
+      ["quick-1", 0, "quick"],
+      ["opening-1", 0, "shared"],
+      ["later-1", 1, "shared"],
+    ]);
+  });
+
   it("splits a chapter shared by several skills into runs, in teaching order, and keeps it whole", () => {
     expect(
       plannedLessons({

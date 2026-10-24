@@ -5,6 +5,7 @@ import { findBeyondNoticeSkillIds } from "./beyond-notice-skills";
 import { type BossMinutes, getPlannedBossMinutes } from "./boss-minutes";
 import { putChapterInProgressFirst } from "./chapter-in-progress";
 import { getAreaFoundationIds, getSkillArea, keepWrittenTestsIn } from "./graph-areas";
+import { addPhaseCheckpoints } from "./phase-checkpoints";
 import { type PlanBase } from "./plan-bases";
 import { type ExistingPlanItem } from "./plan-items";
 import { getLearningShare } from "./plan-phases";
@@ -13,7 +14,6 @@ import {
   DEFAULT_LESSON_MINUTES,
   type PlannerLesson,
   type QueueUnit,
-  addPhaseCheckpoints,
   assignLessonSkills,
   buildLessonUnits,
 } from "./plan-units";
@@ -358,6 +358,7 @@ export function buildPlanQueue(queueInput: QueueInput): {
         lessons: input.lessons,
         paceFactor: input.paceFactor,
         prerequisites: input.prerequisites,
+        preserveCourseOrder: input.goal.targetDate === null,
         skills: ordered,
       }),
     }),
@@ -367,7 +368,12 @@ export function buildPlanQueue(queueInput: QueueInput): {
     isExam ? keepWrittenTestsIn({ graph: input.graph, units: lessonUnits }) : lessonUnits
   ).map((unit) => (coreOnly.has(unit.skillId ?? "") ? { ...unit, coreOnly: true } : unit));
 
-  const rates = isExam ? getAreaRates({ graph: input.graph, skills: ordered }) : null;
+  const followsCourse =
+    input.goal.targetDate === null && input.lessons.some((lesson) => lesson.courseOrder);
+
+  const rates =
+    isExam && !followsCourse ? getAreaRates({ graph: input.graph, skills: ordered }) : null;
+
   const ranks = new Map(ordered.map((skill) => [skill.skillId, skill.rank]));
   const values = new Map(ordered.map((skill) => [skill.skillId, skill.value]));
   const focused = new Set(ordered.filter((skill) => skill.focused).map((skill) => skill.skillId));

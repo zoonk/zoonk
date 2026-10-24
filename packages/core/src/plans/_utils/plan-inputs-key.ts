@@ -143,8 +143,9 @@ function toStable(value: unknown): unknown {
  */
 function toKeyedLessons(lessons: readonly PlannerLesson[]) {
   return lessons
-    .map(({ chapterId: _chapterId, skillIds, ...lesson }) => ({
+    .map(({ chapterId, skillIds, ...lesson }) => ({
       ...lesson,
+      ...(lesson.courseOrder && { chapterId }),
       skillIds: skillIds.toSorted(),
     }))
     .toSorted((a, b) => compareText(a.lessonId, b.lessonId));

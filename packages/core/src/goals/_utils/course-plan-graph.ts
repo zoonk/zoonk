@@ -124,6 +124,30 @@ function toChapterSkills({
   return [...lessonSkills, ...tags];
 }
 
+/** The one curriculum order and level mapping used by the graph and its written lessons. */
+export function getCoursePlanOutline({
+  chapters,
+  startChapterId,
+}: {
+  chapters: readonly CourseOutlineChapter[];
+  startChapterId: string | null;
+}) {
+  const ordered = chapters.toSorted(compareChapters);
+  const planned = sliceFromChapter({ chapters: ordered, startChapterId });
+  const ownTags = findOwnTags(ordered);
+  const lessonCounts = countSkillLessons(planned);
+
+  const levels = [
+    ...new Set(
+      planned
+        .filter((chapter) => toChapterSkills({ chapter, lessonCounts, ownTags }).length > 0)
+        .map((chapter) => chapter.level),
+    ),
+  ];
+
+  return { chapters: planned, lessonCounts, levels, ownTags };
+}
+
 /**
  * The plan graph of a goal started from a Library course: the course's outline in its own order,
  * so the plan teaches the course the way its page shows it. Each outlined level band is a phase
@@ -143,19 +167,12 @@ export function toCoursePlanGraph({
   examGraph?: PlanGraph | null;
   startChapterId: string | null;
 }): PlanGraph {
-  const ordered = chapters.toSorted(compareChapters);
-  const planned = sliceFromChapter({ chapters: ordered, startChapterId });
-  const ownTags = findOwnTags(ordered);
-  const lessonCounts = countSkillLessons(planned);
-
-  // A band whose chapters teach nothing yet is no phase: its checkpoint would have nothing to check.
-  const levels = [
-    ...new Set(
-      planned
-        .filter((chapter) => toChapterSkills({ chapter, lessonCounts, ownTags }).length > 0)
-        .map((chapter) => chapter.level),
-    ),
-  ];
+  const {
+    chapters: planned,
+    lessonCounts,
+    levels,
+    ownTags,
+  } = getCoursePlanOutline({ chapters, startChapterId });
 
   const names = LEVEL_PHASE_NAMES[getSupportedLocaleFromLanguage(course.language)];
   const examSkills = new Map(examGraph?.skills.map((skill) => [skill.skillId, skill]));
@@ -188,6 +205,7 @@ export function toCoursePlanGraph({
   );
 
   return {
+    courseOutline: { courseId: course.id, levels, startChapterId },
     phases: levels.map((level) => ({ milestone: null, name: names[level] })),
     skills: skills.filter(
       (skill, index) => skills.findIndex((other) => other.skillId === skill.skillId) === index,
