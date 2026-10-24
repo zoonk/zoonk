@@ -12,7 +12,10 @@ import { requestWithin } from "../../plan/use-time-to-cover";
 
 const ADVICE_POLL_MS = 3000;
 
-/** The week the question shows: its study days, and the weekend's own time when it has one. */
+/**
+ * The week the question shows: its study days, the weekend's own time when it has one, and, for an
+ * exam, whether it studies everything (`fullCourse`), which the plan's answer then plans too.
+ */
 export type StudyWeek = Omit<PlanTimeAdviceInput, "dailyMinutes"> & { studyDays: number[] };
 
 /**
@@ -31,20 +34,26 @@ export type PickedShare = { known: boolean; share: number | null };
 
 /**
  * A weekend at another time than the weekdays keeps it when the daily time changes, so the time
- * found is the weekdays' with it; at the weekdays' time it's no time of its own.
+ * found is the weekdays' with it; at the weekdays' time it's no time of its own. Studying
+ * everything is part of the week only when on, so a week without it reads as it always did.
  */
 export function toStudyWeek({
   days,
+  fullCourse = false,
   minutes,
   weekend,
 }: {
   days: number[];
+  fullCourse?: boolean;
   minutes: string;
   weekend: string | null;
 }): StudyWeek {
-  return weekend === null || weekend === minutes
-    ? { studyDays: days }
-    : { studyDays: days, weekendMinutes: Number(weekend) };
+  const week =
+    weekend === null || weekend === minutes
+      ? { studyDays: days }
+      : { studyDays: days, weekendMinutes: Number(weekend) };
+
+  return fullCourse ? { ...week, fullCourse } : week;
 }
 
 /**

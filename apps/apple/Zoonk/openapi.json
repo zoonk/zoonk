@@ -15714,7 +15714,7 @@
     },
     "/goals/{goalId}/plan/time-advice": {
       "get": {
-        "description": "What a daily time covers by the goal's date, in the week asked about (its study days, and the weekend's own time, which a new daily time leaves as it is): the plan that time plans, as the plan shows it once the learner chooses it. Only that time: the time that covers everything is asked for with `POST /goals/{goalId}/plan/time-to-cover`. `ready` is false while the plan is being built: ask again in a few seconds.",
+        "description": "What a daily time covers by the goal's date, in the week asked about (its study days, and the weekend's own time, which a new daily time leaves as it is): the plan that time plans, as the plan shows it once the learner chooses it. For an exam asked about with `fullCourse=true`, the plan that studies everything, going on after the exam, and the day it ends. Only that time: the time that covers everything is asked for with `POST /goals/{goalId}/plan/time-to-cover`. `ready` is false while the plan is being built: ask again in a few seconds.",
         "operationId": "getPlanTimeAdvice",
         "security": [
           {
@@ -15749,6 +15749,19 @@
               "type": "number"
             },
             "description": "The weekdays' time a day the learner is looking at: the answer's coveredShare says what it covers by the goal's date. The goal's own time when absent"
+          },
+          {
+            "in": "query",
+            "name": "fullCourse",
+            "schema": {
+              "description": "Exams only: true plans the time asked about studying everything, going on after the exam for what doesn't fit before it (the plan change `setFullCourse`), and says when that ends (fullCourseEndDate). Other goals ignore it",
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ]
+            },
+            "description": "Exams only: true plans the time asked about studying everything, going on after the exam for what doesn't fit before it (the plan change `setFullCourse`), and says when that ends (fullCourseEndDate). Other goals ignore it"
           },
           {
             "in": "query",
@@ -71810,10 +71823,18 @@
         "properties": {
           "coveredShare": {
             "nullable": true,
-            "description": "What the week asked about covers in depth by the goal's date at the daily time asked about (dailyMinutes, else the goal's own): a share of the exam's questions and points or of the goal's skills by weight (see measure). Null without a date, or while not ready",
+            "description": "What the week asked about covers in depth by the goal's date at the daily time asked about (dailyMinutes, else the goal's own), studying everything when fullCourse is asked: a share of the exam's questions and points or of the goal's skills by weight (see measure). Null without a date, or while not ready",
             "type": "number",
             "minimum": 0,
             "maximum": 1
+          },
+          "fullCourseEndDate": {
+            "default": null,
+            "description": "For an exam asked about with fullCourse: the day the plan studying everything ends at the time asked about, going on after the exam for what doesn't fit before it. Null when not asked, for other goals, while not ready, and when even that plan can't fit everything in the time it plans (a few minutes a day for a big exam)",
+            "nullable": true,
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
           },
           "measure": {
             "type": "string",
@@ -71825,7 +71846,7 @@
           },
           "numbers": {
             "nullable": true,
-            "description": "The prospective actual schedule for the selected dailyMinutes and study week. Its coverage equals coveredShare; null while not ready.",
+            "description": "The prospective actual schedule for the selected dailyMinutes and study week, studying everything when fullCourse is asked. Its coverage equals coveredShare; null while not ready.",
             "allOf": [
               {
                 "$ref": "#/components/schemas/PlanNumbers"
@@ -71855,6 +71876,7 @@
         },
         "required": [
           "coveredShare",
+          "fullCourseEndDate",
           "measure",
           "numbers",
           "readingNotice",

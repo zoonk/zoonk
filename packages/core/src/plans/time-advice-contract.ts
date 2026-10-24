@@ -36,8 +36,9 @@ const targetDateNamedMonthSchema = z
 
 /**
  * What the daily time the learner is looking at covers by the goal's date, in the week they'd
- * study: the plan that time plans, as the plan shows it once they choose it. Only that time: the
- * time that covers everything is asked for on its own (see `PlanTimeToCover`).
+ * study: the plan that time plans, as the plan shows it once they choose it, studying everything
+ * when the learner asks about that for an exam (`fullCourse`), with the day it would end. Only
+ * that time: the time that covers everything is asked for on its own (see `PlanTimeToCover`).
  */
 export const planTimeAdviceSchema = z
   .object({
@@ -48,13 +49,20 @@ export const planTimeAdviceSchema = z
       .nullable()
       .meta({
         description:
-          "What the week asked about covers in depth by the goal's date at the daily time asked about (dailyMinutes, else the goal's own): a share of the exam's questions and points or of the goal's skills by weight (see measure). Null without a date, or while not ready",
+          "What the week asked about covers in depth by the goal's date at the daily time asked about (dailyMinutes, else the goal's own), studying everything when fullCourse is asked: a share of the exam's questions and points or of the goal's skills by weight (see measure). Null without a date, or while not ready",
+      }),
+    fullCourseEndDate: isoDateSchema
+      .nullable()
+      .default(null)
+      .meta({
+        description:
+          "For an exam asked about with fullCourse: the day the plan studying everything ends at the time asked about, going on after the exam for what doesn't fit before it. Null when not asked, for other goals, while not ready, and when even that plan can't fit everything in the time it plans (a few minutes a day for a big exam)",
       }),
     measure: measureSchema,
     numbers: planNumbersSchema
       .nullable()
       .describe(
-        "The prospective actual schedule for the selected dailyMinutes and study week. Its coverage equals coveredShare; null while not ready.",
+        "The prospective actual schedule for the selected dailyMinutes and study week, studying everything when fullCourse is asked. Its coverage equals coveredShare; null while not ready.",
       ),
     readingNotice: readingNoticeSchema,
     ready: readySchema,
@@ -115,6 +123,11 @@ export type PlanTimeToCoverInput = { studyDays?: readonly number[]; weekendMinut
 /**
  * The week the learner would study (see `PlanTimeToCoverInput`), and the weekdays' time they're
  * looking at (`dailyMinutes`, the goal's own when absent), which says what that time covers
- * (`coveredShare`).
+ * (`coveredShare`). For an exam, `fullCourse` plans that time studying everything, even after the
+ * exam (see `PlanSettings.fullCourse`), and says when that ends (`fullCourseEndDate`); other goals
+ * ignore it.
  */
-export type PlanTimeAdviceInput = PlanTimeToCoverInput & { dailyMinutes?: number };
+export type PlanTimeAdviceInput = PlanTimeToCoverInput & {
+  dailyMinutes?: number;
+  fullCourse?: boolean;
+};

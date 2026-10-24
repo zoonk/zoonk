@@ -8,8 +8,9 @@ import { getPlanTimeAdvice } from "@zoonk/core/plans/time-advice";
 import { NextResponse } from "next/server";
 
 /**
- * What the daily time asked about covers by the goal's date, in the week asked about: that time's
- * own plan only. The time that covers everything is the learner's POST (`time-to-cover`).
+ * What the daily time asked about covers by the goal's date, in the week asked about, studying
+ * everything when that's asked for an exam: that time's own plan only. The time that covers
+ * everything is the learner's POST (`time-to-cover`).
  */
 async function readTimeAdvice(
   request: Request,
@@ -31,6 +32,7 @@ async function readTimeAdvice(
     goalId: path.data.goalId,
     input: {
       dailyMinutes: query.data.dailyMinutes,
+      fullCourse: query.data.fullCourse === "true",
       studyDays: query.data.studyDays?.split(",").map(Number),
       weekendMinutes: query.data.weekendMinutes,
     },

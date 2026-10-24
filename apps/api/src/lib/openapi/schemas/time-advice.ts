@@ -5,8 +5,9 @@ import { z } from "zod";
 const minutesParamSchema = z.coerce.number().pipe(dailyMinutesSchema);
 
 /**
- * The week a learner would study: its days, the weekend's own time when it has one, and the time a
- * day they're looking at, whose share of the goal the answer says.
+ * The week a learner would study: its days, the weekend's own time when it has one, the time a day
+ * they're looking at, whose share of the goal the answer says, and, for an exam, whether they'd
+ * study everything.
  */
 export const planTimeAdviceQuerySchema = z
   .object({
@@ -15,6 +16,13 @@ export const planTimeAdviceQuerySchema = z
       .meta({
         description:
           "The weekdays' time a day the learner is looking at: the answer's coveredShare says what it covers by the goal's date. The goal's own time when absent",
+      }),
+    fullCourse: z
+      .enum(["true", "false"])
+      .optional()
+      .meta({
+        description:
+          "Exams only: true plans the time asked about studying everything, going on after the exam for what doesn't fit before it (the plan change `setFullCourse`), and says when that ends (fullCourseEndDate). Other goals ignore it",
       }),
     studyDays: z
       .string()

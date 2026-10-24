@@ -14,6 +14,7 @@ const EVERY_DAY = [0, 1, 2, 3, 4, 5, 6];
 
 const ADVICE: PlanTimeAdvice = {
   coveredShare: 0.6,
+  fullCourseEndDate: null,
   measure: "exam",
   numbers: null,
   readingNotice: false,
@@ -152,6 +153,18 @@ describe(toFindWeek, () => {
 
   it("asks about the days alone without a weekend time of its own", () => {
     expect(toFindWeek({ days: [1, 2, 3], weekend: null })).toStrictEqual({ studyDays: [1, 2, 3] });
+  });
+});
+
+describe(toStudyWeek, () => {
+  it("asks about studying everything only when it's on, so other weeks keep their answers", () => {
+    expect(
+      toStudyWeek({ days: [1, 2, 3], fullCourse: true, minutes: "60", weekend: null }),
+    ).toStrictEqual({ fullCourse: true, studyDays: [1, 2, 3] });
+
+    expect(
+      toStudyWeek({ days: [1, 2, 3], fullCourse: false, minutes: "60", weekend: null }),
+    ).toStrictEqual(toStudyWeek({ days: [1, 2, 3], minutes: "60", weekend: null }));
   });
 });
 

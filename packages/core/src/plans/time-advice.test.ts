@@ -603,11 +603,62 @@ describe(getPlanTimeAdvice, () => {
     }
   });
 
+  it("says when studying everything ends for an exam, only once that plan holds all of it", async () => {
+    const [user, library] = await Promise.all([
+      userFixture(),
+      planLibraryFixture({ skills: [{ area: "Math", lessons: 0, size: 600, weight: 1 }] }),
+    ]);
+
+    const { goal } = await unplannedGoalFixture({
+      dailyMinutes: 60,
+      examBlueprintId: null,
+      kind: "exam",
+      settings: { startDate: "2020-09-28" },
+      targetDate: new Date("2020-10-16T00:00:00Z"),
+      timezone: "UTC",
+      userId: user.id,
+    });
+
+    mockSession(user.id);
+
+    vi.mocked(getRequestProgressDateContext).mockResolvedValue({
+      currentDate: new Date("2020-09-28T00:00:00Z"),
+      currentInstant: NOW,
+      timeZone: "UTC",
+    });
+
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+
+    const ask = (input: PlanTimeAdviceInput) => getPlanTimeAdvice({ goalId: goal.id, input });
+
+    const [own, everything, sundays] = await Promise.all([
+      ask({ dailyMinutes: 60, studyDays: EVERY_DAY }),
+      ask({ dailyMinutes: 60, fullCourse: true, studyDays: EVERY_DAY }),
+      // 5 minutes on Sundays never finish 600 lessons within the years the plan lays out.
+      ask({ dailyMinutes: 5, fullCourse: true, studyDays: [0] }),
+    ]);
+
+    if (own.status !== "ready" || everything.status !== "ready" || sundays.status !== "ready") {
+      throw new Error("Expected the time advice");
+    }
+
+    expect(own.advice).toMatchObject({ fullCourseEndDate: null, ready: true });
+    expect(own.advice.coveredShare).toBeLessThan(1);
+
+    // Until the exam the plan stays the one its date shapes; the rest goes on after it.
+    expect(everything.advice.coveredShare).toBe(own.advice.coveredShare);
+    expect(everything.advice.fullCourseEndDate).toMatch(/^\d{4}-\d{2}-\d{2}$/u);
+    expect((everything.advice.fullCourseEndDate ?? "") > "2020-10-16").toBe(true);
+
+    expect(sundays.advice).toMatchObject({ fullCourseEndDate: null, ready: true });
+  });
+
   it("says the plan isn't ready while it's being built", async () => {
     const { goal } = await setup();
 
     await expect(readAdvice(goal.id, EVERY_DAY)).resolves.toStrictEqual({
       coveredShare: null,
+      fullCourseEndDate: null,
       measure: "goal",
       numbers: null,
       readingNotice: false,

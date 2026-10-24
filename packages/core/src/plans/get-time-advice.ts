@@ -12,6 +12,7 @@ import { getChangePlanning } from "./_utils/steered-areas";
 import { MIN_DAILY_MINUTES } from "./daily-minutes";
 import { getNoticeWaitState } from "./notice-wait";
 import { type LearnerPlanOperation } from "./plan-contract";
+import { type BuiltPlan } from "./planner/build-plan";
 import { FITTING_DATE_TRIES } from "./planner/fitting-date";
 import { addDays, toIsoDate } from "./planner/plan-calendar";
 import { applyPlanOperations } from "./planner/plan-operations";
@@ -52,20 +53,28 @@ function getSearchWeekdayMinutes({
 
 /**
  * Apply the same complete schedule operations as updateGoal, including the scalar normalized
- * after changing study days or weekends. The scalar also budgets a rested first day.
+ * after changing study days or weekends. The scalar also budgets a rested first day. An exam
+ * studying everything (`fullCourse`) turns that on as its plan change does.
  */
 function withStudyWeek({
   context,
   dailyMinutes,
+  fullCourse = false,
   input,
 }: {
   context: PlanContext;
   dailyMinutes: number;
+  fullCourse?: boolean;
   input: PlanTimeToCoverInput;
 }): PlanState {
+  const schedule = getScheduleOperations({
+    input: { ...input, dailyMinutes },
+    state: context.state,
+  });
+
   const result = applyPlanOperations({
     goalKind: context.goal.kind,
-    operations: getScheduleOperations({ input: { ...input, dailyMinutes }, state: context.state }),
+    operations: fullCourse ? [...schedule, { fullCourse, kind: "setFullCourse" }] : schedule,
     state: context.state,
     today: context.today,
   });
@@ -75,6 +84,16 @@ function withStudyWeek({
   }
 
   return result.state;
+}
+
+/**
+ * When a plan that studies everything ends, once it holds all of it: its time after the exam stops
+ * at the plan's horizon (see `continueAfterExam`), so at a few minutes a day its last day can be
+ * years away with skills still left out, which no end date would be true of.
+ */
+function getFullCourseEndDate(built: BuiltPlan): string | null {
+  const end = built.estimate.endDate;
+  return end && built.droppedSkillIds.length === 0 ? toIsoDate(end) : null;
 }
 
 /**
@@ -167,8 +186,9 @@ async function findCoveringDate(context: PlanContext): Promise<string | null> {
  * What the time a day the learner is looking at covers by the goal's date (see `PlanTimeAdvice`),
  * in the week they'd study (its days, and the weekend's own time, which a new daily time leaves as
  * it is): the plan that time plans, read as the plan reveal reads it, so the two say the same share.
- * Only that time's own plan: the time that covers everything is the learner's to ask for (see
- * `findPlanTimeToCover`).
+ * For an exam asked about studying everything (`fullCourse`), the plan that does, and the day it
+ * ends. Only that time's own plan, built once: the time that covers everything is the learner's to
+ * ask for (see `findPlanTimeToCover`).
  */
 export async function getPlanTimeAdvice({
   goalId,
@@ -183,6 +203,7 @@ export async function getPlanTimeAdvice({
     return {
       advice: {
         coveredShare: null,
+        fullCourseEndDate: null,
         measure: "goal",
         numbers: null,
         readingNotice: asked.readingNotice,
@@ -200,13 +221,14 @@ export async function getPlanTimeAdvice({
 
   const { context } = asked;
   const dailyMinutes = input.dailyMinutes ?? context.state.goal.dailyMinutes;
+  const fullCourse = context.goal.kind === "exam" && input.fullCourse === true;
 
   const [computed, dateKind] = await Promise.all([
     computePlan({
       context,
       mode: "forced",
       pace: "saved",
-      state: withStudyWeek({ context, dailyMinutes, input }),
+      state: withStudyWeek({ context, dailyMinutes, fullCourse, input }),
     }),
     loadGoalDateKind(context.goal),
   ]);
@@ -216,6 +238,7 @@ export async function getPlanTimeAdvice({
   return {
     advice: {
       coveredShare: feasibility.deadline ? roundShare(feasibility.coveredShare) : null,
+      fullCourseEndDate: fullCourse ? getFullCourseEndDate(computed.built) : null,
       measure: feasibility.measure,
       numbers: await buildPlanNumbersView({ computed, context }),
       readingNotice: false,

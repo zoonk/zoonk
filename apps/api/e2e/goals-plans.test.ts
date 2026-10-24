@@ -524,17 +524,25 @@ test.describe("Goals and plans API", () => {
       where: { id: goal.id },
     });
 
-    const [everyDay, weekdays, weekend, plan, invalid, tooLong, hidden] = await Promise.all([
-      apiContext.get(`/v1/goals/${goal.id}/plan/time-advice`),
-      apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?studyDays=1,2,3,4,5`),
-      apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?weekendMinutes=120`),
-      apiContext.get(`/v1/goals/${goal.id}/plan`),
-      apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?studyDays=7`),
-      apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?weekendMinutes=1441`),
-      apiContext.get(`/v1/goals/${other.goal.id}/plan/time-advice`),
-    ]);
+    const [everyDay, weekdays, weekend, plan, invalid, tooLong, hidden, everything, badEverything] =
+      await Promise.all([
+        apiContext.get(`/v1/goals/${goal.id}/plan/time-advice`),
+        apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?studyDays=1,2,3,4,5`),
+        apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?weekendMinutes=120`),
+        apiContext.get(`/v1/goals/${goal.id}/plan`),
+        apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?studyDays=7`),
+        apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?weekendMinutes=1441`),
+        apiContext.get(`/v1/goals/${other.goal.id}/plan/time-advice`),
+        apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?fullCourse=true`),
+        apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?fullCourse=yes`),
+      ]);
 
     const advice = await readBody({ response: everyDay, schema: planTimeAdviceSchema });
+
+    // Only an exam studies everything after its date: a goal's plan is the same, with no end to say.
+    await expect(
+      readBody({ response: everything, schema: planTimeAdviceSchema }),
+    ).resolves.toMatchObject({ coveredShare: advice.coveredShare, fullCourseEndDate: null });
 
     expect(advice).toMatchObject({ measure: "goal", ready: true, targetDate });
     expect(advice.coveredShare).toBeLessThan(1);
@@ -575,7 +583,12 @@ test.describe("Goals and plans API", () => {
       readBody({ response: weekend, schema: planTimeAdviceSchema }),
     ).resolves.toMatchObject({ ready: true });
 
-    expect([invalid.status(), tooLong.status(), hidden.status()]).toStrictEqual([400, 400, 404]);
+    expect([
+      invalid.status(),
+      tooLong.status(),
+      hidden.status(),
+      badEverything.status(),
+    ]).toStrictEqual([400, 400, 404, 400]);
 
     // The learner asks for the time that covers everything: the fewest minutes that do.
     const [found, foundWeekdays, foundWeekend, badDays, badWeekend, foundHidden] =
