@@ -16,7 +16,10 @@ The v2 seed writes these learners on every reset, at a realistic point of their 
 | Maya    | `v2-learn@zoonk.test`    | Quantum physics from scratch, 45 minutes a day, five phases, placement skipped the math basics                                      | A huge plan that reads as structure, lessons still being written, skipped bases                                                                                |
 | Pedro   | `v2-stocks@zoonk.test`   | How the stock market works, to invest his first salary, one hour a day at most                                                      | Practical goal, personal context in private content                                                                                                            |
 | Sam     | `v2-explain@zoonk.test`  | One question, answered in five short screens and a check                                                                            | The short path, "Want to go further?"                                                                                                                          |
-| Guest   | `v2-guest@zoonk.test`    | Came from a public lesson, finished it and typed a goal, not signed up                                                              | Sign-up moment, nothing lost on sign-up, guest limits                                                                                                          |
+
+### A guest
+
+A guest isn't a seeded account you can sign in as: a guest has no email sign-in, and guests inactive for 30 days are deleted. Make a fresh one instead, the way the app does. In a private window, a visitor becomes a guest on their first step that needs a session (answering a public lesson's first question, sending a goal on `/start`); to start as one, send `POST /api/auth/sign-in/anonymous` with an `Origin` header of the app's URL from the browser's context, as E2E's `ensureGuest` does (`packages/e2e/src/fixtures/guests.ts`). Walk them as the persona who came from a public lesson, finished it and typed a goal without signing up. Watch for the sign-up moment, nothing lost on sign-up, and guest limits. A public lesson costs nothing; a goal the catalog doesn't cover writes its plan with real AI, as anyone's does.
 
 ## Persona command
 
