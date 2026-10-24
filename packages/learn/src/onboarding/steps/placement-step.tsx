@@ -50,8 +50,8 @@ type Phase =
 /**
  * A new question while placement still needs one, the starting point once it's settled or once
  * today's few minutes are used. `answeredHere` counts the answers given on this screen: the
- * server counts answers on the plan's current skills, which can shrink while the plan is still
- * being written, and a question's number never goes back.
+ * server counts this placement's answers on the plan's current skills, which can shrink while the
+ * plan is still being written, and a question's number never goes back.
  */
 function toPhase(outcome: ReadyOutcome, answeredHere = 0): Phase {
   const answered = Math.max(outcome.answered, answeredHere);

@@ -2,6 +2,7 @@ import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import {
   choiceItemContent,
   itemFixture,
@@ -9,6 +10,7 @@ import {
   skillPrerequisiteFixture,
 } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
+import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
@@ -227,22 +229,37 @@ describe(getGoalPlacement, () => {
     expect(result.status === "ready" && result.placement.status).toBe("asking");
   });
 
-  it("counts as started once this goal's placement has an answer, not from earlier answers", async () => {
+  it("counts only this goal's placement answers: not another goal's, a lesson's or a session's on the same skills", async () => {
     const { goal, items, skills, user } = await graphGoalFixture({ planSkills: CHAIN });
+    const lesson = await libraryLessonFixture();
 
-    // Another goal's placement asked about the same skill before this goal existed.
-    await attemptFixture({
-      answeredAt: new Date(goal.createdAt.getTime() - 60_000),
-      itemId: items[0]?.id,
-      skillId: skills[0]?.id,
-      userId: user.id,
-    });
+    const [step, session] = await Promise.all([
+      libraryStepFixture({ lessonId: lesson.id }),
+      studySessionFixture({ goalId: goal.id, userId: user.id }),
+    ]);
+
+    await Promise.all([
+      // Another goal's placement asked about the same skill before this goal existed.
+      attemptFixture({
+        answeredAt: new Date(goal.createdAt.getTime() - 60_000),
+        itemId: items[0]?.id,
+        skillId: skills[0]?.id,
+        userId: user.id,
+      }),
+      attemptFixture({ skillId: skills[0]?.id, stepId: step.id, userId: user.id }),
+      attemptFixture({
+        itemId: items[1]?.id,
+        skillId: skills[0]?.id,
+        studySessionId: session.id,
+        userId: user.id,
+      }),
+    ]);
 
     const before = await readNext(goal.id);
     const after = await answerNext({ answer: RIGHT, goalId: goal.id, placement: before });
 
-    expect(before).toMatchObject({ answered: 1, started: false });
-    expect(after).toMatchObject({ answered: 2, started: true });
+    expect(before).toMatchObject({ answered: 0, started: false });
+    expect(after).toMatchObject({ answered: 1, started: true });
   });
 
   it("sends the question, its options, how many to pick and its picture, chart or timeline only: nothing that tells the answer", async () => {

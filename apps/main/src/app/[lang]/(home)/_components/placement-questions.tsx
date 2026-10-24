@@ -12,7 +12,10 @@ type PlacementQuestion = {
   question: string;
 };
 
-/** Each example goal's third placement question, as the visitor would see it, answered. */
+/**
+ * Each example goal's third placement question, as the visitor would see it, answered: its number
+ * with no total, as in the product, since placement asks only as many as it needs.
+ */
 async function getPlacementQuestions(): Promise<Record<ExampleGoal, PlacementQuestion>> {
   const t = await getExtracted();
   const set = await getExampleSet();
@@ -27,18 +30,13 @@ async function getPlacementQuestions(): Promise<Record<ExampleGoal, PlacementQue
   return {
     exam: {
       ...percent,
-      label: t("Question {number, number} of {total, number} · {subject}", {
+      label: t("Question {number, number} · {subject}", {
         number: 3,
         subject: set.exam === "enem" ? t("Mathematics") : t("Math"),
-        total: 8,
       }),
     },
     job: {
-      label: t("Question {number, number} of {total, number} · {subject}", {
-        number: 3,
-        subject: t("Spreadsheets"),
-        total: 8,
-      }),
+      label: t("Question {number, number} · {subject}", { number: 3, subject: t("Spreadsheets") }),
       // A spreadsheet's functions are named in its language: Brazil's say SOMA and split with ";".
       options:
         set.market === "brazil"
@@ -49,11 +47,7 @@ async function getPlacementQuestions(): Promise<Record<ExampleGoal, PlacementQue
     move:
       set.move === "madrid"
         ? {
-            label: t("Question {number, number} of {total, number} · {subject}", {
-              number: 3,
-              subject: t("Spanish"),
-              total: 8,
-            }),
+            label: t("Question {number, number} · {subject}", { number: 3, subject: t("Spanish") }),
             lang: "es",
             options: [
               "Me gustaría un café, por favor.",
@@ -63,11 +57,7 @@ async function getPlacementQuestions(): Promise<Record<ExampleGoal, PlacementQue
             question: t("Which one means “I'd like a coffee, please”?"),
           }
         : {
-            label: t("Question {number, number} of {total, number} · {subject}", {
-              number: 3,
-              subject: t("English"),
-              total: 8,
-            }),
+            label: t("Question {number, number} · {subject}", { number: 3, subject: t("English") }),
             lang: "en",
             options: [
               "I'd like a coffee, please.",

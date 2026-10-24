@@ -27,19 +27,19 @@ export function isPlacementAnswerOn({
 }
 
 /**
- * Whether this goal's placement began: an answer to placement since the goal was created. Earlier
- * answers on the same skills (another goal's placement, lessons) still place the learner, but they
- * didn't start this one.
+ * This goal's placement answers: answers to placement since the goal was created, which number its
+ * questions. Earlier answers on the same skills (another goal's placement, lessons) still place the
+ * learner, but they aren't this placement's.
  */
-export function hasPlacementStarted({
+export function countPlacementAnswers({
   attempts,
   since,
 }: {
   attempts: PlacementAnswerRow[];
   since: Date | null;
-}): boolean {
-  return (
-    since !== null &&
-    attempts.some((attempt) => isPlacementAnswer(attempt) && attempt.answeredAt >= since)
-  );
+}): number {
+  return since === null
+    ? 0
+    : attempts.filter((attempt) => isPlacementAnswer(attempt) && attempt.answeredAt >= since)
+        .length;
 }

@@ -151,7 +151,14 @@ const placementQuestionSchema = z
 
 export const placementResponseSchema = z
   .object({
-    answered: z.number().int().min(0),
+    answered: z
+      .number()
+      .int()
+      .min(0)
+      .meta({
+        description:
+          "This goal's placement answers so far, which number its questions (the next is `answered` + 1). Answers from before the goal, lessons and sessions on the same skills place the learner too but aren't counted. There's no total: placement asks until it's sure or today's few minutes are used",
+      }),
     areas: z
       .array(areaStartSchema)
       .meta({

@@ -2427,9 +2427,9 @@ msgid "A price goes up 20%, then down 20%. What percent of the original price is
 msgstr "Un precio sube un 20 % y luego baja un 20 %. ¿Qué porcentaje del precio original representa ahora?"
 
 #: src/app/[lang]/(home)/_components/placement-questions.tsx
-msgctxt "JZ3PUD"
-msgid "Question {number, number} of {total, number} · {subject}"
-msgstr "Pregunta {number, number} de {total, number} · {subject}"
+msgctxt "LkDjkt"
+msgid "Question {number, number} · {subject}"
+msgstr "Pregunta {number, number} · {subject}"
 
 #: src/app/[lang]/(home)/_components/placement-questions.tsx
 msgctxt "fd_DO3"

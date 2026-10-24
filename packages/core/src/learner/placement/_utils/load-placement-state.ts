@@ -39,7 +39,7 @@ import {
   isPlacementSettled,
 } from "../placement-steps";
 import { chooseNextSkill } from "./next-placement-skill";
-import { hasPlacementStarted, isPlacementAnswerOn } from "./placement-answers";
+import { countPlacementAnswers, isPlacementAnswerOn } from "./placement-answers";
 import { loadPlacementItems } from "./placement-bank-items";
 import { loadEvidence } from "./placement-evidence";
 import {
@@ -55,6 +55,7 @@ import { loadPlanBuild } from "./placement-plan-build";
  * still need questions made before placement can settle them.
  */
 export type PlacementState = {
+  /** This goal's placement answers so far, which number its questions (`countPlacementAnswers`). */
   answered: number;
   areas: AreaStart[];
   /** Every area of every phase has a confident start. False while the plan has no skills yet. */
@@ -70,8 +71,8 @@ export type PlacementState = {
   next: PlacementQuestionView | null;
   phases: PhaseStart[];
   /**
-   * This goal's placement already has answers (placement questions answered since the goal was
-   * created), so a client coming back resumes at `next` instead of showing placement's start.
+   * This goal's placement already has answers (`answered` isn't 0), so a client coming back
+   * resumes at `next` instead of showing placement's start.
    */
   started: boolean;
   /** What the client does next (`placementStatusSchema`). */
@@ -172,21 +173,23 @@ async function loadQuestion(itemId: string | undefined): Promise<PlacementQuesti
  * What the client does next. Without skills, placement waits for the plan, or stops when the run
  * building it gave up (`failed`). With nothing to ask while the day's budget is left and nothing is
  * settled: the question it asks next is still being written (`waitingForQuestions`), or none could
- * be written and none were answered (`unavailable`), so the learner goes on without placement.
+ * be written and the learner has no answer on its skills (`unavailable`), so the learner goes on
+ * without placement.
  */
 function getStatus({
-  answered,
   buildFailed,
   complete,
   dayBudgetUsed,
+  hasEvidence,
   hasNext,
   hasSkills,
   waitsForQuestions,
 }: {
-  answered: number;
   buildFailed: boolean;
   complete: boolean;
   dayBudgetUsed: boolean;
+  /** Any answer on the plan's skills, placement's or not. */
+  hasEvidence: boolean;
   hasNext: boolean;
   hasSkills: boolean;
   waitsForQuestions: boolean;
@@ -207,7 +210,7 @@ function getStatus({
     return "waitingForQuestions";
   }
 
-  return answered === 0 ? "unavailable" : "done";
+  return hasEvidence ? "done" : "unavailable";
 }
 
 /**
@@ -344,9 +347,10 @@ export async function loadPlacementState({
       : null;
 
   const next = dayBudgetUsed ? null : await loadQuestion(nextItem?.id);
+  const answered = countPlacementAnswers({ attempts, since: goalCreatedAt });
 
   return {
-    answered: evidence.length,
+    answered,
     areas: getAreaStarts({ skills, statuses }),
     complete,
     dayBudgetUsed,
@@ -359,12 +363,12 @@ export async function loadPlacementState({
     needsItems,
     next,
     phases: getPhaseStarts({ skills, statuses }),
-    started: hasPlacementStarted({ attempts, since: goalCreatedAt }),
+    started: answered > 0,
     status: getStatus({
-      answered: evidence.length,
       buildFailed: build.failed,
       complete,
       dayBudgetUsed,
+      hasEvidence: evidence.length > 0,
       hasNext: next !== null,
       // A language certificate's skills are known once its blueprint is (see `loadPlanBuild`).
       hasSkills: skills.length > 0 && !build.waitsForExam,
