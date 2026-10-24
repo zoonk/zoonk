@@ -44,23 +44,25 @@ Everything else is neutral: titles, body and labels, panels and rows, tabs, segm
 
 ## Contrast (WCAG 2.2, measured)
 
-| Pair                                                                                                                                       | Light                             | Dark                              |
-| ------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------- | --------------------------------- |
-| `muted-foreground` on the page / on `muted` / on the sidebar's current item                                                                | 5.89:1 / 5.24:1 / 4.87:1          | 6.17:1 / 5.34:1                   |
-| `faint` on the page / a card / the sidebar / `muted`                                                                                       | 5.07:1 / 5.07:1 / 4.65:1 / 4.52:1 | 5.31:1 / 5.06:1 / 5.19:1 / 4.59:1 |
-| `success-text` on the page / on its 13% tint                                                                                               | 5.68:1 / 4.88:1                   | 11.21:1                           |
-| `destructive-text` on the page / on its 10% tint / on its 20% hover tint                                                                   | 6.33:1 / 5.57:1 / 4.87:1          | 7.16:1                            |
-| `warning-text` on the page / on its 10% tint                                                                                               | 5.48:1 / 4.91:1                   | 11.53:1                           |
-| Green as a mark (`success`) on the page / against a bar's track (`surface-3`)                                                              | 3.71:1 / 3.10:1                   | 11.21:1                           |
-| `brain` (violet-600 / violet-400) as a mark on the page                                                                                    | 5.88:1                            | 7.27:1                            |
-| `brain-text` (violet-700 / violet-300) on the page                                                                                         | 7.29:1                            | 10.71:1                           |
-| The lit reward chip: `background` text on `brain`                                                                                          | 5.88:1                            | 7.27:1                            |
-| `selected` (blue-600 / blue-400) as a ring or mark on a card / on the page                                                                 | 5.26:1 / 5.26:1                   | 7.16:1 / 7.51:1                   |
-| A pick's ring on its tint / text on it / a muted line on it                                                                                | 4.69:1 / 16.6:1 / 5.25:1          | 5.65:1 / 12.5:1 / 4.64:1          |
-| The check on `selected` (`selected-foreground`)                                                                                            | 5.26:1                            | 7.51:1                            |
-| A kind's dot on the page / on a row's highlight (`muted`) (lesson `faint`; review and practice amber-700; the rest 600 or deeper in light) | 3.53:1 / 3.15:1 and up            | 5.31:1 / 4.59:1 and up            |
-| The challenge's dot (lime-700 / lime-400)                                                                                                  | 4.96:1                            | 13.12:1                           |
-| A kind's icon or line color (`kindTextClass`: 700 light, 300 dark) on the page                                                             | AA as text                        | AA as text                        |
+Computed from the tokens: oklch converted to sRGB, a tint composited over its surface in sRGB, then WCAG's relative luminance. In light the page and cards are both white; in dark a card is a step lighter than the page, so a pick on a card is its lowest.
+
+| Pair                                                                                                                                       | Light                             | Dark                                                         |
+| ------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------- | ------------------------------------------------------------ |
+| `muted-foreground` on the page / on `muted` / on the sidebar's current item                                                                | 5.89:1 / 5.24:1 / 4.87:1          | 6.17:1 / 5.34:1 / 5.34:1                                     |
+| `faint` on the page / a card / the sidebar / `muted`                                                                                       | 5.07:1 / 5.07:1 / 4.65:1 / 4.52:1 | 5.31:1 / 5.06:1 / 5.19:1 / 4.59:1                            |
+| `success-text` on the page / on its 13% tint                                                                                               | 5.68:1 / 4.88:1                   | 11.21:1 / 9.09:1                                             |
+| `destructive-text` on the page / on its 10% tint / on its 20% hover tint                                                                   | 6.33:1 / 5.57:1 / 4.87:1          | 7.16:1 / 6.44:1 / 5.48:1                                     |
+| `warning-text` on the page / on its 10% tint                                                                                               | 5.48:1 / 4.91:1                   | 11.53:1 / 9.90:1                                             |
+| Green as a mark (`success`) on the page / against a bar's track (`surface-3`)                                                              | 3.71:1 / 3.10:1                   | 11.21:1 / 9.20:1                                             |
+| `brain` (violet-600 / violet-400) as a mark on the page                                                                                    | 5.88:1                            | 6.94:1                                                       |
+| `brain-text` (violet-700 / violet-300) on the page                                                                                         | 7.29:1                            | 10.64:1                                                      |
+| The lit reward chip: `background` text on `brain`                                                                                          | 5.88:1                            | 6.94:1                                                       |
+| `selected` (blue-600 / blue-400) as a ring or mark on a card / on the page                                                                 | 5.26:1 / 5.26:1                   | 7.16:1 / 7.51:1                                              |
+| A pick's ring on its tint / text on it / a muted line on it                                                                                | 4.69:1 / 16.6:1 / 5.25:1          | 6.08:1 / 13.4:1 / 5.00:1; on a card 5.65:1 / 12.5:1 / 4.64:1 |
+| The check on `selected` (`selected-foreground`)                                                                                            | 5.26:1                            | 7.51:1                                                       |
+| A kind's dot on the page / on a row's highlight (`muted`) (lesson `faint`; review and practice amber-700; the rest 600 or deeper in light) | 3.53:1 / 3.15:1 and up            | 5.31:1 / 4.59:1 and up                                       |
+| The challenge's dot (lime-700 / lime-400)                                                                                                  | 4.96:1                            | 12.89:1                                                      |
+| A kind's icon or line color (`kindTextClass`: 700 light, 300 dark) on the page                                                             | AA as text                        | AA as text                                                   |
 
 Fills, rings and icons use the plain token (`bg-success`, an icon's `text-success`); colored text uses the `-text` token.
 
