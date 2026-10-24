@@ -225,8 +225,9 @@ export function getStepExampleLine({ stepId }: { stepId: string }): Promise<Step
 }
 
 /**
- * Explicitly requests a personal example. Missing lines for the lesson are written together and
- * claimed as one small AI help. Call only from a learner action through a POST.
+ * Requests a personal example. Missing lines for the lesson are written together and claimed as
+ * one small AI help. Call only through a POST that follows a learner action (the web player sends
+ * it in the background after the learner's first action in a lesson), never as a page opens.
  */
 export function requestStepExampleLine({
   stepId,

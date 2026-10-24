@@ -28,6 +28,7 @@ import {
 import { LessonTutor } from "./tutor/lesson-tutor";
 import { type LessonTutorConfig } from "./tutor/lesson-tutor-context";
 import { useAbandonTracking } from "./use-abandon-tracking";
+import { useExampleLines } from "./use-example-lines";
 import { useLessonPlayerActions } from "./use-lesson-player-actions";
 
 function getOptionIds(step: PlayableLibraryStep): string[] {
@@ -172,12 +173,15 @@ export function LessonPlayerProvider({
     createStartingState,
   );
 
+  const exampleLines = useExampleLines({ adapters, steps: lesson.steps });
+
   const actions = useLessonPlayerActions({
     adapters,
     dispatch,
     language: lesson.language,
     state,
     track,
+    writeExampleLines: exampleLines.write,
   });
 
   useAbandonTracking({ state, track });
@@ -208,6 +212,7 @@ export function LessonPlayerProvider({
     () => ({
       adapters,
       challengeTeam,
+      exampleLinesWriting: exampleLines.writing,
       lesson: {
         estimatedMinutes: lesson.estimatedMinutes,
         id: lesson.id,
@@ -227,6 +232,7 @@ export function LessonPlayerProvider({
     [
       adapters,
       challengeTeam,
+      exampleLines.writing,
       lesson,
       linkComponent,
       onExit,

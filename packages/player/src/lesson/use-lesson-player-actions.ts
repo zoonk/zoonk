@@ -22,6 +22,8 @@ type ActionsInput = {
   language: string;
   state: LessonPlayerState;
   track: (event: AnalyticsEvent) => void;
+  /** Starts writing the lesson's personal examples, once, from the learner's first action. */
+  writeExampleLines: () => void;
 };
 
 function analyticsFor(check: CheckContext, lessonId: string): AnalyticsEvent | null {
@@ -39,7 +41,8 @@ function analyticsFor(check: CheckContext, lessonId: string): AnalyticsEvent | n
  * Turns learner intent into reducer actions and server calls. Checks, activities and exercises
  * are graded on the device at once and recorded in the background; typed and spoken answers wait
  * for the server's grade. Reaching the end from a learner's click saves the run once every answer
- * is recorded; a resumed all-answered run waits for Finish first.
+ * is recorded; a resumed all-answered run waits for Finish first. Moving through the lesson or
+ * checking an answer starts its personal examples, which opening it never does.
  */
 export function useLessonPlayerActions({
   adapters,
@@ -47,6 +50,7 @@ export function useLessonPlayerActions({
   language,
   state,
   track,
+  writeExampleLines,
 }: ActionsInput): LessonPlayerActions {
   const {
     ensureRun,
@@ -128,6 +132,8 @@ export function useLessonPlayerActions({
       return;
     }
 
+    writeExampleLines();
+
     if (answer.kind === "hook") {
       const result = revealGuess({ optionId: answer.optionId, step });
       track({ name: "Hook Answered", properties: { lesson_id: state.lessonId } });
@@ -167,17 +173,30 @@ export function useLessonPlayerActions({
     });
 
     recordInBackground({ answer, attemptId, step });
-  }, [dispatch, ensureRun, gradeOnServer, language, recordInBackground, state, track]);
+  }, [
+    dispatch,
+    ensureRun,
+    gradeOnServer,
+    language,
+    recordInBackground,
+    state,
+    track,
+    writeExampleLines,
+  ]);
 
   return useMemo(
     () => ({
       check,
       continue: () => {
         void ensureRun();
+        writeExampleLines();
         dispatch({ type: "continue" });
       },
       explainFirst: () => dispatch({ type: "explainFirst" }),
-      goBack: () => dispatch({ direction: "prev", type: "navigate" }),
+      goBack: () => {
+        writeExampleLines();
+        dispatch({ direction: "prev", type: "navigate" });
+      },
       knowThis: () => dispatch({ type: "knowThis" }),
       retryCompletion: () => dispatch({ type: "completionRetried" }),
       retryStart: () => void ensureRun(),
@@ -191,6 +210,6 @@ export function useLessonPlayerActions({
         }),
       submitSpokenAnswer: (input) => void submitSpokenAnswer(input),
     }),
-    [check, dispatch, ensureRun, submitSpokenAnswer],
+    [check, dispatch, ensureRun, submitSpokenAnswer, writeExampleLines],
   );
 }

@@ -110,11 +110,8 @@ export type SpokenAnswerOutcome =
   | { status: "noSpeech" }
   | { retryAfterSeconds: number; status: "slowDown" };
 
-/**
- * A screen's personal example: the saved line (null when there's none), and whether asking for one
- * can write it (the learner shares something, and no line was written from it yet).
- */
-export type ExampleLine = { canRequest: boolean; line: string | null };
+/** A screen's personal example: the saved line, null when there's none. */
+export type ExampleLine = { line: string | null };
 
 /**
  * How the player reaches the server. The host implements these (the web app over its own
@@ -145,8 +142,9 @@ export type LessonPlayerAdapters = {
    */
   getExampleLine?: (input: { stepId: string }) => Promise<ExampleLine | null>;
   /**
-   * Writes a missing personal example only after an explicit learner click. Null when the request
-   * failed or was refused.
+   * Writes the lesson's missing personal examples (every screen's, in one call). The player asks
+   * once, in the background, after the learner's first action in the lesson. Null when the
+   * request failed or was refused.
    */
   requestExampleLine?: (input: { stepId: string }) => Promise<ExampleLine | null>;
   /**

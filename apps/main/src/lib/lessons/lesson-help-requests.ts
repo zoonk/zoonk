@@ -9,7 +9,7 @@ async function readBody(response: Response): Promise<unknown> {
   return response.json().catch(() => null);
 }
 
-/** The API's example line: the saved line and whether asking can write one. */
+/** The API's example line: the saved line, null when there's none. */
 async function readExampleLine(response: Response | null): Promise<ExampleLine | null> {
   if (!response?.ok) {
     return null;
@@ -17,9 +17,7 @@ async function readExampleLine(response: Response | null): Promise<ExampleLine |
 
   const body = await readBody(response);
 
-  return isJsonObject(body)
-    ? { canRequest: body.canRequest === true, line: getString(body, "line") }
-    : null;
+  return isJsonObject(body) ? { line: getString(body, "line") } : null;
 }
 
 /** Reads an already-written personal example without starting AI work. */
@@ -29,7 +27,10 @@ export async function getExampleLine({ stepId }: { stepId: string }): Promise<Ex
   );
 }
 
-/** Generates a personal example only after the learner asks for it. */
+/**
+ * Writes the lesson's personal examples. The player asks in the background after the learner's
+ * first action in the lesson, never as it opens.
+ */
 export async function requestExampleLine({
   stepId,
 }: {

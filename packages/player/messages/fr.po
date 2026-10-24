@@ -3594,26 +3594,6 @@ msgctxt "ziwOEf"
 msgid "Your example"
 msgstr "Ton exemple"
 
-#: src/lesson/steps/example-line.tsx
-msgctxt "2FLKIW"
-msgid "Nothing you've shared fits this idea."
-msgstr "Rien de ce que tu nous as dit ne correspond à cette idée."
-
-#: src/lesson/steps/example-line.tsx
-msgctxt "QuO5Vn"
-msgid "Writing your example…"
-msgstr "Préparation de ton exemple…"
-
-#: src/lesson/steps/example-line.tsx
-msgctxt "uvr2Ko"
-msgid "Show an example from my life"
-msgstr "Voir un exemple tiré de ma vie"
-
-#: src/lesson/steps/example-line.tsx
-msgctxt "S-INtb"
-msgid "No example is available right now."
-msgstr "Aucun exemple n’est disponible pour le moment."
-
 #: src/lesson/steps/hook-step.tsx
 msgctxt "p6MDZm"
 msgid "Guess first"

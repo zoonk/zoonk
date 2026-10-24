@@ -5,9 +5,9 @@ import { type Page, expect, test } from "./fixtures";
 /**
  * The example line goes to the public API from the browser. Main's E2E runs without the API, so
  * this stands in for its answers (the API's own suite covers the endpoint, and the player's tests
- * what the line shows). Opening a screen only reads the line; writing one is new work that starts
- * from the learner's tap and takes seconds, and a Server Action would hold up every later one on
- * the page, so nothing may wait for that request.
+ * what the line shows). Opening the lesson only reads the line; the learner's first action writes
+ * the lesson's lines in the background, which takes seconds, and a Server Action would hold up
+ * every later one on the page, so nothing may wait for that request.
  */
 
 const RIGHT_TYPED = "It shows where the electron is likely to be";
@@ -22,8 +22,8 @@ function isExampleLine(request: Request, method: "GET" | "POST") {
 }
 
 /**
- * Reads say a line can be written for this learner; asking keeps the line in flight until the test
- * lets it go, like a slow model call.
+ * Reads say a line can be written for this learner; writing keeps the request in flight until the
+ * test lets it go, like a slow model call.
  */
 async function holdExampleLine(page: Page) {
   const { promise: released, resolve: release } = Promise.withResolvers<null>();
@@ -44,7 +44,7 @@ async function holdExampleLine(page: Page) {
 }
 
 test.describe("Example line requests", () => {
-  test("reads as the learner on entry, writes only when asked, and never holds up a check", async ({
+  test("reads as the learner on entry, writes after the first action, and never holds up a check", async ({
     page,
   }) => {
     const { lesson, steps } = await playableLessonFixture({
@@ -68,19 +68,17 @@ test.describe("Example line requests", () => {
     expect(reading.url()).toContain(`/v1/me/example-lines/${steps[0]?.id}`);
     expect(reading.headers().authorization).toMatch(/^Bearer .+/u);
 
-    // Opening the screen offers the example; only the learner's tap asks for it.
-    const offer = page.locator('[data-slot="example-line-offer"]').getByRole("button");
-    await expect(offer).toBeVisible();
+    // Opening the lesson only reads; the learner's first action writes the lesson's lines.
+    await reading.response();
     expect(posts).toStrictEqual([]);
 
     const asked = page.waitForRequest((request) => isExampleLine(request, "POST"));
-    await offer.click();
+    await page.getByRole("button", { name: /^Next/u }).click();
     const asking = await asked;
+    expect(asking.url()).toContain(`/v1/me/example-lines/${steps[0]?.id}`);
     expect(asking.headers().authorization).toMatch(/^Bearer .+/u);
 
-    // The line is still being written while the learner checks a typed answer on the next screen.
-    await page.getByRole("button", { name: /^Next/u }).click();
-
+    // The lines are still being written while the learner checks a typed answer on the next screen.
     await page
       .getByRole("textbox", { name: "In your own words: why is the electron drawn as a cloud?" })
       .fill(RIGHT_TYPED);

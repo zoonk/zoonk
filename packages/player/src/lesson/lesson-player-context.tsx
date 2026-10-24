@@ -62,6 +62,8 @@ type LessonPlayerConfig = {
   adapters: LessonPlayerAdapters;
   /** Who plays the colleagues in a challenge; without it they go by role. */
   challengeTeam: ChallengeTeam | null;
+  /** The lesson's personal examples being written in the background; null until it starts. */
+  exampleLinesWriting: Promise<unknown> | null;
   lesson: Pick<
     PlayableLibraryLesson,
     "estimatedMinutes" | "id" | "language" | "summaryIdeas" | "targetLanguage" | "title"
