@@ -2483,6 +2483,7 @@ msgid "Keep writing"
 msgstr "Seguir escribiendo"
 
 #: src/essay/essay-screen.tsx
+#: src/shell/learn-bar.tsx
 #: src/shell/task-frame.tsx
 msgctxt "fnihsY"
 msgid "Leave"

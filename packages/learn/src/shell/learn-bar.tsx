@@ -4,7 +4,7 @@ import { buttonVariants } from "@zoonk/ui/components/button";
 import { useEscapeClick } from "@zoonk/ui/hooks/keyboard";
 import { useScrolled } from "@zoonk/ui/hooks/scrolled";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronLeftIcon } from "lucide-react";
+import { ChevronLeftIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { PAGE_COLUMN_CLASS } from "../_components/page";
@@ -84,18 +84,27 @@ const BAR_ICON_LINK_CLASS = cn(
 export const CRUMB_LINK_CLASS =
   "text-foreground hover:bg-muted lg:text-muted-foreground lg:hover:text-foreground focus-visible:ring-ring/50 hit-area relative inline-flex size-11 shrink-0 items-center justify-center rounded-lg outline-none transition-colors focus-visible:ring-[3px] [&_svg]:size-5 lg:-ml-1.5 lg:h-8 lg:w-auto lg:gap-0.5 lg:pr-1 lg:text-[0.8125rem] lg:hover:bg-transparent lg:[&_svg]:size-4";
 
+/** The way back's name: where it leads, or simply "Back". */
+function BackLinkName({ label }: { label?: string }) {
+  const t = useExtracted();
+  return label ? t("Back to {page}", { page: label }) : t("Back");
+}
+
 /**
  * The way back, on the left of a page's or a section's bar: a chevron, named for where it leads.
  * A page goes back to the page it was opened from (the same page as before, scroll and all, when
  * that's where the learner came from); a section goes back to the app page the learner left for
  * it (`toApp`). Escape presses it too, unless a menu, dialog or field has the key. A page's way
- * back is a breadcrumb from `lg` (`crumb`), with its destination's name beside the chevron.
+ * back is a breadcrumb from `lg` (`crumb`), with its destination's name beside the chevron. A
+ * flow whose chevron means its previous screen leaves with an ✕ instead (`leave`), named "Leave"
+ * as a task's close is, so going back and going out never look alike.
  */
 export function LearnBackLink({
   className,
   crumb = false,
   href,
   label,
+  leave = false,
   toApp = false,
 }: {
   className?: string;
@@ -104,6 +113,7 @@ export function LearnBackLink({
   href: string;
   /** The destination's name, for its accessible name; a section's way back has none. */
   label?: string;
+  leave?: boolean;
   toApp?: boolean;
 }) {
   const t = useExtracted();
@@ -131,8 +141,8 @@ export function LearnBackLink({
       onClick={onClick}
       ref={ref}
     >
-      <ChevronLeftIcon aria-hidden="true" />
-      <span className="sr-only">{label ? t("Back to {page}", { page: label }) : t("Back")}</span>
+      {leave ? <XIcon aria-hidden="true" /> : <ChevronLeftIcon aria-hidden="true" />}
+      <span className="sr-only">{leave ? t("Leave") : <BackLinkName label={label} />}</span>
       {crumb && label && (
         <span aria-hidden="true" className="hidden lg:inline">
           {label}

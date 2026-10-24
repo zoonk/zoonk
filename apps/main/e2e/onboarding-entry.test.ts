@@ -594,15 +594,15 @@ test.describe("Starting a goal inside the app's frame", () => {
     await expect(sideToday).not.toHaveAttribute("aria-current");
     await expect(sidePlan).not.toHaveAttribute("aria-current");
 
-    // On a phone onboarding has no tab bar: the bar's way back returns to the page they left,
-    // where the tabs are back.
+    // On a phone onboarding has no tab bar: with no screen to go back to, the bar's ✕ leaves for
+    // the page they left, where the tabs are back.
     await userWithoutProgress.setViewportSize({ height: 844, width: 390 });
 
     const tabBar = userWithoutProgress.getByRole("navigation", { name: "Learning tabs" });
 
     await expect(tabBar).toHaveCount(0);
 
-    await userWithoutProgress.getByRole("link", { exact: true, name: "Back" }).click();
+    await userWithoutProgress.getByRole("link", { exact: true, name: "Leave" }).click();
     await expect(userWithoutProgress).toHaveURL(/\/today$/u);
 
     await expect(tabBar.getByRole("link", { name: /^Today/u })).toHaveAttribute(

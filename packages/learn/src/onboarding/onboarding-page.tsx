@@ -56,11 +56,12 @@ const WIDE_ASIDE_CLASS =
   "not-has-[>div>:nth-child(2)]:hidden min-[72rem]:not-has-[>div>:nth-child(2)]:hidden";
 
 /**
- * A screen as a page of the app's frame: the flow's bar, then the screen on the page's left edge,
- * at a task's readable measure, or from a wide page (`@4xl/onboarding`) its question and its answer
- * side by side (`OnboardingColumn`); a `wide` screen fills the room. From 72rem the rail sits in the
- * page's aside at the right edge. The flow's rail is supporting context each screen repeats where
- * it needs it, so it's hidden under 72rem; a `wide` screen's own rail follows it there, as its last
+ * A screen as a page of the app's frame: the flow's bar, then the screen, filling a phone's or a
+ * tablet's column like any page, and from `lg` on the page's left edge at a task's readable
+ * measure, or from a wide page (`@4xl/onboarding`) its question and its answer side by side
+ * (`OnboardingColumn`); a `wide` screen fills the room. From 72rem the rail sits in the page's
+ * aside at the right edge. The flow's rail is supporting context each screen repeats where it
+ * needs it, so it's hidden under 72rem; a `wide` screen's own rail follows it there, as its last
  * sections.
  */
 export function OnboardingScreenPage({
@@ -90,7 +91,7 @@ export function OnboardingScreenPage({
     >
       <OnboardingPageBar backHref={backHref} bar={bar} barEnd={barEnd} wide={wide} />
 
-      <Page className={cn("flex-1 gap-6", !wide && "max-w-column @4xl/onboarding:max-w-wide")}>
+      <Page className={cn("flex-1 gap-6", !wide && "lg:max-w-column @4xl/onboarding:max-w-wide")}>
         {notice}
         {children}
       </Page>

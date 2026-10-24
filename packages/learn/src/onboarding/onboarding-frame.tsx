@@ -123,7 +123,7 @@ export function OnboardingColumn({
   if (host?.kind === "section") {
     return (
       <section
-        className={cn("max-w-column flex w-full flex-col gap-6", className)}
+        className={cn("lg:max-w-column flex w-full flex-col gap-6", className)}
         data-slot="onboarding-column"
         {...props}
       >

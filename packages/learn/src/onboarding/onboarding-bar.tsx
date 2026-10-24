@@ -47,11 +47,11 @@ export function OnboardingBarRow({ bar, className }: { bar: OnboardingBar; class
 /**
  * An onboarding page's bar, where every page's bar sits (`PageBarSurface`), its row as wide as the
  * screens under it from the page's left edge (up to two panes, so it never moves from one screen
- * to the next): on the left the way back to the flow's previous screen or, under `lg`, the way out
- * to the app page the learner left for onboarding (Escape presses either); in the middle the steps'
- * dots; on the right the screen's own action (Start over) and the host's. From `lg` the sidebar
- * holds the way out, so a screen with nothing else in its bar has none there, and its title sits
- * where every page's does.
+ * to the next): on the left the way back to the flow's previous screen or, where there's none and
+ * under `lg`, an ✕ out to the app page the learner left for onboarding (Escape presses either); in
+ * the middle the steps' dots; on the right the screen's own action (Start over) and the host's.
+ * From `lg` the sidebar holds the way out, so a screen with nothing else in its bar has none
+ * there, and its title sits where every page's does.
  */
 export function OnboardingPageBar({
   backHref,
@@ -72,7 +72,7 @@ export function OnboardingPageBar({
       <div
         className={cn(
           PAGE_COLUMN_CLASS,
-          !wide && "max-w-column @4xl/onboarding:max-w-wide",
+          !wide && "lg:max-w-column @4xl/onboarding:max-w-wide",
           "grid min-h-11 grid-cols-[1fr_auto_1fr] items-center gap-2 lg:min-h-10",
         )}
       >
@@ -80,7 +80,7 @@ export function OnboardingPageBar({
           {bar.onBack ? (
             <BackButton escape onBack={bar.onBack} />
           ) : (
-            <LearnBackLink className="lg:hidden" href={backHref} toApp />
+            <LearnBackLink className="lg:hidden" href={backHref} leave toApp />
           )}
         </div>
 

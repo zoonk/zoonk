@@ -145,8 +145,8 @@ function TypedAnswerField({
 
 /**
  * A question's actions: "I don't know yet" beside Confirm, as a session's placement question has
- * them, and stopping under them. A long "I don't know" puts Confirm on its own line rather than
- * squeezing it.
+ * them, and stopping under them. A long "I don't know" puts Confirm on its own line above it rather
+ * than squeezing it, so the main action still comes first.
  */
 function PlacementActions({
   canConfirm,
@@ -173,7 +173,7 @@ function PlacementActions({
         </p>
       )}
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap-reverse gap-2">
         <Button
           className="grow"
           disabled={pending}
