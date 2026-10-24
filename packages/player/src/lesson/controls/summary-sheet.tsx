@@ -39,7 +39,7 @@ export function SummarySheet({
         </DrawerHeader>
 
         <DrawerContent className="flex flex-col gap-6">
-          <LessonSummaryIdeas ideas={ideas} />
+          <LessonSummaryIdeas ideas={ideas} variant="flat" />
           <Button className="w-full" onClick={() => onOpenChange(false)} size="lg">
             {t("Got it")}
           </Button>
