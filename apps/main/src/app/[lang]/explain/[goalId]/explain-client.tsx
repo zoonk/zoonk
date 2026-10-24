@@ -1,9 +1,11 @@
 "use client";
 
+import { type TutorViewer } from "@/components/learn/main-ask-tutor";
 import { useRouter } from "@/i18n/navigation";
 import { recordGenerationWaitAction } from "@/lib/lessons/generation-wait-action";
 import { getCourseStartHref, getGoalStartHref } from "@/lib/public/public-hrefs";
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
+import { type LessonTutorSuggestion } from "@zoonk/core/lesson-questions/contract";
 import { type ExplanationView } from "@zoonk/core/view-models/explain/contract";
 import { ExplainEnding } from "@zoonk/learn/explain/ending";
 import { ExplainDeeperLink, ExplainWaiting } from "@zoonk/learn/explain/waiting";
@@ -135,16 +137,21 @@ function useExplanationWait(isWritten: boolean) {
  * and the check in the lesson player, with the outline beside them on a wide screen, ending with
  * "Now you know" and "Want to go further?". A learner who waited sees the finished outline first
  * and starts it with "See explanation". Opened from an old prefetched copy (Today's link) that
- * still shows the wait, it follows the run, which reads the page again once it can be read.
+ * still shows the wait, it follows the run, which reads the page again once it can be read. The
+ * learner's buddy is beside the screens, as in any lesson.
  */
 export function ExplainClient({
   explanation,
   hasSession,
   soundsEnabled,
+  tutor,
+  tutorSuggestions,
 }: {
   explanation: ExplanationView;
   hasSession: boolean;
   soundsEnabled: boolean;
+  tutor: TutorViewer;
+  tutorSuggestions: readonly LessonTutorSuggestion[];
 }) {
   const router = useRouter();
   const endingSlots = useMemo(() => createExplainEnding(explanation), [explanation]);
@@ -207,6 +214,8 @@ export function ExplainClient({
       routing={routing}
       soundsEnabled={soundsEnabled}
       studySessionId={null}
+      tutor={tutor}
+      tutorSuggestions={tutorSuggestions}
     />
   );
 }

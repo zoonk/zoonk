@@ -240,6 +240,7 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
           soundsEnabled={soundsEnabled}
           studySessionId={null}
           support={support}
+          tutor={tutor}
         />
       )}
 

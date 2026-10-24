@@ -21,7 +21,6 @@ import { trackEvent } from "@zoonk/core/analytics/client";
 import { type LessonSupport } from "@zoonk/core/lesson-player/contract";
 import { type LessonTutorSuggestion } from "@zoonk/core/lesson-questions/contract";
 import { type ChallengeTeam } from "@zoonk/core/library/challenges/team";
-import { DEFAULT_BUDDY } from "@zoonk/core/profile/default-buddy";
 import { LessonPlayerProvider, type LessonPlayerProviderProps } from "@zoonk/player/lesson";
 import { LessonPlayerShell } from "@zoonk/player/lesson/shell";
 import {
@@ -37,13 +36,6 @@ import { completeLibraryLessonAction, getLessonPicturesAction } from "./lesson-p
 import { startLibraryLesson } from "./start-library-lesson";
 
 const ROUTES = { signUp: "/login", upgrade: "/subscription" };
-
-/** Guests and quick explanations play without the questions sheet. */
-const NO_TUTOR: TutorViewer = {
-  buddy: { ...DEFAULT_BUDDY, beltColor: "white", energy: null, studiedToday: false },
-  canAsk: false,
-  goalId: null,
-};
 
 /** Where a lesson closes to: back where it was opened from, and the next lesson there, if any. */
 export type LessonRouting = Pick<LessonPlayerRoutes, "exit" | "exitTo" | "nextLesson">;
@@ -101,7 +93,7 @@ export function LessonPlayerClient({
   soundsEnabled,
   studySessionId,
   support = null,
-  tutor: tutorViewer = NO_TUTOR,
+  tutor: tutorViewer,
   tutorSuggestions,
 }: {
   /** The learner's colleagues in a challenge, kept with their plan. */
@@ -133,10 +125,10 @@ export function LessonPlayerClient({
   /** How the lesson opens for this learner: new skills explanation first, known ones question first. */
   support?: LessonSupport | null;
   /**
-   * Who asks the buddy in the lesson and the buddy who answers (`getTutorViewer`); without it
-   * (guests, quick explanations) the lesson plays without questions.
+   * Who asks the buddy in the lesson and the buddy who answers (`getTutorViewer`): a signed-in
+   * learner asks, and a guest sees the way to an account that can.
    */
-  tutor?: TutorViewer;
+  tutor: TutorViewer;
   /** The tutor's suggestions for the lesson's screens, worded in its language (`wordTutorSuggestions`). */
   tutorSuggestions?: readonly LessonTutorSuggestion[];
 }) {

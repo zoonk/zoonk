@@ -1,8 +1,10 @@
 import { AuthGateScreen } from "@/components/auth-gate";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
+import { getTutorViewer } from "@/lib/learn/tutor-viewer";
 import { getLearningProfile } from "@zoonk/core/profile/get";
 import { getSession } from "@zoonk/core/users/session";
 import { getExplanation } from "@zoonk/core/view-models/explain/get";
+import { wordTutorSuggestions } from "@zoonk/player/tutor/suggestion-words";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
@@ -27,10 +29,11 @@ async function ExplainContent({ params }: Props) {
     notFound();
   }
 
-  const [result, session, profile] = await Promise.all([
+  const [result, session, profile, tutor] = await Promise.all([
     getExplanation({ goalId }),
     getSession(),
     getLearningProfile(),
+    getTutorViewer(),
   ]);
 
   if (result.status === "unauthorized") {
@@ -41,12 +44,17 @@ async function ExplainContent({ params }: Props) {
     notFound();
   }
 
+  const { lesson } = result.explanation;
+  const tutorSuggestions = lesson ? await wordTutorSuggestions(lesson.language) : [];
+
   return (
     <MainLearnProvider>
       <ExplainClient
         explanation={result.explanation}
         hasSession={Boolean(session)}
         soundsEnabled={profile?.soundsEnabled ?? true}
+        tutor={tutor}
+        tutorSuggestions={tutorSuggestions}
       />
     </MainLearnProvider>
   );

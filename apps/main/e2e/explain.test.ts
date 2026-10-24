@@ -489,6 +489,68 @@ test.describe("Quick explanations", () => {
     });
   });
 
+  test("a learner asks their buddy about the screen in view", async ({ browser }) => {
+    await asPersona(browser, { persona: "explain" }, async ({ page, user: persona }) => {
+      await page.setViewportSize({ height: 900, width: 1440 });
+      await page.goto(`/explain/${persona.goalId}`);
+
+      // On a wide screen the buddy's composer is at the foot of the aside, under the outline, with
+      // the reading screen's one-tap questions over it.
+      const aside = page.getByRole("complementary", { name: "Help with this screen" });
+
+      await expect(aside.getByRole("textbox", { name: "Ask a question" })).toHaveAttribute(
+        "placeholder",
+        "Ask Zu about this screen",
+      );
+
+      await expect(aside.getByRole("button", { name: "Explain it more simply" })).toBeVisible();
+      await expect(page.getByText("Create a free account to ask questions")).toHaveCount(0);
+
+      // On a phone, "Ask Zu" opens the conversation in a drawer, ready to write.
+      await page.setViewportSize({ height: 844, width: 390 });
+      await page.getByRole("button", { name: "Ask Zu" }).click();
+      const tutor = page.getByRole("dialog", { name: "Zu" });
+
+      await expect(tutor.getByRole("textbox", { name: "Ask a question" })).toBeVisible();
+      await expect(tutor.getByText("Create a free account to ask questions")).toHaveCount(0);
+    });
+  });
+
+  test("a guest is invited to create an account to ask their buddy", async ({ page }) => {
+    const [userId, played] = await Promise.all([
+      ensureGuest(page),
+      playableLessonFixture({ steps: ["explanation", "explanation", "check", "summary"] }),
+    ]);
+
+    const goal = await goalFixture({
+      details: { question: "why is the sky blue?" },
+      kind: "explain",
+      prompt: `why is the sky blue? ${randomUUID()}`,
+      title: "Why the sky is blue",
+      userId,
+    });
+
+    const plan = await planFixture({ goalId: goal.id });
+
+    await planItemFixture({
+      kind: "lesson",
+      lessonId: played.lesson.id,
+      planId: plan.id,
+      titleSnapshot: "Why the sky is blue",
+    });
+
+    await page.setViewportSize({ height: 900, width: 1440 });
+    await page.goto(`/explain/${goal.id}`);
+
+    const aside = page.getByRole("complementary", { name: "Help with this screen" });
+
+    await expect(
+      aside.getByRole("link", { name: "Create a free account to ask questions" }),
+    ).toBeVisible();
+
+    await expect(aside.getByRole("textbox", { name: "Ask a question" })).toHaveCount(0);
+  });
+
   test("a player that didn't load comes back with Try again", async ({ browser }) => {
     await asPersona(browser, { persona: "explain" }, async ({ page, user: persona }) => {
       const path = `/explain/${persona.goalId}`;
