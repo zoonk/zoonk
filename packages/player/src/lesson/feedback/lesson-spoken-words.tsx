@@ -65,7 +65,10 @@ function PracticeWordButton({
   );
 }
 
-/** The chosen word's native and slow sounds, its respelling and its one tip. */
+/**
+ * The chosen word's native and slow sounds, its respelling and its one tip, in a well a step below
+ * the feedback panel it opens in.
+ */
 function PracticePanel({
   id,
   onPlay,
@@ -80,7 +83,7 @@ function PracticePanel({
   return (
     <div
       aria-label={t("How to say {word}", { word: word.text })}
-      className="bg-background flex flex-col gap-2 rounded-xl p-3"
+      className="bg-muted/50 dark:bg-background flex flex-col gap-2 rounded-xl p-3"
       id={id}
       role="region"
     >
