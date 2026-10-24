@@ -9,9 +9,12 @@ export const TUTOR_DOCK_CLASS = "flex flex-col lg:fixed lg:right-0 lg:bottom-0 l
 export const TUTOR_DOCK_BAR_CLASS =
   "border-border bg-background border-t px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]";
 
-/** The conversation docked over the aside's content from `lg`, above the dock. */
+/**
+ * The conversation docked over the aside's content from `lg`, above the dock: from under the
+ * header's row, like the aside, so the header's menu stays in the window's corner.
+ */
 export const DOCKED_CONVERSATION_CLASS =
-  "bg-background border-border hidden lg:fixed lg:top-0 lg:right-0 lg:bottom-(--task-aside-bottom) lg:z-40 lg:flex lg:w-(--task-aside) lg:flex-col lg:border-l";
+  "bg-background border-border hidden lg:fixed lg:top-(--task-bar) lg:right-0 lg:bottom-(--task-aside-bottom) lg:z-40 lg:flex lg:w-(--task-aside) lg:flex-col lg:border-t lg:border-l";
 
 /**
  * The task's aside keeps its content above the dock (`--task-aside-bottom` on the task's root),

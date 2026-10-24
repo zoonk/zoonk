@@ -4,7 +4,7 @@ import { getQuestionMaterial } from "./question-material";
 const LONG = "A city that grows outward. ".repeat(20);
 
 function question(overrides: Partial<Parameters<typeof getQuestionMaterial>[0]> = {}) {
-  return { context: null, image: null, set: null, visual: null, ...overrides };
+  return { set: null, ...overrides };
 }
 
 describe(getQuestionMaterial, () => {
@@ -26,19 +26,7 @@ describe(getQuestionMaterial, () => {
     ).toStrictEqual({ kind: "audio", long: false });
   });
 
-  it("is the question's own text, or its figure, without a set", () => {
-    expect(getQuestionMaterial(question({ context: LONG }))).toStrictEqual({
-      kind: "text",
-      long: true,
-    });
-
-    expect(getQuestionMaterial(question({ image: { url: "x" } }))).toStrictEqual({
-      kind: "figure",
-      long: false,
-    });
-  });
-
-  it("is nothing for a question with nothing to read first", () => {
+  it("is nothing for a question on its own, whose context stays above it in the column", () => {
     expect(getQuestionMaterial(question())).toBeNull();
   });
 });

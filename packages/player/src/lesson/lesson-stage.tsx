@@ -89,14 +89,13 @@ const PICTURES_AHEAD = 2;
 
 /**
  * A new screen slides in from the side the learner is heading, like turning a story: from the
- * right going on, from the left going back. Reduced motion shows it in place, and so does a wide
- * screen, where the aside beside the column holds part of the screen (a transform would pin it to
- * the sliding column).
+ * right going on, from the left going back, on every screen size, since all of a screen is in its
+ * column. Reduced motion shows it in place.
  */
 const TURN_CLASS: Record<ScreenTurn, string> = {
-  back: "max-lg:motion-safe:animate-in max-lg:motion-safe:fade-in max-lg:motion-safe:slide-in-from-left-8 max-lg:motion-safe:duration-200 max-lg:motion-safe:ease-out",
+  back: "motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-left-8 motion-safe:duration-200 motion-safe:ease-out",
   forward:
-    "max-lg:motion-safe:animate-in max-lg:motion-safe:fade-in max-lg:motion-safe:slide-in-from-right-8 max-lg:motion-safe:duration-200 max-lg:motion-safe:ease-out",
+    "motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-right-8 motion-safe:duration-200 motion-safe:ease-out",
 };
 
 /**

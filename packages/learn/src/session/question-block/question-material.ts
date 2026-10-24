@@ -6,31 +6,24 @@ import { type ItemSetView } from "@zoonk/core/library/items/set-view";
  */
 const LONG_TEXT_CHARACTERS = 400;
 
-/** What a question is read with: its set's stimulus, or its own text or figure. */
-export type QuestionMaterialKind = ItemSetView["kind"] | "figure";
+/** What a question is read with beside it: the stimulus its set shares. */
+export type QuestionMaterialKind = ItemSetView["kind"];
 
 /**
- * What the question shows before its command, which the aside holds from `lg`: the set it's on (a
- * text, a case, a chart or a recording), else its own context (a text) or picture and chart (a
- * figure); null for a question with nothing to read first. `long` widens the aside to half.
+ * What a question is read with beside it from `lg`: the set it's on (a text, a case, a chart or a
+ * recording), shared with the set's other questions; null for a question on its own, whose context,
+ * picture or chart stays above it in the column. `long` widens the aside to half.
  */
 export function getQuestionMaterial(question: {
-  context: string | null;
-  image: unknown;
   set: Pick<ItemSetView, "kind" | "listening" | "text"> | null;
-  visual: unknown;
 }): { kind: QuestionMaterialKind; long: boolean } | null {
-  const { context, image, set, visual } = question;
-  const text = (set?.listening ? null : set?.text) ?? context ?? "";
-  const long = text.length >= LONG_TEXT_CHARACTERS;
+  const { set } = question;
 
-  if (set) {
-    return { kind: set.listening ? "audio" : set.kind, long };
+  if (!set) {
+    return null;
   }
 
-  if (context) {
-    return { kind: "text", long };
-  }
-
-  return image || visual ? { kind: "figure", long: false } : null;
+  return set.listening
+    ? { kind: "audio", long: false }
+    : { kind: set.kind, long: (set.text ?? "").length >= LONG_TEXT_CHARACTERS };
 }

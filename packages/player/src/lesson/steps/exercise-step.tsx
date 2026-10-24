@@ -1,6 +1,5 @@
 "use client";
 
-import { TaskAsideContent } from "@zoonk/learn/task-layout";
 import { isSameLanguage } from "@zoonk/utils/languages";
 import { AlphabetStep } from "../../components/alphabet-step";
 import { FillBlankStep } from "../../components/fill-blank-step";
@@ -90,12 +89,8 @@ export function ExerciseStepView({
     case "vocabulary":
       return (
         <VocabularyStep step={exercise}>
-          {hasWordHints(step.wordHints) && (
-            // How the word is used and said, beside the word from `lg`.
-            <TaskAsideContent>
-              <WordHints hints={step.wordHints} />
-            </TaskAsideContent>
-          )}
+          {/* How the word is used and said, under the word it's about. */}
+          {hasWordHints(step.wordHints) && <WordHints hints={step.wordHints} />}
         </VocabularyStep>
       );
     case "fillBlank":

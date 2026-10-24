@@ -144,11 +144,12 @@ export type TaskFrameAside = {
 
 /**
  * A focused task has the whole screen, like a lesson, and every task wears the same chrome: one
- * header (leave on the left, its title in the middle, an action on the right, its progress under
- * them), one column starting at the top, and its actions pinned to the bottom over a hairline, at
- * every screen size, so the main action is always in the same place. From `lg` an `aside` can sit
- * beside the column, full height behind a hairline, with what helps with the task. Checkpoints,
- * mock exams, essays, calls, pattern drills and results told in steps all use it.
+ * header (leave in the window's top-left corner, an action in its top-right corner, its title
+ * centered over the column with its progress under it), one column starting at the top, and its
+ * actions pinned to the bottom over a hairline, at every screen size, so the main action is always
+ * in the same place. From `lg` an `aside` can sit beside the column, under the header's row behind
+ * a hairline, with what helps with the task. Checkpoints, mock exams, essays, calls, pattern
+ * drills and results told in steps all use it.
  */
 export function TaskFrame({
   aside,

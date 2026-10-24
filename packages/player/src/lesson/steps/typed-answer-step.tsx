@@ -68,7 +68,7 @@ export function TypedAnswerStepView({
             {t("In your own words")}
           </LessonEyebrow>
         )}
-        <ScreenSupport step={step}>
+        <ScreenSupport>
           <LessonContext>{step.content.context}</LessonContext>
           <LessonVisual visual={step.content.visual} />
           <LessonContext>{data ?? undefined}</LessonContext>

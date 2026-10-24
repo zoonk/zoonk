@@ -7,31 +7,33 @@ import { useSyncExternalStore } from "react";
 
 /**
  * The header of every full-screen task (a lesson, a block of questions, a practice, a test-out, a
- * checkpoint, a mock): close on the left, the task's title centered, the "…" menu on the right and,
- * under them, how far into the task the learner is. The sides take the same room, so the title
- * stays centered.
+ * checkpoint, a mock): close in the window's top-left corner, the task's title centered over its
+ * column, the "…" menu in the top-right corner and, under the title, how far into the task the
+ * learner is. The sides take the same room, so the title stays centered.
  */
 export function TaskHeader({ className, ...props }: React.ComponentProps<"div">) {
   return <div className={cn("shrink-0", className)} data-slot="task-header" {...props} />;
 }
 
 /**
- * The header's row: close, the title and the menu, in that order, in the task's column at every
- * size, so the close and the menu sit on the column's edges instead of the screen's corners.
+ * The header's row: close, the title and the menu, in that order, across the window at every size,
+ * so the close and the menu sit in its corners like any full-screen app's, while the title centers
+ * over the task's column. A task's aside starts under this row from `lg` (`TaskAside`).
  */
 export function TaskHeaderBar({ className, ...props }: React.ComponentProps<"header">) {
   return (
     <header
-      className={cn(
-        "max-w-column mx-auto flex w-full items-center gap-2 px-4 py-2 xl:py-3",
-        className,
-      )}
+      className={cn("flex w-full items-center gap-2 px-4 py-2 lg:px-6 xl:py-3", className)}
       {...props}
     />
   );
 }
 
-/** A side of the row (close or the menu), as wide as the other one so the title stays centered. */
+/**
+ * A side of the row (close or the menu), as wide as the other one so the title stays centered over
+ * the column. From `lg`, beside an aside, the menu's side moves over the aside, so the menu still
+ * sits in the window's top-right corner.
+ */
 export function TaskHeaderSide({
   align,
   children,
@@ -43,7 +45,9 @@ export function TaskHeaderSide({
     <div
       className={cn(
         "flex min-w-9 flex-1 basis-0",
-        align === "end" ? "justify-end" : "justify-start",
+        align === "end"
+          ? "justify-end lg:group-data-aside/task:translate-x-(--task-aside)"
+          : "justify-start",
       )}
     >
       {children}
@@ -53,7 +57,8 @@ export function TaskHeaderSide({
 
 /**
  * The header's ghost icon buttons (close on the left, the "…" menu on the right) reach past the
- * column by their padding, so their glyphs sit on the text edge, as the content under them does.
+ * row's padding by their own, so their glyphs sit on a phone's text edge, as the content under them
+ * does, and evenly in the window's corners on a wider screen.
  */
 export const TASK_HEADER_ICON_CLASS = { end: "-mr-2.5", start: "-ml-2.5" } as const;
 

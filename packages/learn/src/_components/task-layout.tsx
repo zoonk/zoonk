@@ -87,8 +87,10 @@ const ASIDE_WIDTH_CLASS: Record<TaskAsideWidth, string> = {
 
 /**
  * The root of a task with an aside (`TaskFrame`, the lesson player): it keeps the aside's room
- * free on the right from `lg`, so the task's column centers in what's left, and tells
- * `TaskAsideContent` where the aside's body is.
+ * free on the right from `lg`, so the task's column centers in what's left, and tells the aside
+ * and `TaskAsideContent` where they start: under the header's row (`--task-bar`, the row's height
+ * at `py-2` and `py-3` around its 36px buttons), and the aside's body under the aside's own header
+ * row (`--task-aside-top`).
  */
 export function getTaskAsideRootProps({
   footer,
@@ -99,7 +101,8 @@ export function getTaskAsideRootProps({
 }) {
   return {
     className: cn(
-      "group/task lg:pr-(--task-aside) lg:[--task-aside-top:3.25rem] xl:[--task-aside-top:3.75rem]",
+      "group/task lg:pr-(--task-aside)",
+      "lg:[--task-aside-top:6.5rem] lg:[--task-bar:3.25rem] xl:[--task-aside-top:7.5rem] xl:[--task-bar:3.75rem]",
       footer && "lg:[--task-aside-bottom:4.5625rem]",
       ASIDE_WIDTH_CLASS[width],
     ),
@@ -108,8 +111,8 @@ export function getTaskAsideRootProps({
 }
 
 /**
- * The aside's header row, level with the task's header: its label on the left in the section-label
- * face, a quiet mono fact on the right ("18 min left").
+ * The aside's header row, at its top under the task's header row: its label on the left in the
+ * section-label face, a quiet mono fact on the right ("18 min left").
  */
 export function TaskAsideHeader({
   className,
@@ -139,12 +142,12 @@ export function TaskAsideHeader({
 }
 
 /**
- * What helps with the task, beside it from `lg` (tablets in landscape and up), full height behind
- * a hairline: what the learner acts on stays in the column on the left, what helps them on the
- * right. Its header row sits level with the task's header (a label on the left, a quiet mono fact
- * on the right), its body scrolls on its own, and its foot (`TaskAsideFooter`) sits level with the
- * action bar. Phones and tablets in portrait don't show it: what it holds is in the column there,
- * or one tap away.
+ * What helps with the task, beside it from `lg` (tablets in landscape and up), from under the
+ * header's row to the bottom of the window behind a hairline: what the learner acts on and reads
+ * to do it stays in the column on the left, what helps them on the right. Its header row has a
+ * label on the left and a quiet mono fact on the right, its body scrolls on its own, and its foot
+ * (`footer`) sits level with the action bar. Phones and tablets in portrait don't show it: what it
+ * holds is in the column there, or one tap away.
  */
 export function TaskAside({
   children,
@@ -163,7 +166,7 @@ export function TaskAside({
   return (
     <aside
       aria-label={label}
-      className="border-border bg-background hidden lg:fixed lg:inset-y-0 lg:right-0 lg:z-20 lg:flex lg:w-(--task-aside) lg:flex-col lg:border-l"
+      className="border-border bg-background hidden lg:fixed lg:top-(--task-bar) lg:right-0 lg:bottom-0 lg:z-20 lg:flex lg:w-(--task-aside) lg:flex-col lg:border-t lg:border-l"
       data-slot="task-aside"
     >
       <TaskAsideHeader meta={meta} title={title} />
@@ -188,11 +191,13 @@ export function TaskAside({
 }
 
 /**
- * What a question shows before it on a phone (the shared text it's on, its context, chart or
- * picture), placed in the aside's body from `lg`, beside the question. It's rendered once, where
- * screen readers hear it before the question, and only its place changes: nothing is drawn twice,
- * and nothing moves after the page loads. In a task without an aside it stays in the column.
- * Nothing between it and the task's root may set a transform, which would hold it in place.
+ * What a task shows in its column on a phone and in the aside's body from `lg`, beside the column:
+ * a long text several questions share, an essay's prompt, an intro's details. A question's own
+ * situation, picture, chart or table is part of the question and stays with it in the column at
+ * every size. It's rendered once, where screen readers hear it before what follows, and only its
+ * place changes: nothing is drawn twice, and nothing moves after the page loads. In a task without
+ * an aside it stays in the column. Nothing between it and the task's root may set a transform,
+ * which would hold it in place.
  */
 export function TaskAsideContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -227,7 +232,8 @@ export function TaskAsideSection({
 
 /**
  * A task's chrome while its screen loads, in its final shapes, so nothing moves when the screen
- * arrives: the header's row in the column (close, the title's placeholder, the menu when `menu`),
+ * arrives: the header's row across the window (close and the menu, when `menu`, in its corners, the
+ * title's placeholder centered over the column),
  * the progress bar under it when `progress`, the screen's own placeholders (`children`), the action
  * bar pinned over a hairline (the screen's secondary `actions`, then its main action, label-width
  * from `lg`) and, for a task with an aside, the aside's placeholders beside them from `lg`.
@@ -249,10 +255,19 @@ export function TaskSkeleton({
 }) {
   return (
     <main className={cn("flex min-h-dvh flex-col", aside && "lg:pr-88 xl:pr-104")}>
-      <div className="max-w-column mx-auto flex w-full items-center justify-between gap-2 px-4 py-2 xl:py-3">
+      <div className="flex w-full items-center justify-between gap-2 px-4 py-2 lg:px-6 xl:py-3">
         <Skeleton className="-ml-2.5 size-9 rounded-lg" />
         {title}
-        {menu ? <Skeleton className="-mr-2.5 size-9 rounded-lg" /> : <span className="size-9" />}
+        {menu ? (
+          <Skeleton
+            className={cn(
+              "-mr-2.5 size-9 rounded-lg",
+              aside && "lg:translate-x-88 xl:translate-x-104",
+            )}
+          />
+        ) : (
+          <span className="size-9" />
+        )}
       </div>
 
       {progress && (
@@ -278,7 +293,7 @@ export function TaskSkeleton({
       </div>
 
       {aside && (
-        <div className="border-border fixed inset-y-0 right-0 hidden w-88 flex-col gap-4 border-l px-6 lg:flex xl:w-104">
+        <div className="border-border fixed top-13 right-0 bottom-0 hidden w-88 flex-col gap-4 border-t border-l px-6 lg:flex xl:top-15 xl:w-104">
           <div className="flex h-13 shrink-0 items-center xl:h-15">
             <Skeleton className="h-3 w-28" />
           </div>

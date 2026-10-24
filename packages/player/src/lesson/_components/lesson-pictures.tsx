@@ -15,7 +15,6 @@ import {
   useRef,
   useState,
 } from "react";
-import { type StepPictureShown } from "../_utils/lesson-aside";
 import {
   type PicturesState,
   getImageRequest,
@@ -190,18 +189,6 @@ export function useIsExploredPictureLost(step: PlayableLibraryStep): boolean {
 export function useHasStepPicture(step: PlayableLibraryStep): boolean {
   const { image, pending } = useStepPicture(step);
   return image !== null || pending;
-}
-
-/**
- * What a screen's picture shows, as `LessonStepPicture` draws it: a screen that leads with its
- * picture shows it drawn or on its way, and a question about it also shows its description when
- * the drawing failed.
- */
-export function useStepPictureShown(step: PlayableLibraryStep): StepPictureShown {
-  const { image, pending } = useStepPicture(step);
-  const shown = image !== null || pending;
-
-  return { asked: shown || getImageRequest(step) !== null, shown };
 }
 
 /**

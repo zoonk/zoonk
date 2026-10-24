@@ -11499,11 +11499,6 @@ msgid "Chart"
 msgstr "Chart"
 
 #: src/session/question-block/block-aside.tsx
-msgctxt "29hoV8"
-msgid "Figure"
-msgstr "Figure"
-
-#: src/session/question-block/block-aside.tsx
 msgctxt "aA8bDw"
 msgid "Text"
 msgstr "Text"

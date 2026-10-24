@@ -168,9 +168,9 @@ function hasTextStimulus(question: StudyQuestion): boolean {
 }
 
 /**
- * What the question is read with (its set's text, case or chart, then its own context, picture or
- * chart): above the question on a phone, in the aside beside it from `lg`. A recording's question
- * keeps its own context in the column, since the recording has the aside.
+ * What the question is read with: its set's text, case or chart, shared with the set's other
+ * questions, above them on a phone and beside them in the aside from `lg`; then its own context,
+ * picture or chart, which is part of the question and stays right above it in the column.
  */
 function QuestionMaterial({
   continued,
@@ -179,30 +179,21 @@ function QuestionMaterial({
   continued: boolean;
   question: StudyQuestion;
 }) {
-  const support = (
-    <ItemSupport
-      className="text-muted-foreground text-sm leading-relaxed"
-      context={question.context}
-      image={question.image}
-      visual={question.visual}
-    />
-  );
-
-  if (question.set?.listening) {
-    return support;
-  }
-
-  if (!question.set && !question.context && !question.image && !question.visual) {
-    return null;
-  }
-
   return (
-    <TaskAsideContent className="flex flex-col gap-4" key={question.itemId}>
+    <>
       {question.set && hasTextStimulus(question) && (
-        <ItemSetStimulus continued={continued} set={question.set} />
+        <TaskAsideContent className="flex flex-col gap-4" key={question.itemId}>
+          <ItemSetStimulus continued={continued} set={question.set} />
+        </TaskAsideContent>
       )}
-      {support}
-    </TaskAsideContent>
+
+      <ItemSupport
+        className="text-muted-foreground text-sm leading-relaxed"
+        context={question.context}
+        image={question.image}
+        visual={question.visual}
+      />
+    </>
   );
 }
 

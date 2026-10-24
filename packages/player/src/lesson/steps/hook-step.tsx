@@ -43,7 +43,7 @@ function HookGuess({
     <PlayerChoiceScene>
       <PlayerChoiceScenePrompt>
         <LessonEyebrow icon={<SparklesIcon aria-hidden="true" />}>{t("Guess first")}</LessonEyebrow>
-        <ScreenSupport step={step}>
+        <ScreenSupport>
           <LessonStepPicture asks priority step={step} />
           <LessonVisual visual={step.content.visual} />
           <LessonContext>{data ?? undefined}</LessonContext>
@@ -81,15 +81,12 @@ export function HookStepView(props: LessonStepViewProps<StepOf<"hook">>) {
     return <HookGuess {...props} />;
   }
 
-  // The text comes first for screen readers and in the aside's place from `lg`; a phone still
-  // leads with the picture, like a story.
+  // The text comes first for screen readers; the screen still leads with the picture, like a story.
   return (
     <PlayerReadScene className={cn("gap-5 sm:gap-6", hasPicture && "max-sm:pt-0")}>
       <LessonBody>{step.content.text}</LessonBody>
-      <ScreenSupport className="max-lg:contents" step={step}>
-        <LessonStepPicture className="max-lg:order-first" hero priority step={step} />
-        <LessonVisual visual={step.content.visual} />
-      </ScreenSupport>
+      <LessonStepPicture className="order-first" hero priority step={step} />
+      <LessonVisual visual={step.content.visual} />
     </PlayerReadScene>
   );
 }

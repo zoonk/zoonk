@@ -16,7 +16,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, CircleHelpIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { LessonRichText } from "./_components/lesson-rich-text";
-import { useHasOwnSupport } from "./_components/screen-support";
 import {
   type RecapStep,
   getLessonOutline,
@@ -171,29 +170,21 @@ function LessonOutline() {
 /** Whether a reading screen shows the lesson's outline beside it: when the host asks for it. */
 function useShowsOutline(step: PlayableLibraryStep): boolean {
   const { outline } = useLessonPlayerConfig();
-  const hasOwnSupport = useHasOwnSupport(step);
-
-  return outline && !hasOwnSupport && !isLanguageStep(step) && isReadStep(step);
-}
-
-/** The recap a question shows beside it, unless it has support of its own to show there. */
-function useScreenRecap(step: PlayableLibraryStep) {
-  const { state } = useLessonPlayer();
-  const hasOwnSupport = useHasOwnSupport(step);
-
-  return hasOwnSupport ? null : getLessonRecap(state);
+  return outline && !isLanguageStep(step) && isReadStep(step);
 }
 
 /**
- * The aside beside a screen from `lg`: the question's own support or, without any, the last reading
- * screen ("From the lesson", with its place in the lesson); a reading screen's picture, chart or
- * activity, or the lesson's outline when the host asks for it; and the buddy's composer at its
- * foot, level with the action bar.
+ * The aside beside a screen from `lg`, with what helps with it (what the screen shows itself, its
+ * situation, picture or chart, stays with it in the column): beside a question, the last reading
+ * screen ("From the lesson", with its place in the lesson); beside a reading screen, the lesson's
+ * outline when the host asks for it; and the buddy's composer at its foot, level with the action
+ * bar.
  */
 function ScreenAside({ step }: { step: PlayableLibraryStep }) {
   const t = useExtracted();
   const buddy = useLessonBuddy();
-  const recap = useScreenRecap(step);
+  const { state } = useLessonPlayer();
+  const recap = getLessonRecap(state);
   const showsOutline = useShowsOutline(step);
   const mark = useShowsMiss() ? getRecapMark({ recap, step }) : null;
 
@@ -251,10 +242,10 @@ function CompletionAside() {
 }
 
 /**
- * The lesson's aside from `lg` (tablets in landscape and up), full height beside the screen behind
- * a hairline, so the screen's column stays in one place from the first screen to the end. Once the
- * lesson is done, the player's own moment shows the lesson's ideas there, while a host's moment (a
- * session block's queue, a quick explanation's recap) fills the aside itself.
+ * The lesson's aside from `lg` (tablets in landscape and up), beside the screen under the header's
+ * row behind a hairline, so the screen's column stays in one place from the first screen to the
+ * end. Once the lesson is done, the player's own moment shows the lesson's ideas there, while a
+ * host's moment (a session block's queue, a quick explanation's recap) fills the aside itself.
  */
 export function LessonAside() {
   const t = useExtracted();

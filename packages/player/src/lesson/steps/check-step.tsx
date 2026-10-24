@@ -35,7 +35,7 @@ export function CheckStepView({
   return (
     <PlayerChoiceScene>
       <PlayerChoiceScenePrompt>
-        <ScreenSupport step={step}>
+        <ScreenSupport>
           <LessonStepPicture asks step={step} />
           <LessonContext>{step.content.context}</LessonContext>
           <LessonVisual visual={step.content.visual} />

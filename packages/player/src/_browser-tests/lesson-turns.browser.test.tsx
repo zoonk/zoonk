@@ -73,31 +73,6 @@ describe("lessons that read like stories", () => {
     });
   });
 
-  it("turns screens in place beside the aside on a wide screen, the picture in the aside", async () => {
-    const lesson = buildLesson([
-      explanationStep({ text: "The frontal lobe plans what you do.", title: "The frontal lobe" }),
-      pictured(LOBES),
-    ]);
-
-    renderLessonPlayer({ lesson });
-    await expect.element(page.getByRole("heading", { name: "The frontal lobe" })).toBeVisible();
-
-    await press("ArrowRight");
-    await expect.element(page.getByRole("heading", { name: LOBES.title })).toBeVisible();
-    // A sliding column would carry the aside's picture with it.
-    expect(shownScreen().getAnimations()).toHaveLength(0);
-
-    const picture = page.getByRole("img", { name: LOBES.alt });
-    await expect.element(picture).toBeVisible();
-
-    const asideBox = page
-      .getByRole("complementary", { name: "Help with this screen" })
-      .element()
-      .getBoundingClientRect();
-
-    expect(picture.element().getBoundingClientRect().left).toBeGreaterThanOrEqual(asideBox.left);
-  });
-
   it("shows a new screen in place when the device asks for reduced motion", async () => {
     await onDevice({ reducedMotion: "reduce" }, async () => {
       const lesson = buildLesson([pictured(LOBES), teachingStep("explanation")]);

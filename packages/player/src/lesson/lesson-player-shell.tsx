@@ -96,11 +96,13 @@ function LessonContent() {
 }
 
 /**
- * The lesson player: a header with the lesson's title and progress, the screen in the middle, and
- * one next action at the bottom. No navigation bar: a lesson has the whole screen. From `lg` an
- * aside sits beside the screen, full height behind a hairline, with what helps with it (the
- * question's support, the text it checks, the buddy), and the screen's column centers in what's
- * left. On a touch screen, a swipe turns reading screens like a story, wherever the arrow keys do.
+ * The lesson player: a header with ✕ and "…" in the window's corners and the lesson's title and
+ * progress over the column, the screen in the column (everything it shows, its situation, picture
+ * or chart included), and one next action at the bottom. No navigation bar: a lesson has the whole
+ * screen. From `lg` an aside sits beside the screen under the header's row, behind a hairline,
+ * with what helps with it (the text a question checks, the outline, the buddy), and the screen's
+ * column centers in what's left. On a touch screen, a swipe turns reading screens like a story,
+ * wherever the arrow keys do.
  */
 export function LessonPlayerShell() {
   return (
