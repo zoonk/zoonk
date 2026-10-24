@@ -286,7 +286,7 @@ describe(normalizePlanEdit, () => {
       input,
       raw: {
         changes: [
-          change({ kind: "setDailyMinutes", minutes: 600 }),
+          change({ kind: "setDailyMinutes", minutes: 2000 }),
           change({ kind: "clearTargetDate" }),
           change({ date: "2026-09-28", kind: "addLightWeek" }),
         ],
@@ -296,7 +296,7 @@ describe(normalizePlanEdit, () => {
     });
 
     expect(result.operations).toStrictEqual([
-      { kind: "setDailyMinutes", minutes: 240 },
+      { kind: "setDailyMinutes", minutes: 1440 },
       { kind: "setTargetDate", targetDate: null },
       { kind: "addLightWeek", startDate: "2026-09-28" },
     ]);

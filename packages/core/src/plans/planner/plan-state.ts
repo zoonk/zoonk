@@ -4,6 +4,7 @@ import { z } from "zod";
 import { examChoicePickSchema } from "../../exams/choices/exam-choice-contract";
 import { LANGUAGE_ACTIVITY_TYPES } from "../../language/activities/language-activities";
 import { challengeTeamSchema } from "../../library/challenges/challenge-team";
+import { MAX_DAILY_MINUTES } from "../daily-minutes";
 import { TOOL_CHOICES, TOOL_SYSTEMS } from "../plan-tools-contract";
 
 /**
@@ -46,8 +47,6 @@ export type DifficultyBias = (typeof DIFFICULTY_BIASES)[number];
 export type WrittenCadence = (typeof WRITTEN_CADENCES)[number];
 export type PaceSource = (typeof PACE_SOURCES)[number];
 
-export const MIN_DAILY_MINUTES = 5;
-export const MAX_DAILY_MINUTES = 240;
 export const DAYS_PER_WEEK = 7;
 
 const isoDateSchema = z.iso.date();

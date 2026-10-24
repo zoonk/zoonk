@@ -1,8 +1,7 @@
 import { z } from "zod";
 import { planNumbersSchema } from "./numbers-contract";
 
-/** The most time a day a plan studies: a learner who gives it can't be offered more. */
-export { MAX_DAILY_MINUTES } from "./planner/plan-state";
+export { MAX_DAILY_MINUTES } from "./daily-minutes";
 
 const isoDateSchema = z.iso.date();
 
@@ -70,9 +69,8 @@ export type PlanTimeAdvice = z.infer<typeof planTimeAdviceSchema>;
  * The daily time a goal needs, found when the learner asks for it ("Find the time that covers
  * everything"): the fewest minutes that study the whole goal in depth by its date, at the
  * learner's study days, planning the goal at each daily time from the least. Exact: the plan at
- * that time covers everything. When no daily time does, what the most time a day covers, and for
- * a goal that isn't an exam, falling short in its own week, the earliest date its own time covers
- * everything by.
+ * that time covers everything. For a goal that isn't an exam, falling short in its own week, also
+ * the earliest date its own time covers everything by.
  */
 export const planTimeToCoverSchema = z
   .object({
@@ -89,13 +87,6 @@ export const planTimeToCoverSchema = z
         description:
           "For a goal that isn't an exam and doesn't cover everything by its date in its own week, or whose date passed (no studyDays or weekendMinutes asked about): the earliest date the learner's own time covers everything by, measured as the plan measures what it covers (once moved there, the plan says it covers everything), to send as it is with `setTargetDate`. Null otherwise, and when no date within a week of the plan's end without a date does",
       }),
-    maximum: z
-      .object({ coveredShare: z.number().min(0).max(1), dailyMinutes: z.int() })
-      .nullable()
-      .meta({
-        description:
-          "When no daily time covers everything in depth: what the most time a day covers by the date, when it's more than the learner's time does. Recommend that time, honestly, with the learner choosing where to focus",
-      }),
     measure: measureSchema,
     readingNotice: readingNoticeSchema,
     ready: readySchema,
@@ -104,7 +95,7 @@ export const planTimeToCoverSchema = z
       .nullable()
       .meta({
         description:
-          "The fewest daily minutes that study the whole goal in depth by its date. Null without a date, while the plan is being built, or when no daily time does (see maximum)",
+          "Daily minutes that study the whole goal in depth by its date: the fewest up to 4 hours a day; above that, a time that does, which a weekly mock can make a little more than the fewest. Null without a date, while the plan is being built, or when not even a whole day does",
       }),
     targetDate: isoDateSchema
       .nullable()
@@ -114,27 +105,6 @@ export const planTimeToCoverSchema = z
   .meta({ id: "PlanTimeToCover" });
 
 export type PlanTimeToCover = z.infer<typeof planTimeToCoverSchema>;
-
-/**
- * The one daily time a plan recommends, wherever the learner asked for it (the time step, the
- * Plan's coverage card, its editor): the fewest minutes that study the whole goal in depth by its
- * date (`inDepth`), or, when no daily time does, the most time a day with the share it covers
- * (`more`). Null without a date. Pedro's time step said 1h 20min and his reveal 40 min, the time
- * that only brings every topic in: one number, one meaning.
- */
-export function getRecommendedTime({
-  maximum,
-  recommendedMinutes,
-}: Pick<PlanTimeToCover, "maximum" | "recommendedMinutes">):
-  | { dailyMinutes: number; kind: "inDepth" }
-  | { coveredShare: number; dailyMinutes: number; kind: "more" }
-  | null {
-  if (recommendedMinutes !== null) {
-    return { dailyMinutes: recommendedMinutes, kind: "inDepth" };
-  }
-
-  return maximum && { ...maximum, kind: "more" };
-}
 
 /**
  * The week the learner would study: the weekdays, Sunday first (0; the plan's own days when

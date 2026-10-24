@@ -530,7 +530,7 @@ test.describe("Goals and plans API", () => {
       apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?weekendMinutes=120`),
       apiContext.get(`/v1/goals/${goal.id}/plan`),
       apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?studyDays=7`),
-      apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?weekendMinutes=999`),
+      apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?weekendMinutes=1441`),
       apiContext.get(`/v1/goals/${other.goal.id}/plan/time-advice`),
     ]);
 
@@ -589,7 +589,7 @@ test.describe("Goals and plans API", () => {
         }),
         apiContext.post(`/v1/goals/${goal.id}/plan/time-to-cover`, { data: { studyDays: [7] } }),
         apiContext.post(`/v1/goals/${goal.id}/plan/time-to-cover`, {
-          data: { weekendMinutes: 999 },
+          data: { weekendMinutes: 1441 },
         }),
         apiContext.post(`/v1/goals/${other.goal.id}/plan/time-to-cover`, { data: {} }),
       ]);
@@ -617,7 +617,7 @@ test.describe("Goals and plans API", () => {
         `/v1/goals/${goal.id}/plan/time-advice?dailyMinutes=${time.recommendedMinutes}`,
       ),
       apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?dailyMinutes=5`),
-      apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?dailyMinutes=999`),
+      apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?dailyMinutes=1441`),
     ]);
 
     await expect(
@@ -649,7 +649,7 @@ test.describe("Goals and plans API", () => {
         }),
         schema: planTimeToCoverSchema,
       }),
-    ).resolves.toMatchObject({ maximum: null, ready: true, recommendedMinutes: null });
+    ).resolves.toMatchObject({ ready: true, recommendedMinutes: null });
 
     const weekendOnly = await readBody({
       response: await apiContext.get(

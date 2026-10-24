@@ -1591,7 +1591,6 @@ test.describe("Today's plan change", () => {
         goalId: user.goalId,
         time: {
           fittingDate: "2028-09-28",
-          maximum: { coveredShare: 0.49, dailyMinutes: 240 },
           measure: "goal",
           targetDate: soon.toISOString().slice(0, 10),
         },

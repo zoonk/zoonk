@@ -878,7 +878,6 @@ describe("exam plans", () => {
     expect(feasibility.coveredShare).toBeGreaterThan(0);
     expect(feasibility.coveredShare).toBeLessThan(1);
     expect(feasibility.recommendedMinutes).toBeGreaterThan(40);
-    expect(feasibility.maximum).toBeNull();
 
     const more = {
       ...input,
@@ -1393,13 +1392,16 @@ describe("a plan's first day", () => {
   });
 });
 
-describe("a plan no daily time can cover", () => {
-  it("says what the most time a day covers, and nothing to switch to once the learner gives it", () => {
-    const skills = Array.from({ length: 40 }, (_, index) => skill(`s${index}`, { lessons: 40 }));
+/** 4,800 minutes of lessons two days before the date: more than both whole days hold. */
+const MORE_THAN_A_DAY_HOLDS = Array.from({ length: 40 }, (_, index) =>
+  skill(`s${index}`, { lessons: 40 }),
+);
 
+describe("a plan no daily time can cover", () => {
+  it("recommends no time when not even a whole day covers everything", () => {
     const input = planInput({
-      goal: { dailyMinutes: 30, kind: "exam", targetDate: fromIsoDate("2026-10-12") },
-      graph: { phases: [{ milestone: null, name: "Everything" }], skills },
+      goal: { dailyMinutes: 30, kind: "exam", targetDate: fromIsoDate("2026-09-30") },
+      graph: { phases: [{ milestone: null, name: "Everything" }], skills: MORE_THAN_A_DAY_HOLDS },
       settings: parsePlanSettings({ startDate: "2026-09-28" }),
     });
 
@@ -1408,30 +1410,21 @@ describe("a plan no daily time can cover", () => {
     expect(feasibility).toMatchObject({ fits: false, recommendedMinutes: null });
     // An exam's date doesn't move: no date to name either.
     expect(feasibility.fittingDate).toBeNull();
-    expect(feasibility.maximum?.dailyMinutes).toBe(240);
-    expect(feasibility.maximum?.coveredShare).toBeGreaterThan(feasibility.coveredShare);
-    expect(feasibility.maximum?.coveredShare).toBeLessThan(1);
-
-    const atMaximum = { ...input, goal: { ...input.goal, dailyMinutes: 240 } };
-
-    expect(getPlanFeasibility({ input: atMaximum }).maximum).toBeNull();
   });
 
   it("names the earliest date the learner's own time covers everything by", () => {
-    const skills = Array.from({ length: 16 }, (_, index) => skill(`s${index}`, { lessons: 40 }));
-
     const input = planInput({
-      goal: { dailyMinutes: 30, kind: "learn", targetDate: fromIsoDate("2026-10-12") },
-      graph: { phases: [{ milestone: null, name: "Everything" }], skills },
+      goal: { dailyMinutes: 30, kind: "learn", targetDate: fromIsoDate("2026-09-30") },
+      graph: { phases: [{ milestone: null, name: "Everything" }], skills: MORE_THAN_A_DAY_HOLDS },
       settings: parsePlanSettings({ startDate: "2026-09-28" }),
     });
 
-    const { fittingDate, maximum } = getPlanFeasibility({ input });
+    const { fittingDate, recommendedMinutes } = getPlanFeasibility({ input });
 
     const by = (targetDate: Date) =>
       getPlanFeasibility({ input: { ...input, goal: { ...input.goal, targetDate } } });
 
-    expect(maximum?.coveredShare).toBeLessThan(1);
+    expect(recommendedMinutes).toBeNull();
     expect(fittingDate).not.toBeNull();
     expect(by(fittingDate ?? TODAY).fits).toBe(true);
     expect(by(addDays(fittingDate ?? TODAY, -1)).fits).toBe(false);

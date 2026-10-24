@@ -6,11 +6,8 @@ import {
 } from "../../exams/choices/exam-choice-contract";
 import { type TargetCutoff } from "../../exams/cutoffs/target-cutoff-contract";
 import { type GoalDraft, type GoalView, goalDraftSchema } from "../../goals/goal-contract";
-import {
-  DAYS_PER_WEEK,
-  MAX_DAILY_MINUTES,
-  MIN_DAILY_MINUTES,
-} from "../../plans/planner/plan-state";
+import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../../plans/daily-minutes";
+import { DAYS_PER_WEEK } from "../../plans/planner/plan-state";
 import { learningProfileUpdateSchema } from "../../profile/learning-profile-contract";
 
 const MAX_GOAL_TEXT_LENGTH = 2000;

@@ -1,24 +1,16 @@
 "use client";
 
-import { MAX_DAILY_MINUTES, type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
+import { type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
 import { useExtracted } from "next-intl";
-import { useFormatGoalDate } from "../../_utils/iso-date";
-import { useFormatShare } from "../../_utils/percent";
-import { useFormatDuration } from "../../_utils/time-format";
 import { type FindStatus, FindTimeLine } from "../../plan/plan-coverage";
 import { readTimeToCover, useTimeToCoverTexts } from "../../plan/use-time-to-cover";
 
 /**
  * What Find found for the week shown: the time that covers everything in depth by the goal's date,
- * or, when that's more than anyone keeps up, that it is, with the most time a day and the share it
- * covers; or that no time covers more.
+ * or that no time a day does.
  */
 function FoundWords({ found }: { found: PlanTimeToCover }) {
-  const t = useExtracted();
   const texts = useTimeToCoverTexts();
-  const formatDuration = useFormatDuration();
-  const formatShare = useFormatShare();
-  const formatGoalDate = useFormatGoalDate();
   const answer = readTimeToCover(found);
   const { targetDate, targetDateNamedMonth } = found;
 
@@ -26,35 +18,13 @@ function FoundWords({ found }: { found: PlanTimeToCover }) {
     return null;
   }
 
-  if (answer.kind === "covers") {
-    return (
-      <p className="text-foreground font-medium">
-        {texts.covers({ minutes: answer.minutes, targetDate, targetDateNamedMonth })}
-      </p>
-    );
-  }
-
   if (answer.kind === "none") {
-    return <p>{texts.none(MAX_DAILY_MINUTES)}</p>;
+    return <p>{texts.none({ targetDate, targetDateNamedMonth })}</p>;
   }
-
-  const values = {
-    date: formatGoalDate({ isoDate: targetDate, namedMonth: targetDateNamedMonth }),
-    share: formatShare(answer.share),
-    time: formatDuration(answer.minutes),
-  };
 
   return (
     <p className="text-foreground font-medium">
-      {found.measure === "exam"
-        ? t(
-            "Studying everything in depth by {date} would take more than {time} a day. We recommend {time} a day: about {share} of the plan's exam topics in depth, what comes up most first.",
-            values,
-          )
-        : t(
-            "Studying everything in depth by {date} would take more than {time} a day. We recommend {time} a day: about {share} of your goal in depth, what matters most first.",
-            values,
-          )}
+      {texts.covers({ minutes: answer.minutes, targetDate, targetDateNamedMonth })}
     </p>
   );
 }

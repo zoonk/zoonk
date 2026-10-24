@@ -1,7 +1,7 @@
 "use client";
 
 import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
-import { MAX_DAILY_MINUTES, type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
+import { type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,7 +16,6 @@ import {
   SuggestionDescription,
 } from "../_components/suggestion";
 import { useFormatIsoDate } from "../_utils/iso-date";
-import { useFormatShare } from "../_utils/percent";
 import { useFormatDuration } from "../_utils/time-format";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import { usePlanScreen } from "./plan-context";
@@ -213,14 +212,12 @@ export type Intent = "date" | "time";
 /**
  * The change a find answer offers (see `useTimeToCover`), all of it exact, since it was planned:
  * asked for a date, the earliest one the learner's own time covers everything by; asked for
- * time, the time found, or when no time covers everything, a goal's new date when it has one, or
- * the most time a day with the share it covers. Null when nothing is worth one tap: no time covers
- * more, or no date was found.
+ * time, the time found, or when no time covers everything, a goal's new date when it has one.
+ * Null when nothing is worth one tap: no time covers everything and no date was found.
  */
 export function useAnswerOffer() {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
-  const formatShare = useFormatShare();
   const formatDate = useFormatIsoDate();
   const texts = useTimeToCoverTexts();
   const { goal } = usePlanScreen();
@@ -236,14 +233,16 @@ export function useAnswerOffer() {
     time: PlanTimeToCover;
   }): CoverageOffer | null {
     const answer = readTimeToCover(time);
-    const { fittingDate } = time;
+    const { fittingDate, targetDate, targetDateNamedMonth } = time;
 
-    const none = answer.kind === "none" ? texts.none(MAX_DAILY_MINUTES) : null;
-    const most = answer.kind === "more" ? texts.more(answer) : none;
+    const none =
+      answer.kind === "none" && targetDate
+        ? texts.none({ targetDate, targetDateNamedMonth })
+        : null;
 
     if (goal.kind !== "exam" && fittingDate && (intent === "date" || answer.kind !== "covers")) {
       return {
-        description: intent === "date" || !most ? [covered] : [covered, most],
+        description: intent === "date" || !none ? [covered] : [covered, none],
         operations: [{ kind: "setTargetDate", targetDate: fittingDate }],
         title: t("Your time covers everything by {date}", {
           date: formatDate(fittingDate, "long"),
@@ -258,13 +257,7 @@ export function useAnswerOffer() {
     return {
       description: [covered],
       operations: [{ kind: "setDailyMinutes", minutes: answer.minutes }],
-      title:
-        answer.kind === "covers"
-          ? t("{time} a day covers everything in depth", { time: formatDuration(answer.minutes) })
-          : t("{time} a day covers about {share} in depth", {
-              share: formatShare(answer.share),
-              time: formatDuration(answer.minutes),
-            }),
+      title: t("{time} a day covers everything in depth", { time: formatDuration(answer.minutes) }),
     };
   };
 }

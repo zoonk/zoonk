@@ -1,11 +1,10 @@
 "use client";
 
-import { type PlanTimeToCover, getRecommendedTime } from "@zoonk/core/plans/time-advice-contract";
+import { type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
 import { safeAsync } from "@zoonk/utils/error";
 import { settleWithin } from "@zoonk/utils/timeout";
 import { useExtracted } from "next-intl";
 import { useFormatGoalDate, useFormatIsoDate } from "../_utils/iso-date";
-import { useFormatShare } from "../_utils/percent";
 import { useFormatDuration } from "../_utils/time-format";
 import { usePlanScreen } from "./plan-context";
 
@@ -14,26 +13,16 @@ const ASK_TIMEOUT_MS = 45_000;
 
 /**
  * What a find answer says about daily time: the fewest minutes whose plan covers everything in
- * depth by the date (`covers`); when none does, the most time a day with the exact share it covers
- * (`more`), when that's more than the learner's time does; otherwise no time covers more (`none`).
+ * depth by the date (`covers`), or that no time a day does (`none`).
  */
-export type TimeToCoverAnswer =
-  | { kind: "covers"; minutes: number }
-  | { kind: "more"; minutes: number; share: number }
-  | { kind: "none" };
+export type TimeToCoverAnswer = { kind: "covers"; minutes: number } | { kind: "none" };
 
 export function readTimeToCover(
-  time: Pick<PlanTimeToCover, "maximum" | "recommendedMinutes">,
+  time: Pick<PlanTimeToCover, "recommendedMinutes">,
 ): TimeToCoverAnswer {
-  const target = getRecommendedTime(time);
-
-  if (!target) {
-    return { kind: "none" };
-  }
-
-  return target.kind === "inDepth"
-    ? { kind: "covers", minutes: target.dailyMinutes }
-    : { kind: "more", minutes: target.dailyMinutes, share: target.coveredShare };
+  return time.recommendedMinutes === null
+    ? { kind: "none" }
+    : { kind: "covers", minutes: time.recommendedMinutes };
 }
 
 /**
@@ -68,13 +57,12 @@ export function useTimeToCover() {
 
 /**
  * The words of a find answer and its states, the same wherever Find shows (the editor's time, the
- * time step): what the time found covers by the goal's date, what the most time a day covers when
- * no time covers everything, and what a failed or interrupted search says.
+ * time step): what the time found covers by the goal's date, that no time a day covers everything
+ * by it, and what a failed or interrupted search says.
  */
 export function useTimeToCoverTexts() {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
-  const formatShare = useFormatShare();
   const formatDate = useFormatIsoDate();
   const formatGoalDate = useFormatGoalDate();
 
@@ -105,26 +93,22 @@ export function useTimeToCoverTexts() {
         date: formatDate(fittingDate, "long"),
         time: formatDuration(dailyMinutes),
       }),
-    more: ({ minutes, share }: { minutes: number; share: number }) =>
-      t("Even at {time} a day, you'd study about {share} of everything in depth by your date.", {
-        share: formatShare(share),
-        time: formatDuration(minutes),
-      }),
     noDate: t("We couldn't find a date that covers everything."),
-    none: (minutes: number) =>
-      t("Even at {time} a day, your plan wouldn't cover more by your date.", {
-        time: formatDuration(minutes),
+    /** No time a day covers everything in depth by the goal's own date. */
+    none: ({
+      targetDate,
+      targetDateNamedMonth,
+    }: Pick<PlanTimeToCover, "targetDateNamedMonth"> & { targetDate: string }) =>
+      t("No amount of time a day covers everything in depth by {date}.", {
+        date: formatGoalDate({
+          isoDate: targetDate,
+          namedMonth: targetDateNamedMonth,
+          style: "long",
+        }),
       }),
-    /** A chip's note once Find answered: the time found, or the most time's exact share. */
-    note: (answer: TimeToCoverAnswer, minutes: number): string | null => {
-      if (answer.kind === "covers" && answer.minutes === minutes) {
-        return t("Covers everything");
-      }
-
-      return answer.kind === "more" && answer.minutes === minutes
-        ? t("About {share}", { share: formatShare(answer.share) })
-        : null;
-    },
+    /** A chip's note once Find answered: the time found. */
+    note: (answer: TimeToCoverAnswer, minutes: number): string | null =>
+      answer.kind === "covers" && answer.minutes === minutes ? t("Covers everything") : null,
     tryAgain: t("Try again"),
   };
 }

@@ -9,12 +9,13 @@ import { buildPlanNumbersView } from "./_utils/plan-numbers-view";
 import { isPlanSetupTaskOwed } from "./_utils/plan-setup-tasks";
 import { computePlan } from "./_utils/replan";
 import { getChangePlanning } from "./_utils/steered-areas";
+import { MIN_DAILY_MINUTES } from "./daily-minutes";
 import { getNoticeWaitState } from "./notice-wait";
 import { type LearnerPlanOperation } from "./plan-contract";
 import { FITTING_DATE_TRIES } from "./planner/fitting-date";
 import { addDays, toIsoDate } from "./planner/plan-calendar";
 import { applyPlanOperations } from "./planner/plan-operations";
-import { MIN_DAILY_MINUTES, type PlanState } from "./planner/plan-state";
+import { type PlanState } from "./planner/plan-state";
 import { getScheduleOperations } from "./planner/schedule-operations";
 import {
   type PlanTimeAdvice,
@@ -230,9 +231,9 @@ export async function getPlanTimeAdvice({
  * The daily time that studies the learner's whole goal in depth by its date (see
  * `PlanTimeToCover`), in the week they'd study, found by planning the goal at each daily time from
  * the least: exact, and only when the learner asks ("Find the time that covers everything"), never
- * for a page or prefetch. When no daily time does, what the most time a day covers. For a goal that
- * isn't an exam and falls short in its own week, or whose date passed, also the earliest date its
- * own time covers everything by, measured like the time, which "Move your date" applies.
+ * for a page or prefetch. For a goal that isn't an exam and falls short in its own week, or whose
+ * date passed, also the earliest date its own time covers everything by, measured like the time,
+ * which "Move your date" applies.
  */
 export async function findPlanTimeToCover({
   goalId,
@@ -249,7 +250,6 @@ export async function findPlanTimeToCover({
       time: {
         coreMinutes: null,
         fittingDate: null,
-        maximum: null,
         measure: "goal",
         readingNotice: asked.readingNotice,
         ready: false,
@@ -287,7 +287,6 @@ export async function findPlanTimeToCover({
   ]);
 
   const { feasibility } = computed;
-  const { maximum } = feasibility;
 
   // The date is for the plan's own week: another week asked about isn't one a date move keeps. A
   // date that came with lessons left moves too, though nothing measures as left out by it then.
@@ -300,7 +299,6 @@ export async function findPlanTimeToCover({
     time: {
       coreMinutes: feasibility.coreMinutes,
       fittingDate: movesDate && context.goal.targetDate ? await findCoveringDate(context) : null,
-      maximum: maximum && { ...maximum, coveredShare: roundShare(maximum.coveredShare) },
       measure: feasibility.measure,
       readingNotice: false,
       ready: true,

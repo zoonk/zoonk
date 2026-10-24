@@ -63,7 +63,7 @@ export const planAdvicePaths = {
   "/goals/{goalId}/plan/time-to-cover": {
     post: {
       description:
-        "Finds the daily time the goal needs, when the learner asks for it (\"Find the time that covers everything\"): the fewest minutes a day that study the whole goal in depth by its date, in the week asked about (its study days, and the weekend's own time, which a new daily time leaves as it is), planning the goal at each daily time from the least, so the plan at that time covers everything. When no daily time does, what the most time a day covers, and for a goal that isn't an exam the earliest date the learner's own time covers everything by. It changes nothing: apply a time or date with `POST /goals/{goalId}/plan/changes`. `ready` is false while the plan is being built: ask again in a few seconds.",
+        "Finds the daily time the goal needs, when the learner asks for it (\"Find the time that covers everything\"): the fewest minutes a day that study the whole goal in depth by its date, in the week asked about (its study days, and the weekend's own time, which a new daily time leaves as it is), planning the goal at each daily time from the least, so the plan at that time covers everything; null when not even a whole day does. For a goal that isn't an exam, also the earliest date the learner's own time covers everything by. It changes nothing: apply a time or date with `POST /goals/{goalId}/plan/changes`. `ready` is false while the plan is being built: ask again in a few seconds.",
       operationId: "findPlanTimeToCover",
       requestBody: {
         content: { "application/json": { schema: planTimeToCoverInputSchema } },
@@ -74,7 +74,7 @@ export const planAdvicePaths = {
         ...planErrors,
         "200": {
           content: { "application/json": { schema: planTimeToCoverSchema } },
-          description: "The daily time that covers everything, or what the most time covers",
+          description: "The daily time that covers everything",
         },
       },
       security: AUTHENTICATED_SECURITY,

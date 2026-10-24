@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { type BuildPlanInput } from "./build-plan";
-import { withDailyMinutes } from "./daily-time-plans";
+import { findFittingMinutes, withDailyMinutes } from "./daily-time-plans";
 import { getPlanFeasibility } from "./plan-feasibility";
 import { applyPlanOperations } from "./plan-operations";
 import { type PlanState, parsePlanSettings } from "./plan-state";
@@ -173,5 +173,38 @@ describe("accepted daily-time candidates", () => {
     expect(getPlanFeasibility({ input: inputAt(feasibility.recommendedMinutes ?? 0) }).fits).toBe(
       true,
     );
+  });
+});
+
+/** 300 minutes fit, 305 to 395 don't (a mock takes the day), and 400 on do. */
+const fitsAroundAMock = (minutes: number) => minutes === 300 || minutes >= 400;
+
+describe(findFittingMinutes, () => {
+  it("takes the fewest time up to 4 hours, even when a longer one fits no more", () => {
+    const tried: number[] = [];
+
+    const found = findFittingMinutes((minutes) => {
+      tried.push(minutes);
+      return minutes === 95 || minutes >= 135;
+    });
+
+    expect(found).toBe(95);
+    expect(tried).toStrictEqual(Array.from({ length: 19 }, (_, index) => (index + 1) * 5));
+  });
+
+  it("finds the exact time past 4 hours when more time always covers more", () => {
+    expect(findFittingMinutes((minutes) => minutes >= 365)).toBe(365);
+    expect(findFittingMinutes((minutes) => minutes >= 1440)).toBe(1440);
+  });
+
+  it("answers past 4 hours only with a time that fits, which may not be the fewest", () => {
+    const found = findFittingMinutes(fitsAroundAMock);
+
+    expect(found).toBe(400);
+    expect(fitsAroundAMock(found ?? 0)).toBe(true);
+  });
+
+  it("finds nothing when not even a whole day fits", () => {
+    expect(findFittingMinutes(() => false)).toBeNull();
   });
 });

@@ -1,8 +1,14 @@
+import { MAX_DAILY_MINUTES } from "../daily-minutes";
 import { type BuildPlanInput, type BuiltPlan, buildPlan } from "./build-plan";
 import { scaleWeekdayMinutes } from "./plan-calendar";
-import { MAX_DAILY_MINUTES } from "./plan-state";
 
 const MINUTES_STEP = 5;
+
+/**
+ * Up to 4 hours a day the search tries every time (see `findFittingMinutes`). Trying every time
+ * up to a whole day would plan a real-size exam about 290 times, half a minute a learner waits.
+ */
+const EVERY_TIME_UP_TO = 240;
 
 /** A candidate's complete accepted schedule, including its normalized daily time. */
 export type StudyScheduleAt = (
@@ -40,7 +46,8 @@ export function withDailyMinutes(
 
 /**
  * The plan at each daily time as switching to it plans it (see `withDailyMinutes`), each built
- * once: the time search often tries the most time a day, which says what that covers too.
+ * once: the search for the time that covers everything and the one that brings every topic in
+ * try the same times.
  */
 export function planAtMinutes(
   input: BuildPlanInput,
@@ -63,23 +70,52 @@ export function planAtMinutes(
 }
 
 /**
- * The fewest daily minutes, in steps of 5, at which the plan at that time (see `planAtMinutes`)
- * `fits`: it covers everything, or holds every topic. The search starts above the learner's time
- * (`above`), or from the least time a day when what's asked is the time the goal needs whatever the
- * learner gives now. Every time is tried in order: more time can hold less (a weekly mock that
- * comes with it takes a study day).
+ * Halves the way between a time that doesn't fit (`short`) and one that does (`fitting`), on the
+ * 5-minute steps, down to the fitting time right after the short one.
  */
-export function findFittingMinutes({
-  above,
+function narrowFit({
   fits,
+  fitting,
+  short,
 }: {
-  above: number;
   fits: (dailyMinutes: number) => boolean;
-}): number | null {
-  const first = Math.ceil((above + 1) / MINUTES_STEP) * MINUTES_STEP;
-  const steps = Math.floor((MAX_DAILY_MINUTES - first) / MINUTES_STEP) + 1;
-  const candidates = Array.from({ length: Math.max(0, steps) }, (_, i) => first + i * MINUTES_STEP);
+  fitting: number;
+  short: number;
+}): number {
+  if (fitting - short <= MINUTES_STEP) {
+    return fitting;
+  }
+
+  const middle = short + Math.floor((fitting - short) / (2 * MINUTES_STEP)) * MINUTES_STEP;
+
+  return fits(middle)
+    ? narrowFit({ fits, fitting: middle, short })
+    : narrowFit({ fits, fitting, short: middle });
+}
+
+/**
+ * The fewest daily minutes, in steps of 5, at which the plan at that time (see `planAtMinutes`)
+ * `fits`: it covers everything, or holds every topic, whatever the learner gives now. Up to 4 hours
+ * every time is tried in order: more time can hold less (a weekly mock that comes with it takes a
+ * study day). Past that, when a whole day fits, the search halves its way down to a time that fits
+ * (see `narrowFit`): always one that does, though for the same reason it can be a little more than
+ * the fewest (the Sunday exam in `recommended-time.test.ts`, scaled up, holds every topic at 285
+ * minutes, not at 345, and again at 400). Null when not even a whole day fits.
+ */
+export function findFittingMinutes(fits: (dailyMinutes: number) => boolean): number | null {
+  const times = Array.from(
+    { length: EVERY_TIME_UP_TO / MINUTES_STEP },
+    (_, index) => (index + 1) * MINUTES_STEP,
+  );
 
   /** More time can add a mock that takes a lesson day, even when every daily budget increases. */
-  return candidates.find((minutes) => fits(minutes)) ?? null;
+  const found = times.find((minutes) => fits(minutes));
+
+  if (found !== undefined) {
+    return found;
+  }
+
+  return fits(MAX_DAILY_MINUTES)
+    ? narrowFit({ fits, fitting: MAX_DAILY_MINUTES, short: EVERY_TIME_UP_TO })
+    : null;
 }

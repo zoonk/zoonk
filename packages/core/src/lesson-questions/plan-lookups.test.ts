@@ -660,12 +660,11 @@ describe("the plan the buddy looks up", () => {
         throw new Error(`Expected the time that covers everything, got ${time.status}`);
       }
 
-      const { coreMinutes, fittingDate, maximum, measure, recommendedMinutes } = time.time;
+      const { coreMinutes, fittingDate, measure, recommendedMinutes } = time.time;
 
       expect(found).toStrictEqual({
         coreMinutes,
         fittingDate,
-        maximum,
         measure,
         recommendedMinutes,
         status: "found",
@@ -673,7 +672,7 @@ describe("the plan the buddy looks up", () => {
         what: "timeToCover",
       });
 
-      expect(recommendedMinutes ?? maximum?.dailyMinutes).toBeGreaterThan(0);
+      expect(recommendedMinutes).toBeGreaterThan(0);
     });
 
     it("finds nothing for a goal without a date to cover by", async () => {

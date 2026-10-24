@@ -42,7 +42,6 @@ describe(getFallingBehind, () => {
         "coreMinutes",
         "fittingDate",
         "fullCourseEndDate",
-        "maximum",
         "recommendedMinutes",
         "timeCovers",
       ] as const

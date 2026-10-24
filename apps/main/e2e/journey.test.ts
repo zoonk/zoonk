@@ -672,7 +672,6 @@ test.describe("Journey", () => {
         goalId: user.goalId,
         time: {
           fittingDate: fittingDate.toISOString().slice(0, 10),
-          maximum: { coveredShare: 0.37, dailyMinutes: 240 },
           measure: "goal",
           targetDate: targetDate.toISOString().slice(0, 10),
         },

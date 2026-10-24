@@ -2,14 +2,13 @@ import { z } from "zod";
 import { examChoicePickSchema } from "../exams/choices/exam-choice-contract";
 import { LANGUAGE_ACTIVITY_TYPES } from "../language/activities/language-activities";
 import { answerTimeZoneSchema } from "../learner/contract";
+import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "./daily-minutes";
 import { TOOL_CHOICES, TOOL_SYSTEMS } from "./plan-tools-contract";
 import {
   AREA_STARTS,
   BASE_CHOICES,
   DAYS_PER_WEEK,
   DIFFICULTY_BIASES,
-  MAX_DAILY_MINUTES,
-  MIN_DAILY_MINUTES,
   PRACTICE_BIASES,
   WRITTEN_CADENCES,
   toolChoiceSchema,

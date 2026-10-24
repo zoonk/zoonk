@@ -39,7 +39,6 @@ export async function routeTimeToCover(
     const json: PlanTimeToCover = {
       coreMinutes: null,
       fittingDate: null,
-      maximum: null,
       measure: "exam",
       readingNotice: false,
       ready: true,

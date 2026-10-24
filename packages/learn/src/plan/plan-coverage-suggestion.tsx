@@ -114,7 +114,15 @@ function useCardLines({
   const { state } = useTimeToCover();
   const failed = intent === "date" ? t("We couldn't check what changes.") : texts.failed;
   const retryText = state.status === "building" ? texts.building : failed;
-  const none = found && !offer && !flags.noDate ? texts.none(MAX_DAILY_MINUTES) : null;
+
+  const none =
+    found?.targetDate && !offer && !flags.noDate
+      ? texts.none({
+          targetDate: found.targetDate,
+          targetDateNamedMonth: found.targetDateNamedMonth,
+        })
+      : null;
+
   const noDate = flags.noDate ? texts.noDate : null;
   const retry = flags.retry ? retryText : null;
 

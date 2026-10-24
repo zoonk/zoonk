@@ -51,7 +51,7 @@ describe(fitPlanToRoutineFacts, () => {
       createGenerateTextResult({
         changes: [
           { date: null, kind: "setWeekdayMinutes", minutes: 0, weekdays: [0, 0, 9] },
-          { date: null, kind: "setWeekdayMinutes", minutes: 999, weekdays: [3] },
+          { date: null, kind: "setWeekdayMinutes", minutes: 2000, weekdays: [3] },
           { date: "2026-10-12", kind: "addLightWeek", minutes: null, weekdays: null },
           { date: "2026-09-01", kind: "addLightWeek", minutes: null, weekdays: null },
           { date: null, kind: "setWeekdayMinutes", minutes: 10, weekdays: [] },
@@ -65,7 +65,7 @@ describe(fitPlanToRoutineFacts, () => {
     expect(data).toStrictEqual({
       operations: [
         { kind: "setWeekdayMinutes", minutes: 0, weekdays: [0] },
-        { kind: "setWeekdayMinutes", minutes: 240, weekdays: [3] },
+        { kind: "setWeekdayMinutes", minutes: 1440, weekdays: [3] },
         { kind: "addLightWeek", startDate: "2026-10-12" },
       ],
       reason: "Sundays are off, and the week of your trip is lighter.",

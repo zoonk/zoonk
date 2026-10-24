@@ -93,11 +93,7 @@ async function readAdvice(goalId: string, studyDays: number[], week: PlanTimeAdv
     throw new Error(`Expected the time advice, got ${coverage.status} and ${found.status}`);
   }
 
-  return {
-    ...coverage.advice,
-    maximum: found.time.maximum,
-    recommendedMinutes: found.time.recommendedMinutes,
-  };
+  return { ...coverage.advice, recommendedMinutes: found.time.recommendedMinutes };
 }
 
 /** The time the Plan finds for the week the learner saved, when they ask for it there. */
@@ -483,13 +479,8 @@ describe(getPlanTimeAdvice, () => {
       const input = { studyDays, weekendMinutes };
       const advice = await readAdvice(goal.id, studyDays, input);
 
-      const recommended =
-        advice.recommendedMinutes ?? advice.maximum?.dailyMinutes ?? goal.dailyMinutes;
-
-      const promisedCoverage =
-        advice.recommendedMinutes === null
-          ? roundShare(advice.maximum?.coveredShare ?? advice.coveredShare ?? 0)
-          : 1;
+      const recommended = advice.recommendedMinutes ?? goal.dailyMinutes;
+      const promisedCoverage = advice.recommendedMinutes === null ? advice.coveredShare : 1;
 
       const picked = await readAdvice(goal.id, studyDays, { ...input, dailyMinutes: recommended });
 
@@ -521,7 +512,7 @@ describe(getPlanTimeAdvice, () => {
       readAdvice(goal.id, input.studyDays, { ...input, dailyMinutes: 240 }),
     ]);
 
-    expect(least).toMatchObject({ coveredShare: 0.83, maximum: null, recommendedMinutes: null });
+    expect(least).toMatchObject({ coveredShare: 0.83, recommendedMinutes: null });
     expect(most).toStrictEqual(least);
 
     await expect(
@@ -533,26 +524,21 @@ describe(getPlanTimeAdvice, () => {
     });
   });
 
-  it("can recommend more weekday time when the saved scalar is already the weekend maximum", async () => {
+  it("recommends more than 4 hours on weekdays when the weekend's 4 hours don't cover it", async () => {
     const { goal, library } = await setup(60, 60);
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
     const input = { dailyMinutes: 5, studyDays: [0, 1, 6], weekendMinutes: 240 };
     const advice = await readAdvice(goal.id, input.studyDays, input);
-    expect(advice.recommendedMinutes).toBeNull();
-    expect(advice.maximum?.dailyMinutes).toBe(240);
-    expect(advice.maximum?.coveredShare).toBeGreaterThan(advice.coveredShare ?? 1);
+    expect(advice.recommendedMinutes).toBeGreaterThan(240);
 
     const result = await updateGoal({
       goalId: goal.id,
-      input: { ...input, dailyMinutes: 240, timeZone: "UTC" },
+      input: { ...input, dailyMinutes: advice.recommendedMinutes ?? 0, timeZone: "UTC" },
     });
 
     expect(result.status).toBe("updated");
-
-    await expect(readFeasibility(goal.id)).resolves.toMatchObject({
-      coveredShare: roundShare(advice.maximum?.coveredShare ?? 0),
-    });
+    await expect(readFeasibility(goal.id)).resolves.toMatchObject({ coveredShare: 1, fits: true });
   });
 
   it("can preview and accept replacing all saved study days", async () => {
@@ -622,7 +608,6 @@ describe(getPlanTimeAdvice, () => {
 
     await expect(readAdvice(goal.id, EVERY_DAY)).resolves.toStrictEqual({
       coveredShare: null,
-      maximum: null,
       measure: "goal",
       numbers: null,
       readingNotice: false,
@@ -745,7 +730,7 @@ describe(getPlanTimeAdvice, () => {
     ).toBeGreaterThanOrEqual(lastWeek);
 
     const advice = await readAdvice(goal.id, WEEKDAYS);
-    expect(advice.recommendedMinutes ?? advice.maximum?.dailyMinutes ?? 0).toBeGreaterThan(60);
+    expect(advice.recommendedMinutes).toBeGreaterThan(60);
   });
 
   it("reads only the learner's own goal", async () => {

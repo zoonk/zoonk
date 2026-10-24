@@ -72,9 +72,6 @@ export async function loadPlanReadAdvice({
             get fullCourseEndDate() {
               return local().fullCourseEndDate;
             },
-            get maximum() {
-              return local().maximum;
-            },
             get recommendedMinutes() {
               return local().recommendedMinutes;
             },

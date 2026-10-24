@@ -22,7 +22,6 @@ import { getGoalPlan } from "./get-goal-plan";
 import { findPlanTimeToCover } from "./get-time-advice";
 import { parsePlanGraph } from "./planner/plan-state";
 import { refreshGoalPlan } from "./refresh-goal-plan";
-import { getRecommendedTime } from "./time-advice-contract";
 
 /**
  * A Monday in 2020, before the learning events other tests write: estimates read everyone's recent
@@ -233,7 +232,6 @@ describe("a plan's numbers while the Library outlines it", () => {
     const timeBefore = await findTime();
     const found = timeBefore.status === "ready" ? timeBefore.time : null;
 
-    expect(found && getRecommendedTime(found)).toMatchObject({ kind: "inDepth" });
     expect(found?.recommendedMinutes).toBeGreaterThan(12);
     expect(found?.fittingDate).toMatch(/^\d{4}-\d{2}-\d{2}$/u);
 
@@ -277,7 +275,6 @@ describe("a plan's numbers while the Library outlines it", () => {
     const timeAfter = await findTime();
     const foundAfter = timeAfter.status === "ready" ? timeAfter.time : null;
 
-    expect(foundAfter && getRecommendedTime(foundAfter)).toMatchObject({ kind: "inDepth" });
     expect(foundAfter?.recommendedMinutes).toBeGreaterThan(12);
   });
 });

@@ -50,6 +50,9 @@ function sundayExam(): BuildPlanInput {
 const holdsEveryTopicAt = (input: BuildPlanInput, minutes: number) =>
   getPlanFeasibility({ input: withDailyMinutes(input, minutes) }).coreFits;
 
+const fitsAt = (input: BuildPlanInput, minutes: number) =>
+  getPlanFeasibility({ input: withDailyMinutes(input, minutes) }).fits;
+
 describe("the daily time a plan recommends", () => {
   it("is the fewest minutes that bring every topic in, even when a longer day holds fewer", () => {
     const input = sundayExam();
@@ -90,12 +93,13 @@ describe("the daily time a plan recommends", () => {
       [90, 95, 110, 115, 130, 135].map((minutes) => holdsEveryTopicAt(input, minutes)),
     ).toStrictEqual([false, true, true, false, false, true]);
 
-    // No time a day covers all the lessons the Library wrote by the exam: the most says what it does.
+    // Every lesson the Library wrote takes more than 4 hours on the one Sunday: 5 hours 15.
     expect(getPlanFeasibility({ input })).toMatchObject({
       coreMinutes: 95,
-      maximum: { dailyMinutes: 240 },
-      recommendedMinutes: null,
+      recommendedMinutes: 315,
     });
+
+    expect([310, 315].map((minutes) => fitsAt(input, minutes))).toStrictEqual([false, true]);
   });
 
   it("never takes a lower time that brings every topic in for the learner's own time", () => {

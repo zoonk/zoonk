@@ -1,4 +1,5 @@
 import { getPathname } from "@/i18n/navigation";
+import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "@zoonk/core/plans/daily-minutes";
 import { type SupportedLocale } from "@zoonk/utils/locale";
 
 type ChapterHrefParams = { brandSlug: string; chapterSlug: string; courseSlug: string };
@@ -34,9 +35,6 @@ export const CHAPTER_PARAM = "chapter";
  * (onboarding's schedule question opens on it).
  */
 export const MINUTES_PARAM = "minutes";
-
-const MIN_DAILY_MINUTES = 5;
-const MAX_DAILY_MINUTES = 240;
 
 /** The time a day the parameter holds, when it's one a plan can have. */
 export function readDailyMinutes(value: string | string[] | undefined): number | null {

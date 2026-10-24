@@ -1,5 +1,6 @@
 const MIN_DAILY_MINUTES = 5;
-const MAX_DAILY_MINUTES = 240;
+/** A whole day, as core's `MAX_DAILY_MINUTES` bounds it: core depends on this package. */
+const MAX_DAILY_MINUTES = 1440;
 const LAST_WEEKDAY = 6;
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/u;
 const ISO_DATE_LENGTH = 10;

@@ -438,6 +438,7 @@
     "./plans/contract": "./src/plans/plan-contract.ts",
     "./plans/course-contract": "./src/plans/plan-course-contract.ts",
     "./plans/create": "./src/plans/create-goal-plan.ts",
+    "./plans/daily-minutes": "./src/plans/daily-minutes.ts",
     "./plans/decide-change": "./src/plans/decide-plan-change.ts",
     "./plans/effect-contract": "./src/plans/plan-effect-contract.ts",
     "./plans/focus-test/contract": "./src/plans/focus-test/focus-test-contract.ts",

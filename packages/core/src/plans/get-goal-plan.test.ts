@@ -61,7 +61,7 @@ describe("the plan read", () => {
 
     // The time that brings every topic in plans the goal at each daily time, so only the learner's
     // own request works it out (see `findPlanTimeToCover`), and no read carries it.
-    for (const field of ["coreMinutes", "maximum", "recommendedMinutes", "fittingDate"]) {
+    for (const field of ["coreMinutes", "recommendedMinutes", "fittingDate"]) {
       expect(full.plan.feasibility).not.toHaveProperty(field);
     }
 

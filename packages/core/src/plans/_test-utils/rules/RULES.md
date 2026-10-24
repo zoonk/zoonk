@@ -262,7 +262,7 @@ Words used below: a lesson "still to do" is a `todo` lesson item; a stand-in cou
 ### R26. The recommended time covers the goal
 
 - **Owner's words:** "by default recommend the daily minutes that cover 100% of the goal by its date" (7 Oct).
-- **Check:** with the daily time at or above the `recommendedMinutes` Find answered (`findPlanTimeToCover`, only when the learner asks), the plan fits; the recommendation is never more than 240 minutes.
+- **Check:** with the daily time at or above the `recommendedMinutes` Find answered (`findPlanTimeToCover`, only when the learner asks), the plan fits. Any time a day up to a whole day can be recommended ("if a user wants to study 15 hours a day, that's their choice", 24 Oct); above 4 hours it may be a little more than the fewest that fits (see `findFittingMinutes`).
 - **Reads:** `timeToCover`, `view.feasibility`, `view.schedule.dailyMinutes`.
 
 ### R27. No em dashes

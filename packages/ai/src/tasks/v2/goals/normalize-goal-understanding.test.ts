@@ -163,10 +163,10 @@ describe(normalizeGoalUnderstanding, () => {
 
   it("keeps daily minutes within what the planner accepts", () => {
     const tooLittle = normalizeGoalUnderstanding({ raw: raw({ dailyMinutes: 1 }), today: TODAY });
-    const tooMuch = normalizeGoalUnderstanding({ raw: raw({ dailyMinutes: 600 }), today: TODAY });
+    const tooMuch = normalizeGoalUnderstanding({ raw: raw({ dailyMinutes: 2000 }), today: TODAY });
 
     expect(tooLittle).toMatchObject({ dailyMinutes: 5 });
-    expect(tooMuch).toMatchObject({ dailyMinutes: 240 });
+    expect(tooMuch).toMatchObject({ dailyMinutes: 1440 });
   });
 
   it("drops language goals without a language and keeps at most three goals", () => {

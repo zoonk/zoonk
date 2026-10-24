@@ -15826,7 +15826,7 @@
     },
     "/goals/{goalId}/plan/time-to-cover": {
       "post": {
-        "description": "Finds the daily time the goal needs, when the learner asks for it (\"Find the time that covers everything\"): the fewest minutes a day that study the whole goal in depth by its date, in the week asked about (its study days, and the weekend's own time, which a new daily time leaves as it is), planning the goal at each daily time from the least, so the plan at that time covers everything. When no daily time does, what the most time a day covers, and for a goal that isn't an exam the earliest date the learner's own time covers everything by. It changes nothing: apply a time or date with `POST /goals/{goalId}/plan/changes`. `ready` is false while the plan is being built: ask again in a few seconds.",
+        "description": "Finds the daily time the goal needs, when the learner asks for it (\"Find the time that covers everything\"): the fewest minutes a day that study the whole goal in depth by its date, in the week asked about (its study days, and the weekend's own time, which a new daily time leaves as it is), planning the goal at each daily time from the least, so the plan at that time covers everything; null when not even a whole day does. For a goal that isn't an exam, also the earliest date the learner's own time covers everything by. It changes nothing: apply a time or date with `POST /goals/{goalId}/plan/changes`. `ready` is false while the plan is being built: ask again in a few seconds.",
         "operationId": "findPlanTimeToCover",
         "security": [
           {
@@ -15866,7 +15866,7 @@
         },
         "responses": {
           "200": {
-            "description": "The daily time that covers everything, or what the most time covers",
+            "description": "The daily time that covers everything",
             "content": {
               "application/json": {
                 "schema": {
@@ -24033,7 +24033,7 @@
             "description": "Minutes a day; 15 until the schedule screen asks",
             "type": "integer",
             "minimum": 5,
-            "maximum": 240
+            "maximum": 1440
           },
           "level": {
             "description": "The learner's level in the course, asked before the start: null for a quick test (placement finds it). Absent, onboarding asks it",
@@ -26055,7 +26055,7 @@
           "dailyMinutes": {
             "type": "integer",
             "minimum": 5,
-            "maximum": 240,
+            "maximum": 1440,
             "description": "The day's time, shared by the new goals"
           },
           "goals": {
@@ -26109,7 +26109,7 @@
           "dailyMinutes": {
             "type": "integer",
             "minimum": 5,
-            "maximum": 240,
+            "maximum": 1440,
             "description": "Minutes a day for this goal"
           },
           "details": {
@@ -26182,7 +26182,7 @@
           "dailyMinutes": {
             "type": "integer",
             "minimum": 5,
-            "maximum": 240,
+            "maximum": 1440,
             "description": "Minutes a day for this goal"
           },
           "details": {
@@ -26239,7 +26239,7 @@
             "description": "Minutes on Saturday and Sunday when they differ from the daily time; only study days take them",
             "type": "integer",
             "minimum": 5,
-            "maximum": 240
+            "maximum": 1440
           }
         },
         "additionalProperties": false,
@@ -26280,7 +26280,7 @@
               "minutes": {
                 "type": "integer",
                 "minimum": 5,
-                "maximum": 240
+                "maximum": 1440
               }
             },
             "required": [
@@ -26301,7 +26301,7 @@
               "minutes": {
                 "type": "integer",
                 "minimum": 0,
-                "maximum": 240,
+                "maximum": 1440,
                 "description": "0 makes a rest day"
               },
               "weekdays": {
@@ -26907,7 +26907,7 @@
           "dailyMinutes": {
             "type": "integer",
             "minimum": 5,
-            "maximum": 240,
+            "maximum": 1440,
             "description": "The day's time, shared by the new goals"
           },
           "studyDays": {
@@ -26965,7 +26965,7 @@
             "description": "The weekend's own time, when Saturday and Sunday get a time apart from the weekdays'. The time found is the weekdays' time with it",
             "type": "integer",
             "minimum": 5,
-            "maximum": 240
+            "maximum": 1440
           }
         }
       },
@@ -27824,7 +27824,7 @@
               "dailyMinutes": {
                 "type": "integer",
                 "minimum": 5,
-                "maximum": 240
+                "maximum": 1440
               },
               "fullCourse": {
                 "description": "Exams only: study everything, even after the exam (see the plan change `setFullCourse`). Until the exam the plan stays the one its date shapes; what doesn't fit goes on after it",
@@ -27854,7 +27854,7 @@
                 "description": "Minutes on Saturday and Sunday when they differ from the other days; only study days take them",
                 "type": "integer",
                 "minimum": 5,
-                "maximum": 240
+                "maximum": 1440
               }
             },
             "required": [
@@ -71881,28 +71881,6 @@
             "format": "date",
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
           },
-          "maximum": {
-            "nullable": true,
-            "description": "When no daily time covers everything in depth: what the most time a day covers by the date, when it's more than the learner's time does. Recommend that time, honestly, with the learner choosing where to focus",
-            "type": "object",
-            "properties": {
-              "coveredShare": {
-                "type": "number",
-                "minimum": 0,
-                "maximum": 1
-              },
-              "dailyMinutes": {
-                "type": "integer",
-                "minimum": -9007199254740991,
-                "maximum": 9007199254740991
-              }
-            },
-            "required": [
-              "coveredShare",
-              "dailyMinutes"
-            ],
-            "additionalProperties": false
-          },
           "measure": {
             "type": "string",
             "enum": [
@@ -71922,7 +71900,7 @@
           },
           "recommendedMinutes": {
             "nullable": true,
-            "description": "The fewest daily minutes that study the whole goal in depth by its date. Null without a date, while the plan is being built, or when no daily time does (see maximum)",
+            "description": "Daily minutes that study the whole goal in depth by its date: the fewest up to 4 hours a day; above that, a time that does, which a weekly mock can make a little more than the fewest. Null without a date, while the plan is being built, or when not even a whole day does",
             "type": "integer",
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
@@ -71942,7 +71920,6 @@
         "required": [
           "coreMinutes",
           "fittingDate",
-          "maximum",
           "measure",
           "readingNotice",
           "ready",
@@ -82082,7 +82059,7 @@
               "minutes": {
                 "type": "integer",
                 "minimum": 5,
-                "maximum": 240
+                "maximum": 1440
               }
             },
             "required": [
@@ -82103,7 +82080,7 @@
               "minutes": {
                 "type": "integer",
                 "minimum": 0,
-                "maximum": 240,
+                "maximum": 1440,
                 "description": "0 makes a rest day"
               },
               "weekdays": {
@@ -82604,7 +82581,7 @@
           "dailyMinutes": {
             "type": "integer",
             "minimum": 5,
-            "maximum": 240,
+            "maximum": 1440,
             "description": "Minutes a day for this goal"
           },
           "details": {

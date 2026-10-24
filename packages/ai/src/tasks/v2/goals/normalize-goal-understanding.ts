@@ -1,5 +1,6 @@
 const MIN_DAILY_MINUTES = 5;
-const MAX_DAILY_MINUTES = 240;
+/** A whole day, as core's `MAX_DAILY_MINUTES` bounds it: core depends on this package. */
+const MAX_DAILY_MINUTES = 1440;
 const DAYS_PER_WEEK = 7;
 const MAX_GOALS = 3;
 const MAX_FOLLOW_UPS = 2;

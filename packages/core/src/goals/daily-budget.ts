@@ -1,4 +1,4 @@
-import { MIN_DAILY_MINUTES } from "../plans/planner/plan-state";
+import { MIN_DAILY_MINUTES } from "../plans/daily-minutes";
 
 const MINUTES_STEP = 5;
 

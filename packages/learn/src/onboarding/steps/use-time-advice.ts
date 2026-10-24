@@ -24,8 +24,8 @@ export type AdviceAnswer = { advice: PlanTimeAdvice; key: string; minutes: numbe
 /**
  * What the time a day picked covers by the goal's date, and whether that's known for this time:
  * what the plan said for this very time, or, once the learner found the time that covers
- * everything for this week, that time's (all of it) or the most time's exact share. Other times
- * are unknown until asked about: extra time can change the exam's mock cadence.
+ * everything for this week, that time's (all of it). Other times are unknown until asked about:
+ * extra time can change the exam's mock cadence.
  */
 export type PickedShare = { known: boolean; share: number | null };
 
@@ -79,9 +79,9 @@ export function getWeekAdvice({
 }
 
 /**
- * What the time a day picked covers (see `PickedShare`). The time Find found and the most time
- * need no question of their own: the find answer for the week shown (`found`) planned them the way
- * this question plans each time, so it already says what they cover.
+ * What the time a day picked covers (see `PickedShare`). The time Find found needs no question of
+ * its own: the find answer for the week shown (`found`) planned it the way this question plans
+ * each time, so it already says it covers everything.
  */
 export function getPickedShare({
   advice,
@@ -93,7 +93,7 @@ export function getPickedShare({
   advice: PlanTimeAdvice | null;
   answer: AdviceAnswer | null;
   /** The time that covers everything, found for the week shown; null until the learner asks. */
-  found: Pick<PlanTimeToCover, "maximum" | "recommendedMinutes"> | null;
+  found: Pick<PlanTimeToCover, "recommendedMinutes"> | null;
   minutes: number;
 }): PickedShare {
   if (!advice) {
@@ -106,10 +106,6 @@ export function getPickedShare({
 
   if (found && minutes === found.recommendedMinutes) {
     return { known: true, share: 1 };
-  }
-
-  if (found?.maximum && minutes === found.maximum.dailyMinutes) {
-    return { known: true, share: found.maximum.coveredShare };
   }
 
   return { known: false, share: null };

@@ -314,10 +314,7 @@ test.describe("Find the time that covers everything", () => {
 
       await routeTimeToCover(page, {
         goalId: user.goalId,
-        time: {
-          maximum: { coveredShare: 0.54, dailyMinutes: 240 },
-          targetDate: goal.targetDate?.toISOString().slice(0, 10) ?? null,
-        },
+        time: { targetDate: goal.targetDate?.toISOString().slice(0, 10) ?? null },
       });
 
       // Every read of the page or its links, and whether it went out once she tapped Find.
@@ -406,10 +403,7 @@ test.describe("Find the time that covers everything", () => {
     await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
       const { editor, isoDate } = await shortOnTime(page, user.goalId);
 
-      await routeTimeToCover(page, {
-        goalId: user.goalId,
-        time: { maximum: { coveredShare: 0.54, dailyMinutes: 240 }, targetDate: isoDate },
-      });
+      await routeTimeToCover(page, { goalId: user.goalId, time: { targetDate: isoDate } });
 
       await editor.getByRole("button", { name: "Close" }).click();
       await expect(editor).toBeHidden();

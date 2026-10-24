@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { type BuildPlanInput, buildPlan } from "./build-plan";
+import { withDailyMinutes } from "./daily-time-plans";
 import { fromIsoDate, toIsoDate } from "./plan-calendar";
 import { getPlanFeasibility } from "./plan-feasibility";
 import { type ExistingPlanItem } from "./plan-items";
@@ -284,12 +285,12 @@ describe(getPlanFeasibility, () => {
 
     const feasibility = getPlanFeasibility({ input });
 
-    expect(feasibility).toMatchObject({ fits: false, maximum: null, recommendedMinutes: null });
+    expect(feasibility).toMatchObject({ fits: false, recommendedMinutes: null });
   });
 
-  it("says the most time a day covers everything when all but a sliver fits at it", () => {
+  it("recommends a time that covers everything, never one that only reads as everything", () => {
     // At 4 h a day, all but a lesson or two of the light skill fits before the deadline (the final
-    // challenge takes their place): that reads as 100%.
+    // challenge takes their place): that reads as 100%, and still isn't everything.
     const input = planInput({
       goal: { dailyMinutes: 30, kind: "learn", targetDate: fromIsoDate("2026-10-03") },
       graph: {
@@ -305,15 +306,17 @@ describe(getPlanFeasibility, () => {
       input: { ...input, goal: { ...input.goal, dailyMinutes: 240 } },
     });
 
-    // Only a sliver doesn't fit at the most time a day.
+    // Only a sliver doesn't fit at 4 hours a day.
     expect(atMost.fits).toBe(false);
     expect(Math.round(atMost.coveredShare * 100)).toBe(100);
 
-    expect(getPlanFeasibility({ input })).toMatchObject({
-      fits: false,
-      maximum: null,
-      recommendedMinutes: 240,
-    });
+    const { recommendedMinutes } = getPlanFeasibility({ input });
+
+    expect(recommendedMinutes).toBeGreaterThan(240);
+
+    expect(
+      getPlanFeasibility({ input: withDailyMinutes(input, recommendedMinutes ?? 0) }).fits,
+    ).toBe(true);
   });
 
   it("studies every skill, the ones worth more in more depth, while every core fits", () => {

@@ -13,7 +13,6 @@ import { createGoalPlan } from "../plans/create-goal-plan";
 import { getGoalPlan } from "../plans/get-goal-plan";
 import { findPlanTimeToCover } from "../plans/get-time-advice";
 import { refreshGoalPlan } from "../plans/refresh-goal-plan";
-import { getRecommendedTime } from "../plans/time-advice-contract";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
 import { getTodayStudySession } from "./_test-utils/open-today";
 import { catchUpToday } from "./catch-up-today";
@@ -360,7 +359,6 @@ describe("falling behind", () => {
 
     // The time that covers it all again is the learner's to find, from Today's link to the editor.
     const found = await findTime(goal.id);
-    expect(found && getRecommendedTime(found)).toMatchObject({ kind: "inDepth" });
     expect(found?.recommendedMinutes ?? 0).toBeGreaterThan(goal.dailyMinutes);
   });
 
@@ -386,7 +384,7 @@ describe("falling behind", () => {
     expect.soft(saved.coveredShare ?? 1).toBeLessThan(1);
   });
 
-  it("leaves the date that covers it all to the learner's Find when no daily time does, and Today says only what the missed days did", async () => {
+  it("leaves the time and the date that cover it all to the learner's Find, and Today says only what the missed days did", async () => {
     const user = await learner();
 
     const library = await planLibraryFixture({
@@ -404,7 +402,7 @@ describe("falling behind", () => {
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
     await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
 
-    // Away until two days before the date: not even the most time a day covers it all now.
+    // Away until two days before the date: only more than 4 hours a day covers it all now.
     setToday("2020-10-07");
     await getTodayStudySession({ goalId: goal.id, timeZone: "UTC" });
 
@@ -418,13 +416,11 @@ describe("falling behind", () => {
     expect(behind?.coveredAfter ?? 1).toBeLessThan(behind?.coveredBefore ?? 0);
     expectOnlyFacts(change.payload);
 
-    // Find works it out exactly when the learner asks: what the most time a day covers, and the
+    // Find works it out exactly when the learner asks: the time a day that covers it all, and the
     // date their own time covers it all by, which "Move your date" applies.
     const found = await findTime(goal.id);
 
-    expect(found?.recommendedMinutes).toBeNull();
-    expect(found?.maximum?.coveredShare ?? 0).toBeGreaterThan(behind?.coveredAfter ?? 1);
-    expect(found?.maximum?.coveredShare ?? 1).toBeLessThan(1);
+    expect(found?.recommendedMinutes).toBeGreaterThan(240);
     expect(found?.fittingDate).toMatch(/^\d{4}-\d{2}-\d{2}$/u);
     expect((found?.fittingDate ?? "") > "2020-10-09").toBe(true);
 

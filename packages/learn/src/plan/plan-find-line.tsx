@@ -1,6 +1,6 @@
 "use client";
 
-import { MAX_DAILY_MINUTES, type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
+import { type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
 import { useLayoutEffect, useRef } from "react";
 import { usePlanScreen } from "./plan-context";
 import { FindTimeLine, findPickedChip, findTimeChip } from "./plan-coverage";
@@ -30,8 +30,8 @@ export function useFindAnswer(): TimeToCoverAnswer | null {
 /**
  * Where focus goes once the editor's Find answers, since the Find button that had it is gone: the
  * chip of the time found, so Space picks it; Move your date, when it's the one way that covers
- * everything (a goal with a date found); the most time's chip; or, when no time covers more, the
- * first action below. Null leaves it to the answer itself.
+ * everything (a goal with a date found); or, when no time covers everything, the first action
+ * below. Null leaves it to the answer itself.
  */
 function findFocusTarget({
   answered,
@@ -51,10 +51,6 @@ function findFocusTarget({
 
   if (isGoal && answered.fittingDate) {
     return document.querySelector<HTMLElement>(`#${MOVE_DATE_ID}`);
-  }
-
-  if (answer.kind === "more") {
-    return findTimeChip({ choices, container: section, minutes: answer.minutes });
   }
 
   return document.querySelector<HTMLElement>(`#${FIND_ACTIONS_ID} button`);
@@ -99,9 +95,8 @@ export function useFocusFindAnswer(choices: number[]) {
 
 /**
  * The editor's Find (see `FindTimeLine`): once found, the time that covers everything by the
- * goal's date, or what the most time a day covers, or that no time covers more, with, for a goal,
- * the date its own time covers everything by. The editor's block is a live region already, so the
- * line isn't one of its own.
+ * goal's date, or that no time a day does, with, for a goal, the date its own time covers
+ * everything by. The editor's block is a live region already, so the line isn't one of its own.
  */
 export function FindLine({ canFind, onAsk }: { canFind: boolean; onAsk: () => void }) {
   const { goal, plan } = usePlanScreen();
@@ -130,8 +125,14 @@ export function FindLine({ canFind, onAsk }: { canFind: boolean; onAsk: () => vo
             </p>
           )}
 
-          {answer?.kind === "more" && <p className="font-semibold">{texts.more(answer)}</p>}
-          {answer?.kind === "none" && <p>{texts.none(MAX_DAILY_MINUTES)}</p>}
+          {answer?.kind === "none" && answered?.targetDate && (
+            <p>
+              {texts.none({
+                targetDate: answered.targetDate,
+                targetDateNamedMonth: answered.targetDateNamedMonth,
+              })}
+            </p>
+          )}
 
           {dateFound && (
             <p>

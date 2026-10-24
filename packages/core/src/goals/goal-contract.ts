@@ -1,7 +1,8 @@
 import { GoalKind } from "@zoonk/db";
 import { isValidTimeZone } from "@zoonk/utils/time-zone";
 import { z } from "zod";
-import { DAYS_PER_WEEK, MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../plans/planner/plan-state";
+import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../plans/daily-minutes";
+import { DAYS_PER_WEEK } from "../plans/planner/plan-state";
 
 const MAX_TITLE_LENGTH = 120;
 const MAX_PROMPT_LENGTH = 2000;

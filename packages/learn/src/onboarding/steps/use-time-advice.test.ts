@@ -22,8 +22,8 @@ const ADVICE: PlanTimeAdvice = {
   targetDateNamedMonth: false,
 };
 
-/** What Find found for the week: the time that covers everything, or what the most time covers. */
-const FOUND = { maximum: null, recommendedMinutes: 100 };
+/** What Find found for the week: the time that covers everything. */
+const FOUND = { recommendedMinutes: 100 };
 
 function answerFor({
   advice = ADVICE,
@@ -65,12 +65,12 @@ describe(getPickedShare, () => {
     });
   });
 
-  it("says what the most time covers when no time covers everything", () => {
-    const found = { maximum: { coveredShare: 0.7, dailyMinutes: 240 }, recommendedMinutes: null };
+  it("asks about every time when no time covers everything", () => {
+    const found = { recommendedMinutes: null };
 
     expect(
       getPickedShare({ advice: ADVICE, answer: answerFor({ minutes: 60 }), found, minutes: 240 }),
-    ).toStrictEqual({ known: true, share: 0.7 });
+    ).toStrictEqual({ known: false, share: null });
   });
 
   it("takes the plan's share only for the very time it was asked about", () => {
@@ -98,7 +98,7 @@ describe(getPickedShare, () => {
       // The 69-minute mock begins at 70 minutes, reducing the fourteen lessons that fit.
       const advice = { ...ADVICE, coveredShare: share };
       const answer = answerFor({ advice, minutes, studyDays: [0] });
-      const found = { maximum: null, recommendedMinutes: 65 };
+      const found = { recommendedMinutes: 65 };
 
       expect(getPickedShare({ advice, answer, found, minutes })).toStrictEqual({
         known: true,
@@ -112,7 +112,7 @@ describe(getPickedShare, () => {
     (minutes) => {
       const advice = { ...ADVICE, coveredShare: 1 };
       const answer = answerFor({ advice, minutes: 65, studyDays: [0] });
-      const found = { maximum: null, recommendedMinutes: 65 };
+      const found = { recommendedMinutes: 65 };
 
       expect(getPickedShare({ advice, answer, found, minutes })).toStrictEqual({
         known: false,
@@ -128,19 +128,6 @@ describe(getPickedShare, () => {
       known: true,
       share: 0.6,
     });
-  });
-
-  it("uses maximum coverage only for its exact input and prefers the picked answer", () => {
-    const advice = { ...ADVICE, coveredShare: 0.5 };
-    const found = { maximum: { coveredShare: 0.7, dailyMinutes: 120 }, recommendedMinutes: null };
-
-    expect(
-      getPickedShare({ advice, answer: answerFor({ advice, minutes: 60 }), found, minutes: 180 }),
-    ).toStrictEqual({ known: false, share: null });
-
-    expect(
-      getPickedShare({ advice, answer: answerFor({ advice, minutes: 120 }), found, minutes: 120 }),
-    ).toStrictEqual({ known: true, share: 0.5 });
   });
 
   it("knows nothing before the plan says its advice for the week shown", () => {
