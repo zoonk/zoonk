@@ -1366,14 +1366,14 @@ msgid "Follow us"
 msgstr "Suis-nous"
 
 #: src/app/[lang]/(app)/(stats)/_components/progress-empty-state.tsx
-msgctxt "4IVFWL"
-msgid "Go to Today"
-msgstr "Aller à Aujourd’hui"
-
-#: src/app/[lang]/(app)/(stats)/_components/progress-empty-state.tsx
 msgctxt "FVh2Tr"
 msgid "Start learning to track your progress"
 msgstr "Commence à apprendre pour suivre ta progression"
+
+#: src/app/[lang]/(app)/(stats)/_components/progress-empty-state.tsx
+msgctxt "4IVFWL"
+msgid "Go to Today"
+msgstr "Aller à Aujourd’hui"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
 #: src/lib/public/public-labels.ts
@@ -1515,11 +1515,6 @@ msgstr "{date} · {percentage} d’Énergie"
 msgctxt "0i1UHO"
 msgid "Energy by day"
 msgstr "Énergie par jour"
-
-#: src/app/[lang]/(app)/(stats)/energy/energy-content.tsx
-msgctxt "qE9FEI"
-msgid "Energy starts after your first day of study, and grows as you learn."
-msgstr "L’Énergie commence après ta première journée d’étude et augmente à mesure que tu apprends."
 
 #: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
 msgctxt "OiTvvB"
@@ -1817,11 +1812,6 @@ msgstr "Ta ceinture, ton Énergie, tes jours d’étude, tes réponses correctes
 msgctxt "AezvZG"
 msgid "Average {value}"
 msgstr "Moyenne {value}"
-
-#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "i-hsoi"
-msgid "Starts after a day of study"
-msgstr "S’affiche après une journée d’étude"
 
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
 msgctxt "I5Pid5"

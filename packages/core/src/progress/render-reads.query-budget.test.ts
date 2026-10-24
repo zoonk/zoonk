@@ -7,7 +7,6 @@ import { getBeltLevel } from "./get-belt-level";
 import { getCurrentUserProgress } from "./get-current-user-progress";
 import { getEnergyData } from "./get-energy-data";
 import { getEnergyLevel } from "./get-energy-level";
-import { getEnergyStarted } from "./get-energy-started";
 import { getLearningActivity } from "./get-learning-activity";
 import { getRequestProgressDateContext } from "./get-request-date-context";
 import { getScoreHistory } from "./get-score-history";
@@ -22,7 +21,6 @@ describe("stats render read statement budgets", () => {
     ["buddy studied", getStudiedToday, 1],
     ["overview", getCurrentUserProgress, 7],
     ["energy", getEnergyData, 2],
-    ["energy started", getEnergyStarted, 1],
     ["level", getBeltLevel, 1],
     ["activity", getLearningActivity, 4],
     ["patterns", getCurrentUserScorePatterns, 2],

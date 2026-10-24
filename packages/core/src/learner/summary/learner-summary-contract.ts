@@ -32,7 +32,7 @@ export type LearnerSummaryGoal = {
 /** The buddy as every tab draws it: kind, name and glasses from the profile, growth and glow from progress. */
 type LearnerSummaryBuddy = {
   beltColor: BeltColor;
-  /** Null until a day of study has passed: a new buddy is awake, without a glow. */
+  /** Null until the learner has learned something: a new buddy is awake, without a glow. */
   energy: number | null;
   glasses: BuddyGlasses;
   kind: BuddyKind;

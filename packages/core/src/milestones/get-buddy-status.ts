@@ -21,7 +21,7 @@ import { getRequestInstant } from "../learner/facts/request-instant";
 import { readUserProgress } from "../learner/facts/user-progress";
 import { getStartOfWeek, toIsoDate } from "../plans/planner/plan-calendar";
 import { type ResolvedBuddy, resolveProfileBuddy } from "../profile/default-buddy";
-import { hasEnergyStarted } from "../progress/_utils/energy-started";
+import { hasUserLearningProgress } from "../progress/user-progress";
 import { measureProgress } from "../sessions/_utils/capture-snapshot";
 import { findCarriedOverSession } from "../sessions/_utils/current-session";
 import { STUDY_SESSION_INCLUDE } from "../sessions/_utils/study-session-access";
@@ -57,7 +57,7 @@ type BuddyToday = {
  */
 type BuddyStatus = {
   belt: BeltLevelResult & { totalBrainPower: number };
-  /** `current` is null until a day of study has passed: a new buddy has no Energy to show yet. */
+  /** `current` is null until the learner has learned something: a new buddy has no Energy yet. */
   energy: { current: number | null; state: BuddyEnergyState; studiedToday: boolean };
   glasses: GlassesProgress[];
   firstSteps: FirstSteps | null;
@@ -151,8 +151,8 @@ export async function getBuddyStatus(input: BuddyStatusInput): Promise<BuddyStat
   const sessionDate = getDateInTimeZone({ date: now, timeZone: sessionTimeZone });
   const weekStart = getStartOfWeek(today);
 
-  const [progress, todayRow, counts, thisWeek, todayMissions, energyStarted] = await Promise.all([
-    measureProgress({ now, progress: readUserProgress(userId), timeZone, userId }),
+  const [userProgress, todayRow, counts, thisWeek, todayMissions] = await Promise.all([
+    readUserProgress(userId),
     prisma.dailyProgress.findUnique({ where: { userDate: { date: today, userId } } }),
     loadMilestoneCounts(userId),
     loadBuddyDiet({
@@ -170,13 +170,13 @@ export async function getBuddyStatus(input: BuddyStatusInput): Promise<BuddyStat
       timeZone: sessionTimeZone,
       userId,
     }),
-    hasEnergyStarted({ today, userId }),
   ]);
 
+  const progress = await measureProgress({ now, progress: userProgress, timeZone, userId });
   const belt = calculateBeltLevel(progress.brainPower);
   const next = getNextBuddyStage(belt.color);
   const studiedToday = (todayRow?.timeSpentSeconds ?? 0) > 0;
-  const energy = energyStarted ? progress.energy : null;
+  const energy = hasUserLearningProgress(userProgress) ? progress.energy : null;
 
   return {
     buddy: {

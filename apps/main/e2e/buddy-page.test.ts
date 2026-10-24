@@ -13,7 +13,7 @@ import { goalFixture, planChangeFixture, planFixture } from "@zoonk/testing/fixt
 import { attemptFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
-import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
+import { dailyProgressFixtureMany, userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
   studySessionBlockFixture,
@@ -281,7 +281,7 @@ test.describe("Buddy tab", () => {
         .getByRole("link", { name: /^Zu\s*1 of 2 missions today$/u }),
     ).toHaveAttribute("aria-current", "page");
 
-    // Before a day of study has passed there's no Energy to show: no empty meter, just when it starts.
+    // With no progress yet there's no Energy to show: no empty meter, just when it starts.
     // The line beside the buddy's name says so with the missions, and opens the buddy's day.
     await expect(
       main.getByRole("button", { name: /^Energy\s*Not yet\s*1 of 2 missions$/u }),
@@ -291,20 +291,26 @@ test.describe("Buddy tab", () => {
     await expect(first.getByRole("link", { name: /^Energy/u })).toHaveCount(0);
 
     await expect(
-      first.getByText("Energy starts after your first day of study, and grows as you learn."),
+      first.getByText("Energy starts with your first lesson and grows as you learn."),
     ).toBeVisible();
 
     await page.keyboard.press("Escape");
     await expect(first).toBeHidden();
 
-    // A day of study has passed, no study yet today and no Energy left: the buddy naps, and
-    // nothing scolds. Energy opens its history.
-    await dailyProgressFixtureMany([
-      {
-        date: new Date(toUTCMidnight(new Date()).getTime() - MS_PER_DAY),
-        timeSpentSeconds: STUDY_SECONDS,
+    // A lesson yesterday, no study yet today and no Energy left: the buddy naps, and nothing
+    // scolds. Energy opens its history.
+    const yesterday = new Date(toUTCMidnight(new Date()).getTime() - MS_PER_DAY);
+
+    await Promise.all([
+      userProgressFixture({
+        currentEnergy: 0,
+        lastActiveAt: yesterday,
+        totalBrainPower: 30n,
         userId: user.id,
-      },
+      }),
+      dailyProgressFixtureMany([
+        { date: yesterday, timeSpentSeconds: STUDY_SECONDS, userId: user.id },
+      ]),
     ]);
 
     await page.reload();

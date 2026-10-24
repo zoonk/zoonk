@@ -73,7 +73,7 @@ test.describe("Energy Page", () => {
     }
   });
 
-  test("says when Energy starts on the learner's first day of study, as the buddy does", async ({
+  test("shows Energy from the learner's first lesson, on its page and the overview's tile", async ({
     baseURL,
     browser,
   }) => {
@@ -81,8 +81,14 @@ test.describe("Energy Page", () => {
     const now = new Date();
     const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
 
+    // One lesson, today: the learner's whole history.
     await Promise.all([
-      userProgressFixture({ currentEnergy: 2, lastActiveAt: now, userId: user.id }),
+      userProgressFixture({
+        currentEnergy: 2,
+        lastActiveAt: now,
+        totalBrainPower: 30n,
+        userId: user.id,
+      }),
       dailyProgressFixtureMany([
         { date: today, energyAtEnd: 2, timeSpentSeconds: 600, userId: user.id },
       ]),
@@ -91,19 +97,20 @@ test.describe("Energy Page", () => {
     const browserContext = await browser.newContext({ storageState: user.storageState });
 
     const page = await browserContext.newPage();
-    const starts = "Energy starts after your first day of study, and grows as you learn.";
 
     try {
       await page.goto("/energy");
-      await expect(page.getByRole("main").getByText(starts)).toBeVisible();
-      await expect(page.getByRole("main").getByText(/^2%$/u)).toHaveCount(0);
+      const tiles = page.getByRole("main").locator('[data-slot="stat-tile"]');
 
-      // The overview's Energy tile says it isn't there yet; its page says when it starts.
+      await expect(tiles.filter({ hasText: /^Energy/u })).toContainText("2%");
+      await expect(page.getByRole("figure", { name: /past 12 months/iu })).toBeVisible();
+
       await page.goto("/stats");
-      const overview = page.getByRole("main");
 
-      await expect(overview.getByRole("link", { name: "Energy Not yet" })).toBeVisible();
-      await expect(overview.getByRole("link", { name: /^Energy \d+%/u })).toHaveCount(0);
+      await expect(page.getByRole("main").getByRole("link", { name: "Energy 2%" })).toHaveAttribute(
+        "href",
+        "/energy",
+      );
     } finally {
       await browserContext.close();
     }

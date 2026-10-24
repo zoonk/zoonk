@@ -798,9 +798,9 @@ msgid "Energy"
 msgstr "Energie"
 
 #: src/buddies/buddy-day-parts.tsx
-msgctxt "qE9FEI"
-msgid "Energy starts after your first day of study, and grows as you learn."
-msgstr "Deine Energie baut sich ab deinem ersten Lerntag auf und steigt, während du lernst."
+msgctxt "eiGdZK"
+msgid "Energy starts with your first lesson and grows as you learn."
+msgstr "Mit deiner ersten Lektion beginnt deine Energie zu wachsen."
 
 #: src/buddies/buddy-day.tsx
 #: src/buddies/buddy-screen.tsx

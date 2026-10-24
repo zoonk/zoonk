@@ -131,7 +131,7 @@ export const buddyStatusResponseSchema = z
         .nullable()
         .meta({
           description:
-            "Null until a day of study has passed: a new buddy has no Energy to show yet",
+            "Null until the learner has learned something: a new buddy has no Energy to show yet",
         }),
       state: z.enum(["napping", "awake", "glowing"]),
       studiedToday: z.boolean(),

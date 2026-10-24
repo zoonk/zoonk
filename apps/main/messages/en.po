@@ -1366,14 +1366,14 @@ msgid "Follow us"
 msgstr "Follow us"
 
 #: src/app/[lang]/(app)/(stats)/_components/progress-empty-state.tsx
-msgctxt "4IVFWL"
-msgid "Go to Today"
-msgstr "Go to Today"
-
-#: src/app/[lang]/(app)/(stats)/_components/progress-empty-state.tsx
 msgctxt "FVh2Tr"
 msgid "Start learning to track your progress"
 msgstr "Start learning to track your progress"
+
+#: src/app/[lang]/(app)/(stats)/_components/progress-empty-state.tsx
+msgctxt "4IVFWL"
+msgid "Go to Today"
+msgstr "Go to Today"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
 #: src/lib/public/public-labels.ts
@@ -1515,11 +1515,6 @@ msgstr "{date} · {percentage} Energy"
 msgctxt "0i1UHO"
 msgid "Energy by day"
 msgstr "Energy by day"
-
-#: src/app/[lang]/(app)/(stats)/energy/energy-content.tsx
-msgctxt "qE9FEI"
-msgid "Energy starts after your first day of study, and grows as you learn."
-msgstr "Energy starts after your first day of study, and grows as you learn."
 
 #: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
 msgctxt "OiTvvB"
@@ -1817,11 +1812,6 @@ msgstr "Your belt, Energy, study days, right answers and when you do best."
 msgctxt "AezvZG"
 msgid "Average {value}"
 msgstr "Average {value}"
-
-#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "i-hsoi"
-msgid "Starts after a day of study"
-msgstr "Starts after a day of study"
 
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
 msgctxt "I5Pid5"

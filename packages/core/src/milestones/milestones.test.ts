@@ -319,7 +319,7 @@ describe(getBuddyStatus, () => {
     expect(awake.status === "ready" && awake.buddy.energy.state).toBe("awake");
   });
 
-  it("has no Energy to show a brand-new learner until a day of study has passed", async () => {
+  it("shows Energy from the learner's first lesson, with nothing to show before it", async () => {
     freezeClock();
 
     const user = await userFixture();
@@ -339,16 +339,17 @@ describe(getBuddyStatus, () => {
       studiedToday: false,
     });
 
-    // Day one's study fills nothing yet to drop: Energy says something from the next day.
-    await dailyProgressFixtureMany([{ date: today, timeSpentSeconds: 300, userId: user.id }]);
-    await expect(energyOf()).resolves.toMatchObject({ current: null, studiedToday: true });
-
-    // A day before with answers counts as a day of study too, however its time was recorded.
-    await dailyProgressFixtureMany([
-      { correctAnswers: 4, date: new Date(today.getTime() - 86_400_000), userId: user.id },
+    // The first lesson, today: Energy shows what it earned right away.
+    await Promise.all([
+      userProgressFixture({ currentEnergy: 2, totalBrainPower: 30n, userId: user.id }),
+      dailyProgressFixtureMany([{ date: today, timeSpentSeconds: 300, userId: user.id }]),
     ]);
 
-    await expect(energyOf()).resolves.toMatchObject({ current: 0, state: "awake" });
+    await expect(energyOf()).resolves.toStrictEqual({
+      current: 2,
+      state: "awake",
+      studiedToday: true,
+    });
   });
 
   it("reads today's missions from the active goal's session, never building one", async () => {

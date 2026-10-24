@@ -10,7 +10,6 @@ import {
   getCurrentUserProgress,
 } from "@zoonk/core/progress/get-current-user";
 import { getEnergyData } from "@zoonk/core/progress/get-energy-data";
-import { getEnergyStarted } from "@zoonk/core/progress/get-energy-started";
 import { getLearningActivity } from "@zoonk/core/progress/get-learning-activity";
 import { getScoreHistory } from "@zoonk/core/progress/get-score-history";
 import { getCurrentUserScorePatterns } from "@zoonk/core/progress/get-score-patterns";
@@ -85,35 +84,26 @@ async function LevelTile({ level }: { level: BeltLevelDetails }) {
   );
 }
 
-/**
- * Energy now, or "Not yet" before a day of study has passed, with its average under it, opening
- * its year.
- */
-async function EnergyTile({
-  energy,
-  started,
-}: {
-  energy: Pick<EnergyData, "currentEnergy" | "insights">;
-  started: boolean;
-}) {
+/** Energy now, with its average under it, opening its year. */
+async function EnergyTile({ energy }: { energy: Pick<EnergyData, "currentEnergy" | "insights"> }) {
   const t = await getExtracted();
   const format = await getFormatter();
   const label = t("Energy");
   const { insights } = energy;
 
-  const value = started
-    ? format.number(energy.currentEnergy / PERCENT, { maximumFractionDigits: 0, style: "percent" })
-    : t("Not yet");
+  const value = format.number(energy.currentEnergy / PERCENT, {
+    maximumFractionDigits: 0,
+    style: "percent",
+  });
 
   return (
     <StatTile
       className={TILE_CLASS}
       detail={
-        started && insights
-          ? t("Average {value}", {
-              value: formatMetricPercent({ format, value: insights.averageEnergy }),
-            })
-          : t("Starts after a day of study")
+        insights &&
+        t("Average {value}", {
+          value: formatMetricPercent({ format, value: insights.averageEnergy }),
+        })
       }
       icon={<ZapIcon />}
       label={label}
@@ -197,17 +187,14 @@ async function ScoreTile({ progress }: { progress: CurrentUserProgress }) {
 export async function StatsOverview() {
   const locale = await getLocale();
 
-  const [progress, session, energy, energyStarted, activity, patterns, history] = await Promise.all(
-    [
-      getCurrentUserProgress({ history: "lifetime" }),
-      getSession(),
-      loadOptionalData(getEnergyData),
-      getEnergyStarted({ history: "lifetime" }),
-      getLearningActivity({ history: "lifetime" }),
-      loadOptionalData(() => getCurrentUserScorePatterns({ history: "lifetime" })),
-      loadOptionalData(() => getScoreHistory({ history: "lifetime", locale })),
-    ],
-  );
+  const [progress, session, energy, activity, patterns, history] = await Promise.all([
+    getCurrentUserProgress({ history: "lifetime" }),
+    getSession(),
+    loadOptionalData(getEnergyData),
+    getLearningActivity({ history: "lifetime" }),
+    loadOptionalData(() => getCurrentUserScorePatterns({ history: "lifetime" })),
+    loadOptionalData(() => getScoreHistory({ history: "lifetime", locale })),
+  ]);
 
   if (!(progress && (progress.activity.learningDays > 0 || progress.level))) {
     return <ProgressEmptyState isAuthenticated={Boolean(session)} next={getMenu("stats").url} />;
@@ -219,7 +206,7 @@ export async function StatsOverview() {
     <div className="flex flex-col gap-8">
       <StatTiles className={TILES_CLASS}>
         {progress.level && <LevelTile level={progress.level} />}
-        {energy && <EnergyTile energy={energy} started={energyStarted} />}
+        {energy && <EnergyTile energy={energy} />}
         <StudyDaysTile activity={activity} />
         <ScoreTile progress={progress} />
       </StatTiles>

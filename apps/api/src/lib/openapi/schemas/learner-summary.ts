@@ -40,7 +40,7 @@ const learnerSummarySchema = z
         energy: z
           .number()
           .nullable()
-          .meta({ description: "Energy, or null until a day of study has passed" }),
+          .meta({ description: "Energy, or null until the learner has learned something" }),
         glasses: z.enum(BuddyGlasses),
         kind: z.enum(BuddyKind),
         name: z.string().nullable(),

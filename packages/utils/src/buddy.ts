@@ -51,7 +51,7 @@ const BUDDY_AWAKE_FROM_ENERGY = 30;
 const BUDDY_GLOWING_FROM_ENERGY = 80;
 
 export function getBuddyEnergyState(
-  /** Null before the learner has any Energy (no day of study has passed): the buddy just met them. */
+  /** Null before the learner has learned anything: the buddy just met them. */
   energy: number | null,
   { studiedToday = false }: { studiedToday?: boolean } = {},
 ): BuddyEnergyState {

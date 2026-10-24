@@ -547,6 +547,24 @@ describe(getLearnerSummary, () => {
       level: { color: belt.color, level: belt.level },
     });
   });
+
+  it("shows the buddy's Energy from the learner's first lesson, on that same day", async () => {
+    const { user } = await learnerWithGoal();
+
+    await Promise.all([
+      userProgressFixture({
+        currentEnergy: 2,
+        lastActiveAt: new Date(NOW.getTime() - 10 * MINUTE_MS),
+        totalBrainPower: 30n,
+        userId: user.id,
+      }),
+      dailyProgressFixtureMany([{ date: TODAY, timeSpentSeconds: 300, userId: user.id }]),
+    ]);
+
+    await expect(getLearnerSummary()).resolves.toMatchObject({
+      buddy: { energy: 2, studiedToday: true },
+    });
+  });
 });
 
 /** São Paulo's midnight starting NOW's local day (UTC-3). */

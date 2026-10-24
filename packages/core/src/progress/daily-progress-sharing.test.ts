@@ -8,7 +8,6 @@ import { mockSession } from "../_test-utils/mock-session";
 import { readLifetimeDailyProgress } from "./_utils/daily-progress-rows";
 import { getCurrentUserProgress } from "./get-current-user-progress";
 import { getEnergyData } from "./get-energy-data";
-import { getEnergyStarted } from "./get-energy-started";
 import { getLearningActivity } from "./get-learning-activity";
 import { getRequestProgressDateContext } from "./get-request-date-context";
 import { getScoreHistory } from "./get-score-history";
@@ -22,7 +21,6 @@ function readOverview(shared: boolean) {
   return Promise.all([
     shared ? getCurrentUserProgress(LIFETIME) : getCurrentUserProgress(),
     getEnergyData(),
-    shared ? getEnergyStarted(LIFETIME) : getEnergyStarted(),
     shared ? getLearningActivity(LIFETIME) : getLearningActivity(),
     shared ? getCurrentUserScorePatterns(LIFETIME) : getCurrentUserScorePatterns(),
     getScoreHistory({ ...(shared ? LIFETIME : {}), locale: "en" }),

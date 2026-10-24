@@ -15,7 +15,7 @@ function toLocalDate(day: StudyDay): number {
 
 /**
  * The buddy and the belt as the tabs draw them: kind, name and glasses from the profile, growth
- * from the belt (white before any learning), and Energy once a day of study has passed. A buddy
+ * from the belt (white before any learning), and Energy from the first thing learned. A buddy
  * never naps on a day the learner studied.
  */
 export function getSummaryProgress({
@@ -40,7 +40,6 @@ export function getSummaryProgress({
   const learned = hasUserLearningProgress(progress) ? progress : null;
   const belt = learned ? calculateBeltLevel(Number(learned.totalBrainPower)) : null;
   const today = localDate.getTime();
-  const energyStarted = facts.recentStudyDays.some((day) => toLocalDate(day) < today);
 
   const studiedToday = facts.recentStudyDays.some(
     (day) => toLocalDate(day) === today && day.timeSpentSeconds > 0,
@@ -49,19 +48,12 @@ export function getSummaryProgress({
   const energy = learned
     ? projectPersistedEnergy({ persistedEnergy: learned, targetDate: localDate, timeZone })
         .currentEnergy
-    : 0;
+    : null;
 
   const { glasses, kind, name } = resolveProfileBuddy(profile);
 
   return {
-    buddy: {
-      beltColor: belt?.color ?? "white",
-      energy: energyStarted ? energy : null,
-      glasses,
-      kind,
-      name,
-      studiedToday,
-    },
+    buddy: { beltColor: belt?.color ?? "white", energy, glasses, kind, name, studiedToday },
     level: belt ? { color: belt.color, level: belt.level } : null,
   };
 }

@@ -38951,7 +38951,7 @@
               },
               "energy": {
                 "nullable": true,
-                "description": "Energy, or null until a day of study has passed",
+                "description": "Energy, or null until the learner has learned something",
                 "type": "number"
               },
               "glasses": {
@@ -72391,7 +72391,7 @@
             "properties": {
               "current": {
                 "nullable": true,
-                "description": "Null until a day of study has passed: a new buddy has no Energy to show yet",
+                "description": "Null until the learner has learned something: a new buddy has no Energy to show yet",
                 "type": "number",
                 "minimum": 0,
                 "maximum": 100

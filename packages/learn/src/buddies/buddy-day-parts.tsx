@@ -49,8 +49,8 @@ function useEnergyLine({ name, status }: { name: string; status: BuddyStatusView
 }
 
 /**
- * Before a day of study has passed, Energy has nothing to say yet: no empty meter, just when it
- * starts.
+ * Before the learner has learned anything, Energy has nothing to say yet: no empty meter, just
+ * when it starts.
  */
 function EnergyStarts() {
   const t = useExtracted();
@@ -59,7 +59,7 @@ function EnergyStarts() {
     <section className="flex flex-col gap-1">
       <SectionLabel>{t("Energy")}</SectionLabel>
       <p className="text-muted-foreground text-[0.8125rem] leading-snug">
-        {t("Energy starts after your first day of study, and grows as you learn.")}
+        {t("Energy starts with your first lesson and grows as you learn.")}
       </p>
     </section>
   );

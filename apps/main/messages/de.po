@@ -1366,14 +1366,14 @@ msgid "Follow us"
 msgstr "Folge uns"
 
 #: src/app/[lang]/(app)/(stats)/_components/progress-empty-state.tsx
-msgctxt "4IVFWL"
-msgid "Go to Today"
-msgstr "Zu Heute"
-
-#: src/app/[lang]/(app)/(stats)/_components/progress-empty-state.tsx
 msgctxt "FVh2Tr"
 msgid "Start learning to track your progress"
 msgstr "Beginne zu lernen, um deinen Fortschritt zu verfolgen"
+
+#: src/app/[lang]/(app)/(stats)/_components/progress-empty-state.tsx
+msgctxt "4IVFWL"
+msgid "Go to Today"
+msgstr "Zu Heute"
 
 #: src/app/[lang]/(app)/(stats)/_components/stats-nav.tsx
 #: src/lib/public/public-labels.ts
@@ -1515,11 +1515,6 @@ msgstr "{date} · {percentage} Energie"
 msgctxt "0i1UHO"
 msgid "Energy by day"
 msgstr "Energie pro Tag"
-
-#: src/app/[lang]/(app)/(stats)/energy/energy-content.tsx
-msgctxt "qE9FEI"
-msgid "Energy starts after your first day of study, and grows as you learn."
-msgstr "Deine Energie baut sich ab deinem ersten Lerntag auf und steigt, während du lernst."
 
 #: src/app/[lang]/(app)/(stats)/energy/energy-stats.tsx
 msgctxt "OiTvvB"
@@ -1817,11 +1812,6 @@ msgstr "Dein Gürtel, deine Energie, deine Lerntage, richtige Antworten und dein
 msgctxt "AezvZG"
 msgid "Average {value}"
 msgstr "Durchschnitt {value}"
-
-#: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "i-hsoi"
-msgid "Starts after a day of study"
-msgstr "Wird nach einem Lerntag angezeigt"
 
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
 msgctxt "I5Pid5"
