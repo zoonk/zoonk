@@ -65,8 +65,9 @@ function HeadingSkeleton({ eyebrow = false }: { eyebrow?: boolean }) {
 
 /**
  * `/start` while it loads, in the shape of its first screen: its question and line in their own
- * words, the goal's field (the words over its buttons on a phone) and the examples (beside the
- * question from a wide page), with how it works in the page's aside from 72rem.
+ * words, the goal's field (the words over its buttons where it's narrow, as the field lays out) and
+ * the examples (beside the question from a wide page), with how it works in the page's aside from
+ * 72rem.
  */
 export function StartEntrySkeleton() {
   const t = useExtracted();
@@ -83,7 +84,10 @@ export function StartEntrySkeleton() {
           </OnboardingHeading>
 
           <OnboardingAnswer>
-            <Skeleton className="h-27 w-full rounded-xl sm:h-14" />
+            {/* The field's padding around its height, so it changes shape at the field's width. */}
+            <Skeleton className="@container w-full p-1.5 pl-4">
+              <div className="h-24 @xl:h-11" />
+            </Skeleton>
 
             <div className="flex flex-col gap-1">
               <Skeleton className="h-3 w-20" />

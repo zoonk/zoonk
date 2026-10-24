@@ -98,10 +98,11 @@ export function GoalEntry({
       <OnboardingAnswer>
         {notice}
 
-        {/* The landing's field: "I want to", then the words. On phones the words keep the
-            field's width, the paperclip and "Build my plan" under them; from tablets one row. */}
-        <GoalField action={goal.action} className="flex-col items-stretch sm:flex-row sm:items-end">
-          <div className="flex min-w-0 flex-1 items-start gap-2 pr-2.5 sm:pr-0">
+        {/* The landing's field: "I want to", then the words. It lays out by its own width, not
+            the screen's: narrow (a phone, or the answer's pane beside the question), the words
+            take the whole row, the paperclip and "Build my plan" under them; with room, one row. */}
+        <GoalField action={goal.action} className="@container grid grid-cols-[minmax(0,1fr)_auto]">
+          <div className="col-span-2 flex min-w-0 items-start gap-2 pr-2.5 @xl:col-span-1 @xl:pr-0">
             <GoalFieldLabel htmlFor={inputId}>{t("I want to")}</GoalFieldLabel>
 
             <GoalFieldText
@@ -117,11 +118,11 @@ export function GoalEntry({
             />
           </div>
 
-          <div className="flex items-end justify-end gap-1">
+          <div className="col-span-2 flex items-end justify-end gap-1 @xl:col-span-1">
             {onAttach && (
               <Button
                 aria-label={t("Study your own material")}
-                className="text-muted-foreground mr-auto -ml-2.5 size-11 shrink-0 sm:mr-0 sm:ml-0"
+                className="text-muted-foreground mr-auto -ml-2.5 size-11 shrink-0 @xl:mr-0 @xl:ml-0"
                 onClick={onAttach}
                 size="icon-lg"
                 type="button"
