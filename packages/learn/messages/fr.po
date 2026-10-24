@@ -9771,11 +9771,6 @@ msgctxt "EtDfjk"
 msgid "{count, plural, one {# topic leaves: {topics}.} other {# topics leave: {topics}.}}"
 msgstr "{count, plural, one {# sujet est retiré : {topics}.} other {# sujets sont retirés : {topics}.}}"
 
-#: src/plan/plan-bases-effect.tsx
-msgctxt "UYxfzC"
-msgid "Your lessons end on {after} instead of {before}."
-msgstr "Tes leçons se terminent le {after} au lieu du {before}."
-
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-offer-preview.tsx
 msgctxt "g_RDWS"

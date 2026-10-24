@@ -15,6 +15,7 @@ import {
 import { LayersIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
+import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import { BasesAdvice, useBasesAdvice } from "./plan-bases-advice";
 import {
   AllBasesChoice,
@@ -22,7 +23,7 @@ import {
   BasesBySubject,
   getSharedChoice,
 } from "./plan-bases-choices";
-import { useBasesEffectLines } from "./plan-bases-effect";
+import { useBasesFootnote } from "./plan-bases-effect";
 import { PlanChangeApplied } from "./plan-change-applied";
 import { type PlanChangeOutcome, usePlanScreen } from "./plan-context";
 import { PlanFailedMessage } from "./plan-failed-message";
@@ -79,7 +80,7 @@ function usePreview(changed: { choice: BaseChoice; skillId: string }[]) {
   };
 }
 
-/** Under the choices: what they'd do, then Save. */
+/** Under the choices: what they'd do, as a diff like the plan's other changes, then Save. */
 function BasesFooter({
   changed,
   failed,
@@ -96,7 +97,7 @@ function BasesFooter({
   preview: PlanPreviewState;
 }) {
   const t = useExtracted();
-  const effectLines = useBasesEffectLines();
+  const footnote = useBasesFootnote();
   const saveButton = useRef<HTMLButtonElement>(null);
   const loading = preview.status === "idle" || preview.status === "loading";
 
@@ -106,10 +107,9 @@ function BasesFooter({
     saveButton.current?.focus();
   };
 
-  const lines =
-    preview.status === "ready" && !preview.preview.unchanged
-      ? effectLines({ ...preview.preview, ready: true })
-      : [];
+  const changes = preview.status === "ready" && !preview.preview.unchanged ? preview.preview : null;
+
+  const notes = changes ? footnote({ ...changes, ready: true }) : [];
 
   return (
     <div className="flex flex-col gap-3 border-t px-6 pt-4 pb-6">
@@ -117,7 +117,7 @@ function BasesFooter({
         <div
           aria-busy={loading}
           aria-live="polite"
-          className="text-muted-foreground flex flex-col gap-1 text-sm text-pretty aria-busy:opacity-60"
+          className="text-muted-foreground flex flex-col gap-2 text-sm text-pretty aria-busy:opacity-60"
         >
           {loading && <p>{t("Checking what changes…")}</p>}
           {preview.status === "failed" && (
@@ -131,9 +131,8 @@ function BasesFooter({
           {preview.status === "ready" && preview.preview.unchanged && (
             <p>{t("Your plan stays as it is.")}</p>
           )}
-          {lines.map((line) => (
-            <p key={line}>{line}</p>
-          ))}
+          {changes && <PlanEffectDiff effect={changes.effect} />}
+          {notes.length > 0 && <p className="text-xs leading-snug">{notes.join(" ")}</p>}
         </div>
       )}
 

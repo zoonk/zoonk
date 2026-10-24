@@ -2,10 +2,8 @@
 
 import { type PlanChangePreview } from "@zoonk/core/plans/preview-contract";
 import { useExtracted } from "next-intl";
-import { useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatShare } from "../_utils/percent";
 import { usePlanScreen } from "./plan-context";
-import { useLessonsEffectText } from "./use-effect-counts";
 import { useShortList } from "./use-short-list";
 
 type Preview = PlanChangePreview & { ready: true };
@@ -50,24 +48,19 @@ function useCoverageLine() {
 }
 
 /**
- * What the learner's choices would do, before they save them: the topics that come into the plan
- * and the ones that leave it, by name, the lessons it adds and leaves out as the card after saving
- * says them, what their time then covers by the date against now, and when their lessons end when
- * that moves. Without the lessons, a core for a base said only that heat comes in, and saving left
- * out 18 lessons of electricity, a topic the learner was in the middle of.
+ * What the learner's choices would do beyond their diff (`PlanEffectDiff`, which counts the lessons
+ * they add and leave out, then the plan's end and every date that moves): the topics that come into
+ * the plan and the ones that leave it, by name, and what their time then covers by the date against
+ * now. Without the topics, a core for a base said only that lessons come in, not that heat does.
  */
-export function useBasesEffectLines() {
+export function useBasesFootnote() {
   const t = useExtracted();
-  const formatDate = useFormatIsoDate();
   const topicNames = useTopicNames();
   const coverageLine = useCoverageLine();
-  const lessonsText = useLessonsEffectText();
 
   return (preview: Preview): string[] => {
     const added = topicNames(preview.effect?.topicsAdded);
     const leftOut = topicNames(preview.effect?.topicsLeftOut);
-    const before = preview.effect?.endDateBefore;
-    const after = preview.effect?.endDateAfter;
 
     return [
       added.count > 0 &&
@@ -80,15 +73,7 @@ export function useBasesEffectLines() {
           count: leftOut.count,
           topics: leftOut.names,
         }),
-      lessonsText(preview.effect),
       preview.feasibility && coverageLine(preview.feasibility),
-      before &&
-        after &&
-        before !== after &&
-        t("Your lessons end on {after} instead of {before}.", {
-          after: formatDate(after, "long"),
-          before: formatDate(before, "long"),
-        }),
     ].filter((line) => typeof line === "string");
   };
 }

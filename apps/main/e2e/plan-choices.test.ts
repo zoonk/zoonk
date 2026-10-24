@@ -169,7 +169,7 @@ test.describe("Plan choices", () => {
     // The recommendation is one tap, and its effect shows before anything is saved.
     await pickForAll({ choice: "Quick lesson", sheet });
     await expect(allChoice({ choice: "Quick lesson", sheet })).toBeChecked();
-    await expect(sheet.getByText(/^By your date: \d+% of the exam, /u)).toBeVisible();
+    await expect(sheet.getByText(/By your date: \d+% of the exam, /u)).toBeVisible();
     await expect(loadBaseChoices(goal.id)).resolves.toStrictEqual([]);
 
     // By subject, each has its own choice: skipping one leaves them without one choice for all.
@@ -288,7 +288,7 @@ test.describe("Plan choices", () => {
       await editor.getByRole("button", { name: "Choose prerequisites" }).click();
       await pickForAll({ choice, sheet });
       await expect(preview).toHaveAttribute("aria-busy", "false");
-      const lines = await preview.getByRole("paragraph").allTextContents();
+      const lines = await preview.getByRole("listitem").allTextContents();
       await sheet.getByRole("button", { name: "Save choices" }).click();
       await expect(sheet.getByRole("status")).toBeVisible({ timeout: REPLAN_TIMEOUT_MS });
       return lines;
@@ -303,10 +303,10 @@ test.describe("Plan choices", () => {
       timeout: REPLAN_TIMEOUT_MS,
     });
 
-    // Back to the essentials: the preview names the lessons that leave, and saving does just
-    // that instead of undoing the change before it.
+    // Back to the essentials: the preview's diff counts the lessons that leave, and saving does
+    // just that instead of undoing the change before it.
     const lines = await chooseAndSave("Essentials");
-    const lessons = lines.find((line) => /^(?:Adds|Leaves out) /u.test(line));
+    const lessons = /(?:Adds|Leaves out) [^\n]+/u.exec(lines.join("\n"))?.[0];
 
     expect(lessons).toBeDefined();
     await expect(sheet.getByRole("status")).toContainText(lessons ?? "");
