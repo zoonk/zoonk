@@ -2,12 +2,11 @@
 
 import { type MockAnswer, type MockChoice } from "@zoonk/core/exams/mocks/answer-contract";
 import { type MockQuestion } from "@zoonk/core/exams/mocks/view-contract";
-import { useLetterKeys, useNumberKeys } from "@zoonk/ui/hooks/keyboard";
+import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, MinusIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { AnswerOption, AnswerOptionGroup } from "../_components/answer-option";
-import { ANSWER_LETTERS } from "../_components/answer-tone";
 import { ItemLine } from "../questions/item-text";
 import { type OptionSelect, PickRule, togglePick } from "../questions/pick-rule";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
@@ -15,17 +14,11 @@ import { useMockScreen } from "./mock-context";
 import { getOptionMarks } from "./mock-keys";
 
 /**
- * One pick: its answer (none for "Leave blank"), its words and its mark, a letter of the exam's
- * answer sheet (`letter`, the key that picks it) or, for a statement judged right, wrong or left
- * blank, a glyph.
+ * One pick: its answer (none for "Leave blank"), its words and its mark: its number, the key that
+ * picks it, or, for a statement judged right, wrong or left blank, a glyph (its number key still
+ * picks it).
  */
-type Option = {
-  answer: MockChoice | null;
-  key: string;
-  label: string;
-  letter: string | null;
-  marker: React.ReactNode;
-};
+type Option = { answer: MockChoice | null; key: string; label: string; marker: React.ReactNode };
 
 function isSame(first: MockAnswer | null, second: MockAnswer | null): boolean {
   return JSON.stringify(first) === JSON.stringify(second);
@@ -47,50 +40,23 @@ function useOptions(question: MockQuestion): Option[] {
       answer: { selectedIndex: index },
       key: `option-${index}`,
       label,
-      letter: ANSWER_LETTERS[index] ?? null,
-      marker: ANSWER_LETTERS[index],
+      marker: index + 1,
     }));
   }
 
   if (getOptionMarks({ format: question.format, scoring: runner.view.scoring }) === "glyphs") {
     return [
-      {
-        answer: { isTrue: true },
-        key: "true",
-        label: answerLabel(true),
-        letter: null,
-        marker: <CheckIcon />,
-      },
-      {
-        answer: { isTrue: false },
-        key: "false",
-        label: answerLabel(false),
-        letter: null,
-        marker: <XIcon />,
-      },
+      { answer: { isTrue: true }, key: "true", label: answerLabel(true), marker: <CheckIcon /> },
+      { answer: { isTrue: false }, key: "false", label: answerLabel(false), marker: <XIcon /> },
       ...(runner.moves.mustAnswer
         ? []
-        : [
-            {
-              answer: null,
-              key: "blank",
-              label: t("Leave blank"),
-              letter: null,
-              marker: <MinusIcon />,
-            },
-          ]),
+        : [{ answer: null, key: "blank", label: t("Leave blank"), marker: <MinusIcon /> }]),
     ];
   }
 
   return [
-    { answer: { isTrue: true }, key: "true", label: answerLabel(true), letter: "A", marker: "A" },
-    {
-      answer: { isTrue: false },
-      key: "false",
-      label: answerLabel(false),
-      letter: "B",
-      marker: "B",
-    },
+    { answer: { isTrue: true }, key: "true", label: answerLabel(true), marker: 1 },
+    { answer: { isTrue: false }, key: "false", label: answerLabel(false), marker: 2 },
   ];
 }
 
@@ -121,18 +87,13 @@ export function MockOptions({ question }: { question: MockQuestion }) {
     return undefined;
   }
 
-  // The key a learner reads on an option picks it: its letter, as on the exam's answer sheet, and
-  // its digit as a silent alias (1 for A). A statement's glyphs (right, wrong, blank) aren't keys,
-  // so their number keys pick them.
-  const lettered = options.every((option) => option.letter !== null);
-  useLetterKeys({ count: options.length, enabled: lettered, onPick: pick });
   useNumberKeys({ count: options.length, onPick: pick });
 
   return (
     <AnswerOptionGroup>
       {options.map((option, index) => (
         <AnswerOption
-          aria-keyshortcuts={option.letter ?? String(index + 1)}
+          aria-keyshortcuts={String(index + 1)}
           className={cn(option.answer === null && "text-muted-foreground")}
           disabled={locked}
           key={option.key}
@@ -176,8 +137,6 @@ export function MockPicks({ question, select }: { question: MockQuestion; select
     return undefined;
   }
 
-  // Its letter toggles an option, and its digit as a silent alias (1 for A).
-  useLetterKeys({ count: options.length, onPick: toggle });
   useNumberKeys({ count: options.length, onPick: toggle });
 
   return (
@@ -187,10 +146,10 @@ export function MockPicks({ question, select }: { question: MockQuestion; select
         {options.map((label, index) => (
           <AnswerOption
             aria-checked={picks.includes(index)}
-            aria-keyshortcuts={ANSWER_LETTERS[index]}
+            aria-keyshortcuts={String(index + 1)}
             disabled={locked}
             key={label}
-            marker={ANSWER_LETTERS[index]}
+            marker={index + 1}
             onClick={() => toggle(index)}
             picked={picks.includes(index)}
             role="checkbox"

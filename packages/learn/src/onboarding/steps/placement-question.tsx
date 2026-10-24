@@ -4,12 +4,11 @@ import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-label
 import { Button } from "@zoonk/ui/components/button";
 import { Label } from "@zoonk/ui/components/label";
 import { Textarea } from "@zoonk/ui/components/textarea";
-import { useLetterKeys, useNumberKeys } from "@zoonk/ui/hooks/keyboard";
+import { useNumberKeys } from "@zoonk/ui/hooks/keyboard";
 import { CircleHelpIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { AnswerOption, AnswerOptionGroup } from "../../_components/answer-option";
-import { ANSWER_LETTERS } from "../../_components/answer-tone";
 import { ItemLine, ItemStem, ItemSupport } from "../../questions/item-text";
 import { useTrueFalseLabels } from "../../questions/use-true-false-labels";
 import { type Choice } from "../choice-list";
@@ -48,8 +47,7 @@ function useQuestionChoices({
 
 /**
  * A placement question's options drawn as every question's are (the player's answer option): its
- * letter on the left, the strong line, a firm ring once picked. Its letter or number key picks it
- * too.
+ * number on the left, the strong line, a firm ring once picked. Its number key picks it too.
  */
 function PlacementOptions({
   choices,
@@ -70,15 +68,15 @@ function PlacementOptions({
     }
   };
 
-  useLetterKeys({ count: choices.length, onPick: pick });
   useNumberKeys({ count: choices.length, onPick: pick });
 
   return (
     <AnswerOptionGroup aria-label={label}>
       {choices.map((choice, index) => (
         <AnswerOption
+          aria-keyshortcuts={String(index + 1)}
           key={choice.value}
-          marker={ANSWER_LETTERS[index]}
+          marker={index + 1}
           onClick={() => onChange(choice.value)}
           picked={value === choice.value}
         >

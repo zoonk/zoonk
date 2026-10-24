@@ -50,6 +50,10 @@ test.describe("Placement and the plan", () => {
     await expect(page.getByText("Algebra", { exact: true })).toBeVisible();
     await expectAccessibleScreen(page, "a placement question");
     const first = await page.getByRole("heading", { name: /^Question/u }).textContent();
+    // An option's keycap shows the key that picks it.
+    const firstOption = page.getByRole("radio").first();
+    await expect(firstOption).toHaveAttribute("aria-keyshortcuts", "1");
+    await expect(firstOption.locator("[data-slot='kbd']")).toHaveText("1");
     await page.keyboard.press("1");
     await expect(page.getByRole("radio", { name: /Right answer/u })).toBeChecked();
     await page.keyboard.press("Enter");

@@ -16,8 +16,8 @@ import { ResultSection } from "./mock-result-section";
 
 /**
  * An answer's mark on its row, as the runner showed it where the review knows it: a statement's
- * letter (A for true, B for false), or its glyph where it's judged right or wrong. The review has
- * a pick's words but not its letter, so other answers are marked by how they went (`right`).
+ * number (1 for true, 2 for false), or its glyph where it's judged right or wrong. The review has
+ * a pick's words but not its number, so other answers are marked by how they went (`right`).
  */
 function AnswerMark({
   answer,
@@ -32,8 +32,8 @@ function AnswerMark({
   const isStatement = entry.format === "trueFalse" && (answer === "true" || answer === "false");
   const marks = getOptionMarks({ format: entry.format, scoring: runner.view.scoring });
 
-  if (isStatement && marks === "letters") {
-    return answer === "true" ? "A" : "B";
+  if (isStatement && marks === "numbers") {
+    return answer === "true" ? 1 : 2;
   }
 
   if (isStatement) {

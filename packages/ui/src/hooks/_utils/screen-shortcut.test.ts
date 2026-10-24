@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { getLetterKeyIndex, getNumberKeyIndex, isScreenShortcut } from "./screen-shortcut";
+import { getNumberKeyIndex, isScreenShortcut } from "./screen-shortcut";
 
 /** Dispatches a key press on an element, so `event.target` is that element as in a browser. */
 function pressOn(target: EventTarget, init: KeyboardEventInit) {
@@ -103,31 +103,6 @@ describe(getNumberKeyIndex, () => {
 
     expect(
       presses.map((init) => getNumberKeyIndex(new KeyboardEvent("keydown", init))),
-    ).toStrictEqual([null, null, null, null, null, null]);
-  });
-});
-
-describe(getLetterKeyIndex, () => {
-  it("maps A to I, in either case, to the first nine options", () => {
-    const keys = ["a", "C", "i"].map((key) =>
-      getLetterKeyIndex(new KeyboardEvent("keydown", { key })),
-    );
-
-    expect(keys).toStrictEqual([0, 2, 8]);
-  });
-
-  it("ignores letters past I, digits, named keys and shortcut chords such as Cmd+A", () => {
-    const presses = [
-      { key: "j" },
-      { key: "1" },
-      { key: "Enter" },
-      { key: "a", metaKey: true },
-      { ctrlKey: true, key: "a" },
-      { altKey: true, key: "a" },
-    ];
-
-    expect(
-      presses.map((init) => getLetterKeyIndex(new KeyboardEvent("keydown", init))),
     ).toStrictEqual([null, null, null, null, null, null]);
   });
 });

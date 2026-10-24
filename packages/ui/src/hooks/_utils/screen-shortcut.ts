@@ -1,9 +1,6 @@
 /** Number keys reach nine options: there's no key for a tenth. */
 const MAX_NUMBER_KEY = 9;
 
-/** Letter keys reach as many options as number keys: A to I, the letters an answer sheet uses. */
-const OPTION_LETTERS = "abcdefghi";
-
 /** A dialog or a menu open over the screen owns the keys pressed inside it. */
 const POPUP_SELECTOR = "[role='dialog'], [role='alertdialog'], [role='menu'], [role='listbox']";
 
@@ -117,18 +114,4 @@ export function getNumberKeyIndex(event: KeyboardEvent): number | null {
   const number = Number(event.key);
 
   return Number.isInteger(number) && number >= 1 && number <= MAX_NUMBER_KEY ? number - 1 : null;
-}
-
-/**
- * The option a letter key picks (0 for "A", either case), or null for any other key or a shortcut
- * chord, for options marked with letters like an exam's answer sheet.
- */
-export function getLetterKeyIndex(event: KeyboardEvent): number | null {
-  if (event.altKey || event.ctrlKey || event.metaKey || event.key.length !== 1) {
-    return null;
-  }
-
-  const index = OPTION_LETTERS.indexOf(event.key.toLowerCase());
-
-  return index === -1 ? null : index;
 }

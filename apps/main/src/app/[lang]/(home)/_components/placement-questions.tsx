@@ -1,6 +1,5 @@
 import { AnswerPicture, AnswerPictures } from "@/components/public/answer-picture";
 import { Variant } from "@/components/public/variant-switch";
-import { ANSWER_LETTERS } from "@zoonk/learn/answer-tone";
 import { getExtracted } from "next-intl/server";
 import { FRAME_EYEBROW_CLASS } from "./day-one-styles";
 import { EXAMPLE_GOALS, type ExampleGoal, GOAL_SWITCH, getExampleSet } from "./landing-examples";
@@ -89,12 +88,7 @@ function PlacementPicture({ question }: { question: PlacementQuestion }) {
 
       <AnswerPictures>
         {question.options.map((option, index) => (
-          <AnswerPicture
-            key={option}
-            lang={question.lang}
-            marker={ANSWER_LETTERS[index] ?? ""}
-            picked={index === 0}
-          >
+          <AnswerPicture key={option} lang={question.lang} marker={index + 1} picked={index === 0}>
             {option}
           </AnswerPicture>
         ))}

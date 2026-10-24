@@ -50,14 +50,14 @@ function ResultTag({ picked, result }: { picked: boolean; result: AnswerOptionRe
 
 /**
  * One answer to pick, the same in a lesson, a session, a practice, a checkpoint and a mock: its
- * key (a number, or a letter on an exam's answer sheet) in a keycap on the left, its words, and a
- * strong line around it. Picked, it gets the learner's blue ring and tint; once checked, the right answer turns green
- * ("Correct", or "Your answer" when it was the pick) and a wrong pick red ("Your answer"), while
- * its words stay readable in the text color; a guess's pick keeps a neutral ring ("Your guess").
+ * number key in a keycap on the left, its words, and a strong line around it. Picked, it gets the
+ * learner's blue ring and tint; once checked, the right answer turns green ("Correct", or "Your
+ * answer" when it was the pick) and a wrong pick red ("Your answer"), while its words stay
+ * readable in the text color; a guess's pick keeps a neutral ring ("Your guess").
  * `role="checkbox"` where a question takes several picks; tapping a picked one again clears it.
  *
  * ```tsx
- * <AnswerOption marker="2" picked result="right">96%</AnswerOption>
+ * <AnswerOption marker={2} picked result="right">96%</AnswerOption>
  * ```
  */
 export function AnswerOption({

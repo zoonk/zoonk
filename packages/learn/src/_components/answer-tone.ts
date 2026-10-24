@@ -3,9 +3,6 @@
  * too: the player and the app draw them live, and the public pages draw an answered question.
  */
 
-/** An exam's answer sheet keys its options by letter. */
-export const ANSWER_LETTERS = ["A", "B", "C", "D", "E", "F", "G", "H", "I"];
-
 /**
  * How a checked option turned out: the right answer, the learner's wrong pick, or their pick on a
  * guess that never counts (a lesson's "Guess first"), which isn't a mistake.

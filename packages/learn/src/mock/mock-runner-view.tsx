@@ -21,7 +21,7 @@ import { ClockTitle } from "./mock-clock";
 import { useMockScreen } from "./mock-context";
 import { MockFrame, MockStepStatus } from "./mock-frame";
 import { MockHandInDialog } from "./mock-hand-in";
-import { FLAG_KEY, countLetteredOptions, isFlagKeyFree } from "./mock-keys";
+import { FLAG_KEY } from "./mock-keys";
 import { useMockTitle } from "./mock-labels";
 import { ItemClock, MovesNote } from "./mock-moves";
 import { getSectionPlace } from "./mock-place";
@@ -85,36 +85,22 @@ function RunnerProgress({ question }: { question: MockQuestion }) {
 
 /**
  * Flag the question to come back to it: a secondary beside Next, amber while it's flagged. F flags
- * it too, its keycap on the button where there's a keyboard, unless the question has an option F,
- * which keeps its letter.
+ * it too, its keycap on the button where there's a keyboard.
  */
 function FlagButton() {
   const t = useExtracted();
   const { runner } = useMockScreen();
   const question = runner.view.current?.questions[runner.position];
   const flagged = Boolean(question && runner.drafts[question.itemId]?.flagged);
-
-  const keyFree =
-    question !== undefined &&
-    isFlagKeyFree(countLetteredOptions({ question, scoring: runner.view.scoring }));
-
-  const toggleByKey = () => {
-    if (!keyFree) {
-      return false;
-    }
-
-    runner.toggleFlag();
-  };
-
   const screenKey = { mode: "none", screen: true } as const;
 
   // Caps Lock sends the capital.
-  useKeyboardCallback(FLAG_KEY, toggleByKey, screenKey);
-  useKeyboardCallback(FLAG_KEY.toUpperCase(), toggleByKey, screenKey);
+  useKeyboardCallback(FLAG_KEY, runner.toggleFlag, screenKey);
+  useKeyboardCallback(FLAG_KEY.toUpperCase(), runner.toggleFlag, screenKey);
 
   return (
     <Button
-      aria-keyshortcuts={keyFree ? FLAG_KEY.toUpperCase() : undefined}
+      aria-keyshortcuts={FLAG_KEY.toUpperCase()}
       aria-pressed={flagged}
       className={cn("shrink-0", flagged && "border-warning text-warning hover:text-warning")}
       onClick={runner.toggleFlag}
@@ -123,7 +109,7 @@ function FlagButton() {
     >
       <FlagIcon aria-hidden="true" className={cn(flagged && "fill-current")} />
       {t("Flag")}
-      {keyFree && <ShortcutKbd>{FLAG_KEY.toUpperCase()}</ShortcutKbd>}
+      <ShortcutKbd>{FLAG_KEY.toUpperCase()}</ShortcutKbd>
     </Button>
   );
 }

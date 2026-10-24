@@ -2,7 +2,7 @@ import { AnswerPicture, AnswerPictures } from "@/components/public/answer-pictur
 import { NUMERIC_CLASS } from "@/components/public/landing-styles";
 import { Pair } from "@/components/public/pair";
 import { ProductWindow } from "@/components/public/product-window";
-import { ANSWER_LETTERS, type AnswerOptionResult } from "@zoonk/learn/answer-tone";
+import { type AnswerOptionResult } from "@zoonk/learn/answer-tone";
 import { CHIP_CLASS } from "@zoonk/learn/chip";
 import { KindDot } from "@zoonk/learn/kind-tile";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -41,8 +41,8 @@ function ExamQuestionCard({
       <AnswerPictures>
         {options.map((option, index) => (
           <AnswerPicture
-            key={ANSWER_LETTERS[index]}
-            marker={ANSWER_LETTERS[index] ?? ""}
+            key={option.text}
+            marker={index + 1}
             result={option.result}
             tag={option.tag}
           >

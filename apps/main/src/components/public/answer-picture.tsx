@@ -26,7 +26,7 @@ export function AnswerPicture({
   children: ReactNode;
   /** The answer's language when it isn't the page's (a sentence in the language being learned). */
   lang?: string;
-  marker: string;
+  marker: number;
   picked?: boolean;
   result?: AnswerOptionResult;
   tag?: string;

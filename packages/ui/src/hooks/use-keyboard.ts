@@ -1,11 +1,6 @@
 import { use, useEffectEvent, useLayoutEffect, useRef } from "react";
 import { PopupShortcutLayer } from "./_utils/popup-shortcut-layer";
-import {
-  getLetterKeyIndex,
-  getNumberKeyIndex,
-  isEditableTarget,
-  isScreenShortcut,
-} from "./_utils/screen-shortcut";
+import { getNumberKeyIndex, isEditableTarget, isScreenShortcut } from "./_utils/screen-shortcut";
 
 type KeyboardModifiers = {
   altKey?: boolean;
@@ -229,44 +224,6 @@ export function useEscapeClick<Target extends HTMLElement>({
   return ref;
 }
 
-/** The options' keys and what they pick: digits for numbered options, letters for lettered ones. */
-function useOptionKeys({
-  count,
-  enabled,
-  getIndex,
-  onPick,
-}: {
-  count: number;
-  enabled: boolean;
-  getIndex: (event: KeyboardEvent) => number | null;
-  onPick: (index: number) => ShortcutResult;
-}) {
-  const pick = useEffectEvent(onPick);
-  const inPopup = use(PopupShortcutLayer);
-
-  // Before paint, like `useKeyboardCallback`: a question's keys work once it shows.
-  useLayoutEffect(() => {
-    if (!enabled) {
-      return;
-    }
-
-    function handleKeyDown(event: KeyboardEvent) {
-      const index = getIndex(event);
-
-      if (index === null || index >= count || !isScreenShortcut(event, { inPopup })) {
-        return;
-      }
-
-      if (pick(index) !== false) {
-        event.preventDefault();
-      }
-    }
-
-    globalThis.addEventListener("keydown", handleKeyDown);
-    return () => globalThis.removeEventListener("keydown", handleKeyDown);
-  }, [count, enabled, getIndex, inPopup]);
-}
-
 /**
  * Number keys 1 to 9 pick the screen's options, as fast as a tap. Digits typed in a field, or
  * pressed inside a dialog or a menu, stay there. Return `false` from `onPick` for a key that
@@ -281,22 +238,28 @@ export function useNumberKeys({
   enabled?: boolean;
   onPick: (index: number) => ShortcutResult;
 }) {
-  useOptionKeys({ count, enabled, getIndex: getNumberKeyIndex, onPick });
-}
+  const pick = useEffectEvent(onPick);
+  const inPopup = use(PopupShortcutLayer);
 
-/**
- * Letter keys A to I pick options marked with letters (a mock exam's answer sheet), the way
- * `useNumberKeys` does for numbered ones: the key a learner reads on an option is the key that
- * picks it. Letters typed in a field, or pressed inside a dialog or a menu, stay there.
- */
-export function useLetterKeys({
-  count,
-  enabled = true,
-  onPick,
-}: {
-  count: number;
-  enabled?: boolean;
-  onPick: (index: number) => ShortcutResult;
-}) {
-  useOptionKeys({ count, enabled, getIndex: getLetterKeyIndex, onPick });
+  // Before paint, like `useKeyboardCallback`: a question's keys work once it shows.
+  useLayoutEffect(() => {
+    if (!enabled) {
+      return;
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      const index = getNumberKeyIndex(event);
+
+      if (index === null || index >= count || !isScreenShortcut(event, { inPopup })) {
+        return;
+      }
+
+      if (pick(index) !== false) {
+        event.preventDefault();
+      }
+    }
+
+    globalThis.addEventListener("keydown", handleKeyDown);
+    return () => globalThis.removeEventListener("keydown", handleKeyDown);
+  }, [count, enabled, inPopup]);
 }
