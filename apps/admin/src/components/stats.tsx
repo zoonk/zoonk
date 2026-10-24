@@ -57,12 +57,14 @@ export function Stats({
     );
   }
 
-  return content;
+  // The same frame as a linked tile's, so a tile without a link lines up with its row-mates
+  // instead of spreading its label and value over the row's height.
+  return <div className="p-2">{content}</div>;
 }
 
 export function StatsSkeleton() {
   return (
-    <div className="flex w-full flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
+    <div className="flex w-full flex-wrap items-baseline justify-between gap-x-4 gap-y-2 p-2">
       <header className="text-muted-foreground flex items-center gap-1.5">
         <Skeleton className="size-4 rounded-lg" />
         <Skeleton className="h-4 w-24 rounded" />
