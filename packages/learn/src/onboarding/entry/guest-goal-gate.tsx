@@ -7,6 +7,7 @@ import { useExtracted } from "next-intl";
 import { LearnLink } from "../../learn-link";
 import { type OnboardingRoutes } from "../onboarding-actions";
 import {
+  OnboardingAnswer,
   OnboardingColumn,
   OnboardingDescription,
   OnboardingFooter,
@@ -36,15 +37,17 @@ export function GuestGoalGate({ routes }: { routes: OnboardingRoutes }) {
         </OnboardingDescription>
       </OnboardingHeading>
 
-      <OnboardingFooter>
-        <SignUpLink href={routes.signUp} />
-        <LearnLink
-          className={cn(buttonVariants({ size: "lg", variant: "ghost" }), "w-full")}
-          href={routes.today}
-        >
-          {t("Back to Today")}
-        </LearnLink>
-      </OnboardingFooter>
+      <OnboardingAnswer>
+        <OnboardingFooter>
+          <SignUpLink href={routes.signUp} />
+          <LearnLink
+            className={cn(buttonVariants({ size: "lg", variant: "ghost" }), "w-full")}
+            href={routes.today}
+          >
+            {t("Back to Today")}
+          </LearnLink>
+        </OnboardingFooter>
+      </OnboardingAnswer>
     </OnboardingColumn>
   );
 }

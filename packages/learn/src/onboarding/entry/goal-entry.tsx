@@ -8,6 +8,7 @@ import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { type GoalError } from "../goal-errors";
 import {
+  OnboardingAnswer,
   OnboardingColumn,
   OnboardingDescription,
   OnboardingHeading,
@@ -94,51 +95,53 @@ export function GoalEntry({
         </OnboardingHeading>
       )}
 
-      {notice}
+      <OnboardingAnswer>
+        {notice}
 
-      {/* The landing's field: "I want to", then the words. On phones the words keep the
-          field's width, the paperclip and "Build my plan" under them; from tablets one row. */}
-      <GoalField action={goal.action} className="flex-col items-stretch sm:flex-row sm:items-end">
-        <div className="flex min-w-0 flex-1 items-start gap-2 pr-2.5 sm:pr-0">
-          <GoalFieldLabel htmlFor={inputId}>{t("I want to")}</GoalFieldLabel>
+        {/* The landing's field: "I want to", then the words. On phones the words keep the
+            field's width, the paperclip and "Build my plan" under them; from tablets one row. */}
+        <GoalField action={goal.action} className="flex-col items-stretch sm:flex-row sm:items-end">
+          <div className="flex min-w-0 flex-1 items-start gap-2 pr-2.5 sm:pr-0">
+            <GoalFieldLabel htmlFor={inputId}>{t("I want to")}</GoalFieldLabel>
 
-          <GoalFieldText
-            autoFocusOnPointer
-            defaultValue={defaultGoal}
-            id={inputId}
-            maxLength={MAX_GOAL_LENGTH}
-            placeholder={t(
-              "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} pau {pass the PAU, speak {language}…} other {pass the SAT, speak {language}…}}",
-              example,
+            <GoalFieldText
+              autoFocusOnPointer
+              defaultValue={defaultGoal}
+              id={inputId}
+              maxLength={MAX_GOAL_LENGTH}
+              placeholder={t(
+                "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} pau {pass the PAU, speak {language}…} other {pass the SAT, speak {language}…}}",
+                example,
+              )}
+              {...goal.field}
+            />
+          </div>
+
+          <div className="flex items-end justify-end gap-1">
+            {onAttach && (
+              <Button
+                aria-label={t("Study your own material")}
+                className="text-muted-foreground mr-auto -ml-2.5 size-11 shrink-0 sm:mr-0 sm:ml-0"
+                onClick={onAttach}
+                size="icon-lg"
+                type="button"
+                variant="ghost"
+              >
+                <PaperclipIcon aria-hidden="true" />
+              </Button>
             )}
-            {...goal.field}
-          />
-        </div>
 
-        <div className="flex items-end justify-end gap-1">
-          {onAttach && (
-            <Button
-              aria-label={t("Study your own material")}
-              className="text-muted-foreground mr-auto -ml-2.5 size-11 shrink-0 sm:mr-0 sm:ml-0"
-              onClick={onAttach}
-              size="icon-lg"
-              type="button"
-              variant="ghost"
-            >
-              <PaperclipIcon aria-hidden="true" />
-            </Button>
-          )}
+            <SubmitButton />
+          </div>
+        </GoalField>
 
-          <SubmitButton />
-        </div>
-      </GoalField>
+        {attachment}
 
-      {attachment}
+        <GoalErrorAlert error={error} signUpHref={signUpHref} />
 
-      <GoalErrorAlert error={error} signUpHref={signUpHref} />
-
-      {/* Under Today's title the page's aside holds them from 72rem (`StartFlow`'s rail). */}
-      <GoalExamples className={cn(section && "min-[72rem]:hidden")} onPick={goal.send} />
+        {/* Under Today's title the page's aside holds them from 72rem (`StartFlow`'s rail). */}
+        <GoalExamples className={cn(section && "min-[72rem]:hidden")} onPick={goal.send} />
+      </OnboardingAnswer>
     </OnboardingColumn>
   );
 }

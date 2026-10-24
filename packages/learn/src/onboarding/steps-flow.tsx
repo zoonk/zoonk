@@ -20,7 +20,6 @@ import {
 } from "./onboarding-actions";
 import { OnboardingAnnouncer } from "./onboarding-announcer";
 import { OnboardingFrame } from "./onboarding-frame";
-import { OnboardingProgressProvider } from "./onboarding-host";
 import { OnboardingRailProvider } from "./onboarding-rail";
 import { OnboardingStepScreen } from "./onboarding-step-screen";
 import { PlanReceipt } from "./plan-receipt";
@@ -198,27 +197,25 @@ export function StepsFlow({
             )
           }
         >
-          <OnboardingProgressProvider progress={progress}>
-            {/* Placement follows the run itself, so only the questions say it stopped. */}
-            <PlanStartNoticeProvider
-              run={showDots && state.current !== "placement" ? generation : null}
-            >
-              <OnboardingStepScreen
-                actions={actions}
-                isGuest={isGuest}
-                onAnswer={answer}
-                onPlacementDone={() => answer({ question: "placement" })}
-                pending={
-                  isPending && sending !== null && (sending.open || sending.step === state.current)
-                }
-                plan={{ initialPlan: pagePlan, planActions }}
-                routes={routes}
-                run={generation}
-                step={state.current}
-                view={state.view}
-              />
-            </PlanStartNoticeProvider>
-          </OnboardingProgressProvider>
+          {/* Placement follows the run itself, so only the questions say it stopped. */}
+          <PlanStartNoticeProvider
+            run={showDots && state.current !== "placement" ? generation : null}
+          >
+            <OnboardingStepScreen
+              actions={actions}
+              isGuest={isGuest}
+              onAnswer={answer}
+              onPlacementDone={() => answer({ question: "placement" })}
+              pending={
+                isPending && sending !== null && (sending.open || sending.step === state.current)
+              }
+              plan={{ initialPlan: pagePlan, planActions }}
+              routes={routes}
+              run={generation}
+              step={state.current}
+              view={state.view}
+            />
+          </PlanStartNoticeProvider>
         </OnboardingFrame>
       </OnboardingAnnouncer>
     </OnboardingRailProvider>

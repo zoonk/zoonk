@@ -38,7 +38,8 @@ export function OnboardingSectionFrame({
         {header}
 
         <div className="flex flex-col" data-slot="onboarding-frame">
-          <OnboardingBarRow bar={bar} className="-ml-3" />
+          {/* The chevron's glyph on the page's edge under `lg`; from `lg` its crumb sits there. */}
+          <OnboardingBarRow bar={bar} className="-ml-3 lg:ml-0" />
           {notice}
           {children}
         </div>
@@ -56,9 +57,10 @@ const WIDE_ASIDE_CLASS =
 
 /**
  * A screen as a page of the app's frame: the flow's bar, then the screen on the page's left edge,
- * at a task's readable measure (a `wide` one fills the room), and from 72rem the rail in the page's
- * aside at the right edge. The flow's rail is supporting context each screen repeats where it
- * needs it, so it's hidden under 72rem; a `wide` screen's own rail follows it there, as its last
+ * at a task's readable measure, or from a wide page (`@4xl/onboarding`) its question and its answer
+ * side by side (`OnboardingColumn`); a `wide` screen fills the room. From 72rem the rail sits in the
+ * page's aside at the right edge. The flow's rail is supporting context each screen repeats where
+ * it needs it, so it's hidden under 72rem; a `wide` screen's own rail follows it there, as its last
  * sections.
  */
 export function OnboardingScreenPage({
@@ -82,12 +84,13 @@ export function OnboardingScreenPage({
       aside={rail}
       asideClassName={wide ? WIDE_ASIDE_CLASS : "hidden min-[72rem]:flex"}
       asideLabel={t("Getting started")}
-      // The column fills the screen's height, so a phone's next step can sit at its bottom.
-      className="flex-1 gap-4"
+      // The column fills the screen's height, so a phone's next step can sit at its bottom. It's
+      // what the screens measure to put a question and its answer side by side.
+      className="@container/onboarding flex-1 gap-4"
     >
       <OnboardingPageBar backHref={backHref} bar={bar} barEnd={barEnd} wide={wide} />
 
-      <Page className={cn("flex-1 gap-6", !wide && "max-w-column")}>
+      <Page className={cn("flex-1 gap-6", !wide && "max-w-column @4xl/onboarding:max-w-wide")}>
         {notice}
         {children}
       </Page>

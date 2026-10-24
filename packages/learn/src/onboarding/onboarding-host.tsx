@@ -70,8 +70,8 @@ export function useOnboardingSection(): boolean {
 
 /**
  * The flow's bar over its screens: back to the previous screen (`onBack`), where the learner is in
- * the questions in the middle (`middle`: the steps' dots, announced as "Step 2 of 4") and the
- * screen's way out on the right (`end`: starting over, or closing).
+ * the questions in the middle (`middle`: the steps' dots, announced as "Step 2 of 4", the one place
+ * the step shows) and the screen's own action on the right (`end`: Start over).
  */
 export type OnboardingBar = { end?: ReactNode; middle?: ReactNode; onBack?: () => void };
 
@@ -97,23 +97,16 @@ export function useOnboardingScreen(): OnboardingScreen {
   return use(OnboardingScreenContext);
 }
 
-/** Where the learner is in the goal's questions, for the screen's eyebrow ("ENEM · Step 2 of 4"). */
-type OnboardingProgress = { current: number; total: number };
+/**
+ * A screen whose answers are final, such as a placement or level test question: the flow's bar
+ * keeps no way back to the previous screen, only the way out, as on the flow's first screen.
+ */
+export function OnboardingNoBack({ children }: { children: ReactNode }) {
+  const screen = useOnboardingScreen();
 
-const OnboardingProgressContext = createContext<OnboardingProgress | null>(null);
-
-/** The question the learner is on, from the steps' flow, so each screen's eyebrow can say it. */
-export function OnboardingProgressProvider({
-  children,
-  progress,
-}: {
-  children: ReactNode;
-  progress: OnboardingProgress | null;
-}) {
-  return <OnboardingProgressContext value={progress}>{children}</OnboardingProgressContext>;
-}
-
-/** The question the learner is on, for the screen's eyebrow; null outside the steps. */
-export function useOnboardingProgress(): OnboardingProgress | null {
-  return use(OnboardingProgressContext);
+  return (
+    <OnboardingScreenContext value={{ ...screen, bar: { ...screen.bar, onBack: undefined } }}>
+      {children}
+    </OnboardingScreenContext>
+  );
 }

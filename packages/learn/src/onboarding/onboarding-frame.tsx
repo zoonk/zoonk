@@ -4,7 +4,6 @@ import { Button } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
-import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { PageEyebrow } from "../_components/page";
 import { toLabelCase } from "../_utils/label-case";
@@ -14,7 +13,6 @@ import {
   type OnboardingBar,
   OnboardingScreenProvider,
   useOnboardingHost,
-  useOnboardingProgress,
   useOnboardingSection,
 } from "./onboarding-host";
 import { OnboardingScreenPage, OnboardingSectionFrame } from "./onboarding-page";
@@ -68,11 +66,25 @@ export function OnboardingFrame({
 }
 
 /**
+ * A screen that asks something, on a wide page: what it asks (everything before its
+ * `OnboardingAnswer`, stacked on the left) and the answer beside it, each at the column's measure.
+ * Up to three things stack on the left (the learner's words, an icon, the heading); the answer
+ * spans them all, and the last row takes what's left, so the left side never spreads out to match
+ * a taller answer. A screen without an answer, such as a wait, keeps the column's measure.
+ */
+const TWO_PANES_CLASS = cn(
+  "@4xl/onboarding:max-w-column @4xl/onboarding:has-[>[data-slot=onboarding-answer]]:max-w-none",
+  "@4xl/onboarding:grid-cols-2 @4xl/onboarding:grid-rows-[auto_auto_auto_1fr] @4xl/onboarding:items-start @4xl/onboarding:gap-x-16 @4xl/onboarding:has-[>[data-slot=onboarding-answer]]:grid",
+  "@4xl/onboarding:*:col-start-1 @4xl/onboarding:*:data-[slot=onboarding-answer]:col-start-2 @4xl/onboarding:*:data-[slot=onboarding-answer]:row-span-full",
+);
+
+/**
  * The screen's content, from the top like any working screen: on phones its next step sits at the
  * bottom, from tablets it follows the content. On a page of the app's frame it draws the page
  * (`OnboardingScreenPage`), with the flow's rail in its aside from 72rem (`rail` puts the screen's
- * own there; `null`, none); a `wide` screen, such as the plan's reveal, fills the room. Under a
- * host's title it's a section at the page's edges; on a screen of its own, one centered column.
+ * own there; `null`, none); from a wide page a screen's answer (`OnboardingAnswer`) sits beside
+ * what it asks, and a `wide` screen, such as the plan's reveal, fills the room. Under a host's
+ * title it's a section at the page's edges; on a screen of its own, one centered column.
  */
 export function OnboardingColumn({
   children,
@@ -93,7 +105,11 @@ export function OnboardingColumn({
         wide={wide}
       >
         <section
-          className={cn("flex w-full min-w-0 flex-1 flex-col gap-6", className)}
+          className={cn(
+            "flex w-full min-w-0 flex-1 flex-col gap-6",
+            !wide && TWO_PANES_CLASS,
+            className,
+          )}
           data-slot="onboarding-column"
           {...props}
         >
@@ -124,6 +140,24 @@ export function OnboardingColumn({
     >
       <div className={cn("flex min-w-0 flex-1 flex-col gap-6", className)}>{children}</div>
     </main>
+  );
+}
+
+/**
+ * What the learner answers the screen with (its choices, field or options) and its next step,
+ * after what the screen asks. In the column it simply follows it; from a wide page it sits beside
+ * it, at the height of the title (see `OnboardingColumn`).
+ */
+export function OnboardingAnswer({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      className={cn(
+        "contents @4xl/onboarding:flex @4xl/onboarding:min-w-0 @4xl/onboarding:flex-col @4xl/onboarding:gap-6 @4xl/onboarding:pt-5",
+        className,
+      )}
+      data-slot="onboarding-answer"
+      {...props}
+    />
   );
 }
 
@@ -177,33 +211,31 @@ export function OnboardingDescription({
 
 /**
  * What the screen is about (the exam, the course or the subject) as the eyebrow above the question,
- * with where the learner is in the questions ("ENEM 2026 · Step 2 of 4"); on a page of the app's
- * frame it's the page's eyebrow. Naming it apart keeps each question natural in every language: an
- * exam's name inside a sentence would need an article that depends on the name ("sobre o ENEM",
- * "über den SAT").
+ * with where the learner is when the bar's dots can't say it (`position`: "ENEM 2026 · Question 3"
+ * in placement); on a page of the app's frame it's the page's eyebrow. Naming it apart keeps each
+ * question natural in every language: an exam's name inside a sentence would need an article that
+ * depends on the name ("sobre o ENEM", "über den SAT").
  */
 export function OnboardingSubject({
   children,
   className,
+  position,
 }: {
   children: string;
   className?: string;
+  position?: string;
 }) {
-  const t = useExtracted();
   const host = useOnboardingHost();
-  const progress = useOnboardingProgress();
-
-  const step =
-    progress &&
-    t("Step {current, number} of {total, number}", {
-      current: progress.current + 1,
-      total: progress.total,
-    });
 
   const content = (
     <>
       <span>{toLabelCase(children)}</span>
-      {step && <span>{` · ${step}`}</span>}
+      {position && (
+        <>
+          <span aria-hidden="true">{" · "}</span>
+          <span>{position}</span>
+        </>
+      )}
     </>
   );
 

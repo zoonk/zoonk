@@ -463,7 +463,6 @@ msgid "Open the source"
 msgstr "Abrir a fonte"
 
 #: src/_components/step-dots.tsx
-#: src/onboarding/onboarding-frame.tsx
 msgctxt "KPL2U8"
 msgid "Step {current, number} of {total, number}"
 msgstr "Passo {current, number} de {total, number}"
@@ -8736,14 +8735,14 @@ msgid "Your answer, in your own words"
 msgstr "Sua resposta, com as suas palavras"
 
 #: src/onboarding/steps/placement-question.tsx
-msgctxt "bbw_YT"
-msgid "Question {number, number}"
-msgstr "Pergunta {number, number}"
-
-#: src/onboarding/steps/placement-question.tsx
 msgctxt "76_ax9"
 msgid "Stop here and see my plan"
 msgstr "Parar por aqui e ver meu plano"
+
+#: src/onboarding/steps/placement-question.tsx
+msgctxt "bbw_YT"
+msgid "Question {number, number}"
+msgstr "Pergunta {number, number}"
 
 #: src/onboarding/steps/placement-screens.tsx
 msgctxt "L4poYE"

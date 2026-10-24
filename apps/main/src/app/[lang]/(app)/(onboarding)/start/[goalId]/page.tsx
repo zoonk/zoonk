@@ -14,6 +14,7 @@ import { getSession } from "@zoonk/core/users/session";
 import { getOnboarding } from "@zoonk/core/view-models/onboarding/get";
 import { getSyllabusView } from "@zoonk/core/view-models/syllabus/get";
 import {
+  OnboardingAnswer,
   OnboardingColumn,
   OnboardingDescription,
   OnboardingFrame,
@@ -55,7 +56,9 @@ async function StepsGate({ goalId }: { goalId: string }) {
             </OnboardingDescription>
           </OnboardingHeading>
 
-          <AuthGate next={`/start/${goalId}`} />
+          <OnboardingAnswer>
+            <AuthGate next={`/start/${goalId}`} />
+          </OnboardingAnswer>
         </OnboardingColumn>
       </OnboardingFrame>
     </OnboardingPage>

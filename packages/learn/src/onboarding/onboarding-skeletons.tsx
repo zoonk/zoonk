@@ -6,6 +6,7 @@ import { useExtracted } from "next-intl";
 import { SendingGoal } from "./entry/understanding-wait";
 import { OnboardingHowItWorks } from "./how-it-works";
 import {
+  OnboardingAnswer,
   OnboardingColumn,
   OnboardingDescription,
   OnboardingFrame,
@@ -13,6 +14,7 @@ import {
   OnboardingTitle,
 } from "./onboarding-frame";
 import { OnboardingRailProvider } from "./onboarding-rail";
+import { StartOverButtonSkeleton } from "./start-over-button";
 
 const EXAMPLE_ROWS = 5;
 
@@ -63,8 +65,8 @@ function HeadingSkeleton({ eyebrow = false }: { eyebrow?: boolean }) {
 
 /**
  * `/start` while it loads, in the shape of its first screen: its question and line in their own
- * words, the goal's field (the words over its buttons on a phone) and the examples, with how it
- * works in the page's aside from 72rem.
+ * words, the goal's field (the words over its buttons on a phone) and the examples (beside the
+ * question from a wide page), with how it works in the page's aside from 72rem.
  */
 export function StartEntrySkeleton() {
   const t = useExtracted();
@@ -80,12 +82,14 @@ export function StartEntrySkeleton() {
             </OnboardingDescription>
           </OnboardingHeading>
 
-          <Skeleton className="h-27 w-full rounded-xl sm:h-14" />
+          <OnboardingAnswer>
+            <Skeleton className="h-27 w-full rounded-xl sm:h-14" />
 
-          <div className="flex flex-col gap-1">
-            <Skeleton className="h-3 w-20" />
-            <RowsSkeleton rows={EXAMPLE_ROWS} twoLines />
-          </div>
+            <div className="flex flex-col gap-1">
+              <Skeleton className="h-3 w-20" />
+              <RowsSkeleton rows={EXAMPLE_ROWS} twoLines />
+            </div>
+          </OnboardingAnswer>
         </OnboardingColumn>
       </OnboardingFrame>
     </OnboardingRailProvider>
@@ -135,22 +139,24 @@ export function StartWaitSkeleton() {
 }
 
 /**
- * A goal's onboarding steps while they load: the bar (the steps' segments, the way out), the
- * question's eyebrow, title and line over its options, and the plan so far in the page's aside
- * from 72rem.
+ * A goal's onboarding steps while they load: the bar (the steps' segments, Start over), the
+ * question's eyebrow, title and line, its options under it (beside it from a wide page), and the
+ * plan so far in the page's aside from 72rem.
  */
 export function StepsSkeleton() {
   return (
     <OnboardingRailProvider rail={<RailSkeleton rows={3} />}>
       <OnboardingFrame
         bar={{
-          end: <Skeleton className="size-9 rounded-lg" />,
+          end: <StartOverButtonSkeleton />,
           middle: <Skeleton className="h-1 w-24 sm:w-32" />,
         }}
       >
         <OnboardingColumn aria-busy="true">
           <HeadingSkeleton eyebrow />
-          <RowsSkeleton rows={4} twoLines />
+          <OnboardingAnswer>
+            <RowsSkeleton rows={4} twoLines />
+          </OnboardingAnswer>
         </OnboardingColumn>
       </OnboardingFrame>
     </OnboardingRailProvider>

@@ -2,7 +2,7 @@
 
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
-import { OnboardingColumn } from "../onboarding-frame";
+import { OnboardingAnswer, OnboardingColumn, OnboardingHeading } from "../onboarding-frame";
 
 /**
  * An action inside a sentence of a step (the plan's reveal: "Use 1h 40 a day", "Use this date"): a
@@ -35,13 +35,22 @@ export function StepIcon({
   );
 }
 
-/** While a step reads where the learner was, so a refresh doesn't flash its start screen. */
+/**
+ * While a step reads where the learner was, so a refresh doesn't flash its start screen: what it
+ * asks, and its answer under it (beside it from a wide page).
+ */
 export function StepLoading() {
   return (
     <OnboardingColumn aria-busy="true">
-      <Skeleton className="h-9 w-3/4" />
-      <Skeleton className="h-5 w-full" />
-      <Skeleton className="h-5 w-2/3" />
+      <OnboardingHeading className="gap-3">
+        <Skeleton className="h-9 w-3/4" />
+        <Skeleton className="h-5 w-full" />
+        <Skeleton className="h-5 w-2/3" />
+      </OnboardingHeading>
+      <OnboardingAnswer>
+        <Skeleton className="h-14 w-full" />
+        <Skeleton className="h-11 w-full" />
+      </OnboardingAnswer>
     </OnboardingColumn>
   );
 }

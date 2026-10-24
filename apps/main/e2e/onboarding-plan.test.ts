@@ -48,6 +48,8 @@ test.describe("Placement and the plan", () => {
     // What it's about and how many so far: no total and no score.
     await expect(page.getByText("Question 1", { exact: true })).toBeVisible();
     await expect(page.getByText("Algebra", { exact: true })).toBeVisible();
+    // An answer is final, so a question has no way back to the screens before placement.
+    await expect(page.getByRole("button", { name: "Back" })).toHaveCount(0);
     await expectAccessibleScreen(page, "a placement question");
     const first = await page.getByRole("heading", { name: /^Question/u }).textContent();
     // An option's keycap shows the key that picks it.

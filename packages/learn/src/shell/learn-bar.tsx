@@ -77,10 +77,11 @@ const BAR_ICON_LINK_CLASS = cn(
 );
 
 /**
- * A page's way back: a 44px chevron under `lg`; from `lg` the breadcrumb's first step ("‹ Plan"),
- * its chevron pulled onto the page's edge, so the bar starts where the page's title does.
+ * A page's way back: a 44px chevron under `lg`; from `lg` the breadcrumb's first step ("‹ Plan",
+ * onboarding's "‹ Back"), its chevron pulled onto the page's edge, so the bar starts where the
+ * page's title does.
  */
-const CRUMB_LINK_CLASS =
+export const CRUMB_LINK_CLASS =
   "text-foreground hover:bg-muted lg:text-muted-foreground lg:hover:text-foreground focus-visible:ring-ring/50 hit-area relative inline-flex size-11 shrink-0 items-center justify-center rounded-lg outline-none transition-colors focus-visible:ring-[3px] [&_svg]:size-5 lg:-ml-1.5 lg:h-8 lg:w-auto lg:gap-0.5 lg:pr-1 lg:text-[0.8125rem] lg:hover:bg-transparent lg:[&_svg]:size-4";
 
 /**

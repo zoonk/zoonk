@@ -8,12 +8,14 @@ import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { CreateAccountLink } from "../../_components/create-account-link";
 import {
+  OnboardingAnswer,
   OnboardingColumn,
   OnboardingFooter,
   OnboardingHeading,
   OnboardingSecondaryButton,
   OnboardingTitle,
 } from "../../onboarding/onboarding-frame";
+import { OnboardingNoBack } from "../../onboarding/onboarding-host";
 import { PlacementQuestionScreen } from "../../onboarding/steps/placement-question";
 import { useNoSpeechMessage } from "../no-speech-message";
 import { ListeningMessage, SpeakingPrompt } from "./level-test-parts";
@@ -78,7 +80,10 @@ export function LevelTestQuestion({
   );
 }
 
-/** The one sentence out loud: record it, and it's checked word by word. */
+/**
+ * The one sentence out loud: record it, and it's checked word by word. Like the test's other
+ * questions, it has no way back.
+ */
 export function SpeakingStep({
   onSkip,
   onView,
@@ -97,43 +102,48 @@ export function SpeakingStep({
   const [isPending, startTransition] = useTransition();
 
   return (
-    <OnboardingColumn>
-      <OnboardingHeading>
-        <OnboardingTitle>{t("Say it out loud")}</OnboardingTitle>
-      </OnboardingHeading>
-      <SpeakingPrompt
-        error={error}
-        onRecorded={(audio) =>
-          startTransition(async () => {
-            const result = await speak(audio);
-            setNeedsAccount(result === "signUpRequired");
+    <OnboardingNoBack>
+      <OnboardingColumn>
+        <OnboardingHeading>
+          <OnboardingTitle>{t("Say it out loud")}</OnboardingTitle>
+        </OnboardingHeading>
 
-            if (result === "noSpeech") {
-              setError(noSpeech);
-              return;
+        <OnboardingAnswer>
+          <SpeakingPrompt
+            error={error}
+            onRecorded={(audio) =>
+              startTransition(async () => {
+                const result = await speak(audio);
+                setNeedsAccount(result === "signUpRequired");
+
+                if (result === "noSpeech") {
+                  setError(noSpeech);
+                  return;
+                }
+
+                if (result === "signUpRequired") {
+                  setError(t("Create your free account to continue."));
+                  return;
+                }
+
+                setError(result ? null : t("We couldn't check that. Try again."));
+
+                if (result) {
+                  onView(result);
+                }
+              })
             }
-
-            if (result === "signUpRequired") {
-              setError(t("Create your free account to continue."));
-              return;
-            }
-
-            setError(result ? null : t("We couldn't check that. Try again."));
-
-            if (result) {
-              onView(result);
-            }
-          })
-        }
-        pending={isPending}
-        sentence={sentence}
-      />
-      <OnboardingFooter>
-        {needsAccount && <CreateAccountLink />}
-        <OnboardingSecondaryButton disabled={isPending} onClick={onSkip}>
-          {t("Skip this part")}
-        </OnboardingSecondaryButton>
-      </OnboardingFooter>
-    </OnboardingColumn>
+            pending={isPending}
+            sentence={sentence}
+          />
+          <OnboardingFooter>
+            {needsAccount && <CreateAccountLink />}
+            <OnboardingSecondaryButton disabled={isPending} onClick={onSkip}>
+              {t("Skip this part")}
+            </OnboardingSecondaryButton>
+          </OnboardingFooter>
+        </OnboardingAnswer>
+      </OnboardingColumn>
+    </OnboardingNoBack>
   );
 }

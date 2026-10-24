@@ -14,11 +14,14 @@ import { useTrueFalseLabels } from "../../questions/use-true-false-labels";
 import { type Choice } from "../choice-list";
 import { type PlacementAnswer, type PlacementQuestion } from "../onboarding-actions";
 import {
+  OnboardingAnswer,
   OnboardingColumn,
   OnboardingFooter,
+  OnboardingHeading,
   OnboardingPrimaryButton,
   OnboardingSubject,
 } from "../onboarding-frame";
+import { OnboardingNoBack } from "../onboarding-host";
 
 /** A typed answer is a sentence or two; the grader looks for each key point. */
 const MAX_TYPED_ANSWER = 1000;
@@ -141,9 +144,76 @@ function TypedAnswerField({
 }
 
 /**
+ * A question's actions: "I don't know yet" beside Confirm, as a session's placement question has
+ * them, and stopping under them. A long "I don't know" puts Confirm on its own line rather than
+ * squeezing it.
+ */
+function PlacementActions({
+  canConfirm,
+  dontKnowLabel,
+  error,
+  onDontKnow,
+  onStop,
+  pending,
+}: {
+  canConfirm: boolean;
+  dontKnowLabel: string;
+  error: string | null;
+  onDontKnow: () => void;
+  onStop: () => void;
+  pending: boolean;
+}) {
+  const t = useExtracted();
+
+  return (
+    <OnboardingFooter>
+      {error && (
+        <p className="text-destructive-text text-center text-sm" role="alert">
+          {error}
+        </p>
+      )}
+
+      <div className="flex flex-wrap gap-2">
+        <Button
+          className="grow"
+          disabled={pending}
+          onClick={onDontKnow}
+          size="lg"
+          type="button"
+          variant="outline"
+        >
+          <CircleHelpIcon aria-hidden="true" />
+          {dontKnowLabel}
+        </Button>
+        <OnboardingPrimaryButton
+          className="grow-999 basis-40"
+          disabled={!canConfirm || pending}
+          type="submit"
+        >
+          {t("Confirm")}
+        </OnboardingPrimaryButton>
+      </div>
+
+      <Button
+        className="self-center"
+        disabled={pending}
+        onClick={onStop}
+        type="button"
+        variant="ghost"
+      >
+        {t("Stop here and see my plan")}
+      </Button>
+    </OnboardingFooter>
+  );
+}
+
+/**
  * One placement question: a choice, or a few words in the learner's own words to confirm a skill.
- * "I don't know yet" is a real answer: it moves to the basics instead of letting a guess skip
- * them. No score is shown.
+ * What it asks comes first (what it's about and its number, its support, the statement), then the
+ * answer, beside it from a wide page. "I don't know yet" is a real answer: it moves to the basics
+ * instead of letting a guess skip them, and sits beside Confirm as it does on a session's
+ * placement question. No score is shown, and an answer is final, so the bar has no way back:
+ * "Stop here" is the way on.
  */
 export function PlacementQuestionScreen({
   dontKnowLabel,
@@ -195,78 +265,59 @@ export function PlacementQuestionScreen({
   };
 
   return (
-    <OnboardingColumn>
-      <form
-        className="flex flex-1 flex-col gap-5"
-        onSubmit={(event) => {
-          event.preventDefault();
-          confirm();
-        }}
-      >
-        {subject && number !== undefined && (
-          <div className="flex items-start justify-between gap-3">
-            <OnboardingSubject>{subject}</OnboardingSubject>
-            <span className="text-muted-foreground shrink-0 font-mono text-xs tabular-nums">
-              {t("Question {number, number}", { number })}
-            </span>
-          </div>
-        )}
-
-        {media}
-
-        <ItemSupport
-          className="text-muted-foreground text-base leading-relaxed"
-          context={question.context}
-          image={question.image}
-          visual={question.visual}
-        />
-
-        <div className="text-[1.1875rem] leading-[1.35] font-[560] tracking-[-0.02em] text-pretty">
-          <ItemStem text={question.question} heading="h1" />
-        </div>
-
-        {question.format === "typed" ? (
-          <TypedAnswerField onChange={setValue} onSubmit={confirm} value={value ?? ""} />
-        ) : (
-          <PlacementOptions
-            choices={choices}
-            label={question.question}
-            onChange={setValue}
-            value={value}
-          />
-        )}
-
-        <Button
-          disabled={pending}
-          onClick={() => send({ dontKnow: true })}
-          size="lg"
-          type="button"
-          variant="outline"
-        >
-          <CircleHelpIcon aria-hidden="true" />
-          {dontKnowLabel ?? t("I don't know yet")}
-        </Button>
-
-        <OnboardingFooter>
-          {error && (
-            <p className="text-destructive-text text-center text-sm" role="alert">
-              {error}
-            </p>
+    <OnboardingNoBack>
+      <OnboardingColumn>
+        <OnboardingHeading className="gap-5">
+          {subject && number !== undefined && (
+            <OnboardingSubject position={t("Question {number, number}", { number })}>
+              {subject}
+            </OnboardingSubject>
           )}
-          <OnboardingPrimaryButton disabled={!canConfirm || pending} type="submit">
-            {t("Confirm")}
-          </OnboardingPrimaryButton>
-          <Button
-            className="self-center"
-            disabled={pending}
-            onClick={onStop}
-            type="button"
-            variant="ghost"
+
+          {media}
+
+          <ItemSupport
+            className="text-muted-foreground text-base leading-relaxed"
+            context={question.context}
+            image={question.image}
+            visual={question.visual}
+          />
+
+          <div className="text-[1.1875rem] leading-[1.35] font-[560] tracking-[-0.02em] text-pretty">
+            <ItemStem text={question.question} heading="h1" />
+          </div>
+        </OnboardingHeading>
+
+        <OnboardingAnswer>
+          <form
+            className="flex flex-1 flex-col gap-5"
+            onSubmit={(event) => {
+              event.preventDefault();
+              confirm();
+            }}
           >
-            {t("Stop here and see my plan")}
-          </Button>
-        </OnboardingFooter>
-      </form>
-    </OnboardingColumn>
+            {question.format === "typed" ? (
+              <TypedAnswerField onChange={setValue} onSubmit={confirm} value={value ?? ""} />
+            ) : (
+              <PlacementOptions
+                choices={choices}
+                label={question.question}
+                onChange={setValue}
+                value={value}
+              />
+            )}
+
+            <PlacementActions
+              canConfirm={canConfirm}
+              dontKnowLabel={dontKnowLabel ?? t("I don't know yet")}
+              error={error}
+              onDontKnow={() => send({ dontKnow: true })}
+              onStop={onStop}
+              pending={pending}
+            />
+          </form>
+        </OnboardingAnswer>
+      </OnboardingColumn>
+    </OnboardingNoBack>
   );
 }

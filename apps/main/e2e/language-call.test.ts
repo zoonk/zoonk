@@ -932,6 +932,8 @@ test.describe("Language practice in the plan", () => {
     await page.getByRole("button", { exact: true, name: "Start" }).click();
 
     await expect(page.getByText("A short reading text at A2.")).toBeVisible();
+    // A level test's answer is final, as placement's is: its questions have no way back.
+    await expect(page.getByRole("button", { name: "Back" })).toHaveCount(0);
     await page.getByRole("radio", { name: "Right A2" }).click();
     await page.getByRole("button", { name: "Confirm" }).click();
 
