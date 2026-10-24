@@ -2,6 +2,11 @@ import { normalizeString } from "@zoonk/utils/string";
 import { type ExistingPlanItem } from "./plan-items";
 import { type QueueUnit } from "./plan-units";
 
+/** Titles that differ only in case, accents or spacing name one topic. */
+export function getTitleKey(title: string): string {
+  return normalizeString(title);
+}
+
 /**
  * Courses and level bands sometimes each write a lesson on the same topic under the same title
  * ("Ohm's law" in a Physics course and in an ENEM course). A plan teaches it once: a lesson the
@@ -15,10 +20,10 @@ export function withoutRepeatedTitles({
   units: readonly QueueUnit[];
 }): QueueUnit[] {
   const keptTitles = new Set(
-    kept.flatMap((item) => (item.lessonId ? [normalizeString(item.titleSnapshot)] : [])),
+    kept.flatMap((item) => (item.lessonId ? [getTitleKey(item.titleSnapshot)] : [])),
   );
 
-  const titles = units.map((unit) => (unit.lessonId ? normalizeString(unit.title) : null));
+  const titles = units.map((unit) => (unit.lessonId ? getTitleKey(unit.title) : null));
 
   const firstIndex = titles.reduce(
     (first, title, index) => (title === null || first.has(title) ? first : first.set(title, index)),

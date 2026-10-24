@@ -2,7 +2,8 @@ import { type SelectedSummary } from "../_utils/selected-summary-contract";
 import { type BuildPlanInput, type BuiltPlan } from "./build-plan";
 import { getKeptBaseChoices, withBaseChoices } from "./chosen-bases";
 import { type PlannedItem } from "./plan-items";
-import { DEFAULT_LESSON_MINUTES, getStandInLessons } from "./plan-units";
+import { DEFAULT_LESSON_MINUTES, type PlannerLesson, getStandInLessons } from "./plan-units";
+import { getTitleKey } from "./repeated-titles";
 import { getSettledSkillIds } from "./settled-skills";
 
 /** One skill's chosen requirement (see `readRequirement`): its written lessons and stand-in part. */
@@ -14,17 +15,51 @@ export type SkillRequirement = {
 };
 
 /**
+ * The lesson that teaches each lesson's title in the plan: the plan teaches a title once (see
+ * `withoutRepeatedTitles`), so a lesson whose title another lesson it holds has is taught by that
+ * one, for its own skills too. A lesson the plan holds, or whose title it holds no lesson of,
+ * stands for itself.
+ */
+function toTaughtLesson({
+  built,
+  lessons,
+}: {
+  built: BuiltPlan;
+  lessons: readonly PlannerLesson[];
+}): (lesson: PlannerLesson) => PlannerLesson {
+  const held = new Set(built.items.flatMap((item) => (item.lessonId ? [item.lessonId] : [])));
+
+  const holders = new Map(
+    lessons
+      .filter((lesson) => held.has(lesson.lessonId))
+      .map((lesson) => [getTitleKey(lesson.title), lesson] as const),
+  );
+
+  return (lesson) =>
+    held.has(lesson.lessonId) ? lesson : (holders.get(getTitleKey(lesson.title)) ?? lesson);
+}
+
+/**
  * The chosen requirement before any time cut: each skill's written lessons as the learner's kept
  * base choices study it (`withBaseChoices`: a base's core, its quick lesson, or all of it), a
- * shared lesson counting for every skill it teaches, and its stand-in's lessons at their default
- * size.
+ * shared lesson counting for every skill it teaches, a repeated title as the lesson the plan
+ * teaches it with (see `toTaughtLesson`), and its stand-in's lessons at their default size.
  */
-export function readRequirement(input: BuildPlanInput): Map<string, SkillRequirement> {
+export function readRequirement({
+  built,
+  input,
+}: {
+  built: BuiltPlan;
+  input: BuildPlanInput;
+}): Map<string, SkillRequirement> {
   const chosen = withBaseChoices({ choices: getKeptBaseChoices(input), input });
   const standIns = getStandInLessons({ lessons: chosen.lessons, skills: chosen.graph.skills });
+  const taught = toTaughtLesson({ built, lessons: chosen.lessons });
 
   const linked = Map.groupBy(
-    chosen.lessons.flatMap((lesson) => lesson.skillIds.map((skillId) => ({ lesson, skillId }))),
+    chosen.lessons.flatMap((lesson) =>
+      lesson.skillIds.map((skillId) => ({ lesson: taught(lesson), skillId })),
+    ),
     (entry) => entry.skillId,
   );
 

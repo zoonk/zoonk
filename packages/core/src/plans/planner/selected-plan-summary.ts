@@ -47,7 +47,7 @@ export function getSelectedCoverage({
         deadline,
         examSubjects,
         input,
-        requirement: readRequirement(input),
+        requirement: readRequirement({ built, input }),
         settled: listSettled(input),
         targetDate: toIsoDate(targetDate),
       })
@@ -189,7 +189,7 @@ export function summarizeSelectedPlan({
   input: BuildPlanInput;
 }): SelectedSummary {
   const deadline = getDeadline({ built, input });
-  const requirementBySkill = readRequirement(input);
+  const requirementBySkill = readRequirement({ built, input });
   const settled = listSettled(input);
   const requirement = sumRequirement({ built, requirement: requirementBySkill, settled });
 
