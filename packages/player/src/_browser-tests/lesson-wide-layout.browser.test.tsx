@@ -1,6 +1,7 @@
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
+import { atViewport } from "../_test-utils/browser-viewport";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { buildLesson } from "../preview/preview-lesson";
 import { contentStep, explanationStep, inlineImage } from "../preview/preview-steps";
@@ -39,6 +40,27 @@ describe("lesson on a wide screen", () => {
 
     expect(box(close.element()).left).toBeLessThan(32);
     expect(window.innerWidth - box(menu.element()).right).toBeLessThan(32);
+  });
+
+  it("keeps the menu above the aside when a long title wraps over several lines", async () => {
+    await atViewport({ height: 768, width: 1024 }, async () => {
+      const lesson = buildLesson([explanationStep(playableStepContent.explanation)]);
+
+      renderLessonPlayer({
+        lesson: {
+          ...lesson,
+          title:
+            "A atuação da administração pública direta e indireta na organização dos serviços de saúde, da educação e da segurança, com os princípios que orientam cada uma delas",
+        },
+      });
+
+      const title = page.getByRole("heading", { level: 1 });
+      const menu = page.getByRole("button", { name: "Screen options" });
+
+      await expect.element(menu).toBeVisible();
+      expect(box(title.element()).height).toBeGreaterThan(50);
+      expect(box(menu.element()).bottom).toBeLessThanOrEqual(box(aside().element()).top);
+    });
   });
 
   it("keeps a question's situation right above it in the column, with the lesson beside it", async () => {

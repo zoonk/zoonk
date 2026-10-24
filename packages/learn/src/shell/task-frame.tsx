@@ -129,8 +129,9 @@ function TaskCloseLink({
 /**
  * What helps with a task beside it from `lg` (see `TaskAside`): its label and a quiet fact on its
  * header row, what only wide screens show there (`children`: the day's queue, the answer sheet,
- * the Trickster), and its foot level with the action bar (`footer`: Hand in). A question's own
- * text moves into it with `TaskAsideContent` instead.
+ * the Trickster), and its foot level with the action bar (`footer`: Hand in). What the column
+ * shows on a phone but sits beside it from `lg` (a passage several questions share, an essay's
+ * prompt) moves into it with `TaskAsideContent` instead.
  */
 export type TaskFrameAside = {
   children?: React.ReactNode;

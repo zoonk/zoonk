@@ -213,7 +213,7 @@ export function ConversationLive({
           </>
         ),
         label: t("Call goals and phrases"),
-        // Named in the aside's header row, level with the call's, as every task's aside is.
+        // Named in the aside's header row, as every task's aside is.
         meta: examTask
           ? undefined
           : `${countMetGoals(conversation, call.metLabels)}/${conversation.objectives.length}`,

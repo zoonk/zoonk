@@ -32,7 +32,8 @@ export function TaskHeaderBar({ className, ...props }: React.ComponentProps<"hea
 /**
  * A side of the row (close or the menu), as wide as the other one so the title stays centered over
  * the column. From `lg`, beside an aside, the menu's side moves over the aside, so the menu still
- * sits in the window's top-right corner.
+ * sits in the window's top-right corner, and both sides keep to the row's top, so a title wrapped
+ * over several lines never pushes the menu down over the aside.
  */
 export function TaskHeaderSide({
   align,
@@ -44,7 +45,7 @@ export function TaskHeaderSide({
   return (
     <div
       className={cn(
-        "flex min-w-9 flex-1 basis-0",
+        "flex min-w-9 flex-1 basis-0 lg:group-data-aside/task:self-start",
         align === "end"
           ? "justify-end lg:group-data-aside/task:translate-x-(--task-aside)"
           : "justify-start",
