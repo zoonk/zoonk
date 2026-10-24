@@ -28,8 +28,9 @@ function FitList({ id, items, title }: { id: string; items: string[]; title: str
 
 /**
  * Whether the course fits the visitor, in one card: what it makes them able to do and who it's
- * for, in the course's own words, so they can recognize themselves before starting. Nothing when
- * the course has neither.
+ * for, in the course's own words, so they can recognize themselves before starting. The two lists
+ * stack over a hairline, and sit side by side once the card is wide enough for two (a wide
+ * screen's room goes to columns, not to longer lines). Nothing when the course has neither.
  */
 export async function CourseFit({
   audience,
@@ -49,28 +50,28 @@ export async function CourseFit({
   }
 
   return (
-    <div
-      className={cn(
-        SURFACE_CLASS,
-        "divided-rows flex flex-col px-5 py-0.5 sm:px-7 sm:py-1.5",
-        className,
-      )}
-    >
-      {outcomes.length > 0 && (
-        <div className="py-5">
-          <FitList
-            id={`course-outcomes-${courseId}`}
-            items={outcomes}
-            title={t("What you'll be able to do")}
-          />
-        </div>
-      )}
+    <div className={cn(SURFACE_CLASS, "@container px-5 py-0.5 sm:px-7 sm:py-1.5", className)}>
+      <div className="divided-rows flex flex-col @3xl:grid @3xl:grid-cols-2 @3xl:gap-x-12 @3xl:[&>*+*]:border-t-0">
+        {outcomes.length > 0 && (
+          <div className="py-5">
+            <FitList
+              id={`course-outcomes-${courseId}`}
+              items={outcomes}
+              title={t("What you'll be able to do")}
+            />
+          </div>
+        )}
 
-      {audience.length > 0 && (
-        <div className="py-5">
-          <FitList id={`course-audience-${courseId}`} items={audience} title={t("Who it's for")} />
-        </div>
-      )}
+        {audience.length > 0 && (
+          <div className="py-5">
+            <FitList
+              id={`course-audience-${courseId}`}
+              items={audience}
+              title={t("Who it's for")}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 }

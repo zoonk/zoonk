@@ -116,10 +116,7 @@ async function ChapterClosing({
   const titleId = `chapter-closing-${chapterId}`;
 
   return (
-    <PageSection
-      aria-labelledby={titleId}
-      className="border-border max-w-wide gap-1 border-t pt-10"
-    >
+    <PageSection aria-labelledby={titleId} className="border-border gap-1 border-t pt-10">
       <h2
         className="text-[22px] leading-tight font-semibold tracking-[-0.02em] text-balance sm:text-2xl"
         id={titleId}
@@ -257,10 +254,10 @@ export async function LibraryChapterPage({
         {(hasLesson || hasAside) && (
           <div
             className={cn(
-              "max-w-wide grid grid-cols-1 gap-12",
+              "grid grid-cols-1 gap-12",
               hasLesson &&
                 hasAside &&
-                "lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-start lg:gap-8",
+                "lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-start lg:gap-8 2xl:grid-cols-[minmax(0,1fr)_minmax(0,40rem)]",
             )}
           >
             {hasLesson && <ChapterLessons params={params} route={route} />}

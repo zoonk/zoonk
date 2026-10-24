@@ -38,7 +38,7 @@ export async function ChapterLessons({
   const titleId = `chapter-lessons-${chapter.id}`;
 
   return (
-    <PageSection aria-labelledby={titleId} className="max-w-column">
+    <PageSection aria-labelledby={titleId}>
       <PageSectionHeader>
         <PageSectionTitle id={titleId}>{t("Lessons")}</PageSectionTitle>
         <PageSectionDetail>{facts.join(" · ")}</PageSectionDetail>

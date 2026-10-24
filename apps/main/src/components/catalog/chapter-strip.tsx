@@ -84,7 +84,7 @@ export async function ChapterStrip({
   });
 
   return (
-    <section aria-labelledby={stripId} className="max-w-wide flex min-w-0 flex-col gap-5">
+    <section aria-labelledby={stripId} className="flex min-w-0 flex-col gap-5">
       <div className="flex flex-col gap-3">
         <h2 className="text-label" id={stripId}>
           {t("Where this chapter sits in the course")}

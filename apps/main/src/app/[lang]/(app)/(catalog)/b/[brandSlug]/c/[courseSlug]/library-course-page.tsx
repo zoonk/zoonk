@@ -138,7 +138,8 @@ function getTryCandidates(outline: LibraryOutline): TryLessonCandidate[] {
 
 /**
  * A lesson to try beside whether the course fits: what it'll make the visitor able to do and who
- * it's for. Either one alone takes the whole row.
+ * it's for. From `2xl` the question keeps a question's measure (the column, as in the player) and
+ * the fit takes the rest of the row; either one alone takes the whole row.
  */
 function TryAndFit({
   courseId,
@@ -167,8 +168,10 @@ function TryAndFit({
   return (
     <div
       className={cn(
-        "max-w-wide grid grid-cols-1 gap-5",
-        tryLesson && hasFit && "lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-start",
+        "grid grid-cols-1 gap-5",
+        tryLesson &&
+          hasFit &&
+          "lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-start 2xl:grid-cols-[minmax(0,40rem)_minmax(0,1fr)]",
       )}
     >
       {tryLesson && <TryLesson id={tryId} locale={locale} origin={origin} pick={tryLesson} />}
@@ -183,10 +186,7 @@ async function CourseClosing({ courseId, pace }: { courseId: string; pace: numbe
   const titleId = `course-closing-${courseId}`;
 
   return (
-    <PageSection
-      aria-labelledby={titleId}
-      className="border-border max-w-wide gap-1 border-t pt-10"
-    >
+    <PageSection aria-labelledby={titleId} className="border-border gap-1 border-t pt-10">
       <h2
         className="text-[22px] leading-tight font-semibold tracking-[-0.02em] text-balance sm:text-2xl"
         id={titleId}

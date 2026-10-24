@@ -61,7 +61,7 @@ async function OutlinePlanLine({
  * title.
  */
 const OUTLINE_SECTION_CLASS =
-  "max-w-[760px] xl:grid xl:max-w-wide xl:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] xl:items-start xl:gap-x-12";
+  "max-w-[760px] xl:grid xl:max-w-none xl:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] xl:items-start xl:gap-x-12";
 
 /** The outline's words: in the section's own flow until `xl`, then its column beside the levels. */
 const OUTLINE_INTRO_CLASS = "contents xl:sticky xl:top-24 xl:flex xl:flex-col xl:gap-3";

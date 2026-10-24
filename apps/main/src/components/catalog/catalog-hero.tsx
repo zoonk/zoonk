@@ -6,11 +6,12 @@ import { getExtracted } from "next-intl/server";
  */
 
 /**
- * A course's first screen: the course on the left and its example plan beside it from `xl`, under
- * it before; the course alone when it has no plan to show.
+ * A course's first screen: the course on the left and its example plan beside it from `xl`, at the
+ * page's right edge however wide the screen, under it before; the course alone when it has no plan
+ * to show.
  */
 export const COURSE_HERO_CLASS =
-  "max-w-wide grid grid-cols-1 gap-9 xl:items-start xl:gap-12 xl:has-[[data-slot=course-plan]]:grid-cols-[minmax(0,1fr)_minmax(0,33rem)]";
+  "grid grid-cols-1 gap-9 xl:items-start xl:gap-12 xl:has-[[data-slot=course-plan]]:grid-cols-[minmax(0,1fr)_minmax(0,33rem)]";
 
 /** A course's name on its page: the app's page title, larger from `lg`, where the plan sits beside it. */
 export const COURSE_TITLE_CLASS = "text-title lg:text-[2.75rem] lg:leading-[1.04]";
