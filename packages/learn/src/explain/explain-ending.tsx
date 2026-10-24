@@ -19,17 +19,24 @@ import {
 import { SectionLabel } from "../_components/section-label";
 import { StatTile, StatTiles } from "../_components/stat-tile";
 import { SuccessEyebrow } from "../_components/success-eyebrow";
+import {
+  TASK_MAIN_ACTION_CLASS,
+  TaskActionBar,
+  TaskActions,
+  TaskBody,
+} from "../_components/task-layout";
 import { LearnLink } from "../learn-link";
 import { useQuickExplanationLabel } from "./quick-explanation-label";
 
 /** What the check earned, once the explanation is saved. */
 type ExplainResult = { answered: number; brainPower: number | null; correct: number };
 
-const DONE_CLASS = cn(buttonVariants({ size: "lg" }), "w-full font-[560]");
+const DONE_CLASS = cn(buttonVariants({ size: "xl" }), TASK_MAIN_ACTION_CLASS);
 
 /**
  * "Done" leaves the explanation, read to the end, once its reading is saved (`saving` until then):
- * that save is what finishes the explanation, so it leaves the goal switcher.
+ * that save is what finishes the explanation, so it leaves the goal switcher. It's the task's main
+ * action, in the action bar every task screen shares.
  */
 function DoneLink({ href, saving }: { href: string; saving: boolean }) {
   const t = useExtracted();
@@ -133,55 +140,59 @@ export function ExplainEnding({
   const { questions } = explanation.goFurther;
 
   return (
-    <div className="mx-auto flex w-full max-w-xl flex-1 flex-col gap-7 px-4 pt-8">
-      <div className="flex flex-col gap-2" role="status">
-        <SuccessEyebrow>{t("Now you know")}</SuccessEyebrow>
-        <h2 className="text-title">{explanation.title}</h2>
-        <ResultTiles result={result} />
-      </div>
+    <>
+      <TaskBody className="gap-7" data-slot="explain-ending">
+        <div className="flex flex-col gap-2" role="status">
+          <SuccessEyebrow>{t("Now you know")}</SuccessEyebrow>
+          <h2 className="text-title">{explanation.title}</h2>
+          <ResultTiles result={result} />
+        </div>
 
-      {explanation.recap.length > 0 && (
-        <section aria-labelledby="explain-recap" className="flex flex-col gap-1">
-          <SectionLabel id="explain-recap">
-            {t("In {count, plural, one {# sentence} other {# sentences}}", {
-              count: explanation.recap.length,
-            })}
-          </SectionLabel>
-          <ol className="flex flex-col [&>li+li]:border-t">
-            {explanation.recap.map((sentence, index) => (
-              <li className="flex gap-3 py-3" key={sentence}>
-                <span
-                  aria-hidden="true"
-                  className="text-faint w-4 shrink-0 font-mono text-xs leading-relaxed tabular-nums"
-                >
-                  {index + 1}
-                </span>
-                <span className="min-w-0 flex-1 text-sm leading-relaxed text-pretty">
-                  {sentence}
-                </span>
-              </li>
-            ))}
-          </ol>
-        </section>
-      )}
-
-      <section aria-labelledby="explain-go-further" className="flex flex-col gap-1">
-        <SectionLabel id="explain-go-further">{t("Want to go further?")}</SectionLabel>
-
-        {deeper}
-
-        {questions.length > 0 && (
-          <ListGroup>
-            {questions.map((question) => (
-              <QuestionRow href={questionHref(question)} key={question} question={question} />
-            ))}
-          </ListGroup>
+        {explanation.recap.length > 0 && (
+          <section aria-labelledby="explain-recap" className="flex flex-col gap-1">
+            <SectionLabel id="explain-recap">
+              {t("In {count, plural, one {# sentence} other {# sentences}}", {
+                count: explanation.recap.length,
+              })}
+            </SectionLabel>
+            <ol className="flex flex-col [&>li+li]:border-t">
+              {explanation.recap.map((sentence, index) => (
+                <li className="flex gap-3 py-3" key={sentence}>
+                  <span
+                    aria-hidden="true"
+                    className="text-faint w-4 shrink-0 font-mono text-xs leading-relaxed tabular-nums"
+                  >
+                    {index + 1}
+                  </span>
+                  <span className="min-w-0 flex-1 text-sm leading-relaxed text-pretty">
+                    {sentence}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </section>
         )}
-      </section>
 
-      <div className="bg-background border-border sticky bottom-0 -mx-4 mt-auto border-t px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-        <DoneLink href={doneHref} saving={saving} />
-      </div>
-    </div>
+        <section aria-labelledby="explain-go-further" className="flex flex-col gap-1">
+          <SectionLabel id="explain-go-further">{t("Want to go further?")}</SectionLabel>
+
+          {deeper}
+
+          {questions.length > 0 && (
+            <ListGroup>
+              {questions.map((question) => (
+                <QuestionRow href={questionHref(question)} key={question} question={question} />
+              ))}
+            </ListGroup>
+          )}
+        </section>
+      </TaskBody>
+
+      <TaskActionBar>
+        <TaskActions>
+          <DoneLink href={doneHref} saving={saving} />
+        </TaskActions>
+      </TaskActionBar>
+    </>
   );
 }
