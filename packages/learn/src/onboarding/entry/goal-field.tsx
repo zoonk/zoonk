@@ -66,10 +66,12 @@ export function useGoalFieldAction({
  * The panel onboarding's boxes are written in (the goal, a rewrite of it, a question about the
  * learner's material): the stronger line, which takes the app's field focus while its words have
  * focus (the line in the ring's color and a 3px ring around it, as `Input` draws), so someone on
- * a keyboard sees where they are. The buttons inside draw their own.
+ * a keyboard sees where they are. Words that took focus on their own as the page opened
+ * (`autoFocusOnPointer`) only darken the line, as the buddy's composer does, until they're left:
+ * the page's first sight is the question, not a ring. The buttons inside draw their own.
  */
 export const GOAL_PANEL_CLASS =
-  "bg-card inset-ring-input has-[textarea:focus-visible]:inset-ring-ring has-[textarea:focus-visible]:ring-ring/50 rounded-xl inset-ring transition-shadow has-[textarea:focus-visible]:ring-[3px] motion-reduce:transition-none";
+  "bg-card inset-ring-input has-[textarea[data-autofocused]:focus]:inset-ring-foreground/35 contrast-more:has-[textarea[data-autofocused]:focus]:inset-ring-ring has-[textarea:focus-visible:not([data-autofocused])]:inset-ring-ring has-[textarea:focus-visible:not([data-autofocused])]:ring-ring/50 rounded-xl inset-ring transition-shadow has-[textarea:focus-visible:not([data-autofocused])]:ring-[3px] motion-reduce:transition-none";
 
 /**
  * The one place a goal is written, on the landing and on `/start`: a panel with the stronger line,
@@ -124,6 +126,7 @@ export function GoalFieldLabel({
 export function GoalFieldText({
   autoFocusOnPointer = false,
   className,
+  onBlur,
   onKeyDown,
   ref,
   ...props
@@ -143,8 +146,11 @@ export function GoalFieldText({
   });
 
   useEffect(() => {
-    if (autoFocusOnPointer && globalThis.matchMedia("(pointer: fine)").matches) {
-      fieldRef.current?.focus();
+    const field = fieldRef.current;
+
+    if (field && autoFocusOnPointer && globalThis.matchMedia("(pointer: fine)").matches) {
+      field.dataset.autofocused = "";
+      field.focus();
     }
   }, [autoFocusOnPointer, fieldRef]);
 
@@ -157,6 +163,10 @@ export function GoalFieldText({
         className,
       )}
       enterKeyHint="go"
+      onBlur={(event) => {
+        onBlur?.(event);
+        delete event.currentTarget.dataset.autofocused;
+      }}
       onKeyDown={(event) => {
         onKeyDown?.(event);
 
