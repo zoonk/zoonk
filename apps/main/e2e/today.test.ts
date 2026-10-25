@@ -80,9 +80,11 @@ test("keeps a phase challenge waiting for today's lessons while a later lesson c
   await expect(row.getByRole("button")).toHaveCount(0);
   await expect(card.getByRole("button", { exact: true, name: "Phase challenge" })).toHaveCount(0);
 
-  // Picking a later learn block remains allowed even while the earlier review is unfinished.
-  await card
-    .getByRole("button", { exact: true, name: `${LESSON_TITLE}, counts toward a mission` })
+  // A later block opens first even while the earlier review is unfinished: the new lesson's mission
+  // opens where it's done (a later row of the queue does too, in session-day.test.ts).
+  await page
+    .getByRole("region", { name: "Today's missions" })
+    .getByRole("button", { name: /^Do a new lesson\b.*go to today's new lesson\b/u })
     .click();
 
   await expect(page).toHaveURL(new RegExp(`/learn/${lesson.id}\\?session=`, "u"));
@@ -233,24 +235,6 @@ test.describe("Today", () => {
 
     await expect(buddyMissions.getByRole("button", { name: /^Review\b/u })).toHaveCount(0);
 
-    await page.context().close();
-  });
-
-  // Ana's next day: "Quick review · 13 min" isn't quick.
-  test("opens a mission where it's done: the day's new lesson, even before its review", async ({
-    browser,
-  }) => {
-    const { lesson, user } = await createStudyDay();
-    const page = await openAs(browser, user);
-    await page.goto("/today");
-
-    const missions = page.getByRole("region", { name: "Today's missions" });
-
-    await missions
-      .getByRole("button", { name: /^Do a new lesson\b.*go to today's new lesson\b/u })
-      .click();
-
-    await expect(page).toHaveURL(new RegExp(`/learn/${lesson.id}\\?session=`, "u"));
     await page.context().close();
   });
 
