@@ -9,7 +9,7 @@ import { AWAITING_OUTLINES_VERSION, loadDayPlanVersion } from "./day-plan-versio
 import { withSessionAppendLock } from "./extra-blocks";
 import { loadSessionBuildInput } from "./load-build-inputs";
 import { planStudyDay } from "./plan-study-day";
-import { selectDayPlan } from "./selected-day-plan";
+import { type SelectedDayPlan, selectDayPlan } from "./selected-day-plan";
 import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-access";
 
 /**
@@ -101,13 +101,19 @@ function withoutKept({
   };
 }
 
-/** The new blocks and the exact plan facts they were built from. */
+/**
+ * The new blocks and the exact plan facts they were built from. With the day's `selection`, the
+ * rest of the day takes what the plan gives today, as Open does (see `pickDayLessons`); without
+ * it, the plan's next lessons fill the day's time.
+ */
 async function planRestOfDayWithPlan({
   day,
   kept,
+  selection,
 }: {
   day: DaySession;
   kept: readonly StudySessionBlock[];
+  selection?: SelectedDayPlan;
 }) {
   const { goal, session, timeZone } = day;
 
@@ -120,7 +126,7 @@ async function planRestOfDayWithPlan({
   };
 
   /** Share the queue's plan with its missions without a second read or a loading waterfall. */
-  const dayPlan = loadDayPlan(context);
+  const dayPlan = loadDayPlan({ ...context, selection });
   const keptLessonIds = new Set(kept.flatMap((block) => (block.lessonId ? [block.lessonId] : [])));
 
   const input = await loadSessionBuildInput({
@@ -128,6 +134,7 @@ async function planRestOfDayWithPlan({
     dayPlan,
     keepsBlocks: kept.length > 0,
     keptLessonIds,
+    selection,
   });
 
   // The day keeps the shape it opened with: a welcome back stays light, practice keeps its share.
@@ -191,15 +198,16 @@ async function replaceNotStartedBlocks({ day }: { day: DaySession }): Promise<Da
     userId: session.userId,
   };
 
-  // Only an unstarted refresh follows the same selected allocation as Open.
-  const selection =
-    session.status === "planned" && session.startedAt === null && kept.length === 0
-      ? await selectDayPlan(context)
-      : null;
+  // The day follows the same selected allocation as Open: an unstarted one is built again whole,
+  // and a started one's rest takes what the plan gives today. Filled with the plan's next lessons,
+  // Maya's started Saturday took five lessons from November to January for a rest day on Tuesdays.
+  const selection = (await selectDayPlan(context)) ?? undefined;
+  const unstarted = session.status === "planned" && session.startedAt === null && kept.length === 0;
 
-  const { blocks: planned, plan } = selection
-    ? await planStudyDay({ ...context, selection })
-    : await planRestOfDayWithPlan({ day, kept });
+  const { blocks: planned, plan } =
+    selection && unstarted
+      ? await planStudyDay({ ...context, selection })
+      : await planRestOfDayWithPlan({ day, kept, selection });
 
   const unchanged = hasSameContent({ anyOrder: kept.length > 0, planned, replaced });
 

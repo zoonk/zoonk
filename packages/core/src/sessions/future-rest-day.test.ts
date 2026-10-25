@@ -14,11 +14,15 @@ import { startStudyBlock } from "./start-study-block";
 
 /** Sunday after midnight in Maya's time zone, with the weekly challenge due today. */
 const NOW = new Date("2026-10-18T04:12:18Z");
+
+/** The Saturday before, late in Maya's evening: a lesson day the plan leaves time on. */
+const SATURDAY = new Date("2026-10-18T03:53:18Z");
+
 const REST_WEEKDAY = 2;
 const SESSION_INCLUDE = { blocks: { orderBy: { position: "asc" } } } as const;
 
 /** The persona's real planner-built week and an unstarted day opened through the learner's POST. */
-async function openPlannedSunday(persona: "buddy" | "hugeGoal" = "hugeGoal") {
+async function openPlannedDay(persona: "buddy" | "hugeGoal" = "hugeGoal") {
   const copyKey = crypto.randomUUID();
 
   const { goalId, userId } = await seedV2PersonaCopy({
@@ -54,9 +58,44 @@ async function openPlannedSunday(persona: "buddy" | "hugeGoal" = "hugeGoal") {
 
   expect(before.startedAt).toBeNull();
   expect(before.blocks.every((block) => block.status === "pending")).toBe(true);
-  expect(before.blocks.some((block) => block.kind === "checkpoint")).toBe(true);
 
   return { before, goal, plan, timeZone, userId };
+}
+
+/** Sunday's day (`openPlannedDay`), which holds the weekly challenge. */
+async function openPlannedSunday(persona: "buddy" | "hugeGoal" = "hugeGoal") {
+  const day = await openPlannedDay(persona);
+  expect(day.before.blocks.some((block) => block.kind === "checkpoint")).toBe(true);
+  return day;
+}
+
+/** The learner applies a proposal to rest on `REST_WEEKDAY`s, a day still ahead. */
+async function applyFutureRestDay({
+  goalId,
+  planId,
+  timeZone,
+}: {
+  goalId: string;
+  planId: string;
+  timeZone: string;
+}) {
+  const proposal = await planChangeFixture({
+    kind: "edited",
+    payload: {
+      operations: [{ kind: "setWeekdayMinutes", minutes: 0, weekdays: [REST_WEEKDAY] }],
+      source: "planEdit",
+    },
+    planId,
+    status: "proposed",
+  });
+
+  const changed = await decidePlanChange({
+    changeId: proposal.id,
+    goalId,
+    input: { status: "applied", timeZone },
+  });
+
+  return { changed, proposal };
 }
 
 describe("an unstarted day after a plan change", () => {
@@ -72,20 +111,10 @@ describe("an unstarted day after a plan change", () => {
   it("keeps today's blocks and writes no today-session update for a future rest day", async () => {
     const { before, goal, plan, timeZone } = await openPlannedSunday();
 
-    const proposal = await planChangeFixture({
-      kind: "edited",
-      payload: {
-        operations: [{ kind: "setWeekdayMinutes", minutes: 0, weekdays: [REST_WEEKDAY] }],
-        source: "planEdit",
-      },
-      planId: plan.id,
-      status: "proposed",
-    });
-
-    const changed = await decidePlanChange({
-      changeId: proposal.id,
+    const { changed, proposal } = await applyFutureRestDay({
       goalId: goal.id,
-      input: { status: "applied", timeZone },
+      planId: plan.id,
+      timeZone,
     });
 
     const after = await prisma.studySession.findUniqueOrThrow({
@@ -165,5 +194,45 @@ describe("an unstarted day after a plan change", () => {
 
     expect(after).toStrictEqual(started);
     expect(changed).toMatchObject({ change: { todaySession: "unchanged" }, status: "applied" });
+  });
+});
+
+describe("a started day after a plan change", () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(SATURDAY);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  // Maya started Saturday's session and gave Tuesdays a rest from her buddy's card: the rest of
+  // her day took five lessons the plan had from November to January, and the card said today's
+  // session followed the change. The rest of a started day takes what the plan gives today, as Open
+  // does, never the next lessons ahead.
+  it("keeps the rest of the day for a future rest day, without lessons from later days", async () => {
+    const { before, goal, plan, timeZone } = await openPlannedDay();
+    const first = before.blocks[0];
+
+    expect(before.blocks.length).toBeGreaterThan(1);
+    expect(before.plannedMinutes).toBeLessThan(goal.dailyMinutes);
+
+    await startStudyBlock({ blockId: first?.id ?? "", input: { timeZone }, sessionId: before.id });
+
+    const started = await prisma.studySession.findUniqueOrThrow({
+      include: SESSION_INCLUDE,
+      where: { id: before.id },
+    });
+
+    const { changed } = await applyFutureRestDay({ goalId: goal.id, planId: plan.id, timeZone });
+
+    const after = await prisma.studySession.findUniqueOrThrow({
+      include: SESSION_INCLUDE,
+      where: { id: before.id },
+    });
+
+    expect.soft(after).toStrictEqual(started);
+    expect.soft(changed).toMatchObject({ change: { todaySession: null }, status: "updated" });
   });
 });
