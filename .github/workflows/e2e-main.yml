@@ -80,14 +80,20 @@ jobs:
           echo "sources=${{ hashFiles('apps/main/**/*.ts', 'apps/main/**/*.tsx', 'apps/api/**/*.ts', 'packages/**/*.ts', 'packages/**/*.tsx') }}" >> "$GITHUB_OUTPUT"
 
       # Turbopack's build caches: a warm build compiles only what changed since the cache's run.
-      - name: Restore Next.js build caches
+      # The API's is its own entry, which the API's E2E job restores too (`e2e-api.yml`).
+      - name: Restore Main's build cache
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
-          path: |
-            apps/main/.next-e2e/cache
-            apps/api/.next-e2e/cache
-          key: nextjs-e2e-${{ steps.cache-keys.outputs.lockfile }}-${{ steps.cache-keys.outputs.sources }}
-          restore-keys: nextjs-e2e-${{ steps.cache-keys.outputs.lockfile }}-
+          path: apps/main/.next-e2e/cache
+          key: nextjs-e2e-main-${{ steps.cache-keys.outputs.lockfile }}-${{ steps.cache-keys.outputs.sources }}
+          restore-keys: nextjs-e2e-main-${{ steps.cache-keys.outputs.lockfile }}-
+
+      - name: Restore the API's build cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: apps/api/.next-e2e/cache
+          key: nextjs-e2e-api-${{ steps.cache-keys.outputs.lockfile }}-${{ steps.cache-keys.outputs.sources }}
+          restore-keys: nextjs-e2e-api-${{ steps.cache-keys.outputs.lockfile }}-
 
       - name: Setup pnpm and Node.js
         uses: pnpm/setup@a0881977cd8ea73b1ed212236c99ca10dcc80cf4 # v3.1.1
@@ -118,14 +124,19 @@ jobs:
         run: pnpm e2e:main ${{ matrix.args }} --workers=2
 
       # Saved whether the tests passed or not, so the next run's builds start warm.
-      - name: Save Next.js build caches
+      - name: Save Main's build cache
         if: always() && matrix.gates
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
-          path: |
-            apps/main/.next-e2e/cache
-            apps/api/.next-e2e/cache
-          key: nextjs-e2e-${{ steps.cache-keys.outputs.lockfile }}-${{ steps.cache-keys.outputs.sources }}
+          path: apps/main/.next-e2e/cache
+          key: nextjs-e2e-main-${{ steps.cache-keys.outputs.lockfile }}-${{ steps.cache-keys.outputs.sources }}
+
+      - name: Save the API's build cache
+        if: always() && matrix.gates
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: apps/api/.next-e2e/cache
+          key: nextjs-e2e-api-${{ steps.cache-keys.outputs.lockfile }}-${{ steps.cache-keys.outputs.sources }}
 
   # The one check branch protection requires: it passes only when every part passed.
   e2e-main:

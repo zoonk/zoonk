@@ -49,21 +49,18 @@ jobs:
         with:
           ref: ${{ inputs.ref || github.sha }}
 
-      # Hashed once, before dependencies are installed: a cache's post step evaluates its inputs
-      # again, and `hashFiles` would then walk every node_modules (about 20 s per cache).
-      - name: Compute cache keys
+      - name: Compute cache key
         id: cache-keys
-        run: |
-          echo "lockfile=${{ hashFiles('pnpm-lock.yaml') }}" >> "$GITHUB_OUTPUT"
-          echo "sources=${{ hashFiles('apps/api/**/*.ts', 'apps/api/**/*.tsx', 'packages/**/*.ts', 'packages/**/*.tsx') }}" >> "$GITHUB_OUTPUT"
+        run: echo "lockfile=${{ hashFiles('pnpm-lock.yaml') }}" >> "$GITHUB_OUTPUT"
 
-      # Turbopack's build cache: a warm build compiles only what changed since the cache's run.
-      - name: Cache Next.js build
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+      # Turbopack's build cache, as Main's E2E jobs last saved it (`e2e-main.yml`): a warm build
+      # compiles only what changed since.
+      - name: Restore the API's build cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: apps/api/.next-e2e/cache
-          key: nextjs-api-${{ steps.cache-keys.outputs.lockfile }}-${{ steps.cache-keys.outputs.sources }}
-          restore-keys: nextjs-api-${{ steps.cache-keys.outputs.lockfile }}-
+          key: nextjs-e2e-api-${{ steps.cache-keys.outputs.lockfile }}
+          restore-keys: nextjs-e2e-api-${{ steps.cache-keys.outputs.lockfile }}-
 
       - name: Setup pnpm and Node.js
         uses: pnpm/setup@a0881977cd8ea73b1ed212236c99ca10dcc80cf4 # v3.1.1
