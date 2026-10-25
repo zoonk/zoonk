@@ -9,6 +9,7 @@ import { DoneMark } from "../_components/status-mark";
 import { LearnLink } from "../learn-link";
 import { usePlanScreen } from "../plan/plan-context";
 import { usePhaseName } from "../plan/use-phase-name";
+import { CurrentPhaseMark } from "./current-phase-mark";
 import { type JourneyPathLinks } from "./journey-links";
 import { CheckpointRow, MockRow, usePhaseMocksLine } from "./journey-phase-events";
 import { useFinishDate, usePhaseWhen } from "./use-phase-when";
@@ -29,9 +30,7 @@ function PathMarker({ state }: { state: NodeState }) {
       className="relative z-10 flex h-11 w-4 shrink-0 items-center justify-center"
     >
       {state === "done" && <DoneMark />}
-      {state === "current" && (
-        <span className="bg-foreground ring-foreground/15 size-2.5 rounded-full ring-4" />
-      )}
+      {state === "current" && <CurrentPhaseMark />}
       {(state === "upcoming" || state === "unfinished" || state === "leftOut") && (
         <span className="ring-foreground/30 bg-background size-2.5 rounded-full ring-[1.5px] ring-inset" />
       )}

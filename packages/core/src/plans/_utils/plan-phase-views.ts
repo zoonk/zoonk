@@ -123,6 +123,8 @@ function buildChapters({
   outlinedUntil,
   skillAreas,
   taughtSkillIds,
+  today,
+  todayItemKeys,
   upNextItemId,
 }: {
   chapterTitles: ReadonlyMap<string, string>;
@@ -134,6 +136,8 @@ function buildChapters({
   outlinedUntil: string | null;
   skillAreas: SkillAreas;
   taughtSkillIds: ReadonlySet<string>;
+  today: Date | null;
+  todayItemKeys: ReadonlySet<string>;
   upNextItemId: string | null;
 }): PlanChapterView[] {
   const keys = [...new Set(lessons.map((item) => getGroupKey({ item, skillAreas })))];
@@ -151,7 +155,16 @@ function buildChapters({
 
     const todo = inGroup.filter((item) => isTodo(item.status));
     const writing = isWritingItem(first) && todo.length > 0;
-    const nextDate = getEarliestDate(todo);
+    // A saved session can teach a lesson before its plan date. The chapter is already being
+    // studied today, without moving the plan's dates or its challenge timing.
+    const nextDate = getEarliestDate(
+      todo.map((item) =>
+        today && todayItemKeys.has(getPlanReadItemKey(item))
+          ? { ...item, scheduledFor: today }
+          : item,
+      ),
+    );
+
     const far = isFarTopic({ nextDate, outlinedUntil, writing });
 
     return {
@@ -260,6 +273,7 @@ export function buildPhaseViews({
   targetDate = null,
   taughtSkillIds = new Set(),
   today = null,
+  todayItemKeys = new Set(),
   upNextItemId,
 }: {
   phaseChallengesRequired?: boolean;
@@ -286,6 +300,8 @@ export function buildPhaseViews({
   taughtSkillIds?: ReadonlySet<string>;
   /** The learner's day, for mocks past the date and when each challenge comes. */
   today?: Date | null;
+  /** Unfinished lessons in today's saved session, even when their plan dates are later. */
+  todayItemKeys?: ReadonlySet<string>;
   /** The plan item of the lesson up next (`findUpNextItem`): its chapter is the current one. */
   upNextItemId: string | null;
 }): PlanPhaseView[] {
@@ -329,6 +345,8 @@ export function buildPhaseViews({
         outlinedUntil,
         skillAreas,
         taughtSkillIds,
+        today,
+        todayItemKeys,
         upNextItemId,
       }),
       checkpoint: buildCheckpoint({ items: inPhase, locked: !challengesOpen, timings }),

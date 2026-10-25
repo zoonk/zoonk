@@ -1,13 +1,16 @@
 "use client";
 
 import { type PlanPhaseView } from "@zoonk/core/plans/view-contract";
+import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { StatusMark } from "../_components/status-mark";
+import { toLocalIsoDate } from "../_utils/iso-date";
 import { usePlanScreen } from "../plan/plan-context";
 import { useFormatPlanDate } from "../plan/plan-date-text";
 import { usePhaseName } from "../plan/use-phase-name";
 import { useShortDays } from "../plan/use-short-plan";
+import { CurrentPhaseMark } from "./current-phase-mark";
 import { useRoadmapFinish } from "./use-roadmap";
 
 /** A row's lessons or date at its end, in the mono face. */
@@ -90,24 +93,55 @@ export function PhaseUntil({ isLast, phase }: { isLast: boolean; phase: PlanPhas
 }
 
 /**
- * A phase's mark: done, the one the path opens (a dot), or ahead. One the plan moved past with
- * work set aside never gets a check.
+ * A phase's mark: a check once done, a dark dot for the current phase, a faint dot ahead,
+ * whatever the path opens. Work set aside never gets a check.
  */
-export function PhaseMark({ open, phase }: { open: boolean; phase: PlanPhaseView }) {
+export function PhaseMark({ phase }: { phase: PlanPhaseView }) {
   if (phase.state === "done") {
     return <StatusMark status="done" />;
   }
 
-  return <StatusMark status={open ? "next" : "todo"} />;
+  if (phase.state === "current") {
+    return (
+      <span aria-hidden="true" className="flex size-4 shrink-0 items-center justify-center">
+        <CurrentPhaseMark />
+      </span>
+    );
+  }
+
+  return <StatusMark status="todo" />;
 }
 
 /**
  * Under a phase's name, why it reads as it does: the current one, closed while the next chapter is
- * in a later phase, says what it still waits for (lessons still being written, or its challenge
- * and when once its lessons are done); one moved past with work set aside, how many of its
+ * in a later phase, says when its lessons continue, whether they're still being written, or when
+ * its challenge comes once its lessons are done; one moved past with work set aside, how many of its
  * lessons were left out (its lessons done are at the row's end), as the plan's end says it; one
  * the plan holds nothing of, that it isn't in the plan.
  */
+function PhaseResume({ phase }: { phase: PlanPhaseView }) {
+  const t = useExtracted();
+  const formatPlanDate = useFormatPlanDate();
+  const today = toLocalIsoDate(useMountTime());
+
+  const resumes = phase.chapters
+    .filter((chapter) => chapter.state !== "done")
+    .flatMap((chapter) => chapter.nextDate ?? [])
+    .toSorted()[0];
+
+  if (!resumes) {
+    return null;
+  }
+
+  return (
+    <span className="text-muted-foreground text-xs">
+      {resumes === today
+        ? t("Continues today")
+        : t("Continues {date}", { date: formatPlanDate(resumes) })}
+    </span>
+  );
+}
+
 function PhaseMeta({ open, phase }: { open: boolean; phase: PlanPhaseView }) {
   const t = useExtracted();
   const formatPlanDate = useFormatPlanDate();
@@ -138,15 +172,22 @@ function PhaseMeta({ open, phase }: { open: boolean; phase: PlanPhaseView }) {
     );
   }
 
-  // Shut while the plan studies another phase first, a phase with lessons still ahead waits for
-  // them too: its row's count says how many, and "Lessons done" would be false.
+  // The path opens at the next chapter, while this phase says when its remaining lessons resume.
   const lessonsLeft = phase.lessonsDone < phase.lessonsTotal;
 
-  if (phase.state !== "current" || open || (!writing && (!challengeDate || lessonsLeft))) {
+  if (phase.state !== "current" || open) {
     return null;
   }
 
+  if (!writing && lessonsLeft) {
+    return <PhaseResume phase={phase} />;
+  }
+
   const date = challengeDate && formatPlanDate(challengeDate);
+
+  if (!writing && !date) {
+    return null;
+  }
 
   return (
     <span className="text-muted-foreground text-xs">
@@ -176,12 +217,18 @@ function usePhaseState() {
  * own and named the row "Phase 3 , you are here". `byPlace` as in `PhaseName`.
  */
 export function usePhaseLabel() {
+  const t = useExtracted();
   const phaseName = usePhaseName();
   const phaseState = usePhaseState();
   const { plan } = usePlanScreen();
 
-  return (phase: PlanPhaseView, { byPlace = false } = {}): string => {
+  return (phase: PlanPhaseView, { byPlace = false, isNext = false } = {}): string => {
     const name = phaseName(phase, { byPlace, mocksRequirePlus: plan.access.mocksRequirePlus });
+
+    if (isNext && phase.state !== "current") {
+      return `${name}${t(", up next")}`;
+    }
+
     return `${name}${phaseState(phase)}`;
   };
 }

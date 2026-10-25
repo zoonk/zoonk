@@ -75,7 +75,7 @@ export const planPhaseSchema = z
       )
       .meta({
         description:
-          "Every phase's chapters in plan order; only the current phase has a `current` chapter",
+          "Every phase's chapters in plan order. At most one chapter in the plan is `current`: the one holding the next lesson, which can be in a later phase than the current one",
       }),
     checkpoint: z
       .object({

@@ -87,7 +87,7 @@ function ChapterLessons({ chapter }: { chapter: PlanChapterView }) {
 
 /**
  * One chapter of the path: done, the next one (highlighted with its dot: the page's obvious
- * target, `aria-current`) or ahead, with its lessons done at its end. Its page opens on tap. Topics
+ * target, labeled "Up next") or ahead, with its lessons done at its end. Its page opens on tap. Topics
  * after the weeks the plan writes ahead say what the plan knows ("About 12 lessons · from March")
  * and, unless chapters already teach them, open a sheet that can write their lessons now. A
  * chapter an earlier phase started says it goes deeper, so a later phase never reads as listing
@@ -225,10 +225,7 @@ export function JourneyChapters({
   return (
     <ul className="flex flex-col">
       {shown.map((chapter) => (
-        <li
-          aria-current={chapter.state === "current" ? "step" : undefined}
-          key={getChapterKey(chapter)}
-        >
+        <li key={getChapterKey(chapter)}>
           <ChapterRow chapter={chapter} isNext={chapter.state === "current"} links={links} />
         </li>
       ))}

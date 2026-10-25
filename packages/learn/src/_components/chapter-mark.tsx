@@ -30,7 +30,7 @@ export function ChapterMark({
   const { lessonsDone, lessonsTotal, state, writing } = chapter;
 
   if (isNext) {
-    return <StatusMark status="next" />;
+    return <StatusMark label={t("Up next")} status="next" />;
   }
 
   if (state !== "done" && !writing && lessonsDone > 0 && lessonsTotal > 0) {

@@ -107,9 +107,10 @@ export type PlanItemView = {
 };
 
 /**
- * A chapter of a phase: "Functions and graphs, 3 of 8 lessons". Only the current phase has a
- * `current` chapter (the one holding the next lesson). Skills whose lessons aren't written yet (the
- * plan writes them two weeks ahead) group under their course's title as one `writing` row until
+ * A chapter of a phase: "Functions and graphs, 3 of 8 lessons". At most one chapter in the plan is
+ * `current`: the one holding the next lesson, which can be in a later phase than the current one.
+ * Skills whose lessons aren't written yet (the plan writes them two weeks ahead) group under
+ * their course's title as one `writing` row until
  * their chapters exist; the goal's own course leaves it empty (apps say "More lessons"). One
  * starting after those weeks is `far`: apps say the lessons the plan teaches it (`plannedLessons`,
  * "about 12 lessons", or no count when unknown) and when it starts (`nextDate`), and open its

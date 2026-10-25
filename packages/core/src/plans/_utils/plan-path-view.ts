@@ -1,7 +1,7 @@
 import { buildPhaseViews } from "./plan-phase-views";
 import { type PlanReadContext, getPlanReadItemKey } from "./plan-read-projection";
 import { getOutlinedUntil } from "./stand-in-lessons";
-import { type TodayLearnBlock, findUpNextItem } from "./up-next-item";
+import { type TodayLearnBlock, findUpNextItem, listTodayItems } from "./up-next-item";
 
 type PathInput = Pick<
   Parameters<typeof buildPhaseViews>[0],
@@ -30,6 +30,9 @@ export function buildPlanPath({ context, todayBlocks, ...input }: PathInput) {
     studiesPastTarget: goal.kind === "exam" && state.settings.fullCourse,
     targetDate: goal.targetDate,
     today: context.today,
+    todayItemKeys: new Set(
+      listTodayItems({ items, todayBlocks }).map((item) => getPlanReadItemKey(item)),
+    ),
     upNextItemId: next ? getPlanReadItemKey(next) : null,
   });
 }

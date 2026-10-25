@@ -10,6 +10,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronDownIcon, ChevronRightIcon, FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
+import { ChapterMark } from "../_components/chapter-mark";
 import { LearnLink } from "../learn-link";
 import { usePlanScreen } from "../plan/plan-context";
 import { PlanDateText } from "../plan/plan-date-text";
@@ -40,19 +41,21 @@ function PhaseColumns({
   byPlace = false,
   ids,
   isLast,
+  nextChapter,
   open,
   phase,
 }: {
   byPlace?: boolean;
   ids: ReturnType<typeof usePhaseRowIds>;
   isLast: boolean;
+  nextChapter?: PlanChapterView;
   open: boolean;
   phase: PlanPhaseView;
 }) {
   return (
     <>
       <span className={PATH_ROW_LEADING_CLASS}>
-        <PhaseMark open={open} phase={phase} />
+        {nextChapter ? <ChapterMark chapter={nextChapter} isNext /> : <PhaseMark phase={phase} />}
       </span>
       <PhaseName byPlace={byPlace} metaId={ids.meta} open={open} phase={phase} />
       <span className="contents" id={ids.trailing}>
@@ -104,14 +107,20 @@ function ChapterPhase({
   const isNext = chapter.state === "current";
 
   return (
-    <li aria-current={open ? "step" : undefined} data-state={phase.state}>
+    <li aria-current={phase.state === "current" ? "step" : undefined} data-state={phase.state}>
       <LearnLink
         aria-describedby={ids.describedBy}
-        aria-label={label(phase)}
+        aria-label={label(phase, { isNext })}
         className={cn(PHASE_ROW_CLASS, "hover:bg-muted/70", isNext && "bg-muted hover:bg-muted")}
         href={links.chapter(chapter.chapterId)}
       >
-        <PhaseColumns ids={ids} isLast={isLast} open={open} phase={phase} />
+        <PhaseColumns
+          ids={ids}
+          isLast={isLast}
+          nextChapter={isNext ? chapter : undefined}
+          open={open}
+          phase={phase}
+        />
         <ChevronRightIcon aria-hidden="true" className="text-muted-foreground/60 size-4 shrink-0" />
       </LearnLink>
 
@@ -147,7 +156,7 @@ function ChaptersPhase({
 
   if (!hasContent) {
     return (
-      <li data-state={phase.state}>
+      <li aria-current={phase.state === "current" ? "step" : undefined} data-state={phase.state}>
         <div className={PHASE_ROW_CLASS}>
           {header}
           <span aria-hidden="true" className="size-4 shrink-0" />
@@ -157,7 +166,7 @@ function ChaptersPhase({
   }
 
   return (
-    <li aria-current={open ? "step" : undefined} data-state={phase.state}>
+    <li aria-current={phase.state === "current" ? "step" : undefined} data-state={phase.state}>
       {/* Opened or shut by hand, a phase keeps it until the plan goes on elsewhere: a change, a
           finished phase or another goal's plan opens the phase the plan goes on in. */}
       <Collapsible defaultOpen={open} key={open ? "open" : "shut"}>

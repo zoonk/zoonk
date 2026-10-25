@@ -42,6 +42,25 @@ function findNextItem<Item extends Omit<UpNextCandidate, "id">>(
   return chooseNextItem({ first, written, writtenIsLater: written !== first });
 }
 
+/** The unfinished plan lessons today's saved session holds, in its block order. */
+export function listTodayItems<Item extends UpNextCandidate>({
+  items,
+  todayBlocks,
+}: {
+  items: readonly Item[];
+  todayBlocks: readonly TodayLearnBlock[];
+}): Item[] {
+  const todo = items.filter((item) => LEARN_KINDS.has(item.kind) && item.status === "todo");
+
+  return todayBlocks.flatMap((block) => {
+    const item =
+      todo.find((candidate) => block.planItemId !== null && candidate.id === block.planItemId) ??
+      todo.find((candidate) => block.lessonId !== null && candidate.lessonId === block.lessonId);
+
+    return item ? [item] : [];
+  });
+}
+
 /**
  * The lesson the learner does next, the one every screen marks "Up next": Today's, the Plan's,
  * the map's and a chapter's page. It's the plan item of the lesson today's session opens next (the
@@ -57,15 +76,7 @@ export function findUpNextItem<Item extends UpNextCandidate>({
   todayBlocks: readonly TodayLearnBlock[];
 }): Item | undefined {
   const learn = items.filter((item) => LEARN_KINDS.has(item.kind));
-  const todo = learn.filter((item) => item.status === "todo");
-
-  const today = todayBlocks
-    .map(
-      (block) =>
-        todo.find((item) => block.planItemId !== null && item.id === block.planItemId) ??
-        todo.find((item) => block.lessonId !== null && item.lessonId === block.lessonId),
-    )
-    .find(Boolean);
+  const [today] = listTodayItems({ items: learn, todayBlocks });
 
   return today ?? findNextItem(learn);
 }

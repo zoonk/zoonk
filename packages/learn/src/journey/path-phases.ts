@@ -51,8 +51,8 @@ export function isNamedLikeAChapter({
 
 /**
  * The phase the path opens: the one holding the plan's next chapter, else the current one. A phase
- * waiting only for its challenge stays closed while the next chapter is in a later one, so the
- * highlight never points at two phases.
+ * with work left stays closed while the next chapter is in a later one, keeping the next action
+ * visible without changing which phase is current.
  */
 export function findOpenPhase(
   phases: readonly (Pick<PlanPhaseView, "index" | "state"> & {

@@ -35,6 +35,14 @@ msgid "Correct"
 msgstr "Correct"
 
 #: src/_components/chapter-mark.tsx
+#: src/_components/lesson-list.tsx
+#: src/session/next-stop.tsx
+#: src/session/study-moment.tsx
+msgctxt "nC-1Um"
+msgid "Up next"
+msgstr "Up next"
+
+#: src/_components/chapter-mark.tsx
 #: src/journey/journey-chapters.tsx
 #: src/journey/journey-path.tsx
 #: src/journey/next-on-path.tsx
@@ -328,13 +336,6 @@ msgstr "Your calls come back next month, or get Plus for higher call limits."
 msgctxt "BCSjVA"
 msgid "Your calls come back tomorrow, or get Plus for higher call limits."
 msgstr "Your calls come back tomorrow, or get Plus for higher call limits."
-
-#: src/_components/lesson-list.tsx
-#: src/session/next-stop.tsx
-#: src/session/study-moment.tsx
-msgctxt "nC-1Um"
-msgid "Up next"
-msgstr "Up next"
 
 #: src/_components/lesson-list.tsx
 msgctxt "2lvsw9"
@@ -4113,6 +4114,16 @@ msgid "Challenge left out"
 msgstr "Challenge left out"
 
 #: src/journey/path-phase-row.tsx
+msgctxt "M6MlNv"
+msgid "Continues today"
+msgstr "Continues today"
+
+#: src/journey/path-phase-row.tsx
+msgctxt "-DKe0Q"
+msgid "Continues {date}"
+msgstr "Continues {date}"
+
+#: src/journey/path-phase-row.tsx
 msgctxt "nzBtDK"
 msgid "More lessons on the way · challenge {date}"
 msgstr "More lessons on the way · challenge {date}"
@@ -4126,6 +4137,11 @@ msgstr "More lessons on the way"
 msgctxt "EUjjJB"
 msgid "Lessons done · challenge {date}"
 msgstr "Lessons done · challenge {date}"
+
+#: src/journey/path-phase-row.tsx
+msgctxt "0PNU6K"
+msgid ", up next"
+msgstr ", up next"
 
 #: src/journey/phase-details.tsx
 msgctxt "kxXCJy"

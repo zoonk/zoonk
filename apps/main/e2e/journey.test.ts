@@ -1489,7 +1489,7 @@ test.describe("Journey", () => {
     // The chapter up next is the path's highlighted row: no chip says it again.
     const row = journeyPath(page).getByRole("link", { name: /Percentages/u });
     await expect(row).toHaveAttribute("href", `/content/chapters/${chapter.id}`);
-    await expect(row.locator("xpath=ancestor::li[1]")).toHaveAttribute("aria-current", "step");
+    await expect(row.getByRole("img", { exact: true, name: "Up next" })).toBeVisible();
     await expect(row).not.toContainText("Up next");
 
     await hero.click();
