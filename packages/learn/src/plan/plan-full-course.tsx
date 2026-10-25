@@ -17,9 +17,10 @@ import { usePlanChange } from "./use-plan-change";
  * doesn't cover everything by then (`fits`, exact) or while it's on. `endDate` is when they'd
  * finish it all, only when that's the plan's own end: an exam already studying everything whose
  * plan holds all of it (a few minutes a day can leave some out even after the exam), or a goal
- * whose plan covers everything. Otherwise working it out would plan the goal again for a page, so
- * the date shows once the learner switches it on (the applied change says it). Null when there's
- * nothing to choose: no date, a quick explanation, or an exam whose time covers it all.
+ * whose plan covers everything. Otherwise working it out would plan the goal again, which a page
+ * never does: the "Study everything" sheet previews it once opened, and the editor's switch says it
+ * once on. Null when there's nothing to choose: no date, a quick explanation, or an exam whose time
+ * covers it all.
  */
 export function useFullCourse() {
   const { goal, plan } = usePlanScreen();

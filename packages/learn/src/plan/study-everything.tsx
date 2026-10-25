@@ -12,25 +12,62 @@ import {
 } from "@zoonk/ui/components/drawer";
 import { LibraryBigIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { createContext, use, useState } from "react";
+import { createContext, use, useEffect, useEffectEvent, useState } from "react";
 import { PlanChangeApplied } from "./plan-change-applied";
-import { type PlanChangeOutcome } from "./plan-context";
+import { type PlanChangeOutcome, usePlanScreen } from "./plan-context";
 import { PendingLabel } from "./plan-coverage";
 import { PlanFailedMessage } from "./plan-failed-message";
 import { type FullCourse, useFullCourse, useFullCourseText } from "./plan-full-course";
+import { currentPlanPreview } from "./plan-preview-state";
 import { usePlanChange } from "./use-plan-change";
+import { usePlanPreview, usePreviewBase } from "./use-plan-preview";
+
+/**
+ * When studying everything would end, before the learner chooses it: the plan's own end when it's
+ * that already (see `useFullCourse`), or else the end of the change previewed, planned as choosing
+ * it plans it, asked once the sheet shows (`asking`, until the learner chooses) and again if the
+ * plan changes meanwhile. `checking` while it's on its way; a failed check leaves only what's sure.
+ */
+function useFullCourseEnd({ asking, course }: { asking: boolean; course: FullCourse }) {
+  const { plan } = usePlanScreen();
+  const base = usePreviewBase();
+  const { preview, requestPreview } = usePlanPreview();
+  const operations = course.operations(true);
+  const ask = asking && course.endDate === null;
+  const state = currentPlanPreview({ operations, plan, state: preview });
+
+  const load = useEffectEvent((revision: object) => {
+    if (revision === base) {
+      return requestPreview(operations);
+    }
+  });
+
+  useEffect(() => {
+    if (ask) {
+      void load(base);
+    }
+  }, [ask, base]);
+
+  return {
+    checking: ask && (state.status === "idle" || state.status === "loading"),
+    endDate:
+      course.endDate ??
+      (state.status === "ready" ? (state.preview.effect?.endDateAfter ?? null) : null),
+  };
+}
 
 /**
  * The sheet's body: what studying everything changes before they choose it, with when they'd
- * finish when that's the plan's own end (see `useFullCourse`), then what their choice did, with
- * Undo, which says when they finish.
+ * finish (see `useFullCourseEnd`), then what their choice did, with Undo, which says when they
+ * finish.
  */
 function FullCourseChoice({ course, onDone }: { course: FullCourse; onDone: () => void }) {
   const t = useExtracted();
   const text = useFullCourseText();
-  const finish = text.finish(course);
   const { change, failed, isPending } = usePlanChange();
   const [outcome, setOutcome] = useState<PlanChangeOutcome | null>(null);
+  const end = useFullCourseEnd({ asking: !isPending && outcome === null, course });
+  const finish = text.finish({ ...course, endDate: end.endDate });
 
   if (outcome?.status === "applied" && outcome.change) {
     return <PlanChangeApplied change={outcome.change} icon={LibraryBigIcon} onDone={onDone} />;
@@ -51,6 +88,11 @@ function FullCourseChoice({ course, onDone }: { course: FullCourse; onDone: () =
     <>
       <DrawerContent className="flex flex-col gap-3 pt-2">
         {finish && <p className="font-medium text-pretty">{finish}</p>}
+        {end.checking && (
+          <p className="text-muted-foreground text-sm" role="status">
+            {t("Checking what changes…")}
+          </p>
+        )}
         <p className="text-muted-foreground text-sm text-pretty">{text.rule(course)}</p>
       </DrawerContent>
 

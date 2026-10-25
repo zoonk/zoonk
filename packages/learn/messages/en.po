@@ -9783,6 +9783,7 @@ msgstr "{count, plural, one {# topic leaves: {topics}.} other {# topics leave: {
 
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-offer-preview.tsx
+#: src/plan/study-everything.tsx
 msgctxt "g_RDWS"
 msgid "Checking what changes…"
 msgstr "Checking what changes…"

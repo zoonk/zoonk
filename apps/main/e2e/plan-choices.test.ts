@@ -215,14 +215,16 @@ test.describe("Plan choices", () => {
     await expect(editor).toBeHidden();
 
     // Studying everything keeps the exam's date: its sheet, one of the Plan suggestion's other
-    // options, says what it does before she chooses it. When everything would end takes planning
-    // it, so the change says that once she chooses.
+    // options, says what it does before she chooses it, when she'd finish everything included.
     const suggestion = page.locator('[data-slot="suggestion-panel"]').filter({ visible: true });
     await suggestion.getByRole("button", { name: "Other options" }).click();
     await page.getByRole("menuitem", { name: "Study everything, even after the exam" }).click();
     const everything = page.getByRole("dialog", { name: "Study everything" });
     await expect(everything).toContainText("Every topic, even after the exam, at your own pace.");
-    await expect(everything.getByText(/you finish in /u)).toHaveCount(0);
+
+    await expect(
+      everything.getByText(/^At .+ a day, you finish in .+, after the exam on .+\.$/u),
+    ).toBeVisible({ timeout: REPLAN_TIMEOUT_MS });
 
     await expectAccessibleScreen(page, "the study everything sheet");
 
