@@ -100,4 +100,14 @@ describe(scaleWeekdayMinutes, () => {
       }),
     ).toStrictEqual([0, 60, 60, 60, 60, 60, 120]);
   });
+
+  it("never scales a day past a whole day, which the saved settings can't hold", () => {
+    expect(
+      scaleWeekdayMinutes({
+        dailyMinutes: 1070,
+        from: 30,
+        weekdayMinutes: [0, 30, 30, 30, 30, 60, 0],
+      }),
+    ).toStrictEqual([0, 1070, 1070, 1070, 1070, 1440, 0]);
+  });
 });

@@ -1,4 +1,5 @@
 import { MS_PER_DAY, parseLocalDate } from "@zoonk/utils/date";
+import { MAX_DAILY_MINUTES } from "../daily-minutes";
 import { DAYS_PER_WEEK, type LightWeek, type PlanSettings } from "./plan-state";
 import { getWeekShape, isWeekend } from "./week-shape";
 
@@ -121,7 +122,9 @@ export function getStudyMinutes({
  * Changes the daily time and keeps the week's shape: rest days stay rest days and the weekdays move
  * in proportion, a lighter day staying lighter. A weekend with its own time keeps it (see
  * `getWeekShape`): the learner gave it apart from the daily time, as onboarding and the plan
- * editor ask it, so "an hour a day" changes the weekdays and leaves their Saturday as it was.
+ * editor ask it, so "an hour a day" changes the weekdays and leaves their Saturday as it was. A
+ * day never goes past a whole day, the most the saved settings hold: a Friday twice the others at
+ * 30 minutes takes 1440 at 1070 a day, not 2140, so the plan a time is asked about is the one saved.
  */
 export function scaleWeekdayMinutes({
   dailyMinutes,
@@ -143,7 +146,8 @@ export function scaleWeekdayMinutes({
       return minutes;
     }
 
-    return Math.max(1, Math.round((minutes * dailyMinutes) / Math.max(from, 1)));
+    const scaled = Math.round((minutes * dailyMinutes) / Math.max(from, 1));
+    return Math.min(MAX_DAILY_MINUTES, Math.max(1, scaled));
   });
 }
 
