@@ -207,10 +207,9 @@ export function useStudyEverythingFromSuggestion(): (course: FullCourse) => void
 }
 
 /**
- * "Study everything", next to more time a day and choosing where to focus, for a plan whose time
- * doesn't cover its goal by its date: one small button on the notice's line of answers, opening
- * the sheet that says what studying everything at their time changes (an exam's goes on after the
- * exam, which keeps its date) before they choose it.
+ * "Study everything" under a goal's deadline in the plan editor: one small secondary button, as
+ * the editor's other actions, opening the sheet that says what studying everything at their time
+ * changes before they choose it.
  */
 export function StudyEverything({ course }: { course: FullCourse }) {
   const t = useExtracted();
@@ -222,7 +221,7 @@ export function StudyEverything({ course }: { course: FullCourse }) {
       onClick={() => open(course)}
       size="sm"
       type="button"
-      variant="ghost"
+      variant="outline"
     >
       {t("Study everything")}
     </Button>
