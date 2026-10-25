@@ -254,26 +254,19 @@ test.describe("Exam date", () => {
       await expect(date).toHaveValue(ownDay);
       await expect(offer).toBeVisible();
 
-      // One tap takes the notice's day.
+      // One tap takes the notice's day. Saving a date plans again, and the offer goes with the new
+      // plan, after the date is saved (see `plan-timeouts.ts`).
       await editor.getByRole("button", { name: "Use this date" }).click();
-      // Saving a date plans again (see `plan-timeouts.ts`).
-      await expect
-        .poll(() => readTargetDate(user.goalId), { timeout: REPLAN_TIMEOUT_MS })
-        .toBe(noticeDay);
-
-      await expect(offer).toBeHidden();
+      await expect(offer).toBeHidden({ timeout: REPLAN_TIMEOUT_MS });
       await expect(date).toHaveValue(noticeDay);
+      await expect.poll(() => readTargetDate(user.goalId)).toBe(noticeDay);
 
       // Any full date of her own, saved when she says so; the notice's day is offered again.
       await date.fill(laterDay);
       await editor.getByRole("button", { name: "Save" }).click();
-
-      await expect
-        .poll(() => readTargetDate(user.goalId), { timeout: REPLAN_TIMEOUT_MS })
-        .toBe(laterDay);
-
-      await expect(offer).toBeVisible();
+      await expect(offer).toBeVisible({ timeout: REPLAN_TIMEOUT_MS });
       await expect(editor.getByRole("button", { name: "Save" })).toBeHidden();
+      await expect.poll(() => readTargetDate(user.goalId)).toBe(laterDay);
     });
   });
 
