@@ -485,25 +485,33 @@ test.describe("Find the time that covers everything", () => {
   });
 
   test("on a phone, Find's answer shows above the editor's latest change", async ({ browser }) => {
+    // It plans again twice: at her time, then at her closer date.
+    test.setTimeout(test.info().timeout + REPLAN_TIMEOUT_MS);
+
     await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
       await page.setViewportSize(PHONE);
-      const { editor, isoDate } = await shortOnTime(page, user.goalId);
+      const { editor } = await shortOnTime(page, user.goalId);
 
-      await routeTimeToCover(page, {
-        goalId: user.goalId,
-        time: { recommendedMinutes: 330, targetDate: isoDate },
+      // A closer date leaves lessons and topics out: its note, pinned at the sheet's foot, takes
+      // much of a phone's height.
+      const closer = toIsoDay(new Date(toUTCMidnight(new Date()).getTime() + 30 * MS_PER_DAY));
+      await editor.getByLabel("Exam date").fill(closer);
+      await editor.getByRole("button", { name: "Save" }).click();
+
+      await expect(editor.getByRole("status").filter({ hasText: /^Date moved to /u })).toBeVisible({
+        timeout: REPLAN_TIMEOUT_MS,
       });
 
+      await routeTimeToCover(page, { goalId: user.goalId, time: { targetDate: closer } });
       await editor.getByRole("button", { name: FIND }).click();
 
-      // The chip it found takes focus, and the answer under the chips shows too, though the
-      // change pinned at the sheet's foot takes much of a phone's height.
+      // No time covers it: the keyboard goes to studying everything, and the answer shows with it.
       await expect(
-        editor.getByRole("radio", { name: /^5 hr 30 min\s*Covers everything$/u }),
+        editor.getByRole("switch", { name: "Study everything, even after the exam" }),
       ).toBeFocused();
 
       await expect(
-        editor.getByText(/^5\shr 30\smin a day covers everything in depth by .+\.$/u),
+        editor.getByText(/^No amount of time a day covers everything in depth by .+\.$/u),
       ).toBeInViewport();
     });
   });
