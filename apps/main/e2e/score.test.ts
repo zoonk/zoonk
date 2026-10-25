@@ -2,6 +2,8 @@ import { instant } from "@next/playwright";
 import { expect, test } from "./fixtures";
 import {
   AT_ONCE_MS,
+  codeArrivedBy,
+  followCodeWith,
   followRequests,
   markPaintedFrames,
   paintedFramesSince,
@@ -17,11 +19,16 @@ const TREND = 'figure[aria-label="Weekly score trend"]';
 /** The trend's box, and the trend drawn in it. */
 const TREND_FRAMES = { drawn: `${TREND}:has(svg)`, empty: `${TREND}:not(:has(svg))` };
 
+/** What the trend's code has in it: the class of the svg it draws. */
+const TREND_CODE = "recharts-surface";
+
 /**
- * How long a hydrated page may take to draw its trend: a frame or two, far under the 300 ms React
- * holds a Suspense fallback once it's shown.
+ * How many frames a page may paint without its trend once its box has hydrated and its code is in.
+ * The trend renders, takes its box's size and draws: a frame or two, three on a device eight times
+ * slower. A Suspense fallback React holds for 300 ms paints more while it waits: 9 to 18 frames,
+ * still 5 on a device four times slower. Milliseconds can't tell them apart on a busy machine.
  */
-const DRAWN_WITH_PAGE_MS = 200;
+const DRAWN_WITHIN_FRAMES = 4;
 
 test.describe("Score", () => {
   test("shows one weighted 90-day score with its answers on tiles, the weekly trend and one line", async ({
@@ -90,6 +97,7 @@ test.describe("Score", () => {
       await watchPaintedFrames(context, TREND_FRAMES);
       // oxlint-disable-next-line no-await-in-loop
       const page = await context.newPage();
+      const trendCode = followCodeWith({ marker: TREND_CODE, page });
 
       try {
         // oxlint-disable-next-line no-await-in-loop
@@ -99,16 +107,28 @@ test.describe("Score", () => {
 
         // oxlint-disable-next-line no-await-in-loop
         const frames = await paintedFramesSince(page);
-        const hydrated = frames.find((frame) => frame.seen.empty === "hydrated");
         const drawn = frames.find((frame) => frame.seen.drawn !== "none");
-
-        // Its code was on the way while the page loaded: once the page hydrates, the trend is drawn.
+        // Drawn as it hydrated, its box never shows hydrated and empty.
+        const hydrated = frames.find((frame) => frame.seen.empty === "hydrated") ?? drawn;
         expect(drawn, `${path} at ${width}px`).toBeDefined();
 
-        expect(
-          (drawn?.at ?? 0) - (hydrated?.at ?? drawn?.at ?? 0),
-          `${path} at ${width}px`,
-        ).toBeLessThanOrEqual(DRAWN_WITH_PAGE_MS);
+        // Its code was on the way while the page loaded, before its box hydrated...
+        // oxlint-disable-next-line no-await-in-loop
+        const requestedAt = await trendCode.requestedAt();
+        expect(requestedAt, `${path} at ${width}px`).toBeLessThan(hydrated?.at ?? 0);
+
+        // ...and once the box has hydrated with the page's code in, the trend is drawn.
+        // oxlint-disable-next-line no-await-in-loop
+        const codeIn = await codeArrivedBy({ at: hydrated?.at ?? 0, page });
+        const since = Math.max(hydrated?.at ?? 0, codeIn);
+
+        const withoutTrend = frames.filter(
+          (frame) => frame.at > since && frame.seen.drawn === "none",
+        );
+
+        expect(withoutTrend.length, `${path} at ${width}px`).toBeLessThanOrEqual(
+          DRAWN_WITHIN_FRAMES,
+        );
       } finally {
         // oxlint-disable-next-line no-await-in-loop
         await context.close();

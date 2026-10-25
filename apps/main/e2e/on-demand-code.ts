@@ -91,6 +91,9 @@ export async function slowCodeFromNow(page: Page) {
   });
 }
 
+/** The page's scripts. */
+const CODE_URL = /\/_next\/static\/chunks\/[^?]+\.js(?:\?.*)?$/u;
+
 /**
  * A slow device: from now on, the script holding `marker` (code only that part of the page needs)
  * waits to arrive until `release()` (or the page closes), while the page's other code and its
@@ -102,7 +105,7 @@ export async function holdCodeWith({ marker, page }: { marker: string; page: Pag
   const release = () => code.resolve(null);
   page.once("close", release);
 
-  await page.route(/\/_next\/static\/chunks\/[^?]+\.js(?:\?.*)?$/u, async (route) => {
+  await page.route(CODE_URL, async (route) => {
     const response = await route.fetch();
     const body = await response.text();
 
@@ -115,6 +118,72 @@ export async function holdCodeWith({ marker, page }: { marker: string; page: Pag
   });
 
   return { held: () => held, release };
+}
+
+/**
+ * Notes the scripts holding `marker` the page loads from now on: `requestedAt()` says when it first
+ * asked for one, on the page's clock (`performance.now()`, as `PaintedFrame.at`), Infinity if never.
+ */
+export function followCodeWith({ marker, page }: { marker: string; page: Page }) {
+  const urls = new Set<string>();
+  const reads: Promise<void>[] = [];
+
+  page.on("response", (response) => {
+    if (CODE_URL.test(response.url())) {
+      reads.push(
+        response
+          .text()
+          // A script the page dropped (it closed) has nothing to look in.
+          .catch(() => "")
+          .then((body) => {
+            if (body.includes(marker)) {
+              urls.add(response.url());
+            }
+          }),
+      );
+    }
+  });
+
+  return {
+    requestedAt: async () => {
+      await Promise.all(reads);
+
+      return page.evaluate(
+        (names) =>
+          Math.min(
+            ...names.flatMap((name) =>
+              performance.getEntriesByName(name).map((entry) => entry.startTime),
+            ),
+          ),
+        [...urls],
+      );
+    },
+  };
+}
+
+/**
+ * When every script the page had asked for by `at` had arrived, on the page's clock (as
+ * `PaintedFrame.at`): from then on, nothing the page draws waits on code still coming.
+ */
+export function codeArrivedBy({ at, page }: { at: number; page: Page }): Promise<number> {
+  return page.evaluate(
+    ({ before, pattern }) => {
+      const code = new RegExp(pattern, "u");
+
+      const arrivals = performance
+        .getEntriesByType("resource")
+        .flatMap((entry) =>
+          entry instanceof PerformanceResourceTiming &&
+          code.test(entry.name) &&
+          entry.startTime < before
+            ? [entry.responseEnd]
+            : [],
+        );
+
+      return Math.max(0, ...arrivals);
+    },
+    { before: at, pattern: CODE_URL.source },
+  );
 }
 
 /** Whether React has hydrated what `locator` finds (it marks every node it takes over). */
