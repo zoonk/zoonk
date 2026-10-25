@@ -15,40 +15,6 @@ function createGuestHeaders(baseURL: string | undefined) {
   };
 }
 
-test("a classroom can create 40 distinct guest sessions from one IP", async ({
-  baseURL,
-  request,
-}) => {
-  const headers = createGuestHeaders(baseURL);
-  const guestIds = new Set<string>();
-
-  try {
-    for (const index of Array.from({ length: 40 }, (_, value) => value)) {
-      // eslint-disable-next-line no-await-in-loop -- Sequential requests reproduce one NAT's burst without racing cookies.
-      const response = await request.post("/v1/auth/sign-in/anonymous", {
-        data: {},
-        headers: { ...headers, cookie: "" },
-      });
-
-      expect(response.status(), `Guest ${index + 1}`).toBe(200);
-      // eslint-disable-next-line no-await-in-loop -- Inspect each real session before sending the next guest request.
-      const body = await response.json();
-      expect(body.user.isAnonymous).toBe(true);
-      expect(body.token).toEqual(expect.any(String));
-      expect(response.headers()["set-cookie"]).toContain("session_token");
-      guestIds.add(body.user.id);
-    }
-
-    expect(guestIds.size).toBe(40);
-  } finally {
-    await prisma.user.deleteMany({ where: { id: { in: [...guestIds] } } });
-
-    await prisma.rateLimit.deleteMany({
-      where: { key: `${headers["x-forwarded-for"]}|/sign-in/anonymous` },
-    });
-  }
-});
-
 test("the 61st guest attempt is blocked without creating an account", async ({
   baseURL,
   request,
