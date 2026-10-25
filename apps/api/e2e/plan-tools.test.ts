@@ -125,11 +125,11 @@ test.describe("Plan tools API", () => {
     await apiContext.dispose();
   });
 
-  test("lists the plan's tools and saves the learner's answer for each", async () => {
-    const { apiContext, user } = await createAuthenticatedApiContext({
-      baseURL,
-      prefix: "plan-tools",
-    });
+  test("lists the plan's tools and saves the learner's answer for each, refusing tools it doesn't use", async () => {
+    const [{ apiContext, user }, other] = await Promise.all([
+      createAuthenticatedApiContext({ baseURL, prefix: "plan-tools" }),
+      createAuthenticatedApiContext({ baseURL, prefix: "plan-tools-other" }),
+    ]);
 
     const { goal, tools } = await createToolGoal(user.id);
 
@@ -142,6 +142,25 @@ test.describe("Plan tools API", () => {
       { choice: null, essential: true, later: false, name: tools.sheet, system: null },
       { choice: null, essential: false, later: false, name: tools.python, system: null },
     ]);
+
+    // A tool the plan doesn't use, a setup without a device and another learner's goal.
+    const [unknown, noDevice, foreign] = await Promise.all([
+      apiContext.post(`/v1/goals/${goal.id}/plan/tool-choices`, {
+        data: { choice: "have", tools: ["Photoshop"] },
+      }),
+      apiContext.post(`/v1/goals/${goal.id}/plan/tool-choices`, {
+        data: { choice: "setup", tools: [tools.python] },
+      }),
+      other.apiContext.post(`/v1/goals/${goal.id}/plan/tool-choices`, {
+        data: { choice: "have", tools: [tools.python] },
+      }),
+    ]);
+
+    expect([unknown.status(), noDevice.status(), foreign.status()]).toStrictEqual([422, 400, 404]);
+
+    await expect(unknown.json()).resolves.toMatchObject({
+      error: { code: "PLAN_CHANGE_INVALID", details: { reason: "unknownTool" } },
+    });
 
     const setup = await createSetupLesson({ system: "windows", tool: tools.python });
 
@@ -183,40 +202,6 @@ test.describe("Plan tools API", () => {
       prisma.planItem.count({ where: { lessonId: setup.id, plan: { goalId: goal.id } } }),
     ).resolves.toBe(0);
 
-    await apiContext.dispose();
-  });
-
-  test("refuses tools the plan doesn't use and a setup without a device", async () => {
-    const { apiContext, user } = await createAuthenticatedApiContext({
-      baseURL,
-      prefix: "plan-tools-invalid",
-    });
-
-    const { goal, tools } = await createToolGoal(user.id);
-
-    const unknown = await apiContext.post(`/v1/goals/${goal.id}/plan/tool-choices`, {
-      data: { choice: "have", tools: ["Photoshop"] },
-    });
-
-    expect(unknown.status()).toBe(422);
-
-    await expect(unknown.json()).resolves.toMatchObject({
-      error: { code: "PLAN_CHANGE_INVALID", details: { reason: "unknownTool" } },
-    });
-
-    const noDevice = await apiContext.post(`/v1/goals/${goal.id}/plan/tool-choices`, {
-      data: { choice: "setup", tools: [tools.python] },
-    });
-
-    expect(noDevice.status()).toBe(400);
-
-    const other = await createAuthenticatedApiContext({ baseURL, prefix: "plan-tools-other" });
-
-    const foreign = await other.apiContext.post(`/v1/goals/${goal.id}/plan/tool-choices`, {
-      data: { choice: "have", tools: [tools.python] },
-    });
-
-    expect(foreign.status()).toBe(404);
     await Promise.all([apiContext.dispose(), other.apiContext.dispose()]);
   });
 });
