@@ -24,7 +24,7 @@ export type ExtraTimeReason =
   | "sessionNotFinished";
 
 /** A lesson of the plan more time would add, as the day lists it before the learner taps. */
-export type ExtraLesson = { minutes: number; title: string };
+type ExtraLesson = { minutes: number; title: string };
 
 export type ExtraTime = {
   available: boolean;

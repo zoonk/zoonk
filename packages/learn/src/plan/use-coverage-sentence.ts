@@ -1,5 +1,5 @@
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useShortList } from "./use-short-list";
 
 /**
@@ -42,7 +42,7 @@ export function useTopicsMovedSentence() {
  * the notice topics a change brings into the plan or leaves out of it: what a change moves, under
  * what it did. Empty when it moves no topic.
  */
-export function useTopicsMovedLines() {
+function useTopicsMovedLines() {
   const t = useExtracted();
   const shortList = useShortList();
 
@@ -54,28 +54,6 @@ export function useTopicsMovedLines() {
       back.length > 0 && t("Now in your plan: {topics}.", { topics: shortList(back, "topics") }),
       out.length > 0 && t("Out of your plan: {topics}.", { topics: shortList(out, "topics") }),
     ].filter((line) => typeof line === "string");
-  };
-}
-
-/**
- * "Your answers show you know the basics of Listening. Practice with recordings will check them."
- * for a change whose placement answers started an exam's listening areas past their basics
- * (`effect.listeningPastBasics`): placement asks listening nothing, so the card says why their
- * basics left and how they're checked. Null for any other change.
- */
-export function useListeningBasicsLine() {
-  const t = useExtracted();
-  const format = useFormatter();
-
-  return function listeningBasicsLine(change: Pick<PlanChangeView, "effect">): string | null {
-    const areas = change.effect?.listeningPastBasics ?? [];
-
-    return areas.length > 0
-      ? t(
-          "Your answers show you know the basics of {areas}. Practice with recordings will check them.",
-          { areas: format.list(areas, { type: "conjunction" }) },
-        )
-      : null;
   };
 }
 

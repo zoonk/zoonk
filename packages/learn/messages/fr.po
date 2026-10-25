@@ -10753,11 +10753,6 @@ msgid "Out of your plan: {topics}."
 msgstr "Hors de ton plan : {topics}."
 
 #: src/plan/use-coverage-sentence.ts
-msgctxt "9PID_4"
-msgid "Your answers show you know the basics of {areas}. Practice with recordings will check them."
-msgstr "Tes réponses montrent que tu connais les bases de {areas}. Des exercices à partir d’enregistrements permettront de les vérifier."
-
-#: src/plan/use-coverage-sentence.ts
 msgctxt "iNSgWW"
 msgid "Your placement answers changed what fits by your date."
 msgstr "Tes réponses au test de niveau ont changé ce qui peut tenir dans ton plan d’ici la date choisie."
