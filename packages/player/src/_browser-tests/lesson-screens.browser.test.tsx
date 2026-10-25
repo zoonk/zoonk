@@ -554,6 +554,13 @@ describe("lesson screens", () => {
     // The question at the end shows the last screen it's about instead.
     await page.getByRole("button", { name: /^Next/u }).click();
     await expect.element(outline).not.toBeInTheDocument();
-    await expect.element(page.getByText("From the lesson")).toBeVisible();
+
+    await expect
+      .element(
+        page
+          .getByRole("complementary", { name: "Help with this screen" })
+          .getByText("From the lesson"),
+      )
+      .toBeVisible();
   });
 });

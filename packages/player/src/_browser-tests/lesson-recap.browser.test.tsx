@@ -7,9 +7,9 @@ import { buildLesson } from "../preview/preview-lesson";
 import { contentStep, explanationStep } from "../preview/preview-steps";
 
 /**
- * "From the lesson" beside a question on a wide screen, and the sentence it marks there after a
- * wrong answer: the one the question rests on, when the recap shows that screen. Lessons written
- * before questions had a basis show the recap as they always did.
+ * "From the lesson" beside a question on a wide screen (folded under it on a phone), and the
+ * sentence it marks there after a wrong answer: the one the question rests on, when the recap shows
+ * that screen. Lessons written before questions had a basis show the recap as they always did.
  */
 
 const RIGHT_OPTION = "Where the electron is most likely to be found";
@@ -25,6 +25,12 @@ function aside() {
 /** The words the recap marks, or null when it marks none. */
 function markedText(): string | null {
   return aside().element().querySelector("mark")?.textContent ?? null;
+}
+
+/** The title of the screen the phone's folded recap shows, while it's open. */
+function phoneRecapTitle(): string | null {
+  const titles = document.querySelectorAll('[data-slot="lesson-recap-row"] h3');
+  return [...titles].find((title) => title.checkVisibility())?.textContent ?? null;
 }
 
 /** A question on the electron cloud, resting on a sentence of the screen at `position`. */
@@ -147,7 +153,9 @@ describe("lesson recap", () => {
     await expect.element(aside().getByText("Where the cloud is densest")).not.toBeInTheDocument();
   });
 
-  it("keeps a phone's screen as it was: the recap and its mark are wide screens' only", async () => {
+  // A phone had no way to look back at the lesson from a question but leaving it for the screens
+  // before, which the wide screens' aside shows beside it.
+  it("folds the recap under a phone's question, opening in place with the sentence marked", async () => {
     await atViewport(PHONE, async () => {
       const lesson = buildLesson([
         explanationStep(playableStepContent.explanation),
@@ -156,10 +164,21 @@ describe("lesson recap", () => {
 
       renderLessonPlayer({ lesson });
       await page.getByRole("button", { name: /^Next/u }).click();
-      await answer(WRONG_OPTION, "Not quite");
 
-      await expect.element(page.getByText("From the lesson")).not.toBeVisible();
-      expect(document.querySelector("mark")?.checkVisibility() ?? false).toBe(false);
+      const recap = page.getByRole("button", { name: /^From the lesson/u });
+
+      await expect.element(recap).toHaveAttribute("aria-expanded", "false");
+      expect(phoneRecapTitle()).toBeNull();
+
+      await answer(WRONG_OPTION, "Not quite");
+      await recap.click();
+
+      await expect.element(recap).toHaveAttribute("aria-expanded", "true");
+      await expect.poll(phoneRecapTitle).toBe("A cloud, not a little ball");
+      await expect.element(page.getByRole("radio", { name: WRONG_OPTION })).toBeInTheDocument();
+
+      const marked = [...document.querySelectorAll("mark")].find((mark) => mark.checkVisibility());
+      expect(marked?.textContent).toBe(MARKED);
     });
   });
 });

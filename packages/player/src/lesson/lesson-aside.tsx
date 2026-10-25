@@ -1,9 +1,11 @@
 "use client";
 
+import { Disclosure } from "@zoonk/learn/disclosure";
 import {
   ListGroup,
   ListRow,
   ListRowContent,
+  ListRowIcon,
   ListRowLeading,
   ListRowTitle,
   ListRowTrailing,
@@ -13,8 +15,9 @@ import { RichInlineSegments } from "@zoonk/learn/rich-text/inline";
 import { TaskAside, TaskAsideContent } from "@zoonk/learn/task-layout";
 import { LessonVisual } from "@zoonk/learn/visual";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon, CircleHelpIcon } from "lucide-react";
+import { CheckIcon, CircleHelpIcon, TextQuoteIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { PlayerContentFrame } from "../components/step-layouts";
 import { LessonRichText } from "./_components/lesson-rich-text";
 import {
   type RecapStep,
@@ -86,16 +89,12 @@ function recapTitle(step: RecapStep): string | null {
   return step.content.title ?? null;
 }
 
-/**
- * "From the lesson" beside a question from `lg`: the last reading screen before it, its title, text
- * and chart, to look back at while answering, with the sentence the question rests on marked after
- * a wrong answer. Wide screens only; a phone turns back a screen.
- */
-function LessonRecap({ mark, step }: { mark: string | null; step: RecapStep }) {
+/** A reading screen read again: its title, its text (or a worked example's steps) and its chart. */
+function RecapBody({ mark, step }: { mark: string | null; step: RecapStep }) {
   const title = recapTitle(step);
 
   return (
-    <TaskAsideContent className="flex flex-col gap-3 max-lg:hidden" data-slot="lesson-recap">
+    <>
       {title && (
         <h3 className="text-[0.9375rem] leading-snug font-semibold">
           <LessonRichText text={title} />
@@ -109,7 +108,62 @@ function LessonRecap({ mark, step }: { mark: string | null; step: RecapStep }) {
       )}
 
       <LessonVisual visual={step.content.visual} />
+    </>
+  );
+}
+
+/**
+ * "From the lesson" beside a question from `lg`: the last reading screen before it, its title, text
+ * and chart, to look back at while answering, with the sentence the question rests on marked after
+ * a wrong answer. Under `lg` it folds under the question (`LessonRecapRow`).
+ */
+function LessonRecap({ mark, step }: { mark: string | null; step: RecapStep }) {
+  return (
+    <TaskAsideContent className="flex flex-col gap-3 max-lg:hidden" data-slot="lesson-recap">
+      <RecapBody mark={mark} step={step} />
     </TaskAsideContent>
+  );
+}
+
+/** The recap of the question in view and the sentence to mark in it, if any. */
+function useScreenRecap() {
+  const { screen, state } = useLessonPlayer();
+  const recap = getLessonRecap(state);
+  const showsMiss = useShowsMiss();
+  const mark = showsMiss && screen.step ? getRecapMark({ recap, step: screen.step }) : null;
+
+  return { mark, recap };
+}
+
+/**
+ * "From the lesson" on a phone or a tablet in portrait: the same recap as the aside's, folded into
+ * one row under the question (and its result once it's checked), opening in place, so looking
+ * back never leaves the question. Wide screens have it beside the question instead.
+ */
+export function LessonRecapRow() {
+  const t = useExtracted();
+  const { mark, recap } = useScreenRecap();
+
+  if (!recap) {
+    return null;
+  }
+
+  return (
+    <PlayerContentFrame className="pb-6 lg:hidden" data-slot="lesson-recap-row">
+      <Disclosure
+        aside={t("screen {number}", { number: String(recap.position + 1) })}
+        icon={
+          <ListRowIcon>
+            <TextQuoteIcon />
+          </ListRowIcon>
+        }
+        title={t("From the lesson")}
+      >
+        <div className="flex flex-col gap-3">
+          <RecapBody mark={mark} step={recap.step} />
+        </div>
+      </Disclosure>
+    </PlayerContentFrame>
   );
 }
 
@@ -183,10 +237,8 @@ function useShowsOutline(step: PlayableLibraryStep): boolean {
 function ScreenAside({ step }: { step: PlayableLibraryStep }) {
   const t = useExtracted();
   const buddy = useLessonBuddy();
-  const { state } = useLessonPlayer();
-  const recap = getLessonRecap(state);
+  const { mark, recap } = useScreenRecap();
   const showsOutline = useShowsOutline(step);
-  const mark = useShowsMiss() ? getRecapMark({ recap, step }) : null;
 
   const screenNumber = recap
     ? t("screen {number}", { number: String(recap.position + 1) })

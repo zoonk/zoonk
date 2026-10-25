@@ -3384,6 +3384,17 @@ msgid "Result"
 msgstr "Resultado"
 
 #: src/lesson/lesson-aside.tsx
+msgctxt "fl3kLl"
+msgid "screen {number}"
+msgstr "pantalla {number}"
+
+#: src/lesson/lesson-aside.tsx
+#: src/lesson/tutor/lesson-dock.tsx
+msgctxt "C9sbYe"
+msgid "From the lesson"
+msgstr "De la lección"
+
+#: src/lesson/lesson-aside.tsx
 msgctxt "aEhjYg"
 msgid "Outline"
 msgstr "Esquema"
@@ -3399,20 +3410,9 @@ msgid "{count, plural, one {# quick question at the end} other {# quick question
 msgstr "{count, plural, one {# pregunta rápida al final} other {# preguntas rápidas al final}}"
 
 #: src/lesson/lesson-aside.tsx
-msgctxt "fl3kLl"
-msgid "screen {number}"
-msgstr "pantalla {number}"
-
-#: src/lesson/lesson-aside.tsx
 msgctxt "chnAWh"
 msgid "Help with this screen"
 msgstr "Ayuda con esta pantalla"
-
-#: src/lesson/lesson-aside.tsx
-#: src/lesson/tutor/lesson-dock.tsx
-msgctxt "C9sbYe"
-msgid "From the lesson"
-msgstr "De la lección"
 
 #: src/lesson/lesson-leave.tsx
 msgctxt "-D1SOt"

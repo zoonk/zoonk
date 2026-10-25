@@ -14,6 +14,7 @@ import { isLanguageStep } from "./_utils/lesson-steps";
 import { AskBuddyOffer } from "./controls/ask-buddy-offer";
 import { LessonResultNotes } from "./feedback/lesson-result-notes";
 import { LessonStepResultView } from "./feedback/lesson-step-result";
+import { LessonRecapRow } from "./lesson-aside";
 import { useLessonPlayer } from "./lesson-player-context";
 import { type LessonPlayerState } from "./lesson-player-state";
 import { LessonStepView, showsOwnResult } from "./steps/lesson-step-view";
@@ -133,9 +134,9 @@ function getUpcomingSteps(state: LessonPlayerState) {
 
 /**
  * The screen in view and, after a check, its result right under it on the feedback panel, so the
- * answered question stays in view. The screen keeps its place in both phases, so its state
- * survives the check; a screen that shows its own result, like an activity, gets only the panel's
- * quiet last line under it. Every screen
+ * answered question stays in view, then, on a phone, "From the lesson" folded under them. The
+ * screen keeps its place in both phases, so its state survives the check; a screen that shows its
+ * own result, like an activity, gets only the panel's quiet last line under it. Every screen
  * starts at the top, like a page, so nothing jumps from one screen to the next, and the next
  * screens' pictures load while this one is read.
  */
@@ -190,6 +191,7 @@ export function LessonStage({ turn }: { turn: ScreenTurn | null }) {
         </PlayerContentFrame>
       )}
 
+      <LessonRecapRow />
       <UpcomingPictures steps={getUpcomingSteps(state)} />
     </div>
   );

@@ -48,6 +48,7 @@
     "./journey": "./src/journey/journey-screen.tsx",
     "./journey/resume-effect": "./src/journey/resume-effect.tsx",
     "./diff-lines": "./src/_components/diff-lines.tsx",
+    "./disclosure": "./src/_components/disclosure.tsx",
     "./day-segments": "./src/today/day-segments.tsx",
     "./kept-typing-script": "./src/kept-typing-script.ts",
     "./kind-tile": "./src/_components/kind-tile.tsx",
