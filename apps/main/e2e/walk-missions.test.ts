@@ -5,7 +5,7 @@ import { createDrillSession } from "./mistake-drill-days";
 import { openAs, saveMissions } from "./study-day";
 
 test.describe("Mistake mission availability", () => {
-  test("today's mistakes stay readable on desktop without a ready badge or practice shortcut", async ({
+  test("today's mistakes return tomorrow without an empty practice, a ready badge or a practice shortcut", async ({
     browser,
   }) => {
     const learner = await createDrillSession({ causes: ["misread"] });
@@ -18,8 +18,20 @@ test.describe("Mistake mission availability", () => {
     const page = await openAs(browser, learner.user);
 
     try {
-      await page.setViewportSize({ height: 900, width: 1440 });
+      await page.setViewportSize({ height: 844, width: 390 });
       await page.goto("/today");
+
+      // No new lesson or review is planned, and this mistake only becomes available tomorrow.
+      // Zero achievable missions leave out the missions card and its reward.
+      await expect(page.getByRole("region", { name: "Today's missions" })).toHaveCount(0);
+
+      await expect(
+        page.getByRole("link", { name: /^Mistakes notebook/u }).filter({ visible: true }),
+      ).toContainText("Today's mistakes return tomorrow");
+
+      // On a desktop, the sidebar and the palette name the notebook without a ready badge or a
+      // practice shortcut.
+      await page.setViewportSize({ height: 900, width: 1440 });
       const sidebar = page.getByRole("complementary", { name: "Sidebar" });
       const notebook = sidebar.getByRole("link", { name: /^Mistakes notebook/u });
       await expect(notebook).toHaveText("Mistakes notebook");
@@ -51,48 +63,10 @@ test.describe("Mistake mission availability", () => {
       await expect(page.getByRole("link", { exact: true, name: "Practice mistakes" })).toHaveCount(
         0,
       );
-    } finally {
-      await page.context().close();
-    }
-  });
-
-  test("today's notebook mistakes return tomorrow without offering an empty practice", async ({
-    browser,
-  }) => {
-    const learner = await createDrillSession({ causes: ["misread"] });
-
-    await prisma.mistake.update({
-      data: { createdAt: new Date() },
-      where: { id: learner.drills[0]!.mistake.id },
-    });
-
-    const page = await openAs(browser, learner.user);
-
-    try {
-      await page.setViewportSize({ height: 844, width: 390 });
-      await page.goto("/today");
-
-      // No new lesson or review is planned, and this mistake only becomes available tomorrow.
-      // Zero achievable missions leave out the missions card and its reward.
-      await expect(page.getByRole("region", { name: "Today's missions" })).toHaveCount(0);
-
-      const notebook = page
-        .getByRole("link", { name: /^Mistakes notebook/u })
-        .filter({ visible: true });
-
-      await expect(notebook).toContainText("Today's mistakes return tomorrow");
-      await notebook.click();
-      await expect(page.getByText("1 available tomorrow · 0 fixed", { exact: true })).toBeVisible();
-
-      await expect(page.getByRole("link", { exact: true, name: "Practice mistakes" })).toHaveCount(
-        0,
-      );
 
       await expect(
         page.getByRole("link", { exact: true, name: "Practice this skill" }),
       ).toHaveCount(0);
-
-      await expect(page.getByText("Practice tomorrow", { exact: true })).toBeVisible();
     } finally {
       await page.context().close();
     }

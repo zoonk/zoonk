@@ -5,7 +5,7 @@ const ACTIVE_DAY_LABEL = / · \d+ activit(?:y|ies)$/u;
 const EMPTY_DAY_LABEL = / · No study$/u;
 
 test.describe("Activity Page", () => {
-  test("learners see their study days, the calendar that lights them and inspect its days", async ({
+  test("learners see their study days, the calendar that lights them and inspect its days, by tap on a phone", async ({
     browser,
     withProgressUser,
   }) => {
@@ -44,27 +44,28 @@ test.describe("Activity Page", () => {
     } finally {
       await context.close();
     }
-  });
 
-  test("learners can tap a day to read it", async ({ browser, withProgressUser }) => {
-    const browserContext = await browser.newContext({
+    // On a phone, a tap reads a day.
+    const phone = await browser.newContext({
       hasTouch: true,
       isMobile: true,
       storageState: withProgressUser.storageState,
       viewport: { height: 812, width: 375 },
     });
 
-    const page = await browserContext.newPage();
-    await page.goto("/activity");
+    try {
+      const phonePage = await phone.newPage();
+      await phonePage.goto("/activity");
 
-    const days = page.getByRole("group", { name: "Activity by day" });
-    const readout = page.locator('[data-slot="contribution-calendar-readout"]');
+      const days = phonePage.getByRole("group", { name: "Activity by day" });
+      const readout = phonePage.locator('[data-slot="contribution-calendar-readout"]');
 
-    await days.locator('[data-slot="contribution-calendar-day"]').last().tap();
-    await expect(readout).toHaveText(/ · /u);
-    await expect(days.locator("[data-active]")).toHaveCount(1);
-    await expectAccessibleScreen(page, "Activity");
-
-    await browserContext.close();
+      await days.locator('[data-slot="contribution-calendar-day"]').last().tap();
+      await expect(readout).toHaveText(/ · /u);
+      await expect(days.locator("[data-active]")).toHaveCount(1);
+      await expectAccessibleScreen(phonePage, "Activity");
+    } finally {
+      await phone.close();
+    }
   });
 });
