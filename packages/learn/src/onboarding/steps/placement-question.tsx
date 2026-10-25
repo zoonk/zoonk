@@ -276,11 +276,7 @@ export function PlacementQuestionScreen({
 
           {media}
 
-          <ItemSupport
-            context={question.context}
-            image={question.image}
-            visual={question.visual}
-          />
+          <ItemSupport context={question.context} image={question.image} visual={question.visual} />
 
           <div className="text-[1.1875rem] leading-[1.35] font-[560] tracking-[-0.02em] text-pretty">
             <ItemStem text={question.question} heading="h1" />
