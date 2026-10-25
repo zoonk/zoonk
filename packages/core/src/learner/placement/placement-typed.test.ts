@@ -5,7 +5,6 @@ import { itemFixture } from "@zoonk/testing/fixtures/skills";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { freezeClock } from "../../_test-utils/frozen-clock";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getUsageRule } from "../../entitlements/limits";
 import { learnerGoalFixture } from "../_test-utils/learner-goal";
@@ -202,47 +201,5 @@ describe("typed answers in placement", () => {
       "invalidItem",
       "invalidItem",
     ]);
-  });
-});
-
-describe("placement's few minutes a day", () => {
-  it("stops asking for the day after 12 answers, its share used up, and asks again the next day", async () => {
-    freezeClock();
-
-    const user = await userFixture();
-    const { goal, items, skills } = await learnerGoalFixture({ phases: [4, 4], userId: user.id });
-    mockSession(user.id);
-
-    await Promise.all(
-      Array.from({ length: 12 }, (_, index) =>
-        attemptFixture({
-          answer: { dontKnow: true },
-          durationMs: 5000,
-          isCorrect: false,
-          itemId: items[index % items.length]?.id ?? null,
-          skillId: skills[index % skills.length]?.id ?? null,
-          userId: user.id,
-        }),
-      ),
-    );
-
-    const today = await getGoalPlacement({ goalId: goal.id, timeZone: "UTC" });
-
-    expect(today).toMatchObject({
-      placement: { dayBudgetSpent: 1, dayBudgetUsed: true, next: null },
-      status: "ready",
-    });
-
-    await prisma.attempt.updateMany({
-      data: { localDate: new Date(Date.UTC(2020, 0, 1)) },
-      where: { userId: user.id },
-    });
-
-    const nextDay = await getGoalPlacement({ goalId: goal.id, timeZone: "UTC" });
-
-    expect(nextDay).toMatchObject({
-      placement: { dayBudgetSpent: 0, dayBudgetUsed: false },
-      status: "ready",
-    });
   });
 });

@@ -282,11 +282,8 @@ export async function loadPlacementState({
     seen: seenItemIds.has(item.id),
   }));
 
-  // A test from the learner's own material asks every topic placement has (or will have) a
-  // question for.
-  const topics = answeredOnly
-    ? new Set([...items.map((item) => item.skillId), ...build.preparingSkillIds]).size
-    : 0;
+  /** The full material's scope keeps its budget stable as question batches arrive or time out. */
+  const topics = answeredOnly ? skills.length : 0;
 
   const dayBudgetSpent =
     today === null
