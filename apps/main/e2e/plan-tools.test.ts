@@ -5,6 +5,7 @@ import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters"
 import { buildLessonIdentityKey, buildSetupSkillIdentityKey } from "@zoonk/utils/identity-key";
 import { type Page, expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
+import { REPLAN_TIMEOUT_MS } from "./plan-timeouts";
 
 /**
  * The "You'll use" card in the plan editor. Maya's quantum physics plan (the v2 seed) has a vectors
@@ -118,8 +119,9 @@ async function chooseTool(
     await sheet.getByRole("button", { exact: true, name: device }).click();
   }
 
+  // The sheet closes once the plan is made again with the answer.
   await sheet.getByRole("button", { name: "Save" }).click();
-  await expect(sheet).toBeHidden();
+  await expect(sheet).toBeHidden({ timeout: REPLAN_TIMEOUT_MS });
 }
 
 async function loadToolChoices(goalId: string) {

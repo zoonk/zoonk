@@ -86,7 +86,7 @@ test("time presets move focus without saving; Enter, Space and clicks apply a si
 
     await expect(
       editor.getByText("It's in your plan, and today's session follows it.", { exact: true }),
-    ).toBeVisible();
+    ).toBeVisible({ timeout: REPLAN_TIMEOUT_MS });
 
     expect(saves).toHaveLength(1);
 
@@ -106,7 +106,10 @@ test("time presets move focus without saving; Enter, Space and clicks apply a si
     expect(saves).toHaveLength(2);
 
     // A pick while a save is still pending is ignored on purpose: wait for this one to settle.
-    await expect(editor.getByText("Daily time changed to 30 min.", { exact: true })).toBeVisible();
+    await expect(editor.getByText("Daily time changed to 30 min.", { exact: true })).toBeVisible({
+      timeout: REPLAN_TIMEOUT_MS,
+    });
+
     await time.getByText("1 hr", { exact: true }).click();
 
     await expect

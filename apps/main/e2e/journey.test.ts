@@ -523,10 +523,13 @@ test.describe("Journey", () => {
       await expect(workingOut).toBeVisible();
 
       await expect
-        .poll(async () => {
-          const goal = await prisma.goal.findUniqueOrThrow({ where: { id: user.goalId } });
-          return goal.dailyMinutes;
-        })
+        .poll(
+          async () => {
+            const goal = await prisma.goal.findUniqueOrThrow({ where: { id: user.goalId } });
+            return goal.dailyMinutes;
+          },
+          { timeout: REPLAN_TIMEOUT_MS },
+        )
         .toBe(60);
 
       // What the new time covers shows right under it, once it's planned.
@@ -541,7 +544,7 @@ test.describe("Journey", () => {
       // The toggles wait while the new time plans again, which can take a while, so a press then
       // would do nothing.
       const morePractice = editor.getByRole("button", { name: "More practice" });
-      await expect(morePractice).toBeEnabled({ timeout: 15_000 });
+      await expect(morePractice).toBeEnabled({ timeout: REPLAN_TIMEOUT_MS });
       await morePractice.focus();
       await page.keyboard.press("Space");
 
@@ -550,7 +553,7 @@ test.describe("Journey", () => {
       await expect(morePractice).toBeFocused();
 
       await expect
-        .poll(() => loadPlanSettings(user.goalId))
+        .poll(() => loadPlanSettings(user.goalId), { timeout: REPLAN_TIMEOUT_MS })
         .toMatchObject({ practiceBias: "morePractice" });
 
       await editor.getByRole("button", { name: "Close" }).click();
@@ -607,7 +610,10 @@ test.describe("Journey", () => {
       await page.keyboard.press("Enter");
 
       // Apply gives way to what it did: the suggestion takes the keyboard, not the page.
-      await expect(panel.getByRole("heading")).toHaveText("Plan updated");
+      await expect(panel.getByRole("heading")).toHaveText("Plan updated", {
+        timeout: REPLAN_TIMEOUT_MS,
+      });
+
       await expect(suggestion).toBeFocused();
 
       // Past the moment a result usually stays, it's still there while Undo has the keyboard.
@@ -619,7 +625,11 @@ test.describe("Journey", () => {
       // Undo puts the plan back and the suggestion with it: the time Find found for this plan comes
       // back too (no second search), and the keyboard lands on it.
       await page.keyboard.press("Enter");
-      await expect(panel.getByRole("heading")).toHaveText(/a day covers .+ in depth$/u);
+
+      await expect(panel.getByRole("heading")).toHaveText(/a day covers .+ in depth$/u, {
+        timeout: REPLAN_TIMEOUT_MS,
+      });
+
       await expect(panel.getByRole("button", { name: "Preview" })).toBeVisible();
       await expect(find).toHaveCount(0);
       await expect(suggestion).toBeFocused();
@@ -868,7 +878,7 @@ test.describe("Journey", () => {
       await chooseFocusFromPlan(page);
       await focus.getByRole("checkbox", { name: "Linguagens" }).click();
       await focus.getByRole("button", { name: "Focus on these" }).click();
-      await expect(focus.getByRole("status")).toBeVisible();
+      await expect(focus.getByRole("status")).toBeVisible({ timeout: REPLAN_TIMEOUT_MS });
 
       await expect.poll(() => loadFocusAreas(user.goalId)).toStrictEqual(["Ciências da Natureza"]);
     });
@@ -902,7 +912,9 @@ test.describe("Journey", () => {
 
       await weekend.selectOption("120");
 
-      await expect.poll(loadWeek).toStrictEqual([120, 30, 30, 30, 30, 30, 120]);
+      await expect
+        .poll(loadWeek, { timeout: REPLAN_TIMEOUT_MS })
+        .toStrictEqual([120, 30, 30, 30, 30, 30, 120]);
 
       // The weekdays change on their own, and the weekend keeps what she gave it. The editor saves
       // one change at a time: the weekend's is saved before the page shows it.
@@ -913,19 +925,21 @@ test.describe("Journey", () => {
         has: page.getByRole("radiogroup", { name: "Time a day" }),
       });
 
-      await expect(presets).toHaveAttribute("aria-busy", "false");
+      await expect(presets).toHaveAttribute("aria-busy", "false", { timeout: REPLAN_TIMEOUT_MS });
       await minutes.getByText("45 min", { exact: true }).click();
 
-      await expect.poll(loadWeek).toStrictEqual([120, ...weekdays.map(() => 45), 120]);
+      await expect
+        .poll(loadWeek, { timeout: REPLAN_TIMEOUT_MS })
+        .toStrictEqual([120, ...weekdays.map(() => 45), 120]);
 
       await expect(toggle).toBeChecked();
 
       // Switched off once the change is saved, the weekend goes back to the weekdays' new time.
       await expect(minutes.getByRole("radio", { name: /^45 min/u })).toBeChecked();
-      await expect(presets).toHaveAttribute("aria-busy", "false");
+      await expect(presets).toHaveAttribute("aria-busy", "false", { timeout: REPLAN_TIMEOUT_MS });
       await toggle.click();
       await expect(weekend).toBeHidden();
-      await expect.poll(loadWeek).toBeNull();
+      await expect.poll(loadWeek, { timeout: REPLAN_TIMEOUT_MS }).toBeNull();
 
       await expect
         .poll(async () => {
