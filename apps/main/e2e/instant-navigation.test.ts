@@ -70,6 +70,18 @@ async function pageAndOwnFactsPrefetched(page: Page, path: string) {
   await ownFacts;
 }
 
+/**
+ * Holds the page's animations still, so a menu closing on a tap keeps its link mounted. Inside
+ * instant(), Next 16.4.1 reads the tapped link again after prefetching its page
+ * (`navigateToKnownRoute`): a link gone by then counts as one that prefetches only the shell, and
+ * the page paints its loading state. Outside instant() the navigation reads it once, so learners
+ * never meet this.
+ */
+async function holdAnimations(page: Page) {
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send("Animation.setPlaybackRate", { playbackRate: 0 });
+}
+
 /** Taps a link and checks the destination paints from its prefetch, before any server reply. */
 async function tapInstantly({
   content,
@@ -275,16 +287,13 @@ test.describe("Instant navigation", () => {
     const page = await openAs(browser, user);
     await openSettled(page, "/stats");
 
-    const prefetched = pageAndOwnFactsPrefetched(page, "/start");
-
     await page
       .getByRole("complementary", { name: "Sidebar" })
       .getByRole("button", { name: /Learn percentages/u })
       .click();
 
-    await prefetched;
-
     await instant(page, async () => {
+      await holdAnimations(page);
       await page.getByRole("menuitem", { name: "Start a new goal" }).click();
       await page.waitForURL(/\/start$/u);
       await expectPainted(page);
