@@ -57,6 +57,11 @@ function dayOf(item: Pick<PlannedItem, "scheduledFor"> | undefined): string {
   return item?.scheduledFor ? toIsoDate(item.scheduledFor) : "";
 }
 
+/** Each challenge with its day. */
+function listBossDays(plan: ReturnType<typeof buildPlan>): [string, string][] {
+  return plan.items.filter((item) => item.kind === "boss").map((item) => [item.key, dayOf(item)]);
+}
+
 /** Each challenge with the day the lessons its session asks (`getBossSkillIds`) end. */
 function listBossTeaching(input: BuildPlanInput, plan: ReturnType<typeof buildPlan>) {
   const saved = toBossPlan({ input, items: plan.items, skillLessons: plan.skillLessons });
@@ -100,6 +105,20 @@ describe("a phase's challenge in a plan that goes on after its exam", () => {
     expect(bosses.every((boss) => boss.key === `boss:${boss.phase}`)).toBe(true);
     expect(bosses.some((boss) => boss.phase === afterExam)).toBe(false);
     expect(teaching.every(({ boss, end }) => end === null || end < dayOf(boss))).toBe(true);
+  });
+
+  // Studying on weekdays for a Tuesday exam, the practice phase's lessons end on the Thursday
+  // before it, and no day after them can hold a challenge before the exam (Friday's mock, the
+  // weekend off, Monday its eve): as in the plan the date shapes, its challenge goes beside those
+  // lessons, never past the exam.
+  it("keeps a challenge with no study day left before the exam beside its lessons", () => {
+    const input = examPlan({ lessons: 80, standIn: 30, targetDate: "2026-10-27" });
+    const settings = { ...input.settings, weekdayMinutes: [0, 30, 30, 30, 30, 30, 0] };
+    const plan = buildPlan({ ...input, settings });
+    const dated = buildPlan({ ...input, settings: { ...settings, fullCourse: false } });
+
+    expect(listBossDays(dated)).toContainEqual(["boss:2", "2026-10-22"]);
+    expect(listBossDays(plan)).toStrictEqual(listBossDays(dated));
   });
 
   // One placed past the exam (a run with its days, see `placeExamBosses`) goes on that day there,
