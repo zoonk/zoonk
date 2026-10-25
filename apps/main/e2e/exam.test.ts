@@ -84,29 +84,31 @@ async function boxOf(locator: Locator) {
   return box;
 }
 
-/** Phone widths a result's header must fit, from small to large. */
-const PHONE_WIDTHS = [360, 390, 430];
-
 /**
- * On a phone, a result's header keeps its step dots clear of "Ask", the buddy's face alone there.
- * The page goes back to its own size after.
+ * A result's buddy sits where every task's does, never in the header's corner: at the aside's
+ * foot on a laptop, in the action bar's row, and its face after the main action on a phone (the
+ * header's corner had "Ask" there). The page goes back to its own size after.
  */
-async function expectDotsClearOfAsk(page: Page) {
-  const size = page.viewportSize() ?? { height: 844, width: 1280 };
-  const dots = page.locator('[data-slot="step-dots"]');
+async function expectAskWhereTasksHaveIt(page: Page) {
+  const size = page.viewportSize() ?? { height: 720, width: 1280 };
   const ask = page.getByRole("button", { name: "Ask Zu about this mock exam" });
+  // The page left keeps its own bars, hidden, for going back: only the result's count.
+  const bar = page.locator('[data-slot="task-action-bar"]').filter({ visible: true });
+  const header = page.locator('[data-slot="task-header"]').filter({ visible: true });
+  const aside = page.getByRole("complementary", { name: "After this mock exam" });
 
-  for (const width of PHONE_WIDTHS) {
-    // oxlint-disable-next-line no-await-in-loop -- One width at a time, on the same page.
-    await page.setViewportSize({ height: 844, width });
-    // oxlint-disable-next-line no-await-in-loop -- Resizing switches the result to phone steps.
-    await expect(dots).toBeVisible();
-    // oxlint-disable-next-line no-await-in-loop -- Measured after each resize.
-    const [dotsBox, askBox] = await Promise.all([dots.boundingBox(), ask.boundingBox()]);
+  await expect(header.getByRole("button")).toHaveCount(0);
+  await expect(ask).toBeVisible();
 
-    expect((dotsBox?.x ?? 0) + (dotsBox?.width ?? 0)).toBeLessThan(askBox?.x ?? 0);
-  }
+  const [askBox, asideBox, barBox] = await Promise.all([boxOf(ask), boxOf(aside), boxOf(bar)]);
 
+  expect(askBox.x).toBeGreaterThanOrEqual(asideBox.x);
+  expect(askBox.y).toBeGreaterThan(barBox.y);
+
+  await page.setViewportSize({ height: 844, width: 390 });
+  await expect(ask).toBeVisible();
+  const [phoneAsk, phoneBar] = await Promise.all([boxOf(ask), boxOf(bar)]);
+  expect(phoneAsk.y).toBeGreaterThan(phoneBar.y);
   await page.setViewportSize(size);
 }
 
@@ -232,7 +234,7 @@ test.describe("Exam goal", () => {
 
       await expect(page.getByText(/^Estimated score · /u)).toBeVisible();
       await expectAccessibleScreen(page, "a mock's result");
-      await expectDotsClearOfAsk(page);
+      await expectAskWhereTasksHaveIt(page);
 
       // One score per area of the exam day, each named once; never the day's name for an area.
       const areas = page.getByRole("region", { name: "By area" });

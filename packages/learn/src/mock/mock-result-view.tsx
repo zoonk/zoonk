@@ -335,6 +335,7 @@ function MockResultSteps({ result }: { result: MockResult }) {
   return (
     <Steps
       aside={aside}
+      ask={ask}
       exitHref={hrefs.exit}
       finalAction={
         <>
@@ -343,7 +344,6 @@ function MockResultSteps({ result }: { result: MockResult }) {
         </>
       }
       finalOptions={<MockResultOptions placement="under" />}
-      headerEnd={ask}
       items={items}
     />
   );

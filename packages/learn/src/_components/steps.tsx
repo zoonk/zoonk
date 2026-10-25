@@ -68,16 +68,20 @@ function WideOnly({ children, when }: { children: React.ReactNode; when: boolean
  * in the pinned action bar, with Back beside it (← too). The last step has the screen's own
  * actions instead of Continue. From `lg` an `aside` can hold what the steps after the first tell
  * on a phone (what the day earned, the steps `beside` it), so a wide screen says it all at once.
+ * The learner's buddy (`ask`) sits where it does on every task: after the main action on a phone,
+ * at the aside's foot from `lg`.
  */
 export function Steps({
   aside,
+  ask,
   exitHref,
   finalAction,
   finalOptions,
-  headerEnd,
   items,
 }: {
   aside?: TaskFrameAside | null;
+  /** "Ask {buddy}" about the result, as a task's buddy (`AskTutor` with the `task` size). */
+  ask?: React.ReactNode;
   exitHref: string;
   /**
    * The last step's main action, in Continue's place (a `TaskMainButton` or `TaskMainLink`, which
@@ -86,7 +90,6 @@ export function Steps({
   finalAction: React.ReactNode;
   /** Quiet options under the last step's main action. */
   finalOptions?: React.ReactNode;
-  headerEnd?: React.ReactNode;
   items: StepsItem[];
 }) {
   const t = useExtracted();
@@ -174,11 +177,11 @@ export function Steps({
               </TaskMainButton>
             )}
             {isLastWide && <WideOnly when={!isLastHere}>{finalAction}</WideOnly>}
+            {ask}
           </TaskActions>
           {isLastWide && <WideOnly when={!isLastHere}>{finalOptions}</WideOnly>}
         </>
       }
-      headerEnd={headerEnd}
       headerTitle={
         phone.total > 1 ? (
           <>

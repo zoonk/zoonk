@@ -61,10 +61,18 @@ function useAskLabel({ kind, name }: { kind: LessonQuestionScreenKind; name: str
 
 /**
  * The button's size: small beside a screen's content, the bar's size in a page's top bar, and in
- * a task's header (a mock's result) small with its name only from `sm`: on a phone the buddy's
- * face alone, as wide as the close button across, so the header's title between stays clear.
+ * a task (a mock's result) where every task has its buddy: the buddy's face alone after the main
+ * action on a phone and a tablet, and from `lg` at the foot of the task's aside, in the action
+ * bar's row, saying what it asks about, as the composer does there on other tasks (in the bar,
+ * with its name, when the task has no aside).
  */
 type AskTutorSize = "bar" | "sm" | "task";
+
+/** A task's buddy (`task`): see `AskTutorSize`. */
+const TASK_ASK_CLASS = cn(
+  "size-11 shrink-0 px-0 lg:w-auto lg:px-4 lg:pl-2",
+  "lg:group-data-aside/task:fixed lg:group-data-aside/task:right-[calc(var(--task-margin)+1rem)] lg:group-data-aside/task:bottom-[max(1rem,env(safe-area-inset-bottom))] lg:group-data-aside/task:w-[calc(var(--task-aside)-2rem)] lg:group-data-aside/task:justify-start",
+);
 
 /**
  * "Ask Zu about this subject" as a row of a page's list (its aside's "Also"), by the buddy's face:
@@ -108,24 +116,42 @@ function AskTutorButton({
   const { open } = useLessonQuestionController();
   const label = useAskLabel({ kind, name: identity.name });
 
-  const inTask = size === "task";
+  const name = t("Ask {name}", { name: identity.name });
+
+  if (size === "task") {
+    return (
+      <Button
+        {...PRELOAD_ON_INTENT}
+        aria-label={label}
+        className={TASK_ASK_CLASS}
+        onClick={() => open({ kind })}
+        size="xl"
+        type="button"
+        variant="outline"
+      >
+        <span aria-hidden="true" className="flex size-6 items-center justify-center *:size-6!">
+          {identity.avatar}
+        </span>
+        <span className="max-lg:hidden lg:group-data-aside/task:hidden">{name}</span>
+        <span className="hidden truncate lg:group-data-aside/task:inline">{label}</span>
+      </Button>
+    );
+  }
 
   return (
     <Button
       {...PRELOAD_ON_INTENT}
       aria-label={label}
-      className={cn("pl-1.5", inTask && "max-sm:size-9 max-sm:px-0")}
+      className="pl-1.5"
       onClick={() => open({ kind })}
-      size={inTask ? "sm" : size}
+      size={size}
       type="button"
       variant="outline"
     >
       <span aria-hidden="true" className="flex size-6 items-center justify-center *:size-6!">
         {identity.avatar}
       </span>
-      <span className={cn(inTask && "max-sm:hidden")}>
-        {t("Ask {name}", { name: identity.name })}
-      </span>
+      {name}
     </Button>
   );
 }
