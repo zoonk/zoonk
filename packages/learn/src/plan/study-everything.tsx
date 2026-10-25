@@ -13,6 +13,7 @@ import {
 import { LibraryBigIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { createContext, use, useEffect, useEffectEvent, useState } from "react";
+import { useCloseSuggestionSheet } from "../_components/suggestion";
 import { PlanChangeApplied } from "./plan-change-applied";
 import { type PlanChangeOutcome, usePlanScreen } from "./plan-context";
 import { PendingLabel } from "./plan-coverage";
@@ -189,6 +190,20 @@ export function useStudyEverything(): (course: FullCourse) => void {
   }
 
   return open;
+}
+
+/**
+ * Opens the "Study everything" sheet from a suggestion, in the place of the suggestion's own sheet
+ * (see `useCloseSuggestionSheet`), so closing it leaves the page.
+ */
+export function useStudyEverythingFromSuggestion(): (course: FullCourse) => void {
+  const open = useStudyEverything();
+  const closeSheet = useCloseSuggestionSheet();
+
+  return (course) => {
+    closeSheet();
+    open(course);
+  };
 }
 
 /**

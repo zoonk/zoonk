@@ -505,6 +505,41 @@ test.describe("Find the time that covers everything", () => {
     });
   });
 
+  test("on a phone, studying everything from the coverage card leaves one sheet open at a time", async ({
+    browser,
+  }) => {
+    await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
+      await page.setViewportSize(PHONE);
+      const { editor, isoDate } = await shortOnTime(page, user.goalId);
+      await routeTimeToCover(page, { goalId: user.goalId, time: { targetDate: isoDate } });
+
+      await editor.getByRole("button", { name: "Close" }).click();
+      await expect(editor).toBeHidden();
+
+      await page
+        .locator('[data-slot="suggestion"]')
+        .filter({ visible: true })
+        .getByRole("button", { name: "View" })
+        .click();
+
+      // The card's sheet is named by its title: what her own time covers.
+      const card = page.getByRole("dialog", { name: /^15\smin a day /u });
+      await card.getByRole("button", { name: FIND }).click();
+      await card.getByRole("button", { name: "Study everything, even after the exam" }).click();
+
+      // The card's sheet gives way to the one that studies everything.
+      const sheet = page.getByRole("dialog", { name: "Study everything" });
+      await expect(sheet).toBeVisible();
+      await expect(card).toBeHidden();
+
+      await sheet.getByRole("button", { name: "Study everything" }).click();
+      await sheet.getByRole("button", { name: "Done" }).click({ timeout: REPLAN_TIMEOUT_MS });
+
+      // Done leaves the Plan, with no sheet left under it.
+      await expect(page.getByRole("dialog")).toHaveCount(0);
+    });
+  });
+
   test("the coverage card finds the time, previews what it changes and applies it", async ({
     browser,
   }) => {

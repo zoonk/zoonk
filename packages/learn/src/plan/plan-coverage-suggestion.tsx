@@ -40,7 +40,7 @@ import {
   useSlotAnswer,
   useSlotAnswered,
 } from "./plan-suggestion-context";
-import { useStudyEverything } from "./study-everything";
+import { useStudyEverythingFromSuggestion } from "./study-everything";
 import { readTimeToCover, useTimeToCover, useTimeToCoverTexts } from "./use-time-to-cover";
 
 type Coverage = NonNullable<ReturnType<typeof usePlanCoverage>>;
@@ -165,7 +165,7 @@ function CoverageBody({
   const { plan } = usePlanScreen();
   const { requestPreview } = usePlanSuggestionSlot();
   const fullCourse = useFullCourse();
-  const studyEverything = useStudyEverything();
+  const studyEverything = useStudyEverythingFromSuggestion();
   const { findsTime, moveDate, pending, retry } = flags;
 
   if (preview.status !== "idle" && offer) {

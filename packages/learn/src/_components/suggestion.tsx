@@ -11,16 +11,14 @@ import {
 import { cn } from "@zoonk/ui/lib/utils";
 import { SparkleIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { createContext, use, useEffect, useRef, useState } from "react";
+import { createContext, use, useRef, useState } from "react";
 import { type LearnLinkComponentProps } from "../learn-context";
 import { LearnLink } from "../learn-link";
+import { type Answered, useFocusOnAnswer, useFocusOnRemovedControl } from "./suggestion-focus";
 import { SURFACE_CLASS } from "./surface";
 
 /** Where the suggestion's parts are drawn: the line, the aside's panel or the sheet. */
 type Presentation = "line" | "panel" | "sheet";
-
-/** Whether the learner answered: `true`, or the answer's name. */
-type Answered = boolean | string;
 
 type SuggestionValue = {
   answered: boolean;
@@ -29,6 +27,8 @@ type SuggestionValue = {
   /** Its leading mark: the amber sparkle, or the kind's icon (muted). */
   mark: React.ReactNode;
   section: React.RefObject<HTMLElement | null>;
+  /** Opens or closes its sheet. */
+  setOpen: (open: boolean) => void;
 };
 
 const SuggestionContext = createContext<SuggestionValue | null>(null);
@@ -56,59 +56,6 @@ const MARK_SIZE: Readonly<Record<Presentation, string>> = {
   panel: "[&>svg]:size-3.5",
   sheet: "[&>svg]:size-5",
 };
-
-/**
- * Focuses the suggestion on each answer (and on mount when it replaced another in place): its
- * answers give way to what the answer did, so the keyboard keeps its place instead of falling back
- * to the page.
- */
-function useFocusOnAnswer({
-  answered,
-  focusOnMount,
-  section,
-}: {
-  answered: Answered;
-  focusOnMount: boolean;
-  section: React.RefObject<HTMLElement | null>;
-}) {
-  const previous = useRef(focusOnMount ? null : answered);
-
-  useEffect(() => {
-    if ((answered || focusOnMount) && answered !== previous.current) {
-      section.current?.focus();
-    }
-
-    previous.current = answered;
-  }, [answered, focusOnMount, section]);
-}
-
-/**
- * Keeps the keyboard in the suggestion when the control it was on gives way in place (Preview to
- * the check, Try again to the result, Not now back to the offer): focus moves to the suggestion
- * instead of falling to the page. In the sheet, the sheet takes it.
- */
-function useFocusOnRemovedControl(section: React.RefObject<HTMLElement | null>) {
-  const control = useRef<Element | null>(null);
-
-  useEffect(() => {
-    const element = section.current;
-
-    const remember = (event: FocusEvent) => {
-      control.current = event.target instanceof Element ? event.target : null;
-    };
-
-    element?.addEventListener("focusin", remember);
-    return () => element?.removeEventListener("focusin", remember);
-  }, [section]);
-
-  useEffect(() => {
-    const lost = document.activeElement === document.body;
-
-    if (lost && control.current && !control.current.isConnected) {
-      section.current?.focus();
-    }
-  });
-}
 
 /**
  * The one thing a page wants the learner to know or decide (a plan suggestion, a change already
@@ -177,7 +124,7 @@ export function Suggestion({
   useFocusOnRemovedControl(section);
 
   return (
-    <SuggestionContext value={{ answered: Boolean(answered), label, mark, section }}>
+    <SuggestionContext value={{ answered: Boolean(answered), label, mark, section, setOpen }}>
       <Drawer onOpenChange={setOpen} open={open}>
         <section
           aria-label={label}
@@ -254,6 +201,16 @@ export function SuggestionSummary({ className, ...props }: React.ComponentProps<
       {...props}
     />
   );
+}
+
+/**
+ * Closes the suggestion's sheet, for an action that opens another sheet in its place ("Study
+ * everything"): one sheet shows at a time, so closing that one leaves the page, not this sheet
+ * under it. Nothing to close in the aside's panel.
+ */
+export function useCloseSuggestionSheet(): () => void {
+  const { setOpen } = useSuggestion();
+  return () => setOpen(false);
 }
 
 /** "View" at the line's end: opens the whole suggestion in a sheet ("Upload", "Choose"). */

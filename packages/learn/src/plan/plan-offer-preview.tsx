@@ -22,7 +22,7 @@ import { usePlanScreen } from "./plan-context";
 import { useCanChooseFocus, useChooseFocus } from "./plan-focus";
 import { useFullCourse, useFullCourseText } from "./plan-full-course";
 import { type SlotItem, type SlotPreview, usePlanSuggestionSlot } from "./plan-suggestion-context";
-import { useStudyEverything } from "./study-everything";
+import { useStudyEverythingFromSuggestion } from "./study-everything";
 import { useChangeSentence } from "./use-change-sentence";
 import { usePlanChange } from "./use-plan-change";
 import { readTimeToCover, useTimeToCoverTexts } from "./use-time-to-cover";
@@ -287,8 +287,8 @@ export function useCourseOffer(): CoverageOffer | null {
 /**
  * The other ways to change what the plan covers, in one menu: moving a goal's date (unless it's
  * the offer already), choosing where to focus, studying everything at the learner's own pace (an
- * exam's even after the exam, unless the card leads with it), and "Not now", which leaves the
- * suggestion out until the Plan opens again.
+ * exam's even after the exam, unless the card leads with it; its sheet takes the card's place),
+ * and "Not now", which leaves the suggestion out until the Plan opens again.
  */
 export function OtherOptions({
   onMoveDate,
@@ -301,7 +301,7 @@ export function OtherOptions({
   const t = useExtracted();
   const canChooseFocus = useCanChooseFocus();
   const chooseFocus = useChooseFocus();
-  const studyEverything = useStudyEverything();
+  const studyEverything = useStudyEverythingFromSuggestion();
   const course = useFullCourse();
   const { dismiss } = usePlanSuggestionSlot();
 
