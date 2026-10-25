@@ -32,8 +32,8 @@ jobs:
       # Every job builds the API and Main, then runs its share of the tests, dealt test by test so
       # each file's time spreads over every shard (`pnpm e2e:main --shard`). The dependent
       # live-call-states project runs in its own job: Playwright runs a sharded project's
-      # dependencies whole in each shard. That job is the shortest, so it also checks Main's
-      # performance budgets and saves the build caches.
+      # dependencies whole in each shard. That job is the shortest, so it also checks that Main's
+      # navigation pages are prerendered whole and saves the build caches.
       matrix:
         include:
           - { suite: chromium 1/12, args: --project=chromium --shard=1/12 }
@@ -123,8 +123,8 @@ jobs:
 
       # `pnpm e2e:main` through turbo's cache: a shard whose inputs (Main, the API, the packages,
       # the E2E scripts and its arguments) passed before replays that run. Otherwise it migrates the
-      # database, builds and starts the API, builds Main (timing it and checking its performance
-      # budgets in the gates job), then runs the shard's tests.
+      # database, builds and starts the API, builds Main (timing it and checking its prerendered
+      # pages in the gates job), then runs the shard's tests.
       - name: Run E2E tests
         run: pnpm turbo run e2e:suite --filter main --env-mode=loose -- ${{ matrix.args }} --workers=2
 

@@ -6,39 +6,19 @@ import { promisify } from "node:util";
 import UNLISTED_ROUTE from "../../apps/main/src/data/catalog/catalog-placeholder.json" with { type: "json" };
 
 const run = promisify(execFile);
-const script = resolve(import.meta.dirname, "check-route-js.mts");
+const script = resolve(import.meta.dirname, "check-static-routes.mts");
 
 export async function fixture() {
   const root = await mkdtemp(join(tmpdir(), "zoonk-perf-gate-"));
   const dist = join(root, ".next-e2e");
   const app = join(root, "app");
-  const budgets = join(root, "budgets.json");
 
   await Promise.all([
-    mkdir(join(dist, "diagnostics"), { recursive: true }),
-    mkdir(join(dist, "static/chunks"), { recursive: true }),
     mkdir(join(dist, "server/app/en"), { recursive: true }),
     mkdir(join(app, "[lang]/(public)"), { recursive: true }),
   ]);
 
   await Promise.all([
-    writeFile(
-      join(dist, "static/chunks/shared.js"),
-      Buffer.from(Array.from({ length: 83 }, (_, index) => index)),
-    ),
-    writeFile(
-      join(dist, "diagnostics/route-bundle-stats.json"),
-      JSON.stringify([
-        {
-          firstLoadChunkPaths: [
-            ".next-e2e/static/chunks/shared.js",
-            ".next-e2e/static/chunks/shared.js",
-          ],
-          route: "/[lang]",
-        },
-      ]),
-    ),
-    writeFile(budgets, JSON.stringify({ routes: { "/[lang]": 100 }, version: 1 })),
     writeFile(join(app, "[lang]/(public)/page.tsx"), "export const ensureStatic = 'navigation';"),
     writeFile(join(dist, "server/app/en.html"), "<h1>Title</h1>"),
     writeFile(join(dist, "server/app/en.meta"), JSON.stringify({ headers: {}, status: 200 })),
@@ -94,21 +74,11 @@ export async function fixture() {
   };
 
   await writeFile(join(dist, "prerender-manifest.json"), JSON.stringify(manifest));
-  return { app, budgets, dist, manifest, root };
+  return { app, dist, manifest, root };
 }
 
-export async function check(data: Awaited<ReturnType<typeof fixture>>, mode: string) {
-  return run(process.execPath, [
-    script,
-    "--mode",
-    mode,
-    "--dist",
-    data.dist,
-    "--app",
-    data.app,
-    "--budgets",
-    data.budgets,
-  ]);
+export async function check(data: Awaited<ReturnType<typeof fixture>>) {
+  return run(process.execPath, [script, "--dist", data.dist, "--app", data.app]);
 }
 
 export async function catalogFixture(suffix = "") {

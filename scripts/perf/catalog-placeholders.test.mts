@@ -11,11 +11,11 @@ describe("declared catalog placeholders", () => {
       const data = await catalogFixture(suffix);
 
       try {
-        const result = await check(data, "static");
+        const result = await check(data);
 
         assert.match(result.stdout, /PASS/u);
         await writeFile(`${data.artifact}.meta`, JSON.stringify({ headers: {}, status: 200 }));
-        await assert.rejects(check(data, "static"), { code: 1, stderr: /expected 404/u });
+        await assert.rejects(check(data), { code: 1, stderr: /expected 404/u });
       } finally {
         await rm(data.root, { recursive: true });
       }
@@ -31,7 +31,7 @@ describe("declared catalog placeholders", () => {
 
     try {
       await writeFile(`${data.artifact}.html`, html);
-      await assert.rejects(check(data, "static"), { code: 1, stderr: problem });
+      await assert.rejects(check(data), { code: 1, stderr: problem });
     } finally {
       await rm(data.root, { recursive: true });
     }
@@ -45,7 +45,7 @@ describe("declared catalog placeholders", () => {
 
     try {
       await writeFile(`${data.artifact}.meta`, JSON.stringify({ status: 404, ...meta }));
-      await assert.rejects(check(data, "static"), { code: 1, stderr: problem });
+      await assert.rejects(check(data), { code: 1, stderr: problem });
     } finally {
       await rm(data.root, { recursive: true });
     }
@@ -64,7 +64,7 @@ describe("declared catalog placeholders", () => {
         data.manifest.routes[path] = data.manifest.routes[data.path] ?? {};
         Reflect.deleteProperty(data.manifest.routes, data.path);
         await writeFile(join(data.dist, "prerender-manifest.json"), JSON.stringify(data.manifest));
-        await assert.rejects(check(data, "static"), { code: 1, stderr: /content status=404/u });
+        await assert.rejects(check(data), { code: 1, stderr: /content status=404/u });
       } finally {
         await rm(data.root, { recursive: true });
       }
@@ -84,7 +84,7 @@ describe("declared catalog placeholders", () => {
         "export const ensureStatic = 'navigation';",
       );
 
-      await assert.rejects(check(data, "static"), { code: 1, stderr: /content status=404/u });
+      await assert.rejects(check(data), { code: 1, stderr: /content status=404/u });
     } finally {
       await rm(data.root, { recursive: true });
     }
@@ -104,7 +104,7 @@ describe("declared catalog placeholders", () => {
       data.manifest.routes[path] = data.manifest.routes[data.path] ?? {};
       Reflect.deleteProperty(data.manifest.routes, data.path);
       await writeFile(join(data.dist, "prerender-manifest.json"), JSON.stringify(data.manifest));
-      await assert.rejects(check(data, "static"), { code: 1, stderr: /content status=404/u });
+      await assert.rejects(check(data), { code: 1, stderr: /content status=404/u });
     } finally {
       await rm(data.root, { recursive: true });
     }
@@ -119,7 +119,7 @@ describe("declared catalog placeholders", () => {
         JSON.stringify({ postponed: "", status: 200 }),
       );
 
-      await assert.rejects(check(data, "static"), { code: 1, stderr: /postponed/u });
+      await assert.rejects(check(data), { code: 1, stderr: /postponed/u });
     } finally {
       await rm(data.root, { recursive: true });
     }
