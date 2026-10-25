@@ -375,7 +375,8 @@ test("the durable deadline closes an established WebRTC peer when the client nev
   await page.goto(`/conversation/${call.id}`);
   await expect(page.getByRole("button", { name: "Start the call" })).toBeVisible();
   await page.clock.install();
-  await page.clock.pauseAt(new Date());
+  // A moment ahead: the browser's clock runs from the install, and pausing it behind its time throws.
+  await page.clock.pauseAt(new Date(Date.now() + 1000));
   await page.getByRole("button", { name: "Start the call" }).click();
   await expect.poll(offeredSession).toBeDefined();
   const session = await offeredSession();
