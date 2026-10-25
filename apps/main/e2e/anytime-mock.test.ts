@@ -129,15 +129,17 @@ test.describe("Mocks whenever the learner wants", () => {
   });
 
   // A Start the server never answered (its transaction couldn't begin on a busy server) left the
-  // chooser on "Getting it ready…", then on an error page.
-  test("a Start that doesn't go through says so and starts on the next tap", async ({
+  // chooser on "Getting it ready…", then on an error page. And Ana left her mock with 4 of 45
+  // answered: "Continue your mock exam" was its only trace on the exam's page.
+  test("a Start that doesn't go through says so and starts on the next tap, and a mock left running leads the exam's mocks", async ({
     browser,
   }) => {
-    const { user } = await createAnytimeMockLearner({ plus: true });
+    const { answers, user } = await createAnytimeMockLearner({ plus: true });
     const page = await openAs(browser, user);
     let dropped = false;
 
     await page.goto("/mock/new");
+    await pickMock(page, /^Mathematics/u);
 
     // The connection drops once, on the Start's own request.
     await page.route("**/mock/new", async (route) => {
@@ -163,22 +165,8 @@ test.describe("Mocks whenever the learner wants", () => {
 
     await start.click();
     await expect(page.getByRole("timer", { name: "Time left" })).toBeVisible();
-    await page.context().close();
-  });
 
-  // Ana left her mock with 4 of 45 answered: "Continue your mock exam" was its only trace on the
-  // exam's page.
-  test("a mock left running leads the exam's mocks, with what's answered and the time left", async ({
-    browser,
-  }) => {
-    const { answers, user } = await createAnytimeMockLearner({ plus: true });
-    const page = await openAs(browser, user);
-
-    await page.goto("/mock/new");
-    await pickMock(page, /^Mathematics/u);
-    await page.keyboard.press("Enter");
-    await expect(page.getByRole("timer", { name: "Time left" })).toBeVisible();
-
+    // Left with 2 of 8 answered, it leads the exam's mocks.
     await answerMockQuestions({ answers, count: 2, knows: () => true, page });
     const mockId = /\/mock\/(?<id>[\w-]+)$/u.exec(page.url())?.groups?.id ?? "";
 
@@ -198,6 +186,7 @@ test.describe("Mocks whenever the learner wants", () => {
 
     await page.goBack();
     await expect(running.getByText("Mathematics · 2 of 8 answered")).toBeVisible();
+    await page.context().close();
   });
 
   test("the full exam with its written test: the essay on its own clock, the score and the notice's pass mark at once, then the essay's grade", async ({

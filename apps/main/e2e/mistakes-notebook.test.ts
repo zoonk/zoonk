@@ -149,12 +149,14 @@ test.describe("Mistakes notebook", () => {
     await context.close();
   });
 
-  test("leads with what's left to fix, shows each skill's mistakes beside the list and the fixed ones, and drills one by its cause by keyboard", async ({
+  test("leads with what's left to fix, shows each skill's mistakes and the fixed ones, practices one skill with the buddy, and drills by cause by keyboard", async ({
     browser,
   }) => {
     await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
       const attemptsBefore = await prisma.attempt.count({ where: { userId: user.id } });
       const right = page.getByRole("region", { name: "Answer feedback" }).getByText("Correct!");
+      const asked = await stubScreenTutor(page);
+      const options = page.getByRole("radio", { name: "1,0 A" });
 
       await page.goto("/mistakes");
 
@@ -261,6 +263,7 @@ test.describe("Mistakes notebook", () => {
       await tabs.getByRole("link", { name: /^To fix/u }).click();
       await expect(page).toHaveURL(/\/mistakes$/u);
 
+      // Every mistake to fix, from the notebook's main action.
       await page.getByRole("link", { name: "Practice mistakes" }).click();
 
       // The drill's rule sits right above the question it's for. The mistake's own question (a
@@ -298,16 +301,8 @@ test.describe("Mistakes notebook", () => {
       await expect
         .poll(async () => prisma.attempt.count({ where: { userId: user.id } }))
         .toBe(attemptsBefore + 1);
-    });
-  });
 
-  test("practices one skill's mistakes, and asks the buddy about a question without leaving it", async ({
-    browser,
-  }) => {
-    await asPersona(browser, { persona: "exam" }, async ({ page }) => {
-      const asked = await stubScreenTutor(page);
-      const options = page.getByRole("radio", { name: "1,0 A" });
-
+      // One skill's mistakes, practiced on their own: the newest skill's, open on arrival.
       await page.goto("/mistakes");
 
       await page
