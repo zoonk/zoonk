@@ -83,8 +83,9 @@ async function moveDateEditor(page: Page, goalId: string, found?: Promise<unknow
   await page.locator('[data-slot="journey"]').getByRole("button", { name: "Adjust plan" }).click();
 
   const editor = page.getByRole("dialog", { name: "Adjust your plan" });
-  const move = editor.getByRole("button", { name: "Move your date to cover everything" });
-  await expect(move).toBeVisible();
+  // Move your date, whatever it's named: once a search finds the date, it names it.
+  const move = editor.getByRole("button", { name: /^Move your date to /u });
+  await expect(move).toHaveAccessibleName("Move your date to cover everything");
 
   return { asked, editor, fittingDate, move, targetDate };
 }
