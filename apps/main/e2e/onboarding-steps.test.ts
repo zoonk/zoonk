@@ -61,8 +61,9 @@ test.describe("Refreshing mid-onboarding", () => {
     await expect(page.getByRole("heading", { name: purpose })).toBeVisible();
     await expectAccessibleScreen(page, purpose);
 
+    // A one-answer question moves on with the pick: a Continue after it could reach the next
+    // screen's, which waits for a date.
     await page.getByRole("radio", { name: /Understand it in depth/u }).click();
-    await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
     const date = page.getByRole("heading", { name: "Is there a date you're aiming for?" });
     await expect(date).toBeVisible();
@@ -164,8 +165,8 @@ for (const boundary of [
 
       await page.clock.setFixedTime(new Date(boundary.now));
       await page.goto(`/start/${goal.id}`);
+      // The pick moves on by itself (see the refresh test above).
       await page.getByRole("radio", { name: /Understand it in depth/u }).click();
-      await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
       const date = page.getByLabel("Date", { exact: true });
       const next = page.getByRole("button", { exact: true, name: "Continue" });
