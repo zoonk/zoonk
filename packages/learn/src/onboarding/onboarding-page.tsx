@@ -56,20 +56,19 @@ const WIDE_ASIDE_CLASS =
   "not-has-[>div>:nth-child(2)]:hidden min-[72rem]:not-has-[>div>:nth-child(2)]:hidden";
 
 /**
- * A screen's measure from `lg`, its bar's row and the screen alike: a task's column
- * (`max-w-column`) centered in the page, as the player centers its questions, so a wide screen
- * leaves even room on both sides of the question instead of a strip on one edge and the bar's
- * controls sit over the question they act on.
+ * A screen's measure from `lg`: a task's column (`max-w-column`) centered in the page, as the
+ * player centers its questions, so a wide screen leaves even room on both sides of the question
+ * instead of a strip on one edge.
  */
 const SCREEN_MEASURE_CLASS = "lg:mx-auto lg:max-w-column";
 
 /**
- * A screen as a page of the app's frame: the flow's bar, then the screen, filling a phone's or a
- * tablet's column like any page, and from `lg` a task's column centered in the page, its bar on
- * the column's edges; a `wide` screen, such as the plan's reveal, fills the room as a detail page
- * does. From 72rem the rail sits in the page's aside at the right edge. The flow's rail is
- * supporting context each screen repeats where it needs it, so it's hidden under 72rem; a `wide`
- * screen's own rail follows it there, as its last sections.
+ * A screen as a page of the app's frame: the flow's bar across the page, as every page's bar is,
+ * then the screen, filling a phone's or a tablet's column like any page, and from `lg` a task's
+ * column centered in the page, under the bar's middle; a `wide` screen, such as the plan's reveal,
+ * fills the room as a detail page does. From 72rem the rail sits in the page's aside at the right
+ * edge. The flow's rail is supporting context each screen repeats where it needs it, so it's
+ * hidden under 72rem; a `wide` screen's own rail follows it there, as its last sections.
  */
 export function OnboardingScreenPage({
   backHref,
@@ -86,7 +85,6 @@ export function OnboardingScreenPage({
 }) {
   const t = useExtracted();
   const { bar, notice } = useOnboardingScreen();
-  const measure = wide ? undefined : SCREEN_MEASURE_CLASS;
 
   return (
     <PageWithAside
@@ -96,9 +94,9 @@ export function OnboardingScreenPage({
       // The column fills the screen's height, so a phone's next step can sit at its bottom.
       className="flex-1 gap-4"
     >
-      <OnboardingPageBar backHref={backHref} bar={bar} barEnd={barEnd} className={measure} />
+      <OnboardingPageBar backHref={backHref} bar={bar} barEnd={barEnd} />
 
-      <Page className={cn("flex-1 gap-6", measure)}>
+      <Page className={cn("flex-1 gap-6", !wide && SCREEN_MEASURE_CLASS)}>
         {notice}
         {children}
       </Page>

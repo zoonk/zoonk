@@ -21,7 +21,7 @@ const BAR_SURFACE_CLASS =
 /**
  * A page bar's surface: sticky at the page's top over the frame's padding, as wide as the page's
  * edges, its hairline drawn once the page scrolls. `children` is the bar's row, on the page's
- * measure (`LearnPageBar`'s, or an onboarding screen's narrower column).
+ * measure (`LearnPageBar`'s, an onboarding screen's).
  */
 export function PageBarSurface({ children, className, ...props }: React.ComponentProps<"div">) {
   const scrolled = useScrolled();

@@ -24,7 +24,7 @@ import { LearnLink } from "../learn-link";
 import { goBackToApp } from "../shell/app-history";
 import { useOnboardingHost } from "./onboarding-host";
 
-/** The "⋯", its glyph on the column's right edge as the way back's sits on its left. */
+/** The "⋯", its glyph on the page's right edge as the way back's sits on its left. */
 const MENU_TRIGGER_CLASS = "-mr-3 lg:-mr-2.5 [&_svg:not([class*='size-'])]:size-5";
 
 /** A menu row: what it does, and under it what happens to the answers. */

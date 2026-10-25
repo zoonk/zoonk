@@ -73,12 +73,14 @@ export function OnboardingBarRow({ bar, className }: { bar: OnboardingBar; class
 }
 
 /**
- * An onboarding page's bar, where every page's bar sits (`PageBarSurface`), its row on the
- * screen's edges (`className`: from `lg` the centered column, so its controls sit over the question
- * they act on, as a task's do): on the left the way back to the flow's previous screen or, where
- * there's none and under `lg`, an ✕ out to the app page the learner left for onboarding (Escape
- * presses either); in the middle the steps' dots, or a test's progress; on the right the screen's
- * own action (the "⋯" with finishing later and starting over) and the host's. From `lg` the sidebar
+ * An onboarding page's bar, where and as wide as every page's bar (`PageBarSurface`), so it never
+ * moves between screens: on the left, where every page's way back sits, the way back to the flow's
+ * previous screen or, where there's none and under `lg`, an ✕ out to the app page the learner left
+ * for onboarding (Escape presses either); in the middle, over the screen's centered column, the
+ * steps' dots or a test's progress; on the right the screen's own action (the "⋯" with finishing
+ * later and starting over) and the host's, on the page's edge beside the aside, never over it,
+ * where it would read as the aside's own. As the player keeps its ✕ and "⋯" in the window's
+ * corners, the bar's ends stay in the page's corners however wide it grows. From `lg` the sidebar
  * holds the way out, so a screen with nothing else in its bar has none there, and its title sits
  * where every page's does.
  */
@@ -86,12 +88,10 @@ export function OnboardingPageBar({
   backHref,
   bar,
   barEnd,
-  className,
 }: {
   backHref: string;
   bar: OnboardingBar;
   barEnd: ReactNode;
-  className?: string;
 }) {
   const hasOwn = bar.onBack !== undefined || Boolean(bar.middle) || Boolean(bar.end);
 
@@ -102,10 +102,9 @@ export function OnboardingPageBar({
         className={cn(
           PAGE_COLUMN_CLASS,
           "grid min-h-11 grid-cols-[1fr_auto_1fr] items-center gap-2 lg:min-h-10",
-          className,
         )}
       >
-        {/* Under `lg` the chevron's and the ✕'s glyphs sit on the column's edge, as the "⋯"'s does. */}
+        {/* Under `lg` the chevron's and the ✕'s glyphs sit on the page's edge, as the "⋯"'s does. */}
         <div className="justify-self-start max-lg:-ml-3">
           {bar.onBack ? (
             <BackButton escape onBack={bar.onBack} />
