@@ -726,6 +726,28 @@ describe("exam plans", () => {
     expect(plan.phases[1]?.minutes).toBeGreaterThan(0);
   });
 
+  // A class test 10 days away at 20 minutes a day, after three missed days (simulated life
+  // class-test 20/10): the run on the final stretch's first day dated the chapter in progress's
+  // next lesson there, at its own minutes, as a day with no share of new learning gives a lesson.
+  // The next run kept it at its minutes over that share of none: Infinity, which no save takes.
+  it("keeps this week's lesson in the final stretch at the minutes it was given", () => {
+    const day = fromIsoDate("2026-11-02");
+
+    const plan = buildPlan(
+      examInput({
+        items: [existing({ id: "late", lessonId: "l1", phase: 3, scheduledFor: day })],
+        lessons: [lesson("l1", ["s1"])],
+        mode: "automatic",
+        today: day,
+      }),
+    );
+
+    expect(plan.items.find((item) => item.id === "late")).toMatchObject({
+      minutes: 3,
+      scheduledFor: day,
+    });
+  });
+
   function datesOf({ kind, plan }: { kind: string; plan: ReturnType<typeof buildPlan> }) {
     return plan.items
       .filter((item) => item.kind === kind)

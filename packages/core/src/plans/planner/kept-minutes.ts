@@ -1,5 +1,6 @@
 import { getPlannedBossMinutes } from "./boss-minutes";
 import { type BuildPlanInput } from "./build-plan";
+import { toDayMinutes } from "./interval-study-minutes";
 import { getPlanCalendar, toIsoDate } from "./plan-calendar";
 import {
   DAY_BEFORE_EXAM_MINUTES,
@@ -31,7 +32,8 @@ export function getKeptMinutes({
   const window = item.scheduledFor ? findExamWindow({ date: item.scheduledFor, windows }) : null;
 
   // The share of its day's time new learning had when it was laid out: its exam phase's, as the
-  // day gave it (see `createExamDays`), so a kept lesson takes the time a scheduled one would.
+  // day gave it (see `createExamDays`), so a kept lesson takes the time a scheduled one would (see
+  // `toDayMinutes`), a final-stretch day's included.
   const share = getLearningShare({
     phaseKind: window?.kind ?? "learn",
     practiceBias: input.settings.practiceBias,
@@ -51,7 +53,10 @@ export function getKeptMinutes({
     }),
     chapter: 0,
     checkpoint: WEEKLY_CHECKPOINT_MINUTES,
-    lesson: (unit?.minutes ?? DEFAULT_LESSON_MINUTES * input.paceFactor) / share,
+    lesson: toDayMinutes({
+      lessonMinutes: unit?.minutes ?? DEFAULT_LESSON_MINUTES * input.paceFactor,
+      share,
+    }),
     mock:
       saved?.minutes ??
       (isFullMock ? (input.fullMockMinutes ?? input.mockMinutes) : input.mockMinutes),
