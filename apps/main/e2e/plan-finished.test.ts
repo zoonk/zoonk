@@ -334,7 +334,7 @@ test.describe("A plan whose lessons are all done", () => {
         where: { plan: { goalId: user.goalId }, status: "todo" },
       });
 
-      // Main's E2E runs without the API: Find finds that 55 minutes a day cover everything.
+      // Standing in for the API: Find finds that 55 minutes a day cover everything.
       const goal = await prisma.goal.findUniqueOrThrow({ where: { id: user.goalId } });
 
       await routeTimeToCover(page, {

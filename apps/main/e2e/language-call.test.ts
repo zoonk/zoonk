@@ -175,8 +175,8 @@ function clipAudio(): Buffer {
 }
 
 /**
- * `POST /v1/speech-clips` as the API answers it (main's E2E runs without the API, whose own tests
- * cover the endpoint), and the generated file it points to: `url` as the API gives it, `file` as
+ * `POST /v1/speech-clips` as the API answers it (the API's own tests cover the endpoint), and the
+ * generated file it points to: `url` as the API gives it, `file` as
  * the page loads it (a private clip plays through main's own file route).
  */
 async function routeSpeechClips(page: Page, { file = CLIP_URL, url = CLIP_URL } = {}) {

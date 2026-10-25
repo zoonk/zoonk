@@ -78,7 +78,7 @@ test("coverage Apply requires a fresh preview after Adjust plan changes the sche
   const { goal, page } = await openBasesPlan(browser);
   await page.setViewportSize({ height: 900, width: 1440 });
 
-  // Main's E2E runs without the API: Find's search answers an hour a day, more than her 15 minutes
+  // Standing in for the API: Find's search answers an hour a day, more than her 15 minutes
   // and the 30 she picks later, so each Find previews a change.
   await routeTimeToCover(page, {
     goalId: goal.id,

@@ -321,8 +321,8 @@ test("while the learner changes the days, Find says only the time those days nee
   );
 
   // What Find finds for each number of study days, as Marcos's plan gave it: an hour on every
-  // day, 1 hr 10 min on six, 1 hr 25 min on five. Main's E2E runs without the API, so it's stood
-  // in for here; while `holding`, answers wait until released, as a big plan's search takes seconds.
+  // day, 1 hr 10 min on six, 1 hr 25 min on five, standing in for the API's search; while
+  // `holding`, answers wait until released, as a big plan's search takes seconds.
   const minutesFor = new Map([
     [5, 85],
     [6, 70],
@@ -489,7 +489,7 @@ test("the time step asks what a larger Sunday exam budget covers instead of assu
 
   const requests: { dailyMinutes: number; studyDays: string }[] = [];
 
-  // Main runs without the API (see `readSundayExamShare`).
+  // The API's time advice, as `readSundayExamShare` has it.
   await page.route(`**/v1/goals/${goal.id}/plan/time-advice**`, (route) => {
     const params = new URL(route.request().url()).searchParams;
     const dailyMinutes = Number(params.get("dailyMinutes"));
@@ -813,7 +813,7 @@ test("the time step keeps asking while a slow plan is still being built, and fin
 }) => {
   const { goal, isoDate } = await createTimeStepGoal(noProgressUser.id);
 
-  // Main's E2E runs without the API: the plan is still being built until `built`, as Carla's was
+  // Standing in for the API: the plan is still being built until `built`, as Carla's was
   // for over four minutes while five other learners started at the same time.
   let built = false;
   let asked = 0;

@@ -427,7 +427,7 @@ test.describe("Exam date", () => {
       where: { id: goal.id },
     });
 
-    // Main's E2E runs without the API: what the time picked covers, for a plan counting down to
+    // Standing in for the API: what the time picked covers, for a plan counting down to
     // December 2099, and the time Find finds when the learner asks.
     await page.route(`**/v1/goals/${goal.id}/plan/time-advice**`, (route) =>
       route.fulfill({

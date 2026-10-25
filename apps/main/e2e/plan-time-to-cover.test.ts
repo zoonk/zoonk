@@ -11,8 +11,8 @@ import { routeTimeToCover } from "./time-to-cover-routes";
 /*
  * "Find the time that covers everything": no page or prefetch searches other daily times (LEAD
  * ruling, option 2); the learner asks, in the plan editor's time a day or the Plan's coverage card,
- * and only the button waits. Main's E2E runs without the API, so each test says what the search
- * found (see `routeTimeToCover`); the API's E2E and core's tests prove the search exact.
+ * and only the button waits. Each test says what the API's search found (see `routeTimeToCover`);
+ * the API's E2E and core's tests prove the search exact.
  */
 
 const FIND = "Find the time that covers everything";
@@ -72,7 +72,7 @@ async function holdNextSave(page: Page) {
 
 /**
  * Marcos's move came forward to a month away, so his own time falls short by then. The plan editor
- * is open. Main's E2E runs without the API: Find answers once `found` resolves (at once without
+ * is open. Standing in for the API: Find answers once `found` resolves (at once without
  * it), with a date a year later that his time covers it all by.
  */
 async function moveDateEditor(page: Page, goalId: string, found?: Promise<unknown>) {

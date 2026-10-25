@@ -72,7 +72,7 @@ test.describe("Plan choices", () => {
 
     const [cells, living] = bases;
 
-    // Main's E2E runs without the API, which works out the recommendation when she asks: it plans
+    // Standing in for the API, which works out the recommendation when she asks: it plans
     // the goal with every prerequisite in depth.
     const advised = await routeBasesAdvice(page, {
       advice: { daysLeft: 30, ready: true, recommended: "quick" },

@@ -8,9 +8,9 @@ test.use({
 });
 
 /**
- * Spoken answers go to the public API from the browser. Main's E2E runs without the API, so these
- * stand in for its answers (the API's own suite covers the endpoint, its limits included, and the
- * player's tests what each answer shows).
+ * Spoken answers go to the public API from the browser. These stand in for its answers, so each
+ * test picks the grade it needs (the API's own suite covers the endpoint, its limits included, and
+ * the player's tests what each answer shows).
  */
 const SPOKEN_ANSWERS_URL = "**/v1/steps/*/spoken-answers";
 

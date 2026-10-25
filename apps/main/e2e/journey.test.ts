@@ -593,7 +593,7 @@ test.describe("Journey", () => {
       const targetDate = new Date(toUTCMidnight(new Date()).getTime() + 30 * MS_PER_DAY);
       await prisma.goal.update({ data: { targetDate }, where: { id: user.goalId } });
 
-      // Main's E2E runs without the API: Find finds no daily time covers it by his date, and a
+      // Standing in for the API: Find finds no daily time covers it by his date, and a
       // date two years later that his own time covers it all by.
       const fittingDate = new Date(targetDate.getTime() + 2 * 365 * MS_PER_DAY);
 

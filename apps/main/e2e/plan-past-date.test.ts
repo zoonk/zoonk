@@ -49,7 +49,7 @@ async function passTheDate(goalId: string) {
 }
 
 /**
- * Main's E2E runs without the API: Preview finds the day his time covers what's left by (the date
+ * Standing in for the API: Preview finds the day his time covers what's left by (the date
  * search runs only when he asks), here two months out.
  */
 async function routeFoundDate({

@@ -809,7 +809,7 @@ test.describe("Today's plan change", () => {
         status: "applied",
       });
 
-      // Main's E2E runs without the API: Find finds no daily time covers it by his date, and a
+      // Standing in for the API: Find finds no daily time covers it by his date, and a
       // date his own time covers it all by.
       await routeTimeToCover(page, {
         goalId: user.goalId,

@@ -15,8 +15,8 @@ const askedWeekSchema = z.object({
 type AskedWeek = z.infer<typeof askedWeekSchema>;
 
 /**
- * Main's E2E runs without the API, where "Find the time that covers everything" (and Move your date
- * without an answer yet) posts from the browser: each test says what the search found. The API's
+ * "Find the time that covers everything" (and Move your date without an answer yet) posts from the
+ * browser to the API: each test says what the search found. The API's
  * E2E and core's tests prove the search exact; these test what the screens do around it. `time`
  * can answer each week asked about, and take its time (a big plan's search takes seconds).
  * Resolves to the weeks the browser asked about, in order.

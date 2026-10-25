@@ -3,8 +3,8 @@ import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons"
 import { type Page, expect, test } from "./fixtures";
 
 /**
- * The example line goes to the public API from the browser. Main's E2E runs without the API, so
- * this stands in for its answers (the API's own suite covers the endpoint, and the player's tests
+ * The example line goes to the public API from the browser. This stands in for its answers, so
+ * each test picks the line it gets (the API's own suite covers the endpoint, and the player's tests
  * what the line shows). Opening the lesson only reads the line; the learner's first action writes
  * the lesson's lines in the background, which takes seconds, and a Server Action would hold up
  * every later one on the page, so nothing may wait for that request.
