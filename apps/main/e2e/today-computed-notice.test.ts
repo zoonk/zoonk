@@ -66,6 +66,7 @@ test.describe("A plan change Today works out on its own", () => {
       const main = page.getByRole("main");
       const gotIt = main.getByRole("button", { exact: true, name: "Got it" });
       await expect(gotIt).toBeVisible();
+      await expect(main.getByRole("button", { name: "Undo" })).toHaveCount(0);
 
       // Today worked the change out on its own read: nothing about it is saved yet.
       const shown = await readTodayNotice(page, seed.phaseName);

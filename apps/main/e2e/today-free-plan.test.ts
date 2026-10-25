@@ -127,7 +127,6 @@ test.describe("Today on a free exam plan past its first week", () => {
     );
 
     await expect(card.getByText(/more as you go/u)).toHaveCount(0);
-    await page.screenshot({ fullPage: true, path: test.info().outputPath("today-free-plan.png") });
     await page.context().close();
   });
 
@@ -160,7 +159,6 @@ test.describe("Today on a free exam plan past its first week", () => {
     );
 
     await expect(card.getByText("Today's session is complete.")).toBeVisible();
-    await page.screenshot({ fullPage: true, path: test.info().outputPath("today-free-done.png") });
     await page.context().close();
   });
 
@@ -179,7 +177,6 @@ test.describe("Today on a free exam plan past its first week", () => {
     );
 
     await expect(card.getByText(/Getting today's lessons ready/u)).toHaveCount(0);
-    await page.screenshot({ fullPage: true, path: test.info().outputPath("today-free-empty.png") });
     await page.context().close();
   });
 
@@ -201,7 +198,6 @@ test.describe("Today's time studied", () => {
     await page.goto("/session");
 
     await expect(page.getByRole("heading", { level: 1, name: /^Done in 2\smin$/u })).toBeVisible();
-    await page.screenshot({ path: test.info().outputPath("summary-done-in.png") });
     await page.context().close();
   });
 
@@ -217,7 +213,6 @@ test.describe("Today's time studied", () => {
       card.getByRole("status").filter({ hasText: "Today's session is complete." }),
     ).toHaveText(/^Today's session is complete\.\s*2\smin$/u);
 
-    await page.screenshot({ fullPage: true, path: test.info().outputPath("today-done.png") });
     await page.context().close();
   });
 

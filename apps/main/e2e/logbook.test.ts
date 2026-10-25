@@ -115,7 +115,6 @@ test.describe("Logbook", () => {
 
     const heading = page.getByRole("heading", { level: 1 });
     await expect(heading).toHaveText(/^What a week/u);
-    await page.screenshot({ path: test.info().outputPath("logbook-guest.png") });
     await expect(heading).toHaveText("What a week!");
     await context.close();
   });

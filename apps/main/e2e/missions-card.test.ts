@@ -158,8 +158,6 @@ test.describe("Today's missions card", () => {
         .getByRole("button", { exact: true, name: "Quick review, counts toward a mission" }),
     ).toBeVisible();
 
-    await missions.screenshot({ path: test.info().outputPath("today-missions-phone.png") });
-
     // Beside the queue, the card keeps its rows: each named in one run, without a space before the
     // comma, and described by its line.
     await page.setViewportSize(LAPTOP);
@@ -216,11 +214,6 @@ test.describe("Today's missions card", () => {
 
     const queue = page.getByRole("region", { name: "Today's session" });
 
-    await page.screenshot({
-      fullPage: true,
-      path: test.info().outputPath("today-long-phone-day.png"),
-    });
-
     await expect(
       queue.getByRole("button", { exact: true, name: `${LESSON_TITLE}, counts toward a mission` }),
     ).toBeVisible();
@@ -252,7 +245,6 @@ test.describe("Today's missions card", () => {
       .filter({ hasText: "Practice mistakes" });
 
     await expect(block).toBeVisible();
-    await page.screenshot({ path: test.info().outputPath("today-mission-row-laptop.png") });
 
     await expect(
       mission.getByRole("button", { name: "Practice, go to today's practice" }),

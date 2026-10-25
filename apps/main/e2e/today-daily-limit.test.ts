@@ -1,4 +1,4 @@
-import { type Page, type TestInfo } from "@playwright/test";
+import { type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
 import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
@@ -58,19 +58,6 @@ function limitLine(page: Page, { clause, sentence }: { clause: string; sentence:
   return page.getByRole("status").filter({ hasText: sentence }).filter({ hasText: clause });
 }
 
-async function captureAt(
-  page: Page,
-  testInfo: TestInfo,
-  { name, width }: { name: string; width: number },
-) {
-  await page.setViewportSize({ height: 900, width });
-
-  await page.screenshot({
-    animations: "disabled",
-    path: testInfo.outputPath(`today-${name}-${width}-light.png`),
-  });
-}
-
 test("Today past its study time says see you tomorrow when tomorrow is a study day", async ({
   browser,
 }) => {
@@ -88,7 +75,7 @@ test("Today past its study time says see you tomorrow when tomorrow is a study d
 
 test("Today past its study time names the next study day when tomorrow rests", async ({
   browser,
-}, testInfo) => {
+}) => {
   const { goal, user } = await createStudyDay();
 
   // Tomorrow rests and the day after studies: "tomorrow" would promise a day off. On a Friday or
@@ -105,10 +92,10 @@ test("Today past its study time names the next study day when tomorrow rests", a
   ).toBeVisible();
 
   await expect(page.getByText("See you tomorrow!")).toHaveCount(0);
-  await captureAt(page, testInfo, { name: "daily-limit-day", width: 390 });
-  await captureAt(page, testInfo, { name: "daily-limit-day", width: 1440 });
 
   // The same line in German, French and Portuguese, on a phone, where it wraps.
+  await page.setViewportSize({ height: 900, width: 390 });
+
   for (const lang of ["de", "fr", "pt"] as const) {
     const { day, sentence } = LIMIT_LINES[lang];
     // oxlint-disable-next-line no-await-in-loop -- One page shows one language at a time.
@@ -117,8 +104,6 @@ test("Today past its study time names the next study day when tomorrow rests", a
     await expect(
       limitLine(page, { clause: day(weekdayIn({ days: 2, lang })), sentence }),
     ).toBeVisible();
-    // oxlint-disable-next-line no-await-in-loop -- One page shows one language at a time.
-    await captureAt(page, testInfo, { name: `daily-limit-day-${lang}`, width: 390 });
   }
 
   await page.context().close();
