@@ -209,7 +209,9 @@ test("an old copy of the Plan reads itself again when its ask fails", async ({ b
 });
 
 test.describe("Lessons being written in the plan", () => {
-  test("the lesson being written turns into its chapter on the Plan on its own", async ({
+  // An open Plan waiting on lessons used to read itself whole every 10 seconds (~500 queries
+  // each time): it asks whether anything changed, and reads itself again only when it did.
+  test("while nothing lands, the Plan asks whether it changed instead of reading itself again, and the lesson being written turns into its chapter on its own", async ({
     browser,
   }) => {
     const { goal, user } = await createPlanLearner();
@@ -224,34 +226,6 @@ test.describe("Lessons being written in the plan", () => {
     await expect(path.getByText(WRITING_LINE)).toBeVisible();
     await expect(path.getByRole("link")).toHaveCount(0);
 
-    // The outline lands; the plan's next read, without a refresh, shows its chapter.
-    await landOutline();
-    await page.clock.fastForward(WRITING_REFRESH_MS);
-
-    await expect(path.getByRole("link", { name: new RegExp(chapter.title, "u") })).toHaveAttribute(
-      "href",
-      `/content/chapters/${chapter.id}`,
-    );
-
-    await expect(path.getByText(WRITING_LINE)).toBeHidden();
-    await page.context().close();
-  });
-
-  // An open Plan waiting on lessons used to read itself whole every 10 seconds (~500 queries
-  // each time): it asks whether anything changed, and reads itself again only when it did.
-  test("while nothing lands, the Journey asks whether it changed instead of reading itself again", async ({
-    browser,
-  }) => {
-    const { goal, user } = await createPlanLearner();
-    await createPlanBeingWritten(goal.id);
-
-    const page = await openAs(browser, user);
-    await page.clock.install();
-    await page.goto("/plan");
-
-    const path = page.getByRole("list", { name: "Your path" });
-    await expect(path.getByText(WRITING_LINE)).toBeVisible();
-
     // A page that hydrates after the clock moved on asks once more as an old copy
     // (`useRefreshWhenOld`); what matters is that asking never reads it.
     const requests = watchPlanRequests(page);
@@ -265,6 +239,17 @@ test.describe("Lessons being written in the plan", () => {
 
     expect(requests.readsAfterAsking).toBe(0);
     await expect(path.getByText(WRITING_LINE)).toBeVisible();
+
+    // The outline lands; the plan's next read, without a refresh, shows its chapter.
+    await landOutline();
+    await page.clock.fastForward(WRITING_REFRESH_MS);
+
+    await expect(path.getByRole("link", { name: new RegExp(chapter.title, "u") })).toHaveAttribute(
+      "href",
+      `/content/chapters/${chapter.id}`,
+    );
+
+    await expect(path.getByText(WRITING_LINE)).toBeHidden();
     await page.context().close();
   });
 });

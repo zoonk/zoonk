@@ -77,7 +77,7 @@ test.describe("A plan whose date came with lessons left", () => {
   // Lucas's plan read "Ended" and "Your plan ended · 13 lessons were left out" the day after his
   // date, and offered the course's next level over them. The owner: plans don't end; offer a way
   // to adjust them automatically.
-  test("keeps going from the Plan once he previews it, its diff first, and undo brings it back", async ({
+  test("keeps going from the Plan once he previews it, its diff first, and undo brings it back; Today says no rest day past the date and leads to the Plan, which a phone answers in its sheet", async ({
     browser,
   }) => {
     await asPersona(browser, { persona: "buddy" }, async ({ page, user }) => {
@@ -119,16 +119,8 @@ test.describe("A plan whose date came with lessons left", () => {
       // Undo gives the offer back with the plan: he read "Undone" with no way back to it until he
       // reloaded.
       await expect(slot.getByRole("button", { exact: true, name: "Preview" })).toBeVisible();
-    });
-  });
 
-  test("Today says no rest day past the date, and leads to the Plan; a phone answers in its sheet", async ({
-    browser,
-  }) => {
-    await asPersona(browser, { persona: "buddy" }, async ({ page, user }) => {
-      const { date } = await passTheDate(user.goalId);
-      await routeFoundDate({ date, goalId: user.goalId, page });
-
+      // On his phone, Today has no rest day past his date.
       await page.setViewportSize({ height: 844, width: 390 });
       await page.goto("/today");
 
@@ -146,7 +138,7 @@ test.describe("A plan whose date came with lessons left", () => {
       await expect(page).toHaveURL(/\/plan$/u);
 
       // On a phone the slot is a line; its sheet holds Preview, then the diff and Apply.
-      await suggestionSlot(page).getByRole("button", { exact: true, name: "View" }).click();
+      await slot.getByRole("button", { exact: true, name: "View" }).click();
       const sheet = page.getByRole("dialog");
 
       await sheet.getByRole("button", { exact: true, name: "Preview" }).click();

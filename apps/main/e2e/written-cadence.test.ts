@@ -75,10 +75,10 @@ test.describe("Written practice cadence", () => {
     });
   });
 
-  test("on the essay's own page, the cadence she taps shows at once, and the saved one again when the change doesn't save", async ({
+  test("on the essay's own page, the cadence she taps shows at once, and the saved one again when the change doesn't save; the exam page shows where the bar was for her course", async ({
     browser,
   }) => {
-    await asPersona(browser, { persona: "exam" }, async ({ page }) => {
+    await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
       // The change is held on its way to the server, and then never reaches it.
       const held: (() => void)[] = [];
 
@@ -120,13 +120,8 @@ test.describe("Written practice cadence", () => {
       );
 
       await expect(written.getByRole("radio", { name: "Every week" })).toBeChecked();
-    });
-  });
 
-  test("shows where the bar was for her course, with its source, on the exam page", async ({
-    browser,
-  }) => {
-    await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
+      // Where the bar was for her course, with its source, on the exam page.
       const seeded = await prisma.goal.findUniqueOrThrow({ where: { id: user.goalId } });
       const details = isJsonObject(seeded.details) ? seeded.details : {};
 

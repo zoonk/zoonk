@@ -88,8 +88,6 @@ for (const difference of ["device", "learner"] as const) {
         `Goal date${dateText}`,
       );
 
-      await page.screenshot({ path: test.info().outputPath(`${difference}-plan.png`) });
-
       await page.reload();
 
       await expect(page.getByRole("region", { exact: true, name: "Phases" })).toContainText(
