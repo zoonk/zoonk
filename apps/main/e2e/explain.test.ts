@@ -10,7 +10,7 @@ import { openLearnerPalette, openPaletteWithKeyboard } from "./command-palette";
 import { startCourseWithLevel } from "./course-start";
 import { type Page, expect, test } from "./fixtures";
 import { type StreamEvent, followRun } from "./generation-run";
-import { asPersona } from "./learn-personas";
+import { asPersona, openPersona } from "./learn-personas";
 import {
   AT_ONCE_MS,
   expectHydrated,
@@ -41,6 +41,49 @@ async function readStory(page: Page, screens: number): Promise<void> {
 }
 
 const STORY_SCREENS = 5;
+
+/**
+ * Opens the persona's explanation from the goal switcher or search while code arrives slowly: its
+ * first screen shows at once, with no skeleton painted on the way.
+ */
+async function expectOpenedAtOnce({
+  from,
+  page,
+  persona,
+}: {
+  from: "goal switcher" | "search";
+  page: Page;
+  persona: { goalId: string };
+}) {
+  await watchPaintedFrames(page, { skeleton: 'main [data-slot="skeleton"]' });
+  const requests = followRequests(page);
+
+  // Away from Today, whose link to an unfinished explanation loads the player already.
+  await page.setViewportSize({ height: 900, width: 1280 });
+  await page.goto("/stats");
+  const explanation = await findExplanation(page, from);
+  await expect(explanation).toBeVisible();
+
+  // From here on code arrives as over a slow network. Pointing at the explanation starts loading
+  // the player along with the page.
+  await slowCodeFromNow(page);
+  await explanation.hover();
+  await requests.settled();
+  await markPaintedFrames(page);
+
+  await explanation.click();
+
+  await expect(
+    page.getByRole("main", { name: "Lesson content" }).getByText("The market isn't one price"),
+    from,
+  ).toBeVisible({ timeout: AT_ONCE_MS });
+
+  await expect(page).toHaveURL(`/explain/${persona.goalId}`);
+
+  const frames = await paintedFramesSince(page);
+  const skeletons = frames.filter((frame) => frame.seen.skeleton !== "none");
+  expect(skeletons, from).toEqual([]);
+}
 
 /** A quick explanation's entry where a learner finds it: the goal switcher or search. */
 async function findExplanation(page: Page, from: "goal switcher" | "search") {
@@ -447,8 +490,14 @@ test.describe("Quick explanations", () => {
     });
   });
 
-  test(`plays the story and ends with "Now you know"`, async ({ browser }) => {
+  test(`a learner with only quick explanations starts a goal on Today, and one plays its story to "Now you know"`, async ({
+    browser,
+  }) => {
     await asPersona(browser, { persona: "explain" }, async ({ page, user: persona }) => {
+      await page.goto("/today");
+      await expect(page.getByRole("textbox", { name: "I want to" })).toBeVisible();
+      await expect(page).toHaveURL(/\/today$/u);
+
       await page.goto(`/explain/${persona.goalId}`);
 
       // The screen's title, which the outline beside it on a wide screen names too.
@@ -593,15 +642,6 @@ test.describe("Quick explanations", () => {
     });
   });
 
-  test("a learner with only quick explanations starts a goal on Today", async ({ browser }) => {
-    await asPersona(browser, { persona: "explain" }, async ({ page }) => {
-      await page.goto("/today");
-
-      await expect(page.getByRole("textbox", { name: "I want to" })).toBeVisible();
-      await expect(page).toHaveURL(/\/today$/u);
-    });
-  });
-
   test("a learner with a plan goes back to Today after an explanation", async ({ browser }) => {
     await asPersona(browser, { persona: "explain" }, async ({ page, user: persona }) => {
       await goalFixture({ title: "Learn percentages", userId: persona.id });
@@ -635,40 +675,17 @@ test.describe("Quick explanations", () => {
   test("an explanation reached for in the goal switcher or search opens with its player, even when code arrives slowly", async ({
     browser,
   }) => {
-    for (const from of ["goal switcher", "search"] as const) {
-      // oxlint-disable-next-line no-await-in-loop -- Each way in starts from a new tab, one after another.
-      await asPersona(browser, { persona: "explain" }, async ({ page, user: persona }) => {
-        await watchPaintedFrames(page, { skeleton: 'main [data-slot="skeleton"]' });
-        const requests = followRequests(page);
+    await asPersona(browser, { persona: "explain" }, async ({ page, user: persona }) => {
+      await expectOpenedAtOnce({ from: "goal switcher", page, persona });
 
-        // Away from Today, whose link to an unfinished explanation loads the player already.
-        await page.setViewportSize({ height: 900, width: 1280 });
-        await page.goto("/stats");
-        const explanation = await findExplanation(page, from);
-        await expect(explanation).toBeVisible();
+      // The same learner in a new tab, with none of the player's code loaded yet.
+      const other = await openPersona(browser, persona);
 
-        // From here on code arrives as over a slow network. Pointing at the explanation starts
-        // loading the player along with the page.
-        await slowCodeFromNow(page);
-        await explanation.hover();
-        await requests.settled();
-        await markPaintedFrames(page);
-
-        await explanation.click();
-
-        await expect(
-          page
-            .getByRole("main", { name: "Lesson content" })
-            .getByText("The market isn't one price"),
-          from,
-        ).toBeVisible({ timeout: AT_ONCE_MS });
-
-        await expect(page).toHaveURL(`/explain/${persona.goalId}`);
-
-        const frames = await paintedFramesSince(page);
-        const skeletons = frames.filter((frame) => frame.seen.skeleton !== "none");
-        expect(skeletons, from).toEqual([]);
-      });
-    }
+      try {
+        await expectOpenedAtOnce({ from: "search", page: other.page, persona });
+      } finally {
+        await other.context.close();
+      }
+    });
   });
 });
