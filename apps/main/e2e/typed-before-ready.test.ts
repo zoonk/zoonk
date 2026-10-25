@@ -3,7 +3,14 @@ import { type Locator } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { type Page, expect, test } from "./fixtures";
-import { expectHydrated, holdCodeWith, isHydrated } from "./on-demand-code";
+import { expectVisibleFocus, tabTo } from "./keyboard-focus";
+import {
+  expectHydrated,
+  followRequests,
+  holdCodeWith,
+  isHydrated,
+  settleIdleWork,
+} from "./on-demand-code";
 
 /**
  * A slow device: the page shows its fields (the words a link put in a goal box, an onboarding
@@ -62,6 +69,23 @@ test.describe("Typed before the page is ready", () => {
     await expect(isHydrated(box)).resolves.toBe(false);
     await releaseTheCode({ code, field: box, page });
     await expect(box).toHaveValue("learn to bake bread for my family");
+  });
+
+  test("a goal box reached with Tab before it's ready keeps its keyboard ring", async ({
+    page,
+  }) => {
+    const code = await openBeforeTheCode(page, "/start");
+    const box = page.getByRole("textbox", { name: "I want to" });
+
+    // The box takes focus on its own once its code runs, on a device with a mouse. A keyboard
+    // learner who got there first keeps the ring that says where they are.
+    await tabTo(page, box);
+    const requests = followRequests(page);
+    await releaseTheCode({ code, field: box, page });
+    await settleIdleWork(page, requests);
+
+    await expect(box).toBeFocused();
+    await expectVisibleFocus(box);
   });
 
   test("the buddy's goal box keeps words changed before it's ready", async ({
