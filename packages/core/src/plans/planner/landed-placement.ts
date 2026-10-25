@@ -11,7 +11,7 @@ import {
 import { getOneDayStudy } from "./interval-study-minutes";
 import { isStandInItem } from "./kept-items";
 import { getBaseDays, getStandInDays } from "./landed-days";
-import { type LandedUnits } from "./landed-lessons";
+import { type LandedUnits, withoutWrittenStandIns } from "./landed-lessons";
 import { type ExistingPlanItem, getItemKey } from "./plan-items";
 import { DEFAULT_LESSON_MINUTES, type QueueUnit } from "./plan-units";
 import {
@@ -267,7 +267,8 @@ function isStandInPart(unit: Pick<QueueUnit, "kind" | "lessonId">): boolean {
  * the learner was already shown takes no more than it held. Put on the stand-in's first day
  * whatever their time, an ENEM plan's Friday went from 21 lessons to 44. `landed` is what falls
  * this week, which the run keeps as it is (see `keepThisWeek`), and `laidOut` the rest: a
- * landing-only run's only its landed skills' (see `kept`).
+ * landing-only run's only its landed skills' (see `kept`). `dropped` is what the run leaves out
+ * once its landed lessons take their stand-ins' place (see `withoutWrittenStandIns`).
  */
 export function putLandedLessons({
   days,
@@ -280,7 +281,7 @@ export function putLandedLessons({
   units,
 }: {
   days: readonly PlanDay[];
-  /** What the run's cut left out: a landed skill it cut part of gets no more than its time. */
+  /** What the run's layout left out: a landed skill it cut part of gets no more than its time. */
   dropped?: readonly DroppedUnit[];
   input: BuildPlanInput;
   /**
@@ -296,11 +297,11 @@ export function putLandedLessons({
   start: Date;
   /** The run's layout. */
   units: readonly ScheduledUnit[];
-}): { laidOut: ScheduledUnit[]; landed: ScheduledUnit[]; leftOut: DroppedUnit[] } {
+}): { dropped: DroppedUnit[]; laidOut: ScheduledUnit[]; landed: ScheduledUnit[] } {
   // A landing-only run's layout only says where its stand-ins' time was: the rest stays as the
   // plan has it.
   if (!landed || landed.size === 0) {
-    return { laidOut: kept ? [] : [...units], landed: [], leftOut: [] };
+    return { dropped: [...dropped], laidOut: kept ? [] : [...units], landed: [] };
   }
 
   const isPart = (unit: ScheduledUnit) => isStandInPart(unit) && landed.has(unit.skillId ?? "");
@@ -404,10 +405,11 @@ export function putLandedLessons({
     (unit.lessonId ? unit.date : (restStart.get(unit.skillId ?? "") ?? unit.date)) < start;
 
   return {
+    dropped: [
+      ...withoutWrittenStandIns({ dropped, landed }),
+      ...skills.flatMap((skill) => skill.leftOut.map((unit) => ({ ...unit, fittedMinutes: 0 }))),
+    ],
     laidOut: all.filter((unit) => !isThisWeek(unit) && (!kept || ours.has(unit))),
     landed: all.filter((unit) => isThisWeek(unit)),
-    leftOut: skills.flatMap((skill) =>
-      skill.leftOut.map((unit) => ({ ...unit, fittedMinutes: 0 })),
-    ),
   };
 }

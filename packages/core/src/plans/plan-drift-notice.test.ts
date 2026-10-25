@@ -263,6 +263,51 @@ describe("notices for changes within an estimate", () => {
     });
   });
 
+  // At 15 minutes a day, one stand-in begins before the exam and goes on after it: landed, it kept
+  // a stand-in for one more lesson after the exam beside all eight written ones.
+  it("lands every lesson of a stand-in that goes on past the exam, keeping no stand-in", async () => {
+    const { goal, library, plan } = await pacedPlanFixture({
+      dailyMinutes: 15,
+      days: 14,
+      fullCourse: true,
+      kind: "exam",
+      lessons: 4,
+      skills: 8,
+      standIns: [6, 7],
+    });
+
+    const before = await prisma.planItem.findMany({
+      where: { kind: "lesson", planId: plan.id, status: "todo" },
+    });
+
+    const spanning = before.find(
+      (item) =>
+        item.lessonId === null &&
+        item.scheduledFor !== null &&
+        goal.targetDate !== null &&
+        item.scheduledFor <= goal.targetDate,
+    );
+
+    expect(spanning).toBeDefined();
+
+    await writeLessons({
+      chapterId: library.chapters[3]?.id ?? "",
+      estimatedMinutes: 3,
+      skills: library.skills.slice(6, 8),
+    });
+
+    await refreshGoalPlan({ goalId: goal.id });
+    await declineProposals({ goalId: goal.id, planId: plan.id });
+
+    const after = await prisma.planItem.findMany({
+      where: { kind: "lesson", planId: plan.id, status: "todo" },
+    });
+
+    expect(after.filter((item) => item.lessonId === null)).toStrictEqual([]);
+    expect(after.filter((item) => item.lessonId !== null)).toHaveLength(40);
+    await expect(latestChange(plan.id)).resolves.toMatchObject({ effect: { lessonsAdded: 8 } });
+  });
+
   it("records written lessons added after the exam in the total count", async () => {
     const { goal, library, plan } = await pacedPlanFixture({
       dailyMinutes: 14,

@@ -216,3 +216,28 @@ export function getLandingSkillMinutes({
     pending: [...pending.filter((unit) => !isHeld(unit)), ...[...(landed?.values() ?? [])].flat()],
   });
 }
+
+/**
+ * What a run left out (`dropped`), without the stand-in parts of the landed skills whose every
+ * lesson is written (see `putLandedLessons`): the part of such a stand-in the saved layout left
+ * past its time (a plan's days after the exam) is its lessons now. Kept, a plan held all eight of
+ * a skill's written lessons and a stand-in for one more after the exam.
+ */
+export function withoutWrittenStandIns({
+  dropped,
+  landed,
+}: {
+  dropped: readonly DroppedUnit[];
+  landed: LandedUnits;
+}): DroppedUnit[] {
+  const written = new Set(
+    [...landed].flatMap(([skillId, units]) =>
+      units.every((unit) => unit.lessonId !== null) ? [skillId] : [],
+    ),
+  );
+
+  return dropped.filter(
+    (unit) =>
+      !(unit.kind === "lesson" && unit.lessonId === null && written.has(unit.skillId ?? "")),
+  );
+}

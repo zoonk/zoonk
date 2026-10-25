@@ -161,7 +161,7 @@ describe(putLandedLessons, () => {
       ["lesson:law-1", "2026-10-12"],
     ]);
 
-    expect(placed.leftOut.map((entry) => entry.key)).toStrictEqual(["lesson:law-2"]);
+    expect(placed.dropped.map((entry) => entry.key)).toStrictEqual(["lesson:law-2"]);
   });
 
   // The Library wrote three lessons for a learn plan's skill the graph sized at two, and the
@@ -182,7 +182,7 @@ describe(putLandedLessons, () => {
       ["lesson:law-2", "2026-10-13"],
     ]);
 
-    expect(placed.leftOut).toStrictEqual([]);
+    expect(placed.dropped).toStrictEqual([]);
   });
 
   // A plan short on time cut part of the skill: its stand-in held only what the cut kept.
@@ -202,7 +202,7 @@ describe(putLandedLessons, () => {
       ["lesson:law-1", "2026-10-12"],
     ]);
 
-    expect(placed.leftOut.map((entry) => entry.key)).toStrictEqual(["lesson:law-2"]);
+    expect(placed.dropped.map((entry) => entry.key)).toStrictEqual(["lesson:law-2"]);
   });
 
   // Class test seed 1012: a lesson longer than a day's time takes a day of its own, and one written

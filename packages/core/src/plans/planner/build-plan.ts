@@ -357,7 +357,11 @@ function planGoal({
       unitsByKey,
     })(funded.days);
 
-  const { landed, laidOut, leftOut } = putLandedLessons({
+  const {
+    dropped: leftOut,
+    landed,
+    laidOut,
+  } = putLandedLessons({
     days: funded.days,
     dropped: [...carriedSchedule.dropped, ...restSchedule.dropped],
     input,
@@ -372,11 +376,7 @@ function planGoal({
     days: funded.days,
     frozen,
     landed,
-    schedule: {
-      dropped: [...carriedSchedule.dropped, ...restSchedule.dropped, ...leftOut],
-      events: restSchedule.events,
-      units: laidOut,
-    },
+    schedule: { dropped: leftOut, events: restSchedule.events, units: laidOut },
     start,
   });
 
