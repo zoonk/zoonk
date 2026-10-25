@@ -14,7 +14,7 @@ import {
 import { cn } from "@zoonk/ui/lib/utils";
 import { EllipsisIcon, NotebookTextIcon, SparklesIcon, ZapIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useRef, useState } from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { getLessonFocusTarget } from "./_utils/lesson-focus";
 import { SummarySheet } from "./controls/summary-sheet";
 import { useLessonPlayer, useLessonPlayerConfig } from "./lesson-player-context";
@@ -23,9 +23,10 @@ import { useLessonInteraction } from "./lesson-player-interaction";
 /**
  * The lesson's summary card, one tap away from the menu once the lesson is done. The menu closes
  * as the sheet opens, so a ref (not state from the click's render) tells the menu to keep the
- * lesson's keys paused.
+ * lesson's keys paused. A lesson that couldn't save can go back to a screen, whose answer the card
+ * would give away, so it closes then.
  */
-function useSummarySheet() {
+function useSummarySheet(isDone: boolean) {
   const { setPaused } = useLessonInteraction();
   const [open, setOpen] = useState(false);
   const openRef = useRef(false);
@@ -35,6 +36,18 @@ function useSummarySheet() {
     setOpen(next);
     setPaused(next);
   }
+
+  const closeIfOpen = useEffectEvent(() => {
+    if (openRef.current) {
+      change(false);
+    }
+  });
+
+  useEffect(() => {
+    if (!isDone) {
+      closeIfOpen();
+    }
+  }, [isDone]);
 
   function onMenuOpenChange(menuOpen: boolean) {
     setPaused(menuOpen || openRef.current);
@@ -54,8 +67,8 @@ export function LessonScreenMenu() {
   const t = useExtracted();
   const { lesson, slots } = useLessonPlayerConfig();
   const { actions, screen, state } = useLessonPlayer();
-  const summary = useSummarySheet();
   const isDone = state.phase === "completed";
+  const summary = useSummarySheet(isDone);
 
   if (!screen.step && !isDone) {
     return null;

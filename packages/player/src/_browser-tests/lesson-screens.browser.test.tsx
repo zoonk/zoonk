@@ -2,7 +2,12 @@ import { describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
 import { press } from "../_test-utils/activity-player";
 import { atViewport } from "../_test-utils/browser-viewport";
-import { buildAdapters, renderLessonPlayer } from "../_test-utils/render-lesson-player";
+import {
+  buildAdapters,
+  renderLessonPlayer,
+  runAnswer,
+  startedRun,
+} from "../_test-utils/render-lesson-player";
 import { type ExampleLine, type LessonPlayerAdapters } from "../lesson/lesson-player-types";
 import { buildLesson } from "../preview/preview-lesson";
 import { explanationStep, languageStep, teachingStep } from "../preview/preview-steps";
@@ -21,6 +26,13 @@ const RIGHT_TYPED = "It shows where the electron is likely to be";
 /** A verdict as the player announces it. */
 function verdict(text: string) {
   return page.getByRole("status").filter({ hasText: text });
+}
+
+/** Answers the electron question right and goes on. */
+async function answerRight() {
+  await page.getByRole("radio", { name: RIGHT_OPTION }).click();
+  await page.getByRole("button", { name: /^Check/u }).click();
+  await page.getByRole("button", { name: /^Continue/u }).click();
 }
 
 describe("lesson screens", () => {
@@ -63,6 +75,55 @@ describe("lesson screens", () => {
       await summary.getByRole("button", { name: "Got it" }).click();
       await expect.element(summary).not.toBeInTheDocument();
       await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
+    });
+  });
+
+  it("closes the summary card when a lesson that couldn't save goes back to a screen", async () => {
+    await atViewport(PHONE, async () => {
+      const lesson = buildLesson([teachingStep("check"), teachingStep("check")], {
+        summaryIdeas: ["Electrons live in clouds."],
+      });
+
+      const runId = crypto.randomUUID();
+      const saving = Promise.withResolvers<{ status: "incomplete" }>();
+
+      // The second answer never arrived: the server only has the first one.
+      const startLesson = vi
+        .fn<LessonPlayerAdapters["startLesson"]>()
+        .mockResolvedValueOnce(startedRun({ runId }))
+        .mockResolvedValue(
+          startedRun({ answers: [runAnswer({ stepId: lesson.steps[0]?.id ?? "" })], runId }),
+        );
+
+      const completeLesson = vi
+        .fn<LessonPlayerAdapters["completeLesson"]>()
+        .mockReturnValueOnce(saving.promise)
+        .mockImplementation(buildAdapters(lesson).completeLesson);
+
+      renderLessonPlayer({
+        adapters: buildAdapters(lesson, { completeLesson, startLesson }),
+        lesson,
+      });
+
+      await answerRight();
+      await answerRight();
+
+      await page.getByRole("button", { name: "Screen options" }).click();
+      await page.getByRole("menuitem", { name: "Lesson summary" }).click();
+
+      const summary = page.getByRole("dialog", { name: "Lesson summary" });
+      await expect.element(summary).toBeVisible();
+
+      saving.resolve({ status: "incomplete" });
+
+      // Back on the screen to answer again, whose answer the summary would give away.
+      await expect
+        .element(
+          page.getByText("Your answer here didn't save. Answer it again to finish the lesson."),
+        )
+        .toBeVisible();
+
+      await expect.element(summary).not.toBeInTheDocument();
     });
   });
 
