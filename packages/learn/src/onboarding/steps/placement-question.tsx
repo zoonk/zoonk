@@ -20,7 +20,7 @@ import {
   OnboardingPrimaryButton,
   OnboardingSubject,
 } from "../onboarding-frame";
-import { OnboardingNoBack } from "../onboarding-host";
+import { OnboardingTestQuestion } from "../onboarding-host";
 
 /** A typed answer is a sentence or two; the grader looks for each key point. */
 const MAX_TYPED_ANSWER = 1000;
@@ -211,7 +211,8 @@ function PlacementActions({
  * What it asks comes first (what it's about and its number, its support, the statement), then the
  * answer under it. "I don't know yet" is a real answer: it moves to the basics instead of letting
  * a guess skip them, and sits beside Confirm as it does on a session's placement question. No
- * score is shown, and an answer is final, so the bar has no way back: "Stop here" is the way on.
+ * score is shown, and an answer is final, so the bar has no way back, only how far into the test
+ * the learner is: "Stop here" is the way on.
  */
 export function PlacementQuestionScreen({
   dontKnowLabel,
@@ -221,6 +222,7 @@ export function PlacementQuestionScreen({
   onAnswer,
   onStop,
   pending,
+  progress,
   question,
   subject,
   trueFalseLabels = "trueFalse",
@@ -237,6 +239,8 @@ export function PlacementQuestionScreen({
   /** "Stop anytime": the plan starts from what's known so far. */
   onStop: () => void;
   pending: boolean;
+  /** How far into the test the learner is, from 0 to 1, shown in the bar. */
+  progress: number;
   question: PlacementQuestion;
   /** What the questions are about, such as "ENEM" or "quantum physics". */
   subject?: string;
@@ -263,7 +267,7 @@ export function PlacementQuestionScreen({
   };
 
   return (
-    <OnboardingNoBack>
+    <OnboardingTestQuestion progress={progress}>
       <OnboardingColumn>
         <OnboardingHeading className="gap-5">
           {subject && number !== undefined && (
@@ -309,6 +313,6 @@ export function PlacementQuestionScreen({
           />
         </form>
       </OnboardingColumn>
-    </OnboardingNoBack>
+    </OnboardingTestQuestion>
   );
 }

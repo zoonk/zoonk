@@ -932,10 +932,15 @@ test.describe("Language practice in the plan", () => {
     await page.getByRole("button", { exact: true, name: "Start" }).click();
 
     await expect(page.getByText("A short reading text at A2.")).toBeVisible();
-    // A level test's answer is final, as placement's is: its questions have no way back.
+    // A level test's answer is final, as placement's is: its questions have no way back and no
+    // Start over, and the bar shows how far into the test the learner is.
     await expect(page.getByRole("button", { name: "Back" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Start over" })).toHaveCount(0);
+    const progress = page.getByRole("progressbar", { name: "Questions answered" });
+    await expect(progress).toHaveAttribute("aria-valuenow", "0");
     await page.getByRole("radio", { name: "Right A2" }).click();
     await page.getByRole("button", { name: "Confirm" }).click();
+    await expect(progress).not.toHaveAttribute("aria-valuenow", "0");
 
     // The voice message is a clip generated in the language tested, played to its end.
     const clip = await routeSpeechClips(page);

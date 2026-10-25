@@ -1,6 +1,7 @@
 "use client";
 
 import { type ReactNode, createContext, use } from "react";
+import { TestProgress } from "./onboarding-bar";
 
 /**
  * Where the flow shows. Inside the app's frame it's a page of its own (`page`: `/start` and a new
@@ -70,8 +71,8 @@ export function useOnboardingSection(): boolean {
 
 /**
  * The flow's bar over its screens: back to the previous screen (`onBack`), where the learner is in
- * the questions in the middle (`middle`: the steps' dots, announced as "Step 2 of 4", the one place
- * the step shows) and the screen's own action on the right (`end`: Start over).
+ * the middle (`middle`: the steps' dots, announced as "Step 2 of 4", the one place the step shows,
+ * or a test's progress) and the screen's own action on the right (`end`: Start over).
  */
 export type OnboardingBar = { end?: ReactNode; middle?: ReactNode; onBack?: () => void };
 
@@ -98,14 +99,24 @@ export function useOnboardingScreen(): OnboardingScreen {
 }
 
 /**
- * A screen whose answers are final, such as a placement or level test question: the flow's bar
- * keeps no way back to the previous screen, only the way out, as on the flow's first screen.
+ * A test's question (placement, a language's level test), as a task's question is shown: its
+ * answer is final, so the flow's bar has no way back, only the way out under `lg` as on the flow's
+ * first screen, and no Start over, which over a question reads as starting the test over. How far
+ * into the test the learner is (`progress`, from 0 to 1) takes the steps' dots' place.
  */
-export function OnboardingNoBack({ children }: { children: ReactNode }) {
+export function OnboardingTestQuestion({
+  children,
+  progress,
+}: {
+  children: ReactNode;
+  progress: number;
+}) {
   const screen = useOnboardingScreen();
 
   return (
-    <OnboardingScreenContext value={{ ...screen, bar: { ...screen.bar, onBack: undefined } }}>
+    <OnboardingScreenContext
+      value={{ ...screen, bar: { middle: <TestProgress value={progress} /> } }}
+    >
       {children}
     </OnboardingScreenContext>
   );

@@ -210,6 +210,7 @@ export function LanguageLevelTestStep({
           next={phase.test.next}
           onStop={() => setPhase({ kind: "done" })}
           onView={show}
+          progress={phase.test.answered / phase.test.total}
           targetLanguage={goal.targetLanguage}
         />
       );
@@ -218,22 +219,35 @@ export function LanguageLevelTestStep({
   }
 }
 
-/** The test's next question, or its one sentence out loud. */
+/**
+ * The test's next question, or its one sentence out loud, with how far into the test the learner
+ * is (`progress`: its answers over the most it asks).
+ */
 function TestStep({
   actions,
   next,
   onStop,
   onView,
+  progress,
   targetLanguage,
 }: {
   actions: LanguageLevelTestActions;
   next: ReadyTest["next"];
   onStop: () => void;
   onView: (view: LanguageLevelTestView) => void;
+  progress: number;
   targetLanguage: string;
 }) {
   if (next.kind === "speaking") {
-    return <SpeakingStep onSkip={onStop} onView={onView} sentence={next} speak={actions.speak} />;
+    return (
+      <SpeakingStep
+        onSkip={onStop}
+        onView={onView}
+        progress={progress}
+        sentence={next}
+        speak={actions.speak}
+      />
+    );
   }
 
   return next.kind === "question" ? (
@@ -241,6 +255,7 @@ function TestStep({
       answer={actions.answer}
       onStop={onStop}
       onView={onView}
+      progress={progress}
       question={next.question}
       targetLanguage={targetLanguage}
     />

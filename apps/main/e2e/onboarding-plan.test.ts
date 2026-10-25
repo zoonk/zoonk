@@ -41,15 +41,23 @@ test.describe("Placement and the plan", () => {
       page.getByRole("heading", { name: "Let's see what you already know" }),
     ).toBeVisible();
 
+    const startOver = page.getByRole("button", { name: "Start over" });
+    await expect(startOver).toBeVisible();
+
     await tabTo(page, page.getByRole("button", { exact: true, name: "Start" }));
     await page.keyboard.press("Enter");
 
     await expect(page.getByRole("heading", { name: /^Question/u })).toBeVisible();
-    // What it's about and how many so far: no total and no score.
+    // What it's about and its number: no total and no score.
     await expect(page.getByText("Question 1", { exact: true })).toBeVisible();
     await expect(page.getByText("Algebra", { exact: true })).toBeVisible();
-    // An answer is final, so a question has no way back to the screens before placement.
+    // An answer is final, so a question has no way back to the screens before placement, and no
+    // Start over, which over a question reads as starting the test over.
     await expect(page.getByRole("button", { name: "Back" })).toHaveCount(0);
+    await expect(startOver).toHaveCount(0);
+    // The bar shows how far along today's few minutes of questions are, from empty.
+    const progress = page.getByRole("progressbar", { name: "Questions answered" });
+    await expect(progress).toHaveAttribute("aria-valuenow", "0");
     await expectAccessibleScreen(page, "a placement question");
     const first = await page.getByRole("heading", { name: /^Question/u }).textContent();
     // An option's keycap shows the key that picks it.
@@ -62,6 +70,7 @@ test.describe("Placement and the plan", () => {
 
     await expect(page.getByRole("heading", { name: /^Question/u })).not.toHaveText(first ?? "");
     await expect(page.getByText("Question 2", { exact: true })).toBeVisible();
+    await expect(progress).not.toHaveAttribute("aria-valuenow", "0");
 
     // A refresh comes back to placement's next question instead of its start.
     await page.reload();

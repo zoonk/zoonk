@@ -137,6 +137,11 @@ export type PlacementOutcome =
   | {
       answered: number;
       complete: boolean;
+      /**
+       * How much of today's few minutes the answers used, from 0 to 1: how far along today's
+       * questions are at most, since placement can stop sooner once it's sure.
+       */
+      dayBudgetSpent: number;
       /** Today's few minutes of placement are used; the first week's sessions ask the rest. */
       dayBudgetUsed: boolean;
       /** Whether the answer just sent was right; null when nothing was answered. */

@@ -5,6 +5,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { SendingGoal } from "./entry/understanding-wait";
 import { OnboardingHowItWorks } from "./how-it-works";
+import { BAR_MIDDLE_CLASS } from "./onboarding-bar";
 import {
   OnboardingColumn,
   OnboardingDescription,
@@ -149,7 +150,7 @@ export function StepsSkeleton() {
       <OnboardingFrame
         bar={{
           end: <StartOverButtonSkeleton />,
-          middle: <Skeleton className="h-1 w-24 sm:w-32" />,
+          middle: <Skeleton className={cn("h-1", BAR_MIDDLE_CLASS)} />,
         }}
       >
         <OnboardingColumn aria-busy="true">

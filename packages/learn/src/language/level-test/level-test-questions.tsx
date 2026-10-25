@@ -14,7 +14,7 @@ import {
   OnboardingSecondaryButton,
   OnboardingTitle,
 } from "../../onboarding/onboarding-frame";
-import { OnboardingNoBack } from "../../onboarding/onboarding-host";
+import { OnboardingTestQuestion } from "../../onboarding/onboarding-host";
 import { PlacementQuestionScreen } from "../../onboarding/steps/placement-question";
 import { useNoSpeechMessage } from "../no-speech-message";
 import { ListeningMessage, SpeakingPrompt } from "./level-test-parts";
@@ -30,12 +30,15 @@ export function LevelTestQuestion({
   answer,
   onStop,
   onView,
+  progress,
   question,
   targetLanguage,
 }: {
   answer: (input: LevelTestAnswerInput) => Promise<LanguageLevelTestView | null>;
   onStop: () => void;
   onView: (view: LanguageLevelTestView) => void;
+  /** How far into the test the learner is, from 0 to 1. */
+  progress: number;
   question: Extract<NextStep, { kind: "question" }>["question"];
   targetLanguage: string;
 }) {
@@ -65,6 +68,7 @@ export function LevelTestQuestion({
       }
       onStop={onStop}
       pending={isPending}
+      progress={progress}
       question={{
         context: isListening ? null : question.passage,
         format: "multipleChoice",
@@ -81,16 +85,19 @@ export function LevelTestQuestion({
 
 /**
  * The one sentence out loud: record it, and it's checked word by word. Like the test's other
- * questions, it has no way back.
+ * questions, it has no way back, and the bar shows how far into the test the learner is.
  */
 export function SpeakingStep({
   onSkip,
   onView,
+  progress,
   sentence,
   speak,
 }: {
   onSkip: () => void;
   onView: (view: LanguageLevelTestView) => void;
+  /** How far into the test the learner is, from 0 to 1. */
+  progress: number;
   sentence: Extract<NextStep, { kind: "speaking" }>;
   speak: (audio: Blob) => Promise<LanguageLevelTestView | "noSpeech" | "signUpRequired" | null>;
 }) {
@@ -101,12 +108,11 @@ export function SpeakingStep({
   const [isPending, startTransition] = useTransition();
 
   return (
-    <OnboardingNoBack>
+    <OnboardingTestQuestion progress={progress}>
       <OnboardingColumn>
         <OnboardingHeading>
           <OnboardingTitle>{t("Say it out loud")}</OnboardingTitle>
         </OnboardingHeading>
-
         <SpeakingPrompt
           error={error}
           onRecorded={(audio) =>
@@ -141,6 +147,6 @@ export function SpeakingStep({
           </OnboardingSecondaryButton>
         </OnboardingFooter>
       </OnboardingColumn>
-    </OnboardingNoBack>
+    </OnboardingTestQuestion>
   );
 }

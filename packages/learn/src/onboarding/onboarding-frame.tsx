@@ -177,10 +177,10 @@ export function OnboardingDescription({
 
 /**
  * What the screen is about (the exam, the course or the subject) as the eyebrow above the question,
- * with where the learner is when the bar's dots can't say it (`position`: "ENEM 2026 · Question 3"
- * in placement); on a page of the app's frame it's the page's eyebrow. Naming it apart keeps each
- * question natural in every language: an exam's name inside a sentence would need an article that
- * depends on the name ("sobre o ENEM", "über den SAT").
+ * with the question's number on a test, whose bar shows how far along it is but not which question
+ * (`position`: "ENEM 2026 · Question 3" in placement); on a page of the app's frame it's the page's
+ * eyebrow. Naming it apart keeps each question natural in every language: an exam's name inside a
+ * sentence would need an article that depends on the name ("sobre o ENEM", "über den SAT").
  */
 export function OnboardingSubject({
   children,

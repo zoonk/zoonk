@@ -1,13 +1,41 @@
 "use client";
 
+import { ProgressIndicator, ProgressRoot, ProgressTrack } from "@zoonk/ui/components/progress";
 import { useEscapeClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronLeftIcon } from "lucide-react";
-import { useExtracted } from "next-intl";
+import { useExtracted, useLocale } from "next-intl";
 import { type ReactNode } from "react";
 import { PAGE_COLUMN_CLASS } from "../_components/page";
 import { CRUMB_LINK_CLASS, LearnBackLink, PageBarSurface } from "../shell/learn-bar";
 import { type OnboardingBar } from "./onboarding-host";
+
+/** The bar's middle, the steps' dots or a test's progress, as wide as one another. */
+export const BAR_MIDDLE_CLASS = "w-24 sm:w-32";
+
+const PERCENT = 100;
+
+/**
+ * How far into a test the learner is (placement, a language's level test), from 0 to 1, where the
+ * steps' dots sit: one bar in the text color, as a task told as one run shows it.
+ */
+export function TestProgress({ value }: { value: number }) {
+  const t = useExtracted();
+  const locale = useLocale();
+
+  return (
+    <ProgressRoot
+      aria-label={t("Questions answered")}
+      className={cn(BAR_MIDDLE_CLASS, "gap-0")}
+      locale={locale}
+      value={Math.round(Math.min(1, Math.max(0, value)) * PERCENT)}
+    >
+      <ProgressTrack className="bg-surface-3 h-1 rounded-xs">
+        <ProgressIndicator className="bg-foreground rounded-xs motion-reduce:transition-none" />
+      </ProgressTrack>
+    </ProgressRoot>
+  );
+}
 
 /**
  * Back to the flow's previous screen: a chevron under `lg`, "‹ Back" from `lg`, in the face of a
@@ -49,8 +77,8 @@ export function OnboardingBarRow({ bar, className }: { bar: OnboardingBar; class
  * screen's edges (`className`: from `lg` the centered column, so its controls sit over the question
  * they act on, as a task's do): on the left the way back to the flow's previous screen or, where
  * there's none and under `lg`, an ✕ out to the app page the learner left for onboarding (Escape
- * presses either); in the middle the steps' dots; on the right the screen's own action (Start
- * over) and the host's. From `lg` the sidebar holds the way out, so a screen
+ * presses either); in the middle the steps' dots, or a test's progress; on the right the screen's
+ * own action (Start over) and the host's. From `lg` the sidebar holds the way out, so a screen
  * with nothing else in its bar has none there, and its title sits where every page's does.
  */
 export function OnboardingPageBar({

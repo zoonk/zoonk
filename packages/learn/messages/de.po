@@ -8467,6 +8467,11 @@ msgctxt "JHbf4S"
 msgid "A course in the Library fits your goal"
 msgstr "Ein Kurs aus der Bibliothek passt zu deinem Ziel"
 
+#: src/onboarding/onboarding-bar.tsx
+msgctxt "jVVPcv"
+msgid "Questions answered"
+msgstr "Beantwortete Fragen"
+
 #: src/onboarding/onboarding-page.tsx
 msgctxt "EKtClK"
 msgid "Getting started"

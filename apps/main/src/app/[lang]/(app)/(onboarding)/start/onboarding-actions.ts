@@ -134,6 +134,7 @@ function toPlacementOutcome({
   return {
     answered: placement.answered,
     complete: placement.complete,
+    dayBudgetSpent: placement.dayBudgetSpent,
     dayBudgetUsed: placement.dayBudgetUsed,
     isCorrect,
     next: placement.next,

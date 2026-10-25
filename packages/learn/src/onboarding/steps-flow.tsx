@@ -19,6 +19,7 @@ import {
   type RevealedPlan,
 } from "./onboarding-actions";
 import { OnboardingAnnouncer } from "./onboarding-announcer";
+import { BAR_MIDDLE_CLASS } from "./onboarding-bar";
 import { OnboardingFrame } from "./onboarding-frame";
 import { OnboardingRailProvider } from "./onboarding-rail";
 import { OnboardingStepScreen } from "./onboarding-step-screen";
@@ -180,7 +181,7 @@ export function StepsFlow({
             end: isPlan ? null : <StartOverButton disabled={isPending} onStartOver={startOver} />,
             middle: progress && (
               <StepDots
-                className="w-24 sm:w-32"
+                className={BAR_MIDDLE_CLASS}
                 current={progress.current}
                 total={progress.total}
               />

@@ -44,23 +44,33 @@ type Phase =
       answered: number;
       kind: "question";
       question: PlacementQuestion;
+      /** How far along today's questions are at most, from 0 to 1 (`dayBudgetSpent`). */
+      spent: number;
       trueFalseLabels: TrueFalseLabels;
     };
 
 /**
- * A new question while placement still needs one, the starting point once it's settled or once
- * today's few minutes are used. `answeredHere` counts the answers given on this screen: the
- * server counts this placement's answers on the plan's current skills, which can shrink while the
- * plan is still being written, and a question's number never goes back.
+ * How far this screen already showed placement: the server counts this placement's answers on the
+ * plan's current skills, which can shrink while the plan is still being written, and neither a
+ * question's number nor the bar ever goes back.
  */
-function toPhase(outcome: ReadyOutcome, answeredHere = 0): Phase {
-  const answered = Math.max(outcome.answered, answeredHere);
+type Shown = { answered: number; spent: number };
+
+const NOTHING_SHOWN: Shown = { answered: 0, spent: 0 };
+
+/**
+ * A new question while placement still needs one, the starting point once it's settled or once
+ * today's few minutes are used.
+ */
+function toPhase(outcome: ReadyOutcome, shown: Shown = NOTHING_SHOWN): Phase {
+  const answered = Math.max(outcome.answered, shown.answered);
 
   return outcome.next && !outcome.complete
     ? {
         answered,
         kind: "question",
         question: outcome.next,
+        spent: Math.max(outcome.dayBudgetSpent, shown.spent),
         trueFalseLabels: outcome.trueFalseLabels,
       }
     : { answered, forToday: outcome.dayBudgetUsed, kind: "done" };
@@ -110,6 +120,27 @@ function toResumedPhase({
 function useResumedPlacement({ actions, goalId }: { actions: OnboardingActions; goalId: string }) {
   const [phase, setPhase] = useState<Phase>({ kind: "loading" });
   const [mockOffer, setMockOffer] = useState<PlacementMockOutcome["offer"]>(null);
+  // What this screen showed, so the next question's number and the bar never go back (`Shown`).
+  const shown = useRef(NOTHING_SHOWN);
+
+  /** The phase an outcome leads to, never behind what this screen already showed. */
+  const showReady = (outcome: ReadyOutcome) => {
+    const next = toPhase(outcome, shown.current);
+
+    if (next.kind === "question") {
+      shown.current = { answered: shown.current.answered, spent: next.spent };
+    }
+
+    setPhase(next);
+  };
+
+  /** An answer given on this screen to the question numbered after `answered`. */
+  const countAnswer = (answered: number) => {
+    shown.current = {
+      answered: Math.max(shown.current.answered, answered + 1),
+      spent: shown.current.spent,
+    };
+  };
 
   useReadOnOpen({
     onRead: (read) => {
@@ -133,7 +164,7 @@ function useResumedPlacement({ actions, goalId }: { actions: OnboardingActions; 
     },
   });
 
-  return { mockOffer, phase, setPhase };
+  return { countAnswer, mockOffer, phase, setPhase, showReady };
 }
 
 function getAnswerKind({
@@ -180,12 +211,15 @@ export function PlacementStep({
 }) {
   const t = useExtracted();
   const analytics = useLearnAnalytics();
-  const { mockOffer, phase, setPhase } = useResumedPlacement({ actions, goalId });
+
+  const { countAnswer, mockOffer, phase, setPhase, showReady } = useResumedPlacement({
+    actions,
+    goalId,
+  });
+
   const [buildFailed, setBuildFailed] = useState(false);
   const [answerFailed, setAnswerFailed] = useState(false);
   const [isPending, startTransition] = useTransition();
-  // Answers given on this screen, so the next question's number never goes back (`toPhase`).
-  const answeredHere = useRef(0);
 
   // Stopping a placement mock first keeps what was answered, which sets where the plan starts.
   const finish = (fromScratch: boolean, stopMockId: string | null = null) =>
@@ -210,7 +244,7 @@ export function PlacementStep({
     }
 
     if (outcome.status === "ready") {
-      setPhase(toPhase(outcome, answeredHere.current));
+      showReady(outcome);
     }
   };
 
@@ -243,7 +277,7 @@ export function PlacementStep({
           return;
         }
 
-        answeredHere.current = Math.max(answeredHere.current, answered + 1);
+        countAnswer(answered);
 
         if (outcome.status !== "ready") {
           // The next questions are still being written: wait for them instead of repeating one.
@@ -260,7 +294,7 @@ export function PlacementStep({
           },
         });
 
-        setPhase(toPhase(outcome, answeredHere.current));
+        showReady(outcome);
       });
 
   switch (phase.kind) {
@@ -298,6 +332,7 @@ export function PlacementStep({
           onAnswer={answer(phase.question, phase.answered)}
           onStop={() => finish(false)}
           pending={isPending}
+          progress={phase.spent}
           question={phase.question}
           subject={subject}
           trueFalseLabels={phase.trueFalseLabels}
