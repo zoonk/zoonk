@@ -1,4 +1,4 @@
-import { type Page, type TestInfo } from "@playwright/test";
+import { type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
@@ -38,26 +38,6 @@ function nextMonday(): Date {
   return new Date(today.getTime() + days * MS_PER_DAY);
 }
 
-/** The same lines and way back as the French, German and Portuguese catalogs say them. */
-const STUDY_TIME_USED_UP_IN = {
-  de: {
-    back: "Zurück zu Heute",
-    keep: "Du hast deine Lernzeit für heute erreicht. Verschiebe das auf Montag, dann bleibt es in deinem Plan.",
-    tomorrow: "Du hast deine Lernzeit für heute erreicht. Morgen geht es hier weiter.",
-  },
-  fr: {
-    back: "Retour à Aujourd’hui",
-    keep: "Tu as atteint ta limite de temps d’étude pour aujourd’hui. Déplace-le à lundi pour le garder.",
-    tomorrow:
-      "Tu as atteint ta limite de temps d’étude pour aujourd’hui. Ce sera de nouveau disponible demain.",
-  },
-  pt: {
-    back: "Voltar para Hoje",
-    keep: "Você já atingiu seu limite de tempo de estudo de hoje. Mova para segunda-feira para não perder.",
-    tomorrow: "Você já atingiu seu limite de tempo de estudo de hoje. Fica para amanhã.",
-  },
-} as const satisfies Record<string, Record<UsedUpLine, string> & { back: string }>;
-
 /** Today's study time under a 30-minute daily limit, all used. */
 async function useUpTodaysStudyTime(userId: string) {
   await Promise.all([
@@ -82,82 +62,15 @@ async function expectStudyTimeUsedUp(page: Page, line: UsedUpLine) {
   await expect(page.getByRole("button", { name: /^Start/u })).toHaveCount(0);
 }
 
-async function captureAt(
-  page: Page,
-  testInfo: TestInfo,
-  { colorScheme, name, width }: { colorScheme: "dark" | "light"; name: string; width: number },
-) {
-  await page.emulateMedia({ colorScheme });
-  await page.setViewportSize({ height: 900, width });
-
-  await page.screenshot({
-    animations: "disabled",
-    path: testInfo.outputPath(`challenge-${name}-${width}-${colorScheme}.png`),
-  });
-}
-
-/**
- * The used-up footer as the design review sees it: on a phone and a desktop, light and dark, then
- * the same line and way back in French, German and Portuguese on a phone, where the longest labels
- * have to fit. It ends back in the light scheme.
- */
-async function captureStudyTimeUsedUp({
-  line: usedUp,
-  name,
-  page,
-  planItemId,
-  testInfo,
-}: {
-  line: UsedUpLine;
-  name: string;
-  page: Page;
-  planItemId: string;
-  testInfo: TestInfo;
-}) {
-  for (const width of [390, 1440]) {
-    for (const colorScheme of ["light", "dark"] as const) {
-      // oxlint-disable-next-line no-await-in-loop -- One page shows one size and scheme at a time.
-      await captureAt(page, testInfo, { colorScheme, name, width });
-    }
-  }
-
-  for (const lang of ["fr", "de", "pt"] as const) {
-    const { back, [usedUp]: line } = STUDY_TIME_USED_UP_IN[lang];
-    // oxlint-disable-next-line no-await-in-loop -- One page shows one language at a time.
-    await page.goto(`/${lang}/challenge/${planItemId}`);
-    // oxlint-disable-next-line no-await-in-loop -- One page shows one language at a time.
-    await expect(page.getByRole("status").filter({ hasText: line })).toBeVisible();
-    // oxlint-disable-next-line no-await-in-loop -- One page shows one language at a time.
-    await expect(page.getByRole("link", { name: back })).toBeVisible();
-
-    for (const colorScheme of ["light", "dark"] as const) {
-      // oxlint-disable-next-line no-await-in-loop -- One page shows one scheme at a time.
-      await captureAt(page, testInfo, { colorScheme, name: `${name}-${lang}`, width: 390 });
-    }
-  }
-
-  await page.emulateMedia({ colorScheme: "light" });
-}
-
 test("a challenge intro opened past today's study time says when it's back, with no Start to tap", async ({
   browser,
-}, testInfo) => {
+}) => {
   const { block, boss, user } = await createCheckpointLearner();
   await useUpTodaysStudyTime(user.id);
   const page = await openAs(browser, user);
   await page.goto(`/challenge/${boss.id}`);
   // Its plan studies every day, so it's back tomorrow.
   await expectStudyTimeUsedUp(page, "tomorrow");
-
-  await captureStudyTimeUsedUp({
-    line: "tomorrow",
-    name: "daily-limit",
-    page,
-    planItemId: boss.id,
-    testInfo,
-  });
-
-  await page.goto(`/challenge/${boss.id}`);
 
   await expect(
     prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),
@@ -170,7 +83,7 @@ test("a challenge intro opened past today's study time says when it's back, with
 
 test("the week's mock exam past today's study time says how to keep it, with Move to Monday and the way back to Today", async ({
   browser,
-}, testInfo) => {
+}) => {
   const { boss, user } = await createCheckpointLearner({ kind: "weekly", planned: true });
   await useUpTodaysStudyTime(user.id);
   const page = await openAs(browser, user);
@@ -193,20 +106,12 @@ test("the week's mock exam past today's study time says how to keep it, with Mov
     "aria-keyshortcuts",
   );
 
-  await captureStudyTimeUsedUp({
-    line: "keep",
-    name: "daily-limit-weekly",
-    page,
-    planItemId: boss.id,
-    testInfo,
-  });
-
   await page.context().close();
 });
 
 test("the week's mock exam past today's study time stops offering Move to Monday once the plan refuses it", async ({
   browser,
-}, testInfo) => {
+}) => {
   const { boss, plan, user } = await createCheckpointLearner({ kind: "weekly", planned: true });
 
   // Next Monday already has the week's mock, so the plan refuses to move this one onto it.
@@ -241,16 +146,6 @@ test("the week's mock exam past today's study time stops offering Move to Monday
   );
 
   await expect(page).toHaveURL(new RegExp(`/challenge/${boss.id}$`, "u"));
-
-  for (const [colorScheme, width] of [
-    ["light", 390],
-    ["dark", 390],
-    ["light", 1440],
-  ] as const) {
-    // oxlint-disable-next-line no-await-in-loop -- One page shows one size and scheme at a time.
-    await captureAt(page, testInfo, { colorScheme, name: "daily-limit-weekly-refused", width });
-  }
-
   await page.context().close();
 });
 

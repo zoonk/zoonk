@@ -271,23 +271,6 @@ test.describe("Mock speaking sections", () => {
     await expectCallMission();
     await page.reload();
     await expectCallMission();
-    await page.emulateMedia({ reducedMotion: "reduce" });
-    await page.setViewportSize({ height: 844, width: 390 });
-
-    await page.screenshot({
-      animations: "disabled",
-      fullPage: true,
-      path: test.info().outputPath("full-mock-call-mission-390.png"),
-    });
-
-    await page.setViewportSize({ height: 900, width: 1440 });
-
-    await page.screenshot({
-      animations: "disabled",
-      fullPage: true,
-      path: test.info().outputPath("full-mock-call-mission-1440.png"),
-    });
-
     await page.context().close();
   });
 

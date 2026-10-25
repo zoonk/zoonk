@@ -321,23 +321,6 @@ test.describe("Exam speaking tasks", () => {
     await expect(moment).toContainText("Mission done: Have a call");
     await expect(moment.getByRole("button", { name: "+50 Brain Power" })).toBeVisible();
     await expect(moment).toContainText("from today's missions");
-    await page.emulateMedia({ reducedMotion: "reduce" });
-    await page.setViewportSize({ height: 844, width: 390 });
-
-    await page.screenshot({
-      animations: "disabled",
-      fullPage: true,
-      path: test.info().outputPath("exam-call-mission-390.png"),
-    });
-
-    await page.setViewportSize({ height: 900, width: 1440 });
-
-    await page.screenshot({
-      animations: "disabled",
-      fullPage: true,
-      path: test.info().outputPath("exam-call-mission-1440.png"),
-    });
-
     await page.context().close();
   });
 

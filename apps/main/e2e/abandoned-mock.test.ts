@@ -84,7 +84,7 @@ test.describe("A mock left running while the learner was away", () => {
   for (const format of ["typed", "essay"] as const) {
     test(`a cleared ${format} draft stays blank on the sheet and expires without a score`, async ({
       browser,
-    }, testInfo) => {
+    }) => {
       const { goal, user } = await createAnytimeMockLearner({
         formats: true,
         plus: true,
@@ -179,7 +179,6 @@ test.describe("A mock left running while the learner was away", () => {
         "/pt/mock/new",
       );
 
-      await page.screenshot({ path: testInfo.outputPath(`${format}-cleared-expired-pt.png`) });
       await page.context().close();
     });
   }

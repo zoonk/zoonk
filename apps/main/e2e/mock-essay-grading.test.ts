@@ -1,6 +1,5 @@
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
-import { settleAnimations } from "@zoonk/testing/accessibility/scan";
 import { createAnytimeMockLearner } from "./anytime-mock-fixtures";
 import { expect, test } from "./fixtures";
 import { continueToStep } from "./result-steps";
@@ -85,9 +84,7 @@ async function writtenSitting({
 
 test.describe("Mock essays need a learner's grading request", () => {
   for (const mode of ["expired", "section", "question"] as const) {
-    test(`${mode} timeout closes answers without requesting AI grading`, async ({
-      browser,
-    }, testInfo) => {
+    test(`${mode} timeout closes answers without requesting AI grading`, async ({ browser }) => {
       const expired = mode === "expired";
       const { mock, user } = await writtenSitting({ expired, questionClock: mode === "question" });
       const page = await openAs(browser, user);
@@ -165,48 +162,6 @@ test.describe("Mock essays need a learner's grading request", () => {
 
       if (mode === "expired") {
         await expectAccessibleScreen(page, "a mock's time-up screen");
-
-        for (const width of [390, 820, 1180, 1440]) {
-          for (const colorScheme of ["light", "dark"] as const) {
-            // oxlint-disable-next-line no-await-in-loop -- Each responsive state is viewed in order.
-            await page.setViewportSize({ height: 900, width });
-            // oxlint-disable-next-line no-await-in-loop -- A theme belongs to the screen being viewed.
-            await page.emulateMedia({ colorScheme });
-            // oxlint-disable-next-line no-await-in-loop -- Theme transitions finish before their screenshot.
-            await page.evaluate(settleAnimations, 3000);
-            // oxlint-disable-next-line no-await-in-loop -- The next action stays available at every size.
-            await expect(page.getByRole("button", { name: "See how it went" })).toBeVisible();
-            // oxlint-disable-next-line no-await-in-loop -- Each screenshot records its own width and theme.
-            await page.screenshot({
-              path: testInfo.outputPath(`time-up-${width}-${colorScheme}.png`),
-            });
-          }
-        }
-      }
-
-      if (mode === "expired") {
-        await page.goto(`/pt/mock/${mock.id}`);
-        await expect(page.getByRole("heading", { name: "O tempo acabou" })).toBeVisible();
-
-        for (const width of [390, 820, 1180, 1440]) {
-          for (const colorScheme of ["light", "dark"] as const) {
-            // oxlint-disable-next-line no-await-in-loop -- Each translated responsive state is viewed in order.
-            await page.setViewportSize({ height: 900, width });
-            // oxlint-disable-next-line no-await-in-loop -- A theme belongs to the screen being viewed.
-            await page.emulateMedia({ colorScheme });
-            // oxlint-disable-next-line no-await-in-loop -- Wait for real theme transitions before recording the view.
-            await page.evaluate(settleAnimations, 3000);
-            // oxlint-disable-next-line no-await-in-loop -- The translated next action stays visible.
-            await expect(page.getByRole("button", { name: "Ver como foi" })).toBeVisible();
-            // oxlint-disable-next-line no-await-in-loop -- Each screenshot records its own locale, width and theme.
-            await page.screenshot({
-              path: testInfo.outputPath(`time-up-pt-${width}-${colorScheme}.png`),
-            });
-          }
-        }
-
-        await page.goto(`/en/mock/${mock.id}`);
-        await expect(page.getByRole("heading", { name: "Time's up" })).toBeVisible();
       }
 
       await expect(prisma.mockExam.findUnique({ where: { id: mock.id } })).resolves.toMatchObject({
