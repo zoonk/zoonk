@@ -3438,9 +3438,9 @@ msgid "to finish the whole course at {minutes, plural, one {# minute} other {# m
 msgstr "to finish the whole course at {minutes, plural, one {# minute} other {# minutes}} a day, Monday to Friday, from scratch."
 
 #: src/components/catalog/course-plan-window.tsx
-msgctxt "M4Q-0j"
-msgid "Starting today, you'd finish around <mono>{month}</mono>."
-msgstr "Starting today, you'd finish around <mono>{month}</mono>."
+msgctxt "JR79VT"
+msgid "Starting today, you'd finish around <strong>{month}</strong>."
+msgstr "Starting today, you'd finish around <strong>{month}</strong>."
 
 #: src/components/catalog/course-plan-window.tsx
 msgctxt "lM5n28"

@@ -48,8 +48,9 @@ function renderBig(chunks: ReactNode) {
   return <BigQuantity className="text-[2.75rem]">{text}</BigQuantity>;
 }
 
-function renderMono(chunks: ReactNode) {
-  return <span className={NUMERIC_CLASS}>{chunks}</span>;
+/** The finish month in the sentence's own face, a step heavier, so it reads as the line's answer. */
+function renderStrong(chunks: ReactNode) {
+  return <strong className="font-semibold">{chunks}</strong>;
 }
 
 const BIG_LINE_CLASS =
@@ -113,9 +114,9 @@ async function UndatedHeadline({
             <FlagIcon aria-hidden="true" className="size-3.5" />
           </LineMarker>
           <span>
-            {t.rich("Starting today, you'd finish around <mono>{month}</mono>.", {
-              mono: renderMono,
+            {t.rich("Starting today, you'd finish around <strong>{month}</strong>.", {
               month: endMonth,
+              strong: renderStrong,
             })}
           </span>
         </p>
