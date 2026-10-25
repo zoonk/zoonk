@@ -19,7 +19,8 @@ export function createBaseConfig(options: {
     fullyParallel: true,
     globalSetup: options.globalSetup,
     projects: [CHROMIUM_PROJECT],
-    reporter: process.env.CI ? [["github"], ["html", { open: "never" }]] : [["list"]],
+    // CI annotates failures and logs each test with its time, which balances the shards.
+    reporter: process.env.CI ? [["github"], ["list"]] : [["list"]],
     retries: process.env.CI ? 2 : 0,
     testDir: options.testDir,
     use: {

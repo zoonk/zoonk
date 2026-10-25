@@ -1,5 +1,7 @@
 name: E2E Tests (Main App)
 
+# Main's Playwright suite (`pnpm e2e:main`): on every PR, and again on `main` before staging, where
+# `ci.yml` calls this workflow.
 on:
   workflow_call:
     inputs:
@@ -7,56 +9,60 @@ on:
         type: string
         required: false
         default: ""
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
 
 permissions:
   contents: read
 
+concurrency:
+  group: e2e-main-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
-  e2e:
+  suites:
     name: e2e (${{ matrix.suite }})
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 15
     strategy:
       fail-fast: false
-      # Playwright shards only top-level projects and runs their dependencies whole in each shard,
-      # so the dependent live-call-states project runs in its own job instead of under --shard.
+      # Every job builds the API and Main, then runs its share of the tests. Playwright shards only
+      # top-level projects and runs their dependencies whole in each shard, so the dependent
+      # live-call-states project runs in its own job instead of under --shard. That job is the
+      # shortest, so it also checks Main's performance budgets and saves the build caches.
       matrix:
         include:
-          - suite: chromium 1/4
-            args: --project=chromium --shard=1/4
-          - suite: chromium 2/4
-            args: --project=chromium --shard=2/4
-          - suite: chromium 3/4
-            args: --project=chromium --shard=3/4
-          - suite: chromium 4/4
-            args: --project=chromium --shard=4/4
-          - suite: live-call-states
-            args: --project=live-call-states --no-deps
+          - { suite: chromium 1/11, args: --project=chromium --shard=1/11 }
+          - { suite: chromium 2/11, args: --project=chromium --shard=2/11 }
+          - { suite: chromium 3/11, args: --project=chromium --shard=3/11 }
+          - { suite: chromium 4/11, args: --project=chromium --shard=4/11 }
+          - { suite: chromium 5/11, args: --project=chromium --shard=5/11 }
+          - { suite: chromium 6/11, args: --project=chromium --shard=6/11 }
+          - { suite: chromium 7/11, args: --project=chromium --shard=7/11 }
+          - { suite: chromium 8/11, args: --project=chromium --shard=8/11 }
+          - { suite: chromium 9/11, args: --project=chromium --shard=9/11 }
+          - { suite: chromium 10/11, args: --project=chromium --shard=10/11 }
+          - { suite: chromium 11/11, args: --project=chromium --shard=11/11 }
+          - { suite: live-call-states, args: --project=live-call-states --no-deps, gates: true }
     env:
       BETTER_AUTH_SECRET: test-secret-for-ci
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/zoonk_e2e
       DATABASE_URL_UNPOOLED: postgres://postgres:postgres@localhost:5432/zoonk_e2e
       E2E_TESTING: "true"
-      MAIN_PERF_GATES: "true"
+      MAIN_PERF_GATES: ${{ matrix.gates && 'true' || 'false' }}
       NEXT_PUBLIC_APP_DOMAIN: localhost:3000
       NEXT_PUBLIC_API_URL: http://localhost:4000
-      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
-
-    services:
-      db:
-        image: postgres:18-alpine
-        ports: ["5432:5432"]
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: zoonk_e2e
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 1s
-          --health-timeout 5s
-          --health-retries 10
 
     steps:
+      # Postgres pulls and starts while the code checks out and installs (see `vitest.yml`).
+      - name: Start Postgres
+        run: >-
+          docker run --detach --name db --publish 5432:5432 --tmpfs /var/lib/postgresql
+          --env POSTGRES_PASSWORD=postgres --env POSTGRES_DB=zoonk_e2e
+          --env POSTGRES_INITDB_ARGS=--no-sync
+          postgres:18-alpine -c max_connections=200 > "$RUNNER_TEMP/db.log" 2>&1 &
+
       - name: Check out code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -68,25 +74,17 @@ jobs:
         id: cache-keys
         run: |
           echo "lockfile=${{ hashFiles('pnpm-lock.yaml') }}" >> "$GITHUB_OUTPUT"
-          echo "sources=${{ hashFiles('apps/main/**/*.ts', 'apps/main/**/*.tsx', 'packages/**/*.ts', 'packages/**/*.tsx') }}" >> "$GITHUB_OUTPUT"
+          echo "sources=${{ hashFiles('apps/main/**/*.ts', 'apps/main/**/*.tsx', 'apps/api/**/*.ts', 'packages/**/*.ts', 'packages/**/*.tsx') }}" >> "$GITHUB_OUTPUT"
 
-      - name: Cache turbo build setup
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+      # Turbopack's build caches: a warm build compiles only what changed since the cache's run.
+      - name: Restore Next.js build caches
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
-          path: .turbo
-          key: ${{ runner.os }}-turbo-${{ steps.cache-keys.outputs.lockfile }}-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-turbo-${{ steps.cache-keys.outputs.lockfile }}-
-            ${{ runner.os }}-turbo-
-
-      - name: Cache Next.js build
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
-        with:
-          path: apps/main/.next-e2e/cache
-          key: ${{ runner.os }}-nextjs-main-${{ steps.cache-keys.outputs.lockfile }}-${{ steps.cache-keys.outputs.sources }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-main-${{ steps.cache-keys.outputs.lockfile }}-
-            ${{ runner.os }}-nextjs-main-
+          path: |
+            apps/main/.next-e2e/cache
+            apps/api/.next-e2e/cache
+          key: nextjs-e2e-${{ steps.cache-keys.outputs.lockfile }}-${{ steps.cache-keys.outputs.sources }}
+          restore-keys: nextjs-e2e-${{ steps.cache-keys.outputs.lockfile }}-
 
       - name: Setup pnpm and Node.js
         uses: pnpm/setup@a0881977cd8ea73b1ed212236c99ca10dcc80cf4 # v3.1.1
@@ -95,12 +93,42 @@ jobs:
           cache: true
           save-cache: ${{ github.ref == 'refs/heads/main' }}
 
-      - name: Setup database
-        run: pnpm --filter @zoonk/db db:setup:e2e
+      # Over TCP: while the image sets up its database, Postgres only listens on its socket.
+      - name: Wait for Postgres
+        run: |
+          for _ in $(seq 120); do
+            docker exec db pg_isready --host 127.0.0.1 --quiet 2> /dev/null && exit 0
+            sleep 0.5
+          done
+
+          cat "$RUNNER_TEMP/db.log"
+          docker logs db
+          exit 1
 
       - name: Test performance gates
+        if: matrix.gates
         run: pnpm test:deploy scripts/perf
 
-      # The supervisor times build:e2e and gates its artifacts before starting Playwright.
-      - name: Build, check performance budgets, and run E2E tests
+      # Migrates the database, builds and starts the API, builds Main (timing it and checking its
+      # performance budgets in the gates job), then runs the job's tests.
+      - name: Run E2E tests
         run: pnpm e2e:main ${{ matrix.args }} --workers=2
+
+      # Saved whether the tests passed or not, so the next run's builds start warm.
+      - name: Save Next.js build caches
+        if: always() && matrix.gates
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: |
+            apps/main/.next-e2e/cache
+            apps/api/.next-e2e/cache
+          key: nextjs-e2e-${{ steps.cache-keys.outputs.lockfile }}-${{ steps.cache-keys.outputs.sources }}
+
+  # The one check branch protection requires: it passes only when every part passed.
+  e2e-main:
+    if: always()
+    needs: suites
+    runs-on: ubuntu-latest
+    steps:
+      - name: Every part passed
+        run: test "${{ needs.suites.result }}" = success

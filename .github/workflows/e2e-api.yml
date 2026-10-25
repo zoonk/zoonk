@@ -1,5 +1,7 @@
 name: E2E Tests (API App)
 
+# The API's Playwright suite (`pnpm e2e:api`): on every PR, and again on `main` before staging, where
+# `ci.yml` calls this workflow.
 on:
   workflow_call:
     inputs:
@@ -7,14 +9,21 @@ on:
         type: string
         required: false
         default: ""
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
 
 permissions:
   contents: read
 
+concurrency:
+  group: e2e-api-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
-  e2e:
+  e2e-api:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 15
     env:
       BETTER_AUTH_SECRET: test-secret-for-ci
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/zoonk_e2e
@@ -26,20 +35,15 @@ jobs:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
 
-    services:
-      db:
-        image: postgres:18-alpine
-        ports: ["5432:5432"]
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: zoonk_e2e
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 1s
-          --health-timeout 5s
-          --health-retries 10
-
     steps:
+      # Postgres pulls and starts while the code checks out and installs (see `vitest.yml`).
+      - name: Start Postgres
+        run: >-
+          docker run --detach --name db --publish 5432:5432 --tmpfs /var/lib/postgresql
+          --env POSTGRES_PASSWORD=postgres --env POSTGRES_DB=zoonk_e2e
+          --env POSTGRES_INITDB_ARGS=--no-sync
+          postgres:18-alpine -c max_connections=200 > "$RUNNER_TEMP/db.log" 2>&1 &
+
       - name: Check out code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -53,23 +57,13 @@ jobs:
           echo "lockfile=${{ hashFiles('pnpm-lock.yaml') }}" >> "$GITHUB_OUTPUT"
           echo "sources=${{ hashFiles('apps/api/**/*.ts', 'apps/api/**/*.tsx', 'packages/**/*.ts', 'packages/**/*.tsx') }}" >> "$GITHUB_OUTPUT"
 
-      - name: Cache turbo build setup
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
-        with:
-          path: .turbo
-          key: ${{ runner.os }}-turbo-${{ steps.cache-keys.outputs.lockfile }}-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-turbo-${{ steps.cache-keys.outputs.lockfile }}-
-            ${{ runner.os }}-turbo-
-
+      # Turbopack's build cache: a warm build compiles only what changed since the cache's run.
       - name: Cache Next.js build
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: apps/api/.next-e2e/cache
-          key: ${{ runner.os }}-nextjs-api-${{ steps.cache-keys.outputs.lockfile }}-${{ steps.cache-keys.outputs.sources }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-api-${{ steps.cache-keys.outputs.lockfile }}-
-            ${{ runner.os }}-nextjs-api-
+          key: nextjs-api-${{ steps.cache-keys.outputs.lockfile }}-${{ steps.cache-keys.outputs.sources }}
+          restore-keys: nextjs-api-${{ steps.cache-keys.outputs.lockfile }}-
 
       - name: Setup pnpm and Node.js
         uses: pnpm/setup@a0881977cd8ea73b1ed212236c99ca10dcc80cf4 # v3.1.1
@@ -78,8 +72,18 @@ jobs:
           cache: true
           save-cache: ${{ github.ref == 'refs/heads/main' }}
 
-      - name: Setup database
-        run: pnpm --filter @zoonk/db db:setup:e2e
+      # Over TCP: while the image sets up its database, Postgres only listens on its socket.
+      - name: Wait for Postgres
+        run: |
+          for _ in $(seq 120); do
+            docker exec db pg_isready --host 127.0.0.1 --quiet 2> /dev/null && exit 0
+            sleep 0.5
+          done
 
+          cat "$RUNNER_TEMP/db.log"
+          docker logs db
+          exit 1
+
+      # Migrates the database, builds the API (from turbo's cache when unchanged), then runs the tests.
       - name: Run E2E tests
-        run: pnpm e2e --filter api
+        run: pnpm e2e:api
