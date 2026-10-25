@@ -63,16 +63,35 @@ const RECAP_QUESTION_KINDS = new Set<PlayableLibraryStep["kind"]>([
 ]);
 
 /**
+ * A question's first place in the lesson: where it comes before a miss brings it back at the end.
+ * A check missed in "I already know this" gave that place up for the end, so it goes by the
+ * lesson's own order instead: before the first screen the lesson puts after it.
+ */
+function getFirstPlace(
+  state: Pick<LessonPlayerState, "queue" | "retried" | "steps">,
+  step: PlayableLibraryStep,
+): number {
+  const first = state.queue.indexOf(step.id);
+  const gaveUpPlace = state.retried.includes(step.id) && state.queue.lastIndexOf(step.id) === first;
+
+  if (!gaveUpPlace) {
+    return first;
+  }
+
+  const later = state.queue.findIndex((id) => (state.steps[id]?.position ?? 0) > step.position);
+  return later === -1 ? first : Math.min(first, later);
+}
+
+/**
  * "From the lesson" beside a question from `lg`: the last reading screen before it, by its place
  * in the lesson ("screen 3"). A missed question coming back at the end recaps the screen before its
  * first place, the one it checks, not the lesson's last. A language exercise has none (its card
  * would give the word away), nor does a reading screen, which is the lesson itself.
  */
 export function getLessonRecap(
-  state: Pick<LessonPlayerState, "position" | "queue" | "steps">,
+  state: Pick<LessonPlayerState, "position" | "queue" | "retried" | "steps">,
 ): { position: number; step: RecapStep } | null {
-  const currentId = state.queue[state.position] ?? "";
-  const current = state.steps[currentId];
+  const current = state.steps[state.queue[state.position] ?? ""];
 
   if (!current || isLanguageStep(current) || isReadStep(current)) {
     return null;
@@ -82,7 +101,7 @@ export function getLessonRecap(
     return null;
   }
 
-  const firstPlace = state.queue.indexOf(currentId);
+  const firstPlace = getFirstPlace(state, current);
 
   const position = state.queue.findLastIndex(
     (id, index) => index < firstPlace && isRecapStep(state.steps[id]),

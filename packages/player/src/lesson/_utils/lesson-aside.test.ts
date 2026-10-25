@@ -8,7 +8,12 @@ function stateOf(
   steps: PlayableLibraryStep[],
   { position = 0, queue = steps.map((step) => step.id) } = {},
 ) {
-  return { position, queue, steps: Object.fromEntries(steps.map((step) => [step.id, step])) };
+  return {
+    position,
+    queue,
+    retried: [],
+    steps: Object.fromEntries(steps.map((step) => [step.id, step])),
+  };
 }
 
 describe(getLessonOutline, () => {
