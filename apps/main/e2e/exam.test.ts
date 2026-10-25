@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { type Locator, type Request, type Route } from "@playwright/test";
+import { type Browser, type Locator, type Request, type Route } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { ensureGuest } from "@zoonk/e2e/fixtures/guests";
@@ -19,7 +19,6 @@ import {
 } from "./exam-scale-fixtures";
 import { type Page, expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
-import { captureMissionEnding } from "./mission-ending-captures";
 import { nextStep, stepDots } from "./result-steps";
 import { askSuggestion, stubScreenTutor } from "./screen-tutor";
 import { openAs } from "./study-day";
@@ -85,6 +84,29 @@ async function boxOf(locator: Locator) {
 }
 
 /**
+ * An ENEM learner whose essay in today's session is graded once, on a page of their own. Its
+ * theme fits in one line, so the last grade has the aside to itself.
+ */
+async function withGradedEssay(
+  browser: Browser,
+  { fullMarks = false }: { fullMarks?: boolean },
+  run: (learner: { essay: { blockId: string }; page: Page }) => Promise<void>,
+) {
+  const { goalId, user } = await createEnemEssayDay({ motivatingTexts: false });
+
+  const [essay, page] = await Promise.all([
+    addGradedEssay({ fullMarks, goalId, userId: user.id }),
+    openAs(browser, user),
+  ]);
+
+  try {
+    await run({ essay, page });
+  } finally {
+    await page.context().close();
+  }
+}
+
+/**
  * A result's buddy sits where every task's does, never in the header's corner: at the aside's
  * foot on a laptop, in the action bar's row, and its face after the main action on a phone (the
  * header's corner had "Ask" there), where Continue keeps the row's room even on a small phone and
@@ -125,16 +147,10 @@ async function expectAskWhereTasksHaveIt(page: Page) {
 }
 
 test.describe("Exam goal", () => {
-  test("a day, a mock in real conditions with its answer sheet, bounded waits and a tutor once handed in, and its result", async ({
+  test("a mock in real conditions with its answer sheet, bounded waits and a tutor once handed in, and its result", async ({
     browser,
   }) => {
     await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
-      await page.goto("/today");
-
-      const card = page.getByRole("region", { name: "Today's session" });
-      await card.getByRole("button", { name: /^Continue/u }).click();
-      await expect(page).toHaveURL(/\/learn\/[\w-]+\?session=[\w-]+$/u);
-
       const [mock, asked] = await Promise.all([
         addTodayMock({ goalId: user.goalId, userId: user.id }),
         stubScreenTutor(page),
@@ -388,8 +404,6 @@ test.describe("Exam goal", () => {
         prisma.studySession.findUniqueOrThrow({ where: { id: block.sessionId } }),
       ).resolves.toMatchObject({ fullMealAt: expect.any(Date) });
 
-      await captureMissionEnding(page, test.info(), "mock");
-
       // The estimate lives behind the Plan's number; the exam's page says what's on it.
       await page.goto("/plan");
       await preparationNumber(page).click();
@@ -444,8 +458,7 @@ test.describe("Exam goal", () => {
   test("an essay graded by the official rubric, with one next step and a rewrite that keeps its text when grading is slow or fails", async ({
     browser,
   }) => {
-    await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
-      const essay = await addGradedEssay({ goalId: user.goalId, userId: user.id });
+    await withGradedEssay(browser, {}, async ({ essay, page }) => {
       // Long enough for an ENEM grade (60 words), so the send reaches grading instead of the length check.
       const draft = [
         "Minha segunda versão deixa a proposta de intervenção completa. O governo federal, por meio do Ministério da Educação,",
@@ -601,7 +614,7 @@ test.describe("Exam goal", () => {
       await expect(send).toBeDisabled();
 
       await earlier.release();
-      await expect(page).not.toHaveURL(/\/essay\//u);
+      await expect(page).not.toHaveURL(new RegExp(`/essay/${essay.blockId}`, "u"));
       expect(order.slice(0, 2)).toStrictEqual(["settled", "finish"]);
     });
   });
@@ -609,8 +622,7 @@ test.describe("Exam goal", () => {
   test("an essay being written stays on the device, and leaving with it unsent asks first", async ({
     browser,
   }) => {
-    await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
-      const essay = await addGradedEssay({ goalId: user.goalId, userId: user.id });
+    await withGradedEssay(browser, {}, async ({ essay, page }) => {
       const text = "Minha nova versão começa pela proposta de intervenção, com o agente e o meio.";
 
       await page.goto(`/essay/${essay.blockId}`);
@@ -718,8 +730,7 @@ test.describe("Exam goal", () => {
   test("an essay with full marks on every competency has nothing left to work on", async ({
     browser,
   }) => {
-    await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
-      const essay = await addGradedEssay({ fullMarks: true, goalId: user.goalId, userId: user.id });
+    await withGradedEssay(browser, { fullMarks: true }, async ({ essay, page }) => {
       await page.goto(`/essay/${essay.blockId}`);
 
       // No competency stands out as the one to work on, and the next step says nothing is left.

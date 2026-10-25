@@ -1,12 +1,21 @@
+import { randomUUID } from "node:crypto";
+import { type Browser } from "@playwright/test";
+import { ONBOARDING_QUESTIONS } from "@zoonk/core/view-models/onboarding/contract";
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
-import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
+import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
+import {
+  chapterLessonFixture,
+  lessonSkillFixture,
+  libraryLessonFixture,
+} from "@zoonk/testing/fixtures/library-lessons";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { MS_PER_DAY } from "@zoonk/utils/date";
-import { isJsonObject } from "@zoonk/utils/json";
 import { expect, test } from "./fixtures";
-import { asPersona } from "./learn-personas";
 import { ANSWERED, createMappedGoal } from "./onboarding-fixtures";
 import { REPLAN_TIMEOUT_MS } from "./plan-timeouts";
 import { routeTimeToCover } from "./time-to-cover-routes";
@@ -49,6 +58,80 @@ function longDate(isoDate: string): string {
     timeZone: "UTC",
     ...(otherYear ? { year: "numeric" } : {}),
   }).format(date);
+}
+
+/** A topic of the exam with one Library lesson in the chapter, as the planner lays it out. */
+async function createTopic({ chapterId, position }: { chapterId: string; position: number }) {
+  const [skill, lesson] = await Promise.all([
+    skillFixture({ name: `Reading ${randomUUID()}` }),
+    libraryLessonFixture({ estimatedMinutes: 3, homeChapterId: chapterId }),
+  ]);
+
+  await Promise.all([
+    chapterLessonFixture({ chapterId, lessonId: lesson.id, position }),
+    lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id }),
+  ]);
+
+  return { area: null, lessons: 1, name: skill.name, phase: 0, skillId: skill.id, weight: null };
+}
+
+/**
+ * A learner past onboarding who prepares for the exam of `blueprint`'s notice, counting down to
+ * `targetDate`, with a small plan the planner owns: two topics, a lesson each. Returns the goal
+ * and a page on their device, in the goal's time zone.
+ */
+async function openExamPlan(
+  browser: Browser,
+  {
+    blueprintId,
+    details,
+    targetDate,
+  }: { blueprintId: string; details: Record<string, unknown>; targetDate: Date },
+) {
+  const [user, chapter] = await Promise.all([
+    createE2EUser(getBaseURL()),
+    libraryChapterFixture({ title: "Reading" }),
+  ]);
+
+  const [goal, skills] = await Promise.all([
+    goalFixture({
+      dailyMinutes: 30,
+      details: {
+        answered: [...ONBOARDING_QUESTIONS, "buddy", "placement"],
+        examName: "ENEM",
+        placementDeclined: true,
+        ...details,
+      },
+      examBlueprintId: blueprintId,
+      kind: "exam",
+      targetDate,
+      timezone: "UTC",
+      title: "ENEM",
+      userId: user.id,
+    }),
+    Promise.all([0, 1].map((position) => createTopic({ chapterId: chapter.id, position }))),
+  ]);
+
+  const [context, plan] = await Promise.all([
+    browser.newContext({ storageState: user.storageState, timezoneId: "UTC" }),
+    planFixture({
+      goalId: goal.id,
+      graph: { phases: [{ milestone: null, name: "Reading" }], skills },
+    }),
+    learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
+  ]);
+
+  // A plan laid out once, so the Plan opens: placement settled the first topic.
+  await planItemFixture({
+    completedAt: new Date(),
+    planId: plan.id,
+    position: 0,
+    skillId: skills[0]?.skillId ?? null,
+    status: "testedOut",
+    titleSnapshot: "Reading",
+  });
+
+  return { goal, page: await context.newPage() };
 }
 
 async function readTargetDate(goalId: string): Promise<string | null> {
@@ -220,24 +303,19 @@ test.describe("Exam date", () => {
   test("the plan editor changes the exam's full date any time, with the notice's day one tap away", async ({
     browser,
   }) => {
-    await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
-      // Her plan counts down to a day of her own, a week after the notice's.
-      const noticeDay = isoDaysFromNow(70);
-      const ownDay = isoDaysFromNow(77);
-      const laterDay = isoDaysFromNow(84);
-      const blueprint = await noticeFixture(noticeDay);
-      const goal = await prisma.goal.findUniqueOrThrow({ where: { id: user.goalId } });
-      const details = isJsonObject(goal.details) ? goal.details : {};
+    // Her plan counts down to a day of her own, a week after the notice's.
+    const noticeDay = isoDaysFromNow(70);
+    const ownDay = isoDaysFromNow(77);
+    const laterDay = isoDaysFromNow(84);
+    const blueprint = await noticeFixture(noticeDay);
 
-      await prisma.goal.update({
-        data: {
-          details: { ...details, examYear: Number(noticeDay.slice(0, 4)) },
-          examBlueprintId: blueprint.id,
-          targetDate: new Date(`${ownDay}T00:00:00Z`),
-        },
-        where: { id: user.goalId },
-      });
+    const { goal, page } = await openExamPlan(browser, {
+      blueprintId: blueprint.id,
+      details: { examYear: Number(noticeDay.slice(0, 4)) },
+      targetDate: new Date(`${ownDay}T00:00:00Z`),
+    });
 
+    try {
       // Her date is one of her plan's settings beside it: a tap opens the editor at it.
       await page.goto("/plan");
 
@@ -259,40 +337,33 @@ test.describe("Exam date", () => {
       await editor.getByRole("button", { name: "Use this date" }).click();
       await expect(offer).toBeHidden({ timeout: REPLAN_TIMEOUT_MS });
       await expect(date).toHaveValue(noticeDay);
-      await expect.poll(() => readTargetDate(user.goalId)).toBe(noticeDay);
+      await expect.poll(() => readTargetDate(goal.id)).toBe(noticeDay);
 
       // Any full date of her own, saved when she says so; the notice's day is offered again.
       await date.fill(laterDay);
       await editor.getByRole("button", { name: "Save" }).click();
       await expect(offer).toBeVisible({ timeout: REPLAN_TIMEOUT_MS });
       await expect(editor.getByRole("button", { name: "Save" })).toBeHidden();
-      await expect.poll(() => readTargetDate(user.goalId)).toBe(laterDay);
-    });
+      await expect.poll(() => readTargetDate(goal.id)).toBe(laterDay);
+    } finally {
+      await page.context().close();
+    }
   });
 
   test("the Plan says the month the learner named, never a day in it", async ({ browser }) => {
-    await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
-      // She said a month about two months away; the notice sets the exam weeks before it.
-      const noticeDay = isoDaysFromNow(20);
-      const named = new Date(Date.now() + 60 * MS_PER_DAY);
-      const monthStart = new Date(Date.UTC(named.getUTCFullYear(), named.getUTCMonth(), 1));
-      const blueprint = await noticeFixture(noticeDay);
-      const goal = await prisma.goal.findUniqueOrThrow({ where: { id: user.goalId } });
-      const details = isJsonObject(goal.details) ? goal.details : {};
+    // She said a month about two months away; the notice sets the exam weeks before it.
+    const noticeDay = isoDaysFromNow(20);
+    const named = new Date(Date.now() + 60 * MS_PER_DAY);
+    const monthStart = new Date(Date.UTC(named.getUTCFullYear(), named.getUTCMonth(), 1));
+    const blueprint = await noticeFixture(noticeDay);
 
-      await prisma.goal.update({
-        data: {
-          details: {
-            ...details,
-            examMonth: monthStart.getUTCMonth() + 1,
-            examYear: monthStart.getUTCFullYear(),
-          },
-          examBlueprintId: blueprint.id,
-          targetDate: monthStart,
-        },
-        where: { id: user.goalId },
-      });
+    const { goal, page } = await openExamPlan(browser, {
+      blueprintId: blueprint.id,
+      details: { examMonth: monthStart.getUTCMonth() + 1, examYear: monthStart.getUTCFullYear() },
+      targetDate: monthStart,
+    });
 
+    try {
       const month = new Intl.DateTimeFormat("en", {
         month: "long",
         timeZone: "UTC",
@@ -337,7 +408,9 @@ test.describe("Exam date", () => {
       await expect(date).toHaveAccessibleDescription(
         `${month} for now. Pick the day when you know it.`,
       );
-    });
+    } finally {
+      await page.context().close();
+    }
   });
 
   test("the time step says the month the learner named", async ({

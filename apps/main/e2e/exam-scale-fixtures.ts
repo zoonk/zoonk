@@ -127,9 +127,12 @@ export const ENEM_INSTRUCTION =
 
 /**
  * An ENEM writing block open in today's session and not written yet, on its own blueprint: its
- * prompt is an instruction with the theme and two long motivating texts, as ENEM's are written.
+ * prompt is an instruction with the theme and two long motivating texts, as ENEM's are written,
+ * or the theme alone in one line when `motivatingTexts` is false.
  */
-export async function createEnemEssayDay() {
+export async function createEnemEssayDay({
+  motivatingTexts = true,
+}: { motivatingTexts?: boolean } = {}) {
   const [user, skill, blueprint] = await Promise.all([
     createE2EUser(getBaseURL()),
     skillFixture({ name: `Public communication ${randomUUID()}` }),
@@ -147,7 +150,9 @@ export async function createEnemEssayDay() {
   const [item, session] = await Promise.all([
     itemFixture({
       content: {
-        context: ENEM_MOTIVATING_TEXTS,
+        context: motivatingTexts
+          ? ENEM_MOTIVATING_TEXTS
+          : "Tema: Desafios para tornar clara a comunicação dos serviços públicos no Brasil.",
         keyPoints: ["An intervention proposal with agent, action, means, purpose and a detail"],
         question: ENEM_INSTRUCTION,
         rubric: [
@@ -174,7 +179,7 @@ export async function createEnemEssayDay() {
     status: "active",
   });
 
-  return { blockId: block.id, user };
+  return { blockId: block.id, goalId: goal.id, user };
 }
 
 /**
