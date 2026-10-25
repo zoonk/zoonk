@@ -79,7 +79,10 @@ function savedSelection({
   };
 }
 
-/** Missing persisted checkpoints are a reconciliation; an automatic advisory layout is not. */
+/**
+ * Missing persisted checkpoints are a reconciliation; an automatic advisory layout is not. The
+ * phase after an exam has none by design (see `listBossCandidates`).
+ */
 function needsCheckpointReconciliation(context: PlanContext): boolean {
   if (!context.phases.some((phase) => phase.startDate !== null)) {
     return false;
@@ -93,7 +96,8 @@ function needsCheckpointReconciliation(context: PlanContext): boolean {
     (item) =>
       (item.kind === "lesson" || item.kind === "chapter") &&
       item.status !== "skipped" &&
-      !challenges.has(item.phase),
+      !challenges.has(item.phase) &&
+      context.phases[item.phase]?.kind !== "afterExam",
   );
 }
 

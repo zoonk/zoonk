@@ -1,13 +1,16 @@
 import { randomUUID } from "node:crypto";
+import { prisma } from "@zoonk/db";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { seedV2PersonaCopy } from "../seed/seed-v2";
 import { findOwnedPlan } from "./_utils/owned-plan";
 import { computePlan } from "./_utils/replan";
 import { changeGoalPlan } from "./change-goal-plan";
+import { getGoalPlan } from "./get-goal-plan";
 import { findPlanTimeToCover } from "./get-time-advice";
 import { type BuiltPlan } from "./planner/build-plan";
 import { toIsoDate } from "./planner/plan-calendar";
+import { parsePlanPhases } from "./planner/plan-state";
 
 const NOW = new Date("2026-10-24T15:00:00Z");
 const EXAM = "2027-11-14";
@@ -112,4 +115,39 @@ describe("studying everything after an exam (R14)", () => {
     },
     120_000,
   );
+
+  // Three weeks from ENEM, studying everything ends in 2028. The Plan's read took the phase after
+  // the exam, which has no challenge by design, for one missing its challenge, and laid the plan
+  // out again: the editor said a finish days before the one the change had just saved.
+  it("reads the end the change saved after the exam", async () => {
+    const copyKey = randomUUID();
+
+    const copy = await seedV2PersonaCopy({
+      copyKey,
+      email: `full-course-end-${copyKey}@zoonk.test`,
+      persona: "exam",
+    });
+
+    mockSession(copy.userId);
+
+    await expect(
+      changeGoalPlan({
+        goalId: copy.goalId,
+        input: {
+          operations: [
+            { kind: "setTargetDate", targetDate: "2026-11-15" },
+            { fullCourse: true, kind: "setFullCourse" },
+          ],
+          timeZone: TIME_ZONE,
+        },
+      }),
+    ).resolves.toMatchObject({ status: "applied" });
+
+    const saved = await prisma.plan.findUniqueOrThrow({ where: { goalId: copy.goalId } });
+    const end = parsePlanPhases(saved.phases).find((phase) => phase.kind === "afterExam")?.endDate;
+    const read = await getGoalPlan(copy.goalId);
+
+    expect(end).toBeDefined();
+    expect(read).toMatchObject({ plan: { estimate: { fullCourseEndDate: end } }, status: "ready" });
+  }, 120_000);
 });
