@@ -258,8 +258,6 @@ const ENEM_TIME_TO_COVER: GoalTutorLookUpStandIn = {
   timeToCover: {
     coreMinutes: null,
     fittingDate: null,
-    maximum: null,
-    measure: "exam",
     recommendedMinutes: 95,
     status: "found",
     targetDate: "2026-11-08",
