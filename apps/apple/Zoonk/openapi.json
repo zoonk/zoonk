@@ -71838,7 +71838,7 @@
           },
           "fullCourseEndDate": {
             "default": null,
-            "description": "For an exam asked about with fullCourse: the day the plan studying everything ends at the time asked about, going on after the exam for what doesn't fit before it. Null when not asked, for other goals, while not ready, and when even that plan can't fit everything in the time it plans (a few minutes a day for a big exam)",
+            "description": "For an exam asked about with fullCourse: the day the plan studying everything ends at the time asked about, going on after the exam for what doesn't fit before it. Null when not asked, for other goals, while not ready, when the time fits everything before the exam (nothing goes on after it), and when even that plan can't fit everything in the time it plans (a few minutes a day for a big exam)",
             "nullable": true,
             "type": "string",
             "format": "date",

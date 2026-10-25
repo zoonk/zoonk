@@ -41,19 +41,37 @@ export type AfterExam = {
 };
 
 /**
- * When a plan studying everything ends (`end`), once it holds all of it, every skill's lessons
- * whole (`skillMinutes`, which counts a kept stand-in's cut too): its time after the exam stops at
- * the plan's horizon (`MAX_PLAN_DAYS`), so at a few minutes a day its last day can be years away
- * with lessons still left out, which no end date would be true of.
+ * Whether a plan's end (`end`) comes after its exam (`targetDate`): a plan studying everything
+ * whose time fits it all before the exam ends with the exam, with no finish after it to say.
+ */
+export function endsAfterExam({
+  end,
+  targetDate,
+}: {
+  end: string | null;
+  targetDate: string | null;
+}): boolean {
+  return end !== null && targetDate !== null && end > targetDate;
+}
+
+/**
+ * When a plan studying everything ends (`end`), once it goes on after the exam (`targetDate`, see
+ * `endsAfterExam`) and holds all of it, every skill's lessons whole (`skillMinutes`, which counts a
+ * kept stand-in's cut too): its time after the exam stops at the plan's horizon (`MAX_PLAN_DAYS`),
+ * so at a few minutes a day its last day can be years away with lessons still left out, which no
+ * end date would be true of.
  */
 export function getFullCourseEnd({
   built,
   end,
+  targetDate,
 }: {
   built: { skillMinutes: readonly SkillMinutes[] };
   end: string | null;
+  targetDate: string | null;
 }): string | null {
-  return built.skillMinutes.every((skill) => skill.covered >= skill.total) ? end : null;
+  const holdsAll = built.skillMinutes.every((skill) => skill.covered >= skill.total);
+  return holdsAll && endsAfterExam({ end, targetDate }) ? end : null;
 }
 
 /** Whether the plan goes on after its exam: an exam with a date that studies everything. */

@@ -1,5 +1,5 @@
 import { type PlanView } from "../plan-view-contract";
-import { getFullCourseEnd } from "../planner/after-exam";
+import { endsAfterExam, getFullCourseEnd } from "../planner/after-exam";
 import { toIsoDate } from "../planner/plan-calendar";
 import { type PlanReadContext } from "./plan-read-projection";
 import { type ComputedPlan } from "./replan";
@@ -27,8 +27,8 @@ function getShownEnd(context: PlanReadContext): string | null {
 
 /**
  * The plan's size and end (see `getShownEnd`), which for an exam studying everything is when the
- * learner finishes it all once the plan holds all of it (see `getFullCourseEnd`). A plan without a
- * graph (a seeded one) keeps the estimate it was saved with.
+ * learner finishes it all after the exam once the plan holds all of it (see `getFullCourseEnd`). A
+ * plan without a graph (a seeded one) keeps the estimate it was saved with.
  */
 export function buildEstimateView({
   computed,
@@ -40,6 +40,7 @@ export function buildEstimateView({
   const pace = context.state.settings.pace;
   const endDate = getShownEnd(context);
   const fullCourse = context.goal.kind === "exam" && context.state.settings.fullCourse;
+  const targetDate = context.goal.targetDate && toIsoDate(context.goal.targetDate);
 
   if (computed) {
     const { estimate } = computed.built;
@@ -47,7 +48,7 @@ export function buildEstimateView({
     return {
       endDate,
       fullCourseEndDate: fullCourse
-        ? getFullCourseEnd({ built: computed.built, end: endDate })
+        ? getFullCourseEnd({ built: computed.built, end: endDate, targetDate })
         : null,
       pace,
       remainingHours: toHours(estimate.remainingMinutes),
@@ -61,7 +62,7 @@ export function buildEstimateView({
 
   return {
     endDate,
-    fullCourseEndDate: fullCourse ? endDate : null,
+    fullCourseEndDate: fullCourse && endsAfterExam({ end: endDate, targetDate }) ? endDate : null,
     pace,
     remainingHours: items.length > 0 ? Math.round((totalHours * todo * 10) / items.length) / 10 : 0,
     totalHours: Math.round(totalHours * 10) / 10,

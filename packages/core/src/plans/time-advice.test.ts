@@ -631,14 +631,21 @@ describe(getPlanTimeAdvice, () => {
 
     const ask = (input: PlanTimeAdviceInput) => getPlanTimeAdvice({ goalId: goal.id, input });
 
-    const [own, everything, sundays] = await Promise.all([
+    const [own, everything, sundays, wholeDays] = await Promise.all([
       ask({ dailyMinutes: 60, studyDays: EVERY_DAY }),
       ask({ dailyMinutes: 60, fullCourse: true, studyDays: EVERY_DAY }),
       // 5 minutes on Sundays never finish 600 lessons within the years the plan lays out.
       ask({ dailyMinutes: 5, fullCourse: true, studyDays: [0] }),
+      // Whole days of study hold all of it before the exam: nothing goes on after it.
+      ask({ dailyMinutes: 1440, fullCourse: true, studyDays: EVERY_DAY }),
     ]);
 
-    if (own.status !== "ready" || everything.status !== "ready" || sundays.status !== "ready") {
+    if (
+      own.status !== "ready" ||
+      everything.status !== "ready" ||
+      sundays.status !== "ready" ||
+      wholeDays.status !== "ready"
+    ) {
       throw new Error("Expected the time advice");
     }
 
@@ -651,6 +658,7 @@ describe(getPlanTimeAdvice, () => {
     expect((everything.advice.fullCourseEndDate ?? "") > "2020-10-16").toBe(true);
 
     expect(sundays.advice).toMatchObject({ fullCourseEndDate: null, ready: true });
+    expect(wholeDays.advice).toMatchObject({ coveredShare: 1, fullCourseEndDate: null });
   });
 
   it("says on the Plan when studying everything ends, only while its plan holds all of it", async () => {
@@ -709,6 +717,18 @@ describe(getPlanTimeAdvice, () => {
     const sundays = await readEstimate();
     expect(sundays.endDate).not.toBeNull();
     expect(sundays.fullCourseEndDate).toBeNull();
+
+    // Whole days of study hold all of it before the exam: it doesn't go on after it.
+    await expect(
+      updateGoal({
+        goalId: goal.id,
+        input: { dailyMinutes: 1440, studyDays: EVERY_DAY, timeZone: "UTC" },
+      }),
+    ).resolves.toMatchObject({ status: "updated" });
+
+    const wholeDays = await readEstimate();
+    expect((wholeDays.endDate ?? "") <= "2020-10-16").toBe(true);
+    expect(wholeDays.fullCourseEndDate).toBeNull();
   });
 
   it("says the plan isn't ready while it's being built", async () => {

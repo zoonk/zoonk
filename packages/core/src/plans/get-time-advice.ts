@@ -225,18 +225,19 @@ export async function getPlanTimeAdvice({
 
   const { feasibility } = computed;
   const end = computed.built.estimate.endDate;
+  const targetDate = context.goal.targetDate ? toIsoDate(context.goal.targetDate) : null;
 
   return {
     advice: {
       coveredShare: feasibility.deadline ? roundShare(feasibility.coveredShare) : null,
       fullCourseEndDate: fullCourse
-        ? getFullCourseEnd({ built: computed.built, end: end && toIsoDate(end) })
+        ? getFullCourseEnd({ built: computed.built, end: end && toIsoDate(end), targetDate })
         : null,
       measure: feasibility.measure,
       numbers: await buildPlanNumbersView({ computed, context }),
       readingNotice: false,
       ready: true,
-      targetDate: context.goal.targetDate ? toIsoDate(context.goal.targetDate) : null,
+      targetDate,
       targetDateNamedMonth: dateKind.namedMonth,
     },
     status: "ready",
