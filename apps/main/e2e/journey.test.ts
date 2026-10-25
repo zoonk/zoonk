@@ -659,14 +659,15 @@ test.describe("Journey", () => {
   test("a goal no daily time covers by its date finds that when asked, and moves the date to cover it all", async ({
     browser,
   }) => {
-    await asPersona(browser, { persona: "language" }, async ({ page, user }) => {
-      // Marcos's move came forward to a month away: no time a day covers his goal by then.
+    await asPersona(browser, { away: 3, persona: "language" }, async ({ page, user }) => {
+      // Marcos is back after three days away, and his move came forward to a month away: no time a
+      // day covers his goal by then.
       const targetDate = new Date(toUTCMidnight(new Date()).getTime() + 30 * MS_PER_DAY);
       await prisma.goal.update({ data: { targetDate }, where: { id: user.goalId } });
 
       // Main's E2E runs without the API: Find finds no daily time covers it by his date, and a
-      // date a year later that his own time covers it all by.
-      const fittingDate = new Date(targetDate.getTime() + 365 * MS_PER_DAY);
+      // date two years later that his own time covers it all by.
+      const fittingDate = new Date(targetDate.getTime() + 2 * 365 * MS_PER_DAY);
 
       await routeTimeToCover(page, {
         goalId: user.goalId,
@@ -678,10 +679,11 @@ test.describe("Journey", () => {
 
       await openJourney(page);
 
-      // The plan he had no longer fits the month left, which the Plan's suggestion says first. The
-      // next one says exactly what his time covers, and works out the rest only when he asks.
+      // The Plan lays his plan out for the month left. Its first suggestion is the lessons he
+      // missed; the next one says exactly what his time covers, and works out the rest only when
+      // he asks.
       const suggestion = suggestionPanel(page);
-      await expect(suggestion.getByRole("heading")).toHaveText("Your plan no longer fits");
+      await expect(suggestion.getByRole("heading")).toHaveText("A little to catch up");
       const slot = page.getByRole("group", { name: "Plan suggestion" });
       const next = slot.getByRole("button", { exact: true, name: "Next" });
       const previous = slot.getByRole("button", { exact: true, name: "Previous" });
@@ -715,7 +717,7 @@ test.describe("Journey", () => {
       // The answer stays with the plan it was found for while he pages through the suggestions.
       await previous.focus();
       await previous.press("Enter");
-      await expect(suggestion.getByRole("heading")).toHaveText("Your plan no longer fits");
+      await expect(suggestion.getByRole("heading")).toHaveText("A little to catch up");
       await expect(previous).toBeFocused();
       await next.press("Enter");
       await expect(suggestion.getByRole("heading")).toHaveText(/^Your time covers everything by /u);
