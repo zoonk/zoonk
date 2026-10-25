@@ -71,10 +71,11 @@ type ComposerVariant = "compact" | "page";
 
 /**
  * Focus darkens the panel's hairline, as it does a field's border, in place of the input group's
- * 3px ring and the border it draws beside the hairline.
+ * 3px ring and the border it draws beside the hairline. With more contrast asked for, the hairline
+ * is already the text color, so focus thickens it to 3px instead: a darker line can't show.
  */
 const FOCUS_CLASS =
-  "has-[[data-slot=input-group-control]:focus-visible]:border-transparent has-[[data-slot=input-group-control]:focus-visible]:ring-1 has-[[data-slot=input-group-control]:focus-visible]:ring-foreground/35";
+  "has-[[data-slot=input-group-control]:focus-visible]:border-transparent has-[[data-slot=input-group-control]:focus-visible]:ring-1 has-[[data-slot=input-group-control]:focus-visible]:ring-foreground/35 contrast-more:has-[[data-slot=input-group-control]:focus-visible]:ring-[3px] contrast-more:has-[[data-slot=input-group-control]:focus-visible]:ring-foreground";
 
 const FRAME_CLASS: Record<ComposerVariant, string> = {
   // Its line is the inset ring, so it has no border: 44px whole, level with the action bar's.

@@ -68,10 +68,12 @@ export function useGoalFieldAction({
  * focus (the line in the ring's color and a 3px ring around it, as `Input` draws), so someone on
  * a keyboard sees where they are. Words that took focus on their own as the page opened
  * (`autoFocusOnPointer`) only darken the line, as the buddy's composer does, until they're left:
- * the page's first sight is the question, not a ring. The buttons inside draw their own.
+ * the page's first sight is the question, not a ring. With more contrast asked for, the line at
+ * rest is already the text color, so any focus takes the full ring. The buttons inside draw their
+ * own.
  */
 export const GOAL_PANEL_CLASS =
-  "bg-card inset-ring-input has-[textarea[data-autofocused]:focus]:inset-ring-foreground/35 contrast-more:has-[textarea[data-autofocused]:focus]:inset-ring-ring has-[textarea:focus-visible:not([data-autofocused])]:inset-ring-ring has-[textarea:focus-visible:not([data-autofocused])]:ring-ring/50 rounded-xl inset-ring transition-shadow has-[textarea:focus-visible:not([data-autofocused])]:ring-[3px] motion-reduce:transition-none";
+  "bg-card inset-ring-input has-[textarea[data-autofocused]:focus]:inset-ring-foreground/35 contrast-more:has-[textarea[data-autofocused]:focus]:inset-ring-ring contrast-more:has-[textarea:focus-visible]:ring-ring/50 contrast-more:has-[textarea:focus-visible]:ring-[3px] has-[textarea:focus-visible:not([data-autofocused])]:inset-ring-ring has-[textarea:focus-visible:not([data-autofocused])]:ring-ring/50 rounded-xl inset-ring transition-shadow has-[textarea:focus-visible:not([data-autofocused])]:ring-[3px] motion-reduce:transition-none";
 
 /**
  * The one place a goal is written, on the landing and on `/start`: a panel with the stronger line,

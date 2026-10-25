@@ -66,6 +66,8 @@ Computed from the tokens: oklch converted to sRGB, a tint composited over its su
 
 Fills, rings and icons use the plain token (`bg-success`, an icon's `text-success`); colored text uses the `-text` token.
 
+With more contrast asked for (`prefers-contrast: more`), a field's line is already the text color at rest, so focus shows by thickness: a band at least 2px wide whose pixels change by 3:1 or more (WCAG 2.4.13), such as the app's 3px field ring or the line thickened to 3px, never a same-color or lighter line.
+
 ## Native apps
 
 Apple and Android mirror the same rules with native controls: the tint of prominent buttons and toggles is the label color (black in light, white in dark), not a brand hue, so set Apple's `AccentColor` and Android's Material `primary` to it (and turn Android's dynamic color off, which would bring the wallpaper's hue in). A pick and the learner's place take the same blue as the web, never a button. Kinds keep their hues as named colors on dots and icons; green, red and amber keep their meanings, with text in their darker variants (light `#14764A`, `#C02B2F`, `#9D580C`).
