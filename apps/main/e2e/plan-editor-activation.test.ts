@@ -170,3 +170,22 @@ test("time presets move focus without saving; Enter, Space and clicks apply a si
     }
   });
 });
+
+test("a time change on a plan without a date says its new end, as the Plan writes it", async ({
+  browser,
+}) => {
+  await asPersona(browser, { persona: "stocks" }, async ({ page }) => {
+    await page.goto("/plan");
+    await page.getByRole("button", { name: "Adjust plan" }).click();
+    const editor = page.getByRole("dialog", { name: "Adjust your plan" });
+    await editor
+      .getByRole("radiogroup", { name: "Time a day" })
+      .getByText("1 hr", { exact: true })
+      .click();
+
+    // "Ends around Nov 1 instead of Nov 7.": the day the Plan shows, even within one month.
+    await expect(
+      editor.getByText(/^Ends around [A-Z][a-z]{2} \d{1,2} instead of [A-Z][a-z]{2} \d{1,2}\.$/u),
+    ).toBeVisible({ timeout: REPLAN_TIMEOUT_MS });
+  });
+});

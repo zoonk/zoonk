@@ -5,6 +5,7 @@ import { type PlanChangeView, type PlanView } from "@zoonk/core/plans/view-contr
 import { useExtracted } from "next-intl";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { getShownEndMove } from "../plan-diff/end-move";
+import { useFormatPlanDate } from "./plan-date-text";
 import {
   useAddedTopicsStartText,
   useAreaEndTexts,
@@ -41,18 +42,15 @@ function useChangeEffectText() {
 /** The plan as it is now, so a waiting change's effect never names an end the plan doesn't show. */
 type CurrentEnd = Pick<PlanView["estimate"], "endDate"> & Pick<PlanView["schedule"], "targetDate">;
 
-function toMonth(isoDate: string): string {
-  return isoDate.slice(0, "YYYY-MM".length);
-}
-
 /**
  * The end a change moves, in the plan's own terms. A plan with a date keeps it, so only a plan
- * without one says its new end, by month as its title does, and only while the change starts from
- * the end the plan shows now: an older change's dates would contradict it.
+ * without one says its new end, as the Plan writes it (see `useFormatPlanDate`: "Nov 1" this coming
+ * year), and only while the change starts from the end the plan shows now: an older change's dates
+ * would contradict it.
  */
 function usePlanEndEffectText() {
   const t = useExtracted();
-  const formatDate = useFormatIsoDate();
+  const formatPlanDate = useFormatPlanDate();
 
   return function planEndEffect({
     current,
@@ -67,16 +65,14 @@ function usePlanEndEffectText() {
       return null;
     }
 
-    const { after, before } = move;
+    const after = formatPlanDate(move.after);
+    const before = formatPlanDate(move.before);
 
-    if (toMonth(before) !== toMonth(current.endDate) || toMonth(after) === toMonth(before)) {
+    if (before !== formatPlanDate(current.endDate) || after === before) {
       return null;
     }
 
-    return t("Ends around {after} instead of {before}.", {
-      after: formatDate(after, "month"),
-      before: formatDate(before, "month"),
-    });
+    return t("Ends around {after} instead of {before}.", { after, before });
   };
 }
 
@@ -96,12 +92,14 @@ function removesDate(operations: readonly PlanOperation[]): boolean {
  * How a change the learner made moves the end, said as the plan on screen now says it: a plan with
  * a date ends at it, so nothing; a plan the change took the date off finishes around a month,
  * since "instead of" the day the last lesson fell on misread as their deadline (Maya's March 1
- * deadline read "instead of February 28"); a plan without a date before and after, by month, as
- * its title says it.
+ * deadline read "instead of February 28"); an exam that goes on after its date, by month, as the
+ * Plan writes that end; a plan without a date before and after, as the Plan writes its end ("Nov
+ * 1"), so a time that brings it six days closer says so.
  */
 function useAppliedEndText() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
+  const formatPlanDate = useFormatPlanDate();
 
   return function appliedEndText(
     change: Pick<PlanChangeView, "effect" | "operations">,
@@ -118,12 +116,19 @@ function useAppliedEndText() {
       return t("You finish around {month}.", { month: formatDate(after, "month") });
     }
 
-    return before && getShownEndMove(change.effect) && toMonth(after) !== toMonth(before)
-      ? t("Ends around {after} instead of {before}.", {
-          after: formatDate(after, "month"),
-          before: formatDate(before, "month"),
-        })
-      : null;
+    if (!before || !getShownEndMove(change.effect)) {
+      return null;
+    }
+
+    const shown = (isoDate: string) =>
+      plan.targetDate ? formatDate(isoDate, "month") : formatPlanDate(isoDate);
+
+    return shown(after) === shown(before)
+      ? null
+      : t("Ends around {after} instead of {before}.", {
+          after: shown(after),
+          before: shown(before),
+        });
   };
 }
 
