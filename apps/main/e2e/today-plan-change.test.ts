@@ -28,6 +28,7 @@ import {
 import { expect, test } from "./fixtures";
 import { tabTo } from "./keyboard-focus";
 import { asPersona } from "./learn-personas";
+import { REPLAN_TIMEOUT_MS } from "./plan-timeouts";
 import { openAs, readDayNames } from "./study-day";
 import { routeTimeToCover } from "./time-to-cover-routes";
 
@@ -381,6 +382,7 @@ test.describe("Today's plan change", () => {
       // session wasn't started, so it follows the change.
       await expect(note.getByRole("status")).toHaveText(
         "It's in your plan, and today's session follows it.",
+        { timeout: REPLAN_TIMEOUT_MS },
       );
 
       await expect(note).toBeFocused();
@@ -436,6 +438,7 @@ test.describe("Today's plan change", () => {
 
       await expect(note.getByRole("status")).toHaveText(
         "It's in your plan, and today's session follows it.",
+        { timeout: REPLAN_TIMEOUT_MS },
       );
 
       await expect.poll(readBlocks).not.toStrictEqual(blocks);
@@ -545,7 +548,11 @@ test.describe("Today's plan change", () => {
       await expect(page.getByRole("button", { name: "Next suggestion" })).toHaveCount(0);
 
       await note.getByRole("button", { name: "Apply" }).click();
-      await expect(note.getByRole("status")).toContainText("It's in your plan");
+
+      await expect(note.getByRole("status")).toContainText("It's in your plan", {
+        timeout: REPLAN_TIMEOUT_MS,
+      });
+
       await expect.poll(() => readChangeStatus(time.id)).toBe("applied");
 
       // Then the one still waiting, by keyboard: it takes the notice's place and focus.

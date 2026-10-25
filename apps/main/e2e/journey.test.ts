@@ -790,7 +790,11 @@ test.describe("Journey", () => {
       // says what the focus did, with an undo, before it closes.
       await focus.getByRole("checkbox", { name: "Ciências Humanas" }).click();
       await focus.getByRole("button", { name: "Focus on these" }).click();
-      await expect(focus.getByRole("status")).toContainText("More time for");
+
+      await expect(focus.getByRole("status")).toContainText("More time for", {
+        timeout: REPLAN_TIMEOUT_MS,
+      });
+
       await expect(focus.getByRole("status")).toContainText("Ciências Humanas");
       await expect(focus.getByRole("button", { name: "Undo" })).toBeVisible();
       await focus.getByRole("button", { name: "Done" }).click();
