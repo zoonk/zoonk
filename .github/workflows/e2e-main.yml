@@ -65,6 +65,11 @@ jobs:
           --env POSTGRES_INITDB_ARGS=--no-sync
           postgres:18-alpine -c max_connections=200 > "$RUNNER_TEMP/db.log" 2>&1 &
 
+      - name: Sample CPU (temporary)
+        run: |
+          (while true; do date -u +%T; uptime; top -b -n1 -w 160 | sed -n '7,14p'; sleep 20; done) > "$RUNNER_TEMP/cpu.log" 2>&1 &
+          vmstat 10 > "$RUNNER_TEMP/vmstat.log" 2>&1 &
+
       - name: Check out code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -115,6 +120,10 @@ jobs:
       # performance budgets in the gates job), then runs the job's tests.
       - name: Run E2E tests
         run: pnpm e2e:main ${{ matrix.args }} --workers=2
+
+      - name: Show CPU samples (temporary)
+        if: always()
+        run: cat "$RUNNER_TEMP/vmstat.log" "$RUNNER_TEMP/cpu.log"
 
       # Saved whether the tests passed or not, so the next run's builds start warm.
       - name: Save Next.js build caches
