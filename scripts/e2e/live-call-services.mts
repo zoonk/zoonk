@@ -1,20 +1,17 @@
-import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { applyCommandExit, runForegroundCommand } from "../dev/process.mts";
 import { startLiveCallApi } from "./live-call-api.mts";
 import { startLiveCallTestProvider } from "./live-call-provider-bridge.mts";
 
-/** Supervises Main's real API and no-spend provider for the canonical CI call flow. */
+/**
+ * Main's E2E run (`pnpm e2e:main`), the same in CI and in any checkout with its own E2E database:
+ * migrates that database, builds and starts the real API and a no-spend live-call provider, builds
+ * Main against them, and runs Main's Playwright suite with the arguments it was given.
+ */
 const repository = process.cwd();
-const isLane = /^\/Users\/will\/coding\/zoonk\/zoonk-e2e-lane-[1-4]$/u.test(repository);
-const isGitHubCi = process.env.GITHUB_ACTIONS === "true" && process.env.CI === "true";
 
 if (process.env.CODEX_SANDBOX && process.env.CODEX_SANDBOX !== "none") {
   throw new Error("Refusing Main E2E startup under the restricted sandbox.");
-}
-
-if (!isLane && !isGitHubCi) {
-  throw new Error("Main E2E must run in a disposable lane or GitHub CI.");
 }
 
 const bridge = await startLiveCallTestProvider();
@@ -49,6 +46,10 @@ async function runMain() {
     return;
   }
 
+  if (!(await run({ args: ["--filter", "@zoonk/db", "db:setup:e2e"] }))) {
+    return;
+  }
+
   if (
     !(await run({
       args: ["--filter", "api", "build:e2e"],
@@ -58,22 +59,11 @@ async function runMain() {
     return;
   }
 
-  const environmentPath = resolve(repository, "packages/db/.env.e2e.local");
-  const previousEnvironment = isLane ? await readFile(environmentPath, "utf8") : null;
   const api = await startLiveCallApi(repository);
 
   try {
-    process.env.NEXT_PUBLIC_API_URL = api.url;
-
-    // Local test launchers deliberately take URLs from the lane's file rather than caller env.
-    if (previousEnvironment !== null) {
-      const content = previousEnvironment.replaceAll(
-        /^[\t ]*(?:export[\t ]+)?NEXT_PUBLIC_API_URL[\t ]*=.*\r?\n?/gmu,
-        "",
-      );
-
-      await writeFile(environmentPath, `${content.trimEnd()}\nNEXT_PUBLIC_API_URL=${api.url}\n`);
-    }
+    // The test environment (`getTestEnvironment`) points Main's build and server at this API.
+    process.env.E2E_API_URL = api.url;
 
     if (!(await buildMain())) {
       return;
@@ -81,13 +71,7 @@ async function runMain() {
 
     await run({ args: ["--filter", "main", "e2e", ...process.argv.slice(2)] });
   } finally {
-    try {
-      if (previousEnvironment !== null) {
-        await writeFile(environmentPath, previousEnvironment);
-      }
-    } finally {
-      await api.close();
-    }
+    await api.close();
   }
 }
 

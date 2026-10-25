@@ -11,6 +11,15 @@ function readEnvironment(path: string): Record<string, string> {
 }
 
 /**
+ * The API a Main E2E run started for itself (`pnpm e2e:main` sets `E2E_API_URL`), over the
+ * placeholder in `.env.e2e`, so Main's build and server call it.
+ */
+function withRunApi(environment: Record<string, string>): Record<string, string> {
+  const apiUrl = process.env.E2E_API_URL;
+  return apiUrl ? { ...environment, NEXT_PUBLIC_API_URL: apiUrl } : environment;
+}
+
+/**
  * Keeps Prisma, Vitest, Playwright, and E2E builds on the same database, even when the shell has a development URL.
  * Test tooling only: test configs import it by path, so it's absent from production app bundles.
  */
@@ -28,16 +37,16 @@ export function getTestEnvironment(mode: "test" | "e2e"): Record<string, string>
       process.env.DATABASE_URL ||
       defaults.DATABASE_URL_UNPOOLED;
 
-    return {
+    return withRunApi({
       ...Object.fromEntries(
         Object.entries(defaults).map(([key, value]) => [key, process.env[key] ?? value]),
       ),
       ...(pooled && { DATABASE_URL: pooled }),
       ...(unpooled && { DATABASE_URL_UNPOOLED: unpooled }),
-    };
+    });
   }
 
-  return { ...defaults, ...(existsSync(localPath) && readEnvironment(localPath)) };
+  return withRunApi({ ...defaults, ...(existsSync(localPath) && readEnvironment(localPath)) });
 }
 
 /** Marks a test run's own copy of the test database; the id of the process that made it follows. */

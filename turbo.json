@@ -9,6 +9,7 @@
       "BETTER_AUTH_SECRET",
       "BLOB_*",
       "DATABASE_*",
+      "E2E_API_URL",
       "E2E_TESTING",
       "GOOGLE_*",
       "MAILER_API_KEY",
@@ -70,11 +71,6 @@
       "cache": false,
       "dependsOn": ["db:generate", "^dev:direct"],
       "persistent": true
-    },
-    "e2e": {
-      "dependsOn": ["build:e2e"],
-      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/packages/db/.env.e2e.local"],
-      "passThroughEnv": ["PLAYWRIGHT_*", "E2E_BASE_URL"]
     },
     "i18n:lint": {},
     "i18n": { "cache": false },

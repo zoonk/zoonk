@@ -45,7 +45,7 @@ describe("Main CI performance hook in its service supervisor", () => {
         String.raw`
         import { appendFile } from 'node:fs/promises';
         export async function runForegroundCommand({args, command, environment}) {
-          await appendFile(process.env.TEST_LOG, JSON.stringify({args, command, provider:environment.LIVE_CALL_TEST_PROVIDER_URL, api:environment.NEXT_PUBLIC_API_URL, auth:environment.NEXT_PUBLIC_AUTH_BASE_PATH})+'\n');
+          await appendFile(process.env.TEST_LOG, JSON.stringify({args, command, provider:environment.LIVE_CALL_TEST_PROVIDER_URL, api:environment.E2E_API_URL, auth:environment.NEXT_PUBLIC_AUTH_BASE_PATH})+'\n');
           const failed = process.env.TEST_FAIL === 'build' && command === '/usr/bin/time' || process.env.TEST_FAIL === 'gate' && args[0] === 'perf:check';
           return {code:failed ? 1 : 0, signal:null};
         }

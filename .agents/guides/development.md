@@ -12,14 +12,15 @@ Run commands from the repository root using `mise x -- pnpm ...` in this environ
 | TypeScript behavior               | Focused `pnpm --filter <workspace> test <file>`, `pnpm --filter <workspace> typecheck`, root `pnpm lint` |
 | Module boundaries or dependencies | `pnpm knip --production`                                                                                 |
 | App runtime or build integration  | `pnpm --filter <app> build`                                                                              |
-| E2E flows                         | `pnpm --filter <app> build:e2e`, then focused `pnpm --filter <app> e2e <file>`                           |
+| E2E flows                         | Focused `pnpm e2e:main <file>` or `pnpm e2e:api <file>`; both suites with `pnpm e2e`                     |
 | Prisma schema                     | `pnpm db:generate`, generated migration, affected database tests                                         |
 | Public API contract               | `pnpm openapi:generate`, `pnpm openapi:check`, affected HTTP tests                                       |
 | Translated copy                   | Affected app extraction, `i18n`, and `i18n:lint`                                                         |
 
 - Vitest suites that use the database run on their own copy of the test database (`zoonk_test`, or the worktree's), made when the run starts and dropped when it ends; the next run drops copies a crashed run left. The test database itself is only the template: tests never write to it, `pnpm --filter @zoonk/db db:setup:test` migrates it (turbo's `test` task runs it first), and a migration edited in place needs its change and new checksum applied to it too. A run refuses a template whose migrations don't match the repository's.
 - In a macOS sandbox, run browser-launching tests with escalated permissions on the first attempt because Chromium needs Mach services. This is an execution permission requirement, not a request to stop implementation for local review.
-- Building `apps/api` (`build`, `build:e2e`) clears the local workflow store at `apps/api/.next/workflow-data`, which a running API dev server from the same checkout uses: its in-flight workflow runs are lost. While one runs, give the build its own store, for example `WORKFLOW_TARGET_WORLD=local WORKFLOW_LOCAL_DATA_DIR=.next-e2e/workflow-data`, and pass the same variables to the E2E run that serves that build.
+- E2E runs in any checkout with its own E2E database: the primary checkout's `zoonk_e2e`, or a worktree's after `pnpm worktree:setup`. `pnpm e2e:main` and `pnpm e2e:api` migrate that database and build what they test, and pass any further arguments to Playwright (a test file, `--project`, `--grep`). Main's command also builds and starts the real API and a no-spend live-call provider, so specs that reach the API run as in CI; Main's Playwright run on its own has no API, and those specs fail. Run one E2E command per checkout at a time; the checkout's `pnpm dev` can keep running, since E2E builds and servers keep their own output and workflow store (`.next-e2e`).
+- Building `apps/api` for production (`pnpm --filter api build`) clears the local workflow store at `apps/api/.next/workflow-data`, which a running API dev server from the same checkout uses: its in-flight workflow runs are lost.
 
 ## Local development and sign-in
 

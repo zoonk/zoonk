@@ -46,7 +46,7 @@ We recommend using [mise](https://mise.jdx.dev/) to manage your Node.js and pnpm
 - `pnpm typecheck` to run TypeScript type checking
 - `pnpm knip --production` to check for unused code
 - `pnpm test` to run tests with Vitest
-- `pnpm e2e` to run end-to-end tests with Playwright
+- `pnpm e2e` to run end-to-end tests with Playwright, or `pnpm e2e:main` and `pnpm e2e:api` for one app (they pass further arguments, such as a test file, to Playwright)
 - `pnpm i18n:lint` to run i18n linting
 - `pnpm i18n` to translate missing i18n keys
 

@@ -7,23 +7,19 @@ import { stopChildProcess } from "./stop-child-process.mts";
 const STARTUP_TIMEOUT_MS = 60_000;
 const STARTUP_OUTPUT_CHARACTERS = 8192;
 
-/** Starts only this E2E checkout's prebuilt API; callers own its lifetime and shut down this exact child. */
-export async function startLiveCallApi(lane: string) {
+/** Starts only this checkout's prebuilt E2E API; callers own its lifetime and shut down this exact child. */
+export async function startLiveCallApi(repository: string) {
   if (process.env.CODEX_SANDBOX && process.env.CODEX_SANDBOX !== "none") {
     throw new Error("Refusing call E2E startup under the restricted sandbox.");
   }
 
-  const isGithubCi = process.env.GITHUB_ACTIONS === "true" && process.env.CI === "true";
-
-  if (!/^\/Users\/will\/coding\/zoonk\/zoonk-e2e-lane-[1-4]$/u.test(lane) && !isGithubCi) {
-    throw new Error("Call E2E API must run in a disposable lane or GitHub Actions CI.");
+  if (resolve(import.meta.dirname, "../..") !== repository) {
+    throw new Error(
+      "The call E2E helper and its test environment must belong to the same checkout.",
+    );
   }
 
-  if (resolve(import.meta.dirname, "../..") !== lane) {
-    throw new Error("The call E2E helper and its test environment must belong to the same lane.");
-  }
-
-  const directory = resolve(lane, "apps/api");
+  const directory = resolve(repository, "apps/api");
   const require = createRequire(resolve(directory, "package.json"));
 
   const child = spawn(
@@ -31,13 +27,7 @@ export async function startLiveCallApi(lane: string) {
     [require.resolve("next/dist/bin/next"), "start", "-p", "0"],
     {
       cwd: directory,
-      env: {
-        ...process.env,
-        ...getTestEnvironment("e2e"),
-        NEXT_PUBLIC_AUTH_BASE_PATH: "/v1/auth",
-        WORKFLOW_LOCAL_DATA_DIR: resolve(directory, ".next-e2e/workflow-data"),
-        WORKFLOW_TARGET_WORLD: "local",
-      },
+      env: { ...process.env, ...getTestEnvironment("e2e"), NEXT_PUBLIC_AUTH_BASE_PATH: "/v1/auth" },
       stdio: ["ignore", "pipe", "pipe"],
     },
   );

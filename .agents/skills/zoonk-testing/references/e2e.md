@@ -35,11 +35,11 @@ Use semantic drag handles and a deterministic target. If the pointer sensor requ
 
 ## Commands
 
-Build the owning app with its E2E configuration before running against a new revision. E2E uses a separate output directory, such as `.next-e2e`, and the package scripts load the test environment.
+Run the owning app's suite from the repository root. Each command migrates the checkout's E2E database, builds what it tests in `.next-e2e`, and passes further arguments to Playwright; Main's also starts the real API and a no-spend live-call provider, as CI does.
 
 ```bash
-mise x -- pnpm --filter main build:e2e
-mise x -- pnpm --filter main e2e e2e/path/to/test.test.ts
+mise x -- pnpm e2e:main e2e/path/to/test.test.ts
+mise x -- pnpm e2e:api e2e/path/to/test.test.ts
 ```
 
-Choose an existing test path and use the app's script rather than copying the placeholder. On macOS, browser-launching commands require escalated sandbox permissions on the first attempt. For a demonstrated timing or isolation concern, run the focused coverage with `--repeat-each=2` or another repetition count justified by the failure; a pass after an unexplained failure is insufficient.
+Choose an existing test path rather than copying the placeholder. `pnpm e2e` runs both suites in full. On macOS, browser-launching commands require escalated sandbox permissions on the first attempt. For a demonstrated timing or isolation concern, run the focused coverage with `--repeat-each=2` or another repetition count justified by the failure; a pass after an unexplained failure is insufficient.
