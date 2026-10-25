@@ -34,18 +34,19 @@ jobs:
       # performance budgets and saves the build caches.
       matrix:
         include:
-          - { suite: chromium 1/12, args: --project=chromium --shard=1/12 }
-          - { suite: chromium 2/12, args: --project=chromium --shard=2/12 }
-          - { suite: chromium 3/12, args: --project=chromium --shard=3/12 }
-          - { suite: chromium 4/12, args: --project=chromium --shard=4/12 }
-          - { suite: chromium 5/12, args: --project=chromium --shard=5/12 }
-          - { suite: chromium 6/12, args: --project=chromium --shard=6/12 }
-          - { suite: chromium 7/12, args: --project=chromium --shard=7/12 }
-          - { suite: chromium 8/12, args: --project=chromium --shard=8/12 }
-          - { suite: chromium 9/12, args: --project=chromium --shard=9/12 }
-          - { suite: chromium 10/12, args: --project=chromium --shard=10/12 }
-          - { suite: chromium 11/12, args: --project=chromium --shard=11/12 }
-          - { suite: chromium 12/12, args: --project=chromium --shard=12/12 }
+          - { suite: chromium 1/13, args: --project=chromium --shard=1/13 }
+          - { suite: chromium 2/13, args: --project=chromium --shard=2/13 }
+          - { suite: chromium 3/13, args: --project=chromium --shard=3/13 }
+          - { suite: chromium 4/13, args: --project=chromium --shard=4/13 }
+          - { suite: chromium 5/13, args: --project=chromium --shard=5/13 }
+          - { suite: chromium 6/13, args: --project=chromium --shard=6/13 }
+          - { suite: chromium 7/13, args: --project=chromium --shard=7/13 }
+          - { suite: chromium 8/13, args: --project=chromium --shard=8/13 }
+          - { suite: chromium 9/13, args: --project=chromium --shard=9/13 }
+          - { suite: chromium 10/13, args: --project=chromium --shard=10/13 }
+          - { suite: chromium 11/13, args: --project=chromium --shard=11/13 }
+          - { suite: chromium 12/13, args: --project=chromium --shard=12/13 }
+          - { suite: chromium 13/13, args: --project=chromium --shard=13/13 }
           - { suite: live-call-states, args: --project=live-call-states --no-deps, gates: true }
     env:
       BETTER_AUTH_SECRET: test-secret-for-ci
