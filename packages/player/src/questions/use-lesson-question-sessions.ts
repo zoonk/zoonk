@@ -1,11 +1,12 @@
 "use client";
 
 import { type LessonQuestionThreadResource } from "@zoonk/core/lesson-questions/contract";
-import { useCallback, useLayoutEffect, useReducer, useRef } from "react";
+import { useCallback, useLayoutEffect, useMemo, useReducer, useRef } from "react";
 import { type LessonQuestionContext } from "./lesson-question-context";
 import {
   INITIAL_LESSON_QUESTION_SESSIONS,
   getLessonQuestionSession,
+  getShownLessonQuestionSession,
   lessonQuestionSessionsReducer,
 } from "./lesson-question-sessions";
 import { type LessonQuestionAction } from "./lesson-question-state";
@@ -61,7 +62,12 @@ export function useLessonQuestionSessions({
     currentSessions.current = sessions;
   }, [sessions]);
 
-  const state = getLessonQuestionSession({ context: activeContext, sessions });
+  const session = getLessonQuestionSession({ context: activeContext, sessions });
+
+  const state = useMemo(
+    () => getShownLessonQuestionSession({ context: activeContext, session }),
+    [activeContext, session],
+  );
 
   const context = state.context;
 

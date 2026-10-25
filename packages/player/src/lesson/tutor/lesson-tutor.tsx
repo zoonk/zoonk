@@ -3,7 +3,7 @@
 import { type LessonScreenSuggestion } from "@zoonk/core/lesson-questions/contract";
 import { useTaskAsideShown } from "@zoonk/learn/task-header";
 import { type TutorIdentity, useTutorIdentity } from "@zoonk/learn/tutor-identity";
-import { createContext, use, useMemo, useState } from "react";
+import { createContext, use, useCallback, useMemo, useState } from "react";
 import { type LessonQuestionContext } from "../../questions/lesson-question-context";
 import { type LessonQuestionNavigation } from "../../questions/lesson-question-navigation";
 import { LessonQuestionDrawer } from "../../questions/lesson-question-panel";
@@ -23,6 +23,31 @@ import { TutorQuote } from "./tutor-quote";
  * docked in the lesson's aside from `lg`, beside the screen it's about. Chosen when it opens.
  */
 type TutorPresentation = "dock" | "drawer";
+
+/** How the conversation shows (null: it doesn't) on a screen, by its place in the lesson. */
+type ShownConversation = { presentation: TutorPresentation | null; screen: string };
+
+/**
+ * The conversation shows on the screen the learner opened it on, until they move to another one:
+ * a screen never opens with a conversation the learner didn't open on it (a question coming back
+ * at the end opens fresh). Back on the screen, the aside's header (Ask below `lg`) opens it again.
+ */
+function useShownConversation() {
+  const { screen, state } = useLessonPlayer();
+  const where = `${state.position}:${screen.step?.id ?? ""}`;
+  const [shown, setShown] = useState<ShownConversation>({ presentation: null, screen: where });
+
+  if (shown.screen !== where) {
+    setShown({ presentation: null, screen: where });
+  }
+
+  const show = useCallback(
+    (presentation: TutorPresentation) => setShown({ presentation, screen: where }),
+    [where],
+  );
+
+  return { presentation: shown.screen === where ? shown.presentation : null, show };
+}
 
 /** The learner's buddy in the lesson: who it is, and a way to ask it about where they are. */
 type LessonBuddyTutor = {
@@ -88,7 +113,7 @@ function TutorInteraction({
   const controller = useLessonQuestionController();
   const activeContext = useTutorContext();
   const asideShown = useTaskAsideShown();
-  const [presentation, setPresentation] = useState<TutorPresentation>("drawer");
+  const { presentation, show } = useShownConversation();
   const { chooseSuggestion, close, open, state, suggestions } = controller;
   const askAbout = controller.ask;
   const docked = state.isOpen && presentation === "dock";
@@ -100,7 +125,7 @@ function TutorInteraction({
         // The conversation shows in the aside, about the screen in view; a draft in the aside's
         // composer is the learner's, so it stays until it's sent.
         if (!docked || !isSameDraftContext({ current: state.context, next: activeContext })) {
-          setPresentation("dock");
+          show("dock");
           open(activeContext, { keepDraft: true });
         }
 
@@ -112,7 +137,7 @@ function TutorInteraction({
       identity,
       navigation,
       open: (suggestion) => {
-        setPresentation(asideShown ? "dock" : "drawer");
+        show(asideShown ? "dock" : "drawer");
         open(activeContext, { keepDraft: asideShown });
         const offered = suggestions.find(({ id }) => id === suggestion);
 
@@ -131,6 +156,7 @@ function TutorInteraction({
       identity,
       navigation,
       open,
+      show,
       state.context,
       suggestions,
     ],

@@ -1332,6 +1332,18 @@ function dockedConversation() {
   return page.getByRole("region", { name: "Questions to Pip" });
 }
 
+/** What the learner asks the buddy about a missed answer in the docked tests. */
+const WHY_MISSED = "Why isn't it the size?";
+
+/** Misses the check, then asks the buddy why from the aside's composer. */
+async function missAndAskWhy() {
+  await page.getByRole("radio", { name: "The electron's size" }).click();
+  await page.getByRole("button", { name: /^Check/u }).click();
+  await composer(lessonAside()).fill(WHY_MISSED);
+  await press("Enter");
+  await expect.element(dockedConversation().getByText(TUTOR_ANSWER)).toBeVisible();
+}
+
 describe("docked beside the lesson", () => {
   it("asks from the aside's composer and shows the answer beside the question", async () => {
     const { api, lesson } = lessonWithTutor();
@@ -1434,5 +1446,90 @@ describe("docked beside the lesson", () => {
       context: { answer: { kind: "check", optionId: "size" }, kind: "answer" },
       question: "Walk me through this answer",
     });
+  });
+
+  // Maya asked Zu about a miss; when the question came back at the end, the conversation came
+  // back docked with the worked answer in it, and its composer took the number keys she answered
+  // with.
+  it("opens a question coming back at the end fresh, its keys answering it", async () => {
+    const { lesson } = lessonWithTutor();
+    playLesson({ lesson });
+    await missAndAskWhy();
+
+    await page.getByRole("button", { name: /^Continue/u }).click();
+
+    await expect
+      .element(page.getByRole("radio", { name: "The electron's size" }))
+      .not.toBeChecked();
+
+    await expect.element(dockedConversation()).not.toBeInTheDocument();
+
+    await expect
+      .element(lessonAside().getByRole("button", { name: "1 question" }))
+      .not.toBeInTheDocument();
+
+    await expect.element(composer(lessonAside())).not.toHaveFocus();
+
+    await press("2");
+
+    await expect
+      .element(page.getByRole("radio", { name: "Where the electron is most likely to be found" }))
+      .toBeChecked();
+
+    await press("Enter");
+    await expect.element(page.getByRole("status").filter({ hasText: "Correct!" })).toBeVisible();
+
+    // Checked, the aside's header leads back to what was asked about it the first time.
+    await lessonAside().getByRole("button", { name: "1 question" }).click();
+    await expect.element(dockedConversation().getByText(WHY_MISSED)).toBeVisible();
+  });
+
+  it("keeps what the buddy said about a miss out of the question coming back until it's checked", async () => {
+    const { api, lesson } = lessonWithTutor();
+    playLesson({ lesson });
+    await missAndAskWhy();
+    await page.getByRole("button", { name: /^Continue/u }).click();
+
+    // Before it's checked, the buddy gives hints: its conversation holds only what's asked now.
+    await composer(lessonAside()).fill("Any hint?");
+    await press("Enter");
+
+    const conversation = dockedConversation();
+    await expect.element(conversation.getByText("Any hint?")).toBeVisible();
+    await expect.element(conversation.getByText(WHY_MISSED)).not.toBeInTheDocument();
+    expect(api.inputs[1]).toMatchObject({ context: { kind: "step" }, question: "Any hint?" });
+
+    await page
+      .getByRole("radio", { name: "Where the electron is most likely to be found" })
+      .click();
+
+    await page.getByRole("button", { name: /^Check/u }).click();
+    await expect.element(conversation.getByText(WHY_MISSED)).toBeVisible();
+  });
+
+  it("keeps a screen's conversation with it, a tap away on its aside when the learner comes back", async () => {
+    const { lesson } = lessonWithTutor({
+      steps: [teachingStep("explanation"), teachingStep("explanation")],
+    });
+
+    playLesson({ lesson });
+    await composer(lessonAside()).fill("Why a cloud?");
+    await press("Enter");
+    await expect.element(dockedConversation().getByText(TUTOR_ANSWER)).toBeVisible();
+
+    // The next screen has its own aside; coming back opens the screen, not its conversation.
+    await page.getByRole("button", { name: /^Next/u }).click();
+    await expect.element(dockedConversation()).not.toBeInTheDocument();
+    await page.getByRole("button", { name: "Previous screen" }).click();
+
+    await expect
+      .element(page.getByRole("button", { name: "Previous screen" }))
+      .not.toBeInTheDocument();
+
+    await expect.element(dockedConversation()).not.toBeInTheDocument();
+    await expect.element(composer(lessonAside())).not.toHaveFocus();
+
+    await lessonAside().getByRole("button", { name: "1 question" }).click();
+    await expect.element(dockedConversation().getByText("Why a cloud?")).toBeVisible();
   });
 });
