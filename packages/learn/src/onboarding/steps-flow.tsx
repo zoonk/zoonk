@@ -24,7 +24,7 @@ import { OnboardingFrame } from "./onboarding-frame";
 import { OnboardingRailProvider } from "./onboarding-rail";
 import { OnboardingStepScreen } from "./onboarding-step-screen";
 import { PlanReceipt } from "./plan-receipt";
-import { StartOverButton } from "./start-over-button";
+import { StartOverMenu } from "./start-over-menu";
 import { PlanStartNoticeProvider } from "./steps/plan-start-notice";
 
 /** The screens that count as steps in the dots, in the names the goal saves its answers under. */
@@ -62,9 +62,9 @@ function countSteps(steps: OnboardingStep[]): number {
 
 /**
  * The rest of onboarding for a new goal, at `/start/[goalId]`: only the questions its words
- * didn't answer, one per screen with Back and Start over, then the buddy when the profile needs
- * one, placement while the first lessons are made, and the plan. A refresh comes
- * back to the same screen, since each answer is saved. When the run building the plan in the
+ * didn't answer, one per screen with Back and a "⋯" to finish later or start over, then the buddy
+ * when the profile needs one, placement while the first lessons are made, and the plan. A refresh
+ * comes back to the same screen, since each answer is saved. When the run building the plan in the
  * background couldn't start or failed, the questions say so with a way to start it again.
  */
 export function StepsFlow({
@@ -178,7 +178,7 @@ export function StepsFlow({
       <OnboardingAnnouncer>
         <OnboardingFrame
           bar={{
-            end: isPlan ? null : <StartOverButton disabled={isPending} onStartOver={startOver} />,
+            end: isPlan ? null : <StartOverMenu disabled={isPending} onStartOver={startOver} />,
             middle: progress && (
               <StepDots
                 className={BAR_MIDDLE_CLASS}

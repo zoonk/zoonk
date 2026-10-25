@@ -14,7 +14,7 @@ import {
   OnboardingTitle,
 } from "./onboarding-frame";
 import { OnboardingRailProvider } from "./onboarding-rail";
-import { StartOverButtonSkeleton } from "./start-over-button";
+import { StartOverMenuSkeleton } from "./start-over-menu";
 
 const EXAMPLE_ROWS = 5;
 
@@ -140,7 +140,7 @@ export function StartWaitSkeleton() {
 }
 
 /**
- * A goal's onboarding steps while they load: the bar (the steps' segments, Start over), the
+ * A goal's onboarding steps while they load: the bar (the steps' segments, its "⋯"), the
  * question's eyebrow, title and line, its options under it, and the plan so far in the page's
  * aside from 72rem.
  */
@@ -149,7 +149,7 @@ export function StepsSkeleton() {
     <OnboardingRailProvider rail={<RailSkeleton rows={3} />}>
       <OnboardingFrame
         bar={{
-          end: <StartOverButtonSkeleton />,
+          end: <StartOverMenuSkeleton />,
           middle: <Skeleton className={cn("h-1", BAR_MIDDLE_CLASS)} />,
         }}
       >

@@ -112,9 +112,10 @@ test.describe("Refreshing mid-onboarding", () => {
     await page.getByRole("button", { name: "Back" }).click();
     await expect(page.getByRole("heading", { name: "What do you want from it?" })).toBeVisible();
 
-    // "Start over", in words at the bar's end from `lg`, asks first. Starting over sets the goal aside
+    // "Start over", in the bar's "More" at every size, asks first. Starting over sets the goal aside
     // and goes back to typing a goal.
-    await page.getByRole("button", { name: "Start over" }).click();
+    await page.getByRole("button", { name: "More" }).click();
+    await page.getByRole("menuitem", { name: /^Start over/u }).click();
 
     const confirm = page.getByRole("alertdialog", { name: "Start over?" });
     await confirm.getByRole("button", { name: "Start over" }).click();

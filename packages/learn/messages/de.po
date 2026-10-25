@@ -691,7 +691,7 @@ msgstr "Brillen"
 #: src/appearance/buddy-settings.tsx
 #: src/journey/goal-actions.tsx
 #: src/memory/memory-fact-row.tsx
-#: src/onboarding/start-over-button.tsx
+#: src/onboarding/start-over-menu.tsx
 #: src/onboarding/understood/understood-row.tsx
 #: src/onboarding/understood/understood-words.tsx
 #: src/plan/plan-tool-sheet.tsx
@@ -4198,7 +4198,7 @@ msgid "Until"
 msgstr "Bis"
 
 #: src/journey/plan-sections.tsx
-#: src/onboarding/start-over-button.tsx
+#: src/onboarding/start-over-menu.tsx
 msgctxt "I5NMJ8"
 msgid "More"
 msgstr "Mehr"
@@ -8520,32 +8520,32 @@ msgctxt "_zDDtb"
 msgid "Save your plan so it's here next time."
 msgstr "Speichere deinen Plan, damit er beim nächsten Mal noch da ist."
 
-#: src/onboarding/start-over-button.tsx
+#: src/onboarding/start-over-menu.tsx
 msgctxt "c6IvRW"
 msgid "Finish later"
 msgstr "Später weitermachen"
 
-#: src/onboarding/start-over-button.tsx
+#: src/onboarding/start-over-menu.tsx
 msgctxt "kbmC81"
 msgid "Your answers are kept"
 msgstr "Deine Antworten bleiben gespeichert"
 
-#: src/onboarding/start-over-button.tsx
+#: src/onboarding/start-over-menu.tsx
 msgctxt "4prk89"
 msgid "Start over"
 msgstr "Neu starten"
 
-#: src/onboarding/start-over-button.tsx
+#: src/onboarding/start-over-menu.tsx
 msgctxt "wjSspW"
 msgid "Clears your answers"
 msgstr "Deine Antworten werden gelöscht"
 
-#: src/onboarding/start-over-button.tsx
+#: src/onboarding/start-over-menu.tsx
 msgctxt "tB3o4E"
 msgid "Start over?"
 msgstr "Neu starten?"
 
-#: src/onboarding/start-over-button.tsx
+#: src/onboarding/start-over-menu.tsx
 msgctxt "s2KyHA"
 msgid "Your answers for this goal are cleared, and you type a goal again."
 msgstr "Deine Antworten für dieses Ziel werden gelöscht und du gibst danach erneut ein Ziel ein."

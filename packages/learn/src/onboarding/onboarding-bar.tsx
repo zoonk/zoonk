@@ -78,8 +78,9 @@ export function OnboardingBarRow({ bar, className }: { bar: OnboardingBar; class
  * they act on, as a task's do): on the left the way back to the flow's previous screen or, where
  * there's none and under `lg`, an ✕ out to the app page the learner left for onboarding (Escape
  * presses either); in the middle the steps' dots, or a test's progress; on the right the screen's
- * own action (Start over) and the host's. From `lg` the sidebar holds the way out, so a screen
- * with nothing else in its bar has none there, and its title sits where every page's does.
+ * own action (the "⋯" with finishing later and starting over) and the host's. From `lg` the sidebar
+ * holds the way out, so a screen with nothing else in its bar has none there, and its title sits
+ * where every page's does.
  */
 export function OnboardingPageBar({
   backHref,
@@ -104,7 +105,8 @@ export function OnboardingPageBar({
           className,
         )}
       >
-        <div className="justify-self-start">
+        {/* Under `lg` the chevron's and the ✕'s glyphs sit on the column's edge, as the "⋯"'s does. */}
+        <div className="justify-self-start max-lg:-ml-3">
           {bar.onBack ? (
             <BackButton escape onBack={bar.onBack} />
           ) : (

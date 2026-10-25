@@ -72,7 +72,8 @@ export function useOnboardingSection(): boolean {
 /**
  * The flow's bar over its screens: back to the previous screen (`onBack`), where the learner is in
  * the middle (`middle`: the steps' dots, announced as "Step 2 of 4", the one place the step shows,
- * or a test's progress) and the screen's own action on the right (`end`: Start over).
+ * or a test's progress) and the screen's own action on the right (`end`: the "⋯" with finishing
+ * later and starting over).
  */
 export type OnboardingBar = { end?: ReactNode; middle?: ReactNode; onBack?: () => void };
 
@@ -101,8 +102,8 @@ export function useOnboardingScreen(): OnboardingScreen {
 /**
  * A test's question (placement, a language's level test), as a task's question is shown: its
  * answer is final, so the flow's bar has no way back, only the way out under `lg` as on the flow's
- * first screen, and no Start over, which over a question reads as starting the test over. How far
- * into the test the learner is (`progress`, from 0 to 1) takes the steps' dots' place.
+ * first screen, and no "⋯", whose starting over reads over a question as starting the test over.
+ * How far into the test the learner is (`progress`, from 0 to 1) takes the steps' dots' place.
  */
 export function OnboardingTestQuestion({
   children,

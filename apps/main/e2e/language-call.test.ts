@@ -933,9 +933,9 @@ test.describe("Language practice in the plan", () => {
 
     await expect(page.getByText("A short reading text at A2.")).toBeVisible();
     // A level test's answer is final, as placement's is: its questions have no way back and no
-    // Start over, and the bar shows how far into the test the learner is.
+    // "More" with Start over, and the bar shows how far into the test the learner is.
     await expect(page.getByRole("button", { name: "Back" })).toHaveCount(0);
-    await expect(page.getByRole("button", { name: "Start over" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "More" })).toHaveCount(0);
     const progress = page.getByRole("progressbar", { name: "Questions answered" });
     await expect(progress).toHaveAttribute("aria-valuenow", "0");
     await page.getByRole("radio", { name: "Right A2" }).click();

@@ -41,8 +41,9 @@ test.describe("Placement and the plan", () => {
       page.getByRole("heading", { name: "Let's see what you already know" }),
     ).toBeVisible();
 
-    const startOver = page.getByRole("button", { name: "Start over" });
-    await expect(startOver).toBeVisible();
+    // The bar's "More" holds finishing later and starting over.
+    const more = page.getByRole("button", { name: "More" });
+    await expect(more).toBeVisible();
 
     await tabTo(page, page.getByRole("button", { exact: true, name: "Start" }));
     await page.keyboard.press("Enter");
@@ -52,9 +53,9 @@ test.describe("Placement and the plan", () => {
     await expect(page.getByText("Question 1", { exact: true })).toBeVisible();
     await expect(page.getByText("Algebra", { exact: true })).toBeVisible();
     // An answer is final, so a question has no way back to the screens before placement, and no
-    // Start over, which over a question reads as starting the test over.
+    // "More", whose Start over reads over a question as starting the test over.
     await expect(page.getByRole("button", { name: "Back" })).toHaveCount(0);
-    await expect(startOver).toHaveCount(0);
+    await expect(more).toHaveCount(0);
     // The bar shows how far along today's few minutes of questions are, from empty.
     const progress = page.getByRole("progressbar", { name: "Questions answered" });
     await expect(progress).toHaveAttribute("aria-valuenow", "0");
