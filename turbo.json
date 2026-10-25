@@ -72,6 +72,24 @@
       "dependsOn": ["db:generate", "^dev:direct"],
       "persistent": true
     },
+    "e2e": {
+      "dependsOn": ["build:e2e"],
+      "env": ["CI"],
+      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/packages/db/.env.e2e.local"],
+      "passThroughEnv": ["PLAYWRIGHT_*"]
+    },
+    "e2e:suite": {
+      "dependsOn": ["^transit", "api#transit"],
+      "env": ["CI", "MAIN_PERF_GATES"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/packages/db/.env.e2e.local",
+        "$TURBO_ROOT$/scripts/dev/process.mts",
+        "$TURBO_ROOT$/scripts/e2e/**",
+        "$TURBO_ROOT$/scripts/run-test-env.mts"
+      ],
+      "passThroughEnv": ["PLAYWRIGHT_*"]
+    },
     "i18n:lint": {},
     "i18n": { "cache": false },
     "start": { "cache": false, "dependsOn": ["^start"], "persistent": true },

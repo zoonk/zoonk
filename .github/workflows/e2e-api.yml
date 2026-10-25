@@ -83,6 +83,7 @@ jobs:
           docker logs db
           exit 1
 
-      # Migrates the database, builds the API (from turbo's cache when unchanged), then runs the tests.
+      # The API's suite through turbo's cache: unchanged inputs replay the last passing run.
+      # Otherwise it builds the API (from turbo's cache when unchanged) and runs the tests.
       - name: Run E2E tests
-        run: pnpm e2e:api
+        run: pnpm --filter @zoonk/db db:setup:e2e && pnpm turbo run e2e --filter api --env-mode=loose

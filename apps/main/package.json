@@ -10,6 +10,7 @@
     "dev:app": "next dev",
     "dev:direct": "next dev",
     "e2e": "node ../../scripts/run-test-env.mts e2e playwright test",
+    "e2e:suite": "node ../../scripts/e2e/live-call-services.mts",
     "e2e:ui": "node ../../scripts/run-test-env.mts e2e playwright test --ui",
     "i18n:lint": "eloqnt lint --strict",
     "i18n": "eloqnt translate",

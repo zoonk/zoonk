@@ -16,7 +16,7 @@ import { dealShardTests, takeShardArgument } from "./shard-test-list.mts";
  * live-call provider, and runs Main's Playwright suite with the arguments it was given; a shard
  * (`--shard=2/12`) runs its share of the suite dealt test by test (`dealShardTests`).
  */
-const repository = process.cwd();
+const repository = resolve(import.meta.dirname, "../..");
 
 if (process.env.CODEX_SANDBOX && process.env.CODEX_SANDBOX !== "none") {
   throw new Error("Refusing Main E2E startup under the restricted sandbox.");

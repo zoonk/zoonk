@@ -57,6 +57,8 @@ jobs:
       MAIN_PERF_GATES: ${{ matrix.gates && 'true' || 'false' }}
       NEXT_PUBLIC_APP_DOMAIN: localhost:3000
       NEXT_PUBLIC_API_URL: http://localhost:4000
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
 
     steps:
       # Postgres pulls and starts while the code checks out and installs (see `vitest.yml`).
@@ -119,10 +121,12 @@ jobs:
         if: matrix.gates
         run: pnpm test:deploy scripts/perf
 
-      # Migrates the database, builds and starts the API, builds Main (timing it and checking its
-      # performance budgets in the gates job), then runs the job's tests.
+      # `pnpm e2e:main` through turbo's cache: a shard whose inputs (Main, the API, the packages,
+      # the E2E scripts and its arguments) passed before replays that run. Otherwise it migrates the
+      # database, builds and starts the API, builds Main (timing it and checking its performance
+      # budgets in the gates job), then runs the shard's tests.
       - name: Run E2E tests
-        run: pnpm e2e:main ${{ matrix.args }} --workers=2
+        run: pnpm turbo run e2e:suite --filter main --env-mode=loose -- ${{ matrix.args }} --workers=2
 
       # Saved once the build finished (`pnpm e2e:main` marks it), whether the tests then passed or a
       # newer push cancelled the run, so the next run's builds start warm.
