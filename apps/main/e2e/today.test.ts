@@ -813,6 +813,7 @@ test.describe("Today", () => {
     );
 
     // Enter keeps learning, the day's one next step: the plan's next lesson joins the day and opens.
+    await expectHydrated(card.getByRole("button", { name: "Keep learning" }));
     await page.keyboard.press("Enter");
     await expect(page).toHaveURL(new RegExp(`/learn/${lesson.id}\\?session=`, "u"));
     await expect(page.getByText('What does the electron "cloud" show?')).toBeVisible();
@@ -1171,7 +1172,9 @@ test.describe("Today without a session to start", () => {
     await expect(card.getByRole("button", { name: /^Study for \d+ minutes$/u })).toHaveCount(0);
 
     // The lessons join the day in that order, and the first one opens: a lesson, not practice.
-    await card.getByRole("button", { name: "Keep learning" }).click();
+    const keepLearning = card.getByRole("button", { name: "Keep learning" });
+    await expectHydrated(keepLearning);
+    await keepLearning.click();
     await expect(page).toHaveURL(new RegExp(`/learn/${missed[0]?.id}\\?session=`, "u"));
     await expect(page.getByText('What does the electron "cloud" show?')).toBeVisible();
 
