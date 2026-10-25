@@ -64,8 +64,9 @@ function findFocusTarget({
 }
 
 /**
- * Moves focus once this editor's Find answers (see `findFocusTarget`). The returned `ask` marks
- * that this editor asked, so an answer found elsewhere (the Plan's card) moves nothing.
+ * Moves focus once this editor's Find answers (see `findFocusTarget`), and brings the answer into
+ * view. The returned `ask` marks that this editor asked, so an answer found elsewhere (the Plan's
+ * card) moves nothing.
  */
 export function useFocusFindAnswer(choices: number[]) {
   const { goal } = usePlanScreen();
@@ -87,12 +88,13 @@ export function useFocusFindAnswer(choices: number[]) {
 
     const target = findFocusTarget({ answered, choices, isGoal: goal.kind !== "exam" });
     const section = document.querySelector<HTMLElement>(`#${getEditorSectionId("time")}`);
+    const line = document.querySelector<HTMLElement>(`#${FIND_LINE_ID}`);
 
-    (
-      target ??
-      findPickedChip(section) ??
-      document.querySelector<HTMLElement>(`#${FIND_LINE_ID}`)
-    )?.focus();
+    (target ?? findPickedChip(section) ?? line)?.focus();
+
+    // Whatever took focus, the answer shows too: on a phone, the latest change pinned at the
+    // sheet's foot can take a third of it, and the chip found sits above the answer.
+    line?.scrollIntoView({ block: "nearest" });
   }, [answered, choices, goal.kind, state.status]);
 
   return () => {

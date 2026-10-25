@@ -15,6 +15,8 @@ import { routeTimeToCover } from "./time-to-cover-routes";
 
 const FIND = "Find the time that covers everything";
 
+const PHONE = { height: 844, width: 390 };
+
 /** The Plan's one suggestion, as the aside's panel at the tests' desktop width. */
 function suggestionPanel(page: Page) {
   return page.locator('[data-slot="suggestion-panel"]').filter({ visible: true });
@@ -476,6 +478,30 @@ test.describe("Find the time that covers everything", () => {
       // Space picks the time: the plan plans again at it.
       await page.keyboard.press("Space");
       await expect.poll(() => readDailyMinutes(user.goalId)).toBe(390);
+    });
+  });
+
+  test("on a phone, Find's answer shows above the editor's latest change", async ({ browser }) => {
+    await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
+      await page.setViewportSize(PHONE);
+      const { editor, isoDate } = await shortOnTime(page, user.goalId);
+
+      await routeTimeToCover(page, {
+        goalId: user.goalId,
+        time: { recommendedMinutes: 330, targetDate: isoDate },
+      });
+
+      await editor.getByRole("button", { name: FIND }).click();
+
+      // The chip it found takes focus, and the answer under the chips shows too, though the
+      // change pinned at the sheet's foot takes much of a phone's height.
+      await expect(
+        editor.getByRole("radio", { name: /^5 hr 30 min\s*Covers everything$/u }),
+      ).toBeFocused();
+
+      await expect(
+        editor.getByText(/^5\shr 30\smin a day covers everything in depth by .+\.$/u),
+      ).toBeInViewport();
     });
   });
 
