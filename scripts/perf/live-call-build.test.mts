@@ -13,10 +13,39 @@ type Event = {
   args?: string[];
   command?: string;
   event?: string;
+  port?: number;
   provider?: string;
   api?: string;
   auth?: string;
 };
+
+/**
+ * The API starts on the port Main was built against once both builds succeed, and the services
+ * close last, the API before the provider.
+ */
+function assertApiLifecycle({
+  events,
+  mainApi,
+  passes,
+}: {
+  events: Event[];
+  mainApi: string | undefined;
+  passes: boolean;
+}) {
+  const apiStart = events.find((entry) => entry.event === "startLiveCallApi");
+  assert.equal(apiStart !== undefined, passes);
+
+  if (apiStart) {
+    assert.equal(mainApi, `http://localhost:${apiStart.port}`);
+  }
+
+  assert.deepEqual(
+    events.slice(passes ? CLEANUP_EVENTS : -1).map((entry) => entry.event),
+    passes
+      ? ["startLiveCallApi.close", "startLiveCallTestProvider.close"]
+      : ["startLiveCallTestProvider.close"],
+  );
+}
 
 describe("Main CI performance hook in its service supervisor", () => {
   it.each([
@@ -35,9 +64,13 @@ describe("Main CI performance hook in its service supervisor", () => {
         mkdir(join(root, "scripts/dev"), { recursive: true }),
       ]);
 
-      await writeFile(
-        join(directory, "live-call-services.mts"),
-        await readFile(resolve(import.meta.dirname, "../e2e/live-call-services.mts")),
+      await Promise.all(
+        ["live-call-services.mts", "shard-test-list.mts"].map(async (file) =>
+          writeFile(
+            join(directory, file),
+            await readFile(resolve(import.meta.dirname, "../e2e", file)),
+          ),
+        ),
       );
 
       await writeFile(
@@ -68,7 +101,10 @@ describe("Main CI performance hook in its service supervisor", () => {
             join(directory, file),
             String.raw`
           import { appendFile } from 'node:fs/promises';
-          export async function ${name}() { return { url:'${url}', close:async () => appendFile(process.env.TEST_LOG, JSON.stringify({event:'${name}.close'})+'\n') }; }
+          export async function ${name}(options) {
+            await appendFile(process.env.TEST_LOG, JSON.stringify({event:'${name}', port:options?.port})+'\n');
+            return { url:'${url}', close:async () => appendFile(process.env.TEST_LOG, JSON.stringify({event:'${name}.close'})+'\n') };
+          }
         `,
           ),
         ),
@@ -112,7 +148,7 @@ describe("Main CI performance hook in its service supervisor", () => {
 
       assert.equal(builds.length, 1);
       assert.equal(builds[0]?.command, enabled === "true" ? "/usr/bin/time" : "pnpm");
-      assert.equal(builds[0]?.api, "http://api.zoonk.test");
+      assert.match(builds[0]?.api ?? "", /^http:\/\/localhost:\d+$/u);
       assert.equal(builds[0]?.provider, "http://provider.zoonk.test");
       assert.equal(events.find((entry) => entry.args?.includes("api"))?.auth, "/v1/auth");
       const gate = events.findIndex((entry) => entry.args?.[0] === "perf:check");
@@ -124,10 +160,7 @@ describe("Main CI performance hook in its service supervisor", () => {
         assert.ok(gate < browser);
       }
 
-      assert.deepEqual(
-        events.slice(CLEANUP_EVENTS).map((entry) => entry.event),
-        ["startLiveCallApi.close", "startLiveCallTestProvider.close"],
-      );
+      assertApiLifecycle({ events, mainApi: builds[0]?.api, passes });
     } finally {
       await rm(root, { force: true, recursive: true });
     }

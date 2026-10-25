@@ -7,8 +7,11 @@ import { stopChildProcess } from "./stop-child-process.mts";
 const STARTUP_TIMEOUT_MS = 60_000;
 const STARTUP_OUTPUT_CHARACTERS = 8192;
 
-/** Starts only this checkout's prebuilt E2E API; callers own its lifetime and shut down this exact child. */
-export async function startLiveCallApi(repository: string) {
+/**
+ * Starts only this checkout's prebuilt E2E API on `port`; callers own its lifetime and shut down
+ * this exact child.
+ */
+export async function startLiveCallApi({ port, repository }: { port: number; repository: string }) {
   if (process.env.CODEX_SANDBOX && process.env.CODEX_SANDBOX !== "none") {
     throw new Error("Refusing call E2E startup under the restricted sandbox.");
   }
@@ -24,7 +27,7 @@ export async function startLiveCallApi(repository: string) {
 
   const child = spawn(
     process.execPath,
-    [require.resolve("next/dist/bin/next"), "start", "-p", "0"],
+    [require.resolve("next/dist/bin/next"), "start", "-p", String(port)],
     {
       cwd: directory,
       env: { ...process.env, ...getTestEnvironment("e2e"), NEXT_PUBLIC_AUTH_BASE_PATH: "/v1/auth" },
