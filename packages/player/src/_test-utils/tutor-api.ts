@@ -176,12 +176,13 @@ function toTutorRequest(request: Request): TutorRequest {
  * Fakes the tutor's API for one test and returns it: the saved `questions` (oldest first, which
  * tests change as another client would), every question `inputs` sent, and `requests` by route.
  * `next` answers the next request of a route its own way; `hold` and `fail` are the usual ones.
+ * A session's or practice's questions are asked without a `lesson`.
  */
 export function stubTutorApi({
   lesson,
   pageSize,
 }: {
-  lesson: PlayableLibraryLesson;
+  lesson?: PlayableLibraryLesson;
   /** How many questions a thread page holds; without it, the whole thread comes at once. */
   pageSize?: number;
 }) {
@@ -251,7 +252,7 @@ export function stubTutorApi({
       step = 0,
     }: QuestionFields): LessonQuestionResource {
       const createdAt = stamp();
-      const context = { kind: "step" as const, stepId: lesson.steps[step]?.id ?? null };
+      const context = { kind: "step" as const, stepId: lesson?.steps[step]?.id ?? null };
 
       return {
         answer,
@@ -276,7 +277,7 @@ export function stubTutorApi({
     });
 
     return Response.json(
-      api.questions.length === 0 ? null : { id: threadId, lessonId: lesson.id, ...page },
+      api.questions.length === 0 ? null : { id: threadId, lessonId: lesson?.id ?? null, ...page },
     );
   }
 

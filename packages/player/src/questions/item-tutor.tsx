@@ -136,7 +136,8 @@ function ItemTutorInteraction({
 /**
  * The learner's buddy for a run of questions (a session's block, mistakes practice), about the
  * question in view: a drawer that quotes it on phones and tablets in portrait, docked in the aside
- * from `lg`. Opening it reads the question's conversation; only what the learner sends is
+ * from `lg`. Opening it reads the question's conversation, and from `lg`, where its composer waits
+ * in the aside, it's read ahead, as a lesson's screen's is; only what the learner sends is
  * answered. Between questions (`item` null) nothing asks.
  */
 export function ItemTutor({
@@ -149,6 +150,7 @@ export function ItemTutor({
   tutor: LessonTutorConfig;
 }) {
   const identity = useTutorIdentity(tutor.buddy);
+  const asideShown = useTaskAsideShown();
   const itemId = item?.itemId ?? "";
   const target = useMemo(() => ({ itemId, kind: "item" as const }), [itemId]);
 
@@ -169,7 +171,7 @@ export function ItemTutor({
         activeContext,
         canAskQuestions: tutor.canAsk && item !== null,
         lessonStepIds: [],
-        preload: false,
+        preload: asideShown,
       }}
       target={target}
     >
