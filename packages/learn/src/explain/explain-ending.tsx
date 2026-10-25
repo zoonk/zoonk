@@ -115,7 +115,8 @@ function QuestionRow({ href, question }: { href: string; question: string }) {
 
 /**
  * The explanation in its sentences, numbered: in the column under `lg`, and from `lg` in the
- * aside, where the outline and "From the lesson" were, as a lesson's summary is at its end.
+ * aside, where the outline and "From the lesson" were, as a lesson's summary is at its end: from
+ * the aside's top under the header's row, its label drawn as the aside's header row.
  */
 function ExplainRecap({ recap }: { recap: ExplanationView["recap"] }) {
   const t = useExtracted();
@@ -125,7 +126,7 @@ function ExplainRecap({ recap }: { recap: ExplanationView["recap"] }) {
   }
 
   return (
-    <TaskAsideContent className="lg:top-0">
+    <TaskAsideContent className="lg:top-(--task-bar)">
       <section aria-labelledby="explain-recap" className="flex flex-col gap-1 lg:gap-0">
         <SectionLabel
           className="lg:flex lg:h-13 lg:shrink-0 lg:items-center xl:h-15"

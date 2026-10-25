@@ -3026,14 +3026,14 @@ msgid "Right answers"
 msgstr "Bonnes réponses"
 
 #: src/explain/explain-ending.tsx
-msgctxt "L9WMqc"
-msgid "Now you know"
-msgstr "Tu en sais plus maintenant"
-
-#: src/explain/explain-ending.tsx
 msgctxt "D1mqTL"
 msgid "In {count, plural, one {# sentence} other {# sentences}}"
 msgstr "En {count, plural, one {# phrase} other {# phrases}}"
+
+#: src/explain/explain-ending.tsx
+msgctxt "L9WMqc"
+msgid "Now you know"
+msgstr "Tu en sais plus maintenant"
 
 #: src/explain/explain-ending.tsx
 msgctxt "22f_xs"
