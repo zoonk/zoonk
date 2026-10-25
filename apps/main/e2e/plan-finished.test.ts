@@ -4,6 +4,7 @@ import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
+import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
@@ -15,6 +16,11 @@ import { routeTimeToCover } from "./time-to-cover-routes";
 /** A day `days` from today, as the plan dates its items. */
 function inDays(days: number): Date {
   return toUTCMidnight(new Date(Date.now() + days * MS_PER_DAY));
+}
+
+/** A day as the plan dates its phases. */
+function isoDay(date: Date): string {
+  return date.toISOString().slice(0, 10);
 }
 
 /**
@@ -37,6 +43,17 @@ async function lessonsDoneLearner() {
 
   const phases = [{ name: "Ratio basics" }, { name: "Rates" }, { name: "Speeds" }];
 
+  // The plan as the planner lays one out, which is what the Plan reads it as: each phase's lesson
+  // is a Library lesson that teaches its skill, and each phase it holds is dated from its lesson
+  // to its challenge.
+  const lessons = await Promise.all(
+    chapters.map(async (chapter, phase) => {
+      const lesson = await libraryLessonFixture({ homeChapterId: chapter.id });
+      await lessonSkillFixture({ lessonId: lesson.id, skillId: skills[phase]?.id ?? "" });
+      return lesson;
+    }),
+  );
+
   const [plan] = await Promise.all([
     planFixture({
       goalId: goal.id,
@@ -50,7 +67,11 @@ async function lessonsDoneLearner() {
           skillId: skill.id,
         })),
       },
-      phases,
+      phases: phases.map((phase, index) => ({
+        ...phase,
+        endDate: index < 2 ? isoDay(inDays(index * 3 + 5)) : null,
+        startDate: index < 2 ? isoDay(inDays(index * 3)) : null,
+      })),
     }),
     learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
     studySessionFixture({ goalId: goal.id, userId: user.id }),
@@ -60,6 +81,7 @@ async function lessonsDoneLearner() {
     [0, 1].flatMap((phase) => [
       planItemFixture({
         chapterId: chapters[phase]?.id,
+        lessonId: lessons[phase]?.id,
         phase,
         planId: plan.id,
         position: phase * 2,
@@ -86,7 +108,7 @@ async function lessonsDoneLearner() {
     scheduledFor: inDays(12),
   });
 
-  return { bosses: items.filter((item) => item.kind === "boss"), user };
+  return { bosses: items.filter((item) => item.kind === "boss"), planId: plan.id, user };
 }
 
 function standingNumbers(page: Page) {
@@ -118,7 +140,7 @@ async function openPlan(page: Page) {
 
 /** The learner moves their goal's date `days` away in "Adjust plan": a change of their own. */
 async function moveDate(page: Page, { days, goalId }: { days: number; goalId: string }) {
-  const deadline = inDays(days).toISOString().slice(0, 10);
+  const deadline = isoDay(inDays(days));
 
   await page
     .getByRole("region", { exact: true, name: "Your plan" })
@@ -154,7 +176,7 @@ test.describe("A plan whose lessons are all done", () => {
   test("isn't finished while its challenges are left, and is once they're won", async ({
     browser,
   }) => {
-    const { bosses, user } = await lessonsDoneLearner();
+    const { bosses, planId, user } = await lessonsDoneLearner();
     const page = await openAs(browser, user);
     await page.setViewportSize({ height: 900, width: 1440 });
     await openPlan(page);
@@ -196,11 +218,18 @@ test.describe("A plan whose lessons are all done", () => {
     await page.goto(`/challenge/${bosses[1]?.id ?? ""}`);
     await expect(page.getByText("Opens in 8 days", { exact: true })).toBeVisible();
 
-    // Days away, both their days gone: the next session duels them both, and neither reads a day.
-    await prisma.planItem.updateMany({
-      data: { scheduledFor: inDays(-2) },
-      where: { id: { in: bosses.map((boss) => boss.id) } },
-    });
+    // Days away, both their days gone after the lessons they test: the next session duels them
+    // both, and neither reads a day.
+    await Promise.all([
+      prisma.planItem.updateMany({
+        data: { scheduledFor: inDays(-2) },
+        where: { id: { in: bosses.map((boss) => boss.id) } },
+      }),
+      prisma.planItem.updateMany({
+        data: { completedAt: inDays(-3) },
+        where: { kind: "lesson", planId },
+      }),
+    ]);
 
     await openPlan(page);
 
