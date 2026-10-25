@@ -243,7 +243,7 @@ test.describe("Course Detail Page", () => {
     await expect(outline.getByRole("link", { exact: true, name: "Chapter 6" })).toBeVisible();
     await expect(seventh).toBeHidden();
 
-    await outline.getByRole("button", { name: "Show 3 more chapters" }).click();
+    await outline.getByText("Show 3 more chapters", { exact: true }).click();
     await expect(seventh).toBeVisible();
     await expect(outline.getByRole("link", { exact: true, name: "Lesson 9.1" })).toBeVisible();
   });

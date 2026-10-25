@@ -563,7 +563,7 @@ test.describe("public Library chapter and course pages", () => {
     const fit = page.getByRole("region", { name: "What you'll be able to do" });
 
     await expect(fit.getByRole("listitem")).toHaveText(outcomes.slice(0, 3));
-    await fit.getByRole("button", { name: "Show 2 more" }).click();
+    await fit.getByText("Show 2 more", { exact: true }).click();
     await expect(fit.getByRole("listitem")).toHaveText(outcomes);
 
     await expect(
