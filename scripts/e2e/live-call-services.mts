@@ -128,7 +128,11 @@ async function runMain() {
   const api = await startLiveCallApi({ port, repository });
 
   try {
-    await run({ args: ["--filter", "main", "e2e", ...playwrightArgs] });
+    // Main's build prepared the data its tests read: the global setup doesn't again.
+    await run({
+      args: ["--filter", "main", "e2e", ...playwrightArgs],
+      environment: { ...process.env, E2E_DATA_PREPARED: "true" },
+    });
   } finally {
     await api.close();
   }
