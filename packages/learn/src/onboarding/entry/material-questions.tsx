@@ -20,7 +20,6 @@ import {
   type OnboardingActions,
 } from "../onboarding-actions";
 import {
-  OnboardingAnswer,
   OnboardingColumn,
   OnboardingDescription,
   OnboardingHeading,
@@ -173,60 +172,58 @@ export function MaterialQuestions({
         </OnboardingDescription>
       </OnboardingHeading>
 
-      <OnboardingAnswer>
-        <div aria-live="polite" className="flex flex-col gap-4">
-          {turns.map((turn) => (
-            <div className="flex flex-col gap-3" key={turn.id}>
-              <TypedGoal goal={turn.question} />
-              <TurnAnswer identity={identity} outcome={turn.outcome} />
-            </div>
-          ))}
+      <div aria-live="polite" className="flex flex-col gap-4">
+        {turns.map((turn) => (
+          <div className="flex flex-col gap-3" key={turn.id}>
+            <TypedGoal goal={turn.question} />
+            <TurnAnswer identity={identity} outcome={turn.outcome} />
+          </div>
+        ))}
 
-          {isPending && (
-            <p className="flex items-center gap-2 text-sm" role="status">
-              <Spinner className="size-4" />
-              {t("Reading your material…")}
-            </p>
-          )}
-        </div>
+        {isPending && (
+          <p className="flex items-center gap-2 text-sm" role="status">
+            <Spinner className="size-4" />
+            {t("Reading your material…")}
+          </p>
+        )}
+      </div>
 
-        <form
-          className={cn(GOAL_PANEL_CLASS, "mt-auto flex items-end gap-2 p-1.5 pl-4 lg:mt-0")}
-          onSubmit={(event) => {
-            event.preventDefault();
-            submit();
+      <form
+        className={cn(GOAL_PANEL_CLASS, "mt-auto flex items-end gap-2 p-1.5 pl-4 lg:mt-0")}
+        onSubmit={(event) => {
+          event.preventDefault();
+          submit();
+        }}
+      >
+        <label className="sr-only" htmlFor={inputId}>
+          {t("Your question")}
+        </label>
+        <Textarea
+          autoFocus
+          className="field-sizing-content max-h-40 min-h-11 border-0 bg-transparent px-0 shadow-none focus-visible:ring-0"
+          id={inputId}
+          maxLength={MAX_QUESTION_LENGTH}
+          onChange={(event) => setQuestion(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {
+              event.preventDefault();
+              submit();
+            }
           }}
+          placeholder={t("E.g., why does glycolysis net only 2 ATP?")}
+          rows={1}
+          value={question}
+        />
+        <Button
+          aria-label={t("Ask")}
+          className="size-11 shrink-0 rounded-full"
+          disabled={!trimmed || isPending}
+          size="icon-lg"
+          type="submit"
         >
-          <label className="sr-only" htmlFor={inputId}>
-            {t("Your question")}
-          </label>
-          <Textarea
-            autoFocus
-            className="field-sizing-content max-h-40 min-h-11 border-0 bg-transparent px-0 shadow-none focus-visible:ring-0"
-            id={inputId}
-            maxLength={MAX_QUESTION_LENGTH}
-            onChange={(event) => setQuestion(event.target.value)}
-            onKeyDown={(event) => {
-              if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {
-                event.preventDefault();
-                submit();
-              }
-            }}
-            placeholder={t("E.g., why does glycolysis net only 2 ATP?")}
-            rows={1}
-            value={question}
-          />
-          <Button
-            aria-label={t("Ask")}
-            className="size-11 shrink-0 rounded-full"
-            disabled={!trimmed || isPending}
-            size="icon-lg"
-            type="submit"
-          >
-            <ArrowUpIcon aria-hidden="true" className="size-5" />
-          </Button>
-        </form>
-      </OnboardingAnswer>
+          <ArrowUpIcon aria-hidden="true" className="size-5" />
+        </Button>
+      </form>
     </OnboardingColumn>
   );
 }

@@ -6,7 +6,6 @@ import { useExtracted } from "next-intl";
 import { SendingGoal } from "./entry/understanding-wait";
 import { OnboardingHowItWorks } from "./how-it-works";
 import {
-  OnboardingAnswer,
   OnboardingColumn,
   OnboardingDescription,
   OnboardingFrame,
@@ -66,8 +65,7 @@ function HeadingSkeleton({ eyebrow = false }: { eyebrow?: boolean }) {
 /**
  * `/start` while it loads, in the shape of its first screen: its question and line in their own
  * words, the goal's field (the words over its buttons where it's narrow, as the field lays out) and
- * the examples (beside the question from a wide page), with how it works in the page's aside from
- * 72rem.
+ * the examples, with how it works in the page's aside from 72rem.
  */
 export function StartEntrySkeleton() {
   const t = useExtracted();
@@ -83,17 +81,15 @@ export function StartEntrySkeleton() {
             </OnboardingDescription>
           </OnboardingHeading>
 
-          <OnboardingAnswer>
-            {/* The field's padding around its height, so it changes shape at the field's width. */}
-            <Skeleton className="@container w-full p-1.5 pl-4">
-              <div className="h-24 @xl:h-11" />
-            </Skeleton>
+          {/* The field's padding around its height, so it changes shape at the field's width. */}
+          <Skeleton className="@container w-full p-1.5 pl-4">
+            <div className="h-24 @xl:h-11" />
+          </Skeleton>
 
-            <div className="flex flex-col gap-1">
-              <Skeleton className="h-3 w-20" />
-              <RowsSkeleton rows={EXAMPLE_ROWS} twoLines />
-            </div>
-          </OnboardingAnswer>
+          <div className="flex flex-col gap-1">
+            <Skeleton className="h-3 w-20" />
+            <RowsSkeleton rows={EXAMPLE_ROWS} twoLines />
+          </div>
         </OnboardingColumn>
       </OnboardingFrame>
     </OnboardingRailProvider>
@@ -144,8 +140,8 @@ export function StartWaitSkeleton() {
 
 /**
  * A goal's onboarding steps while they load: the bar (the steps' segments, Start over), the
- * question's eyebrow, title and line, its options under it (beside it from a wide page), and the
- * plan so far in the page's aside from 72rem.
+ * question's eyebrow, title and line, its options under it, and the plan so far in the page's
+ * aside from 72rem.
  */
 export function StepsSkeleton() {
   return (
@@ -158,9 +154,7 @@ export function StepsSkeleton() {
       >
         <OnboardingColumn aria-busy="true">
           <HeadingSkeleton eyebrow />
-          <OnboardingAnswer>
-            <RowsSkeleton rows={4} twoLines />
-          </OnboardingAnswer>
+          <RowsSkeleton rows={4} twoLines />
         </OnboardingColumn>
       </OnboardingFrame>
     </OnboardingRailProvider>

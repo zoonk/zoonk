@@ -13,7 +13,6 @@ import { getLibraryCourse } from "@zoonk/core/library/courses/get";
 import { getSession } from "@zoonk/core/users/session";
 import { type GoalLimitReason } from "@zoonk/learn/onboarding/actions";
 import {
-  OnboardingAnswer,
   OnboardingColumn,
   OnboardingFrame,
   OnboardingHeading,
@@ -211,15 +210,13 @@ function CourseStartSkeleton() {
             <Skeleton className="mt-1 h-5 w-3/5" />
           </OnboardingHeading>
 
-          <OnboardingAnswer>
-            <div className="flex flex-col gap-2.5">
-              <Skeleton className="h-14 w-full" />
-              <Skeleton className="h-14 w-full" />
-              <Skeleton className="h-14 w-full" />
-            </div>
+          <div className="flex flex-col gap-2.5">
+            <Skeleton className="h-14 w-full" />
+            <Skeleton className="h-14 w-full" />
+            <Skeleton className="h-14 w-full" />
+          </div>
 
-            <Skeleton className="mt-auto h-11 w-full sm:mt-0" />
-          </OnboardingAnswer>
+          <Skeleton className="mt-auto h-11 w-full sm:mt-0" />
         </OnboardingColumn>
       </OnboardingFrame>
     </OnboardingPage>

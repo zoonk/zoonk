@@ -45,24 +45,24 @@ export function OnboardingBarRow({ bar, className }: { bar: OnboardingBar; class
 }
 
 /**
- * An onboarding page's bar, where every page's bar sits (`PageBarSurface`), its row as wide as the
- * screens under it from the page's left edge (up to two panes, so it never moves from one screen
- * to the next): on the left the way back to the flow's previous screen or, where there's none and
- * under `lg`, an ✕ out to the app page the learner left for onboarding (Escape presses either); in
- * the middle the steps' dots; on the right the screen's own action (Start over) and the host's.
- * From `lg` the sidebar holds the way out, so a screen with nothing else in its bar has none
- * there, and its title sits where every page's does.
+ * An onboarding page's bar, where every page's bar sits (`PageBarSurface`), its row on the
+ * screen's edges (`className`: from `lg` the centered column, so its controls sit over the question
+ * they act on, as a task's do): on the left the way back to the flow's previous screen or, where
+ * there's none and under `lg`, an ✕ out to the app page the learner left for onboarding (Escape
+ * presses either); in the middle the steps' dots; on the right the screen's own action (Start
+ * over) and the host's. From `lg` the sidebar holds the way out, so a screen
+ * with nothing else in its bar has none there, and its title sits where every page's does.
  */
 export function OnboardingPageBar({
   backHref,
   bar,
   barEnd,
-  wide,
+  className,
 }: {
   backHref: string;
   bar: OnboardingBar;
   barEnd: ReactNode;
-  wide: boolean;
+  className?: string;
 }) {
   const hasOwn = bar.onBack !== undefined || Boolean(bar.middle) || Boolean(bar.end);
 
@@ -72,8 +72,8 @@ export function OnboardingPageBar({
       <div
         className={cn(
           PAGE_COLUMN_CLASS,
-          !wide && "lg:max-w-column @4xl/onboarding:max-w-wide",
           "grid min-h-11 grid-cols-[1fr_auto_1fr] items-center gap-2 lg:min-h-10",
+          className,
         )}
       >
         <div className="justify-self-start">

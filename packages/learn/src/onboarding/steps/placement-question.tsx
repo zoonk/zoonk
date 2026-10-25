@@ -14,7 +14,6 @@ import { useTrueFalseLabels } from "../../questions/use-true-false-labels";
 import { type Choice } from "../choice-list";
 import { type PlacementAnswer, type PlacementQuestion } from "../onboarding-actions";
 import {
-  OnboardingAnswer,
   OnboardingColumn,
   OnboardingFooter,
   OnboardingHeading,
@@ -210,10 +209,9 @@ function PlacementActions({
 /**
  * One placement question: a choice, or a few words in the learner's own words to confirm a skill.
  * What it asks comes first (what it's about and its number, its support, the statement), then the
- * answer, beside it from a wide page. "I don't know yet" is a real answer: it moves to the basics
- * instead of letting a guess skip them, and sits beside Confirm as it does on a session's
- * placement question. No score is shown, and an answer is final, so the bar has no way back:
- * "Stop here" is the way on.
+ * answer under it. "I don't know yet" is a real answer: it moves to the basics instead of letting
+ * a guess skip them, and sits beside Confirm as it does on a session's placement question. No
+ * score is shown, and an answer is final, so the bar has no way back: "Stop here" is the way on.
  */
 export function PlacementQuestionScreen({
   dontKnowLabel,
@@ -283,35 +281,33 @@ export function PlacementQuestionScreen({
           </div>
         </OnboardingHeading>
 
-        <OnboardingAnswer>
-          <form
-            className="flex flex-1 flex-col gap-5"
-            onSubmit={(event) => {
-              event.preventDefault();
-              confirm();
-            }}
-          >
-            {question.format === "typed" ? (
-              <TypedAnswerField onChange={setValue} onSubmit={confirm} value={value ?? ""} />
-            ) : (
-              <PlacementOptions
-                choices={choices}
-                label={question.question}
-                onChange={setValue}
-                value={value}
-              />
-            )}
-
-            <PlacementActions
-              canConfirm={canConfirm}
-              dontKnowLabel={dontKnowLabel ?? t("I don't know yet")}
-              error={error}
-              onDontKnow={() => send({ dontKnow: true })}
-              onStop={onStop}
-              pending={pending}
+        <form
+          className="flex flex-1 flex-col gap-5"
+          onSubmit={(event) => {
+            event.preventDefault();
+            confirm();
+          }}
+        >
+          {question.format === "typed" ? (
+            <TypedAnswerField onChange={setValue} onSubmit={confirm} value={value ?? ""} />
+          ) : (
+            <PlacementOptions
+              choices={choices}
+              label={question.question}
+              onChange={setValue}
+              value={value}
             />
-          </form>
-        </OnboardingAnswer>
+          )}
+
+          <PlacementActions
+            canConfirm={canConfirm}
+            dontKnowLabel={dontKnowLabel ?? t("I don't know yet")}
+            error={error}
+            onDontKnow={() => send({ dontKnow: true })}
+            onStop={onStop}
+            pending={pending}
+          />
+        </form>
       </OnboardingColumn>
     </OnboardingNoBack>
   );

@@ -8,7 +8,6 @@ import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { CreateAccountLink } from "../../_components/create-account-link";
 import {
-  OnboardingAnswer,
   OnboardingColumn,
   OnboardingFooter,
   OnboardingHeading,
@@ -108,41 +107,39 @@ export function SpeakingStep({
           <OnboardingTitle>{t("Say it out loud")}</OnboardingTitle>
         </OnboardingHeading>
 
-        <OnboardingAnswer>
-          <SpeakingPrompt
-            error={error}
-            onRecorded={(audio) =>
-              startTransition(async () => {
-                const result = await speak(audio);
-                setNeedsAccount(result === "signUpRequired");
+        <SpeakingPrompt
+          error={error}
+          onRecorded={(audio) =>
+            startTransition(async () => {
+              const result = await speak(audio);
+              setNeedsAccount(result === "signUpRequired");
 
-                if (result === "noSpeech") {
-                  setError(noSpeech);
-                  return;
-                }
+              if (result === "noSpeech") {
+                setError(noSpeech);
+                return;
+              }
 
-                if (result === "signUpRequired") {
-                  setError(t("Create your free account to continue."));
-                  return;
-                }
+              if (result === "signUpRequired") {
+                setError(t("Create your free account to continue."));
+                return;
+              }
 
-                setError(result ? null : t("We couldn't check that. Try again."));
+              setError(result ? null : t("We couldn't check that. Try again."));
 
-                if (result) {
-                  onView(result);
-                }
-              })
-            }
-            pending={isPending}
-            sentence={sentence}
-          />
-          <OnboardingFooter>
-            {needsAccount && <CreateAccountLink />}
-            <OnboardingSecondaryButton disabled={isPending} onClick={onSkip}>
-              {t("Skip this part")}
-            </OnboardingSecondaryButton>
-          </OnboardingFooter>
-        </OnboardingAnswer>
+              if (result) {
+                onView(result);
+              }
+            })
+          }
+          pending={isPending}
+          sentence={sentence}
+        />
+        <OnboardingFooter>
+          {needsAccount && <CreateAccountLink />}
+          <OnboardingSecondaryButton disabled={isPending} onClick={onSkip}>
+            {t("Skip this part")}
+          </OnboardingSecondaryButton>
+        </OnboardingFooter>
       </OnboardingColumn>
     </OnboardingNoBack>
   );

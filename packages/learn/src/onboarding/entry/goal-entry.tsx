@@ -8,7 +8,6 @@ import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { type GoalError } from "../goal-errors";
 import {
-  OnboardingAnswer,
   OnboardingColumn,
   OnboardingDescription,
   OnboardingHeading,
@@ -95,54 +94,52 @@ export function GoalEntry({
         </OnboardingHeading>
       )}
 
-      <OnboardingAnswer>
-        {notice}
+      {notice}
 
-        {/* The landing's field: "I want to", then the words. It lays out by its own width, not
-            the screen's: narrow (a phone, or the answer's pane beside the question), the words
-            take the whole row, the paperclip and "Build my plan" under them; with room, one row. */}
-        <GoalField action={goal.action} className="@container grid grid-cols-[minmax(0,1fr)_auto]">
-          <div className="col-span-2 flex min-w-0 items-start gap-2 pr-2.5 @xl:col-span-1 @xl:pr-0">
-            <GoalFieldLabel htmlFor={inputId}>{t("I want to")}</GoalFieldLabel>
+      {/* The landing's field: "I want to", then the words. It lays out by its own width, not
+          the screen's (Today's section, a tablet's column, a phone): narrow, the words take the
+          whole row, the paperclip and "Build my plan" under them; with room, one row. */}
+      <GoalField action={goal.action} className="@container grid grid-cols-[minmax(0,1fr)_auto]">
+        <div className="col-span-2 flex min-w-0 items-start gap-2 pr-2.5 @xl:col-span-1 @xl:pr-0">
+          <GoalFieldLabel htmlFor={inputId}>{t("I want to")}</GoalFieldLabel>
 
-            <GoalFieldText
-              autoFocusOnPointer
-              defaultValue={defaultGoal}
-              id={inputId}
-              maxLength={MAX_GOAL_LENGTH}
-              placeholder={t(
-                "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} pau {pass the PAU, speak {language}…} other {pass the SAT, speak {language}…}}",
-                example,
-              )}
-              {...goal.field}
-            />
-          </div>
-
-          <div className="col-span-2 flex items-end justify-end gap-1 @xl:col-span-1">
-            {onAttach && (
-              <Button
-                aria-label={t("Study your own material")}
-                className="text-muted-foreground mr-auto -ml-2.5 size-11 shrink-0 @xl:mr-0 @xl:ml-0"
-                onClick={onAttach}
-                size="icon-lg"
-                type="button"
-                variant="ghost"
-              >
-                <PaperclipIcon aria-hidden="true" />
-              </Button>
+          <GoalFieldText
+            autoFocusOnPointer
+            defaultValue={defaultGoal}
+            id={inputId}
+            maxLength={MAX_GOAL_LENGTH}
+            placeholder={t(
+              "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} pau {pass the PAU, speak {language}…} other {pass the SAT, speak {language}…}}",
+              example,
             )}
+            {...goal.field}
+          />
+        </div>
 
-            <SubmitButton />
-          </div>
-        </GoalField>
+        <div className="col-span-2 flex items-end justify-end gap-1 @xl:col-span-1">
+          {onAttach && (
+            <Button
+              aria-label={t("Study your own material")}
+              className="text-muted-foreground mr-auto -ml-2.5 size-11 shrink-0 @xl:mr-0 @xl:ml-0"
+              onClick={onAttach}
+              size="icon-lg"
+              type="button"
+              variant="ghost"
+            >
+              <PaperclipIcon aria-hidden="true" />
+            </Button>
+          )}
 
-        {attachment}
+          <SubmitButton />
+        </div>
+      </GoalField>
 
-        <GoalErrorAlert error={error} signUpHref={signUpHref} />
+      {attachment}
 
-        {/* Under Today's title the page's aside holds them from 72rem (`StartFlow`'s rail). */}
-        <GoalExamples className={cn(section && "min-[72rem]:hidden")} onPick={goal.send} />
-      </OnboardingAnswer>
+      <GoalErrorAlert error={error} signUpHref={signUpHref} />
+
+      {/* Under Today's title the page's aside holds them from 72rem (`StartFlow`'s rail). */}
+      <GoalExamples className={cn(section && "min-[72rem]:hidden")} onPick={goal.send} />
     </OnboardingColumn>
   );
 }

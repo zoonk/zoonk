@@ -6,7 +6,6 @@ import { isStartBlocked } from "@/components/public/course-start-remedy";
 import { type CourseStartFailure, useCourseStart } from "@/components/public/use-course-start";
 import { CHAPTER_PARAM, MINUTES_PARAM } from "@/lib/public/public-hrefs";
 import {
-  OnboardingAnswer,
   OnboardingColumn,
   OnboardingDescription,
   OnboardingFooter,
@@ -277,26 +276,24 @@ export function CourseStartScreen({
           course={course}
         />
 
-        <OnboardingAnswer>
-          {chapter ? (
-            <CourseStartForm
-              chapter={chapter}
-              course={course}
-              dailyMinutes={dailyMinutes}
-              initialFailure={initialFailure}
-              note={note}
-            >
-              <PlanPreview chapters={chapters} />
-            </CourseStartForm>
-          ) : (
-            <CourseLevelStart
-              course={course}
-              dailyMinutes={dailyMinutes}
-              initialFailure={initialFailure}
-              note={note}
-            />
-          )}
-        </OnboardingAnswer>
+        {chapter ? (
+          <CourseStartForm
+            chapter={chapter}
+            course={course}
+            dailyMinutes={dailyMinutes}
+            initialFailure={initialFailure}
+            note={note}
+          >
+            <PlanPreview chapters={chapters} />
+          </CourseStartForm>
+        ) : (
+          <CourseLevelStart
+            course={course}
+            dailyMinutes={dailyMinutes}
+            initialFailure={initialFailure}
+            note={note}
+          />
+        )}
       </OnboardingColumn>
     </OnboardingFrame>
   );

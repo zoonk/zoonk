@@ -11,7 +11,6 @@ import { GoalFooter } from "../entry/goal-outcomes";
 import { type GoalError } from "../goal-errors";
 import { type GoalLimitReason } from "../onboarding-actions";
 import {
-  OnboardingAnswer,
   OnboardingColumn,
   OnboardingDescription,
   OnboardingFooter,
@@ -196,39 +195,37 @@ export function UnderstoodScreen({
         </OnboardingDescription>
       </OnboardingHeading>
 
-      <OnboardingAnswer>
-        {draft.goals.map((understood, index) => (
-          <GoalCard
-            edited={edited?.goal === index ? edited.field : null}
-            editing={editing?.goal === index ? editing.field : null}
-            extraRows={index === 0 ? firstGoalRows : []}
-            goal={understood}
-            // oxlint-disable-next-line react/no-array-index-key -- A goal's place is its identity on the card; its title can change.
-            key={index}
-            onEdit={(field) => edit(field ? { field, goal: index } : null)}
-            onSave={({ field, value }) => onRevise(toDraftEdit({ field, goal: index, value }))}
-          />
-        ))}
+      {draft.goals.map((understood, index) => (
+        <GoalCard
+          edited={edited?.goal === index ? edited.field : null}
+          editing={editing?.goal === index ? editing.field : null}
+          extraRows={index === 0 ? firstGoalRows : []}
+          goal={understood}
+          // oxlint-disable-next-line react/no-array-index-key -- A goal's place is its identity on the card; its title can change.
+          key={index}
+          onEdit={(field) => edit(field ? { field, goal: index } : null)}
+          onSave={({ field, value }) => onRevise(toDraftEdit({ field, goal: index, value }))}
+        />
+      ))}
 
-        {plusLimit ? (
-          <OnboardingFooter className="gap-3">
-            <GoalLimitWall reason={plusLimit} />
-          </OnboardingFooter>
-        ) : (
-          <GoalFooter error={error} signUpHref={signUpHref}>
-            <OnboardingPrimaryButton disabled={isCreating || rewriting} onClick={onConfirm}>
-              {isCreating ? t("Saving your goal…") : t("Looks right")}
-            </OnboardingPrimaryButton>
-            <OnboardingSecondaryButton
-              disabled={isCreating || rewriting}
-              onClick={() => setRewriting(true)}
-              ref={fixButtonRef}
-            >
-              {t("Fix something")}
-            </OnboardingSecondaryButton>
-          </GoalFooter>
-        )}
-      </OnboardingAnswer>
+      {plusLimit ? (
+        <OnboardingFooter className="gap-3">
+          <GoalLimitWall reason={plusLimit} />
+        </OnboardingFooter>
+      ) : (
+        <GoalFooter error={error} signUpHref={signUpHref}>
+          <OnboardingPrimaryButton disabled={isCreating || rewriting} onClick={onConfirm}>
+            {isCreating ? t("Saving your goal…") : t("Looks right")}
+          </OnboardingPrimaryButton>
+          <OnboardingSecondaryButton
+            disabled={isCreating || rewriting}
+            onClick={() => setRewriting(true)}
+            ref={fixButtonRef}
+          >
+            {t("Fix something")}
+          </OnboardingSecondaryButton>
+        </GoalFooter>
+      )}
     </OnboardingColumn>
   );
 }

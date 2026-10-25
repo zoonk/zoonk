@@ -6,7 +6,6 @@ import { isValidLocale } from "@zoonk/utils/locale";
 import { CircleCheckIcon } from "lucide-react";
 import { useExtracted, useLocale } from "next-intl";
 import {
-  OnboardingAnswer,
   OnboardingColumn,
   OnboardingDescription,
   OnboardingFooter,
@@ -77,25 +76,23 @@ export function TestIntro({
         </OnboardingDescription>
       </OnboardingHeading>
 
-      <OnboardingAnswer>
-        {usesNonLatinScript(goal.targetLanguage) && (
-          <p className="text-muted-foreground text-sm text-pretty">
-            {t(
-              "New to its alphabet? Skip the test. Your first session starts with a short lesson on reading it.",
-            )}
-          </p>
-        )}
+      {usesNonLatinScript(goal.targetLanguage) && (
+        <p className="text-muted-foreground text-sm text-pretty">
+          {t(
+            "New to its alphabet? Skip the test. Your first session starts with a short lesson on reading it.",
+          )}
+        </p>
+      )}
 
-        <OnboardingFooter>
-          <OnboardingPrimaryButton disabled={pending} onClick={onStart}>
-            {t("Start")}
-          </OnboardingPrimaryButton>
-          <OnboardingSecondaryButton disabled={pending} onClick={onScratch} variant="ghost">
-            {t("Skip the test")}
-          </OnboardingSecondaryButton>
-          <InterfaceOffer language={goal.language} onSwitch={onSwitch} />
-        </OnboardingFooter>
-      </OnboardingAnswer>
+      <OnboardingFooter>
+        <OnboardingPrimaryButton disabled={pending} onClick={onStart}>
+          {t("Start")}
+        </OnboardingPrimaryButton>
+        <OnboardingSecondaryButton disabled={pending} onClick={onScratch} variant="ghost">
+          {t("Skip the test")}
+        </OnboardingSecondaryButton>
+        <InterfaceOffer language={goal.language} onSwitch={onSwitch} />
+      </OnboardingFooter>
     </OnboardingColumn>
   );
 }
@@ -122,14 +119,12 @@ export function TestDone({
           {t("Based on the test. It gets more accurate every week.")}
         </OnboardingDescription>
       </OnboardingHeading>
-      <OnboardingAnswer>
-        <LevelBars levels={levels} />
-        <OnboardingFooter>
-          <OnboardingPrimaryButton autoFocus disabled={pending} onClick={onContinue}>
-            {t("Build my plan")}
-          </OnboardingPrimaryButton>
-        </OnboardingFooter>
-      </OnboardingAnswer>
+      <LevelBars levels={levels} />
+      <OnboardingFooter>
+        <OnboardingPrimaryButton autoFocus disabled={pending} onClick={onContinue}>
+          {t("Build my plan")}
+        </OnboardingPrimaryButton>
+      </OnboardingFooter>
     </OnboardingColumn>
   );
 }

@@ -19,7 +19,6 @@ import { useFormatDuration } from "../../_utils/time-format";
 import { LearnLink } from "../../learn-link";
 import { type PlacementMockOutcome } from "../onboarding-actions";
 import {
-  OnboardingAnswer,
   OnboardingColumn,
   OnboardingDescription,
   OnboardingFooter,
@@ -120,18 +119,16 @@ export function PlacementIntro({
         </OnboardingDescription>
       </OnboardingHeading>
 
-      <OnboardingAnswer>
-        {mock && <PlacementMockRow mock={mock} />}
+      {mock && <PlacementMockRow mock={mock} />}
 
-        <OnboardingFooter>
-          <OnboardingPrimaryButton disabled={pending} onClick={onStart}>
-            {t("Start")}
-          </OnboardingPrimaryButton>
-          <OnboardingSecondaryButton disabled={pending} onClick={onScratch} variant="ghost">
-            {t("Start from zero")}
-          </OnboardingSecondaryButton>
-        </OnboardingFooter>
-      </OnboardingAnswer>
+      <OnboardingFooter>
+        <OnboardingPrimaryButton disabled={pending} onClick={onStart}>
+          {t("Start")}
+        </OnboardingPrimaryButton>
+        <OnboardingSecondaryButton disabled={pending} onClick={onScratch} variant="ghost">
+          {t("Start from zero")}
+        </OnboardingSecondaryButton>
+      </OnboardingFooter>
     </OnboardingColumn>
   );
 }
@@ -159,13 +156,11 @@ function PlacementOutcome({
         {done && <SuccessEyebrow>{done}</SuccessEyebrow>}
         {children}
       </OnboardingHeading>
-      <OnboardingAnswer>
-        <OnboardingFooter>
-          <OnboardingPrimaryButton autoFocus disabled={pending} onClick={onContinue}>
-            {t("See my plan")}
-          </OnboardingPrimaryButton>
-        </OnboardingFooter>
-      </OnboardingAnswer>
+      <OnboardingFooter>
+        <OnboardingPrimaryButton autoFocus disabled={pending} onClick={onContinue}>
+          {t("See my plan")}
+        </OnboardingPrimaryButton>
+      </OnboardingFooter>
     </OnboardingColumn>
   );
 }
@@ -269,16 +264,14 @@ export function PlacementMockRunning({
         </OnboardingDescription>
       </OnboardingHeading>
 
-      <OnboardingAnswer>
-        <OnboardingFooter>
-          <LearnLink className={cn(buttonVariants({ size: "lg" }), "w-full")} href={href}>
-            {t("Continue the mock exam")}
-          </LearnLink>
-          <OnboardingSecondaryButton disabled={pending} onClick={onStop} variant="ghost">
-            {t("Stop and see my plan")}
-          </OnboardingSecondaryButton>
-        </OnboardingFooter>
-      </OnboardingAnswer>
+      <OnboardingFooter>
+        <LearnLink className={cn(buttonVariants({ size: "lg" }), "w-full")} href={href}>
+          {t("Continue the mock exam")}
+        </LearnLink>
+        <OnboardingSecondaryButton disabled={pending} onClick={onStop} variant="ghost">
+          {t("Stop and see my plan")}
+        </OnboardingSecondaryButton>
+      </OnboardingFooter>
     </OnboardingColumn>
   );
 }

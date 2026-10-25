@@ -2,7 +2,6 @@
 
 import { useExtracted } from "next-intl";
 import {
-  OnboardingAnswer,
   OnboardingColumn,
   OnboardingDescription,
   OnboardingFooter,
@@ -14,8 +13,8 @@ import {
 } from "../onboarding-frame";
 
 /**
- * One onboarding question on its own screen, its answer beside it from a wide page. The answer is
- * a form, so Enter continues; skippable questions offer a quiet second action that saves nothing.
+ * One onboarding question on its own screen. It's a form, so Enter continues; skippable
+ * questions offer a quiet second action that saves nothing.
  */
 export function StepForm({
   canContinue = true,
@@ -48,38 +47,36 @@ export function StepForm({
 
   return (
     <OnboardingColumn rail={rail}>
-      <OnboardingHeading>
-        {subject && <OnboardingSubject>{subject}</OnboardingSubject>}
-        <OnboardingTitle>{title}</OnboardingTitle>
-        {description && <OnboardingDescription>{description}</OnboardingDescription>}
-      </OnboardingHeading>
+      <form
+        className="flex flex-1 flex-col gap-6"
+        onSubmit={(event) => {
+          event.preventDefault();
 
-      <OnboardingAnswer>
-        <form
-          className="flex flex-1 flex-col gap-6"
-          onSubmit={(event) => {
-            event.preventDefault();
+          if (canContinue && !pending) {
+            onContinue();
+          }
+        }}
+      >
+        <OnboardingHeading>
+          {subject && <OnboardingSubject>{subject}</OnboardingSubject>}
+          <OnboardingTitle>{title}</OnboardingTitle>
+          {description && <OnboardingDescription>{description}</OnboardingDescription>}
+        </OnboardingHeading>
 
-            if (canContinue && !pending) {
-              onContinue();
-            }
-          }}
-        >
-          {children}
+        {children}
 
-          <OnboardingFooter>
-            <OnboardingPrimaryButton disabled={!canContinue || pending} type="submit">
-              {continueLabel ?? t("Continue")}
-            </OnboardingPrimaryButton>
+        <OnboardingFooter>
+          <OnboardingPrimaryButton disabled={!canContinue || pending} type="submit">
+            {continueLabel ?? t("Continue")}
+          </OnboardingPrimaryButton>
 
-            {onSkip && (
-              <OnboardingSecondaryButton disabled={pending} onClick={onSkip} type="button">
-                {skipLabel ?? t("Skip")}
-              </OnboardingSecondaryButton>
-            )}
-          </OnboardingFooter>
-        </form>
-      </OnboardingAnswer>
+          {onSkip && (
+            <OnboardingSecondaryButton disabled={pending} onClick={onSkip} type="button">
+              {skipLabel ?? t("Skip")}
+            </OnboardingSecondaryButton>
+          )}
+        </OnboardingFooter>
+      </form>
     </OnboardingColumn>
   );
 }

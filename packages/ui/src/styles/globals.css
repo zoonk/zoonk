@@ -40,7 +40,7 @@
   --container-column: 40rem;
   /* A form or a conversation: the settings forms, Plus in the app, the buddy's chat. */
   --container-form: 45rem;
-  /* A public page's widest sections, and an onboarding question beside its answer (two columns). */
+  /* A public page's widest sections. */
   --container-wide: 84rem;
   /* An answer option and a stat tile: between a button (10) and a panel (14). */
   --radius-option: calc(var(--radius) + 2px);

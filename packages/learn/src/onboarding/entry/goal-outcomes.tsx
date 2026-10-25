@@ -13,7 +13,6 @@ import { useExtracted } from "next-intl";
 import { type GoalError } from "../goal-errors";
 import { type WaitlistOutcome } from "../onboarding-actions";
 import {
-  OnboardingAnswer,
   OnboardingColumn,
   OnboardingDescription,
   OnboardingFooter,
@@ -24,9 +23,8 @@ import {
 } from "../onboarding-frame";
 import { GoalLimitNotice, isPlusGoalLimit } from "./goal-limit-notice";
 
-/** The learner's words on the right: of the column (`self-end`), or of a wide screen's pane. */
 const BUBBLE_CLASS =
-  "bg-muted justify-self-end self-end rounded-xl rounded-br-sm px-3.5 py-2.5 text-[15px] leading-relaxed whitespace-pre-wrap";
+  "bg-muted self-end rounded-xl rounded-br-sm px-3.5 py-2.5 text-[15px] leading-relaxed whitespace-pre-wrap";
 
 /** An outcome's glyph over its title: bare, no tile. */
 const ICON_CLASS = "text-muted-foreground flex [&_svg]:size-6";
@@ -151,13 +149,11 @@ export function ExplainGoal({
         </OnboardingDescription>
       </OnboardingHeading>
 
-      <OnboardingAnswer>
-        <GoalFooter error={error} signUpHref={signUpHref}>
-          <OnboardingPrimaryButton disabled={isStarting} onClick={onStart}>
-            {isStarting ? t("Opening your explanation…") : t("Explain it")}
-          </OnboardingPrimaryButton>
-        </GoalFooter>
-      </OnboardingAnswer>
+      <GoalFooter error={error} signUpHref={signUpHref}>
+        <OnboardingPrimaryButton disabled={isStarting} onClick={onStart}>
+          {isStarting ? t("Opening your explanation…") : t("Explain it")}
+        </OnboardingPrimaryButton>
+      </GoalFooter>
     </OnboardingColumn>
   );
 }
@@ -180,13 +176,9 @@ export function DeclinedGoal({ goal, onRetry }: { goal: string; onRetry: () => v
           )}
         </OnboardingDescription>
       </OnboardingHeading>
-      <OnboardingAnswer>
-        <OnboardingFooter>
-          <OnboardingPrimaryButton onClick={onRetry}>
-            {t("Try another goal")}
-          </OnboardingPrimaryButton>
-        </OnboardingFooter>
-      </OnboardingAnswer>
+      <OnboardingFooter>
+        <OnboardingPrimaryButton onClick={onRetry}>{t("Try another goal")}</OnboardingPrimaryButton>
+      </OnboardingFooter>
     </OnboardingColumn>
   );
 }
@@ -209,13 +201,11 @@ export function UnclearGoal({ goal, onRetry }: { goal: string; onRetry: () => vo
           )}
         </OnboardingDescription>
       </OnboardingHeading>
-      <OnboardingAnswer>
-        <OnboardingFooter>
-          <OnboardingPrimaryButton onClick={onRetry}>
-            {t("Write my goal again")}
-          </OnboardingPrimaryButton>
-        </OnboardingFooter>
-      </OnboardingAnswer>
+      <OnboardingFooter>
+        <OnboardingPrimaryButton onClick={onRetry}>
+          {t("Write my goal again")}
+        </OnboardingPrimaryButton>
+      </OnboardingFooter>
     </OnboardingColumn>
   );
 }
@@ -301,33 +291,31 @@ export function InstrumentGoal({
         </OnboardingDescription>
       </OnboardingHeading>
 
-      <OnboardingAnswer>
-        <div className="bg-card ring-border flex items-start gap-3 rounded-xl p-4 text-sm ring-1">
-          <span className="flex h-lh shrink-0 items-center">
-            <MusicIcon aria-hidden="true" className="size-5" />
-          </span>
-          <p>
-            {t(
-              "Musicianship for {instrument}: hear chords, read short melodies and keep the beat. No microphone needed.",
-              { instrument },
-            )}
-          </p>
-        </div>
+      <div className="bg-card ring-border flex items-start gap-3 rounded-xl p-4 text-sm ring-1">
+        <span className="flex h-lh shrink-0 items-center">
+          <MusicIcon aria-hidden="true" className="size-5" />
+        </span>
+        <p>
+          {t(
+            "Musicianship for {instrument}: hear chords, read short melodies and keep the beat. No microphone needed.",
+            { instrument },
+          )}
+        </p>
+      </div>
 
-        <WaitlistNote outcome={waitlist} signUpHref={signUpHref} />
+      <WaitlistNote outcome={waitlist} signUpHref={signUpHref} />
 
-        <GoalFooter error={error} signUpHref={signUpHref}>
-          <OnboardingPrimaryButton disabled={isStarting} onClick={onStartMusicianship}>
-            {isStarting ? t("Saving your goal…") : t("Start musicianship")}
-          </OnboardingPrimaryButton>
-          <OnboardingSecondaryButton
-            disabled={isJoining || waitlist === "joined"}
-            onClick={onJoinWaitlist}
-          >
-            {t("Join the waitlist")}
-          </OnboardingSecondaryButton>
-        </GoalFooter>
-      </OnboardingAnswer>
+      <GoalFooter error={error} signUpHref={signUpHref}>
+        <OnboardingPrimaryButton disabled={isStarting} onClick={onStartMusicianship}>
+          {isStarting ? t("Saving your goal…") : t("Start musicianship")}
+        </OnboardingPrimaryButton>
+        <OnboardingSecondaryButton
+          disabled={isJoining || waitlist === "joined"}
+          onClick={onJoinWaitlist}
+        >
+          {t("Join the waitlist")}
+        </OnboardingSecondaryButton>
+      </GoalFooter>
     </OnboardingColumn>
   );
 }
