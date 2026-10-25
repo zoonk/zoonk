@@ -24,6 +24,8 @@
 - “score”: “Score”
 - “level”: “Level”
 - “step”: “Schritt”
+- “start over” (answers or a plan): “von vorn beginnen”; “neu starten” is restarting a device or running code again
+- “position” (the post an exam is for): “Stelle”
 - “listening”: “Hören”
 - “Speaking”: “Sprechen”
 - “mind map”: “Mindmap”

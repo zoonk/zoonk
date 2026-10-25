@@ -8513,7 +8513,7 @@ msgstr "Lernzeit pro Tag"
 #: src/onboarding/plan-receipt.tsx
 msgctxt "UcBsGX"
 msgid "Your plan so far"
-msgstr "Dein Plan bis jetzt"
+msgstr "Dein Plan bisher"
 
 #: src/onboarding/save-plan-note.tsx
 msgctxt "_zDDtb"
@@ -8533,7 +8533,7 @@ msgstr "Deine Antworten bleiben gespeichert"
 #: src/onboarding/start-over-menu.tsx
 msgctxt "4prk89"
 msgid "Start over"
-msgstr "Neu starten"
+msgstr "Von vorn beginnen"
 
 #: src/onboarding/start-over-menu.tsx
 msgctxt "wjSspW"
@@ -8543,7 +8543,7 @@ msgstr "Deine Antworten werden gelöscht"
 #: src/onboarding/start-over-menu.tsx
 msgctxt "tB3o4E"
 msgid "Start over?"
-msgstr "Neu starten?"
+msgstr "Von vorn beginnen?"
 
 #: src/onboarding/start-over-menu.tsx
 msgctxt "s2KyHA"
@@ -9068,7 +9068,7 @@ msgstr "In der Bekanntmachung kann für jede Stelle eine andere Prüfung stehen.
 #: src/onboarding/understood/use-understood-rows.ts
 msgctxt "U6qGuO"
 msgid "Position"
-msgstr "Position"
+msgstr "Stelle"
 
 #: src/onboarding/steps/question-steps.tsx
 msgctxt "a89uM8"
