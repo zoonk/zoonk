@@ -17,6 +17,9 @@ import { openAs } from "./study-day";
 const GENERATIONS_URL = "**/v1/goals/*/chapters/*/mind-map/generations";
 const MAP_URL = /\/v1\/goals\/[^/]+\/chapters\/[^/]+\/mind-map\/status$/u;
 
+/** How often the panel checks on a map being drawn (`use-mind-map-request.ts`). */
+const POLL_MS = 4000;
+
 /** A picture main serves itself, standing in for the map's on the CDN. */
 const PICTURE = "/catalog/chapters/science.webp";
 
@@ -108,6 +111,9 @@ test.describe("Mind maps", () => {
     const page = await openAs(browser, user);
     let drawn = false;
 
+    // The panel checks on the map on a timer: the page's clock jumps to each check.
+    await page.clock.install();
+
     await page.route(GENERATIONS_URL, async (route) => {
       // The API's request claims the map before its run starts.
       await prisma.chapterMindMap.create({
@@ -137,6 +143,7 @@ test.describe("Mind maps", () => {
 
     await reference.getByRole("button", { name: "Create the mind map" }).click();
     await expect(reference.getByRole("status")).toHaveText(/Drawing the mind map/u);
+    await page.clock.fastForward(POLL_MS);
     const statusResponse = await statusRead;
     expect(statusResponse.status()).toBe(200);
     expect(statusResponse.headers()["cache-control"]).toBe("no-store");
@@ -154,16 +161,18 @@ test.describe("Mind maps", () => {
     // "Create the mind map" then): it keeps waiting and reading the page, never offering to make
     // it again.
     drawn = true;
-    await expect.poll(() => pageReads, { timeout: 10_000 }).toBeGreaterThanOrEqual(1);
+    await page.clock.fastForward(POLL_MS);
+    await expect.poll(() => pageReads).toBeGreaterThanOrEqual(1);
     await expect(reference.getByRole("button", { name: "Create the mind map" })).toBeHidden();
     await expect(reference.getByRole("status")).toHaveText(/Drawing the mind map/u);
 
     // Once the page can read the map, it shows without a reload (it reads itself every four
     // seconds meanwhile).
     await drawMap(cells.id);
+    await page.clock.fastForward(POLL_MS);
 
     const open = reference.getByRole("button", { name: /^Mind map: Cell parts\./u });
-    await expect(open).toBeVisible({ timeout: 10_000 });
+    await expect(open).toBeVisible();
 
     // Screen readers hear the picture's short alt, then the whole map in words; nobody else
     // sees a second copy of it.
