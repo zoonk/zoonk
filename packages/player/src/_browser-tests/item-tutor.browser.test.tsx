@@ -33,7 +33,7 @@ function QuestionRun({ questions }: { questions: RunQuestion[] }) {
   const [position, setPosition] = useState(0);
   const [answered, setAnswered] = useState(false);
   const question = questions[position];
-  const root = getTaskAsideRootProps({ footer: false });
+  const root = getTaskAsideRootProps();
 
   const item = question
     ? { ...question, answered, blockId: null, missed: answered, position }
