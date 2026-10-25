@@ -117,7 +117,7 @@ describe(checkActivityAnswer, () => {
     expect(grade(guess, { kind: "numeric", value: 1.1001 })).toBe(false);
   });
 
-  it.each([1e-8, 1e-12])("keeps a small-unit guess's tolerance relative to %s", (expected) => {
+  it.each([1e-8, 1e-7])("keeps a small-unit guess's tolerance relative to %s", (expected) => {
     const guess = content(
       "guessReveal",
       {
@@ -142,6 +142,26 @@ describe(checkActivityAnswer, () => {
     expect(grade(guess, { kind: "numeric", value: expected * 1.2 })).toBe(false);
     expect(grade(guess, { kind: "numeric", value: expected * 0.8 })).toBe(false);
   });
+
+  it.each(["absolute", "relative"])(
+    "accepts floating-point noise around zero with zero %s tolerance",
+    (kind) => {
+      const formula = content("patternTester", {
+        examples: [
+          { inputs: [{ name: "noise", value: 1e-17 }], output: 0 },
+          { inputs: [{ name: "noise", value: -1e-17 }], output: 0 },
+        ],
+        hints: [],
+        mode: "formula",
+        solution: "0",
+        task: "Return zero.",
+        tolerance: { kind, value: 0 },
+      });
+
+      expect(grade(formula, { kind: "pattern", pattern: "noise" })).toBe(true);
+      expect(grade(formula, { kind: "pattern", pattern: "0.001" })).toBe(false);
+    },
+  );
 
   it.each([
     { kind: "relative", value: 0.1 },

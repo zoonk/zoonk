@@ -1,6 +1,6 @@
 import { type ActivityFormulaExample } from "../../activity-expected-answer";
 import { type ActivityTolerance } from "../../activity-schemas";
-import { characters, evaluateOrNull } from "./template-helpers";
+import { characters, evaluateOrNull, isClose } from "./template-helpers";
 
 export const MAX_PATTERN_LENGTH = 200;
 const RELATIVE_TOLERANCE_SLACK = 1e-9;
@@ -128,7 +128,7 @@ export function withinTolerance({
   const slack = RELATIVE_TOLERANCE_SLACK * Math.max(Math.abs(expected), Math.abs(value), allowed);
 
   /** Relative slack includes rounded boundaries without overwhelming small-unit tolerances. */
-  return distance <= allowed + slack;
+  return distance <= allowed + slack || isClose(value, expected);
 }
 
 /** Spreadsheet formulas start with "=", which the expression language doesn't need. */
