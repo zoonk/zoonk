@@ -56,14 +56,15 @@ describe(startLibraryLesson, () => {
     expect(outcome.status === "started" && outcome.run.startedAt).toBe(run.startedAt.toISOString());
   });
 
-  it("resumes the open run on a second start and counts the lesson once", async () => {
+  it("resumes one run across concurrent starts and counts the lesson once", async () => {
     const { lesson, user } = await setupPlayableLesson();
 
-    const [first, second] = await Promise.all([start(lesson.id), start(lesson.id)]);
+    // More starts than pool slots: opening the run must not wait for a second connection.
+    const outcomes = await Promise.all(Array.from({ length: 12 }, () => start(lesson.id)));
+    const runIds = outcomes.map((outcome) => outcome.status === "started" && outcome.run.runId);
 
-    expect(first.status === "started" && first.run.runId).toBe(
-      second.status === "started" && second.run.runId,
-    );
+    expect(runIds).not.toContain(false);
+    expect(new Set(runIds).size).toBe(1);
 
     const [runs, usage] = await Promise.all([
       prisma.learningEvent.count({ where: { userId: user.id } }),
@@ -293,8 +294,8 @@ describe(startLibraryLesson, () => {
     });
 
     expect(runs.map((run) => run.contentIds)).toStrictEqual([
-      { lessonId: lesson.id },
-      { lessonId: lesson.id },
+      { lessonId: lesson.id, support: "explanationFirst" },
+      { lessonId: lesson.id, support: "explanationFirst" },
     ]);
 
     expect(

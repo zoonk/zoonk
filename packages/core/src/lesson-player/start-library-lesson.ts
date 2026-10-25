@@ -25,7 +25,7 @@ import {
   loadProgressAnswers,
   loadProgressRuns,
 } from "./_utils/lesson-runs";
-import { loadLessonSupport } from "./_utils/lesson-support";
+import { getRunLessonSupport, loadLessonSupport } from "./_utils/lesson-support";
 import { getLatePictureStepIds } from "./_utils/screen-pictures";
 import { type LibraryLessonRun, type LibraryLessonStartInput } from "./contract";
 
@@ -83,9 +83,21 @@ async function openLessonRun({ lesson, studySessionId, timeZone, userId }: RunSo
         throw new ResumableLessonRunError(resumable);
       }
 
+      const [first] = await loadProgressRuns({
+        client: tx,
+        lessonId: lesson.id,
+        until: now,
+        userId,
+      });
+
+      const support =
+        (first && getRunLessonSupport(first)) ??
+        (await loadLessonSupport({ client: tx, lessonId: lesson.id, userId }));
+
       const run = await startLearningEvent(tx, {
         contentIds: {
           lessonId: lesson.id,
+          ...(support && { support }),
           ...(lesson.homeChapterId && { chapterId: lesson.homeChapterId }),
           ...(studySessionId && { studySessionId }),
         },
@@ -156,7 +168,7 @@ async function readRun({
   const [progress, hyperdrive, support] = await Promise.all([
     loadRunProgress({ lessonId, run, userId }),
     getRunHyperdrive({ lessonId, run, studySessionId: getRunStudySessionId(run), userId }),
-    loadLessonSupport({ lessonId, userId }),
+    getRunLessonSupport(run) ?? loadLessonSupport({ lessonId, userId }),
   ]);
 
   return progress

@@ -141,10 +141,12 @@ type ProgressRun = Pick<LearningEvent, "contentIds" | "startedAt">;
  * every answer since the first of them.
  */
 export async function loadProgressRuns({
+  client = prisma,
   lessonId,
   until,
   userId,
 }: {
+  client?: TransactionClient;
   lessonId: string;
   until: Date;
   userId: string;
@@ -155,7 +157,7 @@ export async function loadProgressRuns({
     userId,
   };
 
-  const finished = await prisma.learningEvent.findFirst({
+  const finished = await client.learningEvent.findFirst({
     orderBy: { endedAt: "desc" },
     select: { endedAt: true },
     where: { ...lessonRuns, endedAt: { not: null } },
@@ -166,7 +168,7 @@ export async function loadProgressRuns({
   const after =
     finished?.endedAt && finished.endedAt > windowStart ? finished.endedAt : windowStart;
 
-  return prisma.learningEvent.findMany({
+  return client.learningEvent.findMany({
     orderBy: { startedAt: "asc" },
     select: { contentIds: true, startedAt: true },
     where: { ...lessonRuns, endedAt: null, startedAt: { gte: after, lte: until } },

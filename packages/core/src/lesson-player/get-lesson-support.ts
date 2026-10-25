@@ -1,7 +1,8 @@
 import "server-only";
 import { isUuid } from "@zoonk/utils/uuid";
+import { readLessonProgressRuns } from "../learner/facts/lesson-progress-runs";
 import { getSession } from "../users/get-session";
-import { loadLessonSupport } from "./_utils/lesson-support";
+import { getRunLessonSupport, loadLessonSupport } from "./_utils/lesson-support";
 import { type LessonSupport } from "./contract";
 
 /**
@@ -28,5 +29,10 @@ export async function getLessonSupport({
     return null;
   }
 
-  return loadLessonSupport({ lessonId: lessonId.toLowerCase(), userId: session.user.id });
+  const id = lessonId.toLowerCase();
+  const userId = session.user.id;
+  const [first] = await readLessonProgressRuns(userId, id);
+  const support = first ? getRunLessonSupport(first) : null;
+
+  return support ?? loadLessonSupport({ lessonId: id, userId });
 }

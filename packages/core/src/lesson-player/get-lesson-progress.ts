@@ -1,7 +1,8 @@
 import "server-only";
 import { isUuid } from "@zoonk/utils/uuid";
+import { readLessonProgressRuns } from "../learner/facts/lesson-progress-runs";
 import { getSession } from "../users/get-session";
-import { loadProgressAnswers, loadProgressRuns } from "./_utils/lesson-runs";
+import { loadProgressAnswers } from "./_utils/lesson-runs";
 import { type LibraryLessonRun } from "./contract";
 
 /**
@@ -30,7 +31,7 @@ export async function getLessonProgress({
 
   const userId = session.user.id;
   const id = lessonId.toLowerCase();
-  const [first] = await loadProgressRuns({ lessonId: id, until: new Date(), userId });
+  const [first] = await readLessonProgressRuns(userId, id);
 
   return first ? loadProgressAnswers({ lessonId: id, since: first.startedAt, userId }) : [];
 }

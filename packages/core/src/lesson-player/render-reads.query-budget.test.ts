@@ -60,7 +60,7 @@ describe("lesson render read budgets", () => {
       playable: 14,
       progress: 2,
       "stored team": 4,
-      support: 3,
+      support: 5,
     };
 
     assertReadBudget(counts, budgets[name]);
