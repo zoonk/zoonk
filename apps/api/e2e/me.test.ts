@@ -109,53 +109,201 @@ test.describe("Current User API", () => {
     await prisma.$disconnect();
   });
 
-  test("rejects unauthenticated requests", async () => {
+  test("refuses reads, updates and deletion without a session", async () => {
     const apiContext = await request.newContext({ baseURL });
-    const response = await apiContext.get("/v1/me");
 
-    await expectApiError({ code: "UNAUTHORIZED", response, status: 401 });
+    const responses = await Promise.all([
+      apiContext.get("/v1/me"),
+      apiContext.patch("/v1/me", { data: { name: "Unauthenticated User" } }),
+      apiContext.delete("/v1/me", { data: {} }),
+    ]);
+
+    await Promise.all(
+      responses.map((response) => expectApiError({ code: "UNAUTHORIZED", response, status: 401 })),
+    );
 
     await apiContext.dispose();
   });
 
-  test("rejects unauthenticated profile updates", async () => {
-    const apiContext = await request.newContext({ baseURL });
-
-    const response = await apiContext.patch("/v1/me", { data: { name: "Unauthenticated User" } });
-
-    await expectApiError({ code: "UNAUTHORIZED", response, status: 401 });
-
-    await apiContext.dispose();
-  });
-
-  test("rejects unauthenticated account deletion", async () => {
-    const apiContext = await request.newContext({ baseURL });
-
-    const response = await apiContext.delete("/v1/me", { data: {} });
-
-    await expectApiError({ code: "UNAUTHORIZED", response, status: 401 });
-
-    await apiContext.dispose();
-  });
-
-  test("requires a fresh session to delete an account", async () => {
+  test("returns the signed-in user and account state", async () => {
     const uniqueId = randomUUID().slice(0, 8);
-    const { apiContext, token, userId } = await createBearerApiContext({ baseURL, uniqueId });
+    const cancelAt = new Date("2027-01-15T12:00:00.000Z");
 
-    await prisma.session.update({
-      data: { createdAt: new Date(Date.now() - 2 * 86_400_000) },
-      where: { token },
+    const { apiContext, email, name, userId, username } = await createBearerApiContext({
+      baseURL,
+      uniqueId,
+      withSubscription: true,
     });
 
-    const response = await apiContext.delete("/v1/me", { data: {} });
+    await Promise.all([
+      appleAccountFixture({ userId }),
+      prisma.user.update({ data: { analyticsDisabled: true }, where: { id: userId } }),
+    ]);
 
-    await expectApiError({ code: "FORBIDDEN", response, status: 403 });
-    await expect(prisma.user.findUnique({ where: { id: userId } })).resolves.not.toBeNull();
+    const response = await apiContext.get("/v1/me");
+
+    expect(response.status()).toBe(200);
+
+    const body = await response.json();
+
+    expect(body.user).toMatchObject({
+      analyticsDisabled: true,
+      email,
+      emailVerified: false,
+      id: userId,
+      name,
+      username,
+    });
+
+    expect(body.account).toMatchObject({
+      deletion: { hasAppleAccount: true },
+      hasActiveSubscription: true,
+      subscription: { plan: "plus", provider: "zoonk", status: "active" },
+    });
+
+    await prisma.subscription.updateMany({
+      data: { cancelAt, cancelAtPeriodEnd: true },
+      where: { referenceId: userId },
+    });
+
+    const scheduled = await apiContext.get("/v1/me");
+
+    await expect(scheduled.json()).resolves.toMatchObject({
+      account: { subscription: { cancelAt: cancelAt.toISOString() } },
+    });
 
     await apiContext.dispose();
   });
 
-  test("deletes a stale-session account and its personalized course after email OTP reauthentication", async () => {
+  test("updates the signed-in user's profile and refuses updates outside its contract", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const takenUsername = `taken_me_${uniqueId}`;
+
+    const [{ apiContext, email, userId, username }, taken] = await Promise.all([
+      createBearerApiContext({ baseURL, uniqueId }),
+      userFixture(),
+    ]);
+
+    await Promise.all([
+      appleAccountFixture({ userId }),
+      prisma.user.update({ data: { username: takenUsername }, where: { id: taken.id } }),
+    ]);
+
+    // A taken username; an empty update, fields outside the public contract and usernames outside
+    // its documented syntax.
+    const [conflict, ...invalid] = await Promise.all([
+      apiContext.patch("/v1/me", { data: { username: takenUsername } }),
+      apiContext.patch("/v1/me", { data: {} }),
+      apiContext.patch("/v1/me", { data: { role: "admin" } }),
+      ...["", "ab", "a".repeat(31), "invalid-name"].map((invalidUsername) =>
+        apiContext.patch("/v1/me", { data: { username: invalidUsername } }),
+      ),
+    ]);
+
+    await Promise.all([
+      expectApiError({ code: "CONFLICT", response: conflict, status: 409 }),
+      ...invalid.map((response) =>
+        expectApiError({ code: "VALIDATION_ERROR", response, status: 400 }),
+      ),
+    ]);
+
+    await expect(prisma.user.findUniqueOrThrow({ where: { id: userId } })).resolves.toMatchObject({
+      username,
+    });
+
+    const nextName = `Updated Me User ${uniqueId}`;
+    const nextUsername = `updated_me_${uniqueId}`;
+
+    const updateResponse = await apiContext.patch("/v1/me", {
+      data: { name: nextName, username: nextUsername },
+    });
+
+    expect(updateResponse.status()).toBe(200);
+
+    const updateBody = await updateResponse.json();
+
+    expect(updateBody.user).toMatchObject({
+      email,
+      id: userId,
+      name: nextName,
+      username: nextUsername,
+    });
+
+    // The update answers with the account's state, as reads do.
+    expect(updateBody.account.deletion.hasAppleAccount).toBe(true);
+
+    const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
+
+    expect(user.name).toBe(nextName);
+    expect(user.username).toBe(nextUsername);
+
+    const getResponse = await apiContext.get("/v1/me");
+    const getBody = await getResponse.json();
+
+    expect(getBody.user.name).toBe(nextName);
+    expect(getBody.user.username).toBe(nextUsername);
+
+    await apiContext.dispose();
+  });
+
+  test("serves a cookie session, whose updates and deletion need a same-origin Origin header", async () => {
+    const { apiContext, uniqueId, user } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "me-cookie",
+    });
+
+    const storageState = await apiContext.storageState();
+
+    const [missingOriginContext, crossOriginContext] = await Promise.all([
+      request.newContext({ baseURL, storageState }),
+      request.newContext({
+        baseURL,
+        extraHTTPHeaders: { Origin: "https://attacker.example" },
+        storageState,
+      }),
+    ]);
+
+    const read = await apiContext.get("/v1/me");
+
+    expect(read.status()).toBe(200);
+    await expect(read.json()).resolves.toMatchObject({ user: { id: user.id } });
+
+    const refused = await Promise.all([
+      missingOriginContext.patch("/v1/me", { data: { name: "Missing Origin" } }),
+      crossOriginContext.patch("/v1/me", { data: { name: "Cross Origin" } }),
+      missingOriginContext.delete("/v1/me", { data: {} }),
+      crossOriginContext.delete("/v1/me", { data: {} }),
+    ]);
+
+    await Promise.all(
+      refused.map((response) => expectApiError({ code: "FORBIDDEN", response, status: 403 })),
+    );
+
+    await expect(prisma.user.findUniqueOrThrow({ where: { id: user.id } })).resolves.toMatchObject({
+      name: `E2E User ${uniqueId}`,
+    });
+
+    const updated = await apiContext.patch("/v1/me", { data: { name: "Same-origin Cookie User" } });
+
+    expect(updated.status()).toBe(200);
+
+    await expect(prisma.user.findUniqueOrThrow({ where: { id: user.id } })).resolves.toMatchObject({
+      name: "Same-origin Cookie User",
+    });
+
+    const deleted = await apiContext.delete("/v1/me", { data: {} });
+
+    expect(deleted.status()).toBe(200);
+    await expect(prisma.user.findUnique({ where: { id: user.id } })).resolves.toBeNull();
+
+    await Promise.all([
+      apiContext.dispose(),
+      missingOriginContext.dispose(),
+      crossOriginContext.dispose(),
+    ]);
+  });
+
+  test("deletes an account with a stale session only after email OTP reauthentication", async () => {
     const uniqueId = randomUUID().slice(0, 8);
 
     const { apiContext, email, token, userId } = await createBearerApiContext({
@@ -176,6 +324,19 @@ test.describe("Current User API", () => {
       }),
       prisma.user.update({ data: { emailVerified: true }, where: { id: userId } }),
     ]);
+
+    // The refusal sets Better Auth's session cache cookie, which a native client never sends back
+    // (its requests keep no cookies), so it comes from a request context of its own.
+    const staleContext = await request.newContext({
+      baseURL,
+      extraHTTPHeaders: { Authorization: `Bearer ${token}` },
+    });
+
+    const stale = await staleContext.delete("/v1/me", { data: {} });
+
+    await expectApiError({ code: "FORBIDDEN", response: stale, status: 403 });
+    await staleContext.dispose();
+    await expect(prisma.user.findUnique({ where: { id: userId } })).resolves.not.toBeNull();
 
     const otpResponse = await apiContext.post("/v1/email-sign-in-codes", { data: { email } });
 
@@ -299,307 +460,5 @@ test.describe("Current User API", () => {
     await expectApiError({ code: "UNAUTHORIZED", response: accountResponse, status: 401 });
 
     await Promise.all([apiContext.dispose(), otpContext.dispose()]);
-  });
-
-  test("returns the signed-in user and account state", async () => {
-    const uniqueId = randomUUID().slice(0, 8);
-
-    const { apiContext, email, name, userId, username } = await createBearerApiContext({
-      baseURL,
-      uniqueId,
-      withSubscription: true,
-    });
-
-    const response = await apiContext.get("/v1/me");
-
-    expect(response.status()).toBe(200);
-
-    const body = await response.json();
-
-    expect(body.user).toMatchObject({ email, id: userId, name, username });
-    expect(body.user.emailVerified).toBe(false);
-    expect(body.account.deletion.hasAppleAccount).toBe(false);
-    expect(body.account.hasActiveSubscription).toBe(true);
-
-    expect(body.account.subscription).toMatchObject({
-      plan: "plus",
-      provider: "zoonk",
-      status: "active",
-    });
-
-    await apiContext.dispose();
-  });
-
-  test("returns Apple account state after profile reads and updates", async () => {
-    const uniqueId = randomUUID().slice(0, 8);
-    const { apiContext, userId } = await createBearerApiContext({ baseURL, uniqueId });
-
-    await appleAccountFixture({ userId });
-
-    const getResponse = await apiContext.get("/v1/me");
-
-    const updateResponse = await apiContext.patch("/v1/me", {
-      data: { name: `Apple Me User ${uniqueId}` },
-    });
-
-    expect(getResponse.status()).toBe(200);
-    expect(updateResponse.status()).toBe(200);
-
-    const [getBody, updateBody] = await Promise.all([getResponse.json(), updateResponse.json()]);
-
-    expect(getBody.account.deletion.hasAppleAccount).toBe(true);
-    expect(updateBody.account.deletion.hasAppleAccount).toBe(true);
-
-    await apiContext.dispose();
-  });
-
-  test("returns analytics preference and scheduled subscription cancellation state", async () => {
-    const uniqueId = randomUUID().slice(0, 8);
-    const cancelAt = new Date("2027-01-15T12:00:00.000Z");
-
-    const { apiContext, userId } = await createBearerApiContext({
-      baseURL,
-      uniqueId,
-      withSubscription: true,
-    });
-
-    await Promise.all([
-      prisma.user.update({ data: { analyticsDisabled: true }, where: { id: userId } }),
-      prisma.subscription.updateMany({
-        data: { cancelAt, cancelAtPeriodEnd: true },
-        where: { referenceId: userId },
-      }),
-    ]);
-
-    const response = await apiContext.get("/v1/me");
-
-    expect(response.status()).toBe(200);
-
-    const body = await response.json();
-
-    expect(body.user.analyticsDisabled).toBe(true);
-    expect(body.account.subscription.cancelAt).toBe(cancelAt.toISOString());
-
-    await apiContext.dispose();
-  });
-
-  test("returns the signed-in user through a cookie session", async () => {
-    const { apiContext, user } = await createAuthenticatedApiContext({
-      baseURL,
-      prefix: "me-cookie",
-    });
-
-    const response = await apiContext.get("/v1/me");
-
-    expect(response.status()).toBe(200);
-
-    const body = await response.json();
-
-    expect(body.user.id).toBe(user.id);
-
-    await apiContext.dispose();
-  });
-
-  test("rejects cookie-authenticated profile updates without a same-origin Origin header", async () => {
-    const { apiContext } = await createAuthenticatedApiContext({
-      baseURL,
-      prefix: "me-cookie-origin",
-    });
-
-    const storageState = await apiContext.storageState();
-
-    const [missingOriginContext, crossOriginContext] = await Promise.all([
-      request.newContext({ baseURL, storageState }),
-      request.newContext({
-        baseURL,
-        extraHTTPHeaders: { Origin: "https://attacker.example" },
-        storageState,
-      }),
-    ]);
-
-    const [missingOriginResponse, crossOriginResponse] = await Promise.all([
-      missingOriginContext.patch("/v1/me", { data: { name: "Missing Origin" } }),
-      crossOriginContext.patch("/v1/me", { data: { name: "Cross Origin" } }),
-    ]);
-
-    await Promise.all([
-      expectApiError({ code: "FORBIDDEN", response: missingOriginResponse, status: 403 }),
-      expectApiError({ code: "FORBIDDEN", response: crossOriginResponse, status: 403 }),
-    ]);
-
-    await Promise.all([
-      apiContext.dispose(),
-      missingOriginContext.dispose(),
-      crossOriginContext.dispose(),
-    ]);
-  });
-
-  test("rejects cookie-authenticated account deletion without a same-origin Origin header", async () => {
-    const { apiContext, user } = await createAuthenticatedApiContext({
-      baseURL,
-      prefix: "me-cookie-delete-origin",
-    });
-
-    const storageState = await apiContext.storageState();
-
-    const [missingOriginContext, crossOriginContext] = await Promise.all([
-      request.newContext({ baseURL, storageState }),
-      request.newContext({
-        baseURL,
-        extraHTTPHeaders: { Origin: "https://attacker.example" },
-        storageState,
-      }),
-    ]);
-
-    const [missingOriginResponse, crossOriginResponse] = await Promise.all([
-      missingOriginContext.delete("/v1/me", { data: {} }),
-      crossOriginContext.delete("/v1/me", { data: {} }),
-    ]);
-
-    await Promise.all([
-      expectApiError({ code: "FORBIDDEN", response: missingOriginResponse, status: 403 }),
-      expectApiError({ code: "FORBIDDEN", response: crossOriginResponse, status: 403 }),
-    ]);
-
-    await expect(prisma.user.findUnique({ where: { id: user.id } })).resolves.not.toBeNull();
-
-    await Promise.all([
-      apiContext.dispose(),
-      missingOriginContext.dispose(),
-      crossOriginContext.dispose(),
-    ]);
-  });
-
-  test("allows same-origin cookie-authenticated account deletion", async () => {
-    const { apiContext, user } = await createAuthenticatedApiContext({
-      baseURL,
-      prefix: "me-cookie-delete",
-    });
-
-    const response = await apiContext.delete("/v1/me", { data: {} });
-
-    expect(response.status()).toBe(200);
-    await expect(prisma.user.findUnique({ where: { id: user.id } })).resolves.toBeNull();
-
-    await apiContext.dispose();
-  });
-
-  test("allows a same-origin cookie-authenticated profile update", async () => {
-    const { apiContext, user } = await createAuthenticatedApiContext({
-      baseURL,
-      prefix: "me-cookie-update",
-    });
-
-    const response = await apiContext.patch("/v1/me", {
-      data: { name: "Same-origin Cookie User" },
-    });
-
-    expect(response.status()).toBe(200);
-
-    await expect(prisma.user.findUniqueOrThrow({ where: { id: user.id } })).resolves.toMatchObject({
-      name: "Same-origin Cookie User",
-    });
-
-    await apiContext.dispose();
-  });
-
-  test("updates the signed-in user's profile", async () => {
-    const uniqueId = randomUUID().slice(0, 8);
-    const { apiContext, email, userId } = await createBearerApiContext({ baseURL, uniqueId });
-    const nextName = `Updated Me User ${uniqueId}`;
-    const nextUsername = `updated_me_${uniqueId}`;
-
-    const updateResponse = await apiContext.patch("/v1/me", {
-      data: { name: nextName, username: nextUsername },
-    });
-
-    expect(updateResponse.status()).toBe(200);
-
-    const updateBody = await updateResponse.json();
-
-    expect(updateBody.user).toMatchObject({
-      email,
-      id: userId,
-      name: nextName,
-      username: nextUsername,
-    });
-
-    expect(updateBody.account.deletion.hasAppleAccount).toBe(false);
-
-    const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
-
-    expect(user.name).toBe(nextName);
-    expect(user.username).toBe(nextUsername);
-
-    const getResponse = await apiContext.get("/v1/me");
-    const getBody = await getResponse.json();
-
-    expect(getBody.user.name).toBe(nextName);
-    expect(getBody.user.username).toBe(nextUsername);
-
-    await apiContext.dispose();
-  });
-
-  test("rejects empty profile updates", async () => {
-    const uniqueId = randomUUID().slice(0, 8);
-    const { apiContext } = await createBearerApiContext({ baseURL, uniqueId });
-
-    const response = await apiContext.patch("/v1/me", { data: {} });
-
-    await expectApiError({ code: "VALIDATION_ERROR", response, status: 400 });
-
-    await apiContext.dispose();
-  });
-
-  test("rejects profile fields outside the public contract", async () => {
-    const uniqueId = randomUUID().slice(0, 8);
-    const { apiContext } = await createBearerApiContext({ baseURL, uniqueId });
-
-    const response = await apiContext.patch("/v1/me", { data: { role: "admin" } });
-
-    await expectApiError({ code: "VALIDATION_ERROR", response, status: 400 });
-
-    await apiContext.dispose();
-  });
-
-  test("rejects username updates outside the documented syntax contract", async () => {
-    const uniqueId = randomUUID().slice(0, 8);
-    const { apiContext, userId, username } = await createBearerApiContext({ baseURL, uniqueId });
-
-    const responses = await Promise.all(
-      ["", "ab", "a".repeat(31), "invalid-name"].map((invalidUsername) =>
-        apiContext.patch("/v1/me", { data: { username: invalidUsername } }),
-      ),
-    );
-
-    await Promise.all(
-      responses.map((response) =>
-        expectApiError({ code: "VALIDATION_ERROR", response, status: 400 }),
-      ),
-    );
-
-    const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
-
-    expect(user.username).toBe(username);
-
-    await apiContext.dispose();
-  });
-
-  test("rejects username updates when the username is already taken", async () => {
-    const takenUniqueId = randomUUID().slice(0, 8);
-    const nextUniqueId = randomUUID().slice(0, 8);
-    const taken = await createBearerApiContext({ baseURL, uniqueId: takenUniqueId });
-    const next = await createBearerApiContext({ baseURL, uniqueId: nextUniqueId });
-
-    const response = await next.apiContext.patch("/v1/me", { data: { username: taken.username } });
-
-    await expectApiError({ code: "CONFLICT", response, status: 409 });
-
-    const user = await prisma.user.findUniqueOrThrow({ where: { id: next.userId } });
-
-    expect(user.username).toBe(next.username);
-
-    await taken.apiContext.dispose();
-    await next.apiContext.dispose();
   });
 });
