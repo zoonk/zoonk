@@ -2,6 +2,7 @@ import { type Locator, type Request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
 import { type Page, expect, test } from "./fixtures";
+import { keepShownCopiesFresh } from "./fresh-copies";
 import { asPersona } from "./learn-personas";
 import { REPLAN_TIMEOUT_MS } from "./plan-timeouts";
 import { routeTimeToCover } from "./time-to-cover-routes";
@@ -363,6 +364,8 @@ test.describe("Find the time that covers everything", () => {
         }
       });
 
+      // A Plan seconds old asks whether it changed and may read itself again, after Find too.
+      await keepShownCopiesFresh(page);
       await page.goto("/plan");
       await expect(page.locator('[data-slot="journey"]')).toBeVisible();
       const planPath = new URL(page.url()).pathname;

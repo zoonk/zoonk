@@ -16,6 +16,7 @@ import {
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { openPaletteWithKeyboard } from "./command-palette";
 import { expect, test } from "./fixtures";
+import { keepShownCopiesFresh } from "./fresh-copies";
 import { createLanguageChallenge } from "./language-challenge-fixtures";
 import { asPersona, findPlanChapterId } from "./learn-personas";
 import { createMistakeLearner, drillQuestion } from "./mistake-drill-days";
@@ -148,11 +149,10 @@ test.describe("Instant navigation", () => {
     browser,
   }) => {
     await asPersona(browser, { persona: "hugeGoal" }, async ({ page }) => {
-      // The browser's clock holds still, so each tab shows a copy read moments ago, which doesn't
-      // ask whether it changed (useRefreshWhenOld; plan-waits covers that). Inside instant(), Next
-      // answers that ask with the page's shell, and the refresh that follows holds the next tap
-      // until the scope ends, while the scope waits for that tap.
-      await page.clock.setFixedTime(new Date());
+      // Inside instant(), Next answers a tab's ask whether it changed with the page's shell, and
+      // the refresh that follows holds the next tap until the scope ends, while the scope waits for
+      // that tap.
+      await keepShownCopiesFresh(page);
       await openSettled(page, "/today");
 
       for (const link of ["/plan", "/buddy", "/mistakes", "/stats"]) {
@@ -655,6 +655,8 @@ test.describe("Instant navigation", () => {
     browser,
   }) => {
     await asPersona(browser, { persona: "hugeGoal" }, async ({ page }) => {
+      // An old tab's ask whether it changed would hold the next tap inside instant().
+      await keepShownCopiesFresh(page);
       await openSettled(page, "/today");
 
       await tapInstantly({
