@@ -808,10 +808,12 @@ test.describe("Exam goal", () => {
     expect(boxOnLaptop.x + boxOnLaptop.width).toBeLessThan(textsOnLaptop.x);
     expect(textsOnLaptop.y).toBeLessThan(boxOnLaptop.y);
 
-    // A long essay scrolls inside the box, so the instruction with its theme stays in view.
+    // A long essay scrolls inside the box, so the instruction with its theme and the word count
+    // stay in view, on a short laptop window too: the box gives up its height first.
+    await page.setViewportSize({ height: 600, width: 1180 });
     await box.fill(Array.from({ length: 40 }, () => "Uma linha do texto.").join("\n"));
-    await expect(page.getByText(/^\d{2,} words$/u)).toBeVisible();
-    await expect(instruction).toBeInViewport();
+    await expect(page.getByText(/^\d{2,} words$/u)).toBeInViewport({ ratio: 1 });
+    await expect(instruction).toBeInViewport({ ratio: 1 });
 
     // On a phone the texts come first, then the instruction, then the box, as in the booklet.
     await page.setViewportSize({ height: 844, width: 390 });

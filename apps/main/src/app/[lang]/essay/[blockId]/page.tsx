@@ -39,7 +39,7 @@ function EssaySkeleton() {
       </div>
       <div className="flex flex-1 flex-col gap-2">
         <Skeleton className="h-4 w-24" />
-        <Skeleton className="min-h-72 w-full flex-1 rounded-lg" />
+        <Skeleton className="min-h-72 w-full flex-1 rounded-lg lg:min-h-36" />
       </div>
     </TaskSkeleton>
   );

@@ -123,7 +123,7 @@ const ENEM_MOTIVATING_TEXTS = [
 
 /** The instruction with its theme, as ENEM words it. */
 export const ENEM_INSTRUCTION =
-  "A partir da leitura dos textos motivadores e de seus conhecimentos, redija um texto dissertativo-argumentativo sobre o tema *Desafios para tornar clara a comunicação dos serviços públicos no Brasil*.";
+  "A partir da leitura dos textos motivadores e com base nos conhecimentos construídos ao longo de sua formação, redija texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa sobre o tema *Desafios para tornar clara a comunicação dos serviços públicos no Brasil*, apresentando proposta de intervenção que respeite os direitos humanos. Selecione, organize e relacione, de forma coerente e coesa, argumentos e fatos para defesa de seu ponto de vista.";
 
 /**
  * An ENEM writing block open in today's session and not written yet, on its own blueprint: its
