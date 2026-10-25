@@ -1,4 +1,6 @@
-import { execFile } from "node:child_process";
+import { type ChildProcessWithoutNullStreams, execFile, spawn } from "node:child_process";
+import { randomUUID } from "node:crypto";
+import { createInterface } from "node:readline";
 import { promisify } from "node:util";
 import { type SeedPersonaName } from "@zoonk/db/seed/v2/personas";
 import { isJsonObject } from "@zoonk/utils/json";
@@ -21,6 +23,76 @@ async function runSeedV2(args: readonly string[]): Promise<string> {
   );
 
   return stdout;
+}
+
+type CopyAnswer = { copy?: unknown; error?: string; id: string };
+
+/**
+ * This process's copy writer: core's seed command kept open with `--serve`, answering one request
+ * a line. Starting that command is nearly all a copy costs, so a Playwright worker starts it once,
+ * and it ends with the worker, whose exit closes its stdin.
+ */
+const copyWriter: {
+  answers: Map<string, (answer: CopyAnswer) => void>;
+  process: ChildProcessWithoutNullStreams | null;
+} = { answers: new Map(), process: null };
+
+function readJsonLine(line: string): unknown {
+  try {
+    return JSON.parse(line);
+  } catch {
+    return null;
+  }
+}
+
+function startCopyWriter(): ChildProcessWithoutNullStreams {
+  const child = spawn("pnpm", ["--filter", "@zoonk/core", "--silent", "seed:v2", "--serve"]);
+
+  // Lines without a waiting request's id are the seed's own logging.
+  createInterface({ input: child.stdout }).on("line", (line) => {
+    const answer = readJsonLine(line);
+    const id = isJsonObject(answer) && typeof answer.id === "string" ? answer.id : null;
+    const deliver = id ? copyWriter.answers.get(id) : undefined;
+
+    if (id && deliver) {
+      copyWriter.answers.delete(id);
+      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- core's `serveCopies` writes this exact answer shape.
+      deliver(answer as CopyAnswer);
+    }
+  });
+
+  child.stderr.pipe(process.stderr);
+
+  child.once("exit", (code) => {
+    copyWriter.process = null;
+
+    for (const deliver of copyWriter.answers.values()) {
+      deliver({ error: `The seed command exited (${code}).`, id: "" });
+    }
+
+    copyWriter.answers.clear();
+  });
+
+  return child;
+}
+
+/** Asks this process's copy writer for a persona copy, starting it the first time. */
+async function requestCopy(request: Record<string, string | undefined>): Promise<unknown> {
+  copyWriter.process ??= startCopyWriter();
+  const id = randomUUID();
+
+  const answered = new Promise<CopyAnswer>((resolve) => {
+    copyWriter.answers.set(id, resolve);
+  });
+
+  copyWriter.process.stdin.write(`${JSON.stringify({ ...request, id })}\n`);
+  const answer = await answered;
+
+  if (answer.error !== undefined) {
+    throw new Error(answer.error);
+  }
+
+  return answer.copy;
 }
 
 /** Seeds the v2 Library and personas with the plans the planner makes (see `seedV2` in core). */
@@ -50,22 +122,17 @@ export async function seedV2PersonaCopy({
   /** The zone the copy lives in, its days and its goal's; the persona's own when absent. */
   timeZone?: string;
 }): Promise<{ goalId: string; userId: string }> {
-  const output = await runSeedV2([
-    "--persona",
-    persona,
-    "--copy-key",
+  const copy = await requestCopy({
+    away: away === undefined ? undefined : String(away),
     copyKey,
-    "--email",
+    day: day === undefined ? undefined : String(day),
     email,
-    ...(day === undefined ? [] : ["--day", String(day)]),
-    ...(away === undefined ? [] : ["--away", String(away)]),
-    ...(timeZone === undefined ? [] : ["--time-zone", timeZone]),
-  ]);
-
-  const copy: unknown = JSON.parse(output.trim().split("\n").at(-1) ?? "null");
+    persona,
+    timeZone,
+  });
 
   if (!isJsonObject(copy) || typeof copy.goalId !== "string" || typeof copy.userId !== "string") {
-    throw new Error(`The seed command wrote no copy of ${persona}: ${output}`);
+    throw new Error(`The seed command wrote no copy of ${persona}: ${JSON.stringify(copy)}`);
   }
 
   return { goalId: copy.goalId, userId: copy.userId };
