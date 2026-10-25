@@ -6965,7 +6965,7 @@ msgstr "Die Probeprüfung konnte nicht gestartet werden. Versuch es noch einmal.
 #: src/mock/mock-chooser-page.tsx
 msgctxt "EMm4ms"
 msgid "{questions, plural, one {# of the {total, number} questions is ready now} other {# of the {total, number} questions are ready now}}, so this mock takes about {time}."
-msgstr "{questions, plural, one {# von insgesamt {total, number} Fragen ist jetzt verfügbar} other {# von insgesamt {total, number} Fragen sind jetzt verfügbar}}, daher dauert diese Probeprüfung etwa {time}."
+msgstr "{questions, plural, one {# von insgesamt {total, number} Fragen ist jetzt verfügbar} other {# von insgesamt {total, number} Fragen sind jetzt verfügbar}}, daher dauert diese Probeprüfung etwa {time}"
 
 #: src/mock/mock-chooser-page.tsx
 msgctxt "iML1q_"
@@ -7805,7 +7805,7 @@ msgstr "Fragen pro Fach in der letzten Prüfung, gezählt von <link>{publisher}<
 #: src/mock/mock-size-note.tsx
 msgctxt "TX0FeU"
 msgid "Your material doesn't say how long the test is. This mock asks {count, plural, one {# question} other {# questions}} in {time}."
-msgstr "In deinem Material steht nicht, wie lange die Prüfung dauert. Diese Probeprüfung umfasst {count, plural, one {# Frage} other {# Fragen}} und dauert {time}."
+msgstr "In deinem Material steht nicht, wie lange die Prüfung dauert. Diese Probeprüfung umfasst {count, plural, one {# Frage} other {# Fragen}} und dauert {time}"
 
 #: src/mock/mock-size-note.tsx
 msgctxt "wyM63w"
@@ -8513,7 +8513,7 @@ msgstr "Lernzeit pro Tag"
 #: src/onboarding/plan-receipt.tsx
 msgctxt "UcBsGX"
 msgid "Your plan so far"
-msgstr "Dein bisheriger Plan"
+msgstr "Dein Plan bis jetzt"
 
 #: src/onboarding/save-plan-note.tsx
 msgctxt "_zDDtb"
@@ -8790,12 +8790,12 @@ msgstr "Frage {number, number}"
 #: src/onboarding/steps/placement-screens.tsx
 msgctxt "L4poYE"
 msgid "In the exam's format, about {time}."
-msgstr "Im Prüfungsformat, etwa {time}."
+msgstr "Im Prüfungsformat, etwa {time}"
 
 #: src/onboarding/steps/placement-screens.tsx
 msgctxt "JVCngo"
 msgid "In the exam's format, from {shortest} to {longest}. You pick how long."
-msgstr "Im Prüfungsformat, von {shortest} bis {longest}. Du entscheidest, wie lange."
+msgstr "Im Prüfungsformat und so lang, wie du willst: von {shortest} bis {longest}"
 
 #: src/onboarding/steps/placement-screens.tsx
 msgctxt "9REw3l"
@@ -10579,7 +10579,7 @@ msgstr "{document, select, notice {Dein Plan richtet sich nach der Bekanntmachun
 #: src/plan/use-change-sentence.ts
 msgctxt "Ug6b0w"
 msgid "Daily time: {time}."
-msgstr "Tägliche Lernzeit: {time}."
+msgstr "Tägliche Lernzeit: {time}"
 
 #: src/plan/use-change-sentence.ts
 msgctxt "8lqPZz"
