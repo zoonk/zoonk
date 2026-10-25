@@ -540,7 +540,7 @@ test.describe("Command Palette - Course Search", () => {
 });
 
 test.describe("Command Palette - Keyboard Navigation", () => {
-  test("arrow key navigation selects items", async ({ page }) => {
+  test("arrow keys select items and Enter opens the highlighted home page", async ({ page }) => {
     await page.goto("/courses");
     await openCommandPalette(page);
 
@@ -567,13 +567,6 @@ test.describe("Command Palette - Keyboard Navigation", () => {
     // Press ArrowUp - "Home page" should be selected again
     await page.keyboard.press("ArrowUp");
     await expectActiveOption(page, /home page/iu);
-  });
-
-  test("Enter to select shows start goals on the home page", async ({ page }) => {
-    await page.goto("/courses"); // Start from courses page so Home navigation is verifiable
-    await expect(page.getByRole("heading", { name: /explore courses/iu })).toBeVisible();
-    await openCommandPalette(page);
-    await expect(page.getByRole("dialog")).toBeVisible();
 
     // Type to filter to Home option, the first one, then press Enter to select it
     await page.getByPlaceholder(/search/iu).fill("Home");

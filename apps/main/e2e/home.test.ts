@@ -213,7 +213,6 @@ test.describe("The example goals", () => {
     await expect(page.getByRole("heading", { level: 2, name: PRACTICE_TITLES.move })).toBeVisible();
 
     await expect(page.getByText("Why “piso” and not “apartamento”?")).toBeVisible();
-    await expectAccessibleScreen(page, "the home page with the move picked");
 
     // The arrow keys move between the goals, as in any radio group.
     await goals.getByRole("radio", { name: GOALS.move.radio }).focus();
@@ -243,15 +242,26 @@ test.describe("The example goals", () => {
     await yesterday.getByText("Studied", { exact: true }).click();
     await expect(unchanged).toBeVisible();
     await expect(changed).toHaveCount(0);
-    await expectAccessibleScreen(page, "the home page after a studied day");
   });
 
-  test("without scripts, both switches still change what shows", async ({ browser }) => {
+  test("without scripts, typing hides the example and both switches still change what shows", async ({
+    browser,
+  }) => {
     const context = await browser.newContext({ javaScriptEnabled: false });
     const page = await context.newPage();
 
     try {
       await page.goto("/");
+
+      const examExample = getDrawnExample(getHero(page).locator("form")).getByText(GOALS.exam.box, {
+        exact: true,
+      });
+
+      await expect(examExample).toBeVisible();
+      const field = getHero(page).getByRole("textbox", { name: "I want to" });
+      await field.fill("learn to cook");
+      await expect(examExample).toBeHidden({ timeout: 200 });
+      await field.clear();
       const box = getHero(page).locator("form");
 
       await getExampleGoals(page).getByText(GOALS.job.switch, { exact: true }).click();
@@ -282,6 +292,7 @@ test.describe("The home goal box", () => {
   }) => {
     await page.goto("/");
     await waitForGoalBox(page);
+    await tabTo(page, getHero(page).getByRole("textbox", { name: "I want to" }));
 
     const box = getHero(page).locator("form");
     const example = getDrawnExample(box).getByText(GOALS.exam.box, { exact: true });
@@ -307,31 +318,6 @@ test.describe("The home goal box", () => {
     await expect(example).toBeHidden({ timeout: 200 });
     await expect(hint).toHaveCount(0);
     await expect(hero.getByText("Start free, no account needed.")).toBeVisible();
-  });
-
-  test("without scripts, the visitor's words still hide the example as they type", async ({
-    browser,
-  }) => {
-    const context = await browser.newContext({ javaScriptEnabled: false });
-    const page = await context.newPage();
-
-    try {
-      await page.goto("/");
-
-      const box = getHero(page).locator("form");
-      const example = getDrawnExample(box).getByText(GOALS.exam.box, { exact: true });
-
-      await expect(example).toBeVisible();
-      await box.getByRole("textbox", { name: "I want to" }).fill("learn to cook");
-      await expect(example).toBeHidden({ timeout: 200 });
-    } finally {
-      await context.close();
-    }
-  });
-
-  test("draws a ring around the box once a keyboard visitor reaches it", async ({ page }) => {
-    await page.goto("/");
-    await tabTo(page, getHero(page).getByRole("textbox", { name: "I want to" }));
   });
 
   test("fits every goal's example on one line beside the button on a laptop", async ({

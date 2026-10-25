@@ -218,13 +218,14 @@ test.describe("Auth Callback", () => {
 
     const ctx = await browser.newContext({ baseURL });
     const state = await createLoginState({ baseURL, context: ctx });
-    const page = await ctx.newPage();
 
-    await page.goto(
+    const response = await ctx.request.get(
       `/auth/callback?state=${encodeURIComponent(state)}&token=${encodeURIComponent(token)}&next=${encodeURIComponent(nextPath)}`,
+      { maxRedirects: 0 },
     );
 
-    await page.waitForURL(/\/level$/u);
+    expect(response.status()).toBe(302);
+    expect(getRedirectLocation(response)).toBe(nextPath);
 
     await ctx.close();
   });

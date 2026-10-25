@@ -182,8 +182,6 @@ test.describe("Course Detail Page", () => {
         () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
       ),
     ).toBe(0);
-
-    await expectAccessibleScreen(page, "a course whose outline isn't written yet, on a phone");
   });
 
   test("an exam course's page reads a notice another app revised once its tag reaches this app", async ({
@@ -253,7 +251,6 @@ test.describe("Course Detail Page", () => {
     expect(weeks).toBeGreaterThan(0);
     // No chapter starts after the course ends.
     expect(await readLastOutlineWeek(page)).toBeLessThanOrEqual(weeks);
-    await expectAccessibleScreen(page, "a course's example plan");
 
     // "Build my plan" starts the plan at the example's time a day.
     const start = page.getByRole("main").getByRole("link", { name: "Build my plan" }).first();

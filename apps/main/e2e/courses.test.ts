@@ -169,6 +169,10 @@ test.describe("Courses Page - Basic", () => {
     await expect(getCourseList(page).getByRole("listitem")).toHaveCount(scienceCount);
 
     const course = getCourseList(page).getByRole("link", { name: /Quantum physics from scratch/u });
+    await expect(course).toBeVisible();
+    await expect(course).toContainText("one short lesson at a time");
+    await expect(course).toHaveAttribute("href", /\/c\/quantum-physics-from-scratch$/u);
+    await expectAccessibleScreen(page, "a catalog category");
     const meta = /^(?<lessons>\d+) lessons · (?<duration>.+)$/mu.exec(await course.innerText());
 
     expect(meta?.groups).toBeDefined();

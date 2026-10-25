@@ -10,7 +10,7 @@ test.describe("Profile settings page", () => {
     await expect(page.getByRole("main").getByRole("link", { name: "Log in" })).toBeVisible();
   });
 
-  test("holds the name and username, the learner's data and deleting the account", async ({
+  test("edits the profile, validates its username and name, and keeps both after reloading", async ({
     noProgressUser,
     userWithoutProgress: page,
   }) => {
@@ -26,13 +26,6 @@ test.describe("Profile settings page", () => {
 
     await expect(page.getByRole("button", { name: "Download my data" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Delete account" })).toBeVisible();
-  });
-
-  test("changes the username once it's free and follows the rule", async ({
-    noProgressUser,
-    userWithoutProgress: page,
-  }) => {
-    await page.goto("/profile");
 
     const username = page.getByRole("textbox", { exact: true, name: "Username" });
     const save = page.getByRole("button", { exact: true, name: "Save" });
@@ -58,20 +51,13 @@ test.describe("Profile settings page", () => {
 
     await expect
       .poll(async () => {
-        const user = await prisma.user.findUniqueOrThrow({ where: { id: noProgressUser.id } });
-        return user.username;
+        const saved = await prisma.user.findUniqueOrThrow({ where: { id: noProgressUser.id } });
+        return saved.username;
       })
       .toBe(chosen);
 
     await page.reload();
     await expect(page.getByRole("textbox", { exact: true, name: "Username" })).toHaveValue(chosen);
-  });
-
-  test("refuses a whitespace-only name, then updates the name", async ({
-    noProgressUser,
-    userWithoutProgress: page,
-  }) => {
-    await page.goto("/profile");
 
     const nameInput = page.getByRole("textbox", { exact: true, name: "Name" });
     const originalName = await nameInput.inputValue();

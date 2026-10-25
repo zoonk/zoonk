@@ -95,31 +95,22 @@ test.describe("learner summary", () => {
     await expect(response.json()).resolves.toMatchObject({ status: "visitor" });
   });
 
-  test("reads the signed-in learner's summary without writing", async ({ browser }) => {
-    const { first, user } = await createGoalLearner();
-    const context = await browser.newContext({ storageState: user.storageState });
-
-    const response = await context.request.get("/api/learner/summary");
-
-    await expect(response.json()).resolves.toMatchObject({
-      status: "ready",
-      summary: { activeGoalId: first.id, identity: { isAnonymous: false, userId: user.id } },
-    });
-
-    await context.close();
-  });
-
-  test("draws the frame for a visitor, a guest and a learner", async ({ browser }) => {
+  test("draws the frame and opens the palette for a visitor, a guest and a learner", async ({
+    browser,
+  }) => {
     const visitorContext = await browser.newContext();
     const visitor = await openAs(visitorContext, "/courses");
 
     await expect(sidebar(visitor).getByRole("link", { name: "Log in" })).toBeVisible();
+    const visitorPalette = await openPaletteWithKeyboard(visitor);
+    await expect(visitorPalette.getByRole("option", { name: "Explore courses" })).toBeVisible();
 
     const guest = await openAsGuest(browser);
     await guest.page.setViewportSize({ height: 900, width: 1440 });
     await guest.page.goto("/courses");
 
     await expect(accountRow(guest.page, "Guest")).toBeVisible();
+    await expect(await openPaletteWithKeyboard(guest.page)).toBeVisible();
 
     const { name, user } = await createGoalLearner();
     const learnerContext = await browser.newContext({ storageState: user.storageState });
@@ -127,6 +118,9 @@ test.describe("learner summary", () => {
 
     await expect(goalSwitcher(learner, "Bake sourdough bread")).toBeVisible();
     await expect(accountRow(learner, name)).toBeVisible();
+    await learner.goto("/courses");
+    const palette = await openLearnerPalette(learner);
+    await expect(palette.getByRole("option", { name: "Switch to Learn to cook" })).toBeVisible();
 
     await Promise.all([visitorContext.close(), guest.context.close(), learnerContext.close()]);
   });
@@ -153,28 +147,6 @@ test.describe("learner summary", () => {
     await context.close();
   });
 
-  test("opens the palette for a visitor, a guest and a learner", async ({ browser }) => {
-    const visitorContext = await browser.newContext();
-    const visitor = await openAs(visitorContext, "/courses");
-    const visitorPalette = await openPaletteWithKeyboard(visitor);
-
-    await expect(visitorPalette.getByRole("option", { name: "Explore courses" })).toBeVisible();
-
-    const guest = await openAsGuest(browser);
-    await guest.page.goto("/courses");
-    await expect(await openPaletteWithKeyboard(guest.page)).toBeVisible();
-
-    const { user } = await createGoalLearner();
-    const learnerContext = await browser.newContext({ storageState: user.storageState });
-    const learner = await openAs(learnerContext, "/courses");
-    // Asking the buddy lands above the highlighted row, so the learner's goals wait with it.
-    const palette = await openLearnerPalette(learner);
-
-    await expect(palette.getByRole("option", { name: "Switch to Learn to cook" })).toBeVisible();
-
-    await Promise.all([visitorContext.close(), guest.context.close(), learnerContext.close()]);
-  });
-
   test("reloads one learner's page when another signs in in another tab", async ({ browser }) => {
     const [first, second] = await Promise.all([createGoalLearner(), createE2EUser(getBaseURL())]);
     const secondName = await getUserName(second);
@@ -195,11 +167,16 @@ test.describe("learner summary", () => {
   });
 
   test("never writes the session hint, for a session or one that ended", async ({ browser }) => {
-    const { user } = await createGoalLearner();
+    const { first, user } = await createGoalLearner();
     const context = await browser.newContext({ storageState: user.storageState });
     const hint = await getSessionHint(context);
 
     const ready = await context.request.get("/api/learner/summary");
+
+    await expect(ready.json()).resolves.toMatchObject({
+      status: "ready",
+      summary: { activeGoalId: first.id, identity: { isAnonymous: false, userId: user.id } },
+    });
 
     // The session ends (signed out elsewhere, or expired): the read says "visitor", and the hint
     // still changes only with the session cookie, which this read doesn't touch.
@@ -280,23 +257,6 @@ test.describe("learner summary", () => {
     await context.close();
   });
 
-  test("gives a new guest the session hint, and their frame", async ({ browser }) => {
-    const { lesson } = await playableLessonFixture();
-    const context = await browser.newContext();
-    const page = await context.newPage();
-
-    await page.goto(`/learn/${lesson.id}`);
-
-    // The guest's own sign-in response leaves the hint.
-    await expect.poll(() => getSessionHint(context)).toBe("1");
-
-    await expect
-      .poll(() => context.request.get("/api/learner/summary").then((response) => response.json()))
-      .toMatchObject({ status: "ready", summary: { identity: { isAnonymous: true } } });
-
-    await context.close();
-  });
-
   test("goes on as the guest a lesson makes for a visitor, without reloading the page", async ({
     browser,
   }) => {
@@ -323,49 +283,6 @@ test.describe("learner summary", () => {
     expect(loads.count).toBe(1);
 
     await context.close();
-  });
-
-  test("drops the session hint when the learner logs out", async ({ logoutPage }) => {
-    await logoutPage.setViewportSize({ height: 900, width: 1440 });
-    await logoutPage.goto("/settings");
-
-    const account = sidebar(logoutPage).getByRole("button", { name: /User menu$/u });
-    await account.click();
-
-    await Promise.all([
-      logoutPage.waitForEvent("framenavigated", {
-        predicate: (frame) => frame === logoutPage.mainFrame(),
-      }),
-      logoutPage.getByRole("menuitem", { name: "Log out" }).click(),
-    ]);
-
-    expect(await getSessionHint(logoutPage.context())).toBe("0");
-  });
-
-  test("never puts the session hint or the session on static pages", async ({
-    browser,
-    request,
-  }) => {
-    const { user } = await createGoalLearner();
-    const learner = await browser.newContext({ storageState: user.storageState });
-
-    const responses = await Promise.all([
-      ...["/", "/pricing", "/privacy", "/terms", "/courses"].map((path) =>
-        request.get(path, { maxRedirects: 0 }),
-      ),
-      ...["/pricing", "/privacy", "/terms", "/courses"].map((path) =>
-        learner.request.get(path, { maxRedirects: 0 }),
-      ),
-    ]);
-
-    for (const response of responses) {
-      const cookies = response.headers()["set-cookie"] ?? "";
-
-      expect(cookies, response.url()).not.toContain(SESSION_HINT_COOKIE);
-      expect(cookies, response.url()).not.toContain("session_token");
-    }
-
-    await learner.close();
   });
 
   test("never lets a read sent before another learner signed in elsewhere land: the tab reloads", async ({

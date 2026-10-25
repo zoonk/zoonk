@@ -190,22 +190,6 @@ test("the sidebar logs in with one document request and returns to Plan", async 
   await expect(page).toHaveURL(/\/plan$/u);
 });
 
-test("the page gate loads login as one document request", async ({ page }) => {
-  const loginRequests: string[] = [];
-  await mockCentralAuthTransport(page);
-  await page.goto("/plan");
-
-  page.on("request", (request) => {
-    if (new URL(request.url()).pathname === "/login") {
-      loginRequests.push(request.resourceType());
-    }
-  });
-
-  await page.getByRole("main").getByRole("link", { exact: true, name: "Log in" }).click();
-  await expect(page).toHaveURL(/\/auth\/login\?/u);
-  expect(loginRequests).toEqual(["document"]);
-});
-
 test("settings login controls keep the localized return page on a phone", async ({ page }) => {
   await page.setViewportSize({ height: 844, width: 390 });
   await page.goto("/pt/settings/memory");

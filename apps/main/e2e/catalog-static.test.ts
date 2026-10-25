@@ -215,12 +215,15 @@ test.describe("catalog pages and the learner's own bits", () => {
   test("a learner without a goal on the course keeps “Build my plan”, without the no-account note", async ({
     browser,
   }) => {
-    const { coursePath, lesson } = await createStaticCourse();
+    const { course, coursePath, lesson } = await createStaticCourse();
     const { context, page } = await openAsLearner(browser);
     const reads = watchProgressReads(page);
 
     try {
-      await page.goto(coursePath);
+      const { known, painted } = await measureHero({ coursePath, page, title: course.title });
+      expect(painted.note).toBe(false);
+      expect(known.note).toBe(false);
+      expect(known.box).toStrictEqual(painted.box);
       await page.waitForLoadState("networkidle");
 
       await expect(page.getByRole("link", { name: "Build my plan" }).first()).toBeVisible();
@@ -367,23 +370,6 @@ test.describe("catalog pages and the learner's own bits", () => {
     }
   });
 
-  test("an account never sees the no-account note, and its line stays so the hero doesn't move", async ({
-    browser,
-  }) => {
-    const { course, coursePath } = await createStaticCourse();
-    const { context, page } = await openAsLearner(browser);
-
-    try {
-      const { known, painted } = await measureHero({ coursePath, page, title: course.title });
-
-      expect(painted.note).toBe(false);
-      expect(known.note).toBe(false);
-      expect(known.box).toStrictEqual(painted.box);
-    } finally {
-      await context.close();
-    }
-  });
-
   // A guest whose one goal was taken read "Start free, no account needed." over a start that then
   // asked for an account: like an account, a guest never reads it, and its line stays.
   test("a guest never gets the no-account note, and its line stays so the hero doesn't move", async ({
@@ -398,20 +384,6 @@ test.describe("catalog pages and the learner's own bits", () => {
       expect(painted.note).toBe(false);
       expect(known.note).toBe(false);
       expect(known.box).toStrictEqual(painted.box);
-    } finally {
-      await context.close();
-    }
-  });
-
-  test("a guest keeps the visitor's ways in", async ({ browser }) => {
-    const { coursePath } = await createStaticCourse();
-    const { context, page } = await openAsGuest(browser);
-
-    try {
-      await page.goto(coursePath);
-      await page.waitForLoadState("networkidle");
-
-      await expect(page.getByRole("link", { name: "Build my plan" }).first()).toBeVisible();
     } finally {
       await context.close();
     }

@@ -12,7 +12,7 @@ import {
 } from "@zoonk/testing/fixtures/library-lessons";
 import { getBaseUrl } from "@zoonk/utils/origin";
 import { normalizeString } from "@zoonk/utils/string";
-import { type Page, expect, test } from "./fixtures";
+import { expect, test } from "./fixtures";
 
 const OPEN_GRAPH_IMAGE_SIZE = { height: 630, width: 1200 };
 
@@ -70,22 +70,19 @@ function getImageHash(image: Buffer): string {
  * Next fingerprints generated metadata routes, so tests need to read the
  * concrete image URL from the page head instead of guessing the file route.
  */
-async function getOpenGraphImageUrl({ page, path }: { page: Page; path: string }) {
-  await page.goto(path);
-
-  await expect
-    .poll(() =>
-      page.evaluate(
-        () => document.querySelector<HTMLMetaElement>("meta[property='og:image']")?.content ?? "",
-      ),
-    )
-    .not.toBe("");
-
-  const imageUrl = await page.evaluate(
-    () => document.querySelector<HTMLMetaElement>("meta[property='og:image']")?.content ?? "",
-  );
-
-  return new URL(imageUrl, "http://localhost");
+async function getOpenGraphImageUrl({
+  request,
+  path,
+}: {
+  request: APIRequestContext;
+  path: string;
+}) {
+  const response = await request.get(path);
+  expect(response.status(), path).toBe(200);
+  const html = await response.text();
+  const imageUrl = /<meta property="og:image" content="(?<url>[^"]+)"/u.exec(html)?.groups?.url;
+  expect(imageUrl, path).toBeTruthy();
+  return new URL(imageUrl!.replaceAll("&amp;", "&"), "http://localhost");
 }
 
 /**
@@ -97,14 +94,12 @@ function toImageRequestPath(url: URL) {
 }
 
 test("localizes the shared open graph image for every locale, on the app's origin", async ({
-  context,
   request,
 }) => {
   const pagePaths = ["/", "/de", "/es", "/fr", "/pt"];
-  const pages = await Promise.all(pagePaths.map(() => context.newPage()));
 
   const imageUrls = await Promise.all(
-    pagePaths.map((path, index) => getOpenGraphImageUrl({ page: pages[index]!, path })),
+    pagePaths.map((path) => getOpenGraphImageUrl({ path, request })),
   );
 
   expect(imageUrls.map((url) => url.origin)).toStrictEqual(
@@ -122,10 +117,7 @@ test("localizes the shared open graph image for every locale, on the app's origi
   expect(imageHashes.size).toBe(pagePaths.length);
 });
 
-test("generates open graph images for course, chapter, and lesson pages", async ({
-  page,
-  request,
-}) => {
+test("generates open graph images for course, chapter, and lesson pages", async ({ request }) => {
   const uniqueId = randomUUID().slice(0, 8);
   const org = await getAiOrganization();
   const courseTitle = `E2E Open Graph Course ${uniqueId}`;
@@ -152,9 +144,9 @@ test("generates open graph images for course, chapter, and lesson pages", async 
   const chapterPath = `${coursePath}/ch/${chapter.slug}`;
   const lessonPath = `${chapterPath}/l/${lesson.slug}`;
 
-  const courseImageUrl = await getOpenGraphImageUrl({ page, path: coursePath });
-  const chapterImageUrl = await getOpenGraphImageUrl({ page, path: chapterPath });
-  const lessonImageUrl = await getOpenGraphImageUrl({ page, path: lessonPath });
+  const courseImageUrl = await getOpenGraphImageUrl({ path: coursePath, request });
+  const chapterImageUrl = await getOpenGraphImageUrl({ path: chapterPath, request });
+  const lessonImageUrl = await getOpenGraphImageUrl({ path: lessonPath, request });
 
   await Promise.all(
     [courseImageUrl, chapterImageUrl, lessonImageUrl].map((url) =>

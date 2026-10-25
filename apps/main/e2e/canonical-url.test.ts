@@ -1,3 +1,4 @@
+import { type APIRequestContext } from "@playwright/test";
 import { setLocale } from "@zoonk/e2e/fixtures/locale";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -11,7 +12,7 @@ import {
 } from "@zoonk/testing/fixtures/library-lessons";
 import { LOCALE_COOKIE } from "@zoonk/utils/locale";
 import { SITE_URL } from "@zoonk/utils/url";
-import { type Page, expect, test } from "./fixtures";
+import { expect, test } from "./fixtures";
 
 /**
  * Course content can be opened through any UI locale, but search engines need
@@ -19,41 +20,25 @@ import { type Page, expect, test } from "./fixtures";
  */
 async function expectCatalogMetadata({
   canonicalPath,
-  page,
+  request,
   path,
   robots,
 }: {
   canonicalPath: string;
-  page: Page;
+  request: APIRequestContext;
   path: string;
   robots: "index, follow" | "noindex, follow";
 }) {
-  await page.goto(path);
+  const response = await request.get(path);
+  expect(response.status(), path).toBe(200);
+  const html = await response.text();
+  const canonicalUrl = /<link rel="canonical" href="(?<url>[^"]+)"/u.exec(html)?.groups?.url;
+  const actualRobots = /<meta name="robots" content="(?<value>[^"]+)"/u.exec(html)?.groups?.value;
 
-  await expect
-    .poll(() =>
-      page.evaluate(() => ({
-        canonicalUrl: document.querySelector<HTMLLinkElement>("link[rel='canonical']")?.href,
-        robots: document.querySelector<HTMLMetaElement>("meta[name='robots']")?.content,
-      })),
-    )
-    .toStrictEqual({ canonicalUrl: `${SITE_URL}${canonicalPath}`, robots });
-}
-
-/**
- * Course discovery pages are search landing pages, so their rendered metadata
- * should explicitly allow indexing instead of relying on an implicit default.
- */
-async function expectIndexable({ page, path }: { page: Page; path: string }) {
-  await page.goto(path);
-
-  await expect
-    .poll(() =>
-      page.evaluate(
-        () => document.querySelector<HTMLMetaElement>("meta[name='robots']")?.content ?? "",
-      ),
-    )
-    .toBe("index, follow");
+  expect({ canonicalUrl, robots: actualRobots }, path).toStrictEqual({
+    canonicalUrl: `${SITE_URL}${canonicalPath}`,
+    robots,
+  });
 }
 
 /**
@@ -91,59 +76,66 @@ async function createLibraryCourse({
   return { chapterPath, course, coursePath, lessonPath: `${chapterPath}/l/${lesson.slug}` };
 }
 
-test("marks course discovery pages as indexable", async ({ page }) => {
-  await expectIndexable({ page, path: "/courses" });
-  await expectIndexable({ page, path: "/pt/courses/science" });
+test("marks course discovery pages as indexable", async ({ request }) => {
+  for (const path of ["/courses", "/pt/courses/science"]) {
+    // oxlint-disable-next-line no-await-in-loop -- Each response is checked before the next request.
+    const response = await request.get(path);
+    expect(response.status(), path).toBe(200);
+    // oxlint-disable-next-line no-await-in-loop -- Each response is checked before the next request.
+    expect(await response.text(), path).toContain('<meta name="robots" content="index, follow"');
+  }
 });
 
-test("indexes course, chapter, and lesson pages only in the course language", async ({ page }) => {
+test("indexes course, chapter, and lesson pages only in the course language", async ({
+  request,
+}) => {
   const { chapterPath, coursePath, lessonPath } = await createLibraryCourse({ language: "pt-BR" });
 
   await expectCatalogMetadata({
     canonicalPath: `/pt${coursePath}`,
-    page,
     path: coursePath,
+    request,
     robots: "noindex, follow",
   });
 
   await expectCatalogMetadata({
     canonicalPath: `/pt${chapterPath}`,
-    page,
     path: `/es${chapterPath}`,
+    request,
     robots: "noindex, follow",
   });
 
   await expectCatalogMetadata({
     canonicalPath: `/pt${lessonPath}`,
-    page,
     path: `/fr${lessonPath}`,
+    request,
     robots: "noindex, follow",
   });
 
   await expectCatalogMetadata({
     canonicalPath: `/pt${coursePath}`,
-    page,
     path: `/pt${coursePath}`,
+    request,
     robots: "index, follow",
   });
 
   await expectCatalogMetadata({
     canonicalPath: `/pt${chapterPath}`,
-    page,
     path: `/pt${chapterPath}`,
+    request,
     robots: "index, follow",
   });
 
   await expectCatalogMetadata({
     canonicalPath: `/pt${lessonPath}`,
-    page,
     path: `/pt${lessonPath}`,
+    request,
     robots: "index, follow",
   });
 });
 
 test("keeps a course and its pages out of the index until its page details are written", async ({
-  page,
+  request,
 }) => {
   const { chapterPath, coursePath, lessonPath } = await createLibraryCourse({
     details: false,
@@ -154,34 +146,34 @@ test("keeps a course and its pages out of the index until its page details are w
     // oxlint-disable-next-line no-await-in-loop -- One page opens each URL in turn.
     await expectCatalogMetadata({
       canonicalPath: `/pt${path}`,
-      page,
       path: `/pt${path}`,
+      request,
       robots: "noindex, follow",
     });
   }
 });
 
-test("keeps unsupported instructional languages out of the English index", async ({ page }) => {
+test("keeps unsupported instructional languages out of the English index", async ({ request }) => {
   const { chapterPath, coursePath, lessonPath } = await createLibraryCourse({ language: "ja-JP" });
 
   await expectCatalogMetadata({
     canonicalPath: coursePath,
-    page,
     path: coursePath,
+    request,
     robots: "noindex, follow",
   });
 
   await expectCatalogMetadata({
     canonicalPath: chapterPath,
-    page,
     path: chapterPath,
+    request,
     robots: "noindex, follow",
   });
 
   await expectCatalogMetadata({
     canonicalPath: lessonPath,
-    page,
     path: lessonPath,
+    request,
     robots: "noindex, follow",
   });
 });
@@ -193,16 +185,26 @@ test.describe("catalog URLs with another language preference", () => {
     const { course, coursePath: path } = await createLibraryCourse({ language: "en" });
 
     await setLocale(page, "de");
-    await expectCatalogMetadata({ canonicalPath: path, page, path, robots: "noindex, follow" });
+
+    await expectCatalogMetadata({
+      canonicalPath: path,
+      path,
+      request: page.request,
+      robots: "noindex, follow",
+    });
+
+    await page.goto(path);
     await expect(page.getByRole("heading", { level: 1, name: course.title })).toBeVisible();
     expect(new URL(page.url()).pathname).toBe(`/de${path}`);
 
     await expectCatalogMetadata({
       canonicalPath: path,
-      page,
       path: `/pt${path}`,
+      request: page.request,
       robots: "noindex, follow",
     });
+
+    await page.goto(`/pt${path}`);
 
     expect(new URL(page.url()).pathname).toBe(`/pt${path}`);
     await expect(page.locator("html")).toHaveAttribute("lang", "pt");

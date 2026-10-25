@@ -756,18 +756,6 @@ test.describe("public Library chapter and course pages", () => {
     }
   });
 
-  test("lists a Library course with its description on its category's page", async ({ page }) => {
-    // Category pages are prerendered, so this reads the seeded Library course (read-only).
-    await page.goto("/courses/science");
-
-    const course = page.getByRole("link", { name: /Quantum physics from scratch/u });
-
-    await expect(course).toBeVisible();
-    await expect(course).toContainText("one short lesson at a time");
-    await expect(course).toHaveAttribute("href", /\/c\/quantum-physics-from-scratch$/u);
-    await expectAccessibleScreen(page, "a catalog category");
-  });
-
   test("a signed-in learner reports a problem from the course's and the chapter's menus, without votes", async ({
     userWithoutProgress: page,
   }) => {

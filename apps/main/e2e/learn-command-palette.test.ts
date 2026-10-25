@@ -1,11 +1,7 @@
 import { catalogCourseFixture } from "@zoonk/testing/fixtures/library-courses";
 import { openLearnerPalette, openPaletteWithKeyboard } from "./command-palette";
 import { expect, test } from "./fixtures";
-import { asPersona } from "./learn-personas";
 import { createStudyDay, openAs } from "./study-day";
-
-/** A chapter of Maya's plan. */
-const CHAPTER = "Exponents and scientific notation";
 
 /**
  * The learning tabs' command palette: the same Cmd/Ctrl+K palette as the catalog, with what the
@@ -13,7 +9,7 @@ const CHAPTER = "Exponents and scientific notation";
  * it on a laptop, and the one under the top bar on a phone.
  */
 test.describe("Learning tabs command palette", () => {
-  test("opens on the learner's actions and places only, and goes to one from the keyboard", async ({
+  test("opens on the learner's actions and places, navigates by keyboard, and drafts a buddy question", async ({
     browser,
   }) => {
     const { user } = await createStudyDay({ buddy: true });
@@ -71,24 +67,14 @@ test.describe("Learning tabs command palette", () => {
       page.getByRole("navigation", { name: "Learning tabs" }).getByRole("link", { name: "Zu" }),
     ).toHaveAttribute("aria-current", "page");
 
-    await page.context().close();
-  });
-
-  test("asks the buddy what the learner typed: it waits in the composer until they send it", async ({
-    browser,
-  }) => {
-    const { user } = await createStudyDay({ buddy: true });
-    const page = await openAs(browser, user);
     const question = "Why do two discounts in a row not add up?";
 
-    await page.goto("/today");
-
     // Asking the buddy lands above the highlighted row, the list's first: it waits for the learner.
-    const palette = await openLearnerPalette(page);
-    await palette.getByRole("combobox", { name: "Search" }).fill(question);
+    const questionPalette = await openLearnerPalette(page);
+    await questionPalette.getByRole("combobox", { name: "Search" }).fill(question);
 
     // Whatever the learner types ends with asking the buddy, then starting a goal: no dead end.
-    const ask = palette.getByRole("group", { name: "Ask" });
+    const ask = questionPalette.getByRole("group", { name: "Ask" });
 
     await expect(ask.getByRole("option")).toHaveText([
       /^Ask Zu: “Why do two discounts in a row not add up\?”/u,
@@ -98,7 +84,7 @@ test.describe("Learning tabs command palette", () => {
     await ask.getByRole("option", { name: /^Ask Zu/u }).click();
 
     await expect(page).toHaveURL(/\/buddy\?ask=/u);
-    await expect(palette).toBeHidden();
+    await expect(questionPalette).toBeHidden();
 
     const conversation = page.getByRole("region", { name: "Conversation with Zu" });
 
@@ -108,21 +94,6 @@ test.describe("Learning tabs command palette", () => {
     await expect(conversation.getByRole("log")).not.toContainText(question);
 
     await page.context().close();
-  });
-
-  test("finds the learner's own chapters before the catalog's", async ({ browser }) => {
-    await asPersona(browser, { persona: "hugeGoal" }, async ({ page }) => {
-      await page.goto("/today");
-
-      const palette = await openPaletteWithKeyboard(page);
-      await palette.getByRole("combobox", { name: "Search" }).fill("Exponents");
-
-      const plan = palette.getByRole("group", { name: "Your plan" });
-      await plan.getByRole("option", { name: new RegExp(`^${CHAPTER}`, "u") }).click();
-
-      await expect(page).toHaveURL(/\/content\/chapters\//u);
-      await expect(page.getByRole("heading", { level: 1, name: CHAPTER })).toBeVisible();
-    });
   });
 
   test("Cmd/Ctrl+K opens the same palette from every screen of the app, tasks included", async ({

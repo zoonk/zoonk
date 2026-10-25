@@ -28,47 +28,48 @@ test("signing in with a real token lands a learner on an interactive Today", asy
   }
 });
 
-// oxlint-disable-next-line vitest/prefer-each -- Playwright has no test.each API.
-for (const control of ["\t", "\n", "\r", "\u0000", "\u0008", "\u001F", "\u007F"]) {
-  test(`ASCII control ${control.codePointAt(0)} stays in the app at login and successful redemption`, async ({
-    browser,
-  }) => {
-    const baseURL = getBaseURL();
-    const user = await createE2EUser(baseURL);
-    const context = await browser.newContext({ baseURL });
+test("ASCII controls stay in the app at login and successful redemption", async ({ browser }) => {
+  const baseURL = getBaseURL();
+  const user = await createE2EUser(baseURL);
 
-    try {
-      const next = `/${control}/evil.example`;
+  for (const control of ["\t", "\n", "\r", "\u0000", "\u0008", "\u001F", "\u007F"]) {
+    // oxlint-disable-next-line no-await-in-loop -- Each login has its own state cookie and single-use token.
+    await test.step(`ASCII control ${control.codePointAt(0)}`, async () => {
+      const context = await browser.newContext({ baseURL });
 
-      const initiated = await context.request.get(`/login?${new URLSearchParams({ next })}`, {
-        maxRedirects: 0,
-      });
+      try {
+        const next = `/${control}/evil.example`;
 
-      expect(initiated.status()).toBe(307);
-      const authUrl = new URL(initiated.headers().location ?? "");
-      const callback = new URL(authUrl.searchParams.get("redirectTo") ?? "");
-      expect(callback.searchParams.get("next")).toBe("/today");
-      const state = callback.searchParams.get("state") ?? "";
-      const cookies = await context.cookies();
+        const initiated = await context.request.get(`/login?${new URLSearchParams({ next })}`, {
+          maxRedirects: 0,
+        });
 
-      expect(
-        cookies.find((cookie) => cookie.name === ONE_TIME_TOKEN_LOGIN_STATE_COOKIE)?.value,
-      ).toBe(state);
+        expect(initiated.status()).toBe(307);
+        const authUrl = new URL(initiated.headers().location ?? "");
+        const callback = new URL(authUrl.searchParams.get("redirectTo") ?? "");
+        expect(callback.searchParams.get("next")).toBe("/today");
+        const state = callback.searchParams.get("state") ?? "";
+        const cookies = await context.cookies();
 
-      const token = await generateOneTimeToken(baseURL, user);
+        expect(
+          cookies.find((cookie) => cookie.name === ONE_TIME_TOKEN_LOGIN_STATE_COOKIE)?.value,
+        ).toBe(state);
 
-      const redeemed = await context.request.get(
-        `/auth/callback?${new URLSearchParams({ next, state, token })}`,
-        { maxRedirects: 0 },
-      );
+        const token = await generateOneTimeToken(baseURL, user);
 
-      expect(redeemed.status()).toBe(302);
-      expect(redeemed.headers().location).toBe("/");
-    } finally {
-      await context.close();
-    }
-  });
-}
+        const redeemed = await context.request.get(
+          `/auth/callback?${new URLSearchParams({ next, state, token })}`,
+          { maxRedirects: 0 },
+        );
+
+        expect(redeemed.status()).toBe(302);
+        expect(redeemed.headers().location).toBe("/");
+      } finally {
+        await context.close();
+      }
+    });
+  }
+});
 
 test("a second failed callback renders a retry screen with a safe return path", async ({
   page,
