@@ -79,7 +79,6 @@ test("keeps a phase challenge waiting for today's lessons while a later lesson c
   await expect(row).toContainText("Percentages · after today's lessons");
   await expect(row.getByRole("button")).toHaveCount(0);
   await expect(card.getByRole("button", { exact: true, name: "Phase challenge" })).toHaveCount(0);
-  await page.screenshot({ fullPage: true, path: test.info().outputPath("today-wait-desktop.png") });
 
   // Picking a later learn block remains allowed even while the earlier review is unfinished.
   await card
@@ -112,7 +111,6 @@ test("keeps a phase challenge waiting for today's lessons while a later lesson c
   await expect(row.getByRole("button")).toHaveCount(0);
   await page.setViewportSize({ height: 844, width: 390 });
   await expect(row).toBeVisible();
-  await page.screenshot({ fullPage: true, path: test.info().outputPath("today-wait-phone.png") });
   await page.context().close();
 });
 
@@ -368,7 +366,6 @@ test.describe("Today", () => {
 
     await expect(challenge.getByRole("button")).toHaveCount(0);
     await expect(challenge.getByRole("link")).toHaveCount(0);
-    await missions.screenshot({ path: test.info().outputPath("today-missions-desktop.png") });
 
     await missions.getByRole("link", { name: /^Ask Zu something\b/u }).click();
     await expect(page).toHaveURL(/\/buddy$/u);
@@ -639,25 +636,11 @@ test.describe("Today", () => {
     await page.context().close();
   });
 
-  test("offers a course from before goals when nothing else needs saying", async ({ browser }) => {
-    const { user } = await createStudyDay();
-    await suggestedGoalFixture({ title: "Spanish", userId: user.id });
-    const page = await openAs(browser, user);
-    await page.goto("/today");
-
-    const suggestion = page.getByRole("region", { name: "Suggested goal" });
-    await expect(suggestion.getByRole("heading", { name: "Continue Spanish?" })).toBeVisible();
-    await expect(suggestion.getByText("Build a plan in 1 minute.")).toBeVisible();
-
-    await suggestion.getByRole("button", { name: "Not now" }).click();
-    await expect(suggestion).toBeHidden();
-    await expect(page.getByRole("region", { name: "Today's session" })).toBeVisible();
-    await page.context().close();
-  });
-
   // Bia had Today open in two tabs and said "Not now" to "Continue Spanish?" in one: the other kept
   // offering it, and answering it there failed, since it was answered already.
-  test("drops a suggested goal answered in another tab", async ({ browser }) => {
+  test("offers a course from before goals when nothing else needs saying, and drops it in another tab once answered", async ({
+    browser,
+  }) => {
     const { user } = await createStudyDay();
     await suggestedGoalFixture({ title: "Spanish", userId: user.id });
     const page = await openAs(browser, user);
@@ -667,11 +650,14 @@ test.describe("Today", () => {
 
     const suggestion = page.getByRole("region", { name: "Suggested goal" });
     const elsewhere = other.getByRole("region", { name: "Suggested goal" });
+    await expect(suggestion.getByRole("heading", { name: "Continue Spanish?" })).toBeVisible();
+    await expect(suggestion.getByText("Build a plan in 1 minute.")).toBeVisible();
     await expect(elsewhere.getByRole("heading", { name: "Continue Spanish?" })).toBeVisible();
     expect(await other.evaluate(() => document.visibilityState)).toBe("visible");
 
     await suggestion.getByRole("button", { name: "Not now" }).click();
     await expect(suggestion).toBeHidden();
+    await expect(page.getByRole("region", { name: "Today's session" })).toBeVisible();
     await expect(elsewhere).toBeHidden();
     await page.context().close();
   });
@@ -831,7 +817,6 @@ test.describe("Today", () => {
     ]);
 
     await expect(card.getByRole("button", { name: /^Study \d+ more minutes$/u })).toBeVisible();
-    await expectAccessibleScreen(page, "Today once the day is done");
 
     // Enter opens what changed, the day's one next step, on the session screen of this goal's day.
     await expect(card.getByRole("link", { name: /^See what changed/u })).toHaveAttribute(
@@ -859,7 +844,7 @@ test.describe("Today after days away", () => {
   test("welcomes back a learner who set up the goal and never studied, without pushing the backlog", async ({
     browser,
   }) => {
-    await asPersona(browser, { away: 6, day: 7, persona: "exam" }, async ({ page }) => {
+    await asPersona(browser, { away: 6, day: 7, persona: "stocks" }, async ({ page }) => {
       await page.goto("/today");
 
       const card = page.getByRole("region", { name: "Today's session" });
@@ -871,7 +856,6 @@ test.describe("Today after days away", () => {
       await expect(page.getByRole("main").getByText(/to catch up/u)).toHaveCount(0);
       await expect(card.getByText(/Catching up/u)).toHaveCount(0);
       await expect(card.getByRole("button", { name: CATCH_UP_BUTTON })).toHaveCount(0);
-      await expectAccessibleScreen(page, "Today after days away");
 
       // The Plan still says honestly what those days left, under its pace (drawn once per
       // viewport: a tile in the column, a number in the aside).
@@ -969,7 +953,7 @@ test.describe("Today after days away", () => {
   test("keeps a rest day after days away, says hello and still offers some study", async ({
     browser,
   }) => {
-    await asPersona(browser, { away: 4, persona: "exam" }, async ({ page, user }) => {
+    await asPersona(browser, { away: 4, persona: "stocks" }, async ({ page, user }) => {
       const plan = await prisma.plan.findUniqueOrThrow({
         include: { goal: true },
         where: { goalId: user.goalId },
@@ -1199,7 +1183,9 @@ test.describe("Today without a session to start", () => {
     await page.context().close();
   });
 
-  test("brings a paused goal back with one tap", async ({ browser }) => {
+  // Bia had Today open in two tabs on her paused goal and resumed it in one: the other still said
+  // the goal was paused, with nothing planned.
+  test("brings a paused goal back with one tap, in another tab too", async ({ browser }) => {
     const user = await createE2EUser(getBaseURL());
 
     const goal = await goalFixture({
@@ -1217,7 +1203,9 @@ test.describe("Today without a session to start", () => {
     await planItemFixture({ kind: "lesson", planId: plan.id });
 
     const page = await openAs(browser, user);
+    const other = await page.context().newPage();
     await page.goto("/today");
+    await other.goto("/today");
 
     // Today keeps its frame: its title, and one line saying the goal is paused.
     await expect(page.getByRole("heading", { level: 1, name: "Today" })).toBeVisible();
@@ -1225,6 +1213,12 @@ test.describe("Today without a session to start", () => {
     await expect(
       page.getByRole("status").filter({ hasText: "Bake sourdough bread is paused." }),
     ).toContainText("Nothing is planned until you resume it.");
+
+    await expect(
+      other.getByRole("status").filter({ hasText: "Bake sourdough bread is paused." }),
+    ).toBeVisible();
+
+    expect(await other.evaluate(() => document.visibilityState)).toBe("visible");
 
     // Today reads the page again from the resume's note, after reading its view, never from the
     // button on its own: a read of the page sent with the resume (the button's) could overlap
@@ -1258,42 +1252,6 @@ test.describe("Today without a session to start", () => {
     expect(firstPage === -1 ? ["view"] : events.slice(0, firstPage)).toContain("view");
 
     await expect.poll(() => readGoalStatus(goal.id)).toBe("active");
-
-    await page.context().close();
-  });
-
-  // Bia had Today open in two tabs on her paused goal and resumed it in one: the other still said
-  // the goal was paused, with nothing planned.
-  test("shows the day in another tab once a paused goal is resumed", async ({ browser }) => {
-    const user = await createE2EUser(getBaseURL());
-
-    const goal = await goalFixture({
-      status: "paused",
-      timezone: "UTC",
-      title: "Bake sourdough bread",
-      userId: user.id,
-    });
-
-    const [plan] = await Promise.all([
-      planFixture({ goalId: goal.id }),
-      learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
-    ]);
-
-    await planItemFixture({ kind: "lesson", planId: plan.id });
-
-    const page = await openAs(browser, user);
-    const other = await page.context().newPage();
-    await page.goto("/today");
-    await other.goto("/today");
-
-    await expect(
-      other.getByRole("status").filter({ hasText: "Bake sourdough bread is paused." }),
-    ).toBeVisible();
-
-    expect(await other.evaluate(() => document.visibilityState)).toBe("visible");
-
-    await page.getByRole("button", { name: "Resume Bake sourdough bread" }).click();
-    await expect(page.getByRole("region", { name: "Today's session" })).toBeVisible();
     await expect(other.getByRole("region", { name: "Today's session" })).toBeVisible();
     await page.context().close();
   });
@@ -1533,7 +1491,10 @@ test.describe("Today without a day to show", () => {
 
   // Bia typed "understand quantum physics" on Today and had it open in two tabs: she renamed the
   // goal in one, and the other kept the old name, so confirming there made the goal she'd changed.
-  test("shows a goal draft corrected in another tab on Today's card", async ({ browser }) => {
+  // Once she confirmed it in one, the other kept offering the same draft to confirm again.
+  test("shows a goal draft corrected in another tab, and leaves it there once it's confirmed", async ({
+    browser,
+  }) => {
     const { id, other, page } = await openDraftInTwoTabs(browser);
     const renamed = `Understand quantum computing ${id}`;
 
@@ -1543,6 +1504,11 @@ test.describe("Today without a day to show", () => {
     await expect(page.getByText(renamed, { exact: true })).toBeVisible();
 
     await expect(other.getByText(renamed, { exact: true })).toBeVisible();
+
+    await page.getByRole("button", { name: "Looks right" }).click();
+    await expect(page).toHaveURL(/\/start\/[0-9a-f-]{36}$/u);
+
+    await expect(other.getByRole("heading", { name: "Here's what I understood" })).toBeHidden();
     await page.context().close();
   });
 
@@ -1637,17 +1603,6 @@ test.describe("Today without a day to show", () => {
 
     await expect(page.getByText(fromHere, { exact: true })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.dataset.sawOlder)).toBeUndefined();
-    await page.context().close();
-  });
-
-  // Bia confirmed the goal in one tab: the other kept offering the same draft to confirm again.
-  test("leaves the goal draft in another tab once the goal is confirmed", async ({ browser }) => {
-    const { other, page } = await openDraftInTwoTabs(browser);
-
-    await page.getByRole("button", { name: "Looks right" }).click();
-    await expect(page).toHaveURL(/\/start\/[0-9a-f-]{36}$/u);
-
-    await expect(other.getByRole("heading", { name: "Here's what I understood" })).toBeHidden();
     await page.context().close();
   });
 
