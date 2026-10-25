@@ -15,6 +15,8 @@ import { routeTimeToCover } from "./time-to-cover-routes";
 
 const FIND = "Find the time that covers everything";
 
+const FAILED = "We couldn't work out the time needed.";
+
 const PHONE = { height: 844, width: 390 };
 
 /** The Plan's one suggestion, as the aside's panel at the tests' desktop width. */
@@ -537,6 +539,25 @@ test.describe("Find the time that covers everything", () => {
 
       // Done leaves the Plan, with no sheet left under it.
       await expect(page.getByRole("dialog")).toHaveCount(0);
+    });
+  });
+
+  test("a search that fails says so once", async ({ browser }) => {
+    await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
+      const { editor } = await shortOnTime(page, user.goalId);
+      await page.route(`**/v1/goals/${user.goalId}/plan/time-to-cover`, (route) => route.abort());
+
+      await editor.getByRole("button", { name: "Close" }).click();
+      await expect(editor).toBeHidden();
+
+      const panel = suggestionPanel(page);
+      await panel.getByRole("button", { name: FIND }).click();
+      await expect(panel.getByRole("button", { name: "Try again" })).toBeVisible();
+      await expect(panel.getByText(FAILED).first()).toBeVisible();
+
+      // What she sees is what a screen reader hears, once.
+      const heard = await panel.ariaSnapshot();
+      expect(heard.split(FAILED)).toHaveLength(2);
     });
   });
 

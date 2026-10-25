@@ -92,9 +92,9 @@ function getCardFlags({
 }
 
 /**
- * What the card says under its title (`description`), and what a screen reader hears when the
- * search ends without an offer to show (`status`): the offer's own lines, that no time covers
- * more, that no date covers everything, or why the search didn't answer.
+ * What the card says under its title: the offer's own lines (`description`), then, when the search
+ * ends without an offer to show (`status`), that no time covers everything, that no date does, or
+ * why the search didn't answer.
  */
 function useCardLines({
   flags,
@@ -127,10 +127,7 @@ function useCardLines({
   const retry = flags.retry ? retryText : null;
 
   return {
-    description: [
-      ...(offer?.description.filter((line) => line !== title) ?? []),
-      ...[none, noDate, retry].filter((line) => line !== null),
-    ],
+    description: offer?.description.filter((line) => line !== title) ?? [],
     status: retry ?? noDate ?? none ?? "",
   };
 }
@@ -325,6 +322,11 @@ export function CoverageSuggestion({ coverage }: { coverage: Coverage | null }) 
             {lines.description.map((line) => (
               <SuggestionDescription key={line}>{line}</SuggestionDescription>
             ))}
+
+            {/* Seen here, heard from the live line under it: said once. */}
+            {lines.status && (
+              <SuggestionDescription aria-hidden="true">{lines.status}</SuggestionDescription>
+            )}
 
             {/* Always there, so that the search runs, and what it couldn't find, is announced. */}
             <p aria-live="polite" className="sr-only">
