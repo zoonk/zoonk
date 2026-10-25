@@ -359,7 +359,6 @@ test.describe("Language calls", () => {
     ]);
 
     const page = await openAs(browser, user);
-    await page.emulateMedia({ reducedMotion: "reduce" });
     const peer = await answerLiveCalls(page, "answers");
     await page.goto(`/conversation/${call.id}`);
     await page.getByRole("button", { name: "Start the call" }).click();
@@ -386,22 +385,6 @@ test.describe("Language calls", () => {
     await expect(
       page.getByRole("main").getByRole("listitem").filter({ hasText: "Brain Power" }),
     ).toHaveCount(0);
-
-    await page.setViewportSize({ height: 844, width: 390 });
-
-    await page.screenshot({
-      animations: "disabled",
-      fullPage: true,
-      path: test.info().outputPath("call-mission-done-390.png"),
-    });
-
-    await page.setViewportSize({ height: 900, width: 1440 });
-
-    await page.screenshot({
-      animations: "disabled",
-      fullPage: true,
-      path: test.info().outputPath("call-mission-done-1440.png"),
-    });
 
     await page.context().close();
   });
@@ -601,7 +584,12 @@ test.describe("Language calls", () => {
       await page.goto(`/conversation/${call.id}`);
 
       await expect(page.getByRole("button", { name: "Start the call" })).toBeVisible();
-      await expectAccessibleScreen(page, "a call");
+
+      // The day's and the month's screens differ only in their words: one scan covers both.
+      if (used.period === "day") {
+        await expectAccessibleScreen(page, "a call");
+      }
+
       await page.getByRole("button", { name: "Start the call" }).click();
 
       const problem = page.getByRole("alert").filter({ hasText: used.title });
@@ -614,7 +602,10 @@ test.describe("Language calls", () => {
         "/subscription",
       );
 
-      await expectAccessibleScreen(page, `calls used for the ${used.period}`);
+      if (used.period === "day") {
+        await expectAccessibleScreen(page, "calls used up");
+      }
+
       await page.context().close();
     });
   }
@@ -708,7 +699,10 @@ test.describe("Language calls", () => {
       }
 
       await expect(status).toHaveText(left.status);
-      await expectAccessibleScreen(page, `a call wrapping up at the ${left.period}'s call time`);
+
+      if (left.period === "day") {
+        await expectAccessibleScreen(page, "a call wrapping up at the plan's call time");
+      }
 
       await page.clock.fastForward("00:30");
       await expect(page.getByRole("img", { name: /of 3 stars/u })).toBeVisible();

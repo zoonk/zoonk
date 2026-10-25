@@ -5,7 +5,6 @@ import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
-import { captureMissionEnding } from "./mission-ending-captures";
 import { saveMissions } from "./study-day";
 
 const PATTERN_TITLE = "“Since” e “for”";
@@ -137,23 +136,6 @@ test.describe("Language mistake pattern", () => {
       await expect(page.getByRole("region", { name: "We noticed a pattern" })).toHaveCount(0);
       const missions = page.getByRole("region", { name: "Today's missions" });
       await expect(missions).toContainText("Practice a pattern");
-
-      await page.setViewportSize({ height: 900, width: 390 });
-
-      await page.screenshot({
-        animations: "disabled",
-        fullPage: true,
-        path: test.info().outputPath("pattern-mission-today-390.png"),
-      });
-
-      await page.setViewportSize({ height: 900, width: 1440 });
-
-      await page.screenshot({
-        animations: "disabled",
-        fullPage: true,
-        path: test.info().outputPath("pattern-mission-today-1440.png"),
-      });
-
       await missions.getByRole("link", { name: /Practice a pattern/u }).click();
       await page.getByRole("button", { name: "Practice this · 3 min" }).click();
       await answerDrill(page);
@@ -177,7 +159,6 @@ test.describe("Language mistake pattern", () => {
         moment.getByText(`+${event.brainPower + 50} Brain Power`, { exact: true }),
       ).toHaveCount(0);
 
-      await captureMissionEnding(page, test.info(), "pattern");
       await expect(moment).toContainText("from today's missions");
     });
   });
