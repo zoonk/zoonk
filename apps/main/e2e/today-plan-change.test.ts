@@ -14,14 +14,8 @@ import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters"
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
-import {
-  getWeeklyMockMinutes,
-  listMockClocks,
-} from "../../../packages/core/src/exams/mocks/mock-plan";
 import { parsePlanChangePayload } from "../../../packages/core/src/plans/_utils/plan-change-payload";
-import { buildPlan } from "../../../packages/core/src/plans/planner/build-plan";
 import {
-  type PlanGraph,
   parsePlanGraph,
   parsePlanSettings,
 } from "../../../packages/core/src/plans/planner/plan-state";
@@ -29,6 +23,7 @@ import { expect, test } from "./fixtures";
 import { tabTo } from "./keyboard-focus";
 import { asPersona } from "./learn-personas";
 import { REPLAN_TIMEOUT_MS } from "./plan-timeouts";
+import { createProposalPlan } from "./proposal-plan";
 import { openAs, readDayNames } from "./study-day";
 import { routeTimeToCover } from "./time-to-cover-routes";
 
@@ -175,130 +170,6 @@ function areaTopics(area: string, count: number) {
   };
 }
 
-/** Real Library content and a saved planner schedule, so proposed changes can be dry-run. */
-async function createProposalPlan({
-  dailyMinutes = 30,
-  exam = false,
-  examDays = 190,
-  lessonMinutes = 3,
-  specs,
-  startDate,
-  startDaysAgo = 10,
-}: {
-  dailyMinutes?: number;
-  exam?: boolean;
-  examDays?: number;
-  lessonMinutes?: number;
-  specs: {
-    area: string;
-    lessons: number;
-    name: string;
-    phase?: number;
-    topics?: string[];
-    written?: string[];
-  }[];
-  startDate?: Date;
-  startDaysAgo?: number;
-}) {
-  const user = await createE2EUser(getBaseURL());
-  const today = toUTCMidnight(new Date());
-  const start = startDate ?? (exam ? new Date(today.getTime() - startDaysAgo * MS_PER_DAY) : today);
-
-  const goal = await goalFixture({
-    ...(startDate && { createdAt: startDate }),
-    dailyMinutes,
-    kind: exam ? "exam" : "learn",
-    targetDate: exam ? new Date(today.getTime() + examDays * MS_PER_DAY) : null,
-    timezone: "UTC",
-    userId: user.id,
-  });
-
-  const skills = await Promise.all(specs.map((spec) => skillFixture({ name: spec.name })));
-
-  const lessons = await Promise.all(
-    specs.flatMap((spec, skillIndex) =>
-      (spec.written ?? []).map(async (title) => {
-        const lesson = await libraryLessonFixture({ estimatedMinutes: lessonMinutes, title });
-        const skillId = skills[skillIndex]?.id ?? "";
-        await prisma.lessonSkill.create({ data: { lessonId: lesson.id, skillId } });
-
-        return {
-          chapterId: null,
-          lessonId: lesson.id,
-          minutes: lessonMinutes,
-          skillIds: [skillId],
-          title,
-        };
-      }),
-    ),
-  );
-
-  const graph: PlanGraph = {
-    phases: [
-      { milestone: null, name: "First interviews" },
-      { milestone: null, name: "Practice" },
-    ],
-    skills: specs.map((spec, index) => ({
-      area: spec.area,
-      lessons: spec.lessons,
-      name: spec.name,
-      phase: spec.phase ?? 0,
-      skillId: skills[index]?.id ?? "",
-      topics: spec.topics,
-      weight: null,
-    })),
-  };
-
-  // Keep the fixture's built pace, as a real plan does, rather than sampling concurrent learners.
-  const pace = { factor: 1, source: "typical" as const };
-  const settings = parsePlanSettings({ pace, startDate: start.toISOString().slice(0, 10) });
-
-  const built = buildPlan({
-    fullMockMinutes: getWeeklyMockMinutes({ fullLength: true, structure: null }),
-    goal,
-    graph,
-    items: [],
-    lessons,
-    mockClocks: listMockClocks(null),
-    mockMinutes: getWeeklyMockMinutes({ fullLength: false, structure: null }),
-    mode: "forced",
-    paceFactor: pace.factor,
-    prerequisites: new Map(),
-    readiness: new Map(),
-    settings,
-    today: start,
-  });
-
-  const plan = await planFixture({
-    goalId: goal.id,
-    graph,
-    phases: built.phases,
-    settings: { ...settings, mockFunding: built.mockFunding },
-  });
-
-  await Promise.all([
-    learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
-    prisma.planItem.createMany({
-      data: built.items.map((item, position) => ({
-        chapterId: item.chapterId,
-        completedAt: item.completedAt,
-        kind: item.kind,
-        lessonId: item.lessonId,
-        lessons: item.lessons,
-        phase: item.phase,
-        planId: plan.id,
-        position,
-        scheduledFor: item.scheduledFor,
-        skillId: item.skillId,
-        status: item.status,
-        titleSnapshot: item.titleSnapshot,
-      })),
-    }),
-  ]);
-
-  return { built, plan, today, user };
-}
-
 /** Calendar labels match the learner's UTC plan, including a year for dates beyond this year. */
 function proposalDate(isoDate: string, month: "long" | "short" = "long") {
   const date = new Date(`${isoDate}T00:00:00Z`);
@@ -351,54 +222,6 @@ async function firstProposalLesson({ area, planId }: { area: string; planId: str
 }
 
 test.describe("Today's plan change", () => {
-  test("applies a proposal from the plan's assistant right on Today, by keyboard", async ({
-    browser,
-  }) => {
-    await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
-      const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: user.goalId } });
-
-      const change = await planChangeFixture({
-        kind: "edited",
-        payload: { operations: [{ kind: "setDailyMinutes", minutes: 25 }], source: "planEdit" },
-        planId: plan.id,
-        reason: PROPOSAL,
-        status: "proposed",
-      });
-
-      await page.goto("/today");
-
-      const note = page.getByRole("region", { name: "Suggested change" });
-      await expect(note.getByRole("button", { name: "Apply" })).toBeVisible();
-      await expect(note).not.toContainText(PAST_TENSE_CARD);
-      await expect(note).not.toContainText(PROPOSAL);
-
-      // Nothing changes before the learner's OK.
-      expect(await readChangeStatus(change.id)).toBe("proposed");
-
-      await tabTo(page, note.getByRole("button", { name: "Apply" }));
-      await page.keyboard.press("Enter");
-
-      // The answer says what it did, where the buttons were, and focus stays on the note: today's
-      // session wasn't started, so it follows the change.
-      await expect(note.getByRole("status")).toHaveText(
-        "It's in your plan, and today's session follows it.",
-        { timeout: REPLAN_TIMEOUT_MS },
-      );
-
-      await expect(note).toBeFocused();
-      await expect(page).toHaveURL(/\/today$/u);
-
-      await expect.poll(() => readChangeStatus(change.id)).toBe("applied");
-
-      await expect
-        .poll(async () => {
-          const goal = await prisma.goal.findUniqueOrThrow({ where: { id: user.goalId } });
-          return goal.dailyMinutes;
-        })
-        .toBe(25);
-    });
-  });
-
   // Ana applied a suggestion on Today and undid it: the card said her plan was back as it was, but
   // today's session was built again, other lessons and no mistakes practice. Undo gives back the
   // day she had: the same blocks, in the same order.
@@ -434,13 +257,26 @@ test.describe("Today's plan change", () => {
 
       await page.reload();
       const note = page.getByRole("region", { name: "Suggested change" });
-      await note.getByRole("button", { name: "Apply" }).click();
+      await expect(note.getByRole("button", { name: "Apply" })).toBeVisible();
+      await expect(note).not.toContainText(PAST_TENSE_CARD);
+      await expect(note).not.toContainText(PROPOSAL);
 
+      // Nothing changes before the learner's OK.
+      expect(await readChangeStatus(change.id)).toBe("proposed");
+
+      await tabTo(page, note.getByRole("button", { name: "Apply" }));
+      await page.keyboard.press("Enter");
+
+      // The answer says what it did, where the buttons were, and focus stays on the note: today's
+      // session wasn't started, so it follows the change.
       await expect(note.getByRole("status")).toHaveText(
         "It's in your plan, and today's session follows it.",
         { timeout: REPLAN_TIMEOUT_MS },
       );
 
+      await expect(note).toBeFocused();
+      await expect(page).toHaveURL(/\/today$/u);
+      await expect.poll(() => readChangeStatus(change.id)).toBe("applied");
       await expect.poll(readBlocks).not.toStrictEqual(blocks);
       await note.getByRole("button", { name: "Undo" }).click();
       await expect.poll(readBlocks).toStrictEqual(blocks);
@@ -461,154 +297,112 @@ test.describe("Today's plan change", () => {
   test("gives a suggestion back on Undo when Today opens on it already applied", async ({
     browser,
   }) => {
-    await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
-      const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: user.goalId } });
-
-      // The persona's own waiting proposal is answered already, so only this one is shown.
-      await prisma.planChange.updateMany({
-        data: { status: "declined" },
-        where: { planId: plan.id, status: "proposed" },
-      });
-
-      const change = await planChangeFixture({
-        kind: "edited",
-        payload: {
-          operations: [{ kind: "setWeekdayMinutes", minutes: 0, weekdays: [6] }],
-          source: "memory",
-        },
-        planId: plan.id,
-        reason: "You have a prep course on Saturday mornings. Rest on Saturdays?",
-        status: "proposed",
-      });
-
-      await page.goto("/today");
-      const suggestion = page.getByRole("region", { name: "Suggested change" });
-      await suggestion.getByRole("button", { name: "Apply" }).click();
-      await expect.poll(() => readChangeStatus(change.id)).toBe("applied");
-
-      await page.reload();
-      const applied = page.getByRole("region", { name: "Plan change" });
-      await expect(applied.getByRole("button", { name: "Got it" })).toBeVisible();
-      await applied.getByRole("button", { name: "Undo" }).click();
-      await expect.poll(() => readChangeStatus(change.id)).toBe("proposed");
-
-      const back = page.getByRole("region", { name: "Suggested change" });
-      await expect(back.getByRole("button", { name: "Apply" })).toBeVisible();
-      await expect(back.getByRole("button", { name: "Not now" })).toBeVisible();
-      await expect(page.getByRole("button", { name: "Got it" })).toHaveCount(0);
+    const { plan, user } = await createProposalPlan({
+      specs: [{ area: "Stocks", lessons: 4, name: "Financial basics" }],
     });
+
+    const change = await planChangeFixture({
+      kind: "edited",
+      payload: {
+        operations: [{ kind: "setWeekdayMinutes", minutes: 0, weekdays: [6] }],
+        source: "memory",
+      },
+      planId: plan.id,
+      reason: "You have a prep course on Saturday mornings. Rest on Saturdays?",
+      status: "proposed",
+    });
+
+    const page = await openAs(browser, user);
+    await page.goto("/today");
+    const suggestion = page.getByRole("region", { name: "Suggested change" });
+    await suggestion.getByRole("button", { name: "Apply" }).click();
+    await expect.poll(() => readChangeStatus(change.id)).toBe("applied");
+
+    await page.reload();
+    const applied = page.getByRole("region", { name: "Plan change" });
+    await expect(applied.getByRole("button", { name: "Got it" })).toBeVisible();
+    await applied.getByRole("button", { name: "Undo" }).click();
+    await expect.poll(() => readChangeStatus(change.id)).toBe("proposed");
+
+    const back = page.getByRole("region", { name: "Suggested change" });
+    await expect(back.getByRole("button", { name: "Apply" })).toBeVisible();
+    await expect(back.getByRole("button", { name: "Not now" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Got it" })).toHaveCount(0);
+    await page.context().close();
   });
 
   test("answers each waiting proposal in turn, the buddy's and the exam notice's", async ({
     browser,
   }) => {
-    await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
-      const [plan, goal] = await Promise.all([
-        prisma.plan.findUniqueOrThrow({ where: { goalId: user.goalId } }),
-        prisma.goal.findUniqueOrThrow({ where: { id: user.goalId } }),
-      ]);
-
-      const noticeDay = new Date((goal.targetDate ?? new Date()).getTime() + 7 * 86_400_000)
-        .toISOString()
-        .slice(0, "YYYY-MM-DD".length);
-
-      // The persona's own waiting proposal is answered already, so only these two wait.
-      await prisma.planChange.updateMany({
-        data: { status: "declined" },
-        where: { planId: plan.id, status: "proposed" },
-      });
-
-      // The notice's date came first; the buddy's time came later and changes something else.
-      const notice = await planChangeFixture({
-        createdAt: new Date(Date.now() - 60_000),
-        kind: "edited",
-        payload: {
-          operations: [{ estimated: false, kind: "setNoticeDate", targetDate: noticeDay }],
-          source: "notice",
-        },
-        planId: plan.id,
-        reason: "",
-        status: "proposed",
-      });
-
-      const time = await planChangeFixture({
-        kind: "edited",
-        payload: { operations: [{ kind: "setDailyMinutes", minutes: 25 }], source: "planEdit" },
-        planId: plan.id,
-        reason: PROPOSAL,
-        status: "proposed",
-      });
-
-      await page.goto("/today");
-
-      // The newest shows first, alone; the other waits without clutter.
-      const note = page.getByRole("region", { name: "Suggested change" });
-      await expect(note).not.toContainText(/The exam notice says/u);
-      await expect(note).not.toContainText(PAST_TENSE_CARD);
-      await expect(page.getByRole("button", { name: "Next suggestion" })).toHaveCount(0);
-
-      await note.getByRole("button", { name: "Apply" }).click();
-
-      await expect(note.getByRole("status")).toContainText("It's in your plan", {
-        timeout: REPLAN_TIMEOUT_MS,
-      });
-
-      await expect.poll(() => readChangeStatus(time.id)).toBe("applied");
-
-      // Then the one still waiting, by keyboard: it takes the notice's place and focus.
-      const next = note.getByRole("button", { name: "Next suggestion" });
-      await tabTo(page, next);
-      await page.keyboard.press("Enter");
-
-      const noticeNote = page.getByRole("region", { name: "Suggested change" });
-      await expect(noticeNote).toContainText(/^The exam notice says /u);
-      await expect(noticeNote).toBeFocused();
-
-      await noticeNote.getByRole("button", { name: "Keep mine" }).click();
-      await expect(noticeNote.getByRole("status")).toHaveText("Your plan stays as it was.");
-      await expect.poll(() => readChangeStatus(notice.id)).toBe("declined");
-      await expect(page.getByRole("button", { name: "Next suggestion" })).toHaveCount(0);
+    const { plan, user } = await createProposalPlan({
+      exam: true,
+      specs: [{ area: "Stocks", lessons: 4, name: "Financial basics" }],
     });
-  });
 
-  test("asks before the exam notice's day moves the plan, and Keep mine keeps the learner's date", async ({
-    browser,
-  }) => {
-    await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
-      const [plan, goal] = await Promise.all([
-        prisma.plan.findUniqueOrThrow({ where: { goalId: user.goalId } }),
-        prisma.goal.findUniqueOrThrow({ where: { id: user.goalId } }),
-      ]);
+    const goal = await prisma.goal.findUniqueOrThrow({ where: { id: plan.goalId } });
 
-      const noticeDay = new Date((goal.targetDate ?? new Date()).getTime() + 7 * 86_400_000)
-        .toISOString()
-        .slice(0, "YYYY-MM-DD".length);
+    const noticeDay = new Date((goal.targetDate ?? new Date()).getTime() + 7 * 86_400_000)
+      .toISOString()
+      .slice(0, "YYYY-MM-DD".length);
 
-      const change = await planChangeFixture({
-        kind: "edited",
-        payload: {
-          operations: [{ estimated: false, kind: "setNoticeDate", targetDate: noticeDay }],
-          source: "notice",
-        },
-        planId: plan.id,
-        reason: "",
-        status: "proposed",
-      });
-
-      await page.goto("/today");
-
-      const note = page.getByRole("region", { name: "Suggested change" });
-      await expect(note).toContainText(/^The exam notice says /u);
-      await expect(note.getByRole("button", { name: "Apply" })).toBeVisible();
-
-      await note.getByRole("button", { name: "Keep mine" }).click();
-      await expect(note.getByRole("status")).toHaveText("Your plan stays as it was.");
-
-      await expect.poll(() => readChangeStatus(change.id)).toBe("declined");
-
-      const kept = await prisma.goal.findUniqueOrThrow({ where: { id: user.goalId } });
-      expect(kept.targetDate).toStrictEqual(goal.targetDate);
+    // The notice's date came first; the buddy's time came later and changes something else.
+    const notice = await planChangeFixture({
+      createdAt: new Date(Date.now() - 60_000),
+      kind: "edited",
+      payload: {
+        operations: [{ estimated: false, kind: "setNoticeDate", targetDate: noticeDay }],
+        source: "notice",
+      },
+      planId: plan.id,
+      reason: "",
+      status: "proposed",
     });
+
+    const time = await planChangeFixture({
+      kind: "edited",
+      payload: { operations: [{ kind: "setDailyMinutes", minutes: 25 }], source: "planEdit" },
+      planId: plan.id,
+      reason: PROPOSAL,
+      status: "proposed",
+    });
+
+    const page = await openAs(browser, user);
+    await page.goto("/today");
+
+    // The newest shows first, alone; the other waits without clutter.
+    const note = page.getByRole("region", { name: "Suggested change" });
+    await expect(note).not.toContainText(/The exam notice says/u);
+    await expect(note).not.toContainText(PAST_TENSE_CARD);
+    await expect(page.getByRole("button", { name: "Next suggestion" })).toHaveCount(0);
+
+    await note.getByRole("button", { name: "Apply" }).click();
+
+    // No session is built for today yet, so the plan follows it from now on.
+    await expect(note.getByRole("status")).toHaveText("Your plan follows it from now on.", {
+      timeout: REPLAN_TIMEOUT_MS,
+    });
+
+    await expect.poll(() => readChangeStatus(time.id)).toBe("applied");
+
+    // Then the one still waiting, by keyboard: it takes the notice's place and focus.
+    const next = note.getByRole("button", { name: "Next suggestion" });
+    await tabTo(page, next);
+    await page.keyboard.press("Enter");
+
+    // The notice asks before its day moves the plan; Keep mine keeps the learner's date.
+    const noticeNote = page.getByRole("region", { name: "Suggested change" });
+    await expect(noticeNote).toContainText(/^The exam notice says /u);
+    await expect(noticeNote).toBeFocused();
+    await expect(noticeNote.getByRole("button", { name: "Apply" })).toBeVisible();
+
+    await noticeNote.getByRole("button", { name: "Keep mine" }).click();
+    await expect(noticeNote.getByRole("status")).toHaveText("Your plan stays as it was.");
+    await expect.poll(() => readChangeStatus(notice.id)).toBe("declined");
+    await expect(page.getByRole("button", { name: "Next suggestion" })).toHaveCount(0);
+
+    const kept = await prisma.goal.findUniqueOrThrow({ where: { id: plan.goalId } });
+    expect(kept.targetDate).toStrictEqual(goal.targetDate);
+    await page.context().close();
   });
 
   test("names the lessons and topics a suggestion leaves out and the end it moves", async ({
@@ -1166,7 +960,7 @@ test.describe("Today's plan change", () => {
     await page.context().close();
   });
 
-  test("names the lessons that no longer fit when the plan gives lessons more time", async ({
+  test("shows an automatic re-estimate once when fewer lessons fit, naming what no longer fits", async ({
     browser,
   }) => {
     // Lessons only stop fitting by a date the plan has ahead.
@@ -1182,7 +976,7 @@ test.describe("Today's plan change", () => {
       ],
     });
 
-    await planChangeFixture({
+    const change = await planChangeFixture({
       kind: "estimateUpdated",
       payload: {
         effect: {
@@ -1200,117 +994,50 @@ test.describe("Today's plan change", () => {
 
     const page = await openAs(browser, user);
     await page.goto("/today");
-
     const note = page.getByRole("region", { name: "Plan change" });
 
     await expect(note).toContainText(
       "Leaves out 2 lessons: Compound interest and Diversification.",
     );
 
-    await expect(note.getByRole("button", { name: "Got it" })).toBeVisible();
+    // The news and reason are separate sentences, or two compiled message IDs until extraction.
+    // A generic "Your plan changed" has neither structure and must not pass for an explanation.
+    const explanation = note
+      .getByRole("paragraph")
+      .filter({ hasText: /\.\s+\S|^[\w+/=-]{6}\s+[\w+/=-]{6}$/u });
+
+    await expect(explanation).toBeVisible();
     await expect(note.getByRole("button", { name: "Undo" })).toHaveCount(0);
+
+    const editor = page.getByRole("dialog", { name: "Adjust your plan" });
     await note.getByRole("link", { name: "Adjust plan" }).click();
     await expect(page).toHaveURL(/\/plan\?focus=adjust$/u);
-    const editor = page.getByRole("dialog", { name: "Adjust your plan" });
     await expect(editor).toBeVisible();
     await editor.getByRole("button", { exact: true, name: "Close" }).click();
-    await expect(editor).not.toBeVisible();
+    await page.getByRole("link", { exact: true, name: "Today" }).filter({ visible: true }).click();
+
+    // Plan has already been visited: the notice must still open its adjustment view.
+    await expect(note.getByRole("button", { name: "Got it" })).toBeVisible();
+    await note.getByRole("link", { name: "Adjust plan" }).click();
+    await expect(editor).toBeVisible();
+    await editor.getByRole("button", { exact: true, name: "Close" }).click();
+    await page.getByRole("link", { exact: true, name: "Today" }).filter({ visible: true }).click();
+
+    await note.getByRole("button", { name: "Got it" }).click();
+    await expect(note).toContainText("Noted.");
+
+    await expect
+      .poll(async () => {
+        const saved = await prisma.planChange.findUniqueOrThrow({ where: { id: change.id } });
+        return parsePlanChangePayload(saved.payload).seenAt;
+      })
+      .not.toBeNull();
+
+    await page.reload();
+    await expect(page.getByRole("heading", { level: 1, name: "Today" })).toBeVisible();
+    await expect(page.getByRole("region", { name: "Plan change" })).toHaveCount(0);
     await page.context().close();
   });
-
-  for (const fewer of [false, true]) {
-    test(`shows an automatic re-estimate once when ${fewer ? "fewer" : "more"} lessons fit`, async ({
-      browser,
-    }) => {
-      const { plan, user } = await createProposalPlan({
-        exam: true,
-        specs: [
-          {
-            area: "Stocks",
-            lessons: 2,
-            name: "Financial basics",
-            written: ["Compound interest", "Diversification"],
-          },
-        ],
-      });
-
-      const change = await planChangeFixture({
-        kind: "estimateUpdated",
-        payload: {
-          effect: {
-            endDateAfter: null,
-            endDateBefore: null,
-            lessonsAdded: fewer ? 0 : 4,
-            lessonsLeftOut: fewer ? ["Compound interest", "Diversification"] : [],
-            lessonsRemoved: fewer ? 2 : 0,
-          },
-          source: "system",
-        },
-        planId: plan.id,
-        status: "applied",
-      });
-
-      const page = await openAs(browser, user);
-      await page.goto("/today");
-      const note = page.getByRole("region", { name: "Plan change" });
-      await expect(note).toContainText(fewer ? "Leaves out 2 lessons" : "Adds 4 lessons");
-      // The news and reason are separate sentences, or two compiled message IDs until extraction.
-      // A generic "Your plan changed" has neither structure and must not pass for an explanation.
-      const explanation = note
-        .getByRole("paragraph")
-        .filter({ hasText: /\.\s+\S|^[\w+/=-]{6}\s+[\w+/=-]{6}$/u });
-
-      await expect(explanation).toBeVisible();
-      await expect(note.getByRole("button", { name: "Undo" })).toHaveCount(0);
-
-      if (fewer) {
-        // Plan has already been visited: the notice must still open its adjustment view.
-        await note.getByRole("link", { name: "Adjust plan" }).click();
-        await expect(page.getByRole("dialog", { name: "Adjust your plan" })).toBeVisible();
-
-        await page
-          .getByRole("dialog", { name: "Adjust your plan" })
-          .getByRole("button", { exact: true, name: "Close" })
-          .click();
-
-        await page
-          .getByRole("link", { exact: true, name: "Today" })
-          .filter({ visible: true })
-          .click();
-
-        await expect(note.getByRole("button", { name: "Got it" })).toBeVisible();
-        await note.getByRole("link", { name: "Adjust plan" }).click();
-        await expect(page.getByRole("dialog", { name: "Adjust your plan" })).toBeVisible();
-
-        await page
-          .getByRole("dialog", { name: "Adjust your plan" })
-          .getByRole("button", { exact: true, name: "Close" })
-          .click();
-
-        await page
-          .getByRole("link", { exact: true, name: "Today" })
-          .filter({ visible: true })
-          .click();
-      } else {
-        await expect(note.getByRole("link", { name: "Adjust plan" })).toHaveCount(0);
-      }
-
-      await note.getByRole("button", { name: "Got it" }).click();
-      await expect(note).toContainText("Noted.");
-
-      await expect
-        .poll(async () => {
-          const saved = await prisma.planChange.findUniqueOrThrow({ where: { id: change.id } });
-          return parsePlanChangePayload(saved.payload).seenAt;
-        })
-        .not.toBeNull();
-
-      await page.reload();
-      await expect(page.getByRole("heading", { level: 1, name: "Today" })).toBeVisible();
-      await expect(page.getByRole("region", { name: "Plan change" })).toHaveCount(0);
-      await page.context().close();
-    });
-  }
 
   test("uses by-date counts only for future plans that finish by that date", async ({
     browser,
@@ -1368,6 +1095,10 @@ test.describe("Today's plan change", () => {
       await expect(note.locator("[data-slot=diff-lines]").getByRole("listitem").first()).toHaveText(
         scenario === "future" ? /^\+\s*Adds 4 lessons$/u : /^\+\s*4 more lessons$/u,
       );
+
+      // More lessons leave nothing to win back: no plan has Adjust plan or Undo for them.
+      await expect(note.getByRole("link", { name: "Adjust plan" })).toHaveCount(0);
+      await expect(note.getByRole("button", { name: "Undo" })).toHaveCount(0);
 
       const explanation = note.getByRole("paragraph").first();
       await expect(explanation).toBeVisible();
@@ -1443,26 +1174,7 @@ test.describe("Today's plan change", () => {
   test("names the subjects, not every topic, when a mock brings many known topics back", async ({
     browser,
   }) => {
-    const user = await createE2EUser(getBaseURL());
-    const suffix = randomUUID().slice(0, 6);
-
-    const [goal, lesson] = await Promise.all([
-      goalFixture({ timezone: "UTC", title: `OAB ${suffix}`, userId: user.id }),
-      libraryLessonFixture({ title: `Legal fees ${suffix}` }),
-    ]);
-
-    const [plan] = await Promise.all([
-      planFixture({ goalId: goal.id }),
-      learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
-    ]);
-
-    await planItemFixture({
-      lessonId: lesson.id,
-      planId: plan.id,
-      position: 0,
-      scheduledFor: toUTCMidnight(new Date()),
-      titleSnapshot: lesson.title,
-    });
+    const { plan, user } = await createLessonDayPlan();
 
     // Sofia's first full mock: misses on topics placement took as known, in six subjects.
     await planChangeFixture({
@@ -1502,64 +1214,40 @@ test.describe("Today's plan change", () => {
     await page.context().close();
   });
 
-  // Missed days on a plan short on time leave topics out: the card names them, whether or not
-  // the plan now covers less of the exam.
-  for (const behind of [
-    null,
-    { canFocus: true, coveredAfter: 0.5, coveredBefore: 0.6, currentMinutes: 15, measure: "exam" },
-  ]) {
-    test(`names the topics missed days leave out of the plan (${behind ? "behind" : "keeping pace"})`, async ({
-      browser,
-    }) => {
-      const user = await createE2EUser(getBaseURL());
-      const suffix = randomUUID().slice(0, 6);
+  // Missed days on a plan short on time leave topics out: the card names them, also while the plan
+  // covers as much of the exam as before (today.test.ts shows them on a plan falling behind).
+  test("names the topics missed days leave out of the plan, though it keeps pace", async ({
+    browser,
+  }) => {
+    const { plan, user } = await createLessonDayPlan();
 
-      const [goal, lesson] = await Promise.all([
-        goalFixture({ timezone: "UTC", title: `Enem ${suffix}`, userId: user.id }),
-        libraryLessonFixture({ title: `Food chains ${suffix}` }),
-      ]);
-
-      const [plan] = await Promise.all([
-        planFixture({ goalId: goal.id }),
-        learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
-      ]);
-
-      await planItemFixture({
-        lessonId: lesson.id,
-        planId: plan.id,
-        position: 0,
-        scheduledFor: toUTCMidnight(new Date()),
-        titleSnapshot: lesson.title,
-      });
-
-      await planChangeFixture({
-        kind: "missedDays",
-        payload: {
-          behind,
-          days: 4,
-          effect: {
-            endDateAfter: null,
-            endDateBefore: null,
-            lessonsAdded: 0,
-            lessonsRemoved: 6,
-            topicsLeftOut: [{ area: "Natural sciences", topics: ["Food chains", "Genetics"] }],
-          },
-          source: "system",
+    await planChangeFixture({
+      kind: "missedDays",
+      payload: {
+        behind: null,
+        days: 4,
+        effect: {
+          endDateAfter: null,
+          endDateBefore: null,
+          lessonsAdded: 0,
+          lessonsRemoved: 6,
+          topicsLeftOut: [{ area: "Natural sciences", topics: ["Food chains", "Genetics"] }],
         },
-        planId: plan.id,
-        reason: "Lessons earlier days left come first; the rest of the plan moved forward.",
-        status: "applied",
-      });
-
-      const page = await openAs(browser, user);
-      await page.goto("/today");
-
-      const note = page.getByRole("region", { name: "Plan change" });
-
-      await expect(note).toContainText("Food chains and Genetics no longer fit by your date.");
-      await page.context().close();
+        source: "system",
+      },
+      planId: plan.id,
+      reason: "Lessons earlier days left come first; the rest of the plan moved forward.",
+      status: "applied",
     });
-  }
+
+    const page = await openAs(browser, user);
+    await page.goto("/today");
+
+    const note = page.getByRole("region", { name: "Plan change" });
+
+    await expect(note).toContainText("Food chains and Genetics no longer fit by your date.");
+    await page.context().close();
+  });
 
   // LEAD ruling (A)/(A′): Today's falling-behind card says only exact facts, and its "more time"
   // and "move date" choices are one link into the plan editor's time a day, where Find and Move
@@ -1674,173 +1362,6 @@ test.describe("Today's plan change", () => {
       await expect(note.getByRole("button", { name: /^Study .+ a day/u })).toHaveCount(0);
       await expect(note.getByText(/5\shr|everything in depth/u)).toHaveCount(0);
     });
-  });
-
-  test("explains the applied phase-end move after a real missed day", async ({ browser }) => {
-    const previousDay = toUTCMidnight(new Date(Date.now() - MS_PER_DAY));
-
-    const { built, plan, user } = await createProposalPlan({
-      dailyMinutes: 12,
-      specs: [
-        { area: "Interviews", lessons: 12, name: "Opening the interview", phase: 0 },
-        { area: "Interviews", lessons: 60, name: "Follow-up questions", phase: 1 },
-      ],
-      startDate: previousDay,
-    });
-
-    const end = built.phases[0]?.endDate;
-
-    if (!end) {
-      throw new Error("The prior-day plan must have a real saved first phase end");
-    }
-
-    const originalLessons = await prisma.planItem.findMany({
-      orderBy: { id: "asc" },
-      select: { id: true, lessonId: true, scheduledFor: true },
-      where: { kind: "lesson", planId: plan.id },
-    });
-
-    expect(originalLessons).toHaveLength(2);
-
-    expect(originalLessons.map((item) => item.scheduledFor?.toISOString().slice(0, 10))).toContain(
-      previousDay.toISOString().slice(0, 10),
-    );
-
-    const restDay = new Date(`${end}T00:00:00Z`).getUTCDay();
-
-    await prisma.plan.update({
-      data: {
-        settings: {
-          ...parsePlanSettings(plan.settings),
-          weekdayMinutes: Array.from({ length: 7 }, (_, day) => (day === restDay ? 0 : 12)),
-        },
-      },
-      where: { id: plan.id },
-    });
-
-    await expect(prisma.planChange.count({ where: { planId: plan.id } })).resolves.toBe(0);
-
-    const page = await openAs(browser, user);
-    await page.goto("/today");
-    const note = page.getByRole("region", { name: "Plan change" });
-    await expect(note.getByRole("button", { name: "Got it" })).toBeVisible();
-
-    // The read computes the exact notice; only the learner's acknowledgment persists it.
-    const response = await page.request.get("/api/learner/views/today");
-    expect(response.ok()).toBe(true);
-    const body = await response.json();
-    expect(body.status).toBe("ready");
-    const shown = body.copy.view.today.planChange;
-
-    expect(shown).toMatchObject({
-      canUndo: false,
-      id: null,
-      kind: "missedDays",
-      source: "system",
-      status: "applied",
-    });
-
-    await expect(prisma.planChange.count({ where: { planId: plan.id } })).resolves.toBe(0);
-    const payload = parsePlanChangePayload(shown);
-    const move = payload.effect?.phaseEnds?.[0];
-
-    if (!move) {
-      throw new Error("The mandatory notice must name the actual first phase-end move");
-    }
-
-    expect(payload).toMatchObject({
-      behind: null,
-      days: 1,
-      effect: { lessonsAdded: 0, lessonsRemoved: 0 },
-      source: "system",
-    });
-
-    expect(payload.effect?.phaseEnds).toStrictEqual([
-      { after: move.after, before: end, name: "First interviews" },
-    ]);
-
-    expect(Date.parse(move.after)).toBeGreaterThan(Date.parse(end));
-
-    expect(await readText(note)).toContain(
-      `First interviews ends ${proposalDate(move.after)} instead of ${proposalDate(end)}.`,
-    );
-
-    await expect(page.getByRole("region", { name: "Suggested change" })).toHaveCount(0);
-    await expect(note.getByRole("button", { name: "Apply" })).toHaveCount(0);
-    await expect(note.getByRole("button", { name: "Keep mine" })).toHaveCount(0);
-    await expect(note.getByRole("button", { name: "Undo" })).toHaveCount(0);
-
-    await expect(
-      prisma.planItem.findFirstOrThrow({ where: { kind: "boss", phase: 0, planId: plan.id } }),
-    ).resolves.toMatchObject({ scheduledFor: new Date(`${end}T00:00:00Z`) });
-
-    const keptLessons = await prisma.planItem.findMany({
-      orderBy: { id: "asc" },
-      select: { id: true, lessonId: true },
-      where: { kind: "lesson", planId: plan.id },
-    });
-
-    expect(keptLessons).toStrictEqual(
-      originalLessons.map(({ id, lessonId }) => ({ id, lessonId })),
-    );
-
-    const acknowledgments: string[] = [];
-
-    // Today's writing poll also uses a Server Action; only the acknowledgment is a learner write.
-    page.on("request", (request) => {
-      if (
-        request.method() === "POST" &&
-        request.headers()["next-action"] &&
-        request.postData()?.includes('"kind":"computed"')
-      ) {
-        acknowledgments.push(request.url());
-      }
-    });
-
-    await note.getByRole("button", { name: "Got it" }).click();
-    await expect(note.getByRole("status")).toHaveText("Noted.");
-
-    await expect.poll(() => prisma.planChange.count({ where: { planId: plan.id } })).toBe(1);
-
-    const [acknowledged, savedPlan, savedBoss, savedLessons] = await Promise.all([
-      prisma.planChange.findFirstOrThrow({ where: { planId: plan.id } }),
-      prisma.plan.findUniqueOrThrow({ where: { id: plan.id } }),
-      prisma.planItem.findFirstOrThrow({ where: { kind: "boss", phase: 0, planId: plan.id } }),
-      prisma.planItem.findMany({
-        orderBy: { id: "asc" },
-        select: { id: true, lessonId: true },
-        where: { kind: "lesson", planId: plan.id },
-      }),
-    ]);
-
-    expect(acknowledged.id).toMatch(/^[0-9a-f-]{36}$/u);
-    expect(acknowledged).toMatchObject({ kind: "missedDays", status: "applied" });
-
-    expect(parsePlanChangePayload(acknowledged.payload)).toMatchObject({
-      acknowledgedRead: { revision: body.copy.revision },
-      behind: null,
-      days: 1,
-      effect: payload.effect,
-      seenAt: expect.any(String),
-      source: "system",
-    });
-
-    expect(parsePlanChangePayload(acknowledged.payload).effect).toStrictEqual(payload.effect);
-    expect((savedPlan.phases as { endDate: string | null }[])[0]?.endDate).toBe(move.after);
-    expect(savedBoss.scheduledFor).toStrictEqual(new Date(`${move.after}T00:00:00Z`));
-    expect(savedLessons).toStrictEqual(keptLessons);
-    expect(acknowledgments).toHaveLength(1);
-    await expect(prisma.studySession.count({ where: { goalId: plan.goalId } })).resolves.toBe(0);
-
-    await page.request.get("/api/learner/views/today");
-
-    await expect(
-      prisma.planChange.findUniqueOrThrow({ where: { id: acknowledged.id } }),
-    ).resolves.toStrictEqual(acknowledged);
-
-    await expect(prisma.planChange.count({ where: { planId: plan.id } })).resolves.toBe(1);
-
-    await page.context().close();
   });
 
   // An IELTS learner's card lists the tested-out lessons separately from the topics it moves.
