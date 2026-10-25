@@ -40,6 +40,14 @@ function readTargetDate(goalId: string) {
 }
 
 /**
+ * Polls what a change saved for as long as planning again may take (see `plan-timeouts.ts`): the
+ * change writes once its new plan is computed.
+ */
+function expectSaved<T>(read: () => Promise<T>) {
+  return expect.poll(read, { timeout: REPLAN_TIMEOUT_MS });
+}
+
+/**
  * Holds the page's next Server Action (a save: a change, an Undo) until `release`, as a slow save
  * would. Main's plan changes post to the page.
  */
@@ -187,7 +195,7 @@ test.describe("Find the time that covers everything", () => {
 
       // Space picks it: the plan plans again at that time.
       await page.keyboard.press("Space");
-      await expect.poll(() => readDailyMinutes(user.goalId)).toBe(330);
+      await expectSaved(() => readDailyMinutes(user.goalId)).toBe(330);
 
       await expect(
         editor.getByRole("status").filter({ hasText: "Daily time changed to 5 hr 30 min." }),
@@ -196,7 +204,7 @@ test.describe("Find the time that covers everything", () => {
       // Undo puts her time back to the plan Find answered for, so its answer shows again, not
       // picked, with no second search.
       await editor.getByRole("button", { name: "Undo" }).click();
-      await expect.poll(() => readDailyMinutes(user.goalId)).toBe(15);
+      await expectSaved(() => readDailyMinutes(user.goalId)).toBe(15);
 
       await expect(minutes.getByRole("radio", { name: /^15 min/u })).toBeChecked({
         timeout: REPLAN_TIMEOUT_MS,
@@ -231,7 +239,7 @@ test.describe("Find the time that covers everything", () => {
 
       // Found, the date is named before it moves anything; one tap moves it.
       await moveTo(editor).click();
-      await expect.poll(() => readTargetDate(user.goalId)).toBe(fittingDate);
+      await expectSaved(() => readTargetDate(user.goalId)).toBe(fittingDate);
       await expect.poll(() => readDailyMinutes(user.goalId)).toBe(before);
     });
   });
@@ -283,7 +291,7 @@ test.describe("Find the time that covers everything", () => {
 
       await expect(move).not.toHaveAttribute("aria-busy", "true");
       save.release();
-      await expect.poll(() => readTargetDate(user.goalId)).toBe(ownDate);
+      await expectSaved(() => readTargetDate(user.goalId)).toBe(ownDate);
       await expect(editor.getByLabel("Deadline")).toHaveValue(ownDate);
     });
   });
@@ -307,7 +315,7 @@ test.describe("Find the time that covers everything", () => {
       expect(asked).toStrictEqual([]);
 
       save.release();
-      await expect.poll(() => readTargetDate(user.goalId)).toBe(ownDate);
+      await expectSaved(() => readTargetDate(user.goalId)).toBe(ownDate);
       expect(asked).toStrictEqual([]);
     });
   });
@@ -322,7 +330,7 @@ test.describe("Find the time that covers everything", () => {
 
       await editor.getByLabel("Deadline").fill(tighter);
       await editor.getByRole("button", { name: "Save" }).click();
-      await expect.poll(() => readTargetDate(user.goalId)).toBe(tighter);
+      await expectSaved(() => readTargetDate(user.goalId)).toBe(tighter);
       const undo = editor.getByRole("button", { name: "Undo" });
       await expect(undo).toBeVisible({ timeout: REPLAN_TIMEOUT_MS });
 
@@ -338,7 +346,7 @@ test.describe("Find the time that covers everything", () => {
 
       await expect(move).not.toHaveAttribute("aria-busy", "true");
       save.release();
-      await expect.poll(() => readTargetDate(user.goalId)).toBe(toIsoDay(targetDate));
+      await expectSaved(() => readTargetDate(user.goalId)).toBe(toIsoDay(targetDate));
     });
   });
 
@@ -608,7 +616,11 @@ test.describe("Find the time that covers everything", () => {
       await panel.getByRole("button", { exact: true, name: "Preview" }).click();
       await panel.getByRole("button", { exact: true, name: "Apply" }).click();
 
-      await expect(panel.getByRole("heading")).toHaveText("Plan updated");
+      // Applying plans again: the card says so once the new plan is in.
+      await expect(panel.getByRole("heading")).toHaveText("Plan updated", {
+        timeout: REPLAN_TIMEOUT_MS,
+      });
+
       await expect.poll(() => readDailyMinutes(user.goalId)).toBe(300);
     });
   });
