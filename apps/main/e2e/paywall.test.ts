@@ -16,7 +16,8 @@ import { continueToLastStep } from "./result-steps";
 import { carryLessons, createStudyDay, openAs, pastFreeWeek } from "./study-day";
 
 const CATCH_UP_BUTTON = /^Catch up today/u;
-const EXTRA_TIME_BUTTON = /^Study \d+ more minutes/u;
+/** More time: the plan's next lessons, or practice once every lesson is done. */
+const EXTRA_TIME_BUTTON = /^(?:Keep learning|Study \d+ more minutes)/u;
 
 const FREE_WEEK_OVER_BODY =
   "Reviews and fixing your mistakes stay free. Plus opens new lessons, the rest of your plan and mock exams.";

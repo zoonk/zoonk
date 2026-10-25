@@ -188,7 +188,7 @@ export async function createStudyDay({
 
 /**
  * Lessons earlier days left, as the plan's last new-day settling carried them: written lessons of 3
- * minutes each that today's time didn't fit, first on tomorrow's plan.
+ * minutes each that today's time didn't fit, first on tomorrow's plan. Returns them in plan order.
  */
 export async function carryLessons({ count, goalId }: { count: number; goalId: string }) {
   const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId } });
@@ -220,6 +220,8 @@ export async function carryLessons({ count, goalId }: { count: number; goalId: s
     payload: { carriedItemIds: items.map((item) => item.id), days: 1, source: "system" },
     planId: plan.id,
   });
+
+  return lessons.map(({ lesson }) => lesson);
 }
 
 /** Moves a free exam goal's start back, so its free first week of exam prep is over. */

@@ -90,6 +90,9 @@ const SLOW_REQUEST_MS = 2000;
 
 const OPENING_STEP = "Opening your next step…";
 
+/** More time at the session's end: the plan's next lessons, or practice once every lesson is done. */
+const EXTRA_TIME_BUTTON = /^(?:Keep learning|Study \d+ more minutes)/u;
+
 /**
  * A moment sits under its header's heading: the lesson's title in the player, "Today's session"
  * between a session's blocks.
@@ -548,7 +551,7 @@ test.describe("Today's session", () => {
 
     // What changed so far, said as a pause: nothing is skipped.
     await expect(page.getByRole("heading", { level: 1, name: "Done for now" })).toBeVisible();
-    await expect(page.getByRole("button", { name: /^Study \d+ more minutes/u })).toBeHidden();
+    await expect(page.getByRole("button", { name: EXTRA_TIME_BUTTON })).toBeHidden();
     await expect(page.getByText("Save your plan so it's here next time.")).toBeHidden();
 
     const blocks = await prisma.studySessionBlock.findMany({
@@ -610,7 +613,7 @@ test.describe("Today's session", () => {
     await page.context().close();
   });
 
-  test("keeps going right after stopping, and offers 10 more minutes once the day is done", async ({
+  test("keeps going right after stopping, and keeps learning with the plan's next lesson once the day is done", async ({
     browser,
   }) => {
     const { lesson, session, user } = await createStudyDay({ reviewDone: true });
@@ -640,8 +643,8 @@ test.describe("Today's session", () => {
     await expect(page.getByRole("heading", { level: 1, name: /^Done in /u })).toBeVisible();
     await continueToLastStep(page);
 
-    // Nothing new to practice, so the bonus time goes to the plan's lesson left earlier.
-    await page.getByRole("button", { name: /^Study \d+ more minutes/u }).click();
+    // The plan's next lesson is the one left earlier: more time goes to it, not to practice.
+    await page.getByRole("button", { name: "Keep learning" }).click();
     await expect(page).toHaveURL(new RegExp(`/learn/${lesson.id}\\?session=`, "u"));
 
     const extra = await prisma.studySessionBlock.findFirst({
@@ -661,7 +664,8 @@ test.describe("Today's session", () => {
       where: { lessonId: lesson.id },
     });
 
-    // The lesson is done and taught a skill with a question left to practice; the practice is left.
+    // The lesson, the plan's only one, is done and taught a skill with a question left to practice;
+    // the practice is left. With no lesson to go on with, more time is practice.
     await Promise.all([
       prisma.studySessionBlock.updateMany({
         data: { status: "completed" },

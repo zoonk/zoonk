@@ -768,12 +768,12 @@ test.describe("Today", () => {
     await page.context().close();
   });
 
-  test("ends the day with its completed queue, what changed and 10 more minutes", async ({
+  test("ends the day with its completed queue, the plan's next lessons to keep learning and what changed", async ({
     browser,
   }) => {
-    const { session, user } = await createStudyDay({ buddy: true });
+    const { lesson, session, user } = await createStudyDay({ buddy: true });
 
-    // The review and the practice are done; the lesson was left for later, so time is left.
+    // The review and the practice are done; the lesson was left for later, so the plan has it next.
     await Promise.all([
       prisma.studySessionBlock.updateMany({
         data: { status: "completed" },
@@ -789,27 +789,38 @@ test.describe("Today", () => {
     await page.goto("/today");
 
     const card = page.getByRole("region", { name: "Today's session" });
+    const done = card.getByRole("status").filter({ hasText: "Today's session is complete." });
+    const upNext = card.getByRole("region", { name: "Up next in your plan" });
 
-    await expect(
-      card.getByRole("status").filter({ hasText: "Today's session is complete." }),
-    ).toBeVisible();
+    await expect(done).toBeVisible();
 
     await expect(card.getByRole("listitem")).toHaveText([
       /^Quick review\s*, done/u,
       /^Discounts in your head\s*, skipped/u,
       /^Mixed practice\s*, done/u,
+      /^Discounts in your head\s*3\smin$/u,
     ]);
 
-    await expect(card.getByRole("button", { name: /^Study \d+ more minutes$/u })).toBeVisible();
+    await expect(upNext.getByRole("listitem")).toHaveText([/^Discounts in your head/u]);
+    await expect(upNext.getByRole("listitem").first()).toHaveAttribute("aria-current", "step");
+    await expect(card.getByRole("button", { name: "Keep learning" })).toBeVisible();
+    await expect(card.getByRole("button", { name: /^Study \d+ more minutes$/u })).toHaveCount(0);
 
-    // Enter opens what changed, the day's one next step, on the session screen of this goal's day.
-    await expect(card.getByRole("link", { name: /^See what changed/u })).toHaveAttribute(
+    // What changed moves to the end of the day's line, on the session screen of this goal's day.
+    await expect(done.getByRole("link", { name: "See what changed" })).toHaveAttribute(
       "href",
       `/session?goal=${session.goalId}`,
     );
 
+    // Enter keeps learning, the day's one next step: the plan's next lesson joins the day and opens.
     await page.keyboard.press("Enter");
-    await expect(page).toHaveURL(new RegExp(`/session\\?goal=${session.goalId}$`, "u"));
+    await expect(page).toHaveURL(new RegExp(`/learn/${lesson.id}\\?session=`, "u"));
+    await expect(page.getByText('What does the electron "cloud" show?')).toBeVisible();
+
+    await expect(
+      prisma.studySessionBlock.findFirstOrThrow({ where: { position: 3, sessionId: session.id } }),
+    ).resolves.toMatchObject({ kind: "learn", lessonId: lesson.id });
+
     await page.context().close();
   });
 });
@@ -934,7 +945,7 @@ test.describe("Today after days away", () => {
   });
 
   // Rafaela back after 30 days on her rest day saw only "Enjoy your day off!".
-  test("keeps a rest day after days away, says hello and still offers some study", async ({
+  test("keeps a rest day after days away, says hello and offers the plan's next lessons", async ({
     browser,
   }) => {
     await asPersona(browser, { away: 4, persona: "stocks" }, async ({ page, user }) => {
@@ -961,14 +972,17 @@ test.describe("Today after days away", () => {
 
       await expect(
         card.getByRole("status").filter({ hasText: "No study planned today." }),
-      ).toContainText("Welcome back! Today is a rest day in your plan, so enjoy it.");
+      ).toContainText("Welcome back! Your next lessons are here if you'd like to study.");
 
       await expect(
-        card.getByText("Welcome back! Today is a rest day in your plan, so enjoy it."),
+        card.getByText("Welcome back! Your next lessons are here if you'd like to study."),
       ).toBeVisible();
 
-      // Nothing studied yet today: "more" would count study she hasn't done.
-      await expect(card.getByRole("button", { name: /^Study for \d+ minutes$/u })).toBeVisible();
+      await expect(
+        card.getByRole("region", { name: "Up next in your plan" }).getByRole("listitem").first(),
+      ).toBeVisible();
+
+      await expect(card.getByRole("button", { name: "Keep learning" })).toBeVisible();
     });
   });
 
@@ -1087,6 +1101,93 @@ test.describe("Today without a session to start", () => {
 
     await expect(card.getByText("Enjoy your day off!")).toBeVisible();
     await expect(card.getByText(/Getting today's lessons ready/u)).toHaveCount(0);
+
+    // The plan's one item has no lesson to study early, so the day off offers none.
+    await expect(card.getByRole("button", { name: "Keep learning" })).toHaveCount(0);
+    await page.context().close();
+  });
+
+  // Will's plan had Sunday off, and Will wanted to study anyway: Today showed only "Study for 10
+  // minutes", which gave practice instead of the plan's next lessons, as if none were left.
+  test("lists the plan's next lessons on a rest day, those earlier days left first, and Keep learning opens the first", async ({
+    browser,
+  }) => {
+    const user = await createE2EUser(getBaseURL());
+    const goal = await goalFixture({ dailyMinutes: 10, timezone: "UTC", userId: user.id });
+    const today = toUTCMidnight(new Date());
+
+    // The plan gives today no time, and every other day its 10 minutes.
+    const weekdayMinutes = Array.from({ length: DAYS_PER_WEEK }, (_, weekday) =>
+      weekday === today.getUTCDay() ? 0 : goal.dailyMinutes,
+    );
+
+    const [plan, session, upcoming] = await Promise.all([
+      planFixture({ goalId: goal.id, settings: { weekdayMinutes } }),
+      studySessionFixture({ goalId: goal.id, plannedMinutes: 0, userId: user.id }),
+      Promise.all(
+        ["Next lesson 1", "Next lesson 2"].map((title) =>
+          playableLessonFixture({ lesson: { estimatedMinutes: 3, title }, steps: ["check"] }),
+        ),
+      ),
+      learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
+    ]);
+
+    // The plan's next lessons were saved first; settling the missed day then put the two lessons
+    // an earlier day left ahead of them.
+    await Promise.all(
+      upcoming.map(({ lesson }, index) =>
+        planItemFixture({
+          kind: "lesson",
+          lessonId: lesson.id,
+          planId: plan.id,
+          position: 3 + index,
+          scheduledFor: new Date(today.getTime() + 2 * MS_PER_DAY),
+          titleSnapshot: lesson.title,
+        }),
+      ),
+    );
+
+    const missed = await carryLessons({ count: 2, goalId: goal.id });
+
+    const page = await openAs(browser, user);
+    await page.goto("/today");
+
+    const card = page.getByRole("region", { name: "Today's session" });
+    const upNext = card.getByRole("region", { name: "Up next in your plan" });
+
+    await expect(
+      card.getByRole("status").filter({ hasText: "No study planned today." }),
+    ).toContainText("Your next lessons are here if you'd like to study.");
+
+    await expect(upNext.getByRole("listitem")).toHaveText([
+      /^Missed lesson 1/u,
+      /^Missed lesson 2/u,
+      /^Next lesson 1/u,
+      /^Next lesson 2/u,
+    ]);
+
+    // Where the learner stands shows on a rest day too, where "Rest day" used to be.
+    await expect(card.getByText(/2 lessons to catch up$/u)).toBeVisible();
+    await expect(card.getByRole("button", { name: /^Study for \d+ minutes$/u })).toHaveCount(0);
+
+    // The lessons join the day in that order, and the first one opens: a lesson, not practice.
+    await card.getByRole("button", { name: "Keep learning" }).click();
+    await expect(page).toHaveURL(new RegExp(`/learn/${missed[0]?.id}\\?session=`, "u"));
+    await expect(page.getByText('What does the electron "cloud" show?')).toBeVisible();
+
+    await expect(
+      prisma.studySessionBlock.findMany({
+        orderBy: { position: "asc" },
+        select: { kind: true, lessonId: true },
+        where: { sessionId: session.id },
+      }),
+    ).resolves.toStrictEqual(
+      [...missed, ...upcoming.map(({ lesson }) => lesson)].map((lesson) => ({
+        kind: "learn",
+        lessonId: lesson.id,
+      })),
+    );
+
     await page.context().close();
   });
 

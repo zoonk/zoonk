@@ -132,14 +132,15 @@ test.describe("A plan whose date came with lessons left", () => {
       await page.setViewportSize({ height: 844, width: 390 });
       await page.goto("/today");
 
-      await expect(page.getByText("Enjoy your day off!")).toHaveCount(0);
-      await expect(page.getByText("Rest day", { exact: true })).toHaveCount(0);
-
       // The week's days past his date have nothing planned until he moves it, and say so by the
       // date: they read "after your plan" while his plan still held 13 lessons.
       const week = page.locator('[data-slot="today-week"]');
       await expect(week).toContainText(/Tuesday: |Wednesday: |Sunday: /u);
       await expect(week).not.toContainText("after your plan");
+
+      // Nor is it a day off with lessons to study early: the Plan is the one way on.
+      await expect(page.getByText("Enjoy your day off!")).toHaveCount(0);
+      await expect(page.getByRole("button", { name: "Keep learning" })).toHaveCount(0);
 
       await page.getByRole("link", { name: "See your plan" }).filter({ visible: true }).click();
       await expect(page).toHaveURL(/\/plan$/u);
