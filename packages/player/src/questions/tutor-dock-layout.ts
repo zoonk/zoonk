@@ -2,7 +2,6 @@
 
 import { TASK_ASIDE_PLACE_CLASS } from "@zoonk/learn/task-layout";
 import { cn } from "@zoonk/ui/lib/utils";
-import { type RefObject, useLayoutEffect } from "react";
 
 /**
  * The buddy at the foot of a task's aside from `lg`: its composer in the action bar's row, under
@@ -22,29 +21,3 @@ export const DOCKED_CONVERSATION_CLASS = cn(
   "bg-background hidden lg:top-(--task-bar) lg:bottom-(--task-aside-bottom) lg:z-40 lg:flex lg:flex-col",
   TASK_ASIDE_PLACE_CLASS,
 );
-
-/**
- * The task's aside keeps its content above the dock (`--task-aside-bottom` on the task's root),
- * whatever the dock holds: suggested questions, a composer grown to a few lines, an error under it.
- */
-export function useAsideBottom(dockRef: RefObject<HTMLElement | null>) {
-  useLayoutEffect(() => {
-    const dock = dockRef.current;
-    const root = dock?.closest<HTMLElement>("[data-aside]");
-
-    if (!dock || !root) {
-      return;
-    }
-
-    const update = () => root.style.setProperty("--task-aside-bottom", `${dock.offsetHeight}px`);
-    update();
-
-    const observer = new ResizeObserver(update);
-    observer.observe(dock);
-
-    return () => {
-      observer.disconnect();
-      root.style.removeProperty("--task-aside-bottom");
-    };
-  }, [dockRef]);
-}

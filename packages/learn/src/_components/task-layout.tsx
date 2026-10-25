@@ -1,5 +1,6 @@
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
+import { TaskActionBarFrame } from "./task-foot-height";
 
 /**
  * The task's column (40rem with its padding): centered on a phone and a tablet, and from `lg`,
@@ -57,11 +58,15 @@ const BAR_PADDING_CLASS = "pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]";
  * main action never jumps from one screen to the next. Its row lines up with the task's column;
  * from `lg` the aside's foot (the buddy's composer, Hand in) sits in the same row under the aside.
  * Put the actions in a `TaskActions` row; a quiet line (a save error, an option) can sit above or
- * under it.
+ * under it, and the aside then ends above the taller bar (`--task-action-bar`).
  */
-export function TaskActionBar({ children, className, ...props }: React.ComponentProps<"div">) {
+export function TaskActionBar({
+  children,
+  className,
+  ...props
+}: Omit<React.ComponentProps<"div">, "ref">) {
   return (
-    <div
+    <TaskActionBarFrame
       className={cn("bg-background border-border sticky bottom-0 z-20 border-t", className)}
       data-slot="task-action-bar"
       {...props}
@@ -69,7 +74,7 @@ export function TaskActionBar({ children, className, ...props }: React.Component
       <div className={cn(TASK_COLUMN_CLASS, "flex flex-col gap-2", BAR_PADDING_CLASS)}>
         {children}
       </div>
-    </div>
+    </TaskActionBarFrame>
   );
 }
 
@@ -123,8 +128,9 @@ const ASIDE_WIDTH_CLASS: Record<TaskAsideWidth, string> = {
  * the pair doesn't fit) and the room left on each side (`--task-margin`, at least 1rem). It also
  * tells the aside where it starts and ends: under the header's row (`--task-bar`, the row's height
  * at `py-2` and `py-3` around its 36px buttons), its body under its own header row
- * (`--task-aside-top`), and above the action bar's row (`--task-aside-bottom`, which the buddy's
- * dock grows), so the bar's hairline runs across the window.
+ * (`--task-aside-top`), and above the action bar (`--task-aside-bottom`), so the bar's hairline
+ * runs across the window: above the taller of the bar (`--task-action-bar`, one row's 73px until
+ * the bar measures itself) and the buddy's dock (`--task-dock`), as they measure themselves.
  */
 export function getTaskAsideRootProps({ width = "default" }: { width?: TaskAsideWidth } = {}) {
   return {
@@ -133,7 +139,7 @@ export function getTaskAsideRootProps({ width = "default" }: { width?: TaskAside
       "lg:[--task-gap:2rem] xl:[--task-gap:3rem]",
       "lg:[--task-column:min(40rem,100%-2rem-var(--task-gap)-var(--task-aside))]",
       "lg:[--task-margin:max(1rem,(100%-40rem-var(--task-gap)-var(--task-aside))/2)]",
-      "lg:[--task-aside-bottom:4.5625rem] lg:[--task-aside-top:6.5rem] lg:[--task-bar:3.25rem] xl:[--task-aside-top:7.5rem] xl:[--task-bar:3.75rem]",
+      "lg:[--task-aside-bottom:max(var(--task-action-bar,4.5625rem),var(--task-dock,0px))] lg:[--task-aside-top:6.5rem] lg:[--task-bar:3.25rem] xl:[--task-aside-top:7.5rem] xl:[--task-bar:3.75rem]",
       ASIDE_WIDTH_CLASS[width],
     ),
     "data-aside": width,
@@ -222,7 +228,7 @@ export function TaskAside({
       {footer && (
         <div
           className={cn(
-            "bg-background border-border flex flex-col gap-2 border-t px-4 lg:bottom-0",
+            "bg-background flex flex-col gap-2 px-4 lg:bottom-0",
             TASK_ASIDE_PLACE_CLASS,
             BAR_PADDING_CLASS,
           )}

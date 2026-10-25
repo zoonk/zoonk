@@ -1,5 +1,6 @@
 "use client";
 
+import { useTaskFootHeight } from "@zoonk/learn/task-foot-height";
 import { type TutorIdentity } from "@zoonk/learn/tutor-identity";
 import { Button } from "@zoonk/ui/components/button";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
@@ -18,7 +19,6 @@ import {
   DOCKED_CONVERSATION_CLASS,
   TUTOR_DOCK_BAR_CLASS,
   TUTOR_DOCK_CLASS,
-  useAsideBottom,
 } from "../../questions/tutor-dock-layout";
 import { type LessonQuestionController } from "../../questions/use-lesson-questions";
 import { useTutorSuggestions } from "../../questions/use-tutor-suggestions";
@@ -204,7 +204,7 @@ export function LessonDock() {
   const offersSuggestions = useOffersSuggestions();
   const dockRef = useRef<HTMLDivElement>(null);
 
-  useAsideBottom(dockRef);
+  useTaskFootHeight(dockRef, "--task-dock");
 
   if (!buddy) {
     return null;

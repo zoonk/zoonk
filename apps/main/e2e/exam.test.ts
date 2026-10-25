@@ -521,6 +521,15 @@ test.describe("Exam goal", () => {
         page.getByText("Still grading. This is taking longer than usual."),
       ).toBeVisible();
 
+      // The line makes the bar taller, and the aside beside it ends above the bar, so the bar's
+      // hairline still crosses the window.
+      const [lastGrade, gradingBar] = await Promise.all([
+        boxOf(page.getByRole("complementary", { name: "Your last grade" })),
+        boxOf(page.locator('[data-slot="task-action-bar"]')),
+      ]);
+
+      expect(lastGrade.y + lastGrade.height).toBeLessThanOrEqual(gradingBar.y);
+
       await page.clock.fastForward(70_000);
       await expect(failed).toBeVisible();
       await expect(send).toBeEnabled();

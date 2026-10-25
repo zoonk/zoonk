@@ -118,6 +118,7 @@
     "./subject-icon": "./src/syllabus/subject-icon.tsx",
     "./suggestion": "./src/_components/suggestion.tsx",
     "./surface": "./src/_components/surface.tsx",
+    "./task-foot-height": "./src/_components/task-foot-height.tsx",
     "./task-frame": "./src/shell/task-frame.tsx",
     "./task-header": "./src/_components/task-header.tsx",
     "./task-layout": "./src/_components/task-layout.tsx",
