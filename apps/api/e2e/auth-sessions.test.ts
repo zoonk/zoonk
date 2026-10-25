@@ -73,7 +73,7 @@ test.describe("Native session API", () => {
     expect(accountResponse.status()).toBe(200);
 
     await expect(accountResponse.json()).resolves.toMatchObject({
-      user: { email: SESSION_EMAIL, id: session.userId },
+      user: { email: SESSION_EMAIL, emailVerified: true, id: session.userId },
     });
 
     // The app's reads keep its session going: a read a day or more after the last renewal renews it.

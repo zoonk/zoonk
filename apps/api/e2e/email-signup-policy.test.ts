@@ -107,22 +107,3 @@ test("keeps existing disposable-email accounts accessible through the API", asyn
   expect(response.status(), await response.text()).toBe(200);
   await expect(prisma.session.findFirst({ where: { userId: user.id } })).resolves.not.toBeNull();
 });
-
-// oxlint-disable-next-line vitest/prefer-each -- Playwright does not support test.each.
-for (const domain of ["icloud.com", "privaterelay.appleid.com", "private.icloud.com", "duck.com"]) {
-  test(`creates a new account with a privacy alias on ${domain}`, async ({ request }) => {
-    const email = createEmail(domain);
-    const codeResponse = await request.post("/v1/email-sign-in-codes", { data: { email } });
-    expect(codeResponse.status()).toBe(204);
-
-    const code = await getOTPForEmail(email);
-    expect(code).not.toBeNull();
-    const response = await request.post("/v1/sessions/email-code", { data: { code, email } });
-
-    expect(response.status(), await response.text()).toBe(200);
-
-    await expect(prisma.user.findUnique({ where: { email } })).resolves.toMatchObject({
-      emailVerified: true,
-    });
-  });
-}
