@@ -53,13 +53,15 @@ type CoveredProps = Pick<Coverage, "coreFits" | "coveredShare" | "deepensMostAsk
  * What the learner's own time covers: every topic (for an exam, of the exam; for any other goal,
  * every part of it), the ones that count most in more depth (for an exam, only when the topics it
  * asks most really keep more of theirs); or, when even that doesn't fit, what the plan's cut
- * leaves out: an exam's least asked topics, and for any other goal what its path reaches last.
+ * leaves out: an exam's least asked topics (or, studying everything, that they come after the
+ * exam, since nothing is left out then), and for any other goal what its path reaches last.
  */
 export function useCoveredText() {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const { plan } = usePlanScreen();
   const time = formatDuration(plan.schedule.dailyMinutes);
+  const { fullCourse } = plan.schedule;
 
   return ({ coreFits, coveredShare, deepensMostAsked, measure }: CoveredProps): string => {
     // Next to nothing fits: a sentence about depth would say nothing a learner can use.
@@ -79,6 +81,13 @@ export function useCoveredText() {
     if (coreFits) {
       return t(
         "{time} a day studies every part of your goal, the ones that matter most in more depth.",
+        { time },
+      );
+    }
+
+    if (measure === "exam" && fullCourse) {
+      return t(
+        "{time} a day doesn't reach every topic by the exam: the ones that come up least come after it.",
         { time },
       );
     }

@@ -9879,6 +9879,11 @@ msgid "{time} a day studies every part of your goal, the ones that matter most i
 msgstr "{time} a day studies every part of your goal, the ones that matter most in more depth."
 
 #: src/plan/plan-coverage.tsx
+msgctxt "wzOAQq"
+msgid "{time} a day doesn't reach every topic by the exam: the ones that come up least come after it."
+msgstr "{time} a day doesn't reach every topic by the exam: the ones that come up least come after it."
+
+#: src/plan/plan-coverage.tsx
 msgctxt "nIFMp8"
 msgid "{time} a day doesn't reach every topic: the ones that come up least are left out."
 msgstr "{time} a day doesn't reach every topic: the ones that come up least are left out."
