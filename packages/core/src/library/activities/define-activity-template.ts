@@ -3,6 +3,7 @@ import { promptSchema, stepImageRequestSchema } from "../steps/contract/content-
 import { type ActivityExpectedAnswer } from "./activity-expected-answer";
 import {
   type ActivityCheckKind,
+  type ActivityTolerance,
   activityCheckSchema,
   activityDataSchema,
 } from "./activity-schemas";
@@ -66,6 +67,11 @@ type ActivityTemplateDefinition<
   description: string;
   fields: TFields;
   id: TId;
+  /**
+   * How far a `numeric` answer may always be from the right one, when the check's own tolerance is
+   * tighter: a guess on a slider can't land closer than the slider's own steps.
+   */
+  minTolerance?: ActivityTolerance;
   /** Shows data, so it must cite a source or be labeled as an example. */
   needsData: FieldsRule<z.output<TFields>>;
 };
@@ -187,6 +193,7 @@ export type ActivityTemplate = {
   id: string;
   listFormulas: (fields: unknown) => ActivityFormula[];
   mayShowData: boolean;
+  minTolerance?: ActivityTolerance;
   /** Whether a screen's fields show data, which must cite a source or be labeled as an example. */
   showsData: (fields: unknown) => boolean;
   verifyFields: (fields: unknown) => ActivityIssue[];

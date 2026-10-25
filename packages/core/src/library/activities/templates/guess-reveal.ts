@@ -81,6 +81,12 @@ export const guessRevealTemplate = defineActivityTemplate({
         ]
       : [],
   id: "guessReveal",
+  /**
+   * A guess within a tenth of the real value counts, whatever the check asks: on a log scale of
+   * nine powers of ten the slider's positions sit about 11% apart, so a tighter tolerance can leave
+   * every position wrong.
+   */
+  minTolerance: { kind: "relative", value: 0.1 },
   needsData: (fields) => fields.truth.kind === "cited",
   value: (fields) => trueValue(fields),
   verify: (fields) => {

@@ -17,14 +17,22 @@ export function checkActivityAnswer(content: ActivityStepContent, answer: Activi
     );
   }
 
+  const template = getActivityTemplate(content.template);
+
   if (check.kind === "numeric") {
+    const tolerances = [check.tolerance, template?.minTolerance].filter(
+      (item) => item !== undefined,
+    );
+
     return (
       answer.kind === "numeric" &&
-      withinTolerance({ expected: check.answer, tolerance: check.tolerance, value: answer.value })
+      tolerances.some((tolerance) =>
+        withinTolerance({ expected: check.answer, tolerance, value: answer.value }),
+      )
     );
   }
 
-  const expected = getActivityTemplate(content.template)?.computeExpected(content.fields) ?? null;
+  const expected = template?.computeExpected(content.fields) ?? null;
 
   return expected !== null && matchesExpectedAnswer(expected, answer);
 }

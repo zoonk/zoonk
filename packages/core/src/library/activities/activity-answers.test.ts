@@ -53,6 +53,44 @@ describe(checkActivityAnswer, () => {
     expect(grade(listening, { kind: "choice", optionId: "b" })).toBe(false);
   });
 
+  it("counts a guess on the scale within a tenth of the real value, or the check's wider tolerance", () => {
+    const fields = {
+      max: 1_000_000_000,
+      min: 1,
+      scale: "log",
+      takeaway: "Dividing powers of ten subtracts them.",
+      truth: {
+        expression: "7 * 10^(-5) / (1 * 10^(-10))",
+        kind: "computed",
+        workings: [{ expression: "7 * 10^(-5) / (1 * 10^(-10))", label: "Atoms across" }],
+      },
+      unit: "atoms",
+    };
+
+    const check = {
+      answer: 700_000,
+      explanation: "Why.",
+      kind: "numeric",
+      question: "How many atoms fit across the hair?",
+    };
+
+    const strict = content("guessReveal", fields, {
+      ...check,
+      tolerance: { kind: "relative", value: 0.01 },
+    });
+
+    const loose = content("guessReveal", fields, {
+      ...check,
+      tolerance: { kind: "relative", value: 0.25 },
+    });
+
+    // The slider's nearest positions to 700,000 are 640,000 and 710,000: a guess can't do better.
+    expect(grade(strict, { kind: "numeric", value: 710_000 })).toBe(true);
+    expect(grade(strict, { kind: "numeric", value: 660_000 })).toBe(true);
+    expect(grade(strict, { kind: "numeric", value: 790_000 })).toBe(false);
+    expect(grade(loose, { kind: "numeric", value: 790_000 })).toBe(true);
+  });
+
   it("orders timeline events by their dates, not by how they were written", () => {
     const timeline = content("timeline", {
       anchors: [{ label: "Great Pyramid", year: -2560 }],
