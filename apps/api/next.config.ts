@@ -1,6 +1,7 @@
 import { withSentryConfig } from "@sentry/nextjs/config";
 import { CACHE_LIFE_PROFILES } from "@zoonk/core/cache-tags";
 import { getPublicAppSecurityHeaders } from "@zoonk/core/security/headers";
+import { getExtractPath } from "@zoonk/i18n/extract-path";
 import { withBotId } from "botid/next/config";
 import { type NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
@@ -57,7 +58,7 @@ const nextConfig: NextConfig = {
 
 const withNextIntl = createNextIntlPlugin({
   experimental: {
-    extract: { path: "./messages" },
+    extract: { path: getExtractPath("api") },
     messages: {
       format: "po",
       locales: "infer",
