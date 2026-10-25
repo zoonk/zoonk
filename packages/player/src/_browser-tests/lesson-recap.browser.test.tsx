@@ -98,6 +98,29 @@ describe("lesson recap", () => {
     expect(markedText()).toBeNull();
   });
 
+  it("recaps a missed question coming back at the end with the screen read before its place", async () => {
+    const lesson = buildLesson([
+      explanationStep(playableStepContent.explanation),
+      question(),
+      explanationStep({ text: "Where the cloud is densest, the electron is likeliest." }),
+      question(),
+    ]);
+
+    renderLessonPlayer({ lesson });
+    await page.getByRole("button", { name: /^Next/u }).click();
+    await answer(WRONG_OPTION, "Not quite");
+    await page.getByRole("button", { name: /^Continue/u }).click();
+    await page.getByRole("button", { name: /^Next/u }).click();
+    await answer(RIGHT_OPTION, "Correct!");
+    await page.getByRole("button", { name: /^Continue/u }).click();
+
+    // The missed question is back at the end: the recap is the screen before it the first time.
+    await expect.element(page.getByRole("radio", { name: WRONG_OPTION })).not.toBeChecked();
+    await expect.element(aside().getByText("A cloud, not a little ball")).toBeVisible();
+    await expect.element(aside().getByText("screen 1")).toBeVisible();
+    await expect.element(aside().getByText("Where the cloud is densest")).not.toBeInTheDocument();
+  });
+
   it("keeps a phone's screen as it was: the recap and its mark are wide screens' only", async () => {
     await atViewport(PHONE, async () => {
       const lesson = buildLesson([

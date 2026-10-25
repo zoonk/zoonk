@@ -64,13 +64,15 @@ const RECAP_QUESTION_KINDS = new Set<PlayableLibraryStep["kind"]>([
 
 /**
  * "From the lesson" beside a question from `lg`: the last reading screen before it, by its place
- * in the lesson ("screen 3"). A language exercise has none (its card would give the word away), nor
- * does a reading screen, which is the lesson itself.
+ * in the lesson ("screen 3"). A missed question coming back at the end recaps the screen before its
+ * first place, the one it checks, not the lesson's last. A language exercise has none (its card
+ * would give the word away), nor does a reading screen, which is the lesson itself.
  */
 export function getLessonRecap(
   state: Pick<LessonPlayerState, "position" | "queue" | "steps">,
 ): { position: number; step: RecapStep } | null {
-  const current = state.steps[state.queue[state.position] ?? ""];
+  const currentId = state.queue[state.position] ?? "";
+  const current = state.steps[currentId];
 
   if (!current || isLanguageStep(current) || isReadStep(current)) {
     return null;
@@ -80,8 +82,10 @@ export function getLessonRecap(
     return null;
   }
 
+  const firstPlace = state.queue.indexOf(currentId);
+
   const position = state.queue.findLastIndex(
-    (id, index) => index < state.position && isRecapStep(state.steps[id]),
+    (id, index) => index < firstPlace && isRecapStep(state.steps[id]),
   );
 
   const step = state.steps[state.queue[position] ?? ""];
