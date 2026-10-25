@@ -12,15 +12,16 @@ import { expect, test } from "./fixtures";
  */
 
 /**
- * Ana's goal lives in Honolulu and her device is in Kiritimati: 24 hours apart, neither with summer
- * time, so at any hour the device's day is her goal's next one, and both turn at the same moment.
+ * The learner's goal lives in Honolulu and their device is in Kiritimati: 24 hours apart, neither
+ * with summer time, so at any hour the device's day is the goal's next one, and both turn at the
+ * same moment.
  */
 const GOAL_ZONE = "Pacific/Honolulu";
 const DEVICE_ZONE = "Pacific/Kiritimati";
 
 /**
- * Room for a test to seed Ana, open Today and check it (more than its 30-second budget): no
- * midnight of hers may fall inside.
+ * Room for a test to seed the learner, open Today and check it (more than its 30-second budget): no
+ * midnight of the goal's may fall inside.
  */
 const MIDNIGHT_MARGIN_MS = 60_000;
 
@@ -58,7 +59,7 @@ function untilMidnight(timeZone: string, at: Date): number {
 }
 
 /**
- * The moment a test reads its days at: now, unless Ana's midnight comes before the test could
+ * The moment a test reads its days at: now, unless the goal's midnight comes before the test could
  * finish, then just after it, so the days it seeds and checks stay the ones the server reads.
  */
 async function startClearOfMidnight(): Promise<Date> {
@@ -75,10 +76,13 @@ async function startClearOfMidnight(): Promise<Date> {
   return new Date();
 }
 
-/** Ana (ENEM) with her goal in Honolulu, on a device in Kiritimati: a day ahead of hers. */
-async function openAnaElsewhere(browser: Browser) {
+/**
+ * A copy of the stocks persona (a small plan, so each Today read is quick) with its goal in
+ * Honolulu, on a device in Kiritimati: a day ahead of the goal's.
+ */
+async function openLearnerElsewhere(browser: Browser) {
   const at = await startClearOfMidnight();
-  const user = await createE2EPersona(getBaseURL(), { persona: "exam", timeZone: GOAL_ZONE });
+  const user = await createE2EPersona(getBaseURL(), { persona: "stocks", timeZone: GOAL_ZONE });
 
   const context = await browser.newContext({
     storageState: user.storageState,
@@ -94,9 +98,9 @@ async function readGoalZone(user: E2EPersona) {
 }
 
 /**
- * Nothing yet today in her goal's zone: no answer, no block opened or finished, the session not
- * started. Before her study hour, the seed dates today's activity minutes ago, which would keep the
- * session hers past midnight on the device's day.
+ * Nothing yet today in the goal's zone: no answer, no block opened or finished, the session not
+ * started. Before the learner's study hour, the seed dates today's activity minutes ago, which would
+ * keep the session the goal's past midnight on the device's day.
  */
 async function clearToday(user: E2EPersona, at: Date) {
   const today = { goalId: user.goalId, localDate: localDay(user.timeZone, at) };
@@ -180,10 +184,10 @@ function watchFollow(page: Page, zone: string) {
 }
 
 test.describe("The learner's day on a device in another zone", () => {
-  test("keeps the day of a goal she studied today, and Continue opens her session", async ({
+  test("keeps the day of a goal studied today, and Continue opens its session", async ({
     browser,
   }) => {
-    const { at, context, page, user } = await openAnaElsewhere(browser);
+    const { at, context, page, user } = await openLearnerElsewhere(browser);
 
     try {
       await page.goto("/today");
@@ -199,28 +203,10 @@ test.describe("The learner's day on a device in another zone", () => {
     }
   });
 
-  test("moves to the device's day while nothing was done yet today", async ({ browser }) => {
-    const { at, context, device, page, user } = await openAnaElsewhere(browser);
-    await clearToday(user, at);
-
-    const follow = watchFollow(page, device);
-
-    try {
-      // Today reads itself again once the follow answers, however long the summary took first, and
-      // the day moves with that read, however long the server takes to answer it.
-      await page.goto("/today");
-      await follow.answered;
-      await follow.viewed;
-
-      await expect(page.getByText(headerDay(device, at), { exact: true })).toBeVisible();
-      await expect.poll(() => readGoalZone(user)).toBe(device);
-    } finally {
-      await context.close();
-    }
-  });
-
-  test("follows the device's zone with one ask, then reads Today once", async ({ browser }) => {
-    const { at, context, device, page, user } = await openAnaElsewhere(browser);
+  test("moves to the device's day while nothing was done yet today, with one ask, then reads Today once", async ({
+    browser,
+  }) => {
+    const { at, context, device, page, user } = await openLearnerElsewhere(browser);
     await clearToday(user, at);
 
     const origin = new URL(getBaseURL()).origin;
@@ -246,9 +232,10 @@ test.describe("The learner's day on a device in another zone", () => {
       await follow.answered;
 
       // The day moves with the view read the follow made (the one counted), however long the server
-      // takes to answer it.
+      // takes to answer it, and the goal takes the device's zone.
       await follow.viewed;
       await expect(page.getByText(headerDay(device, at), { exact: true })).toBeVisible();
+      await expect.poll(() => readGoalZone(user)).toBe(device);
 
       // One read of Today, its view's own (never the page rendered again), and no link in sight
       // prefetched twice.
