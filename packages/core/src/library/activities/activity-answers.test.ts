@@ -91,6 +91,32 @@ describe(checkActivityAnswer, () => {
     expect(grade(loose, { kind: "numeric", value: 790_000 })).toBe(true);
   });
 
+  it("counts a guess exactly a tenth away, which floating point puts a hair past it", () => {
+    const guess = content(
+      "guessReveal",
+      {
+        max: 2,
+        min: 0,
+        scale: "linear",
+        takeaway: "A liter is a thousand milliliters.",
+        truth: { kind: "cited", value: 1 },
+        unit: "liters",
+      },
+      {
+        answer: 1,
+        explanation: "Why.",
+        kind: "numeric",
+        question: "How many liters fill the bottle?",
+        tolerance: { kind: "relative", value: 0.01 },
+      },
+    );
+
+    // 1.1 - 1 is 0.10000000000000009 in floating point.
+    expect(grade(guess, { kind: "numeric", value: 1.1 })).toBe(true);
+    expect(grade(guess, { kind: "numeric", value: 0.9 })).toBe(true);
+    expect(grade(guess, { kind: "numeric", value: 1.1001 })).toBe(false);
+  });
+
   it("orders timeline events by their dates, not by how they were written", () => {
     const timeline = content("timeline", {
       anchors: [{ label: "Great Pyramid", year: -2560 }],

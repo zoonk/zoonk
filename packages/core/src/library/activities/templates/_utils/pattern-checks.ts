@@ -123,7 +123,11 @@ export function withinTolerance({
   const allowed =
     tolerance.kind === "absolute" ? tolerance.value : tolerance.value * Math.abs(expected);
 
-  return Math.abs(value - expected) <= allowed || isClose(value, expected);
+  const distance = Math.abs(value - expected);
+
+  // Floating point can put a value right at the edge a hair past it: 1.1 is 0.10000000000000009
+  // from 1, yet within 10% of it.
+  return distance <= allowed || isClose(distance, allowed) || isClose(value, expected);
 }
 
 /** Spreadsheet formulas start with "=", which the expression language doesn't need. */
