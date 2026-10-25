@@ -53,9 +53,12 @@ const todayReadSchema = z.object({
   }),
 });
 
-// Ana's Today carried her whole syllabus, every topic and chapter (94 KB of a 107 KB read), for the
-// few rows its aside draws: each read now carries only those rows.
-test("Today's read carries its subjects' rows, not the whole syllabus", async ({ browser }) => {
+// Ana's Today read "Preparation 12%" over five subjects at "<1%": the bars counted lessons. Her
+// Today read also carried her whole syllabus, every topic and chapter (94 KB of a 107 KB read), for
+// the few rows its aside draws: each read now carries only those rows.
+test("An exam's subjects read their preparation, which the overall number sums up, and Today's read carries only their rows", async ({
+  browser,
+}) => {
   await asPersona(browser, { persona: "exam" }, async ({ page }) => {
     const response = await page.request.get("/api/learner/views/today");
     await expect(response).toBeOK();
@@ -65,14 +68,7 @@ test("Today's read carries its subjects' rows, not the whole syllabus", async ({
 
     expect(body.length).toBeLessThan(40_000);
     expect(read.copy.view.syllabus.subjects.every((subject) => !("topics" in subject))).toBe(true);
-  });
-});
 
-// Ana's Today read "Preparation 12%" over five subjects at "<1%": the bars counted lessons.
-test("An exam's subjects read their preparation, which the overall number sums up", async ({
-  browser,
-}) => {
-  await asPersona(browser, { persona: "exam" }, async ({ page }) => {
     const preparation = await openTodayStanding(page, "Preparation");
 
     const rows = preparation

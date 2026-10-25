@@ -64,47 +64,15 @@ async function switchingDay() {
 }
 
 test.describe("Today review regressions", () => {
-  test("switching goals replaces the retained recommendation with the new goal's notice", async ({
-    browser,
-  }) => {
-    const { otherGoal, user } = await switchingDay();
-    const page = await browser.newPage({ storageState: user.storageState, timezoneId: "UTC" });
-    await page.setViewportSize({ height: 900, width: 1280 });
-    await page.goto("/today");
-
-    const notice = page.getByRole("region", { name: "Plan change" });
-
-    await expect(notice.getByRole("link", { name: "More time a day" })).toBeVisible();
-
-    // Continue lands above the highlighted row, so the learner's goals wait with it.
-    const palette = await openLearnerPalette(page);
-    await palette.getByRole("option", { name: `Switch to ${otherGoal.title}` }).click();
-
-    await expect(page.getByRole("region", { name: "Today's session" })).toContainText(
-      "Goal B lesson",
-    );
-
-    await expect(notice).toHaveCount(0);
-
-    await expect(page.getByRole("region", { name: "Your plan needs a document" })).toContainText(
-      "Add your class material",
-    );
-
-    expect(await prisma.goal.findUniqueOrThrow({ where: { id: otherGoal.id } })).toMatchObject({
-      dailyMinutes: 35,
-      targetDate: null,
-    });
-
-    await page.context().close();
-  });
-
-  test("a pending goal switch blocks focus, pointer actions and the global Enter shortcut", async ({
+  test("a pending goal switch blocks focus, pointer actions and the global Enter shortcut, then replaces the retained recommendation with the new goal's notice", async ({
     browser,
   }, testInfo) => {
     const { goal, otherGoal, session, user } = await switchingDay();
     const page = await browser.newPage({ storageState: user.storageState, timezoneId: "UTC" });
     await page.setViewportSize({ height: 900, width: 1280 });
     await page.goto("/today");
+    const notice = page.getByRole("region", { name: "Plan change" });
+    await expect(notice.getByRole("link", { name: "More time a day" })).toBeVisible();
     const start = page.getByRole("button", { name: "Start session" });
     await start.focus();
 
@@ -168,6 +136,16 @@ test.describe("Today review regressions", () => {
       );
 
       await expect(page.getByRole("main")).not.toHaveAttribute("inert", "");
+      await expect(notice).toHaveCount(0);
+
+      await expect(page.getByRole("region", { name: "Your plan needs a document" })).toContainText(
+        "Add your class material",
+      );
+
+      expect(await prisma.goal.findUniqueOrThrow({ where: { id: otherGoal.id } })).toMatchObject({
+        dailyMinutes: 35,
+        targetDate: null,
+      });
 
       expect(
         await prisma.studySession.findUniqueOrThrow({ where: { id: session.id } }),

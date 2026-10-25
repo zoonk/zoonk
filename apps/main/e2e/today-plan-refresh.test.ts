@@ -37,7 +37,7 @@ async function stayAway(goalId: string) {
  * persists the moved-forward plan and its mandatory change notice.
  */
 test.describe("Plan after days away", () => {
-  test("after days away, Today puts what they left first and the Journey says what's left to catch up", async ({
+  test("after days away, Today puts what they left first and the Journey says what's left to catch up, on a phone too", async ({
     browser,
   }) => {
     await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
@@ -70,21 +70,9 @@ test.describe("Plan after days away", () => {
 
       await page.goto("/plan");
       await expect(planNumbers(page)).toContainText(/\d+ lessons? to catch up/u);
-    });
-  });
 
-  test("on a phone, the Plan's catch-up suggestion takes the learner to Today", async ({
-    browser,
-  }) => {
-    await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
-      await stayAway(user.goalId);
+      // On a phone, the Plan's catch-up suggestion takes the learner to Today.
       await page.setViewportSize({ height: 844, width: 390 });
-
-      // Today and Plan project the moved-forward work without persisting it on either GET.
-      await page.goto("/today");
-      await expect(startDayButton(page)).toBeVisible();
-
-      await page.goto("/plan");
 
       await page
         .getByRole("region", { name: "A little to catch up" })
