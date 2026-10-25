@@ -44,6 +44,22 @@ export async function getTotalDurationFormatter(): Promise<(totalMinutes: number
   };
 }
 
+/**
+ * A plan's time as its example writes it, beside its big numbers: its minutes under an hour, beyond
+ * that the whole hours `getTotalDuration` rounds to, marked "~" as the estimate they are ("~3 h").
+ */
+export async function getApproxDurationFormatter(): Promise<(totalMinutes: number) => string> {
+  const formatMinutes = await getMinutesFormatter();
+
+  return (totalMinutes) => {
+    const duration = getTotalDuration(Math.round(totalMinutes));
+
+    return "minutes" in duration
+      ? formatMinutes(duration.minutes)
+      : `~${formatMinutes(duration.hours * MINUTES_PER_HOUR)}`;
+  };
+}
+
 /** How long a chapter or course takes, from its lessons' estimates (`getTotalDuration`). */
 export async function getTotalDurationLabel(totalMinutes: number): Promise<string> {
   const durationText = await getTotalDurationFormatter();

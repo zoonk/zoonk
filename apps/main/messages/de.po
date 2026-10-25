@@ -530,6 +530,16 @@ msgid "What you'll be able to do"
 msgstr "Was du danach kannst"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/course-fit.tsx
+msgctxt "_OvJVm"
+msgid "Show fewer"
+msgstr "Weniger anzeigen"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/course-fit.tsx
+msgctxt "R9RxR-"
+msgid "{count, plural, one {Show # more} other {Show # more}}"
+msgstr "{count, plural, one {Noch # weiteres anzeigen} other {Noch # weitere anzeigen}}"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/course-fit.tsx
 msgctxt "fIvfRs"
 msgid "Who it's for"
 msgstr "Für wen der Kurs gedacht ist"
@@ -600,6 +610,16 @@ msgstr "Nicht eingeplant"
 msgctxt "DOR8eI"
 msgid "{count, number} of {total, number} lessons"
 msgstr "{count, number} von {total, number} Lektionen"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-chapter-row.tsx
+msgctxt "OGR3YM"
+msgid "Show fewer chapters"
+msgstr "Weniger Kapitel anzeigen"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-chapter-row.tsx
+msgctxt "IiIBmN"
+msgid "{count, plural, one {Show # more chapter} other {Show # more chapters}}"
+msgstr "{count, plural, one {Noch # weiteres Kapitel anzeigen} other {Noch # weitere Kapitel anzeigen}}"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-levels.tsx
 msgctxt "wieA_m"
@@ -2969,6 +2989,7 @@ msgid "Written for your goal"
 msgstr "Für dein Ziel erstellt"
 
 #: src/app/[lang]/(home)/_components/stop-every-day.tsx
+#: src/components/catalog/plan-workload.tsx
 msgctxt "RYqUsZ"
 msgid "What you studied comes back right before you'd forget it."
 msgstr "Gelerntes kommt kurz zurück, bevor du es vergessen würdest."
@@ -3412,9 +3433,14 @@ msgid "{weeks, plural, one {<big>~#</big> week} other {<big>~#</big> weeks}}"
 msgstr "{weeks, plural, one {<big>~#</big> Woche} other {<big>~#</big> Wochen}}"
 
 #: src/components/catalog/course-plan-window.tsx
-msgctxt "HxIZiZ"
-msgid "to finish the whole course at {minutes, plural, one {# minute} other {# minutes}} a day, Monday to Friday, from scratch. Reviews included; skipping what you know makes it shorter."
-msgstr "um den ganzen Kurs bei {minutes, plural, one {# Minute} other {# Minuten}} pro Tag von Anfang an abzuschließen, von Montag bis Freitag. Wiederholungen sind eingeplant; wenn du Bekanntes überspringst, geht es schneller."
+msgctxt "BzWLOy"
+msgid "to finish the whole course at {minutes, plural, one {# minute} other {# minutes}} a day, Monday to Friday, from scratch."
+msgstr "um den ganzen Kurs bei {minutes, plural, one {# Minute} other {# Minuten}} pro Tag von Anfang an abzuschließen, von Montag bis Freitag."
+
+#: src/components/catalog/course-plan-window.tsx
+msgctxt "M4Q-0j"
+msgid "Starting today, you'd finish around <mono>{month}</mono>."
+msgstr "Wenn du heute anfängst, bist du etwa im <mono>{month}</mono> fertig."
 
 #: src/components/catalog/course-plan-window.tsx
 msgctxt "lM5n28"
@@ -3522,9 +3548,9 @@ msgid "What fills the time"
 msgstr "Womit die Zeit gefüllt wird"
 
 #: src/components/catalog/plan-workload.tsx
-msgctxt "qMxBvQ"
-msgid "In all"
-msgstr "Insgesamt"
+msgctxt "wk-8Dt"
+msgid "{time} in all"
+msgstr "insgesamt {time}"
 
 #: src/components/catalog/plan-workload.tsx
 msgctxt "GDUlmD"

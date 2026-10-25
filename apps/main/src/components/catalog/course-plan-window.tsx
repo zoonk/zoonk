@@ -1,10 +1,11 @@
 import { DayList, type DayListStep } from "@/components/public/day-list";
 import { NUMERIC_CLASS } from "@/components/public/landing-styles";
 import { ProductWindow } from "@/components/public/product-window";
-import { getMinutesFormatter } from "@/lib/public/public-labels";
-import { getTotalDuration } from "@/lib/public/total-duration";
+import { getApproxDurationFormatter, getMinutesFormatter } from "@/lib/public/public-labels";
 import { BigQuantity } from "@zoonk/learn/big-quantity";
+import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
+import { FlagIcon } from "lucide-react";
 import { getExtracted, getFormatter } from "next-intl/server";
 import { type ReactNode } from "react";
 import { type CoursePlanExample } from "./course-plan";
@@ -14,15 +15,31 @@ import {
   getStudyMinutes,
   isDatedEstimate,
 } from "./plan-estimate";
-import { PlanWorkloadRows } from "./plan-workload";
-
-const MINUTES_PER_HOUR = 60;
+import { PlanWorkload } from "./plan-workload";
 
 /** Today's rows the window lists before folding the rest into one line. */
 const TODAY_ROWS = 3;
 
-/** The window beside the hero from `lg`, under it before. */
+/**
+ * A plan ending within this many days names no finish month: its few weeks already say when, and
+ * the Plan names a near end by its day rather than its month.
+ */
+const NEAR_ESTIMATE_DAYS = 42;
+const MS_PER_DAY = 86_400_000;
+
+/** The window and its caption. */
 const WINDOW_COLUMN_CLASS = "flex min-w-0 flex-col gap-3.5";
+
+/**
+ * The window lays itself out by the room it gets: one column beside the hero or on a phone, two
+ * from 48rem (the page's width), the result on the left and the first day on the right.
+ */
+const WINDOW_BODY_CLASS =
+  "grid grid-cols-1 gap-5 @3xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] @3xl:gap-x-14";
+
+/** The right half's first block drops the hairline that separates it in one column. */
+const WINDOW_DETAILS_CLASS =
+  "flex min-w-0 flex-col gap-5 @3xl:[&>*:first-child]:border-t-0 @3xl:[&>*:first-child]:pt-0";
 
 /** The headline number, big, through the one quantity treatment; its word beside it. */
 function renderBig(chunks: ReactNode) {
@@ -31,12 +48,33 @@ function renderBig(chunks: ReactNode) {
   return <BigQuantity className="text-[2.75rem]">{text}</BigQuantity>;
 }
 
+function renderMono(chunks: ReactNode) {
+  return <span className={NUMERIC_CLASS}>{chunks}</span>;
+}
+
 const BIG_LINE_CLASS =
   "flex flex-wrap items-baseline gap-x-2 text-2xl font-semibold tracking-[-0.03em]";
 
 const RESULT_LINE_CLASS = "text-muted-foreground max-w-[30rem] text-sm leading-relaxed text-pretty";
 
-/** The course to its end at one time a day: how many weeks it takes from scratch. */
+/**
+ * When the example plan ends, as the Plan writes a far estimate, by its month ("February 2027");
+ * null for one ending within a few weeks.
+ */
+async function getEndMonthText({ endDate, fromDate }: { endDate: string; fromDate: string }) {
+  const format = await getFormatter();
+  const end = new Date(`${endDate}T00:00:00Z`);
+  const days = (end.getTime() - new Date(`${fromDate}T00:00:00Z`).getTime()) / MS_PER_DAY;
+
+  return days > NEAR_ESTIMATE_DAYS
+    ? format.dateTime(end, { month: "long", timeZone: "UTC", year: "numeric" })
+    : null;
+}
+
+/**
+ * The course to its end at one time a day: how many weeks it takes from scratch, and the month it
+ * ends for someone starting today, the estimate the Plan's road ends with.
+ */
 async function UndatedHeadline({
   estimate,
   minutes,
@@ -45,6 +83,13 @@ async function UndatedHeadline({
   minutes: number;
 }) {
   const t = await getExtracted();
+
+  const endMonth =
+    estimate.endDate &&
+    (await getEndMonthText({
+      endDate: estimate.endDate,
+      fromDate: estimate.numbers.context.fromDate,
+    }));
 
   return (
     <div className="flex flex-col gap-2.5">
@@ -57,10 +102,24 @@ async function UndatedHeadline({
 
       <p className={RESULT_LINE_CLASS}>
         {t(
-          "to finish the whole course at {minutes, plural, one {# minute} other {# minutes}} a day, Monday to Friday, from scratch. Reviews included; skipping what you know makes it shorter.",
+          "to finish the whole course at {minutes, plural, one {# minute} other {# minutes}} a day, Monday to Friday, from scratch.",
           { minutes },
         )}
       </p>
+
+      {endMonth && (
+        <p className="flex gap-2 text-sm leading-relaxed font-medium text-pretty">
+          <LineMarker>
+            <FlagIcon aria-hidden="true" className="size-3.5" />
+          </LineMarker>
+          <span>
+            {t.rich("Starting today, you'd finish around <mono>{month}</mono>.", {
+              mono: renderMono,
+              month: endMonth,
+            })}
+          </span>
+        </p>
+      )}
     </div>
   );
 }
@@ -139,12 +198,9 @@ async function DatedHeadline({
   const t = await getExtracted();
   const format = await getFormatter();
   const minutesText = await getMinutesFormatter();
-  const study = getTotalDuration(getStudyMinutes(estimate));
+  const durationText = await getApproxDurationFormatter();
   // The big number in the mono face, "~3 h", its words beside it.
-  const studyTime =
-    "minutes" in study
-      ? minutesText(study.minutes)
-      : `~${minutesText(study.hours * MINUTES_PER_HOUR)}`;
+  const studyTime = durationText(getStudyMinutes(estimate));
 
   const hasQuickLessons = estimate.areas.some((area) => area.quickLessons > 0);
   const writesLessons = estimate.workload.unwrittenLessonMinutes > 0;
@@ -214,24 +270,20 @@ async function DatedHeadline({
         {t.rich("<big>{time}</big> of study", { big: renderBig, time: studyTime })}
       </p>
 
-      <p className={RESULT_LINE_CLASS}>
-        {holds()} {coverage && share && coverageText({ coverage, share })}
-      </p>
+      <p className={RESULT_LINE_CLASS}>{holds()}</p>
+
+      {coverage && share && (
+        <p className={RESULT_LINE_CLASS}>{coverageText({ coverage, share })}</p>
+      )}
     </div>
   );
 }
 
 /**
- * Whether a pace has rows to list under its headline: the plan's first day. An exam's areas are
- * the outline's, right under the window, so the window doesn't repeat them.
- */
-function hasPaceDetails(estimate: DatedEstimate | UndatedEstimate): estimate is UndatedEstimate {
-  return !isDatedEstimate(estimate) && estimate.firstDay.length > 0;
-}
-
-/**
- * The course's selected public example: its daily time, result and first day. The outline reads
- * the same estimate. With no estimate the window is hidden; the caption explains the example.
+ * The course's selected public example: its result at one time a day (the weeks to its end and
+ * when that is, or what fits by the exam), what fills that time and its first day. The outline
+ * reads the same estimate. With no estimate the window is hidden; the caption explains the
+ * example.
  */
 export async function CoursePlanWindow({
   chapterTitles,
@@ -255,22 +307,33 @@ export async function CoursePlanWindow({
     return null;
   }
 
+  const { estimate } = pace;
+  const workload = <PlanWorkload exam={isExam} numbers={estimate.numbers} />;
+
+  // The first day, when there's one, fills the right half; the time and what fills it stay
+  // together on the left. An exam's plan has no first day to show, so what fills it moves over.
+  const today = !isDatedEstimate(estimate) && estimate.firstDay.length > 0 && (
+    <UndatedToday chapterTitles={chapterTitles} estimate={estimate} />
+  );
+
   return (
     <div className={cn(WINDOW_COLUMN_CLASS, className)} data-slot="course-plan">
-      <ProductWindow className="flex flex-col gap-5 p-5 sm:p-7">
-        <h2 className="text-label">{t("Example plan")}</h2>
+      <ProductWindow className="@container p-5 sm:p-7">
+        <div className={WINDOW_BODY_CLASS}>
+          <div className="flex min-w-0 flex-col gap-5">
+            <h2 className="text-label">{t("Example plan")}</h2>
 
-        {isDatedEstimate(pace.estimate) ? (
-          <DatedHeadline date={examDate ?? ""} estimate={pace.estimate} minutes={pace.minutes} />
-        ) : (
-          <UndatedHeadline estimate={pace.estimate} minutes={pace.minutes} />
-        )}
+            {isDatedEstimate(estimate) ? (
+              <DatedHeadline date={examDate ?? ""} estimate={estimate} minutes={pace.minutes} />
+            ) : (
+              <UndatedHeadline estimate={estimate} minutes={pace.minutes} />
+            )}
 
-        <PlanWorkloadRows exam={isExam} numbers={pace.estimate.numbers} />
+            {today && workload}
+          </div>
 
-        {hasPaceDetails(pace.estimate) && (
-          <UndatedToday chapterTitles={chapterTitles} estimate={pace.estimate} />
-        )}
+          <div className={WINDOW_DETAILS_CLASS}>{today || workload}</div>
+        </div>
       </ProductWindow>
 
       <p className="text-muted-foreground text-[13px] text-pretty">

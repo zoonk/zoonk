@@ -6,6 +6,7 @@ import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { courseBandsFixture } from "@zoonk/testing/fixtures/library-chapters";
+import { catalogCourseFixture } from "@zoonk/testing/fixtures/library-courses";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type Page, expect, test } from "./fixtures";
@@ -219,6 +220,34 @@ test.describe("Course Detail Page", () => {
     ).toBeVisible();
   });
 
+  test("a long level shows its first chapters and the rest on a tap, all of them in the page's HTML", async ({
+    page,
+    request,
+  }) => {
+    const { course, organization } = await catalogCourseFixture({
+      lessonCounts: Array.from({ length: 9 }, () => 1),
+    });
+
+    const path = `/b/${organization.slug}/c/${course.slug}`;
+    const response = await request.get(path);
+    const html = await response.text();
+
+    expect(html).toContain("Chapter 9");
+    expect(html).toContain("Lesson 9.1");
+
+    await page.goto(path);
+
+    const outline = page.getByRole("region", { name: "Course outline" });
+    const seventh = outline.getByRole("link", { exact: true, name: "Chapter 7" });
+
+    await expect(outline.getByRole("link", { exact: true, name: "Chapter 6" })).toBeVisible();
+    await expect(seventh).toBeHidden();
+
+    await outline.getByRole("button", { name: "Show 3 more chapters" }).click();
+    await expect(seventh).toBeVisible();
+    await expect(outline.getByRole("link", { exact: true, name: "Lesson 9.1" })).toBeVisible();
+  });
+
   test("titles a course with a regional language tag in its own language", async ({ page }) => {
     const title = `E2E Regional Course ${randomUUID().slice(0, 8)}`;
     const { path } = await publishedCourse({ language: "pt-BR", title });
@@ -245,6 +274,9 @@ test.describe("Course Detail Page", () => {
     ).toBeVisible();
 
     await expect(plan.getByRole("radio")).toHaveCount(0);
+
+    // When that ends for someone starting today, the estimate the Plan's road ends with.
+    await expect(plan.getByText(/^Starting today, you'd finish around .+\.$/u)).toBeVisible();
     await expect(outline.getByText("Your plan at 15 minutes a day, from scratch")).toBeVisible();
 
     const weeks = await readPlanWeeks(plan);

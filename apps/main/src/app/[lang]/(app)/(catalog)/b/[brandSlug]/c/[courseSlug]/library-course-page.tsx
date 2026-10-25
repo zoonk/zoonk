@@ -1,5 +1,6 @@
 import {
   COURSE_HERO_CLASS,
+  COURSE_HERO_PAIR_CLASS,
   COURSE_TITLE_CLASS,
   HERO_LEAD_CLASS,
   PlanLine,
@@ -11,9 +12,13 @@ import { type CoursePlanExample, getCoursePlanExample } from "@/components/catal
 import { CoursePlanWindow } from "@/components/catalog/course-plan-window";
 import { CourseProgressScope } from "@/components/catalog/course-progress";
 import {
+  BAND_CLASS,
+  SUBJECT_WASH_CLASS,
+  getSubjectToneStyle,
+} from "@/components/catalog/subject-tone";
+import {
   TryLesson,
   type TryLessonCandidate,
-  type TryLessonPick,
   getTryLessonId,
   pickTryLesson,
 } from "@/components/catalog/try-lesson";
@@ -36,6 +41,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { type SupportedLocale, getContentLocale } from "@zoonk/utils/locale";
 import { ArrowRightIcon, LanguagesIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
+import { type ReactNode } from "react";
 import { CourseFit } from "./course-fit";
 import { CourseStart } from "./course-start";
 import { LibraryCourseOutline } from "./library-course-outline";
@@ -43,7 +49,10 @@ import { LibraryCourseOutline } from "./library-course-outline";
 type Params = { brandSlug: string; courseSlug: string };
 type Course = LibraryCourseRoute["course"];
 
-/** Points visitors reading in another language to this course's edition in theirs. */
+/**
+ * Points visitors reading in another language to this course's edition in theirs, on a panel over
+ * the first screen's band.
+ */
 async function EditionNotice({ courseId, locale }: { courseId: string; locale: SupportedLocale }) {
   const t = await getExtracted();
   const editions = await listPublishedCourseEditions({ courseId });
@@ -55,7 +64,7 @@ async function EditionNotice({ courseId, locale }: { courseId: string; locale: S
 
   return (
     <Link
-      className="bg-muted hover:bg-muted/70 focus-visible:ring-ring/50 mb-6 flex max-w-[560px] gap-3 rounded-xl px-4 py-3 text-sm leading-snug transition-colors outline-none focus-visible:ring-[3px]"
+      className="bg-card ring-border hover:bg-muted focus-visible:ring-ring/50 mb-6 flex max-w-[560px] gap-3 rounded-xl px-4 py-3 text-sm leading-snug ring-1 transition-colors outline-none focus-visible:ring-[3px]"
       href={getCourseHref(edition)}
       prefetch
     >
@@ -116,6 +125,36 @@ function CourseHero({
   );
 }
 
+/**
+ * The first screen: the course and its ways in, beside the course's own first question to try,
+ * so the page teaches before it explains, with the example plan right after it; without a question,
+ * the plan takes its place beside the course.
+ */
+function CourseFirstScreen({
+  hero,
+  plan,
+  tryCard,
+}: {
+  hero: ReactNode;
+  plan: ReactNode;
+  tryCard: ReactNode;
+}) {
+  const side = tryCard ?? plan;
+
+  return (
+    <>
+      <div className={cn(BAND_CLASS, SUBJECT_WASH_CLASS.strong, "-mt-8")}>
+        <div className={cn(COURSE_HERO_CLASS, side && COURSE_HERO_PAIR_CLASS)}>
+          {hero}
+          {side}
+        </div>
+      </div>
+
+      {tryCard && plan && <div className={BAND_CLASS}>{plan}</div>}
+    </>
+  );
+}
+
 /** The course's chapters by id, for the plan's rows to say which chapter a lesson is from. */
 function getChapterTitles(outline: LibraryOutline): Map<string, string> {
   return new Map(
@@ -136,57 +175,16 @@ function getTryCandidates(outline: LibraryOutline): TryLessonCandidate[] {
   );
 }
 
-/**
- * A lesson to try beside whether the course fits: what it'll make the visitor able to do and who
- * it's for. From `2xl` the question keeps a question's measure (the column, as in the player) and
- * the fit takes the rest of the row; either one alone takes the whole row.
- */
-function TryAndFit({
-  courseId,
-  landingPage,
-  locale,
-  origin,
-  tryId,
-  tryLesson,
-}: {
-  courseId: string;
-  landingPage: ReturnType<typeof parseCourseLandingPageContent>;
-  locale: SupportedLocale;
-  /** The course page's own path, which closing the tried lesson returns to. */
-  origin: string;
-  tryId: string;
-  tryLesson: TryLessonPick | null;
-}) {
-  const outcomes = landingPage?.outcomes ?? [];
-  const audience = landingPage?.audience ?? [];
-  const hasFit = outcomes.length > 0 || audience.length > 0;
-
-  if (!tryLesson && !hasFit) {
-    return null;
-  }
-
-  return (
-    <div
-      className={cn(
-        "grid grid-cols-1 gap-5",
-        tryLesson &&
-          hasFit &&
-          "lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-start 2xl:grid-cols-[minmax(0,40rem)_minmax(0,1fr)]",
-      )}
-    >
-      {tryLesson && <TryLesson id={tryId} locale={locale} origin={origin} pick={tryLesson} />}
-      <CourseFit audience={audience} courseId={courseId} outcomes={outcomes} />
-    </div>
-  );
-}
-
 /** The page's last word, where a long page ends: the one way in again. */
 async function CourseClosing({ courseId, pace }: { courseId: string; pace: number | null }) {
   const t = await getExtracted();
   const titleId = `course-closing-${courseId}`;
 
   return (
-    <PageSection aria-labelledby={titleId} className="border-border gap-1 border-t pt-10">
+    <PageSection
+      aria-labelledby={titleId}
+      className={cn(BAND_CLASS, SUBJECT_WASH_CLASS.strong, "-mb-12 gap-1 lg:-mb-16")}
+    >
       <h2
         className="text-[22px] leading-tight font-semibold tracking-[-0.02em] text-balance sm:text-2xl"
         id={titleId}
@@ -206,11 +204,13 @@ async function CourseClosing({ courseId, pace }: { courseId: string; pace: numbe
 /**
  * A course's page in the catalog, inside the app's frame like Explore courses, written for a
  * visitor from a search who doesn't know Zoonk: the bar back to the catalog; the course and its
- * ways in, beside its example plan, which a time a day turns into weeks to the end (or, for an
- * exam course, into the lessons that fit by the exam), from core's planner; a lesson to try and
- * whether the course fits them; the full outline, every chapter and lesson in the HTML, each
- * chapter marked with its place in the plan at the picked pace; and the way in again. The plan is
- * cached for the hour, so the page's prefetch carries it whole.
+ * ways in, beside the course's own first question, answerable right there, so the page starts
+ * teaching before it explains anything; its example plan, which a time a day turns into weeks to
+ * the end (or, for an exam course, into the lessons that fit by the exam), from core's planner,
+ * beside the course instead when there's no question to try; who it's for and what it makes them
+ * able to do; the full outline, every chapter and lesson in the HTML, each chapter marked with its
+ * place in the plan at the example's pace; and the way in again. The plan is cached for the hour,
+ * so the page's prefetch carries it whole.
  * "Build my plan" opens the course's start page, which asks their level and starts the plan on
  * their tap there.
  */
@@ -245,9 +245,22 @@ export async function LibraryCoursePage({
   const examDate = examDay ? formatDay(examDay) : null;
   const pace = plan.pace?.minutes ?? null;
 
+  const planWindow = plan.pace && (
+    <CoursePlanWindow
+      chapterTitles={getChapterTitles(outline)}
+      examDate={examDate}
+      isExam={course.format === "exam"}
+      plan={plan}
+    />
+  );
+
+  const tryCard = tryLesson && (
+    <TryLesson id={tryId} locale={locale} origin={getCourseHref(params)} pick={tryLesson} />
+  );
+
   return (
     <CourseProgressScope courseId={course.id} lessonId={tryLesson?.lessonId ?? null}>
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-8" style={getSubjectToneStyle(course.categories)}>
         <CatalogPageBar
           back={{ href: "/courses", label: t("Explore courses") }}
           options={
@@ -262,7 +275,7 @@ export async function LibraryCoursePage({
           title={course.title}
         />
 
-        <Page className="gap-16 sm:gap-20">
+        <Page className="gap-0">
           <PublicViewTracker contentId={course.id} page="course" />
 
           <JsonLd
@@ -285,41 +298,38 @@ export async function LibraryCoursePage({
             ]}
           />
 
-          <div className={COURSE_HERO_CLASS}>
-            <CourseHero
-              course={course}
-              exam={plan.exam}
-              isOtherLanguage={isOtherLanguage}
-              locale={locale}
-              pace={pace}
-              promise={promise}
-              tryId={tryLesson ? tryId : null}
-            />
+          <CourseFirstScreen
+            hero={
+              <CourseHero
+                course={course}
+                exam={plan.exam}
+                isOtherLanguage={isOtherLanguage}
+                locale={locale}
+                pace={pace}
+                promise={promise}
+                tryId={tryLesson ? tryId : null}
+              />
+            }
+            plan={planWindow}
+            tryCard={tryCard}
+          />
 
-            <CoursePlanWindow
-              chapterTitles={getChapterTitles(outline)}
-              examDate={examDate}
-              isExam={course.format === "exam"}
-              plan={plan}
+          {/* On a tablet the bands are rounded panels, so this one keeps a gap from the one above. */}
+          <CourseFit
+            className={cn(BAND_CLASS, SUBJECT_WASH_CLASS.soft, "sm:mt-3 lg:mt-0")}
+            content={landingPage}
+            courseId={course.id}
+          />
+
+          <div className={BAND_CLASS}>
+            <LibraryCourseOutline
+              courseId={course.id}
+              lead={outlineLead}
+              outline={outline}
+              params={params}
+              plan={{ examDate, pace: plan.pace }}
             />
           </div>
-
-          <TryAndFit
-            courseId={course.id}
-            landingPage={landingPage}
-            locale={locale}
-            origin={getCourseHref(params)}
-            tryId={tryId}
-            tryLesson={tryLesson}
-          />
-
-          <LibraryCourseOutline
-            courseId={course.id}
-            lead={outlineLead}
-            outline={outline}
-            params={params}
-            plan={{ examDate, pace: plan.pace }}
-          />
 
           <CourseClosing courseId={course.id} pace={pace} />
         </Page>

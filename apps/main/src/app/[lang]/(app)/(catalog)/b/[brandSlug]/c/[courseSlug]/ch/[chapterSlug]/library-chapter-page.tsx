@@ -3,6 +3,11 @@ import { CatalogPageBar } from "@/components/catalog/catalog-page-bar";
 import { ChapterStrip } from "@/components/catalog/chapter-strip";
 import { getExamChapterAreas } from "@/components/catalog/course-plan";
 import { CourseProgressScope } from "@/components/catalog/course-progress";
+import {
+  BAND_CLASS,
+  SUBJECT_WASH_CLASS,
+  getSubjectToneStyle,
+} from "@/components/catalog/subject-tone";
 import { TryLesson, getTryLessonId, pickTryLesson } from "@/components/catalog/try-lesson";
 import { CheckMark } from "@/components/public/check-mark";
 import { JsonLd } from "@/components/public/json-ld";
@@ -116,7 +121,10 @@ async function ChapterClosing({
   const titleId = `chapter-closing-${chapterId}`;
 
   return (
-    <PageSection aria-labelledby={titleId} className="border-border gap-1 border-t pt-10">
+    <PageSection
+      aria-labelledby={titleId}
+      className={cn(BAND_CLASS, SUBJECT_WASH_CLASS.strong, "-mb-12 gap-1 lg:-mb-16")}
+    >
       <h2
         className="text-[22px] leading-tight font-semibold tracking-[-0.02em] text-balance sm:text-2xl"
         id={titleId}
@@ -186,7 +194,7 @@ export async function LibraryChapterPage({
   const titleId = `chapter-title-${chapter.id}`;
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-8" style={getSubjectToneStyle(course.categories)}>
       <CatalogPageBar
         back={{ href: getCourseHref(params), label: course.title }}
         options={
@@ -228,26 +236,28 @@ export async function LibraryChapterPage({
           ]}
         />
 
-        <section aria-labelledby={titleId} className="max-w-column flex flex-col">
-          <p className="text-muted-foreground flex flex-wrap items-center gap-x-1.5 text-sm sm:text-[15px]">
-            <PublicEyebrowLink href={getCourseHref(params)}>{course.title}</PublicEyebrowLink>
-            {area && <span>{`· ${area}`}</span>}
-          </p>
+        <div className={cn(BAND_CLASS, SUBJECT_WASH_CLASS.strong, "-mt-8")}>
+          <section aria-labelledby={titleId} className="max-w-column flex flex-col">
+            <p className="text-muted-foreground flex flex-wrap items-center gap-x-1.5 text-sm sm:text-[15px]">
+              <PublicEyebrowLink href={getCourseHref(params)}>{course.title}</PublicEyebrowLink>
+              {area && <span>{`· ${area}`}</span>}
+            </p>
 
-          <h1 className="text-title mt-2" id={titleId}>
-            {chapter.title}
-          </h1>
+            <h1 className="text-title mt-2" id={titleId}>
+              {chapter.title}
+            </h1>
 
-          <p className={HERO_LEAD_CLASS}>{chapter.description}</p>
+            <p className={HERO_LEAD_CLASS}>{chapter.description}</p>
 
-          <PlanLine startsHere={Boolean(startChapterId)} />
+            <PlanLine startsHere={Boolean(startChapterId)} />
 
-          <ChapterStart
-            courseId={course.id}
-            hasLesson={hasLesson}
-            startChapterId={startChapterId}
-          />
-        </section>
+            <ChapterStart
+              courseId={course.id}
+              hasLesson={hasLesson}
+              startChapterId={startChapterId}
+            />
+          </section>
+        </div>
 
         <ChapterStrip areas={areas} chapterId={chapter.id} outline={outline} params={params} />
 

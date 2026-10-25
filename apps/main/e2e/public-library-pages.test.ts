@@ -480,6 +480,9 @@ test.describe("public Library chapter and course pages", () => {
     const outcomes = [
       `Explain why atoms don't collapse ${id}`,
       `Predict where an electron is ${id}`,
+      `Read the light an atom gives off ${id}`,
+      `Tell a wave from a particle in an experiment ${id}`,
+      `Describe how a laser makes its light ${id}`,
     ];
 
     const description = `How the smallest things behave ${id}: </script><h1>Injected heading ${id}</h1><script type="application/ld+json">`;
@@ -509,6 +512,8 @@ test.describe("public Library chapter and course pages", () => {
     expect(html).toContain(`Waves ${id}`);
     expect(html).toContain(`Inside the atom ${id}`);
     expect(html).toContain(`How do electrons fill the shells ${id}`);
+    // Every outcome is in the page for search engines, the ones folded away included.
+    expect(html).toContain(`Describe how a laser makes its light ${id}`);
     expect(html).not.toContain(REVEAL);
     expect(html).not.toContain(WRONG_REASON);
     expect(html).not.toContain("isCorrect");
@@ -531,8 +536,8 @@ test.describe("public Library chapter and course pages", () => {
 
     await expect(hero.getByRole("link", { name: "Build my plan" })).toBeVisible();
 
-    // "Try a lesson" leads down to the course's first written question, answerable right there.
-    await hero.getByRole("link", { name: "Try a lesson" }).click();
+    // Beside the way in, the course's first written question, answerable right there: on a wide
+    // screen it's on the first screen, so nothing links down to it.
     const tryLesson = page.getByRole("region", { name: "Try a lesson · free · 5 min" });
 
     await expect(tryLesson).toBeInViewport();
@@ -544,11 +549,22 @@ test.describe("public Library chapter and course pages", () => {
       }),
     ).toBeVisible();
 
+    await expect(hero.getByRole("link", { name: "Try a lesson" })).toBeHidden();
+
+    // On a phone it follows the way in, and "Try a lesson" leads down to all of it.
+    await page.setViewportSize({ height: 812, width: 375 });
+    await hero.getByRole("link", { name: "Try a lesson" }).click();
+    await expect(tryLesson).toBeInViewport({ ratio: 1 });
+    await page.setViewportSize({ height: 720, width: 1280 });
+
     await expect(page.getByText(description, { exact: true })).toBeVisible();
 
-    await expect(
-      page.getByRole("region", { name: "What you'll be able to do" }).getByRole("listitem"),
-    ).toHaveText(outcomes);
+    // What it makes someone able to do: the first few in sight, the rest one tap away.
+    const fit = page.getByRole("region", { name: "What you'll be able to do" });
+
+    await expect(fit.getByRole("listitem")).toHaveText(outcomes.slice(0, 3));
+    await fit.getByRole("button", { name: "Show 2 more" }).click();
+    await expect(fit.getByRole("listitem")).toHaveText(outcomes);
 
     await expect(
       page.getByRole("region", { name: "Who it's for" }).getByRole("listitem"),

@@ -1,3 +1,5 @@
+import { LineMarker } from "@zoonk/ui/components/line-marker";
+import { MapIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 
 /*
@@ -6,12 +8,13 @@ import { getExtracted } from "next-intl/server";
  */
 
 /**
- * A course's first screen: the course on the left and its example plan beside it from `xl`, at the
- * page's right edge however wide the screen, under it before; the course alone when it has no plan
- * to show.
+ * A course's first screen: the course on the left and, with `COURSE_HERO_PAIR_CLASS`, what it
+ * shows beside it (the question to try, or the example plan without one) from `xl`, at the page's
+ * right edge however wide the screen, under it before.
  */
-export const COURSE_HERO_CLASS =
-  "grid grid-cols-1 gap-9 xl:items-start xl:gap-12 xl:has-[[data-slot=course-plan]]:grid-cols-[minmax(0,1fr)_minmax(0,33rem)]";
+export const COURSE_HERO_CLASS = "grid grid-cols-1 gap-9 xl:items-start xl:gap-12";
+
+export const COURSE_HERO_PAIR_CLASS = "xl:grid-cols-[minmax(0,1fr)_minmax(0,31rem)]";
 
 /** A course's name on its page: the app's page title, larger from `lg`, where the plan sits beside it. */
 export const COURSE_TITLE_CLASS = "text-title lg:text-[2.75rem] lg:leading-[1.04]";
@@ -25,20 +28,28 @@ export const LESSON_LEAD_CLASS =
   "text-muted-foreground mt-3 text-[0.9375rem] leading-relaxed text-pretty";
 
 /** The line on what Zoonk does with the course (`PlanLine`). */
-const PLAN_LINE_CLASS = "mt-3 text-[0.9375rem] leading-snug font-medium text-pretty";
+const PLAN_LINE_CLASS = "text-muted-foreground mt-3 flex gap-2 text-[0.9375rem] leading-snug";
 
 /**
  * What Zoonk does with the page's course, in one line on its first screen: a plan that starts at
- * the visitor's level, or at the page's chapter (`startsHere`), and fits their schedule.
+ * the visitor's level, or at the page's chapter (`startsHere`), and fits their schedule. It leads
+ * to the button that builds that plan, so it's quieter than the page's own promise above it, after
+ * the Plan's map, as the tab it opens is marked.
  */
 export async function PlanLine({ startsHere = false }: { startsHere?: boolean }) {
   const t = await getExtracted();
 
   return (
     <p className={PLAN_LINE_CLASS}>
-      {startsHere
-        ? t("With Zoonk, your plan starts at this chapter and fits your schedule.")
-        : t("With Zoonk, your plan starts at your level and fits your schedule.")}
+      <LineMarker>
+        <MapIcon aria-hidden="true" className="size-4" />
+      </LineMarker>
+
+      <span className="text-pretty">
+        {startsHere
+          ? t("With Zoonk, your plan starts at this chapter and fits your schedule.")
+          : t("With Zoonk, your plan starts at your level and fits your schedule.")}
+      </span>
     </p>
   );
 }

@@ -23,7 +23,8 @@ function CoursePlanLink({ courseId, pace }: { courseId: string; pace: number | n
 /**
  * The course's way in: "Build my plan", whose start page asks the visitor's level first, and on the
  * first screen "Try a lesson" beside it, down to the card (`tryId`) when there's one to try, with
- * a short line that it's free and needs no account.
+ * a short line that it's free and needs no account. From `xl` the card sits beside the hero, where
+ * a link to it would scroll nowhere, so it's only there under `xl`.
  */
 export async function CourseStart({
   className,
@@ -46,7 +47,7 @@ export async function CourseStart({
       {tryId ? (
         <div className="flex flex-col gap-3 sm:flex-row">
           <CoursePlanLink courseId={courseId} pace={pace} />
-          <a className={getSecondaryStartControlClassName()} href={`#${tryId}`}>
+          <a className={cn(getSecondaryStartControlClassName(), "xl:hidden")} href={`#${tryId}`}>
             {t("Try a lesson")}
           </a>
         </div>

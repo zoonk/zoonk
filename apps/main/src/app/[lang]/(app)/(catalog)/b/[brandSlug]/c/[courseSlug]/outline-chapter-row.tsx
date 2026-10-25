@@ -1,8 +1,10 @@
+import { ShowMore } from "@/components/catalog/show-more";
 import { NUMERIC_CLASS } from "@/components/public/landing-styles";
 import { type LibraryOutline } from "@/data/catalog/resolve-catalog-route";
 import { Link } from "@/i18n/navigation";
 import { getChapterHref, getLessonHref } from "@/lib/public/public-hrefs";
 import { cn } from "@zoonk/ui/lib/utils";
+import { getExtracted } from "next-intl/server";
 import { Fragment, type ReactNode } from "react";
 
 export type OutlineParams = { brandSlug: string; courseSlug: string };
@@ -11,6 +13,12 @@ export type OutlineChapter = OutlineBand["chapters"][number];
 
 /** A no-break space keeps each dot at the end of a line, never at the start of the next. */
 export const OUTLINE_SEPARATOR = " · ";
+
+/** The chapters a long list shows before the rest wait one tap away. */
+const CHAPTERS_SHOWN = 6;
+
+/** A list only a little longer shows whole: a fold that hides two chapters saves nothing. */
+const CHAPTERS_FOLDED_FROM = CHAPTERS_SHOWN + 3;
 
 /*
  * A row's targets stay inside the row and never overlap, so a tap opens what it lands on, and each
@@ -60,6 +68,37 @@ function ChapterLessonLinks({
         </Fragment>
       ))}
     </p>
+  );
+}
+
+/**
+ * A level's or an area's chapters (`rows`, each an `OutlineChapterRow`): a long list shows its
+ * first few and the rest one tap away, so a level of seventy chapters doesn't push the rest of the
+ * page seventy rows down. Every row stays in the page's HTML, for search engines.
+ */
+export async function OutlineChapterList({ rows }: { rows: ReactNode[] }) {
+  const t = await getExtracted();
+
+  if (rows.length < CHAPTERS_FOLDED_FROM) {
+    return <ol>{rows}</ol>;
+  }
+
+  const rest = rows.length - CHAPTERS_SHOWN;
+
+  return (
+    <div className="flex flex-col">
+      <ol>{rows.slice(0, CHAPTERS_SHOWN)}</ol>
+
+      <ShowMore
+        className="mt-1 ml-10"
+        less={t("Show fewer chapters")}
+        more={t("{count, plural, one {Show # more chapter} other {Show # more chapters}}", {
+          count: rest,
+        })}
+      >
+        <ol className="border-t">{rows.slice(CHAPTERS_SHOWN)}</ol>
+      </ShowMore>
+    </div>
   );
 }
 

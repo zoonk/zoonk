@@ -6,6 +6,7 @@ import { getExtracted } from "next-intl/server";
 import {
   OUTLINE_SEPARATOR,
   type OutlineChapter,
+  OutlineChapterList,
   OutlineChapterRow,
   type OutlineParams,
 } from "./outline-chapter-row";
@@ -118,8 +119,8 @@ async function AreaChapters({
   };
 
   return (
-    <ol>
-      {orderByStudy({ chapters, rows }).map((chapter) => (
+    <OutlineChapterList
+      rows={orderByStudy({ chapters, rows }).map((chapter) => (
         <OutlineChapterRow
           chapter={chapter}
           key={chapter.id}
@@ -128,7 +129,7 @@ async function AreaChapters({
           params={params}
         />
       ))}
-    </ol>
+    />
   );
 }
 
