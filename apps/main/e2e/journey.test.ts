@@ -887,7 +887,8 @@ test.describe("Journey", () => {
   test("gives the weekend its own time in the plan editor, as onboarding does, by keyboard too", async ({
     browser,
   }) => {
-    await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
+    // Lucas studies every day, and his small plan plans again in a moment after each change.
+    await asPersona(browser, { persona: "buddy" }, async ({ page, user }) => {
       const weekdays = [1, 2, 3, 4, 5];
 
       // No week of its own (null, or never set) means every day takes the daily time.
@@ -916,7 +917,7 @@ test.describe("Journey", () => {
         .poll(loadWeek, { timeout: REPLAN_TIMEOUT_MS })
         .toStrictEqual([120, 30, 30, 30, 30, 30, 120]);
 
-      // The weekdays change on their own, and the weekend keeps what she gave it. The editor saves
+      // The weekdays change on their own, and the weekend keeps what he gave it. The editor saves
       // one change at a time: the weekend's is saved before the page shows it.
       const minutes = editor.getByRole("radiogroup", { name: "Time a day" });
 
@@ -953,7 +954,8 @@ test.describe("Journey", () => {
   test("says what a time change in the plan editor did, and Undo, or the old time set back, gives the plan back as it was", async ({
     browser,
   }) => {
-    await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
+    // Lucas's small plan plans again in a moment after each of the four changes.
+    await asPersona(browser, { persona: "buddy" }, async ({ page, user }) => {
       // Each item by what it is, its day and its status: what the learner sees of the plan.
       const loadPlanItems = async () => {
         const items = await prisma.planItem.findMany({
