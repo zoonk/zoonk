@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { type Locator } from "@playwright/test";
 import { prisma } from "@zoonk/db";
+import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { type Page, expect, test } from "./fixtures";
 import { expectVisibleFocus, tabTo } from "./keyboard-focus";
@@ -106,18 +107,6 @@ test.describe("Typed before the page is ready", () => {
     await tabTo(page, box);
   });
 
-  test("the buddy's goal box keeps words changed before it's ready", async ({
-    userWithoutProgress: page,
-  }) => {
-    const code = await openBeforeTheCode(page, "/buddy?ask=learn+guitar");
-    const box = page.getByRole("main").getByRole("textbox", { name: "Your goal" });
-    await expect(box).toHaveValue("learn guitar");
-
-    await box.fill("learn guitar for campfire songs");
-    await releaseTheCode({ code, field: box, page });
-    await expect(box).toHaveValue("learn guitar for campfire songs");
-  });
-
   test("a step's words typed before it's ready are the answer, in each of its fields", async ({
     noProgressUser,
     userWithoutProgress: page,
@@ -128,7 +117,8 @@ test.describe("Typed before the page is ready", () => {
     });
 
     const code = await openBeforeTheCode(page, `/start/${goal.id}`);
-    await expect(page.getByRole("heading", { name: "What do you do at work?" })).toBeVisible();
+    const heading = "What do you do at work?";
+    await expect(page.getByRole("heading", { name: heading })).toBeVisible();
 
     const role = page.getByRole("textbox", { name: "Your role" });
     const use = page.getByRole("textbox", { name: "What you'll use it for" });
@@ -138,8 +128,22 @@ test.describe("Typed before the page is ready", () => {
     await expect(role).toHaveValue("Marketing analyst");
     await expect(use).toHaveValue("A/B tests");
 
-    // The step's own state has the words: Continue goes on with them.
-    await expect(page.getByRole("button", { exact: true, name: "Continue" })).toBeEnabled();
+    // The step's own state has the words: Continue goes on with them, and work plans use them.
+    const next = page.getByRole("button", { exact: true, name: "Continue" });
+    await expect(next).toBeEnabled();
+    await expectAccessibleScreen(page, heading);
+    await next.click();
+
+    await expect(
+      page.getByRole("heading", { name: "Is there a date you're aiming for?" }),
+    ).toBeVisible();
+
+    await expect
+      .poll(async () => {
+        const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+        return saved.details;
+      })
+      .toMatchObject({ purpose: "work", role: "Marketing analyst", tasks: "A/B tests" });
   });
 
   test("a date picked before the step is ready is the date it goes on with", async ({

@@ -24,7 +24,6 @@ import { createGoalLearner } from "./checkpoint-fixtures";
 import { runCoreSeedScript } from "./core-seed-script";
 import { expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
-import { captureMissionEnding } from "./mission-ending-captures";
 import { expectHydrated, holdCodeWith, isHydrated } from "./on-demand-code";
 import { createStudyDay, openAs, saveMissions } from "./study-day";
 import { fulfillTutorAnswer, proposeFutureRestDay, toProposal } from "./tutor-answer";
@@ -564,7 +563,6 @@ test.describe("Buddy tab", () => {
       prisma.userProgress.findUniqueOrThrow({ where: { userId: user.id } }),
     ).resolves.toMatchObject({ totalBrainPower: before.totalBrainPower + 50n });
 
-    await captureMissionEnding(page, test.info(), "buddy");
     await page.context().close();
   });
 
@@ -632,10 +630,12 @@ test.describe("Buddy tab", () => {
     await expect(day).toBeVisible();
     await expect(main.getByRole("button", { name: /missions$/iu })).toBeHidden();
 
-    // The conversation keeps a comfortable line instead of stretching across the screen.
+    // The conversation keeps a comfortable line instead of stretching across the screen, beside
+    // the day rather than under it.
     const conversation = main.getByRole("region", { name: "Conversation with Zu" });
-    const width = await conversation.evaluate((element) => element.getBoundingClientRect().width);
-    expect(width).toBeLessThanOrEqual(720);
+    const [threadBox, dayBox] = await Promise.all([conversation.boundingBox(), day.boundingBox()]);
+    expect(threadBox!.width).toBeLessThanOrEqual(720);
+    expect(threadBox!.x + threadBox!.width).toBeLessThan(dayBox!.x);
 
     // Every mission done: the card says so and the reward lights up.
     const missions = day.getByRole("region", { name: "Missions done" });
@@ -773,8 +773,6 @@ test.describe("Buddy tab", () => {
     ).toHaveCount(0);
 
     await expectAccessibleScreen(page, "the buddy's day with first steps");
-    await missions.screenshot({ path: test.info().outputPath("buddy-day-missions-phone.png") });
-    await steps.screenshot({ path: test.info().outputPath("buddy-day-first-steps-phone.png") });
 
     // Asking the buddy from its own day is the composer right there: it takes focus inside the
     // tap itself (when a phone raises its keyboard), the sheet closes onto it, and nothing is
@@ -835,7 +833,6 @@ test.describe("Buddy tab", () => {
     await expect(finished).toContainText("4/4");
     await expect(finished.getByText("You've tried everything your plan uses.")).toBeVisible();
     await expect(finished.getByRole("listitem").filter({ hasText: /, done$/u })).toHaveCount(4);
-    await finished.screenshot({ path: test.info().outputPath("first-steps-finished-phone.png") });
     await page.context().close();
   });
 
@@ -873,12 +870,15 @@ test.describe("Buddy tab", () => {
     }) => {
       const goal = `understand quantum physics ${randomUUID().slice(0, 8)}`;
 
-      // A slow device: the buddy shows its goal box before the box's code has arrived.
+      // A slow device: the buddy shows its goal box, with the words a link asked about, before the
+      // box's code has arrived. The learner's own words replace them.
       const code = await holdCodeWith({ marker: "buddy-goal-start", page });
-      await page.goto("/buddy", { waitUntil: "domcontentloaded" });
+      await page.goto("/buddy?ask=learn+guitar", { waitUntil: "domcontentloaded" });
       await expect.poll(code.held).toBe(true);
       const main = page.getByRole("main");
-      await main.getByRole("textbox", { name: "Your goal" }).fill(goal);
+      const box = main.getByRole("textbox", { name: "Your goal" });
+      await expect(box).toHaveValue("learn guitar");
+      await box.fill(goal);
       const send = main.getByRole("button", { name: /^Build my plan/u });
       await expect(isHydrated(send)).resolves.toBe(false);
 
@@ -897,38 +897,6 @@ test.describe("Buddy tab", () => {
       await expect(page.getByRole("textbox", { name: "I want to" })).toHaveValue(goal);
     });
   }
-
-  test("on a wide screen the buddy's day stays beside a readable thread and the composer opens focused", async ({
-    browser,
-  }) => {
-    const user = await createBuddyLearner();
-    const page = await openAs(browser, user);
-
-    try {
-      await page.setViewportSize({ height: 900, width: 1440 });
-      await stubBuddy({ answers: [], page });
-      await page.goto("/buddy");
-
-      const thread = page.getByRole("region", { name: "Conversation with Zu" });
-      const day = page.getByRole("complementary", { name: "Zu today" });
-      await expect(thread).toBeVisible();
-      await expect(day).toBeVisible();
-      await expect(day.getByRole("region", { name: "Today's missions" })).toBeVisible();
-
-      await expect(day.getByRole("link", { name: /^What Zu remembers/u })).toHaveAttribute(
-        "href",
-        "/settings/memory",
-      );
-
-      await expect(thread.getByRole("textbox", { name: "Message Zu" })).toBeFocused();
-
-      const [threadBox, dayBox] = await Promise.all([thread.boundingBox(), day.boundingBox()]);
-      expect(threadBox!.width).toBeLessThanOrEqual(720);
-      expect(threadBox!.x + threadBox!.width).toBeLessThan(dayBox!.x);
-    } finally {
-      await page.context().close();
-    }
-  });
 
   test("a learner starts with Zu, chooses a buddy from the tab, then renames it", async ({
     browser,
