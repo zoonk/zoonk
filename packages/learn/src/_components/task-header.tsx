@@ -21,7 +21,7 @@ export function TaskHeader({ className, ...props }: React.ComponentProps<"div">)
   return (
     <div
       className={cn(
-        "after:from-background relative z-30 shrink-0 border-b transition-colors after:pointer-events-none after:absolute after:inset-x-0 after:top-full after:h-3 after:bg-linear-to-b after:to-transparent motion-reduce:transition-none",
+        "after:from-background relative z-30 shrink-0 border-b transition-colors after:pointer-events-none after:absolute after:inset-x-0 after:top-full after:mt-px after:h-3 after:bg-linear-to-b after:to-transparent motion-reduce:transition-none",
         scrolled ? "border-border" : "border-transparent",
         className,
       )}
