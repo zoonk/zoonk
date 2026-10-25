@@ -17,7 +17,7 @@ import { activityStep, teachingStep } from "../preview/preview-steps";
 /**
  * The lesson player by keyboard alone, at desktop size: Enter runs the screen's main action from
  * anywhere, yet a focused control keeps its own keys; number keys answer; the arrows move between
- * reading screens; sheets hold the lesson's keys while they're open.
+ * reading screens; menus and sheets hold the lesson's keys while they're open.
  */
 
 const DESKTOP = { height: 900, width: 1280 };
@@ -34,7 +34,7 @@ function verdict(text: string) {
 }
 
 describe("lesson by keyboard", () => {
-  it("a focused control keeps Enter, and a sheet holds the lesson's keys", async () => {
+  it("a focused control keeps Enter, and a menu or a sheet holds the lesson's keys", async () => {
     await atViewport(DESKTOP, async () => {
       openLesson({ steps: [teachingStep("explanation"), teachingStep("check")] });
       await expect.element(page.getByText("A cloud, not a little ball")).toBeVisible();
@@ -43,21 +43,17 @@ describe("lesson by keyboard", () => {
       await tabTo(page.getByRole("button", { name: "Screen options" }));
       await press("Enter");
 
-      const summaryItem = page.getByRole("menuitem", { name: "Lesson summary" });
-      await expect.element(summaryItem).toBeVisible();
+      const knowThis = page.getByRole("menuitem", { name: "I already know this" });
+      await expect.element(knowThis).toBeVisible();
       await press("End");
-      await expect.element(summaryItem).toHaveFocus();
-      await press("Enter");
+      await expect.element(knowThis).toHaveFocus();
 
-      const summary = page.getByRole("dialog", { name: "Lesson summary" });
-      await expect.element(summary.getByText(SUMMARY_IDEA)).toBeVisible();
-
-      // The arrows wait while the sheet is open, and Escape closes only the sheet, handing focus
+      // The arrows wait while the menu is open, and Escape closes only the menu, handing focus
       // to Next rather than the menu, so Enter would go on instead of opening it again.
       await press("ArrowRight");
-      await expect.element(summary).toBeVisible();
+      await expect.element(page.getByRole("menu")).toBeVisible();
       await press("Escape");
-      await expect.element(summary).not.toBeInTheDocument();
+      await expect.element(page.getByRole("menu")).not.toBeInTheDocument();
       await expect.element(page.getByRole("button", { name: /^Next/u })).toHaveFocus();
       await expect.element(page.getByText("A cloud, not a little ball")).toBeVisible();
 
@@ -73,6 +69,21 @@ describe("lesson by keyboard", () => {
       await press("Enter");
       await expect.element(verdict("Correct!")).toBeVisible();
       await press("Enter");
+      await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
+
+      // Once the lesson is done, its summary card opens from the menu and Escape closes only it.
+      await tabTo(page.getByRole("button", { name: "Screen options" }));
+      await press("Enter");
+
+      const summaryItem = page.getByRole("menuitem", { name: "Lesson summary" });
+      await press("End");
+      await expect.element(summaryItem).toHaveFocus();
+      await press("Enter");
+
+      const summary = page.getByRole("dialog", { name: "Lesson summary" });
+      await expect.element(summary.getByText(SUMMARY_IDEA)).toBeVisible();
+      await press("Escape");
+      await expect.element(summary).not.toBeInTheDocument();
       await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
     });
   });

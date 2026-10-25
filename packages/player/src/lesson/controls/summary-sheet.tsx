@@ -14,8 +14,9 @@ import { LessonSummaryIdeas } from "../_components/lesson-summary-ideas";
 import { getLessonFocusTarget } from "../_utils/lesson-focus";
 
 /**
- * The lesson's summary card over the lesson, opened from its menu: short lessons end without a
- * summary screen, so the card stays one tap away while playing (and is saved to Content).
+ * The lesson's summary card over its completion moment, opened from its menu: short lessons end
+ * without a summary screen, so on a phone, which has no aside to show it, the card is one tap away
+ * (and saved to Content).
  */
 export function SummarySheet({
   ideas,

@@ -200,7 +200,10 @@ export type PlayableLibraryLesson = {
   level: CourseLevel;
   skills: { id: string; name: string }[];
   steps: PlayableLibraryStep[];
-  /** The summary card, each idea in one sentence: saved to Content and one tap away in the menu. */
+  /**
+   * The summary card, each idea in one sentence: saved to Content and, once the lesson is done, one
+   * tap away in its menu.
+   */
   summaryIdeas: string[];
   targetLanguage: string | null;
   title: string;

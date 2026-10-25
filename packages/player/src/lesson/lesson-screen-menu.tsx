@@ -21,8 +21,9 @@ import { useLessonPlayer, useLessonPlayerConfig } from "./lesson-player-context"
 import { useLessonInteraction } from "./lesson-player-interaction";
 
 /**
- * The lesson's summary card, one tap away from the menu. The menu closes as the sheet opens, so
- * a ref (not state from the click's render) tells the menu to keep the lesson's keys paused.
+ * The lesson's summary card, one tap away from the menu once the lesson is done. The menu closes
+ * as the sheet opens, so a ref (not state from the click's render) tells the menu to keep the
+ * lesson's keys paused.
  */
 function useSummarySheet() {
   const { setPaused } = useLessonInteraction();
@@ -45,16 +46,18 @@ function useSummarySheet() {
 /**
  * The screen's "…" menu, for what the learner rarely needs: that the lesson was made with AI and
  * may contain mistakes (said once here, not on every screen), "I already know this" on an
- * explanation, the lesson's summary card and "Report a problem" from the host. Closing it hands
- * focus back to the lesson, so Enter goes on instead of opening the menu again.
+ * explanation, "Report a problem" from the host and, once the lesson is done, its summary card.
+ * Not before: the summary states what the questions ahead ask. Closing it hands focus back to the
+ * lesson, so Enter goes on instead of opening the menu again.
  */
 export function LessonScreenMenu() {
   const t = useExtracted();
   const { lesson, slots } = useLessonPlayerConfig();
-  const { actions, screen } = useLessonPlayer();
+  const { actions, screen, state } = useLessonPlayer();
   const summary = useSummarySheet();
+  const isDone = state.phase === "completed";
 
-  if (!screen.step) {
+  if (!screen.step && !isDone) {
     return null;
   }
 
@@ -92,14 +95,15 @@ export function LessonScreenMenu() {
             </DropdownMenuItem>
           )}
 
-          {lesson.summaryIdeas.length > 0 && (
+          {isDone && lesson.summaryIdeas.length > 0 && (
             <DropdownMenuItem onClick={() => summary.change(true)}>
               <NotebookTextIcon aria-hidden="true" />
               {t("Lesson summary")}
             </DropdownMenuItem>
           )}
 
-          {slots.reportMenuItem?.({ contentId: screen.step.id, contentKind: "step" })}
+          {screen.step &&
+            slots.reportMenuItem?.({ contentId: screen.step.id, contentKind: "step" })}
         </DropdownMenuContent>
       </DropdownMenu>
 

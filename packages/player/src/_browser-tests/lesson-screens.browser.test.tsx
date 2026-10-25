@@ -1,18 +1,21 @@
 import { describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
 import { press } from "../_test-utils/activity-player";
+import { atViewport } from "../_test-utils/browser-viewport";
 import { buildAdapters, renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { type ExampleLine, type LessonPlayerAdapters } from "../lesson/lesson-player-types";
 import { buildLesson } from "../preview/preview-lesson";
 import { explanationStep, languageStep, teachingStep } from "../preview/preview-steps";
 
 /**
- * What a lesson shows around its screens: the header's minutes and the summary card in the
- * screen's menu, the right spelling of a typo, a word's note and sound tip, and the dated Sources
- * chip of a screen built from a public document.
+ * What a lesson shows around its screens: the header's minutes and the summary card in the menu
+ * once the lesson is done, the right spelling of a typo, a word's note and sound tip, and the
+ * dated Sources chip of a screen built from a public document.
  */
 
 const EXPLANATION_TITLE = "A cloud, not a little ball";
+const PHONE = { height: 844, width: 390 };
+const RIGHT_OPTION = "Where the electron is most likely to be found";
 const RIGHT_TYPED = "It shows where the electron is likely to be";
 
 /** A verdict as the player announces it. */
@@ -21,30 +24,46 @@ function verdict(text: string) {
 }
 
 describe("lesson screens", () => {
-  it("keeps the header to one row and its summary card in the screen's menu", async () => {
-    renderLessonPlayer({
-      lesson: buildLesson([teachingStep("explanation"), teachingStep("check")], {
-        estimatedMinutes: 4,
-        summaryIdeas: ["Electrons live in clouds.", "The densest part is likeliest."],
-      }),
+  it("keeps the header to one row and the summary card in its menu for the lesson's end", async () => {
+    await atViewport(PHONE, async () => {
+      renderLessonPlayer({
+        lesson: buildLesson([teachingStep("explanation"), teachingStep("check")], {
+          estimatedMinutes: 4,
+          summaryIdeas: ["Electrons live in clouds.", "The densest part is likeliest."],
+        }),
+      });
+
+      await expect.element(page.getByText(EXPLANATION_TITLE)).toBeVisible();
+
+      // The header is one row: close, the lesson's title and the menu, without its minutes.
+      await expect.element(page.getByRole("heading", { level: 1 })).toBeVisible();
+      await expect.element(page.getByText("4 min", { exact: true })).not.toBeInTheDocument();
+
+      // The summary states the answers to the questions ahead, so it waits for the lesson's end.
+      const knowThis = page.getByRole("menuitem", { name: "I already know this" });
+      const summaryItem = page.getByRole("menuitem", { name: "Lesson summary" });
+      await page.getByRole("button", { name: "Screen options" }).click();
+      await expect.element(knowThis).toBeVisible();
+      await expect.element(summaryItem).not.toBeInTheDocument();
+      await press("Escape");
+
+      await page.getByRole("button", { name: /^Next/u }).click();
+      await page.getByRole("radio", { name: RIGHT_OPTION }).click();
+      await page.getByRole("button", { name: /^Check/u }).click();
+      await page.getByRole("button", { name: /^Continue/u }).click();
+      await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
+
+      await page.getByRole("button", { name: "Screen options" }).click();
+      await summaryItem.click();
+
+      const summary = page.getByRole("dialog", { name: "Lesson summary" });
+      await expect.element(summary.getByText("Electrons live in clouds.")).toBeVisible();
+      await expect.element(summary.getByText("The densest part is likeliest.")).toBeVisible();
+
+      await summary.getByRole("button", { name: "Got it" }).click();
+      await expect.element(summary).not.toBeInTheDocument();
+      await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
     });
-
-    await expect.element(page.getByText(EXPLANATION_TITLE)).toBeVisible();
-
-    // The header is one row: close, the lesson's title and the menu, without its minutes.
-    await expect.element(page.getByRole("heading", { level: 1 })).toBeVisible();
-    await expect.element(page.getByText("4 min", { exact: true })).not.toBeInTheDocument();
-
-    await page.getByRole("button", { name: "Screen options" }).click();
-    await page.getByRole("menuitem", { name: "Lesson summary" }).click();
-
-    const summary = page.getByRole("dialog", { name: "Lesson summary" });
-    await expect.element(summary.getByText("Electrons live in clouds.")).toBeVisible();
-    await expect.element(summary.getByText("The densest part is likeliest.")).toBeVisible();
-
-    await summary.getByRole("button", { name: "Got it" }).click();
-    await expect.element(summary).not.toBeInTheDocument();
-    await expect.element(page.getByText(EXPLANATION_TITLE)).toBeVisible();
   });
 
   it("shows a written answer nothing checked next to the sample answer, without calling it wrong", async () => {

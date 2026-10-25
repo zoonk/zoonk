@@ -8,8 +8,8 @@ import { teachingStep } from "../preview/preview-steps";
 /**
  * What a learner sees after answering, and the quiet controls around it: one why and one line on
  * what happens next, Hyperdrive from three in a row, "I already know this" in the menu with a miss
- * coming back at the end, Previous on every screen after the first, and Enter going on after a
- * sheet closes.
+ * coming back at the end, Previous on every screen after the first, and Enter going on after the
+ * screen's menu closes.
  */
 
 const QUESTION = 'What does the electron "cloud" show?';
@@ -187,19 +187,14 @@ describe("lesson feedback", () => {
     await expect.element(previous).not.toBeInTheDocument();
   });
 
-  it("goes on with Enter after the summary sheet opened from the menu closes", async () => {
-    const lesson = buildLesson([teachingStep("explanation"), teachingStep("check")], {
-      summaryIdeas: ["The electron is a cloud of chances."],
-    });
-
+  it("goes on with Enter after the screen's menu closes", async () => {
+    const lesson = buildLesson([teachingStep("explanation"), teachingStep("check")]);
     renderLessonPlayer({ lesson });
 
     await page.getByRole("button", { name: "Screen options" }).click();
-    await page.getByRole("menuitem", { name: "Lesson summary" }).click();
-
-    const sheet = page.getByRole("dialog", { name: "Lesson summary" });
-    await sheet.getByRole("button", { name: "Got it" }).click();
-    await expect.element(sheet).not.toBeInTheDocument();
+    await expect.element(page.getByRole("menu")).toBeVisible();
+    await press("Escape");
+    await expect.element(page.getByRole("menu")).not.toBeInTheDocument();
 
     await press("Enter");
     await expect.element(page.getByText(QUESTION)).toBeVisible();
