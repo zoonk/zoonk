@@ -756,7 +756,7 @@ test("when no time covers an exam by its date, Find offers the time that studies
   });
 
   await page.goto(`/start/${goal.id}`);
-  await page.getByRole("button", { name: "Start from zero" }).click();
+  await page.getByRole("button", { name: "Skip and start from the basics" }).click();
 
   await page
     .getByRole("radiogroup", { name: "Minutes a day" })
