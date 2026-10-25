@@ -709,13 +709,14 @@ test.describe("Today's plan change", () => {
   test("a focus explains the extra depth behind a subject's later finish before applying", async ({
     browser,
   }) => {
-    // Enough of each subject and time that the focus moves Criminal law's finish on any weekday:
-    // with fewer, its extra lessons fit its old last day on most of them.
+    // Short enough on time that Criminal law keeps only some of its lessons and ends before the
+    // plan's last lesson day on any weekday, so the focus ends it later. Since challenges run on
+    // top of their days, 45 minutes a day took it to that last day already: no focus could.
     const phases = [0, 1];
-    const lessonsPerSkill = 14;
+    const lessonsPerSkill = 6;
 
     const { plan, user } = await createProposalPlan({
-      dailyMinutes: 45,
+      dailyMinutes: 30,
       exam: true,
       examDays: 21,
       lessonMinutes: 6,
