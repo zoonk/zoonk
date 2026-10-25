@@ -216,6 +216,10 @@ test.describe("Static public pages", () => {
       await expect(banner.locator('[data-slot="public-account-slot"]')).toBeHidden();
       await expect(freePlan.getByRole("link", { name: "Start free" })).toBeVisible();
 
+      // The HTML can't know the page's search, so the browser draws the "Log in" that returns here
+      // in place of the HTML's: measured once it has, as a box read across the swap has none.
+      await expect(logIn).toHaveAttribute("href", "/login?next=%2Fpricing");
+
       const [bannerBefore, logInBefore] = await Promise.all([
         banner.boundingBox(),
         logIn.boundingBox(),
