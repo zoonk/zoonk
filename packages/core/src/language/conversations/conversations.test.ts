@@ -698,10 +698,11 @@ describe("language conversations", () => {
 
     const scheduled = await loadSessionBosses({
       examBlueprintId: null,
-      goalKind: "language",
+      goal: { kind: "language", targetDate: null },
       graphSkills: [],
       itemSkillIds: new Map(),
       items: planItems,
+      settings: { fullCourse: false },
       skills: [],
       today: new Date(),
       userId: user.id,

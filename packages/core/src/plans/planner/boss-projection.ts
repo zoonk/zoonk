@@ -161,7 +161,7 @@ export function projectBossPlan({
     skillLessons: ReadonlyMap<string, number>;
   };
   candidates: readonly (BossCandidate & { laid?: { beside: boolean; date: string } })[];
-  input: Pick<BuildPlanInput, "graph" | "settings">;
+  input: Pick<BuildPlanInput, "goal" | "graph" | "settings">;
   rows?: ItemSkillRows;
   survivors?: ReadonlyMap<string, string>;
 }) {

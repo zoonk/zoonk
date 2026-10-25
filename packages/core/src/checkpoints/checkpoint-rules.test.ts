@@ -257,6 +257,80 @@ describe("an exam window's challenge", () => {
   });
 });
 
+describe("a challenge before an exam's continuation", () => {
+  const items = [
+    planItem({ id: "a1", phase: 0, position: 0, scheduledFor: day(1), skillId: "a" }),
+    planItem({ id: "b1", phase: 0, position: 1, scheduledFor: day(2), skillId: "b" }),
+    planItem({ id: "c1", phase: 0, position: 2, scheduledFor: day(3), skillId: "c" }),
+    planItem({ id: "w0", kind: "boss", phase: 0, position: 3, scheduledFor: day(5) }),
+    planItem({ id: "c2", phase: 1, position: 4, scheduledFor: day(7), skillId: "c" }),
+    planItem({ id: "w1", kind: "boss", phase: 1, position: 5, scheduledFor: day(10) }),
+    planItem({ id: "a2", phase: 2, position: 6, scheduledFor: day(15), skillId: "a" }),
+    planItem({ id: "w2", kind: "boss", phase: 3, position: 7, scheduledFor: day(16) }),
+  ];
+
+  const plan = {
+    goal: { kind: "exam" as const, targetDate: day(12) },
+    graphSkills: [
+      { lessons: 6, skillId: "a" },
+      { lessons: 3, skillId: "b" },
+      { lessons: 6, skillId: "c" },
+    ],
+    itemSkillIds: new Map(items.map((item) => [item.id, item.skillId ? [item.skillId] : []])),
+    items,
+    settings: { fullCourse: true },
+    skills: ["a", "b", "c"].map((id) => ({ id })),
+  };
+
+  const boss = items[3]!;
+
+  it("ignores after-exam core items but keeps core items between the challenge and exam", () => {
+    expect(getBossSkillIds({ ...plan, boss })).toStrictEqual(["a", "b"]);
+
+    expect(
+      getBossSkillIds({ ...plan, boss, items: items.filter((item) => item.id !== "a2") }),
+    ).toStrictEqual(["a", "b"]);
+  });
+
+  it("counts a required lesson on the exam day", () => {
+    const onExam = items.map((item) =>
+      item.id === "a2" ? { ...item, scheduledFor: day(12) } : item,
+    );
+
+    expect(getBossSkillIds({ ...plan, boss, items: onExam })).toStrictEqual(["b"]);
+
+    expect(getBossSkillIds({ ...plan, boss: { ...boss, scheduledFor: day(12) } })).toStrictEqual([
+      "a",
+      "b",
+      "c",
+    ]);
+  });
+
+  it.each([
+    { goal: plan.goal, settings: { fullCourse: false } },
+    { goal: { kind: "learn" as const, targetDate: day(12) }, settings: plan.settings },
+    { goal: { kind: "exam" as const, targetDate: null }, settings: plan.settings },
+  ])("keeps the ordinary core rule for $goal.kind with $settings", (context) => {
+    expect(getBossSkillIds({ ...plan, ...context, boss })).toStrictEqual(["b"]);
+  });
+
+  it("keeps undated required items and an undated challenge's ordinary core", () => {
+    const undated = items.map((item) =>
+      item.id === "a2" ? { ...item, scheduledFor: null } : item,
+    );
+
+    expect(getBossSkillIds({ ...plan, boss, items: undated })).toStrictEqual(["b"]);
+
+    expect(getBossSkillIds({ ...plan, boss: { ...boss, scheduledFor: null } })).toStrictEqual([
+      "b",
+    ]);
+  });
+
+  it("uses earlier challenges' pre-exam skills when an after-exam challenge selects unasked skills", () => {
+    expect(getBossSkillIds({ ...plan, boss: items[7]! })).toStrictEqual(["a", "b", "c"]);
+  });
+});
+
 describe(planChallengeWrites, () => {
   it("writes nothing for a challenge that already has its ten questions", () => {
     expect(

@@ -1,12 +1,15 @@
 import { prisma } from "@zoonk/db";
+import { planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { loadGoalPlan } from "../learner/_utils/goal-skill-graph";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { parsePlanGraph } from "../plans/planner/plan-state";
 import { getTodayStudySession } from "../sessions/_test-utils/open-today";
 import { readBlockPayload } from "../sessions/block-payload";
+import { loadSessionBosses } from "./_utils/load-boss";
 import { requestChallengeQuestions } from "./challenge-questions";
 
 /** A Monday in 2020, before the learning events other tests write, which estimates read. */
@@ -25,6 +28,84 @@ describe("a challenge before a skill's core is in", () => {
 
   afterEach(() => {
     vi.useRealTimers();
+  });
+
+  it("keeps a skill taught before the exam in the day's challenge and question preparation", async () => {
+    const user = await userFixture();
+    const library = await planLibraryFixture({ skills: [{ lessons: 6 }, { lessons: 3 }] });
+
+    const { goal, plan } = await unplannedGoalFixture({
+      kind: "exam",
+      targetDate: new Date("2020-10-10T00:00:00Z"),
+      timezone: "UTC",
+      userId: user.id,
+    });
+
+    const settings = { fullCourse: true, startDate: "2020-09-28" };
+    await prisma.plan.update({ data: { graph: library.graph, settings }, where: { id: plan.id } });
+    const [first, second] = library.skills;
+
+    const created = await Promise.all([
+      planItemFixture({
+        kind: "lesson",
+        lessonId: library.lessons[0]!.id,
+        planId: plan.id,
+        position: 0,
+        scheduledFor: new Date("2020-09-27T00:00:00Z"),
+        skillId: first!.id,
+      }),
+      planItemFixture({
+        kind: "lesson",
+        lessonId: library.lessons[6]!.id,
+        planId: plan.id,
+        position: 1,
+        scheduledFor: new Date("2020-09-27T00:00:00Z"),
+        skillId: second!.id,
+      }),
+      planItemFixture({
+        kind: "boss",
+        phase: 0,
+        planId: plan.id,
+        position: 2,
+        scheduledFor: new Date("2020-09-28T00:00:00Z"),
+      }),
+      planItemFixture({
+        kind: "lesson",
+        lessonId: library.lessons[1]!.id,
+        phase: 1,
+        planId: plan.id,
+        position: 3,
+        scheduledFor: new Date("2020-10-11T00:00:00Z"),
+        skillId: first!.id,
+      }),
+    ]);
+
+    mockSession(user.id);
+    const saved = await loadGoalPlan(goal.id);
+
+    const day = await loadSessionBosses({
+      examBlueprintId: null,
+      goal,
+      graphSkills: library.graph.skills,
+      itemSkillIds: new Map(saved.items.map((item) => [item.id, item.skillIds])),
+      items: await prisma.planItem.findMany({
+        orderBy: { position: "asc" },
+        where: { planId: plan.id },
+      }),
+      settings,
+      skills: saved.skills,
+      today: new Date("2020-09-28T00:00:00Z"),
+      userId: user.id,
+    });
+
+    expect(day.checkpoints[0]?.skillIds).toStrictEqual([first!.id, second!.id]);
+    expect(day.checkpoints[0]?.minutes).toBe(15);
+    const writing = await requestChallengeQuestions({ planItemId: created[2]!.id });
+    expect(writing.status).toBe("start");
+
+    expect(
+      writing.status === "start" ? writing.writes.flatMap((write) => write.skillIds) : [],
+    ).toStrictEqual([first!.id, second!.id]);
   });
 
   it("leaves out a skill whose core, as the plan counts it, comes after its day", async () => {

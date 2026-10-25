@@ -255,7 +255,7 @@ function isBossWritable({
   world,
 }: {
   boss: SimPlan["items"][number];
-  world: Pick<SimWorld, "inputs" | "plan">;
+  world: Pick<SimWorld, "inputs" | "learner" | "plan">;
 }): boolean {
   const { inputs, plan } = world;
 
@@ -281,9 +281,15 @@ function isBossWritable({
 
   const graphSkills = plan.state.graph.skills;
 
-  return getBossSkillIds({ boss, graphSkills, itemSkillIds, items: plan.items, skills }).some(
-    (skillId) => !inputs.listeningSkillIds.has(skillId),
-  );
+  return getBossSkillIds({
+    boss,
+    goal: getSimGoal(world),
+    graphSkills,
+    itemSkillIds,
+    items: plan.items,
+    settings: plan.state.settings,
+    skills,
+  }).some((skillId) => !inputs.listeningSkillIds.has(skillId));
 }
 
 /**
@@ -291,7 +297,7 @@ function isBossWritable({
  * that day: a language goal's unit calls, and other goals' challenges, whose questions are written
  * when they start. None when the first can't be written; a later one that can't is left out.
  */
-function findSessionBosses(world: Pick<SimWorld, "inputs" | "plan" | "today">) {
+function findSessionBosses(world: Pick<SimWorld, "inputs" | "learner" | "plan" | "today">) {
   const [first, ...later] = findBosses(world.plan.items, world.today);
 
   if (!first || !isBossWritable({ boss: first, world })) {

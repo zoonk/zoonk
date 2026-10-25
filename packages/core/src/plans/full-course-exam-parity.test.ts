@@ -116,6 +116,78 @@ describe("studying everything after an exam (R14)", () => {
     120_000,
   );
 
+  it.each([
+    { exam: EXAM, fits: true, minutes: 100 },
+    { exam: "2026-11-15", fits: false, minutes: 120 },
+    { exam: "2026-11-15", fits: false, minutes: 30 },
+  ])(
+    "keeps Ana's pre-exam challenge skills and minutes at $minutes minutes until $exam",
+    async ({ exam, fits, minutes }) => {
+      const copyKey = randomUUID();
+
+      const copy = await seedV2PersonaCopy({
+        copyKey,
+        email: `challenge-parity-${copyKey}@zoonk.test`,
+        persona: "exam",
+      });
+
+      mockSession(copy.userId);
+
+      await changeGoalPlan({
+        goalId: copy.goalId,
+        input: {
+          operations: [
+            { kind: "setTargetDate", targetDate: exam },
+            { kind: "setDailyMinutes", minutes },
+          ],
+          timeZone: TIME_ZONE,
+        },
+      });
+
+      const owned = await findOwnedPlan({ goalId: copy.goalId });
+
+      if (owned.status !== "ready") {
+        throw new Error(`Expected Ana's plan, got ${owned.status}`);
+      }
+
+      const { context } = owned;
+
+      const [off, on] = await Promise.all(
+        [false, true].map((fullCourse) =>
+          computePlan({
+            context,
+            mode: "forced",
+            state: { ...context.state, settings: { ...context.state.settings, fullCourse } },
+          }),
+        ),
+      );
+
+      if (!off || !on) {
+        throw new Error("Expected both schedules");
+      }
+
+      const challenges = (computed: NonNullable<typeof off>) =>
+        computed.built.items
+          .filter(
+            (item) =>
+              item.kind === "boss" && item.scheduledFor && toIsoDate(item.scheduledFor) <= exam,
+          )
+          .map((item) => ({
+            key: item.key,
+            minutes: item.minutes,
+            skills: computed.itemFacts.get(item.key)?.boss?.testedSkillIds,
+          }));
+
+      const before = challenges(off);
+      const after = challenges(on);
+      expect(before.length).toBeGreaterThan(0);
+      expect(after.map(({ skills }) => skills)).toStrictEqual(before.map(({ skills }) => skills));
+      expect(after).toStrictEqual(before);
+      expect(off.feasibility.fits).toBe(fits);
+    },
+    120_000,
+  );
+
   // Three weeks from ENEM, studying everything ends in 2028. The Plan's read took the phase after
   // the exam, which has no challenge by design, for one missing its challenge, and laid the plan
   // out again: the editor said a finish days before the one the change had just saved.

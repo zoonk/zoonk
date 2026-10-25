@@ -9,6 +9,7 @@ import {
   loadAlphabetIntro,
 } from "../../library/language/alphabet/alphabet-intro";
 import { isWritingItem } from "../../plans/_utils/plan-phase-views";
+import { parsePlanSettings } from "../../plans/planner/plan-state";
 import { type BlockDrill } from "../block-payload";
 import { getFreshStart } from "../fresh-start";
 import { getPracticeShare } from "../practice-share";
@@ -243,11 +244,12 @@ export async function loadSessionBuildInput(
     loadDayBosses({
       access,
       examBlueprintId: goal.examBlueprintId,
-      goalKind: goal.kind,
+      goal,
       graphSkills: plan.graph.skills,
       itemSkillIds: plan.itemSkillIds,
       items: plan.items,
       listeningSkillIds,
+      settings: parsePlanSettings(plan.settings),
       skills: plan.skills,
       today: localDate,
       userId,
@@ -306,8 +308,6 @@ export async function loadSessionBuildInput(
 
   const placementItemIds = await loadSessionPlacement({ context, isReviewDay, plan, used });
 
-  const reviewSkillIds = fullReview ? testSkillIds : skillIds;
-
   const practice = await loadPracticeItems({
     claims,
     difficultyBias: getPracticeDifficulty({
@@ -326,7 +326,7 @@ export async function loadSessionBuildInput(
     listeningSkillIds,
     now,
     repeatOnlyMissed: isReviewDay,
-    skillIds: reviewSkillIds,
+    skillIds: fullReview ? testSkillIds : skillIds,
     userId,
   });
 
@@ -337,7 +337,7 @@ export async function loadSessionBuildInput(
     drills,
     examTrialEnded: access.trialEnded,
     freshStart: getDayFreshStart({ plan, today: localDate }),
-    fullReviewSkillIds: fullReview ? reviewSkillIds : null,
+    fullReviewSkillIds: fullReview ? testSkillIds : null,
     lessons,
     netScored,
     placementItemIds,

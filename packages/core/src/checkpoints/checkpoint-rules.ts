@@ -1,6 +1,8 @@
-import { type PlanItemKind, type PlanItemStatus } from "@zoonk/db";
+import { type Goal, type PlanItemKind, type PlanItemStatus } from "@zoonk/db";
 import { interleave } from "@zoonk/utils/interleave";
+import { once } from "@zoonk/utils/once";
 import { listCoreLessonItems } from "../plans/_utils/core-lessons";
+import { type PlanSettings } from "../plans/planner/plan-state";
 
 /**
  * Phase checkpoints (the Trickster boss): about ten mixed questions from the whole phase in the exam's
@@ -103,6 +105,9 @@ type BossPlanItem = {
 type BossItem = Pick<BossPlanItem, "phase" | "position" | "scheduledFor">;
 
 type BossPlan = {
+  /** Existing exam context: its continuation cannot change a challenge on or before the exam. */
+  goal?: Pick<Goal, "kind" | "targetDate">;
+  settings?: Pick<PlanSettings, "fullCourse">;
   /**
    * The plan graph's skills, with the lessons the plan's last build counted for each
    * (`plannedLessons`), which size its core; a plan saved before it counted them has the graph's
@@ -211,26 +216,40 @@ function pickBossSkillIds({
  * its own phase teaches, else any no earlier checkpoint asked (`pickBossSkillIds`). A skill begun
  * late in an exam's window, its core in the next one, isn't asked before it's studied, and the next
  * window's challenge asks it (R40). Checking again what earlier phases taught is review's work, not
- * a phase's challenge's. The session's duel and the questions written ahead for it ask the same.
+ * a phase's challenge's. In an exam plan studying everything, a challenge on or before the exam
+ * sizes those cores from items no later than the exam; its continuation changes no earlier duel.
+ * The session's duel and the questions written ahead for it ask the same.
  */
 export function getBossSkillIds({ boss, ...plan }: BossPlan & { boss: BossItem }): string[] {
-  const core = listCoreLessonItems({
-    graphSkills: plan.graphSkills,
-    items: plan.items
-      .map((item) => ({ ...item, id: item.id ?? item.key ?? "" }))
-      .toSorted((a, b) => a.position - b.position),
-  });
+  const items = plan.items.toSorted((a, b) => a.position - b.position);
+
+  const exam = plan.goal?.kind === "exam" && plan.settings?.fullCourse && plan.goal.targetDate;
+  const core = once(() => listCoreLessonItems({ graphSkills: plan.graphSkills, items }));
+
+  const beforeExam = once(() =>
+    listCoreLessonItems({
+      graphSkills: plan.graphSkills,
+      items: items.filter((item) => !exam || !item.scheduledFor || item.scheduledFor <= exam),
+    }),
+  );
+
+  // Continuation must not remove a skill from a pre-exam challenge. Lessons between that
+  // challenge and the exam still count toward its core, and can keep it for a later challenge.
+  const coreFor = (checkpoint: BossItem) =>
+    exam && checkpoint.scheduledFor && checkpoint.scheduledFor <= exam ? beforeExam() : core();
 
   const asked = plan.items
     .filter((item) => item.kind === "boss" && item.position < boss.position)
     .toSorted((a, b) => a.position - b.position)
     .reduce<ReadonlySet<string>>(
       (seen, earlier) =>
-        seen.union(new Set(pickBossSkillIds({ asked: seen, boss: earlier, core, plan }))),
+        seen.union(
+          new Set(pickBossSkillIds({ asked: seen, boss: earlier, core: coreFor(earlier), plan })),
+        ),
       new Set(),
     );
 
-  return pickBossSkillIds({ asked, boss, core, plan });
+  return pickBossSkillIds({ asked, boss, core: coreFor(boss), plan });
 }
 
 /**
