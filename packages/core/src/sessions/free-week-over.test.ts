@@ -196,7 +196,12 @@ describe("a free exam plan past its first week", () => {
 
     const done = await openToday(goal.id);
 
-    expect(done.extraTime).toStrictEqual({ available: false, minutes: 0, reason: "plusRequired" });
+    expect(done.extraTime).toStrictEqual({
+      available: false,
+      lessons: [],
+      minutes: 0,
+      reason: "plusRequired",
+    });
 
     await expect(addExtraStudyBlock({ sessionId: day.id })).resolves.toStrictEqual({
       reason: "plusRequired",

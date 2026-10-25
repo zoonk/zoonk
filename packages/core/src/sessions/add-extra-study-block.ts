@@ -1,9 +1,9 @@
 import "server-only";
 import { loadGoalSkillIds } from "../learner/_utils/goal-skill-graph";
 import {
-  appendExtraBlock,
+  appendExtraBlocks,
   isFreeWeekOver,
-  planExtraBlock,
+  planExtraBlocks,
   withSessionAppendLock,
 } from "./_utils/extra-blocks";
 import { type StudyBlockView } from "./_utils/session-view";
@@ -20,10 +20,11 @@ export type ExtraStudyBlockResult =
   | { reason: ExtraTimeReason; status: "unavailable" };
 
 /**
- * "10 more minutes" after the day's session: one bonus block of mixed practice (or the next
- * lesson when there's nothing to practice), offered only after the planned blocks are done, at
- * most twice a day, and never past the learner's daily limit. Its Brain Power is capped. A free
- * exam plan past its first week has none: its practice and new lessons come with Plus.
+ * "Keep learning" after the day's session, or on a day the plan gives no time: the plan's next
+ * lessons, about ten minutes of them, studied a day early (with every lesson done, a block of mixed
+ * practice instead, at most twice a day). Offered only after the planned blocks are done, never
+ * past the learner's daily limit. The result is the first block added, where the learner goes on.
+ * A free exam plan past its first week has none: its practice and new lessons come with Plus.
  */
 export async function addExtraStudyBlock({
   sessionId,
@@ -49,6 +50,7 @@ export async function addExtraStudyBlock({
       const extraTime = getExtraTime({
         blocks: session.blocks.map((block) => ({
           extra: readBlockPayload(block).extra,
+          kind: block.kind,
           status: block.status,
         })),
         remainingLimitMinutes: limit?.remainingMinutes ?? null,
@@ -58,18 +60,23 @@ export async function addExtraStudyBlock({
         return { reason: extraTime.reason ?? "dailyCap", status: "unavailable" };
       }
 
-      const planned = await planExtraBlock({
+      const planned = await planExtraBlocks({
         minutes: extraTime.minutes,
         session,
         skillIds,
         userId,
       });
 
-      if (!planned) {
-        return { status: "nothingToPractice" };
+      if ("reason" in planned) {
+        return planned.reason === "dailyCap"
+          ? { reason: planned.reason, status: "unavailable" }
+          : { status: "nothingToPractice" };
       }
 
-      return { block: await appendExtraBlock({ planned, session, transaction }), status: "ready" };
+      return {
+        block: await appendExtraBlocks({ planned: planned.blocks, session, transaction }),
+        status: "ready",
+      };
     },
     session: owned.session,
   });

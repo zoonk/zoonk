@@ -224,11 +224,11 @@ export const studySessionPaths = {
   "/study-sessions/{sessionId}/extra-blocks": {
     post: {
       description:
-        '"10 more minutes": one bonus block of mixed practice (or the next lesson) after the day\'s session, at most twice a day and never past the daily time limit. Its Brain Power is capped. A free exam plan past its first week has none (`plusRequired`): its practice and new lessons come with Plus.',
+        "\"Keep learning\" after the day's session, or on a day the plan gives no time: the plan's next lessons, about ten minutes of them (`extraTime.lessons` lists them before the tap), studied a day early. With every lesson done, one bonus block of mixed practice instead, at most twice a day, with capped Brain Power. Never past the daily time limit. A free exam plan past its first week has none (`plusRequired`): its practice and new lessons come with Plus.",
       operationId: "createStudyExtraBlock",
       requestParams: { path: studySessionPathParamsSchema },
       responses: {
-        "201": jsonResponse(studyBlockSchema, "The bonus block"),
+        "201": jsonResponse(studyBlockSchema, "The first block added, where the learner goes on"),
         ...readErrors,
         "409": {
           ...conflictResponse,
@@ -240,7 +240,7 @@ export const studySessionPaths = {
         },
       },
       security: AUTHENTICATED_SECURITY,
-      summary: "Add ten more minutes",
+      summary: "Keep learning",
       tags: TAGS,
     },
   },

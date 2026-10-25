@@ -308,6 +308,40 @@ export function BlockRow({
 }
 
 /**
+ * A lesson of the plan after today's session (see `TodayUpNext`), drawn as a lesson still to do:
+ * its mark, its name and its minutes. It opens nothing itself: "Keep learning" adds it, the first
+ * one highlighted as where that goes on.
+ */
+export function PlanLessonRow({
+  isNext,
+  minutes,
+  title,
+}: {
+  isNext: boolean;
+  minutes: number;
+  title: string;
+}) {
+  const formatDuration = useFormatDuration();
+
+  return (
+    <li
+      aria-current={isNext ? "step" : undefined}
+      className={getRowClass({ finished: false, fold: NO_FOLD, isNext })}
+    >
+      <span className="flex h-5 w-3 shrink-0 items-center justify-center">
+        <KindMark kind="lesson" />
+      </span>
+
+      <span className="min-w-0 flex-1 truncate text-sm leading-5 font-medium">{title}</span>
+
+      <span className="text-muted-foreground flex h-5 shrink-0 items-center font-mono text-xs tabular-nums">
+        {formatDuration(minutes)}
+      </span>
+    </li>
+  );
+}
+
+/**
  * One of the lessons the plan dates today that the learner's plan holds for Plus, after the day's
  * blocks: drawn as a lesson still to do, the Plus mark where its minutes would be, opening the Plus
  * page. The mark is part of the link, so its name says "Available with Plus" wherever it's read.

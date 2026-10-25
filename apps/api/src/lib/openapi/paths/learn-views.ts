@@ -20,7 +20,7 @@ export const learnViewPaths = {
   "/goals/{goalId}/area-practice": {
     post: {
       description:
-        "\"Practice now\" on a chapter (or another area of the goal's preparation): a bonus block of practice on that area's studied skills, added to today's session. It can start before the day's session is done, but counts as extra time: at most two bonus blocks a day, never past the daily time limit, with capped Brain Power. Tapping again returns the unfinished block.",
+        "\"Practice now\" on a chapter (or another area of the goal's preparation): a bonus block of practice on that area's studied skills, added to today's session. It can start before the day's session is done, but counts as extra time: at most two bonus practice blocks a day, never past the daily time limit, with capped Brain Power. Tapping again returns the unfinished block.",
       operationId: "createAreaPractice",
       requestBody: { content: { "application/json": { schema: areaPracticeInputSchema } } },
       requestParams: { path: goalPathParamsSchema },

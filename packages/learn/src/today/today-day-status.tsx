@@ -6,22 +6,69 @@ import { CalendarClockIcon, ClockIcon, HourglassIcon, MoonIcon, SparklesIcon } f
 import { useExtracted, useFormatter } from "next-intl";
 import { DoneMark } from "../_components/status-mark";
 import { useFormatDuration } from "../_utils/time-format";
+import { LearnLink } from "../learn-link";
 import { usePastDateText } from "../plan/plan-status-label";
 import { useTodayScreen } from "./today-context";
 import { useStudiedToday } from "./today-day-progress";
 import { TodayStatusClause, TodayStatusLine, TodayStatusSentence } from "./today-status-line";
+import { useUpNextLessons } from "./today-up-next";
 import { useDayState, useTodayPastDate } from "./use-today-copy";
 
-/** "Today's session is complete. 45 min": the day's blocks are done, with the time it took. */
+/**
+ * "Today's session is complete. 45 min": the day's blocks are done, with the time it took; on a
+ * rest day the learner chose to study, it says so, since the plan asked nothing. While "Keep
+ * learning" is the day's main action, what changed today is a link at the end of the line.
+ */
 function DoneStatus({ className }: { className?: string }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const studied = useStudiedToday();
+  const { actions, today } = useTodayScreen();
+  const keepLearning = useUpNextLessons().length > 0;
+  const restDay = today.session.minutes.dailyGoal === 0;
 
   return (
     <TodayStatusLine className={className} icon={<DoneMark />}>
-      <TodayStatusSentence>{t("Today's session is complete.")}</TodayStatusSentence>
-      {studied > 0 && <TodayStatusClause mono>{formatDuration(studied)}</TodayStatusClause>}
+      <TodayStatusSentence>
+        {restDay ? t("You studied on your day off.") : t("Today's session is complete.")}
+      </TodayStatusSentence>
+      {studied > 0 && <TodayStatusClause mono>{formatDuration(studied)} </TodayStatusClause>}
+      {keepLearning && (
+        <LearnLink
+          className="text-muted-foreground hover:text-foreground font-medium underline underline-offset-2"
+          href={actions.summaryHref}
+          prefetch={false}
+        >
+          {t("See what changed")}
+        </LearnLink>
+      )}
+    </TodayStatusLine>
+  );
+}
+
+/**
+ * Why a rest day has nothing planned, and what's there anyway: the plan's next lessons when there
+ * are some to add (listed under it), else the day off. A return after a break still says hello.
+ */
+function RestStatus({ className }: { className?: string }) {
+  const t = useExtracted();
+  const { today } = useTodayScreen();
+  const welcomeBack = today.session.freshStart === "welcomeBack";
+  const keepLearning = useUpNextLessons().length > 0;
+
+  return (
+    <TodayStatusLine className={className} icon={<MoonIcon />}>
+      <TodayStatusSentence>{t("No study planned today.")}</TodayStatusSentence>
+      <TodayStatusClause>
+        {keepLearning &&
+          welcomeBack &&
+          t("Welcome back! Your next lessons are here if you'd like to study.")}
+        {keepLearning && !welcomeBack && t("Your next lessons are here if you'd like to study.")}
+        {!keepLearning &&
+          welcomeBack &&
+          t("Welcome back! Today is a rest day in your plan, so enjoy it.")}
+        {!keepLearning && !welcomeBack && t("Enjoy your day off!")}
+      </TodayStatusClause>
     </TodayStatusLine>
   );
 }
@@ -132,16 +179,7 @@ export function TodayDayStatus({ className }: { className?: string }) {
         </TodayStatusLine>
       );
     case "rest":
-      return (
-        <TodayStatusLine className={className} icon={<MoonIcon />}>
-          <TodayStatusSentence>{t("No study planned today.")}</TodayStatusSentence>
-          <TodayStatusClause>
-            {today.session.freshStart === "welcomeBack"
-              ? t("Welcome back! Today is a rest day in your plan, so enjoy it.")
-              : t("Enjoy your day off!")}
-          </TodayStatusClause>
-        </TodayStatusLine>
-      );
+      return <RestStatus className={className} />;
     case "ahead":
       // A free exam plan past its first week has nothing to review or fix today: its new lessons,
       // listed locked above, come with Plus, so it never claims they're all done.

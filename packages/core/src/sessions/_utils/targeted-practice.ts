@@ -4,11 +4,11 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { readBlockPayload } from "../block-payload";
 import { ensureStudySession } from "../ensure-study-session";
-import { type ExtraTimeReason, getExtraTime } from "../extra-time";
+import { type ExtraTimeReason, getExtraTime, hasExtraPracticeLeft } from "../extra-time";
 import { getDailyTimeLimitStatus } from "../get-daily-time-limit";
 import {
-  appendExtraBlock,
-  buildExtraLesson,
+  appendExtraBlocks,
+  buildExtraLessons,
   buildExtraPractice,
   withSessionAppendLock,
 } from "./extra-blocks";
@@ -100,39 +100,48 @@ async function addToLockedSession({
     };
   }
 
-  const extraTime = getExtraTime({
-    anytime: true,
-    blocks: session.blocks.map((block) => ({
-      extra: readBlockPayload(block).extra,
-      status: block.status,
-    })),
-    remainingLimitMinutes,
-  });
+  const blocks = session.blocks.map((block) => ({
+    extra: readBlockPayload(block).extra,
+    kind: block.kind,
+    status: block.status,
+  }));
+
+  const extraTime = getExtraTime({ anytime: true, blocks, remainingLimitMinutes });
 
   if (!extraTime.available) {
     return { reason: extraTime.reason ?? "dailyCap", status: "unavailable" };
   }
 
+  if (!hasExtraPracticeLeft(blocks)) {
+    return { reason: "dailyCap", status: "unavailable" };
+  }
+
   const { areaId, planItemIds, refresh, skillIds, title } = target;
 
   // Practice first; with nothing studied (or asked already today), the target's next lesson.
-  const planned =
-    (await buildExtraPractice({
-      areaId,
-      minutes: extraTime.minutes,
-      refresh,
-      session,
-      skillIds,
-      title,
-      userId,
-    })) ?? (planItemIds ? await buildExtraLesson({ areaId, planItemIds, session, userId }) : null);
+  const practice = await buildExtraPractice({
+    areaId,
+    minutes: extraTime.minutes,
+    refresh,
+    session,
+    skillIds,
+    title,
+    userId,
+  });
+
+  const lessons =
+    practice || !planItemIds
+      ? []
+      : await buildExtraLessons({ areaId, planItemIds, session, userId });
+
+  const planned = practice ?? lessons[0];
 
   if (!planned) {
     return { status: "nothingToPractice" };
   }
 
   return {
-    block: await appendExtraBlock({ planned, session, transaction }),
+    block: await appendExtraBlocks({ planned: [planned], session, transaction }),
     sessionId: session.id,
     status: "ready",
   };

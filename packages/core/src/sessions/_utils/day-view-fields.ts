@@ -98,6 +98,7 @@ export function toDayViewFields({
     extraTime: getExtraTime({
       blocks: session.blocks.map((block) => ({
         extra: readBlockPayload(block).extra,
+        kind: block.kind,
         status: block.status,
       })),
       remainingLimitMinutes: dailyLimit?.remainingMinutes ?? null,

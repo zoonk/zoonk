@@ -371,8 +371,10 @@ describe("ending a session", () => {
     );
   });
 
-  it("offers ten more minutes only after the day's session, and at most twice", async () => {
-    const { session } = await setup();
+  // Will had studied one lesson and wanted more: "10 more minutes" gave him practice, twice at
+  // most. His plan's next lessons aren't bonus: studied now, they're the plan done early.
+  it("keeps learning with the plan's next lessons after the day's session, as often as asked", async () => {
+    const { lessons, session } = await setup();
 
     await expect(addExtraStudyBlock({ sessionId: session.id })).resolves.toStrictEqual({
       reason: "sessionNotFinished",
@@ -387,35 +389,44 @@ describe("ending a session", () => {
       status: "unavailable",
     });
 
-    await prisma.studySessionBlock.updateMany({
-      data: { status: "skipped" },
-      where: { sessionId: session.id },
-    });
+    const skipAll = () =>
+      prisma.studySessionBlock.updateMany({
+        data: { status: "skipped" },
+        where: { sessionId: session.id },
+      });
 
-    const first = await addExtraStudyBlock({ sessionId: session.id });
+    await skipAll();
 
-    expect(first).toMatchObject({
-      block: { extra: true, kind: "learn", status: "pending" },
+    // A lesson skipped is still the plan's next: one tap adds about ten minutes of them, in order.
+    await expect(addExtraStudyBlock({ sessionId: session.id })).resolves.toMatchObject({
+      block: { extra: true, kind: "learn", lessonId: lessons[0]?.id, status: "pending" },
       status: "ready",
     });
 
-    await prisma.studySessionBlock.updateMany({
-      data: { status: "skipped" },
-      where: { sessionId: session.id },
+    const added = await prisma.studySessionBlock.findMany({
+      orderBy: { position: "asc" },
+      where: { position: { gte: session.blocks.length }, sessionId: session.id },
     });
+
+    expect(added.map((block) => block.lessonId)).toStrictEqual(
+      lessons.slice(0, added.length).map((lesson) => lesson.id),
+    );
+
+    expect(added.length).toBeGreaterThan(1);
+
+    // Past the two bonus practice blocks a day, the plan's lessons keep coming.
+    await skipAll();
 
     await expect(addExtraStudyBlock({ sessionId: session.id })).resolves.toMatchObject({
+      block: { kind: "learn" },
       status: "ready",
     });
 
-    await prisma.studySessionBlock.updateMany({
-      data: { status: "skipped" },
-      where: { sessionId: session.id },
-    });
+    await skipAll();
 
-    await expect(addExtraStudyBlock({ sessionId: session.id })).resolves.toStrictEqual({
-      reason: "dailyCap",
-      status: "unavailable",
+    await expect(addExtraStudyBlock({ sessionId: session.id })).resolves.toMatchObject({
+      block: { kind: "learn" },
+      status: "ready",
     });
   });
 
@@ -440,7 +451,7 @@ describe("ending a session", () => {
       prisma.studySessionBlock.updateMany({ data: { status: "completed" }, where: { sessionId } }),
     ]);
 
-    const nothingLeft = { available: false, minutes: 0, reason: "nothingToStudy" };
+    const nothingLeft = { available: false, lessons: [], minutes: 0, reason: "nothingToStudy" };
 
     const [summary, view] = await Promise.all([
       getStudySessionSummary({ input: {}, sessionId }),

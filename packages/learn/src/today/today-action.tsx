@@ -16,6 +16,7 @@ import { useGoalSwitchPending } from "../shell/goal-switcher";
 import { useTodayScreen } from "./today-context";
 import { TodayExtraTime } from "./today-extra-time";
 import { NEXT_TITLE_ID } from "./today-ids";
+import { useUpNextLessons } from "./today-up-next";
 import { useContinueSession } from "./use-continue-session";
 import { useDayState, useSessionState, useTodayPastDate } from "./use-today-copy";
 
@@ -179,6 +180,31 @@ function PracticeTime() {
 }
 
 /**
+ * "Keep learning" on a day with nothing left to start (a rest day, or once the day's session is
+ * done): it adds the plan's next lessons listed under the day ("Up next in your plan") and opens
+ * the first. Enter presses it, as it does Start.
+ */
+function KeepLearning() {
+  const t = useExtracted();
+  const { actions, today } = useTodayScreen();
+  const switching = useGoalSwitchPending();
+  const ref = useEnterClick<HTMLButtonElement>({ enabled: !switching });
+
+  return (
+    <TodayExtraTime
+      action={actions.addExtraTime}
+      className={ACTION_CLASS}
+      label={t("Keep learning")}
+      minutes={today.session.extraTime.minutes}
+      ref={ref}
+      shortcut
+      size="lg"
+      variant="default"
+    />
+  );
+}
+
+/**
  * The goal's date came with lessons left: the Plan, whose slot keeps the plan going in one tap
  * (Enter too).
  */
@@ -202,18 +228,28 @@ function SeePlanLink() {
 
 /**
  * The day's main action, one place for every state: Start or Continue while there's a block to go
- * on with (Enter too), "See what changed" once it's done, practice on a day with nothing new, the
- * Plan once the goal's date came with lessons left. A rest day, a day at its limit or one still
- * waiting for its lessons has none.
+ * on with (Enter too), "Keep learning" with the plan's next lessons once it's done or on a rest day
+ * (see `TodayUpNext`), "See what changed" once it's done with no lesson left to add, practice on a
+ * day with nothing new, the Plan once the goal's date came with lessons left. A day at its limit,
+ * one still waiting for its lessons, or a rest day with nothing to add has none.
  */
 export function TodayAction({ className }: { className?: string }) {
   const state = useDayState();
   const pastDate = useTodayPastDate();
+  const keepLearning = useUpNextLessons().length > 0;
 
   if (pastDate) {
     return (
       <div className={cn("flex flex-col sm:items-end", className)} data-slot="today-action">
         <SeePlanLink />
+      </div>
+    );
+  }
+
+  if (keepLearning) {
+    return (
+      <div className={cn("flex flex-col sm:items-end", className)} data-slot="today-action">
+        <KeepLearning />
       </div>
     );
   }

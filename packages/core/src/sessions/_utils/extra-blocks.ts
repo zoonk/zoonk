@@ -7,7 +7,7 @@ import { markLearnerChanged, markPlansChanged } from "../../learner/_utils/mark-
 import { getGoalField } from "../../library/items/item-field";
 import { type DifficultyBias, parsePlanSettings } from "../../plans/planner/plan-state";
 import { getBlockItemIds, readBlockPayload, toBlockPayload } from "../block-payload";
-import { type ExtraTime } from "../extra-time";
+import { type ExtraTime, hasExtraPracticeLeft } from "../extra-time";
 import { PRACTICE_MINUTES_PER_QUESTION, type PlannedBlock } from "../session-builder";
 import { type DayBlockInput } from "./day-block-view";
 import { loadExamStructure } from "./exam-structure";
@@ -113,34 +113,49 @@ export async function buildExtraPractice({
   };
 }
 
+/** Plan items the next lessons come from: wide enough for a few lessons past any already done. */
+const EXTRA_LESSON_WINDOW = 6;
+
+/** A run of blocks more time adds, never empty. */
+export type ExtraBlocks = [PlannedBlock, ...PlannedBlock[]];
+
+/** Lessons finished today: more time never adds them again. */
+function getLessonsDoneToday(session: ExtraDay): Set<string> {
+  return new Set(
+    session.blocks.flatMap((block) =>
+      block.lessonId && block.status === "completed" ? [block.lessonId] : [],
+    ),
+  );
+}
+
 /**
- * Without questions to practice, the bonus time goes to the plan's next lesson not finished today,
- * a lesson skipped earlier included. `planItemIds` narrows it to part of the plan, such as an area.
- * A free exam plan past its first week has none to give: new lessons come with Plus.
+ * The plan's next lessons not finished today (a lesson skipped earlier included), in the plan's
+ * order: about `minutes` of them (the last one may run past it), or the next one without
+ * `minutes`. `planItemIds` narrows them to part of the plan, such as an area. A free exam plan past
+ * its first week has none to give: new lessons come with Plus.
  */
-export async function buildExtraLesson({
+export async function buildExtraLessons({
   areaId = null,
+  minutes = 0,
   planItemIds,
   session,
   userId,
 }: {
   areaId?: string | null;
+  minutes?: number;
   planItemIds?: readonly string[];
   session: ExtraDay;
   userId: string;
-}): Promise<PlannedBlock | null> {
+}): Promise<PlannedBlock[]> {
   if (await isFreeWeekOver(session)) {
-    return null;
+    return [];
   }
 
-  const done = new Set(
-    session.blocks.flatMap((block) =>
-      block.lessonId && block.status === "completed" ? [block.lessonId] : [],
-    ),
-  );
+  const done = getLessonsDoneToday(session);
 
   const items = await prisma.planItem.findMany({
     orderBy: { position: "asc" },
+    take: EXTRA_LESSON_WINDOW + done.size,
     where: {
       kind: { in: ["lesson", "chapter"] },
       plan: { goalId: session.goalId ?? "" },
@@ -150,38 +165,46 @@ export async function buildExtraLesson({
   });
 
   const lessons = await loadPlanLessons({
-    items: items.filter((item) => !item.lessonId || !done.has(item.lessonId)).slice(0, 1),
+    items: items.filter((item) => !item.lessonId || !done.has(item.lessonId)),
     userId,
   });
 
-  const next = lessons[0];
+  const unique = lessons.filter(
+    (lesson, index) =>
+      !lesson.lessonId ||
+      lessons.findIndex((other) => other.lessonId === lesson.lessonId) === index,
+  );
 
-  if (!next) {
-    return null;
-  }
+  // Each lesson joins while the ones before it take less than `minutes`; the first always does.
+  const fitting = unique.filter(
+    (_lesson, index) =>
+      index === 0 ||
+      unique.slice(0, index).reduce((sum, earlier) => sum + earlier.minutes, 0) < minutes,
+  );
 
-  return {
-    canDo: next.canDo,
-    estimatedMinutes: Math.max(1, Math.round(next.minutes)),
+  return fitting.map((lesson) => ({
+    canDo: lesson.canDo,
+    estimatedMinutes: Math.max(1, Math.round(lesson.minutes)),
     kind: "learn",
-    lessonId: next.lessonId,
+    lessonId: lesson.lessonId,
     payload: toBlockPayload({
       areaId,
-      chapterId: next.chapterId,
+      chapterId: lesson.chapterId,
       extra: true,
-      planItemId: next.planItemId,
-      planSkillId: next.planSkillId,
-      skillIds: next.skillIds,
-      title: next.title,
+      planItemId: lesson.planItemId,
+      planSkillId: lesson.planSkillId,
+      skillIds: lesson.skillIds,
+      title: lesson.title,
     }),
-  };
+  }));
 }
 
 /**
- * The bonus block "10 more minutes" would add: mixed practice on the goal's skills, else the plan's
- * next lesson. Null when nothing is left to practice or learn.
+ * What more time would add: the plan's next lessons (about `minutes` of them), else, with every
+ * lesson done, mixed practice on the goal's skills while the day has room for it. Why there's
+ * nothing otherwise: the day's bonus practice is used up, or nothing is left to practice or learn.
  */
-export async function planExtraBlock({
+export async function planExtraBlocks({
   minutes,
   session,
   skillIds,
@@ -191,17 +214,31 @@ export async function planExtraBlock({
   session: ExtraDay;
   skillIds: string[];
   userId: string;
-}): Promise<PlannedBlock | null> {
-  return (
-    (await buildExtraPractice({ minutes, session, skillIds, userId })) ??
-    (await buildExtraLesson({ session, userId }))
-  );
+}): Promise<{ blocks: ExtraBlocks } | { reason: "dailyCap" | "nothingToStudy" }> {
+  const [lesson, ...lessons] = await buildExtraLessons({ minutes, session, userId });
+
+  if (lesson) {
+    return { blocks: [lesson, ...lessons] };
+  }
+
+  const blocks = session.blocks.map((block) => ({
+    extra: readBlockPayload(block).extra,
+    kind: block.kind,
+    status: block.status,
+  }));
+
+  if (!hasExtraPracticeLeft(blocks)) {
+    return { reason: "dailyCap" };
+  }
+
+  const practice = await buildExtraPractice({ minutes, session, skillIds, userId });
+  return practice ? { blocks: [practice] } : { reason: "nothingToStudy" };
 }
 
 /**
- * "10 more minutes" is offered only when it has something to add, so the button never leads to
- * "nothing more to practice". The check reads what the bonus block would hold, only once the rules
- * already allow it.
+ * More time is offered only when it has something to add, so the button never leads to "nothing
+ * more to practice", and with the lessons it adds, so the day can list them before the tap. The
+ * check reads what the time would hold, only once the rules already allow it.
  */
 export async function withExtraStudyCheck({
   extraTime,
@@ -217,14 +254,24 @@ export async function withExtraStudyCheck({
   }
 
   if (await isFreeWeekOver(session)) {
-    return { available: false, minutes: 0, reason: "plusRequired" };
+    return { available: false, lessons: [], minutes: 0, reason: "plusRequired" };
   }
 
   const skillIds = session.goalId ? await loadGoalSkillIds(session.goalId) : [];
 
-  const planned = await planExtraBlock({ minutes: extraTime.minutes, session, skillIds, userId });
+  const planned = await planExtraBlocks({ minutes: extraTime.minutes, session, skillIds, userId });
 
-  return planned ? extraTime : { available: false, minutes: 0, reason: "nothingToStudy" };
+  if ("reason" in planned) {
+    return { available: false, lessons: [], minutes: 0, reason: planned.reason };
+  }
+
+  const lessons = planned.blocks.flatMap((block) =>
+    block.kind === "learn"
+      ? [{ minutes: block.estimatedMinutes, title: block.payload.title ?? "" }]
+      : [],
+  );
+
+  return { ...extraTime, lessons };
 }
 
 /**
@@ -260,23 +307,36 @@ export async function withSessionAppendLock<TResult>({
   });
 }
 
-/** Adds a bonus block at the end of the session. Call it inside `withSessionAppendLock`. */
-export async function appendExtraBlock({
+/**
+ * Adds bonus blocks at the end of the session, in order, and returns the first, where the learner
+ * goes on. Call it inside `withSessionAppendLock`.
+ */
+export async function appendExtraBlocks({
   planned,
   session,
   transaction,
 }: {
-  planned: PlannedBlock;
+  planned: ExtraBlocks;
   session: StudySessionRow;
   transaction: TransactionClient;
 }): Promise<StudyBlockView> {
-  const position = Math.max(-1, ...session.blocks.map((block) => block.position)) + 1;
+  const start = Math.max(-1, ...session.blocks.map((block) => block.position)) + 1;
 
-  const block: StudySessionBlock = await transaction.studySessionBlock.create({
-    data: { ...planned, position, sessionId: session.id },
+  const blocks: StudySessionBlock[] = await transaction.studySessionBlock.createManyAndReturn({
+    data: planned.map((block, index) => ({
+      ...block,
+      position: start + index,
+      sessionId: session.id,
+    })),
   });
 
   await transaction.studySession.update({ data: { status: "active" }, where: { id: session.id } });
 
-  return toStudyBlockView({ answeredItemIds: new Set(), block });
+  const first = blocks.find((block) => block.position === start);
+
+  if (!first) {
+    throw new Error("The first bonus block wasn't saved.");
+  }
+
+  return toStudyBlockView({ answeredItemIds: new Set(), block: first });
 }

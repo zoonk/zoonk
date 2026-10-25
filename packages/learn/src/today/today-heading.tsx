@@ -9,7 +9,7 @@ import { usePlanStatusText } from "../plan/plan-status-label";
 import { useShortDayRange, useShortFocusName } from "../plan/use-short-plan";
 import { useTodayScreen } from "./today-context";
 import { DayTime } from "./today-day-progress";
-import { isWelcomeBackDay, useDayState, useTodayDate, useTodayPastDate } from "./use-today-copy";
+import { isWelcomeBackDay, useDayState, useTodayDate } from "./use-today-copy";
 
 /**
  * The dot between the parts of the date line, drawn in the gap before a part: a part that wraps to
@@ -160,24 +160,9 @@ function MockFundingPart() {
   );
 }
 
-/** The day's end, at the end of the line: done, or a rest day. The plan's pace waits for tomorrow. */
-function DayEndPart() {
-  const t = useExtracted();
-  const state = useDayState();
-
-  if (state === "done") {
-    return <TodayEyebrowPart>{t("Done")}</TodayEyebrowPart>;
-  }
-
-  if (state === "rest") {
-    return <TodayEyebrowPart>{t("Rest day")}</TodayEyebrowPart>;
-  }
-
-  return null;
-}
-
 /**
- * The tab's name under one quiet line (the date, the days left, where the plan or the day stands),
+ * The tab's name under one quiet line (the date, the days left, where the plan stands, every day:
+ * a finished or rest day says so under the title, and where the learner stands still matters),
  * and on a phone the day's time beside it ("44 min left"); from `sm` that time moves under the
  * day's segments and the day's action takes its place beside the title.
  */
@@ -185,8 +170,8 @@ export function TodayHeading({ className }: { className?: string }) {
   const t = useExtracted();
   const date = useTodayDate();
   const state = useDayState();
-  // Past the goal's date, a day with nothing planned isn't a rest day: the pace says why.
-  const endsDay = !useTodayPastDate() && (state === "done" || state === "rest");
+  // A finished or rest day has no lighter session left to explain.
+  const endsDay = state === "done" || state === "rest";
 
   return (
     <PageHeader className={className}>
@@ -196,8 +181,8 @@ export function TodayHeading({ className }: { className?: string }) {
           <DaysLeft />
           <ShortPlanPart />
           <ExamDayPart />
-          {endsDay ? <DayEndPart /> : <MockFundingPart />}
-          {endsDay ? null : <TodayPace />}
+          {!endsDay && <MockFundingPart />}
+          <TodayPace />
         </TodayEyebrow>
 
         <div className="flex items-baseline justify-between gap-3">

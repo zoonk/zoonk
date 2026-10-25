@@ -12,6 +12,7 @@ import { FoldRow } from "./today-fold-row";
 import { TodayFreshStart } from "./today-fresh-start";
 import { SESSION_LIST_ID } from "./today-ids";
 import { splitTodayQueue } from "./today-queue";
+import { TodayUpNext } from "./today-up-next";
 
 /** Done blocks a phone shows before folding them into one row ("✓ 3 done · 14 min"). */
 const PHONE_DONE_ROWS = 2;
@@ -202,8 +203,9 @@ function useNextBlock(): DayStep | null {
  * Today's session, flat on the page under Today's title: why the day is lighter (once), the day's
  * segments with how far along it is, its blocks as a queue with the next one highlighted, and
  * one line on what the day is when there's nothing to start (done, a rest day, the study time used
- * up, nothing new, or lessons still being prepared). The day's main action sits beside the title
- * from `sm` and under the queue on a phone (`TodayAction`).
+ * up, nothing new, or lessons still being prepared), then the plan's next lessons once it's done
+ * or resting (`TodayUpNext`). The day's main action sits beside the title from `sm` and under the
+ * queue on a phone (`TodayAction`).
  */
 export function TodaySession({ className }: { className?: string }) {
   const next = useNextBlock();
@@ -221,6 +223,7 @@ export function TodaySession({ className }: { className?: string }) {
       </div>
 
       <TodayDayStatus className="mt-3 first:mt-0" />
+      <TodayUpNext className="mt-6" />
     </div>
   );
 }

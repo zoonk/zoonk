@@ -88,7 +88,7 @@ export const goalMapPaths = {
   "/goals/{goalId}/refresh-practice": {
     post: {
       description:
-        "\"Review\" on Content: the block of today's session that reviews the goal's skills that are fading or due today when one is still to do; otherwise a bonus block of practice on them, weakest first, added to today's session. A bonus block counts as extra time: at most two a day, never past the daily time limit, with capped Brain Power. Tapping again returns the same unfinished block.",
+        "\"Review\" on Content: the block of today's session that reviews the goal's skills that are fading or due today when one is still to do; otherwise a bonus block of practice on them, weakest first, added to today's session. A bonus block counts as extra time: at most two bonus practice blocks a day, never past the daily time limit, with capped Brain Power. Tapping again returns the same unfinished block.",
       operationId: "createRefreshPractice",
       requestBody: { content: { "application/json": { schema: studySessionTimeZoneInputSchema } } },
       requestParams: { path: goalPathParamsSchema },

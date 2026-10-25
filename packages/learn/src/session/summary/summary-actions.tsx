@@ -76,11 +76,13 @@ export function KeepGoingFailed({ keepGoing }: { keepGoing: ReturnType<typeof us
 }
 
 /**
- * Under the actions: "10 more minutes" after the day's session, while there's something left to
- * study (capped, and never past the learner's daily limit), as a quiet text button; and a guest's
- * soft ask to save their plan.
+ * Under the actions: "Keep learning" with the plan's next lessons after the day's session (or "10
+ * more minutes" of practice once every lesson is done), while there's something left to study
+ * (never past the learner's daily limit), as a quiet text button; and a guest's soft ask to save
+ * their plan.
  */
 export function SummaryOptions() {
+  const t = useExtracted();
   const stopped = useIsStopped();
   const { actions, signUpHref, summary } = useSessionSummary();
   const { extraTime } = summary;
@@ -91,6 +93,7 @@ export function SummaryOptions() {
         <ExtraTimeButton
           action={actions.addExtraTime}
           className="lg:w-auto lg:self-end"
+          label={extraTime.lessons.length > 0 ? t("Keep learning") : undefined}
           minutes={extraTime.minutes}
         />
       )}

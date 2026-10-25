@@ -27,13 +27,19 @@ const hyperdriveSchema = z.object({
 export const extraTimeSchema = z
   .object({
     available: z.boolean(),
+    lessons: z
+      .array(z.object({ minutes: z.number().int().min(0), title: z.string() }))
+      .meta({
+        description:
+          "The plan's next lessons the time adds, in order, to list them before the tap (\"Up next\"); empty when it adds practice instead (every lesson is done) or isn't available",
+      }),
     minutes: z.number().int().min(0),
     reason: z
       .enum(["dailyCap", "dailyLimit", "nothingToStudy", "plusRequired", "sessionNotFinished"])
       .nullable()
       .meta({
         description:
-          "Why it isn't offered: the day's two bonus blocks are used, the daily time limit leaves too little, nothing is left to practice or learn, a free exam plan's first week is over (its practice and new lessons come with Plus), or the session isn't finished",
+          "Why it isn't offered: the day's two bonus practice blocks are used with no lesson of the plan left to add, the daily time limit leaves too little, nothing is left to practice or learn, a free exam plan's first week is over (its practice and new lessons come with Plus), or the session isn't finished",
       }),
   })
   .meta({ id: "StudyExtraTime" });
