@@ -255,7 +255,10 @@ export async function saveMissions(sessionId: string, picks: StoredMission[]) {
   });
 }
 
-/** Opens a page signed in as the learner, in a browser context of its own. */
+/**
+ * Opens a page signed in as the learner, in a browser context of its own that closes when the test
+ * ends (`closeOpenedContexts`).
+ */
 export async function openAs(browser: Browser, user: E2EUser): Promise<Page> {
   const context = await browser.newContext({ storageState: user.storageState });
   return context.newPage();

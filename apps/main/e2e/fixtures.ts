@@ -7,6 +7,7 @@ import { mockCentralSignOut } from "./auth-transport";
 // Each test needs its own user: lesson completions and subscriptions persist beyond browser contexts.
 export const test = base.extend<{
   authenticatedPage: Page;
+  closeOpenedContexts: null;
   guestBudget: null;
   logoutPage: Page;
   noProgressUser: E2EUser;
@@ -26,6 +27,20 @@ export const test = base.extend<{
   baseURL: async ({}, use) => {
     await use(getBaseURL());
   },
+
+  /**
+   * Closes the browser contexts a test opened (`openAs` and the like) once it ends, so their pages
+   * stop prefetching and polling while the worker's later tests run.
+   */
+  closeOpenedContexts: [
+    async ({ browser }, use) => {
+      const before = new Set(browser.contexts());
+      await use(null);
+      const opened = browser.contexts().filter((context) => !before.has(context));
+      await Promise.all(opened.map((context) => context.close()));
+    },
+    { auto: true },
+  ],
 
   /**
    * A run's guests start goals (each weighs about $1.80 in core's limits), which would use up the
