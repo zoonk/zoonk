@@ -18,13 +18,41 @@ export type ExamBossDays = ReadonlyMap<
   { beside: boolean; date: string; tested?: readonly string[] }
 >;
 
+/** The last day a joined stand-in teaches before its exam, without its later continuation. */
+function getLastTeachingDay({
+  before,
+  days,
+}: {
+  before: string;
+  days: ReadonlyMap<string, number> | undefined;
+}): Date | undefined {
+  const last = [...(days?.keys() ?? [])]
+    .filter((day) => day < before)
+    .toSorted()
+    .at(-1);
+
+  return last ? fromIsoDate(last) : undefined;
+}
+
+/** Prefer the exam's remaining challenge days; retain continuation days once none can hold it. */
+function getChallengeDays({
+  days,
+  exam,
+}: {
+  days: readonly string[];
+  exam: string | null;
+}): readonly string[] {
+  const before = days.filter((day) => exam !== null && day < exam);
+  return before.length > 0 ? before : days;
+}
+
 /**
  * The day an exam's phase challenge goes, as a built plan lays its lessons out: the first study
  * day after every lesson its own phase teaches has ended (with the time each takes, `teachingEnds`),
  * so it never comes while its phase's lessons still run, and
  * a day passes between learning and being tested; with none before the exam, the day they end,
- * beside them. A stand-in its phase begins keeps its later days as its own. It tests its own phase's
- * teaching and asks its skills once
+ * beside them. While its challenge days remain before the exam, only teaching before it counts;
+ * later continuation leaves that challenge unchanged. It tests its own phase's teaching and asks its skills once
  * saved: the plan's items with every challenge the run places where it tries it, in the saved
  * plan's order (see `projectBossPlan`), read by the rule sizing and the session read
  * (`getBossSkillIds`). A phase that teaches nothing of its own (an exam's window of practice and
@@ -44,16 +72,18 @@ export function placeExamBosses({
   built: {
     items: readonly PlannedItem[];
     keptKeys: ReadonlySet<string>;
+    lessonRawMinutes: ReadonlyMap<string, ReadonlyMap<string, number>>;
     phases: readonly PlanPhase[];
     skillLessons: ReadonlyMap<string, number>;
     studyDays: readonly string[];
     teachingEnds: ReadonlyMap<string, Date>;
   };
-  input: Pick<BuildPlanInput, "graph" | "items" | "settings">;
+  input: Pick<BuildPlanInput, "goal" | "graph" | "items" | "settings">;
   rows?: ItemSkillRows;
   survivors?: ReadonlyMap<string, string>;
 }): ExamBossDays {
   const candidates = listBossCandidates({ built });
+  const exam = input.goal.targetDate && toIsoDate(input.goal.targetDate);
 
   // A day the learner moved a mock onto holds only the challenge the plan they saw had there: they
   // moved the mock onto it. One a run carries there (left on an earlier day, or its teaching ended
@@ -69,12 +99,22 @@ export function placeExamBosses({
   );
 
   const canGoOn = (key: string, day: string) => !movedOnto.has(day) || savedDays.get(key) === day;
-  const listStudyDays = (key: string) => built.studyDays.filter((day) => canGoOn(key, day));
+
+  const listStudyDays = (key: string) =>
+    getChallengeDays({ days: built.studyDays.filter((day) => canGoOn(key, day)), exam });
 
   const { at, plan, without } = projectBossPlan({ built, candidates, input, rows, survivors });
 
   const learn = plan.items.filter((item) => isBossTeachingItem(item) && item.scheduledFor);
-  const endOf = (item: PlannedItem) => built.teachingEnds.get(item.key) ?? item.scheduledFor;
+
+  // A joined stand-in can continue after the exam. That continuation must not move a challenge
+  // the exam's own schedule already held: only its teaching before the exam closes that phase.
+  const endOf = (item: PlannedItem, studyDays: readonly string[]) =>
+    (exam && studyDays[0] && studyDays[0] < exam
+      ? getLastTeachingDay({ before: exam, days: built.lessonRawMinutes.get(item.key) })
+      : undefined) ??
+    built.teachingEnds.get(item.key) ??
+    item.scheduledFor;
 
   // The skills a challenge asks on `day` with every other one where the run tries it: leading the
   // day, after the lessons before it; beside them (`afterDay`), after the day's own lessons too.
@@ -104,20 +144,6 @@ export function placeExamBosses({
     return (own.length > 0 ? own : tested).map((item) => item.key);
   };
 
-  const ends = learn
-    .map((item) => endOf(item))
-    .filter((end): end is Date => end !== undefined && end !== null);
-
-  // The days a challenge's content can change on: the first study day after each lesson's end.
-  const eventDays = [
-    ...new Set(
-      ends.flatMap((end) => {
-        const day = findStudyDayAfter(built.studyDays, toIsoDate(end));
-        return day ? [day] : [];
-      }),
-    ),
-  ].toSorted();
-
   // What a challenge tests on `date`: leading the day, else after the day's own lessons.
   const listOn = ({ date, key, phase }: { date: string; key: string; phase: number }) => {
     const day = fromIsoDate(date);
@@ -125,9 +151,9 @@ export function placeExamBosses({
     return leading.length > 0 ? leading : listTested({ afterDay: true, day, key, phase });
   };
 
-  const lastEnd = (items: readonly PlannedItem[]) =>
+  const lastEnd = (items: readonly PlannedItem[], studyDays: readonly string[]) =>
     items.reduce<string | null>((latest, item) => {
-      const end = endOf(item);
+      const end = endOf(item, studyDays);
       const day = end ? toIsoDate(end) : null;
       return day && (!latest || day > latest) ? day : latest;
     }, null);
@@ -147,13 +173,14 @@ export function placeExamBosses({
   const placeOne = (candidate: BossCandidate) => {
     const { phase } = candidate;
     const own = listOwnTeaching(phase);
-    const lastTaught = lastEnd(own);
+    const studyDays = listStudyDays(candidate.key);
+    const lastTaught = lastEnd(own, studyDays);
 
     if (!lastTaught) {
       return placeAfterWindow(candidate);
     }
 
-    const day = findStudyDayAfter(listStudyDays(candidate.key), lastTaught);
+    const day = findStudyDayAfter(studyDays, lastTaught);
 
     return {
       beside: day === undefined,
@@ -167,9 +194,22 @@ export function placeExamBosses({
   const placeAfterWindow = (candidate: BossCandidate) => {
     const { key, phase } = candidate;
     const anchor = candidate.date;
-    const atAnchor = lastEnd(listOn({ date: anchor, key, phase }));
     const studyDays = listStudyDays(key);
-    const changeDays = eventDays.filter((day) => canGoOn(key, day));
+    const atAnchor = lastEnd(listOn({ date: anchor, key, phase }), studyDays);
+
+    const ends = learn
+      .map((item) => endOf(item, studyDays))
+      .filter((end): end is Date => end !== undefined && end !== null);
+
+    // Content changes on this challenge's first eligible study day after each lesson's end.
+    const changeDays = [
+      ...new Set(
+        ends.flatMap((end) => {
+          const day = findStudyDayAfter(studyDays, toIsoDate(end));
+          return day ? [day] : [];
+        }),
+      ),
+    ].toSorted();
 
     const date: string | undefined = atAnchor
       ? findStudyDayAfter(studyDays, atAnchor)
@@ -184,7 +224,7 @@ export function placeExamBosses({
     for (let day: string | undefined = date; day;) {
       const on: string = day;
       const tested = listOn({ date: on, key, phase });
-      const end = lastEnd(tested);
+      const end = lastEnd(tested, studyDays);
       const keys = tested.map((item) => item.key);
 
       if (tested.length > 0 && end !== null && end < on) {

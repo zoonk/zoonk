@@ -155,11 +155,22 @@ describe("overlapping phase teaching", () => {
     expect(Date.parse(end)).toBeGreaterThan(Date.parse("2026-11-01"));
     expect(toIsoDate(built.teachingEnds.get(law.key)!)).toBe(end);
 
-    const first = built.studyDays.find((day) => day > end);
+    const beforeExam = portions
+      .map(([day]) => day)
+      .filter((day) => day < "2026-11-01")
+      .toSorted()
+      .at(-1)!;
+
+    const first = built.studyDays.find((day) => day > beforeExam);
     const challenge = built.items.find((item) => item.key === "boss:0");
 
     expect(first).toBeDefined();
     expect(toIsoDate(challenge!.scheduledFor!)).toBe(first);
+    const dated = buildPlan({ ...input, settings: { ...input.settings, fullCourse: false } });
+
+    expect(challenge?.scheduledFor).toStrictEqual(
+      dated.items.find((item) => item.key === "boss:0")?.scheduledFor,
+    );
   });
 
   it("does not postpone a phase for another phase's long stand-in", () => {

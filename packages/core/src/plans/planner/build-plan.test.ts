@@ -1201,7 +1201,6 @@ describe("studying everything", () => {
         .filter(
           (item) =>
             item.kind !== "lesson" &&
-            item.kind !== "boss" &&
             item.scheduledFor !== null &&
             toIsoDate(item.scheduledFor) <= EXAM_DAY,
         )
@@ -1209,19 +1208,18 @@ describe("studying everything", () => {
 
     expect(eventsBeforeExam(plan)).toStrictEqual(eventsBeforeExam(byExam));
 
-    // Phase 1 teaches past the exam now, so its challenge moves to 11-20; it took none of the
-    // lessons' time on its old day, so every lesson-day portion before the exam stays exact.
+    // The continuation changes neither lesson-day portions nor challenges before the exam.
     expect(teachingBeforeExam(plan)).toStrictEqual(teachingBeforeExam(byExam));
 
     expect(
       plan.items
         .filter((item) => item.kind === "boss")
         .map((item) => [item.key, item.phase, toIsoDate(item.scheduledFor!)]),
-    ).toStrictEqual([
-      ["boss:0", 0, "2026-10-04"],
-      ["boss:1", 1, "2026-11-20"],
-      ["boss:2", 2, "2026-11-25"],
-    ]);
+    ).toStrictEqual(
+      byExam.items
+        .filter((item) => item.kind === "boss")
+        .map((item) => [item.key, item.phase, toIsoDate(item.scheduledFor!)]),
+    );
 
     expect(byExam.droppedSkillIds.length).toBeGreaterThan(0);
     expect(plan.droppedSkillIds).toStrictEqual([]);

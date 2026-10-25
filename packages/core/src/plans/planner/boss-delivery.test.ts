@@ -73,7 +73,8 @@ function listBossTeaching(input: BuildPlanInput, plan: ReturnType<typeof buildPl
             (item.kind === "lesson" || item.kind === "chapter") &&
             (saved.itemSkillIds.get(item.id) ?? []).some((skillId) => asked.has(skillId)),
         )
-        .map((item) => toIsoDate(plan.teachingEnds.get(item.key) ?? item.scheduledFor ?? TODAY))
+        .flatMap((item) => [...(plan.lessonRawMinutes.get(item.key)?.keys() ?? [])])
+        .filter((day) => day < toIsoDate(input.goal.targetDate!))
         .toSorted();
 
       return { boss, end: ends.at(-1) ?? null };
@@ -82,7 +83,7 @@ function listBossTeaching(input: BuildPlanInput, plan: ReturnType<typeof buildPl
 
 // A plan that studies everything goes on past its exam. Each phase's challenge goes on the first
 // study day after what its session asks there, its own phase's, once: those lessons end before
-// the exam (a stand-in begun before it keeps its days after it as its own), so none waits past it.
+// the exam; a stand-in's later continuation must not postpone the challenge.
 describe("a phase's challenge in a plan that goes on after its exam", () => {
   it.each([
     { lessons: 80, standIn: 30, targetDate: "2026-11-01" },
@@ -172,6 +173,47 @@ describe("the challenges' projection of a plan", () => {
 // a day the plan held for a mock, and asked more of the day than the plan gave it. Settled again,
 // the plan dates it on a day it holds from now on, after what it tests.
 describe("a phase's challenge the learner left on an earlier day", () => {
+  it.each([
+    { day: "2026-10-31", movedEvents: [] },
+    { day: "2026-11-02", movedEvents: [] },
+    { day: "2026-10-30", movedEvents: [{ from: "2026-10-25", to: "2026-10-30" }] },
+  ])("keeps an unfinished challenge when replanning on $day", ({ day, movedEvents }) => {
+    const input = examPlan({ lessons: 80, standIn: 600, targetDate: "2026-11-01" });
+    const first = buildPlan(input);
+    const today = fromIsoDate(day);
+
+    const items = first.items.map((item, position) => ({
+      ...item,
+      id: item.key,
+      position,
+      ...(item.kind === "lesson" && item.lessonId
+        ? { completedAt: item.scheduledFor, status: "done" as const }
+        : {}),
+    }));
+
+    const pending = first.items.filter((item) => item.kind === "boss");
+
+    const replanned = buildPlan({
+      ...input,
+      items,
+      settings: { ...input.settings, movedEvents },
+      today,
+    });
+
+    expect(pending.length).toBeGreaterThan(0);
+
+    for (const boss of pending) {
+      expect(replanned.items.find((item) => item.key === boss.key)).toMatchObject({
+        kind: "boss",
+        status: "todo",
+      });
+
+      expect(
+        replanned.items.find((item) => item.key === boss.key)?.scheduledFor?.getTime(),
+      ).toBeGreaterThanOrEqual(today.getTime());
+    }
+  });
+
   it("goes on a day from the run's first on", () => {
     const input = examPlan({ lessons: 80, standIn: 10, targetDate: "2026-10-25" });
     const first = buildPlan(input);

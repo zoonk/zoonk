@@ -150,6 +150,8 @@ Words used below: a lesson "still to do" is a `todo` lesson item; a stand-in cou
 - **Reads:** `after.goal`, `after.settings`, `after.graph`, `after.items`.
 - **Code:** `checkEverythingPlanned`.
 
+For a dated exam, turning `fullCourse` on keeps the schedule on or before the exam identical, including lesson portions, phase challenges and mocks, whether everything fits by then or not. Only the work that does not fit continues after the exam. A joined stand-in's later portions must not postpone a pre-exam challenge. "Find the time that covers everything" returns the same daily time with the switch on or off. Covered by `full-course-exam-parity.test.ts` and the planner's "studying everything" regression.
+
 ### R15. A base choice never pushes out a topic
 
 - **Owner's words:** prerequisites are the learner's choice (9 Oct); the choice's contract: "No choice ever pushes out a topic its core keeps."
