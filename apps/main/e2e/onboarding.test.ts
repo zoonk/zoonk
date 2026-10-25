@@ -135,58 +135,55 @@ test.describe("Onboarding from a typed goal", () => {
     browser,
   }) => {
     // AI is off in tests, so the plan the answers start building always stops: the notice arrives
-    // while the learner is on a question, on a phone and on a laptop, in either theme.
-    for (const { colorScheme, width } of [
-      { colorScheme: "light", width: 390 },
-      { colorScheme: "dark", width: 390 },
-      { colorScheme: "light", width: 1440 },
-      { colorScheme: "dark", width: 1440 },
-    ] as const) {
-      // oxlint-disable-next-line no-await-in-loop -- One screen at a time.
-      const context = await browser.newContext({ colorScheme, viewport: { height: 900, width } });
+    // while the learner is on a question, on a phone and on a laptop (side by side, as each waits
+    // for the run to give up), in either theme.
+    await Promise.all(
+      [390, 1440].map(async (width) => {
+        const context = await browser.newContext({ viewport: { height: 900, width } });
 
-      try {
-        // oxlint-disable-next-line no-await-in-loop -- One screen at a time.
-        const page = await context.newPage();
-        // oxlint-disable-next-line no-await-in-loop -- One screen at a time.
-        const goal = await typeGoal(page, {
-          result: QUANTUM,
-          words: "i want to understand quantum physics",
-        });
-        // oxlint-disable-next-line no-await-in-loop -- One screen at a time.
-        await confirmGoal(page, goal);
-        // oxlint-disable-next-line no-await-in-loop -- One screen at a time.
-        await expect(
-          page.getByRole("heading", { name: "What do you want from it?" }),
-        ).toBeVisible();
+        try {
+          const page = await context.newPage();
 
-        const first = page.getByRole("radio").first();
-        // oxlint-disable-next-line no-await-in-loop -- One screen at a time.
-        const before = await first.boundingBox();
+          const goal = await typeGoal(page, {
+            result: QUANTUM,
+            words: "i want to understand quantum physics",
+          });
 
-        const stopped = page.getByText(
-          /^(?:Building your plan stopped|We couldn't start building your plan)$/u,
-        );
-        // The run retries before it gives up, longer than an assertion's default wait.
-        // oxlint-disable-next-line no-await-in-loop -- One screen at a time.
-        await expect(stopped).toBeVisible({ timeout: 30_000 });
+          await confirmGoal(page, goal);
 
-        // It sits with Continue, in a live region screen readers hear, and the choices stay put.
-        // oxlint-disable-next-line no-await-in-loop -- One screen at a time.
-        await expect(page.locator("[aria-live='polite']").filter({ has: stopped })).toHaveCount(1);
-        // oxlint-disable-next-line no-await-in-loop -- One screen at a time.
-        await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
-        // oxlint-disable-next-line no-await-in-loop -- One screen at a time.
-        expect(await first.boundingBox()).toStrictEqual(before);
-        // oxlint-disable-next-line no-await-in-loop -- One screen at a time.
-        await page.screenshot({
-          path: test.info().outputPath(`plan-stopped-${width}-${colorScheme}.png`),
-        });
-      } finally {
-        // oxlint-disable-next-line no-await-in-loop -- One screen at a time.
-        await context.close();
-      }
-    }
+          await expect(
+            page.getByRole("heading", { name: "What do you want from it?" }),
+          ).toBeVisible();
+
+          const first = page.getByRole("radio").first();
+          const before = await first.boundingBox();
+
+          const stopped = page.getByText(
+            /^(?:Building your plan stopped|We couldn't start building your plan)$/u,
+          );
+
+          // The run retries before it gives up, longer than an assertion's default wait.
+          await expect(stopped).toBeVisible({ timeout: 30_000 });
+
+          // It sits with Continue, in a live region screen readers hear, and the choices stay put.
+          const liveRegion = page.locator("[aria-live='polite']").filter({ has: stopped });
+          await expect(liveRegion).toHaveCount(1);
+          await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
+          expect(await first.boundingBox()).toStrictEqual(before);
+
+          for (const colorScheme of ["light", "dark"] as const) {
+            // oxlint-disable-next-line no-await-in-loop -- One theme at a time.
+            await page.emulateMedia({ colorScheme });
+            // oxlint-disable-next-line no-await-in-loop -- One theme at a time.
+            await page.screenshot({
+              path: test.info().outputPath(`plan-stopped-${width}-${colorScheme}.png`),
+            });
+          }
+        } finally {
+          await context.close();
+        }
+      }),
+    );
   });
 
   test("a visitor goes from a goal in their words to a plan, by keyboard", async ({ page }) => {
