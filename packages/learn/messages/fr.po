@@ -65,7 +65,6 @@ msgstr "Ignoré"
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/mock/mock-speaking.tsx
 #: src/plan/plan-change-applied.tsx
-#: src/today/today-heading.tsx
 msgctxt "JXdbo8"
 msgid "Done"
 msgstr "Terminé"
@@ -3882,7 +3881,6 @@ msgstr "Parler à {name}"
 #: src/plan/plan-past-date-suggestion.tsx
 #: src/plan/plan-suggestion.tsx
 #: src/syllabus/subject-not-planned.tsx
-#: src/today/today-plan-change-actions.tsx
 msgctxt "2f2Vee"
 msgid "Adjust plan"
 msgstr "Ajuster le plan"
@@ -10650,7 +10648,6 @@ msgstr "Ton plan prévoit l’étude de {subject} pour {group}."
 
 #: src/plan/use-change-sentence.ts
 #: src/plan/use-coverage-sentence.ts
-#: src/today/today-plan-change.tsx
 msgctxt "5m7gA2"
 msgid "Your plan changed."
 msgstr "Ton plan a changé."
@@ -11331,7 +11328,6 @@ msgid "The chapter stays in your plan, and today's answers help it start at the 
 msgstr "Le chapitre reste dans ton plan, et tes réponses d’aujourd’hui aideront à commencer au bon niveau."
 
 #: src/questions/test-out-run.tsx
-#: src/today/today-plan-change.tsx
 msgctxt "aBn-KM"
 msgid "The lessons are back in your plan."
 msgstr "Les leçons sont de nouveau dans ton plan."
@@ -11750,6 +11746,7 @@ msgstr "Score net {net}"
 
 #: src/session/study-moment.tsx
 #: src/today/today-action.tsx
+#: src/today/today-day-status.tsx
 msgctxt "BOsVvE"
 msgid "See what changed"
 msgstr "Voir ce qui a changé"
@@ -11758,6 +11755,12 @@ msgstr "Voir ce qui a changé"
 msgctxt "0gmQJH"
 msgid "See mistakes"
 msgstr "Voir tes erreurs"
+
+#: src/session/summary/summary-actions.tsx
+#: src/today/today-action.tsx
+msgctxt "xbqZcP"
+msgid "Keep learning"
+msgstr "Continuer à apprendre"
 
 #: src/session/summary/summary-parts.tsx
 msgctxt "Ug6aid"
@@ -12431,16 +12434,6 @@ msgctxt "ZoDO4s"
 msgid "What changed"
 msgstr "Ce qui a changé"
 
-#: src/today/today-change-sentence.ts
-msgctxt "j_9tBZ"
-msgid "We skipped {lessons, plural, one {# lesson} other {# lessons}} of {chapter}"
-msgstr "On a passé {lessons, plural, one {# leçon} other {# leçons}} du chapitre {chapter}"
-
-#: src/today/today-change-sentence.ts
-msgctxt "NE3WRL"
-msgid "We skipped {lessons, plural, one {# lesson} other {# lessons}} you already know"
-msgstr "On a passé {lessons, plural, one {# leçon} other {# leçons}} que tu connais déjà"
-
 #: src/today/today-day-progress.tsx
 msgctxt "m9CrfE"
 msgid "{done, plural, =0 {# of {total, number} done} one {# of {total, number} done} other {# of {total, number} done}}"
@@ -12452,9 +12445,39 @@ msgid "{time} studied"
 msgstr "{time} étudiées"
 
 #: src/today/today-day-status.tsx
+msgctxt "XMRh7X"
+msgid "You studied on your day off."
+msgstr "Tu as étudié pendant ton jour de repos."
+
+#: src/today/today-day-status.tsx
 msgctxt "QPZgh9"
 msgid "Today's session is complete."
 msgstr "Ta séance du jour est terminée."
+
+#: src/today/today-day-status.tsx
+msgctxt "9JilTp"
+msgid "No study planned today."
+msgstr "Aucune séance prévue aujourd’hui."
+
+#: src/today/today-day-status.tsx
+msgctxt "n6t3BM"
+msgid "Welcome back! Your next lessons are here if you'd like to study."
+msgstr "Bon retour ! Tes prochaines leçons sont là si tu veux étudier."
+
+#: src/today/today-day-status.tsx
+msgctxt "lx6WCd"
+msgid "Your next lessons are here if you'd like to study."
+msgstr "Tes prochaines leçons sont là si tu veux étudier."
+
+#: src/today/today-day-status.tsx
+msgctxt "xzdcrh"
+msgid "Welcome back! Today is a rest day in your plan, so enjoy it."
+msgstr "Bon retour ! Aujourd’hui, c’est un jour de repos dans ton plan, alors profite-en."
+
+#: src/today/today-day-status.tsx
+msgctxt "MdRa2K"
+msgid "Enjoy your day off!"
+msgstr "Profite bien de ta journée de repos !"
 
 #: src/today/today-day-status.tsx
 msgctxt "Pg7r31"
@@ -12500,21 +12523,6 @@ msgstr "À {day} !"
 msgctxt "nQ6arV"
 msgid "That's today's study time."
 msgstr "Tu as atteint ton temps d’étude pour aujourd’hui."
-
-#: src/today/today-day-status.tsx
-msgctxt "9JilTp"
-msgid "No study planned today."
-msgstr "Aucune séance prévue aujourd’hui."
-
-#: src/today/today-day-status.tsx
-msgctxt "xzdcrh"
-msgid "Welcome back! Today is a rest day in your plan, so enjoy it."
-msgstr "Bon retour ! Aujourd’hui, c’est un jour de repos dans ton plan, alors profite-en."
-
-#: src/today/today-day-status.tsx
-msgctxt "MdRa2K"
-msgid "Enjoy your day off!"
-msgstr "Profite bien de ta journée de repos !"
 
 #: src/today/today-day-status.tsx
 msgctxt "2PMQ3_"
@@ -12577,7 +12585,6 @@ msgid "Noted. You keep your time, with less depth where it counts least."
 msgstr "C’est noté. Tu gardes le même temps d’étude et approfondis moins les sujets les moins importants."
 
 #: src/today/today-falling-behind.tsx
-#: src/today/today-plan-change.tsx
 msgctxt "6WPC9q"
 msgid "Plan change"
 msgstr "Modification du plan"
@@ -12602,11 +12609,6 @@ msgctxt "dYEY9n"
 msgid "Lighter day: saving time for {date}'s mock exam"
 msgstr "Journée plus légère : du temps réservé à l’examen blanc du {date}"
 
-#: src/today/today-heading.tsx
-msgctxt "Gg5U7i"
-msgid "Rest day"
-msgstr "Jour de repos"
-
 #: src/today/today-insight.tsx
 msgctxt "8owE4V"
 msgid "Add it"
@@ -12628,7 +12630,6 @@ msgid "Move my study time to {time}"
 msgstr "Déplacer mon créneau d’étude à {time}"
 
 #: src/today/today-insight.tsx
-#: src/today/today-plan-change.tsx
 msgctxt "NYTGIb"
 msgid "Got it"
 msgstr "Compris"
@@ -12679,16 +12680,6 @@ msgstr "Voir le défi de {day}"
 msgctxt "AYHJ_M"
 msgid "Practice with {name}"
 msgstr "T’entraîner avec {name}"
-
-#: src/today/today-plan-change.tsx
-msgctxt "Ctfgrz"
-msgid "Lessons skipped"
-msgstr "Leçons sautées"
-
-#: src/today/today-plan-change.tsx
-msgctxt "DQ8KR2"
-msgid "Your plan changed"
-msgstr "Ton plan a changé"
 
 #: src/today/today-plan-change.tsx
 msgctxt "BxNBZP"
@@ -12760,6 +12751,11 @@ msgstr "Objectif suggéré"
 msgctxt "Ie2Ije"
 msgid "Build a plan in 1 minute."
 msgstr "Crée un plan en 1 minute."
+
+#: src/today/today-up-next.tsx
+msgctxt "oAkgEE"
+msgid "Up next in your plan"
+msgstr "La suite de ton plan"
 
 #: src/today/today-week-challenge.tsx
 msgctxt "tfN79H"
