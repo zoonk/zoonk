@@ -173,8 +173,10 @@ test.describe("Onboarding from a typed goal", () => {
           for (const colorScheme of ["light", "dark"] as const) {
             // oxlint-disable-next-line no-await-in-loop -- One theme at a time.
             await page.emulateMedia({ colorScheme });
+            // The theme changes in place: transitions end before the shot, as on a page opened in it.
             // oxlint-disable-next-line no-await-in-loop -- One theme at a time.
             await page.screenshot({
+              animations: "disabled",
               path: test.info().outputPath(`plan-stopped-${width}-${colorScheme}.png`),
             });
           }
