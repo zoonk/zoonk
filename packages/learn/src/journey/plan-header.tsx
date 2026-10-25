@@ -1,9 +1,8 @@
 "use client";
 
-import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { useExtracted } from "next-intl";
 import { PageEyebrow, PageHeader, PageHeaderContent, PageTitle } from "../_components/page";
-import { daysUntilIsoDate, hasIsoDatePassed } from "../_utils/iso-date";
+import { daysBetween } from "../_utils/iso-date";
 import { PLAN_TITLE_ID, usePlanScreen } from "../plan/plan-context";
 
 /**
@@ -12,16 +11,15 @@ import { PLAN_TITLE_ID, usePlanScreen } from "../plan/plan-context";
  */
 function JourneyEyebrow() {
   const t = useExtracted();
-  const today = useMountTime();
-  const { goal, plan } = usePlanScreen();
+  const { goal, plan, today } = usePlanScreen();
   const { targetDate, targetDateEstimated } = plan.schedule;
 
   // A date that passed has nothing to count down to: the pace says where the plan stands.
-  if (!targetDate || hasIsoDatePassed({ isoDate: targetDate, today })) {
+  if (!targetDate || targetDate < today) {
     return <PageEyebrow>{goal.title}</PageEyebrow>;
   }
 
-  const days = daysUntilIsoDate({ isoDate: targetDate, today });
+  const days = daysBetween(today, targetDate);
 
   if (!targetDateEstimated) {
     return (

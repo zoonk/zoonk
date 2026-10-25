@@ -152,6 +152,8 @@ type PlanChanges = {
 };
 
 type PlanScreenContextValue = PlanScreenValue & {
+  /** The learner-local day already marked by core in this plan, shared by SSR and hydration. */
+  today: string;
   changes: PlanChanges;
   timeToCover: TimeToCoverStore;
   /**
@@ -164,7 +166,7 @@ type PlanScreenContextValue = PlanScreenValue & {
 
 type Saving = { control: Element | null; plan: PlanView; target?: FocusTarget };
 
-const PlanScreenContext = createContext<PlanScreenContextValue | null>(null);
+export const PlanScreenContext = createContext<PlanScreenContextValue | null>(null);
 
 /**
  * Focus is lost when it fell to the page, or, inside a sheet (the plan editor), to the sheet
@@ -316,12 +318,15 @@ export function PlanScreenProvider({
   children: React.ReactNode;
   value: PlanScreenValue;
 }) {
+  const today =
+    value.plan.week.days.find((day) => day.state === "today")?.date ?? value.plan.week.startDate;
+
   const keepFocus = useKeepFocus(value.plan);
   const timeToCover = useTimeToCoverStore(value.plan);
   const { actions, changes } = useCountedChanges(value.actions);
 
   return (
-    <PlanScreenContext value={{ ...value, actions, changes, keepFocus, timeToCover }}>
+    <PlanScreenContext value={{ ...value, actions, changes, keepFocus, timeToCover, today }}>
       {children}
     </PlanScreenContext>
   );

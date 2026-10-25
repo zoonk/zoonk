@@ -1,9 +1,8 @@
 "use client";
 
 import { type PlanPhaseView } from "@zoonk/core/plans/view-contract";
-import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { useExtracted } from "next-intl";
-import { daysBetween, toLocalIsoDate } from "../_utils/iso-date";
+import { daysBetween } from "../_utils/iso-date";
 import { getPhaseDay, getShareInPhase } from "../plan/phase-weight";
 import { usePlanScreen } from "../plan/plan-context";
 import { usePhaseName } from "../plan/use-phase-name";
@@ -26,8 +25,7 @@ export function getLessonShare(phase: PlanPhaseView): number {
  * plan holds nothing of (`leftOut`) has no days in it, so both are on the path only.
  */
 export function useRoadmapPhases() {
-  const { plan } = usePlanScreen();
-  const today = toLocalIsoDate(useMountTime());
+  const { plan, today } = usePlanScreen();
 
   const phases = plan.phases.filter(
     (phase) => phase.kind !== "afterExam" && phase.state !== "leftOut",

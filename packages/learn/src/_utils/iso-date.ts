@@ -2,6 +2,8 @@
 
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { type DateTimeFormatOptions, useFormatter } from "next-intl";
+import { use } from "react";
+import { PlanScreenContext } from "../plan/plan-context";
 
 /**
  * View models send calendar days as "YYYY-MM-DD" labels in the learner's day. Reading them as UTC
@@ -74,9 +76,10 @@ const DATE_STYLES: Record<DateStyle, DateTimeFormatOptions> = {
  */
 const YEAR_WHEN_ANOTHER_YEAR = new Set<DateStyle>(["day", "long"]);
 
-function getDateOptions({ date, style }: { date: Date; style: DateStyle }) {
+function getDateOptions({ date, style, today }: { date: Date; style: DateStyle; today?: string }) {
   const options = DATE_STYLES[style];
-  const isAnotherYear = date.getUTCFullYear() !== new Date().getFullYear();
+  const year = today ? isoDateToUtc(today).getUTCFullYear() : new Date().getFullYear();
+  const isAnotherYear = date.getUTCFullYear() !== year;
 
   return YEAR_WHEN_ANOTHER_YEAR.has(style) && isAnotherYear
     ? { ...options, year: "numeric" as const }
@@ -86,10 +89,15 @@ function getDateOptions({ date, style }: { date: Date; style: DateStyle }) {
 /** Formats a view model's calendar day in the viewer's language. */
 export function useFormatIsoDate() {
   const format = useFormatter();
+  const plan = use(PlanScreenContext);
 
   return (isoDate: string, style: DateStyle = "day") => {
     const date = isoDateToUtc(isoDate);
-    return format.dateTime(date, { ...getDateOptions({ date, style }), timeZone: "UTC" });
+
+    return format.dateTime(date, {
+      ...getDateOptions({ date, style, today: plan?.today }),
+      timeZone: "UTC",
+    });
   };
 }
 

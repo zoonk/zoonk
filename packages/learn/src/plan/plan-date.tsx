@@ -5,22 +5,13 @@ import { Button } from "@zoonk/ui/components/button";
 import { Input } from "@zoonk/ui/components/input";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
-import { toLocalIsoDate, useFormatGoalDate } from "../_utils/iso-date";
+import { useFormatGoalDate } from "../_utils/iso-date";
 import { UseDateButton, useNoticeDayText } from "./notice-day";
 import { usePlanScreen } from "./plan-context";
 import { PlanFailedMessage } from "./plan-failed-message";
 import { FullCourseSwitch, useFullCourse } from "./plan-full-course";
 import { StudyEverything } from "./study-everything";
 import { usePlanChange } from "./use-plan-change";
-
-/**
- * The days the plan's date can take: after today, since a plan counts down to a day still ahead,
- * and no later than a plan reaches (see `getTargetDateBounds`). A day past it is the browser's to
- * explain when the learner saves, as the picker greys it out.
- */
-function getDateBounds() {
-  return getTargetDateBounds(toLocalIsoDate(new Date()));
-}
 
 /**
  * What the date field says above it: a named month stands for the month until the learner picks a
@@ -85,7 +76,7 @@ export function PlanDate() {
   const t = useExtracted();
   const inputId = useId();
   const noteId = useId();
-  const { goal, plan } = usePlanScreen();
+  const { goal, plan, today } = usePlanScreen();
   const { change, failed, isPending } = usePlanChange();
   const noticeDayText = useNoticeDayText();
   const { noticeDay, targetDate, targetDateNamedMonth } = plan.schedule;
@@ -109,7 +100,7 @@ export function PlanDate() {
   };
 
   const note = noteFor({ isExam: goal.kind === "exam", namedMonth, targetDate });
-  const bounds = getDateBounds();
+  const bounds = getTargetDateBounds(today);
   // A month's first day is a day of its own once the learner picks it.
   const canSave = value !== "" && (namedMonth || value !== targetDate) && value >= bounds.min;
 
