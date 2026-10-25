@@ -732,6 +732,41 @@ test("when no time covers an exam by its date, Find hands the keyboard to studyi
   expect(sent.postData()).toContain('"fullCourse":true');
 });
 
+test("when no time covers an exam by its date, Find offers the time that studies every topic, one tap away", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}) => {
+  const { goal, isoDate } = await createTimeStepGoal(noProgressUser.id);
+  await prisma.goal.update({ data: { kind: "exam" }, where: { id: goal.id } });
+  await routeTwoHourAdvice(page, { goalId: goal.id, isoDate, measure: "exam", short: 0.5 });
+
+  await routeTimeToCover(page, {
+    goalId: goal.id,
+    time: { coreMinutes: 390, targetDate: isoDate },
+  });
+
+  await page.goto(`/start/${goal.id}`);
+  await page.getByRole("button", { name: "Start from zero" }).click();
+
+  await page
+    .getByRole("radiogroup", { name: "Minutes a day" })
+    .getByText("30 min", { exact: true })
+    .click();
+
+  await page.getByRole("button", { name: "Find the time that covers everything" }).click();
+
+  await expect(
+    page.getByText("6 hr 30 min a day studies every topic, some in less depth."),
+  ).toBeVisible();
+
+  // The time joins the chips, marked and focused, not picked: Space picks it.
+  const chip = page.getByRole("radio", { name: /^6 hr 30 min\s*Every topic$/u });
+  await expect(chip).toBeFocused();
+  await expect(chip).not.toBeChecked();
+  await page.keyboard.press("Space");
+  await expect(chip).toBeChecked();
+});
+
 test("a goal's time step says the next screen moves its date only while the time leaves something out", async ({
   noProgressUser,
   userWithoutProgress: page,
