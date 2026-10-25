@@ -1,7 +1,14 @@
 "use client";
 
 import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
-import { BrainIcon, RotateCcwIcon, TargetIcon, TrendingUpIcon } from "lucide-react";
+import { cn } from "@zoonk/ui/lib/utils";
+import {
+  BrainIcon,
+  RotateCcwIcon,
+  TargetIcon,
+  TrendingDownIcon,
+  TrendingUpIcon,
+} from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { KindDot } from "../../_components/kind-tile";
 import { StatTile, StatTiles } from "../../_components/stat-tile";
@@ -145,6 +152,7 @@ function SessionNumbers() {
   const formatShare = useFormatShare();
   const { summary } = useSessionSummary();
   const goalNumber = useGoalNumber();
+  const dropped = goalNumber?.change ? goalNumber.change.after < goalNumber.change.before : false;
 
   return (
     <StatTiles className="md:grid-cols-4 md:[&>li:last-child:nth-child(odd)]:col-span-1">
@@ -158,18 +166,25 @@ function SessionNumbers() {
         />
       )}
 
+      {/* A number that went down says so quietly: Maya's "4% → 2%" came in green beside a rising
+          arrow. */}
       {goalNumber && (
         <StatTile
           detail={
             goalNumber.change && (
-              <span className="text-success-text font-mono tabular-nums">
+              <span
+                className={cn(
+                  "font-mono tabular-nums",
+                  dropped ? "text-muted-foreground" : "text-success-text",
+                )}
+              >
                 {`${formatShare(goalNumber.change.before)} → ${formatShare(goalNumber.change.after)}`}
               </span>
             )
           }
-          icon={<TrendingUpIcon />}
+          icon={dropped ? <TrendingDownIcon /> : <TrendingUpIcon />}
           label={goalNumber.label}
-          tone="success"
+          tone={dropped ? undefined : "success"}
           value={formatShare(goalNumber.value)}
         />
       )}

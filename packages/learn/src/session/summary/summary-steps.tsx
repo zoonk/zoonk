@@ -114,7 +114,7 @@ export function SummarySteps() {
             <FinishLink className={continuesToRewards ? "max-lg:hidden" : undefined} />
           </TaskActions>
 
-          <SummaryOptions />
+          <SummaryOptions lastStep={!continuesToRewards} />
         </>
       }
       headerTitle={
