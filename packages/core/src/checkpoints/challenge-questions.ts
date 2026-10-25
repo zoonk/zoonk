@@ -14,7 +14,7 @@ import {
   type PlacementQuickFormat,
   getPlacementQuickFormat,
 } from "../learner/placement/placement-quick-format";
-import { parsePlanGraph, parsePlanSettings } from "../plans/planner/plan-state";
+import { parsePlanGraph } from "../plans/planner/plan-state";
 import { loadExamStructure } from "../sessions/_utils/exam-structure";
 import { loadExamPrepAccess } from "../sessions/_utils/plus-only-lessons";
 import { getSkippedSkillIds } from "../sessions/_utils/review-skills";
@@ -113,7 +113,6 @@ async function loadChallengeContext({ goal, items }: { goal: Goal; items: PlanIt
     items,
     listeningSkillIds,
     quickFormat: getPlacementQuickFormat(structure),
-    settings: parsePlanSettings(plan?.settings),
     skills: goalPlan.skills.filter((skill) => !skipped.has(skill.id)),
   };
 }
@@ -130,7 +129,7 @@ async function loadAskedSkillIds({
   now: Date;
   userId: string;
 }): Promise<string[]> {
-  const { goal, settings, graphSkills, itemSkillIds, items, listeningSkillIds, skills } = context;
+  const { goal, graphSkills, itemSkillIds, items, listeningSkillIds, skills } = context;
 
   if (item.kind === "checkpoint") {
     const textSkillIds = skills.flatMap((skill) =>
@@ -142,12 +141,11 @@ async function loadAskedSkillIds({
 
   return getBossSkillIds({
     boss: item,
-    goal,
     graphSkills,
     itemSkillIds,
     items,
-    settings,
     skills,
+    targetDate: goal.targetDate,
   }).filter((skillId) => !listeningSkillIds.has(skillId));
 }
 

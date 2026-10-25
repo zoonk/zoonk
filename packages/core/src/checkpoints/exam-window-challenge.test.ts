@@ -92,7 +92,6 @@ describe("a challenge before a skill's core is in", () => {
         orderBy: { position: "asc" },
         where: { planId: plan.id },
       }),
-      settings,
       skills: saved.skills,
       today: new Date("2020-09-28T00:00:00Z"),
       userId: user.id,

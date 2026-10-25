@@ -702,7 +702,6 @@ describe("language conversations", () => {
       graphSkills: [],
       itemSkillIds: new Map(),
       items: planItems,
-      settings: { fullCourse: false },
       skills: [],
       today: new Date(),
       userId: user.id,

@@ -124,6 +124,7 @@ describe(getBossSkillIds, () => {
       itemSkillIds,
       items,
       skills,
+      targetDate: null,
     });
 
   it("asks the skills its phase finished", () => {
@@ -189,6 +190,7 @@ describe("an exam window's challenge", () => {
       itemSkillIds,
       items,
       skills,
+      targetDate: null,
     });
   }
 
@@ -244,6 +246,7 @@ describe("an exam window's challenge", () => {
         itemSkillIds: new Map(items.map((item) => [item.id, item.skillId ? [item.skillId] : []])),
         items,
         skills: [{ id: "algebra" }, { id: "biology" }],
+        targetDate: null,
       }),
     ).toStrictEqual(["algebra"]);
   });
@@ -270,7 +273,6 @@ describe("a challenge before an exam's continuation", () => {
   ];
 
   const plan = {
-    goal: { kind: "exam" as const, targetDate: day(12) },
     graphSkills: [
       { lessons: 6, skillId: "a" },
       { lessons: 3, skillId: "b" },
@@ -278,8 +280,8 @@ describe("a challenge before an exam's continuation", () => {
     ],
     itemSkillIds: new Map(items.map((item) => [item.id, item.skillId ? [item.skillId] : []])),
     items,
-    settings: { fullCourse: true },
     skills: ["a", "b", "c"].map((id) => ({ id })),
+    targetDate: day(12),
   };
 
   const boss = items[3]!;
@@ -306,12 +308,8 @@ describe("a challenge before an exam's continuation", () => {
     ]);
   });
 
-  it.each([
-    { goal: plan.goal, settings: { fullCourse: false } },
-    { goal: { kind: "learn" as const, targetDate: day(12) }, settings: plan.settings },
-    { goal: { kind: "exam" as const, targetDate: null }, settings: plan.settings },
-  ])("keeps the ordinary core rule for $goal.kind with $settings", (context) => {
-    expect(getBossSkillIds({ ...plan, ...context, boss })).toStrictEqual(["b"]);
+  it("keeps the ordinary core rule without a date", () => {
+    expect(getBossSkillIds({ ...plan, boss, targetDate: null })).toStrictEqual(["b"]);
   });
 
   it("keeps undated required items and an undated challenge's ordinary core", () => {

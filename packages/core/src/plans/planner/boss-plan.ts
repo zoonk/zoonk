@@ -34,14 +34,13 @@ export function toBossPlan({
   const skipped = getSkippedSkillIds({ graph: input.graph, settings: input.settings });
 
   return {
-    goal: input.goal,
     graphSkills: input.graph.skills.map((skill) => ({
       ...skill,
       plannedLessons: skillLessons.get(skill.skillId) ?? 0,
     })),
     itemSkillIds: projected.itemSkillIds,
     items: saved,
-    settings: input.settings,
     skills: projected.skillIds.filter((id) => !skipped.has(id)).map((id) => ({ id })),
+    targetDate: input.goal.targetDate,
   };
 }

@@ -283,12 +283,11 @@ function isBossWritable({
 
   return getBossSkillIds({
     boss,
-    goal: getSimGoal(world),
     graphSkills,
     itemSkillIds,
     items: plan.items,
-    settings: plan.state.settings,
     skills,
+    targetDate: getSimGoal(world).targetDate,
   }).some((skillId) => !inputs.listeningSkillIds.has(skillId));
 }
 

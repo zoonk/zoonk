@@ -1,8 +1,6 @@
-import { type Goal, type PlanItemKind, type PlanItemStatus } from "@zoonk/db";
+import { type PlanItemKind, type PlanItemStatus } from "@zoonk/db";
 import { interleave } from "@zoonk/utils/interleave";
-import { once } from "@zoonk/utils/once";
 import { listCoreLessonItems } from "../plans/_utils/core-lessons";
-import { type PlanSettings } from "../plans/planner/plan-state";
 
 /**
  * Phase checkpoints (the Trickster boss): about ten mixed questions from the whole phase in the exam's
@@ -105,9 +103,6 @@ type BossPlanItem = {
 type BossItem = Pick<BossPlanItem, "phase" | "position" | "scheduledFor">;
 
 type BossPlan = {
-  /** Existing exam context: its continuation cannot change a challenge on or before the exam. */
-  goal?: Pick<Goal, "kind" | "targetDate">;
-  settings?: Pick<PlanSettings, "fullCourse">;
   /**
    * The plan graph's skills, with the lessons the plan's last build counted for each
    * (`plannedLessons`), which size its core; a plan saved before it counted them has the graph's
@@ -119,6 +114,8 @@ type BossPlan = {
   items: readonly BossPlanItem[];
   /** The plan's skills to ask, in plan order (without the areas the learner took out). */
   skills: readonly { id: string }[];
+  /** The goal's date: a challenge by it asks what the plan teaches by then (see `getBossSkillIds`). */
+  targetDate: Date | null;
 };
 
 /** A skill's core lesson items (see `listCoreLessonItems`). */
@@ -216,27 +213,23 @@ function pickBossSkillIds({
  * its own phase teaches, else any no earlier checkpoint asked (`pickBossSkillIds`). A skill begun
  * late in an exam's window, its core in the next one, isn't asked before it's studied, and the next
  * window's challenge asks it (R40). Checking again what earlier phases taught is review's work, not
- * a phase's challenge's. In an exam plan studying everything, a challenge on or before the exam
- * sizes those cores from items no later than the exam; its continuation changes no earlier duel.
+ * a phase's challenge's. A challenge by the goal's date sizes those cores from the lessons dated by
+ * then: an exam plan studying everything goes on after the exam, which changes no duel before it.
  * The session's duel and the questions written ahead for it ask the same.
  */
 export function getBossSkillIds({ boss, ...plan }: BossPlan & { boss: BossItem }): string[] {
+  const { graphSkills, targetDate } = plan;
   const items = plan.items.toSorted((a, b) => a.position - b.position);
+  const byDate = (date: Date | null) => targetDate !== null && date !== null && date <= targetDate;
+  const core = listCoreLessonItems({ graphSkills, items });
 
-  const exam = plan.goal?.kind === "exam" && plan.settings?.fullCourse && plan.goal.targetDate;
-  const core = once(() => listCoreLessonItems({ graphSkills: plan.graphSkills, items }));
+  // Lessons between a challenge and the date still count toward its cores: it waits for them.
+  const coreByDate = listCoreLessonItems({
+    graphSkills,
+    items: items.filter((item) => !item.scheduledFor || byDate(item.scheduledFor)),
+  });
 
-  const beforeExam = once(() =>
-    listCoreLessonItems({
-      graphSkills: plan.graphSkills,
-      items: items.filter((item) => !exam || !item.scheduledFor || item.scheduledFor <= exam),
-    }),
-  );
-
-  // Continuation must not remove a skill from a pre-exam challenge. Lessons between that
-  // challenge and the exam still count toward its core, and can keep it for a later challenge.
-  const coreFor = (checkpoint: BossItem) =>
-    exam && checkpoint.scheduledFor && checkpoint.scheduledFor <= exam ? beforeExam() : core();
+  const coreFor = (checkpoint: BossItem) => (byDate(checkpoint.scheduledFor) ? coreByDate : core);
 
   const asked = plan.items
     .filter((item) => item.kind === "boss" && item.position < boss.position)

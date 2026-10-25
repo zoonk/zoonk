@@ -3,7 +3,6 @@ import { type Goal } from "@zoonk/db";
 import { CHECKPOINT_CALL_BLOCK_MINUTES } from "../../language/conversations/conversation-rules";
 import { type GoalSkillNode } from "../../learner/_utils/goal-skill-graph";
 import { getItemKey } from "../../plans/planner/plan-items";
-import { type PlanSettings } from "../../plans/planner/plan-state";
 import { type SessionPlanItem } from "../../sessions/_utils/session-plan-item";
 import { type PlannedCheckpoint, type PlannedLesson } from "../../sessions/session-builder";
 import { getBossQuestionSkills, getCheckpointMinutes } from "../checkpoint-minutes";
@@ -86,7 +85,6 @@ type BossInput = {
   /** The goal's exam: its questions and general ones make the checkpoint, never another exam's. */
   examBlueprintId: string | null;
   goal: Pick<Goal, "kind" | "targetDate">;
-  settings: Pick<PlanSettings, "fullCourse">;
   /** The plan graph's skills, whose lessons size each skill's core (see `getBossSkillIds`). */
   graphSkills: readonly { lessons: number; skillId: string }[];
   /** Each plan item's skills, by its id, for a phase with no skills of its own. */
@@ -149,7 +147,6 @@ async function loadBoss({
   boss,
   examBlueprintId,
   goal,
-  settings,
   graphSkills,
   itemSkillIds,
   items,
@@ -166,12 +163,11 @@ async function loadBoss({
 
   const skillIds = getBossSkillIds({
     boss,
-    goal,
     graphSkills,
     itemSkillIds,
     items,
-    settings,
     skills,
+    targetDate: goal.targetDate,
   });
 
   // A language goal's boss is the unit's live call: it has goals to get across, not questions.
