@@ -788,17 +788,11 @@ test.describe("Journey", () => {
       await focus.getByRole("button", { name: "Done" }).click();
       await expect(focus).toBeHidden();
 
+      // Taking Linguagens out of her focus takes her English out with it: core's
+      // focus-part-areas.test.ts.
       await expect
         .poll(() => loadFocusAreas(user.goalId))
         .toStrictEqual(["Ciências da Natureza", "Linguagens", "Língua Inglesa"]);
-
-      // Taking Linguagens out of her focus takes her English out with it.
-      await chooseFocusFromPlan(page);
-      await focus.getByRole("checkbox", { name: "Linguagens" }).click();
-      await focus.getByRole("button", { name: "Focus on these" }).click();
-      await expect(focus.getByRole("status")).toBeVisible({ timeout: REPLAN_TIMEOUT_MS });
-
-      await expect.poll(() => loadFocusAreas(user.goalId)).toStrictEqual(["Ciências da Natureza"]);
     });
   });
 
