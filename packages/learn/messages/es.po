@@ -4198,6 +4198,7 @@ msgid "Until"
 msgstr "Hasta"
 
 #: src/journey/plan-sections.tsx
+#: src/onboarding/start-over-button.tsx
 msgctxt "I5NMJ8"
 msgid "More"
 msgstr "Más"
@@ -8520,9 +8521,24 @@ msgid "Save your plan so it's here next time."
 msgstr "Guarda tu plan para tenerlo aquí la próxima vez."
 
 #: src/onboarding/start-over-button.tsx
+msgctxt "c6IvRW"
+msgid "Finish later"
+msgstr "Terminar más tarde"
+
+#: src/onboarding/start-over-button.tsx
+msgctxt "kbmC81"
+msgid "Your answers are kept"
+msgstr "Tus respuestas se guardarán"
+
+#: src/onboarding/start-over-button.tsx
 msgctxt "4prk89"
 msgid "Start over"
 msgstr "Empezar de nuevo"
+
+#: src/onboarding/start-over-button.tsx
+msgctxt "wjSspW"
+msgid "Clears your answers"
+msgstr "Se borrarán tus respuestas"
 
 #: src/onboarding/start-over-button.tsx
 msgctxt "tB3o4E"

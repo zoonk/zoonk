@@ -74,10 +74,21 @@ test.describe("Refreshing mid-onboarding", () => {
     await expect(date).toBeVisible();
     await expect(page.getByRole("img", { name: /^Step 2 of \d+$/u })).toBeVisible();
 
-    // On a phone the questions have no tab bar: the bar has the way back and out.
+    // On a phone the questions have no tab bar: the bar has the way back, and its "More" the way
+    // out, which keeps the answers, beside starting over. Today then leads back to the question.
     const size = page.viewportSize();
     await page.setViewportSize({ height: 844, width: 390 });
     await expect(page.getByRole("navigation", { name: "Learning tabs" })).toHaveCount(0);
+    await page.getByRole("button", { name: "More" }).click();
+    await expect(page.getByRole("menuitem", { name: /^Start over/u })).toBeVisible();
+    await page.getByRole("menuitem", { name: /^Finish later/u }).click();
+
+    await expect(
+      page.getByText("Your plan for Learn algebra needs a few more answers."),
+    ).toBeVisible();
+
+    await page.getByRole("link", { name: "Continue setting up" }).click();
+    await expect(date).toBeVisible();
 
     if (size) {
       await page.setViewportSize(size);
@@ -101,8 +112,8 @@ test.describe("Refreshing mid-onboarding", () => {
     await page.getByRole("button", { name: "Back" }).click();
     await expect(page.getByRole("heading", { name: "What do you want from it?" })).toBeVisible();
 
-    // "Start over", in words at the bar's end, asks first. Starting over sets the goal aside and goes
-    // back to the first question.
+    // "Start over", in words at the bar's end from `lg`, asks first. Starting over sets the goal aside
+    // and goes back to typing a goal.
     await page.getByRole("button", { name: "Start over" }).click();
 
     const confirm = page.getByRole("alertdialog", { name: "Start over?" });
