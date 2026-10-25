@@ -179,7 +179,10 @@ export function DrillIntro({
   lessonHref,
   onStart,
 }: {
-  /** The question below is graded: the drill's rule has done its job. */
+  /**
+   * The drill's rule has done its job: the question below is graded, or a gap's idea said how the
+   * drill goes on its own screen.
+   */
   answered?: boolean;
   drill: Drill;
   lastAnswer?: string | null;

@@ -218,18 +218,21 @@ export function PracticeStepView({
 
   const graded = phase.kind === "feedback" ? phase : null;
   const disabled = phase.kind === "checking";
+  const ideaFirst = isIdeaFirst(drill);
+
+  // Drills say how they work above their first question, and a misread above each one, since each
+  // waits behind "Show the answers"; a gap's idea said it on its own screen, so its questions only
+  // recall the earlier answer, on the question it was given to. The note is how to answer, so it
+  // sits right above the question at every size, as in a session's block.
+  const showsNote = ideaFirst ? lastAnswer !== null : step.firstOfEntry || isReadFirst(drill);
 
   return (
     <>
-      {/* A gap's idea had its own screen; other drills say how they work above their first
-          question, and a misread above each one, since each waits behind "Show the answers". The
-          note is how to answer, so it sits right above the question at every size, as in a
-          session's block. */}
-      {!isIdeaFirst(drill) && (step.firstOfEntry || isReadFirst(drill)) && (
+      {showsNote && (
         <DrillIntro
-          answered={graded !== null}
+          answered={graded !== null || ideaFirst}
           drill={drill}
-          lastAnswer={step.firstOfEntry ? lastAnswer : null}
+          lastAnswer={step.firstOfEntry || ideaFirst ? lastAnswer : null}
           lessonHref={lessonHref}
         />
       )}

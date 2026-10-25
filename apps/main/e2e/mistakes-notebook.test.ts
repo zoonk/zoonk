@@ -455,6 +455,11 @@ test.describe("Mistakes notebook", () => {
     await expect(page.getByRole("button", { name: /^Check/u })).toBeEnabled();
     await expect(page.getByRole("heading", { name: question })).toBeVisible();
 
+    // Back on the question it was made on, the drill recalls the earlier answer over it, as every
+    // drill does; a gap's idea said how the drill goes, so the rule isn't said again.
+    await expect(page.getByText("Last time you answered: Wrong answer")).toBeVisible();
+    await expect(page.getByText("The idea first, then a few questions on it.")).toHaveCount(0);
+
     await page.context().close();
   });
 
