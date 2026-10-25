@@ -19,7 +19,7 @@ export type SessionPreparationAccess =
   | { goalId: string; sessionId: string; status: "ready"; timeZone: string; userId: string }
   /**
    * A guest gets only the lesson they reach next in this session written ahead (`lessonId`, the
-   * first learn block still to do), counted as its start like opening it; nothing else.
+   * first learn block not started yet), counted as its start like opening it; nothing else.
    */
   | { lessonId: string | null; status: "guest" }
   /**
@@ -69,10 +69,13 @@ const NOTHING_TO_PREPARE: SessionPreparation = {
   plannedLessonIds: [],
 };
 
-/** The lesson a session's learner reaches next: its first learn block still to do. */
+/**
+ * The lesson a session's learner reaches next: its first learn block not started yet. A block
+ * preparing the session starts before preparation reads it, so the one they're in is never next.
+ */
 function findNextLessonId(blocks: readonly StudySessionBlock[]): string | null {
   const next = blocks.find(
-    (block) => block.kind === "learn" && block.lessonId && OPEN_BLOCK_STATUSES.has(block.status),
+    (block) => block.kind === "learn" && block.lessonId && block.status === "pending",
   );
 
   return next?.lessonId ?? null;

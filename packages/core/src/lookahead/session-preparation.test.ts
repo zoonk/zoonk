@@ -184,7 +184,7 @@ describe(getSessionPreparationAccess, () => {
     });
   });
 
-  it("names only the lesson a guest reaches next, the first learn block still to do", async () => {
+  it("names only the lesson a guest reaches next, the first learn block not started yet", async () => {
     const guest = await userFixture();
 
     const [goal] = await Promise.all([
@@ -192,13 +192,16 @@ describe(getSessionPreparationAccess, () => {
       prisma.user.update({ data: { isAnonymous: true }, where: { id: guest.id } }),
     ]);
 
-    const [session, done, next, later] = await Promise.all([
+    const [session, done, current, next, later] = await Promise.all([
       studySessionFixture({ goalId: goal.id, localDate: today(), userId: guest.id }),
+      libraryLessonFixture({ contentStatus: "completed" }),
       libraryLessonFixture({ contentStatus: "completed" }),
       libraryLessonFixture(),
       libraryLessonFixture(),
     ]);
 
+    // The block they just opened starts before its preparation reads the session: the lesson
+    // after it is the one to write while they study.
     await Promise.all([
       studySessionBlockFixture({
         lessonId: done.id,
@@ -206,9 +209,15 @@ describe(getSessionPreparationAccess, () => {
         sessionId: session.id,
         status: "completed",
       }),
-      studySessionBlockFixture({ kind: "review", position: 1, sessionId: session.id }),
-      studySessionBlockFixture({ lessonId: next.id, position: 2, sessionId: session.id }),
-      studySessionBlockFixture({ lessonId: later.id, position: 3, sessionId: session.id }),
+      studySessionBlockFixture({
+        lessonId: current.id,
+        position: 1,
+        sessionId: session.id,
+        status: "active",
+      }),
+      studySessionBlockFixture({ kind: "review", position: 2, sessionId: session.id }),
+      studySessionBlockFixture({ lessonId: next.id, position: 3, sessionId: session.id }),
+      studySessionBlockFixture({ lessonId: later.id, position: 4, sessionId: session.id }),
     ]);
 
     mockGuestSession(guest.id);
