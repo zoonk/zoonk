@@ -9135,13 +9135,6 @@ msgctxt "0WvsUC"
 msgid "Done. Your plan now covers your whole goal."
 msgstr "C’est fait. Ton plan couvre maintenant tout ton objectif."
 
-#: src/onboarding/steps/reveal-coverage.tsx
-#: src/plan/plan-coverage.tsx
-#: src/plan/plan-offer-preview.tsx
-msgctxt "hzzrUH"
-msgid "Move your date to cover everything"
-msgstr "Change la date pour tout couvrir"
-
 #: src/onboarding/steps/reveal-notice-day.tsx
 #: src/plan/notice-day.tsx
 msgctxt "xYZ4fs"
@@ -9893,6 +9886,17 @@ msgstr "{time} par jour ne suffit pas pour couvrir tous les sujets : les moins 
 msgctxt "iMuwYA"
 msgid "{time} a day doesn't reach every part of your goal: what comes last in your path is left out."
 msgstr "Avec {time} par jour, tu ne peux pas couvrir toutes les parties de ton objectif : les dernières étapes de ton parcours sont laissées de côté."
+
+#: src/plan/plan-coverage.tsx
+msgctxt "0YytO3"
+msgid "Move your date to {date}"
+msgstr "Change la date pour le {date}"
+
+#: src/plan/plan-coverage.tsx
+#: src/plan/plan-offer-preview.tsx
+msgctxt "hzzrUH"
+msgid "Move your date to cover everything"
+msgstr "Change la date pour tout couvrir"
 
 #: src/plan/plan-date-text.tsx
 msgctxt "7KwTGn"

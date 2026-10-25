@@ -1624,7 +1624,9 @@ test.describe("Today's plan change", () => {
       const minutes = editor.getByRole("radiogroup", { name: "Time a day" });
       await expect(minutes.locator(":focus")).toHaveCount(1);
 
+      // A tap finds the date and names it; the next one moves it.
       await editor.getByRole("button", { name: "Move your date to cover everything" }).click();
+      await editor.getByRole("button", { name: "Move your date to September 28, 2028" }).click();
 
       await expect
         .poll(async () => {

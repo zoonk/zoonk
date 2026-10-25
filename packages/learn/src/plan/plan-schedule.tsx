@@ -340,8 +340,7 @@ export function PlanSchedule() {
   const planChange = usePlanChange();
   const [weekendChoice, setWeekendChoice] = useState<boolean | null>(null);
   const weekendOn = weekendChoice ?? shape.weekend !== null;
-  // While Move your date finds its date and saves it, the other settings wait, as for any change:
-  // a time picked meanwhile would leave the date it found for the plan before.
+  // While Move your date finds its date or saves it, the other settings wait, as for any change.
   const [moving, setMoving] = useState(false);
   const schedule = { ...planChange, isPending: planChange.isPending || moving };
 

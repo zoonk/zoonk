@@ -4,6 +4,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { usePlanScreen } from "./plan-context";
 import { getEditorSectionId } from "./plan-editor-sections";
@@ -125,11 +126,12 @@ export function useCanMoveDate(): boolean {
 type MoveOutcome = "building" | "failed" | "noDate" | null;
 
 /**
- * One tap moves a goal's date to the earliest day the learner's own time covers everything by:
- * the date Find found for this plan, found first when it hasn't been (the same search, shared with
- * Find: see `useTimeToCover`), then saved as any change (S1: no endpoint of its own), through
- * `planChange` when the section saves one change at a time. A plan that changed while it searched
- * moves nothing: the date was for the plan before. `onMoved` hears when the move was saved.
+ * Moves a goal's date to the earliest day the learner's own time covers everything by: the date
+ * Find found for this plan (`date`, the same search, shared with Find: see `useTimeToCover`), saved
+ * as any change (S1: no endpoint of its own), through `planChange` when the section saves one
+ * change at a time. Moving a deadline is the learner's to see first: until the date is known, a tap
+ * finds it and the control names it; once named, one tap moves it, with Undo where the change
+ * shows. `onMoved` hears when the move was saved.
  */
 export function useMoveDate({
   onMoved,
@@ -137,21 +139,32 @@ export function useMoveDate({
   planChange,
 }: {
   onMoved?: () => void;
-  /** Hears when the move starts finding its date and when it's done, saved or not. */
+  /** Hears when the move starts finding its date or saving it, and when it's done, saved or not. */
   onMoving?: (moving: boolean) => void;
   planChange?: ReturnType<typeof usePlanChange>;
 } = {}) {
   const own = usePlanChange();
   const { change, failed, isPending } = planChange ?? own;
   const { changes, keepFocus } = usePlanScreen();
-  const { find } = useTimeToCover();
+  const { answered, find } = useTimeToCover();
   const [finding, setFinding] = useState(false);
   const [outcome, setOutcome] = useState<MoveOutcome>(null);
+  const date = answered?.fittingDate ?? null;
 
-  const stop = (next: MoveOutcome) => {
+  const findDate = async () => {
+    setFinding(true);
+    onMoving?.(true);
+    const found = await find();
     setFinding(false);
     onMoving?.(false);
-    setOutcome(next);
+
+    if (found.status === "answered") {
+      setOutcome(found.time.fittingDate ? null : "noDate");
+      return;
+    }
+
+    // A plan that changed while it searched has no date found yet: the control asks again.
+    setOutcome(found.status === "stale" ? null : found.status);
   };
 
   const move = async () => {
@@ -161,33 +174,15 @@ export function useMoveDate({
     }
 
     setOutcome(null);
-    setFinding(true);
+
+    if (!date) {
+      await findDate();
+      return;
+    }
+
     onMoving?.(true);
-    const started = changes.started();
-    const found = await find();
 
-    if (found.status !== "answered") {
-      stop(found.status === "stale" ? null : found.status);
-      return;
-    }
-
-    // A change that started while it searched (or the plan leaving the screen) comes after: the
-    // date was for the plan before it, so it moves nothing.
-    if (changes.started() !== started) {
-      stop(null);
-      return;
-    }
-
-    const { fittingDate } = found.time;
-
-    if (!fittingDate) {
-      stop("noDate");
-      return;
-    }
-
-    setFinding(false);
-
-    void change([{ kind: "setTargetDate", targetDate: fittingDate }], (saved) => {
+    void change([{ kind: "setTargetDate", targetDate: date }], (saved) => {
       onMoving?.(false);
 
       if (saved?.status === "applied") {
@@ -200,7 +195,26 @@ export function useMoveDate({
     keepFocus(() => findPickedChip(document.querySelector(`#${getEditorSectionId("time")}`)));
   };
 
-  return { failed: failed || outcome === "failed", move, outcome, pending: finding || isPending };
+  return {
+    date,
+    failed: failed || outcome === "failed",
+    move,
+    outcome,
+    pending: finding || isPending,
+  };
+}
+
+/**
+ * Move your date's label: the date it moves to once that's known ("Move your date to October 14,
+ * 2028"), so the learner knows before a tap moves it, and what it's for until then.
+ */
+export function MoveDateLabel({ move }: { move: ReturnType<typeof useMoveDate> }) {
+  const t = useExtracted();
+  const formatDate = useFormatIsoDate();
+
+  return move.date
+    ? t("Move your date to {date}", { date: formatDate(move.date, "long") })
+    : t("Move your date to cover everything");
 }
 
 /**
@@ -251,8 +265,8 @@ export function PendingLabel({
 }
 
 /**
- * "Move your date to cover everything" as a button, in the plan editor (see `useMoveDate`), saving
- * through the schedule's one change at a time (`planChange`).
+ * Move your date as a button, in the plan editor (see `useMoveDate`), named by the date it moves to
+ * once that's known, saving through the schedule's one change at a time (`planChange`).
  */
 export function MoveDateSwitch({
   id,
@@ -264,7 +278,6 @@ export function MoveDateSwitch({
   onMoving?: (moving: boolean) => void;
   planChange?: ReturnType<typeof usePlanChange>;
 }) {
-  const t = useExtracted();
   const move = useMoveDate({ onMoving, planChange });
 
   return (
@@ -280,7 +293,7 @@ export function MoveDateSwitch({
         variant="outline"
       >
         <PendingLabel pending={move.pending}>
-          {t("Move your date to cover everything")}
+          <MoveDateLabel move={move} />
         </PendingLabel>
       </Button>
       <MoveDateFailure live={false} move={move} />

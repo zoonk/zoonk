@@ -7,6 +7,7 @@ import { FreeWeekOverNotice } from "../../_components/free-week-over";
 import { usePlanScreen } from "../../plan/plan-context";
 import {
   MoveDateFailure,
+  MoveDateLabel,
   PendingLabel,
   useCanMoveDate,
   useCoveredText,
@@ -42,8 +43,8 @@ function SyllabusWords({ syllabus }: { syllabus: SyllabusView }) {
 /**
  * What the plan covers, said once in one honest sentence under its weights: when the learner's
  * time doesn't cover the goal by its date, what it does cover, with, for a goal that isn't an exam,
- * the one tap that moves its date to the day their time covers everything by (found when they tap
- * it, never for the page: see `useMoveDate`); otherwise the goal's structure ("9 subjects from the
+ * the way to move its date to the day their time covers everything by (a tap finds and names that
+ * day, never for the page, and the next one moves it: see `useMoveDate`); otherwise the goal's structure ("9 subjects from the
  * notice · 70 topics, all in your plan"), and once that tap made it cover everything, that it does,
  * where focus goes, since the tap that had it is gone. "See topics" opens every subject and topic
  * in a sheet, the ones left out marked; what it takes to pass follows, once. Other ways to change
@@ -105,7 +106,7 @@ export function RevealCoverage({ syllabus }: { syllabus: SyllabusView | null }) 
               type="button"
             >
               <PendingLabel pending={move.pending}>
-                {t("Move your date to cover everything")}
+                <MoveDateLabel move={move} />
               </PendingLabel>
             </button>
           </>

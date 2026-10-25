@@ -732,7 +732,8 @@ test.describe("Journey", () => {
         editor.getByText(/^At .+ a day, your plan covers everything by .+\.$/u),
       ).toBeVisible();
 
-      await editor.getByRole("button", { name: "Move your date to cover everything" }).click();
+      // The date it moves to is known, so the button names it.
+      await editor.getByRole("button", { name: /^Move your date to \w+ \d+, \d{4}$/u }).click();
 
       await expect
         .poll(async () => {

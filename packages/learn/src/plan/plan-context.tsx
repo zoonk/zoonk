@@ -9,16 +9,7 @@ import { type PlanChangePreview } from "@zoonk/core/plans/preview-contract";
 import { type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
 import { type ToolChoice, type ToolSystem } from "@zoonk/core/plans/tools-contract";
 import { type PlanChangeView, type PlanView } from "@zoonk/core/plans/view-contract";
-import {
-  createContext,
-  use,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { createContext, use, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { getTimeToCoverRevision } from "./time-to-cover-revision";
 
@@ -140,15 +131,12 @@ type FocusTarget = () => HTMLElement | null;
 
 /**
  * The plan's changes, whichever control saves them (every save goes through `actions`): whether one
- * is saving, and how many ever started, the plan leaving the screen included. A change worked out
- * before it saves (Move your date finds its date first) can tell another one started meanwhile, or
- * the plan is gone, and leave the plan to it. Read them in handlers, never while rendering.
+ * is saving, so a control that works out its change first (Move your date) leaves the plan to the
+ * learner's newer word. Read it in handlers, never while rendering.
  */
 type PlanChanges = {
   /** Whether a change is saving right now: current before the screen shows it. */
   isSaving: () => boolean;
-  /** How many changes started so far. */
-  started: () => number;
 };
 
 type PlanScreenContextValue = PlanScreenValue & {
@@ -263,31 +251,19 @@ function useTimeToCoverStore(plan: PlanView): TimeToCoverStore {
 }
 
 /**
- * Counts every action that changes the plan as it starts and answers (see `PlanChanges`): its own
- * changes, an Undo or an Apply, an exam's option, the tools. A ref, not state: a save starts inside
- * its transition, where a state update would only show once the save is done. The plan leaving the
- * screen counts as a change too, so a Move still finding its date saves nothing.
+ * Counts every action that changes the plan while it saves (see `PlanChanges`): its own changes,
+ * an Undo or an Apply, an exam's option, the tools. A ref, not state: a save starts inside its
+ * transition, where a state update would only show once the save is done.
  */
 function useCountedChanges(actions: PlanActions): { actions: PlanActions; changes: PlanChanges } {
-  const counts = useRef({ saving: 0, started: 0 });
-
-  // In the commit that hides or removes the plan, not after it: a link's transition can commit the
-  // departure before passive effects run, and a Find answering then would still move the date.
-  useLayoutEffect(() => {
-    const current = counts.current;
-
-    return () => {
-      current.started += 1;
-    };
-  }, []);
+  const saving = useRef(0);
 
   const countedActions = useMemo((): PlanActions => {
     const counted = <Result,>(save: () => Promise<Result>): Promise<Result> => {
-      counts.current.started += 1;
-      counts.current.saving += 1;
+      saving.current += 1;
 
       return save().finally(() => {
-        counts.current.saving -= 1;
+        saving.current -= 1;
       });
     };
 
@@ -303,10 +279,7 @@ function useCountedChanges(actions: PlanActions): { actions: PlanActions; change
     };
   }, [actions]);
 
-  const changes = useMemo(
-    () => ({ isSaving: () => counts.current.saving > 0, started: () => counts.current.started }),
-    [],
-  );
+  const changes = useMemo(() => ({ isSaving: () => saving.current > 0 }), []);
 
   return { actions: countedActions, changes };
 }

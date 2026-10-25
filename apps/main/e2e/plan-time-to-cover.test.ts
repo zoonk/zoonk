@@ -1,4 +1,4 @@
-import { type Request } from "@playwright/test";
+import { type Locator, type Request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
 import { type Page, expect, test } from "./fixtures";
@@ -83,6 +83,11 @@ async function moveDateEditor(page: Page, goalId: string, found?: Promise<unknow
   await expect(move).toBeVisible();
 
   return { asked, editor, fittingDate, move, targetDate };
+}
+
+/** "Move your date to October 14, 2028": Move your date once it knows the date it moves to. */
+function moveTo(editor: Locator) {
+  return editor.getByRole("button", { name: /^Move your date to \w+ \d+, \d{4}$/u });
 }
 
 /**
@@ -218,8 +223,36 @@ test.describe("Find the time that covers everything", () => {
 
       held.resolve(null);
 
+      // Found, the date is named before it moves anything; one tap moves it.
+      await moveTo(editor).click();
       await expect.poll(() => readTargetDate(user.goalId)).toBe(fittingDate);
       await expect.poll(() => readDailyMinutes(user.goalId)).toBe(before);
+    });
+  });
+
+  test("Move your date names the date it moves to, found first when it isn't known, then moves it in one tap", async ({
+    browser,
+  }) => {
+    await asPersona(browser, { persona: "language" }, async ({ page, user }) => {
+      const { asked, editor, fittingDate, move, targetDate } = await moveDateEditor(
+        page,
+        user.goalId,
+      );
+
+      // Before the date is known, a tap finds it and names it on the button, moving nothing.
+      await move.click();
+      const named = moveTo(editor);
+      await expect(named).toBeFocused();
+      expect(asked).toStrictEqual([{}]);
+      expect(await readTargetDate(user.goalId)).toBe(toIsoDay(targetDate));
+
+      // Once named, one tap moves it, with Undo.
+      await named.click();
+      await expect.poll(() => readTargetDate(user.goalId)).toBe(fittingDate);
+
+      await expect(editor.getByRole("button", { name: "Undo" })).toBeVisible({
+        timeout: REPLAN_TIMEOUT_MS,
+      });
     });
   });
 
