@@ -4,6 +4,7 @@ import { ProgressRoot } from "@zoonk/ui/components/progress";
 import { Trickster } from "@zoonk/ui/components/trickster";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useLocale } from "next-intl";
+import { TASK_COLUMN_CLASS } from "../_components/task-layout";
 
 /**
  * The shield itself: one plate per right answer needed to win, each right answer breaking one and
@@ -82,7 +83,7 @@ export function TricksterShield({
 
   return (
     <div
-      className={cn("max-w-column mx-auto flex w-full items-center gap-2.5 px-4 pb-1", className)}
+      className={cn(TASK_COLUMN_CLASS, "flex items-center gap-2.5 pb-1", className)}
       data-slot="trickster-shield"
     >
       <ProgressRoot

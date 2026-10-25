@@ -214,7 +214,7 @@ export function MistakePracticeRun({
 
   // The aside is there while a question is, never beside the run's end.
   const asideStep = phase.kind === "ending" || phase.kind === "ended" ? null : run.step;
-  const asideRoot = asideStep ? getTaskAsideRootProps({ footer: false }) : null;
+  const asideRoot = asideStep ? getTaskAsideRootProps() : null;
 
   const content = (
     <div

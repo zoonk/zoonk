@@ -10,7 +10,7 @@ import { FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { TaskHeaderProgress } from "../_components/task-header";
-import { TASK_MAIN_ACTION_CLASS, TaskActions } from "../_components/task-layout";
+import { TASK_COLUMN_CLASS, TASK_MAIN_ACTION_CLASS, TaskActions } from "../_components/task-layout";
 import {
   MockAnswerSheet,
   MockQuestionMap,
@@ -56,7 +56,10 @@ function RunnerProgress({ question }: { question: MockQuestion }) {
         value={counts.total > 0 ? (counts.answered / counts.total) * PERCENT : 0}
       />
       <div
-        className="text-muted-foreground max-w-column mx-auto flex w-full items-center justify-between gap-3 px-4 pt-1.5 pb-1 font-mono text-xs tabular-nums"
+        className={cn(
+          TASK_COLUMN_CLASS,
+          "text-muted-foreground flex items-center justify-between gap-3 pt-1.5 pb-1 font-mono text-xs tabular-nums",
+        )}
         data-slot="mock-meta"
       >
         <span aria-hidden="true" className="min-w-0 truncate">

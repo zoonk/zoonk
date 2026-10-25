@@ -80,7 +80,7 @@ export function SessionQueueAsideContent({ queue }: { queue: ReturnType<typeof g
   return (
     <TaskAsideContent className="max-lg:hidden lg:top-(--task-bar) lg:group-data-aside/task:px-0">
       <TaskAsideHeader meta={aside.meta} title={aside.title} />
-      <div className="px-6">{aside.children}</div>
+      <div className="px-4">{aside.children}</div>
     </TaskAsideContent>
   );
 }

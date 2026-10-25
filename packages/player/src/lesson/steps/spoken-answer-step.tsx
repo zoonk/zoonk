@@ -8,7 +8,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { HeadphonesIcon, KeyboardIcon, MicIcon, SquareIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useCallback, useState } from "react";
-import { InteractiveStepLayout } from "../../components/step-layouts";
+import { COLUMN_GHOST_ACTION_CLASS, InteractiveStepLayout } from "../../components/step-layouts";
 import { LessonHelpLimitNotice } from "../_components/help-limit-notice";
 import { LessonQuestion } from "../_components/lesson-step-text";
 import { useLessonPlayer, useLessonPlayerConfig } from "../lesson-player-context";
@@ -230,7 +230,7 @@ function ModeSwitch({
   if (mode === "listen") {
     return (
       <Button
-        className="w-fit"
+        className={COLUMN_GHOST_ACTION_CLASS}
         onClick={() => switchTo({ cantTalk: false, prefersTyping: false })}
         size="sm"
         variant="ghost"
@@ -244,7 +244,7 @@ function ModeSwitch({
   if (canListen && mode === "speak") {
     return (
       <Button
-        className="w-fit"
+        className={COLUMN_GHOST_ACTION_CLASS}
         onClick={() => switchTo({ cantTalk: true, prefersTyping: false })}
         size="sm"
         variant="ghost"
@@ -257,7 +257,7 @@ function ModeSwitch({
 
   return (
     <Button
-      className="w-fit"
+      className={COLUMN_GHOST_ACTION_CLASS}
       onClick={() => switchTo({ cantTalk: false, prefersTyping: mode === "speak" })}
       size="sm"
       variant="ghost"

@@ -17,7 +17,7 @@ export function SessionFrame({
   aside: TaskFrameAside;
   children: React.ReactNode;
 }) {
-  const root = getTaskAsideRootProps({ footer: Boolean(aside.footer), width: aside.width });
+  const root = getTaskAsideRootProps({ width: aside.width });
 
   return (
     <div

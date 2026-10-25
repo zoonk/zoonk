@@ -196,9 +196,7 @@ export function TaskFrame({
     | { bar: React.ReactNode }
     | { label: string; segments?: readonly TaskSegment[]; value: number };
 }) {
-  const asideRoot = aside
-    ? getTaskAsideRootProps({ footer: Boolean(aside.footer), width: aside.width })
-    : null;
+  const asideRoot = aside ? getTaskAsideRootProps({ width: aside.width }) : null;
 
   return (
     <div

@@ -174,7 +174,7 @@ function DockSuggestions() {
   return (
     <div
       aria-label={t("Suggested questions")}
-      className="bg-background flex flex-wrap gap-2 px-6 pb-3"
+      className="bg-background flex flex-wrap gap-2 px-4 pb-3"
       role="group"
     >
       {suggestions.map((suggestion) => (

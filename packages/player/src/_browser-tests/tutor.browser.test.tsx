@@ -1420,11 +1420,10 @@ describe("docked beside the lesson", () => {
       .toHaveAttribute("placeholder", `Ask ${buddy.name} about this screen`);
 
     const frame = field.element().closest('[data-slot="input-group"]');
-    const foot = document.querySelector('[data-slot="task-aside-footer"]');
-    const bar = document.querySelector('[data-slot="task-action-bar"]');
+    const check = page.getByRole("button", { name: /^Check/u }).element();
 
     expect(frame?.getBoundingClientRect().height).toBe(44);
-    expect(foot?.getBoundingClientRect().top).toBe(bar?.getBoundingClientRect().top);
+    expect(frame?.getBoundingClientRect().top).toBe(check.getBoundingClientRect().top);
   });
 
   it("offers two questions to ask after a wrong answer, each sent with a tap", async () => {

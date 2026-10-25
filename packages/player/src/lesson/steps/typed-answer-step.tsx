@@ -4,7 +4,7 @@ import { LessonVisual } from "@zoonk/learn/visual";
 import { Button } from "@zoonk/ui/components/button";
 import { PenLineIcon, PenOffIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { InteractiveStepLayout } from "../../components/step-layouts";
+import { COLUMN_GHOST_ACTION_CLASS, InteractiveStepLayout } from "../../components/step-layouts";
 import { LessonContext, LessonEyebrow, LessonQuestion } from "../_components/lesson-step-text";
 import { ScreenSupport } from "../_components/screen-support";
 import { splitQuestionData } from "../_utils/lesson-aside";
@@ -30,7 +30,7 @@ function SkipWritingButton() {
 
   return (
     <Button
-      className="w-fit"
+      className={COLUMN_GHOST_ACTION_CLASS}
       onClick={() => {
         actions.skipWriting();
         focusLessonAfterTurn();
@@ -88,7 +88,7 @@ export function TypedAnswerStepView({
       <ExplainFirstButton />
       {!isLocked && !isNumber && (
         <Button
-          className="w-fit"
+          className={COLUMN_GHOST_ACTION_CLASS}
           onClick={() => {
             actions.dontKnow(step.id);
             focusLessonAfterTurn();

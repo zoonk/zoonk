@@ -3,6 +3,7 @@
 import { Button } from "@zoonk/ui/components/button";
 import { BookOpenIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { COLUMN_GHOST_ACTION_CLASS } from "../../components/step-layouts";
 import { focusLessonAfterTurn } from "../_utils/lesson-focus";
 import { useLessonPlayer } from "../lesson-player-context";
 
@@ -20,7 +21,7 @@ export function ExplainFirstButton() {
 
   return (
     <Button
-      className="w-fit"
+      className={COLUMN_GHOST_ACTION_CLASS}
       onClick={() => {
         actions.explainFirst();
         focusLessonAfterTurn();

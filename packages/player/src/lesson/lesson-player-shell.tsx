@@ -103,10 +103,9 @@ function LessonContent() {
  * The lesson player: a header with ✕ and "…" in the window's corners and the lesson's title and
  * progress over the column, the screen in the column (everything it shows, its situation, picture
  * or chart included), and one next action at the bottom. No navigation bar: a lesson has the whole
- * screen. From `lg` an aside sits beside the screen under the header's row, behind a hairline,
- * with what helps with it (the text a question checks, the outline, the buddy), and the screen's
- * column centers in what's left. On a touch screen, a swipe turns reading screens like a story,
- * wherever the arrow keys do.
+ * screen. From `lg` an aside sits beside the screen under the header's row with what helps with it
+ * (the text a question checks, the outline, the buddy), the column and the aside centered together.
+ * On a touch screen, a swipe turns reading screens like a story, wherever the arrow keys do.
  */
 export function LessonPlayerShell() {
   return (
@@ -122,7 +121,7 @@ function LessonPlayerFrame() {
   const buddy = useLessonBuddy();
   const mainRef = useRef<HTMLElement>(null);
   const hasDock = Boolean(buddy) && isPlayingScreen(state);
-  const asideRoot = getTaskAsideRootProps({ footer: hasDock });
+  const asideRoot = getTaskAsideRootProps();
 
   const turns = useScreenTurns();
 
@@ -135,7 +134,6 @@ function LessonPlayerFrame() {
       className={cn(
         "ph-no-rageclick bg-background flex h-dvh flex-col overflow-hidden",
         asideRoot.className,
-        !hasDock && "lg:[--task-aside-bottom:0px]",
       )}
       data-aside={asideRoot["data-aside"]}
       data-phase={state.phase}

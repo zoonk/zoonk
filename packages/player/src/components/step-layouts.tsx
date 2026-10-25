@@ -1,3 +1,4 @@
+import { TASK_COLUMN_CLASS } from "@zoonk/learn/task-layout";
 import { cn } from "@zoonk/ui/lib/utils";
 
 /**
@@ -6,13 +7,15 @@ import { cn } from "@zoonk/ui/lib/utils";
  */
 export function PlayerContentFrame({ className, ...props }: React.ComponentProps<"div">) {
   return (
-    <div
-      className={cn("max-w-column mx-auto w-full px-4", className)}
-      data-slot="player-content-frame"
-      {...props}
-    />
+    <div className={cn(TASK_COLUMN_CLASS, className)} data-slot="player-content-frame" {...props} />
   );
 }
+
+/**
+ * A quiet action in the column ("Explain first", "I don't know yet"): a small ghost button whose
+ * icon and label keep the column's text edge, its hover reaching past it as a row's does.
+ */
+export const COLUMN_GHOST_ACTION_CLASS = "-ml-2.75 w-fit";
 
 /**
  * Every interactive screen in the player's column, starting at the top on every size, so a longer

@@ -8,6 +8,7 @@ import { getTutorViewer } from "@/lib/learn/tutor-viewer";
 import { mistakePracticeInputSchema } from "@zoonk/core/mistakes/contract";
 import { getMistakePractice } from "@zoonk/core/mistakes/practice";
 import { getSession } from "@zoonk/core/users/session";
+import { TaskSkeleton } from "@zoonk/learn/task-layout";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -24,7 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
 type Props = PageProps<"/[lang]/mistakes/practice">;
 
 /**
- * The run's full screen, around the run and its placeholder only: the sign-in screen and the
+ * The run's full screen, around the run only: its placeholder, the sign-in screen and the
  * not-found answer bring their own `main`.
  */
 function PracticeMain({ children }: { children: React.ReactNode }) {
@@ -86,35 +87,17 @@ async function PracticeBody({ searchParams }: Pick<Props, "searchParams">) {
 }
 
 /**
- * The task header's place with its segments' row, the question in its column, then the pinned
- * action bar, as the run lays them out.
+ * The run's shape: the header with its segments, the question in its column beside the aside's
+ * place from `lg`, then the pinned action bar, as the run lays them out.
  */
 function PracticeSkeleton() {
   return (
-    <>
-      <div className="flex items-center justify-between gap-2 px-3 py-2 sm:px-4">
-        <Skeleton className="size-9 rounded-lg" />
-        <Skeleton className="h-4 w-32" />
-        <Skeleton className="size-9 rounded-lg" />
-      </div>
-
-      <div className="max-w-column mx-auto w-full px-4 pb-1">
-        <Skeleton className="h-1 w-full rounded-xs" />
-      </div>
-
-      <div className="max-w-column mx-auto flex w-full flex-1 flex-col gap-2.5 px-4 pt-4 pb-8">
-        <Skeleton className="mb-3.5 h-5 w-full" />
-        <Skeleton className="mb-3.5 h-7 w-2/3" />
-        <Skeleton className="rounded-option h-12 w-full" />
-        <Skeleton className="rounded-option h-12 w-full" />
-      </div>
-
-      <div className="border-border border-t">
-        <div className="max-w-column mx-auto w-full px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]">
-          <Skeleton className="h-11 w-full" />
-        </div>
-      </div>
-    </>
+    <TaskSkeleton aside menu progress title={<Skeleton className="h-4 w-32" />}>
+      <Skeleton className="mb-3.5 h-5 w-full" />
+      <Skeleton className="mb-3.5 h-7 w-2/3" />
+      <Skeleton className="rounded-option h-12 w-full" />
+      <Skeleton className="rounded-option h-12 w-full" />
+    </TaskSkeleton>
   );
 }
 
@@ -125,13 +108,7 @@ function PracticeSkeleton() {
 export default function MistakePracticePage({ searchParams }: Props) {
   return (
     <MainLearnProvider>
-      <Suspense
-        fallback={
-          <PracticeMain>
-            <PracticeSkeleton />
-          </PracticeMain>
-        }
-      >
+      <Suspense fallback={<PracticeSkeleton />}>
         <PracticeBody searchParams={searchParams} />
       </Suspense>
     </MainLearnProvider>

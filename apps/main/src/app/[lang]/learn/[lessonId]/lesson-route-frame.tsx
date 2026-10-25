@@ -42,18 +42,14 @@ export function LessonRouteFrame({
 }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
-  const asideRoot = getTaskAsideRootProps({ footer: false });
+  const asideRoot = getTaskAsideRootProps();
 
   const minutes =
     lesson.estimatedMinutes === undefined ? undefined : formatDuration(lesson.estimatedMinutes);
 
   return (
     <div
-      className={cn(
-        "bg-background flex min-h-dvh flex-col",
-        asideRoot.className,
-        "lg:[--task-aside-bottom:0px]",
-      )}
+      className={cn("bg-background flex min-h-dvh flex-col", asideRoot.className)}
       data-aside={asideRoot["data-aside"]}
     >
       <TaskHeader className="bg-background sticky top-0 z-20">

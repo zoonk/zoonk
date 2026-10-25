@@ -4,37 +4,39 @@ import { ProgressIndicator, ProgressRoot, ProgressTrack } from "@zoonk/ui/compon
 import { cn } from "@zoonk/ui/lib/utils";
 import { useLocale } from "next-intl";
 import { useSyncExternalStore } from "react";
+import { TASK_COLUMN_CLASS, TASK_HEADER_BAR_CLASS, TASK_HEADER_SIDE_CLASS } from "./task-layout";
 
 /**
  * The header of every full-screen task (a lesson, a block of questions, a practice, a test-out, a
  * checkpoint, a mock): close in the window's top-left corner, the task's title centered over its
  * column, the "…" menu in the top-right corner and, under the title, how far into the task the
- * learner is. The sides take the same room, so the title stays centered.
+ * learner is. The sides take the same room, so the title stays centered. What scrolls under it
+ * fades out at its edge rather than being cut off under the progress bar.
  */
 export function TaskHeader({ className, ...props }: React.ComponentProps<"div">) {
-  return <div className={cn("shrink-0", className)} data-slot="task-header" {...props} />;
-}
-
-/**
- * The header's row: close, the title and the menu, in that order, across the window at every size,
- * so the close and the menu sit in its corners like any full-screen app's, while the title centers
- * over the task's column. A task's aside starts under this row from `lg` (`TaskAside`).
- */
-export function TaskHeaderBar({ className, ...props }: React.ComponentProps<"header">) {
   return (
-    <header
-      className={cn("flex w-full items-center gap-2 px-4 py-2 lg:px-6 xl:py-3", className)}
+    <div
+      className={cn(
+        "after:from-background relative z-20 shrink-0 after:pointer-events-none after:absolute after:inset-x-0 after:top-full after:h-3 after:bg-linear-to-b after:to-transparent",
+        className,
+      )}
+      data-slot="task-header"
       {...props}
     />
   );
 }
 
 /**
- * A side of the row (close or the menu), as wide as the other one so the title stays centered over
- * the column. From `lg`, beside an aside, the menu's side moves over the aside, so the menu still
- * sits in the window's top-right corner, and both sides keep to the row's top, so a title wrapped
- * over several lines never pushes the menu down over the aside.
+ * The header's row: close, the title and the menu, in that order, across the window at every size,
+ * so the close and the menu sit in its corners like any full-screen app's, while the title centers
+ * over the task's column (`TASK_HEADER_BAR_CLASS`). A task's aside starts under this row from `lg`
+ * (`TaskAside`).
  */
+export function TaskHeaderBar({ className, ...props }: React.ComponentProps<"header">) {
+  return <header className={cn(TASK_HEADER_BAR_CLASS, className)} {...props} />;
+}
+
+/** A side of the row: close (`start`) or the menu (`end`), see `TASK_HEADER_SIDE_CLASS`. */
 export function TaskHeaderSide({
   align,
   children,
@@ -42,18 +44,7 @@ export function TaskHeaderSide({
   align: "end" | "start";
   children?: React.ReactNode;
 }) {
-  return (
-    <div
-      className={cn(
-        "flex min-w-9 flex-1 basis-0 lg:group-data-aside/task:self-start",
-        align === "end"
-          ? "justify-end lg:group-data-aside/task:translate-x-(--task-aside)"
-          : "justify-start",
-      )}
-    >
-      {children}
-    </div>
-  );
+  return <div className={TASK_HEADER_SIDE_CLASS[align]}>{children}</div>;
 }
 
 /**
@@ -106,7 +97,7 @@ export function TaskHeaderProgress({ label, value }: { label: string; value: num
   return (
     <ProgressRoot
       aria-label={label}
-      className="max-w-column mx-auto w-full gap-0 px-4 pb-1"
+      className={cn(TASK_COLUMN_CLASS, "gap-0 pb-1")}
       data-slot="task-header-progress"
       locale={locale}
       value={Math.min(100, Math.max(0, value))}
@@ -164,7 +155,7 @@ export function TaskHeaderSegments({
   return (
     <ProgressRoot
       aria-label={label}
-      className="max-w-column mx-auto w-full px-4 pb-1"
+      className={cn(TASK_COLUMN_CLASS, "pb-1")}
       data-slot="task-header-segments"
       locale={locale}
       value={Math.min(100, Math.max(0, value))}
