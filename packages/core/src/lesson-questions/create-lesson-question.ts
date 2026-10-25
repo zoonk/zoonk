@@ -14,6 +14,7 @@ import {
   type LessonQuestionResourceSource,
   lessonQuestionResourceOmit,
   lessonQuestionResourceQuery,
+  markItemTurnAnswered,
   toLessonQuestionResource,
 } from "./_utils/question-resource";
 import { getLessonQuestionRequestFingerprint } from "./_utils/request-fingerprint";
@@ -27,6 +28,7 @@ import {
 } from "./_utils/tutor-subject";
 import {
   type CreateLessonQuestionInput,
+  type LessonQuestionReadInput,
   type LessonScreenSuggestion,
   type TutorTarget,
 } from "./contract";
@@ -56,6 +58,27 @@ async function settleAskedQuestion({
 }
 
 type PersistedQuestionOutcome = ReturnType<typeof getCreateLessonQuestionOutcome>;
+
+/**
+ * A question just asked, as the client asked to read it, with what asking did to today's missions;
+ * a conflicting request, as it is.
+ */
+async function finishCreatedQuestion({
+  include,
+  outcome,
+  userId,
+}: LessonQuestionReadInput & { outcome: PersistedQuestionOutcome; userId: string }) {
+  if (outcome.status !== "created") {
+    return outcome;
+  }
+
+  const [question, missionMoment] = await Promise.all([
+    markItemTurnAnswered({ include, question: outcome.question }),
+    settleAskedQuestion({ questionId: outcome.question.id, userId }),
+  ]);
+
+  return { missionMoment, question, status: outcome.status };
+}
 
 function getCreateLessonQuestionOutcome({
   question,
@@ -198,10 +221,11 @@ async function toAskedQuestion({
  * the client sent, or the chapter, plan or finished mock as a whole.
  */
 export async function createLessonQuestion({
+  include,
   input,
   target,
   wordSuggestion,
-}: {
+}: LessonQuestionReadInput & {
   input: CreateLessonQuestionInput;
   target: TutorTarget;
   /** Words a tapped suggestion; without it, a suggestion is asked as the learner's own words. */
@@ -230,17 +254,11 @@ export async function createLessonQuestion({
   });
 
   if (existingQuestion) {
-    const outcome = getCreateLessonQuestionOutcome({
-      question: existingQuestion,
-      requestFingerprint,
+    return finishCreatedQuestion({
+      include,
+      outcome: getCreateLessonQuestionOutcome({ question: existingQuestion, requestFingerprint }),
+      userId,
     });
-
-    if (outcome.status === "created") {
-      const missionMoment = await settleAskedQuestion({ questionId: outcome.question.id, userId });
-      return { ...outcome, missionMoment };
-    }
-
-    return outcome;
   }
 
   const [context, asked] = await Promise.all([
@@ -264,10 +282,5 @@ export async function createLessonQuestion({
     userId,
   });
 
-  if (outcome.status === "created") {
-    const missionMoment = await settleAskedQuestion({ questionId: outcome.question.id, userId });
-    return { ...outcome, missionMoment };
-  }
-
-  return outcome;
+  return finishCreatedQuestion({ include, outcome, userId });
 }

@@ -5,6 +5,7 @@ import { getSession } from "../users/get-session";
 import {
   lessonQuestionResourceOmit,
   lessonQuestionResourceQuery,
+  markItemTurnsAnswered,
   toLessonQuestionThreadResource,
 } from "./_utils/question-resource";
 import { findTutorSubject, getSubjectThreadColumn } from "./_utils/tutor-subject";
@@ -83,6 +84,7 @@ async function getQuestionPage({
 export async function getLessonQuestionThread({
   contextKind,
   cursor,
+  include,
   stepId,
   target,
 }: GetLessonQuestionThreadInput & { target: TutorTarget }) {
@@ -119,12 +121,17 @@ export async function getLessonQuestionThread({
     return { status: "ready" as const, thread: null };
   }
 
+  const resource = toLessonQuestionThreadResource({
+    hasMore: page.hasMore,
+    nextCursor: page.nextCursor,
+    thread: { ...found, questions: page.questions },
+  });
+
   return {
     status: "ready" as const,
-    thread: toLessonQuestionThreadResource({
-      hasMore: page.hasMore,
-      nextCursor: page.nextCursor,
-      thread: { ...found, questions: page.questions },
-    }),
+    thread: {
+      ...resource,
+      questions: await markItemTurnsAnswered({ include, questions: resource.questions }),
+    },
   };
 }

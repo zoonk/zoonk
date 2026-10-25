@@ -8527,6 +8527,18 @@
           },
           {
             "in": "query",
+            "name": "include",
+            "schema": {
+              "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked",
+              "type": "string",
+              "enum": [
+                "answered"
+              ]
+            },
+            "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked"
+          },
+          {
+            "in": "query",
             "name": "contextKind",
             "schema": {
               "description": "Filter by context kind; use lesson for the completion conversation",
@@ -8652,6 +8664,18 @@
             },
             "required": true,
             "description": "Chapter ID"
+          },
+          {
+            "in": "query",
+            "name": "include",
+            "schema": {
+              "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked",
+              "type": "string",
+              "enum": [
+                "answered"
+              ]
+            },
+            "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked"
           }
         ],
         "requestBody": {
@@ -8788,6 +8812,18 @@
           },
           {
             "in": "query",
+            "name": "include",
+            "schema": {
+              "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked",
+              "type": "string",
+              "enum": [
+                "answered"
+              ]
+            },
+            "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked"
+          },
+          {
+            "in": "query",
             "name": "contextKind",
             "schema": {
               "description": "Filter by context kind; use lesson for the completion conversation",
@@ -8913,6 +8949,18 @@
             },
             "required": true,
             "description": "Goal ID"
+          },
+          {
+            "in": "query",
+            "name": "include",
+            "schema": {
+              "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked",
+              "type": "string",
+              "enum": [
+                "answered"
+              ]
+            },
+            "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked"
           }
         ],
         "requestBody": {
@@ -9061,6 +9109,18 @@
           },
           {
             "in": "query",
+            "name": "include",
+            "schema": {
+              "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked",
+              "type": "string",
+              "enum": [
+                "answered"
+              ]
+            },
+            "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked"
+          },
+          {
+            "in": "query",
             "name": "contextKind",
             "schema": {
               "description": "Filter by context kind; use lesson for the completion conversation",
@@ -9198,6 +9258,18 @@
             },
             "required": true,
             "description": "A subject's `key` in the goal's syllabus (`GET /v1/goals/{goalId}/syllabus`)"
+          },
+          {
+            "in": "query",
+            "name": "include",
+            "schema": {
+              "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked",
+              "type": "string",
+              "enum": [
+                "answered"
+              ]
+            },
+            "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked"
           }
         ],
         "requestBody": {
@@ -9334,6 +9406,18 @@
           },
           {
             "in": "query",
+            "name": "include",
+            "schema": {
+              "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked",
+              "type": "string",
+              "enum": [
+                "answered"
+              ]
+            },
+            "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked"
+          },
+          {
+            "in": "query",
             "name": "contextKind",
             "schema": {
               "description": "Filter by context kind; use lesson for the completion conversation",
@@ -9459,6 +9543,18 @@
             },
             "required": true,
             "description": "A question of the item bank, as a study session's block or mistakes practice asks it (`itemId`)"
+          },
+          {
+            "in": "query",
+            "name": "include",
+            "schema": {
+              "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked",
+              "type": "string",
+              "enum": [
+                "answered"
+              ]
+            },
+            "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked"
           }
         ],
         "requestBody": {
@@ -9595,6 +9691,18 @@
           },
           {
             "in": "query",
+            "name": "include",
+            "schema": {
+              "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked",
+              "type": "string",
+              "enum": [
+                "answered"
+              ]
+            },
+            "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked"
+          },
+          {
+            "in": "query",
             "name": "contextKind",
             "schema": {
               "description": "Filter by context kind; use lesson for the completion conversation",
@@ -9720,6 +9828,18 @@
             },
             "required": true,
             "description": "Lesson ID"
+          },
+          {
+            "in": "query",
+            "name": "include",
+            "schema": {
+              "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked",
+              "type": "string",
+              "enum": [
+                "answered"
+              ]
+            },
+            "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked"
           }
         ],
         "requestBody": {
@@ -9929,6 +10049,18 @@
           },
           {
             "in": "query",
+            "name": "include",
+            "schema": {
+              "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked",
+              "type": "string",
+              "enum": [
+                "answered"
+              ]
+            },
+            "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked"
+          },
+          {
+            "in": "query",
             "name": "contextKind",
             "schema": {
               "description": "Filter by context kind; use lesson for the completion conversation",
@@ -10054,6 +10186,18 @@
             },
             "required": true,
             "description": "The id the mock opens by: its study session block's for a mock the plan scheduled, its own for one taken any time"
+          },
+          {
+            "in": "query",
+            "name": "include",
+            "schema": {
+              "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked",
+              "type": "string",
+              "enum": [
+                "answered"
+              ]
+            },
+            "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked"
           }
         ],
         "requestBody": {
@@ -10186,6 +10330,18 @@
             },
             "required": true,
             "description": "Lesson question ID"
+          },
+          {
+            "in": "query",
+            "name": "include",
+            "schema": {
+              "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked",
+              "type": "string",
+              "enum": [
+                "answered"
+              ]
+            },
+            "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked"
           }
         ],
         "responses": {
@@ -64412,6 +64568,10 @@
               {
                 "type": "object",
                 "properties": {
+                  "answered": {
+                    "description": "Asked about their checked answer",
+                    "type": "boolean"
+                  },
                   "kind": {
                     "type": "string",
                     "enum": [
@@ -64980,6 +65140,10 @@
               {
                 "type": "object",
                 "properties": {
+                  "answered": {
+                    "description": "Asked about their checked answer",
+                    "type": "boolean"
+                  },
                   "kind": {
                     "type": "string",
                     "enum": [

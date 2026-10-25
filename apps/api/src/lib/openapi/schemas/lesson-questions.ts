@@ -3,6 +3,7 @@ import {
   createdLessonQuestionSchema,
   getLessonQuestionThreadInputSchema,
   lessonQuestionContextInputSchema,
+  lessonQuestionReadInputSchema,
   lessonQuestionResourceSchema,
   lessonQuestionThreadResourceSchema,
 } from "@zoonk/core/lesson-questions/contract";
@@ -12,6 +13,15 @@ const lessonQuestionContextInputOpenAPISchema = lessonQuestionContextInputSchema
   id: "LessonQuestionContextInput",
 });
 
+const lessonQuestionIncludeSchema = lessonQuestionReadInputSchema.shape.include.meta({
+  description:
+    "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked",
+});
+
+export const lessonQuestionReadQuerySchema = lessonQuestionReadInputSchema
+  .extend({ include: lessonQuestionIncludeSchema })
+  .meta({ id: "LessonQuestionReadQuery" });
+
 export const lessonQuestionThreadQuerySchema = getLessonQuestionThreadInputSchema
   .extend({
     contextKind: getLessonQuestionThreadInputSchema.shape.contextKind.meta({
@@ -20,6 +30,7 @@ export const lessonQuestionThreadQuerySchema = getLessonQuestionThreadInputSchem
     cursor: getLessonQuestionThreadInputSchema.shape.cursor.meta({
       description: "Opaque cursor returned in nextCursor",
     }),
+    include: lessonQuestionIncludeSchema,
     stepId: getLessonQuestionThreadInputSchema.shape.stepId.meta({
       description:
         "Return questions and answer explanations for this step only; pagination uses the same filter",

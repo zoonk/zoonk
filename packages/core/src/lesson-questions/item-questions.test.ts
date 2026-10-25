@@ -13,6 +13,7 @@ import { parseLessonQuestionContextSnapshot } from "./_utils/context-snapshot-sc
 import { claimLessonQuestionAnswer } from "./answer-lifecycle";
 import { type LessonQuestionContextInput } from "./contract";
 import { createLessonQuestion } from "./create-lesson-question";
+import { getLessonQuestion } from "./get-lesson-question";
 import { getLessonQuestionThread } from "./get-lesson-question-thread";
 
 vi.mock("../memory/update-memory-from-activity", () => ({ updateMemoryFromActivity: vi.fn() }));
@@ -35,14 +36,17 @@ async function practiceQuestion() {
 
 function ask({
   context,
+  include,
   itemId,
   question = "Can you give me a hint?",
 }: {
   context: LessonQuestionContextInput;
+  include?: "answered";
   itemId: string;
   question?: string;
 }) {
   return createLessonQuestion({
+    include,
     input: { context, question, requestId: randomUUID() },
     target: { itemId, kind: "item" },
   });
@@ -204,6 +208,71 @@ describe("asking the buddy about a session's or practice's question", () => {
       { answer: "The right answer is the first one.", question: "Why was I wrong?" },
       { answer: "Look at the last digit.", question: "Another hint?" },
     ]);
+  });
+
+  // Clients read a turn's context strictly, so only those that ask learn which turns were about
+  // the learner's checked answer: those that don't keep reading `{ kind: "item" }`.
+  it("says which turns were asked about the learner's checked answer to clients that ask", async () => {
+    const { item, user } = await practiceQuestion();
+    const target = { itemId: item.id, kind: "item" } as const;
+
+    const hint = await ask({
+      context: { answered: false, kind: "item" },
+      include: "answered",
+      itemId: item.id,
+    });
+
+    await prisma.lessonQuestion.updateMany({
+      data: { answer: "Even numbers end in 0, 2, 4, 6 or 8.", status: "completed" },
+      where: { thread: { userId: user.id } },
+    });
+
+    await missQuestion({ itemId: item.id, userId: user.id });
+
+    const why = await ask({
+      context: { answered: true, kind: "item" },
+      include: "answered",
+      itemId: item.id,
+      question: "Why was I wrong?",
+    });
+
+    expect(hint).toMatchObject({ question: { context: { answered: false, kind: "item" } } });
+    expect(why).toMatchObject({ question: { context: { answered: true, kind: "item" } } });
+
+    await expect(getLessonQuestionThread({ include: "answered", target })).resolves.toMatchObject({
+      thread: {
+        questions: [
+          { context: { answered: false, kind: "item" } },
+          { context: { answered: true, kind: "item" } },
+        ],
+      },
+    });
+
+    await expect(
+      getLessonQuestion({ include: "answered", questionId: askedId(why) }),
+    ).resolves.toMatchObject({ question: { context: { answered: true, kind: "item" } } });
+
+    const thread = await getLessonQuestionThread({ target });
+    const question = await getLessonQuestion({ questionId: askedId(why) });
+
+    await prisma.lessonQuestion.update({
+      data: { answer: "The right answer is the first one.", status: "completed" },
+      where: { id: askedId(why) },
+    });
+
+    const again = await ask({
+      context: { answered: true, kind: "item" },
+      itemId: item.id,
+      question: "And the second option?",
+    });
+
+    expect(
+      [
+        ...(thread.status === "ready" ? (thread.thread?.questions ?? []) : []),
+        question.status === "ready" ? question.question : null,
+        again.status === "created" ? again.question : null,
+      ].map((turn) => turn?.context),
+    ).toStrictEqual([{ kind: "item" }, { kind: "item" }, { kind: "item" }, { kind: "item" }]);
   });
 
   it("keeps a question on a mock the learner is sitting, and a block that isn't theirs, out", async () => {

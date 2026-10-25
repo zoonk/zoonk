@@ -3,11 +3,13 @@ import { type LessonQuestionGetPayload, type LessonQuestionThreadGetPayload } fr
 import { changeGoalSelect, toPlanChangeView } from "../../plans/_utils/plan-change-view";
 import {
   type LessonQuestionContextSummary,
+  type LessonQuestionReadInput,
   type LessonQuestionResource,
   type LessonQuestionThreadResource,
   type TutorToolOffer,
   tutorToolOfferSchema,
 } from "../contract";
+import { findAboutCheckedAnswer } from "./about-checked-answer";
 
 export const lessonQuestionResourceOmit = { contextSnapshot: true } as const;
 
@@ -94,4 +96,38 @@ export function toLessonQuestionThreadResource({
     nextCursor,
     questions: thread.questions.map((question) => toLessonQuestionResource(question)),
   };
+}
+
+/**
+ * For clients that ask (`include: "answered"`), says on each turn about a session's or practice's
+ * question whether it was asked about the learner's checked answer; the rest read it as before.
+ */
+export async function markItemTurnsAnswered<Question extends LessonQuestionResource>({
+  include,
+  questions,
+}: LessonQuestionReadInput & { questions: Question[] }): Promise<Question[]> {
+  if (include !== "answered") {
+    return questions;
+  }
+
+  const aboutAnswer = await findAboutCheckedAnswer({
+    questionIds: questions
+      .filter((question) => question.context.kind === "item")
+      .map((question) => question.id),
+  });
+
+  return questions.map((question) =>
+    question.context.kind === "item"
+      ? { ...question, context: { answered: aboutAnswer.has(question.id), kind: "item" } }
+      : question,
+  );
+}
+
+/** One question, as `markItemTurnsAnswered` reads it. */
+export async function markItemTurnAnswered<Question extends LessonQuestionResource>({
+  include,
+  question,
+}: LessonQuestionReadInput & { question: Question }): Promise<Question> {
+  const [marked] = await markItemTurnsAnswered({ include, questions: [question] });
+  return marked ?? question;
 }

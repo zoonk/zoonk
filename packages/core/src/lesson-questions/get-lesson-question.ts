@@ -2,11 +2,19 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { getSession } from "../users/get-session";
-import { lessonQuestionResourceQuery, toLessonQuestionResource } from "./_utils/question-resource";
+import {
+  lessonQuestionResourceQuery,
+  markItemTurnAnswered,
+  toLessonQuestionResource,
+} from "./_utils/question-resource";
 import { findThreadSubject } from "./_utils/tutor-subject";
+import { type LessonQuestionReadInput } from "./contract";
 
 /** Returns one current learner-owned question without loading its large immutable AI snapshot. */
-export async function getLessonQuestion({ questionId }: { questionId: string }) {
+export async function getLessonQuestion({
+  include,
+  questionId,
+}: LessonQuestionReadInput & { questionId: string }) {
   const session = await getSession();
 
   if (!session) {
@@ -33,5 +41,8 @@ export async function getLessonQuestion({ questionId }: { questionId: string }) 
     return access;
   }
 
-  return { question: toLessonQuestionResource(question), status: "ready" as const };
+  return {
+    question: await markItemTurnAnswered({ include, question: toLessonQuestionResource(question) }),
+    status: "ready" as const,
+  };
 }

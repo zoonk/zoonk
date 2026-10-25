@@ -401,6 +401,20 @@ test.describe("Tutor threads beyond lessons", () => {
     expect(question.context).toStrictEqual({ kind: "item" });
     expect(foreignBlock.status()).toBe(422);
 
+    // Older clients read a turn's context strictly: only a client that asks learns whether it was
+    // asked about the learner's checked answer.
+    const [thread, asked, read] = await Promise.all([
+      api.get(path).then((response) => response.json()),
+      api.get(`${path}?include=answered`).then((response) => response.json()),
+      api.get(`/v1/questions/${question.id}?include=answered`).then((response) => response.json()),
+    ]);
+
+    expect([thread.questions[0].context, asked.questions[0].context, read.context]).toStrictEqual([
+      { kind: "item" },
+      { answered: false, kind: "item" },
+      { answered: false, kind: "item" },
+    ]);
+
     await api.dispose();
   });
 

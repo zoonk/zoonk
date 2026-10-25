@@ -7,6 +7,7 @@ import {
   type TutorTarget,
   createLessonQuestionInputSchema,
   getLessonQuestionThreadInputSchema,
+  lessonQuestionReadInputSchema,
 } from "@zoonk/core/lesson-questions/contract";
 import { createLessonQuestion } from "@zoonk/core/lesson-questions/create";
 import { getLessonQuestionThread } from "@zoonk/core/lesson-questions/get-thread";
@@ -62,6 +63,8 @@ export function tutorQuestionRoutes<TPath>({
    * retries can target the same durable resource.
    */
   async function postQuestion(request: NextRequest, context: QuestionsRouteContext) {
+    const query = parseQueryParams(request.nextUrl.searchParams, lessonQuestionReadInputSchema);
+
     const [body, path] = await Promise.all([
       parseBody(request, createLessonQuestionInputSchema),
       context.params.then((params) => parsePathParams({ params, schema: pathSchema })),
@@ -71,11 +74,16 @@ export function tutorQuestionRoutes<TPath>({
       return errors.validation(path.error);
     }
 
+    if (!query.success) {
+      return errors.validation(query.error);
+    }
+
     if (!body.success) {
       return errors.validation(body.error);
     }
 
     const result = await createLessonQuestion({
+      ...query.data,
       input: body.data,
       target: toTarget(path.data),
       wordSuggestion: wordTutorSuggestion,
