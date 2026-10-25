@@ -63,10 +63,7 @@ async function routeFoundDate({
 }) {
   const fittingDate = isoDaysFromNow(60);
 
-  await routeTimeToCover(page, {
-    goalId,
-    time: { fittingDate, measure: "goal", targetDate: date },
-  });
+  await routeTimeToCover(page, { goalId, time: { fittingDate, targetDate: date } });
 
   return fittingDate;
 }

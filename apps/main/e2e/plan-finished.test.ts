@@ -308,7 +308,6 @@ test.describe("A plan whose lessons are all done", () => {
       await routeTimeToCover(page, {
         goalId: user.goalId,
         time: {
-          measure: "goal",
           recommendedMinutes: 55,
           targetDate: goal.targetDate?.toISOString().slice(0, 10) ?? null,
         },

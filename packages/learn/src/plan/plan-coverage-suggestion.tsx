@@ -1,6 +1,6 @@
 "use client";
 
-import { MAX_DAILY_MINUTES, type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
+import { type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
 import { DoneMark } from "../_components/status-mark";

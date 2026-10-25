@@ -87,8 +87,6 @@ export type PlanLookUpFound =
       coreMinutes: number | null;
       /** A goal that isn't an exam whose own time falls short by its date: the earliest date that time covers it all by, when one does. */
       fittingDate: string | null;
-      /** A share of the exam's questions and points (`exam`), or of the goal's skills by weight (`goal`). */
-      measure: "exam" | "goal";
       /** The fewest minutes a day that study the whole goal in depth by its date; null when no daily time does. */
       recommendedMinutes: number | null;
       /** The goal's date. */

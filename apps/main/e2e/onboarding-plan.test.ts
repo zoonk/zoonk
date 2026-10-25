@@ -733,7 +733,7 @@ test("the time step keeps asking while a slow plan is still being built, and fin
 
   await routeTimeToCover(page, {
     goalId: goal.id,
-    time: { measure: "goal", recommendedMinutes: 100, targetDate: isoDate },
+    time: { recommendedMinutes: 100, targetDate: isoDate },
   });
 
   await page.clock.install();
@@ -796,8 +796,6 @@ test("when the time can't be worked out, the time step says so and asks again on
           json: {
             coreMinutes: null,
             fittingDate: null,
-            maximum: null,
-            measure: "goal",
             readingNotice: false,
             ready: true,
             recommendedMinutes: 60,

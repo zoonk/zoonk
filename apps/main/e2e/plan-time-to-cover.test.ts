@@ -71,12 +71,7 @@ async function moveDateEditor(page: Page, goalId: string, found?: Promise<unknow
     time: async () => {
       await found;
 
-      return {
-        fittingDate,
-        maximum: { coveredShare: 0.37, dailyMinutes: 240 },
-        measure: "goal",
-        targetDate: toIsoDay(targetDate),
-      };
+      return { fittingDate, targetDate: toIsoDay(targetDate) };
     },
   });
 

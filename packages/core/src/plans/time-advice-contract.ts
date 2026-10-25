@@ -1,8 +1,6 @@
 import { z } from "zod";
 import { planNumbersSchema } from "./numbers-contract";
 
-export { MAX_DAILY_MINUTES } from "./daily-minutes";
-
 const isoDateSchema = z.iso.date();
 
 const measureSchema = z
@@ -95,7 +93,6 @@ export const planTimeToCoverSchema = z
         description:
           "For a goal that isn't an exam and doesn't cover everything by its date in its own week, or whose date passed (no studyDays or weekendMinutes asked about): the earliest date the learner's own time covers everything by, measured as the plan measures what it covers (once moved there, the plan says it covers everything), to send as it is with `setTargetDate`. Null otherwise, and when no date within a week of the plan's end without a date does",
       }),
-    measure: measureSchema,
     readingNotice: readingNoticeSchema,
     ready: readySchema,
     recommendedMinutes: z

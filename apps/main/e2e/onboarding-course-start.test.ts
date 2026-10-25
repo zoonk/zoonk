@@ -407,10 +407,7 @@ test.describe("Starting a course from its page", () => {
       }),
     );
 
-    await routeTimeToCover(page, {
-      goalId,
-      time: { measure: "goal", recommendedMinutes: 240, targetDate },
-    });
+    await routeTimeToCover(page, { goalId, time: { recommendedMinutes: 240, targetDate } });
 
     await page.getByLabel("Date", { exact: true }).fill(targetDate);
     await page.getByRole("button", { exact: true, name: "Continue" }).click();

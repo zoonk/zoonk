@@ -1,6 +1,6 @@
 "use client";
 
-import { MAX_DAILY_MINUTES } from "@zoonk/core/plans/time-advice-contract";
+import { MAX_DAILY_MINUTES } from "@zoonk/core/plans/daily-minutes";
 import { NativeSelect, NativeSelectOption } from "@zoonk/ui/components/native-select";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
@@ -10,14 +10,13 @@ import { ChoiceList } from "../choice-list";
 /** From a short habit to a full study day for a big exam; any other time is one select away. */
 const MINUTE_OPTIONS = ["15", "30", "45", "60", "90", "120", "180", "240"].map(Number);
 
-const FOUR_HOURS = 240;
 const FINE_STEP = 15;
 const COARSE_STEP = 30;
 
 /** Up to 4 hours, a quarter of an hour matters; past it, half hours are enough to tell apart. */
-const FINE_UNTIL = Math.min(FOUR_HOURS, MAX_DAILY_MINUTES);
+const FINE_UNTIL = 240;
 
-/** Every time a day the select offers, up to the most a plan takes. */
+/** Every time a day the select offers, up to a whole day. */
 const DAILY_TIMES = [
   ...Array.from({ length: FINE_UNTIL / FINE_STEP }, (_, index) => (index + 1) * FINE_STEP),
   ...Array.from(

@@ -378,12 +378,7 @@ test.describe("Exam date", () => {
 
     await routeTimeToCover(page, {
       goalId: goal.id,
-      time: {
-        measure: "goal",
-        recommendedMinutes: 60,
-        targetDate: "2099-12-01",
-        targetDateNamedMonth: true,
-      },
+      time: { recommendedMinutes: 60, targetDate: "2099-12-01", targetDateNamedMonth: true },
     });
 
     await page.goto(`/start/${goal.id}`);

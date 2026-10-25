@@ -1589,11 +1589,7 @@ test.describe("Today's plan change", () => {
       // date his own time covers it all by.
       await routeTimeToCover(page, {
         goalId: user.goalId,
-        time: {
-          fittingDate: "2028-09-28",
-          measure: "goal",
-          targetDate: soon.toISOString().slice(0, 10),
-        },
+        time: { fittingDate: "2028-09-28", targetDate: soon.toISOString().slice(0, 10) },
       });
 
       await page.goto("/today");

@@ -273,7 +273,6 @@ export async function findPlanTimeToCover({
       time: {
         coreMinutes: null,
         fittingDate: null,
-        measure: "goal",
         readingNotice: asked.readingNotice,
         ready: false,
         recommendedMinutes: null,
@@ -322,7 +321,6 @@ export async function findPlanTimeToCover({
     time: {
       coreMinutes: feasibility.coreMinutes,
       fittingDate: movesDate && context.goal.targetDate ? await findCoveringDate(context) : null,
-      measure: feasibility.measure,
       readingNotice: false,
       ready: true,
       recommendedMinutes: feasibility.recommendedMinutes,

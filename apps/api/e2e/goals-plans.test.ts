@@ -609,7 +609,7 @@ test.describe("Goals and plans API", () => {
 
     const time = await readBody({ response: found, schema: planTimeToCoverSchema });
 
-    expect(time).toMatchObject({ measure: "goal", ready: true, targetDate });
+    expect(time).toMatchObject({ ready: true, targetDate });
     expect(time.recommendedMinutes).toBeGreaterThan(12);
 
     await expect(
