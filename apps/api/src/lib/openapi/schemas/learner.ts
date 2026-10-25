@@ -170,6 +170,14 @@ export const placementResponseSchema = z
         description:
           "Every area of every phase has a confident starting point. False while the plan has no skills yet",
       }),
+    dayBudgetSpent: z
+      .number()
+      .min(0)
+      .max(1)
+      .meta({
+        description:
+          "How much of today's few minutes the day's answers used, from 0 to 1: the further along of its two limits, the answers and the answering time. Placement stops for the day at 1 (`dayBudgetUsed`), or sooner once it's sure, so it's how far along today's questions are at most, never a count still to come",
+      }),
     dayBudgetUsed: z
       .boolean()
       .meta({

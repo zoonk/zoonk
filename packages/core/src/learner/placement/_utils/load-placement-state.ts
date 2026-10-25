@@ -16,7 +16,7 @@ import {
 } from "../../../plans/planner/plan-state";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
 import { type PlacementEvidence } from "../placement-beliefs";
-import { isPlacementBudgetUsed } from "../placement-budget";
+import { getPlacementBudgetSpent } from "../placement-budget";
 import {
   type PlacementStatus,
   getKnownSubjects,
@@ -60,6 +60,11 @@ export type PlacementState = {
   areas: AreaStart[];
   /** Every area of every phase has a confident start. False while the plan has no skills yet. */
   complete: boolean;
+  /**
+   * How much of today's few minutes the day's answers used, from 0 to 1 (`getPlacementBudgetSpent`):
+   * how far along today's questions are at most, since placement can stop sooner once it's sure.
+   */
+  dayBudgetSpent: number;
   /**
    * Today's few minutes of placement are used: it stops for the day with what it knows, and the
    * first week's sessions ask the rest a few at a time.
@@ -283,12 +288,15 @@ export async function loadPlacementState({
     ? new Set([...items.map((item) => item.skillId), ...build.preparingSkillIds]).size
     : 0;
 
-  const dayBudgetUsed =
-    today !== null &&
-    isPlacementBudgetUsed({
-      answers: attempts.filter((attempt) => isPlacementAnswerOn({ attempt, day: today })),
-      topics,
-    });
+  const dayBudgetSpent =
+    today === null
+      ? 0
+      : getPlacementBudgetSpent({
+          answers: attempts.filter((attempt) => isPlacementAnswerOn({ attempt, day: today })),
+          topics,
+        });
+
+  const dayBudgetUsed = dayBudgetSpent >= 1;
 
   const answers = sessionAnswer ? [...placementAnswers, sessionAnswer] : placementAnswers;
 
@@ -353,6 +361,7 @@ export async function loadPlacementState({
     answered,
     areas: getAreaStarts({ skills, statuses }),
     complete,
+    dayBudgetSpent,
     dayBudgetUsed,
     knownSkillIds: [
       ...new Set([

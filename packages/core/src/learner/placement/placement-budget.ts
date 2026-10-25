@@ -23,24 +23,30 @@ export const PLACEMENT_WEEK_DAYS = 7;
 const TOPIC_ANSWER_MS = 40_000;
 
 /**
- * Whether today's placement answers used up the day's few minutes. A test from the learner's own
- * material asks every one of its `topics` (see `answeredOnly`), so its day has room for an answer
- * on each: a class test days away has no first week to ask the rest in.
+ * How much of the day's few minutes today's placement answers used, from 0 to 1: the further along
+ * of its two limits, the answers and the answering time. Placement stops for the day at 1, or
+ * sooner once it's sure, so it's how far along the day's questions are at most, never how many are
+ * still to come. A test from the learner's own material asks every one of its `topics` (see
+ * `answeredOnly`), so its day has room for an answer on each: a class test days away has no first
+ * week to ask the rest in.
  */
-export function isPlacementBudgetUsed({
+export function getPlacementBudgetSpent({
   answers,
   topics = 0,
 }: {
   answers: readonly { durationMs: number }[];
   topics?: number;
-}): boolean {
+}): number {
   const spent = answers.reduce(
     (total, answer) => total + Math.min(answer.durationMs, MAX_COUNTED_ANSWER_MS),
     0,
   );
 
-  return (
-    answers.length >= Math.max(DAY_PLACEMENT_ANSWERS, topics) ||
-    spent >= Math.max(DAY_PLACEMENT_MS, topics * TOPIC_ANSWER_MS)
+  return Math.min(
+    1,
+    Math.max(
+      answers.length / Math.max(DAY_PLACEMENT_ANSWERS, topics),
+      spent / Math.max(DAY_PLACEMENT_MS, topics * TOPIC_ANSWER_MS),
+    ),
   );
 }

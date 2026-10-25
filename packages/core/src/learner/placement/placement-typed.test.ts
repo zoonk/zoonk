@@ -206,7 +206,7 @@ describe("typed answers in placement", () => {
 });
 
 describe("placement's few minutes a day", () => {
-  it("stops asking for the day after 12 answers, and asks again the next day", async () => {
+  it("stops asking for the day after 12 answers, its share used up, and asks again the next day", async () => {
     freezeClock();
 
     const user = await userFixture();
@@ -229,7 +229,7 @@ describe("placement's few minutes a day", () => {
     const today = await getGoalPlacement({ goalId: goal.id, timeZone: "UTC" });
 
     expect(today).toMatchObject({
-      placement: { dayBudgetUsed: true, next: null },
+      placement: { dayBudgetSpent: 1, dayBudgetUsed: true, next: null },
       status: "ready",
     });
 
@@ -240,6 +240,9 @@ describe("placement's few minutes a day", () => {
 
     const nextDay = await getGoalPlacement({ goalId: goal.id, timeZone: "UTC" });
 
-    expect(nextDay.status === "ready" && nextDay.placement.dayBudgetUsed).toBe(false);
+    expect(nextDay).toMatchObject({
+      placement: { dayBudgetSpent: 0, dayBudgetUsed: false },
+      status: "ready",
+    });
   });
 });
