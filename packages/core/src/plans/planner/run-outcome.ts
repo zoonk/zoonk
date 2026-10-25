@@ -5,7 +5,7 @@ import { type PlanPhase, type PlanSettings } from "./plan-state";
 
 /**
  * The settings a planning run saves: the learner's, with what its build derived for Today and the
- * plan's week to read (its mocks' funding and relocations, its checkpoints' overflow).
+ * plan's week to read (its mocks' funding, its checkpoints' overflow).
  */
 export function withBuiltSettings({
   built,
@@ -14,7 +14,6 @@ export function withBuiltSettings({
   built: {
     checkpointOverflow: PlanSettings["checkpointOverflow"];
     mockFunding: PlanSettings["mockFunding"];
-    mocks: { relocations: PlanSettings["mockRelocations"] };
   };
   settings: PlanSettings;
 }): PlanSettings {
@@ -22,7 +21,6 @@ export function withBuiltSettings({
     ...settings,
     checkpointOverflow: built.checkpointOverflow,
     mockFunding: built.mockFunding,
-    mockRelocations: built.mocks.relocations,
   };
 }
 

@@ -15,7 +15,6 @@ import {
   splitExistingItems,
 } from "./kept-items";
 import { listEndsBeforeLessons, listStrainedEnds } from "./kept-phase-ends";
-import { type TestedTeaching } from "./kept-teaching";
 import {
   type LandedUnits,
   findLanding,
@@ -61,11 +60,11 @@ export type BuildPlanInput = {
   /** What the plan's bosses ask (see `settlePlannedBosses`); absent: their size before the bank. */
   bossFacts?: BossPlanFacts;
   bossMinutes?: BossMinutes;
-  /** Where an exam's phase challenges go, as a run settles them (see `placeExamBosses`). */
+  /** Where an exam's phase challenges go, as a run places them (see `settlePlannedBosses`). */
   bossDays?: ExamBossDays;
   /** A new course's first day fills its study time with lessons before later days reserve practice. */
   courseStart?: boolean;
-  /** The days the change being planned moves the week's events to (see `findRelocation`). */
+  /** The days the change being planned moves the week's events to (see `fundMocks`). */
   requestedMoveDates?: ReadonlySet<string>;
   /**
    * What the questions a class test's own material announces ask ("Essay on osmosis"): a
@@ -104,12 +103,7 @@ export type BuildPlanInput = {
   /** The final stretch's mocks: the whole exam day, its written test included (`mockMinutes`). */
   fullMockMinutes?: number;
   goal: { dailyMinutes: number; kind: GoalKind; targetDate: Date | null };
-  /**
-   * The teaching each challenge still to do tests, as the run's pass before laid it out (see
-   * `listTestedTeaching`): funding a mock never takes it. Absent on a run's first pass.
-   */
-  testedTeaching?: TestedTeaching;
-  /** The goal the run plans, for its warnings only (see `settleTeachingFirst`). */
+  /** The goal the run plans, for its warnings only (see `settlePlannedBosses`). */
   goalId?: string;
   graph: PlanGraph;
   /**

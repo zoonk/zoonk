@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { type TestedTeaching, keepWindowTeaching } from "./kept-teaching";
+import { keepWindowTeaching } from "./kept-teaching";
 import { fundMocks } from "./mock-funding";
 import { addDays, fromIsoDate, toIsoDate } from "./plan-calendar";
 import { type QueueUnit } from "./plan-units";
@@ -58,16 +58,12 @@ function unit(fields: Partial<QueueUnit>): QueueUnit {
 
 /** The days with their mocks funded, without saved funding or moves, keeping `promised`'s time. */
 function fund(days: readonly PlanDay[], promised: PromisedLesson | null = null) {
-  return fundMocks({ days, funding: [], kept: keep(days, promised), moves: [] });
+  return fundMocks({ days, funding: [], moves: [], promised: keep(days, promised) });
 }
 
 /** The teaching funding keeps: the promised lesson's (see `listPromisedLessonMinutes`). */
-function keep(
-  days: readonly PlanDay[],
-  promised: PromisedLesson | null,
-  tested: TestedTeaching = [],
-) {
-  return { promised: listPromisedLessonMinutes({ days, promised }), tested };
+function keep(days: readonly PlanDay[], promised: PromisedLesson | null) {
+  return listPromisedLessonMinutes({ days, promised });
 }
 
 /** A day's lesson minutes, on a day of these. */
@@ -82,11 +78,10 @@ function listKept(days: readonly PlanDay[], promised: PromisedLesson) {
   const labels = days.map((day) => toIsoDate(day.date));
 
   keepWindowTeaching({
-    date: "",
     days,
     index: -1,
-    kept: keep(days, promised),
     labels,
+    promised: keep(days, promised),
     shapes,
     windowStart: 0,
   });
@@ -181,8 +176,8 @@ describe("a promised lesson on a day that funds a mock", () => {
     const funded = fundMocks({
       days,
       funding: [{ contributions: past, date: "2026-10-18", minutes: 100 }],
-      kept: keep(days, promised),
       moves: [],
+      promised: keep(days, promised),
     });
 
     expect(funded.funding[0]?.contributions.slice(0, 2)).toStrictEqual(past);
@@ -194,74 +189,15 @@ describe("a promised lesson on a day that funds a mock", () => {
     const funded = fundMocks({
       days: requestedDays,
       funding: [],
-      kept: keep(requestedDays, { dueBy: fromIsoDate("2026-10-13"), key: "lesson", minutes: 4 }),
       moves: [],
+      promised: keep(requestedDays, {
+        dueBy: fromIsoDate("2026-10-13"),
+        key: "lesson",
+        minutes: 4,
+      }),
       requested: new Set(["2026-10-14"]),
     });
 
     expect(funded.unfunded).toStrictEqual([{ date: "2026-10-14", minutes: 200 }]);
-  });
-
-  // A mock its checkpoint's day can't fund moves to the next free day, never the promised one.
-  it("never moves a mock onto the promised lesson's day", () => {
-    const relocating = listDays(6, {
-      "2026-10-14": { events: [{ ...boss(25), kind: "checkpoint" }, mock(70)] },
-    });
-
-    const promise = { dueBy: fromIsoDate(THURSDAY), key: "lesson", minutes: 4 };
-    const funded = fund(relocating, promise);
-    const unkept = fund(relocating);
-
-    expect(unkept.relocations).toStrictEqual([{ from: "2026-10-14", to: THURSDAY }]);
-    expect(funded.relocations).toStrictEqual([{ from: "2026-10-14", to: "2026-10-16" }]);
-  });
-});
-
-/** A challenge on `date` testing a lesson of 6 lesson minutes on `on`. */
-function challenge(date: string, on: string): TestedTeaching {
-  return [{ date, lessons: new Map([["lesson", new Map([[on, 6]])]]) }];
-}
-
-// A mock's funding keeps the lessons of the first challenge still to do in its window, from the
-// window's start to the mock's own day; a later challenge never takes an earlier mock's time.
-describe(keepWindowTeaching, () => {
-  const days = listDays(7);
-
-  /** What each day keeps for a mock on `date`, and whether its own day holds tested lessons. */
-  function keepFor(date: string, tested: TestedTeaching) {
-    const shapes = days.map((day) => day.shape);
-
-    const labels = days.map((day) => toIsoDate(day.date));
-
-    const ownDay = keepWindowTeaching({
-      date,
-      days,
-      index: labels.indexOf(date),
-      kept: keep(days, null, tested),
-      labels,
-      shapes,
-      windowStart: 0,
-    });
-
-    return { kept: shapes.map((shape) => shape.kept ?? 0), ownDay };
-  }
-
-  it("keeps the teaching a challenge before the mock tests, at its day's share", () => {
-    const { kept, ownDay } = keepFor("2026-10-16", challenge(THURSDAY, "2026-10-14"));
-
-    expect(kept[2]).toBeCloseTo(10);
-    expect(kept.filter((minutes) => minutes > 0)).toHaveLength(1);
-    expect(ownDay).toBe(false);
-  });
-
-  it("keeps the mock off a day with the lessons a challenge on its day tests", () => {
-    expect(keepFor(THURSDAY, challenge(THURSDAY, THURSDAY)).ownDay).toBe(true);
-  });
-
-  it("keeps nothing for a challenge after the mock", () => {
-    const { kept, ownDay } = keepFor("2026-10-14", challenge(THURSDAY, "2026-10-14"));
-
-    expect(kept.every((minutes) => minutes === 0)).toBe(true);
-    expect(ownDay).toBe(false);
   });
 });

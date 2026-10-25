@@ -10,7 +10,6 @@ import {
 } from "./mock-identity";
 import { toIsoDate } from "./plan-calendar";
 import { type PlannedItem } from "./plan-items";
-import { type MovedEvent } from "./plan-state";
 
 /** What a planning pass settled about its mocks (see `settlePlannedMocks`). */
 export type PlannedMocks = {
@@ -24,8 +23,6 @@ export type PlannedMocks = {
   selectionShifts?: SelectionShift[];
   /** The resolution to plan again with, or null when this pass's mocks hold. */
   next: MockResolution | null;
-  /** The mocks the plan keeps on another day than their own (see `findRelocation`). */
-  relocations: MovedEvent[];
   /** The mocks the days before them can't fund, at their real length: not in the plan. */
   unfundedMocks: UnfundedMove[];
 };
@@ -93,9 +90,6 @@ export function settlePlannedMocks({
     next,
     ...(practiceFunding.length > 0 ? { practiceFunding } : {}),
     ...(selectionShifts.length > 0 ? { selectionShifts } : {}),
-    relocations: [...dayPass.relocations, ...(afterExam?.relocations ?? [])].filter((relocation) =>
-      held.has(relocation.to),
-    ),
     unfundedMocks,
   };
 }

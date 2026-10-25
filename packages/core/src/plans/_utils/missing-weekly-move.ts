@@ -121,8 +121,8 @@ export function findUnfundedMove({
 
 /**
  * The days a change asks the week's events to move to: its state's moves the saved plan doesn't
- * have. A mock there is funded on that day or refused (`unfundedMove`), never moved on (see
- * `findRelocation`). Absent when it moves nothing.
+ * have. A mock there is funded on that day or refused (`unfundedMove`). Absent when it moves
+ * nothing.
  */
 export function listRequestedMoveDates({
   saved,

@@ -1210,28 +1210,9 @@ describe("studying everything", () => {
 
     expect(eventsBeforeExam(plan)).toStrictEqual(eventsBeforeExam(byExam));
 
-    // Phase 1 teaches past the exam now, so its challenge moves from 10-15 to 11-20. Its freed
-    // funded slot gives s5 80/7 more teaching minutes on 10-15: 160/7 becomes 240/7. Every other
-    // lesson-day portion stays exact. Keep the sevenths together to avoid addition round-off.
-    const freedBossTeachingMinutes = 80 / 7;
-    const beforeTeaching = teachingBeforeExam(byExam);
-
-    expect(beforeTeaching.find(({ key }) => key === "skill:s5")?.portions).toContainEqual([
-      "2026-10-15",
-      160 / 7,
-    ]);
-
-    expect(teachingBeforeExam(plan)).toStrictEqual(
-      beforeTeaching.map(({ key, portions }) => ({
-        key,
-        portions: portions.map(([date, minutes]) => [
-          date,
-          key === "skill:s5" && date === "2026-10-15"
-            ? (minutes * 7 + freedBossTeachingMinutes * 7) / 7
-            : minutes,
-        ]),
-      })),
-    );
+    // Phase 1 teaches past the exam now, so its challenge moves to 11-20; it took none of the
+    // lessons' time on its old day, so every lesson-day portion before the exam stays exact.
+    expect(teachingBeforeExam(plan)).toStrictEqual(teachingBeforeExam(byExam));
 
     expect(
       plan.items

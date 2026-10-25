@@ -182,7 +182,6 @@ describe("a learner's change keeps the teaching the learner was shown", () => {
     expect(next && dateOf(next) >= toIsoDate(CHANGE_DAY)).toBe(true);
 
     expect(getChallengeDay(after.items)).toBe(getChallengeDay(shown.items));
-    expect(after.mocks.relocations).toStrictEqual([]);
 
     expect(after.mockFunding.find((entry) => !entry.fullLength)).toMatchObject({
       date: shown.mock.date,

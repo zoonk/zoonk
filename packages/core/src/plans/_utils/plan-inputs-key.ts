@@ -51,7 +51,6 @@ const KEYED_FIELDS = {
   setAsideLeftWork: "Only a new day's settling sets work aside, and the plan it saved holds it.",
   settings: true,
   strongAreas: true,
-  testedTeaching: "A run's own pass before, settling its challenges: not what it plans from.",
   today:
     "Raw day rollover is not news; missed work settles separately and rescue eligibility is keyed.",
   todayShown: "Whether the learner saw today's session: the saved plan's today, as it is.",

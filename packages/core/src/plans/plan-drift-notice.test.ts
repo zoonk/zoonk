@@ -265,7 +265,7 @@ describe("notices for changes within an estimate", () => {
 
   it("records written lessons added after the exam in the total count", async () => {
     const { goal, library, plan } = await pacedPlanFixture({
-      dailyMinutes: 15,
+      dailyMinutes: 14,
       days: 14,
       fullCourse: true,
       kind: "exam",
@@ -308,7 +308,7 @@ describe("notices for changes within an estimate", () => {
     expect(byDate(after)).toBe(byDate(before));
     expect(change?.effect?.lessonsAdded).toBe(8);
     // The last lessons reclaim time no longer set aside for an omitted after-exam mock.
-    expect(change?.effect?.endDateAfter).toBe("2020-10-29");
+    expect(change?.effect?.endDateAfter).toBe("2020-10-31");
 
     await expect(readTodayChange(goal.id)).resolves.toMatchObject({
       canUndo: false,

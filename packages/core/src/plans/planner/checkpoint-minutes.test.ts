@@ -4,35 +4,16 @@ import {
   CHECKPOINT_QUESTIONS,
 } from "../../checkpoints/checkpoint-rules";
 import { getPlannedBossMinutes } from "./boss-minutes";
-import { fundMocks } from "./mock-funding";
 import { addPhaseCheckpoints } from "./phase-checkpoints";
-import {
-  type StudyCalendar,
-  addDays,
-  fromIsoDate,
-  getStudyMinutes,
-  toIsoDate,
-} from "./plan-calendar";
-import { getExamDayRules, getPlannedMinutes } from "./plan-days";
-import { parsePlanSettings } from "./plan-state";
-import {
-  type DayShape,
-  type PlanDay,
-  type ScheduledUnit,
-  placeUnits,
-  scheduleUnits,
-} from "./schedule-units";
+import { addDays, fromIsoDate } from "./plan-calendar";
+import { type PlanDay, type ScheduledUnit, placeUnits, scheduleUnits } from "./schedule-units";
 import { markKeptLessons } from "./whole-boss";
 
 /** What a checkpoint takes when it's played: its questions, at an exam question's pace. */
 const PLAYED_CHECKPOINT = CHECKPOINT_QUESTIONS * CHECKPOINT_MINUTES_PER_QUESTION;
 
-/** A weekly mock's clock on a regular week. */
-const MOCK = 165;
-
-/** A Monday, and the Friday that week holds both a phase's checkpoint and the weekly mock. */
+/** A Monday. */
 const MONDAY = fromIsoDate("2020-10-12");
-const FRIDAY = "2020-10-16";
 
 /** The time the planner keeps for a phase's checkpoint. */
 function getPlannedCheckpoint(): number {
@@ -57,163 +38,10 @@ function getPlannedCheckpoint(): number {
   return units.find((unit) => unit.kind === "boss")?.minutes ?? 0;
 }
 
-function weekdays(minutes: number): StudyCalendar {
-  return {
-    dailyMinutes: minutes,
-    firstDay: null,
-    lightWeeks: [],
-    weekdayMinutes: [0, minutes, minutes, minutes, minutes, minutes, 0],
-  };
-}
-
-/**
- * The days from Monday (`length`, a week's five by default), Friday with its mock and the phase's
- * checkpoint as the planner keeps it, and a mock of its own on each of `mocks`.
- */
-function listWeek(
-  calendar: StudyCalendar,
-  { length = 5, mocks = [] }: { length?: number; mocks?: readonly string[] } = {},
-): PlanDay[] {
-  return Array.from({ length }, (_, offset) => {
-    const date = addDays(MONDAY, offset);
-    const day = toIsoDate(date);
-    const friday = day === FRIDAY;
-
-    const own = mocks.includes(day)
-      ? [{ key: `mock:${day}`, kind: "mock" as const, minutes: MOCK, replacesDay: true, title: "" }]
-      : [];
-
-    const shape: DayShape = {
-      events: friday
-        ? [
-            {
-              key: "boss:0",
-              kind: "boss",
-              minutes: getPlannedCheckpoint(),
-              replacesDay: false,
-              title: "",
-            },
-            { key: `mock:${FRIDAY}`, kind: "mock", minutes: MOCK, replacesDay: true, title: "" },
-          ]
-        : own,
-      minutes: getStudyMinutes({ calendar, date }),
-      open: true,
-      phase: 0,
-      share: 0.6,
-    };
-
-    return { date, shape };
-  });
-}
-
-/** Friday's minutes on Today, from the funding the plan saves. */
-function getFridayMinutes({
-  calendar,
-  funding,
-}: {
-  calendar: StudyCalendar;
-  funding: ReturnType<typeof fundMocks>["funding"];
-}) {
-  return getPlannedMinutes({
-    calendar,
-    date: fromIsoDate(FRIDAY),
-    exam: getExamDayRules({ isExam: true, settings: parsePlanSettings({ mockFunding: funding }) }),
-    targetDate: null,
-  });
-}
-
-// A checkpoint is planned for the time it takes when played, so a day that holds it beside a mock
-// asks the learner for both, and a week that can't fund both doesn't plan the mock there.
-describe("a phase's checkpoint on a mock's day", () => {
+// A checkpoint is planned for the time it takes when played.
+describe("a phase's checkpoint", () => {
   it("plans a checkpoint for the time it takes when played", () => {
     expect(getPlannedCheckpoint()).toBe(PLAYED_CHECKPOINT);
-  });
-
-  it("funds the checkpoint and the mock together, and Today asks for both", () => {
-    const calendar = weekdays(60);
-    const funded = fundMocks({ days: listWeek(calendar), funding: [], moves: [] });
-
-    expect(funded.funding).toMatchObject([
-      { date: FRIDAY, fixedMinutes: PLAYED_CHECKPOINT, minutes: MOCK },
-    ]);
-
-    expect(getFridayMinutes({ calendar, funding: funded.funding })).toBeCloseTo(
-      MOCK + PLAYED_CHECKPOINT,
-    );
-  });
-
-  // At 35 minutes a weekday, the week holds 175: the mock and a 10-minute checkpoint, not the
-  // checkpoint as played. The mock moves to the next free day whose days before it fund it.
-  it("moves a mock its day can't fund beside the checkpoint to the next day that can", () => {
-    const funded = fundMocks({
-      days: listWeek(weekdays(35), { length: 8 }),
-      funding: [],
-      moves: [],
-    });
-
-    expect(funded.unfunded).toStrictEqual([]);
-    expect(funded.relocations).toStrictEqual([{ from: FRIDAY, to: "2020-10-19" }]);
-    expect(funded.funding).toMatchObject([{ date: "2020-10-19", minutes: MOCK }]);
-    expect(funded.funding[0]).not.toHaveProperty("fixedMinutes");
-
-    expect(funded.days[4]?.shape.events.map((event) => event.key)).toStrictEqual(["boss:0"]);
-
-    expect(funded.days[7]?.shape.events.map((event) => event.key)).toStrictEqual([
-      "mock:2020-10-19",
-    ]);
-
-    expect(funded.days[7]?.shape.minutes).toBeCloseTo(MOCK);
-  });
-
-  it("leaves the mock out when no day before the next mock can fund it", () => {
-    const funded = fundMocks({
-      days: listWeek(weekdays(35), { length: 8, mocks: ["2020-10-19"] }),
-      funding: [],
-      moves: [],
-    });
-
-    expect(funded.relocations).toStrictEqual([]);
-    expect(funded.unfunded).toContainEqual({ date: FRIDAY, minutes: MOCK });
-  });
-
-  // A day the learner asks to move the mock to is funded there or refused (`unfundedMove`).
-  it("never moves on a mock the learner is moving to that day", () => {
-    const funded = fundMocks({
-      days: listWeek(weekdays(35), { length: 8 }),
-      funding: [],
-      moves: [],
-      requested: new Set([FRIDAY]),
-    });
-
-    expect(funded.relocations).toStrictEqual([]);
-    expect(funded.unfunded).toStrictEqual([{ date: FRIDAY, minutes: MOCK }]);
-  });
-
-  // A plan saved while checkpoints were planned at 10 minutes: what its past days set aside stays,
-  // and the days left fund the checkpoint as played.
-  it("keeps what a plan saved with a shorter checkpoint set aside, and funds the rest", () => {
-    const calendar = weekdays(60);
-    const past = { date: "2020-10-09", minutes: 40 };
-
-    const funded = fundMocks({
-      days: listWeek(calendar),
-      funding: [{ contributions: [past], date: FRIDAY, fixedMinutes: 10, minutes: MOCK }],
-      moves: [],
-    });
-
-    expect(funded.funding).toHaveLength(1);
-
-    expect(funded.funding[0]).toMatchObject({
-      date: FRIDAY,
-      fixedMinutes: PLAYED_CHECKPOINT,
-      minutes: MOCK,
-    });
-
-    expect(funded.funding[0]?.contributions[0]).toStrictEqual(past);
-
-    expect(getFridayMinutes({ calendar, funding: funded.funding })).toBeCloseTo(
-      MOCK + PLAYED_CHECKPOINT,
-    );
   });
 });
 

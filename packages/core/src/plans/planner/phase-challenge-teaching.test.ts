@@ -3,7 +3,7 @@ import { getBossSkillIds } from "../../checkpoints/checkpoint-rules";
 import { toBossPlan } from "./boss-plan";
 import { type BuildPlanInput, buildPlan } from "./build-plan";
 import { placeExamBosses } from "./exam-boss-days";
-import { fromIsoDate, toIsoDate } from "./plan-calendar";
+import { addDays, fromIsoDate, toIsoDate } from "./plan-calendar";
 import { parsePlanSettings } from "./plan-state";
 import { DEFAULT_LESSON_MINUTES } from "./plan-units";
 
@@ -206,5 +206,93 @@ describe("overlapping phase teaching", () => {
     expect(placed.get("boss:1")?.date).toBe(first);
     expect(toIsoDate(challenge!.scheduledFor!)).toBe(first);
     expect(built.bossFallback).toBeUndefined();
+  });
+});
+
+describe("a challenge near a mock", () => {
+  // Core's challenge on Nov 4, inside the Nov 6 mock's funding window, moved Core's last lessons
+  // past it; on Nov 9, outside it, they came back: the plan was built again and again, fell back
+  // and logged an error on every Plan view. Its time now runs on top of its day.
+  it("goes on the first study day after its teaching, its time asked of that day on top", () => {
+    const input: BuildPlanInput = {
+      ...examInput(),
+      goal: { dailyMinutes: 45, kind: "exam", targetDate: fromIsoDate("2026-11-20") },
+      graph: {
+        phases: [
+          { milestone: null, name: "Basics" },
+          { milestone: null, name: "Core" },
+          { milestone: null, name: "Review" },
+        ],
+        skills: [
+          { area: "Math", lessons: 30, name: "Algebra", phase: 0, skillId: "s0", weight: 5 },
+          { area: "Math", lessons: 2, name: "Sets", phase: 0, skillId: "s1", weight: 3 },
+          { area: "Port", lessons: 60, name: "Grammar", phase: 1, skillId: "s2", weight: 5 },
+          { area: "Port", lessons: 16, name: "Reading", phase: 2, skillId: "s3", weight: 5 },
+        ],
+      },
+      lessons: [],
+      mockMinutes: 150,
+      prerequisites: new Map(),
+      settings: parsePlanSettings({
+        startDate: "2026-10-24",
+        weekdayMinutes: [0, 45, 45, 45, 45, 45, 0],
+      }),
+      today: fromIsoDate("2026-10-24"),
+    };
+
+    const built = buildPlan(input);
+    const core = built.items.filter((item) => item.kind === "lesson" && item.phase === 1);
+
+    const end = core
+      .map((item) => toIsoDate(built.teachingEnds.get(item.key) ?? item.scheduledFor!))
+      .toSorted()
+      .at(-1)!;
+
+    const challenge = built.items.find((item) => item.key === "boss:1");
+    const day = toIsoDate(challenge!.scheduledFor!);
+
+    expect(built.mockFunding.map((mock) => mock.date)).toStrictEqual(["2026-11-06"]);
+    expect(built.bossFallback).toBeUndefined();
+    expect(day).toBe(built.studyDays.find((study) => study > end));
+    expect(built.checkpointOverflow).toContainEqual({ date: day, minutes: challenge!.minutes });
+  });
+});
+
+describe("a finished challenge on a short day", () => {
+  // The run after it priced it once at its full time and again inside the day it left: a learner
+  // studying 5 minutes a day saw 25 more minutes asked of that day instead of 15.
+  it("asks its day for its time once, on top", () => {
+    const input: BuildPlanInput = {
+      ...examInput(),
+      goal: { dailyMinutes: 5, kind: "exam", targetDate: fromIsoDate("2026-11-08") },
+      settings: parsePlanSettings({
+        startDate: "2026-09-23",
+        weekdayMinutes: [0, 5, 5, 5, 5, 5, 5],
+      }),
+    };
+
+    const first = buildPlan(input);
+    const challenge = first.items.find((item) => item.key === "boss:0");
+    const day = challenge?.scheduledFor;
+
+    if (!challenge || !day) {
+      throw new Error("Expected the first phase's challenge");
+    }
+
+    const items = first.items.map((item, position) => ({
+      ...item,
+      id: item.key,
+      position,
+      ...(item.scheduledFor && item.scheduledFor <= day
+        ? { completedAt: item.scheduledFor, status: "done" as const }
+        : {}),
+    }));
+
+    const next = buildPlan({ ...input, items, mode: "automatic", today: addDays(day, 1) });
+
+    expect(next.checkpointOverflow).toContainEqual({
+      date: toIsoDate(day),
+      minutes: challenge.minutes,
+    });
   });
 });

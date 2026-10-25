@@ -45,9 +45,8 @@ export type DayShape = {
   /** The plan phase the day belongs to, or null when phases follow the lessons (learn plans). */
   phase: number | null;
   /**
-   * Day minutes the day keeps for the teaching its window's challenge tests and the lesson the
-   * learner was promised by it (see `getKeptMinutes`): no mock's funding takes them, and they stay
-   * lesson time.
+   * Day minutes the day keeps for the lesson the learner was promised by it (see
+   * `keepWindowTeaching`): no mock's funding takes them, and they stay lesson time.
    */
   kept?: number;
   /**

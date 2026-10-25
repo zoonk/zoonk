@@ -1110,8 +1110,12 @@ describe("real saved local-move commitments", () => {
           ...original,
           contributions: [],
           date: to,
-          ...(to === "2020-10-19" ? { fixedMinutes: 15 } : {}),
         });
+
+        // The phase's challenge on the mock's new day runs on top of it, as the day asks.
+        expect(
+          parsePlanSettings(after.settings).checkpointOverflow.find((entry) => entry.date === to),
+        ).toStrictEqual(to === "2020-10-19" ? { date: to, minutes: 15 } : undefined);
 
         const oldDates = new Set(original.contributions.map((part) => part.date));
 
@@ -1123,9 +1127,8 @@ describe("real saved local-move commitments", () => {
         const intervalStart = to === "2020-10-19" ? "2020-10-12" : "2020-10-09";
         expect(additions.every((part) => part.date >= intervalStart && part.date < to)).toBe(true);
 
-        expect(additions.reduce((total, part) => total + part.minutes, 0)).toBeCloseTo(
-          to === "2020-10-19" ? 15 : 0,
-        );
+        // The challenge's time is on top of its day, so its day funds the mock as fully as before.
+        expect(additions.reduce((total, part) => total + part.minutes, 0)).toBeCloseTo(0);
 
         expect(
           after.items

@@ -12,31 +12,29 @@ type PhaseChallengeDayRules =
   | { kind: "lessons" }
   | { kind: "examDays"; eve: number | null; movedTo: ReadonlySet<string> };
 
-type MoveSettings = Pick<PlanSettings, "mockRelocations" | "movedEvents">;
-
 /**
- * A dated exam's rules: its eve, and the days a mock was moved onto (`movedTo`: the learner's
- * move, or a run's, see `findRelocation`), which a challenge can still go on.
+ * A dated exam's rules: its eve, and the days the learner moved a mock onto (`movedTo`), which a
+ * challenge can still go on.
  */
 export function getExamChallengeDayRules({
   settings,
   targetDate,
 }: {
-  settings: MoveSettings;
+  settings: Pick<PlanSettings, "movedEvents">;
   targetDate: Date | null;
 }): PhaseChallengeDayRules {
   return {
     eve: targetDate ? addDays(targetDate, -1).getTime() : null,
     kind: "examDays",
-    movedTo: new Set([...settings.movedEvents, ...settings.mockRelocations].map((move) => move.to)),
+    movedTo: new Set(settings.movedEvents.map((move) => move.to)),
   };
 }
 
 /**
  * Whether a run's day can hold a phase challenge no kept day holds: a day with lesson time, which
  * it leads, or a dated exam's study day: with study time, before the exam's eve, and not a weekly
- * mock's own day, though a day a mock was moved onto still is (the two share it when its days
- * fund both, else the mock moves on).
+ * mock's own day, though a day the learner moved a mock onto still is, for the challenge they moved
+ * it onto (see `placeExamBosses`): the two share it, the challenge on top of the mock's time.
  */
 export function canHoldPhaseChallenge({
   day,

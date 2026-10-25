@@ -87,17 +87,17 @@ describe(chooseBases, () => {
   });
 
   it("brings in more of what the exam asks most with the time a quick lesson frees", () => {
-    expect(keptTopics(examInput({ choice: null, dailyMinutes: 5 }))).toStrictEqual(["a", "d"]);
-    expect(keptTopics(examInput({ choice: null, dailyMinutes: 8 }))).toStrictEqual(["a", "b", "d"]);
+    expect(keptTopics(examInput({ choice: null, dailyMinutes: 4 }))).toStrictEqual(["a", "d"]);
+    expect(keptTopics(examInput({ choice: null, dailyMinutes: 7 }))).toStrictEqual(["a", "b", "d"]);
 
     // The first topic cut fits in part, from its base on.
-    expect(keptTopics(examInput({ choice: "quick", dailyMinutes: 5 }))).toStrictEqual([
+    expect(keptTopics(examInput({ choice: "quick", dailyMinutes: 4 }))).toStrictEqual([
       "a",
       "b",
       "d",
     ]);
 
-    expect(keptTopics(examInput({ choice: "quick", dailyMinutes: 8 }))).toStrictEqual([
+    expect(keptTopics(examInput({ choice: "quick", dailyMinutes: 7 }))).toStrictEqual([
       "a",
       "b",
       "c",

@@ -334,7 +334,7 @@ function assertFunding({
 
     expect
       .soft(entry.contributions.reduce((sum, contribution) => sum + contribution.minutes, 0) + base)
-      .toBeGreaterThanOrEqual(entry.minutes + (entry.fixedMinutes ?? 0) - 0.000001);
+      .toBeGreaterThanOrEqual(entry.minutes - 0.000001);
 
     for (const contribution of entry.contributions) {
       const date = new Date(contribution.date);
@@ -442,8 +442,6 @@ describe("promised teaching shares the real checkpoint and mock funding budget",
     expect
       .soft(after.settings.mockFunding.find((entry) => !entry.fullLength))
       .toMatchObject({ date: MOCK_DAY, day: 1, minutes: 180 });
-
-    expect.soft(after.settings.mockRelocations).toStrictEqual([]);
 
     const shown = listShownDays(before.items);
     const kept = listShownDays(after.items);

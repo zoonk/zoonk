@@ -12,37 +12,8 @@ import { mockSession } from "../_test-utils/mock-session";
 import { getPlanTabView } from "../view-models/plan/get-plan-view";
 import { loadPlanContext } from "./_utils/plan-context";
 import { computePlan } from "./_utils/replan";
-import type * as BossDays from "./planner/exam-boss-days";
-
-/** When on, every pass places the bosses a study day later than the one before: they never settle. */
-const unsettled = vi.hoisted(() => ({ on: false, shift: 0 }));
 
 vi.mock("@zoonk/utils/logger", () => ({ logError: vi.fn(), logInfo: vi.fn() }));
-
-vi.mock("./planner/exam-boss-days", async (importOriginal) => {
-  const actual = await importOriginal<typeof BossDays>();
-
-  return {
-    ...actual,
-    placeExamBosses: (input: Parameters<typeof actual.placeExamBosses>[0]) => {
-      const placed = actual.placeExamBosses(input);
-
-      if (!unsettled.on) {
-        return placed;
-      }
-
-      unsettled.shift += 1;
-      const study = input.built.studyDays;
-
-      return new Map(
-        [...placed].map(([key, day]) => {
-          const next = study[study.indexOf(day.date) + unsettled.shift] ?? day.date;
-          return [key, { ...day, date: next }] as const;
-        }),
-      );
-    },
-  };
-});
 
 const NATURE = "Natural Sciences and their Technologies";
 const MATH = "Mathematics and its Technologies";
@@ -171,8 +142,6 @@ async function planBosses(goalId: string) {
 // nothing, and so on: "The plan's bosses didn't settle in 5 passes", and the Plan didn't open.
 describe("an entrance exam plan's challenges", () => {
   afterEach(() => {
-    unsettled.on = false;
-    unsettled.shift = 0;
     vi.mocked(logError).mockClear();
   });
 
@@ -186,7 +155,7 @@ describe("an entrance exam plan's challenges", () => {
   // The Plan's daily-time advice plans this learner at 5 minutes a day: each pass's challenges kept
   // the teaching the pass before laid out from the mock's funding, which spread it again a little
   // differently, so the same days, lessons and minutes never settled.
-  it("settles the plan at 5 minutes a day without placing its challenges after the fact", async () => {
+  it("plans its challenges at 5 minutes a day", async () => {
     const { goal } = await createEntranceExamLearner({ dailyMinutes: 5 });
     const bosses = await planBosses(goal.id);
 
@@ -194,21 +163,14 @@ describe("an entrance exam plan's challenges", () => {
     expect(logError).not.toHaveBeenCalled();
   });
 
-  it("opens the Plan when they still don't settle, each asking its day for all of its time", async () => {
+  // Placed by the time they take, a challenge's time reshuffled the days before it, so its lessons
+  // ended after it, then before it: the plan was built a dozen times and logged an error.
+  it("asks each challenge's day for all of its time, on top of its lessons", async () => {
     const { goal } = await createEntranceExamLearner();
-    unsettled.on = true;
-
-    await expect(getPlanTabView({ goalId: goal.id })).resolves.toMatchObject({ status: "ready" });
-
-    expect(logError).toHaveBeenCalledWith("Plan bosses placed after unsettled passes", {
-      goalId: goal.id,
-      iterations: expect.any(Number),
-      reason: "unsettled",
-    });
-
     const bosses = await planBosses(goal.id);
 
     expect(bosses.length).toBeGreaterThan(0);
-    expect(bosses.every((boss) => boss.overflow >= boss.minutes)).toBe(true);
+    expect(bosses.every((boss) => boss.minutes > 0 && boss.overflow >= boss.minutes)).toBe(true);
+    expect(logError).not.toHaveBeenCalled();
   });
 });

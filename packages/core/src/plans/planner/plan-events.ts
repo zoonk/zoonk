@@ -1,7 +1,6 @@
 import { continueAfterExam } from "./after-exam";
 import { getPlannedBossMinutes } from "./boss-minutes";
 import { type BuildPlanInput } from "./build-plan";
-import { getFixedMinutes } from "./committed-mock-funding";
 import { type StudyPortion } from "./interval-study-minutes";
 import { getMockWeeks } from "./mock-days";
 import { type FundedMocks, type MockFunding } from "./mock-funding";
@@ -12,6 +11,7 @@ import { type ExistingPlanItem, getItemKey } from "./plan-items";
 import { getCalendar } from "./plan-run-days";
 import { addPracticeDays } from "./practice-days";
 import {
+  type DayShape,
   type DroppedUnit,
   type PlanDay,
   type ScheduledEvent,
@@ -20,6 +20,13 @@ import {
 import { isShortExam } from "./short-exam-plan";
 import { fundSpareMocks } from "./spare-mock-funding";
 import { addSpareMocks } from "./spare-mocks";
+
+/** The minutes a day's checkpoints take of it: not a review's, a mock's or one beside its lessons. */
+function getFixedMinutes(shape: DayShape): number {
+  return shape.events
+    .filter((event) => event.kind !== "review" && event.kind !== "mock" && !event.beside)
+    .reduce((sum, event) => sum + event.minutes, 0);
+}
 
 function getCheckpointPractice({
   day,

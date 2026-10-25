@@ -8,14 +8,13 @@ import { type PlanContext } from "./plan-context";
 import { loadPlanSnapshot } from "./restore-plan";
 
 /**
- * Mock funding, relocations and the checkpoints' overflow come from a planning run, so reversing a choice
+ * Mock funding and the checkpoints' overflow come from a planning run, so reversing a choice
  * hasn't restored them yet.
  */
 function getChosen(state: PlanState) {
   const {
     checkpointOverflow: _checkpointOverflow,
     mockFunding: _mockFunding,
-    mockRelocations: _mockRelocations,
     ...settings
   } = state.settings;
 

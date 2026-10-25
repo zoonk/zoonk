@@ -9,10 +9,10 @@ export function findDayMock(shape: DayShape): FixedEvent | undefined {
 }
 
 /**
- * The time a day can give a mock: its minutes less the events that keep their own time on it (a
- * phase's checkpoint), then less the lesson time it keeps for the lesson the learner was promised
- * by it, or the teaching its window's challenge tests (`DayShape.kept`), so a day that funds a mock still holds them. A review fills what the
- * day has left, so it gets shorter instead.
+ * The time a day can give a mock: its minutes less the events that keep their own time on it,
+ * then less the lesson time it keeps for the lesson the learner was promised by it
+ * (`DayShape.kept`), so a day that funds a mock still holds it. A review fills what the day has
+ * left, so it gets shorter instead.
  */
 export function getSpendable(shape: DayShape): number {
   const fixed = shape.events

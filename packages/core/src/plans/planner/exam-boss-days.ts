@@ -4,44 +4,19 @@ import { type BossCandidate, listBossCandidates, projectBossPlan } from "./boss-
 import { type BuildPlanInput } from "./build-plan";
 import { getExamChallengeDayRules, listPhaseChallengeDays } from "./phase-challenge-days";
 import { fromIsoDate, toIsoDate } from "./plan-calendar";
-import { type PlannedItem } from "./plan-items";
+import { type PlannedItem, getItemKey } from "./plan-items";
 import { type PlanPhase } from "./plan-state";
 import { type FixedEvent, type PlanDay } from "./schedule-units";
 
 /**
  * Where an exam's phase challenges go, by key (see `placeExamBosses`): their day, whether it's
  * beside the lessons they test on their last day, with no study day left after them, and the keys
- * of the lessons they test there (`tested`), which the next pass keeps them after. A phase with
- * teaching of its own (`phaseTeaching`) always uses its first eligible day, even if an earlier
- * pass placed it later.
+ * of the lessons they test there (`tested`).
  */
 export type ExamBossDays = ReadonlyMap<
   string,
-  { beside: boolean; date: string; phaseTeaching?: true; tested?: readonly string[] }
+  { beside: boolean; date: string; tested?: readonly string[] }
 >;
-
-/** Whether two challenges test the same lessons, in any order. */
-function isSameTested(first?: readonly string[], second?: readonly string[]): boolean {
-  const tested = new Set(first);
-  return tested.size === new Set(second).size && (second ?? []).every((key) => tested.has(key));
-}
-
-/** Whether two exam challenges' days, and what each tests there, are the same. */
-export function isSameBossDays(first: ExamBossDays, second: ExamBossDays): boolean {
-  return (
-    first.size === second.size &&
-    [...first].every(([key, day]) => {
-      const other = second.get(key);
-
-      return (
-        other?.date === day.date &&
-        other.beside === day.beside &&
-        other.phaseTeaching === day.phaseTeaching &&
-        isSameTested(other.tested, day.tested)
-      );
-    })
-  );
-}
 
 /**
  * The day an exam's phase challenge goes, as a built plan lays its lessons out: the first study
@@ -74,11 +49,27 @@ export function placeExamBosses({
     studyDays: readonly string[];
     teachingEnds: ReadonlyMap<string, Date>;
   };
-  input: Pick<BuildPlanInput, "graph" | "settings">;
+  input: Pick<BuildPlanInput, "graph" | "items" | "settings">;
   rows?: ItemSkillRows;
   survivors?: ReadonlyMap<string, string>;
 }): ExamBossDays {
   const candidates = listBossCandidates({ built });
+
+  // A day the learner moved a mock onto holds only the challenge the plan they saw had there: they
+  // moved the mock onto it. One a run carries there (left on an earlier day, or its teaching ended
+  // sooner) goes on the next study day: its time runs on top of its day, and a mock's is long.
+  const movedOnto = new Set(input.settings.movedEvents.map((move) => move.to));
+
+  const savedDays = new Map(
+    input.items.flatMap((item) =>
+      item.kind === "boss" && item.scheduledFor
+        ? [[getItemKey(item), toIsoDate(item.scheduledFor)] as const]
+        : [],
+    ),
+  );
+
+  const canGoOn = (key: string, day: string) => !movedOnto.has(day) || savedDays.get(key) === day;
+  const listStudyDays = (key: string) => built.studyDays.filter((day) => canGoOn(key, day));
 
   const { at, plan, without } = projectBossPlan({ built, candidates, input, rows, survivors });
 
@@ -162,12 +153,11 @@ export function placeExamBosses({
       return placeAfterWindow(candidate);
     }
 
-    const day = findStudyDayAfter(built.studyDays, lastTaught);
+    const day = findStudyDayAfter(listStudyDays(candidate.key), lastTaught);
 
     return {
       beside: day === undefined,
       date: day ?? lastTaught,
-      phaseTeaching: true as const,
       tested: own.map((item) => item.key),
     };
   };
@@ -178,10 +168,12 @@ export function placeExamBosses({
     const { key, phase } = candidate;
     const anchor = candidate.date;
     const atAnchor = lastEnd(listOn({ date: anchor, key, phase }));
+    const studyDays = listStudyDays(key);
+    const changeDays = eventDays.filter((day) => canGoOn(key, day));
 
     const date: string | undefined = atAnchor
-      ? findStudyDayAfter(built.studyDays, atAnchor)
-      : (eventDays.find((day) => day > anchor) ?? anchor);
+      ? findStudyDayAfter(studyDays, atAnchor)
+      : (changeDays.find((day) => day > anchor) ?? anchor);
 
     if (!date) {
       return { beside: true, date: atAnchor ?? anchor, tested: [] as string[] };
@@ -201,8 +193,8 @@ export function placeExamBosses({
 
       day =
         end === null
-          ? eventDays.find((event) => event > on)
-          : findStudyDayAfter(built.studyDays, end > on ? end : on);
+          ? changeDays.find((event) => event > on)
+          : findStudyDayAfter(studyDays, end > on ? end : on);
 
       if (!day && end !== null) {
         return { beside: true, date: end, tested: keys };
@@ -254,34 +246,6 @@ function findStudyDayAfter(days: readonly string[], date: string): string | unde
 
 /** A day a challenge is tried on, leading it or after its lessons (`afterDay`). */
 type Spot = { afterDay: boolean; day: Date; key: string; phase: number };
-
-/**
- * A phase with teaching of its own always uses this pass's first eligible day. Keeping an earlier
- * pass's later day would leave its challenge after an empty gap once funding settles. A phase
- * without its own teaching keeps the later day: moving back would free time, change the teaching
- * it asks from other phases, and move it forward again. On the same day, one beside the lessons
- * stays beside them, taking none of their time.
- */
-export function keepLaterBossDays({
-  earlier,
-  placed,
-}: {
-  earlier: ExamBossDays;
-  placed: ExamBossDays;
-}): ExamBossDays {
-  return new Map(
-    [...placed].map(([key, day]) => {
-      const before = earlier.get(key);
-
-      const keeps =
-        !day.phaseTeaching &&
-        before &&
-        (before.date > day.date || (before.date === day.date && before.beside));
-
-      return [key, keeps ? { ...before, tested: day.tested } : day] as const;
-    }),
-  );
-}
 
 /**
  * The phase challenges a run's settled days put on a date (see `placeExamBosses`): each its own

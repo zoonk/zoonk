@@ -196,8 +196,8 @@ describe("a change the learner didn't make names the topics it moves", () => {
         .map((item) => [item.phase, item.scheduledFor?.toISOString().slice(0, 10)]),
     ).toStrictEqual([
       [0, "2020-10-01"],
-      [1, "2020-10-05"],
-      [2, "2020-10-10"],
+      [1, "2020-10-06"],
+      [2, "2020-10-08"],
     ]);
 
     if (!known) {
@@ -227,7 +227,7 @@ describe("a change the learner didn't make names the topics it moves", () => {
   // Four days missed on a plan that just fit: what's left no longer fits by the exam, and the
   // missed-days change names what leaves, not only that the plan covers less.
   it("names the topics missed days leave out of the plan", async () => {
-    const { goal, library, plan } = await setup({ dailyMinutes: 15, daysAway: 14 });
+    const { goal, library, plan } = await setup({ dailyMinutes: 11, daysAway: 14 });
     const before = await plannedTopics({ library, planId: plan.id });
 
     vi.setSystemTime(new Date("2020-10-02T12:00:00Z"));
@@ -246,7 +246,7 @@ describe("a change the learner didn't make names the topics it moves", () => {
 
   // Back from a pause with less time left: the resumed plan names what no longer fits.
   it("names the topics a goal back from a pause leaves out of the plan", async () => {
-    const { goal, library, plan } = await setup({ dailyMinutes: 15, daysAway: 14 });
+    const { goal, library, plan } = await setup({ dailyMinutes: 11, daysAway: 14 });
     const before = await plannedTopics({ library, planId: plan.id });
 
     await updateGoal({ goalId: goal.id, input: { status: "paused" } });
@@ -265,7 +265,7 @@ describe("a change the learner didn't make names the topics it moves", () => {
   });
 });
 
-describe("a plan whose challenges settled", () => {
+describe("an exam plan planned again with nothing new", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(NOW);
@@ -281,8 +281,8 @@ describe("a plan whose challenges settled", () => {
     vi.useRealTimers();
   });
 
-  // Its challenges settle on the days their teaching takes, not on the minutes a mock's funding
-  // leaves each of them: planned again with nothing new, it keeps the funding it was made with.
+  // Its challenges go on the days their teaching ends, taking none of its time, so a mock's funding
+  // never moves them: planned again with nothing new, it keeps the funding it was made with.
   it("keeps its mock funding when planned again with nothing new", async () => {
     const { goal, plan } = await setup({
       dailyMinutes: 9,

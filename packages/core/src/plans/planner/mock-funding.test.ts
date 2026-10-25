@@ -552,9 +552,9 @@ describe("a plan that goes on after its exam", () => {
   });
 });
 
-// A 165-minute mock moved onto a 30-minute day beside its phase's 15-minute challenge, funded by
-// the 14 days before it: their 150 minutes, split in fourteenths, summed to 149.99999999999997, and
-// Today asked 179.99999999999997 minutes of a day the plan showed as 180.
+// A 165-minute mock on a 30-minute day, funded by the 14 days before it: their 135 minutes, split
+// in fourteenths, summed to 134.99999999999997, and Today asked 164.99999999999997 minutes of a day
+// the plan showed as 165.
 describe(getFundedMinutes, () => {
   const date = fromIsoDate("2020-10-16");
 
@@ -564,20 +564,12 @@ describe(getFundedMinutes, () => {
       minutes,
     }));
 
-    return [
-      {
-        contributions: setAside,
-        date: "2020-10-16",
-        fixedMinutes: 15,
-        fullLength: false,
-        minutes: 165,
-      },
-    ];
+    return [{ contributions: setAside, date: "2020-10-16", fullLength: false, minutes: 165 }];
   }
 
   it("gives a fully funded mock's day its whole time", () => {
-    const given = Array.from({ length: 14 }, () => 150 / 14);
-    expect(getFundedMinutes({ base: 30, date, funding: funding(given) })).toBe(180);
+    const given = Array.from({ length: 14 }, () => 135 / 14);
+    expect(getFundedMinutes({ base: 30, date, funding: funding(given) })).toBe(165);
   });
 
   it("gives a day its mock's days funded only partly no more than they set aside", () => {

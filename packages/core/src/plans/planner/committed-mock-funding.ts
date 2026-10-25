@@ -29,13 +29,6 @@ export function getRequestedMoves({
   return moves.filter((move) => requested.has(move.to));
 }
 
-/** A phase challenge keeps its own clock beside a mock; review gives way to it. */
-export function getFixedMinutes(shape: DayShape): number {
-  return shape.events
-    .filter((event) => event.kind !== "review" && event.kind !== "mock" && !event.beside)
-    .reduce((sum, event) => sum + event.minutes, 0);
-}
-
 /** Funding changes a day's available minutes and its review by the same proportion. */
 export function fundDay({ minutes, shape }: { minutes: number; shape: DayShape }): DayShape {
   const spendable = getSpendable(shape);
@@ -50,13 +43,12 @@ export function fundDay({ minutes, shape }: { minutes: number; shape: DayShape }
   };
 }
 
-/** A fully funded mock plays its exact whole clock, including fixed coevents. */
+/** A fully funded mock plays its exact whole clock. */
 export function getMockDayMinutes({ base, entry }: { base: number; entry: MockFunding }): number {
   const given = entry.contributions.reduce((sum, contribution) => sum + contribution.minutes, 0);
-  const total = entry.minutes + (entry.fixedMinutes ?? 0);
-  const needed = Math.max(0, total - base);
+  const needed = Math.max(0, entry.minutes - base);
 
-  return given >= needed - EPSILON ? Math.max(base, total) : base + Math.min(given, needed);
+  return given >= needed - EPSILON ? Math.max(base, entry.minutes) : base + Math.min(given, needed);
 }
 
 function sumByDate(funding: readonly MockFunding[]): Map<string, number> {
@@ -159,9 +151,8 @@ function moveCommittedMock({
   source: MockFunding;
 }): { entry: MockFunding; practice: Contribution[] } | null {
   const date = toIsoDate(day.date);
-  const fixedMinutes = getFixedMinutes(day.shape);
   const credit = source.contributions.reduce((sum, entry) => sum + entry.minutes, 0);
-  const available = day.shape.minutes - (contributed.get(date) ?? 0) - fixedMinutes;
+  const available = day.shape.minutes - (contributed.get(date) ?? 0);
 
   const needed = Math.max(0, minutes - credit - available);
   const growth = Math.max(0, minutes - source.minutes);
@@ -193,14 +184,12 @@ function moveCommittedMock({
     contributed.set(entry.date, (contributed.get(entry.date) ?? 0) + entry.minutes),
   );
 
-  const { fixedMinutes: _previousFixed, ...saved } = source;
   const identity = findDayMock(day.shape)?.mock;
 
   return {
     entry: {
-      ...saved,
+      ...source,
       ...(identity ? { day: source.day ?? null, fullLength: identity.fullLength } : {}),
-      ...(fixedMinutes > 0 ? { fixedMinutes } : {}),
       contributions: addContributions({ additions, source }),
       date,
       minutes: identity
@@ -222,7 +211,7 @@ function retainCommittedMocks({
   funding,
   moves,
   practice = new Map(),
-}: FundingInput): Omit<FundedMocks, "days" | "relocations"> {
+}: FundingInput): Omit<FundedMocks, "days"> {
   const dates = days.flatMap((day) => (findDayMock(day.shape) ? [toIsoDate(day.date)] : []));
 
   const matches = matchSavedMocks({
@@ -333,5 +322,5 @@ export function fundCommittedMocks(input: FundingInput): FundedMocks {
     };
   });
 
-  return { ...committed, days, relocations: [] };
+  return { ...committed, days };
 }

@@ -1,7 +1,6 @@
 import { logError } from "@zoonk/utils/logger";
 import { type BossBankFacts } from "../../checkpoints/checkpoint-minutes";
 import { type ItemSkillRows } from "../../learner/_utils/goal-plan-projection";
-import { type BossFallback, type SettlingPlan, settleTeachingFirst } from "./boss-fallback";
 import { type BossMinutes } from "./boss-minutes";
 import {
   type BossSizes,
@@ -12,14 +11,11 @@ import {
 } from "./boss-sizes";
 import { type BuildPlanInput } from "./build-plan";
 import { listCheckpointOverflow } from "./checkpoint-overflow";
-import {
-  type ExamBossDays,
-  isSameBossDays,
-  keepLaterBossDays,
-  placeExamBosses,
-} from "./exam-boss-days";
-import { type TestedTeaching, isSameTeaching, listTestedTeaching } from "./kept-teaching";
+import { placeExamBosses } from "./exam-boss-days";
+import { type PlannedItem, getItemKey } from "./plan-items";
 import { type PlanSettings } from "./plan-state";
+import { getBossKey } from "./plan-units";
+import { type SettlingPlan, settleTeachingFirst } from "./teaching-first";
 
 /**
  * What a plan's bosses ask, read once for a planning run, so the plan keeps for each the time its
@@ -34,6 +30,9 @@ export type BossPlanFacts = {
   survivors: ReadonlyMap<string, string>;
 };
 
+/** Why a plan's bosses were placed teaching first when its goal's aren't, for the warning it logs. */
+type BossFallback = { iterations: number; reason: "unsettled" };
+
 function isSameMinutes(first: BossMinutes, second: BossMinutes): boolean {
   return (
     first.size === second.size &&
@@ -41,150 +40,29 @@ function isSameMinutes(first: BossMinutes, second: BossMinutes): boolean {
   );
 }
 
-/**
- * Whether a pass places its challenges where the pass before did: none to place, the same, and
- * testing the same lessons there. Once passes take turns, the same days hold: what each tests then
- * follows from the later days kept.
- */
-function isSameDays({
-  cycling = false,
-  first,
-  second,
-}: {
-  cycling?: boolean;
-  first?: ExamBossDays;
-  second?: ExamBossDays;
-}): boolean {
-  if (!first || !second) {
-    return true;
-  }
-
-  return cycling ? isSameDates(first, second) : isSameBossDays(first, second);
-}
-
-/** Whether a pass places its challenges where an earlier pass than the last did: they take turns. */
-function isCycle({
-  current,
-  next,
-  seen,
-}: {
-  current?: ExamBossDays;
-  next?: ExamBossDays;
-  seen: readonly ExamBossDays[];
-}): boolean {
-  return Boolean(
-    current &&
-    next &&
-    !isSameDates(next, current) &&
-    seen.some((earlier) => isSameDates(next, earlier)),
-  );
-}
-
-/** Whether two passes put each challenge on the same day, beside or leading it, whatever it tests. */
-function isSameDates(first: ExamBossDays, second: ExamBossDays): boolean {
-  return (
-    first.size === second.size &&
-    [...first].every(([key, day]) => {
-      const other = second.get(key);
-      return other?.date === day.date && other.beside === day.beside;
-    })
-  );
-}
-
-/** The later of each challenge's two days (see `keepLaterBossDays`), once passes take turns. */
-function keepLater({
-  earlier,
-  placed,
-}: {
-  earlier?: ExamBossDays;
-  placed?: ExamBossDays;
-}): ExamBossDays | undefined {
-  return earlier && placed ? keepLaterBossDays({ earlier, placed }) : placed;
-}
-
-/**
- * Whether a pass holds, with what the next pass would keep from mocks' funding (`testedTeaching`,
- * see `listTestedTeaching`): its challenges' minutes and days are the ones it was built with, and
- * that teaching is on the days it was built keeping (`kept`, see `isSameTeaching`). Same days and
- * minutes alone don't settle a plan whose next pass would keep other days from its mocks' funding.
- */
-function checkPass({
-  built,
-  days,
-  kept,
-  minutes,
-  today,
-}: {
-  built: Parameters<typeof listTestedTeaching>[0]["built"];
-  days: { current?: ExamBossDays; cycling: boolean; placed?: ExamBossDays };
-  kept?: TestedTeaching;
-  minutes: { current: BossMinutes; sized: BossMinutes };
-  today: Date;
-}): { holds: boolean; testedTeaching?: TestedTeaching } {
-  const testedTeaching = days.placed && listTestedTeaching({ built, placed: days.placed, today });
-
-  const holds =
-    isSameMinutes(minutes.sized, minutes.current) &&
-    isSameDays({ cycling: days.cycling, first: days.placed, second: days.current }) &&
-    isSameTeaching(testedTeaching, kept);
-
-  return { holds, testedTeaching };
-}
-
-/** What the passes so far say of their challenges' days (see `placePass`). */
-type DayTrack = { cycledAt?: number; cycling: boolean; retried: boolean; seen: ExamBossDays[] };
-
-/**
- * Where a pass places an exam's challenges, from their windows' ends on its layout (`placing`), and
- * where they go (`placed`): passes taking turns (a challenge's own time pushing the lessons it
- * tests, then freeing them) settle by keeping the later day from then on (see `keepLaterBossDays`).
- */
-function placePass<T>({
-  built,
-  current,
-  place,
-  track,
-}: {
-  built: T;
-  current?: ExamBossDays;
-  place: (built: T) => ExamBossDays;
-  track: DayTrack;
-}): { placed?: ExamBossDays; placing?: ExamBossDays } {
-  const placing = current && place(built);
-  track.cycling ||= isCycle({ current, next: placing, seen: track.seen });
-  track.cycledAt ??= track.cycling ? track.seen.length + 1 : undefined;
-
-  return {
-    placed: track.cycling ? keepLater({ earlier: current, placed: placing }) : placing,
-    placing,
-  };
-}
-
-/** The days the next pass tries: the placement's own once, when a pass holds on later ones. */
-function getNextDays({
-  holds,
-  placed,
-  placing,
-  retried,
-}: {
-  holds: boolean;
-  placed?: ExamBossDays;
-  placing?: ExamBossDays;
-  retried: boolean;
-}): ExamBossDays | undefined {
-  return holds && !retried && !isSameDays({ first: placing, second: placed }) ? placing : placed;
+function listBossKeys(items: readonly PlannedItem[]): string[] {
+  return items.flatMap((item) => (item.kind === "boss" ? [item.key] : []));
 }
 
 /** Passes beyond one per boss: one to settle what they ask, one to see it hold. */
 const SETTLING_PASSES = 2;
 
 /**
- * Plans with the time each boss runs: what a boss asks depends on the lessons before its day, which
- * depend on the time the plan keeps for the bosses, so the plan is built again with what its
- * bosses run until that holds. Past one pass per boss, and the two that settle it, its teaching is
- * kept as a build with every boss taking no time lays it, and the bosses placed after it (see
- * `settleTeachingFirst`): a Plan never fails to open. Without the facts (`bossFacts`) every boss
- * takes its size before the bank is read (see `getPlannedBossMinutes`).
+ * Plans with the time each boss runs (see `BossMinutes`), what its session plays: read from the
+ * plan's items with the facts (`bossFacts`), or, without them, its size before the bank is read
+ * (see `getPlannedBossMinutes`).
+ *
+ * An exam's challenges go teaching first (see `settleTeachingFirst`): built once with none on any
+ * day, each goes where that teaching puts it (see `placeExamBosses`; an exam without a date, where
+ * its build does), taking none of the lessons' time, and runs past its day's time. Placed by the
+ * time it takes, a challenge had no settled day: its time on a day reshuffled the days before it,
+ * so its lessons ended after it, then before it, round and round, and the plan was built a dozen
+ * times to end up teaching first anyway, with an error on every Plan view.
+ *
+ * Any other goal's bosses keep their time in their day: what a boss asks depends on the lessons
+ * before it, which depend on the time the plan keeps for it, so the plan is built again with what
+ * its bosses run until that holds. Past one pass per boss and the two that settle it, it goes
+ * teaching first too (`bossFallback`): a Plan never fails to open.
  */
 export function settlePlannedBosses<T extends SettlingPlan>({
   build,
@@ -199,61 +77,60 @@ export function settlePlannedBosses<T extends SettlingPlan>({
   checkpointOverflow: PlanSettings["checkpointOverflow"];
 } {
   const facts = input.bossFacts;
+  const sizedBefore = input.bossMinutes ?? new Map();
 
-  // What the plan saves of its checkpoints' days, so each asks for the time they take past it.
-  const settled = (bossMinutes: BossMinutes, built: T, bossSizes: BossSizes = new Map()) => ({
-    bossSizes,
-    ...built,
-    checkpointOverflow: listCheckpointOverflow({ bossMinutes, built, input }),
-  });
+  const size = (taught: T, items: readonly PlannedItem[]) =>
+    facts
+      ? toBossMinutes(sizeBosses({ facts, input, items, skillLessons: taught.skillLessons }))
+      : sizedBefore;
 
-  if (!facts && input.goal.kind !== "exam") {
-    return settled(input.bossMinutes ?? new Map(), build(input));
+  if (input.goal.kind === "exam") {
+    const place = (on: T) =>
+      placeExamBosses({ built: on, input, rows: facts?.rows, survivors: facts?.survivors });
+
+    // Without a date, its build puts each phase's challenge after the phase's lessons.
+    const bossDays =
+      input.goal.targetDate === null ? undefined : place(build({ ...input, bossDays: new Map() }));
+
+    // Every boss the plan holds takes no time: each one placed (or each phase's that teaches,
+    // without a date), and those it saved, finished ones included.
+    const bossKeys = new Set([
+      ...(bossDays?.keys() ?? input.graph.skills.map((skill) => getBossKey(skill.phase))),
+      ...input.items.flatMap((item) => (item.kind === "boss" ? [getItemKey(item)] : [])),
+    ]);
+
+    return withBossSizes({
+      built: settleTeachingFirst({
+        bossDays,
+        bossKeys: [...bossKeys],
+        build,
+        input,
+        places: bossDays ? place : null,
+        size,
+      }),
+      facts,
+      input,
+    });
   }
 
-  // An exam's challenges go after the lessons they test (see `placeExamBosses`): its first pass has
-  // none, and each pass places them where the last one's lessons end.
-  const placesDays = input.goal.kind === "exam" && input.goal.targetDate !== null;
-  let minutes: BossMinutes = input.bossMinutes ?? new Map();
-  let bossDays: ExamBossDays | undefined = placesDays ? (input.bossDays ?? new Map()) : undefined;
-  let built = build({ ...input, bossDays, bossMinutes: minutes });
-  let limit = SETTLING_PASSES;
-  const track: DayTrack = { cycling: false, retried: false, seen: [] };
-  let kept: TestedTeaching | undefined;
-
-  const placeBosses = (on: T) =>
-    placeExamBosses({ built: on, input, rows: facts?.rows, survivors: facts?.survivors });
+  let minutes: BossMinutes = sizedBefore;
+  let built = build({ ...input, bossMinutes: minutes });
 
   for (let pass = 1; ; pass += 1) {
     const { minutes: sized, sizes } = readBossSizes({ built, facts, input, minutes });
 
-    const { placed, placing } = placePass({ built, current: bossDays, place: placeBosses, track });
-
-    // Once passes take turns, the later days they keep rise at most once per challenge from there.
-    limit = Math.max(
-      limit,
-      (track.cycledAt ?? 0) +
-        built.items.filter((item) => item.kind === "boss").length +
-        SETTLING_PASSES,
-    );
-
-    const { holds, testedTeaching } = checkPass({
-      built,
-      days: { current: bossDays, cycling: track.cycling, placed },
-      kept,
-      minutes: { current: minutes, sized },
-      today: input.today,
-    });
-
-    const next = getNextDays({ holds, placed, placing, retried: track.retried });
-
-    if (holds && next === placed) {
-      return settled(minutes, built, sizes);
+    if (isSameMinutes(sized, minutes)) {
+      return {
+        bossSizes: sizes,
+        ...built,
+        // What the plan saves of its checkpoints' days, so each asks for the time they take past it.
+        checkpointOverflow: listCheckpointOverflow({ bossMinutes: minutes, built, input }),
+      };
     }
 
-    if (pass > limit) {
-      const asSized = minutes;
+    const bossKeys = listBossKeys(built.items);
 
+    if (pass > bossKeys.length + SETTLING_PASSES) {
       // For the team, never a learner: the plan opens all the same.
       logError("Plan bosses placed after unsettled passes", {
         goalId: input.goalId ?? null,
@@ -261,32 +138,24 @@ export function settlePlannedBosses<T extends SettlingPlan>({
         reason: "unsettled",
       });
 
-      return withBossSizes({
-        built: settleTeachingFirst({
-          bossDays: placed,
-          build,
+      return {
+        ...withBossSizes({
+          built: settleTeachingFirst({
+            bossDays: undefined,
+            bossKeys,
+            build,
+            input,
+            places: null,
+            size,
+          }),
+          facts,
           input,
-          iterations: pass,
-          places: placed ? (taught) => placeBosses(taught) : null,
-          size: (taught, items) =>
-            facts
-              ? toBossMinutes(
-                  sizeBosses({ facts, input, items, skillLessons: taught.skillLessons }),
-                )
-              : asSized,
         }),
-        facts,
-        input,
-      });
+        bossFallback: { iterations: pass, reason: "unsettled" },
+      };
     }
 
     minutes = sized;
-    track.seen.push(...(bossDays ? [bossDays] : []));
-    track.retried ||= next !== placed;
-    bossDays = next;
-
-    // Each pass keeps from mocks' funding what its challenges test as this one laid it out.
-    kept = testedTeaching;
-    built = build({ ...input, bossDays, bossMinutes: minutes, testedTeaching });
+    built = build({ ...input, bossMinutes: minutes });
   }
 }

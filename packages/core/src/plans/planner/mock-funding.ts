@@ -3,11 +3,10 @@ import {
   type PracticeFunding,
   fundCommittedMocks,
   fundDay,
-  getFixedMinutes,
   getMockDayMinutes,
   getRequestedMoves,
 } from "./committed-mock-funding";
-import { type KeptTeaching, NOTHING_KEPT, keepWindowTeaching } from "./kept-teaching";
+import { type LessonDays, keepWindowTeaching } from "./kept-teaching";
 import { EPSILON, findDayMock, getSpendable } from "./mock-day";
 import {
   type MockClock,
@@ -18,7 +17,6 @@ import {
   getNextMockDay,
   matchSavedMocks,
 } from "./mock-identity";
-import { findMockFunding } from "./mock-relocation";
 import { toIsoDate } from "./plan-calendar";
 import { type MovedEvent, type PlanSettings } from "./plan-state";
 import { type DayShape, type PlanDay } from "./schedule-units";
@@ -114,12 +112,6 @@ export function getMockFundingStart(entry: MockFunding): string {
   return entry.contributions[0]?.date ?? entry.date;
 }
 
-/** What else a mock's day keeps beside it, as its funding saves it (`fixedMinutes`); none: absent. */
-function getFixedEntry(shape: DayShape): Pick<MockFunding, "fixedMinutes"> {
-  const fixedMinutes = getFixedMinutes(shape);
-  return fixedMinutes > 0 ? { fixedMinutes } : {};
-}
-
 /** What days before the run's first set aside for a mock, as they did: they're never planned again. */
 export function listPast({ saved, start }: { saved: MockFunding | undefined; start: string }) {
   return (saved?.contributions ?? []).filter((contribution) => contribution.date < start);
@@ -152,7 +144,46 @@ export function resolveIdentity({
   return { day, fullLength };
 }
 
-/** The minutes of what else a mock's day keeps beside it: a phase's checkpoint, not a review. */
+/**
+ * What funding a mock on day `at` takes (see `fundMocks`): the days of its window since the last
+ * mock as funding left them (`shapes`: a left-out mock's day is an ordinary day again), what they
+ * must give besides its own day's time and what earlier days already set aside (`past`), and its
+ * day's shape. Null when they can't give it.
+ */
+function fundMockOn({
+  at,
+  days,
+  minutes,
+  past,
+  shapes,
+  windowStart,
+}: {
+  at: number;
+  days: readonly PlanDay[];
+  minutes: number;
+  past: number;
+  shapes: readonly DayShape[];
+  windowStart: number;
+}) {
+  const own = shapes[at];
+
+  if (!own) {
+    return null;
+  }
+
+  const window = days
+    .slice(windowStart, at)
+    .map((item, offset) => ({
+      date: item.date,
+      shape: shapes[windowStart + offset] ?? item.shape,
+    }));
+
+  const spendable = window.reduce((total, item) => total + getSpendable(item.shape), 0);
+  const needed = Math.max(0, minutes - getSpendable(own) - past);
+
+  return needed > spendable + EPSILON ? null : { needed, spendable, window };
+}
+
 /**
  * The days of a mock's window giving `needed` minutes, each the same share of the time it can
  * give (see `getSpendable`): their shapes lighter (in `shapes`), and what each gave.
@@ -192,11 +223,6 @@ export type FundedMocks = {
   practiceFunding?: PracticeFunding[];
   /** The saved mocks the run's mocks continue (see `matchSavedMocks`): each counts once. */
   matched: MockFunding[];
-  /**
-   * The mocks this run moved off a day a phase's checkpoint left without time for them, to the next
-   * day that could fund them (see `findRelocation`); the plan saves them (`mockRelocations`).
-   */
-  relocations: MovedEvent[];
   /** The mocks whose identity continues a saved one's. */
   sourced: Set<string>;
   /** The mocks the days before them can't fund, at their real length: not planned. */
@@ -220,10 +246,10 @@ export function fundMocks({
   cursor,
   days,
   funding,
-  kept = NOTHING_KEPT,
   keepSelection = false,
   moves,
   practice,
+  promised = new Map(),
   requested = new Set(),
   resolution = null,
 }: {
@@ -234,12 +260,12 @@ export function fundMocks({
   days: readonly PlanDay[];
   /** The funding the plan saved last (see `PlanSettings.mockFunding`). */
   funding: readonly MockFunding[];
-  /** The teaching funding never takes (see `getKeptMinutes`); none: every day's time can give. */
-  kept?: KeptTeaching;
   keepSelection?: boolean;
   moves: readonly MovedEvent[];
   practice?: ReadonlyMap<string, number>;
-  /** The days a learner's change asks mocks to move to: funded there or refused, never relocated. */
+  /** The promised lesson's teaching, which funding never takes; none: every day's time can give. */
+  promised?: LessonDays;
+  /** The days a learner's change asks mocks to move to (a move-only run's): funded there or refused. */
   requested?: ReadonlySet<string>;
   resolution?: MockResolution | null;
 }): FundedMocks {
@@ -247,14 +273,7 @@ export function fundMocks({
   const labels = days.map((day) => toIsoDate(day.date));
   const start = labels[0] ?? null;
 
-  const empty = {
-    days: [],
-    funding: [],
-    matched: [],
-    relocations: [],
-    sourced: new Set<string>(),
-    unfunded: [],
-  };
+  const empty = { days: [], funding: [], matched: [], sourced: new Set<string>(), unfunded: [] };
 
   if (!start) {
     return empty;
@@ -282,7 +301,6 @@ export function fundMocks({
   const entries: MockFunding[] = [];
   const sourced = new Set<string>();
   const unfunded: UnfundedMove[] = [];
-  const relocations: MovedEvent[] = [];
   let after = cursor === undefined ? getMockCursor({ saved: funding, start }) : cursor;
   let windowStart = 0;
   let carried: Contribution[] = [];
@@ -325,28 +343,16 @@ export function fundMocks({
 
     const past = [...carried, ...listPast({ saved: source, start })];
 
-    // Each window keeps the teaching its own challenge tests, from where it really starts; a mock
-    // its day can't fund beside a phase's checkpoint, or in place of the lessons it tests, moves to
-    // the next day that can; a day the learner asked for (`requested`) is funded there or not at all.
-    const testsOwnDay = keepWindowTeaching({
-      date,
-      days,
-      index,
-      kept,
-      labels,
-      shapes,
-      windowStart,
-    });
+    // Each window keeps the promised lesson's teaching, from where it really starts.
+    keepWindowTeaching({ days, index, labels, promised, shapes, windowStart });
 
     shapes[index] = ownDay;
 
-    const funded = findMockFunding({
+    const funded = fundMockOn({
+      at: index,
       days,
-      index,
       minutes: mock.minutes,
-      ownBlocked: testsOwnDay,
       past: sumContributions(past),
-      relocates: (getFixedMinutes(ownDay) > 0 || testsOwnDay) && !requested.has(date),
       shapes,
       windowStart,
     });
@@ -357,37 +363,26 @@ export function fundMocks({
       return;
     }
 
-    const at = labels[funded.at] ?? date;
-
     const entry: MockFunding = {
       contributions: [...past, ...fundWindow({ ...funded, shapes, windowStart })],
-      date: at,
+      date,
       ...identity,
-      ...getFixedEntry(funded.own),
       minutes: mock.minutes,
     };
 
-    // On its own day the mock takes its place among the day's events; on another, it joins them.
-    const base = funded.at === index ? day.shape : funded.own;
-
-    shapes[funded.at] = {
-      ...base,
-      events:
-        funded.at === index
-          ? day.shape.events.map((event) => (event === found ? mock : event))
-          : [...base.events, { ...mock, key: `mock:${at}` }],
-      minutes: getMockDayMinutes({ base: base.minutes, entry }),
+    shapes[index] = {
+      ...day.shape,
+      events: day.shape.events.map((event) => (event === found ? mock : event)),
+      minutes: getMockDayMinutes({ base: day.shape.minutes, entry }),
     };
-
-    relocations.push(...(funded.at === index ? [] : [{ from: date, to: at }]));
 
     entries.push(entry);
     after = identity ? identity.day : after;
-    windowStart = funded.at + 1;
+    windowStart = index + 1;
     carried = [];
 
     if (source) {
-      sourced.add(at);
+      sourced.add(date);
     }
   });
 
@@ -395,7 +390,6 @@ export function fundMocks({
     days: days.map((day, index) => ({ ...day, shape: shapes[index] ?? day.shape })),
     funding: entries,
     matched: [...matches.values()],
-    relocations,
     sourced,
     unfunded,
   };

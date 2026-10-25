@@ -86,6 +86,7 @@ function readDay({
     calendar: getPlanCalendar({ dailyMinutes: input.goal.dailyMinutes, settings }),
     date: fromIsoDate(date),
     exam: getExamDayRules({ isExam: true, settings }),
+    overflow: built.checkpointOverflow,
     targetDate: input.goal.targetDate,
   });
 
@@ -120,12 +121,12 @@ describe("a mock moved onto a day that holds something", () => {
   });
 
   // A phase's challenge stays on the study day after its lessons (see `placeExamBosses`): a mock
-  // moved onto it shares the day, which asks for both when its days fund them.
+  // the learner moves onto it shares the day, which asks for both, the challenge's time on top.
   it("keeps a phase checkpoint's time beside it", () => {
-    const plain = examInput({ lessons: 200, targetDate: fromIsoDate("2020-11-04") });
+    const plain = buildPlan(examInput({ lessons: 200, targetDate: fromIsoDate("2020-11-04") }));
 
-    const target = buildPlan(plain)
-      .items.flatMap((item) =>
+    const target = plain.items
+      .flatMap((item) =>
         item.kind === "boss" && item.scheduledFor ? [toIsoDate(item.scheduledFor)] : [],
       )
       .find((date) => date > "2020-10-09");
@@ -134,11 +135,14 @@ describe("a mock moved onto a day that holds something", () => {
       throw new Error("Expected a phase checkpoint after the first mock");
     }
 
-    const input = examInput({
-      lessons: 200,
-      moves: [{ from: "2020-10-09", to: target }],
-      targetDate: fromIsoDate("2020-11-04"),
-    });
+    const input = {
+      ...examInput({
+        lessons: 200,
+        moves: [{ from: "2020-10-09", to: target }],
+        targetDate: fromIsoDate("2020-11-04"),
+      }),
+      items: plain.items.map((item, position) => ({ ...item, id: item.key, position })),
+    };
 
     const built = buildPlan(input);
     const day = readDay({ built, date: target, input });
@@ -278,13 +282,7 @@ describe("banked time when the calendar moves the next mock", () => {
 // A plan is saved only once its mocks hold (see `resolvePlannedMocks`): never a pass that still
 // sets time aside for a mock it doesn't hold.
 describe(resolvePlannedMocks, () => {
-  const settled: PlannedMocks = {
-    horizon: 2,
-    mockFunding: [],
-    next: null,
-    relocations: [],
-    unfundedMocks: [],
-  };
+  const settled: PlannedMocks = { horizon: 2, mockFunding: [], next: null, unfundedMocks: [] };
 
   const unsettled: PlannedMocks = {
     ...settled,
@@ -408,46 +406,5 @@ describe("a weekly event moved onto a day that has one", () => {
     expect(events.map((event) => [event.key, event.mock?.day])).toStrictEqual([
       ["mock:2020-10-12", 1],
     ]);
-  });
-});
-
-/** A plan whose earlier run moved the 9th's mock to the 12th, with the learner's `moves`. */
-function buildRelocated(moves: MovedEvent[]) {
-  const input = examInput({ lessons: 200, moves, targetDate: fromIsoDate("2020-11-04") });
-
-  return buildPlan({
-    ...input,
-    settings: { ...input.settings, mockRelocations: [{ from: "2020-10-09", to: "2020-10-12" }] },
-  });
-}
-
-/** A built plan's mocks: their days and minutes. */
-function listMocks(built: ReturnType<typeof buildPlan>) {
-  return built.items.flatMap((item) =>
-    item.kind === "mock" && item.scheduledFor
-      ? [[toIsoDate(item.scheduledFor), item.minutes] as const]
-      : [],
-  );
-}
-
-// A mock an earlier run moved off a checkpoint's day (`mockRelocations`) stays on its new day, as
-// announced, and the learner moves it from there; undoing their move brings it back there.
-describe("a mock the plan moved off its checkpoint's day", () => {
-  it("stays on its new day, its half day's length kept", () => {
-    const built = buildRelocated([]);
-
-    expect(listMocks(built)).toContainEqual(["2020-10-12", 165]);
-    expect(listMocks(built).map(([date]) => date)).not.toContain("2020-10-09");
-    expect(built.mocks.relocations).toStrictEqual([{ from: "2020-10-09", to: "2020-10-12" }]);
-  });
-
-  it("moves from its new day as the learner moves it, and back when they undo", () => {
-    const moved = buildRelocated([{ from: "2020-10-12", to: "2020-10-13" }]);
-    const dates = listMocks(moved).map(([date]) => date);
-
-    expect(listMocks(moved)).toContainEqual(["2020-10-13", 165]);
-    expect(dates).not.toContain("2020-10-12");
-    expect(dates).not.toContain("2020-10-09");
-    expect(listMocks(buildRelocated([]))).toContainEqual(["2020-10-12", 165]);
   });
 });

@@ -80,12 +80,6 @@ const input: Required<BuildPlanInput> = {
   setAsideLeftWork: true,
   settings: parsePlanSettings({ startDate: "2026-10-12" }),
   strongAreas: new Set(["Math"]),
-  testedTeaching: [
-    {
-      date: "2026-10-20",
-      lessons: new Map([["lesson:fractions-0", new Map([["2026-10-19", 4]])]]),
-    },
-  ],
   today: TODAY,
   todayShown: true,
   topicLevels: [{ level: "high", subject: "Math", topic: "Ratios" }],
@@ -106,7 +100,6 @@ const RUN_FIELDS = new Set([
   "phaseEnds",
   "requestedMoveDates",
   "setAsideLeftWork",
-  "testedTeaching",
   "today",
   "todayShown",
 ]);
@@ -116,10 +109,11 @@ const item = { key: "lesson:fractions-0" };
 const key = getPlanInputsKey({ input, items: [] });
 
 describe(getPlanInputsKey, () => {
-  // A plan saved before still reads as unchanged.
+  // A plan saved before still reads as unchanged. Those saved before an exam's challenges ran on
+  // top of their days (their settings kept the mocks runs moved off them) plan once more.
   it("keeps the bytes of the keys plans were saved with", () => {
     expect(getPlanInputsKey({ input, items: [{ ...item, status: "done" }] })).toBe(
-      "d963076eec90be5f7caa22cf68020899712fc712b284e1603769dc682b7942cb",
+      "73541100b6c938f450c7a826186798436b06a14578e9f3f77048401b9b0a64e6",
     );
   });
 

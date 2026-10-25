@@ -9,7 +9,6 @@ import { after as afterResponse } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
-import { getChallenge } from "../checkpoints/get-challenge";
 import { startChallenge } from "../checkpoints/start-challenge";
 import { getMock } from "../exams/mocks/get-mock";
 import { examStructureSchema } from "../library/exams/blueprint-contract";
@@ -117,11 +116,11 @@ function bosses(items: PlanItem[]) {
 
 function expectSavedSelection({ after, before }: { after: PlanItem[]; before: PlanItem[] }) {
   expect(teaching(after)).toStrictEqual(teaching(before));
-  expect(teaching(after)).toHaveLength(45);
+  expect(teaching(after)).toHaveLength(47);
 
   expect(
     [0, 1, 2].map((phase) => teaching(after).filter((item) => item.phase === phase).length),
-  ).toStrictEqual([14, 16, 15]);
+  ).toStrictEqual([14, 17, 16]);
 
   expect(bosses(after)).toStrictEqual(bosses(before));
 
@@ -164,21 +163,13 @@ async function moveOntoSavedBoss(fixture: Awaited<ReturnType<typeof setup>>) {
   }
 
   expect(before.contributions).toHaveLength(9);
-  expect(after).toMatchObject({ date: COEVENT_DAY, fixedMinutes: 15, minutes: 165 });
-  expect(after.contributions).toHaveLength(14);
-  const oldDates = new Set(before.contributions.map((part) => part.date));
+  expect(after).toStrictEqual({ ...before, date: COEVENT_DAY });
 
-  expect(after.contributions.filter((part) => oldDates.has(part.date))).toStrictEqual(
-    before.contributions,
-  );
-
-  expect(after.contributions.filter((part) => !oldDates.has(part.date))).toStrictEqual([
-    { date: "2020-10-12", minutes: 8.333333333333334 },
-    { date: "2020-10-13", minutes: 1.6666666666666667 },
-    { date: "2020-10-14", minutes: 1.6666666666666667 },
-    { date: "2020-10-15", minutes: 1.6666666666666667 },
-    { date: "2020-10-16", minutes: 1.6666666666666667 },
-  ]);
+  // The challenge runs on top of the mock's new day, so the days before it set nothing more aside.
+  expect(parsePlanSettings(saved.settings).checkpointOverflow).toContainEqual({
+    date: COEVENT_DAY,
+    minutes: 15,
+  });
 
   return after;
 }
@@ -260,7 +251,8 @@ async function saveProgressBeforeBossDay(fixture: Awaited<ReturnType<typeof setu
   expect(
     phaseLessons(1).map((item) => item.scheduledFor?.toISOString().slice(0, 10)),
   ).toStrictEqual([
-    "2020-10-09",
+    "2020-10-07",
+    "2020-10-08",
     "2020-10-09",
     "2020-10-09",
     "2020-10-09",
@@ -270,11 +262,11 @@ async function saveProgressBeforeBossDay(fixture: Awaited<ReturnType<typeof setu
     "2020-10-14",
     "2020-10-14",
     "2020-10-14",
+    "2020-10-14",
     "2020-10-15",
     "2020-10-15",
     "2020-10-15",
     "2020-10-15",
-    "2020-10-16",
     "2020-10-16",
   ]);
 
@@ -346,7 +338,7 @@ async function saveProgressBeforeBossDay(fixture: Awaited<ReturnType<typeof setu
   );
 
   expect(nextTeaching.map((item) => item.lessonId)).toStrictEqual(
-    fixture.library.lessons.slice(14, 31).map((lesson) => lesson.id),
+    fixture.library.lessons.slice(14, 33).map((lesson) => lesson.id),
   );
 
   const second = await finishTeaching({
@@ -386,10 +378,11 @@ async function saveProgressBeforeBossDay(fixture: Awaited<ReturnType<typeof setu
       ({ endedAt }) => endedAt.toISOString().slice(0, 10) === date,
     ).length;
 
+    // The first phase's challenge took 900 seconds of its own day, beside the lessons there.
     expect(progress.find((day) => day.date.toISOString().slice(0, 10) === date)).toMatchObject({
       lessonsCompleted: count,
       staticCompleted: count,
-      timeSpentSeconds: count * 240,
+      timeSpentSeconds: count * 240 + (date === FIRST_BOSS_DAY ? 900 : 0),
     });
   }
 
@@ -440,10 +433,10 @@ describe("funded mock sessions reserve all their fixed work", () => {
     vi.useRealTimers();
   });
 
-  // The learner won the first challenge with two lessons done ahead, at the pace lessons estimate:
-  // the session's refresh plans again from tomorrow (the pace's source became their own) and fills
-  // the room their progress freed (P1 diagnosis: three lessons of the same skill). It never takes a
-  // faster pace, and it says what it added.
+  // The learner won the first challenge with two lessons done ahead, and the next phase's first six
+  // too, at the pace lessons estimate: the session's refresh plans again from tomorrow (the pace's
+  // source became their own) and fills the room their progress freed (P1 diagnosis: three lessons
+  // of the same skill). It never takes a faster pace, and it says what it added.
   it("brings lessons back only as the learner's own progress frees room, and says so", async () => {
     const fixture = await setup({ withBoss: true });
     await moveOntoSavedBoss(fixture);
@@ -466,7 +459,7 @@ describe("funded mock sessions reserve all their fixed work", () => {
     };
 
     const before = await readItems();
-    expect(writtenIds(before)).toHaveLength(45);
+    expect(writtenIds(before)).toHaveLength(47);
     const beforeIds = new Set(before.map((item) => item.id));
 
     // Every lesson the learner saw stays, as the same lesson: none removed, replaced or set aside.
@@ -486,9 +479,12 @@ describe("funded mock sessions reserve all their fixed work", () => {
       throw new Error("Expected the real first phase challenge");
     }
 
+    // The challenge runs on top of its day, so finishing it on time frees none of the lessons'.
+    const next = before.filter((item) => item.kind === "lesson" && item.phase === 1).slice(0, 6);
+
     await finishTeaching({
       beforeDate: FIRST_BOSS_DAY,
-      items: before.filter((item) => item.kind === "lesson" && item.phase === 0),
+      items: [...before.filter((item) => item.kind === "lesson" && item.phase === 0), ...next],
       userId: fixture.user.id,
     });
 
@@ -583,11 +579,11 @@ describe("funded mock sessions reserve all their fixed work", () => {
       ),
     ).toStrictEqual([]);
 
-    expect
-      .soft(
-        parsePlanSettings(saved.settings).mockFunding.find((entry) => entry.date === COEVENT_DAY),
-      )
-      .toMatchObject({ fixedMinutes: 15, minutes: 165 });
+    expect(
+      parsePlanSettings(saved.settings).checkpointOverflow.find(
+        (entry) => entry.date === COEVENT_DAY,
+      ),
+    ).toStrictEqual({ date: COEVENT_DAY, minutes: 15 });
 
     vi.setSystemTime(new Date(`${COEVENT_DAY}T12:00:00Z`));
 
@@ -690,7 +686,10 @@ describe("funded mock sessions reserve all their fixed work", () => {
     });
   });
 
-  it("discloses the lost last lesson and funded mock relocation when overdue bosses take the day", async () => {
+  // A learner who moved the week's mock onto a day, then left the first two phases' challenges: a
+  // challenge's time runs on top of its day, so the run carries them past the day the learner moved
+  // the mock onto, to the next study day. The mock keeps its day and funding, and every lesson stays.
+  it("carries overdue challenges past the mock's day, keeping the mock and every lesson", async () => {
     const fixture = await setup({ withBoss: true });
 
     await expect(
@@ -703,11 +702,13 @@ describe("funded mock sessions reserve all their fixed work", () => {
       }),
     ).resolves.toMatchObject({ status: "applied" });
 
-    const original = await prisma.plan.findUniqueOrThrow({
-      include: { items: { orderBy: { position: "asc" } } },
-      where: { id: fixture.plan.id },
-    });
+    const readPlan = () =>
+      prisma.plan.findUniqueOrThrow({
+        include: { items: { orderBy: { position: "asc" } } },
+        where: { id: fixture.plan.id },
+      });
 
+    const original = await readPlan();
     expectSavedSelection({ after: original.items, before: fixture.selected });
 
     await prisma.lesson.updateMany({
@@ -722,14 +723,19 @@ describe("funded mock sessions reserve all their fixed work", () => {
 
     vi.setSystemTime(new Date(`${FIRST_BOSS_DAY}T12:00:00Z`));
     const skipped = await openTodayView({ goalId: fixture.goal.id, timeZone: "UTC" });
-    expect(skipped).toMatchObject({ status: "ready" });
 
     if (skipped.status !== "ready") {
       throw new Error("Expected the first boss day");
     }
 
+    // The first phase's challenge leads its day's lessons, its time on top of theirs.
     expect(skipped.today.session.blocks.map((block) => block.planItemId)).toStrictEqual([
       original.items.find((item) => item.kind === "boss" && item.phase === 0)?.id,
+      original.items.find(
+        (item) =>
+          item.kind === "lesson" &&
+          item.scheduledFor?.toISOString().slice(0, 10) === FIRST_BOSS_DAY,
+      )?.id,
     ]);
 
     await finishTeaching({
@@ -738,248 +744,57 @@ describe("funded mock sessions reserve all their fixed work", () => {
     });
 
     vi.setSystemTime(new Date(`${BOSS_DAY}T12:00:00Z`));
-
-    const before = await prisma.plan.findUniqueOrThrow({
-      include: { items: { orderBy: { position: "asc" } } },
-      where: { id: fixture.plan.id },
-    });
-
-    const beforeView = await getGoalPlan(fixture.goal.id);
+    const before = await readPlan();
+    const mock = before.items.find((item) => item.kind === "mock");
+    const overdue = before.items.filter((item) => item.kind === "boss" && item.phase <= 1);
 
     const preview = await countDatabaseStatements(() =>
       getTodayView({ goalId: fixture.goal.id, timeZone: "UTC" }),
     );
 
     expect(preview.writes).toBe(0);
-    expect(preview.result.status).toBe("ready");
 
     if (preview.result.status !== "ready") {
-      throw new Error("Expected the selected missed-day preview");
+      throw new Error("Expected the mock's day before Open");
     }
 
-    // The selected mock stays visible; its intro opens only after its row is persisted.
-    expect(preview.result.today.weeklyChallenge).toMatchObject({
-      date: new Date("2020-10-20"),
-      kind: "mock",
-      planItemId: null,
-      questions: 30,
-      timeLimitMinutes: 165,
-    });
+    expect(preview.result.today.session.blocks.map((block) => block.planItemId)).toStrictEqual([
+      mock?.id,
+    ]);
 
-    await expect(
-      prisma.plan.findUniqueOrThrow({
-        include: { items: { orderBy: { position: "asc" } } },
-        where: { id: fixture.plan.id },
-      }),
-    ).resolves.toStrictEqual(before);
+    await expect(readPlan()).resolves.toStrictEqual(before);
 
     const today = await openTodayView({ goalId: fixture.goal.id, timeZone: "UTC" });
-
-    const after = await prisma.plan.findUniqueOrThrow({
-      include: { items: { orderBy: { position: "asc" } } },
-      where: { id: fixture.plan.id },
-    });
-
-    const view = await getGoalPlan(fixture.goal.id);
-    const mock = after.items.find((item) => item.kind === "mock");
-    const card = await getChallenge({ input: { timeZone: "UTC" }, planItemId: mock?.id ?? "" });
-
-    expect(today.status).toBe("ready");
+    const after = await readPlan();
 
     if (today.status !== "ready") {
       throw new Error("Expected actual Today");
     }
 
-    const oldMock = before.items.find((item) => item.kind === "mock");
+    expect(today.today.session.blocks.map((block) => block.planItemId)).toStrictEqual([mock?.id]);
+    expect(today.today.session.minutes).toMatchObject({ dailyGoal: 165, planned: 165 });
 
-    expect(
-      before.items
-        .filter((item) => item.scheduledFor?.toISOString().slice(0, 10) === BOSS_DAY)
-        .map((item) => item.kind)
-        .toSorted(),
-    ).toStrictEqual(["mock"]);
-
-    const beforeFunding = parsePlanSettings(before.settings).mockFunding;
-    const afterFunding = parsePlanSettings(after.settings).mockFunding;
-    expect(beforeView).toMatchObject({ status: "ready" });
-
-    if (beforeView.status !== "ready") {
-      throw new Error("Expected the funded coevent Plan");
-    }
-
-    // Read-only Plan already projects the real missed-day relocation; the saved premise stays165.
-    expect(beforeView.plan.week.days.find((day) => day.date === BOSS_DAY)?.minutes).toBe(30);
-    expect(view.status).toBe("ready");
-
-    if (view.status !== "ready") {
-      throw new Error("Expected the persisted relocated Plan");
-    }
-
-    const visible = (plan: typeof view.plan) =>
-      plan.week.days
-        .flatMap((day) => day.items)
-        .map(({ kind, scheduledFor, title }) => ({ kind, scheduledFor, title }));
-
-    expect(visible(beforeView.plan)).toStrictEqual(visible(view.plan));
-
-    expect(before.items.find((item) => item.kind === "boss" && item.phase === 0)).toMatchObject({
-      completedAt: null,
-      scheduledFor: new Date(FIRST_BOSS_DAY),
+    expect(after.items.find((item) => item.kind === "mock")).toMatchObject({
+      id: mock?.id,
+      scheduledFor: new Date(BOSS_DAY),
       status: "todo",
     });
 
-    expect(beforeFunding).toHaveLength(1);
-    expect(beforeFunding[0]).not.toHaveProperty("fixedMinutes");
-
-    expect(beforeFunding[0]).toMatchObject({
-      date: BOSS_DAY,
-      day: 1,
-      fullLength: false,
-      minutes: 165,
-    });
-
-    expect(afterFunding).toHaveLength(1);
-
-    expect(afterFunding[0]).toMatchObject({
-      date: "2020-10-20",
-      day: 1,
-      fullLength: false,
-      minutes: 165,
-    });
-
-    expect(afterFunding[0]).not.toHaveProperty("fixedMinutes");
-
-    expect(afterFunding[0]?.contributions).toStrictEqual(beforeFunding[0]?.contributions);
-    expect(afterFunding[0]?.contributions).toHaveLength(9);
-
-    expect(parsePlanSettings(after.settings).mockRelocations).toStrictEqual([
-      { from: BOSS_DAY, to: "2020-10-20" },
-    ]);
-
-    expect(parsePlanSettings(after.settings).movedEvents).toStrictEqual([
-      { from: ORIGINAL_MOCK, to: BOSS_DAY },
-    ]);
-
-    expect(after.items.filter((item) => item.kind === "mock")).toHaveLength(1);
-
-    expect(mock).toMatchObject({
-      completedAt: null,
-      scheduledFor: new Date("2020-10-20"),
-      status: "todo",
-    });
-
-    expect(doneTeaching(after.items)).toStrictEqual(doneTeaching(before.items));
+    expect(parsePlanSettings(after.settings).mockFunding).toStrictEqual(
+      parsePlanSettings(before.settings).mockFunding,
+    );
 
     expect(after.items.filter((item) => item.kind === "boss" && item.phase <= 1)).toMatchObject(
-      before.items
-        .filter((item) => item.kind === "boss" && item.phase <= 1)
-        .map((item) => ({
-          completedAt: null,
-          id: item.id,
-          scheduledFor: new Date(BOSS_DAY),
-          status: "todo",
-        })),
+      overdue.map((item) => ({ id: item.id, scheduledFor: new Date(COEVENT_DAY), status: "todo" })),
     );
 
-    expect(
-      after.items
-        .filter((item) => item.scheduledFor?.toISOString().slice(0, 10) === "2020-10-19")
-        .map((item) => item.id),
-    ).toStrictEqual(
-      before.items
-        .filter((item) => item.kind === "lesson" && item.phase === 2)
-        .slice(0, 2)
-        .map((item) => item.id),
-    );
-
-    expect(
-      after.items
-        .filter((item) => item.scheduledFor?.toISOString().slice(0, 10) === "2020-10-19")
-        .map((item) => item.kind),
-    ).toStrictEqual(["lesson", "lesson"]);
-
-    expect(
-      after.items
-        .filter((item) => item.scheduledFor?.toISOString().slice(0, 10) === "2020-10-19")
-        .map((item) => item.lessonId),
-    ).toStrictEqual(fixture.library.lessons.slice(30, 32).map((lesson) => lesson.id));
-
-    const lost = fixture.library.lessons.at(44);
-
-    if (!lost) {
-      throw new Error("Expected the last selected lesson");
-    }
-
-    expect(before.items.find((item) => item.lessonId === lost.id)).toMatchObject({
-      completedAt: null,
-      scheduledFor: new Date("2020-10-28"),
-      status: "todo",
+    expect(parsePlanSettings(after.settings).checkpointOverflow).toContainEqual({
+      date: COEVENT_DAY,
+      minutes: 30,
     });
 
-    expect(writtenIds(after.items)).toStrictEqual(
-      writtenIds(before.items).filter((lessonId) => lessonId !== lost.id),
-    );
-
-    expect(after.items.some((item) => item.id === oldMock?.id)).toBe(false);
-    expect(today.today.session.minutes).toMatchObject({ dailyGoal: 30, planned: 30 });
-
-    expect(today.today.session.blocks.map((block) => block.planItemId)).toStrictEqual(
-      before.items.filter((item) => item.kind === "boss" && item.phase <= 1).map((item) => item.id),
-    );
-
-    expect(today.today.session.blocks.map((block) => block.estimatedMinutes)).toStrictEqual([
-      15, 15,
-    ]);
-
-    expect(today.today.planChange).toMatchObject({
-      days: 1,
-      effect: {
-        lessonsAdded: 0,
-        lessonsRemoved: 1,
-        nextMock: { after: "2020-10-20", before: BOSS_DAY },
-      },
-      kind: "missedDays",
-      seen: false,
-      source: "system",
-      status: "applied",
-    });
-
-    expect(view).toMatchObject({ status: "ready" });
-
-    if (view.status !== "ready") {
-      throw new Error("Expected actual Plan");
-    }
-
-    expect(view.plan.week.days.find((day) => day.date === BOSS_DAY)?.minutes).toBe(30);
-
-    expect(view.plan.phases.find((phase) => phase.index === 2)?.mocks).toStrictEqual({
-      count: 1,
-      nextDate: "2020-10-20",
-    });
-
-    const session = await prisma.studySession.findUniqueOrThrow({
-      include: { blocks: { orderBy: { position: "asc" } } },
-      where: { id: today.today.session.id },
-    });
-
-    expect(session.plannedMinutes).toBe(30);
-
-    expect(session.blocks.map((block) => readBlockPayload(block).planItemId)).toStrictEqual(
-      before.items.filter((item) => item.kind === "boss" && item.phase <= 1).map((item) => item.id),
-    );
-
-    expect(session.blocks.map((block) => block.estimatedMinutes)).toStrictEqual([15, 15]);
-
-    expect(card).toMatchObject({
-      challenge: {
-        date: "2020-10-20",
-        fullLength: false,
-        minutes: 165,
-        planItemId: mock?.id,
-        status: "upcoming",
-      },
-      status: "ready",
-    });
+    expect(writtenIds(after.items)).toStrictEqual(writtenIds(before.items));
+    expect(doneTeaching(after.items)).toStrictEqual(doneTeaching(before.items));
   });
 
   it("leaves an independent three-question due capsule for later when the mock fills all 165 minutes", async () => {

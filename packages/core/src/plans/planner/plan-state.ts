@@ -130,15 +130,14 @@ const movedEventSchema = z.object({ from: isoDateSchema, to: isoDateSchema });
 /**
  * A mock the plan schedules and funds (see `fundMocks`): its date, which exam day it sits (`day`,
  * null for an exam without days; absent on plans saved before, until their next run) and whether
- * all of it (`fullLength`), its real length (`getMockClock`), the minutes of what else its day
- * keeps (a phase's checkpoint, `fixedMinutes`), and what each study day before it sets aside for
- * it, in minutes, past days as they set it aside. Its session plays this mock, never another day.
+ * all of it (`fullLength`), its real length (`getMockClock`), and what each study day before it
+ * sets aside for it, in minutes, past days as they set it aside. Its session plays this mock, never
+ * another day.
  */
 const mockFundingSchema = z.object({
   contributions: z.array(z.object({ date: isoDateSchema, minutes: z.number().positive() })),
   date: isoDateSchema,
   day: z.number().int().nullable().optional(),
-  fixedMinutes: z.number().min(0).optional(),
   fullLength: z.boolean().optional(),
   minutes: z.number().positive(),
 });
@@ -230,12 +229,6 @@ const planSettingsSchema = z.object({
    * plan's week read each day's time through it (see `getFundedMinutes`), so they agree.
    */
   mockFunding: z.array(mockFundingSchema).default([]),
-  /**
-   * The mocks the last planning run moved off a day a phase's checkpoint left without time for
-   * them (see `findRelocation`), derived from the plan, never a learner's move: later runs keep
-   * them there, under the learner's own moves, while their new day stays free.
-   */
-  mockRelocations: z.array(movedEventSchema).default([]),
   movedEvents: z.array(movedEventSchema).default([]),
   /**
    * The exam day the plan took from the exam's notice, or its estimate, when the learner gave no

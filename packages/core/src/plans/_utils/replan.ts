@@ -267,7 +267,7 @@ export async function computePlan({
     topicLevels,
   });
 
-  // Compare the inputs before the producer can change its own funding or relocations. Its output
+  // Compare the inputs before the producer can change its own funding. Its output
   // is not news: rebuilding identical inputs moved a saved boss and deleted a funded mock.
   if (shouldSkipPlanBuild({ input, savedKey: context.plan.inputsKey, skipUnchangedInputs })) {
     return null;
