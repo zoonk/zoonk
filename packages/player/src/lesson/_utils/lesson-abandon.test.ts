@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { checkStep, explanationStep, stepResult } from "../_test-utils/lesson-steps";
+import {
+  checkStep,
+  explanationStep,
+  stepResult,
+  typedAnswerStep,
+} from "../_test-utils/lesson-steps";
 import { lessonPlayerReducer } from "../lesson-player-reducer";
 import { type LessonPlayerAction, createInitialState } from "../lesson-player-state";
 import { getAbandonEvent } from "./lesson-abandon";
@@ -28,10 +33,10 @@ function answer(stepId: string, isCorrect: boolean): LessonPlayerAction[] {
   ];
 }
 
-function play(actions: LessonPlayerAction[]) {
+function play(actions: LessonPlayerAction[], steps = STEPS) {
   return actions.reduce(
     (state, action) => lessonPlayerReducer(state, action),
-    createInitialState({ id: "lesson", steps: STEPS }),
+    createInitialState({ id: "lesson", steps }),
   );
 }
 
@@ -65,6 +70,21 @@ describe(getAbandonEvent, () => {
     ]);
 
     expect(getAbandonEvent(state)?.properties).toMatchObject({ wrong_in_a_row: 1 });
+  });
+
+  it("leaves out an answer without a verdict, such as a sample answer read", () => {
+    const state = play(
+      [
+        STARTED,
+        ...answer("q1", false),
+        { type: "continue" },
+        { stepId: "write", type: "skipWriting" },
+        { type: "continue" },
+      ],
+      [checkStep("q1"), typedAnswerStep("write"), checkStep("q2")],
+    );
+
+    expect(getAbandonEvent(state)?.properties).toMatchObject({ screen: 3, wrong_in_a_row: 1 });
   });
 
   it("counts nothing before the run starts", () => {

@@ -3,7 +3,8 @@ import { type LessonPlayerState } from "../lesson-player-state";
 
 /**
  * Wrong answers in a row before the screen the learner left: the latest result of each screen
- * seen so far, newest first, until a right one. Screens without an answer don't break the run.
+ * seen so far, newest first, until a right one. Screens without a verdict (no answer, a written
+ * answer nothing checked or only its sample answer read) don't break the run, nor add to it.
  */
 function countWrongInARow(state: LessonPlayerState): number {
   const seen = state.queue.slice(0, state.position + 1).toReversed();
@@ -11,7 +12,7 @@ function countWrongInARow(state: LessonPlayerState): number {
 
   const verdicts = latestFirst.flatMap((stepId) => {
     const result = state.results[stepId];
-    return result ? [result.isCorrect] : [];
+    return result?.checked ? [result.isCorrect] : [];
   });
 
   const firstRight = verdicts.indexOf(true);
