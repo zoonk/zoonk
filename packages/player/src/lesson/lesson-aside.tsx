@@ -25,7 +25,7 @@ import {
   getLessonRecap,
   getRecapMark,
 } from "./_utils/lesson-aside";
-import { isLanguageStep, isReadStep } from "./_utils/lesson-steps";
+import { getExplanationsAfter, isLanguageStep, isReadStep } from "./_utils/lesson-steps";
 import { useLessonPlayer, useLessonPlayerConfig } from "./lesson-player-context";
 import { type PlayableLibraryStep } from "./lesson-player-types";
 import { ConversationToggle, LessonDock } from "./tutor/lesson-dock";
@@ -137,21 +137,26 @@ function useScreenRecap() {
 
 /**
  * "From the lesson" on a phone or a tablet in portrait: the same recap as the aside's, folded into
- * one row under the question (and its result once it's checked), opening in place, so looking
- * back never leaves the question. Wide screens have it beside the question instead.
+ * one row under the question (and its result once it's checked) that names the screen it holds,
+ * opening in place, so looking back never leaves the question. A question asked before its
+ * explanation offers that explanation instead ("Explain first"), since an earlier screen isn't
+ * what it's about. Wide screens have the recap beside the question.
  */
 export function LessonRecapRow() {
   const t = useExtracted();
+  const { state } = useLessonPlayer();
   const { mark, recap } = useScreenRecap();
 
-  if (!recap) {
+  if (!recap || getExplanationsAfter(state).length > 0) {
     return null;
   }
+
+  const title = recapTitle(recap.step);
 
   return (
     <PlayerContentFrame className="pb-6 lg:hidden" data-slot="lesson-recap-row">
       <Disclosure
-        aside={t("screen {number}", { number: String(recap.position + 1) })}
+        description={title ? <LessonRichText text={title} /> : undefined}
         icon={
           <ListRowIcon>
             <TextQuoteIcon />

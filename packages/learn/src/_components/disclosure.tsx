@@ -10,6 +10,7 @@ import { ChevronDownIcon } from "lucide-react";
 import {
   LIST_ROW_INTERACTIVE_CLASS,
   ListRowContent,
+  ListRowDescription,
   ListRowLeading,
   ListRowTitle,
   ListRowTrailing,
@@ -34,6 +35,7 @@ export function Disclosure({
   children,
   className,
   defaultOpen = false,
+  description,
   icon,
   title,
 }: {
@@ -42,6 +44,8 @@ export function Disclosure({
   children: React.ReactNode;
   className?: string;
   defaultOpen?: boolean;
+  /** A quiet line under the title saying what's inside. */
+  description?: React.ReactNode;
   icon: React.ReactNode;
   title: string;
 }) {
@@ -51,6 +55,7 @@ export function Disclosure({
         <ListRowLeading>{icon}</ListRowLeading>
         <ListRowContent>
           <ListRowTitle>{title}</ListRowTitle>
+          {description && <ListRowDescription>{description}</ListRowDescription>}
         </ListRowContent>
         {aside !== undefined && <ListRowTrailing>{aside}</ListRowTrailing>}
         <ChevronDownIcon

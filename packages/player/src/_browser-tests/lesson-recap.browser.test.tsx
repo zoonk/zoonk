@@ -167,7 +167,9 @@ describe("lesson recap", () => {
 
       const recap = page.getByRole("button", { name: /^From the lesson/u });
 
+      // Folded, it names the screen it holds by its title.
       await expect.element(recap).toHaveAttribute("aria-expanded", "false");
+      expect(recap.element().textContent).toContain("A cloud, not a little ball");
       expect(phoneRecapTitle()).toBeNull();
 
       await answer(WRONG_OPTION, "Not quite");
@@ -179,6 +181,34 @@ describe("lesson recap", () => {
 
       const marked = [...document.querySelectorAll("mark")].find((mark) => mark.checkVisibility());
       expect(marked?.textContent).toBe(MARKED);
+    });
+  });
+
+  // A question asked before its explanation offers that explanation ("Explain first"); the screen
+  // before it is about something else, and a second help row under it only competed.
+  it("folds no recap under a phone's question asked before its explanation", async () => {
+    await atViewport(PHONE, async () => {
+      const lesson = buildLesson([
+        explanationStep({ text: "Electrons sit around the nucleus.", title: "Around the nucleus" }),
+        question(),
+        explanationStep(playableStepContent.explanation),
+      ]);
+
+      renderLessonPlayer({ lesson });
+      await page.getByRole("button", { name: /^Next/u }).click();
+
+      await expect.element(page.getByRole("button", { name: "Explain first" })).toBeVisible();
+
+      await expect
+        .element(page.getByRole("button", { name: /^From the lesson/u }))
+        .not.toBeInTheDocument();
+
+      // Picking an answer doesn't bring it in under the question.
+      await page.getByRole("radio", { name: WRONG_OPTION }).click();
+
+      await expect
+        .element(page.getByRole("button", { name: /^From the lesson/u }))
+        .not.toBeInTheDocument();
     });
   });
 });
