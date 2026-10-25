@@ -7,6 +7,7 @@ import { createGoalPlan } from "../create-goal-plan";
 import { addDays, toIsoDate } from "../planner/plan-calendar";
 import { parsePlanPhases, parsePlanSettings } from "../planner/plan-state";
 import { refreshGoalPlan } from "../refresh-goal-plan";
+import { parsePlanChangePayload } from "./plan-change-payload";
 import { loadTodayPlanChange } from "./today-plan-change";
 
 const NOW = new Date("2020-09-28T12:00:00Z");
@@ -121,7 +122,7 @@ describe("proposal effects on Today", () => {
     const goalBefore = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
 
     // Superseded by C2's next-study-day rule: every run moves this end, so the optional proposal
-    // moves nothing more and isn't offered; the refresh's notice says the move instead.
+    // moves nothing more and isn't offered; the refresh's change records the move instead.
     await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toBeNull();
 
     await expect(
@@ -138,11 +139,15 @@ describe("proposal effects on Today", () => {
 
     await refreshGoalPlan({ goalId: goal.id });
 
-    const today = await loadTodayPlanChange({ goal, now: NOW });
+    const change = await prisma.planChange.findFirstOrThrow({
+      orderBy: { createdAt: "desc" },
+      where: { kind: "estimateUpdated", planId: plan.id, status: "applied" },
+    });
 
-    expect(today).toMatchObject({ kind: "estimateUpdated", status: "applied" });
+    // The refresh moved the end on its own: its change says so, and Today asks nothing.
+    await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toBeNull();
 
-    expect(today?.effect?.phaseEnds).toStrictEqual([
+    expect(parsePlanChangePayload(change.payload).effect?.phaseEnds).toStrictEqual([
       // The challenge's day became a rest day: the phase's last lessons take the day after it, and
       // the challenge comes the first study day after them.
       {

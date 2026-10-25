@@ -108,9 +108,7 @@ export function prepareSelectedPlanSave({
   return {
     change,
     kind: "computed",
-    replacesPhaseDates:
-      change !== null &&
-      (parsePlanChangePayload(change.payload).effect?.phaseEnds?.length ?? 0) > 0,
+    replacesPhaseDates: replacesPhaseDates(change),
     write: toComputedPlanWrite({
       computed,
       context: {
@@ -180,4 +178,12 @@ export async function saveSelectedPlan({
   }
 
   return context.plan.version + 1;
+} /**
+ * Whether a change the selected plan saves moves the phase dates itself: a waiting proposal to
+ * move them no longer describes the plan, so saving it replaces that proposal.
+ */
+export function replacesPhaseDates(change: PlanChangeRecord | null): boolean {
+  return (
+    change !== null && (parsePlanChangePayload(change.payload).effect?.phaseEnds?.length ?? 0) > 0
+  );
 }

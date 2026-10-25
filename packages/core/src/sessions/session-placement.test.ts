@@ -9,10 +9,10 @@ import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
 import { loadSkillsToConfirm } from "../learner/_utils/load-skill-claims";
 import { finishGoalPlacement } from "../learner/placement/finish-goal-placement";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
+import { loadPlanChangeView } from "../plans/_utils/owned-plan";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { getGoalPreparation } from "../preparation/get-goal-preparation";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
-import { getTodayView } from "../view-models/today/get-today-view";
 import { getTodayStudySession } from "./_test-utils/open-today";
 import { answerStudyQuestion } from "./answer-study-question";
 import { readBlockPayload } from "./block-payload";
@@ -447,13 +447,12 @@ describe("placement in the first week's sessions", () => {
         .map(() => "skipped"),
     );
 
-    // Today says what the answer skipped, with its undo, instead of changing without a word.
-    const today = await getTodayView({ goalId: goal.id });
-
-    expect(today.status === "ready" && today.today.planChange).toMatchObject({
-      canUndo: true,
-      kind: "testedOut",
+    // The plan keeps what the answer skipped, with its undo; the skipped rows say it on the day.
+    const change = await prisma.planChange.findFirstOrThrow({
+      where: { kind: "testedOut", plan: { goalId: goal.id } },
     });
+
+    await expect(loadPlanChangeView(change.id)).resolves.toMatchObject({ canUndo: true });
   });
 
   it("never saves a wrong placement answer as a mistake", async () => {

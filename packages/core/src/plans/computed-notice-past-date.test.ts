@@ -130,7 +130,9 @@ describe("computed mandatory notice past-date eligibility", () => {
     },
   );
 
-  it("keeps mandatory notices when the learner explicitly studies an exam course beyond its date", async () => {
+  // Past the exam's date the plan has no date to put at risk, so settling missed days asks nothing:
+  // Open saves it for the Plan's history, and Today stays quiet.
+  it("settles missed days quietly when the learner explicitly studies an exam course beyond its date", async () => {
     const user = await userFixture();
 
     const fixture = await mandatoryNoticeDayFixture({
@@ -156,18 +158,7 @@ describe("computed mandatory notice past-date eligibility", () => {
     );
 
     expect(read.writes).toBe(0);
-
-    expect(read.result).toMatchObject({
-      status: "ready",
-      today: { planChange: { canUndo: false, id: null, kind: "missedDays", status: "applied" } },
-    });
-
-    if (read.result.status !== "ready") {
-      throw new Error("Expected the continuing course");
-    }
-
-    const effect = read.result.today.planChange?.effect;
-    expect(effect?.phaseEnds?.length).toBeGreaterThan(0);
+    expect(read.result).toMatchObject({ status: "ready", today: { planChange: null } });
 
     await expect(
       openStudyDay({
@@ -178,13 +169,12 @@ describe("computed mandatory notice past-date eligibility", () => {
       }),
     ).resolves.toMatchObject({ status: "opened" });
 
-    const saved = await getTodayView({ goalId: fixture.goal.id, timeZone: "UTC" });
+    const [saved, changes] = await Promise.all([
+      getTodayView({ goalId: fixture.goal.id, timeZone: "UTC" }),
+      prisma.planChange.findMany({ where: { planId: fixture.plan.id, status: "applied" } }),
+    ]);
 
-    expect(saved).toMatchObject({
-      status: "ready",
-      today: {
-        planChange: { canUndo: false, effect, kind: "missedDays", seen: false, status: "applied" },
-      },
-    });
+    expect(saved).toMatchObject({ status: "ready", today: { planChange: null } });
+    expect(changes).toStrictEqual([expect.objectContaining({ kind: "missedDays" })]);
   });
 });

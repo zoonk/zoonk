@@ -1,5 +1,5 @@
 import { getExamDocument } from "../../exams/exam-document";
-import { isAutomaticPlanChange } from "../../plans/_utils/automatic-plan-change";
+import { asksAboutAutomaticChange } from "../../plans/_utils/automatic-plan-change";
 import { parsePlanChangePayload } from "../../plans/_utils/plan-change-payload";
 import { isDateReached } from "../../plans/_utils/plan-end";
 import { type PlanChangeRecord } from "../../plans/_utils/replan";
@@ -36,14 +36,13 @@ export function getSelectedPlanNotice({
     today: selection.context.today,
   });
 
-  if (!isAutomaticPlanChange({ change, dateReached })) {
+  if (!asksAboutAutomaticChange({ change, dateReached })) {
     return null;
   }
 
   return {
     behind: payload.behind,
     canUndo: false,
-    chapterTitle: null,
     createdAt: now.toISOString(),
     days: payload.days,
     effect: payload.effect,

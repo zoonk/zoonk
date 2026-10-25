@@ -12707,7 +12707,7 @@
     },
     "/goals/{goalId}/area-practice": {
       "post": {
-        "description": "\"Practice now\" on a chapter (or another area of the goal's preparation): a bonus block of practice on that area's studied skills, added to today's session. It can start before the day's session is done, but counts as extra time: at most two bonus blocks a day, never past the daily time limit, with capped Brain Power. Tapping again returns the unfinished block.",
+        "description": "\"Practice now\" on a chapter (or another area of the goal's preparation): a bonus block of practice on that area's studied skills, added to today's session. It can start before the day's session is done, but counts as extra time: at most two bonus practice blocks a day, never past the daily time limit, with capped Brain Power. Tapping again returns the unfinished block.",
         "operationId": "createAreaPractice",
         "security": [
           {
@@ -14444,7 +14444,7 @@
     },
     "/goals/{goalId}/refresh-practice": {
       "post": {
-        "description": "\"Review\" on Content: the block of today's session that reviews the goal's skills that are fading or due today when one is still to do; otherwise a bonus block of practice on them, weakest first, added to today's session. A bonus block counts as extra time: at most two a day, never past the daily time limit, with capped Brain Power. Tapping again returns the same unfinished block.",
+        "description": "\"Review\" on Content: the block of today's session that reviews the goal's skills that are fading or due today when one is still to do; otherwise a bonus block of practice on them, weakest first, added to today's session. A bonus block counts as extra time: at most two bonus practice blocks a day, never past the daily time limit, with capped Brain Power. Tapping again returns the same unfinished block.",
         "operationId": "createRefreshPractice",
         "security": [
           {
@@ -23278,7 +23278,7 @@
     },
     "/study-sessions/{sessionId}/extra-blocks": {
       "post": {
-        "description": "\"10 more minutes\": one bonus block of mixed practice (or the next lesson) after the day's session, at most twice a day and never past the daily time limit. Its Brain Power is capped. A free exam plan past its first week has none (`plusRequired`): its practice and new lessons come with Plus.",
+        "description": "\"Keep learning\" after the day's session, or on a day the plan gives no time: the plan's next lessons, about ten minutes of them (`extraTime.lessons` lists them before the tap), studied a day early. With every lesson done, one bonus block of mixed practice instead, at most twice a day, with capped Brain Power. Never past the daily time limit. A free exam plan past its first week has none (`plusRequired`): its practice and new lessons come with Plus.",
         "operationId": "createStudyExtraBlock",
         "security": [
           {
@@ -23288,7 +23288,7 @@
             "cookieAuth": []
           }
         ],
-        "summary": "Add ten more minutes",
+        "summary": "Keep learning",
         "tags": [
           "Study sessions"
         ],
@@ -23308,7 +23308,7 @@
         ],
         "responses": {
           "201": {
-            "description": "The bonus block",
+            "description": "The first block added, where the learner goes on",
             "content": {
               "application/json": {
                 "schema": {
@@ -79180,6 +79180,28 @@
           "available": {
             "type": "boolean"
           },
+          "lessons": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "minutes": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "title": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "minutes",
+                "title"
+              ],
+              "additionalProperties": false
+            },
+            "description": "The plan's next lessons the time adds, in order, to list them before the tap (\"Up next\"); empty when it adds practice instead (every lesson is done) or isn't available"
+          },
           "minutes": {
             "type": "integer",
             "minimum": 0,
@@ -79187,7 +79209,7 @@
           },
           "reason": {
             "nullable": true,
-            "description": "Why it isn't offered: the day's two bonus blocks are used, the daily time limit leaves too little, nothing is left to practice or learn, a free exam plan's first week is over (its practice and new lessons come with Plus), or the session isn't finished",
+            "description": "Why it isn't offered: the day's two bonus practice blocks are used with no lesson of the plan left to add, the daily time limit leaves too little, nothing is left to practice or learn, a free exam plan's first week is over (its practice and new lessons come with Plus), or the session isn't finished",
             "type": "string",
             "enum": [
               "dailyCap",
@@ -79200,6 +79222,7 @@
         },
         "required": [
           "available",
+          "lessons",
           "minutes",
           "reason"
         ],
@@ -80469,7 +80492,7 @@
           },
           "planChange": {
             "nullable": true,
-            "description": "The plan change to answer on Today: the newest proposal waiting for an OK, or an automatic change of the last day (a rebalance, missed days, a test-out, an estimateUpdated whose net lesson count changed by more than one as the plan adapted to pace data or written lessons) until it's marked seen. Answer it with POST /v1/goals/{goalId}/plan/changes/{changeId}",
+            "description": "The plan change to answer on Today, only when the learner has a say: the newest proposal waiting for an OK, or missed days of the last day that put the goal's date at risk (`behind`) until it's answered. Changes the plan makes on its own (missed days moved forward, closer estimates, test-outs, relearns) stay in the plan's `changes` and aren't Today's news. Answer it with POST /v1/goals/{goalId}/plan/changes/{changeId}",
             "type": "object",
             "properties": {
               "behind": {
@@ -80821,11 +80844,6 @@
                   "changed",
                   "unchanged"
                 ]
-              },
-              "chapterTitle": {
-                "nullable": true,
-                "description": "For a test-out, the chapter its lessons were skipped from when they all come from one",
-                "type": "string"
               }
             },
             "required": [
@@ -80844,8 +80862,7 @@
               "seen",
               "source",
               "status",
-              "todaySession",
-              "chapterTitle"
+              "todaySession"
             ],
             "additionalProperties": false
           },

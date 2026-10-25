@@ -7,7 +7,7 @@ import { type PlanChangeView } from "../plan-view-contract";
 import { showsPhaseDatesMove } from "../planner/phase-dates-move";
 import { parsePlanGraph, parsePlanSettings } from "../planner/plan-state";
 import { isPlanReady } from "./apply-plan-change";
-import { isAutomaticPlanChange } from "./automatic-plan-change";
+import { asksAboutAutomaticChange } from "./automatic-plan-change";
 import { computeChange } from "./compute-change";
 import { foldChangeAreas } from "./fold-part-areas";
 import { applyChangeOperations, loadGraphPartAreas } from "./part-areas";
@@ -26,51 +26,28 @@ export const RECENT_CHANGE_MS = 24 * 60 * 60 * 1000;
 const MAX_PROPOSALS = 3;
 
 /**
- * The plan change Today shows: a proposal waiting for an OK, or an automatic change of the last
- * day (a rebalance, falling behind, a test-out, a closer estimate that changed how many lessons
- * fit). A test-out names its chapter when every lesson it skipped is from one.
+ * The plan change Today shows: a proposal waiting for an OK, or falling behind that puts the date
+ * at risk, which waits for the learner's choice (see `asksAboutAutomaticChange`).
  */
 export type TodayPlanChangeView = Omit<PlanChangeView, "id"> & {
-  chapterTitle: string | null;
   /** A computed mandatory read has no persisted ID until the learner's POST. */
   id: string | null;
 };
 
-/** The chapter a test-out skipped lessons of, when they all come from the same one. */
-async function loadSkippedChapterTitle({
-  kind,
-  planItemIds,
-}: {
-  kind: string;
-  planItemIds: string[];
-}): Promise<string | null> {
-  if (kind !== "testedOut" || planItemIds.length === 0) {
-    return null;
-  }
-
-  const items = await prisma.planItem.findMany({
-    select: { chapter: { select: { title: true } }, chapterId: true },
-    where: { id: { in: planItemIds } },
-  });
-
-  const [first] = items;
-  const oneChapter = new Set(items.map((item) => item.chapterId)).size === 1;
-
-  return oneChapter && first?.chapter ? first.chapter.title : null;
-}
-
 /**
- * The newest proposals waiting for an OK, and the newest unseen automatic change of the last day,
- * which Today carries when no proposal is worth offering.
+ * The newest proposals waiting for an OK, and the newest unseen automatic change of the last day
+ * Today asks about, which it carries when no proposal is worth offering.
  */
 async function findTodayChanges({
   dateReached,
   now,
   planId,
+  skipPhaseDates,
 }: {
   dateReached: boolean;
   now: Date;
   planId: string;
+  skipPhaseDates: boolean;
 }) {
   const [proposals, recent] = await Promise.all([
     prisma.planChange.findMany({
@@ -90,11 +67,17 @@ async function findTodayChanges({
 
   const automatic = recent.find(
     (change) =>
-      isAutomaticPlanChange({ change, dateReached }) &&
+      asksAboutAutomaticChange({ change, dateReached }) &&
       parsePlanChangePayload(change.payload).seenAt === null,
   );
 
-  return { automatic: automatic ?? null, proposals };
+  const offered = skipPhaseDates
+    ? proposals.filter(
+        (proposal) => parsePlanChangePayload(proposal.payload).source !== PHASE_DATES_SOURCE,
+      )
+    : proposals;
+
+  return { automatic: automatic ?? null, proposals: offered };
 }
 
 /**
@@ -153,15 +136,22 @@ async function pickTodayChange({
   goal,
   now,
   planId,
+  skipPhaseDates,
   timeZone,
 }: {
   dateReached: boolean;
   goal: Goal;
   now: Date;
   planId: string;
+  skipPhaseDates: boolean;
   timeZone?: string | null;
 }): Promise<{ change: PlanChange; effect: PlanChangeView["effect"] } | null> {
-  const { automatic, proposals } = await findTodayChanges({ dateReached, now, planId });
+  const { automatic, proposals } = await findTodayChanges({
+    dateReached,
+    now,
+    planId,
+    skipPhaseDates,
+  });
 
   for (const proposal of proposals) {
     // oxlint-disable-next-line no-await-in-loop -- the newest proposal still worth offering wins, so each waits for the one before it.
@@ -179,16 +169,19 @@ async function pickTodayChange({
 
 /**
  * The one plan change Today carries, so the learner can answer it where they are: OK or not now
- * for a proposal, and "Got it" (or an undo, while the plan is still as the change left it) for an
- * automatic change. Null when there's nothing to say.
+ * for a proposal, and their choice when falling behind puts the date at risk. Null when there's
+ * nothing to ask.
  */
 export async function loadTodayPlanChange({
   goal,
   now,
+  skipPhaseDates = false,
   timeZone,
 }: {
   goal: Goal;
   now: Date;
+  /** Leaves out a waiting proposal to move the phase dates, which the day's Open replaces. */
+  skipPhaseDates?: boolean;
   timeZone?: string | null;
 }): Promise<TodayPlanChangeView | null> {
   const goalId = goal.id;
@@ -213,7 +206,7 @@ export async function loadTodayPlanChange({
     });
 
   const picked = plan
-    ? await pickTodayChange({ dateReached, goal, now, planId: plan.id, timeZone })
+    ? await pickTodayChange({ dateReached, goal, now, planId: plan.id, skipPhaseDates, timeZone })
     : null;
 
   if (!plan || !picked) {
@@ -221,17 +214,13 @@ export async function loadTodayPlanChange({
   }
 
   const { change, effect } = picked;
-  const { planItemIds } = parsePlanChangePayload(change.payload);
 
-  const [chapterTitle, partAreas] = await Promise.all([
-    loadSkippedChapterTitle({ kind: change.kind, planItemIds }),
-    loadGraphPartAreas({
-      examBlueprintId: plan.goal.examBlueprintId,
-      graph: parsePlanGraph(plan.graph),
-    }),
-  ]);
+  const partAreas = await loadGraphPartAreas({
+    examBlueprintId: plan.goal.examBlueprintId,
+    graph: parsePlanGraph(plan.graph),
+  });
 
   const view = toPlanChangeView({ change, goal: plan.goal, planVersion: plan.version });
 
-  return { ...foldChangeAreas({ change: { ...view, effect }, partAreas }), chapterTitle };
+  return foldChangeAreas({ change: { ...view, effect }, partAreas });
 }

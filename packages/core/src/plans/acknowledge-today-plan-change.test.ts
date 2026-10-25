@@ -15,7 +15,7 @@ const PRIOR_DAY = new Date("2026-10-13T12:00:00Z");
 const NEXT_DAY = new Date("2026-10-14T12:00:00Z");
 
 async function computedNoticeFixture() {
-  const fixture = await mandatoryPhasePlanFixture();
+  const fixture = await mandatoryPhasePlanFixture({ atRisk: true });
   mockSession(fixture.user.id);
   vi.setSystemTime(NEXT_DAY);
 

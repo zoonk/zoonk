@@ -4,6 +4,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
+import { loadPlanChangeView } from "../plans/_utils/owned-plan";
 import { loadTodayPlanChange } from "../plans/_utils/today-plan-change";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { parsePlanSettings } from "../plans/planner/plan-state";
@@ -133,15 +134,16 @@ describe(rebalancePlanAfterSession, () => {
     await rebalancePlanAfterSession({ goalId: goal.id, now: NOW, userId: user.id });
     await expect(rebalances(plan.id)).resolves.toHaveLength(1);
 
-    // Today carries it the next day, with its undo.
-    await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toMatchObject({
+    // The plan keeps it with its undo; Today, with nothing for the learner to decide, asks nothing.
+    await expect(loadPlanChangeView(change?.id ?? "")).resolves.toMatchObject({
       canUndo: true,
-      chapterTitle: null,
       operations: [{ areas: ["Science"], kind: "focusAreas" }],
       reason: null,
       source: "preparation",
       status: "applied",
     });
+
+    await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toBeNull();
   });
 
   it("announces no move when focusing the fading area wouldn't move anything", async () => {

@@ -30,7 +30,7 @@ describe("POST /v1/today/plan-change/acknowledgments", () => {
   afterEach(() => vi.useRealTimers());
 
   it("returns the real acknowledged ID and revision without creating a session", async () => {
-    const fixture = await mandatoryPhasePlanFixture();
+    const fixture = await mandatoryPhasePlanFixture({ atRisk: true });
     mockSession(fixture.user.id);
     vi.setSystemTime(new Date("2026-10-14T12:00:00Z"));
     const read = await getTodayView({ goalId: fixture.goal.id, timeZone: "UTC" });
@@ -86,7 +86,7 @@ describe("POST /v1/today/plan-change/acknowledgments", () => {
   });
 
   it("never acknowledges another learner's computed notice", async () => {
-    const fixture = await mandatoryPhasePlanFixture();
+    const fixture = await mandatoryPhasePlanFixture({ atRisk: true });
     const stranger = await userFixture();
     mockSession(stranger.id);
     vi.setSystemTime(new Date("2026-10-14T12:00:00Z"));

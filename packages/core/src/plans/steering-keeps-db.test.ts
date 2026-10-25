@@ -30,7 +30,7 @@ describe("asking to move the phase dates a run keeps", () => {
    * as its run was. The zero-net applied notice says which shown end moved, instead of leaving an
    * optional proposal and a challenge before its lessons.
    */
-  it("moves a phase's end after a slower session and names the applied change", async () => {
+  it("moves a phase's end after a slower session and records it, quietly on Today", async () => {
     const user = await userFixture();
 
     const library = await planLibraryFixture({
@@ -106,18 +106,10 @@ describe("asking to move the phase dates a run keeps", () => {
     expect(payload.effect).toMatchObject({ lessonsAdded: 0, lessonsRemoved: 0 });
     expect(payload.effect?.phaseEnds).toStrictEqual(phaseEnds);
 
+    // The plan moved the end on its own: its change says so, and Today asks nothing.
     await expect(getTodayView({ goalId: goal.id, timeZone: "UTC" })).resolves.toMatchObject({
       status: "ready",
-      today: {
-        planChange: {
-          canUndo: false,
-          effect: { lessonsAdded: 0, lessonsRemoved: 0, phaseEnds },
-          id: applied.id,
-          kind: "estimateUpdated",
-          source: "system",
-          status: "applied",
-        },
-      },
+      today: { planChange: null },
     });
   });
 });

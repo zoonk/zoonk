@@ -12,29 +12,25 @@ const PATH = "/v1/today/plan-change/acknowledgments";
 test.describe("Today's mandatory notice acknowledgment API", () => {
   test.afterAll(() => prisma.$disconnect());
 
-  test("reads the mandatory move without a write, then Got it persists it without a session", async () => {
+  test("reads falling behind without a write, then keeping the plan persists it without a session", async () => {
     const baseURL = process.env.E2E_BASE_URL ?? "";
     const { api, userId } = await createBearerLearner({ baseURL, prefix: "mandatory-notice" });
     const localDate = getDateInTimeZone({ date: new Date(), timeZone: "UTC" });
-    const fixture = await mandatoryNoticeDayFixture({ localDate, userId });
+    // A missed day that puts the goal's date at risk: the one automatic change Today asks about.
+    const fixture = await mandatoryNoticeDayFixture({ atRisk: true, localDate, userId });
     const before = await prisma.plan.findUniqueOrThrow({ where: { id: fixture.plan.id } });
     const response = await api.get(`/v1/today?goalId=${fixture.goal.id}&timeZone=UTC`);
     expect(response.status(), await response.text()).toBe(200);
     const today = todayResponseSchema.parse(await response.json());
 
     expect(today.planChange).toMatchObject({
+      behind: { coveredBefore: 1 },
       canUndo: false,
       id: null,
+      kind: "missedDays",
       source: "system",
       status: "applied",
     });
-
-    expect(today.planChange?.effect?.phaseEnds).toContainEqual(
-      expect.objectContaining({
-        before: fixture.before.toISOString().slice(0, 10),
-        name: fixture.phaseName,
-      }),
-    );
 
     await expect(
       prisma.plan.findUniqueOrThrow({ where: { id: fixture.plan.id } }),

@@ -9,8 +9,14 @@ import { type PlanGraph, parsePlanSettings } from "../planner/plan-state";
 
 const PRIOR_DAY = new Date("2026-10-13T12:00:00Z");
 
-/** The actual previous-day Main fixture, including the planner's joined unwritten work. */
-async function createPriorDayPlan() {
+/** A date too close for the plan's 72 lessons at 12 minutes a day. */
+const AT_RISK_DATE = new Date("2026-10-30T00:00:00Z");
+
+/**
+ * The actual previous-day Main fixture, including the planner's joined unwritten work. At risk,
+ * the goal has a date the plan covered all of when it was last planned, which a missed day loses.
+ */
+async function createPriorDayPlan({ atRisk }: { atRisk: boolean }) {
   const user = await userFixture();
 
   const [goal, skills] = await Promise.all([
@@ -18,7 +24,7 @@ async function createPriorDayPlan() {
       createdAt: PRIOR_DAY,
       dailyMinutes: 12,
       kind: "learn",
-      targetDate: null,
+      targetDate: atRisk ? AT_RISK_DATE : null,
       timezone: "UTC",
       userId: user.id,
     }),
@@ -64,6 +70,7 @@ async function createPriorDayPlan() {
   });
 
   const plan = await planFixture({
+    coveredShare: atRisk ? 1 : null,
     createdAt: PRIOR_DAY,
     goalId: goal.id,
     graph,
@@ -94,9 +101,13 @@ async function createPriorDayPlan() {
   return { built, goal, plan, user };
 }
 
-/** A real saved plan whose missed day causes an exact, mandatory Oct 21 → 24 phase move. */
-export async function mandatoryPhasePlanFixture() {
-  const fixture = await createPriorDayPlan();
+/**
+ * A real saved plan whose missed day causes an exact, mandatory Oct 21 → 24 phase move. At risk
+ * (`atRisk`), the missed day also puts the goal's date at risk, so Today asks the learner about it
+ * (see `asksAboutAutomaticChange`).
+ */
+export async function mandatoryPhasePlanFixture({ atRisk = false }: { atRisk?: boolean } = {}) {
+  const fixture = await createPriorDayPlan({ atRisk });
 
   await prisma.plan.update({
     data: {

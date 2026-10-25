@@ -18,6 +18,7 @@ import { startStudyBlock } from "../sessions/start-study-block";
 import { getSyllabusView } from "../view-models/syllabus/get-syllabus-view";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { parsePlanChangePayload } from "./_utils/plan-change-payload";
 import { createGoalPlan } from "./create-goal-plan";
 import { type PlanGraph } from "./planner/plan-state";
 
@@ -332,7 +333,7 @@ describe.each([
     await expect(readCoverage(goal.id)).resolves.toMatchObject({ studiedSkills: 1 });
   });
 
-  it("brings a known topic's lessons back when practice misses it, and Today says so", async () => {
+  it("brings a known topic's lessons back when practice misses it, and says so in the plan", async () => {
     const { goal, itemsOf, ordinary, plan } = await setup(shape);
     const { blockId, payload, sessionId } = await startPractice(goal.id);
     const question = payload.itemIds.find((id) => itemsOf(ordinary).some((item) => item.id === id));
@@ -355,8 +356,8 @@ describe.each([
 
     await expect(readCoverage(goal.id)).resolves.toMatchObject({ studiedSkills: 0 });
 
-    // Plans never change unannounced: Today names the topic that came back, with "Got it" only.
-    await expectRelearnCard({ goalId: goal.id, topic: shape.topics[2] });
+    // Plans never change unannounced: the plan's change names the topic that came back.
+    await expectRelearnChange({ goalId: goal.id, topic: shape.topics[2] });
   });
 
   // A tested-out topic was never studied: a miss after practice confirmed it once means the
@@ -390,20 +391,30 @@ describe.each([
 
     expect(lessons.length).toBeGreaterThan(0);
     expect(lessons.every((item) => item.status === "todo")).toBe(true);
-    await expectRelearnCard({ goalId: goal.id, topic: shape.topics[2] });
+    await expectRelearnChange({ goalId: goal.id, topic: shape.topics[2] });
   });
 });
 
-/** Today names the topic a miss brought back, with "Got it" only. */
-async function expectRelearnCard({ goalId, topic }: { goalId: string; topic?: string }) {
-  const today = await getTodayView({ goalId });
+/**
+ * The plan's change names the topic a miss brought back; Today asks nothing about it, since the
+ * learner has nothing to decide (see `asksAboutAutomaticChange`).
+ */
+async function expectRelearnChange({ goalId, topic }: { goalId: string; topic?: string }) {
+  const [change, today] = await Promise.all([
+    prisma.planChange.findFirstOrThrow({
+      orderBy: { createdAt: "desc" },
+      where: { kind: "relearn", plan: { goalId } },
+    }),
+    getTodayView({ goalId }),
+  ]);
 
-  expect(today.status === "ready" && today.today.planChange).toMatchObject({
-    canUndo: false,
-    effect: { topicsAdded: [{ area: "Biologia", topics: [topic] }] },
-    kind: "relearn",
-    status: "applied",
+  expect(change.status).toBe("applied");
+
+  expect(parsePlanChangePayload(change.payload).effect).toMatchObject({
+    topicsAdded: [{ area: "Biologia", topics: [topic] }],
   });
+
+  expect(today.status === "ready" && today.today.planChange?.kind).not.toBe("relearn");
 }
 
 describe("a known topic Pedro's time left without lessons", () => {

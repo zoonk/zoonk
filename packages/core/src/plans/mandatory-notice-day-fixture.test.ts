@@ -18,6 +18,7 @@ describe("date-parameterized mandatory Today seed", () => {
       const user = await userFixture();
 
       const fixture = await mandatoryNoticeDayFixture({
+        atRisk: true,
         localDate: new Date(date),
         userId: user.id,
       });
@@ -39,17 +40,13 @@ describe("date-parameterized mandatory Today seed", () => {
       const notice = read.result.today.planChange;
 
       expect(notice).toMatchObject({
+        behind: { coveredBefore: 1, measure: "goal" },
         canUndo: false,
         id: null,
         kind: "missedDays",
         source: "system",
         status: "applied",
       });
-
-      const move = notice?.effect?.phaseEnds?.find((phase) => phase.name === fixture.phaseName);
-      expect(move?.before).toBe(fixture.before.toISOString().slice(0, 10));
-      expect(move?.after).toBeTypeOf("string");
-      expect(Date.parse(move!.after)).toBeGreaterThan(Date.parse(move!.before));
 
       expect(read.result.today.session).toMatchObject({
         blocks: [],

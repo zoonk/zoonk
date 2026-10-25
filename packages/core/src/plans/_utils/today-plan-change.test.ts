@@ -1,11 +1,5 @@
 import { prisma } from "@zoonk/db";
-import {
-  goalFixture,
-  planChangeFixture,
-  planFixture,
-  planItemFixture,
-} from "@zoonk/testing/fixtures/goals";
-import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
+import { goalFixture, planChangeFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { loadTodayPlanChange } from "./today-plan-change";
@@ -124,7 +118,13 @@ describe(loadTodayPlanChange, () => {
       createdAt: hoursAgo(2),
       kind: "missedDays",
       payload: {
-        behind: null,
+        behind: {
+          canFocus: false,
+          coveredAfter: 0.8,
+          coveredBefore: 1,
+          currentMinutes: 30,
+          measure: "goal",
+        },
         days: 3,
         effect: {
           endDateAfter: null,
@@ -141,7 +141,7 @@ describe(loadTodayPlanChange, () => {
 
     await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toBeNull();
 
-    // Before its date the same settling is news.
+    // Before its date the same settling puts the date at risk, which the learner answers.
     const ahead = await prisma.goal.update({
       data: { targetDate: new Date("2026-10-20T00:00:00Z") },
       where: { id: goal.id },
@@ -152,28 +152,28 @@ describe(loadTodayPlanChange, () => {
     });
   });
 
-  // Missed days and a pause that leave topics out of the plan are news, even on track: Today names
-  // the topics they move.
+  // Missed days' lessons moved forward and a pause are the plan doing its job, even when they move
+  // topics: the Plan lists them, and Today asks nothing (Will couldn't tell whether "Your plan
+  // changed" with a dozen topics asked him to do anything).
   it.each(["missedDays", "resumed"] as const)(
-    "brings up a %s change that moves topics in or out of the plan",
+    "keeps a %s change quiet, even one that moves topics in or out of the plan",
     async (kind) => {
       const { goal, plan } = await setup();
 
-      const effect = {
-        endDateAfter: null,
-        endDateBefore: null,
-        lessonsAdded: 0,
-        lessonsRemoved: 6,
-        topicsLeftOut: [{ area: "Natureza", topics: ["Genética"] }],
-      };
-
       await planChangeFixture({
-        createdAt: hoursAgo(2),
+        createdAt: hoursAgo(1),
         kind,
         payload: {
           behind: null,
           days: 1,
-          effect: { ...effect, topicsLeftOut: [] },
+          effect: {
+            endDateAfter: null,
+            endDateBefore: null,
+            lessonsAdded: 212,
+            lessonsRemoved: 194,
+            phaseEnds: [{ after: "2026-10-24", before: "2026-10-21", name: "Basics" }],
+            topicsLeftOut: [{ area: "Natureza", topics: ["Genética"] }],
+          },
           source: "system",
         },
         planId: plan.id,
@@ -181,22 +181,32 @@ describe(loadTodayPlanChange, () => {
       });
 
       await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toBeNull();
-
-      const moved = await planChangeFixture({
-        createdAt: hoursAgo(1),
-        kind,
-        payload: { behind: null, days: 1, effect, source: "system" },
-        planId: plan.id,
-        status: "applied",
-      });
-
-      await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toMatchObject({
-        effect: { topicsLeftOut: effect.topicsLeftOut },
-        id: moved.id,
-        kind,
-      });
     },
   );
+
+  it("keeps a closer estimate quiet, even one that leaves lessons out", async () => {
+    const { goal, plan } = await setup();
+
+    await planChangeFixture({
+      createdAt: hoursAgo(1),
+      kind: "estimateUpdated",
+      payload: {
+        effect: {
+          endDateAfter: null,
+          endDateBefore: null,
+          lessonsAdded: 0,
+          lessonsLeftOut: [{ area: "Science", title: "Ecology basics" }],
+          lessonsRemoved: 6,
+          topicsLeftOut: [{ area: "Science", topics: ["Ecology"] }],
+        },
+        source: "system",
+      },
+      planId: plan.id,
+      status: "applied",
+    });
+
+    await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toBeNull();
+  });
 
   it.each([
     { added: 0, removed: 0 },
@@ -229,23 +239,26 @@ describe(loadTodayPlanChange, () => {
     },
   );
 
-  it("carries the newest automatic change of the last day until it's seen", async () => {
+  it("carries falling behind of the last day until it's answered", async () => {
     const { goal, plan } = await setup();
 
-    const [rebalance] = await Promise.all([
+    const behind = {
+      canFocus: false,
+      coveredAfter: 0.8,
+      coveredBefore: 1,
+      currentMinutes: 30,
+      measure: "goal",
+    };
+
+    const [atRisk] = await Promise.all([
       planChangeFixture({
         createdAt: hoursAgo(6),
-        kind: "edited",
-        payload: {
-          operations: [{ areas: ["Science"], kind: "focusAreas" }],
-          source: "preparation",
-          versionAfter: plan.version,
-        },
+        kind: "missedDays",
+        payload: { behind, days: 1, source: "system" },
         planId: plan.id,
         status: "applied",
       }),
-      // The learner's own edit, a closer estimate with no reason to say and an older change say
-      // nothing new.
+      // The learner's own edit, a closer estimate and an older change say nothing new.
       planChangeFixture({
         createdAt: hoursAgo(2),
         kind: "edited",
@@ -263,83 +276,42 @@ describe(loadTodayPlanChange, () => {
       planChangeFixture({
         createdAt: hoursAgo(30),
         kind: "missedDays",
-        payload: { days: 1, source: "system" },
+        payload: { behind, days: 1, source: "system" },
         planId: plan.id,
         status: "applied",
       }),
     ]);
 
     await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toMatchObject({
-      canUndo: true,
-      chapterTitle: null,
-      id: rebalance.id,
-      kind: "edited",
-      source: "preparation",
+      id: atRisk.id,
+      kind: "missedDays",
     });
 
-    // "Got it" takes one off Today: a newer one the learner saw stays off it.
-    await planChangeFixture({
-      createdAt: hoursAgo(4),
-      kind: "edited",
-      payload: {
-        operations: [{ areas: ["Math"], kind: "focusAreas" }],
-        seenAt: hoursAgo(3).toISOString(),
-        source: "preparation",
-        versionAfter: plan.version,
-      },
-      planId: plan.id,
-      status: "applied",
+    // The learner's answer takes it off Today.
+    await prisma.planChange.update({
+      data: { payload: { behind, days: 1, seenAt: hoursAgo(1).toISOString(), source: "system" } },
+      where: { id: atRisk.id },
     });
 
-    await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toMatchObject({
-      id: rebalance.id,
-    });
+    await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toBeNull();
   });
 
-  it("names the chapter a test-out skipped, only when its lessons all come from one", async () => {
-    const { goal, plan } = await setup();
+  // The test-out's own result says what it skipped, with its Undo; a question missed in practice
+  // brings a topic back on its own. Neither asks anything of the learner on Today.
+  it.each(["relearn", "testedOut"] as const)(
+    "keeps a %s change quiet: the learner's answers made it",
+    async (kind) => {
+      const { goal, plan } = await setup();
 
-    const [circuits, optics] = await Promise.all([
-      libraryChapterFixture({ title: "Electric circuits" }),
-      libraryChapterFixture({ title: "Optics" }),
-    ]);
+      await planChangeFixture({
+        createdAt: hoursAgo(1),
+        kind,
+        payload: { planItemIds: [], source: "system", versionAfter: plan.version },
+        planId: plan.id,
+        status: "applied",
+      });
 
-    const items = await Promise.all(
-      [circuits, circuits, optics].map((chapter, position) =>
-        planItemFixture({ chapterId: chapter.id, planId: plan.id, position, status: "testedOut" }),
-      ),
-    );
-
-    const ids = items.map((item) => item.id);
-
-    const oneChapter = await planChangeFixture({
-      createdAt: hoursAgo(2),
-      kind: "testedOut",
-      payload: { planItemIds: ids.slice(0, 2), source: "system", versionAfter: plan.version },
-      planId: plan.id,
-      status: "applied",
-    });
-
-    await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toMatchObject({
-      canUndo: true,
-      chapterTitle: "Electric circuits",
-      id: oneChapter.id,
-      lessonsSkipped: 2,
-    });
-
-    const twoChapters = await planChangeFixture({
-      createdAt: hoursAgo(1),
-      kind: "testedOut",
-      // The plan moved on since, so this one can't be undone any more.
-      payload: { planItemIds: ids.slice(1), source: "system", versionAfter: plan.version - 1 },
-      planId: plan.id,
-      status: "applied",
-    });
-
-    await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toMatchObject({
-      canUndo: false,
-      chapterTitle: null,
-      id: twoChapters.id,
-    });
-  });
+      await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toBeNull();
+    },
+  );
 });

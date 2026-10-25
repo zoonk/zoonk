@@ -58,17 +58,19 @@ describe("a proposal whose preview no longer changes anything", () => {
   it("isn't offered on Today, and the change before it still is", async () => {
     const { goal, plan } = await setup();
 
+    // Falling behind that puts the date at risk, which the learner still has to answer.
     const missed = await planChangeFixture({
       createdAt: new Date(NOW.getTime() - 60 * 60 * 1000),
-      kind: "coverageChanged",
+      kind: "missedDays",
       payload: {
-        effect: {
-          endDateAfter: null,
-          endDateBefore: null,
-          lessonsAdded: 0,
-          lessonsRemoved: 0,
-          topicsAdded: [{ area: "Math", topics: ["Fractions"] }],
+        behind: {
+          canFocus: false,
+          coveredAfter: 0.8,
+          coveredBefore: 1,
+          currentMinutes: 30,
+          measure: "goal",
         },
+        days: 1,
         source: "system",
       },
       planId: plan.id,

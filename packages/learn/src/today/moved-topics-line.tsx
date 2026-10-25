@@ -2,11 +2,7 @@
 
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { SuggestionDescription } from "../_components/suggestion";
-import {
-  useListeningBasicsLine,
-  useTopicsMovedLines,
-  useTopicsMovedSentence,
-} from "../plan/use-coverage-sentence";
+import { useTopicsMovedSentence } from "../plan/use-coverage-sentence";
 
 /**
  * The notice topics a change the learner didn't make moved into or out of the plan, as a line of
@@ -23,26 +19,4 @@ export function MovedTopicsLine({
 }) {
   const sentence = useTopicsMovedSentence()(change, { named });
   return sentence ? <SuggestionDescription>{sentence}</SuggestionDescription> : null;
-}
-
-/**
- * What skipping lessons moved, under the card that says they were skipped: "Now in your plan: …"
- * and "Out of your plan: …", one line each. An IELTS learner's card said one topic no longer fits
- * and eight now fit, in one paragraph under "Lessons skipped". Nothing when it moved none.
- */
-export function MovedTopicsLines({ change }: { change: Pick<PlanChangeView, "effect"> }) {
-  const lines = useTopicsMovedLines()(change);
-
-  return lines.map((line) => <SuggestionDescription key={line}>{line}</SuggestionDescription>);
-}
-
-/**
- * Why an exam's listening basics left with placement's answers, and how they're checked: "Your
- * answers show you know the basics of Listening. Practice with recordings will check them." An
- * IELTS learner saw "Out of your plan: Distinguish spoken English sounds" after answering only
- * text questions. Nothing for any other change.
- */
-export function ListeningBasicsLine({ change }: { change: Pick<PlanChangeView, "effect"> }) {
-  const line = useListeningBasicsLine()(change);
-  return line ? <SuggestionDescription>{line}</SuggestionDescription> : null;
 }

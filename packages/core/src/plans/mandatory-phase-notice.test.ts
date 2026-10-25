@@ -19,7 +19,9 @@ describe("mandatory phase notices after missed days", () => {
 
   afterEach(() => vi.useRealTimers());
 
-  it("shows the saved applied phase move when ordinary Today settling has no behind choices", async () => {
+  // The move is the plan doing its job: Open saves it for the Plan's history, and Today, with
+  // nothing for the learner to choose, says nothing about it (see `asksAboutAutomaticChange`).
+  it("saves the phase move a missed day makes on Open, and keeps it off Today", async () => {
     const { built, goal, pending, plan, user } = await mandatoryPhasePlanFixture();
     mockSession(user.id);
 
@@ -40,7 +42,7 @@ describe("mandatory phase notices after missed days", () => {
 
     vi.setSystemTime(NEXT_DAY);
 
-    /** A read shows the same exact mandatory move without persisting its notice or dates. */
+    /** A read neither persists the move nor tells the learner about it. */
     const preview = await countDatabaseStatements(() =>
       getTodayView({ goalId: goal.id, timeZone: "UTC" }),
     );
@@ -52,18 +54,7 @@ describe("mandatory phase notices after missed days", () => {
       throw new Error("Expected the mandatory read preview");
     }
 
-    expect(preview.result.today.planChange).toMatchObject({
-      canUndo: false,
-      effect: {
-        lessonsAdded: 0,
-        lessonsRemoved: 0,
-        phaseEnds: [{ after: "2026-10-24", before: "2026-10-21", name: "First interviews" }],
-      },
-      id: null,
-      kind: "missedDays",
-      source: "system",
-      status: "applied",
-    });
+    expect(preview.result.today.planChange).toBeNull();
 
     expect(preview.result.today.session).toMatchObject({
       blocks: [],
@@ -139,19 +130,9 @@ describe("mandatory phase notices after missed days", () => {
       prisma.planItem.findFirstOrThrow({ where: { kind: "boss", phase: 0, planId: plan.id } }),
     ).resolves.toMatchObject({ scheduledFor: new Date("2026-10-24T00:00:00Z") });
 
-    expect(result.today.planChange).toMatchObject({
-      behind: null,
-      canUndo: false,
-      effect: { phaseEnds },
-      id: change.id,
-      kind: "missedDays",
-      source: "system",
-      status: "applied",
-    });
-
+    expect(result.today.planChange).toBeNull();
     expect(payload.seenAt).toBeNull();
     expect(change.id).toMatch(/^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$/u);
-    expect(result.today.planChange?.effect).toStrictEqual(payload.effect);
 
     expect(result.today.session).toMatchObject({
       blocks: [],

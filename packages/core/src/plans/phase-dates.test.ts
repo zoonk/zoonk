@@ -514,7 +514,7 @@ describe("phase dates through system refreshes", () => {
 
   // A rest day must not leave the held challenge before its teaching. The plan moves it to the
   // next study day and Today names that applied move, even when the lesson count is unchanged.
-  it("moves an unsafe phase end after a rest day and shows its applied notice", async () => {
+  it("moves an unsafe phase end after a rest day and records it, quietly on Today", async () => {
     const { goal, plan } = await setup({ targetDate: FAR });
     const ends = await readPhaseEnds(plan.id);
     expect(ends[0]).toBe("2020-10-07");
@@ -556,18 +556,10 @@ describe("phase dates through system refreshes", () => {
     expect(payload.effect?.phaseEnds).toStrictEqual(phaseEnds);
     await expectChallengeDate({ date: "2020-10-09", planId: plan.id });
 
+    // The plan moved the end on its own: its change says so, and Today asks nothing.
     await expect(getTodayView({ goalId: goal.id, timeZone: "UTC" })).resolves.toMatchObject({
       status: "ready",
-      today: {
-        planChange: {
-          canUndo: false,
-          effect: { lessonsAdded: 0, lessonsRemoved: 0, phaseEnds },
-          id: applied.id,
-          kind: "estimateUpdated",
-          source: "system",
-          status: "applied",
-        },
-      },
+      today: { planChange: null },
     });
   });
 

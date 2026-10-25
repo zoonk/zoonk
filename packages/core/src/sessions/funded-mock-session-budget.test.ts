@@ -12,7 +12,6 @@ import { mockSession } from "../_test-utils/mock-session";
 import { startChallenge } from "../checkpoints/start-challenge";
 import { getMock } from "../exams/mocks/get-mock";
 import { examStructureSchema } from "../library/exams/blueprint-contract";
-import { readTodayChange } from "../plans/_test-utils/estimate-plan";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { changeGoalPlan } from "../plans/change-goal-plan";
 import { createGoalPlan } from "../plans/create-goal-plan";
@@ -437,7 +436,7 @@ describe("funded mock sessions reserve all their fixed work", () => {
   // too, at the pace lessons estimate: the session's refresh plans again from tomorrow (the pace's
   // source became their own) and fills the room their progress freed (P1 diagnosis: three lessons
   // of the same skill). It never takes a faster pace, and it says what it added.
-  it("brings lessons back only as the learner's own progress frees room, and says so", async () => {
+  it("brings lessons back only as the learner's own progress frees room, and records it", async () => {
     const fixture = await setup({ withBoss: true });
     await moveOntoSavedBoss(fixture);
     const finishDeferred = runDeferredWork();
@@ -519,11 +518,6 @@ describe("funded mock sessions reserve all their fixed work", () => {
     expect(changes[0]?.payload).toMatchObject({
       effect: { lessonsAdded: added, lessonsRemoved: 0 },
       source: "system",
-    });
-
-    await expect(readTodayChange(fixture.goal.id)).resolves.toMatchObject({
-      id: changes[0]?.id,
-      kind: "estimateUpdated",
     });
 
     const completedPace = await readPace();

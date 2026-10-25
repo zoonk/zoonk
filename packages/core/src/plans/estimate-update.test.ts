@@ -1,12 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { AHEAD_START } from "./_test-utils/ahead-plan";
-import {
-  declineProposals,
-  pacedPlanFixture,
-  readTodayChange,
-  studyEveryLesson,
-} from "./_test-utils/estimate-plan";
+import { declineProposals, pacedPlanFixture, studyEveryLesson } from "./_test-utils/estimate-plan";
 import { type PlanEffect } from "./planner/plan-effect";
 import { refreshGoalPlan } from "./refresh-goal-plan";
 
@@ -62,11 +57,9 @@ describe("a closer estimate of how long lessons take", () => {
     await expect(
       prisma.planChange.count({ where: { kind: "estimateUpdated", planId: plan.id } }),
     ).resolves.toBe(0);
-
-    await expect(readTodayChange(goal.id)).resolves.toBeNull();
   });
 
-  it("says on Today how many fewer lessons fit by the date, and which", async () => {
+  it("records how many fewer lessons fit by the date, and which", async () => {
     const { goal, plan, user } = await pacedPlanFixture({
       dailyMinutes: 30,
       days: 14,
@@ -84,8 +77,6 @@ describe("a closer estimate of how long lessons take", () => {
 
     expect(change.effect.lessonsRemoved).toBeGreaterThan(0);
     expect(change.effect.lessonsLeftOut).toHaveLength(change.effect.lessonsRemoved);
-
-    await expect(readTodayChange(goal.id)).resolves.toMatchObject({ id: change.id });
   });
 
   it("keeps topic names with a significant lesson-count change", async () => {
@@ -101,14 +92,10 @@ describe("a closer estimate of how long lessons take", () => {
     await declineProposals({ goalId: goal.id, planId: plan.id });
 
     const change = await findChange({ kind: "estimateUpdated", planId: plan.id });
-
-    await expect(readTodayChange(goal.id)).resolves.toMatchObject({
-      effect: { topicsLeftOut: [{ area: "Stocks" }] },
-      id: change.id,
-    });
+    expect(change.effect).toMatchObject({ topicsLeftOut: [{ area: "Stocks" }] });
   });
 
-  it("stays off Today when every lesson still fits", async () => {
+  it("records nothing when every lesson still fits", async () => {
     const { goal, plan, user } = await pacedPlanFixture({
       dailyMinutes: 30,
       days: 14,
@@ -123,7 +110,5 @@ describe("a closer estimate of how long lessons take", () => {
     await expect(
       prisma.planChange.count({ where: { kind: "estimateUpdated", planId: plan.id } }),
     ).resolves.toBe(0);
-
-    await expect(readTodayChange(goal.id)).resolves.toBeNull();
   });
 });

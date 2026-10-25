@@ -15,7 +15,7 @@ import { loadGoalPlan } from "../learner/_utils/goal-skill-graph";
 import { markPlanItemsTestedOut, markSkillsKnown } from "../learner/_utils/known-skills";
 import { getRequestProgressDateContext } from "../progress/get-request-date-context";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
-import { loadTodayPlanChange } from "./_utils/today-plan-change";
+import { loadPlanChangeView } from "./_utils/owned-plan";
 import { createGoalPlan } from "./create-goal-plan";
 import { decidePlanChange } from "./decide-plan-change";
 import { getGoalPlan } from "./get-goal-plan";
@@ -417,12 +417,11 @@ describe("test-outs on the plan", () => {
     // The stand-in is one row on the plan, as in the result that lists these ids, and six lessons.
     expect(ids).toHaveLength(3);
 
-    const [change, today] = await Promise.all([
-      prisma.planChange.findFirstOrThrow({ where: { kind: "testedOut", planId: plan.id } }),
-      loadTodayPlanChange({ goal, now: MONDAY }),
-    ]);
+    const change = await prisma.planChange.findFirstOrThrow({
+      where: { kind: "testedOut", planId: plan.id },
+    });
 
-    expect(today?.lessonsSkipped).toBe(8);
+    await expect(loadPlanChangeView(change.id)).resolves.toMatchObject({ lessonsSkipped: 8 });
 
     await expect(
       decidePlanChange({ changeId: change.id, goalId: goal.id, input: { status: "undone" } }),

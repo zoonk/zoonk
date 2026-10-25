@@ -28,12 +28,10 @@ import {
   useOfficialDateLine,
 } from "../plan/use-change-sentence";
 import { useProposalEffectText } from "../plan/use-effect-text";
-import { ListeningBasicsLine, MovedTopicsLines } from "./moved-topics-line";
 import { getChangeMark } from "./today-change-mark";
 import { useTodayChangeSentence, useTodayCountsByDate } from "./today-change-sentence";
 import { useTodayScreen } from "./today-context";
 import { FallingBehindNotice } from "./today-falling-behind";
-import { AdjustPlanLink } from "./today-plan-change-actions";
 import { useShownChange } from "./use-shown-change";
 
 type Change = NonNullable<TodayView["planChange"]>;
@@ -41,28 +39,13 @@ type Decision = PlanChangeDecisionInput["status"];
 type Answered = { answer: Decision; answered: PlanChangeView };
 
 /**
- * The notice's title: what kind of change it is, before the sentence that says what it does. A
- * change the exam's notice brings says so in its own sentence ("The exam notice says…"), so that
- * sentence is the title.
+ * The notice's title, before the sentence that says what the suggestion does. A change the exam's
+ * notice brings says so in its own sentence ("The exam notice says…"), so that sentence is the
+ * title.
  */
 function useChangeTitle() {
   const t = useExtracted();
-
-  return (change: Change): string => {
-    if (change.source === NOTICE_SOURCE) {
-      return "";
-    }
-
-    if (change.status === "proposed") {
-      return t("Plan suggestion");
-    }
-
-    if (change.kind === "testedOut") {
-      return t("Lessons skipped");
-    }
-
-    return t("Your plan changed");
-  };
+  return (change: Change): string => (change.source === NOTICE_SOURCE ? "" : t("Plan suggestion"));
 }
 
 /**
@@ -97,7 +80,7 @@ export function ProposalEffect({
 }
 
 /** What the answer did, said where the buttons were: an applied change says what it did to today. */
-function useAnsweredText(change: Change) {
+function useAnsweredText() {
   const t = useExtracted();
   const appliedLine = useAppliedLine();
 
@@ -108,9 +91,7 @@ function useAnsweredText(change: Change) {
       case "declined":
         return t("Your plan stays as it was.");
       case "undone":
-        return change.kind === "testedOut"
-          ? t("The lessons are back in your plan.")
-          : t("Undone. Your plan is back as it was.");
+        return t("Undone. Your plan is back as it was.");
       case "seen":
         return t("Noted.");
       default:
@@ -120,9 +101,9 @@ function useAnsweredText(change: Change) {
 }
 
 /**
- * "Apply" or "Not now" for a proposal ("Keep mine" for one the exam's notice brings or one that
- * moves the phase dates, since the answer stays); "Got it", and "Undo" while it can be, for a
- * change made.
+ * "Apply" or "Not now" for a suggestion: "Keep mine" for one the exam's notice brings or one that
+ * moves the phase dates, since the answer stays; "Use my date anyway" over the exam's official
+ * date.
  */
 function ChangeActions({
   change,
@@ -135,39 +116,23 @@ function ChangeActions({
 }) {
   const t = useExtracted();
   const keepOfficialDate = useKeepOfficialDateLabel();
-  const proposal = change.status === "proposed";
-  const overridesNotice = proposal && change.officialDate !== null;
+  const overridesNotice = change.officialDate !== null;
   // Answering the notice or the phase dates keeps what the learner has, and the answer stays.
-  const keepsMine =
-    proposal && (change.source === NOTICE_SOURCE || change.source === PHASE_DATES_SOURCE);
+  const keepsMine = change.source === NOTICE_SOURCE || change.source === PHASE_DATES_SOURCE;
 
   return (
     <SuggestionActions>
-      {(!proposal || change.effect !== null) && (
-        <SuggestionAction
-          disabled={disabled}
-          onClick={() => onAnswer(proposal ? "applied" : "seen")}
-        >
-          {overridesNotice && t("Use my date anyway")}
-          {proposal && !overridesNotice && t("Apply")}
-          {!proposal && t("Got it")}
+      {change.effect !== null && (
+        <SuggestionAction disabled={disabled} onClick={() => onAnswer("applied")}>
+          {overridesNotice ? t("Use my date anyway") : t("Apply")}
         </SuggestionAction>
       )}
 
-      <AdjustPlanLink change={change} />
-
-      {(proposal || change.canUndo) && (
-        <SuggestionAction
-          disabled={disabled}
-          onClick={() => onAnswer(proposal ? "declined" : "undone")}
-          variant="outline"
-        >
-          {keepsMine && !overridesNotice && t("Keep mine")}
-          {overridesNotice && keepOfficialDate(change.examDocument)}
-          {proposal && !keepsMine && !overridesNotice && t("Not now")}
-          {!proposal && t("Undo")}
-        </SuggestionAction>
-      )}
+      <SuggestionAction disabled={disabled} onClick={() => onAnswer("declined")} variant="outline">
+        {keepsMine && !overridesNotice && t("Keep mine")}
+        {overridesNotice && keepOfficialDate(change.examDocument)}
+        {!keepsMine && !overridesNotice && t("Not now")}
+      </SuggestionAction>
     </SuggestionActions>
   );
 }
@@ -218,7 +183,7 @@ function useAnswer(opened: Change, onHold: (held: boolean) => void) {
       }
 
       if (saved.status === "proposed") {
-        setRestored({ ...saved, chapterTitle: opened.chapterTitle });
+        setRestored(saved);
         setAnswered(null);
       } else {
         setAnswered({ answer: status, answered: saved });
@@ -292,16 +257,12 @@ function PlanChangeNotice({
   const sentence = useTodayChangeSentence();
   const changeTitle = useChangeTitle();
   const { answer, answered, change, failed, isPending } = useAnswer(opened, onHold);
-  const answeredText = useAnsweredText(change);
+  const answeredText = useAnsweredText();
   const officialDate = useOfficialDateLine()(change);
   const byDate = useTodayCountsByDate()(change);
-  const proposal = change.status === "proposed";
   const title = changeTitle(change);
   const summary = sentence(change);
   const result = answered ? answeredText(answered) : null;
-
-  // A change whose counts net to zero falls back to "Your plan changed.": the title says it already.
-  const repeatsTitle = title === t("Your plan changed") && summary === t("Your plan changed.");
 
   const after = answered && (
     <AfterAnswer answer={answer} isPending={isPending} onNext={onNext} state={answered} />
@@ -312,7 +273,7 @@ function PlanChangeNotice({
       answered={answered?.answer ?? false}
       data-slot="today-plan-change"
       focusOnMount={focusOnMount}
-      label={proposal ? t("Suggested change") : t("Plan change")}
+      label={t("Suggested change")}
       mark={getChangeMark(change)}
     >
       <SuggestionLine>
@@ -326,15 +287,8 @@ function PlanChangeNotice({
 
       <SuggestionContent>
         <SuggestionHeader>{title || summary}</SuggestionHeader>
-        {title && !repeatsTitle && <SuggestionDescription>{summary}</SuggestionDescription>}
-        {change.kind === "testedOut" && <MovedTopicsLines change={change} />}
-        <ListeningBasicsLine change={change} />
-        {/* A closer estimate names the lessons that no longer fit, as a proposal does. */}
-        {proposal || change.kind === "estimateUpdated" ? (
-          <ProposalEffect byDate={byDate} change={change} />
-        ) : (
-          <PlanEffectDiff byDate={byDate} effect={change.effect} />
-        )}
+        {title && <SuggestionDescription>{summary}</SuggestionDescription>}
+        <ProposalEffect byDate={byDate} change={change} />
         {officialDate && <SuggestionDescription>{officialDate}</SuggestionDescription>}
 
         {result ? (
@@ -353,10 +307,10 @@ function PlanChangeNotice({
 }
 
 /**
- * Today's plan change, the one place to answer it: a proposal ("Apply" or "Not now"), falling
- * behind that puts the date at risk (more time, focus or keep), or an automatic change of the last
- * day, such as a rebalance or a test-out ("We skipped 3 lessons of Electric circuits"), with "Got
- * it" and its undo while the plan is still as it left it.
+ * Today's plan change, the one place to answer it, only when the learner has a say: a suggestion
+ * ("Apply" or "Not now", and its undo once applied), or falling behind that puts the date at risk
+ * (more time, focus or keep). What the plan does on its own isn't news on Today (see
+ * `asksAboutAutomaticChange`).
  */
 export function TodayPlanChange() {
   const { today } = useTodayScreen();

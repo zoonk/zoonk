@@ -7,7 +7,7 @@ import { markPlanItemsTestedOut } from "../learner/_utils/known-skills";
 import { readPlan } from "./_test-utils/kept-end-plan";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { acknowledgeStoredNotice } from "./_utils/acknowledge-today-change";
-import { loadTodayPlanChange } from "./_utils/today-plan-change";
+import { loadPlanChangeView } from "./_utils/owned-plan";
 import { createGoalPlan } from "./create-goal-plan";
 import { decidePlanChange } from "./decide-plan-change";
 
@@ -76,14 +76,14 @@ describe("lessons skipped one answer at a time", () => {
     expect(first.lessonsSkipped).toBeGreaterThan(0);
     expect(second.lessonsSkipped).toBeGreaterThan(0);
 
-    const today = await loadTodayPlanChange({ goal, now: NOW });
+    const change = await loadPlanChangeView(first.changeId ?? "");
 
-    expect(today?.lessonsSkipped).toBe(first.lessonsSkipped + second.lessonsSkipped);
-    expect(today).toMatchObject({ canUndo: true, id: first.changeId, kind: "testedOut" });
+    expect(change.lessonsSkipped).toBe(first.lessonsSkipped + second.lessonsSkipped);
+    expect(change).toMatchObject({ canUndo: true, kind: "testedOut" });
     expect(second.changeId).toBe(first.changeId);
 
     await expect(
-      decidePlanChange({ changeId: today?.id ?? "", goalId: goal.id, input: { status: "undone" } }),
+      decidePlanChange({ changeId: change.id, goalId: goal.id, input: { status: "undone" } }),
     ).resolves.toMatchObject({ change: { status: "undone" }, status: "updated" });
 
     await expect(readPlan(plan.id)).resolves.toStrictEqual(shown);
@@ -98,8 +98,7 @@ describe("lessons skipped one answer at a time", () => {
 
     expect(second.changeId).not.toBe(first.changeId);
 
-    await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toMatchObject({
-      id: second.changeId,
+    await expect(loadPlanChangeView(second.changeId ?? "")).resolves.toMatchObject({
       lessonsSkipped: second.lessonsSkipped,
     });
   });
@@ -125,13 +124,12 @@ describe("lessons skipped one answer at a time", () => {
 
     expect(second.changeId).toBe(first.changeId);
 
-    const today = await loadTodayPlanChange({ goal, now: NOW });
-
-    expect(today?.id).toBe(first.changeId);
-    expect(today?.lessonsSkipped).toBe(first.lessonsSkipped);
+    await expect(loadPlanChangeView(first.changeId ?? "")).resolves.toMatchObject({
+      lessonsSkipped: first.lessonsSkipped,
+    });
   });
 
-  it("starts a new change once the last skip is no longer news on Today", async () => {
+  it("starts a new change once the last skip is a day old", async () => {
     const { goal, skillIds } = await setupPlan();
     const first = await skipSkill({ goalId: goal.id, skillId: skillIds[0] ?? "" });
 
@@ -144,8 +142,7 @@ describe("lessons skipped one answer at a time", () => {
 
     expect(second.changeId).not.toBe(first.changeId);
 
-    await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toMatchObject({
-      id: second.changeId,
+    await expect(loadPlanChangeView(second.changeId ?? "")).resolves.toMatchObject({
       lessonsSkipped: second.lessonsSkipped,
     });
   });

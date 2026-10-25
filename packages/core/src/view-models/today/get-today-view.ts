@@ -23,6 +23,10 @@ import { type MockFundingView } from "../../plans/mock-funding-contract";
 import { daysBetween } from "../../plans/planner/plan-calendar";
 import { type PlanStatus } from "../../preparation/plan-status";
 import { type ReadStudyDay, readStudyDay } from "../../sessions/_utils/read-study-day";
+import {
+  getSelectedPlanChange,
+  replacesPhaseDates,
+} from "../../sessions/_utils/save-selected-plan";
 import { getSelectedPlanNotice } from "../../sessions/_utils/selected-plan-notice";
 import { type TodayStudySessionInput } from "../../sessions/contract";
 import { type DayView } from "../../sessions/day-view";
@@ -107,8 +111,8 @@ export type TodayView = {
    */
   pattern: NoticedPattern | null;
   /**
-   * The plan change to answer on Today: the newest proposal waiting for an OK, or an automatic
-   * change of the last day (a rebalance, missed days, a test-out) until the learner says "Got it".
+   * The plan change to answer on Today, only when the learner has a say: the newest proposal
+   * waiting for an OK, or missed days that put the goal's date at risk until they choose.
    * Proposals wait while the expired Free exam trial owns the suggestion slot.
    */
   planChange: TodayPlanChangeView | null;
@@ -234,6 +238,30 @@ async function loadOpenExamChoice(goal: Goal): Promise<ExamChoiceView | null> {
   return choices.find((choice) => !choice.subject) ?? null;
 }
 
+/**
+ * The plan change Today carries: the notice the day's Open saves when it asks the learner
+ * something (see `getSelectedPlanNotice`), else the change waiting on the saved plan, without a
+ * proposal to move the phase dates that Open replaces because its settling moves them itself.
+ */
+async function loadDayPlanChange({
+  day,
+  goal,
+  timeZone,
+}: {
+  day: ReadStudyDay;
+  goal: Goal;
+  timeZone?: string;
+}): Promise<TodayPlanChangeView | null> {
+  const now = new Date();
+  const settling = day.selection ? getSelectedPlanChange(day.selection) : null;
+  const notice = getSelectedPlanNotice({ change: settling, now, selection: day.selection });
+
+  return (
+    notice ??
+    loadTodayPlanChange({ goal, now, skipPhaseDates: replacesPhaseDates(settling), timeZone })
+  );
+}
+
 /** The day Today shows for an admitted goal, with the read-only cards around it. */
 async function readAdmittedToday({
   admission: { owned, stamp },
@@ -263,8 +291,7 @@ async function readAdmittedToday({
       loadSessionDay({ day, goal: owned.goal, userId }),
       loadAroundSession({ owned, selection: day.selection, session: day.session, timeZone }),
       getCurrentSuggestedGoal(),
-      getSelectedPlanNotice({ now: new Date(), selection: day.selection }) ??
-        loadTodayPlanChange({ goal: owned.goal, now: new Date(), timeZone }),
+      loadDayPlanChange({ day, goal: owned.goal, timeZone }),
       loadGoalDateKind(owned.goal, day.blueprint),
       loadOpenExamChoice(owned.goal),
       loadNoticedPattern({ goal: owned.goal, userId }),

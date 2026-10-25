@@ -66,13 +66,6 @@ export const todayResponseSchema = z
       }),
     planChange: planChangeSchema
       .extend({
-        chapterTitle: z
-          .string()
-          .nullable()
-          .meta({
-            description:
-              "For a test-out, the chapter its lessons were skipped from when they all come from one",
-          }),
         id: z
           .uuid()
           .nullable()
@@ -83,7 +76,7 @@ export const todayResponseSchema = z
       .nullable()
       .meta({
         description:
-          "The plan change to answer on Today: the newest proposal waiting for an OK, or an automatic change of the last day (a rebalance, missed days, a test-out, an estimateUpdated whose net lesson count changed by more than one as the plan adapted to pace data or written lessons) until it's marked seen. Answer it with POST /v1/goals/{goalId}/plan/changes/{changeId}",
+          "The plan change to answer on Today, only when the learner has a say: the newest proposal waiting for an OK, or missed days of the last day that put the goal's date at risk (`behind`) until it's answered. Changes the plan makes on its own (missed days moved forward, closer estimates, test-outs, relearns) stay in the plan's `changes` and aren't Today's news. Answer it with POST /v1/goals/{goalId}/plan/changes/{changeId}",
       }),
     progress: z
       .discriminatedUnion("measure", [

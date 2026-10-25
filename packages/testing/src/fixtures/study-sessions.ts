@@ -185,14 +185,21 @@ export async function unplannedCheckpointFixture({ userId }: { userId: string })
   };
 }
 
+/** Days to an at-risk goal's date: too few for its 72 lessons at 12 minutes a day. */
+const AT_RISK_DAYS = 7;
+
 /**
- * DB-only prior-day unwritten work: the read must settle it in memory and show a mandatory
- * phase-end move. No notice, proposal, session or authored lesson is fabricated.
+ * DB-only prior-day unwritten work: the read must settle it in memory, which moves a phase's end.
+ * No notice, proposal, session or authored lesson is fabricated. At risk (`atRisk`), the goal has
+ * a date its plan covered all of when it was last planned, which the missed day loses: Today asks
+ * the learner what to do about it.
  */
 export async function mandatoryNoticeDayFixture({
+  atRisk = false,
   localDate,
   userId,
 }: {
+  atRisk?: boolean;
   localDate: Date;
   userId: string;
 }) {
@@ -215,7 +222,7 @@ export async function mandatoryNoticeDayFixture({
     dailyMinutes: 12,
     details: { placementDeclined: true },
     kind: "learn",
-    targetDate: null,
+    targetDate: atRisk ? new Date(day.getTime() + AT_RISK_DAYS * MS_PER_DAY) : null,
     timezone: "UTC",
     title: "Interview practice",
     userId,
@@ -239,6 +246,7 @@ export async function mandatoryNoticeDayFixture({
   ];
 
   const plan = await planFixture({
+    coveredShare: atRisk ? 1 : null,
     createdAt: goal.createdAt,
     goalId: goal.id,
     graph: {

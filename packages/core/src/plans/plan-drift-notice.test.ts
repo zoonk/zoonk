@@ -13,7 +13,6 @@ import { loadPlanContext } from "./_utils/plan-context";
 import { computePlan } from "./_utils/replan";
 import { getSeenEffect } from "./_utils/seen-effect";
 import { countLessons } from "./_utils/stand-in-lessons";
-import { decidePlanChange } from "./decide-plan-change";
 import { refreshGoalPlan } from "./refresh-goal-plan";
 
 /** Keep the source at own while the next session moves its blended factor. */
@@ -83,12 +82,8 @@ describe("notices for changes within an estimate", () => {
     const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
     const beforeReads = await prisma.planChange.findMany({ where: { planId: plan.id } });
 
-    await expect(readTodayChange(goal.id)).resolves.toMatchObject({
-      canUndo: false,
-      id: change?.id,
-    });
-
-    await readTodayChange(goal.id);
+    // The Plan lists it; Today, with nothing for the learner to do, stays quiet.
+    await expect(readTodayChange(goal.id)).resolves.toBeNull();
 
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toStrictEqual(
       saved,
@@ -105,13 +100,6 @@ describe("notices for changes within an estimate", () => {
         where: { kind: { in: ["coverageChanged", "estimateUpdated"] }, planId: plan.id },
       }),
     ).resolves.toBe(1);
-
-    if (!change) {
-      throw new Error("The change wasn't recorded.");
-    }
-
-    await decidePlanChange({ changeId: change.id, goalId: goal.id, input: { status: "seen" } });
-    await expect(readTodayChange(goal.id)).resolves.toBeNull();
   });
 
   // Every lesson a run leaves out is named, a single one too: the threshold keeps only small gains
@@ -141,7 +129,6 @@ describe("notices for changes within an estimate", () => {
       const change = await latestChange(plan.id);
       expect(change?.effect).toMatchObject({ lessonsAdded: 0, lessonsRemoved: 1 });
       expect(change?.effect?.lessonsLeftOut).toHaveLength(1);
-      await expect(readTodayChange(goal.id)).resolves.toMatchObject({ id: change?.id });
     },
   );
 
@@ -171,11 +158,6 @@ describe("notices for changes within an estimate", () => {
       const change = await latestChange(plan.id);
       const more = (change?.effect?.lessonsAdded ?? 0) - (change?.effect?.lessonsRemoved ?? 0);
       expect(length === "shorter" ? more : -more).toBeGreaterThan(1);
-
-      await expect(readTodayChange(goal.id)).resolves.toMatchObject({
-        canUndo: false,
-        id: change?.id,
-      });
     },
   );
 
@@ -201,11 +183,6 @@ describe("notices for changes within an estimate", () => {
     await declineProposals({ goalId: goal.id, planId: plan.id });
     const change = await latestChange(plan.id);
     expect(change?.effect?.lessonsRemoved).toBeGreaterThan(1);
-
-    await expect(readTodayChange(goal.id)).resolves.toMatchObject({
-      canUndo: false,
-      id: change?.id,
-    });
   });
 
   it("keeps a one-lesson written resize quiet", async () => {
@@ -231,7 +208,6 @@ describe("notices for changes within an estimate", () => {
     await refreshGoalPlan({ goalId: goal.id });
     await declineProposals({ goalId: goal.id, planId: plan.id });
     await expect(latestChange(plan.id)).resolves.toBeNull();
-    await expect(readTodayChange(goal.id)).resolves.toBeNull();
   });
 
   it("announces written lesson counts on an undated plan too", async () => {
@@ -255,12 +231,6 @@ describe("notices for changes within an estimate", () => {
     expect(goal.targetDate).toBeNull();
     expect(change?.effect?.lessonsAdded).toBe(8);
     expect(change?.effect?.lessonsRemoved).toBe(0);
-
-    await expect(readTodayChange(goal.id)).resolves.toMatchObject({
-      canUndo: false,
-      id: change?.id,
-      kind: "estimateUpdated",
-    });
   });
 
   // At 15 minutes a day, one stand-in begins before the exam and goes on after it: landed, it kept
@@ -354,12 +324,6 @@ describe("notices for changes within an estimate", () => {
     expect(change?.effect?.lessonsAdded).toBe(8);
     // The last lessons reclaim time no longer set aside for an omitted after-exam mock.
     expect(change?.effect?.endDateAfter).toBe("2020-10-31");
-
-    await expect(readTodayChange(goal.id)).resolves.toMatchObject({
-      canUndo: false,
-      id: change?.id,
-      kind: "estimateUpdated",
-    });
   });
 
   it.each([4, 5])(
@@ -412,11 +376,6 @@ describe("notices for changes within an estimate", () => {
       await declineProposals({ goalId: goal.id, planId: plan.id });
       const change = await latestChange(plan.id);
       expect(change?.effect?.lessonsAdded).toBeGreaterThan(1);
-
-      await expect(readTodayChange(goal.id)).resolves.toMatchObject({
-        canUndo: false,
-        id: change?.id,
-      });
     },
   );
 });
