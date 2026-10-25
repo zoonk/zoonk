@@ -117,6 +117,52 @@ describe(checkActivityAnswer, () => {
     expect(grade(guess, { kind: "numeric", value: 1.1001 })).toBe(false);
   });
 
+  it.each([1e-8, 1e-12])("keeps a small-unit guess's tolerance relative to %s", (expected) => {
+    const guess = content(
+      "guessReveal",
+      {
+        max: 2 * expected,
+        min: 0,
+        scale: "linear",
+        takeaway: "Lengths can be measured in meters.",
+        truth: { kind: "cited", value: expected },
+        unit: "m",
+      },
+      {
+        answer: expected,
+        explanation: "Why.",
+        kind: "numeric",
+        question: "How long is it?",
+        tolerance: { kind: "relative", value: 0.1 },
+      },
+    );
+
+    expect(grade(guess, { kind: "numeric", value: expected * 1.1 })).toBe(true);
+    expect(grade(guess, { kind: "numeric", value: expected * 0.9 })).toBe(true);
+    expect(grade(guess, { kind: "numeric", value: expected * 1.2 })).toBe(false);
+    expect(grade(guess, { kind: "numeric", value: expected * 0.8 })).toBe(false);
+  });
+
+  it.each([
+    { kind: "relative", value: 0.1 },
+    { kind: "absolute", value: 1e-9 },
+  ])("keeps formula examples' $kind tolerance small", (tolerance) => {
+    const formula = content("patternTester", {
+      examples: [
+        { inputs: [{ name: "length", value: 1e-8 }], output: 1e-8 },
+        { inputs: [{ name: "length", value: 5e-9 }], output: 5e-9 },
+      ],
+      hints: [],
+      mode: "formula",
+      solution: "length",
+      task: "Return the length in meters.",
+      tolerance,
+    });
+
+    expect(grade(formula, { kind: "pattern", pattern: "length * 1.1" })).toBe(true);
+    expect(grade(formula, { kind: "pattern", pattern: "length * 1.2" })).toBe(false);
+  });
+
   it("orders timeline events by their dates, not by how they were written", () => {
     const timeline = content("timeline", {
       anchors: [{ label: "Great Pyramid", year: -2560 }],

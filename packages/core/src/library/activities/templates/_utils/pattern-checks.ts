@@ -1,8 +1,9 @@
 import { type ActivityFormulaExample } from "../../activity-expected-answer";
 import { type ActivityTolerance } from "../../activity-schemas";
-import { characters, evaluateOrNull, isClose } from "./template-helpers";
+import { characters, evaluateOrNull } from "./template-helpers";
 
 export const MAX_PATTERN_LENGTH = 200;
+const RELATIVE_TOLERANCE_SLACK = 1e-9;
 
 type ScanState = {
   closedRiskyGroup: boolean;
@@ -124,10 +125,10 @@ export function withinTolerance({
     tolerance.kind === "absolute" ? tolerance.value : tolerance.value * Math.abs(expected);
 
   const distance = Math.abs(value - expected);
+  const slack = RELATIVE_TOLERANCE_SLACK * Math.max(Math.abs(expected), Math.abs(value), allowed);
 
-  // Floating point can put a value right at the edge a hair past it: 1.1 is 0.10000000000000009
-  // from 1, yet within 10% of it.
-  return distance <= allowed || isClose(distance, allowed) || isClose(value, expected);
+  /** Relative slack includes rounded boundaries without overwhelming small-unit tolerances. */
+  return distance <= allowed + slack;
 }
 
 /** Spreadsheet formulas start with "=", which the expression language doesn't need. */
