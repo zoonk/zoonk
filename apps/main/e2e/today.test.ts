@@ -29,6 +29,7 @@ import { expect, test } from "./fixtures";
 import { type StreamEvent, followRun } from "./generation-run";
 import { tabTo } from "./keyboard-focus";
 import { asPersona } from "./learn-personas";
+import { expectHydrated } from "./on-demand-code";
 import {
   DAYS_TO_EXAM,
   LESSON_CAN_DO,
@@ -1482,11 +1483,7 @@ async function openDraftInTwoTabs(browser: Browser) {
   const send = page.getByRole("button", { name: "Build my plan" });
 
   // The box sends once React drives it: a click on the server's HTML alone sends nothing.
-  await expect
-    .poll(() =>
-      send.evaluate((button) => Object.keys(button).some((key) => key.startsWith("__react"))),
-    )
-    .toBe(true);
+  await expectHydrated(send);
 
   await page.getByRole("textbox", { name: "I want to" }).fill(`understand quantum physics ${id}`);
   await send.click();
@@ -1496,13 +1493,7 @@ async function openDraftInTwoTabs(browser: Browser) {
   await expect(other.getByText(title, { exact: true })).toBeVisible();
 
   // The resumed draft is server-rendered too: Edit Goal needs React before the first tap.
-  const edit = other.getByRole("button", { name: "Edit Goal" });
-
-  await expect
-    .poll(() =>
-      edit.evaluate((button) => Object.keys(button).some((key) => key.startsWith("__react"))),
-    )
-    .toBe(true);
+  await expectHydrated(other.getByRole("button", { name: "Edit Goal" }));
 
   expect(await other.evaluate(() => document.visibilityState)).toBe("visible");
 
