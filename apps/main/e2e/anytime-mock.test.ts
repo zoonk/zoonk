@@ -1,6 +1,7 @@
 import { type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
+import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { SECTION_TOOLS, TEXT_SET, WRITTEN_ESSAY, WRITTEN_PASS_MARK } from "./anytime-mock-exams";
 import {
@@ -20,6 +21,31 @@ function pickMock(page: Page, name: RegExp) {
     .locator("label")
     .filter({ has: page.getByRole("radio", { name }) })
     .click();
+}
+
+/** Wait for the submitted section's response before checking its next screen. */
+async function confirmMockHandIn(page: Page) {
+  const mockId = new URL(page.url()).pathname.split("/").at(-1);
+
+  const submitted = page.waitForResponse((response) => {
+    const request = response.request();
+
+    if (request.method() !== "POST" || request.url() !== page.url()) {
+      return false;
+    }
+
+    const input: unknown = request.postDataJSON();
+
+    return (
+      Array.isArray(input) &&
+      input[0] === mockId &&
+      typeof input[1] === "number" &&
+      input[2] === "UTC"
+    );
+  });
+
+  await page.getByRole("alertdialog").getByRole("button", { name: "Hand in" }).click();
+  await submitted;
 }
 
 test.describe("Mocks whenever the learner wants", () => {
@@ -58,7 +84,7 @@ test.describe("Mocks whenever the learner wants", () => {
     });
 
     await page.getByRole("button", { name: "Hand in the mock exam" }).click();
-    await page.getByRole("alertdialog").getByRole("button", { name: "Hand in" }).click();
+    await confirmMockHandIn(page);
 
     await expect(page.getByRole("heading", { level: 1, name: /^Mock exam 1 done/u })).toBeVisible();
 
@@ -199,7 +225,7 @@ test.describe("Mocks whenever the learner wants", () => {
 
     await answerMockQuestions({ answers, knows: () => true, page });
     await page.getByRole("button", { name: "Hand in this section" }).click();
-    await page.getByRole("alertdialog").getByRole("button", { name: "Hand in" }).click();
+    await confirmMockHandIn(page);
 
     // The written test on its own clock: the exam's essay question, written in the mock.
     await expect(page.getByText(/^Written part · Mathematics$/u)).toBeVisible();
@@ -218,7 +244,7 @@ test.describe("Mocks whenever the learner wants", () => {
 
     await expectAccessibleScreen(page, "a mock's written test");
     await page.getByRole("button", { name: "Hand in the mock exam" }).click();
-    await page.getByRole("alertdialog").getByRole("button", { name: "Hand in" }).click();
+    await confirmMockHandIn(page);
 
     // The objective score shows at once, beside what the notice says it takes to pass.
     await expect(
@@ -316,7 +342,7 @@ test.describe("Mocks whenever the learner wants", () => {
     await expect(sheet.getByText(SECTION_TOOLS.Mathematics)).toBeVisible();
     await answerMockQuestions({ answers, knows: () => true, page });
     await page.getByRole("button", { name: "Hand in this section" }).click();
-    await page.getByRole("alertdialog").getByRole("button", { name: "Hand in" }).click();
+    await confirmMockHandIn(page);
 
     // The notice's ten-minute break, with the next section and its tools; it survives a reload.
     await expect(page.getByRole("heading", { level: 1, name: "Break" })).toBeVisible();
@@ -342,7 +368,7 @@ test.describe("Mocks whenever the learner wants", () => {
     // Two wrong and six left blank: each wrong answer takes a quarter point, a blank one nothing.
     await answerMockQuestions({ answers, count: 2, knows: () => false, page });
     await sheet.getByRole("button", { exact: true, name: "Hand in" }).click();
-    await page.getByRole("alertdialog").getByRole("button", { name: "Hand in" }).click();
+    await confirmMockHandIn(page);
 
     await expect(
       page.getByRole("heading", { level: 1, name: /^Mock exam 1 done\s*7\.5$/u }),
@@ -396,7 +422,7 @@ test.describe("Mocks whenever the learner wants", () => {
 
     const sheet = page.getByRole("complementary", { name: "Answer sheet" });
     await sheet.getByRole("button", { exact: true, name: "Hand in" }).click();
-    await page.getByRole("alertdialog").getByRole("button", { name: "Hand in" }).click();
+    await confirmMockHandIn(page);
 
     // Each question has its own clock: when it runs out, the next one opens.
     await expect(page.getByText(/^Question 9 of 16/u)).toBeVisible();
@@ -404,7 +430,7 @@ test.describe("Mocks whenever the learner wants", () => {
     await expect(page.getByText(/^Question 10 of 16/u)).toBeVisible({ timeout: 6000 });
 
     await sheet.getByRole("button", { exact: true, name: "Hand in" }).click();
-    await page.getByRole("alertdialog").getByRole("button", { name: "Hand in" }).click();
+    await confirmMockHandIn(page);
 
     // The one change in the review is the only right answer.
     await expect(
@@ -428,12 +454,12 @@ test.describe("Mocks whenever the learner wants", () => {
     await page.getByRole("button", { name: "Start" }).click();
     await answerMockQuestions({ answers, knows: knowsMathematics, page });
     await page.getByRole("button", { name: "Hand in this section" }).click();
-    await page.getByRole("alertdialog").getByRole("button", { name: "Hand in" }).click();
+    await confirmMockHandIn(page);
     await expect(page.getByText(/^Question 9 of 16/u)).toBeVisible();
     await expect(page.getByRole("alertdialog")).toBeHidden();
     await answerMockQuestions({ answers, knows: knowsMathematics, page });
     await page.getByRole("button", { name: "Hand in the mock exam" }).click();
-    await page.getByRole("alertdialog").getByRole("button", { name: "Hand in" }).click();
+    await confirmMockHandIn(page);
 
     await expect(
       page.getByRole("heading", { level: 1, name: /^Mock exam 1 done\s*8 of 16$/u }),
@@ -456,7 +482,7 @@ test.describe("Mocks whenever the learner wants", () => {
     await page.getByRole("button", { name: "Start" }).click();
     await answerFormatsMock({ answers, page });
     await page.getByRole("button", { name: "Hand in the mock exam" }).click();
-    await page.getByRole("alertdialog").getByRole("button", { name: "Hand in" }).click();
+    await confirmMockHandIn(page);
 
     // One of the two right options earns a quarter of its question, as the notice scores it.
     await expect(
@@ -497,7 +523,7 @@ test.describe("Mocks whenever the learner wants", () => {
       .getByRole("button", { exact: true, name: "Hand in" })
       .click();
 
-    await page.getByRole("alertdialog").getByRole("button", { name: "Hand in" }).click();
+    await confirmMockHandIn(page);
     await expect(page.getByRole("heading", { level: 1, name: /^Mock exam 1 done/u })).toBeVisible();
 
     const review = page.getByRole("region", { name: "Questions to review" });
@@ -515,13 +541,14 @@ test.describe("Mocks whenever the learner wants", () => {
       await page.goto("/mock/new");
       await pickMock(page, /^Mathematics/u);
       await page.getByRole("button", { name: "Start" }).click();
+      await page.waitForURL(/\/mock\/[\w-]+$/u);
       await expect(page.getByRole("timer", { name: "Time left" })).toBeVisible();
     }
 
     async function handIn({ knows, number }: { knows: boolean; number: number }) {
       await answerMockQuestions({ answers, knows: () => knows, page });
       await page.getByRole("button", { name: "Hand in the mock exam" }).click();
-      await page.getByRole("alertdialog").getByRole("button", { name: "Hand in" }).click();
+      await confirmMockHandIn(page);
 
       await expect(
         page.getByRole("heading", { level: 1, name: new RegExp(`^Mock exam ${number} done`, "u") }),
@@ -595,6 +622,29 @@ test.describe("Mocks whenever the learner wants", () => {
     await expect(page.getByRole("dialog", { name: "Your preparation" })).toContainText(
       "Take more mock exams of the whole exam or half of it to see your estimated score.",
     );
+  });
+
+  test("a full mock never pads its missing new questions with ones answered before", async ({
+    browser,
+  }) => {
+    const { answers, skills, user } = await createAnytimeMockLearner({ plus: true });
+    const mathematics = skills.filter((skill) => skill.name.startsWith("Mathematics "));
+
+    const items = await prisma.item.findMany({
+      omit: { content: true },
+      where: { skillId: { in: mathematics.map((skill) => skill.id) } },
+    });
+
+    // Mathematics was answered before, and today's allowance can't write replacement questions.
+    await Promise.all([
+      ...items.map((item) =>
+        attemptFixture({ itemId: item.id, skillId: item.skillId, userId: user.id }),
+      ),
+      usageRecordsFixture({ count: 2, kind: "mockQuestions", userId: user.id }),
+    ]);
+
+    const page = await openAs(browser, user);
+    const sheet = page.getByRole("complementary", { name: "Answer sheet" });
 
     // A full mock is the real exam: answered questions never pad it. With every Mathematics
     // question answered and nothing more to write today, the chooser says what's ready first.
@@ -609,6 +659,7 @@ test.describe("Mocks whenever the learner wants", () => {
     ).toBeVisible();
 
     await page.getByRole("button", { name: "Start with 8 questions" }).click();
+    await page.waitForURL(/\/mock\/[\w-]+$/u);
     await expect(page.getByRole("timer", { name: "Time left" })).toBeVisible();
 
     await expect(
@@ -616,7 +667,10 @@ test.describe("Mocks whenever the learner wants", () => {
     ).toBeVisible();
 
     await expect(page.getByText(/repeat/u)).toBeHidden();
-    await handIn({ knows: true, number: 4 });
+    await answerMockQuestions({ answers, knows: () => true, page });
+    await page.getByRole("button", { name: "Hand in the mock exam" }).click();
+    await confirmMockHandIn(page);
+    await expect(page.getByRole("heading", { level: 1, name: /^Mock exam 1 done/u })).toBeVisible();
 
     await page.goto("/exam");
 

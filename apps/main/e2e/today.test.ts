@@ -1494,6 +1494,16 @@ async function openDraftInTwoTabs(browser: Browser) {
 
   await other.goto("/today");
   await expect(other.getByText(title, { exact: true })).toBeVisible();
+
+  // The resumed draft is server-rendered too: Edit Goal needs React before the first tap.
+  const edit = other.getByRole("button", { name: "Edit Goal" });
+
+  await expect
+    .poll(() =>
+      edit.evaluate((button) => Object.keys(button).some((key) => key.startsWith("__react"))),
+    )
+    .toBe(true);
+
   expect(await other.evaluate(() => document.visibilityState)).toBe("visible");
 
   return { id, other, page };

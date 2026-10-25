@@ -1784,11 +1784,16 @@ test.describe("Today's plan change", () => {
       originalLessons.map(({ id, lessonId }) => ({ id, lessonId })),
     );
 
-    const actions: string[] = [];
+    const acknowledgments: string[] = [];
 
+    // Today's writing poll also uses a Server Action; only the acknowledgment is a learner write.
     page.on("request", (request) => {
-      if (request.method() === "POST" && request.headers()["next-action"]) {
-        actions.push(request.url());
+      if (
+        request.method() === "POST" &&
+        request.headers()["next-action"] &&
+        request.postData()?.includes('"kind":"computed"')
+      ) {
+        acknowledgments.push(request.url());
       }
     });
 
@@ -1824,7 +1829,7 @@ test.describe("Today's plan change", () => {
     expect((savedPlan.phases as { endDate: string | null }[])[0]?.endDate).toBe(move.after);
     expect(savedBoss.scheduledFor).toStrictEqual(new Date(`${move.after}T00:00:00Z`));
     expect(savedLessons).toStrictEqual(keptLessons);
-    expect(actions).toHaveLength(1);
+    expect(acknowledgments).toHaveLength(1);
     await expect(prisma.studySession.count({ where: { goalId: plan.goalId } })).resolves.toBe(0);
 
     await page.request.get("/api/learner/views/today");
