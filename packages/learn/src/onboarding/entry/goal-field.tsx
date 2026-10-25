@@ -122,9 +122,9 @@ export function GoalFieldLabel({
 /**
  * The goal's words: one line that grows with them. Enter sends (Shift+Enter breaks the line). On
  * a device with a mouse or trackpad it takes focus when it shows (`autoFocusOnPointer`), unless
- * the learner already put it there before its code arrived, whose ring stays; on a phone it waits
- * for a tap, so the keyboard doesn't cover what's under it. Words typed before its code arrived
- * stay, instead of the words it came with (`useKeptTyping`).
+ * the learner already has keyboard focus on a control, whose focus and ring stay; on a phone it
+ * waits for a tap, so the keyboard doesn't cover what's under it. Words typed before its code
+ * arrived stay, instead of the words it came with (`useKeptTyping`).
  */
 export function GoalFieldText({
   autoFocusOnPointer = false,
@@ -151,10 +151,12 @@ export function GoalFieldText({
   useEffect(() => {
     const field = fieldRef.current;
 
+    /** A clicked sidebar link can keep pointer focus after navigation; keyboard focus stays put. */
     if (
       field &&
       autoFocusOnPointer &&
       document.activeElement !== field &&
+      !document.activeElement?.matches(":focus-visible") &&
       globalThis.matchMedia("(pointer: fine)").matches
     ) {
       field.dataset.autofocused = "";

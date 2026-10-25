@@ -88,6 +88,24 @@ test.describe("Typed before the page is ready", () => {
     await expectVisibleFocus(box);
   });
 
+  test("a goal box becoming ready leaves keyboard focus on the learner's chosen control", async ({
+    page,
+  }) => {
+    const code = await openBeforeTheCode(page, "/start");
+    const skip = page.getByRole("link", { name: "Skip to content" });
+    const box = page.getByRole("textbox", { name: "I want to" });
+
+    /** On a slow load the learner can still be walking the frame when the goal box becomes ready. */
+    await tabTo(page, skip);
+    const requests = followRequests(page);
+    await releaseTheCode({ code, field: box, page });
+    await settleIdleWork(page, requests);
+
+    await expect(skip).toBeFocused();
+    await expectVisibleFocus(skip);
+    await tabTo(page, box);
+  });
+
   test("the buddy's goal box keeps words changed before it's ready", async ({
     userWithoutProgress: page,
   }) => {

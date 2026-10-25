@@ -599,6 +599,8 @@ test.describe("Starting a goal inside the app's frame", () => {
 
     await expect(userWithoutProgress).toHaveURL(/\/start$/u);
 
+    await expect(userWithoutProgress.getByRole("textbox", { name: "I want to" })).toBeFocused();
+
     await expect(
       userWithoutProgress.getByRole("heading", { level: 1, name: "What do you want to achieve?" }),
     ).toBeVisible();
