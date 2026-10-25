@@ -2399,6 +2399,37 @@ msgctxt "EWD_9X"
 msgid "Your essay"
 msgstr "Dein Aufsatz"
 
+#: src/essay/essay-prompt.tsx
+msgctxt "iyKTfM"
+msgid "Free response · AP scoring guidelines"
+msgstr "Freie Antwort · AP-Bewertungsrichtlinien"
+
+#: src/essay/essay-prompt.tsx
+#: src/session/use-block-copy.ts
+msgctxt "Jo0iJd"
+msgid "Writing practice"
+msgstr "Schreibübung"
+
+#: src/essay/essay-prompt.tsx
+msgctxt "OJsoa4"
+msgid "Essay · ENEM rubric"
+msgstr "Aufsatz · ENEM-Bewertungsraster"
+
+#: src/essay/essay-prompt.tsx
+msgctxt "mQS0Tq"
+msgid "Supporting texts"
+msgstr "Unterstützende Texte"
+
+#: src/essay/essay-prompt.tsx
+msgctxt "69RO1g"
+msgid "Motivating texts"
+msgstr "Impulstexte"
+
+#: src/essay/essay-prompt.tsx
+msgctxt "rUq4jt"
+msgid "The case"
+msgstr "Der Fall"
+
 #: src/essay/essay-rewrite-guide.tsx
 #: src/essay/essay-screen.tsx
 msgctxt "OAkBl1"
@@ -2462,37 +2493,6 @@ msgstr "Überarbeitung bewerten"
 msgctxt "o88h1t"
 msgid "Send for grading"
 msgstr "Zur Bewertung senden"
-
-#: src/essay/essay-screen.tsx
-msgctxt "iyKTfM"
-msgid "Free response · AP scoring guidelines"
-msgstr "Freie Antwort · AP-Bewertungsrichtlinien"
-
-#: src/essay/essay-screen.tsx
-#: src/session/use-block-copy.ts
-msgctxt "Jo0iJd"
-msgid "Writing practice"
-msgstr "Schreibübung"
-
-#: src/essay/essay-screen.tsx
-msgctxt "OJsoa4"
-msgid "Essay · ENEM rubric"
-msgstr "Aufsatz · ENEM-Bewertungsraster"
-
-#: src/essay/essay-screen.tsx
-msgctxt "mQS0Tq"
-msgid "Supporting texts"
-msgstr "Unterstützende Texte"
-
-#: src/essay/essay-screen.tsx
-msgctxt "69RO1g"
-msgid "Motivating texts"
-msgstr "Impulstexte"
-
-#: src/essay/essay-screen.tsx
-msgctxt "rUq4jt"
-msgid "The case"
-msgstr "Der Fall"
 
 #: src/essay/essay-screen.tsx
 msgctxt "xNSBn4"
