@@ -12,7 +12,8 @@ import { type Page, expect, test } from "./fixtures";
 /**
  * Plays a Library lesson through the app: every teaching screen (the hook's guess, an explanation,
  * a worked example, a check, a typed and a spoken answer, the summary) for a signed-in learner,
- * checked by the server, to the completion; coming back to a lesson where the learner left off;
+ * checked by the server, to the completion; coming back to a lesson where the learner left off
+ * (core's tests resume the open run and a new one, the player's the screen it opens on);
  * a plan lesson played from its chapter counting for the plan, closing to the chapter and going on
  * to its next lesson; and the short break the page asks for when lessons are read too fast. What
  * single screens show is the player's to test (`packages/player`).
@@ -237,42 +238,6 @@ test.describe("Library lesson player", () => {
         }),
       )
       .toStrictEqual({ correctAnswers: 3 });
-  });
-
-  test("comes back where the learner left off after a reload, and finishes", async ({
-    noProgressUser,
-    userWithoutProgress: page,
-  }) => {
-    const { lesson } = await playableLessonFixture({
-      steps: [
-        "explanation",
-        "check",
-        {
-          content: { ...playableStepContent.explanation, title: "Denser means more likely" },
-          kind: "explanation",
-        },
-        "check",
-      ],
-    });
-
-    await page.goto(`/learn/${lesson.id}`);
-    await primary(page, /^Next/u).click();
-    await answerCheckWithKeys(page);
-    await expect(page.getByText("Denser means more likely")).toBeVisible();
-
-    // The answer reached the server, which is what the lesson comes back from.
-    await expect.poll(() => prisma.attempt.count({ where: { userId: noProgressUser.id } })).toBe(1);
-
-    await page.reload();
-
-    await expect(page.getByText("Denser means more likely")).toBeVisible();
-    await expect(page.getByText("A cloud, not a little ball")).toBeHidden();
-
-    await primary(page, /^Next/u).click();
-    await answerCheckWithKeys(page);
-
-    await expect(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
-    await expect(page.getByText(/^2 of 2 right/u)).toBeVisible();
   });
 
   test("comes back days later where the learner left off, in a new run, and finishes", async ({
