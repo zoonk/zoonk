@@ -14,6 +14,7 @@ const SUBJECT_COLORS: Readonly<Record<CourseCategory | "general", string>> = {
   culture: "#F2B45A",
   economics: "#7FC8A0",
   engineering: "#7A9CC6",
+  exams: "#5B7BD5",
   general: "#8B93F8",
   geography: "#6BB5D8",
   health: "#F4A6B4",
