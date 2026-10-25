@@ -95,7 +95,7 @@ async function expectDotsClearOfAsk(page: Page) {
 }
 
 test.describe("Exam goal", () => {
-  test("a day, a mock in real conditions with its answer sheet, bounded waits and a tutor once handed in, its result and preparation", async ({
+  test("a day, a mock in real conditions with its answer sheet, bounded waits and a tutor once handed in, and its result", async ({
     browser,
   }) => {
     await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
@@ -263,63 +263,14 @@ test.describe("Exam goal", () => {
           path: `/v1/mocks/${mock.blockId}/questions`,
         },
       ]);
-
-      // The estimate lives behind the Plan's number; the exam's page says what's on it.
-      await page.goto("/plan");
-      await preparationNumber(page).click();
-
-      await expect(
-        page
-          .getByRole("dialog", { name: "Your preparation" })
-          .locator('[data-slot="estimated-score"]')
-          .getByText(/^\d+ to \d+$/u),
-      ).toBeVisible();
-
-      await page.keyboard.press("Escape");
-      await page.getByRole("button", { name: "Plan options" }).click();
-      await page.getByRole("menuitem", { name: "About the exam" }).click();
-      await expect(page).toHaveURL(/\/exam$/u);
-
-      // The page is named after the exam, with its days left over the name.
-      await expect(page.getByRole("heading", { level: 1, name: "ENEM" })).toBeVisible();
-
-      await expect(
-        page
-          .getByRole("main")
-          .getByText(/\d+ days? left/u)
-          .filter({ visible: true })
-          .first(),
-      ).toBeVisible();
-
-      await expect(page.getByText(/^Estimated score/u)).toBeHidden();
-
-      // The exam day by day, as its notice sets it out, beside the page: each day's date and
-      // length over what it holds.
-      const days = page.getByRole("region", { name: "The two days" });
-      await expect(days).toContainText("180 questions");
-      const firstDay = days.getByRole("listitem").first();
-
-      await expect(firstDay.getByText("Day 1", { exact: true })).toBeVisible();
-      await expect(firstDay.getByText(/^[A-Z][a-z]+, Nov \d+(?:, \d{4})?$/u)).toBeVisible();
-      await expect(firstDay.getByText("5 hr 30 min", { exact: true })).toBeVisible();
-
-      await expect(
-        firstDay.getByText("Linguagens, Ciências Humanas e redação · 90 questions", {
-          exact: true,
-        }),
-      ).toBeVisible();
-
-      await expect(page.getByRole("link", { name: /^Mock exam 2/u })).toBeVisible();
-      await expect(page.getByRole("link", { name: /^Mock exam 1/u })).toBeVisible();
-      await expectAccessibleScreen(page, "the exam page");
     });
   });
 
   // Ana handed a math mock in with most of it blank, and its result said only "230–390", nothing
   // of what she answered. An estimated score now shows the answers it comes from, as a net score's
   // tiles do: right, wrong and blank. The mock was her last mission of the day, so its result says
-  // so with the day's bonus, on a reload too.
-  test("an estimated score shows the right, wrong and blank answers it comes from, and the mission it completed", async ({
+  // so with the day's bonus, on a reload too. Her Plan and the exam's page then count it.
+  test("an estimated score shows the right, wrong and blank answers it comes from, the mission it completed, and her preparation", async ({
     browser,
   }) => {
     await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
@@ -408,6 +359,55 @@ test.describe("Exam goal", () => {
       ).resolves.toMatchObject({ fullMealAt: expect.any(Date) });
 
       await captureMissionEnding(page, test.info(), "mock");
+
+      // The estimate lives behind the Plan's number; the exam's page says what's on it.
+      await page.goto("/plan");
+      await preparationNumber(page).click();
+
+      await expect(
+        page
+          .getByRole("dialog", { name: "Your preparation" })
+          .locator('[data-slot="estimated-score"]')
+          .getByText(/^\d+ to \d+$/u),
+      ).toBeVisible();
+
+      await page.keyboard.press("Escape");
+      await page.getByRole("button", { name: "Plan options" }).click();
+      await page.getByRole("menuitem", { name: "About the exam" }).click();
+      await expect(page).toHaveURL(/\/exam$/u);
+
+      // The page is named after the exam, with its days left over the name.
+      await expect(page.getByRole("heading", { level: 1, name: "ENEM" })).toBeVisible();
+
+      await expect(
+        page
+          .getByRole("main")
+          .getByText(/\d+ days? left/u)
+          .filter({ visible: true })
+          .first(),
+      ).toBeVisible();
+
+      await expect(page.getByText(/^Estimated score/u)).toBeHidden();
+
+      // The exam day by day, as its notice sets it out, beside the page: each day's date and
+      // length over what it holds.
+      const days = page.getByRole("region", { name: "The two days" });
+      await expect(days).toContainText("180 questions");
+      const firstDay = days.getByRole("listitem").first();
+
+      await expect(firstDay.getByText("Day 1", { exact: true })).toBeVisible();
+      await expect(firstDay.getByText(/^[A-Z][a-z]+, Nov \d+(?:, \d{4})?$/u)).toBeVisible();
+      await expect(firstDay.getByText("5 hr 30 min", { exact: true })).toBeVisible();
+
+      await expect(
+        firstDay.getByText("Linguagens, Ciências Humanas e redação · 90 questions", {
+          exact: true,
+        }),
+      ).toBeVisible();
+
+      await expect(page.getByRole("link", { name: /^Mock exam 2/u })).toBeVisible();
+      await expect(page.getByRole("link", { name: /^Mock exam 1/u })).toBeVisible();
+      await expectAccessibleScreen(page, "the exam page");
     });
   });
 
