@@ -240,16 +240,39 @@ test.describe("Asking for the notice research couldn't find", () => {
     await page.context().close();
   });
 
-  test(`Today asks to confirm the exam's details, and "Not now" takes the ask away`, async ({
+  test(`Today asks for nothing until research needs something, says what it needs, and "Not now" takes the ask away`, async ({
     browser,
   }) => {
-    const { goal, user } = await studyDayWaitingFor("unverified");
+    const { goal, user } = await createStudyDay();
     const page = await openAs(browser, user);
     await page.setViewportSize({ height: 900, width: 1280 });
+    const ask = page.getByRole("region", { name: "Your plan needs a document" });
 
     await page.goto("/today");
 
-    const ask = page.getByRole("region", { name: "Your plan needs a document" });
+    await expect(page.getByRole("region", { name: "Today's session" })).toBeVisible();
+    await expect(ask).toBeHidden();
+
+    // A teacher's test asks for the class's material.
+    await prisma.goal.update({
+      data: { researchUploadReason: "classMaterial" },
+      where: { id: goal.id },
+    });
+
+    await page.reload();
+
+    await expect(ask).toContainText("Add your class material");
+    await expect(ask).toContainText("Upload the slides, notes or list of topics");
+    await expect(ask.getByRole("button", { name: "Upload your material" })).toBeVisible();
+
+    // A notice research couldn't confirm asks for the official one, until "Not now".
+    await prisma.goal.update({
+      data: { researchUploadReason: "unverified" },
+      where: { id: goal.id },
+    });
+
+    await page.reload();
+
     await expect(ask).toContainText("We couldn't confirm the exam's details");
     await expect(ask).toContainText("Upload the official notice");
 
@@ -265,34 +288,7 @@ test.describe("Asking for the notice research couldn't find", () => {
 
     await page.reload();
     await expect(page.getByRole("region", { name: "Today's session" })).toBeVisible();
-    await expect(page.getByRole("region", { name: "Your plan needs a document" })).toBeHidden();
-    await page.context().close();
-  });
-
-  test("Today asks for nothing until research needs something, like a teacher's test's material", async ({
-    browser,
-  }) => {
-    const { goal, user } = await createStudyDay();
-    const page = await openAs(browser, user);
-    await page.setViewportSize({ height: 900, width: 1280 });
-
-    await page.goto("/today");
-
-    await expect(page.getByRole("region", { name: "Today's session" })).toBeVisible();
-    await expect(page.getByRole("region", { name: "Your plan needs a document" })).toBeHidden();
-
-    // A teacher's test asks for the class's material.
-    await prisma.goal.update({
-      data: { researchUploadReason: "classMaterial" },
-      where: { id: goal.id },
-    });
-
-    await page.reload();
-
-    const ask = page.getByRole("region", { name: "Your plan needs a document" });
-    await expect(ask).toContainText("Add your class material");
-    await expect(ask).toContainText("Upload the slides, notes or list of topics");
-    await expect(ask.getByRole("button", { name: "Upload your material" })).toBeVisible();
+    await expect(ask).toBeHidden();
     await page.context().close();
   });
 });

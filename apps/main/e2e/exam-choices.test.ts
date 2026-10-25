@@ -303,11 +303,37 @@ test.describe("Exam choices", () => {
       .toStrictEqual([{ group: FOREIGN, subject: SPANISH }]);
   });
 
-  test("a learner who decided later is asked on the Plan, and the pick says what it did", async ({
+  test("a learner who decided later is asked on Today and on the Plan, and each pick says what it did", async ({
     browser,
   }) => {
     const { areaOf, goal, user } = await createLanguageLearner();
     const page = await openAs(browser, user);
+    await page.goto("/today");
+
+    // Today is where she studies: "Decide later" in onboarding left the language out of her plan.
+    const notice = page
+      .locator('[data-slot="exam-choice-notice"]')
+      .filter({ hasText: `${FOREIGN}: which one will you take?` });
+
+    await expect(notice).toContainText(`Until you pick, your plan leaves ${FOREIGN} out.`);
+    await notice.getByRole("button", { exact: true, name: "Espanhol" }).click();
+
+    await expect(
+      page.getByRole("status").filter({ hasText: `Your plan studies ${SPANISH} for ${FOREIGN}.` }),
+    ).toBeVisible();
+
+    await expect(notice).toBeHidden();
+
+    await expect
+      .poll(() => loadPlannedAreas({ areaOf, goalId: goal.id }))
+      .toStrictEqual([SPANISH, LANGUAGES].toSorted());
+
+    // Undo asks again.
+    await page.getByRole("button", { exact: true, name: "Undo" }).click();
+    await expect(notice).toBeVisible();
+    await expect.poll(() => loadPicks(goal.id)).toStrictEqual([]);
+
+    // The Plan asks too, as long as she hasn't picked.
     await page.goto("/plan");
 
     // The plan studies no foreign language until she picks: the Plan's one suggestion asks, not
@@ -343,39 +369,6 @@ test.describe("Exam choices", () => {
     await expect
       .poll(() => loadPicks(goal.id))
       .toStrictEqual([{ group: FOREIGN, subject: SPANISH }]);
-
-    await page.context().close();
-  });
-
-  test("a learner who decided later is asked on Today, and the pick says what it did", async ({
-    browser,
-  }) => {
-    const { areaOf, goal, user } = await createLanguageLearner();
-    const page = await openAs(browser, user);
-    await page.goto("/today");
-
-    // Today is where she studies: "Decide later" in onboarding left the language out of her plan.
-    const question = page
-      .locator('[data-slot="exam-choice-notice"]')
-      .filter({ hasText: `${FOREIGN}: which one will you take?` });
-
-    await expect(question).toContainText(`Until you pick, your plan leaves ${FOREIGN} out.`);
-    await question.getByRole("button", { exact: true, name: "Espanhol" }).click();
-
-    await expect(
-      page.getByRole("status").filter({ hasText: `Your plan studies ${SPANISH} for ${FOREIGN}.` }),
-    ).toBeVisible();
-
-    await expect(question).toBeHidden();
-
-    await expect
-      .poll(() => loadPlannedAreas({ areaOf, goalId: goal.id }))
-      .toStrictEqual([SPANISH, LANGUAGES].toSorted());
-
-    // Undo asks again.
-    await page.getByRole("button", { exact: true, name: "Undo" }).click();
-    await expect(question).toBeVisible();
-    await expect.poll(() => loadPicks(goal.id)).toStrictEqual([]);
 
     await page.context().close();
   });
