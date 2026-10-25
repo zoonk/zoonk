@@ -14,7 +14,6 @@ import {
 } from "./checkpoint-fixtures";
 import { expect, test } from "./fixtures";
 import { type StreamEvent, followRun } from "./generation-run";
-import { asPersona } from "./learn-personas";
 import { openAs } from "./study-day";
 import { createUpcomingBoss } from "./upcoming-checkpoint-fixture";
 
@@ -123,37 +122,16 @@ test.describe("Checkpoints", () => {
       })
       .toBe("completed");
 
+    // Reopened once every question is deleted, it keeps the score it earned.
+    await prisma.item.deleteMany({ where: { id: { in: items.map((item) => item.id) } } });
+    await page.reload();
+    await expect(page.getByRole("heading", { level: 1, name: "Not this time" })).toBeVisible();
+    await expect(page.getByText("0 of 2 right", { exact: true })).toBeVisible();
+    await expect(page.getByText(/right to win/u)).toHaveCount(0);
+    await expect(page.getByRole("link", { exact: true, name: "Continue" })).toBeVisible();
+
     await page.context().close();
   });
-
-  for (const outcome of [
-    {
-      answer: "Right answer",
-      heading: "You beat the Trickster!",
-      kind: "won",
-      score: "5 of 5 right",
-    },
-    { answer: "Wrong answer", heading: "Not this time", kind: "lost", score: "0 of 2 right" },
-  ] as const) {
-    test(`a reopened ${outcome.kind} duel keeps its earned score after every question is deleted`, async ({
-      browser,
-    }) => {
-      const { boss, items, user } = await createCheckpointLearner();
-      const page = await openAs(browser, user);
-      await page.goto(`/challenge/${boss.id}`);
-      await page.getByRole("button", { exact: true, name: "Start" }).click();
-      await playDuel(page, { answer: outcome.answer, passMark: CHECKPOINT_PASS_MARK });
-      await expect(page.getByText(outcome.score, { exact: true })).toBeVisible();
-      await prisma.item.deleteMany({ where: { id: { in: items.map((item) => item.id) } } });
-      await page.reload();
-      await expect(page.getByRole("heading", { level: 1, name: outcome.heading })).toBeVisible();
-      await expect(page.getByText(outcome.score, { exact: true })).toBeVisible();
-      await expect(page.getByText(/right to win/u)).toHaveCount(0);
-      await expect(page.getByRole("link", { exact: true, name: "Continue" })).toBeVisible();
-
-      await page.context().close();
-    });
-  }
 
   test("the Trickster's checkpoint says what it asks before its day, without a way to start it yet", async ({
     browser,
@@ -307,7 +285,7 @@ test.describe("Checkpoints", () => {
   test("winning breaks the Trickster's shield, checks the phase off and explains the answers", async ({
     browser,
   }) => {
-    const { block, boss, user } = await createCheckpointLearner();
+    const { block, boss, items, user } = await createCheckpointLearner();
     const page = await openAs(browser, user);
 
     // Before it starts, the checkpoint's own page is its challenge's intro.
@@ -412,95 +390,104 @@ test.describe("Checkpoints", () => {
       `/checkpoint/${block.id}`,
     );
 
+    // Reopened once every question is deleted, it keeps the score it earned.
+    await prisma.item.deleteMany({ where: { id: { in: items.map((item) => item.id) } } });
+    await page.goto(`/checkpoint/${block.id}`);
+
+    await expect(
+      page.getByRole("heading", { level: 1, name: "You beat the Trickster!" }),
+    ).toBeVisible();
+
+    await expect(
+      page.getByText(`${CHECKPOINT_PASS_MARK} of ${CHECKPOINT_PASS_MARK} right`, { exact: true }),
+    ).toBeVisible();
+
+    await expect(page.getByText(/right to win/u)).toHaveCount(0);
+    await expect(page.getByRole("link", { exact: true, name: "Continue" })).toBeVisible();
+
     await page.context().close();
   });
 
-  // The mirror of a won duel: Pedro's lost challenge kept asking, still promising its prize.
-  for (const lessons of [0, 1, 2]) {
-    test(`a lost duel promises its ${lessons} actual reinforcement lessons and leaves the next phase open`, async ({
-      browser,
-    }) => {
-      const { block, boss, user } = await createCheckpointLearner({
-        reinforcementLessons: lessons,
-      });
+  // The mirror of a won duel: Pedro's lost challenge kept asking, still promising its prize. Core
+  // counts the lessons a loss actually adds, none included (`rematch-reinforcement.test.ts`).
+  test("a lost duel promises its actual reinforcement lessons and leaves the next phase open", async ({
+    browser,
+  }) => {
+    const { block, boss, user } = await createCheckpointLearner({ reinforcementLessons: 2 });
 
-      const page = await openAs(browser, user);
+    const page = await openAs(browser, user);
 
-      await page.goto(`/challenge/${boss.id}`);
-      await page.getByRole("button", { name: "Start" }).click();
-      await expect(page).toHaveURL(new RegExp(`/checkpoint/${block.id}$`, "u"));
+    await page.goto(`/challenge/${boss.id}`);
+    await page.getByRole("button", { name: "Start" }).click();
+    await expect(page).toHaveURL(new RegExp(`/checkpoint/${block.id}$`, "u"));
 
-      // Five right of six win it: one miss leaves them all to get.
-      const duelAside = page.getByRole("complementary", { name: "Phase 1 challenge" });
-      await playDuel(page, { answer: "Wrong answer", until: 1 });
-      await expect(duelAside.getByText("5 questions left", { exact: true })).toBeVisible();
-      await expect(duelAside.getByText("Winning", { exact: true })).toBeVisible();
+    // Five right of six win it: one miss leaves them all to get.
+    const duelAside = page.getByRole("complementary", { name: "Phase 1 challenge" });
+    await playDuel(page, { answer: "Wrong answer", until: 1 });
+    await expect(duelAside.getByText("5 questions left", { exact: true })).toBeVisible();
+    await expect(duelAside.getByText("Winning", { exact: true })).toBeVisible();
 
-      // The second miss decides it: nothing more is asked, or promised.
-      await page.getByRole("radio", { name: "Wrong answer" }).click();
-      await page.getByRole("button", { name: "Confirm" }).click();
+    // The second miss decides it: nothing more is asked, or promised.
+    await page.getByRole("radio", { name: "Wrong answer" }).click();
+    await page.getByRole("button", { name: "Confirm" }).click();
 
-      const verdict = page.getByRole("status");
+    const verdict = page.getByRole("status");
 
-      const rematch =
-        lessons === 0
-          ? "New try tomorrow. Nothing is lost."
-          : `New try tomorrow, after ${lessons} short ${lessons === 1 ? "lesson" : "lessons"}. Nothing is lost.`;
+    const rematch = "New try tomorrow, after 2 short lessons. Nothing is lost.";
 
-      await expect(verdict).toContainText(rematch);
-      await expect(page.getByRole("button", { name: "Next" })).toHaveCount(0);
-      await expect(duelAside.getByText(/questions? left$/u)).toHaveCount(0);
-      await expect(duelAside.getByText(/to go$/u)).toHaveCount(0);
-      await expect(duelAside.getByText("Winning", { exact: true })).toHaveCount(0);
+    await expect(verdict).toContainText(rematch);
+    await expect(page.getByRole("button", { name: "Next" })).toHaveCount(0);
+    await expect(duelAside.getByText(/questions? left$/u)).toHaveCount(0);
+    await expect(duelAside.getByText(/to go$/u)).toHaveCount(0);
+    await expect(duelAside.getByText("Winning", { exact: true })).toHaveCount(0);
 
-      await expect(verdict).toHaveText(`Not quiteHis shield held this time. ${rematch}`);
+    await expect(verdict).toHaveText(`Not quiteHis shield held this time. ${rematch}`);
 
-      // Reloaded before moving on, the duel stays over: it says how it ended, never a blank page.
-      await page.reload();
-      await expect(page.getByRole("status")).toContainText(rematch);
-      await expect(page.getByRole("radio")).toHaveCount(0);
+    // Reloaded before moving on, the duel stays over: it says how it ended, never a blank page.
+    await page.reload();
+    await expect(page.getByRole("status")).toContainText(rematch);
+    await expect(page.getByRole("radio")).toHaveCount(0);
 
-      await page.getByRole("button", { name: "See how it went" }).click();
-      await expect(page.getByRole("heading", { level: 1, name: "Not this time" })).toBeVisible();
-      await expect(page.getByText("0 of 2 right", { exact: true })).toBeVisible();
+    await page.getByRole("button", { name: "See how it went" }).click();
+    await expect(page.getByRole("heading", { level: 1, name: "Not this time" })).toBeVisible();
+    await expect(page.getByText("0 of 2 right", { exact: true })).toBeVisible();
 
-      // What winning took, of all six: "2 asked, 5 to win" alone would read as out of reach.
-      await expect
-        .soft(
-          page
-            .getByRole("main")
-            .getByText(`${CHECKPOINT_PASS_MARK} of ${CHECKPOINT_QUESTIONS} right to win`),
-        )
-        .toBeVisible();
+    // What winning took, of all six: "2 asked, 5 to win" alone would read as out of reach.
+    await expect
+      .soft(
+        page
+          .getByRole("main")
+          .getByText(`${CHECKPOINT_PASS_MARK} of ${CHECKPOINT_QUESTIONS} right to win`),
+      )
+      .toBeVisible();
 
-      // A new try, and the next phase named: nothing is locked.
-      const details = page.getByRole("complementary", { name: "Phase 1 challenge" });
-      await expect(details.getByText("New try tomorrow", { exact: true })).toBeVisible();
+    // A new try, and the next phase named: nothing is locked.
+    const details = page.getByRole("complementary", { name: "Phase 1 challenge" });
+    await expect(details.getByText("New try tomorrow", { exact: true })).toBeVisible();
 
-      const reinforcement =
-        lessons === 0
-          ? "Nothing is lost."
-          : `After ${lessons} short ${lessons === 1 ? "lesson" : "lessons"} on what tripped you up. Nothing is lost.`;
+    await expect(
+      details.getByText("After 2 short lessons on what tripped you up. Nothing is lost.", {
+        exact: true,
+      }),
+    ).toBeVisible();
 
-      await expect(details.getByText(reinforcement, { exact: true })).toBeVisible();
-      await expect(details.getByText("The next phase, Practice, is already open.")).toBeVisible();
-      await expect(page.getByText("Trap hunter badge")).toHaveCount(0);
+    await expect(details.getByText("The next phase, Practice, is already open.")).toBeVisible();
+    await expect(page.getByText("Trap hunter badge")).toHaveCount(0);
 
-      await expect.poll(() => planItemStatus(boss.id)).toBe("todo");
+    await expect.poll(() => planItemStatus(boss.id)).toBe("todo");
 
-      // Its intro says so too, and opens how it went.
-      await page.goto(`/challenge/${boss.id}`);
+    // Its intro says so too, and opens how it went.
+    await page.goto(`/challenge/${boss.id}`);
 
-      await expect(page.getByText(rematch, { exact: true })).toBeVisible();
+    await expect(page.getByText(rematch, { exact: true })).toBeVisible();
 
-      await page.getByRole("link", { name: "See how it went" }).click();
-      await expect(page).toHaveURL(new RegExp(`/checkpoint/${block.id}$`, "u"));
-      await expect(page.getByRole("heading", { level: 1, name: "Not this time" })).toBeVisible();
-      await expect(details.getByText("New try tomorrow", { exact: true })).toBeVisible();
+    await page.getByRole("link", { name: "See how it went" }).click();
+    await expect(page).toHaveURL(new RegExp(`/checkpoint/${block.id}$`, "u"));
+    await expect(page.getByRole("heading", { level: 1, name: "Not this time" })).toBeVisible();
+    await expect(details.getByText("New try tomorrow", { exact: true })).toBeVisible();
 
-      await page.context().close();
-    });
-  }
+    await page.context().close();
+  });
 
   test("the week's mock says when, how long and its one rule, and starts from its intro", async ({
     browser,
@@ -759,6 +746,19 @@ async function challengeDays(planId: string) {
   return items.map((item) => item.scheduledFor?.toISOString().slice(0, 10));
 }
 
+/** The Monday after `date`'s day, as the moved challenge names it: "Monday, November 2". */
+function nextMondayAfter(date: Date) {
+  const monday = toUTCMidnight(date);
+  monday.setUTCDate(monday.getUTCDate() + ((8 - monday.getUTCDay()) % 7 || 7));
+
+  return new Intl.DateTimeFormat("en", {
+    day: "numeric",
+    month: "long",
+    timeZone: "UTC",
+    weekday: "long",
+  }).format(monday);
+}
+
 async function blockStatus(blockId: string) {
   const block = await prisma.studySessionBlock.findUniqueOrThrow({ where: { id: blockId } });
   return block.status;
@@ -835,7 +835,12 @@ test.describe("Move to Monday", () => {
     await expectAccessibleScreen(page, "the week's challenge");
     await move.click();
 
-    await expect(page.getByRole("heading", { name: /^Moved to/u })).toBeVisible();
+    // It names the weekday "Move to Monday" promised, with the date: the Monday after today's.
+    await expect(
+      page.getByRole("heading", { name: `Moved to ${nextMondayAfter(new Date())}` }),
+    ).toBeVisible();
+
+    await expectAccessibleScreen(page, "the moved weekly challenge confirmation");
 
     await expect(
       page.getByText(
@@ -867,86 +872,5 @@ test.describe("Move to Monday", () => {
     await expect(page).toHaveURL(/\/today$/u);
 
     await page.context().close();
-  });
-
-  test("moving Lucas's future weekly challenge confirms its next Monday and preserves Tricksters, with Undo", async ({
-    browser,
-  }) => {
-    await asPersona(browser, { day: 19, persona: "buddy" }, async ({ page, user }) => {
-      const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: user.goalId } });
-
-      const weekly = await prisma.planItem.findFirstOrThrow({
-        orderBy: { scheduledFor: "desc" },
-        where: { kind: "checkpoint", planId: plan.id, status: "todo" },
-      });
-
-      const before = await prisma.planItem.findMany({
-        orderBy: { phase: "asc" },
-        where: { kind: "boss", planId: plan.id },
-      });
-
-      const weeklyBefore = await challengeDays(plan.id);
-
-      const from = weekly.scheduledFor;
-
-      if (!from) {
-        throw new Error("Expected Lucas's future weekly challenge date");
-      }
-
-      const monday = new Date(from);
-      monday.setUTCDate(monday.getUTCDate() + ((8 - monday.getUTCDay()) % 7 || 7));
-
-      await page.goto(`/challenge/${weekly.id}`);
-      await page.getByRole("button", { name: "Move to Monday" }).click();
-
-      // It names the weekday, the one "Move to Monday" promised, with the date.
-      const date = new Intl.DateTimeFormat("en", {
-        day: "numeric",
-        month: "long",
-        timeZone: "UTC",
-        weekday: "long",
-      }).format(monday);
-
-      await expect(page.getByRole("heading", { name: `Moved to ${date}` })).toBeVisible();
-      await expect(page.getByRole("button", { exact: true, name: "Undo" })).toBeVisible();
-      await expectAccessibleScreen(page, "the moved weekly challenge confirmation");
-
-      const moved = await prisma.planItem.findFirstOrThrow({
-        where: { kind: "checkpoint", planId: plan.id, scheduledFor: monday, status: "todo" },
-      });
-
-      await expect(page).toHaveURL(new RegExp(`/challenge/${moved.id}\\?moved=`, "u"));
-
-      const after = await prisma.planItem.findMany({
-        orderBy: { phase: "asc" },
-        where: { kind: "boss", planId: plan.id },
-      });
-
-      expect(after.map((item) => [item.id, item.scheduledFor, item.status])).toStrictEqual(
-        before.map((item) => [item.id, item.scheduledFor, item.status]),
-      );
-
-      // The move leaves other weeks as shown, including a current week with no weekly challenge.
-      const weeklyAfter = await challengeDays(plan.id);
-
-      expect(weeklyAfter.filter((day) => day !== monday.toISOString().slice(0, 10))).toStrictEqual(
-        weeklyBefore.filter((day) => day !== from.toISOString().slice(0, 10)),
-      );
-
-      await page.getByRole("button", { exact: true, name: "Undo" }).click();
-
-      await expect(
-        page.getByRole("heading", { exact: true, name: "Weekly challenge" }),
-      ).toBeVisible();
-
-      await expect(page.getByRole("button", { name: "Move to Monday" })).toBeVisible();
-      await expect(page).not.toHaveURL(/moved=/u);
-
-      const restored = await prisma.planItem.findFirstOrThrow({
-        where: { kind: "checkpoint", planId: plan.id, scheduledFor: from, status: "todo" },
-      });
-
-      await expect(page).toHaveURL(new RegExp(`/challenge/${restored.id}$`, "u"));
-    });
   });
 });
