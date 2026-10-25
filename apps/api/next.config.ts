@@ -42,6 +42,7 @@ const nextConfig: NextConfig = {
       "../../node_modules/.pnpm/sql.js@*/node_modules/sql.js/{package.json,dist/sql-wasm.*}",
     ],
   },
+  partialPrefetching: true,
   reactCompiler: true,
   turbopack: {
     resolveAlias: { ...e2eAliases },
