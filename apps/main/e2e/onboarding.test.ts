@@ -218,8 +218,14 @@ test.describe("Onboarding from a typed goal", () => {
 
     await pressByKeyboard(page, page.getByRole("button", { name: "No date" }));
 
+    // The arrow keys move the pick without moving on, as a click or a number key would: Continue
+    // moves on.
     await answerByKeyboard(page, {
-      choose: () => page.getByText("The basics").click(),
+      choose: async () => {
+        await tabTo(page, page.getByRole("radio", { name: /^Nothing, I'm just starting/u }));
+        await page.keyboard.press("ArrowDown");
+        await expect(page.getByRole("radio", { name: /^The basics/u })).toBeChecked();
+      },
       heading: "How much do you already know?",
     });
 
