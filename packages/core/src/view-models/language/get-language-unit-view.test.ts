@@ -11,7 +11,7 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../../_test-utils/frozen-clock";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
@@ -47,12 +47,12 @@ describe("a language unit's page", () => {
     freezeClock();
     const { goal, lessons, renting, user } = await languageGoalFixture();
     mockSession(user.id);
-    const failedAt = new Date(Date.now() - 60_000);
 
+    // It failed just now: a minute earlier is yesterday when the test runs just after midnight.
     await learningEventFixture({
       contentIds: { chapterId: renting.id },
       correctAnswers: 1,
-      endedAt: failedAt,
+      endedAt: new Date(),
       goalId: goal.id,
       incorrectAnswers: 7,
       kind: "questions",
@@ -64,6 +64,8 @@ describe("a language unit's page", () => {
       unit: { canTestOut: false },
     });
 
+    // A minute later, a lesson in the unit is studied.
+    vi.setSystemTime(Date.now() + 60_000);
     await learningEventFixture({ contentIds: { lessonId: lessons[2]?.id }, userId: user.id });
 
     await expect(getLanguageUnitView({ chapterId: renting.id })).resolves.toMatchObject({
