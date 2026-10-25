@@ -6,41 +6,33 @@ import { mandatoryNoticeDayFixture } from "@zoonk/testing/fixtures/study-session
 import { toUTCMidnight } from "@zoonk/utils/date";
 import { expect, test } from "./fixtures";
 
-type PhaseEndMove = { after: string; before: string; name: string };
-
 /** A calendar day as plans label it (YYYY-MM-DD); the seed's dates are UTC midnights. */
 function toDayLabel(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
 
-/** A plan day as the notice says it ("October 21"), read in UTC like every plan label. */
-function sayPlanDay(day: string): string {
-  return new Intl.DateTimeFormat("en", { day: "numeric", month: "long", timeZone: "UTC" }).format(
-    new Date(`${day}T00:00:00Z`),
-  );
+/** A share as the card says it: a whole percentage ("54%"). */
+function sayShare(share: number): string {
+  return new Intl.NumberFormat("en", { maximumFractionDigits: 0, style: "percent" }).format(share);
 }
 
-/** What Today's own view read says: its revision and where the change moved the phase's end. */
-async function readTodayNotice(page: Page, phase: string) {
+/** What Today's own view read says: its revision and the plan change it carries. */
+async function readTodayNotice(page: Page) {
   const response = await page.request.get("/api/learner/views/today");
   const body = await response.json();
-  const view = body.copy.view.today;
-  const moves: PhaseEndMove[] = view.planChange.effect.phaseEnds;
 
-  return {
-    id: view.planChange.id,
-    move: moves.find((move) => move.name === phase),
-    revision: body.copy.revision,
-  };
+  return { change: body.copy.view.today.planChange, revision: body.copy.revision };
 }
 
 test.describe("A plan change Today works out on its own", () => {
-  test("shows with its new dates before any tap, and Got it saves it once without starting the day", async ({
+  test("asks about falling behind before any tap, and Keep my time saves it once without starting the day", async ({
     browser,
   }) => {
     const user = await createE2EUser(getBaseURL());
 
+    // A missed day the read settles on its own puts the goal's date at risk.
     const seed = await mandatoryNoticeDayFixture({
+      atRisk: true,
       localDate: toUTCMidnight(new Date()),
       userId: user.id,
     });
@@ -64,34 +56,43 @@ test.describe("A plan change Today works out on its own", () => {
       await page.goto("/today");
 
       const main = page.getByRole("main");
-      const gotIt = main.getByRole("button", { exact: true, name: "Got it" });
-      await expect(gotIt).toBeVisible();
+      const notice = main.getByRole("region", { name: "Plan change" });
+      const keep = notice.getByRole("button", { exact: true, name: "Keep my time" });
+      await expect(keep).toBeVisible();
       await expect(main.getByRole("button", { name: "Undo" })).toHaveCount(0);
 
       // Today worked the change out on its own read: nothing about it is saved yet.
-      const shown = await readTodayNotice(page, seed.phaseName);
-      expect(shown.id).toBeNull();
-      expect(shown.move?.before).toBe(toDayLabel(seed.before));
+      const shown = await readTodayNotice(page);
+      expect(shown.change).toMatchObject({ id: null, kind: "missedDays", status: "applied" });
 
-      const sentence = `${seed.phaseName} ends ${sayPlanDay(shown.move?.after ?? "")} instead of ${sayPlanDay(toDayLabel(seed.before))}.`;
-      await expect(main.getByText(sentence).filter({ visible: true })).toBeVisible();
+      await expect(
+        notice.getByRole("heading", {
+          name: `At 12 min a day, your plan now covers ${sayShare(shown.change.behind.coveredAfter)} of your goal, down from 100%.`,
+        }),
+      ).toBeVisible();
 
-      // It's a rest day in the plan, and Today says so alongside the change.
+      // It's a rest day in the plan, and Today says so alongside the question.
       await expect(main.getByText("No study planned today.")).toBeVisible();
       await expect(main.getByRole("button", { name: /^(?:Start|Continue)/u })).toHaveCount(0);
 
       expect(actions).toEqual([]);
       await expect(prisma.planChange.count({ where: { planId: seed.plan.id } })).resolves.toBe(0);
 
-      await gotIt.click();
-      await expect(main.getByText("Noted.").filter({ visible: true })).toBeVisible();
+      await keep.click();
+
+      await expect(notice.getByRole("status")).toHaveText(
+        "Noted. You keep your time, with less depth where it counts least.",
+      );
 
       // One ask saved it, for the copy that showed it; the day wasn't started.
       await expect.poll(() => prisma.planChange.count({ where: { planId: seed.plan.id } })).toBe(1);
       const saved = await prisma.planChange.findFirstOrThrow({ where: { planId: seed.plan.id } });
 
+      expect(saved).toMatchObject({ kind: "missedDays", status: "applied" });
+
       expect(saved.payload).toMatchObject({
         acknowledgedRead: { revision: shown.revision, studyDay: toDayLabel(seed.localDate) },
+        behind: { coveredBefore: 1 },
         seenAt: expect.any(String),
       });
 
@@ -100,8 +101,7 @@ test.describe("A plan change Today works out on its own", () => {
 
       await page.reload();
       await expect(main.getByText("No study planned today.")).toBeVisible();
-      await expect(main.getByRole("button", { exact: true, name: "Got it" })).toHaveCount(0);
-      await expect(main.getByText(sentence)).toHaveCount(0);
+      await expect(notice).toHaveCount(0);
     } finally {
       await context.close();
     }
