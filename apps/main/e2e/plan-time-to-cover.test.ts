@@ -511,6 +511,9 @@ test.describe("Find the time that covers everything", () => {
   test("on a phone, studying everything from the coverage card leaves one sheet open at a time", async ({
     browser,
   }) => {
+    // It plans again twice: at her time, then studying everything.
+    test.setTimeout(test.info().timeout + REPLAN_TIMEOUT_MS);
+
     await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
       await page.setViewportSize(PHONE);
       const { editor, isoDate } = await shortOnTime(page, user.goalId);
