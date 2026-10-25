@@ -236,7 +236,7 @@ test.describe("Onboarding from a typed goal", () => {
     await expect(page.getByRole("img", { name: "Step 6 of 7" })).toBeVisible();
     await expect(page.getByText(/A few quick questions, so your plan skips/u)).toBeVisible();
     await expectAccessibleScreen(page, placement);
-    const scratch = page.getByRole("button", { name: "Start from zero" });
+    const scratch = page.getByRole("button", { name: "Skip and start from the basics" });
     await pressByKeyboard(page, scratch);
 
     // A refresh after placement still counts it: the time is the last of the seven steps.
@@ -521,7 +521,7 @@ test.describe("Onboarding from a typed goal", () => {
     );
 
     await continueWith(page, "Choose your buddy");
-    await page.getByRole("button", { name: "Start from zero" }).click();
+    await page.getByRole("button", { name: "Skip and start from the basics" }).click();
 
     // The time comes after placement. Minutes and days only; while the plan isn't built yet, a
     // public exam over a year away starts at an hour a day.

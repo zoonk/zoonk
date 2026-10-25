@@ -128,7 +128,7 @@ test.describe("Studying your own material", () => {
     // The time comes after the buddy and placement.
     await expect(page.getByRole("heading", { name: "Choose your buddy" })).toBeVisible();
     await page.getByRole("button", { exact: true, name: "Continue" }).click();
-    await page.getByRole("button", { name: "Start from zero" }).click();
+    await page.getByRole("button", { name: "Skip and start from the basics" }).click();
 
     await expect(
       page.getByRole("heading", { name: "How much time can you study each day?" }),

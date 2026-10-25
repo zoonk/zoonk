@@ -8808,19 +8808,19 @@ msgid "Let's see what you already know"
 msgstr "Finden wir heraus, was du schon weißt"
 
 #: src/onboarding/steps/placement-screens.tsx
-msgctxt "Ktluws"
-msgid "A few quick questions about the {count, plural, one {# area} other {# areas}}, so your plan skips what you already know."
-msgstr "Ein paar kurze Fragen zu {count, plural, one {# Bereich} other {# Bereichen}}, damit dein Plan überspringt, was du schon weißt."
+msgctxt "FaKYJe"
+msgid "A few quick questions about the {count, plural, one {# area} other {# areas}}, so your plan skips what you already know. There's no score, and “I don't know yet” is a fine answer."
+msgstr "Ein paar kurze Fragen zu {count, plural, one {# Bereich} other {# Bereichen}}, damit dein Plan überspringt, was du schon weißt. Es gibt keinen Score, und „Das weiß ich noch nicht“ ist eine völlig passende Antwort."
 
 #: src/onboarding/steps/placement-screens.tsx
-msgctxt "fEgrZW"
-msgid "A few quick questions, so your plan skips what you already know."
-msgstr "Ein paar kurze Fragen, damit dein Plan überspringt, was du schon weißt."
+msgctxt "BzVgDK"
+msgid "A few quick questions, so your plan skips what you already know. There's no score, and “I don't know yet” is a fine answer."
+msgstr "Ein paar kurze Fragen, damit dein Plan überspringt, was du schon weißt. Es gibt keinen Score, und „Das weiß ich noch nicht“ ist eine völlig passende Antwort."
 
 #: src/onboarding/steps/placement-screens.tsx
-msgctxt "W8-a1l"
-msgid "Start from zero"
-msgstr "Bei null anfangen"
+msgctxt "UaMtvq"
+msgid "Skip and start from the basics"
+msgstr "Überspringen und mit den Grundlagen starten"
 
 #: src/onboarding/steps/placement-screens.tsx
 msgctxt "oj1-Qw"

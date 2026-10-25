@@ -8808,19 +8808,19 @@ msgid "Let's see what you already know"
 msgstr "Let's see what you already know"
 
 #: src/onboarding/steps/placement-screens.tsx
-msgctxt "Ktluws"
-msgid "A few quick questions about the {count, plural, one {# area} other {# areas}}, so your plan skips what you already know."
-msgstr "A few quick questions about the {count, plural, one {# area} other {# areas}}, so your plan skips what you already know."
+msgctxt "FaKYJe"
+msgid "A few quick questions about the {count, plural, one {# area} other {# areas}}, so your plan skips what you already know. There's no score, and “I don't know yet” is a fine answer."
+msgstr "A few quick questions about the {count, plural, one {# area} other {# areas}}, so your plan skips what you already know. There's no score, and “I don't know yet” is a fine answer."
 
 #: src/onboarding/steps/placement-screens.tsx
-msgctxt "fEgrZW"
-msgid "A few quick questions, so your plan skips what you already know."
-msgstr "A few quick questions, so your plan skips what you already know."
+msgctxt "BzVgDK"
+msgid "A few quick questions, so your plan skips what you already know. There's no score, and “I don't know yet” is a fine answer."
+msgstr "A few quick questions, so your plan skips what you already know. There's no score, and “I don't know yet” is a fine answer."
 
 #: src/onboarding/steps/placement-screens.tsx
-msgctxt "W8-a1l"
-msgid "Start from zero"
-msgstr "Start from zero"
+msgctxt "UaMtvq"
+msgid "Skip and start from the basics"
+msgstr "Skip and start from the basics"
 
 #: src/onboarding/steps/placement-screens.tsx
 msgctxt "oj1-Qw"

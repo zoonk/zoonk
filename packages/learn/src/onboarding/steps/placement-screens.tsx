@@ -81,9 +81,10 @@ function PlacementMockRow({ mock }: { mock: PlacementMockOffer }) {
 }
 
 /**
- * Placement's start: what it's for in one sentence (with how many areas it covers
- * for an exam), Start, and starting from zero as the quiet way around it. An exam also offers a
- * diagnostic mock instead, with how long it takes.
+ * Placement's start: what it's for (with how many areas it covers for an exam) and that it has no
+ * score, so "I don't know yet" is welcome; then Start, and skipping it to start from the basics as
+ * the quiet way around it, named for what it does ("Start from zero" read as starting over). An
+ * exam also offers a diagnostic mock instead, with how long it takes.
  */
 export function PlacementIntro({
   areaCount,
@@ -112,10 +113,12 @@ export function PlacementIntro({
         <OnboardingDescription>
           {areaCount > 0
             ? t(
-                "A few quick questions about the {count, plural, one {# area} other {# areas}}, so your plan skips what you already know.",
+                "A few quick questions about the {count, plural, one {# area} other {# areas}}, so your plan skips what you already know. There's no score, and “I don't know yet” is a fine answer.",
                 { count: areaCount },
               )
-            : t("A few quick questions, so your plan skips what you already know.")}
+            : t(
+                "A few quick questions, so your plan skips what you already know. There's no score, and “I don't know yet” is a fine answer.",
+              )}
         </OnboardingDescription>
       </OnboardingHeading>
 
@@ -126,7 +129,7 @@ export function PlacementIntro({
           {t("Start")}
         </OnboardingPrimaryButton>
         <OnboardingSecondaryButton disabled={pending} onClick={onScratch} variant="ghost">
-          {t("Start from zero")}
+          {t("Skip and start from the basics")}
         </OnboardingSecondaryButton>
       </OnboardingFooter>
     </OnboardingColumn>

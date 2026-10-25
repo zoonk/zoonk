@@ -382,7 +382,7 @@ test.describe("Exam date", () => {
     });
 
     await page.goto(`/start/${goal.id}`);
-    await page.getByRole("button", { name: "Start from zero" }).click();
+    await page.getByRole("button", { name: "Skip and start from the basics" }).click();
     await page.getByRole("button", { name: "Find the time that covers everything" }).click();
 
     await expect(

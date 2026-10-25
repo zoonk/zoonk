@@ -8808,19 +8808,19 @@ msgid "Let's see what you already know"
 msgstr "Vamos a ver qué sabes ya"
 
 #: src/onboarding/steps/placement-screens.tsx
-msgctxt "Ktluws"
-msgid "A few quick questions about the {count, plural, one {# area} other {# areas}}, so your plan skips what you already know."
-msgstr "Unas cuantas preguntas rápidas sobre {count, plural, one {# área} other {# áreas}}, para que tu plan se salte lo que ya sabes."
+msgctxt "FaKYJe"
+msgid "A few quick questions about the {count, plural, one {# area} other {# areas}}, so your plan skips what you already know. There's no score, and “I don't know yet” is a fine answer."
+msgstr "Unas cuantas preguntas rápidas sobre {count, plural, one {# área} other {# áreas}}, para que tu plan se salte lo que ya sabes. No hay puntuación y «Aún no lo sé» también es una respuesta válida."
 
 #: src/onboarding/steps/placement-screens.tsx
-msgctxt "fEgrZW"
-msgid "A few quick questions, so your plan skips what you already know."
-msgstr "Unas cuantas preguntas rápidas para que tu plan se salte lo que ya sabes."
+msgctxt "BzVgDK"
+msgid "A few quick questions, so your plan skips what you already know. There's no score, and “I don't know yet” is a fine answer."
+msgstr "Unas cuantas preguntas rápidas para que tu plan se salte lo que ya sabes. No hay puntuación y «Aún no lo sé» también es una respuesta válida."
 
 #: src/onboarding/steps/placement-screens.tsx
-msgctxt "W8-a1l"
-msgid "Start from zero"
-msgstr "Empezar desde cero"
+msgctxt "UaMtvq"
+msgid "Skip and start from the basics"
+msgstr "Omitir y empezar por lo básico"
 
 #: src/onboarding/steps/placement-screens.tsx
 msgctxt "oj1-Qw"

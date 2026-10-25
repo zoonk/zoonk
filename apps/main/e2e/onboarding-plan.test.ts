@@ -143,7 +143,7 @@ test("the plan right after the learner's time shows that time, never the plan th
   });
 
   await page.goto(`/start/${goal.id}`);
-  await page.getByRole("button", { name: "Start from zero" }).click();
+  await page.getByRole("button", { name: "Skip and start from the basics" }).click();
 
   await expect(
     page.getByRole("heading", { name: "How much time can you study each day?" }),
@@ -253,7 +253,7 @@ test("keeps the learner's time when saving it fails, and saves it on the next tr
   });
 
   await page.goto(`/start/${goal.id}`);
-  await page.getByRole("button", { name: "Start from zero" }).click();
+  await page.getByRole("button", { name: "Skip and start from the basics" }).click();
 
   await expect(
     page.getByRole("heading", { name: "How much time can you study each day?" }),
@@ -349,7 +349,7 @@ test("while the learner changes the days, Find says only the time those days nee
   });
 
   await page.goto(`/start/${goal.id}`);
-  await page.getByRole("button", { name: "Start from zero" }).click();
+  await page.getByRole("button", { name: "Skip and start from the basics" }).click();
 
   const find = page.getByRole("button", { name: "Find the time that covers everything" });
   const covers = page.getByText("Covers everything", { exact: true });
@@ -517,7 +517,7 @@ test("the time step asks what a larger Sunday exam budget covers instead of assu
   });
 
   await page.goto(`/start/${goal.id}`);
-  await page.getByRole("button", { name: "Start from zero" }).click();
+  await page.getByRole("button", { name: "Skip and start from the basics" }).click();
   await page.getByRole("button", { name: /^Which days\?/u }).click();
 
   // From Monday to Friday to Sunday alone.
@@ -839,7 +839,7 @@ test("the time step keeps asking while a slow plan is still being built, and fin
 
   await page.clock.install();
   await page.goto(`/start/${goal.id}`);
-  await page.getByRole("button", { name: "Start from zero" }).click();
+  await page.getByRole("button", { name: "Skip and start from the basics" }).click();
 
   const building = page.getByText("Building your plan…");
   const find = page.getByRole("button", { name: "Find the time that covers everything" });
@@ -907,7 +907,7 @@ test("when the time can't be worked out, the time step says so and asks again on
   );
 
   await page.goto(`/start/${goal.id}`);
-  await page.getByRole("button", { name: "Start from zero" }).click();
+  await page.getByRole("button", { name: "Skip and start from the basics" }).click();
 
   // After three tries, three seconds apart, the estimate says so: never a quiet fallback that reads
   // as if there were nothing to cover.
@@ -1234,7 +1234,7 @@ test("the reveal says the learner's month has no exam date, and takes the closes
     .toBe(days[1]);
 });
 
-test("an exam's placement says how many areas it covers in one sentence", async ({
+test("an exam's placement says how many areas it covers, and that there's no score", async ({
   noProgressUser,
   userWithoutProgress: page,
 }) => {
@@ -1279,14 +1279,14 @@ test("an exam's placement says how many areas it covers in one sentence", async 
 
   await expect(
     page.getByText(
-      "A few quick questions about the 4 areas, so your plan skips what you already know.",
+      "A few quick questions about the 4 areas, so your plan skips what you already know. There's no score, and “I don't know yet” is a fine answer.",
     ),
   ).toBeVisible();
 
   // The count says enough: the areas live on the exam's page, not in a list here.
   await expect(page.getByText("Humanities", { exact: true })).toBeHidden();
   await expect(page.getByRole("button", { exact: true, name: "Start" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Start from zero" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Skip and start from the basics" })).toBeVisible();
 });
 
 test("an exam with several subjects asks which ones the learner already knows well", async ({

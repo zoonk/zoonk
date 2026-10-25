@@ -414,7 +414,7 @@ test.describe("Starting a course from its page", () => {
     await expect(page.getByRole("heading", { name: "Choose your buddy" })).toBeVisible();
     await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
-    const scratch = page.getByRole("button", { name: "Start from zero" });
+    const scratch = page.getByRole("button", { name: "Skip and start from the basics" });
     const time = page.getByRole("heading", { name: "How much time can you study each day?" });
     await expect(scratch.or(time)).toBeVisible();
 
