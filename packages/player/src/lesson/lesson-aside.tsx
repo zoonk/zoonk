@@ -254,7 +254,7 @@ function CompletionAside() {
  * The lesson's aside from `lg` (tablets in landscape and up), full height beside the screen behind
  * a hairline, so the screen's column stays in one place from the first screen to the end. Once the
  * lesson is done, the player's own moment shows the lesson's ideas there, while a host's moment (a
- * session block's) fills the aside itself.
+ * session block's queue, a quick explanation's recap) fills the aside itself.
  */
 export function LessonAside() {
   const t = useExtracted();

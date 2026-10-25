@@ -23,6 +23,7 @@ import {
   TASK_MAIN_ACTION_CLASS,
   TaskActionBar,
   TaskActions,
+  TaskAsideContent,
   TaskBody,
 } from "../_components/task-layout";
 import { LearnLink } from "../learn-link";
@@ -113,10 +114,50 @@ function QuestionRow({ href, question }: { href: string; question: string }) {
 }
 
 /**
+ * The explanation in its sentences, numbered: in the column under `lg`, and from `lg` in the
+ * aside, where the outline and "From the lesson" were, as a lesson's summary is at its end.
+ */
+function ExplainRecap({ recap }: { recap: ExplanationView["recap"] }) {
+  const t = useExtracted();
+
+  if (recap.length === 0) {
+    return null;
+  }
+
+  return (
+    <TaskAsideContent className="lg:top-0">
+      <section aria-labelledby="explain-recap" className="flex flex-col gap-1 lg:gap-0">
+        <SectionLabel
+          className="lg:flex lg:h-13 lg:shrink-0 lg:items-center xl:h-15"
+          id="explain-recap"
+        >
+          {t("In {count, plural, one {# sentence} other {# sentences}}", { count: recap.length })}
+        </SectionLabel>
+        <ol className="flex flex-col [&>li+li]:border-t">
+          {recap.map((sentence, index) => (
+            <li className="flex gap-3 py-3 lg:first:pt-0" key={sentence}>
+              <span
+                aria-hidden="true"
+                className="text-faint w-4 shrink-0 font-mono text-xs leading-relaxed tabular-nums"
+              >
+                {index + 1}
+              </span>
+              <span className="min-w-0 flex-1 text-sm leading-relaxed text-pretty">{sentence}</span>
+            </li>
+          ))}
+        </ol>
+      </section>
+    </TaskAsideContent>
+  );
+}
+
+/**
  * The end of a quick explanation: "✓ Now you know" over its title, what the one question earned,
  * the recap in three numbered sentences, and "Want to go further?": learning the subject in depth
  * as a plan of its own (the host's `deeper` control) or another quick question. "Done" finishes,
- * in the action bar at the bottom; a problem with it is reported from the lesson's "…" menu.
+ * in the action bar at the bottom. From `lg` the recap sits in the aside, where the outline and
+ * "From the lesson" were, as a lesson's summary does at its end, so the aside is never left empty
+ * and the column keeps the result and the way on.
  */
 export function ExplainEnding({
   deeper,
@@ -148,30 +189,7 @@ export function ExplainEnding({
           <ResultTiles result={result} />
         </div>
 
-        {explanation.recap.length > 0 && (
-          <section aria-labelledby="explain-recap" className="flex flex-col gap-1">
-            <SectionLabel id="explain-recap">
-              {t("In {count, plural, one {# sentence} other {# sentences}}", {
-                count: explanation.recap.length,
-              })}
-            </SectionLabel>
-            <ol className="flex flex-col [&>li+li]:border-t">
-              {explanation.recap.map((sentence, index) => (
-                <li className="flex gap-3 py-3" key={sentence}>
-                  <span
-                    aria-hidden="true"
-                    className="text-faint w-4 shrink-0 font-mono text-xs leading-relaxed tabular-nums"
-                  >
-                    {index + 1}
-                  </span>
-                  <span className="min-w-0 flex-1 text-sm leading-relaxed text-pretty">
-                    {sentence}
-                  </span>
-                </li>
-              ))}
-            </ol>
-          </section>
-        )}
+        <ExplainRecap recap={explanation.recap} />
 
         <section aria-labelledby="explain-go-further" className="flex flex-col gap-1">
           <SectionLabel id="explain-go-further">{t("Want to go further?")}</SectionLabel>
