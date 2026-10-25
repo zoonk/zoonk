@@ -3,6 +3,7 @@ import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters"
 import { stepVariantFixture } from "@zoonk/testing/fixtures/library-steps";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { type Page, expect, test } from "./fixtures";
+import { expectHydrated } from "./on-demand-code";
 
 /**
  * The personal layer over shared lessons, as the page serves it: hands-on screens in the tool the
@@ -88,7 +89,10 @@ test.describe("Personal versions of shared lessons", () => {
     await expect(page.getByText(pythonExplanation.title)).toBeVisible();
     await expect(page.getByText(SHARED_TITLE)).toBeHidden();
 
-    await page.getByRole("button", { name: /^Next/u }).click();
+    // The screen is in the page's HTML before the player's code runs; its Next waits for it.
+    const next = page.getByRole("button", { name: /^Next/u });
+    await expectHydrated(next);
+    await next.click();
     await expect(page.getByText(pythonCheck.question)).toBeVisible();
     await page.getByRole("radio", { name: "9" }).click();
     await page.keyboard.press("Enter");

@@ -13,6 +13,7 @@ import { type StreamEvent, followRun } from "./generation-run";
 import { asPersona } from "./learn-personas";
 import {
   AT_ONCE_MS,
+  expectHydrated,
   followRequests,
   markPaintedFrames,
   paintedFramesSince,
@@ -31,7 +32,11 @@ async function readStory(page: Page, screens: number): Promise<void> {
     return;
   }
 
-  await page.getByRole("button", { name: /^Next/u }).click();
+  // The first screen is in the page's HTML before the player's code runs, and a tap on its Next
+  // does nothing until then.
+  const next = page.getByRole("button", { name: /^Next/u });
+  await expectHydrated(next);
+  await next.click();
   await readStory(page, screens - 1);
 }
 
