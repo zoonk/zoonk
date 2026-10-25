@@ -764,8 +764,8 @@ test.describe("Exam goal", () => {
     ).toBeVisible();
 
     const scores = page.getByRole("list", { name: "Score by criterion" });
+    // The same grade screen as an essay's, scanned there.
     await expect(scores.getByText("(c) Explanation")).toBeVisible();
-    await expectAccessibleScreen(page, "a graded free-response answer");
 
     await nextStep(page);
     await expect(page.getByRole("heading", { level: 1, name: "(c) Explanation" })).toBeVisible();
