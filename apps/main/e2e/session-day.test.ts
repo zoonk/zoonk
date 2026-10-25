@@ -97,13 +97,25 @@ async function expectMoment(page: Page, title: string) {
 }
 
 /**
- * What Continue opens, named right above it. The screen before keeps its moment hidden (Next keeps
- * a route it left in the page, hidden, for going back), so only the one in view counts.
+ * What Continue opens: on a wide screen the day's queue beside the moment highlights it, so the
+ * moment doesn't name it again under its title (it used to, as a second highlighted row); on a
+ * phone it's named right above Continue. The screen before keeps its moment hidden (Next keeps a
+ * route it left in the page, hidden, for going back), so only the one in view counts. The page
+ * goes back to its own size after.
  */
 async function expectUpNext(page: Page, title: string) {
+  const size = page.viewportSize() ?? { height: 720, width: 1280 };
   const next = page.locator('[data-slot="study-moment-next"]').filter({ visible: true });
+  const queued = page.locator('[role="listitem"][aria-current="step"]').filter({ visible: true });
+
+  await expect(queued).toHaveCount(1);
+  await expect(queued).toContainText(title);
+  await expect(next).toHaveCount(0);
+
+  await page.setViewportSize({ height: 844, width: 390 });
   await expect(next.getByText("Up next", { exact: true })).toBeVisible();
   await expect(next.getByText(title, { exact: true })).toBeVisible();
+  await page.setViewportSize(size);
 }
 
 /**

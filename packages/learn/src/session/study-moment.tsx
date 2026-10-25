@@ -64,7 +64,8 @@ function MomentFacts({ moment }: { moment: StudyMomentView }) {
 
 /**
  * What Continue opens: the next block as the list's highlighted "next" row, its kind's dot, its
- * name and its minutes.
+ * name and its minutes. Under `lg` only: from `lg` the day's queue beside the moment highlights the
+ * same row.
  */
 function NextBlock({ block }: { block: StudyBlock }) {
   const t = useExtracted();
@@ -72,7 +73,7 @@ function NextBlock({ block }: { block: StudyBlock }) {
   const blockTitle = useBlockTitle();
 
   return (
-    <section className="flex flex-col gap-2" data-slot="study-moment-next">
+    <section className="flex flex-col gap-2 lg:hidden" data-slot="study-moment-next">
       <h3 className="text-label">{t("Up next")}</h3>
       <div className="bg-muted -mx-2.5 flex items-center gap-3 rounded-[0.625rem] px-2.5 py-2.75">
         <KindMark kind={getBlockKind(block)} />
@@ -136,7 +137,8 @@ function MomentActions({
  * The quick moment between the session's blocks, with the same chrome as every task: the day's
  * session bar in the header, then on the page what the block was ("Review done"), what it earned
  * in one mono line, and what comes next as the highlighted next row. The action bar holds "Stop
- * for today" beside Continue (or Enter). From `lg` the aside lists the day's queue, as Today does.
+ * for today" beside Continue (or Enter). From `lg` the aside lists the day's queue, as Today does,
+ * its next row highlighted, in the next row's place.
  * The full summary waits for the end of the session. Inside the lesson player the host's
  * completion header shows the day (`LessonMomentHeader`) and the queue takes the player's aside.
  */
