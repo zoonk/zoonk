@@ -274,7 +274,9 @@ test.describe("Learning tabs frame", () => {
     const main = page.getByRole("main");
     const todayHeading = main.getByRole("heading", { level: 1, name: "Today" });
 
-    // Measured once painted: a title not in sight yet has no box.
+    // Measured once the start form has taken the place of Today's frame, whose own title the frame
+    // drew: a box read as one title gives way to the other has none.
+    await expect(main.getByRole("textbox", { name: "I want to" })).toBeVisible();
     await expect(todayHeading).toBeVisible();
     const todayTitle = await todayHeading.boundingBox();
 
@@ -327,10 +329,12 @@ test.describe("Learning tabs frame", () => {
       );
     }
 
-    // Moving from Today to the Plan keeps the large title in its place.
+    // Moving from Today to the Plan keeps the large title in its place, measured once the way in
+    // has taken the place of the Plan's skeleton, which has the title too.
     await page.goto("/plan");
     const planHeading = main.getByRole("heading", { level: 1, name: "Plan" });
 
+    await expect(main.getByRole("heading", { level: 2, name: "Log in to continue" })).toBeVisible();
     await expect(planHeading).toBeVisible();
     const planTitle = await planHeading.boundingBox();
 
