@@ -2400,6 +2400,7 @@ msgid "Your essay"
 msgstr "Sua redação"
 
 #: src/essay/essay-rewrite-guide.tsx
+#: src/essay/essay-screen.tsx
 msgctxt "OAkBl1"
 msgid "Your last grade"
 msgstr "Sua última nota"
@@ -2477,6 +2478,21 @@ msgstr "Prática de escrita"
 msgctxt "OJsoa4"
 msgid "Essay · ENEM rubric"
 msgstr "Redação · critérios do Enem"
+
+#: src/essay/essay-screen.tsx
+msgctxt "mQS0Tq"
+msgid "Supporting texts"
+msgstr "Textos de apoio"
+
+#: src/essay/essay-screen.tsx
+msgctxt "69RO1g"
+msgid "Motivating texts"
+msgstr "Textos motivadores"
+
+#: src/essay/essay-screen.tsx
+msgctxt "rUq4jt"
+msgid "The case"
+msgstr "O caso"
 
 #: src/essay/essay-screen.tsx
 msgctxt "xNSBn4"
@@ -6675,6 +6691,11 @@ msgctxt "HGnX5e"
 msgid "Practice mistakes"
 msgstr "Praticar o que você errou"
 
+#: src/mistakes/mistake-practice-run.tsx
+msgctxt "SMv32M"
+msgid "Help with this question"
+msgstr "Ajuda com esta pergunta"
+
 #: src/mistakes/mistakes-notebook.tsx
 #: src/mistakes/practice-done.tsx
 msgctxt "IBOhsd"
@@ -6757,31 +6778,6 @@ msgstr "{count, plural, =0 {# disponíveis amanhã} one {# disponível amanhã} 
 msgctxt "lzzeMG"
 msgid "{count, plural, =0 {# fixed} one {# fixed} other {# fixed}}"
 msgstr "{count, plural, =0 {# corrigidos} one {# corrigido} other {# corrigidos}}"
-
-#: src/mistakes/practice-aside.tsx
-msgctxt "7Eb7pR"
-msgid "One right answer fixes it."
-msgstr "Basta uma resposta certa para corrigir."
-
-#: src/mistakes/practice-aside.tsx
-msgctxt "p0j2lP"
-msgid "Last time"
-msgstr "Da última vez"
-
-#: src/mistakes/practice-aside.tsx
-msgctxt "SVNZLT"
-msgid "This time"
-msgstr "Desta vez"
-
-#: src/mistakes/practice-aside.tsx
-msgctxt "SMv32M"
-msgid "Help with this question"
-msgstr "Ajuda com esta pergunta"
-
-#: src/mistakes/practice-aside.tsx
-msgctxt "PxLH3Q"
-msgid "Mistake {current, number} of {total, number}"
-msgstr "Erro {current, number} de {total, number}"
 
 #: src/mistakes/practice-done.tsx
 msgctxt "h5HRXn"

@@ -9,8 +9,9 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { settleWithin } from "@zoonk/utils/timeout";
 import { useExtracted } from "next-intl";
 import { useId, useRef, useState, useSyncExternalStore } from "react";
-import { TASK_MAIN_ACTION_CLASS, TaskActions, TaskAsideContent } from "../_components/task-layout";
-import { ItemStem, ItemText, QUESTION_TEXT_CLASS } from "../questions/item-text";
+import { TaskHeaderTitle } from "../_components/task-header";
+import { TASK_MAIN_ACTION_CLASS, TaskActions } from "../_components/task-layout";
+import { isLongText } from "../questions/long-text";
 import { TaskFrame } from "../shell/task-frame";
 import {
   type EssayActions,
@@ -20,7 +21,8 @@ import {
 } from "./essay-context";
 import { EssayGradeSteps } from "./essay-feedback";
 import { useWritingName } from "./essay-labels";
-import { CriteriaInView, RewriteGuide } from "./essay-rewrite-guide";
+import { EssayInstruction, EssayTexts, usePromptLabel, useTextsLabel } from "./essay-prompt";
+import { RewriteGuide } from "./essay-rewrite-guide";
 import { clearUnsentText, keepUnsentText, readUnsentText } from "./unsent-text";
 import { useFinishEssay } from "./use-finish-essay";
 
@@ -244,48 +246,11 @@ function EssayWriteFooter({ writer }: { writer: EssayWriter }) {
   );
 }
 
-function usePromptLabel(rubric: EssayView["rubric"]): string {
-  const t = useExtracted();
-
-  const labels: Record<EssayView["rubric"], string> = {
-    ap: t("Free response · AP scoring guidelines"),
-    custom: t("Writing practice"),
-    enem: t("Essay · ENEM rubric"),
-    oab: t("Writing practice"),
-  };
-
-  return labels[rubric];
-}
-
 /**
- * What it's graded by as the label above (the aside's own label from `lg`), then what it's about
- * (the theme, its motivating texts) as a quote, flat on the page, and the task under it in the
- * question face.
- */
-function Prompt() {
-  const { essay } = useEssayScreen();
-  const label = usePromptLabel(essay.rubric);
-
-  return (
-    <section className="flex flex-col gap-4">
-      <p className="text-label lg:hidden">{label}</p>
-      {essay.context && (
-        <ItemText
-          className="border-border border-l-2 pl-4 text-sm leading-relaxed lg:group-data-aside/task:border-l-0 lg:group-data-aside/task:pl-0"
-          text={essay.context}
-        />
-      )}
-      <div className={QUESTION_TEXT_CLASS}>
-        <ItemStem text={essay.question} heading="h1" />
-      </div>
-    </section>
-  );
-}
-
-/**
- * Writing (or rewriting) the essay: the prompt, the next step in view while rewriting, the box,
- * and Send in the pinned action bar. On a phone the prompt sits above the box; from `lg` it moves
- * beside it, into the aside, with the last grade's criteria, and the box fills the column.
+ * Writing (or rewriting) the essay: the texts to read, the instruction with its theme, the next
+ * step while rewriting, the box, and Send in the pinned action bar. What the learner needs while
+ * writing stays over the box at every size (the instruction, the next step); from `lg` the texts
+ * sit beside it, with the last grade's criteria while rewriting.
  */
 function EssayWriteScreen({
   onGraded,
@@ -295,9 +260,14 @@ function EssayWriteScreen({
   onSeeGrade: () => void;
 }) {
   const t = useExtracted();
-  const { essay, hrefs } = useEssayScreen();
+  const { drafts, essay, hrefs } = useEssayScreen();
   const label = usePromptLabel(essay.rubric);
+  const textsLabel = useTextsLabel(essay.rubric);
   const writer = useEssayWriter(onGraded);
+  const lastGrade = drafts[0]?.grade;
+  const criteria = Boolean(lastGrade) && lastGrade?.zeroReason !== "tooShort";
+  // Long texts are read beside the box; a short context goes with the instruction over it.
+  const texts = isLongText(essay.context) ? essay.context : null;
 
   // Unsent text stays on the device, so leaving loses nothing, but the learner hears it first.
   const confirmExit = writer.unsent
@@ -311,16 +281,22 @@ function EssayWriteScreen({
 
   return (
     <TaskFrame
-      aside={{ label, title: label }}
+      aside={
+        texts || criteria
+          ? {
+              label: texts ? textsLabel : t("Your last grade"),
+              title: texts ? textsLabel : undefined,
+            }
+          : null
+      }
       confirmExit={confirmExit}
       exitHref={hrefs.exit}
       footer={<EssayWriteFooter writer={writer} />}
+      headerTitle={<TaskHeaderTitle title={label} />}
     >
-      <TaskAsideContent className="flex flex-col gap-6">
-        <Prompt />
-        <CriteriaInView />
-        <RewriteGuide onSeeGrade={onSeeGrade} />
-      </TaskAsideContent>
+      <EssayTexts criteria={criteria} texts={texts} />
+      <EssayInstruction context={texts ? null : essay.context} />
+      <RewriteGuide onSeeGrade={onSeeGrade} />
       <EssayBox writer={writer} />
     </TaskFrame>
   );

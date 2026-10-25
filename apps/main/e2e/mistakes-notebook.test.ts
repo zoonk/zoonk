@@ -307,26 +307,22 @@ test.describe("Mistakes notebook", () => {
       await expect(page.getByText("Read every word before you answer.")).toBeHidden();
       await expect(options).toBeVisible();
 
-      // On a laptop the aside says why the mistake happened and how its drill goes, beside the
-      // question instead of over it, and the buddy waits at its foot.
+      // How the drill goes sits right above the question at every size, where it's read before
+      // answering (on a laptop it sat only in the aside); the aside holds the buddy alone.
+      const note = page
+        .locator('[data-slot="task-body"]')
+        .getByText("A few questions on an idea you missed.");
+
       const help = page.getByRole("complementary", { name: "Help with this question" });
-      await expect(help.getByText("Content gap")).toBeVisible();
-      await expect(help.getByText("A few questions on an idea you missed.")).toBeVisible();
-
-      await expect(
-        page.locator('[data-slot="task-body"]').getByText("A few questions on an idea you missed."),
-      ).toBeHidden();
-
+      await expect(note).toBeVisible();
+      await expect(help.getByText("Content gap")).toHaveCount(0);
       await expect(help.getByRole("textbox", { name: "Ask a question" })).toBeVisible();
       await expect(page.getByRole("button", { name: "Ask Zu" })).toBeHidden();
 
-      // On a phone the drill's note sits above the question, and the buddy opens over the
-      // question's foot, quoting it; opening asks nothing.
+      // On a phone the note stays above the question, and the buddy opens over the question's
+      // foot, quoting it; opening asks nothing.
       await page.setViewportSize({ height: 844, width: 390 });
-
-      await expect(
-        page.locator('[data-slot="task-body"]').getByText("A few questions on an idea you missed."),
-      ).toBeVisible();
+      await expect(note).toBeVisible();
 
       await page.getByRole("button", { name: "Ask Zu" }).click();
 
@@ -377,16 +373,18 @@ test.describe("Mistakes notebook", () => {
       await expect(page.getByText("3 ready to practice · 1 fixed", { exact: true })).toBeVisible();
       await page.getByRole("link", { name: "Practice mistakes" }).click();
 
-      // Beside the question, the aside says how the drill goes and shows the mistake as it was
-      // made. Its own question (a number to type) can't be asked here, so the earlier answer
-      // shows under that question, never next to the one in view, where it would mislead.
-      const aside = page.getByRole("complementary", { name: "Help with this question" });
+      // The drill's rule sits right above the question it's for. The mistake's own question (a
+      // number to type) can't be asked here, so its earlier answer isn't shown next to this one,
+      // where it would mislead; the notebook keeps the mistake as it was made.
+      await expect(
+        page.locator('[data-slot="task-body"]').getByText("Read every word before you answer."),
+      ).toBeVisible();
 
-      await expect(aside.getByText("Read every word before you answer.")).toBeVisible();
-      await expect(aside.getByText("Misread")).toBeVisible();
-      await expect(aside).toContainText("Uma camisa de");
-      await expect(aside.locator('[data-slot="mistake-answer"]')).toContainText("R$ 18");
       await expect(page.getByText(/^Last time you answered/u)).toBeHidden();
+
+      await expect(
+        page.locator('[data-slot="mistake-answer"]').filter({ visible: true }),
+      ).toHaveCount(0);
 
       // A misread is drilled by reading first: the answers show once the question is read.
       await expect(page.getByRole("radio", { name: "R$ 2.040" })).toBeHidden();
@@ -413,14 +411,13 @@ test.describe("Mistakes notebook", () => {
     });
   });
 
-  // On a content gap's idea screen Ana's aside showed only her answer ("3,0 A"): the question it
-  // was made on waits behind the idea, so the aside shows it until the question is in view.
-  test("a content gap's idea screen shows the question the mistake was made on", async ({
+  // The notebook keeps a gap's mistake as it was made, its situation and chart included; practice
+  // opens on the idea, and the very first digit answers the question that follows.
+  test("a content gap's mistake keeps its situation and chart in the notebook, and practice starts from its idea", async ({
     browser,
   }) => {
     const { drills, user } = await createMistakeLearner({ causes: ["gap"] });
     const page = await openAs(browser, user);
-    const aside = page.getByRole("complementary", { name: "Help with this question" });
     const question = drillQuestion("gap", "original");
     const context = "A tree casts a 12 m shadow while a 2 m post casts a 3 m shadow.";
 
@@ -451,18 +448,12 @@ test.describe("Mistakes notebook", () => {
     await page.goto("/mistakes/practice");
     await expect(page.getByText(LESSON_IDEA)).toBeVisible();
 
-    await expect(aside.getByText(question)).toBeVisible();
-    await expect(aside.getByText(context)).toBeVisible();
-    await expect(aside.getByText("Shadow measurements", { exact: true })).toBeVisible();
-    await expect(aside.locator('[data-slot="mistake-answer"]')).toContainText("Wrong answer");
-
     await page.getByRole("button", { name: /^Start the questions/u }).click();
     // The very first digit works on the new question, without waiting for a refresh tail.
     await page.keyboard.press("1");
     await expect(page.getByRole("radio", { name: "Right answer" })).toBeChecked();
     await expect(page.getByRole("button", { name: /^Check/u })).toBeEnabled();
     await expect(page.getByRole("heading", { name: question })).toBeVisible();
-    await expect(aside.getByText(question)).toBeHidden();
 
     await page.context().close();
   });
@@ -569,11 +560,15 @@ test.describe("Mistakes notebook", () => {
 
     await page.getByRole("link", { exact: true, name: "Practice this skill" }).click();
     await expect(page.getByText(LESSON_IDEA)).toBeVisible();
-    const aside = page.getByRole("complementary", { name: "Help with this question" });
-    await expect(aside).toBeVisible();
-    await expect(aside.getByText(drillQuestion("gap", "original"), { exact: true })).toBeVisible();
-    await expect(aside.getByRole("region", { exact: true, name: "Recording" })).toHaveCount(0);
-    await expect(aside.getByRole("button", { exact: true, name: "Transcript" })).toHaveCount(0);
+
+    // The idea screen never gives the recording's answers away before its questions.
+    await expect(
+      page.getByRole("region", { exact: true, name: "Recording" }).filter({ visible: true }),
+    ).toHaveCount(0);
+
+    await expect(
+      page.getByRole("button", { exact: true, name: "Transcript" }).filter({ visible: true }),
+    ).toHaveCount(0);
 
     await page.getByRole("button", { name: /^Start the questions/u }).click();
 
@@ -678,12 +673,9 @@ test.describe("Mistakes notebook", () => {
     const { drills, user } = await createMistakeLearner({ causes: ["trap"] });
     const page = await openAs(browser, user);
     const trapRule = page.getByText("There's a trap in here. Find it before you answer.");
-    const fixesIt = page.getByText("One right answer fixes it.");
-    const aside = page.getByRole("complementary", { name: "Help with this question" });
 
     await page.goto("/mistakes/practice");
-    await expect(trapRule.filter({ visible: true })).toBeVisible();
-    await expect(fixesIt).toBeVisible();
+    await expect(trapRule).toBeVisible();
 
     await page.getByRole("button", { name: "I don't know yet" }).click();
     const feedback = page.getByRole("region", { name: "Answer feedback" });
@@ -692,12 +684,9 @@ test.describe("Mistakes notebook", () => {
     await expect(feedback.getByText(TRAP)).toBeHidden();
     await expect(feedback.getByText("Mistake fixed. It leaves your notebook.")).toBeHidden();
 
-    // Graded, the drill's rule and what fixes it go, beside the question and above it on a phone:
-    // a blank answer looked for no trap. What happened last time stays.
+    // Graded, the drill's rule goes from over the question: a blank answer looked for no trap.
+    // What was answered last time stays.
     await expect(trapRule).toHaveCount(0);
-    await expect(fixesIt).toHaveCount(0);
-    await expect(aside.getByText("This time", { exact: true })).toHaveCount(0);
-    await expect(aside.getByText("Fell for a trap")).toBeVisible();
     await expect(page.getByText("Last time you answered: Wrong answer")).toHaveCount(1);
 
     await captureUnknownFeedback({ colorScheme: "light", page, testInfo, width: 390 });

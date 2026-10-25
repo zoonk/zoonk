@@ -230,20 +230,6 @@ export function getPracticeSegments(state: PracticeState): TaskSegment[] {
   });
 }
 
-/**
- * Which of the run's mistakes the question in view drills, and how many the run holds ("2 of 3"),
- * from the questions it started with: a mistake can bring several questions.
- */
-export function getPracticeMistakePosition(state: PracticeState): {
-  current: number;
-  total: number;
-} {
-  const mistakeIds = [...new Set(state.steps.map((step) => step.entry.mistakeId))];
-  const current = state.steps[state.index]?.entry.mistakeId;
-
-  return { current: current ? mistakeIds.indexOf(current) + 1 : 0, total: mistakeIds.length };
-}
-
 /** Spaces and line breaks as one space, so a text reads the same however it was joined. */
 function squashSpaces(text: string): string {
   return text.replaceAll(/\s+/gu, " ").trim();

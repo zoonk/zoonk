@@ -113,6 +113,70 @@ const AP_ROWS = [
 
 const AP_ROW_SCORES = [1, 1, 0, 1];
 
+/** An ENEM proposal's two motivating texts, as long as the ones it writes (over 400 characters). */
+export const ENEM_MOTIVATING_TEXTS = [
+  "Texto I",
+  "Em Teresina, Jussara recebe um comunicado sobre o agendamento de um atendimento. Embora reconheça todas as palavras, ela não consegue identificar quais documentos precisa levar nem o prazo para confirmar a solicitação.",
+  "Texto II",
+  "Uma comunicação pública clara precisa permitir que as pessoas compreendam o que devem fazer. Ao mesmo tempo, simplificar um texto não significa retirar condições importantes: uma orientação incompleta também pode levar o cidadão ao erro.",
+].join("\n\n");
+
+/** The instruction with its theme, as ENEM words it. */
+export const ENEM_INSTRUCTION =
+  "A partir da leitura dos textos motivadores e de seus conhecimentos, redija um texto dissertativo-argumentativo sobre o tema *Desafios para tornar clara a comunicação dos serviços públicos no Brasil*.";
+
+/**
+ * An ENEM writing block open in today's session and not written yet, on its own blueprint: its
+ * prompt is an instruction with the theme and two long motivating texts, as ENEM's are written.
+ */
+export async function createEnemEssayDay() {
+  const [user, skill, blueprint] = await Promise.all([
+    createE2EUser(getBaseURL()),
+    skillFixture({ name: `Public communication ${randomUUID()}` }),
+    examBlueprintFixture({ identityKey: `enem-${randomUUID()}`, name: "ENEM" }),
+  ]);
+
+  const goal = await goalFixture({
+    examBlueprintId: blueprint.id,
+    kind: "exam",
+    timezone: "UTC",
+    title: "ENEM",
+    userId: user.id,
+  });
+
+  const [item, session] = await Promise.all([
+    itemFixture({
+      content: {
+        context: ENEM_MOTIVATING_TEXTS,
+        keyPoints: ["An intervention proposal with agent, action, means, purpose and a detail"],
+        question: ENEM_INSTRUCTION,
+        rubric: [
+          { criterion: "C1", description: "Formal writing", points: null },
+          { criterion: "C5", description: "Intervention proposal", points: null },
+        ],
+        sampleOutline: "Thesis, two arguments, an intervention proposal.",
+      },
+      examBlueprintId: blueprint.id,
+      format: "essay",
+      skillId: skill.id,
+    }),
+    studySessionFixture({ goalId: goal.id, userId: user.id }),
+    planFixture({ goalId: goal.id }),
+    learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
+  ]);
+
+  const block = await studySessionBlockFixture({
+    estimatedMinutes: 20,
+    kind: "produce",
+    payload: { itemIds: [item.id], skillIds: [skill.id], title: "Essay" },
+    sessionId: session.id,
+    startedAt: new Date(),
+    status: "active",
+  });
+
+  return { blockId: block.id, user };
+}
+
 /**
  * An AP Biology learner with a free-response question open in today's writing block and one draft
  * graded by its rows' own points, stored the way grading stores it (tests don't call the model).

@@ -7,7 +7,12 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { TASK_HEADER_ICON_CLASS } from "../_components/task-header";
-import { TaskActionBar, TaskBody, getTaskAsideRootProps } from "../_components/task-layout";
+import {
+  TaskActionBar,
+  TaskAside,
+  TaskBody,
+  getTaskAsideRootProps,
+} from "../_components/task-layout";
 import { ContentVoteMenu } from "../feedback/content-vote-menu";
 import { LearnLink } from "../learn-link";
 import { type QuestionTutor } from "../questions/question-tutor";
@@ -15,12 +20,7 @@ import { usePreloadMath } from "../rich-text/use-preload-math";
 import { QuestionActionsRow } from "../session/question-block/question-actions";
 import { QuestionBlockHeader } from "../session/question-block/question-block-header";
 import { type LessonHref } from "./drill/drill-types";
-import {
-  type PracticeEntry,
-  getPracticeMistakePosition,
-  getPracticeSegments,
-} from "./mistake-practice-state";
-import { PracticeAside } from "./practice-aside";
+import { type PracticeEntry, getPracticeSegments } from "./mistake-practice-state";
 import { NothingToPractice, PracticeDone, PracticeSaving } from "./practice-done";
 import { PracticeStepActions, PracticeStepView } from "./practice-step";
 import { getPracticeTutorItem } from "./practice-tutor-item";
@@ -185,9 +185,9 @@ function PracticeBody({
  * for, with the answer and why after every question. It plays like a session block: the same
  * header with one segment per question, the same options and feedback, and Check then Continue
  * pinned at the bottom. A mistake answered right on a later day is fixed, and the run counts
- * toward today like any practice, stopped early included. From `lg` an aside beside the question
- * shows the mistake it drills as it was made and how the drill goes (`PracticeAside`), with the
- * learner's buddy (`tutor`) at its foot, to ask about the question in view.
+ * toward today like any practice, stopped early included. How the drill goes sits above its
+ * question at every size; from `lg` the learner's buddy (`tutor`) sits beside the question, at
+ * the foot of the aside, to ask about the question in view.
  */
 export function MistakePracticeRun({
   actions,
@@ -212,9 +212,9 @@ export function MistakePracticeRun({
   const { phase } = run.state;
   usePreloadMath(practice);
 
-  // The aside is there while a question is, never beside the run's end.
-  const asideStep = phase.kind === "ending" || phase.kind === "ended" ? null : run.step;
-  const asideRoot = asideStep ? getTaskAsideRootProps() : null;
+  // The buddy is beside a question, never beside the run's end; the column keeps its place there.
+  const asideRoot = tutor ? getTaskAsideRootProps() : null;
+  const asking = phase.kind !== "ending" && phase.kind !== "ended" && run.step !== null;
 
   const content = (
     <div
@@ -238,18 +238,7 @@ export function MistakePracticeRun({
         trueFalseLabels={trueFalseLabels}
       />
 
-      {asideStep && (
-        <PracticeAside
-          answered={phase.kind === "feedback"}
-          fixed={run.state.fixedIds.includes(asideStep.entry.mistakeId)}
-          lessonHref={lessonHref}
-          position={getPracticeMistakePosition(run.state)}
-          showsDrill={phase.kind !== "idea"}
-          step={asideStep}
-          trueFalseLabels={trueFalseLabels}
-          tutor={tutor?.aside}
-        />
-      )}
+      {tutor && asking && <TaskAside label={t("Help with this question")}>{tutor.aside}</TaskAside>}
     </div>
   );
 

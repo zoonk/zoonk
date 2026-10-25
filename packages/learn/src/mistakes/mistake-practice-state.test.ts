@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import {
   type PracticeEntry,
   createPracticeState,
-  getPracticeMistakePosition,
   getPracticeSegments,
   isMistakeQuestion,
   practiceReducer,
@@ -260,24 +259,6 @@ describe(getPracticeSegments, () => {
       ]);
     },
   );
-});
-
-function next(state: ReturnType<typeof createPracticeState>) {
-  return practiceReducer(state, { type: "next" });
-}
-
-describe(getPracticeMistakePosition, () => {
-  it("counts the run's mistakes, not its questions, and says which one the question drills", () => {
-    const practice = [entry("first", {}, 2), entry("second", {}, 3), entry("third", {}, 1)];
-    const start = createPracticeState(practice);
-    const secondMistake = next(next(start));
-    const lastQuestion = next(next(next(next(next(start)))));
-
-    expect(getPracticeMistakePosition(start)).toStrictEqual({ current: 1, total: 3 });
-    expect(getPracticeMistakePosition(next(start))).toStrictEqual({ current: 1, total: 3 });
-    expect(getPracticeMistakePosition(secondMistake)).toStrictEqual({ current: 2, total: 3 });
-    expect(getPracticeMistakePosition(lastQuestion)).toStrictEqual({ current: 3, total: 3 });
-  });
 });
 
 describe(isMistakeQuestion, () => {

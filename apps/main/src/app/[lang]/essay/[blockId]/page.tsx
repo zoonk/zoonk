@@ -19,23 +19,23 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /**
- * The writing screen's own shape (its chrome, the prompt over the box on a phone, the box filling
- * the column and the prompt in the aside from `lg`), so nothing moves when it arrives.
+ * The writing screen's own shape (its chrome with the rubric as its title, the texts first on a
+ * phone and beside the column from `lg`, the instruction over the box filling the column), so
+ * nothing moves when it arrives.
  */
 function EssaySkeleton() {
   return (
     <TaskSkeleton
-      aside={
-        <>
-          <Skeleton className="h-28 w-full" />
-          <Skeleton className="h-7 w-5/6" />
-        </>
-      }
+      aside={<Skeleton className="h-40 w-full" />}
+      title={<Skeleton className="h-4 w-40" />}
     >
-      <div className="flex flex-col gap-4 lg:hidden">
+      <div className="flex flex-col gap-3 lg:hidden">
         <Skeleton className="h-3 w-32" />
         <Skeleton className="h-24 w-full" />
-        <Skeleton className="h-7 w-5/6" />
+      </div>
+      <div className="flex flex-col gap-2">
+        <Skeleton className="h-6 w-full" />
+        <Skeleton className="h-6 w-5/6" />
       </div>
       <div className="flex flex-1 flex-col gap-2">
         <Skeleton className="h-4 w-24" />

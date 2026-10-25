@@ -222,17 +222,16 @@ export function PracticeStepView({
   return (
     <>
       {/* A gap's idea had its own screen; other drills say how they work above their first
-          question, and a misread above each one, since each waits behind "Show the answers".
-          From `lg` the run's aside says it beside every question (`PracticeAside`). */}
+          question, and a misread above each one, since each waits behind "Show the answers". The
+          note is how to answer, so it sits right above the question at every size, as in a
+          session's block. */}
       {!isIdeaFirst(drill) && (step.firstOfEntry || isReadFirst(drill)) && (
-        <div className="contents lg:hidden">
-          <DrillIntro
-            answered={graded !== null}
-            drill={drill}
-            lastAnswer={step.firstOfEntry ? lastAnswer : null}
-            lessonHref={lessonHref}
-          />
-        </div>
+        <DrillIntro
+          answered={graded !== null}
+          drill={drill}
+          lastAnswer={step.firstOfEntry ? lastAnswer : null}
+          lessonHref={lessonHref}
+        />
       )}
 
       {drill.timeLimitSeconds !== null && phase.kind === "answering" && (

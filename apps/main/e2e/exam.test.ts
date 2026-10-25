@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { type Request, type Route } from "@playwright/test";
+import { type Locator, type Request, type Route } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { ensureGuest } from "@zoonk/e2e/fixtures/guests";
@@ -11,7 +11,12 @@ import {
   createNetScoredPracticeDay,
   playMock,
 } from "./exam-fixtures";
-import { createApFreeResponseDay, createSatExamAfterMock } from "./exam-scale-fixtures";
+import {
+  ENEM_INSTRUCTION,
+  createApFreeResponseDay,
+  createEnemEssayDay,
+  createSatExamAfterMock,
+} from "./exam-scale-fixtures";
 import { type Page, expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
 import { captureMissionEnding } from "./mission-ending-captures";
@@ -66,6 +71,17 @@ function preparationNumber(page: Page) {
     .locator('[data-slot="journey-standing"]')
     .filter({ visible: true })
     .getByRole("button", { name: /^Preparation/u });
+}
+
+/** Where an element is drawn; it must be. */
+async function boxOf(locator: Locator) {
+  const box = await locator.boundingBox();
+
+  if (!box) {
+    throw new Error("The element isn't drawn");
+  }
+
+  return box;
 }
 
 /** Phone widths a result's header must fit, from small to large. */
@@ -464,9 +480,15 @@ test.describe("Exam goal", () => {
       await expect(page.getByText("Say by what means the proposal will work.")).toBeVisible();
       await expect(page.getByText("By what means, missing")).toBeAttached();
 
-      // Rewriting keeps the next step in view, over the draft to rework.
+      // Rewriting keeps the next step in view, over the draft to rework, and the last grade beside
+      // it. The rubric names the screen, as every task's title does.
       await page.getByRole("button", { exact: true, name: "Rewrite" }).click();
-      await expect(page.getByRole("complementary", { name: "Essay · ENEM rubric" })).toBeVisible();
+
+      await expect(
+        page.getByRole("heading", { level: 1, name: "Essay · ENEM rubric" }),
+      ).toBeVisible();
+
+      await expect(page.getByRole("complementary", { name: "Your last grade" })).toBeVisible();
       await expect(page.getByText("Next step: Intervention proposal")).toBeVisible();
 
       const rewrite = page.getByLabel("Rewrite what needs work");
@@ -717,9 +739,66 @@ test.describe("Exam goal", () => {
     await page.getByRole("button", { exact: true, name: "Rewrite" }).click();
 
     await expect(
-      page.getByRole("complementary", { name: "Free response · AP scoring guidelines" }),
+      page.getByRole("heading", { level: 1, name: "Free response · AP scoring guidelines" }),
     ).toBeVisible();
 
+    // A short situation is part of the question: it stays over the instruction, in the column.
+    await expect(
+      page.getByRole("main").getByText("A student measures an enzyme's rate at five temperatures."),
+    ).toBeVisible();
+
+    await expect(page.getByRole("complementary", { name: "Your last grade" })).toBeVisible();
+    await page.context().close();
+  });
+
+  // From a laptop the instruction sat only in the aside, beside an empty box, cut off at 1180px and
+  // 770px from the box at 2560px; the aside was named by the rubric, not by the texts it held.
+  test("an essay's instruction sits over the box at every size, its motivating texts beside it on a laptop", async ({
+    browser,
+  }) => {
+    const { blockId, user } = await createEnemEssayDay();
+    const page = await openAs(browser, user);
+    await page.goto(`/essay/${blockId}`);
+
+    const box = page.getByLabel("Your essay");
+    const texts = page.getByText(/^Em Teresina, Jussara/u);
+
+    const instruction = page.getByRole("heading", {
+      level: 2,
+      name: new RegExp(`^${ENEM_INSTRUCTION.slice(0, 40)}`, "u"),
+    });
+
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Essay · ENEM rubric" }),
+    ).toBeVisible();
+
+    await expect(page.getByRole("complementary", { name: "Motivating texts" })).toBeVisible();
+    await expect(instruction).toBeVisible();
+
+    const [onLaptop, boxOnLaptop, textsOnLaptop] = await Promise.all([
+      boxOf(instruction),
+      boxOf(box),
+      boxOf(texts),
+    ]);
+
+    expect(onLaptop.y + onLaptop.height).toBeLessThan(boxOnLaptop.y);
+    expect(boxOnLaptop.x + boxOnLaptop.width).toBeLessThan(textsOnLaptop.x);
+    expect(textsOnLaptop.y).toBeLessThan(boxOnLaptop.y);
+
+    // On a phone the texts come first, then the instruction, then the box, as in the booklet.
+    await page.setViewportSize({ height: 844, width: 390 });
+    await expect(
+      page.getByRole("main").getByText("Motivating texts", { exact: true }),
+    ).toBeVisible();
+
+    const [textsOnPhone, onPhone, boxOnPhone] = await Promise.all([
+      boxOf(texts),
+      boxOf(instruction),
+      boxOf(box),
+    ]);
+
+    expect(textsOnPhone.y).toBeLessThan(onPhone.y);
+    expect(onPhone.y).toBeLessThan(boxOnPhone.y);
     await page.context().close();
   });
 
