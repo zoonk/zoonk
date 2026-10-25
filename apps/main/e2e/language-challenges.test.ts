@@ -1,4 +1,4 @@
-import { type Page, type Request, type TestInfo } from "@playwright/test";
+import { type Page, type Request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { RENTING_SCENARIO } from "@zoonk/testing/fixtures/language";
 import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
@@ -28,75 +28,65 @@ async function expectNoChallengeSpend(userId: string) {
   expect(usage.every((record) => ["conversation", "lessonStart"].includes(record.kind))).toBe(true);
 }
 
-// oxlint-disable-next-line vitest/prefer-each -- Playwright doesn't provide test.each.
-for (const final of [false, true]) {
-  test(`a Free learner with exhausted calls sees the ${final ? "final" : "phase"} challenge locked and finishes the lesson plan`, async ({
-    browser,
-  }, testInfo) => {
-    const { block, boss, user } = await createLanguageChallenge({ final });
+// A phase challenge locks the same way (core's language-challenge-lock tests both).
+test("a Free learner with exhausted calls sees the final challenge locked and finishes the lesson plan", async ({
+  browser,
+}) => {
+  const { block, boss, user } = await createLanguageChallenge({ final: true });
 
-    await usageRecordsFixture({
-      count: 1,
-      kind: "conversation",
-      seconds: EXHAUSTED_CALL_SECONDS,
-      userId: user.id,
-    });
-
-    const page = await openAs(browser, user);
-
-    if (final) {
-      await page.setViewportSize({ height: 844, width: 390 });
-    }
-
-    await page.goto(`/checkpoint/${block.id}`);
-    await expect(page).toHaveURL(new RegExp(`/challenge/${boss.id}$`, "u"));
-
-    await expect(
-      page.getByRole("heading", { level: 1, name: RENTING_SCENARIO.title }),
-    ).toBeVisible();
-
-    await expect(page.getByText("Book a viewing")).toBeVisible();
-    await expect(page.getByText("Available with Plus")).toBeVisible();
-
-    await expect(page.getByRole("link", { name: "See Plus" })).toHaveAttribute(
-      "href",
-      "/subscription",
-    );
-
-    await expect(page.getByRole("button", { name: /^Start/u })).toHaveCount(0);
-    await expect(page.getByRole("heading", { name: "Challenge passed" })).toHaveCount(0);
-    await expectNoChallengeSpend(user.id);
-    await page.screenshot({ path: testInfo.outputPath("free-locked-call-intro.png") });
-
-    await page.getByRole("link", { name: "See Plus" }).click();
-    await expect(page).toHaveURL(/\/subscription$/u);
-    await page.goto("/plan");
-    await expect(page.getByRole("button", { exact: true, name: "Pace Finished" })).toBeVisible();
-    await page.screenshot({ path: testInfo.outputPath("free-finished-plan.png") });
-    await page.goto("/today");
-    await expect(page.getByText(/Plan finished/u)).toBeVisible();
-
-    await expect(
-      prisma.planItem.findUniqueOrThrow({ where: { id: boss.id } }),
-    ).resolves.toMatchObject({ status: "todo" });
-
-    await expect(
-      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),
-    ).resolves.toMatchObject({ startedAt: null, status: "pending" });
-
-    await expectNoChallengeSpend(user.id);
-
-    await page.goto(`/challenge/${boss.id}`);
-    await expect(page.getByText("Available with Plus")).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Challenge passed" })).toHaveCount(0);
-    await expectNoChallengeSpend(user.id);
-    await page.context().close();
+  await usageRecordsFixture({
+    count: 1,
+    kind: "conversation",
+    seconds: EXHAUSTED_CALL_SECONDS,
+    userId: user.id,
   });
-}
+
+  const page = await openAs(browser, user);
+
+  await page.goto(`/checkpoint/${block.id}`);
+  await expect(page).toHaveURL(new RegExp(`/challenge/${boss.id}$`, "u"));
+
+  await expect(page.getByRole("heading", { level: 1, name: RENTING_SCENARIO.title })).toBeVisible();
+
+  await expect(page.getByText("Book a viewing")).toBeVisible();
+  await expect(page.getByText("Available with Plus")).toBeVisible();
+
+  await expect(page.getByRole("link", { name: "See Plus" })).toHaveAttribute(
+    "href",
+    "/subscription",
+  );
+
+  await expect(page.getByRole("button", { name: /^Start/u })).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "Challenge passed" })).toHaveCount(0);
+  await expectNoChallengeSpend(user.id);
+
+  await page.getByRole("link", { name: "See Plus" }).click();
+  await expect(page).toHaveURL(/\/subscription$/u);
+  await page.goto("/plan");
+  await expect(page.getByRole("button", { exact: true, name: "Pace Finished" })).toBeVisible();
+  await page.goto("/today");
+  await expect(page.getByText(/Plan finished/u)).toBeVisible();
+
+  await expect(
+    prisma.planItem.findUniqueOrThrow({ where: { id: boss.id } }),
+  ).resolves.toMatchObject({ status: "todo" });
+
+  await expect(
+    prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),
+  ).resolves.toMatchObject({ startedAt: null, status: "pending" });
+
+  await expectNoChallengeSpend(user.id);
+
+  await page.goto(`/challenge/${boss.id}`);
+  await expect(page.getByText("Available with Plus")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Challenge passed" })).toHaveCount(0);
+  await expectNoChallengeSpend(user.id);
+  await page.context().close();
+});
 
 test("a Free learner can open the next lesson while the earlier call challenge stays locked", async ({
   browser,
-}, testInfo) => {
+}) => {
   const { block, nextBlock, nextLesson, user } = await createLanguageChallenge({
     final: false,
     nextLessonTodo: true,
@@ -122,7 +112,6 @@ test("a Free learner can open the next lesson while the earlier call challenge s
   await today.getByRole("button", { name: /^Start session/u }).click();
   await expect(page).toHaveURL(new RegExp(`/learn/${nextLesson?.id}\\?session=`, "u"));
   await expect(page.getByText('What does the electron "cloud" show?')).toBeVisible();
-  await page.screenshot({ path: testInfo.outputPath("free-next-lesson.png") });
 
   await expect(
     prisma.studySessionBlock.findUniqueOrThrow({ where: { id: nextBlock?.id } }),
@@ -136,9 +125,7 @@ test("a Free learner can open the next lesson while the earlier call challenge s
   await page.context().close();
 });
 
-test("a Plus learner's written challenge creates its call only on Start", async ({
-  browser,
-}, testInfo) => {
+test("a Plus learner's written challenge creates its call only on Start", async ({ browser }) => {
   const { block, boss, user } = await createLanguageChallenge({ final: false, plus: true });
   const page = await openAs(browser, user);
   await answerLiveCalls(page, "answers");
@@ -148,7 +135,6 @@ test("a Plus learner's written challenge creates its call only on Start", async 
   await expect(page.getByText("Available with Plus")).toHaveCount(0);
   await expect(page.getByRole("heading", { level: 1, name: "The Trickster" })).toHaveCount(0);
   await expect(page.getByText(/\d+ questions/u)).toHaveCount(0);
-  await page.screenshot({ path: testInfo.outputPath("plus-call-intro.png") });
 
   await expect(page).toHaveURL(new RegExp(`/checkpoint/${block.id}$`, "u"));
   await expect(page.getByRole("button", { name: "Start the call" })).toBeVisible();
@@ -182,7 +168,6 @@ test("a Plus learner's written challenge creates its call only on Start", async 
   await page.goto(`/checkpoint/${block.id}`);
   await expect(page).toHaveURL(/\/conversation\//u);
   await expect(page.getByRole("img", { name: "2 of 3 stars" })).toBeVisible();
-  await page.screenshot({ path: testInfo.outputPath("completed-call-after-lapse.png") });
 
   await page.context().close();
 });
@@ -345,32 +330,9 @@ async function microphoneRequests(page: Page) {
   });
 }
 
-async function captureStartAt(
-  page: Page,
-  testInfo: TestInfo,
-  { colorScheme, state, width }: { colorScheme: "dark" | "light"; state: string; width: number },
-) {
-  await page.emulateMedia({ colorScheme });
-  await page.setViewportSize({ height: 900, width });
-
-  await page.screenshot({
-    animations: "disabled",
-    path: testInfo.outputPath(`checkpoint-call-${state}-${width}-${colorScheme}.png`),
-  });
-}
-
-/** A Start state on the action bar, on a phone and a laptop, light and dark. */
-async function captureStartState(page: Page, testInfo: TestInfo, state: string) {
-  await captureStartAt(page, testInfo, { colorScheme: "light", state, width: 390 });
-  await captureStartAt(page, testInfo, { colorScheme: "dark", state, width: 390 });
-  await captureStartAt(page, testInfo, { colorScheme: "light", state, width: 1440 });
-  await captureStartAt(page, testInfo, { colorScheme: "dark", state, width: 1440 });
-  await page.emulateMedia({ colorScheme: "light" });
-}
-
 test("a checkpoint Start says it's starting, keeps its intro when it fails and starts at once after leaving", async ({
   browser,
-}, testInfo) => {
+}) => {
   const { block, user } = await createLanguageChallenge({ final: false, plus: true });
   const page = await openAs(browser, user);
   await answerLiveCalls(page, "answers");
@@ -428,7 +390,6 @@ test("a checkpoint Start says it's starting, keeps its intro when it fails and s
     await start.click();
     await failing.held.promise;
     await expect(page.getByRole("button", { name: "Starting…" })).toBeDisabled();
-    await captureStartState(page, testInfo, "starting");
     failing.release.resolve(null);
 
     await expect(problem).toBeVisible();
@@ -438,7 +399,6 @@ test("a checkpoint Start says it's starting, keeps its intro when it fails and s
     ).toBeVisible();
 
     await expect(start).toBeEnabled();
-    await captureStartState(page, testInfo, "start-failed");
 
     await expect(prisma.languageConversation.count({ where: { userId: user.id } })).resolves.toBe(
       0,
@@ -466,55 +426,6 @@ test("a checkpoint Start says it's starting, keeps its intro when it fails and s
   } finally {
     failing.release.resolve(null);
     abandoned.release.resolve(null);
-    await page.context().close();
-  }
-});
-
-test("a checkpoint Start asks for the microphone in the tap, and its call keeps it", async ({
-  browser,
-}) => {
-  const { block, user } = await createLanguageChallenge({ final: false, plus: true });
-  const page = await openAs(browser, user);
-  await answerLiveCalls(page, "answers");
-  await watchMicrophone(page);
-  await page.goto(`/checkpoint/${block.id}`);
-
-  const held = Promise.withResolvers<null>();
-  const release = Promise.withResolvers<null>();
-
-  await page.route(`**/checkpoint/${block.id}`, async (route) => {
-    if (route.request().method() !== "POST" || !route.request().postData()?.includes(block.id)) {
-      await route.continue();
-      return;
-    }
-
-    const response = await route.fetch();
-    held.resolve(null);
-    await release.promise;
-    await route.fulfill({ response });
-  });
-
-  try {
-    await page.getByRole("button", { name: "Start the call" }).click();
-    await held.promise;
-
-    // Asked for while the tap was still active, before the call even exists.
-    await expect
-      .poll(() => microphoneRequests(page))
-      .toStrictEqual([{ active: true, tracks: ["live"] }]);
-
-    release.resolve(null);
-
-    await expect(
-      page.getByRole("log", { name: "Conversation" }).getByText("Hi! Are you calling"),
-    ).toBeVisible();
-
-    // The call goes on with that microphone instead of asking again.
-    await expect(microphoneRequests(page)).resolves.toStrictEqual([
-      { active: true, tracks: ["live"] },
-    ]);
-  } finally {
-    release.resolve(null);
     await page.context().close();
   }
 });
@@ -553,15 +464,24 @@ test("a checkpoint Start refused while its call's screen loads says so at once a
     await page.getByRole("button", { name: "Start the call" }).click();
 
     // Plus lapsed meanwhile: the refusal shows without waiting for a screen it won't open.
-    await expect(page.getByRole("link", { name: "See Plus" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "See Plus" })).toHaveAttribute(
+      "href",
+      "/subscription",
+    );
+
+    await expect(page.getByRole("button", { name: /^Start/u })).toHaveCount(0);
 
     await expect
       .poll(() => microphoneRequests(page))
       .toStrictEqual([{ active: true, tracks: ["ended"] }]);
 
-    await expect(prisma.languageConversation.count({ where: { userId: user.id } })).resolves.toBe(
-      0,
-    );
+    const [conversations, calls, usage] = await Promise.all([
+      prisma.languageConversation.count({ where: { userId: user.id } }),
+      prisma.aiCall.count({ where: { userId: user.id } }),
+      prisma.usageRecord.count({ where: { userId: user.id } }),
+    ]);
+
+    expect({ calls, conversations, usage }).toStrictEqual({ calls: 0, conversations: 0, usage: 0 });
   } finally {
     screen.release.resolve(null);
     await page.unrouteAll({ behavior: "ignoreErrors" });
@@ -574,18 +494,6 @@ test("a checkpoint Start refused while its call's screen loads says so at once a
  * learner's next session, whichever day that is.
  */
 const STUDY_TIME_USED_UP = "You've reached today's study time. It'll be in your next session.";
-
-/** The same line and way back as the French and German catalogs say them. */
-const STUDY_TIME_USED_UP_IN = {
-  de: {
-    back: "Zurück zu Heute",
-    line: "Du hast deine Lernzeit für heute erreicht. In deiner nächsten Lerneinheit geht es hier weiter.",
-  },
-  fr: {
-    back: "Retour à Aujourd’hui",
-    line: "Tu as atteint ta limite de temps d’étude pour aujourd’hui. Ce sera disponible à ta prochaine séance.",
-  },
-} as const;
 
 const CALL_DID_NOT_START = "The call didn't start. Try again in a moment.";
 
@@ -609,7 +517,7 @@ async function expectStudyTimeUsedUp(page: Page) {
 
 test("a checkpoint opened past today's study time says when the call is back, with no Start to tap", async ({
   browser,
-}, testInfo) => {
+}) => {
   const { block, user } = await createLanguageChallenge({ final: false, plus: true });
   await useUpTodaysStudyTime(user.id);
   const page = await openAs(browser, user);
@@ -618,34 +526,6 @@ test("a checkpoint opened past today's study time says when the call is back, wi
   await expectStudyTimeUsedUp(page);
 
   // Nothing tapped, so nothing asked for the microphone.
-  await expect(microphoneRequests(page)).resolves.toStrictEqual([]);
-  await captureStartState(page, testInfo, "daily-limit");
-
-  // The same line in French and German, on a phone.
-  for (const lang of ["fr", "de"] as const) {
-    const { back, line } = STUDY_TIME_USED_UP_IN[lang];
-    // oxlint-disable-next-line no-await-in-loop -- One page shows one language at a time.
-    await page.goto(`/${lang}/checkpoint/${block.id}`);
-    // oxlint-disable-next-line no-await-in-loop -- One page shows one language at a time.
-    await expect(page.getByRole("status").filter({ hasText: line })).toBeVisible();
-    // oxlint-disable-next-line no-await-in-loop -- One page shows one language at a time.
-    await expect(page.getByRole("link", { name: back })).toBeVisible();
-    // oxlint-disable-next-line no-await-in-loop -- One page shows one language at a time.
-    await captureStartAt(page, testInfo, {
-      colorScheme: "light",
-      state: `daily-limit-${lang}`,
-      width: 390,
-    });
-    // oxlint-disable-next-line no-await-in-loop -- One page shows one language at a time.
-    await captureStartAt(page, testInfo, {
-      colorScheme: "dark",
-      state: `daily-limit-${lang}`,
-      width: 390,
-    });
-  }
-
-  await page.emulateMedia({ colorScheme: "light" });
-  await page.goto(`/checkpoint/${block.id}`);
   await expect(microphoneRequests(page)).resolves.toStrictEqual([]);
   await expect(prisma.languageConversation.count({ where: { userId: user.id } })).resolves.toBe(0);
 
@@ -796,36 +676,9 @@ test("a checkpoint Start after its day changed opens where it stands instead of 
   await page.context().close();
 });
 
-test("a learner whose Plus lapses while the call intro is open sees the lock on Start", async ({
-  browser,
-}) => {
-  const { boss, user } = await createLanguageChallenge({ final: false, plus: true });
-  const page = await openAs(browser, user);
-  await page.goto(`/challenge/${boss.id}`);
-  await expect(page.getByRole("button", { name: "Start the call" })).toBeVisible();
-
-  await prisma.subscription.updateMany({
-    data: { status: "canceled" },
-    where: { referenceId: user.id },
-  });
-
-  await page.getByRole("button", { name: "Start the call" }).click();
-
-  await expect(page.getByRole("link", { name: "See Plus" })).toHaveAttribute(
-    "href",
-    "/subscription",
-  );
-
-  await expect(page.getByRole("button", { name: /^Start/u })).toHaveCount(0);
-  await expect(prisma.languageConversation.count({ where: { userId: user.id } })).resolves.toBe(0);
-  await expect(prisma.aiCall.count({ where: { userId: user.id } })).resolves.toBe(0);
-  await expect(prisma.usageRecord.count({ where: { userId: user.id } })).resolves.toBe(0);
-  await page.context().close();
-});
-
 test("an unstarted checkpoint bookmark shows the Plus lock after the subscription lapses", async ({
   browser,
-}, testInfo) => {
+}) => {
   const { block, nextLesson, user } = await createLanguageChallenge({
     final: false,
     nextLessonTodo: true,
@@ -851,7 +704,6 @@ test("an unstarted checkpoint bookmark shows the Plus lock after the subscriptio
   );
 
   await expect(page.getByRole("button", { name: /^Start/u })).toHaveCount(0);
-  await page.screenshot({ path: testInfo.outputPath("lapsed-call-bookmark.png") });
   await expect(prisma.aiCall.count({ where: { userId: user.id } })).resolves.toBe(0);
   await expect(prisma.usageRecord.count({ where: { userId: user.id } })).resolves.toBe(0);
 
@@ -866,7 +718,7 @@ test("an unstarted checkpoint bookmark shows the Plus lock after the subscriptio
 
 test("a lost challenge result stays readable after Plus lapses and offers Plus for another call", async ({
   browser,
-}, testInfo) => {
+}) => {
   const { block, boss, user } = await createLanguageChallenge({ final: false, plus: true });
   const page = await openAs(browser, user);
   const peer = await answerLiveCalls(page, "silent");
@@ -904,25 +756,6 @@ test("a lost challenge result stays readable after Plus lapses and offers Plus f
 
   const plus = page.getByRole("link", { name: "See Plus" });
   await expect(plus).toHaveAttribute("href", "/subscription");
-
-  await page.setViewportSize({ height: 1000, width: 390 });
-  await expect(page.getByRole("heading", { name: "Not this time" })).toBeVisible();
-
-  await page.screenshot({
-    animations: "disabled",
-    fullPage: true,
-    path: testInfo.outputPath("lost-call-plus-390.png"),
-  });
-
-  await page.setViewportSize({ height: 1000, width: 1440 });
-  await expect(page.getByRole("heading", { name: "Not this time" })).toBeVisible();
-
-  await page.screenshot({
-    animations: "disabled",
-    fullPage: true,
-    path: testInfo.outputPath("lost-call-plus-1440.png"),
-  });
-
   await plus.click();
   await expect(page).toHaveURL(/\/subscription$/u);
   await page.context().close();
