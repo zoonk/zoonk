@@ -33,7 +33,7 @@ async function openPractice(browser: Parameters<typeof openAs>[0]) {
 
 test("a finished session lesson survives reload, Back and Forward without another start", async ({
   browser,
-}, testInfo) => {
+}) => {
   const { lesson, session, user } = await createStudyDay({ reviewDone: true });
   const page = await openAs(browser, user);
 
@@ -61,19 +61,7 @@ test("a finished session lesson survives reload, Back and Forward without anothe
       .toMatchObject({ status: "completed" });
 
     await page.reload();
-
-    await page.screenshot({
-      fullPage: true,
-      path: testInfo.outputPath("finished-lesson-reload.png"),
-    });
-
     await expect(page.getByRole("heading", { exact: true, name: "Mixed practice" })).toBeVisible();
-
-    await page.screenshot({
-      fullPage: true,
-      path: testInfo.outputPath("finished-lesson-recovered.png"),
-    });
-
     await expect(page.getByText('What does the electron "cloud" show?')).toBeHidden();
     await expect.poll(starts).toBe(1);
 
@@ -96,28 +84,16 @@ test("a finished session lesson survives reload, Back and Forward without anothe
   }
 });
 
-test("an answer saved in another tab is explained before continuing", async ({
+test("an answer saved in another tab is explained before continuing, and a finished session reloads there instead of an impossible retry", async ({
   browser,
-}, testInfo) => {
+}) => {
   const { other, page, practice, user } = await openPractice(browser);
 
   try {
     await answerRight(page, /^Practice one/u);
     await other.getByRole("radio", { name: "Wrong answer" }).click();
     await other.getByRole("button", { exact: true, name: "Check" }).click();
-
-    await other.screenshot({
-      fullPage: true,
-      path: testInfo.outputPath("answer-in-other-tab.png"),
-    });
-
     await expect(other.getByRole("status")).toHaveText("You already answered this question.");
-
-    await other.screenshot({
-      fullPage: true,
-      path: testInfo.outputPath("answer-in-other-tab-notice.png"),
-    });
-
     await expect(other.getByRole("heading", { name: /^Practice one/u })).toBeVisible();
     await other.getByRole("button", { exact: true, name: "Continue" }).click();
     await expect(other.getByRole("heading", { name: /^Practice two/u })).toBeVisible();
@@ -127,29 +103,13 @@ test("an answer saved in another tab is explained before continuing", async ({
         prisma.attempt.count({ where: { studySessionId: practice.sessionId, userId: user.id } }),
       )
       .toBe(1);
-  } finally {
-    await page.context().close();
-  }
-});
 
-test("a stale second tab reloads into the finished session instead of an impossible retry", async ({
-  browser,
-}, testInfo) => {
-  const { other, page, practice, user } = await openPractice(browser);
-
-  try {
-    await answerRight(page, /^Practice one/u);
+    // The first tab finishes the session while the second still shows its last question.
     await answerRight(page, /^Practice two/u);
     await expect(page.getByRole("heading", { level: 1, name: /^Done in /u })).toBeVisible();
     await other.getByRole("radio", { name: "Wrong answer" }).click();
     await other.getByRole("button", { exact: true, name: "Check" }).click();
     await expect(other.getByRole("heading", { level: 1, name: /^Done in /u })).toBeVisible();
-
-    await other.screenshot({
-      fullPage: true,
-      path: testInfo.outputPath("finished-in-other-tab.png"),
-    });
-
     await expect(other.getByText("We couldn't save that answer. Check it again.")).toBeHidden();
 
     await expect

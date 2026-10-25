@@ -200,7 +200,6 @@ async function answerPlacement(page: Page) {
   // The learner's own "I don't know yet" is said back to them, never graded "Not quite".
   const feedback = page.getByRole("region", { name: "Answer feedback" });
   await expect(feedback).toBeVisible();
-  await feedback.screenshot({ path: test.info().outputPath("placement-dont-know-feedback.png") });
   await expect(feedback.getByText("I don't know yet")).toBeVisible();
   await expect(feedback.getByText("Not quite")).toBeHidden();
   await page.keyboard.press("Enter");
@@ -210,11 +209,12 @@ async function answerPlacement(page: Page) {
 }
 
 /**
- * Both capsules from the keyboard, with the first one and its feedback scanned. The first was
- * answered wrong days ago: before the answer the line says only when, since the earlier answer
- * could give it away; after it, the earlier answer in quotes.
+ * Both capsules from the keyboard, with the first one and its feedback scanned when `scan` (once in
+ * the suite: each screen gets one scan). The first was answered wrong days ago: before the answer
+ * the line says only when, since the earlier answer could give it away; after it, the earlier answer
+ * in quotes.
  */
-async function playCapsules(page: Page) {
+async function playCapsules(page: Page, { scan = false }: { scan?: boolean } = {}) {
   await expect(page.getByRole("heading", { name: /^Capsule one/u })).toBeVisible();
   await expect(page.getByText(/^You saw this on \w+ \d+\.$/u)).toBeVisible();
   await expect(page.getByText(/you answered/u)).toBeHidden();
@@ -224,7 +224,9 @@ async function playCapsules(page: Page) {
   await expect(page.getByRole("progressbar")).toHaveCount(1);
   await expect(page.getByRole("progressbar", { name: /^Question \d of \d$/u })).toBeVisible();
 
-  await expectAccessibleScreen(page, "a capsule");
+  if (scan) {
+    await expectAccessibleScreen(page, "a capsule");
+  }
 
   // A number picks, as in the lesson; nothing is graded until Check (or Enter).
   await page.keyboard.press("1");
@@ -237,7 +239,11 @@ async function playCapsules(page: Page) {
   ).toBeVisible();
 
   await expect(page.getByText(/^On \w+ \d+ you answered “Wrong answer”\.$/u)).toBeVisible();
-  await expectAccessibleScreen(page, "a capsule's feedback");
+
+  if (scan) {
+    await expectAccessibleScreen(page, "a capsule's feedback");
+  }
+
   await continueWithEnter(page);
   await answerRight(page, /^Capsule two/u);
 }
@@ -458,7 +464,7 @@ test.describe("Today's session", () => {
     await page.keyboard.press("Enter");
     await answerPlacement(page);
 
-    await playCapsules(page);
+    await playCapsules(page, { scan: true });
     await expectMoment(page, "Review done");
 
     // The moment: what it earned, the day's progress on the header's bar, and what's next right
@@ -489,8 +495,6 @@ test.describe("Today's session", () => {
 
     // What comes back for review is counted beside the days it does: no mistake was saved, and
     // "To review 0 · Back Oct 18" read as nothing to review.
-    await page.screenshot({ path: test.info().outputPath("session-summary-numbers.png") });
-
     await expect(
       page
         .getByRole("main")
@@ -546,7 +550,6 @@ test.describe("Today's session", () => {
     await expect(page.getByRole("heading", { level: 1, name: "Done for now" })).toBeVisible();
     await expect(page.getByRole("button", { name: /^Study \d+ more minutes/u })).toBeHidden();
     await expect(page.getByText("Save your plan so it's here next time.")).toBeHidden();
-    await expectAccessibleScreen(page, "the summary after stopping");
 
     const blocks = await prisma.studySessionBlock.findMany({
       orderBy: { position: "asc" },
