@@ -2,11 +2,14 @@ import { randomUUID } from "node:crypto";
 import { type Route } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
+import { planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture, learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
+import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
+import { studySessionBlockFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { isJsonObject } from "@zoonk/utils/json";
 import { type Page, expect, test } from "./fixtures";
 import { type StreamEvent, followRun } from "./generation-run";
@@ -371,6 +374,69 @@ test.describe("Today's session", () => {
     await expectMoment(page, "Review done");
     await expect(page.getByRole("button", { name: "Take the test" })).toHaveCount(0);
     await expect(page.getByRole("main").getByText("Already know this?")).toHaveCount(0);
+    await page.context().close();
+  });
+
+  // On a wide screen the moment left "Up next" to the queue beside it, and its offer to test out of
+  // the next lesson's chapter, under the title alone, read as being about the lesson just done.
+  test("a lesson's moment names the next lesson over its chapter's test, on a wide screen too", async ({
+    browser,
+  }) => {
+    const { goal, session, user } = await createStudyDay({ reviewDone: true });
+    const nextTitle = `Discounts in a new chapter ${randomUUID().slice(0, 8)}`;
+
+    const [chapter, next, plan] = await Promise.all([
+      libraryChapterFixture(),
+      playableLessonFixture({
+        lesson: { estimatedMinutes: 3, title: nextTitle },
+        steps: ["check"],
+      }),
+      prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
+    ]);
+
+    const item = await planItemFixture({
+      chapterId: chapter.id,
+      kind: "lesson",
+      lessonId: next.lesson.id,
+      planId: plan.id,
+      position: 1,
+      titleSnapshot: nextTitle,
+    });
+
+    // The day's practice moves one place on for the next lesson, which starts another chapter.
+    await prisma.studySessionBlock.updateMany({
+      data: { position: 3 },
+      where: { kind: "practice", sessionId: session.id },
+    });
+
+    await studySessionBlockFixture({
+      estimatedMinutes: 3,
+      kind: "learn",
+      lessonId: next.lesson.id,
+      payload: { chapterId: chapter.id, planItemId: item.id, skillIds: [], title: nextTitle },
+      position: 2,
+      sessionId: session.id,
+    });
+
+    const page = await openAs(browser, user);
+    await page.goto("/session");
+    await page.getByRole("button", { name: /^Start/u }).click();
+    await expect(page).toHaveURL(/\/learn\/[\w-]+\?session=[\w-]+$/u);
+    await expect(page.getByText('What does the electron "cloud" show?')).toBeVisible();
+    await page.keyboard.press("2");
+
+    await expect(
+      page.getByRole("radio", { name: "Where the electron is most likely to be found" }),
+    ).toBeChecked();
+
+    await page.keyboard.press("Enter");
+    await expect(page.getByRole("status").filter({ hasText: "Correct!" })).toBeVisible();
+    await page.keyboard.press("Enter");
+    await expectMoment(page, "Lesson complete");
+
+    const upNext = page.locator('[data-slot="study-moment-next"]').filter({ visible: true });
+    await expect(upNext.getByText(nextTitle, { exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Take the test" })).toBeVisible();
     await page.context().close();
   });
 

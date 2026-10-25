@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useFormatter } from "next-intl";
 import { EnterButton } from "../_components/enter-button";
 import { KindMark } from "../_components/kind-tile";
@@ -64,16 +65,20 @@ function MomentFacts({ moment }: { moment: StudyMomentView }) {
 
 /**
  * What Continue opens: the next block as the list's highlighted "next" row, its kind's dot, its
- * name and its minutes. Under `lg` only: from `lg` the day's queue beside the moment highlights the
- * same row.
+ * name and its minutes. From `lg` the day's queue beside the moment highlights the same row, so the
+ * moment leaves it out there, unless something under it is about it (`subject`: taking the next
+ * lesson's test).
  */
-function NextBlock({ block }: { block: StudyBlock }) {
+function NextBlock({ block, subject }: { block: StudyBlock; subject: boolean }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
   const blockTitle = useBlockTitle();
 
   return (
-    <section className="flex flex-col gap-2 lg:hidden" data-slot="study-moment-next">
+    <section
+      className={cn("flex flex-col gap-2", !subject && "lg:hidden")}
+      data-slot="study-moment-next"
+    >
       <h3 className="text-label">{t("Up next")}</h3>
       <div className="bg-muted -mx-2.5 flex items-center gap-3 rounded-[0.625rem] px-2.5 py-2.75">
         <KindMark kind={getBlockKind(block)} />
@@ -213,7 +218,9 @@ export function StudyMoment({
           missions={moment.missions}
         />
 
-        {nextBlock && <NextBlock block={nextBlock} />}
+        {nextBlock && (
+          <NextBlock block={nextBlock} subject={Boolean(nextChapterId && onStartTestOut)} />
+        )}
 
         {offer && onStartTestOut && <TestOutOffer offer={offer} onStart={onStartTestOut} />}
 
