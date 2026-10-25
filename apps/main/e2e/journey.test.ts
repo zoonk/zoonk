@@ -405,7 +405,7 @@ test.describe("Journey", () => {
     });
   });
 
-  test("a plan that doesn't fit says how much it covers, and the editor fixes it, from the keyboard too", async ({
+  test("a plan that doesn't fit says how much it covers, and a new time in the editor plans it to the exam", async ({
     browser,
   }) => {
     await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
@@ -479,30 +479,20 @@ test.describe("Journey", () => {
       ).toHaveCount(0);
 
       await expect(page.getByText(/^To study every topic:/u)).toHaveCount(0);
+    });
+  });
 
-      // The buddy's "Choose where to focus" opens the Plan with the sheet open; Esc closes it.
-      await page.goto("/plan?focus=choose");
-      await expect(page.getByRole("dialog", { name: "Where to focus" })).toBeVisible();
-      await page.keyboard.press("Escape");
-      await expect(page.getByRole("dialog", { name: "Where to focus" })).toBeHidden();
-
-      // Where her few minutes go is hers to choose, from the suggestion's other options: the sheet
-      // says what the focus did, with an undo, before it closes.
-      await chooseFocusFromPlan(page);
-      const focus = page.getByRole("dialog", { name: "Where to focus" });
-
-      await focus.getByRole("checkbox", { name: "Matemática" }).click();
-      await focus.getByRole("button", { name: "Focus on these" }).click();
-
-      await expect(focus.getByRole("status")).toContainText("More time for");
-      await expect(focus.getByRole("status")).toContainText("Matemática");
-      await expect(focus.getByRole("button", { name: "Undo" })).toBeVisible();
-      await focus.getByRole("button", { name: "Done" }).click();
-      await expect(focus).toBeHidden();
-
-      await expect.poll(() => loadFocusAreas(user.goalId)).toContain("Matemática");
-
+  // Choosing where her minutes go, from the suggestion's other options, is covered with the focus
+  // on part of a subject below.
+  test("the editor says what a new time covers once it's planned, and a toggle keeps the keyboard while it saves", async ({
+    browser,
+  }) => {
+    await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
+      // Ana's 45 minutes a day don't cover all of ENEM in depth by her exam.
+      await openJourney(page);
       await adjustPlanButton(page).click();
+      const editor = page.getByRole("dialog", { name: "Adjust your plan" });
+      const minutes = editor.getByRole("radiogroup", { name: "Time a day" });
 
       // No preset says what it covers until she asks: Find sits under them.
       await expect(
