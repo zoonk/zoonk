@@ -11066,6 +11066,11 @@ msgid "{time} a day covers everything in depth by {date}."
 msgstr "Con {time} al día, lo cubrirás todo en profundidad para el {date}."
 
 #: src/plan/use-time-to-cover.ts
+msgctxt "3ZJZJ3"
+msgid "{time} a day studies every topic, some in less depth."
+msgstr "Con {time} al día, estudiarás todos los temas, algunos con menos profundidad."
+
+#: src/plan/use-time-to-cover.ts
 msgctxt "g7wBHi"
 msgid "We couldn't work out the time needed."
 msgstr "No hemos podido calcular el tiempo necesario."
@@ -11099,6 +11104,11 @@ msgstr "Ningún tiempo diario basta para estudiar todo el contenido en profundid
 msgctxt "IPzR8B"
 msgid "Covers everything"
 msgstr "Lo cubre todo"
+
+#: src/plan/use-time-to-cover.ts
+msgctxt "OUc_Xr"
+msgid "Every topic"
+msgstr "Todos los temas"
 
 #: src/plan/use-tool-sentence.ts
 msgctxt "MYXHu2"

@@ -9,7 +9,7 @@ import { useFormatGoalDate } from "../_utils/iso-date";
 import { UseDateButton, useNoticeDayText } from "./notice-day";
 import { usePlanScreen } from "./plan-context";
 import { PlanFailedMessage } from "./plan-failed-message";
-import { FullCourseSwitch, useFullCourse } from "./plan-full-course";
+import { useFullCourse } from "./plan-full-course";
 import { StudyEverything } from "./study-everything";
 import { usePlanChange } from "./use-plan-change";
 
@@ -70,7 +70,8 @@ function useFieldDate({
  * (Sofia's "March" read 01/03/2027). When the plan counts down to another day than the exam's
  * notice gives, that day is offered with one tap. A goal that isn't an exam can drop its deadline
  * to study everything at its own pace, and set one again; an exam keeps its date and can go on
- * after it instead (see `FullCourseSwitch`). Not for quick explanations, which have no plan days.
+ * after it instead, chosen with its time (see `FullCourseSwitch`). Not for quick explanations,
+ * which have no plan days.
  */
 export function PlanDate() {
   const t = useExtracted();
@@ -154,7 +155,6 @@ export function PlanDate() {
       )}
 
       {course && !course.isExam && <StudyEverything course={course} />}
-      {goal.kind === "exam" && <FullCourseSwitch />}
 
       {failed && <PlanFailedMessage />}
     </div>

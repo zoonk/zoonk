@@ -28,9 +28,10 @@ import {
   useFocusFindAnswer,
 } from "./plan-find-line";
 import { ChooseFocus, useCanChooseFocus } from "./plan-focus";
+import { FullCourseSwitch } from "./plan-full-course";
 import { usePlanChange } from "./use-plan-change";
 import { useTappedChoice } from "./use-tapped-choice";
-import { useTimeToCoverTexts } from "./use-time-to-cover";
+import { getOfferedMinutes, useTimeToCoverTexts } from "./use-time-to-cover";
 
 const DAYS_PER_WEEK = 7;
 
@@ -38,9 +39,10 @@ const DAYS_PER_WEEK = 7;
  * What the chosen time covers, under the presets, so each change shows its effect right away: the
  * whole goal, or what it leaves lighter, exactly as the plan has it; then Find, which plans the
  * goal at each daily time when the learner asks (never for the page), and the other ways: moving
- * a goal's date, choosing where to focus. Nothing for a plan without a date, which covers
- * everything at any pace. Studying everything is chosen with the date, above it (see `PlanDate`).
- * While the schedule's change saves, the old plan's coverage would describe a time no longer
+ * a goal's date, choosing where to focus, and after them an exam's "Study everything, even after
+ * the exam" (see `FullCourseSwitch`); a goal's is chosen with its date, above it (see `PlanDate`).
+ * Nothing for a plan without a date, which covers everything at any pace. While the schedule's
+ * change saves, the old plan's coverage would describe a time no longer
  * picked, so its place says the new one is being worked out, keeping its height.
  */
 function DailyCoverage({
@@ -129,7 +131,8 @@ function useWeekShape() {
  * among them, even an unusual one, and "Other time…" for any other, which joins them. Once Find
  * answers, the time it found joins them too, as it is (1 hr 25 min: it was planned, so it's exact,
  * where the preset above it can cover less, as a mock can take a study day), and says "Covers
- * everything"; none is picked for the learner. While the weekend has its own time (`weekendOn`),
+ * everything", or, when no time does, the time that brings every topic in, "Every topic"; none is
+ * picked for the learner. While the weekend has its own time (`weekendOn`),
  * it changes the weekdays alone, so the weekend keeps what the learner gave it; otherwise every
  * study day moves with it. The time picked shows picked while its change saves (see
  * `useTappedChoice`); another pick waits for it.
@@ -156,8 +159,7 @@ function DailyMinutes({
   const answer = useFindAnswer();
   const current = shape.weekdays;
   const time = useTappedChoice(current);
-  const found = answer?.kind === "covers" ? answer.minutes : null;
-  const choices = getTimeChoices(current, time.shown, found);
+  const choices = getTimeChoices(current, time.shown, getOfferedMinutes(answer));
   const onAsk = useFocusFindAnswer(choices);
 
   const setMinutes = (minutes: number) => {
@@ -213,6 +215,8 @@ function DailyMinutes({
         onMoving={onMoving}
         planChange={planChange}
       />
+
+      <FullCourseSwitch />
     </div>
   );
 }

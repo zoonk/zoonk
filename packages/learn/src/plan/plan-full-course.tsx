@@ -157,8 +157,8 @@ export function useFullCourseText() {
 export const FULL_COURSE_SWITCH_ID = "plan-editor-full-course";
 
 /**
- * "Study everything, even after the exam" in the plan editor, as onboarding names and describes
- * it, for an exam whose time doesn't cover it by its date: on, what doesn't fit goes on after the
+ * "Study everything, even after the exam" in the plan editor, after Find's answer as onboarding
+ * places, names and describes it, for an exam whose time doesn't cover it by its date: on, what doesn't fit goes on after the
  * exam, and it says when everything ends; off, what doesn't fit by the exam is left out. Each
  * switch re-plans from today.
  */

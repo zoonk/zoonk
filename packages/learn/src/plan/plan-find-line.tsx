@@ -8,6 +8,7 @@ import { getEditorSectionId } from "./plan-editor-sections";
 import { FULL_COURSE_SWITCH_ID } from "./plan-full-course";
 import {
   type TimeToCoverAnswer,
+  getOfferedMinutes,
   readTimeToCover,
   useTimeToCover,
   useTimeToCoverTexts,
@@ -30,10 +31,10 @@ export function useFindAnswer(): TimeToCoverAnswer | null {
 
 /**
  * Where focus goes once the editor's Find answers, since the Find button that had it is gone: the
- * chip of the time found, so Space picks it; Move your date, when it's the one way that covers
- * everything (a goal with a date found); an exam's "Study everything, even after the exam", as
- * onboarding does, when no time covers it; or else the first action below. Null leaves it to the
- * answer itself.
+ * chip of the time it offers (see `getOfferedMinutes`), so Space picks it; Move your date, when
+ * it's the one way that covers everything (a goal with a date found); an exam's "Study everything,
+ * even after the exam", as onboarding does, when no time covers it; or else the first action
+ * below. Null leaves it to the answer itself.
  */
 function findFocusTarget({
   answered,
@@ -44,11 +45,11 @@ function findFocusTarget({
   choices: number[];
   isGoal: boolean;
 }): HTMLElement | null {
-  const answer = readTimeToCover(answered);
+  const offered = getOfferedMinutes(readTimeToCover(answered));
   const section = document.querySelector<HTMLElement>(`#${getEditorSectionId("time")}`);
 
-  if (answer.kind === "covers") {
-    return findTimeChip({ choices, container: section, minutes: answer.minutes });
+  if (offered !== null) {
+    return findTimeChip({ choices, container: section, minutes: offered });
   }
 
   if (isGoal && answered.fittingDate) {
@@ -101,8 +102,9 @@ export function useFocusFindAnswer(choices: number[]) {
 
 /**
  * The editor's Find (see `FindTimeLine`): once found, the time that covers everything by the
- * goal's date, or that no time a day does, with, for a goal, the date its own time covers
- * everything by. The editor's block is a live region already, so the line isn't one of its own.
+ * goal's date, or that no time a day does, with the time that brings every topic in when one does,
+ * and, for a goal, the date its own time covers everything by. The editor's block is a live region
+ * already, so the line isn't one of its own.
  */
 export function FindLine({ canFind, onAsk }: { canFind: boolean; onAsk: () => void }) {
   const { goal, plan } = usePlanScreen();
@@ -138,6 +140,10 @@ export function FindLine({ canFind, onAsk }: { canFind: boolean; onAsk: () => vo
                 targetDateNamedMonth: answered.targetDateNamedMonth,
               })}
             </p>
+          )}
+
+          {answer?.kind === "none" && answer.coreMinutes !== null && (
+            <p>{texts.everyTopic(answer.coreMinutes)}</p>
           )}
 
           {dateFound && (

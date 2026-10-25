@@ -13,16 +13,31 @@ const ASK_TIMEOUT_MS = 45_000;
 
 /**
  * What a find answer says about daily time: the fewest minutes whose plan covers everything in
- * depth by the date (`covers`), or that no time a day does (`none`).
+ * depth by the date (`covers`), or that no time a day does (`none`), with the fewest that bring
+ * every topic in, some in less depth, when the learner's own time leaves one out (`coreMinutes`).
  */
-export type TimeToCoverAnswer = { kind: "covers"; minutes: number } | { kind: "none" };
+export type TimeToCoverAnswer =
+  | { kind: "covers"; minutes: number }
+  | { coreMinutes: number | null; kind: "none" };
 
 export function readTimeToCover(
-  time: Pick<PlanTimeToCover, "recommendedMinutes">,
+  time: Pick<PlanTimeToCover, "coreMinutes" | "recommendedMinutes">,
 ): TimeToCoverAnswer {
   return time.recommendedMinutes === null
-    ? { kind: "none" }
+    ? { coreMinutes: time.coreMinutes, kind: "none" }
     : { kind: "covers", minutes: time.recommendedMinutes };
+}
+
+/**
+ * The daily time a find answer offers among the time chips, one tap away: the time that covers
+ * everything, or, when none does, the time that brings every topic in. Null when it offers none.
+ */
+export function getOfferedMinutes(answer: TimeToCoverAnswer | null): number | null {
+  if (!answer) {
+    return null;
+  }
+
+  return answer.kind === "covers" ? answer.minutes : answer.coreMinutes;
 }
 
 /**
@@ -84,6 +99,9 @@ export function useTimeToCoverTexts() {
         }),
         time: formatDuration(minutes),
       }),
+    /** When no time covers everything in depth: the time that brings every topic in. */
+    everyTopic: (minutes: number) =>
+      t("{time} a day studies every topic, some in less depth.", { time: formatDuration(minutes) }),
     failed: t("We couldn't work out the time needed."),
     find: t("Find the time that covers everything"),
     finding: t("Finding the time…"),
@@ -106,9 +124,14 @@ export function useTimeToCoverTexts() {
           style: "long",
         }),
       }),
-    /** A chip's note once Find answered: the time found. */
-    note: (answer: TimeToCoverAnswer, minutes: number): string | null =>
-      answer.kind === "covers" && answer.minutes === minutes ? t("Covers everything") : null,
+    /** A chip's note once Find answered: the time found (see `getOfferedMinutes`). */
+    note: (answer: TimeToCoverAnswer, minutes: number): string | null => {
+      if (getOfferedMinutes(answer) !== minutes) {
+        return null;
+      }
+
+      return answer.kind === "covers" ? t("Covers everything") : t("Every topic");
+    },
     tryAgain: t("Try again"),
   };
 }

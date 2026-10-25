@@ -13,6 +13,7 @@ import { type GenerationRun } from "../../generation/generation-run";
 import { type FindStatus, findPickedChip, findTimeChip } from "../../plan/plan-coverage";
 import {
   type TimeToCoverAnswer,
+  getOfferedMinutes,
   readTimeToCover,
   useTimeToCoverTexts,
 } from "../../plan/use-time-to-cover";
@@ -49,14 +50,15 @@ import { isRunStopped } from "./wait-run";
 /**
  * The time chips: the usual amounts and the learner's own pick (a time picked in "Other time…" or
  * on a course's page may be none of them). Once Find answers for the week shown, the time it found
- * joins them as it is (1 hr 25 min: it was planned, so it's exact) and says "Covers everything".
- * None is picked for the learner.
+ * joins them as it is (1 hr 25 min: it was planned, so it's exact) and says "Covers everything",
+ * or, when no time does, the time that brings every topic in, "Every topic". None is picked for the
+ * learner.
  */
 function useMinuteChoices({ found, picked }: { found: PlanTimeToCover | null; picked: number }) {
   const texts = useTimeToCoverTexts();
   const formatDuration = useFormatDuration();
   const answer = found && readTimeToCover(found);
-  const options = getTimeChoices(picked, answer?.kind === "covers" ? answer.minutes : null);
+  const options = getTimeChoices(picked, getOfferedMinutes(answer));
 
   return {
     choices: options.map((value) => ({
@@ -87,9 +89,9 @@ const MINUTES_ID = "onboarding-minutes";
 const FIND_LINE_ID = "onboarding-find";
 
 /**
- * Where Find's answer sends the keyboard: the chip of the time that covers everything, so Space
- * picks it; when no time does, an exam's one way to study it all, "Study everything, even after
- * the exam" (only an exam has it). Null when neither is there.
+ * Where Find's answer sends the keyboard: the chip of the time it offers (see `getOfferedMinutes`),
+ * so Space picks it; when it offers none, an exam's one way to study it all, "Study everything,
+ * even after the exam" (only an exam has it). Null when neither is there.
  */
 function findAnswerTarget({
   answer,
@@ -100,11 +102,13 @@ function findAnswerTarget({
   minutes: HTMLElement | null;
   options: number[];
 }): HTMLElement | null {
-  if (answer.kind === "none") {
+  const offered = getOfferedMinutes(answer);
+
+  if (offered === null) {
     return document.querySelector<HTMLElement>(`#${FULL_COURSE_ID} [role="switch"]`);
   }
 
-  return findTimeChip({ choices: options, container: minutes, minutes: answer.minutes });
+  return findTimeChip({ choices: options, container: minutes, minutes: offered });
 }
 
 /**

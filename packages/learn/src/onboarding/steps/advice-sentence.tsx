@@ -7,7 +7,7 @@ import { readTimeToCover, useTimeToCoverTexts } from "../../plan/use-time-to-cov
 
 /**
  * What Find found for the week shown: the time that covers everything in depth by the goal's date,
- * or that no time a day does.
+ * or that no time a day does, with the time that brings every topic in when one does.
  */
 function FoundWords({ found }: { found: PlanTimeToCover }) {
   const texts = useTimeToCoverTexts();
@@ -19,7 +19,12 @@ function FoundWords({ found }: { found: PlanTimeToCover }) {
   }
 
   if (answer.kind === "none") {
-    return <p>{texts.none({ targetDate, targetDateNamedMonth })}</p>;
+    return (
+      <>
+        <p>{texts.none({ targetDate, targetDateNamedMonth })}</p>
+        {answer.coreMinutes !== null && <p>{texts.everyTopic(answer.coreMinutes)}</p>}
+      </>
+    );
   }
 
   return (

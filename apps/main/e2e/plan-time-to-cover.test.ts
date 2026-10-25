@@ -431,6 +431,54 @@ test.describe("Find the time that covers everything", () => {
     });
   });
 
+  test("when no time covers everything in depth, Find offers the time that studies every topic and studying everything", async ({
+    browser,
+  }) => {
+    await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
+      const { editor, isoDate } = await shortOnTime(page, user.goalId);
+
+      await routeTimeToCover(page, {
+        goalId: user.goalId,
+        time: { coreMinutes: 390, targetDate: isoDate },
+      });
+
+      const none = editor.getByText(
+        /^No amount of time a day covers everything in depth by .+\.$/u,
+      );
+
+      await editor.getByRole("button", { name: FIND }).click();
+      await expect(none).toBeVisible();
+
+      await expect(
+        editor.getByText("6 hr 30 min a day studies every topic, some in less depth."),
+      ).toBeVisible();
+
+      // The time that brings every topic in joins the chips, marked, focused, not picked.
+      const chip = editor
+        .getByRole("radiogroup", { name: "Time a day" })
+        .getByRole("radio", { name: /^6 hr 30 min\s*Every topic$/u });
+
+      await expect(chip).toBeFocused();
+      await expect(chip).not.toBeChecked();
+
+      // Studying everything, even after the exam, follows the answer as the other way.
+      const everything = editor.getByRole("switch", {
+        name: "Study everything, even after the exam",
+      });
+
+      const [noneBox, everythingBox] = await Promise.all([
+        none.boundingBox(),
+        everything.boundingBox(),
+      ]);
+
+      expect(everythingBox?.y ?? 0).toBeGreaterThan(noneBox?.y ?? Infinity);
+
+      // Space picks the time: the plan plans again at it.
+      await page.keyboard.press("Space");
+      await expect.poll(() => readDailyMinutes(user.goalId)).toBe(390);
+    });
+  });
+
   test("the coverage card finds the time, previews what it changes and applies it", async ({
     browser,
   }) => {
