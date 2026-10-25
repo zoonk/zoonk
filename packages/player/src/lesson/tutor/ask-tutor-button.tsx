@@ -7,9 +7,9 @@ import { useExtracted } from "next-intl";
 import { useLessonBuddy } from "./lesson-tutor";
 
 /**
- * One quiet way to ask the learner's buddy about the screen in view, beside the lesson's next
- * action: an icon on most screens, and "Ask {buddy}" in words after a wrong answer, when asking
- * helps most. From `lg` the buddy's composer is in the aside, so the bar leaves it out.
+ * One quiet way to ask the learner's buddy about the screen in view, after the lesson's next action
+ * on every screen: an icon on most screens, and "Ask {buddy}" in words after a wrong answer, when
+ * asking helps most. From `lg` the buddy's composer is in the aside, so the bar leaves it out.
  */
 export function AskTutorButton({ labeled = false }: { labeled?: boolean }) {
   const t = useExtracted();

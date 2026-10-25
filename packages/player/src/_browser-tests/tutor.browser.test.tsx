@@ -1290,6 +1290,30 @@ describe("the learner's buddy", () => {
     await expect.element(sheet.getByText("Ask about your answer")).toBeVisible();
   });
 
+  // On a phone the buddy sat after the main action before an answer and jumped before it after a
+  // miss, so help was somewhere else in each state.
+  it("keeps the buddy after the main action on a phone, saying its name there after a miss", async () => {
+    await atViewport(PHONE, async () => {
+      const { lesson } = lessonWithTutor();
+      playLesson({ lesson });
+
+      const buddy = page.getByRole("button", { name: "Ask Pip" });
+      const check = page.getByRole("button", { name: /^Check/u });
+
+      const afterMain = (main: Element) =>
+        buddy.element().getBoundingClientRect().left > main.getBoundingClientRect().right;
+
+      await expect.element(buddy).toBeVisible();
+      expect(afterMain(check.element())).toBe(true);
+
+      await page.getByRole("radio", { name: "The electron's size" }).click();
+      await check.click();
+      await expect.element(buddy).toHaveTextContent("Ask Pip");
+
+      expect(afterMain(page.getByRole("button", { name: /^Continue/u }).element())).toBe(true);
+    });
+  });
+
   // Ana's phone showed "Ask Zu" twice after her second miss: the offer's button and the bar's.
   // The offer says the buddy's name then, and the bar keeps its quiet icon.
   it("names the buddy once on a phone when it offers help", async () => {

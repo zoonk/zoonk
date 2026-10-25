@@ -775,7 +775,7 @@ test.describe("Mistakes notebook", () => {
     await page.context().close();
   });
 
-  test("after a miss in practice the buddy offers to walk through the answer, beside the main action as in a lesson", async ({
+  test("after a miss in practice the buddy offers to walk through the answer, after the main action as in a lesson", async ({
     browser,
   }) => {
     const { user } = await createMistakeLearner({ causes: ["trap"] });
@@ -801,9 +801,10 @@ test.describe("Mistakes notebook", () => {
       page.getByRole("region", { name: "Answer feedback" }).getByText("Not quite"),
     ).toBeVisible();
 
-    // After a miss it says its name before Continue, when asking helps most.
+    // After a miss it says its name, when asking helps most, in the same place after Continue.
     const next = page.getByRole("button", { name: /^Continue/u });
-    expect(await leftEdge(ask)).toBeLessThan(await leftEdge(next));
+    await expect(ask).toHaveText("Ask Zu");
+    expect(await leftEdge(ask)).toBeGreaterThan(await leftEdge(next));
 
     // Beside a checked answer the buddy is asked about the answer, not for a hint: on a laptop in
     // the aside's dock, on a phone in its drawer.

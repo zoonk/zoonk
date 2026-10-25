@@ -56,11 +56,11 @@ function PromptAudio() {
 
 /**
  * The task's action bar: the one next action, with Previous on every screen after the first and a
- * card's sound on reading screens. The buddy is an icon after the main action, and says its name
- * before it after a wrong answer, when asking helps most, unless the buddy's own offer to help
- * already says it on the screen; from `lg` the buddy is in the aside instead. The bar stays pinned
- * at the bottom over a hairline on every size, so it never moves when a result appears, and Enter
- * always does what it says. Every button is 44px tall.
+ * card's sound on reading screens. The buddy is always after the main action, an icon that says its
+ * name after a wrong answer, when asking helps most, unless the buddy's own offer to help already
+ * says it on the screen; from `lg` the buddy is in the aside instead. The bar stays pinned at the
+ * bottom over a hairline on every size, so it never moves when a result appears, and Enter always
+ * does what it says. Every button is 44px tall.
  */
 export function LessonActionBar() {
   const t = useExtracted();
@@ -92,8 +92,6 @@ export function LessonActionBar() {
 
         <PromptAudio />
 
-        {showsMiss && <AskTutorButton labeled />}
-
         <Button
           aria-keyshortcuts="Enter"
           className={cn(TASK_MAIN_ACTION_CLASS, primary.busy && "disabled:opacity-100")}
@@ -107,7 +105,7 @@ export function LessonActionBar() {
           {!primary.busy && <ShortcutKbd tone="inverse">⏎</ShortcutKbd>}
         </Button>
 
-        {!showsMiss && <AskTutorButton />}
+        <AskTutorButton labeled={showsMiss} />
       </TaskActions>
     </TaskActionBar>
   );

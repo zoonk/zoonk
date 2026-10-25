@@ -301,13 +301,13 @@ export function QuestionBlock({
           <FinishReadyActions onFinish={run.retryFinish} phase={phase} />
 
           {phase.kind === "feedback" && (
-            <QuestionActionsRow ask={askButton} missed={!phase.feedback.isCorrect}>
+            <QuestionActionsRow ask={askButton}>
               <ContinueButton onContinue={run.next} />
             </QuestionActionsRow>
           )}
 
           {question && isAnswerPhase(phase) && (
-            <QuestionActionsRow ask={askButton} missed={false}>
+            <QuestionActionsRow ask={askButton}>
               <BlockQuestionActions
                 blockDrill={blockDrill}
                 draft={draft}

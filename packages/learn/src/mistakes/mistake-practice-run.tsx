@@ -168,10 +168,7 @@ function PracticeBody({
       {phase.kind !== "idea" && (
         <TaskActionBar>
           {phase.kind === "answerFailed" && <AnswerFailed />}
-          <QuestionActionsRow
-            ask={askButton}
-            missed={phase.kind === "feedback" && !phase.feedback.isCorrect}
-          >
+          <QuestionActionsRow ask={askButton}>
             <PracticeStepActions run={run} step={run.step} />
           </QuestionActionsRow>
         </TaskActionBar>

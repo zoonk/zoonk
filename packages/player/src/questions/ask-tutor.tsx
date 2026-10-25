@@ -8,6 +8,7 @@ import { ListRowButton, ListRowContent, ListRowLeading, ListRowTitle } from "@zo
 import { type TutorIdentity, useTutorIdentity } from "@zoonk/learn/tutor-identity";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
+import { MessageCircleQuestionIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Suspense, lazy, useMemo, useState } from "react";
 import { type LessonTutorConfig } from "../lesson/tutor/lesson-tutor-context";
@@ -61,10 +62,10 @@ function useAskLabel({ kind, name }: { kind: LessonQuestionScreenKind; name: str
 
 /**
  * The button's size: small beside a screen's content, the bar's size in a page's top bar, and in
- * a task (a mock's result) where every task has its buddy: the buddy's face alone after the main
- * action on a phone and a tablet, and from `lg` at the foot of the task's aside, in the action
- * bar's row, saying what it asks about, as the composer does there on other tasks (in the bar,
- * with its name, when the task has no aside).
+ * a task (a mock's result) where every task has its buddy: the icon every task's buddy has after
+ * the main action on a phone and a tablet, and from `lg` at the foot of the task's aside, in the
+ * action bar's row, by its face and saying what it asks about, as the composer does there on other
+ * tasks (in the bar, with its name, when the task has no aside).
  */
 type AskTutorSize = "bar" | "sm" | "task";
 
@@ -129,7 +130,11 @@ function AskTutorButton({
         type="button"
         variant="outline"
       >
-        <span aria-hidden="true" className="flex size-6 items-center justify-center *:size-6!">
+        <MessageCircleQuestionIcon aria-hidden="true" className="lg:hidden" />
+        <span
+          aria-hidden="true"
+          className="flex size-6 items-center justify-center *:size-6! max-lg:hidden"
+        >
           {identity.avatar}
         </span>
         <span className="max-lg:hidden lg:group-data-aside/task:hidden">{name}</span>

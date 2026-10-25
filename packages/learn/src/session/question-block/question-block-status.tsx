@@ -24,7 +24,7 @@ export function QuestionBlockStatus({
         <p className="text-muted-foreground text-sm" role="status">
           {t("You already answered this question.")}
         </p>
-        <QuestionActionsRow ask={null} missed={false}>
+        <QuestionActionsRow ask={null}>
           <ContinueButton onContinue={onContinue} />
         </QuestionActionsRow>
       </>

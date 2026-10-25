@@ -65,25 +65,22 @@ export function useFocusCheckWhenComplete({
 }
 
 /**
- * A question's actions in the pinned bar with the learner's buddy beside them, placed as the
- * lesson places it: its icon after the main action, and, after a miss, its name before it, when
- * asking helps most. From `lg` the buddy is in the aside instead.
+ * A question's actions in the pinned bar with the learner's buddy after them, where the lesson
+ * places it: an icon, saying its name after a miss, when asking helps most (`ItemAskButton`). From
+ * `lg` the buddy is in the aside instead.
  */
 export function QuestionActionsRow({
   ask,
   children,
-  missed,
 }: {
   /** "Ask {buddy}", when the host has one (`QuestionTutor.button`). */
   ask: React.ReactNode;
   children: React.ReactNode;
-  missed: boolean;
 }) {
   return (
     <TaskActions>
-      {missed && ask}
       {children}
-      {!missed && ask}
+      {ask}
     </TaskActions>
   );
 }
