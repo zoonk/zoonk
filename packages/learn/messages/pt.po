@@ -2402,7 +2402,7 @@ msgstr "Sua redação"
 #: src/essay/essay-prompt.tsx
 msgctxt "iyKTfM"
 msgid "Free response · AP scoring guidelines"
-msgstr "Resposta aberta · critérios de correção do Enem"
+msgstr "Resposta aberta · critérios de correção do AP"
 
 #: src/essay/essay-prompt.tsx
 #: src/session/use-block-copy.ts
