@@ -81,7 +81,8 @@ async function createQuestionLesson({
   language?: string;
   staticOnly?: boolean;
 } = {}): Promise<QuestionLessonScenario> {
-  const uniqueId = randomUUID().slice(0, 8);
+  // A letter first: an id of digits alone reads as a number, which the lesson writes grouped.
+  const uniqueId = `q${randomUUID().slice(0, 8)}`;
   const question = `Why does a satellite stay in orbit ${uniqueId}?`;
   const correctOption = `Gravity bends its path ${uniqueId}`;
   const wrongOption = `There is no gravity ${uniqueId}`;
