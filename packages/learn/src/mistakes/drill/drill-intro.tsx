@@ -32,7 +32,7 @@ const DRILL_ICON: Readonly<Record<Drill["kind"], LucideIcon>> = {
 };
 
 /** The whole lesson a tap away in a new tab, so the drill waits where it is. */
-export function LessonLink({
+function LessonLink({
   className,
   lesson,
   lessonHref,

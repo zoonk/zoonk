@@ -114,7 +114,7 @@ const AP_ROWS = [
 const AP_ROW_SCORES = [1, 1, 0, 1];
 
 /** An ENEM proposal's two motivating texts, as long as the ones it writes (over 400 characters). */
-export const ENEM_MOTIVATING_TEXTS = [
+const ENEM_MOTIVATING_TEXTS = [
   "Texto I",
   "Em Teresina, Jussara recebe um comunicado sobre o agendamento de um atendimento. Embora reconheça todas as palavras, ela não consegue identificar quais documentos precisa levar nem o prazo para confirmar a solicitação.",
   "Texto II",

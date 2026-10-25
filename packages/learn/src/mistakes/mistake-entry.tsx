@@ -34,9 +34,9 @@ const CAUSE_ICON: Readonly<Record<NonNullable<MistakeEntry["cause"]> | "unsorted
 
 /**
  * Why a mistake happened, as its mark and a quiet label ("Fell for a trap"): the line over a
- * notebook entry, and over the mistake practice brings back.
+ * notebook entry.
  */
-export function MistakeCauseLabel({
+function MistakeCauseLabel({
   cause,
   fixed = false,
 }: {
