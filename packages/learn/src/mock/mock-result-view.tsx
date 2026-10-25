@@ -293,14 +293,15 @@ function useResultSteps(result: MockResult) {
     plan: [{ content: <MockPlanStep change={change} preparation={preparation} />, id: "plan" }],
     score: [
       {
-        // The questions are a tap away on a phone; from `lg` they're on the score's page.
-        action: (
+        content: <ScoreStep result={result} />,
+        id: "score",
+        // The questions are a tap away on a phone, under Continue as "Not now" is under the last
+        // step's action; from `lg` they're on the score's page.
+        option: (
           <div className="contents lg:hidden">
             <MockReviewDrawer />
           </div>
         ),
-        content: <ScoreStep result={result} />,
-        id: "score",
       },
     ],
     speaking,

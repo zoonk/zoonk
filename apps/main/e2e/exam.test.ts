@@ -87,7 +87,8 @@ async function boxOf(locator: Locator) {
 /**
  * A result's buddy sits where every task's does, never in the header's corner: at the aside's
  * foot on a laptop, in the action bar's row, and its face after the main action on a phone (the
- * header's corner had "Ask" there). The page goes back to its own size after.
+ * header's corner had "Ask" there), where Continue keeps the row's room even on a small phone and
+ * the questions sit under it. The page goes back to its own size after.
  */
 async function expectAskWhereTasksHaveIt(page: Page) {
   const size = page.viewportSize() ?? { height: 720, width: 1280 };
@@ -109,6 +110,17 @@ async function expectAskWhereTasksHaveIt(page: Page) {
   await expect(ask).toBeVisible();
   const [phoneAsk, phoneBar] = await Promise.all([boxOf(ask), boxOf(bar)]);
   expect(phoneAsk.y).toBeGreaterThan(phoneBar.y);
+
+  await page.setViewportSize({ height: 740, width: 360 });
+  const questions = bar.getByRole("button", { name: /^See the (?:\d+ )?questions?$/u });
+  await expect(questions).toBeVisible();
+
+  const [main, questionsBox] = await Promise.all([
+    boxOf(bar.getByRole("button", { name: /^Continue/u })),
+    boxOf(questions),
+  ]);
+
+  expect(questionsBox.y).toBeGreaterThanOrEqual(main.y + main.height);
   await page.setViewportSize(size);
 }
 

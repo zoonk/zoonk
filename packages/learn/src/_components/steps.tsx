@@ -26,6 +26,11 @@ export type StepsItem = {
   content: React.ReactNode;
   id: string;
   /**
+   * A quiet option on its own row under this step's actions ("See the questions"), so the main
+   * action keeps its room in a row it shares with the buddy.
+   */
+  option?: React.ReactNode;
+  /**
    * A full-screen moment over this step (a ceremony), shown once as the learner reaches it. It
    * calls `close` when it's over, and the step under it takes the focus.
    */
@@ -179,6 +184,7 @@ export function Steps({
             {isLastWide && <WideOnly when={!isLastHere}>{finalAction}</WideOnly>}
             {ask}
           </TaskActions>
+          {item.option}
           {isLastWide && <WideOnly when={!isLastHere}>{finalOptions}</WideOnly>}
         </>
       }

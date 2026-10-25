@@ -13,8 +13,11 @@ import {
 import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 
-/** How the drawer opens: a quiet text link, or a secondary action in the task's `TaskActions` row. */
-const TRIGGER: Record<"link" | "secondary", React.ReactElement> = {
+/**
+ * How the drawer opens: a quiet text link, a secondary action in the task's `TaskActions` row, or
+ * a quiet option on its own row under it.
+ */
+const TRIGGER: Record<"link" | "option" | "secondary", React.ReactElement> = {
   link: (
     <Button
       className="text-muted-foreground hover:text-foreground self-start px-0 underline-offset-4 hover:bg-transparent hover:underline dark:hover:bg-transparent"
@@ -22,13 +25,15 @@ const TRIGGER: Record<"link" | "secondary", React.ReactElement> = {
       variant="ghost"
     />
   ),
+  option: <Button className="w-full" size="xl" variant="ghost" />,
   secondary: <Button className="shrink-0" size="xl" variant="outline" />,
 };
 
 /**
  * Detail that can wait (the questions with their answers, every criterion's comment) behind a
- * quiet text link, or a secondary action beside the main one (`trigger="secondary"`), in a sheet
- * from the bottom, so the screen keeps to its one thing.
+ * quiet text link, a secondary action beside the main one (`trigger="secondary"`) or a quiet
+ * option under it (`trigger="option"`), in a sheet from the bottom, so the screen keeps to its one
+ * thing.
  */
 export function DetailsDrawer({
   children,
@@ -40,7 +45,7 @@ export function DetailsDrawer({
   /** The trigger's words, "See the questions". */
   label: string;
   title: string;
-  trigger?: "link" | "secondary";
+  trigger?: "link" | "option" | "secondary";
 }) {
   const t = useExtracted();
 

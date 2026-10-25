@@ -168,7 +168,7 @@ export function MockReviewSection() {
 }
 
 /**
- * The questions to review on a phone: a secondary beside Continue on the score's step, opening
+ * The questions to review on a phone: a quiet option under Continue on the score's step, opening
  * them in a drawer from the bottom.
  */
 export function MockReviewDrawer() {
@@ -186,7 +186,7 @@ export function MockReviewDrawer() {
         count: review.length,
       })}
       title={t("Questions to review")}
-      trigger="secondary"
+      trigger="option"
     >
       <MockReviewList />
     </DetailsDrawer>
