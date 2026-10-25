@@ -169,7 +169,8 @@ type EssayWriter = ReturnType<typeof useEssayWriter>;
 
 /**
  * The box to write in, in a book's face at 16px on every screen, filling the column down to the
- * action bar, with its word count in the mono face.
+ * action bar, with its word count in the mono face. From `lg` it keeps that size and scrolls inside
+ * as the text grows, so the instruction over it stays in view while writing.
  */
 function EssayBox({ writer }: { writer: EssayWriter }) {
   const t = useExtracted();
@@ -183,7 +184,7 @@ function EssayBox({ writer }: { writer: EssayWriter }) {
         {drafts.length > 0 ? t("Rewrite what needs work") : writingName(essay.rubric)}
       </label>
       <Textarea
-        className="min-h-72 flex-1 font-serif text-base leading-relaxed md:text-base"
+        className="min-h-72 flex-1 font-serif text-base leading-relaxed md:text-base lg:field-sizing-fixed"
         id={textId}
         onChange={(event) => writer.write(event.target.value)}
         value={writer.text}
@@ -291,6 +292,7 @@ function EssayWriteScreen({
       }
       confirmExit={confirmExit}
       exitHref={hrefs.exit}
+      fit
       footer={<EssayWriteFooter writer={writer} />}
       headerTitle={<TaskHeaderTitle title={label} />}
     >

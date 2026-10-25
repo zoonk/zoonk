@@ -160,6 +160,7 @@ export function TaskFrame({
   confirmExit = null,
   exitHref,
   exitToApp = false,
+  fit = false,
   footer,
   headerEnd,
   headerTitle,
@@ -183,6 +184,11 @@ export function TaskFrame({
    * when the browser has it; `exitHref` otherwise.
    */
   exitToApp?: boolean;
+  /**
+   * From `lg` the screen fits the window and its column scrolls inside it, so what fills the rest
+   * of the column (an essay's box under its instruction) keeps what's above it in view.
+   */
+  fit?: boolean;
   /** The pinned action bar's content: a `TaskActions` row, with quiet lines around it. */
   footer?: React.ReactNode;
   headerEnd?: React.ReactNode;
@@ -200,11 +206,15 @@ export function TaskFrame({
 
   return (
     <div
-      className={cn("bg-background text-foreground flex min-h-dvh flex-col", asideRoot?.className)}
+      className={cn(
+        "bg-background text-foreground flex min-h-dvh flex-col",
+        fit && "lg:h-dvh lg:overflow-hidden",
+        asideRoot?.className,
+      )}
       data-aside={asideRoot?.["data-aside"]}
       data-slot="task-frame"
     >
-      <TaskHeader className="bg-background sticky top-0 z-20">
+      <TaskHeader className="bg-background sticky top-0">
         <TaskHeaderBar>
           <TaskHeaderSide align="start">
             <TaskCloseLink
@@ -236,7 +246,10 @@ export function TaskFrame({
         )}
       </TaskHeader>
 
-      <main className="flex flex-1 flex-col" data-slot="task-frame-body">
+      <main
+        className={cn("flex flex-1 flex-col", fit && "lg:min-h-0 lg:overflow-y-auto")}
+        data-slot="task-frame-body"
+      >
         <TaskBody>{children}</TaskBody>
       </main>
 
