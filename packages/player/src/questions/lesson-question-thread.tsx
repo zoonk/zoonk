@@ -289,7 +289,8 @@ export function QuestionThread({
     );
   }
 
-  if (state.questions.length === 0) {
+  // A latest page whose turns wait for the question's check keeps the way to earlier ones.
+  if (state.questions.length === 0 && !state.hasMore) {
     return (
       <ThreadViewport>
         <EmptyThread

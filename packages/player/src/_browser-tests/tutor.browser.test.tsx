@@ -1152,6 +1152,37 @@ describe("tutor history", () => {
     await expect.element(sheet.getByText(older.answer ?? "")).toBeVisible();
   });
 
+  // The latest page holds only what the buddy said about an earlier answer to the screen, which
+  // waits until it's checked; the hints before it are a tap away.
+  it("offers earlier questions when the latest page waits for the screen's check", async () => {
+    const { api, lesson } = lessonWithTutor({ pageSize: 1 });
+
+    const hint = api.question({
+      answer: "Think about what the cloud maps.",
+      question: "Any hint?",
+      status: "completed",
+    });
+
+    api.questions = [
+      hint,
+      {
+        ...api.question({
+          answer: "The right answer is where the electron is most likely to be found.",
+          question: "Why isn't it the size?",
+          status: "completed",
+        }),
+        context: { kind: "answer", stepId: lesson.steps[0]?.id ?? null, stepNumber: 1 },
+      },
+    ];
+
+    playLesson({ lesson });
+
+    const sheet = await openTutor();
+    await sheet.getByRole("button", { name: "Load earlier questions" }).click();
+    await expect.element(sheet.getByText(hint.question)).toBeVisible();
+    await expect.element(sheet.getByText("Why isn't it the size?")).not.toBeInTheDocument();
+  });
+
   it("shows saved history on a phone without moving focus into the composer", async () => {
     await atViewport(PHONE, async () => {
       const { api, lesson } = lessonWithTutor({ steps: [teachingStep("explanation")] });
