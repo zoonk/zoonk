@@ -8,6 +8,7 @@ import {
   isQuestionStep,
   isRetryStep,
 } from "./lesson-steps";
+import { showSampleAnswer } from "./sample-answer";
 
 function omitKey<TValue>(record: Record<string, TValue>, key: string): Record<string, TValue> {
   return Object.fromEntries(Object.entries(record).filter(([entry]) => entry !== key));
@@ -129,26 +130,22 @@ function leaveOutAhead(
 }
 
 /**
- * Leaves writing out of the rest of this sitting, with no answer verdict. The screen that takes
- * its place says so, so the learner knows one tap covered the whole lesson.
+ * Leaves writing out of this sitting, with no answer verdict: the screen in view, which the
+ * learner doesn't know yet, once its sample answer is read (`stepId`), or all of it from here on
+ * ("Can't write now"). The screen that takes the place of all of it says so, so the learner knows
+ * one tap covered the whole lesson.
  */
-export function skipStepKinds(
-  state: LessonPlayerState,
-  kinds: readonly PlayableLibraryStep["kind"][],
-  stepIds?: readonly string[],
-): LessonPlayerState {
+export function skipWriting(state: LessonPlayerState, stepId?: string): LessonPlayerState {
   if (state.phase !== "playing") {
     return state;
   }
 
-  const isLeftOut = (id: string) => {
-    const kind = state.steps[id]?.kind;
-    return kind !== undefined && kinds.includes(kind) && (!stepIds || stepIds.includes(id));
-  };
+  if (stepId) {
+    return showSampleAnswer(state, stepId);
+  }
 
-  const skippedWritingStepIds = state.queue
-    .slice(state.position)
-    .filter((id) => isLeftOut(id) && state.steps[id]?.kind === "typedAnswer");
+  const isLeftOut = (id: string) => state.steps[id]?.kind === "typedAnswer";
+  const skippedWritingStepIds = state.queue.slice(state.position).filter((id) => isLeftOut(id));
 
   const next = leaveOutAhead(
     {
@@ -161,7 +158,7 @@ export function skipStepKinds(
     "saving",
   );
 
-  return !stepIds && next.phase === "playing" && skippedWritingStepIds.length > 0
+  return next.phase === "playing" && skippedWritingStepIds.length > 0
     ? { ...next, notice: "writingSkipped" }
     : next;
 }

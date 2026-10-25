@@ -17,14 +17,16 @@ import {
 export type LessonPlayerActions = {
   check: () => void;
   continue: () => void;
+  /** "I don't know yet" on a written answer: its sample answer shows, and nothing is graded. */
+  dontKnow: (stepId: string) => void;
   explainFirst: () => void;
   goBack: () => void;
   knowThis: () => void;
   retryCompletion: () => void;
   retryStart: () => void;
   selectAnswer: (stepId: string, answer: LessonPlayerAnswer | null) => void;
-  /** Skips one writing screen, or the rest of this lesson's writing, without changing the plan. */
-  skipWriting: (stepId?: string) => void;
+  /** Skips the rest of this lesson's writing, without changing the plan. */
+  skipWriting: () => void;
   /** Leaves out screens that can't be played after all, such as a numbered picture that never came. */
   skipSteps: (stepIds: string[]) => void;
   submitSpokenAnswer: (input: { audio: Blob; durationMs: number; stepId: string }) => void;

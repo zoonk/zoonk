@@ -18,8 +18,15 @@ async function captureOpenAnswer(width: number, colorScheme: "light" | "dark", s
   });
 }
 
+const SAMPLE_ANSWER =
+  "Because we can't pin down where the electron is. The cloud maps where it's most likely to be.";
+
+function verdict(text: string) {
+  return page.getByRole("status").filter({ hasText: text });
+}
+
 describe("open answer skip", () => {
-  it("finishes without grading when the learner doesn't know either open answer", async () => {
+  it("shows a good answer, then finishes without grading, when the learner doesn't know either open answer", async () => {
     const first = teachingStep("typedAnswer");
     const last = teachingStep("typedAnswer");
     const lesson = buildLesson([first, teachingStep("explanation"), last]);
@@ -45,8 +52,18 @@ describe("open answer skip", () => {
     await page.viewport(1280, 720);
 
     await page.getByRole("button", { name: "I don't know yet" }).click();
+
+    // What a good answer says, before going on: no verdict on an answer the learner didn't give.
+    await expect.element(verdict("Here's a good answer")).toBeVisible();
+    await expect.element(verdict(SAMPLE_ANSWER)).toBeVisible();
+    await expect.element(verdict("Not quite")).not.toBeInTheDocument();
+    await expect.element(page.getByRole("button", { name: /^Continue/u })).toHaveFocus();
+    await captureOpenAnswer(390, "light", "dont-know");
+    await captureOpenAnswer(1440, "light", "dont-know");
+    await page.viewport(1280, 720);
+
+    await page.getByRole("button", { name: /^Continue/u }).click();
     await expect.element(page.getByText("A cloud, not a little ball")).toBeVisible();
-    await expect.element(page.getByRole("button", { name: /^Next/u })).toHaveFocus();
     await page.getByRole("button", { name: /^Next/u }).click();
     await expect.element(page.getByRole("textbox")).toBeVisible();
     await page.getByRole("textbox").fill("An unfinished thought");
@@ -55,6 +72,8 @@ describe("open answer skip", () => {
     await captureOpenAnswer(1440, "light", "typed");
     await captureOpenAnswer(1440, "dark", "typed");
     await page.getByRole("button", { name: "I don't know yet" }).click();
+    await expect.element(verdict(SAMPLE_ANSWER)).toBeVisible();
+    await page.getByRole("button", { name: /^Continue/u }).click();
 
     await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
     await expect.element(page.getByText("1 of 1 right")).not.toBeInTheDocument();

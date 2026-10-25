@@ -90,7 +90,7 @@ export function TypedAnswerStepView({
         <Button
           className="w-fit"
           onClick={() => {
-            actions.skipWriting(step.id);
+            actions.dontKnow(step.id);
             focusLessonAfterTurn();
           }}
           size="sm"

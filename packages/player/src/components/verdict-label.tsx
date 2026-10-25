@@ -8,6 +8,8 @@ import { useExtracted } from "next-intl";
  * "guess" and "guessRight" are a hook screen's guess, which never counts as wrong. "typo" is a
  * right answer with a spelling slip: it counts as right and shows the spelling. "unchecked" is a
  * written answer nothing checked, shown next to the sample answer and counted neither way.
+ * "sampleAnswer" is a written answer the learner didn't know: its sample answer, counted neither
+ * way.
  */
 export type Verdict =
   | "almost"
@@ -15,6 +17,7 @@ export type Verdict =
   | "guess"
   | "guessRight"
   | "incorrect"
+  | "sampleAnswer"
   | "typo"
   | "unchecked";
 
@@ -24,6 +27,7 @@ const VERDICT_TONE: Record<Verdict, FeedbackTone> = {
   guess: "neutral",
   guessRight: "right",
   incorrect: "wrong",
+  sampleAnswer: "neutral",
   typo: "right",
   unchecked: "neutral",
 };
@@ -43,6 +47,7 @@ export function VerdictLabel({ end, verdict }: { end?: React.ReactNode; verdict:
     guess: t("Here's the answer"),
     guessRight: t("Good guess!"),
     incorrect: t("Not quite"),
+    sampleAnswer: t("Here's a good answer"),
     typo: t("Right, watch the spelling"),
     unchecked: t("Not checked this time"),
   };

@@ -2983,6 +2983,11 @@ msgid "Not quite"
 msgstr "Casi"
 
 #: src/components/verdict-label.tsx
+msgctxt "pWC3pf"
+msgid "Here's a good answer"
+msgstr "Aquí tienes una buena respuesta"
+
+#: src/components/verdict-label.tsx
 msgctxt "9DZ20y"
 msgid "Right, watch the spelling"
 msgstr "Correcto, cuidado con la ortografía"

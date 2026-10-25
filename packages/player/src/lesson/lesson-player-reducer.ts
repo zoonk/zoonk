@@ -5,8 +5,8 @@ import {
   explainFirst,
   goBack,
   resolveCheck,
-  skipStepKinds,
   skipSteps,
+  skipWriting,
   startQuickCheck,
 } from "./_utils/lesson-flow";
 import { getRunVerdicts, resumeLesson } from "./_utils/lesson-resume";
@@ -242,8 +242,8 @@ export function lessonPlayerReducer(
       return selectAnswer(state, action);
     case "continue":
       return continueFrom(state);
-    case "skipKinds":
-      return skipStepKinds(state, action.kinds, action.stepIds);
+    case "skipWriting":
+      return skipWriting(state, action.stepId);
     case "skipSteps":
       return skipSteps(state, action.stepIds);
     case "navigate":

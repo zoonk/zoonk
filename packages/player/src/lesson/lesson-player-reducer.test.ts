@@ -51,18 +51,24 @@ function answerCheck(
 }
 
 describe(lessonPlayerReducer, () => {
-  it("skips only the open answer the learner doesn't know, without a verdict", () => {
+  it("shows the sample answer of an open answer the learner doesn't know, without a verdict", () => {
     const steps = [typedAnswerStep("first"), explanationStep("tip"), typedAnswerStep("last")];
+    const shown = play(steps, [{ stepId: "first", type: "skipWriting" }]);
 
-    const skipped = play(steps, [
-      { kinds: ["typedAnswer"], stepIds: ["first"], type: "skipKinds" },
-    ]);
+    expect(shown).toMatchObject({ notice: null, phase: "feedback", position: 0 });
+    expect(shown.queue).toStrictEqual(["first", "tip", "last"]);
+    expect(shown.skippedWritingStepIds).toStrictEqual(["first"]);
+    expect(shown.firstVerdicts).toStrictEqual({});
 
-    expect(skipped.queue).toStrictEqual(["tip", "last"]);
-    expect(skipped.skippedWritingStepIds).toStrictEqual(["first"]);
-    expect(skipped.firstVerdicts).toStrictEqual({});
-    expect(skipped.results).toStrictEqual({});
-    expect(skipped.notice).toBeNull();
+    expect(shown.results.first).toMatchObject({
+      answerText: null,
+      checked: false,
+      correctAnswer: "Because it maps chances.",
+      savedMistake: false,
+    });
+
+    const next = lessonPlayerReducer(shown, { type: "continue" });
+    expect([getCurrentStep(next)?.id, next.queue]).toStrictEqual(["tip", ["first", "tip", "last"]]);
   });
 
   it("goes back one screen at a time, showing an answered question's result again", () => {
@@ -101,7 +107,7 @@ describe(lessonPlayerReducer, () => {
       summaryStep("end"),
     ];
 
-    const skipped = play(steps, [{ kinds: ["typedAnswer"], type: "skipKinds" }]);
+    const skipped = play(steps, [{ type: "skipWriting" }]);
 
     expect(skipped.queue).toStrictEqual(["tip", "end"]);
     expect(getCurrentStep(skipped)?.id).toBe("tip");
@@ -131,7 +137,7 @@ describe(lessonPlayerReducer, () => {
   it("finishes a lesson whose only screens left were skipped", () => {
     const steps = [explanationStep("tip"), typedAnswerStep("write")];
 
-    const done = play(steps, [{ type: "continue" }, { kinds: ["typedAnswer"], type: "skipKinds" }]);
+    const done = play(steps, [{ type: "continue" }, { type: "skipWriting" }]);
 
     expect(done).toMatchObject({ completion: { status: "saving" }, phase: "completed" });
   });
@@ -142,7 +148,7 @@ describe(lessonPlayerReducer, () => {
     const done = play(steps, [
       ...answerCheck("quiz", true),
       { type: "continue" },
-      { kinds: ["typedAnswer"], type: "skipKinds" },
+      { type: "skipWriting" },
       { type: "continue" },
     ]);
 

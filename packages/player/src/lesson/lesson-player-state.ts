@@ -103,7 +103,7 @@ export type LessonPlayerAction =
   | { counts: boolean; result: LessonStepResult; stepId: string; type: "checkResolved" }
   | { attemptId: string; result: LessonStepCheckResult; stepId: string; type: "checkConfirmed" }
   | { direction: "next" | "prev"; type: "navigate" }
-  | { kinds: PlayableLibraryStep["kind"][]; stepIds?: string[]; type: "skipKinds" }
+  | { stepId?: string; type: "skipWriting" }
   | { stepIds: string[]; type: "skipSteps" }
   | { refusal: LessonRunRefusal; type: "runRefused" }
   | { result: LessonPlayerCompletionState["result"]; type: "completionSaved" }

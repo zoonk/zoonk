@@ -32,7 +32,7 @@ function getVerdict({
   }
 
   if (!result.checked) {
-    return "unchecked";
+    return result.answerText === null ? "sampleAnswer" : "unchecked";
   }
 
   if (result.isCorrect) {
@@ -75,9 +75,24 @@ function CorrectAnswerLine({
   );
 }
 
-/** A written answer nothing checked: why, and the sample answer to compare it with. */
-function UncheckedLine({ sampleAnswer }: { sampleAnswer: string }) {
+/**
+ * A written answer nothing checked: why, and the sample answer to compare it with. One the learner
+ * didn't know has nothing to compare: the sample answer alone.
+ */
+function SampleAnswerLine({ result }: { result: LessonStepResult }) {
   const t = useExtracted();
+
+  if (result.checked || !result.correctAnswer) {
+    return null;
+  }
+
+  if (result.answerText === null) {
+    return (
+      <FeedbackExplanation>
+        <LessonRichText text={result.correctAnswer} />
+      </FeedbackExplanation>
+    );
+  }
 
   return (
     <FeedbackExplanation className="flex flex-col gap-1">
@@ -85,7 +100,7 @@ function UncheckedLine({ sampleAnswer }: { sampleAnswer: string }) {
         {t("Each question is checked a few times a day. Compare your answer with this one:")}
       </p>
       <p className="font-medium">
-        <LessonRichText text={sampleAnswer} />
+        <LessonRichText text={result.correctAnswer} />
       </p>
     </FeedbackExplanation>
   );
@@ -162,9 +177,7 @@ export function LessonStepResultView({
         {result.spelling && <SpellingLine spelling={result.spelling} />}
         {result.corrections.length > 0 && <CorrectionLines corrections={result.corrections} />}
         <CorrectAnswerLine result={result} step={step} />
-        {!result.checked && result.correctAnswer && (
-          <UncheckedLine sampleAnswer={result.correctAnswer} />
-        )}
+        <SampleAnswerLine result={result} />
         {result.heard && step.kind === "spokenAnswer" && (
           <LessonSpokenWords heard={result.heard} language={step.content.language} />
         )}

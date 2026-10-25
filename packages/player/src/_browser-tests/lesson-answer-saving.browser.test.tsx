@@ -193,7 +193,10 @@ describe("saving answers", () => {
       .element(page.getByText("We couldn't check your answer this time. Try again."))
       .toBeVisible();
 
+    // Giving up shows a good answer first; the summary after it ends the lesson.
     await page.getByRole("button", { name: "I don't know yet" }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
+    await expect.element(page.getByRole("heading", { name: "Summary" })).toBeVisible();
     await page.getByRole("button", { name: /^Continue/u }).click();
 
     // The grade may still be recorded on the server, so the run isn't counted before it settles.

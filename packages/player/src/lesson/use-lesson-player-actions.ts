@@ -192,6 +192,7 @@ export function useLessonPlayerActions({
         writeExampleLines();
         dispatch({ type: "continue" });
       },
+      dontKnow: (stepId) => dispatch({ stepId, type: "skipWriting" }),
       explainFirst: () => dispatch({ type: "explainFirst" }),
       goBack: () => {
         writeExampleLines();
@@ -202,12 +203,7 @@ export function useLessonPlayerActions({
       retryStart: () => void ensureRun(),
       selectAnswer: (stepId, answer) => dispatch({ answer, stepId, type: "selectAnswer" }),
       skipSteps: (stepIds) => dispatch({ stepIds, type: "skipSteps" }),
-      skipWriting: (stepId) =>
-        dispatch({
-          kinds: ["typedAnswer"],
-          ...(stepId && { stepIds: [stepId] }),
-          type: "skipKinds",
-        }),
+      skipWriting: () => dispatch({ type: "skipWriting" }),
       submitSpokenAnswer: (input) => void submitSpokenAnswer(input),
     }),
     [check, dispatch, ensureRun, submitSpokenAnswer, writeExampleLines],
