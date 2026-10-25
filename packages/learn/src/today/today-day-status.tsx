@@ -32,15 +32,18 @@ function DoneStatus({ className }: { className?: string }) {
       <TodayStatusSentence>
         {restDay ? t("You studied on your day off.") : t("Today's session is complete.")}
       </TodayStatusSentence>
-      {studied > 0 && <TodayStatusClause mono>{formatDuration(studied)} </TodayStatusClause>}
+      {studied > 0 && <TodayStatusClause mono>{formatDuration(studied)}</TodayStatusClause>}
       {keepLearning && (
-        <LearnLink
-          className="text-muted-foreground hover:text-foreground font-medium underline underline-offset-2"
-          href={actions.summaryHref}
-          prefetch={false}
-        >
-          {t("See what changed")}
-        </LearnLink>
+        <>
+          {" "}
+          <LearnLink
+            className="text-muted-foreground hover:text-foreground font-medium underline underline-offset-2"
+            href={actions.summaryHref}
+            prefetch={false}
+          >
+            {t("See what changed")}
+          </LearnLink>
+        </>
       )}
     </TodayStatusLine>
   );
