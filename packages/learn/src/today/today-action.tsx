@@ -12,13 +12,13 @@ import { useSlowWait } from "../_utils/use-slow-wait";
 import { type WaitState } from "../_utils/wait-state";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
+import { useSessionAction } from "../session/use-session-action";
 import { useGoalSwitchPending } from "../shell/goal-switcher";
 import { useTodayScreen } from "./today-context";
 import { TodayExtraTime } from "./today-extra-time";
 import { NEXT_TITLE_ID } from "./today-ids";
-import { useUpNextLessons } from "./today-up-next";
 import { useContinueSession } from "./use-continue-session";
-import { useDayState, useSessionState, useTodayPastDate } from "./use-today-copy";
+import { useDayState, useSessionState, useTodayPastDate, useUpNextLessons } from "./use-today-copy";
 
 /**
  * The day's one main action, 44px: full width under the queue on a phone, in the title row from
@@ -26,20 +26,36 @@ import { useDayState, useSessionState, useTodayPastDate } from "./use-today-copy
  */
 const ACTION_CLASS = "w-full text-[0.9375rem] sm:w-auto";
 
-type TodayContinue = ReturnType<typeof useContinueSession> & { wait: WaitState };
+type SessionAction = ReturnType<typeof useSessionAction> & { wait: WaitState };
+
+type TodayContinue = ReturnType<typeof useContinueSession> & {
+  /** "Keep learning", from its button, the up-next list's first row or Enter. */
+  keep: SessionAction;
+  wait: WaitState;
+};
 
 const TodayContinueContext = createContext<TodayContinue | null>(null);
 
 /**
- * Starts or continues the day once for the two places that show it: the button (and Enter, while
- * the day has a block to go on with) and the line that says how it's going (`TodayContinueStatus`).
+ * Starts or continues the day once for the places that show it: the button (and Enter, while the
+ * day has a block to go on with) and the line that says how it's going (`TodayContinueStatus`).
+ * "Keep learning" is one action too, for its button and the up-next list's first row (and Enter,
+ * while the day offers it), so a tap on either is one request.
  */
 export function TodayContinueProvider({ children }: { children: React.ReactNode }) {
+  const { actions } = useTodayScreen();
   const underway = useDayState() === "underway";
+  const keepLearning = useUpNextLessons().length > 0;
   const session = useContinueSession({ enterKey: underway });
   const wait = useSlowWait(session.isPending);
+  const keep = useSessionAction({ action: actions.addExtraTime, enterKey: keepLearning });
+  const keepWait = useSlowWait(keep.isPending);
 
-  return <TodayContinueContext value={{ ...session, wait }}>{children}</TodayContinueContext>;
+  return (
+    <TodayContinueContext value={{ ...session, keep: { ...keep, wait: keepWait }, wait }}>
+      {children}
+    </TodayContinueContext>
+  );
 }
 
 function useTodayContinue(): TodayContinue {
@@ -50,6 +66,11 @@ function useTodayContinue(): TodayContinue {
   }
 
   return value;
+}
+
+/** "Keep learning" as the button and the up-next list's first row share it. */
+export function useKeepLearning(): SessionAction {
+  return useTodayContinue().keep;
 }
 
 /** Whether a slow or failed Start or Continue has something to say (`TodayContinueStatus`). */
@@ -151,7 +172,7 @@ function SummaryLink() {
       prefetch={false}
       ref={ref}
     >
-      {t("See what changed")}
+      {t("See today's summary")}
       <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
     </LearnLink>
   );
@@ -182,25 +203,40 @@ function PracticeTime() {
 /**
  * "Keep learning" on a day with nothing left to start (a rest day, or once the day's session is
  * done): it adds the plan's next lessons listed under the day ("Up next in your plan") and opens
- * the first. Enter presses it, as it does Start.
+ * the first. Enter presses it, as it does Start, and a slow opening says so, as Start's does.
  */
 function KeepLearning() {
   const t = useExtracted();
-  const { actions, today } = useTodayScreen();
-  const switching = useGoalSwitchPending();
-  const ref = useEnterClick<HTMLButtonElement>({ enabled: !switching });
+  const { failed, isPending, run, wait } = useKeepLearning();
 
   return (
-    <TodayExtraTime
-      action={actions.addExtraTime}
-      className={ACTION_CLASS}
-      label={t("Keep learning")}
-      minutes={today.session.extraTime.minutes}
-      ref={ref}
-      shortcut
-      size="lg"
-      variant="default"
-    />
+    <>
+      <Button
+        aria-keyshortcuts="Enter"
+        className={ACTION_CLASS}
+        disabled={isPending}
+        focusableWhenDisabled
+        onClick={run}
+        size="lg"
+      >
+        {wait !== "none" && <Spinner aria-hidden="true" />}
+        {t("Keep learning")}
+        <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+      </Button>
+
+      <span
+        className="text-sm data-speaking:pt-2"
+        data-speaking={failed || wait !== "none" || undefined}
+      >
+        <OpeningWaitLine wait={wait} />
+
+        {failed && (
+          <span className="text-destructive-text" role="alert">
+            {t("We couldn't open your next lessons. Try again.")}
+          </span>
+        )}
+      </span>
+    </>
   );
 }
 
@@ -229,7 +265,7 @@ function SeePlanLink() {
 /**
  * The day's main action, one place for every state: Start or Continue while there's a block to go
  * on with (Enter too), "Keep learning" with the plan's next lessons once it's done or on a rest day
- * (see `TodayUpNext`), "See what changed" once it's done with no lesson left to add, practice on a
+ * (see `TodayUpNext`), "See today's summary" once it's done with no lesson left to add, practice on a
  * day with nothing new, the Plan once the goal's date came with lessons left. A day at its limit,
  * one still waiting for its lessons, or a rest day with nothing to add has none.
  */

@@ -17,9 +17,8 @@ import { useBuddyName } from "../buddies/use-buddy-name";
 import { CatchUpLater } from "./today-catch-up";
 import { useTodayScreen } from "./today-context";
 import { TodayExtraTime } from "./today-extra-time";
-import { useUpNextLessons } from "./today-up-next";
 import { getChallengeEventKind, useWeekdayLabel } from "./today-week-challenge";
-import { useDayState, useTodayPastDate } from "./use-today-copy";
+import { useDayState, useTodayPastDate, useUpNextLessons } from "./use-today-copy";
 
 /** A secondary action under the day: 44px across a phone, small beside the day from `sm`. */
 const SECONDARY_CLASS = "max-sm:h-11 max-sm:w-full max-sm:rounded-lg max-sm:text-sm sm:self-start";

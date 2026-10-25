@@ -93,7 +93,7 @@ export type TodayActions = {
   examHref?: string;
   /** Where "See Plus" goes when a free exam plan's first week is over. */
   plusHref: string;
-  /** Where "See what changed" goes once the day's blocks are done. */
+  /** Where "See today's summary" goes once the day's blocks are done. */
   summaryHref: string;
 };
 

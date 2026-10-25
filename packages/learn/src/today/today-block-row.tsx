@@ -309,19 +309,26 @@ export function BlockRow({
 
 /**
  * A lesson of the plan after today's session (see `TodayUpNext`), drawn as a lesson still to do:
- * its mark, its name and its minutes. It opens nothing itself: "Keep learning" adds it, the first
- * one highlighted as where that goes on.
+ * its mark, its name and its minutes. The first is highlighted and opens with `onOpen` ("Keep
+ * learning", which adds it and the ones after it); the others only say what comes.
  */
 export function PlanLessonRow({
-  isNext,
+  busy,
   minutes,
+  onOpen,
   title,
 }: {
-  isNext: boolean;
+  busy: boolean;
   minutes: number;
+  onOpen: (() => void) | null;
   title: string;
 }) {
   const formatDuration = useFormatDuration();
+  const isNext = onOpen !== null;
+
+  const name = (
+    <span className="min-w-0 flex-1 truncate text-sm leading-5 font-medium">{title}</span>
+  );
 
   return (
     <li
@@ -332,7 +339,20 @@ export function PlanLessonRow({
         <KindMark kind="lesson" />
       </span>
 
-      <span className="min-w-0 flex-1 truncate text-sm leading-5 font-medium">{title}</span>
+      {onOpen ? (
+        <button
+          aria-busy={busy || undefined}
+          className={cn(ROW_OPEN_CLASS, "flex-1 after:inset-x-0")}
+          data-slot="today-row-open"
+          disabled={busy}
+          onClick={onOpen}
+          type="button"
+        >
+          {name}
+        </button>
+      ) : (
+        name
+      )}
 
       <span className="text-muted-foreground flex h-5 shrink-0 items-center font-mono text-xs tabular-nums">
         {formatDuration(minutes)}

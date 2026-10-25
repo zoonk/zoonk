@@ -807,7 +807,7 @@ test.describe("Today", () => {
     await expect(card.getByRole("button", { name: /^Study \d+ more minutes$/u })).toHaveCount(0);
 
     // What changed moves to the end of the day's line, on the session screen of this goal's day.
-    await expect(done.getByRole("link", { name: "See what changed" })).toHaveAttribute(
+    await expect(done.getByRole("link", { name: "See today's summary" })).toHaveAttribute(
       "href",
       `/session?goal=${session.goalId}`,
     );
@@ -1056,7 +1056,7 @@ test.describe("Today without a session to start", () => {
     ).toContainText("They show up here on their own.");
 
     await expect(card.getByText("Today's session is complete")).toHaveCount(0);
-    await expect(card.getByRole("link", { name: /See what changed/u })).toHaveCount(0);
+    await expect(card.getByRole("link", { name: /See today's summary/u })).toHaveCount(0);
 
     // The lessons land (as a re-plan rebuilds the day): Today reads itself again and shows them.
     await studySessionBlockFixture({

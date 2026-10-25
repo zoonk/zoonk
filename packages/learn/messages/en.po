@@ -4083,6 +4083,7 @@ msgid "Ahead"
 msgstr "Ahead"
 
 #: src/journey/pace-details.tsx
+#: src/today/today-heading.tsx
 msgctxt "RlWvYP"
 msgid "Behind"
 msgstr "Behind"
@@ -11742,9 +11743,9 @@ msgstr "Net score {net}"
 #: src/session/study-moment.tsx
 #: src/today/today-action.tsx
 #: src/today/today-day-status.tsx
-msgctxt "BOsVvE"
-msgid "See what changed"
-msgstr "See what changed"
+msgctxt "sCfpTF"
+msgid "See today's summary"
+msgstr "See today's summary"
 
 #: src/session/summary/summary-actions.tsx
 msgctxt "0gmQJH"
@@ -12358,6 +12359,11 @@ msgstr "Start session"
 msgctxt "AFqHlU"
 msgid "Practice for {minutes} minutes"
 msgstr "Practice for {minutes} minutes"
+
+#: src/today/today-action.tsx
+msgctxt "WKZJxb"
+msgid "We couldn't open your next lessons. Try again."
+msgstr "We couldn't open your next lessons. Try again."
 
 #: src/today/today-block-row.tsx
 msgctxt "afsNpC"

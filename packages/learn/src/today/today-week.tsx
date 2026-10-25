@@ -33,13 +33,21 @@ const DAY_CELL_CLASS = "flex min-h-11 flex-col items-center gap-1.5 py-1";
 /** Today's rings: 30px, the letter under each one. */
 const RING_CLASS = "size-7.5";
 
-/** How much of the day's goal was done, drawn as the ring's arc. */
+/**
+ * How much of the day's goal was done, drawn as the ring's arc. A day the plan gave no time that
+ * the learner studied anyway fills whole: Will's Sunday stayed an empty ring beside "Sunday:
+ * studied" after 8 minutes on his day off.
+ */
 function getDayShare(day: WeekDay): number {
   if (day.hitGoal) {
     return 1;
   }
 
-  return day.goalMinutes > 0 ? Math.min(1, day.minutes / day.goalMinutes) : 0;
+  if (day.goalMinutes === 0) {
+    return day.studied ? 1 : 0;
+  }
+
+  return Math.min(1, day.minutes / day.goalMinutes);
 }
 
 /** The week marks the current local day even while a lesson carries the previous day's session. */

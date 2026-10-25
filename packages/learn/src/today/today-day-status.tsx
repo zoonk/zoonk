@@ -11,8 +11,7 @@ import { usePastDateText } from "../plan/plan-status-label";
 import { useTodayScreen } from "./today-context";
 import { useStudiedToday } from "./today-day-progress";
 import { TodayStatusClause, TodayStatusLine, TodayStatusSentence } from "./today-status-line";
-import { useUpNextLessons } from "./today-up-next";
-import { useDayState, useTodayPastDate } from "./use-today-copy";
+import { useDayState, useTodayPastDate, useUpNextLessons } from "./use-today-copy";
 
 /**
  * "Today's session is complete. 45 min": the day's blocks are done, with the time it took; on a
@@ -41,7 +40,7 @@ function DoneStatus({ className }: { className?: string }) {
             href={actions.summaryHref}
             prefetch={false}
           >
-            {t("See what changed")}
+            {t("See today's summary")}
           </LearnLink>
         </>
       )}

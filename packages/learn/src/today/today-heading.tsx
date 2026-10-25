@@ -65,18 +65,35 @@ function DaysLeft() {
 }
 
 /**
- * Where the plan stands ("Keeping pace", "2 days behind"), in the line's own quiet tone: only a
- * plan that no longer fits takes color, on its words. Being behind is never an alarm. A return
- * after a break leaves the lessons to catch up to the Plan: "377 lessons to catch up" above
- * "Welcome back! Today is lighter" read as a backlog to clear.
+ * Where the plan stands ("Keeping pace", "One day ahead"), in the line's own quiet tone: only a
+ * plan that no longer fits takes color, on its words. Behind says so in a word before what to
+ * catch up ("Behind · 17 lessons to catch up"): Will read "17 lessons pending" as a to-do list,
+ * not as being behind. A return after a break says only "Behind": "377 lessons to catch up" above
+ * "Welcome back! Today is lighter" read as a backlog to clear, and the Plan has the count. Being
+ * behind is never an alarm.
  */
 function TodayPace() {
+  const t = useExtracted();
   const statusText = usePlanStatusText();
   const { today } = useTodayScreen();
   const status = today.progress?.status ?? null;
 
-  if (!status || today.shortPlan || (status.kind === "behind" && isWelcomeBackDay(today.session))) {
+  if (!status || today.shortPlan) {
     return null;
+  }
+
+  if (status.kind === "behind" && isWelcomeBackDay(today.session)) {
+    return <TodayEyebrowPart>{t("Behind")}</TodayEyebrowPart>;
+  }
+
+  // "2 days behind" says it already; a count to catch up says it after "Behind".
+  if (status.kind === "behind" && status.lessons) {
+    return (
+      <>
+        <TodayEyebrowPart>{t("Behind")}</TodayEyebrowPart>
+        <TodayEyebrowPart>{statusText(status)}</TodayEyebrowPart>
+      </>
+    );
   }
 
   return (

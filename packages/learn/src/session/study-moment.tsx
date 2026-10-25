@@ -101,7 +101,7 @@ function ActionFailed({ children }: { children: React.ReactNode }) {
 
 /**
  * The moment's action bar: "Stop for today" beside Continue (what's done counts, the rest waits on
- * Today), or "See what changed" alone once the session is done.
+ * Today), or "See today's summary" alone once the session is done.
  */
 function MomentActions({
   onContinue,
@@ -131,7 +131,7 @@ function MomentActions({
         )}
 
         <EnterButton disabled={proceed.isPending} onClick={proceed.run}>
-          {sessionCompleted ? t("See what changed") : t("Continue")}
+          {sessionCompleted ? t("See today's summary") : t("Continue")}
         </EnterButton>
       </TaskActions>
     </TaskActionBar>

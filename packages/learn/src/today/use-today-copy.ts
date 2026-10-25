@@ -123,3 +123,23 @@ export function useLessonBeingWritten() {
   return (block: StopLesson): boolean =>
     !writingStalled && isStopBeingWritten({ block, lessonStatus: today.lessonStatus });
 }
+
+type UpNextLesson = TodayView["session"]["extraTime"]["lessons"][number];
+
+/**
+ * The plan's next lessons "Keep learning" adds, on a day with nothing left to start: a rest day,
+ * or once the day's session is done. Empty on any other day, and when the time would go to
+ * practice instead (every lesson is done) or isn't there to take.
+ */
+export function useUpNextLessons(): UpNextLesson[] {
+  const state = useDayState();
+  const pastDate = useTodayPastDate();
+  const { today } = useTodayScreen();
+  const { extraTime } = today.session;
+
+  if (pastDate || (state !== "done" && state !== "rest") || !extraTime.available) {
+    return [];
+  }
+
+  return extraTime.lessons;
+}
