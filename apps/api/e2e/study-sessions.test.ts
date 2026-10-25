@@ -310,7 +310,7 @@ test.describe("Study sessions API", () => {
     expect(summary).toMatchObject({ fullMeal: true, status: "completed", tomorrow: null });
     expect(summary.questions).toBeGreaterThan(0);
 
-    // The lesson taught its skill, so "10 more minutes" has questions to practice.
+    // No lesson of the plan is left, and today's taught its skill, so more time is practice on it.
     await learnerSkillFixture({ reps: 1, skillId: skills[1]?.id ?? "", state: "learning", userId });
 
     const extra = await readBody({
@@ -320,6 +320,66 @@ test.describe("Study sessions API", () => {
     });
 
     expect(extra).toMatchObject({ extra: true, kind: "practice", status: "pending" });
+  });
+
+  // Will's plan had a day off, and Will wanted to study anyway: more time gave practice instead of
+  // the plan's next lessons. It now adds them, and the day lists them before the tap.
+  test("keeps learning with the plan's next lessons on a day the plan gives no time", async () => {
+    const { api, userId } = await createBearerLearner({ baseURL, prefix: "study-extra-lessons" });
+    const goal = await goalFixture({ dailyMinutes: 10, timezone: "UTC", userId });
+
+    const [plan, session, lessons] = await Promise.all([
+      planFixture({
+        goalId: goal.id,
+        settings: { weekdayMinutes: Array.from({ length: 7 }, () => 0) },
+      }),
+      studySessionFixture({ goalId: goal.id, plannedMinutes: 0, userId }),
+      Promise.all(
+        ["Ratios in recipes", "Scaling a recipe"].map((title) =>
+          libraryLessonFixture({ estimatedMinutes: 4, title }),
+        ),
+      ),
+      learningProfileFixture({ activeGoalId: goal.id, userId }),
+    ]);
+
+    await Promise.all(
+      lessons.map((lesson, position) =>
+        planItemFixture({
+          kind: "lesson",
+          lessonId: lesson.id,
+          planId: plan.id,
+          position,
+          titleSnapshot: lesson.title,
+        }),
+      ),
+    );
+
+    const { session: day } = await readBody({
+      response: await api.get(`/v1/today?goalId=${goal.id}&timeZone=UTC`),
+      schema: todayResponseSchema,
+    });
+
+    expect(day.extraTime).toMatchObject({
+      available: true,
+      lessons: lessons.map((lesson) => ({ minutes: 4, title: lesson.title })),
+    });
+
+    // The lessons join the day in the plan's order; the answer is the first, where it goes on.
+    const extra = await readBody({
+      response: await api.post(`/v1/study-sessions/${session.id}/extra-blocks`),
+      schema: studyBlockSchema,
+      status: 201,
+    });
+
+    expect(extra).toMatchObject({ extra: true, kind: "learn", lessonId: lessons[0]?.id });
+
+    await expect(
+      prisma.studySessionBlock.findMany({
+        orderBy: { position: "asc" },
+        select: { kind: true, lessonId: true },
+        where: { sessionId: session.id },
+      }),
+    ).resolves.toStrictEqual(lessons.map((lesson) => ({ kind: "learn", lessonId: lesson.id })));
   });
 
   test("holds a phase challenge for unfinished lessons without opening it or the session", async () => {
