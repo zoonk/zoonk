@@ -81,105 +81,102 @@ test.describe("A mock left running while the learner was away", () => {
     await expect(page.getByRole("heading", { level: 1, name: "Take a mock exam" })).toBeVisible();
   });
 
-  for (const format of ["typed", "essay"] as const) {
-    test(`a cleared ${format} draft stays blank on the sheet and expires without a score`, async ({
-      browser,
-    }) => {
-      const { goal, user } = await createAnytimeMockLearner({
-        formats: true,
-        plus: true,
-        written: true,
-      });
+  // One shared rule (`isMockAnswerPresent`) counts a typed answer and an essay as answered, and
+  // core keeps either cleared draft unanswered (`cleared-mock-drafts.test.ts`): the essay, cleared
+  // to blanks, shows it on the sheet.
+  test("a cleared essay draft stays blank on the sheet and expires without a score", async ({
+    browser,
+  }) => {
+    const { goal, user } = await createAnytimeMockLearner({ plus: true, written: true });
 
-      const [text, objective] = await Promise.all([
-        prisma.item.findFirstOrThrow({ where: { examBlueprintId: goal.examBlueprintId, format } }),
-        prisma.item.findFirstOrThrow({
-          where: { examBlueprintId: goal.examBlueprintId, format: "multipleChoice" },
-        }),
-      ]);
+    const [text, objective] = await Promise.all([
+      prisma.item.findFirstOrThrow({
+        where: { examBlueprintId: goal.examBlueprintId, format: "essay" },
+      }),
+      prisma.item.findFirstOrThrow({
+        where: { examBlueprintId: goal.examBlueprintId, format: "multipleChoice" },
+      }),
+    ]);
 
-      const mock = await prisma.mockExam.create({
-        data: {
-          conditions: {
-            day: null,
-            fullLength: true,
-            purpose: "practice",
-            scoring: "raw",
-            sections: [
-              {
-                essays: format === "essay" ? [text.id] : [],
-                itemIds: format === "typed" ? [text.id, objective.id] : [objective.id],
-                minutes: 30,
-                name: "Written answers",
-                questions: format === "typed" ? 2 : 1,
-                routing: null,
-              },
-            ],
-            startTime: null,
-            timeZone: null,
-          },
-          examBlueprintId: goal.examBlueprintId,
-          goalId: goal.id,
-          sectionStartedAt: new Date(),
-          userId: user.id,
+    const mock = await prisma.mockExam.create({
+      data: {
+        conditions: {
+          day: null,
+          fullLength: true,
+          purpose: "practice",
+          scoring: "raw",
+          sections: [
+            {
+              essays: [text.id],
+              itemIds: [objective.id],
+              minutes: 30,
+              name: "Written answers",
+              questions: 1,
+              routing: null,
+            },
+          ],
+          startTime: null,
+          timeZone: null,
         },
-      });
-
-      const page = await openAs(browser, user);
-      await page.goto(`/mock/${mock.id}`);
-      const sheet = page.getByRole("complementary", { name: "Answer sheet" });
-
-      if (format === "essay") {
-        await sheet.getByRole("button", { exact: true, name: "Written part" }).click();
-      }
-
-      const answer = page.getByRole("textbox", { exact: true, name: "Your answer" });
-      await answer.fill("I started an answer and changed my mind.");
-      await expect(sheet.getByText("1 answered · 0 flagged", { exact: true })).toBeVisible();
-
-      await expect
-        .poll(() => storedTextAnswer({ itemId: text.id, mockExamId: mock.id }))
-        .toEqual({ text: "I started an answer and changed my mind." });
-
-      const cleared = format === "essay" ? "   " : "";
-      await answer.fill(cleared);
-      await expect(sheet.getByText("0 answered · 0 flagged", { exact: true })).toBeVisible();
-
-      await expect
-        .poll(() => storedTextAnswer({ itemId: text.id, mockExamId: mock.id }))
-        .toEqual({ text: cleared });
-
-      await prisma.mockExam.update({
-        data: { sectionStartedAt: new Date(Date.now() - 3 * DAY_MS) },
-        where: { id: mock.id },
-      });
-
-      await page.goto(`/mock/${mock.id}`);
-
-      await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-      await expect(page.getByRole("timer")).toBeHidden();
-
-      await expect(page.getByRole("link").filter({ hasNotText: /^Leave$/u })).toHaveAttribute(
-        "href",
-        "/mock/new",
-      );
-
-      await expect(prisma.attempt.count({ where: { mockExamId: mock.id } })).resolves.toBe(0);
-
-      await expect(
-        prisma.learningEvent.count({ where: { kind: "mock", userId: user.id } }),
-      ).resolves.toBe(0);
-
-      await page.goto(`/pt/mock/${mock.id}`);
-
-      await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-
-      await expect(page.getByRole("link").filter({ hasNotText: /^Sair$/u })).toHaveAttribute(
-        "href",
-        "/pt/mock/new",
-      );
-
-      await page.context().close();
+        examBlueprintId: goal.examBlueprintId,
+        goalId: goal.id,
+        sectionStartedAt: new Date(),
+        userId: user.id,
+      },
     });
-  }
+
+    const page = await openAs(browser, user);
+    await page.goto(`/mock/${mock.id}`);
+    const sheet = page.getByRole("complementary", { name: "Answer sheet" });
+
+    await sheet.getByRole("button", { exact: true, name: "Written part" }).click();
+
+    const answer = page.getByRole("textbox", { exact: true, name: "Your answer" });
+    await answer.fill("I started an answer and changed my mind.");
+    await expect(sheet.getByText("1 answered · 0 flagged", { exact: true })).toBeVisible();
+
+    await expect
+      .poll(() => storedTextAnswer({ itemId: text.id, mockExamId: mock.id }))
+      .toEqual({ text: "I started an answer and changed my mind." });
+
+    const cleared = "   ";
+    await answer.fill(cleared);
+    await expect(sheet.getByText("0 answered · 0 flagged", { exact: true })).toBeVisible();
+
+    await expect
+      .poll(() => storedTextAnswer({ itemId: text.id, mockExamId: mock.id }))
+      .toEqual({ text: cleared });
+
+    await prisma.mockExam.update({
+      data: { sectionStartedAt: new Date(Date.now() - 3 * DAY_MS) },
+      where: { id: mock.id },
+    });
+
+    await page.goto(`/mock/${mock.id}`);
+
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    await expect(page.getByRole("timer")).toBeHidden();
+
+    await expect(page.getByRole("link").filter({ hasNotText: /^Leave$/u })).toHaveAttribute(
+      "href",
+      "/mock/new",
+    );
+
+    await expect(prisma.attempt.count({ where: { mockExamId: mock.id } })).resolves.toBe(0);
+
+    await expect(
+      prisma.learningEvent.count({ where: { kind: "mock", userId: user.id } }),
+    ).resolves.toBe(0);
+
+    await page.goto(`/pt/mock/${mock.id}`);
+
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+
+    await expect(page.getByRole("link").filter({ hasNotText: /^Sair$/u })).toHaveAttribute(
+      "href",
+      "/pt/mock/new",
+    );
+
+    await page.context().close();
+  });
 });
