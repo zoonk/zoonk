@@ -308,21 +308,23 @@ export function TaskSkeleton({
       className={cn("flex min-h-dvh flex-col", root?.className)}
       data-aside={root?.["data-aside"]}
     >
-      <div className={TASK_HEADER_BAR_CLASS}>
-        <div className={TASK_HEADER_SIDE_CLASS.start}>
-          <Skeleton className="-ml-2.5 size-9 rounded-lg" />
+      <div className="border-b border-transparent">
+        <div className={TASK_HEADER_BAR_CLASS}>
+          <div className={TASK_HEADER_SIDE_CLASS.start}>
+            <Skeleton className="-ml-2.5 size-9 rounded-lg" />
+          </div>
+          <div className="flex min-w-0 justify-center">{title}</div>
+          <div className={TASK_HEADER_SIDE_CLASS.end}>
+            {menu && <Skeleton className="-mr-2.5 size-9 rounded-lg" />}
+          </div>
         </div>
-        <div className="flex min-w-0 justify-center">{title}</div>
-        <div className={TASK_HEADER_SIDE_CLASS.end}>
-          {menu && <Skeleton className="-mr-2.5 size-9 rounded-lg" />}
-        </div>
-      </div>
 
-      {progress && (
-        <div className={cn(TASK_COLUMN_CLASS, "pb-1")}>
-          <Skeleton className="h-1 w-full rounded-xs" />
-        </div>
-      )}
+        {progress && (
+          <div className={cn(TASK_COLUMN_CLASS, "pb-1")}>
+            <Skeleton className="h-1 w-full rounded-xs" />
+          </div>
+        )}
+      </div>
 
       <div className={cn(TASK_COLUMN_CLASS, "flex flex-1 flex-col gap-4 pt-4 pb-8")}>
         {children}

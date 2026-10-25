@@ -1,6 +1,7 @@
 "use client";
 
 import { ProgressIndicator, ProgressRoot, ProgressTrack } from "@zoonk/ui/components/progress";
+import { useScrolled } from "@zoonk/ui/hooks/scrolled";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useLocale } from "next-intl";
 import { useSyncExternalStore } from "react";
@@ -11,13 +12,17 @@ import { TASK_COLUMN_CLASS, TASK_HEADER_BAR_CLASS, TASK_HEADER_SIDE_CLASS } from
  * checkpoint, a mock): close in the window's top-left corner, the task's title centered over its
  * column, the "…" menu in the top-right corner and, under the title, how far into the task the
  * learner is. The sides take the same room, so the title stays centered. What scrolls under it
- * fades out at its edge rather than being cut off under the progress bar.
+ * fades out at its edge rather than being cut off, and once the page scrolls it draws its hairline
+ * across the window, over the aside's top, as the app's bars do.
  */
 export function TaskHeader({ className, ...props }: React.ComponentProps<"div">) {
+  const scrolled = useScrolled();
+
   return (
     <div
       className={cn(
-        "after:from-background relative z-20 shrink-0 after:pointer-events-none after:absolute after:inset-x-0 after:top-full after:h-3 after:bg-linear-to-b after:to-transparent",
+        "after:from-background relative z-30 shrink-0 border-b transition-colors after:pointer-events-none after:absolute after:inset-x-0 after:top-full after:h-3 after:bg-linear-to-b after:to-transparent motion-reduce:transition-none",
+        scrolled ? "border-border" : "border-transparent",
         className,
       )}
       data-slot="task-header"

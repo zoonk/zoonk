@@ -70,7 +70,7 @@ export function QuestionBlockHeader({
   const current = Math.min(index + 1, total);
 
   return (
-    <TaskHeader className="bg-background sticky top-0 z-20">
+    <TaskHeader className="bg-background sticky top-0">
       <TaskHeaderBar>
         <TaskHeaderSide align="start">{close}</TaskHeaderSide>
         <TaskHeaderTitle title={title} />

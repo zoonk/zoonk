@@ -116,7 +116,7 @@ export function SessionHeader({
   const { segments, weights } = getSessionSegments({ queue, sessionBar });
 
   return (
-    <TaskHeader className="bg-background sticky top-0 z-20" data-slot="session-header">
+    <TaskHeader className="bg-background sticky top-0" data-slot="session-header">
       <TaskHeaderBar>
         <TaskHeaderSide align="start">
           <LearnLink

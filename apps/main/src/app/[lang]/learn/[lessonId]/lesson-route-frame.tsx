@@ -52,7 +52,7 @@ export function LessonRouteFrame({
       className={cn("bg-background flex min-h-dvh flex-col", asideRoot.className)}
       data-aside={asideRoot["data-aside"]}
     >
-      <TaskHeader className="bg-background sticky top-0 z-20">
+      <TaskHeader className="bg-background sticky top-0">
         <TaskHeaderBar>
           <TaskHeaderSide align="start">
             <Link
