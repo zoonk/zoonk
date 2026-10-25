@@ -254,6 +254,7 @@ private func makeGeneratedCourseCategory(
   case .culture: .culture
   case .economics: .economics
   case .engineering: .engineering
+  case .exams: .exams
   case .geography: .geography
   case .health: .health
   case .history: .history
@@ -316,6 +317,7 @@ private func makeCourseCategory(
   case .culture: .culture
   case .economics: .economics
   case .engineering: .engineering
+  case .exams: .exams
   case .geography: .geography
   case .health: .health
   case .history: .history

@@ -43,7 +43,7 @@ final class CourseCatalogModelsTests: XCTestCase {
     XCTAssertEqual(
       CourseCategory.allCases.map(\.rawValue),
       [
-        "arts", "business", "communication", "culture", "economics", "engineering",
+        "arts", "business", "communication", "culture", "economics", "engineering", "exams",
         "geography", "health", "history", "languages", "law", "math", "science", "society",
         "tech",
       ])

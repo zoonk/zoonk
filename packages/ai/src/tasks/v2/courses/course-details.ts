@@ -22,8 +22,16 @@ import promptTemplate from "./course-details.prompt.md";
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["google/gemini-3.8-flash", "anthropic/claude-haiku-5.5"] as const;
 
-/** Language courses are listed under `languages` because of what they are, never by a model. */
-const SUBJECT_CATEGORIES = COURSE_CATEGORIES.filter((category) => category !== "languages");
+/**
+ * Language courses are listed under `languages` and exam courses under `exams` because of what
+ * they are, never by a model.
+ */
+const FORMAT_CATEGORIES: ReadonlySet<CourseCategory> = new Set(["exams", "languages"]);
+
+/** The categories the model picks from. */
+export const SUBJECT_CATEGORIES = COURSE_CATEGORIES.filter(
+  (category) => !FORMAT_CATEGORIES.has(category),
+);
 
 const systemPrompt = promptTemplate.replace("{{CATEGORIES}}", () => SUBJECT_CATEGORIES.join(", "));
 

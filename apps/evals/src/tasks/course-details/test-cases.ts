@@ -560,10 +560,10 @@ export const TEST_CASES: TestCase<CourseDetailsExpected, CourseDetailsParams>[] 
       - Regression: an earlier promise was "Você poderá aplicar conteúdos de diferentes áreas e critérios da redação para resolver questões e planejar suas respostas no ENEM". A promise built on abstract terms ("aplicar conteúdos de diferentes áreas", "critérios da redação", "competências avaliadas") or an opener like "Você poderá" before the outcome fails this case
       - CHAPTERS are only the first band (math, data, waves, reading, ecology): the copy covers the whole exam, its four areas and the redação
       - Don't judge how the exam's name is capitalized
+      - Categories don't matter for exam courses: don't judge them
 
       ${SHARED_EXPECTATIONS}
     `,
-    expected: { categories: ["math", "science", "society", "communication"] },
     id: "pt-enem-exam",
     userInput: {
       chapters: [

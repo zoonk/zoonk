@@ -4011,6 +4011,11 @@ msgid "Engineering"
 msgstr "Ingeniería"
 
 #: src/lib/categories/category.ts
+msgctxt "aTYLZQ"
+msgid "Exams"
+msgstr "Exámenes"
+
+#: src/lib/categories/category.ts
 msgctxt "YMDBNH"
 msgid "Geography"
 msgstr "Geografía"

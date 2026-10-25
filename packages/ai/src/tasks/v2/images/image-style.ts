@@ -48,6 +48,10 @@ const PALETTES: Readonly<Record<PaletteKey, Omit<ImagePalette, "key">>> = {
     accent: "safety orange (#F59E0B)",
     colors: ["steel blue (#7A9CC6)", "pale steel (#E3EAF3)", "charcoal (#334155)"],
   },
+  exams: {
+    accent: "pencil yellow (#F6C945)",
+    colors: ["ink blue (#5B7BD5)", "paper white (#F7F5EF)", "graphite gray (#4B5563)"],
+  },
   general: {
     accent: "amber (#FBBF24)",
     colors: ["soft indigo (#8B93F8)", "pale lavender (#E4E6FD)", "slate gray (#64748B)"],

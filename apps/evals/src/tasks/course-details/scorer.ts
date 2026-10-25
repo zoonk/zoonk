@@ -1,12 +1,11 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
 import { defineScoreCategories } from "@/lib/score-categories";
 import { type TaskScorer } from "@/lib/types";
-import { type CourseDetails } from "@zoonk/ai/tasks/v2/courses/details";
-import { isValidCategory } from "@zoonk/utils/categories";
+import { type CourseDetails, SUBJECT_CATEGORIES } from "@zoonk/ai/tasks/v2/courses/details";
 
 /**
  * The categories a course may be listed under first: the model passes when one of its
- * categories is one of these. Language courses get theirs from their target language, so their
+ * categories is one of these. Language and exam courses get theirs from what they are, so their
  * cases leave it out.
  */
 export type CourseDetailsExpected = { categories?: string[] };
@@ -54,9 +53,7 @@ function checkCategories({
   const { categories } = details;
   const accepted = expected?.categories;
 
-  const invalid = categories.filter(
-    (category) => !isValidCategory(category) || category === "languages",
-  );
+  const invalid = categories.filter((category) => !SUBJECT_CATEGORIES.includes(category));
 
   return [
     (categories.length === 0 || categories.length > MAX_CATEGORIES) &&

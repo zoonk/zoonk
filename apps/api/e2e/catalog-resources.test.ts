@@ -18,6 +18,7 @@ import {
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { COURSE_CATEGORIES } from "@zoonk/utils/categories";
 import { normalizeString } from "@zoonk/utils/string";
 import { courseResourceSchema } from "../src/lib/openapi/schemas/catalog-resources";
 import { createAuthenticatedApiContext } from "./helpers/auth";
@@ -194,7 +195,7 @@ test.describe("Catalog resource API", () => {
     ]);
 
     expect(counts.total).toBe(1);
-    expect(counts.categories).toHaveLength(15);
+    expect(counts.categories).toHaveLength(COURSE_CATEGORIES.length);
 
     expect(counts.categories).toEqual(
       expect.arrayContaining([

@@ -1080,6 +1080,35 @@
         }
       }
     },
+    "Exams" : {
+      "comment" : "Course category for exam preparation courses, such as the SAT or ENEM.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prüfungen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exámenes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Examens"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Provas"
+          }
+        }
+      }
+    },
     "Geography" : {
       "comment" : "Course category for geography.",
       "localizations" : {

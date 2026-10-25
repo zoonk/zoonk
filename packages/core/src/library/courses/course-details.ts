@@ -5,6 +5,7 @@ import {
   generateCourseDetails,
 } from "@zoonk/ai/tasks/v2/courses/details";
 import { prisma } from "@zoonk/db";
+import { type CourseCategory } from "@zoonk/utils/categories";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { COURSE_LIST_CACHE_TAG, getCourseCacheTag } from "../../cache/tags";
 import { type LibraryProvenance } from "../_utils/library-rows";
@@ -13,9 +14,6 @@ type DetailsAnalytics = CourseDetailsParams["analytics"];
 
 /** Enough of the outline for the copy to name what the course covers, without a huge prompt. */
 const MAX_PROMPT_CHAPTERS = 30;
-
-/** Language courses are listed under `languages` because of what they are, never by a model. */
-const LANGUAGE_CATEGORY = "languages";
 
 function findCourse(courseId: string) {
   return prisma.course.findUnique({
@@ -47,10 +45,23 @@ function findMissingDetails({ course, copyOnly }: { course: DetailsCourse; copyO
 
 type MissingDetails = ReturnType<typeof findMissingDetails>;
 
-/** A language course's category is known, so only its description and landing copy need a model. */
+/**
+ * Exam courses are listed under `exams` and language courses under `languages` because of what they
+ * are, never by a model; a language exam such as IELTS is both.
+ */
+function getFormatCategories(course: DetailsCourse): CourseCategory[] {
+  return [
+    ...(course.format === "exam" ? ["exams" as const] : []),
+    ...(course.targetLanguage ? ["languages" as const] : []),
+  ];
+}
+
+/** A course whose categories its format sets only needs a model for its description and copy. */
 function needsModel({ course, missing }: { course: DetailsCourse; missing: MissingDetails }) {
   return (
-    missing.description || missing.landingPage || (missing.categories && !course.targetLanguage)
+    missing.description ||
+    missing.landingPage ||
+    (missing.categories && getFormatCategories(course).length === 0)
   );
 }
 
@@ -60,8 +71,9 @@ function getCategories({
 }: {
   course: DetailsCourse;
   details: CourseDetails | null;
-}): string[] {
-  return course.targetLanguage ? [LANGUAGE_CATEGORY] : (details?.categories ?? []);
+}): CourseCategory[] {
+  const formatCategories = getFormatCategories(course);
+  return formatCategories.length > 0 ? formatCategories : (details?.categories ?? []);
 }
 
 /** The run that wrote the landing copy; metadata-only fills must not replace its provenance. */

@@ -47,7 +47,7 @@ describe(generateCourseDetails, () => {
     });
   });
 
-  it("never offers the model the category language courses get from their target language", async () => {
+  it("never offers the model the categories language and exam courses get from what they are", async () => {
     const { systemPrompt, userPrompt } = await generateCourseDetails({
       chapters,
       courseTitle: "Espanhol",
@@ -57,6 +57,7 @@ describe(generateCourseDetails, () => {
 
     expect(systemPrompt).toContain("health");
     expect(systemPrompt).not.toContain("languages");
+    expect(systemPrompt).not.toContain("exams");
     expect(userPrompt).toContain("TARGET_LANGUAGE: Español de España");
     expect(userPrompt).toContain("- [overview] Antibodies: How antibodies find germs");
   });

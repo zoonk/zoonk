@@ -144,6 +144,34 @@ describe(writeCourseDetails, () => {
     expect(stored.detailsRunId).toBeNull();
   });
 
+  it("lists an exam course under exams whatever the model says", async () => {
+    const course = await outlinedCourse({ format: "exam", title: "ENEM" });
+
+    await writeCourseDetails({ courseId: course.id });
+
+    const stored = await readCourse(course.id);
+
+    expect(stored.description).toBe(details.description);
+    expect(stored.categories.map((item) => item.category)).toStrictEqual(["exams"]);
+  });
+
+  it("lists a language exam under both exams and languages without a model", async () => {
+    const course = await outlinedCourse({
+      description: "IELTS, part by part",
+      format: "exam",
+      landingPage: storedLandingPage,
+      targetLanguage: "en",
+      title: "IELTS",
+    });
+
+    await writeCourseDetails({ courseId: course.id });
+
+    const stored = await readCourse(course.id);
+
+    expect(generateCourseDetails).not.toHaveBeenCalled();
+    expect(stored.categories.map((item) => item.category)).toStrictEqual(["exams", "languages"]);
+  });
+
   it("leaves a course with everything its page needs untouched", async () => {
     const course = await outlinedCourse({
       description: "A complete course",

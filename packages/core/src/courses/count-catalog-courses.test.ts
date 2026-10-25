@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { COURSE_CATEGORIES } from "@zoonk/utils/categories";
 import { cacheTag } from "next/cache";
 import { describe, expect, it } from "vitest";
 import { COURSE_LIST_CACHE_TAG } from "../cache/tags";
@@ -48,7 +49,7 @@ describe(countCatalogCourses, () => {
 
     expect(result.total).toBe(3);
     expect(counts).toMatchObject({ arts: 0, science: 2, tech: 1 });
-    expect(result.categories).toHaveLength(15);
+    expect(result.categories).toHaveLength(COURSE_CATEGORIES.length);
     expect(cacheTag).toHaveBeenCalledWith(COURSE_LIST_CACHE_TAG);
   });
 });

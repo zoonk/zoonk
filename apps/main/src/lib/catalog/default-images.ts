@@ -9,6 +9,7 @@ const DEFAULT_CHAPTER_IMAGES: Record<CourseCategory, string> = {
   culture: "/catalog/chapters/culture.webp",
   economics: "/catalog/chapters/economics.webp",
   engineering: "/catalog/chapters/engineering.webp",
+  exams: "/catalog/chapters/exams.webp",
   geography: "/catalog/chapters/geography.webp",
   health: "/catalog/chapters/health.webp",
   history: "/catalog/chapters/history.webp",

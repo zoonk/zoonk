@@ -26,8 +26,8 @@ model Course {
   outlineRunId         String?           @map("outline_run_id")
   /// The AI run that created the course and wrote its title. The `details*` columns name the run
   /// that wrote its description, landing page and categories, and the `icon*` columns the run that
-  /// drew its icon. Each is null when people wrote that part, when no model was needed (a language
-  /// course's category) and for courses made before generated rows stored their provenance.
+  /// drew its icon. Each is null when people wrote that part, when no model was needed (a language or
+  /// exam course's category) and for courses made before generated rows stored their provenance.
   model                String?
   promptVersion        String?           @map("prompt_version")
   runId                String?           @map("run_id")

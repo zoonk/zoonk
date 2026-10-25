@@ -12,6 +12,7 @@ export async function getCategories(): Promise<CategoryInfo[]> {
     { icon: CATEGORY_ICONS.culture, key: "culture", label: t("Culture") },
     { icon: CATEGORY_ICONS.economics, key: "economics", label: t("Economics") },
     { icon: CATEGORY_ICONS.engineering, key: "engineering", label: t("Engineering") },
+    { icon: CATEGORY_ICONS.exams, key: "exams", label: t("Exams") },
     { icon: CATEGORY_ICONS.geography, key: "geography", label: t("Geography") },
     { icon: CATEGORY_ICONS.health, key: "health", label: t("Health") },
     { icon: CATEGORY_ICONS.history, key: "history", label: t("History") },

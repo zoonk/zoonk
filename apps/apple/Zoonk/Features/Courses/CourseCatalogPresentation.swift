@@ -74,6 +74,10 @@ extension CourseCategory {
     case .engineering:
       LocalizedStringResource(
         "Engineering", table: "Courses", comment: "Course category for engineering.")
+    case .exams:
+      LocalizedStringResource(
+        "Exams", table: "Courses",
+        comment: "Course category for exam preparation courses, such as the SAT or ENEM.")
     case .geography:
       LocalizedStringResource(
         "Geography", table: "Courses", comment: "Course category for geography.")
@@ -111,6 +115,7 @@ extension CourseCategory {
     case .culture: "globe"
     case .economics: "chart.line.uptrend.xyaxis"
     case .engineering: "wrench.and.screwdriver"
+    case .exams: "graduationcap"
     case .geography: "map"
     case .health: "heart"
     case .history: "clock.arrow.circlepath"

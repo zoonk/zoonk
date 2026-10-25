@@ -5,6 +5,7 @@ export const COURSE_CATEGORIES = [
   "culture",
   "economics",
   "engineering",
+  "exams",
   "geography",
   "health",
   "history",

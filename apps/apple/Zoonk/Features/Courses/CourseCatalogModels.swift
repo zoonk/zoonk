@@ -7,6 +7,7 @@ enum CourseCategory: String, CaseIterable, Codable, Equatable, Sendable {
   case culture
   case economics
   case engineering
+  case exams
   case geography
   case health
   case history

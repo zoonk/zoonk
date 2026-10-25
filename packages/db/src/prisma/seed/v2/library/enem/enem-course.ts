@@ -14,7 +14,7 @@ import { enemAreaSkills, enemMathSkills } from "./enem-skills";
  * also hold the rest of the exam's, whose lessons the Library writes as learners reach them.
  */
 export const enemCourse: SeedCourse = {
-  category: "society",
+  category: "exams",
   chapters: [...enemMathChapters, ...enemAreaChapters],
   description: t(
     "Brazil's national high school exam, topic by topic, in the order that pays off most.",
