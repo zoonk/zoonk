@@ -123,16 +123,17 @@ function useResumedPlacement({ actions, goalId }: { actions: OnboardingActions; 
   // What this screen showed, so the next question's number and the bar never go back (`Shown`).
   const shown = useRef(NOTHING_SHOWN);
 
-  /** The phase an outcome leads to, never behind what this screen already showed. */
-  const showReady = (outcome: ReadyOutcome) => {
-    const next = toPhase(outcome, shown.current);
-
+  /** Remember resumed questions too, before a replan can remove earlier answers. */
+  const showPhase = (next: Phase) => {
     if (next.kind === "question") {
-      shown.current = { answered: shown.current.answered, spent: next.spent };
+      shown.current = { answered: next.answered, spent: next.spent };
     }
 
     setPhase(next);
   };
+
+  /** The phase an outcome leads to, never behind what this screen already showed. */
+  const showReady = (outcome: ReadyOutcome) => showPhase(toPhase(outcome, shown.current));
 
   /** An answer given on this screen to the question numbered after `answered`. */
   const countAnswer = (answered: number) => {
@@ -146,7 +147,7 @@ function useResumedPlacement({ actions, goalId }: { actions: OnboardingActions; 
     onRead: (read) => {
       setMockOffer(read?.mock.offer ?? null);
 
-      setPhase(
+      showPhase(
         toResumedPhase({
           mock: read?.mock.mock ?? null,
           outcome: read?.outcome ?? { status: "failed" },

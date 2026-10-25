@@ -282,6 +282,24 @@ test.describe("Coming back", () => {
     await expect(page).toHaveURL(/\/today$/u);
     await expect(page.getByRole("main").getByText(goal, { exact: true })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
+
+    // Editing and app search keep their own Escape without taking the learner back.
+    await page.getByRole("button", { name: "Fix something" }).click();
+    await expect(page.getByRole("textbox", { name: "What you wrote" })).toBeFocused();
+    await page.keyboard.press("Escape");
+    await expect(page.getByRole("button", { name: "Fix something" })).toBeFocused();
+    await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
+
+    await page.keyboard.press("ControlOrMeta+k");
+    await expect(page.getByRole("dialog", { name: "Search or ask" })).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(page.getByRole("dialog", { name: "Search or ask" })).toBeHidden();
+    await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeVisible();
+
+    // On Today's embedded flow, Escape returns to the words just like Back.
+    await page.keyboard.press("Escape");
+    await expect(page.getByRole("textbox", { name: "I want to" })).toHaveValue(goal);
+    await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeHidden();
   });
 
   for (const tap of ["before", "after"] as const) {

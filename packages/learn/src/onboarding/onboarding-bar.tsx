@@ -9,11 +9,10 @@ import { type ReactNode } from "react";
 import { PAGE_COLUMN_CLASS } from "../_components/page";
 import { CRUMB_LINK_CLASS, LearnBackLink, PageBarSurface } from "../shell/learn-bar";
 import { type OnboardingBar } from "./onboarding-host";
+import { testProgressPercent } from "./test-progress";
 
 /** The bar's middle, the steps' dots or a test's progress, as wide as one another. */
 export const BAR_MIDDLE_CLASS = "w-24 sm:w-32";
-
-const PERCENT = 100;
 
 /**
  * How far into a test the learner is (placement, a language's level test), from 0 to 1, where the
@@ -28,7 +27,7 @@ export function TestProgress({ value }: { value: number }) {
       aria-label={t("Questions answered")}
       className={cn(BAR_MIDDLE_CLASS, "gap-0")}
       locale={locale}
-      value={Math.round(Math.min(1, Math.max(0, value)) * PERCENT)}
+      value={testProgressPercent(value)}
     >
       <ProgressTrack className="bg-surface-3 h-1 rounded-xs">
         <ProgressIndicator className="bg-foreground rounded-xs motion-reduce:transition-none" />
@@ -65,7 +64,9 @@ export function OnboardingBarRow({ bar, className }: { bar: OnboardingBar; class
         className,
       )}
     >
-      <div className="justify-self-start">{bar.onBack && <BackButton onBack={bar.onBack} />}</div>
+      <div className="justify-self-start">
+        {bar.onBack && <BackButton escape onBack={bar.onBack} />}
+      </div>
       {bar.middle ?? <span />}
       <div className="justify-self-end">{bar.end}</div>
     </div>
