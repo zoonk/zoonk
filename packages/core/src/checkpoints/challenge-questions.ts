@@ -107,13 +107,13 @@ async function loadChallengeContext({ goal, items }: { goal: Goal; items: PlanIt
   const skipped = getSkippedSkillIds({ graph, settings: plan?.settings });
 
   return {
-    goal,
     graphSkills: graph.skills,
     itemSkillIds: new Map(goalPlan.items.map((item) => [item.id, item.skillIds])),
     items,
     listeningSkillIds,
     quickFormat: getPlacementQuickFormat(structure),
     skills: goalPlan.skills.filter((skill) => !skipped.has(skill.id)),
+    targetDate: goal.targetDate,
   };
 }
 
@@ -129,7 +129,7 @@ async function loadAskedSkillIds({
   now: Date;
   userId: string;
 }): Promise<string[]> {
-  const { goal, graphSkills, itemSkillIds, items, listeningSkillIds, skills } = context;
+  const { graphSkills, itemSkillIds, items, listeningSkillIds, skills, targetDate } = context;
 
   if (item.kind === "checkpoint") {
     const textSkillIds = skills.flatMap((skill) =>
@@ -145,7 +145,7 @@ async function loadAskedSkillIds({
     itemSkillIds,
     items,
     skills,
-    targetDate: goal.targetDate,
+    targetDate,
   }).filter((skillId) => !listeningSkillIds.has(skillId));
 }
 
