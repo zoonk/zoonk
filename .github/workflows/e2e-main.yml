@@ -18,7 +18,9 @@ permissions:
 
 concurrency:
   group: e2e-main-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  # A newer push waits for the running suite instead of cancelling it: on a busy PR, pushes came
+  # faster than the suite runs, so it never finished. GitHub keeps one run pending, the newest.
+  cancel-in-progress: false
 
 jobs:
   suites:
