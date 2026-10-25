@@ -33,11 +33,13 @@ import {
   useSlotAnswered,
 } from "./plan-suggestion-context";
 import { useChangeSentence } from "./use-change-sentence";
+import { useTappedChoice } from "./use-tapped-choice";
 
 /**
  * Saves a pick with a pending state and a failure flag, like the plan's other controls. The change
  * it made becomes the editor's latest, so the editor says which option the plan now studies, with
  * Undo (see `PlanEditorChange`); `onChange` hears it too, for a card that says it in place.
+ * `answer` runs once the pick answers, with the re-planned page, as `usePlanChange`'s does.
  */
 function useExamChoice({ onChange }: { onChange?: (change: PlanChangeView) => void } = {}) {
   const { actions, keepFocus } = usePlanScreen();
@@ -46,7 +48,7 @@ function useExamChoice({ onChange }: { onChange?: (change: PlanChangeView) => vo
   const [isPending, startTransition] = useTransition();
   const [failed, setFailed] = useState(false);
 
-  const choose = (input: { group: string; subject: string }) => {
+  const choose = (input: { group: string; subject: string }, answer?: () => void) => {
     setFailed(false);
     keepFocus();
 
@@ -56,6 +58,7 @@ function useExamChoice({ onChange }: { onChange?: (change: PlanChangeView) => vo
       // Updates after an `await` join the transition only when started in one again.
       startTransition(() => {
         setFailed(!outcome);
+        answer?.();
 
         if (outcome?.change) {
           editor.report(outcome.change);
@@ -72,10 +75,14 @@ function useExamChoice({ onChange }: { onChange?: (change: PlanChangeView) => vo
   return { choose, failed, isPending };
 }
 
-/** One of the exam's choices: its options, one tap each, and what an unpicked choice means. */
+/**
+ * One of the exam's choices: its options, one tap each, and what an unpicked choice means. The
+ * tapped option shows picked while its change saves (see `useTappedChoice`).
+ */
 function ExamChoice({ choice }: { choice: ExamChoiceView }) {
   const t = useExtracted();
   const { choose, failed, isPending } = useExamChoice();
+  const tapped = useTappedChoice(choice.subject ?? "");
 
   return (
     <fieldset className="flex flex-col gap-2">
@@ -86,10 +93,10 @@ function ExamChoice({ choice }: { choice: ExamChoiceView }) {
         disabled={isPending}
         onValueChange={(value) => {
           if (typeof value === "string" && value !== choice.subject) {
-            choose({ group: choice.group, subject: value });
+            choose({ group: choice.group, subject: value }, tapped.pick(value));
           }
         }}
-        value={choice.subject ?? ""}
+        value={tapped.shown}
       >
         {choice.options.map((option) => (
           <RadioGroupOption className={PLAN_OPTION_CLASS} key={option.name}>

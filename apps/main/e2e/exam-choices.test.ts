@@ -18,6 +18,7 @@ import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
 import { isJsonObject } from "@zoonk/utils/json";
 import { type Page, expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
+import { REPLAN_TIMEOUT_MS } from "./plan-timeouts";
 import { openAs } from "./study-day";
 
 /**
@@ -314,17 +315,33 @@ test.describe("Exam choices", () => {
       await expect(choice.getByRole("radio", { name: "Inglês" })).toBeChecked();
       await expect(choice.getByRole("radio", { name: "Espanhol" })).not.toBeChecked();
 
+      // The pick shows at once while the plan is made again, which can take a while: the save
+      // waits here until the editor has shown it.
+      const saving = Promise.withResolvers<boolean>();
+
+      await page.route(
+        (url) => url.pathname === "/plan",
+        async (route) => {
+          if (route.request().postData()?.includes(SPANISH)) {
+            await saving.promise;
+          }
+
+          await route.fallback();
+        },
+      );
+
       await choice.getByRole("radio", { name: "Espanhol" }).click();
 
       await expect(choice.getByRole("radio", { name: "Espanhol" })).toBeChecked();
       await expect(choice.getByRole("radio", { name: "Inglês" })).not.toBeChecked();
+      saving.resolve(true);
 
-      // The editor confirms the pick in words, with a way back.
+      // The editor confirms the pick in words, with a way back, once the plan is made again.
       await expect(
         editor
           .getByRole("status")
           .filter({ hasText: `Your plan studies ${SPANISH} for ${FOREIGN}.` }),
-      ).toBeVisible();
+      ).toBeVisible({ timeout: REPLAN_TIMEOUT_MS });
 
       await expect(editor.getByRole("button", { exact: true, name: "Undo" })).toBeVisible();
 
