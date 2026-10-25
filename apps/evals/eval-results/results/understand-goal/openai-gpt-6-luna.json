@@ -747,6 +747,19 @@
           "today": "2026-09-28"
         }
       }
+    },
+    {
+      "classification": { "expected": "goals", "predicted": "goals" },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "potentialImprovements", "score": 10 }
+      ],
+      "testCase": {
+        "expected": { "goals": [{ "kind": "learn", "ownLevel": "none" }], "route": "goals" },
+        "id": "pt-learn-music-zero-1",
+        "userInput": { "goal": "Aprender música do zero", "language": "pt", "today": "2026-09-26" }
+      }
     }
   ],
   "taskId": "understand-goal"

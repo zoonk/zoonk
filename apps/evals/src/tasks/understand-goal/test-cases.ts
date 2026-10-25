@@ -332,4 +332,10 @@ export const TEST_CASES: UnderstandGoalCase[] = [
     goal: "music theory and ear training",
     language: "en",
   }),
+  // The music goal example: learning music without naming an instrument is a goal, not the waitlist.
+  testCase("pt-learn-music-zero", {
+    expected: { goals: [{ kind: "learn", ownLevel: "none" }], route: "goals" },
+    goal: "Aprender música do zero",
+    language: "pt",
+  }),
 ];

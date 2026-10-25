@@ -31,7 +31,7 @@ function useGoalExamples(): GoalExample[] {
     },
     { kind: t("Language"), label: t("Speak {language} for a job interview", { language }) },
     { kind: t("Learn a topic"), label: t("Understand quantum physics") },
-    { kind: t("Music"), label: t("Read sheet music") },
+    { kind: t("Music"), label: t("Learn music from scratch") },
     { kind: quickExplanation, label: t("How does inflation work?") },
   ];
 }

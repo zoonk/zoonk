@@ -1561,12 +1561,12 @@ test.describe("Today without a day to show", () => {
 
     // On a wide screen the examples to start from sit in Today's aside, beside the form; on a
     // phone they follow the form.
-    const example = userWithoutProgress.getByRole("button", { name: /^Read sheet music/u });
+    const example = userWithoutProgress.getByRole("button", { name: /^Learn music from scratch/u });
     const aside = userWithoutProgress.getByRole("complementary", { name: "Getting started" });
 
     await userWithoutProgress.setViewportSize({ height: 900, width: 1440 });
     await expect(example).toHaveCount(1);
-    await expect(aside.getByRole("button", { name: /^Read sheet music/u })).toBeVisible();
+    await expect(aside.getByRole("button", { name: /^Learn music from scratch/u })).toBeVisible();
     await expect(aside.getByRole("heading", { name: "How it works" })).toBeVisible();
 
     await userWithoutProgress.setViewportSize({ height: 844, width: 390 });

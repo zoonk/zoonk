@@ -8052,9 +8052,9 @@ msgid "Music"
 msgstr "Musik"
 
 #: src/onboarding/entry/goal-examples.tsx
-msgctxt "Xwxsav"
-msgid "Read sheet music"
-msgstr "Noten lesen"
+msgctxt "PSyWa0"
+msgid "Learn music from scratch"
+msgstr "Musik von Grund auf lernen"
 
 #: src/onboarding/entry/goal-examples.tsx
 msgctxt "_g7xra"
