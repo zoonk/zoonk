@@ -17,7 +17,6 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
 import { isJsonObject } from "@zoonk/utils/json";
 import { type Page, expect, test } from "./fixtures";
-import { asPersona } from "./learn-personas";
 import { REPLAN_TIMEOUT_MS } from "./plan-timeouts";
 import { openAs } from "./study-day";
 
@@ -304,74 +303,6 @@ test.describe("Exam choices", () => {
       .toStrictEqual([{ group: FOREIGN, subject: SPANISH }]);
   });
 
-  test("an ENEM learner who takes English switches to Spanish in the plan, and the exam shows Spanish, not English", async ({
-    browser,
-  }) => {
-    await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
-      const editor = await openEditor(page);
-      const choice = editor.getByRole("group", { name: FOREIGN });
-
-      // Ana picked English when she started.
-      await expect(choice.getByRole("radio", { name: "Inglês" })).toBeChecked();
-      await expect(choice.getByRole("radio", { name: "Espanhol" })).not.toBeChecked();
-
-      // The pick shows at once while the plan is made again, which can take a while: the save
-      // waits here until the editor has shown it.
-      const saving = Promise.withResolvers<boolean>();
-
-      await page.route(
-        (url) => url.pathname === "/plan",
-        async (route) => {
-          if (route.request().postData()?.includes(SPANISH)) {
-            await saving.promise;
-          }
-
-          await route.fallback();
-        },
-      );
-
-      await choice.getByRole("radio", { name: "Espanhol" }).click();
-
-      await expect(choice.getByRole("radio", { name: "Espanhol" })).toBeChecked();
-      await expect(choice.getByRole("radio", { name: "Inglês" })).not.toBeChecked();
-      saving.resolve(true);
-
-      // The editor confirms the pick in words, with a way back, once the plan is made again.
-      await expect(
-        editor
-          .getByRole("status")
-          .filter({ hasText: `Your plan studies ${SPANISH} for ${FOREIGN}.` }),
-      ).toBeVisible({ timeout: REPLAN_TIMEOUT_MS });
-
-      await expect(editor.getByRole("button", { exact: true, name: "Undo" })).toBeVisible();
-
-      await expect
-        .poll(() => loadPicks(user.goalId))
-        .toStrictEqual([{ group: FOREIGN, subject: SPANISH }]);
-
-      await page.keyboard.press("Escape");
-      await expect(editor).toBeHidden();
-
-      // The subjects: the languages area the notice counts her language in, never the language as
-      // a subject of its own, and never as an area beyond the notice.
-      const syllabus = page.getByRole("region", { exact: true, name: "Subjects" });
-      const languages = syllabus.getByRole("link", { name: /Linguagens/u });
-
-      await expect(languages).toHaveCount(1);
-      await expect(languages).toContainText("Códigos");
-      await expect(languages).not.toContainText("Not in your plan");
-
-      await expect(
-        syllabus.getByRole("link", { name: /Espanhol|Inglês|Língua Espanhola|Língua Inglesa/u }),
-      ).toHaveCount(0);
-
-      // Its page lists the language she takes among its topics, never the other.
-      await languages.click();
-      await expect(page.getByText(SPANISH, { exact: true })).toBeVisible();
-      await expect(page.getByText(ENGLISH, { exact: true })).toHaveCount(0);
-    });
-  });
-
   test("a learner who decided later is asked on the Plan, and the pick says what it did", async ({
     browser,
   }) => {
@@ -449,7 +380,7 @@ test.describe("Exam choices", () => {
     await page.context().close();
   });
 
-  test("the plan studies the language the learner picks, and swaps it when they change it", async ({
+  test("the plan studies the language the learner picks, shown at once, and swaps it when they change it", async ({
     browser,
   }) => {
     const { areaOf, goal, user } = await createLanguageLearner();
@@ -466,28 +397,64 @@ test.describe("Exam choices", () => {
       choice.getByText(`Pick the one you'll take. Until you do, your plan leaves ${FOREIGN} out.`),
     ).toBeVisible();
 
+    // The pick shows at once while the plan is made again, which can take a while: the save
+    // waits here until the editor has shown it.
+    const saving = Promise.withResolvers<boolean>();
+
+    await page.route(
+      (url) => url.pathname === "/plan",
+      async (route) => {
+        if (route.request().postData()?.includes(SPANISH)) {
+          await saving.promise;
+        }
+
+        await route.fallback();
+      },
+    );
+
     // Picking re-plans: the reading lessons and Spanish's.
     await choice.getByRole("radio", { name: "Espanhol" }).click();
     await expect(choice.getByRole("radio", { name: "Espanhol" })).toBeChecked();
+    await expect(choice.getByRole("radio", { name: "Inglês" })).not.toBeChecked();
+    saving.resolve(true);
     await expect(choice.getByText(/Until you do/u)).toBeHidden();
+
+    // The editor confirms the pick in words, with a way back, once the plan is made again.
+    await expect(
+      editor
+        .getByRole("status")
+        .filter({ hasText: `Your plan studies ${SPANISH} for ${FOREIGN}.` }),
+    ).toBeVisible({ timeout: REPLAN_TIMEOUT_MS });
+
+    await expect(editor.getByRole("button", { exact: true, name: "Undo" })).toBeVisible();
 
     await expect
       .poll(() => loadPlannedAreas({ areaOf, goalId: goal.id }))
       .toStrictEqual([SPANISH, LANGUAGES].toSorted());
 
-    // The subjects list no language apart, and the languages area counts Spanish's topic.
+    // The subjects: the languages area the notice counts her language in, never the language as
+    // a subject of its own.
     await page.keyboard.press("Escape");
+    await expect(editor).toBeHidden();
     const syllabus = page.getByRole("region", { exact: true, name: "Subjects" });
+    const languages = syllabus.getByRole("link", { name: /^Linguagens/u });
+
+    await expect(languages).toHaveCount(1);
+    await expect(languages).not.toContainText("Not in your plan");
 
     await expect(
       syllabus.getByRole("link", { name: /Espanhol|Inglês|Língua Espanhola|Língua Inglesa/u }),
     ).toHaveCount(0);
 
-    await syllabus.getByRole("link", { name: /^Linguagens/u }).click();
+    // Its page counts Spanish's topic and lists the language she takes, never the other.
+    await languages.click();
 
     await expect(page.getByRole("region", { name: "Topics in the notice" })).toContainText(
       "0 of 2 topics",
     );
+
+    await expect(page.getByText(SPANISH, { exact: true })).toBeVisible();
+    await expect(page.getByText(ENGLISH, { exact: true })).toHaveCount(0);
 
     // Changing her mind swaps the languages' lessons.
     const again = await openEditor(page);

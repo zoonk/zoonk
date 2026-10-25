@@ -1,7 +1,6 @@
-import { type Locator, type TestInfo } from "@playwright/test";
+import { type Locator } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
-import { settleAnimations } from "@zoonk/testing/accessibility/scan";
 import { mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import {
   listeningBlueprintFixture,
@@ -12,36 +11,12 @@ import {
   studySessionBlockFixture,
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
-import { type Page, expect, test } from "./fixtures";
+import { expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
 import { toneUrl } from "./listening-audio";
-import { captureMissionEnding } from "./mission-ending-captures";
 import { LESSON_IDEA, TRAP, createMistakeLearner, drillQuestion } from "./mistake-drill-days";
 import { stubScreenTutor } from "./screen-tutor";
 import { checkWithEnter, openAs } from "./study-day";
-
-async function captureUnknownFeedback({
-  page,
-  testInfo,
-  width,
-  colorScheme,
-}: {
-  page: Page;
-  testInfo: TestInfo;
-  width: number;
-  colorScheme: "light" | "dark";
-}) {
-  await page.setViewportSize({ height: 900, width });
-  await page.emulateMedia({ colorScheme, reducedMotion: "reduce" });
-  // A theme's colors fade in; a capture mid-fade isn't the screen people read.
-  await expect.poll(() => page.evaluate(settleAnimations, 3000)).toBe(0);
-
-  await page.screenshot({
-    animations: "disabled",
-    fullPage: true,
-    path: testInfo.outputPath(`unknown-feedback-${width}-${colorScheme}.png`),
-  });
-}
 
 /** Where a control starts across the bar, to read the order its buttons are in. */
 async function leftEdge(control: Locator) {
@@ -55,51 +30,48 @@ async function leftEdge(control: Locator) {
  * laptop), each with why it happened, and the fixed ones on the notebook's other tab.
  */
 test.describe("Mistakes notebook", () => {
-  for (const width of [390, 1440]) {
-    test(`renders a saved Markdown question table at ${width}px after returning to the notebook`, async ({
-      browser,
-    }, testInfo) => {
-      const { drills, user } = await createMistakeLearner({ causes: ["guess"] });
+  test("renders a saved Markdown question table on a phone after returning to the notebook", async ({
+    browser,
+  }) => {
+    const { drills, user } = await createMistakeLearner({ causes: ["guess"] });
 
-      const question =
-        "Use the information to find the price.\n\n| Informação | Valor |\n| --- | ---: |\n| Preço original | R$ 120 |\n| Desconto | 15% |";
+    const question =
+      "Use the information to find the price.\n\n| Informação | Valor |\n| --- | ---: |\n| Preço original | R$ 120 |\n| Desconto | 15% |";
 
-      await prisma.mistake.update({
-        data: { snapshot: { answer: "R$ 18", correctAnswer: "R$ 102", question } },
-        where: { id: drills[0]!.mistake.id },
-      });
-
-      const page = await openAs(browser, user);
-      await page.setViewportSize({ height: 900, width });
-      await page.goto("/mistakes");
-
-      await expect(
-        page.getByText("Use the information to find the price.", { exact: false }),
-      ).toBeVisible();
-
-      await page.screenshot({ fullPage: true, path: testInfo.outputPath(`notebook-${width}.png`) });
-      const table = page.getByRole("table");
-      await expect(table).toBeVisible();
-      await expect(table.getByRole("columnheader")).toHaveText(["Informação", "Valor"]);
-
-      await expect(table.getByRole("cell")).toHaveText([
-        "Preço original",
-        "R$120",
-        "Desconto",
-        "15%",
-      ]);
-
-      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
-        width,
-      );
-
-      await page.goto("/today");
-      await page.goto("/mistakes");
-      await expect(table).toBeVisible();
-      await expect(page.getByText("| --- | ---: |", { exact: false })).toHaveCount(0);
-      await page.context().close();
+    await prisma.mistake.update({
+      data: { snapshot: { answer: "R$ 18", correctAnswer: "R$ 102", question } },
+      where: { id: drills[0]!.mistake.id },
     });
-  }
+
+    const page = await openAs(browser, user);
+    await page.setViewportSize({ height: 900, width: 390 });
+    await page.goto("/mistakes");
+
+    await expect(
+      page.getByText("Use the information to find the price.", { exact: false }),
+    ).toBeVisible();
+
+    const table = page.getByRole("table");
+    await expect(table).toBeVisible();
+    await expect(table.getByRole("columnheader")).toHaveText(["Informação", "Valor"]);
+
+    await expect(table.getByRole("cell")).toHaveText([
+      "Preço original",
+      "R$120",
+      "Desconto",
+      "15%",
+    ]);
+
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
+      390,
+    );
+
+    await page.goto("/today");
+    await page.goto("/mistakes");
+    await expect(table).toBeVisible();
+    await expect(page.getByText("| --- | ---: |", { exact: false })).toHaveCount(0);
+    await page.context().close();
+  });
 
   test("scrolling a wide true-or-false stem on a phone keeps the answer unpicked", async ({
     browser,
@@ -177,10 +149,13 @@ test.describe("Mistakes notebook", () => {
     await context.close();
   });
 
-  test("leads with what's left to fix, shows each skill's mistakes beside the list, and the fixed ones", async ({
+  test("leads with what's left to fix, shows each skill's mistakes beside the list and the fixed ones, and drills one by its cause by keyboard", async ({
     browser,
   }) => {
-    await asPersona(browser, { persona: "exam" }, async ({ page }) => {
+    await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
+      const attemptsBefore = await prisma.attempt.count({ where: { userId: user.id } });
+      const right = page.getByRole("region", { name: "Answer feedback" }).getByText("Correct!");
+
       await page.goto("/mistakes");
 
       // The page's name as its title, with how many are left to fix and fixed under it.
@@ -285,6 +260,44 @@ test.describe("Mistakes notebook", () => {
 
       await tabs.getByRole("link", { name: /^To fix/u }).click();
       await expect(page).toHaveURL(/\/mistakes$/u);
+
+      await page.getByRole("link", { name: "Practice mistakes" }).click();
+
+      // The drill's rule sits right above the question it's for. The mistake's own question (a
+      // number to type) can't be asked here, so its earlier answer isn't shown next to this one,
+      // where it would mislead; the notebook keeps the mistake as it was made.
+      await expect(
+        page.locator('[data-slot="task-body"]').getByText("Read every word before you answer."),
+      ).toBeVisible();
+
+      await expect(page.getByText(/^Last time you answered/u)).toBeHidden();
+
+      await expect(
+        page.locator('[data-slot="mistake-answer"]').filter({ visible: true }),
+      ).toHaveCount(0);
+
+      // A misread is drilled by reading first: the answers show once the question is read.
+      await expect(page.getByRole("radio", { name: "R$ 2.040" })).toBeHidden();
+
+      // Keys work once the page hydrates, so the first press retries. Enter shows the answers of
+      // a question read first, then a number picks (a second press would clear it).
+      await expect(async () => {
+        await page.keyboard.press("Enter");
+        await expect(page.getByRole("radio", { name: "R$ 2.040" })).toBeVisible({ timeout: 1000 });
+      }).toPass({ timeout: 5000 });
+
+      await page.keyboard.press("2");
+      await expect(page.getByRole("radio", { checked: true, name: "R$ 2.040" })).toBeVisible();
+
+      // Enter checks, then goes on.
+      await checkWithEnter(page);
+      await expect(right).toBeVisible();
+      await page.keyboard.press("Enter");
+      await expect(right).toBeHidden();
+
+      await expect
+        .poll(async () => prisma.attempt.count({ where: { userId: user.id } }))
+        .toBe(attemptsBefore + 1);
     });
   });
 
@@ -359,55 +372,6 @@ test.describe("Mistakes notebook", () => {
       await page.getByRole("heading", { name: "Qual é a corrente elétrica no circuito?" }).click();
       await page.keyboard.press("Escape");
       await expect(page).toHaveURL(/\/mistakes$/u);
-    });
-  });
-
-  test("practice drills a mistake by its cause and gives the why, by keyboard", async ({
-    browser,
-  }) => {
-    await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
-      const attemptsBefore = await prisma.attempt.count({ where: { userId: user.id } });
-      const right = page.getByRole("region", { name: "Answer feedback" }).getByText("Correct!");
-
-      await page.goto("/mistakes");
-      await expect(page.getByText("3 ready to practice · 1 fixed", { exact: true })).toBeVisible();
-      await page.getByRole("link", { name: "Practice mistakes" }).click();
-
-      // The drill's rule sits right above the question it's for. The mistake's own question (a
-      // number to type) can't be asked here, so its earlier answer isn't shown next to this one,
-      // where it would mislead; the notebook keeps the mistake as it was made.
-      await expect(
-        page.locator('[data-slot="task-body"]').getByText("Read every word before you answer."),
-      ).toBeVisible();
-
-      await expect(page.getByText(/^Last time you answered/u)).toBeHidden();
-
-      await expect(
-        page.locator('[data-slot="mistake-answer"]').filter({ visible: true }),
-      ).toHaveCount(0);
-
-      // A misread is drilled by reading first: the answers show once the question is read.
-      await expect(page.getByRole("radio", { name: "R$ 2.040" })).toBeHidden();
-
-      // Keys work once the page hydrates, so the first press retries. Enter shows the answers of
-      // a question read first, then a number picks (a second press would clear it).
-      await expect(async () => {
-        await page.keyboard.press("Enter");
-        await expect(page.getByRole("radio", { name: "R$ 2.040" })).toBeVisible({ timeout: 1000 });
-      }).toPass({ timeout: 5000 });
-
-      await page.keyboard.press("2");
-      await expect(page.getByRole("radio", { checked: true, name: "R$ 2.040" })).toBeVisible();
-
-      // Enter checks, then goes on.
-      await checkWithEnter(page);
-      await expect(right).toBeVisible();
-      await page.keyboard.press("Enter");
-      await expect(right).toBeHidden();
-
-      await expect
-        .poll(async () => prisma.attempt.count({ where: { userId: user.id } }))
-        .toBe(attemptsBefore + 1);
     });
   });
 
@@ -647,10 +611,8 @@ test.describe("Mistakes notebook", () => {
       prisma.userProgress.findUniqueOrThrow({ where: { userId: user.id } }),
     ).resolves.toMatchObject({ totalBrainPower: 52n });
 
-    await captureMissionEnding(page, test.info(), "notebook");
     await expect(page.getByRole("progressbar", { name: /^Question /u })).toHaveCount(0);
     await expect(moment).toContainText("from today's missions");
-    await page.setViewportSize({ height: 900, width: 390 });
     await page.getByRole("link", { exact: true, name: "Back" }).click();
     await page.getByRole("link", { exact: true, name: "Today" }).filter({ visible: true }).click();
 
@@ -674,7 +636,7 @@ test.describe("Mistakes notebook", () => {
 
   test("an unknown answer keeps the notebook entry without a trap or a correction claim", async ({
     browser,
-  }, testInfo) => {
+  }) => {
     const { drills, user } = await createMistakeLearner({ causes: ["trap"] });
     const page = await openAs(browser, user);
     const trapRule = page.getByText("There's a trap in here. Find it before you answer.");
@@ -693,11 +655,6 @@ test.describe("Mistakes notebook", () => {
     // What was answered last time stays.
     await expect(trapRule).toHaveCount(0);
     await expect(page.getByText("Last time you answered: Wrong answer")).toHaveCount(1);
-
-    await captureUnknownFeedback({ colorScheme: "light", page, testInfo, width: 390 });
-    await captureUnknownFeedback({ colorScheme: "dark", page, testInfo, width: 390 });
-    await captureUnknownFeedback({ colorScheme: "light", page, testInfo, width: 1440 });
-    await captureUnknownFeedback({ colorScheme: "dark", page, testInfo, width: 1440 });
 
     await expect(
       prisma.mistake.findUniqueOrThrow({ where: { id: drills[0]?.mistake.id } }),

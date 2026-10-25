@@ -2,9 +2,8 @@ import { prisma } from "@zoonk/db";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { pronunciationReviewFixture } from "@zoonk/testing/fixtures/pronunciation-reviews";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
-import { expect, test } from "./fixtures";
+import { type Page, expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
-import { captureMissionEnding } from "./mission-ending-captures";
 import { allowPronunciationRecording } from "./pronunciation-recording";
 import { saveMissions } from "./study-day";
 
@@ -40,6 +39,13 @@ async function seedDueWords(userId: string) {
   return { deposit, rent };
 }
 
+/** Today reads itself again, as a write elsewhere would make it, keeping the pages it has. */
+function refreshRouter(page: Page) {
+  return page.evaluate(() => {
+    (globalThis as unknown as { next: { router: { refresh: () => void } } }).next.router.refresh();
+  });
+}
+
 /**
  * Words a language learner mispronounced come back as "Say it again" on Today: each one with its
  * respelling, tip and native sound, said out loud or skipped. Grading the sound calls a paid
@@ -47,70 +53,6 @@ async function seedDueWords(userId: string) {
  * real actions; a refused microphone also covers skipped words.
  */
 test.describe("Pronunciation reviews", () => {
-  test("link reentry starts a fresh round after an empty entry and a finished round", async ({
-    browser,
-  }) => {
-    await asPersona(browser, { persona: "language" }, async ({ page, user }) => {
-      await page.goto(`/pronunciation?goal=${user.goalId}`);
-      await expect(page.getByRole("status")).toHaveText("No words to say again today.");
-      await page.getByRole("link", { exact: true, name: "Done" }).click();
-      await expect(page).toHaveURL(/\/today$/u);
-
-      const { rent, deposit } = await seedDueWords(user.id);
-
-      const session = await prisma.studySession.findFirstOrThrow({
-        orderBy: { createdAt: "desc" },
-        where: { goalId: user.goalId, userId: user.id },
-      });
-
-      await saveMissions(session.id, [
-        { anchor: {}, kind: "pronunciation", opens: { kind: "pronunciation" }, total: 1 },
-      ]);
-
-      // Fixtures bypass cache invalidation; refresh Today before testing retained link reentry.
-      await page.evaluate(() => {
-        (
-          globalThis as unknown as { next: { router: { refresh: () => void } } }
-        ).next.router.refresh();
-      });
-
-      const mission = page
-        .getByRole("region", { name: "Today's missions" })
-        .getByRole("link", { name: /^Pronunciation/u });
-
-      await expect(mission).toHaveAttribute("href", `/pronunciation?goal=${user.goalId}`);
-      await mission.click();
-      await expect(page).toHaveURL(new RegExp(`/pronunciation\\?goal=${user.goalId}$`, "u"));
-      await expect(page.getByRole("progressbar", { name: "Word 1 of 2" })).toBeVisible();
-      await expect(page.getByRole("region", { name: "The word to say" })).toContainText(rent.word);
-      await page.getByRole("button", { name: "Screen options" }).click();
-      await page.getByRole("menuitem", { name: "Skip this word" }).click();
-
-      await expect(page.getByRole("region", { name: "The word to say" })).toContainText(
-        deposit.word,
-      );
-
-      await page.getByRole("button", { name: "Screen options" }).click();
-      await page.getByRole("menuitem", { name: "Skip this word" }).click();
-      await expect(page.getByRole("heading", { name: "Nothing said this time" })).toBeVisible();
-      await page.getByRole("link", { exact: true, name: "Done" }).click();
-      await expect(page).toHaveURL(/\/today$/u);
-
-      // This return can reuse Today prefetched before the direct fixture writes.
-      await page.evaluate(() => {
-        (
-          globalThis as unknown as { next: { router: { refresh: () => void } } }
-        ).next.router.refresh();
-      });
-
-      await expect(mission).toHaveAttribute("href", `/pronunciation?goal=${user.goalId}`);
-      await mission.click();
-      await expect(page.getByRole("progressbar", { name: "Word 1 of 2" })).toBeVisible();
-      await expect(page.getByRole("region", { name: "The word to say" })).toContainText(rent.word);
-      await expect(page.getByRole("heading", { name: "Nothing said this time" })).toHaveCount(0);
-    });
-  });
-
   test("a graded round earns activity points separately from its last mission's +50", async ({
     browser,
   }) => {
@@ -234,16 +176,20 @@ test.describe("Pronunciation reviews", () => {
       await expect(
         prisma.userProgress.findUniqueOrThrow({ where: { userId: user.id } }),
       ).resolves.toMatchObject({ totalBrainPower: brainPowerBefore + 56n });
-
-      await captureMissionEnding(page, test.info(), "pronunciation");
     });
   });
 
-  test("opens the due words from Today and walks through them", async ({ browser }) => {
+  test("opens the due words from Today, walks through them, and starts afresh on each return", async ({
+    browser,
+  }) => {
     await asPersona(browser, { persona: "language" }, async ({ page, user }) => {
-      const { deposit, rent } = await seedDueWords(user.id);
+      // Opened by its link before any word is due, it says so and goes back to Today.
+      await page.goto(`/pronunciation?goal=${user.goalId}`);
+      await expect(page.getByRole("status")).toHaveText("No words to say again today.");
+      await page.getByRole("link", { exact: true, name: "Done" }).click();
+      await expect(page).toHaveURL(/\/today$/u);
 
-      await page.goto("/today");
+      const { deposit, rent } = await seedDueWords(user.id);
 
       const session = await prisma.studySession.findFirstOrThrow({
         orderBy: { createdAt: "desc" },
@@ -254,8 +200,9 @@ test.describe("Pronunciation reviews", () => {
         { anchor: {}, kind: "pronunciation", opens: { kind: "pronunciation" }, total: 1 },
       ]);
 
-      // Build the fixture before pronunciation and its prefetched return page are opened.
-      await page.reload();
+      // Fixtures bypass cache invalidation: Today reads again, keeping the pages it already has,
+      // so the link's next visit can't reuse the empty round.
+      await refreshRouter(page);
 
       const mission = page
         .getByRole("region", { name: "Today's missions" })
@@ -306,17 +253,21 @@ test.describe("Pronunciation reviews", () => {
         }),
       ).resolves.toBe(0);
 
-      await captureMissionEnding(page, test.info(), "pronunciation-skipped");
-
       await page.getByRole("link", { name: "Done" }).click();
       await expect(page).toHaveURL(/\/today$/u);
 
-      // Skipped words stay due: they come back until they're said.
-      await expect(
-        page
-          .getByRole("region", { name: "Today's missions" })
-          .getByRole("link", { name: /^Pronunciation/u }),
-      ).toBeVisible();
+      // Skipped words stay due: they come back until they're said, in a new round from the first.
+      await refreshRouter(page);
+      await expect(mission).toBeVisible();
+      await mission.click();
+      await expect(page.getByRole("progressbar", { name: "Word 1 of 2" })).toBeVisible();
+      await expect(card.getByText(rent.word, { exact: true })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Nothing said this time" })).toHaveCount(0);
+
+      // Before any recording, the screen's menu skips a word too.
+      await page.getByRole("button", { name: "Screen options" }).click();
+      await page.getByRole("menuitem", { name: "Skip this word" }).click();
+      await expect(card).toContainText(deposit.word);
     });
   });
 });

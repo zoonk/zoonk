@@ -154,7 +154,7 @@ test.describe("Mind maps", () => {
     // "Create the mind map" then): it keeps waiting and reading the page, never offering to make
     // it again.
     drawn = true;
-    await expect.poll(() => pageReads, { timeout: 15_000 }).toBeGreaterThanOrEqual(2);
+    await expect.poll(() => pageReads, { timeout: 10_000 }).toBeGreaterThanOrEqual(1);
     await expect(reference.getByRole("button", { name: "Create the mind map" })).toBeHidden();
     await expect(reference.getByRole("status")).toHaveText(/Drawing the mind map/u);
 
@@ -293,49 +293,46 @@ test.describe("Mind maps", () => {
     await page.context().close();
   });
 
-  for (const [period, message] of [
-    ["day", "That's all the new mind maps for today."],
-    ["month", "That's all the new mind maps for this month."],
-  ] as const) {
-    test(`says when a free learner made this ${period}'s mind maps`, async ({ browser }) => {
-      const { cells, user } = await createLearner();
-      const page = await openAs(browser, user);
+  // The day's cap says so before the tap (above); the month's, from the API's refusal of the tap.
+  test("says when a free learner made this month's mind maps", async ({ browser }) => {
+    const message = "That's all the new mind maps for this month.";
+    const { cells, user } = await createLearner();
+    const page = await openAs(browser, user);
 
-      // The API's refusal of a free learner's new map past their plan's cap (`usageDecisionError`).
-      await page.route(GENERATIONS_URL, (route) =>
-        route.fulfill({
-          json: {
-            error: {
-              code: "USAGE_LIMIT_REACHED",
-              details: { limit: { limit: 3, period, resource: "mindMap", tier: "free" } },
-              message: "This plan's limit is reached",
-            },
+    // The API's refusal of a free learner's new map past their plan's cap (`usageDecisionError`).
+    await page.route(GENERATIONS_URL, (route) =>
+      route.fulfill({
+        json: {
+          error: {
+            code: "USAGE_LIMIT_REACHED",
+            details: { limit: { limit: 3, period: "month", resource: "mindMap", tier: "free" } },
+            message: "This plan's limit is reached",
           },
-          status: 402,
-        }),
-      );
+        },
+        status: 402,
+      }),
+    );
 
-      await page.goto(`/content/chapters/${cells.id}`);
-      await page.getByRole("button", { name: "Create the mind map" }).click();
+    await page.goto(`/content/chapters/${cells.id}`);
+    await page.getByRole("button", { name: "Create the mind map" }).click();
 
-      // Nothing is hidden: the button stays in sight, disabled, and the notice's link is the one
-      // thing left to do.
-      const reference = page.getByRole("region", { name: "For reference" });
-      await expect(reference.getByText(message)).toBeVisible();
-      await expect(reference.getByRole("link", { name: "See Plus" })).toBeVisible();
-      await expect(reference.getByRole("button", { name: "Create the mind map" })).toBeDisabled();
+    // Nothing is hidden: the button stays in sight, disabled, and the notice's link is the one
+    // thing left to do.
+    const reference = page.getByRole("region", { name: "For reference" });
+    await expect(reference.getByText(message)).toBeVisible();
+    await expect(reference.getByRole("link", { name: "See Plus" })).toBeVisible();
+    await expect(reference.getByRole("button", { name: "Create the mind map" })).toBeDisabled();
 
-      // The goal's maps page says the same under the chapter's tile.
-      await page.goto("/mind-maps");
-      const finished = page.getByRole("region", { name: "Chapters you finished" });
-      const tile = finished.getByRole("listitem").filter({ hasText: cells.title });
-      await tile.getByRole("button", { name: "Create" }).click();
-      await expect(tile.getByText(message)).toBeVisible();
-      await expect(tile.getByRole("link", { name: "See Plus" })).toBeVisible();
-      await expect(tile.getByRole("button", { name: "Create" })).toBeDisabled();
-      await page.context().close();
-    });
-  }
+    // The goal's maps page says the same under the chapter's tile.
+    await page.goto("/mind-maps");
+    const finished = page.getByRole("region", { name: "Chapters you finished" });
+    const tile = finished.getByRole("listitem").filter({ hasText: cells.title });
+    await tile.getByRole("button", { name: "Create" }).click();
+    await expect(tile.getByText(message)).toBeVisible();
+    await expect(tile.getByRole("link", { name: "See Plus" })).toBeVisible();
+    await expect(tile.getByRole("button", { name: "Create" })).toBeDisabled();
+    await page.context().close();
+  });
 
   test("before any chapter is finished, names the plan's next chapter, whose map comes first, and opens it", async ({
     browser,

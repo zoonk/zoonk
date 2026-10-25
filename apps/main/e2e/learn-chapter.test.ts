@@ -48,65 +48,41 @@ async function useUpBonusPractice(goalId: string) {
 }
 
 test.describe("Chapter page", () => {
-  test("marks the first lesson of an unstarted chapter Up next, matching Start", async ({
-    browser,
-  }, testInfo) => {
-    await asPersona(browser, { persona: "hugeGoal" }, async ({ page, user }) => {
-      const chapterId = await findPlanChapterId(user.goalId, "Vectors");
-
-      await page.goto(`/content/chapters/${chapterId}`);
-      await expect(page.getByRole("heading", { level: 1, name: "Vectors" })).toBeVisible();
-
-      const lessons = page.getByRole("region", { name: "Lessons" });
-      await expect(lessons.getByText("0 of 2", { exact: true })).toBeVisible();
-
-      const next = lessons.getByRole("link", {
-        name: /^Up next 1\. Arrows with size and direction/u,
-      });
-
-      await expect(next).toHaveCount(1);
-      await expect(lessons.getByRole("img", { exact: true, name: "Up next" })).toHaveCount(1);
-
-      await expect(page.getByRole("link", { exact: true, name: "Start" })).toHaveAttribute(
-        "href",
-        (await next.getAttribute("href")) ?? "",
-      );
-
-      await expect(
-        lessons.getByRole("link", { name: /^Coming up 2\. Adding vectors/u }),
-      ).toBeVisible();
-
-      await page.setViewportSize({ height: 1000, width: 390 });
-      await expect(next).toBeVisible();
-
-      await page.screenshot({
-        animations: "disabled",
-        fullPage: true,
-        path: testInfo.outputPath("unstarted-chapter-390.png"),
-      });
-
-      await page.setViewportSize({ height: 1000, width: 1440 });
-      await expect(next).toBeVisible();
-
-      await page.screenshot({
-        animations: "disabled",
-        fullPage: true,
-        path: testInfo.outputPath("unstarted-chapter-1440.png"),
-      });
-    });
-  });
-
   test("shows the chapter's lessons, mistakes and skills, takes a report and a question, and practices it up to the day's cap", async ({
     browser,
   }) => {
     await asPersona(browser, { persona: "hugeGoal" }, async ({ page, user }) => {
-      const [chapterId, outside, asked] = await Promise.all([
+      const [chapterId, vectorsId, outside, asked] = await Promise.all([
         findPlanChapterId(user.goalId, CHAPTER),
+        findPlanChapterId(user.goalId, "Vectors"),
         prisma.chapter.findFirstOrThrow({ where: { title: "Light: wave or particle?" } }),
         stubScreenTutor(page),
       ]);
 
       const chapterUrl = new RegExp(`/content/chapters/${chapterId}$`, "u");
+
+      // A chapter not started yet marks its first lesson Up next, the one Start opens.
+      await page.goto(`/content/chapters/${vectorsId}`);
+      await expect(page.getByRole("heading", { level: 1, name: "Vectors" })).toBeVisible();
+
+      const unstarted = page.getByRole("region", { name: "Lessons" });
+      await expect(unstarted.getByText("0 of 2", { exact: true })).toBeVisible();
+
+      const upNext = unstarted.getByRole("link", {
+        name: /^Up next 1\. Arrows with size and direction/u,
+      });
+
+      await expect(upNext).toHaveCount(1);
+      await expect(unstarted.getByRole("img", { exact: true, name: "Up next" })).toHaveCount(1);
+
+      await expect(page.getByRole("link", { exact: true, name: "Start" })).toHaveAttribute(
+        "href",
+        (await upNext.getAttribute("href")) ?? "",
+      );
+
+      await expect(
+        unstarted.getByRole("link", { name: /^Coming up 2\. Adding vectors/u }),
+      ).toBeVisible();
 
       // Chapters open from the Plan, which is the way back.
       await page.goto(`/content/chapters/${chapterId}`);

@@ -162,37 +162,6 @@ function countTestedOut(goalId: string) {
  * the learner's tap. Tests never reach a model: the API's writing run is stood in for.
  */
 test.describe("Chapter test-out", () => {
-  test("a failed test does not offer itself again when returning to the chapter", async ({
-    browser,
-  }) => {
-    const { chapter, user, writeQuestions } = await createTestOutChapter({ skills: 4 });
-    await writeQuestions();
-    const page = await openAs(browser, user);
-
-    await page.route(GENERATIONS_URL, (route) =>
-      route.fulfill({ json: { generationId: null, status: "ready" }, status: 200 }),
-    );
-
-    await page.goto(`/content/chapters/${chapter.id}`);
-    await expect(page.getByRole("heading", { level: 1, name: chapter.title })).toBeVisible();
-    await page.getByRole("button", { name: "Take the test" }).click();
-
-    for (const number of [1, 2, 3, 4]) {
-      // oxlint-disable-next-line no-await-in-loop -- Each answer advances the actual test.
-      await expectQuestion(page, number, 4);
-      // oxlint-disable-next-line no-await-in-loop -- Each answer advances the actual test.
-      await page.getByRole("button", { name: "I don't know yet" }).click();
-    }
-
-    await expect(page.getByText("0 of 4 right", { exact: true })).toBeVisible();
-    await page.getByRole("link", { name: "Continue" }).click();
-    await expect(page.getByRole("heading", { level: 1, name: chapter.title })).toBeVisible();
-    await expect(page.getByRole("region", { name: "Lessons" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Take the test" })).toHaveCount(0);
-    await expect(page.getByText("Already know this?")).toHaveCount(0);
-    await page.context().close();
-  });
-
   test("opens from the chapter and takes off only the skills answered right", async ({
     browser,
   }) => {
@@ -321,7 +290,7 @@ test.describe("Chapter test-out", () => {
     await page.context().close();
   });
 
-  test("a grade that didn't go through says so, keeps the answers and sends them again", async ({
+  test("a grade that didn't go through says so, keeps the answers on the device after leaving, and sends them again", async ({
     browser,
   }) => {
     const SKILLS = 4;
@@ -335,15 +304,15 @@ test.describe("Chapter test-out", () => {
     const page = await openAs(browser, user);
     await page.goto(`/test-out/${chapter.id}`);
 
-    // The answers are graded by one server action once the last is in: the first one fails.
-    let failGrade = true;
+    // The answers are graded by one server action once the last is in: the first two fail.
+    let failedGrades = 0;
 
     await page.route("**/*", async (route) => {
       const request = route.request();
       const isAction = request.method() === "POST" && request.headers()["next-action"];
 
-      if (failGrade && isAction) {
-        failGrade = false;
+      if (failedGrades < 2 && isAction) {
+        failedGrades += 1;
         await route.abort();
         return;
       }
@@ -366,56 +335,6 @@ test.describe("Chapter test-out", () => {
     await expect(page.getByText("Not yet, and that's fine")).toBeHidden();
     await expectQuestion(page, SKILLS, SKILLS);
 
-    await failed.getByRole("button", { name: "Try again" }).click();
-
-    const result = page.getByRole("status").filter({ hasText: "You already know this" });
-    await expect(result.getByText(`${SKILLS} of ${SKILLS} right`)).toBeVisible();
-    await expect.poll(() => countTestedOut(goal.id)).toBe(SKILLS);
-    await page.context().close();
-  });
-
-  test("answers whose grade didn't go through stay on the device after leaving", async ({
-    browser,
-  }) => {
-    const SKILLS = 4;
-
-    const { chapter, user, writeQuestions } = await createTestOutChapter({
-      planned: true,
-      skills: SKILLS,
-    });
-
-    await writeQuestions();
-    const page = await openAs(browser, user);
-    await page.goto(`/test-out/${chapter.id}`);
-
-    // The answers are graded by one server action once the last is in: the first one fails.
-    let failGrade = true;
-
-    await page.route("**/*", async (route) => {
-      const request = route.request();
-      const isAction = request.method() === "POST" && request.headers()["next-action"];
-
-      if (failGrade && isAction) {
-        failGrade = false;
-        await route.abort();
-        return;
-      }
-
-      await route.fallback();
-    });
-
-    for (const number of [1, 2, 3, 4]) {
-      // oxlint-disable-next-line no-await-in-loop -- A test-out is answered one question at a time.
-      await expectQuestion(page, number, SKILLS);
-      // oxlint-disable-next-line no-await-in-loop -- Each answer waits for the one before.
-      await page.getByRole("radio", { exact: true, name: RIGHT }).click();
-      // oxlint-disable-next-line no-await-in-loop -- Each answer waits for the one before.
-      await page.getByRole("button", { name: /^(?:Next|Finish)$/u }).click();
-    }
-
-    const failed = page.getByRole("alert").filter({ hasText: "That didn't go through." });
-    await expect(failed).toBeVisible();
-
     // Leaving doesn't drop them: back on the test, it goes on from its last question.
     await page.getByRole("link", { name: "Leave" }).click();
     await expect(page).not.toHaveURL(/\/test-out\//u);
@@ -424,8 +343,13 @@ test.describe("Chapter test-out", () => {
     await page.getByRole("radio", { exact: true, name: RIGHT }).click();
     await page.getByRole("button", { name: /^Finish$/u }).click();
 
+    // That one doesn't go through either: Try again sends them.
+    await expect(failed).toBeVisible();
+    await failed.getByRole("button", { name: "Try again" }).click();
+
     const result = page.getByRole("status").filter({ hasText: "You already know this" });
     await expect(result.getByText(`${SKILLS} of ${SKILLS} right`)).toBeVisible();
+    await expect.poll(() => countTestedOut(goal.id)).toBe(SKILLS);
     await page.context().close();
   });
 
@@ -509,8 +433,12 @@ test.describe("Chapter test-out", () => {
     await expect(result.getByRole("heading", { name: "Not yet, and that's fine" })).toBeVisible();
     await expect(result.getByText(`0 of ${QUESTIONS} right`)).toBeVisible();
 
+    // Back on the chapter, a failed test doesn't offer itself again.
     await page.getByRole("link", { name: "Continue" }).click();
     await expect(page).toHaveURL(new RegExp(`/content/chapters/${chapter.id}$`, "u"));
+    await expect(page.getByRole("region", { name: "Lessons" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Take the test" })).toHaveCount(0);
+    await expect(page.getByText("Already know this?")).toHaveCount(0);
     await page.context().close();
   });
 

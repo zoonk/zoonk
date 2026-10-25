@@ -103,22 +103,6 @@ async function writeLessonElsewhere(lessonId: string) {
   await prisma.lesson.update({ data: { contentStatus: "completed" }, where: { id: lessonId } });
 }
 
-test("directly loading and reloading an unwritten lesson never requests generation", async ({
-  userWithoutProgress: page,
-}) => {
-  const lesson = await libraryLessonFixture();
-  const asked = await answerLessonWriting(page, [{ events: [], id: `e2e-${randomUUID()}` }]);
-
-  await page.goto(`/learn/${lesson.id}`);
-  await expect(page.getByText("This lesson isn't written yet")).toBeVisible();
-  await expect(page.getByRole("button", { name: "Start this lesson" })).toBeVisible();
-  expect(asked).toStrictEqual([]);
-
-  await page.reload();
-  await expect(page.getByRole("button", { name: "Start this lesson" })).toBeVisible();
-  expect(asked).toStrictEqual([]);
-});
-
 test("the in-app lesson click starts writing before navigating without an extra step", async ({
   browser,
 }) => {
@@ -186,16 +170,33 @@ test("a late writing response doesn't reopen a lesson the learner left", async (
   await page.context().close();
 });
 
-test("opens a lesson once another app writes it, though this app saw it unwritten", async ({
+test("loading an unwritten lesson asks for nothing, and it opens once another app writes it, though this app saw it unwritten", async ({
   userWithoutProgress: page,
 }) => {
   const unwritten = await libraryLessonFixture({
     title: `Electron clouds ${randomUUID().slice(0, 6)}`,
   });
 
+  const start = page.getByRole("button", { name: "Start this lesson" });
+  const asked: string[] = [];
+
+  page.on("request", (request) => {
+    if (request.url().includes("/generations")) {
+      asked.push(request.url());
+    }
+  });
+
   await failLessonWriting(page);
+
+  // Loading and reloading it asks for nothing: only the learner's tap does.
   await page.goto(`/learn/${unwritten.id}`);
-  await page.getByRole("button", { name: "Start this lesson" }).click();
+  await expect(page.getByText("This lesson isn't written yet")).toBeVisible();
+  await expect(start).toBeVisible();
+  await page.reload();
+  await expect(start).toBeVisible();
+  expect(asked).toStrictEqual([]);
+
+  await start.click();
   await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
 
   await writeLessonElsewhere(unwritten.id);
