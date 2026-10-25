@@ -1,16 +1,11 @@
-import { type Browser, type Locator, type Page } from "@playwright/test";
-import { ONBOARDING_QUESTIONS } from "@zoonk/core/view-models/onboarding/contract";
+import { type Locator } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
-import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
-import { createE2EUser } from "@zoonk/e2e/fixtures/users";
-import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
-import { goalWithBasesFixture } from "@zoonk/testing/fixtures/plan-bases";
 import { isJsonObject } from "@zoonk/utils/json";
+import { openLearnerWithBases } from "./bases-learner";
 import { expect, test } from "./fixtures";
 import { REPLAN_TIMEOUT_MS } from "./plan-timeouts";
 import { dayFromToday } from "./short-exam-fixtures";
-import { openAs } from "./study-day";
 import { routeBasesAdvice } from "./time-to-cover-routes";
 
 /**
@@ -19,9 +14,6 @@ import { routeBasesAdvice } from "./time-to-cover-routes";
  * time), with what the choices do before they're saved, and studying everything at their own pace
  * (an exam's after it, keeping its date; any other goal without its deadline, which can come back).
  */
-
-/** Every onboarding screen before the plan, so the goal has its Plan. */
-const ALL_ANSWERED = [...ONBOARDING_QUESTIONS, "buddy", "placement"];
 
 async function loadPlanSettings(goalId: string) {
   const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId } });
@@ -46,52 +38,6 @@ async function loadPlannedLessonKeys(skillId: string) {
 async function loadTargetDate(goalId: string) {
   const goal = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
   return goal.targetDate?.toISOString().slice(0, 10) ?? null;
-}
-
-/**
- * Starting the day Today shows (a POST) lays out the plan the goal's run handed over. The tap moves
- * to the session before its POST answers; the day's session commits with the plan, so it's there
- * once the plan is.
- */
-async function startTodaysDay({ goalId, page }: { goalId: string; page: Page }) {
-  await page.goto("/today");
-
-  await page
-    .getByRole("region", { name: "Today's session" })
-    .getByRole("button", { name: /^Start/u })
-    .click();
-
-  await expect.poll(() => prisma.studySession.count({ where: { goalId } })).toBe(1);
-}
-
-/** A learner whose plan builds on bases, with it as their active goal, who started their day. */
-async function openLearnerWithBases(
-  browser: Browser,
-  {
-    days,
-    kind,
-    subjectPerTopic,
-  }: { days: number; kind: "exam" | "learn"; subjectPerTopic?: boolean },
-) {
-  const user = await createE2EUser(getBaseURL());
-
-  const fixture = await goalWithBasesFixture({
-    days,
-    details: { answered: ALL_ANSWERED },
-    kind,
-    subjectPerTopic,
-    userId: user.id,
-  });
-
-  await learningProfileFixture({ activeGoalId: fixture.goal.id, userId: user.id });
-
-  const page = await openAs(browser, user);
-
-  await startTodaysDay({ goalId: fixture.goal.id, page });
-  await page.goto("/plan");
-  await expect(page.getByRole("heading", { level: 1, name: "Plan" })).toBeVisible();
-
-  return { ...fixture, page };
 }
 
 type AllChoice = "Essentials" | "In depth" | "Quick lesson" | "Skip";
@@ -361,28 +307,37 @@ test.describe("Plan choices", () => {
   test("an exam's plan reveal says what its time covers, with the topics and Adjust, and the other ways in the editor", async ({
     browser,
   }) => {
-    const user = await createE2EUser(getBaseURL());
-
-    const { goal } = await goalWithBasesFixture({
-      days: 30,
-      details: { answered: ALL_ANSWERED },
-      kind: "exam",
-      userId: user.id,
-    });
-
-    await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
-
-    const page = await openAs(browser, user);
-
     // Starting the day lays out the plan the reveal shows.
-    await startTodaysDay({ goalId: goal.id, page });
+    const { goal, page } = await openLearnerWithBases(browser, { days: 30, kind: "exam" });
     await page.goto(`/start/${goal.id}`);
     await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
+    await expect(page.getByText(/^\d+ days$/u)).toBeVisible();
 
     // One honest sentence on what her time covers, with the topics one tap away; the time step
-    // offered Find, and Adjust holds the rest: never four buttons that read alike.
+    // offered Find, and Adjust holds the rest: never four buttons that read alike, and nothing on
+    // it was searched for the page.
     const coverage = page.locator('[data-slot="reveal-coverage"]');
+
+    await expect(
+      coverage.getByText(
+        "15 min a day doesn't reach every topic: the ones that come up least are left out.",
+      ),
+    ).toBeVisible();
+
     await expect(coverage.getByRole("button")).toHaveText(["See topics"]);
+    await expect(page.getByRole("button", { name: /^Use .+ a day$/u })).toHaveCount(0);
+
+    await expect(
+      page.getByRole("button", { name: "Move your date to cover everything" }),
+    ).toHaveCount(0);
+
+    // What's on her exam, the moment she decides to trust the plan: its subjects and their topics.
+    await page.getByRole("button", { name: "See topics" }).click();
+    const structure = page.getByRole("dialog", { name: "What you'll study" });
+    await structure.getByRole("button", { name: /^Biology/u }).click();
+    await expect(structure.getByText("Heredity", { exact: true })).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(structure).toBeHidden();
 
     await page.getByRole("button", { exact: true, name: "Adjust" }).click();
     const editor = page.getByRole("dialog", { name: "Adjust your plan" });

@@ -108,7 +108,12 @@ async function lessonsDoneLearner() {
     scheduledFor: inDays(12),
   });
 
-  return { bosses: items.filter((item) => item.kind === "boss"), planId: plan.id, user };
+  return {
+    bosses: items.filter((item) => item.kind === "boss"),
+    goalId: goal.id,
+    planId: plan.id,
+    user,
+  };
 }
 
 function standingNumbers(page: Page) {
@@ -173,10 +178,10 @@ function countLessonsLeft(goalId: string) {
  * next agree.
  */
 test.describe("A plan whose lessons are all done", () => {
-  test("isn't finished while its challenges are left, and is once they're won", async ({
+  test("isn't finished while its challenges are left, and is once they're won, paused too", async ({
     browser,
   }) => {
-    const { bosses, planId, user } = await lessonsDoneLearner();
+    const { bosses, goalId, planId, user } = await lessonsDoneLearner();
     const page = await openAs(browser, user);
     await page.setViewportSize({ height: 900, width: 1440 });
     await openPlan(page);
@@ -252,14 +257,27 @@ test.describe("A plan whose lessons are all done", () => {
 
     await page.reload();
 
-    await expect(page.getByRole("button", { exact: true, name: "Pace Finished" })).toBeVisible();
+    // Finished, its pace reads "Finished", never days ahead of dates it no longer needs, on the
+    // Plan, its pace sheet and Today.
+    const pace = page.getByRole("button", { exact: true, name: "Pace Finished" });
+    const paceSheet = page.getByRole("dialog", { name: "Your pace" });
     await expect(page.getByRole("region", { name: "You finished your plan" })).toBeVisible();
     await expect(page.getByText("2 of 2 phases done", { exact: true })).toBeVisible();
     await expect(leftOut).toHaveAttribute("data-state", "leftOut");
+    await pace.click();
+    await expect(paceSheet.getByText("Plan finished", { exact: true })).toBeVisible();
+    await page.keyboard.press("Escape");
 
     // Today reads the same core status.
     await page.goto("/today");
     await expect(page.getByText(/Plan finished/u)).toBeVisible();
+
+    // A paused goal still keeps its finished plan's pace on a return visit.
+    await prisma.goal.update({ data: { status: "paused" }, where: { id: goalId } });
+    await page.setViewportSize({ height: 844, width: 390 });
+    await openPlan(page);
+    await pace.click();
+    await expect(paceSheet.getByText("Plan finished", { exact: true })).toBeVisible();
 
     await page.context().close();
   });
@@ -268,12 +286,17 @@ test.describe("A plan whose lessons are all done", () => {
   // time. His own time now fitted them, yet his Plan offered "10 min a day covers everything"
   // beside his 15, and a won challenge added lessons behind his back. The Plan offers what his
   // time fits, at his time, with its diff, Apply and Undo.
-  test("offers the lessons the learner's own time fits once every lesson is done", async ({
+  // Lucas's near date fitted part of his course. Once he finished what it held, his Plan offered
+  // the next level first and the rest of this goal second; a unit is finished before the next one
+  // starts (Duolingo, Khan Academy), so the rest comes first and the next level a few pages later.
+  test("offers the lessons the learner's own time fits once every lesson is done, and the rest of the goal before the next level once every challenge is too", async ({
     browser,
   }) => {
     await asPersona(browser, { persona: "buddy" }, async ({ page, user }) => {
       await page.setViewportSize({ height: 900, width: 1440 });
       await openPlan(page);
+
+      // He moves his date three days away: the plan keeps what fits and leaves the rest out.
       await moveDate(page, { days: 3, goalId: user.goalId });
 
       // He studies every lesson it holds; its challenges are still to win.
@@ -304,32 +327,12 @@ test.describe("A plan whose lessons are all done", () => {
       await expect.poll(() => countLessonsLeft(user.goalId)).toBe(0);
       await expect(firstLine).toHaveText(/Adds (?:about )?\d+ lessons?$/u);
       await expect(slot.getByRole("button", { exact: true, name: "Apply" })).toBeVisible();
-    });
-  });
 
-  // Lucas's near date fitted part of his course. Once he finished what it held, his Plan offered
-  // the next level first and the rest of this goal second; a unit is finished before the next one
-  // starts (Duolingo, Khan Academy), so the rest comes first and the next level a few pages later.
-  test("offers the rest of the goal before the next level when the date left some out", async ({
-    browser,
-  }) => {
-    await asPersona(browser, { persona: "buddy" }, async ({ page, user }) => {
-      await page.setViewportSize({ height: 900, width: 1440 });
-      await openPlan(page);
-
-      // He moves his date three days away: the plan keeps what fits and leaves the rest out.
-      await moveDate(page, { days: 3, goalId: user.goalId });
-
-      // He studies everything it holds, every challenge won.
+      // He wins every challenge too: everything the plan holds is done.
       await prisma.planItem.updateMany({
         data: { completedAt: new Date(), status: "done" },
         where: { plan: { goalId: user.goalId }, status: "todo" },
       });
-
-      await openPlan(page);
-
-      const slot = page.getByRole("group", { name: "Plan suggestion" }).filter({ visible: true });
-      const finished = slot.getByRole("region", { name: "You finished your plan" });
 
       // Main's E2E runs without the API: Find finds that 55 minutes a day cover everything.
       const goal = await prisma.goal.findUniqueOrThrow({ where: { id: user.goalId } });
@@ -342,14 +345,13 @@ test.describe("A plan whose lessons are all done", () => {
         },
       });
 
+      await openPlan(page);
+      const finished = slot.getByRole("region", { name: "You finished your plan" });
+
       // First what his own time fits of the rest by his date, then what his time covers, with the
       // time that covers it all when he asks, and only then the next level.
       await expect(slot.getByText("1 of 3").filter({ visible: true })).toBeVisible();
-
-      await expect(
-        slot.locator('[data-slot="diff-lines"]').getByRole("listitem").first(),
-      ).toHaveText(/Adds (?:about )?\d+ lessons?$/u);
-
+      await expect(firstLine).toHaveText(/Adds (?:about )?\d+ lessons?$/u);
       await expect(finished).toHaveCount(0);
       await slot.getByRole("button", { exact: true, name: "Next" }).click();
 
