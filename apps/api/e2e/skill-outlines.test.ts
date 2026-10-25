@@ -15,6 +15,7 @@ import {
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { skillOutlineGenerationSchema } from "../src/lib/openapi/schemas/skill-outlines";
 import { createAuthenticatedApiContext } from "./helpers/auth";
@@ -24,59 +25,40 @@ const ACCEPTED = 202;
 const PAYMENT_REQUIRED = 402;
 const DAY_MS = 86_400_000;
 
-/**
- * A goal whose plan has `count` topics, each of its own subject, all months away, none written
- * yet: while a subject's outline is being written, its other topics read as being written too.
- */
-async function createFarGoal({ count = 1, userId }: { count?: number; userId: string }) {
-  const [goal, topics] = await Promise.all([
+/** A goal whose plan has one topic of its own subject, months away, its lessons not written yet. */
+async function createFarGoal({ userId }: { userId: string }) {
+  const [goal, course, skill] = await Promise.all([
     goalFixture({ timezone: "UTC", title: "Learn statistics", userId }),
-    Promise.all(
-      Array.from({ length: count }, async () => {
-        const [course, skill] = await Promise.all([
-          courseFixture({ language: "en", title: `Statistics ${randomUUID().slice(0, 6)}` }),
-          skillFixture({ level: "beginner" }),
-        ]);
-
-        return { course, skill };
-      }),
-    ),
+    courseFixture({ language: "en", title: `Statistics ${randomUUID().slice(0, 6)}` }),
+    skillFixture({ level: "beginner" }),
   ]);
 
   const plan = await planFixture({
     goalId: goal.id,
     graph: {
       phases: [{ milestone: null, name: "One" }],
-      skills: topics.map(({ course, skill }) => ({
-        area: null,
-        courseIds: [course.id],
-        lessons: 12,
-        name: skill.name,
-        phase: 0,
-        skillId: skill.id,
-        weight: null,
-      })),
+      skills: [
+        {
+          area: null,
+          courseIds: [course.id],
+          lessons: 12,
+          name: skill.name,
+          phase: 0,
+          skillId: skill.id,
+          weight: null,
+        },
+      ],
     },
   });
 
-  await Promise.all(
-    topics.map(({ skill }, position) =>
-      planItemFixture({
-        planId: plan.id,
-        position,
-        scheduledFor: new Date(Date.now() + (60 + position) * DAY_MS),
-        skillId: skill.id,
-      }),
-    ),
-  );
+  await planItemFixture({
+    planId: plan.id,
+    position: 0,
+    scheduledFor: new Date(Date.now() + 60 * DAY_MS),
+    skillId: skill.id,
+  });
 
-  const [first] = topics;
-
-  if (!first) {
-    throw new Error("A far goal needs at least one topic.");
-  }
-
-  return { first, goal, topics };
+  return { first: { course, skill }, goal };
 }
 
 function outlinePath({ goalId, skillId }: { goalId: string; skillId: string }) {
@@ -208,17 +190,17 @@ test.describe("Far topics' lesson plans API", () => {
       prefix: "outline-limit",
     });
 
-    const { goal, topics } = await createFarGoal({ count: 4, userId: user.id });
-    const statuses: number[] = [];
+    // Three topics written today, each counted once as a request counts it (see above).
+    const [{ first, goal }] = await Promise.all([
+      createFarGoal({ userId: user.id }),
+      usageRecordsFixture({ count: 3, kind: "outline", userId: user.id }),
+    ]);
 
-    for (const { skill } of topics) {
-      const path = outlinePath({ goalId: goal.id, skillId: skill.id });
-      // oxlint-disable-next-line no-await-in-loop -- each request counts the ones before it.
-      const response = await apiContext.post(`${path}/generations`);
-      statuses.push(response.status());
-    }
+    const response = await apiContext.post(
+      `${outlinePath({ goalId: goal.id, skillId: first.skill.id })}/generations`,
+    );
 
-    expect(statuses).toStrictEqual([ACCEPTED, ACCEPTED, ACCEPTED, PAYMENT_REQUIRED]);
+    expect(response.status()).toBe(PAYMENT_REQUIRED);
 
     await apiContext.dispose();
   });
