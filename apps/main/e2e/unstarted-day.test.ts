@@ -345,45 +345,6 @@ function isSessionFor(goalId: string) {
 }
 
 test.describe("An unstarted day", () => {
-  test("Today previews the day without saving it and loads only the session screen's shell", async ({
-    browser,
-  }) => {
-    await asUnstartedDay(browser, {}, async ({ day, page }) => {
-      const sessionRequests: (string | undefined)[] = [];
-
-      page.on("request", (request) => {
-        if (new URL(request.url()).pathname === "/session") {
-          sessionRequests.push(request.headers()["next-router-prefetch"]);
-        }
-      });
-
-      await page.goto("/today");
-
-      await expect(todaySession(page).getByRole("listitem")).toHaveText(
-        [
-          /^(?:Quick review|Reviews)\s+\d+\smin$/u,
-          new RegExp(`^${day.lessons[1]?.title}\\s+\\d+\\smin$`, "u"),
-          new RegExp(`^${day.lessons[2]?.title}\\s+\\d+\\smin$`, "u"),
-          /^Practice mistakes\s+\d+\smin$/u,
-        ],
-        { useInnerText: true },
-      );
-
-      await expect(
-        todaySession(page).getByRole("img", { exact: true, name: "0 of 4 done" }),
-      ).toBeVisible();
-
-      await expect(page.getByRole("button", { name: "Start session" })).toBeEnabled();
-      await page.waitForLoadState("networkidle");
-      await expect(countSessions(day.user.id)).resolves.toBe(0);
-
-      // The session screen's static shell only ("1", or "3" for a runtime shell): a link's own
-      // prefetch ("2", or none for a full one) would read the unopened day a second time.
-      expect(sessionRequests, "Today prefetches the session screen's shell").not.toHaveLength(0);
-      expect(sessionRequests.filter((kind) => kind !== "1" && kind !== "3")).toStrictEqual([]);
-    });
-  });
-
   test("Start shows the review at once on a slow phone, then opens it in place", async ({
     browser,
   }) => {
@@ -464,11 +425,42 @@ test.describe("An unstarted day", () => {
     });
   });
 
-  test("the day it opens is the day Today showed, and Today goes on with it", async ({
+  test("Today previews the day without saving it, and the day it opens is the day Today showed", async ({
     browser,
   }) => {
     await asUnstartedDay(browser, {}, async ({ day, opens, page }) => {
+      const sessionRequests: (string | undefined)[] = [];
+
+      page.on("request", (request) => {
+        if (new URL(request.url()).pathname === "/session") {
+          sessionRequests.push(request.headers()["next-router-prefetch"]);
+        }
+      });
+
       await openToday(page);
+
+      await expect(todaySession(page).getByRole("listitem")).toHaveText(
+        [
+          /^(?:Quick review|Reviews)\s+\d+\smin$/u,
+          new RegExp(`^${day.lessons[1]?.title}\\s+\\d+\\smin$`, "u"),
+          new RegExp(`^${day.lessons[2]?.title}\\s+\\d+\\smin$`, "u"),
+          /^Practice mistakes\s+\d+\smin$/u,
+        ],
+        { useInnerText: true },
+      );
+
+      await expect(
+        todaySession(page).getByRole("img", { exact: true, name: "0 of 4 done" }),
+      ).toBeVisible();
+
+      await expect(countSessions(day.user.id)).resolves.toBe(0);
+
+      // The session screen's static shell only ("1", or "3" for a runtime shell): a link's own
+      // prefetch ("2", or none for a full one) would read the unopened day a second time.
+      expect(sessionRequests, "Today prefetches the session screen's shell").not.toHaveLength(0);
+      expect(sessionRequests.filter((kind) => kind !== "1" && kind !== "3")).toStrictEqual([]);
+
+      // Start opens that day, and Today goes on with it.
       const shown = await readTodaySteps(page);
 
       await page.getByRole("button", { name: "Start session" }).click();

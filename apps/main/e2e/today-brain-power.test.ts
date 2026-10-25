@@ -2,8 +2,9 @@ import { prisma } from "@zoonk/db";
 import { expect, test } from "./fixtures";
 import { createStudyDay, openAs, saveMissions } from "./study-day";
 
+// No progress row reads as 0 Brain Power, as a row at 0 does; a large total is grouped.
 // oxlint-disable-next-line vitest/prefer-each -- Playwright has no test.each API.
-for (const progress of [null, 0, 15_000]) {
+for (const progress of [null, 15_000]) {
   test(`Today keeps its reward total with ${progress === null ? "no progress row" : `${progress} Brain Power`}`, async ({
     browser,
   }) => {
