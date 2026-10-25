@@ -3,7 +3,6 @@ import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { cleanupVerifications, disconnectDb, getOTPForEmail } from "./helpers/db";
 
-const TEST_EMAIL = `e2e-otp-${Date.now()}@zoonk.test`;
 const REDIRECT_URL = "http://localhost:49152/test";
 
 /** Holds each request to `url` until the test lets it through, like a slow phone network. */
@@ -19,29 +18,12 @@ async function holdRequests(page: Page, url: string) {
 
 test.describe("OTP Login Flow", () => {
   test.afterAll(async () => {
-    await cleanupVerifications(TEST_EMAIL);
     await disconnectDb();
   });
 
-  test("completes email submission and shows OTP page", async ({ page }) => {
-    await page.goto(`/auth/login?redirectTo=${encodeURIComponent(REDIRECT_URL)}`);
-    await page.getByLabel(/email/iu).fill(TEST_EMAIL);
-    await page.getByRole("button", { name: /^continue$/iu }).click();
-    await page.waitForURL(/\/auth\/otp/u);
-
-    await expect(page.getByRole("heading", { name: /check your email/iu })).toBeVisible();
-
-    await expect(page.getByText(TEST_EMAIL)).toBeVisible();
-
-    // Ready for the code at once: focused, with the phone's number pad and its code suggestion.
-    const code = page.getByRole("textbox", { name: "Code from the email" });
-
-    await expect(code).toBeFocused();
-    await expect(code).toHaveAttribute("inputmode", "numeric");
-    await expect(code).toHaveAttribute("autocomplete", "one-time-code");
-  });
-
-  test("validates OTP and redirects to setup for new user", async ({ page }) => {
+  test("asks for the emailed code, which pasted signs a new account in to its setup", async ({
+    page,
+  }) => {
     const email = `e2e-otp-validate-${Date.now()}@zoonk.test`;
 
     await page.goto(`/auth/login?redirectTo=${encodeURIComponent(REDIRECT_URL)}`);
@@ -49,15 +31,23 @@ test.describe("OTP Login Flow", () => {
     await page.getByRole("button", { name: /^continue$/iu }).click();
     await page.waitForURL(/\/auth\/otp/u);
 
+    await expect(page.getByRole("heading", { name: /check your email/iu })).toBeVisible();
+    await expect(page.getByText(email)).toBeVisible();
+
+    // Ready for the code at once: focused, with the phone's number pad and its code suggestion.
+    const input = page.getByRole("textbox", { name: "Code from the email" });
+
+    await expect(input).toBeFocused();
+    await expect(input).toHaveAttribute("inputmode", "numeric");
+    await expect(input).toHaveAttribute("autocomplete", "one-time-code");
+
     const otp = await getOTPForEmail(email);
 
     if (!otp) {
       throw new Error("OTP not found in database");
     }
 
-    // Pasted straight into the focused input, even copied with a space in the middle. The paste
-    // waits for the input to take focus, as a learner's does: the form arrives after the URL does.
-    const input = page.getByRole("textbox", { name: "Code from the email" });
+    // Pasted straight into the focused input, even copied with a space in the middle.
     await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
 
     await page.evaluate(
@@ -65,7 +55,6 @@ test.describe("OTP Login Flow", () => {
       `${otp.slice(0, 3)} ${otp.slice(3)}`,
     );
 
-    await expect(input).toBeFocused();
     await page.keyboard.press("ControlOrMeta+V");
 
     // The sixth digit sends the code: nothing else to press.
@@ -78,35 +67,7 @@ test.describe("OTP Login Flow", () => {
     await cleanupVerifications(email);
   });
 
-  test("shows error for invalid OTP", async ({ page }) => {
-    await page.goto(`/auth/login?redirectTo=${encodeURIComponent(REDIRECT_URL)}`);
-    await page.getByLabel(/email/iu).fill(TEST_EMAIL);
-    await page.getByRole("button", { name: /^continue$/iu }).click();
-    await page.waitForURL(/\/auth\/otp/u);
-
-    await page.getByRole("textbox").click();
-    await page.keyboard.type("000000");
-
-    await expect(
-      page.getByText("That code isn't right. Check the email and try again."),
-    ).toBeVisible();
-
-    // Continue tries the same code again from the keyboard, also after the connection drops.
-    await expect(page.getByRole("button", { name: /^continue$/iu })).toBeEnabled();
-    await page.route("**/sign-in/email-otp", (route) => route.abort("internetdisconnected"));
-    await page.keyboard.press("Enter");
-
-    await expect(page.getByText("Something went wrong. Try again in a moment.")).toBeVisible();
-
-    await page.unroute("**/sign-in/email-otp");
-    await page.keyboard.press("Enter");
-
-    await expect(
-      page.getByText("That code isn't right. Check the email and try again."),
-    ).toBeVisible();
-  });
-
-  test("after too many wrong tries, asks for a new code, and the new code signs in", async ({
+  test("says a code is wrong, retries it after a dropped connection, and after too many wrong tries asks for a new code that signs in", async ({
     page,
   }) => {
     const email = `e2e-otp-attempts-${Date.now()}@zoonk.test`;
@@ -120,6 +81,7 @@ test.describe("OTP Login Flow", () => {
     const wrongCode = code === "000000" ? "111111" : "000000";
     const input = page.getByRole("textbox", { name: "Code from the email" });
     const continueButton = page.getByRole("button", { name: /^continue$/iu });
+    const wrong = page.getByText("That code isn't right. Check the email and try again.");
     const tooMany = page.getByText("Too many wrong tries with this code. Get a new one.");
 
     /**
@@ -140,12 +102,20 @@ test.describe("OTP Login Flow", () => {
     }
 
     await tryCode(wrongCode);
+    await expect(wrong).toBeVisible();
 
-    await expect(
-      page.getByText("That code isn't right. Check the email and try again."),
-    ).toBeVisible();
+    // Continue tries the same code again from the keyboard, also after the connection drops: a try
+    // that never reaches auth doesn't count.
+    await expect(continueButton).toBeEnabled();
+    await page.route("**/sign-in/email-otp", (route) => route.abort("internetdisconnected"));
+    await page.keyboard.press("Enter");
 
-    await tryCode(wrongCode);
+    await expect(page.getByText("Something went wrong. Try again in a moment.")).toBeVisible();
+
+    await page.unroute("**/sign-in/email-otp");
+    await page.keyboard.press("Enter");
+    await expect(wrong).toBeVisible();
+
     await tryCode(wrongCode);
 
     // Auth allows three tries per code: the fourth, even the right code, says the code is gone.
@@ -295,7 +265,7 @@ test.describe("OTP Login Flow", () => {
 
   test("allows changing email (back to login)", async ({ page }) => {
     await page.goto(
-      `/auth/otp?email=${encodeURIComponent(TEST_EMAIL)}&redirectTo=${encodeURIComponent(REDIRECT_URL)}`,
+      `/auth/otp?email=${encodeURIComponent("e2e-otp-change@zoonk.test")}&redirectTo=${encodeURIComponent(REDIRECT_URL)}`,
     );
 
     const continueButton = page.getByRole("button", { name: /^continue$/iu });
@@ -313,50 +283,5 @@ test.describe("OTP Login Flow", () => {
     await expect(
       page.getByRole("heading", { name: /sign in or create an account/iu }),
     ).toBeVisible();
-  });
-
-  test("handles redirect URL with trailing slash without double slashes", async ({ page }) => {
-    const trailingSlashUrl = "http://localhost:49152/test/";
-    const email = `e2e-otp-trailing-${Date.now()}@zoonk.test`;
-
-    await page.goto(`/auth/login?redirectTo=${encodeURIComponent(trailingSlashUrl)}`);
-    await page.getByLabel(/email/iu).fill(email);
-    await page.getByRole("button", { name: /^continue$/iu }).click();
-    await page.waitForURL(/\/auth\/otp/u);
-
-    const otp = await getOTPForEmail(email);
-
-    if (!otp) {
-      throw new Error("OTP not found in database");
-    }
-
-    await page.getByRole("textbox").click();
-    await page.keyboard.type(otp);
-
-    // New user will be redirected to setup first
-    await page.waitForURL(/\/auth\/setup/u);
-
-    // Complete setup to continue the redirect flow
-    await page.getByRole("textbox", { name: /^name$/iu }).fill("Trailing Slash User");
-
-    // Register listener BEFORE the click that triggers the redirect.
-    // waitForRequest only captures requests after registration,
-    // so registering after click risks missing fast redirects.
-    const redirectPromise = page.waitForRequest((req) => {
-      const url = req.url();
-      return url.startsWith("http://localhost:49152/test/") && url.length > 28;
-    });
-
-    await page.getByRole("button", { name: /^continue$/iu }).click();
-
-    const redirectRequest = await redirectPromise;
-    const redirectUrl = new URL(redirectRequest.url());
-
-    // Verify no double slashes in the path
-    expect(redirectUrl.pathname).not.toContain("//");
-    // Verify token is present
-    expect(redirectUrl.searchParams.get("token")).toBeTruthy();
-
-    await cleanupVerifications(email);
   });
 });

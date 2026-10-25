@@ -15,62 +15,19 @@ test.describe("Login Page", () => {
     await expect(page.getByRole("heading", { name: "Confira seu email" })).toBeVisible();
   });
 
-  test("displays login form with email input and social buttons", async ({ page }) => {
-    await page.goto("/auth/login");
-
-    // Verify heading
-    await expect(
-      page.getByRole("heading", { name: /sign in or create an account/iu }),
-    ).toBeVisible();
-
-    // Verify email form elements
-    await expect(page.getByLabel(/email/iu)).toBeVisible();
-
-    await expect(page.getByRole("button", { name: /^continue$/iu })).toBeVisible();
-
-    // Verify social login buttons
-    await expect(page.getByRole("button", { name: /continue with google/iu })).toBeVisible();
-
-    await expect(page.getByRole("button", { name: /continue with apple/iu })).toBeVisible();
-  });
-
-  test("shows a validation error when Better Auth rejects the email", async ({ page }) => {
-    await page.goto("/auth/login");
-
-    const emailInput = page.getByLabel(/email/iu);
-
-    await emailInput.fill("not-an-email");
-    await emailInput.evaluate((input) => input.closest("form")?.setAttribute("novalidate", ""));
-    await page.getByRole("button", { name: /^continue$/iu }).click();
-
-    await expect(page).toHaveURL(/\/auth\/login/u);
-    await expect(page.getByText(/enter a valid email address/iu)).toBeVisible();
-  });
-
-  test("says when the last sign-in couldn't finish", async ({ page }) => {
-    await page.goto("/auth/login?error=expired");
-    await expect(page.getByText("That sign-in expired. Try again.")).toBeVisible();
-
-    await page.goto("/auth/login");
-    await expect(page.getByText("That sign-in expired. Try again.")).toBeHidden();
-  });
-
-  test("the brain goes back to the app that started the sign-in", async ({ page }) => {
-    const appCallback = "http://localhost:49152/auth/callback?state=abc";
-
-    await page.goto(`/auth/login?redirectTo=${encodeURIComponent(appCallback)}`);
-
-    await expect(page.getByRole("link", { name: "Back to Zoonk" })).toHaveAttribute(
-      "href",
-      "http://localhost:49152",
-    );
-  });
-
-  test("without an app to go back to, the brain and the legal links go to the main app", async ({
+  test("shows the sign-in options, links to the main app and says when Better Auth rejects the email", async ({
     page,
   }) => {
     await page.goto("/auth/login");
 
+    await expect(
+      page.getByRole("heading", { name: /sign in or create an account/iu }),
+    ).toBeVisible();
+
+    await expect(page.getByRole("button", { name: /continue with google/iu })).toBeVisible();
+    await expect(page.getByRole("button", { name: /continue with apple/iu })).toBeVisible();
+
+    // Without an app to go back to, the brain and the legal links go to the main app.
     await expect(page.getByRole("link", { name: "Back to Zoonk" })).toHaveAttribute(
       "href",
       MAIN_APP_URL,
@@ -85,9 +42,18 @@ test.describe("Login Page", () => {
       "href",
       `${MAIN_APP_URL}/privacy`,
     );
+
+    const emailInput = page.getByLabel(/email/iu);
+
+    await emailInput.fill("not-an-email");
+    await emailInput.evaluate((input) => input.closest("form")?.setAttribute("novalidate", ""));
+    await page.getByRole("button", { name: /^continue$/iu }).click();
+
+    await expect(page).toHaveURL(/\/auth\/login/u);
+    await expect(page.getByText(/enter a valid email address/iu)).toBeVisible();
   });
 
-  test("the code page without an email starts over, still going back to the same app", async ({
+  test("the code page without an email starts over, the brain still going back to the app that started", async ({
     page,
   }) => {
     const appCallback = "http://localhost:49152/auth/callback?state=abc";
@@ -97,6 +63,11 @@ test.describe("Login Page", () => {
     await expect(page).toHaveURL(/\/auth\/login\?/u);
     expect(new URL(page.url()).searchParams.get("redirectTo")).toBe(appCallback);
     await expect(page.getByText(/undefined/u)).toHaveCount(0);
+
+    await expect(page.getByRole("link", { name: "Back to Zoonk" })).toHaveAttribute(
+      "href",
+      "http://localhost:49152",
+    );
   });
 
   test("signing in directly on the API ends in the main app", async ({ page }) => {

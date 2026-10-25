@@ -33,6 +33,7 @@ test("central login keeps its form on an error and rejects a revoked cached sess
     await page.goto("/auth/login");
     await expect(page.getByLabel("Email")).toBeVisible();
     await expect(page).toHaveURL(/\/auth\/login$/u);
+    await expect(page.getByText("That sign-in expired. Try again.")).toBeHidden();
   } finally {
     await context.close();
     await apiContext.dispose();

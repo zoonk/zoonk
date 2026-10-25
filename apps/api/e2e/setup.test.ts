@@ -5,9 +5,17 @@ import { cleanupVerifications, disconnectDb, getOTPForEmail } from "./helpers/db
 
 const REDIRECT_URL = "http://localhost:49152/test";
 
-/** Signs a new email in through the code and lands on the profile setup. */
-async function signUpToSetup(page: Page, email: string) {
-  await page.goto(`/auth/login?redirectTo=${encodeURIComponent(REDIRECT_URL)}`);
+/** Signs an email in through the code and lands on the profile setup. */
+async function signInToSetup({
+  email,
+  page,
+  redirectTo = REDIRECT_URL,
+}: {
+  email: string;
+  page: Page;
+  redirectTo?: string;
+}) {
+  await page.goto(`/auth/login?redirectTo=${encodeURIComponent(redirectTo)}`);
   await page.getByLabel(/email/iu).fill(email);
   await page.getByRole("button", { name: /^continue$/iu }).click();
   await page.waitForURL(/\/auth\/otp/u);
@@ -19,8 +27,7 @@ async function signUpToSetup(page: Page, email: string) {
   }
 
   // The sixth digit sends the code.
-  await page.getByRole("textbox").click();
-  await page.keyboard.type(otp);
+  await page.getByRole("textbox", { name: "Code from the email" }).fill(otp);
 
   await page.waitForURL(/\/auth\/setup/u);
 }
@@ -30,17 +37,30 @@ test.describe("Profile Setup Flow", () => {
     await disconnectDb();
   });
 
-  test("a new account gives its name; the username starts from the email and can change", async ({
+  test("a new account gives its name; the username starts from the email and is checked as it changes", async ({
     page,
   }) => {
     const prefix = `e2esetup${Date.now()}`;
     const email = `${prefix}@zoonk.test`;
     const chosen = `${prefix}_x`;
+    // A return address ending in a slash gets the token without a second slash.
+    const redirectTo = `${REDIRECT_URL}/`;
 
-    await signUpToSetup(page, email);
+    await signInToSetup({ email, page, redirectTo });
+
+    const name = page.getByRole("textbox", { exact: true, name: "Name" });
+    const submit = page.getByRole("button", { name: /^continue$/iu });
 
     await expect(page.getByRole("heading", { name: "What should we call you?" })).toBeVisible();
-    await expect(page.getByRole("textbox", { exact: true, name: "Name" })).toBeFocused();
+    await expect(name).toBeFocused();
+
+    // A blank name keeps the setup.
+    await name.fill("   ");
+    await name.evaluate((input) => input.closest("form")?.setAttribute("novalidate", ""));
+    await submit.click();
+
+    await expect(page.getByText("We couldn't save your profile. Try again.")).toBeVisible();
+    await expect(page).toHaveURL(/\/auth\/setup/u);
 
     // The username is already picked, as a line under the name, until the learner changes it.
     await expect(page.getByText(`Your username: @${prefix}`)).toBeVisible();
@@ -50,21 +70,35 @@ test.describe("Profile Setup Flow", () => {
     await expect(username).toHaveValue(prefix);
     await expect(username).toBeFocused();
 
-    await page.getByRole("textbox", { exact: true, name: "Name" }).fill("Test User");
+    // A taken or badly formed username says why and waits for a good one.
+    await username.fill("admin");
+    await expect(page.getByText("admin is already taken")).toBeVisible();
+    await expect(submit).toBeDisabled();
+
+    await username.fill("ab");
+
+    await expect(
+      page.getByText("3-30 characters. Letters, numbers, and underscores only."),
+    ).toBeVisible();
+
+    await expect(username).toHaveAttribute("aria-invalid", "true");
+    await expect(submit).toBeDisabled();
+
+    await name.fill("Test User");
     await username.fill(chosen);
     await expect(page.getByText(`${chosen} is available`)).toBeVisible();
 
     const redirectPromise = page.waitForRequest((req) => {
       const url = req.url();
-      return url.startsWith(REDIRECT_URL) && new URL(url).searchParams.has("token");
+      return url.startsWith(redirectTo) && new URL(url).searchParams.has("token");
     });
 
-    await page.getByRole("button", { name: /^continue$/iu }).click();
+    await submit.click();
 
     const redirectRequest = await redirectPromise;
     const redirectUrl = new URL(redirectRequest.url());
 
-    expect(`${redirectUrl.origin}${redirectUrl.pathname}`).toBe(REDIRECT_URL);
+    expect(`${redirectUrl.origin}${redirectUrl.pathname}`).toBe(redirectTo);
     expect(redirectUrl.searchParams.get("token")).toBeTruthy();
 
     await expect(prisma.user.findUniqueOrThrow({ where: { email } })).resolves.toMatchObject({
@@ -86,14 +120,7 @@ test.describe("Profile Setup Flow", () => {
     // Named, without a username: a native sign-up that left its setup, or one whose username was taken.
     await prisma.user.create({ data: { email, emailVerified: true, name: "Named Learner" } });
 
-    await page.goto(`/auth/login?redirectTo=${encodeURIComponent(REDIRECT_URL)}`);
-    await page.getByLabel(/email/iu).fill(email);
-    await page.getByRole("button", { name: /^continue$/iu }).click();
-    await page.waitForURL(/\/auth\/otp/u);
-
-    const otp = await getOTPForEmail(email);
-    await page.getByRole("textbox", { name: "Code from the email" }).fill(otp ?? "");
-    await page.waitForURL(/\/auth\/setup/u);
+    await signInToSetup({ email, page });
 
     await expect(prisma.user.findUniqueOrThrow({ where: { email } })).resolves.toMatchObject(
       unnamed,
@@ -133,49 +160,6 @@ test.describe("Profile Setup Flow", () => {
     expect(location.searchParams.get("token")).toBeTruthy();
 
     await expect(prisma.user.findUniqueOrThrow({ where: { email } })).resolves.toStrictEqual(saved);
-
-    await cleanupVerifications(email);
-  });
-
-  test("says when a username is taken or doesn't follow the rule, and waits for a good one", async ({
-    page,
-  }) => {
-    const email = `e2e-setup-taken-${Date.now()}@zoonk.test`;
-
-    await signUpToSetup(page, email);
-    await page.getByRole("button", { name: "Change username" }).click();
-
-    const username = page.getByRole("textbox", { exact: true, name: "Username" });
-    const submit = page.getByRole("button", { name: /^continue$/iu });
-
-    await username.fill("admin");
-    await expect(page.getByText("admin is already taken")).toBeVisible();
-    await expect(submit).toBeDisabled();
-
-    await username.fill("ab");
-
-    await expect(
-      page.getByText("3-30 characters. Letters, numbers, and underscores only."),
-    ).toBeVisible();
-
-    await expect(username).toHaveAttribute("aria-invalid", "true");
-    await expect(submit).toBeDisabled();
-
-    await cleanupVerifications(email);
-  });
-
-  test("keeps the setup when the name is blank", async ({ page }) => {
-    const email = `e2e-setup-blank-${Date.now()}@zoonk.test`;
-
-    await signUpToSetup(page, email);
-
-    const name = page.getByRole("textbox", { exact: true, name: "Name" });
-    await name.fill("   ");
-    await name.evaluate((input) => input.closest("form")?.setAttribute("novalidate", ""));
-    await page.getByRole("button", { name: /^continue$/iu }).click();
-
-    await expect(page.getByText("We couldn't save your profile. Try again.")).toBeVisible();
-    await expect(page).toHaveURL(/\/auth\/setup/u);
 
     await cleanupVerifications(email);
   });
