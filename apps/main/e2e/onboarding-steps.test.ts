@@ -341,7 +341,9 @@ test.describe("When a wait can't go on", () => {
     await deep.click();
     await expect(deep).toBeChecked();
 
-    await page.clock.runFor(RUN_START_LIMIT_MS);
+    // The clock jumps past the limit: running through it would fire the 2 s ask for the run's id
+    // some 20 times at once, and as Server Actions go one at a time, Try again would wait behind them.
+    await page.clock.fastForward(RUN_START_LIMIT_MS);
 
     const notice = page
       .getByRole("alert")
