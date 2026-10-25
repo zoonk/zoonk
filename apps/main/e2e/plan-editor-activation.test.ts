@@ -178,6 +178,7 @@ test("a time change on a plan without a date says its new end, as the Plan write
     await page.goto("/plan");
     await page.getByRole("button", { name: "Adjust plan" }).click();
     const editor = page.getByRole("dialog", { name: "Adjust your plan" });
+
     await editor
       .getByRole("radiogroup", { name: "Time a day" })
       .getByText("1 hr", { exact: true })
