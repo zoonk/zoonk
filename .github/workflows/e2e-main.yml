@@ -51,7 +51,7 @@ jobs:
       BETTER_AUTH_SECRET: test-secret-for-ci
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/zoonk_e2e
       DATABASE_URL_UNPOOLED: postgres://postgres:postgres@localhost:5432/zoonk_e2e
-      E2E_SERVERS: "2"
+      E2E_SERVERS: "3"
       E2E_TESTING: "true"
       MAIN_PERF_GATES: ${{ matrix.gates && 'true' || 'false' }}
       NEXT_PUBLIC_APP_DOMAIN: localhost:3000
@@ -120,7 +120,7 @@ jobs:
       # Migrates the database, builds and starts the API, builds Main (timing it and checking its
       # performance budgets in the gates job), then runs the job's tests.
       - name: Run E2E tests
-        run: pnpm e2e:main ${{ matrix.args }} --workers=2
+        run: pnpm e2e:main ${{ matrix.args }} --workers=3
 
       - name: Show CPU samples (temporary)
         if: always()
