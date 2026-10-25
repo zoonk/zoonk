@@ -3,6 +3,7 @@
 import { Button } from "@zoonk/ui/components/button";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { useExtracted } from "next-intl";
+import { type ReactNode } from "react";
 import { EnterButton } from "../_components/enter-button";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
 import { type TestOutStart } from "../_components/test-out-start-link";
@@ -94,17 +95,20 @@ function OutsideSession({ onContinue }: { onContinue: () => Promise<boolean> }) 
 /**
  * The header over a lesson's completion moment when it's one of today's blocks: the session's,
  * with the day as one segment per block (each as long as its minutes when the day's `blocks` are
- * given), like between every other block, in place of the lesson's own segments. Nothing until
- * the lesson is saved (the lesson's header stays meanwhile).
+ * given), like between every other block, in place of the lesson's own segments, and the lesson's
+ * `menu` (its summary card). Nothing until the lesson is saved (the lesson's header stays
+ * meanwhile).
  */
 export function LessonMomentHeader({
   blocks,
   completion,
   exitHref,
+  menu,
 }: {
   blocks?: readonly StudyBlock[];
   completion: LessonMomentCompletion;
   exitHref: string;
+  menu?: ReactNode;
 }) {
   const moment = completion.result?.studyBlock ?? null;
 
@@ -116,7 +120,9 @@ export function LessonMomentHeader({
     ? getSessionQueue({ blocks, finishedId: moment.blockId, nextId: moment.nextBlockId }).rows
     : undefined;
 
-  return <SessionHeader exitHref={exitHref} queue={queue} sessionBar={moment.sessionBar} />;
+  return (
+    <SessionHeader exitHref={exitHref} menu={menu} queue={queue} sessionBar={moment.sessionBar} />
+  );
 }
 
 /**

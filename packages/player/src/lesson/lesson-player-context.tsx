@@ -48,9 +48,10 @@ export type LessonPlayerSlots = {
   /**
    * The header over the completion moment, in place of the lesson's, such as the day's session
    * over a session block's moment. While it returns null (the lesson isn't saved yet), the
-   * lesson's header stays.
+   * lesson's header stays. It puts the lesson's `menu` at its end, which keeps the lesson's
+   * summary card one tap away.
    */
-  completionHeader?: (props: LessonCompletionSlotProps) => ReactNode;
+  completionHeader?: (props: LessonCompletionSlotProps & { menu: ReactNode }) => ReactNode;
   /**
    * What comes next on the completion moment, in place of Continue, such as a guest's "Build my
    * plan" and "Create an account to save".

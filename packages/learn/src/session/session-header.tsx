@@ -5,6 +5,7 @@ import { useEscapeClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { type ReactNode } from "react";
 import {
   TASK_HEADER_ICON_CLASS,
   TaskHeader,
@@ -95,12 +96,15 @@ function useSessionProgressLabel({
 export function SessionHeader({
   exitHref,
   lessonsComing = false,
+  menu,
   queue,
   sessionBar = NO_BAR,
 }: {
   exitHref: string;
   /** The day holds time for lessons still being outlined, which join its end once they land. */
   lessonsComing?: boolean;
+  /** A "…" menu on its end side, such as a finished lesson's, with its summary card. */
+  menu?: ReactNode;
   /** The day's blocks in order (`getSessionQueue`), for segments as long as their minutes. */
   queue?: readonly SessionQueueRow[];
   /** The day's counts; without them (and without `queue`), the header has no bar. */
@@ -132,7 +136,7 @@ export function SessionHeader({
 
         <TaskHeaderTitle title={t("Today's session")} />
 
-        <TaskHeaderSide align="end" />
+        <TaskHeaderSide align="end">{menu}</TaskHeaderSide>
       </TaskHeaderBar>
 
       {segments.length > 0 && (

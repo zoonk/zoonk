@@ -19,6 +19,7 @@ import { useLessonPlayer, useLessonPlayerConfig } from "./lesson-player-context"
 import { LessonPlayerHeader } from "./lesson-player-header";
 import { type LessonPlayerState } from "./lesson-player-state";
 import { type PlayableLibraryStep } from "./lesson-player-types";
+import { LessonScreenMenu } from "./lesson-screen-menu";
 import { LessonSounds } from "./lesson-sounds";
 import { LessonStage } from "./lesson-stage";
 import { DockedConversation } from "./tutor/lesson-dock";
@@ -56,12 +57,15 @@ function LessonCompletion() {
 
 /**
  * The lesson's header, or the host's once the lesson is done (a session block shows the day's
- * session there), when it has one to show; until then the lesson's stays.
+ * session there), when it has one to show, with the lesson's menu; until then the lesson's stays.
  */
 function LessonHeader() {
   const { slots } = useLessonPlayerConfig();
   const props = useCompletionProps();
-  const completionHeader = props ? slots.completionHeader?.(props) : null;
+
+  const completionHeader = props
+    ? slots.completionHeader?.({ ...props, menu: <LessonScreenMenu /> })
+    : null;
 
   return completionHeader ?? <LessonPlayerHeader />;
 }

@@ -57,10 +57,10 @@ export function useLessonSessionSlots({
         </MainLearnProvider>
       ),
       // Until the lesson is saved there's no moment yet, and the lesson's header stays.
-      completionHeader: ({ completion }) =>
+      completionHeader: ({ completion, menu }) =>
         completion.result?.studyBlock ? (
           <MainLearnProvider>
-            <LessonMomentHeader completion={completion} exitHref="/today" />
+            <LessonMomentHeader completion={completion} exitHref="/today" menu={menu} />
           </MainLearnProvider>
         ) : null,
     };

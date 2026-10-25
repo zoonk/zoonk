@@ -14,8 +14,8 @@ import { explanationStep, languageStep, teachingStep } from "../preview/preview-
 
 /**
  * What a lesson shows around its screens: the header's minutes and the summary card in the menu
- * once the lesson is done, the right spelling of a typo, a word's note and sound tip, and the
- * dated Sources chip of a screen built from a public document.
+ * once the lesson is done (a host's header over its own moment too), the right spelling of a typo,
+ * a word's note and sound tip, and the dated Sources chip of a screen built from a public document.
  */
 
 const EXPLANATION_TITLE = "A cloud, not a little ball";
@@ -75,6 +75,33 @@ describe("lesson screens", () => {
       await summary.getByRole("button", { name: "Got it" }).click();
       await expect.element(summary).not.toBeInTheDocument();
       await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
+    });
+  });
+
+  it("keeps the summary card in the menu of a host's header over its own moment", async () => {
+    await atViewport(PHONE, async () => {
+      renderLessonPlayer({
+        lesson: buildLesson([teachingStep("check")], {
+          summaryIdeas: ["Electrons live in clouds."],
+        }),
+        // Like a session block's: the day's header takes the lesson's place once it's saved.
+        slots: {
+          completion: () => <h2>Block done</h2>,
+          completionHeader: ({ completion, menu }) =>
+            completion.status === "saved" ? <header aria-label="Today">{menu}</header> : null,
+        },
+      });
+
+      await answerRight();
+      await expect.element(page.getByRole("heading", { name: "Block done" })).toBeVisible();
+
+      const header = page.getByRole("banner", { name: "Today" });
+      await expect.element(header.getByRole("button", { name: "Screen options" })).toBeVisible();
+      await header.getByRole("button", { name: "Screen options" }).click();
+      await page.getByRole("menuitem", { name: "Lesson summary" }).click();
+
+      const summary = page.getByRole("dialog", { name: "Lesson summary" });
+      await expect.element(summary.getByText("Electrons live in clouds.")).toBeVisible();
     });
   });
 

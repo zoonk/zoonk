@@ -5,6 +5,7 @@ import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { attemptFixture, learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
+import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { isJsonObject } from "@zoonk/utils/json";
 import { type Page, expect, test } from "./fixtures";
@@ -249,6 +250,13 @@ async function playLesson(page: Page) {
   await expect(page.getByRole("progressbar", { name: "2 of 3 done" })).toBeVisible();
   await expect(page.getByRole("progressbar")).toHaveCount(1);
 
+  // It keeps the lesson's menu, with the summary card a lesson's end offers.
+  await page.getByRole("button", { name: "Screen options" }).click();
+  await page.getByRole("menuitem", { name: "Lesson summary" }).click();
+  const summary = page.getByRole("dialog", { name: "Lesson summary" });
+  await expect(summary.getByText("Where the cloud is densest")).toBeVisible();
+  await summary.getByRole("button", { name: "Got it" }).click();
+
   await page.getByRole("button", { name: /^Continue/u }).click();
 }
 
@@ -357,7 +365,14 @@ test.describe("Today's session", () => {
   test("plays a full day by keyboard: placement, capsules, the lesson, practice and the summary", async ({
     browser,
   }) => {
-    const { user } = await createFirstWeekDay();
+    const { lesson, user } = await createFirstWeekDay();
+
+    // The lesson's summary card, which its end offers in the menu.
+    await prisma.lesson.update({
+      data: { summary: playableStepContent.summary },
+      where: { id: lesson.id },
+    });
+
     const page = await openAs(browser, user);
     await page.goto("/today");
 
