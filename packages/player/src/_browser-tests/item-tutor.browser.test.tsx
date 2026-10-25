@@ -95,6 +95,28 @@ async function missAndAskWhy() {
   await expect.element(dockedConversation().getByText(TUTOR_ANSWER)).toBeVisible();
 }
 
+/** Yesterday's conversation about a question: a hint, then why the learner's answer was wrong. */
+function earlierDayTurns(api: ReturnType<typeof stubTutorApi>) {
+  return [
+    {
+      ...api.question({
+        answer: "Think about the last digit.",
+        question: "Any hint?",
+        status: "completed",
+      }),
+      context: { answered: false, kind: "item" as const },
+    },
+    {
+      ...api.question({
+        answer: "8 is even: it ends in 8.",
+        question: WHY_MISSED,
+        status: "completed",
+      }),
+      context: { answered: true, kind: "item" as const },
+    },
+  ];
+}
+
 describe("the buddy beside a run of questions", () => {
   it("answers a question typed in the aside before the question is checked", async () => {
     const api = stubTutorApi({});
@@ -178,25 +200,7 @@ describe("the buddy beside a run of questions", () => {
   // until today's answer is checked.
   it("keeps an earlier day's talk about the answer out of a question practiced again", async () => {
     const api = stubTutorApi({});
-
-    api.questions = [
-      {
-        ...api.question({
-          answer: "Think about the last digit.",
-          question: "Any hint?",
-          status: "completed",
-        }),
-        context: { answered: false, kind: "item" },
-      },
-      {
-        ...api.question({
-          answer: "8 is even: it ends in 8.",
-          question: WHY_MISSED,
-          status: "completed",
-        }),
-        context: { answered: true, kind: "item" },
-      },
-    ];
+    api.questions = earlierDayTurns(api);
 
     render(<QuestionRun questions={[EVEN]} />);
     await askFromAside("Another hint?");
@@ -212,5 +216,20 @@ describe("the buddy beside a run of questions", () => {
     await page.getByRole("button", { name: "Check" }).click();
     await expect.element(conversation.getByText("8 is even: it ends in 8.")).toBeVisible();
     await expect.element(conversation.getByText("About your answer")).toBeVisible();
+  });
+
+  // While apps deploy, the tutor can meet the API from before `include`: it reads the conversation
+  // as that API sends it, holding nothing back as it did then, and the aside's composer still sends.
+  it("talks with the API from before `include`, holding nothing back", async () => {
+    const api = stubTutorApi({ olderApi: true });
+    api.questions = earlierDayTurns(api);
+
+    render(<QuestionRun questions={[EVEN]} />);
+    await askFromAside("Another hint?");
+
+    const conversation = dockedConversation();
+    await expect.element(conversation.getByText(TUTOR_ANSWER)).toBeVisible();
+    await expect.element(conversation.getByText("8 is even: it ends in 8.")).toBeVisible();
+    expect(api.inputs).toMatchObject([{ context: { answered: false, kind: "item" } }]);
   });
 });

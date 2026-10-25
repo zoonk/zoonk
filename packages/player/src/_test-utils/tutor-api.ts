@@ -6,6 +6,12 @@ import {
   createLessonQuestionInputSchema,
 } from "@zoonk/core/lesson-questions/contract";
 import { onTestFinished, vi } from "vitest";
+import {
+  asOlderApiRequest,
+  asRequested,
+  getContextSummary,
+  getThreadPage,
+} from "./tutor-api-requests";
 
 /** What a question carries before an answer proposes or offers anything. */
 const UNANSWERED = { planChange: null, toolOffer: null } as const;
@@ -19,6 +25,7 @@ const UNANSWERED = { planChange: null, toolOffer: null } as const;
 export const TUTOR_API_URL = "https://api.zoonk.test";
 export const TUTOR_AUTHORIZATION = "Bearer tutor-test-token";
 
+const HTTP_STATUS_BAD_REQUEST = 400;
 const HTTP_STATUS_UNAUTHORIZED = 401;
 const HTTP_STATUS_NOT_FOUND = 404;
 const HTTP_STATUS_CONFLICT = 409;
@@ -119,65 +126,24 @@ function errorResponse(status: number) {
   return Response.json({ error: "The API refused this request" }, { status });
 }
 
-function isInScope({ question, url }: { question: LessonQuestionResource; url: URL }) {
-  const stepId = url.searchParams.get("stepId");
-  const contextKind = url.searchParams.get("contextKind");
-
-  if (stepId && (!("stepId" in question.context) || question.context.stepId !== stepId)) {
-    return false;
-  }
-
-  return !contextKind || question.context.kind === contextKind;
-}
-
-function getContextSummary(
-  context: CreateLessonQuestionInput["context"],
-): LessonQuestionResource["context"] {
-  if (context.kind === "item") {
-    return { answered: context.answered, kind: context.kind };
-  }
-
-  if (context.kind !== "step" && context.kind !== "answer") {
-    return { kind: context.kind };
-  }
-
-  return { kind: context.kind, stepId: context.stepId, stepNumber: context.stepNumber };
-}
-
-/**
- * A question as a request reads it: like the API, a turn about a session's or practice's question
- * says whether it was about the learner's checked answer only when the request asks for it.
- */
-function asRequested({ question, url }: { question: LessonQuestionResource; url: URL }) {
-  if (question.context.kind !== "item" || url.searchParams.get("include") === "answered") {
-    return question;
-  }
-
-  return { ...question, context: { kind: question.context.kind } };
-}
-
-/**
- * A page of the thread as the request reads it (`asRequested`): its scope, latest last, ending
- * before `cursor` (an older page) when there's one.
- */
-function getThreadPage({
-  pageSize,
-  questions,
-  url,
+/** A question just asked, waiting for its answer, as the API saves it. */
+function toPendingQuestion({
+  createdAt,
+  input,
 }: {
-  pageSize: number | undefined;
-  questions: LessonQuestionResource[];
-  url: URL;
-}) {
-  const inScope = questions.filter((question) => isInScope({ question, url }));
-  const cursor = url.searchParams.get("cursor");
-  const cursorIndex = cursor ? inScope.findIndex((question) => question.id === cursor) : -1;
-  const pageEnd = cursorIndex >= 0 ? cursorIndex : inScope.length;
-  const pageStart = pageSize ? Math.max(0, pageEnd - pageSize) : 0;
-  const page = inScope.slice(pageStart, pageEnd).map((question) => asRequested({ question, url }));
-  const hasMore = pageStart > 0;
-
-  return { hasMore, nextCursor: hasMore ? (page[0]?.id ?? null) : null, questions: page };
+  createdAt: string;
+  input: CreateLessonQuestionInput;
+}): LessonQuestionResource {
+  return {
+    answer: null,
+    context: getContextSummary(input.context),
+    createdAt,
+    id: crypto.randomUUID(),
+    question: input.question,
+    status: "pending",
+    ...UNANSWERED,
+    updatedAt: createdAt,
+  };
 }
 
 type TutorRequest =
@@ -203,9 +169,12 @@ function toTutorRequest(request: Request): TutorRequest {
  */
 export function stubTutorApi({
   lesson,
+  olderApi = false,
   pageSize,
 }: {
   lesson?: PlayableLibraryLesson;
+  /** The API from before `include`, as apps can meet it while they deploy (`asOlderApiRequest`). */
+  olderApi?: boolean;
   /** How many questions a thread page holds; without it, the whole thread comes at once. */
   pageSize?: number;
 }) {
@@ -316,18 +285,7 @@ export function stubTutorApi({
         : errorResponse(HTTP_STATUS_CONFLICT);
     }
 
-    const createdAt = stamp();
-
-    const question: LessonQuestionResource = {
-      answer: null,
-      context: getContextSummary(input.context),
-      createdAt,
-      id: crypto.randomUUID(),
-      question: input.question,
-      status: "pending",
-      ...UNANSWERED,
-      updatedAt: createdAt,
-    };
+    const question = toPendingQuestion({ createdAt: stamp(), input });
 
     createdByRequestId.set(input.requestId, {
       input: JSON.stringify(input),
@@ -380,7 +338,13 @@ export function stubTutorApi({
       return Promise.resolve(errorResponse(HTTP_STATUS_UNAUTHORIZED));
     }
 
-    const tutorRequest = toTutorRequest(request);
+    const served = olderApi ? asOlderApiRequest(request) : request;
+
+    if (!served) {
+      return Promise.resolve(errorResponse(HTTP_STATUS_BAD_REQUEST));
+    }
+
+    const tutorRequest = toTutorRequest(served);
     api.requests[tutorRequest.route] += 1;
     const respond = responders[tutorRequest.route].shift();
 

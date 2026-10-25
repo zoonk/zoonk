@@ -71,10 +71,19 @@ export async function getApiError(response: Response): Promise<LessonQuestionApi
   return { kind: "unknown" };
 }
 
+/**
+ * An item thread's turns say which were about the learner's checked answer, to hold them back
+ * until the question is checked again; other threads have none to say it of.
+ */
+function getThreadInclude(target: TutorTarget) {
+  return target.kind === "item" ? ("answered" as const) : undefined;
+}
+
 function questionsUrl({
   connection,
   contextKind,
   cursor,
+  include,
   stepId,
   target,
 }: { connection: LessonQuestionConnection; target: TutorTarget } & GetLessonQuestionThreadInput) {
@@ -92,11 +101,8 @@ function questionsUrl({
     url.searchParams.set("contextKind", contextKind);
   }
 
-  // An item thread's turns say which were about the learner's checked answer, to hold them back
-  // until the question is checked again. Other threads don't ask: servers that don't know
-  // `include` refuse it there.
-  if (target.kind === "item") {
-    url.searchParams.set("include", "answered");
+  if (include) {
+    url.searchParams.set("include", include);
   }
 
   return url.toString();
@@ -128,12 +134,21 @@ export async function getLessonQuestionThreadRequest({
 } & GetLessonQuestionThreadInput): Promise<
   LessonQuestionApiResult<LessonQuestionThreadResource | null>
 > {
-  const { data: response, error } = await safeAsync(async () =>
-    fetch(questionsUrl({ connection, contextKind, cursor, stepId, target }), {
-      cache: "no-store",
-      headers: await connection.getHeaders(),
-    }),
-  );
+  const readThread = (include?: "answered") =>
+    safeAsync(async () =>
+      fetch(questionsUrl({ connection, contextKind, cursor, include, stepId, target }), {
+        cache: "no-store",
+        headers: await connection.getHeaders(),
+      }),
+    );
+
+  const include = getThreadInclude(target);
+  const read = await readThread(include);
+
+  // An API from before `include` (met while apps deploy) refuses it: the thread is read again
+  // without it, its turns unannotated, so nothing is held back, as before.
+  const { data: response, error } =
+    include && read.data?.status === HTTP_STATUS_BAD_REQUEST ? await readThread() : read;
 
   if (error || !response) {
     return { error: { kind: "unknown" }, status: "error" };
@@ -162,8 +177,9 @@ export async function createLessonQuestionRequest({
   input: CreateLessonQuestionInput;
   target: TutorTarget;
 }): Promise<LessonQuestionApiResult<CreatedLessonQuestion>> {
+  // An API from before `include` ignores it on a new question, which then reads unannotated.
   const { data: response, error } = await safeAsync(async () =>
-    fetch(questionsUrl({ connection, target }), {
+    fetch(questionsUrl({ connection, include: getThreadInclude(target), target }), {
       body: JSON.stringify(input),
       cache: "no-store",
       headers: await getJsonHeaders(connection),
