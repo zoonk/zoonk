@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { type APIRequestContext, type BrowserContext, type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { RENTING_SCENARIO } from "@zoonk/testing/fixtures/language";
@@ -9,6 +10,12 @@ import { openAs } from "./study-day";
 
 const NATIVE_SETUP_TIMEOUT_MS = 8000;
 const NATIVE_TEARDOWN_TIMEOUT_MS = 30_000;
+
+/**
+ * When the call's server deadline falls, counted from its Start. A checkpoint's call time runs
+ * from its first connection, so an earlier one sets it; a practice call holds at least a minute.
+ */
+const DEADLINE_MS = 25_000;
 
 type NativeCallResources = {
   answer: string | null;
@@ -301,22 +308,53 @@ const test = base.extend<{ liveCallResources: NativeCallResources }>({
   ],
 });
 
+/**
+ * A checkpoint call that already connected once: its next connection ends where the first one's
+ * call time does, `DEADLINE_MS` from now.
+ */
+async function reconnectingCheckpoint({ callId, userId }: { callId: string; userId: string }) {
+  const usage = await prisma.usageRecord.create({
+    data: { kind: "conversation", seconds: 0, targetId: callId, userId },
+  });
+
+  const now = Date.now();
+
+  return prisma.liveCallConnection.create({
+    data: {
+      attemptNumber: 1,
+      closedAt: new Date(now),
+      conversationId: callId,
+      costConfidence: "confirmed",
+      createdAt: new Date(now),
+      deadlineAt: new Date(now + DEADLINE_MS),
+      generation: 1,
+      heldSeconds: 0,
+      liabilityMicros: 0,
+      requestId: randomUUID(),
+      reservedMicros: 0,
+      state: "closed",
+      usageRecordId: usage.id,
+      userId,
+    },
+  });
+}
+
 /** Native browser transport against a local AI fake; this does not establish OpenAI termination semantics. */
 test("the durable deadline closes an established WebRTC peer when the client never ends", async ({
   browser,
   request,
   liveCallResources: owned,
 }) => {
-  test.setTimeout(130_000);
+  test.setTimeout(70_000);
   const { bridge, peerContext } = owned;
 
-  const { goal, renting, user } = await createLanguageLearner();
+  const { goal, renting, user } = await createLanguageLearner({ withSubscription: true });
 
   const call = await prisma.languageConversation.create({
     data: {
       chapterId: renting.id,
       goalId: goal.id,
-      kind: "practice",
+      kind: "checkpoint",
       language: "pt",
       level: "A2",
       liveModel: "openai/gpt-live-1",
@@ -374,6 +412,7 @@ test("the durable deadline closes an established WebRTC peer when the client nev
   await peer.getByRole("button", { name: "Start test peer" }).click();
   await page.goto(`/conversation/${call.id}`);
   await expect(page.getByRole("button", { name: "Start the call" })).toBeVisible();
+  const first = await reconnectingCheckpoint({ callId: call.id, userId: user.id });
   await page.clock.install();
   // A moment ahead: the browser's clock runs from the install, and pausing it behind its time throws.
   await page.clock.pauseAt(new Date(Date.now() + 1000));
@@ -444,7 +483,10 @@ test("the durable deadline closes an established WebRTC peer when the client nev
   expect(connection.state).toBe("active");
   expect(connection.conversationId).toBe(call.id);
   expect(connection.workflowRunId).toBeTruthy();
-  expect(connection.deadlineAt.getTime() - connection.createdAt.getTime()).toBe(75_000);
+  // Rounded up to the whole second it holds.
+  const overFirst = connection.deadlineAt.getTime() - first.deadlineAt.getTime();
+  expect(overFirst).toBeGreaterThanOrEqual(0);
+  expect(overFirst).toBeLessThan(1000);
 
   /** Frozen client timers defeat its countdown. Only the actual server Workflow may initiate this close. */
   await expect
@@ -453,7 +495,7 @@ test("the durable deadline closes an established WebRTC peer when the client nev
         const current = await sessions();
         return current.find((item) => item.id === session.id)?.closeRequested;
       },
-      { timeout: 95_000 },
+      { timeout: DEADLINE_MS + 20_000 },
     )
     .toBe(true);
 
