@@ -1,6 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 import { assertBrowserLaunchAllowed } from "@zoonk/testing/browser-preflight";
 import { getTestEnvironment } from "../../db/src/test-environment";
+import { getBaseUrlVariable, getServerCount } from "./fixtures/base-url";
 
 const CHROMIUM_PROJECT = {
   name: "chromium",
@@ -31,7 +32,9 @@ export function createBaseConfig(options: {
       trace: process.env.CI ? "off" : "on-first-retry",
       video: process.env.CI ? "off" : "retain-on-failure",
     },
-    webServer: {
+    // One app server, or one per worker slot with `E2E_SERVERS`: a Node server renders on one core,
+    // so a single one held back every worker on CI (`getBaseURL` picks the worker's own).
+    webServer: Array.from({ length: getServerCount() }, (_, slot) => ({
       command: "pnpm start -p 0",
       env: {
         ...getTestEnvironment("e2e"),
@@ -39,10 +42,15 @@ export function createBaseConfig(options: {
         ...options.webServerEnv,
       },
       // Let pnpm forward shutdown to the server in its separate process group.
-      gracefulShutdown: { signal: "SIGTERM", timeout: 10_000 },
+      gracefulShutdown: { signal: "SIGTERM" as const, timeout: 10_000 },
       timeout: 120_000,
-      // Capture port from Next.js stdout: "- Local: http://localhost:12345"
-      wait: { stdout: /-\s+Local:\s+(?<E2E_BASE_URL>http:\/\/localhost:(?<E2E_PORT>\d+))/u },
-    },
+      // Capture the address from Next.js stdout: "- Local: http://localhost:12345"
+      wait: {
+        stdout: new RegExp(
+          `-\\s+Local:\\s+(?<${getBaseUrlVariable(slot)}>http://localhost:\\d+)`,
+          "u",
+        ),
+      },
+    })),
   });
 }
