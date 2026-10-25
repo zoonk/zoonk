@@ -214,7 +214,12 @@ function CoverageBody({
         </SuggestionAction>
       )}
 
-      {coverage && <OtherOptions onMoveDate={moveDate ? () => ask("date") : null} />}
+      {coverage && (
+        <OtherOptions
+          onMoveDate={moveDate ? () => ask("date") : null}
+          studyEverythingLeads={flags.studiesEverything && fullCourse !== null}
+        />
+      )}
     </SuggestionActions>
   );
 }

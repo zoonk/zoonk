@@ -219,7 +219,7 @@ test.describe("Plan choices", () => {
     // it, so the change says that once she chooses.
     const suggestion = page.locator('[data-slot="suggestion-panel"]').filter({ visible: true });
     await suggestion.getByRole("button", { name: "Other options" }).click();
-    await page.getByRole("menuitem", { name: "Study everything after the exam" }).click();
+    await page.getByRole("menuitem", { name: "Study everything, even after the exam" }).click();
     const everything = page.getByRole("dialog", { name: "Study everything" });
     await expect(everything).toContainText("Every topic, even after the exam, at your own pace.");
     await expect(everything.getByText(/you finish in /u)).toHaveCount(0);

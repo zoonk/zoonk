@@ -15,6 +15,7 @@ import {
   listPlanDays,
   scheduleUnits,
 } from "./schedule-units";
+import { type SkillMinutes } from "./skill-minutes";
 
 /**
  * The days an exam plan that studies everything spans after the exam, and the minutes its work
@@ -38,6 +39,22 @@ export type AfterExam = {
   span: AfterExamSpan | null;
   units: ScheduledUnit[];
 };
+
+/**
+ * When a plan studying everything ends (`end`), once it holds all of it, every skill's lessons
+ * whole (`skillMinutes`, which counts a kept stand-in's cut too): its time after the exam stops at
+ * the plan's horizon (`MAX_PLAN_DAYS`), so at a few minutes a day its last day can be years away
+ * with lessons still left out, which no end date would be true of.
+ */
+export function getFullCourseEnd({
+  built,
+  end,
+}: {
+  built: { skillMinutes: readonly SkillMinutes[] };
+  end: string | null;
+}): string | null {
+  return built.skillMinutes.every((skill) => skill.covered >= skill.total) ? end : null;
+}
 
 /** Whether the plan goes on after its exam: an exam with a date that studies everything. */
 function goesOnAfterExam({

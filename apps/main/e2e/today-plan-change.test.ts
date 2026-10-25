@@ -1560,8 +1560,8 @@ test.describe("Today's plan change", () => {
     browser,
   }) => {
     await asPersona(browser, { persona: "language" }, async ({ page, user }) => {
-      // Marcos's move came forward to five days away and he missed days: even 4 hours a day can't
-      // cover his goal by then, while his 25 minutes cover it all by a later date.
+      // Marcos's move came forward to five days away and he missed days: no time a day covers his
+      // goal by then, while his 25 minutes cover it all by a later date.
       const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: user.goalId } });
       const soon = new Date(toUTCMidnight(new Date()).getTime() + SOON_DAYS * MS_PER_DAY);
 

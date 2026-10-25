@@ -5,6 +5,7 @@ import { useLayoutEffect, useRef } from "react";
 import { usePlanScreen } from "./plan-context";
 import { FindTimeLine, findPickedChip, findTimeChip } from "./plan-coverage";
 import { getEditorSectionId } from "./plan-editor-sections";
+import { FULL_COURSE_SWITCH_ID } from "./plan-full-course";
 import {
   type TimeToCoverAnswer,
   readTimeToCover,
@@ -30,8 +31,9 @@ export function useFindAnswer(): TimeToCoverAnswer | null {
 /**
  * Where focus goes once the editor's Find answers, since the Find button that had it is gone: the
  * chip of the time found, so Space picks it; Move your date, when it's the one way that covers
- * everything (a goal with a date found); or, when no time covers everything, the first action
- * below. Null leaves it to the answer itself.
+ * everything (a goal with a date found); an exam's "Study everything, even after the exam", as
+ * onboarding does, when no time covers it; or else the first action below. Null leaves it to the
+ * answer itself.
  */
 function findFocusTarget({
   answered,
@@ -53,7 +55,11 @@ function findFocusTarget({
     return document.querySelector<HTMLElement>(`#${MOVE_DATE_ID}`);
   }
 
-  return document.querySelector<HTMLElement>(`#${FIND_ACTIONS_ID} button`);
+  const studyEverything = isGoal
+    ? null
+    : document.querySelector<HTMLElement>(`#${FULL_COURSE_SWITCH_ID} [role="switch"]`);
+
+  return studyEverything ?? document.querySelector<HTMLElement>(`#${FIND_ACTIONS_ID} button`);
 }
 
 /**

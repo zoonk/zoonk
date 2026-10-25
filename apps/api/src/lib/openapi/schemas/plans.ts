@@ -104,6 +104,12 @@ export const planResponseSchema = z
       }),
     estimate: z.object({
       endDate: isoDateSchema.nullable(),
+      fullCourseEndDate: isoDateSchema
+        .nullable()
+        .meta({
+          description:
+            "For an exam studying everything (`schedule.fullCourse`): `endDate`, when the learner finishes everything, once the plan holds all of it. Null otherwise, and while a few minutes a day leave some of it out even within the ten years a plan lays out",
+        }),
       pace: z
         .object({ factor: z.number(), source: z.enum(["own", "course", "typical"]) })
         .nullable(),

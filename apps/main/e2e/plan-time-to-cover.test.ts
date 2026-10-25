@@ -148,9 +148,10 @@ test.describe("Find the time that covers everything", () => {
     await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
       const { editor, isoDate } = await shortOnTime(page, user.goalId);
 
+      // More than any preset: any time a day is hers to choose.
       const asked = await routeTimeToCover(page, {
         goalId: user.goalId,
-        time: { recommendedMinutes: 95, targetDate: isoDate },
+        time: { recommendedMinutes: 330, targetDate: isoDate },
       });
 
       const minutes = editor.getByRole("radiogroup", { name: "Time a day" });
@@ -164,10 +165,10 @@ test.describe("Find the time that covers everything", () => {
 
       // The exact time joins the chips as it is, marked, and takes focus without being picked.
       await expect(
-        editor.getByText(/^1\shr 35\smin a day covers everything in depth by .+\.$/u),
+        editor.getByText(/^5\shr 30\smin a day covers everything in depth by .+\.$/u),
       ).toBeVisible();
 
-      const chip = minutes.getByRole("radio", { name: /^1 hr 35 min\s*Covers everything$/u });
+      const chip = minutes.getByRole("radio", { name: /^5 hr 30 min\s*Covers everything$/u });
       await expect(chip).toBeFocused();
       await expect(chip).not.toBeChecked();
       // Her plan's own week, searched once.
@@ -175,10 +176,10 @@ test.describe("Find the time that covers everything", () => {
 
       // Space picks it: the plan plans again at that time.
       await page.keyboard.press("Space");
-      await expect.poll(() => readDailyMinutes(user.goalId)).toBe(95);
+      await expect.poll(() => readDailyMinutes(user.goalId)).toBe(330);
 
       await expect(
-        editor.getByRole("status").filter({ hasText: "Daily time changed to 1 hr 35 min." }),
+        editor.getByRole("status").filter({ hasText: "Daily time changed to 5 hr 30 min." }),
       ).toBeVisible({ timeout: REPLAN_TIMEOUT_MS });
 
       // Undo puts her time back to the plan Find answered for, so its answer shows again, not
@@ -341,16 +342,13 @@ test.describe("Find the time that covers everything", () => {
       afterFind = true;
       await find.click();
 
+      // No time covers her exam by its date: the keyboard goes to the other way to everything.
       await expect(
-        editor.getByText(
-          /^Even at 4\shr a day, you'd study about 54% of everything in depth by your date\.$/u,
-        ),
+        editor.getByText(/^No amount of time a day covers everything in depth by .+\.$/u),
       ).toBeVisible();
 
       await expect(
-        editor
-          .getByRole("radiogroup", { name: "Time a day" })
-          .getByRole("radio", { name: /^4 hr\s*About 54%$/u }),
+        editor.getByRole("switch", { name: "Study everything, even after the exam" }),
       ).toBeFocused();
 
       // A Server Action would purge the client cache and refresh the page, and every visible link
@@ -388,7 +386,15 @@ test.describe("Find the time that covers everything", () => {
 
       await expect(everything).toBeFocused();
       await page.keyboard.press("Enter");
-      await expect(page.getByRole("dialog", { name: "Study everything" })).toBeVisible();
+      const sheet = page.getByRole("dialog", { name: "Study everything" });
+      await expect(sheet).toBeVisible();
+      await page.keyboard.press("Escape");
+      await expect(sheet).toBeHidden();
+
+      // It leads the card, so its other options don't offer it again.
+      await panel.getByRole("button", { name: "Other options" }).click();
+      await expect(page.getByRole("menuitem", { name: "Not now" })).toBeVisible();
+      await expect(page.getByRole("menuitem", { name: /^Study everything/u })).toHaveCount(0);
     });
   });
 
@@ -398,7 +404,10 @@ test.describe("Find the time that covers everything", () => {
     await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
       const { editor, isoDate } = await shortOnTime(page, user.goalId);
 
-      await routeTimeToCover(page, { goalId: user.goalId, time: { targetDate: isoDate } });
+      await routeTimeToCover(page, {
+        goalId: user.goalId,
+        time: { recommendedMinutes: 300, targetDate: isoDate },
+      });
 
       await editor.getByRole("button", { name: "Close" }).click();
       await expect(editor).toBeHidden();
@@ -409,7 +418,7 @@ test.describe("Find the time that covers everything", () => {
       await panel.getByRole("button", { name: FIND }).click();
 
       // One tap finds the time and shows what it changes, never applied without its diff.
-      await expect(panel.getByRole("heading")).toHaveText("4 hr a day covers about 54% in depth");
+      await expect(panel.getByRole("heading")).toHaveText("5 hr a day covers everything in depth");
 
       await expect(panel.locator('[data-slot="diff-lines"]')).toBeVisible({
         timeout: REPLAN_TIMEOUT_MS,
@@ -417,12 +426,12 @@ test.describe("Find the time that covers everything", () => {
 
       // Not now keeps the answer, with Preview to see the change again.
       await panel.getByRole("button", { exact: true, name: "Not now" }).click();
-      await expect(panel.getByRole("heading")).toHaveText("4 hr a day covers about 54% in depth");
+      await expect(panel.getByRole("heading")).toHaveText("5 hr a day covers everything in depth");
       await panel.getByRole("button", { exact: true, name: "Preview" }).click();
       await panel.getByRole("button", { exact: true, name: "Apply" }).click();
 
       await expect(panel.getByRole("heading")).toHaveText("Plan updated");
-      await expect.poll(() => readDailyMinutes(user.goalId)).toBe(240);
+      await expect.poll(() => readDailyMinutes(user.goalId)).toBe(300);
     });
   });
 });

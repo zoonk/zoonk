@@ -19,7 +19,7 @@ import {
 import { type Choice, ChoiceList } from "../choice-list";
 import { PlanReceipt, PlanReceiptChips } from "../plan-receipt";
 import { AdviceSentence } from "./advice-sentence";
-import { CoverEverything, FULL_COURSE_ID, getShownShare, isShort } from "./cover-everything";
+import { CoverEverything, FULL_COURSE_ID, getShownShare } from "./cover-everything";
 import { OtherTimeSelect, getTimeChoices } from "./daily-minutes";
 import { StepForm } from "./step-form";
 import {
@@ -34,9 +34,11 @@ import {
   type AdviceAnswer,
   type StudyWeek,
   getEstimate,
+  getFullCourseEnd,
   getPickedShare,
   getWeekAdvice,
   hasEstimate,
+  keepsFullCourse,
   toFindWeek,
   toStudyWeek,
   useTimeAdvice,
@@ -255,7 +257,9 @@ export function ScheduleStep({
   const [fullCourse, setFullCourse] = useState(false);
   const studiesOnWeekends = days.some((day) => isWeekend(day));
   const weekend = studiesOnWeekends ? weekendMinutes : null;
-  const week = toStudyWeek({ days, minutes, weekend });
+  // An exam's choice to study everything goes with each question, so the estimate and when
+  // everything ends describe the plan the learner would get.
+  const week = toStudyWeek({ days, fullCourse: exam && fullCourse, minutes, weekend });
   const advice = getWeekAdvice({ answer, week });
 
   const findWeek = toFindWeek({ days, weekend });
@@ -272,6 +276,7 @@ export function ScheduleStep({
   const weekendChoices = useWeekendChoices({ minutes: Number(minutes), weekend: weekendMinutes });
   const askFocus = useFocusFound({ found, options, status: finder.status });
   const pickedShare = getPickedShare({ advice, answer, found, minutes: Number(minutes) });
+  const studiesEverything = exam && keepsFullCourse({ checked: fullCourse, pickedShare });
 
   const asking = useTimeAdvice({
     answer,
@@ -311,8 +316,7 @@ export function ScheduleStep({
       onContinue={() =>
         onAnswer({
           dailyMinutes: Number(minutes),
-          // The switch shows only while the time leaves something out: hidden, it isn't chosen.
-          fullCourse: exam ? fullCourse && isShort(share) : undefined,
+          fullCourse: exam ? studiesEverything : undefined,
           question: "schedule",
           studyDays: days.length === EVERY_DAY.length ? undefined : days,
           timeZone: getLocalTimeZone(),
@@ -337,9 +341,11 @@ export function ScheduleStep({
       <CoverEverything
         exam={exam}
         fullCourse={fullCourse}
+        fullCourseEnd={getFullCourseEnd({ advice, answer, minutes: Number(minutes) })}
         minutes={Number(minutes)}
         onFullCourseChange={setFullCourse}
         share={share}
+        studiesEverything={studiesEverything}
       >
         <AdviceSentence
           dated={dated}

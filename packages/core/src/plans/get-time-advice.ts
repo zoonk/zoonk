@@ -12,7 +12,7 @@ import { getChangePlanning } from "./_utils/steered-areas";
 import { MIN_DAILY_MINUTES } from "./daily-minutes";
 import { getNoticeWaitState } from "./notice-wait";
 import { type LearnerPlanOperation } from "./plan-contract";
-import { type BuiltPlan } from "./planner/build-plan";
+import { getFullCourseEnd } from "./planner/after-exam";
 import { FITTING_DATE_TRIES } from "./planner/fitting-date";
 import { addDays, toIsoDate } from "./planner/plan-calendar";
 import { applyPlanOperations } from "./planner/plan-operations";
@@ -84,16 +84,6 @@ function withStudyWeek({
   }
 
   return result.state;
-}
-
-/**
- * When a plan that studies everything ends, once it holds all of it: its time after the exam stops
- * at the plan's horizon (see `continueAfterExam`), so at a few minutes a day its last day can be
- * years away with skills still left out, which no end date would be true of.
- */
-function getFullCourseEndDate(built: BuiltPlan): string | null {
-  const end = built.estimate.endDate;
-  return end && built.droppedSkillIds.length === 0 ? toIsoDate(end) : null;
 }
 
 /**
@@ -234,11 +224,14 @@ export async function getPlanTimeAdvice({
   ]);
 
   const { feasibility } = computed;
+  const end = computed.built.estimate.endDate;
 
   return {
     advice: {
       coveredShare: feasibility.deadline ? roundShare(feasibility.coveredShare) : null,
-      fullCourseEndDate: fullCourse ? getFullCourseEndDate(computed.built) : null,
+      fullCourseEndDate: fullCourse
+        ? getFullCourseEnd({ built: computed.built, end: end && toIsoDate(end) })
+        : null,
       measure: feasibility.measure,
       numbers: await buildPlanNumbersView({ computed, context }),
       readingNotice: false,

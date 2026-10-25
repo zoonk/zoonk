@@ -351,6 +351,12 @@ export type PlanView = {
   currentPhase: number | null;
   estimate: {
     endDate: string | null;
+    /**
+     * For an exam studying everything (`schedule.fullCourse`): `endDate`, when the learner
+     * finishes everything, once the plan holds all of it. Null otherwise, and while a few minutes
+     * a day leave some of it out even within the ten years a plan lays out.
+     */
+    fullCourseEndDate: string | null;
     pace: { factor: number; source: PaceSource } | null;
     remainingHours: number;
     totalHours: number;

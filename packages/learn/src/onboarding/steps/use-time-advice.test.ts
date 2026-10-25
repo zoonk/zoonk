@@ -6,6 +6,7 @@ import {
   getPickedShare,
   getWeekAdvice,
   hasEstimate,
+  keepsFullCourse,
   toFindWeek,
   toStudyWeek,
 } from "./use-time-advice";
@@ -303,5 +304,22 @@ describe(hasEstimate, () => {
         status: "failed",
       }),
     ).toBe(true);
+  });
+});
+
+describe(keepsFullCourse, () => {
+  it("keeps an exam's choice to study everything until the time picked is known to cover it all", () => {
+    const week = toStudyWeek({ days: EVERY_DAY, fullCourse: true, minutes: "45", weekend: null });
+    const advice = { ...ADVICE, coveredShare: 0.5 };
+    const answer = { advice, key: JSON.stringify(week), minutes: 45 };
+    const shareAt = (minutes: number) => getPickedShare({ advice, answer, found: null, minutes });
+
+    // Another time, whose estimate never came (asking for it kept failing): her choice stands.
+    expect(keepsFullCourse({ checked: true, pickedShare: shareAt(60) })).toBe(true);
+    expect(keepsFullCourse({ checked: true, pickedShare: shareAt(45) })).toBe(true);
+    expect(keepsFullCourse({ checked: false, pickedShare: shareAt(45) })).toBe(false);
+
+    // Only a time the plan says covers everything leaves nothing to study after the exam.
+    expect(keepsFullCourse({ checked: true, pickedShare: { known: true, share: 1 } })).toBe(false);
   });
 });

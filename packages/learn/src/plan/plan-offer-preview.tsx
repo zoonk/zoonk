@@ -264,8 +264,9 @@ export function useAnswerOffer() {
 
 /**
  * What the card offers without asking anything: an exam studying everything can end at the exam
- * again, a change worked out from the plan as it is. Null otherwise: the rest is the learner's to
- * ask for (Find, Move your date).
+ * again, a change worked out from the plan as it is. It says when everything ends, or, while the
+ * plan can't hold it all even after the exam, only what it studies. Null otherwise: the rest is the
+ * learner's to ask for (Find, Move your date).
  */
 export function useCourseOffer(): CoverageOffer | null {
   const t = useExtracted();
@@ -279,17 +280,24 @@ export function useCourseOffer(): CoverageOffer | null {
   return {
     description: [t("Until the exam, what comes up most comes first.")],
     operations: course.operations(false),
-    title: text.finish(course) ?? t("Every topic, even after the exam, at your own pace."),
+    title: text.finish(course) ?? t("Study everything, even after the exam"),
   };
 }
 
 /**
  * The other ways to change what the plan covers, in one menu: moving a goal's date (unless it's
  * the offer already), choosing where to focus, studying everything at the learner's own pace (an
- * exam's after the exam), and "Not now", which leaves the suggestion out until the Plan opens
- * again.
+ * exam's even after the exam, unless the card leads with it), and "Not now", which leaves the
+ * suggestion out until the Plan opens again.
  */
-export function OtherOptions({ onMoveDate }: { onMoveDate: (() => void) | null }) {
+export function OtherOptions({
+  onMoveDate,
+  studyEverythingLeads,
+}: {
+  onMoveDate: (() => void) | null;
+  /** The card's main action is studying everything already: no time covers the exam. */
+  studyEverythingLeads: boolean;
+}) {
   const t = useExtracted();
   const canChooseFocus = useCanChooseFocus();
   const chooseFocus = useChooseFocus();
@@ -313,9 +321,9 @@ export function OtherOptions({ onMoveDate }: { onMoveDate: (() => void) | null }
         {canChooseFocus && (
           <DropdownMenuItem onClick={chooseFocus}>{t("Choose where to focus")}</DropdownMenuItem>
         )}
-        {course && !course.on && (
+        {course && !course.on && !studyEverythingLeads && (
           <DropdownMenuItem onClick={() => studyEverything(course)}>
-            {course.isExam ? t("Study everything after the exam") : t("Study everything")}
+            {course.isExam ? t("Study everything, even after the exam") : t("Study everything")}
           </DropdownMenuItem>
         )}
         <DropdownMenuItem onClick={() => dismiss("coverage")}>{t("Not now")}</DropdownMenuItem>

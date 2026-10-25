@@ -564,23 +564,40 @@ test("the time step asks what a larger Sunday exam budget covers instead of assu
 
 /**
  * The time step's estimate for a goal at its time question (see `createTimeStepGoal`): from 2
- * hours a day the plan covers everything, under it `short` of it. Main runs without the API.
+ * hours a day the plan covers everything, under it `short` of it. Asked about studying everything,
+ * it ends on `fullCourseEndDate`. The times in `unreadable` can't be worked out. Main runs without
+ * the API.
  */
 async function routeTwoHourAdvice(
   page: Page,
   {
+    fullCourseEndDate = null,
     goalId,
     isoDate,
     measure,
     short,
-  }: { goalId: string; isoDate: string; measure: "exam" | "goal"; short: number },
+    unreadable = [],
+  }: {
+    fullCourseEndDate?: string | null;
+    goalId: string;
+    isoDate: string;
+    measure: "exam" | "goal";
+    short: number;
+    unreadable?: number[];
+  },
 ) {
   await page.route(`**/v1/goals/${goalId}/plan/time-advice**`, (route) => {
-    const dailyMinutes = Number(new URL(route.request().url()).searchParams.get("dailyMinutes"));
+    const params = new URL(route.request().url()).searchParams;
+    const dailyMinutes = Number(params.get("dailyMinutes"));
+
+    if (unreadable.includes(dailyMinutes)) {
+      return route.fulfill({ body: "", status: 500 });
+    }
 
     return route.fulfill({
       json: {
         coveredShare: dailyMinutes >= 120 ? 1 : short,
+        fullCourseEndDate: params.get("fullCourse") === "true" ? fullCourseEndDate : null,
         measure,
         numbers: null,
         readingNotice: false,
@@ -645,13 +662,24 @@ test("an exam's time step offers what covers everything only while the time pick
   expect(body).toContain('"fullCourse":false');
 });
 
-test("when no time covers an exam by its date, Find hands the keyboard to studying everything after it", async ({
+test("when no time covers an exam by its date, Find hands the keyboard to studying everything after it, which says when it ends and keeps her choice", async ({
   noProgressUser,
   userWithoutProgress: page,
 }) => {
   const { goal, isoDate } = await createTimeStepGoal(noProgressUser.id);
   await prisma.goal.update({ data: { kind: "exam" }, where: { id: goal.id } });
-  await routeTwoHourAdvice(page, { goalId: goal.id, isoDate, measure: "exam", short: 0.5 });
+
+  await routeTwoHourAdvice(page, {
+    fullCourseEndDate: inMinutes(60 * 24 * 400)
+      .toISOString()
+      .slice(0, "YYYY-MM-DD".length),
+    goalId: goal.id,
+    isoDate,
+    measure: "exam",
+    short: 0.5,
+    unreadable: [45],
+  });
+
   await routeTimeToCover(page, { goalId: goal.id, time: { targetDate: isoDate } });
 
   await page.goto(`/start/${goal.id}`);
@@ -666,12 +694,41 @@ test("when no time covers an exam by its date, Find hands the keyboard to studyi
 
   const everything = page.getByRole("switch", { name: "Study everything, even after the exam" });
   await expect(everything).toBeFocused();
+
+  await expect(everything).toHaveAccessibleDescription(
+    "Until the exam, what comes up most comes first. What doesn't fit comes after it.",
+  );
+
+  // On, the plan she'd get is the one asked about: it says when everything ends.
   await page.keyboard.press("Space");
   await expect(everything).toBeChecked();
+
+  await expect(everything).toHaveAccessibleDescription(
+    /^At 30\smin a day, you finish in .+, after the exam on .+\. Until the exam, what comes up most comes first\.$/u,
+  );
+
+  // Another time whose estimate can't be worked out doesn't take her choice away.
+  await page
+    .getByRole("radiogroup", { name: "Minutes a day" })
+    .getByText("45 min", { exact: true })
+    .click();
+
+  const estimate = page.getByRole("region", { name: "Estimate" });
+
+  await expect(
+    estimate.getByText(/^We couldn't work out what 45\smin a day covers\./u),
+  ).toBeVisible({ timeout: 15_000 });
+
+  await expect(everything).toBeChecked();
+
+  await expect(everything).toHaveAccessibleDescription(
+    "Until the exam, what comes up most comes first. What doesn't fit comes after it.",
+  );
 
   const answer = waitForScheduleAnswer(page, goal.id);
   await page.getByRole("button", { exact: true, name: "Continue" }).click();
   const sent = await answer;
+  expect(sent.postData()).toContain('"dailyMinutes":45');
   expect(sent.postData()).toContain('"fullCourse":true');
 });
 

@@ -8,6 +8,7 @@ import {
 import { useState } from "react";
 import { type PollStatus, usePoll } from "../../_utils/use-poll";
 import { type FindStatus } from "../../plan/plan-coverage";
+import { type ExamFinish } from "../../plan/plan-full-course";
 import { requestWithin } from "../../plan/use-time-to-cover";
 
 const ADVICE_POLL_MS = 3000;
@@ -118,6 +119,49 @@ export function getPickedShare({
   }
 
   return { known: false, share: null };
+}
+
+/**
+ * When studying everything ends at the time picked, once the plan asked about it for this very time
+ * and week said so (`advice`, see `getWeekAdvice`); null before, and when even that plan can't
+ * hold everything (see `PlanTimeAdvice.fullCourseEndDate`).
+ */
+export function getFullCourseEnd({
+  advice,
+  answer,
+  minutes,
+}: {
+  advice: PlanTimeAdvice | null;
+  answer: AdviceAnswer | null;
+  minutes: number;
+}): ExamFinish | null {
+  const endDate = answer?.minutes === minutes ? advice?.fullCourseEndDate : null;
+
+  return endDate && advice?.targetDate
+    ? {
+        dailyMinutes: minutes,
+        endDate,
+        targetDate: advice.targetDate,
+        targetDateNamedMonth: advice.targetDateNamedMonth,
+      }
+    : null;
+}
+
+/**
+ * Whether an exam's choice to study everything (`checked`) goes with the week: until the plan says
+ * the time picked covers everything (see `getPickedShare`), which leaves nothing to study after the
+ * exam. While what it covers isn't known (another time is asked about, or asking it failed), the
+ * learner's choice stands.
+ */
+export function keepsFullCourse({
+  checked,
+  pickedShare,
+}: {
+  checked: boolean;
+  pickedShare: PickedShare;
+}): boolean {
+  const coversEverything = pickedShare.known && (pickedShare.share ?? 0) >= 1;
+  return checked && !coversEverything;
 }
 
 /** Asking stopped: it kept failing, or it ran too long. */

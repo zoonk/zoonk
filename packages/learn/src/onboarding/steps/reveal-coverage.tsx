@@ -26,19 +26,11 @@ type Coverage = NonNullable<ReturnType<typeof usePlanCoverage>>;
  * exam's plan studies everything, when it ends.
  */
 function CoveredWords({ coverage }: { coverage: Coverage }) {
-  const t = useExtracted();
   const coveredText = useCoveredText();
   const course = useFullCourse();
   const fullCourseText = useFullCourseText();
 
-  if (course?.on) {
-    const finish =
-      fullCourseText.finish(course) ?? t("Every topic, even after the exam, at your own pace.");
-
-    return `${finish} ${t("Until the exam, what comes up most comes first.")}`;
-  }
-
-  return coveredText(coverage);
+  return course?.on ? fullCourseText.onExam(course) : coveredText(coverage);
 }
 
 /** "9 subjects from the notice · 70 topics, all in your plan": the goal's structure in one line. */

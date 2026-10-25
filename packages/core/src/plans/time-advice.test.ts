@@ -653,6 +653,64 @@ describe(getPlanTimeAdvice, () => {
     expect(sundays.advice).toMatchObject({ fullCourseEndDate: null, ready: true });
   });
 
+  it("says on the Plan when studying everything ends, only while its plan holds all of it", async () => {
+    const [user, library] = await Promise.all([
+      userFixture(),
+      planLibraryFixture({ skills: [{ area: "Math", lessons: 0, size: 600, weight: 1 }] }),
+    ]);
+
+    const { goal } = await unplannedGoalFixture({
+      dailyMinutes: 60,
+      examBlueprintId: null,
+      kind: "exam",
+      settings: { startDate: "2020-09-28" },
+      targetDate: new Date("2020-10-16T00:00:00Z"),
+      timezone: "UTC",
+      userId: user.id,
+    });
+
+    mockSession(user.id);
+
+    vi.mocked(getRequestProgressDateContext).mockResolvedValue({
+      currentDate: new Date("2020-09-28T00:00:00Z"),
+      currentInstant: NOW,
+      timeZone: "UTC",
+    });
+
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+
+    const readEstimate = async () => {
+      const result = await getGoalPlan(goal.id);
+
+      if (result.status !== "ready") {
+        throw new Error(`Expected the plan, got ${result.status}`);
+      }
+
+      return result.plan.estimate;
+    };
+
+    // Ending at the exam, nothing goes on after it.
+    await expect(readEstimate()).resolves.toMatchObject({ fullCourseEndDate: null });
+
+    await expect(
+      change(goal.id, [{ fullCourse: true, kind: "setFullCourse" }]),
+    ).resolves.toMatchObject({ status: "applied" });
+
+    // Going on after the exam at an hour a day, it holds all of it: its end is the finish.
+    const everything = await readEstimate();
+    expect(everything.fullCourseEndDate).toBe(everything.endDate);
+    expect((everything.fullCourseEndDate ?? "") > "2020-10-16").toBe(true);
+
+    // 5 minutes on Sundays never finish 600 lessons within the years the plan lays out.
+    await expect(
+      updateGoal({ goalId: goal.id, input: { dailyMinutes: 5, studyDays: [0], timeZone: "UTC" } }),
+    ).resolves.toMatchObject({ status: "updated" });
+
+    const sundays = await readEstimate();
+    expect(sundays.endDate).not.toBeNull();
+    expect(sundays.fullCourseEndDate).toBeNull();
+  });
+
   it("says the plan isn't ready while it's being built", async () => {
     const { goal } = await setup();
 

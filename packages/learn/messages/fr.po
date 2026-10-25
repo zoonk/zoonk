@@ -8536,16 +8536,6 @@ msgid "We couldn't save that. Try again in a moment."
 msgstr "Impossible d’enregistrer ça. Réessaie dans un instant."
 
 #: src/onboarding/steps/advice-sentence.tsx
-msgctxt "eucoaK"
-msgid "Studying everything in depth by {date} would take more than {time} a day. We recommend {time} a day: about {share} of the plan's exam topics in depth, what comes up most first."
-msgstr "Tout étudier en détail d’ici le {date} demanderait plus de {time} par jour. On te recommande {time} par jour : environ {share} des sujets d’examen du plan en détail, en commençant par les plus fréquents."
-
-#: src/onboarding/steps/advice-sentence.tsx
-msgctxt "-0lu6x"
-msgid "Studying everything in depth by {date} would take more than {time} a day. We recommend {time} a day: about {share} of your goal in depth, what matters most first."
-msgstr "Tout étudier en profondeur d’ici le {date} demanderait plus de {time} par jour. On te recommande {time} par jour : environ {share} de ton objectif en profondeur, en commençant par ce qui compte le plus."
-
-#: src/onboarding/steps/advice-sentence.tsx
 msgctxt "7CNAnx"
 msgid "You can change this anytime."
 msgstr "Tu peux changer ça à tout moment."
@@ -8565,11 +8555,28 @@ msgctxt "bv5Y_i"
 msgid "Your buddy grows as you learn."
 msgstr "Ton compagnon grandit à mesure que tu apprends."
 
+#: src/onboarding/steps/cover-everything.tsx
+msgctxt "5fsywg"
+msgid "To cover everything at {time} a day, move your date on the next screen."
+msgstr "Pour tout couvrir à raison de {time} par jour, modifie ta date sur l’écran suivant."
+
+#: src/onboarding/steps/daily-minutes.tsx
+msgctxt "QegAWn"
+msgid "Other time…"
+msgstr "Autre durée…"
+
 #: src/onboarding/steps/daily-minutes.tsx
 #: src/onboarding/steps/schedule-step.tsx
 msgctxt "NnJcB-"
 msgid "Minutes a day"
 msgstr "Minutes par jour"
+
+#: src/onboarding/steps/daily-minutes.tsx
+#: src/onboarding/steps/schedule-step.tsx
+#: src/plan/plan-schedule.tsx
+msgctxt "fhjtBs"
+msgid "Other time a day"
+msgstr "Autre durée quotidienne"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "_2I8Hl"
@@ -8637,14 +8644,12 @@ msgid "{count, plural, one {Which one will you take?} other {Which ones will you
 msgstr "{count, plural, one {Quel examen vas-tu passer ?} other {Quels examens vas-tu passer ?}}"
 
 #: src/onboarding/steps/full-course-toggle.tsx
+#: src/plan/plan-coverage-suggestion.tsx
+#: src/plan/plan-full-course.tsx
+#: src/plan/plan-offer-preview.tsx
 msgctxt "ibF-ax"
 msgid "Study everything, even after the exam"
-msgstr "Tout étudier, même après le bac"
-
-#: src/onboarding/steps/full-course-toggle.tsx
-msgctxt "uWL68n"
-msgid "Until the exam, what comes up most comes first. What doesn't fit comes after it."
-msgstr "Jusqu’au bac, les sujets les plus fréquents passent d’abord. Le reste vient après."
+msgstr "Tout étudier, même après l’examen"
 
 #: src/onboarding/steps/level-choices.tsx
 msgctxt "HGiiLi"
@@ -9126,27 +9131,11 @@ msgid "Adjust"
 msgstr "Ajuster"
 
 #: src/onboarding/steps/reveal-coverage.tsx
-#: src/plan/plan-full-course.tsx
-#: src/plan/plan-offer-preview.tsx
-#: src/plan/plan-past-date-suggestion.tsx
-#: src/plan/study-everything.tsx
-msgctxt "0kaP6f"
-msgid "Every topic, even after the exam, at your own pace."
-msgstr "Tous les sujets, même après l’examen, à ton rythme."
-
-#: src/onboarding/steps/reveal-coverage.tsx
-#: src/plan/plan-offer-preview.tsx
-msgctxt "aIjU98"
-msgid "Until the exam, what comes up most comes first."
-msgstr "Jusqu’à l’examen, ce qui tombe le plus souvent passe en premier."
-
-#: src/onboarding/steps/reveal-coverage.tsx
 msgctxt "0WvsUC"
 msgid "Done. Your plan now covers your whole goal."
 msgstr "C’est fait. Ton plan couvre maintenant tout ton objectif."
 
 #: src/onboarding/steps/reveal-coverage.tsx
-#: src/plan/plan-coverage-suggestion.tsx
 #: src/plan/plan-coverage.tsx
 #: src/plan/plan-offer-preview.tsx
 msgctxt "hzzrUH"
@@ -9258,6 +9247,11 @@ msgstr "Quels jours ?"
 msgctxt "uCJzR6"
 msgid "Minutes on weekends"
 msgstr "Nombre de minutes le week-end"
+
+#: src/onboarding/steps/study-week.tsx
+msgctxt "Foe70I"
+msgid "Other time on weekends"
+msgstr "Autre durée le week-end"
 
 #: src/onboarding/steps/subjects-level-step.tsx
 msgctxt "PNR_JU"
@@ -10020,6 +10014,17 @@ msgid "At {time} a day, you finish in {month}."
 msgstr "Avec {time} par jour, tu termines en {month}."
 
 #: src/plan/plan-full-course.tsx
+#: src/plan/plan-offer-preview.tsx
+msgctxt "aIjU98"
+msgid "Until the exam, what comes up most comes first."
+msgstr "Jusqu’à l’examen, ce qui tombe le plus souvent passe en premier."
+
+#: src/plan/plan-full-course.tsx
+msgctxt "uWL68n"
+msgid "Until the exam, what comes up most comes first. What doesn't fit comes after it."
+msgstr "Jusqu’à l’examen, ce qui tombe le plus souvent passe en premier. Ce qui ne tient pas avant l’examen vient après."
+
+#: src/plan/plan-full-course.tsx
 msgctxt "Wkhove"
 msgid "Until the exam, nothing changes: what comes up most comes first, with mocks and the final stretch. What doesn't fit comes after it."
 msgstr "Jusqu’à l’examen, rien ne change : ce qui tombe le plus souvent passe en premier, avec les examens blancs et la dernière ligne droite. Ce qui ne tient pas avant l’examen vient après."
@@ -10028,11 +10033,6 @@ msgstr "Jusqu’à l’examen, rien ne change : ce qui tombe le plus souvent pa
 msgctxt "_LZyQU"
 msgid "Your deadline of {date} comes off your plan. You can set one again anytime."
 msgstr "La date limite du {date} sera retirée de ton plan. Tu pourras en définir une autre quand tu veux."
-
-#: src/plan/plan-full-course.tsx
-msgctxt "UucZ2o"
-msgid "Keep studying after the exam"
-msgstr "Continuer à étudier après l’examen"
 
 #: src/plan/plan-full-course.tsx
 msgctxt "9N2W7h"
@@ -10076,20 +10076,10 @@ msgid "{time} a day covers everything in depth"
 msgstr "{time} par jour te permet de tout étudier en détail"
 
 #: src/plan/plan-offer-preview.tsx
-msgctxt "mV7H8_"
-msgid "{time} a day covers about {share} in depth"
-msgstr "{time} par jour te permet d’étudier environ {share} en détail"
-
-#: src/plan/plan-offer-preview.tsx
 #: src/plan/plan-past-date-suggestion.tsx
 msgctxt "KcETCo"
 msgid "Other options"
 msgstr "Autres options"
-
-#: src/plan/plan-offer-preview.tsx
-msgctxt "8JrQTY"
-msgid "Study everything after the exam"
-msgstr "Tout étudier après l’examen"
 
 #: src/plan/plan-offer-preview.tsx
 #: src/plan/study-everything.tsx
@@ -10097,6 +10087,12 @@ msgstr "Tout étudier après l’examen"
 msgctxt "tODRiS"
 msgid "Study everything"
 msgstr "Tout étudier"
+
+#: src/plan/plan-past-date-suggestion.tsx
+#: src/plan/study-everything.tsx
+msgctxt "0kaP6f"
+msgid "Every topic, even after the exam, at your own pace."
+msgstr "Tous les sujets, même après l’examen, à ton rythme."
 
 #: src/plan/plan-past-date-suggestion.tsx
 msgctxt "oNLSka"
@@ -11080,29 +11076,19 @@ msgid "At {time} a day, your plan covers everything by {date}."
 msgstr "Avec {time} par jour, ton plan couvre tout d’ici au {date}."
 
 #: src/plan/use-time-to-cover.ts
-msgctxt "FuholB"
-msgid "Even at {time} a day, you'd study about {share} of everything in depth by your date."
-msgstr "Même en y consacrant {time} par jour, tu n’étudierais en profondeur qu’environ {share} de tout d’ici ta date."
-
-#: src/plan/use-time-to-cover.ts
 msgctxt "wo_0PK"
 msgid "We couldn't find a date that covers everything."
 msgstr "On n’a pas trouvé de date qui couvre tout."
 
 #: src/plan/use-time-to-cover.ts
-msgctxt "V0QV2z"
-msgid "Even at {time} a day, your plan wouldn't cover more by your date."
-msgstr "Même avec {time} par jour, ton plan ne couvrirait pas plus d’ici ta date."
+msgctxt "4HljXi"
+msgid "No amount of time a day covers everything in depth by {date}."
+msgstr "Aucune durée quotidienne ne permet de tout étudier en profondeur d’ici au {date}."
 
 #: src/plan/use-time-to-cover.ts
 msgctxt "IPzR8B"
 msgid "Covers everything"
 msgstr "Couvre tout"
-
-#: src/plan/use-time-to-cover.ts
-msgctxt "j5lSlC"
-msgid "About {share}"
-msgstr "Environ {share}"
 
 #: src/plan/use-tool-sentence.ts
 msgctxt "MYXHu2"
@@ -12542,11 +12528,6 @@ msgstr "Plus de temps par jour"
 msgctxt "eH7xFh"
 msgid "More time or a later date"
 msgstr "Plus de temps ou une date plus tardive"
-
-#: src/today/today-falling-behind.tsx
-msgctxt "aPdH_X"
-msgid "Move your date"
-msgstr "Changer la date"
 
 #: src/today/today-falling-behind.tsx
 msgctxt "-0WD6T"
