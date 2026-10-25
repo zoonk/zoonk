@@ -123,6 +123,33 @@ async function answerByKeyboard(
   await pressByKeyboard(page, next);
 }
 
+/**
+ * Stands in for the run the answers start (the API's, whose own tests cover it): its stream stays
+ * open until `stop`, then says the run failed.
+ */
+async function stopRunOnCue(page: Page, stop: Promise<string>) {
+  let status = "running";
+
+  await page.route(/\/v1\/generations\/[^/]+$/u, (route) => route.fulfill({ json: { status } }));
+
+  await page.route("**/v1/generations/*/events**", async (route) => {
+    const entityId = await stop;
+    status = "failed";
+
+    const failed = {
+      entityId,
+      reason: "aiGenerationFailed",
+      status: "error",
+      step: "workflowError",
+    };
+
+    await route.fulfill({
+      body: `data: ${JSON.stringify(failed)}\n\n`,
+      contentType: "text/event-stream",
+    });
+  });
+}
+
 const QUANTUM: Understanding = {
   followUps: [],
   goals: [{ kind: "learn", subject: "quantum physics", title: "Understand quantum physics" }],
@@ -133,22 +160,23 @@ test.describe("Onboarding from a typed goal", () => {
   test("a plan that stops building says so by Continue, without moving the choices", async ({
     browser,
   }) => {
-    // AI is off in tests, so the plan the answers start building always stops: the notice arrives
-    // while the learner is on a question, on a phone and on a laptop (side by side, as each waits
-    // for the run to give up), in either theme.
+    // The plan the answers start building stops while the learner is on a question, on a phone
+    // and on a laptop (side by side).
     await Promise.all(
       [390, 1440].map(async (width) => {
         const context = await browser.newContext({ viewport: { height: 900, width } });
+        const stop = Promise.withResolvers<string>();
 
         try {
           const page = await context.newPage();
+          await stopRunOnCue(page, stop.promise);
 
           const goal = await typeGoal(page, {
             result: QUANTUM,
             words: "i want to understand quantum physics",
           });
 
-          await confirmGoal(page, goal);
+          const created = await confirmGoal(page, goal);
 
           await expect(
             page.getByRole("heading", { name: "What do you want from it?" }),
@@ -156,31 +184,18 @@ test.describe("Onboarding from a typed goal", () => {
 
           const first = page.getByRole("radio").first();
           const before = await first.boundingBox();
+          stop.resolve(created.id);
 
-          const stopped = page.getByText(
-            /^(?:Building your plan stopped|We couldn't start building your plan)$/u,
-          );
-
-          // The run retries before it gives up, longer than an assertion's default wait.
-          await expect(stopped).toBeVisible({ timeout: 30_000 });
+          const stopped = page.getByText("Building your plan stopped", { exact: true });
+          await expect(stopped).toBeVisible();
 
           // It sits with Continue, in a live region screen readers hear, and the choices stay put.
           const liveRegion = page.locator("[aria-live='polite']").filter({ has: stopped });
           await expect(liveRegion).toHaveCount(1);
           await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
           expect(await first.boundingBox()).toStrictEqual(before);
-
-          for (const colorScheme of ["light", "dark"] as const) {
-            // oxlint-disable-next-line no-await-in-loop -- One theme at a time.
-            await page.emulateMedia({ colorScheme });
-            // The theme changes in place: transitions end before the shot, as on a page opened in it.
-            // oxlint-disable-next-line no-await-in-loop -- One theme at a time.
-            await page.screenshot({
-              animations: "disabled",
-              path: test.info().outputPath(`plan-stopped-${width}-${colorScheme}.png`),
-            });
-          }
         } finally {
+          stop.resolve("");
           await context.close();
         }
       }),

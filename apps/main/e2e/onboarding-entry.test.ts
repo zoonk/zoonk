@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { prisma } from "@zoonk/db";
+import { DbNull, prisma } from "@zoonk/db";
 import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { ensureGuest } from "@zoonk/e2e/fixtures/guests";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
@@ -339,7 +339,7 @@ test.describe("Coming back", () => {
     });
   }
 
-  test("a start that failed offers to try again, and a refresh follows the read to the card", async ({
+  test("a start that failed offers to try again, which moves on once the words can be read, and a refresh follows a read to the card", async ({
     page,
   }) => {
     const goal = uniqueWords("learn to juggle five balls");
@@ -351,10 +351,39 @@ test.describe("Coming back", () => {
     await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
 
     const draft = await findDraft(goal);
+
+    const understanding = {
+      goals: [
+        {
+          draft: {
+            details: { onboardingId: draft.id, subject: "juggling" },
+            kind: "learn",
+            language: "en",
+            prompt: goal,
+            title: "Juggle five balls",
+          },
+          examDates: [],
+        },
+      ],
+      schedule: { dailyMinutes: 15, studyDays: null, studyTime: null, studyTimeNote: null },
+      status: "goals",
+    };
+
+    // The words got read after all (the cache has them now): trying again shows the card.
+    await prisma.onboardingDraft.update({
+      data: { status: "understood", understanding },
+      where: { id: draft.id },
+    });
+
+    await page.getByRole("button", { name: "Try again" }).click();
+    await expect(page.getByText("Juggle five balls", { exact: true })).toBeVisible();
+
+    // A read still running when the page is refreshed: the refresh only follows the run it finds,
+    // the wait, then the card on its own.
     const runId = `e2e-understanding-${randomUUID()}`;
 
     await prisma.onboardingDraft.update({
-      data: { runId, status: "understanding" },
+      data: { runId, status: "understanding", understanding: DbNull },
       where: { id: draft.id },
     });
 
@@ -364,25 +393,7 @@ test.describe("Coming back", () => {
       await release.promise;
 
       await prisma.onboardingDraft.update({
-        data: {
-          status: "understood",
-          understanding: {
-            goals: [
-              {
-                draft: {
-                  details: { onboardingId: draft.id, subject: "juggling" },
-                  kind: "learn",
-                  language: "en",
-                  prompt: goal,
-                  title: "Juggle five balls",
-                },
-                examDates: [],
-              },
-            ],
-            schedule: { dailyMinutes: 15, studyDays: null, studyTime: null, studyTimeNote: null },
-            status: "goals",
-          },
-        },
+        data: { status: "understood", understanding },
         where: { id: draft.id },
       });
 
@@ -399,7 +410,6 @@ test.describe("Coming back", () => {
       });
     });
 
-    // The refresh only follows the run it finds: the wait, then the card on its own.
     await page.reload();
     await expect(page.getByRole("heading", { name: "Understanding your goal" })).toBeVisible();
     await expect(page.getByRole("progressbar", { name: "Reading your goal" })).toBeVisible();
@@ -408,41 +418,6 @@ test.describe("Coming back", () => {
 
     await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeFocused();
     await expect(page.getByText("Juggle five balls", { exact: true })).toBeVisible();
-  });
-
-  test("try again moves on once the words can be read", async ({ page }) => {
-    const goal = uniqueWords("learn to whistle with two fingers");
-    await sendGoal(page, goal);
-    await expect(page.getByText(FAILED_READ)).toBeVisible({ timeout: FAILED_READ_TIMEOUT });
-
-    // The words got read after all (the cache has them now): trying again shows the card.
-    const draft = await findDraft(goal);
-
-    await prisma.onboardingDraft.update({
-      data: {
-        status: "understood",
-        understanding: {
-          goals: [
-            {
-              draft: {
-                details: { onboardingId: draft.id, subject: "whistling" },
-                kind: "learn",
-                language: "en",
-                prompt: goal,
-                title: "Whistle with two fingers",
-              },
-              examDates: [],
-            },
-          ],
-          schedule: { dailyMinutes: 15, studyDays: null, studyTime: null, studyTimeNote: null },
-          status: "goals",
-        },
-      },
-      where: { id: draft.id },
-    });
-
-    await page.getByRole("button", { name: "Try again" }).click();
-    await expect(page.getByText("Whistle with two fingers", { exact: true })).toBeVisible();
   });
 });
 

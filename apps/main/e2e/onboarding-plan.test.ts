@@ -1032,50 +1032,44 @@ function isoDaysFromNow(days: number): string {
     .slice(0, "YYYY-MM-DD".length);
 }
 
-/** Taking the notice day answers the same advice on Today, with or without a saved graph. */
-async function expectNoticeDayTaken({
-  hasGraph,
-  page,
-  userId,
-}: {
-  hasGraph: boolean;
-  page: Page;
-  userId: string;
-}) {
-  const goal = await createMappedGoal(userId);
+// Taking the notice day answers the same advice on Today. The plan has its saved skill graph, as
+// the goal workflow leaves it; core's notice-day tests cover a plan without one.
+test("the reveal offers the exam notice's day over the learner's own, and takes it in one tap", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}) => {
+  const goal = await createMappedGoal(noProgressUser.id);
   const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
   const noticeDay = isoDaysFromNow(90);
 
-  if (hasGraph) {
-    const items = await prisma.planItem.findMany({
-      include: { skill: true },
-      orderBy: { position: "asc" },
-      where: { planId: plan.id },
-    });
+  const items = await prisma.planItem.findMany({
+    include: { skill: true },
+    orderBy: { position: "asc" },
+    where: { planId: plan.id },
+  });
 
-    await prisma.plan.update({
-      data: {
-        graph: {
-          phases: [{ name: "Stage 1" }, { name: "Stage 2" }],
-          skills: items.flatMap((item) =>
-            item.skill
-              ? [
-                  {
-                    area: null,
-                    lessons: 1,
-                    name: item.skill.name,
-                    phase: item.phase,
-                    skillId: item.skill.id,
-                    weight: null,
-                  },
-                ]
-              : [],
-          ),
-        },
+  await prisma.plan.update({
+    data: {
+      graph: {
+        phases: [{ name: "Stage 1" }, { name: "Stage 2" }],
+        skills: items.flatMap((item) =>
+          item.skill
+            ? [
+                {
+                  area: null,
+                  lessons: 1,
+                  name: item.skill.name,
+                  phase: item.phase,
+                  skillId: item.skill.id,
+                  weight: null,
+                },
+              ]
+            : [],
+        ),
       },
-      where: { id: plan.id },
-    });
-  }
+    },
+    where: { id: plan.id },
+  });
 
   const blueprint = await examBlueprintFixture({
     edition: {
@@ -1168,20 +1162,6 @@ async function expectNoticeDayTaken({
   await expect(
     page.getByText("A newer suggestion replaced this one.", { exact: true }),
   ).toHaveCount(0);
-}
-
-test("the reveal offers the exam notice's day over the learner's own, and takes it in one tap", async ({
-  noProgressUser,
-  userWithoutProgress: page,
-}) => {
-  await expectNoticeDayTaken({ hasGraph: false, page, userId: noProgressUser.id });
-});
-
-test("the reveal offers the exam notice's day over the learner's own, and takes it in one tap, with its saved skill graph", async ({
-  noProgressUser,
-  userWithoutProgress: page,
-}) => {
-  await expectNoticeDayTaken({ hasGraph: true, page, userId: noProgressUser.id });
 });
 
 // Dele said February; DELE B2 sits in November and April. Nothing told her.
@@ -1391,8 +1371,8 @@ test("Back to the level question shows the level the learner picked", async ({
 
   const question = "How much do you already know?";
   await expect(page.getByRole("heading", { name: question })).toBeVisible();
+  // The level moves on with the pick: a Continue after it could land on the next screen.
   await page.getByRole("radio", { name: /^I studied it before/u }).click();
-  await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
   await expect(
     page.getByRole("heading", { name: "Let's see what you already know" }),
