@@ -172,12 +172,7 @@ function QuestionLead({
 }) {
   return (
     <>
-      <ItemSupport
-        className="text-muted-foreground text-sm leading-relaxed"
-        context={question.context}
-        image={question.image}
-        visual={question.visual}
-      />
+      <ItemSupport context={question.context} image={question.image} visual={question.visual} />
       {withTitle && <QuestionTitle muted={graded} text={question.question} />}
     </>
   );

@@ -208,12 +208,7 @@ export function ChoiceQuestion({
 
   return (
     <div className="flex flex-col gap-4">
-      <ItemSupport
-        className="text-muted-foreground text-sm"
-        context={question.context}
-        image={question.image}
-        visual={question.visual}
-      />
+      <ItemSupport context={question.context} image={question.image} visual={question.visual} />
       <div
         className={cn(QUESTION_TEXT_CLASS, "outline-none")}
         data-slot={CHOICE_QUESTION_TITLE_SLOT}

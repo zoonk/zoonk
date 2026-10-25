@@ -2,8 +2,12 @@
 
 import { type RefObject, useLayoutEffect } from "react";
 
-/** The buddy at the foot of a task's aside from `lg`, level with the action bar. */
-export const TUTOR_DOCK_CLASS = "flex flex-col lg:fixed lg:right-0 lg:bottom-0 lg:w-(--task-aside)";
+/**
+ * The buddy at the foot of a task's aside from `lg`, level with the action bar, carrying on the
+ * aside's hairline beside its suggestions.
+ */
+export const TUTOR_DOCK_CLASS =
+  "flex flex-col lg:border-border lg:fixed lg:right-0 lg:bottom-0 lg:w-(--task-aside) lg:border-l";
 
 /** The dock's composer row, behind a hairline. */
 export const TUTOR_DOCK_BAR_CLASS =

@@ -214,12 +214,7 @@ export function MockQuestionCard({ question }: { question: MockQuestion }) {
         <ItemSetStimulus continued={previous?.set?.id === question.set.id} set={question.set} />
       )}
 
-      <ItemSupport
-        className="text-muted-foreground"
-        context={question.context}
-        image={question.image}
-        visual={question.visual}
-      />
+      <ItemSupport context={question.context} image={question.image} visual={question.visual} />
       <div className={QUESTION_TEXT_CLASS}>
         <ItemStem text={question.question} heading="h2" />
       </div>

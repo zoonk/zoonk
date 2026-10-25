@@ -213,8 +213,8 @@ function LessonPicturePending({ frame }: { frame: LessonPictureFrame }) {
 }
 
 /**
- * A reading screen's picture leads it like a story: edge to edge on a phone, in the column's
- * width from a tablet up.
+ * A reading screen's picture leads it like a story: edge to edge on a phone, in the column from a
+ * tablet up, on the text's left edge when its height cap leaves it narrower than the column.
  */
 function PictureFrame({
   children,
@@ -228,7 +228,7 @@ function PictureFrame({
   return (
     <div
       className={cn(
-        "flex w-full justify-center",
+        "flex w-full justify-start",
         frame === "hero" && "max-sm:-mx-4 max-sm:w-[calc(100%+2rem)]",
         className,
       )}

@@ -277,7 +277,6 @@ export function PlacementQuestionScreen({
           {media}
 
           <ItemSupport
-            className="text-muted-foreground text-base leading-relaxed"
             context={question.context}
             image={question.image}
             visual={question.visual}

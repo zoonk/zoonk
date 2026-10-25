@@ -107,7 +107,9 @@ export function ItemLine({ text }: { text: string }) {
 /**
  * What a question shows before its command: its support text (paragraphs and tables), the figure
  * it's about and the chart or timeline it reads. Every question screen uses it, so a picture or a
- * visual never goes missing.
+ * visual never goes missing. The text is body text, as a lesson's situation is: it holds what the
+ * question needs, so it never reads as a quiet aside. Only a recap of an earlier question
+ * (`className`) draws it quieter.
  */
 export function ItemSupport({
   className,
@@ -122,7 +124,9 @@ export function ItemSupport({
 }) {
   return (
     <>
-      {context && <ItemText className={className} text={context} />}
+      {context && (
+        <ItemText className={cn("text-base leading-relaxed", className)} text={context} />
+      )}
       {image && <ItemPicture image={image} />}
       <LessonVisual visual={visual} />
     </>

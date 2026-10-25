@@ -119,12 +119,7 @@ function QuestionCard({ question }: { question: CheckpointQuestion }) {
 
   return (
     <div className="flex flex-col gap-4" data-slot="checkpoint-question">
-      <ItemSupport
-        className="text-muted-foreground"
-        context={question.context}
-        image={question.image}
-        visual={question.visual}
-      />
+      <ItemSupport context={question.context} image={question.image} visual={question.visual} />
       <div className={QUESTION_TEXT_CLASS}>
         <ItemStem text={question.question} heading="h2" />
       </div>
