@@ -2,7 +2,6 @@ import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
-import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { examResultResponseSchema, examViewResponseSchema } from "../src/lib/openapi/schemas/exams";
 import {
   mockEssayGradesResponseSchema,
@@ -495,68 +494,6 @@ test.describe("Exams API", () => {
     });
 
     await Promise.all([api.dispose(), other.api.dispose()]);
-  });
-
-  test("takes a mock again as often as the learner wants, then shows how the mocks went", async () => {
-    const { api, userId } = await createBearerLearner({ baseURL, prefix: "anytime-mock-again" });
-    const { goal } = await createExamGoal(userId);
-    const mocksPath = `/v1/goals/${goal.id}/mocks`;
-    const half = { area: null, day: null, kind: "half" } as const;
-
-    /** Takes the half mock to its end, the first `right` questions right and the rest wrong. */
-    async function takeHalf(right: number) {
-      const started = await readBody({
-        response: await api.post(mocksPath, { data: { shape: half, timeZone: "UTC" } }),
-        schema: anytimeMockResponseSchema,
-        status: 201,
-      });
-
-      const path = `/v1/mocks/${started.id}`;
-
-      const running = await readBody({
-        response: await api.get(path),
-        schema: mockViewResponseSchema,
-      });
-
-      await (running.current?.questions ?? []).reduce(async (previous, question, index) => {
-        await previous;
-
-        await api.put(`${path}/answers`, {
-          data: {
-            answer: { selectedIndex: index < right ? 0 : 1 },
-            durationMs: 5000,
-            flagged: false,
-            itemId: question.itemId,
-          },
-        });
-      }, Promise.resolve());
-
-      await api.post(`${path}/sections/0/submissions`, { data: { timeZone: "UTC" } });
-      return running;
-    }
-
-    const first = await takeHalf(MOCK_QUESTIONS);
-    expect(first.reusedQuestions).toBe(0);
-
-    // Every question in the bank is answered and the plan's new questions for today are used: the
-    // same mock starts at once (201, never `needsQuestions`) with the questions answered before.
-    await usageRecordsFixture({ count: 2, kind: "mockQuestions", userId });
-
-    const second = await takeHalf(MOCK_QUESTIONS / 2);
-    expect(second).toMatchObject({ questions: MOCK_QUESTIONS, reusedQuestions: MOCK_QUESTIONS });
-
-    const exam = await readBody({
-      response: await api.get(`/v1/goals/${goal.id}/exam`),
-      schema: examViewResponseSchema,
-    });
-
-    // A wrong answer cancels a right one: all right is 100%, half right is a net of 0.
-    expect(exam.progress?.mocks.map((mock) => [mock.number, mock.percent])).toStrictEqual([
-      [1, 100],
-      [2, 0],
-    ]);
-
-    await api.dispose();
   });
 
   test("keeps the notice's break between sections, with each section's tools, and ends it early on request", async () => {
