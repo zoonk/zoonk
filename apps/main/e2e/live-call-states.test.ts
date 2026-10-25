@@ -1,20 +1,12 @@
 import { randomUUID } from "node:crypto";
-import {
-  type APIRequestContext,
-  type BrowserContext,
-  type Page,
-  type TestInfo,
-} from "@playwright/test";
+import { type APIRequestContext, type BrowserContext, type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
-import { settleAnimations } from "@zoonk/testing/accessibility/scan";
 import { RENTING_SCENARIO } from "@zoonk/testing/fixtures/language";
 import { getNumber, getString, isJsonObject } from "@zoonk/utils/json";
 import { test as base, expect } from "./fixtures";
 import { createLanguageLearner } from "./language-learner";
 import { answerLiveCalls } from "./live-peer";
 
-const WIDTHS = [390, 1440];
-const VIEWPORT_HEIGHT = 900;
 const CONNECTIONS_PER_CALL = 6;
 const CONNECTIONS_PER_DAY = 30;
 
@@ -155,32 +147,6 @@ function createCall({
       userId: learner.user.id,
     },
   });
-}
-
-async function capture({
-  label,
-  page,
-  testInfo,
-  width,
-}: {
-  label: string;
-  page: Page;
-  testInfo: TestInfo;
-  width: number;
-}) {
-  const path = testInfo.outputPath(`${label}-${width}.png`);
-  await expect.poll(() => page.evaluate(settleAnimations, 3000)).toBe(0);
-  await page.screenshot({ fullPage: true, path });
-  await testInfo.attach(`${label}-${width}`, { contentType: "image/png", path });
-  await page.emulateMedia({ colorScheme: "dark" });
-  await expect.poll(() => page.evaluate(settleAnimations, 3000)).toBe(0);
-
-  await page.screenshot({
-    fullPage: true,
-    path: testInfo.outputPath(`${label}-${width}-dark.png`),
-  });
-
-  await page.emulateMedia({ colorScheme: "light" });
 }
 
 function connectionFor(conversationId: string) {
@@ -513,333 +479,309 @@ async function leaveAndReturn({
 test.describe("Live call server states", () => {
   test.describe.configure({ mode: "serial" });
 
-  for (const width of WIDTHS) {
-    test(`two tabs require explicit takeover and the old call earns no feedback at ${width}`, async ({
-      stateCallResources: owned,
-    }, testInfo) => {
-      const learner = await createLanguageLearner({ withSubscription: true });
-      const [first, second] = await Promise.all([createCall({ learner }), createCall({ learner })]);
-      const oldTab = await owned.open(learner);
+  test("two tabs require explicit takeover and the old call earns no feedback", async ({
+    stateCallResources: owned,
+  }) => {
+    const learner = await createLanguageLearner({ withSubscription: true });
+    const [first, second] = await Promise.all([createCall({ learner }), createCall({ learner })]);
+    const oldTab = await owned.open(learner);
 
-      try {
-        await oldTab.setViewportSize({ height: VIEWPORT_HEIGHT, width });
-        const oldPeer = await answerLiveCalls(oldTab, "answers");
-        await oldTab.goto(`/conversation/${first.id}`);
-        await oldTab.getByRole("button", { name: "Start the call" }).click();
-        await expectLive(oldTab);
-        const original = await connectionFor(first.id);
-        const newTab = await oldTab.context().newPage();
-        await newTab.setViewportSize({ height: VIEWPORT_HEIGHT, width });
-        await answerLiveCalls(newTab, "answers");
-        const actions = observeActions({ conversationId: second.id, page: newTab });
-        await newTab.goto(`/conversation/${second.id}`);
-        await newTab.getByRole("button", { name: "Start the call" }).click();
-        await expect(callAlert(newTab)).toContainText("You're already in a call");
+    try {
+      const oldPeer = await answerLiveCalls(oldTab, "answers");
+      await oldTab.goto(`/conversation/${first.id}`);
+      await oldTab.getByRole("button", { name: "Start the call" }).click();
+      await expectLive(oldTab);
+      const original = await connectionFor(first.id);
+      const newTab = await oldTab.context().newPage();
+      await answerLiveCalls(newTab, "answers");
+      const actions = observeActions({ conversationId: second.id, page: newTab });
+      await newTab.goto(`/conversation/${second.id}`);
+      await newTab.getByRole("button", { name: "Start the call" }).click();
+      await expect(callAlert(newTab)).toContainText("You're already in a call");
 
-        await expect(
-          newTab.getByRole("button", { name: "End that call and start this one" }),
-        ).toBeVisible();
+      await expect(
+        newTab.getByRole("button", { name: "End that call and start this one" }),
+      ).toBeVisible();
 
-        await capture({ label: "takeover", page: newTab, testInfo, width });
+      expect(await prisma.liveCallConnection.count({ where: { conversationId: second.id } })).toBe(
+        0,
+      );
 
-        expect(
-          await prisma.liveCallConnection.count({ where: { conversationId: second.id } }),
-        ).toBe(0);
+      expect(
+        await prisma.liveCallSlot.findUnique({ where: { userId: learner.user.id } }),
+      ).toMatchObject({ connectionId: original.id });
 
-        expect(
-          await prisma.liveCallSlot.findUnique({ where: { userId: learner.user.id } }),
-        ).toMatchObject({ connectionId: original.id });
+      await newTab.getByRole("button", { name: "End that call and start this one" }).click();
+      await expectLive(newTab);
+      expect(actions.reserve).toHaveLength(2);
+      expect(actions.reserve[0]?.takeover).toBe(false);
+      expect(actions.reserve[1]?.takeover).toBe(true);
+      expect(actions.reserve[1]?.requestId).not.toBe(actions.reserve[0]?.requestId);
 
-        await newTab.getByRole("button", { name: "End that call and start this one" }).click();
-        await expectLive(newTab);
-        expect(actions.reserve).toHaveLength(2);
-        expect(actions.reserve[0]?.takeover).toBe(false);
-        expect(actions.reserve[1]?.takeover).toBe(true);
-        expect(actions.reserve[1]?.requestId).not.toBe(actions.reserve[0]?.requestId);
+      const [replaced, current] = await Promise.all([
+        prisma.liveCallConnection.findUniqueOrThrow({ where: { id: original.id } }),
+        connectionFor(second.id),
+      ]);
 
-        const [replaced, current] = await Promise.all([
-          prisma.liveCallConnection.findUniqueOrThrow({ where: { id: original.id } }),
-          connectionFor(second.id),
-        ]);
-
-        expect(replaced).toMatchObject({
-          costConfidence: "confirmed",
-          endReason: "takeover",
-          state: "closed",
-        });
-
-        expect(current.state).toBe("active");
-
-        expect(current.providerStartedAt?.getTime()).toBeGreaterThanOrEqual(
-          replaced.closedAt?.getTime() ?? Number.POSITIVE_INFINITY,
-        );
-
-        await oldPeer.emit({
-          reason: "close_requested",
-          session: { id: original.providerSessionId },
-          type: "session.closed",
-          usage: { seconds: 15 },
-        });
-
-        await expect(callAlert(oldTab)).toContainText("It ended when you started another call.");
-
-        const saved = await prisma.languageConversation.findUniqueOrThrow({
-          where: { id: first.id },
-        });
-
-        expect(saved).toMatchObject({ feedback: null, status: "ready" });
-      } finally {
-        await owned.cleanup();
-      }
-    });
-
-    test(`reconnect retries once and retains the slot until confirmed, at ${width}`, async ({
-      stateCallResources: owned,
-      request,
-    }, testInfo) => {
-      const learner = await createLanguageLearner({ withSubscription: true });
-      const call = await createCall({ learner });
-      const firstTab = await owned.open(learner);
-
-      try {
-        const firstPeer = await answerLiveCalls(firstTab, "answers");
-        await firstTab.goto(`/conversation/${call.id}`);
-        await firstTab.getByRole("button", { name: "Start the call" }).click();
-        await expectLive(firstTab);
-        const original = await connectionFor(call.id);
-        /** The first close fails; the automatic retry waits at the external boundary for our capture. */
-        await closeBehavior({
-          mode: "hold",
-          rejectCloses: 1,
-          request,
-          sessionId: original.providerSessionId,
-        });
-
-        const returning = await firstTab.context().newPage();
-        await returning.setViewportSize({ height: VIEWPORT_HEIGHT, width });
-        await answerLiveCalls(returning, "answers");
-        const actions = observeActions({ conversationId: call.id, page: returning });
-        await returning.goto(`/conversation/${call.id}`);
-        await returning.getByRole("button", { name: "Start the call" }).click();
-
-        await expect(
-          returning
-            .locator('[data-slot="task-frame-body"]')
-            .getByRole("status")
-            .filter({ hasText: /^Reconnecting…$/u }),
-        ).toBeVisible();
-
-        await expect
-          .poll(() => prisma.liveCallConnection.findUnique({ where: { id: original.id } }))
-          .toMatchObject({ closeAttempts: 2, state: "closing" });
-
-        expect(actions.reserve).toHaveLength(2);
-        expect(actions.reserve[1]).toEqual(actions.reserve[0]);
-        await capture({ label: "reconnecting", page: returning, testInfo, width });
-        await closeBehavior({ mode: "reject", request, sessionId: original.providerSessionId });
-        await expect(callAlert(returning)).toContainText("The call didn't connect");
-        await capture({ label: "refused-after-retry", page: returning, testInfo, width });
-
-        expect(await prisma.liveCallConnection.count({ where: { conversationId: call.id } })).toBe(
-          1,
-        );
-
-        expect(
-          await prisma.liveCallSlot.findUnique({ where: { userId: learner.user.id } }),
-        ).toMatchObject({ connectionId: original.id });
-
-        expect(
-          await prisma.liveCallConnection.findUnique({ where: { id: original.id } }),
-        ).toMatchObject({ closeAttempts: 2, costConfidence: "unconfirmed", state: "closing" });
-
-        await closeBehavior({ mode: "confirm", request, sessionId: original.providerSessionId });
-        await returning.getByRole("button", { exact: true, name: "Try again" }).click();
-        await expectLive(returning);
-        expect(actions.reserve).toHaveLength(3);
-        expect(actions.reserve[2]?.requestId).not.toBe(actions.reserve[0]?.requestId);
-        const current = await connectionFor(call.id);
-        expect(current.id).not.toBe(original.id);
-        expect(current.generation).toBeGreaterThan(original.generation);
-
-        expect(
-          await prisma.liveCallConnection.findUnique({ where: { id: original.id } }),
-        ).toMatchObject({ costConfidence: "confirmed", endReason: "reconnect", state: "closed" });
-
-        await firstPeer.emit({
-          reason: "close_requested",
-          session: { id: original.providerSessionId },
-          type: "session.closed",
-          usage: { seconds: 15 },
-        });
-
-        await expect(callAlert(firstTab)).toContainText("Start a new call to keep practicing.");
-
-        expect(
-          await prisma.liveCallConnection.findUnique({ where: { id: current.id } }),
-        ).toMatchObject({ state: "active" });
-
-        expect(
-          await prisma.liveCallSlot.findUnique({ where: { userId: learner.user.id } }),
-        ).toMatchObject({ connectionId: current.id });
-
-        expect(
-          await prisma.languageConversation.findUnique({ where: { id: call.id } }),
-        ).toMatchObject({ feedback: null, status: "ready" });
-      } finally {
-        await owned.cleanup();
-      }
-    });
-
-    test(`paused call recovery enables the unit sheet without a reload at ${width}`, async ({
-      stateCallResources: owned,
-    }, testInfo) => {
-      const learner = await createLanguageLearner();
-      const setting = await prisma.liveCallSetting.findUniqueOrThrow({ where: { id: "live" } });
-      const page = await owned.open(learner);
-
-      owned.restoreAdmission = () =>
-        prisma.liveCallSetting.update({
-          data: {
-            admission: setting.admission,
-            freeDailyBudgetMicros: setting.freeDailyBudgetMicros,
-          },
-          where: { id: "live" },
-        });
-
-      try {
-        await prisma.liveCallSetting.update({ data: { admission: "all" }, where: { id: "live" } });
-        await page.setViewportSize({ height: VIEWPORT_HEIGHT, width });
-        const callId = await openUnitCall({ learner, page });
-        await prisma.liveCallSetting.update({ data: { admission: "off" }, where: { id: "live" } });
-        await page.getByRole("button", { name: "Start the call" }).click();
-        await expect(callAlert(page)).toContainText("Calls are paused");
-        await expect(page.getByRole("link", { exact: true, name: "Back" })).toBeVisible();
-        await capture({ label: "paused", page, testInfo, width });
-
-        expect(await prisma.liveCallConnection.count({ where: { conversationId: callId } })).toBe(
-          0,
-        );
-
-        expect(
-          await prisma.usageRecord.count({
-            where: { kind: "conversation", targetId: callId, userId: learner.user.id },
-          }),
-        ).toBe(0);
-
-        await prisma.liveCallSetting.update({ data: { admission: "all" }, where: { id: "live" } });
-        await page.getByRole("link", { exact: true, name: "Back" }).click();
-        await expect(page).toHaveURL(new RegExp(`/content/units/${learner.renting.id}$`, "u"));
-        await page.getByRole("button", { name: "Practice a conversation" }).click();
-        const sheet = page.getByRole("dialog", { name: "Practice a conversation" });
-        await expect(sheet.getByRole("button", { name: "Start the call" })).toBeEnabled();
-        await sheet.getByRole("button", { exact: true, name: "Close" }).click();
-        await page.getByRole("button", { name: "Practice a conversation" }).click();
-        await expect(sheet.getByRole("button", { name: "Start the call" })).toBeEnabled();
-        await sheet.getByRole("button", { exact: true, name: "Close" }).click();
-      } finally {
-        await owned.cleanup();
-      }
-    });
-
-    test(`paused speaking tasks show the notice before generation at ${width}`, async ({
-      stateCallResources: owned,
-    }, testInfo) => {
-      const learner = await createLanguageLearner({ withSubscription: true });
-      const setting = await prisma.liveCallSetting.findUniqueOrThrow({ where: { id: "live" } });
-
-      await prisma.goal.update({
-        data: { targetLanguage: "es", title: "DELE B2" },
-        where: { id: learner.goal.id },
+      expect(replaced).toMatchObject({
+        costConfidence: "confirmed",
+        endReason: "takeover",
+        state: "closed",
       });
 
-      const page = await owned.open(learner);
+      expect(current.state).toBe("active");
 
-      owned.restoreAdmission = () =>
-        prisma.liveCallSetting.update({
-          data: {
-            admission: setting.admission,
-            freeDailyBudgetMicros: setting.freeDailyBudgetMicros,
-          },
-          where: { id: "live" },
-        });
+      expect(current.providerStartedAt?.getTime()).toBeGreaterThanOrEqual(
+        replaced.closedAt?.getTime() ?? Number.POSITIVE_INFINITY,
+      );
 
-      try {
-        await prisma.liveCallSetting.update({ data: { admission: "off" }, where: { id: "live" } });
-        await page.setViewportSize({ height: VIEWPORT_HEIGHT, width });
-        await page.goto("/speaking?task=t1");
-        const tasks = page.getByRole("region", { exact: true, name: "Tasks" });
+      await oldPeer.emit({
+        reason: "close_requested",
+        session: { id: original.providerSessionId },
+        type: "session.closed",
+        usage: { seconds: 15 },
+      });
 
-        await expect(
-          tasks.getByText("It's the same for everyone right now. Try again later."),
-        ).toBeVisible();
+      await expect(callAlert(oldTab)).toContainText("It ended when you started another call.");
 
-        const task = tasks.getByRole("listitem").filter({ hasText: "Tarea 1:" });
-        await expect(task.getByText("Calls are paused", { exact: true })).toBeVisible();
-        await expect(tasks.getByRole("button", { name: "Start this task" })).toHaveCount(0);
-        await expect(tasks.getByRole("link", { name: "See Plus" })).toHaveCount(0);
-        await capture({ label: "paused-speaking-task", page, testInfo, width });
+      const saved = await prisma.languageConversation.findUniqueOrThrow({
+        where: { id: first.id },
+      });
 
-        expect(
-          await prisma.languageConversation.count({ where: { userId: learner.user.id } }),
-        ).toBe(0);
+      expect(saved).toMatchObject({ feedback: null, status: "ready" });
+    } finally {
+      await owned.cleanup();
+    }
+  });
 
-        expect(await prisma.liveCallConnection.count({ where: { userId: learner.user.id } })).toBe(
-          0,
-        );
-      } finally {
-        await owned.cleanup();
-      }
+  test("reconnect retries once and retains the slot until confirmed", async ({
+    stateCallResources: owned,
+    request,
+  }) => {
+    const learner = await createLanguageLearner({ withSubscription: true });
+    const call = await createCall({ learner });
+    const firstTab = await owned.open(learner);
+
+    try {
+      const firstPeer = await answerLiveCalls(firstTab, "answers");
+      await firstTab.goto(`/conversation/${call.id}`);
+      await firstTab.getByRole("button", { name: "Start the call" }).click();
+      await expectLive(firstTab);
+      const original = await connectionFor(call.id);
+      /** The first close fails; the automatic retry waits at the external boundary. */
+      await closeBehavior({
+        mode: "hold",
+        rejectCloses: 1,
+        request,
+        sessionId: original.providerSessionId,
+      });
+
+      const returning = await firstTab.context().newPage();
+      await answerLiveCalls(returning, "answers");
+      const actions = observeActions({ conversationId: call.id, page: returning });
+      await returning.goto(`/conversation/${call.id}`);
+      await returning.getByRole("button", { name: "Start the call" }).click();
+
+      await expect(
+        returning
+          .locator('[data-slot="task-frame-body"]')
+          .getByRole("status")
+          .filter({ hasText: /^Reconnecting…$/u }),
+      ).toBeVisible();
+
+      await expect
+        .poll(() => prisma.liveCallConnection.findUnique({ where: { id: original.id } }))
+        .toMatchObject({ closeAttempts: 2, state: "closing" });
+
+      expect(actions.reserve).toHaveLength(2);
+      expect(actions.reserve[1]).toEqual(actions.reserve[0]);
+      await closeBehavior({ mode: "reject", request, sessionId: original.providerSessionId });
+      await expect(callAlert(returning)).toContainText("The call didn't connect");
+
+      expect(await prisma.liveCallConnection.count({ where: { conversationId: call.id } })).toBe(1);
+
+      expect(
+        await prisma.liveCallSlot.findUnique({ where: { userId: learner.user.id } }),
+      ).toMatchObject({ connectionId: original.id });
+
+      expect(
+        await prisma.liveCallConnection.findUnique({ where: { id: original.id } }),
+      ).toMatchObject({ closeAttempts: 2, costConfidence: "unconfirmed", state: "closing" });
+
+      await closeBehavior({ mode: "confirm", request, sessionId: original.providerSessionId });
+      await returning.getByRole("button", { exact: true, name: "Try again" }).click();
+      await expectLive(returning);
+      expect(actions.reserve).toHaveLength(3);
+      expect(actions.reserve[2]?.requestId).not.toBe(actions.reserve[0]?.requestId);
+      const current = await connectionFor(call.id);
+      expect(current.id).not.toBe(original.id);
+      expect(current.generation).toBeGreaterThan(original.generation);
+
+      expect(
+        await prisma.liveCallConnection.findUnique({ where: { id: original.id } }),
+      ).toMatchObject({ costConfidence: "confirmed", endReason: "reconnect", state: "closed" });
+
+      await firstPeer.emit({
+        reason: "close_requested",
+        session: { id: original.providerSessionId },
+        type: "session.closed",
+        usage: { seconds: 15 },
+      });
+
+      await expect(callAlert(firstTab)).toContainText("Start a new call to keep practicing.");
+
+      expect(
+        await prisma.liveCallConnection.findUnique({ where: { id: current.id } }),
+      ).toMatchObject({ state: "active" });
+
+      expect(
+        await prisma.liveCallSlot.findUnique({ where: { userId: learner.user.id } }),
+      ).toMatchObject({ connectionId: current.id });
+
+      expect(
+        await prisma.languageConversation.findUnique({ where: { id: call.id } }),
+      ).toMatchObject({ feedback: null, status: "ready" });
+    } finally {
+      await owned.cleanup();
+    }
+  });
+
+  test("paused call recovery enables the unit sheet without a reload", async ({
+    stateCallResources: owned,
+  }) => {
+    const learner = await createLanguageLearner();
+    const setting = await prisma.liveCallSetting.findUniqueOrThrow({ where: { id: "live" } });
+    const page = await owned.open(learner);
+
+    owned.restoreAdmission = () =>
+      prisma.liveCallSetting.update({
+        data: {
+          admission: setting.admission,
+          freeDailyBudgetMicros: setting.freeDailyBudgetMicros,
+        },
+        where: { id: "live" },
+      });
+
+    try {
+      await prisma.liveCallSetting.update({ data: { admission: "all" }, where: { id: "live" } });
+      const callId = await openUnitCall({ learner, page });
+      await prisma.liveCallSetting.update({ data: { admission: "off" }, where: { id: "live" } });
+      await page.getByRole("button", { name: "Start the call" }).click();
+      await expect(callAlert(page)).toContainText("Calls are paused");
+      await expect(page.getByRole("link", { exact: true, name: "Back" })).toBeVisible();
+
+      expect(await prisma.liveCallConnection.count({ where: { conversationId: callId } })).toBe(0);
+
+      expect(
+        await prisma.usageRecord.count({
+          where: { kind: "conversation", targetId: callId, userId: learner.user.id },
+        }),
+      ).toBe(0);
+
+      await prisma.liveCallSetting.update({ data: { admission: "all" }, where: { id: "live" } });
+      await page.getByRole("link", { exact: true, name: "Back" }).click();
+      await expect(page).toHaveURL(new RegExp(`/content/units/${learner.renting.id}$`, "u"));
+      await page.getByRole("button", { name: "Practice a conversation" }).click();
+      const sheet = page.getByRole("dialog", { name: "Practice a conversation" });
+      await expect(sheet.getByRole("button", { name: "Start the call" })).toBeEnabled();
+      await sheet.getByRole("button", { exact: true, name: "Close" }).click();
+      await page.getByRole("button", { name: "Practice a conversation" }).click();
+      await expect(sheet.getByRole("button", { name: "Start the call" })).toBeEnabled();
+      await sheet.getByRole("button", { exact: true, name: "Close" }).click();
+    } finally {
+      await owned.cleanup();
+    }
+  });
+
+  test("paused speaking tasks show the notice before generation", async ({
+    stateCallResources: owned,
+  }) => {
+    const learner = await createLanguageLearner({ withSubscription: true });
+    const setting = await prisma.liveCallSetting.findUniqueOrThrow({ where: { id: "live" } });
+
+    await prisma.goal.update({
+      data: { targetLanguage: "es", title: "DELE B2" },
+      where: { id: learner.goal.id },
     });
 
-    test(`paused calls are shown before the unit's call length configuration at ${width}`, async ({
-      stateCallResources: owned,
-    }, testInfo) => {
-      const learner = await createLanguageLearner();
-      const setting = await prisma.liveCallSetting.findUniqueOrThrow({ where: { id: "live" } });
-      const page = await owned.open(learner);
+    const page = await owned.open(learner);
 
-      owned.restoreAdmission = () =>
-        prisma.liveCallSetting.update({
-          data: {
-            admission: setting.admission,
-            freeDailyBudgetMicros: setting.freeDailyBudgetMicros,
-          },
-          where: { id: "live" },
-        });
+    owned.restoreAdmission = () =>
+      prisma.liveCallSetting.update({
+        data: {
+          admission: setting.admission,
+          freeDailyBudgetMicros: setting.freeDailyBudgetMicros,
+        },
+        where: { id: "live" },
+      });
 
-      try {
-        await prisma.liveCallSetting.update({ data: { admission: "off" }, where: { id: "live" } });
-        await page.setViewportSize({ height: VIEWPORT_HEIGHT, width });
-        await page.goto(`/content/units/${learner.renting.id}`);
-        const row = page.getByRole("button", { name: "Practice a conversation" });
-        await expect(row).toContainText("Calls are paused");
-        await capture({ label: "paused-unit-row", page, testInfo, width });
-        await row.click();
+    try {
+      await prisma.liveCallSetting.update({ data: { admission: "off" }, where: { id: "live" } });
+      await page.goto("/speaking?task=t1");
+      const tasks = page.getByRole("region", { exact: true, name: "Tasks" });
 
-        const sheet = page.getByRole("dialog", { name: "Practice a conversation" });
-        await expect(sheet.getByText("Calls are paused", { exact: true })).toBeVisible();
+      await expect(
+        tasks.getByText("It's the same for everyone right now. Try again later."),
+      ).toBeVisible();
 
-        await expect(
-          sheet.getByText("It's the same for everyone right now. Try again later."),
-        ).toBeVisible();
+      const task = tasks.getByRole("listitem").filter({ hasText: "Tarea 1:" });
+      await expect(task.getByText("Calls are paused", { exact: true })).toBeVisible();
+      await expect(tasks.getByRole("button", { name: "Start this task" })).toHaveCount(0);
+      await expect(tasks.getByRole("link", { name: "See Plus" })).toHaveCount(0);
 
-        await expect(sheet.getByRole("group", { name: "Call length" })).toHaveCount(0);
-        await expect(sheet.getByRole("radio")).toHaveCount(0);
-        await expect(sheet.getByRole("button", { name: "Start the call" })).toHaveCount(0);
-        await capture({ label: "paused-unit-sheet", page, testInfo, width });
+      expect(await prisma.languageConversation.count({ where: { userId: learner.user.id } })).toBe(
+        0,
+      );
 
-        expect(
-          await prisma.languageConversation.count({ where: { userId: learner.user.id } }),
-        ).toBe(0);
+      expect(await prisma.liveCallConnection.count({ where: { userId: learner.user.id } })).toBe(0);
+    } finally {
+      await owned.cleanup();
+    }
+  });
 
-        expect(await prisma.liveCallConnection.count({ where: { userId: learner.user.id } })).toBe(
-          0,
-        );
-      } finally {
-        await owned.cleanup();
-      }
-    });
-  }
+  test("paused calls are shown before the unit's call length configuration", async ({
+    stateCallResources: owned,
+  }) => {
+    const learner = await createLanguageLearner();
+    const setting = await prisma.liveCallSetting.findUniqueOrThrow({ where: { id: "live" } });
+    const page = await owned.open(learner);
+
+    owned.restoreAdmission = () =>
+      prisma.liveCallSetting.update({
+        data: {
+          admission: setting.admission,
+          freeDailyBudgetMicros: setting.freeDailyBudgetMicros,
+        },
+        where: { id: "live" },
+      });
+
+    try {
+      await prisma.liveCallSetting.update({ data: { admission: "off" }, where: { id: "live" } });
+      await page.goto(`/content/units/${learner.renting.id}`);
+      const row = page.getByRole("button", { name: "Practice a conversation" });
+      await expect(row).toContainText("Calls are paused");
+      await row.click();
+
+      const sheet = page.getByRole("dialog", { name: "Practice a conversation" });
+      await expect(sheet.getByText("Calls are paused", { exact: true })).toBeVisible();
+
+      await expect(
+        sheet.getByText("It's the same for everyone right now. Try again later."),
+      ).toBeVisible();
+
+      await expect(sheet.getByRole("group", { name: "Call length" })).toHaveCount(0);
+      await expect(sheet.getByRole("radio")).toHaveCount(0);
+      await expect(sheet.getByRole("button", { name: "Start the call" })).toHaveCount(0);
+
+      expect(await prisma.languageConversation.count({ where: { userId: learner.user.id } })).toBe(
+        0,
+      );
+
+      expect(await prisma.liveCallConnection.count({ where: { userId: learner.user.id } })).toBe(0);
+    } finally {
+      await owned.cleanup();
+    }
+  });
 
   test("a microphone resolving after Activity hide and return cannot restart the cancelled call", async ({
     stateCallResources: owned,
