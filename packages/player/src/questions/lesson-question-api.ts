@@ -92,6 +92,13 @@ function questionsUrl({
     url.searchParams.set("contextKind", contextKind);
   }
 
+  // An item thread's turns say which were about the learner's checked answer, to hold them back
+  // until the question is checked again. Other threads don't ask: servers that don't know
+  // `include` refuse it there.
+  if (target.kind === "item") {
+    url.searchParams.set("include", "answered");
+  }
+
   return url.toString();
 }
 
@@ -191,12 +198,14 @@ export async function getLessonQuestionRequest({
   questionId: string;
   signal?: AbortSignal;
 }): Promise<LessonQuestionApiResult<LessonQuestionResource>> {
+  const url = questionUrl({ connection, questionId });
+
+  // A polled item turn keeps saying whether it was about the learner's checked answer; servers
+  // that don't know `include` ignore it here.
+  url.searchParams.set("include", "answered");
+
   const { data: response, error } = await safeAsync(async () =>
-    fetch(questionUrl({ connection, questionId }), {
-      cache: "no-store",
-      headers: await connection.getHeaders(),
-      signal,
-    }),
+    fetch(url, { cache: "no-store", headers: await connection.getHeaders(), signal }),
   );
 
   if (error || !response) {

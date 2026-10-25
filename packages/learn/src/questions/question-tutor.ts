@@ -1,13 +1,15 @@
 /**
  * The question in view of a session's block or of mistakes practice, as the learner's buddy is
- * asked about it: which one, the block it's asked in (null in practice), its words for the quote,
- * and whether it was checked and missed.
+ * asked about it: which one, the block it's asked in (null in practice), its place in the run (a
+ * question asked again later in it is another visit), its words for the quote, and whether it was
+ * checked and missed.
  */
 export type TutorItem = {
   answered: boolean;
   blockId: string | null;
   itemId: string;
   missed: boolean;
+  position: number;
   text: string;
 };
 

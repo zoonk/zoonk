@@ -11,11 +11,14 @@ import { type QuestionBlockPhase } from "./question-block-state";
 export function getBlockTutorItem({
   blockDrill,
   detail,
+  index,
   phase,
   question,
 }: {
   blockDrill: Pick<ReturnType<typeof useBlockDrill>, "drill" | "stage">;
   detail: StudyBlockDetail;
+  /** The question's place in the block. */
+  index: number;
   phase: QuestionBlockPhase;
   question: StudyQuestion | null;
 }): TutorItem | null {
@@ -31,6 +34,7 @@ export function getBlockTutorItem({
     blockId: detail.block.id,
     itemId: question.itemId,
     missed: phase.kind === "feedback" && !phase.feedback.isCorrect,
+    position: index,
     text: question.question,
   };
 }

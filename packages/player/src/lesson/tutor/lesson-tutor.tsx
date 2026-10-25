@@ -3,7 +3,7 @@
 import { type LessonScreenSuggestion } from "@zoonk/core/lesson-questions/contract";
 import { useTaskAsideShown } from "@zoonk/learn/task-header";
 import { type TutorIdentity, useTutorIdentity } from "@zoonk/learn/tutor-identity";
-import { createContext, use, useCallback, useMemo, useState } from "react";
+import { createContext, use, useMemo } from "react";
 import { type LessonQuestionContext } from "../../questions/lesson-question-context";
 import { type LessonQuestionNavigation } from "../../questions/lesson-question-navigation";
 import { LessonQuestionDrawer } from "../../questions/lesson-question-panel";
@@ -13,40 +13,19 @@ import {
 } from "../../questions/lesson-question-provider";
 import { type OfferedSuggestion } from "../../questions/lesson-question-state";
 import { isSameDraftContext } from "../../questions/lesson-question-state-helpers";
+import { useShownConversation } from "../../questions/use-shown-conversation";
 import { useLessonPlayer, useLessonPlayerConfig } from "../lesson-player-context";
 import { LessonInteractionProvider } from "../lesson-player-interaction";
 import { type LessonTutorConfig } from "./lesson-tutor-context";
 import { TutorQuote } from "./tutor-quote";
 
 /**
- * Where the conversation shows: a drawer over the lesson on phones and tablets in portrait, or
- * docked in the lesson's aside from `lg`, beside the screen it's about. Chosen when it opens.
+ * The screen in view by its place in the lesson, so a question coming back at the end is another
+ * visit; back on a screen, the aside's header (Ask below `lg`) opens its conversation again.
  */
-type TutorPresentation = "dock" | "drawer";
-
-/** How the conversation shows (null: it doesn't) on a screen, by its place in the lesson. */
-type ShownConversation = { presentation: TutorPresentation | null; screen: string };
-
-/**
- * The conversation shows on the screen the learner opened it on, until they move to another one:
- * a screen never opens with a conversation the learner didn't open on it (a question coming back
- * at the end opens fresh). Back on the screen, the aside's header (Ask below `lg`) opens it again.
- */
-function useShownConversation() {
+function useScreenVisit() {
   const { screen, state } = useLessonPlayer();
-  const where = `${state.position}:${screen.step?.id ?? ""}`;
-  const [shown, setShown] = useState<ShownConversation>({ presentation: null, screen: where });
-
-  if (shown.screen !== where) {
-    setShown({ presentation: null, screen: where });
-  }
-
-  const show = useCallback(
-    (presentation: TutorPresentation) => setShown({ presentation, screen: where }),
-    [where],
-  );
-
-  return { presentation: shown.screen === where ? shown.presentation : null, show };
+  return `${state.position}:${screen.step?.id ?? ""}`;
 }
 
 /** The learner's buddy in the lesson: who it is, and a way to ask it about where they are. */
@@ -113,7 +92,7 @@ function TutorInteraction({
   const controller = useLessonQuestionController();
   const activeContext = useTutorContext();
   const asideShown = useTaskAsideShown();
-  const { presentation, show } = useShownConversation();
+  const { presentation, show } = useShownConversation(useScreenVisit());
   const { chooseSuggestion, close, open, state, suggestions } = controller;
   const askAbout = controller.ask;
   const docked = state.isOpen && presentation === "dock";

@@ -28,6 +28,7 @@ export function getPracticeTutorItem({
     blockId: null,
     itemId: step.question.itemId,
     missed: phase.kind === "feedback" && !phase.feedback.isCorrect,
+    position: state.index,
     text: step.question.question,
   };
 }

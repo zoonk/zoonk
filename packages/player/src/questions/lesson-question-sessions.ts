@@ -1,4 +1,4 @@
-import { type LessonQuestionContext } from "./lesson-question-context";
+import { type LessonQuestionContext, isAboutCheckedAnswer } from "./lesson-question-context";
 import { getLessonQuestionScope } from "./lesson-question-scope";
 import {
   INITIAL_LESSON_QUESTION_STATE,
@@ -28,10 +28,10 @@ export function getLessonQuestionSession({
 }
 
 /**
- * The conversation as the learner sees it from where they are. Before a screen is checked the
+ * The conversation as the learner sees it from where they are. Before a question is checked the
  * buddy only gives hints, so what it said about an earlier answer to it (a question coming back at
- * the end of the lesson) waits until this one is checked. An answer still unfinished stays, so the
- * learner can finish it before asking more.
+ * the end of the lesson, or asked again in practice) waits until this one is checked. An answer
+ * still unfinished stays, so the learner can finish it before asking more.
  */
 export function getShownLessonQuestionSession({
   context,
@@ -40,13 +40,13 @@ export function getShownLessonQuestionSession({
   context: LessonQuestionContext;
   session: LessonQuestionState;
 }): LessonQuestionState {
-  if (context.kind !== "step") {
+  if (isAboutCheckedAnswer(context)) {
     return session;
   }
 
   const questions = session.questions.filter(
     (question) =>
-      question.context.kind !== "answer" || doesLessonQuestionBlockNewQuestion(question),
+      !isAboutCheckedAnswer(question.context) || doesLessonQuestionBlockNewQuestion(question),
   );
 
   return questions.length === session.questions.length ? session : { ...session, questions };

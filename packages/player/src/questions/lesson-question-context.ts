@@ -1,5 +1,6 @@
 import {
   type LessonQuestionContextInput,
+  type LessonQuestionContextSummary,
   type LessonQuestionScreenKind,
 } from "@zoonk/core/lesson-questions/contract";
 
@@ -23,3 +24,14 @@ export type LessonQuestionContext =
       step: { id: string };
       stepIndex: number;
     };
+
+/**
+ * Asked about an answer the learner checked, so the tutor saw it and the right one: a lesson
+ * screen's answer, or a session's or practice's question once it's checked (a saved one says so
+ * when the tutor's request asks, see `lessonQuestionReadInputSchema`).
+ */
+export function isAboutCheckedAnswer(
+  context: LessonQuestionContext | LessonQuestionContextSummary,
+): boolean {
+  return context.kind === "answer" || (context.kind === "item" && context.answered === true);
+}

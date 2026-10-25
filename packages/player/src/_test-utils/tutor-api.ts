@@ -119,25 +119,6 @@ function errorResponse(status: number) {
   return Response.json({ error: "The API refused this request" }, { status });
 }
 
-/** A page of the thread, latest last, ending before `cursor` (an older page) when there's one. */
-function getThreadPage({
-  cursor,
-  pageSize,
-  questions,
-}: {
-  cursor: string | null;
-  pageSize: number | undefined;
-  questions: LessonQuestionResource[];
-}) {
-  const cursorIndex = cursor ? questions.findIndex((question) => question.id === cursor) : -1;
-  const pageEnd = cursorIndex >= 0 ? cursorIndex : questions.length;
-  const pageStart = pageSize ? Math.max(0, pageEnd - pageSize) : 0;
-  const page = questions.slice(pageStart, pageEnd);
-  const hasMore = pageStart > 0;
-
-  return { hasMore, nextCursor: hasMore ? (page[0]?.id ?? null) : null, questions: page };
-}
-
 function isInScope({ question, url }: { question: LessonQuestionResource; url: URL }) {
   const stepId = url.searchParams.get("stepId");
   const contextKind = url.searchParams.get("contextKind");
@@ -149,12 +130,54 @@ function isInScope({ question, url }: { question: LessonQuestionResource; url: U
   return !contextKind || question.context.kind === contextKind;
 }
 
-function getContextSummary(context: CreateLessonQuestionInput["context"]) {
+function getContextSummary(
+  context: CreateLessonQuestionInput["context"],
+): LessonQuestionResource["context"] {
+  if (context.kind === "item") {
+    return { answered: context.answered, kind: context.kind };
+  }
+
   if (context.kind !== "step" && context.kind !== "answer") {
     return { kind: context.kind };
   }
 
   return { kind: context.kind, stepId: context.stepId, stepNumber: context.stepNumber };
+}
+
+/**
+ * A question as a request reads it: like the API, a turn about a session's or practice's question
+ * says whether it was about the learner's checked answer only when the request asks for it.
+ */
+function asRequested({ question, url }: { question: LessonQuestionResource; url: URL }) {
+  if (question.context.kind !== "item" || url.searchParams.get("include") === "answered") {
+    return question;
+  }
+
+  return { ...question, context: { kind: question.context.kind } };
+}
+
+/**
+ * A page of the thread as the request reads it (`asRequested`): its scope, latest last, ending
+ * before `cursor` (an older page) when there's one.
+ */
+function getThreadPage({
+  pageSize,
+  questions,
+  url,
+}: {
+  pageSize: number | undefined;
+  questions: LessonQuestionResource[];
+  url: URL;
+}) {
+  const inScope = questions.filter((question) => isInScope({ question, url }));
+  const cursor = url.searchParams.get("cursor");
+  const cursorIndex = cursor ? inScope.findIndex((question) => question.id === cursor) : -1;
+  const pageEnd = cursorIndex >= 0 ? cursorIndex : inScope.length;
+  const pageStart = pageSize ? Math.max(0, pageEnd - pageSize) : 0;
+  const page = inScope.slice(pageStart, pageEnd).map((question) => asRequested({ question, url }));
+  const hasMore = pageStart > 0;
+
+  return { hasMore, nextCursor: hasMore ? (page[0]?.id ?? null) : null, questions: page };
 }
 
 type TutorRequest =
@@ -270,11 +293,7 @@ export function stubTutorApi({
   };
 
   function serveThread(url: URL) {
-    const page = getThreadPage({
-      cursor: url.searchParams.get("cursor"),
-      pageSize,
-      questions: api.questions.filter((question) => isInScope({ question, url })),
-    });
+    const page = getThreadPage({ pageSize, questions: api.questions, url });
 
     return Response.json(
       api.questions.length === 0 ? null : { id: threadId, lessonId: lesson?.id ?? null, ...page },
@@ -283,6 +302,7 @@ export function stubTutorApi({
 
   /** Like the API, a create is idempotent by its request id: a replay gets the same question. */
   async function serveCreate(request: Request) {
+    const url = new URL(request.url);
     const input = createLessonQuestionInputSchema.parse(await request.json());
     api.inputs = [...api.inputs, input];
     const created = createdByRequestId.get(input.requestId);
@@ -292,7 +312,7 @@ export function stubTutorApi({
       const isSameRequest = created.input === JSON.stringify(input);
 
       return isSameRequest && question
-        ? Response.json(question, { status: 201 })
+        ? Response.json(asRequested({ question, url }), { status: 201 })
         : errorResponse(HTTP_STATUS_CONFLICT);
     }
 
@@ -315,12 +335,15 @@ export function stubTutorApi({
     });
 
     api.questions = [...api.questions, question];
-    return Response.json(question, { status: 201 });
+    return Response.json(asRequested({ question, url }), { status: 201 });
   }
 
-  function serveQuestion(questionId: string) {
+  function serveQuestion({ questionId, request }: { questionId: string; request: Request }) {
     const question = api.questions.find((candidate) => candidate.id === questionId);
-    return question ? Response.json(question) : errorResponse(HTTP_STATUS_NOT_FOUND);
+
+    return question
+      ? Response.json(asRequested({ question, url: new URL(request.url) }))
+      : errorResponse(HTTP_STATUS_NOT_FOUND);
   }
 
   function serveAnswer(questionId: string) {
@@ -335,7 +358,7 @@ export function stubTutorApi({
       case "create":
         return serveCreate(tutorRequest.request);
       case "question":
-        return serveQuestion(tutorRequest.questionId);
+        return serveQuestion(tutorRequest);
       case "thread":
         return serveThread(new URL(tutorRequest.request.url));
       default:

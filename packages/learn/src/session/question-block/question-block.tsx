@@ -325,5 +325,8 @@ export function QuestionBlock({
     return block;
   }
 
-  return tutor.wrap(getBlockTutorItem({ blockDrill, detail, phase, question }), block);
+  return tutor.wrap(
+    getBlockTutorItem({ blockDrill, detail, index: run.state.index, phase, question }),
+    block,
+  );
 }

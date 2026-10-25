@@ -22,6 +22,7 @@ const TUTOR = buildTutor();
 type RunQuestion = Pick<TutorItem, "itemId" | "text">;
 
 const EVEN = { itemId: crypto.randomUUID(), text: "Which number is even?" };
+const ODD = { itemId: crypto.randomUUID(), text: "Which number is odd?" };
 
 /**
  * A run as a session's block and mistakes practice play it around the buddy: the buddy stays while
@@ -34,7 +35,9 @@ function QuestionRun({ questions }: { questions: RunQuestion[] }) {
   const question = questions[position];
   const root = getTaskAsideRootProps({ footer: false });
 
-  const item = question ? { ...question, answered, blockId: null, missed: answered } : null;
+  const item = question
+    ? { ...question, answered, blockId: null, missed: answered, position }
+    : null;
 
   const next = () => {
     setPosition(position + 1);
@@ -83,6 +86,15 @@ async function askFromAside(question: string) {
   await press("Enter");
 }
 
+const WHY_MISSED = "Why isn't it 7?";
+
+/** Misses the question in view, then asks the buddy why from the aside's composer. */
+async function missAndAskWhy() {
+  await page.getByRole("button", { name: "Check" }).click();
+  await askFromAside(WHY_MISSED);
+  await expect.element(dockedConversation().getByText(TUTOR_ANSWER)).toBeVisible();
+}
+
 describe("the buddy beside a run of questions", () => {
   it("answers a question typed in the aside before the question is checked", async () => {
     const api = stubTutorApi({});
@@ -94,5 +106,111 @@ describe("the buddy beside a run of questions", () => {
     await expect.element(conversation.getByText("Any hint?")).toBeVisible();
     await expect.element(conversation.getByText(TUTOR_ANSWER)).toBeVisible();
     expect(api.inputs).toMatchObject([{ context: { answered: false, kind: "item" } }]);
+  });
+
+  it("opens a question asked again later in the run fresh, its conversation a tap away", async () => {
+    stubTutorApi({});
+    render(<QuestionRun questions={[EVEN, ODD, EVEN]} />);
+    await missAndAskWhy();
+
+    await page.getByRole("button", { name: "Continue" }).click();
+    await expect.element(page.getByText(ODD.text)).toBeVisible();
+    await page.getByRole("button", { name: "Check" }).click();
+    await page.getByRole("button", { name: "Continue" }).click();
+
+    await expect.element(page.getByText(EVEN.text)).toBeVisible();
+    await expect.element(dockedConversation()).not.toBeInTheDocument();
+    await expect.element(composer()).not.toHaveFocus();
+
+    await askFromAside("Any hint?");
+    await expect.element(dockedConversation().getByText("Any hint?")).toBeVisible();
+  });
+
+  it("keeps what the buddy said about an earlier answer out until the question is checked again", async () => {
+    const api = stubTutorApi({});
+    render(<QuestionRun questions={[EVEN, ODD, EVEN]} />);
+    await missAndAskWhy();
+    await page.getByRole("button", { name: "Continue" }).click();
+    await page.getByRole("button", { name: "Check" }).click();
+    await page.getByRole("button", { name: "Continue" }).click();
+
+    await askFromAside("Any hint?");
+
+    const conversation = dockedConversation();
+    await expect.element(conversation.getByText("Any hint?")).toBeVisible();
+    await expect.element(conversation.getByText(WHY_MISSED)).not.toBeInTheDocument();
+    expect(api.inputs[1]).toMatchObject({ context: { answered: false, kind: "item" } });
+
+    await page.getByRole("button", { name: "Check" }).click();
+    await expect.element(conversation.getByText(WHY_MISSED)).toBeVisible();
+  });
+
+  // The answer's stream broke after the server saved it, so the buddy read the question again: it
+  // still says it was about the learner's answer.
+  it("keeps an answer read again after its stream broke out of the question asked again", async () => {
+    const api = stubTutorApi({});
+
+    api.next("answer", () => {
+      api.complete(api.questions.at(-1)?.id ?? "");
+      return Promise.resolve(new Response(null, { status: 500 }));
+    });
+
+    render(<QuestionRun questions={[EVEN, ODD, EVEN]} />);
+    await missAndAskWhy();
+    expect(api.requests.question).toBe(1);
+
+    await page.getByRole("button", { name: "Continue" }).click();
+    await page.getByRole("button", { name: "Check" }).click();
+    await page.getByRole("button", { name: "Continue" }).click();
+
+    // Asking opens the conversation again, which reads it again: until then, what it holds shows.
+    await expect.poll(() => api.requests.thread).toBe(2);
+    const release = api.hold("thread");
+    await askFromAside("Any hint?");
+
+    const conversation = dockedConversation();
+    await expect.element(conversation.getByText("Any hint?")).toBeVisible();
+    await expect.element(conversation.getByText(WHY_MISSED)).not.toBeInTheDocument();
+    await release();
+  });
+
+  // Practice asks yesterday's missed question first: what the buddy said about the miss then waits
+  // until today's answer is checked.
+  it("keeps an earlier day's talk about the answer out of a question practiced again", async () => {
+    const api = stubTutorApi({});
+
+    api.questions = [
+      {
+        ...api.question({
+          answer: "Think about the last digit.",
+          question: "Any hint?",
+          status: "completed",
+        }),
+        context: { answered: false, kind: "item" },
+      },
+      {
+        ...api.question({
+          answer: "8 is even: it ends in 8.",
+          question: WHY_MISSED,
+          status: "completed",
+        }),
+        context: { answered: true, kind: "item" },
+      },
+    ];
+
+    render(<QuestionRun questions={[EVEN]} />);
+    await askFromAside("Another hint?");
+
+    const conversation = dockedConversation();
+    await expect.element(conversation.getByText("Another hint?")).toBeVisible();
+    await expect.element(conversation.getByText("Think about the last digit.")).toBeVisible();
+
+    await expect
+      .element(conversation.getByText("8 is even: it ends in 8."))
+      .not.toBeInTheDocument();
+
+    await page.getByRole("button", { name: "Check" }).click();
+    await expect.element(conversation.getByText("8 is even: it ends in 8.")).toBeVisible();
+    await expect.element(conversation.getByText("About your answer")).toBeVisible();
   });
 });

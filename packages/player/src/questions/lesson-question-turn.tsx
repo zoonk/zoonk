@@ -44,7 +44,7 @@ function QuestionContextLabel({ context }: { context: LessonQuestionContextSumma
     case "subject":
       return t("About this subject");
     case "item":
-      return t("About this question");
+      return context.answered ? t("About your answer") : t("About this question");
     default:
       return context satisfies never;
   }

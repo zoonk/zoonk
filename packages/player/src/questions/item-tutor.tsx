@@ -7,7 +7,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@zoonk/ui/components/tooltip";
 import { MessageCircleQuestionIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { createContext, use, useMemo, useState } from "react";
+import { createContext, use, useMemo } from "react";
 import { type LessonTutorConfig } from "../lesson/tutor/lesson-tutor-context";
 import { type LessonQuestionContext } from "./lesson-question-context";
 import { type LessonQuestionNavigation } from "./lesson-question-navigation";
@@ -18,6 +18,7 @@ import {
 } from "./lesson-question-provider";
 import { type OfferedSuggestion } from "./lesson-question-state";
 import { isSameDraftContext } from "./lesson-question-state-helpers";
+import { useShownConversation } from "./use-shown-conversation";
 
 /** The learner's buddy for the question in view, and ways to ask it about the question. */
 export type ItemBuddy = {
@@ -61,9 +62,6 @@ function ItemQuote({ item }: { item: TutorItem }) {
   );
 }
 
-/** Where the conversation shows, chosen when it opens: docked in the aside from `lg`, or a drawer. */
-type ItemTutorPresentation = "dock" | "drawer";
-
 function ItemTutorInteraction({
   children,
   identity,
@@ -77,7 +75,12 @@ function ItemTutorInteraction({
 }) {
   const controller = useLessonQuestionController();
   const asideShown = useTaskAsideShown();
-  const [presentation, setPresentation] = useState<ItemTutorPresentation>("drawer");
+
+  // A question asked again later in the run opens fresh, like a lesson's screen.
+  const { presentation, show } = useShownConversation(
+    item ? `${item.position}:${item.itemId}` : "",
+  );
+
   const { close, open, state } = controller;
   const askAbout = controller.ask;
   const docked = state.isOpen && presentation === "dock";
@@ -99,7 +102,7 @@ function ItemTutorInteraction({
       ask: ({ question, suggestion }) => {
         // A draft in the aside's composer is the learner's, so it stays until it's sent.
         if (!docked || !isSameDraftContext({ current: state.context, next: context })) {
-          setPresentation("dock");
+          show("dock");
           open(context, { keepDraft: true });
         }
 
@@ -112,11 +115,11 @@ function ItemTutorInteraction({
       item,
       navigation,
       open: () => {
-        setPresentation(asideShown ? "dock" : "drawer");
+        show(asideShown ? "dock" : "drawer");
         open(context, { keepDraft: asideShown });
       },
     };
-  }, [askAbout, asideShown, close, docked, identity, item, navigation, open, state.context]);
+  }, [askAbout, asideShown, close, docked, identity, item, navigation, open, show, state.context]);
 
   return (
     <ItemTutorContext value={buddy}>
