@@ -5,6 +5,7 @@ import {
   type TransactionClient,
   type TutorSharedAnswer,
 } from "@zoonk/db";
+import { aboutCheckedAnswerWhere, findAboutCheckedAnswer } from "./about-checked-answer";
 import { parseLessonQuestionContextSnapshot } from "./context-snapshot-schema";
 import { lessonQuestionResourceOmit } from "./question-resource";
 import { getSharedAnswerKey } from "./shared-answers";
@@ -65,29 +66,37 @@ function sameStepWhere(question: { libraryStepId: string | null }) {
   return { libraryStepId: question.libraryStepId };
 }
 
+/**
+ * The turns a question is answered with. Before a question is checked the tutor only gives hints,
+ * so a question asked then (a missed question coming back) is answered without what the tutor
+ * said about an earlier answer to it, as the learner's conversation shows it; those turns come
+ * back once it's checked.
+ */
 async function getPriorTurns({
-  createdAt,
-  questionId,
-  step,
-  threadId,
+  question,
   transaction,
 }: {
-  createdAt: Date;
-  questionId: string;
-  step: { libraryStepId: string | null };
-  threadId: string;
+  question: { createdAt: Date; id: string; libraryStepId: string | null; threadId: string };
   transaction: TransactionClient;
 }) {
+  const { createdAt } = question;
+
+  const aboutAnswer = await findAboutCheckedAnswer({
+    client: transaction,
+    questionIds: [question.id],
+  });
+
   const questions = await transaction.lessonQuestion.findMany({
     omit: lessonQuestionResourceOmit,
     orderBy: [{ createdAt: "desc" }, { id: "desc" }],
     take: MAX_PRIOR_TURNS,
     where: {
-      OR: [{ createdAt: { lt: createdAt } }, { createdAt, id: { lt: questionId } }],
+      OR: [{ createdAt: { lt: createdAt } }, { createdAt, id: { lt: question.id } }],
       answer: { not: null },
       status: "completed",
-      ...sameStepWhere(step),
-      threadId,
+      ...sameStepWhere(question),
+      ...(aboutAnswer.has(question.id) ? {} : { NOT: aboutCheckedAnswerWhere }),
+      threadId: question.threadId,
     },
   });
 
@@ -222,13 +231,7 @@ export async function claimAnswerInTransaction({
     return { status: "conflict" as const };
   }
 
-  const priorTurns = await getPriorTurns({
-    createdAt: question.createdAt,
-    questionId: question.id,
-    step: question,
-    threadId: question.threadId,
-    transaction,
-  });
+  const priorTurns = await getPriorTurns({ question, transaction });
 
   const sharedKey = getSharedAnswerKey({ hasPriorTurns: priorTurns.length > 0, question });
   const claimWhere = getClaimWhere({ now, question, userId });

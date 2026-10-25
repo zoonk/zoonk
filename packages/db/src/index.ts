@@ -140,7 +140,10 @@ export type {
 } from "./generated/prisma/models/CoursePrompt";
 export type { CourseGetPayload } from "./generated/prisma/models/Course";
 export type { LessonUncheckedCreateInput } from "./generated/prisma/models/Lesson";
-export type { LessonQuestionGetPayload } from "./generated/prisma/models/LessonQuestion";
+export type {
+  LessonQuestionGetPayload,
+  LessonQuestionWhereInput,
+} from "./generated/prisma/models/LessonQuestion";
 export type { LessonQuestionThreadGetPayload } from "./generated/prisma/models/LessonQuestionThread";
 
 export { prisma };
@@ -149,6 +152,9 @@ export type Sql = Prisma.Sql;
 
 /** Writes SQL NULL to a nullable JSON column (a plain `null` means JSON null to Prisma). */
 export const DbNull = Prisma.DbNull;
+
+/** Matches JSON null and SQL NULL alike in a JSON filter, so a path that isn't there reads as null. */
+export const AnyNull = Prisma.AnyNull;
 
 export type TransactionClient = Parameters<Parameters<typeof prisma.$transaction>[0]>[0];
 

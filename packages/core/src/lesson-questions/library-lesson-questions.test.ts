@@ -65,6 +65,31 @@ async function ask({
   return created.question;
 }
 
+/** The tutor's answer to a question, saved as the answers route saves it. */
+function answerWith({ answer, questionId }: { answer: string; questionId: string }) {
+  return prisma.lessonQuestion.update({
+    data: { answer, status: "completed" },
+    where: { id: questionId },
+  });
+}
+
+/** Asks, and the tutor answers with `answer`. */
+async function askAnswered({ answer, ...asked }: Parameters<typeof ask>[0] & { answer: string }) {
+  const question = await ask(asked);
+  await answerWith({ answer, questionId: question.id });
+  return question;
+}
+
+async function claimedHistory(questionId: string) {
+  const claimed = await claimLessonQuestionAnswer({ questionId, requestedModel: MODEL });
+
+  if (claimed.status !== "ready") {
+    throw new Error(`Expected a claimed answer, received ${claimed.status}`);
+  }
+
+  return claimed.claim.priorTurns;
+}
+
 describe("questions about a Library lesson", () => {
   beforeEach(() => {
     vi.mocked(updateMemoryFromActivity).mockResolvedValue([]);
@@ -134,6 +159,59 @@ describe("questions about a Library lesson", () => {
         selectedAnswer: "The electron's size",
       },
     });
+  });
+
+  // A missed question comes back at the end of the lesson: before it's checked again, the buddy
+  // only gives hints, so what it said about the miss stays out of what it's answered with.
+  it("leaves what the tutor said about an earlier answer out of a hint's history until it's checked again", async () => {
+    const { lesson, steps } = await setupPlayableLesson();
+    const check = stepOfKind(steps, "check");
+    const onScreen = { kind: "step", stepId: check.id, stepNumber: 3 } as const;
+
+    const answered = (optionId: string) =>
+      ({
+        answer: { kind: "check", optionId },
+        kind: "answer",
+        stepId: check.id,
+        stepNumber: 3,
+      }) as const;
+
+    await askAnswered({
+      answer: "Think about what the cloud maps.",
+      context: onScreen,
+      lessonId: lesson.id,
+      question: "Any hint?",
+    });
+
+    await askAnswered({
+      answer: "The right answer is where the electron is most likely to be found.",
+      context: answered("size"),
+      lessonId: lesson.id,
+      question: "Why isn't it the size?",
+    });
+
+    const hint = await ask({ context: onScreen, lessonId: lesson.id, question: "Another hint?" });
+
+    await expect(claimedHistory(hint.id)).resolves.toStrictEqual([
+      { answer: "Think about what the cloud maps.", question: "Any hint?" },
+    ]);
+
+    await answerWith({ answer: "Where would you most often find it?", questionId: hint.id });
+
+    const afterRetry = await ask({
+      context: answered("likely"),
+      lessonId: lesson.id,
+      question: "So it's about chances?",
+    });
+
+    await expect(claimedHistory(afterRetry.id)).resolves.toStrictEqual([
+      { answer: "Think about what the cloud maps.", question: "Any hint?" },
+      {
+        answer: "The right answer is where the electron is most likely to be found.",
+        question: "Why isn't it the size?",
+      },
+      { answer: "Where would you most often find it?", question: "Another hint?" },
+    ]);
   });
 
   it("reads a typed answer's verdict from the learner's recorded answer", async () => {

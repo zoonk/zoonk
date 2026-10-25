@@ -10,6 +10,7 @@ import { trackServerEvent } from "../analytics/server";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
 import { updateMemoryFromActivity } from "../memory/update-memory-from-activity";
 import { parseLessonQuestionContextSnapshot } from "./_utils/context-snapshot-schema";
+import { claimLessonQuestionAnswer } from "./answer-lifecycle";
 import { type LessonQuestionContextInput } from "./contract";
 import { createLessonQuestion } from "./create-lesson-question";
 import { getLessonQuestionThread } from "./get-lesson-question-thread";
@@ -32,16 +33,57 @@ async function practiceQuestion() {
   return { item, user };
 }
 
-function ask({ context, itemId }: { context: LessonQuestionContextInput; itemId: string }) {
+function ask({
+  context,
+  itemId,
+  question = "Can you give me a hint?",
+}: {
+  context: LessonQuestionContextInput;
+  itemId: string;
+  question?: string;
+}) {
   return createLessonQuestion({
-    input: { context, question: "Can you give me a hint?", requestId: randomUUID() },
+    input: { context, question, requestId: randomUUID() },
     target: { itemId, kind: "item" },
   });
 }
 
+function askedId(result: Awaited<ReturnType<typeof ask>>) {
+  return result.status === "created" ? result.question.id : "";
+}
+
+/** Asks, and the tutor answers with `answer`, as the answers route saves it. */
+async function askAnswered({ answer, ...asked }: Parameters<typeof ask>[0] & { answer: string }) {
+  const questionId = askedId(await ask(asked));
+
+  await prisma.lessonQuestion.update({
+    data: { answer, status: "completed" },
+    where: { id: questionId },
+  });
+
+  return questionId;
+}
+
+async function claimedHistory(questionId: string) {
+  const claimed = await claimLessonQuestionAnswer({
+    questionId,
+    requestedModel: "openai/gpt-6-luna",
+  });
+
+  if (claimed.status !== "ready") {
+    throw new Error(`Expected a claimed answer, received ${claimed.status}`);
+  }
+
+  return claimed.claim.priorTurns;
+}
+
+/** The learner checks a wrong answer to the question. */
+function missQuestion({ itemId, userId }: { itemId: string; userId: string }) {
+  return attemptFixture({ answer: { selectedIndex: 1 }, isCorrect: false, itemId, userId });
+}
+
 async function askedScreen(result: Awaited<ReturnType<typeof ask>>) {
-  const questionId = result.status === "created" ? result.question.id : "";
-  const stored = await prisma.lessonQuestion.findUniqueOrThrow({ where: { id: questionId } });
+  const stored = await prisma.lessonQuestion.findUniqueOrThrow({ where: { id: askedId(result) } });
   const snapshot = parseLessonQuestionContextSnapshot(stored.contextSnapshot);
 
   return "screen" in snapshot ? snapshot.screen : null;
@@ -110,6 +152,58 @@ describe("asking the buddy about a session's or practice's question", () => {
     await expect(
       prisma.lessonQuestionThread.findMany({ where: { userId: user.id } }),
     ).resolves.toMatchObject([{ itemId: item.id, kind: "item" }]);
+  });
+
+  // Practice asks a missed question again: before it's checked, the buddy only gives hints, so
+  // what it said about the learner's earlier answer stays out of what it's answered with.
+  it("leaves what the buddy said about an earlier answer out of a hint's history until it's checked again", async () => {
+    const { item, user } = await practiceQuestion();
+
+    await askAnswered({
+      answer: "Even numbers end in 0, 2, 4, 6 or 8.",
+      context: { answered: false, kind: "item" },
+      itemId: item.id,
+    });
+
+    await missQuestion({ itemId: item.id, userId: user.id });
+
+    await askAnswered({
+      answer: "The right answer is the first one.",
+      context: { answered: true, kind: "item" },
+      itemId: item.id,
+      question: "Why was I wrong?",
+    });
+
+    const hint = askedId(
+      await ask({
+        context: { answered: false, kind: "item" },
+        itemId: item.id,
+        question: "Another hint?",
+      }),
+    );
+
+    await expect(claimedHistory(hint)).resolves.toStrictEqual([
+      { answer: "Even numbers end in 0, 2, 4, 6 or 8.", question: "Can you give me a hint?" },
+    ]);
+
+    await prisma.lessonQuestion.update({
+      data: { answer: "Look at the last digit.", status: "completed" },
+      where: { id: hint },
+    });
+
+    const afterRetry = askedId(
+      await ask({
+        context: { answered: true, kind: "item" },
+        itemId: item.id,
+        question: "So it's the last digit?",
+      }),
+    );
+
+    await expect(claimedHistory(afterRetry)).resolves.toStrictEqual([
+      { answer: "Even numbers end in 0, 2, 4, 6 or 8.", question: "Can you give me a hint?" },
+      { answer: "The right answer is the first one.", question: "Why was I wrong?" },
+      { answer: "Look at the last digit.", question: "Another hint?" },
+    ]);
   });
 
   it("keeps a question on a mock the learner is sitting, and a block that isn't theirs, out", async () => {
