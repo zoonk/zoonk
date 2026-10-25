@@ -314,10 +314,17 @@ test.describe("A class test days away", () => {
     await page.goto("/session");
     await expect(page.getByText("Tomorrow", { exact: true })).toHaveCount(0);
 
-    // The lessons he skipped are still there for today once the review is done.
+    // The lessons he skipped are still there for today once the review is done: Keep learning
+    // goes on with them, and nothing says they come tomorrow.
     await page.goto("/today");
     await expect(page.getByText("Today's session is complete")).toBeVisible();
-    await expect(catchUp).toBeVisible();
+
+    await expect(
+      session.getByRole("region", { name: "Up next in your plan" }).getByRole("listitem").first(),
+    ).toBeVisible();
+
+    await expect(session.getByRole("button", { name: "Keep learning" })).toBeVisible();
+    await expect(page.getByText(/come first tomorrow/u)).toHaveCount(0);
 
     await page.context().close();
   });
