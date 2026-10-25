@@ -1,9 +1,9 @@
 import { execFile } from "node:child_process";
 import { once } from "node:events";
-import { mkdtemp, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
 import { createServer } from "node:net";
 import { tmpdir } from "node:os";
-import { join, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { promisify } from "node:util";
 import { applyCommandExit, runForegroundCommand } from "../dev/process.mts";
 import { startLiveCallApi } from "./live-call-api.mts";
@@ -84,6 +84,20 @@ async function getPlaywrightArgs(args: readonly string[]): Promise<string[]> {
   return [...rest, "--test-list", file];
 }
 
+/**
+ * Marks an app's finished E2E build, Turbopack's cache written: CI saves that cache only from a
+ * finished build, even when a newer push cancels the run after it (`e2e-main.yml`).
+ */
+async function markBuilt({ app, built }: { app: "api" | "main"; built: boolean }) {
+  if (built) {
+    const marker = resolve(repository, "apps", app, ".next-e2e/e2e-build-complete");
+    await mkdir(dirname(marker), { recursive: true });
+    await writeFile(marker, "");
+  }
+
+  return built;
+}
+
 /** A free local port, so Main builds against the API's address while the API builds. */
 async function findFreePort(): Promise<number> {
   const server = createServer().listen(0, "127.0.0.1");
@@ -116,8 +130,8 @@ async function runMain() {
     run({
       args: ["--filter", "api", "build:e2e"],
       environment: { ...process.env, NEXT_PUBLIC_AUTH_BASE_PATH: "/v1/auth" },
-    }),
-    buildMain(),
+    }).then(async (built) => markBuilt({ app: "api", built })),
+    buildMain().then(async (built) => markBuilt({ app: "main", built })),
     getPlaywrightArgs(process.argv.slice(2)),
   ]);
 

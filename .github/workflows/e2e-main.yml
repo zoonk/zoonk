@@ -123,17 +123,17 @@ jobs:
       - name: Run E2E tests
         run: pnpm e2e:main ${{ matrix.args }} --workers=2
 
-      # Saved once the build finished (Next writes BUILD_ID last), whether the tests then passed or a
+      # Saved once the build finished (`pnpm e2e:main` marks it), whether the tests then passed or a
       # newer push cancelled the run, so the next run's builds start warm.
       - name: Save Main's build cache
-        if: always() && matrix.gates && hashFiles('apps/main/.next-e2e/BUILD_ID') != ''
+        if: always() && matrix.gates && hashFiles('apps/main/.next-e2e/e2e-build-complete') != ''
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: apps/main/.next-e2e/cache
           key: nextjs-e2e-main-${{ steps.cache-keys.outputs.lockfile }}-${{ steps.cache-keys.outputs.sources }}
 
       - name: Save the API's build cache
-        if: always() && matrix.gates && hashFiles('apps/api/.next-e2e/BUILD_ID') != ''
+        if: always() && matrix.gates && hashFiles('apps/api/.next-e2e/e2e-build-complete') != ''
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: apps/api/.next-e2e/cache
