@@ -4104,16 +4104,6 @@ msgid "until about {date}"
 msgstr "jusqu’à environ {date}"
 
 #: src/journey/path-phase-row.tsx
-msgctxt "LZkGdn"
-msgid "{count, plural, one {# lesson was left out} other {# lessons were left out}}"
-msgstr "{count, plural, one {# leçon a été laissée de côté} other {# leçons ont été laissées de côté}}"
-
-#: src/journey/path-phase-row.tsx
-msgctxt "uDE8Kt"
-msgid "Challenge left out"
-msgstr "Le défi a été laissé de côté"
-
-#: src/journey/path-phase-row.tsx
 msgctxt "M6MlNv"
 msgid "Continues today"
 msgstr "Reprend aujourd’hui"
@@ -4122,6 +4112,16 @@ msgstr "Reprend aujourd’hui"
 msgctxt "-DKe0Q"
 msgid "Continues {date}"
 msgstr "Reprend le {date}"
+
+#: src/journey/path-phase-row.tsx
+msgctxt "LZkGdn"
+msgid "{count, plural, one {# lesson was left out} other {# lessons were left out}}"
+msgstr "{count, plural, one {# leçon a été laissée de côté} other {# leçons ont été laissées de côté}}"
+
+#: src/journey/path-phase-row.tsx
+msgctxt "uDE8Kt"
+msgid "Challenge left out"
+msgstr "Le défi a été laissé de côté"
 
 #: src/journey/path-phase-row.tsx
 msgctxt "nzBtDK"
