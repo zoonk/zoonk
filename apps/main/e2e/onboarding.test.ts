@@ -71,9 +71,8 @@ async function confirmGoal(page: Page, goal: string) {
   return findCreatedGoal(page, goal);
 }
 
-async function continueWith(page: Page, heading: string, choose?: () => Promise<void>) {
+async function continueWith(page: Page, heading: string) {
   await expect(page.getByRole("heading", { name: heading })).toBeVisible();
-  await choose?.();
   await page.getByRole("button", { exact: true, name: "Continue" }).click();
 }
 
@@ -519,9 +518,12 @@ test.describe("Onboarding from a typed goal", () => {
     // The exam is named apart from the question, so no language needs an article for it.
     await expect(page.getByRole("main").getByText(name, { exact: true })).toBeVisible();
 
-    await continueWith(page, "How much do you already know?", () =>
-      page.getByText("The basics").click(),
-    );
+    // The level moves on with the pick: a Continue after it could skip the buddy's screen.
+    await expect(
+      page.getByRole("heading", { name: "How much do you already know?" }),
+    ).toBeVisible();
+
+    await page.getByText("The basics").click();
 
     await continueWith(page, "Choose your buddy");
     await page.getByRole("button", { name: "Skip and start from the basics" }).click();
