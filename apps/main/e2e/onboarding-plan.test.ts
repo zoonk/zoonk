@@ -638,7 +638,7 @@ test("an exam's time step offers what covers everything only while the time pick
   await routeTwoHourAdvice(page, { goalId: goal.id, isoDate, measure: "exam", short: 0.5 });
 
   await page.goto(`/start/${goal.id}`);
-  await page.getByRole("button", { name: "Start from zero" }).click();
+  await page.getByRole("button", { name: "Skip and start from the basics" }).click();
 
   const minutes = page.getByRole("radiogroup", { name: "Minutes a day" });
   const estimate = page.getByRole("region", { name: "Estimate" });
@@ -693,7 +693,7 @@ test("when no time covers an exam by its date, Find hands the keyboard to studyi
   await routeTimeToCover(page, { goalId: goal.id, time: { targetDate: isoDate } });
 
   await page.goto(`/start/${goal.id}`);
-  await page.getByRole("button", { name: "Start from zero" }).click();
+  await page.getByRole("button", { name: "Skip and start from the basics" }).click();
 
   await page
     .getByRole("radiogroup", { name: "Minutes a day" })
@@ -785,7 +785,7 @@ test("a goal's time step says the next screen moves its date only while the time
   await routeTwoHourAdvice(page, { goalId: goal.id, isoDate, measure: "goal", short: 0.4 });
 
   await page.goto(`/start/${goal.id}`);
-  await page.getByRole("button", { name: "Start from zero" }).click();
+  await page.getByRole("button", { name: "Skip and start from the basics" }).click();
 
   const minutes = page.getByRole("radiogroup", { name: "Minutes a day" });
   const estimate = page.getByRole("region", { name: "Estimate" });
