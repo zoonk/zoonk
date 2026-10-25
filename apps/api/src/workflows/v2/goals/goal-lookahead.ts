@@ -98,10 +98,11 @@ async function writeLessons({
 /**
  * While placement runs, the first lessons of the two likeliest starting phases start generating,
  * so the first lesson is ready when placement ends: two for a free learner, four for a Plus
- * subscriber (`getLookahead`), whose sessions run longer. The plan's first lesson starts the
- * moment its band lands, since the learner opens it next; the rest follow once the whole opening
+ * subscriber (`getLookahead`), whose sessions run longer, and only the first for a guest. The
+ * plan's first lesson starts the moment its band lands, since the learner opens it next: the few
+ * screens after placement take less time than writing it. The rest follow once the whole opening
  * is outlined, the first lesson of the other guessed phase first, since placement may start the
- * learner there. Guests never trigger speculative work.
+ * learner there.
  */
 export async function startLikelyLessons({
   context,
@@ -113,10 +114,6 @@ export async function startLikelyLessons({
   const goalId = inputs.goal.id;
   const writer = toWriter({ context, inputs });
   const ownLevel = inputs.graphPrompt.ownLevel ?? null;
-
-  if (inputs.isGuest) {
-    return [];
-  }
 
   const { speculativeLessons: count } = await readGoalLookaheadStep(goalId);
   const pick = () => pickSpeculativeLessonsStep({ count, goalId, ownLevel });
@@ -131,6 +128,12 @@ export async function startLikelyLessons({
     writer,
   });
 
+  const left = count - first.length;
+
+  if (left <= 0) {
+    return first;
+  }
+
   await waitForOpening({ done: isOpeningOutlined, goalId });
   const guesses = await pick();
 
@@ -139,7 +142,11 @@ export async function startLikelyLessons({
   const leads = unstarted.slice(1).flatMap((guess) => guess.slice(0, 1));
   const rest = unstarted.flat().filter((lessonId) => !leads.includes(lessonId));
 
-  const started = await writeLessons({ goalId, lessonIds: [...leads, ...rest], writer });
+  const started = await writeLessons({
+    goalId,
+    lessonIds: [...leads, ...rest].slice(0, left),
+    writer,
+  });
 
   return [...first, ...started];
 }
@@ -151,8 +158,9 @@ export async function startLikelyLessons({
  * when the learner opens it; one already written ends its run at once. The learner's own lesson
  * waits until placement ends (`pickPlanStartToWrite`). Each look reads where the saved plan
  * starts, and only a start that moved is picked again, from the plan brought up to date: a plan
- * still waiting for a band's lessons never sends the writer to the lesson before them. Guests
- * never trigger speculative work.
+ * still waiting for a band's lessons never sends the writer to the lesson before them. A guest's
+ * start isn't followed: their one lesson written ahead is the first guess, and a start placement
+ * moved is written when placement ends, as their one new lesson.
  */
 export async function followPlanStart({
   context,

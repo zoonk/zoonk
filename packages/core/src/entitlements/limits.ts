@@ -162,9 +162,11 @@ const ACTIVE_GOAL_LIMITS: Record<EntitlementTier, number | null> = {
  * ($0.42–1.03, the most for an exam with many subjects) and placement's questions ($0.18–0.22,
  * batched; was $0.45–0.81). Measured on real cold guest goals on 2026-09-30 with batched
  * placement: SAT about $1.25 and Polícia Rodoviária Federal (Cebraspe) above $2.10, beside the
- * walkthrough's ENEM with its notice already read, about $1.00. Guests never start the courses'
- * other bands, their pictures or speculative lessons, and a goal whose skills and courses exist
- * costs far less.
+ * walkthrough's ENEM with its notice already read, about $1.00. The plan's first lesson, written
+ * while placement runs when the Library doesn't have it, adds a lesson's cost
+ * (`GENERATED_LESSON_COST_MICROS`) to those. Guests never start the courses' other bands, their
+ * pictures or any other speculative lesson, and a goal whose skills and courses exist costs far
+ * less.
  */
 const GOAL_COST_MICROS = 1_800_000;
 

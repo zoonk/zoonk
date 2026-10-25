@@ -1015,19 +1015,40 @@ describe(goalContentWorkflow, () => {
     },
   );
 
-  it("never starts speculative lessons for a guest", { timeout: TIMEOUT }, async () => {
+  it("writes only the plan's first lesson ahead for a guest", { timeout: TIMEOUT }, async () => {
     const { goal, user } = await newGoal();
+    const [phase] = graph.phases;
     await prisma.user.update({ data: { isAnonymous: true }, where: { id: user.id } });
+
+    // Two phases a guest who knows the basics may start in: still only the first is written.
+    vi.mocked(generateSkillGraph).mockResolvedValue(
+      graphResult({
+        ...graph,
+        phases: phase ? [phase, { ...phase, title: `${phase.title} 2` }] : [],
+        skills: graph.skills.map((skill, index) => (index < 8 ? skill : { ...skill, phase: 2 })),
+      }),
+    );
+
     runOutlinesInline();
 
-    await expect(goalContentWorkflow({ goalId: goal.id })).resolves.toMatchObject({
-      speculativeLessonIds: [],
-      status: "built",
+    const result = await goalContentWorkflow({ goalId: goal.id });
+
+    const first = await prisma.planItem.findFirstOrThrow({
+      orderBy: { position: "asc" },
+      where: { kind: "lesson", plan: { goalId: goal.id }, status: "todo" },
     });
 
-    expect(getStartMock().mock.calls.some(([workflow]) => workflow === lessonContentWorkflow)).toBe(
-      false,
-    );
+    // The lesson a guest opens the moment onboarding ends is ready by then; nothing else is.
+    expect(result).toMatchObject({ speculativeLessonIds: [first.lessonId], status: "built" });
+
+    expect(
+      getStartMock().mock.calls.filter(([workflow]) => workflow === lessonContentWorkflow),
+    ).toStrictEqual([
+      [
+        lessonContentWorkflow,
+        [expect.objectContaining({ lessonId: first.lessonId, wait: "learner" })],
+      ],
+    ]);
 
     // A guest's outlines leave the courses' background work to a learner with an account.
     expect(start).toHaveBeenCalledWith(courseOutlineWorkflow, [
@@ -1193,7 +1214,7 @@ describe(goalContentWorkflow, () => {
   );
 
   it(
-    "leaves a guest's plan that came with the goal without the courses' background work or speculative lessons",
+    "leaves a guest's plan that came with the goal without the courses' background work",
     { timeout: TIMEOUT },
     async () => {
       const { goal, user } = await newGoal();
@@ -1239,10 +1260,6 @@ describe(goalContentWorkflow, () => {
       expect(start).toHaveBeenCalledWith(courseOutlineWorkflow, [
         expect.objectContaining({ courseId: course.id, forGuest: true }),
       ]);
-
-      expect(
-        getStartMock().mock.calls.some(([workflow]) => workflow === lessonContentWorkflow),
-      ).toBe(false);
     },
   );
 
