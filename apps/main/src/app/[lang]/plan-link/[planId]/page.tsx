@@ -1,6 +1,6 @@
 import { CatalogAsideBlock } from "@/components/catalog/catalog-aside";
 import { NotFoundPage } from "@/components/errors/not-found-page";
-import { HERO_CLASS, HERO_LEAD_CLASS, HERO_TITLE_CLASS } from "@/components/public/landing-styles";
+import { HERO_CLASS, HERO_LEAD_CLASS } from "@/components/public/landing-styles";
 import { NumberedRows } from "@/components/public/numbered-rows";
 import { PublicNotFound } from "@/components/public/public-not-found";
 import { PublicPage, PublicPageSkeleton } from "@/components/public/public-page";
@@ -88,7 +88,7 @@ async function PlanLinkBody({ params }: Props) {
             {t("A study plan someone shared with you")}
           </p>
 
-          <h1 className={cn(HERO_TITLE_CLASS, "mt-3 sm:mt-4")} id="plan-link-title">
+          <h1 className="text-headline mt-3 sm:mt-4" id="plan-link-title">
             {outline.subject?.title ?? t("A study plan")}
           </h1>
 

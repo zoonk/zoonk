@@ -23,10 +23,6 @@ export const PUBLIC_BAND_CLASS = "py-14 sm:py-20 lg:py-24";
 export const DISPLAY_CLASS =
   "text-[40px] leading-[1.04] font-semibold tracking-[-0.045em] text-pretty sm:text-[54px] lg:text-[64px] lg:leading-[1.02] xl:text-[72px]";
 
-/** A public page's headline when it isn't the landing's promise (pricing). */
-export const HEADLINE_CLASS =
-  "text-[34px] leading-[1.06] font-semibold tracking-[-0.04em] text-balance lg:text-[52px] lg:leading-[1.04]";
-
 /** A stop's heading: one short sentence. */
 export const STOP_TITLE_CLASS =
   "max-w-[20em] text-[28px] leading-[1.12] font-semibold tracking-[-0.035em] text-balance sm:text-[34px] lg:text-[40px] lg:leading-[1.08]";
@@ -42,12 +38,8 @@ export const EYEBROW_CLASS =
 /** A public page's first screen: the page's promise on the left and its panel beside it (below it on phones). */
 export const HERO_CLASS = `${PUBLIC_CONTAINER_CLASS} grid grid-cols-1 gap-10 pt-6 pb-4 sm:pt-10 lg:grid-cols-[minmax(0,1fr)_444px] lg:items-start lg:gap-14`;
 
-/** A shared plan's name as the page's headline. */
-export const HERO_TITLE_CLASS =
-  "text-[36px] leading-[1.06] font-semibold tracking-[-0.035em] text-balance sm:text-5xl sm:leading-[1.04] lg:text-[56px]";
-
-export const HERO_LEAD_CLASS =
-  "text-muted-foreground mt-4 max-w-[600px] text-base leading-relaxed text-pretty sm:mt-6 sm:text-lg";
+/** Under a public page's headline: what it is, in one line. */
+export const HERO_LEAD_CLASS = "text-lead mt-4 max-w-[600px] sm:mt-5";
 
 /**
  * A row of cards that swipes sideways on phones and tablets, each card snapping to the page's edge

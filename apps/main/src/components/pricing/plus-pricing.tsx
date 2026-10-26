@@ -1,6 +1,5 @@
 import {
   EYEBROW_CLASS,
-  HEADLINE_CLASS,
   LEAD_CLASS,
   PUBLIC_CONTAINER_CLASS,
 } from "@/components/public/landing-styles";
@@ -50,7 +49,7 @@ export async function PricingHero() {
     >
       <p className={EYEBROW_CLASS}>{t("Pricing")}</p>
 
-      <h1 className={cn(HEADLINE_CLASS, "mt-4 max-w-[16em]")} id="pricing-title">
+      <h1 className="text-headline mt-4 max-w-[16em]" id="pricing-title">
         {t.rich("Start free. <rest>Plus when you want everything.</rest>", { rest: renderRest })}
       </h1>
 
