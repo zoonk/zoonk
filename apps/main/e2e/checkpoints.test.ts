@@ -42,9 +42,10 @@ test.describe("A checkpoint from today's session", () => {
     await expect(ceremony.getByRole("button", { name: "Wear them" })).toBeFocused();
     await pressUntil(() => page.keyboard.press("Enter"), ceremony, { state: "hidden" });
 
+    // The result under it takes the focus.
     await expect(
       page.getByRole("heading", { level: 1, name: "You beat the Trickster!" }),
-    ).toBeVisible();
+    ).toBeFocused();
 
     // Enter leaves the single-screen result for the session.
     await expect(page.getByRole("link", { name: "Continue" })).toHaveAttribute("href", "/session");

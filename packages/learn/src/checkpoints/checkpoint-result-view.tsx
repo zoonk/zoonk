@@ -5,8 +5,8 @@ import { StepCard, StepHeader, StepTitle } from "../_components/step-card";
 import { Steps } from "../_components/steps";
 import { useTaskAsideShown } from "../_components/task-header";
 import { TaskMeta } from "../_components/task-meta";
+import { SCREEN_STEADY_MS } from "../_utils/use-steady";
 import { MissionMoment } from "../missions/mission-moment";
-import { MomentCeremonyOnce } from "../session/moment-ceremony";
 import { ReachedMoment } from "../session/reached-moment";
 import { TaskMainLink } from "../shell/task-frame";
 import { useCheckpointScreen } from "./checkpoint-context";
@@ -144,6 +144,7 @@ function OutcomeStep({ showsReview }: { showsReview: boolean }) {
 export function CheckpointResultView() {
   const t = useExtracted();
   const { checkpoint, duel, hrefs, renderCeremony } = useCheckpointScreen();
+  const ceremony = duel.state.completion?.ceremony ?? null;
   const name = useCheckpointEyebrow(checkpoint);
   const outcome = useCheckpointOutcome();
   const reviewed = useReviewedAnswers();
@@ -153,28 +154,24 @@ export function CheckpointResultView() {
   const hasReview = reviewed.length > 0;
 
   return (
-    <>
-      <MomentCeremonyOnce
-        milestone={duel.state.completion?.ceremony ?? null}
-        render={renderCeremony}
-      />
-
-      <Steps
-        aside={outcome ? { children: <CheckpointResultDetails />, label: name, title: name } : null}
-        exitHref={hrefs.exit}
-        finalAction={<TaskMainLink href={hrefs.continue}>{t("Continue")}</TaskMainLink>}
-        items={[
-          {
-            action: hasReview && !docked ? <CheckpointReviewDrawer /> : null,
-            content: outcome ? (
-              <OutcomeStep showsReview={hasReview && docked} />
-            ) : (
-              <NoVerdictStep />
-            ),
-            id: "outcome",
-          },
-        ]}
-      />
-    </>
+    <Steps
+      aside={outcome ? { children: <CheckpointResultDetails />, label: name, title: name } : null}
+      exitHref={hrefs.exit}
+      finalAction={
+        <TaskMainLink href={hrefs.continue} steadyMs={SCREEN_STEADY_MS}>
+          {t("Continue")}
+        </TaskMainLink>
+      }
+      items={[
+        {
+          action: hasReview && !docked ? <CheckpointReviewDrawer /> : null,
+          content: outcome ? <OutcomeStep showsReview={hasReview && docked} /> : <NoVerdictStep />,
+          id: "outcome",
+          // A milestone the duel earned (the Star glasses) opens right over its result.
+          moment:
+            ceremony && renderCeremony ? (close) => renderCeremony(ceremony, close) : undefined,
+        },
+      ]}
+    />
   );
 }

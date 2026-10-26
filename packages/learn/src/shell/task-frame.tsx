@@ -27,6 +27,7 @@ import {
   TaskBody,
   getTaskAsideRootProps,
 } from "../_components/task-layout";
+import { useSteady } from "../_utils/use-steady";
 import { LearnLink } from "../learn-link";
 import { goBackToApp } from "./app-history";
 import { type TaskExitConfirmation } from "./task-exit-dialog";
@@ -336,19 +337,31 @@ export function TaskMainLink({
   children,
   className,
   href,
+  steadyMs = 0,
   toApp = false,
 }: {
   children: React.ReactNode;
   /** Only to show it at some screen sizes (`max-lg:hidden`). */
   className?: string;
   href: string;
+  /**
+   * How long after the screen shows a press is ignored (`useSteady`): on a result right after its
+   * last answer, a second Enter or tap meant for that answer would leave before it's read.
+   */
+  steadyMs?: number;
   toApp?: boolean;
 }) {
   const ref = useRef<HTMLAnchorElement>(null);
+  const isSteady = useSteady(steadyMs);
 
-  useEnterKey(() => (isShown(ref.current) ? ref.current?.click() : false));
+  useEnterKey(() => (isShown(ref.current) && isSteady() ? ref.current?.click() : false));
 
   const onClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    if (!isSteady()) {
+      event.preventDefault();
+      return;
+    }
+
     const isPlainClick =
       event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
 
