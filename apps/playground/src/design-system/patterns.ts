@@ -100,6 +100,20 @@ export const PATTERNS: readonly Pattern[] = [
     title: "Lists and panels",
   },
   {
+    avoid: [
+      "A subject's color washed over a band.",
+      "Bands inside the app's pages, which stay on the page.",
+      "Two neighboring parts on the same tone.",
+    ],
+    follow: [
+      "Alternate `ground` and the page between a public page's parts; the first screen's one white sheet (`card`) sits on `ground`.",
+      "A public page may close on an inverted band holding its one action: ink in light (`bg-foreground text-background`), a raised band with a hairline in dark (`bg-card`), since a light band glares on a dark page.",
+    ],
+    id: "bands",
+    summary: "A public page's parts read apart by neutral tone steps, never by color.",
+    title: "Bands",
+  },
+  {
     avoid: ["Uppercase section names on a page.", "A heading with no content under it."],
     follow: [
       "`PageSectionTitle` for an app page's block, with its count in `PageSectionDetail`.",

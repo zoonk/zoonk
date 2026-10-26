@@ -177,6 +177,30 @@ function StructureSpecimen() {
   );
 }
 
+function BandsSpecimen() {
+  return (
+    <div className="flex flex-col overflow-hidden rounded-lg">
+      <div className="bg-ground flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-1">
+          <p className="text-section">Quantum physics from scratch</p>
+          <p className="text-muted-foreground text-sm">The first screen, on ground.</p>
+        </div>
+        <Surface className="p-4 text-sm">The one white sheet on it.</Surface>
+      </div>
+      <div className="p-6 text-sm">The next part, on the page.</div>
+      <div className="bg-foreground text-background dark:bg-card dark:text-foreground dark:ring-border flex items-center justify-between gap-4 rounded-b-lg p-6 dark:ring-1 dark:ring-inset">
+        <p className="text-section">Start today, at your level</p>
+        <Button
+          className="bg-background text-foreground hover:bg-background/90 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90"
+          size="lg"
+        >
+          Build my plan
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 function TitlesSpecimen() {
   return (
     <PageSection className="max-w-column">
@@ -192,6 +216,7 @@ function TitlesSpecimen() {
 const SPECIMENS: Record<string, () => React.ReactNode> = {
   actions: ActionsSpecimen,
   answers: AnswersSpecimen,
+  bands: BandsSpecimen,
   kinds: KindsSpecimen,
   readouts: ReadoutsSpecimen,
   status: StatusSpecimen,
