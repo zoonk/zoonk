@@ -12,14 +12,15 @@ import { useStrugglePause } from "./use-struggle-pause";
  * A calm offer to ask the learner's buddy when they seem stuck, as a quiet line over a hairline: after two misses in a row on the
  * same idea, or a long pause on an explanation. "Ask" opens the questions sheet with "Explain it
  * more simply" ready to send; it asks once and "No thanks" puts it away. Without a tutor (guests)
- * there's nothing to offer.
+ * there's nothing to offer, and a learner who already turned to the buddy about the screen knows
+ * where it is.
  */
 export function AskBuddyOffer({ reason }: { reason: "misses" | "pause" }) {
   const t = useExtracted();
   const buddy = useLessonBuddy();
   const [dismissed, setDismissed] = useState(false);
 
-  if (!buddy || dismissed) {
+  if (!buddy || buddy.consulted || dismissed) {
     return null;
   }
 

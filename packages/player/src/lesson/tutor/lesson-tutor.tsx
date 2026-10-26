@@ -37,6 +37,11 @@ type LessonBuddyTutor = {
   ask: (question: OfferedSuggestion) => void;
   /** Back to the lesson from the conversation docked in the aside. */
   close: () => void;
+  /**
+   * The learner has turned to the buddy about the screen in view: opened its conversation on this
+   * visit, or asked about this screen before.
+   */
+  consulted: boolean;
   /** Where the learner is, as the tutor sees it: the screen in view, or the answer just checked. */
   context: LessonQuestionContext;
   /**
@@ -97,6 +102,7 @@ function TutorInteraction({
   const askAbout = controller.ask;
   const docked = state.isOpen && presentation === "dock";
   const inDrawer = state.isOpen && presentation === "drawer";
+  const consulted = presentation !== null || state.questions.length > 0;
 
   const buddy = useMemo<LessonBuddyTutor>(
     () => ({
@@ -111,6 +117,7 @@ function TutorInteraction({
         void askAbout({ context: activeContext, question, suggestion });
       },
       close,
+      consulted,
       context: activeContext,
       docked,
       identity,
@@ -131,6 +138,7 @@ function TutorInteraction({
       asideShown,
       chooseSuggestion,
       close,
+      consulted,
       docked,
       identity,
       navigation,

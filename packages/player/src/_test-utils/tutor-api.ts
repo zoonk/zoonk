@@ -102,7 +102,7 @@ export function tutorAnswerResponse(answer: string) {
 }
 
 /** Two frames: whatever the tutor made of a response it just read is on screen by then. */
-function nextFrames() {
+export function nextFrames() {
   return new Promise<void>((resolve) => {
     requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
   });
