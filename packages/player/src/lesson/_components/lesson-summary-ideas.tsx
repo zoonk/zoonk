@@ -1,39 +1,21 @@
-import { cn } from "@zoonk/ui/lib/utils";
 import { LessonRichText } from "./lesson-rich-text";
 
 /**
- * The summary card's ideas, numbered, one sentence each: at the end of a lesson, as a card of their
- * own, or from its menu, as flat rows (`variant="flat"`) in the sheet, which is already the panel.
+ * The lesson's ideas, numbered, one sentence each, as flat rows with a hairline between them: on
+ * the page at the end of a lesson, and in the summary sheet from its menu.
  */
-export function LessonSummaryIdeas({
-  ideas,
-  variant = "card",
-}: {
-  ideas: string[];
-  variant?: "card" | "flat";
-}) {
+export function LessonSummaryIdeas({ ideas }: { ideas: string[] }) {
   return (
-    <ol
-      className={cn(
-        "divide-border flex w-full flex-col divide-y",
-        variant === "card" && "border-border rounded-xl border",
-      )}
-    >
+    <ol className="divided-rows flex w-full flex-col">
       {ideas.map((idea, index) => {
         const key = `idea-${index}`;
 
         return (
           <li
-            className={cn(
-              "flex gap-3 text-base leading-relaxed sm:text-lg",
-              variant === "card" ? "p-4" : "py-3",
-            )}
+            className="border-border flex gap-3 py-3 text-base leading-relaxed sm:text-lg"
             key={key}
           >
-            <span
-              aria-hidden="true"
-              className="text-muted-foreground w-5 shrink-0 font-mono tabular-nums"
-            >
+            <span aria-hidden="true" className="text-faint w-5 shrink-0 font-mono tabular-nums">
               {index + 1}
             </span>
             <span className="min-w-0">
