@@ -15,6 +15,8 @@ pnpm --filter playground dev:direct
 
 Then open `http://localhost:3202`.
 
+The player's screens and the design system's specimens that speak through next-intl (`useExtracted`) run on the dev server only: a production build has no next-intl compiler, so it shows a note in their place.
+
 ## Changing the design system
 
 Change a value in `globals.css` and the pages show it in every mode. Change what something means or where it goes in `src/design-system/` (and the `zoonk-design` skill if a rule changes). A new token needs its row in `src/design-system/color.ts`.
