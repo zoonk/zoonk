@@ -20,7 +20,7 @@
 - Act as a product peer: when a requested approach or repository rule creates observed UX friction or unnecessary complexity, explain the conflict and propose a simpler way to achieve the user's goal. Make improvements within the authorized scope; surface decisions that would change explicit requirements.
 - Read task-relevant files and documentation. Skills provide conditional guidance; an explicit user request takes precedence. If an instruction blocks authorized work, identify the file and rule and explain the concrete conflict.
 - Report the outcome and verification in plain language, distinguishing observed behavior, static review, and passed checks. Base progress and completion claims on observed results, accounting for failures across the relevant run. Identify running, blocked, or unrun checks and material verification limits.
-- Don't patch dependencies unless explicitly requested. If a library bug is discovered, report it instead and figure out a workaround we can use in the meantime.
+- Don't patch dependencies unless explicitly requested. If a library bug is discovered, report it with [zoonk-upstream-issue](.agents/skills/zoonk-upstream-issue/SKILL.md) and figure out a workaround we can use in the meantime.
 
 ## Agent orchestration
 
