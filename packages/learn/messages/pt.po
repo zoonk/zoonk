@@ -1823,6 +1823,7 @@ msgstr "Desafio da fase"
 #: src/explain/explain-ending.tsx
 #: src/language/conversation/call-stars-step.tsx
 #: src/missions/brain-power-reward.tsx
+#: src/missions/mission-moment.tsx
 #: src/mistakes/practice-done.tsx
 #: src/session/summary/summary-parts.tsx
 msgctxt "LEuDU7"
@@ -6502,9 +6503,9 @@ msgid "Ask your buddy something"
 msgstr "Perguntar algo para o seu parceiro"
 
 #: src/missions/mission-moment.tsx
-msgctxt "bbUu9m"
-msgid "{count, plural, one {Mission done!} other {All # missions done!}}"
-msgstr "{count, plural, one {Missão concluída!} other {Todas as # missões concluídas!}}"
+msgctxt "BQGCP4"
+msgid "Today's missions done!"
+msgstr "Missões de hoje concluídas!"
 
 #: src/missions/mission-moment.tsx
 msgctxt "5Bpyg-"
@@ -6512,10 +6513,9 @@ msgid "{count, plural, one {Mission done!} other {# missions done!}}"
 msgstr "{count, plural, one {Missão concluída!} other {# missões concluídas!}}"
 
 #: src/missions/mission-moment.tsx
-#: src/missions/missions-card.tsx
-msgctxt "4JBtJN"
-msgid "{count, plural, one {# left} other {# left}}"
-msgstr "{count, plural, one {Falta #} other {Faltam #}}"
+msgctxt "oKqRoi"
+msgid "{count, plural, one {# more for +{points} Brain Power} other {# more for +{points} Brain Power}}"
+msgstr "{count, plural, one {Falta # para ganhar +{points} de Poder Mental} other {Faltam # para ganhar +{points} de Poder Mental}}"
 
 #: src/missions/mission-moment.tsx
 #: src/missions/missions-card.tsx
@@ -6538,6 +6538,11 @@ msgstr "Concluída agora"
 msgctxt "3-ihlA"
 msgid "{count, plural, one {# mission} other {# missions}}"
 msgstr "{count, plural, one {# missão} other {# missões}}"
+
+#: src/missions/missions-card.tsx
+msgctxt "4JBtJN"
+msgid "{count, plural, one {# left} other {# left}}"
+msgstr "{count, plural, one {Falta #} other {Faltam #}}"
 
 #: src/missions/missions-card.tsx
 msgctxt "agm7r8"

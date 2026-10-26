@@ -35,22 +35,19 @@ function writeSeen(done: number) {
 }
 
 /**
- * Fills in the arcs of the missions done since the learner last saw the ring (or since `from`, on
- * the screen of the work that did them), then bounces the face: before the browser paints a new
- * count (after hydration on a first load), and not at all when the device asks for less motion. A
- * new day, with fewer done, just starts over.
+ * Fills in the arcs of the missions done since the learner last saw the ring, then bounces the
+ * face: before the browser paints a new count (after hydration on a first load), and not at all
+ * when the device asks for less motion. A new day, with fewer done, just starts over.
  */
 function useMissionMoment({
   done,
   enabled,
   face,
-  from,
   ring,
 }: {
   done: number;
   enabled: boolean;
   face: React.RefObject<HTMLSpanElement | null>;
-  from?: number;
   ring: React.RefObject<SVGSVGElement | null>;
 }) {
   useLayoutEffect(() => {
@@ -58,7 +55,7 @@ function useMissionMoment({
       return;
     }
 
-    const seen = from ?? readSeen();
+    const seen = readSeen();
     writeSeen(done);
 
     if (seen === null || done <= seen || getScrollBehavior() === "auto") {
@@ -79,7 +76,7 @@ function useMissionMoment({
       [{ transform: "scale(1)" }, { transform: `scale(${POP_SCALE})` }, { transform: "scale(1)" }],
       { delay: FILL_MS, duration: POP_MS, easing: "ease-out" },
     );
-  }, [done, enabled, face, from, ring]);
+  }, [done, enabled, face, ring]);
 }
 
 /**
@@ -98,23 +95,18 @@ function getArcClass({ complete, done }: { complete: boolean; done: boolean }): 
  * Today's missions as a ring of arcs, one per mission, around the buddy's face on its tab: each
  * arc fills as its mission is done, so they're in sight on every tab without a row of their own. A
  * mission done since the learner last looked fills in with a short moment (`moment`, one ring
- * has it), or, on the screen of the work that did them, since `from`, so the learner sees it there
- * and the tab doesn't play it again. Decorative: the tab's name says the count. Place the buddy's
- * face as its child; the buddy page's missions chip draws it small and empty, so the two read as
- * the same thing.
+ * has it). Decorative: the tab's name says the count. Place the buddy's face as its child; the
+ * buddy page's missions chip draws it small and empty, so the two read as the same thing.
  */
 export function MissionsRing({
   children,
   className,
-  from,
   missions,
   moment = true,
   strokeWidth = 2,
 }: {
   children?: React.ReactNode;
   className?: string;
-  /** How many were done before the work this screen ends, so their arcs fill from there now. */
-  from?: number;
   missions: MissionsCount;
   moment?: boolean;
   /** In the ring's 36-unit box: thicker for a small ring, so it still reads. */
@@ -124,7 +116,7 @@ export function MissionsRing({
   const face = useRef<HTMLSpanElement>(null);
   const complete = missions.total > 0 && missions.done >= missions.total;
 
-  useMissionMoment({ done: missions.done, enabled: moment, face, from, ring });
+  useMissionMoment({ done: missions.done, enabled: moment, face, ring });
 
   return (
     <span
