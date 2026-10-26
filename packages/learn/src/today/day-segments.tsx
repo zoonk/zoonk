@@ -6,12 +6,13 @@ const PERCENT = 100;
 export type DaySegmentState = "ahead" | "current" | "done" | "skipped";
 
 /**
- * Blue once done, a neutral fill once skipped, an outline in the text color for the one in
- * progress (where they are; a solid segment read as done), and the track for the ones ahead.
+ * Blue once done, a neutral fill once skipped, a blue outline for the one in progress (where the
+ * learner is, the edge of their progress; a solid segment read as done), and the track for the ones
+ * ahead.
  */
 const SEGMENT_STATE_CLASS: Record<DaySegmentState, string> = {
   ahead: "bg-surface-3",
-  current: "ring-selected ring-1 ring-inset",
+  current: "ring-success ring-1 ring-inset",
   done: "bg-success",
   skipped: "bg-foreground/25",
 };

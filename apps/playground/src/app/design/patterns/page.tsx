@@ -133,7 +133,7 @@ function ReadoutsSpecimen() {
       </div>
       <MeterParts>
         <MeterPart className="bg-success" weight={2} />
-        <MeterPart className="ring-selected bg-transparent ring-[1.5px] ring-inset" weight={5} />
+        <MeterPart className="ring-success bg-transparent ring-[1.5px] ring-inset" weight={5} />
         <MeterPart weight={5} />
         <MeterPart weight={3} />
         <MeterPart weight={4} />

@@ -42,7 +42,7 @@ export const PATTERNS: readonly Pattern[] = [
       "A kind's dot in a list of one kind.",
     ],
     follow: [
-      "`StatusMark`: a blue check once done, the learner's dot with a halo for the next one, a faint dot ahead.",
+      "`StatusMark`: a blue check once done, the learner's blue dot with a halo for the next one, a faint dot ahead.",
       "The next row sits on the neutral highlight; a done row is one quiet line.",
     ],
     id: "status",
@@ -66,7 +66,7 @@ export const PATTERNS: readonly Pattern[] = [
     ],
     follow: [
       "One big number per block (`BigQuantity`), its unit small and muted.",
-      "Under it a meter of parts sized by what they measure (`MeterParts`): progress blue, a kind in its hue, the learner's place as a ring, the rest on the track.",
+      "Under it a meter of parts sized by what they measure (`MeterParts`): progress blue, the learner's place as a blue ring, a kind in its hue, the rest on the track.",
     ],
     id: "readouts",
     summary: "Readouts with meters: the number that matters and what it's made of.",

@@ -6,11 +6,11 @@ import { type PlanPhaseView } from "@zoonk/core/plans/view-contract";
  */
 
 /**
- * A phase's band in its state: the current one raised and ringed in the text color (where the
- * learner is, so a ring without a tint), done ones blue, the rest quiet.
+ * A phase's band in its state: the current one raised and ringed in blue (where the learner is,
+ * the edge of their progress, so a ring without a tint), done ones tinted blue, the rest quiet.
  */
 export const BAND_STATE_CLASS: Record<PlanPhaseView["state"], string> = {
-  current: "bg-surface-3 text-foreground ring-selected ring-[1.5px] ring-inset",
+  current: "bg-surface-3 text-foreground ring-success ring-[1.5px] ring-inset",
   done: "bg-success/13 text-success-text",
   leftOut: "bg-muted text-muted-foreground",
   unfinished: "bg-muted text-muted-foreground",

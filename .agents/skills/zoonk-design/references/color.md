@@ -4,8 +4,8 @@ Zoonk is neutral by default and colored on purpose, softly. Neutral tone steps (
 
 ## One meaning per hue
 
-- **The text color** is the action and the learner's own: the main action (inverted), focus, a pick before it's judged (a 2px ring on `selected-tint`) and where the learner is now (a ring, or a dot with a halo). `selected` is the text color on purpose: picks were blue, and with progress blue a picked answer looked right before it was checked.
-- **Blue** (`success`, words in `success-text`) is progress made: done, a right answer, studied, reached, a day of activity, good news in a plan change.
+- **The text color** is the action and the learner's pick: the main action (inverted), focus, and a pick before it's judged (`selected`: a 2px ring on `selected-tint`). Picks were blue; with progress blue a picked answer looked right before it was checked, so a pick takes the text color and checking always changes it.
+- **Blue** (`success`, words in `success-text`) is progress made, up to where the learner is: done (a fill or a check), a right answer, studied, reached, a day of activity, good news in a plan change, and the learner's place at the edge of their progress (a ring, or a dot with a halo).
 - **Pink-red** (`destructive`, `destructive-text`) is wrong or removed: a wrong answer, bad news in a plan change, a destructive action, a one-line inline error.
 - **Amber** (`warning`, `warning-text`) is look here: a flag, a suggestion, the one thing to improve. Icons and chips only, never a dot: an amber dot is review and practice.
 - **Violet** (`brain`, `brain-text`) is Brain Power and nothing else: every reward amount, the missions' track and reward, the bar to the next level.
@@ -21,7 +21,7 @@ Everything else is neutral: titles, body and labels, panels and rows, tabs, navi
 - **Soft, never alone.** Colored marks, icons, tints and colored words stay soft in the regular theme; the deeper, strict values belong only to `prefers-contrast: more`. Every colored mark has a word, a shape or screen-reader text that says the same, so a soft mark loses no meaning.
 - **A tint belongs on something whose color is its meaning**: a checked answer under its ring, a plan diff's line, a flag's chip, a subject's label, an earned reward. Never on a button, a section, a heading or a band.
 - **Checking changes a pick's color**: picked in the text color, then blue when right or pink-red when wrong, each with its word ("Correct", "Your answer"); a guess goes back to neutral. A set of toggles where many may be on (a week's study days) takes a 1px line on the tint, quieter than a single pick's 2px; keyboard focus is a separate outline, so a focused pick shows both.
-- **A place shows once per view where it can**: the day's block in progress outlined in the text color, the current phase's band ringed, the next chapter's dot with a halo; its row keeps the neutral highlight.
+- **A place shows once per view where it can**, in progress's blue as an outline or a dot with a halo, never a fill (a fill is done): the day's block in progress outlined, the current phase's band ringed, the next chapter's dot with a halo; its row keeps the neutral highlight.
 - **A plan change is colored by what it means, not by its sign.** `PlanEffectDiff` colors only its outcome line through `getLessonLineTone` (`plan-diff/line-tone.ts`): lessons a date leaves out are pink-red, lessons added back blue, and without a date fewer lessons are blue and more are plain. Every date, end or count that moves is neutral: the old value struck through and muted, the new one in the text color. A worked answer's diff keeps right and wrong.
 - **Done reads the same in every list**: one blue check (`DoneMark`) in the row's mark, the name never struck through and muted in a list of work to get through. A list of one kind shows state (`StatusMark`), not kind.
 - **Missions**: one card (`MissionsCard`), each mission with its kind's icon until it's done; the track, the reward and the mark on the queue row a mission opens are violet. When every mission is done the reward lights up as a solid violet chip and the buddy's ring closes in violet: one of the few special moments, below.
@@ -46,7 +46,7 @@ Everything else is neutral: titles, body and labels, panels and rows, tabs, navi
 
 ## Native apps
 
-Apple and Android take the same meanings and values with native controls. The tint of prominent buttons and toggles is the label color (black in light, white in dark), so Apple's `AccentColor` and Android's Material `primary` are that ink, and Android's dynamic color stays off (it would bring the wallpaper's hue in). Each token becomes a named color with light and dark values plus a high-contrast variant: Apple's asset catalog "High Contrast" appearance (Increase Contrast), and Android's contrast levels (`UiModeManager.getContrast()`, Android 14 and up) choosing the more-contrast values. Picks and the learner's place are ink, progress blue, wrong pink-red, Brain Power violet, kinds their hues on icons.
+Apple and Android take the same meanings and values with native controls. The tint of prominent buttons and toggles is the label color (black in light, white in dark), so Apple's `AccentColor` and Android's Material `primary` are that ink, and Android's dynamic color stays off (it would bring the wallpaper's hue in). Each token becomes a named color with light and dark values plus a high-contrast variant: Apple's asset catalog "High Contrast" appearance (Increase Contrast), and Android's contrast levels (`UiModeManager.getContrast()`, Android 14 and up) choosing the more-contrast values. Picks are ink, progress and the learner's place blue, wrong pink-red, Brain Power violet, kinds their hues on icons.
 
 ## Sources
 

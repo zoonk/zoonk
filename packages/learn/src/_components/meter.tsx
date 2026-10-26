@@ -67,7 +67,7 @@ export function MeterParts({
 /**
  * One part of `MeterParts`, on the track until a color says what it is: `bg-success` for progress
  * made, `bg-destructive` for a wrong answer, a kind's fill (`kindFillClass`), or the learner's
- * place as a ring (`ring-selected ring-[1.5px] ring-inset bg-transparent`).
+ * place as a blue ring (`ring-success ring-[1.5px] ring-inset bg-transparent`).
  */
 export function MeterPart({
   as: Element = "div",

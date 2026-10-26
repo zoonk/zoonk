@@ -22,11 +22,11 @@ export function DoneMark({ className }: { className?: string }) {
 /**
  * Where a thing in a list stands, the same everywhere (chapters, lessons, topics, phases), in the
  * quiet marks of Today's queue: a blue check once done, a muted fast-forward once skipped because
- * the learner showed they know it, the learner's dot with a halo, in the text color, for the one to
- * do next (where they are; its row is highlighted too, in the neutral fill) and a faint dot ahead.
- * The halo keeps it from reading as a kind's dot. Every mark sits in one 16px box, so the rows'
- * words start in one place. `label` names the state for screen readers when the row doesn't say it
- * in words.
+ * the learner showed they know it, the learner's blue dot with a halo for the one to do next, the
+ * edge of their progress (where they are; its row is highlighted too, in the neutral fill) and a
+ * faint dot ahead. The halo keeps it from reading as a kind's dot. Every mark sits in one 16px box,
+ * so the rows' words start in one place. `label` names the state for screen readers when the row
+ * doesn't say it in words.
  */
 export function StatusMark({
   className,
@@ -51,7 +51,7 @@ export function StatusMark({
         <FastForwardIcon aria-hidden="true" className="text-muted-foreground size-3 fill-current" />
       )}
       {status === "next" && (
-        <span className="bg-selected ring-selected/25 size-2 rounded-full ring-3" />
+        <span className="bg-success ring-success/25 size-2 rounded-full ring-3" />
       )}
       {status === "todo" && <span className="bg-foreground/20 size-2 rounded-full" />}
     </span>

@@ -47,7 +47,7 @@ function RoadmapCompact({
             className={cn(
               "bg-surface-3 relative min-w-6 basis-0 overflow-hidden rounded-[2px]",
               phase.state === "current" &&
-                "after:ring-selected after:absolute after:inset-0 after:rounded-[inherit] after:ring-1 after:ring-inset",
+                "after:ring-success after:absolute after:inset-0 after:rounded-[inherit] after:ring-1 after:ring-inset",
             )}
             key={phase.index}
             style={{ flexGrow: getPhaseWeight(phase) }}

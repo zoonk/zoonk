@@ -135,14 +135,15 @@ export const COLOR_GROUPS: readonly ColorGroup[] = [
   {
     id: "own",
     intro:
-      "What the learner chose and where they are, in the text color. Blue means progress made, so a pick never looks right before it's checked and the block in progress never looks done.",
-    title: "The learner's own",
+      "What the learner picked before it's judged, in the text color. Checking turns it blue or pink-red, so a pick never looks right before it's checked.",
+    title: "The learner's pick",
     tokens: [
       {
-        avoid: "Blue, a button, a tab, a link, a hover.",
-        meaning: "A pick before it's judged, and where the learner is now.",
+        avoid:
+          "Blue, a button, a tab, a link, a hover, the learner's place (that's progress's blue).",
+        meaning: "A pick before it's judged.",
         name: "selected",
-        use: "A pick: a 2px ring on `selected-tint` (`ANSWER_TONE.picked`, `ChoiceList`, `Toggle`). A place: a ring (the day's block in progress, the current phase) or a dot with a halo (`StatusMark` next).",
+        use: "A 2px ring on `selected-tint` (`ANSWER_TONE.picked`, `ChoiceList`, `Toggle`), a checked radio or checkbox.",
       },
       {
         meaning: "The faint fill under a pick.",
@@ -165,10 +166,11 @@ export const COLOR_GROUPS: readonly ColorGroup[] = [
     title: "Meanings",
     tokens: [
       {
-        avoid: "A pick or the learner's place (`selected`), a button, decoration.",
-        meaning: "Progress made: done, right, studied, reached, a day of activity.",
+        avoid: "A pick (`selected`), a button, decoration.",
+        meaning:
+          "Progress made (done, right, studied, reached, a day of activity) and where the learner is now, the edge of their progress.",
         name: "success",
-        use: "`DoneMark`, filled segments and cells, the week's rings, a right answer's ring and tint, activity squares, good news in a plan change.",
+        use: "Done: `DoneMark`, filled segments and cells, the week's rings, a right answer's ring and tint, activity squares, good news in a plan change. The place: a ring (the day's block in progress, the current phase) or a dot with a halo (`StatusMark` next).",
       },
       {
         meaning: "Progress in words.",

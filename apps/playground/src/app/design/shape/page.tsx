@@ -69,10 +69,7 @@ export default function ShapePage() {
         <Specimen className="flex flex-col gap-4">
           <MeterParts>
             <MeterPart className="bg-success" weight={2} />
-            <MeterPart
-              className="ring-selected bg-transparent ring-[1.5px] ring-inset"
-              weight={5}
-            />
+            <MeterPart className="ring-success bg-transparent ring-[1.5px] ring-inset" weight={5} />
             <MeterPart weight={5} />
             <MeterPart weight={3} />
             <MeterPart className={kindFillClass("practice")} weight={6} />

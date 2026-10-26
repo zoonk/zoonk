@@ -37,7 +37,7 @@ Examples of native behavior:
 
 - Prefer Jetpack Compose with Material 3 components for new native Android UI unless the local app architecture requires Views.
 - Map Zoonk's design tokens from `main` (colors, typography, spacing, and shapes) onto Material color, type, and shape roles, with light and dark values and the more-contrast values for Android's high contrast level (`UiModeManager.getContrast()`). Use Zoonk's colors instead of dynamic color. Light, dark, contrast, and reduced motion follow the device.
-- Take each color's meaning from the design system (`apps/playground/src/design-system/`, values in `packages/ui/src/styles/globals.css`, the rules in [the zoonk-design skill's color reference](../zoonk-design/references/color.md)): Material `primary` is the ink text color, picks and the learner's place are ink, progress is a soft blue, wrong a soft pink-red, Brain Power violet, never a green for done.
+- Take each color's meaning from the design system (`apps/playground/src/design-system/`, values in `packages/ui/src/styles/globals.css`, the rules in [the zoonk-design skill's color reference](../zoonk-design/references/color.md)): Material `primary` is the ink text color, picks are ink, progress and the learner's place a soft blue, wrong a soft pink-red, Brain Power violet, never a green for done.
 - Prefer Material Symbols or platform-standard icons for standard actions and objects, choosing the closest match to the icon `main` uses. Use custom icons only when no official symbol communicates the concept.
 - Support dark theme, accessibility, font scaling, contrast, reduced motion, system gestures, edge-to-edge behavior, and proper system bar handling.
 - Use platform-provided components and AndroidX libraries before custom controls.

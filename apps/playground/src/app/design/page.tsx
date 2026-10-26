@@ -43,7 +43,7 @@ function AtAGlance() {
             <MeterParts>
               <MeterPart className="bg-success" weight={2} />
               <MeterPart
-                className="ring-selected bg-transparent ring-[1.5px] ring-inset"
+                className="ring-success bg-transparent ring-[1.5px] ring-inset"
                 weight={5}
               />
               <MeterPart weight={4} />
@@ -87,7 +87,7 @@ export default function DesignOverviewPage() {
       </DocSection>
 
       <DocSection
-        intro="Picked in the text color, right in blue, wrong in pink-red, the day's meter, a reward and a flag, in every mode."
+        intro="The day's meter (done, the block in progress, practice), a pick in the text color, right in blue, wrong in pink-red, the status marks and a reward, in every mode."
         title="At a glance"
       >
         <AtAGlance />

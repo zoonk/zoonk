@@ -37,7 +37,7 @@ export const PRINCIPLES: readonly string[] = [
   "Neutral by default, colored on purpose: tone steps separate, color signals.",
   "Soft colors in the regular theme; strict contrast when the device asks for more.",
   "One meaning per hue, the same on every screen, and never color alone.",
-  "The text color is the action and the learner's own; blue is progress made.",
+  "The text color is the action and the learner's pick; blue is progress made, up to where the learner is.",
   "Titles, not labels; readouts with meters; fewer boxes.",
   "Modern and quiet like Linear and Vercel: nothing crowded, nothing flashy, except a few earned moments.",
 ];

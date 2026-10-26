@@ -18,7 +18,7 @@ type NodeState = PlanPhaseView["state"] | "finish";
 
 /**
  * A node on the path, in the marks lists use: a blue check once done, a dot in the text color for
- * the phase they're in (its band and its next chapter carry the learner's mark, so this one stays
+ * the phase they're in (its band and its next chapter carry the learner's blue, so this one stays
  * quiet), the goal's flag; an empty ring for a phase ahead, for one the plan moved
  * past with work set aside and for one it holds nothing of, never a check. It sits in a box as tall
  * as its title's first line (`HEADER_CLASS`), so its centre is on that line.

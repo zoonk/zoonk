@@ -129,8 +129,9 @@
  * `card` for a panel, `muted` and `surface-3` for tracks and the row the learner is on), and soft
  * color goes only where it means something, one meaning per hue: blue for progress made (done,
  * right, studied, activity), pink-red for wrong or removed, amber for a flag, violet for Brain
- * Power, a kind's hue on its icon, a subject's hue on its label and line. The learner's own pick
- * and place are drawn in the text color, so a pick never looks like a right answer. Neutral text
+ * Power, a kind's hue on its icon, a subject's hue on its label and line. What the learner picks
+ * is drawn in the text color, so a pick never looks like a right answer; where they are is the
+ * edge of their progress, in its blue, as a ring or a dot with a halo. Neutral text
  * meets WCAG AA on every surface; colored marks and text stay soft here and turn strict under
  * `prefers-contrast: more` (the blocks below). What each token means and where it goes:
  * `apps/playground/src/design-system/tokens.ts`, shown live in the playground's design system.
@@ -168,10 +169,9 @@
   --destructive: oklch(0.65 0.19 6);
   --destructive-text: oklch(0.575 0.2 4);
   /*
-   * The learner's own: what they picked before it's judged (a 2px ring and a faint tint) and where
-   * they are now (a ring, or a dot with a halo), in the text color. Blue is progress made, so a
-   * pick can't be mistaken for a right answer or the place for something done. The tint keeps a
-   * muted line on it at AA.
+   * The learner's pick before it's judged, in the text color: a 2px ring and a faint tint. Blue is
+   * progress made, so a pick can't be mistaken for a right answer. The tint keeps a muted line on
+   * it at AA.
    */
   --selected: var(--foreground);
   --selected-foreground: var(--background);
@@ -180,8 +180,9 @@
   --warning: oklch(0.74 0.14 70);
   --warning-text: oklch(0.575 0.12 60);
   /*
-   * Progress made, a soft blue: done, a right answer, studied, reached, a day of activity. Fills,
-   * rings and checks take `success`; words take `success-text`, a step deeper.
+   * Progress made, a soft blue: done, a right answer, studied, reached, a day of activity, and
+   * where the learner is now, the edge of their progress (a ring, or a dot with a halo, where done
+   * is a fill or a check). Fills, rings and checks take `success`; words take `success-text`.
    */
   --success: oklch(0.66 0.14 252);
   --success-text: oklch(0.56 0.15 255);
