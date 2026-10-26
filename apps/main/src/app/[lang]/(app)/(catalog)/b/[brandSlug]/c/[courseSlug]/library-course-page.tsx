@@ -1,3 +1,4 @@
+import { BAND_CLASS } from "@/components/catalog/band";
 import {
   COURSE_HERO_CLASS,
   COURSE_HERO_PAIR_CLASS,
@@ -11,7 +12,6 @@ import { CourseMark } from "@/components/catalog/course-mark";
 import { type CoursePlanExample, getCoursePlanExample } from "@/components/catalog/course-plan";
 import { CoursePlanWindow } from "@/components/catalog/course-plan-window";
 import { CourseProgressScope } from "@/components/catalog/course-progress";
-import { BAND_CLASS, SUBJECT_WASH_CLASS } from "@/components/catalog/subject-tone";
 import {
   TryLesson,
   type TryLessonCandidate,
@@ -140,7 +140,7 @@ function CourseFirstScreen({
 
   return (
     <>
-      <div className={cn(BAND_CLASS, SUBJECT_WASH_CLASS.strong, "-mt-8")}>
+      <div className={cn(BAND_CLASS, "bg-ground -mt-8")}>
         <div className={cn(COURSE_HERO_CLASS, side && COURSE_HERO_PAIR_CLASS)}>
           {hero}
           {side}
@@ -180,7 +180,7 @@ async function CourseClosing({ courseId, pace }: { courseId: string; pace: numbe
   return (
     <PageSection
       aria-labelledby={titleId}
-      className={cn(BAND_CLASS, SUBJECT_WASH_CLASS.strong, "-mb-12 gap-1 lg:-mb-16")}
+      className={cn(BAND_CLASS, "bg-ground -mb-12 gap-1 lg:-mb-16")}
     >
       <h2
         className="text-[22px] leading-tight font-semibold tracking-[-0.02em] text-balance sm:text-2xl"
@@ -313,7 +313,7 @@ export async function LibraryCoursePage({
 
           {/* On a tablet the bands are rounded panels, so this one keeps a gap from the one above. */}
           <CourseFit
-            className={cn(BAND_CLASS, SUBJECT_WASH_CLASS.soft, "sm:mt-3 lg:mt-0")}
+            className={cn(BAND_CLASS, "bg-ground sm:mt-3 lg:mt-0")}
             content={landingPage}
             courseId={course.id}
           />

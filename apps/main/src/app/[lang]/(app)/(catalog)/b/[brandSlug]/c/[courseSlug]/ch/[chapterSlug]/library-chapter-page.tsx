@@ -1,9 +1,9 @@
+import { BAND_CLASS } from "@/components/catalog/band";
 import { HERO_LEAD_CLASS, PlanLine } from "@/components/catalog/catalog-hero";
 import { CatalogPageBar } from "@/components/catalog/catalog-page-bar";
 import { ChapterStrip } from "@/components/catalog/chapter-strip";
 import { getExamChapterAreas } from "@/components/catalog/course-plan";
 import { CourseProgressScope } from "@/components/catalog/course-progress";
-import { BAND_CLASS, SUBJECT_WASH_CLASS } from "@/components/catalog/subject-tone";
 import { TryLesson, getTryLessonId, pickTryLesson } from "@/components/catalog/try-lesson";
 import { CheckMark } from "@/components/public/check-mark";
 import { JsonLd } from "@/components/public/json-ld";
@@ -120,7 +120,7 @@ async function ChapterClosing({
   return (
     <PageSection
       aria-labelledby={titleId}
-      className={cn(BAND_CLASS, SUBJECT_WASH_CLASS.strong, "-mb-12 gap-1 lg:-mb-16")}
+      className={cn(BAND_CLASS, "bg-ground -mb-12 gap-1 lg:-mb-16")}
     >
       <h2
         className="text-[22px] leading-tight font-semibold tracking-[-0.02em] text-balance sm:text-2xl"
@@ -233,7 +233,7 @@ export async function LibraryChapterPage({
           ]}
         />
 
-        <div className={cn(BAND_CLASS, SUBJECT_WASH_CLASS.strong, "-mt-8")}>
+        <div className={cn(BAND_CLASS, "bg-ground -mt-8")}>
           <section aria-labelledby={titleId} className="max-w-column flex flex-col">
             <p className="text-muted-foreground flex flex-wrap items-center gap-x-1.5 text-sm sm:text-[15px]">
               <PublicEyebrowLink href={getCourseHref(params)}>{course.title}</PublicEyebrowLink>
