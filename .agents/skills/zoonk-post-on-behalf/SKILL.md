@@ -13,7 +13,7 @@ Anything an agent publishes from the owner's account says so up front, as [Theo 
 
 ## Before posting
 
-- Get the owner's go-ahead for this post. A public post can be cached or indexed even after it's deleted, and a go-ahead for one post doesn't cover the next.
+- Get the owner's go-ahead for this post. A public post can be cached or indexed even after it's deleted, and a go-ahead for one post doesn't cover the next. Upstream bug reports through [zoonk-upstream-issue](../zoonk-upstream-issue/SKILL.md) are approved in advance (root `AGENTS.md`).
 - Check that the active account (`gh auth status`) is the one the owner wants to post from.
 - Keep private things out: product, company and customer names unless the owner wants them, internal links and paths, private repositories, secrets, and logs with user data.
 - Claim only what you verified. Say "once in about 200 builds", not "often".

@@ -9,7 +9,7 @@ metadata:
 
 # Upstream issue with a minimal reproduction
 
-Maintainers act on a bug they can run in a minute. Prove the bug is theirs, reproduce it in the smallest public repository, then file it in their template. The issue and the repository are public: follow [zoonk-post-on-behalf](../zoonk-post-on-behalf/SKILL.md), which needs the owner's go-ahead.
+Maintainers act on a bug they can run in a minute. Prove the bug is theirs, reproduce it in the smallest public repository, then file it in their template. The issue and the repository are public: follow [zoonk-post-on-behalf](../zoonk-post-on-behalf/SKILL.md). The owner approves upstream bug reports in advance (root `AGENTS.md`), so open them without asking.
 
 ## 1. Confirm it's theirs
 
