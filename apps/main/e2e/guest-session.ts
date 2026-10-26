@@ -39,7 +39,7 @@ async function finishOnboarding(userId: string) {
  * cookie's cached copy still says "signed up": dropping it makes the server read the guest. A
  * persona's browser is in its own time zone.
  */
-export async function openUserAsGuest(browser: Browser, user: E2EUser & { timeZone?: string }) {
+async function openUserAsGuest(browser: Browser, user: E2EUser & { timeZone?: string }) {
   await Promise.all([
     prisma.user.update({ data: { isAnonymous: true }, where: { id: user.id } }),
     finishOnboarding(user.id),

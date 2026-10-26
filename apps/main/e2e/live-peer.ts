@@ -2,7 +2,7 @@ import { type Page } from "@playwright/test";
 import { LIVE_CALL_SDP_OFFER } from "@zoonk/testing/fixtures/language";
 
 export const CHARACTER_REPLY = "Yes, it's still available.";
-export const CHARACTER_CHECK_IN = "Hello? Are you still there?";
+const CHARACTER_CHECK_IN = "Hello? Are you still there?";
 
 /** Its session name marks the fake peer, which the lane's provider bridge answers at once. */
 const FAKE_PEER_OFFER = LIVE_CALL_SDP_OFFER.replace("\r\ns=-\r\n", "\r\ns=e2e-browser-peer\r\n");
