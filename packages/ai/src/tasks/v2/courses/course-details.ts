@@ -17,7 +17,9 @@ import promptTemplate from "./course-details.prompt.md";
  * then Astra judge with a plain-promise criterion, 14 Oct 2026): Luna scored
  * 9.37 and 9.39 over two runs (EN 9.51 and 9.55, PT 9.23 and 9.23) at about
  * $0.61 per 1,000 courses. It's the cheapest candidate, so nothing cheaper was
- * run; fallbacks come from other families.
+ * run; fallbacks come from other families. Once the page's lists got short (25 Oct 2026, a rubric
+ * that also judges short items), it scored 9.10, 9.18 and 9.16 over three runs at about $0.90 per
+ * 1,000 courses, since it reasons longer to fit the word limits.
  */
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["google/gemini-3.8-flash", "anthropic/claude-haiku-5.5"] as const;
@@ -40,8 +42,19 @@ export function getCourseDetailsPromptVersion(): string {
   return getPromptVersion({ systemPrompt });
 }
 
-/** How many items each list on the course page shows at most, and how many categories a course has. */
-const LIMITS = { audience: 5, categories: 2, outcomes: 6 } as const;
+/**
+ * The course page's lists as the prompt asks for them, so a visitor takes each in at a glance: how
+ * many items it shows and how many words an item has at most.
+ */
+export const PAGE_LISTS = {
+  audience: { items: 3, words: 6 },
+  outcomes: { items: 4, words: 8 },
+} as const;
+
+const MAX_CATEGORIES = 2;
+
+/** List items are phrases, so a model's closing period goes. */
+const FINAL_PERIOD = /\.$/u;
 
 const schema = z.object({
   audience: z.array(z.string()),
@@ -112,9 +125,12 @@ ${formatLocalContext(params.language)}
   `;
 }
 
-/** Trims, drops empty items and keeps the first of items that only differ in case or accents. */
+/**
+ * Trims, drops a final period and empty items, and keeps the first of items that only differ in
+ * case or accents.
+ */
 function cleanList({ items, max }: { items: readonly string[]; max: number }): string[] {
-  const trimmed = items.map((item) => item.trim()).filter(Boolean);
+  const trimmed = items.map((item) => item.trim().replace(FINAL_PERIOD, "")).filter(Boolean);
   const keys = trimmed.map((item) => normalizeString(item));
 
   return trimmed.filter((_, index) => keys.indexOf(keys[index] ?? "") === index).slice(0, max);
@@ -122,11 +138,11 @@ function cleanList({ items, max }: { items: readonly string[]; max: number }): s
 
 function normalizeCourseDetails(raw: RawCourseDetails): CourseDetails {
   return {
-    categories: [...new Set(raw.categories)].slice(0, LIMITS.categories),
+    categories: [...new Set(raw.categories)].slice(0, MAX_CATEGORIES),
     description: raw.description.trim(),
     landingPage: {
-      audience: cleanList({ items: raw.audience, max: LIMITS.audience }),
-      outcomes: cleanList({ items: raw.outcomes, max: LIMITS.outcomes }),
+      audience: cleanList({ items: raw.audience, max: PAGE_LISTS.audience.items }),
+      outcomes: cleanList({ items: raw.outcomes, max: PAGE_LISTS.outcomes.items }),
       valueProposition: raw.valueProposition.trim(),
     },
   };

@@ -20,8 +20,8 @@ Write every field for a visitor at the course's starting level, which `COURSE_TI
 # Fields
 
 - `valueProposition`: the course's promise, the first line under its name. One short sentence of 20 words at most that leads with what the learner will be able to do: a concrete result from everyday life, work or study that the visitor recognizes and wants. Not a definition of the subject, the course's process or its path from basics to advanced, a list of topics, or an opener like "You'll be able to…" or "This course…" (or its equivalent in `LANGUAGE`). For a bread course from scratch, write "Bake crusty, airy bread at home with flour, water, salt and yeast", not "Apply fermentation science and gluten development to optimize loaf structure".
-- `outcomes`: the page's "What you'll be able to do": 4 to 6 abilities from the first steps to the course's later levels, each a short action, such as "Fix a dripping faucet without calling a plumber". Each one passes the promise's test: the visitor knows every word and can picture doing it. Later items go further in what the learner does, not in vocabulary.
-- `audience`: 3 to 5 short fit statements a person can recognize themselves in: a role, a goal or a situation, with what they want to do, such as "Gardeners who want to grow vegetables on a balcony". No vague labels like "Anyone interested in the topic".
+- `outcomes`: the page's "What you'll be able to do", which a visitor takes in at a glance: exactly 4 abilities, in order from the first steps to the furthest the course goes. Each is one action in 8 words at most, such as "Fix a dripping faucet without calling a plumber": never a list of three or more things, and no clause on how or why. Each one passes the promise's test: the visitor knows every word and can picture doing it. When the plain words for an ability don't fit, name a smaller, concrete thing the learner does, never the course's term for it. Later items go further in what the learner does, not in vocabulary. Spend at most one on the tools the course builds along the way, like its math or notation.
+- `audience`: the page's "Who it's for", also read at a glance: exactly 3 short labels a visitor recognizes themselves in, each in 6 words at most and each a different kind of person: a role, a situation or what they're curious about, such as "Gardeners with only a balcony" or "Curious about growing their own food". Not a sentence about what they'll do in the course, and no vague labels like "Anyone interested in the topic".
 - `description`: 1 to 3 short sentences. Say what the subject is, what the course covers as a whole (the subject's main areas in words the visitor knows, not a list of the chapters above), and why it's useful, without repeating the promise. Go straight to the point.
 - `categories`: 1 or 2 categories from the allowed list. Anchor on what the learner will do and know, not on surface words: pick the primary domain first, and add a second only when it's central to the course, not peripheral.
 
@@ -32,7 +32,7 @@ Word the promise and every outcome in `VERB_FORM`, as a native course page lists
 - **Professional subjects**: name the kinds of work where the skills are used, without saying the course gets anyone a job.
 - **Hobbies, pop culture and general interest**: personal, creative, social and cultural uses (discussion, criticism, writing, community, interpreting references), not careers.
 - **Regulated professions** (medicine, nursing, psychology, law, accounting, aviation, finance and the like): never imply the course qualifies someone to practice, get licensed, diagnose, treat, prescribe, represent clients or give legal or financial advice, or that it replaces accredited education. In every field, frame the course as understanding, preparation, study, vocabulary or better work with qualified professionals.
-- **Exam preparation** (`COURSE_TITLE` names an exam): the promise and the outcomes say what the learner will do on the exam's own questions and tasks, in a candidate's words, framed as preparation. Cover the whole exam, every area and part it tests, not only the areas of the chapters written so far.
+- **Exam preparation** (`COURSE_TITLE` names an exam): the promise and the outcomes say what the learner will do on the exam's own questions and tasks, in a candidate's words, framed as preparation. Cover the whole exam, every area and part it tests, not only the areas of the chapters written so far: the description names them all, and the outcomes say what the candidate does on its questions and tasks rather than naming its areas.
 - **Language courses** (`TARGET_LANGUAGE` is set): the course is the language itself, named as `COURSE_TITLE` names it. Focus on communicating in real situations, from first conversations to confident, nuanced use, and on travel, study, work and culture. `categories` doesn't matter for them; give the closest one.
 
 # Honest claims
@@ -48,7 +48,7 @@ Word the promise and every outcome in `VERB_FORM`, as a native course page lists
 - Warm, direct, everyday words.
 - Never use "introduction to", "basics of", "comprehensive guide" or "this course will teach you", or their equivalents in `LANGUAGE`.
 - Name specific tools or technologies only when the course is about them.
-- Keep every list item short enough for a page: a phrase or one short sentence.
+- List items are phrases, without a final period.
 - No em dashes, no exclamation marks, no emoji.
 
 # Allowed categories

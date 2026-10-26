@@ -3,7 +3,7 @@ import { type CourseDetailsParams } from "@zoonk/ai/tasks/v2/courses/details";
 import { type CourseDetailsExpected } from "./scorer";
 
 const SHARED_EXPECTATIONS = `
-  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 to 5 audience items and 4 to 6 outcomes) and 1 or 2 categories; code checks score sizes and category validity, so don't judge them
+  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score sizes, item lengths and category validity, so don't judge them
   - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's "What you'll be able to do" list
   - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters
   - The page is shared by every learner of the course, so nothing is tailored to one person
@@ -411,6 +411,7 @@ export const TEST_CASES: TestCase<CourseDetailsExpected, CourseDetailsParams>[] 
       - MUST be in Brazilian Portuguese, natural and informal ("você"), not translated from English
       - The course starts "do zero": the promise and the outcomes are for a visitor who never studied physics. They say what the learner will be able to explain or do about real things (por que o átomo não desaba, de onde vêm as cores de um LED ou de um letreiro de neon, como a luz pode ser onda e partícula, o que tem de quântico num celular ou num laser) in everyday words
       - Regression: an earlier promise was "Você poderá acompanhar as ideias centrais da física quântica e relacioná-las à matemática e a tecnologias do cotidiano". A promise built on abstract verbs ("acompanhar as ideias centrais", "relacionar"), an opener like "Você poderá" before the outcome, or outcomes centered on "função de onda" or "equação de Schrödinger" fail this case
+      - Regression: an earlier outcome was "Usar potências de dez, unidades, equações e gráficos para fazer contas com grandezas muito pequenas", too dense for the page. Outcomes that list tools or topics, or add a clause on how or why, fail this case
       - The math chapters belong to the course: an outcome may say the learner does the math physics uses, in plain words (fazer contas com números muito grandes e muito pequenos, ler um gráfico), not as a list of calculus terms
       - School, curiosity and science communication uses; no promise of a grade or a career
 

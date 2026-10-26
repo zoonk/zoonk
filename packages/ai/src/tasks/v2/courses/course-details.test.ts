@@ -20,16 +20,23 @@ describe(generateCourseDetails, () => {
   beforeEach(() => {
     vi.mocked(generateText).mockResolvedValue(
       createGenerateTextResult({
-        audience: [" Parents deciding on vaccines ", "parents deciding on vaccines", ""],
+        audience: [" Parents deciding on vaccines. ", "parents deciding on vaccines", ""],
         categories: ["health", "science", "health", "society"],
         description: " Immunology is how the body tells friend from foe. ",
-        outcomes: ["Explain how a vaccine trains memory cells", "", "Read a vaccine leaflet"],
+        outcomes: [
+          "Read a vaccine leaflet.",
+          "",
+          "Tell a cold from the flu",
+          "Explain how a vaccine trains memory cells",
+          "Spot a misleading vaccine headline",
+          "Explain why outbreaks stop",
+        ],
         valueProposition: " Make sense of vaccine news. ",
       }),
     );
   });
 
-  it("keeps the page's lists short, clean and free of repeats, with at most two categories", async () => {
+  it("keeps the page's lists to their size, as phrases free of repeats, with at most two categories", async () => {
     const { data } = await generateCourseDetails({
       chapters,
       courseTitle: "Immunology",
@@ -41,7 +48,12 @@ describe(generateCourseDetails, () => {
       description: "Immunology is how the body tells friend from foe.",
       landingPage: {
         audience: ["Parents deciding on vaccines"],
-        outcomes: ["Explain how a vaccine trains memory cells", "Read a vaccine leaflet"],
+        outcomes: [
+          "Read a vaccine leaflet",
+          "Tell a cold from the flu",
+          "Explain how a vaccine trains memory cells",
+          "Spot a misleading vaccine headline",
+        ],
         valueProposition: "Make sense of vaccine news.",
       },
     });
