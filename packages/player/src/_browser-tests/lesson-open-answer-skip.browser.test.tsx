@@ -1,10 +1,11 @@
 import { settleAnimations } from "@zoonk/testing/accessibility/scan";
+import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
 import { onDevice } from "../_test-utils/device-media";
 import { buildAdapters, renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { buildLesson, localAdapters } from "../preview/preview-lesson";
-import { teachingStep } from "../preview/preview-steps";
+import { contentStep, teachingStep } from "../preview/preview-steps";
 
 async function captureOpenAnswer(width: number, colorScheme: "light" | "dark", state = "empty") {
   await page.viewport(width, 900);
@@ -88,5 +89,91 @@ describe("open answer skip", () => {
       runId: expect.any(String),
       skippedWritingStepIds: [first.id, last.id],
     });
+  });
+
+  it.each([
+    { kind: "a lesson", overrides: {}, slug: "lesson" },
+    {
+      kind: "a language lesson",
+      overrides: { language: "pt", targetLanguage: "en" },
+      slug: "language",
+    },
+  ] as const)(
+    "leaves the rest of the writing out of $kind with Can't write now, unchecked",
+    async ({ overrides, slug }) => {
+      const first = teachingStep("typedAnswer");
+      const second = teachingStep("typedAnswer");
+
+      const lesson = buildLesson(
+        [first, teachingStep("explanation"), second, teachingStep("summary")],
+        overrides,
+      );
+
+      const adapters = buildAdapters(lesson);
+      const { unmount } = renderLessonPlayer({ adapters, lesson });
+      const skip = page.getByRole("button", { name: "Can't write now" });
+
+      await expect.element(skip).toBeVisible();
+      await skip.click();
+      await expect.element(page.getByRole("textbox")).not.toBeInTheDocument();
+
+      // The screen after it says the whole lesson is free of writing, and the keyboard stays in
+      // the lesson instead of falling back to the page with the button that left.
+      const notice = page
+        .getByRole("status")
+        .filter({ hasText: "No more writing in this lesson." });
+
+      await expect.element(notice).toBeVisible();
+      await expect.element(page.getByRole("button", { name: /^Next/u })).toHaveFocus();
+      await captureOpenAnswer(390, "light", `writing-skipped-${slug}`);
+      await captureOpenAnswer(390, "dark", `writing-skipped-${slug}`);
+      await captureOpenAnswer(1440, "light", `writing-skipped-${slug}`);
+      await captureOpenAnswer(1440, "dark", `writing-skipped-${slug}`);
+      await page.viewport(1280, 720);
+
+      await page.getByRole("button", { name: /^Next/u }).click();
+      await expect.element(page.getByRole("heading", { name: "Summary" })).toBeVisible();
+      await expect.element(notice).not.toBeInTheDocument();
+      await page.getByRole("button", { name: /^Continue/u }).click();
+      await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
+      expect(adapters.checkStep).not.toHaveBeenCalled();
+
+      expect(adapters.completeLesson).toHaveBeenCalledExactlyOnceWith({
+        runId: expect.any(String),
+        skippedWritingStepIds: [first.id, second.id],
+      });
+
+      // A new sitting asks for writing again; temporary skips never become a preference.
+      unmount();
+      renderLessonPlayer({ lesson });
+      await expect.element(skip).toBeVisible();
+    },
+  );
+
+  it("keeps a number question, with no way to skip it, when the rest of the writing is left out", async () => {
+    const question = "How many electrons does a hydrogen atom have?";
+
+    const lesson = buildLesson([
+      teachingStep("typedAnswer"),
+      contentStep("typedAnswer", {
+        content: { ...playableStepContent.typedAnswer, acceptedAnswers: ["1"], question },
+      }),
+      teachingStep("summary"),
+    ]);
+
+    renderLessonPlayer({ lesson });
+    await page.getByRole("button", { name: "Can't write now" }).click();
+
+    // Typing a number is the calculation's answer, not writing: it stays, as a question to answer.
+    await expect.element(page.getByRole("textbox", { name: question })).toBeVisible();
+    await expect.element(page.getByRole("button", { name: /^Check/u })).toBeDisabled();
+
+    await expect
+      .element(page.getByRole("button", { name: "Can't write now" }))
+      .not.toBeInTheDocument();
+
+    await expect
+      .element(page.getByRole("button", { name: "I don't know yet" }))
+      .not.toBeInTheDocument();
   });
 });

@@ -69,6 +69,16 @@ export function typedAnswerStep(id: string): PlayableTeachingStep {
   });
 }
 
+/** A typed question whose answer is a number, so it takes a number field. */
+export function numberAnswerStep(id: string): PlayableTeachingStep {
+  return teachingStep("typedAnswer", id, {
+    acceptedAnswers: ["20"],
+    keyPoints: ["Finds 20"],
+    question: "What is 25% of 80?",
+    sampleAnswer: "20",
+  });
+}
+
 /** A language exercise: fill the blank in a sentence. */
 export function fillBlankStep(id: string): PlayableLanguageStep {
   return {

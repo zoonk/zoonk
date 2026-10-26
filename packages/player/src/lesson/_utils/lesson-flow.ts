@@ -8,6 +8,7 @@ import {
   isQuestionStep,
   isRetryStep,
 } from "./lesson-steps";
+import { isNumberAnswer } from "./number-answer";
 import { showSampleAnswer } from "./sample-answer";
 
 function omitKey<TValue>(record: Record<string, TValue>, key: string): Record<string, TValue> {
@@ -129,11 +130,16 @@ function leaveOutAhead(
     : enterPosition({ ...next, notice: null }, state.position);
 }
 
+/** A written answer; a number typed into a number field is a calculation's answer instead. */
+function isWritingStep(step: PlayableLibraryStep | undefined): boolean {
+  return step?.kind === "typedAnswer" && !isNumberAnswer(step.content.acceptedAnswers);
+}
+
 /**
  * Leaves writing out of this sitting, with no answer verdict: the screen in view, which the
  * learner doesn't know yet, once its sample answer is read (`stepId`), or all of it from here on
- * ("Can't write now"). The screen that takes the place of all of it says so, so the learner knows
- * one tap covered the whole lesson.
+ * ("Can't write now"), number questions kept. The screen that takes the place of all of it says
+ * so, so the learner knows one tap covered the whole lesson.
  */
 export function skipWriting(state: LessonPlayerState, stepId?: string): LessonPlayerState {
   if (state.phase !== "playing") {
@@ -144,7 +150,7 @@ export function skipWriting(state: LessonPlayerState, stepId?: string): LessonPl
     return showSampleAnswer(state, stepId);
   }
 
-  const isLeftOut = (id: string) => state.steps[id]?.kind === "typedAnswer";
+  const isLeftOut = (id: string) => isWritingStep(state.steps[id]);
   const skippedWritingStepIds = state.queue.slice(state.position).filter((id) => isLeftOut(id));
 
   const next = leaveOutAhead(

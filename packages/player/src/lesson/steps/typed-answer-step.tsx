@@ -11,22 +11,18 @@ import { splitQuestionData } from "../_utils/lesson-aside";
 import { focusLessonAfterTurn } from "../_utils/lesson-focus";
 import { isNumberAnswer } from "../_utils/number-answer";
 import { ExplainFirstButton } from "../controls/explain-first-button";
-import { useLessonPlayer, useLessonPlayerConfig } from "../lesson-player-context";
+import { useLessonPlayer } from "../lesson-player-context";
 import { LessonAnswerField } from "./lesson-answer-field";
 import { type LessonStepViewProps, type StepOf } from "./lesson-step-view-props";
 
 /**
- * Writing can wait for the next lesson when the learner is on the bus or can't use a keyboard.
- * The permanent preference stays in Plan settings.
+ * Writing can wait for the next lesson, in any lesson, when the learner is on the bus, can't use a
+ * keyboard or would rather not type now. Language goals also keep a permanent preference in Plan
+ * settings.
  */
 function SkipWritingButton() {
   const t = useExtracted();
-  const { lesson } = useLessonPlayerConfig();
   const { actions } = useLessonPlayer();
-
-  if (!lesson.targetLanguage) {
-    return null;
-  }
 
   return (
     <Button
@@ -45,8 +41,10 @@ function SkipWritingButton() {
 }
 
 /**
- * "Explain it in your words": a written answer graded one key point at a time. A question whose
- * answer is a number (every accepted answer is one) takes it in a number field instead.
+ * "Explain it in your words": a written answer graded one key point at a time, which the learner
+ * can leave out ("I don't know yet" for this one, "Can't write now" for the rest). A question whose
+ * answer is a number (every accepted answer is one) takes it in a number field instead, answered
+ * like a calculation.
  */
 export function TypedAnswerStepView({
   answer,
@@ -85,21 +83,26 @@ export function TypedAnswerStepView({
         value={text}
       />
 
-      <ExplainFirstButton />
-      {!isLocked && !isNumber && (
-        <Button
-          className={COLUMN_GHOST_ACTION_CLASS}
-          onClick={() => {
-            actions.dontKnow(step.id);
-            focusLessonAfterTurn();
-          }}
-          size="sm"
-          variant="ghost"
-        >
-          {t("I don't know yet")}
-        </Button>
-      )}
-      {!isLocked && <SkipWritingButton />}
+      {/* The ways out, one set of quiet actions a touch target apart. */}
+      <div className="flex flex-col gap-3.5 empty:hidden">
+        <ExplainFirstButton />
+        {!isLocked && !isNumber && (
+          <>
+            <Button
+              className={COLUMN_GHOST_ACTION_CLASS}
+              onClick={() => {
+                actions.dontKnow(step.id);
+                focusLessonAfterTurn();
+              }}
+              size="sm"
+              variant="ghost"
+            >
+              {t("I don't know yet")}
+            </Button>
+            <SkipWritingButton />
+          </>
+        )}
+      </div>
     </InteractiveStepLayout>
   );
 }

@@ -4,6 +4,7 @@ import {
   explanationStep,
   fillBlankStep,
   hookGuessStep,
+  numberAnswerStep,
   stepResult,
   summaryStep,
   typedAnswerStep,
@@ -117,6 +118,15 @@ describe(lessonPlayerReducer, () => {
     // The screen that took the writing's place says so, until the learner moves on.
     expect(skipped.notice).toBe("writingSkipped");
     expect(lessonPlayerReducer(skipped, { type: "continue" }).notice).toBeNull();
+  });
+
+  it("keeps number questions when the rest of the writing is left out", () => {
+    const steps = [typedAnswerStep("write"), numberAnswerStep("count"), summaryStep("end")];
+    const skipped = play(steps, [{ type: "skipWriting" }]);
+
+    expect(skipped.queue).toStrictEqual(["count", "end"]);
+    expect(getCurrentStep(skipped)?.id).toBe("count");
+    expect(skipped.skippedWritingStepIds).toStrictEqual(["write"]);
   });
 
   it("leaves out screens that can't be played, the one in view too, and keeps the ones before", () => {

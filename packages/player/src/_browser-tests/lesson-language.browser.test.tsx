@@ -66,45 +66,6 @@ function letter({
 }
 
 describe("language lesson screens", () => {
-  it("can't write now skips every remaining writing screen and finishes without checking them", async () => {
-    const first = teachingStep("typedAnswer");
-    const second = teachingStep("typedAnswer");
-
-    const lesson = buildLesson(
-      [first, teachingStep("explanation"), second, teachingStep("summary")],
-      { language: "pt", targetLanguage: "en" },
-    );
-
-    const adapters = buildAdapters(lesson);
-    const { unmount } = renderLessonPlayer({ adapters, lesson });
-
-    await page.getByRole("button", { name: "Can't write now" }).click();
-    await expect.element(page.getByRole("textbox")).not.toBeInTheDocument();
-
-    // The screen after it says the whole lesson is free of writing, and the keyboard stays in the
-    // lesson instead of falling back to the page with the button that left.
-    const notice = page.getByRole("status").filter({ hasText: "No more writing in this lesson." });
-    await expect.element(notice).toBeVisible();
-    await expect.element(page.getByRole("button", { name: /^Next/u })).toHaveFocus();
-
-    await page.getByRole("button", { name: /^Next/u }).click();
-    await expect.element(page.getByRole("heading", { name: "Summary" })).toBeVisible();
-    await expect.element(notice).not.toBeInTheDocument();
-    await page.getByRole("button", { name: /^Continue/u }).click();
-    await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
-    expect(adapters.checkStep).not.toHaveBeenCalled();
-
-    expect(adapters.completeLesson).toHaveBeenCalledWith({
-      runId: expect.any(String),
-      skippedWritingStepIds: [first.id, second.id],
-    });
-
-    // A new sitting asks for writing again; temporary skips never become a preference.
-    unmount();
-    renderLessonPlayer({ lesson });
-    await expect.element(page.getByRole("button", { name: "Can't write now" })).toBeVisible();
-  });
-
   it("builds sentences from the word bank, fixes a blank once and writes a sentence", async () => {
     const writing = teachingStep("typedAnswer");
 

@@ -13,7 +13,7 @@ export const libraryLessonCompletionInputSchema = z
       .optional()
       .meta({
         description:
-          'Typed-answer screens skipped in this run with "I don\'t know yet" (any lesson) or "Can\'t write now" (language lessons). Recorded on completion without grading or an answer verdict; does not skip other screens or future runs',
+          'Typed-answer screens skipped in this run with "I don\'t know yet" or "Can\'t write now", in any lesson. Recorded on completion without grading or an answer verdict; does not skip other screens or future runs',
       }),
     timeZone: answerTimeZoneSchema,
   })
