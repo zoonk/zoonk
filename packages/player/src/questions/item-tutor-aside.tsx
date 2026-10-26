@@ -25,7 +25,8 @@ const SUGGESTED = 2;
 
 /**
  * The buddy's composer at the foot of the aside: what the learner writes is about the question in
- * view, and sending it shows the conversation in the aside.
+ * view (or their answer, once it's checked), and sending it shows the conversation in the aside. Its
+ * placeholder only names the buddy, by its face, so it fits the aside's one line in every language.
  */
 function ItemDockComposer() {
   const t = useExtracted();
@@ -71,11 +72,7 @@ function ItemDockComposer() {
       controller={dockController}
       inputRef={inputRef}
       label={t("Ask a question")}
-      placeholder={
-        buddy.item.answered
-          ? t("Ask {name} about your answer", { name: buddy.identity.name })
-          : t("Ask {name} about this question", { name: buddy.identity.name })
-      }
+      placeholder={t("Ask {name}", { name: buddy.identity.name })}
     />
   );
 }
@@ -107,7 +104,7 @@ function ItemDockSuggestions() {
   return (
     <div
       aria-label={t("Suggested questions")}
-      className="bg-background flex flex-wrap gap-2 px-4 pb-3"
+      className="bg-background flex flex-wrap gap-2 px-5 pb-3"
       role="group"
     >
       {suggestions.slice(0, SUGGESTED).map((suggestion) => (
@@ -142,7 +139,7 @@ function ItemDockedConversation() {
       className={DOCKED_CONVERSATION_CLASS}
       data-slot="item-docked-conversation"
     >
-      <div className="flex h-13 shrink-0 items-center justify-between gap-3 px-4 xl:h-15">
+      <div className="flex h-13 shrink-0 items-center justify-between gap-3 px-5 xl:h-15">
         <Button
           className="text-muted-foreground -ml-1 px-2"
           onClick={buddy.close}
@@ -186,7 +183,7 @@ export function ItemTutorAside() {
   const { canAskQuestions } = useLessonQuestionController();
   const dockRef = useRef<HTMLDivElement>(null);
 
-  useTaskFootHeight(dockRef, "--task-dock");
+  useTaskFootHeight(dockRef);
 
   if (!buddy) {
     return null;

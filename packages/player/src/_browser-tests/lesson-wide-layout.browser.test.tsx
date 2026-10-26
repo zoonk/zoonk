@@ -8,10 +8,11 @@ import { buildLesson } from "../preview/preview-lesson";
 import { contentStep, explanationStep, inlineImage, teachingStep } from "../preview/preview-steps";
 
 /**
- * On a wide screen the lesson has the whole window: ✕ and "…" in its top corners, everything a
- * screen shows (a question's situation, a reading screen's picture) in the column with it, read in
- * the same order as on a phone, and only what helps with it ("From the lesson", the buddy) in the
- * aside beside it, the column and the aside centered together so what helps stays near.
+ * On a wide screen the lesson has the whole window: ✕ and "…" in the top corners of its room,
+ * everything a screen shows (a question's situation, a reading screen's picture) in the column
+ * with it, read in the same order as on a phone, and only what helps with it ("From the lesson",
+ * the buddy) in the aside, a rail at the window's right edge behind a hairline, with the column
+ * centered in the room on its left.
  */
 
 const SITUATION = "In Mossoró, Priscila runs a public health unit and plans its night shifts.";
@@ -48,7 +49,7 @@ function textLeft(element: Element): number {
 }
 
 describe("lesson on a wide screen", () => {
-  it("puts ✕ and the screen's menu in the window's top corners", async () => {
+  it("puts ✕ in the window's top-left corner and the screen's menu beside the aside", async () => {
     renderLessonPlayer({ lesson: buildLesson([explanationStep(playableStepContent.explanation)]) });
 
     const close = page.getByRole("link", { name: "Close lesson" });
@@ -57,11 +58,14 @@ describe("lesson on a wide screen", () => {
     await expect.element(close).toBeVisible();
     await expect.element(menu).toBeVisible();
 
+    const gap = box(aside().element()).left - box(menu.element()).right;
+
     expect(box(close.element()).left).toBeLessThan(32);
-    expect(window.innerWidth - box(menu.element()).right).toBeLessThan(32);
+    expect(gap).toBeGreaterThanOrEqual(0);
+    expect(gap).toBeLessThan(32);
   });
 
-  it("keeps the menu above the aside when a long title wraps over several lines", async () => {
+  it("keeps the menu clear of the aside when a long title wraps over several lines", async () => {
     await atViewport({ height: 768, width: 1024 }, async () => {
       const lesson = buildLesson([explanationStep(playableStepContent.explanation)]);
 
@@ -77,21 +81,21 @@ describe("lesson on a wide screen", () => {
       const menu = page.getByRole("button", { name: "Screen options" });
 
       await expect.element(menu).toBeVisible();
-      expect(box(title.element()).height).toBeGreaterThan(50);
-      expect(box(menu.element()).bottom).toBeLessThanOrEqual(box(aside().element()).top);
+      // Wrapped: more than its one 20px line.
+      expect(box(title.element()).height).toBeGreaterThan(20);
+      expect(box(title.element()).right).toBeLessThanOrEqual(box(menu.element()).left);
+      expect(box(menu.element()).right).toBeLessThanOrEqual(box(aside().element()).left);
     });
   });
 
-  // At 1920px the aside sat at the window's right edge, 450px from the column it helps with (770px
-  // at 2560px): the buddy's reply about an answer was a long look away from it.
-  it("centers the column and the aside together, one gap apart, however wide the window", async () => {
+  it("keeps the aside at the window's right edge and the column centered on its left, however wide the window", async () => {
     const sizes = [
-      { gap: 32, height: 820, width: 1180 },
-      { gap: 48, height: 1080, width: 1920 },
-      { gap: 48, height: 1440, width: 2560 },
+      { aside: 300, height: 768, width: 1024 },
+      { aside: 320, height: 1080, width: 1920 },
+      { aside: 320, height: 1440, width: 2560 },
     ];
 
-    for (const { gap, ...size } of sizes) {
+    for (const { aside: width, ...size } of sizes) {
       // oxlint-disable-next-line no-await-in-loop -- Each size plays after the one before.
       await atViewport(size, async () => {
         const view = renderLessonPlayer({
@@ -105,27 +109,31 @@ describe("lesson on a wide screen", () => {
         await expect.element(aside().getByText("From the lesson")).toBeVisible();
 
         const asideBox = box(aside().element());
-        const left = column().left;
-        const right = window.innerWidth - asideBox.right;
+        const { left, right } = column();
 
-        expect(Math.abs(left - right)).toBeLessThanOrEqual(1);
-        expect(asideBox.left - column().right).toBeCloseTo(gap, 0);
+        expect(asideBox.width).toBe(width);
+        expect(asideBox.right).toBe(window.innerWidth);
+        expect(asideBox.top).toBe(0);
+        expect(asideBox.bottom).toBe(window.innerHeight);
+        expect(right - left).toBe(640);
+        expect(Math.abs(left - (asideBox.left - right))).toBeLessThanOrEqual(1);
         view.unmount();
       });
     }
   });
 
-  it("draws no panel around the aside, so one with only the buddy is just room", async () => {
+  it("draws the aside behind one hairline, never a panel, so one with only the buddy is the page's edge", async () => {
     renderLessonPlayer({ lesson: buildLesson([teachingStep("explanation")]), tutor: buildTutor() });
 
     const style = getComputedStyle(aside().element());
 
     await expect.element(aside()).toBeVisible();
-    expect(style.borderLeftWidth).toBe("0px");
+    expect(style.borderLeftWidth).toBe("1px");
     expect(style.borderTopWidth).toBe("0px");
+    expect(style.backgroundColor).toBe(getComputedStyle(document.body).backgroundColor);
   });
 
-  it("runs the action bar's hairline across the window, the buddy's composer in its row", async () => {
+  it("runs the action bar's hairline up to the aside, the buddy's composer level with it", async () => {
     renderLessonPlayer({ lesson: buildLesson([teachingStep("check")]), tutor: buildTutor() });
 
     const field = aside().getByRole("textbox", { name: "Ask a question" });
@@ -136,8 +144,33 @@ describe("lesson on a wide screen", () => {
     const bar = document.querySelector('[data-slot="lesson-action-bar"]');
     const frame = field.element().closest('[data-slot="input-group"]');
 
-    expect(box(bar ?? document.body).width).toBe(window.innerWidth);
+    expect(box(bar ?? document.body).right).toBe(box(aside().element()).left);
+    expect(box(frame ?? document.body).top).toBeCloseTo(box(check.element()).top, 0);
     expect(box(frame ?? document.body).bottom).toBeCloseTo(box(check.element()).bottom, 0);
+  });
+
+  it("puts Back and the main action in the action bar's corners, not at the column's edges", async () => {
+    renderLessonPlayer({
+      lesson: buildLesson([
+        explanationStep(playableStepContent.explanation),
+        teachingStep("check"),
+      ]),
+    });
+
+    await page.getByRole("button", { name: /^Next/u }).click();
+
+    const back = page.getByRole("button", { name: "Previous screen" });
+    const check = page.getByRole("button", { name: /^Check/u });
+
+    await expect.element(back).toBeVisible();
+
+    const backBox = box(back.element());
+    const checkBox = box(check.element());
+    const rightGap = box(aside().element()).left - checkBox.right;
+
+    expect(backBox.left).toBeLessThan(column().left);
+    expect(checkBox.right).toBeGreaterThan(column().right);
+    expect(Math.abs(backBox.left - rightGap)).toBeLessThanOrEqual(1);
   });
 
   it("keeps a quiet action's label on the column's text edge", async () => {

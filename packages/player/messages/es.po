@@ -3209,7 +3209,9 @@ msgstr "¿Te está llevando tiempo? {name} puede explicártelo de otra forma."
 
 #: src/lesson/controls/ask-buddy-offer.tsx
 #: src/lesson/tutor/ask-tutor-button.tsx
+#: src/lesson/tutor/lesson-dock.tsx
 #: src/questions/ask-tutor.tsx
+#: src/questions/item-tutor-aside.tsx
 #: src/questions/item-tutor.tsx
 msgctxt "bH47Z4"
 msgid "Ask {name}"
@@ -3728,17 +3730,6 @@ msgstr "Ejemplo resuelto"
 
 #: src/lesson/tutor/lesson-dock.tsx
 #: src/questions/item-tutor-aside.tsx
-msgctxt "nete1_"
-msgid "Ask {name} about your answer"
-msgstr "Preguntar a {name} sobre tu respuesta"
-
-#: src/lesson/tutor/lesson-dock.tsx
-msgctxt "_Kuebo"
-msgid "Ask {name} about this screen"
-msgstr "Preguntar a {name} sobre esta pantalla"
-
-#: src/lesson/tutor/lesson-dock.tsx
-#: src/questions/item-tutor-aside.tsx
 #: src/questions/lesson-question-composer.tsx
 msgctxt "iPfRms"
 msgid "Ask a question"
@@ -3802,11 +3793,6 @@ msgstr "Preguntar a {name} sobre tu plan"
 msgctxt "dHV3p3"
 msgid "Ask {name} about this subject"
 msgstr "Preguntar a {name} sobre este tema"
-
-#: src/questions/item-tutor-aside.tsx
-msgctxt "Fp8B9R"
-msgid "Ask {name} about this question"
-msgstr "Preguntar a {name} sobre esta pregunta"
 
 #: src/questions/item-tutor.tsx
 msgctxt "_DwRra"

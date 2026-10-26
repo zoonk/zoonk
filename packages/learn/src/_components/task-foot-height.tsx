@@ -1,17 +1,13 @@
 "use client";
 
-import { type RefObject, useLayoutEffect, useRef } from "react";
+import { type RefObject, useLayoutEffect } from "react";
 
 /**
- * Keeps the height of what sits at a task's foot (the action bar, the buddy's dock) in `variable`
- * on the task's root, so the aside and what joins it end above the taller of them, whatever they
- * hold: a line over the actions, a call's typed reply, a composer grown to a few lines. A task
- * without an aside measures nothing.
+ * Keeps the height of the buddy's dock at the foot of a task's aside in `--task-dock` on the task's
+ * root, so what sits in the aside's body ends above it, whatever it holds: suggestions over the
+ * composer, a composer grown to a few lines. A task without an aside measures nothing.
  */
-export function useTaskFootHeight(
-  ref: RefObject<HTMLElement | null>,
-  variable: "--task-action-bar" | "--task-dock",
-) {
+export function useTaskFootHeight(ref: RefObject<HTMLElement | null>) {
   useLayoutEffect(() => {
     const element = ref.current;
     const root = element?.closest<HTMLElement>("[data-aside]");
@@ -20,7 +16,7 @@ export function useTaskFootHeight(
       return;
     }
 
-    const update = () => root.style.setProperty(variable, `${element.offsetHeight}px`);
+    const update = () => root.style.setProperty("--task-dock", `${element.offsetHeight}px`);
     update();
 
     const observer = new ResizeObserver(update);
@@ -28,15 +24,7 @@ export function useTaskFootHeight(
 
     return () => {
       observer.disconnect();
-      root.style.removeProperty(variable);
+      root.style.removeProperty("--task-dock");
     };
-  }, [ref, variable]);
-}
-
-/** The action bar's own element (`TaskActionBar`), which keeps its height on the task's root. */
-export function TaskActionBarFrame(props: Omit<React.ComponentProps<"div">, "ref">) {
-  const ref = useRef<HTMLDivElement>(null);
-  useTaskFootHeight(ref, "--task-action-bar");
-
-  return <div ref={ref} {...props} />;
+  }, [ref]);
 }

@@ -221,10 +221,12 @@ export function ConversationLive({
       }}
       exitHref={null}
       footer={
-        <>
+        // A call's controls stay under its transcript, at the column's measure, rather than in the
+        // bar's corners.
+        <div className="lg:max-w-column flex w-full flex-col gap-2 lg:mx-auto lg:px-4">
           <TypedReply call={call} />
           <CallControls call={call} onEnd={onEnd} onHelp={onHelp} />
-        </>
+        </div>
       }
       headerTitle={
         <TaskHeaderTitle

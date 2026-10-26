@@ -1458,8 +1458,8 @@ describe("docked beside the lesson", () => {
   it("keeps the aside's composer one line high, level with the action bar, however long its placeholder", async () => {
     const { lesson } = lessonWithTutor();
 
-    // A long name stands in for a long translation ("Pergunte para Zu sobre esta questão" took two
-    // lines at 1180px and lifted the aside's foot over the action bar's).
+    // A placeholder wider than the field keeps to its one line (a second line once lifted the
+    // aside's foot over the action bar's), here with a buddy's long name.
     const buddy = {
       beltColor: "white",
       energy: null,
@@ -1472,9 +1472,7 @@ describe("docked beside the lesson", () => {
 
     const field = composer(lessonAside());
 
-    await expect
-      .element(field)
-      .toHaveAttribute("placeholder", `Ask ${buddy.name} about this screen`);
+    await expect.element(field).toHaveAttribute("placeholder", `Ask ${buddy.name}`);
 
     const frame = field.element().closest('[data-slot="input-group"]');
     const check = page.getByRole("button", { name: /^Check/u }).element();

@@ -97,9 +97,9 @@ const LIMIT_FRAME_CLASS: Record<ComposerVariant, string> = {
 };
 
 /**
- * The placeholder keeps to one line, cut with "…" where a translation is longer than the field (a
- * lesson's aside at 1180px): the field sizes itself to its placeholder, so a second line would
- * lift the aside's composer above the action bar beside it.
+ * The placeholder keeps to one line, cut with "…" where it's longer than the field (a long buddy
+ * name in a task's aside): the field sizes itself to its placeholder, so a second line would lift
+ * the aside's composer above the action bar beside it.
  */
 const ONE_LINE_PLACEHOLDER_CLASS = "placeholder-shown:truncate placeholder:truncate";
 

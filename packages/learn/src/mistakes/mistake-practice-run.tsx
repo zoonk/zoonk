@@ -209,7 +209,8 @@ export function MistakePracticeRun({
   const { phase } = run.state;
   usePreloadMath(practice);
 
-  // The buddy is beside a question, never beside the run's end; the column keeps its place there.
+  // The buddy is beside a question, never beside the run's end, where the aside stays empty so the
+  // column keeps its place.
   const asideRoot = tutor ? getTaskAsideRootProps() : null;
   const asking = phase.kind !== "ending" && phase.kind !== "ended" && run.step !== null;
 
@@ -235,7 +236,7 @@ export function MistakePracticeRun({
         trueFalseLabels={trueFalseLabels}
       />
 
-      {tutor && asking && <TaskAside label={t("Help with this question")}>{tutor.aside}</TaskAside>}
+      {tutor && <TaskAside label={t("Help with this question")}>{asking && tutor.aside}</TaskAside>}
     </div>
   );
 

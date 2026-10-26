@@ -10,10 +10,10 @@ import { TASK_COLUMN_CLASS, TASK_HEADER_BAR_CLASS, TASK_HEADER_SIDE_CLASS } from
 /**
  * The header of every full-screen task (a lesson, a block of questions, a practice, a test-out, a
  * checkpoint, a mock): close in the window's top-left corner, the task's title centered over its
- * column, the "…" menu in the top-right corner and, under the title, how far into the task the
- * learner is. The sides take the same room, so the title stays centered. What scrolls under it
- * fades out at its edge rather than being cut off, and once the page scrolls it draws its hairline
- * across the window, over the aside's top, as the app's bars do.
+ * column, the "…" menu in the top-right corner (from `lg`, beside the aside when there is one)
+ * and, under the title, how far into the task the learner is. The sides take the same room, so the
+ * title stays centered. What scrolls under it fades out at its edge rather than being cut off, and
+ * once the page scrolls it draws its hairline across the task's room, as the app's bars do.
  */
 export function TaskHeader({ className, ...props }: React.ComponentProps<"div">) {
   const scrolled = useScrolled();
@@ -32,10 +32,10 @@ export function TaskHeader({ className, ...props }: React.ComponentProps<"div">)
 }
 
 /**
- * The header's row: close, the title and the menu, in that order, across the window at every size,
- * so the close and the menu sit in its corners like any full-screen app's, while the title centers
- * over the task's column (`TASK_HEADER_BAR_CLASS`). A task's aside starts under this row from `lg`
- * (`TaskAside`).
+ * The header's row: close, the title and the menu, in that order, across the task's room at every
+ * size, so the close and the menu sit in its corners like any full-screen app's, while the title
+ * centers over the task's column (`TASK_HEADER_BAR_CLASS`). From `lg` a task's aside runs beside
+ * it, its own header row level with this one (`TaskAside`).
  */
 export function TaskHeaderBar({ className, ...props }: React.ComponentProps<"header">) {
   return <header className={cn(TASK_HEADER_BAR_CLASS, className)} {...props} />;

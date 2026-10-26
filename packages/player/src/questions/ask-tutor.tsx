@@ -63,16 +63,16 @@ function useAskLabel({ kind, name }: { kind: LessonQuestionScreenKind; name: str
 /**
  * The button's size: small beside a screen's content, the bar's size in a page's top bar, and in
  * a task (a mock's result) where every task has its buddy: the icon every task's buddy has after
- * the main action on a phone and a tablet, and from `lg` at the foot of the task's aside, in the
- * action bar's row, by its face and saying what it asks about, as the composer does there on other
- * tasks (in the bar, with its name, when the task has no aside).
+ * the main action on a phone and a tablet, and from `lg` its face and name, at the foot of the
+ * task's aside level with the action bar, as the composer is there on other tasks (in the bar
+ * when the task has no aside). Its accessible name says what it asks about.
  */
 type AskTutorSize = "bar" | "sm" | "task";
 
 /** A task's buddy (`task`): see `AskTutorSize`. */
 const TASK_ASK_CLASS = cn(
   "size-11 shrink-0 px-0 lg:w-auto lg:px-4 lg:pl-2",
-  "lg:group-data-aside/task:fixed lg:group-data-aside/task:right-[calc(var(--task-margin)+1rem)] lg:group-data-aside/task:bottom-[max(1rem,env(safe-area-inset-bottom))] lg:group-data-aside/task:w-[calc(var(--task-aside)-2rem)] lg:group-data-aside/task:justify-start",
+  "lg:group-data-aside/task:fixed lg:group-data-aside/task:right-5 lg:group-data-aside/task:bottom-[max(1rem,env(safe-area-inset-bottom))] lg:group-data-aside/task:w-[calc(var(--task-aside)-2.5rem-1px)] lg:group-data-aside/task:justify-start",
 );
 
 /**
@@ -137,8 +137,7 @@ function AskTutorButton({
         >
           {identity.avatar}
         </span>
-        <span className="max-lg:hidden lg:group-data-aside/task:hidden">{name}</span>
-        <span className="hidden truncate lg:group-data-aside/task:inline">{label}</span>
+        <span className="truncate max-lg:hidden">{name}</span>
       </Button>
     );
   }

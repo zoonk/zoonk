@@ -71,16 +71,16 @@ export function useSessionQueueAside(queue: ReturnType<typeof getSessionQueue>):
 
 /**
  * The day's queue placed in the aside of a screen whose frame isn't the session's (a lesson's end,
- * in the lesson player): drawn like the aside's own header and body, from its top under the header's row. Wide screens
- * only; phones have the "Up next" row.
+ * in the lesson player): drawn like the aside's own header and body, from the aside's top. Wide
+ * screens only; phones have the "Up next" row.
  */
 export function SessionQueueAsideContent({ queue }: { queue: ReturnType<typeof getSessionQueue> }) {
   const aside = useSessionQueueAside(queue);
 
   return (
-    <TaskAsideContent className="max-lg:hidden lg:top-(--task-bar) lg:group-data-aside/task:px-0">
+    <TaskAsideContent className="max-lg:hidden lg:top-0 lg:group-data-aside/task:px-0">
       <TaskAsideHeader meta={aside.meta} title={aside.title} />
-      <div className="px-4">{aside.children}</div>
+      <div className="px-5">{aside.children}</div>
     </TaskAsideContent>
   );
 }

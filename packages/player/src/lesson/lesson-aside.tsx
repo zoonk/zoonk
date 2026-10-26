@@ -32,8 +32,8 @@ import { ConversationToggle, LessonDock } from "./tutor/lesson-dock";
 import { useLessonBuddy } from "./tutor/lesson-tutor";
 import { useShowsMiss } from "./tutor/use-shows-miss";
 
-/** The reading text in the aside: a step under the screen's own, at a calm line height. */
-const RECAP_TEXT_CLASS = "text-foreground text-[0.9375rem] leading-[1.6]";
+/** The reading text in the aside, at the aside's quieter size and a calm line height. */
+const RECAP_TEXT_CLASS = "text-foreground text-sm leading-relaxed";
 
 /** A worked example read again: its problem, every step and its result, compact. */
 function WorkedExampleRecap({
@@ -96,7 +96,7 @@ function RecapBody({ mark, step }: { mark: string | null; step: RecapStep }) {
   return (
     <>
       {title && (
-        <h3 className="text-[0.9375rem] leading-snug font-semibold">
+        <h3 className="text-sm leading-snug font-semibold">
           <LessonRichText text={title} />
         </h3>
       )}
@@ -299,10 +299,11 @@ function CompletionAside() {
 }
 
 /**
- * The lesson's aside from `lg` (tablets in landscape and up), beside the screen under the header's
- * row behind a hairline, so the screen's column stays in one place from the first screen to the
- * end. Once the lesson is done, the player's own moment shows the lesson's ideas there, while a
- * host's moment (a session block's queue, a quick explanation's recap) fills the aside itself.
+ * The lesson's aside from `lg` (tablets in landscape and up), at the window's right edge behind a
+ * hairline, there on every screen so the screen's column stays in one place from the first screen
+ * to the end. Once the lesson is done, the player's own moment shows the lesson's ideas there,
+ * while a host's moment (a session block's queue, a quick explanation's recap) fills the aside
+ * itself.
  */
 export function LessonAside() {
   const t = useExtracted();

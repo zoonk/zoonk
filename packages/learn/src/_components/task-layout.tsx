@@ -1,15 +1,19 @@
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
-import { TaskActionBarFrame } from "./task-foot-height";
 
 /**
- * The task's column (40rem with its padding): centered on a phone and a tablet, and from `lg`,
- * beside an aside, the column's place in the pair the two make, centered together in the window
+ * The task's column (40rem with its padding), centered in the task's room: the window on a phone
+ * and a tablet, and from `lg`, beside an aside, what the aside leaves on its left
  * (`getTaskAsideRootProps`). Everything that lines up with the column takes it: the content, the
- * progress under the title and the action bar's row.
+ * progress under the title and, on a phone and a tablet, the action bar's row.
  */
-export const TASK_COLUMN_CLASS =
-  "max-w-column mx-auto w-full px-4 lg:group-data-aside/task:ml-(--task-margin) lg:group-data-aside/task:w-(--task-column)";
+export const TASK_COLUMN_CLASS = "max-w-column mx-auto w-full px-4";
+
+/**
+ * The action bar's row: the column's on a phone and a tablet, and from `lg` the task's whole room,
+ * padded like the header's row, so its buttons sit under the header's corners.
+ */
+const TASK_BAR_ROW_CLASS = cn(TASK_COLUMN_CLASS, "lg:max-w-none lg:px-6");
 
 /**
  * A full-screen task's content (a lesson's question, a block of the session, a checkpoint, a
@@ -28,25 +32,19 @@ export function TaskBody({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 /**
- * The header's row (`TaskHeaderBar`): across the window on every task, close and the menu in its
- * corners and the title between them, centered over the column. From `lg`, beside an aside, its
- * columns follow the pair the column and the aside make (`getTaskAsideRootProps`): the room on the
- * left, the column, the gap and the aside, the room on the right, each side at least 4rem, so a
- * long title never reaches the corners' buttons.
+ * The header's row (`TaskHeaderBar`): close and the menu in its corners and the title between them,
+ * centered over the column. It spans the task's room, as the column does: the window, or from
+ * `lg` what an aside leaves on its left, so the menu stays clear of the aside.
  */
-export const TASK_HEADER_BAR_CLASS =
-  "flex w-full items-center gap-2 px-4 py-2 lg:px-6 xl:py-3 lg:group-data-aside/task:grid lg:group-data-aside/task:grid-cols-[minmax(4rem,1fr)_minmax(0,var(--task-column))_calc(var(--task-gap)+var(--task-aside))_minmax(4rem,1fr)] lg:group-data-aside/task:gap-0 lg:group-data-aside/task:px-0";
+export const TASK_HEADER_BAR_CLASS = "flex w-full items-center gap-2 px-4 py-2 lg:px-6 xl:py-3";
 
 /**
  * A side of the header's row (close, or the menu), as wide as the other one so the title stays
- * centered over the column. Beside an aside from `lg` each takes its corner's column of the row,
- * and both keep to the row's top, so a title wrapped over several lines never pushes the menu
- * down over the aside.
+ * centered over the column.
  */
 export const TASK_HEADER_SIDE_CLASS = {
-  end: "flex min-w-9 flex-1 basis-0 justify-end lg:group-data-aside/task:col-start-4 lg:group-data-aside/task:self-start lg:group-data-aside/task:pr-6",
-  start:
-    "flex min-w-9 flex-1 basis-0 justify-start lg:group-data-aside/task:col-start-1 lg:group-data-aside/task:self-start lg:group-data-aside/task:pl-6",
+  end: "flex min-w-9 flex-1 basis-0 justify-end",
+  start: "flex min-w-9 flex-1 basis-0 justify-start",
 } as const;
 
 /** The padding of the action bar's row, shared with the aside's foot so both sit level. */
@@ -54,41 +52,40 @@ const BAR_PADDING_CLASS = "pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]";
 
 /**
  * A task's actions, pinned to the bottom of the screen on every size, over a hairline across the
- * window: where the thumb is on a phone, and in the same place on every task on a desktop, so the
- * main action never jumps from one screen to the next. Its row lines up with the task's column;
- * from `lg` the aside's foot (the buddy's composer, Hand in) sits in the same row under the aside.
- * Put the actions in a `TaskActions` row; a quiet line (a save error, an option) can sit above or
- * under it, and the aside then ends above the taller bar (`--task-action-bar`).
+ * task's room: where the thumb is on a phone, and in the same place on every task on a desktop, so
+ * the main action never jumps from one screen to the next. On a phone and a tablet its row lines
+ * up with the task's column; from `lg` it fills the room, the main action in its bottom-right
+ * corner, beside the aside's foot (the buddy's composer, Hand in), which sits level with it. Put
+ * the actions in a `TaskActions` row; a quiet line (a save error, an option) can sit above or under
+ * it, from `lg` at the right, beside the action it's about.
  */
-export function TaskActionBar({
-  children,
-  className,
-  ...props
-}: Omit<React.ComponentProps<"div">, "ref">) {
+export function TaskActionBar({ children, className, ...props }: React.ComponentProps<"div">) {
   return (
-    <TaskActionBarFrame
+    <div
       className={cn("bg-background border-border sticky bottom-0 z-20 border-t", className)}
       data-slot="task-action-bar"
       {...props}
     >
-      <div className={cn(TASK_COLUMN_CLASS, "flex flex-col gap-2", BAR_PADDING_CLASS)}>
+      <div
+        className={cn(TASK_BAR_ROW_CLASS, "flex flex-col gap-2 lg:items-end", BAR_PADDING_CLASS)}
+      >
         {children}
       </div>
-    </TaskActionBarFrame>
+    </div>
   );
 }
 
 /**
  * The bar's one row. On a phone the main action (`TASK_MAIN_ACTION_CLASS`) takes the width the
- * secondary ones leave (Back, Flag, See mistakes, Ask Buddy). From `lg`, where the column is wide
+ * secondary ones leave (Back, Flag, See mistakes, Ask Buddy). From `lg`, where the bar is wide
  * enough that a full-width button reads as a banner, every button is as wide as its label: Back
- * (`TASK_BACK_ACTION_CLASS`) holds the column's left edge and the rest its right edge, the main
- * action last, where the eye ends.
+ * (`TASK_BACK_ACTION_CLASS`) holds the bar's left edge, under close, and the rest its right edge,
+ * the main action last, in the corner where the eye ends.
  */
 export function TaskActions({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("flex items-center gap-2.5 lg:justify-end", className)}
+      className={cn("flex w-full items-center gap-2.5 lg:justify-end", className)}
       data-slot="task-actions"
       {...props}
     />
@@ -104,57 +101,56 @@ export function TaskActions({ className, ...props }: React.ComponentProps<"div">
 export const TASK_MAIN_ACTION_CLASS =
   "w-full min-w-0 shrink grow lg:w-auto lg:min-w-40 lg:shrink-0 lg:grow-0";
 
-/** Back, the 44px square on the row's left, which keeps the column's left edge from `lg`. */
+/** Back, the 44px square on the row's left, which keeps the bar's left edge from `lg`. */
 export const TASK_BACK_ACTION_CLASS = "size-11 shrink-0 lg:mr-auto";
 
 /**
- * How wide the aside is: the default rail (24rem, 26rem from `xl`), or a second column as wide as
- * the task's for a long shared text read beside its question (half the window when both don't
- * fit).
+ * How wide the aside is: the default rail (300px, 320px from `xl`, as wide as the app's aside), or
+ * a second column as wide as the task's for a long shared text read beside its question (half the
+ * window when both don't fit).
  */
 export type TaskAsideWidth = "default" | "half";
 
 const ASIDE_WIDTH_CLASS: Record<TaskAsideWidth, string> = {
-  default: "lg:[--task-aside:24rem] xl:[--task-aside:26rem]",
-  half: "lg:[--task-aside:min(40rem,(100%-2rem-var(--task-gap))/2)]",
+  default: "lg:[--task-aside:18.75rem] xl:[--task-aside:20rem]",
+  half: "lg:[--task-aside:min(40rem,50%)]",
 };
 
 /**
- * The root of a task with an aside (`TaskFrame`, the lesson player). From `lg` the column and the
- * aside are one pair, centered together in the window with a fixed gap between them, so what helps
- * stays beside the question on every width while ✕ and the menu keep the window's corners. It
- * sets where they go (each `100%` is the window's width where it's used): the aside's width
- * (`--task-aside`), the gap (`--task-gap`), the column's width (`--task-column`: 40rem, less once
- * the pair doesn't fit) and the room left on each side (`--task-margin`, at least 1rem). It also
- * tells the aside where it starts and ends: under the header's row (`--task-bar`, the row's height
- * at `py-2` and `py-3` around its 36px buttons), its body under its own header row
- * (`--task-aside-top`), and above the action bar (`--task-aside-bottom`), so the bar's hairline
- * runs across the window: above the taller of the bar (`--task-action-bar`, one row's 73px until
- * the bar measures itself) and the buddy's dock (`--task-dock`), as they measure themselves.
+ * The root of a task with an aside (`TaskFrame`, the lesson player). From `lg` the aside runs the
+ * window's full height at its right edge behind a hairline, as the app's aside does, and the task
+ * keeps the room on its left (`--task-aside`, the aside's width): its header's row, its column,
+ * centered there, and its action bar. It also tells what sits in the aside where the aside's body
+ * starts and ends: under the aside's own header row, as tall as the task's (`--task-bar`, the row's
+ * height at `py-2` and `py-3` around its 36px buttons), and above its foot (`--task-aside-bottom`),
+ * the action bar's row (73px), where the buddy's composer or Hand in sits level with the bar, or the
+ * buddy's dock when its suggestions make it taller (`--task-dock`, as it measures itself).
  */
 export function getTaskAsideRootProps({ width = "default" }: { width?: TaskAsideWidth } = {}) {
   return {
     className: cn(
-      "group/task",
-      "lg:[--task-gap:2rem] xl:[--task-gap:3rem]",
-      "lg:[--task-column:min(40rem,100%-2rem-var(--task-gap)-var(--task-aside))]",
-      "lg:[--task-margin:max(1rem,(100%-40rem-var(--task-gap)-var(--task-aside))/2)]",
-      "lg:[--task-aside-bottom:max(var(--task-action-bar,4.5625rem),var(--task-dock,0px))] lg:[--task-aside-top:6.5rem] lg:[--task-bar:3.25rem] xl:[--task-aside-top:7.5rem] xl:[--task-bar:3.75rem]",
+      "group/task lg:pr-(--task-aside)",
+      "lg:[--task-aside-bottom:max(4.5625rem,var(--task-dock,0px))] lg:[--task-bar:3.25rem] xl:[--task-bar:3.75rem]",
       ASIDE_WIDTH_CLASS[width],
     ),
     "data-aside": width,
   };
 }
 
-/**
- * Where the aside and what joins it sit from `lg` (its content, the buddy's dock and conversation,
- * its foot): at the aside's place in the pair, fixed while the column scrolls.
- */
-export const TASK_ASIDE_PLACE_CLASS = "lg:fixed lg:right-(--task-margin) lg:w-(--task-aside)";
+/** The aside from `lg`: the window's right edge, its full height, behind a hairline. */
+const TASK_ASIDE_RAIL_CLASS =
+  "border-border lg:fixed lg:inset-y-0 lg:right-0 lg:w-(--task-aside) lg:border-l";
 
 /**
- * The aside's header row, at its top under the task's header row: its label on the left in the
- * section-label face, a quiet mono fact on the right ("18 min left").
+ * Where what joins the aside sits from `lg` (its content, the buddy's dock and conversation, its
+ * foot): at the window's right edge, fixed while the task scrolls, inside the aside's hairline, so
+ * what's drawn over the aside never covers it.
+ */
+export const TASK_ASIDE_PLACE_CLASS = "lg:fixed lg:right-0 lg:w-[calc(var(--task-aside)-1px)]";
+
+/**
+ * The aside's header row, at its top, level with the task's header row: its label on the left in
+ * the section-label face, a quiet mono fact on the right ("18 min left").
  */
 export function TaskAsideHeader({
   className,
@@ -168,7 +164,7 @@ export function TaskAsideHeader({
   return (
     <div
       className={cn(
-        "flex h-13 shrink-0 items-center justify-between gap-3 px-4 xl:h-15",
+        "flex h-13 shrink-0 items-center justify-between gap-3 px-5 xl:h-15",
         className,
       )}
       data-slot="task-aside-header"
@@ -184,14 +180,14 @@ export function TaskAsideHeader({
 }
 
 /**
- * What helps with the task, beside it from `lg` (tablets in landscape and up), from under the
- * header's row to the action bar's: what the learner acts on and reads to do it stays in the
- * column, what helps them sits beside it, the two centered together (`getTaskAsideRootProps`). It
- * draws no panel: its words sit on the page under their label, so an aside with nothing to show
- * leaves only room, never an empty box. Its header row has a label on the left and a quiet mono
- * fact on the right, its body scrolls on its own, and its foot (`footer`) sits in the action bar's
- * row. Phones and tablets in portrait don't show it: what it holds is in the column there, or one
- * tap away.
+ * What helps with the task, beside it from `lg` (tablets in landscape and up): what the learner acts
+ * on and reads to do it stays in the column, what helps them sits in the aside, a quiet rail at the
+ * window's right edge that runs its full height behind a hairline, as the app's aside does
+ * (`getTaskAsideRootProps`). It draws no panel: its words sit on the page, so a rail with only the
+ * buddy at its foot reads as the page's edge, never an empty box. Its header row, level with the
+ * task's, has a label on the left and a quiet mono fact on the right, its body scrolls on its own,
+ * and its foot (`footer`) sits level with the action bar. Phones and tablets in portrait don't show
+ * it: what it holds is in the column there, or one tap away.
  */
 export function TaskAside({
   children,
@@ -211,15 +207,15 @@ export function TaskAside({
     <aside
       aria-label={label}
       className={cn(
-        "bg-background hidden lg:top-(--task-bar) lg:bottom-(--task-aside-bottom) lg:z-20 lg:flex lg:flex-col",
-        TASK_ASIDE_PLACE_CLASS,
+        "bg-background hidden lg:flex lg:flex-col lg:pb-(--task-aside-bottom)",
+        TASK_ASIDE_RAIL_CLASS,
       )}
       data-slot="task-aside"
     >
       <TaskAsideHeader meta={meta} title={title} />
 
       <div
-        className="flex min-h-0 flex-1 flex-col gap-8 overflow-y-auto px-4 pb-6"
+        className="flex min-h-0 flex-1 flex-col gap-8 overflow-y-auto px-5 pb-6"
         data-slot="task-aside-body"
       >
         {children}
@@ -228,7 +224,7 @@ export function TaskAside({
       {footer && (
         <div
           className={cn(
-            "bg-background flex flex-col gap-2 px-4 lg:bottom-0",
+            "bg-background flex flex-col gap-2 px-5 lg:bottom-0",
             TASK_ASIDE_PLACE_CLASS,
             BAR_PADDING_CLASS,
           )}
@@ -247,16 +243,17 @@ export function TaskAside({
  * question's own situation, picture, chart or table is part of the question and stays with it in
  * the column at every size, as does what the learner needs to answer (an essay's instruction, a
  * drill's rule). It's rendered once, where screen readers hear it before what follows, and only
- * its place changes: nothing is drawn twice, and nothing moves after the page loads. Beside the
- * column it scrolls on its own and fades out at its foot while there's more to read. In a task
- * without an aside it stays in the column. Nothing between it and the task's root may set a
- * transform, which would hold it in place.
+ * its place changes: nothing is drawn twice, and nothing moves after the page loads. In the aside
+ * it starts under the aside's header row (`top-0` for content that draws its own), scrolls on its
+ * own and fades out at its foot while there's more to read, and the buddy's conversation docked
+ * over the aside hides it until it closes. In a task without an aside it stays in the column.
+ * Nothing between it and the task's root may set a transform, which would hold it in place.
  */
 export function TaskAsideContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "lg:group-data-aside/task:scroll-fade-b lg:top-(--task-aside-top) lg:right-(--task-margin) lg:bottom-(--task-aside-bottom) lg:w-(--task-aside) lg:group-data-aside/task:fixed lg:group-data-aside/task:z-30 lg:group-data-aside/task:overflow-y-auto lg:group-data-aside/task:px-4 lg:group-data-aside/task:pb-6",
+        "lg:group-data-aside/task:scroll-fade-b lg:top-(--task-bar) lg:right-0 lg:bottom-(--task-aside-bottom) lg:w-[calc(var(--task-aside)-1px)] lg:group-has-data-[slot$=docked-conversation]/task:invisible lg:group-data-aside/task:fixed lg:group-data-aside/task:z-30 lg:group-data-aside/task:overflow-y-auto lg:group-data-aside/task:px-5 lg:group-data-aside/task:pb-6",
         className,
       )}
       data-slot="task-aside-content"
@@ -285,11 +282,11 @@ export function TaskAsideSection({
 
 /**
  * A task's chrome while its screen loads, in its final shapes, so nothing moves when the screen
- * arrives: the header's row across the window (close and the menu, when `menu`, in its corners, the
- * title's placeholder centered over the column), the progress bar under it when `progress`, the
- * screen's own placeholders (`children`), the action bar pinned over a hairline (the screen's
- * secondary `actions`, then its main action, label-width from `lg`) and, for a task with an aside,
- * the aside's placeholders beside the column from `lg`, the two centered together.
+ * arrives: the header's row (close and the menu, when `menu`, in its corners, the title's
+ * placeholder centered over the column), the progress bar under it when `progress`, the screen's
+ * own placeholders (`children`), the action bar pinned over a hairline (the screen's secondary
+ * `actions`, then its main action, label-width from `lg`) and, for a task with an aside, the aside
+ * at the window's right edge from `lg`, behind its hairline, with its placeholders.
  */
 export function TaskSkeleton({
   actions,
@@ -337,23 +334,22 @@ export function TaskSkeleton({
       </div>
 
       <div className="border-border border-t">
-        <div className={cn(TASK_COLUMN_CLASS, "flex gap-2.5 lg:justify-end", BAR_PADDING_CLASS)}>
+        <div className={cn(TASK_BAR_ROW_CLASS, "flex gap-2.5 lg:justify-end", BAR_PADDING_CLASS)}>
           {actions}
           <Skeleton className="h-11 w-full rounded-lg lg:w-40" />
         </div>
       </div>
 
-      {aside && aside !== true && (
-        <div
-          className={cn(
-            "hidden flex-col gap-4 px-4 lg:top-(--task-bar) lg:bottom-(--task-aside-bottom) lg:flex",
-            TASK_ASIDE_PLACE_CLASS,
+      {aside && (
+        <div className={cn("hidden flex-col gap-4 px-5 lg:flex", TASK_ASIDE_RAIL_CLASS)}>
+          {aside !== true && (
+            <>
+              <div className="flex h-13 shrink-0 items-center xl:h-15">
+                <Skeleton className="h-3 w-28" />
+              </div>
+              {aside}
+            </>
           )}
-        >
-          <div className="flex h-13 shrink-0 items-center xl:h-15">
-            <Skeleton className="h-3 w-28" />
-          </div>
-          {aside}
         </div>
       )}
     </main>

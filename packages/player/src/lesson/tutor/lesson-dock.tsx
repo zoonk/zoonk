@@ -7,7 +7,6 @@ import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useMemo, useRef } from "react";
 import { QuestionComposer } from "../../questions/lesson-question-composer";
-import { type LessonQuestionContext } from "../../questions/lesson-question-context";
 import { getQuestionLimit } from "../../questions/lesson-question-errors";
 import {
   type LessonQuestionNavigation,
@@ -32,20 +31,11 @@ import { useShowsMiss } from "./use-shows-miss";
 /** How many of the buddy's suggested questions the aside offers over its composer. */
 const SUGGESTED = 2;
 
-/** The aside composer's placeholder, by what the learner would ask about. */
-function useDockPlaceholder({ context, name }: { context: LessonQuestionContext; name: string }) {
-  const t = useExtracted();
-
-  if (context.kind === "answer") {
-    return t("Ask {name} about your answer", { name });
-  }
-
-  return t("Ask {name} about this screen", { name });
-}
-
 /**
  * The buddy's composer at the foot of the aside, always there beside the lesson: what the learner
- * writes is about the screen in view, and sending it shows the conversation in the aside.
+ * writes is about the screen in view (or their answer, once it's checked), and sending it shows the
+ * conversation in the aside. Its placeholder only names the buddy, by its face, so it fits the
+ * aside's one line in every language.
  */
 function DockComposer() {
   const t = useExtracted();
@@ -53,11 +43,6 @@ function DockComposer() {
   const controller = useLessonQuestionController();
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const docked = buddy?.docked ?? false;
-
-  const placeholder = useDockPlaceholder({
-    context: buddy?.context ?? { kind: "lesson" },
-    name: buddy?.identity.name ?? "",
-  });
 
   // Once the conversation shows in the aside, the learner writes (or sends a ready suggestion)
   // without reaching for the composer.
@@ -98,7 +83,7 @@ function DockComposer() {
       controller={dockController}
       inputRef={inputRef}
       label={t("Ask a question")}
-      placeholder={placeholder}
+      placeholder={t("Ask {name}", { name: buddy.identity.name })}
     />
   );
 }
@@ -174,7 +159,7 @@ function DockSuggestions() {
   return (
     <div
       aria-label={t("Suggested questions")}
-      className="bg-background flex flex-wrap gap-2 px-4 pb-3"
+      className="bg-background flex flex-wrap gap-2 px-5 pb-3"
       role="group"
     >
       {suggestions.map((suggestion) => (
@@ -204,7 +189,7 @@ export function LessonDock() {
   const offersSuggestions = useOffersSuggestions();
   const dockRef = useRef<HTMLDivElement>(null);
 
-  useTaskFootHeight(dockRef, "--task-dock");
+  useTaskFootHeight(dockRef);
 
   if (!buddy) {
     return null;
@@ -277,7 +262,7 @@ export function DockedConversation() {
       className={DOCKED_CONVERSATION_CLASS}
       data-slot="lesson-docked-conversation"
     >
-      <div className="flex h-13 shrink-0 items-center justify-between gap-3 px-4 xl:h-15">
+      <div className="flex h-13 shrink-0 items-center justify-between gap-3 px-5 xl:h-15">
         <Button
           className="text-muted-foreground -ml-1 px-2"
           onClick={back}

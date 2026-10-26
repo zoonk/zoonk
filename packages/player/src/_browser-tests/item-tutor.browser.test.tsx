@@ -1,6 +1,6 @@
 import { render } from "@testing-library/react";
 import { type TutorItem } from "@zoonk/learn/question-tutor";
-import { TaskAside, getTaskAsideRootProps } from "@zoonk/learn/task-layout";
+import { TaskAside, TaskAsideContent, getTaskAsideRootProps } from "@zoonk/learn/task-layout";
 import { useState } from "react";
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
@@ -27,9 +27,10 @@ const ODD = { itemId: crypto.randomUUID(), text: "Which number is odd?" };
 /**
  * A run as a session's block and mistakes practice play it around the buddy: the buddy stays while
  * the question in view changes, Check grades it (a miss) and Continue moves on. Practice asks a
- * missed question again, in a later run or later in the same one.
+ * missed question again, in a later run or later in the same one. A question can share a text with
+ * its set (`material`), read in the aside's body.
  */
-function QuestionRun({ questions }: { questions: RunQuestion[] }) {
+function QuestionRun({ material, questions }: { material?: string; questions: RunQuestion[] }) {
   const [position, setPosition] = useState(0);
   const [answered, setAnswered] = useState(false);
   const question = questions[position];
@@ -47,6 +48,7 @@ function QuestionRun({ questions }: { questions: RunQuestion[] }) {
   return (
     <ItemTutor item={item} tutor={TUTOR}>
       <div className={root.className} data-aside={root["data-aside"]}>
+        {material && <TaskAsideContent>{material}</TaskAsideContent>}
         <p>{question?.text}</p>
 
         {answered ? (
@@ -87,6 +89,9 @@ async function askFromAside(question: string) {
 }
 
 const WHY_MISSED = "Why isn't it 7?";
+
+/** A text the questions of a set share, as long ones are read beside them. */
+const SHARED_TEXT = "Numbers that end in 0, 2, 4, 6 or 8 are even; the others are odd.";
 
 /** Misses the question in view, then asks the buddy why from the aside's composer. */
 async function missAndAskWhy() {
@@ -216,6 +221,25 @@ describe("the buddy beside a run of questions", () => {
     await page.getByRole("button", { name: "Check" }).click();
     await expect.element(conversation.getByText("8 is even: it ends in 8.")).toBeVisible();
     await expect.element(conversation.getByText("About your answer")).toBeVisible();
+  });
+
+  // The conversation docks over the aside's body, where a question's shared text is read: the text
+  // gives way while it's open (drawn over it, it showed through), and comes back after.
+  it("docks the conversation over the question's shared text, which comes back after", async () => {
+    stubTutorApi({});
+    render(<QuestionRun material={SHARED_TEXT} questions={[EVEN]} />);
+
+    const material = page.getByText(SHARED_TEXT);
+    await expect.element(material).toBeVisible();
+
+    await askFromAside("Any hint?");
+
+    const conversation = dockedConversation();
+    await expect.element(conversation.getByText(TUTOR_ANSWER)).toBeVisible();
+    await expect.element(material).not.toBeVisible();
+
+    await conversation.getByRole("button", { name: "Back" }).click();
+    await expect.element(material).toBeVisible();
   });
 
   // While apps deploy, the tutor can meet the API from before `include`: it reads the conversation
