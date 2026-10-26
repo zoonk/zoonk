@@ -37,7 +37,8 @@ Examples of native behavior:
 
 - Prefer native controls, materials, and navigation structures, styled with Zoonk's design tokens from `main`: colors, typography, spacing, and corner radii.
 - Prefer SF Symbols for standard actions and objects, choosing the closest match to the icon `main` uses. Use custom symbols only when no platform symbol communicates the concept.
-- Support Dark Mode with named colors that carry Zoonk's light and dark values instead of hardcoded ones. Light, dark, and reduced motion follow the device.
+- Support Dark Mode with named colors that carry Zoonk's light and dark values instead of hardcoded ones, plus a High Contrast variant for Increase Contrast with the web's `prefers-contrast: more` values. Light, dark, contrast and reduced motion follow the device.
+- Take each color's meaning from the design system (`apps/playground/src/design-system/`, values in `packages/ui/src/styles/globals.css`, the rules in [the zoonk-design skill's color reference](../zoonk-design/references/color.md)): the `AccentColor` is the label color, picks and the learner's place are ink, progress is a soft blue, wrong a soft pink-red, Brain Power violet, never a system green for done.
 - Respect safe areas, Dynamic Type (custom fonts included), VoiceOver, reduced motion, contrast settings, platform gestures, pointer/focus behavior, and input-specific affordances.
 - Use platform-provided components before custom components.
 - Keep platform differences intentional. Behavior can differ between Apple platforms and the web; the look stays Zoonk's.
