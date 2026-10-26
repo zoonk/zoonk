@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { type Browser, type Locator, type Page, expect } from "@playwright/test";
+import { type Browser, type Page, expect } from "@playwright/test";
 import { getFreePlanLimits } from "@zoonk/core/entitlements/plan-limits";
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
@@ -23,12 +23,12 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
 
-export const DAYS_TO_EXAM = 32;
+const DAYS_TO_EXAM = 32;
 const TIME_MACHINE_DAYS_AGO = 4;
 const SHORT_ID_LENGTH = 6;
 
-export const LESSON_TITLE = "Discounts in your head";
-export const LESSON_CAN_DO = "You'll work out a discount in your head";
+const LESSON_TITLE = "Discounts in your head";
+const LESSON_CAN_DO = "You'll work out a discount in your head";
 
 /** A written lesson with one check, or one still waiting to be written. */
 async function createLesson({ written }: { written: boolean }) {
@@ -268,7 +268,7 @@ export async function openAs(browser: Browser, user: E2EUser): Promise<Page> {
  * Waits for the grade, then continues with Enter. Its listener attaches right after the grade
  * shows, so the press retries until the feedback goes away.
  */
-export async function continueWithEnter(page: Page) {
+async function continueWithEnter(page: Page) {
   const feedback = page.getByRole("region", { name: "Answer feedback" });
   await expect(feedback.getByText("Correct!")).toBeVisible();
 
@@ -299,15 +299,4 @@ export async function answerRight(page: Page, question: RegExp | string) {
   await page.keyboard.press("1");
   await checkWithEnter(page);
   await continueWithEnter(page);
-}
-
-/**
- * Today's blocks by name, in order (`day`: the rows of "Today's session"). What a row says under
- * its name can change on its own: applying or undoing a plan change gets today's lessons written
- * (session preparation), so a lesson in both days may read "Being written for you…" afterwards,
- * though the block is the same.
- */
-export async function readDayNames(day: Locator): Promise<string[]> {
-  const rows = await day.allInnerTexts();
-  return rows.map((row) => row.split("\n")[0] ?? "");
 }

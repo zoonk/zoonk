@@ -123,8 +123,6 @@ export async function createUnstartedDay() {
   return {
     goal,
     lessons,
-    /** Any of the learner's own questions, as the review and practice title them. */
-    question: new RegExp(`^Skill \\d ${tag} question \\d\\?`, "u"),
     /** The first skill's questions, the ones its review brings back. */
     reviewQuestion: new RegExp(`^Skill 1 ${tag} question \\d\\?`, "u"),
     user,
