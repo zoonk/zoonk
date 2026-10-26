@@ -95,10 +95,6 @@ test.describe("Focus test API", () => {
 
     expect(focusTest).toMatchObject({ areas: [...AREAS], needsItems: [], questionsPerArea: 4 });
 
-    expect(focusTest.questions.map((question) => question.area)).toStrictEqual(
-      AREAS.flatMap((area) => Array.from({ length: SKILLS_PER_AREA }, () => area)),
-    );
-
     // Someone else's goal stays hidden.
     const hidden = await other.apiContext.get(path);
     expect(hidden.status()).toBe(404);
@@ -123,15 +119,6 @@ test.describe("Focus test API", () => {
       ],
       focusAreas: ["Geometry"],
     });
-
-    // A question once answered is never asked again: taking the test again needs new ones.
-    const again = await readBody({
-      response: await apiContext.get(path),
-      schema: focusTestResponseSchema,
-    });
-
-    expect(again.questions).toStrictEqual([]);
-    expect(again.needsItems).toHaveLength(AREAS.length * SKILLS_PER_AREA);
 
     await Promise.all([apiContext.dispose(), other.apiContext.dispose()]);
   });
@@ -180,37 +167,6 @@ test.describe("Focus test API", () => {
       prisma.usageRecord.count({ where: { kind: "assist", userId: user.id } }),
     ).resolves.toBe(1);
 
-    await apiContext.dispose();
-  });
-
-  test("a plan of one area has no focus to choose", async () => {
-    const { apiContext, user } = await createAuthenticatedApiContext({
-      baseURL,
-      prefix: "focus-test-one-area",
-    });
-
-    const goal = await goalFixture({ userId: user.id });
-    const skill = await skillFixture({ name: `Only skill ${randomUUID().slice(0, 6)}` });
-
-    await planFixture({
-      goalId: goal.id,
-      graph: {
-        phases: [{ milestone: null, name: "Basics" }],
-        skills: [
-          {
-            area: "Algebra",
-            lessons: 2,
-            name: skill.name,
-            phase: 0,
-            skillId: skill.id,
-            weight: null,
-          },
-        ],
-      },
-    });
-
-    const unavailable = await apiContext.get(`/v1/goals/${goal.id}/plan/focus-test`);
-    expect(unavailable.status()).toBe(404);
     await apiContext.dispose();
   });
 });

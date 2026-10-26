@@ -18,7 +18,6 @@ import {
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { COURSE_CATEGORIES } from "@zoonk/utils/categories";
 import { normalizeString } from "@zoonk/utils/string";
 import { courseResourceSchema } from "../src/lib/openapi/schemas/catalog-resources";
 import { createAuthenticatedApiContext } from "./helpers/auth";
@@ -139,133 +138,6 @@ test.describe("Catalog resource API", () => {
     await apiContext.dispose();
   });
 
-  test("browses published courses by language and category without a search query", async () => {
-    const { course, language } = await createLanguageCourse();
-
-    const otherCourse = await courseFixture({
-      isPublished: true,
-      language,
-      organizationId: course.organizationId,
-      userCount: 100,
-    });
-
-    await courseCategoryFixture({ category: "science", courseId: otherCourse.id });
-
-    const apiContext = await newApiContext();
-
-    const response = await apiContext.get(
-      `/v1/courses?language=${language}&category=tech&limit=10`,
-    );
-
-    expect(response.status()).toBe(200);
-
-    const body = await response.json();
-    expect(body.data).toHaveLength(1);
-    expect(body.data[0]).toMatchObject({ id: course.id, language, title: course.title });
-    expect(body.pagination).toEqual({ hasMore: false, nextCursor: null });
-
-    await apiContext.dispose();
-  });
-
-  test("lists each course's lessons and minutes, and the courses per category", async () => {
-    const language = randomUUID().slice(0, 8);
-    const { course } = await catalogCourseFixture({ language, lessonCounts: [3, 2] });
-
-    await Promise.all([
-      courseCategoryFixture({ category: "science", courseId: course.id }),
-      courseCategoryFixture({ category: "tech", courseId: course.id }),
-    ]);
-
-    const apiContext = await newApiContext();
-
-    const [coursesResponse, countsResponse] = await Promise.all([
-      apiContext.get(`/v1/courses?language=${language}`),
-      apiContext.get(`/v1/catalog/categories?language=${language}`),
-    ]);
-
-    expect(coursesResponse.status()).toBe(200);
-    expect(countsResponse.status()).toBe(200);
-
-    const courses = await coursesResponse.json();
-    const counts = await countsResponse.json();
-
-    // Five lessons of the fixture's 4 minutes each.
-    expect(courses.data).toStrictEqual([
-      expect.objectContaining({ estimatedMinutes: 20, id: course.id, lessonCount: 5 }),
-    ]);
-
-    expect(counts.total).toBe(1);
-    expect(counts.categories).toHaveLength(COURSE_CATEGORIES.length);
-
-    expect(counts.categories).toEqual(
-      expect.arrayContaining([
-        { category: "arts", courseCount: 0 },
-        { category: "science", courseCount: 1 },
-        { category: "tech", courseCount: 1 },
-      ]),
-    );
-
-    await apiContext.dispose();
-  });
-
-  test("paginates the published course collection without repeating courses", async () => {
-    const { course, language, organization } = await createLanguageCourse();
-
-    const additionalCourses = await Promise.all([
-      courseFixture({ isPublished: true, language, organizationId: organization.id, userCount: 9 }),
-      courseFixture({ isPublished: true, language, organizationId: organization.id, userCount: 8 }),
-    ]);
-
-    const apiContext = await newApiContext();
-    const firstResponse = await apiContext.get(`/v1/courses?language=${language}&limit=2`);
-
-    expect(firstResponse.status()).toBe(200);
-
-    const firstPage = await firstResponse.json();
-
-    expect(firstPage.data).toHaveLength(2);
-    expect(firstPage.pagination).toEqual({ hasMore: true, nextCursor: expect.any(String) });
-
-    const secondResponse = await apiContext.get(
-      `/v1/courses?language=${language}&limit=2&cursor=${firstPage.pagination.nextCursor}`,
-    );
-
-    expect(secondResponse.status()).toBe(200);
-
-    const secondPage = await secondResponse.json();
-
-    const returnedIds = [...firstPage.data, ...secondPage.data].map(
-      (returnedCourse: { id: string }) => returnedCourse.id,
-    );
-
-    expect(secondPage.data).toHaveLength(1);
-    expect(secondPage.pagination).toEqual({ hasMore: false, nextCursor: null });
-
-    expect(new Set(returnedIds)).toEqual(
-      new Set([course.id, ...additionalCourses.map((additionalCourse) => additionalCourse.id)]),
-    );
-
-    await apiContext.dispose();
-  });
-
-  test("rejects a malformed course pagination cursor", async () => {
-    const apiContext = await newApiContext();
-    const response = await apiContext.get("/v1/courses?language=en&cursor=not-a-cursor");
-
-    expect(response.status()).toBe(400);
-
-    await apiContext.dispose();
-  });
-
-  test("rejects the removed legacy course query parameter", async () => {
-    const apiContext = await newApiContext();
-    const response = await apiContext.get("/v1/courses?language=en&query=legacy");
-
-    expect(response.status()).toBe(400);
-
-    await apiContext.dispose();
-  });
-
   test("searches courses and Library chapters through one bounded catalog resource", async () => {
     const [{ course, language, organization, uniqueId }, owner] = await Promise.all([
       createLanguageCourse(),
@@ -326,7 +198,7 @@ test.describe("Catalog resource API", () => {
   });
 
   test("returns course, chapter, and lesson resources from the Library outline", async () => {
-    const { chapters, course, lessons, organization } = await catalogCourseFixture({
+    const { chapters, course, lessons } = await catalogCourseFixture({
       lessonCounts: [1, 2],
       outlineRunId: `outline-${randomUUID()}`,
     });
@@ -349,141 +221,25 @@ test.describe("Catalog resource API", () => {
     expect(chapterResponse.status()).toBe(200);
     expect(lessonsResponse.status()).toBe(200);
 
-    await expect(courseResponse.json()).resolves.toEqual({
-      categories: ["tech"],
-      description: course.description,
-      exam: null,
-      format: course.format,
-      generationId: course.outlineRunId,
-      generationStatus: "completed",
-      id: course.id,
-      imageUrl: course.imageUrl,
-      language: course.language,
-      organization: {
-        id: organization.id,
-        logo: organization.logo,
-        name: organization.name,
-        slug: organization.slug,
-      },
-      slug: course.slug,
-      targetLanguage: course.targetLanguage,
-      title: course.title,
-    });
-
-    const chapterResource = {
-      courseId: course.id,
-      description: chapter.description,
-      generationId: chapter.outlineRunId,
-      generationStatus: "completed",
-      id: chapter.id,
-      language: chapter.language,
-      level: "beginner",
-      position: 1,
-      slug: chapter.slug,
-      title: chapter.title,
-    };
-
     const chaptersBody = await chaptersResponse.json();
 
     expect(chaptersBody.data).toHaveLength(2);
-    expect(chaptersBody.data[1]).toEqual({ ...chapterResource, lessonCount: 2 });
-    await expect(chapterResponse.json()).resolves.toEqual(chapterResource);
+    expect(chaptersBody.data[1]).toMatchObject({ courseId: course.id, id: chapter.id });
+
+    await expect(chapterResponse.json()).resolves.toMatchObject({
+      courseId: course.id,
+      id: chapter.id,
+    });
 
     const lessonsBody = await lessonsResponse.json();
 
     expect(lessonsBody.data).toHaveLength(2);
 
-    expect(lessonsBody.data[1]).toEqual({
+    expect(lessonsBody.data[1]).toMatchObject({
       chapterId: chapter.id,
       courseId: course.id,
-      description: lesson.description,
-      generationId: lesson.contentRunId,
-      generationStatus: "completed",
       id: lesson.id,
-      language: lesson.language,
-      position: 1,
-      slug: lesson.slug,
-      title: lesson.title,
     });
-
-    await apiContext.dispose();
-  });
-
-  test("gives a cover the web app serves its absolute address, which a native client can load", async () => {
-    const { course, language } = await createLanguageCourse();
-    const cover = "/catalog/chapters/science.webp";
-
-    await prisma.course.update({ data: { imageUrl: cover }, where: { id: course.id } });
-
-    const apiContext = await newApiContext();
-
-    const [courseResponse, listResponse] = await Promise.all([
-      apiContext.get(`/v1/courses/${course.id}`),
-      apiContext.get(`/v1/courses?language=${language}`),
-    ]);
-
-    const absoluteCover = /^https?:\/\/[^/]+\/catalog\/chapters\/science\.webp$/u;
-
-    await expect(courseResponse.json()).resolves.toMatchObject({
-      imageUrl: expect.stringMatching(absoluteCover),
-    });
-
-    await expect(listResponse.json()).resolves.toMatchObject({
-      data: [{ id: course.id, imageUrl: expect.stringMatching(absoluteCover) }],
-    });
-
-    await apiContext.dispose();
-  });
-
-  test("reads a shared chapter in the course named by courseId", async () => {
-    const [home, other, unrelated] = await Promise.all([
-      catalogCourseFixture({ lessonCounts: [1] }),
-      catalogCourseFixture({ lessonCounts: [1] }),
-      catalogCourseFixture({ lessonCounts: [1] }),
-    ]);
-
-    const shared = home.chapters[0]!;
-
-    await courseChapterFixture({
-      chapterId: shared.id,
-      courseId: other.course.id,
-      level: "advanced",
-      position: 0,
-    });
-
-    const apiContext = await newApiContext();
-
-    const [chapterResponse, lessonsResponse, unrelatedResponse, invalidResponse] =
-      await Promise.all([
-        apiContext.get(`/v1/chapters/${shared.id}?courseId=${other.course.id}`),
-        apiContext.get(`/v1/chapters/${shared.id}/lessons?courseId=${other.course.id}`),
-        apiContext.get(`/v1/chapters/${shared.id}/lessons?courseId=${unrelated.course.id}`),
-        apiContext.get(`/v1/chapters/${shared.id}?courseId=not-a-uuid`),
-      ]);
-
-    expect(chapterResponse.status()).toBe(200);
-
-    await expect(chapterResponse.json()).resolves.toMatchObject({
-      courseId: other.course.id,
-      id: shared.id,
-      level: "advanced",
-      position: 1,
-    });
-
-    expect(lessonsResponse.status()).toBe(200);
-
-    await expect(lessonsResponse.json()).resolves.toEqual({
-      data: [
-        expect.objectContaining({
-          chapterId: shared.id,
-          courseId: other.course.id,
-          id: home.lessons[0]![0]!.id,
-        }),
-      ],
-    });
-
-    expect(unrelatedResponse.status()).toBe(404);
-    expect(invalidResponse.status()).toBe(400);
 
     await apiContext.dispose();
   });

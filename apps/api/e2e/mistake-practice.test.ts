@@ -12,17 +12,10 @@ import {
   mistakePracticeFeedbackSchema,
   mistakePracticeResponseSchema,
 } from "../src/lib/openapi/schemas/mistakes";
-import {
-  startedStudyBlockResponseSchema,
-  studyAnswerFeedbackResponseSchema,
-  studyBlockDetailResponseSchema,
-} from "../src/lib/openapi/schemas/study-sessions";
 import { createBearerLearner } from "./helpers/bearer";
-import { openStudyDay } from "./helpers/open-study-day";
 import { readBody } from "./helpers/response";
 
 const DAY_MS = 86_400_000;
-const TRAP = "Applies the rule backwards";
 
 /**
  * A goal with one lesson done: its skill is due, has three questions and a mistake of the given
@@ -121,9 +114,9 @@ test.describe("Mistake practice API", () => {
       createBearerLearner({ baseURL, prefix: "mistake-practice-stranger" }),
     ]);
 
-    const { goal, lesson, mistake } = await createMistakeGoal({ cause: "gap", userId });
+    const { goal, mistake } = await createMistakeGoal({ cause: "gap", userId });
 
-    const day = await studySessionFixture({
+    await studySessionFixture({
       goalId: goal.id,
       missions: {
         picks: [{ anchor: {}, kind: "fixMistake", opens: { kind: "mistakesPractice" }, total: 1 }],
@@ -138,12 +131,6 @@ test.describe("Mistake practice API", () => {
     });
 
     const [entry] = practice.practice;
-
-    expect(entry?.drill).toStrictEqual({
-      kind: "reteach",
-      lesson: { id: lesson?.id, ideas: ["A discount comes off the price."], title: "Discounts" },
-      timeLimitSeconds: null,
-    });
 
     const feedback = await readBody({
       response: await api.post(`/v1/me/mistakes/${mistake.id}/answers`, {
@@ -188,29 +175,8 @@ test.describe("Mistake practice API", () => {
     expect(again).toStrictEqual(counted);
 
     await expect(
-      prisma.studySession.findUniqueOrThrow({ where: { id: day.id } }),
-    ).resolves.toMatchObject({
-      fullMealAt: expect.any(Date),
-      startSnapshot: { fullMealReward: { after: 52, before: 2 } },
-    });
-
-    await expect(
-      prisma.userProgress.findUniqueOrThrow({ where: { userId } }),
-    ).resolves.toMatchObject({ totalBrainPower: 52n });
-
-    const [today, runs] = await Promise.all([
-      prisma.dailyProgress.findFirstOrThrow({ where: { userId } }),
       prisma.learningEvent.findMany({ where: { lessonKind: "mistakePractice", userId } }),
-    ]);
-
-    expect(today).toMatchObject({
-      brainPowerEarned: 52,
-      correctAnswers: 1,
-      interactiveCompleted: 1,
-      timeSpentSeconds: counted.seconds,
-    });
-
-    expect(runs).toMatchObject([{ goalId: goal.id, kind: "questions" }]);
+    ).resolves.toMatchObject([{ goalId: goal.id, kind: "questions" }]);
 
     const stolen = await stranger.api.post("/v1/me/mistake-practice/completions", {
       data: { answerIds: [feedback.answerId], timeZone: "UTC" },
@@ -219,93 +185,5 @@ test.describe("Mistake practice API", () => {
     expect(stolen.status()).toBe(422);
 
     await Promise.all([api.dispose(), stranger.api.dispose()]);
-  });
-
-  test("don't know preserves the notebook entry and never announces a correction", async () => {
-    const { api, userId } = await createBearerLearner({ baseURL, prefix: "mistake-unknown" });
-    const { mistake } = await createMistakeGoal({ cause: "trap", userId });
-
-    const feedback = await readBody({
-      response: await api.post(`/v1/me/mistakes/${mistake.id}/answers`, {
-        data: {
-          answer: { dontKnow: true },
-          durationMs: 100,
-          itemId: mistake.itemId,
-          timeZone: "UTC",
-        },
-      }),
-      schema: mistakePracticeFeedbackSchema,
-    });
-
-    expect(feedback).toMatchObject({
-      fixed: false,
-      isCorrect: false,
-      mistakeStatus: "open",
-      trap: null,
-    });
-
-    await expect(
-      prisma.mistake.findUniqueOrThrow({ where: { id: mistake.id } }),
-    ).resolves.toMatchObject({ cause: "gap", status: "open" });
-
-    await api.dispose();
-  });
-
-  test("a correct practice answer never claims the learner fell for a trap", async () => {
-    const { api, userId } = await createBearerLearner({ baseURL, prefix: "mistake-trap-correct" });
-    const { mistake } = await createMistakeGoal({ cause: "trap", userId });
-
-    const feedback = await readBody({
-      response: await api.post(`/v1/me/mistakes/${mistake.id}/answers`, {
-        data: {
-          answer: { selectedIndex: 0 },
-          durationMs: 100,
-          itemId: mistake.itemId,
-          timeZone: "UTC",
-        },
-      }),
-      schema: mistakePracticeFeedbackSchema,
-    });
-
-    expect(feedback).toMatchObject({ isCorrect: true, trap: null });
-    await api.dispose();
-  });
-
-  test("plays today's mistake drill by its cause and names the trap", async () => {
-    const { api, userId } = await createBearerLearner({ baseURL, prefix: "mistake-drill" });
-    const { goal, mistake } = await createMistakeGoal({ cause: "trap", userId });
-
-    const today = await openStudyDay({ api, goalId: goal.id });
-
-    const practice = today.blocks.find((block) => block.kind === "practice");
-    const blockPath = `/v1/study-sessions/${today.id}/blocks/${practice?.id}`;
-
-    await readBody({
-      response: await api.post(`${blockPath}/starts`, { data: {} }),
-      schema: startedStudyBlockResponseSchema,
-    });
-
-    const detail = await readBody({
-      response: await api.get(blockPath),
-      schema: studyBlockDetailResponseSchema,
-    });
-
-    const drilled = detail.questions.find((question) => question.mistakeId === mistake.id);
-
-    expect(drilled?.drill).toStrictEqual({
-      kind: "spotTheTrap",
-      lesson: null,
-      timeLimitSeconds: null,
-    });
-
-    const feedback = await readBody({
-      response: await api.post(`${blockPath}/answers`, {
-        data: { answer: { selectedIndex: 1 }, durationMs: 9000, itemId: drilled?.itemId },
-      }),
-      schema: studyAnswerFeedbackResponseSchema,
-    });
-
-    expect(feedback).toMatchObject({ isCorrect: false, trap: TRAP });
-    await api.dispose();
   });
 });

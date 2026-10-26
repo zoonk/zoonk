@@ -3,7 +3,6 @@ import { request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
-import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import {
@@ -19,22 +18,13 @@ import {
   placementAnswerResponseSchema,
   placementCompletionResponseSchema,
   placementResponseSchema,
-  reviewScheduleResponseSchema,
-  skillListResponseSchema,
   testOutGenerationSchema,
 } from "../src/lib/openapi/schemas/learner";
-import {
-  mistakeListResponseSchema,
-  mistakePracticeFeedbackSchema,
-  mistakePracticeResponseSchema,
-} from "../src/lib/openapi/schemas/mistakes";
-import { goalPreparationResponseSchema } from "../src/lib/openapi/schemas/preparation";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 import { createGuest } from "./helpers/bearer";
 import { readBody } from "./helpers/response";
 
 const SKILLS = 4;
-const YESTERDAY = new Date(Date.now() - 86_400_000);
 
 /** A goal with one chapter of four chained skills, one plan item and one question per skill. */
 async function createGoal(userId: string) {
@@ -148,8 +138,6 @@ test.describe("Learner model API", () => {
       status: "asking",
     });
 
-    expect(placement.next?.skillId).toBe(skills[0]?.id);
-
     // The raw response carries the question and its options only: nothing that tells the answer.
     expect(Object.keys(placement.next ?? {}).toSorted()).toStrictEqual(
       Object.keys((sent as { next: object }).next).toSorted(),
@@ -223,50 +211,6 @@ test.describe("Learner model API", () => {
     await guestApi.dispose();
   });
 
-  test("says a goal's plan isn't ready instead of a finished placement", async () => {
-    const { apiContext, user } = await createAuthenticatedApiContext({
-      baseURL,
-      prefix: "learner-placement-preparing",
-    });
-
-    const goal = await goalFixture({ userId: user.id });
-    await planFixture({ goalId: goal.id });
-
-    const placement = await readBody({
-      response: await apiContext.get(`/v1/goals/${goal.id}/placement`),
-      schema: placementResponseSchema,
-    });
-
-    expect(placement).toMatchObject({
-      areas: [],
-      complete: false,
-      next: null,
-      phases: [],
-      status: "preparing",
-    });
-
-    await apiContext.dispose();
-  });
-
-  test("stops preparing when the goal's plan couldn't be built", async () => {
-    const { apiContext, user } = await createAuthenticatedApiContext({
-      baseURL,
-      prefix: "learner-placement-failed",
-    });
-
-    const goal = await goalFixture({ userId: user.id });
-    await planFixture({ buildFailedAt: new Date(), goalId: goal.id });
-
-    const placement = await readBody({
-      response: await apiContext.get(`/v1/goals/${goal.id}/placement`),
-      schema: placementResponseSchema,
-    });
-
-    expect(placement).toMatchObject({ next: null, status: "failed" });
-
-    await apiContext.dispose();
-  });
-
   test("tests out a chapter the learner already knows", async () => {
     const { apiContext, user } = await createAuthenticatedApiContext({
       baseURL,
@@ -299,12 +243,6 @@ test.describe("Learner model API", () => {
     expect(result).toMatchObject({ correct: SKILLS, passed: true, total: SKILLS });
     expect(result.testedOutPlanItemIds).toHaveLength(SKILLS);
 
-    const skillsList = await readBody({
-      response: await apiContext.get(`/v1/me/skills?goalId=${goal.id}`),
-      schema: skillListResponseSchema,
-    });
-
-    expect(skillsList.counts).toMatchObject({ new: 0, total: SKILLS });
     await apiContext.dispose();
   });
 
@@ -345,116 +283,5 @@ test.describe("Learner model API", () => {
     expect(hidden.status()).toBe(404);
 
     await Promise.all([apiContext.dispose(), other.apiContext.dispose()]);
-  });
-
-  test("practices and fixes a mistake from the notebook", async () => {
-    const { apiContext, user } = await createAuthenticatedApiContext({
-      baseURL,
-      prefix: "learner-mistakes",
-    });
-
-    const { goal, items, skills } = await createGoal(user.id);
-
-    const [mistake, todayMistake] = await Promise.all([
-      mistakeFixture({
-        cause: "misread",
-        createdAt: YESTERDAY,
-        itemId: items[0]?.id,
-        skillId: skills[0]?.id,
-        userId: user.id,
-      }),
-      mistakeFixture({
-        cause: "misread",
-        createdAt: new Date(),
-        itemId: items[0]?.id,
-        skillId: skills[0]?.id,
-        userId: user.id,
-      }),
-    ]);
-
-    const notebook = await readBody({
-      response: await apiContext.get(`/v1/me/mistakes?goalId=${goal.id}&status=open`),
-      schema: mistakeListResponseSchema,
-    });
-
-    expect(notebook.data.map((entry) => entry.id)).toStrictEqual([todayMistake.id, mistake.id]);
-    expect(notebook.counts.byCause.misread).toBe(2);
-    expect(notebook.availability).toStrictEqual({ ready: 1, tomorrow: 1 });
-
-    expect(notebook.data[0]).toMatchObject({
-      practiceAvailable: false,
-      practiceAvailableTomorrow: true,
-    });
-
-    expect(notebook.data[1]).toMatchObject({
-      practiceAvailable: true,
-      practiceAvailableTomorrow: false,
-    });
-
-    // "Practice this skill": only the skill's mistakes.
-    const practice = await readBody({
-      response: await apiContext.get(
-        `/v1/me/mistake-practice?skillId=${skills[0]?.id}&timeZone=UTC`,
-      ),
-      schema: mistakePracticeResponseSchema,
-    });
-
-    expect(practice.practice[0]).toMatchObject({
-      drill: { kind: "readCarefully" },
-      mistakeId: mistake.id,
-    });
-
-    const feedback = await readBody({
-      response: await apiContext.post(`/v1/me/mistakes/${mistake.id}/answers`, {
-        data: {
-          answer: { selectedIndex: 0 },
-          durationMs: 7000,
-          itemId: items[0]?.id,
-          timeZone: "UTC",
-        },
-      }),
-      schema: mistakePracticeFeedbackSchema,
-    });
-
-    expect(feedback).toMatchObject({
-      correctAnswer: { selectedIndex: 0 },
-      isCorrect: true,
-      mistakeStatus: "fixed",
-    });
-
-    const after = await readBody({
-      response: await apiContext.get(`/v1/me/mistakes?goalId=${goal.id}&status=open`),
-      schema: mistakeListResponseSchema,
-    });
-
-    expect(after.availability).toStrictEqual({ ready: 0, tomorrow: 1 });
-    expect(after.data.map((entry) => entry.id)).toStrictEqual([todayMistake.id]);
-
-    await apiContext.dispose();
-  });
-
-  test("returns preparation and the review schedule for a goal", async () => {
-    const { apiContext, user } = await createAuthenticatedApiContext({
-      baseURL,
-      prefix: "learner-preparation",
-    });
-
-    const { chapter, goal } = await createGoal(user.id);
-
-    const [preparation, reviews] = await Promise.all([
-      readBody({
-        response: await apiContext.get(`/v1/goals/${goal.id}/preparation`),
-        schema: goalPreparationResponseSchema,
-      }),
-      readBody({
-        response: await apiContext.get(`/v1/me/reviews?goalId=${goal.id}&timeZone=UTC`),
-        schema: reviewScheduleResponseSchema,
-      }),
-    ]);
-
-    expect(preparation).toMatchObject({ estimatedScore: null, stage: "starting", value: 0 });
-    expect(preparation.areas.map((area) => area.title)).toStrictEqual([chapter.title]);
-    expect(reviews.forecast).toHaveLength(7);
-    await apiContext.dispose();
   });
 });

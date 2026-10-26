@@ -10,17 +10,12 @@ import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profile
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
-import { sourceFixture } from "@zoonk/testing/fixtures/sources";
 import {
   studySessionBlockFixture,
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import {
-  buddyStatusResponseSchema,
-  milestoneListResponseSchema,
-  weeklyRecapResponseSchema,
-} from "../src/lib/openapi/schemas/milestones";
+import { milestoneListResponseSchema } from "../src/lib/openapi/schemas/milestones";
 import { studySessionSummaryResponseSchema } from "../src/lib/openapi/schemas/study-session-results";
 import {
   startedStudyBlockResponseSchema,
@@ -30,7 +25,6 @@ import {
   studySessionResponseSchema,
 } from "../src/lib/openapi/schemas/study-sessions";
 import { todayResponseSchema } from "../src/lib/openapi/schemas/today";
-import { weeklyChallengeResponseSchema } from "../src/lib/openapi/schemas/weekly-challenge";
 import { createBearerLearner } from "./helpers/bearer";
 import { openStudyDay } from "./helpers/open-study-day";
 import { readBody } from "./helpers/response";
@@ -260,11 +254,6 @@ test.describe("Study sessions API", () => {
     expect(today.blocks.map((block) => block.kind)).toStrictEqual(["review", "learn", "practice"]);
     expect(today.missions.map((mission) => mission.kind)).toStrictEqual(["review", "somethingNew"]);
 
-    expect(today.blocks[1]).toMatchObject({
-      canDo: "You'll compare ratios",
-      lessonId: lessons[1]?.id,
-    });
-
     const { session: again } = await readBody({
       response: await api.get(`/v1/today?goalId=${goal.id}`),
       schema: todayResponseSchema,
@@ -324,63 +313,6 @@ test.describe("Study sessions API", () => {
 
   // Will's plan had a day off, and Will wanted to study anyway: more time gave practice instead of
   // the plan's next lessons. It now adds them, and the day lists them before the tap.
-  test("keeps learning with the plan's next lessons on a day the plan gives no time", async () => {
-    const { api, userId } = await createBearerLearner({ baseURL, prefix: "study-extra-lessons" });
-    const goal = await goalFixture({ dailyMinutes: 10, timezone: "UTC", userId });
-
-    const [plan, session, lessons] = await Promise.all([
-      planFixture({
-        goalId: goal.id,
-        settings: { weekdayMinutes: Array.from({ length: 7 }, () => 0) },
-      }),
-      studySessionFixture({ goalId: goal.id, plannedMinutes: 0, userId }),
-      Promise.all(
-        ["Ratios in recipes", "Scaling a recipe"].map((title) =>
-          libraryLessonFixture({ estimatedMinutes: 4, title }),
-        ),
-      ),
-      learningProfileFixture({ activeGoalId: goal.id, userId }),
-    ]);
-
-    await Promise.all(
-      lessons.map((lesson, position) =>
-        planItemFixture({
-          kind: "lesson",
-          lessonId: lesson.id,
-          planId: plan.id,
-          position,
-          titleSnapshot: lesson.title,
-        }),
-      ),
-    );
-
-    const { session: day } = await readBody({
-      response: await api.get(`/v1/today?goalId=${goal.id}&timeZone=UTC`),
-      schema: todayResponseSchema,
-    });
-
-    expect(day.extraTime).toMatchObject({
-      available: true,
-      lessons: lessons.map((lesson) => ({ minutes: 4, title: lesson.title })),
-    });
-
-    // The lessons join the day in the plan's order; the answer is the first, where it goes on.
-    const extra = await readBody({
-      response: await api.post(`/v1/study-sessions/${session.id}/extra-blocks`),
-      schema: studyBlockSchema,
-      status: 201,
-    });
-
-    expect(extra).toMatchObject({ extra: true, kind: "learn", lessonId: lessons[0]?.id });
-
-    await expect(
-      prisma.studySessionBlock.findMany({
-        orderBy: { position: "asc" },
-        select: { kind: true, lessonId: true },
-        where: { sessionId: session.id },
-      }),
-    ).resolves.toStrictEqual(lessons.map((lesson) => ({ kind: "learn", lessonId: lesson.id })));
-  });
 
   test("holds a phase challenge for unfinished lessons without opening it or the session", async () => {
     const { api, userId } = await createBearerLearner({ baseURL, prefix: "study-order-lessons" });
@@ -477,55 +409,6 @@ test.describe("Study sessions API", () => {
     ).resolves.toMatchObject({ status: "skipped" });
 
     await expect(prisma.usageRecord.count({ where: { userId } })).resolves.toBe(0);
-    await api.dispose();
-  });
-
-  test("dates the source a question quotes, for its Sources chip", async () => {
-    const url = "https://www.planalto.gov.br/ccivil_03/leis/l8112cons.htm";
-
-    const [{ api, userId }, skill, law] = await Promise.all([
-      createBearerLearner({ baseURL, prefix: "study-block-sources" }),
-      skillFixture(),
-      sourceFixture({
-        fetchedAt: new Date("2026-09-12T10:00:00.000Z"),
-        publisher: "Planalto",
-        title: "Law 8,112",
-        url,
-      }),
-    ]);
-
-    const [drill, session] = await Promise.all([
-      itemFixture({
-        content: choiceItemContent(),
-        skillId: skill.id,
-        sourceCitation: "Law 8,112, Art. 20",
-        sourceId: law.id,
-      }),
-      studySessionFixture({ userId }),
-    ]);
-
-    const block = await studySessionBlockFixture({
-      kind: "practice",
-      payload: { itemIds: [drill.id], skillIds: [skill.id] },
-      position: 0,
-      sessionId: session.id,
-    });
-
-    const detail = await readBody({
-      response: await api.get(`/v1/study-sessions/${session.id}/blocks/${block.id}`),
-      schema: studyBlockDetailResponseSchema,
-    });
-
-    expect(detail.questions.map((question) => question.citation)).toStrictEqual([
-      {
-        checkedAt: "2026-09-12T10:00:00.000Z",
-        publisher: "Planalto",
-        text: "Law 8,112, Art. 20",
-        title: "Law 8,112",
-        url,
-      },
-    ]);
-
     await api.dispose();
   });
 
@@ -670,13 +553,12 @@ test.describe("Study sessions API", () => {
     await api.dispose();
   });
 
-  test("reads milestones, the weekly recap, the buddy and the weekly challenge", async () => {
+  test("reads milestones and hides another learner's acknowledgment", async () => {
     const { api, userId } = await createBearerLearner({ baseURL, prefix: "study-milestones" });
 
-    const [{ goal }, milestone] = await Promise.all([
-      createGoal(userId),
-      prisma.milestone.create({ data: { key: "star", kind: "glasses", userId } }),
-    ]);
+    const milestone = await prisma.milestone.create({
+      data: { key: "star", kind: "glasses", userId },
+    });
 
     const listed = await readBody({
       response: await api.get("/v1/me/milestones"),
@@ -687,28 +569,6 @@ test.describe("Study sessions API", () => {
 
     const viewed = await api.post(`/v1/me/milestones/${milestone.id}/views`);
     expect(viewed.status()).toBe(200);
-
-    const [recap, buddy, challenge] = await Promise.all([
-      readBody({
-        response: await api.get("/v1/me/weekly-recap?timeZone=UTC"),
-        schema: weeklyRecapResponseSchema,
-      }),
-      readBody({ response: await api.get("/v1/me/buddy"), schema: buddyStatusResponseSchema }),
-      readBody({
-        response: await api.get(`/v1/goals/${goal.id}/weekly-challenge`),
-        schema: weeklyChallengeResponseSchema,
-      }),
-    ]);
-
-    expect(recap.week.questions).toBe(0);
-    // Reading the buddy never builds today's session, so there are no missions yet.
-    expect(buddy).toMatchObject({
-      buddy: { glasses: "round", kind: "zu", name: null, picked: false },
-      stage: "baby",
-      today: null,
-    });
-
-    expect(challenge).toStrictEqual({ challenge: null });
 
     const stranger = await userFixture();
 

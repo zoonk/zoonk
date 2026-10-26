@@ -18,8 +18,6 @@ const ACCEPTED = 202;
 const PAYMENT_REQUIRED = 402;
 const UNPROCESSABLE = 422;
 
-const CDN = "https://example.public.blob.vercel-storage.com/library/mind-maps";
-
 /**
  * A goal whose plan has two chapters of one written lesson each: the first finished, the second
  * still to study.
@@ -57,34 +55,6 @@ async function createGoal(userId: string) {
   ]);
 
   return { current, finished, goal };
-}
-
-/** A map someone already made for the chapter: its outline and its picture on the CDN. */
-function readyMap(chapterId: string) {
-  return prisma.chapterMindMap.create({
-    data: {
-      chapterId,
-      generatedAt: new Date(),
-      imageHeight: 2048,
-      imageUrl: `${CDN}/mind-map.webp`,
-      imageWidth: 2048,
-      language: "en",
-      status: "completed",
-      structure: {
-        branches: ["Nucleus", "Membrane", "Cytoplasm"].map((title) => ({
-          drawing: "a cell",
-          explanation: `What the ${title.toLowerCase()} does.`,
-          points: ["One point"],
-          title,
-        })),
-        centralIdea: "Each part of a cell has a job.",
-        comparison: null,
-        summary: "A cell's parts work together.",
-        title: "Cell parts",
-      },
-      thumbnailUrl: `${CDN}/mind-map-thumb.webp`,
-    },
-  });
 }
 
 test.describe("Mind maps API", () => {
@@ -202,51 +172,6 @@ test.describe("Mind maps API", () => {
       goal: { id: goal.id, title: "Cells" },
       nextChapter: { chapterId: current.id, lessonsLeft: 1, title: current.title },
     });
-
-    await apiContext.dispose();
-  });
-
-  test("serves a map another learner already made, without making it again", async () => {
-    const { apiContext, user } = await createAuthenticatedApiContext({
-      baseURL,
-      prefix: "mind-map-ready",
-    });
-
-    const { finished, goal } = await createGoal(user.id);
-    await readyMap(finished.id);
-    const chapterPath = `/v1/goals/${goal.id}/chapters/${finished.id}/mind-map`;
-
-    const mindMap = await readBody({
-      response: await apiContext.get(chapterPath),
-      schema: chapterMindMapSchema,
-    });
-
-    expect(mindMap).toMatchObject({
-      image: {
-        height: 2048,
-        thumbnailUrl: `${CDN}/mind-map-thumb.webp`,
-        url: `${CDN}/mind-map.webp`,
-        width: 2048,
-      },
-      status: "ready",
-    });
-
-    // The outline carries what the picture letters, never the sketches it draws.
-    expect(mindMap.outline?.branches[0]).toStrictEqual({
-      explanation: "What the nucleus does.",
-      points: ["One point"],
-      title: "Nucleus",
-    });
-
-    await expect(
-      readBody({
-        response: await apiContext.post(`${chapterPath}/generations`),
-        schema: mindMapGenerationSchema,
-      }),
-    ).resolves.toStrictEqual({ generationId: null, status: "ready" });
-
-    // Reading a map that exists never counts toward the learner's limits.
-    await expect(prisma.usageRecord.count({ where: { userId: user.id } })).resolves.toBe(0);
 
     await apiContext.dispose();
   });

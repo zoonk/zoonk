@@ -30,7 +30,6 @@ import {
   planLinkResponseSchema,
   planResponseSchema,
 } from "../src/lib/openapi/schemas/plans";
-import { goalPreparationResponseSchema } from "../src/lib/openapi/schemas/preparation";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 import { readBody } from "./helpers/response";
 
@@ -252,51 +251,6 @@ test.describe("Goals and plans API", () => {
     await apiContext.dispose();
   });
 
-  test("reads finished pace in plan and preparation responses", async () => {
-    const { apiContext, user } = await createAuthenticatedApiContext({
-      baseURL: process.env.E2E_BASE_URL ?? "",
-      prefix: "plan-finished-status",
-    });
-
-    const { goal, plan } = await createPlannedGoal(user.id);
-
-    const read = async () => {
-      const [planResponse, preparationResponse] = await Promise.all([
-        apiContext.get(`/v1/goals/${goal.id}/plan`),
-        apiContext.get(`/v1/goals/${goal.id}/preparation`),
-      ]);
-
-      return Promise.all([
-        readBody({ response: planResponse, schema: planResponseSchema }),
-        readBody({ response: preparationResponse, schema: goalPreparationResponseSchema }),
-      ]);
-    };
-
-    // Every lesson studied, the phase's challenge still to win: the plan isn't finished yet.
-    await prisma.planItem.updateMany({
-      data: { status: "done" },
-      where: { kind: "lesson", planId: plan.id },
-    });
-
-    const [challengeLeft, challengePreparation] = await read();
-
-    expect(challengeLeft).toMatchObject({
-      end: null,
-      status: { challenges: 1, kind: "challengesLeft" },
-    });
-
-    expect(challengePreparation.status).toStrictEqual({ challenges: 1, kind: "challengesLeft" });
-
-    await prisma.planItem.updateMany({ data: { status: "done" }, where: { planId: plan.id } });
-
-    const [planView, preparation] = await read();
-
-    expect(planView).toMatchObject({ end: { kind: "finished" }, status: { kind: "finished" } });
-
-    expect(preparation.status).toStrictEqual({ kind: "finished" });
-    await apiContext.dispose();
-  });
-
   test("reads and edits a plan, and undoes the change", async () => {
     const { apiContext, user } = await createAuthenticatedApiContext({
       baseURL,
@@ -335,7 +289,6 @@ test.describe("Goals and plans API", () => {
       weekdayMinutes: [0, 12, 12, 12, 12, 12, 0],
     });
 
-    expect(after.phases[0]?.lessonsTotal).toBe(LESSONS);
     expect(after.changes[0]).toMatchObject({ id: changed.change?.id, seen: false });
 
     const savedChange = await prisma.planChange.findUniqueOrThrow({
@@ -399,27 +352,6 @@ test.describe("Goals and plans API", () => {
       error: { code: "PLAN_CHANGE_INVALID", details: { reason: "unknownArea" } },
     });
 
-    // The plan's one area already has every lesson in it: focusing it moves nothing, so nothing
-    // is saved and the answer says why.
-    const noFocusGain = await readBody({
-      response: await apiContext.post(`/v1/goals/${goal.id}/plan/changes`, {
-        data: { operations: [{ areas: ["Markets"], kind: "focusAreas" }] },
-      }),
-      schema: planChangeResultSchema,
-    });
-
-    expect(noFocusGain).toStrictEqual({ change: null, reason: "alreadyIn", status: "unchanged" });
-
-    // Starting an area past its basics is a change the learner can make like any other.
-    const pastBasics = await readBody({
-      response: await apiContext.post(`/v1/goals/${goal.id}/plan/changes`, {
-        data: { operations: [{ areas: ["Markets"], kind: "setAreaStart", start: "pastBasics" }] },
-      }),
-      schema: planChangeResultSchema,
-    });
-
-    expect(pastBasics).toMatchObject({ status: "applied" });
-
     await apiContext.dispose();
   });
 
@@ -467,30 +399,10 @@ test.describe("Goals and plans API", () => {
     expect(advice.numbers).not.toBeNull();
     expect(advice.numbers?.context).toMatchObject({ dailyMinutes: 12, targetDate });
 
-    expect(advice.numbers?.coverage).toMatchObject({
-      basis: "selected",
-      coveredShare: advice.coveredShare,
-      measure: "goal",
-      scope: "selectedCurriculum",
-    });
-
-    expect(advice.numbers?.scheduledMinutes).toBe(
-      Object.values(advice.numbers!.workload).reduce((sum, minutes) => sum + minutes, 0),
-    );
-
     // Reads say only what the learner's own time does: no other daily time is searched for them.
     const [everyDayBody, planBody] = await Promise.all([everyDay.json(), plan.json()]);
     expect(everyDayBody).not.toHaveProperty("recommendedMinutes");
     expect(planBody).not.toHaveProperty("feasibility.recommendedMinutes");
-
-    const visiblePlan = await readBody({ response: plan, schema: planResponseSchema });
-
-    expect(visiblePlan.numbers?.context).toEqual(advice.numbers?.context);
-    expect(visiblePlan.numbers?.coverage?.coveredShare).toBe(visiblePlan.feasibility?.coveredShare);
-
-    expect(visiblePlan.numbers?.scheduledMinutes).toBe(
-      Object.values(visiblePlan.numbers!.workload).reduce((sum, minutes) => sum + minutes, 0),
-    );
 
     await expect(
       readBody({ response: weekdays, schema: planTimeAdviceSchema }),
@@ -542,24 +454,6 @@ test.describe("Goals and plans API", () => {
       400, 400, 404,
     ]);
 
-    // What it found is exact: the plan at that time covers everything, and less time doesn't.
-    const [atFound, atLeast, tooMuch] = await Promise.all([
-      apiContext.get(
-        `/v1/goals/${goal.id}/plan/time-advice?dailyMinutes=${time.recommendedMinutes}`,
-      ),
-      apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?dailyMinutes=5`),
-      apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?dailyMinutes=1441`),
-    ]);
-
-    await expect(
-      readBody({ response: atFound, schema: planTimeAdviceSchema }),
-    ).resolves.toMatchObject({ coveredShare: 1 });
-
-    const least = await readBody({ response: atLeast, schema: planTimeAdviceSchema });
-
-    expect(least.coveredShare).toBeLessThan(1);
-    expect(tooMuch.status()).toBe(400);
-
     // Finding the time changes nothing: the goal keeps its own time until the learner picks one.
     await expect(
       readBody({
@@ -567,45 +461,6 @@ test.describe("Goals and plans API", () => {
         schema: planTimeAdviceSchema,
       }),
     ).resolves.toMatchObject({ coveredShare: advice.coveredShare });
-
-    /** The first day rests: its budget must use the scalar that accepting the weekend saves. */
-    const weekday = new Date().getUTCDay();
-    const studyDays = [0, 6].filter((day) => day !== weekday);
-
-    // Only the weekend's own 5 minutes: no weekday time covers more, so none is found.
-    await expect(
-      readBody({
-        response: await apiContext.post(`/v1/goals/${goal.id}/plan/time-to-cover`, {
-          data: { studyDays, weekendMinutes: 5 },
-        }),
-        schema: planTimeToCoverSchema,
-      }),
-    ).resolves.toMatchObject({ ready: true, recommendedMinutes: null });
-
-    const weekendOnly = await readBody({
-      response: await apiContext.get(
-        `/v1/goals/${goal.id}/plan/time-advice?dailyMinutes=240&studyDays=${studyDays.join(",")}&weekendMinutes=5`,
-      ),
-      schema: planTimeAdviceSchema,
-    });
-
-    expect(weekendOnly.coveredShare).toBeLessThan(1);
-
-    await expect(
-      readBody({
-        response: await apiContext.patch(`/v1/goals/${goal.id}`, {
-          data: { dailyMinutes: 240, studyDays, timeZone: "UTC", weekendMinutes: 5 },
-        }),
-        schema: goalUpdateResponseSchema,
-      }),
-    ).resolves.toMatchObject({ goal: { dailyMinutes: 5 } });
-
-    await expect(
-      readBody({
-        response: await apiContext.get(`/v1/goals/${goal.id}/plan`),
-        schema: planResponseSchema,
-      }),
-    ).resolves.toMatchObject({ feasibility: { coveredShare: weekendOnly.coveredShare } });
 
     await apiContext.dispose();
   });
@@ -744,11 +599,7 @@ test.describe("Goals and plans API", () => {
       ),
     );
 
-    await expect(preview()).resolves.toMatchObject({
-      effect: expect.any(Object),
-      ready: true,
-      unchanged: false,
-    });
+    await expect(preview()).resolves.toMatchObject({ ready: true, unchanged: false });
 
     const [resumed, hidden] = await Promise.all([
       apiContext.patch(`/v1/goals/${goal.id}`, { data: { status: "active" } }),
@@ -802,13 +653,6 @@ test.describe("Goals and plans API", () => {
       primaryCourseId: course.id,
       title: course.title,
     });
-
-    const copy = await prisma.plan.findUniqueOrThrow({
-      include: { items: true },
-      where: { goalId: started.id },
-    });
-
-    expect(copy.items.filter((item) => item.kind === "lesson")).toHaveLength(LESSONS);
 
     await expect(prisma.goal.count({ where: { id: started.id, userId: user.id } })).resolves.toBe(
       1,

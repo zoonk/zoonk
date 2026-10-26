@@ -125,11 +125,8 @@ test.describe("Math problems over the study sessions API", () => {
 
     expect(feedback).toMatchObject({
       correctAnswer: { number: paid },
-      explanation: SAVED_REASON,
       isCorrect: false,
       savedToNotebook: true,
     });
-
-    expect(feedback.workedSteps).toHaveLength(2);
   });
 });

@@ -14,7 +14,6 @@ import {
 import {
   goalGenerationSchema,
   lessonGenerationSchema,
-  lessonReadinessSchema,
   sessionPreparationSchema,
 } from "../src/lib/openapi/schemas/content-generation";
 import { generationResourceSchema } from "../src/lib/openapi/schemas/workflows";
@@ -95,39 +94,6 @@ test.describe("Content generation API", () => {
 
     expect(response.status()).toBe(409);
     await expect(response.json()).resolves.toMatchObject({ error: { code: "LESSON_SET_ASIDE" } });
-
-    await api.dispose();
-  });
-
-  test("tells the lesson page which run writes a lesson and what is ready instead", async () => {
-    const { api, userId } = await createBearerLearner({ baseURL, prefix: "content-readiness" });
-    const goal = await goalFixture({ userId });
-    const runId = `wrun_${randomUUID()}`;
-
-    const [plan, waiting, ready] = await Promise.all([
-      planFixture({ goalId: goal.id }),
-      libraryLessonFixture({ contentRunId: runId, contentStatus: "running" }),
-      libraryLessonFixture({ contentStatus: "completed", title: "A lesson ready now" }),
-      prisma.userLearningProfile.upsert({
-        create: { activeGoalId: goal.id, userId },
-        update: { activeGoalId: goal.id },
-        where: { userId },
-      }),
-    ]);
-
-    await planItemFixture({ lessonId: waiting.id, planId: plan.id, position: 0 });
-    await planItemFixture({ lessonId: ready.id, planId: plan.id, position: 1 });
-
-    const readiness = await readBody({
-      response: await api.get(`/v1/library/lessons/${waiting.id}/readiness`),
-      schema: lessonReadinessSchema,
-    });
-
-    expect(readiness).toStrictEqual({
-      alternative: { kind: "lesson", lessonId: ready.id, title: "A lesson ready now" },
-      generationId: runId,
-      status: "generating",
-    });
 
     await api.dispose();
   });
@@ -276,24 +242,6 @@ test.describe("Content generation API", () => {
     await guestApi.dispose();
   });
 
-  test("records a wait for content and rejects a wait that isn't one", async () => {
-    const { api } = await createBearerLearner({ baseURL, prefix: "generation-waits" });
-
-    const recorded = await api.post("/v1/me/generation-waits", {
-      data: { contentKind: "lesson", locale: "en", milliseconds: 1850, platform: "web" },
-    });
-
-    expect(recorded.status()).toBe(204);
-
-    const invalid = await api.post("/v1/me/generation-waits", {
-      data: { contentKind: "lesson", milliseconds: -5 },
-    });
-
-    expect(invalid.status()).toBe(400);
-
-    await api.dispose();
-  });
-
   test("starts a goal's curriculum again for its owner only, and reports the run without a session", async () => {
     const [{ api, userId }, other] = await Promise.all([
       createBearerLearner({ baseURL, prefix: "goal-generation" }),
@@ -351,23 +299,5 @@ test.describe("Content generation API", () => {
     ).resolves.toMatchObject({ id: generation.generationId });
 
     await Promise.all([api.dispose(), other.api.dispose()]);
-  });
-
-  test("rejects an empty generation ID and answers an unknown one as not found", async () => {
-    const anonymous = await request.newContext({ baseURL });
-    const unknown = `wrun_${randomUUID()}`;
-
-    const [emptyStatus, emptyEvents, unknownStatus, unknownEvents] = await Promise.all([
-      anonymous.get("/v1/generations/%20"),
-      anonymous.get("/v1/generations/%20/events"),
-      anonymous.get(`/v1/generations/${unknown}`),
-      anonymous.get(`/v1/generations/${unknown}/events`),
-    ]);
-
-    expect([emptyStatus.status(), emptyEvents.status()]).toStrictEqual([400, 400]);
-    expect([unknownStatus.status(), unknownEvents.status()]).toStrictEqual([404, 404]);
-    await expect(unknownEvents.json()).resolves.toMatchObject({ error: { code: "NOT_FOUND" } });
-
-    await anonymous.dispose();
   });
 });

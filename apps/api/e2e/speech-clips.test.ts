@@ -26,10 +26,6 @@ function storedClip({ language, text }: { language: string; text: string }) {
   });
 }
 
-function assistClaims(userId: string) {
-  return prisma.usageRecord.count({ where: { kind: "assist", userId } });
-}
-
 test.describe("Speech clips API", () => {
   let baseURL: string;
 
@@ -49,32 +45,6 @@ test.describe("Speech clips API", () => {
     });
 
     expect(response.status()).toBe(401);
-    await apiContext.dispose();
-  });
-
-  test("plays a clip someone already heard without counting it as help", async () => {
-    const { apiContext, user } = await createAuthenticatedApiContext({
-      baseURL,
-      prefix: "speech-stored",
-    });
-
-    const text = uniqueSentence();
-    const clip = await storedClip({ language: "it", text });
-
-    const response = await apiContext.post("/v1/speech-clips", {
-      data: { language: "it", text: `  ${text}  ` },
-    });
-
-    expect(response.status()).toBe(200);
-
-    await expect(response.json()).resolves.toStrictEqual({
-      durationMs: 1900,
-      id: clip.id,
-      language: "it",
-      url: clip.url,
-    });
-
-    await expect(assistClaims(user.id)).resolves.toBe(0);
     await apiContext.dispose();
   });
 

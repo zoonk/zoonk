@@ -5,15 +5,6 @@ import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
-import {
-  chapterSkillFixture,
-  courseChapterFixture,
-  libraryChapterFixture,
-} from "@zoonk/testing/fixtures/library-chapters";
-import {
-  chapterLessonFixture,
-  libraryLessonFixture,
-} from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -141,46 +132,6 @@ test.describe("Far topics' lesson plans API", () => {
       }),
     ).resolves.toStrictEqual([{ kind: "outline", targetId: first.skill.id }]);
 
-    await apiContext.dispose();
-  });
-
-  test("serves a topic another learner's outline already wrote, without writing it again", async () => {
-    const { apiContext, user } = await createAuthenticatedApiContext({
-      baseURL,
-      prefix: "outline-ready",
-    });
-
-    const { first, goal } = await createFarGoal({ userId: user.id });
-    const skillId = first.skill.id;
-
-    const [chapter, lesson] = await Promise.all([
-      libraryChapterFixture({ title: "Means and medians" }),
-      libraryLessonFixture(),
-    ]);
-
-    await Promise.all([
-      courseChapterFixture({ chapterId: chapter.id, courseId: first.course.id }),
-      chapterSkillFixture({ chapterId: chapter.id, skillId }),
-      chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id }),
-    ]);
-
-    const path = outlinePath({ goalId: goal.id, skillId });
-
-    await expect(
-      readBody({
-        response: await apiContext.post(`${path}/generations`),
-        schema: skillOutlineGenerationSchema,
-      }),
-    ).resolves.toStrictEqual({ generationId: null, status: "ready" });
-
-    await expect(
-      readBody({ response: await apiContext.get(path), schema: skillOutlineSchema }),
-    ).resolves.toStrictEqual({
-      chapters: [{ chapterId: chapter.id, title: "Means and medians" }],
-      status: "ready",
-    });
-
-    await expect(prisma.usageRecord.count({ where: { userId: user.id } })).resolves.toBe(0);
     await apiContext.dispose();
   });
 

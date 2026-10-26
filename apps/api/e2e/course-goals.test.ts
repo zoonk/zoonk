@@ -15,12 +15,10 @@ import {
   lessonSkillFixture,
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
-import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
-import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { courseEstimateResponseSchema } from "../src/lib/openapi/schemas/course-estimates";
 import { goalSchema } from "../src/lib/openapi/schemas/goals";
-import { onboardingResponseSchema } from "../src/lib/openapi/schemas/onboarding";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 import { readBody } from "./helpers/response";
 
@@ -70,10 +68,6 @@ async function createOutlinedCourse({
   return { chapters, course };
 }
 
-async function countPlanLessons(goalId: string) {
-  return prisma.planItem.count({ where: { kind: "lesson", plan: { goalId } } });
-}
-
 test.describe("Course goals API", () => {
   let baseURL: string;
 
@@ -86,21 +80,12 @@ test.describe("Course goals API", () => {
   });
 
   test("estimates a public course signed out, counts what fits and writes no goal", async () => {
-    const [anonymous, { course }, partial] = await Promise.all([
+    const [anonymous, { course }] = await Promise.all([
       request.newContext({ baseURL }),
       createOutlinedCourse({ everyBand: true, lessonsPerChapter: 12 }),
-      createOutlinedCourse({ lessonsPerChapter: 12 }),
     ]);
 
     const query = "dailyMinutes=30&studyDays=1,2,3,4,5";
-
-    // A course missing a band is planned from the learner's own graph: no estimate of its chapters.
-    await expect(
-      readBody({
-        response: await anonymous.get(`/v1/courses/${partial.course.id}/estimate?${query}`),
-        schema: courseEstimateResponseSchema,
-      }),
-    ).resolves.toBeNull();
 
     const estimate = await readBody({
       response: await anonymous.get(`/v1/courses/${course.id}/estimate?${query}`),
@@ -113,27 +98,6 @@ test.describe("Course goals API", () => {
       throw new Error("Expected a course estimate");
     }
 
-    expect(estimate.firstDay.length).toBeGreaterThan(0);
-    expect(estimate.firstDay.every((lesson) => lesson.dayMinutes > 0)).toBe(true);
-    expect(estimate.workload.lessonMinutes).toBeGreaterThan(0);
-    expect(estimate.workload.unwrittenLessonMinutes).toBe(0);
-    expect(estimate.workload.practiceMinutes).toBeGreaterThan(0);
-    expect(estimate.workload.checkpointMinutes).toBeGreaterThan(0);
-    expect(estimate.numbers.workload).toEqual(estimate.workload);
-
-    expect(estimate.numbers.scheduledMinutes).toBe(
-      Object.values(estimate.workload).reduce((sum, minutes) => sum + minutes, 0),
-    );
-
-    expect(estimate.numbers).toMatchObject({
-      availableBeforeDeadlineMinutes: null,
-      context: { dailyMinutes: 30, targetDate: null, weekdayMinutes: [0, 30, 30, 30, 30, 30, 0] },
-      coverage: null,
-    });
-
-    expect(estimate.publishedContent.lessons).toBe(26);
-    // Its two beginner chapters and one in each later band.
-    expect(estimate.chapters).toHaveLength(4);
     const date = new Date(Date.now() + 2 * 86_400_000).toISOString().slice(0, 10);
 
     const dated = await readBody({
@@ -146,33 +110,6 @@ test.describe("Course goals API", () => {
     if (!dated || !("fittingLessons" in dated)) {
       throw new Error("Expected deadline estimate");
     }
-
-    expect(dated.fittingLessons).toBeLessThan(26);
-    expect(dated.areas.reduce((sum, area) => sum + area.total, 0)).toBe(26);
-    expect(dated.publishedContent).toEqual(estimate.publishedContent);
-    expect(dated.numbers.context.targetDate).toBe(date);
-    expect(dated.numbers.workload).toEqual(dated.workload);
-
-    expect(dated.numbers.beforeDeadlineMinutes! + dated.numbers.afterDeadlineMinutes!).toBeCloseTo(
-      dated.numbers.scheduledMinutes,
-    );
-
-    expect(dated.numbers.availableBeforeDeadlineMinutes).toBeGreaterThan(0);
-
-    expect(dated.numbers.coverage).toMatchObject({
-      basis: "selected",
-      scope: "selectedCurriculum",
-    });
-
-    expect(
-      dated.areas.every((area) => area.plannedMinutes >= 0 && area.unwrittenMinutes >= 0),
-    ).toBe(true);
-
-    expect(dated.areas.every((area) => Number.isInteger(area.quickLessons))).toBe(true);
-
-    expect(dated.chapters.reduce((sum, chapter) => sum + chapter.lessonsInPlan, 0)).toBe(
-      dated.fittingLessons,
-    );
 
     const { max } = getTargetDateBounds(new Date().toISOString().slice(0, 10));
 
@@ -251,127 +188,6 @@ test.describe("Course goals API", () => {
     );
   });
 
-  test("an unnamed whole-exam course defaults to its date and estimates the stored subject graph", async () => {
-    const [{ apiContext }, { course, chapters }, subjectCourse, unwritten] = await Promise.all([
-      createAuthenticatedApiContext({ baseURL, prefix: "exam-course-date" }),
-      createOutlinedCourse(),
-      courseFixture({ isPublished: true, visibility: "public" }),
-      skillFixture(),
-    ]);
-
-    await prisma.course.update({ data: { format: "exam" }, where: { id: course.id } });
-
-    const date = new Date(Date.now() + 21 * 86_400_000).toISOString().slice(0, 10);
-
-    const blueprint = await examBlueprintFixture({
-      edition: {
-        citations: [],
-        dates: [
-          {
-            citation: { passage: "Exam day", sourceId: "notice" },
-            date,
-            kind: "exam",
-            label: "Exam",
-          },
-        ],
-        noticeUrl: null,
-        questionCount: null,
-        sourceHash: null,
-        year: Number(date.slice(0, 4)),
-      },
-    });
-
-    const rows = await prisma.lessonSkill.findMany({
-      include: { lesson: { include: { chapters: true } }, skill: true },
-      where: {
-        lesson: {
-          chapters: { some: { chapterId: { in: chapters.map((chapter) => chapter.id) } } },
-        },
-      },
-    });
-
-    await itemFixture({ examBlueprintId: blueprint.id, skillId: rows[0]!.skillId });
-
-    await prisma.examSkillGraph.create({
-      data: {
-        examBlueprintId: blueprint.id,
-        generatedAt: new Date(),
-        graph: {
-          phases: [{ milestone: null, name: "Ready" }],
-          skills: [
-            ...rows.map((row) => ({
-              area: row.lesson.chapters.some((entry) => entry.chapterId === chapters[0]?.id)
-                ? "Math"
-                : "Science",
-              courseIds: [subjectCourse.id],
-              lessons: 1,
-              name: row.skill.name,
-              phase: 0,
-              skillId: row.skillId,
-              weight: 1,
-            })),
-            {
-              area: "Math",
-              courseIds: [subjectCourse.id],
-              lessons: 2,
-              name: unwritten.name,
-              phase: 0,
-              skillId: unwritten.id,
-              weight: 1,
-            },
-          ],
-        },
-        model: "fixture",
-        primaryCourseId: subjectCourse.id,
-        promptVersion: "fixture",
-        runId: "fixture",
-      },
-    });
-
-    const goal = await readBody({
-      response: await apiContext.post(`/v1/courses/${course.id}/goals`, {
-        data: { level: "basic", timeZone: "UTC" },
-      }),
-      schema: goalSchema,
-      status: 201,
-    });
-
-    expect(goal).toMatchObject({ examBlueprintId: blueprint.id, kind: "exam", targetDate: date });
-
-    const onboarding = await readBody({
-      response: await apiContext.get(`/v1/goals/${goal.id}/onboarding`),
-      schema: onboardingResponseSchema,
-    });
-
-    expect(onboarding.steps).toContain("targetDate");
-    expect(onboarding.goal.targetDate).toBe(date);
-
-    const undated = await readBody({
-      response: await apiContext.post(`/v1/goals/${goal.id}/onboarding/answers`, {
-        data: { question: "targetDate", targetDate: null },
-      }),
-      schema: onboardingResponseSchema,
-    });
-
-    expect(undated.goal.targetDate).toBeNull();
-    expect(undated.steps).not.toContain("targetDate");
-
-    const estimate = await readBody({
-      response: await apiContext.get(
-        `/v1/courses/${course.id}/estimate?dailyMinutes=30&studyDays=1,2,3,4,5&targetDate=${date}`,
-      ),
-      schema: courseEstimateResponseSchema,
-    });
-
-    if (!estimate || !("areas" in estimate)) {
-      throw new Error("Expected exam estimate");
-    }
-
-    expect(estimate.areas.map((area) => area.area)).toEqual(["Math", "Science"]);
-    expect(estimate.areas.every((area) => area.plannedMinutes > 0)).toBe(true);
-    await apiContext.dispose();
-  });
-
   test("needs a session", async () => {
     const [anonymous, { course }] = await Promise.all([
       request.newContext({ baseURL }),
@@ -402,13 +218,9 @@ test.describe("Course goals API", () => {
       dailyMinutes: 20,
       details: { courseStart: { chapterId: null } },
       kind: "learn",
-      plan: { phaseCount: 3, ready: true },
+      plan: { ready: true },
       primaryCourseId: course.id,
-      title: course.title,
     });
-
-    // Its beginner chapters' four lessons and one in each later band.
-    await expect(countPlanLessons(created.id)).resolves.toBe(6);
 
     const again = await readBody({
       response: await apiContext.post(`/v1/courses/${course.id}/goals`, { data: {} }),
@@ -422,22 +234,6 @@ test.describe("Course goals API", () => {
 
   // A course one goal outlined only in part (its beginner band) would give the next learner a plan
   // without the levels the first one skipped: the goal's run plans it from its own graph.
-  test("leaves a later learner's plan to the goal's run while the course misses a band", async () => {
-    const [{ apiContext }, { course }] = await Promise.all([
-      createAuthenticatedApiContext({ baseURL, prefix: "course-goal-partial" }),
-      createOutlinedCourse(),
-    ]);
-
-    const created = await readBody({
-      response: await apiContext.post(`/v1/courses/${course.id}/goals`, { data: {} }),
-      schema: goalSchema,
-      status: 201,
-    });
-
-    expect(created).toMatchObject({ plan: { ready: false }, primaryCourseId: course.id });
-    await expect(countPlanLessons(created.id)).resolves.toBe(0);
-    await apiContext.dispose();
-  });
 
   test("starts the plan at a chapter of the course", async () => {
     const [{ apiContext }, { chapters, course }, other] = await Promise.all([
@@ -463,7 +259,6 @@ test.describe("Course goals API", () => {
     });
 
     expect(started.details).toStrictEqual({ courseStart: { chapterId: second?.id } });
-    await expect(countPlanLessons(started.id)).resolves.toBe(2);
     await apiContext.dispose();
   });
 

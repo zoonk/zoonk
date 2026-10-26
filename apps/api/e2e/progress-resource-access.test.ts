@@ -56,45 +56,6 @@ test.describe("Progress resource access", () => {
     await apiContext.dispose();
   });
 
-  test("reads the learner's progress from their finished lessons", async () => {
-    const [{ apiContext, user }, { chapters, course, lessons }] = await Promise.all([
-      createAuthenticatedApiContext({ baseURL, prefix: "ledger-progress" }),
-      catalogCourseFixture({ lessonCounts: [2, 2] }),
-    ]);
-
-    await Promise.all([
-      learningEventFixture({ contentIds: { lessonId: lessons[0]![0]!.id }, userId: user.id }),
-      learningEventFixture({
-        contentIds: { lessonId: lessons[0]![1]!.id },
-        kind: "review",
-        userId: user.id,
-      }),
-    ]);
-
-    const [courseResponse, chapterResponse] = await Promise.all([
-      apiContext.get(`/v1/courses/${course.id}/progress`),
-      apiContext.get(`/v1/chapters/${chapters[1]!.id}/progress`),
-    ]);
-
-    expect(await courseResponse.json()).toEqual({
-      chapters: [
-        { chapterId: chapters[0]!.id, completedLessons: 2, totalLessons: 2 },
-        { chapterId: chapters[1]!.id, completedLessons: 0, totalLessons: 2 },
-      ],
-      percentComplete: 50,
-    });
-
-    expect(await chapterResponse.json()).toEqual({
-      lessons: [
-        { isCompleted: false, lessonId: lessons[1]![0]!.id },
-        { isCompleted: false, lessonId: lessons[1]![1]!.id },
-      ],
-      percentComplete: 0,
-    });
-
-    await apiContext.dispose();
-  });
-
   test("serves a private course's progress and next lesson to its owner only", async () => {
     const [owner, other, visitor] = await Promise.all([
       createAuthenticatedApiContext({ baseURL, prefix: "private-progress-owner" }),

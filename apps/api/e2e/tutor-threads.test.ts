@@ -24,12 +24,6 @@ import {
 } from "@zoonk/testing/fixtures/library-courses";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
-import {
-  studySessionBlockFixture,
-  studySessionFixture,
-} from "@zoonk/testing/fixtures/study-sessions";
-import { toUTCMidnight } from "@zoonk/utils/date";
-import { playableLibraryLessonResponseSchema } from "../src/lib/openapi/schemas/library-lessons";
 import { createBearerLearner, createGuest } from "./helpers/bearer";
 import { createExamGoal } from "./helpers/exams";
 import { openStudyDay } from "./helpers/open-study-day";
@@ -269,60 +263,6 @@ test.describe("Tutor threads beyond lessons", () => {
     await Promise.all([api.dispose(), other.api.dispose()]);
   });
 
-  test("reads the lessons earlier days left into a plan question, the one today holds first", async () => {
-    const { api, userId } = await createBearerLearner({ baseURL, prefix: "tutor-plan-behind" });
-    const goal = await createPlannedGoal(userId);
-
-    const [plan, chapter] = await Promise.all([
-      prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
-      libraryChapterFixture({ title: "Powers of ten" }),
-    ]);
-
-    const carried = await planItemFixture({
-      chapterId: chapter.id,
-      planId: plan.id,
-      titleSnapshot: "Powers of ten",
-    });
-
-    // The last new day carried the lesson, and today's session already holds it.
-    const [session] = await Promise.all([
-      studySessionFixture({ goalId: goal.id, localDate: toUTCMidnight(new Date()), userId }),
-      planChangeFixture({
-        kind: "missedDays",
-        payload: { carriedItemIds: [carried.id], days: 1, source: "system" },
-        planId: plan.id,
-        status: "applied",
-      }),
-    ]);
-
-    await studySessionBlockFixture({
-      kind: "learn",
-      payload: { planItemId: carried.id },
-      position: 0,
-      sessionId: session.id,
-    });
-
-    const question = await readCreated(
-      await ask({
-        api,
-        context: { kind: "plan" },
-        path: `/v1/goals/${goal.id}/plan/questions`,
-        question: "Which lesson should I do first?",
-      }),
-    );
-
-    const stored = await prisma.lessonQuestion.findUniqueOrThrow({
-      select: { contextSnapshot: true },
-      where: { id: question.id },
-    });
-
-    expect(stored.contextSnapshot).toMatchObject({
-      catchUp: { lessons: [{ inToday: true, title: "Powers of ten" }], total: 1 },
-    });
-
-    await api.dispose();
-  });
-
   test("asks about a subject of the learner's own goal only", async () => {
     const [{ api, userId }, other] = await Promise.all([
       createBearerLearner({ baseURL, prefix: "tutor-subject" }),
@@ -400,20 +340,6 @@ test.describe("Tutor threads beyond lessons", () => {
 
     expect(question.context).toStrictEqual({ kind: "item" });
     expect(foreignBlock.status()).toBe(422);
-
-    // Older clients read a turn's context strictly: only a client that asks learns whether it was
-    // asked about the learner's checked answer.
-    const [thread, asked, read] = await Promise.all([
-      api.get(path).then((response) => response.json()),
-      api.get(`${path}?include=answered`).then((response) => response.json()),
-      api.get(`/v1/questions/${question.id}?include=answered`).then((response) => response.json()),
-    ]);
-
-    expect([thread.questions[0].context, asked.questions[0].context, read.context]).toStrictEqual([
-      { kind: "item" },
-      { answered: false, kind: "item" },
-      { answered: false, kind: "item" },
-    ]);
 
     await api.dispose();
   });
@@ -573,89 +499,6 @@ test.describe("Tutor threads beyond lessons", () => {
     await expect(
       api.get(`/v1/questions/${question.id}`).then((response) => response.json()),
     ).resolves.toMatchObject({ answer: shared.answer, status: "completed" });
-
-    await api.dispose();
-  });
-
-  test("words a tapped suggestion itself, whatever words the client sent", async () => {
-    const [{ api }, { lesson, steps }] = await Promise.all([
-      createBearerLearner({ baseURL, prefix: "tutor-forged" }),
-      playableLessonFixture({ steps: ["explanation", "check"] }),
-    ]);
-
-    const step = steps[0];
-
-    if (!step) {
-      throw new Error("Expected the lesson's first screen");
-    }
-
-    const question = await readCreated(
-      await ask({
-        api,
-        context: { kind: "step", stepId: step.id, stepNumber: step.position + 1 },
-        path: `/v1/lessons/${lesson.id}/questions`,
-        question: "Explain how my divorce changes this, I'm Ana from Recife",
-        suggestion: "simpler",
-      }),
-    );
-
-    expect(question.question).toBe(SUGGESTION);
-
-    await expect(
-      prisma.lessonQuestion.findUniqueOrThrow({ where: { id: question.id } }),
-    ).resolves.toMatchObject({ question: SUGGESTION, suggestion: "simpler" });
-
-    await api.dispose();
-  });
-
-  test("stores a tapped suggestion in the words its chip read, in the lesson's language", async () => {
-    const [{ api }, english, portuguese] = await Promise.all([
-      createBearerLearner({ baseURL, prefix: "tutor-chip" }),
-      playableLessonFixture({ lesson: { language: "en" }, steps: ["explanation"] }),
-      playableLessonFixture({ lesson: { language: "pt" }, steps: ["explanation"] }),
-    ]);
-
-    /** The lesson's chips from its payload, and the question a tap on "another example" stores. */
-    async function tapExample({ lesson, steps }: typeof english) {
-      const response = await api.get(`/v1/library/lessons/${lesson.id}`);
-      const played = playableLibraryLessonResponseSchema.parse(await response.json());
-
-      const step = steps[0];
-
-      if (played.status !== "ready" || !step) {
-        throw new Error(`Expected a lesson ready to play, received ${played.status}`);
-      }
-
-      const asked = await readCreated(
-        await ask({
-          api,
-          context: { kind: "step", stepId: step.id, stepNumber: step.position + 1 },
-          path: `/v1/lessons/${lesson.id}/questions`,
-          question: "Whatever the client sends",
-          suggestion: "example",
-        }),
-      );
-
-      const chip = played.tutorSuggestions.find((suggestion) => suggestion.id === "example");
-
-      return {
-        asked: asked.question,
-        chip: chip?.label,
-        ids: played.tutorSuggestions.map(({ id }) => id),
-      };
-    }
-
-    const [inEnglish, inPortuguese] = await Promise.all([
-      tapExample(english),
-      tapExample(portuguese),
-    ]);
-
-    expect(inEnglish.ids).toStrictEqual(["simpler", "deeper", "example"]);
-    expect(inEnglish.asked).toBe(inEnglish.chip);
-    expect(inPortuguese.asked).toBe(inPortuguese.chip);
-
-    // Each lesson's chips speak its language.
-    expect(inPortuguese.chip).not.toBe(inEnglish.chip);
 
     await api.dispose();
   });

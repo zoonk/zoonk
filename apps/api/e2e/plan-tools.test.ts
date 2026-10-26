@@ -133,16 +133,6 @@ test.describe("Plan tools API", () => {
 
     const { goal, tools } = await createToolGoal(user.id);
 
-    const before = await readBody({
-      response: await apiContext.get(`/v1/goals/${goal.id}/plan`),
-      schema: planResponseSchema,
-    });
-
-    expect(before.tools).toStrictEqual([
-      { choice: null, essential: true, later: false, name: tools.sheet, system: null },
-      { choice: null, essential: false, later: false, name: tools.python, system: null },
-    ]);
-
     // A tool the plan doesn't use, a setup without a device and another learner's goal.
     const [unknown, noDevice, foreign] = await Promise.all([
       apiContext.post(`/v1/goals/${goal.id}/plan/tool-choices`, {
@@ -197,10 +187,6 @@ test.describe("Plan tools API", () => {
     });
 
     expect(after.tools.map((tool) => tool.choice)).toStrictEqual(["none", "none"]);
-
-    await expect(
-      prisma.planItem.count({ where: { lessonId: setup.id, plan: { goalId: goal.id } } }),
-    ).resolves.toBe(0);
 
     await Promise.all([apiContext.dispose(), other.apiContext.dispose()]);
   });

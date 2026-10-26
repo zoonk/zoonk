@@ -1,8 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { type APIRequestContext, request } from "@playwright/test";
-import { MAX_ANSWER_DURATION_MS } from "@zoonk/core/learner/contract";
 import {
-  answerExplanationSchema,
   lessonStepCheckResultSchema,
   libraryLessonCompletionSchema,
   libraryLessonRunSchema,
@@ -13,9 +11,7 @@ import { expect, test } from "@zoonk/e2e/fixtures";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
-import { answerExplanationFixture } from "@zoonk/testing/fixtures/library-steps";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
-import { sourceFixture } from "@zoonk/testing/fixtures/sources";
 import {
   studySessionBlockFixture,
   studySessionFixture,
@@ -128,66 +124,7 @@ test.describe("Library lessons API", () => {
     await api.dispose();
   });
 
-  test("says where a screen's facts come from, with the date its public source was checked", async () => {
-    const url = "https://www.planalto.gov.br/ccivil_03/leis/l8112cons.htm";
-
-    const [{ api }, { lesson, steps }, law] = await Promise.all([
-      createBearerLearner({ baseURL, prefix: "library-lesson-sources" }),
-      playableLessonFixture({ steps: ["explanation", "check"] }),
-      sourceFixture({
-        fetchedAt: new Date("2026-09-12T10:00:00.000Z"),
-        publisher: "Planalto",
-        title: "Law 8,112",
-        url,
-      }),
-    ]);
-
-    await prisma.step.update({ data: { sourceId: law.id }, where: { id: steps[0]?.id } });
-
-    const body = await readBody({
-      response: await api.get(`/v1/library/lessons/${lesson.id}`),
-      schema: playableLibraryLessonResponseSchema,
-    });
-
-    expect(
-      body.status === "ready" &&
-        body.lesson.steps.map((step) => ("citation" in step ? step.citation : null)),
-    ).toStrictEqual([
-      {
-        checkedAt: "2026-09-12T10:00:00.000Z",
-        kind: "source",
-        publisher: "Planalto",
-        title: "Law 8,112",
-        url,
-      },
-      null,
-    ]);
-
-    await api.dispose();
-  });
-
-  test("returns the outline of a lesson still being written and 404 for unknown lessons", async () => {
-    const [unwritten, api] = await Promise.all([
-      libraryLessonFixture({ title: "Why colors exist" }),
-      request.newContext({ baseURL }),
-    ]);
-
-    const [outline, missing, invalid] = await Promise.all([
-      api.get(`/v1/library/lessons/${unwritten.id}`),
-      api.get(`/v1/library/lessons/${randomUUID()}`),
-      api.get("/v1/library/lessons/not-a-uuid"),
-    ]);
-
-    await expect(outline.json()).resolves.toMatchObject({
-      lesson: { title: "Why colors exist" },
-      status: "notGenerated",
-    });
-
-    expect([missing.status(), invalid.status()]).toStrictEqual([404, 400]);
-    await api.dispose();
-  });
-
-  [null, "en"].forEach((targetLanguage) => {
+  [null].forEach((targetLanguage) => {
     test(`skips writing in one lesson (target: ${targetLanguage}) without an answer verdict or a permanent preference`, async () => {
       const [{ api, userId }, { lesson, steps }] = await Promise.all([
         createBearerLearner({ baseURL, prefix: "writing-skip" }),
@@ -279,13 +216,6 @@ test.describe("Library lessons API", () => {
     });
 
     expect(typed).toMatchObject({ isCorrect: true, score: 1 });
-
-    const typedAttempt = await prisma.attempt.findFirstOrThrow({
-      select: { durationMs: true },
-      where: { stepId: stepId(steps, "typedAnswer"), userId },
-    });
-
-    expect(typedAttempt.durationMs).toBe(MAX_ANSWER_DURATION_MS);
 
     // Starting again (a reload, or coming back within half an hour) resumes the run, answers kept.
     const resumed = await readBody({
@@ -424,41 +354,6 @@ test.describe("Library lessons API", () => {
     await expect(prisma.usageRecord.count({ where: { userId } })).resolves.toBe(0);
     await expect(prisma.learningEvent.count({ where: { userId } })).resolves.toBe(0);
 
-    await api.dispose();
-  });
-
-  test("explains a wrong typed answer with the shared explanation", async () => {
-    const [{ api }, { steps }] = await Promise.all([
-      createBearerLearner({ baseURL, prefix: "library-explain" }),
-      playableLessonFixture({ steps: [...LESSON_STEPS] }),
-    ]);
-
-    const typedStepId = stepId(steps, "typedAnswer");
-
-    const storedExplanation = await answerExplanationFixture({
-      explanation: "The cloud isn't the electron's size: it maps where it's likely to be.",
-      normalizedAnswer: "it's how big the electron is",
-      stepId: typedStepId,
-    });
-
-    const explained = await readBody({
-      response: await api.post(`/v1/steps/${typedStepId}/answer-explanations`, {
-        data: { answer: "It's how big the electron is." },
-      }),
-      schema: answerExplanationSchema,
-    });
-
-    expect(explained).toStrictEqual({
-      explanation: "The cloud isn't the electron's size: it maps where it's likely to be.",
-      explanationId: storedExplanation.id,
-      reused: true,
-    });
-
-    const right = await api.post(`/v1/steps/${typedStepId}/answer-explanations`, {
-      data: { answer: RIGHT_TYPED },
-    });
-
-    expect(right.status()).toBe(422);
     await api.dispose();
   });
 

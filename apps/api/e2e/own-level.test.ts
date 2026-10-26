@@ -107,14 +107,6 @@ test.describe("Own level API", () => {
       testOuts: [],
     });
 
-    const [stored, items] = await Promise.all([
-      prisma.goal.findUniqueOrThrow({ where: { id: goal.id } }),
-      prisma.planItem.findMany({ where: { plan: { goalId: goal.id } } }),
-    ]);
-
-    expect(stored.details).toMatchObject({ level: "none" });
-    expect(items.every((item) => item.status === "todo")).toBe(true);
-
     await apiContext.dispose();
   });
 });

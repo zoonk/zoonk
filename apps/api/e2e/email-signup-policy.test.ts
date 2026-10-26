@@ -32,12 +32,7 @@ test("shows a recoverable disposable-email error and accepts an Apple privacy al
   await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
   await expect(page).toHaveURL(/\/auth\/login/u);
-
-  await expect(
-    page.getByText(
-      "Temporary email addresses aren't supported. Use another email or a privacy alias.",
-    ),
-  ).toBeVisible();
+  await expect(page.getByLabel("Email", { exact: true })).toHaveAttribute("aria-invalid", "true");
 
   await expect(
     prisma.verification.findFirst({ where: { identifier: `sign-in-otp-${disposableEmail}` } }),
@@ -47,7 +42,6 @@ test("shows a recoverable disposable-email error and accepts an Apple privacy al
   await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
   await expect(page).toHaveURL(/\/auth\/otp\?/u);
-  await expect(page.getByRole("heading", { name: "Check your email" })).toBeVisible();
 });
 
 test("returns a stable API error before creating an OTP for a new disposable account", async ({

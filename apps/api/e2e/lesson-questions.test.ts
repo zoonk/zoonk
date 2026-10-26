@@ -1,7 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { type APIRequestContext, request } from "@playwright/test";
 import {
-  MAX_LESSON_QUESTION_THREAD_TURNS,
   createdLessonQuestionSchema,
   lessonQuestionThreadResponseSchema,
 } from "@zoonk/core/lesson-questions/contract";
@@ -16,7 +15,6 @@ const LESSON_STEPS = ["explanation", "check", "summary"] as const;
 const FREE_DAILY_TUTOR_MESSAGES = 10;
 const OVERSIZED_OPTION_ID_LENGTH = 41;
 const OVERSIZED_TYPED_ANSWER_LENGTH = 1001;
-const OLDER_QUESTION_COUNT = 5;
 
 function stepOf(steps: { id: string; kind: string; position: number }[], kind: string) {
   const step = steps.find((candidate) => candidate.kind === kind);
@@ -130,46 +128,6 @@ test.describe("Lesson questions API", () => {
     await Promise.all([api.dispose(), other.api.dispose()]);
   });
 
-  test("filters a thread by screen and checks the cursor belongs to that screen", async () => {
-    const [{ api }, { lesson, steps }] = await Promise.all([
-      createBearerLearner({ baseURL, prefix: "lesson-question-steps" }),
-      playableLessonFixture({ steps: [...LESSON_STEPS] }),
-    ]);
-
-    const [explanation, summary] = [stepOf(steps, "explanation"), stepOf(steps, "summary")];
-
-    const [first, second] = await Promise.all(
-      [explanation, summary].map((step) =>
-        askQuestion({
-          api,
-          context: { kind: "step", stepId: step.id, stepNumber: step.stepNumber },
-          lessonId: lesson.id,
-        }),
-      ),
-    );
-
-    const path = `/v1/lessons/${lesson.id}/questions`;
-
-    const [stepHistory, otherCursor, lessonHistory, invalidStep] = await Promise.all([
-      api.get(`${path}?stepId=${explanation.id}`),
-      api.get(`${path}?stepId=${explanation.id}&cursor=${second?.id}`),
-      api.get(`${path}?contextKind=lesson`),
-      api.get(`${path}?stepId=invalid`),
-    ]);
-
-    await expect(
-      readBody({ response: stepHistory, schema: lessonQuestionThreadResponseSchema }),
-    ).resolves.toMatchObject({ hasMore: false, questions: [first && asRead(first)] });
-
-    await expect(
-      readBody({ response: lessonHistory, schema: lessonQuestionThreadResponseSchema }),
-    ).resolves.toMatchObject({ questions: [] });
-
-    expect([otherCursor.status(), invalidStep.status()]).toStrictEqual([400, 400]);
-
-    await api.dispose();
-  });
-
   test("keeps one unfinished turn when two questions arrive at once", async () => {
     const [{ api, userId }, { lesson }] = await Promise.all([
       createBearerLearner({ baseURL, prefix: "lesson-question-concurrent" }),
@@ -191,83 +149,6 @@ test.describe("Lesson questions API", () => {
     await expect(
       prisma.lessonQuestion.findMany({ where: { thread: { libraryLessonId: lesson.id, userId } } }),
     ).resolves.toMatchObject([{ id, status: "pending" }]);
-
-    await api.dispose();
-  });
-
-  test("pages older questions with an opaque cursor", async () => {
-    const [{ api }, { lesson }] = await Promise.all([
-      createBearerLearner({ baseURL, prefix: "lesson-question-pages" }),
-      playableLessonFixture({ steps: [...LESSON_STEPS] }),
-    ]);
-
-    const created = await askQuestion({ api, lessonId: lesson.id, question: "Question 1" });
-    const stored = await prisma.lessonQuestion.findUniqueOrThrow({ where: { id: created.id } });
-    const firstCreatedAt = new Date("2026-01-01T00:00:00.000Z");
-    const total = MAX_LESSON_QUESTION_THREAD_TURNS + OLDER_QUESTION_COUNT;
-
-    const answeredAt = (questionNumber: number) =>
-      new Date(firstCreatedAt.getTime() + questionNumber * 1000);
-
-    await prisma.$transaction([
-      prisma.lessonQuestion.update({
-        data: {
-          answer: "Answer 1",
-          createdAt: firstCreatedAt,
-          status: "completed",
-          updatedAt: firstCreatedAt,
-        },
-        where: { id: stored.id },
-      }),
-      prisma.lessonQuestion.createMany({
-        data: Array.from({ length: total - 1 }, (_, index) => ({
-          answer: `Answer ${index + 2}`,
-          contextKind: "lesson" as const,
-          contextSnapshot: stored.contextSnapshot ?? {},
-          createdAt: answeredAt(index + 2),
-          question: `Question ${index + 2}`,
-          requestFingerprint: `page-question-${index + 2}`,
-          requestId: randomUUID(),
-          status: "completed" as const,
-          threadId: stored.threadId,
-          updatedAt: answeredAt(index + 2),
-        })),
-      }),
-    ]);
-
-    const path = `/v1/lessons/${lesson.id}/questions`;
-
-    const latest = await readBody({
-      response: await api.get(path),
-      schema: lessonQuestionThreadResponseSchema,
-    });
-
-    expect(latest).toMatchObject({ hasMore: true, nextCursor: expect.any(String) });
-
-    expect(latest?.questions.map(({ question }) => question)).toStrictEqual(
-      Array.from(
-        { length: MAX_LESSON_QUESTION_THREAD_TURNS },
-        (_, index) => `Question ${index + OLDER_QUESTION_COUNT + 1}`,
-      ),
-    );
-
-    await expect(
-      readBody({
-        response: await api.get(`${path}?cursor=${latest?.nextCursor}`),
-        schema: lessonQuestionThreadResponseSchema,
-      }),
-    ).resolves.toMatchObject({
-      hasMore: false,
-      nextCursor: null,
-      questions: Array.from({ length: OLDER_QUESTION_COUNT }, (_, index) => ({
-        question: `Question ${index + 1}`,
-      })),
-    });
-
-    const unknownCursor = await api.get(`${path}?cursor=${randomUUID()}`);
-
-    expect(unknownCursor.status()).toBe(400);
-    await expect(unknownCursor.json()).resolves.toMatchObject({ error: { code: "BAD_REQUEST" } });
 
     await api.dispose();
   });

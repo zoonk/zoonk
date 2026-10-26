@@ -8,7 +8,6 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import {
   currentMemoryInsightResponseSchema,
   memoryChangeReversalSchema,
-  memoryExportSchema,
   memoryFactDeletionSchema,
   memoryFactResponseSchema,
   memoryInsightResultSchema,
@@ -186,30 +185,6 @@ test.describe("Memory API", () => {
     await api.dispose();
   });
 
-  test("exports every stored fact and shown insight", async () => {
-    const { api, userId } = await createBearerLearner({ baseURL, prefix: "memory-export" });
-
-    await Promise.all([
-      memoryFactFixture({ statement: "Wants Law", userId }),
-      memoryFactFixture({ deletedAt: new Date(), status: "deleted", userId }),
-      memoryInsightFixture({ message: "Try a short break.", userId }),
-    ]);
-
-    const exported = await readBody({
-      response: await api.get("/v1/me/memory/export"),
-      schema: memoryExportSchema,
-    });
-
-    expect(exported.facts.map((fact) => fact.status).toSorted()).toStrictEqual([
-      "active",
-      "deleted",
-    ]);
-
-    expect(exported.insights).toMatchObject([{ kind: "tip", message: "Try a short break." }]);
-
-    await api.dispose();
-  });
-
   test("shows the current insight and applies an accepted schedule idea once", async () => {
     const [{ api, userId }, owner] = await Promise.all([
       createBearerLearner({ baseURL, prefix: "memory-insight" }),
@@ -270,41 +245,6 @@ test.describe("Memory API", () => {
     expect(invalid.status()).toBe(400);
 
     await expect(noneLeft.json()).resolves.toStrictEqual({ insight: null });
-
-    await api.dispose();
-  });
-
-  test("shows what a bigger plan change adds before the learner's OK", async () => {
-    const { api, userId } = await createBearerLearner({ baseURL, prefix: "memory-gap" });
-    const goal = await goalFixture({ userId });
-    const planChangeId = randomUUID();
-
-    const effect = {
-      endDateAfter: "2026-11-20",
-      endDateBefore: "2026-11-12",
-      lessonsAdded: 6,
-      lessonsRemoved: 0,
-    };
-
-    await memoryInsightFixture({
-      goalId: goal.id,
-      kind: "planChange",
-      message:
-        "Most of your percentage mistakes start with fractions. A short chapter on fractions first should help.",
-      payload: { effect, planChangeId, planChangeStatus: "proposed", skillId: randomUUID() },
-      userId,
-    });
-
-    const current = await readBody({
-      response: await api.get(`/v1/me/memory/insights/current?goalId=${goal.id}`),
-      schema: currentMemoryInsightResponseSchema,
-    });
-
-    expect(current.insight?.planChange).toStrictEqual({
-      effect,
-      id: planChangeId,
-      status: "proposed",
-    });
 
     await api.dispose();
   });

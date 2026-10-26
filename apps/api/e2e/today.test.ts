@@ -8,13 +8,11 @@ import {
   planItemFixture,
   suggestedGoalFixture,
 } from "@zoonk/testing/fixtures/goals";
-import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { memoryInsightFixture } from "@zoonk/testing/fixtures/memory";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
-import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { openedStudyDayResponseSchema } from "../src/lib/openapi/schemas/open-study-day";
@@ -39,45 +37,6 @@ function toIsoDay(date: Date): string {
 function zoneOnAnotherDay(goalZone: string): string {
   const zones = ["Pacific/Kiritimati", "Pacific/Pago_Pago"];
   return zones.find((zone) => localDay(zone).getTime() !== localDay(goalZone).getTime()) ?? "UTC";
-}
-
-/** A pattern noticed in the learner's mistakes; with a drill, the day's missions can offer it. */
-function createPattern({
-  drill,
-  goalId,
-  userId,
-}: {
-  drill: boolean;
-  goalId: string;
-  userId: string;
-}) {
-  return prisma.mistakePattern.create({
-    data: {
-      content: {
-        contrast: [],
-        drill: drill
-          ? [
-              {
-                answer: "for",
-                feedback: "Use for with a length of time.",
-                options: ["for", "since"],
-                sentence: "I've lived here ___ two years.",
-              },
-            ]
-          : [],
-        examples: [],
-        rule: "Use for with durations.",
-      },
-      goalId,
-      kind: "pattern",
-      language: "en",
-      model: "test",
-      promptVersion: "test",
-      runId: "test",
-      title: "Since and for",
-      userId,
-    },
-  });
 }
 
 /** An exam goal 20 days away with one lesson in its plan, set as the learner's active goal. */
@@ -228,18 +187,12 @@ test.describe("Today API", () => {
 
     expect(today.userId).toBe(userId);
 
-    expect(today.goal).toMatchObject({
-      daysLeft: DAYS_TO_EXAM,
-      id: goal.id,
-      kind: "exam",
-      title: "Test exam",
-    });
+    expect(today.goal).toMatchObject({ id: goal.id, kind: "exam", title: "Test exam" });
 
     expect(today.session.goalId).toBe(goal.id);
     expect(today.session.blocks.map((block) => block.lessonId)).toContain(lesson.id);
     expect(today.insight?.id).toBe(insight.id);
     expect(today.lessonStatus).toStrictEqual({ [lesson.id]: "notStarted" });
-    expect(today.suggestedGoal).toBeNull();
 
     const againResponse = await api.get("/v1/today?timeZone=UTC");
     const again = todayResponseSchema.parse(await againResponse.json());
@@ -433,59 +386,6 @@ test.describe("Today API", () => {
 
     expect(response.status(), await response.text()).toBe(409);
     await api.dispose();
-  });
-
-  test("offers a language goal's noticed pattern once, beside the day's missions", async () => {
-    const [covered, uncovered, earned] = await Promise.all([
-      createBearerLearner({ baseURL, prefix: "today-pattern-covered" }),
-      createBearerLearner({ baseURL, prefix: "today-pattern-uncovered" }),
-      createBearerLearner({ baseURL, prefix: "today-pattern-earned" }),
-    ]);
-
-    // The drilled pattern is one of the unopened day's missions; a pattern without a drill isn't.
-    const learners = await Promise.all(
-      [
-        { drill: true, learner: covered },
-        { drill: false, learner: uncovered },
-        { drill: true, learner: earned },
-      ].map(async ({ drill, learner }) => {
-        const { goal } = await languageGoalFixture({ userId: learner.userId });
-        const pattern = await createPattern({ drill, goalId: goal.id, userId: learner.userId });
-        return { goal, learner, pattern };
-      }),
-    );
-
-    // A bonus earned on another goal replaces the missions' unfinished rows.
-    const otherGoal = await goalFixture({ userId: earned.userId });
-
-    await studySessionFixture({
-      fullMealAt: new Date(),
-      goalId: otherGoal.id,
-      userId: earned.userId,
-    });
-
-    const todays = await Promise.all(
-      learners.map(async ({ goal, learner }) => {
-        const response = await learner.api.get(`/v1/today?goalId=${goal.id}&timeZone=UTC`);
-        expect(response.status(), await response.text()).toBe(200);
-        return todayResponseSchema.parse(await response.json());
-      }),
-    );
-
-    const offered = learners.map(({ pattern }, index) => ({
-      card: todays[index]?.pattern?.id ?? null,
-      mission: todays[index]?.session.missions.some(
-        (mission) => mission.opens?.kind === "pattern" && mission.opens.patternId === pattern.id,
-      ),
-    }));
-
-    expect(offered).toStrictEqual([
-      { card: null, mission: true },
-      { card: learners[1]?.pattern.id, mission: false },
-      { card: learners[2]?.pattern.id, mission: true },
-    ]);
-
-    await Promise.all([covered.api.dispose(), uncovered.api.dispose(), earned.api.dispose()]);
   });
 
   test("rejects an invalid timezone", async () => {

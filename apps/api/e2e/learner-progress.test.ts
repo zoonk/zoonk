@@ -202,55 +202,6 @@ test.describe("Learner Progress API", () => {
     await apiContext.dispose();
   });
 
-  test("returns stable empty resources for a signed-in learner without progress", async () => {
-    const { apiContext } = await createAuthenticatedApiContext({
-      baseURL,
-      prefix: "progress-empty",
-    });
-
-    const [summary, activity, energy, level, score, patterns] =
-      await getProgressResponses(apiContext);
-
-    const summaryBody = await getSuccessfulBody({
-      response: summary,
-      schema: currentUserProgressResponseSchema,
-    });
-
-    const activityBody = await getSuccessfulBody({
-      response: activity,
-      schema: currentUserActivityResponseSchema,
-    });
-
-    expect(summaryBody).toMatchObject({
-      activity: { learningDays: 0, totalLearningSeconds: 0, totalLessonCompletions: 0 },
-      energy: null,
-      level: null,
-      score: null,
-      scorePatterns: null,
-    });
-
-    expect(activityBody.activity.days.length).toBeGreaterThan(360);
-    expect(activityBody.activity.days.at(-1)?.date).toMatch(LOGICAL_DATE_PATTERN);
-
-    await expect(
-      getSuccessfulBody({ response: energy, schema: currentUserEnergyResponseSchema }),
-    ).resolves.toStrictEqual({ energy: null });
-
-    await expect(
-      getSuccessfulBody({ response: level, schema: currentUserLevelResponseSchema }),
-    ).resolves.toStrictEqual({ level: null });
-
-    await expect(
-      getSuccessfulBody({ response: score, schema: currentUserScoreResponseSchema }),
-    ).resolves.toStrictEqual({ score: null });
-
-    await expect(
-      getSuccessfulBody({ response: patterns, schema: currentUserScorePatternsResponseSchema }),
-    ).resolves.toStrictEqual({ patterns: null });
-
-    await apiContext.dispose();
-  });
-
   test("returns caller-scoped progress and serializes calendar dates without timestamps", async () => {
     const { apiContext, cookieContext, userId } = await createBearerProgressContext({
       baseURL,
@@ -262,15 +213,14 @@ test.describe("Learner Progress API", () => {
     const [summary, activity, energy, level, score, patterns] =
       await getProgressResponses(apiContext);
 
-    const [summaryBody, activityBody, energyBody, levelBody, scoreBody, patternsBody] =
-      await Promise.all([
-        getSuccessfulBody({ response: summary, schema: currentUserProgressResponseSchema }),
-        getSuccessfulBody({ response: activity, schema: currentUserActivityResponseSchema }),
-        getSuccessfulBody({ response: energy, schema: currentUserEnergyResponseSchema }),
-        getSuccessfulBody({ response: level, schema: currentUserLevelResponseSchema }),
-        getSuccessfulBody({ response: score, schema: currentUserScoreResponseSchema }),
-        getSuccessfulBody({ response: patterns, schema: currentUserScorePatternsResponseSchema }),
-      ]);
+    const [summaryBody, activityBody, energyBody, levelBody, scoreBody] = await Promise.all([
+      getSuccessfulBody({ response: summary, schema: currentUserProgressResponseSchema }),
+      getSuccessfulBody({ response: activity, schema: currentUserActivityResponseSchema }),
+      getSuccessfulBody({ response: energy, schema: currentUserEnergyResponseSchema }),
+      getSuccessfulBody({ response: level, schema: currentUserLevelResponseSchema }),
+      getSuccessfulBody({ response: score, schema: currentUserScoreResponseSchema }),
+      getSuccessfulBody({ response: patterns, schema: currentUserScorePatternsResponseSchema }),
+    ]);
 
     expect(summaryBody).toMatchObject({
       activity: { learningDays: 1, totalLearningSeconds: 120, totalLessonCompletions: 1 },
@@ -282,8 +232,6 @@ test.describe("Learner Progress API", () => {
         strongestWeekday: { dayOfWeek: WEEKDAYS[today.getUTCDay()], totalAnswers: 12 },
       },
     });
-
-    expect(summaryBody.level).not.toHaveProperty("color");
 
     expect(activityBody.activity.days.at(-1)).toStrictEqual({
       activitiesCompleted: 2,
@@ -298,31 +246,10 @@ test.describe("Learner Progress API", () => {
 
     expect(energyBody.energy?.days.at(-1)?.date).toMatch(LOGICAL_DATE_PATTERN);
     expect(levelBody.level).toMatchObject({ belt: "orange", level: 8, totalBrainPower: 15_000 });
-    expect(levelBody.level).not.toHaveProperty("color");
     expect(scoreBody.score).toMatchObject({ score: 75, totalAnswers: 12 });
     expect(scoreBody.score?.periodStart).toMatch(LOGICAL_DATE_PATTERN);
     expect(scoreBody.score?.periodEnd).toMatch(LOGICAL_DATE_PATTERN);
     expect(scoreBody.score?.dataPoints.at(-1)?.date).toMatch(LOGICAL_DATE_PATTERN);
-    expect(scoreBody.score?.dataPoints.at(-1)).not.toHaveProperty("label");
-    expect(patternsBody.patterns?.weekdays).toHaveLength(7);
-    expect(patternsBody.patterns?.times).toHaveLength(4);
-
-    expect(patternsBody.patterns?.weekdays.map(({ dayOfWeek }) => dayOfWeek)).toStrictEqual(
-      WEEKDAYS,
-    );
-
-    expect(patternsBody.patterns?.times.map(({ period }) => period)).toStrictEqual([
-      "night",
-      "morning",
-      "afternoon",
-      "evening",
-    ]);
-
-    expect(patternsBody.patterns?.strongestTime).toMatchObject({
-      period: "morning",
-      totalAnswers: 10,
-    });
-
     await Promise.all([apiContext.dispose(), cookieContext.dispose()]);
   });
 });

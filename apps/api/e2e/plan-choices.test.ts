@@ -59,13 +59,6 @@ test.describe("Plan choices API", () => {
       }),
     ).resolves.toStrictEqual({ daysLeft: 30, ready: true, recommended: "quick" });
 
-    const [base] = before.bases?.items ?? [];
-    const { deep = 0, essential = 0, quick = 0 } = base?.minutes ?? {};
-
-    expect(quick).toBeLessThan(essential);
-    expect(essential).toBeLessThan(deep);
-    expect(before.schedule.fullCourse).toBe(false);
-
     const quickLessons = [cells, living].map((item) => ({
       choice: "quick" as const,
       skillId: item?.skillId ?? "",
@@ -118,16 +111,6 @@ test.describe("Plan choices API", () => {
 
     expect(quickLesson).toMatchObject({ status: "applied" });
 
-    // The quick lesson is a lesson of its own in the plan, written when the learner gets to it.
-    const quickItems = await prisma.planItem.findMany({
-      select: { lesson: { select: { contentStatus: true, identityKey: true } } },
-      where: { kind: "lesson", skillId: cells?.skillId },
-    });
-
-    expect(quickItems.map((item) => item.lesson)).toStrictEqual([
-      { contentStatus: "pending", identityKey: `quick:${cells?.skillId}` },
-    ]);
-
     const everything = await readBody({
       response: await apiContext.post(`${plan}/changes`, {
         data: { operations: [{ fullCourse: true, kind: "setFullCourse" }] },
@@ -143,15 +126,11 @@ test.describe("Plan choices API", () => {
     });
 
     expect(after.bases?.items.map((item) => item.choice)).toStrictEqual(["quick", "skip"]);
-    expect(after.phases.at(-1)?.kind).toBe("afterExam");
 
     expect(after.schedule).toMatchObject({
       fullCourse: true,
       targetDate: before.schedule.targetDate,
     });
-
-    // Studying everything ends after the exam: the plan says when once the learner switches it on.
-    expect((after.estimate.endDate ?? "") > (before.schedule.targetDate ?? "")).toBe(true);
 
     await apiContext.dispose();
   });

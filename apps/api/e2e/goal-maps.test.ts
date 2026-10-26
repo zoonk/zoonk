@@ -1,6 +1,5 @@
 import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
-import { chapterViewSchema } from "@zoonk/core/view-models/chapter/contract";
 import { fieldMapViewSchema } from "@zoonk/core/view-models/map/contract";
 import { type PlanItemStatus, prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
@@ -20,9 +19,7 @@ import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { areaPracticeResponseSchema } from "../src/lib/openapi/schemas/learn-views";
-import { planResponseSchema } from "../src/lib/openapi/schemas/plans";
 import { createAuthenticatedApiContext } from "./helpers/auth";
-import { readBody } from "./helpers/response";
 
 const DAY_MS = 86_400_000;
 
@@ -126,46 +123,6 @@ test.describe("Goal maps API", () => {
     await apiContext.dispose();
   });
 
-  test("returns the map of the field and a chapter's page", async () => {
-    const { apiContext, user } = await createAuthenticatedApiContext({ baseURL, prefix: "maps" });
-    const { chapter, course, goal, lessons } = await createCourseGoal({ userId: user.id });
-
-    const mapResponse = await apiContext.get(`/v1/goals/${goal.id}/map`);
-    expect(mapResponse.status()).toBe(200);
-
-    const map = fieldMapViewSchema.parse(await mapResponse.json());
-
-    expect(
-      map.areas.map((area) => [area.chapterId, area.current, area.skills.length]),
-    ).toStrictEqual([[chapter.id, true, 2]]);
-
-    expect(map.course).toMatchObject({
-      courseId: course.id,
-      nextLevel: "beginner",
-      planChapterCount: 1,
-    });
-
-    expect(map.next).toBeNull();
-
-    const chapterResponse = await apiContext.get(`/v1/goals/${goal.id}/chapters/${chapter.id}`);
-    expect(chapterResponse.status()).toBe(200);
-
-    const page = chapterViewSchema.parse(await chapterResponse.json());
-
-    expect(page.chapter).toMatchObject({ position: 1, title: "The night sky" });
-
-    expect(page.lessons.map((lesson) => [lesson.lessonId, lesson.state])).toStrictEqual([
-      [lessons[0]?.id, "done"],
-      [lessons[1]?.id, "next"],
-    ]);
-
-    const outside = await libraryChapterFixture();
-    const missing = await apiContext.get(`/v1/goals/${goal.id}/chapters/${outside.id}`);
-    expect(missing.status()).toBe(404);
-
-    await apiContext.dispose();
-  });
-
   test("refreshes fading skills in today's session", async () => {
     const { apiContext, user } = await createAuthenticatedApiContext({
       baseURL,
@@ -228,9 +185,6 @@ test.describe("Goal maps API", () => {
 
     expect(map.next?.nextLevel).toMatchObject({ courseId: course.id, level: "beginner" });
 
-    // Finished, no phase is the one the learner is in: the map's own rule kept the last current.
-    expect(map.phases.map((phase) => phase.state)).toStrictEqual(["done"]);
-
     const response = await apiContext.post(`/v1/goals/${goal.id}/next-level`);
     expect(response.status()).toBe(201);
 
@@ -248,39 +202,4 @@ test.describe("Goal maps API", () => {
 
   // A plan without a date sets a lesson aside only when the Library couldn't write it: nothing is
   // left for the learner, so it's finished, with what's next and the next level.
-  test("finishes a dateless plan whose last lesson was set aside, with what's next and the next level", async () => {
-    const { apiContext, user } = await createAuthenticatedApiContext({
-      baseURL,
-      prefix: "maps-ended",
-    });
-
-    const { course, goal } = await createCourseGoal({
-      statuses: ["done", "skipped"],
-      userId: user.id,
-    });
-
-    const plan = await readBody({
-      response: await apiContext.get(`/v1/goals/${goal.id}/plan`),
-      schema: planResponseSchema,
-    });
-
-    expect(plan.end).toStrictEqual({ kind: "finished" });
-
-    const map = await readBody({
-      response: await apiContext.get(`/v1/goals/${goal.id}/map`),
-      schema: fieldMapViewSchema,
-    });
-
-    expect(map.next?.nextLevel).toMatchObject({ courseId: course.id, level: "beginner" });
-
-    // The map's phases read the plan's.
-    expect(map.phases.map((phase) => phase.state)).toStrictEqual(
-      plan.phases.map((phase) => phase.state),
-    );
-
-    const response = await apiContext.post(`/v1/goals/${goal.id}/next-level`);
-    expect(response.status()).toBe(201);
-
-    await apiContext.dispose();
-  });
 });

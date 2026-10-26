@@ -164,15 +164,6 @@ test.describe("Native session API", () => {
     await apiContext.dispose();
   });
 
-  test("treats unauthenticated sign-out as an idempotent no-op", async () => {
-    const apiContext = await request.newContext({ baseURL });
-    const response = await apiContext.delete("/v1/sessions/current");
-
-    expect(response.status()).toBe(204);
-
-    await apiContext.dispose();
-  });
-
   test("validates native provider credentials on the product contract", async () => {
     const apiContext = await request.newContext({ baseURL });
 

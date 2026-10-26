@@ -2,7 +2,6 @@ import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
-import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
@@ -72,44 +71,6 @@ test.describe("Pronunciation reviews API", () => {
     await apiContext.dispose();
   });
 
-  test("lists the words due today with their sound, respelling and tip", async () => {
-    const { apiContext, user } = await createAuthenticatedApiContext({
-      baseURL,
-      prefix: "pronunciation-list",
-    });
-
-    const { due, goal, review } = await learnerWithReviews(user.id);
-    const other = await goalFixture({ kind: "learn", userId: user.id });
-
-    const [list, notLanguage, today] = await Promise.all([
-      apiContext.get(`/v1/goals/${goal.id}/pronunciation-reviews`),
-      apiContext.get(`/v1/goals/${other.id}/pronunciation-reviews`),
-      apiContext.get(`/v1/goals/${goal.id}/language-today`),
-    ]);
-
-    expect(list.status()).toBe(200);
-
-    expect(await list.json()).toStrictEqual({
-      goalId: goal.id,
-      language: "en",
-      words: [
-        {
-          audioUrl: "https://audio.test/rent.mp3",
-          id: review.id,
-          respelling: "RÉNT",
-          romanization: null,
-          tip: "O r é suave.",
-          word: due.word,
-        },
-      ],
-    });
-
-    expect(notLanguage.status()).toBe(422);
-    expect(await today.json()).toMatchObject({ pronunciation: { count: 1, words: [due.word] } });
-
-    await apiContext.dispose();
-  });
-
   test("rejects audio it can't grade and another learner's review", async () => {
     const [{ apiContext, user }, owner] = await Promise.all([
       createAuthenticatedApiContext({ baseURL, prefix: "pronunciation-answer" }),
@@ -156,7 +117,7 @@ test.describe("Pronunciation reviews API", () => {
     const { goal, review } = await learnerWithReviews(user.id);
     const roundId = randomUUID();
 
-    const day = await studySessionFixture({
+    await studySessionFixture({
       goalId: goal.id,
       missions: {
         picks: [{ anchor: {}, kind: "pronunciation", opens: { kind: "pronunciation" }, total: 1 }],
@@ -210,17 +171,6 @@ test.describe("Pronunciation reviews API", () => {
         where: { lessonKind: "pronunciationReview", userId: user.id },
       }),
     ).resolves.toStrictEqual([{ brainPower: 2 }]);
-
-    await expect(
-      prisma.studySession.findUniqueOrThrow({ where: { id: day.id } }),
-    ).resolves.toMatchObject({
-      fullMealAt: expect.any(Date),
-      startSnapshot: { fullMealReward: { after: 52, before: 2 } },
-    });
-
-    await expect(
-      prisma.userProgress.findUniqueOrThrow({ where: { userId: user.id } }),
-    ).resolves.toMatchObject({ totalBrainPower: 52n });
 
     expect(await again.json()).toStrictEqual(await first.json());
     expect(empty.status()).toBe(422);

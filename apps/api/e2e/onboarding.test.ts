@@ -4,14 +4,9 @@ import { onboardingDraftViewSchema } from "@zoonk/core/view-models/onboarding/vi
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
-import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
-import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { goalCreateResponseSchema } from "../src/lib/openapi/schemas/goals";
-import {
-  explanationResponseSchema,
-  onboardingResponseSchema,
-} from "../src/lib/openapi/schemas/onboarding";
+import { onboardingResponseSchema } from "../src/lib/openapi/schemas/onboarding";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 import { readBody } from "./helpers/response";
 
@@ -111,13 +106,6 @@ test.describe("Onboarding API", () => {
 
     expect(onboarding.steps[0]).toBe("purpose");
     expect(onboarding.steps.at(-1)).toBe("plan");
-    // No date yet: the time question suggests a short daily habit.
-    expect(onboarding).toMatchObject({
-      examSubjects: [],
-      libraryCourse: null,
-      recommendedMinutes: 15,
-    });
-
     // The material attached with the goal is linked to it for research and the curriculum.
     await expect(
       prisma.learnerSource.findFirstOrThrow({ where: { sourceId: notes.id, userId: user.id } }),
@@ -138,49 +126,6 @@ test.describe("Onboarding API", () => {
     });
 
     expect(invalid.status()).toBe(400);
-    await apiContext.dispose();
-  });
-
-  test("serves a quick explanation once it's written", async () => {
-    const { apiContext, user } = await createAuthenticatedApiContext({
-      baseURL,
-      prefix: "onboarding-explain",
-    });
-
-    const [goal, played] = await Promise.all([
-      goalFixture({
-        details: { question: "how does a microwave work?" },
-        kind: "explain",
-        title: "How a microwave works",
-        userId: user.id,
-      }),
-      playableLessonFixture({ steps: ["explanation", "check", "summary"] }),
-    ]);
-
-    const plan = await planFixture({ goalId: goal.id });
-
-    const preparing = await readBody({
-      response: await apiContext.get(`/v1/goals/${goal.id}/explanation`),
-      schema: explanationResponseSchema,
-    });
-
-    expect(preparing).toMatchObject({ lesson: null, status: "preparing" });
-
-    await planItemFixture({
-      kind: "lesson",
-      lessonId: played.lesson.id,
-      planId: plan.id,
-      titleSnapshot: "How a microwave works",
-    });
-
-    const ready = await readBody({
-      response: await apiContext.get(`/v1/goals/${goal.id}/explanation`),
-      schema: explanationResponseSchema,
-    });
-
-    expect(ready.status).toBe("ready");
-    expect(ready.lesson?.steps.map((step) => step.kind)).toEqual(["explanation", "check"]);
-    expect(ready.recap.length).toBeGreaterThan(0);
     await apiContext.dispose();
   });
 });

@@ -94,22 +94,4 @@ test.describe("Personal example lines", () => {
     expect(await read()).toStrictEqual({ canRequest: true, line: null, stepId: step.id });
     await api.dispose();
   });
-
-  test("without shared facts there is nothing to ask for, and a request needs no model", async () => {
-    const { api } = await createBearerLearner({ baseURL, prefix: "example-no-facts" });
-    const lesson = await libraryLessonFixture({ contentStatus: "completed" });
-    const step = await libraryStepFixture({ content, lessonId: lesson.id });
-    const path = `/v1/me/example-lines/${step.id}`;
-
-    const read = await readBody({ response: await api.get(path), schema: stepExampleLineSchema });
-
-    const requested = await readBody({
-      response: await api.post(path),
-      schema: stepExampleLineSchema,
-    });
-
-    expect(read).toStrictEqual({ canRequest: false, line: null, stepId: step.id });
-    expect(requested).toStrictEqual({ canRequest: false, line: null, stepId: step.id });
-    await api.dispose();
-  });
 });

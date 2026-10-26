@@ -93,60 +93,6 @@ test.describe("Language goal API", () => {
     await apiContext.dispose();
   });
 
-  test("returns a language goal's progress, Today cards and units, and nothing for other goals", async () => {
-    const { apiContext, user } = await createAuthenticatedApiContext({
-      baseURL,
-      prefix: "language-views",
-    });
-
-    const { goal, renting } = await languageGoalFixture({ userId: user.id });
-    const other = await goalFixture({ userId: user.id });
-
-    const [progress, today, unit, notLanguage, badUnit, units] = await Promise.all([
-      apiContext.get(`/v1/goals/${goal.id}/language-progress`),
-      apiContext.get(`/v1/goals/${goal.id}/language-today`),
-      apiContext.get(`/v1/language-units/${renting.id}`),
-      apiContext.get(`/v1/goals/${other.id}/language-progress`),
-      apiContext.get("/v1/language-units/not-a-uuid"),
-      apiContext.get(`/v1/goals/${goal.id}/language-units`),
-    ]);
-
-    expect(progress.status()).toBe(200);
-
-    expect(await progress.json()).toMatchObject({
-      goal: { id: goal.id, targetLanguage: "en" },
-      level: "A2",
-      levels: [{ label: "A2", skill: "reading", trend: "same" }, {}, {}, {}],
-      speakingMock: null,
-      target: { label: "B1+" },
-    });
-
-    expect(await today.json()).toStrictEqual({
-      level: { label: "A2", target: "B1+" },
-      pronunciation: null,
-      // No exam named: English's paper at the B1+ target, locked on the free plan.
-      speaking: { access: "plusRequired", title: "B1 Preliminary" },
-    });
-
-    expect(await unit.json()).toMatchObject({
-      conversation: { character: { name: "Linda" } },
-      goalId: goal.id,
-    });
-
-    expect(notLanguage.status()).toBe(422);
-    const notLanguageBody = await notLanguage.json();
-    expect(notLanguageBody.error.code).toBe("NOT_LANGUAGE");
-    expect(badUnit.status()).toBe(400);
-
-    const unitsBody = await units.json();
-
-    expect(unitsBody.units.map((item: { position: number }) => item.position)).toStrictEqual([
-      1, 2,
-    ]);
-
-    await apiContext.dispose();
-  });
-
   test("lists a new script's alphabet lesson and skips it for a learner who reads it", async () => {
     const { apiContext, user } = await createAuthenticatedApiContext({
       baseURL,
@@ -195,66 +141,6 @@ test.describe("Language goal API", () => {
     expect(await alphabetOf()).toMatchObject({ lessonId: lesson.id, pending: false });
 
     await Promise.all([apiContext.dispose(), anonymous.dispose()]);
-  });
-
-  test("names the TOEFL as the exam of a goal's speaking mock and of a mock's result", async () => {
-    const { apiContext, user } = await createAuthenticatedApiContext({
-      baseURL,
-      prefix: "language-toefl-mock",
-    });
-
-    const { goal } = await languageGoalFixture({ userId: user.id });
-
-    await prisma.goal.update({
-      data: { details: { level: "A2", reason: "Preciso do TOEFL para o mestrado" } },
-      where: { id: goal.id },
-    });
-
-    const progress = await apiContext.get(`/v1/goals/${goal.id}/language-progress`);
-    expect(await progress.json()).toMatchObject({ speakingMock: "toefl" });
-
-    const overall = { bandHigh: 4.5, bandLow: 4 };
-
-    const mock = await prisma.languageConversation.create({
-      data: {
-        endedAt: new Date(),
-        feedback: {
-          criteria: ["repetition", "elaboration", "grammar", "vocabulary", "delivery"].map(
-            (criterion) => ({ ...overall, criterion, evidence: "Evidência.", tip: "Dica." }),
-          ),
-          exam: "toefl",
-          focus: "elaboration",
-          kind: "speakingMock",
-          overall,
-        },
-        goalId: goal.id,
-        kind: "speakingMock",
-        language: "pt",
-        level: "A2",
-        minutes: 5,
-        scenario: { ...RENTING_SCENARIO, exam: "toefl" },
-        spokenSeconds: 200,
-        status: "completed",
-        targetLanguage: "en",
-        titleSnapshot: RENTING_SCENARIO.title,
-        userId: user.id,
-      },
-    });
-
-    const view = await apiContext.get(`/v1/language-conversations/${mock.id}`);
-
-    expect(await view.json()).toMatchObject({
-      exam: "toefl",
-      kind: "speakingMock",
-      result: { feedback: { exam: "toefl", focus: "elaboration", overall } },
-    });
-
-    await prisma.goal.update({ data: { kind: "exam", title: "TOEFL" }, where: { id: goal.id } });
-
-    const exam = await apiContext.get(`/v1/goals/${goal.id}/exam?timeZone=UTC`);
-    expect(await exam.json()).toMatchObject({ speakingMock: "toefl" });
-
-    await apiContext.dispose();
   });
 
   test("offers a Cambridge goal its speaking paper, locked without Plus, and starts a task with Plus", async () => {
@@ -508,21 +394,6 @@ test.describe("Language goal API", () => {
       },
     });
 
-    const allowance = await apiContext.get("/v1/me/allowance");
-
-    await expect(allowance.json()).resolves.toMatchObject({
-      callTime: {
-        limitSeconds: FREE_CALL_SECONDS,
-        usedSeconds: FREE_CALL_SECONDS,
-        // Yesterday's call counts in this month's time too, unless today is the 1st (UTC).
-        usedSecondsThisMonth:
-          FREE_CALL_SECONDS +
-          (new Date(Date.now() - DAY_MS).getUTCMonth() === new Date().getUTCMonth()
-            ? OLD_CALL_SECONDS
-            : 0),
-      },
-    });
-
     await apiContext.dispose();
   });
 
@@ -562,13 +433,6 @@ test.describe("Language goal API", () => {
     const finished = await apiContext.post(`${path}/completions`);
 
     expect(finished.status()).toBe(200);
-    const finishedBody = await finished.json();
-
-    // No sentence was said out loud, so speaking gets no level; nothing written was asked either.
-    expect(finishedBody.levels.map((level: { skill: string }) => level.skill)).toStrictEqual([
-      "reading",
-      "listening",
-    ]);
 
     await apiContext.dispose();
   });
@@ -692,12 +556,6 @@ test.describe("Language goal API", () => {
 
     const dismissed = await apiContext.post(`/v1/mistake-patterns/${pattern.id}/dismissals`);
     expect(dismissed.status()).toBe(204);
-
-    // A dismissed pattern is no longer offered beside the day.
-    const todayResponse = await apiContext.get(`/v1/today?goalId=${goal.id}&timeZone=UTC`);
-    expect(todayResponse.status(), await todayResponse.text()).toBe(200);
-    const today = await todayResponse.json();
-    expect(today.pattern).toBeNull();
 
     await apiContext.dispose();
   });

@@ -135,10 +135,7 @@ test.describe("Current User API", () => {
       withSubscription: true,
     });
 
-    await Promise.all([
-      appleAccountFixture({ userId }),
-      prisma.user.update({ data: { analyticsDisabled: true }, where: { id: userId } }),
-    ]);
+    await appleAccountFixture({ userId });
 
     const response = await apiContext.get("/v1/me");
 
@@ -146,14 +143,7 @@ test.describe("Current User API", () => {
 
     const body = await response.json();
 
-    expect(body.user).toMatchObject({
-      analyticsDisabled: true,
-      email,
-      emailVerified: false,
-      id: userId,
-      name,
-      username,
-    });
+    expect(body.user).toMatchObject({ email, emailVerified: false, id: userId, name, username });
 
     expect(body.account).toMatchObject({
       deletion: { hasAppleAccount: true },

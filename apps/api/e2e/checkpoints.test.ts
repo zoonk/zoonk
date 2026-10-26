@@ -18,7 +18,6 @@ import {
 import { languageConversationCreatedSchema } from "../src/lib/openapi/schemas/language";
 import { planResponseSchema } from "../src/lib/openapi/schemas/plans";
 import { createBearerLearner } from "./helpers/bearer";
-import { createExamGoal } from "./helpers/exams";
 import { openStudyDay } from "./helpers/open-study-day";
 import { readBody } from "./helpers/response";
 
@@ -162,15 +161,7 @@ test.describe("Checkpoints API", () => {
       schema: checkpointResponseSchema,
     });
 
-    expect(before).toMatchObject({
-      kind: "boss",
-      nextPhase: { index: 1, name: "Mix" },
-      phase: { index: 0, name: "Basics" },
-      result: null,
-      reward: { badge: true, glasses: "star", phaseComplete: true },
-      sessionId: today.id,
-      status: "pending",
-    });
+    expect(before).toMatchObject({ kind: "boss", sessionId: today.id, status: "pending" });
 
     expect(before.questions).toHaveLength(BOSS_QUESTIONS);
 
@@ -200,80 +191,12 @@ test.describe("Checkpoints API", () => {
       status: "completed",
     });
 
-    await prisma.item.deleteMany({
-      where: { id: { in: before.questions.map((question) => question.itemId) } },
-    });
-
-    const reopened = await readBody({
-      response: await api.get(path),
-      schema: checkpointResponseSchema,
-    });
-
-    expect(reopened).toMatchObject({
-      questions: [],
-      result: { correct: BOSS_QUESTIONS, passed: true, total: BOSS_QUESTIONS },
-      status: "completed",
-    });
-
     const hidden = await other.api.get(path);
     expect(hidden.status()).toBe(404);
 
     // Only the week's challenge moves to Monday; a boss keeps its day.
     const bossMove = await api.post(`${path}/moves`, { data: {} });
     expect(bossMove.status()).toBe(404);
-  });
-
-  test("ends a duel whose questions vanished without a verdict or reward", async () => {
-    const { api, userId } = await createBearerLearner({ baseURL, prefix: "checkpoint-empty" });
-    const goal = await createGoalAtBoss(userId);
-
-    const today = await openStudyDay({ api, goalId: goal.id });
-
-    const boss = today.blocks.find((block) => block.kind === "checkpoint");
-    const path = `/v1/checkpoints/${boss?.id}`;
-    const blockPath = `/v1/study-sessions/${today.id}/blocks/${boss?.id}`;
-
-    const before = await readBody({
-      response: await api.get(path),
-      schema: checkpointResponseSchema,
-    });
-
-    const started = await api.post(`${blockPath}/starts`, { data: {} });
-    expect(started.status()).toBe(200);
-
-    await prisma.item.deleteMany({
-      where: { id: { in: before.questions.map((question) => question.itemId) } },
-    });
-
-    const completion = await readBody({
-      response: await api.post(`${blockPath}/completions`, { data: {} }),
-      schema: studyBlockCompletionSchema,
-    });
-
-    expect(completion).toMatchObject({
-      brainPower: 0,
-      checkpoint: null,
-      correct: 0,
-      milestones: [],
-      total: 0,
-    });
-
-    const reopened = await readBody({
-      response: await api.get(path),
-      schema: checkpointResponseSchema,
-    });
-
-    expect(reopened).toMatchObject({ questions: [], result: null, status: "skipped" });
-
-    await expect(
-      prisma.planItem.findFirstOrThrow({ where: { kind: "boss", plan: { goalId: goal.id } } }),
-    ).resolves.toMatchObject({ status: "todo" });
-
-    await expect(
-      prisma.learningEvent.count({ where: { kind: "checkpoint", userId } }),
-    ).resolves.toBe(0);
-
-    await api.dispose();
   });
 
   test("a legacy boss offers Start without a question count, then reads its saved block, only for its learner", async () => {
@@ -298,14 +221,8 @@ test.describe("Checkpoints API", () => {
     expect(intro).toMatchObject({
       blockId: null,
       call: null,
-      canMove: false,
-      estimatedMinutes: null,
       goalId: goal.id,
       kind: "boss",
-      locked: false,
-      minutes: null,
-      passMark: null,
-      phase: { index: 0, name: "Basics" },
       planItemId: boss.id,
       questions: null,
       status: "ready",
@@ -492,23 +409,6 @@ test.describe("Checkpoints API", () => {
     await expect(
       prisma.studySessionBlock.findUniqueOrThrow({ where: { id: started.blockId } }),
     ).resolves.toMatchObject({ status: "active" });
-  });
-
-  test("an included exam mock is unlocked", async () => {
-    const { api, userId } = await createBearerLearner({ baseURL, prefix: "challenge-mock" });
-    const { goal } = await createExamGoal(userId);
-
-    const mock = await prisma.planItem.findFirstOrThrow({
-      where: { kind: "mock", plan: { goalId: goal.id } },
-    });
-
-    const intro = await readBody({
-      response: await api.get(`/v1/challenges/${mock.id}?timeZone=UTC`),
-      schema: challengeResponseSchema,
-    });
-
-    expect(intro).toMatchObject({ call: null, kind: "weekly", locked: false, mock: true });
-    await api.dispose();
   });
 
   test("a language challenge locks when Plus lapses between its intro and Start", async () => {

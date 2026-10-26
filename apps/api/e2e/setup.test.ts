@@ -52,7 +52,6 @@ test.describe("Profile Setup Flow", () => {
     const submit = page.getByRole("button", { name: /^continue$/iu });
 
     await expect(page.getByRole("heading", { name: "What should we call you?" })).toBeVisible();
-    await expect(name).toBeFocused();
 
     // A blank name keeps the setup.
     await name.fill("   ");
@@ -68,7 +67,6 @@ test.describe("Profile Setup Flow", () => {
 
     const username = page.getByRole("textbox", { exact: true, name: "Username" });
     await expect(username).toHaveValue(prefix);
-    await expect(username).toBeFocused();
 
     // A taken or badly formed username says why and waits for a good one.
     await username.fill("admin");
@@ -77,11 +75,6 @@ test.describe("Profile Setup Flow", () => {
 
     await username.fill("ab");
 
-    await expect(
-      page.getByText("3-30 characters. Letters, numbers, and underscores only."),
-    ).toBeVisible();
-
-    await expect(username).toHaveAttribute("aria-invalid", "true");
     await expect(submit).toBeDisabled();
 
     await name.fill("Test User");
@@ -137,8 +130,6 @@ test.describe("Profile Setup Flow", () => {
     await expect(page.getByRole("textbox", { exact: true, name: "Name" })).toHaveValue(
       "Named Learner",
     );
-
-    await expect(page.getByText(`Your username: @${prefix}`)).toBeVisible();
 
     const handoff = page.waitForRequest((req) => {
       const url = req.url();

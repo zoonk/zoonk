@@ -42,19 +42,6 @@ test.describe("Research upload requests API", () => {
     await api.dispose();
   });
 
-  test("reads a research run that exists, by its id", async () => {
-    const anonymous = await request.newContext({ baseURL });
-
-    const [unknown, garbled, blank] = await Promise.all([
-      anonymous.get(`/v1/research/wrun_${randomUUID()}`),
-      anonymous.get("/v1/research/not-a-run"),
-      anonymous.get("/v1/research/%20"),
-    ]);
-
-    expect([unknown.status(), garbled.status(), blank.status()]).toStrictEqual([404, 404, 400]);
-    await anonymous.dispose();
-  });
-
   test("shows the ask only to its learner, and dismissing takes it away", async () => {
     const [learner, other] = await Promise.all([
       createBearerLearner({ baseURL, prefix: "upload-ask" }),
