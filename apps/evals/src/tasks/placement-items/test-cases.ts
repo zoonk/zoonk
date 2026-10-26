@@ -4,8 +4,14 @@ import { CEBRASPE, ENEM, SAT_MATH } from "../generate-items/test-cases";
 
 type PlacementItemsInput = Omit<PlacementItemsParams, "model" | "useFallback" | "reasoning">;
 
-/** What placement writes per skill: one quick question to ask it and one typed to confirm it. */
-const PLACEMENT_COUNTS = { quickCount: 1, typedCount: 1 } as const;
+/** What placement writes per skill: one quick question to ask it and a second to confirm a right pick. */
+const PLACEMENT_COUNTS = { quickCount: 2, typedCount: 0 } as const;
+
+/** A guess passes a statement half the time, so two more statements confirm a right one. */
+const TRUE_FALSE_PLACEMENT_COUNTS = { quickCount: 3, typedCount: 0 } as const;
+
+/** A language goal confirms a right pick with a typed answer in the language. */
+const LANGUAGE_PLACEMENT_COUNTS = { quickCount: 1, typedCount: 1 } as const;
 
 /**
  * Each case batches three skills, one more than placement sends per call, including skills the
@@ -13,7 +19,7 @@ const PLACEMENT_COUNTS = { quickCount: 1, typedCount: 1 } as const;
  */
 export const TEST_CASES: TestCase<unknown, PlacementItemsInput>[] = [
   {
-    expectations: `Questions in Brazilian Portuguese for three constitutional-law skills (one multiple-choice question and one typed question each). Each skill lists the situations its questions in the bank already use (USED_SITUATIONS): no new question may use one of those situations again with other names, places or numbers (a meeting in a public square for the right of assembly; a request for one's own records for habeas data), and a skill's two new questions differ from each other too. Check the legal accuracy against the Constitution's article 5 (XVI, LXXII, LXIX).`,
+    expectations: `Questions in Brazilian Portuguese for three constitutional-law skills (two multiple-choice questions each). Each skill lists the situations its questions in the bank already use (USED_SITUATIONS): no new question may use one of those situations again with other names, places or numbers (a meeting in a public square for the right of assembly; a request for one's own records for habeas data), and a skill's two new questions differ from each other too. Check the legal accuracy against the Constitution's article 5 (XVI, LXXII, LXIX).`,
     id: "pt-constitutional-mock-avoids-used-situations",
     userInput: {
       ...PLACEMENT_COUNTS,
@@ -49,7 +55,7 @@ export const TEST_CASES: TestCase<unknown, PlacementItemsInput>[] = [
     },
   },
   {
-    expectations: `Placement questions in Brazilian Portuguese for three ENEM skills, each skill with one ENEM-style multiple-choice question (short support text, a command, 5 options, distractors from typical mistakes such as adding successive percentages or misreading a table row) and one typed question asking for a short answer or explanation with checkable key points. Each question tests only its own skill, a skill's two questions use different situations, and the typed question doesn't repeat or give away the multiple-choice one's answer. Tables go in \`context\` as GFM pipe tables. Every question reads like a typical ENEM question at its level, never like a primary-school exercise.`,
+    expectations: `Placement questions in Brazilian Portuguese for three ENEM skills, each skill with two ENEM-style multiple-choice questions (short support text, a command, 5 options, distractors from typical mistakes such as adding successive percentages or misreading a table row). Each question tests only its own skill, and a skill's two questions use different situations, ask different things and never give away each other's answer. Tables go in \`context\` as GFM pipe tables. Every question reads like a typical ENEM question at its level, never like a primary-school exercise.`,
     id: "pt-enem-placement-three-skills",
     userInput: {
       ...PLACEMENT_COUNTS,
@@ -81,7 +87,7 @@ export const TEST_CASES: TestCase<unknown, PlacementItemsInput>[] = [
   {
     // Pedro's phase challenge (13 Oct 2026) showed "40000000 ações … 12500": placement writes the
     // challenge's questions, so code checks every number for the language's format.
-    expectations: `Placement questions in Brazilian Portuguese for three ENEM skills about large quantities and decimals, each skill with one ENEM-style multiple-choice question (short support text, a command, 5 options, distractors from typical mistakes) and one typed question with checkable key points. Every number is written the Brazilian way: thousands grouped with a dot (12.500; 40.000.000 or 40 milhões), a decimal comma (3,5; 0,03%), money as R$ 1.250,00, and never a run of digits such as 40000000 or 12500. Options that are values use the same format as the text. Each question tests only its own skill, a skill's two questions use different situations, and the typed question doesn't give away the multiple-choice one's answer.`,
+    expectations: `Placement questions in Brazilian Portuguese for three ENEM skills about large quantities and decimals, each skill with two ENEM-style multiple-choice questions (short support text, a command, 5 options, distractors from typical mistakes). Every number is written the Brazilian way: thousands grouped with a dot (12.500; 40.000.000 or 40 milhões), a decimal comma (3,5; 0,03%), money as R$ 1.250,00, and never a run of digits such as 40000000 or 12500. Options that are values use the same format as the text. Each question tests only its own skill, and a skill's two questions use different situations and never give away each other's answer.`,
     id: "pt-enem-placement-large-numbers",
     userInput: {
       ...PLACEMENT_COUNTS,
@@ -113,7 +119,7 @@ export const TEST_CASES: TestCase<unknown, PlacementItemsInput>[] = [
   {
     // Helena's placement (ENEM, Oct 2026): a sound answer to "what check would you recommend?" was
     // graded wrong for not naming elimination, a second technique its key points demanded.
-    expectations: `Placement questions in Brazilian Portuguese for one ENEM test-taking skill: one ENEM-style multiple-choice question and one typed question with checkable key points, both set in a situation during the exam. The typed question asks how to handle a question in the exam, and its key points say what any sound answer does: a question asking for a check or a strategy accepts any sound one, so no key point demands one particular technique among several (eliminating options, rereading the command, skipping and coming back) on top of another that does the same job. The test-taking skill is about scoring well (time, choosing between close options), never the exam day's procedures.`,
+    expectations: `Placement questions in Brazilian Portuguese for one ENEM test-taking skill: two ENEM-style multiple-choice questions, both set in a situation during the exam, each asking how to handle a question in the exam, with one best option and wrong options that are tempting but worse strategies, never a sound strategy marked wrong because another one is listed as right. The test-taking skill is about scoring well (time, choosing between close options), never the exam day's procedures.`,
     id: "pt-enem-placement-test-taking",
     userInput: {
       ...PLACEMENT_COUNTS,
@@ -133,7 +139,7 @@ export const TEST_CASES: TestCase<unknown, PlacementItemsInput>[] = [
   {
     // Bia's placement (ENEM, 10 Oct 2026): she picked Spanish of the exam's foreign language
     // choice, so placement asked its two skills; the questions written then were sound.
-    expectations: `Placement questions in Brazilian Portuguese for two skills of ENEM's foreign language test in Spanish, the option the learner picked of the exam's choice. As in ENEM, each question's support text is in Spanish (a notice, a chronicle, a website, an ad, a song or another real genre), while the setup, the command, the options, the reasons and the typed question's key points are in Brazilian Portuguese. Never English, never a text-free grammar or translation drill, and never a question a reader of Portuguese could answer without understanding the Spanish (distractors come from real misreadings: false friends such as "apenas", "exquisito" or "embarazada", a detail read in isolation, a cognate taken at face value). Check every key against the Spanish text. Each skill has one ENEM-style multiple-choice question with 5 options and one typed question answered in Portuguese with checkable key points; a skill's two questions use different texts.`,
+    expectations: `Placement questions in Brazilian Portuguese for two skills of ENEM's foreign language test in Spanish, the option the learner picked of the exam's choice. As in ENEM, each question's support text is in Spanish (a notice, a chronicle, a website, an ad, a song or another real genre), while the setup, the command, the options, and the reasons are in Brazilian Portuguese. Never English, never a text-free grammar or translation drill, and never a question a reader of Portuguese could answer without understanding the Spanish (distractors come from real misreadings: false friends such as "apenas", "exquisito" or "embarazada", a detail read in isolation, a cognate taken at face value). Check every key against the Spanish text. Each skill has two ENEM-style multiple-choice questions with 5 options; a skill's two questions use different texts.`,
     id: "pt-enem-placement-spanish-option",
     userInput: {
       ...PLACEMENT_COUNTS,
@@ -157,10 +163,10 @@ export const TEST_CASES: TestCase<unknown, PlacementItemsInput>[] = [
     },
   },
   {
-    expectations: `Placement questions in Brazilian Portuguese for three Brazilian administrative-law skills of a Cebraspe exam. Each skill's quick question is a Cebraspe-style assertion judged Certo or Errado (true/false), never multiple choice: a false one hides one realistic trap (a swapped concept, a wrong exception, an absolute word). Each skill also has one typed question with checkable key points. Check the legal accuracy of every statement against the Constitution's article 37, Law 9.784/1999 and STF Precedent 473. Each question tests only its own skill, and the typed question doesn't give away the assertion's judgment.`,
+    expectations: `Placement questions in Brazilian Portuguese for three Brazilian administrative-law skills of a Cebraspe exam. Each skill has three Cebraspe-style assertions judged Certo or Errado (true/false), never multiple choice: a false one hides one realistic trap (a swapped concept, a wrong exception, an absolute word). Check the legal accuracy of every statement against the Constitution's article 37, Law 9.784/1999 and STF Precedent 473. Each question tests only its own skill, a skill's three statements test different points of it and never settle each other's judgment, and about half of all statements are true.`,
     id: "pt-cebraspe-placement-true-false",
     userInput: {
-      ...PLACEMENT_COUNTS,
+      ...TRUE_FALSE_PLACEMENT_COUNTS,
       examFormat: CEBRASPE,
       language: "pt",
       quickFormat: "trueFalse",
@@ -219,7 +225,7 @@ export const TEST_CASES: TestCase<unknown, PlacementItemsInput>[] = [
     },
   },
   {
-    expectations: `Placement questions in US English for three Digital SAT skills, each with one SAT-style multiple-choice question (concise context, a direct question, 4 options, distractors from real slips such as sign errors or dividing by the new value) and one typed question with checkable key points and accepted answers for short answers. The math must be right. Each question tests only its own skill, and a skill's typed question uses a different situation from its multiple-choice one.`,
+    expectations: `Placement questions in US English for three Digital SAT skills, each with two SAT-style multiple-choice questions (concise context, a direct question, 4 options, distractors from real slips such as sign errors or dividing by the new value). The math must be right. Each question tests only its own skill, and a skill's two questions use different situations and ask different things.`,
     id: "en-sat-placement-three-skills",
     userInput: {
       ...PLACEMENT_COUNTS,
@@ -249,7 +255,7 @@ export const TEST_CASES: TestCase<unknown, PlacementItemsInput>[] = [
     },
   },
   {
-    expectations: `Placement questions in US English for three beginner biology skills without an exam: everyday, clear questions. Each skill gets one multiple-choice question with a misconception behind every wrong option and one typed question whose key points can be checked one at a time (for cellular respiration, for example: glucose is broken down, oxygen is used, energy is stored as ATP). Each question tests only its own skill.`,
+    expectations: `Placement questions in US English for three beginner biology skills without an exam: everyday, clear questions. Each skill gets two multiple-choice questions with a misconception behind every wrong option, in different situations and asking different things (for cellular respiration, for example: what is broken down, what is used, where the energy is stored). Each question tests only its own skill.`,
     id: "en-biology-placement-no-exam",
     userInput: {
       ...PLACEMENT_COUNTS,
@@ -281,7 +287,7 @@ export const TEST_CASES: TestCase<unknown, PlacementItemsInput>[] = [
     expectations: `Placement questions for a Brazilian learning US English for a job interview in Toronto, three situation skills at B1 to B2 (intermediate). Every question practices English itself: what the learner reads, chooses or writes as the language (the interviewer's line, the reply options, the typed answer) is in natural US English at about B1 to B2, while the setup, the question, reasons and feedback are in Brazilian Portuguese. Never a question about interview manners or steps that a learner could answer without knowing English, and never a question written entirely in Portuguese. Each skill also has one typed question whose answer is written in English, with key points saying what it must express. Situations are a data analyst's interview, varied, without the learner's own name.`,
     id: "pt-en-language-interview-placement",
     userInput: {
-      ...PLACEMENT_COUNTS,
+      ...LANGUAGE_PLACEMENT_COUNTS,
       language: "pt",
       quickFormat: "multipleChoice",
       skills: [

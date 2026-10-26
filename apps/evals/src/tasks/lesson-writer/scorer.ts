@@ -46,9 +46,9 @@ async function checkLesson(
     lesson,
     level: input.level,
     material: input.material,
+    shortAnswers: input.shortAnswers,
     sources: input.sources,
     spec: input.spec,
-    writtenAnswers: input.writtenAnswers,
   });
 
   const problems = [

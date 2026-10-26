@@ -271,7 +271,7 @@ export async function loadPracticeItems({
    */
   repeatOnlyMissed?: boolean;
   skillIds: readonly string[];
-  /** The goal's learner may meet typed questions (`allowsTypedQuestions`). */
+  /** Short typed answers join the goal's practice (`practicesShortAnswers`). */
   typed: boolean;
   userId: string;
 }): Promise<PracticeItem[]> {

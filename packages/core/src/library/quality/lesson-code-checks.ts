@@ -58,8 +58,8 @@ type ScreenCheckInput = {
   level: CourseLevel;
   screen: WrittenScreen;
   specScreen: LessonScreen;
-  /** The exams of the lesson's learners ask written answers, so a check may be typed. */
-  writtenAnswers: boolean;
+  /** The exams of the lesson's learners ask short written answers, so a check may be typed. */
+  shortAnswers: boolean;
 };
 
 type Problem = { code: LessonCheckCode; problem: string } | false;
@@ -68,9 +68,9 @@ function getKindProblems({
   allowActivityFallback,
   screen,
   specScreen,
-  writtenAnswers,
+  shortAnswers,
 }: ScreenCheckInput): Problem[] {
-  const kinds = getWrittenKinds({ kind: specScreen.kind, writtenAnswers });
+  const kinds = getWrittenKinds({ kind: specScreen.kind, shortAnswers });
 
   const fallback =
     allowActivityFallback && specScreen.kind === "activity" && screen.kind === "check";
@@ -319,7 +319,7 @@ export function checkWrittenLesson({
   material,
   sources,
   spec,
-  writtenAnswers = false,
+  shortAnswers = false,
 }: {
   allowActivityFallback?: boolean;
   /** The chapter's other lessons, whose examples this one shouldn't reuse. */
@@ -332,10 +332,10 @@ export function checkWrittenLesson({
   /** The official sources the lesson is written from, whose numbers are facts too. */
   sources?: string;
   spec: LessonSpec;
-  /** The learners' exams ask written answers: any other lesson's typed answer goes to the fix pass. */
-  writtenAnswers?: boolean;
+  /** The learners' exams ask short written answers: other lessons' typed answers go to the fix pass. */
+  shortAnswers?: boolean;
 }): { problems: LessonCheckProblem[]; screens: ConvertedScreen[] } {
-  const lessonInput = { allowActivityFallback, language, level, writtenAnswers };
+  const lessonInput = { allowActivityFallback, language, level, shortAnswers };
 
   const checked = lesson.screens.flatMap((screen, index) => {
     const specScreen = spec.screens[index];

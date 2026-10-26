@@ -32,11 +32,10 @@ import { pickPlacementBatchesStep, writePlacementBatchStep } from "./steps/place
 
 const CITATION = { passage: "Conforme o edital.", sourceId: "notice" };
 
-/** Polícia Federal's notice as research reads it: assertions judged right or wrong, and an essay. */
+/** Polícia Federal's notice as research reads it: assertions judged right or wrong. */
 const CEBRASPE_STRUCTURE = {
   formats: [
     { citation: CITATION, description: "Itens Certo ou Errado.", kind: "trueFalse", options: null },
-    { citation: CITATION, description: "Prova discursiva.", kind: "essay", options: null },
   ],
   mock: null,
   rules: [],
@@ -106,7 +105,7 @@ const TYPED_ITEM: GeneratedItem = {
 function writtenFor(params: PlacementItemsParams) {
   return taskResult({
     skills: params.skills.map(() => ({
-      quick: [QUICK_ITEMS[params.quickFormat]],
+      quick: Array.from({ length: params.quickCount }, () => QUICK_ITEMS[params.quickFormat]),
       typed: params.typedCount > 0 ? [TYPED_ITEM] : [],
     })),
   });
@@ -291,7 +290,7 @@ describe(placementItemsWorkflow, () => {
     ]);
   });
 
-  it("writes the picked skills a few per call, a quick question each and no typed one for a hobby", async () => {
+  it("writes the picked skills a few per call, with the quick questions that confirm a right pick", async () => {
     const { goal, skillIds } = await goalWithSkills({ count: 7 });
 
     await expect(
@@ -302,10 +301,10 @@ describe(placementItemsWorkflow, () => {
     // questions may serve one learner, so its first question gets no premium either.
     expect(calledSkillCounts()).toStrictEqual([1, 2, 2, 2]);
 
-    // A learn goal's exam asks no written answers, so placement confirms with quick questions.
+    // A second pick confirms a right one in the same call, where a typed question used to.
     expect(vi.mocked(generatePlacementItems).mock.calls[0]?.[0]).toMatchObject({
       examFormat: null,
-      quickCount: 1,
+      quickCount: 2,
       quickFormat: "multipleChoice",
       typedCount: 0,
     });
@@ -314,7 +313,7 @@ describe(placementItemsWorkflow, () => {
       vi.mocked(generatePlacementItems).mock.calls.map(([params]) => params.serviceTier),
     ).toStrictEqual([undefined, undefined, undefined, undefined]);
 
-    await expect(countItems({ format: "multipleChoice", skillIds })).resolves.toBe(7);
+    await expect(countItems({ format: "multipleChoice", skillIds })).resolves.toBe(14);
     await expect(countItems({ format: "typed", skillIds })).resolves.toBe(0);
 
     // Placement stops waiting for questions that didn't come once they're all written.
@@ -518,7 +517,7 @@ describe(placementItemsWorkflow, () => {
     const { goal, skillIds } = await goalWithSkills({ count: 2, kind: "exam" });
 
     // Before the notice is read, placement's questions are general multiple choice.
-    await preparePlacementItems({ ...context, goalId: goal.id, skillIds });
+    await preparePlacementItems({ ...context, forPlacement: true, goalId: goal.id, skillIds });
 
     const blueprint = await examBlueprintFixture({
       name: "Polícia Federal",
@@ -530,21 +529,21 @@ describe(placementItemsWorkflow, () => {
     vi.mocked(generatePlacementItems).mockClear();
 
     await expect(
-      preparePlacementItems({ ...context, goalId: goal.id, skillIds }),
+      preparePlacementItems({ ...context, forPlacement: true, goalId: goal.id, skillIds }),
     ).resolves.toStrictEqual({ failed: 0, written: 2 });
 
-    // The exam's own questions: its true/false ones and, as its discursive test asks written
-    // answers, typed ones of its own, since placement asks an exam its questions over the general
-    // ones written before.
+    // The exam's own true/false questions, since placement asks an exam its questions over the
+    // general ones written before: three a skill, as a guess passes a statement half the time.
     expect(vi.mocked(generatePlacementItems).mock.calls).toStrictEqual([
       [
         expect.objectContaining({
           examFormat: expect.objectContaining({ name: "Polícia Federal, Agente" }),
+          quickCount: 3,
           quickFormat: "trueFalse",
-          typedCount: 1,
+          typedCount: 0,
         }),
       ],
-      [expect.objectContaining({ quickFormat: "trueFalse", typedCount: 1 })],
+      [expect.objectContaining({ quickCount: 3, quickFormat: "trueFalse", typedCount: 0 })],
     ]);
 
     // The exam's bank is very likely asked again: the first question the learner waits on is
@@ -557,16 +556,13 @@ describe(placementItemsWorkflow, () => {
       where: { examBlueprintId: blueprint.id, skillId: { in: skillIds } },
     });
 
-    expect(examItems.map((item) => item.format).toSorted()).toStrictEqual([
-      "trueFalse",
-      "trueFalse",
-      "typed",
-      "typed",
-    ]);
+    expect(examItems.map((item) => item.format)).toStrictEqual(
+      Array.from({ length: 6 }, () => "trueFalse"),
+    );
 
     // A later call finds them.
     vi.mocked(generatePlacementItems).mockClear();
-    await preparePlacementItems({ ...context, goalId: goal.id, skillIds });
+    await preparePlacementItems({ ...context, forPlacement: true, goalId: goal.id, skillIds });
     expect(generatePlacementItems).not.toHaveBeenCalled();
   });
 
@@ -596,8 +592,9 @@ describe(placementItemsWorkflow, () => {
       serviceTier: "priority",
     });
 
+    // Three statements a skill: a guess passes one half the time.
     await expect(countItems({ format: "multipleChoice", skillIds })).resolves.toBe(0);
-    await expect(countItems({ format: "trueFalse", skillIds })).resolves.toBe(2);
+    await expect(countItems({ format: "trueFalse", skillIds })).resolves.toBe(6);
   });
 
   it("waits for a new notice's formats before writing questions, and goes on without them in the end", async () => {

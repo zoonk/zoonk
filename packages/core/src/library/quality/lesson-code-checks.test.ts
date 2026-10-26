@@ -7,7 +7,7 @@ import {
 } from "./_test-utils/written-lessons";
 import { checkScreenText, checkWrittenLesson } from "./lesson-code-checks";
 
-type CheckOptions = { allowActivityFallback?: boolean; writtenAnswers?: boolean };
+type CheckOptions = { allowActivityFallback?: boolean; shortAnswers?: boolean };
 
 function check(lesson: WrittenLesson, options: CheckOptions = {}) {
   return checkWrittenLesson({
@@ -396,7 +396,7 @@ describe(checkWrittenLesson, () => {
       "Planned as check but written as typedAnswer; write it as check or mathCheck.",
     );
 
-    expect(codesOf(typed, { writtenAnswers: true })).toStrictEqual([]);
+    expect(codesOf(typed, { shortAnswers: true })).toStrictEqual([]);
   });
 
   it("rejects a typed answer whose sample gives none of the accepted answers", () => {
@@ -406,7 +406,7 @@ describe(checkWrittenLesson, () => {
       sampleAnswer: "It ends at 3 °C.",
     };
 
-    expect(codesOf(withScreen(6, contradicting), { writtenAnswers: true })).toStrictEqual([
+    expect(codesOf(withScreen(6, contradicting), { shortAnswers: true })).toStrictEqual([
       [6, "answerKey"],
     ]);
   });

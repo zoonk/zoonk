@@ -3,7 +3,7 @@ import { loadSessionWeeklyChallenge } from "../../checkpoints/_utils/load-weekly
 import { isNetScored } from "../../checkpoints/weekly-challenge-rules";
 import { loadSessionProduce } from "../../exams/essays/_utils/load-produce";
 import { getDaysToExam } from "../../exams/final-stretch/final-stretch-rules";
-import { allowsTypedQuestions } from "../../library/exams/written-answers";
+import { practicesShortAnswers } from "../../library/exams/short-answers";
 import { getGoalField } from "../../library/items/item-field";
 import {
   type AlphabetIntro,
@@ -326,7 +326,7 @@ export async function loadSessionBuildInput(
     now,
     repeatOnlyMissed: isReviewDay,
     skillIds: fullReview ? testSkillIds : skillIds,
-    typed: allowsTypedQuestions({ goal, structure: plan.structure }),
+    typed: practicesShortAnswers({ goal, structure: plan.structure }),
     userId,
   });
 

@@ -5,7 +5,7 @@ import { type PlacementSkill } from "./placement-graph";
  * when every area of every phase has a starting point it is that sure about, not after a set
  * number of questions.
  */
-const PLACEMENT_CONFIDENCE = 0.8;
+export const PLACEMENT_CONFIDENCE = 0.8;
 
 /**
  * What placement's walk makes of a skill (see `readSkillStatuses`): `known` once its own answers

@@ -5,7 +5,6 @@ import { type ExamStructure } from "../../../library/exams/blueprint-contract";
 import { readNoticeFormats } from "../../../library/exams/notice-formats";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
 import { type TrueFalseLabels, getTrueFalseLabels } from "../../../library/exams/true-false-labels";
-import { allowsTypedQuestions } from "../../../library/exams/written-answers";
 import { ITEM_IMAGE_INCLUDE } from "../../../library/items/item-image";
 import { getAreaShares } from "../../../plans/_utils/exam-subject-shares";
 import { listFocusedSkillIds } from "../../../plans/planner/focus-targets";
@@ -28,7 +27,11 @@ import { getTargetDifficulty } from "../placement-difficulty";
 import { type PlacementItemCandidate, pickPlacementItem } from "../placement-item-choice";
 import { listKnownByMeasuredLevel, listKnownSkillIds, readSkillStatuses } from "../placement-known";
 import { isOwnMaterialTest } from "../placement-material";
-import { type PlacementQuickFormat, getPlacementQuickFormat } from "../placement-quick-format";
+import {
+  type PlacementQuickFormat,
+  confirmsInWriting,
+  getPlacementQuickFormat,
+} from "../placement-quick-format";
 import { type SkillStatuses } from "../placement-status";
 import {
   type AreaStart,
@@ -131,10 +134,7 @@ async function loadGoalExam(goalId: string): Promise<{
   measuredLevel: OwnLevel | null;
   quickFormat: PlacementQuickFormat;
   trueFalseLabels: TrueFalseLabels;
-  /**
-   * Its learner may meet typed questions (`allowsTypedQuestions`), so a right quick answer is
-   * confirmed in writing; any other goal's is confirmed with another quick question.
-   */
+  /** A language goal confirms a right quick answer in writing (`confirmsInWriting`). */
   typed: boolean;
 }> {
   const goal = await prisma.goal.findUnique({
@@ -161,7 +161,7 @@ async function loadGoalExam(goalId: string): Promise<{
     // Before the notice's blueprint is linked, the formats a first pass over it read.
     quickFormat: getPlacementQuickFormat(structure ?? notice),
     trueFalseLabels: getTrueFalseLabels(structure ?? notice),
-    typed: goal ? allowsTypedQuestions({ goal, structure }) : false,
+    typed: goal ? confirmsInWriting(goal) : false,
   };
 }
 

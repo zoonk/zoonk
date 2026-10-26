@@ -298,34 +298,54 @@ describe(pickPlacementItemSkills, () => {
 
   /*
    * A hobby biology course asked the learner to write what Iara's cell diagram was missing:
-   * learners would rather pick, so only a goal whose exam asks written answers, or a language's,
-   * gets typed confirmations written.
+   * learners would rather pick, so placement confirms a right pick with more quick questions,
+   * written with it, and only a language goal gets a typed confirmation.
    */
-  it("writes typed confirmations only for a goal whose exam asks written answers, or a language's", async () => {
-    const [user, discursive, choices, skill] = await Promise.all([
+  it("confirms a right pick with more quick questions, and only a language goal in writing", async () => {
+    const [user, shortAnswers, cebraspe, skill] = await Promise.all([
       userFixture(),
-      examBlueprintFixture({ structure: examStructure(["multipleChoice", "essay"]) }),
-      examBlueprintFixture({ structure: examStructure(["multipleChoice", "numeric"]) }),
+      examBlueprintFixture({ structure: examStructure(["multipleChoice", "shortAnswer"]) }),
+      examBlueprintFixture({ structure: CEBRASPE_STRUCTURE }),
       skillFixture(),
     ]);
 
     const goals = await Promise.all([
-      goalFixture({ examBlueprintId: discursive.id, kind: "exam", userId: user.id }),
-      goalFixture({ examBlueprintId: choices.id, kind: "exam", userId: user.id }),
+      goalFixture({ examBlueprintId: shortAnswers.id, kind: "exam", userId: user.id }),
+      goalFixture({ examBlueprintId: cebraspe.id, kind: "exam", userId: user.id }),
       goalFixture({ userId: user.id }),
       goalFixture({ kind: "language", targetLanguage: "en", userId: user.id }),
     ]);
 
     const picks = await Promise.all(
-      goals.map((goal) => pickPlacementItemSkills({ goalId: goal.id, skillIds: [skill.id] })),
+      goals.map((goal) =>
+        pickPlacementItemSkills({ forPlacement: true, goalId: goal.id, skillIds: [skill.id] }),
+      ),
     );
 
-    expect(picks.map((pick) => pick.skills.map((picked) => picked.needsTyped))).toStrictEqual([
-      [true],
-      [false],
-      [false],
-      [true],
+    // Two right picks, or three right statements, are as sure as a right typed answer.
+    expect(
+      picks.map((pick) => [pick.quickFormat, pick.confirmingCount, pick.skills[0]?.needsTyped]),
+    ).toStrictEqual([
+      ["multipleChoice", 1, false],
+      ["trueFalse", 2, false],
+      ["multipleChoice", 1, false],
+      ["multipleChoice", 0, true],
     ]);
+  });
+
+  it("writes placement's confirming questions for a skill with only one quick question", async () => {
+    const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
+    const goal = await goalFixture({ userId: user.id });
+
+    await itemFixture({ skillId: skill.id });
+
+    const [placement, practice] = await Promise.all([
+      pickPlacementItemSkills({ forPlacement: true, goalId: goal.id, skillIds: [skill.id] }),
+      pickPlacementItemSkills({ goalId: goal.id, skillIds: [skill.id] }),
+    ]);
+
+    expect(placement.skills.map((picked) => picked.id)).toStrictEqual([skill.id]);
+    expect(practice).toMatchObject({ confirmingCount: 0, skills: [] });
   });
 
   it("records when placement's questions for the goal's plan were written", async () => {
@@ -419,14 +439,9 @@ describe(pickPlacementItemSkills, () => {
     const { quickFormat, skills } = await pickPlacementItemSkills({ goalId: goal.id, skillIds });
 
     // Written before the notice was read, the general questions don't count for its placement:
-    // the exam's own true/false and typed ones are written.
+    // the exam's own true/false ones are written.
     expect(quickFormat).toBe("trueFalse");
-
-    expect(skills.map((skill) => [skill.id, skill.needsTyped])).toStrictEqual([
-      [withChoice, true],
-      [withTrueFalse, true],
-      [bare, true],
-    ]);
+    expect(skills.map((skill) => skill.id)).toStrictEqual([withChoice, withTrueFalse, bare]);
 
     expect(skills[0]?.exam?.blueprintId).toBe(blueprint.id);
   });

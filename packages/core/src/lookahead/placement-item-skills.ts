@@ -18,6 +18,8 @@ import { pickPlacementItemSkillIds } from "../learner/placement/placement-item-p
 import { isOwnMaterialTest } from "../learner/placement/placement-material";
 import {
   type PlacementQuickFormat,
+  confirmsInWriting,
+  getConfirmingCount,
   getPlacementQuickFormat,
 } from "../learner/placement/placement-quick-format";
 import {
@@ -28,7 +30,7 @@ import {
 } from "../library/exams/exam-choice-format";
 import { type NoticeFormats } from "../library/exams/notice-formats";
 import { readBlueprintContent } from "../library/exams/save-exam-blueprint";
-import { allowsTypedQuestions, readGoalExamFormats } from "../library/exams/written-answers";
+import { readGoalExamFormats } from "../library/exams/short-answers";
 import { getItemAudienceFilter } from "../library/items/item-field";
 import { loadSkillPrerequisites } from "../library/skills/skill-prerequisites";
 import { parsePlanGraph, parsePlanSettings } from "../plans/planner/plan-state";
@@ -140,14 +142,14 @@ export function toItemExam(blueprint: ExamBlueprint): PlacementItemExam {
  * The goal's exam as a first pass over its new notice read it (`readNoticeFormats`): its formats
  * only, under the goal's own name for it, until the notice's blueprint is linked.
  */
-function toNoticeItemExam({ name, notice }: { name: string; notice: NoticeFormats }) {
-  const formats = getExamFormats(notice);
+function toNoticeItemExam({ formats, name }: { formats: NoticeFormats; name: string }) {
+  const examFormats = getExamFormats(formats);
 
   return {
     blueprintId: null,
     name,
-    optionCount: toOptionCount(formats),
-    style: toExamStyle({ formats, scoring: undefined }),
+    optionCount: toOptionCount(examFormats),
+    style: toExamStyle({ formats: examFormats, scoring: undefined }),
   };
 }
 
@@ -167,10 +169,7 @@ function getGoalItemExam(
     return { exam: goal.kind === "exam" ? toItemExam(blueprint) : null, formats };
   }
 
-  return {
-    exam: formats ? toNoticeItemExam({ name: goal.title, notice: formats }) : null,
-    formats,
-  };
+  return { exam: formats ? toNoticeItemExam({ formats, name: goal.title }) : null, formats };
 }
 
 type PickingGoal = Pick<Goal, "details"> & {
@@ -216,15 +215,17 @@ async function readPickedSkillIds({
 }
 
 /**
- * The formats a run writes for placement: a quick one to ask a skill, and a typed confirmation for
- * a goal whose learner may meet typed questions (`allowsTypedQuestions`).
+ * The formats a run writes for placement: a quick one to ask a skill, and a language goal's typed
+ * confirmation (`confirmsInWriting`).
  */
 export type PlacementItemFormat = PlacementQuickFormat | "typed";
 
-/** A picked skill, and whether it still needs the typed question that confirms a right answer. */
+/** A picked skill, and whether it still needs a language goal's typed confirmation. */
 export type PlacementItemPick = PlacementItemSkill & { needsTyped: boolean };
 
 export type PlacementItemPicks = {
+  /** The quick questions each picked skill gets beyond the first (`getConfirmingCount`). */
+  confirmingCount: number;
   /** How the goal's placement asks quickly: its questions are written in this format. */
   quickFormat: PlacementQuickFormat;
   skills: PlacementItemPick[];
@@ -247,7 +248,8 @@ function isAnswered(item: SkillItem): boolean {
  * A picked skill that still needs placement's questions, or null when this goal's placement can
  * already ask it in the goal's quick format. A question that won't be asked counts as missing
  * (`fits`): an exam goal's in another choice format or with another number of options, such as an
- * old four-option question for ENEM's five. The typed confirmation comes along when it's missing.
+ * old four-option question for ENEM's five. A language goal's typed confirmation comes along when
+ * it's missing.
  */
 function toPick({
   exam,
@@ -346,8 +348,9 @@ export async function pickPlacementItemSkills({
   formats?: readonly PlacementItemFormat[];
   goalId: string;
   /**
-   * How many quick questions a skill needs before it's skipped: one for placement, more for a
-   * chapter's test-out, which asks a chapter of few skills each of them several times.
+   * How many quick questions a skill needs before it's skipped: one for placement (and its
+   * confirming ones, `getConfirmingCount`), more for a chapter's test-out, which asks a chapter of
+   * few skills each of them several times.
    */
   quickNeeded?: number;
   skillIds?: string[];
@@ -385,11 +388,8 @@ export async function pickPlacementItemSkills({
   const quickFormat =
     formats?.find((format) => isQuickFormat(format)) ?? getPlacementQuickFormat(structure);
 
-  // Only a goal whose exam asks written answers (or a language goal) confirms in writing; the
-  // others confirm with another quick question.
-  const writesTyped =
-    formats?.includes("typed") ?? (goal !== null && allowsTypedQuestions({ goal, structure }));
-
+  const writesTyped = formats?.includes("typed") ?? (goal !== null && confirmsInWriting(goal));
+  const confirmingCount = getConfirmingCount({ forPlacement, formats, quickFormat, writesTyped });
   const needed: ItemFormat[] = [quickFormat, "typed"];
 
   const skills = await prisma.skill.findMany({
@@ -421,16 +421,16 @@ export async function pickPlacementItemSkills({
     where: { id: { in: picked } },
   });
 
+  const rules = { exam, exceptAnswered, fits, quickFormat, writesTyped };
+
   const picks = picked
     .map((id) => skills.find((row) => row.id === id))
     .map((row) =>
-      row
-        ? toPick({ exam, exceptAnswered, fits, quickFormat, quickNeeded, row, writesTyped })
-        : null,
+      row ? toPick({ ...rules, quickNeeded: quickNeeded + confirmingCount, row }) : null,
     )
     .filter((pick) => pick !== null);
 
-  return { quickFormat, skills: picks };
+  return { confirmingCount, quickFormat, skills: picks };
 }
 
 /**

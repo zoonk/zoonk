@@ -21,9 +21,9 @@ vi.mock("./lesson-spec.prompt.md", () => ({
     "{{#setup}}",
     "Plan the setup.",
     "{{/setup}}",
-    "{{#writtenAnswers}}",
+    "{{#shortAnswers}}",
     "Ask it in their own words.",
-    "{{/writtenAnswers}}",
+    "{{/shortAnswers}}",
     "Check the plan.",
   ].join("\n"),
 }));
@@ -272,7 +272,7 @@ describe(generateLessonSpec, () => {
       generateLessonSpec({ ...params, sources: "<page>Law</page>" }),
       generateLessonSpec({ ...params, setup: true }),
       generateLessonSpec({ ...params, exams, quick: true }),
-      generateLessonSpec({ ...params, writtenAnswers: true }),
+      generateLessonSpec({ ...params, shortAnswers: true }),
     ]);
 
     expect(regular.systemPrompt).toBe("Plan the lesson.\nCheck the plan.");

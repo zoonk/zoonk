@@ -22,8 +22,8 @@ async function loadExamChoice(examBlueprintId: string | null): Promise<ExamChoic
  * The questions placement may ask on these skills: the goal's exam's first, general ones where a
  * skill has none of its exam's and none are being written (`preferExamItems`), never another
  * exam's (a shared skill's "on the first day of ENEM…" question isn't for a police exam), only in
- * the exam's own format (`fitsExamChoice`), and typed ones only for a goal whose learner may meet
- * them (`typed`), though the bank shares them with every goal.
+ * the exam's own format (`fitsExamChoice`), and typed ones only for a goal that confirms in writing
+ * (`typed`), though the bank shares them with every goal.
  */
 export async function loadPlacementItems({
   examBlueprintId,
@@ -33,7 +33,7 @@ export async function loadPlacementItems({
 }: {
   examBlueprintId: string | null;
   skillIds: string[];
-  /** The goal's learner may meet typed questions (`allowsTypedQuestions`). */
+  /** The goal confirms a right quick answer in writing (`confirmsInWriting`). */
   typed: boolean;
   /** Skills whose placement questions the goal's run is still writing. */
   writingSkillIds?: ReadonlySet<string>;

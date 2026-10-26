@@ -27,9 +27,9 @@ vi.mock("./lesson-writer.prompt.md", () => ({
     "{{#setup}}",
     "Write the setup.",
     "{{/setup}}",
-    "{{#writtenAnswers}}",
+    "{{#shortAnswers}}",
     "Write typed answers.",
-    "{{/writtenAnswers}}",
+    "{{/shortAnswers}}",
     "Check it.",
   ].join("\n"),
 }));
@@ -110,7 +110,7 @@ describe(writeLessonDraft, () => {
       writeLessonDraft({ ...params, sources: "<page>Law</page>" }),
       writeLessonDraft({ ...params, exams }),
       writeLessonDraft({ ...params, setup: true }),
-      writeLessonDraft({ ...params, writtenAnswers: true }),
+      writeLessonDraft({ ...params, shortAnswers: true }),
     ]);
 
     expect(regular.systemPrompt).toBe("Write the lesson.\nKeep it short.\nCheck it.");

@@ -46,11 +46,10 @@ function mockGrade({ met }: { met: number }) {
 }
 
 /**
- * One skill with two quick questions and a typed one. A right pick is confirmed in words when the
- * goal's exam asks short written answers, and with the other pick when it asks none
- * (`written: false`).
+ * One skill with two quick questions and a typed one. A language goal confirms a right pick in
+ * writing; every other goal, an exam that asks short written answers too, with the other pick.
  */
-async function setup({ written = true }: { written?: boolean } = {}) {
+async function setup({ goal = "language" }: { goal?: "hobby" | "language" | "shortAnswers" } = {}) {
   const user = await userFixture();
 
   const [fixture, blueprint] = await Promise.all([
@@ -68,12 +67,15 @@ async function setup({ written = true }: { written?: boolean } = {}) {
       data: { placementPreparedAt: new Date() },
       where: { id: fixture.plan.id },
     }),
-    written
-      ? prisma.goal.update({
-          data: { examBlueprintId: blueprint.id, kind: "exam" },
+    goal === "hobby"
+      ? null
+      : prisma.goal.update({
+          data:
+            goal === "language"
+              ? { kind: "language", targetLanguage: "en" }
+              : { examBlueprintId: blueprint.id, kind: "exam" },
           where: { id: fixture.goal.id },
-        })
-      : null,
+        }),
   ]);
 
   mockSession(user.id);
@@ -209,13 +211,33 @@ describe("typed answers in placement", () => {
    * learners would rather pick, so a goal whose exam asks no written answers never gets a typed
    * question, even one the shared bank has.
    */
-  it("confirms a right pick with another quick question when the goal's exam asks no written answers", async () => {
-    const { goal } = await setup({ written: false });
-    const afterPick = await answerQuickRight({ goalId: goal.id });
+  it("confirms a right pick with another quick question for every goal but a language's", async () => {
+    // Each setup signs its own learner in, so the two answer one after the other.
+    const hobby = await setup({ goal: "hobby" });
+    const hobbyPick = await answerQuickRight({ goalId: hobby.goal.id });
+    const shortAnswers = await setup({ goal: "shortAnswers" });
+    const shortAnswersPick = await answerQuickRight({ goalId: shortAnswers.goal.id });
 
-    expect(afterPick).toMatchObject({
-      placement: { next: { format: "multipleChoice" } },
-      status: "ready",
+    expect([hobbyPick, shortAnswersPick]).toMatchObject([
+      { placement: { complete: false, next: { format: "multipleChoice" } }, status: "ready" },
+      { placement: { complete: false, next: { format: "multipleChoice" } }, status: "ready" },
+    ]);
+
+    // The second right pick makes placement as sure of the skill as a right typed answer did.
+    mockSession(hobby.user.id);
+
+    const confirmed = await answerPlacementQuestion({
+      goalId: hobby.goal.id,
+      input: {
+        answer: { selectedIndex: 0 },
+        durationMs: 4000,
+        itemId: hobbyPick.status === "ready" ? (hobbyPick.placement.next?.itemId ?? "") : "",
+      },
+    });
+
+    expect(confirmed).toMatchObject({
+      isCorrect: true,
+      placement: { complete: true, knownSkillIds: [hobby.skills[0]?.id] },
     });
   });
 

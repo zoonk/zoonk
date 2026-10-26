@@ -85,8 +85,9 @@ const FIND_ERROR_TEMPLATE = "findError";
 /**
  * The rules, keeping in place only the variants this lesson is (a step to find the mistake in,
  * built from the learner's material or official sources, written for exams, a setup lesson, for
- * learners whose exams ask written answers). A lesson never reads the others' rules, so its prompt
- * (and version) never carries them, and a variant's lesson reads its rules where they always were.
+ * learners whose exams ask short written answers). A lesson never reads the others' rules, so its
+ * prompt (and version) never carries them, and a variant's lesson reads its rules where they always
+ * were.
  */
 function buildSystemPrompt(params: WriteLessonDraftParams): string {
   return selectPromptVariants({
@@ -95,11 +96,11 @@ function buildSystemPrompt(params: WriteLessonDraftParams): string {
       exams: (params.exams?.length ?? 0) > 0,
       material: Boolean(params.material),
       setup: Boolean(params.setup),
+      shortAnswers: Boolean(params.shortAnswers),
       sources: Boolean(params.sources),
       spotAiMistake: params.spec.screens.some(
         (screen) => screen.activityTemplate === FIND_ERROR_TEMPLATE,
       ),
-      writtenAnswers: Boolean(params.writtenAnswers),
     },
   });
 }

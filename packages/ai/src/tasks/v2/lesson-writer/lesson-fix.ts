@@ -102,10 +102,10 @@ export async function fixLessonDraft(params: FixLessonDraftParams) {
 
   const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
 
-  // A lesson whose learners' exams ask no written answers never reads about typed answers.
+  // A lesson whose learners' exams ask no short written answers never reads about typed answers.
   const systemPrompt = selectPromptVariants({
     template: fixPrompt,
-    variants: { writtenAnswers: Boolean(params.writtenAnswers) },
+    variants: { shortAnswers: Boolean(params.shortAnswers) },
   });
 
   const userPrompt = `${formatLessonPlan(params)}

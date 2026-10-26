@@ -28,7 +28,7 @@ export type LessonWritingContext = Pick<
   | "setup"
   | "sources"
   | "spec"
-  | "writtenAnswers"
+  | "shortAnswers"
 >;
 
 type AiAnalytics = CheckLessonQualityParams["analytics"];
@@ -157,9 +157,9 @@ export async function runLessonQualityGate({
     lesson,
     level: context.level,
     material: context.material,
+    shortAnswers: context.shortAnswers,
     sources: context.sources,
     spec: context.spec,
-    writtenAnswers: context.writtenAnswers,
   });
 
   const [programProblems, reviewed] = await Promise.all([

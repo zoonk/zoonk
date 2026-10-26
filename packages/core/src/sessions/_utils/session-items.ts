@@ -57,7 +57,7 @@ const SHORT_TYPED_ANSWER = {
 
 /**
  * The questions practice asks: `QUESTION_ITEM_FORMATS`, ordering questions and, for a goal whose
- * learner may meet typed questions (`typed`: an exam that asks written answers, or a language),
+ * learner may meet typed questions (`typed`: an exam that asks short answers, or a language),
  * short typed answers, graded by code first and by a model only on a miss. Typed explanations,
  * spoken answers and essays join sessions with the produce blocks.
  */

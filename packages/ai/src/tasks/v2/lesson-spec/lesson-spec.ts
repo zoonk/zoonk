@@ -96,10 +96,10 @@ export type LessonSpecParams = {
   /** A lesson that sets up a tool on the learner's device ("Set up Python on Windows"). */
   setup?: boolean;
   /**
-   * The exams of the lesson's learners ask for written answers, so a check may ask them to explain
-   * in their own words; every other lesson plans only checks learners answer by picking.
+   * The exams of the lesson's learners ask short written answers, so a check may ask for one in
+   * their format; every other lesson plans only checks learners answer by picking.
    */
-  writtenAnswers?: boolean;
+  shortAnswers?: boolean;
   /**
    * A skill's quick lesson ("Quick lesson"): one short lesson summing up the skill's core ideas with
    * one worked example, for a learner who takes a short version of a base. It's never split.
@@ -122,8 +122,8 @@ function formatList(items: readonly string[]): string {
 
 /**
  * The rules, keeping in place only the variants this lesson is (planned for exams, from the
- * learner's material or official sources, a setup lesson, for learners whose exams ask written
- * answers), then a quick lesson's rules last. A lesson never reads the others' rules, so its prompt
+ * learner's material or official sources, a setup lesson, for learners whose exams ask short
+ * written answers), then a quick lesson's rules last. A lesson never reads the others' rules, so its prompt
  * (and version) never carries them, and a variant's lesson reads its rules where they always were.
  */
 function buildSystemPrompt(params: LessonSpecParams): string {
@@ -133,8 +133,8 @@ function buildSystemPrompt(params: LessonSpecParams): string {
       exams: (params.exams?.length ?? 0) > 0,
       material: Boolean(params.material),
       setup: Boolean(params.setup),
+      shortAnswers: Boolean(params.shortAnswers),
       sources: Boolean(params.sources),
-      writtenAnswers: Boolean(params.writtenAnswers),
     },
   });
 

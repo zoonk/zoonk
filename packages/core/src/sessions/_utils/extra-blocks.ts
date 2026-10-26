@@ -4,7 +4,7 @@ import { isNetScored } from "../../checkpoints/weekly-challenge-rules";
 import { loadListeningSkillIds } from "../../exams/listening/listening-skills";
 import { loadGoalSkillIds } from "../../learner/_utils/goal-skill-graph";
 import { markLearnerChanged, markPlansChanged } from "../../learner/_utils/mark-learner-changed";
-import { allowsTypedQuestions } from "../../library/exams/written-answers";
+import { practicesShortAnswers } from "../../library/exams/short-answers";
 import { getGoalField } from "../../library/items/item-field";
 import { type DifficultyBias, parsePlanSettings } from "../../plans/planner/plan-state";
 import { getBlockItemIds, readBlockPayload, toBlockPayload } from "../block-payload";
@@ -85,7 +85,7 @@ export async function buildExtraPractice({
     listeningSkillIds,
     now: new Date(),
     skillIds,
-    typed: session.goal ? allowsTypedQuestions({ goal: session.goal, structure }) : false,
+    typed: session.goal ? practicesShortAnswers({ goal: session.goal, structure }) : false,
     userId,
   });
 

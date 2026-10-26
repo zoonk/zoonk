@@ -90,8 +90,8 @@ function formatSkills(skills: readonly PlacementItemsSkill[]): string {
 }
 
 /**
- * The writer's own rules, with the typed questions' only when it writes them (placement's
- * confirmations; mocks, focus tests and test-outs ask quick questions alone) and the true/false
+ * The writer's own rules, with the typed questions' only when it writes them (a language goal's
+ * placement confirmations; every other call asks quick questions alone) and the true/false
  * balance only for true/false questions.
  */
 function buildTaskPrompt({ quickFormat, typedCount }: PlacementItemsParams): string {
@@ -161,8 +161,9 @@ function buildSchema({ quickFormat, typedCount }: PlacementItemsParams) {
 
 /**
  * Writes the bank's questions for several skills in one call: quick ones (multiple choice, or
- * the exam's true/false judgments) to ask each skill, and, for placement, typed ones to confirm a
- * right answer. Mocks, focus tests and test-outs ask for quick ones alone.
+ * the exam's true/false judgments) to ask each skill and to confirm a right answer, and, for a
+ * language goal's placement, typed ones to confirm it. Mocks, focus tests and test-outs ask for
+ * quick ones alone.
  * One call per few skills repeats the shared instructions far less than one call per skill and
  * format; a few skills per call keep each wait short, since output is written token by token.
  * Callers run the item checks in `@zoonk/core` before storing.

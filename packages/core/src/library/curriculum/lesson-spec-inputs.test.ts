@@ -202,14 +202,14 @@ describe(loadLessonSpecInputs, () => {
   /*
    * A hobby biology course asked the learner to write what Iara's cell diagram was missing:
    * learners would rather pick, so only the exams of the goals that plan a lesson let it ask them
-   * to write.
+   * to write a short answer.
    */
-  it("lets a lesson ask written answers only when an exam of the goals that plan it does", async () => {
+  it("lets a lesson ask short written answers only when an exam of the goals that plan it does", async () => {
     const user = await userFixture();
 
-    const [discursive, choices, classTest, ...lessons] = await Promise.all([
+    const [shortAnswers, essay, classTest, ...lessons] = await Promise.all([
+      examBlueprintFixture({ structure: examStructure(["multipleChoice", "shortAnswer"]) }),
       examBlueprintFixture({ structure: examStructure(["multipleChoice", "essay"]) }),
-      examBlueprintFixture({ structure: examStructure(["multipleChoice", "numeric"]) }),
       examBlueprintFixture({
         ownerId: user.id,
         structure: examStructure(["multipleChoice", "shortAnswer"]),
@@ -219,8 +219,8 @@ describe(loadLessonSpecInputs, () => {
     ]);
 
     const goals = await Promise.all([
-      goalFixture({ examBlueprintId: discursive.id, kind: "exam", userId: user.id }),
-      goalFixture({ examBlueprintId: choices.id, kind: "exam", userId: user.id }),
+      goalFixture({ examBlueprintId: shortAnswers.id, kind: "exam", userId: user.id }),
+      goalFixture({ examBlueprintId: essay.id, kind: "exam", userId: user.id }),
       goalFixture({ userId: user.id }),
       goalFixture({ examBlueprintId: classTest.id, kind: "exam", userId: user.id }),
       // Before its notice's blueprint is linked, an exam goal knows only the formats it states.
@@ -242,9 +242,9 @@ describe(loadLessonSpecInputs, () => {
 
     const inputs = await Promise.all(lessons.map((lesson) => loadLessonSpecInputs(lesson.id)));
 
-    // A hobby and an exam of choices and numbers ask what learners pick; a class test from the
-    // learner's material asks in writing even though its lesson follows no public exam.
-    expect(inputs.map((input) => input?.prompt.writtenAnswers)).toStrictEqual([
+    // A hobby and an exam of choices and an essay (its own written block) ask what learners pick; a
+    // class test from the learner's material asks short answers though its lesson has no exams.
+    expect(inputs.map((input) => input?.prompt.shortAnswers)).toStrictEqual([
       true,
       false,
       true,

@@ -183,20 +183,19 @@ const WRITTEN_KINDS_BY_SCREEN: Readonly<Record<LessonScreenKind, readonly Writte
 
 /**
  * What a planned screen may be written as. Learners would rather pick than think up and type an
- * answer, so a typed answer ("Explain it in your words") is a last resort: only a lesson whose
- * learners' exams ask for written answers (`writtenAnswers`) may write a check or the application
- * as one.
+ * answer, so a typed answer is a last resort: only a lesson whose learners' exams ask short
+ * written answers (`shortAnswers`) may write a check or the application as one.
  */
 export function getWrittenKinds({
   kind,
-  writtenAnswers,
+  shortAnswers,
 }: {
   kind: LessonScreenKind;
-  writtenAnswers: boolean;
+  shortAnswers: boolean;
 }): readonly WrittenScreenKind[] {
   const kinds = WRITTEN_KINDS_BY_SCREEN[kind];
 
-  return writtenAnswers && (kind === "check" || kind === "application")
+  return shortAnswers && (kind === "check" || kind === "application")
     ? [...kinds, "typedAnswer"]
     : kinds;
 }

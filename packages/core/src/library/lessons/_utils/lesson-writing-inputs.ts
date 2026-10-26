@@ -12,7 +12,7 @@ import { type LessonWritingContext } from "../../quality/lesson-quality-gate";
 import { getSiblingsChapterId } from "../../quick-lessons/quick-lesson-identity";
 import { type MaterialPage, formatMaterialPages } from "../../sources/material-pages";
 import { type ChapterLesson, loadChapterLessons } from "./chapter-lessons";
-import { loadLessonExams, loadLessonWrittenAnswers } from "./lesson-exams";
+import { loadLessonExams, loadLessonShortAnswers } from "./lesson-exams";
 import { loadLessonDocuments } from "./lesson-sources";
 import { parseStoredLessonSpec } from "./stored-lesson-spec";
 
@@ -44,8 +44,8 @@ export type LessonWritingInputs = {
    * lessons of goals built from sources; empty for lessons built from material and all others.
    */
   sources: MaterialPage[];
-  /** The exams of its learners ask written answers (see `loadLessonWrittenAnswers`). */
-  writtenAnswers: boolean;
+  /** The exams of its learners ask short written answers (see `loadLessonShortAnswers`). */
+  shortAnswers: boolean;
 };
 
 type LessonWritingState =
@@ -104,7 +104,7 @@ async function toWritingState(lesson: LessonToWrite): Promise<LessonWritingState
     lessonId: lesson.id,
   };
 
-  const [{ material, sources }, chapterLessons, exams, writtenAnswers] = await Promise.all([
+  const [{ material, sources }, chapterLessons, exams, shortAnswers] = await Promise.all([
     loadLessonDocuments({ ...goalsOf, query: toMaterialQuery(spec) }),
     loadChapterLessons({
       chapterId: getSiblingsChapterId(lesson),
@@ -112,7 +112,7 @@ async function toWritingState(lesson: LessonToWrite): Promise<LessonWritingState
       ownerId: lesson.ownerId,
     }),
     loadLessonExams(goalsOf),
-    loadLessonWrittenAnswers(goalsOf),
+    loadLessonShortAnswers(goalsOf),
   ]);
 
   const course = lesson.homeChapter?.homeCourse;
@@ -134,13 +134,13 @@ async function toWritingState(lesson: LessonToWrite): Promise<LessonWritingState
       material,
       ownerId: lesson.ownerId,
       setup: lesson.skills.some(({ skill }) => isSetupSkillIdentityKey(skill.identityKey)),
+      shortAnswers,
       skillIds: matchSpecSkills({
         lessonSkills: lesson.skills.map((item) => item.skill),
         specSkills: spec.skills,
       }),
       sources,
       spec,
-      writtenAnswers,
     },
     status: "ready",
   };
@@ -179,9 +179,9 @@ export function toWritingContext(inputs: LessonWritingInputs): LessonWritingCont
     level: inputs.level,
     material: inputs.material.length > 0 ? formatMaterialPages(inputs.material) : undefined,
     setup: inputs.setup,
+    shortAnswers: inputs.shortAnswers,
     sources: inputs.sources.length > 0 ? formatMaterialPages(inputs.sources) : undefined,
     spec: inputs.spec,
-    writtenAnswers: inputs.writtenAnswers,
   };
 }
 

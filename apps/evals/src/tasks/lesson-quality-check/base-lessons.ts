@@ -16,8 +16,8 @@ type BaseLesson = {
   lesson: WrittenLesson;
   level: "overview" | "beginner" | "intermediate" | "advanced";
   spec: LessonSpec;
-  /** A lesson with a typed answer is one whose learners' exams ask written answers. */
-  writtenAnswers?: boolean;
+  /** A lesson with a typed answer is one whose learners' exams ask short written answers. */
+  shortAnswers?: boolean;
 };
 
 export const BASE_LESSONS = {
@@ -282,8 +282,8 @@ export const BASE_LESSONS = {
       ],
     },
     level: "overview",
+    shortAnswers: true,
     spec: LESSON_SPECS["pt-eletron-nucleo-overview"],
-    writtenAnswers: true,
   },
   regra: {
     chapterTitle: "Razão e proporção",
@@ -719,6 +719,7 @@ export const BASE_LESSONS = {
       ],
     },
     level: "beginner",
+    shortAnswers: true,
     spec: {
       canDo: "Work out a temperature after it rises across zero",
       description: "Add a rise to a temperature below zero, the way thermometers do.",
@@ -795,6 +796,5 @@ export const BASE_LESSONS = {
       supportMode: "explanationFirst",
       title: "Temperature changes across zero",
     },
-    writtenAnswers: true,
   },
 } satisfies Record<string, BaseLesson>;

@@ -4,7 +4,7 @@ import { prisma } from "@zoonk/db";
 import { isSetupSkillIdentityKey } from "@zoonk/utils/identity-key";
 import { listPlannerTemplates } from "../activities/writer-templates";
 import { loadChapterLessons } from "../lessons/_utils/chapter-lessons";
-import { loadLessonExams, loadLessonWrittenAnswers } from "../lessons/_utils/lesson-exams";
+import { loadLessonExams, loadLessonShortAnswers } from "../lessons/_utils/lesson-exams";
 import { loadLessonDocuments } from "../lessons/_utils/lesson-sources";
 import {
   getSiblingsChapterId,
@@ -55,7 +55,7 @@ export async function loadLessonSpecInputs(lessonId: string): Promise<LessonSpec
     lessonId,
   };
 
-  const [{ material, sources }, chapterLessons, exams, writtenAnswers] = await Promise.all([
+  const [{ material, sources }, chapterLessons, exams, shortAnswers] = await Promise.all([
     loadLessonDocuments({
       ...goalsOf,
       query: [lesson.title, lesson.description, lesson.canDo, ...skills].join(" "),
@@ -66,7 +66,7 @@ export async function loadLessonSpecInputs(lessonId: string): Promise<LessonSpec
       ownerId: lesson.ownerId,
     }),
     loadLessonExams(goalsOf),
-    loadLessonWrittenAnswers(goalsOf),
+    loadLessonShortAnswers(goalsOf),
   ]);
 
   return {
@@ -86,9 +86,9 @@ export async function loadLessonSpecInputs(lessonId: string): Promise<LessonSpec
       material: material.length > 0 ? formatMaterialPages(material) : undefined,
       quick: isQuickLessonIdentityKey(lesson.identityKey),
       setup: lesson.skills.some(({ skill }) => isSetupSkillIdentityKey(skill.identityKey)),
+      shortAnswers,
       skills,
       sources: sources.length > 0 ? formatMaterialPages(sources) : undefined,
-      writtenAnswers,
     },
     scope: {
       generalGoal: null,

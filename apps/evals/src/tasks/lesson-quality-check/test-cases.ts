@@ -21,7 +21,7 @@ export type LessonQualityCheckInput = Pick<
   | "level"
   | "sources"
   | "spec"
-  | "writtenAnswers"
+  | "shortAnswers"
 > & { lesson: WrittenLesson };
 
 /**

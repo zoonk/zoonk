@@ -6,6 +6,7 @@ import {
   collectRelated,
   getBandRank,
 } from "./placement-graph";
+import { PLACEMENT_CONFIDENCE } from "./placement-status";
 import { type OwnLevel } from "./placement-steps";
 
 /** "I don't know yet" is its own outcome: honest, and stronger evidence than a wrong guess. */
@@ -85,6 +86,26 @@ function getLikelihoods({ format, outcome }: Pick<PlacementEvidence, "format" | 
 function getPosterior({ evidence, prior }: { evidence: PlacementEvidence; prior: number }): number {
   const { known, unknown } = getLikelihoods(evidence);
   return (prior * known) / (prior * known + (1 - prior) * unknown);
+}
+
+/** The right answers in `format` that take a skill from `belief` to `PLACEMENT_CONFIDENCE`. */
+function countRightAnswersFrom({ belief, format }: { belief: number; format: ItemFormat }): number {
+  if (belief >= PLACEMENT_CONFIDENCE) {
+    return 0;
+  }
+
+  const evidence: PlacementEvidence = { format, outcome: "correct", skillId: "" };
+  return 1 + countRightAnswersFrom({ belief: getPosterior({ evidence, prior: belief }), format });
+}
+
+/**
+ * How many right answers in a format make placement sure of a skill it had no opinion about:
+ * two multiple-choice picks, three statements judged right or wrong (a guess passes those more
+ * often), one typed answer. Placement writes that many quick questions per skill, so a right
+ * answer is confirmed without typing.
+ */
+export function countRightAnswersToKnow(format: ItemFormat): number {
+  return countRightAnswersFrom({ belief: PRIOR_BELIEF, format });
 }
 
 /**

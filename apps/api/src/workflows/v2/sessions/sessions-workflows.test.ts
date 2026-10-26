@@ -649,7 +649,8 @@ describe(sessionPreparationWorkflow, () => {
           ],
         },
       }),
-      // Day 1's placement wrote Portuguese its question.
+      // Day 1's placement wrote Portuguese its question and the one that confirms a right pick.
+      itemFixture({ skillId: reading.id }),
       itemFixture({ skillId: reading.id }),
     ]);
 
@@ -665,7 +666,8 @@ describe(sessionPreparationWorkflow, () => {
       }),
     );
 
-    await expect(prisma.item.count({ where: { skillId: english.id } })).resolves.toBe(1);
+    // Its question and the one that confirms a right pick.
+    await expect(prisma.item.count({ where: { skillId: english.id } })).resolves.toBe(2);
 
     // Past placement's first week, lessons and reviews place the learner instead.
     vi.mocked(generatePlacementItems).mockClear();

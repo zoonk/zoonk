@@ -18,10 +18,11 @@ import { toPlacementItemBatches } from "../placement-item-batches";
 
 /**
  * What placement writes for each skill it picked. One quick question is what day 1 and the first
- * week's sessions ask of a skill before moving on, and one typed question confirms a right quick
- * answer: a typed right answer takes a skill from 78% to 99% sure, past the 80% placement needs,
- * which a second multiple-choice one doesn't (93%, and only in a later session). A skill placement
- * can't ask again is left to lessons and reviews, whose answers count too.
+ * week's sessions ask of a skill before moving on. A right quick answer is confirmed by the
+ * skill's other quick questions, written in the same call (`confirmingCount`: a second
+ * multiple-choice pick takes a skill from 78% to 93% sure, past the 80% placement needs), or, for
+ * a language goal, by one typed question. A skill placement can't ask again is left to lessons and
+ * reviews, whose answers count too.
  */
 const PLACEMENT_ITEMS_PER_SKILL = { quick: 1, typed: 1 } as const;
 
@@ -121,11 +122,12 @@ export async function pickPlacementBatchesStep({
   skillIds,
 }: PlacementItemsRequest): Promise<{
   batches: PlacementItemPick[][];
+  confirmingCount: number;
   quickFormat: PlacementQuickFormat;
 }> {
   "use step";
 
-  const { quickFormat, skills } = await pickPlacementItemSkills({
+  const { confirmingCount, quickFormat, skills } = await pickPlacementItemSkills({
     exceptAnswered,
     forPlacement,
     formats,
@@ -134,7 +136,8 @@ export async function pickPlacementBatchesStep({
     skillIds,
   });
 
-  return { batches: toPlacementItemBatches({ quickCount, skills }), quickFormat };
+  // Confirming questions ride along like typed ones: the batches follow the questions asked first.
+  return { batches: toPlacementItemBatches({ quickCount, skills }), confirmingCount, quickFormat };
 }
 
 /**
@@ -145,12 +148,15 @@ export async function pickPlacementBatchesStep({
  */
 export async function writePlacementBatchStep({
   analytics,
+  confirmingCount = 0,
   quickCount,
   quickFormat,
   skills,
   wait = "soon",
   workflowRunId,
 }: WriteContext & {
+  /** Quick questions each skill gets beyond `quickCount`, to confirm a right answer. */
+  confirmingCount?: number;
   quickCount: number;
   quickFormat: PlacementQuickFormat;
   skills: PlacementItemPick[];
@@ -179,7 +185,7 @@ export async function writePlacementBatchStep({
     analytics: toContentAnalytics({ analytics, scope: first, workflowRunId }),
     examFormat: first.exam,
     language: first.language,
-    quickCount,
+    quickCount: quickCount + confirmingCount,
     quickFormat,
     serviceTier,
     skills: skills.map((skill) => ({

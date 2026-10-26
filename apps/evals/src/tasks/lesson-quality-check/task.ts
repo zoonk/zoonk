@@ -30,8 +30,8 @@ function reviewLesson({
     language: context.language,
     lesson,
     level: context.level,
+    shortAnswers: context.shortAnswers,
     spec: context.spec,
-    writtenAnswers: context.writtenAnswers,
   });
 
   return checkLessonQuality({

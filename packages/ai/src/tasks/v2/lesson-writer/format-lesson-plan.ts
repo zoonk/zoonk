@@ -43,10 +43,10 @@ export type LessonWritingContext = {
   /** A lesson that sets up a tool on the learner's device ("Set up Python on Windows"). */
   setup?: boolean;
   /**
-   * The exams of the lesson's learners ask for written answers, so a check or the application may
+   * The exams of the lesson's learners ask short written answers, so a check or the application may
    * be a typed answer (`getWrittenKinds`); every other lesson asks only what learners pick.
    */
-  writtenAnswers?: boolean;
+  shortAnswers?: boolean;
 };
 
 /** A problem found by code or by the reviewer. `screen` is a 0-based index, or null for the whole lesson. */
@@ -76,15 +76,15 @@ function formatScreen({
   screen,
   skills,
   position,
-  writtenAnswers,
+  shortAnswers,
 }: {
   screen: LessonScreen;
   skills: readonly LessonSpecSkill[];
   position: number;
-  writtenAnswers: boolean;
+  shortAnswers: boolean;
 }): string {
   const skillNames = screen.skills.flatMap((index) => skills[index]?.name ?? []);
-  const kinds = getWrittenKinds({ kind: screen.kind, writtenAnswers });
+  const kinds = getWrittenKinds({ kind: screen.kind, shortAnswers });
 
   return [
     `${position}. ${screen.kind}, written as: ${kinds.join(" or ")}`,
@@ -129,8 +129,8 @@ export function formatLessonPlan(context: LessonWritingContext): string {
     formatScreen({
       position: index + 1,
       screen,
+      shortAnswers: Boolean(context.shortAnswers),
       skills: spec.skills,
-      writtenAnswers: Boolean(context.writtenAnswers),
     }),
   );
 

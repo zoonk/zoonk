@@ -15,7 +15,7 @@ const SKILLS_PER_GROUP = 3;
 /**
  * Questions for a big goal's first skills are enough to start: the rest come from lessons and
  * reviews. Day 1 asks at most 12 questions (`placement-budget.ts`), a right quick answer usually
- * followed by its skill's typed one, so it reaches at most 12 skills and about 6 to 8 in its four
+ * followed by one that confirms it, so it reaches at most 12 skills and about 6 to 8 in its four
  * minutes; a third more leaves the walk a choice, and the first week's sessions ask the picks day
  * 1 didn't reach. Picks go breadth first, so an exam with many subjects gets some in every one,
  * and one with more subjects than this (the OAB's 20) gets the skill placement asks first in each.

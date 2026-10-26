@@ -84,9 +84,9 @@ describe(loadLessonWritingInputs, () => {
 
 describe(loadPublishedLessonInputs, () => {
   it("lets the writer and its checks write a typed answer only for learners whose exams ask one", async () => {
-    const [user, blueprint, discursiveLesson, hobbyLesson] = await Promise.all([
+    const [user, blueprint, shortAnswerLesson, hobbyLesson] = await Promise.all([
       userFixture(),
-      examBlueprintFixture({ structure: examStructure(["multipleChoice", "essay"]) }),
+      examBlueprintFixture({ structure: examStructure(["multipleChoice", "shortAnswer"]) }),
       libraryLessonFixture({ spec: temperatureSpec() }),
       libraryLessonFixture({ spec: temperatureSpec() }),
     ]);
@@ -102,16 +102,16 @@ describe(loadPublishedLessonInputs, () => {
     ]);
 
     await Promise.all([
-      planItemFixture({ lessonId: discursiveLesson.id, planId: examPlan.id, position: 0 }),
+      planItemFixture({ lessonId: shortAnswerLesson.id, planId: examPlan.id, position: 0 }),
       planItemFixture({ lessonId: hobbyLesson.id, planId: hobbyPlan.id, position: 0 }),
     ]);
 
-    const [discursive, hobby] = await Promise.all([
-      loadPublishedLessonInputs(discursiveLesson.id),
+    const [shortAnswer, hobby] = await Promise.all([
+      loadPublishedLessonInputs(shortAnswerLesson.id),
       loadPublishedLessonInputs(hobbyLesson.id),
     ]);
 
-    expect(discursive && toWritingContext(discursive).writtenAnswers).toBe(true);
-    expect(hobby && toWritingContext(hobby).writtenAnswers).toBe(false);
+    expect(shortAnswer && toWritingContext(shortAnswer).shortAnswers).toBe(true);
+    expect(hobby && toWritingContext(hobby).shortAnswers).toBe(false);
   });
 });

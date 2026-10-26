@@ -11,9 +11,9 @@ vi.mock("server-only", () => ({}));
 vi.mock("./lesson-fix.prompt.md", () => ({
   default: [
     "Fix the lesson.",
-    "{{#writtenAnswers}}",
+    "{{#shortAnswers}}",
     "Fix typed answers.",
-    "{{/writtenAnswers}}",
+    "{{/shortAnswers}}",
     "Keep the rest.",
   ].join("\n"),
 }));
@@ -67,7 +67,7 @@ const lesson: WrittenLesson = {
   summary: ["The idea."],
 };
 
-function fix(params: { screenCount: number; writtenAnswers?: boolean }) {
+function fix(params: { screenCount: number; shortAnswers?: boolean }) {
   return fixLessonDraft({
     activityTemplates: [],
     chapterTitle: "Chapter",
@@ -76,8 +76,8 @@ function fix(params: { screenCount: number; writtenAnswers?: boolean }) {
     lesson,
     level: "beginner",
     problems: [{ problem: "Too long.", screen: 1 }],
+    shortAnswers: params.shortAnswers,
     spec: spec(params.screenCount),
-    writtenAnswers: params.writtenAnswers,
   });
 }
 
@@ -143,7 +143,7 @@ describe(fixLessonDraft, () => {
 
     const [picked, written] = await Promise.all([
       fix({ screenCount: 3 }),
-      fix({ screenCount: 3, writtenAnswers: true }),
+      fix({ screenCount: 3, shortAnswers: true }),
     ]);
 
     expect(picked.systemPrompt).toBe("Fix the lesson.\nKeep the rest.");
