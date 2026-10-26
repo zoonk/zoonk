@@ -3448,9 +3448,9 @@ msgid "by {date}, at {time} a day, Monday to Friday, in quick lessons on what co
 msgstr "para el {date}, con {time} al día, de lunes a viernes, en lecciones rápidas sobre lo que más suele caer. Las lecciones completas llegarán cuando tengas más tiempo."
 
 #: src/components/catalog/course-plan-window.tsx
-msgctxt "Fzsgv6"
-msgid "by {date}, at {time} a day, Monday to Friday, what comes up most first: {count, number} of the course's {total, plural, one {# lesson} other {# lessons}}. What doesn't fit is left out, and you see what."
-msgstr "para el {date}, con {time} al día, de lunes a viernes, primero lo que más suele caer: {count, number} de las {total, plural, one {# lección} other {# lecciones}} del curso. Lo que no quepa se queda fuera, y ves qué."
+msgctxt "ngWcm1"
+msgid "by {date}, at {time} a day, Monday to Friday, what comes up most first: {count, number} of the course's {total, plural, one {# lesson} other {# lessons}}."
+msgstr "para el {date}, con {time} al día, de lunes a viernes, primero lo que más suele caer: {count, number} de las {total, plural, one {# lección} other {# lecciones}} del curso."
 
 #: src/components/catalog/course-plan-window.tsx
 msgctxt "zC104g"

@@ -223,7 +223,7 @@ async function DatedHeadline({
     }
 
     return t(
-      "by {date}, at {time} a day, Monday to Friday, what comes up most first: {count, number} of the course's {total, plural, one {# lesson} other {# lessons}}. What doesn't fit is left out, and you see what.",
+      "by {date}, at {time} a day, Monday to Friday, what comes up most first: {count, number} of the course's {total, plural, one {# lesson} other {# lessons}}.",
       {
         count: estimate.fittingLessons,
         date,
