@@ -65,7 +65,17 @@ describe("reasoning activities", () => {
     openActivity({ template: "matchPairs" });
     await matchCards("embarazada", "pregnant");
     await matchCards("éxito", "success");
-    await expect.element(page.getByText("2 of 2 pairs matched", { exact: true })).toBeVisible();
+    await matchCards("librería", "bookstore");
+
+    await expect
+      .element(page.getByText("3 of 3 pairs matched · 2 cards have no match", { exact: true }))
+      .toBeVisible();
+
+    await expect
+      .element(page.getByRole("button", { name: "embarrassed, no match" }))
+      .toBeDisabled();
+
+    await expect.element(page.getByRole("button", { name: "library, no match" })).toBeDisabled();
     await checkActivity();
     await expectVerdict("Correct!");
     await expect.element(page.getByText("Look-alikes with no match")).toBeVisible();
@@ -76,12 +86,17 @@ describe("reasoning activities", () => {
     await matchCards("embarazada", "embarrassed");
 
     await expect
-      .element(page.getByText("It looks alike but means something else.", { exact: true }))
+      .element(
+        page.getByText("“embarrassed” has no match. It looks alike but means something else.", {
+          exact: true,
+        }),
+      )
       .toBeVisible();
 
     await expect.element(page.getByRole("button", { name: "Check" })).toBeDisabled();
     await matchCards("embarazada", "pregnant");
     await matchCards("éxito", "success");
+    await matchCards("librería", "bookstore");
     await checkActivity();
     await expectVerdict("Not quite");
 

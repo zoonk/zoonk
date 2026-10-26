@@ -1788,6 +1788,11 @@ msgid "Matched {left} with {right}. {matched} of {total} pairs matched."
 msgstr "Bonne association : {left} et {right}. Associations réussies : {matched} sur {total}."
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
+msgctxt "95nYEN"
+msgid "“{card}” has no match."
+msgstr "« {card} » n’a pas de correspondance."
+
+#: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "5sU5Ih"
 msgid "{left} and {right} don't go together."
 msgstr "{left} et {right} ne vont pas ensemble."
@@ -1796,6 +1801,21 @@ msgstr "{left} et {right} ne vont pas ensemble."
 msgctxt "LbHKlv"
 msgid "{text}, matched"
 msgstr "{text}, associé"
+
+#: src/activities/match-pairs/match-pairs-activity.tsx
+msgctxt "aj5odZ"
+msgid "{text}, no match"
+msgstr "{text}, sans correspondance"
+
+#: src/activities/match-pairs/match-pairs-activity.tsx
+msgctxt "aCh1Dx"
+msgid "{matched} of {total} pairs matched"
+msgstr "{matched} sur {total} paires associées"
+
+#: src/activities/match-pairs/match-pairs-activity.tsx
+msgctxt "ZdoI92"
+msgid "{count, plural, one {# card has no match} other {# cards have no match}}"
+msgstr "{count, plural, one {# carte sans correspondance} other {# cartes sans correspondance}}"
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "nuMsTW"
@@ -1808,14 +1828,9 @@ msgid "Those two don't go together."
 msgstr "Ces deux cartes ne vont pas ensemble."
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "aCh1Dx"
-msgid "{matched} of {total} pairs matched"
-msgstr "{matched} sur {total} paires associées"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "WRBWEV"
-msgid "Two columns of cards. Pick a card on the left and one on the right to match them. Some cards are look-alike traps with no match. {matched} of {total} pairs matched."
-msgstr "Deux colonnes de cartes. Choisis une carte à gauche et une à droite pour les associer. Certaines cartes se ressemblent, mais ne vont avec aucune autre. Associations réussies : {matched} sur {total}."
+msgctxt "1hDE7k"
+msgid "Two columns of cards. Pick a card on the left and one on the right to match them. {count, plural, =0 {} one {# card has no match.} other {# cards have no match.}} {matched} of {total} pairs matched."
+msgstr "Deux colonnes de cartes. Choisis une carte à gauche et une à droite pour les associer. {count, plural, =0 {} one {# carte n’a pas de correspondance.} other {# cartes n’ont pas de correspondance.}} {matched} sur {total} paires associées."
 
 #: src/activities/match-pairs/match-pairs-results.tsx
 msgctxt "kzygtu"

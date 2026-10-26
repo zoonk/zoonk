@@ -168,10 +168,12 @@ export const societyReasoningActivities = {
     fields: {
       distractors: [
         { side: "right", text: "embarrassed", why: "It looks alike but means something else." },
+        { side: "right", text: "library", why: "A library is biblioteca." },
       ],
       pairs: [
         { id: "a", left: "embarazada", right: "pregnant" },
         { id: "b", left: "éxito", right: "success" },
+        { id: "c", left: "librería", right: "bookstore" },
       ],
     },
     prompt: "Match each word to its meaning.",

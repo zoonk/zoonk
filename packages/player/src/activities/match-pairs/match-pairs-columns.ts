@@ -55,19 +55,13 @@ export function arrangeMatchColumns(fields: MatchFields): {
 }
 
 /**
- * Why two cards don't go together, from the writer's notes: a trap's own reason first, then the
- * reason on the pair the learner mixed up.
+ * Why two cards don't go together, from the writer's notes: the trap among them (the right one
+ * first) with its own reason, or else the reason on the pairs the learner mixed up.
  */
-export function mismatchReason({
-  left,
-  pairs,
-  right,
-}: {
-  left: MatchCard;
-  pairs: readonly MatchCard[];
-  right: MatchCard;
-}): string | null {
-  const leftPair = pairs.find((card) => card.id === left.id);
-  const rightPair = pairs.find((card) => card.id === right.id);
-  return right.why ?? left.why ?? leftPair?.why ?? rightPair?.why ?? null;
+export function explainMismatch({ left, right }: { left: MatchCard; right: MatchCard }): {
+  reason: string | null;
+  trap: MatchCard | null;
+} {
+  const trap = [right, left].find((card) => card.isTrap) ?? null;
+  return { reason: trap?.why ?? right.why ?? left.why, trap };
 }

@@ -1788,6 +1788,11 @@ msgid "Matched {left} with {right}. {matched} of {total} pairs matched."
 msgstr "Matched {left} with {right}. {matched} of {total} pairs matched."
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
+msgctxt "95nYEN"
+msgid "“{card}” has no match."
+msgstr "“{card}” has no match."
+
+#: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "5sU5Ih"
 msgid "{left} and {right} don't go together."
 msgstr "{left} and {right} don't go together."
@@ -1796,6 +1801,21 @@ msgstr "{left} and {right} don't go together."
 msgctxt "LbHKlv"
 msgid "{text}, matched"
 msgstr "{text}, matched"
+
+#: src/activities/match-pairs/match-pairs-activity.tsx
+msgctxt "aj5odZ"
+msgid "{text}, no match"
+msgstr "{text}, no match"
+
+#: src/activities/match-pairs/match-pairs-activity.tsx
+msgctxt "aCh1Dx"
+msgid "{matched} of {total} pairs matched"
+msgstr "{matched} of {total} pairs matched"
+
+#: src/activities/match-pairs/match-pairs-activity.tsx
+msgctxt "ZdoI92"
+msgid "{count, plural, one {# card has no match} other {# cards have no match}}"
+msgstr "{count, plural, one {# card has no match} other {# cards have no match}}"
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
 msgctxt "nuMsTW"
@@ -1808,14 +1828,9 @@ msgid "Those two don't go together."
 msgstr "Those two don't go together."
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "aCh1Dx"
-msgid "{matched} of {total} pairs matched"
-msgstr "{matched} of {total} pairs matched"
-
-#: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "WRBWEV"
-msgid "Two columns of cards. Pick a card on the left and one on the right to match them. Some cards are look-alike traps with no match. {matched} of {total} pairs matched."
-msgstr "Two columns of cards. Pick a card on the left and one on the right to match them. Some cards are look-alike traps with no match. {matched} of {total} pairs matched."
+msgctxt "1hDE7k"
+msgid "Two columns of cards. Pick a card on the left and one on the right to match them. {count, plural, =0 {} one {# card has no match.} other {# cards have no match.}} {matched} of {total} pairs matched."
+msgstr "Two columns of cards. Pick a card on the left and one on the right to match them. {count, plural, =0 {} one {# card has no match.} other {# cards have no match.}} {matched} of {total} pairs matched."
 
 #: src/activities/match-pairs/match-pairs-results.tsx
 msgctxt "kzygtu"

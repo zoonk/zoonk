@@ -4,7 +4,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { Check, X } from "lucide-react";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 
-export type MatchCardState = "idle" | "matched" | "missed" | "selected";
+export type MatchCardState = "idle" | "matched" | "missed" | "noMatch" | "selected";
 
 /** A card in one of the two columns: pick one on each side to try a match. */
 export function MatchPairsCard({
@@ -25,7 +25,7 @@ export function MatchPairsCard({
   return (
     <button
       aria-label={label}
-      aria-pressed={state === "matched" ? undefined : state === "selected"}
+      aria-pressed={state === "matched" || state === "noMatch" ? undefined : state === "selected"}
       className={cn(
         "bg-background focus-visible:border-ring focus-visible:ring-ring/50 flex min-h-12 w-full items-center gap-2 rounded-xl border px-3.5 py-2 text-left text-sm leading-snug font-medium outline-none focus-visible:ring-[3px] sm:text-base",
         state === "idle" && "hover:bg-accent",
@@ -33,6 +33,7 @@ export function MatchPairsCard({
         state === "matched" && "border-success/40 bg-success/10 text-success-text",
         state === "missed" &&
           "border-destructive bg-destructive/10 motion-safe:animate-shake border-2",
+        state === "noMatch" && "text-muted-foreground border-dashed bg-transparent",
       )}
       data-slot="match-pairs-card"
       disabled={isDisabled}

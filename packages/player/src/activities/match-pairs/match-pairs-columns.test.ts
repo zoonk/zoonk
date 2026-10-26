@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { arrangeMatchColumns, mismatchReason } from "./match-pairs-columns";
+import { arrangeMatchColumns, explainMismatch } from "./match-pairs-columns";
 
 const fields = {
   distractors: [
@@ -45,22 +45,27 @@ describe(arrangeMatchColumns, () => {
   });
 });
 
-describe(mismatchReason, () => {
-  it("explains a trap with its own reason, and a mix-up with the pair's", () => {
-    const { left, right } = arrangeMatchColumns(fields);
-    const pairs = left.filter((card) => !card.isTrap);
-    const card = (cards: typeof left, text: string) => cards.find((item) => item.text === text)!;
+describe(explainMismatch, () => {
+  const { left, right } = arrangeMatchColumns(fields);
+  const card = (cards: typeof left, text: string) => cards.find((item) => item.text === text)!;
+
+  it("names the trap with its own reason, on either side", () => {
+    expect(
+      explainMismatch({ left: card(left, "embarazada"), right: card(right, "embarrassed") }),
+    ).toStrictEqual({ reason: "Embarrassed is avergonzado.", trap: card(right, "embarrassed") });
 
     expect(
-      mismatchReason({ left: card(left, "embarazada"), pairs, right: card(right, "embarrassed") }),
-    ).toBe("Embarrassed is avergonzado.");
+      explainMismatch({ left: card(left, "carpeta"), right: card(right, "bookstore") }),
+    ).toStrictEqual({ reason: "Carpeta means folder.", trap: card(left, "carpeta") });
+  });
+
+  it("explains a mix-up of two pairs with the pair's reason, if it has one", () => {
+    expect(
+      explainMismatch({ left: card(left, "librería"), right: card(right, "success") }),
+    ).toStrictEqual({ reason: "A library is biblioteca.", trap: null });
 
     expect(
-      mismatchReason({ left: card(left, "librería"), pairs, right: card(right, "success") }),
-    ).toBe("A library is biblioteca.");
-
-    expect(
-      mismatchReason({ left: card(left, "éxito"), pairs, right: card(right, "pregnant") }),
-    ).toBeNull();
+      explainMismatch({ left: card(left, "éxito"), right: card(right, "pregnant") }),
+    ).toStrictEqual({ reason: null, trap: null });
   });
 });
