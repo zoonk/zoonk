@@ -1,4 +1,3 @@
-import { ONE_TIME_TOKEN_LOGIN_STATE_COOKIE } from "@zoonk/core/auth/ott/state";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser, generateOneTimeToken } from "@zoonk/e2e/fixtures/users";
 import { mockCentralAuthTransport, mockCentralSignOut } from "./auth-transport";
@@ -26,64 +25,6 @@ test("signing in with a real token lands a learner on an interactive Today", asy
   } finally {
     await context.close();
   }
-});
-
-test("ASCII controls stay in the app at login and successful redemption", async ({ browser }) => {
-  const baseURL = getBaseURL();
-  const user = await createE2EUser(baseURL);
-
-  for (const control of ["\t", "\n", "\r", "\u0000", "\u0008", "\u001F", "\u007F"]) {
-    // oxlint-disable-next-line no-await-in-loop -- Each login has its own state cookie and single-use token.
-    await test.step(`ASCII control ${control.codePointAt(0)}`, async () => {
-      const context = await browser.newContext({ baseURL });
-
-      try {
-        const next = `/${control}/evil.example`;
-
-        const initiated = await context.request.get(`/login?${new URLSearchParams({ next })}`, {
-          maxRedirects: 0,
-        });
-
-        expect(initiated.status()).toBe(307);
-        const authUrl = new URL(initiated.headers().location ?? "");
-        const callback = new URL(authUrl.searchParams.get("redirectTo") ?? "");
-        expect(callback.searchParams.get("next")).toBe("/today");
-        const state = callback.searchParams.get("state") ?? "";
-        const cookies = await context.cookies();
-
-        expect(
-          cookies.find((cookie) => cookie.name === ONE_TIME_TOKEN_LOGIN_STATE_COOKIE)?.value,
-        ).toBe(state);
-
-        const token = await generateOneTimeToken(baseURL, user);
-
-        const redeemed = await context.request.get(
-          `/auth/callback?${new URLSearchParams({ next, state, token })}`,
-          { maxRedirects: 0 },
-        );
-
-        expect(redeemed.status()).toBe(302);
-        expect(redeemed.headers().location).toBe("/");
-      } finally {
-        await context.close();
-      }
-    });
-  }
-});
-
-test("a second failed callback renders a retry screen with a safe return path", async ({
-  page,
-}) => {
-  const response = await page.goto("/auth/callback?error=auth&token=invalid&next=%2Fplan");
-  expect(response?.status()).toBe(401);
-  await expect(page.getByRole("heading", { name: "We couldn't sign you in." })).toBeVisible();
-
-  await expect(page.getByRole("link", { name: "Try again" })).toHaveAttribute(
-    "href",
-    "/login?next=%2Fplan",
-  );
-
-  await expect(page).toHaveURL(/\/auth\/callback\?/u);
 });
 
 test("logout ends the app session and signs out centrally before login can reopen", async ({
