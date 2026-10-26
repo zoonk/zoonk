@@ -53,13 +53,11 @@ export function ConversationMissionMoment({
   }
 
   return (
-    <div className="ring-border rounded-xl px-4 py-3.5 ring-1">
-      <MissionMoment
-        buddyName={buddyName}
-        completed={moment.completed}
-        fullMeal={moment.fullMeal}
-        missions={moment.missions}
-      />
-    </div>
+    <MissionMoment
+      buddyName={buddyName}
+      completed={moment.completed}
+      fullMeal={moment.fullMeal}
+      missions={moment.missions}
+    />
   );
 }

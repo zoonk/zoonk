@@ -1,53 +1,27 @@
-"use client";
-
 import { type Mission } from "@zoonk/core/sessions/missions";
 import { cn } from "@zoonk/ui/lib/utils";
-import { useEffect, useState } from "react";
 
 /** How far a mission is, from 0 to 1, for its segment of the day's track. */
 function getFill(mission: Pick<Mission, "done" | "total">): number {
   return mission.total > 0 ? Math.min(1, mission.done / mission.total) : 0;
 }
 
-/** The furthest missions first, so the track fills from its start in whatever order they're listed. */
-function byFurthest(fills: number[]): number[] {
-  return fills.toSorted((first, second) => second - first);
-}
-
 /**
  * The day's missions as one track in Brain Power's violet, a segment per mission filled as far as
  * it is ("1 of 3 fixed" fills a third), the furthest first: "1 of 2" fills the first segment even
- * when the mission done is listed last. Given where the missions stood before (`from`), it starts
- * there and fills to now: the one animation missions have, right after the action that moved them.
+ * when the mission done is listed last; a segment fills to where its mission moves while in view.
  * Decorative: the words beside it say the same.
  */
 export function MissionTrack({
   className,
-  from,
   missions,
 }: {
   className?: string;
-  from?: readonly Pick<Mission, "done" | "kind" | "total">[];
   missions: readonly Pick<Mission, "done" | "kind" | "total">[];
 }) {
-  const target = byFurthest(missions.map((mission) => getFill(mission)));
-
-  const [fills, setFills] = useState(() =>
-    byFurthest(
-      missions.map((mission) => {
-        const before = from?.find((candidate) => candidate.kind === mission.kind);
-        return before ? getFill(before) : getFill(mission);
-      }),
-    ),
-  );
-
-  const targetKey = target.join(",");
-
-  useEffect(() => {
-    // The next frame, so the segments paint where they were before filling to where they are.
-    const frame = requestAnimationFrame(() => setFills(targetKey.split(",").map(Number)));
-    return () => cancelAnimationFrame(frame);
-  }, [targetKey]);
+  const fills = missions
+    .map((mission) => getFill(mission))
+    .toSorted((first, second) => second - first);
 
   return (
     <div aria-hidden="true" className={cn("flex gap-1", className)} data-slot="mission-track">

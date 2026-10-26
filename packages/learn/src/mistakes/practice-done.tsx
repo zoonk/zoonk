@@ -7,6 +7,7 @@ import { useExtracted } from "next-intl";
 import { StatTile, StatTiles } from "../_components/stat-tile";
 import { StepCard, StepDetail, StepHeader } from "../_components/step-card";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
+import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { MissionMoment } from "../missions/mission-moment";
 import { TaskMainLink } from "../shell/task-frame";
 import { type MistakePracticeSummary } from "./mistake-practice-state";
@@ -109,10 +110,13 @@ export function NothingToPractice({ backHref }: { backHref: string }) {
  */
 export function PracticeDone({
   backHref,
+  buddy,
   fixed,
   summary,
 }: {
   backHref: string;
+  /** The learner's buddy, who cheers when the run completes one of the day's missions. */
+  buddy?: LearnBuddy | null;
   fixed: number;
   summary: MistakePracticeSummary | null;
 }) {
@@ -127,6 +131,7 @@ export function PracticeDone({
 
           {summary?.missionMoment && (
             <MissionMoment
+              buddy={buddy}
               completed={summary.missionMoment.completed}
               fullMeal={summary.missionMoment.fullMeal}
               missions={summary.missionMoment.missions}

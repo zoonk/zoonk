@@ -7,6 +7,7 @@ import { type ReactNode } from "react";
 import { EnterButton } from "../_components/enter-button";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
 import { type TestOutStart } from "../_components/test-out-start-link";
+import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { SessionHeader } from "./session-header";
 import { getSessionQueue } from "./session-queue-rows";
 import { type StudyBlock, type StudyMomentView, type StudySession } from "./session-types";
@@ -21,9 +22,10 @@ type LessonMomentCompletion = {
   testedOut: boolean;
 };
 
-type LessonMomentSession = Pick<StudySession, "blocks" | "missions">;
+type LessonMomentSession = Pick<StudySession, "blocks">;
 
 function SavedMoment({
+  buddy,
   moment,
   onContinue,
   onStartTestOut,
@@ -31,6 +33,7 @@ function SavedMoment({
   session,
   testedOut,
 }: {
+  buddy?: LearnBuddy | null;
   moment: StudyMomentView;
   onContinue: () => Promise<boolean>;
   onStartTestOut: (chapterId: string) => Promise<TestOutStart>;
@@ -38,12 +41,12 @@ function SavedMoment({
   session: LessonMomentSession;
   testedOut: boolean;
 }) {
-  useMomentEvents({ missionsBefore: session.missions, moment });
+  useMomentEvents({ moment });
 
   return (
     <StudyMoment
       blocks={session.blocks}
-      missionsBefore={session.missions}
+      buddy={buddy}
       finishedChapterId={
         session.blocks.find((block) => block.id === moment.blockId)?.chapterId ?? null
       }
@@ -131,6 +134,7 @@ export function LessonMomentHeader({
  * session. The host puts it in the lesson player's completion slot, under the player's header.
  */
 export function LessonMoment({
+  buddy,
   completion,
   onContinue,
   onRetry,
@@ -138,6 +142,8 @@ export function LessonMoment({
   onStop,
   session,
 }: {
+  /** The learner's buddy, who cheers when the lesson completes one of the day's missions. */
+  buddy?: LearnBuddy | null;
   completion: LessonMomentCompletion;
   onContinue: () => Promise<boolean>;
   onRetry: () => void;
@@ -178,6 +184,7 @@ export function LessonMoment({
 
   return (
     <SavedMoment
+      buddy={buddy}
       moment={moment}
       onContinue={onContinue}
       onStartTestOut={onStartTestOut}

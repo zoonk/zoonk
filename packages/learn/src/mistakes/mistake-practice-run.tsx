@@ -13,6 +13,7 @@ import {
   TaskBody,
   getTaskAsideRootProps,
 } from "../_components/task-layout";
+import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { ContentVoteMenu } from "../feedback/content-vote-menu";
 import { LearnLink } from "../learn-link";
 import { type QuestionTutor } from "../questions/question-tutor";
@@ -122,6 +123,7 @@ function AnswerFailed() {
 function PracticeBody({
   askButton,
   backHref,
+  buddy,
   lessonHref,
   run,
   trueFalseLabels,
@@ -129,6 +131,7 @@ function PracticeBody({
   /** "Ask {buddy}" beside the main action, when the host has a tutor. */
   askButton: React.ReactNode;
   backHref: string;
+  buddy?: LearnBuddy | null;
   lessonHref: LessonHref | null;
   run: Run;
   trueFalseLabels: TrueFalseLabels;
@@ -147,6 +150,7 @@ function PracticeBody({
     return (
       <PracticeDone
         backHref={backHref}
+        buddy={buddy}
         fixed={run.state.fixedIds.length}
         summary={phase.kind === "ended" ? phase.summary : null}
       />
@@ -189,6 +193,7 @@ function PracticeBody({
 export function MistakePracticeRun({
   actions,
   backHref,
+  buddy,
   lessonHref,
   practice,
   trueFalseLabels,
@@ -196,6 +201,8 @@ export function MistakePracticeRun({
 }: {
   actions: MistakePracticeActions;
   backHref: string;
+  /** The learner's buddy, who cheers when the run completes one of the day's missions. */
+  buddy?: LearnBuddy | null;
   /** Where a content gap's lesson opens; without it the drill shows only the lesson's summary. */
   lessonHref: LessonHref | null;
   practice: PracticeEntry[];
@@ -231,6 +238,7 @@ export function MistakePracticeRun({
       <PracticeBody
         askButton={tutor?.button}
         backHref={backHref}
+        buddy={buddy}
         lessonHref={lessonHref}
         run={run}
         trueFalseLabels={trueFalseLabels}

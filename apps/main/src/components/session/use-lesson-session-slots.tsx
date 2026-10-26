@@ -5,6 +5,7 @@ import { useRouter } from "@/i18n/navigation";
 import { type LessonSessionContext } from "@/lib/session/lesson-session-context";
 import { useStudyNavigation } from "@/lib/session/use-study-navigation";
 import { useStartTestOut } from "@/lib/test-out/use-start-test-out";
+import { type LearnBuddy } from "@zoonk/learn/buddy-name";
 import { LessonMoment, LessonMomentHeader } from "@zoonk/learn/session/lesson-moment";
 import { type LessonPlayerProviderProps } from "@zoonk/player/lesson";
 import { useEffect, useMemo } from "react";
@@ -14,12 +15,15 @@ type LessonPlayerSlots = NonNullable<LessonPlayerProviderProps["slots"]>;
 /**
  * A lesson played as one of today's blocks: the session's completion moment, whose Continue opens
  * the next block, under the session's header (the day as one segment per block) in place of the
- * lesson's once the lesson is saved, like between every other block. Null for a lesson on its own.
- * The session screen's frame is static: holding it, Continue opens the next block there at once.
+ * lesson's once the lesson is saved, like between every other block, with the learner's buddy
+ * cheering a mission it completed. Null for a lesson on its own. The session screen's frame is
+ * static: holding it, Continue opens the next block there at once.
  */
 export function useLessonSessionSlots({
+  buddy,
   session,
 }: {
+  buddy: LearnBuddy | null;
   session: LessonSessionContext | null;
 }): Pick<LessonPlayerSlots, "completion" | "completionHeader"> | null {
   const navigation = useStudyNavigation(session?.id ?? "");
@@ -43,6 +47,7 @@ export function useLessonSessionSlots({
       completion: ({ completion, onRetry }) => (
         <MainLearnProvider>
           <LessonMoment
+            buddy={buddy}
             completion={completion}
             onContinue={navigation.continueSession}
             onRetry={onRetry}
@@ -64,5 +69,5 @@ export function useLessonSessionSlots({
           </MainLearnProvider>
         ) : null,
     };
-  }, [navigation, session, startTestOut]);
+  }, [buddy, navigation, session, startTestOut]);
 }

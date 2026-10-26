@@ -9,6 +9,7 @@ import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout
 import { TaskMeta } from "../_components/task-meta";
 import { type TestOutStart, TestOutStartLink } from "../_components/test-out-start-link";
 import { useFormatDuration } from "../_utils/time-format";
+import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { MissionMoment } from "../missions/mission-moment";
 import { getBlockKind } from "./block-kind";
 import { SessionFrame } from "./session-frame";
@@ -39,15 +40,16 @@ function useMomentTitle({ kind, testedOut }: { kind: MomentKind; testedOut: bool
 /**
  * What the block earned, as one mono line: its Brain Power (never "+0"), the day a lesson comes
  * back (as a date, never a weekday that could be this one or the next) and its net score when it's
- * scored like an exam where a wrong answer cancels a right one.
+ * scored like an exam where a wrong answer cancels a right one. The day's bonus, when the block paid
+ * it, is the missions' to show, so the line counts only the block's own points.
  */
 function MomentFacts({ moment }: { moment: StudyMomentView }) {
   const t = useExtracted();
   const format = useFormatter();
+  const brainPower = moment.brainPower - (moment.fullMeal.paid ? moment.fullMeal.bonus : 0);
 
   const facts = [
-    moment.brainPower > 0 &&
-      t("+{points} Brain Power", { points: format.number(moment.brainPower) }),
+    brainPower > 0 && t("+{points} Brain Power", { points: format.number(brainPower) }),
     moment.comesBackOn &&
       t("Review on {date}", {
         date: format.dateTime(new Date(`${moment.comesBackOn}T00:00:00Z`), {
@@ -149,10 +151,10 @@ function MomentActions({
  */
 export function StudyMoment({
   blocks,
+  buddy,
   exitHref,
   inLessonPlayer = false,
   kind,
-  missionsBefore,
   moment,
   next,
   finishedChapterId = null,
@@ -163,6 +165,8 @@ export function StudyMoment({
 }: {
   /** The day's blocks, for its queue beside the moment. */
   blocks: readonly StudyBlock[];
+  /** The learner's buddy, who cheers when the block completes one of the day's missions. */
+  buddy?: LearnBuddy | null;
   /** Where leaving goes, for the moment's own header; inside the lesson player it has none. */
   exitHref?: string;
   /** The chapter of the lesson just finished: a next lesson in another one starts a chapter. */
@@ -170,8 +174,6 @@ export function StudyMoment({
   /** Inside the lesson player, whose header holds the page's heading (the lesson's title). */
   inLessonPlayer?: boolean;
   kind: MomentKind;
-  /** The day's missions before the block, so the moment says which one it completed. */
-  missionsBefore?: StudyMomentView["missions"];
   moment: StudyMomentView;
   /** The block that comes next, shown above Continue. */
   next: StudyBlock | null;
@@ -213,7 +215,8 @@ export function StudyMoment({
         </div>
 
         <MissionMoment
-          before={missionsBefore}
+          buddy={buddy}
+          completed={moment.completedMissions}
           fullMeal={moment.fullMeal}
           missions={moment.missions}
         />

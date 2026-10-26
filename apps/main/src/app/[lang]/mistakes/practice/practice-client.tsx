@@ -54,6 +54,7 @@ export function MistakePracticeClient({
           }),
       }}
       backHref="/mistakes"
+      buddy={tutor.buddy}
       lessonHref={lessonHref}
       practice={practice}
       trueFalseLabels={trueFalseLabels}

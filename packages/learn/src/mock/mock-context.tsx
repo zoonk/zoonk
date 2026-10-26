@@ -4,6 +4,7 @@ import { type MockAnswer, type MockAnswerInput } from "@zoonk/core/exams/mocks/a
 import { type MockView } from "@zoonk/core/exams/mocks/contract";
 import { type MockDraft } from "@zoonk/core/exams/mocks/view-contract";
 import { createContext, use } from "react";
+import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { type DraftSaveStatus } from "./draft-save-queue";
 import { type SectionMoves } from "./section-moves";
 
@@ -126,6 +127,8 @@ type MockScreenValue = {
   actions: MockActions;
   /** The host's "Ask" about the finished mock; never shown while the mock runs. */
   ask?: React.ReactNode;
+  /** The learner's buddy, who cheers when the mock completes one of the day's missions. */
+  buddy?: LearnBuddy | null;
   hrefs: MockHrefs;
   runner: MockRunner;
 };

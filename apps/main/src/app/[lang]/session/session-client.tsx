@@ -79,16 +79,12 @@ export function SessionBlockClient({
         refresh: () => router.refresh(),
         stop: navigation.stop,
       }}
+      buddy={tutor.buddy}
       detail={detail}
       exitHref={EXIT_HREF}
       key={`${detail.block.id}:${firstUnanswered ?? "answered"}`}
       lessonHref={lessonHref}
-      session={{
-        blocks: session.blocks,
-        examTomorrow: session.examTomorrow,
-        id: session.id,
-        missions: session.missions,
-      }}
+      session={{ blocks: session.blocks, examTomorrow: session.examTomorrow, id: session.id }}
       tutor={questionTutor}
     />
   );

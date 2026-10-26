@@ -6502,24 +6502,37 @@ msgid "Ask your buddy something"
 msgstr "Pregúntale algo a tu compañero"
 
 #: src/missions/mission-moment.tsx
-msgctxt "6v2Eum"
-msgid "Mission done: {name}"
-msgstr "Misión completada: {name}"
+msgctxt "bbUu9m"
+msgid "{count, plural, one {Mission done!} other {All # missions done!}}"
+msgstr "{count, plural, one {¡Misión completada!} many {¡Todas las # misiones completadas!} other {¡Todas las # misiones completadas!}}"
 
 #: src/missions/mission-moment.tsx
-msgctxt "ijXdTz"
-msgid "from today's missions"
-msgstr "de las misiones de hoy"
+msgctxt "5Bpyg-"
+msgid "{count, plural, one {Mission done!} other {# missions done!}}"
+msgstr "{count, plural, one {¡Misión completada!} many {¡# misiones completadas!} other {¡# misiones completadas!}}"
 
 #: src/missions/mission-moment.tsx
-msgctxt "r2ANTd"
-msgid "{done} of {total} · {count, plural, one {Left} other {Left}}: {missions}"
-msgstr "{done} de {total} · {count, plural, one {Falta} other {Faltan}}: {missions}"
+#: src/missions/missions-card.tsx
+msgctxt "4JBtJN"
+msgid "{count, plural, one {# left} other {# left}}"
+msgstr "{count, plural, one {Falta #} other {Faltan #}}"
 
+#: src/missions/mission-moment.tsx
 #: src/missions/missions-card.tsx
 msgctxt "aGylUw"
 msgid "You earned +{points} Brain Power."
 msgstr "Has ganado +{points} de Poder Mental."
+
+#: src/missions/mission-moment.tsx
+#: src/missions/missions-card.tsx
+msgctxt "IQG5uD"
+msgid "Today's +{points} Brain Power is already earned."
+msgstr "Los +{points} puntos de Poder Mental de hoy ya están conseguidos."
+
+#: src/missions/mission-moment.tsx
+msgctxt "DeTHLe"
+msgid "Just done"
+msgstr "Recién completada"
 
 #: src/missions/missions-card.tsx
 msgctxt "3-ihlA"
@@ -6527,19 +6540,9 @@ msgid "{count, plural, one {# mission} other {# missions}}"
 msgstr "{count, plural, one {# misión} other {# misiones}}"
 
 #: src/missions/missions-card.tsx
-msgctxt "4JBtJN"
-msgid "{count, plural, one {# left} other {# left}}"
-msgstr "{count, plural, one {Falta #} other {Faltan #}}"
-
-#: src/missions/missions-card.tsx
 msgctxt "agm7r8"
 msgid "Today's missions start with today's session."
 msgstr "Las misiones de hoy empiezan con tu sesión de hoy."
-
-#: src/missions/missions-card.tsx
-msgctxt "IQG5uD"
-msgid "Today's +{points} Brain Power is already earned."
-msgstr "Los +{points} puntos de Poder Mental de hoy ya están conseguidos."
 
 #: src/missions/missions-card.tsx
 msgctxt "0gBkBl"

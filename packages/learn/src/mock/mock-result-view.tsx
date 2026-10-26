@@ -131,11 +131,12 @@ function PassMarks() {
  * when one of them did the last; nothing when it did none.
  */
 function MockMissionMoment() {
-  const { runner } = useMockScreen();
+  const { buddy, runner } = useMockScreen();
   const moment = runner.view.missionMoment;
 
   return moment ? (
     <MissionMoment
+      buddy={buddy}
       completed={moment.completed}
       fullMeal={moment.fullMeal}
       missions={moment.missions}

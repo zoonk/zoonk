@@ -3,6 +3,7 @@
 import { useExtracted } from "next-intl";
 import { type TaskSegment } from "../../_components/task-header";
 import { TaskActionBar, TaskBody } from "../../_components/task-layout";
+import { type LearnBuddy } from "../../buddies/use-buddy-name";
 import { ContentVoteMenu } from "../../feedback/content-vote-menu";
 import { type LessonHref } from "../../mistakes/drill/drill-types";
 import { type QuestionTutor } from "../../questions/question-tutor";
@@ -63,7 +64,7 @@ function getQuestionSegments({
   });
 }
 
-type SessionContext = Pick<StudySession, "blocks" | "examTomorrow" | "id" | "missions">;
+type SessionContext = Pick<StudySession, "blocks" | "examTomorrow" | "id">;
 
 type SessionActions = QuestionBlockActions & {
   continueSession: () => Promise<boolean>;
@@ -72,19 +73,21 @@ type SessionActions = QuestionBlockActions & {
 
 function FinishedBlock({
   actions,
+  buddy,
   detail,
   exitHref,
   moment,
   session,
 }: {
   actions: SessionActions;
+  buddy?: LearnBuddy | null;
   detail: StudyBlockDetail;
   exitHref: string;
   moment: Extract<QuestionBlockPhase, { kind: "finished" }>["moment"];
   session: SessionContext;
 }) {
   const t = useExtracted();
-  useMomentEvents({ missionsBefore: session.missions, moment });
+  useMomentEvents({ moment });
 
   // The session's last block ends on the summary itself: a moment that only says "See what
   // changed" would be one more tap.
@@ -102,7 +105,7 @@ function FinishedBlock({
   return (
     <StudyMoment
       blocks={session.blocks}
-      missionsBefore={session.missions}
+      buddy={buddy}
       exitHref={exitHref}
       kind={detail.block.kind}
       moment={moment}
@@ -183,6 +186,7 @@ function BlockMenu({ target }: { target: ReturnType<typeof getVoteTarget> }) {
  */
 export function QuestionBlock({
   actions,
+  buddy,
   detail,
   exitHref,
   lessonHref = null,
@@ -190,6 +194,8 @@ export function QuestionBlock({
   tutor,
 }: {
   actions: SessionActions;
+  /** The learner's buddy, who cheers when the block completes one of the day's missions. */
+  buddy?: LearnBuddy | null;
   detail: StudyBlockDetail;
   exitHref: string;
   /** Where a content gap's lesson opens; without it the drill shows only the lesson's summary. */
@@ -213,6 +219,7 @@ export function QuestionBlock({
     return (
       <FinishedBlock
         actions={actions}
+        buddy={buddy}
         detail={detail}
         exitHref={exitHref}
         moment={phase.moment}

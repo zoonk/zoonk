@@ -5,6 +5,7 @@ import { TimerOffIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { StepCard, StepDetail, StepHeader, StepTitle } from "../_components/step-card";
 import { TaskActions } from "../_components/task-layout";
+import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { TaskMainButton } from "../shell/task-frame";
 import { MockBreak } from "./mock-break";
 import { useRefreshPastMockDeadline } from "./mock-clock";
@@ -132,19 +133,22 @@ function MockStage() {
 export function MockScreen({
   actions,
   ask,
+  buddy,
   hrefs,
   mock,
 }: {
   actions: MockActions;
   /** "Ask" about the result, such as the player's `AskTutor`; it shows once the mock is over. */
   ask?: React.ReactNode;
+  /** The learner's buddy, who cheers when the mock completes one of the day's missions. */
+  buddy?: LearnBuddy | null;
   hrefs: MockHrefs;
   mock: MockView;
 }) {
   const runner = useMockRunner({ actions, initial: mock });
 
   return (
-    <MockProvider value={{ actions, ask, hrefs, runner }}>
+    <MockProvider value={{ actions, ask, buddy, hrefs, runner }}>
       <MockStage />
     </MockProvider>
   );

@@ -160,7 +160,7 @@ export function LessonPlayerClient({
     [buddy, canAsk, cards, tutorSuggestions],
   );
 
-  const sessionSlots = useLessonSessionSlots({ session: sessionContext });
+  const sessionSlots = useLessonSessionSlots({ buddy, session: sessionContext });
 
   const slots = useMemo(
     () => ({ ...LESSON_FEEDBACK_SLOTS, ...sessionSlots, ...endingSlots }),

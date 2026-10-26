@@ -77,6 +77,7 @@ export function MockClient({
     <MockScreen
       actions={actions}
       ask={<MainAskTutor {...tutor} size="task" target={target} />}
+      buddy={tutor.buddy}
       hrefs={hrefs}
       key={`${bfcacheId}:${mock.status === "expired"}`}
       mock={mock}
