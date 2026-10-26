@@ -1,11 +1,12 @@
 /**
  * A choice's radio or checkbox at its row's end, drawn as every list marks what's done: an empty
- * ring, filled in the text color with a check once picked (`data-checked`). The row is its label,
- * so a tap anywhere on it picks it. In a module of its own so the public pages draw a picked choice
- * too.
+ * ring, filled in the text color with a check once picked (`data-checked`). The ring at rest is a
+ * step firmer than a field's line: at 20px the input's line all but vanished on a dark page. The
+ * row is its label, so a tap anywhere on it picks it. In a module of its own so the public pages
+ * draw a picked choice too.
  */
 export const CHOICE_CONTROL_CLASS =
-  "border-input data-checked:border-selected data-checked:bg-selected dark:data-checked:bg-selected data-checked:text-selected-foreground size-5 self-center rounded-full border-[1.5px] dark:bg-transparent [&_svg]:size-3";
+  "border-foreground/25 contrast-more:border-input data-checked:border-selected data-checked:bg-selected dark:data-checked:bg-selected data-checked:text-selected-foreground size-5 self-center rounded-full border-[1.5px] dark:bg-transparent [&_svg]:size-3";
 
 /**
  * The picked choice's row (`data-highlighted`) as every pick is drawn: the learner's 2px line
