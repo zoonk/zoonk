@@ -4648,6 +4648,147 @@
           "activityTemplates": []
         }
       }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "accuracy",
+          "reasoning": "The biological explanations are accurate at the introductory level specified by the brief. Each check has one defensible correct answer, and the feedback correctly distinguishes boundary control, stored instructions, and the cytoplasm's role. The requested diagrams match the explanations.",
+          "score": 10,
+          "label": "Accuracy",
+          "weight": 30
+        },
+        {
+          "categoryId": "clarity",
+          "reasoning": "The lesson uses short, everyday Brazilian Portuguese. Each explanation introduces one technical term and explains it through a familiar comparison or concrete description: a condominium gate, a recipe notebook, and a water-rich gel. The cytoplasm explanation includes a concrete example of cellular work without unnecessary terminology.",
+          "score": 10,
+          "label": "Clarity & plain words",
+          "weight": 25
+        },
+        {
+          "categoryId": "checks",
+          "reasoning": "The first check merely retrieves the previously stated membrane function, triggering the cap of 8 for one recall-only check. The remaining checks require predicting the consequence of cytoplasm loss and completing an incomplete diagram. Required misconception options are present, every scored option has relevant feedback, and the bases point to supporting explanations. No check requires typing or judges the learner's previous selection.",
+          "score": 8,
+          "label": "Checks & feedback",
+          "weight": 20
+        },
+        {
+          "categoryId": "fitAndApplication",
+          "reasoning": "The result fits a beginner hobby learner and uses Brazilian Portuguese without exam framing. It follows the seven planned screens in order and ends with one summary sentence per idea. The hook opens directly with the cellular-interior question. The application preserves Iara's diagram in Porto Velho, and each option specifies what to add, where, and why, including the required second-membrane trap.",
+          "score": 10,
+          "label": "Level, hook & application",
+          "weight": 25
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4444,
+          "outputTokens": 829,
+          "reasoningTokens": 278
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The first check is recall-only: asking which part controls entry directly repeats the membrane explanation. Its brief context does not require a prediction or inference. The later cytoplasm-loss check and Iara application do test understanding.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Strengthen the first check by describing a failure to control entry and asking which part is affected, while retaining the genetic-material trap required by the plan. Its correct-answer feedback could also explicitly connect the membrane's location with its control of passage.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese, for a beginner learning biology as a hobby, with no exam to prepare for\n      - The membrane separates the inside from the outside and controls what enters and leaves; the cytoplasm fills the space between the membrane and the genetic material and is where much of the cell's work happens; the genetic material holds the instructions\n      - No screen is a `typedAnswer`: every check and the application are answered by picking (code flags a typed answer, since this lesson's learners take no exam that asks written answers)\n      - The application keeps Iara's diagram from the brief, and its options say what she adds, where and why (the cytoplasm, filling the space between the membrane and the genetic material), with the second-membrane trap and a reason on every option\n\n      \n  - The output has one screen per planned screen, in order, each of a kind the plan allows, then the summary card (one sentence per idea)\n  - A `hookGuess` is a guess that doesn't count: one `reveal` answers whatever the learner picks, so its options have no reasons by design; judge the reveal instead\n  - Calculations written as `mathCheck` are data: code turns them into options, so judge the question, the math and the reasons, not option formatting\n  - Activities are JSON inside `content`; code validates the fields, so judge whether the activity makes the learner do something that shows the screen's idea\n  - Image prompts are only requests; judge whether the requested picture would teach, and whether a question about a picture names everything its answer depends on\n  - Charts and timelines in `visual` are drawn by the app from their data; judge whether the data is right and matches the text\n  - An explanation's `explore` is a template the app draws under the text with nothing asked, its fields as JSON in `content`; judge whether its fields are right and match the text\n  - A question's `basis` names an earlier screen and quotes the sentence the app marks there after a wrong answer (code checks the quote is exact); judge whether that sentence is the one that decides the right answer, and flag a null basis on a question one earlier sentence clearly decides\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-partes-da-celula-hobby-1",
+        "userInput": {
+          "chapterTitle": "A célula",
+          "courseTitle": "Biologia",
+          "language": "pt",
+          "level": "beginner",
+          "spec": {
+            "canDo": "Reconhecer a membrana, o citoplasma e o material genético de uma célula",
+            "description": "Mostra as três partes que toda célula tem e o papel de cada uma, para entender o que há dentro dela.",
+            "estimatedMinutes": 3,
+            "screens": [
+              {
+                "activityTemplate": null,
+                "brief": "Peça um palpite, sem valer ponto: por dentro do contorno, uma célula é vazia? Opções: vazia, cheia de ar, cheia de um gel; a resposta é o gel.",
+                "kind": "hook",
+                "skills": [],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "A membrana é o contorno da célula: separa o dentro do fora e controla o que entra e o que sai. Compare com o portão de um condomínio que deixa passar só quem pode.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "Uma célula com a membrana em destaque no contorno."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "O material genético guarda as instruções que a célula usa para funcionar e se dividir. Compare com o caderno de receitas de uma cozinha.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Pergunte qual parte decide se uma substância entra na célula. Inclua a resposta tentadora, mas errada, de que é o material genético, por guardar as instruções.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "O citoplasma preenche todo o espaço entre a membrana e o material genético: um gel feito quase todo de água, onde acontece boa parte do trabalho da célula, como tirar energia do açúcar.",
+                "kind": "explanation",
+                "skills": [0],
+                "visual": "Uma célula com a membrana, o citoplasma preenchendo o interior e o material genético, as três partes rotuladas."
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Descreva uma célula que perdeu quase todo o citoplasma e pergunte o que deixa de acontecer nela. Inclua a resposta tentadora, mas errada, de que ela só perde o formato.",
+                "kind": "check",
+                "skills": [0],
+                "visual": null
+              },
+              {
+                "activityTemplate": null,
+                "brief": "Em Porto Velho, Iara prepara um esquema didático de célula. Ela desenha a membrana no contorno e um fio de material genético no interior, mas deixa vazio todo o espaço entre eles. Pergunte o que Iara precisa acrescentar, onde deve desenhar e por que isso completa o esquema. Inclua a resposta tentadora, mas errada, de desenhar uma segunda membrana por dentro.",
+                "kind": "application",
+                "skills": [0],
+                "visual": null
+              }
+            ],
+            "skills": [
+              {
+                "description": "Toda célula tem membrana, que controla o que entra e sai, citoplasma, que preenche o interior e onde acontece boa parte do seu trabalho, e material genético, que guarda as instruções.",
+                "example": "Num esquema de célula, o citoplasma preenche o espaço entre a membrana e o material genético.",
+                "hard": false,
+                "name": "Reconhecer as partes básicas de uma célula",
+                "topic": "Partes da célula",
+                "useCase": "Entender esquemas de células em livros, museus e documentários de ciência."
+              }
+            ],
+            "supportMode": "explanationFirst",
+            "title": "Membrana, citoplasma e material genético"
+          },
+          "activityTemplates": []
+        }
+      }
     }
   ],
   "taskId": "lesson-writer"

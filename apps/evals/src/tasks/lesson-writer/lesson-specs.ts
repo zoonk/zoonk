@@ -342,6 +342,90 @@ export const LESSON_SPECS = {
     supportMode: "explanationFirst",
     title: "Por que o elétron não cai no núcleo",
   },
+  /**
+   * A hobby course's lesson on a cell's parts (26 Oct 2026): its application, Iara's diagram with
+   * nothing between the membrane and the genetic material, came out as a typed answer, though
+   * its learner takes no exam that asks them to write.
+   */
+  "pt-partes-da-celula-hobby": {
+    canDo: "Reconhecer a membrana, o citoplasma e o material genético de uma célula",
+    description:
+      "Mostra as três partes que toda célula tem e o papel de cada uma, para entender o que há dentro dela.",
+    estimatedMinutes: 3,
+    screens: [
+      {
+        activityTemplate: null,
+        brief:
+          "Peça um palpite, sem valer ponto: por dentro do contorno, uma célula é vazia? Opções: vazia, cheia de ar, cheia de um gel; a resposta é o gel.",
+        kind: "hook",
+        skills: [],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "A membrana é o contorno da célula: separa o dentro do fora e controla o que entra e o que sai. Compare com o portão de um condomínio que deixa passar só quem pode.",
+        kind: "explanation",
+        skills: [0],
+        visual: "Uma célula com a membrana em destaque no contorno.",
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "O material genético guarda as instruções que a célula usa para funcionar e se dividir. Compare com o caderno de receitas de uma cozinha.",
+        kind: "explanation",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Pergunte qual parte decide se uma substância entra na célula. Inclua a resposta tentadora, mas errada, de que é o material genético, por guardar as instruções.",
+        kind: "check",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "O citoplasma preenche todo o espaço entre a membrana e o material genético: um gel feito quase todo de água, onde acontece boa parte do trabalho da célula, como tirar energia do açúcar.",
+        kind: "explanation",
+        skills: [0],
+        visual:
+          "Uma célula com a membrana, o citoplasma preenchendo o interior e o material genético, as três partes rotuladas.",
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Descreva uma célula que perdeu quase todo o citoplasma e pergunte o que deixa de acontecer nela. Inclua a resposta tentadora, mas errada, de que ela só perde o formato.",
+        kind: "check",
+        skills: [0],
+        visual: null,
+      },
+      {
+        activityTemplate: null,
+        brief:
+          "Em Porto Velho, Iara prepara um esquema didático de célula. Ela desenha a membrana no contorno e um fio de material genético no interior, mas deixa vazio todo o espaço entre eles. Pergunte o que Iara precisa acrescentar, onde deve desenhar e por que isso completa o esquema. Inclua a resposta tentadora, mas errada, de desenhar uma segunda membrana por dentro.",
+        kind: "application",
+        skills: [0],
+        visual: null,
+      },
+    ],
+    skills: [
+      {
+        description:
+          "Toda célula tem membrana, que controla o que entra e sai, citoplasma, que preenche o interior e onde acontece boa parte do seu trabalho, e material genético, que guarda as instruções.",
+        example:
+          "Num esquema de célula, o citoplasma preenche o espaço entre a membrana e o material genético.",
+        hard: false,
+        name: "Reconhecer as partes básicas de uma célula",
+        topic: "Partes da célula",
+        useCase: "Entender esquemas de células em livros, museus e documentários de ciência.",
+      },
+    ],
+    supportMode: "explanationFirst",
+    title: "Membrana, citoplasma e material genético",
+  },
   "pt-regra-de-tres-intermediate": {
     canDo: "Resolver regras de três simples e compostas com grandezas diretas e inversas",
     description:

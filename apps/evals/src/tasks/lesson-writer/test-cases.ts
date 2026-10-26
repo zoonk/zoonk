@@ -197,6 +197,24 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
   },
   {
     expectations: `
+      - MUST be in Brazilian Portuguese, for a beginner learning biology as a hobby, with no exam to prepare for
+      - The membrane separates the inside from the outside and controls what enters and leaves; the cytoplasm fills the space between the membrane and the genetic material and is where much of the cell's work happens; the genetic material holds the instructions
+      - No screen is a \`typedAnswer\`: every check and the application are answered by picking (code flags a typed answer, since this lesson's learners take no exam that asks written answers)
+      - The application keeps Iara's diagram from the brief, and its options say what she adds, where and why (the cytoplasm, filling the space between the membrane and the genetic material), with the second-membrane trap and a reason on every option
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-partes-da-celula-hobby",
+    userInput: toInput({
+      chapterTitle: "A célula",
+      courseTitle: "Biologia",
+      language: "pt",
+      level: "beginner",
+      spec: LESSON_SPECS["pt-partes-da-celula-hobby"],
+    }),
+  },
+  {
+    expectations: `
       - MUST be in US English, for a beginner
       - The hook uses the planned surprise (a price that drops 50% and doesn't come back with a 50% rise) as a guess, with no introduction
       - Percent change is explained as change divided by the starting value, concretely with dollars, before any formula; the formula, if any, is explained piece by piece
