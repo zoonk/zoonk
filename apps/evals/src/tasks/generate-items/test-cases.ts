@@ -378,6 +378,29 @@ export const TEST_CASES: TestCase<unknown, GenerateItemsInput>[] = [
     },
   },
   {
+    // A sound answer to "what check would you recommend?" was graded wrong for not naming a second
+    // technique its key points demanded (an ENEM placement, Oct 2026). Placement now confirms with
+    // quick questions outside languages, so this case keeps "any sound answer" questions covered.
+    expectations: `Short-answer items in English for GCSE Combined Science on improving a practical investigation. Each question asks what the learner would do or check (a change that makes results more accurate or repeatable, a check before trusting a reading) as one direct instruction with its length ("In one or two sentences, suggest..."), asking one thing or two linked parts (a change and its reason) without giving the answer away. Many different answers are sound, so each key point states what every sound answer does (for example "names a change that reduces random error in the readings") and never one technique among several ("repeats each measurement three times and takes the mean") that another sound answer could replace; the sample answer is one sound answer among those the key points accept.`,
+    id: "en-gcse-science-improve-practical-typed",
+    userInput: {
+      count: ITEMS_PER_CASE,
+      examFormat: {
+        name: "GCSE Combined Science",
+        style:
+          "Structured questions with short written answers (a word, a value or one or two sentences per part) using command words such as state, describe and suggest, marked against a mark scheme that accepts any valid answer.",
+      },
+      format: "typed",
+      language: "en",
+      level: "intermediate",
+      skill: {
+        description:
+          "Suggest how to make a practical investigation's results more accurate or repeatable, and decide whether a reading can be trusted.",
+        name: "Improving a practical investigation",
+      },
+    },
+  },
+  {
     expectations: `Workplace multiple-choice items in English for a retail store manager learning to give specific, behavior-based feedback. Situations must be realistic store situations; wrong options should be common manager mistakes such as vague praise, judging personality instead of behavior or waiting weeks to give feedback.`,
     id: "en-work-behavior-feedback-retail",
     userInput: {

@@ -2151,6 +2151,90 @@
           }
         }
       }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "The three sample answers are scientifically defensible, and 74 seconds is clearly anomalous relative to 45, 46 and 45 seconds. However, Item 1 has an inadequately inclusive key: measuring gas volume is a valid approach, not a requirement of every valid answer. This is one defective key, so the score is capped at 7. Multiple valid suggestions are expressly intended by the task-specific expectations and are not themselves an error.",
+          "score": 7,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Empty accepted-answer lists are appropriate for these explanations, and the key points are generally straightforward to assess. The important weakness is that Item 1 encodes a particular measurement approach instead of an outcome-based criterion accepting other sound approaches. There are no distractors or misconception labels to evaluate.",
+          "score": 7,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "Pondweed photosynthesis, the disappearing-cross reaction and insulation comparisons are credible GCSE Combined Science practical contexts. The questions use suitable command words, manageable reading loads and short written responses. The set broadly resembles teacher-written GCSE practice, with no meaningful exam-setting mismatch.",
+          "score": 9,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The set covers measurement accuracy, anomalous readings and repeatability across three distinct investigations, entirely in English. Learners apply practical reasoning rather than recall definitions. Item 2 nevertheless elicits a heavily signposted judgment instead of asking the learner to propose a concrete check, and Item 3 offers limited additional challenge despite its hard label.",
+          "score": 8,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2415,
+          "outputTokens": 1380,
+          "reasoningTokens": 722
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Item 1's first key point requires measuring oxygen volume, although the expectations require criteria that accept every scientifically sound approach. A calibrated oxygen sensor measuring oxygen production over a fixed interval could also address the unreliable bubble counts without directly measuring gas volume. The sample answer is valid, but the key could reject valid alternatives.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Item 2 asks whether to use a conspicuous outlier 'without checking it first', which strongly cues the expected response. It also asks for a judgment and reason rather than the concrete action or check requested by the task-specific expectations.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Rewrite Item 1's criteria around a measurement approach that avoids assuming equal bubble sizes and a scientifically valid explanation. Ask learners in Item 2 to suggest a check before trusting the anomalous reading. Item 3 could assess repeatability more strongly by considering agreement between repeated temperature decreases, rather than only which insulation performs better; this would also make its 'hard' designation more convincing.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Short-answer items in English for GCSE Combined Science on improving a practical investigation. Each question asks what the learner would do or check (a change that makes results more accurate or repeatable, a check before trusting a reading) as one direct instruction with its length (\"In one or two sentences, suggest...\"), asking one thing or two linked parts (a change and its reason) without giving the answer away. Many different answers are sound, so each key point states what every sound answer does (for example \"names a change that reduces random error in the readings\") and never one technique among several (\"repeats each measurement three times and takes the mean\") that another sound answer could replace; the sample answer is one sound answer among those the key points accept.",
+        "id": "en-gcse-science-improve-practical-typed-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "GCSE Combined Science",
+            "style": "Structured questions with short written answers (a word, a value or one or two sentences per part) using command words such as state, describe and suggest, marked against a mark scheme that accepts any valid answer."
+          },
+          "format": "typed",
+          "language": "en",
+          "level": "intermediate",
+          "skill": {
+            "description": "Suggest how to make a practical investigation's results more accurate or repeatable, and decide whether a reading can be trusted.",
+            "name": "Improving a practical investigation"
+          }
+        }
+      }
     }
   ],
   "taskId": "generate-items"
