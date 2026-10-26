@@ -65,7 +65,8 @@ export function usePatternDrill({
     });
   };
 
-  // Each question's segment in the header: green or red once checked, the one in view, the rest ahead.
+  // Each question's segment in the header: blue or red once checked, the one in view, the rest
+  // ahead.
   const segments = drill.map((item, position): TaskSegment => {
     const checked = answers[position];
 

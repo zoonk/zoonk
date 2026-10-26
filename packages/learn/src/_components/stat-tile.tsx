@@ -10,7 +10,7 @@ const STAT_TONE = {
   energy: "text-energy",
   neutral: "text-muted-foreground",
   success: "text-success",
-  // Time is plain data, so neutral: blue is the learner's own pick and place.
+  // Time is plain data, so neutral: blue is progress made.
   time: "text-muted-foreground",
 } as const;
 
@@ -81,9 +81,7 @@ export function StatTile({
         <span className="truncate">{label}</span>
       </span>{" "}
       {/* The spaces keep "Questions 20" one phrase for screen readers; the column hides them. */}
-      <span className="font-mono text-2xl leading-tight font-medium tracking-[-0.03em] tabular-nums">
-        {value}
-      </span>
+      <span className="font-mono text-2xl leading-tight font-medium tracking-[-0.03em] tabular-nums">{value}</span>
       {detail && (
         <>
           {" "}

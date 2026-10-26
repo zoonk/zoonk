@@ -29,7 +29,7 @@ import { getActivityCalendarIntensity } from "./_utils/activity-calendar-intensi
 
 const ACTIVITY_CHART_TITLE_ID = "activity-chart-title";
 
-/** Green means studied, as everywhere in the app: the more finished that day, the fuller. */
+/** Blue means studied, as everywhere in the app: the more finished that day, the fuller. */
 const INTENSITY_CLASSES = [
   "bg-surface-3",
   "bg-success/25",

@@ -25,7 +25,7 @@ export type RoadBand = {
   startLabel?: string;
   /** Where today falls in the current band, 0 to 1. */
   todayShare?: number;
-  /** How much of the current band's work is done, 0 to 1, as the Plan underlines it in green. */
+  /** How much of the current band's work is done, 0 to 1, as the Plan underlines it in blue. */
   share?: number;
   /** The mock exams in the band, each where it falls, 0 to 1. */
   mocks?: readonly number[];
@@ -158,7 +158,7 @@ function RoadAxis({
 }
 
 /**
- * A plan's road as the Plan draws it: one band per phase, as long as its days, done ones green,
+ * A plan's road as the Plan draws it: one band per phase, as long as its days, done ones blue,
  * today's line in the current one, the mock exams on their days and the goal's flag and date at
  * the end. Below `fullFrom` it's the Plan's compact bar with the road in words under it. A
  * picture: screen readers hear `caption` instead.

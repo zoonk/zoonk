@@ -25,7 +25,7 @@ function ContrastLabel({ label }: { label: string }) {
 
 /**
  * The rule, led by one of the learner's own mistakes as a change: what they said on a red line,
- * the correct version on a green one, then the rule.
+ * the correct version on a blue one, then the rule.
  */
 function RuleExample({ example, rule }: { example: PatternExample | undefined; rule: string }) {
   const t = useExtracted();

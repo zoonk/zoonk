@@ -32,7 +32,7 @@ export type FocusTestOutcome = ProgressCelebration & {
 };
 
 /**
- * One short segment per answer, green when right and red when wrong, as a task's header draws
+ * One short segment per answer, blue when right and red when wrong, as a task's header draws
  * them, and how many were right in numbers: an area's result at a glance.
  */
 function AnswerSegments({ answers }: { answers: readonly boolean[] }) {

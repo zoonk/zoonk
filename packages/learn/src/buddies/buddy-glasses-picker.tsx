@@ -26,7 +26,7 @@ export type BuddyGlassesOption = {
 /** Pairs earned by counting (7 days with every mission done, 50 reviews) show how far along the learner is. */
 const COUNTED_GLASSES = new Set<BuddyGlasses>(["catEye", "retro"]);
 
-/** A buddy option as a card, picked as every pick is: the blue line on its tint. */
+/** A buddy option as a card, picked as every pick is: the line in the text color on its tint. */
 const OPTION_CLASS = cn(
   "border-border has-focus-visible:ring-ring/50 flex min-h-16 cursor-pointer items-center gap-3 rounded-xl border p-2 pr-3 has-focus-visible:ring-[3px] has-data-disabled:cursor-default",
   CHOICE_CARD_PICKED_CLASS,

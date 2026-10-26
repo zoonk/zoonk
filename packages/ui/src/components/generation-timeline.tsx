@@ -59,7 +59,7 @@ function GenerationTimelineDescription({ className, ...props }: React.ComponentP
 
 /**
  * The bar with its percentage: one segment per phase, as wide as the phase usually takes
- * (`weights`), so the segments fill in step with the percentage. The ones done are green, the one
+ * (`weights`), so the segments fill in step with the percentage. The ones done are blue, the one
  * running fills as it goes, the rest wait on the track. `aria-label` names what is being made;
  * pass `locale` so the server and the browser format the percentage the same way.
  */

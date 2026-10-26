@@ -19,7 +19,7 @@ type Passed = (typeof PASSED_VALUES)[number];
 
 /**
  * Options share the row but never squeeze a label ("Noch nicht") onto two lines; they wrap instead.
- * Picked as every pick is: the blue line on its tint.
+ * Picked as every pick is: the line in the text color on its tint.
  */
 const OPTION_CLASS = cn(
   "border-border flex min-h-11 min-w-max flex-1 cursor-pointer items-center gap-2 rounded-lg border px-3 text-sm",

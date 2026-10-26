@@ -20,8 +20,9 @@ import {
  * A feature the learner's plan doesn't include, marked where it shows: a row, a card's title, a
  * path's mock. Plus features are never hidden: free learners and guests see them as Plus learners
  * do, with this mark, and they open as usual to a page that says what Plus unlocks. Screen readers
- * hear "Available with Plus" (or `label`, where it marks the learner's own plan). The one way the app draws Plus: a quiet 22px chip on a strong
- * hairline, neither green (right, done) nor blue (information), since a plan is neither.
+ * hear "Available with Plus" (or `label`, where it marks the learner's own plan). The one way the
+ * app draws Plus: a quiet 22px chip on a strong hairline, neither blue (right, done) nor a pick's
+ * ring (the learner's own), since a plan is neither.
  */
 export function PlusMark({
   className,

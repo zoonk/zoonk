@@ -88,7 +88,7 @@ function PronunciationTip({
 }
 
 /**
- * One thing to say better, as a change: what was said on a red line, the better way on a green
+ * One thing to say better, as a change: what was said on a red line, the better way on a blue
  * one, then why, with the better way's sound beside it.
  */
 function BetterWay({

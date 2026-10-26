@@ -13,7 +13,7 @@ export function countMetGoals(conversation: LanguageConversationView, met: strin
 }
 
 /**
- * What the learner works toward during the call: the goals as a checklist, each turning to a green
+ * What the learner works toward during the call: the goals as a checklist, each turning to a blue
  * dot as it's met, with how many are across ("1/3"). An exam task shows its card instead, as the
  * sheet stays on the table through the exam; its one goal is the task itself, graded once it ends.
  * In the aside from `lg`, the aside's own header names them (`titled={false}`).

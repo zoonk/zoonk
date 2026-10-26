@@ -35,8 +35,8 @@ function getLessonCounts({
 
 /**
  * Any other goal's progress in its plan's lessons, as the Plan says it ("31.58%", "6 of 19
- * lessons"), drawn as the lessons themselves: one cell each, studied in green, known muted, today's
- * still to do outlined in green, so the day's work shows on the way to the goal. A goal with
+ * lessons"), drawn as the lessons themselves: one cell each, studied in blue, known muted, today's
+ * still to do outlined in blue, so the day's work shows on the way to the goal. A goal with
  * several modules lists them under it, on the same scale.
  */
 export function LessonsCard({

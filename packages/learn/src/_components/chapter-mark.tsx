@@ -12,8 +12,8 @@ type MarkedChapter = {
 };
 
 /**
- * A chapter's mark in a list, in `StatusMark`'s marks: the learner's blue dot for the next one, a
- * small ring for one begun, a green check once done, a skip mark once done without studying it
+ * A chapter's mark in a list, in `StatusMark`'s marks: the learner's dot for the next one, a
+ * small ring for one begun, a blue check once done, a skip mark once done without studying it
  * (`skipped`: the learner showed they know it), a faint dot ahead. The Plan's path and a
  * subject's chapters use the same marks.
  */

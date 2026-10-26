@@ -6,8 +6,8 @@ import { type PlanPhaseView } from "@zoonk/core/plans/view-contract";
  */
 
 /**
- * A phase's band in its state: the current one raised and ringed in the learner's blue (where they
- * are, so a ring without a tint), done ones green, the rest quiet.
+ * A phase's band in its state: the current one raised and ringed in the text color (where the
+ * learner is, so a ring without a tint), done ones blue, the rest quiet.
  */
 export const BAND_STATE_CLASS: Record<PlanPhaseView["state"], string> = {
   current: "bg-surface-3 text-foreground ring-selected ring-[1.5px] ring-inset",

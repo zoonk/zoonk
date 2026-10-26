@@ -196,7 +196,7 @@ export function TaskFrame({
   headerTitle?: React.ReactNode;
   /**
    * Where the learner is, from 0 to 100, as a thin bar under the header; with `segments`, one
-   * segment per question instead, green or red once answered; or a bar of the task's own (`bar`),
+   * segment per question instead, blue or red once answered; or a bar of the task's own (`bar`),
    * like the Trickster's shield.
    */
   progress?:

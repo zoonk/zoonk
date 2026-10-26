@@ -6,7 +6,7 @@ const PERCENT = 100;
 export type DaySegmentState = "ahead" | "current" | "done" | "skipped";
 
 /**
- * Green once done, a neutral fill once skipped, an outline in the learner's blue for the one in
+ * Blue once done, a neutral fill once skipped, an outline in the text color for the one in
  * progress (where they are; a solid segment read as done), and the track for the ones ahead.
  */
 const SEGMENT_STATE_CLASS: Record<DaySegmentState, string> = {
@@ -20,7 +20,7 @@ const SEGMENT_STATE_CLASS: Record<DaySegmentState, string> = {
 export const DAY_SEGMENTS_CLASS = "flex h-1 gap-[3px]";
 
 /**
- * One block's segment, as long as its minutes, the one in progress filling green as its questions
+ * One block's segment, as long as its minutes, the one in progress filling blue as its questions
  * are answered (`share`, 0 to 1). Today draws the learner's day with it, and the public pages draw
  * an example day, so it's a module a server component can render.
  */

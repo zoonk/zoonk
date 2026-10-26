@@ -168,7 +168,7 @@ export function ListItemStatusProgress({ className, ...props }: React.ComponentP
   return (
     <span
       className={cn(
-        "mt-0.5 flex size-4 shrink-0 items-center justify-center text-blue-500",
+        "text-success mt-0.5 flex size-4 shrink-0 items-center justify-center",
         className,
       )}
       data-slot="list-item-status"

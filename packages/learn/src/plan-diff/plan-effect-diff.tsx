@@ -226,7 +226,7 @@ function usePlanEffectLines() {
 
 /**
  * A plan change as a diff, colored by what it means for the learner (`getLessonLineTone`): the
- * lessons it leaves out or adds first, the one line in color (good news green, bad news red), then
+ * lessons it leaves out or adds first, the one line in color (good news blue, bad news red), then
  * each date or count that moves, plain: the old value struck through over the new one. Nothing when
  * the change moves none; its sentence says the rest.
  */

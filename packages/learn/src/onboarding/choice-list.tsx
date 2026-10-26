@@ -47,7 +47,7 @@ function ChoiceRadio<Value extends string>({ value }: { value: Value }) {
 
 /**
  * A choice as a flat row of one list: the whole row picks it, the picked one (`data-highlighted`)
- * on the learner's blue tint, the keyboard ring inside it.
+ * on the pick's tint, the keyboard ring inside it.
  */
 export const CHOICE_ROW_CLASS = cn(
   LIST_ROW_INTERACTIVE_CLASS,
@@ -56,7 +56,7 @@ export const CHOICE_ROW_CLASS = cn(
 );
 
 /**
- * A preset (an amount of time): the strong line, and the learner's blue ring and tint once picked;
+ * A preset (an amount of time): the strong line, and the pick's ring and tint once picked;
  * the keyboard's focus is an outline, so a picked preset still shows it.
  */
 const CHIP_CLASS = cn(

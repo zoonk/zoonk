@@ -25,7 +25,7 @@ import { TurnaroundChart } from "./turnaround-chart";
 const DAYS_PER_WEEK = 7;
 
 /**
- * The week's seven days as Today draws its week: a ring per day, closed in green with a check on a
+ * The week's seven days as Today draws its week: a ring per day, closed in blue with a check on a
  * day studied, an empty track otherwise, and the day's letter under it in the mono face.
  */
 function WeekRings() {

@@ -80,15 +80,16 @@ function useMissionMoment({
 }
 
 /**
- * A mission done fills its arc in the foreground's tone; the ring turns green only once every
- * mission is, so green keeps meaning done and a part-done day doesn't read as finished.
+ * A mission done fills its arc in the foreground's tone; the ring closes in Brain Power's violet
+ * only once every mission is, one of the few moments drawn louder (the day's missions earned their
+ * reward), so a part-done day doesn't read as finished.
  */
 function getArcClass({ complete, done }: { complete: boolean; done: boolean }): string {
   if (!done) {
     return "stroke-foreground/15";
   }
 
-  return complete ? "stroke-success" : "stroke-foreground/50";
+  return complete ? "stroke-brain" : "stroke-foreground/50";
 }
 
 /**

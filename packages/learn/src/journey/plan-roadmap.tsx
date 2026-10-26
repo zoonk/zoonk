@@ -23,7 +23,7 @@ import {
 const PERCENT = 100;
 
 /**
- * The phases on a phone: a thin segmented bar in time (each filling green with its lessons done, the
+ * The phases on a phone: a thin segmented bar in time (each filling blue with its lessons done, the
  * current one outlined over its fill, as Today's block in progress is), and where the learner is
  * under it. With `onOpen` it's one button opening every phase (the Plan's "Phases" sheet); without,
  * it's only there to read, as when the path below names every phase.

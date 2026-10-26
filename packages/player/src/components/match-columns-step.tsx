@@ -37,7 +37,7 @@ const FLASH_DURATION = 800;
 /**
  * One item to match, drawn like an answer option: its number in a keycap (number keys pick from
  * one column at a time), its words, and a strong line that turns into a firm ring when picked,
- * green once matched and red for a moment on a wrong pair.
+ * blue once matched and red for a moment on a wrong pair.
  */
 function MatchItem({
   isShortcutActive,

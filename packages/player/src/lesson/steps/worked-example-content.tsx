@@ -92,7 +92,7 @@ export function WorkedExampleContent({
         })}
       </ol>
 
-      {/* The example's answer on a quiet panel: green and red only say right and wrong. */}
+      {/* The example's answer on a quiet panel: blue and red only say right and wrong. */}
       {isDone && (
         <div className={cn(SURFACE_CLASS, "flex flex-col gap-1 p-4")}>
           <p className="text-muted-foreground text-sm font-medium">{t("Result")}</p>

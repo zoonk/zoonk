@@ -38,7 +38,7 @@ function useDuelNumbers() {
       checkpoint.questions.findIndex((candidate) => candidate.itemId === question.itemId)
     : score.answered - 1;
 
-  // Each question's segment: green or red once it has its verdict, the one in view, the rest ahead.
+  // Each question's segment: blue or red once it has its verdict, the one in view, the rest ahead.
   const visibleSegments = checkpoint.questions.map((candidate, index): TaskSegment => {
     const verdict = duel.state.verdicts[candidate.itemId];
 
@@ -296,7 +296,7 @@ function useDuelAside(): TaskFrameAside {
 /**
  * One question at a time, without hints: right or wrong shows after each answer, and the answers
  * and the traps wait for the end. Every duel fills one segment per question under its header,
- * green or red, like every task's; against the Trickster a phone shows his shield there instead,
+ * blue or red, like every task's; against the Trickster a phone shows his shield there instead,
  * breaking a piece for each right answer, while a wide screen shows it beside the question.
  */
 export function CheckpointDuelView() {

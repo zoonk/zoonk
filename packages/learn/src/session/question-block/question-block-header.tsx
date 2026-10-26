@@ -46,7 +46,7 @@ export function QuestionBlockClose({ href }: { href: string }) {
 /**
  * The header of a run of questions (a session block, mistake practice), the same as every
  * full-screen task's: close on the left, the run's name in the middle, the question's "…" menu on
- * the right, and one segment per question under it, green or red once answered. It stays at the
+ * the right, and one segment per question under it, blue or red once answered. It stays at the
  * top while a long question scrolls.
  */
 export function QuestionBlockHeader({

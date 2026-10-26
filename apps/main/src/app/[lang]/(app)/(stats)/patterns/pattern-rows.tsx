@@ -32,7 +32,7 @@ function getBarWidth(score: number): string {
 }
 
 /**
- * The bar's tone: the best green, the others that count a lighter green, and a group with too few
+ * The bar's tone: the best blue, the others that count a lighter blue, and a group with too few
  * answers to count gray, so a lucky answer never reads as a result.
  */
 function getBarClass({ best, pattern }: Pick<PatternRowView, "best" | "pattern">): string {
@@ -130,7 +130,7 @@ function PatternSection({
   );
 }
 
-/** Every day of the week as a row, Sunday first, the best one (when one stands out) in green. */
+/** Every day of the week as a row, Sunday first, the best one (when one stands out) in blue. */
 export async function WeekPatterns({
   best,
   patterns,
@@ -154,7 +154,9 @@ export async function WeekPatterns({
   return <PatternSection id="week-patterns" rows={rows} title={t("Throughout the week")} />;
 }
 
-/** The four parts of the day as rows, with their hours, the best one (when one stands out) in green. */
+/**
+ * The four parts of the day as rows, with their hours, the best one (when one stands out) in blue.
+ */
 export async function DayPatterns({
   best,
   patterns,

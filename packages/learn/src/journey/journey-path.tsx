@@ -17,8 +17,8 @@ import { useFinishDate, usePhaseWhen } from "./use-phase-when";
 type NodeState = PlanPhaseView["state"] | "finish";
 
 /**
- * A node on the path, in the marks lists use: a green check once done, a dot in the text color for
- * the phase they're in (its band and its next chapter carry the learner's blue, so this one stays
+ * A node on the path, in the marks lists use: a blue check once done, a dot in the text color for
+ * the phase they're in (its band and its next chapter carry the learner's mark, so this one stays
  * quiet), the goal's flag; an empty ring for a phase ahead, for one the plan moved
  * past with work set aside and for one it holds nothing of, never a check. It sits in a box as tall
  * as its title's first line (`HEADER_CLASS`), so its centre is on that line.
@@ -40,7 +40,7 @@ function PathMarker({ state }: { state: NodeState }) {
 }
 
 /**
- * The stretch of path from a node down to the next one, a hairline centred under the nodes: green
+ * The stretch of path from a node down to the next one, a hairline centred under the nodes: blue
  * once the phase is done. The path's last node has none.
  */
 function PathLine({ walked }: { walked: boolean }) {

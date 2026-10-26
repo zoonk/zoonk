@@ -134,7 +134,7 @@ export function LessonList({
 }
 
 /**
- * A chapter's or unit's lessons as one segmented bar, one segment per lesson, green once done, so
+ * A chapter's or unit's lessons as one segmented bar, one segment per lesson, blue once done, so
  * the aside shows at a glance how far the learner is ("1 of 3").
  */
 export function LessonProgress({

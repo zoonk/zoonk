@@ -3,11 +3,7 @@ import { CatalogPageBar } from "@/components/catalog/catalog-page-bar";
 import { ChapterStrip } from "@/components/catalog/chapter-strip";
 import { getExamChapterAreas } from "@/components/catalog/course-plan";
 import { CourseProgressScope } from "@/components/catalog/course-progress";
-import {
-  BAND_CLASS,
-  SUBJECT_WASH_CLASS,
-  getSubjectToneStyle,
-} from "@/components/catalog/subject-tone";
+import { BAND_CLASS, SUBJECT_WASH_CLASS } from "@/components/catalog/subject-tone";
 import { TryLesson, getTryLessonId, pickTryLesson } from "@/components/catalog/try-lesson";
 import { CheckMark } from "@/components/public/check-mark";
 import { JsonLd } from "@/components/public/json-ld";
@@ -24,6 +20,7 @@ import { getChapterHref, getLessonHref } from "@/lib/public/public-hrefs";
 import { breadcrumbJsonLd, lessonListJsonLd } from "@/lib/public/structured-data";
 import { ContentVoteMenu } from "@zoonk/learn/feedback/vote-menu";
 import { Page, PageSection } from "@zoonk/learn/page";
+import { getSubject } from "@zoonk/learn/subject-label";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type SupportedLocale } from "@zoonk/utils/locale";
@@ -194,7 +191,7 @@ export async function LibraryChapterPage({
   const titleId = `chapter-title-${chapter.id}`;
 
   return (
-    <div className="flex flex-col gap-8" style={getSubjectToneStyle(course.categories)}>
+    <div className="flex flex-col gap-8" data-subject={getSubject(course.categories)}>
       <CatalogPageBar
         back={{ href: getCourseHref(params), label: course.title }}
         options={

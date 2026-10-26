@@ -32,74 +32,51 @@ export type LearnKind =
   | "review";
 
 type KindMarks = {
-  /** The dot: the color alone, 3:1 or more on the page and on a row's highlight in both themes. */
-  dot: string;
+  /** The color as a fill: the kind's dot, its part of a meter. */
+  fill: string;
   icon: LucideIcon;
-  /** The color as text or an icon's stroke, AA on the page in both themes. */
+  /** The color as text or an icon's stroke. */
   text: string;
 };
 
 /**
  * Every kind's marks in one place, the only map from a kind to a color or an icon: a screen marks a
- * kind through `KindDot`, `KindIcon` or `kindTextClass`, never with its own classes, so a kind
- * can't look different from one screen to the next. A kind added without its marks fails the type
- * check. A hue never already means something else (`references/color.md`): green is progress
- * made, blue the learner's own pick and place, violet Brain Power. Review and practice share amber,
- * going back over what was learned; amber's other meanings (a flag, Energy) are never dots.
+ * kind through `KindDot`, `KindIcon`, `kindFillClass` or `kindTextClass`, never with its own
+ * classes, so a kind can't look different from one screen to the next. A kind added without its
+ * marks fails the type check. The hues are `@zoonk/ui`'s `kind-*` tokens (soft, deeper with more
+ * contrast), and none already means something else: blue is progress made, violet Brain Power.
+ * Review and practice share amber, going back over what was learned; amber's other meanings (a
+ * flag, Energy) are never dots.
  */
 const KIND_MARKS = {
-  // Lime, not violet: violet is Brain Power's alone. The light dot is lime-700, since lime-600 is
-  // under 3:1 on the page.
-  challenge: {
-    dot: "bg-lime-700 dark:bg-lime-400",
-    icon: SwordsIcon,
-    text: "text-lime-700 dark:text-lime-300",
-  },
+  // Lime, not violet: violet is Brain Power's alone.
+  challenge: { fill: "bg-kind-challenge", icon: SwordsIcon, text: "text-kind-challenge" },
   conversation: {
-    dot: "bg-teal-600 dark:bg-teal-300",
+    fill: "bg-kind-conversation",
     icon: MessagesSquareIcon,
-    text: "text-teal-700 dark:text-teal-300",
+    text: "text-kind-conversation",
   },
   // The conversation's teal: speaking and writing are both making something yourself. A cyan read
-  // as a second blue beside the learner's own.
-  essay: {
-    dot: "bg-teal-600 dark:bg-teal-300",
-    icon: PenLineIcon,
-    text: "text-teal-700 dark:text-teal-300",
-  },
-  // Neutral: the default kind, and no blue to mistake for the learner's own (`selected`).
-  lesson: { dot: "bg-faint", icon: BookOpenIcon, text: "text-muted-foreground" },
-  mindMap: {
-    dot: "bg-fuchsia-500 dark:bg-fuchsia-400",
-    icon: NetworkIcon,
-    text: "text-fuchsia-700 dark:text-fuchsia-300",
-  },
-  mistakes: {
-    dot: "bg-rose-500 dark:bg-rose-400",
-    icon: NotebookPenIcon,
-    text: "text-rose-700 dark:text-rose-300",
-  },
-  mock: {
-    dot: "bg-orange-600 dark:bg-orange-400",
-    icon: TimerIcon,
-    text: "text-orange-700 dark:text-orange-300",
-  },
-  // Review's amber, not green: a green dot beside the done checks read as done.
-  practice: {
-    dot: "bg-amber-700 dark:bg-amber-400",
-    icon: DumbbellIcon,
-    text: "text-amber-700 dark:text-amber-300",
-  },
-  review: {
-    dot: "bg-amber-700 dark:bg-amber-400",
-    icon: RotateCcwIcon,
-    text: "text-amber-700 dark:text-amber-300",
-  },
+  // as a second blue beside progress.
+  essay: { fill: "bg-kind-conversation", icon: PenLineIcon, text: "text-kind-conversation" },
+  // Neutral: the default kind, and no blue to mistake for progress.
+  lesson: { fill: "bg-faint", icon: BookOpenIcon, text: "text-muted-foreground" },
+  mindMap: { fill: "bg-kind-mind-map", icon: NetworkIcon, text: "text-kind-mind-map" },
+  mistakes: { fill: "bg-kind-mistakes", icon: NotebookPenIcon, text: "text-kind-mistakes" },
+  mock: { fill: "bg-kind-mock", icon: TimerIcon, text: "text-kind-mock" },
+  // Review's amber: going back over what was learned.
+  practice: { fill: "bg-kind-review", icon: DumbbellIcon, text: "text-kind-review" },
+  review: { fill: "bg-kind-review", icon: RotateCcwIcon, text: "text-kind-review" },
 } as const satisfies Readonly<Record<LearnKind, KindMarks>>;
 
 /** A kind's color as text, for something drawn in it (a mock's line on the progress chart). */
 export function kindTextClass(kind: LearnKind): string {
   return KIND_MARKS[kind].text;
+}
+
+/** A kind's color as a fill, for its part of a meter (a day's practice block, a plan's reviews). */
+export function kindFillClass(kind: LearnKind): string {
+  return KIND_MARKS[kind].fill;
 }
 
 /**
@@ -111,7 +88,7 @@ export function KindDot({ className, kind }: { className?: string; kind: LearnKi
   return (
     <span
       aria-hidden="true"
-      className={cn("size-2 shrink-0 rounded-full", KIND_MARKS[kind].dot, className)}
+      className={cn("size-2 shrink-0 rounded-full", KIND_MARKS[kind].fill, className)}
       data-slot="kind-dot"
     />
   );

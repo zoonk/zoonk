@@ -38,7 +38,7 @@ import { useCapsuleEvents } from "./use-capsule-events";
 import { type QuestionBlockActions, useQuestionBlock } from "./use-question-block";
 
 /**
- * Each question's segment in the header: green or red once answered (this sitting's answer, or the
+ * Each question's segment in the header: blue or red once answered (this sitting's answer, or the
  * one saved before it), read for a placement question or a statement left blank, which aren't
  * graded as right or wrong, the one in view, and the rest ahead.
  */

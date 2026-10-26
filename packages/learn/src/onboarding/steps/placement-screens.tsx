@@ -137,7 +137,7 @@ export function PlacementIntro({
 }
 
 /**
- * A finished moment: what was done (`done`, as the green ✓ line every finished screen opens with;
+ * A finished moment: what was done (`done`, as the blue ✓ line every finished screen opens with;
  * none when nothing was), what it means for the plan, and one way on.
  */
 function PlacementOutcome({

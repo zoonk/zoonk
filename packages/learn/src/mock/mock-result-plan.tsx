@@ -157,7 +157,7 @@ function PlanChangeStatus({ change }: { change: PlanChange }) {
 
 /**
  * The change as a diff, colored by what it means as every plan change is: each topic it showed the
- * learner knows going out is good news (green), with the lessons it saves, and the area that went
+ * learner knows going out is good news (blue), with the lessons it saves, and the area that went
  * worst getting more time is a plain change, with its score.
  */
 function usePlanChangeLines(adapt: MockAdaptView): DiffLine[] {

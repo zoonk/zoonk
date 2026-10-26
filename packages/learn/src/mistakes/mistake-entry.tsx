@@ -69,7 +69,7 @@ function useEntryDate() {
 
 /**
  * One answer as the player draws it once checked: the learner's in a red ring ("Your answer"), the
- * right one in a green ring ("Correct"), the words in the text color. Named before its words for
+ * right one in a blue ring ("Correct"), the words in the text color. Named before its words for
  * screen readers. The notebook and a unit's mistakes draw them the same way.
  */
 export function MistakeAnswer({

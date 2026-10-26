@@ -70,7 +70,7 @@ function useLessonProgress(): number {
 
 /**
  * The full-screen task header: close, the lesson's title, the screen's menu, and the lesson as one
- * segment per screen, green for a right answer and red for a wrong one. The session's progress
+ * segment per screen, blue for a right answer and red for a wrong one. The session's progress
  * waits for the moment between blocks.
  */
 export function LessonPlayerHeader() {

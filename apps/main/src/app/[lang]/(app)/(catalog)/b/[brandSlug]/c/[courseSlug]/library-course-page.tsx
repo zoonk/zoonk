@@ -11,11 +11,7 @@ import { CourseMark } from "@/components/catalog/course-mark";
 import { type CoursePlanExample, getCoursePlanExample } from "@/components/catalog/course-plan";
 import { CoursePlanWindow } from "@/components/catalog/course-plan-window";
 import { CourseProgressScope } from "@/components/catalog/course-progress";
-import {
-  BAND_CLASS,
-  SUBJECT_WASH_CLASS,
-  getSubjectToneStyle,
-} from "@/components/catalog/subject-tone";
+import { BAND_CLASS, SUBJECT_WASH_CLASS } from "@/components/catalog/subject-tone";
 import {
   TryLesson,
   type TryLessonCandidate,
@@ -36,6 +32,7 @@ import { parseCourseLandingPageContent } from "@zoonk/core/courses/landing-page"
 import { listPublishedCourseEditions } from "@zoonk/core/courses/published-editions";
 import { ContentVoteMenu } from "@zoonk/learn/feedback/vote-menu";
 import { Page, PageSection } from "@zoonk/learn/page";
+import { getSubject } from "@zoonk/learn/subject-label";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type SupportedLocale, getContentLocale } from "@zoonk/utils/locale";
@@ -260,7 +257,7 @@ export async function LibraryCoursePage({
 
   return (
     <CourseProgressScope courseId={course.id} lessonId={tryLesson?.lessonId ?? null}>
-      <div className="flex flex-col gap-8" style={getSubjectToneStyle(course.categories)}>
+      <div className="flex flex-col gap-8" data-subject={getSubject(course.categories)}>
         <CatalogPageBar
           back={{ href: "/courses", label: t("Explore courses") }}
           options={

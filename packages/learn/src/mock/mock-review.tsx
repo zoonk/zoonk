@@ -45,7 +45,7 @@ function AnswerMark({
 
 /**
  * The learner's answer and the right one as the answer rows they just used: their pick in red
- * ("Your answer"), the right answer in green ("Correct"); a statement's in the exam's words. A
+ * ("Your answer"), the right answer in blue ("Correct"); a statement's in the exam's words. A
  * blank says so instead of a row.
  */
 function ReviewAnswers({ entry }: { entry: MockReviewEntry }) {

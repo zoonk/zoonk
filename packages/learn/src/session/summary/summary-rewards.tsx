@@ -63,7 +63,7 @@ function RewardsArt() {
 
 /**
  * A reward's value on its row's right, in the mono face: what the session added. Brain Power is in
- * its violet, as every reward amount reads; a level gained is progress made, in green.
+ * its violet, as every reward amount reads; a level gained is progress made, in blue.
  */
 function RewardValue({
   children,

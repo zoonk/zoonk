@@ -107,7 +107,7 @@ export function getItemVisualState({
 /**
  * Keeps the visual-state class mapping beside the state machine so each state
  * has one styling definition, the answer options' own: a matched pair turns
- * green, a wrong pair red for a moment, and the picked item gets a firm ring.
+ * blue, a wrong pair red for a moment, and the picked item gets a firm ring.
  */
 export function getItemClassName(state: ItemVisualState): string {
   if (state === "correct") {

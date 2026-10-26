@@ -13,9 +13,9 @@ function clampShare(share: number, room = 1): number {
 /**
  * How far the learner is in one part of their goal, the same bar wherever it's drawn (the Plan's
  * subjects, Today's aside, a subject's page). A goal measured in lessons has three states: studied
- * in green (progress made), already known (skipped) muted beside it, the rest still new on the track. An
- * exam's subject is its preparation alone (`studied`, nothing `known`). Shares are 0 to 1. The share
- * in words sits beside it, so the bar is hidden from screen readers.
+ * in blue (progress made), already known (skipped) muted beside it, the rest still new on the
+ * track. An exam's subject is its preparation alone (`studied`, nothing `known`). Shares are 0 to
+ * 1. The share in words sits beside it, so the bar is hidden from screen readers.
  */
 export function CoverageBar({
   className,
@@ -70,7 +70,7 @@ function LegendItem({ state }: { state: CoverageState }) {
 
 /**
  * What the bars' states mean, once over a list of bars: studied, already known, still new; or the
- * `states` a row of cells shows, such as today's lessons outlined in green (`ProgressCell`).
+ * `states` a row of cells shows, such as today's lessons outlined in blue (`ProgressCell`).
  */
 export function CoverageLegend({
   className,

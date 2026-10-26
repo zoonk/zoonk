@@ -22,7 +22,7 @@ export type BuddyChoice = { glasses: BuddyGlasses; kind: BuddyKind; name: string
 /** How a buddy looks right now: it grows with the belt and glows with Energy. */
 export type BuddyLook = { beltColor: BeltColor; energy: number | null; studiedToday?: boolean };
 
-/** A buddy option as a card, picked as every pick is: the blue line on its tint. */
+/** A buddy option as a card, picked as every pick is: the line in the text color on its tint. */
 const OPTION_CLASS = cn(
   "border-border has-focus-visible:ring-ring/50 relative flex cursor-pointer flex-col items-center gap-1 rounded-xl border p-3 pt-4 text-center has-focus-visible:ring-[3px]",
   CHOICE_CARD_PICKED_CLASS,

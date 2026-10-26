@@ -3,7 +3,7 @@ import { CheckIcon } from "lucide-react";
 
 /**
  * How a finished moment opens (a plan created, an explanation read, a starting point set): a
- * check and what was done, in green over the title. One way to say "done" on every such screen.
+ * check and what was done, in blue over the title. One way to say "done" on every such screen.
  */
 export function SuccessEyebrow({ children, className, ...props }: React.ComponentProps<"p">) {
   return (

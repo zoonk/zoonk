@@ -11,10 +11,10 @@ export type AnswerOptionResult = "guess" | "right" | "wrong";
 
 /**
  * The answer anatomy's states, for options and for the answer pieces that aren't options (word
- * tiles, match items, placed words): a strong line at rest, the learner's blue ring and tint when
- * picked (2px, since blue is lighter than the text color it replaced), and a green or red ring with
- * a faint tint once checked, while the words stay in the text color. A guess keeps a neutral ring
- * with no tint: only the right answer is colored.
+ * tiles, match items, placed words): a strong line at rest, the learner's 2px ring and faint tint
+ * in the text color when picked, and a blue (right) or pink-red (wrong) ring with a faint tint once
+ * checked, so checking always changes the pick's color, while the words stay in the text color. A
+ * guess keeps a neutral ring with no tint: only the right answer is colored.
  */
 export const ANSWER_TONE = {
   guess: "ring-foreground/40 ring-[1.5px] ring-inset",

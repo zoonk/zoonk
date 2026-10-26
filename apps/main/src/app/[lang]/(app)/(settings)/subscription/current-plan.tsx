@@ -72,7 +72,7 @@ export async function CurrentPlan({ subscription }: { subscription: Subscription
           <div className="flex flex-wrap items-center gap-2">
             {/* Under the section's title from a tablet up, the plan's name is a step smaller. */}
             <PageTitle className="md:text-xl md:leading-tight">{t("Plus")}</PageTitle>
-            {/* A status, not a result: quiet, as the Plus mark is, never green. */}
+            {/* A status, not a result: quiet, as the Plus mark is, never blue. */}
             <span className={CHIP_CLASS}>{isEnding ? t("Subscription ending") : t("Active")}</span>
           </div>
 

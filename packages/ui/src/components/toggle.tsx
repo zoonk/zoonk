@@ -16,8 +16,9 @@ const toggleVariants = cva(
       },
       variant: {
         default: "bg-transparent",
-        // Pressed is the learner's pick: a blue border on the blue tint. Toggles come in sets where
-        // most may be on (a week's study days), so their line stays 1px, quieter than a single pick.
+        // Pressed is the learner's pick: a border in the text color on its tint. Toggles come in
+        // sets where most may be on (a week's study days), so their line stays 1px, quieter than a
+        // single pick.
         outline:
           "border-input hover:bg-muted aria-pressed:border-selected aria-pressed:bg-selected-tint aria-pressed:hover:bg-selected-tint border bg-transparent",
       },

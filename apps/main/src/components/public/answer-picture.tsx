@@ -12,7 +12,7 @@ import { type ReactNode } from "react";
 
 /**
  * An answer as the player draws it, on a public page's picture of a question: its key in a keycap,
- * its words, a firm ring when picked, green or red once checked with its word on the right
+ * its words, a firm ring when picked, blue or red once checked with its word on the right
  * ("Correct", "Your answer"). Nothing to press: the question is an example.
  */
 export function AnswerPicture({

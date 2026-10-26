@@ -15,7 +15,7 @@ const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 /**
  * A day's goal as a small activity ring, like the rings learners know from their phones: its arc
- * fills green with how much of the day's goal was done, and a mark sits inside it (`children`: a
+ * fills blue with how much of the day's goal was done, and a mark sits inside it (`children`: a
  * check once reached, the exam's cap, a challenge's icon). Today's week and the logbook's draw
  * their days with it (Today's at 30px, `className="size-7.5"`). Decorative: the day's words say
  * how it went.

@@ -8,7 +8,7 @@ import { TASK_COLUMN_CLASS } from "../_components/task-layout";
 
 /**
  * The shield itself: one plate per right answer needed to win, each right answer breaking one and
- * filling it green, as a right answer does in a lesson's segments, so the pass mark is visible at
+ * filling it blue, as a right answer does in a lesson's segments, so the pass mark is visible at
  * a glance and a wrong answer never takes anything away. It's one meter for screen readers ("2 of
  * 5 broken"), drawn as the phone's thin header bar or as the wide screen's plates in the aside.
  */

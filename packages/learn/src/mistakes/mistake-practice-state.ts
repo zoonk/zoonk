@@ -231,7 +231,7 @@ export function practiceReducer(state: PracticeState, action: PracticeAction): P
 }
 
 /**
- * Each question of the run as a segment of its header: green once answered right, red once
+ * Each question of the run as a segment of its header: blue once answered right, red once
  * answered wrong or the time runs out, neutral for an explicit "I'm not sure", the one in view,
  * then the ones ahead.
  */

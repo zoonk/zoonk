@@ -9,7 +9,7 @@ const SIZES = {
 
 /**
  * The public pages' check: something included or taught, a plain muted check centered in the room
- * a marker takes. It's not green, since green means a right answer in the app. Put it in a
+ * a marker takes. It's not blue, since blue means a right answer in the app. Put it in a
  * `LineMarker` to sit on the first line of a list item's text.
  */
 export function CheckMark({ size }: { size: keyof typeof SIZES }) {

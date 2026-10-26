@@ -35,7 +35,7 @@ function BackBar({ backHref }: { backHref: string }) {
 }
 
 /**
- * What the run did, as numbers on their tiles: mistakes fixed, right answers (green once one is
+ * What the run did, as numbers on their tiles: mistakes fixed, right answers (blue once one is
  * right), Brain Power (never "+0"). A run that fixed nothing and counted nothing says the rest come
  * back, and so does a run with a miss, so a hard day reads as "not yet".
  */

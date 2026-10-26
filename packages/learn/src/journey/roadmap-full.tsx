@@ -201,8 +201,8 @@ function RoadmapPosition() {
 
 /**
  * The plan's phases in time, as wide screens draw them: each phase a band as long as its days, the
- * current one raised with today on it and its lessons filling a green line under it, done ones
- * green; under the bands its next mock exams, the challenges that close the phases and the goal's
+ * current one raised with today on it and its lessons filling a blue line under it, done ones
+ * blue; under the bands its next mock exams, the challenges that close the phases and the goal's
  * flag; under those, today, when each phase ahead starts and the goal's date. Each band opens what
  * its phase holds.
  */

@@ -171,7 +171,7 @@ function SessionNumbers() {
         />
       )}
 
-      {/* A number that went down says so quietly: Maya's "4% → 2%" came in green beside a rising
+      {/* A number that went down says so quietly: Maya's "4% → 2%" came in blue beside a rising
           arrow. */}
       {goalNumber && (
         <StatTile

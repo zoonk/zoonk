@@ -124,7 +124,7 @@ export type TaskSegment = "ahead" | "current" | "done" | "read" | "right" | "wro
 const DENSE_SEGMENTS = 40;
 
 /**
- * Only answers carry color, so green and red stand out: a read screen is a quiet gray, the one in
+ * Only answers carry color, so blue and red stand out: a read screen is a quiet gray, the one in
  * view is half filled on the track, and what's ahead is the bare track.
  */
 const SEGMENT_CLASS: Record<TaskSegment, string> = {
@@ -138,7 +138,7 @@ const SEGMENT_CLASS: Record<TaskSegment, string> = {
 
 /**
  * The task's progress as one short segment per screen, under the header and as wide as the task's
- * column: read screens fill in quietly, answers fill green when right and red when wrong, so the
+ * column: read screens fill in quietly, answers fill blue when right and red when wrong, so the
  * learner sees how it's going at a glance. Segments share the width evenly, or by `weights` (the
  * day's blocks by their minutes, as Today draws them). Still one progress bar for screen readers
  * (`label`, `value` in percent).

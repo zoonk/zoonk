@@ -38,7 +38,7 @@ function toAnswer({ format, index }: { format: CheckpointQuestion["format"]; ind
 /**
  * A checkpoint question's options, numbered like a lesson's and picked with the same number keys.
  * They lock from Confirm (`locked`, while the answer is graded) through the verdict, so the pick on
- * screen is the one graded. After an answer the pick turns green or red ("Your answer"); a wrong
+ * screen is the one graded. After an answer the pick turns blue or red ("Your answer"); a wrong
  * pick never reveals the right one until the end.
  */
 export function CheckpointOptions({

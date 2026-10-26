@@ -66,7 +66,6 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-text: var(--destructive-text);
-  --color-info: var(--info);
   --color-selected: var(--selected);
   --color-selected-foreground: var(--selected-foreground);
   --color-selected-tint: var(--selected-tint);
@@ -77,6 +76,7 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-ground: var(--ground);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -89,6 +89,15 @@
   --color-brain: var(--brain);
   --color-brain-text: var(--brain-text);
   --color-score: var(--score);
+  --color-kind-review: var(--kind-review);
+  --color-kind-mock: var(--kind-mock);
+  --color-kind-mistakes: var(--kind-mistakes);
+  --color-kind-challenge: var(--kind-challenge);
+  --color-kind-conversation: var(--kind-conversation);
+  --color-kind-mind-map: var(--kind-mind-map);
+  --color-subject: var(--subject);
+  --color-subject-text: var(--subject-text);
+  --color-subject-tint: var(--subject-tint);
   --color-viz-accent: var(--viz-accent);
   --color-viz-accent-soft: var(--viz-accent-soft);
   --color-viz-highlight: var(--viz-highlight);
@@ -115,16 +124,16 @@
 }
 
 /*
- * Precision: warm neutrals, hairline edges, and the text color as the primary (the main action is
- * inverted). Color appears only where it means something: a kind's dot, a status's icon, green for
- * progress made, red for wrong or removed, amber for a flag, blue for the learner's own pick and
- * place, violet for Brain Power; never a button, a hover or a screen's background.
- * In light the page is white like the cards on it, so a card reads by its hairline, and the sidebar
- * is a step dimmer; in dark the page is a step darker than the cards, so a card reads as one
- * without a shadow. Text meets WCAG AA on every surface, colored text through its `-text` token
- * and the faint labels included (quieter than what they name by size and a lighter step, never
- * below 4.5:1); a device asking for more contrast gets the blocks below. The rules:
- * `.agents/skills/zoonk-design/references/color.md`.
+ * Instrument: warm neutrals, hairline edges and the text color as the primary (the main action is
+ * inverted). Neutral tone steps set a page's parts apart (`background`, `ground` for a band,
+ * `card` for a panel, `muted` and `surface-3` for tracks and the row the learner is on), and soft
+ * color goes only where it means something, one meaning per hue: blue for progress made (done,
+ * right, studied, activity), pink-red for wrong or removed, amber for a flag, violet for Brain
+ * Power, a kind's hue on its icon, a subject's hue on its label and line. The learner's own pick
+ * and place are drawn in the text color, so a pick never looks like a right answer. Neutral text
+ * meets WCAG AA on every surface; colored marks and text stay soft here and turn strict under
+ * `prefers-contrast: more` (the blocks below). What each token means and where it goes:
+ * `apps/playground/src/design-system/tokens.ts`, shown live in the playground's design system.
  */
 :root {
   --radius: 0.625rem;
@@ -153,26 +162,31 @@
   --accent: oklch(0.96 0.002 106);
   --accent-foreground: oklch(0.185 0.004 286);
   /*
-   * A wrong answer and a destructive action. Fills, rings and icons stay light and clear; text names
-   * its own darker token (`-text`), which reads at AA.
+   * A wrong answer, a destructive action, an error: a soft red leaning pink. Fills, rings and icons
+   * take `destructive`; words take `destructive-text`, a step deeper.
    */
-  --destructive: oklch(0.626 0.193 23);
-  --destructive-text: oklch(0.51 0.185 25);
+  --destructive: oklch(0.65 0.19 6);
+  --destructive-text: oklch(0.575 0.2 4);
   /*
-   * The learner's own: what they picked (a ring and a faint tint), where they are now (a mark or a
-   * ring) and a skill being learned now. Never a button, a tab, a link, a hover or a background;
-   * the main action stays the text color. The tint keeps a muted line on it at AA (4.5:1 and up).
+   * The learner's own: what they picked before it's judged (a 2px ring and a faint tint) and where
+   * they are now (a ring, or a dot with a halo), in the text color. Blue is progress made, so a
+   * pick can't be mistaken for a right answer or the place for something done. The tint keeps a
+   * muted line on it at AA.
    */
-  --selected: var(--color-blue-600);
-  --selected-foreground: var(--color-white);
-  --selected-tint: color-mix(in srgb, var(--selected) 8%, transparent);
-  --info: var(--selected);
+  --selected: var(--foreground);
+  --selected-foreground: var(--background);
+  --selected-tint: color-mix(in srgb, var(--selected) 5%, transparent);
   /* What asks for attention: a suggestion, a flag, the one thing to improve. */
-  --warning: var(--color-amber-600);
-  --warning-text: oklch(0.53 0.12 60);
-  /* Progress made: a right answer, done, studied, reached; 3:1 against the tracks it fills. */
-  --success: oklch(0.6 0.13 160);
-  --success-text: oklch(0.5 0.11 158);
+  --warning: oklch(0.74 0.14 70);
+  --warning-text: oklch(0.575 0.12 60);
+  /*
+   * Progress made, a soft blue: done, a right answer, studied, reached, a day of activity. Fills,
+   * rings and checks take `success`; words take `success-text`, a step deeper.
+   */
+  --success: oklch(0.66 0.14 252);
+  --success-text: oklch(0.56 0.15 255);
+  /* A band that sets a public page's part apart from its neighbors; a panel on it is `card`. */
+  --ground: oklch(0.975 0.0015 106);
   /* Hairlines and the stronger line (inputs, options, secondary buttons) are see-through, so they
    * read the same on the page, on cards and on muted surfaces. */
   --border: oklch(0 0 0 / 7%);
@@ -186,27 +200,38 @@
   --sidebar-accent-foreground: oklch(0.185 0.004 286);
   --sidebar-border: oklch(0.925 0.002 106);
   --sidebar-ring: var(--color-primary);
-  /* Energy is amber (its meter, its bolt, its calendar); Score is the right answers' green. */
+  /* Energy is amber (its meter, its bolt, its calendar); Score is the right answers' blue. */
   --energy: oklch(0.782 0.158 72.3);
   /*
    * Brain Power is violet, and nothing else is: points earned, the missions' track and reward, and
-   * the mark on the block a mission opens. Its text step passes AA on the page and on its tints.
+   * the mark on the block a mission opens. Words take `brain-text`.
    */
-  --brain: var(--color-violet-600);
-  --brain-text: var(--color-violet-700);
+  --brain: oklch(0.64 0.17 293);
+  --brain-text: oklch(0.56 0.19 293);
   --score: var(--success);
+  /*
+   * The kinds of things a learner meets, each one hue for its icon and its dot (`KIND_MARKS` in
+   * `@zoonk/learn/kind-tile` maps every kind to one of these): review and practice amber, a mock
+   * orange, mistakes rose, a challenge lime, a conversation and an essay teal, a mind map fuchsia.
+   * A lesson, the default, is neutral.
+   */
+  --kind-review: oklch(0.7 0.13 68);
+  --kind-mock: oklch(0.68 0.15 45);
+  --kind-mistakes: oklch(0.66 0.18 10);
+  --kind-challenge: oklch(0.68 0.15 130);
+  --kind-conversation: oklch(0.66 0.1 185);
+  --kind-mind-map: oklch(0.65 0.2 325);
   /*
    * Data visualization in interactive activities, three hues apart from every meaning outside the
    * canvas: the thing the learner moves (accent, teal), a target, a highlight or a prize (amber,
-   * "look here", never the red of wrong) and a second series (fuchsia). Never blue (the learner's
-   * own pick) or violet (Brain Power). Each passes AA as text on the background, on muted surfaces
-   * and on its own soft fill.
+   * "look here", never the red of wrong) and a second series (fuchsia). Never blue (progress) or
+   * violet (Brain Power). Each reads as text on the background and on its own soft fill.
    */
-  --viz-accent: var(--color-teal-700);
+  --viz-accent: oklch(0.57 0.1 185);
   --viz-accent-soft: var(--color-teal-100);
-  --viz-highlight: var(--color-amber-700);
+  --viz-highlight: oklch(0.6 0.13 62);
   --viz-highlight-soft: var(--color-amber-100);
-  --viz-secondary: var(--color-fuchsia-700);
+  --viz-secondary: oklch(0.56 0.19 325);
   --viz-secondary-soft: var(--color-fuchsia-100);
   --belt-white: var(--color-white);
   --belt-yellow: var(--color-yellow-400);
@@ -239,15 +264,14 @@
     --surface-3: var(--color-neutral-300);
     --accent: var(--color-neutral-200);
     --accent-foreground: var(--color-black);
-    --destructive: var(--color-pink-950);
+    --destructive: var(--color-pink-800);
     --destructive-text: var(--destructive);
-    --selected: var(--color-blue-800);
     --selected-tint: transparent;
-    --info: var(--selected);
     --warning: var(--color-amber-800);
     --warning-text: var(--warning);
-    --success: var(--color-emerald-950);
+    --success: var(--color-blue-800);
     --success-text: var(--success);
+    --ground: var(--color-neutral-100);
     --border: var(--color-neutral-950);
     --input: var(--color-neutral-950);
     --ring: var(--color-primary);
@@ -263,6 +287,15 @@
     --brain: var(--color-violet-800);
     --brain-text: var(--brain);
     --score: var(--success);
+    --kind-review: var(--color-amber-800);
+    --kind-mock: var(--color-orange-800);
+    --kind-mistakes: var(--color-rose-800);
+    --kind-challenge: var(--color-lime-800);
+    --kind-conversation: var(--color-teal-800);
+    --kind-mind-map: var(--color-fuchsia-800);
+    --viz-accent: var(--color-teal-800);
+    --viz-highlight: var(--color-amber-800);
+    --viz-secondary: var(--color-fuchsia-800);
   }
 }
 
@@ -286,16 +319,14 @@
     --accent: oklch(0.225 0.005 286);
     --accent-foreground: oklch(0.94 0.003 286);
     /* These read on the dark surfaces as text too, so text and fills share them. */
-    --destructive: oklch(0.713 0.181 20.9);
+    --destructive: oklch(0.74 0.15 6);
     --destructive-text: var(--destructive);
-    --selected: var(--color-blue-400);
-    --selected-foreground: var(--color-background);
-    --selected-tint: color-mix(in srgb, var(--selected) 16%, transparent);
-    --info: var(--selected);
-    --warning: var(--color-amber-400);
+    --selected-tint: color-mix(in srgb, var(--selected) 10%, transparent);
+    --warning: oklch(0.83 0.12 80);
     --warning-text: var(--warning);
-    --success: oklch(0.797 0.164 159.7);
+    --success: oklch(0.77 0.11 248);
     --success-text: var(--success);
+    --ground: oklch(0.18 0.004 286);
     --border: oklch(1 0 0 / 7.5%);
     --input: oklch(1 0 0 / 13%);
     --ring: var(--color-primary);
@@ -308,14 +339,20 @@
     --sidebar-border: oklch(0.235 0.005 286);
     --sidebar-ring: var(--color-primary);
     --energy: oklch(0.782 0.158 72.3);
-    --brain: var(--color-violet-400);
-    --brain-text: var(--color-violet-300);
+    --brain: oklch(0.75 0.13 293);
+    --brain-text: oklch(0.83 0.09 293);
     --score: var(--success);
-    --viz-accent: var(--color-teal-300);
+    --kind-review: oklch(0.83 0.11 80);
+    --kind-mock: oklch(0.8 0.11 55);
+    --kind-mistakes: oklch(0.79 0.12 10);
+    --kind-challenge: oklch(0.86 0.14 128);
+    --kind-conversation: oklch(0.83 0.09 182);
+    --kind-mind-map: oklch(0.8 0.13 325);
+    --viz-accent: oklch(0.85 0.11 182);
     --viz-accent-soft: var(--color-teal-950);
-    --viz-highlight: var(--color-amber-400);
+    --viz-highlight: oklch(0.84 0.13 80);
     --viz-highlight-soft: var(--color-amber-950);
-    --viz-secondary: var(--color-fuchsia-300);
+    --viz-secondary: oklch(0.8 0.13 325);
     --viz-secondary-soft: var(--color-fuchsia-950);
     --belt-black: var(--color-neutral-700);
   }
@@ -347,15 +384,14 @@
       --surface-3: var(--color-neutral-600);
       --accent: var(--color-neutral-700);
       --accent-foreground: var(--color-white);
-      --destructive: var(--color-pink-600);
-      --destructive-text: var(--color-pink-300);
-      --selected: var(--color-blue-200);
+      --destructive: var(--color-pink-300);
+      --destructive-text: var(--destructive);
       --selected-tint: transparent;
-      --info: var(--selected);
-      --warning: var(--color-amber-400);
+      --warning: var(--color-amber-300);
       --warning-text: var(--warning);
-      --success: var(--color-emerald-400);
+      --success: var(--color-blue-200);
       --success-text: var(--success);
+      --ground: var(--color-neutral-900);
       --border: var(--color-neutral-50);
       --input: var(--color-neutral-50);
       --ring: var(--color-primary);
@@ -371,9 +407,123 @@
       --brain: var(--color-violet-200);
       --brain-text: var(--brain);
       --score: var(--success);
+      --kind-review: var(--color-amber-300);
+      --kind-mock: var(--color-orange-300);
+      --kind-mistakes: var(--color-rose-300);
+      --kind-challenge: var(--color-lime-300);
+      --kind-conversation: var(--color-teal-300);
+      --kind-mind-map: var(--color-fuchsia-300);
+      --viz-accent: var(--color-teal-200);
+      --viz-highlight: var(--color-amber-200);
+      --viz-secondary: var(--color-fuchsia-200);
       --belt-black: var(--color-neutral-500);
     }
   }
+}
+
+/*
+ * A course's subject, from one table: each category's hue (muted subjects take 60% of the chroma),
+ * turned into three roles wherever an element carries `data-subject` (`getSubject` in
+ * `@zoonk/learn/subject-label` picks it): `subject` for its line, glyph and strokes, `subject-tint`
+ * behind its label and `subject-text` for the label's words. Soft in the regular theme; with more
+ * contrast the label is plain text and the line goes deep.
+ */
+[data-subject] {
+  --subject-chroma: 1;
+  --subject-hue: 290;
+  --subject: oklch(0.68 calc(0.12 * var(--subject-chroma)) var(--subject-hue));
+  --subject-text: oklch(0.47 calc(0.1 * var(--subject-chroma)) var(--subject-hue));
+  --subject-tint: color-mix(in srgb, var(--subject) 13%, transparent);
+
+  @variant dark {
+    --subject: oklch(0.76 calc(0.11 * var(--subject-chroma)) var(--subject-hue));
+    --subject-text: oklch(0.84 calc(0.075 * var(--subject-chroma)) var(--subject-hue));
+    --subject-tint: color-mix(in srgb, var(--subject) 16%, transparent);
+  }
+
+  @media (prefers-contrast: more) {
+    --subject: oklch(0.42 calc(0.14 * var(--subject-chroma)) var(--subject-hue));
+    --subject-text: var(--foreground);
+    --subject-tint: transparent;
+
+    @variant dark {
+      --subject: oklch(0.86 calc(0.09 * var(--subject-chroma)) var(--subject-hue));
+    }
+  }
+}
+
+[data-subject="health"] {
+  --subject-hue: 5;
+}
+
+[data-subject="languages"] {
+  --subject-hue: 32;
+}
+
+[data-subject="history"] {
+  --subject-hue: 50;
+  --subject-chroma: 0.6;
+}
+
+[data-subject="culture"] {
+  --subject-hue: 68;
+}
+
+[data-subject="law"] {
+  --subject-hue: 82;
+  --subject-chroma: 0.6;
+}
+
+[data-subject="business"] {
+  --subject-hue: 96;
+}
+
+[data-subject="society"] {
+  --subject-hue: 122;
+  --subject-chroma: 0.6;
+}
+
+[data-subject="economics"] {
+  --subject-hue: 150;
+}
+
+[data-subject="geography"] {
+  --subject-hue: 172;
+}
+
+[data-subject="science"] {
+  --subject-hue: 198;
+}
+
+[data-subject="math"] {
+  --subject-hue: 222;
+}
+
+[data-subject="communication"] {
+  --subject-hue: 238;
+}
+
+[data-subject="engineering"] {
+  --subject-hue: 250;
+  --subject-chroma: 0.6;
+}
+
+[data-subject="tech"] {
+  --subject-hue: 262;
+}
+
+[data-subject="exams"] {
+  --subject-hue: 280;
+  --subject-chroma: 0.6;
+}
+
+[data-subject="general"] {
+  --subject-hue: 290;
+  --subject-chroma: 0.6;
+}
+
+[data-subject="arts"] {
+  --subject-hue: 330;
 }
 
 /*

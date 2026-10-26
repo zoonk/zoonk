@@ -81,7 +81,7 @@ export function DayList({
 
 /**
  * The example day at a glance, as under Today's title: a segment per step, as long as its
- * minutes, done ones green and the one under way outlined. Screen readers hear how far along it is.
+ * minutes, done ones blue and the one under way outlined. Screen readers hear how far along it is.
  */
 export async function DaySegments({
   className,

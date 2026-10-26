@@ -59,7 +59,7 @@ export type JourneyStanding =
     };
 
 /**
- * "+4 this week": what the number gained since the learner's week began, green when it rose; a
+ * "+4 this week": what the number gained since the learner's week began, blue when it rose; a
  * week without a whole point either way says so, so both numbers keep their three lines.
  */
 function WeekGain({ gain }: { gain: number }) {

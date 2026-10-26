@@ -6,8 +6,8 @@ import { cn } from "@zoonk/ui/lib/utils";
  * language being learned), so screen readers say it right. `label` replaces what screen readers
  * hear before it (`labels`), and null says nothing first, for a line whose words say it
  * ("Leaves out 228 lessons"). `tone` colors a line by what it means for the learner rather than by
- * its sign (a plan change: good news green, bad news red, a plain move neutral); without it, an
- * added line is green and a removed one red (a worked answer: the right step and the wrong one).
+ * its sign (a plan change: good news blue, bad news red, a plain move neutral); without it, an
+ * added line is blue and a removed one red (a worked answer: the right step and the wrong one).
  */
 export type DiffLine = {
   kind: "added" | "context" | "removed";
@@ -54,7 +54,7 @@ const LINE_SIGN: Readonly<Record<DiffLine["kind"], string>> = {
 
 /**
  * A change told line by line in the mono face, the way a diff reads: a red-tinted line for what
- * goes, a green-tinted line for what comes, quiet lines for what stays; or, with a `tone`, colored
+ * goes, a blue-tinted line for what comes, quiet lines for what stays; or, with a `tone`, colored
  * by what each line means for the learner. Plan changes (fewer
  * minutes, a later date) and worked answers (the step that went wrong, the right one) both use it,
  * so the learner sees exactly what moved. The signs are for sighted readers, in a column of their

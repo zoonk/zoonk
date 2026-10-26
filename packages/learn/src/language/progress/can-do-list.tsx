@@ -7,7 +7,7 @@ import { useExtracted } from "next-intl";
 import { SectionLabel } from "../../_components/section-label";
 
 /**
- * A can-do statement's mark: an 8px ring still to reach, a green dot once reached. Lighter than a
+ * A can-do statement's mark: an 8px ring still to reach, a blue dot once reached. Lighter than a
  * lesson's mark, so "I can…" never reads as a lesson left undone.
  */
 export function CanDoMark({ done }: { done: boolean }) {

@@ -7,7 +7,7 @@ import { ProgressChartFigure } from "../_components/progress-chart-figure";
 import { type SerializedScoreDataPoint } from "./score-chart";
 
 /**
- * The rolling Score as one weekly trend, a green line on a 0–100 scale; the numbers above it name
+ * The rolling Score as one weekly trend, a blue line on a 0–100 scale; the numbers above it name
  * the window. The screen-reader caption lists every weekly score with its answer volume, and the
  * plot (`children`) gives each week's detail under the pointer.
  */

@@ -29,7 +29,7 @@ export function AnswerOptionGroup({ className, ...props }: React.ComponentProps<
 
 /**
  * What a checked option says on its right: "Correct" on the right answer the learner didn't pick,
- * "Your answer" on their pick (green when right, so a right answer isn't called correct twice
+ * "Your answer" on their pick (blue when right, so a right answer isn't called correct twice
  * under its verdict), and "Your guess" on a guess.
  */
 function ResultTag({ picked, result }: { picked: boolean; result: AnswerOptionResult }) {
@@ -51,10 +51,10 @@ function ResultTag({ picked, result }: { picked: boolean; result: AnswerOptionRe
 /**
  * One answer to pick, the same in a lesson, a session, a practice, a checkpoint and a mock: its
  * number key in a keycap on the left, its words, and a strong line around it. Picked, it gets the
- * learner's blue ring and tint; once checked, the right answer turns green ("Correct", or "Your
- * answer" when it was the pick) and a wrong pick red ("Your answer"), while its words stay
- * readable in the text color; a guess's pick keeps a neutral ring ("Your guess").
- * `role="checkbox"` where a question takes several picks; tapping a picked one again clears it.
+ * learner's ring and tint in the text color; once checked, the right answer turns blue ("Correct",
+ * or "Your answer" when it was the pick) and a wrong pick red ("Your answer"), while its words stay
+ * readable in the text color; a guess's pick keeps a neutral ring ("Your guess"). `role="checkbox"`
+ * where a question takes several picks; tapping a picked one again clears it.
  *
  * ```tsx
  * <AnswerOption marker={2} picked result="right">96%</AnswerOption>

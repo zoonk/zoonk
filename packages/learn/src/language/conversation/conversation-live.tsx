@@ -125,7 +125,7 @@ function Phrases({ conversation }: { conversation: LanguageConversationView }) {
   );
 }
 
-/** An 8px dot before the clock: green once the call is live, quiet while it's still ringing. */
+/** An 8px dot before the clock: blue once the call is live, quiet while it's still ringing. */
 function LiveDot({ live }: { live: boolean }) {
   return (
     <span

@@ -29,7 +29,7 @@ const SEGMENT_BY_STATE: Record<SessionQueueRow["state"], TaskSegment> = {
 };
 
 /**
- * The day's blocks as segments: done ones green, the next one in view, the rest ahead. With the
+ * The day's blocks as segments: done ones blue, the next one in view, the rest ahead. With the
  * day's queue each block's segment is as long as its minutes, as Today draws the day; with only
  * the counts, the first ones done and every segment the same length.
  */
@@ -89,7 +89,7 @@ function useSessionProgressLabel({
 /**
  * The header between the session's blocks (the next stop, a block just done, a lesson's end), the
  * same as every task's: leave on the left (Escape too: nothing is open, so nothing is lost),
- * "Today's session" in the middle, and the day as one segment per block under it, done ones green,
+ * "Today's session" in the middle, and the day as one segment per block under it, done ones blue,
  * each as long as its minutes when the day's `queue` is known. It's the one place the whole
  * session shows on a phone.
  */

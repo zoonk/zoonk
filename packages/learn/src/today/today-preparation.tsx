@@ -13,7 +13,7 @@ import { SubjectRows, type TodaySyllabus, useSubjectRows } from "./today-subject
 const PERCENT = 100;
 
 /**
- * "+4 this week": what an exam's preparation gained since the learner's week began, green when it
+ * "+4 this week": what an exam's preparation gained since the learner's week began, blue when it
  * rose, as the Plan says it. Nothing in a week without a whole point either way.
  */
 function useWeekGain(gain: number): React.ReactNode {
@@ -67,7 +67,7 @@ function PreparationCard({
 
 /**
  * A language goal's level and the one it aims for ("A2+ → B1+"), as the Plan says it, on the CEFR
- * scale: the half steps reached in green and the ones up to the target outlined.
+ * scale: the half steps reached in blue and the ones up to the target outlined.
  */
 function LevelCard({
   className,

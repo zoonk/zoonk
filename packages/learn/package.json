@@ -119,6 +119,7 @@
     "./speech/provider": "./src/speech/speech-player-provider.tsx",
     "./subject": "./src/syllabus/subject-screen.tsx",
     "./subject-icon": "./src/syllabus/subject-icon.tsx",
+    "./subject-label": "./src/_components/subject-label.tsx",
     "./suggestion": "./src/_components/suggestion.tsx",
     "./surface": "./src/_components/surface.tsx",
     "./task-foot-height": "./src/_components/task-foot-height.tsx",

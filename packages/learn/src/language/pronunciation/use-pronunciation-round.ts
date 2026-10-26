@@ -124,7 +124,7 @@ export function usePronunciationRound({
     });
   };
 
-  // One segment per word in the header: green once it sounded right, red when it didn't yet,
+  // One segment per word in the header: blue once it sounded right, red when it didn't yet,
   // quiet if skipped; otherwise the word in view, then the ones ahead.
   const segments = words.map(
     (_, position): TaskSegment => outcomes[position] ?? (position === index ? "current" : "ahead"),

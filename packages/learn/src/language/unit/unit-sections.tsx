@@ -16,7 +16,7 @@ import { CanDoMark } from "../progress/can-do-list";
 const SHOWN_OBJECTIVES = 3;
 
 /**
- * The unit's "I can" objectives, at most three, with the marks of "I can already…": a green dot
+ * The unit's "I can" objectives, at most three, with the marks of "I can already…": a blue dot
  * once every lesson is done, an 8px ring until then, so they never read as lessons left undone.
  */
 export function UnitObjectives({ view }: { view: LanguageUnitView }) {
