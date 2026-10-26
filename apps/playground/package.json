@@ -11,8 +11,11 @@
     "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {
+    "@zoonk/learn": "workspace:*",
     "@zoonk/player": "workspace:*",
     "@zoonk/ui": "workspace:*",
+    "@zoonk/utils": "workspace:*",
+    "lucide-react": "catalog:",
     "next": "catalog:",
     "next-intl": "catalog:",
     "react": "catalog:",

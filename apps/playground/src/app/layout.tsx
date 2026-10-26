@@ -1,3 +1,4 @@
+import { geistMono, geistSans } from "@/lib/fonts";
 import { type Metadata } from "next";
 import "@zoonk/ui/globals.css";
 
@@ -8,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en">
+    <html className={`${geistSans.variable} ${geistMono.variable}`} lang="en">
       <body className="font-sans antialiased">{children}</body>
     </html>
   );
