@@ -77,8 +77,29 @@ export async function loadCourseMaterial(
 }
 
 /**
- * The goals a lesson is written for: those whose plan has the lesson or its chapter, or whose own
- * course is the lesson's course. A Prisma goal filter, to use inside other queries.
+ * A goal whose plan waits on a skill the lesson teaches with a stand-in (no lesson yet) and learns
+ * from the lesson's course: generation takes the lesson in the stand-in's place before the re-plan
+ * saves its link (`readGenerationManifest`). Another learner's plan never names a private course.
+ */
+function standInGoalsFilter({ courseId, lessonId }: { courseId: string; lessonId: string }) {
+  return {
+    plan: {
+      graph: { array_contains: [{ courseIds: [courseId] }], path: ["skills"] },
+      items: {
+        some: {
+          lessonId: null,
+          skill: { lessons: { some: { lessonId } } },
+          status: "todo" as const,
+        },
+      },
+    },
+  };
+}
+
+/**
+ * The goals a lesson is written for: those whose plan has the lesson or its chapter, or a stand-in
+ * the lesson fills (`standInGoalsFilter`), or whose own course is the lesson's course. A Prisma goal
+ * filter, to use inside other queries.
  */
 export function lessonGoalsFilter({
   chapterId,
@@ -93,7 +114,9 @@ export function lessonGoalsFilter({
     OR: [
       { plan: { items: { some: { lessonId } } } },
       ...(chapterId ? [{ plan: { items: { some: { chapterId } } } }] : []),
-      ...(courseId ? [{ primaryCourseId: courseId }] : []),
+      ...(courseId
+        ? [{ primaryCourseId: courseId }, standInGoalsFilter({ courseId, lessonId })]
+        : []),
     ],
   };
 }

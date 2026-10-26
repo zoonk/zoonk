@@ -1,6 +1,10 @@
 import { randomUUID } from "node:crypto";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
-import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
+import {
+  courseChapterFixture,
+  libraryChapterFixture,
+} from "@zoonk/testing/fixtures/library-chapters";
 import {
   chapterLessonFixture,
   lessonSkillFixture,
@@ -12,6 +16,7 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { buildSetupSkillIdentityKey } from "@zoonk/utils/identity-key";
 import { describe, expect, it } from "vitest";
+import { createPlanGenerationManifest } from "../../lookahead/speculative-lessons";
 import { examFormat, examStructure } from "../exams/_test-utils/exam-formats";
 import { temperatureSpec } from "../quality/_test-utils/written-lessons";
 import { loadLessonSpecInputs } from "./lesson-spec-inputs";
@@ -252,5 +257,88 @@ describe(loadLessonSpecInputs, () => {
     ]);
 
     expect(inputs[2]?.prompt.exams).toStrictEqual([]);
+  });
+
+  /*
+   * Generation admits a newly outlined lesson through a plan's stand-in for its skill before the
+   * re-plan saves the lesson's link (`readGenerationManifest`): a goal learning that skill from a
+   * course other than its own still prepares for its exam in the lesson.
+   */
+  it("plans a lesson for a goal whose stand-in for its skill it fills, in the course the goal learns it from", async () => {
+    const [user, skill, secondary, other, ownCourse] = await Promise.all([
+      userFixture(),
+      skillFixture(),
+      courseFixture(),
+      courseFixture(),
+      courseFixture(),
+    ]);
+
+    const [shortAnswers, elsewhere, chapter] = await Promise.all([
+      examBlueprintFixture({
+        name: "Short answers exam",
+        structure: examStructure(["multipleChoice", "shortAnswer"]),
+      }),
+      examBlueprintFixture({
+        name: "Another course's exam",
+        structure: examStructure(["multipleChoice", "shortAnswer"]),
+      }),
+      libraryChapterFixture({ homeCourseId: secondary.id }),
+    ]);
+
+    const [lesson] = await Promise.all([
+      libraryLessonFixture({ homeChapterId: chapter.id, title: "Partes da célula" }),
+      courseChapterFixture({ chapterId: chapter.id, courseId: secondary.id }),
+    ]);
+
+    await Promise.all([
+      chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id, position: 0 }),
+      lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id }),
+    ]);
+
+    // Both goals wait on the skill with a stand-in; one learns it from the lesson's course.
+    const goals = await Promise.all(
+      [
+        { blueprint: shortAnswers, course: secondary },
+        { blueprint: elsewhere, course: other },
+      ].map(async ({ blueprint, course }) => {
+        const goal = await goalFixture({
+          examBlueprintId: blueprint.id,
+          kind: "exam",
+          primaryCourseId: ownCourse.id,
+          userId: user.id,
+        });
+
+        const plan = await planFixture({
+          goalId: goal.id,
+          graph: {
+            phases: [{ milestone: null, name: "Phase" }],
+            skills: [
+              {
+                area: "Biology",
+                courseIds: [course.id],
+                lessons: 1,
+                name: skill.name,
+                phase: 0,
+                skillId: skill.id,
+                weight: null,
+              },
+            ],
+          },
+        });
+
+        await planItemFixture({ planId: plan.id, position: 0, skillId: skill.id });
+        return goal;
+      }),
+    );
+
+    const [manifest, inputs] = await Promise.all([
+      createPlanGenerationManifest({ goalId: goals[0]?.id ?? "", lessonIds: [lesson.id] }),
+      loadLessonSpecInputs(lesson.id),
+    ]);
+
+    // The goal's plan takes the lesson in its stand-in's place, so the lesson is written for it.
+    expect(manifest?.targets.map((target) => target.lessonId)).toStrictEqual([lesson.id]);
+    expect(inputs?.prompt.shortAnswers).toBe(true);
+    expect(inputs?.prompt.exams?.map((exam) => exam.name)).toStrictEqual(["Short answers exam"]);
   });
 });
