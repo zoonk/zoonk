@@ -19,7 +19,7 @@ import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { ListGroup } from "../_components/list-group";
-import { useFormatShare } from "../_utils/percent";
+import { useFormatPlanProgress, useFormatShare } from "../_utils/percent";
 import { useSkillName } from "../language/_utils/use-skill-name";
 import { SpeakingPracticeRow } from "../language/exam-speaking/speaking-practice-screen";
 import { CanDoList } from "../language/progress/can-do-list";
@@ -117,12 +117,13 @@ function useLeadingSkill() {
 
 /**
  * The first number, in the goal's one measure: an exam's preparation as a share with its gain this
- * week, another goal's progress as its plan's lessons ("35%", "6 of 17 lessons"), or a language
+ * week, another goal's progress as its plan's lessons ("35.29%", "6 of 17 lessons"), or a language
  * goal's level with its target ("A2+ → B1+") and what leads.
  */
 function useStandingNumber(standing: JourneyStanding): PlanNumber {
   const t = useExtracted();
   const formatShare = useFormatShare();
+  const formatPlanProgress = useFormatPlanProgress();
   const leadingSkill = useLeadingSkill();
 
   if (standing.kind === "preparation" && standing.forExam) {
@@ -144,7 +145,7 @@ function useStandingNumber(standing: JourneyStanding): PlanNumber {
       ),
       label: t("Progress"),
       numeric: true,
-      value: formatShare(getLessonShare(lessons)),
+      value: formatPlanProgress(getLessonShare(lessons)),
     };
   }
 
