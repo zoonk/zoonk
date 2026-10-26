@@ -44,6 +44,17 @@ const beltLevelSchema = z.object({
   bpToNextLevel: z.number().int().min(0),
   isMaxLevel: z.boolean(),
   level: z.number().int().min(1).max(10),
+  nextBelt: z
+    .object({
+      belt: beltSchema,
+      brainPowerToGo: z.number().int().min(1),
+      startBrainPower: z.number().int().min(0),
+    })
+    .nullable()
+    .meta({
+      description:
+        "The belt after the learner's current one, the total Brain Power where it starts and how much more that takes; null on Black, the last belt",
+    }),
   progressInLevel: z.number().int().min(0),
   totalBrainPower: z.number().int().min(0),
 });

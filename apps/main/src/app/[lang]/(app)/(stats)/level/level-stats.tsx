@@ -2,6 +2,7 @@ import { getBeltLabel } from "@/lib/belt-colors";
 import { type BeltLevelDetails } from "@zoonk/core/progress/get-belt-level";
 import { StatTile, StatTiles } from "@zoonk/learn/stat-tile";
 import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
+import { LEVELS_PER_COLOR } from "@zoonk/utils/belt-level";
 import { BRAIN_POWER_PER_LESSON } from "@zoonk/utils/brain-power";
 import { formatWholeNumber } from "@zoonk/utils/number";
 import { BrainIcon, ChevronsUpIcon } from "lucide-react";
@@ -35,7 +36,8 @@ const DASH = "–";
 
 /**
  * How much more Brain Power the next level takes, its bar showing how far into this one the
- * learner is; at the last level, that it's reached.
+ * learner is; at the last level, that it's reached. After a belt's tenth level the next one is the
+ * next belt's first, so the tile names that belt instead of an eleventh level.
  */
 async function NextLevelTile({ level }: { level: BeltLevelDetails }) {
   const t = await getExtracted();
@@ -52,11 +54,19 @@ async function NextLevelTile({ level }: { level: BeltLevelDetails }) {
     );
   }
 
+  const label =
+    level.nextBelt && level.level === LEVELS_PER_COLOR
+      ? t(
+          "{color, select, yellow {To Yellow belt} orange {To Orange belt} green {To Green belt} blue {To Blue belt} purple {To Purple belt} brown {To Brown belt} red {To Red belt} gray {To Gray belt} black {To Black belt} other {To the next belt}}",
+          { color: level.nextBelt.color },
+        )
+      : t("To level {level}", { level: String(level.level + 1) });
+
   return (
     <StatTile
       detail={<LevelBar level={level} />}
       icon={<ChevronsUpIcon />}
-      label={t("To level {level}", { level: String(level.level + 1) })}
+      label={label}
       value={
         <>
           {formatWholeNumber({ format, value: level.bpToNextLevel })}{" "}

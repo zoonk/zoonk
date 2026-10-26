@@ -1,11 +1,19 @@
 import "server-only";
 import { type UserProgress } from "@zoonk/db";
-import { type BeltLevelResult, calculateBeltLevel } from "@zoonk/utils/belt-level";
+import {
+  type BeltLevelResult,
+  type NextBelt,
+  calculateBeltLevel,
+  getNextBelt,
+} from "@zoonk/utils/belt-level";
 import { getSession } from "../users/get-session";
 import { getUserProgress } from "./get-user-progress";
 import { hasUserLearningProgress } from "./user-progress";
 
-export type BeltLevelDetails = BeltLevelResult & { totalBrainPower: number };
+export type BeltLevelDetails = BeltLevelResult & {
+  nextBelt: NextBelt | null;
+  totalBrainPower: number;
+};
 
 /** Converts one durable progress row into every value needed by belt progress surfaces. */
 function toBeltLevel(progress: UserProgress | null): BeltLevelDetails | null {
@@ -15,7 +23,11 @@ function toBeltLevel(progress: UserProgress | null): BeltLevelDetails | null {
 
   const totalBrainPower = Number(progress.totalBrainPower);
 
-  return { ...calculateBeltLevel(totalBrainPower), totalBrainPower };
+  return {
+    ...calculateBeltLevel(totalBrainPower),
+    nextBelt: getNextBelt(totalBrainPower),
+    totalBrainPower,
+  };
 }
 
 /** Returns the authenticated learner's current belt and its durable total in one read. */

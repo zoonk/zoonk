@@ -48,7 +48,8 @@ const BELT_CONFIGS: readonly [BeltConfig, ...BeltConfig[]] = [
   { bpPerLevel: 100_000, color: "black", startBp: 2_167_500 },
 ];
 
-const LEVELS_PER_COLOR = 10;
+/** Every belt has ten levels: the stripes on its rank bar. */
+export const LEVELS_PER_COLOR = 10;
 
 function findCurrentBelt(bp: number): BeltConfig {
   return BELT_CONFIGS.findLast((belt) => bp >= belt.startBp) ?? BELT_CONFIGS[0];
@@ -95,4 +96,18 @@ export function calculateBeltLevel(totalBrainPower: number): BeltLevelResult {
 /** The Brain Power where a belt color starts: level 1 of that color. */
 export function getBeltStartBrainPower(color: BeltColor): number {
   return BELT_CONFIGS.find((belt) => belt.color === color)?.startBp ?? 0;
+}
+
+export type NextBelt = { brainPowerToGo: number; color: BeltColor; startBrainPower: number };
+
+/** The belt after the one this Brain Power is on: where it starts and how far that is. None past Black. */
+export function getNextBelt(totalBrainPower: number): NextBelt | null {
+  const bp = Math.max(0, totalBrainPower);
+  const next = BELT_CONFIGS.find((belt) => belt.startBp > bp);
+
+  if (!next) {
+    return null;
+  }
+
+  return { brainPowerToGo: next.startBp - bp, color: next.color, startBrainPower: next.startBp };
 }

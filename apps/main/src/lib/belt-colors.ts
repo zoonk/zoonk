@@ -2,7 +2,7 @@ import { beltColorClasses } from "@zoonk/ui/components/belt-indicator";
 import { BELT_COLORS_ORDER, type BeltColor } from "@zoonk/utils/belt-level";
 import { getExtracted } from "next-intl/server";
 
-type BeltColorOption = { bgClass: string; key: BeltColor; label: string };
+export type BeltColorOption = { bgClass: string; key: BeltColor; label: string };
 
 /**
  * The progression dots and visible level copy share these options so every belt

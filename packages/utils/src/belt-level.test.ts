@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { BELT_COLORS_ORDER, calculateBeltLevel, getBeltStartBrainPower } from "./belt-level";
+import {
+  BELT_COLORS_ORDER,
+  calculateBeltLevel,
+  getBeltStartBrainPower,
+  getNextBelt,
+} from "./belt-level";
 
 describe(calculateBeltLevel, () => {
   describe("white belt (250 BP per level)", () => {
@@ -234,5 +239,38 @@ describe(getBeltStartBrainPower, () => {
       color: "green",
       level: 1,
     });
+  });
+});
+
+describe(getNextBelt, () => {
+  it("names the next belt, where it starts and how far that is", () => {
+    expect(getNextBelt(50)).toStrictEqual({
+      brainPowerToGo: 2450,
+      color: "yellow",
+      startBrainPower: 2500,
+    });
+
+    expect(getNextBelt(15_000)).toStrictEqual({
+      brainPowerToGo: 2500,
+      color: "green",
+      startBrainPower: 17_500,
+    });
+  });
+
+  it("moves on to the belt after once a belt starts", () => {
+    expect(getNextBelt(getBeltStartBrainPower("green"))).toMatchObject({
+      color: "blue",
+      startBrainPower: getBeltStartBrainPower("blue"),
+    });
+  });
+
+  it("has no next belt once the learner is on Black", () => {
+    expect(getNextBelt(getBeltStartBrainPower("black") - 1)).toMatchObject({
+      brainPowerToGo: 1,
+      color: "black",
+    });
+
+    expect(getNextBelt(getBeltStartBrainPower("black"))).toBeNull();
+    expect(getNextBelt(5_000_000)).toBeNull();
   });
 });

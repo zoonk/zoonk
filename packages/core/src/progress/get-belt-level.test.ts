@@ -40,6 +40,7 @@ describe("authenticated users", () => {
       color: "orange",
       isMaxLevel: false,
       level: 8,
+      nextBelt: { brainPowerToGo: 2500, color: "green", startBrainPower: 17_500 },
       progressInLevel: 500,
       totalBrainPower: 15_000,
     });

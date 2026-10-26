@@ -51,8 +51,17 @@ function serializeDaypart(period: number) {
  * free to choose their own presentation color for each tier.
  */
 export function serializeLevel(level: BeltLevelDetails) {
-  const { color: belt, ...progress } = level;
-  return { ...progress, belt };
+  const { color: belt, nextBelt, ...progress } = level;
+
+  return {
+    ...progress,
+    belt,
+    nextBelt: nextBelt && {
+      belt: nextBelt.color,
+      brainPowerToGo: nextBelt.brainPowerToGo,
+      startBrainPower: nextBelt.startBrainPower,
+    },
+  };
 }
 
 /**

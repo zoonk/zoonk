@@ -1562,15 +1562,40 @@ msgctxt "5CNApj"
 msgid "All goals"
 msgstr "Alle Ziele"
 
-#: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
+#: src/app/[lang]/(app)/(stats)/level/belt-rack.tsx
 msgctxt "CIQa5T"
 msgid "{color, select, white {White} yellow {Yellow} orange {Orange} green {Green} blue {Blue} purple {Purple} brown {Brown} red {Red} gray {Gray} black {Black} other {Belt}}"
 msgstr "{color, select, white {Weiß} yellow {Gelb} orange {Orange} green {Grün} blue {Blau} purple {Lila} brown {Braun} red {Rot} gray {Grau} black {Schwarz} other {Gürtel}}"
 
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
+msgctxt "SeonFl"
+msgid "Every belt earned"
+msgstr "Alle Gürtel verdient"
+
+#: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
+msgctxt "e6TtsL"
+msgid "Next belt"
+msgstr "Nächster Gürtel"
+
+#: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
+msgctxt "0ZGPb-"
+msgid "{belt} at <mono>{points}</mono> Brain Power"
+msgstr "{belt} ab <mono>{points}</mono> Brain Power"
+
+#: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
+msgctxt "dzpvr6"
+msgid "{points, plural, one {<mono>#</mono> to go} other {<mono>#</mono> to go}}"
+msgstr "{points, plural, other {Noch <mono>#</mono> bis zum nächsten Gürtel}}"
+
+#: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
 msgctxt "3DtX17"
 msgid "Belt progression"
 msgstr "Gürtelfortschritt"
+
+#: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
+msgctxt "EX6xiz"
+msgid "Level <mono>{level}</mono> of {count}"
+msgstr "Level <mono>{level}</mono> von {count}"
 
 #: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
 msgctxt "pgt3eW"
@@ -1581,6 +1606,11 @@ msgstr "Höchstes Level erreicht"
 msgctxt "Cm04Yp"
 msgid "Next level"
 msgstr "Nächstes Level"
+
+#: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
+msgctxt "cmc2-s"
+msgid "{color, select, yellow {To Yellow belt} orange {To Orange belt} green {To Green belt} blue {To Blue belt} purple {To Purple belt} brown {To Brown belt} red {To Red belt} gray {To Gray belt} black {To Black belt} other {To the next belt}}"
+msgstr "{color, select, yellow {Zum gelben Gürtel} orange {Zum orangefarbenen Gürtel} green {Zum grünen Gürtel} blue {Zum blauen Gürtel} purple {Zum lila Gürtel} brown {Zum braunen Gürtel} red {Zum roten Gürtel} gray {Zum grauen Gürtel} black {Zum schwarzen Gürtel} other {Zum nächsten Gürtel}}"
 
 #: src/app/[lang]/(app)/(stats)/level/level-stats.tsx
 msgctxt "57EFxN"
