@@ -61,7 +61,10 @@ export type StudyBlockCompletion = {
    */
   netScore: number | null;
   nextBlockId: string | null;
-  /** The belt level and the tenth of Energy the block took the learner to, to celebrate them. */
+  /**
+   * The belt level and the tenth of Energy the block took the learner to, to celebrate them; said
+   * by the request that settled it, so a retry reaches nothing again.
+   */
   reached: Reached;
   sessionBar: { completed: number; total: number };
   sessionCompleted: boolean;
@@ -275,7 +278,10 @@ export const studyBlockCompletionSchema = z
             description: "The belt level its Brain Power reached, the day's bonus included",
           }),
       })
-      .meta({ description: "What the block took the learner to, for its moment to celebrate" }),
+      .meta({
+        description:
+          "What the block took the learner to, for its moment to celebrate; nothing on a retry, which celebrates none of it again",
+      }),
     sessionBar: z.object({ completed: countSchema, total: countSchema }),
     sessionCompleted: z.boolean(),
     testOutOffer: z

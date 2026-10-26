@@ -13,6 +13,7 @@ import {
 import { getNetScore, getNetScoredItemIds } from "./_utils/net-score";
 import { trackBlockCompleted } from "./_utils/session-events";
 import { gradeSessionAnswer, parseSessionItem, readRecordedAnswer } from "./_utils/session-items";
+import { type ProgressChange } from "./_utils/session-progress";
 import {
   type QuestionBlockSettlement,
   countOpenedCapsules,
@@ -22,7 +23,6 @@ import {
 import { type StudySessionRow, findOwnedStudyBlock } from "./_utils/study-session-access";
 import { findTestOutOffer } from "./_utils/test-out-offer";
 import { readBlockPayload } from "./block-payload";
-import { getAnswersEnergyDelta } from "./brain-power";
 import { type CheckpointResultView, type StudyBlockCompletion } from "./completion-contract";
 import { type StudySessionTimeZoneInput } from "./contract";
 import { type MissionCompletionSource } from "./missions/settle-missions";
@@ -43,8 +43,17 @@ type OwnedBlock = {
   userId: string;
 };
 
+/**
+ * A question block's settlement, made now or read back: one settled before (a retry) has no
+ * Energy change, since what it reached was this block's to celebrate when it was settled.
+ */
 type SettledQuestionBlock =
-  | { settlement: Omit<QuestionBlockSettlement, "seconds">; status: "ready" }
+  | {
+      settlement: Omit<QuestionBlockSettlement, "energy" | "seconds"> & {
+        energy: ProgressChange | null;
+      };
+      status: "ready";
+    }
   | { status: "blockFinished" };
 
 /**
@@ -138,6 +147,7 @@ async function readSettledQuestionBlock(owned: OwnedBlock): Promise<SettledQuest
       capsulesOpened: countOpenedCapsules(prepared),
       checkpoint: prepared.checkpoint,
       correct: prepared.correct,
+      energy: null,
       topHyperdrive: prepared.scored.topLevel,
       total: prepared.own.length,
     },
@@ -198,10 +208,7 @@ async function finishQuestionBlock(
   const completion = await completeBlockMoment({
     blockId: owned.block.id,
     brainPowerBefore: settlement.brainPowerBefore,
-    energyDelta: getAnswersEnergyDelta({
-      correct: settlement.correct,
-      incorrect: settlement.total - settlement.correct,
-    }),
+    energy: settlement.energy,
     payload,
     result: {
       brainPower: settlement.brainPower,
@@ -225,10 +232,17 @@ async function finishQuestionBlock(
 
 /**
  * Finishes a learn block once its lesson was finished: the lesson's own completion already paid
- * its Brain Power, so the block records it, checks the lesson off in the plan and settles the
- * day. The lesson's time is the block's. Finishing it again returns the same moment.
+ * its Brain Power and Energy (`energy`, when that completion is this request), so the block
+ * records it, checks the lesson off in the plan and settles the day. The lesson's time is the
+ * block's. Finishing it again returns the same moment.
  */
-export async function finishLessonBlock(owned: OwnedBlock): Promise<FinishStudyBlockResult> {
+export async function finishLessonBlock({
+  energy = null,
+  ...owned
+}: OwnedBlock & {
+  /** Energy before and after the lesson, when its completion just added it. */
+  energy?: ProgressChange | null;
+}): Promise<FinishStudyBlockResult> {
   const finish = await findLessonFinish(owned);
 
   if (!finish) {
@@ -264,7 +278,7 @@ export async function finishLessonBlock(owned: OwnedBlock): Promise<FinishStudyB
   const completion = await completeBlockMoment({
     blockId: owned.block.id,
     brainPowerBefore: Number(progress?.totalBrainPower ?? 0) - finish.brainPower,
-    energyDelta: finish.energyDelta,
+    energy,
     payload: readBlockPayload(owned.block),
     result: {
       brainPower: finish.brainPower,

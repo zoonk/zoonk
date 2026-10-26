@@ -64074,7 +64074,7 @@
               "level"
             ],
             "additionalProperties": false,
-            "description": "What the block took the learner to, for its moment to celebrate"
+            "description": "What the block took the learner to, for its moment to celebrate; nothing on a retry, which celebrates none of it again"
           },
           "sessionBar": {
             "type": "object",

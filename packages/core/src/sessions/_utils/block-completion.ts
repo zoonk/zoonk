@@ -1,13 +1,12 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
 import { awardMilestones } from "../../milestones/award-milestones";
 import { getTrapHunterBadge, pickCeremony } from "../../milestones/milestone-rules";
-import { clampEnergy } from "../../progress/energy";
 import { type BlockPayload } from "../block-payload";
 import { type StudyBlockCompletion } from "../completion-contract";
 import { getMissionBonus } from "../missions";
 import { type MissionCompletionSource } from "../missions/settle-missions";
-import { getEnergyReached, getLevelReached } from "../reached";
+import { type Reached, getEnergyReached, getLevelReached } from "../reached";
+import { type ProgressChange } from "./session-progress";
 import { getNextBlockId, getSessionBar } from "./session-view";
 import { settleSessionDay } from "./settle-session-day";
 
@@ -24,14 +23,19 @@ type BlockResult = Pick<
   | "total"
 >;
 
+/** Nothing new reached: a block read back after an earlier request settled it. */
+const NOTHING_REACHED: Reached = { energy: null, level: null };
+
 /**
  * Settles the day after a block finished (full meal, session completion), awards milestones from
- * the Brain Power crossed and a boss won, and builds the block's completion moment.
+ * the Brain Power crossed and a boss won, and builds the block's completion moment. The level and
+ * the tenth of Energy it reached are said by the request that settled its answers, as its
+ * ceremony is: a retry returns the same missions without celebrating them again.
  */
 export async function completeBlockMoment({
   blockId,
   brainPowerBefore,
-  energyDelta,
+  energy,
   payload,
   result,
   sessionId,
@@ -42,8 +46,11 @@ export async function completeBlockMoment({
   blockId: string;
   /** The learner's Brain Power total before this block's points, to find belts crossed. */
   brainPowerBefore: number;
-  /** How much the block's answers moved Energy, to tell the tenth it reached. */
-  energyDelta: number;
+  /**
+   * Energy before and after the block's answers when this request settled them, to tell the tenth
+   * they reached; null when it reads back a block an earlier request settled.
+   */
+  energy: ProgressChange | null;
   payload: BlockPayload;
   result: BlockResult;
   sessionId: string;
@@ -66,17 +73,12 @@ export async function completeBlockMoment({
     brainPower: { after: brainPowerBefore + result.brainPower, before: brainPowerBefore },
   };
 
-  const [milestones, progress] = await Promise.all([
-    awardMilestones({
-      badges: reward.bossWon && payload.planItemId ? [getTrapHunterBadge(payload.planItemId)] : [],
-      brainPower: reward.brainPower,
-      brainPowerRewards: settled.fullMealReward ? [settled.fullMealReward] : [],
-      userId,
-    }),
-    prisma.userProgress.findUnique({ select: { currentEnergy: true }, where: { userId } }),
-  ]);
-
-  const energy = progress?.currentEnergy ?? 0;
+  const milestones = await awardMilestones({
+    badges: reward.bossWon && payload.planItemId ? [getTrapHunterBadge(payload.planItemId)] : [],
+    brainPower: reward.brainPower,
+    brainPowerRewards: settled.fullMealReward ? [settled.fullMealReward] : [],
+    userId,
+  });
 
   const blocks = settled.session.blocks;
 
@@ -90,13 +92,15 @@ export async function completeBlockMoment({
     milestones,
     missions: settled.missions,
     nextBlockId: getNextBlockId(blocks),
-    reached: {
-      energy: getEnergyReached({ after: energy, before: clampEnergy(energy - energyDelta) }),
-      level: getLevelReached({
-        after: reward.brainPower.after + fullMeal,
-        before: reward.brainPower.before,
-      }),
-    },
+    reached: energy
+      ? {
+          energy: getEnergyReached(energy),
+          level: getLevelReached({
+            after: reward.brainPower.after + fullMeal,
+            before: reward.brainPower.before,
+          }),
+        }
+      : NOTHING_REACHED,
     sessionBar: getSessionBar(blocks),
     sessionCompleted: settled.sessionCompleted,
   };

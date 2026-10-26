@@ -120,7 +120,7 @@ async function payFullMeal(
     userId: string;
   },
 ) {
-  const reward = await applySessionProgress(tx, {
+  const { brainPower: reward } = await applySessionProgress(tx, {
     completion: false,
     delta: {
       brainPower: BRAIN_POWER_BONUS.fullMeal,

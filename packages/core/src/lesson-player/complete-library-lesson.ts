@@ -1,6 +1,5 @@
 import "server-only";
 import { type LearningEvent, prisma } from "@zoonk/db";
-import { getString } from "@zoonk/utils/json";
 import { isUuid } from "@zoonk/utils/uuid";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getLearnerModelCacheTag, getUserProgressCacheTag } from "../cache/tags";
@@ -10,9 +9,8 @@ import {
   loadLessonReviewSkillIds,
 } from "../learner/_utils/lesson-plan-skills";
 import { clampEnergy } from "../progress/energy";
-import { serializeStudyBlockCompletion } from "../sessions/completion-contract";
+import { type ProgressChange } from "../sessions/_utils/session-progress";
 import { scoreLessonAnswers } from "../sessions/score-lesson-answers";
-import { settleFinishedLesson } from "../sessions/settle-finished-lesson";
 import { getCompletionEnergyContext } from "../stats/completion-energy";
 import { upsertDailyProgress } from "../stats/daily-progress";
 import { finishLearningEvent } from "../stats/record-learning-event";
@@ -21,6 +19,7 @@ import { loadCompletionSteps, recordSkippedWritingSteps } from "./_utils/complet
 import { trackLessonCompleted } from "./_utils/lesson-events";
 import { isOwnExplanation } from "./_utils/lesson-rows";
 import { findLessonRun, hasFinishedLessonBefore, toSittings } from "./_utils/lesson-runs";
+import { type RunCompletion, withStudyBlock } from "./_utils/lesson-study-block";
 import { loadPlayedLesson } from "./_utils/load-played-lesson";
 import {
   getNextReviewAt,
@@ -38,9 +37,6 @@ export type LibraryLessonCompletionOutcome =
   | { status: "invalid" }
   | { status: "notFound" }
   | { status: "unauthorized" };
-
-/** The run's own outcome; the session block's moment is added once the run is closed. */
-type RunCompletion = Omit<LibraryLessonCompletion, "studyBlock">;
 
 type CompletionRun = {
   lessonId: string;
@@ -192,37 +188,10 @@ async function finishRun({
         seconds,
         totalBrainPower: Number(progress.totalBrainPower),
       },
+      energy: { after: clampedEnergy, before: currentEnergy },
       modelChanged: changed,
     };
   });
-}
-
-/**
- * A finished lesson checks off its plan items and, when it was one of today's session blocks,
- * completes the block and settles the day; its moment rides along so the player needs no other
- * request. Repeating a completion returns the moment again.
- */
-async function withStudyBlock({
-  completion,
-  lessonId,
-  runId,
-  timeZone,
-  userId,
-}: {
-  completion: RunCompletion;
-  lessonId: string;
-  runId: string;
-  timeZone: string;
-  userId: string;
-}): Promise<LibraryLessonCompletion> {
-  const run = await prisma.learningEvent.findUniqueOrThrow({ where: { id: runId } });
-  const blockId = getString(run.contentIds, "studySessionBlockId") ?? undefined;
-  const studyBlock = await settleFinishedLesson({ blockId, lessonId, timeZone, userId });
-
-  return {
-    ...completion,
-    studyBlock: studyBlock ? serializeStudyBlockCompletion(studyBlock) : null,
-  };
 }
 
 /**
@@ -301,8 +270,8 @@ export async function completeLibraryLesson({
     getLearnerTimeZone({ timeZone: input.timeZone, userId }),
   ]);
 
-  const settle = (completion: RunCompletion) =>
-    withStudyBlock({ completion, lessonId, runId: run.id, timeZone, userId });
+  const settle = (completion: RunCompletion, energy?: ProgressChange) =>
+    withStudyBlock({ completion, energy, lessonId, runId: run.id, timeZone, userId });
 
   if (run.endedAt) {
     return {
@@ -370,5 +339,5 @@ export async function completeLibraryLesson({
     seconds: finished.completion.seconds,
   });
 
-  return { completion: await settle(finished.completion), status: "completed" };
+  return { completion: await settle(finished.completion, finished.energy), status: "completed" };
 }

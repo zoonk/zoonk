@@ -12,6 +12,9 @@ import { answerStudyQuestion } from "./answer-study-question";
 import { type BlockPayload, toBlockPayload } from "./block-payload";
 import { finishStudyBlock } from "./finish-study-block";
 
+/** What a retry reaches: its level and Energy were the first finish's to celebrate. */
+const NOTHING = { energy: null, level: null };
+
 const BOSS: BlockPayload["checkpoint"] = {
   kind: "boss",
   mock: false,
@@ -110,7 +113,10 @@ describe("finishing a block that already finished", () => {
 
     expect(retried).toStrictEqual(
       first.status === "ready"
-        ? { ...first, completion: { ...first.completion, ceremony: null, milestones: [] } }
+        ? {
+            ...first,
+            completion: { ...first.completion, ceremony: null, milestones: [], reached: NOTHING },
+          }
         : first,
     );
 
@@ -131,7 +137,10 @@ describe("finishing a block that already finished", () => {
 
     expect(retried).toStrictEqual(
       first.status === "ready"
-        ? { ...first, completion: { ...first.completion, ceremony: null, milestones: [] } }
+        ? {
+            ...first,
+            completion: { ...first.completion, ceremony: null, milestones: [], reached: NOTHING },
+          }
         : first,
     );
   });
@@ -177,6 +186,27 @@ describe("finishing a block that already finished", () => {
         ceremony: { key: "yellow", kind: "belt" },
         reached: { energy: 80, level: { color: "yellow", level: 1 } },
       },
+      status: "ready",
+    });
+
+    // A retry after a lost response celebrates none of it again.
+    await expect(day.finish()).resolves.toMatchObject({
+      completion: { ceremony: null, reached: NOTHING },
+    });
+  });
+
+  it("doesn't celebrate Max Energy again for a learner already at it", async () => {
+    const day = await setup(null);
+    const progress = { currentEnergy: 100, lastActiveAt: new Date(), totalBrainPower: 10n };
+
+    await prisma.userProgress.upsert({
+      create: { ...progress, userId: day.user.id },
+      update: progress,
+      where: { userId: day.user.id },
+    });
+
+    await expect(day.finish()).resolves.toMatchObject({
+      completion: { reached: { energy: null } },
       status: "ready",
     });
   });

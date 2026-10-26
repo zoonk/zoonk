@@ -3,6 +3,7 @@ import { finishExplanations } from "../goals/_utils/finish-explanations";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { findDayLessonBlock } from "./_utils/day-lesson-block";
 import { completeLessonPlanItems, scheduleLessonCanDos } from "./_utils/plan-items";
+import { type ProgressChange } from "./_utils/session-progress";
 import { type StudyBlockCompletion } from "./completion-contract";
 import { finishLessonBlock } from "./finish-study-block";
 
@@ -19,11 +20,14 @@ import { finishLessonBlock } from "./finish-study-block";
  */
 export async function settleFinishedLesson({
   blockId,
+  energy,
   lessonId,
   timeZone,
   userId,
 }: {
   blockId?: string;
+  /** Energy before and after the lesson, when its completion just added it (not on a replay). */
+  energy?: ProgressChange | null;
   lessonId: string;
   timeZone: string;
   userId: string;
@@ -57,7 +61,7 @@ export async function settleFinishedLesson({
   }
 
   const { session, ...block } = found;
-  const result = await finishLessonBlock({ block, session, timeZone, userId });
+  const result = await finishLessonBlock({ block, energy, session, timeZone, userId });
 
   return result.status === "ready" ? result.completion : null;
 }

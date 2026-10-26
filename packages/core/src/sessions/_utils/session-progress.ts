@@ -8,6 +8,9 @@ import { upsertDailyProgress } from "../../stats/daily-progress";
  */
 export type ProgressLock = { completedAt: Date; completionDate: Date; currentEnergy: number };
 
+/** A total before and after a settlement added to it. */
+export type ProgressChange = { after: number; before: number };
+
 export type SessionProgressDelta = {
   brainPower: number;
   correctAnswers: number;
@@ -19,8 +22,8 @@ export type SessionProgressDelta = {
 /**
  * Adds a session's Brain Power, Energy, answers and time to the learner's totals and today's row,
  * under the lock from `getCompletionEnergyContext`. A finished question block counts as an
- * interactive completion; the full meal only adds Brain Power. Returns the Brain Power total before
- * and after, so belts crossed can be celebrated.
+ * interactive completion; the full meal only adds Brain Power. Returns the Brain Power total and the
+ * Energy before and after, so the belts and the tenths of Energy crossed can be celebrated.
  */
 export async function applySessionProgress(
   tx: TransactionClient,
@@ -30,7 +33,7 @@ export async function applySessionProgress(
     lock,
     userId,
   }: { completion: boolean; delta: SessionProgressDelta; lock: ProgressLock; userId: string },
-): Promise<{ after: number; before: number }> {
+): Promise<{ brainPower: ProgressChange; energy: ProgressChange }> {
   const energy = clampEnergy(lock.currentEnergy + delta.energyDelta);
 
   const progress = await tx.userProgress.update({
@@ -57,5 +60,9 @@ export async function applySessionProgress(
   });
 
   const after = Number(progress.totalBrainPower);
-  return { after, before: after - delta.brainPower };
+
+  return {
+    brainPower: { after, before: after - delta.brainPower },
+    energy: { after: energy, before: lock.currentEnergy },
+  };
 }

@@ -25,7 +25,7 @@ import { loadBlockSkillStates } from "./load-block-skill-states";
 import { completePlanItem } from "./plan-items";
 import { type SessionAnswer, getBlockAnswers, loadSessionAnswers } from "./session-answers";
 import { trackBlockCompleted } from "./session-events";
-import { applySessionProgress } from "./session-progress";
+import { type ProgressChange, applySessionProgress } from "./session-progress";
 import { getMasteryRewards, readSessionSnapshot, withPaidRewards } from "./session-snapshot";
 import { type StudySessionRow } from "./study-session-access";
 
@@ -43,6 +43,8 @@ export type QuestionBlockSettlement = {
   capsulesOpened: number;
   checkpoint: CheckpointOutcome | null;
   correct: number;
+  /** Energy before and after the block's answers, to tell the tenth of Energy they reached. */
+  energy: ProgressChange;
   /** How long the block took, as the ledger and today's totals count it. */
   seconds: number;
   topHyperdrive: number;
@@ -269,7 +271,7 @@ export async function settleQuestionBlock(input: SettleInput): Promise<SettleQue
         }) * SECONDS_PER_MINUTE,
       );
 
-      const brainPowerReward = await applySessionProgress(tx, {
+      const progress = await applySessionProgress(tx, {
         completion: true,
         delta: {
           brainPower: reward.brainPower,
@@ -289,7 +291,7 @@ export async function settleQuestionBlock(input: SettleInput): Promise<SettleQue
             ...currentPayload,
             milestoneReward: {
               bossWon: checkpoint !== null && checkpoint.kind !== "weekly" && checkpoint.passed,
-              brainPower: brainPowerReward,
+              brainPower: progress.brainPower,
             },
             timing: pausedBlockTiming({ block: currentBlock, now: lock.completedAt }),
           },
@@ -334,10 +336,11 @@ export async function settleQuestionBlock(input: SettleInput): Promise<SettleQue
         settlement: {
           answers: own,
           brainPower: reward.brainPower,
-          brainPowerBefore: brainPowerReward.before,
+          brainPowerBefore: progress.brainPower.before,
           capsulesOpened: reward.capsulesOpened,
           checkpoint,
           correct,
+          energy: progress.energy,
           seconds,
           topHyperdrive: scored.topLevel,
           total: own.length,
