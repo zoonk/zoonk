@@ -125,11 +125,12 @@ const DENSE_SEGMENTS = 40;
 
 /**
  * Only answers carry color, so blue and red stand out: a read screen is a quiet gray, the one in
- * view is half filled on the track, and what's ahead is the bare track.
+ * view is outlined in progress's blue (where the learner is, as Today's day marks it; a fill would
+ * read as done), and what's ahead is the bare track.
  */
 const SEGMENT_CLASS: Record<TaskSegment, string> = {
   ahead: "bg-surface-3",
-  current: "bg-surface-3",
+  current: "ring-success ring-1 ring-inset",
   done: "bg-success",
   read: "bg-foreground/25",
   right: "bg-success",
@@ -179,9 +180,7 @@ export function TaskHeaderSegments({
             // oxlint-disable-next-line react/no-array-index-key -- Segments are positions, not items.
             key={index}
             style={weights ? { flexGrow: Math.max(1, weights[index] ?? 1) } : undefined}
-          >
-            {segment === "current" && <span className="bg-foreground/50 w-1/2" />}
-          </span>
+          />
         ))}
       </span>
     </ProgressRoot>
