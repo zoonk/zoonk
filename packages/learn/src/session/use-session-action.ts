@@ -2,7 +2,8 @@
 
 import { useEnterKey } from "@zoonk/ui/hooks/keyboard";
 import { safeAsync } from "@zoonk/utils/error";
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
+import { useSteady } from "../_utils/use-steady";
 import { useGoalSwitchPending } from "../shell/goal-switcher";
 
 /**
@@ -27,18 +28,10 @@ export function useSessionAction({
   const [isPending, startTransition] = useTransition();
   const [failed, setFailed] = useState(false);
   const switching = useGoalSwitchPending();
-  const shownAt = useRef<number | null>(null);
-
-  useEffect(() => {
-    shownAt.current = performance.now();
-  }, []);
+  const isSteady = useSteady(steadyMs);
 
   const run = () => {
-    const steady =
-      steadyMs === 0 ||
-      (shownAt.current !== null && performance.now() - shownAt.current >= steadyMs);
-
-    if (!steady) {
+    if (!isSteady()) {
       return false;
     }
 

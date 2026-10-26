@@ -1,19 +1,22 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
+import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useFormatter } from "next-intl";
-import { useState } from "react";
+import { useEffect, useRef } from "react";
 import { EnterButton } from "../_components/enter-button";
 import { KindMark } from "../_components/kind-tile";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
 import { TaskMeta } from "../_components/task-meta";
 import { type TestOutStart, TestOutStartLink } from "../_components/test-out-start-link";
+import { isFocusLost } from "../_utils/is-focus-lost";
 import { useFormatDuration } from "../_utils/time-format";
+import { SCREEN_STEADY_MS } from "../_utils/use-steady";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
-import { type CeremonyMilestone } from "../ceremonies/use-ceremony-copy";
 import { MissionMoment } from "../missions/mission-moment";
 import { getBlockKind } from "./block-kind";
+import { type MomentCeremony, MomentCeremonyOnce } from "./moment-ceremony";
 import { ReachedMoment } from "./reached-moment";
 import { SessionFrame } from "./session-frame";
 import { SessionHeader } from "./session-header";
@@ -25,17 +28,12 @@ import { useBlockTitle } from "./use-block-copy";
 import { type MomentKind, useMomentTitle } from "./use-moment-title";
 import { useSessionAction } from "./use-session-action";
 
-/** A press this soon after the moment shows was meant for the screen before it: it's ignored. */
-const MOMENT_STEADY_MS = 500;
-
-/** The host's full-screen ceremony for a milestone the block earned, closed with `onClose`. */
-export type MomentCeremony = (milestone: CeremonyMilestone, onClose: () => void) => React.ReactNode;
-
 /**
- * What the block earned, as one mono line: its Brain Power (never "+0"), the day a lesson comes
- * back (as a date, never a weekday that could be this one or the next) and its net score when it's
- * scored like an exam where a wrong answer cancels a right one. The day's bonus, when the block paid
- * it, is the missions' to show, so the line counts only the block's own points.
+ * What the block earned, as one mono line: the day a lesson comes back (as a date, never a weekday
+ * that could be this one or the next), its net score when it's scored like an exam where a wrong
+ * answer cancels a right one, and its Brain Power in violet, as every reward amount reads (never
+ * "+0"). The day's bonus, when the block paid it, is the missions' to show, so the line counts
+ * only the block's own points.
  */
 function MomentFacts({ moment }: { moment: StudyMomentView }) {
   const t = useExtracted();
@@ -43,7 +41,6 @@ function MomentFacts({ moment }: { moment: StudyMomentView }) {
   const brainPower = moment.brainPower - (moment.fullMeal.paid ? moment.fullMeal.bonus : 0);
 
   const facts = [
-    brainPower > 0 && t("+{points} Brain Power", { points: format.number(brainPower) }),
     moment.comesBackOn &&
       t("Review on {date}", {
         date: format.dateTime(new Date(`${moment.comesBackOn}T00:00:00Z`), {
@@ -56,7 +53,16 @@ function MomentFacts({ moment }: { moment: StudyMomentView }) {
     moment.netScore !== null && t("Net score {net}", { net: String(moment.netScore) }),
   ];
 
-  return <TaskMeta facts={facts} />;
+  return (
+    <TaskMeta
+      facts={facts}
+      reward={
+        brainPower > 0
+          ? t("+{points} Brain Power", { points: format.number(brainPower) })
+          : undefined
+      }
+    />
+  );
 }
 
 /**
@@ -113,10 +119,11 @@ function MomentActions({
   const proceed = useSessionAction({
     action: onContinue,
     enterKey: true,
-    steadyMs: MOMENT_STEADY_MS,
+    steadyMs: SCREEN_STEADY_MS,
   });
 
-  const stop = useSessionAction({ action: onStop });
+  // A second tap after the last answer's Continue would land right here, where Continue was.
+  const stop = useSessionAction({ action: onStop, steadyMs: SCREEN_STEADY_MS });
 
   return (
     <TaskActionBar>
@@ -133,6 +140,7 @@ function MomentActions({
         )}
 
         <EnterButton disabled={proceed.isPending} onClick={proceed.run}>
+          {proceed.isPending && <Spinner aria-hidden="true" />}
           {sessionCompleted ? t("See today's summary") : t("Continue")}
         </EnterButton>
       </TaskActions>
@@ -140,21 +148,24 @@ function MomentActions({
   );
 }
 
-/** The host's ceremony for the block's milestone, once: over the moment until it's closed. */
-function MomentCeremonyOnce({
-  milestone,
-  render,
-}: {
-  milestone: CeremonyMilestone | null;
-  render?: MomentCeremony;
-}) {
-  const [closed, setClosed] = useState(false);
+/**
+ * The moment's title, which takes the focus when the screen before it left none (the last answer's
+ * Continue went with it), so a screen reader starts here and reads on.
+ */
+function MomentTitle({ title }: { title: string }) {
+  const heading = useRef<HTMLHeadingElement>(null);
 
-  if (!render || !milestone || closed) {
-    return null;
-  }
+  useEffect(() => {
+    if (isFocusLost(document.activeElement)) {
+      heading.current?.focus({ preventScroll: true });
+    }
+  }, []);
 
-  return render(milestone, () => setClosed(true));
+  return (
+    <h2 className="text-title outline-none" ref={heading} tabIndex={-1}>
+      {title}
+    </h2>
+  );
 }
 
 /**
@@ -231,8 +242,8 @@ export function StudyMoment({
       <MomentCeremonyOnce milestone={moment.ceremony} render={renderCeremony} />
 
       <TaskBody data-slot="study-moment">
-        <div className="flex flex-col gap-2" role="status">
-          <h2 className="text-title">{title}</h2>
+        <div className="flex flex-col gap-2">
+          <MomentTitle title={title} />
           <MomentFacts moment={moment} />
         </div>
 

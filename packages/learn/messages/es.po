@@ -134,6 +134,7 @@ msgstr "Crear una cuenta gratis"
 #: src/questions/test-out-run.tsx
 #: src/session/lesson-moment.tsx
 #: src/session/next-stop.tsx
+#: src/session/pending-moment.tsx
 #: src/session/question-block/question-actions.tsx
 #: src/session/study-moment.tsx
 #: src/session/summary/summary-steps.tsx
@@ -1099,13 +1100,6 @@ msgctxt "buddyNames.vPjK_E"
 msgid "Zu"
 msgstr "Zu"
 
-#: src/ceremonies/milestone-ceremony.tsx
-#: src/onboarding/steps/step-form.tsx
-#: src/plan/plan-bases-choices.tsx
-msgctxt "_4tOwT"
-msgid "Skip"
-msgstr "Omitir"
-
 #: src/ceremonies/use-ceremony-copy.ts
 msgctxt "Lxi2Lv"
 msgid "For winning your first phase challenge."
@@ -1182,9 +1176,9 @@ msgid "{buddy} is Young now, and keeps growing with your Brain Power."
 msgstr "{buddy} ya es joven y seguirá creciendo con tu Poder Mental."
 
 #: src/ceremonies/use-ceremony-copy.ts
-msgctxt "8chScl"
-msgid "{belt}!"
-msgstr "¡{belt}!"
+msgctxt "bCJ2Za"
+msgid "Your Brain Power earned it."
+msgstr "Tu Poder Mental se lo ha ganado."
 
 #: src/ceremonies/use-ceremony-copy.ts
 msgctxt "FuC-da"
@@ -1192,9 +1186,14 @@ msgid "A new belt!"
 msgstr "¡Un cinturón nuevo!"
 
 #: src/ceremonies/use-ceremony-copy.ts
-msgctxt "riuGuR"
-msgid "Every point came from what you learned."
-msgstr "Has conseguido cada punto aprendiendo."
+msgctxt "0IcLDc"
+msgid "You reached {points} Brain Power by learning."
+msgstr "Has conseguido {points} puntos de Poder Mental aprendiendo."
+
+#: src/ceremonies/use-ceremony-copy.ts
+msgctxt "8chScl"
+msgid "{belt}!"
+msgstr "¡{belt}!"
 
 #: src/ceremonies/use-ceremony-copy.ts
 msgctxt "6Vl5-v"
@@ -9255,6 +9254,12 @@ msgctxt "2BpSHk"
 msgid "{days, plural, one {# day} other {# days}} · {time} a week"
 msgstr "{days, plural, one {# día} other {# días}} · {time} a la semana"
 
+#: src/onboarding/steps/step-form.tsx
+#: src/plan/plan-bases-choices.tsx
+msgctxt "_4tOwT"
+msgid "Skip"
+msgstr "Omitir"
+
 #: src/onboarding/steps/study-week.tsx
 msgctxt "8lkojx"
 msgid "Which days?"
@@ -11607,11 +11612,6 @@ msgctxt "zOi8iy"
 msgid "We couldn't save this block yet."
 msgstr "Aún no se ha podido guardar este bloque."
 
-#: src/session/question-block/question-block.tsx
-msgctxt "8H-sBj"
-msgid "Saving your answers…"
-msgstr "Guardando tus respuestas…"
-
 #: src/session/question-block/question-feedback.tsx
 msgctxt "ZnZgUJ"
 msgid "How to solve it"
@@ -11722,24 +11722,29 @@ msgid "Level up!"
 msgstr "¡Subiste de nivel!"
 
 #: src/session/reached-moment.tsx
-msgctxt "m2WzLQ"
-msgid "Max Energy!"
-msgstr "¡Energía al máximo!"
+msgctxt "33CMyI"
+msgid "Right answers keep it there. A day away lowers it a little."
+msgstr "Las respuestas correctas la mantienen así. Si pasas un día sin estudiar, baja un poco."
 
 #: src/session/reached-moment.tsx
-msgctxt "_cyoFN"
-msgid "{buddy} is glowing!"
-msgstr "¡{buddy} está brillando!"
-
-#: src/session/reached-moment.tsx
-msgctxt "Vlxihv"
-msgid "{energy} Energy"
-msgstr "Energía al {energy}"
+msgctxt "n6B3nB"
+msgid "{buddy} is glowing now."
+msgstr "{buddy} brilla ahora."
 
 #: src/session/reached-moment.tsx
 msgctxt "T5ld7Y"
 msgid "Right answers raise it. A day away lowers it a little."
 msgstr "Las respuestas correctas aumentan tu Energía. Un día sin estudiar la reduce un poco."
+
+#: src/session/reached-moment.tsx
+msgctxt "NnY-Hf"
+msgid "Max Energy: {energy}"
+msgstr "Energía máxima: {energy}"
+
+#: src/session/reached-moment.tsx
+msgctxt "-wkcC0"
+msgid "Energy at {energy}"
+msgstr "Energía: {energy}"
 
 #: src/session/session-header.tsx
 msgctxt "_Jliky"

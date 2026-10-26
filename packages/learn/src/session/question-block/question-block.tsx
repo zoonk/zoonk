@@ -8,11 +8,10 @@ import { ContentVoteMenu } from "../../feedback/content-vote-menu";
 import { type LessonHref } from "../../mistakes/drill/drill-types";
 import { type QuestionTutor } from "../../questions/question-tutor";
 import { usePreloadMath } from "../../rich-text/use-preload-math";
-import { OpenNextStep } from "../open-next-step";
+import { type MomentCeremony } from "../moment-ceremony";
 import { SessionFrame } from "../session-frame";
-import { SessionHeader } from "../session-header";
 import { type StudyBlockDetail, type StudySession } from "../session-types";
-import { type MomentCeremony, StudyMoment } from "../study-moment";
+import { StudyMoment } from "../study-moment";
 import { useBlockTitle } from "../use-block-copy";
 import { useMomentEvents } from "../use-moment-events";
 import { useBlockAside } from "./block-aside";
@@ -89,22 +88,10 @@ function FinishedBlock({
   renderCeremony?: MomentCeremony;
   session: SessionContext;
 }) {
-  const t = useExtracted();
   useMomentEvents({ moment });
 
-  // The session's last block ends on the summary itself: a moment that only says "See what
-  // changed" would be one more tap.
-  if (moment.sessionCompleted) {
-    return (
-      <OpenNextStep
-        exitHref={exitHref}
-        header={<SessionHeader exitHref={exitHref} sessionBar={moment.sessionBar} />}
-        readNext={actions.refresh}
-        status={t("Saving your answers…")}
-      />
-    );
-  }
-
+  // The session's last block has its moment too (its missions, the day's bonus, a level), with
+  // "See today's summary" to go on.
   return (
     <StudyMoment
       blocks={session.blocks}

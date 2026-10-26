@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { type Browser, type Page, expect } from "@playwright/test";
+import { type Browser, type Locator, type Page, expect } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { type E2EUser, createE2EUser } from "@zoonk/e2e/fixtures/users";
@@ -271,6 +271,28 @@ async function continueWithEnter(page: Page) {
 async function checkWithEnter(page: Page) {
   await expect(page.getByRole("button", { name: /^Check/u })).toBeEnabled();
   await page.keyboard.press("Enter");
+}
+
+/** How long a screen's next step gets to show before a press is retried. */
+const ARRIVED_TIMEOUT_MS = 2000;
+
+/**
+ * Presses on a screen that ignores a press in its first half second, as meant for the screen
+ * before it (a block's moment, a milestone's ceremony), until the press shows `arrived` (or hides
+ * it: `state: "hidden"`).
+ */
+export async function pressUntil(
+  press: () => Promise<void>,
+  arrived: Locator,
+  { state = "visible" }: { state?: "hidden" | "visible" } = {},
+) {
+  await expect(async () => {
+    await press();
+
+    await (state === "visible"
+      ? expect(arrived).toBeVisible({ timeout: ARRIVED_TIMEOUT_MS })
+      : expect(arrived).toBeHidden({ timeout: ARRIVED_TIMEOUT_MS }));
+  }).toPass({ timeout: 10_000 });
 }
 
 /**

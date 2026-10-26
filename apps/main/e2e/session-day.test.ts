@@ -7,7 +7,7 @@ import { type Page, expect, test } from "./fixtures";
 import { type StreamEvent, followRun } from "./generation-run";
 import { tabTo } from "./keyboard-focus";
 import { continueToLastStep } from "./result-steps";
-import { answerRight, createStudyDay, openAs, writeStudyLesson } from "./study-day";
+import { answerRight, createStudyDay, openAs, pressUntil, writeStudyLesson } from "./study-day";
 
 /**
  * A moment sits under its header's heading: the lesson's title in the player, "Today's session"
@@ -89,14 +89,25 @@ async function playLesson(page: Page) {
   await page.keyboard.press("Enter");
 
   await expectMoment(page, "Lesson complete");
-  await page.getByRole("button", { name: /^Continue/u }).click();
+
+  await pressUntil(
+    () => page.getByRole("button", { name: /^Continue/u }).click({ timeout: 1000 }),
+    page.getByRole("heading", { name: /^Practice one/u }),
+  );
 }
 
-/** The day's last block: its last answer goes straight to the summary, one tap fewer. */
+/** The day's last block, to its moment and on to the summary by Enter. */
 async function playPractice(page: Page) {
   await expect(page).toHaveURL((url) => url.pathname === "/session");
   await answerRight(page, /^Practice one/u);
   await answerRight(page, /^Practice two/u);
+  await expectMoment(page, "Practice done");
+  await expect(page.getByRole("button", { name: /^See today's summary/u })).toBeVisible();
+
+  await pressUntil(
+    () => page.keyboard.press("Enter"),
+    page.getByRole("heading", { level: 1, name: /^Done in /u }),
+  );
 }
 
 test("reopening a fully answered block waits for Finish before completing the session", async ({
@@ -167,11 +178,14 @@ test.describe("Today's session", () => {
 
     await playCapsules(page);
     await expectMoment(page, "Review done");
-    await page.keyboard.press("Enter");
+
+    await pressUntil(
+      () => page.keyboard.press("Enter"),
+      page.getByText('What does the electron "cloud" show?'),
+    );
 
     await playLesson(page);
     await playPractice(page);
-    await expect(page.getByRole("heading", { level: 1, name: /^Done in /u })).toBeVisible();
 
     // Finish is a link back to Today, and Enter follows it.
     await continueToLastStep(page, { keyboard: true });
@@ -192,10 +206,12 @@ test.describe("Today's session", () => {
     await page.keyboard.press("Enter");
     await playCapsules(page);
     await expectMoment(page, "Review done");
-    await page.getByRole("button", { name: "Stop for today" }).click();
 
     // What changed so far, said as a pause: nothing is skipped.
-    await expect(page.getByRole("heading", { level: 1, name: "Done for now" })).toBeVisible();
+    await pressUntil(
+      () => page.getByRole("button", { name: "Stop for today" }).click({ timeout: 1000 }),
+      page.getByRole("heading", { level: 1, name: "Done for now" }),
+    );
 
     const blocks = await prisma.studySessionBlock.findMany({
       orderBy: { position: "asc" },

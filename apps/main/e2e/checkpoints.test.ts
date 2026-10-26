@@ -5,7 +5,7 @@ import {
   playDuel,
 } from "./checkpoint-fixtures";
 import { expect, test } from "./fixtures";
-import { openAs } from "./study-day";
+import { openAs, pressUntil } from "./study-day";
 
 test.describe("A checkpoint from today's session", () => {
   test("continues back to the session by keyboard, to the day's summary", async ({ browser }) => {
@@ -36,25 +36,25 @@ test.describe("A checkpoint from today's session", () => {
 
     await playDuel(page, { keyboard: true, passMark: CHECKPOINT_PASS_MARK });
 
-    // Enter leaves the single-screen result for the session.
+    // Winning the first checkpoint earned the Star glasses: their moment opens right over the
+    // duel's result, and Enter puts them on.
+    const ceremony = page.getByRole("dialog", { name: "Star glasses!" });
+    await expect(ceremony.getByRole("button", { name: "Wear them" })).toBeFocused();
+    await pressUntil(() => page.keyboard.press("Enter"), ceremony, { state: "hidden" });
+
     await expect(
       page.getByRole("heading", { level: 1, name: "You beat the Trickster!" }),
     ).toBeVisible();
 
+    // Enter leaves the single-screen result for the session.
     await expect(page.getByRole("link", { name: "Continue" })).toHaveAttribute("href", "/session");
     await page.keyboard.press("Enter");
 
-    // The checkpoint was the day's only block, so the session shows the day's summary.
+    // The checkpoint was the day's only block, so the session shows the day's summary, without the
+    // glasses' moment again.
     await expect(page).toHaveURL(/\/session$/u);
-    // Winning the first checkpoint earned the Star glasses: their moment opens over the summary,
-    // and Enter puts them on.
-    const ceremony = page.getByRole("dialog", { name: "Star glasses!" });
-    await expect(ceremony.getByRole("button", { name: "Wear them" })).toBeFocused();
-    await page.keyboard.press("Enter");
-    await expect(ceremony).toBeHidden();
-
-    // The step under it takes the focus, and Enter finishes the day.
     await expect(page.getByRole("heading", { level: 1, name: /^Done in /u })).toBeVisible();
+    await expect(ceremony).toBeHidden();
     await expect(page.getByRole("link", { name: "Finish" })).toBeVisible();
     await page.keyboard.press("Enter");
     await expect(page).toHaveURL(/\/today$/u);

@@ -2,6 +2,8 @@
 
 import { type CheckpointView } from "@zoonk/core/checkpoints/contract";
 import { useMemo, useState } from "react";
+import { type LearnBuddy } from "../buddies/use-buddy-name";
+import { type MomentCeremony } from "../session/moment-ceremony";
 import { type CheckpointHrefs, CheckpointProvider } from "./checkpoint-context";
 import { type CheckpointAnswer } from "./checkpoint-duel-state";
 import { CheckpointDuelView } from "./checkpoint-duel-view";
@@ -43,18 +45,26 @@ function useAnswersGiven(actions: CheckpointActions) {
  */
 export function CheckpointScreen({
   actions,
+  buddy,
   checkpoint,
   hrefs,
+  renderCeremony,
 }: {
   actions: CheckpointActions;
+  /** The learner's buddy, glad about the missions the duel completed. */
+  buddy?: LearnBuddy | null;
   checkpoint: CheckpointView;
   hrefs: CheckpointHrefs;
+  /** The full-screen moment for a milestone the duel earned (new glasses, a belt). */
+  renderCeremony?: MomentCeremony;
 }) {
   const given = useAnswersGiven(actions);
   const duel = useCheckpointDuel({ actions: given.actions, checkpoint });
 
   return (
-    <CheckpointProvider value={{ answersGiven: given.answersGiven, checkpoint, duel, hrefs }}>
+    <CheckpointProvider
+      value={{ answersGiven: given.answersGiven, buddy, checkpoint, duel, hrefs, renderCeremony }}
+    >
       {duel.state.phase === "duel" ? <CheckpointDuelView /> : <CheckpointResultView />}
     </CheckpointProvider>
   );

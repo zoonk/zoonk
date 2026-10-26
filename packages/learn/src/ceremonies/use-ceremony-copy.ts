@@ -1,8 +1,8 @@
 "use client";
 
-import { type BeltColor } from "@zoonk/utils/belt-level";
+import { type BeltColor, getBeltStartBrainPower } from "@zoonk/utils/belt-level";
 import { type BuddyGlasses, type BuddyStage } from "@zoonk/utils/buddy";
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import { toBeltColor, useBeltName } from "../_utils/use-belt-name";
 import { BUDDY_GLASSES } from "../buddies/buddy-labels";
 import { type LearnBuddy, useBuddyName } from "../buddies/use-buddy-name";
@@ -77,11 +77,22 @@ function useStageLine({ buddyName, key }: { buddyName: string; key: string }): s
   }
 }
 
-function useBeltTitle(color: BeltColor | null): string {
+/** A new belt's title and its one fact: the Brain Power the learner reached to earn it. */
+function useBeltCopy(color: BeltColor | null): Omit<CeremonyCopy, "action"> {
   const t = useExtracted();
+  const format = useFormatter();
   const beltName = useBeltName();
 
-  return color ? t("{belt}!", { belt: beltName(color) }) : t("A new belt!");
+  if (!color) {
+    return { detail: t("Your Brain Power earned it."), title: t("A new belt!") };
+  }
+
+  return {
+    detail: t("You reached {points} Brain Power by learning.", {
+      points: format.number(getBeltStartBrainPower(color)),
+    }),
+    title: t("{belt}!", { belt: beltName(color) }),
+  };
 }
 
 /**
@@ -102,16 +113,12 @@ export function useCeremonyCopy({
   const buddyName = useBuddyName(buddy);
   const glasses = useGlassesCopy(toBuddyGlasses(milestone.key));
   const stageLine = useStageLine({ buddyName, key: milestone.key });
-  const beltTitle = useBeltTitle(toBeltColor(milestone.key));
+  const belt = useBeltCopy(toBeltColor(milestone.key));
   const continueLabel = t("Continue");
 
   switch (milestone.kind) {
     case "belt":
-      return {
-        action: continueLabel,
-        detail: t("Every point came from what you learned."),
-        title: beltTitle,
-      };
+      return { ...belt, action: continueLabel };
     case "buddyStage":
       return {
         action: continueLabel,

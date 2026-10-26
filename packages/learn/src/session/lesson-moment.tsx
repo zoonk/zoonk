@@ -7,11 +7,12 @@ import { EnterButton } from "../_components/enter-button";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
 import { type TestOutStart } from "../_components/test-out-start-link";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
+import { type MomentCeremony } from "./moment-ceremony";
 import { PendingMoment } from "./pending-moment";
 import { SessionHeader } from "./session-header";
 import { getSessionQueue } from "./session-queue-rows";
 import { type StudyBlock, type StudyMomentView, type StudySession } from "./session-types";
-import { type MomentCeremony, StudyMoment } from "./study-moment";
+import { StudyMoment } from "./study-moment";
 import { useMomentEvents } from "./use-moment-events";
 import { useSessionAction } from "./use-session-action";
 

@@ -3,6 +3,7 @@ import { NotFoundPage } from "@/components/errors/not-found-page";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { TaskNotFound } from "@/components/learn/task-not-found";
 import { redirect } from "@/i18n/navigation";
+import { getLearnerBuddy } from "@/lib/learn/learner-buddy";
 import { getSessionBlockReturn } from "@/lib/session/session-block-return";
 import { withQuery } from "@/lib/with-query";
 import { getCheckpoint } from "@zoonk/core/checkpoints/get";
@@ -90,7 +91,7 @@ async function CheckpointContent({ params, searchParams }: Props) {
 
   // A duel or the week's challenge is the learner's own and reads as of today: render per request.
   await connection();
-  const result = await getCheckpoint(blockId);
+  const [result, buddy] = await Promise.all([getCheckpoint(blockId), getLearnerBuddy()]);
 
   if (result.status === "unauthorized") {
     return <AuthGateScreen next={withQuery(`/checkpoint/${blockId}`, query)} />;
@@ -133,7 +134,11 @@ async function CheckpointContent({ params, searchParams }: Props) {
 
   return (
     <MainLearnProvider>
-      <CheckpointClient checkpoint={checkpoint} continueHref={sessionReturn.continueHref} />
+      <CheckpointClient
+        buddy={buddy}
+        checkpoint={checkpoint}
+        continueHref={sessionReturn.continueHref}
+      />
     </MainLearnProvider>
   );
 }

@@ -5,6 +5,9 @@ import { StepCard, StepHeader, StepTitle } from "../_components/step-card";
 import { Steps } from "../_components/steps";
 import { useTaskAsideShown } from "../_components/task-header";
 import { TaskMeta } from "../_components/task-meta";
+import { MissionMoment } from "../missions/mission-moment";
+import { MomentCeremonyOnce } from "../session/moment-ceremony";
+import { ReachedMoment } from "../session/reached-moment";
 import { TaskMainLink } from "../shell/task-frame";
 import { useCheckpointScreen } from "./checkpoint-context";
 import { NoVerdictStep } from "./checkpoint-empty";
@@ -77,9 +80,35 @@ function ResultArt() {
 }
 
 /**
- * How it went, on one page: the Trickster and the score; on a phone, what it earned and what's
- * next under them (a wide screen has those in the aside); and, where the aside shows, the answers
- * explained right under the outcome.
+ * What the duel did to the day, right under its score, as every block's moment says it: the
+ * missions it completed by name (the day's bonus when it was the last), then the belt level and
+ * the tenth of Energy it reached.
+ */
+function DayMoment() {
+  const { buddy, duel } = useCheckpointScreen();
+  const completion = duel.state.completion;
+
+  if (!completion) {
+    return null;
+  }
+
+  return (
+    <>
+      <MissionMoment
+        buddy={buddy}
+        completed={completion.completedMissions}
+        fullMeal={completion.fullMeal}
+        missions={completion.missions}
+      />
+      <ReachedMoment buddy={buddy} ceremony={completion.ceremony} reached={completion.reached} />
+    </>
+  );
+}
+
+/**
+ * How it went, on one page: the Trickster and the score, what it did to the day's missions and
+ * level; on a phone, what it earned and what's next under them (a wide screen has those in the
+ * aside); and, where the aside shows, the answers explained right under the outcome.
  */
 function OutcomeStep({ showsReview }: { showsReview: boolean }) {
   const headline = useHeadline();
@@ -92,6 +121,8 @@ function OutcomeStep({ showsReview }: { showsReview: boolean }) {
         <StepTitle>{headline}</StepTitle>
         <ScoreLine />
       </StepHeader>
+
+      <DayMoment />
 
       <div className="flex w-full flex-col gap-6 lg:hidden">
         <CheckpointResultDetails />
@@ -112,7 +143,7 @@ function OutcomeStep({ showsReview }: { showsReview: boolean }) {
  */
 export function CheckpointResultView() {
   const t = useExtracted();
-  const { checkpoint, hrefs } = useCheckpointScreen();
+  const { checkpoint, duel, hrefs, renderCeremony } = useCheckpointScreen();
   const name = useCheckpointEyebrow(checkpoint);
   const outcome = useCheckpointOutcome();
   const reviewed = useReviewedAnswers();
@@ -122,17 +153,28 @@ export function CheckpointResultView() {
   const hasReview = reviewed.length > 0;
 
   return (
-    <Steps
-      aside={outcome ? { children: <CheckpointResultDetails />, label: name, title: name } : null}
-      exitHref={hrefs.exit}
-      finalAction={<TaskMainLink href={hrefs.continue}>{t("Continue")}</TaskMainLink>}
-      items={[
-        {
-          action: hasReview && !docked ? <CheckpointReviewDrawer /> : null,
-          content: outcome ? <OutcomeStep showsReview={hasReview && docked} /> : <NoVerdictStep />,
-          id: "outcome",
-        },
-      ]}
-    />
+    <>
+      <MomentCeremonyOnce
+        milestone={duel.state.completion?.ceremony ?? null}
+        render={renderCeremony}
+      />
+
+      <Steps
+        aside={outcome ? { children: <CheckpointResultDetails />, label: name, title: name } : null}
+        exitHref={hrefs.exit}
+        finalAction={<TaskMainLink href={hrefs.continue}>{t("Continue")}</TaskMainLink>}
+        items={[
+          {
+            action: hasReview && !docked ? <CheckpointReviewDrawer /> : null,
+            content: outcome ? (
+              <OutcomeStep showsReview={hasReview && docked} />
+            ) : (
+              <NoVerdictStep />
+            ),
+            id: "outcome",
+          },
+        ]}
+      />
+    </>
   );
 }

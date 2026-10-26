@@ -11,7 +11,6 @@ import {
 } from "@zoonk/ui/components/dialog";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { type BuddyGlasses } from "@zoonk/utils/buddy";
-import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import {
   TASK_MAIN_ACTION_CLASS,
@@ -20,6 +19,7 @@ import {
   TaskBody,
 } from "../_components/task-layout";
 import { toBeltColor } from "../_utils/use-belt-name";
+import { SCREEN_STEADY_MS, useSteady } from "../_utils/use-steady";
 import { type LearnBuddy, resolveLearnBuddy, useBuddyName } from "../buddies/use-buddy-name";
 import { useLearnAnalytics } from "../learn-context";
 import { type CeremonyMilestone, toBuddyGlasses, useCeremonyCopy } from "./use-ceremony-copy";
@@ -30,7 +30,7 @@ type CeremonyProps = {
   /** Draws the buddy in its new belt, stage or glasses; null resolves to the default buddy. */
   buddy: LearnBuddy | null;
   milestone: CeremonyMilestone;
-  /** Called once it's closed, by its button, Skip or Escape. */
+  /** Called once it's closed, by its button or Escape. */
   onClose?: () => void;
   /** Records that it was celebrated, so it shows only once. Called when it appears. */
   onShown: (milestoneId: string) => void;
@@ -79,7 +79,8 @@ function CeremonyArt({
   return (
     <Buddy
       beltColor={milestone.kind === "belt" && belt ? belt : buddy.beltColor}
-      className="size-40 sm:size-48"
+      // One pulse once it's in, for what just changed on it.
+      className="motion-safe:animate-pulse-scale size-40 [animation-delay:200ms] sm:size-48"
       energy={buddy.energy}
       expression="cheer"
       glasses={milestone.kind === "glasses" && glasses ? glasses : buddy.glasses}
@@ -122,10 +123,10 @@ function CeremonyBar({ action, onConfirm }: { action: string; onConfirm: () => v
 }
 
 /**
- * One full-screen moment for a new belt, the buddy's next stage or new glasses, over the summary,
- * laid out like a task's result: the picture, a title and one line from the top of the column, and
- * one button in the pinned action bar (focused, so Enter presses it), with Skip on the header's
- * right for anyone in a hurry. Escape closes it too.
+ * One full-screen moment for a new belt, the buddy's next stage or new glasses, right after the
+ * block that earned it or over the summary, laid out like a task's result: the picture, a title
+ * and one line from the top of the column, and one button in the pinned action bar (focused, so
+ * Enter presses it; a press still meant for the screen before it is ignored). Escape closes it too.
  */
 function CeremonyMoment({
   buddy,
@@ -133,13 +134,17 @@ function CeremonyMoment({
   onClose,
   onWearGlasses,
 }: Omit<CeremonyProps, "onShown">) {
-  const t = useExtracted();
   const [open, setOpen] = useState(true);
   const glasses = milestone.kind === "glasses" ? toBuddyGlasses(milestone.key) : null;
   const canWear = Boolean(glasses && onWearGlasses);
   const copy = useCeremonyCopy({ buddy, canWear, milestone });
+  const isSteady = useSteady(SCREEN_STEADY_MS);
 
   async function confirm() {
+    if (!isSteady()) {
+      return;
+    }
+
     if (canWear && glasses && onWearGlasses) {
       await onWearGlasses(glasses);
     }
@@ -162,13 +167,8 @@ function CeremonyMoment({
           className="data-open:animate-in data-open:fade-in data-closed:animate-out data-closed:fade-out fixed inset-0 z-50 flex flex-col overflow-y-auto duration-200"
           data-slot="milestone-ceremony"
         >
-          <div className="max-w-column mx-auto flex w-full justify-end px-4 py-2 xl:py-3">
-            <Button className="-mr-2.5" onClick={() => setOpen(false)} size="sm" variant="ghost">
-              {t("Skip")}
-            </Button>
-          </div>
-
-          <TaskBody className="items-start">
+          {/* As far down as a task's result sits under its header. */}
+          <TaskBody className="items-start pt-16 xl:pt-18">
             <CeremonyArt buddy={buddy} milestone={milestone} />
             <CeremonyText detail={copy.detail} title={copy.title} />
           </TaskBody>
