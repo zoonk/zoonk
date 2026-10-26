@@ -24,7 +24,8 @@ function CoursePlanLink({ courseId, pace }: { courseId: string; pace: number | n
  * The course's way in: "Build my plan", whose start page asks the visitor's level first, and on the
  * first screen "Try a lesson" beside it, down to the card (`tryId`) when there's one to try, with
  * a short line that it's free and needs no account. From `xl` the card sits beside the hero, where
- * a link to it would scroll nowhere, so it's only there under `xl`.
+ * a link to it would scroll nowhere, so it's only there under `xl`, and the note returns beside
+ * the one button.
  */
 export async function CourseStart({
   className,
@@ -41,7 +42,12 @@ export async function CourseStart({
 
   return (
     <StartBlock
-      className={cn(tryId && "sm:flex-col sm:items-start sm:gap-3", className)}
+      className={cn(
+        // Two buttons put the note under them; from `xl`, where "Try a lesson" leaves for the
+        // card beside the title, the one left keeps its note beside it.
+        tryId && "sm:flex-col sm:items-start sm:gap-3 xl:flex-row xl:items-center xl:gap-5",
+        className,
+      )}
       note={<NoAccountStartNote>{t("Start free, no account needed.")}</NoAccountStartNote>}
     >
       {tryId ? (
