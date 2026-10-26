@@ -56,10 +56,12 @@ async function findGoalItem({
 async function gradeTyped({
   answer,
   item,
+  practicedLanguage,
   userId,
 }: {
   answer: PlacementAnswer;
   item: TypedItem;
+  practicedLanguage: string | null;
   userId: string;
 }): Promise<boolean | null> {
   if ("dontKnow" in answer) {
@@ -70,7 +72,13 @@ async function gradeTyped({
     return null;
   }
 
-  const verdict = await gradeTypedItemAnswer({ item, text: answer.text, userId });
+  const verdict = await gradeTypedItemAnswer({
+    item,
+    practicedLanguage,
+    text: answer.text,
+    userId,
+  });
+
   return verdict.isCorrect;
 }
 
@@ -78,14 +86,16 @@ async function gradeTyped({
 function gradeAnswer({
   answer,
   item,
+  practicedLanguage,
   userId,
 }: {
   answer: PlacementAnswer;
   item: PlacementItem;
+  practicedLanguage: string | null;
   userId: string;
 }): Promise<boolean | null> | boolean | null {
   if (item.format === "typed") {
-    return gradeTyped({ answer, item, userId });
+    return gradeTyped({ answer, item, practicedLanguage, userId });
   }
 
   return "text" in answer ? null : gradeChoiceAnswer({ answer, item }).isCorrect;
@@ -119,7 +129,12 @@ export async function answerPlacementQuestion({
   ]);
 
   const isCorrect = item
-    ? await gradeAnswer({ answer: input.answer, item, userId: owned.userId })
+    ? await gradeAnswer({
+        answer: input.answer,
+        item,
+        practicedLanguage: owned.goal.targetLanguage,
+        userId: owned.userId,
+      })
     : null;
 
   if (!item || isCorrect === null) {

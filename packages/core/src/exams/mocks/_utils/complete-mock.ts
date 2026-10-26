@@ -206,6 +206,7 @@ export async function completeMock({
   const graded = await gradeMock({
     areas,
     mock,
+    practicedLanguage: owned.goal?.targetLanguage ?? null,
     sessionId: owned.block?.sessionId ?? null,
     timeZone,
   });

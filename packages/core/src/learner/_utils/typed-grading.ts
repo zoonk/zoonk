@@ -15,10 +15,12 @@ export type TypedVerdict = { feedback: string | null; isCorrect: boolean };
  */
 export async function gradeTypedItemAnswer({
   item,
+  practicedLanguage,
   text,
   userId,
 }: {
   item: TypedItem;
+  practicedLanguage: string | null;
   text: string;
   userId: string;
 }): Promise<TypedVerdict> {
@@ -38,6 +40,7 @@ export async function gradeTypedItemAnswer({
     answer: text,
     keyPoints: content.keyPoints,
     language: item.language,
+    practicedLanguage,
     question: getTypedQuestionText(item),
     sampleAnswer: content.sampleAnswer,
   });

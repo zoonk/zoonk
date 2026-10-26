@@ -122,6 +122,36 @@ describe("typed answers in placement", () => {
     expect(vi.mocked(gradeTypedAnswer)).toHaveBeenCalledOnce();
   });
 
+  it("keeps language practice on the model path for a rounded heard price", async () => {
+    const { goal, typed } = await setup();
+
+    await prisma.item.update({
+      data: {
+        content: {
+          ...TYPED_CONTENT,
+          acceptedAnswers: ["11.88"],
+          question: "Write the price you hear, in numbers.",
+          sampleAnswer: "11.88",
+        },
+      },
+      where: { id: typed.id },
+    });
+
+    // Only the external model verdict is supplied; the goal and grading orchestration are real.
+    mockGrade({ met: 0 });
+
+    const result = await answerPlacementQuestion({
+      goalId: goal.id,
+      input: { answer: { text: "12" }, durationMs: 9000, itemId: typed.id },
+    });
+
+    expect(result).toMatchObject({ isCorrect: false, status: "ready" });
+
+    expect(gradeTypedAnswer).toHaveBeenCalledWith(
+      expect.objectContaining({ answer: "12", practicedLanguage: "en" }),
+    );
+  });
+
   it("grades a typed answer with the model past the learner's small AI help, without counting it", async () => {
     const { goal, typed, user } = await setup();
     await answerQuickRight({ goalId: goal.id });

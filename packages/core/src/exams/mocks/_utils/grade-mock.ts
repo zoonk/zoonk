@@ -85,10 +85,12 @@ async function recordAnswer({
 async function gradeAsked({
   asked,
   mock,
+  practicedLanguage,
   recorded,
 }: {
   asked: AskedQuestion;
   mock: MockSitting;
+  practicedLanguage: string | null;
   recorded: ReadonlyMap<string, boolean>;
 }): Promise<GradedQuestion> {
   const { item } = asked;
@@ -108,7 +110,7 @@ async function gradeAsked({
 
   const verdict = recorded.has(item.id)
     ? { isCorrect: recorded.get(item.id) === true }
-    : await gradeTypedItemAnswer({ item, text, userId: mock.userId });
+    : await gradeTypedItemAnswer({ item, practicedLanguage, text, userId: mock.userId });
 
   return {
     ...asked,
@@ -143,11 +145,13 @@ function getGradedQuestions({
 export async function gradeMock({
   areas,
   mock,
+  practicedLanguage,
   sessionId,
   timeZone,
 }: {
   areas: Map<string, string>;
   mock: MockSitting;
+  practicedLanguage: string | null;
   /** The session a scheduled mock was played in; null for a mock taken any time. */
   sessionId: string | null;
   timeZone: string;
@@ -190,7 +194,7 @@ export async function gradeMock({
   // Typed answers a model grades are independent of each other, so they're graded at once.
   const graded = await Promise.all(
     getGradedQuestions({ asked: allAsked, mock }).map((asked) =>
-      gradeAsked({ asked, mock, recorded }),
+      gradeAsked({ asked, mock, practicedLanguage, recorded }),
     ),
   );
 

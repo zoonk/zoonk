@@ -94,11 +94,13 @@ async function gradeStudyAnswer({
   answer,
   blockId,
   item,
+  session,
   userId,
 }: {
   answer: StudyAnswerInput["answer"];
   blockId: string;
   item: SessionItem;
+  session: StudySessionRow;
   userId: string;
 }): Promise<GradedSessionAnswer> {
   const graded = gradeSessionAnswer({ answer, blockId, item });
@@ -107,7 +109,12 @@ async function gradeStudyAnswer({
     return graded;
   }
 
-  const verdict = await gradeTypedItemAnswer({ item, text: answer.text, userId });
+  const verdict = await gradeTypedItemAnswer({
+    item,
+    practicedLanguage: session.goal?.targetLanguage ?? null,
+    text: answer.text,
+    userId,
+  });
 
   return {
     ...graded,
@@ -180,7 +187,7 @@ export async function answerStudyQuestion({
 
   const graded = storedAnswer
     ? gradeSessionAnswer({ answer: storedAnswer, blockId: block.id, item })
-    : await gradeStudyAnswer({ answer: input.answer, blockId: block.id, item, userId });
+    : await gradeStudyAnswer({ answer: input.answer, blockId: block.id, item, session, userId });
 
   const drill = payload.drills.find((candidate) => candidate.itemIds.includes(item.id));
 
