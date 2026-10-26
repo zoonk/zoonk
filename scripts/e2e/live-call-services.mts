@@ -1,20 +1,15 @@
-import { execFile } from "node:child_process";
 import { once } from "node:events";
-import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 import { createServer } from "node:net";
-import { tmpdir } from "node:os";
-import { dirname, join, resolve } from "node:path";
-import { promisify } from "node:util";
+import { dirname, resolve } from "node:path";
 import { applyCommandExit, runForegroundCommand } from "../dev/process.mts";
 import { startLiveCallApi } from "./live-call-api.mts";
 import { startLiveCallTestProvider } from "./live-call-provider-bridge.mts";
-import { dealShardTests, takeShardArgument } from "./shard-test-list.mts";
 
 /**
  * Main's E2E run (`pnpm e2e:main`), the same in CI and in any checkout with its own E2E database:
  * migrates that database, builds the real API and Main side by side, starts the API and a no-spend
- * live-call provider, and runs Main's Playwright suite with the arguments it was given; a shard
- * (`--shard=2/12`) runs its share of the suite dealt test by test (`dealShardTests`).
+ * live-call provider, and runs Main's Playwright suite with the arguments it was given.
  */
 const repository = resolve(import.meta.dirname, "../..");
 
@@ -47,41 +42,6 @@ async function run({
 
   applyCommandExit(result);
   return false;
-}
-
-const execute = promisify(execFile);
-
-/** Room for `playwright test --list`, a line per test. */
-const MAX_LISTING_BYTES = 10 * 1024 * 1024;
-
-/**
- * The run's Playwright arguments, with a shard's tests named in a test list instead of
- * Playwright's `--shard`, which cuts the suite into contiguous runs.
- */
-async function getPlaywrightArgs(args: readonly string[]): Promise<string[]> {
-  const { rest, shard } = takeShardArgument(args);
-
-  if (!shard) {
-    return rest;
-  }
-
-  const { stdout } = await execute(
-    process.execPath,
-    [
-      resolve(repository, "scripts/run-test-env.mts"),
-      "e2e",
-      "playwright",
-      "test",
-      "--list",
-      ...rest,
-    ],
-    { cwd: resolve(repository, "apps/main"), maxBuffer: MAX_LISTING_BYTES },
-  );
-
-  const file = join(await mkdtemp(join(tmpdir(), "zoonk-e2e-shard-")), "tests.txt");
-  await writeFile(file, dealShardTests({ listing: stdout, shard }));
-
-  return [...rest, "--test-list", file];
 }
 
 /**
@@ -126,13 +86,12 @@ async function runMain() {
   // The test environment (`getTestEnvironment`) points Main's build and server at this API.
   process.env.E2E_API_URL = `http://localhost:${port}`;
 
-  const [apiBuilt, mainBuilt, playwrightArgs] = await Promise.all([
+  const [apiBuilt, mainBuilt] = await Promise.all([
     run({
       args: ["--filter", "api", "build:e2e"],
       environment: { ...process.env, NEXT_PUBLIC_AUTH_BASE_PATH: "/v1/auth" },
     }).then(async (built) => markBuilt({ app: "api", built })),
     buildMain().then(async (built) => markBuilt({ app: "main", built })),
-    getPlaywrightArgs(process.argv.slice(2)),
   ]);
 
   if (!apiBuilt || !mainBuilt) {
@@ -144,7 +103,7 @@ async function runMain() {
   try {
     // Main's build prepared the data its tests read: the global setup doesn't again.
     await run({
-      args: ["--filter", "main", "e2e", ...playwrightArgs],
+      args: ["--filter", "main", "e2e", ...process.argv.slice(2)],
       environment: { ...process.env, E2E_DATA_PREPARED: "true" },
     });
   } finally {

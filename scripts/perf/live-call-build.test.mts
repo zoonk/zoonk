@@ -64,13 +64,9 @@ describe("Main CI performance hook in its service supervisor", () => {
         mkdir(join(root, "scripts/dev"), { recursive: true }),
       ]);
 
-      await Promise.all(
-        ["live-call-services.mts", "shard-test-list.mts"].map(async (file) =>
-          writeFile(
-            join(directory, file),
-            await readFile(resolve(import.meta.dirname, "../e2e", file)),
-          ),
-        ),
+      await writeFile(
+        join(directory, "live-call-services.mts"),
+        await readFile(resolve(import.meta.dirname, "../e2e/live-call-services.mts")),
       );
 
       await writeFile(

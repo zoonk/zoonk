@@ -29,25 +29,15 @@ jobs:
     timeout-minutes: 15
     strategy:
       fail-fast: false
-      # Every job builds the API and Main, then runs its share of the tests, dealt test by test so
-      # each file's time spreads over every shard (`pnpm e2e:main --shard`). The dependent
-      # live-call-states project runs in its own job: Playwright runs a sharded project's
-      # dependencies whole in each shard. That job is the shortest, so it also checks that Main's
-      # navigation pages are prerendered whole and saves the build caches.
+      # Every job builds the API and Main, then runs its share of the tests (Playwright's `--shard`
+      # splits a fully parallel project test by test). The dependent live-call-states project runs in
+      # its own job: Playwright runs a sharded project's dependencies whole in each shard. That job is
+      # the shortest, so it also checks that Main's navigation pages are prerendered whole and saves
+      # the build caches.
       matrix:
         include:
-          - { suite: chromium 1/12, args: --project=chromium --shard=1/12 }
-          - { suite: chromium 2/12, args: --project=chromium --shard=2/12 }
-          - { suite: chromium 3/12, args: --project=chromium --shard=3/12 }
-          - { suite: chromium 4/12, args: --project=chromium --shard=4/12 }
-          - { suite: chromium 5/12, args: --project=chromium --shard=5/12 }
-          - { suite: chromium 6/12, args: --project=chromium --shard=6/12 }
-          - { suite: chromium 7/12, args: --project=chromium --shard=7/12 }
-          - { suite: chromium 8/12, args: --project=chromium --shard=8/12 }
-          - { suite: chromium 9/12, args: --project=chromium --shard=9/12 }
-          - { suite: chromium 10/12, args: --project=chromium --shard=10/12 }
-          - { suite: chromium 11/12, args: --project=chromium --shard=11/12 }
-          - { suite: chromium 12/12, args: --project=chromium --shard=12/12 }
+          - { suite: chromium 1/2, args: --project=chromium --shard=1/2 }
+          - { suite: chromium 2/2, args: --project=chromium --shard=2/2 }
           - { suite: live-call-states, args: --project=live-call-states --no-deps, gates: true }
     env:
       BETTER_AUTH_SECRET: test-secret-for-ci
