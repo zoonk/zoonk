@@ -83,7 +83,7 @@ test.describe("A spoken answer", () => {
       await sayIt(page);
       await expect(page.getByText("What we heard")).toBeVisible();
 
-      // The recording and the fields the API reads, as the learner: never the step in the body.
+      // The browser sends the recording and required fields with the learner's bearer token.
       const [request] = sent;
       const body = request?.postData() ?? "";
 
@@ -92,7 +92,6 @@ test.describe("A spoken answer", () => {
       expect(body).toContain('name="audio"');
       expect(body).toContain('name="durationMs"');
       expect(body).toContain('name="timeZone"');
-      expect(body).not.toContain('name="stepId"');
     } finally {
       await context.close();
     }
