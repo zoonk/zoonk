@@ -13,6 +13,7 @@ import {
   FinishLink,
   KeepGoingButton,
   KeepGoingFailed,
+  SHARED_ROW_ACTION_CLASS,
   SeeMistakesLink,
   SummaryOptions,
   useKeepGoing,
@@ -50,6 +51,47 @@ function useRewardsStep(stepRef: React.RefObject<HTMLElement | null>) {
 }
 
 /**
+ * The summary's buttons: Back on the rewards step, "See mistakes" (and "Keep going" right after
+ * stopping) beside the main action, Continue to the rewards on a phone or Finish. Right after
+ * stopping, "See mistakes" and "Keep going" share a phone's row and Finish takes its own under
+ * them: all three in one row squeezed Finish's label ("Concluir" read "ncluir").
+ */
+function SummaryButtons({
+  continuesToRewards,
+  keepGoing,
+  rewards,
+}: {
+  continuesToRewards: boolean;
+  keepGoing: ReturnType<typeof useKeepGoing>;
+  rewards: ReturnType<typeof useRewardsStep>;
+}) {
+  const t = useExtracted();
+  const stopped = useIsStopped();
+  const { mistakesHref, summary } = useSessionSummary();
+  const canSeeMistakes = mistakesHref !== null && summary.mistakesSaved > 0;
+  const crowded = stopped && canSeeMistakes;
+  const sharedRow = crowded ? SHARED_ROW_ACTION_CLASS : undefined;
+
+  return (
+    <TaskActions className={crowded ? "max-lg:flex-wrap" : undefined}>
+      {rewards.open && <StepsBackButton onClick={rewards.close} />}
+      {!rewards.open && canSeeMistakes && (
+        <SeeMistakesLink className={sharedRow} href={mistakesHref} />
+      )}
+      {stopped && <KeepGoingButton className={sharedRow} keepGoing={keepGoing} />}
+
+      {continuesToRewards && (
+        <TaskMainButton className="lg:hidden" onClick={rewards.show}>
+          {t("Continue")}
+        </TaskMainButton>
+      )}
+
+      <FinishLink className={continuesToRewards ? "max-lg:hidden" : undefined} />
+    </TaskActions>
+  );
+}
+
+/**
  * The end of the session on one screen: the day done with its four numbers, the skills that rose
  * and tomorrow's lesson, with "See mistakes" beside Finish, a link back to Today. From `lg` what
  * the day earned sits in the aside beside it; a phone gives it a step of its own (Continue) only
@@ -62,7 +104,7 @@ function useRewardsStep(stepRef: React.RefObject<HTMLElement | null>) {
 export function SummarySteps() {
   const t = useExtracted();
   const stopped = useIsStopped();
-  const { actions, ceremony, exitHref, mistakesHref, summary } = useSessionSummary();
+  const { actions, ceremony, exitHref, summary } = useSessionSummary();
   const stepRef = useRef<HTMLDivElement>(null);
   const rewards = useRewardsStep(stepRef);
   const keepGoing = useKeepGoing();
@@ -88,7 +130,6 @@ export function SummarySteps() {
   }
 
   const milestone = summary.ceremony;
-  const canSeeMistakes = mistakesHref !== null && summary.mistakesSaved > 0;
   const continuesToRewards = rewards.exists && !rewards.open;
 
   return (
@@ -100,19 +141,11 @@ export function SummarySteps() {
         <>
           <KeepGoingFailed keepGoing={keepGoing} />
 
-          <TaskActions>
-            {rewards.open && <StepsBackButton onClick={rewards.close} />}
-            {!rewards.open && canSeeMistakes && <SeeMistakesLink href={mistakesHref} />}
-            {stopped && <KeepGoingButton keepGoing={keepGoing} />}
-
-            {continuesToRewards && (
-              <TaskMainButton className="lg:hidden" onClick={rewards.show}>
-                {t("Continue")}
-              </TaskMainButton>
-            )}
-
-            <FinishLink className={continuesToRewards ? "max-lg:hidden" : undefined} />
-          </TaskActions>
+          <SummaryButtons
+            continuesToRewards={continuesToRewards}
+            keepGoing={keepGoing}
+            rewards={rewards}
+          />
 
           <SummaryOptions lastStep={!continuesToRewards} />
         </>

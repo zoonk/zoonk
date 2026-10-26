@@ -10,13 +10,23 @@ import { ExtraTimeButton } from "../extra-time-button";
 import { useSessionAction } from "../use-session-action";
 import { useIsStopped, useSessionSummary } from "./summary-context";
 
+/**
+ * On a phone, a secondary action that shares its row with another one over a main action of its
+ * own: both grow to fill the row.
+ */
+export const SHARED_ROW_ACTION_CLASS = "max-lg:grow";
+
 /** "See mistakes", beside the main action: the notebook with what the session saved. */
-export function SeeMistakesLink({ href }: { href: string }) {
+export function SeeMistakesLink({ className, href }: { className?: string; href: string }) {
   const t = useExtracted();
 
   return (
     <LearnLink
-      className={buttonVariants({ className: "shrink-0", size: "xl", variant: "outline" })}
+      className={buttonVariants({
+        className: cn("shrink-0", className),
+        size: "xl",
+        variant: "outline",
+      })}
       href={href}
     >
       {t("See mistakes")}
@@ -45,12 +55,18 @@ export function useKeepGoing() {
   return useSessionAction({ action: actions.keepGoing });
 }
 
-export function KeepGoingButton({ keepGoing }: { keepGoing: ReturnType<typeof useKeepGoing> }) {
+export function KeepGoingButton({
+  className,
+  keepGoing,
+}: {
+  className?: string;
+  keepGoing: ReturnType<typeof useKeepGoing>;
+}) {
   const t = useExtracted();
 
   return (
     <Button
-      className="shrink-0"
+      className={cn("shrink-0", className)}
       disabled={keepGoing.isPending}
       onClick={keepGoing.run}
       size="xl"
