@@ -66,8 +66,8 @@ function PracticeWordButton({
 }
 
 /**
- * The chosen word's native and slow sounds, its respelling and its one tip, in a well a step below
- * the feedback panel it opens in.
+ * The chosen word's native and slow sounds, its respelling and its one tip, behind a rule on its
+ * leading edge inside the feedback panel it opens in, as the explained answer is, never a box in it.
  */
 function PracticePanel({
   id,
@@ -83,7 +83,7 @@ function PracticePanel({
   return (
     <div
       aria-label={t("How to say {word}", { word: word.text })}
-      className="bg-muted/50 dark:bg-background flex flex-col gap-2 rounded-xl p-3"
+      className="border-border flex flex-col gap-2 border-s-2 ps-3"
       id={id}
       role="region"
     >

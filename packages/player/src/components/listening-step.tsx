@@ -10,14 +10,14 @@ import { type SelectedAnswer, type StepResult } from "../step-answer";
 import { ArrangeWordsInteraction } from "./arrange-words";
 import { PlayAudioButton } from "./play-audio-button";
 import { QuestionText } from "./question-text";
-import { SectionLabel } from "./section-label";
+import { ScreenChip } from "./screen-chip";
 
 function AudioPrompt({ audioUrl }: { audioUrl: string }) {
   const t = useExtracted();
 
   return (
     <div className="flex flex-col gap-3">
-      <SectionLabel>{t("What do you hear?")}</SectionLabel>
+      <ScreenChip>{t("What do you hear?")}</ScreenChip>
       <PlayAudioButton audioUrl={audioUrl} variant="labeled" />
     </div>
   );
@@ -28,7 +28,7 @@ function TextPrompt({ sentence }: { sentence: string }) {
 
   return (
     <div className="flex flex-col gap-2">
-      <SectionLabel>{t("Translate")}</SectionLabel>
+      <ScreenChip>{t("Translate")}</ScreenChip>
       <QuestionText>{sentence}</QuestionText>
     </div>
   );

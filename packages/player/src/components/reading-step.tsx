@@ -27,7 +27,7 @@ import {
 import { stripWrappingQuotes } from "./_utils/strip-wrapping-quotes";
 import { ArrangeWordsInteraction } from "./arrange-words";
 import { QuestionText } from "./question-text";
-import { SectionLabel } from "./section-label";
+import { ScreenChip } from "./screen-chip";
 
 /**
  * One prompt word can either be plain text or a small translation trigger.
@@ -135,7 +135,7 @@ export function ReadingStep({
       wordBankOptions={step.wordBankOptions}
     >
       <div className="flex flex-col gap-2">
-        <SectionLabel>{t("Translate")}</SectionLabel>
+        <ScreenChip>{t("Translate")}</ScreenChip>
         <QuestionText>
           <ReadingPromptText
             sentence={step.sentence.translation}

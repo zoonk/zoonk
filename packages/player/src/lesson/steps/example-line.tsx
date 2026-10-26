@@ -27,9 +27,10 @@ async function readExampleLine({
 }
 
 /**
- * The personal example under an explanation: one sentence about the learner's own life. The
- * lesson writes its lines in the background (`useExampleLines`), so the line simply appears once
- * it's there, and a screen without one stays as it is, with nothing to ask for or explain.
+ * The personal example under an explanation: one sentence about the learner's own life, set apart
+ * by a rule on its leading edge, as a shared text is, rather than a box. The lesson writes its lines
+ * in the background (`useExampleLines`), so the line simply appears once it's there, without
+ * animating in, and a screen without one stays as it is, with nothing to ask for or explain.
  */
 export function ExampleLine({ stepId }: { stepId: string }) {
   const t = useExtracted();
@@ -63,7 +64,7 @@ export function ExampleLine({ stepId }: { stepId: string }) {
   return (
     <aside
       aria-label={t("Your example")}
-      className="bg-muted/60 motion-safe:animate-in motion-safe:fade-in flex items-start gap-3 rounded-xl p-4 text-base leading-relaxed"
+      className="border-border flex items-start gap-3 border-s-2 ps-4 text-base leading-relaxed"
     >
       <UserRoundIcon aria-hidden="true" className="text-muted-foreground mt-1 size-4 shrink-0" />
       <p>

@@ -282,7 +282,7 @@ function CompletionAside() {
               <li className="flex gap-3 py-3 text-sm leading-relaxed first:pt-0" key={key}>
                 <span
                   aria-hidden="true"
-                  className="text-muted-foreground w-4 shrink-0 font-mono text-xs leading-6 tabular-nums"
+                  className="text-faint w-4 shrink-0 font-mono text-xs leading-6 tabular-nums"
                 >
                   {index + 1}
                 </span>

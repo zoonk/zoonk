@@ -7,7 +7,10 @@ import { PlayerContentFrame } from "../../components/step-layouts";
 
 const MS_PER_SECOND = 1000;
 
-/** The shared layout of the screens shown when a lesson can't open yet. */
+/**
+ * The shared layout of the screens shown when a lesson can't open yet, at the top of the column like
+ * every task's screen: a quiet icon, the title and why, then its actions.
+ */
 export function AccessLayout({
   children,
   description,
@@ -20,12 +23,10 @@ export function AccessLayout({
   title: string;
 }) {
   return (
-    <PlayerContentFrame className="my-auto flex flex-col gap-6 py-10" data-slot="lesson-access">
-      <span className="bg-muted text-muted-foreground flex size-12 items-center justify-center rounded-full [&_svg]:size-6">
-        {icon}
-      </span>
+    <PlayerContentFrame className="flex flex-col gap-6 pt-4 pb-8" data-slot="lesson-access">
+      <span className="text-muted-foreground flex [&_svg]:size-6">{icon}</span>
       <div className="flex flex-col gap-2" role="status">
-        <h2 className="text-2xl font-semibold tracking-tight">{title}</h2>
+        <h2 className="text-title">{title}</h2>
         <p className="text-muted-foreground text-base leading-relaxed">{description}</p>
       </div>
       {children && <div className="flex flex-col gap-2 sm:flex-row">{children}</div>}
