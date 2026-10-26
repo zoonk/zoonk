@@ -662,6 +662,68 @@
   @apply bg-primary text-primary-foreground;
 }
 
+/* The landing's promise, its one display line: 40px on a phone, 64px from `sm`. */
+@utility text-display {
+  font-size: 2.5rem;
+  line-height: 2.75rem;
+  font-weight: 650;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+
+  @media (width >= 40rem) {
+    font-size: 4rem;
+    line-height: 4.25rem;
+  }
+}
+
+/* A public page's name (a course, a chapter, a lesson): 34px on a phone, 48px from `sm`. */
+@utility text-headline {
+  font-size: 2.125rem;
+  line-height: 2.375rem;
+  font-weight: 640;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+
+  @media (width >= 40rem) {
+    font-size: 3rem;
+    line-height: 3.25rem;
+  }
+}
+
+/* A public page's lead: the promise under its name or a part's title, in the muted step. */
+@utility text-lead {
+  font-size: 1.0625rem;
+  line-height: 1.625rem;
+  letter-spacing: -0.01em;
+  text-wrap: pretty;
+  color: var(--muted-foreground);
+
+  @media (width >= 40rem) {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
+}
+
+/* A part of a public page, named by a real title in sentence case ("Example plan"). */
+@utility text-section {
+  font-size: 1.25rem;
+  line-height: 1.625rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+/*
+ * A readout: one big number per block in the text face with tabular figures, its unit smaller
+ * beside it (`BigQuantity`). Size it with a text size; mono stays for data in rows and eyebrows.
+ */
+@utility text-readout {
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
 /* A page's title: the tab, the section or the task the learner is on. */
 @utility text-title {
   font-size: 1.875rem;
@@ -671,7 +733,10 @@
   text-wrap: balance;
 }
 
-/* A section's name over its content ("THIS WEEK"), quiet so the content leads. */
+/*
+ * A label inside a panel ("TRY A LESSON · FREE"), quiet so the content leads. A page's parts are
+ * named by titles instead (`PageSectionTitle`, `text-section`).
+ */
 @utility text-label {
   font-size: 0.71875rem;
   line-height: 1rem;

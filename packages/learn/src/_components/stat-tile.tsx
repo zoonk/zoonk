@@ -81,7 +81,7 @@ export function StatTile({
         <span className="truncate">{label}</span>
       </span>{" "}
       {/* The spaces keep "Questions 20" one phrase for screen readers; the column hides them. */}
-      <span className="font-mono text-2xl leading-tight font-medium tracking-[-0.03em] tabular-nums">{value}</span>
+      <span className="text-readout text-2xl leading-tight">{value}</span>
       {detail && (
         <>
           {" "}

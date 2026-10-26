@@ -11,6 +11,15 @@ describe(cn, () => {
     expect(cn("text-title", "text-sm")).toBe("text-sm");
   });
 
+  it("treats the type roles as sizes and keeps a readout's face beside a size and a color", () => {
+    expect(cn("text-section", "text-sm")).toBe("text-sm");
+    expect(cn("text-lead", "text-foreground")).toBe("text-lead text-foreground");
+
+    expect(cn("text-readout", "text-2xl", "text-muted-foreground")).toBe(
+      "text-readout text-2xl text-muted-foreground",
+    );
+  });
+
   it("treats the option radius and the column widths as their kind's values", () => {
     expect(cn("rounded-xl", "rounded-option")).toBe("rounded-option");
     expect(cn("max-w-column", "max-w-none")).toBe("max-w-none");
