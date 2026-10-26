@@ -51333,6 +51333,38 @@
                       "fields": {
                         "type": "object",
                         "properties": {
+                          "distractors": {
+                            "maxItems": 3,
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "side": {
+                                  "type": "string",
+                                  "enum": [
+                                    "left",
+                                    "right"
+                                  ]
+                                },
+                                "text": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 160
+                                },
+                                "why": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 400
+                                }
+                              },
+                              "required": [
+                                "side",
+                                "text",
+                                "why"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
                           "pairs": {
                             "minItems": 2,
                             "maxItems": 6,
@@ -51371,6 +51403,7 @@
                           }
                         },
                         "required": [
+                          "distractors",
                           "pairs"
                         ],
                         "additionalProperties": false

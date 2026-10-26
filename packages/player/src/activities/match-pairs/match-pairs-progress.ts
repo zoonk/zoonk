@@ -14,18 +14,18 @@ export type MatchProgress = {
 const EMPTY_MATCH_PROGRESS: MatchProgress = { firstTries: {}, matched: [] };
 
 export function isMatch(left: MatchCard, right: MatchCard): boolean {
-  return left.id === right.id;
+  return !left.isTrap && left.id === right.id;
 }
 
-/** Records a try: the left card's first try, and the pair if it matches. */
+/** Records a try: its first try if the left card is a real pair, and the pair if it matches. */
 export function recordTry(
   progress: MatchProgress,
   { left, right }: { left: MatchCard; right: MatchCard },
 ): MatchProgress {
   const firstTries =
-    progress.firstTries[left.id] === undefined
-      ? { ...progress.firstTries, [left.id]: right.id }
-      : progress.firstTries;
+    left.isTrap || progress.firstTries[left.id] !== undefined
+      ? progress.firstTries
+      : { ...progress.firstTries, [left.id]: right.id };
 
   const matched = isMatch(left, right) ? [...progress.matched, left.id] : progress.matched;
 

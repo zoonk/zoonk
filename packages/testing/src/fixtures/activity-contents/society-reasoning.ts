@@ -166,14 +166,12 @@ export const societyReasoningActivities = {
   matchPairs: {
     check: interactionCheck,
     fields: {
+      distractors: [
+        { side: "right", text: "embarrassed", why: "It looks alike but means something else." },
+      ],
       pairs: [
-        {
-          id: "a",
-          left: "embarazada",
-          right: "pregnant",
-          why: "It looks like embarrassed but means pregnant.",
-        },
-        { id: "b", left: "avergonzada", right: "embarrassed" },
+        { id: "a", left: "embarazada", right: "pregnant" },
+        { id: "b", left: "éxito", right: "success" },
       ],
     },
     prompt: "Match each word to its meaning.",

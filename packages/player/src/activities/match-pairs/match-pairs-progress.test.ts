@@ -3,16 +3,22 @@ import { matchAnswer, progressFromAnswer, recordTry } from "./match-pairs-progre
 
 const EMPTY = progressFromAnswer(null);
 
-const card = (id: string) => ({ id, text: id, why: null });
+const card = (id: string, isTrap = false) => ({ id, isTrap, text: id, why: null });
 
 describe(recordTry, () => {
   it("keeps each pair's first try and locks in matches", () => {
-    const missed = recordTry(EMPTY, { left: card("a"), right: card("b") });
+    const missed = recordTry(EMPTY, { left: card("a"), right: card("right-trap-0", true) });
 
     const matched = recordTry(missed, { left: card("a"), right: card("a") });
 
-    expect(missed).toStrictEqual({ firstTries: { a: "b" }, matched: [] });
-    expect(matched).toStrictEqual({ firstTries: { a: "b" }, matched: ["a"] });
+    expect(missed).toStrictEqual({ firstTries: { a: "right-trap-0" }, matched: [] });
+    expect(matched).toStrictEqual({ firstTries: { a: "right-trap-0" }, matched: ["a"] });
+  });
+
+  it("doesn't count tries from a trap on the left", () => {
+    expect(recordTry(EMPTY, { left: card("left-trap-0", true), right: card("a") })).toStrictEqual(
+      EMPTY,
+    );
   });
 });
 
