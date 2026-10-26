@@ -1,5 +1,4 @@
 import { type Page } from "@playwright/test";
-import { type PlanBasesAdvice } from "@zoonk/core/plans/bases-advice-contract";
 import { type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
 import { z } from "zod";
 
@@ -47,21 +46,6 @@ export async function routeTimeToCover(
     };
 
     await route.fulfill({ json });
-  });
-
-  return asked;
-}
-
-/** What the app recommends for the plan's bases when the learner asks (see `routeTimeToCover`). */
-export async function routeBasesAdvice(
-  page: Page,
-  { advice, goalId }: { advice: PlanBasesAdvice; goalId: string },
-): Promise<unknown[]> {
-  const asked: unknown[] = [];
-
-  await page.route(`**/v1/goals/${goalId}/plan/bases-advice`, async (route) => {
-    asked.push(route.request().method());
-    await route.fulfill({ json: advice });
   });
 
   return asked;
