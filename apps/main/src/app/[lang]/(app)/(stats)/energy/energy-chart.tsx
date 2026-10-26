@@ -30,13 +30,18 @@ import { getEnergyCalendarIntensity } from "./_utils/energy-calendar-intensity";
 
 const ENERGY_HISTORY_TITLE_ID = "energy-history-title";
 
+/**
+ * Energy's steps, its amber softened at every step: most days sit in the upper steps, and at full
+ * strength they made the calendar the loudest thing on a neutral page. With more contrast the
+ * token itself deepens, so the steps stay apart.
+ */
 const ENERGY_INTENSITY_CLASSES = [
   "bg-surface-3",
-  "bg-energy/20",
-  "bg-energy/40",
+  "bg-energy/15",
+  "bg-energy/30",
+  "bg-energy/45",
   "bg-energy/60",
   "bg-energy/80",
-  "bg-energy",
 ] as const;
 
 type EnergyCalendarDay = EnergyDay & {
