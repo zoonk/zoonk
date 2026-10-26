@@ -31,6 +31,7 @@ import {
   lockOpenRun,
 } from "./_utils/lesson-runs";
 import { loadPlayableSteps } from "./_utils/load-playable-steps";
+import { getMistakeCorrectAnswer } from "./_utils/mistake-correct-answer";
 import { getStepQuestion } from "./_utils/step-question";
 import {
   type LessonStepAnswer,
@@ -161,7 +162,11 @@ async function recordCheck({
             questionText,
             snapshot: {
               answer: verdict.answerText,
-              correctAnswer: verdict.correctAnswer,
+              correctAnswer: getMistakeCorrectAnswer({
+                kind: answeredKind,
+                targetLanguage: row.lesson.targetLanguage,
+                verdict,
+              }),
               explanation: verdict.feedback,
               format: answeredKind,
               question: questionText,

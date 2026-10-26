@@ -189,6 +189,7 @@ function addToNotebook({ attemptId, context }: { attemptId: string; context: Ans
       skillId,
       snapshot: entry.snapshot,
       stepId,
+      targetLanguage: input.targetLanguage,
       userId: input.userId,
     },
     transaction,

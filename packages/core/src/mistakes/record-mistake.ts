@@ -63,6 +63,7 @@ export async function recordMistake(
     skillId,
     snapshot,
     stepId,
+    targetLanguage,
     userId,
   }: MistakeTarget & {
     attemptId: string;
@@ -71,11 +72,14 @@ export async function recordMistake(
     signals: MistakeSignals;
     skillId: string | null;
     snapshot: MistakeSnapshot;
+    targetLanguage?: string | null;
     userId: string;
   },
   transaction: TransactionClient = prisma,
 ): Promise<{ causeRequest: MistakeCauseRequest | null; mistake: Mistake }> {
-  const cause = inferMistakeCause(signals);
+  /** Writing corrections establish the error, not whether the learner misread, guessed or forgot. */
+  const isLanguageWriting = Boolean(targetLanguage) && snapshot.format === "typedAnswer";
+  const cause = isLanguageWriting ? null : inferMistakeCause(signals);
   const unknownGap = signals.dontKnow && cause === "gap";
 
   // An explicit unknown is evidence of a gap, including when a drill targets a different question.
@@ -101,9 +105,10 @@ export async function recordMistake(
     data: { attemptId, cause, itemId, skillId, snapshot, stepId, userId },
   });
 
-  const causeRequest = cause
-    ? null
-    : { input: toCauseInput({ language, signals, snapshot }), mistakeId: mistake.id, userId };
+  const causeRequest =
+    cause || isLanguageWriting
+      ? null
+      : { input: toCauseInput({ language, signals, snapshot }), mistakeId: mistake.id, userId };
 
   return { causeRequest, mistake };
 }
