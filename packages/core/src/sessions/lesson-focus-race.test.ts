@@ -55,8 +55,11 @@ describe("session lesson focus settlement", () => {
       userId: user.id,
     });
 
+    // The bound lesson's moment again, not the later run's evidence.
     await expect(completeLibraryLesson(input)).resolves.toMatchObject({
-      completion: { studyBlock: { brainPower: first.completion.brainPower, correct: 0, total: 0 } },
+      completion: {
+        studyBlock: { brainPower: first.completion.studyBlock?.brainPower, correct: 0, total: 0 },
+      },
       status: "completed",
     });
 

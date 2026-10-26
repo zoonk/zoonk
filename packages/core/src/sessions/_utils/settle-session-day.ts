@@ -147,6 +147,8 @@ async function completeIfFinished({
 }
 
 type SettledSessionDay = {
+  /** The missions this settlement completed: the ones the finished block was the last step of. */
+  completedMissions: Mission["kind"][];
   fullMealPaid: boolean;
   fullMealReward: BrainPowerReward | null;
   missions: Mission[];
@@ -180,12 +182,15 @@ export async function settleSessionDay({
 
   const [answers, settled] = await Promise.all([
     loadSessionAnswers({ blocks: session.blocks, sessionId, userId }),
+    // No tag expiry: in a Server Action it draws the page again, which would swap the block's
+    // moment (the missions it completed) for the next step. Pages read the change by revision.
     rewardMissions
-      ? settleMissions({ sessionId, source, timeZone, userId })
+      ? settleMissions({ revalidation: "skip", sessionId, source, timeZone, userId })
       : getDayMissions({ session, timeZone }).then((missions) => ({
           fullMealPaid: false,
           fullMealReward: null,
           missions,
+          newlyDone: [],
         })),
   ]);
 
@@ -195,6 +200,7 @@ export async function settleSessionDay({
   const sessionCompleted = await completeIfFinished({ ...day, answers });
 
   return {
+    completedMissions: settled.newlyDone.map((pick) => pick.kind),
     fullMealPaid,
     fullMealReward: paidReward ?? readFullMealReward(session.startSnapshot),
     missions,

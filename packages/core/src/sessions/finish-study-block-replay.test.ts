@@ -20,12 +20,22 @@ const BOSS: BlockPayload["checkpoint"] = {
   timeLimitMinutes: null,
 };
 
+/** A day whose one mission is its practice: finishing that block completes it and pays the bonus. */
+const PRACTICE_MISSION = {
+  picks: [{ anchor: { blockKind: "practice" }, kind: "practice", total: 1 }],
+  version: 1,
+};
+
 /** A block answered and ready to finish, with a lesson after it so the day goes on. */
-async function setup(checkpoint: BlockPayload["checkpoint"]) {
+async function setup(
+  checkpoint: BlockPayload["checkpoint"],
+  { missions }: { missions?: typeof PRACTICE_MISSION } = {},
+) {
   const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
   const item = await itemFixture({ content: choiceItemContent(), skillId: skill.id });
 
   const session = await studySessionFixture({
+    missions,
     startedAt: new Date(),
     status: "active",
     userId: user.id,
@@ -104,5 +114,24 @@ describe("finishing a block that already finished", () => {
     );
 
     await expect(readPaid(day)).resolves.toStrictEqual(paid);
+  });
+
+  it("says again which missions it completed and that it paid the day's bonus", async () => {
+    const day = await setup(null, { missions: PRACTICE_MISSION });
+    const first = await day.finish();
+
+    expect(first).toMatchObject({
+      completion: { completedMissions: ["practice"], fullMeal: { bonus: 50, paid: true } },
+      status: "ready",
+    });
+
+    // The screen asked again (its first response was lost, or it was drawn again): the same moment.
+    const retried = await day.finish();
+
+    expect(retried).toStrictEqual(
+      first.status === "ready"
+        ? { ...first, completion: { ...first.completion, milestones: [] } }
+        : first,
+    );
   });
 });

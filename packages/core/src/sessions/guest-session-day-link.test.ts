@@ -237,11 +237,12 @@ describe("session day settlement during guest linking", () => {
       status: "ready",
     });
 
+    // Finishing it again says the same: the block paid the full meal, and nothing is paid twice.
     await expect(finish()).resolves.toMatchObject({
       completion: {
         blockId: block.id,
-        brainPower: paidBlock.brainPower,
-        fullMeal: { paid: false },
+        brainPower: paidBlock.brainPower + BRAIN_POWER_BONUS.fullMeal,
+        fullMeal: { paid: true },
         milestones: [],
       },
       status: "ready",
@@ -275,9 +276,16 @@ describe("session day settlement during guest linking", () => {
       { brainPowerEarned: paidBlock.brainPower + BRAIN_POWER_BONUS.fullMeal, correctAnswers: 1 },
     ]);
 
+    // The block keeps what it did to the day's missions, for its moment; its paid evidence stays.
     await expect(
       prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),
-    ).resolves.toStrictEqual(paidBlock);
+    ).resolves.toStrictEqual({
+      ...paidBlock,
+      payload: {
+        ...(paidBlock.payload as object),
+        missionResult: { completed: expect.any(Array), fullMealPaid: true },
+      },
+    });
 
     const milestones = await prisma.milestone.findMany({ where: { userId: account.userId } });
 
@@ -348,8 +356,13 @@ describe("session day settlement during guest linking", () => {
         expected.toSorted(),
       );
 
+      // The interrupted finish had paid the full meal: the retry's moment still says so.
       expect(retried).toMatchObject({
-        completion: { blockId: block.id, brainPower: paidBlock.brainPower },
+        completion: {
+          blockId: block.id,
+          brainPower: paidBlock.brainPower + BRAIN_POWER_BONUS.fullMeal,
+          fullMeal: { paid: true },
+        },
         status: "ready",
       });
 

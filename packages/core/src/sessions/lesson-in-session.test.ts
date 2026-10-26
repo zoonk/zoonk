@@ -66,6 +66,7 @@ describe("a lesson played as a session block", () => {
         studyBlock: {
           blockId: block?.id,
           brainPower: 2 + 10 + 50,
+          completedMissions: ["somethingNew"],
           fullMeal: { bonus: 50, paid: true },
           sessionBar: { completed: 1, total: 1 },
           sessionCompleted: true,

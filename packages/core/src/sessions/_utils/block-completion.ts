@@ -1,4 +1,5 @@
 import "server-only";
+import { prisma } from "@zoonk/db";
 import { awardMilestones } from "../../milestones/award-milestones";
 import { getTrapHunterBadge } from "../../milestones/milestone-rules";
 import { type BlockPayload } from "../block-payload";
@@ -7,6 +8,30 @@ import { getMissionBonus } from "../missions";
 import { type MissionCompletionSource } from "../missions/settle-missions";
 import { getNextBlockId, getSessionBar } from "./session-view";
 import { settleSessionDay } from "./settle-session-day";
+
+type MissionResult = NonNullable<BlockPayload["missionResult"]>;
+
+/**
+ * What finishing the block did to the day's missions, kept on the block the first time it did
+ * something, so finishing it again says the same: a second settlement finds nothing new to do.
+ */
+async function keepMissionResult({
+  blockId,
+  result,
+}: {
+  blockId: string;
+  result: MissionResult;
+}): Promise<MissionResult> {
+  if (result.completed.length > 0 || result.fullMealPaid) {
+    await prisma.$executeRaw`
+      UPDATE study_session_blocks
+      SET payload = jsonb_set(payload, '{missionResult}', ${JSON.stringify(result)}::jsonb)
+      WHERE id = ${blockId}::uuid
+    `;
+  }
+
+  return result;
+}
 
 type BlockResult = Pick<
   StudyBlockCompletion,
@@ -48,7 +73,15 @@ export async function completeBlockMoment({
 }): Promise<StudyBlockCompletion> {
   const settled = await settleSessionDay({ sessionId, source, timeZone, userId });
   const bonus = getMissionBonus(settled.missions);
-  const fullMeal = settled.fullMealPaid ? bonus : 0;
+
+  const missionResult =
+    payload.missionResult ??
+    (await keepMissionResult({
+      blockId,
+      result: { completed: settled.completedMissions, fullMealPaid: settled.fullMealPaid },
+    }));
+
+  const fullMeal = missionResult.fullMealPaid ? bonus : 0;
 
   const bossWon =
     result.checkpoint && result.checkpoint.kind !== "weekly" && result.checkpoint.passed;
@@ -72,7 +105,8 @@ export async function completeBlockMoment({
     ...result,
     blockId,
     brainPower: result.brainPower + fullMeal,
-    fullMeal: { bonus, paid: settled.fullMealPaid },
+    completedMissions: missionResult.completed,
+    fullMeal: { bonus, paid: missionResult.fullMealPaid },
     milestones,
     missions: settled.missions,
     nextBlockId: getNextBlockId(blocks),

@@ -45,6 +45,8 @@ export type StudyBlockCompletion = {
   checkpoint: CheckpointResultView | null;
   /** For lessons: the day their capsule opens, right when memory would start to fade. */
   comesBackOn: Date | null;
+  /** The day's missions this block completed, so its moment names them. */
+  completedMissions: Mission["kind"][];
   correct: number;
   fullMeal: { bonus: number; paid: boolean };
   milestones: Milestone[];
@@ -227,6 +229,9 @@ export const studyBlockCompletionSchema = z
       .date()
       .nullable()
       .meta({ description: "The learner-local day a lesson's capsule opens" }),
+    completedMissions: z
+      .array(z.enum(MISSION_KINDS))
+      .meta({ description: "The day's missions this block completed, in the day's order" }),
     correct: countSchema,
     fullMeal: z
       .object({ bonus: z.number().int(), paid: z.boolean() })

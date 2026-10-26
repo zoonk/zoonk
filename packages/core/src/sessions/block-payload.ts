@@ -5,6 +5,7 @@ import { brainPowerRewardSchema } from "../milestones/milestone-reward";
 import { MISTAKE_DRILL_KINDS } from "../mistakes/mistake-drills";
 import { CAPSULE_FORMATS } from "./capsules";
 import { mockIdentitySchema } from "./day-block";
+import { MISSION_KINDS } from "./missions/catalog";
 
 const capsuleSchema = z.object({
   format: z.enum(CAPSULE_FORMATS),
@@ -71,6 +72,15 @@ const blockPayloadSchema = z.object({
   /** The paid completion's evidence survives retries without rescoring its answers. */
   milestoneReward: z
     .object({ bossWon: z.boolean(), brainPower: brainPowerRewardSchema })
+    .nullable()
+    .default(null),
+  /**
+   * What finishing the block did to the day's missions (the ones it completed, whether it paid the
+   * day's bonus), kept so finishing it again, after a lost response or from a screen drawn again,
+   * returns the same moment.
+   */
+  missionResult: z
+    .object({ completed: z.array(z.enum(MISSION_KINDS)), fullMealPaid: z.boolean() })
     .nullable()
     .default(null),
   /**

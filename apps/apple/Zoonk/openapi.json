@@ -63945,6 +63945,29 @@
             "format": "date",
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
           },
+          "completedMissions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "review",
+                "somethingNew",
+                "finishChapter",
+                "challenge",
+                "weeklyChallenge",
+                "mock",
+                "essay",
+                "practice",
+                "fixMistake",
+                "pattern",
+                "pronunciation",
+                "call",
+                "askBuddy",
+                "weakSpot"
+              ]
+            },
+            "description": "The day's missions this block completed, in the day's order"
+          },
           "correct": {
             "type": "integer",
             "minimum": 0,
@@ -64067,6 +64090,7 @@
           "capsulesOpened",
           "checkpoint",
           "comesBackOn",
+          "completedMissions",
           "correct",
           "fullMeal",
           "milestones",
