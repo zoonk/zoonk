@@ -3,7 +3,7 @@
 import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { ListGroup } from "../_components/list-group";
-import { SectionLabel } from "../_components/section-label";
+import { PageSectionDetail, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { StatusMark } from "../_components/status-mark";
 import { type FirstStep, type FirstSteps } from "../buddies/buddy-status-view";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
@@ -85,12 +85,12 @@ export function FirstStepsSection({
 
   return (
     <section aria-labelledby={titleId} className="flex flex-col gap-1" data-slot="first-steps">
-      <div className="flex items-baseline justify-between gap-2">
-        <SectionLabel id={titleId}>{t("First steps")}</SectionLabel>
-        <span className="text-muted-foreground font-mono text-xs tabular-nums">
+      <PageSectionHeader>
+        <PageSectionTitle id={titleId}>{t("First steps")}</PageSectionTitle>
+        <PageSectionDetail>
           <ProgressCount done={firstSteps.done} total={firstSteps.total} />
-        </span>
-      </div>
+        </PageSectionDetail>
+      </PageSectionHeader>
 
       <div className="flex flex-col gap-1">
         <ListGroup>

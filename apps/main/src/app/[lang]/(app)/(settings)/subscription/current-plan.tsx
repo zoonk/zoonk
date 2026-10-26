@@ -6,8 +6,6 @@ import {
   PageHeader,
   PageHeaderContent,
   PageSection,
-  PageSectionHeader,
-  PageSectionTitle,
   PageSubtitle,
   PageTitle,
 } from "@zoonk/learn/page";
@@ -15,8 +13,6 @@ import { isWebManagedSubscriptionProvider } from "@zoonk/utils/subscription";
 import { getExtracted, getFormatter } from "next-intl/server";
 import { CancelPlusButton } from "./cancel-plus-button";
 import { ManagedSubscription } from "./managed-subscription";
-
-const INCLUDED_ID = "plus-included";
 
 /** The date in a sentence, in the mono face as every date reads. */
 function renderDate(chunks: React.ReactNode) {
@@ -85,10 +81,9 @@ export async function CurrentPlan({ subscription }: { subscription: Subscription
         </PageHeaderContent>
       </PageHeader>
 
-      <PageSection aria-labelledby={INCLUDED_ID}>
-        <PageSectionHeader>
-          <PageSectionTitle id={INCLUDED_ID}>{t("What's included")}</PageSectionTitle>
-        </PageSectionHeader>
+      {/* The benefits' own line leads ("Every goal · every lesson"): a smaller title over it read
+          as the lesser of the two. */}
+      <PageSection aria-label={t("What's included")}>
         <PlusBenefits />
       </PageSection>
 
