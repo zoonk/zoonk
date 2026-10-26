@@ -5,6 +5,205 @@
       "classification": { "expected": "correct", "predicted": "correct" },
       "steps": [
         {
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": true, "keyPoints": [true, true, true] },
+        "id": "pt-language-recruiter-english-answer-1",
+        "userInput": {
+          "acceptedAnswers": [
+            "Could you tell me who I should contact about registration requirements?",
+            "Could you let me know who I should contact about registration requirements?",
+            "Who should I contact about registration requirements?"
+          ],
+          "keyPoints": [
+            "Pergunta quem deve ser contatado",
+            "Menciona as exigências para o registro profissional",
+            "Usa uma pergunta clara e educada"
+          ],
+          "language": "pt",
+          "practicedLanguage": "en",
+          "question": "Escreva uma mensagem ao recrutador perguntando, com educação, quem você deve contatar sobre as exigências para o registro profissional.",
+          "sampleAnswer": "Could you tell me who I should contact about registration requirements?",
+          "answer": "Hi, could you tell me who I should contact about the professional registration requirements? Thank you!"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "correct", "predicted": "correct" },
+      "steps": [
+        {
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": true, "keyPoints": [true, true, true] },
+        "id": "pt-language-recruiter-english-paraphrase-1",
+        "userInput": {
+          "acceptedAnswers": [
+            "Could you tell me who I should contact about registration requirements?",
+            "Could you let me know who I should contact about registration requirements?",
+            "Who should I contact about registration requirements?"
+          ],
+          "keyPoints": [
+            "Pergunta quem deve ser contatado",
+            "Menciona as exigências para o registro profissional",
+            "Usa uma pergunta clara e educada"
+          ],
+          "language": "pt",
+          "practicedLanguage": "en",
+          "question": "Escreva uma mensagem ao recrutador perguntando, com educação, quem você deve contatar sobre as exigências para o registro profissional.",
+          "sampleAnswer": "Could you tell me who I should contact about registration requirements?",
+          "answer": "Hello! I'd like to ask who is the right person to talk to about the requirements for my professional registration. Thanks in advance."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "wrong", "predicted": "wrong" },
+      "steps": [
+        {
+          "conclusion": "Expected wrong with key points [true,false,true] and corrections []; got wrong with [true,false,true] and []. Feedback: \"voce\" written without its right accent.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,false,true] and corrections []; got wrong with [true,false,true] and []. Feedback: \"voce\" written without its right accent.",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,false,true] and corrections []; got wrong with [true,false,true] and []. Feedback: \"voce\" written without its right accent.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": false, "keyPoints": [true, false, true] },
+        "id": "pt-language-recruiter-missing-registration-1",
+        "userInput": {
+          "acceptedAnswers": [
+            "Could you tell me who I should contact about registration requirements?",
+            "Could you let me know who I should contact about registration requirements?",
+            "Who should I contact about registration requirements?"
+          ],
+          "keyPoints": [
+            "Pergunta quem deve ser contatado",
+            "Menciona as exigências para o registro profissional",
+            "Usa uma pergunta clara e educada"
+          ],
+          "language": "pt",
+          "practicedLanguage": "en",
+          "question": "Escreva uma mensagem ao recrutador perguntando, com educação, quem você deve contatar sobre as exigências para o registro profissional.",
+          "sampleAnswer": "Could you tell me who I should contact about registration requirements?",
+          "answer": "Hi, could you tell me who I should contact? Thanks!"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "wrong", "predicted": "wrong" },
+      "steps": [
+        {
+          "conclusion": "Expected wrong with key points [false,false,false] and corrections []; got wrong with [true,true,true] and [].",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Expected wrong with key points [false,false,false] and corrections []; got wrong with [true,true,true] and [].",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Expected wrong with key points [false,false,false] and corrections []; got wrong with [true,true,true] and [].",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": false, "keyPoints": [false, false, false] },
+        "id": "pt-language-recruiter-portuguese-answer-1",
+        "userInput": {
+          "acceptedAnswers": [
+            "Could you tell me who I should contact about registration requirements?",
+            "Could you let me know who I should contact about registration requirements?",
+            "Who should I contact about registration requirements?"
+          ],
+          "keyPoints": [
+            "Pergunta quem deve ser contatado",
+            "Menciona as exigências para o registro profissional",
+            "Usa uma pergunta clara e educada"
+          ],
+          "language": "pt",
+          "practicedLanguage": "en",
+          "question": "Escreva em inglês uma mensagem ao recrutador perguntando, com educação, quem você deve contatar sobre as exigências para o registro profissional.",
+          "sampleAnswer": "Could you tell me who I should contact about registration requirements?",
+          "answer": "Olá, você poderia me dizer com quem devo falar sobre as exigências do registro profissional? Obrigado!"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "correct", "predicted": "correct" },
+      "steps": [
+        {
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": true, "keyPoints": [true, true, true] },
+        "id": "pt-english-answer-outside-language-practice-1",
+        "userInput": {
+          "answer": "Prices keep going up over time, so the same money buys less.",
+          "keyPoints": [
+            "Os preços sobem de forma geral",
+            "Acontece ao longo do tempo",
+            "O dinheiro perde poder de compra"
+          ],
+          "language": "pt",
+          "question": "Explique com suas palavras o que é inflação.",
+          "sampleAnswer": "É o aumento geral e contínuo dos preços, que faz o dinheiro comprar menos."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "correct", "predicted": "correct" },
+      "steps": [
+        {
           "conclusion": "Expected correct with key points [true] and corrections []; got correct with [true] and [].",
           "kind": "majorErrors",
           "score": 10
@@ -207,29 +406,28 @@
       }
     },
     {
-      "classification": { "expected": "wrong", "predicted": "wrong" },
+      "classification": { "expected": "correct", "predicted": "correct" },
       "steps": [
         {
-          "conclusion": "Expected wrong with key points [true,true,false] and corrections []; got wrong with [true,true,false] and [].",
+          "conclusion": "Expected correct with key points [true,true,false] and corrections []; got correct with [true,true,false] and [].",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected wrong with key points [true,true,false] and corrections []; got wrong with [true,true,false] and [].",
+          "conclusion": "Expected correct with key points [true,true,false] and corrections []; got correct with [true,true,false] and [].",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected wrong with key points [true,true,false] and corrections []; got wrong with [true,true,false] and [].",
+          "conclusion": "Expected correct with key points [true,true,false] and corrections []; got correct with [true,true,false] and [].",
           "kind": "potentialImprovements",
           "score": 10
         }
       ],
       "testCase": {
-        "expected": { "isCorrect": false, "keyPoints": [true, true, false] },
+        "expected": { "isCorrect": true, "keyPoints": [true, true, false] },
         "id": "pt-sem-acentos-lei-de-ohm-1",
         "userInput": {
-          "answer": "o resistor, porque a resistencia dele nao muda. a corrente e 9/6 = 1,5 A",
           "keyPoints": [
             "Escolher o resistor, pois ele mantém a resistência constante",
             "Calcular 9 ÷ 6 = 1,5 A",
@@ -237,7 +435,43 @@
           ],
           "language": "pt",
           "question": "João tem uma fonte de 9 V, um resistor de 6 Ω e uma lâmpada que mediu 6 Ω ainda fria. Qual dos dois ele pode usar para prever a corrente com a lei de Ohm, quanto ela vale e por que o outro não serve?",
-          "sampleAnswer": "O resistor: 9 V ÷ 6 Ω = 1,5 A. A resistência da lâmpada muda quando ela esquenta, então o valor medido a frio não serve."
+          "sampleAnswer": "O resistor: 9 V ÷ 6 Ω = 1,5 A. A resistência da lâmpada muda quando ela esquenta, então o valor medido a frio não serve.",
+          "answer": "o resistor, porque a resistencia dele nao muda. a corrente e 9/6 = 1,5 A"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "wrong", "predicted": "wrong" },
+      "steps": [
+        {
+          "conclusion": "Expected wrong with key points [false,true,false] and corrections []; got wrong with [true,true,false] and [].",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Expected wrong with key points [false,true,false] and corrections []; got wrong with [true,true,false] and [].",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Expected wrong with key points [false,true,false] and corrections []; got wrong with [true,true,false] and [].",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": false, "keyPoints": [false, true, false] },
+        "id": "pt-lei-de-ohm-sem-porque-1",
+        "userInput": {
+          "keyPoints": [
+            "Escolher o resistor, pois ele mantém a resistência constante",
+            "Calcular 9 ÷ 6 = 1,5 A",
+            "Explicar que a resistência da lâmpada muda quando ela esquenta"
+          ],
+          "language": "pt",
+          "question": "João tem uma fonte de 9 V, um resistor de 6 Ω e uma lâmpada que mediu 6 Ω ainda fria. Qual dos dois ele pode usar para prever a corrente com a lei de Ohm, quanto ela vale e por que o outro não serve?",
+          "sampleAnswer": "O resistor: 9 V ÷ 6 Ω = 1,5 A. A resistência da lâmpada muda quando ela esquenta, então o valor medido a frio não serve.",
+          "answer": "o resistor, 1,5 A"
         }
       }
     },
@@ -277,22 +511,217 @@
       }
     },
     {
-      "classification": { "expected": "correct", "predicted": "wrong" },
+      "classification": { "expected": "wrong", "predicted": "wrong" },
       "steps": [
         {
-          "conclusion": "Expected correct with key points [true,true,true,true] and corrections []; got wrong with [true,false,true,true] and [].",
+          "conclusion": "Expected wrong with key points [false] and corrections [\"bonita\"]; got wrong with [false] and [\"bonita\"].",
           "kind": "majorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Expected correct with key points [true,true,true,true] and corrections []; got wrong with [true,false,true,true] and [].",
+          "conclusion": "Expected wrong with key points [false] and corrections [\"bonita\"]; got wrong with [false] and [\"bonita\"].",
           "kind": "minorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Expected correct with key points [true,true,true,true] and corrections []; got wrong with [true,false,true,true] and [].",
+          "conclusion": "Expected wrong with key points [false] and corrections [\"bonita\"]; got wrong with [false] and [\"bonita\"].",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "corrections": ["bonita"], "isCorrect": false, "keyPoints": [false] },
+        "id": "pt-language-gender-agreement-1",
+        "userInput": {
+          "acceptedAnswers": ["Ela é bonita"],
+          "answer": "Ela é bonito",
+          "keyPoints": ["Uses the feminine form of the adjective to agree with 'ela'"],
+          "language": "en",
+          "practicedLanguage": "pt",
+          "question": "Translate into Portuguese: 'She is pretty.'",
+          "sampleAnswer": "Ela é bonita."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "wrong", "predicted": "wrong" },
+      "steps": [
+        {
+          "conclusion": "Expected wrong with key points [true,true,true] and corrections [\"your\"]; got wrong with [true,true,true] and [\"your\"].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,true,true] and corrections [\"your\"]; got wrong with [true,true,true] and [\"your\"].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,true,true] and corrections [\"your\"]; got wrong with [true,true,true] and [\"your\"].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "corrections": ["your"],
+          "isCorrect": false,
+          "keyPoints": [true, true, true]
+        },
+        "id": "pt-language-form-mistake-idea-stated-1",
+        "userInput": {
+          "acceptedAnswers": [
+            "Please reply by Thursday to confirm your availability.",
+            "Please respond by Thursday to confirm your availability."
+          ],
+          "keyPoints": [
+            "Faz o pedido com `Please` seguido de um verbo na forma simples.",
+            "Usa `by Thursday` para indicar o prazo.",
+            "Pede a confirmação da disponibilidade."
+          ],
+          "language": "pt",
+          "practicedLanguage": "en",
+          "question": "Escreva uma frase de convite em inglês: «Por favor, responda até quinta-feira para confirmar sua disponibilidade.»",
+          "sampleAnswer": "Please reply by Thursday to confirm your availability.",
+          "answer": "Please reply by thursday to confirm you availability."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "correct", "predicted": "correct" },
+      "steps": [
+        {
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": true, "keyPoints": [true, true, true] },
+        "id": "pt-language-slip-not-a-mistake-1",
+        "userInput": {
+          "acceptedAnswers": [
+            "Please reply by Thursday to confirm your availability.",
+            "Please respond by Thursday to confirm your availability."
+          ],
+          "keyPoints": [
+            "Faz o pedido com `Please` seguido de um verbo na forma simples.",
+            "Usa `by Thursday` para indicar o prazo.",
+            "Pede a confirmação da disponibilidade."
+          ],
+          "language": "pt",
+          "practicedLanguage": "en",
+          "question": "Escreva uma frase de convite em inglês: «Por favor, responda até quinta-feira para confirmar sua disponibilidade.»",
+          "sampleAnswer": "Please reply by Thursday to confirm your availability.",
+          "answer": "Please reply by Thursday to confirm your availabilty."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "wrong", "predicted": "wrong" },
+      "steps": [
+        {
+          "conclusion": "Expected wrong with key points [true,true,true] and corrections [\"sua\"]; got wrong with [true,true,true] and [\"sua presença\"].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,true,true] and corrections [\"sua\"]; got wrong with [true,true,true] and [\"sua presença\"].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,true,true] and corrections [\"sua\"]; got wrong with [true,true,true] and [\"sua presença\"].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "corrections": ["sua"], "isCorrect": false, "keyPoints": [true, true, true] },
+        "id": "en-language-form-mistake-idea-stated-1",
+        "userInput": {
+          "acceptedAnswers": ["Por favor, confirme sua presença até sexta-feira."],
+          "answer": "Por favor, confirme seu presença até sexta-feira.",
+          "keyPoints": [
+            "Asks politely with `Por favor`",
+            "Asks the person to confirm their attendance",
+            "Gives Friday (`até sexta-feira`) as the deadline"
+          ],
+          "language": "en",
+          "practicedLanguage": "pt",
+          "question": "Write in Portuguese: “Please confirm your attendance by Friday.”",
+          "sampleAnswer": "Por favor, confirme sua presença até sexta-feira."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "correct", "predicted": "correct" },
+      "steps": [
+        {
+          "conclusion": "Expected correct with key points [true,true] and corrections []; got correct with [true,true] and [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true] and corrections []; got correct with [true,true] and [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true] and corrections []; got correct with [true,true] and [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": true, "keyPoints": [true, true] },
+        "id": "pt-language-own-words-paraphrase-of-taught-phrase-1",
+        "userInput": {
+          "acceptedAnswers": [
+            "I'll stay with a friend.",
+            "I will stay with a friend.",
+            "I'm going to stay with a friend.",
+            "I am going to stay with a friend."
+          ],
+          "answer": "I'll stay at a friend's house.",
+          "keyPoints": [
+            "Indica um plano futuro de hospedagem.",
+            "Usa “stay with a friend” para dizer que vai ficar na casa de um amigo."
+          ],
+          "language": "pt",
+          "practicedLanguage": "en",
+          "question": "Escreva uma mensagem com seu plano de hospedagem: “Vou ficar na casa de um amigo.”",
+          "sampleAnswer": "I'll stay with a friend."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "correct", "predicted": "correct" },
+      "steps": [
+        {
+          "conclusion": "Expected correct with key points [true,true,true,true] and corrections []; got correct with [true,true,true,true] and [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,true,true] and corrections []; got correct with [true,true,true,true] and [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,true,true] and corrections []; got correct with [true,true,true,true] and [].",
+          "kind": "potentialImprovements",
+          "score": 10
         }
       ],
       "testCase": {
@@ -446,22 +875,22 @@
       }
     },
     {
-      "classification": { "expected": "correct", "predicted": "wrong" },
+      "classification": { "expected": "correct", "predicted": "correct" },
       "steps": [
         {
-          "conclusion": "Expected correct with key points [true,true,true,true] and corrections []; got wrong with [true,false,true,false] and [].",
+          "conclusion": "Expected correct with key points [true,true,true,true] and corrections []; got correct with [true,true,true,true] and [].",
           "kind": "majorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Expected correct with key points [true,true,true,true] and corrections []; got wrong with [true,false,true,false] and [].",
+          "conclusion": "Expected correct with key points [true,true,true,true] and corrections []; got correct with [true,true,true,true] and [].",
           "kind": "minorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Expected correct with key points [true,true,true,true] and corrections []; got wrong with [true,false,true,false] and [].",
+          "conclusion": "Expected correct with key points [true,true,true,true] and corrections []; got correct with [true,true,true,true] and [].",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
@@ -517,26 +946,26 @@
       }
     },
     {
-      "classification": { "expected": "wrong", "predicted": "wrong" },
+      "classification": { "expected": "correct", "predicted": "wrong" },
       "steps": [
         {
-          "conclusion": "Expected wrong with key points [true,false] and corrections []; got wrong with [true,false] and [].",
+          "conclusion": "Expected correct with key points [true,false] and corrections []; got wrong with [true,false] and [].",
           "kind": "majorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "Expected wrong with key points [true,false] and corrections []; got wrong with [true,false] and [].",
+          "conclusion": "Expected correct with key points [true,false] and corrections []; got wrong with [true,false] and [].",
           "kind": "minorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "Expected wrong with key points [true,false] and corrections []; got wrong with [true,false] and [].",
+          "conclusion": "Expected correct with key points [true,false] and corrections []; got wrong with [true,false] and [].",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {
-        "expected": { "isCorrect": false, "keyPoints": [true, false] },
+        "expected": { "isCorrect": true, "keyPoints": [true, false] },
         "id": "pt-teoria-celular-meia-resposta-1",
         "userInput": {
           "answer": "que todo ser vivo é formado por celulas",
@@ -554,19 +983,19 @@
       "classification": { "expected": "correct", "predicted": "correct" },
       "steps": [
         {
-          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,false,true] and [].",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,false,true] and [].",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,false,true] and [].",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8
         }
       ],
       "testCase": {
@@ -586,26 +1015,26 @@
       }
     },
     {
-      "classification": { "expected": "wrong", "predicted": "wrong" },
+      "classification": { "expected": "correct", "predicted": "correct" },
       "steps": [
         {
-          "conclusion": "Expected wrong with key points [true,false] and corrections []; got wrong with [true,false] and [].",
+          "conclusion": "Expected correct with key points [true,false] and corrections []; got correct with [true,false] and [].",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected wrong with key points [true,false] and corrections []; got wrong with [true,false] and [].",
+          "conclusion": "Expected correct with key points [true,false] and corrections []; got correct with [true,false] and [].",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected wrong with key points [true,false] and corrections []; got wrong with [true,false] and [].",
+          "conclusion": "Expected correct with key points [true,false] and corrections []; got correct with [true,false] and [].",
           "kind": "potentialImprovements",
           "score": 10
         }
       ],
       "testCase": {
-        "expected": { "isCorrect": false, "keyPoints": [true, false] },
+        "expected": { "isCorrect": true, "keyPoints": [true, false] },
         "id": "en-feedback-partial-1",
         "userInput": {
           "answer": "So they still remember exactly what happened.",
@@ -623,40 +1052,69 @@
       "classification": { "expected": "correct", "predicted": "correct" },
       "steps": [
         {
-          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "conclusion": "Expected correct with key points [true,true,false] and corrections []; got correct with [true,true,true] and [].",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "conclusion": "Expected correct with key points [true,true,false] and corrections []; got correct with [true,true,true] and [].",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "conclusion": "Expected correct with key points [true,true,false] and corrections []; got correct with [true,true,true] and [].",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8
         }
       ],
       "testCase": {
-        "expected": { "isCorrect": true, "keyPoints": [true, true, true] },
-        "id": "pt-language-recruiter-english-answer-1",
+        "expected": { "isCorrect": true, "keyPoints": [true, true, false] },
+        "id": "pt-celula-citoplasma-sem-porque-1",
         "userInput": {
-          "acceptedAnswers": [
-            "Could you tell me who I should contact about registration requirements?",
-            "Could you let me know who I should contact about registration requirements?",
-            "Who should I contact about registration requirements?"
-          ],
           "keyPoints": [
-            "Pergunta quem deve ser contatado",
-            "Menciona as exigências para o registro profissional",
-            "Usa uma pergunta clara e educada"
+            "Acrescentar o citoplasma.",
+            "Representá-lo na região interna delimitada pela membrana, ao redor do fio.",
+            "Essa região contém materiais da célula e é onde acontecem muitas de suas atividades."
           ],
           "language": "pt",
-          "practicedLanguage": "en",
-          "question": "Escreva uma mensagem ao recrutador perguntando, com educação, quem você deve contatar sobre as exigências para o registro profissional.",
-          "sampleAnswer": "Could you tell me who I should contact about registration requirements?",
-          "answer": "Hi, could you tell me who I should contact about the professional registration requirements? Thank you!"
+          "question": "Em Porto Velho, Iara prepara um esquema didático de célula. Ela desenha a membrana no contorno e um fio de material genético no interior, mas deixa vazio todo o espaço entre eles.\n\nO que Iara precisa acrescentar, onde deve desenhar isso e por que isso completa o esquema?",
+          "sampleAnswer": "Iara precisa mostrar o citoplasma no espaço dentro da membrana, ao redor do fio. Assim, o esquema inclui a região interna onde ficam materiais da célula e acontecem muitas de suas atividades.",
+          "answer": "Ela precisa desenhar o citoplasma preenchendo o espaço entre a membrana e o material genético."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "correct", "predicted": "correct" },
+      "steps": [
+        {
+          "conclusion": "Expected correct with key points [true,true,false] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,false] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,false] and corrections []; got correct with [true,true,true] and [].",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": true, "keyPoints": [true, true, false] },
+        "id": "pt-celula-gel-das-organelas-1",
+        "userInput": {
+          "keyPoints": [
+            "Acrescentar o citoplasma.",
+            "Representá-lo na região interna delimitada pela membrana, ao redor do fio.",
+            "Essa região contém materiais da célula e é onde acontecem muitas de suas atividades."
+          ],
+          "language": "pt",
+          "question": "Em Porto Velho, Iara prepara um esquema didático de célula. Ela desenha a membrana no contorno e um fio de material genético no interior, mas deixa vazio todo o espaço entre eles.\n\nO que Iara precisa acrescentar, onde deve desenhar isso e por que isso completa o esquema?",
+          "sampleAnswer": "Iara precisa mostrar o citoplasma no espaço dentro da membrana, ao redor do fio. Assim, o esquema inclui a região interna onde ficam materiais da célula e acontecem muitas de suas atividades.",
+          "answer": "faltou aquele liquido tipo gel onde ficam as organelas, tem que pintar tudo dentro da membrana em volta do fio"
         }
       }
     },
@@ -681,64 +1139,17 @@
       ],
       "testCase": {
         "expected": { "isCorrect": true, "keyPoints": [true, true, true] },
-        "id": "pt-language-recruiter-english-paraphrase-1",
+        "id": "pt-celula-citoplasma-informal-1",
         "userInput": {
-          "acceptedAnswers": [
-            "Could you tell me who I should contact about registration requirements?",
-            "Could you let me know who I should contact about registration requirements?",
-            "Who should I contact about registration requirements?"
-          ],
           "keyPoints": [
-            "Pergunta quem deve ser contatado",
-            "Menciona as exigências para o registro profissional",
-            "Usa uma pergunta clara e educada"
+            "Acrescentar o citoplasma.",
+            "Representá-lo na região interna delimitada pela membrana, ao redor do fio.",
+            "Essa região contém materiais da célula e é onde acontecem muitas de suas atividades."
           ],
           "language": "pt",
-          "practicedLanguage": "en",
-          "question": "Escreva uma mensagem ao recrutador perguntando, com educação, quem você deve contatar sobre as exigências para o registro profissional.",
-          "sampleAnswer": "Could you tell me who I should contact about registration requirements?",
-          "answer": "Hello! I'd like to ask who is the right person to talk to about the requirements for my professional registration. Thanks in advance."
-        }
-      }
-    },
-    {
-      "classification": { "expected": "wrong", "predicted": "wrong" },
-      "steps": [
-        {
-          "conclusion": "Expected wrong with key points [true,false,true] and corrections []; got wrong with [true,false,true] and [].",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected wrong with key points [true,false,true] and corrections []; got wrong with [true,false,true] and [].",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected wrong with key points [true,false,true] and corrections []; got wrong with [true,false,true] and [].",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": { "isCorrect": false, "keyPoints": [true, false, true] },
-        "id": "pt-language-recruiter-missing-registration-1",
-        "userInput": {
-          "acceptedAnswers": [
-            "Could you tell me who I should contact about registration requirements?",
-            "Could you let me know who I should contact about registration requirements?",
-            "Who should I contact about registration requirements?"
-          ],
-          "keyPoints": [
-            "Pergunta quem deve ser contatado",
-            "Menciona as exigências para o registro profissional",
-            "Usa uma pergunta clara e educada"
-          ],
-          "language": "pt",
-          "practicedLanguage": "en",
-          "question": "Escreva uma mensagem ao recrutador perguntando, com educação, quem você deve contatar sobre as exigências para o registro profissional.",
-          "sampleAnswer": "Could you tell me who I should contact about registration requirements?",
-          "answer": "Hi, could you tell me who I should contact? Thanks!"
+          "question": "Em Porto Velho, Iara prepara um esquema didático de célula. Ela desenha a membrana no contorno e um fio de material genético no interior, mas deixa vazio todo o espaço entre eles.\n\nO que Iara precisa acrescentar, onde deve desenhar isso e por que isso completa o esquema?",
+          "sampleAnswer": "Iara precisa mostrar o citoplasma no espaço dentro da membrana, ao redor do fio. Assim, o esquema inclui a região interna onde ficam materiais da célula e acontecem muitas de suas atividades.",
+          "answer": "o citoplasma, no meio, em volta do dna. é ali q a celula faz as coisas dela"
         }
       }
     },
@@ -763,58 +1174,17 @@
       ],
       "testCase": {
         "expected": { "isCorrect": false, "keyPoints": [false, false, false] },
-        "id": "pt-language-recruiter-portuguese-answer-1",
+        "id": "pt-celula-parede-celular-1",
         "userInput": {
-          "acceptedAnswers": [
-            "Could you tell me who I should contact about registration requirements?",
-            "Could you let me know who I should contact about registration requirements?",
-            "Who should I contact about registration requirements?"
-          ],
           "keyPoints": [
-            "Pergunta quem deve ser contatado",
-            "Menciona as exigências para o registro profissional",
-            "Usa uma pergunta clara e educada"
+            "Acrescentar o citoplasma.",
+            "Representá-lo na região interna delimitada pela membrana, ao redor do fio.",
+            "Essa região contém materiais da célula e é onde acontecem muitas de suas atividades."
           ],
           "language": "pt",
-          "practicedLanguage": "en",
-          "question": "Escreva em inglês uma mensagem ao recrutador perguntando, com educação, quem você deve contatar sobre as exigências para o registro profissional.",
-          "sampleAnswer": "Could you tell me who I should contact about registration requirements?",
-          "answer": "Olá, você poderia me dizer com quem devo falar sobre as exigências do registro profissional? Obrigado!"
-        }
-      }
-    },
-    {
-      "classification": { "expected": "correct", "predicted": "correct" },
-      "steps": [
-        {
-          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": { "isCorrect": true, "keyPoints": [true, true, true] },
-        "id": "pt-english-answer-outside-language-practice-1",
-        "userInput": {
-          "answer": "Prices keep going up over time, so the same money buys less.",
-          "keyPoints": [
-            "Os preços sobem de forma geral",
-            "Acontece ao longo do tempo",
-            "O dinheiro perde poder de compra"
-          ],
-          "language": "pt",
-          "question": "Explique com suas palavras o que é inflação.",
-          "sampleAnswer": "É o aumento geral e contínuo dos preços, que faz o dinheiro comprar menos."
+          "question": "Em Porto Velho, Iara prepara um esquema didático de célula. Ela desenha a membrana no contorno e um fio de material genético no interior, mas deixa vazio todo o espaço entre eles.\n\nO que Iara precisa acrescentar, onde deve desenhar isso e por que isso completa o esquema?",
+          "sampleAnswer": "Iara precisa mostrar o citoplasma no espaço dentro da membrana, ao redor do fio. Assim, o esquema inclui a região interna onde ficam materiais da célula e acontecem muitas de suas atividades.",
+          "answer": "Ela precisa desenhar a parede celular nesse espaço, porque é ela que protege a célula."
         }
       }
     },
@@ -822,32 +1192,34 @@
       "classification": { "expected": "wrong", "predicted": "wrong" },
       "steps": [
         {
-          "conclusion": "Expected wrong with key points [false] and corrections [\"bonita\"]; got wrong with [false] and [\"bonita\"].",
+          "conclusion": "Expected wrong with key points [true,false,false] and corrections []; got wrong with [true,false,false] and [].",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected wrong with key points [false] and corrections [\"bonita\"]; got wrong with [false] and [\"bonita\"].",
+          "conclusion": "Expected wrong with key points [true,false,false] and corrections []; got wrong with [true,false,false] and [].",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected wrong with key points [false] and corrections [\"bonita\"]; got wrong with [false] and [\"bonita\"].",
+          "conclusion": "Expected wrong with key points [true,false,false] and corrections []; got wrong with [true,false,false] and [].",
           "kind": "potentialImprovements",
           "score": 10
         }
       ],
       "testCase": {
-        "expected": { "corrections": ["bonita"], "isCorrect": false, "keyPoints": [false] },
-        "id": "pt-language-gender-agreement-1",
+        "expected": { "isCorrect": false, "keyPoints": [true, false, false] },
+        "id": "pt-celula-citoplasma-fora-da-membrana-1",
         "userInput": {
-          "acceptedAnswers": ["Ela é bonita"],
-          "answer": "Ela é bonito",
-          "keyPoints": ["Uses the feminine form of the adjective to agree with 'ela'"],
-          "language": "en",
-          "practicedLanguage": "pt",
-          "question": "Translate into Portuguese: 'She is pretty.'",
-          "sampleAnswer": "Ela é bonita."
+          "keyPoints": [
+            "Acrescentar o citoplasma.",
+            "Representá-lo na região interna delimitada pela membrana, ao redor do fio.",
+            "Essa região contém materiais da célula e é onde acontecem muitas de suas atividades."
+          ],
+          "language": "pt",
+          "question": "Em Porto Velho, Iara prepara um esquema didático de célula. Ela desenha a membrana no contorno e um fio de material genético no interior, mas deixa vazio todo o espaço entre eles.\n\nO que Iara precisa acrescentar, onde deve desenhar isso e por que isso completa o esquema?",
+          "sampleAnswer": "Iara precisa mostrar o citoplasma no espaço dentro da membrana, ao redor do fio. Assim, o esquema inclui a região interna onde ficam materiais da célula e acontecem muitas de suas atividades.",
+          "answer": "O citoplasma, desenhado do lado de fora da membrana, envolvendo a célula toda."
         }
       }
     },
@@ -855,161 +1227,34 @@
       "classification": { "expected": "wrong", "predicted": "wrong" },
       "steps": [
         {
-          "conclusion": "Expected wrong with key points [true,true,true] and corrections [\"your\"]; got wrong with [true,true,true] and [\"your\"].",
+          "conclusion": "Expected wrong with key points [false,false,false] and corrections []; got wrong with [false,false,false] and [].",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected wrong with key points [true,true,true] and corrections [\"your\"]; got wrong with [true,true,true] and [\"your\"].",
+          "conclusion": "Expected wrong with key points [false,false,false] and corrections []; got wrong with [false,false,false] and [].",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected wrong with key points [true,true,true] and corrections [\"your\"]; got wrong with [true,true,true] and [\"your\"].",
+          "conclusion": "Expected wrong with key points [false,false,false] and corrections []; got wrong with [false,false,false] and [].",
           "kind": "potentialImprovements",
           "score": 10
         }
       ],
       "testCase": {
-        "expected": {
-          "corrections": ["your"],
-          "isCorrect": false,
-          "keyPoints": [true, true, true]
-        },
-        "id": "pt-language-form-mistake-idea-stated-1",
+        "expected": { "isCorrect": false, "keyPoints": [false, false, false] },
+        "id": "pt-celula-repete-pergunta-1",
         "userInput": {
-          "acceptedAnswers": [
-            "Please reply by Thursday to confirm your availability.",
-            "Please respond by Thursday to confirm your availability."
-          ],
           "keyPoints": [
-            "Faz o pedido com `Please` seguido de um verbo na forma simples.",
-            "Usa `by Thursday` para indicar o prazo.",
-            "Pede a confirmação da disponibilidade."
+            "Acrescentar o citoplasma.",
+            "Representá-lo na região interna delimitada pela membrana, ao redor do fio.",
+            "Essa região contém materiais da célula e é onde acontecem muitas de suas atividades."
           ],
           "language": "pt",
-          "practicedLanguage": "en",
-          "question": "Escreva uma frase de convite em inglês: «Por favor, responda até quinta-feira para confirmar sua disponibilidade.»",
-          "sampleAnswer": "Please reply by Thursday to confirm your availability.",
-          "answer": "Please reply by thursday to confirm you availability."
-        }
-      }
-    },
-    {
-      "classification": { "expected": "correct", "predicted": "correct" },
-      "steps": [
-        {
-          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": { "isCorrect": true, "keyPoints": [true, true, true] },
-        "id": "pt-language-slip-not-a-mistake-1",
-        "userInput": {
-          "acceptedAnswers": [
-            "Please reply by Thursday to confirm your availability.",
-            "Please respond by Thursday to confirm your availability."
-          ],
-          "keyPoints": [
-            "Faz o pedido com `Please` seguido de um verbo na forma simples.",
-            "Usa `by Thursday` para indicar o prazo.",
-            "Pede a confirmação da disponibilidade."
-          ],
-          "language": "pt",
-          "practicedLanguage": "en",
-          "question": "Escreva uma frase de convite em inglês: «Por favor, responda até quinta-feira para confirmar sua disponibilidade.»",
-          "sampleAnswer": "Please reply by Thursday to confirm your availability.",
-          "answer": "Please reply by Thursday to confirm your availabilty."
-        }
-      }
-    },
-    {
-      "classification": { "expected": "wrong", "predicted": "wrong" },
-      "steps": [
-        {
-          "conclusion": "Expected wrong with key points [true,true,true] and corrections [\"sua\"]; got wrong with [true,true,true] and [\"sua\"].",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected wrong with key points [true,true,true] and corrections [\"sua\"]; got wrong with [true,true,true] and [\"sua\"].",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected wrong with key points [true,true,true] and corrections [\"sua\"]; got wrong with [true,true,true] and [\"sua\"].",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": { "corrections": ["sua"], "isCorrect": false, "keyPoints": [true, true, true] },
-        "id": "en-language-form-mistake-idea-stated-1",
-        "userInput": {
-          "acceptedAnswers": ["Por favor, confirme sua presença até sexta-feira."],
-          "answer": "Por favor, confirme seu presença até sexta-feira.",
-          "keyPoints": [
-            "Asks politely with `Por favor`",
-            "Asks the person to confirm their attendance",
-            "Gives Friday (`até sexta-feira`) as the deadline"
-          ],
-          "language": "en",
-          "practicedLanguage": "pt",
-          "question": "Write in Portuguese: “Please confirm your attendance by Friday.”",
-          "sampleAnswer": "Por favor, confirme sua presença até sexta-feira."
-        }
-      }
-    },
-    {
-      "classification": { "expected": "correct", "predicted": "correct" },
-      "steps": [
-        {
-          "conclusion": "Expected correct with key points [true,true] and corrections []; got correct with [true,true] and [].",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected correct with key points [true,true] and corrections []; got correct with [true,true] and [].",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Expected correct with key points [true,true] and corrections []; got correct with [true,true] and [].",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": { "isCorrect": true, "keyPoints": [true, true] },
-        "id": "pt-language-own-words-paraphrase-of-taught-phrase-1",
-        "userInput": {
-          "acceptedAnswers": [
-            "I'll stay with a friend.",
-            "I will stay with a friend.",
-            "I'm going to stay with a friend.",
-            "I am going to stay with a friend."
-          ],
-          "answer": "I'll stay at a friend's house.",
-          "keyPoints": [
-            "Indica um plano futuro de hospedagem.",
-            "Usa “stay with a friend” para dizer que vai ficar na casa de um amigo."
-          ],
-          "language": "pt",
-          "practicedLanguage": "en",
-          "question": "Escreva uma mensagem com seu plano de hospedagem: “Vou ficar na casa de um amigo.”",
-          "sampleAnswer": "I'll stay with a friend."
+          "question": "Em Porto Velho, Iara prepara um esquema didático de célula. Ela desenha a membrana no contorno e um fio de material genético no interior, mas deixa vazio todo o espaço entre eles.\n\nO que Iara precisa acrescentar, onde deve desenhar isso e por que isso completa o esquema?",
+          "sampleAnswer": "Iara precisa mostrar o citoplasma no espaço dentro da membrana, ao redor do fio. Assim, o esquema inclui a região interna onde ficam materiais da célula e acontecem muitas de suas atividades.",
+          "answer": "Ela precisa acrescentar o que falta no espaço vazio, para o esquema ficar completo."
         }
       }
     }

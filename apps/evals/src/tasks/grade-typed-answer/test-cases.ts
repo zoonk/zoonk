@@ -65,6 +65,37 @@ const RECRUITER_MESSAGE = {
   sampleAnswer: "Could you tell me who I should contact about registration requirements?",
 };
 
+const OHMS_LAW = {
+  keyPoints: [
+    "Escolher o resistor, pois ele mantém a resistência constante",
+    "Calcular 9 ÷ 6 = 1,5 A",
+    "Explicar que a resistência da lâmpada muda quando ela esquenta",
+  ],
+  language: "pt",
+  question:
+    "João tem uma fonte de 9 V, um resistor de 6 Ω e uma lâmpada que mediu 6 Ω ainda fria. Qual dos dois ele pode usar para prever a corrente com a lei de Ohm, quanto ela vale e por que o outro não serve?",
+  sampleAnswer:
+    "O resistor: 9 V ÷ 6 Ω = 1,5 A. A resistência da lâmpada muda quando ela esquenta, então o valor medido a frio não serve.",
+};
+
+/**
+ * The owner's lesson screen (Oct 2026), with the key points its writer gave it: a question asking
+ * three things at once, whose right answers name the cytoplasm and its place in their own words
+ * and often skip the "why" their own idea already carries.
+ */
+const CELL_DIAGRAM = {
+  keyPoints: [
+    "Acrescentar o citoplasma.",
+    "Representá-lo na região interna delimitada pela membrana, ao redor do fio.",
+    "Essa região contém materiais da célula e é onde acontecem muitas de suas atividades.",
+  ],
+  language: "pt",
+  question:
+    "Em Porto Velho, Iara prepara um esquema didático de célula. Ela desenha a membrana no contorno e um fio de material genético no interior, mas deixa vazio todo o espaço entre eles.\n\nO que Iara precisa acrescentar, onde deve desenhar isso e por que isso completa o esquema?",
+  sampleAnswer:
+    "Iara precisa mostrar o citoplasma no espaço dentro da membrana, ao redor do fio. Assim, o esquema inclui a região interna onde ficam materiais da célula e acontecem muitas de suas atividades.",
+};
+
 export const TEST_CASES: TestCase<GradeTypedAnswerExpected, GradeTypedAnswerInput>[] = [
   {
     expected: { isCorrect: true, keyPoints: [true, true, true] },
@@ -188,21 +219,21 @@ export const TEST_CASES: TestCase<GradeTypedAnswerExpected, GradeTypedAnswerInpu
     },
   },
   {
-    expected: { isCorrect: false, keyPoints: [true, true, false] },
+    // Its reason for the resistor (a resistance that doesn't change) already says why the lamp
+    // doesn't serve: the missing "it heats up" is a detail for the feedback, not a wrong answer.
+    expected: { isCorrect: true, keyPoints: [true, true, false] },
     id: "pt-sem-acentos-lei-de-ohm",
     userInput: {
+      ...OHMS_LAW,
       answer: "o resistor, porque a resistencia dele nao muda. a corrente e 9/6 = 1,5 A",
-      keyPoints: [
-        "Escolher o resistor, pois ele mantém a resistência constante",
-        "Calcular 9 ÷ 6 = 1,5 A",
-        "Explicar que a resistência da lâmpada muda quando ela esquenta",
-      ],
-      language: "pt",
-      question:
-        "João tem uma fonte de 9 V, um resistor de 6 Ω e uma lâmpada que mediu 6 Ω ainda fria. Qual dos dois ele pode usar para prever a corrente com a lei de Ohm, quanto ela vale e por que o outro não serve?",
-      sampleAnswer:
-        "O resistor: 9 V ÷ 6 Ω = 1,5 A. A resistência da lâmpada muda quando ela esquenta, então o valor medido a frio não serve.",
     },
+  },
+  {
+    // Picking one of two parts and dividing could be a guess: with no reason, the answer doesn't
+    // show why Ohm's law fits the resistor.
+    expected: { isCorrect: false, keyPoints: [false, true, false] },
+    id: "pt-lei-de-ohm-sem-porque",
+    userInput: { ...OHMS_LAW, answer: "o resistor, 1,5 A" },
   },
   {
     expected: { isCorrect: false, keyPoints: [true, true, false] },
@@ -406,7 +437,9 @@ export const TEST_CASES: TestCase<GradeTypedAnswerExpected, GradeTypedAnswerInpu
     },
   },
   {
-    expected: { isCorrect: false, keyPoints: [true, false] },
+    // The postulate the question checks is right; why the microscope mattered, which the question
+    // also asks, is something to add in the feedback.
+    expected: { isCorrect: true, keyPoints: [true, false] },
     id: "pt-teoria-celular-meia-resposta",
     userInput: {
       answer: "que todo ser vivo é formado por celulas",
@@ -442,7 +475,9 @@ export const TEST_CASES: TestCase<GradeTypedAnswerExpected, GradeTypedAnswerInpu
     },
   },
   {
-    expected: { isCorrect: false, keyPoints: [true, false] },
+    // "Why" asks for a reason, and this one is right: the second reason the key points list is
+    // something to add in the feedback, since the question never asks for two.
+    expected: { isCorrect: true, keyPoints: [true, false] },
     id: "en-feedback-partial",
     userInput: {
       answer: "So they still remember exactly what happened.",
@@ -454,6 +489,59 @@ export const TEST_CASES: TestCase<GradeTypedAnswerExpected, GradeTypedAnswerInpu
       question: "Why should a manager give feedback soon after the behavior happens?",
       sampleAnswer:
         "Because everyone still remembers the details, and the person can change what they do right away.",
+    },
+  },
+  // The owner found the grader too literal (Oct 2026): an answer that shows the idea is right even
+  // when it skips a reason its own idea carries; a wrong part, a contradiction or an echo isn't.
+  {
+    expected: { isCorrect: true, keyPoints: [true, true, false] },
+    id: "pt-celula-citoplasma-sem-porque",
+    userInput: {
+      ...CELL_DIAGRAM,
+      answer:
+        "Ela precisa desenhar o citoplasma preenchendo o espaço entre a membrana e o material genético.",
+    },
+  },
+  {
+    expected: { isCorrect: true, keyPoints: [true, true, false] },
+    id: "pt-celula-gel-das-organelas",
+    userInput: {
+      ...CELL_DIAGRAM,
+      answer:
+        "faltou aquele liquido tipo gel onde ficam as organelas, tem que pintar tudo dentro da membrana em volta do fio",
+    },
+  },
+  {
+    expected: { isCorrect: true, keyPoints: [true, true, true] },
+    id: "pt-celula-citoplasma-informal",
+    userInput: {
+      ...CELL_DIAGRAM,
+      answer: "o citoplasma, no meio, em volta do dna. é ali q a celula faz as coisas dela",
+    },
+  },
+  {
+    expected: { isCorrect: false, keyPoints: [false, false, false] },
+    id: "pt-celula-parede-celular",
+    userInput: {
+      ...CELL_DIAGRAM,
+      answer:
+        "Ela precisa desenhar a parede celular nesse espaço, porque é ela que protege a célula.",
+    },
+  },
+  {
+    expected: { isCorrect: false, keyPoints: [true, false, false] },
+    id: "pt-celula-citoplasma-fora-da-membrana",
+    userInput: {
+      ...CELL_DIAGRAM,
+      answer: "O citoplasma, desenhado do lado de fora da membrana, envolvendo a célula toda.",
+    },
+  },
+  {
+    expected: { isCorrect: false, keyPoints: [false, false, false] },
+    id: "pt-celula-repete-pergunta",
+    userInput: {
+      ...CELL_DIAGRAM,
+      answer: "Ela precisa acrescentar o que falta no espaço vazio, para o esquema ficar completo.",
     },
   },
 ];

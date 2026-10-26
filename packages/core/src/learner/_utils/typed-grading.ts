@@ -7,10 +7,11 @@ import { type TypedItem, getTypedQuestionText, matchesAcceptedAnswer } from "./t
 export type TypedVerdict = { feedback: string | null; isCorrect: boolean };
 
 /**
- * Grades a typed answer: code settles an accepted answer, and a fast model grades the rest one key
- * point at a time (not counted as small AI help: grading must stay right). Only an answer that
- * states every key point counts as right, and an empty answer is wrong without asking. Past the
- * day's model-graded answers to one question (`canGradeWithModel`), only an accepted answer counts.
+ * Grades a typed answer: code settles an accepted answer, and a fast model grades the rest (not
+ * counted as small AI help: grading must stay right). An answer that shows the idea the question
+ * checks counts as right even when it leaves out a detail, and an empty answer is wrong without
+ * asking. Past the day's model-graded answers to one question (`canGradeWithModel`), only an
+ * accepted answer counts.
  */
 export async function gradeTypedItemAnswer({
   item,

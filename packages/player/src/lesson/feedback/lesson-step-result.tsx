@@ -138,11 +138,26 @@ function CorrectionLines({ corrections }: { corrections: LessonStepResult["corre
 }
 
 /**
+ * A written answer's key points, unless they'd read against its verdict: a right answer that left
+ * out a detail, or one marked wrong with every point stated, shows the grader's feedback instead,
+ * which explains the verdict. A language answer's corrections already say why its stated ideas
+ * aren't right yet, so its key points stay.
+ */
+function getShownKeyPoints(result: LessonStepResult): LessonStepResult["keyPoints"] {
+  if (!result.keyPoints || !result.feedback || result.corrections.length > 0) {
+    return result.keyPoints;
+  }
+
+  const allMet = result.keyPoints.every((point) => point.met);
+  return allMet === result.isCorrect ? result.keyPoints : null;
+}
+
+/**
  * The result of one screen, on the feedback panel under the question: the verdict (with
  * Hyperdrive's streak on its right), one why, and a faint last line on what happens next. The
  * options on screen already show what was picked and what was right, so nothing repeats them; a
- * written answer shows its key points instead of a paragraph, a typo its right spelling, a
- * language answer's form mistakes as a diff, and a spoken one the words heard.
+ * written answer shows its key points instead of a paragraph (see `getShownKeyPoints`), a typo its
+ * right spelling, a language answer's form mistakes as a diff, and a spoken one the words heard.
  */
 export function LessonStepResultView({
   hyperdriveStreak,
@@ -157,6 +172,7 @@ export function LessonStepResultView({
 }) {
   const t = useExtracted();
   const verdict = getVerdict({ result, step });
+  const keyPoints = getShownKeyPoints(result);
   const { answerText } = result;
   const wordHints = "wordHints" in step ? step.wordHints : null;
 
@@ -181,8 +197,8 @@ export function LessonStepResultView({
         {result.heard && step.kind === "spokenAnswer" && (
           <LessonSpokenWords heard={result.heard} language={step.content.language} />
         )}
-        {result.keyPoints ? (
-          <LessonKeyPoints keyPoints={result.keyPoints} />
+        {keyPoints ? (
+          <LessonKeyPoints keyPoints={keyPoints} />
         ) : (
           result.feedback && (
             <FeedbackExplanation>

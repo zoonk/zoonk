@@ -77,9 +77,10 @@ function gradeTypedByCode({
 }
 
 /**
- * A written answer: code settles the accepted answers and a fast model grades the rest one key
- * point at a time, with feedback in the learner's language. In a language course, a spelling that
- * changes a word is a mistake; a typo that doesn't is right, with the spelling shown.
+ * A written answer: code settles the accepted answers and a fast model grades the rest by the idea
+ * the question checks, with each key point for partial credit and feedback in the learner's
+ * language. In a language course, a spelling that changes a word is a mistake; a typo that doesn't
+ * is right, with the spelling shown.
  */
 async function gradeTypedStep({
   answer,

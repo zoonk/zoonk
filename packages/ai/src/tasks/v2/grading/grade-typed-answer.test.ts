@@ -81,6 +81,7 @@ describe(gradeTypedAnswer, () => {
       createGenerateTextResult({
         corrections: [],
         feedback: "Right.",
+        isCorrect: true,
         keyPoints: [{ met: true, number: 1 }],
       }),
     );
@@ -103,6 +104,7 @@ describe(gradeTypedAnswer, () => {
       createGenerateTextResult({
         corrections: [{ right: "bonita", wrong: "bonito" }],
         feedback: "Watch the ending.",
+        isCorrect: false,
         keyPoints: [{ met: false, number: 1 }],
       }),
     );
@@ -127,11 +129,12 @@ describe(gradeTypedAnswer, () => {
     });
   });
 
-  it("keeps an idea stated with a form mistake but doesn't count the answer right", async () => {
+  it("keeps an idea stated with a form mistake but never counts the answer right", async () => {
     vi.mocked(generateText).mockResolvedValueOnce(
       createGenerateTextResult({
         corrections: [{ right: "your availability", wrong: "you availability" }],
         feedback: "You asked for everything; it's “your availability”.",
+        isCorrect: true,
         keyPoints: [
           { met: true, number: 1 },
           { met: true, number: 2 },
@@ -168,6 +171,7 @@ describe(gradeTypedAnswer, () => {
           { right: "reply", wrong: "reply" },
         ],
         feedback: "Right.",
+        isCorrect: true,
         keyPoints: [{ met: true, number: 1 }],
       }),
     );
@@ -188,6 +192,7 @@ describe(gradeTypedAnswer, () => {
       createGenerateTextResult({
         corrections: [{ right: "were", wrong: "was" }],
         feedback: "Right.",
+        isCorrect: true,
         keyPoints: [{ met: true, number: 1 }],
       }),
     );
@@ -207,6 +212,7 @@ describe(gradeTypedAnswer, () => {
       createGenerateTextResult({
         corrections: [],
         feedback: "You explained the inputs but not what the plant makes.",
+        isCorrect: false,
         keyPoints: [
           { met: true, number: 1 },
           { met: true, number: 2 },
@@ -235,11 +241,41 @@ describe(gradeTypedAnswer, () => {
     });
   });
 
+  it("counts an answer right when the model says it shows the idea, with a detail left out", async () => {
+    vi.mocked(generateText).mockResolvedValueOnce(
+      createGenerateTextResult({
+        feedback: "Right: light turns CO2 into sugar. It also releases oxygen.",
+        isCorrect: true,
+        keyPoints: [
+          { met: true, number: 1 },
+          { met: true, number: 2 },
+          { met: false, number: 3 },
+        ],
+      }),
+    );
+
+    const result = await gradeTypedAnswer({
+      ...openAnswerParams,
+      answer: "With sunlight the plant turns CO2 from the air into sugar.",
+    });
+
+    expect(result.data).toMatchObject({
+      isCorrect: true,
+      keyPoints: [
+        { met: true, text: "Plants take in carbon dioxide" },
+        { met: true, text: "Light provides the energy" },
+        { met: false, text: "Glucose and oxygen are produced" },
+      ],
+      score: 2 / 3,
+    });
+  });
+
   it("fails instead of grading when the model skips or invents a key point", async () => {
     vi.mocked(generateText).mockResolvedValueOnce(
       createGenerateTextResult({
         corrections: [],
         feedback: "Only part of the process.",
+        isCorrect: false,
         keyPoints: [
           { met: true, number: 2 },
           { met: true, number: 7 },
@@ -257,6 +293,7 @@ describe(gradeTypedAnswer, () => {
       createGenerateTextResult({
         corrections: [],
         feedback: "Only part of the process.",
+        isCorrect: false,
         keyPoints: [
           { met: true, number: 1 },
           { met: false, number: 1 },
@@ -275,6 +312,7 @@ describe(gradeTypedAnswer, () => {
       createGenerateTextResult({
         corrections: [],
         feedback: "Você perguntou com educação quem contatar sobre o registro.",
+        isCorrect: true,
         keyPoints: [
           { met: true, number: 1 },
           { met: true, number: 2 },
@@ -299,6 +337,7 @@ describe(gradeTypedAnswer, () => {
     const grade = createGenerateTextResult({
       corrections: [],
       feedback: "Você perguntou quem contatar.",
+      isCorrect: true,
       keyPoints: [{ met: true, number: 1 }],
     });
 
@@ -316,9 +355,11 @@ describe(gradeTypedAnswer, () => {
     expect(practice.systemPrompt).toBe("Grade the answer.\nLanguage practice rules.");
     expect(vi.mocked(generateText).mock.calls[0]?.[0].instructions).toBe(practice.systemPrompt);
 
-    // Key points come before the feedback: written before them, the feedback said "Well done!" for
-    // a placement answer the key points marked wrong, since it couldn't follow their verdict.
+    // The verdict comes first: after the key points, the model read them as a checklist and called
+    // right answers wrong for a detail. The feedback comes last: written before the key points, it
+    // said "Well done!" for a placement answer they marked wrong.
     await expect(requestedSchemaFields()).resolves.toStrictEqual([
+      "isCorrect",
       "keyPoints",
       "corrections",
       "feedback",
@@ -329,7 +370,12 @@ describe(gradeTypedAnswer, () => {
 
     expect(other.systemPrompt).toBe("Grade the answer.");
     expect(other.userPrompt).not.toContain("PRACTICED_LANGUAGE");
-    await expect(requestedSchemaFields()).resolves.toStrictEqual(["keyPoints", "feedback"]);
+
+    await expect(requestedSchemaFields()).resolves.toStrictEqual([
+      "isCorrect",
+      "keyPoints",
+      "feedback",
+    ]);
   });
 
   it("turns HTML entities in the feedback back into the letters they stand for", async () => {
@@ -338,6 +384,7 @@ describe(gradeTypedAnswer, () => {
         corrections: [],
         feedback:
           "Faltou explicar por que a resist&ecirc;ncia da l&acirc;mpada muda &amp; esquenta.",
+        isCorrect: false,
         keyPoints: [
           { met: false, number: 1 },
           { met: false, number: 2 },
@@ -358,6 +405,7 @@ describe(gradeTypedAnswer, () => {
       createGenerateTextResult({
         corrections: [],
         feedback: "No.",
+        isCorrect: false,
         keyPoints: [
           { met: false, number: 1 },
           { met: false, number: 2 },

@@ -275,6 +275,49 @@ describe("lesson screens", () => {
     await expect.element(page.getByText("Missing:")).not.toBeInTheDocument();
   });
 
+  it("counts a right answer that left out a detail as right, naming the detail as something to add", async () => {
+    const lesson = buildLesson([teachingStep("typedAnswer"), teachingStep("summary")]);
+
+    const feedback =
+      "Right: it's where the electron is likely to be. Its exact path can't be known.";
+
+    // The grader's verdict on an answer that shows the idea but leaves out one key point.
+    const checkStep = vi.fn<LessonPlayerAdapters["checkStep"]>(() =>
+      Promise.resolve({
+        result: {
+          checked: true,
+          correctAnswer: null,
+          corrections: [],
+          feedback,
+          isCorrect: true,
+          keyPoints: [
+            { met: false, text: "We can't know the electron's exact position or path" },
+            { met: true, text: "The cloud shows where it's likely to be found" },
+          ],
+          nextReviewAt: null,
+          savedMistake: false,
+          score: 0.5,
+          spelling: null,
+        },
+        status: "checked" as const,
+      }),
+    );
+
+    renderLessonPlayer({ adapters: buildAdapters(lesson, { checkStep }), lesson });
+
+    await page
+      .getByRole("textbox", { name: "In your own words: why is the electron drawn as a cloud?" })
+      .fill("It shows where the electron probably is");
+
+    await page.getByRole("button", { name: /^Check/u }).click();
+    await expect.element(verdict("Correct!")).toBeVisible();
+    await expect.element(page.getByRole("status").getByText(feedback)).toBeVisible();
+
+    // No "missing" list under "Correct!": the feedback names the detail instead.
+    await expect.element(page.getByText("1 of 2 key points")).not.toBeInTheDocument();
+    await expect.element(page.getByText("Missing:")).not.toBeInTheDocument();
+  });
+
   it("teaches a word with its note and tip, then checks it", async () => {
     renderLessonPlayer({
       lesson: buildLesson(

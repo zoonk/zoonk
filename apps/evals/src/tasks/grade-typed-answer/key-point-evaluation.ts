@@ -6,14 +6,24 @@ import {
 import { matchTypedAnswer } from "@zoonk/ai/tasks/v2/grading/typed-answer-match";
 
 /**
- * The plan's Jev use for open answers: one boolean question per key point
- * after the same code pre-check production runs, plus one on form in language
- * practice. It returns the task's own output shape so the typed-grading scorer
- * compares it with generation models; a yes/no answer can't name a correction,
- * so a form mistake only shows in the verdict.
+ * The plan's Jev use for open answers: one boolean question on the verdict and
+ * one per key point after the same code pre-check production runs, plus one on
+ * form in language practice. It returns the task's own output shape so the
+ * typed-grading scorer compares it with generation models; a yes/no answer
+ * can't name a correction, so a form mistake only shows in the verdict.
  */
 const INSTRUCTIONS = `Decide whether LEARNER_ANSWER states the key point below as an answer to QUESTION.
 The key point is met when the answer states its idea in any wording, including synonyms, paraphrases, everyday words and examples that clearly show it. It is not met when the answer leaves it out, stays too vague, only repeats the question or contradicts it. Judge meaning, not grammar, and ignore spelling slips.`;
+
+const VERDICT_QUESTION = {
+  criteria: {
+    false:
+      "The answer misses or gets wrong the idea the question checks, states something false, stays too vague or only repeats the question.",
+    true: "The answer shows the idea the question checks, even if it leaves out a detail or another part.",
+  },
+  instructions: `Decide whether LEARNER_ANSWER shows that the learner understands what QUESTION checks, like a fair teacher who checks understanding, not wording. It can leave out a place or a detail, one of several reasons, a second thing the question also asks about, or a reason that follows from what it already says. It is wrong when it misses or gets wrong the idea the question checks (only a choice or a result with no reason when the question asks why, only what goes into a process when it asks what happens), states something false, contradicts itself, stays too vague or only repeats the question.`,
+  type: "boolean" as const,
+};
 
 const FORM_QUESTION = {
   criteria: {
@@ -31,7 +41,10 @@ const NO_USAGE = { inputTokens: 0, outputTokens: 0 };
 function buildQuestions({
   keyPoints,
   practicedLanguage,
-}: Pick<GradeTypedAnswerParams, "keyPoints" | "practicedLanguage">) {
+}: Pick<GradeTypedAnswerParams, "keyPoints" | "practicedLanguage">): Record<
+  string,
+  typeof VERDICT_QUESTION
+> {
   const keyPointQuestions = Object.fromEntries(
     keyPoints.map((keyPoint, index) => [
       `keyPoint${index + 1}`,
@@ -46,18 +59,19 @@ function buildQuestions({
     ]),
   );
 
-  return practicedLanguage
-    ? { ...keyPointQuestions, formIsRight: FORM_QUESTION }
-    : keyPointQuestions;
+  const questions = { ...keyPointQuestions, isRight: VERDICT_QUESTION };
+  return practicedLanguage ? { ...questions, formIsRight: FORM_QUESTION } : questions;
 }
 
 function toGrade({
   formIsRight,
+  isRight,
   keyPoints,
   met,
   spelling,
 }: {
   formIsRight: boolean;
+  isRight: boolean;
   keyPoints: string[];
   met: boolean[];
   spelling: string | null;
@@ -68,7 +82,7 @@ function toGrade({
   return {
     corrections: [],
     feedback: null,
-    isCorrect: metCount === graded.length && formIsRight,
+    isCorrect: isRight && formIsRight,
     keyPoints: graded,
     method: "model",
     score: metCount / graded.length,
@@ -90,6 +104,7 @@ export async function evaluateTypedAnswerKeyPoints(
     return {
       data: toGrade({
         formIsRight: true,
+        isRight: true,
         keyPoints: input.keyPoints,
         met: input.keyPoints.map(() => true),
         spelling,
@@ -116,10 +131,12 @@ export async function evaluateTypedAnswerKeyPoints(
   );
 
   const formIsRight = (run.answers.formIsRight?.probability ?? 1) >= EVAL_THRESHOLD;
+  const isRight = (run.answers.isRight?.probability ?? 0) >= EVAL_THRESHOLD;
 
   return {
     data: toGrade({
       formIsRight,
+      isRight,
       keyPoints: input.keyPoints,
       met: probabilities.map((probability) => probability >= EVAL_THRESHOLD),
       spelling,

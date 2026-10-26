@@ -38,18 +38,30 @@ import {
  * to use a phrase the question doesn't ask for is met by another correct
  * wording, it got all 10 language-practice cases right, an own-words answer it
  * had graded "1 of 2" for a missing taught phrase included (11 Oct 2026, 1.2s p50).
+ * Asked whether the answer shows the idea the question checks (a right answer
+ * may leave out a detail), but after the key points, it still read them as a
+ * checklist and called 4 of 20 right answers wrong, one naming the missing
+ * cytoplasm and where it goes among them. Deciding the verdict first, it got 34
+ * of 35 verdicts right in each of three runs, against Luna's 32 to 34 and Haiku's
+ * 33 to 34 in two (26 Oct 2026, 1.3s p50 against Luna's 2.9 to 3.3s and Haiku's
+ * 2.3 to 2.5s).
  */
 const defaultModel = "google/gemini-3.5-flash-lite";
 const fallbackModels = ["openai/gpt-6-luna", "anthropic/claude-haiku-5.5"] as const;
 const INCOMPLETE_GRADE_MESSAGE = "AI provider didn't grade every key point of a typed answer";
 
-/* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the model decides each key point before it writes the feedback, so the feedback says the verdict the key points give. */
+/* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the model judges the whole answer before its key points can read as a checklist, then each key point, and writes the feedback last, so it says that verdict. */
 const keyPointsSchema = z.array(z.object({ number: z.number().int(), met: z.boolean() }));
 
-const schema = z.object({ keyPoints: keyPointsSchema, feedback: z.string() });
+const schema = z.object({
+  isCorrect: z.boolean(),
+  keyPoints: keyPointsSchema,
+  feedback: z.string(),
+});
 
 /** Only language practice grades form, so only its answers list form mistakes. */
 const languagePracticeSchema = z.object({
+  isCorrect: z.boolean(),
   keyPoints: keyPointsSchema,
   corrections: z.array(z.object({ wrong: z.string(), right: z.string() })),
   feedback: z.string(),
@@ -69,14 +81,17 @@ export type TypedAnswerCorrection = { wrong: string; right: string };
 
 /**
  * How the verdict was reached: code matched an accepted answer exactly or
- * with a spelling slip, or a model graded the key points.
+ * with a spelling slip, or a model graded the answer.
  */
 export type TypedAnswerGradeMethod = "exact" | "typo" | "model";
 
 export type TypedAnswerGrade = {
-  /** Every key point met, and in language practice no form mistake left. */
+  /**
+   * The answer shows the understanding the question asks for, and in language practice has no
+   * form mistake left. A right answer may leave out a key point that was only a detail.
+   */
   isCorrect: boolean;
-  /** Share of key points met, from 0 to 1: partial credit for open answers. */
+  /** Share of key points met, from 0 to 1: partial credit for open answers, right ones included. */
   score: number;
   /** Judged by meaning, so a form mistake never hides an idea the learner stated. */
   keyPoints: { text: string; met: boolean }[];
@@ -95,7 +110,7 @@ export type TypedAnswerGrade = {
 
 export type GradeTypedAnswerParams = {
   question: string;
-  /** What a full answer must state, one idea each. */
+  /** What a full answer states, one idea each: the grader's guide to the verdict. */
   keyPoints: string[];
   /** Short canonical answers compared in code before any model runs. */
   acceptedAnswers?: string[];
@@ -118,6 +133,7 @@ export type GradeTypedAnswerParams = {
 function toGrade({
   corrections,
   feedback,
+  isCorrect,
   keyPoints,
   match,
   method,
@@ -125,6 +141,7 @@ function toGrade({
 }: {
   corrections: TypedAnswerCorrection[];
   feedback: string | null;
+  isCorrect: boolean;
   keyPoints: string[];
   match: TypedAnswerMatch;
   method: TypedAnswerGradeMethod;
@@ -136,7 +153,7 @@ function toGrade({
   return {
     corrections,
     feedback,
-    isCorrect: graded.length > 0 && metCount === graded.length && corrections.length === 0,
+    isCorrect: isCorrect && corrections.length === 0,
     keyPoints: graded,
     method,
     score: graded.length === 0 ? 0 : metCount / graded.length,
@@ -225,13 +242,15 @@ function getCodeMethod({
 }
 
 /**
- * Grades a typed or spoken (transcribed) answer against its key points. Code
- * compares it with the accepted answers first, so easy cases never call a
- * model; otherwise a fast model marks each key point met or not and writes
- * feedback that explains the verdict. Partial answers get partial credit. In
- * language practice key points are still judged by meaning (an English answer
- * meets a key point written in Portuguese), and each form mistake comes back as
- * a correction that keeps the answer from being right. A grade that skips a key
+ * Grades a typed or spoken (transcribed) answer. Code compares it with the
+ * accepted answers first, so easy cases never call a model; otherwise a fast
+ * model decides whether the answer shows the understanding the question asks
+ * for (a right answer can leave out a detail), marks each key point met or not,
+ * and writes feedback that explains the verdict and names what a right answer
+ * could add. The share of key points met is partial credit. In language
+ * practice key points are still judged by meaning (an English answer meets a
+ * key point written in Portuguese), and each form mistake comes back as a
+ * correction that keeps the answer from being right. A grade that skips a key
  * point throws instead of counting it as missed, so a grading failure never
  * reads as the learner's mistake.
  */
@@ -254,6 +273,7 @@ export async function gradeTypedAnswer(params: GradeTypedAnswerParams) {
       data: toGrade({
         corrections: [],
         feedback: null,
+        isCorrect: true,
         keyPoints,
         match,
         metNumbers: allMet,
@@ -300,6 +320,7 @@ export async function gradeTypedAnswer(params: GradeTypedAnswerParams) {
         practicedLanguage: params.practicedLanguage,
       }),
       feedback: decodeHtmlEntities(result.output.feedback),
+      isCorrect: result.output.isCorrect,
       keyPoints,
       match,
       metNumbers,

@@ -44,11 +44,11 @@ export function gradeLessonAnswers(firstAnswers: readonly boolean[]): GradedAnsw
 }
 
 /**
- * Turns one graded answer into an FSRS grade. A wrong answer (or less than half the key points) is
- * Again; help, partial credit or taking over twice the expected time is Hard; answering in under
- * half the expected time is Easy; everything else is Good. It's a code rule rather than a model's
- * score: partial credit already comes from the per-key-point grader, and help and time are facts
- * code measures, so asking a model again would add cost and noise without new information.
+ * Turns one graded answer into an FSRS grade. A wrong answer is Again; help, partial credit (a
+ * right answer that left out key points) or taking over twice the expected time is Hard; answering
+ * in under half the expected time is Easy; everything else is Good. It's a code rule rather than a
+ * model's score: partial credit already comes from the per-key-point grader, and help and time are
+ * facts code measures, so asking a model again would add cost and noise without new information.
  */
 export function rateAnswer({
   durationMs,
@@ -57,13 +57,13 @@ export function rateAnswer({
   score,
   usedHint = false,
 }: GradedAnswer): ReviewRating {
-  const hasScore = typeof score === "number";
-
-  if (!isCorrect || (hasScore && score < PASSING_SCORE)) {
+  if (!isCorrect) {
     return "again";
   }
 
-  if (usedHint || (hasScore && score < 1) || durationMs > expectedDurationMs * SLOW_FACTOR) {
+  const partialCredit = typeof score === "number" && score < 1;
+
+  if (usedHint || partialCredit || durationMs > expectedDurationMs * SLOW_FACTOR) {
     return "hard";
   }
 

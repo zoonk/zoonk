@@ -6,13 +6,11 @@ describe(rateAnswer, () => {
     expect(rateAnswer({ durationMs: 10_000, isCorrect: false })).toBe("again");
   });
 
-  it("rates less than half the key points Again even when marked right", () => {
-    expect(rateAnswer({ durationMs: 10_000, isCorrect: true, score: 0.4 })).toBe("again");
-  });
-
   it("rates help, partial credit or a slow answer Hard", () => {
     expect(rateAnswer({ durationMs: 10_000, isCorrect: true, usedHint: true })).toBe("hard");
     expect(rateAnswer({ durationMs: 10_000, isCorrect: true, score: 0.75 })).toBe("hard");
+    // A right answer that left out most key points still showed the idea: Hard, never a lapse.
+    expect(rateAnswer({ durationMs: 10_000, isCorrect: true, score: 0.4 })).toBe("hard");
     expect(rateAnswer({ durationMs: 50_000, isCorrect: true })).toBe("hard");
   });
 
