@@ -56,7 +56,8 @@ test.describe("A checkpoint from today's session", () => {
       page.getByRole("heading", { level: 1, name: /^Done in /u }),
     );
 
-    await expect(page).toHaveURL(/\/session$/u);
+    // The summary's address may name its goal once it's read (`?goal=`), so only its path counts.
+    await expect(page).toHaveURL((url) => url.pathname === "/session");
     await expect(ceremony).toBeHidden();
     await expect(page.getByRole("link", { name: "Finish" })).toBeVisible();
     await page.keyboard.press("Enter");
