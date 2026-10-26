@@ -1,7 +1,6 @@
 import { DayList, type DayListStep } from "@/components/public/day-list";
 import { NUMERIC_CLASS } from "@/components/public/landing-styles";
 import { NoAccountStartNote } from "@/components/public/no-account-note";
-import { ProductWindow } from "@/components/public/product-window";
 import { StartBlock } from "@/components/public/public-start";
 import { StartPlanLink } from "@/components/public/start-plan-link";
 import { type LibraryLessonRoute } from "@/data/catalog/resolve-catalog-route";
@@ -57,10 +56,10 @@ function getDaySteps({
 
 /**
  * Under the lesson, what it is in a plan: one day of the course's plan with this lesson in it, as
- * Today lists it, between its chapter's lessons before and after it (an example, said so), then a
- * quieter "Build my plan" than the first screen above, which stays the page's main action. The
- * plan starts at this lesson's chapter, as the end of the lesson does, unless it's the course's
- * first.
+ * Today lists it, flat on the page, between its chapter's lessons before and after it (an example,
+ * said so under it), then a quieter "Build my plan" than the first screen above, which stays the
+ * page's main action. The plan starts at this lesson's chapter, as the end of the lesson does,
+ * unless it's the course's first.
  */
 export async function LessonPlanDay({
   className,
@@ -82,18 +81,13 @@ export async function LessonPlanDay({
       aria-labelledby={titleId}
       className={cn("max-w-column flex flex-col gap-5", className)}
     >
-      <h2
-        className="text-[22px] leading-tight font-semibold tracking-[-0.02em] text-balance sm:text-2xl"
-        id={titleId}
-      >
+      <h2 className="text-section" id={titleId}>
         {t("This lesson is part of the {course} course.", { course: course.title })}
       </h2>
 
-      <ProductWindow className="flex flex-col gap-1.5 p-5 sm:px-6">
-        <p className="text-label mb-2">{t("Example plan")}</p>
-
+      <div className="flex flex-col gap-2">
         <p className="flex items-baseline justify-between gap-3">
-          <span className="text-label">{t("Today")}</span>
+          <span className="text-[0.9375rem] font-semibold">{t("Today")}</span>
           <span className={cn(NUMERIC_CLASS, "text-muted-foreground text-xs")}>
             {t("{count, plural, one {# lesson} other {# lessons}}", { count: steps.length })}
             {" · "}
@@ -102,7 +96,11 @@ export async function LessonPlanDay({
         </p>
 
         <DayList minutesText={minutesText} steps={steps} />
-      </ProductWindow>
+
+        <p className="text-muted-foreground pt-2 text-[13px] leading-relaxed text-pretty">
+          {t("An example. Your plan follows your answers, so it can start later and end sooner.")}
+        </p>
+      </div>
 
       <StartBlock
         className="mt-1 sm:mt-1"

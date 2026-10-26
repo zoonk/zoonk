@@ -1,5 +1,5 @@
 import { type UndatedEstimate } from "@/components/catalog/plan-estimate";
-import { PublicDisclosure } from "@/components/public/public-disclosure";
+import { RouteZone } from "@zoonk/learn/route-line";
 import { getExtracted } from "next-intl/server";
 import {
   OUTLINE_SEPARATOR,
@@ -14,10 +14,11 @@ import { type ChapterWeeks, getChapterWeeksFormatter } from "./outline-weeks";
 const CHAPTERS_NAMED = 3;
 
 /**
- * A level of the course (Overview, Beginner…) folded to one row: its name, its first chapters and
- * how many there are, with the weeks it takes in the selected example; open, its chapters with their
- * lessons and their weeks, numbered across the whole course, a long level's first few in sight. The
- * first chapters' names leave the row once it's open, where its rows name them.
+ * A level of the course (Overview, Beginner…), a zone of its route, folded to one row: its name,
+ * its first chapters and how many there are, with the weeks it takes in the selected example;
+ * open, its chapters as stations with their lessons and their weeks, numbered across the whole
+ * course, a long level's first few in sight. The first chapters' names leave the row once it's
+ * open, where its rows name them.
  */
 export async function OutlineLevel({
   band,
@@ -71,13 +72,13 @@ export async function OutlineLevel({
   const span = spanText();
 
   return (
-    <PublicDisclosure
+    <RouteZone
       aside={[chapterCount, span].filter(Boolean).join(OUTLINE_SEPARATOR)}
       open={open}
       summary={
         <span className="flex flex-col gap-1">
           <span>{label}</span>
-          <span className="text-muted-foreground text-[13px] leading-snug font-normal text-pretty group-open:hidden sm:text-sm">
+          <span className="text-muted-foreground text-[13px] leading-snug font-normal text-pretty group-open/zone:hidden sm:text-sm">
             {band.chapters
               .slice(0, CHAPTERS_NAMED)
               .map((chapter) => chapter.title)
@@ -97,6 +98,6 @@ export async function OutlineLevel({
           />
         ))}
       />
-    </PublicDisclosure>
+    </RouteZone>
   );
 }

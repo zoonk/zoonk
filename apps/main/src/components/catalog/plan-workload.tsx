@@ -1,21 +1,32 @@
 import { NUMERIC_CLASS } from "@/components/public/landing-styles";
 import { getApproxDurationFormatter } from "@/lib/public/public-labels";
 import { type PlanNumbers } from "@zoonk/core/plans/numbers-contract";
-import { KindDot, type LearnKind } from "@zoonk/learn/kind-tile";
+import { KindMark, type LearnKind, kindFillClass } from "@zoonk/learn/kind-tile";
+import { MeterPart, MeterParts } from "@zoonk/learn/meter";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
 
-/** A part of the plan's time: the kinds of work in it, as the app marks them on Today. */
-type WorkloadPart = { id: string; kinds: LearnKind[]; label: string; minutes: number };
+/**
+ * A part of the plan's time: the kinds of work in it, as the app marks them on Today, and its color
+ * in the meter (a lesson's neutral, a kind's hue).
+ */
+type WorkloadPart = {
+  fill: string;
+  id: string;
+  kinds: LearnKind[];
+  label: string;
+  minutes: number;
+};
 
 /**
  * What fills the plan's days at one time a day, so its headline reads against the outline's lesson
- * time: the lessons, those the course hasn't written yet (written as the learner reaches them),
- * reviews and practice, and challenges and mocks, each after its kind's dot, the one the app marks
- * it with on Today, and the whole of it beside the label, from the same plan numbers as the
- * headline. A part with no time isn't listed. The reviews' time, often as long as the lessons',
- * says what it's for. Work an exam's plan leaves for after its date (none unless it studies the
- * whole course) is said apart, since the headline counts up to it.
+ * time: the whole of it beside the title, a meter of its parts, each as long as its time, then
+ * each part on its row after its kind's mark, the one the app marks it with on Today: the lessons,
+ * those the course hasn't written yet (written as the learner reaches them), reviews and practice,
+ * and challenges and mocks, from the same plan numbers as the headline. A part with no time isn't
+ * listed. The reviews' time, often as long as the lessons', says what it's for. Work an exam's plan
+ * leaves for after its date (none unless it studies the whole course) is said apart, since the
+ * headline counts up to it.
  */
 export async function PlanWorkload({
   exam,
@@ -29,20 +40,29 @@ export async function PlanWorkload({
   const { workload } = numbers;
 
   const allParts: WorkloadPart[] = [
-    { id: "lessons", kinds: ["lesson"], label: t("Lessons"), minutes: workload.lessonMinutes },
     {
+      fill: "bg-foreground/45",
+      id: "lessons",
+      kinds: ["lesson"],
+      label: t("Lessons"),
+      minutes: workload.lessonMinutes,
+    },
+    {
+      fill: "bg-foreground/20",
       id: "unwritten",
       kinds: ["lesson"],
       label: t("Lessons not written yet"),
       minutes: workload.unwrittenLessonMinutes,
     },
     {
+      fill: kindFillClass("review"),
       id: "practice",
       kinds: ["review"],
       label: t("Reviews and practice"),
       minutes: workload.practiceMinutes,
     },
     {
+      fill: kindFillClass(exam ? "mock" : "challenge"),
       id: "checkpoints",
       kinds: exam ? ["challenge", "mock"] : ["challenge"],
       label: exam ? t("Challenges and mock exams") : t("Challenges"),
@@ -60,9 +80,9 @@ export async function PlanWorkload({
   const afterDate = Math.round(numbers.afterDeadlineMinutes ?? 0);
 
   return (
-    <div className="flex flex-col gap-2.5 border-t pt-4">
+    <div className="flex flex-col gap-3">
       <p className="flex items-baseline justify-between gap-3">
-        <span className="text-label">{t("What fills the time")}</span>
+        <span className="text-[0.9375rem] font-semibold">{t("What fills the time")}</span>
 
         {parts.length > 1 && (
           <span className={cn(NUMERIC_CLASS, "text-muted-foreground text-xs")}>
@@ -71,16 +91,24 @@ export async function PlanWorkload({
         )}
       </p>
 
-      <dl className="flex flex-wrap gap-x-5 gap-y-2 text-[0.8125rem] leading-5">
+      {parts.length > 1 && (
+        <MeterParts className="h-2">
+          {parts.map((part) => (
+            <MeterPart className={part.fill} key={part.id} weight={part.minutes} />
+          ))}
+        </MeterParts>
+      )}
+
+      <dl className="flex flex-col gap-2.5 pt-1 text-sm leading-5">
         {parts.map((part) => (
-          <div className="flex items-center gap-2" key={part.id}>
-            <dt className="flex items-center gap-2">
+          <div className="flex items-center gap-3" key={part.id}>
+            <dt className="flex min-w-0 flex-1 items-center gap-2.5">
               <span className="flex gap-1">
                 {part.kinds.map((kind) => (
-                  <KindDot key={kind} kind={kind} />
+                  <KindMark key={kind} kind={kind} />
                 ))}
               </span>
-              {part.label}
+              <span className="text-pretty">{part.label}</span>
             </dt>
 
             <dd className={cn(NUMERIC_CLASS, "text-muted-foreground text-xs")}>
@@ -91,19 +119,19 @@ export async function PlanWorkload({
       </dl>
 
       {Math.round(workload.practiceMinutes) > 0 && (
-        <p className="text-muted-foreground text-xs leading-relaxed text-pretty">
+        <p className="text-muted-foreground pt-1 text-[13px] leading-relaxed text-pretty">
           {t("What you studied comes back right before you'd forget it.")}
         </p>
       )}
 
       {afterDate > 0 && (
-        <p className="text-muted-foreground text-xs leading-relaxed text-pretty">
+        <p className="text-muted-foreground text-[13px] leading-relaxed text-pretty">
           {t("Of this, {time} comes after the exam.", { time: durationText(afterDate) })}
         </p>
       )}
 
       {workload.unwrittenLessonMinutes > 0 && (
-        <p className="text-muted-foreground text-xs leading-relaxed text-pretty">
+        <p className="text-muted-foreground text-[13px] leading-relaxed text-pretty">
           {t("Lessons not written yet are written as you reach them.")}
         </p>
       )}

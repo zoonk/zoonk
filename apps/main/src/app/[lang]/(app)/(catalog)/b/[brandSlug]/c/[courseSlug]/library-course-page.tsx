@@ -1,4 +1,3 @@
-import { BAND_CLASS } from "@/components/catalog/band";
 import {
   COURSE_HERO_CLASS,
   COURSE_HERO_PAIR_CLASS,
@@ -12,6 +11,7 @@ import { CourseMark } from "@/components/catalog/course-mark";
 import { type CoursePlanExample, getCoursePlanExample } from "@/components/catalog/course-plan";
 import { CoursePlanWindow } from "@/components/catalog/course-plan-window";
 import { CourseProgressScope } from "@/components/catalog/course-progress";
+import { CourseSubjectLabel } from "@/components/catalog/course-subject-label";
 import {
   TryLesson,
   type TryLessonCandidate,
@@ -31,8 +31,9 @@ import { breadcrumbJsonLd, courseJsonLd } from "@/lib/public/structured-data";
 import { parseCourseLandingPageContent } from "@zoonk/core/courses/landing-page";
 import { listPublishedCourseEditions } from "@zoonk/core/courses/published-editions";
 import { ContentVoteMenu } from "@zoonk/learn/feedback/vote-menu";
-import { Page, PageSection } from "@zoonk/learn/page";
-import { getSubject } from "@zoonk/learn/subject-label";
+import { Page } from "@zoonk/learn/page";
+import { Route, RouteMark, RouteStop, RouteTitle } from "@zoonk/learn/route-line";
+import { type Subject, getSubject } from "@zoonk/learn/subject-label";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type SupportedLocale, getContentLocale } from "@zoonk/utils/locale";
@@ -45,6 +46,9 @@ import { LibraryCourseOutline } from "./library-course-outline";
 
 type Params = { brandSlug: string; courseSlug: string };
 type Course = LibraryCourseRoute["course"];
+
+/** The room between the route's stops, inside each one, so the line runs on unbroken. */
+const STOP_CLASS = "pb-16 sm:pb-24";
 
 /**
  * Points visitors reading in another language to this course's edition in theirs, on a panel over
@@ -79,8 +83,9 @@ async function EditionNotice({ courseId, locale }: { courseId: string; locale: S
 }
 
 /**
- * The course: its mark, an exam course's next sitting, its name, what it makes someone able to
- * do, what Zoonk does with it in one line and the ways in.
+ * The course: its mark, its subject (and an exam course's next sitting) over its name, the first
+ * station of its route, what it makes someone able to do, what Zoonk does with it in one line and
+ * the ways in.
  */
 function CourseHero({
   course,
@@ -89,6 +94,7 @@ function CourseHero({
   locale,
   pace,
   promise,
+  subject,
   tryId,
 }: {
   course: Course;
@@ -97,6 +103,7 @@ function CourseHero({
   locale: SupportedLocale;
   pace: number | null;
   promise: string | null;
+  subject: Subject;
   tryId: string | null;
 }) {
   const titleId = `course-title-${course.id}`;
@@ -107,9 +114,13 @@ function CourseHero({
 
       <CourseMark course={course} loading="eager" locale={locale} />
 
-      {exam && <CourseExamEyebrow exam={exam} />}
+      <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2">
+        <CourseSubjectLabel subject={subject} />
+        {exam && <CourseExamEyebrow exam={exam} />}
+      </div>
 
-      <h1 className={cn(COURSE_TITLE_CLASS, exam ? "mt-2" : "mt-4")} id={titleId}>
+      <h1 className={cn(COURSE_TITLE_CLASS, "relative mt-3")} id={titleId}>
+        <RouteMark down />
         {course.title}
       </h1>
 
@@ -123,9 +134,10 @@ function CourseHero({
 }
 
 /**
- * The first screen: the course and its ways in, beside the course's own first question to try,
- * so the page teaches before it explains, with the example plan right after it; without a question,
- * the plan takes its place beside the course.
+ * The first screen, the route's first stop: the course and its ways in, beside the course's own
+ * first question to try (off the line, beside the title from `xl`), so the page teaches before it
+ * explains, with the example plan as the next stop; without a question, the plan takes its place
+ * beside the course.
  */
 function CourseFirstScreen({
   hero,
@@ -139,16 +151,12 @@ function CourseFirstScreen({
   const side = tryCard ?? plan;
 
   return (
-    <>
-      <div className={cn(BAND_CLASS, "bg-ground -mt-8")}>
-        <div className={cn(COURSE_HERO_CLASS, side && COURSE_HERO_PAIR_CLASS)}>
-          {hero}
-          {side}
-        </div>
+    <RouteStop className={STOP_CLASS}>
+      <div className={cn(COURSE_HERO_CLASS, side && COURSE_HERO_PAIR_CLASS)}>
+        {hero}
+        {side}
       </div>
-
-      {tryCard && plan && <div className={BAND_CLASS}>{plan}</div>}
-    </>
+    </RouteStop>
   );
 }
 
@@ -172,29 +180,23 @@ function getTryCandidates(outline: LibraryOutline): TryLessonCandidate[] {
   );
 }
 
-/** The page's last word, where a long page ends: the one way in again. */
+/** The page's last word, where its route ends: the one way in again. */
 async function CourseClosing({ courseId, pace }: { courseId: string; pace: number | null }) {
   const t = await getExtracted();
   const titleId = `course-closing-${courseId}`;
 
   return (
-    <PageSection
-      aria-labelledby={titleId}
-      className={cn(BAND_CLASS, "bg-ground -mb-12 gap-1 lg:-mb-16")}
-    >
-      <h2
-        className="text-[22px] leading-tight font-semibold tracking-[-0.02em] text-balance sm:text-2xl"
-        id={titleId}
-      >
+    <RouteStop aria-labelledby={titleId} className="flex flex-col gap-1.5">
+      <RouteTitle id={titleId} station="end" up>
         {t("Start today, at your level")}
-      </h2>
+      </RouteTitle>
 
-      <p className="text-muted-foreground max-w-[600px] text-[0.9375rem] leading-relaxed text-pretty">
+      <p className="text-muted-foreground max-w-column text-[0.9375rem] leading-relaxed text-pretty">
         {t("A few quick questions, then your plan and your first lesson.")}
       </p>
 
       <CourseStart className="mt-5 sm:mt-6" courseId={courseId} pace={pace} />
-    </PageSection>
+    </RouteStop>
   );
 }
 
@@ -237,19 +239,25 @@ export async function LibraryCoursePage({
     getCoursePlanExample(course),
   ]);
 
+  const subject = getSubject(course.categories);
   const tryId = getTryLessonId(course.id);
   const examDay = plan.exam?.days[0];
   const examDate = examDay ? formatDay(examDay) : null;
   const pace = plan.pace?.minutes ?? null;
 
-  const planWindow = plan.pace && (
-    <CoursePlanWindow
-      chapterTitles={getChapterTitles(outline)}
-      examDate={examDate}
-      isExam={course.format === "exam"}
-      plan={plan}
-    />
-  );
+  const planTitleId = `course-plan-${course.id}`;
+
+  const planWindow = (onRoute: boolean) =>
+    plan.pace && (
+      <CoursePlanWindow
+        chapterTitles={getChapterTitles(outline)}
+        examDate={examDate}
+        isExam={course.format === "exam"}
+        onRoute={onRoute}
+        plan={plan}
+        titleId={planTitleId}
+      />
+    );
 
   const tryCard = tryLesson && (
     <TryLesson id={tryId} locale={locale} origin={getCourseHref(params)} pick={tryLesson} />
@@ -257,7 +265,7 @@ export async function LibraryCoursePage({
 
   return (
     <CourseProgressScope courseId={course.id} lessonId={tryLesson?.lessonId ?? null}>
-      <div className="flex flex-col gap-8" data-subject={getSubject(course.categories)}>
+      <div className="flex flex-col gap-8" data-subject={subject}>
         <CatalogPageBar
           back={{ href: "/courses", label: t("Explore courses") }}
           options={
@@ -272,7 +280,7 @@ export async function LibraryCoursePage({
           title={course.title}
         />
 
-        <Page className="gap-0">
+        <Page className="gap-0 pt-2 sm:pt-4">
           <PublicViewTracker contentId={course.id} page="course" />
 
           <JsonLd
@@ -295,40 +303,43 @@ export async function LibraryCoursePage({
             ]}
           />
 
-          <CourseFirstScreen
-            hero={
-              <CourseHero
-                course={course}
-                exam={plan.exam}
-                isOtherLanguage={isOtherLanguage}
-                locale={locale}
-                pace={pace}
-                promise={promise}
-                tryId={tryLesson ? tryId : null}
-              />
-            }
-            plan={planWindow}
-            tryCard={tryCard}
-          />
+          <Route>
+            <CourseFirstScreen
+              hero={
+                <CourseHero
+                  course={course}
+                  exam={plan.exam}
+                  isOtherLanguage={isOtherLanguage}
+                  locale={locale}
+                  pace={pace}
+                  promise={promise}
+                  subject={subject}
+                  tryId={tryLesson ? tryId : null}
+                />
+              }
+              plan={planWindow(false)}
+              tryCard={tryCard}
+            />
 
-          {/* On a tablet the bands are rounded panels, so this one keeps a gap from the one above. */}
-          <CourseFit
-            className={cn(BAND_CLASS, "bg-ground sm:mt-3 lg:mt-0")}
-            content={landingPage}
-            courseId={course.id}
-          />
+            {tryCard && plan.pace && (
+              <RouteStop aria-labelledby={planTitleId} className={STOP_CLASS}>
+                {planWindow(true)}
+              </RouteStop>
+            )}
 
-          <div className={BAND_CLASS}>
+            <CourseFit className={STOP_CLASS} content={landingPage} courseId={course.id} />
+
             <LibraryCourseOutline
+              className={STOP_CLASS}
               courseId={course.id}
               lead={outlineLead}
               outline={outline}
               params={params}
               plan={{ examDate, pace: plan.pace }}
             />
-          </div>
 
-          <CourseClosing courseId={course.id} pace={pace} />
+            <CourseClosing courseId={course.id} pace={pace} />
+          </Route>
         </Page>
       </div>
     </CourseProgressScope>

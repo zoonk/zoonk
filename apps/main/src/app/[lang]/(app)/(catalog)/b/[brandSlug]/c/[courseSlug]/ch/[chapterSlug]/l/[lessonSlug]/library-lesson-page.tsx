@@ -1,4 +1,4 @@
-import { LESSON_LEAD_CLASS } from "@/components/catalog/catalog-hero";
+import { COURSE_TITLE_CLASS, LESSON_LEAD_CLASS } from "@/components/catalog/catalog-hero";
 import { CatalogPageBar } from "@/components/catalog/catalog-page-bar";
 import { CourseProgressScope } from "@/components/catalog/course-progress";
 import { JsonLd } from "@/components/public/json-ld";
@@ -13,6 +13,8 @@ import { breadcrumbJsonLd, lessonJsonLd } from "@/lib/public/structured-data";
 import { type PublicLibraryLesson } from "@zoonk/core/library/lessons/public";
 import { Page } from "@zoonk/learn/page";
 import { PageWithAside } from "@zoonk/learn/shell";
+import { SubjectGlyph, getSubject } from "@zoonk/learn/subject-label";
+import { cn } from "@zoonk/ui/lib/utils";
 import { type SupportedLocale } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
 import { LessonChapterAside } from "./lesson-chapter-aside";
@@ -45,6 +47,7 @@ export async function LibraryLessonPage({
   const { chapter, course } = route;
   const playerPath = getLessonPlayerPath({ lessonId: lesson.id, locale });
   const titleId = `lesson-title-${lesson.id}`;
+  const subject = getSubject(course.categories);
 
   const t = await getExtracted();
   const levelLabels = await getLevelLabels();
@@ -74,7 +77,7 @@ export async function LibraryLessonPage({
       asideClassName="hidden min-[72rem]:flex"
       asideLabel={t("Lessons")}
     >
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-8" data-subject={subject}>
         <CatalogPageBar
           back={{
             href: getChapterHref({ ...params, chapterSlug: chapter.slug }),
@@ -83,7 +86,7 @@ export async function LibraryLessonPage({
           title={lesson.title}
         />
 
-        <Page className="gap-16 sm:gap-20">
+        <Page className="gap-16 pt-2 sm:gap-24 sm:pt-4">
           <PublicViewTracker contentId={lesson.id} page="lesson" />
 
           <JsonLd
@@ -107,9 +110,12 @@ export async function LibraryLessonPage({
           />
 
           <article aria-labelledby={titleId} className="max-w-column flex flex-col">
-            <PublicEyebrowLink href={getCourseHref(params)}>{course.title}</PublicEyebrowLink>
+            <p className="text-muted-foreground flex items-center gap-2 text-sm sm:text-[15px]">
+              <SubjectGlyph subject={subject} />
+              <PublicEyebrowLink href={getCourseHref(params)}>{course.title}</PublicEyebrowLink>
+            </p>
 
-            <h1 className="text-title mt-2" id={titleId}>
+            <h1 className={cn(COURSE_TITLE_CLASS, "mt-2")} id={titleId}>
               {lesson.title}
             </h1>
 

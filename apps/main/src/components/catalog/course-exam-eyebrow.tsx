@@ -1,6 +1,5 @@
 import { EYEBROW_CLASS } from "@/components/public/landing-styles";
 import { getIsoDayFormatter } from "@/lib/public/public-labels";
-import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted, getFormatter } from "next-intl/server";
 import { type CoursePlanExample } from "./course-plan";
 
@@ -20,7 +19,7 @@ export async function CourseExamEyebrow({
   const dates = format.list(exam.days.map(formatDay), { type: "conjunction" });
 
   return (
-    <p className={cn(EYEBROW_CLASS, "mt-4")}>
+    <p className={EYEBROW_CLASS}>
       {exam.estimated
         ? t(
             "Exam around {dates} · {days, plural, =0 {today} one {about # day left} other {about # days left}}",

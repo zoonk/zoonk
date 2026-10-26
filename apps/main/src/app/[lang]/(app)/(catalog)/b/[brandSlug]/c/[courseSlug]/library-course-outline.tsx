@@ -6,13 +6,9 @@ import {
   getMinutesFormatter,
   getTotalDurationLabel,
 } from "@/lib/public/public-labels";
-import {
-  PageSection,
-  PageSectionDetail,
-  PageSectionHeader,
-  PageSectionTitle,
-} from "@zoonk/learn/page";
+import { RouteStop, RouteTitle } from "@zoonk/learn/route-line";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
+import { cn } from "@zoonk/ui/lib/utils";
 import { SparklesIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import { AreaOutline } from "./outline-areas";
@@ -40,7 +36,7 @@ async function OutlinePlanLine({
   const minutesText = await getMinutesFormatter();
 
   return (
-    <p className="text-muted-foreground -mt-2 text-sm leading-relaxed text-pretty">
+    <p className="text-muted-foreground text-sm leading-relaxed text-pretty">
       {isDatedEstimate(pace.estimate) && examDate
         ? t("Your plan until {date}, at {time} a day", {
             date: examDate,
@@ -55,21 +51,11 @@ async function OutlinePlanLine({
 }
 
 /**
- * One column under the hero; from `xl`, where the page is wider than a list should read, the
- * outline takes the page's width with its title, size, plan line and description in a column
- * beside the levels (kept in view while they scroll), as the pricing questions sit beside their
- * title.
- */
-const OUTLINE_SECTION_CLASS =
-  "max-w-[760px] xl:grid xl:max-w-none xl:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] xl:items-start xl:gap-x-12";
-
-/** The outline's words: in the section's own flow until `xl`, then its column beside the levels. */
-const OUTLINE_INTRO_CLASS = "contents xl:sticky xl:top-24 xl:flex xl:flex-col xl:gap-3";
-
-/**
- * Everything the course covers, after the page has said what it is and how it becomes a plan: its
- * size in one quiet line (chapters, then lessons and their total time once they're written), its
- * description, then its levels, each folded to its name and first chapters, the first one open.
+ * Everything the course covers, a stop of its route after the page has said what it is and how it
+ * becomes a plan: its size in one quiet line beside its title (chapters, then lessons and their
+ * total time once they're written), its description, then its levels, zones the route runs
+ * through, each folded to its name and first chapters, the first one open with its chapters as
+ * stations.
  * With the example plan (`plan`), each chapter says its week in it, and an exam course read
  * against its date groups its chapters by the exam's areas, each
  * saying how much of it fits. Every chapter and lesson title stays in the page's HTML once for
@@ -77,12 +63,14 @@ const OUTLINE_INTRO_CLASS = "contents xl:sticky xl:top-24 xl:flex xl:flex-col xl
  * the visitor to build their plan, which writes it for them.
  */
 export async function LibraryCourseOutline({
+  className,
   courseId,
   lead,
   outline,
   params,
   plan = null,
 }: {
+  className?: string;
   courseId: string;
   lead: string | null;
   outline: LibraryOutline;
@@ -105,13 +93,15 @@ export async function LibraryCourseOutline({
   const titleId = `course-outline-${courseId}`;
 
   return (
-    <PageSection aria-labelledby={titleId} className={OUTLINE_SECTION_CLASS}>
-      <div className={OUTLINE_INTRO_CLASS}>
-        <PageSectionHeader>
-          <PageSectionTitle id={titleId}>{t("Course outline")}</PageSectionTitle>
+    <RouteStop aria-labelledby={titleId} className={cn("flex flex-col gap-8", className)}>
+      <div className="max-w-column flex flex-col gap-3">
+        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <RouteTitle down id={titleId} up>
+            {t("Course outline")}
+          </RouteTitle>
 
           {stats.chapterCount > 0 && (
-            <PageSectionDetail>
+            <span className="text-muted-foreground font-mono text-xs tabular-nums">
               {[
                 t("{count, plural, one {# chapter} other {# chapters}}", {
                   count: stats.chapterCount,
@@ -124,18 +114,16 @@ export async function LibraryCourseOutline({
               ]
                 .filter(Boolean)
                 .join(" · ")}
-            </PageSectionDetail>
+            </span>
           )}
-        </PageSectionHeader>
+        </div>
 
         {plan && pace && <OutlinePlanLine examDate={plan.examDate} pace={pace} />}
 
-        {lead && (
-          <p className="max-w-column text-[0.9375rem] leading-relaxed text-pretty">{lead}</p>
-        )}
+        {lead && <p className="text-[0.9375rem] leading-relaxed text-pretty">{lead}</p>}
 
         {stats.chapterCount === 0 && (
-          <p className="max-w-column flex gap-2.5 text-[0.9375rem] leading-relaxed text-pretty">
+          <p className="flex gap-2.5 text-[0.9375rem] leading-relaxed text-pretty">
             <LineMarker>
               <SparklesIcon aria-hidden="true" className="text-muted-foreground size-4" />
             </LineMarker>
@@ -151,7 +139,7 @@ export async function LibraryCourseOutline({
       {areas && <AreaOutline estimate={areas} outline={outline} params={params} />}
 
       {stats.chapterCount > 0 && !areas && (
-        <div className="flex flex-col">
+        <div className="flex flex-col gap-2">
           {outline.levels.map((band, index) => (
             <OutlineLevel
               band={band}
@@ -165,6 +153,6 @@ export async function LibraryCourseOutline({
           ))}
         </div>
       )}
-    </PageSection>
+    </RouteStop>
   );
 }

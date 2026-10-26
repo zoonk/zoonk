@@ -1,5 +1,4 @@
-import { BAND_CLASS } from "@/components/catalog/band";
-import { HERO_LEAD_CLASS, PlanLine } from "@/components/catalog/catalog-hero";
+import { COURSE_TITLE_CLASS, HERO_LEAD_CLASS, PlanLine } from "@/components/catalog/catalog-hero";
 import { CatalogPageBar } from "@/components/catalog/catalog-page-bar";
 import { ChapterStrip } from "@/components/catalog/chapter-strip";
 import { getExamChapterAreas } from "@/components/catalog/course-plan";
@@ -20,7 +19,7 @@ import { getChapterHref, getLessonHref } from "@/lib/public/public-hrefs";
 import { breadcrumbJsonLd, lessonListJsonLd } from "@/lib/public/structured-data";
 import { ContentVoteMenu } from "@zoonk/learn/feedback/vote-menu";
 import { Page, PageSection } from "@zoonk/learn/page";
-import { getSubject } from "@zoonk/learn/subject-label";
+import { SubjectGlyph, getSubject } from "@zoonk/learn/subject-label";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type SupportedLocale } from "@zoonk/utils/locale";
@@ -63,7 +62,7 @@ async function ChapterStart({
   );
 }
 
-/** What the chapter teaches, under a quiet label beside its lessons. */
+/** What the chapter teaches, under its title beside its lessons. */
 async function ChapterObjectives({
   chapterId,
   objectives,
@@ -80,8 +79,8 @@ async function ChapterObjectives({
   const titleId = `chapter-objectives-${chapterId}`;
 
   return (
-    <section aria-labelledby={titleId} className="flex flex-col gap-3.5">
-      <h2 className="text-label" id={titleId}>
+    <section aria-labelledby={titleId} className="flex flex-col gap-4">
+      <h2 className="text-[0.9375rem] leading-snug font-semibold" id={titleId}>
         {t("What you'll learn")}
       </h2>
 
@@ -100,8 +99,9 @@ async function ChapterObjectives({
 }
 
 /**
- * The page's last word, where it ends: the plan this chapter starts (or, for a chapter whose start
- * is the course's own, the course's at the visitor's level) and the one way in again.
+ * The page's last word, where it ends, after a hairline: the plan this chapter starts (or, for a
+ * chapter whose start is the course's own, the course's at the visitor's level) and the one way in
+ * again.
  */
 async function ChapterClosing({
   chapterId,
@@ -118,18 +118,12 @@ async function ChapterClosing({
   const titleId = `chapter-closing-${chapterId}`;
 
   return (
-    <PageSection
-      aria-labelledby={titleId}
-      className={cn(BAND_CLASS, "bg-ground -mb-12 gap-1 lg:-mb-16")}
-    >
-      <h2
-        className="text-[22px] leading-tight font-semibold tracking-[-0.02em] text-balance sm:text-2xl"
-        id={titleId}
-      >
+    <PageSection aria-labelledby={titleId} className="gap-1.5 border-t pt-12 sm:pt-16">
+      <h2 className="text-section" id={titleId}>
         {startChapterId ? t("Your plan from this chapter") : t("Start today, at your level")}
       </h2>
 
-      <p className="text-muted-foreground max-w-[600px] text-[0.9375rem] leading-relaxed text-pretty">
+      <p className="text-muted-foreground max-w-column text-[0.9375rem] leading-relaxed text-pretty">
         {startChapterId
           ? t("It follows the course from here, at your pace, with reviews before you forget.")
           : t("A few quick questions, then your plan and your first lesson.")}
@@ -189,9 +183,10 @@ export async function LibraryChapterPage({
   const hasAside = tryLesson !== null || chapter.objectives.length > 0;
   const area = areas?.get(chapter.id) ?? null;
   const titleId = `chapter-title-${chapter.id}`;
+  const subject = getSubject(course.categories);
 
   return (
-    <div className="flex flex-col gap-8" data-subject={getSubject(course.categories)}>
+    <div className="flex flex-col gap-8" data-subject={subject}>
       <CatalogPageBar
         back={{ href: getCourseHref(params), label: course.title }}
         options={
@@ -206,7 +201,7 @@ export async function LibraryChapterPage({
         title={chapter.title}
       />
 
-      <Page className="gap-16 sm:gap-20">
+      <Page className="gap-16 pt-2 sm:gap-24 sm:pt-4">
         <PublicViewTracker contentId={chapter.id} page="chapter" />
 
         <JsonLd
@@ -233,28 +228,27 @@ export async function LibraryChapterPage({
           ]}
         />
 
-        <div className={cn(BAND_CLASS, "bg-ground -mt-8")}>
-          <section aria-labelledby={titleId} className="max-w-column flex flex-col">
-            <p className="text-muted-foreground flex flex-wrap items-center gap-x-1.5 text-sm sm:text-[15px]">
-              <PublicEyebrowLink href={getCourseHref(params)}>{course.title}</PublicEyebrowLink>
-              {area && <span>{`· ${area}`}</span>}
-            </p>
+        <section aria-labelledby={titleId} className="max-w-column flex flex-col">
+          <p className="text-muted-foreground flex flex-wrap items-center gap-x-2 text-sm sm:text-[15px]">
+            <SubjectGlyph subject={subject} />
+            <PublicEyebrowLink href={getCourseHref(params)}>{course.title}</PublicEyebrowLink>
+            {area && <span>{`· ${area}`}</span>}
+          </p>
 
-            <h1 className="text-title mt-2" id={titleId}>
-              {chapter.title}
-            </h1>
+          <h1 className={cn(COURSE_TITLE_CLASS, "mt-2")} id={titleId}>
+            {chapter.title}
+          </h1>
 
-            <p className={HERO_LEAD_CLASS}>{chapter.description}</p>
+          <p className={HERO_LEAD_CLASS}>{chapter.description}</p>
 
-            <PlanLine startsHere={Boolean(startChapterId)} />
+          <PlanLine startsHere={Boolean(startChapterId)} />
 
-            <ChapterStart
-              courseId={course.id}
-              hasLesson={hasLesson}
-              startChapterId={startChapterId}
-            />
-          </section>
-        </div>
+          <ChapterStart
+            courseId={course.id}
+            hasLesson={hasLesson}
+            startChapterId={startChapterId}
+          />
+        </section>
 
         <ChapterStrip areas={areas} chapterId={chapter.id} outline={outline} params={params} />
 
@@ -264,13 +258,13 @@ export async function LibraryChapterPage({
               "grid grid-cols-1 gap-12",
               hasLesson &&
                 hasAside &&
-                "lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-start lg:gap-8 2xl:grid-cols-[minmax(0,1fr)_minmax(0,40rem)]",
+                "lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-start lg:gap-12 2xl:grid-cols-[minmax(0,1fr)_minmax(0,40rem)]",
             )}
           >
             {hasLesson && <ChapterLessons params={params} route={route} />}
 
             {hasAside && (
-              <div className="flex min-w-0 flex-col gap-8">
+              <div className="flex min-w-0 flex-col gap-10">
                 {tryLesson && (
                   <CourseProgressScope courseId={course.id} lessonId={tryLesson.lessonId}>
                     <TryLesson

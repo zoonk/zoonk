@@ -1,7 +1,7 @@
 import { findEstimateArea, getAreaStudyText } from "@/components/catalog/area-study";
 import { type DatedEstimate } from "@/components/catalog/plan-estimate";
-import { PublicDisclosure } from "@/components/public/public-disclosure";
 import { type LibraryOutline } from "@/data/catalog/resolve-catalog-route";
+import { RouteZone } from "@zoonk/learn/route-line";
 import { getExtracted } from "next-intl/server";
 import {
   OUTLINE_SEPARATOR,
@@ -134,8 +134,8 @@ async function AreaChapters({
 }
 
 /**
- * The outline by the exam's areas, for an exam course read against its date: each area folded to
- * its name and how much of it fits, its chapters in the plan's order when opened (they're long,
+ * The outline by the exam's areas, for an exam course read against its date: each area a zone of
+ * the course's route, folded to its name and how much of it fits, its chapters in the plan's order when opened (they're long,
  * and the summaries already say what a visitor came to compare). Areas follow core's estimate; a
  * chapter it can't place in an area yet (never a guessed one) isn't listed here, since a group of
  * "chapters in no exam area" is our data's gap, not the exam's structure. An exam with one area
@@ -173,12 +173,12 @@ export async function AreaOutline({
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col gap-2">
       {order.map((area) => {
         const areaChapters = groups.get(area) ?? [];
 
         return (
-          <PublicDisclosure
+          <RouteZone
             aside={t("{count, plural, one {# chapter} other {# chapters}}", {
               count: areaChapters.length,
             })}
@@ -191,7 +191,7 @@ export async function AreaOutline({
             }
           >
             <AreaChapters chapters={areaChapters} {...shared} />
-          </PublicDisclosure>
+          </RouteZone>
         );
       })}
     </div>

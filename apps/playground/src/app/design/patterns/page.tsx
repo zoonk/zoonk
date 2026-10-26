@@ -18,6 +18,7 @@ import {
   PageSectionHeader,
   PageSectionTitle,
 } from "@zoonk/learn/page";
+import { Route, RouteMark, RouteStop, RouteTitle, RouteZone } from "@zoonk/learn/route-line";
 import { StatusMark } from "@zoonk/learn/status-mark";
 import { SubjectGlyph, SubjectLabel } from "@zoonk/learn/subject-label";
 import { Surface } from "@zoonk/learn/surface";
@@ -203,6 +204,56 @@ function BandsSpecimen() {
   );
 }
 
+/** A level's chapters, each a station on the route. */
+function RouteSpecimenRows() {
+  return (
+    <ol className="flex flex-col text-sm">
+      {["A very small world", "Light: wave or particle?"].map((title) => (
+        <li className="relative py-2" key={title}>
+          <RouteMark className="top-4.5" station="stop" />
+          {title}
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+function RouteSpecimen() {
+  return (
+    <Route className="max-w-column" data-subject="science">
+      <RouteStop className="flex flex-col gap-1 pb-10">
+        <p className="text-section relative">
+          <RouteMark down />
+          Quantum physics from scratch
+        </p>
+        <p className="text-muted-foreground text-sm">The course itself, the route&apos;s start.</p>
+      </RouteStop>
+
+      <RouteStop className="flex flex-col gap-4 pb-10">
+        <RouteTitle down up>
+          Course outline
+        </RouteTitle>
+
+        <div className="flex flex-col gap-2">
+          <RouteZone aside="2 chapters" open summary="Overview">
+            <RouteSpecimenRows />
+          </RouteZone>
+
+          <RouteZone aside="21 chapters" summary="Beginner">
+            <p className="text-muted-foreground text-sm">Folded until opened.</p>
+          </RouteZone>
+        </div>
+      </RouteStop>
+
+      <RouteStop>
+        <RouteTitle station="end" up>
+          Start today, at your level
+        </RouteTitle>
+      </RouteStop>
+    </Route>
+  );
+}
+
 function TitlesSpecimen() {
   return (
     <PageSection className="max-w-column">
@@ -221,6 +272,7 @@ const SPECIMENS: Record<string, () => React.ReactNode> = {
   bands: BandsSpecimen,
   kinds: KindsSpecimen,
   readouts: ReadoutsSpecimen,
+  route: RouteSpecimen,
   status: StatusSpecimen,
   structure: StructureSpecimen,
   subjects: SubjectsSpecimen,

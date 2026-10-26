@@ -1,8 +1,8 @@
 import { type ReactNode } from "react";
 
 /**
- * A block of a catalog page's aside (a lesson's chapter): its label, a quiet line of mono facts
- * and its rows, flat on the aside, as Today's aside draws its blocks.
+ * A block beside a public page's main column (a shared plan's phases): its title, a quiet line of
+ * mono facts and its rows, flat, as Today's aside draws its blocks.
  */
 export function CatalogAsideBlock({
   children,
@@ -20,7 +20,7 @@ export function CatalogAsideBlock({
   return (
     <section aria-labelledby={id} className="flex flex-col gap-3">
       <div className="flex flex-col gap-1">
-        <h2 className="text-label" id={id}>
+        <h2 className="text-[0.9375rem] leading-snug font-semibold" id={id}>
           {title}
         </h2>
 

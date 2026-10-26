@@ -41,7 +41,7 @@ export const COLOR_GROUPS: readonly ColorGroup[] = [
         avoid: "Inside the app's pages, which stay on the page with rows and hairlines.",
         meaning: "A band that sets a public page's part apart from its neighbors.",
         name: "ground",
-        use: "The landing's and a course's parts alternate ground and the page; a panel on it is a card.",
+        use: "The landing's parts alternate ground and the page, a panel on it a card; a level's zone on a course's route.",
       },
       {
         avoid: "A panel inside another panel, a shadow.",

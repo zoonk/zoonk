@@ -473,9 +473,9 @@ msgstr "Cette leçon fait partie du cours {course}."
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-plan-day.tsx
 #: src/components/catalog/course-plan-window.tsx
-msgctxt "TEMmOs"
-msgid "Example plan"
-msgstr "Exemple de plan"
+msgctxt "JZFs07"
+msgid "An example. Your plan follows your answers, so it can start later and end sooner."
+msgstr "Voici un exemple. Ton plan dépend de tes réponses : il peut donc commencer plus tard et se terminer plus tôt."
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-plan-day.tsx
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
@@ -3342,6 +3342,7 @@ msgid "Test out of a chapter"
 msgstr "Test pour valider un chapitre"
 
 #: src/app/[lang]/test-out/[chapterId]/page.tsx
+#: src/components/catalog/chapter-strip.tsx
 msgctxt "KGN7UU"
 msgid "This chapter"
 msgstr "Ce chapitre"
@@ -3503,9 +3504,9 @@ msgid "<big>{time}</big> of study"
 msgstr "<big>{time}</big> d’étude"
 
 #: src/components/catalog/course-plan-window.tsx
-msgctxt "JZFs07"
-msgid "An example. Your plan follows your answers, so it can start later and end sooner."
-msgstr "Voici un exemple. Ton plan dépend de tes réponses : il peut donc commencer plus tard et se terminer plus tôt."
+msgctxt "TEMmOs"
+msgid "Example plan"
+msgstr "Exemple de plan"
 
 #: src/components/catalog/first-question.tsx
 msgctxt "xpsuUj"

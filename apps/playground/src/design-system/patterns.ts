@@ -104,15 +104,32 @@ export const PATTERNS: readonly Pattern[] = [
     avoid: [
       "A subject's color washed over a band.",
       "Bands inside the app's pages, which stay on the page.",
+      "Bands on a course's, a chapter's or a lesson's page, whose parts Route's line separates.",
       "Two neighboring parts on the same tone.",
     ],
     follow: [
-      "Alternate `ground` and the page between a public page's parts; the first screen's one white sheet (`card`) sits on `ground`.",
+      "Alternate `ground` and the page between a public page's parts (the landing, pricing); the first screen's one white sheet (`card`) sits on `ground`.",
       "A public page may close on an inverted band holding its one action: ink in light (`bg-foreground text-background`), a raised band with a hairline in dark (`bg-card`), since a light band glares on a dark page.",
     ],
     id: "bands",
     summary: "A public page's parts read apart by neutral tone steps, never by color.",
     title: "Bands",
+  },
+  {
+    avoid: [
+      "The line where nothing is an order: the catalog's grid, the landing, statistics.",
+      "The line at full strength for a visitor, who has traveled none of it.",
+      "A station for every row of a list that isn't the course's own order.",
+    ],
+    follow: [
+      "`Route` down a course's page, a `RouteStop` per part with its `RouteTitle`: ink rings for the page's own parts, a square where it ends.",
+      "The course's real stops (chapters, lessons) on the subject's soft rings (`RouteMark station=\"stop\"`), the page itself (this chapter, this lesson) on an ink ring.",
+      "Levels and an exam's areas as `RouteZone` bands the line runs through, a capsule standing for their stops until opened.",
+    ],
+    id: "route",
+    summary:
+      "The public course family's line (`@zoonk/learn/route-line`): a pale line in the subject's color through the course's real order.",
+    title: "Route's line",
   },
   {
     avoid: ["Uppercase section names on a page.", "A heading with no content under it."],

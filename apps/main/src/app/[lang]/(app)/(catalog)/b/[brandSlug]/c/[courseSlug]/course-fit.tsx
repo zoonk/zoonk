@@ -1,49 +1,36 @@
 import { CheckMark } from "@/components/public/check-mark";
 import { type CourseLandingPageContent } from "@zoonk/core/courses/landing-page";
-import { SURFACE_CLASS } from "@zoonk/learn/surface";
+import { RouteStop, RouteTitle } from "@zoonk/learn/route-line";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ArrowDownIcon, ArrowRightIcon } from "lucide-react";
+import { ArrowRightIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
-
-const LIST_CLASS = "flex flex-col gap-3";
 
 /**
  * What the course makes someone able to do, each after a tick, its first steps first. The details
  * step writes a few short lines (`PAGE_LISTS` in `@zoonk/ai`), so they all show.
  */
-async function Outcomes({ id, outcomes }: { id: string; outcomes: string[] }) {
-  const t = await getExtracted();
-
+function OutcomeList({ outcomes }: { outcomes: string[] }) {
   return (
-    <section
-      aria-labelledby={id}
-      className={cn(SURFACE_CLASS, "max-w-column flex flex-col gap-4 p-5 sm:p-7")}
-    >
-      <h2 className="text-label" id={id}>
-        {t("What you'll be able to do")}
-      </h2>
-
-      <ul className={LIST_CLASS}>
-        {outcomes.map((item) => (
-          <li className="flex gap-3 text-[0.9375rem] leading-snug" key={item}>
-            <LineMarker>
-              <CheckMark size="sm" />
-            </LineMarker>
-            <span className="text-pretty">{item}</span>
-          </li>
-        ))}
-      </ul>
-    </section>
+    <ul className="flex flex-col gap-3">
+      {outcomes.map((item) => (
+        <li className="flex gap-3 text-[0.9375rem] leading-relaxed" key={item}>
+          <LineMarker>
+            <CheckMark size="sm" />
+          </LineMarker>
+          <span className="text-pretty">{item}</span>
+        </li>
+      ))}
+    </ul>
   );
 }
 
 /**
  * Whether the course fits the visitor, in the course's own words, read as where they start and
- * where they get to: who it's for, then what it makes them able to do, an arrow from one to the
- * other, side by side from `lg`. Flat on the page: it's about the course, while the question and
- * the plan beside and above it are pieces of the product, in their panels. Nothing when the course
- * has neither.
+ * where they get to: who it's for, then what it makes them able to do, side by side from `lg` (an
+ * arrow from one to the other), a stop of the course's route named by the first. Flat on the page,
+ * no panel: it's about the course, while the question above is a piece of the product. Nothing
+ * when the course has neither.
  */
 export async function CourseFit({
   className,
@@ -63,44 +50,62 @@ export async function CourseFit({
     return null;
   }
 
-  const hasBoth = audience.length > 0 && outcomes.length > 0;
   const audienceId = `course-audience-${courseId}`;
+  const outcomesId = `course-outcomes-${courseId}`;
+
+  if (audience.length === 0) {
+    return (
+      <RouteStop aria-labelledby={outcomesId} className={cn("flex flex-col gap-5", className)}>
+        <RouteTitle down id={outcomesId} up>
+          {t("What you'll be able to do")}
+        </RouteTitle>
+        <div className="max-w-column">
+          <OutcomeList outcomes={outcomes} />
+        </div>
+      </RouteStop>
+    );
+  }
 
   return (
-    <div
+    <RouteStop
+      aria-labelledby={audienceId}
       className={cn(
-        "grid grid-cols-1 gap-6",
-        hasBoth && "lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:gap-x-10",
+        "grid grid-cols-1 gap-x-16 gap-y-5",
+        outcomes.length > 0 && "lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:grid-rows-[auto_1fr]",
         className,
       )}
     >
-      {audience.length > 0 && (
-        <section aria-labelledby={audienceId} className="max-w-column flex flex-col gap-4">
-          <h2 className="text-label" id={audienceId}>
-            {t("Who it's for")}
+      <RouteTitle down id={audienceId} up>
+        {t("Who it's for")}
+      </RouteTitle>
+
+      <ul className="max-w-column flex flex-col lg:row-start-2">
+        {audience.map((item) => (
+          <li
+            className="border-border py-3 text-[0.9375rem] leading-relaxed text-pretty not-first:border-t first:pt-0"
+            key={item}
+          >
+            {item}
+          </li>
+        ))}
+      </ul>
+
+      {outcomes.length > 0 && (
+        <section
+          aria-labelledby={outcomesId}
+          className="max-w-column mt-6 flex flex-col gap-4 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:mt-0"
+        >
+          <h2
+            className="flex items-center gap-2 text-[0.9375rem] leading-relaxed font-semibold lg:min-h-6.5"
+            id={outcomesId}
+          >
+            <ArrowRightIcon aria-hidden="true" className="text-muted-foreground size-4" />
+            {t("What you'll be able to do")}
           </h2>
 
-          <ul className={LIST_CLASS}>
-            {audience.map((item) => (
-              <li
-                className="text-muted-foreground text-[0.9375rem] leading-snug text-pretty"
-                key={item}
-              >
-                {item}
-              </li>
-            ))}
-          </ul>
+          <OutcomeList outcomes={outcomes} />
         </section>
       )}
-
-      {hasBoth && (
-        <span aria-hidden="true" className="text-faint flex lg:items-center">
-          <ArrowDownIcon className="size-5 lg:hidden" />
-          <ArrowRightIcon className="hidden size-5 lg:block" />
-        </span>
-      )}
-
-      {outcomes.length > 0 && <Outcomes id={`course-outcomes-${courseId}`} outcomes={outcomes} />}
-    </div>
+    </RouteStop>
   );
 }

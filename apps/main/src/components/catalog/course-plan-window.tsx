@@ -1,8 +1,8 @@
 import { DayList, type DayListStep } from "@/components/public/day-list";
 import { NUMERIC_CLASS } from "@/components/public/landing-styles";
-import { ProductWindow } from "@/components/public/product-window";
 import { getApproxDurationFormatter, getMinutesFormatter } from "@/lib/public/public-labels";
 import { BigQuantity } from "@zoonk/learn/big-quantity";
+import { RouteTitle } from "@zoonk/learn/route-line";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { FlagIcon } from "lucide-react";
@@ -27,25 +27,19 @@ const TODAY_ROWS = 3;
 const NEAR_ESTIMATE_DAYS = 42;
 const MS_PER_DAY = 86_400_000;
 
-/** The window and its caption. */
-const WINDOW_COLUMN_CLASS = "flex min-w-0 flex-col gap-3.5";
-
 /**
- * The window lays itself out by the room it gets: one column beside the hero or on a phone, two
- * from 48rem (the page's width), the result on the left and the first day on the right.
+ * The plan lays itself out by the room it gets: one column beside the hero or on a phone, two from
+ * 48rem (the page's width), the result and what fills it on the left and the first day on the
+ * right. It sits flat on the page: it's the course's example, not a panel of the app.
  */
-const WINDOW_BODY_CLASS =
-  "grid grid-cols-1 gap-5 @3xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] @3xl:gap-x-14";
+const PLAN_BODY_CLASS =
+  "grid grid-cols-1 gap-10 @3xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] @3xl:gap-x-16";
 
-/** The right half's first block drops the hairline that separates it in one column. */
-const WINDOW_DETAILS_CLASS =
-  "flex min-w-0 flex-col gap-5 @3xl:[&>*:first-child]:border-t-0 @3xl:[&>*:first-child]:pt-0";
-
-/** The headline number, big, through the one quantity treatment; its word beside it. */
+/** The headline number, a public page's readout, its word beside it. */
 function renderBig(chunks: ReactNode) {
   const parts: unknown[] = Array.isArray(chunks) ? chunks : [chunks];
   const text = parts.filter((part) => typeof part === "string").join("");
-  return <BigQuantity className="text-[2.75rem]">{text}</BigQuantity>;
+  return <BigQuantity className="text-foreground text-5xl sm:text-[3.5rem]">{text}</BigQuantity>;
 }
 
 /** The finish month in the sentence's own face, a step heavier, so it reads as the line's answer. */
@@ -53,10 +47,12 @@ function renderStrong(chunks: ReactNode) {
   return <strong className="font-semibold">{chunks}</strong>;
 }
 
+/** The readout's line: its word small and muted beside the number, as a readout's unit. */
 const BIG_LINE_CLASS =
-  "flex flex-wrap items-baseline gap-x-2 text-2xl font-semibold tracking-[-0.03em]";
+  "text-muted-foreground flex flex-wrap items-baseline gap-x-2 text-lg font-medium tracking-[-0.01em]";
 
-const RESULT_LINE_CLASS = "text-muted-foreground max-w-[30rem] text-sm leading-relaxed text-pretty";
+const RESULT_LINE_CLASS =
+  "text-muted-foreground max-w-[30rem] text-[0.9375rem] leading-relaxed text-pretty";
 
 /**
  * When the example plan ends, as the Plan writes a far estimate, by its month ("February 2027");
@@ -93,7 +89,7 @@ async function UndatedHeadline({
     }));
 
   return (
-    <div className="flex flex-col gap-2.5">
+    <div className="flex flex-col gap-3">
       <p className={BIG_LINE_CLASS}>
         {t.rich("{weeks, plural, one {<big>~#</big> week} other {<big>~#</big> weeks}}", {
           big: renderBig,
@@ -109,9 +105,9 @@ async function UndatedHeadline({
       </p>
 
       {endMonth && (
-        <p className="flex gap-2 text-sm leading-relaxed font-medium text-pretty">
+        <p className="flex gap-2 text-[0.9375rem] leading-relaxed text-pretty">
           <LineMarker>
-            <FlagIcon aria-hidden="true" className="size-3.5" />
+            <FlagIcon aria-hidden="true" className="text-muted-foreground size-4" />
           </LineMarker>
           <span>
             {t.rich("Starting today, you'd finish around <strong>{month}</strong>.", {
@@ -156,9 +152,9 @@ async function UndatedToday({
   const foldedMinutes = folded.reduce((sum, step) => sum + step.minutes, 0);
 
   return (
-    <div className="flex flex-col gap-1.5 border-t pt-4">
+    <div className="flex flex-col gap-2">
       <p className="flex items-baseline justify-between gap-3">
-        <span className="text-label">{t("Today")}</span>
+        <span className="text-[0.9375rem] font-semibold">{t("Today")}</span>
         <span className={cn(NUMERIC_CLASS, "text-muted-foreground text-xs")}>
           {t("{count, plural, one {# lesson} other {# lessons}}", { count: steps.length })}
           {" · "}
@@ -247,7 +243,7 @@ async function DatedHeadline({
   };
 
   return (
-    <div className="flex flex-col gap-2.5">
+    <div className="flex flex-col gap-3">
       <p className={BIG_LINE_CLASS}>
         {t.rich("<big>{time}</big> of study", { big: renderBig, time: studyTime })}
       </p>
@@ -261,16 +257,18 @@ async function DatedHeadline({
 
 /**
  * The course's selected public example: its result at one time a day (the weeks to its end and
- * when that is, or what fits by the exam), what fills that time and its first day. The outline
- * reads the same estimate. With no estimate the window is hidden; the caption explains the
- * example.
+ * when that is, or what fits by the exam), what fills that time and its first day, under its title
+ * (a stop of the course's route when it's one, `onRoute`). The outline reads the same estimate.
+ * With no estimate it's hidden; the caption explains the example.
  */
 export async function CoursePlanWindow({
   chapterTitles,
   className,
   examDate,
   isExam,
+  onRoute = false,
   plan,
+  titleId,
 }: {
   chapterTitles: Map<string, string>;
   className?: string;
@@ -278,7 +276,11 @@ export async function CoursePlanWindow({
   isExam: boolean;
   /** The exam's first day as the page writes it, for an exam course read against it. */
   examDate: string | null;
+  /** A stop on the course's route, its title a station, rather than beside the course's name. */
+  onRoute?: boolean;
   plan: CoursePlanExample;
+  /** Names the plan's section, unique in the document. */
+  titleId: string;
 }) {
   const t = await getExtracted();
   const { pace } = plan;
@@ -296,29 +298,43 @@ export async function CoursePlanWindow({
     <UndatedToday chapterTitles={chapterTitles} estimate={estimate} />
   );
 
+  const caption = (
+    <p className="text-muted-foreground text-[13px] leading-relaxed text-pretty">
+      {t("An example. Your plan follows your answers, so it can start later and end sooner.")}
+    </p>
+  );
+
   return (
-    <div className={cn(WINDOW_COLUMN_CLASS, className)} data-slot="course-plan">
-      <ProductWindow className="@container p-5 sm:p-7">
-        <div className={WINDOW_BODY_CLASS}>
-          <div className="flex min-w-0 flex-col gap-5">
-            <h2 className="text-label">{t("Example plan")}</h2>
+    <div
+      className={cn("@container flex min-w-0 flex-col gap-7", className)}
+      data-slot="course-plan"
+    >
+      {onRoute ? (
+        <RouteTitle down id={titleId} up>
+          {t("Example plan")}
+        </RouteTitle>
+      ) : (
+        <h2 className="text-section" id={titleId}>
+          {t("Example plan")}
+        </h2>
+      )}
 
-            {isDatedEstimate(estimate) ? (
-              <DatedHeadline date={examDate ?? ""} estimate={estimate} minutes={pace.minutes} />
-            ) : (
-              <UndatedHeadline estimate={estimate} minutes={pace.minutes} />
-            )}
+      <div className={PLAN_BODY_CLASS}>
+        <div className="flex min-w-0 flex-col gap-9">
+          {isDatedEstimate(estimate) ? (
+            <DatedHeadline date={examDate ?? ""} estimate={estimate} minutes={pace.minutes} />
+          ) : (
+            <UndatedHeadline estimate={estimate} minutes={pace.minutes} />
+          )}
 
-            {today && workload}
-          </div>
-
-          <div className={WINDOW_DETAILS_CLASS}>{today || workload}</div>
+          {today && workload}
         </div>
-      </ProductWindow>
 
-      <p className="text-muted-foreground text-[13px] text-pretty">
-        {t("An example. Your plan follows your answers, so it can start later and end sooner.")}
-      </p>
+        <div className="flex min-w-0 flex-col gap-5">
+          {today || workload}
+          {caption}
+        </div>
+      </div>
     </div>
   );
 }
