@@ -167,8 +167,16 @@ export const societyReasoningActivities = {
     check: interactionCheck,
     fields: {
       distractors: [
-        { side: "right", text: "embarrassed", why: "It looks alike but means something else." },
-        { side: "right", text: "library", why: "A library is biblioteca." },
+        {
+          side: "right",
+          text: "embarrassed",
+          why: "Embarrassed is avergonzada in Spanish. Embarazada looks like it but means pregnant.",
+        },
+        {
+          side: "right",
+          text: "library",
+          why: "A library is a biblioteca. A librería sells books: it's a bookstore.",
+        },
       ],
       pairs: [
         { id: "a", left: "embarazada", right: "pregnant" },

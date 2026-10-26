@@ -87,9 +87,10 @@ describe("reasoning activities", () => {
 
     await expect
       .element(
-        page.getByText("“embarrassed” has no match. It looks alike but means something else.", {
-          exact: true,
-        }),
+        page.getByText(
+          "“embarrassed” has no match. Embarrassed is avergonzada in Spanish. Embarazada looks like it but means pregnant.",
+          { exact: true },
+        ),
       )
       .toBeVisible();
 

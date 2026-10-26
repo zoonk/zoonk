@@ -87,7 +87,7 @@ const matchPairsFields = z
 export const matchPairsTemplate = defineActivityTemplate({
   checks: ["interaction"],
   description:
-    "Pair items that belong together, with look-alike traps, like false friends between languages. The learner matches each left item (by pair id) to a right item (by pair id). Fills: the pairs, look-alike distractors and a why for each likely mix-up.",
+    "Pair items that belong together, with look-alike traps, like false friends between languages. The learner matches each left item (by pair id) to a right item (by pair id). Fills: the pairs, look-alike distractors and a why for each likely mix-up. A distractor's why shows the moment it catches the learner, so it teaches: what that card really is or means, and what it gets mixed up with (“Embarrassed is avergonzada. Embarazada looks like it but means pregnant.”), never only that it looks alike.",
   expected: (fields) => ({
     kind: "assignment",
     pairs: Object.fromEntries(fields.pairs.map((pair) => [pair.id, pair.id])),
