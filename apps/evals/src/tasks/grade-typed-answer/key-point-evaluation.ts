@@ -2,6 +2,7 @@ import { evaluateQuestions } from "@zoonk/ai/evaluate/evaluate-questions";
 import {
   type GradeTypedAnswerParams,
   type TypedAnswerGrade,
+  gradeTypedAnswer,
 } from "@zoonk/ai/tasks/v2/grading/grade-typed-answer";
 import { matchTypedAnswer } from "@zoonk/ai/tasks/v2/grading/typed-answer-match";
 
@@ -100,19 +101,9 @@ export async function evaluateTypedAnswerKeyPoints(
 
   const spelling = match.kind === "typo" ? match.acceptedAnswer : null;
 
-  if (match.kind === "exact" || (match.kind === "typo" && !input.practicedLanguage)) {
-    return {
-      data: toGrade({
-        formIsRight: true,
-        isRight: true,
-        keyPoints: input.keyPoints,
-        met: input.keyPoints.map(() => true),
-        spelling,
-      }),
-      systemPrompt: INSTRUCTIONS,
-      usage: NO_USAGE,
-      userPrompt: input.answer,
-    };
+  if (match.kind === "exact" || (match.kind !== "none" && !input.practicedLanguage)) {
+    const { data } = await gradeTypedAnswer(input);
+    return { data, systemPrompt: INSTRUCTIONS, usage: NO_USAGE, userPrompt: input.answer };
   }
 
   const run = await evaluateQuestions({

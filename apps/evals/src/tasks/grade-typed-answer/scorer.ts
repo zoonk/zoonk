@@ -75,7 +75,7 @@ export const scoreTypedAnswerGrade: TaskScorer<GradeTypedAnswerExpected> = ({
     "corrections" | "feedback" | "isCorrect" | "keyPoints"
   >;
 
-  const predictedKeyPoints = grade.keyPoints.map((keyPoint) => keyPoint.met);
+  const predictedKeyPoints = grade.keyPoints?.map((keyPoint) => keyPoint.met) ?? null;
   const verdictMatches = grade.isCorrect === testCase.expected.isCorrect;
 
   const expectedCorrections = testCase.expected.corrections ?? [];

@@ -45,8 +45,8 @@ function noop() {
 }
 
 /**
- * The local adapters, plus written answers graded as right with every key point met, since only
- * the server grades them.
+ * The local adapters, plus written answers given full credit without judging key points, since
+ * only the server grades them.
  */
 function previewAdapters(lesson: PlayableLibraryLesson): LessonPlayerAdapters {
   const local = localAdapters(lesson);
@@ -67,7 +67,7 @@ function previewAdapters(lesson: PlayableLibraryLesson): LessonPlayerAdapters {
           corrections: [],
           feedback: null,
           isCorrect: true,
-          keyPoints: step.content.keyPoints.map((text) => ({ met: true, text })),
+          keyPoints: null,
           nextReviewAt: null,
           savedMistake: false,
           score: 1,

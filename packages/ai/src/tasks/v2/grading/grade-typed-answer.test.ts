@@ -60,11 +60,24 @@ describe(gradeTypedAnswer, () => {
       corrections: [],
       feedback: null,
       isCorrect: true,
-      keyPoints: [{ met: true, text: "Names the mitochondria" }],
+      keyPoints: null,
       method: "exact",
       score: 1,
       spelling: null,
     });
+  });
+
+  it("gives full credit for a scientific notation match without claiming unwritten reasoning", async () => {
+    const result = await gradeTypedAnswer({
+      acceptedAnswers: ["3e8"],
+      answer: "3e8",
+      keyPoints: ["Moves the decimal point 8 places", "Keeps a coefficient between 1 and 10"],
+      language: "en",
+      question: "Write 300000000 in scientific notation.",
+    });
+
+    expect(generateText).not.toHaveBeenCalled();
+    expect(result.data).toMatchObject({ isCorrect: true, keyPoints: null, score: 1 });
   });
 
   it("accepts a spelling slip in code when spelling isn't being practiced", async () => {
@@ -74,6 +87,8 @@ describe(gradeTypedAnswer, () => {
     expect(result.data.method).toBe("typo");
     expect(result.data.isCorrect).toBe(true);
     expect(result.data.spelling).toBe("Mitochondria");
+    expect(result.data.keyPoints).toBeNull();
+    expect(result.data.score).toBe(1);
   });
 
   it("settles a fairly rounded number in code, but not in language practice", async () => {
@@ -101,6 +116,7 @@ describe(gradeTypedAnswer, () => {
 
     expect(rounded.data).toMatchObject({
       isCorrect: true,
+      keyPoints: null,
       method: "rounded",
       score: 1,
       spelling: null,

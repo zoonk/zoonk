@@ -91,8 +91,8 @@ export function buildAdapters(
 }
 
 /**
- * The server settles an accepted written answer in code: right, with every key point met. Written
- * answers are graded only on the server, so this stands in for its verdict.
+ * The server settles an accepted written answer in code: full credit, without judging key points.
+ * Written answers are graded only on the server, so this stands in for its verdict.
  */
 export function acceptedAnswerCheck(
   step: PlayableTeachingStepOf<"typedAnswer">,
@@ -111,7 +111,7 @@ export function acceptedAnswerCheck(
         corrections: [],
         feedback: null,
         isCorrect: true,
-        keyPoints: step.content.keyPoints.map((text) => ({ met: true, text })),
+        keyPoints: null,
         nextReviewAt: null,
         savedMistake: false,
         score: 1,

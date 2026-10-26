@@ -9,7 +9,7 @@ type GradeTypedAnswerInput = Omit<GradeTypedAnswerParams, "model" | "useFallback
  */
 export type GradeTypedAnswerExpected = {
   isCorrect: boolean;
-  keyPoints: boolean[];
+  keyPoints: boolean[] | null;
   corrections?: string[];
 };
 
@@ -127,6 +127,33 @@ const CONFINED_ELECTRON = {
 };
 
 export const TEST_CASES: TestCase<GradeTypedAnswerExpected, GradeTypedAnswerInput>[] = [
+  {
+    expected: { isCorrect: true, keyPoints: null },
+    id: "en-scientific-notation-code-match",
+    userInput: {
+      acceptedAnswers: ["3e8"],
+      answer: "3e8",
+      keyPoints: [
+        "The front number is 3, between 1 and 10",
+        "The point jumps 8 places, so the power is 8",
+      ],
+      language: "en",
+      question: "Write 300000000 in scientific notation.",
+      sampleAnswer: "3e8",
+    },
+  },
+  {
+    expected: { isCorrect: true, keyPoints: null },
+    id: "en-rounded-number-code-match",
+    userInput: {
+      acceptedAnswers: ["11.88"],
+      answer: "12",
+      keyPoints: ["States the percentage rise", "Explains how the percentage was calculated"],
+      language: "en",
+      question: "What was the percentage rise?",
+      sampleAnswer: "11.88%",
+    },
+  },
   {
     expected: { isCorrect: true, keyPoints: [true, true, true] },
     id: "pt-language-recruiter-english-answer",

@@ -684,7 +684,7 @@ describe(checkLessonStep, () => {
     expect(attempt.skillId).toBe(skill.id);
   });
 
-  it("grades an accepted typed answer in code with every key point met", async () => {
+  it("gives an accepted typed answer full credit without claiming unstated key points", async () => {
     const { run, steps } = await setupRun();
 
     const outcome = await check({
@@ -694,16 +694,7 @@ describe(checkLessonStep, () => {
     });
 
     expect(outcome).toMatchObject({
-      result: {
-        corrections: [],
-        feedback: null,
-        isCorrect: true,
-        keyPoints: [
-          { met: true, text: "We can't know the electron's exact position or path" },
-          { met: true, text: "The cloud shows where it's likely to be found" },
-        ],
-        score: 1,
-      },
+      result: { corrections: [], feedback: null, isCorrect: true, keyPoints: null, score: 1 },
       status: "checked",
     });
   });

@@ -97,10 +97,10 @@ export type TypedAnswerGrade = {
    * form mistake left. A right answer may leave out a key point that was only a detail.
    */
   isCorrect: boolean;
-  /** Share of key points met, from 0 to 1: partial credit for open answers, right ones included. */
+  /** Full credit for a code match; otherwise the share of key points met, from 0 to 1. */
   score: number;
-  /** Judged by meaning, so a form mistake never hides an idea the learner stated. */
-  keyPoints: { text: string; met: boolean }[];
+  /** Judged by meaning; null when code matched the answer without judging its ideas. */
+  keyPoints: { text: string; met: boolean }[] | null;
   /** Language practice only: each form mistake, so the learner sees what to fix. Empty otherwise. */
   corrections: TypedAnswerCorrection[];
   /** Null when code matched the answer, since there is nothing to explain. */
@@ -274,23 +274,17 @@ export async function gradeTypedAnswer(params: GradeTypedAnswerParams) {
   const codeMethod = getCodeMethod({ match, practicedLanguage: params.practicedLanguage });
 
   if (codeMethod) {
-    const allMet = new Set(keyPoints.map((_, index) => index + 1));
-
-    return {
-      data: toGrade({
-        corrections: [],
-        feedback: null,
-        isCorrect: true,
-        keyPoints,
-        match,
-        metNumbers: allMet,
-        method: codeMethod,
-      }),
-      provenance: null,
-      systemPrompt,
-      usage: null,
-      userPrompt,
+    const data: TypedAnswerGrade = {
+      corrections: [],
+      feedback: null,
+      isCorrect: true,
+      keyPoints: null,
+      method: codeMethod,
+      score: 1,
+      spelling: match.kind === "typo" ? match.acceptedAnswer : null,
     };
+
+    return { data, provenance: null, systemPrompt, usage: null, userPrompt };
   }
 
   const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
