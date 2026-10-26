@@ -64,24 +64,23 @@ describe("reasoning activities", () => {
   it("match pairs: matching each pair on the first try is right", async () => {
     openActivity({ template: "matchPairs" });
     await matchCards("embarazada", "pregnant");
-    await matchCards("éxito", "success");
+    await matchCards("avergonzada", "embarrassed");
     await expect.element(page.getByText("2 of 2 pairs matched", { exact: true })).toBeVisible();
     await checkActivity();
     await expectVerdict("Correct!");
-    await expect.element(page.getByText("Look-alikes with no match")).toBeVisible();
   });
 
-  it("match pairs: a trap explains itself and the first try counts", async () => {
+  it("match pairs: a mix-up explains itself and the first try counts", async () => {
     openActivity({ template: "matchPairs" });
     await matchCards("embarazada", "embarrassed");
 
     await expect
-      .element(page.getByText("It looks alike but means something else.", { exact: true }))
+      .element(page.getByText("It looks like embarrassed but means pregnant.", { exact: true }))
       .toBeVisible();
 
     await expect.element(page.getByRole("button", { name: "Check" })).toBeDisabled();
     await matchCards("embarazada", "pregnant");
-    await matchCards("éxito", "success");
+    await matchCards("avergonzada", "embarrassed");
     await checkActivity();
     await expectVerdict("Not quite");
 

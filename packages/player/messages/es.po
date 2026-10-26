@@ -1813,9 +1813,9 @@ msgid "{matched} of {total} pairs matched"
 msgstr "{matched} de {total} parejas emparejadas"
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "WRBWEV"
-msgid "Two columns of cards. Pick a card on the left and one on the right to match them. Some cards are look-alike traps with no match. {matched} of {total} pairs matched."
-msgstr "Dos columnas de tarjetas. Elige una tarjeta de la izquierda y otra de la derecha para emparejarlas. Algunas tarjetas trampa se parecen a otras, pero no tienen pareja. {matched} de {total} parejas emparejadas."
+msgctxt "XpNoFf"
+msgid "Two columns of cards. Pick a card on the left and one on the right to match them. {matched} of {total} pairs matched."
+msgstr "Dos columnas de tarjetas. Elige una tarjeta de la izquierda y otra de la derecha para emparejarlas. {matched} de {total} parejas emparejadas."
 
 #: src/activities/match-pairs/match-pairs-results.tsx
 msgctxt "kzygtu"
@@ -1826,11 +1826,6 @@ msgstr "Parejas que no acertaste a la primera"
 msgctxt "prxLRA"
 msgid "{left} goes with {right}, not {guess}."
 msgstr "{left} va con {right}, no con {guess}."
-
-#: src/activities/match-pairs/match-pairs-results.tsx
-msgctxt "_Hm0lS"
-msgid "Look-alikes with no match"
-msgstr "Elementos parecidos sin pareja"
 
 #: src/activities/molecule-builder/molecule-builder-activity.tsx
 msgctxt "G7a_3q"

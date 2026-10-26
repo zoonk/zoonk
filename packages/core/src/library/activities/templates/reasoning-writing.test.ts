@@ -1,7 +1,7 @@
 import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { describe, expect, it } from "vitest";
 import { validateActivity } from "../validate-activity";
-import { findErrorTemplate } from "./reasoning-writing";
+import { findErrorTemplate, matchPairsTemplate } from "./reasoning-writing";
 
 describe(findErrorTemplate.id, () => {
   const spotTheAi = {
@@ -55,6 +55,20 @@ describe(findErrorTemplate.id, () => {
     const result = validateActivity({
       ...spotTheAi,
       fields: { ...spotTheAi.fields, author: "teacher" },
+    });
+
+    expect(result.ok ? [] : result.issues.map((item) => item.code)).toContain("invalidSchema");
+  });
+});
+
+describe(matchPairsTemplate.id, () => {
+  it("rejects a card with no match, so both columns hold the same pairs", () => {
+    const result = validateActivity({
+      ...activityContentFixtures.matchPairs,
+      fields: {
+        ...activityContentFixtures.matchPairs.fields,
+        distractors: [{ side: "right", text: "ashamed", why: "It looks alike." }],
+      },
     });
 
     expect(result.ok ? [] : result.issues.map((item) => item.code)).toContain("invalidSchema");

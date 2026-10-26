@@ -14,7 +14,6 @@ import { duplicateIssues, evaluateOrNull, isClose, issue } from "./_utils/templa
 const MAX_GROUPS = 4;
 const MAX_ITEMS = 10;
 const MAX_PAIRS = 6;
-const MAX_DISTRACTORS = 3;
 const MAX_CANDIDATES = 4;
 const MAX_STEPS = 6;
 
@@ -59,17 +58,6 @@ export const categorizeTemplate = defineActivityTemplate({
 
 const matchPairsFields = z
   .object({
-    distractors: z
-      .array(
-        z
-          .object({
-            side: z.enum(["left", "right"]),
-            text: optionTextSchema,
-            why: explanationSchema,
-          })
-          .strict(),
-      )
-      .max(MAX_DISTRACTORS),
     pairs: uniqueIdsSchema(
       z
         .object({
@@ -87,7 +75,7 @@ const matchPairsFields = z
 export const matchPairsTemplate = defineActivityTemplate({
   checks: ["interaction"],
   description:
-    "Pair items that belong together, with look-alike traps, like false friends between languages. The learner matches each left item (by pair id) to a right item (by pair id). Fills: the pairs, look-alike distractors and a why for each likely mix-up.",
+    "Pair items that belong together and are easy to mix up with each other, like false friends between languages. Every card has one match on the other side, so a look-alike goes in as its own pair. The learner matches each left item (by pair id) to its right item (by pair id). Fills: the pairs and a why for each pair likely to be mixed up.",
   expected: (fields) => ({
     kind: "assignment",
     pairs: Object.fromEntries(fields.pairs.map((pair) => [pair.id, pair.id])),
@@ -97,18 +85,12 @@ export const matchPairsTemplate = defineActivityTemplate({
   needsData: false,
   verify: (fields) => [
     ...duplicateIssues(
-      [
-        ...fields.pairs.map((pair) => pair.left),
-        ...fields.distractors.filter((item) => item.side === "left").map((item) => item.text),
-      ],
+      fields.pairs.map((pair) => pair.left),
       "fields.pairs",
       "Left item",
     ),
     ...duplicateIssues(
-      [
-        ...fields.pairs.map((pair) => pair.right),
-        ...fields.distractors.filter((item) => item.side === "right").map((item) => item.text),
-      ],
+      fields.pairs.map((pair) => pair.right),
       "fields.pairs",
       "Right item",
     ),

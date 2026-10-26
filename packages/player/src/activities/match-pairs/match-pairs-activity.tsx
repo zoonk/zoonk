@@ -12,7 +12,7 @@ import {
 import { expectedInteraction } from "../_utils/activity-expected";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { type MatchCardState, MatchPairsCard } from "./match-pairs-card";
-import { type MatchCard, arrangeMatchColumns, mismatchReason } from "./match-pairs-columns";
+import { type MatchCard, arrangeMatchColumns } from "./match-pairs-columns";
 import {
   type MatchProgress,
   isMatch,
@@ -42,7 +42,7 @@ function cardState({
   selection: Selection;
   side: Side;
 }): MatchCardState {
-  if (!card.isTrap && progress.matched.includes(card.id)) {
+  if (progress.matched.includes(card.id)) {
     return "matched";
   }
 
@@ -54,9 +54,9 @@ function cardState({
 }
 
 /**
- * Pair cards that belong together, with look-alike traps. Pick one card on each side: a match
- * locks in, a miss says why the two don't go together. Every pair must be matched before the
- * check, which grades each pair's first try.
+ * Pair cards that belong together. Pick one card on each side: a match locks in, a miss says why
+ * the two don't go together. Every pair must be matched before the check, which grades each
+ * pair's first try.
  */
 export function MatchPairsActivity({
   answer,
@@ -98,11 +98,8 @@ export function MatchPairsActivity({
       return;
     }
 
-    const reason = mismatchReason({
-      left: leftCard,
-      pairs: left.filter((card) => !card.isTrap),
-      right: rightCard,
-    });
+    // The writer's note on either pair the learner mixed up says why they don't go together.
+    const reason = rightCard.why ?? leftCard.why;
 
     setMiss({ left: leftCard.id, reason, right: rightCard.id });
 
@@ -198,7 +195,7 @@ export function MatchPairsActivity({
 
       <ActivityTextAlternative>
         {t(
-          "Two columns of cards. Pick a card on the left and one on the right to match them. Some cards are look-alike traps with no match. {matched} of {total} pairs matched.",
+          "Two columns of cards. Pick a card on the left and one on the right to match them. {matched} of {total} pairs matched.",
           { matched: String(progress.matched.length), total: String(pairIds.length) },
         )}
       </ActivityTextAlternative>

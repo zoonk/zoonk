@@ -1813,9 +1813,9 @@ msgid "{matched} of {total} pairs matched"
 msgstr "{matched} of {total} pairs matched"
 
 #: src/activities/match-pairs/match-pairs-activity.tsx
-msgctxt "WRBWEV"
-msgid "Two columns of cards. Pick a card on the left and one on the right to match them. Some cards are look-alike traps with no match. {matched} of {total} pairs matched."
-msgstr "Two columns of cards. Pick a card on the left and one on the right to match them. Some cards are look-alike traps with no match. {matched} of {total} pairs matched."
+msgctxt "XpNoFf"
+msgid "Two columns of cards. Pick a card on the left and one on the right to match them. {matched} of {total} pairs matched."
+msgstr "Two columns of cards. Pick a card on the left and one on the right to match them. {matched} of {total} pairs matched."
 
 #: src/activities/match-pairs/match-pairs-results.tsx
 msgctxt "kzygtu"
@@ -1826,11 +1826,6 @@ msgstr "Missed on the first try"
 msgctxt "prxLRA"
 msgid "{left} goes with {right}, not {guess}."
 msgstr "{left} goes with {right}, not {guess}."
-
-#: src/activities/match-pairs/match-pairs-results.tsx
-msgctxt "_Hm0lS"
-msgid "Look-alikes with no match"
-msgstr "Look-alikes with no match"
 
 #: src/activities/molecule-builder/molecule-builder-activity.tsx
 msgctxt "G7a_3q"
