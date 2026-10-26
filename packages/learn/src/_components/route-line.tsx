@@ -14,7 +14,7 @@ import { type ReactNode } from "react";
  *
  * ```tsx
  * <Route>
- *   <RouteStop first>
+ *   <RouteStop>
  *     <h1 className="relative">
  *       <RouteMark down />
  *       Quantum physics from scratch
@@ -22,21 +22,18 @@ import { type ReactNode } from "react";
  *   </RouteStop>
  *
  *   <RouteStop>
- *     <h2 className="relative">
- *       <RouteMark down up />
- *       Course outline
- *     </h2>
+ *     <RouteTitle down up>Course outline</RouteTitle>
  *     <RouteZone summary="Overview">…rows, each with <RouteMark station="stop" />…</RouteZone>
  *   </RouteStop>
  *
- *   <RouteStop last>
- *     <h2 className="relative">
- *       <RouteMark station="end" up />
- *       Start today, at your level
- *     </h2>
+ *   <RouteStop>
+ *     <RouteTitle station="end" up>Start today, at your level</RouteTitle>
  *   </RouteStop>
  * </Route>
  * ```
+ *
+ * The first stop's mark draws the line down only and the last one's up only, so it starts and
+ * ends at a station.
  */
 
 /**
