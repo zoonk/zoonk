@@ -77,10 +77,10 @@ async function answerTyped(page: Page) {
 
 async function answerSpokenByTyping(page: Page) {
   await expect(page.getByText("The electron is a cloud")).toBeVisible();
-  const typeInstead = page.getByRole("button", { name: "Type it instead" });
+  const cantTalk = page.getByRole("button", { name: "I can't talk now" });
 
-  if (await typeInstead.isVisible()) {
-    await typeInstead.click();
+  if (await cantTalk.isVisible()) {
+    await cantTalk.click();
   }
 
   await page.getByRole("textbox", { name: "Say it out loud" }).fill("The electron is a cloud");
