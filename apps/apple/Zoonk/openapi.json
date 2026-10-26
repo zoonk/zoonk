@@ -63858,6 +63858,15 @@
             "minimum": 0,
             "maximum": 9007199254740991
           },
+          "ceremony": {
+            "nullable": true,
+            "description": "The one milestone this block earned that gets a full-screen moment right after it (a new belt, the buddy's next stage, new glasses); null otherwise and on a retry",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Milestone"
+              }
+            ]
+          },
           "checkpoint": {
             "nullable": true,
             "description": "A checkpoint's result with each right answer and why",
@@ -64017,6 +64026,56 @@
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
+          "reached": {
+            "type": "object",
+            "properties": {
+              "energy": {
+                "nullable": true,
+                "description": "The tenth of Energy the block reached going up (60, 80, 100)",
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "level": {
+                "nullable": true,
+                "description": "The belt level its Brain Power reached, the day's bonus included",
+                "type": "object",
+                "properties": {
+                  "color": {
+                    "type": "string",
+                    "enum": [
+                      "white",
+                      "yellow",
+                      "orange",
+                      "green",
+                      "blue",
+                      "purple",
+                      "brown",
+                      "red",
+                      "gray",
+                      "black"
+                    ]
+                  },
+                  "level": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "color",
+                  "level"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "energy",
+              "level"
+            ],
+            "additionalProperties": false,
+            "description": "What the block took the learner to, for its moment to celebrate"
+          },
           "sessionBar": {
             "type": "object",
             "properties": {
@@ -64088,6 +64147,7 @@
           "blockId",
           "brainPower",
           "capsulesOpened",
+          "ceremony",
           "checkpoint",
           "comesBackOn",
           "completedMissions",
@@ -64097,11 +64157,53 @@
           "missions",
           "netScore",
           "nextBlockId",
+          "reached",
           "sessionBar",
           "sessionCompleted",
           "testOutOffer",
           "topHyperdrive",
           "total"
+        ],
+        "additionalProperties": false
+      },
+      "Milestone": {
+        "type": "object",
+        "properties": {
+          "earnedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "key": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "badge",
+              "belt",
+              "glasses",
+              "buddyStage"
+            ]
+          },
+          "shownAt": {
+            "nullable": true,
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          }
+        },
+        "required": [
+          "earnedAt",
+          "id",
+          "key",
+          "kind",
+          "shownAt"
         ],
         "additionalProperties": false
       },
@@ -64224,47 +64326,6 @@
             "additionalProperties": false
           }
         ]
-      },
-      "Milestone": {
-        "type": "object",
-        "properties": {
-          "earnedAt": {
-            "type": "string",
-            "format": "date-time",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-          },
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-          },
-          "key": {
-            "type": "string"
-          },
-          "kind": {
-            "type": "string",
-            "enum": [
-              "badge",
-              "belt",
-              "glasses",
-              "buddyStage"
-            ]
-          },
-          "shownAt": {
-            "nullable": true,
-            "type": "string",
-            "format": "date-time",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-          }
-        },
-        "required": [
-          "earnedAt",
-          "id",
-          "key",
-          "kind",
-          "shownAt"
-        ],
-        "additionalProperties": false
       },
       "LibraryLessonRun": {
         "type": "object",

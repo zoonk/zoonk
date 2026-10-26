@@ -104,13 +104,13 @@ describe("finishing a block that already finished", () => {
     const paid = await readPaid(day);
     expect(paid.blockBrainPower).toBeGreaterThan(0);
 
-    // A retry after the first response was lost: the same moment, whose milestones were recorded
-    // the first time (the day's summary shows any the learner didn't see).
+    // A retry after the first response was lost: the same moment, whose milestones (and their
+    // ceremony) were recorded the first time; the day's summary shows any the learner didn't see.
     const retried = await day.finish();
 
     expect(retried).toStrictEqual(
       first.status === "ready"
-        ? { ...first, completion: { ...first.completion, milestones: [] } }
+        ? { ...first, completion: { ...first.completion, ceremony: null, milestones: [] } }
         : first,
     );
 
@@ -131,7 +131,7 @@ describe("finishing a block that already finished", () => {
 
     expect(retried).toStrictEqual(
       first.status === "ready"
-        ? { ...first, completion: { ...first.completion, milestones: [] } }
+        ? { ...first, completion: { ...first.completion, ceremony: null, milestones: [] } }
         : first,
     );
   });
@@ -154,6 +154,28 @@ describe("finishing a block that already finished", () => {
         completedMissions: ["practice"],
         fullMeal: { bonus: 50, paid: true },
         sessionCompleted: true,
+      },
+      status: "ready",
+    });
+  });
+
+  it("says the belt level and the tenth of Energy it reached, with its ceremony", async () => {
+    const day = await setup(null, { missions: PRACTICE_MISSION });
+
+    // Just short of the yellow belt and of 80% Energy: the block's answer and the day's bonus
+    // take the learner across both.
+    const progress = { currentEnergy: 79.9, lastActiveAt: new Date(), totalBrainPower: 2490n };
+
+    await prisma.userProgress.upsert({
+      create: { ...progress, userId: day.user.id },
+      update: progress,
+      where: { userId: day.user.id },
+    });
+
+    await expect(day.finish()).resolves.toMatchObject({
+      completion: {
+        ceremony: { key: "yellow", kind: "belt" },
+        reached: { energy: 80, level: { color: "yellow", level: 1 } },
       },
       status: "ready",
     });

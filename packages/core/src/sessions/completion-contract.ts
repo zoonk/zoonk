@@ -1,9 +1,11 @@
 import { type Milestone } from "@zoonk/db";
+import { BELT_COLORS_ORDER } from "@zoonk/utils/belt-level";
 import { z } from "zod";
 import { type CheckpointOutcome } from "../checkpoints/_utils/checkpoint-outcome";
 import { type QuestionAnswer } from "./contract";
 import { type Mission } from "./missions";
 import { FIRST_STEP_KINDS, MISSION_KINDS } from "./missions/catalog";
+import { type Reached } from "./reached";
 
 const LOGICAL_DATE_LENGTH = 10;
 
@@ -42,6 +44,8 @@ export type StudyBlockCompletion = {
   blockId: string;
   brainPower: number;
   capsulesOpened: number;
+  /** The one milestone the block earned that gets a full-screen moment right after it. */
+  ceremony: Milestone | null;
   checkpoint: CheckpointResultView | null;
   /** For lessons: the day their capsule opens, right when memory would start to fade. */
   comesBackOn: Date | null;
@@ -57,6 +61,8 @@ export type StudyBlockCompletion = {
    */
   netScore: number | null;
   nextBlockId: string | null;
+  /** The belt level and the tenth of Energy the block took the learner to, to celebrate them. */
+  reached: Reached;
   sessionBar: { completed: number; total: number };
   sessionCompleted: boolean;
   /**
@@ -222,6 +228,12 @@ export const studyBlockCompletionSchema = z
       description: "Earned by the block, with the bonus for all offered missions when it just paid",
     }),
     capsulesOpened: countSchema,
+    ceremony: milestoneSchema
+      .nullable()
+      .meta({
+        description:
+          "The one milestone this block earned that gets a full-screen moment right after it (a new belt, the buddy's next stage, new glasses); null otherwise and on a retry",
+      }),
     checkpoint: checkpointResultSchema
       .nullable()
       .meta({ description: "A checkpoint's result with each right answer and why" }),
@@ -249,6 +261,21 @@ export const studyBlockCompletionSchema = z
         description: "Right minus wrong, for net-scored (Cebraspe) swipe capsules and practice",
       }),
     nextBlockId: idSchema.nullable(),
+    reached: z
+      .object({
+        energy: z
+          .number()
+          .int()
+          .nullable()
+          .meta({ description: "The tenth of Energy the block reached going up (60, 80, 100)" }),
+        level: z
+          .object({ color: z.enum(BELT_COLORS_ORDER), level: countSchema })
+          .nullable()
+          .meta({
+            description: "The belt level its Brain Power reached, the day's bonus included",
+          }),
+      })
+      .meta({ description: "What the block took the learner to, for its moment to celebrate" }),
     sessionBar: z.object({ completed: countSchema, total: countSchema }),
     sessionCompleted: z.boolean(),
     testOutOffer: z
@@ -272,21 +299,26 @@ export const studyBlockCompletionSchema = z
 
 export type StudyBlockCompletionView = z.infer<typeof studyBlockCompletionSchema>;
 
+function serializeMilestone(milestone: Milestone) {
+  return {
+    earnedAt: milestone.earnedAt.toISOString(),
+    id: milestone.id,
+    key: milestone.key,
+    kind: milestone.kind,
+    shownAt: milestone.shownAt?.toISOString() ?? null,
+  };
+}
+
 /** The completion as it goes over the wire: instants in ISO, learner-local days as dates. */
 export function serializeStudyBlockCompletion(
   completion: StudyBlockCompletion,
 ): StudyBlockCompletionView {
   return {
     ...completion,
+    ceremony: completion.ceremony ? serializeMilestone(completion.ceremony) : null,
     comesBackOn: completion.comesBackOn
       ? completion.comesBackOn.toISOString().slice(0, LOGICAL_DATE_LENGTH)
       : null,
-    milestones: completion.milestones.map((milestone) => ({
-      earnedAt: milestone.earnedAt.toISOString(),
-      id: milestone.id,
-      key: milestone.key,
-      kind: milestone.kind,
-      shownAt: milestone.shownAt?.toISOString() ?? null,
-    })),
+    milestones: completion.milestones.map((milestone) => serializeMilestone(milestone)),
   };
 }

@@ -22,6 +22,7 @@ import {
 import { type StudySessionRow, findOwnedStudyBlock } from "./_utils/study-session-access";
 import { findTestOutOffer } from "./_utils/test-out-offer";
 import { readBlockPayload } from "./block-payload";
+import { getAnswersEnergyDelta } from "./brain-power";
 import { type CheckpointResultView, type StudyBlockCompletion } from "./completion-contract";
 import { type StudySessionTimeZoneInput } from "./contract";
 import { type MissionCompletionSource } from "./missions/settle-missions";
@@ -197,6 +198,10 @@ async function finishQuestionBlock(
   const completion = await completeBlockMoment({
     blockId: owned.block.id,
     brainPowerBefore: settlement.brainPowerBefore,
+    energyDelta: getAnswersEnergyDelta({
+      correct: settlement.correct,
+      incorrect: settlement.total - settlement.correct,
+    }),
     payload,
     result: {
       brainPower: settlement.brainPower,
@@ -259,6 +264,7 @@ export async function finishLessonBlock(owned: OwnedBlock): Promise<FinishStudyB
   const completion = await completeBlockMoment({
     blockId: owned.block.id,
     brainPowerBefore: Number(progress?.totalBrainPower ?? 0) - finish.brainPower,
+    energyDelta: finish.energyDelta,
     payload: readBlockPayload(owned.block),
     result: {
       brainPower: finish.brainPower,
