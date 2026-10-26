@@ -3,6 +3,7 @@
 import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
 import { cn } from "@zoonk/ui/lib/utils";
 import {
+  BookOpenIcon,
   BrainIcon,
   RotateCcwIcon,
   TargetIcon,
@@ -10,7 +11,7 @@ import {
   TrendingUpIcon,
 } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
-import { KindDot } from "../../_components/kind-tile";
+import { PageSectionTitle } from "../../_components/page";
 import { StatTile, StatTiles } from "../../_components/stat-tile";
 import {
   StepCard,
@@ -232,7 +233,7 @@ function SkillRises() {
 
   return (
     <section className="flex w-full flex-col gap-1">
-      <h2 className="text-label">{t("Skills that rose")}</h2>
+      <PageSectionTitle>{t("Skills that rose")}</PageSectionTitle>
 
       <StepRows>
         {rises.map((move) => (
@@ -264,11 +265,11 @@ function TomorrowRow() {
 
   return (
     <section className="flex w-full flex-col gap-1">
-      <h2 className="text-label">{t("Tomorrow")}</h2>
+      <PageSectionTitle>{t("Tomorrow")}</PageSectionTitle>
 
       <StepRows>
         <StepRow>
-          <KindDot kind="lesson" />
+          <BookOpenIcon aria-hidden="true" />
           <span className="min-w-0 flex-1 truncate font-medium">{summary.tomorrow.title}</span>
         </StepRow>
       </StepRows>

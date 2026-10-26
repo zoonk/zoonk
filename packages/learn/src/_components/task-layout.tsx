@@ -1,5 +1,6 @@
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
+import { PageSectionTitle } from "./page";
 
 /**
  * The task's column (40rem with its padding), centered in the task's room: the window on a phone
@@ -262,7 +263,10 @@ export function TaskAsideContent({ className, ...props }: React.ComponentProps<"
   );
 }
 
-/** A block of the aside's body: its label, then its rows or text. */
+/**
+ * A block of the aside's body: its sentence-case title, as an app page's aside titles its blocks
+ * (the label stays in the aside's header row), then its rows or text.
+ */
 export function TaskAsideSection({
   children,
   className,
@@ -274,7 +278,7 @@ export function TaskAsideSection({
 }) {
   return (
     <section className={cn("flex flex-col gap-2", className)} data-slot="task-aside-section">
-      {title && <h3 className="text-label">{title}</h3>}
+      {title && <PageSectionTitle>{title}</PageSectionTitle>}
       {children}
     </section>
   );
