@@ -27,10 +27,7 @@ const DRILL_KINDS = {
 const TIMED_DRILL_SECONDS = 45;
 
 /** The summary card of every drill's lesson: what a content gap's drill brings back first. */
-export const LESSON_IDEA = "A discount comes off the price you pay.";
-
-/** Every question's right option is the first one, "Right answer"; the second is a trap. */
-export const TRAP = "Applies the rule backwards";
+const LESSON_IDEA = "A discount comes off the price you pay.";
 
 /** The question a cause's drill asks first, and the one it adds on the same skill. */
 export function drillQuestion(cause: MistakeCause, which: "extra" | "original") {

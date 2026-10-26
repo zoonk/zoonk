@@ -1,6 +1,5 @@
 import { randomUUID } from "node:crypto";
 import { type Page, expect } from "@playwright/test";
-import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
@@ -22,7 +21,7 @@ export const CHECKPOINT_QUESTIONS = SKILL_NAMES.length * QUESTIONS_PER_SKILL;
 export const CHECKPOINT_PASS_MARK = 5;
 
 /** A mock keeps the exam's pace: three minutes a question. */
-export const MOCK_MINUTES = 18;
+const MOCK_MINUTES = 18;
 
 /** A learner who owns the returned goal, studying it. */
 export async function createGoalLearner() {
@@ -95,7 +94,7 @@ function plannerPlan(skillId: string) {
  * A boss planned while the bank held fewer than five questions for it: ten, seven right to win,
  * once Start has the rest written.
  */
-export const THIN_CHECKPOINT = { minutes: 15, passMark: 7, questions: 10 } as const;
+const THIN_CHECKPOINT = { minutes: 15, passMark: 7, questions: 10 } as const;
 
 /** A checkpoint takes about a minute and a half a question. */
 const CHECKPOINT_MINUTES = 9;
@@ -362,13 +361,4 @@ export async function playDuel(
       total,
     });
   }
-}
-
-/** When the first boss's star glasses had their ceremony; null until it showed. */
-export async function starShownAt(userId: string) {
-  const milestone = await prisma.milestone.findFirstOrThrow({
-    where: { key: "star", kind: "glasses", userId },
-  });
-
-  return milestone.shownAt;
 }

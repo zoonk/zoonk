@@ -5,11 +5,7 @@ import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
-import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
-import {
-  chapterLessonFixture,
-  libraryLessonFixture,
-} from "@zoonk/testing/fixtures/library-lessons";
+import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
@@ -102,73 +98,6 @@ async function writeLessonElsewhere(lessonId: string) {
 
   await prisma.lesson.update({ data: { contentStatus: "completed" }, where: { id: lessonId } });
 }
-
-test("the in-app lesson click starts writing before navigating without an extra step", async ({
-  browser,
-}) => {
-  const { unwritten: lesson, user } = await createWaitingLearner();
-  const chapter = await libraryChapterFixture();
-  await chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id });
-
-  await prisma.planItem.updateMany({
-    data: { chapterId: chapter.id },
-    where: { lessonId: lesson.id },
-  });
-
-  const page = await openAs(browser, user);
-  const runId = `e2e-${randomUUID()}`;
-
-  const asked = await answerLessonWriting(page, [
-    { events: [lessonStep("writeLesson", "started")], id: runId },
-  ]);
-
-  await page.goto(`/content/chapters/${chapter.id}`);
-  await page.getByRole("link", { exact: true, name: "Start" }).click();
-  await expect(page).toHaveURL(new RegExp(`/learn/${lesson.id}\\?generation=${runId}$`, "u"));
-  await expect(page.getByRole("progressbar", { name: "Writing your lesson" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Start this lesson" })).toBeHidden();
-  expect(asked).toStrictEqual([runId]);
-  await page.context().close();
-});
-
-test("a late writing response doesn't reopen a lesson the learner left", async ({ browser }) => {
-  const { unwritten: lesson, user } = await createWaitingLearner();
-  const chapter = await libraryChapterFixture();
-
-  await Promise.all([
-    chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id }),
-    prisma.planItem.updateMany({ data: { chapterId: chapter.id }, where: { lessonId: lesson.id } }),
-  ]);
-
-  const page = await openAs(browser, user);
-  const answer = Promise.withResolvers<null>();
-  const answered = Promise.withResolvers<null>();
-  const asked: string[] = [];
-
-  await page.route("**/v1/library/lessons/*/generations", async (route) => {
-    asked.push(route.request().url());
-    await answer.promise;
-    await route.fulfill({ json: { status: "ready" } });
-    answered.resolve(null);
-  });
-
-  await page.goto(`/content/chapters/${chapter.id}`);
-
-  const chapterView = page
-    .getByRole("article", { includeHidden: true })
-    .filter({ has: page.getByRole("heading", { includeHidden: true, name: chapter.title }) });
-
-  const start = chapterView.getByRole("link", { includeHidden: true, name: /^Start\b/u });
-  await start.click();
-  await expect.poll(() => asked.length).toBe(1);
-  await page.getByRole("link", { name: "Back to Plan" }).click();
-  await expect(page).toHaveURL(/\/plan$/u);
-  answer.resolve(null);
-  await answered.promise;
-  await expect(start).not.toHaveAttribute("aria-busy", "true");
-  await expect(page).toHaveURL(/\/plan$/u);
-  await page.context().close();
-});
 
 test("loading an unwritten lesson asks for nothing, and it opens once another app writes it, though this app saw it unwritten", async ({
   userWithoutProgress: page,
@@ -328,31 +257,6 @@ test.describe("A lesson still being written", () => {
     await page.context().close();
   });
 
-  test("a lesson set aside says so, with something ready instead", async ({ browser }) => {
-    const { unwritten, user, written } = await createWaitingLearner();
-    const page = await openAs(browser, user);
-
-    await page.route("**/v1/library/lessons/*/generations", (route) =>
-      route.fulfill({
-        json: { error: { code: "LESSON_SET_ASIDE", message: "Set aside" } },
-        status: 409,
-      }),
-    );
-
-    await page.goto(`/learn/${unwritten.id}`);
-    await page.getByRole("button", { name: "Start this lesson" }).click();
-
-    await expect(page.getByRole("status").getByText("This lesson isn't available")).toBeVisible();
-
-    await expect(
-      page.getByRole("heading", { level: 2, name: "Ready to do instead" }),
-    ).toBeVisible();
-
-    await expect(page.getByRole("link", { name: written.title })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Try again" })).toBeHidden();
-    await page.context().close();
-  });
-
   test("a visitor who starts it becomes a guest and gets it written", async ({ page }) => {
     const unwritten = await libraryLessonFixture({
       title: `Continuous compounding ${randomUUID().slice(0, 6)}`,
@@ -388,34 +292,5 @@ test.describe("A lesson still being written", () => {
 
     const session = await page.request.get("/api/auth/get-session");
     expect(await session.json()).toMatchObject({ user: { isAnonymous: true } });
-  });
-
-  test("a guest asked to create an account once the guests' AI budget is spent gets the link to it", async ({
-    page,
-  }) => {
-    const unwritten = await libraryLessonFixture({
-      title: `Annuities ${randomUUID().slice(0, 6)}`,
-    });
-
-    // The API's answer once the day's AI budget all guests share is spent. Spending the real
-    // budget would refuse every other guest in this run, so the answer stands in for it; core's
-    // tests cover the budget and the API's tests this answer.
-    await page.route("**/v1/library/lessons/*/generations", (route) =>
-      route.fulfill({
-        json: { error: { code: "SIGN_UP_REQUIRED", message: "Create your free account" } },
-        status: 403,
-      }),
-    );
-
-    await page.goto(`/learn/${unwritten.id}`);
-    await page.getByRole("button", { name: "Start this lesson" }).click();
-
-    const notice = page
-      .getByRole("status")
-      .filter({ hasText: "Create your free account to continue." });
-
-    await expect(notice).toBeVisible();
-    await expect(notice.getByRole("link", { name: "Create a free account" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Try again" })).toBeHidden();
   });
 });

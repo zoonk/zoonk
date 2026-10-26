@@ -6,7 +6,6 @@ import {
   createLessonQuestionInputSchema,
 } from "@zoonk/core/lesson-questions/contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
-import { expect } from "./fixtures";
 import { fulfillTutorAnswer } from "./tutor-answer";
 
 /**
@@ -77,35 +76,4 @@ export async function stubScreenTutor(
   );
 
   return asked;
-}
-
-/**
- * Opens "Ask", where the learner's resolved buddy answers, and sends a suggested question in one tap.
- */
-export async function askSuggestion({
-  ask,
-  description,
-  page,
-  suggestion,
-  tutorName = "Zu",
-}: {
-  ask: string;
-  description: string;
-  page: Page;
-  suggestion: string;
-  tutorName?: string;
-}) {
-  // Screens offer "Ask" as a button or, like the plan, as an item of their open "…" menu.
-  await page
-    .getByRole("button", { name: ask })
-    .or(page.getByRole("menuitem", { name: ask }))
-    .click();
-
-  const dialog = page.getByRole("dialog", { name: tutorName });
-  await expect(dialog.getByText(description)).toBeVisible();
-
-  await dialog.getByRole("button", { name: suggestion }).click();
-  await expect(dialog.getByText(SCREEN_TUTOR_ANSWER)).toBeVisible();
-
-  return dialog;
 }

@@ -5,7 +5,6 @@ import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
-import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import {
@@ -176,6 +175,62 @@ export async function playMock({ answers, page }: { answers: MockAnswers; page: 
   }
 }
 
+/** The instruction with its theme, as ENEM words it. */
+const ENEM_INSTRUCTION =
+  "A partir da leitura dos textos motivadores e com base nos conhecimentos construídos ao longo de sua formação, redija texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa sobre o tema *Desafios para tornar clara a comunicação dos serviços públicos no Brasil*, apresentando proposta de intervenção que respeite os direitos humanos. Selecione, organize e relacione, de forma coerente e coesa, argumentos e fatos para defesa de seu ponto de vista.";
+
+/**
+ * An ENEM writing block open in today's session and not written yet, on its own blueprint: its
+ * prompt is an instruction with the theme, and the theme alone in one line as its context.
+ */
+export async function createEnemEssayDay() {
+  const [user, skill, blueprint] = await Promise.all([
+    createE2EUser(getBaseURL()),
+    skillFixture({ name: `Public communication ${randomUUID()}` }),
+    examBlueprintFixture({ identityKey: `enem-${randomUUID()}`, name: "ENEM" }),
+  ]);
+
+  const goal = await goalFixture({
+    examBlueprintId: blueprint.id,
+    kind: "exam",
+    timezone: "UTC",
+    title: "ENEM",
+    userId: user.id,
+  });
+
+  const [item, session] = await Promise.all([
+    itemFixture({
+      content: {
+        context: "Tema: Desafios para tornar clara a comunicação dos serviços públicos no Brasil.",
+        keyPoints: ["An intervention proposal with agent, action, means, purpose and a detail"],
+        question: ENEM_INSTRUCTION,
+        rubric: [
+          { criterion: "C1", description: "Formal writing", points: null },
+          { criterion: "C5", description: "Intervention proposal", points: null },
+        ],
+        sampleOutline: "Thesis, two arguments, an intervention proposal.",
+      },
+      examBlueprintId: blueprint.id,
+      format: "essay",
+      skillId: skill.id,
+    }),
+    studySessionFixture({ goalId: goal.id, userId: user.id }),
+    planFixture({ goalId: goal.id }),
+    learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
+  ]);
+
+  const block = await studySessionBlockFixture({
+    estimatedMinutes: 20,
+    kind: "produce",
+    payload: { itemIds: [item.id], skillIds: [skill.id], title: "Essay" },
+    sessionId: session.id,
+    startedAt: new Date(),
+    status: "active",
+  });
+
+  return { blockId: block.id, goalId: goal.id, user };
+}
+
 /**
  * A writing block already open in today's session, with one draft graded by ENEM's rubric: essays
  * are graded by a model, which tests don't call, so the grade is stored the way grading stores it.
@@ -256,96 +311,4 @@ export async function addGradedEssay({
   });
 
   return { blockId: block.id };
-}
-
-const NOTICE = { passage: "Julgue os itens a seguir.", sourceId: "notice" };
-
-/** A Cebraspe-style exam: statements judged right or wrong, and a wrong answer cancels a right one. */
-export const NET_SCORED_STRUCTURE = {
-  formats: [{ citation: NOTICE, description: "Certo ou Errado", kind: "trueFalse", options: null }],
-  mock: {
-    adaptive: false,
-    citations: [],
-    order: null,
-    scoring: { description: "A wrong answer cancels a right one.", method: "wrongCancelsRight" },
-    sections: [],
-    timeLimitMinutes: 180,
-    totalQuestions: 120,
-  },
-  rules: [],
-  subjects: [],
-};
-
-/** A true-or-false statement, named by its label so a test can find it. */
-export function statement(label: string, isTrue: boolean) {
-  return {
-    context: null,
-    isTrue,
-    misconception: null,
-    reason: "Because of the statute.",
-    statement: `${label}: ${randomUUID()}`,
-  };
-}
-
-/** Where the first statement of a statement practice day was copied from: a real past paper. */
-export const QUOTED_STATEMENT_CITATION = "Cebraspe 2024, TJ-AM, item 41";
-
-/**
- * A learner preparing for an exam with `structure` whose day is mixed practice on three statements
- * (true, false, true), scored net when the exam cancels a right answer with a wrong one, as the
- * session builder scores it. The first is a past exam's statement, copied as printed and citing it.
- */
-async function createStatementPracticeDay({
-  netScored,
-  structure,
-}: {
-  netScored: boolean;
-  structure: object;
-}) {
-  const [user, skill, blueprint, lesson] = await Promise.all([
-    createE2EUser(getBaseURL()),
-    skillFixture({ name: `Administrative law ${randomUUID()}` }),
-    examBlueprintFixture({ name: "Concurso Test", structure }),
-    libraryLessonFixture({ title: "Tenure" }),
-  ]);
-
-  const goal = await goalFixture({
-    examBlueprintId: blueprint.id,
-    kind: "exam",
-    timezone: "UTC",
-    userId: user.id,
-  });
-
-  const plan = await planFixture({ goalId: goal.id });
-
-  const [statements, session] = await Promise.all([
-    Promise.all(
-      [
-        {
-          content: { ...statement("First statement", true), quoted: true },
-          sourceCitation: QUOTED_STATEMENT_CITATION,
-        },
-        { content: statement("Second statement", false) },
-        { content: statement("Third statement", true) },
-      ].map((item) => itemFixture({ ...item, format: "trueFalse", skillId: skill.id })),
-    ),
-    studySessionFixture({ goalId: goal.id, userId: user.id }),
-    planItemFixture({ kind: "lesson", lessonId: lesson.id, planId: plan.id, position: 0 }),
-    learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
-  ]);
-
-  await studySessionBlockFixture({
-    estimatedMinutes: 5,
-    kind: "practice",
-    payload: { itemIds: statements.map((item) => item.id), netScored, skillIds: [skill.id] },
-    position: 0,
-    sessionId: session.id,
-  });
-
-  return { user };
-}
-
-/** A Cebraspe-style exam's practice day: statements judged right or wrong, scored net. */
-export function createNetScoredPracticeDay() {
-  return createStatementPracticeDay({ netScored: true, structure: NET_SCORED_STRUCTURE });
 }

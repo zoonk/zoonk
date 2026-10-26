@@ -284,12 +284,6 @@ export async function checkWithEnter(page: Page) {
   await page.keyboard.press("Enter");
 }
 
-/** Picks a session question's option by its words and checks it, as a tap and Check do. */
-export async function pickAndCheck(page: Page, option: RegExp | string) {
-  await page.getByRole("radio", { name: option }).click();
-  await page.getByRole("button", { name: /^Check/u }).click();
-}
-
 /**
  * Answers a quick question with its first option (always the right one): its number picks it and
  * Enter checks it, as in the lesson. Then it moves on.

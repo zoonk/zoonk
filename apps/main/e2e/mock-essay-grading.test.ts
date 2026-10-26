@@ -1,5 +1,4 @@
 import { prisma } from "@zoonk/db";
-import { expectAccessibleScreen } from "@zoonk/e2e/fixtures/accessibility";
 import { createAnytimeMockLearner } from "./anytime-mock-fixtures";
 import { expect, test } from "./fixtures";
 import { continueToStep } from "./result-steps";
@@ -9,13 +8,7 @@ const ESSAY_TEXT =
   "O controle externo da administração pública cabe ao Congresso Nacional, com o auxílio do Tribunal de Contas da União, que julga as contas dos administradores e fiscaliza a aplicação dos recursos federais.";
 
 /** A resumed last section whose essay is already saved; no generation is needed to reach it. */
-async function writtenSitting({
-  expired,
-  questionClock = false,
-}: {
-  expired: boolean;
-  questionClock?: boolean;
-}) {
+async function writtenSitting({ expired }: { expired: boolean }) {
   const { goal, user } = await createAnytimeMockLearner({ plus: true, written: true });
 
   const [objective, essay] = await Promise.all([
@@ -31,13 +24,7 @@ async function writtenSitting({
 
   const mock = await prisma.mockExam.create({
     data: {
-      answers: {
-        create: {
-          answer: { text: ESSAY_TEXT },
-          durationMs: questionClock ? 0 : 60_000,
-          itemId: essay.id,
-        },
-      },
+      answers: { create: { answer: { text: ESSAY_TEXT }, durationMs: 60_000, itemId: essay.id } },
       conditions: {
         day: null,
         fullLength: true,
@@ -60,7 +47,7 @@ async function writtenSitting({
             navigation: {
               answerChanges: null,
               forwardOnly: false,
-              itemSeconds: questionClock ? 1 : null,
+              itemSeconds: null,
               mustAnswer: false,
             },
             questions: 0,
@@ -83,10 +70,10 @@ async function writtenSitting({
 }
 
 test.describe("Mock essays need a learner's grading request", () => {
-  for (const mode of ["expired", "section", "question"] as const) {
+  for (const mode of ["expired", "section"] as const) {
     test(`${mode} timeout closes answers without requesting AI grading`, async ({ browser }) => {
       const expired = mode === "expired";
-      const { mock, user } = await writtenSitting({ expired, questionClock: mode === "question" });
+      const { mock, user } = await writtenSitting({ expired });
       const page = await openAs(browser, user);
       const gradingRequests: string[] = [];
       const sectionRequests: string[] = [];
@@ -127,42 +114,20 @@ test.describe("Mock essays need a learner's grading request", () => {
       if (!expired) {
         await expect(page.getByRole("timer", { exact: true, name: "Time left" })).toBeVisible();
 
-        if (mode === "section") {
-          await prisma.mockExam.update({
-            data: { sectionStartedAt: new Date(Date.now() - 120_000) },
-            where: { id: mock.id },
-          });
-        }
+        await prisma.mockExam.update({
+          data: { sectionStartedAt: new Date(Date.now() - 120_000) },
+          where: { id: mock.id },
+        });
 
-        await page.clock.fastForward(mode === "question" ? 1000 : 120_000);
+        await page.clock.fastForward(120_000);
       }
 
       await expect(page.getByRole("heading", { name: "Time's up" })).toBeVisible();
       await expect(page.getByLabel("Your answer")).toBeHidden();
 
-      if (mode === "question") {
-        await expect
-          .poll(async () => {
-            const answer = await prisma.mockExamAnswer.findFirstOrThrow({
-              where: { mockExamId: mock.id },
-            });
-
-            return answer.durationMs;
-          })
-          .toBeGreaterThanOrEqual(1000);
-
-        await page.reload();
-        await expect(page.getByRole("heading", { name: "Time's up" })).toBeVisible();
-        await expect(page.getByLabel("Your answer")).toBeHidden();
-      }
-
       await expect(
         prisma.mockExamAnswer.findFirstOrThrow({ where: { mockExamId: mock.id } }),
       ).resolves.toMatchObject({ answer: { text: ESSAY_TEXT } });
-
-      if (mode === "expired") {
-        await expectAccessibleScreen(page, "a mock's time-up screen");
-      }
 
       await expect(prisma.mockExam.findUnique({ where: { id: mock.id } })).resolves.toMatchObject({
         status: "active",

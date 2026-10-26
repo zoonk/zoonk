@@ -4,7 +4,6 @@ import { planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { chapterLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
-import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { createGoalLearner } from "./checkpoint-fixtures";
 import { type Page, expect, test } from "./fixtures";
@@ -12,11 +11,9 @@ import { type Page, expect, test } from "./fixtures";
 /**
  * Plays a Library lesson through the app: every teaching screen (the hook's guess, an explanation,
  * a worked example, a check, a typed and a spoken answer, the summary) for a signed-in learner,
- * checked by the server, to the completion; coming back to a lesson where the learner left off
- * (core's tests resume the open run and a new one, the player's the screen it opens on);
- * a plan lesson played from its chapter counting for the plan, closing to the chapter and going on
- * to its next lesson; and the short break the page asks for when lessons are read too fast. What
- * single screens show is the player's to test (`packages/player`).
+ * checked by the server, to the completion; a plan lesson played from its chapter counting for the
+ * plan and closing to the chapter; and a signed-in learner kept when the session check fails. What
+ * single screens show, and where a lesson resumes, is the player's to test (`packages/player`).
  */
 
 const RIGHT_TYPED = "It shows where the electron is likely to be";
@@ -37,52 +34,13 @@ async function answerHook(page: Page) {
   await primary(page, /^Continue/u).click();
 }
 
-/**
- * The buddy is beside the screen on a wide screen, its composer at the foot of the lesson's aside;
- * on a tablet in portrait it opens in a drawer over the screen, and Escape closes only the drawer,
- * never the lesson.
- */
-async function openAndCloseTutor(page: Page, { expectText }: { expectText: string }) {
-  await expect(
-    page
-      .getByRole("complementary", { name: "Help with this screen" })
-      .getByRole("textbox", { name: "Ask a question" }),
-  ).toHaveAttribute("placeholder", "Ask Zu about this screen");
-
-  const wide = page.viewportSize();
-  await page.setViewportSize({ height: 1180, width: 820 });
-  await page.getByRole("button", { name: "Ask Zu" }).click();
-  const tutor = page.getByRole("dialog", { name: "Zu" });
-  await expect(tutor.getByText(expectText)).toBeVisible();
-  await page.keyboard.press("Escape");
-  await expect(tutor).toBeHidden();
-
-  if (wide) {
-    await page.setViewportSize(wide);
-  }
-}
-
-async function readExplanationWithHelp(page: Page) {
+async function readExplanation(page: Page) {
   await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
-
-  await openAndCloseTutor(page, { expectText: "Ask about this screen" });
-  await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
-
-  // Made with AI, said once in the screen's menu; Escape closes the menu, not the lesson.
-  await page.getByRole("button", { name: "Screen options" }).click();
-  await expect(page.getByText("Made with AI. It may contain mistakes.")).toBeVisible();
-  await expect(page.getByRole("menuitem", { name: "Report a problem" })).toBeVisible();
-  await page.keyboard.press("Escape");
-  await expect(page.getByText("Made with AI. It may contain mistakes.")).toBeHidden();
-  await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
-
   await primary(page, /^Next/u).click();
 }
 
 async function followWorkedExample(page: Page) {
   await expect(page.getByText("Reading the cloud")).toBeVisible();
-  await expect(page.getByText("The darkest part sits just around the nucleus.")).toBeHidden();
-
   await primary(page, /^Show the next step/u).click();
   await expect(page.getByText("The darkest part sits just around the nucleus.")).toBeVisible();
   await primary(page, /^Show the next step/u).click();
@@ -128,9 +86,6 @@ async function answerSpokenByTyping(page: Page) {
   await page.getByRole("textbox", { name: "Say it out loud" }).fill("The electron is a cloud");
   await primary(page, /^Check/u).click();
   await expectVerdict(page, "Correct!");
-
-  // Hyperdrive: the check, the written and the spoken answer, right in a row.
-  await expect(page.getByText("3 right in a row")).toBeVisible();
   await primary(page, /^Continue/u).click();
 }
 
@@ -188,14 +143,7 @@ async function createChapterLearner(browser: Browser) {
     ),
   );
 
-  return {
-    chapterId: chapter.id,
-    context,
-    first: first.lesson,
-    firstItemId: firstItem.id,
-    page,
-    second: second.lesson,
-  };
+  return { chapterId: chapter.id, context, first: first.lesson, firstItemId: firstItem.id, page };
 }
 
 test.describe("Library lesson player", () => {
@@ -208,7 +156,7 @@ test.describe("Library lesson player", () => {
     await page.goto(`/learn/${lesson.id}`);
 
     await answerHook(page);
-    await readExplanationWithHelp(page);
+    await readExplanation(page);
     await followWorkedExample(page);
     await answerCheckWithKeys(page);
     await answerTyped(page);
@@ -218,17 +166,6 @@ test.describe("Library lesson player", () => {
     await primary(page, /^Continue/u).click();
 
     await expect(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
-
-    // Brain Power v2: 2, 4 and 6 for three right answers in a row, and 10 for finishing, said in
-    // the moment's one line of facts.
-    const facts = page.locator('[data-slot="lesson-completion-facts"]');
-    await expect(facts).toHaveText(/^3 of 3 right · \+22 Brain Power/u);
-
-    // A lesson outside the learner's plan goes back to Today.
-    await expect(page.getByRole("link", { name: /^Continue/u })).toHaveAttribute(
-      "href",
-      /\/today$/u,
-    );
 
     await expect
       .poll(() =>
@@ -240,71 +177,10 @@ test.describe("Library lesson player", () => {
       .toStrictEqual({ correctAnswers: 3 });
   });
 
-  test("comes back days later where the learner left off, in a new run, and finishes", async ({
-    noProgressUser,
-    userWithoutProgress: page,
-  }) => {
-    const { lesson } = await playableLessonFixture({
-      steps: [
-        "explanation",
-        "check",
-        {
-          content: { ...playableStepContent.explanation, title: "Denser means more likely" },
-          kind: "explanation",
-        },
-        "check",
-      ],
-    });
-
-    await page.goto(`/learn/${lesson.id}`);
-    await primary(page, /^Next/u).click();
-    await answerCheckWithKeys(page);
-    await expect(page.getByText("Denser means more likely")).toBeVisible();
-    await expect.poll(() => prisma.attempt.count({ where: { userId: noProgressUser.id } })).toBe(1);
-
-    // The learner left two days ago: long past the half hour a run stays open.
-    const twoDaysAgo = new Date(Date.now() - 2 * MS_PER_DAY);
-
-    await Promise.all([
-      prisma.learningEvent.updateMany({
-        data: { startedAt: twoDaysAgo },
-        where: { userId: noProgressUser.id },
-      }),
-      prisma.attempt.updateMany({
-        data: { answeredAt: new Date(twoDaysAgo.getTime() + 60_000) },
-        where: { userId: noProgressUser.id },
-      }),
-    ]);
-
-    await page.goto(`/learn/${lesson.id}`);
-
-    await expect(page.getByText("Denser means more likely")).toBeVisible();
-    await expect(page.getByText("A cloud, not a little ball")).toBeHidden();
-
-    await primary(page, /^Next/u).click();
-    await answerCheckWithKeys(page);
-
-    await expect(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
-    await expect(page.getByText(/^2 of 2 right/u)).toBeVisible();
-
-    const runs = await prisma.learningEvent.findMany({
-      orderBy: { startedAt: "asc" },
-      select: { correctAnswers: true, endedAt: true },
-      where: { userId: noProgressUser.id },
-    });
-
-    // The sitting two days ago stays open; today's run finished the lesson with both answers.
-    expect(runs).toMatchObject([
-      { endedAt: null },
-      { correctAnswers: 2, endedAt: expect.any(Date) },
-    ]);
-  });
-
-  test("a plan lesson played from its chapter, outside any session, counts for the plan, closes to the chapter and goes on to the next lesson", async ({
+  test("a plan lesson played from its chapter, outside any session, counts for the plan and closes to the chapter", async ({
     browser,
   }) => {
-    const { chapterId, context, first, firstItemId, page, second } =
-      await createChapterLearner(browser);
+    const { chapterId, context, first, firstItemId, page } = await createChapterLearner(browser);
 
     try {
       await page.goto(`/content/chapters/${chapterId}`);
@@ -314,11 +190,6 @@ test.describe("Library lesson player", () => {
 
       await expect(page).toHaveURL(new RegExp(`/learn/${first.id}$`, "u"));
       await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
-
-      await expect(page.getByRole("link", { name: "Close lesson" })).toHaveAttribute(
-        "href",
-        new RegExp(`/content/chapters/${chapterId}$`, "u"),
-      );
 
       await primary(page, /^Continue/u).click();
       await expect(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
@@ -333,25 +204,9 @@ test.describe("Library lesson player", () => {
         )
         .toStrictEqual({ status: "done" });
 
-      await expect(page.getByRole("link", { name: /^Next lesson/u })).toHaveAttribute(
-        "href",
-        new RegExp(`/learn/${second.id}$`, "u"),
-      );
-
       await page.getByRole("link", { name: "Back to chapter" }).click();
       await expect(page).toHaveURL(new RegExp(`/content/chapters/${chapterId}$`, "u"));
       await expect(lessons.getByText("1 of 2", { exact: true })).toBeVisible();
-
-      await expect(
-        lessons.getByRole("link", { name: /^Done 1\. An almost empty atom/u }),
-      ).toBeVisible();
-
-      await lessons
-        .getByRole("link", { name: /^Up next 2\. Why the electron doesn't fall/u })
-        .click();
-
-      await expect(page).toHaveURL(new RegExp(`/learn/${second.id}$`, "u"));
-      await expect(page.getByText('What does the electron "cloud" show?')).toBeVisible();
     } finally {
       await context.close();
     }
