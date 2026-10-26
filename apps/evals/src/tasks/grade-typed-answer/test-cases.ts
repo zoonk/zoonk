@@ -96,6 +96,36 @@ const CELL_DIAGRAM = {
     "Iara precisa mostrar o citoplasma no espaço dentro da membrana, ao redor do fio. Assim, o esquema inclui a região interna onde ficam materiais da célula e acontecem muitas de suas atividades.",
 };
 
+/**
+ * Persona walks (Oct 2026) whose right answers showed key points they never wrote as stated: a key
+ * point is met only when the answer itself states it, whatever the verdict.
+ */
+const VECTOR_RECORD = {
+  keyPoints: [
+    "Record 3 m/s north for one cart and 3 m/s east for the other.",
+    "Draw arrows of equal length because the speeds match.",
+    "Point the arrows in different directions: north and east.",
+  ],
+  language: "en",
+  question:
+    "In Leah’s physics lab, the cart-tracking software records only “3 m/s” for each of two carts. One moves north; the other moves east.\n\nWhat should the software record to tell the carts apart? How would their motion arrows compare on the same scale?",
+  sampleAnswer:
+    "Record 3 m/s north for one cart and 3 m/s east for the other. Their arrows should be equally long, with one pointing north and the other east.",
+};
+
+const CONFINED_ELECTRON = {
+  keyPoints: [
+    "A energia mínima aumenta.",
+    "A onda precisa variar mais para caber no espaço menor.",
+    "Esse aumento não depende de aquecer a caixa.",
+  ],
+  language: "pt",
+  question:
+    "Kauã diminui o espaço disponível para um elétron, mas não aquece a caixa.\n\nO que acontece com a energia mínima do elétron? Justifique pela forma da onda.",
+  sampleAnswer:
+    "A energia mínima aumenta. A onda precisa variar mais para caber no espaço menor, mesmo sem aquecimento.",
+};
+
 export const TEST_CASES: TestCase<GradeTypedAnswerExpected, GradeTypedAnswerInput>[] = [
   {
     expected: { isCorrect: true, keyPoints: [true, true, true] },
@@ -400,7 +430,9 @@ export const TEST_CASES: TestCase<GradeTypedAnswerExpected, GradeTypedAnswerInpu
   // Pedro's class-test placement (Oct 2026): right answers in his own words that the grader marked
   // wrong for leaving out a term's name, while its feedback praised them.
   {
-    expected: { isCorrect: true, keyPoints: [true, true, true, true] },
+    // Right, and "precisa de ATP" says the pump is active transport, but the answer never says the
+    // way out goes against the gradient.
+    expected: { isCorrect: true, keyPoints: [true, false, true, true] },
     id: "pt-membrana-sodio-sem-nomes",
     userInput: {
       answer:
@@ -419,7 +451,8 @@ export const TEST_CASES: TestCase<GradeTypedAnswerExpected, GradeTypedAnswerInpu
     },
   },
   {
-    expected: { isCorrect: true, keyPoints: [true, true, true] },
+    // Right, but it never says the virus has no ribosomes of its own: that point stays unmet.
+    expected: { isCorrect: true, keyPoints: [true, true, false] },
     id: "pt-virus-ribossomos-proprias-palavras",
     userInput: {
       answer:
@@ -457,7 +490,7 @@ export const TEST_CASES: TestCase<GradeTypedAnswerExpected, GradeTypedAnswerInpu
   {
     // Helena's placement answer (ENEM strategy, Oct 2026): a sound check said its own way, graded
     // wrong for not naming elimination, which is the same check from the other side.
-    expected: { isCorrect: true, keyPoints: [true, true, true] },
+    expected: { isCorrect: true, keyPoints: [true, false, true] },
     id: "pt-enem-estrategia-duas-alternativas",
     userInput: {
       answer:
@@ -542,6 +575,53 @@ export const TEST_CASES: TestCase<GradeTypedAnswerExpected, GradeTypedAnswerInpu
     userInput: {
       ...CELL_DIAGRAM,
       answer: "Ela precisa acrescentar o que falta no espaço vazio, para o esquema ficar completo.",
+    },
+  },
+  {
+    // Maya answered the first of two questions: right, with the arrows left for the feedback.
+    expected: { isCorrect: true, keyPoints: [true, false, false] },
+    id: "en-vector-record-direction-only",
+    userInput: { ...VECTOR_RECORD, answer: "the direction too, not just the speed" },
+  },
+  {
+    // Lucas never mentioned heating: that point stays unmet.
+    expected: { isCorrect: true, keyPoints: [true, true, false] },
+    id: "pt-eletron-confinado-sem-aquecimento",
+    userInput: {
+      ...CONFINED_ELECTRON,
+      answer:
+        "sobe. com menos espaço a onda tem que ficar mais espremida e mudar mais rapido, e isso custa energia",
+    },
+  },
+  {
+    // The effect with no reason when the question asks to justify it.
+    expected: { isCorrect: false, keyPoints: [true, false, false] },
+    id: "pt-eletron-confinado-so-efeito",
+    userInput: { ...CONFINED_ELECTRON, answer: "A energia minima aumenta." },
+  },
+  {
+    expected: { isCorrect: false, keyPoints: [false, false, false] },
+    id: "pt-eletron-confinado-diminui",
+    userInput: {
+      ...CONFINED_ELECTRON,
+      answer: "diminui, porque com menos espaço ele se mexe menos",
+    },
+  },
+  {
+    // A right answer with its unit, which code doesn't match; it never says how far the point moves.
+    expected: { isCorrect: true, keyPoints: [true, false] },
+    id: "en-scientific-notation-with-unit",
+    userInput: {
+      acceptedAnswers: ["3 × 10^8", "3 x 10^8", "3*10^8", "3 × 10⁸", "3e8"],
+      answer: "3x10^8 m/s",
+      keyPoints: [
+        "The front number is 3, between 1 and 10",
+        "The point jumps 8 places, so the power is 8",
+      ],
+      language: "en",
+      question:
+        "Light travels about 300,000,000 meters per second. Write that speed in scientific notation.",
+      sampleAnswer: "$3 \\times 10^8$ m/s",
     },
   },
 ];

@@ -43,22 +43,22 @@
       }
     },
     {
-      "classification": { "expected": "correct", "predicted": "wrong" },
+      "classification": { "expected": "correct", "predicted": "correct" },
       "steps": [
         {
-          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got wrong with [true,true,true] and [\"who the right person is\"].",
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
           "kind": "majorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got wrong with [true,true,true] and [\"who the right person is\"].",
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
           "kind": "minorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got wrong with [true,true,true] and [\"who the right person is\"].",
+          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
@@ -444,19 +444,19 @@
       "classification": { "expected": "wrong", "predicted": "wrong" },
       "steps": [
         {
-          "conclusion": "Expected wrong with key points [false,true,false] and corrections []; got wrong with [false,true,false] and [].",
+          "conclusion": "Expected wrong with key points [false,true,false] and corrections []; got wrong with [true,true,false] and [].",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "Expected wrong with key points [false,true,false] and corrections []; got wrong with [false,true,false] and [].",
+          "conclusion": "Expected wrong with key points [false,true,false] and corrections []; got wrong with [true,true,false] and [].",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "Expected wrong with key points [false,true,false] and corrections []; got wrong with [false,true,false] and [].",
+          "conclusion": "Expected wrong with key points [false,true,false] and corrections []; got wrong with [true,true,false] and [].",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8
         }
       ],
       "testCase": {
@@ -878,23 +878,23 @@
       "classification": { "expected": "correct", "predicted": "correct" },
       "steps": [
         {
-          "conclusion": "Expected correct with key points [true,true,true,true] and corrections []; got correct with [true,false,true,true] and [].",
+          "conclusion": "Expected correct with key points [true,false,true,true] and corrections []; got correct with [true,false,true,true] and [].",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "Expected correct with key points [true,true,true,true] and corrections []; got correct with [true,false,true,true] and [].",
+          "conclusion": "Expected correct with key points [true,false,true,true] and corrections []; got correct with [true,false,true,true] and [].",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "Expected correct with key points [true,true,true,true] and corrections []; got correct with [true,false,true,true] and [].",
+          "conclusion": "Expected correct with key points [true,false,true,true] and corrections []; got correct with [true,false,true,true] and [].",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
-        "expected": { "isCorrect": true, "keyPoints": [true, true, true, true] },
+        "expected": { "isCorrect": true, "keyPoints": [true, false, true, true] },
         "id": "pt-membrana-sodio-sem-nomes-1",
         "userInput": {
           "answer": "a saida para pq a bomba precisa de ATP. a entrada continua pq é a favor do gradiente e nao gasta ATP",
@@ -914,23 +914,23 @@
       "classification": { "expected": "correct", "predicted": "correct" },
       "steps": [
         {
-          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "conclusion": "Expected correct with key points [true,true,false] and corrections []; got correct with [true,true,false] and [].",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "conclusion": "Expected correct with key points [true,true,false] and corrections []; got correct with [true,true,false] and [].",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,true,true] and [].",
+          "conclusion": "Expected correct with key points [true,true,false] and corrections []; got correct with [true,true,false] and [].",
           "kind": "potentialImprovements",
           "score": 10
         }
       ],
       "testCase": {
-        "expected": { "isCorrect": true, "keyPoints": [true, true, true] },
+        "expected": { "isCorrect": true, "keyPoints": [true, true, false] },
         "id": "pt-virus-ribossomos-proprias-palavras-1",
         "userInput": {
           "answer": "nao vai sair virus novo pq o virus usa os ribossomos da celula pra fazer as proteinas dele",
@@ -983,23 +983,23 @@
       "classification": { "expected": "correct", "predicted": "correct" },
       "steps": [
         {
-          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,false,true] and [].",
+          "conclusion": "Expected correct with key points [true,false,true] and corrections []; got correct with [true,false,true] and [].",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,false,true] and [].",
+          "conclusion": "Expected correct with key points [true,false,true] and corrections []; got correct with [true,false,true] and [].",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "Expected correct with key points [true,true,true] and corrections []; got correct with [true,false,true] and [].",
+          "conclusion": "Expected correct with key points [true,false,true] and corrections []; got correct with [true,false,true] and [].",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
-        "expected": { "isCorrect": true, "keyPoints": [true, true, true] },
+        "expected": { "isCorrect": true, "keyPoints": [true, false, true] },
         "id": "pt-enem-estrategia-duas-alternativas-1",
         "userInput": {
           "answer": "Voltar ao comando da questão e conferir qual alternativa responde exatamente o que foi pedido, com base no texto. Se continuar na dúvida, marcar a que parece melhor, anotar a questão e seguir em frente para voltar no fim se sobrar tempo.",
@@ -1084,22 +1084,22 @@
       }
     },
     {
-      "classification": { "expected": "correct", "predicted": "wrong" },
+      "classification": { "expected": "correct", "predicted": "correct" },
       "steps": [
         {
-          "conclusion": "Expected correct with key points [true,true,false] and corrections []; got wrong with [false,true,true] and [].",
+          "conclusion": "Expected correct with key points [true,true,false] and corrections []; got correct with [true,true,false] and [].",
           "kind": "majorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Expected correct with key points [true,true,false] and corrections []; got wrong with [false,true,true] and [].",
+          "conclusion": "Expected correct with key points [true,true,false] and corrections []; got correct with [true,true,false] and [].",
           "kind": "minorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "Expected correct with key points [true,true,false] and corrections []; got wrong with [false,true,true] and [].",
+          "conclusion": "Expected correct with key points [true,true,false] and corrections []; got correct with [true,true,false] and [].",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
@@ -1255,6 +1255,181 @@
           "question": "Em Porto Velho, Iara prepara um esquema didático de célula. Ela desenha a membrana no contorno e um fio de material genético no interior, mas deixa vazio todo o espaço entre eles.\n\nO que Iara precisa acrescentar, onde deve desenhar isso e por que isso completa o esquema?",
           "sampleAnswer": "Iara precisa mostrar o citoplasma no espaço dentro da membrana, ao redor do fio. Assim, o esquema inclui a região interna onde ficam materiais da célula e acontecem muitas de suas atividades.",
           "answer": "Ela precisa acrescentar o que falta no espaço vazio, para o esquema ficar completo."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "correct", "predicted": "wrong" },
+      "steps": [
+        {
+          "conclusion": "Expected correct with key points [true,false,false] and corrections []; got wrong with [false,false,false] and [].",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected correct with key points [true,false,false] and corrections []; got wrong with [false,false,false] and [].",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Expected correct with key points [true,false,false] and corrections []; got wrong with [false,false,false] and [].",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": true, "keyPoints": [true, false, false] },
+        "id": "en-vector-record-direction-only-1",
+        "userInput": {
+          "keyPoints": [
+            "Record 3 m/s north for one cart and 3 m/s east for the other.",
+            "Draw arrows of equal length because the speeds match.",
+            "Point the arrows in different directions: north and east."
+          ],
+          "language": "en",
+          "question": "In Leah’s physics lab, the cart-tracking software records only “3 m/s” for each of two carts. One moves north; the other moves east.\n\nWhat should the software record to tell the carts apart? How would their motion arrows compare on the same scale?",
+          "sampleAnswer": "Record 3 m/s north for one cart and 3 m/s east for the other. Their arrows should be equally long, with one pointing north and the other east.",
+          "answer": "the direction too, not just the speed"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "correct", "predicted": "correct" },
+      "steps": [
+        {
+          "conclusion": "Expected correct with key points [true,true,false] and corrections []; got correct with [true,true,false] and [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,false] and corrections []; got correct with [true,true,false] and [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected correct with key points [true,true,false] and corrections []; got correct with [true,true,false] and [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": true, "keyPoints": [true, true, false] },
+        "id": "pt-eletron-confinado-sem-aquecimento-1",
+        "userInput": {
+          "keyPoints": [
+            "A energia mínima aumenta.",
+            "A onda precisa variar mais para caber no espaço menor.",
+            "Esse aumento não depende de aquecer a caixa."
+          ],
+          "language": "pt",
+          "question": "Kauã diminui o espaço disponível para um elétron, mas não aquece a caixa.\n\nO que acontece com a energia mínima do elétron? Justifique pela forma da onda.",
+          "sampleAnswer": "A energia mínima aumenta. A onda precisa variar mais para caber no espaço menor, mesmo sem aquecimento.",
+          "answer": "sobe. com menos espaço a onda tem que ficar mais espremida e mudar mais rapido, e isso custa energia"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "wrong", "predicted": "wrong" },
+      "steps": [
+        {
+          "conclusion": "Expected wrong with key points [true,false,false] and corrections []; got wrong with [true,false,false] and [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,false,false] and corrections []; got wrong with [true,false,false] and [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [true,false,false] and corrections []; got wrong with [true,false,false] and [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": false, "keyPoints": [true, false, false] },
+        "id": "pt-eletron-confinado-so-efeito-1",
+        "userInput": {
+          "keyPoints": [
+            "A energia mínima aumenta.",
+            "A onda precisa variar mais para caber no espaço menor.",
+            "Esse aumento não depende de aquecer a caixa."
+          ],
+          "language": "pt",
+          "question": "Kauã diminui o espaço disponível para um elétron, mas não aquece a caixa.\n\nO que acontece com a energia mínima do elétron? Justifique pela forma da onda.",
+          "sampleAnswer": "A energia mínima aumenta. A onda precisa variar mais para caber no espaço menor, mesmo sem aquecimento.",
+          "answer": "A energia minima aumenta."
+        }
+      }
+    },
+    {
+      "classification": { "expected": "wrong", "predicted": "wrong" },
+      "steps": [
+        {
+          "conclusion": "Expected wrong with key points [false,false,false] and corrections []; got wrong with [false,false,false] and [].",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [false,false,false] and corrections []; got wrong with [false,false,false] and [].",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Expected wrong with key points [false,false,false] and corrections []; got wrong with [false,false,false] and [].",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": false, "keyPoints": [false, false, false] },
+        "id": "pt-eletron-confinado-diminui-1",
+        "userInput": {
+          "keyPoints": [
+            "A energia mínima aumenta.",
+            "A onda precisa variar mais para caber no espaço menor.",
+            "Esse aumento não depende de aquecer a caixa."
+          ],
+          "language": "pt",
+          "question": "Kauã diminui o espaço disponível para um elétron, mas não aquece a caixa.\n\nO que acontece com a energia mínima do elétron? Justifique pela forma da onda.",
+          "sampleAnswer": "A energia mínima aumenta. A onda precisa variar mais para caber no espaço menor, mesmo sem aquecimento.",
+          "answer": "diminui, porque com menos espaço ele se mexe menos"
+        }
+      }
+    },
+    {
+      "classification": { "expected": "correct", "predicted": "correct" },
+      "steps": [
+        {
+          "conclusion": "Expected correct with key points [true,false] and corrections []; got correct with [true,true] and [].",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Expected correct with key points [true,false] and corrections []; got correct with [true,true] and [].",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Expected correct with key points [true,false] and corrections []; got correct with [true,true] and [].",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expected": { "isCorrect": true, "keyPoints": [true, false] },
+        "id": "en-scientific-notation-with-unit-1",
+        "userInput": {
+          "acceptedAnswers": ["3 × 10^8", "3 x 10^8", "3*10^8", "3 × 10⁸", "3e8"],
+          "answer": "3x10^8 m/s",
+          "keyPoints": [
+            "The front number is 3, between 1 and 10",
+            "The point jumps 8 places, so the power is 8"
+          ],
+          "language": "en",
+          "question": "Light travels about 300,000,000 meters per second. Write that speed in scientific notation.",
+          "sampleAnswer": "$3 \\times 10^8$ m/s"
         }
       }
     }

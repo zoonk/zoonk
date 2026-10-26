@@ -44,13 +44,18 @@ import {
  * cytoplasm and where it goes among them. Deciding the verdict first, it got 34
  * of 35 verdicts right in each of three runs, against Luna's 32 to 34 and Haiku's
  * 33 to 34 in two (26 Oct 2026, 1.3s p50 against Luna's 2.9 to 3.3s and Haiku's
- * 2.3 to 2.5s).
+ * 2.3 to 2.5s). But with the verdict first, it marked key points met to match it,
+ * so learners read "Stated" for ideas they never wrote (10 of 108 key points, 26
+ * Oct 2026). Told to decide each key point from the answer's own words, never the
+ * verdict, Haiku claimed 1 to 2 (both arguable) and got 39 of 40 verdicts right
+ * in two runs at 2s p50; Flash Lite still claimed 7 to 8, Luna 1 to 2 with 38 to
+ * 40 verdicts at 2.9 to 3.3s p50. Haiku costs less than Flash Lite per answer.
  */
-const defaultModel = "google/gemini-3.5-flash-lite";
-const fallbackModels = ["openai/gpt-6-luna", "anthropic/claude-haiku-5.5"] as const;
+const defaultModel = "anthropic/claude-haiku-5.5";
+const fallbackModels = ["openai/gpt-6-luna", "google/gemini-3.5-flash-lite"] as const;
 const INCOMPLETE_GRADE_MESSAGE = "AI provider didn't grade every key point of a typed answer";
 
-/* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the model judges the whole answer before its key points can read as a checklist, then each key point, and writes the feedback last, so it says that verdict. */
+/* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the model judges the whole answer before its key points can read as a checklist, then each key point from the answer's own words, and writes the feedback last, so it says that verdict. */
 const keyPointsSchema = z.array(z.object({ number: z.number().int(), met: z.boolean() }));
 
 const schema = z.object({
