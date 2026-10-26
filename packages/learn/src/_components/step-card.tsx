@@ -1,4 +1,5 @@
 import { cn } from "@zoonk/ui/lib/utils";
+import { PageEyebrow } from "./page";
 
 /** The title the `Steps` frame moves focus to as each step comes. */
 export const STEP_TITLE_SLOT = "step-title";
@@ -29,10 +30,10 @@ export function StepHeader({ className, ...props }: React.ComponentProps<"div">)
   );
 }
 
-/** The quiet label above the title ("TODAY'S SESSION"), in the section-label face. */
+/** The quiet line above the title ("TODAY'S SESSION"), in the mono face of a page's eyebrow. */
 export function StepEyebrow({ className, ...props }: React.ComponentProps<"p">) {
   return (
-    <p className={cn("text-label text-balance", className)} data-slot="step-eyebrow" {...props} />
+    <PageEyebrow className={cn("text-balance", className)} data-slot="step-eyebrow" {...props} />
   );
 }
 
@@ -53,11 +54,12 @@ export function StepTitle({ children, className, ...props }: React.ComponentProp
 /**
  * A title led by a number ("300–470", "29% → 33%") with a quiet line that names it, above or under
  * the number: `StepTitleNumber` and `StepTitleLabel` inside `StepTitle className="flex flex-col"`.
+ * The number is a readout: the text face with tabular figures.
  */
 export function StepTitleNumber({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
-      className={cn("font-mono text-5xl font-medium tracking-[-0.04em] tabular-nums", className)}
+      className={cn("text-readout text-5xl", className)}
       data-slot="step-title-number"
       {...props}
     />

@@ -278,7 +278,10 @@ export function PreparationNumbers({ change }: { change: NonNullable<MockResult[
   );
 }
 
-/** Preparation's bar and what moved it: the answers the mock gave count, never more than that. */
+/**
+ * Preparation's bar in progress's blue and what moved it: the answers the mock gave count, never
+ * more than that.
+ */
 export function PreparationMeter({ change }: { change: NonNullable<MockResult["preparation"]> }) {
   const t = useExtracted();
   const fell = change.after < change.before;
@@ -286,7 +289,7 @@ export function PreparationMeter({ change }: { change: NonNullable<MockResult["p
   return (
     <>
       <Meter className="h-1.5 w-full max-w-xs">
-        <MeterFill share={change.after} />
+        <MeterFill className="bg-success" share={change.after} />
       </Meter>
       <StepDetail className="text-sm">
         {fell
@@ -298,7 +301,7 @@ export function PreparationMeter({ change }: { change: NonNullable<MockResult["p
 }
 
 /**
- * A phone's plan step after the score: how preparation moved, big in the mono face, and the change
+ * A phone's plan step after the score: how preparation moved, as a readout, and the change
  * the mock offers for the plan, as one diff to apply or not. Without a preparation move, the
  * change's sentence is the step's title.
  */
@@ -316,11 +319,7 @@ export function MockPlanStep({
     <StepCard>
       <StepHeader>
         <StepEyebrow>{preparation ? t("Your preparation") : t("Your plan")}</StepEyebrow>
-        <StepTitle
-          className={cn(
-            preparation && "font-mono text-5xl font-medium tracking-[-0.04em] tabular-nums",
-          )}
-        >
+        <StepTitle className={cn(preparation && "text-readout text-5xl")}>
           {preparation ? <PreparationNumbers change={preparation} /> : changeTitle}
         </StepTitle>
       </StepHeader>

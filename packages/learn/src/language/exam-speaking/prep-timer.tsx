@@ -112,7 +112,7 @@ export function PrepTimer({
     return (
       <div className="flex items-center justify-between gap-4">
         <div className="flex min-w-0 flex-col gap-1">
-          <p className="text-label">{t("Preparation")}</p>
+          <p className="text-sm leading-5 font-medium">{t("Preparation")}</p>
           <p className="text-muted-foreground text-[0.8125rem] leading-snug text-pretty">
             {prepLine(task)}
           </p>
@@ -132,15 +132,13 @@ export function PrepTimer({
         role="timer"
         tabIndex={-1}
       >
-        <p className="text-label">{t("Preparation")}</p>
+        <p className="text-sm leading-5 font-medium">{t("Preparation")}</p>
         {leftMs === 0 ? (
           <p className="text-[0.8125rem] leading-snug text-pretty">
             {t("Preparation time is over. Start the call when you're ready.")}
           </p>
         ) : (
-          <p className="font-mono text-2xl leading-tight font-medium tracking-[-0.03em] tabular-nums">
-            {formatClock(leftMs)}
-          </p>
+          <p className="text-readout text-2xl leading-tight">{formatClock(leftMs)}</p>
         )}
       </div>
       <Button className="shrink-0" onClick={start} size="sm" variant="ghost">

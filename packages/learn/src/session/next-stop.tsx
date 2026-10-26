@@ -6,6 +6,7 @@ import { useEffect, useEffectEvent, useLayoutEffect, useRef, useState } from "re
 import { EnterButton } from "../_components/enter-button";
 import { type LessonNotWritten } from "../_components/lesson-not-written-notice";
 import { OpeningWaitLine } from "../_components/opening-wait-line";
+import { PageEyebrow } from "../_components/page";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
 import { TaskMeta } from "../_components/task-meta";
 import { isFocusLost } from "../_utils/is-focus-lost";
@@ -354,7 +355,7 @@ export function NextStop({
 
       <TaskBody data-slot="next-stop">
         <div className="flex flex-col gap-2">
-          <p className="text-label">{t("Up next")}</p>
+          <PageEyebrow>{t("Up next")}</PageEyebrow>
           <h2 className="text-title">{title(block)}</h2>
           {line && <p className="text-muted-foreground text-sm text-balance">{line}</p>}
           <TaskMeta facts={facts} />

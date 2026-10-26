@@ -229,7 +229,7 @@ function useResultAside({
       <>
         {preparation && (
           <TaskAsideSection title={t("Your preparation")}>
-            <p className="font-mono text-3xl font-medium tracking-[-0.03em] tabular-nums">
+            <p className="text-readout text-3xl">
               <PreparationNumbers change={preparation} />
             </p>
             <PreparationMeter change={preparation} />

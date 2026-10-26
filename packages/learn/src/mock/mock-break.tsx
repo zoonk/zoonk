@@ -10,7 +10,7 @@ import {
   ListRowTitle,
   ListRowTrailing,
 } from "../_components/list-group";
-import { StepCard, StepDetail, StepHeader } from "../_components/step-card";
+import { StepCard, StepDetail, StepHeader, StepTitle } from "../_components/step-card";
 import { TaskActions } from "../_components/task-layout";
 import { formatClock } from "../_utils/clock";
 import { useFormatDuration } from "../_utils/time-format";
@@ -87,11 +87,11 @@ export function MockBreak({ until }: { until: string }) {
     >
       <StepCard>
         <StepHeader>
-          <h1 className="text-label">{t("Break")}</h1>
+          <StepTitle>{t("Break")}</StepTitle>
           {/* The server renders the clock a moment before the browser takes over. */}
           <p
             aria-label={t("Break time left")}
-            className="font-mono text-5xl font-medium tracking-[-0.04em] tabular-nums"
+            className="text-readout pt-3 text-5xl"
             role="timer"
             suppressHydrationWarning
           >

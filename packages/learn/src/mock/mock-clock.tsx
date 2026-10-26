@@ -57,7 +57,7 @@ const CLOCK_CLASS = {
 } as const;
 
 /**
- * The section's time left, big in the mono face, with a small "time left" under it: in the task's
+ * The section's time left as a readout, with a small "time left" under it: in the task's
  * header, or at the top of the answer sheet beside the question from `lg`. A timer isn't a live
  * region, so it never reads every second.
  */
@@ -78,10 +78,7 @@ export function SectionClock({
       {/* The server renders the clock a moment before the browser takes over. */}
       <p
         aria-label={t("Time left")}
-        className={cn(
-          "text-foreground font-mono font-medium tracking-[-0.02em] tabular-nums",
-          CLOCK_CLASS[place].time,
-        )}
+        className={cn("text-foreground text-readout", CLOCK_CLASS[place].time)}
         role="timer"
         suppressHydrationWarning
       >

@@ -23,8 +23,8 @@ type Result = NonNullable<LanguageConversationView["result"]>;
 const MAX_STARS = 3;
 
 /**
- * The call's stars, from what the learner did and never at random, as a count ("2/3") after one
- * small star: the result's anchor.
+ * The call's stars, from what the learner did and never at random, as a readout ("2/3") after one
+ * small star in progress's blue (what the call reached): the result's anchor.
  */
 function Stars({ stars }: { stars: number }) {
   const t = useExtracted();
@@ -32,10 +32,10 @@ function Stars({ stars }: { stars: number }) {
   return (
     <p
       aria-label={t("{stars, number} of 3 stars", { stars })}
-      className="flex items-center gap-1.5 font-mono text-2xl leading-none font-medium tracking-[-0.03em] tabular-nums"
+      className="text-readout flex items-center gap-1.5 text-2xl"
       role="img"
     >
-      <StarIcon aria-hidden="true" className="fill-warning text-warning size-5" />
+      <StarIcon aria-hidden="true" className="fill-success text-success size-5" />
       <span aria-hidden="true">
         {stars}
         <span className="text-muted-foreground">{`/${MAX_STARS}`}</span>
