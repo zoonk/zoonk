@@ -28,9 +28,9 @@ const LINK_CLASS =
 /**
  * The card's frame: its name with a quiet detail beside it, the number as a readout (a share or a
  * level, its unit small), what draws it (`children`), and "See your plan" at its end. The whole
- * card is that one link: its box
- * covers the card, and it's named by the card's own words ("Progress 32% 6 of 19 lessons Today: 2
- * lessons See your plan"), while a list inside stays a list for screen readers.
+ * card is that one link: its box covers the card, and it's named by the card's own words
+ * ("Progress 32% 6 of 19 lessons Today: 2 lessons See your plan"), while a list inside stays a
+ * list for screen readers.
  */
 export function ProgressCard({
   children,
