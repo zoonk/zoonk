@@ -34,4 +34,4 @@ Use small composable primitives when callers need to arrange content or share st
 
 Pure visual composition does not need a provider. Use context when siblings must share state/actions or controls outside the main frame need access to them. For those cases, consult [Vercel composition patterns](../vercel-composition-patterns/SKILL.md), retaining Zoonk's flat naming. Do not add a provider solely to pass static content.
 
-Use E2E coverage for user interactions according to the repository testing guidance; do not add isolated React component tests for these primitives.
+Cover an interaction with E2E only when it clears the repository's [E2E bar](../zoonk-testing/SKILL.md#the-e2e-bar); do not add isolated React component tests for these primitives.

@@ -16,10 +16,11 @@ await expect(page.getByRole("status")).toHaveText("Saved");
 
 Consult [Playwright actionability](https://playwright.dev/docs/actionability) or its [load-state guidance](https://playwright.dev/docs/api/class-page#page-wait-for-load-state) when diagnosing timing behavior.
 
-## Coverage and accessibility
+## Coverage
 
+- Add or extend an E2E test only for a risk that clears [the E2E bar](../SKILL.md#the-e2e-bar): a big deal for learners if it broke, likely enough to break, and nothing cheaper catches it.
 - Before adding a test, look for the flow that already reaches the screen or state and extend it. A new test pays for its own sign-in, fixtures and navigation, so it needs behavior of its own that no existing flow can reach.
-- Scan a screen for accessibility where a flow already shows it: `expectAccessibleScreen(page, label)` from `@zoonk/e2e/fixtures/accessibility`, once per screen, at the flow's width. It covers light and dark. Use `expectAccessibleRoutes` only for screens no flow passes through.
+- Assert what guards the risk, not the screen's wording, layout or accessibility.
 
 ## Isolation and persistence
 

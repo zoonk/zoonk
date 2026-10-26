@@ -41,7 +41,7 @@ Use it for any change a learner can see or feel: screens, flows, copy, plan beha
 ## 4. Fix, push back, and lock it in
 
 - Fix friction within scope. When the better experience conflicts with the request or a repository rule, explain the conflict concretely and propose the alternative instead of building the worse version silently.
-- Give every reproducible problem a regression test through [zoonk-testing](../zoonk-testing/SKILL.md): an E2E journey for flows (seeded persona copies through `asPersona`), the learner simulator for plan behavior over time, an eval case for AI output, a player browser test for lesson interactions.
+- Give a reproducible problem a regression test when [zoonk-testing](../zoonk-testing/SKILL.md)'s bar says one is worth it, at the cheapest layer that reproduces it: a core test for a rule, the learner simulator for plan behavior over time, an eval case for AI output, a player browser test for lesson interactions, and an E2E journey (seeded persona copies through `asPersona`) only for a high-risk flow nothing cheaper catches. Wording, layout and other low-risk fixes are checked by walking the journey again, not by a permanent test.
 - Walk the affected journey again after the fix.
 
 ## 5. Report the evidence
