@@ -7,6 +7,7 @@ import { scheduleMemoryAfterSession } from "../../memory/after-session";
 import { type BrainPowerReward } from "../../milestones/milestone-reward";
 import { rebalancePlanAfterSession } from "../../preparation/rebalance-plan";
 import { type Mission } from "../missions";
+import { type BlockMissionResult } from "../missions/block-mission-result";
 import { getDayMissions } from "../missions/get-day-missions";
 import { type MissionCompletionSource, settleMissions } from "../missions/settle-missions";
 import { measureSessionState } from "./capture-snapshot";
@@ -147,10 +148,10 @@ async function completeIfFinished({
 }
 
 type SettledSessionDay = {
-  /** The missions this settlement completed: the ones the finished block was the last step of. */
-  completedMissions: Mission["kind"][];
   fullMealPaid: boolean;
   fullMealReward: BrainPowerReward | null;
+  /** What the finished block did to the missions: the ones it completed and the bonus it paid. */
+  missionResult: BlockMissionResult;
   missions: Mission[];
   session: StudySessionRow;
   sessionCompleted: boolean;
@@ -161,12 +162,15 @@ type SettledSessionDay = {
  * +50 once a day) and the session completes when nothing is left.
  */
 export async function settleSessionDay({
+  blockId,
   rewardMissions = true,
   sessionId,
   source,
   timeZone,
   userId,
 }: {
+  /** The block whose finish settles the day, which keeps what it did to the missions. */
+  blockId?: string;
   /** Ending an unasked challenge closes the session without paying a completion reward. */
   rewardMissions?: boolean;
   sessionId: string;
@@ -185,12 +189,12 @@ export async function settleSessionDay({
     // No tag expiry: in a Server Action it draws the page again, which would swap the block's
     // moment (the missions it completed) for the next step. Pages read the change by revision.
     rewardMissions
-      ? settleMissions({ revalidation: "skip", sessionId, source, timeZone, userId })
+      ? settleMissions({ blockId, revalidation: "skip", sessionId, source, timeZone, userId })
       : getDayMissions({ session, timeZone }).then((missions) => ({
+          blockResult: null,
           fullMealPaid: false,
           fullMealReward: null,
           missions,
-          newlyDone: [],
         })),
   ]);
 
@@ -200,9 +204,9 @@ export async function settleSessionDay({
   const sessionCompleted = await completeIfFinished({ ...day, answers });
 
   return {
-    completedMissions: settled.newlyDone.map((pick) => pick.kind),
     fullMealPaid,
     fullMealReward: paidReward ?? readFullMealReward(session.startSnapshot),
+    missionResult: settled.blockResult ?? { completed: [], fullMealPaid: false },
     missions,
     session,
     sessionCompleted,

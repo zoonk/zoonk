@@ -5,8 +5,9 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import * as sessionState from "./_utils/capture-snapshot";
 import { answerStudyQuestion } from "./answer-study-question";
 import { type BlockPayload, toBlockPayload } from "./block-payload";
 import { finishStudyBlock } from "./finish-study-block";
@@ -26,10 +27,10 @@ const PRACTICE_MISSION = {
   version: 1,
 };
 
-/** A block answered and ready to finish, with a lesson after it so the day goes on. */
+/** A block answered and ready to finish, with a lesson after it so the day goes on (unless `last`). */
 async function setup(
   checkpoint: BlockPayload["checkpoint"],
-  { missions }: { missions?: typeof PRACTICE_MISSION } = {},
+  { last = false, missions }: { last?: boolean; missions?: typeof PRACTICE_MISSION } = {},
 ) {
   const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
   const item = await itemFixture({ content: choiceItemContent(), skillId: skill.id });
@@ -50,7 +51,7 @@ async function setup(
       startedAt: new Date(),
       status: "active",
     }),
-    studySessionBlockFixture({ kind: "learn", position: 1, sessionId: session.id }),
+    last ? null : studySessionBlockFixture({ kind: "learn", position: 1, sessionId: session.id }),
   ]);
 
   mockSession(user.id);
@@ -133,5 +134,48 @@ describe("finishing a block that already finished", () => {
         ? { ...first, completion: { ...first.completion, milestones: [] } }
         : first,
     );
+  });
+
+  it("keeps the missions it completed when the session's end failed after they settled", async () => {
+    const day = await setup(null, { last: true, missions: PRACTICE_MISSION });
+
+    const failedEnd = vi
+      .spyOn(sessionState, "measureSessionState")
+      .mockRejectedValueOnce(new Error("Session end interrupted"));
+
+    try {
+      await expect(day.finish()).rejects.toThrow("Session end interrupted");
+    } finally {
+      failedEnd.mockRestore();
+    }
+
+    await expect(day.finish()).resolves.toMatchObject({
+      completion: {
+        completedMissions: ["practice"],
+        fullMeal: { bonus: 50, paid: true },
+        sessionCompleted: true,
+      },
+      status: "ready",
+    });
+  });
+
+  it("tells two finishes at once the same missions and bonus", async () => {
+    const day = await setup(null, { missions: PRACTICE_MISSION });
+    const finishes = await Promise.all([day.finish(), day.finish()]);
+
+    // The finish that lost the race to settle the block may only say it's finished; every moment
+    // either one returns names the mission and the bonus the block paid.
+    const moments = finishes.flatMap((finish) =>
+      finish.status === "ready" ? [finish.completion] : [],
+    );
+
+    expect(moments.length).toBeGreaterThan(0);
+
+    for (const moment of moments) {
+      expect(moment).toMatchObject({
+        completedMissions: ["practice"],
+        fullMeal: { bonus: 50, paid: true },
+      });
+    }
   });
 });

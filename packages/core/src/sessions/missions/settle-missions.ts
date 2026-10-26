@@ -16,6 +16,7 @@ import { type SessionSnapshot, readFullMealReward } from "../_utils/session-snap
 import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "../_utils/study-session-access";
 import { BRAIN_POWER_BONUS } from "../brain-power";
 import { type Mission, isFullMeal } from "../missions";
+import { type BlockMissionResult, keepBlockMissionResult } from "./block-mission-result";
 import { type MissionDocument, type MissionPick, readMissionDocument } from "./catalog";
 import { getDayMissions, hasDayMissionBonus } from "./get-day-missions";
 import { isCompletedBy, settleLegacyMissions } from "./legacy-mission-completions";
@@ -24,6 +25,8 @@ import { isLinkedBlockMission, isLinkedCallMission } from "./linked-call-mission
 export type MissionCompletionSource = NonNullable<SessionSnapshot["fullMealSource"]>;
 
 type MissionSettlement = {
+  /** What the finished block did to the missions (kept by its first finish); null without one. */
+  blockResult: BlockMissionResult | null;
   fullMealPaid: boolean;
   fullMealReward: ReturnType<typeof readFullMealReward>;
   legacyClaimed: Mission[];
@@ -153,12 +156,15 @@ async function payFullMeal(
 
 /** Progress and reward evidence commit together under the learner lock, once per local session day. */
 export async function settleMissions({
+  blockId,
   revalidation = "now",
   sessionId,
   timeZone,
   userId,
   source,
 }: {
+  /** The block whose finish this settles: it keeps what it did, so another finish says the same. */
+  blockId?: string;
   revalidation?: "now" | "skip";
   sessionId: string;
   timeZone: string;
@@ -253,18 +259,28 @@ export async function settleMissions({
         });
       }
 
-      if (
-        !isFullMeal(missions) ||
-        (await hasDayMissionBonus({ client: tx, now: lock.completedAt, session, timeZone }))
-      ) {
+      const fullMealDue =
+        isFullMeal(missions) &&
+        !(await hasDayMissionBonus({ client: tx, now: lock.completedAt, session, timeZone }));
+
+      const settled = {
+        blockResult: await keepBlockMissionResult(tx, {
+          blockId,
+          fullMealPaid: fullMealDue,
+          newlyDone,
+        }),
+        legacyClaimed,
+        missions,
+        newlyClaimed: claimed,
+        newlyDone,
+        session,
+      };
+
+      if (!fullMealDue) {
         const result = {
+          ...settled,
           fullMealPaid: false,
           fullMealReward: readFullMealReward(session.startSnapshot),
-          legacyClaimed,
-          missions,
-          newlyClaimed: claimed,
-          newlyDone,
-          session,
         };
 
         if (newlyDone.length === 0 && claimed.length === 0 && legacyClaimed.length === 0) {
@@ -282,15 +298,7 @@ export async function settleMissions({
         userId,
       });
 
-      return {
-        fullMealPaid: true,
-        fullMealReward: reward,
-        legacyClaimed,
-        missions,
-        newlyClaimed: claimed,
-        newlyDone,
-        session,
-      };
+      return { ...settled, fullMealPaid: true, fullMealReward: reward };
     }),
   );
 

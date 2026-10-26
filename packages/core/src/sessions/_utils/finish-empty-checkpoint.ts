@@ -79,7 +79,7 @@ export async function finishEmptyCheckpoint({
       capsulesOpened: 0,
       checkpoint: null,
       comesBackOn: null,
-      completedMissions: settled.completedMissions,
+      completedMissions: settled.missionResult.completed,
       correct: 0,
       fullMeal: { bonus: getMissionBonus(settled.missions), paid: false },
       milestones: [],
