@@ -22,7 +22,7 @@ Maintainers act on a bug they can run in a minute. Prove the bug is theirs, repr
 
 - Create a new public repository on the owner's personal GitHub (`gh api user --jq .login`), named after the bug, in `~/coding/<login>/<name>-repro`. Keep it outside any workspace so its install stays separate.
 - Start from nothing, or from the maintainers' reproduction template, with the latest stable versions. Keep only what the bug needs. Leave out product, company and customer names, internal paths, data and secrets.
-- Make it fail by command: `pnpm install`, then one script.
+- Make it fail by command, with npm so it runs on what ships with Node: `npm install`, then one `npm run` script. Commit `package-lock.json` and pin exact versions. Use another package manager only when the bug depends on it (such as pnpm's `node_modules/.pnpm` layout), and say why in the README.
 - For a timing bug, add a script that shows the mechanism on an unmodified run (for example, polling a file the build rewrites). Separately, add an opt-in, clearly labeled shim that widens the window so the failure happens every time. Never patch the library.
 - Write the README with: what's broken in one paragraph; Reproduction, with the commands and their exact output; Expected; Actual, naming where in the library's code it goes wrong; Environment (versions and OS).
 - Verify from a fresh clone in a new directory before linking it.
