@@ -1,9 +1,8 @@
 "use client";
 
 import { type MistakePatternView } from "@zoonk/core/language/patterns/contract";
-import { BrainIcon } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
-import { FactChip, FactChips } from "../../_components/fact-chips";
+import { useExtracted } from "next-intl";
+import { BrainPowerReadout, ReadoutNumber } from "../../_components/moment-readouts";
 import { type LearnBuddy } from "../../buddies/use-buddy-name";
 import {
   type ChoiceFeedback,
@@ -97,14 +96,15 @@ export function PatternDrillQuestion({
   );
 }
 
-/** The drill's score in the mono face, as every count reads ("5/6"). */
-function monoScore(chunks: React.ReactNode) {
-  return <span className="font-mono tracking-[-0.03em] tabular-nums">{chunks}</span>;
+/** The drill's score as a readout ("5/6"), its words small beside it. */
+function readoutScore(chunks: React.ReactNode) {
+  return <ReadoutNumber className="text-foreground">{chunks}</ReadoutNumber>;
 }
 
 /**
- * The drill's result: right answers of the total ("5/6 right", screen readers hear "5 of 6
- * right"), the Brain Power it paid as a chip, and what it did to the day.
+ * The drill's result, as every task's end reads: right answers of the total as a readout ("5/6
+ * right", screen readers hear "5 of 6 right"), the Brain Power it paid in its violet, and what it
+ * did to the day.
  */
 export function PatternDrillResult({
   buddy,
@@ -114,29 +114,30 @@ export function PatternDrillResult({
   result: PatternPracticeResult;
 }) {
   const t = useExtracted();
-  const format = useFormatter();
   const allRight = result.correct === result.total;
   const counts = { correct: result.correct, total: result.total };
 
   return (
     <div aria-live="polite" className="flex flex-col items-start gap-3 py-6" role="status">
-      <h1 className="text-title text-balance outline-none" {...MOMENT_TITLE_PROPS}>
-        <span aria-hidden="true">
-          {t.rich("<score>{correct, number}/{total, number}</score> right", {
-            ...counts,
-            score: monoScore,
-          })}
-        </span>
-        <span className="sr-only">{t("{correct, number} of {total, number} right", counts)}</span>
-      </h1>
-      {result.brainPower > 0 && (
-        <FactChips>
-          <FactChip>
-            <BrainIcon aria-hidden="true" className="text-brain" />
-            {t("+{points} Brain Power", { points: format.number(result.brainPower) })}
-          </FactChip>
-        </FactChips>
-      )}
+      <div className="flex flex-wrap items-baseline gap-x-8 gap-y-2">
+        <h1
+          className="text-muted-foreground text-sm font-medium outline-none"
+          {...MOMENT_TITLE_PROPS}
+        >
+          <span aria-hidden="true">
+            {t.rich("<score>{correct, number}/{total, number}</score> right", {
+              ...counts,
+              score: readoutScore,
+            })}
+          </span>
+          <span className="sr-only">{t("{correct, number} of {total, number} right", counts)}</span>
+        </h1>
+        {result.brainPower > 0 && (
+          <p>
+            <BrainPowerReadout points={result.brainPower} />
+          </p>
+        )}
+      </div>
       <p className="text-muted-foreground text-pretty">
         {allRight
           ? t("You've got this rule.")

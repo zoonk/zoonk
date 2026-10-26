@@ -13,15 +13,9 @@ import {
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
 import { cn } from "@zoonk/ui/lib/utils";
-import {
-  BrainIcon,
-  CheckCircle2Icon,
-  EllipsisIcon,
-  RotateCcwIcon,
-  SkipForwardIcon,
-} from "lucide-react";
+import { CheckCircle2Icon, EllipsisIcon, RotateCcwIcon, SkipForwardIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
-import { FactChip, FactChips } from "../../_components/fact-chips";
+import { BrainPowerReadout, ReadoutNumber } from "../../_components/moment-readouts";
 import { TASK_HEADER_ICON_CLASS } from "../../_components/task-header";
 import { TaskActions } from "../../_components/task-layout";
 import { type LearnBuddy } from "../../buddies/use-buddy-name";
@@ -71,9 +65,9 @@ function GradeNote({ grade }: { grade: PronunciationAnswerGrade }) {
   );
 }
 
-/** The round's count in the mono face, as every count reads ("2/3"). */
-function monoScore(chunks: React.ReactNode) {
-  return <span className="font-mono tracking-[-0.03em] tabular-nums">{chunks}</span>;
+/** The round's count as a readout ("2/3"), its words small beside it. */
+function readoutScore(chunks: React.ReactNode) {
+  return <ReadoutNumber className="text-foreground">{chunks}</ReadoutNumber>;
 }
 
 /** "2/3 sounded right", as a pattern's drill counts its result; screen readers hear "2 of 3". */
@@ -86,7 +80,7 @@ function RoundScore({ result }: { result: PronunciationRoundResult }) {
       <span aria-hidden="true">
         {t.rich("<score>{correct, number}/{total, number}</score> sounded right", {
           ...counts,
-          score: monoScore,
+          score: readoutScore,
         })}
       </span>
       <span className="sr-only">
@@ -96,7 +90,10 @@ function RoundScore({ result }: { result: PronunciationRoundResult }) {
   );
 }
 
-/** How the round went, the Brain Power it paid and what it did to the day. */
+/**
+ * The round's end, as every task's end reads: the count as a readout and the Brain Power it paid
+ * in its violet, then what it did to the day; with nothing said, a plain title.
+ */
 function RoundResult({
   buddy,
   result,
@@ -105,21 +102,25 @@ function RoundResult({
   result: PronunciationRoundResult | null;
 }) {
   const t = useExtracted();
-  const format = useFormatter();
 
   return (
     <div aria-live="polite" className="flex flex-col items-start gap-3 py-6" role="status">
-      <h1 className="text-title text-balance outline-none" {...MOMENT_TITLE_PROPS}>
-        {result ? <RoundScore result={result} /> : t("Nothing said this time")}
-      </h1>
-
-      {result && result.brainPower > 0 && (
-        <FactChips>
-          <FactChip>
-            <BrainIcon aria-hidden="true" className="text-brain" />
-            {t("+{points} Brain Power", { points: format.number(result.brainPower) })}
-          </FactChip>
-        </FactChips>
+      {result ? (
+        <div className="flex flex-wrap items-baseline gap-x-8 gap-y-2">
+          <h1
+            className="text-muted-foreground text-sm font-medium outline-none"
+            {...MOMENT_TITLE_PROPS}
+          >
+            <RoundScore result={result} />
+          </h1>
+          {result.brainPower > 0 && (
+            <p>
+              <BrainPowerReadout points={result.brainPower} />
+            </p>
+          )}
+        </div>
+      ) : (
+        <h1 className="text-title text-balance">{t("Nothing said this time")}</h1>
       )}
 
       <p className="text-muted-foreground text-pretty">

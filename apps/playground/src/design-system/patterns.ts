@@ -67,6 +67,7 @@ export const PATTERNS: readonly Pattern[] = [
     follow: [
       "One big number per block (`BigQuantity`), its unit small and muted.",
       "Under it a meter of parts sized by what they measure (`MeterParts`): progress blue, the learner's place as a blue ring, a kind in its hue, the rest on the track.",
+      "At a task's end, `MomentReadouts`: the score and the Brain Power earned (`BrainPowerReadout`, its violet number large and its words small), the facts on one mono line under them.",
     ],
     id: "readouts",
     summary: "Readouts with meters: the number that matters and what it's made of.",

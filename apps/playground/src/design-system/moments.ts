@@ -20,9 +20,11 @@ export const MOMENTS: readonly Moment[] = [
   },
   {
     id: "reward",
-    summary: "A lesson's or a session's end: the Brain Power earned as a violet readout.",
+    summary:
+      "A task's end (a lesson, a session's block, a drill) and the session's summary: the Brain Power earned as a violet readout, beside the score's readout.",
     title: "Brain Power earned",
-    where: "The completion and the session summary's rewards.",
+    where:
+      "`MomentReadouts` (the score and `BrainPowerReadout`, then the facts' mono line), and `BrainPowerReadout` alone in the session summary's rewards.",
   },
 ];
 

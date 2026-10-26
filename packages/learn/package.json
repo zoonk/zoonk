@@ -81,6 +81,7 @@
     "./mock": "./src/mock/mock-screen.tsx",
     "./mock/chooser": "./src/mock/mock-chooser.tsx",
     "./mock/entry": "./src/mock/mock-entry.tsx",
+    "./moment-readouts": "./src/_components/moment-readouts.tsx",
     "./navigation": "./src/shell/learn-navigation.tsx",
     "./onboarding": "./src/onboarding/start-flow.tsx",
     "./onboarding/actions": "./src/onboarding/onboarding-actions.ts",

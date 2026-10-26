@@ -7,8 +7,9 @@ import { useExtracted, useFormatter } from "next-intl";
 import { useEffect, useRef } from "react";
 import { EnterButton } from "../_components/enter-button";
 import { KindMark } from "../_components/kind-tile";
+import { MomentReadouts } from "../_components/moment-readouts";
+import { PageSectionLabel } from "../_components/page";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
-import { TaskMeta } from "../_components/task-meta";
 import { type TestOutStart, TestOutStartLink } from "../_components/test-out-start-link";
 import { isFocusLost } from "../_utils/is-focus-lost";
 import { useFormatDuration } from "../_utils/time-format";
@@ -29,13 +30,13 @@ import { type MomentKind, useMomentTitle } from "./use-moment-title";
 import { useSessionAction } from "./use-session-action";
 
 /**
- * What the block earned, as one mono line: the day a lesson comes back (as a date, never a weekday
- * that could be this one or the next), its net score when it's scored like an exam where a wrong
- * answer cancels a right one, and its Brain Power in violet, as every reward amount reads (never
- * "+0"). The day's bonus, when the block paid it, is the missions' to show, so the line counts
- * only the block's own points.
+ * What the block earned: its Brain Power as a readout (never "+0"), then on one quiet line the day
+ * a lesson comes back (as a date, never a weekday that could be this one or the next) and its net
+ * score when it's scored like an exam where a wrong answer cancels a right one. The day's bonus,
+ * when the block paid it, is the missions' to show, so the readout counts only the block's own
+ * points.
  */
-function MomentFacts({ moment }: { moment: StudyMomentView }) {
+function MomentEarned({ moment }: { moment: StudyMomentView }) {
   const t = useExtracted();
   const format = useFormatter();
   const brainPower = getOwnBrainPower(moment);
@@ -53,16 +54,7 @@ function MomentFacts({ moment }: { moment: StudyMomentView }) {
     moment.netScore !== null && t("Net score {net}", { net: String(moment.netScore) }),
   ];
 
-  return (
-    <TaskMeta
-      facts={facts}
-      reward={
-        brainPower > 0
-          ? t("+{points} Brain Power", { points: format.number(brainPower) })
-          : undefined
-      }
-    />
-  );
+  return <MomentReadouts brainPower={brainPower} facts={facts} />;
 }
 
 /**
@@ -81,7 +73,7 @@ function NextBlock({ block, subject }: { block: StudyBlock; subject: boolean }) 
       className={cn("flex flex-col gap-2", !subject && "lg:hidden")}
       data-slot="study-moment-next"
     >
-      <h3 className="text-label">{t("Up next")}</h3>
+      <PageSectionLabel>{t("Up next")}</PageSectionLabel>
       <div className="bg-muted -mx-2.5 flex items-center gap-3 rounded-[0.625rem] px-2.5 py-2.75">
         <KindMark kind={getBlockKind(block)} />
         <span className="min-w-0 flex-1 truncate text-sm font-medium">{blockTitle(block)}</span>
@@ -242,9 +234,9 @@ export function StudyMoment({
   const content = (
     <MomentAfterCeremony milestone={moment.ceremony} render={renderCeremony}>
       <TaskBody data-slot="study-moment">
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col items-start gap-6">
           <MomentTitle title={title} />
-          <MomentFacts moment={moment} />
+          <MomentEarned moment={moment} />
         </div>
 
         <DayMoment

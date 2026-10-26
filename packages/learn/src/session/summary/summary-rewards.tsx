@@ -8,6 +8,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronsUpIcon, ListChecksIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { BeltTicks } from "../../_components/belt-ticks";
+import { BrainPowerReadout } from "../../_components/moment-readouts";
 import { StepCard, StepRow, StepRows, StepTitle } from "../../_components/step-card";
 import { useBeltName } from "../../_utils/use-belt-name";
 import { resolveLearnBuddy, useBuddyName } from "../../buddies/use-buddy-name";
@@ -142,11 +143,6 @@ function StreakRow({ count }: { count: number }) {
   );
 }
 
-/** "+27 Brain Power", the number in the mono face. */
-function renderMono(chunks: React.ReactNode) {
-  return <span className="font-mono font-medium tracking-[-0.04em]">{chunks}</span>;
-}
-
 /** Only what happened, as flat rows: the missions' bonus, a new stripe, the best streak. */
 function RewardRows() {
   const { summary } = useSessionSummary();
@@ -169,13 +165,13 @@ function RewardRows() {
 }
 
 /**
- * What the session earned, with the buddy glad about it: Brain Power as the title, then only what
+ * What the session earned, with the buddy glad about it: Brain Power as the title, a violet
+ * readout (one of the few louder moments), then only what
  * happened as flat rows: the bonus for all of today's missions, a new stripe on the belt and the
  * best streak of right answers. A phone's step when there's more than Brain Power.
  */
 export function RewardsStep() {
   const t = useExtracted();
-  const format = useFormatter();
   const { summary } = useSessionSummary();
   const { brainPower } = summary;
 
@@ -184,12 +180,7 @@ export function RewardsStep() {
       <RewardsArt />
 
       <StepTitle>
-        {brainPower > 0
-          ? t.rich("<mono>+{points}</mono> Brain Power", {
-              mono: renderMono,
-              points: format.number(brainPower),
-            })
-          : t("Rewards")}
+        {brainPower > 0 ? <BrainPowerReadout points={brainPower} /> : t("Rewards")}
       </StepTitle>
 
       <RewardRows />
@@ -199,21 +190,16 @@ export function RewardsStep() {
 
 /**
  * The same rewards in the aside of a wide screen, beside the day's numbers: the buddy, the Brain
- * Power as a big mono number, and the rows. Not the page's heading (the summary's title is).
+ * Power as its violet readout, and the rows. Not the page's heading (the summary's title is).
  */
 export function EarnedToday() {
-  const t = useExtracted();
-  const format = useFormatter();
   const { summary } = useSessionSummary();
 
   return (
     <div className="flex flex-col items-start gap-4" data-slot="earned-today">
       <RewardsArt />
-      <p className="text-2xl font-semibold tracking-[-0.03em]">
-        {t.rich("<mono>+{points}</mono> Brain Power", {
-          mono: renderMono,
-          points: format.number(summary.brainPower),
-        })}
+      <p>
+        <BrainPowerReadout points={summary.brainPower} />
       </p>
       <RewardRows />
     </div>

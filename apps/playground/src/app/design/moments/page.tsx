@@ -1,7 +1,7 @@
 import { MOMENTS, MOMENT_RULES } from "@/design-system/moments";
-import { BigQuantity } from "@zoonk/learn/big-quantity";
 import { BrainPowerReward } from "@zoonk/learn/brain-power-reward";
 import { MissionsRing } from "@zoonk/learn/missions-ring";
+import { MomentReadouts } from "@zoonk/learn/moment-readouts";
 import { Buddy } from "@zoonk/ui/components/buddy";
 import { type Metadata } from "next";
 import { PreviewIntlProvider } from "../../preview/preview-intl-provider";
@@ -61,10 +61,16 @@ function MissionsSpecimen() {
 
 function RewardSpecimen() {
   return (
-    <p className="flex items-baseline gap-2">
-      <BigQuantity className="text-brain-text text-[2.5rem]">+18</BigQuantity>
-      <span className="text-muted-foreground text-sm font-medium">Brain Power</span>
-    </p>
+    <DevOnlySpecimen>
+      <div className="flex flex-col gap-6">
+        <p className="text-title">Lesson complete</p>
+        <MomentReadouts
+          brainPower={18}
+          facts={["Review on Oct 28"]}
+          score={{ answered: 4, correct: 3 }}
+        />
+      </div>
+    </DevOnlySpecimen>
   );
 }
 

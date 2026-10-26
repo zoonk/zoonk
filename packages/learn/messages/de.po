@@ -399,6 +399,16 @@ msgctxt "vc1FfA"
 msgid "Summaries"
 msgstr "Zusammenfassungen"
 
+#: src/_components/moment-readouts.tsx
+msgctxt "XjzZDx"
+msgid "<number>+{points}</number> <words>Brain Power</words>"
+msgstr "<number>+{points}</number> <words>Brain Power</words>"
+
+#: src/_components/moment-readouts.tsx
+msgctxt "oKgF3Y"
+msgid "<number>{correct}</number> of {answered} right"
+msgstr "<number>{correct}</number> von {answered} richtig"
+
 #: src/_components/opening-wait-line.tsx
 msgctxt "bSuhQp"
 msgid "Opening your next step…"
@@ -1369,9 +1379,6 @@ msgid "{count, plural, one {# question} other {# questions}}"
 msgstr "{count, plural, one {# Frage} other {# Fragen}}"
 
 #: src/challenge/challenge-intro-parts.tsx
-#: src/language/pattern/pattern-drill.tsx
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-#: src/session/study-moment.tsx
 msgctxt "moNgIg"
 msgid "+{points} Brain Power"
 msgstr "+{points} Brain Power"
@@ -11852,11 +11859,6 @@ msgstr "+{bonus}"
 msgctxt "DhH9Oq"
 msgid "{count, plural, one {+# level} other {+# levels}}"
 msgstr "{count, plural, one {+# neues Level} other {+# neue Level}}"
-
-#: src/session/summary/summary-rewards.tsx
-msgctxt "nJfiit"
-msgid "<mono>+{points}</mono> Brain Power"
-msgstr "<mono>+{points}</mono> Brain Power"
 
 #: src/session/summary/summary-steps.tsx
 msgctxt "vrNWq4"

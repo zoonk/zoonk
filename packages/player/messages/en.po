@@ -3148,16 +3148,6 @@ msgid "Take a short break"
 msgstr "Take a short break"
 
 #: src/lesson/completion/lesson-completion-moment.tsx
-msgctxt "ornlwe"
-msgid "{correct} of {answered} right"
-msgstr "{correct} of {answered} right"
-
-#: src/lesson/completion/lesson-completion-moment.tsx
-msgctxt "moNgIg"
-msgid "+{points} Brain Power"
-msgstr "+{points} Brain Power"
-
-#: src/lesson/completion/lesson-completion-moment.tsx
 msgctxt "GgV_JT"
 msgid "Review on {date}"
 msgstr "Review on {date}"
