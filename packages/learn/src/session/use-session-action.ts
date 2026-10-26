@@ -2,7 +2,7 @@
 
 import { useEnterKey } from "@zoonk/ui/hooks/keyboard";
 import { safeAsync } from "@zoonk/utils/error";
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useGoalSwitchPending } from "../shell/goal-switcher";
 
 /**
@@ -14,15 +14,34 @@ import { useGoalSwitchPending } from "../shell/goal-switcher";
 export function useSessionAction({
   action,
   enterKey = false,
+  steadyMs = 0,
 }: {
   action: () => Promise<boolean>;
   enterKey?: boolean;
+  /**
+   * How long after the screen shows a press is ignored: a second press meant for the screen before
+   * it (Enter twice, a double tap where both screens put their main button) never skips this one.
+   */
+  steadyMs?: number;
 }) {
   const [isPending, startTransition] = useTransition();
   const [failed, setFailed] = useState(false);
   const switching = useGoalSwitchPending();
+  const shownAt = useRef<number | null>(null);
+
+  useEffect(() => {
+    shownAt.current = performance.now();
+  }, []);
 
   const run = () => {
+    const steady =
+      steadyMs === 0 ||
+      (shownAt.current !== null && performance.now() - shownAt.current >= steadyMs);
+
+    if (!steady) {
+      return false;
+    }
+
     if (isPending || switching) {
       return;
     }

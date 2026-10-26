@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
-import { Spinner } from "@zoonk/ui/components/spinner";
 import { useExtracted } from "next-intl";
 import { ContinueButton, QuestionActionsRow } from "./question-actions";
 import { type QuestionBlockPhase } from "./question-block-state";
@@ -47,15 +46,6 @@ export function QuestionBlockStatus({
           {t("Try again")}
         </Button>
       </div>
-    );
-  }
-
-  if (phase.kind === "finishing") {
-    return (
-      <p className="text-muted-foreground flex items-center gap-2 text-sm" role="status">
-        <Spinner />
-        {t("Saving your answers…")}
-      </p>
     );
   }
 

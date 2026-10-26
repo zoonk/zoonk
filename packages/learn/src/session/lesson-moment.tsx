@@ -1,17 +1,17 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { EnterButton } from "../_components/enter-button";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
 import { type TestOutStart } from "../_components/test-out-start-link";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
+import { PendingMoment } from "./pending-moment";
 import { SessionHeader } from "./session-header";
 import { getSessionQueue } from "./session-queue-rows";
 import { type StudyBlock, type StudyMomentView, type StudySession } from "./session-types";
-import { StudyMoment } from "./study-moment";
+import { type MomentCeremony, StudyMoment } from "./study-moment";
 import { useMomentEvents } from "./use-moment-events";
 import { useSessionAction } from "./use-session-action";
 
@@ -30,6 +30,7 @@ function SavedMoment({
   onContinue,
   onStartTestOut,
   onStop,
+  renderCeremony,
   session,
   testedOut,
 }: {
@@ -38,6 +39,7 @@ function SavedMoment({
   onContinue: () => Promise<boolean>;
   onStartTestOut: (chapterId: string) => Promise<TestOutStart>;
   onStop: () => Promise<boolean>;
+  renderCeremony?: MomentCeremony;
   session: LessonMomentSession;
   testedOut: boolean;
 }) {
@@ -47,6 +49,7 @@ function SavedMoment({
     <StudyMoment
       blocks={session.blocks}
       buddy={buddy}
+      renderCeremony={renderCeremony}
       finishedChapterId={
         session.blocks.find((block) => block.id === moment.blockId)?.chapterId ?? null
       }
@@ -140,6 +143,7 @@ export function LessonMoment({
   onRetry,
   onStartTestOut,
   onStop,
+  renderCeremony,
   session,
 }: {
   /** The learner's buddy, who cheers when the lesson completes one of the day's missions. */
@@ -150,6 +154,8 @@ export function LessonMoment({
   /** Opens a chapter's test: the one the moment offers, or the next lesson's. */
   onStartTestOut: (chapterId: string) => Promise<TestOutStart>;
   onStop: () => Promise<boolean>;
+  /** The full-screen moment for a milestone the lesson earned (a new belt, new glasses). */
+  renderCeremony?: MomentCeremony;
   session: LessonMomentSession;
 }) {
   const t = useExtracted();
@@ -173,18 +179,13 @@ export function LessonMoment({
   }
 
   if (!moment) {
-    return (
-      <TaskBody role="status">
-        <Skeleton className="h-8 w-2/3" />
-        <Skeleton className="h-4 w-48" />
-        <span className="sr-only">{t("Saving your progress…")}</span>
-      </TaskBody>
-    );
+    return <PendingMoment kind="learn" testedOut={completion.testedOut} />;
   }
 
   return (
     <SavedMoment
       buddy={buddy}
+      renderCeremony={renderCeremony}
       moment={moment}
       onContinue={onContinue}
       onStartTestOut={onStartTestOut}

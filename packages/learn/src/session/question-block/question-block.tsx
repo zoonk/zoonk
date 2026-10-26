@@ -2,7 +2,7 @@
 
 import { useExtracted } from "next-intl";
 import { type TaskSegment } from "../../_components/task-header";
-import { TaskActionBar, TaskBody } from "../../_components/task-layout";
+import { TaskActionBar } from "../../_components/task-layout";
 import { type LearnBuddy } from "../../buddies/use-buddy-name";
 import { ContentVoteMenu } from "../../feedback/content-vote-menu";
 import { type LessonHref } from "../../mistakes/drill/drill-types";
@@ -12,10 +12,11 @@ import { OpenNextStep } from "../open-next-step";
 import { SessionFrame } from "../session-frame";
 import { SessionHeader } from "../session-header";
 import { type StudyBlockDetail, type StudySession } from "../session-types";
-import { StudyMoment } from "../study-moment";
+import { type MomentCeremony, StudyMoment } from "../study-moment";
 import { useBlockTitle } from "../use-block-copy";
 import { useMomentEvents } from "../use-moment-events";
 import { useBlockAside } from "./block-aside";
+import { BlockBody, showsQuestionActions } from "./block-body";
 import { FinishReadyActions, FinishReadyBody } from "./block-finish-ready";
 import {
   BlockDrillNotes,
@@ -77,6 +78,7 @@ function FinishedBlock({
   detail,
   exitHref,
   moment,
+  renderCeremony,
   session,
 }: {
   actions: SessionActions;
@@ -84,6 +86,7 @@ function FinishedBlock({
   detail: StudyBlockDetail;
   exitHref: string;
   moment: Extract<QuestionBlockPhase, { kind: "finished" }>["moment"];
+  renderCeremony?: MomentCeremony;
   session: SessionContext;
 }) {
   const t = useExtracted();
@@ -106,6 +109,7 @@ function FinishedBlock({
     <StudyMoment
       blocks={session.blocks}
       buddy={buddy}
+      renderCeremony={renderCeremony}
       exitHref={exitHref}
       kind={detail.block.kind}
       moment={moment}
@@ -114,16 +118,6 @@ function FinishedBlock({
       onStop={actions.stop}
     />
   );
-}
-
-function showsQuestionActions({
-  phase,
-  stage,
-}: {
-  phase: QuestionBlockPhase;
-  stage: string;
-}): boolean {
-  return stage !== "idea" || phase.kind === "finishReady";
 }
 
 /** Before the grade: answering, checking, or answering again after a failed save. */
@@ -190,6 +184,7 @@ export function QuestionBlock({
   detail,
   exitHref,
   lessonHref = null,
+  renderCeremony,
   session,
   tutor,
 }: {
@@ -200,6 +195,8 @@ export function QuestionBlock({
   exitHref: string;
   /** Where a content gap's lesson opens; without it the drill shows only the lesson's summary. */
   lessonHref?: LessonHref | null;
+  /** The full-screen moment for a milestone the block earned (a new belt, new glasses). */
+  renderCeremony?: MomentCeremony;
   session: SessionContext;
   /** The learner's buddy for the question in view, from the host; none plays without it. */
   tutor?: QuestionTutor | null;
@@ -220,6 +217,7 @@ export function QuestionBlock({
       <FinishedBlock
         actions={actions}
         buddy={buddy}
+        renderCeremony={renderCeremony}
         detail={detail}
         exitHref={exitHref}
         moment={phase.moment}
@@ -246,7 +244,7 @@ export function QuestionBlock({
         total={run.total}
       />
 
-      <TaskBody data-slot="question-block">
+      <BlockBody kind={detail.block.kind} phase={phase}>
         <FinishReadyBody phase={phase} />
         {isNetScoredQuestion({ detail, question }) && (
           <SwipeScore detail={detail} answers={run.state.answers} />
@@ -294,7 +292,7 @@ export function QuestionBlock({
             {phase.feedback.pauseSuggested && <PauseSuggestion onStop={actions.stop} />}
           </>
         )}
-      </TaskBody>
+      </BlockBody>
 
       {/* A gap's idea screen has its own Start. */}
       {showsQuestionActions({ phase, stage: blockDrill.stage }) && (

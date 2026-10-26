@@ -2,29 +2,22 @@
 
 import { BRAIN_POWER_BONUS } from "@zoonk/core/sessions/brain-power";
 import { isFullMeal } from "@zoonk/core/sessions/missions";
-import { BeltIndicator, beltColorClasses } from "@zoonk/ui/components/belt-indicator";
+import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
 import { Buddy } from "@zoonk/ui/components/buddy";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronsUpIcon, ListChecksIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
+import { BeltTicks } from "../../_components/belt-ticks";
 import { StepCard, StepRow, StepRows, StepTitle } from "../../_components/step-card";
 import { useBeltName } from "../../_utils/use-belt-name";
 import { resolveLearnBuddy, useBuddyName } from "../../buddies/use-buddy-name";
 import { type StudySessionSummary } from "../session-types";
 import { useSessionSummary } from "./summary-context";
 
-/** A belt has ten levels, each a stripe. */
-const STRIPES_PER_BELT = 10;
-
 /** A streak worth naming: three right answers in a row or more. */
 const SHOWN_STREAK = 3;
 
 type SummaryBelt = NonNullable<StudySessionSummary["belt"]>;
-
-/** A level's tick in its belt's color; a white belt's would vanish on the page, so it's ink. */
-function tickClass(color: SummaryBelt["after"]["color"]): string {
-  return color === "white" ? "bg-foreground/70" : beltColorClasses[color];
-}
 
 /**
  * Every mission of this session's day done, with the day's bonus earned. The bonus is once a day
@@ -133,22 +126,7 @@ function BeltRow({ belt }: { belt: SummaryBelt }) {
         </RewardValue>
       </span>
 
-      <span aria-hidden="true" className="flex h-1 gap-[3px]">
-        {Array.from({ length: STRIPES_PER_BELT }, (_, index) => (
-          <span
-            className={cn(
-              "flex-1 rounded-xs",
-              index < level ? tickClass(color) : "bg-surface-3",
-              // The levels earned today fill in, so the learner sees which ones are new.
-              index >= level - belt.stripesGained &&
-                index < level &&
-                "motion-safe:animate-energy-charge origin-left",
-            )}
-            // oxlint-disable-next-line react/no-array-index-key -- Ticks are the belt's levels, not items.
-            key={index}
-          />
-        ))}
-      </span>
+      <BeltTicks color={color} gained={belt.stripesGained} level={level} />
     </StepRow>
   );
 }

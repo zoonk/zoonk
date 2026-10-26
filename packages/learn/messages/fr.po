@@ -6802,7 +6802,7 @@ msgid "Nothing to practice yet"
 msgstr "Rien à travailler pour l’instant"
 
 #: src/mistakes/practice-done.tsx
-#: src/session/study-moment.tsx
+#: src/session/use-moment-title.ts
 msgctxt "TvGh65"
 msgid "Practice done"
 msgstr "Entraînement terminé"
@@ -11463,7 +11463,7 @@ msgid "We couldn't add more time. Try again."
 msgstr "On n’a pas réussi à ajouter du temps. Réessaie."
 
 #: src/session/lesson-moment.tsx
-#: src/session/study-moment.tsx
+#: src/session/use-moment-title.ts
 msgctxt "_DUim9"
 msgid "Lesson complete"
 msgstr "Leçon terminée"
@@ -11481,11 +11481,6 @@ msgstr "Impossible d’ouvrir l’étape suivante. Réessaie."
 msgctxt "ocFozp"
 msgid "We couldn't save your progress yet."
 msgstr "On n’a pas encore pu enregistrer ta progression."
-
-#: src/session/lesson-moment.tsx
-msgctxt "uPG65F"
-msgid "Saving your progress…"
-msgstr "Enregistrement de ta progression…"
 
 #: src/session/next-stop-wait.tsx
 msgctxt "m3SPlD"
@@ -11526,6 +11521,11 @@ msgstr "Arrêter pour aujourd’hui"
 msgctxt "d562ST"
 msgid "Often tested"
 msgstr "Souvent évalué"
+
+#: src/session/pending-moment.tsx
+msgctxt "uPG65F"
+msgid "Saving your progress…"
+msgstr "Enregistrement de ta progression…"
 
 #: src/session/question-block/block-aside.tsx
 msgctxt "KpN3WY"
@@ -11607,7 +11607,6 @@ msgctxt "zOi8iy"
 msgid "We couldn't save this block yet."
 msgstr "Impossible d’enregistrer ce bloc pour le moment."
 
-#: src/session/question-block/question-block-status.tsx
 #: src/session/question-block/question-block.tsx
 msgctxt "8H-sBj"
 msgid "Saving your answers…"
@@ -11710,6 +11709,38 @@ msgctxt "ZPSLSh"
 msgid "On {date} this one tripped you up."
 msgstr "Le {date}, cette question t’a posé problème."
 
+#: src/session/reached-moment.tsx
+#: src/session/summary/summary-parts.tsx
+#: src/session/summary/summary-rewards.tsx
+msgctxt "vj_mVz"
+msgid "{belt}, level {level}"
+msgstr "{belt}, niveau {level}"
+
+#: src/session/reached-moment.tsx
+msgctxt "ri96Ur"
+msgid "Level up!"
+msgstr "Niveau supérieur !"
+
+#: src/session/reached-moment.tsx
+msgctxt "m2WzLQ"
+msgid "Max Energy!"
+msgstr "Énergie au maximum !"
+
+#: src/session/reached-moment.tsx
+msgctxt "_cyoFN"
+msgid "{buddy} is glowing!"
+msgstr "{buddy} rayonne !"
+
+#: src/session/reached-moment.tsx
+msgctxt "Vlxihv"
+msgid "{energy} Energy"
+msgstr "Énergie à {energy}"
+
+#: src/session/reached-moment.tsx
+msgctxt "T5ld7Y"
+msgid "Right answers raise it. A day away lowers it a little."
+msgstr "Les bonnes réponses font monter ton Énergie. Une journée sans étudier la fait un peu baisser."
+
 #: src/session/session-header.tsx
 msgctxt "_Jliky"
 msgid "{completed, plural, =0 {# of {total} done} one {# of {total} done} other {# of {total} done}} · more as you go"
@@ -11727,16 +11758,6 @@ msgstr "{completed, plural, =0 {# sur {total} terminé} one {# sur {total} termi
 msgctxt "hnntJl"
 msgid "Today's session"
 msgstr "Séance du jour"
-
-#: src/session/study-moment.tsx
-msgctxt "XHHt5U"
-msgid "You already knew this"
-msgstr "Tu connaissais déjà ça"
-
-#: src/session/study-moment.tsx
-msgctxt "ql88uE"
-msgid "Review done"
-msgstr "Révision terminée"
 
 #: src/session/study-moment.tsx
 msgctxt "GgV_JT"
@@ -11780,12 +11801,6 @@ msgstr "Terminé en {time}"
 msgctxt "KxAe8j"
 msgid "Back {days}"
 msgstr "De retour : {days}"
-
-#: src/session/summary/summary-parts.tsx
-#: src/session/summary/summary-rewards.tsx
-msgctxt "vj_mVz"
-msgid "{belt}, level {level}"
-msgstr "{belt}, niveau {level}"
 
 #: src/session/summary/summary-parts.tsx
 msgctxt "LaOLXl"
@@ -11906,6 +11921,16 @@ msgstr "{count, plural, one {# question} other {# questions}}, sans indice"
 msgctxt "AUtFzE"
 msgid "{count, plural, one {# question} other {# questions}} on every topic, your weakest first"
 msgstr "{count, plural, one {# question sur chaque sujet, en commençant par ceux que tu maîtrises le moins} other {# questions sur chaque sujet, en commençant par ceux que tu maîtrises le moins}}"
+
+#: src/session/use-moment-title.ts
+msgctxt "XHHt5U"
+msgid "You already knew this"
+msgstr "Tu connaissais déjà ça"
+
+#: src/session/use-moment-title.ts
+msgctxt "ql88uE"
+msgid "Review done"
+msgstr "Révision terminée"
 
 #: src/session/use-review-title.ts
 msgctxt "dUxyza"

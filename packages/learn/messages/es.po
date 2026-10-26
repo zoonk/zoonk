@@ -6802,7 +6802,7 @@ msgid "Nothing to practice yet"
 msgstr "Aún no hay nada que practicar"
 
 #: src/mistakes/practice-done.tsx
-#: src/session/study-moment.tsx
+#: src/session/use-moment-title.ts
 msgctxt "TvGh65"
 msgid "Practice done"
 msgstr "Práctica completada"
@@ -11463,7 +11463,7 @@ msgid "We couldn't add more time. Try again."
 msgstr "No hemos podido añadir más tiempo. Inténtalo de nuevo."
 
 #: src/session/lesson-moment.tsx
-#: src/session/study-moment.tsx
+#: src/session/use-moment-title.ts
 msgctxt "_DUim9"
 msgid "Lesson complete"
 msgstr "Lección completada"
@@ -11481,11 +11481,6 @@ msgstr "No se ha podido abrir el siguiente paso. Inténtalo de nuevo."
 msgctxt "ocFozp"
 msgid "We couldn't save your progress yet."
 msgstr "Aún no hemos podido guardar tu progreso."
-
-#: src/session/lesson-moment.tsx
-msgctxt "uPG65F"
-msgid "Saving your progress…"
-msgstr "Guardando tu progreso…"
 
 #: src/session/next-stop-wait.tsx
 msgctxt "m3SPlD"
@@ -11526,6 +11521,11 @@ msgstr "Parar por hoy"
 msgctxt "d562ST"
 msgid "Often tested"
 msgstr "Suele aparecer en los exámenes"
+
+#: src/session/pending-moment.tsx
+msgctxt "uPG65F"
+msgid "Saving your progress…"
+msgstr "Guardando tu progreso…"
 
 #: src/session/question-block/block-aside.tsx
 msgctxt "KpN3WY"
@@ -11607,7 +11607,6 @@ msgctxt "zOi8iy"
 msgid "We couldn't save this block yet."
 msgstr "Aún no se ha podido guardar este bloque."
 
-#: src/session/question-block/question-block-status.tsx
 #: src/session/question-block/question-block.tsx
 msgctxt "8H-sBj"
 msgid "Saving your answers…"
@@ -11710,6 +11709,38 @@ msgctxt "ZPSLSh"
 msgid "On {date} this one tripped you up."
 msgstr "El {date}, esta pregunta se te resistió."
 
+#: src/session/reached-moment.tsx
+#: src/session/summary/summary-parts.tsx
+#: src/session/summary/summary-rewards.tsx
+msgctxt "vj_mVz"
+msgid "{belt}, level {level}"
+msgstr "{belt}, nivel {level}"
+
+#: src/session/reached-moment.tsx
+msgctxt "ri96Ur"
+msgid "Level up!"
+msgstr "¡Subiste de nivel!"
+
+#: src/session/reached-moment.tsx
+msgctxt "m2WzLQ"
+msgid "Max Energy!"
+msgstr "¡Energía al máximo!"
+
+#: src/session/reached-moment.tsx
+msgctxt "_cyoFN"
+msgid "{buddy} is glowing!"
+msgstr "¡{buddy} está brillando!"
+
+#: src/session/reached-moment.tsx
+msgctxt "Vlxihv"
+msgid "{energy} Energy"
+msgstr "Energía al {energy}"
+
+#: src/session/reached-moment.tsx
+msgctxt "T5ld7Y"
+msgid "Right answers raise it. A day away lowers it a little."
+msgstr "Las respuestas correctas aumentan tu Energía. Un día sin estudiar la reduce un poco."
+
 #: src/session/session-header.tsx
 msgctxt "_Jliky"
 msgid "{completed, plural, =0 {# of {total} done} one {# of {total} done} other {# of {total} done}} · more as you go"
@@ -11727,16 +11758,6 @@ msgstr "{completed, plural, =0 {# de {total} completados} one {# de {total} comp
 msgctxt "hnntJl"
 msgid "Today's session"
 msgstr "Sesión de hoy"
-
-#: src/session/study-moment.tsx
-msgctxt "XHHt5U"
-msgid "You already knew this"
-msgstr "Esto ya lo sabías"
-
-#: src/session/study-moment.tsx
-msgctxt "ql88uE"
-msgid "Review done"
-msgstr "Repaso terminado"
 
 #: src/session/study-moment.tsx
 msgctxt "GgV_JT"
@@ -11780,12 +11801,6 @@ msgstr "Completado en {time}"
 msgctxt "KxAe8j"
 msgid "Back {days}"
 msgstr "De vuelta: {days}"
-
-#: src/session/summary/summary-parts.tsx
-#: src/session/summary/summary-rewards.tsx
-msgctxt "vj_mVz"
-msgid "{belt}, level {level}"
-msgstr "{belt}, nivel {level}"
 
 #: src/session/summary/summary-parts.tsx
 msgctxt "LaOLXl"
@@ -11906,6 +11921,16 @@ msgstr "{count, plural, one {# pregunta} other {# preguntas}}, sin pistas"
 msgctxt "AUtFzE"
 msgid "{count, plural, one {# question} other {# questions}} on every topic, your weakest first"
 msgstr "{count, plural, one {# pregunta} other {# preguntas}} de todos los temas, empezando por los que peor llevas"
+
+#: src/session/use-moment-title.ts
+msgctxt "XHHt5U"
+msgid "You already knew this"
+msgstr "Esto ya lo sabías"
+
+#: src/session/use-moment-title.ts
+msgctxt "ql88uE"
+msgid "Review done"
+msgstr "Repaso terminado"
 
 #: src/session/use-review-title.ts
 msgctxt "dUxyza"

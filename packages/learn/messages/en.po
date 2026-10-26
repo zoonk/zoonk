@@ -6802,7 +6802,7 @@ msgid "Nothing to practice yet"
 msgstr "Nothing to practice yet"
 
 #: src/mistakes/practice-done.tsx
-#: src/session/study-moment.tsx
+#: src/session/use-moment-title.ts
 msgctxt "TvGh65"
 msgid "Practice done"
 msgstr "Practice done"
@@ -11463,7 +11463,7 @@ msgid "We couldn't add more time. Try again."
 msgstr "We couldn't add more time. Try again."
 
 #: src/session/lesson-moment.tsx
-#: src/session/study-moment.tsx
+#: src/session/use-moment-title.ts
 msgctxt "_DUim9"
 msgid "Lesson complete"
 msgstr "Lesson complete"
@@ -11481,11 +11481,6 @@ msgstr "We couldn't open the next step. Try again."
 msgctxt "ocFozp"
 msgid "We couldn't save your progress yet."
 msgstr "We couldn't save your progress yet."
-
-#: src/session/lesson-moment.tsx
-msgctxt "uPG65F"
-msgid "Saving your progress…"
-msgstr "Saving your progress…"
 
 #: src/session/next-stop-wait.tsx
 msgctxt "m3SPlD"
@@ -11526,6 +11521,11 @@ msgstr "Stop for today"
 msgctxt "d562ST"
 msgid "Often tested"
 msgstr "Often tested"
+
+#: src/session/pending-moment.tsx
+msgctxt "uPG65F"
+msgid "Saving your progress…"
+msgstr "Saving your progress…"
 
 #: src/session/question-block/block-aside.tsx
 msgctxt "KpN3WY"
@@ -11607,7 +11607,6 @@ msgctxt "zOi8iy"
 msgid "We couldn't save this block yet."
 msgstr "We couldn't save this block yet."
 
-#: src/session/question-block/question-block-status.tsx
 #: src/session/question-block/question-block.tsx
 msgctxt "8H-sBj"
 msgid "Saving your answers…"
@@ -11710,6 +11709,38 @@ msgctxt "ZPSLSh"
 msgid "On {date} this one tripped you up."
 msgstr "On {date} this one tripped you up."
 
+#: src/session/reached-moment.tsx
+#: src/session/summary/summary-parts.tsx
+#: src/session/summary/summary-rewards.tsx
+msgctxt "vj_mVz"
+msgid "{belt}, level {level}"
+msgstr "{belt}, level {level}"
+
+#: src/session/reached-moment.tsx
+msgctxt "ri96Ur"
+msgid "Level up!"
+msgstr "Level up!"
+
+#: src/session/reached-moment.tsx
+msgctxt "m2WzLQ"
+msgid "Max Energy!"
+msgstr "Max Energy!"
+
+#: src/session/reached-moment.tsx
+msgctxt "_cyoFN"
+msgid "{buddy} is glowing!"
+msgstr "{buddy} is glowing!"
+
+#: src/session/reached-moment.tsx
+msgctxt "Vlxihv"
+msgid "{energy} Energy"
+msgstr "{energy} Energy"
+
+#: src/session/reached-moment.tsx
+msgctxt "T5ld7Y"
+msgid "Right answers raise it. A day away lowers it a little."
+msgstr "Right answers raise it. A day away lowers it a little."
+
 #: src/session/session-header.tsx
 msgctxt "_Jliky"
 msgid "{completed, plural, =0 {# of {total} done} one {# of {total} done} other {# of {total} done}} · more as you go"
@@ -11727,16 +11758,6 @@ msgstr "{completed, plural, =0 {# of {total} done} one {# of {total} done} other
 msgctxt "hnntJl"
 msgid "Today's session"
 msgstr "Today's session"
-
-#: src/session/study-moment.tsx
-msgctxt "XHHt5U"
-msgid "You already knew this"
-msgstr "You already knew this"
-
-#: src/session/study-moment.tsx
-msgctxt "ql88uE"
-msgid "Review done"
-msgstr "Review done"
 
 #: src/session/study-moment.tsx
 msgctxt "GgV_JT"
@@ -11780,12 +11801,6 @@ msgstr "Done in {time}"
 msgctxt "KxAe8j"
 msgid "Back {days}"
 msgstr "Back {days}"
-
-#: src/session/summary/summary-parts.tsx
-#: src/session/summary/summary-rewards.tsx
-msgctxt "vj_mVz"
-msgid "{belt}, level {level}"
-msgstr "{belt}, level {level}"
 
 #: src/session/summary/summary-parts.tsx
 msgctxt "LaOLXl"
@@ -11906,6 +11921,16 @@ msgstr "{count, plural, one {# question} other {# questions}}, no hints"
 msgctxt "AUtFzE"
 msgid "{count, plural, one {# question} other {# questions}} on every topic, your weakest first"
 msgstr "{count, plural, one {# question} other {# questions}} on every topic, your weakest first"
+
+#: src/session/use-moment-title.ts
+msgctxt "XHHt5U"
+msgid "You already knew this"
+msgstr "You already knew this"
+
+#: src/session/use-moment-title.ts
+msgctxt "ql88uE"
+msgid "Review done"
+msgstr "Review done"
 
 #: src/session/use-review-title.ts
 msgctxt "dUxyza"

@@ -3,6 +3,7 @@
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useFormatter } from "next-intl";
+import { useState } from "react";
 import { EnterButton } from "../_components/enter-button";
 import { KindMark } from "../_components/kind-tile";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
@@ -10,8 +11,10 @@ import { TaskMeta } from "../_components/task-meta";
 import { type TestOutStart, TestOutStartLink } from "../_components/test-out-start-link";
 import { useFormatDuration } from "../_utils/time-format";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
+import { type CeremonyMilestone } from "../ceremonies/use-ceremony-copy";
 import { MissionMoment } from "../missions/mission-moment";
 import { getBlockKind } from "./block-kind";
+import { ReachedMoment } from "./reached-moment";
 import { SessionFrame } from "./session-frame";
 import { SessionHeader } from "./session-header";
 import { SessionQueueAsideContent, useSessionQueueAside } from "./session-queue";
@@ -19,23 +22,14 @@ import { getSessionQueue } from "./session-queue-rows";
 import { type StudyBlock, type StudyMomentView } from "./session-types";
 import { TestOutOffer } from "./test-out-offer";
 import { useBlockTitle } from "./use-block-copy";
+import { type MomentKind, useMomentTitle } from "./use-moment-title";
 import { useSessionAction } from "./use-session-action";
 
-type MomentKind = StudyBlock["kind"];
+/** A press this soon after the moment shows was meant for the screen before it: it's ignored. */
+const MOMENT_STEADY_MS = 500;
 
-function useMomentTitle({ kind, testedOut }: { kind: MomentKind; testedOut: boolean }) {
-  const t = useExtracted();
-
-  if (kind === "learn") {
-    return testedOut ? t("You already knew this") : t("Lesson complete");
-  }
-
-  if (kind === "review") {
-    return t("Review done");
-  }
-
-  return t("Practice done");
-}
+/** The host's full-screen ceremony for a milestone the block earned, closed with `onClose`. */
+export type MomentCeremony = (milestone: CeremonyMilestone, onClose: () => void) => React.ReactNode;
 
 /**
  * What the block earned, as one mono line: its Brain Power (never "+0"), the day a lesson comes
@@ -115,7 +109,13 @@ function MomentActions({
   sessionCompleted: boolean;
 }) {
   const t = useExtracted();
-  const proceed = useSessionAction({ action: onContinue, enterKey: true });
+
+  const proceed = useSessionAction({
+    action: onContinue,
+    enterKey: true,
+    steadyMs: MOMENT_STEADY_MS,
+  });
+
   const stop = useSessionAction({ action: onStop });
 
   return (
@@ -140,6 +140,23 @@ function MomentActions({
   );
 }
 
+/** The host's ceremony for the block's milestone, once: over the moment until it's closed. */
+function MomentCeremonyOnce({
+  milestone,
+  render,
+}: {
+  milestone: CeremonyMilestone | null;
+  render?: MomentCeremony;
+}) {
+  const [closed, setClosed] = useState(false);
+
+  if (!render || !milestone || closed) {
+    return null;
+  }
+
+  return render(milestone, () => setClosed(true));
+}
+
 /**
  * The quick moment between the session's blocks, with the same chrome as every task: the day's
  * session bar in the header, then on the page what the block was ("Review done"), what it earned
@@ -161,6 +178,7 @@ export function StudyMoment({
   onContinue,
   onStartTestOut,
   onStop,
+  renderCeremony,
   testedOut = false,
 }: {
   /** The day's blocks, for its queue beside the moment. */
@@ -185,6 +203,8 @@ export function StudyMoment({
   onStartTestOut?: (chapterId: string) => Promise<TestOutStart>;
   /** "Stop for today" between blocks: what's done counts, the rest waits on Today. */
   onStop: () => Promise<boolean>;
+  /** The full-screen moment for a milestone the block earned (`moment.ceremony`), over this one. */
+  renderCeremony?: MomentCeremony;
   testedOut?: boolean;
 }) {
   const title = useMomentTitle({ kind, testedOut });
@@ -208,6 +228,8 @@ export function StudyMoment({
 
   const content = (
     <>
+      <MomentCeremonyOnce milestone={moment.ceremony} render={renderCeremony} />
+
       <TaskBody data-slot="study-moment">
         <div className="flex flex-col gap-2" role="status">
           <h2 className="text-title">{title}</h2>
@@ -220,6 +242,8 @@ export function StudyMoment({
           fullMeal={moment.fullMeal}
           missions={moment.missions}
         />
+
+        <ReachedMoment buddy={buddy} ceremony={moment.ceremony} reached={moment.reached} />
 
         {nextBlock && (
           <NextBlock block={nextBlock} subject={Boolean(nextChapterId && onStartTestOut)} />

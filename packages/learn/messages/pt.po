@@ -6802,7 +6802,7 @@ msgid "Nothing to practice yet"
 msgstr "Ainda não há nada para praticar"
 
 #: src/mistakes/practice-done.tsx
-#: src/session/study-moment.tsx
+#: src/session/use-moment-title.ts
 msgctxt "TvGh65"
 msgid "Practice done"
 msgstr "Prática concluída"
@@ -11463,7 +11463,7 @@ msgid "We couldn't add more time. Try again."
 msgstr "Não foi possível adicionar mais tempo. Tente de novo."
 
 #: src/session/lesson-moment.tsx
-#: src/session/study-moment.tsx
+#: src/session/use-moment-title.ts
 msgctxt "_DUim9"
 msgid "Lesson complete"
 msgstr "Aula concluída"
@@ -11481,11 +11481,6 @@ msgstr "Não deu para abrir o próximo passo. Tente de novo."
 msgctxt "ocFozp"
 msgid "We couldn't save your progress yet."
 msgstr "A gente ainda não conseguiu salvar seu progresso."
-
-#: src/session/lesson-moment.tsx
-msgctxt "uPG65F"
-msgid "Saving your progress…"
-msgstr "Salvando seu progresso…"
 
 #: src/session/next-stop-wait.tsx
 msgctxt "m3SPlD"
@@ -11526,6 +11521,11 @@ msgstr "Parar por hoje"
 msgctxt "d562ST"
 msgid "Often tested"
 msgstr "Cai com frequência"
+
+#: src/session/pending-moment.tsx
+msgctxt "uPG65F"
+msgid "Saving your progress…"
+msgstr "Salvando seu progresso…"
 
 #: src/session/question-block/block-aside.tsx
 msgctxt "KpN3WY"
@@ -11607,7 +11607,6 @@ msgctxt "zOi8iy"
 msgid "We couldn't save this block yet."
 msgstr "Ainda não deu para salvar este bloco."
 
-#: src/session/question-block/question-block-status.tsx
 #: src/session/question-block/question-block.tsx
 msgctxt "8H-sBj"
 msgid "Saving your answers…"
@@ -11710,6 +11709,38 @@ msgctxt "ZPSLSh"
 msgid "On {date} this one tripped you up."
 msgstr "Em {date}, esta pergunta te confundiu."
 
+#: src/session/reached-moment.tsx
+#: src/session/summary/summary-parts.tsx
+#: src/session/summary/summary-rewards.tsx
+msgctxt "vj_mVz"
+msgid "{belt}, level {level}"
+msgstr "{belt}, nível {level}"
+
+#: src/session/reached-moment.tsx
+msgctxt "ri96Ur"
+msgid "Level up!"
+msgstr "Subiu de nível!"
+
+#: src/session/reached-moment.tsx
+msgctxt "m2WzLQ"
+msgid "Max Energy!"
+msgstr "Energia no máximo!"
+
+#: src/session/reached-moment.tsx
+msgctxt "_cyoFN"
+msgid "{buddy} is glowing!"
+msgstr "{buddy} está brilhando!"
+
+#: src/session/reached-moment.tsx
+msgctxt "Vlxihv"
+msgid "{energy} Energy"
+msgstr "Energia em {energy}"
+
+#: src/session/reached-moment.tsx
+msgctxt "T5ld7Y"
+msgid "Right answers raise it. A day away lowers it a little."
+msgstr "Respostas certas aumentam sua Energia. Um dia sem estudar diminui um pouco."
+
 #: src/session/session-header.tsx
 msgctxt "_Jliky"
 msgid "{completed, plural, =0 {# of {total} done} one {# of {total} done} other {# of {total} done}} · more as you go"
@@ -11727,16 +11758,6 @@ msgstr "{completed, plural, =0 {# de {total} concluídos} one {# de {total} conc
 msgctxt "hnntJl"
 msgid "Today's session"
 msgstr "Sessão de hoje"
-
-#: src/session/study-moment.tsx
-msgctxt "XHHt5U"
-msgid "You already knew this"
-msgstr "Você já sabia disso"
-
-#: src/session/study-moment.tsx
-msgctxt "ql88uE"
-msgid "Review done"
-msgstr "Revisão concluída"
 
 #: src/session/study-moment.tsx
 msgctxt "GgV_JT"
@@ -11780,12 +11801,6 @@ msgstr "Concluído em {time}"
 msgctxt "KxAe8j"
 msgid "Back {days}"
 msgstr "Volta em {days}"
-
-#: src/session/summary/summary-parts.tsx
-#: src/session/summary/summary-rewards.tsx
-msgctxt "vj_mVz"
-msgid "{belt}, level {level}"
-msgstr "{belt}, nível {level}"
 
 #: src/session/summary/summary-parts.tsx
 msgctxt "LaOLXl"
@@ -11906,6 +11921,16 @@ msgstr "{count, plural, one {# pergunta} other {# perguntas}}, sem dicas"
 msgctxt "AUtFzE"
 msgid "{count, plural, one {# question} other {# questions}} on every topic, your weakest first"
 msgstr "{count, plural, one {# pergunta} other {# perguntas}} de todos os tópicos, começando pelos que você tem mais dificuldade"
+
+#: src/session/use-moment-title.ts
+msgctxt "XHHt5U"
+msgid "You already knew this"
+msgstr "Você já sabia disso"
+
+#: src/session/use-moment-title.ts
+msgctxt "ql88uE"
+msgid "Review done"
+msgstr "Revisão concluída"
 
 #: src/session/use-review-title.ts
 msgctxt "dUxyza"

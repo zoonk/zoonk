@@ -84,6 +84,9 @@ export function SessionBlockClient({
         stop: navigation.stop,
       }}
       buddy={tutor.buddy}
+      renderCeremony={(milestone, onClose) => (
+        <SessionCeremony buddy={tutor.buddy} milestone={milestone} onClose={onClose} />
+      )}
       detail={detail}
       exitHref={EXIT_HREF}
       key={`${detail.block.id}:${firstUnanswered ?? "answered"}`}
