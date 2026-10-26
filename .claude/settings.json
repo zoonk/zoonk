@@ -17,6 +17,19 @@
       "Bash(git push --force:*)"
     ]
   },
+  "hooks": {
+    "WorktreeCreate": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": ["${CLAUDE_PROJECT_DIR}/scripts/worktree/claude-create.mts"]
+          }
+        ]
+      }
+    ]
+  },
   "enabledPlugins": {
     "cache-components@nextjs": true,
     "code-review@claude-plugins-official": true,

@@ -15,7 +15,7 @@
   "includeEntryExports": true,
   "tags": ["-lintignore", "-internal", "-public"],
   "workspaces": {
-    ".": { "project": ["scripts/**/*.mts"] },
+    ".": { "entry": ["scripts/worktree/claude-create.mts"], "project": ["scripts/**/*.mts"] },
     "apps/android": {
       "entry": [".eloqnt/config.ts", ".eloqnt/android-xml.ts"],
       "project": [".eloqnt/**/*.ts", "scripts/**/*.mts", "!scripts/run-emulator.mts"]

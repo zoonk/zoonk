@@ -74,6 +74,7 @@ i18n.cache
 debug.log
 .claude/agent-memory
 .claude/plans
+.claude/worktrees
 
 # Temporary tasks for AI agents
 /tasks/

@@ -84,7 +84,7 @@ Seeded content stays as the v2 seed wrote it. The seed gives its courses and Lib
 
 ### Worktree Databases
 
-Run `pnpm worktree:setup` from a linked worktree's root. The Codex environment runs this automatically. Setup copies missing local environment files from the primary checkout, installs dependencies, and generates Prisma. When the primary checkout's database URL points to a loopback PostgreSQL server containing `zoonk`, it also creates:
+Run `pnpm worktree:setup` from a linked worktree's root. Codex, T3 Code, and Claude Code run this automatically when they create a worktree. Setup copies missing local environment files from the primary checkout, installs dependencies, and generates Prisma. When the primary checkout's database URL points to a loopback PostgreSQL server containing `zoonk`, it also creates:
 
 | Database             | Initial content                                     |
 | -------------------- | --------------------------------------------------- |
