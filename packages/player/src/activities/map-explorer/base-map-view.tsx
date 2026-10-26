@@ -9,7 +9,7 @@ const REGION_CLASS: Record<BaseMapRegionTone, string> = {
   focus: "fill-background",
   groupA: "fill-viz-accent-soft",
   groupB: "fill-viz-highlight-soft",
-  groupC: "fill-success/15",
+  groupC: "fill-viz-secondary-soft",
 };
 
 const LABEL_SIZE = 12;

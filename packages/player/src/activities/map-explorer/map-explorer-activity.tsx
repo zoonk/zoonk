@@ -34,7 +34,7 @@ const MAX_MAP_HEIGHT = 440;
 const LEGEND_CLASS: Record<string, string> = {
   groupA: "bg-viz-accent-soft",
   groupB: "bg-viz-highlight-soft",
-  groupC: "bg-success/15",
+  groupC: "bg-viz-secondary-soft",
 };
 
 function MapLegend({
