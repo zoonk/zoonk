@@ -482,7 +482,6 @@ test.describe("public Library chapter and course pages", () => {
       `Predict where an electron is ${id}`,
       `Read the light an atom gives off ${id}`,
       `Tell a wave from a particle in an experiment ${id}`,
-      `Describe how a laser makes its light ${id}`,
     ];
 
     const description = `How the smallest things behave ${id}: </script><h1>Injected heading ${id}</h1><script type="application/ld+json">`;
@@ -512,8 +511,6 @@ test.describe("public Library chapter and course pages", () => {
     expect(html).toContain(`Waves ${id}`);
     expect(html).toContain(`Inside the atom ${id}`);
     expect(html).toContain(`How do electrons fill the shells ${id}`);
-    // Every outcome is in the page for search engines, the ones folded away included.
-    expect(html).toContain(`Describe how a laser makes its light ${id}`);
     expect(html).not.toContain(REVEAL);
     expect(html).not.toContain(WRONG_REASON);
     expect(html).not.toContain("isCorrect");
@@ -559,11 +556,9 @@ test.describe("public Library chapter and course pages", () => {
 
     await expect(page.getByText(description, { exact: true })).toBeVisible();
 
-    // What it makes someone able to do: the first few in sight, the rest one tap away.
+    // What it makes someone able to do: a few short lines, all in sight.
     const fit = page.getByRole("region", { name: "What you'll be able to do" });
 
-    await expect(fit.getByRole("listitem")).toHaveText(outcomes.slice(0, 3));
-    await fit.getByText("Show 2 more", { exact: true }).click();
     await expect(fit.getByRole("listitem")).toHaveText(outcomes);
 
     await expect(

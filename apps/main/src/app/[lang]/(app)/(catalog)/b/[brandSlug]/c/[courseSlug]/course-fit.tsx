@@ -1,4 +1,3 @@
-import { ShowMore } from "@/components/catalog/show-more";
 import { CheckMark } from "@/components/public/check-mark";
 import { type CourseLandingPageContent } from "@zoonk/core/courses/landing-page";
 import { SURFACE_CLASS } from "@zoonk/learn/surface";
@@ -7,35 +6,14 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowDownIcon, ArrowRightIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 
-/** How many outcomes show before the rest wait one tap away. */
-const OUTCOMES_SHOWN = 3;
-
 const LIST_CLASS = "flex flex-col gap-3";
 
-/** Outcomes after a tick, each something the course makes the visitor able to do. */
-function OutcomeItems({ items }: { items: string[] }) {
-  return (
-    <ul className={LIST_CLASS}>
-      {items.map((item) => (
-        <li className="flex gap-3 text-[0.9375rem] leading-snug" key={item}>
-          <LineMarker>
-            <CheckMark size="sm" />
-          </LineMarker>
-          <span className="text-pretty">{item}</span>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
 /**
- * What the course makes someone able to do, its first steps first (the details step writes them
- * in that order): the first few in sight, the rest one tap away. Folding a single one would only
- * hide one line, so a list one longer than that shows whole.
+ * What the course makes someone able to do, each after a tick, its first steps first. The details
+ * step writes a few short lines (`PAGE_LISTS` in `@zoonk/ai`), so they all show.
  */
 async function Outcomes({ id, outcomes }: { id: string; outcomes: string[] }) {
   const t = await getExtracted();
-  const rest = outcomes.length - OUTCOMES_SHOWN;
 
   return (
     <section
@@ -46,21 +24,16 @@ async function Outcomes({ id, outcomes }: { id: string; outcomes: string[] }) {
         {t("What you'll be able to do")}
       </h2>
 
-      {rest > 1 ? (
-        <div className={LIST_CLASS}>
-          <OutcomeItems items={outcomes.slice(0, OUTCOMES_SHOWN)} />
-
-          <ShowMore
-            className="ml-8"
-            less={t("Show fewer")}
-            more={t("{count, plural, one {Show # more} other {Show # more}}", { count: rest })}
-          >
-            <OutcomeItems items={outcomes.slice(OUTCOMES_SHOWN)} />
-          </ShowMore>
-        </div>
-      ) : (
-        <OutcomeItems items={outcomes} />
-      )}
+      <ul className={LIST_CLASS}>
+        {outcomes.map((item) => (
+          <li className="flex gap-3 text-[0.9375rem] leading-snug" key={item}>
+            <LineMarker>
+              <CheckMark size="sm" />
+            </LineMarker>
+            <span className="text-pretty">{item}</span>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }

@@ -530,16 +530,6 @@ msgid "What you'll be able to do"
 msgstr "What you'll be able to do"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/course-fit.tsx
-msgctxt "_OvJVm"
-msgid "Show fewer"
-msgstr "Show fewer"
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/course-fit.tsx
-msgctxt "R9RxR-"
-msgid "{count, plural, one {Show # more} other {Show # more}}"
-msgstr "{count, plural, one {Show # more} other {Show # more}}"
-
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/course-fit.tsx
 msgctxt "fIvfRs"
 msgid "Who it's for"
 msgstr "Who it's for"
