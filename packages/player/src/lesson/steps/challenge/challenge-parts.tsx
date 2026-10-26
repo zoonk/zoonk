@@ -12,7 +12,11 @@ type ChallengePanel = ChallengeContent["panels"][number];
 type ChallengeMessage = ChallengeContent["nodes"][number]["messages"][number];
 type ChallengeSlot = ChallengeContent["team"][number];
 
-/** A small label above a group, like "Your mission" or "Your team"; a heading when it names one. */
+/**
+ * A panel's small label, like "Your mission" or a panel's title, in the kit's label face; a heading
+ * when it names the panel. A group on the page takes a sentence-case title instead
+ * (`PageSectionLabel`).
+ */
 export function ChallengeLabel({
   as: Tag = "p",
   children,
@@ -25,10 +29,7 @@ export function ChallengeLabel({
   id?: string;
 }) {
   return (
-    <Tag
-      className={cn("text-muted-foreground text-xs font-medium tracking-wide uppercase", className)}
-      id={id}
-    >
+    <Tag className={cn("text-label", className)} id={id}>
       {children}
     </Tag>
   );

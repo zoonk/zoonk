@@ -2,9 +2,11 @@
 
 import { type ChallengeStep } from "@zoonk/core/library/challenges/graph";
 import { getChallengeDebrief } from "@zoonk/core/library/challenges/run";
+import { CHIP_CLASS } from "@zoonk/learn/chip";
+import { PageSectionLabel } from "@zoonk/learn/page";
 import { cn } from "@zoonk/ui/lib/utils";
 import { formatDuration } from "@zoonk/utils/duration";
-import { CheckIcon, TrophyIcon } from "lucide-react";
+import { CheckIcon } from "lucide-react";
 import { useExtracted, useLocale } from "next-intl";
 import { PlayerReadScene } from "../../../components/player-read-scene";
 import { LessonRichText } from "../../_components/lesson-rich-text";
@@ -62,7 +64,7 @@ function DebriefNotes({
           className="border-border flex flex-col gap-2 not-first:border-t not-first:pt-4"
           data-slot="challenge-improve"
         >
-          <ChallengeLabel as="h3" className="text-warning" id="challenge-improve">
+          <ChallengeLabel as="h3" className="text-warning-text" id="challenge-improve">
             {t("To improve")}
           </ChallengeLabel>
           <ul className="flex flex-col gap-3">
@@ -109,10 +111,6 @@ export function ChallengeDebriefView({
 
   return (
     <PlayerReadScene className="gap-5 sm:gap-6">
-      <span className="bg-warning/10 text-warning flex size-12 items-center justify-center rounded-full">
-        <TrophyIcon aria-hidden="true" className="size-6" />
-      </span>
-
       <div className="flex flex-col gap-2">
         <h2 className="text-title">
           {content.variant === "whatIf" ? t("Scenario complete") : t("Challenge complete")}
@@ -127,17 +125,15 @@ export function ChallengeDebriefView({
       <DebriefNotes debrief={debrief} fill={fill} />
 
       <section aria-labelledby="challenge-skills" className="flex flex-col gap-2">
-        <ChallengeLabel as="h3" id="challenge-skills">
-          {t("Skills practiced")}
-        </ChallengeLabel>
+        <PageSectionLabel id="challenge-skills">{t("Skills practiced")}</PageSectionLabel>
         <ul className="flex flex-wrap gap-2">
           {debrief.skills.map((skill) => (
             <li
               className={cn(
-                "rounded-full px-3 py-1 text-sm",
-                skill.id === debrief.practice?.id
-                  ? "bg-warning/10 text-warning font-medium"
-                  : "bg-muted text-foreground",
+                CHIP_CLASS,
+                "h-auto min-h-5.5 py-1 leading-4 text-balance",
+                skill.id === debrief.practice?.id &&
+                  "bg-warning/10 text-warning-text ring-warning/40",
               )}
               key={skill.id}
             >

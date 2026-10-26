@@ -1,6 +1,7 @@
 "use client";
 
 import { type ChallengeMeterState } from "@zoonk/core/library/challenges/run";
+import { Meter, MeterFill } from "@zoonk/learn/meter";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowDownIcon, ArrowUpIcon, ChevronsDownIcon, ChevronsUpIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -51,7 +52,7 @@ function MeterChange({ meter }: { meter: ChallengeMeterState }) {
     <span
       className={cn(
         "flex items-center gap-1 font-medium",
-        isGood ? "text-success-text" : "text-warning",
+        isGood ? "text-success-text" : "text-warning-text",
       )}
     >
       <Icon aria-hidden="true" className="size-4" />
@@ -128,19 +129,20 @@ export function ChallengeMeters({
             <span className="text-foreground">{fill(meter.label)}</span>
             {hasMoved && <MeterChange meter={meter} />}
           </div>
-          <div
+          <Meter
+            aria-hidden={false}
             aria-label={fill(meter.label)}
             aria-valuemax={METER_MAX}
             aria-valuemin={0}
             aria-valuenow={meter.value}
-            className="bg-border h-1.5 w-full overflow-hidden rounded-full"
+            className="w-full"
             role="meter"
           >
-            <div
-              className="bg-foreground/70 h-full rounded-full transition-[width] duration-500 motion-reduce:transition-none"
-              style={{ width: `${meter.value}%` }}
+            <MeterFill
+              className="bg-foreground/70 transition-[width] duration-500 motion-reduce:transition-none"
+              share={meter.value / METER_MAX}
             />
-          </div>
+          </Meter>
         </div>
       ))}
     </section>

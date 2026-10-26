@@ -1,5 +1,6 @@
 "use client";
 
+import { PageSectionLabel } from "@zoonk/learn/page";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { ClockIcon, TargetIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -23,9 +24,7 @@ function ChallengeTeamList({
 
   return (
     <section aria-labelledby="challenge-team" className="flex w-full flex-col gap-3">
-      <ChallengeLabel as="h3" id="challenge-team">
-        {t("Your team")}
-      </ChallengeLabel>
+      <PageSectionLabel id="challenge-team">{t("Your team")}</PageSectionLabel>
 
       <ul className="flex flex-wrap gap-x-6 gap-y-3" data-slot="challenge-team">
         {content.team.map((slot) => {
@@ -66,10 +65,7 @@ export function ChallengeIntro({
   return (
     <PlayerReadScene className="gap-5 sm:gap-6">
       <div className="flex flex-col gap-3">
-        <LessonEyebrow
-          className="bg-warning/10 text-warning"
-          icon={<TargetIcon aria-hidden="true" />}
-        >
+        <LessonEyebrow icon={<TargetIcon aria-hidden="true" />}>
           {content.variant === "whatIf"
             ? t("What if · {setting}", { setting: fill(content.setting) })
             : t("Challenge · {setting}", { setting: fill(content.setting) })}
