@@ -2,29 +2,35 @@ import { PlayerPreview } from "@zoonk/player/preview";
 import { getPreviewEntry, previewLesson } from "@zoonk/player/preview/catalog";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
-import { connection } from "next/server";
 import { Suspense } from "react";
 import { readOption, readParam } from "../_utils/gallery-params";
 import { PreviewIntlProvider } from "./preview-intl-provider";
 
 export const metadata: Metadata = { title: "Preview" };
 
+/**
+ * The entry's lesson in the state the URL asks for (its first state otherwise), built once and then
+ * read, like the app's own lessons: building it draws ids and shuffles language options, which a
+ * prerender can't do outside a cache.
+ */
+async function getPreview(entryId: string, requestedState: string | undefined) {
+  "use cache";
+  const entry = getPreviewEntry(entryId);
+  const state = entry ? (readOption(entry.states, requestedState) ?? entry.states[0]) : undefined;
+  return entry && state ? { lesson: previewLesson(entry, state), state } : null;
+}
+
 async function PreviewScreen({ searchParams }: Pick<PageProps<"/preview">, "searchParams">) {
   const params = await searchParams;
-  const entry = getPreviewEntry(readParam(params.entry) ?? "");
-  const state = entry ? (readOption(entry.states, params.state) ?? entry.states[0]) : undefined;
+  const preview = await getPreview(readParam(params.entry) ?? "", readParam(params.state));
 
-  if (!entry || !state) {
+  if (!preview) {
     notFound();
   }
 
-  // Each load builds a new lesson (fresh ids, language options shuffled again), so it renders at
-  // request time, never in a prerender or prefetch.
-  await connection();
-
   return (
     <PreviewIntlProvider>
-      <PlayerPreview lesson={previewLesson(entry, state)} state={state} />
+      <PlayerPreview lesson={preview.lesson} state={preview.state} />
     </PreviewIntlProvider>
   );
 }
