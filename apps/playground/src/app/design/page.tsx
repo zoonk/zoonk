@@ -7,7 +7,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { type Metadata } from "next";
 import Link from "next/link";
 import { PreviewIntlProvider } from "../preview/preview-intl-provider";
-import { DocHeader, DocRules, DocSection, renderCode } from "./_components/doc";
+import { DevOnlySpecimen, DocHeader, DocRules, DocSection, renderCode } from "./_components/doc";
 import { MODES, modeClass } from "./_components/modes";
 import { DESIGN_PAGES } from "./_components/pages";
 
@@ -90,7 +90,9 @@ export default function DesignOverviewPage() {
         intro="The day's meter (done, the block in progress, practice), a pick in the text color, right in blue, wrong in pink-red, the status marks and a reward, in every mode."
         title="At a glance"
       >
-        <AtAGlance />
+        <DevOnlySpecimen>
+          <AtAGlance />
+        </DevOnlySpecimen>
       </DocSection>
 
       <DocSection title="Where it lives">

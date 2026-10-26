@@ -5,7 +5,14 @@ import { MissionsRing } from "@zoonk/learn/missions-ring";
 import { Buddy } from "@zoonk/ui/components/buddy";
 import { type Metadata } from "next";
 import { PreviewIntlProvider } from "../../preview/preview-intl-provider";
-import { DocHeader, DocRules, DocSection, Specimen, renderCode } from "../_components/doc";
+import {
+  DevOnlySpecimen,
+  DocHeader,
+  DocRules,
+  DocSection,
+  Specimen,
+  renderCode,
+} from "../_components/doc";
 
 export const metadata: Metadata = { title: "Special moments" };
 
@@ -35,18 +42,20 @@ function BuddyInRing({ done }: { done: number }) {
 
 function MissionsSpecimen() {
   return (
-    <div className="flex flex-wrap items-center gap-10">
-      <div className="flex items-center gap-4">
-        <BuddyInRing done={1} />
-        <BrainPowerReward brainPower={BRAIN_POWER} earned={false} points={REWARD_POINTS} />
-        <span className="text-muted-foreground text-xs">Still to do</span>
+    <DevOnlySpecimen>
+      <div className="flex flex-wrap items-center gap-10">
+        <div className="flex items-center gap-4">
+          <BuddyInRing done={1} />
+          <BrainPowerReward brainPower={BRAIN_POWER} earned={false} points={REWARD_POINTS} />
+          <span className="text-muted-foreground text-xs">Still to do</span>
+        </div>
+        <div className="flex items-center gap-4">
+          <BuddyInRing done={MISSIONS_TOTAL} />
+          <BrainPowerReward brainPower={BRAIN_POWER} earned points={REWARD_POINTS} />
+          <span className="text-muted-foreground text-xs">Every mission done</span>
+        </div>
       </div>
-      <div className="flex items-center gap-4">
-        <BuddyInRing done={MISSIONS_TOTAL} />
-        <BrainPowerReward brainPower={BRAIN_POWER} earned points={REWARD_POINTS} />
-        <span className="text-muted-foreground text-xs">Every mission done</span>
-      </div>
-    </div>
+    </DevOnlySpecimen>
   );
 }
 

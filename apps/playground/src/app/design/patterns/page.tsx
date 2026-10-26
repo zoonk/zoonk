@@ -24,7 +24,7 @@ import { Surface } from "@zoonk/learn/surface";
 import { Button } from "@zoonk/ui/components/button";
 import { type Metadata } from "next";
 import { PreviewIntlProvider } from "../../preview/preview-intl-provider";
-import { DoDont, DocHeader, DocSection, Specimen } from "../_components/doc";
+import { DevOnlySpecimen, DoDont, DocHeader, DocSection, Specimen } from "../_components/doc";
 
 export const metadata: Metadata = { title: "Components and patterns" };
 
@@ -44,23 +44,25 @@ function ActionsSpecimen() {
 
 function AnswersSpecimen() {
   return (
-    <AnswerOptionGroup className="max-w-column">
-      <AnswerOption marker={1} picked={false}>
-        At rest
-      </AnswerOption>
-      <AnswerOption marker={2} picked>
-        Picked, before it&apos;s checked
-      </AnswerOption>
-      <AnswerOption marker={3} picked result="right">
-        Checked right
-      </AnswerOption>
-      <AnswerOption marker={4} picked result="wrong">
-        Checked wrong
-      </AnswerOption>
-      <AnswerOption marker={5} picked={false} result="right">
-        The right answer the learner didn&apos;t pick
-      </AnswerOption>
-    </AnswerOptionGroup>
+    <DevOnlySpecimen>
+      <AnswerOptionGroup className="max-w-column">
+        <AnswerOption marker={1} picked={false}>
+          At rest
+        </AnswerOption>
+        <AnswerOption marker={2} picked>
+          Picked, before it&apos;s checked
+        </AnswerOption>
+        <AnswerOption marker={3} picked result="right">
+          Checked right
+        </AnswerOption>
+        <AnswerOption marker={4} picked result="wrong">
+          Checked wrong
+        </AnswerOption>
+        <AnswerOption marker={5} picked={false} result="right">
+          The right answer the learner didn&apos;t pick
+        </AnswerOption>
+      </AnswerOptionGroup>
+    </DevOnlySpecimen>
   );
 }
 

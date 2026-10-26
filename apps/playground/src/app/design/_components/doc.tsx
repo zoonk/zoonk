@@ -54,6 +54,24 @@ export function Specimen({ children, className }: React.PropsWithChildren<{ clas
   );
 }
 
+/**
+ * A specimen whose components speak through next-intl's `useExtracted`, which only the dev server
+ * runs without next-intl's compiler (the player's preview needs it too): a production build of the
+ * playground says so in its place instead of failing.
+ */
+export function DevOnlySpecimen({ children }: React.PropsWithChildren) {
+  if (process.env.NODE_ENV !== "production") {
+    return children;
+  }
+
+  return (
+    <p className="text-muted-foreground text-sm">
+      This specimen&apos;s components speak through next-intl; run the playground with `pnpm dev` to
+      see them.
+    </p>
+  );
+}
+
 /** What to do and what not, side by side. */
 export function DoDont({ avoid, follow }: { avoid: readonly string[]; follow: readonly string[] }) {
   return (
