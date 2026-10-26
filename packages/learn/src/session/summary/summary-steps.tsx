@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { StepDots } from "../../_components/step-dots";
 import { StepsBackButton, focusStepTitle } from "../../_components/steps";
 import { TaskActions } from "../../_components/task-layout";
+import { isFocusLost } from "../../_utils/is-focus-lost";
 import { TaskFrame, TaskMainButton } from "../../shell/task-frame";
 import { OpenNextStep } from "../open-next-step";
 import { SessionHeader } from "../session-header";
@@ -117,6 +118,16 @@ export function SummarySteps() {
       focusStepTitle(stepRef.current);
     }
   }, [momentShown]);
+
+  // So does a summary the learner just reached with the focus nowhere (the tapped "Stop for today"
+  // went with the screen before it), so a screen reader starts at its title.
+  const shown = stopped || summary.finished;
+
+  useEffect(() => {
+    if (shown && isFocusLost(document.activeElement)) {
+      focusStepTitle(stepRef.current);
+    }
+  }, [shown]);
 
   if (!stopped && !summary.finished) {
     return (

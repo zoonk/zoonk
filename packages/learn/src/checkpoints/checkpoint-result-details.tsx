@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { StepRow, StepRows } from "../_components/step-card";
+import { getOwnBrainPower } from "../session/block-brain-power";
 import { useCheckpointScreen } from "./checkpoint-context";
 import { phaseNumber, usePhaseLabel } from "./checkpoint-labels";
 import { useIsWon, useRetry } from "./use-checkpoint-outcome";
@@ -24,7 +25,10 @@ function DetailsSection({ children, title }: { children: React.ReactNode; title:
   );
 }
 
-/** The Brain Power the duel added, its value in the mono face and green on the row's right. */
+/**
+ * The Brain Power the duel added, its value in the mono face and Brain Power's violet on the row's
+ * right, as every reward amount reads.
+ */
 function BrainPowerRow({ points }: { points: number }) {
   const t = useExtracted();
   const format = useFormatter();
@@ -33,7 +37,7 @@ function BrainPowerRow({ points }: { points: number }) {
     <StepRow>
       <BrainIcon aria-hidden="true" />
       <span className="min-w-0 flex-1 font-medium">{t("Brain Power")}</span>
-      <span className="text-success-text shrink-0 font-mono text-xs font-medium tabular-nums">
+      <span className="text-brain-text shrink-0 font-mono text-xs font-medium tabular-nums">
         {t("+{points}", { points: format.number(points) })}
       </span>
     </StepRow>
@@ -42,8 +46,8 @@ function BrainPowerRow({ points }: { points: number }) {
 
 /**
  * What a won checkpoint (or a finished weekly one) earned: its Brain Power (what the duel actually
- * earned, answers included, right after it), the phase it checks off and the "Trap hunter" badge;
- * then the phase that comes next, by its name.
+ * earned, answers included, right after it; the day's bonus it paid is the missions' to show),
+ * the phase it checks off and the "Trap hunter" badge; then the phase that comes next, by its name.
  */
 function WonDetails() {
   const t = useExtracted();
@@ -51,7 +55,8 @@ function WonDetails() {
   const { checkpoint, duel } = useCheckpointScreen();
   const { nextPhase, reward } = checkpoint;
   const phase = phaseNumber(checkpoint);
-  const points = duel.state.completion?.brainPower ?? reward.brainPower;
+  const completion = duel.state.completion;
+  const points = completion ? getOwnBrainPower(completion) : reward.brainPower;
   const showsNextPhase = nextPhase && reward.phaseComplete && checkpoint.kind !== "weekly";
 
   return (
@@ -97,7 +102,7 @@ function NotWonDetails() {
   const phaseLabel = usePhaseLabel();
   const { checkpoint, duel } = useCheckpointScreen();
   const retry = useRetry();
-  const earned = duel.state.completion?.brainPower ?? 0;
+  const earned = duel.state.completion ? getOwnBrainPower(duel.state.completion) : 0;
   const showsNextPhase = checkpoint.nextPhase && checkpoint.retry !== "passed";
 
   return (

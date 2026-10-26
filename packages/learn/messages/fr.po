@@ -1100,6 +1100,20 @@ msgctxt "buddyNames.vPjK_E"
 msgid "Zu"
 msgstr "Zu"
 
+#: src/ceremonies/milestone-ceremony.tsx
+#: src/conversation/tutor-plan-change.tsx
+#: src/mock/mock-result-actions.tsx
+#: src/plan/plan-fit-suggestion.tsx
+#: src/plan/plan-offer-preview.tsx
+#: src/plan/plan-past-date-suggestion.tsx
+#: src/research/upload-request-card.tsx
+#: src/today/today-insight.tsx
+#: src/today/today-plan-change.tsx
+#: src/today/today-suggested-goal.tsx
+msgctxt "dUCA4K"
+msgid "Not now"
+msgstr "Pas maintenant"
+
 #: src/ceremonies/use-ceremony-copy.ts
 msgctxt "Lxi2Lv"
 msgid "For winning your first phase challenge."
@@ -2136,19 +2150,6 @@ msgstr "Utiliser quand même ma date"
 msgctxt "EWw_tK"
 msgid "Apply"
 msgstr "Appliquer"
-
-#: src/conversation/tutor-plan-change.tsx
-#: src/mock/mock-result-actions.tsx
-#: src/plan/plan-fit-suggestion.tsx
-#: src/plan/plan-offer-preview.tsx
-#: src/plan/plan-past-date-suggestion.tsx
-#: src/research/upload-request-card.tsx
-#: src/today/today-insight.tsx
-#: src/today/today-plan-change.tsx
-#: src/today/today-suggested-goal.tsx
-msgctxt "dUCA4K"
-msgid "Not now"
-msgstr "Pas maintenant"
 
 #: src/conversation/tutor-plan-change.tsx
 msgctxt "eUZEWb"
@@ -11722,9 +11723,14 @@ msgid "Level up!"
 msgstr "Niveau supérieur !"
 
 #: src/session/reached-moment.tsx
-msgctxt "33CMyI"
-msgid "Right answers keep it there. A day away lowers it a little."
-msgstr "Les bonnes réponses la maintiennent à ce niveau. Un jour d’absence la fait légèrement baisser."
+msgctxt "K1evK3"
+msgid "As high as Energy goes."
+msgstr "L’Énergie est au maximum."
+
+#: src/session/reached-moment.tsx
+msgctxt "ejGTo0"
+msgid "{buddy} is glowing as bright as it gets."
+msgstr "{buddy} brille aussi fort que possible."
 
 #: src/session/reached-moment.tsx
 msgctxt "n6B3nB"

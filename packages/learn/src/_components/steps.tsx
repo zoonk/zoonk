@@ -31,8 +31,9 @@ export type StepsItem = {
    */
   option?: React.ReactNode;
   /**
-   * A full-screen moment over this step (a ceremony), shown once as the learner reaches it. It
-   * calls `close` when it's over, and the step under it takes the focus.
+   * A full-screen moment for this step (a ceremony), shown once as the learner reaches it, before
+   * the step itself, so the step's own motion doesn't play hidden behind it. It calls `close` when
+   * it's over, and the step takes the focus.
    */
   moment?: (close: () => void) => React.ReactNode;
 };
@@ -148,7 +149,7 @@ export function Steps({
     focusStepTitle(stepRef.current);
   }, [current]);
 
-  // Once a moment over the step closes, the step under it takes the focus.
+  // Once a moment before the step closes, the step takes the focus.
   useEffect(() => {
     if (momentsShown.length > 0) {
       focusStepTitle(stepRef.current);
@@ -159,7 +160,7 @@ export function Steps({
     return null;
   }
 
-  const showsMoment = item.moment && !momentsShown.includes(item.id);
+  const moment = item.moment && !momentsShown.includes(item.id) ? item.moment : null;
 
   const closeMoment = () => setMomentsShown((shown) => [...shown, item.id]);
 
@@ -169,24 +170,26 @@ export function Steps({
       closeOnEscape
       exitHref={exitHref}
       footer={
-        <>
-          <TaskActions>
-            {phone.back !== -1 && <StepsBackButton onClick={back} />}
-            {item.action}
-            {!isLastHere && (
-              <TaskMainButton
-                className={cn(isLastWide && "lg:hidden")}
-                onClick={() => move("next")}
-              >
-                {t("Continue")}
-              </TaskMainButton>
-            )}
-            {isLastWide && <WideOnly when={!isLastHere}>{finalAction}</WideOnly>}
-            {ask}
-          </TaskActions>
-          {item.option}
-          {isLastWide && <WideOnly when={!isLastHere}>{finalOptions}</WideOnly>}
-        </>
+        moment ? null : (
+          <>
+            <TaskActions>
+              {phone.back !== -1 && <StepsBackButton onClick={back} />}
+              {item.action}
+              {!isLastHere && (
+                <TaskMainButton
+                  className={cn(isLastWide && "lg:hidden")}
+                  onClick={() => move("next")}
+                >
+                  {t("Continue")}
+                </TaskMainButton>
+              )}
+              {isLastWide && <WideOnly when={!isLastHere}>{finalAction}</WideOnly>}
+              {ask}
+            </TaskActions>
+            {item.option}
+            {isLastWide && <WideOnly when={!isLastHere}>{finalOptions}</WideOnly>}
+          </>
+        )
       }
       headerTitle={
         phone.total > 1 ? (
@@ -205,11 +208,13 @@ export function Steps({
         ) : null
       }
     >
-      <div className="flex flex-col gap-4" data-slot="steps-step" key={item.id} ref={stepRef}>
-        {item.content}
-      </div>
-
-      {showsMoment && item.moment?.(closeMoment)}
+      {moment ? (
+        moment(closeMoment)
+      ) : (
+        <div className="flex flex-col gap-4" data-slot="steps-step" key={item.id} ref={stepRef}>
+          {item.content}
+        </div>
+      )}
     </TaskFrame>
   );
 }

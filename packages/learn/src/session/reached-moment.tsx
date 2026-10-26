@@ -118,7 +118,9 @@ function EnergyReached({ buddy, energy }: { buddy?: LearnBuddy | null; energy: n
 
   const detail = () => {
     if (max) {
-      return t("Right answers keep it there. A day away lowers it a little.");
+      return buddy === undefined
+        ? t("As high as Energy goes.")
+        : t("{buddy} is glowing as bright as it gets.", { buddy: name });
     }
 
     if (energy === GLOWING_ENERGY && buddy !== undefined) {

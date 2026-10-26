@@ -15,8 +15,9 @@ import { useFormatDuration } from "../_utils/time-format";
 import { SCREEN_STEADY_MS } from "../_utils/use-steady";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { MissionMoment } from "../missions/mission-moment";
+import { getOwnBrainPower } from "./block-brain-power";
 import { getBlockKind } from "./block-kind";
-import { type MomentCeremony, MomentCeremonyOnce } from "./moment-ceremony";
+import { MomentAfterCeremony, type MomentCeremony } from "./moment-ceremony";
 import { ReachedMoment } from "./reached-moment";
 import { SessionFrame } from "./session-frame";
 import { SessionHeader } from "./session-header";
@@ -38,7 +39,7 @@ import { useSessionAction } from "./use-session-action";
 function MomentFacts({ moment }: { moment: StudyMomentView }) {
   const t = useExtracted();
   const format = useFormatter();
-  const brainPower = moment.brainPower - (moment.fullMeal.paid ? moment.fullMeal.bonus : 0);
+  const brainPower = getOwnBrainPower(moment);
 
   const facts = [
     moment.comesBackOn &&
@@ -103,7 +104,9 @@ function ActionFailed({ children }: { children: React.ReactNode }) {
 
 /**
  * The moment's action bar: "Stop for today" beside Continue (what's done counts, the rest waits on
- * Today), or "See today's summary" alone once the session is done.
+ * Today), or "See today's summary" alone once the session is done. On a phone Continue keeps the
+ * bar's bottom row, where the last answer's Continue was, and "Stop for today" sits above it, so a
+ * quick second tap never stops the session.
  */
 function MomentActions({
   onContinue,
@@ -132,7 +135,7 @@ function MomentActions({
       )}
       {stop.failed && <ActionFailed>{t("We couldn't stop the session. Try again.")}</ActionFailed>}
 
-      <TaskActions>
+      <TaskActions className={cn(!sessionCompleted && "max-lg:flex-col max-lg:items-stretch")}>
         {!sessionCompleted && (
           <Button disabled={stop.isPending} onClick={stop.run} size="xl" variant="outline">
             {t("Stop for today")}
@@ -238,9 +241,7 @@ export function StudyMoment({
       : null;
 
   const content = (
-    <>
-      <MomentCeremonyOnce milestone={moment.ceremony} render={renderCeremony} />
-
+    <MomentAfterCeremony milestone={moment.ceremony} render={renderCeremony}>
       <TaskBody data-slot="study-moment">
         <div className="flex flex-col gap-2">
           <MomentTitle title={title} />
@@ -272,7 +273,7 @@ export function StudyMoment({
         onStop={onStop}
         sessionCompleted={moment.sessionCompleted}
       />
-    </>
+    </MomentAfterCeremony>
   );
 
   if (!hasHeader) {

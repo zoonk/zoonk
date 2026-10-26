@@ -36,25 +36,27 @@ test.describe("A checkpoint from today's session", () => {
 
     await playDuel(page, { keyboard: true, passMark: CHECKPOINT_PASS_MARK });
 
-    // Winning the first checkpoint earned the Star glasses: their moment opens right over the
-    // duel's result, and Enter puts them on.
+    // Winning the first checkpoint earned the Star glasses: their moment opens first, right after
+    // the duel, and Enter puts them on.
     const ceremony = page.getByRole("dialog", { name: "Star glasses!" });
     await expect(ceremony.getByRole("button", { name: "Wear them" })).toBeFocused();
     await pressUntil(() => page.keyboard.press("Enter"), ceremony, { state: "hidden" });
 
-    // The result under it takes the focus.
+    // Then the duel's result shows, and takes the focus.
     await expect(
       page.getByRole("heading", { level: 1, name: "You beat the Trickster!" }),
     ).toBeFocused();
 
-    // Enter leaves the single-screen result for the session.
+    // Enter leaves the single-screen result for the session. The checkpoint was the day's only
+    // block, so the session shows the day's summary, without the glasses' moment again.
     await expect(page.getByRole("link", { name: "Continue" })).toHaveAttribute("href", "/session");
-    await page.keyboard.press("Enter");
 
-    // The checkpoint was the day's only block, so the session shows the day's summary, without the
-    // glasses' moment again.
+    await pressUntil(
+      () => page.keyboard.press("Enter"),
+      page.getByRole("heading", { level: 1, name: /^Done in /u }),
+    );
+
     await expect(page).toHaveURL(/\/session$/u);
-    await expect(page.getByRole("heading", { level: 1, name: /^Done in /u })).toBeVisible();
     await expect(ceremony).toBeHidden();
     await expect(page.getByRole("link", { name: "Finish" })).toBeVisible();
     await page.keyboard.press("Enter");

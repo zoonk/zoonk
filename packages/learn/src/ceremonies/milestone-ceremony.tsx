@@ -11,6 +11,7 @@ import {
 } from "@zoonk/ui/components/dialog";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { type BuddyGlasses } from "@zoonk/utils/buddy";
+import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import {
   TASK_MAIN_ACTION_CLASS,
@@ -100,13 +101,30 @@ function CeremonyText({ detail, title }: { detail: string; title: string }) {
 }
 
 /**
- * The moment's one action in the pinned action bar, where every task's main action is: focused as
- * it opens, so Enter presses it.
+ * The moment's action in the pinned action bar, where every task's main action is: focused as it
+ * opens, so Enter presses it. "Not now" beside it (`onDecline`) when the action changes something,
+ * such as putting new glasses on.
  */
-function CeremonyBar({ action, onConfirm }: { action: string; onConfirm: () => void }) {
+function CeremonyBar({
+  action,
+  onConfirm,
+  onDecline,
+}: {
+  action: string;
+  onConfirm: () => void;
+  onDecline?: () => void;
+}) {
+  const t = useExtracted();
+
   return (
     <TaskActionBar>
       <TaskActions>
+        {onDecline && (
+          <Button className="shrink-0" onClick={onDecline} size="xl" variant="outline">
+            {t("Not now")}
+          </Button>
+        )}
+
         <Button
           aria-keyshortcuts="Enter"
           autoFocus
@@ -152,6 +170,12 @@ function CeremonyMoment({
     setOpen(false);
   }
 
+  function decline() {
+    if (isSteady()) {
+      setOpen(false);
+    }
+  }
+
   return (
     <Dialog
       onOpenChange={setOpen}
@@ -173,7 +197,11 @@ function CeremonyMoment({
             <CeremonyText detail={copy.detail} title={copy.title} />
           </TaskBody>
 
-          <CeremonyBar action={copy.action} onConfirm={() => void confirm()} />
+          <CeremonyBar
+            action={copy.action}
+            onConfirm={() => void confirm()}
+            onDecline={canWear ? decline : undefined}
+          />
         </DialogPopup>
       </DialogPortal>
     </Dialog>
