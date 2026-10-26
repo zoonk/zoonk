@@ -183,7 +183,7 @@ function PageBarStart({
           aria-hidden="true"
           className="hidden min-w-0 items-center gap-1.5 text-[0.8125rem] lg:flex"
         >
-          <span className="text-faint before:content-['/']" />
+          {back.label && <span className="text-faint before:content-['/']" />}
           <span className="truncate font-medium">{title}</span>
         </span>
       )}

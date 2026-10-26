@@ -3,7 +3,6 @@ import { NotFoundPage } from "@/components/errors/not-found-page";
 import { ClientMessagesProvider } from "@/i18n/client-messages-provider";
 import { Link } from "@/i18n/navigation";
 import { type EarlierQuestion, listEarlierQuestions } from "@zoonk/core/lesson-questions/earlier";
-import { LearnPageBar } from "@zoonk/learn/bar";
 import { Page, PageHeader, PageHeaderContent, PageSubtitle, PageTitle } from "@zoonk/learn/page";
 import { LessonQuestionMarkdown } from "@zoonk/player/tutor/markdown";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -11,6 +10,7 @@ import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import { LearnNotFound } from "../../_components/learn-not-found";
+import { EarlierQuestionsBar } from "./earlier-questions-bar";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
@@ -75,7 +75,7 @@ async function EarlierQuestionsContent({ searchParams }: Pick<Props, "searchPara
 
   return (
     <>
-      <LearnPageBar back={{ href: "/buddy" }} title={t("Earlier questions")} />
+      <EarlierQuestionsBar title={t("Earlier questions")} />
 
       <Page>
         <PageHeader>
