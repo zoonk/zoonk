@@ -3,6 +3,7 @@
 import { type SyllabusSubject, type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
+import { BigQuantity } from "../_components/big-quantity";
 import { CoverageBar } from "../_components/coverage-bar";
 import { DetailAsideSection, DetailProperties, DetailProperty } from "../_components/detail-page";
 import { KindDot } from "../_components/kind-tile";
@@ -13,6 +14,7 @@ import {
   ListRowLink,
   ListRowTitle,
 } from "../_components/list-group";
+import { PAGE_SECTION_TITLE_CLASS } from "../_components/page";
 import { useFormatProgressShare } from "../_utils/percent";
 import { useFormatPlanDate } from "../plan/plan-date-text";
 
@@ -49,9 +51,9 @@ function SubjectMastery({ mastery }: { mastery: SyllabusSubject["mastery"] }) {
 }
 
 /**
- * An exam subject's preparation: the bar and the share the Plan's row has for it, named where no
- * section title above it does (under the subject's facts, below 72rem), and how much practice
- * backs it.
+ * An exam subject's preparation: the share the Plan's row has for it as a readout with its meter
+ * under it, named where no section title above it does (under the subject's facts, below 72rem,
+ * where the readout is a step smaller under the page's title), and how much practice backs it.
  */
 function SubjectPreparation({
   className,
@@ -69,12 +71,12 @@ function SubjectPreparation({
 
   return (
     <div className={cn("flex flex-col gap-2", className)} data-slot="subject-preparation">
-      {labelled && <span className="text-label">{t("Preparation")}</span>}
+      {labelled && <span className={PAGE_SECTION_TITLE_CLASS}>{t("Preparation")}</span>}
 
-      <span className="flex items-center gap-3">
-        <CoverageBar className="h-1.5 flex-1" studied={share} />
-        <span className="font-mono text-sm tabular-nums">{formatShare(share)}</span>
-      </span>
+      <BigQuantity className={labelled ? "text-2xl" : "text-[2rem]"}>
+        {formatShare(share)}
+      </BigQuantity>
+      <CoverageBar studied={share} />
 
       <SubjectMastery mastery={mastery} />
     </div>
@@ -124,7 +126,7 @@ export function SubjectCoverage({
 
   return (
     <div className={cn("flex flex-col gap-2", className)} data-slot="subject-coverage">
-      <CoverageBar className="h-1.5" known={coverage.known} studied={coverage.studied} />
+      <CoverageBar known={coverage.known} studied={coverage.studied} />
       <ul className="text-muted-foreground flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.71875rem]">
         {parts.map((part) => (
           <li className="flex items-center gap-1.5" key={part.label}>

@@ -3,6 +3,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { MeterPart, MeterParts } from "../_components/meter";
 import { StatusMark } from "../_components/status-mark";
 import { getPhaseWeight, getShareInPhase } from "../plan/phase-weight";
 import { usePlanScreen } from "../plan/plan-context";
@@ -23,8 +24,8 @@ import {
 const PERCENT = 100;
 
 /**
- * The phases on a phone: a thin segmented bar in time (each filling blue with its lessons done, the
- * current one outlined over its fill, as Today's block in progress is), and where the learner is
+ * The phases on a phone: a meter of parts in time (each filling blue with its lessons done, the
+ * current one ringed over its fill, as Today's block in progress is), and where the learner is
  * under it. With `onOpen` it's one button opening every phase (the Plan's "Phases" sheet); without,
  * it's only there to read, as when the path below names every phase.
  */
@@ -41,24 +42,25 @@ function RoadmapCompact({
 
   const content = (
     <>
-      <span aria-hidden="true" className="flex h-1 w-full gap-[3px]">
+      <MeterParts as="span">
         {phases.map((phase) => (
-          <span
+          <MeterPart
+            as="span"
             className={cn(
-              "bg-surface-3 relative min-w-6 basis-0 overflow-hidden rounded-[2px]",
+              "relative min-w-6 overflow-hidden",
               phase.state === "current" &&
-                "after:ring-success after:absolute after:inset-0 after:rounded-[inherit] after:ring-1 after:ring-inset",
+                "after:ring-success after:absolute after:inset-0 after:rounded-[inherit] after:ring-[1.5px] after:ring-inset",
             )}
             key={phase.index}
-            style={{ flexGrow: getPhaseWeight(phase) }}
+            weight={getPhaseWeight(phase)}
           >
             <span
               className="bg-success absolute inset-y-0 left-0"
               style={{ width: `${getLessonShare(phase) * PERCENT}%` }}
             />
-          </span>
+          </MeterPart>
         ))}
-      </span>
+      </MeterParts>
 
       {position && (
         <span className="flex w-full items-baseline justify-between gap-3 text-xs">

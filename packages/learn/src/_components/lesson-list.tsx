@@ -13,6 +13,7 @@ import {
   ListRowTitle,
   ListRowTrailing,
 } from "./list-group";
+import { MeterPart, MeterParts } from "./meter";
 import { PageSection, PageSectionDetail, PageSectionHeader, PageSectionTitle } from "./page";
 import { PlusMark } from "./plus-lock";
 import { StatusMark } from "./status-mark";
@@ -134,8 +135,8 @@ export function LessonList({
 }
 
 /**
- * A chapter's or unit's lessons as one segmented bar, one segment per lesson, blue once done, so
- * the aside shows at a glance how far the learner is ("1 of 3").
+ * A chapter's or unit's lessons as a meter of parts, one per lesson, blue once done, so the aside
+ * shows at a glance how far the learner is ("1 of 3").
  */
 export function LessonProgress({
   lessons,
@@ -143,16 +144,14 @@ export function LessonProgress({
   lessons: readonly Pick<ListedLesson, "lessonId" | "state">[];
 }) {
   return (
-    <span aria-hidden="true" className="flex h-1 w-full gap-[3px]" data-slot="lesson-progress">
+    <MeterParts as="span" data-slot="lesson-progress">
       {lessons.map((lesson) => (
-        <span
-          className={cn(
-            "min-w-1 flex-1 rounded-[2px]",
-            lesson.state === "done" ? "bg-success" : "bg-surface-3",
-          )}
+        <MeterPart
+          as="span"
+          className={cn(lesson.state === "done" && "bg-success")}
           key={lesson.lessonId}
         />
       ))}
-    </span>
+    </MeterParts>
   );
 }

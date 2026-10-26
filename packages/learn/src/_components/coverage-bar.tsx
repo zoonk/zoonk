@@ -32,7 +32,7 @@ export function CoverageBar({
   return (
     <span
       aria-hidden="true"
-      className={cn("bg-surface-3 flex h-1 w-full overflow-hidden rounded-[2px]", className)}
+      className={cn("bg-surface-3 flex h-1.5 w-full overflow-hidden rounded-[3px]", className)}
       data-slot="coverage-bar"
     >
       <span className="bg-success h-full" style={{ width: `${studiedShare * PERCENT}%` }} />
