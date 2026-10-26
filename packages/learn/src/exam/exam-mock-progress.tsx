@@ -139,8 +139,8 @@ function SubjectRow({ trend, trends }: { trend: SubjectTrend; trends: boolean })
       {trends ? (
         <Sparkline values={trend.percents} />
       ) : (
-        <Meter className="bg-surface-3 h-1 w-20 rounded-[2px] sm:w-36">
-          <MeterFill className="bg-success rounded-[2px]" share={latest / PERCENT} />
+        <Meter className="w-20 sm:w-36">
+          <MeterFill className="bg-success" share={latest / PERCENT} />
         </Meter>
       )}
       <span className="w-10 text-right font-mono text-xs tabular-nums">{`${latest}%`}</span>

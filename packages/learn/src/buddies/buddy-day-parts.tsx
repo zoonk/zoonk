@@ -4,7 +4,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Meter, MeterFill } from "../_components/meter";
-import { SectionLabel } from "../_components/section-label";
+import { PAGE_SECTION_TITLE_CLASS, PageSectionTitle } from "../_components/page";
 import { useFormatShare } from "../_utils/percent";
 import { toBeltColor, useBeltName } from "../_utils/use-belt-name";
 import { LearnLink } from "../learn-link";
@@ -57,7 +57,7 @@ function EnergyStarts() {
 
   return (
     <section className="flex flex-col gap-1">
-      <SectionLabel>{t("Energy")}</SectionLabel>
+      <PageSectionTitle>{t("Energy")}</PageSectionTitle>
       <p className="text-muted-foreground text-[0.8125rem] leading-snug">
         {t("Energy starts with your first lesson and grows as you learn.")}
       </p>
@@ -66,9 +66,9 @@ function EnergyStarts() {
 }
 
 /**
- * Energy is the buddy's: its label with its share in the mono face, a thin amber bar and one
- * line, the whole of it opening Energy's history. The day's sheet and the conversation's aside
- * both lead with it.
+ * Energy is the buddy's: its name with its share in the mono face, an amber meter and one line,
+ * the whole of it opening Energy's history. The day's sheet and the conversation's aside both lead
+ * with it.
  */
 export function BuddyEnergy({
   className,
@@ -101,15 +101,15 @@ export function BuddyEnergy({
       href={href}
     >
       <span className="flex items-center justify-between gap-3">
-        <span className="text-label">{t("Energy")}</span>
+        <span className={PAGE_SECTION_TITLE_CLASS}>{t("Energy")}</span>
         <span className="flex items-center gap-0.5 font-mono text-[0.8125rem] font-medium tabular-nums">
           {formatShare(share)}
           <ChevronRightIcon aria-hidden="true" className="text-muted-foreground/60 size-3.5" />
         </span>
       </span>
 
-      <Meter className="bg-surface-3 h-1 rounded-[2px]">
-        <MeterFill className="bg-energy rounded-[2px]" share={share} />
+      <Meter>
+        <MeterFill className="bg-energy" share={share} />
       </Meter>
 
       <span className="text-muted-foreground text-[0.8125rem] leading-snug">{line}</span>

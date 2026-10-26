@@ -134,11 +134,17 @@ export function ContributionCalendarCaption({
 
 /**
  * Gives each contribution calendar a visible heading while keeping its
- * typography consistent across metrics and applications.
+ * typography consistent across metrics and applications: a page block's
+ * title in sentence case ("Past 12 months"), as every block of a page is
+ * named, never an uppercase label.
  */
 export function ContributionCalendarTitle({ children, className, ...props }: ComponentProps<"h2">) {
   return (
-    <h2 className={cn("text-label", className)} data-slot="contribution-calendar-title" {...props}>
+    <h2
+      className={cn("text-sm leading-5 font-semibold tracking-[-0.01em]", className)}
+      data-slot="contribution-calendar-title"
+      {...props}
+    >
       {children}
     </h2>
   );

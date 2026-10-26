@@ -2,8 +2,8 @@
 
 import { type ExamMockSummary } from "@zoonk/core/exams/view/contract";
 import { useExtracted } from "next-intl";
+import { DetailAsideSection } from "../_components/detail-page";
 import { ListGroup } from "../_components/list-group";
-import { TaskAsideSection } from "../_components/task-layout";
 import { MockSummaryRow } from "./mock-summary-row";
 
 /**
@@ -24,10 +24,14 @@ export function ChooserLastMock({
   }
 
   return (
-    <TaskAsideSection className="max-[72rem]:hidden" title={t("Your last mock exam")}>
+    <DetailAsideSection
+      className="max-[72rem]:hidden"
+      title={t("Your last mock exam")}
+      titleId="mock-chooser-last-mock-title"
+    >
       <ListGroup>
         <MockSummaryRow href={mock.blockId ? resultHref(mock.blockId) : null} mock={mock} stacked />
       </ListGroup>
-    </TaskAsideSection>
+    </DetailAsideSection>
   );
 }

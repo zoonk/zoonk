@@ -6,6 +6,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { PaperclipIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
+import { PageSectionTitle } from "../../_components/page";
 import { type GoalError } from "../goal-errors";
 import {
   OnboardingColumn,
@@ -80,7 +81,7 @@ export function GoalEntry({
   return (
     <OnboardingColumn className={cn(section && "gap-4")}>
       {section ? (
-        <h2 className="text-label">{t("Start a goal")}</h2>
+        <PageSectionTitle>{t("Start a goal")}</PageSectionTitle>
       ) : (
         <OnboardingHeading>
           <OnboardingTitle>{t("What do you want to achieve?")}</OnboardingTitle>

@@ -10,7 +10,7 @@ import {
   ListRowDescription,
   ListRowTitle,
 } from "../_components/list-group";
-import { TaskAsideSection } from "../_components/task-layout";
+import { PageSectionLabel } from "../_components/page";
 import { useFormatDuration } from "../_utils/time-format";
 import { ChooserLastMock } from "./mock-chooser-last-mock";
 import { MockLeftOutNote } from "./mock-notes";
@@ -29,7 +29,8 @@ type PickedSize = { estimatedMinutes: number; minutes: number; questions: number
 /**
  * The picked mock in the page's aside from 72rem, where a narrower screen has its size on the row:
  * its questions, time limit and about how long learners take as properties, then what it asks
- * (`asks`: the subjects, or the exam's parts it sits) with the written parts beside its questions.
+ * (`asks`: the subjects, or the exam's parts it sits, named as a group of its section) with the
+ * written parts beside its questions.
  */
 export function ChooserPicked({
   asks,
@@ -58,7 +59,8 @@ export function ChooserPicked({
       </DetailProperties>
 
       {asks.names.length + written.length > 0 && (
-        <TaskAsideSection title={asks.title}>
+        <section className="flex flex-col gap-1">
+          <PageSectionLabel>{asks.title}</PageSectionLabel>
           <ListGroup>
             {asks.names.map((name) => (
               <ListRow key={name}>
@@ -76,7 +78,7 @@ export function ChooserPicked({
               </ListRow>
             ))}
           </ListGroup>
-        </TaskAsideSection>
+        </section>
       )}
     </div>
   );

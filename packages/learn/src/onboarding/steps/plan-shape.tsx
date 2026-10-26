@@ -2,7 +2,8 @@
 
 import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { useExtracted, useFormatter } from "next-intl";
-import { SectionLabel } from "../../_components/section-label";
+import { Meter, MeterFill } from "../../_components/meter";
+import { PageSectionTitle } from "../../_components/page";
 import { getChapterKey, isWritingAhead, useChapterTitle } from "../../journey/journey-chapters";
 import { PlanRoadmap } from "../../journey/plan-roadmap";
 import { usePlanScreen } from "../../plan/plan-context";
@@ -32,7 +33,7 @@ export function PlanPhasesBar() {
 
   return (
     <section aria-labelledby="plan-phases" className="flex flex-col gap-2.5">
-      <SectionLabel id="plan-phases">{t("Phases")}</SectionLabel>
+      <PageSectionTitle id="plan-phases">{t("Phases")}</PageSectionTitle>
       <PlanRoadmap density="reveal" />
     </section>
   );
@@ -61,7 +62,7 @@ export function PlanChapterList() {
 
   return (
     <section aria-labelledby="plan-chapters" className="flex flex-col gap-1">
-      <SectionLabel id="plan-chapters">{t("Chapters")}</SectionLabel>
+      <PageSectionTitle id="plan-chapters">{t("Chapters")}</PageSectionTitle>
 
       <ol className="flex flex-col [&>li+li]:border-t">
         {chapters.slice(0, ROWS_SHOWN).map((chapter, index) => (
@@ -116,7 +117,7 @@ export function AreaWeights({ syllabus }: { syllabus: SyllabusView | null }) {
 
   return (
     <section aria-labelledby="plan-weights" className="flex flex-col gap-1">
-      <SectionLabel id="plan-weights">{t("Weight by area")}</SectionLabel>
+      <PageSectionTitle id="plan-weights">{t("Weight by area")}</PageSectionTitle>
 
       <ul className="flex flex-col [&>li+li]:border-t">
         {weighed.map((area) => (
@@ -126,12 +127,9 @@ export function AreaWeights({ syllabus }: { syllabus: SyllabusView | null }) {
               className="bg-muted-foreground size-1.5 shrink-0 rounded-full"
             />
             <span className="min-w-0 flex-1 text-sm font-medium text-pretty">{area.name}</span>
-            <span aria-hidden="true" className="bg-surface-3 h-1 w-20 shrink-0 rounded-xs sm:w-36">
-              <span
-                className="bg-foreground block h-full rounded-xs"
-                style={{ width: `${area.weight.share * 100}%` }}
-              />
-            </span>
+            <Meter as="span" className="w-20 shrink-0 sm:w-36">
+              <MeterFill as="span" share={area.weight.share} />
+            </Meter>
             <span className="text-muted-foreground w-10 shrink-0 text-right font-mono text-xs tabular-nums">
               {area.weight.basis === "assumed"
                 ? t("~{percent}", { percent: formatPercent(area.weight.percent) })

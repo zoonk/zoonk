@@ -9,7 +9,7 @@ import { useExtracted } from "next-intl";
 import { type ReactNode, useState } from "react";
 import { ChoiceRows } from "../_components/choice-rows";
 import { DetailAsideSection, DetailContent } from "../_components/detail-page";
-import { SectionLabel } from "../_components/section-label";
+import { PageSectionLabel } from "../_components/page";
 import {
   ChooserHeader,
   ChooserLayout,
@@ -90,7 +90,7 @@ function MockOptionLists({
 
       {subjectChoices.length > 0 && (
         <section aria-labelledby="mock-subjects-title" className="flex flex-col gap-1">
-          <SectionLabel id="mock-subjects-title">{t("One subject")}</SectionLabel>
+          <PageSectionLabel id="mock-subjects-title">{t("One subject")}</PageSectionLabel>
           <ChoiceRows
             choices={subjectChoices}
             label={t("One subject")}

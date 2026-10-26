@@ -27,6 +27,7 @@ import { LevelValue } from "../language/progress/level-value";
 import { SkillLevelsCard } from "../language/progress/skill-levels-card";
 import { SpeakingMockCard } from "../language/progress/speaking-mock-card";
 import { PaceDetails, usePaceNumber } from "./pace-details";
+import { NumberButton, type PlanNumber, type PlanNumberVariant } from "./plan-number-button";
 import { PreparationDetails } from "./preparation/preparation-details";
 
 const PERCENT = 100;
@@ -80,17 +81,6 @@ function WeekGain({ gain }: { gain: number }) {
 }
 
 /**
- * A number as the Plan shows it: what it is, its value and one line under it. A value in words
- * ("On pace", "Ended", "Not yet") stays in the text face; `numeric` draws a share or a level in mono.
- */
-type PlanNumber = {
-  detail: React.ReactNode;
-  label: string;
-  numeric?: boolean;
-  value: React.ReactNode;
-};
-
-/**
  * "Speaking leads": the skill ahead of the others, under the level, or that they're even. Nothing
  * before the first levels.
  */
@@ -131,12 +121,14 @@ function useStandingNumber(standing: JourneyStanding): PlanNumber {
       detail: <WeekGain gain={standing.preparation.weekGain} />,
       label: t("Preparation"),
       numeric: true,
+      share: standing.preparation.value,
       value: formatShare(standing.preparation.value),
     };
   }
 
   if (standing.kind === "preparation") {
     const lessons = standing.lessons ?? { done: 0, total: 0 };
+    const share = getLessonShare(lessons);
 
     return {
       detail: t(
@@ -145,7 +137,8 @@ function useStandingNumber(standing: JourneyStanding): PlanNumber {
       ),
       label: t("Progress"),
       numeric: true,
-      value: formatGoalProgress(getLessonShare(lessons)),
+      share,
+      value: formatGoalProgress(share),
     };
   }
 
@@ -157,51 +150,6 @@ function useStandingNumber(standing: JourneyStanding): PlanNumber {
     numeric: level !== null,
     value: <LevelValue label={level ?? t("Not yet")} target={target?.label ?? null} />,
   };
-}
-
-/**
- * How a number looks: a hairline tile (in the page's column) or a plain block (in the aside). A
- * button is as wide as its words unless told otherwise, so each fills its half of the row.
- */
-const NUMBER_CLASS = {
-  stats:
-    "-m-2 w-[calc(100%+1rem)] rounded-lg p-2 hover:bg-muted/70 focus-visible:ring-ring/50 flex min-w-0 flex-col gap-1 text-left outline-none transition-colors focus-visible:ring-[3px]",
-  tiles:
-    "ring-border rounded-option hover:bg-muted/50 focus-visible:ring-ring/50 flex h-full w-full min-w-0 flex-col gap-1.5 p-3 text-left ring-1 outline-none transition-colors ring-inset focus-visible:ring-[3px]",
-} as const;
-
-/** One number as a button opening its details in a sheet. */
-function NumberButton({
-  number,
-  onOpen,
-  variant,
-}: {
-  number: PlanNumber;
-  onOpen: () => void;
-  variant: keyof typeof NUMBER_CLASS;
-}) {
-  return (
-    <button aria-haspopup="dialog" className={NUMBER_CLASS[variant]} onClick={onOpen} type="button">
-      <span className="text-label truncate">{number.label}</span>{" "}
-      {/* The spaces keep "Pace On pace" phrases apart for screen readers; the column hides them. */}
-      <span
-        className={cn(
-          "text-2xl leading-tight font-medium tracking-[-0.03em]",
-          number.numeric && "font-mono tabular-nums",
-        )}
-      >
-        {number.value}
-      </span>
-      {number.detail && (
-        <>
-          {" "}
-          <span className="text-muted-foreground text-[0.71875rem] leading-snug">
-            {number.detail}
-          </span>
-        </>
-      )}
-    </button>
-  );
 }
 
 function useStandingTitle(standing: JourneyStanding): string {
@@ -312,7 +260,7 @@ export function PlanNumbers({
   paused?: boolean;
   standing: JourneyStanding;
   status: PlanView["status"];
-  variant: keyof typeof NUMBER_CLASS;
+  variant: PlanNumberVariant;
 }) {
   const t = useExtracted();
   const [open, setOpen] = useState<"pace" | "standing" | null>(null);

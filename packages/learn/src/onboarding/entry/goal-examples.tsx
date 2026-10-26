@@ -10,7 +10,7 @@ import {
   ListRowDescription,
   ListRowTitle,
 } from "../../_components/list-group";
-import { SectionLabel } from "../../_components/section-label";
+import { PageSectionTitle } from "../../_components/page";
 import { useQuickExplanationLabel } from "../../explain/quick-explanation-label";
 import { useLocalGoalExample } from "./use-local-goal-example";
 
@@ -53,7 +53,7 @@ export function GoalExamples({
 
   return (
     <section aria-labelledby={titleId} className={cn("flex flex-col gap-1", className)}>
-      <SectionLabel id={titleId}>{t("Examples")}</SectionLabel>
+      <PageSectionTitle id={titleId}>{t("Examples")}</PageSectionTitle>
 
       <ListGroup>
         {examples.map((example) => (

@@ -2,7 +2,7 @@
 
 import { cn } from "@zoonk/ui/lib/utils";
 import { type ReactNode, createContext, use } from "react";
-import { SectionLabel } from "../_components/section-label";
+import { PageSectionTitle } from "../_components/page";
 
 /**
  * What every screen of a flow shows in the page's aside from 72rem (`OnboardingColumn`): the plan
@@ -26,7 +26,7 @@ export function useOnboardingRail(): ReactNode {
   return use(OnboardingRailContext);
 }
 
-/** A block of the rail (or of a screen's own column on phones): its label, then its rows. */
+/** A block of the rail (or of a screen's own column on phones): its title, then its rows. */
 export function OnboardingRailSection({
   children,
   className,
@@ -41,7 +41,7 @@ export function OnboardingRailSection({
 }) {
   return (
     <section aria-labelledby={id} className={cn("flex flex-col gap-2", className)}>
-      <SectionLabel id={id}>{title}</SectionLabel>
+      <PageSectionTitle id={id}>{title}</PageSectionTitle>
       {children}
     </section>
   );

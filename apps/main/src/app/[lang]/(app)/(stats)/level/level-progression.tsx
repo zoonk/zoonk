@@ -1,5 +1,6 @@
 import { type BeltColorOption, getBeltColors } from "@/lib/belt-colors";
 import { type BeltLevelDetails } from "@zoonk/core/progress/get-belt-level";
+import { PageSectionTitle } from "@zoonk/learn/page";
 import { DoneMark } from "@zoonk/learn/status-mark";
 import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -196,9 +197,7 @@ export async function LevelProgression({ currentBelt }: { currentBelt: BeltLevel
 
   return (
     <section aria-labelledby={BELT_PROGRESSION_TITLE_ID} className="flex flex-col gap-4">
-      <h2 className="text-label" id={BELT_PROGRESSION_TITLE_ID}>
-        {t("Belt progression")}
-      </h2>
+      <PageSectionTitle id={BELT_PROGRESSION_TITLE_ID}>{t("Belt progression")}</PageSectionTitle>
 
       <div
         className={cn(

@@ -53,7 +53,10 @@ function PlanPreview({ chapters }: { chapters: PlanChapter[] }) {
 
   return (
     <section aria-labelledby={PLAN_PREVIEW_ID} className="flex flex-col gap-1">
-      <h2 className="text-label" id={PLAN_PREVIEW_ID}>
+      <h2
+        className="text-muted-foreground font-mono text-xs leading-5 tabular-nums"
+        id={PLAN_PREVIEW_ID}
+      >
         {t(
           "{chapters, plural, one {# chapter} other {# chapters}} · {lessons, plural, one {# lesson} other {# lessons}}",
           { chapters: chapters.length, lessons },

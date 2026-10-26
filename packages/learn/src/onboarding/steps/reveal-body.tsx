@@ -15,7 +15,7 @@ import {
   DetailHero,
   DetailHeroText,
 } from "../../_components/detail-page";
-import { SectionLabel } from "../../_components/section-label";
+import { PageSectionTitle } from "../../_components/page";
 import { SuccessEyebrow } from "../../_components/success-eyebrow";
 import { daysUntilIsoDate } from "../../_utils/iso-date";
 import { useFormatDuration } from "../../_utils/time-format";
@@ -125,14 +125,14 @@ function RevealFacts() {
 }
 
 /**
- * A block of the reveal's aside from 72rem (what fits, the choices), under its label there; under
- * 72rem it follows the weights unlabeled, as one more line of the plan. Each block says nothing
- * when there's nothing to say, and then its label goes too.
+ * A block of the reveal's aside from 72rem (what fits, the choices), under its title there; under
+ * 72rem it follows the weights untitled, as one more line of the plan. Each block says nothing
+ * when there's nothing to say, and then its title goes too.
  */
 function RevealRailBlock({ children, title }: { children: React.ReactNode; title: string }) {
   return (
     <div className="flex flex-col gap-2 not-has-[>:nth-child(2)]:hidden">
-      <SectionLabel className="hidden min-[72rem]:block">{title}</SectionLabel>
+      <PageSectionTitle className="hidden min-[72rem]:block">{title}</PageSectionTitle>
       {children}
     </div>
   );

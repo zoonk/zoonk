@@ -12,7 +12,7 @@ import {
   ListRowTitle,
   ListRowTrailing,
 } from "../_components/list-group";
-import { SectionLabel } from "../_components/section-label";
+import { PAGE_SECTION_TITLE_CLASS, PageSectionTitle } from "../_components/page";
 import { FirstStepsSection } from "../missions/first-steps";
 import { type MissionLinks } from "../missions/mission-links";
 import { MissionsCard } from "../missions/missions-card";
@@ -63,7 +63,7 @@ function BuddyRows({
 
   return (
     <section aria-labelledby={titleId} className="flex flex-col gap-1">
-      <SectionLabel id={titleId}>{name}</SectionLabel>
+      <PageSectionTitle id={titleId}>{name}</PageSectionTitle>
 
       <ListGroup>
         <ListRow>
@@ -155,15 +155,15 @@ export function BuddyDaySkeleton() {
     <>
       <div className="-my-2 flex flex-col gap-2 py-2">
         <span className="flex items-center justify-between gap-3">
-          <span className="text-label">{t("Energy")}</span>
+          <span className={PAGE_SECTION_TITLE_CLASS}>{t("Energy")}</span>
           <Skeleton className="h-3 w-8 rounded-sm" />
         </span>
-        <Skeleton className="h-1 w-full rounded-[2px]" />
+        <Skeleton className="h-1.5 w-full rounded-[3px]" />
         <Skeleton className="h-3 w-4/5" />
       </div>
       <div className="flex flex-col gap-3">
         <span className="flex items-baseline justify-between gap-2">
-          <span className="text-label">{t("Today's missions")}</span>
+          <span className={PAGE_SECTION_TITLE_CLASS}>{t("Today's missions")}</span>
           <Skeleton className="h-3 w-6 rounded-sm" />
         </span>
         <Skeleton className="h-36 w-full rounded-lg" />

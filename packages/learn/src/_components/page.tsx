@@ -152,6 +152,13 @@ export function PageSectionHeader({ className, ...props }: React.ComponentProps<
 }
 
 /**
+ * A block's name as a real title: sentence case, the body's size and a firmer weight. Where the
+ * name can't be a heading (inside a link or a button that opens the block), a span takes it.
+ */
+export const PAGE_SECTION_TITLE_CLASS =
+  "min-w-0 text-sm leading-5 font-semibold tracking-[-0.01em] text-balance";
+
+/**
  * A section's name as a real title in sentence case, in the text color at the body's size and a
  * firmer weight, so the page reads as named parts and its content still leads: "Your path",
  * "Practice anytime". Uppercase labels stay inside panels (`text-label`).
@@ -159,10 +166,7 @@ export function PageSectionHeader({ className, ...props }: React.ComponentProps<
 export function PageSectionTitle({ children, className, ...props }: React.ComponentProps<"h2">) {
   return (
     <h2
-      className={cn(
-        "min-w-0 text-sm leading-5 font-semibold tracking-[-0.01em] text-balance",
-        className,
-      )}
+      className={cn(PAGE_SECTION_TITLE_CLASS, className)}
       data-slot="page-section-title"
       {...props}
     >
