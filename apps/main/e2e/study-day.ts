@@ -1,6 +1,5 @@
 import { randomUUID } from "node:crypto";
 import { type Browser, type Page, expect } from "@playwright/test";
-import { getFreePlanLimits } from "@zoonk/core/entitlements/plan-limits";
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { type E2EUser, createE2EUser } from "@zoonk/e2e/fixtures/users";
@@ -224,16 +223,6 @@ export async function carryLessons({ count, goalId }: { count: number; goalId: s
   return lessons.map(({ lesson }) => lesson);
 }
 
-/** Moves a free exam goal's start back, so its free first week of exam prep is over. */
-export async function pastFreeWeek(goalId: string) {
-  const days = getFreePlanLimits().examPrepDays ?? 0;
-
-  await prisma.goal.update({
-    data: { createdAt: new Date(Date.now() - (days + 1) * MS_PER_DAY) },
-    where: { id: goalId },
-  });
-}
-
 /** A mission as a session stores it when its day is built (core's `MissionPick`). */
 type StoredMission = {
   anchor: Record<string, string>;
@@ -279,7 +268,7 @@ async function continueWithEnter(page: Page) {
 }
 
 /** Checks the picked answer with Enter, once the pinned Check is ready for it. */
-export async function checkWithEnter(page: Page) {
+async function checkWithEnter(page: Page) {
   await expect(page.getByRole("button", { name: /^Check/u })).toBeEnabled();
   await page.keyboard.press("Enter");
 }

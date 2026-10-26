@@ -5,8 +5,8 @@ import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understan
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { type Page, expect, test } from "./fixtures";
+import { expectHydrated } from "./hydration";
 import { asPersona } from "./learn-personas";
-import { expectHydrated } from "./on-demand-code";
 
 /**
  * Quick explanations: a question goes straight to its explanation, with a wait while it's

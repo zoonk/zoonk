@@ -194,9 +194,6 @@ catalogs:
     '@next/mdx':
       specifier: 16.4.1
       version: 16.4.1
-    '@next/playwright':
-      specifier: 16.4.1
-      version: 16.4.1
     '@next/third-parties':
       specifier: 16.4.1
       version: 16.4.1
@@ -790,9 +787,6 @@ importers:
       '@next/mdx':
         specifier: 'catalog:'
         version: 16.4.1(@mdx-js/loader@3.1.1(supports-color@10.2.2)(webpack@5.111.1(@swc/core@1.15.3(@swc/helpers@0.5.23))(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.29)(sharp@0.35.5(@types/node@24.19.1))))(@mdx-js/react@3.1.1(@types/react@19.3.0)(react@19.3.0))
-      '@next/playwright':
-        specifier: 'catalog:'
-        version: 16.4.1(@playwright/test@1.63.0)
       '@tailwindcss/postcss':
         specifier: 'catalog:'
         version: 4.3.3
@@ -2929,14 +2923,6 @@ packages:
       '@mdx-js/loader':
         optional: true
       '@mdx-js/react':
-        optional: true
-
-  '@next/playwright@16.4.1':
-    resolution: {integrity: sha512-5Os2wfYUAL0Iger9GTtz2S+ZLmCUJ+UdKozPm3E8Y2uX7kOspewvWIfx6IEQ6tkG1coQ0b3L6cD0KS65S2D2lw==}
-    peerDependencies:
-      '@playwright/test': '>=1.0.0'
-    peerDependenciesMeta:
-      '@playwright/test':
         optional: true
 
   '@next/swc-darwin-arm64@16.4.1':
@@ -9967,8 +9953,7 @@ snapshots:
       '@iconify/types': 2.0.0
       import-meta-resolve: 4.2.0
 
-  '@img/colour@1.1.0':
-    optional: true
+  '@img/colour@1.1.0': {}
 
   '@img/sharp-darwin-arm64@0.35.5':
     optionalDependencies:
@@ -10351,10 +10336,6 @@ snapshots:
     optionalDependencies:
       '@mdx-js/loader': 3.1.1(supports-color@10.2.2)(webpack@5.111.1(@swc/core@1.15.3(@swc/helpers@0.5.23))(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.29)(sharp@0.35.5(@types/node@24.19.1)))
       '@mdx-js/react': 3.1.1(@types/react@19.3.0)(react@19.3.0)
-
-  '@next/playwright@16.4.1(@playwright/test@1.63.0)':
-    optionalDependencies:
-      '@playwright/test': 1.63.0
 
   '@next/swc-darwin-arm64@16.4.1':
     optional: true
@@ -16094,7 +16075,6 @@ snapshots:
       '@img/sharp-win32-ia32': 0.35.5
       '@img/sharp-win32-x64': 0.35.5
       '@types/node': 24.19.1
-    optional: true
 
   shebang-command@2.0.0:
     dependencies:

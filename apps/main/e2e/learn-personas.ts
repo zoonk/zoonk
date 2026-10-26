@@ -1,5 +1,4 @@
 import { type Browser, type Page } from "@playwright/test";
-import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { type E2EPersona, createE2EPersona } from "@zoonk/e2e/fixtures/personas";
 
@@ -9,7 +8,7 @@ type PersonaName = Parameters<typeof createE2EPersona>[1]["persona"];
  * Opens a page as a persona, on a device in the persona's own time zone, like the learner who set
  * up the goal there: Today and the session's actions then read the same day at any hour.
  */
-export async function openPersona(browser: Browser, user: E2EPersona) {
+async function openPersona(browser: Browser, user: E2EPersona) {
   const context = await browser.newContext({
     storageState: user.storageState,
     timezoneId: user.timeZone,
@@ -40,13 +39,4 @@ export async function asPersona(
   } finally {
     await context.close();
   }
-}
-
-/** The id of a chapter in the persona's plan, by its title. */
-export async function findPlanChapterId(goalId: string, title: string) {
-  const item = await prisma.planItem.findFirstOrThrow({
-    where: { chapter: { title }, plan: { goalId } },
-  });
-
-  return item.chapterId ?? "";
 }

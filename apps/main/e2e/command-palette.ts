@@ -47,18 +47,3 @@ export async function openPaletteWithKeyboard(page: Page, name: RegExp | string 
   await expect(palette).toBeVisible();
   return palette;
 }
-
-/**
- * Opens the palette once the frame has read the learner: the sidebar's account row is drawn from
- * their summary. A palette opened before keeps the places every learner has until the learner
- * types or opens it again, so the rows their summary adds above the highlighted one (Continue, a
- * mock, the buddy) wait, with the rest of theirs (`learner-frame-paint`).
- */
-export async function openLearnerPalette(page: Page, name?: RegExp | string) {
-  const accountRow = page
-    .getByRole("complementary", { name: "Sidebar" })
-    .getByRole("button", { name: /User menu$/u });
-
-  await expect(accountRow).toBeVisible();
-  return openPaletteWithKeyboard(page, name);
-}

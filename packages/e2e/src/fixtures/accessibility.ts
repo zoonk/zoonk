@@ -1,6 +1,5 @@
 import { AxeBuilder } from "@axe-core/playwright";
 import { type Page, expect, test } from "@playwright/test";
-import { listMovingAnimations } from "@zoonk/testing/accessibility/motion";
 import {
   describeViolations,
   resumeAnimations,
@@ -129,9 +128,4 @@ function expectNoViolations(violations: string[]) {
  */
 export async function expectAccessibleScreen(page: Page, label: string) {
   expectNoViolations(await scanCurrentScreen(page, label));
-}
-
-/** The animations on the page that move something (`listMovingAnimations`). */
-export async function findMovingAnimations(page: Page): Promise<string[]> {
-  return page.evaluate(listMovingAnimations);
 }

@@ -7,7 +7,7 @@ import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons"
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
 import { expect, test } from "./fixtures";
-import { expectHydrated } from "./on-demand-code";
+import { expectHydrated } from "./hydration";
 import { carryLessons, openAs } from "./study-day";
 
 const DAYS_PER_WEEK = 7;

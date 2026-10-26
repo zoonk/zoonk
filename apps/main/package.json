@@ -47,7 +47,6 @@
     "@mdx-js/loader": "catalog:",
     "@mdx-js/react": "catalog:",
     "@next/mdx": "catalog:",
-    "@next/playwright": "catalog:",
     "@tailwindcss/postcss": "catalog:",
     "@types/mdx": "catalog:",
     "@types/node": "catalog:",

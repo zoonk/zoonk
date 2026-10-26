@@ -4,7 +4,6 @@
   "type": "module",
   "exports": {
     "./statement-counter": "./src/statement-counter.ts",
-    "./accessibility/motion": "./src/accessibility/motion.ts",
     "./accessibility/scan": "./src/accessibility/scan.ts",
     "./accessibility/target-size": "./src/accessibility/target-size.ts",
     "./browser-preflight": "./src/browser-preflight.ts",
