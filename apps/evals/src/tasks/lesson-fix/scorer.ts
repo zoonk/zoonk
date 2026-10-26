@@ -45,6 +45,7 @@ function checkLesson(input: FixLessonDraftParams, lesson: WrittenLesson) {
     lesson,
     level: input.level,
     spec: input.spec,
+    writtenAnswers: input.writtenAnswers,
   });
 }
 

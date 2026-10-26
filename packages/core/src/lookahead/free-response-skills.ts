@@ -5,18 +5,13 @@ import { namesMatch } from "../exams/_utils/name-match";
 import { isWrittenSection } from "../exams/mocks/written-subject";
 import { getExamScale } from "../exams/scoring/exam-scales";
 import { readBlueprintContent } from "../library/exams/save-exam-blueprint";
+import { isWrittenAnswerFormat } from "../library/exams/written-answers";
 import { getSkillArea } from "../plans/planner/graph-areas";
 import { parsePlanGraph } from "../plans/planner/plan-state";
 import { type PlacementItemSkill, toItemExam } from "./placement-item-skills";
 
 /** A few questions to start: the goal's essay block asks one every few days. */
 const FREE_RESPONSE_SKILLS = 3;
-
-/**
- * The written questions a class test's material can announce: an explanation (a dissertativa) or
- * a short written answer, such as a table of organelles to complete.
- */
-const CLASS_TEST_WRITTEN_KINDS: ReadonlySet<string> = new Set(["essay", "shortAnswer"]);
 
 /** Shorter words ("of", "the", "and") say nothing about what a question is about. */
 const MIN_MATCH_WORD_LENGTH = 4;
@@ -105,9 +100,9 @@ function findQuestionSkill({
 
 /**
  * A class test read from the learner's own material: each written question the material
- * announces ("there will be an essay on osmosis", a table of organelles to complete) is
- * practiced on the skill it's about, in that question's own form, so the days before the test
- * rehearse the questions the teacher said would come, not only multiple choice.
+ * announces (`isWrittenAnswerFormat`: "there will be an essay on osmosis", a table of organelles
+ * to complete) is practiced on the skill it's about, in that question's own form, so the days
+ * before the test rehearse the questions the teacher said would come, not only multiple choice.
  */
 function findClassTestQuestions({
   graph,
@@ -117,7 +112,7 @@ function findClassTestQuestions({
   structure: ExamStructure;
 }): WrittenPick[] {
   return structure.formats
-    .filter((format) => CLASS_TEST_WRITTEN_KINDS.has(format.kind))
+    .filter((format) => isWrittenAnswerFormat(format))
     .flatMap((format) => {
       const skill = findQuestionSkill({ description: format.description, skills: graph.skills });
       return skill ? [{ skill, style: `${format.kind}: ${format.description}` }] : [];

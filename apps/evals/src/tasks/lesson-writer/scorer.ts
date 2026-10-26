@@ -48,6 +48,7 @@ async function checkLesson(
     material: input.material,
     sources: input.sources,
     spec: input.spec,
+    writtenAnswers: input.writtenAnswers,
   });
 
   const problems = [

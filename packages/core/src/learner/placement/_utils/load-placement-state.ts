@@ -5,6 +5,7 @@ import { type ExamStructure } from "../../../library/exams/blueprint-contract";
 import { readNoticeFormats } from "../../../library/exams/notice-formats";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
 import { type TrueFalseLabels, getTrueFalseLabels } from "../../../library/exams/true-false-labels";
+import { allowsTypedQuestions } from "../../../library/exams/written-answers";
 import { ITEM_IMAGE_INCLUDE } from "../../../library/items/item-image";
 import { getAreaShares } from "../../../plans/_utils/exam-subject-shares";
 import { listFocusedSkillIds } from "../../../plans/planner/focus-targets";
@@ -130,14 +131,14 @@ async function loadGoalExam(goalId: string): Promise<{
   measuredLevel: OwnLevel | null;
   quickFormat: PlacementQuickFormat;
   trueFalseLabels: TrueFalseLabels;
+  /**
+   * Its learner may meet typed questions (`allowsTypedQuestions`), so a right quick answer is
+   * confirmed in writing; any other goal's is confirmed with another quick question.
+   */
+  typed: boolean;
 }> {
   const goal = await prisma.goal.findUnique({
-    select: {
-      createdAt: true,
-      details: true,
-      examBlueprint: true,
-      plan: { select: { graph: true, settings: true } },
-    },
+    include: { examBlueprint: true, plan: { select: { graph: true, settings: true } } },
     where: { id: goalId },
   });
 
@@ -160,6 +161,7 @@ async function loadGoalExam(goalId: string): Promise<{
     // Before the notice's blueprint is linked, the formats a first pass over it read.
     quickFormat: getPlacementQuickFormat(structure ?? notice),
     trueFalseLabels: getTrueFalseLabels(structure ?? notice),
+    typed: goal ? allowsTypedQuestions({ goal, structure }) : false,
   };
 }
 
@@ -258,6 +260,7 @@ export async function loadPlacementState({
     measuredLevel,
     quickFormat,
     trueFalseLabels,
+    typed,
   } = await loadGoalExam(goalId);
 
   const ownLevel = requestedLevel ?? goalLevel;
@@ -270,6 +273,7 @@ export async function loadPlacementState({
           bankItems: await loadPlacementItems({
             examBlueprintId,
             skillIds,
+            typed,
             writingSkillIds: planBuild.preparingSkillIds,
           }),
           build: planBuild,

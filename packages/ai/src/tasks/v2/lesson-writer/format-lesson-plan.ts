@@ -10,7 +10,7 @@ import {
   type LessonSpec,
   type LessonSpecSkill,
 } from "../lesson-spec/lesson-spec-rules";
-import { WRITTEN_KINDS_BY_SCREEN } from "./written-lesson-schema";
+import { getWrittenKinds } from "./written-lesson-schema";
 
 /**
  * An activity template the spec picked, as core describes it: what it teaches
@@ -42,6 +42,11 @@ export type LessonWritingContext = {
   exams?: LessonExam[];
   /** A lesson that sets up a tool on the learner's device ("Set up Python on Windows"). */
   setup?: boolean;
+  /**
+   * The exams of the lesson's learners ask for written answers, so a check or the application may
+   * be a typed answer (`getWrittenKinds`); every other lesson asks only what learners pick.
+   */
+  writtenAnswers?: boolean;
 };
 
 /** A problem found by code or by the reviewer. `screen` is a 0-based index, or null for the whole lesson. */
@@ -71,15 +76,18 @@ function formatScreen({
   screen,
   skills,
   position,
+  writtenAnswers,
 }: {
   screen: LessonScreen;
   skills: readonly LessonSpecSkill[];
   position: number;
+  writtenAnswers: boolean;
 }): string {
   const skillNames = screen.skills.flatMap((index) => skills[index]?.name ?? []);
+  const kinds = getWrittenKinds({ kind: screen.kind, writtenAnswers });
 
   return [
-    `${position}. ${screen.kind}, written as: ${WRITTEN_KINDS_BY_SCREEN[screen.kind].join(" or ")}`,
+    `${position}. ${screen.kind}, written as: ${kinds.join(" or ")}`,
     `   Skills: ${skillNames.length > 0 ? skillNames.join("; ") : "none"}`,
     `   Brief: ${screen.brief}`,
     `   Visual: ${screen.visual ?? "none"}`,
@@ -118,7 +126,12 @@ export function formatLessonPlan(context: LessonWritingContext): string {
   const { spec } = context;
 
   const screens = spec.screens.map((screen, index) =>
-    formatScreen({ position: index + 1, screen, skills: spec.skills }),
+    formatScreen({
+      position: index + 1,
+      screen,
+      skills: spec.skills,
+      writtenAnswers: Boolean(context.writtenAnswers),
+    }),
   );
 
   return `

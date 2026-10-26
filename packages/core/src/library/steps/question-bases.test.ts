@@ -4,9 +4,9 @@ import { writtenTemperatureLesson } from "../quality/_test-utils/written-lessons
 import { addQuestionBases, findQuestionBases } from "./question-bases";
 import { toStepContent } from "./written-screens";
 
-/** The written temperature lesson: 1 guess, 2 explanation, 3 worked example, 4 calculation, 5 explanation, 6 activity, 7 typed answer, 8 check. */
+/** The written temperature lesson: 1 guess, 2 explanation, 3 worked example, 4 calculation, 5 explanation, 6 activity, 7 why check, 8 application. */
 const CALCULATION = 3;
-const TYPED_ANSWER = 6;
+const WHY_CHECK = 6;
 const APPLICATION = 7;
 
 type Basis = { quote: string; screen: number } | null;
@@ -53,7 +53,7 @@ describe(findQuestionBases, () => {
     expect(bases).toStrictEqual([
       { question: CALCULATION, quote: "A rise always moves **up** the thermometer.", reading: 1 },
       {
-        question: TYPED_ANSWER,
+        question: WHY_CHECK,
         quote: "Count the degrees to zero, then the degrees after it.",
         reading: 4,
       },
@@ -81,7 +81,7 @@ describe(findQuestionBases, () => {
 
     const { bases, problems } = find(lesson);
 
-    expect(bases.map((basis) => basis.question)).toStrictEqual([TYPED_ANSWER]);
+    expect(bases.map((basis) => basis.question)).toStrictEqual([WHY_CHECK]);
 
     expect(problems).toStrictEqual([
       {
@@ -111,11 +111,11 @@ describe(findQuestionBases, () => {
   it("drops a quote that runs over two lines of the screen", () => {
     const lesson = lessonWith({
       basis: { quote: "Zero is just a mark.\nCount the degrees.", screen: 5 },
-      question: TYPED_ANSWER,
+      question: WHY_CHECK,
       screen: { index: 4, patch: { text: "Zero is just a mark.\nCount the degrees." } },
     });
 
-    expect(find(lesson).problems.map((problem) => problem.screen)).toStrictEqual([TYPED_ANSWER]);
+    expect(find(lesson).problems.map((problem) => problem.screen)).toStrictEqual([WHY_CHECK]);
   });
 
   it("matches a quote with an em dash the way both texts are stored", () => {
@@ -123,12 +123,12 @@ describe(findQuestionBases, () => {
 
     const lesson = lessonWith({
       basis: { quote: text, screen: 5 },
-      question: TYPED_ANSWER,
+      question: WHY_CHECK,
       screen: { index: 4, patch: { text } },
     });
 
     expect(find(lesson).bases).toContainEqual({
-      question: TYPED_ANSWER,
+      question: WHY_CHECK,
       quote: "Zero is a mark, count the degrees to it, then past it.",
       reading: 4,
     });
@@ -136,7 +136,7 @@ describe(findQuestionBases, () => {
 
   it("finds nothing for questions without a basis", () => {
     const lesson = lessonWith({ basis: null, question: CALCULATION });
-    expect(find(lesson).bases.map((basis) => basis.question)).toStrictEqual([TYPED_ANSWER]);
+    expect(find(lesson).bases.map((basis) => basis.question)).toStrictEqual([WHY_CHECK]);
   });
 });
 
@@ -156,7 +156,7 @@ describe(addQuestionBases, () => {
       basis: { position: 0, quote: "A rise always moves **up** the thermometer." },
     });
 
-    expect(contentAt(withBases, TYPED_ANSWER)).toMatchObject({
+    expect(contentAt(withBases, WHY_CHECK)).toMatchObject({
       basis: { position: 3, quote: "Count the degrees to zero, then the degrees after it." },
     });
 
@@ -168,6 +168,6 @@ describe(addQuestionBases, () => {
     const withBases = addQuestionBases({ lesson, positions, screens });
 
     expect(contentAt(withBases, CALCULATION)).not.toHaveProperty("basis");
-    expect(contentAt(withBases, TYPED_ANSWER)).toHaveProperty("basis.position", 4);
+    expect(contentAt(withBases, WHY_CHECK)).toHaveProperty("basis.position", 4);
   });
 });

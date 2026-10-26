@@ -12,6 +12,7 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { buildSetupSkillIdentityKey } from "@zoonk/utils/identity-key";
 import { describe, expect, it } from "vitest";
+import { examFormat, examStructure } from "../exams/_test-utils/exam-formats";
 import { temperatureSpec } from "../quality/_test-utils/written-lessons";
 import { loadLessonSpecInputs } from "./lesson-spec-inputs";
 
@@ -196,5 +197,60 @@ describe(loadLessonSpecInputs, () => {
     ]);
 
     expect(learnLesson?.prompt.exams).toStrictEqual([]);
+  });
+
+  /*
+   * A hobby biology course asked the learner to write what Iara's cell diagram was missing:
+   * learners would rather pick, so only the exams of the goals that plan a lesson let it ask them
+   * to write.
+   */
+  it("lets a lesson ask written answers only when an exam of the goals that plan it does", async () => {
+    const user = await userFixture();
+
+    const [discursive, choices, classTest, ...lessons] = await Promise.all([
+      examBlueprintFixture({ structure: examStructure(["multipleChoice", "essay"]) }),
+      examBlueprintFixture({ structure: examStructure(["multipleChoice", "numeric"]) }),
+      examBlueprintFixture({
+        ownerId: user.id,
+        structure: examStructure(["multipleChoice", "shortAnswer"]),
+        visibility: "private",
+      }),
+      ...Array.from({ length: 4 }, () => libraryLessonFixture({ title: "Partes da célula" })),
+    ]);
+
+    const goals = await Promise.all([
+      goalFixture({ examBlueprintId: discursive.id, kind: "exam", userId: user.id }),
+      goalFixture({ examBlueprintId: choices.id, kind: "exam", userId: user.id }),
+      goalFixture({ userId: user.id }),
+      goalFixture({ examBlueprintId: classTest.id, kind: "exam", userId: user.id }),
+      // Before its notice's blueprint is linked, an exam goal knows only the formats it states.
+      goalFixture({
+        details: { noticeFormats: [examFormat("shortAnswer")] },
+        kind: "exam",
+        userId: user.id,
+      }),
+    ]);
+
+    const plans = await Promise.all(goals.map((goal) => planFixture({ goalId: goal.id })));
+    const plannedLessons = [lessons[0], lessons[1], lessons[1], lessons[2], lessons[3]];
+
+    await Promise.all(
+      plans.map((plan, index) =>
+        planItemFixture({ lessonId: plannedLessons[index]?.id, planId: plan.id, position: 0 }),
+      ),
+    );
+
+    const inputs = await Promise.all(lessons.map((lesson) => loadLessonSpecInputs(lesson.id)));
+
+    // A hobby and an exam of choices and numbers ask what learners pick; a class test from the
+    // learner's material asks in writing even though its lesson follows no public exam.
+    expect(inputs.map((input) => input?.prompt.writtenAnswers)).toStrictEqual([
+      true,
+      false,
+      true,
+      true,
+    ]);
+
+    expect(inputs[2]?.prompt.exams).toStrictEqual([]);
   });
 });

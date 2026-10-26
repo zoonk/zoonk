@@ -168,17 +168,35 @@ export type WrittenScreenKind = WrittenScreen["kind"];
 export type WrittenLesson = z.infer<typeof writtenLessonSchema>;
 
 /**
- * What each planned screen may be written as. A check or the application can
- * be multiple choice, a calculation as data or a typed answer ("Explain it in
- * your words"); activities only go where the spec put them.
+ * What each planned screen may be written as. A check or the application is
+ * multiple choice or a calculation as data; activities only go where the spec
+ * put them.
  */
-export const WRITTEN_KINDS_BY_SCREEN: Readonly<
-  Record<LessonScreenKind, readonly WrittenScreenKind[]>
-> = {
+const WRITTEN_KINDS_BY_SCREEN: Readonly<Record<LessonScreenKind, readonly WrittenScreenKind[]>> = {
   activity: ["activity"],
-  application: ["check", "mathCheck", "typedAnswer"],
-  check: ["check", "mathCheck", "typedAnswer"],
+  application: ["check", "mathCheck"],
+  check: ["check", "mathCheck"],
   explanation: ["explanation"],
   hook: ["hookGuess", "hookText"],
   workedExample: ["workedExample"],
 };
+
+/**
+ * What a planned screen may be written as. Learners would rather pick than think up and type an
+ * answer, so a typed answer ("Explain it in your words") is a last resort: only a lesson whose
+ * learners' exams ask for written answers (`writtenAnswers`) may write a check or the application
+ * as one.
+ */
+export function getWrittenKinds({
+  kind,
+  writtenAnswers,
+}: {
+  kind: LessonScreenKind;
+  writtenAnswers: boolean;
+}): readonly WrittenScreenKind[] {
+  const kinds = WRITTEN_KINDS_BY_SCREEN[kind];
+
+  return writtenAnswers && (kind === "check" || kind === "application")
+    ? [...kinds, "typedAnswer"]
+    : kinds;
+}

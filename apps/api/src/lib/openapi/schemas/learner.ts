@@ -136,7 +136,10 @@ const areaStartSchema = z
   })
   .meta({ id: "AreaStart" });
 
-/** Placement also asks typed questions, graded one key point at a time, to confirm a skill. */
+/**
+ * Placement confirms a skill with a typed question, graded one key point at a time, for a goal whose
+ * exam asks written answers or a language goal (`allowsTypedQuestions`); other goals never get one.
+ */
 const placementQuestionSchema = z
   .discriminatedUnion("format", [
     ...bankQuestionSchema.options,

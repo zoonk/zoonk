@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal, type ItemFormat, prisma } from "@zoonk/db";
+import { type Goal, prisma } from "@zoonk/db";
 import { interleave } from "@zoonk/utils/interleave";
 import { loadListeningSkillIds } from "../../../exams/listening/listening-skills";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
@@ -11,9 +11,6 @@ import { type SkillStatuses } from "../placement-status";
 import { type AreaPriority, getUndecidedSkills, rankAreasToAsk } from "../placement-steps";
 import { loadPlacementItems } from "./placement-bank-items";
 import { loadEvidence } from "./placement-evidence";
-
-/** Sessions grade quick questions on the spot; typed confirmation stays in placement itself. */
-const SESSION_FORMATS = new Set<ItemFormat>(["multipleChoice", "trueFalse"]);
 
 type StartSkill = { id: string; phase: number; sectionTitle: string | null };
 
@@ -110,7 +107,8 @@ export async function pickSessionPlacementItems({
 
   const [{ evidence, placementAnswers, seenItemIds }, bankItems, blueprint] = await Promise.all([
     loadEvidence({ skillIds, userId }),
-    loadPlacementItems({ examBlueprintId: goal.examBlueprintId, skillIds }),
+    // Sessions grade quick questions on the spot; typed confirmation stays in placement itself.
+    loadPlacementItems({ examBlueprintId: goal.examBlueprintId, skillIds, typed: false }),
     goal.examBlueprintId
       ? prisma.examBlueprint.findUnique({
           select: { ownerId: true },
@@ -142,12 +140,7 @@ export async function pickSessionPlacementItems({
   });
 
   const askable = bankItems
-    .filter(
-      (item) =>
-        SESSION_FORMATS.has(item.format) &&
-        !seenItemIds.has(item.id) &&
-        !excludeItemIds.has(item.id),
-    )
+    .filter((item) => !seenItemIds.has(item.id) && !excludeItemIds.has(item.id))
     .toSorted((a, b) => compareQuickFormat({ a: a.format, b: b.format, quickFormat }));
 
   return interleaveByStart({ evidence, priority: { areaShares, focusAreas }, skills, undecided })

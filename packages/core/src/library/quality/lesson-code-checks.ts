@@ -1,8 +1,8 @@
 import { type LessonScreen, type LessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
 import {
-  WRITTEN_KINDS_BY_SCREEN,
   type WrittenLesson,
   type WrittenScreen,
+  getWrittenKinds,
 } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
 import { type CourseLevel } from "@zoonk/db";
 import { removeMarkdownTables } from "@zoonk/utils/markdown-table";
@@ -58,25 +58,29 @@ type ScreenCheckInput = {
   level: CourseLevel;
   screen: WrittenScreen;
   specScreen: LessonScreen;
+  /** The exams of the lesson's learners ask written answers, so a check may be typed. */
+  writtenAnswers: boolean;
 };
 
 type Problem = { code: LessonCheckCode; problem: string } | false;
 
-function isAllowedKind({ allowActivityFallback, screen, specScreen }: ScreenCheckInput): boolean {
-  return (
-    WRITTEN_KINDS_BY_SCREEN[specScreen.kind].includes(screen.kind) ||
-    (allowActivityFallback && specScreen.kind === "activity" && screen.kind === "check")
-  );
-}
+function getKindProblems({
+  allowActivityFallback,
+  screen,
+  specScreen,
+  writtenAnswers,
+}: ScreenCheckInput): Problem[] {
+  const kinds = getWrittenKinds({ kind: specScreen.kind, writtenAnswers });
 
-function getKindProblems(input: ScreenCheckInput): Problem[] {
-  const { screen, specScreen } = input;
+  const fallback =
+    allowActivityFallback && specScreen.kind === "activity" && screen.kind === "check";
 
   return [
-    !isAllowedKind(input) && {
-      code: "screenKind",
-      problem: `Planned as ${specScreen.kind} but written as ${screen.kind}; write it as ${WRITTEN_KINDS_BY_SCREEN[specScreen.kind].join(" or ")}.`,
-    },
+    !kinds.includes(screen.kind) &&
+      !fallback && {
+        code: "screenKind",
+        problem: `Planned as ${specScreen.kind} but written as ${screen.kind}; write it as ${kinds.join(" or ")}.`,
+      },
     screen.kind === "activity" &&
       specScreen.kind === "activity" &&
       screen.template !== specScreen.activityTemplate && {
@@ -315,6 +319,7 @@ export function checkWrittenLesson({
   material,
   sources,
   spec,
+  writtenAnswers = false,
 }: {
   allowActivityFallback?: boolean;
   /** The chapter's other lessons, whose examples this one shouldn't reuse. */
@@ -327,13 +332,14 @@ export function checkWrittenLesson({
   /** The official sources the lesson is written from, whose numbers are facts too. */
   sources?: string;
   spec: LessonSpec;
+  /** The learners' exams ask written answers: any other lesson's typed answer goes to the fix pass. */
+  writtenAnswers?: boolean;
 }): { problems: LessonCheckProblem[]; screens: ConvertedScreen[] } {
+  const lessonInput = { allowActivityFallback, language, level, writtenAnswers };
+
   const checked = lesson.screens.flatMap((screen, index) => {
     const specScreen = spec.screens[index];
-
-    return specScreen
-      ? [checkScreen({ allowActivityFallback, index, language, level, screen, specScreen })]
-      : [];
+    return specScreen ? [checkScreen({ ...lessonInput, index, screen, specScreen })] : [];
   });
 
   const countProblem: LessonCheckProblem[] =

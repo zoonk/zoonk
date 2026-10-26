@@ -16,6 +16,8 @@ type BaseLesson = {
   lesson: WrittenLesson;
   level: "overview" | "beginner" | "intermediate" | "advanced";
   spec: LessonSpec;
+  /** A lesson with a typed answer is one whose learners' exams ask written answers. */
+  writtenAnswers?: boolean;
 };
 
 export const BASE_LESSONS = {
@@ -281,6 +283,7 @@ export const BASE_LESSONS = {
     },
     level: "overview",
     spec: LESSON_SPECS["pt-eletron-nucleo-overview"],
+    writtenAnswers: true,
   },
   regra: {
     chapterTitle: "Razão e proporção",
@@ -792,5 +795,6 @@ export const BASE_LESSONS = {
       supportMode: "explanationFirst",
       title: "Temperature changes across zero",
     },
+    writtenAnswers: true,
   },
 } satisfies Record<string, BaseLesson>;

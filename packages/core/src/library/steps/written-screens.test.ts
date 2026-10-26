@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { writtenTemperatureLesson } from "../quality/_test-utils/written-lessons";
+import {
+  writtenTemperatureLesson,
+  writtenTypedAnswer,
+} from "../quality/_test-utils/written-lessons";
 import { toStepContent } from "./written-screens";
 
 const screens = writtenTemperatureLesson().screens;
@@ -167,13 +170,15 @@ describe(toStepContent, () => {
   });
 
   it("stores typed answers without empty accepted answers and activities with their template", () => {
-    expect(toStepContent(screenAt(6), { allowImage: false, language: "en" })).toMatchObject({
+    const typed = writtenTypedAnswer();
+
+    expect(toStepContent(typed, { allowImage: false, language: "en" })).toMatchObject({
       content: { keyPoints: expect.any(Array), sampleAnswer: expect.any(String) },
       kind: "typedAnswer",
     });
 
     expect(
-      JSON.stringify(toStepContent(screenAt(6), { allowImage: false, language: "en" })),
+      JSON.stringify(toStepContent(typed, { allowImage: false, language: "en" })),
     ).not.toContain("acceptedAnswers");
 
     expect(toStepContent(screenAt(5), { allowImage: false, language: "en" })).toMatchObject({
@@ -183,14 +188,11 @@ describe(toStepContent, () => {
   });
 
   it("keeps short accepted answers and leaves out a sentence-long one", () => {
-    const screen = screenAt(6);
-
-    if (screen.kind !== "typedAnswer") {
-      throw new Error("Screen 7 is a typed answer.");
-    }
-
     const converted = toStepContent(
-      { ...screen, acceptedAnswers: ["3 °C", `It goes up ${"one degree at a time ".repeat(10)}`] },
+      {
+        ...writtenTypedAnswer(),
+        acceptedAnswers: ["3 °C", `It goes up ${"one degree at a time ".repeat(10)}`],
+      },
       { allowImage: false, language: "en" },
     );
 

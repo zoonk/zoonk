@@ -5,13 +5,14 @@ import { acceptOmittedNulls } from "../../../_utils/omitted-nulls";
 import { type AiGenerationContext } from "../../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../../provider-options";
+import { selectPromptVariants } from "../../_utils/prompt-variants";
 import {
   type LessonProblem,
   type LessonWritingContext,
   formatLessonPlan,
   formatLessonProblems,
 } from "./format-lesson-plan";
-import systemPrompt from "./lesson-fix.prompt.md";
+import fixPrompt from "./lesson-fix.prompt.md";
 import {
   type WrittenLesson,
   type WrittenScreen,
@@ -100,6 +101,12 @@ export async function fixLessonDraft(params: FixLessonDraftParams) {
   } = params;
 
   const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
+
+  // A lesson whose learners' exams ask no written answers never reads about typed answers.
+  const systemPrompt = selectPromptVariants({
+    template: fixPrompt,
+    variants: { writtenAnswers: Boolean(params.writtenAnswers) },
+  });
 
   const userPrompt = `${formatLessonPlan(params)}
 LESSON:

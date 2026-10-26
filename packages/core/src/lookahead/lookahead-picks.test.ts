@@ -6,6 +6,7 @@ import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
+import { examStructure } from "../library/exams/_test-utils/exam-formats";
 import { pickPlacementItemSkills, recordPlacementPrepared } from "./placement-item-skills";
 import { pickPlanStartToWrite, pickSpeculativeLessons } from "./speculative-lessons";
 
@@ -276,7 +277,6 @@ describe(pickPlacementItemSkills, () => {
 
     // In the order the run picked them, once each, and never a skill that already has questions.
     expect(picked.map((skill) => skill.id)).toStrictEqual([second.id, first.id]);
-    expect(picked.every((skill) => skill.needsTyped)).toBe(true);
   });
 
   it("gives a language goal's skills the language their questions practice", async () => {
@@ -293,6 +293,38 @@ describe(pickPlacementItemSkills, () => {
 
     expect(picked.map((skill) => [skill.language, skill.targetLanguage])).toStrictEqual([
       ["pt", "en"],
+    ]);
+  });
+
+  /*
+   * A hobby biology course asked the learner to write what Iara's cell diagram was missing:
+   * learners would rather pick, so only a goal whose exam asks written answers, or a language's,
+   * gets typed confirmations written.
+   */
+  it("writes typed confirmations only for a goal whose exam asks written answers, or a language's", async () => {
+    const [user, discursive, choices, skill] = await Promise.all([
+      userFixture(),
+      examBlueprintFixture({ structure: examStructure(["multipleChoice", "essay"]) }),
+      examBlueprintFixture({ structure: examStructure(["multipleChoice", "numeric"]) }),
+      skillFixture(),
+    ]);
+
+    const goals = await Promise.all([
+      goalFixture({ examBlueprintId: discursive.id, kind: "exam", userId: user.id }),
+      goalFixture({ examBlueprintId: choices.id, kind: "exam", userId: user.id }),
+      goalFixture({ userId: user.id }),
+      goalFixture({ kind: "language", targetLanguage: "en", userId: user.id }),
+    ]);
+
+    const picks = await Promise.all(
+      goals.map((goal) => pickPlacementItemSkills({ goalId: goal.id, skillIds: [skill.id] })),
+    );
+
+    expect(picks.map((pick) => pick.skills.map((picked) => picked.needsTyped))).toStrictEqual([
+      [true],
+      [false],
+      [false],
+      [true],
     ]);
   });
 

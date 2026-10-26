@@ -7,7 +7,16 @@ import { type WrittenLesson, type WrittenScreen } from "./written-lesson-schema"
 import type * as Ai from "ai";
 
 vi.mock("server-only", () => ({}));
-vi.mock("./lesson-fix.prompt.md", () => ({ default: "Fix the lesson." }));
+
+vi.mock("./lesson-fix.prompt.md", () => ({
+  default: [
+    "Fix the lesson.",
+    "{{#writtenAnswers}}",
+    "Fix typed answers.",
+    "{{/writtenAnswers}}",
+    "Keep the rest.",
+  ].join("\n"),
+}));
 
 vi.mock("ai", async (importOriginal) => {
   const actual = await importOriginal<typeof Ai>();
@@ -58,7 +67,7 @@ const lesson: WrittenLesson = {
   summary: ["The idea."],
 };
 
-function fix(params: { screenCount: number }) {
+function fix(params: { screenCount: number; writtenAnswers?: boolean }) {
   return fixLessonDraft({
     activityTemplates: [],
     chapterTitle: "Chapter",
@@ -68,6 +77,7 @@ function fix(params: { screenCount: number }) {
     level: "beginner",
     problems: [{ problem: "Too long.", screen: 1 }],
     spec: spec(params.screenCount),
+    writtenAnswers: params.writtenAnswers,
   });
 }
 
@@ -124,5 +134,19 @@ describe(fixLessonDraft, () => {
     expect(data.changedScreens).toStrictEqual([3]);
     expect(data.lesson.screens.at(-1)).toStrictEqual(explanation("Four"));
     expect(data.lesson.summary).toStrictEqual(["A clearer idea."]);
+  });
+
+  it("reads the typed answers' rules only for a lesson whose learners' exams ask written answers", async () => {
+    vi.mocked(generateText).mockResolvedValue(
+      createGenerateTextResult({ screens: [], summary: null }),
+    );
+
+    const [picked, written] = await Promise.all([
+      fix({ screenCount: 3 }),
+      fix({ screenCount: 3, writtenAnswers: true }),
+    ]);
+
+    expect(picked.systemPrompt).toBe("Fix the lesson.\nKeep the rest.");
+    expect(written.systemPrompt).toBe("Fix the lesson.\nFix typed answers.\nKeep the rest.");
   });
 });

@@ -21,6 +21,9 @@ vi.mock("./lesson-spec.prompt.md", () => ({
     "{{#setup}}",
     "Plan the setup.",
     "{{/setup}}",
+    "{{#writtenAnswers}}",
+    "Ask it in their own words.",
+    "{{/writtenAnswers}}",
     "Check the plan.",
   ].join("\n"),
 }));
@@ -262,13 +265,14 @@ describe(generateLessonSpec, () => {
 
     const exams = [{ name: "ENEM", style: "Multiple choice with a text." }];
 
-    const [regular, exam, material, sources, setup, quickExam] = await Promise.all([
+    const [regular, exam, material, sources, setup, quickExam, written] = await Promise.all([
       generateLessonSpec(params),
       generateLessonSpec({ ...params, exams }),
       generateLessonSpec({ ...params, exams: [], material: "<page>Slides</page>" }),
       generateLessonSpec({ ...params, sources: "<page>Law</page>" }),
       generateLessonSpec({ ...params, setup: true }),
       generateLessonSpec({ ...params, exams, quick: true }),
+      generateLessonSpec({ ...params, writtenAnswers: true }),
     ]);
 
     expect(regular.systemPrompt).toBe("Plan the lesson.\nCheck the plan.");
@@ -286,6 +290,10 @@ describe(generateLessonSpec, () => {
 
     expect(quickExam.systemPrompt).toBe(
       "Plan the lesson.\nPlan it for the exams.\nCheck the plan.\nThis is a quick lesson.",
+    );
+
+    expect(written.systemPrompt).toBe(
+      "Plan the lesson.\nAsk it in their own words.\nCheck the plan.",
     );
   });
 });

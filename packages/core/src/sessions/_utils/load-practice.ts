@@ -230,6 +230,7 @@ export async function loadPracticeItems({
   now,
   repeatOnlyMissed = false,
   skillIds,
+  typed,
   userId,
 }: {
   /**
@@ -270,6 +271,8 @@ export async function loadPracticeItems({
    */
   repeatOnlyMissed?: boolean;
   skillIds: readonly string[];
+  /** The goal's learner may meet typed questions (`allowsTypedQuestions`). */
+  typed: boolean;
   userId: string;
 }): Promise<PracticeItem[]> {
   const claimed = new Set([...claims.first, ...claims.last]);
@@ -304,7 +307,7 @@ export async function loadPracticeItems({
       orderBy: { id: "asc" },
       select: { difficulty: true, examBlueprintId: true, field: true, id: true, skillId: true },
       where: {
-        ...getPracticeItemFilter(),
+        ...getPracticeItemFilter({ typed }),
         skillId: { in: ordered.filter((skillId) => !listeningSkillIds.has(skillId)) },
         ...getItemAudienceFilter({ examBlueprintId, field }),
       },

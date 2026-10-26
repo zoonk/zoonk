@@ -32,10 +32,11 @@ import { pickPlacementBatchesStep, writePlacementBatchStep } from "./steps/place
 
 const CITATION = { passage: "Conforme o edital.", sourceId: "notice" };
 
-/** Polícia Federal's notice as research reads it: assertions judged right or wrong. */
+/** Polícia Federal's notice as research reads it: assertions judged right or wrong, and an essay. */
 const CEBRASPE_STRUCTURE = {
   formats: [
     { citation: CITATION, description: "Itens Certo ou Errado.", kind: "trueFalse", options: null },
+    { citation: CITATION, description: "Prova discursiva.", kind: "essay", options: null },
   ],
   mock: null,
   rules: [],
@@ -290,7 +291,7 @@ describe(placementItemsWorkflow, () => {
     ]);
   });
 
-  it("writes the picked skills a few per call, with a quick and a typed question each", async () => {
+  it("writes the picked skills a few per call, a quick question each and no typed one for a hobby", async () => {
     const { goal, skillIds } = await goalWithSkills({ count: 7 });
 
     await expect(
@@ -301,11 +302,12 @@ describe(placementItemsWorkflow, () => {
     // questions may serve one learner, so its first question gets no premium either.
     expect(calledSkillCounts()).toStrictEqual([1, 2, 2, 2]);
 
+    // A learn goal's exam asks no written answers, so placement confirms with quick questions.
     expect(vi.mocked(generatePlacementItems).mock.calls[0]?.[0]).toMatchObject({
       examFormat: null,
       quickCount: 1,
       quickFormat: "multipleChoice",
-      typedCount: 1,
+      typedCount: 0,
     });
 
     expect(
@@ -313,7 +315,7 @@ describe(placementItemsWorkflow, () => {
     ).toStrictEqual([undefined, undefined, undefined, undefined]);
 
     await expect(countItems({ format: "multipleChoice", skillIds })).resolves.toBe(7);
-    await expect(countItems({ format: "typed", skillIds })).resolves.toBe(7);
+    await expect(countItems({ format: "typed", skillIds })).resolves.toBe(0);
 
     // Placement stops waiting for questions that didn't come once they're all written.
     await expect(
@@ -531,8 +533,9 @@ describe(placementItemsWorkflow, () => {
       preparePlacementItems({ ...context, goalId: goal.id, skillIds }),
     ).resolves.toStrictEqual({ failed: 0, written: 2 });
 
-    // The exam's own questions: its true/false ones and typed ones of its own, since placement
-    // asks an exam its questions over the general ones written before.
+    // The exam's own questions: its true/false ones and, as its discursive test asks written
+    // answers, typed ones of its own, since placement asks an exam its questions over the general
+    // ones written before.
     expect(vi.mocked(generatePlacementItems).mock.calls).toStrictEqual([
       [
         expect.objectContaining({

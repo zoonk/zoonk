@@ -182,7 +182,7 @@ describe(writeLessonContent, () => {
         "check",
         "explanation",
         "activity",
-        "typedAnswer",
+        "check",
         "check",
       ].map((kind, position) => [position, kind, draft.runId, position === 0 ? null : skill.id]),
     );

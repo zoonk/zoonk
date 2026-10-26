@@ -1,6 +1,7 @@
 import { gradeTypedAnswer } from "@zoonk/ai/tasks/v2/grading/grade-typed-answer";
 import { prisma } from "@zoonk/db";
-import { itemFixture } from "@zoonk/testing/fixtures/skills";
+import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
+import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import {
   studySessionBlockFixture,
   studySessionFixture,
@@ -8,6 +9,7 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { examStructure } from "../library/exams/_test-utils/exam-formats";
 import { thirdsMath, thirdsQuestion } from "../library/items/_test-utils/math-problems";
 import { getTodayStudySession } from "./_test-utils/open-today";
 import {
@@ -116,6 +118,46 @@ async function practiceBlock(
   }
 
   return { itemIds: created.map((item) => item.id), questions: detail.detail.questions, ref, user };
+}
+
+/**
+ * The questions of today's practice for a learner of `goal` who studied its one skill, whose
+ * questions in the bank are `items`. They start from nothing, so the first week's placement
+ * questions stay out of the day; a practice block needs two questions at least.
+ */
+async function todayPractice({
+  goal,
+  items,
+}: {
+  goal?: Parameters<typeof sessionGoalFixture>[0]["goal"];
+  items: { content: object; format: "multipleChoice" | "typed" }[];
+}) {
+  const user = await userFixture();
+
+  const fixture = await sessionGoalFixture({ goal, itemsPerSkill: 0, lessons: 1, userId: user.id });
+  const skillId = fixture.skills[0]?.id ?? "";
+
+  const [created] = await Promise.all([
+    Promise.all(
+      items.map((item) => itemFixture({ content: item.content, format: item.format, skillId })),
+    ),
+    prisma.planItem.update({ data: { status: "done" }, where: { id: fixture.planItems[0]?.id } }),
+    prisma.goal.update({
+      data: { details: { level: "none", purpose: "deep" } },
+      where: { id: fixture.goal.id },
+    }),
+    dueSkillFixture({ due: daysAgo(-10), skillId, userId: user.id }),
+  ]);
+
+  mockSession(user.id);
+  const today = await getTodayStudySession({ goalId: fixture.goal.id });
+  const sessionId = today.status === "ready" ? today.session.id : "";
+
+  const blocks = await prisma.studySessionBlock.findMany({
+    where: { kind: "practice", sessionId },
+  });
+
+  return { created, itemIds: blocks.flatMap((block) => readBlockPayload(block).itemIds) };
 }
 
 function answer({
@@ -287,41 +329,42 @@ describe("exam answer formats in practice", () => {
     });
   });
 
-  it("practices short typed answers from the bank, never typed explanations", async () => {
-    const user = await userFixture();
-
-    const { goal, planItems, skills } = await sessionGoalFixture({
-      itemsPerSkill: 0,
-      lessons: 1,
-      userId: user.id,
+  it("practices short typed answers from the bank for a goal whose exam asks them, never typed explanations", async () => {
+    const blueprint = await examBlueprintFixture({
+      structure: examStructure(["multipleChoice", "shortAnswer"]),
     });
 
-    const skillId = skills[0]?.id ?? "";
-
-    // Starting from nothing, so the first week's placement questions stay out of the day. A
-    // practice block needs two questions at least.
-    const [word, otherWord, explanation] = await Promise.all([
-      itemFixture({ content: TYPED_WORD, format: "typed", skillId }),
-      itemFixture({ content: TYPED_WORD, format: "typed", skillId }),
-      itemFixture({ content: TYPED_EXPLANATION, format: "typed", skillId }),
-      prisma.planItem.update({ data: { status: "done" }, where: { id: planItems[0]?.id } }),
-      prisma.goal.update({
-        data: { details: { level: "none", purpose: "deep" } },
-        where: { id: goal.id },
-      }),
-      dueSkillFixture({ due: daysAgo(-10), skillId, userId: user.id }),
-    ]);
-
-    mockSession(user.id);
-    const today = await getTodayStudySession({ goalId: goal.id });
-    const sessionId = today.status === "ready" ? today.session.id : "";
-
-    const blocks = await prisma.studySessionBlock.findMany({
-      where: { kind: "practice", sessionId },
+    const { created, itemIds } = await todayPractice({
+      goal: { createdAt: daysAgo(1), examBlueprintId: blueprint.id, kind: "exam" },
+      items: [
+        { content: TYPED_WORD, format: "typed" },
+        { content: TYPED_WORD, format: "typed" },
+        { content: TYPED_EXPLANATION, format: "typed" },
+      ],
     });
 
-    const itemIds = blocks.flatMap((block) => readBlockPayload(block).itemIds);
+    const [word, otherWord, explanation] = created;
+
     expect(itemIds).toStrictEqual(expect.arrayContaining([word?.id, otherWord?.id]));
     expect(itemIds).not.toContain(explanation?.id);
+  });
+
+  /*
+   * A hobby biology course asked the learner to write what Iara's cell diagram was missing:
+   * learners would rather pick, so only an exam that asks written answers brings them to practice.
+   */
+  it("never practices typed answers for a goal whose exam asks none", async () => {
+    const { created, itemIds } = await todayPractice({
+      items: [
+        { content: choiceItemContent(), format: "multipleChoice" },
+        { content: choiceItemContent(), format: "multipleChoice" },
+        { content: TYPED_WORD, format: "typed" },
+      ],
+    });
+
+    const [choice, otherChoice, word] = created;
+
+    expect(itemIds).toStrictEqual(expect.arrayContaining([choice?.id, otherChoice?.id]));
+    expect(itemIds).not.toContain(word?.id);
   });
 });

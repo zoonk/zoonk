@@ -49,17 +49,23 @@ export const QUESTION_ITEM_FORMATS = [
   "numeric",
 ] as const satisfies ItemFormat[];
 
+/** A short typed answer (a word, a number, a term): one with the wordings code accepts. */
+const SHORT_TYPED_ANSWER = {
+  NOT: { content: { equals: [], path: ["acceptedAnswers"] } },
+  format: "typed" as const,
+};
+
 /**
- * The questions practice asks: `QUESTION_ITEM_FORMATS`, ordering questions, and short typed
- * answers (a word, a number, a term) with the wordings code accepts, graded by code first and by a
- * model only on a miss. Typed explanations, spoken answers and essays join sessions with the
- * produce blocks.
+ * The questions practice asks: `QUESTION_ITEM_FORMATS`, ordering questions and, for a goal whose
+ * learner may meet typed questions (`typed`: an exam that asks written answers, or a language),
+ * short typed answers, graded by code first and by a model only on a miss. Typed explanations,
+ * spoken answers and essays join sessions with the produce blocks.
  */
-export function getPracticeItemFilter() {
+export function getPracticeItemFilter({ typed }: { typed: boolean }) {
   return {
     OR: [
       { format: { in: [...QUESTION_ITEM_FORMATS, "order" as const] } },
-      { NOT: { content: { equals: [], path: ["acceptedAnswers"] } }, format: "typed" as const },
+      ...(typed ? [SHORT_TYPED_ANSWER] : []),
     ],
   };
 }

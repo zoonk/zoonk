@@ -1,5 +1,5 @@
 import { type LessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
-import { type WrittenLesson } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
+import { type WrittenLesson, type WrittenScreen } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
 
 /** A beginner lesson plan with every screen kind the writer can produce, including an activity. */
 export function temperatureSpec(): LessonSpec {
@@ -188,13 +188,31 @@ export function writtenTemperatureLesson(): WrittenLesson {
       },
       { content: JSON.stringify(numberLineActivity), kind: "activity", template: "numberLine" },
       {
-        acceptedAnswers: [],
         basis: { quote: "Count the degrees to zero, then the degrees after it.", screen: 5 },
         context: null,
-        keyPoints: ["Going up 3 degrees reaches zero", "The last 2 degrees go above zero"],
-        kind: "typedAnswer",
-        question: "Explain in your own words why −3 °C plus 5 degrees is 2 °C.",
-        sampleAnswer: "Three degrees get you to zero, and the other two take you to 2 °C.",
+        image: null,
+        kind: "check",
+        options: [
+          {
+            isCorrect: true,
+            picture: null,
+            reason: "Going up 3 degrees reaches zero, and the last 2 degrees go above it.",
+            text: "Three degrees reach zero, and two more go past it",
+          },
+          {
+            isCorrect: false,
+            picture: null,
+            reason: "Zero doesn't stop a rise: the thermometer keeps going up past it.",
+            text: "The rise stops at zero",
+          },
+          {
+            isCorrect: false,
+            picture: null,
+            reason: "A rise adds degrees to the start; it never takes the start away.",
+            text: "You take the 3 away from the 5",
+          },
+        ],
+        question: "Why is −3 °C plus 5 degrees equal to 2 °C?",
         visual: null,
       },
       {
@@ -231,5 +249,22 @@ export function writtenTemperatureLesson(): WrittenLesson {
       "A rise moves up the thermometer, even below zero.",
       "Count up to zero first, then the degrees above it.",
     ],
+  };
+}
+
+/**
+ * The why check of `writtenTemperatureLesson` (screen 7) as a typed answer, which only a lesson
+ * whose learners' exams ask written answers may have (`getWrittenKinds`).
+ */
+export function writtenTypedAnswer(): Extract<WrittenScreen, { kind: "typedAnswer" }> {
+  return {
+    acceptedAnswers: [],
+    basis: { quote: "Count the degrees to zero, then the degrees after it.", screen: 5 },
+    context: null,
+    keyPoints: ["Going up 3 degrees reaches zero", "The last 2 degrees go above zero"],
+    kind: "typedAnswer",
+    question: "Explain in your own words why −3 °C plus 5 degrees is 2 °C.",
+    sampleAnswer: "Three degrees get you to zero, and the other two take you to 2 °C.",
+    visual: null,
   };
 }

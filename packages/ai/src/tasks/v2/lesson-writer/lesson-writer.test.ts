@@ -27,6 +27,9 @@ vi.mock("./lesson-writer.prompt.md", () => ({
     "{{#setup}}",
     "Write the setup.",
     "{{/setup}}",
+    "{{#writtenAnswers}}",
+    "Write typed answers.",
+    "{{/writtenAnswers}}",
     "Check it.",
   ].join("\n"),
 }));
@@ -100,13 +103,14 @@ describe(writeLessonDraft, () => {
     const findError = spec([screen("hook"), screen("activity", "findError")]);
     const exams = [{ name: "ENEM", style: "Multiple choice with a text." }];
 
-    const [regular, spotAi, material, sources, exam, setup] = await Promise.all([
+    const [regular, spotAi, material, sources, exam, setup, written] = await Promise.all([
       writeLessonDraft(params),
       writeLessonDraft({ ...params, spec: findError }),
       writeLessonDraft({ ...params, exams: [], material: "<page>Slides</page>" }),
       writeLessonDraft({ ...params, sources: "<page>Law</page>" }),
       writeLessonDraft({ ...params, exams }),
       writeLessonDraft({ ...params, setup: true }),
+      writeLessonDraft({ ...params, writtenAnswers: true }),
     ]);
 
     expect(regular.systemPrompt).toBe("Write the lesson.\nKeep it short.\nCheck it.");
@@ -131,8 +135,19 @@ describe(writeLessonDraft, () => {
       "Write the lesson.\nKeep it short.\nWrite the setup.\nCheck it.",
     );
 
+    expect(written.systemPrompt).toBe(
+      "Write the lesson.\nKeep it short.\nWrite typed answers.\nCheck it.",
+    );
+
     expect(regular.userPrompt).not.toContain("TODAY");
     expect(setup.userPrompt).toMatch(/\nTODAY: \d{4}-\d{2}-\d{2}\n/u);
+
+    // Only learners whose exams ask written answers may get the application as a typed answer.
+    expect(regular.userPrompt).toContain("3. application, written as: check or mathCheck\n");
+
+    expect(written.userPrompt).toContain(
+      "3. application, written as: check or mathCheck or typedAnswer\n",
+    );
   });
 
   it("falls back from Gemini to Sol before Opus", async () => {

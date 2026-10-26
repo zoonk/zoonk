@@ -451,8 +451,8 @@ describe(goalContentWorkflow, () => {
       );
 
       expect(vi.mocked(generateSkillGraph).mock.calls[0]?.[0].serviceTier).toBeUndefined();
-      // Placement's questions come two skills per call, each skill with a quick question and a
-      // typed one that confirms a right pick.
+      // Placement's questions come two skills per call, each skill with a quick question: a learn
+      // goal asks no written answers, so none is typed.
       const placementCalls = vi.mocked(generatePlacementItems).mock.calls.map(([params]) => params);
       const placementSkills = placementCalls.reduce((total, call) => total + call.skills.length, 0);
 
@@ -465,7 +465,7 @@ describe(goalContentWorkflow, () => {
             call.serviceTier === undefined &&
             call.skills.length <= 2 &&
             call.quickCount === 1 &&
-            call.typedCount === 1,
+            call.typedCount === 0,
         ),
       ).toBe(true);
 
@@ -473,7 +473,7 @@ describe(goalContentWorkflow, () => {
         prisma.item.count({
           where: { format: "typed", skill: { planItems: { some: { plan: { goalId: goal.id } } } } },
         }),
-      ).resolves.toBe(placementSkills);
+      ).resolves.toBe(0);
 
       const events = getStreamedEvents().map(
         (event) => `${String(event.step)}:${String(event.status)}`,

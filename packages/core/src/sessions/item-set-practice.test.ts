@@ -347,6 +347,7 @@ describe("question sets in practice", () => {
       listeningSkillIds: await loadListeningSkillIds(goal.id),
       now: SESSION_NOW,
       skillIds: [heardId, reading.id],
+      typed: true,
       userId: user.id,
     });
 
@@ -388,6 +389,7 @@ describe("question sets in practice", () => {
       listeningSkillIds: await loadListeningSkillIds(goal.id),
       now: SESSION_NOW,
       skillIds: [reading.id],
+      typed: true,
       userId: user.id,
     });
 

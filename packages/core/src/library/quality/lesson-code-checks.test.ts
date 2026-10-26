@@ -1,9 +1,15 @@
 import { type WrittenLesson, type WrittenScreen } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
 import { describe, expect, it } from "vitest";
-import { temperatureSpec, writtenTemperatureLesson } from "./_test-utils/written-lessons";
+import {
+  temperatureSpec,
+  writtenTemperatureLesson,
+  writtenTypedAnswer,
+} from "./_test-utils/written-lessons";
 import { checkScreenText, checkWrittenLesson } from "./lesson-code-checks";
 
-function check(lesson: WrittenLesson, options: { allowActivityFallback?: boolean } = {}) {
+type CheckOptions = { allowActivityFallback?: boolean; writtenAnswers?: boolean };
+
+function check(lesson: WrittenLesson, options: CheckOptions = {}) {
   return checkWrittenLesson({
     ...options,
     language: "en",
@@ -34,7 +40,7 @@ function explanation(text: string): Extract<WrittenScreen, { kind: "explanation"
   };
 }
 
-function codesOf(lesson: WrittenLesson, options: { allowActivityFallback?: boolean } = {}) {
+function codesOf(lesson: WrittenLesson, options: CheckOptions = {}) {
   return check(lesson, options).problems.map((problem) => [problem.screen, problem.code]);
 }
 
@@ -223,7 +229,7 @@ describe(checkWrittenLesson, () => {
       "check",
       "explanation",
       "activity",
-      "typedAnswer",
+      "check",
       "check",
     ]);
   });
@@ -377,20 +383,32 @@ describe(checkWrittenLesson, () => {
     expect(codesOf(withScreen(0, sensors))).toStrictEqual([[0, "optionData"]]);
   });
 
+  /*
+   * A hobby biology course asked "Iara" to write what her cell diagram was missing: learners would
+   * rather pick, so a typed answer is only for learners whose exams ask written answers.
+   */
+  it("sends a typed answer to the fix pass unless the lesson's learners' exams ask written answers", () => {
+    const typed = withScreen(6, writtenTypedAnswer());
+
+    expect(codesOf(typed)).toStrictEqual([[6, "screenKind"]]);
+
+    expect(check(typed).problems[0]?.problem).toBe(
+      "Planned as check but written as typedAnswer; write it as check or mathCheck.",
+    );
+
+    expect(codesOf(typed, { writtenAnswers: true })).toStrictEqual([]);
+  });
+
   it("rejects a typed answer whose sample gives none of the accepted answers", () => {
-    const typed = writtenTemperatureLesson().screens[6];
-
-    if (typed?.kind !== "typedAnswer") {
-      throw new Error("Screen 7 is a typed answer.");
-    }
-
     const contradicting = {
-      ...typed,
+      ...writtenTypedAnswer(),
       acceptedAnswers: ["2 °C", "2 degrees"],
       sampleAnswer: "It ends at 3 °C.",
     };
 
-    expect(codesOf(withScreen(6, contradicting))).toStrictEqual([[6, "answerKey"]]);
+    expect(codesOf(withScreen(6, contradicting), { writtenAnswers: true })).toStrictEqual([
+      [6, "answerKey"],
+    ]);
   });
 
   it("rejects Markdown the player shows as marks and text a writer left unfinished", () => {

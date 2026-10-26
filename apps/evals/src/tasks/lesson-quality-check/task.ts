@@ -31,6 +31,7 @@ function reviewLesson({
     lesson,
     level: context.level,
     spec: context.spec,
+    writtenAnswers: context.writtenAnswers,
   });
 
   return checkLessonQuality({

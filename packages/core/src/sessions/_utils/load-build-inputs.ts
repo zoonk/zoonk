@@ -3,6 +3,7 @@ import { loadSessionWeeklyChallenge } from "../../checkpoints/_utils/load-weekly
 import { isNetScored } from "../../checkpoints/weekly-challenge-rules";
 import { loadSessionProduce } from "../../exams/essays/_utils/load-produce";
 import { getDaysToExam } from "../../exams/final-stretch/final-stretch-rules";
+import { allowsTypedQuestions } from "../../library/exams/written-answers";
 import { getGoalField } from "../../library/items/item-field";
 import {
   type AlphabetIntro,
@@ -306,8 +307,6 @@ export async function loadSessionBuildInput(
 
   const placementItemIds = await loadSessionPlacement({ context, isReviewDay, plan, used });
 
-  const reviewSkillIds = fullReview ? testSkillIds : skillIds;
-
   const practice = await loadPracticeItems({
     claims,
     difficultyBias: getPracticeDifficulty({
@@ -326,7 +325,8 @@ export async function loadSessionBuildInput(
     listeningSkillIds,
     now,
     repeatOnlyMissed: isReviewDay,
-    skillIds: reviewSkillIds,
+    skillIds: fullReview ? testSkillIds : skillIds,
+    typed: allowsTypedQuestions({ goal, structure: plan.structure }),
     userId,
   });
 
@@ -337,7 +337,7 @@ export async function loadSessionBuildInput(
     drills,
     examTrialEnded: access.trialEnded,
     freshStart: getDayFreshStart({ plan, today: localDate }),
-    fullReviewSkillIds: fullReview ? reviewSkillIds : null,
+    fullReviewSkillIds: fullReview ? testSkillIds : null,
     lessons,
     netScored,
     placementItemIds,

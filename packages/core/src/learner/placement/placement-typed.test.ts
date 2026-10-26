@@ -1,12 +1,14 @@
 import { gradeTypedAnswer } from "@zoonk/ai/tasks/v2/grading/grade-typed-answer";
 import { prisma } from "@zoonk/db";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
-import { itemFixture } from "@zoonk/testing/fixtures/skills";
+import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
+import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getUsageRule } from "../../entitlements/limits";
+import { examStructure } from "../../library/exams/_test-utils/exam-formats";
 import { learnerGoalFixture } from "../_test-utils/learner-goal";
 import { answerPlacementQuestion } from "./answer-placement-question";
 import { getGoalPlacement } from "./get-goal-placement";
@@ -43,17 +45,36 @@ function mockGrade({ met }: { met: number }) {
   });
 }
 
-/** One skill with a quick question and a typed one, so a right pick gets confirmed in words. */
-async function setup() {
+/**
+ * One skill with two quick questions and a typed one. A right pick is confirmed in words when the
+ * goal's exam asks short written answers, and with the other pick when it asks none
+ * (`written: false`).
+ */
+async function setup({ written = true }: { written?: boolean } = {}) {
   const user = await userFixture();
-  const fixture = await learnerGoalFixture({ itemsPerSkill: 1, phases: [1], userId: user.id });
-  const [skill] = fixture.skills;
 
-  const typed = await itemFixture({
-    content: TYPED_CONTENT,
-    format: "typed",
-    skillId: skill?.id ?? "",
-  });
+  const [fixture, blueprint] = await Promise.all([
+    learnerGoalFixture({ itemsPerSkill: 1, phases: [1], userId: user.id }),
+    examBlueprintFixture({ structure: examStructure(["multipleChoice", "shortAnswer"]) }),
+  ]);
+
+  const skillId = fixture.skills[0]?.id ?? "";
+
+  const [typed] = await Promise.all([
+    itemFixture({ content: TYPED_CONTENT, format: "typed", skillId }),
+    itemFixture({ content: choiceItemContent(), skillId }),
+    // Its run wrote placement's questions, so placement asks the general ones in the bank.
+    prisma.plan.update({
+      data: { placementPreparedAt: new Date() },
+      where: { id: fixture.plan.id },
+    }),
+    written
+      ? prisma.goal.update({
+          data: { examBlueprintId: blueprint.id, kind: "exam" },
+          where: { id: fixture.goal.id },
+        })
+      : null,
+  ]);
 
   mockSession(user.id);
   return { ...fixture, typed, user };
@@ -181,6 +202,21 @@ describe("typed answers in placement", () => {
     await expect(
       prisma.mistake.count({ where: { skillId: skills[0]?.id, userId: user.id } }),
     ).resolves.toBe(0);
+  });
+
+  /*
+   * A hobby biology course asked the learner to write what Iara's cell diagram was missing:
+   * learners would rather pick, so a goal whose exam asks no written answers never gets a typed
+   * question, even one the shared bank has.
+   */
+  it("confirms a right pick with another quick question when the goal's exam asks no written answers", async () => {
+    const { goal } = await setup({ written: false });
+    const afterPick = await answerQuickRight({ goalId: goal.id });
+
+    expect(afterPick).toMatchObject({
+      placement: { next: { format: "multipleChoice" } },
+      status: "ready",
+    });
   });
 
   it("rejects a typed answer to a choice question and a pick for a typed one", async () => {
