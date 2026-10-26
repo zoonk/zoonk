@@ -67,7 +67,7 @@ export type LessonPlayerState = {
    * A language answer was wrong and the learner gets to fix it before the answer shows, an answer
    * never reached the server and the lesson came back to its screen to finish, a question left
    * out while its picture was missing came back once the picture was ready, or "Can't write now"
-   * left the lesson's writing out and the screen after it says so.
+   * (tapped here or earlier today) left the lesson's writing out and the screen after it says so.
    */
   notice: "answerNotSaved" | "pictureReady" | "selfCorrect" | "writingSkipped" | null;
   phase: LessonPlayerPhase;
@@ -87,7 +87,10 @@ export type LessonPlayerState = {
   reviewing: boolean;
   /** Language answers that already had their one chance to self-correct. */
   selfCorrected: string[];
-  /** Writing left out of this sitting only, without an answer verdict or a plan preference. */
+  /**
+   * Writing left out of this run, without an answer verdict or a plan preference. The device keeps
+   * "Can't write now" for the rest of the day (`CANT_WRITE_TODAY`); the server only records the run.
+   */
   skippedWritingStepIds: string[];
   startedAt: number;
   stepStartedAt: number;
@@ -96,6 +99,11 @@ export type LessonPlayerState = {
   support: LessonSupport | null;
   /** Screens whose required pictures were lost, retained when the server resyncs this run. */
   unavailableStepIds: string[];
+  /**
+   * The lesson as it was before "Can't write now" left its writing out, so "Write again" can put
+   * it back while the screen that says so is still the one in view.
+   */
+  writingRestore: Pick<LessonPlayerState, "position" | "queue" | "skippedWritingStepIds"> | null;
 };
 
 export type LessonPlayerAction =
@@ -103,7 +111,7 @@ export type LessonPlayerAction =
   | { counts: boolean; result: LessonStepResult; stepId: string; type: "checkResolved" }
   | { attemptId: string; result: LessonStepCheckResult; stepId: string; type: "checkConfirmed" }
   | { direction: "next" | "prev"; type: "navigate" }
-  | { stepId?: string; type: "skipWriting" }
+  | { opening?: boolean; stepId?: string; type: "skipWriting" }
   | { stepIds: string[]; type: "skipSteps" }
   | { refusal: LessonRunRefusal; type: "runRefused" }
   | { result: LessonPlayerCompletionState["result"]; type: "completionSaved" }
@@ -129,7 +137,8 @@ export type LessonPlayerAction =
   | { type: "continue" }
   | { type: "explainFirst" }
   | { type: "knowThis" }
-  | { type: "runStarting" };
+  | { type: "runStarting" }
+  | { type: "writingRestored" };
 
 export function createInitialState(
   lesson: Pick<LessonPlayerLesson, "id" | "steps">,
@@ -165,6 +174,7 @@ export function createInitialState(
     steps,
     support,
     unavailableStepIds: [],
+    writingRestore: null,
   };
 }
 

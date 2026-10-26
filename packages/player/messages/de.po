@@ -3482,6 +3482,11 @@ msgid "I already know this"
 msgstr "Das weiß ich schon"
 
 #: src/lesson/lesson-stage.tsx
+msgctxt "qzpeai"
+msgid "Write again"
+msgstr "Wieder schreiben"
+
+#: src/lesson/lesson-stage.tsx
 msgctxt "LnHBcu"
 msgid "Quick check · {current} of {total}"
 msgstr "Kurztest · {current} von {total}"
@@ -3502,9 +3507,9 @@ msgid "This question was waiting for its picture. Answer it to finish the lesson
 msgstr "Diese Frage hat auf ihr Bild gewartet. Beantworte sie, um die Lektion abzuschließen."
 
 #: src/lesson/lesson-stage.tsx
-msgctxt "VbY3en"
-msgid "No more writing in this lesson."
-msgstr "In dieser Lektion musst du nichts mehr schreiben."
+msgctxt "I67vt5"
+msgid "No more writing today."
+msgstr "Heute musst du nichts mehr schreiben."
 
 #: src/lesson/steps/challenge/challenge-conversation.tsx
 msgctxt "bbucHz"
@@ -3664,24 +3669,19 @@ msgid "Listening… Tap Stop to check."
 msgstr "Ich höre zu… Tippe auf „Stopp“, um deine Antwort zu prüfen."
 
 #: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "UwEXD9"
-msgid "I can talk now"
-msgstr "Ich kann jetzt sprechen"
-
-#: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "begRkt"
 msgid "I can't talk now"
 msgstr "Ich kann gerade nicht sprechen"
 
 #: src/lesson/steps/spoken-answer-step.tsx
+msgctxt "UwEXD9"
+msgid "I can talk now"
+msgstr "Ich kann jetzt sprechen"
+
+#: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "0gloy9"
 msgid "Say it instead"
 msgstr "Stattdessen sprechen"
-
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "E7aQC2"
-msgid "Type it instead"
-msgstr "Stattdessen tippen"
 
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "QuYUAL"

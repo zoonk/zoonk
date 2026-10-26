@@ -6,12 +6,12 @@ import {
   goBack,
   resolveCheck,
   skipSteps,
-  skipWriting,
   startQuickCheck,
 } from "./_utils/lesson-flow";
 import { getRunVerdicts, resumeLesson } from "./_utils/lesson-resume";
 import { isReadStep } from "./_utils/lesson-steps";
 import { restorePicturedSteps } from "./_utils/restore-pictured-steps";
+import { restoreWriting, skipWriting } from "./_utils/writing-skip";
 import {
   type LessonPlayerAction,
   type LessonPlayerState,
@@ -229,6 +229,11 @@ function completionSaved(
     : state;
 }
 
+/** A verdict that lands after the lesson ended changes nothing. */
+function recordVerdict(state: LessonPlayerState, action: ActionOf<"checkResolved">) {
+  return state.phase === "completed" ? state : resolveCheck(state, action);
+}
+
 /**
  * The one lesson reducer: every screen kind. It has no idea how the lesson looks; the player's
  * parts read its state. Network work happens outside it and reports back through actions.
@@ -243,7 +248,9 @@ export function lessonPlayerReducer(
     case "continue":
       return continueFrom(state);
     case "skipWriting":
-      return skipWriting(state, action.stepId);
+      return skipWriting(state, action);
+    case "writingRestored":
+      return restoreWriting(state);
     case "skipSteps":
       return skipSteps(state, action.stepIds);
     case "navigate":
@@ -255,7 +262,7 @@ export function lessonPlayerReducer(
     case "checkStarted":
       return startChecking(state);
     case "checkResolved":
-      return state.phase === "completed" ? state : resolveCheck(state, action);
+      return recordVerdict(state, action);
     case "checkFailed":
       return failCheck(state, action);
     case "checkConfirmed":

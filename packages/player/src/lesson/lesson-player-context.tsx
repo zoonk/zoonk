@@ -22,10 +22,12 @@ export type LessonPlayerActions = {
   explainFirst: () => void;
   goBack: () => void;
   knowThis: () => void;
+  /** "Write again": takes back "Can't write now" and puts this lesson's writing back. */
+  restoreWriting: () => void;
   retryCompletion: () => void;
   retryStart: () => void;
   selectAnswer: (stepId: string, answer: LessonPlayerAnswer | null) => void;
-  /** Skips the rest of this lesson's writing, without changing the plan. */
+  /** Skips the rest of this lesson's writing, and of every lesson today, without changing the plan. */
   skipWriting: () => void;
   /** Leaves out screens that can't be played after all, such as a numbered picture that never came. */
   skipSteps: (stepIds: string[]) => void;

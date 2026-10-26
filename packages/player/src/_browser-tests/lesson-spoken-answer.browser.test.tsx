@@ -10,8 +10,9 @@ import { languageStep, spokenAnswerStep, teachingStep } from "../preview/preview
 
 /**
  * "Say it out loud": the learner records the sentence and the host grades it. When they can't talk
- * now, the screen plays as listening for the rest of the visit; a recording with no words, or one
- * past today's help, says so and leaves typing as the way on.
+ * now, speaking screens play as listening, or as typing without a listening version, for the rest
+ * of the day; a recording with no words, or one past today's help, says so and leaves typing as the
+ * way on.
  */
 
 type GradeSpokenAnswer = NonNullable<LessonPlayerAdapters["gradeSpokenAnswer"]>;
@@ -61,10 +62,9 @@ async function sayIt() {
 describe("spoken answers", () => {
   afterEach(() => {
     vi.restoreAllMocks();
-    sessionStorage.clear();
   });
 
-  it("plays a spoken screen as listening when the learner can't talk now, for the visit", async () => {
+  it("plays a spoken screen as listening when the learner can't talk now, for the day", async () => {
     const gradeSpokenAnswer = vi.fn<GradeSpokenAnswer>();
     const step = spokenSentenceStep();
     const first = openSpokenLesson({ gradeSpokenAnswer, step });
@@ -83,11 +83,22 @@ describe("spoken answers", () => {
     await expect.element(page.getByRole("status").filter({ hasText: "Correct!" })).toBeVisible();
     expect(gradeSpokenAnswer).not.toHaveBeenCalled();
 
-    // The choice lasts for the visit: the screen opens as listening again, until they can talk.
+    // The choice lasts for the day: the screen opens as listening again, until they can talk.
     first.unmount();
-    openSpokenLesson({ gradeSpokenAnswer, step });
+    const second = openSpokenLesson({ gradeSpokenAnswer, step });
     await expect.element(page.getByRole("group", { name: "Word bank" })).toBeVisible();
+
+    // A speaking screen without a listening version takes the sentence typed instead.
+    second.unmount();
+    const third = openSpokenLesson({ gradeSpokenAnswer });
+    await expect.element(page.getByRole("textbox")).toBeVisible();
+    await expect.element(page.getByRole("button", { name: "Record" })).not.toBeInTheDocument();
     await page.getByRole("button", { name: "I can talk now" }).click();
+    await expect.element(page.getByRole("button", { name: "Record" })).toBeVisible();
+
+    // Taken back, it's gone for the next speaking screen too.
+    third.unmount();
+    openSpokenLesson({ gradeSpokenAnswer, step });
     await expect.element(page.getByRole("button", { name: "Record" })).toBeVisible();
   });
 
@@ -141,7 +152,7 @@ describe("spoken answers", () => {
       .element(page.getByText("We couldn't check your answer", { exact: false }))
       .not.toBeInTheDocument();
 
-    await expect.element(page.getByRole("button", { name: "Type it instead" })).toBeVisible();
+    await expect.element(page.getByRole("button", { name: "I can't talk now" })).toBeVisible();
 
     // Trying again records and sends again.
     await sayIt();
@@ -167,7 +178,7 @@ describe("spoken answers", () => {
       .toBeVisible();
 
     await expect.element(page.getByRole("link", { name: "See Plus" })).toBeVisible();
-    await expect.element(page.getByRole("button", { name: "Type it instead" })).toBeVisible();
+    await expect.element(page.getByRole("button", { name: "I can't talk now" })).toBeVisible();
   });
 
   // Pedro's microphone was blocked: the screen said "Type your answer instead" with nowhere to type.

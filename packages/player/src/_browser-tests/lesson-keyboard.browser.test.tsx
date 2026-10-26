@@ -113,6 +113,14 @@ describe("lesson by keyboard", () => {
       await focusOn(answer);
       await press("Enter");
       await expect.element(verdict("Correct!")).toBeVisible();
+
+      // Once checked, focus leaves the locked field for Continue, and the typing hint goes.
+      await expect.element(page.getByRole("button", { name: /^Continue/u })).toHaveFocus();
+
+      await expect
+        .element(page.getByText("Press Enter to check, Shift+Enter for a new line."))
+        .not.toBeInTheDocument();
+
       await press("Enter");
       await expect.element(page.getByRole("heading", { name: "Summary" })).toBeVisible();
     });

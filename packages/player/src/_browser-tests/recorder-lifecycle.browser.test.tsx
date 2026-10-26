@@ -67,7 +67,6 @@ describe("recorder ownership", () => {
     vi.restoreAllMocks();
     vi.unstubAllGlobals();
     vi.useRealTimers();
-    sessionStorage.clear();
   });
 
   it("a retained owner can record again while its abandoned permission request is pending", async () => {

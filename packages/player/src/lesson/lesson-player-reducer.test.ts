@@ -129,6 +129,34 @@ describe(lessonPlayerReducer, () => {
     expect(skipped.skippedWritingStepIds).toStrictEqual(["write"]);
   });
 
+  it("puts the writing back with Write again until the learner moves on", () => {
+    const steps = [explanationStep("tip"), typedAnswerStep("write"), summaryStep("end")];
+    const skipped = play(steps, [{ opening: true, type: "skipWriting" }]);
+
+    expect(skipped).toMatchObject({ notice: "writingSkipped", position: 0, queue: ["tip", "end"] });
+
+    const restored = lessonPlayerReducer(skipped, { type: "writingRestored" });
+
+    expect(restored).toMatchObject({ notice: null, position: 0, queue: ["tip", "write", "end"] });
+    expect(restored.skippedWritingStepIds).toStrictEqual([]);
+
+    const movedOn = lessonPlayerReducer(skipped, { type: "continue" });
+    expect(lessonPlayerReducer(movedOn, { type: "writingRestored" })).toBe(movedOn);
+  });
+
+  it("brings the learner back to the screen they left with Can't write now", () => {
+    const steps = [typedAnswerStep("write"), explanationStep("tip")];
+    const skipped = play(steps, [{ type: "skipWriting" }]);
+    const restored = lessonPlayerReducer(skipped, { type: "writingRestored" });
+
+    expect([getCurrentStep(restored)?.id, restored.phase]).toStrictEqual(["write", "playing"]);
+  });
+
+  it("waits for Finish when writing left out as the lesson opens leaves nothing to do", () => {
+    const opened = play([typedAnswerStep("write")], [{ opening: true, type: "skipWriting" }]);
+    expect(opened).toMatchObject({ completion: { status: "ready" }, phase: "completed" });
+  });
+
   it("leaves out screens that can't be played, the one in view too, and keeps the ones before", () => {
     const steps = [
       explanationStep("tip"),

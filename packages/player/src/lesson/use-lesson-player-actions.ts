@@ -14,6 +14,7 @@ import {
 import { type LessonPlayerAdapters } from "./lesson-player-types";
 import { useLessonRun } from "./use-lesson-run";
 import { type CheckContext, useStepGrading } from "./use-step-grading";
+import { CANT_WRITE_TODAY, setChosenToday } from "./use-today-choice";
 
 type ActionsInput = {
   adapters: LessonPlayerAdapters;
@@ -199,11 +200,18 @@ export function useLessonPlayerActions({
         dispatch({ direction: "prev", type: "navigate" });
       },
       knowThis: () => dispatch({ type: "knowThis" }),
+      restoreWriting: () => {
+        setChosenToday(CANT_WRITE_TODAY, false);
+        dispatch({ type: "writingRestored" });
+      },
       retryCompletion: () => dispatch({ type: "completionRetried" }),
       retryStart: () => void ensureRun(),
       selectAnswer: (stepId, answer) => dispatch({ answer, stepId, type: "selectAnswer" }),
       skipSteps: (stepIds) => dispatch({ stepIds, type: "skipSteps" }),
-      skipWriting: () => dispatch({ type: "skipWriting" }),
+      skipWriting: () => {
+        setChosenToday(CANT_WRITE_TODAY, true);
+        dispatch({ type: "skipWriting" });
+      },
       submitSpokenAnswer: (input) => void submitSpokenAnswer(input),
     }),
     [check, dispatch, ensureRun, submitSpokenAnswer, writeExampleLines],

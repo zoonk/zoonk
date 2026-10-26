@@ -30,6 +30,7 @@ import { type LessonTutorConfig } from "./tutor/lesson-tutor-context";
 import { useAbandonTracking } from "./use-abandon-tracking";
 import { useExampleLines } from "./use-example-lines";
 import { useLessonPlayerActions } from "./use-lesson-player-actions";
+import { CANT_WRITE_TODAY, isChosenToday } from "./use-today-choice";
 
 function getOptionIds(step: PlayableLibraryStep): string[] {
   if (step.kind === "check") {
@@ -190,6 +191,11 @@ export function LessonPlayerProvider({
   const pictureSteps = useMemo(() => Object.values(state.steps), [state.steps]);
 
   const onOpen = useEffectEvent(() => {
+    // "Can't write now" from earlier today, read once the device's storage is there.
+    if (isChosenToday(CANT_WRITE_TODAY)) {
+      dispatch({ opening: true, type: "skipWriting" });
+    }
+
     const first = lesson.steps[0];
     const answer = state.answers[first?.id ?? ""];
 

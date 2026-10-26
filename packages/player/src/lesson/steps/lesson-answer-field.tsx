@@ -7,12 +7,14 @@ import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useEffect, useId, useRef } from "react";
+import { focusLessonAfterTurn } from "../_utils/lesson-focus";
 import { useLessonPlayer } from "../lesson-player-context";
 import { CHECK_BOUNDS } from "../use-step-grading";
 
 /**
  * Under the answer: that the check is still going or didn't work and, with a keyboard, how Enter
- * works in a written answer. Touch screens have the button for that, so they get no hint.
+ * works in a written answer until it's sent. Touch screens have the button for that, so they get no
+ * hint.
  */
 function AnswerHint({ id, isNumber }: { id: string; isNumber: boolean }) {
   const t = useExtracted();
@@ -40,7 +42,7 @@ function AnswerHint({ id, isNumber }: { id: string; isNumber: boolean }) {
     );
   }
 
-  if (isNumber) {
+  if (isNumber || state.phase !== "playing") {
     return null;
   }
 
@@ -57,8 +59,9 @@ function AnswerHint({ id, isNumber }: { id: string; isNumber: boolean }) {
 
 /**
  * A written answer. Enter checks it and Shift+Enter starts a new line, like a chat; once it's
- * checked, Enter continues, as everywhere else. A number takes one line with the number keyboard.
- * It stays editable after a failed check, so nothing typed is lost.
+ * checked, focus moves on to Continue, so Enter continues and the locked field doesn't look ready
+ * for typing. A number takes one line with the number keyboard. It stays editable after a failed
+ * check, so nothing typed is lost.
  */
 export function LessonAnswerField({
   autoFocusOnPointer = false,
@@ -78,8 +81,9 @@ export function LessonAnswerField({
 }) {
   const t = useExtracted();
   const hintId = useId();
-  const { actions, screen } = useLessonPlayer();
+  const { actions, screen, state } = useLessonPlayer();
   const fieldRef = useRef<HTMLDivElement>(null);
+  const isGraded = state.phase === "feedback";
 
   useEffect(() => {
     if (autoFocusOnPointer && globalThis.matchMedia("(pointer: fine)").matches) {
@@ -88,6 +92,12 @@ export function LessonAnswerField({
         ?.focus({ preventScroll: true });
     }
   }, [autoFocusOnPointer]);
+
+  useEffect(() => {
+    if (isGraded && fieldRef.current?.contains(document.activeElement)) {
+      focusLessonAfterTurn();
+    }
+  }, [isGraded]);
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (event.key !== "Enter" || event.shiftKey || event.nativeEvent.isComposing) {

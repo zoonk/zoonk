@@ -13,10 +13,10 @@ import { LessonHelpLimitNotice } from "../_components/help-limit-notice";
 import { LessonQuestion } from "../_components/lesson-step-text";
 import { useLessonPlayer, useLessonPlayerConfig } from "../lesson-player-context";
 import { CHECK_BOUNDS } from "../use-step-grading";
+import { CANT_TALK_TODAY, useTodayChoice } from "../use-today-choice";
 import { ExerciseStepView } from "./exercise-step";
 import { LessonAnswerField } from "./lesson-answer-field";
 import { type LessonStepViewProps, type StepOf } from "./lesson-step-view-props";
-import { useCantTalkNow } from "./use-cant-talk-now";
 
 const MS_PER_SECOND = 1000;
 const SECONDS_PER_MINUTE = 60;
@@ -144,26 +144,24 @@ function getAnswerMode({
   canSpeak,
   cantTalk,
   micBlocked,
-  prefersTyping,
 }: {
   canListen: boolean;
   canSpeak: boolean;
   cantTalk: boolean;
   micBlocked: boolean;
-  prefersTyping: boolean;
 }): AnswerMode {
   if ((cantTalk || !canSpeak) && canListen) {
     return "listen";
   }
 
-  return prefersTyping || micBlocked || !canSpeak ? "type" : "speak";
+  return cantTalk || micBlocked || !canSpeak ? "type" : "speak";
 }
 
 /**
  * How the learner answers now. Speaking is the default; "I can't talk now" plays the sentence as
- * listening when the screen has it, for the rest of the visit; typing covers a quiet room without
- * a listening version, a browser that can't record, and a microphone blocked when they tap to
- * speak, which brings up the typing field right away with a line saying why.
+ * listening when the screen has it, or as typing when it doesn't, on every speaking screen for the
+ * rest of the day; typing also covers a browser that can't record and a microphone blocked when
+ * they tap to speak, which brings up the typing field right away with a line saying why.
  */
 function useAnswerMode({
   onAnswer,
@@ -173,21 +171,27 @@ function useAnswerMode({
   const canRecord = useCanRecord();
   const canSpeak = Boolean(adapters.gradeSpokenAnswer) && canRecord;
   const canListen = step.listening !== null;
-  const [cantTalk, setCantTalk] = useCantTalkNow();
-  const [prefersTyping, setPrefersTyping] = useState(false);
+  const [cantTalk, setCantTalk] = useTodayChoice(CANT_TALK_TODAY);
   const [micBlocked, setMicBlocked] = useState(false);
 
-  const mode = getAnswerMode({ canListen, canSpeak, cantTalk, micBlocked, prefersTyping });
+  const mode = getAnswerMode({ canListen, canSpeak, cantTalk, micBlocked });
 
   /** An answer started one way doesn't carry over to another; asking to speak tries the mic again. */
-  const switchTo = (next: { cantTalk: boolean; prefersTyping: boolean }) => {
+  const switchTo = (next: { cantTalk: boolean }) => {
     onAnswer(null);
     setCantTalk(next.cantTalk);
-    setPrefersTyping(next.prefersTyping);
     setMicBlocked(false);
   };
 
-  return { canListen, canSpeak, micBlocked, mode, onBlocked: () => setMicBlocked(true), switchTo };
+  return {
+    canListen,
+    canSpeak,
+    cantTalk,
+    micBlocked,
+    mode,
+    onBlocked: () => setMicBlocked(true),
+    switchTo,
+  };
 }
 
 /** "I can't talk now": the same sentence as a listening exercise, heard and built from a word bank. */
@@ -221,35 +225,21 @@ function ModeSwitch({
   isLocked: boolean;
 }) {
   const t = useExtracted();
-  const { canListen, canSpeak, mode, switchTo } = answerMode;
+  const { canListen, canSpeak, cantTalk, mode, switchTo } = answerMode;
 
   if (isLocked || !canSpeak) {
     return null;
   }
 
-  if (mode === "listen") {
+  if (mode === "speak") {
     return (
       <Button
         className={COLUMN_GHOST_ACTION_CLASS}
-        onClick={() => switchTo({ cantTalk: false, prefersTyping: false })}
+        onClick={() => switchTo({ cantTalk: true })}
         size="sm"
         variant="ghost"
       >
-        <MicIcon aria-hidden="true" />
-        {t("I can talk now")}
-      </Button>
-    );
-  }
-
-  if (canListen && mode === "speak") {
-    return (
-      <Button
-        className={COLUMN_GHOST_ACTION_CLASS}
-        onClick={() => switchTo({ cantTalk: true, prefersTyping: false })}
-        size="sm"
-        variant="ghost"
-      >
-        <HeadphonesIcon aria-hidden="true" />
+        {canListen ? <HeadphonesIcon aria-hidden="true" /> : <KeyboardIcon aria-hidden="true" />}
         {t("I can't talk now")}
       </Button>
     );
@@ -258,12 +248,12 @@ function ModeSwitch({
   return (
     <Button
       className={COLUMN_GHOST_ACTION_CLASS}
-      onClick={() => switchTo({ cantTalk: false, prefersTyping: mode === "speak" })}
+      onClick={() => switchTo({ cantTalk: false })}
       size="sm"
       variant="ghost"
     >
-      {mode === "type" ? <MicIcon aria-hidden="true" /> : <KeyboardIcon aria-hidden="true" />}
-      {mode === "type" ? t("Say it instead") : t("Type it instead")}
+      <MicIcon aria-hidden="true" />
+      {cantTalk ? t("I can talk now") : t("Say it instead")}
     </Button>
   );
 }

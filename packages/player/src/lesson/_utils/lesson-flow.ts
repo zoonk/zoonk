@@ -8,8 +8,6 @@ import {
   isQuestionStep,
   isRetryStep,
 } from "./lesson-steps";
-import { isNumberAnswer } from "./number-answer";
-import { showSampleAnswer } from "./sample-answer";
 
 function omitKey<TValue>(record: Record<string, TValue>, key: string): Record<string, TValue> {
   return Object.fromEntries(Object.entries(record).filter(([entry]) => entry !== key));
@@ -20,7 +18,7 @@ function omitKey<TValue>(record: Record<string, TValue>, key: string): Record<st
  * check) starts fresh: its old answer and verdict are cleared, while its first verdict still
  * counts.
  */
-function enterPosition(state: LessonPlayerState, position: number): LessonPlayerState {
+export function enterPosition(state: LessonPlayerState, position: number): LessonPlayerState {
   const id = state.queue[position] ?? "";
 
   return {
@@ -102,7 +100,7 @@ export function advance(state: LessonPlayerState): LessonPlayerState {
  * Leaves out the screens from the one in view on that `isLeftOut` names: the rest of the lesson
  * goes on from where the learner is, and a lesson with nothing left ends.
  */
-function leaveOutAhead(
+export function leaveOutAhead(
   state: LessonPlayerState,
   isLeftOut: (stepId: string) => boolean,
   completionStatus: "ready" | "saving",
@@ -128,45 +126,6 @@ function leaveOutAhead(
   return state.position >= next.queue.length
     ? complete(next, completionStatus)
     : enterPosition({ ...next, notice: null }, state.position);
-}
-
-/** A written answer; a number typed into a number field is a calculation's answer instead. */
-function isWritingStep(step: PlayableLibraryStep | undefined): boolean {
-  return step?.kind === "typedAnswer" && !isNumberAnswer(step.content.acceptedAnswers);
-}
-
-/**
- * Leaves writing out of this sitting, with no answer verdict: the screen in view, which the
- * learner doesn't know yet, once its sample answer is read (`stepId`), or all of it from here on
- * ("Can't write now"), number questions kept. The screen that takes the place of all of it says
- * so, so the learner knows one tap covered the whole lesson.
- */
-export function skipWriting(state: LessonPlayerState, stepId?: string): LessonPlayerState {
-  if (state.phase !== "playing") {
-    return state;
-  }
-
-  if (stepId) {
-    return showSampleAnswer(state, stepId);
-  }
-
-  const isLeftOut = (id: string) => isWritingStep(state.steps[id]);
-  const skippedWritingStepIds = state.queue.slice(state.position).filter((id) => isLeftOut(id));
-
-  const next = leaveOutAhead(
-    {
-      ...state,
-      skippedWritingStepIds: [
-        ...new Set([...state.skippedWritingStepIds, ...skippedWritingStepIds]),
-      ],
-    },
-    isLeftOut,
-    "saving",
-  );
-
-  return next.phase === "playing" && skippedWritingStepIds.length > 0
-    ? { ...next, notice: "writingSkipped" }
-    : next;
 }
 
 /**

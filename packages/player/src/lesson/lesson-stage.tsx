@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@zoonk/ui/components/button";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CloudOffIcon, ImageIcon, PenOffIcon, PencilIcon, ZapIcon } from "lucide-react";
@@ -9,7 +10,7 @@ import { PlayerContentFrame } from "../components/step-layouts";
 import { LessonCitation } from "./_components/lesson-citation";
 import { UpcomingPictures } from "./_components/lesson-pictures";
 import { LessonEyebrow } from "./_components/lesson-step-text";
-import { LESSON_CONTENT_ID } from "./_utils/lesson-focus";
+import { LESSON_CONTENT_ID, focusLessonAfterTurn } from "./_utils/lesson-focus";
 import { isLanguageStep } from "./_utils/lesson-steps";
 import { AskBuddyOffer } from "./controls/ask-buddy-offer";
 import { LessonResultNotes } from "./feedback/lesson-result-notes";
@@ -20,21 +21,57 @@ import { type LessonPlayerState } from "./lesson-player-state";
 import { LessonStepView, showsOwnResult } from "./steps/lesson-step-view";
 import { type ScreenTurn } from "./use-screen-turns";
 
-/** A quiet line over the screen it's about, its icon before it, read out when it shows. */
-function NoticeLine({ children, icon }: { children: React.ReactNode; icon: React.ReactNode }) {
+/**
+ * A quiet line over the screen it's about, its icon before it, read out when it shows, with the
+ * one way to take it back at its end when there is one.
+ */
+function NoticeLine({
+  action,
+  children,
+  icon,
+}: {
+  action?: React.ReactNode;
+  children: React.ReactNode;
+  icon: React.ReactNode;
+}) {
   return (
-    <PlayerContentFrame className="pt-4">
+    <PlayerContentFrame className="flex items-center justify-between gap-3 pt-4">
       <p className="text-muted-foreground flex items-start gap-2 text-sm" role="status">
         <LineMarker>{icon}</LineMarker>
         {children}
       </p>
+      {action}
     </PlayerContentFrame>
+  );
+}
+
+/** "Write again" while the lesson can still go back to how it was before "Can't write now". */
+function WriteAgainButton() {
+  const t = useExtracted();
+  const { actions, state } = useLessonPlayer();
+
+  if (!state.writingRestore || state.phase !== "playing") {
+    return null;
+  }
+
+  return (
+    <Button
+      className="-mr-2.5 shrink-0"
+      onClick={() => {
+        actions.restoreWriting();
+        focusLessonAfterTurn();
+      }}
+      size="sm"
+      variant="ghost"
+    >
+      {t("Write again")}
+    </Button>
   );
 }
 
 /**
  * "I know this" in progress, a language answer to fix first, an answer that didn't save, a
- * question that waited for its picture, or writing left out of the rest of the lesson.
+ * question that waited for its picture, or writing left out for the rest of the day.
  */
 function LessonNotice() {
   const t = useExtracted();
@@ -74,8 +111,11 @@ function LessonNotice() {
       );
     case "writingSkipped":
       return (
-        <NoticeLine icon={<PenOffIcon aria-hidden="true" className="size-4" />}>
-          {t("No more writing in this lesson.")}
+        <NoticeLine
+          action={<WriteAgainButton />}
+          icon={<PenOffIcon aria-hidden="true" className="size-4" />}
+        >
+          {t("No more writing today.")}
         </NoticeLine>
       );
     case null:

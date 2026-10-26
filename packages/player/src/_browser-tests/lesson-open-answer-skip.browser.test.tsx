@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
 import { onDevice } from "../_test-utils/device-media";
 import { buildAdapters, renderLessonPlayer } from "../_test-utils/render-lesson-player";
+import { CANT_WRITE_TODAY, isChosenToday } from "../lesson/use-today-choice";
 import { buildLesson, localAdapters } from "../preview/preview-lesson";
 import { contentStep, teachingStep } from "../preview/preview-steps";
 
@@ -22,14 +23,29 @@ async function captureOpenAnswer(width: number, colorScheme: "light" | "dark", s
 const SAMPLE_ANSWER =
   "Because we can't pin down where the electron is. The cloud maps where it's most likely to be.";
 
+/** An explanation in the learner's own words: no accepted wordings to match, only key points. */
+function explanationStep() {
+  return contentStep("typedAnswer", {
+    content: {
+      ...playableStepContent.typedAnswer,
+      acceptedAnswers: [],
+      question: "In one or two sentences, say why the electron is drawn as a cloud.",
+    },
+  });
+}
+
 function verdict(text: string) {
   return page.getByRole("status").filter({ hasText: text });
 }
 
+function writingSkippedNotice() {
+  return page.getByRole("status").filter({ hasText: "No more writing today." });
+}
+
 describe("open answer skip", () => {
-  it("shows a good answer, then finishes without grading, when the learner doesn't know either open answer", async () => {
-    const first = teachingStep("typedAnswer");
-    const last = teachingStep("typedAnswer");
+  it("explains first while the explanation is ahead, then shows a good answer without grading", async () => {
+    const first = explanationStep();
+    const last = explanationStep();
     const lesson = buildLesson([first, teachingStep("explanation"), last]);
     const local = localAdapters(lesson);
 
@@ -45,11 +61,27 @@ describe("open answer skip", () => {
 
     renderLessonPlayer({ adapters, lesson });
 
+    // Two ways out at most: the explanation still ahead takes the place of "I don't know yet".
+    await expect.element(page.getByText("In your own words")).toBeVisible();
     await expect.element(page.getByRole("button", { name: /^Check/u })).toBeDisabled();
+    await expect.element(page.getByRole("button", { name: "Can't write now" })).toBeVisible();
+
+    await expect
+      .element(page.getByRole("button", { name: "I don't know yet" }))
+      .not.toBeInTheDocument();
+
     await captureOpenAnswer(390, "light");
     await captureOpenAnswer(390, "dark");
     await captureOpenAnswer(1440, "light");
     await captureOpenAnswer(1440, "dark");
+    await page.viewport(1280, 720);
+
+    await page.getByRole("button", { name: "Explain first" }).click();
+    await expect.element(page.getByText("A cloud, not a little ball")).toBeVisible();
+    await page.getByRole("button", { name: /^Next/u }).click();
+    await expect.element(page.getByRole("textbox")).toBeVisible();
+    await captureOpenAnswer(390, "light", "after-explanation");
+    await captureOpenAnswer(1440, "dark", "after-explanation");
     await page.viewport(1280, 720);
 
     await page.getByRole("button", { name: "I don't know yet" }).click();
@@ -64,8 +96,6 @@ describe("open answer skip", () => {
     await page.viewport(1280, 720);
 
     await page.getByRole("button", { name: /^Continue/u }).click();
-    await expect.element(page.getByText("A cloud, not a little ball")).toBeVisible();
-    await page.getByRole("button", { name: /^Next/u }).click();
     await expect.element(page.getByRole("textbox")).toBeVisible();
     await page.getByRole("textbox").fill("An unfinished thought");
     await captureOpenAnswer(390, "light", "typed");
@@ -99,10 +129,10 @@ describe("open answer skip", () => {
       slug: "language",
     },
   ] as const)(
-    "leaves the rest of the writing out of $kind with Can't write now, unchecked",
+    "leaves the writing out of $kind with Can't write now, unchecked, and of every lesson today",
     async ({ overrides, slug }) => {
-      const first = teachingStep("typedAnswer");
-      const second = teachingStep("typedAnswer");
+      const first = explanationStep();
+      const second = explanationStep();
 
       const lesson = buildLesson(
         [first, teachingStep("explanation"), second, teachingStep("summary")],
@@ -117,13 +147,10 @@ describe("open answer skip", () => {
       await skip.click();
       await expect.element(page.getByRole("textbox")).not.toBeInTheDocument();
 
-      // The screen after it says the whole lesson is free of writing, and the keyboard stays in
-      // the lesson instead of falling back to the page with the button that left.
-      const notice = page
-        .getByRole("status")
-        .filter({ hasText: "No more writing in this lesson." });
-
-      await expect.element(notice).toBeVisible();
+      // The screen after it says writing is off for the day, and the keyboard stays in the lesson
+      // instead of falling back to the page with the button that left.
+      await expect.element(writingSkippedNotice()).toBeVisible();
+      await expect.element(page.getByRole("button", { name: "Write again" })).toBeVisible();
       await expect.element(page.getByRole("button", { name: /^Next/u })).toHaveFocus();
       await captureOpenAnswer(390, "light", `writing-skipped-${slug}`);
       await captureOpenAnswer(390, "dark", `writing-skipped-${slug}`);
@@ -133,7 +160,7 @@ describe("open answer skip", () => {
 
       await page.getByRole("button", { name: /^Next/u }).click();
       await expect.element(page.getByRole("heading", { name: "Summary" })).toBeVisible();
-      await expect.element(notice).not.toBeInTheDocument();
+      await expect.element(writingSkippedNotice()).not.toBeInTheDocument();
       await page.getByRole("button", { name: /^Continue/u }).click();
       await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
       expect(adapters.checkStep).not.toHaveBeenCalled();
@@ -143,18 +170,82 @@ describe("open answer skip", () => {
         skippedWritingStepIds: [first.id, second.id],
       });
 
-      // A new sitting asks for writing again; temporary skips never become a preference.
+      // The next lesson today leaves its writing out as it opens, and says so on its first screen.
       unmount();
       renderLessonPlayer({ lesson });
-      await expect.element(skip).toBeVisible();
+      await expect.element(writingSkippedNotice()).toBeVisible();
+      await expect.element(page.getByText("A cloud, not a little ball")).toBeVisible();
+      await expect.element(page.getByRole("textbox")).not.toBeInTheDocument();
     },
   );
+
+  it("puts the writing back with Write again, for this lesson and the rest of today", async () => {
+    const writing = explanationStep();
+    const lesson = buildLesson([teachingStep("explanation"), writing, teachingStep("summary")]);
+    const earlier = renderLessonPlayer({ lesson: buildLesson([explanationStep()]) });
+
+    // Earlier today, in another lesson.
+    await page.getByRole("button", { name: "Can't write now" }).click();
+    earlier.unmount();
+
+    const { unmount } = renderLessonPlayer({ lesson });
+    await expect.element(writingSkippedNotice()).toBeVisible();
+    await captureOpenAnswer(390, "light", "writing-off-today");
+    await captureOpenAnswer(1440, "dark", "writing-off-today");
+    await page.viewport(1280, 720);
+
+    await page.getByRole("button", { name: "Write again" }).click();
+    await expect.element(writingSkippedNotice()).not.toBeInTheDocument();
+    await expect.element(page.getByRole("button", { name: /^Next/u })).toHaveFocus();
+    expect(isChosenToday(CANT_WRITE_TODAY)).toBe(false);
+
+    await page.getByRole("button", { name: /^Next/u }).click();
+    await expect.element(page.getByRole("textbox")).toBeVisible();
+
+    // The next lesson asks for writing again.
+    unmount();
+    renderLessonPlayer({ lesson: buildLesson([writing]) });
+    await expect.element(page.getByRole("textbox")).toBeVisible();
+    await expect.element(writingSkippedNotice()).not.toBeInTheDocument();
+  });
+
+  it("asks for writing again the next day", async () => {
+    localStorage.setItem(CANT_WRITE_TODAY, "2000-1-1");
+    renderLessonPlayer({ lesson: buildLesson([explanationStep(), teachingStep("summary")]) });
+
+    await expect.element(page.getByRole("textbox")).toBeVisible();
+    await expect.element(writingSkippedNotice()).not.toBeInTheDocument();
+  });
+
+  it("names only an explanation as one in your own words, not a short exact answer", async () => {
+    const lesson = buildLesson([
+      contentStep("typedAnswer", {
+        content: {
+          ...playableStepContent.typedAnswer,
+          acceptedAnswers: ["3 × 10⁸ m/s"],
+          question:
+            "Light travels about 300,000,000 meters per second. Write it in scientific notation.",
+        },
+      }),
+      explanationStep(),
+    ]);
+
+    renderLessonPlayer({ lesson });
+
+    await expect.element(page.getByRole("textbox", { name: /scientific notation/u })).toBeVisible();
+    await expect.element(page.getByText("In your own words")).not.toBeInTheDocument();
+    await page.getByRole("button", { name: "I don't know yet" }).click();
+    await page.getByRole("button", { name: /^Continue/u }).click();
+
+    await expect.element(page.getByRole("textbox", { name: /drawn as a cloud/u })).toBeVisible();
+    await expect.element(page.getByText("In your own words")).toBeVisible();
+  });
 
   it("keeps a number question, with no way to skip it, when the rest of the writing is left out", async () => {
     const question = "How many electrons does a hydrogen atom have?";
 
     const lesson = buildLesson([
-      teachingStep("typedAnswer"),
+      explanationStep(),
       contentStep("typedAnswer", {
         content: { ...playableStepContent.typedAnswer, acceptedAnswers: ["1"], question },
       }),
@@ -167,6 +258,7 @@ describe("open answer skip", () => {
     // Typing a number is the calculation's answer, not writing: it stays, as a question to answer.
     await expect.element(page.getByRole("textbox", { name: question })).toBeVisible();
     await expect.element(page.getByRole("button", { name: /^Check/u })).toBeDisabled();
+    await expect.element(page.getByText("In your own words")).not.toBeInTheDocument();
 
     await expect
       .element(page.getByRole("button", { name: "Can't write now" }))

@@ -3482,6 +3482,11 @@ msgid "I already know this"
 msgstr "Esto ya lo sé"
 
 #: src/lesson/lesson-stage.tsx
+msgctxt "qzpeai"
+msgid "Write again"
+msgstr "Volver a escribir"
+
+#: src/lesson/lesson-stage.tsx
 msgctxt "LnHBcu"
 msgid "Quick check · {current} of {total}"
 msgstr "Comprobación rápida · {current} de {total}"
@@ -3502,9 +3507,9 @@ msgid "This question was waiting for its picture. Answer it to finish the lesson
 msgstr "Esta pregunta estaba esperando su imagen. Respóndela para terminar la lección."
 
 #: src/lesson/lesson-stage.tsx
-msgctxt "VbY3en"
-msgid "No more writing in this lesson."
-msgstr "No hay nada más que escribir en esta lección."
+msgctxt "I67vt5"
+msgid "No more writing today."
+msgstr "Hoy no hay nada más que escribir."
 
 #: src/lesson/steps/challenge/challenge-conversation.tsx
 msgctxt "bbucHz"
@@ -3664,24 +3669,19 @@ msgid "Listening… Tap Stop to check."
 msgstr "Escuchando… Toca Parar para comprobar."
 
 #: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "UwEXD9"
-msgid "I can talk now"
-msgstr "Ya puedo hablar"
-
-#: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "begRkt"
 msgid "I can't talk now"
 msgstr "Ahora no puedo hablar"
 
 #: src/lesson/steps/spoken-answer-step.tsx
+msgctxt "UwEXD9"
+msgid "I can talk now"
+msgstr "Ya puedo hablar"
+
+#: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "0gloy9"
 msgid "Say it instead"
 msgstr "Decirlo"
-
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "E7aQC2"
-msgid "Type it instead"
-msgstr "Escribirlo"
 
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "QuYUAL"
