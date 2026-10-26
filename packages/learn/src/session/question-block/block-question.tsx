@@ -310,8 +310,9 @@ export function BlockQuestion({
 /**
  * The question's actions in the block's pinned bar: "Show the answers" for a misread still being
  * read; otherwise Check (once the answer is complete) with the honest way out beside it where it
- * applies ("I'm not sure" in a no-guessing drill, "I don't know yet" on a placement question). A
- * gap's idea screen has its own Start.
+ * applies ("I'm not sure" in a no-guessing drill, "I don't know yet" on a placement question and on
+ * every typed one, so nobody has to type a guess to move on). A gap's idea screen has its own
+ * Start.
  */
 export function BlockQuestionActions({
   blockDrill,
@@ -340,9 +341,11 @@ export function BlockQuestionActions({
         <NotSureButton disabled={false} onClick={notSure} />
       )}
 
-      {question.placement && !drill && answering && (
-        <NotSureButton disabled={false} label={t("I don't know yet")} onClick={notSure} />
-      )}
+      {(question.placement || question.format === "typed") &&
+        drill?.kind !== "noGuessing" &&
+        answering && (
+          <NotSureButton disabled={false} label={t("I don't know yet")} onClick={notSure} />
+        )}
 
       <CheckButton
         busy={phase.kind === "checking"}

@@ -296,6 +296,26 @@ describe("exam answer formats in practice", () => {
     expect(gradeTypedAnswer).toHaveBeenCalledOnce();
   });
 
+  it('takes "I don\'t know yet" on a typed word: its answer, no model, a mistake to come back', async () => {
+    const { itemIds, ref, user } = await practiceBlock([
+      { content: TYPED_WORD, format: "typed" },
+      { content: TYPED_WORD, format: "typed" },
+    ]);
+
+    const unknown = await answer({ answer: { dontKnow: true }, itemId: itemIds[0] ?? "", ref });
+
+    expect(unknown).toMatchObject({
+      feedback: { correctAnswer: { text: "went" }, isCorrect: false, savedToNotebook: true },
+      status: "ready",
+    });
+
+    expect(gradeTypedAnswer).not.toHaveBeenCalled();
+
+    await expect(
+      prisma.mistake.findFirstOrThrow({ where: { itemId: itemIds[0], userId: user.id } }),
+    ).resolves.toMatchObject({ cause: "gap" });
+  });
+
   it("shows an ordering question's steps shuffled and grades the order given", async () => {
     const { itemIds, questions, ref } = await practiceBlock([
       { content: ORDER, format: "order" },
