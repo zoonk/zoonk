@@ -67,9 +67,12 @@ function getOrderResult(phase: QuestionBlockPhase): OrderResult | null {
   };
 }
 
-/** A typed answer's mark once graded, a number's or a word's. */
+/**
+ * A typed answer's mark once graded, a number's or a word's. "I don't know yet" (or a drill's clock
+ * running out) leaves the field empty, with nothing to mark wrong: the verdict says what happened.
+ */
 function getAnswerMark(phase: QuestionBlockPhase): "correct" | "wrong" | null {
-  if (phase.kind !== "feedback") {
+  if (phase.kind !== "feedback" || "dontKnow" in phase.answer) {
     return null;
   }
 
