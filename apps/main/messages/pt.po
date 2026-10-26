@@ -3453,24 +3453,19 @@ msgid "by {date}, at {time} a day, Monday to Friday, what comes up most first: {
 msgstr "até {date}, com {time} por dia, de segunda a sexta, primeiro o que mais cai: {count, number} das {total, plural, one {# aula} other {# aulas}} do curso. O que não couber fica de fora, e você vê o quê."
 
 #: src/components/catalog/course-plan-window.tsx
-msgctxt "w_TJ7M"
-msgid "That's every topic in the plan, in depth."
-msgstr "Isso inclui todos os tópicos do plano, estudados a fundo."
+msgctxt "zC104g"
+msgid "Not all of it fits by then. Before you start, you see how much fits at your level and your time."
+msgstr "Nem tudo cabe até lá. Antes de começar, você vê quanto cabe no seu nível e no seu tempo."
 
 #: src/components/catalog/course-plan-window.tsx
-msgctxt "Xv-o5F"
-msgid "That's ~{share} of the plan's topics in depth, what matters most first."
-msgstr "Isso corresponde a cerca de {share} dos tópicos do plano, estudados a fundo, começando pelo que mais importa."
+msgctxt "Pq4Zco"
+msgid "That's every topic in the course, in depth."
+msgstr "Isso inclui todos os tópicos do curso, estudados a fundo."
 
 #: src/components/catalog/course-plan-window.tsx
-msgctxt "iuoAEF"
-msgid "That's every exam topic in the plan, in depth."
-msgstr "Isso inclui todos os tópicos da prova no plano, estudados a fundo."
-
-#: src/components/catalog/course-plan-window.tsx
-msgctxt "_XpKBn"
-msgid "That's ~{share} of the plan's exam topics in depth, weighed by what each is worth on the exam rather than by lessons."
-msgstr "Isso corresponde a cerca de {share} dos tópicos da prova no plano, estudados a fundo, considerando o peso de cada um na prova, e não a quantidade de aulas."
+msgctxt "e1oyF_"
+msgid "That's every exam topic in the course, in depth."
+msgstr "Isso inclui todos os tópicos da prova do curso, estudados a fundo."
 
 #: src/components/catalog/course-plan-window.tsx
 msgctxt "YTiAat"

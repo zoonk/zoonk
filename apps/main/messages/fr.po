@@ -3453,24 +3453,19 @@ msgid "by {date}, at {time} a day, Monday to Friday, what comes up most first: {
 msgstr "d’ici au {date}, à raison de {time} par jour, du lundi au vendredi, d’abord ce qui tombe le plus : {count, number} des {total, plural, one {# leçon} other {# leçons}} du cours. Ce qui ne tient pas est laissé de côté, et tu vois quoi."
 
 #: src/components/catalog/course-plan-window.tsx
-msgctxt "w_TJ7M"
-msgid "That's every topic in the plan, in depth."
-msgstr "Tous les sujets du plan sont traités en profondeur."
+msgctxt "zC104g"
+msgid "Not all of it fits by then. Before you start, you see how much fits at your level and your time."
+msgstr "Tout ne tient pas d’ici là. Avant de commencer, tu vois ce qui tient selon ton niveau et ton temps."
 
 #: src/components/catalog/course-plan-window.tsx
-msgctxt "Xv-o5F"
-msgid "That's ~{share} of the plan's topics in depth, what matters most first."
-msgstr "Environ {share} des sujets du plan sont traités en profondeur, en commençant par les plus importants."
+msgctxt "Pq4Zco"
+msgid "That's every topic in the course, in depth."
+msgstr "Tous les sujets du cours sont traités en profondeur."
 
 #: src/components/catalog/course-plan-window.tsx
-msgctxt "iuoAEF"
-msgid "That's every exam topic in the plan, in depth."
-msgstr "Tous les sujets de l’examen sont traités en profondeur dans le plan."
-
-#: src/components/catalog/course-plan-window.tsx
-msgctxt "_XpKBn"
-msgid "That's ~{share} of the plan's exam topics in depth, weighed by what each is worth on the exam rather than by lessons."
-msgstr "Environ {share} des sujets de l’examen sont traités en profondeur dans le plan, selon leur poids à l’examen plutôt que le nombre de leçons."
+msgctxt "e1oyF_"
+msgid "That's every exam topic in the course, in depth."
+msgstr "Tous les sujets de l’examen sont traités en profondeur dans le cours."
 
 #: src/components/catalog/course-plan-window.tsx
 msgctxt "YTiAat"

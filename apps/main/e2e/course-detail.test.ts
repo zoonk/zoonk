@@ -7,6 +7,7 @@ import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { courseBandsFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { catalogCourseFixture } from "@zoonk/testing/fixtures/library-courses";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type Page, expect, test } from "./fixtures";
@@ -80,8 +81,11 @@ function examEdition(dates: string[]) {
   };
 }
 
-/** A published exam course whose stored exam graph starts on it, with its notice's days. */
-async function publishedExamCourse(dates: string[]) {
+/**
+ * A published exam course whose stored exam graph starts on it, with its notice's days. `toWrite`
+ * adds a skill of that many lessons nobody wrote yet, more than the example's time holds by then.
+ */
+async function publishedExamCourse(dates: string[], { toWrite = 0 }: { toWrite?: number } = {}) {
   const { course, path } = await publishedCourse({
     language: "en",
     title: `E2E Exam Course ${randomUUID().slice(0, 8)}`,
@@ -89,9 +93,10 @@ async function publishedExamCourse(dates: string[]) {
 
   await prisma.course.update({ data: { format: "exam" }, where: { id: course.id } });
 
-  const [blueprint, [band]] = await Promise.all([
+  const [blueprint, [band], unwritten] = await Promise.all([
     examBlueprintFixture({ edition: examEdition(dates) }),
     courseBandsFixture({ courseId: course.id, levels: ["beginner"] }),
+    toWrite > 0 ? skillFixture() : null,
   ]);
 
   await prisma.examSkillGraph.create({
@@ -110,6 +115,19 @@ async function publishedExamCourse(dates: string[]) {
             skillId: band?.skill.id ?? "",
             weight: null,
           },
+          ...(unwritten
+            ? [
+                {
+                  area: null,
+                  courseIds: [course.id],
+                  lessons: toWrite,
+                  name: unwritten.name,
+                  phase: 0,
+                  skillId: unwritten.id,
+                  weight: null,
+                },
+              ]
+            : []),
         ],
       },
       model: "fixture",
@@ -218,6 +236,31 @@ test.describe("Course Detail Page", () => {
     await expect(
       page.getByText(new RegExp(`^Exam on ${eyebrowDay(revised)} · `, "u")),
     ).toBeVisible();
+  });
+
+  test("an exam course's example says whether all of it fits by the exam, never a share of it", async ({
+    page,
+  }) => {
+    const [fits, short] = await Promise.all([
+      publishedExamCourse([dayIn(40)]),
+      publishedExamCourse([dayIn(40)], { toWrite: 300 }),
+    ]);
+
+    const plan = page.getByRole("main").locator("[data-slot='course-plan']");
+
+    await page.goto(fits.path);
+    await expect(plan.getByText("That's every topic in the course, in depth.")).toBeVisible();
+
+    // What doesn't fit leaves the share to the start, where the visitor's level and time decide it.
+    await page.goto(short.path);
+
+    await expect(
+      plan.getByText(
+        "Not all of it fits by then. Before you start, you see how much fits at your level and your time.",
+      ),
+    ).toBeVisible();
+
+    await expect(plan.getByText(/%/u)).toHaveCount(0);
   });
 
   test("a long level shows its first chapters and the rest on a tap, all of them in the page's HTML", async ({

@@ -3453,24 +3453,19 @@ msgid "by {date}, at {time} a day, Monday to Friday, what comes up most first: {
 msgstr "by {date}, at {time} a day, Monday to Friday, what comes up most first: {count, number} of the course's {total, plural, one {# lesson} other {# lessons}}. What doesn't fit is left out, and you see what."
 
 #: src/components/catalog/course-plan-window.tsx
-msgctxt "w_TJ7M"
-msgid "That's every topic in the plan, in depth."
-msgstr "That's every topic in the plan, in depth."
+msgctxt "zC104g"
+msgid "Not all of it fits by then. Before you start, you see how much fits at your level and your time."
+msgstr "Not all of it fits by then. Before you start, you see how much fits at your level and your time."
 
 #: src/components/catalog/course-plan-window.tsx
-msgctxt "Xv-o5F"
-msgid "That's ~{share} of the plan's topics in depth, what matters most first."
-msgstr "That's ~{share} of the plan's topics in depth, what matters most first."
+msgctxt "Pq4Zco"
+msgid "That's every topic in the course, in depth."
+msgstr "That's every topic in the course, in depth."
 
 #: src/components/catalog/course-plan-window.tsx
-msgctxt "iuoAEF"
-msgid "That's every exam topic in the plan, in depth."
-msgstr "That's every exam topic in the plan, in depth."
-
-#: src/components/catalog/course-plan-window.tsx
-msgctxt "_XpKBn"
-msgid "That's ~{share} of the plan's exam topics in depth, weighed by what each is worth on the exam rather than by lessons."
-msgstr "That's ~{share} of the plan's exam topics in depth, weighed by what each is worth on the exam rather than by lessons."
+msgctxt "e1oyF_"
+msgid "That's every exam topic in the course, in depth."
+msgstr "That's every exam topic in the course, in depth."
 
 #: src/components/catalog/course-plan-window.tsx
 msgctxt "YTiAat"

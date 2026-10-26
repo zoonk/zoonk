@@ -25,8 +25,9 @@ function ShareNumber(chunks: React.ReactNode) {
 /**
  * What the share is of, by the goal's date: the plan's exam topics (the curriculum the plan holds,
  * weighed by the exam, never claimed as the whole exam), what comes up most first, or the goal,
- * what matters most first. The course's page says the same share the same way. All of it reads as
- * all of it, not "about 100%".
+ * what matters most first. All of it reads as all of it, not "about 100%". The course's page only
+ * says whether everything fits and leaves the share to this question, where the visitor's level and
+ * time decide it.
  */
 function EstimateWords({ advice, share }: { advice: PlanTimeAdvice; share: number }) {
   const t = useExtracted();

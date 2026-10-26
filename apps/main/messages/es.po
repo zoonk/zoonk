@@ -3453,24 +3453,19 @@ msgid "by {date}, at {time} a day, Monday to Friday, what comes up most first: {
 msgstr "para el {date}, con {time} al día, de lunes a viernes, primero lo que más suele caer: {count, number} de las {total, plural, one {# lección} other {# lecciones}} del curso. Lo que no quepa se queda fuera, y ves qué."
 
 #: src/components/catalog/course-plan-window.tsx
-msgctxt "w_TJ7M"
-msgid "That's every topic in the plan, in depth."
-msgstr "Eso abarca todos los temas del plan en profundidad."
+msgctxt "zC104g"
+msgid "Not all of it fits by then. Before you start, you see how much fits at your level and your time."
+msgstr "No todo encaja para entonces. Antes de empezar, ves cuánto encaja según tu nivel y tu tiempo."
 
 #: src/components/catalog/course-plan-window.tsx
-msgctxt "Xv-o5F"
-msgid "That's ~{share} of the plan's topics in depth, what matters most first."
-msgstr "Eso abarca aproximadamente el {share} de los temas del plan en profundidad, empezando por lo más importante."
+msgctxt "Pq4Zco"
+msgid "That's every topic in the course, in depth."
+msgstr "Eso abarca todos los temas del curso en profundidad."
 
 #: src/components/catalog/course-plan-window.tsx
-msgctxt "iuoAEF"
-msgid "That's every exam topic in the plan, in depth."
-msgstr "Eso abarca todos los temas del examen del plan en profundidad."
-
-#: src/components/catalog/course-plan-window.tsx
-msgctxt "_XpKBn"
-msgid "That's ~{share} of the plan's exam topics in depth, weighed by what each is worth on the exam rather than by lessons."
-msgstr "Eso abarca aproximadamente el {share} de los temas del examen del plan en profundidad, ponderados según su importancia en el examen y no por número de lecciones."
+msgctxt "e1oyF_"
+msgid "That's every exam topic in the course, in depth."
+msgstr "Eso abarca todos los temas del examen del curso en profundidad."
 
 #: src/components/catalog/course-plan-window.tsx
 msgctxt "YTiAat"

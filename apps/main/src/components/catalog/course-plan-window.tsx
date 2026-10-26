@@ -184,8 +184,9 @@ async function UndatedToday({
 /**
  * An exam course against the exam's day at one time a day: the time it studies by then, from the
  * plan's own numbers (never only the lessons, which undercount a plan that also reviews, practices
- * and writes lessons ahead), then what that time holds: the course's lessons that fit, and what
- * share of the exam it studies in depth, the same measure onboarding's time question shows.
+ * and writes lessons ahead), then what that time holds: the course's lessons that fit, and whether
+ * all of it fits. Never how much: that share assumes a start from scratch and shrinks with the
+ * course's size, so onboarding's time question says it, at the visitor's level and time.
  */
 async function DatedHeadline({
   date,
@@ -197,7 +198,6 @@ async function DatedHeadline({
   minutes: number;
 }) {
   const t = await getExtracted();
-  const format = await getFormatter();
   const minutesText = await getMinutesFormatter();
   const durationText = await getApproxDurationFormatter();
   // The big number in the mono face, "~3 h", its words beside it.
@@ -233,36 +233,17 @@ async function DatedHeadline({
     );
   };
 
-  const share = coverage
-    ? format.number(coverage.coveredShare, { maximumFractionDigits: 0, style: "percent" })
-    : null;
-
-  /**
-   * What share of the plan's topics it studies in depth, as onboarding's time question says it:
-   * counted over the topics the plan holds (an exam's, by what each is worth on it), never over a
-   * whole exam the plan may not fully hold, so it never says "all of the exam".
-   */
-  const coverageText = ({
-    coverage: { coveredShare, measure },
-    share: percent,
-  }: {
-    coverage: NonNullable<typeof coverage>;
-    share: string;
-  }) => {
-    if (measure === "goal") {
-      return coveredShare >= 1
-        ? t("That's every topic in the plan, in depth.")
-        : t("That's ~{share} of the plan's topics in depth, what matters most first.", {
-            share: percent,
-          });
+  /** Whether all of it fits in depth by the exam, by the exam's topics or by the goal's. */
+  const fitText = ({ coveredShare, measure }: NonNullable<typeof coverage>) => {
+    if (coveredShare < 1) {
+      return t(
+        "Not all of it fits by then. Before you start, you see how much fits at your level and your time.",
+      );
     }
 
-    return coveredShare >= 1
-      ? t("That's every exam topic in the plan, in depth.")
-      : t(
-          "That's ~{share} of the plan's exam topics in depth, weighed by what each is worth on the exam rather than by lessons.",
-          { share: percent },
-        );
+    return measure === "goal"
+      ? t("That's every topic in the course, in depth.")
+      : t("That's every exam topic in the course, in depth.");
   };
 
   return (
@@ -273,9 +254,7 @@ async function DatedHeadline({
 
       <p className={RESULT_LINE_CLASS}>{holds()}</p>
 
-      {coverage && share && (
-        <p className={RESULT_LINE_CLASS}>{coverageText({ coverage, share })}</p>
-      )}
+      {coverage && <p className={RESULT_LINE_CLASS}>{fitText(coverage)}</p>}
     </div>
   );
 }
