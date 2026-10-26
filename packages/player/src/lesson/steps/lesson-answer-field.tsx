@@ -50,7 +50,7 @@ function AnswerHint({ id, isNumber }: { id: string; isNumber: boolean }) {
       className="text-muted-foreground hidden text-xs lg:pointer-fine:block"
       id={id}
     >
-      {t("Your own words are fine. Press Enter to check, Shift+Enter for a new line.")}
+      {t("Press Enter to check, Shift+Enter for a new line.")}
     </p>
   );
 }

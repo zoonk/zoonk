@@ -3637,9 +3637,9 @@ msgid "Still checking. This is taking longer than usual."
 msgstr "Seguimos comprobándolo. Está tardando más de lo habitual."
 
 #: src/lesson/steps/lesson-answer-field.tsx
-msgctxt "ZhM6Zz"
-msgid "Your own words are fine. Press Enter to check, Shift+Enter for a new line."
-msgstr "Puedes responder con tus propias palabras. Pulsa Intro para comprobar la respuesta y Mayús+Intro para escribir en una línea nueva."
+msgctxt "waVIZZ"
+msgid "Press Enter to check, Shift+Enter for a new line."
+msgstr "Pulsa Intro para comprobar la respuesta y Mayús+Intro para escribir en una línea nueva."
 
 #: src/lesson/steps/lesson-answer-field.tsx
 msgctxt "YAXwBl"
