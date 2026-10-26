@@ -1,6 +1,7 @@
 import { LevelLadder } from "@zoonk/learn/level-ladder";
 import { Meter, MeterFill } from "@zoonk/learn/meter";
 import { LessonCells } from "@zoonk/learn/progress-cells";
+import { formatGoalProgress } from "@zoonk/utils/number";
 import { getExtracted, getFormatter } from "next-intl/server";
 import { type ExampleGoal, getExampleSet } from "./landing-examples";
 import { type DayState } from "./tomorrow-steps";
@@ -59,7 +60,7 @@ export async function GoalMeasure({ day, goal }: { day: DayState; goal: ExampleG
       <>
         <p className="text-label">{t("Progress")}</p>
         <p className="font-mono text-[1.75rem] leading-none tracking-[-0.03em] tabular-nums">
-          {percent(done / JOB_PROGRESS.total)}
+          {formatGoalProgress({ format, share: done / JOB_PROGRESS.total })}
         </p>
         <LessonCells
           known={JOB_PROGRESS.known}

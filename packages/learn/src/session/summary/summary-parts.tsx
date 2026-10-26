@@ -21,8 +21,7 @@ import {
   StepRows,
   StepTitle,
 } from "../../_components/step-card";
-import { useFormatShare } from "../../_utils/percent";
-import { hasShareMoved } from "../../_utils/share-moved";
+import { useFormatGoalProgress, useFormatShare } from "../../_utils/percent";
 import { useFormatDuration } from "../../_utils/time-format";
 import { useBeltName } from "../../_utils/use-belt-name";
 import { useStateLabel } from "../../_utils/use-state-label";
@@ -49,10 +48,13 @@ function DoneTitle() {
 /**
  * Where the goal stands after the session, in its one measure as the Plan says it: an exam's
  * preparation, another goal's progress in its plan's lessons, with how the session moved it. A
- * language goal says its level elsewhere.
+ * language goal says its level elsewhere. The move shows only when the number on screen moved:
+ * "32% → 32%" says nothing.
  */
 function useGoalNumber() {
   const t = useExtracted();
+  const formatShare = useFormatShare();
+  const formatGoalProgress = useFormatGoalProgress();
   const { goalKind, summary } = useSessionSummary();
 
   if (goalKind === "language") {
@@ -67,11 +69,15 @@ function useGoalNumber() {
   }
 
   const start = before ?? after;
+  const format = forExam ? formatShare : formatGoalProgress;
+  const shown = { after: format(after), before: format(start) };
+  const moved = shown.after !== shown.before;
 
   return {
-    change: hasShareMoved({ after, before: start }) ? { after, before: start } : null,
+    change: moved ? shown : null,
+    dropped: moved && after < start,
     label: forExam ? t("Preparation") : t("Progress"),
-    value: after,
+    value: shown.after,
   };
 }
 
@@ -149,10 +155,9 @@ function BeltDetail({ belt }: { belt: NonNullable<StudySessionSummary["belt"]> }
 function SessionNumbers() {
   const t = useExtracted();
   const format = useFormatter();
-  const formatShare = useFormatShare();
   const { summary } = useSessionSummary();
   const goalNumber = useGoalNumber();
-  const dropped = goalNumber?.change ? goalNumber.change.after < goalNumber.change.before : false;
+  const dropped = goalNumber?.dropped ?? false;
 
   return (
     <StatTiles className="md:grid-cols-4 md:[&>li:last-child:nth-child(odd)]:col-span-1">
@@ -178,14 +183,14 @@ function SessionNumbers() {
                   dropped ? "text-muted-foreground" : "text-success-text",
                 )}
               >
-                {`${formatShare(goalNumber.change.before)} → ${formatShare(goalNumber.change.after)}`}
+                {`${goalNumber.change.before} → ${goalNumber.change.after}`}
               </span>
             )
           }
           icon={dropped ? <TrendingDownIcon /> : <TrendingUpIcon />}
           label={goalNumber.label}
           tone={dropped ? undefined : "success"}
-          value={formatShare(goalNumber.value)}
+          value={goalNumber.value}
         />
       )}
 

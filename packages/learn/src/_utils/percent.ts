@@ -1,5 +1,6 @@
 "use client";
 
+import { formatGoalProgress } from "@zoonk/utils/number";
 import { useFormatter } from "next-intl";
 import { formatProgressShare } from "./progress-share";
 
@@ -10,14 +11,10 @@ export function useFormatShare() {
   return (share: number) => format.number(share, { maximumFractionDigits: 0, style: "percent" });
 }
 
-/**
- * A plan's progress to the hundredth of a percent ("0.16%"): each lesson of a long plan moves it,
- * where a whole percentage would sit at "0%" for weeks.
- */
-export function useFormatPlanProgress() {
+/** `formatGoalProgress` in the learner's language. */
+export function useFormatGoalProgress() {
   const format = useFormatter();
-
-  return (share: number) => format.number(share, { maximumFractionDigits: 2, style: "percent" });
+  return (share: number) => formatGoalProgress({ format, share });
 }
 
 /** `formatProgressShare` in the learner's language. */

@@ -4,7 +4,7 @@ import { type TodayView } from "@zoonk/core/view-models/today/get";
 import { useExtracted } from "next-intl";
 import { CoverageLegend } from "../_components/coverage-bar";
 import { LessonCells } from "../_components/progress-cells";
-import { useFormatShare } from "../_utils/percent";
+import { useFormatGoalProgress } from "../_utils/percent";
 import { ProgressCard, useCardIds } from "./today-progress-card";
 import { SubjectRows, type TodaySyllabus, useSubjectRows } from "./today-subject-rows";
 
@@ -34,10 +34,10 @@ function getLessonCounts({
 }
 
 /**
- * Any other goal's progress in its plan's lessons, as the Plan says it ("32%", "6 of 19 lessons"),
- * drawn as the lessons themselves: one cell each, studied in green, known muted, today's still to
- * do outlined in green, so the day's work shows on the way to the goal. A goal with several
- * modules lists them under it, on the same scale.
+ * Any other goal's progress in its plan's lessons, as the Plan says it ("31.58%", "6 of 19
+ * lessons"), drawn as the lessons themselves: one cell each, studied in green, known muted, today's
+ * still to do outlined in green, so the day's work shows on the way to the goal. A goal with
+ * several modules lists them under it, on the same scale.
  */
 export function LessonsCard({
   className,
@@ -51,7 +51,7 @@ export function LessonsCard({
   value: number;
 }) {
   const t = useExtracted();
-  const formatShare = useFormatShare();
+  const formatGoalProgress = useFormatGoalProgress();
   const ids = useCardIds();
   const rows = useSubjectRows(syllabus);
   const counts = getLessonCounts({ lessons, syllabus });
@@ -76,7 +76,7 @@ export function LessonsCard({
           : null
       }
       title={t("Progress")}
-      value={formatShare(value)}
+      value={formatGoalProgress(value)}
     >
       {counts.total > 0 && (
         <div className="flex flex-col gap-2.5">
