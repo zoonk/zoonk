@@ -233,30 +233,47 @@ export const whyColorsExistLesson: SeedLesson = {
     },
     {
       content: {
-        keyPoints: [
-          t(
-            "Each firework has different metals in it",
-            "Cada fogo de artifício tem metais diferentes",
+        context: t(
+          "Your little cousin asks why fireworks come in different colors.",
+          "Sua prima pequena pergunta por que os fogos de artifício têm cores diferentes.",
+        ),
+        options: [
+          option(
+            "metals",
+            t(
+              "Each has a different metal, and each metal gives off light only in its own sizes of energy",
+              "Cada um tem um metal diferente, e cada metal só solta luz em tamanhos de energia próprios",
+            ),
+            t(
+              "The heat kicks the metal's electrons up, and when they drop back they give off light. Each metal can only make certain drops, and the size of the drop decides the color.",
+              "O calor chuta os elétrons do metal para cima, e ao cair de volta eles soltam luz. Cada metal só faz certos tamanhos de queda, e o tamanho da queda decide a cor.",
+            ),
+            true,
           ),
-          t(
-            "Heat kicks the atoms' electrons up, and when they drop back they give off light",
-            "O calor chuta os elétrons dos átomos para cima, e ao cair de volta eles soltam luz",
+          option(
+            "heat",
+            t("Hotter fireworks glow in more colors", "Fogos mais quentes brilham em mais cores"),
+            t(
+              "Heat gives the electrons their energy, but which colors come out depends on the metal inside: each one only makes certain drops.",
+              "O calor dá energia aos elétrons, mas as cores que saem dependem do metal dentro: cada um só faz certas quedas.",
+            ),
           ),
-          t(
-            "Each metal can only make certain drop sizes, and the size of the drop decides the color",
-            "Cada metal só faz certos tamanhos de queda, e o tamanho da queda decide a cor",
+          option(
+            "sky",
+            t(
+              "The explosion's light mixes with the sky's",
+              "A luz da explosão se mistura com a do céu",
+            ),
+            t(
+              "The color comes from the firework itself: its metals give off light of certain colors, even on a dark night.",
+              "A cor vem do próprio fogo de artifício: seus metais soltam luz de certas cores, mesmo numa noite escura.",
+            ),
           ),
         ],
-        question: t(
-          "Your little cousin asks why fireworks come in different colors. Explain it in two or three sentences she'd understand.",
-          "Sua prima pequena pergunta por que os fogos de artifício têm cores diferentes. Explique em duas ou três frases que ela entenda.",
-        ),
-        sampleAnswer: t(
-          "Each firework has a different metal inside. The heat of the explosion gives the metal's tiny particles extra energy, and when they calm down they let it out as light. Each metal lets out its energy in its own sizes, and each size is a different color.",
-          "Cada fogo de artifício tem um metal diferente dentro. O calor da explosão dá energia extra às partículas minúsculas do metal, e quando elas se acalmam soltam essa energia como luz. Cada metal solta energia nos seus próprios tamanhos, e cada tamanho é uma cor diferente.",
-        ),
+        question: t("Which explanation is right?", "Qual explicação está certa?"),
       },
-      kind: "typedAnswer",
+      kind: "check",
+      screen: "application",
       skill: "emission-lines",
     },
     {

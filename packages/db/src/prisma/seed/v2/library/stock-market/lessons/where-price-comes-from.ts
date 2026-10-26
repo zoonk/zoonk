@@ -245,30 +245,53 @@ export const wherePriceComesFromLesson: SeedLesson = {
     },
     {
       content: {
-        keyPoints: [
-          t(
-            "The price is the last trade between a buyer and a seller",
-            "O preço é o último negócio entre um comprador e um vendedor",
+        context: t(
+          "A company's share price dropped this morning, but nothing at the company changed: same sales, same plans, no news from it.",
+          "O preço da ação de uma empresa caiu hoje de manhã, mas nada mudou na empresa: mesmas vendas, mesmos planos, nenhuma notícia dela.",
+        ),
+        options: [
+          option(
+            "expectations",
+            t(
+              "Buyers now expect less from it, so trades close at lower prices",
+              "Os compradores esperam menos dela, e os negócios fecham mais baixo",
+            ),
+            t(
+              "The price is just the last trade between a buyer and a seller. When expectations about the future drop, buyers offer less, and new trades happen at lower prices, even with the company unchanged.",
+              "O preço é só o último negócio entre um comprador e um vendedor. Quando as expectativas sobre o futuro caem, os compradores oferecem menos, e os novos negócios saem mais baixos, mesmo com a empresa igual.",
+            ),
+            true,
           ),
-          t(
-            "It moves when buyers and sellers change what they'll pay or accept",
-            "Ele muda quando compradores e vendedores mudam o que pagam ou aceitam",
+          option(
+            "company",
+            t(
+              "The company lowered the price of its shares",
+              "A empresa baixou o preço das suas ações",
+            ),
+            t(
+              "The company doesn't set the price on the exchange: buyers and sellers do, trade by trade.",
+              "A empresa não define o preço na bolsa: compradores e vendedores definem, negócio a negócio.",
+            ),
           ),
-          t(
-            "Expectations about the future can change even when the company doesn't",
-            "As expectativas sobre o futuro podem mudar mesmo quando a empresa não muda",
+          option(
+            "exchange",
+            t(
+              "The stock exchange recalculated the company's value",
+              "A bolsa recalculou o valor da empresa",
+            ),
+            t(
+              "The exchange only matches buy and sell orders; it doesn't value companies. The price is the last deal a buyer and a seller agreed on.",
+              "A bolsa só junta ordens de compra e de venda; ela não avalia empresas. O preço é o último negócio que um comprador e um vendedor fecharam.",
+            ),
           ),
         ],
         question: t(
-          "In your own words: why can a stock's price change when nothing at the company has changed?",
-          "Com as suas palavras: por que o preço de uma ação pode mudar quando nada mudou na empresa?",
-        ),
-        sampleAnswer: t(
-          "The price is just the last deal between a buyer and a seller. When people start expecting more or less from the company, buyers and sellers change the prices they'll accept, and new deals happen at new prices, even if the company itself is exactly the same.",
-          "O preço é só o último negócio entre um comprador e um vendedor. Quando as pessoas passam a esperar mais ou menos da empresa, compradores e vendedores mudam os preços que aceitam, e os novos negócios saem em novos preços, mesmo que a empresa continue igualzinha.",
+          "What most likely moved the price?",
+          "O que mais provavelmente mexeu no preço?",
         ),
       },
-      kind: "typedAnswer",
+      kind: "check",
+      screen: "application",
       skill: "price-last-trade",
     },
     {

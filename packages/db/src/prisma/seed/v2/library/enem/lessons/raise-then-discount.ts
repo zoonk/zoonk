@@ -243,30 +243,41 @@ export const raiseThenDiscountLesson: SeedLesson = {
     },
     {
       content: {
-        keyPoints: [
-          t(
-            "The 20% raise is calculated on the lower salary, R$ 1,600",
-            "O aumento de 20% é calculado sobre o salário menor, R$ 1.600",
+        context: t(
+          "An R$ 2,000 salary was cut by 20% and later raised by 20%. The worker says it's “back to normal”.",
+          "Um salário de R$ 2.000 teve um corte de 20% e depois um aumento de 20%. O trabalhador diz que “voltou ao normal”.",
+        ),
+        options: [
+          option(
+            "lower",
+            t("R$ 1,920, 96% of what he earned before", "R$ 1.920, 96% do que recebia antes"),
+            t(
+              "After the cut he earned R$ 1,600, and the 20% raise was calculated on that: only R$ 320 more. In one step, 0.8 × 1.2 = 0.96 of the old salary.",
+              "Depois do corte ele recebia R$ 1.600, e o aumento de 20% foi calculado sobre esse valor: só R$ 320 a mais. Numa conta só, 0,8 × 1,2 = 0,96 do salário antigo.",
+            ),
+            true,
           ),
-          t(
-            "0.8 × 1.2 = 0.96, so the salary is 96% of the original",
-            "0,8 × 1,2 = 0,96, então o salário é 96% do original",
+          option(
+            "same",
+            t("R$ 2,000, back to normal", "R$ 2.000, voltou ao normal"),
+            t(
+              "The raise is calculated on the lower salary, R$ 1,600, so 20% adds only R$ 320, less than the R$ 400 the cut took.",
+              "O aumento é calculado sobre o salário menor, R$ 1.600, então 20% somam só R$ 320, menos que os R$ 400 do corte.",
+            ),
           ),
-          t(
-            "He now earns R$ 1,920, R$ 80 less than before",
-            "Ele recebe agora R$ 1.920, R$ 80 a menos que antes",
+          option(
+            "higher",
+            t("R$ 2,080, 4% more than before", "R$ 2.080, 4% a mais que antes"),
+            t(
+              "The two changes don't end in his favor: 0.8 × 1.2 = 0.96, so he ends 4% below his old salary, not above it.",
+              "As duas mudanças não terminam a favor dele: 0,8 × 1,2 = 0,96, então ele fica 4% abaixo do salário antigo, não acima.",
+            ),
           ),
         ],
-        question: t(
-          "An R$ 2,000 salary was cut by 20% and later raised by 20%. The worker says it's “back to normal”. In up to three sentences, explain why he's wrong and how much he earns now.",
-          "Um salário de R$ 2.000 teve um corte de 20% e depois um aumento de 20%. O trabalhador diz que “voltou ao normal”. Em até três frases, explique por que ele está errado e quanto recebe agora.",
-        ),
-        sampleAnswer: t(
-          "After the cut he earned R$ 1,600, and the 20% raise was calculated on that, adding only R$ 320. In one step: 0.8 × 1.2 = 0.96, so he gets 96% of the old salary. He now earns R$ 1,920, R$ 80 less than before.",
-          "Depois do corte ele passou a ganhar R$ 1.600, e o aumento de 20% foi calculado sobre esse valor, somando só R$ 320. Numa conta só: 0,8 × 1,2 = 0,96, então ele recebe 96% do salário antigo. Agora ganha R$ 1.920, R$ 80 a menos que antes.",
-        ),
+        question: t("How much does he earn now?", "Quanto ele recebe agora?"),
       },
-      kind: "typedAnswer",
+      kind: "check",
+      screen: "application",
       skill: "successive-percent",
     },
     {

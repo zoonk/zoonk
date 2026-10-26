@@ -232,21 +232,39 @@ export const scientificNotationLesson: SeedLesson = {
     },
     {
       content: {
-        acceptedAnswers: ["3 × 10^8", "3 x 10^8", "3*10^8", "3 × 10⁸", "3e8"],
-        keyPoints: [
-          t("The front number is 3, between 1 and 10", "O número da frente é 3, entre 1 e 10"),
-          t(
-            "The point jumps 8 places, so the power is 8",
-            "A vírgula pula 8 casas, então a potência é 8",
+        options: [
+          option(
+            "right",
+            t("3 × 10⁸ m/s", "3 × 10⁸ m/s"),
+            t(
+              "The front number is 3, between 1 and 10, and the point jumps 8 places to get there, so the power is 8.",
+              "O número da frente é 3, entre 1 e 10, e a vírgula pula 8 casas para chegar lá, então a potência é 8.",
+            ),
+            true,
+          ),
+          option(
+            "front",
+            t("30 × 10⁷ m/s", "30 × 10⁷ m/s"),
+            t(
+              "It's the same value, but the front number has to be between 1 and 10, and 30 isn't. Move one more place: 3 × 10⁸.",
+              "É o mesmo valor, mas o número da frente tem que ficar entre 1 e 10, e 30 não fica. Pule mais uma casa: 3 × 10⁸.",
+            ),
+          ),
+          option(
+            "zeros",
+            t("3 × 10⁹ m/s", "3 × 10⁹ m/s"),
+            t(
+              "300,000,000 has 8 places after the 3, so the power is 8. 3 × 10⁹ would be ten times faster.",
+              "300.000.000 tem 8 casas depois do 3, então a potência é 8. 3 × 10⁹ seria dez vezes mais rápido.",
+            ),
           ),
         ],
         question: t(
-          "Light travels about 300,000,000 meters per second. Write that speed in scientific notation.",
-          "A luz percorre cerca de 300.000.000 metros por segundo. Escreva essa velocidade em notação científica.",
+          "Light travels about 300,000,000 meters per second. Which is that speed in scientific notation?",
+          "A luz percorre cerca de 300.000.000 metros por segundo. Qual é essa velocidade em notação científica?",
         ),
-        sampleAnswer: t(String.raw`$3 \times 10^8$ m/s`, String.raw`$3 \times 10^8$ m/s`),
       },
-      kind: "typedAnswer",
+      kind: "check",
       screen: "application",
       skill: "sci-notation",
     },

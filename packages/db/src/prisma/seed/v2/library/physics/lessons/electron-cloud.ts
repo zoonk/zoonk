@@ -287,30 +287,50 @@ export const electronCloudLesson: SeedLesson = {
     },
     {
       content: {
-        keyPoints: [
-          t(
-            "The electron is a cloud of chances, not a ball on an orbit",
-            "O elétron é uma nuvem de probabilidades, não uma bolinha em órbita",
+        context: t(
+          "A friend says: “The electron would fall into the nucleus if it stopped moving.”",
+          "Um amigo diz: “O elétron cairia no núcleo se parasse de se mexer.”",
+        ),
+        options: [
+          option(
+            "ground",
+            t(
+              "The atom is already at its lowest energy: squeezing the cloud closer would cost more",
+              "O átomo já está na menor energia: espremer a nuvem custaria mais",
+            ),
+            t(
+              "The electron is a cloud, not a ball on an orbit. Squeezing it toward the nucleus makes it jitter more, costing more energy than the pull gives back, so in the ground state there's nowhere lower to fall.",
+              "O elétron é uma nuvem, não uma bolinha em órbita. Espremê-la em direção ao núcleo aumenta a agitação e custa mais energia do que a atração devolve, então no estado fundamental não há para onde cair.",
+            ),
+            true,
           ),
-          t(
-            "Squeezing the cloud closer makes it jitter more, which costs energy",
-            "Espremer a nuvem mais perto aumenta a agitação, e isso custa energia",
+          option(
+            "speed",
+            t(
+              "The electron moves so fast that it never falls in",
+              "O elétron se move tão rápido que nunca cai",
+            ),
+            t(
+              "That's the old orbit picture: the electron isn't a ball circling the nucleus, so its speed isn't what holds it up.",
+              "Essa é a imagem antiga da órbita: o elétron não é uma bolinha girando em volta do núcleo, então não é a velocidade que o segura.",
+            ),
           ),
-          t(
-            "The atom is already at its lowest energy, the ground state, so there's nowhere lower to fall",
-            "O átomo já está na menor energia, o estado fundamental, então não há para onde cair",
+          option(
+            "push",
+            t("The nucleus pushes the electron away", "O núcleo empurra o elétron para longe"),
+            t(
+              "The nucleus pulls the electron in. What stops the fall is the energy it would cost to squeeze the cloud, not a push.",
+              "O núcleo atrai o elétron. O que impede a queda é a energia que custaria espremer a nuvem, não um empurrão.",
+            ),
           ),
         ],
         question: t(
-          "A friend says: “The electron would fall into the nucleus if it stopped moving.” In two or three sentences, explain what really keeps atoms from collapsing.",
-          "Um amigo diz: “O elétron cairia no núcleo se parasse de se mexer.” Em duas ou três frases, explique o que de fato impede os átomos de colapsar.",
-        ),
-        sampleAnswer: t(
-          "The electron isn't a ball moving on an orbit, so stopping isn't the issue. It's a cloud, and squeezing that cloud toward the nucleus would make it jitter more, costing more energy than the pull gives back. The atom is already at its lowest energy, the ground state, so there's no lower place to fall.",
-          "O elétron não é uma bolinha andando numa órbita, então parar não é a questão. Ele é uma nuvem, e espremer essa nuvem em direção ao núcleo aumentaria a agitação, custando mais energia do que a atração devolve. O átomo já está na menor energia, o estado fundamental, então não há lugar mais baixo para cair.",
+          "What really keeps atoms from collapsing?",
+          "O que de fato impede os átomos de colapsar?",
         ),
       },
-      kind: "typedAnswer",
+      kind: "check",
+      screen: "application",
       skill: "ground-state",
     },
     {

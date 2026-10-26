@@ -249,24 +249,47 @@ export const percentDiscountLesson: SeedLesson = {
     },
     {
       content: {
-        keyPoints: [
-          t("You get 1 piece free out of 3", "Você ganha 1 peça grátis a cada 3"),
-          t(
-            "The discount is measured against the full price of the 3 pieces",
-            "O desconto é medido sobre o preço cheio das 3 peças",
+        context: t(
+          "A store sells T-shirts for R$ 60 each and advertises “buy 3, pay for 2”. A friend says that's a 50% discount.",
+          "Uma loja vende camisetas a R$ 60 cada e anuncia “leve 3, pague 2”. Um amigo diz que isso é 50% de desconto.",
+        ),
+        options: [
+          option(
+            "third",
+            t("About 33%: R$ 60 off R$ 180", "Cerca de 33%: R$ 60 a menos sobre R$ 180"),
+            t(
+              "You pay R$ 120 for R$ 180 worth of T-shirts, so you save R$ 60. Measured against the full R$ 180, that's 1/3, about 33.3%.",
+              "Você paga R$ 120 por R$ 180 em camisetas e economiza R$ 60. Sobre o preço cheio de R$ 180, isso é 1/3, cerca de 33,3%.",
+            ),
+            true,
           ),
-          t("1/3 is about 33.3%, not 1/2", "1/3 é cerca de 33,3%, não 1/2"),
+          option(
+            "half",
+            t(
+              "50%: one T-shirt free for every two paid",
+              "50%: uma camiseta grátis a cada duas pagas",
+            ),
+            t(
+              "That compares the free T-shirt with the 2 you pay for. A discount is measured against the full price of all 3, R$ 180, so R$ 60 off is 1/3.",
+              "Isso compara a camiseta grátis com as 2 que você paga. O desconto é medido sobre o preço cheio das 3, R$ 180, então R$ 60 a menos é 1/3.",
+            ),
+          ),
+          option(
+            "two-thirds",
+            t("About 67%: you pay for 2 of the 3", "Cerca de 67%: você paga 2 das 3"),
+            t(
+              "2 of 3 is the share you pay, not the share you save: you pay about 67% of the full price, so the discount is about 33%.",
+              "2 de 3 é a parte que você paga, não a que você economiza: você paga cerca de 67% do preço cheio, então o desconto é de cerca de 33%.",
+            ),
+          ),
         ],
         question: t(
-          "A friend says “buy 3, pay for 2” is a 50% discount. In two or three sentences, explain why it isn't.",
-          "Um amigo diz que “leve 3, pague 2” é 50% de desconto. Em duas ou três frases, explique por que não é.",
-        ),
-        sampleAnswer: t(
-          "You take 3 pieces and pay for 2, so you get 1 free out of 3. The discount is measured against the full price of all 3, which makes it 1/3, about 33.3%. It would only be 50% if you got 1 free for every one you paid for.",
-          "Você leva 3 peças e paga 2, então ganha 1 grátis a cada 3. O desconto é medido sobre o preço cheio das 3, o que dá 1/3, cerca de 33,3%. Só seria 50% se você ganhasse 1 peça grátis para cada uma que pagasse.",
+          "What's the real discount on the 3 T-shirts?",
+          "Qual é o desconto de verdade nas 3 camisetas?",
         ),
       },
-      kind: "typedAnswer",
+      kind: "check",
+      screen: "application",
       skill: "buy-x-pay-y",
     },
     {

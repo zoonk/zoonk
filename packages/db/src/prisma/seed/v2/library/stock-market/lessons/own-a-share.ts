@@ -283,30 +283,47 @@ export const ownAShareLesson: SeedLesson = {
     },
     {
       content: {
-        keyPoints: [
-          t(
-            "A share is a piece of ownership of a company",
-            "Uma ação é um pedaço da propriedade de uma empresa",
+        context: t(
+          "A friend thinks buying a share is like putting money in a savings account.",
+          "Um amigo acha que comprar uma ação é como colocar dinheiro na poupança.",
+        ),
+        options: [
+          option(
+            "owner",
+            t(
+              "A share makes you a part-owner, with no guaranteed return",
+              "A ação te torna sócio da empresa, sem retorno garantido",
+            ),
+            t(
+              "A savings account pays interest agreed in advance. With a share, what you earn depends on how the company does: dividends and growth, or losses.",
+              "A poupança paga um rendimento combinado de antemão. Com uma ação, o que você ganha depende de como a empresa vai: dividendos e crescimento, ou perdas.",
+            ),
+            true,
           ),
-          t(
-            "Its value and dividends depend on how the company does",
-            "O valor e os dividendos dependem de como a empresa vai",
+          option(
+            "fixed",
+            t("A share pays a fixed amount every month", "A ação paga um valor fixo todo mês"),
+            t(
+              "Dividends depend on the company's profit and on what it decides to pay; nothing fixes them in advance.",
+              "Os dividendos dependem do lucro da empresa e do que ela decide pagar; nada os fixa de antemão.",
+            ),
           ),
-          t(
-            "There's no guaranteed return, unlike a savings account",
-            "Não há retorno garantido, ao contrário da poupança",
+          option(
+            "loan",
+            t(
+              "A share is a loan the company pays back with interest",
+              "A ação é um empréstimo que a empresa devolve com juros",
+            ),
+            t(
+              "A loan to a company is a bond. A share is a piece of ownership: nobody promises to pay it back.",
+              "Um empréstimo a uma empresa é um título de dívida. A ação é um pedaço da empresa: ninguém promete devolver o dinheiro.",
+            ),
           ),
         ],
-        question: t(
-          "A friend thinks buying a share is like putting money in a savings account. In two or three sentences, explain the difference.",
-          "Um amigo acha que comprar uma ação é como colocar dinheiro na poupança. Em duas ou três frases, explique a diferença.",
-        ),
-        sampleAnswer: t(
-          "A savings account pays you interest that's promised in advance. A share makes you a part-owner of a company, so what you earn depends on how the company does: it can pay dividends and grow, or lose value. Nobody guarantees the return.",
-          "A poupança paga um rendimento combinado de antemão. Uma ação te torna sócio de uma empresa, então o que você ganha depende de como ela vai: pode pagar dividendos e crescer, ou perder valor. Ninguém garante o retorno.",
-        ),
+        question: t("What's the main difference?", "Qual é a diferença principal?"),
       },
-      kind: "typedAnswer",
+      kind: "check",
+      screen: "application",
       skill: "shareholder-rights",
     },
     {
