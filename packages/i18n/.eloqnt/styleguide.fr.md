@@ -28,6 +28,7 @@
 - “listening”: “écoute”
 - “Speaking”: “Expression orale”
 - “mind map”: “carte mentale”
+- “card”: a speaking exam's task card: “fiche”; a card to pick in an activity: “carte”
 
 ## Feature names and states
 
@@ -35,7 +36,6 @@
 - “Buddy”: “Compagnon”
 - “Progress”: “Progrès”
 - “Content”: “Contenu”
-- “Cards”: “Fiches”, not “cartes”
 - “Time capsules”: “Capsules temporelles”
 - “Missions”: “Missions”
 - Mission names (missions list, first steps): infinitive: “Terminer ta première leçon”, “Travailler {area}”; “Practice” and “Review” stay distinct: “S’entraîner” / “Réviser”
@@ -57,7 +57,6 @@
 - “Full meal”: “Repas complet”
 - “Logbook”: “Journal de bord”
 - “Fading” (needs review): “À revoir”
-- “Gold” (card remembered on three different days): “Or”
 - “Overview” (course level): “Vue d’ensemble”
 - “Focus test”: “Test de priorités”
 - Belts: “White belt”: “Ceinture blanche”, the color in lowercase

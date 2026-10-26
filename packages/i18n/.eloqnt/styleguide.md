@@ -19,7 +19,7 @@ Zoonk helps anyone learn anything, especially people in small towns, under-resou
 ## Product terminology
 
 - Learners “start” a goal, rather than add, set, or create one.
-- Cards are flashcards for studying, not playing cards.
+- A “card” is a speaking exam's task card or a card the learner picks in an activity, such as match pairs. Zoonk has no flashcards.
 - Buddies are learning partners, not pets. Their localized names are proper names.
 - “Known” and “Known before” mean the learner knew something before studying it in Zoonk.
 - In Trickster duels, “broken” counts shield plates broken by right answers; “held” means the shield withstood this attempt.

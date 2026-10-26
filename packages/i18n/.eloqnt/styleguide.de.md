@@ -29,6 +29,7 @@
 - “listening”: “Hören”
 - “Speaking”: “Sprechen”
 - “mind map”: “Mindmap”
+- “card”: “Karte”, not “Lernkarte”; a speaking exam's task card may be “Aufgabenkarte”
 
 ## Feature names and states
 
@@ -36,7 +37,6 @@
 - “Buddy”: “Kumpel”
 - “Progress”: “Fortschritt”
 - “Content”: “Inhalte”
-- “Cards”: “Lernkarten”, not “Spielkarten”
 - “Time capsules”: “Zeitkapseln”
 - “Missions”: “Missionen”
 - Mission names (missions list, first steps): infinitive: “Deine erste Lektion abschließen”, “{area} üben”
@@ -57,7 +57,6 @@
 - “Full meal”: “Volle Mahlzeit”
 - “Logbook”: “Logbuch”
 - “Fading” (needs review): “Nachlassend”
-- “Gold” (card remembered on three different days): “Gold”
 - “Overview” (course level): “Überblick”
 - “Appearance” (settings): “Aussehen”
 - “Focus test”: “Fokustest”

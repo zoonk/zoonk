@@ -24,6 +24,7 @@
 - “listening”: “escucha”
 - “Speaking”: “Expresión oral”
 - “mind map”: “mapa mental”
+- “card”: “tarjeta”, not “carta”
 - “hello@zoonk.com”: “contacto@zoonk.com”
 
 ## Feature names and states
@@ -33,7 +34,6 @@
 - “Buddy”: “Compañero”
 - “Progress”: “Progreso”
 - “Content”: “Contenido”
-- “Cards”: “Tarjetas”, not “cartas”
 - “Time capsules”: “Cápsulas del tiempo”
 - “Missions”: “Misiones”
 - Mission names (missions list, first steps): “tú” imperative: “Completa tu primera lección”, “Practica {area}”
@@ -55,7 +55,6 @@
 - “Full meal”: “Comida completa”
 - “Logbook”: “Cuaderno de bitácora”
 - “Fading” (needs review): “Por repasar”
-- “Gold” (card remembered on three different days): “Oro”
 - “Overview” (course level): “Visión general”
 - “Focus test”: “Prueba de enfoque”
 

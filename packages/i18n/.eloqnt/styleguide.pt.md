@@ -43,6 +43,7 @@
 - “Speaking”: “Conversação”
 - “Free” (subscription name): “Grátis”
 - “language”: “idioma”
+- “card”: “cartão”, not “carta”
 - “hello@zoonk.com”: “contato@zoonk.com”
 
 ## Feature names and states
@@ -52,7 +53,6 @@
 - “Buddy”: “Parceiro”
 - “Progress”: “Progresso”
 - “Content”: “Conteúdo”
-- “Cards”: “Cartões”, not “cartas”
 - “Time capsules”: “Cápsulas do tempo”
 - “Missions”: “Missões”
 - Mission names (missions list, first steps): infinitive, like a to-do list: “Concluir sua primeira aula”, “Praticar {area}”
@@ -74,7 +74,6 @@
 - “Full meal”: “Refeição completa”
 - “Logbook”: “Diário de bordo”
 - “Fading” (needs review): “Para revisar”
-- “Gold” (card remembered on three different days): “Ouro”
 - “Focus test”: “Teste de foco”
 - “Right” / “Wrong” (Cebraspe-style exam judgment): “Certo” / “Errado”
 
