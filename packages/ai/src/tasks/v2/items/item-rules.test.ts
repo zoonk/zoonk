@@ -23,8 +23,10 @@ vi.mock("./item-rules/multiple-choice.prompt.md", () => ({
 vi.mock("./item-rules/true-false.prompt.md", () => ({ default: "## trueFalse\n\n- Statement.\n" }));
 
 vi.mock("./item-rules/typed-spoken.prompt.md", () => ({
-  default: "## typed and spoken\n\n- Key points.\n",
+  default: "## typed and spoken\n\n{{TYPED_QUESTION}}\n- Key points.\n",
 }));
+
+vi.mock("./item-rules/typed-question.prompt.md", () => ({ default: "- One clear ask.\n" }));
 
 vi.mock("./item-rules/essay.prompt.md", () => ({ default: "## essay\n\n- Rubric.\n" }));
 vi.mock("./item-rules/match-pairs.prompt.md", () => ({ default: "## matchPairs\n\n- Pairs.\n" }));
@@ -59,7 +61,11 @@ describe(withItemRules, () => {
     expect(prompt).toContain("- Concrete.\n- In `LANGUAGE`.\n\n# Text");
     expect(prompt).toContain("- Tables.\n- No em dashes.");
     expect(prompt).toContain("# Formats\n\n## essay\n\n- Rubric.\n\n# Final check");
-    expect(prompt).not.toMatch(/Options|Statement|Key points|Pairs|Steps|Math|Pictures|FIELD/u);
+
+    expect(prompt).not.toMatch(
+      /Options|Statement|One clear ask|Key points|Pairs|Steps|Math|Pictures|FIELD/u,
+    );
+
     expect(prompt).not.toContain("{{");
   });
 
@@ -88,7 +94,7 @@ describe(withItemRules, () => {
     expect(prompt).toContain("\n\n# Language goals\n\nPractice it.\n\n# Text");
 
     expect(prompt).toContain(
-      "## multipleChoice\n\n- Options, one correct.\n\n## typed and spoken\n\n- Key points.",
+      "## multipleChoice\n\n- Options, one correct.\n\n## typed and spoken\n\n- One clear ask.\n- Key points.",
     );
 
     expect(prompt).toContain(

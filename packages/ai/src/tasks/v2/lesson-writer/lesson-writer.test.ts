@@ -31,6 +31,8 @@ vi.mock("./lesson-writer.prompt.md", () => ({
   ].join("\n"),
 }));
 
+vi.mock("../items/item-rules/typed-question.prompt.md", () => ({ default: "- One clear ask.\n" }));
+
 vi.mock("ai", async (importOriginal) => {
   const actual = await importOriginal<typeof Ai>();
   return { ...actual, generateText: vi.fn() };

@@ -6,14 +6,20 @@ import { type AiGenerationContext } from "../../../provenance/ai-generation-even
 import { runTaskGeneration } from "../../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../../provider-options";
 import { selectPromptVariants } from "../../_utils/prompt-variants";
+import typedQuestionRules from "../items/item-rules/typed-question.prompt.md";
 import {
   type LessonProblem,
   type LessonWritingContext,
   formatLessonPlan,
   formatLessonProblems,
 } from "./format-lesson-plan";
-import systemPrompt from "./lesson-writer.prompt.md";
+import rulesTemplate from "./lesson-writer.prompt.md";
 import { type WrittenLesson, writtenLessonSchema } from "./written-lesson-schema";
+
+/** A typed screen's question and key points follow the item bank's typed rules, under its bullet. */
+const systemPrompt = rulesTemplate.replace("{{TYPED_QUESTION}}", () =>
+  typedQuestionRules.trim().replaceAll(/^/gmu, "  "),
+);
 
 /**
  * From the lesson-writer eval (4 specs in English and Portuguese, overview to

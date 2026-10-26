@@ -2071,6 +2071,86 @@
           }
         }
       }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "The intended identifications and keyed biological statements are accurate at this level: the membrane controls substance movement, the cytoplasm accommodates internal cellular structures, and genetic material carries instructions needed by daughter cells. The sample answers agree with the keys.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Each question has two independently checkable key points corresponding to its two linked requests. There are no hidden locations or terminology requirements. Empty accepted-answer lists are appropriate because these items require explanations rather than isolated terms. No distractor-related requirements apply.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "These are plausible short constructed-response questions for a Brazilian sixth-grade science test. The Portuguese is accessible, every command specifies the response length, and each asks only for an identification and its function or importance. The classroom contexts fit the setting without unnecessary reading demands.",
+          "score": 10,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The questions cover all three requested cell components and remain in Portuguese, but most assess recognition and recalled functions rather than application. Items 1 and 2 repeat the same identification-plus-function task, triggering the explicit cap of 7. The easy, medium, and hard labels also exceed the actual variation in cognitive demand.",
+          "score": 7,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2320,
+          "outputTokens": 1313,
+          "reasoningTokens": 779
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The set relies mostly on recognition and recall of standard functions. Items 1 and 2 test the same thing in the same way: identify a cell part from a descriptive cue and state its function. The drawing and model contexts do not add meaningful application. This triggers the skill-fit score cap of 7.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "Make the difficulty progression substantive rather than mainly changing the cell part. For example, replace one identification-and-function item with a simple prediction about what happens when the membrane cannot control substance movement. Keep the explicit one-or-two-sentence limit and independently checkable key points.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Short written-answer items in Brazilian Portuguese for a 6th-grade science test on the parts of a cell. Each question is one direct instruction that says what to write and how long (for example \"Em uma ou duas frases, diga...\"), asks one thing or two linked parts at most (a thing and what it does, an effect and its reason), and never stacks several questions (\"o que, onde e por quê\") or uses a vague \"explique com suas palavras\": a learner can tell from the question alone what a right answer states. There is one key point (at most three) for each part the question asks for, each a single idea, never a hidden detail, place or term.",
+        "id": "pt-school-ciencias-partes-da-celula-typed-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "Prova de ciências do 6º ano",
+            "style": "Questões discursivas curtas, respondidas em uma ou duas frases e corrigidas por ideias-chave."
+          },
+          "format": "typed",
+          "language": "pt",
+          "level": "beginner",
+          "skill": {
+            "description": "Reconhecer a membrana, o citoplasma e o material genético de uma célula e dizer o papel de cada um.",
+            "name": "Partes da célula"
+          }
+        }
+      }
     }
   ],
   "taskId": "generate-items"

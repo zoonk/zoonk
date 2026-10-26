@@ -10,7 +10,8 @@ import numericRules from "./item-rules/numeric.prompt.md";
 import orderRules from "./item-rules/order.prompt.md";
 import pictureRules from "./item-rules/pictures.prompt.md";
 import trueFalseRules from "./item-rules/true-false.prompt.md";
-import typedRules from "./item-rules/typed-spoken.prompt.md";
+import typedQuestionRules from "./item-rules/typed-question.prompt.md";
+import typedSpokenRules from "./item-rules/typed-spoken.prompt.md";
 import { GENERATED_ITEM_SCHEMAS, type ItemFormat } from "./item-schemas";
 
 /** What a call writes, which decides the rules it reads. */
@@ -31,6 +32,9 @@ export type ItemRulesScope = {
   /** Whether multiple choice asks the learner to pick several options (`SELECT`), not one. */
   severalPicks?: boolean;
 };
+
+/** How a typed question and its key points are written, shared with lessons' typed screens. */
+const typedRules = typedSpokenRules.replace("{{TYPED_QUESTION}}\n", () => typedQuestionRules);
 
 /** Each format's rules, in the order every writer reads them; typed and spoken share theirs. */
 const FORMAT_RULES: readonly { formats: readonly ItemFormat[]; rules: string }[] = [

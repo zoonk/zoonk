@@ -356,6 +356,28 @@ export const TEST_CASES: TestCase<unknown, GenerateItemsInput>[] = [
     },
   },
   {
+    // A lesson's typed question asked what to add, where to draw it and why at once, and the owner
+    // couldn't tell what to answer (Oct 2026): each question asks one clear thing.
+    expectations: `Short written-answer items in Brazilian Portuguese for a 6th-grade science test on the parts of a cell. Each question is one direct instruction that says what to write and how long (for example "Em uma ou duas frases, diga..."), asks one thing or two linked parts at most (a thing and what it does, an effect and its reason), and never stacks several questions ("o que, onde e por quê") or uses a vague "explique com suas palavras": a learner can tell from the question alone what a right answer states. There is one key point (at most three) for each part the question asks for, each a single idea, never a hidden detail, place or term.`,
+    id: "pt-school-ciencias-partes-da-celula-typed",
+    userInput: {
+      count: ITEMS_PER_CASE,
+      examFormat: {
+        name: "Prova de ciências do 6º ano",
+        style:
+          "Questões discursivas curtas, respondidas em uma ou duas frases e corrigidas por ideias-chave.",
+      },
+      format: "typed",
+      language: "pt",
+      level: "beginner",
+      skill: {
+        description:
+          "Reconhecer a membrana, o citoplasma e o material genético de uma célula e dizer o papel de cada um.",
+        name: "Partes da célula",
+      },
+    },
+  },
+  {
     expectations: `Workplace multiple-choice items in English for a retail store manager learning to give specific, behavior-based feedback. Situations must be realistic store situations; wrong options should be common manager mistakes such as vague praise, judging personality instead of behavior or waiting weeks to give feedback.`,
     id: "en-work-behavior-feedback-retail",
     userInput: {
