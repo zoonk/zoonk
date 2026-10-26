@@ -20,7 +20,7 @@ import {
 } from "./today-context";
 import { getSessionState } from "./today-day-state";
 import { TodayHeading } from "./today-heading";
-import { TODAY_ASIDE_CLASS, TODAY_MAIN_CLASS } from "./today-layout";
+import { TODAY_ACTION_CLASS, TODAY_ASIDE_CLASS, TODAY_MAIN_CLASS } from "./today-layout";
 import { TodayMissions } from "./today-missions";
 import { TodayMore } from "./today-more";
 import { TodayNotice } from "./today-notice";
@@ -65,8 +65,9 @@ function isWaitingForLessons(today: TodayView): boolean {
  * Today, the screen learners open every day, with one job: start or continue today's session. Its
  * name under one quiet line (the date, the days left and where the plan stands), the day's
  * segments, its queue with the next block highlighted, and one action: Start or Continue beside
- * the title from `sm`, under the queue on a phone. Every other state (done, a rest day, nothing
- * new, lessons being written) keeps that frame and says what the day is in one line.
+ * the title from `sm`, after the queue on a phone, docked above the tab bar until the learner
+ * scrolls to it. Every other state (done, a rest day, nothing new, lessons being written) keeps
+ * that frame and says what the day is in one line.
  *
  * Beside it, the aside (`PageWithAside`): from 72rem it runs the screen's full height at its right
  * edge (the day's missions, the week, the preparation and the one notice); under 72rem its blocks
@@ -155,7 +156,7 @@ export function TodayScreen({
           <section aria-label={t("Today's session")} className={TODAY_MAIN_CLASS}>
             <TodayContinueProvider>
               <TodayHeading className="[grid-area:head]" />
-              <TodayAction className="mt-4 [grid-area:action] sm:mt-0 sm:self-end" />
+              <TodayAction className={TODAY_ACTION_CLASS} />
               <TodaySession className="mt-5 [grid-area:session]" />
               <TodayMore className="mt-4 [grid-area:more]" />
             </TodayContinueProvider>

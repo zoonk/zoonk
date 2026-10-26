@@ -28,4 +28,9 @@ describe(splitQuantity, () => {
       { numeric: false, text: " h" },
     ]);
   });
+
+  it("keeps a percent sign with its number, as one figure", () => {
+    expect(splitQuantity("3.48%")).toStrictEqual([{ numeric: true, text: "3.48%" }]);
+    expect(splitQuantity("3,48\u00A0%")).toStrictEqual([{ numeric: true, text: "3,48\u00A0%" }]);
+  });
 });

@@ -4,6 +4,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
+import { BigQuantity } from "../_components/big-quantity";
 import {
   PageSection,
   PageSectionDetail,
@@ -25,8 +26,9 @@ const LINK_CLASS =
   "text-muted-foreground hover:text-foreground inline-flex items-center gap-1 self-start text-[0.8125rem] transition-colors outline-none after:absolute after:-inset-x-2.5 after:-inset-y-2 after:rounded-[0.625rem] after:content-['']";
 
 /**
- * The card's frame: its name with a quiet detail beside it, the number in the mono face, what
- * draws it (`children`), and "See your plan" at its end. The whole card is that one link: its box
+ * The card's frame: its name with a quiet detail beside it, the number as a readout (a share or a
+ * level, its unit small), what draws it (`children`), and "See your plan" at its end. The whole
+ * card is that one link: its box
  * covers the card, and it's named by the card's own words ("Progress 32% 6 of 19 lessons Today: 2
  * lessons See your plan"), while a list inside stays a list for screen readers.
  */
@@ -77,11 +79,8 @@ export function ProgressCard({
         {detail && <PageSectionDetail id={detailId}>{detail}</PageSectionDetail>}
       </PageSectionHeader>
 
-      <p
-        className="-mt-1 font-mono text-[1.375rem] leading-7 font-medium tabular-nums"
-        id={ids.value}
-      >
-        {value}
+      <p className="text-readout pt-0.5 pb-1 text-[2rem]" id={ids.value}>
+        {typeof value === "string" ? <BigQuantity>{value}</BigQuantity> : value}
       </p>
 
       {children}

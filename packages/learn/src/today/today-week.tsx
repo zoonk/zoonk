@@ -3,6 +3,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { GraduationCapIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
+import { BigQuantity } from "../_components/big-quantity";
 import { GoalRing, type GoalRingTrack } from "../_components/goal-ring";
 import { KindIcon } from "../_components/kind-tile";
 import {
@@ -222,8 +223,9 @@ function ChallengeDay({
 }
 
 /**
- * "1 min / 4 hr 30 min": the week's time studied over what the plan gives it, in the mono face;
- * screen readers hear it as a sentence.
+ * "1 min / 4 hr 30 min": the week's time studied over what the plan gives it, the block's number
+ * as a readout beside the plan's time in the mono face (`headline`), or one mono fact on a phone's
+ * line (`inline`); screen readers hear it as a sentence.
  */
 function WeekTime({ className, size }: { className?: string; size: "headline" | "inline" }) {
   const t = useExtracted();
@@ -239,10 +241,12 @@ function WeekTime({ className, size }: { className?: string; size: "headline" | 
     <span className={cn("font-mono tabular-nums", className)}>
       <span aria-hidden="true">
         {size === "inline" && "· "}
-        <span className={cn(size === "headline" && "text-[1.375rem] leading-7 font-medium")}>
-          {formatDuration(studied)}
-        </span>
-        <span className="text-muted-foreground">{` / ${formatDuration(planned)}`}</span>
+        {size === "headline" ? (
+          <BigQuantity className="text-2xl">{formatDuration(studied)}</BigQuantity>
+        ) : (
+          formatDuration(studied)
+        )}
+        <span className="text-muted-foreground text-xs">{` / ${formatDuration(planned)}`}</span>
       </span>
       <span className="sr-only">
         {t("{studied} of {planned} studied this week", {

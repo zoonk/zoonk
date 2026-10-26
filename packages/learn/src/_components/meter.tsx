@@ -17,7 +17,7 @@ export function Meter({
   return (
     <Element
       aria-hidden="true"
-      className={cn("bg-muted block h-1.5 overflow-hidden rounded-[3px]", className)}
+      className={cn("bg-surface-3 block h-1.5 overflow-hidden rounded-[3px]", className)}
       data-slot="meter"
       {...props}
     />
@@ -42,6 +42,9 @@ export function MeterFill({
   );
 }
 
+/** A meter of parts' row: 6px tall, its parts 2px apart. */
+export const METER_PARTS_CLASS = "flex h-1.5 w-full gap-0.5";
+
 /**
  * A meter made of parts, under or beside the number it explains (a readout): each part as long as
  * its `weight` and colored by what it measures, 2px apart, so the number's make-up reads at a
@@ -57,7 +60,7 @@ export function MeterParts({
   return (
     <Element
       aria-hidden="true"
-      className={cn("flex h-1.5 w-full gap-0.5", className)}
+      className={cn(METER_PARTS_CLASS, className)}
       data-slot="meter-parts"
       {...props}
     />

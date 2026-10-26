@@ -180,8 +180,8 @@ function MockFundingPart() {
 /**
  * The tab's name under one quiet line (the date, the days left, where the plan stands, every day:
  * a finished or rest day says so under the title, and where the learner stands still matters),
- * and on a phone the day's time beside it ("44 min left"); from `sm` that time moves under the
- * day's segments and the day's action takes its place beside the title.
+ * and on a phone the day's time beside it as a readout ("44 min left"); from `sm` that time moves
+ * under the day's segments and the day's action takes its place beside the title.
  */
 export function TodayHeading({ className }: { className?: string }) {
   const t = useExtracted();
@@ -204,7 +204,7 @@ export function TodayHeading({ className }: { className?: string }) {
 
         <div className="flex items-baseline justify-between gap-3">
           <PageTitle>{t("Today")}</PageTitle>
-          <DayTime className="text-muted-foreground shrink-0 font-mono text-[0.8125rem] tabular-nums sm:hidden" />
+          <DayTime className="shrink-0 text-2xl sm:hidden" />
         </div>
       </PageHeaderContent>
     </PageHeader>

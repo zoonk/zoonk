@@ -15,8 +15,9 @@ function byFurthest(fills: number[]): number[] {
 }
 
 /**
- * The day's missions as one track in Brain Power's violet, a segment per mission filled as far as
- * it is ("1 of 3 fixed" fills a third), the furthest first: "1 of 2" fills the first segment even
+ * The day's missions as one track in Brain Power's violet, drawn as a meter's parts (6px, 2px
+ * apart), a segment per mission filled as far as it is ("1 of 3 fixed" fills a third), the
+ * furthest first: "1 of 2" fills the first segment even
  * when the mission done is listed last. Given where the missions stood before (`from`), it starts
  * there and fills to now: the one animation missions have, right after the action that moved them.
  * Decorative: the words beside it say the same.
@@ -50,14 +51,14 @@ export function MissionTrack({
   }, [targetKey]);
 
   return (
-    <div aria-hidden="true" className={cn("flex gap-1", className)} data-slot="mission-track">
+    <div aria-hidden="true" className={cn("flex gap-0.5", className)} data-slot="mission-track">
       {missions.map((mission, index) => (
         <span
-          className="bg-brain/15 dark:bg-brain/30 relative h-1.5 flex-1 rounded-full"
+          className="bg-brain/15 dark:bg-brain/30 relative h-1.5 flex-1 overflow-hidden rounded-[3px]"
           key={mission.kind}
         >
           <span
-            className="bg-brain absolute inset-y-0 left-0 rounded-full transition-[width] duration-300 ease-out motion-reduce:transition-none"
+            className="bg-brain absolute inset-y-0 left-0 transition-[width] duration-300 ease-out motion-reduce:transition-none"
             style={{ width: `${(fills[index] ?? 0) * 100}%` }}
           />
         </span>

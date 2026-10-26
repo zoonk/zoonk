@@ -188,6 +188,13 @@ export function LearnSideNavigation({
 }
 
 /**
+ * How far above the screen's bottom something docked over the tab bar on a phone sits (Today's
+ * action): the bar's hairline, its 6px padding above and below its 52px tabs, and the home
+ * indicator's inset. Kept beside the bar so the two change together.
+ */
+export const ABOVE_BOTTOM_TABS_CLASS = "bottom-[calc(4rem+1px+env(safe-area-inset-bottom))]";
+
+/**
  * The three tabs at the bottom of the screen under `lg`, where the thumb is. Place it after
  * `LearnShellMain`: it stays on screen while the page scrolls and takes its own room at the end,
  * so it never covers the page, and it clears the home indicator on iPhones. Toasts rise above it
