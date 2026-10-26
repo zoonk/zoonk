@@ -26,7 +26,7 @@ function MistakeItem({ mistake }: { mistake: UnitMistake }) {
 
   return (
     <li className="flex flex-col gap-2 py-3 first:pt-0 last:pb-0">
-      <p className="text-label">{labels[mistake.skill]}</p>
+      <p className="text-muted-foreground text-xs font-medium">{labels[mistake.skill]}</p>
       <div className="text-sm font-medium">
         <ItemStem text={mistake.question} />
       </div>

@@ -18,6 +18,7 @@ import {
 } from "@zoonk/ui/components/drawer";
 import { ChevronDownIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { PageSectionLabel } from "../_components/page";
 import { useFormatDuration } from "../_utils/time-format";
 import { type SubjectGroup, groupSubjects } from "./group-subjects";
 import { SubjectIcon } from "./subject-icon";
@@ -227,11 +228,7 @@ function SummaryGroup({
 
   return (
     <div className="flex flex-col gap-1">
-      {name && (
-        <h3 className="text-muted-foreground pt-2 text-xs font-medium tracking-wide uppercase">
-          {name}
-        </h3>
-      )}
+      {name && <PageSectionLabel>{name}</PageSectionLabel>}
       <ul className="flex flex-col">
         {group.subjects.map((subject) => (
           <li key={subject.key}>

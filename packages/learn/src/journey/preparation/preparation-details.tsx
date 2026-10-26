@@ -54,9 +54,7 @@ function EstimatedScore({ preparation }: { preparation: Preparation }) {
     <div className="flex flex-col" data-slot="estimated-score">
       <p className="flex min-w-0 flex-col gap-1">
         <span className="text-label">{t("Estimated score")}</span>
-        <span className="font-mono text-2xl font-medium tracking-[-0.03em] tabular-nums">
-          {scoreRange(score)}
-        </span>
+        <span className="text-readout text-2xl leading-tight">{scoreRange(score)}</span>
         <span className="text-muted-foreground text-xs">
           {t(
             "{count, plural, one {Based on your last mock exam} other {Based on your last # mock exams}}",
