@@ -1,3 +1,4 @@
+import { BigQuantity } from "@zoonk/learn/big-quantity";
 import { LevelLadder } from "@zoonk/learn/level-ladder";
 import { Meter, MeterFill } from "@zoonk/learn/meter";
 import { LessonCells } from "@zoonk/learn/progress-cells";
@@ -57,8 +58,10 @@ export async function GoalMeasure({ day, goal }: { day: DayState; goal: ExampleG
     return (
       <>
         <p className="text-label">{t("Progress")}</p>
-        <p className="text-readout text-[1.75rem]">
-          {formatGoalProgress({ format, share: done / JOB_PROGRESS.total })}
+        <p>
+          <BigQuantity className="text-[1.75rem]">
+            {formatGoalProgress({ format, share: done / JOB_PROGRESS.total })}
+          </BigQuantity>
         </p>
         <LessonCells
           known={JOB_PROGRESS.known}
@@ -103,7 +106,9 @@ export async function GoalMeasure({ day, goal }: { day: DayState; goal: ExampleG
   return (
     <>
       <p className="text-label">{t("Preparation")}</p>
-      <p className="text-readout text-[1.75rem]">{percent(preparation)}</p>
+      <p>
+        <BigQuantity className="text-[1.75rem]">{percent(preparation)}</BigQuantity>
+      </p>
       <ul className="flex flex-col gap-2.5 pt-1">
         {subjects.map((subject) => (
           <li

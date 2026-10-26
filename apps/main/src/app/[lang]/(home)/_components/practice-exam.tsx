@@ -3,6 +3,7 @@ import { NUMERIC_CLASS } from "@/components/public/landing-styles";
 import { Pair } from "@/components/public/pair";
 import { ProductWindow } from "@/components/public/product-window";
 import { type AnswerOptionResult } from "@zoonk/learn/answer-tone";
+import { BigQuantity } from "@zoonk/learn/big-quantity";
 import { CHIP_CLASS } from "@zoonk/learn/chip";
 import { KindDot } from "@zoonk/learn/kind-tile";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -146,7 +147,9 @@ export async function ExamPractice() {
         </p>
 
         <div className="flex flex-col gap-2">
-          <p className="text-readout text-[2.75rem]">{isEnem ? "610–690" : "1180–1260"}</p>
+          <p>
+            <BigQuantity className="text-[2.75rem]">{isEnem ? "610–690" : "1180–1260"}</BigQuantity>
+          </p>
           <p className="text-muted-foreground text-[0.8125rem]">
             {isEnem ? t("Estimated score · Natural Sciences") : t("Estimated score · SAT")}
           </p>

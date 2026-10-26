@@ -1,4 +1,5 @@
 import { CheckMark } from "@/components/public/check-mark";
+import { BigQuantity } from "@zoonk/learn/big-quantity";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 
 /**
@@ -32,11 +33,14 @@ export function PlanIncludes({
   );
 }
 
-/** A plan's price, a readout, with what it's per beside it. */
+/**
+ * A plan's price, a readout: its number large, its currency small and muted beside it, so a long
+ * code ("ISK 2,299") never crowds the number, with what it's per after it.
+ */
 export function PlanPrice({ amount, per }: { amount: string; per?: string }) {
   return (
     <p className="flex items-baseline gap-2">
-      <span className="text-readout text-[2.75rem]">{amount}</span>
+      <BigQuantity className="text-[2.75rem]">{amount}</BigQuantity>
       {per && <span className="text-muted-foreground text-sm">{per}</span>}
     </p>
   );
