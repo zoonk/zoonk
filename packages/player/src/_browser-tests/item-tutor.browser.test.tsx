@@ -76,7 +76,7 @@ function runAside() {
 }
 
 function composer() {
-  return runAside().getByRole("textbox", { name: "Ask a question" });
+  return runAside().getByRole("textbox", { name: /^Ask Pip about /u });
 }
 
 function dockedConversation() {
@@ -133,6 +133,22 @@ describe("the buddy beside a run of questions", () => {
     await expect.element(conversation.getByText("Any hint?")).toBeVisible();
     await expect.element(conversation.getByText(TUTOR_ANSWER)).toBeVisible();
     expect(api.inputs).toMatchObject([{ context: { answered: false, kind: "item" } }]);
+  });
+
+  // Its placeholder only names the buddy, so its name tells a screen reader what a question is about.
+  it("names the composer for what the learner asks about: the question, then their answer", async () => {
+    stubTutorApi({});
+    render(<QuestionRun questions={[EVEN]} />);
+
+    await expect
+      .element(runAside().getByRole("textbox", { name: "Ask Pip about this question" }))
+      .toBeVisible();
+
+    await page.getByRole("button", { name: "Check" }).click();
+
+    await expect
+      .element(runAside().getByRole("textbox", { name: "Ask Pip about your answer" }))
+      .toBeVisible();
   });
 
   it("opens a question asked again later in the run fresh, its conversation a tap away", async () => {

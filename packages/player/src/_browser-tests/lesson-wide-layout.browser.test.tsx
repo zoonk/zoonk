@@ -136,7 +136,7 @@ describe("lesson on a wide screen", () => {
   it("runs the action bar's hairline up to the aside, the buddy's composer level with it", async () => {
     renderLessonPlayer({ lesson: buildLesson([teachingStep("check")]), tutor: buildTutor() });
 
-    const field = aside().getByRole("textbox", { name: "Ask a question" });
+    const field = aside().getByRole("textbox", { name: "Ask Pip about this screen" });
     const check = page.getByRole("button", { name: /^Check/u });
 
     await expect.element(field).toBeVisible();

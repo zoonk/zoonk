@@ -26,7 +26,8 @@ const SUGGESTED = 2;
 /**
  * The buddy's composer at the foot of the aside: what the learner writes is about the question in
  * view (or their answer, once it's checked), and sending it shows the conversation in the aside. Its
- * placeholder only names the buddy, by its face, so it fits the aside's one line in every language.
+ * placeholder only names the buddy, by its face, so it fits the aside's one line in every language,
+ * and its label says what the learner asks about.
  */
 function ItemDockComposer() {
   const t = useExtracted();
@@ -71,7 +72,11 @@ function ItemDockComposer() {
       avatar={buddy.identity.avatar}
       controller={dockController}
       inputRef={inputRef}
-      label={t("Ask a question")}
+      label={
+        buddy.item.answered
+          ? t("Ask {name} about your answer", { name: buddy.identity.name })
+          : t("Ask {name} about this question", { name: buddy.identity.name })
+      }
       placeholder={t("Ask {name}", { name: buddy.identity.name })}
     />
   );

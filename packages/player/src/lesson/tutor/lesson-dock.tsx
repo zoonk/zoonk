@@ -35,7 +35,7 @@ const SUGGESTED = 2;
  * The buddy's composer at the foot of the aside, always there beside the lesson: what the learner
  * writes is about the screen in view (or their answer, once it's checked), and sending it shows the
  * conversation in the aside. Its placeholder only names the buddy, by its face, so it fits the
- * aside's one line in every language.
+ * aside's one line in every language, and its label says what the learner asks about.
  */
 function DockComposer() {
   const t = useExtracted();
@@ -82,7 +82,11 @@ function DockComposer() {
       avatar={buddy.identity.avatar}
       controller={dockController}
       inputRef={inputRef}
-      label={t("Ask a question")}
+      label={
+        buddy.context.kind === "answer"
+          ? t("Ask {name} about your answer", { name: buddy.identity.name })
+          : t("Ask {name} about this screen", { name: buddy.identity.name })
+      }
       placeholder={t("Ask {name}", { name: buddy.identity.name })}
     />
   );

@@ -3730,10 +3730,14 @@ msgstr "Worked example"
 
 #: src/lesson/tutor/lesson-dock.tsx
 #: src/questions/item-tutor-aside.tsx
-#: src/questions/lesson-question-composer.tsx
-msgctxt "iPfRms"
-msgid "Ask a question"
-msgstr "Ask a question"
+msgctxt "nete1_"
+msgid "Ask {name} about your answer"
+msgstr "Ask {name} about your answer"
+
+#: src/lesson/tutor/lesson-dock.tsx
+msgctxt "_Kuebo"
+msgid "Ask {name} about this screen"
+msgstr "Ask {name} about this screen"
 
 #: src/lesson/tutor/lesson-dock.tsx
 #: src/questions/lesson-question-thread.tsx
@@ -3794,6 +3798,11 @@ msgctxt "dHV3p3"
 msgid "Ask {name} about this subject"
 msgstr "Ask {name} about this subject"
 
+#: src/questions/item-tutor-aside.tsx
+msgctxt "Fp8B9R"
+msgid "Ask {name} about this question"
+msgstr "Ask {name} about this question"
+
 #: src/questions/item-tutor.tsx
 msgctxt "_DwRra"
 msgid "About your answer to “<question></question>”"
@@ -3848,6 +3857,11 @@ msgstr "Retry last question"
 msgctxt "9WRlF4"
 msgid "Send"
 msgstr "Send"
+
+#: src/questions/lesson-question-composer.tsx
+msgctxt "iPfRms"
+msgid "Ask a question"
+msgstr "Ask a question"
 
 #: src/questions/lesson-question-composer.tsx
 msgctxt "uw7M-z"

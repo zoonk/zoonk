@@ -3730,10 +3730,14 @@ msgstr "Beispiel mit Lösungsweg"
 
 #: src/lesson/tutor/lesson-dock.tsx
 #: src/questions/item-tutor-aside.tsx
-#: src/questions/lesson-question-composer.tsx
-msgctxt "iPfRms"
-msgid "Ask a question"
-msgstr "Frage stellen"
+msgctxt "nete1_"
+msgid "Ask {name} about your answer"
+msgstr "Frag {name} zu deiner Antwort"
+
+#: src/lesson/tutor/lesson-dock.tsx
+msgctxt "_Kuebo"
+msgid "Ask {name} about this screen"
+msgstr "Frag {name} zu diesem Bildschirm"
 
 #: src/lesson/tutor/lesson-dock.tsx
 #: src/questions/lesson-question-thread.tsx
@@ -3794,6 +3798,11 @@ msgctxt "dHV3p3"
 msgid "Ask {name} about this subject"
 msgstr "Frag {name} zu diesem Thema"
 
+#: src/questions/item-tutor-aside.tsx
+msgctxt "Fp8B9R"
+msgid "Ask {name} about this question"
+msgstr "Frag {name} zu dieser Frage"
+
 #: src/questions/item-tutor.tsx
 msgctxt "_DwRra"
 msgid "About your answer to “<question></question>”"
@@ -3848,6 +3857,11 @@ msgstr "Letzte Frage erneut senden"
 msgctxt "9WRlF4"
 msgid "Send"
 msgstr "Senden"
+
+#: src/questions/lesson-question-composer.tsx
+msgctxt "iPfRms"
+msgid "Ask a question"
+msgstr "Frage stellen"
 
 #: src/questions/lesson-question-composer.tsx
 msgctxt "uw7M-z"

@@ -172,7 +172,7 @@ test.describe("The tutor", () => {
     // beside the lesson, about the screen in view.
     await expect.poll(() => api.getRequests).toBe(1);
     const aside = page.getByRole("complementary", { name: "Help with this screen" });
-    const textbox = aside.getByRole("textbox", { name: "Ask a question" });
+    const textbox = aside.getByRole("textbox", { name: "Ask Zu about this screen" });
 
     const firstQuestion = `Can you explain this orbit ${randomUUID().slice(0, 6)}?`;
     await textbox.fill(firstQuestion);
@@ -196,7 +196,7 @@ test.describe("The tutor", () => {
 
     // The next screen's questions are its own thread.
     const followUp = "How does that connect to free fall?";
-    await aside.getByRole("textbox", { name: "Ask a question" }).fill(followUp);
+    await aside.getByRole("textbox", { name: "Ask Zu about this screen" }).fill(followUp);
     await aside.getByRole("button", { name: "Send" }).click();
     await expect(conversation.getByText(followUp)).toBeVisible();
     await expect(conversation.getByText(firstQuestion)).not.toBeVisible();

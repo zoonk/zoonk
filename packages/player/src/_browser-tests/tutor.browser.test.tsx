@@ -1384,6 +1384,11 @@ function lessonAside() {
   return page.getByRole("complementary", { name: "Help with this screen" });
 }
 
+/** The buddy's composer at the aside's foot, named for what the learner would ask about. */
+function asideComposer() {
+  return lessonAside().getByRole("textbox", { name: /^Ask .+ about /u });
+}
+
 /** The conversation docked in the aside, over what it showed. */
 function dockedConversation() {
   return page.getByRole("region", { name: "Questions to Pip" });
@@ -1396,7 +1401,7 @@ const WHY_MISSED = "Why isn't it the size?";
 async function missAndAskWhy() {
   await page.getByRole("radio", { name: "The electron's size" }).click();
   await page.getByRole("button", { name: /^Check/u }).click();
-  await composer(lessonAside()).fill(WHY_MISSED);
+  await asideComposer().fill(WHY_MISSED);
   await press("Enter");
   await expect.element(dockedConversation().getByText(TUTOR_ANSWER)).toBeVisible();
 }
@@ -1410,7 +1415,7 @@ describe("docked beside the lesson", () => {
     // The bar leaves the buddy to the aside, where its composer is always in reach.
     await expect.element(page.getByRole("button", { name: "Ask Pip" })).not.toBeInTheDocument();
 
-    await composer(lessonAside()).fill("Why does the cloud show chances?");
+    await asideComposer().fill("Why does the cloud show chances?");
     await press("Enter");
 
     const conversation = dockedConversation();
@@ -1429,6 +1434,23 @@ describe("docked beside the lesson", () => {
     // The aside's header leads back to what was asked about this screen.
     await lessonAside().getByRole("button", { name: "1 question" }).click();
     await expect.element(dockedConversation().getByText(TUTOR_ANSWER)).toBeVisible();
+  });
+
+  // Its placeholder only names the buddy, so its name tells a screen reader what a question is about.
+  it("names the aside's composer for what the learner asks about: the screen, then their answer", async () => {
+    const { lesson } = lessonWithTutor();
+    playLesson({ lesson });
+
+    await expect
+      .element(lessonAside().getByRole("textbox", { name: "Ask Pip about this screen" }))
+      .toBeVisible();
+
+    await page.getByRole("radio", { name: "The electron's size" }).click();
+    await page.getByRole("button", { name: /^Check/u }).click();
+
+    await expect
+      .element(lessonAside().getByRole("textbox", { name: "Ask Pip about your answer" }))
+      .toBeVisible();
   });
 
   it("offers the lesson's simpler and deeper takes on a reading screen, one tap each", async () => {
@@ -1470,7 +1492,7 @@ describe("docked beside the lesson", () => {
 
     renderLessonPlayer({ lesson, tutor: buildTutor({}, { buddy }) });
 
-    const field = composer(lessonAside());
+    const field = asideComposer();
 
     await expect.element(field).toHaveAttribute("placeholder", `Ask ${buddy.name}`);
 
@@ -1522,7 +1544,7 @@ describe("docked beside the lesson", () => {
       .element(lessonAside().getByRole("button", { name: "1 question" }))
       .not.toBeInTheDocument();
 
-    await expect.element(composer(lessonAside())).not.toHaveFocus();
+    await expect.element(asideComposer()).not.toHaveFocus();
 
     await press("2");
 
@@ -1545,7 +1567,7 @@ describe("docked beside the lesson", () => {
     await page.getByRole("button", { name: /^Continue/u }).click();
 
     // Before it's checked, the buddy gives hints: its conversation holds only what's asked now.
-    await composer(lessonAside()).fill("Any hint?");
+    await asideComposer().fill("Any hint?");
     await press("Enter");
 
     const conversation = dockedConversation();
@@ -1567,7 +1589,7 @@ describe("docked beside the lesson", () => {
     });
 
     playLesson({ lesson });
-    await composer(lessonAside()).fill("Why a cloud?");
+    await asideComposer().fill("Why a cloud?");
     await press("Enter");
     await expect.element(dockedConversation().getByText(TUTOR_ANSWER)).toBeVisible();
 
@@ -1581,7 +1603,7 @@ describe("docked beside the lesson", () => {
       .not.toBeInTheDocument();
 
     await expect.element(dockedConversation()).not.toBeInTheDocument();
-    await expect.element(composer(lessonAside())).not.toHaveFocus();
+    await expect.element(asideComposer()).not.toHaveFocus();
 
     await lessonAside().getByRole("button", { name: "1 question" }).click();
     await expect.element(dockedConversation().getByText("Why a cloud?")).toBeVisible();
@@ -1602,7 +1624,7 @@ describe("docked beside the lesson", () => {
     };
 
     playLesson({ lesson });
-    await composer(lessonAside()).fill("Why a cloud?");
+    await asideComposer().fill("Why a cloud?");
     await press("Enter");
     await expect.element(dockedConversation().getByText(TUTOR_ANSWER)).toBeVisible();
 
