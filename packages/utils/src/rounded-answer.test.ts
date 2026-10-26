@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { countDecimalPlaces, isRoundedAnswer } from "./rounded-answer";
 
-function rounded(value: number, expected = 11.88): boolean {
+function rounded(value: number | string, expected = 11.88): boolean {
   return isRoundedAnswer({ expected, value });
 }
 
@@ -18,6 +18,17 @@ describe(isRoundedAnswer, () => {
     expect([12, 11.9, 11.88].map((value) => rounded(value))).toStrictEqual([true, true, true]);
     expect(rounded(-12, -11.88)).toBe(true);
     expect(rounded(2.35, 2.345)).toBe(true);
+  });
+
+  it("keeps trailing zeroes and exponent precision from the written answer", () => {
+    expect(rounded("0.40", 0.398)).toBe(true);
+    expect(rounded("0.400", 0.3998)).toBe(true);
+    expect(rounded("0.400", 0.398)).toBe(false);
+    expect(rounded("4.0e-1", 0.398)).toBe(true);
+    expect(rounded("4.00e-1", 0.398)).toBe(false);
+    expect(rounded("1.0", 1.04)).toBe(true);
+    expect(rounded("12.0", 11.88)).toBe(false);
+    expect(rounded("-0.40", -0.398)).toBe(true);
   });
 
   it("rejects other numbers at the places typed", () => {

@@ -125,7 +125,7 @@ function isRounded(answer: string, accepted: string): boolean {
   return (
     answerNumber !== null &&
     acceptedNumber !== null &&
-    isRoundedAnswer({ expected: acceptedNumber, value: answerNumber })
+    isRoundedAnswer({ expected: acceptedNumber, value: answer })
   );
 }
 

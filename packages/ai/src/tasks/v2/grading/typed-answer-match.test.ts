@@ -63,6 +63,13 @@ describe(matchTypedAnswer, () => {
     expect(match("0", "0,4").kind).toBe("none");
   });
 
+  it("keeps the precision of a typed decimal, including trailing zeroes", () => {
+    expect(match("0,40", "0,398").kind).toBe("rounded");
+    expect(match("0.400", "0.3998").kind).toBe("rounded");
+    expect(match("0.400", "0.398").kind).toBe("none");
+    expect(match("12.0", "11.88").kind).toBe("none");
+  });
+
   it("never treats a different number as a typo", () => {
     expect(matchTypedAnswer({ acceptedAnswers: ["1985"], answer: "1986" }).kind).toBe("none");
 
