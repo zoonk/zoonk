@@ -9,8 +9,7 @@
     "@tailwindcss/postcss",
     "next",
     "portless",
-    "postcss-load-config",
-    "tsx"
+    "postcss-load-config"
   ],
   "includeEntryExports": true,
   "tags": ["-lintignore", "-internal", "-public"],

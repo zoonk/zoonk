@@ -31,18 +31,6 @@ const MAX_ANIMATION_WAIT_MS = 3000;
 /** Longer than any entrance animation or transition: a screen still moving by then is a finding. */
 const ANIMATIONS_TIMEOUT_MS = 15_000;
 
-export type AccessibilityRoute = {
-  /** Named in failures next to the path, e.g. "the logbook". */
-  label?: string;
-  path: string;
-  /** Waits until the screen shows what the scan should read; the page's h1 by default. */
-  ready?: (page: Page) => Promise<void>;
-};
-
-async function waitForFirstHeading(page: Page) {
-  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-}
-
 /**
  * Lets entrance animations and theme transitions end (`settleAnimations`), until a frame passes
  * with none running.
@@ -141,34 +129,6 @@ function expectNoViolations(violations: string[]) {
  */
 export async function expectAccessibleScreen(page: Page, label: string) {
   expectNoViolations(await scanCurrentScreen(page, label));
-}
-
-/**
- * Opens each route at the page's width and scans it (`expectAccessibleScreen`), for screens no
- * flow shows on the way. Fails with every violation the routes have, so one failure names all of
- * them instead of the first.
- */
-export async function expectAccessibleRoutes(page: Page, routes: AccessibilityRoute[]) {
-  const found: string[] = [];
-
-  for (const route of routes) {
-    const label = route.label ?? route.path;
-
-    // oxlint-disable-next-line no-await-in-loop -- One page visits each route in turn.
-    await page.goto(route.path);
-
-    // A screen that never shows what it should is a finding too; the scan still reads it.
-    // oxlint-disable-next-line no-await-in-loop -- One page visits each route in turn.
-    const unready = await (route.ready ?? waitForFirstHeading)(page).then(
-      () => [],
-      (error: unknown) => [`${label}: not ready: ${String(error).split("\n")[0]}`],
-    );
-
-    // oxlint-disable-next-line no-await-in-loop -- One page visits each route in turn.
-    found.push(...unready, ...(await scanCurrentScreen(page, label)));
-  }
-
-  expectNoViolations(found);
 }
 
 /** The animations on the page that move something (`listMovingAnimations`). */

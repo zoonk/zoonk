@@ -12,7 +12,7 @@ async function isFocused(target: Locator) {
  * Keyboard focus can draw its outline or ring on the control or its highlight pseudo-element. Read
  * until it settles, since a ring can grow in with a short transition.
  */
-export async function expectVisibleFocus(target: Locator) {
+async function expectVisibleFocus(target: Locator) {
   await expect
     .poll(
       () =>
