@@ -18,11 +18,17 @@ type ListCoursesInput = {
 type ListCoursesPageInput = Omit<ListCoursesInput, "cursor"> & { offset?: number };
 
 /**
- * What a course card shows (its link, mark, words and numbers) and the public parts of its brand.
- * The catalog list reaches the browser and the API, so internal fields (generation runs, prompt
- * versions, landing-page content, billing) stay out.
+ * What a course card shows (its link, mark, subject, words and numbers) and the public parts of its
+ * brand. The catalog list reaches the browser and the API, so internal fields (generation runs,
+ * prompt versions, landing-page content, billing) stay out. The subject is the course's first
+ * category, the one its pages take their color from.
  */
 const COURSE_CARD_SELECT = {
+  categories: {
+    orderBy: { createdAt: "asc" },
+    select: { category: true, createdAt: true },
+    take: 1,
+  },
   description: true,
   id: true,
   imageUrl: true,

@@ -1,4 +1,4 @@
-import { getCategoryMeta } from "@/lib/categories/category";
+import { getCategoryMeta, getCategoryNames } from "@/lib/categories/category";
 import { getLocalizedUrl } from "@/lib/metadata/localized-url";
 import { LIST_COURSES_LIMIT, listCourses } from "@zoonk/core/courses/list";
 import { type CourseCategory } from "@zoonk/utils/categories";
@@ -26,6 +26,7 @@ export async function getCategoryPageMetadata(category: CourseCategory): Promise
  */
 export async function CategoryCoursesPage({ category }: { category: CourseCategory }) {
   const language = await getLocale();
+  const subjectNames = await getCategoryNames();
   const courses = await listCourses({ category, language });
 
   return (
@@ -34,6 +35,7 @@ export async function CategoryCoursesPage({ category }: { category: CourseCatego
       initialCourses={courses}
       language={language}
       limit={LIST_COURSES_LIMIT}
+      subjectNames={subjectNames}
     />
   );
 }

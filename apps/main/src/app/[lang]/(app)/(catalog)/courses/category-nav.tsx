@@ -1,6 +1,7 @@
 "use client";
 
 import { Link } from "@/i18n/navigation";
+import { SubjectGlyph } from "@zoonk/learn/subject-label";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { HorizontalScroll, HorizontalScrollContent } from "@zoonk/ui/components/horizontal-scroll";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -26,9 +27,12 @@ const CHIPS_FRAME_CLASS =
 
 const LIST_FRAME_CLASS = "sticky top-8 hidden self-start lg:block";
 
-/** A category in the list from `lg`: a 32px row, as tall as a 44px target to press. */
+/**
+ * A category in the list from `lg`: a 32px row, as tall as a 44px target to press, its subject's
+ * glyph before its name (a key to the courses' labels; "All" keeps the glyph's room).
+ */
 const LIST_LINK_CLASS =
-  "text-muted-foreground hover:bg-muted/70 hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:text-foreground focus-visible:ring-ring/50 hit-area relative flex h-8 items-center rounded-md px-2 text-[0.84375rem] font-medium outline-none transition-colors focus-visible:ring-[3px]";
+  "text-muted-foreground hover:bg-muted/70 hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:text-foreground focus-visible:ring-ring/50 hit-area relative flex h-8 items-center gap-2.5 rounded-md px-2 text-[0.84375rem] font-medium outline-none transition-colors focus-visible:ring-[3px]";
 
 /**
  * A page opened on a category (a link, a reload) brings its chip into the row's view, clear of the
@@ -61,6 +65,7 @@ function useCategoryLinks({ categories, openCategory, total }: CategoryNavProps)
       href: "/courses" as const,
       key: "all",
       label: t("All"),
+      subject: null,
     },
     ...categories
       .filter((category) => category.courseCount > 0 || category.key === openCategory)
@@ -71,6 +76,7 @@ function useCategoryLinks({ categories, openCategory, total }: CategoryNavProps)
         href: `/courses/${category.key}` as const,
         key: category.key,
         label: category.label,
+        subject: category.key,
       })),
   ];
 }
@@ -103,6 +109,7 @@ function CategoryNavView(props: CategoryNavProps) {
                 prefetch
                 ref={link.current ? revealChip : undefined}
               >
+                {link.subject && <SubjectGlyph subject={link.subject} />}
                 {link.label}
               </Link>
             ))}
@@ -120,6 +127,11 @@ function CategoryNavView(props: CategoryNavProps) {
                 href={link.href}
                 prefetch
               >
+                {link.subject ? (
+                  <SubjectGlyph subject={link.subject} />
+                ) : (
+                  <span aria-hidden="true" className="size-2 shrink-0" />
+                )}
                 <span className="truncate">{link.label}</span>
                 <span className="text-muted-foreground ml-auto pl-3 font-mono text-xs tabular-nums">
                   {link.courseCount}

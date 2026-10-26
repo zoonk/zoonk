@@ -152,6 +152,7 @@ describe(listCourses, () => {
     ]);
 
     const cardKeys = [
+      "categories",
       "description",
       "estimatedMinutes",
       "id",
@@ -174,6 +175,36 @@ describe(listCourses, () => {
         "name",
         "slug",
       ]);
+    }
+  });
+
+  it("carries only a course's first category, the subject its card shows", async () => {
+    const language = createTestLanguage();
+    const organization = await organizationFixture({ kind: "brand" });
+    const listed = { isPublished: true, language, organizationId: organization.id };
+
+    const [course, uncategorized] = await Promise.all([
+      courseFixture(listed),
+      courseFixture(listed),
+    ]);
+
+    await prisma.courseCategory.createMany({
+      data: [
+        { category: "tech", courseId: course.id, createdAt: new Date("2026-01-02T00:00:00Z") },
+        { category: "science", courseId: course.id, createdAt: new Date("2026-01-01T00:00:00Z") },
+      ],
+    });
+
+    const [list, page] = await Promise.all([
+      listCourses({ language }),
+      listCoursesPage({ language }),
+    ]);
+
+    for (const courses of [list, page.courses]) {
+      const byId = new Map(courses.map((item) => [item.id, item.categories]));
+
+      expect(byId.get(course.id)?.map((item) => item.category)).toStrictEqual(["science"]);
+      expect(byId.get(uncategorized.id)).toStrictEqual([]);
     }
   });
 

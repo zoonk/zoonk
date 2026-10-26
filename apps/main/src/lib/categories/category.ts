@@ -60,3 +60,9 @@ export async function getCategoryTitles(): Promise<Record<string, string>> {
     categories.map(({ key, label }) => [key, t("Courses in {category}", { category: label })]),
   );
 }
+
+/** Every category's name by its key, for a course's subject label wherever a list shows many. */
+export async function getCategoryNames(): Promise<Record<string, string>> {
+  const categories = await getCategories();
+  return Object.fromEntries(categories.map(({ key, label }) => [key, label]));
+}

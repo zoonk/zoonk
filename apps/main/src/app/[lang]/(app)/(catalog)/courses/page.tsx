@@ -1,3 +1,4 @@
+import { getCategoryNames } from "@/lib/categories/category";
 import { getLocalizedUrl } from "@/lib/metadata/localized-url";
 import { LIST_COURSES_LIMIT, listCourses } from "@zoonk/core/courses/list";
 import { type Metadata } from "next";
@@ -22,6 +23,15 @@ export async function generateMetadata(): Promise<Metadata> {
 /** Every course in the learner's language, under the catalog's title and chips (its layout). */
 export default async function Courses() {
   const locale = await getLocale();
+  const subjectNames = await getCategoryNames();
   const courses = await listCourses({ language: locale });
-  return <CourseListClient initialCourses={courses} language={locale} limit={LIST_COURSES_LIMIT} />;
+
+  return (
+    <CourseListClient
+      initialCourses={courses}
+      language={locale}
+      limit={LIST_COURSES_LIMIT}
+      subjectNames={subjectNames}
+    />
+  );
 }
