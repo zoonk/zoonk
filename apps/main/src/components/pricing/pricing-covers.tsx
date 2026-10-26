@@ -1,4 +1,3 @@
-import { PUBLIC_CONTAINER_CLASS } from "@/components/public/landing-styles";
 import { PlanRoad, type RoadBand } from "@/components/public/plan-road";
 import { ProductWindow } from "@/components/public/product-window";
 import {
@@ -172,33 +171,31 @@ export async function PricingCovers() {
   const t = await getExtracted();
 
   return (
-    <div className={PUBLIC_CONTAINER_CLASS}>
-      <Stop aria-labelledby={COVERS_TITLE_ID} className="pt-24 lg:pt-32">
-        <StopHeader>
-          <StopEyebrow>
-            <StopMark>
-              <FlagIcon className="size-3.5" />
-            </StopMark>
-            {t("What free covers")}
-          </StopEyebrow>
+    <Stop aria-labelledby={COVERS_TITLE_ID} band>
+      <StopHeader>
+        <StopEyebrow>
+          <StopMark>
+            <FlagIcon className="size-3.5" />
+          </StopMark>
+          {t("What free covers")}
+        </StopEyebrow>
 
-          <StopTitle id={COVERS_TITLE_ID}>{t("See your whole plan before you pay.")}</StopTitle>
+        <StopTitle id={COVERS_TITLE_ID}>{t("See your whole plan before you pay.")}</StopTitle>
 
-          <StopLead>
-            {t(
-              "For an exam, the diagnostic, your plan and its first week are free. Plus keeps you going to exam day, with mock exams along the way.",
-            )}
-          </StopLead>
-        </StopHeader>
+        <StopLead>
+          {t(
+            "For an exam, the diagnostic, your plan and its first week are free. Plus keeps you going to exam day, with mock exams along the way.",
+          )}
+        </StopLead>
+      </StopHeader>
 
-        <StopBody>
-          <ProductWindow className="flex flex-col gap-7 p-5 sm:px-8 sm:py-7">
-            <ExamPlanRoad />
+      <StopBody>
+        <ProductWindow className="flex flex-col gap-7 p-5 sm:px-8 sm:py-7">
+          <ExamPlanRoad />
 
-            <FreeMonth />
-          </ProductWindow>
-        </StopBody>
-      </Stop>
-    </div>
+          <FreeMonth />
+        </ProductWindow>
+      </StopBody>
+    </Stop>
   );
 }

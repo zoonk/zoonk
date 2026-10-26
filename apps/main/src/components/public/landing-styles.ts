@@ -10,6 +10,12 @@
 export const PUBLIC_CONTAINER_CLASS = "mx-auto w-full max-w-wide px-4 sm:px-6 lg:px-8";
 
 /**
+ * A band's room above and below, the same for every part of a public page that alternates the
+ * page and `ground`: 56px on a phone, 80px on a tablet and 96px from `lg`.
+ */
+export const PUBLIC_BAND_CLASS = "py-14 sm:py-20 lg:py-24";
+
+/**
  * The page's one display headline: the landing's promise. Its lines fill greedily (`text-pretty`),
  * so a two-line promise breaks after its first idea ("…every day / until the big day.") rather
  * than in the middle of it, as balancing would.

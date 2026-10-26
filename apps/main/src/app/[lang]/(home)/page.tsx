@@ -1,5 +1,4 @@
 import { JsonLd } from "@/components/public/json-ld";
-import { PUBLIC_CONTAINER_CLASS } from "@/components/public/landing-styles";
 import { PublicFooter } from "@/components/public/public-footer";
 import { PUBLIC_FOOTER_ID } from "@/components/public/public-ids";
 import { PublicViewTracker } from "@/components/public/public-view-tracker";
@@ -14,6 +13,7 @@ import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { lang } from "next/root-params";
 import { FinalCall } from "./_components/final-call";
+import { HomeExample } from "./_components/hero-window";
 import { HomeHeader } from "./_components/home-header";
 import { HomeHero } from "./_components/home-hero";
 import { FINAL_GOAL_ID, HERO_GOAL_ID } from "./_components/home-ids";
@@ -41,7 +41,7 @@ export async function generateMetadata(): Promise<Metadata> {
  * The home page for visitors, prerendered per language. It has one job: get someone started on a
  * goal, by showing the plan they'd get. The hero's example goals scope the whole page, which
  * follows one plan's story in time order: Day 1, every day (and the day you miss), practice, the
- * buddy at night, and the big day. Every variant is in the HTML and CSS shows the picked one, so
+ * buddy at night, and the big day, its parts on bands that alternate the page and `ground`. Every variant is in the HTML and CSS shows the picked one, so
  * the page has no script of its own. Anyone with a session opens Today instead (`proxy.ts`),
  * before this renders. The language comes from the root parameter, which stays available while a
  * prefetch warms the page's caches.
@@ -60,8 +60,9 @@ export default async function HomePage() {
 
       <main className="flex-1">
         <HomeHero startPath={startPath} />
+        <HomeExample />
 
-        <div className={PUBLIC_CONTAINER_CLASS}>
+        <div>
           <StopDayOne />
           <StopEveryDay />
           <StopPractice />

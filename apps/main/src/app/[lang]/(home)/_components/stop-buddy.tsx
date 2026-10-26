@@ -152,14 +152,19 @@ async function Conversation({ exchange }: { exchange: Exchange }) {
 
 /**
  * Stuck late at night: the buddy explains the question the page just showed, as simply as the
- * learner needs, where they got stuck. Its lead says it's AI.
+ * learner needs, where they got stuck. Its lead says it's AI. From `lg` its words sit beside the
+ * conversation, which keeps a chat's measure.
  */
 export async function StopBuddy() {
   const t = await getExtracted();
   const exchanges = await getExchanges();
 
   return (
-    <Stop aria-labelledby={STOP_TITLE_ID}>
+    <Stop
+      aria-labelledby={STOP_TITLE_ID}
+      band
+      className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,40rem)] lg:items-start lg:gap-16"
+    >
       <StopHeader>
         <StopEyebrow>
           <StopMark>
@@ -177,7 +182,7 @@ export async function StopBuddy() {
         </StopLead>
       </StopHeader>
 
-      <StopBody className="max-w-form">
+      <StopBody className="max-w-form lg:mt-0">
         {EXAMPLE_GOALS.map((goal) => (
           <Variant key={goal} name={GOAL_SWITCH} value={goal}>
             <Conversation exchange={exchanges[goal]} />

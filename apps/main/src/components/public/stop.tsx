@@ -1,10 +1,17 @@
 import { cn } from "@zoonk/ui/lib/utils";
-import { EYEBROW_CLASS, LEAD_CLASS, STOP_TITLE_CLASS } from "./landing-styles";
+import {
+  EYEBROW_CLASS,
+  LEAD_CLASS,
+  PUBLIC_BAND_CLASS,
+  PUBLIC_CONTAINER_CLASS,
+  STOP_TITLE_CLASS,
+} from "./landing-styles";
 
 /*
- * A stop on the landing's story, from Day 1 to the big day: an eyebrow with the app's own mark for
- * that moment, one short heading, one lead line, then one product moment. Inside `StopRail`, the
- * marks hang on one line in the left margin once there's room for it.
+ * A stop on a public page's story, from Day 1 to the big day: a band across the page (on `ground`
+ * with `band`, so neighbors alternate), and in the page's container an eyebrow with the app's own
+ * mark for that moment, one short heading, one lead line, then one product moment. Stops follow
+ * each other, and their marks hang on one line in the left margin once there's room for it.
  *
  * ```tsx
  * <Stop aria-labelledby="stop-day-one">
@@ -21,24 +28,45 @@ import { EYEBROW_CLASS, LEAD_CLASS, STOP_TITLE_CLASS } from "./landing-styles";
  * ```
  */
 
-/** Where the rail runs, and its marks: from 88rem, where the margin has room for them. */
+/**
+ * Where the rail runs, and its marks: from 88rem, where the margin has room for them, 44px left of
+ * the container's content (`PUBLIC_CONTAINER_CLASS`: 84rem with 2rem gutters), through each stop's
+ * band, so the stops' lines meet.
+ */
 const RAIL_LINE_CLASS =
-  "min-[88rem]:before:bg-border min-[88rem]:before:absolute min-[88rem]:before:inset-y-0 min-[88rem]:before:-left-11 min-[88rem]:before:w-px";
+  "min-[88rem]:before:bg-border min-[88rem]:before:absolute min-[88rem]:before:inset-y-0 min-[88rem]:before:left-[calc((100%-84rem)/2-0.75rem)] min-[88rem]:before:w-px";
 
-export function Stop({ className, ...props }: React.ComponentProps<"section">) {
+export function Stop({
+  band = false,
+  children,
+  className,
+  ...props
+}: React.ComponentProps<"section"> & { band?: boolean }) {
   return (
     <section
       className={cn(
-        "relative flex min-w-0 flex-col pt-26 lg:pt-38",
+        "relative [--stop-surface:var(--background)]",
+        band && "bg-ground [--stop-surface:var(--ground)]",
         RAIL_LINE_CLASS,
-        // The rail starts at the first stop's mark and fades out under the last.
-        "min-[88rem]:first:before:top-[calc(var(--spacing)*38+0.5rem)]",
+        // The rail starts at the first stop's mark (its band's padding, then half the eyebrow) and
+        // fades out under the last.
+        "min-[88rem]:first:before:top-[calc(var(--spacing)*24+0.5rem)]",
         "min-[88rem]:last:before:from-border min-[88rem]:last:before:bg-transparent min-[88rem]:last:before:bg-linear-to-b min-[88rem]:last:before:from-85% min-[88rem]:last:before:to-transparent",
-        className,
       )}
       data-slot="stop"
       {...props}
-    />
+    >
+      <div
+        className={cn(
+          PUBLIC_CONTAINER_CLASS,
+          PUBLIC_BAND_CLASS,
+          "flex min-w-0 flex-col",
+          className,
+        )}
+      >
+        {children}
+      </div>
+    </section>
   );
 }
 
@@ -60,7 +88,8 @@ export function StopEyebrow({ className, ...props }: React.ComponentProps<"p">) 
 
 /**
  * The stop's mark, the app's own for that moment (a kind's dot, the fast-forward of what's skipped,
- * Zu's face, the flag), beside the eyebrow; on the rail from 88rem. Decorative: the eyebrow says it.
+ * Zu's face, the flag), beside the eyebrow; on the rail from 88rem, cut out of it in its band's
+ * surface. Decorative: the eyebrow says it.
  */
 export function StopMark({ className, ...props }: React.ComponentProps<"span">) {
   return (
@@ -68,7 +97,7 @@ export function StopMark({ className, ...props }: React.ComponentProps<"span">) 
       aria-hidden="true"
       className={cn(
         "text-foreground flex size-4 shrink-0 items-center justify-center",
-        "min-[88rem]:bg-background min-[88rem]:ring-background min-[88rem]:absolute min-[88rem]:-left-13 min-[88rem]:rounded-full min-[88rem]:ring-6",
+        "min-[88rem]:absolute min-[88rem]:-left-13 min-[88rem]:rounded-full min-[88rem]:bg-(--stop-surface) min-[88rem]:ring-6 min-[88rem]:ring-(--stop-surface)",
         className,
       )}
       data-slot="stop-mark"

@@ -19,7 +19,7 @@ export async function FinalCall({ startPath }: { startPath: string }) {
       aria-labelledby={CLOSE_TITLE_ID}
       className={cn(
         PUBLIC_CONTAINER_CLASS,
-        "flex flex-col items-center pt-26 pb-24 text-center lg:pt-38 lg:pb-40",
+        "flex flex-col items-center pt-20 pb-24 text-center sm:pt-28 lg:pt-32 lg:pb-36",
       )}
     >
       <p className={cn(EYEBROW_CLASS, "flex items-center gap-2.5")}>

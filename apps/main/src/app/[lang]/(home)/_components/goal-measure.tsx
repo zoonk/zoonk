@@ -41,9 +41,7 @@ export async function GoalMeasure({ day, goal }: { day: DayState; goal: ExampleG
     return (
       <>
         <p className="text-label">{t("Level")}</p>
-        <p className="font-mono text-[1.75rem] leading-none tracking-[-0.03em] tabular-nums">
-          {MOVE_LEVELS}
-        </p>
+        <p className="text-readout text-[1.75rem]">{MOVE_LEVELS}</p>
         <LevelLadder label="A2" target="B1" />
         <p className="text-muted-foreground text-[0.8125rem] leading-snug text-pretty">
           {t("Next: renting, banking, the first week at work")}
@@ -59,7 +57,7 @@ export async function GoalMeasure({ day, goal }: { day: DayState; goal: ExampleG
     return (
       <>
         <p className="text-label">{t("Progress")}</p>
-        <p className="font-mono text-[1.75rem] leading-none tracking-[-0.03em] tabular-nums">
+        <p className="text-readout text-[1.75rem]">
           {formatGoalProgress({ format, share: done / JOB_PROGRESS.total })}
         </p>
         <LessonCells
@@ -105,9 +103,7 @@ export async function GoalMeasure({ day, goal }: { day: DayState; goal: ExampleG
   return (
     <>
       <p className="text-label">{t("Preparation")}</p>
-      <p className="font-mono text-[1.75rem] leading-none tracking-[-0.03em] tabular-nums">
-        {percent(preparation)}
-      </p>
+      <p className="text-readout text-[1.75rem]">{percent(preparation)}</p>
       <ul className="flex flex-col gap-2.5 pt-1">
         {subjects.map((subject) => (
           <li

@@ -146,9 +146,7 @@ export async function ExamPractice() {
         </p>
 
         <div className="flex flex-col gap-2">
-          <p className="font-mono text-[2.75rem] leading-none font-medium tracking-[-0.04em] tabular-nums">
-            {isEnem ? "610–690" : "1180–1260"}
-          </p>
+          <p className="text-readout text-[2.75rem]">{isEnem ? "610–690" : "1180–1260"}</p>
           <p className="text-muted-foreground text-[0.8125rem]">
             {isEnem ? t("Estimated score · Natural Sciences") : t("Estimated score · SAT")}
           </p>

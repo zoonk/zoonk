@@ -1,5 +1,9 @@
 import { DayList, DaySegments } from "@/components/public/day-list";
-import { NUMERIC_CLASS } from "@/components/public/landing-styles";
+import {
+  NUMERIC_CLASS,
+  PUBLIC_BAND_CLASS,
+  PUBLIC_CONTAINER_CLASS,
+} from "@/components/public/landing-styles";
 import { PlanRoad } from "@/components/public/plan-road";
 import { ProductWindow } from "@/components/public/product-window";
 import { Variant, VariantSwitch, VariantSwitchOption } from "@/components/public/variant-switch";
@@ -142,7 +146,7 @@ async function ExamplePlan({ goal }: { goal: ExampleGoal }) {
 
       <div className="flex flex-col gap-2.5">
         <div className="flex items-baseline justify-between gap-3">
-          <p className="text-label">{t("Today")}</p>
+          <p className="text-[0.9375rem] font-semibold">{t("Today")}</p>
           <p className={cn(NUMERIC_CLASS, "text-muted-foreground text-xs")}>
             {t("{done, number} of {total, number}", { done: doneCount, total: steps.length })}
             {" · "}
@@ -158,39 +162,48 @@ async function ExamplePlan({ goal }: { goal: ExampleGoal }) {
 }
 
 /**
- * The product in the first screen: the example goals beside the plan of the one picked, in the
+ * The product under the first screen's words, on a band of `ground` across the page so its window
+ * reads as the one white sheet on it: the example goals beside the plan of the one picked, in the
  * app's own window. Every plan is in the page; the picked one shows (`Variant`), and they share
  * one place, so the window keeps the height of the tallest and nothing under it moves. A caption
  * says they're examples and that the page follows the pick.
  */
-export async function HeroWindow({ className }: { className?: string }) {
+export async function HomeExample() {
   const t = await getExtracted();
 
   return (
-    <div className={cn("flex flex-col gap-3.5", className)}>
-      <ProductWindow className="grid grid-cols-1 min-[900px]:grid-cols-[17.75rem_minmax(0,1fr)]">
-        <ExampleGoalList />
-
-        <div className="grid min-w-0">
-          {EXAMPLE_GOALS.map((goal) => (
-            <Variant
-              className="col-start-1 row-start-1 min-w-0"
-              key={goal}
-              name={GOAL_SWITCH}
-              stacked
-              value={goal}
-            >
-              <ExamplePlan goal={goal} />
-            </Variant>
-          ))}
-        </div>
-      </ProductWindow>
-
-      <p className="text-muted-foreground text-[13px] text-pretty">
-        {t(
-          "Example plans. Yours follows your goal, your time and what you already know. Pick one: the rest of the page follows it.",
+    <div className="bg-ground">
+      <div
+        className={cn(
+          PUBLIC_CONTAINER_CLASS,
+          PUBLIC_BAND_CLASS,
+          "flex flex-col gap-3.5 pt-8 sm:pt-12 lg:pt-16",
         )}
-      </p>
+      >
+        <ProductWindow className="grid grid-cols-1 min-[900px]:grid-cols-[17.75rem_minmax(0,1fr)]">
+          <ExampleGoalList />
+
+          <div className="grid min-w-0">
+            {EXAMPLE_GOALS.map((goal) => (
+              <Variant
+                className="col-start-1 row-start-1 min-w-0"
+                key={goal}
+                name={GOAL_SWITCH}
+                stacked
+                value={goal}
+              >
+                <ExamplePlan goal={goal} />
+              </Variant>
+            ))}
+          </div>
+        </ProductWindow>
+
+        <p className="text-muted-foreground text-[13px] text-pretty">
+          {t(
+            "Example plans. Yours follows your goal, your time and what you already know. Pick one: the rest of the page follows it.",
+          )}
+        </p>
+      </div>
     </div>
   );
 }

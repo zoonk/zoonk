@@ -255,7 +255,7 @@ export async function StopEveryDay() {
   const tYesterday = await getExtracted("yesterdaySwitch");
 
   return (
-    <Stop aria-labelledby={STOP_TITLE_ID}>
+    <Stop aria-labelledby={STOP_TITLE_ID} band>
       <StopHeader>
         <StopEyebrow>
           <StopMark>
@@ -281,7 +281,7 @@ export async function StopEveryDay() {
           name={DAY_SWITCH}
           values={DAY_STATES}
         >
-          <span className="text-label" id={YESTERDAY_LABEL_ID}>
+          <span className="text-muted-foreground text-sm font-medium" id={YESTERDAY_LABEL_ID}>
             {t("Yesterday")}
           </span>
 

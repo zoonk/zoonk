@@ -81,7 +81,7 @@ export function PricingPlans({
   const currency = (monthlyPrice ?? yearlyPrice)?.currency ?? null;
 
   return (
-    <div className={cn(PUBLIC_CONTAINER_CLASS, "pt-12")}>
+    <div className={cn(PUBLIC_CONTAINER_CLASS, "pt-12 pb-14 sm:pb-20 lg:pb-24")}>
       <div className={PLANS_GRID_CLASS}>
         <FreePlan currency={currency} />
 
