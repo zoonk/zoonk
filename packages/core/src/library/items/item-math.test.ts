@@ -198,6 +198,21 @@ describe("numeric entry rules", () => {
     expect([2.3, 2.33, 2.37].map((answer) => grade(answer))).toStrictEqual([false, false, false]);
   });
 
+  it("takes any number rounded to the places the learner typed, when the question asks none", () => {
+    const math = {
+      ...thirds,
+      answer: 11.88,
+      solution: "11.88 + eaten - eaten",
+      tolerance: { kind: "absolute", value: 0.005 },
+    } as const;
+
+    const grade = (answer: number) =>
+      checkMathAnswer({ answer, math, values: thirdsValues }).isCorrect;
+
+    expect([12, 11.9, 11.88].map((answer) => grade(answer))).toStrictEqual([true, true, true]);
+    expect([11, 10, 11.8].map((answer) => grade(answer))).toStrictEqual([false, false, false]);
+  });
+
   it("takes only the whole number for an integer answer", () => {
     const entry = { kind: "integer", places: null } as const;
     const values = { discount: 25, price: 80 };

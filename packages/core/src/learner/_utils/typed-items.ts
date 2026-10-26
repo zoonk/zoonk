@@ -76,12 +76,18 @@ export function getTypedCorrectAnswer(item: TypedItem): string {
   return item.content.acceptedAnswers[0] ?? item.content.sampleAnswer;
 }
 
-/** Whether code settles the answer: it's one of the accepted wordings, or one with a slip. */
+/**
+ * Whether code settles the answer: it's one of the accepted wordings, or one with a slip. A
+ * rounded number isn't: a language goal's item may ask for the number heard, and an item doesn't
+ * say which goal it serves.
+ */
 export function matchesAcceptedAnswer({ item, text }: { item: TypedItem; text: string }): boolean {
-  return (
-    matchTypedAnswer({ acceptedAnswers: item.content.acceptedAnswers, answer: text }).kind !==
-    "none"
-  );
+  const { kind } = matchTypedAnswer({
+    acceptedAnswers: item.content.acceptedAnswers,
+    answer: text,
+  });
+
+  return kind === "exact" || kind === "typo";
 }
 
 /** What the notebook keeps for a typed answer that missed. */

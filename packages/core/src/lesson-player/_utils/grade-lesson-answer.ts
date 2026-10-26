@@ -46,9 +46,10 @@ function withContext(context: string | undefined, question: string): string {
 type TypedContent = Extract<PlayableLibraryStep, { kind: "typedAnswer" }>["content"];
 
 /**
- * A written answer graded without a model: an accepted answer (or a typo of one, where spelling
- * doesn't matter) is right. Anything else isn't checked rather than wrong, since a paraphrase can
- * be right too, and the sample answer shows what was expected.
+ * A written answer graded without a model: an accepted answer (or, outside a language course, a
+ * typo of one or an accepted number rounded to the places typed) is right. Anything else isn't
+ * checked rather than wrong, since a paraphrase can be right too, and the sample answer shows what
+ * was expected.
  */
 function gradeTypedByCode({
   answer,
@@ -61,7 +62,8 @@ function gradeTypedByCode({
 }): LessonAnswerVerdict {
   const match = matchTypedAnswer({ acceptedAnswers: content.acceptedAnswers ?? [], answer });
   const isTypo = match.kind === "typo";
-  const isCorrect = match.kind === "exact" || (isTypo && !lesson.targetLanguage);
+  const isClose = isTypo || match.kind === "rounded";
+  const isCorrect = match.kind === "exact" || (isClose && !lesson.targetLanguage);
 
   return {
     answerText: answer,

@@ -19,6 +19,10 @@ function grade(activity: ReturnType<typeof content>, answer: ActivityAnswer): bo
   return checkActivityAnswer(activity, answer);
 }
 
+function value(typed: number): ActivityAnswer {
+  return { kind: "numeric", value: typed };
+}
+
 describe(checkActivityAnswer, () => {
   it("grades choice and numeric checks from the check itself", () => {
     const numberLine = content(
@@ -51,6 +55,42 @@ describe(checkActivityAnswer, () => {
     expect(grade(numberLine, { kind: "choice", optionId: "a" })).toBe(false);
     expect(grade(listening, { kind: "choice", optionId: "a" })).toBe(true);
     expect(grade(listening, { kind: "choice", optionId: "b" })).toBe(false);
+  });
+
+  it("takes a number rounded to the places the learner typed, when it keeps two significant digits", () => {
+    // A persona typed 12 for an 11.88% rise the chart labels "+11.9%" (Oct 2026): the question
+    // asks no precision, so a fair rounding is right, and one too coarse to show the value isn't.
+    const line = { label: "Rise", max: 20, min: 0, moves: [{ by: 2 }], start: 10, step: 1 };
+
+    const check = (answer: number, tolerance: number) =>
+      content("numberLine", line, {
+        answer,
+        explanation: "Why.",
+        kind: "numeric",
+        question: "By what percent did the price rise?",
+        tolerance: { kind: "absolute", value: tolerance },
+      });
+
+    const rise = check(11.88, 0.1);
+    const share = check(0.38, 0.001);
+
+    expect([12, 11.9, 11.88].map((typed) => grade(rise, value(typed)))).toStrictEqual([
+      true,
+      true,
+      true,
+    ]);
+
+    expect([11, 13, 10].map((typed) => grade(rise, value(typed)))).toStrictEqual([
+      false,
+      false,
+      false,
+    ]);
+
+    expect([0.38, 0.4, 0].map((typed) => grade(share, value(typed)))).toStrictEqual([
+      true,
+      false,
+      false,
+    ]);
   });
 
   it("counts a guess on the scale within a tenth of the real value, or the check's wider tolerance", () => {

@@ -85,10 +85,11 @@ const languagePracticeSystemPrompt = `${basePrompt}\n${languagePracticePrompt}`;
 export type TypedAnswerCorrection = { wrong: string; right: string };
 
 /**
- * How the verdict was reached: code matched an accepted answer exactly or
- * with a spelling slip, or a model graded the answer.
+ * How the verdict was reached: code matched an accepted answer exactly, with a
+ * spelling slip or as a number rounded to the places typed, or a model graded
+ * the answer.
  */
-export type TypedAnswerGradeMethod = "exact" | "typo" | "model";
+export type TypedAnswerGradeMethod = "exact" | "typo" | "rounded" | "model";
 
 export type TypedAnswerGrade = {
   /**
@@ -230,7 +231,8 @@ ${answerBlock}
 
 /**
  * Code settles the answers it can: an exact match is always right, and a
- * spelling slip is right unless the learner is practicing spelling itself.
+ * spelling slip or a rounded number is right unless the learner is practicing
+ * a language, where writing the word or the number heard is the skill itself.
  */
 function getCodeMethod({
   match,
@@ -243,7 +245,7 @@ function getCodeMethod({
     return "exact";
   }
 
-  return match.kind === "typo" && !practicedLanguage ? "typo" : null;
+  return match.kind === "none" || practicedLanguage ? null : match.kind;
 }
 
 /**

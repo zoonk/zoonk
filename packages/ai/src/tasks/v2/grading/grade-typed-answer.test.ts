@@ -76,6 +76,46 @@ describe(gradeTypedAnswer, () => {
     expect(result.data.spelling).toBe("Mitochondria");
   });
 
+  it("settles a fairly rounded number in code, but not in language practice", async () => {
+    const params = {
+      acceptedAnswers: ["11,88%"],
+      answer: "12",
+      keyPoints: ["States the rise"],
+      language: "pt",
+      question: "Em quantos por cento o preço variou?",
+    };
+
+    // Writing the number heard is the skill itself, so in language practice the model judges it.
+    vi.mocked(generateText).mockResolvedValue(
+      createGenerateTextResult({
+        corrections: [],
+        feedback: "Ouça de novo: eleven eighty-eight.",
+        isCorrect: false,
+        keyPoints: [{ met: false, number: 1 }],
+      }),
+    );
+
+    const rounded = await gradeTypedAnswer(params);
+
+    expect(generateText).not.toHaveBeenCalled();
+
+    expect(rounded.data).toMatchObject({
+      isCorrect: true,
+      method: "rounded",
+      score: 1,
+      spelling: null,
+    });
+
+    const practice = await gradeTypedAnswer({
+      ...params,
+      practicedLanguage: "en",
+      question: "Write the price you hear, in numbers.",
+    });
+
+    expect(generateText).toHaveBeenCalledOnce();
+    expect(practice.data).toMatchObject({ isCorrect: false, method: "model" });
+  });
+
   it("keeps the right spelling when the model accepts a slip in language practice", async () => {
     vi.mocked(generateText).mockResolvedValueOnce(
       createGenerateTextResult({

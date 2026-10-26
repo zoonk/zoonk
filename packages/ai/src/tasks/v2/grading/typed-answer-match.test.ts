@@ -25,6 +25,11 @@ describe(normalizeTypedAnswer, () => {
   });
 });
 
+/** A typed answer against one accepted answer, an 11.88% rise by default. */
+function match(answer: string, accepted = "11,88%") {
+  return matchTypedAnswer({ acceptedAnswers: [accepted], answer });
+}
+
 describe(matchTypedAnswer, () => {
   it("matches the same answer written differently without a model", () => {
     expect(
@@ -36,6 +41,26 @@ describe(matchTypedAnswer, () => {
     expect(matchTypedAnswer({ acceptedAnswers: ["0.5"], answer: "0,50" }).kind).toBe("exact");
     expect(matchTypedAnswer({ acceptedAnswers: ["0.5"], answer: ".5" }).kind).toBe("exact");
     expect(matchTypedAnswer({ acceptedAnswers: ["12"], answer: "13" }).kind).toBe("none");
+  });
+
+  it("takes a number rounded to the places the learner typed, when it keeps two significant digits", () => {
+    expect(match("12")).toStrictEqual({ acceptedAnswer: "11,88%", kind: "rounded" });
+
+    expect(["12%", "11,9", "11.9 %"].map((answer) => match(answer).kind)).toStrictEqual([
+      "rounded",
+      "rounded",
+      "rounded",
+    ]);
+
+    expect(["11", "13", "10", "11,8"].map((answer) => match(answer).kind)).toStrictEqual([
+      "none",
+      "none",
+      "none",
+      "none",
+    ]);
+
+    expect(match("0,4", "0,38").kind).toBe("none");
+    expect(match("0", "0,4").kind).toBe("none");
   });
 
   it("never treats a different number as a typo", () => {

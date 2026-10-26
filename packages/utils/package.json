@@ -45,6 +45,7 @@
     "./posthog": "./src/posthog.ts",
     "./private-blob-store": "./src/private-blob-store.ts",
     "./prompt-version": "./src/prompt-version.ts",
+    "./rounded-answer": "./src/rounded-answer.ts",
     "./search": "./src/search.ts",
     "./seeded-random": "./src/seeded-random.ts",
     "./sentry": "./src/sentry.ts",

@@ -1,4 +1,5 @@
 import { type NumericEntry } from "@zoonk/ai/tasks/v2/items/schemas";
+import { countDecimalPlaces, isRoundedAnswer } from "@zoonk/utils/rounded-answer";
 import { withinTolerance } from "../../activities/templates/_utils/pattern-checks";
 import { isClose } from "../../activities/templates/_utils/template-helpers";
 
@@ -9,13 +10,6 @@ export const ANY_NUMBER: NumericEntry = { kind: "number", places: null };
 
 /** A decimal the SAT's grid takes for a fraction: at least three places (.667 or .666, not .67). */
 const MIN_FRACTION_DECIMALS = 3;
-
-/** Decimal places a number has as typed: 0.667 has 3, 2 has none, 1e-7 has 7. */
-function countDecimalPlaces(value: number): number {
-  const [digits = "", exponent] = String(Math.abs(value)).split("e-");
-  const places = digits.split(".")[1]?.length ?? 0;
-  return exponent ? places + Number(exponent) : places;
-}
 
 /** A fraction's exact value, or a decimal that fills the grid, rounded or cut short. */
 function matchesFraction({ expected, value }: { expected: number; value: number }): boolean {
@@ -28,10 +22,10 @@ function matchesFraction({ expected, value }: { expected: number; value: number 
 }
 
 /**
- * Whether a typed number is the expected answer, the way the item's answer box takes it: within
- * the tolerance for any number, the exact whole number for an integer answer, rounded or cut to
- * the decimal places asked, or a fraction's value (2/3, or .667 and .666 the way the SAT's grid
- * takes it, never .67).
+ * Whether a typed number is the expected answer, the way the item's answer box takes it: for any
+ * number, within the tolerance or rounded to the places the learner typed (the question asks no
+ * precision); the exact whole number for an integer answer; rounded or cut to the decimal places
+ * asked; or a fraction's value (2/3, or .667 and .666 the way the SAT's grid takes it, never .67).
  */
 export function matchesEntry({
   entry,
@@ -52,7 +46,9 @@ export function matchesEntry({
     case "fraction":
       return matchesFraction({ expected, value });
     case "number":
-      return withinTolerance({ expected, tolerance, value });
+      return (
+        withinTolerance({ expected, tolerance, value }) || isRoundedAnswer({ expected, value })
+      );
     default:
       throw new Error("Unknown numeric entry.");
   }

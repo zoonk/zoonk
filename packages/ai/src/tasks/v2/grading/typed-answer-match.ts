@@ -1,3 +1,4 @@
+import { isRoundedAnswer } from "@zoonk/utils/rounded-answer";
 import { removeAccents } from "@zoonk/utils/string";
 
 const APOSTROPHES = /[’‘`´]/gu;
@@ -15,7 +16,7 @@ const MIN_LENGTH_FOR_ONE_TYPO = 4;
 const MIN_LENGTH_FOR_TWO_TYPOS = 8;
 
 export type TypedAnswerMatch =
-  | { kind: "exact" | "typo"; acceptedAnswer: string }
+  | { kind: "exact" | "typo" | "rounded"; acceptedAnswer: string }
   | { kind: "none"; acceptedAnswer: null };
 
 /**
@@ -116,6 +117,18 @@ function isTypo(answer: string, accepted: string): boolean {
   return allowed > 0 && getEditDistance(plainAnswer, plainAccepted) <= allowed;
 }
 
+/** A number rounded to the places the learner typed ("12" for "11,88%"): see `isRoundedAnswer`. */
+function isRounded(answer: string, accepted: string): boolean {
+  const answerNumber = parseNumber(answer);
+  const acceptedNumber = parseNumber(accepted);
+
+  return (
+    answerNumber !== null &&
+    acceptedNumber !== null &&
+    isRoundedAnswer({ expected: acceptedNumber, value: answerNumber })
+  );
+}
+
 function isExact(answer: string, accepted: string): boolean {
   if (answer === accepted) {
     return true;
@@ -130,7 +143,9 @@ function isExact(answer: string, accepted: string): boolean {
 /**
  * Checks a typed answer against the accepted answers in code, so easy cases
  * never wait for a model: "exact" means the same answer written differently,
- * "typo" a spelling slip or missing accent the caller may accept with a note.
+ * "typo" a spelling slip or missing accent the caller may accept with a note,
+ * and "rounded" an accepted number rounded to the places the learner typed,
+ * which the caller may accept when the question isn't practicing a language.
  */
 export function matchTypedAnswer({
   acceptedAnswers,
@@ -161,5 +176,9 @@ export function matchTypedAnswer({
     return { acceptedAnswer: typo.accepted, kind: "typo" };
   }
 
-  return { acceptedAnswer: null, kind: "none" };
+  const rounded = candidates.find((candidate) => isRounded(normalizedAnswer, candidate.normalized));
+
+  return rounded
+    ? { acceptedAnswer: rounded.accepted, kind: "rounded" }
+    : { acceptedAnswer: null, kind: "none" };
 }
