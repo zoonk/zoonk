@@ -847,6 +847,24 @@ describe(checkLessonStep, () => {
     expect(outcome).toMatchObject({ result: { isCorrect: true }, status: "checked" });
   });
 
+  it("shows a typed fallback that misses a word as the sentence typed, then as it reads", async () => {
+    const { run, steps } = await setupRun();
+
+    const outcome = await check({
+      answer: { kind: "spokenAnswer", text: "The electrons is cloud" },
+      runId: run.id,
+      stepId: stepOfKind(steps, "spokenAnswer").id,
+    });
+
+    expect(outcome).toMatchObject({
+      result: {
+        corrections: [{ right: "The electron is a cloud", wrong: "The electrons is cloud" }],
+        isCorrect: false,
+      },
+      status: "checked",
+    });
+  });
+
   it("grades language screens against the lesson's word and sentence", async () => {
     const [user, { lesson, steps, word }] = await Promise.all([
       userFixture(),

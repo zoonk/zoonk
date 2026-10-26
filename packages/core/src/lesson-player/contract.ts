@@ -287,7 +287,7 @@ export const lessonStepCheckResultSchema = z
       )
       .meta({
         description:
-          "A typed answer in a language course: each form mistake (a wrong word, gender, number, tense or agreement), which keeps the answer from being right even when every key point is met. Empty otherwise.",
+          "A typed answer in a language course: each form mistake (a wrong word, gender, number, tense or agreement), which keeps the answer from being right even when every key point is met. A sentence typed instead of said that misses: one correction, the sentence as typed and as it reads. Empty otherwise.",
       }),
     feedback: z
       .string()

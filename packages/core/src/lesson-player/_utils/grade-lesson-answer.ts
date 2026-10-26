@@ -127,7 +127,9 @@ async function gradeTypedStep({
 
 /**
  * The typed fallback of a spoken answer: the learner writes what they would say, compared word by
- * word with the target sentence by the same code that grades a recording, so no model runs.
+ * word with the target sentence by the same code that grades a recording, so no model runs. A miss
+ * shows as one correction, the sentence as typed and as it reads, the way a written language
+ * answer shows its form mistakes.
  */
 function gradeSpokenFallback({ answer, step }: OpenAnswerGrade): LessonAnswerVerdict | null {
   if (step.kind !== "spokenAnswer" || answer.kind !== "spokenAnswer") {
@@ -146,7 +148,7 @@ function gradeSpokenFallback({ answer, step }: OpenAnswerGrade): LessonAnswerVer
     answerText: answer.text,
     checked: true,
     correctAnswer: match.isCorrect ? null : content.targetText,
-    corrections: [],
+    corrections: match.isCorrect ? [] : [{ right: content.targetText, wrong: answer.text }],
     feedback: null,
     isCorrect: match.isCorrect,
     keyPoints: null,
