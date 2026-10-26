@@ -95,32 +95,6 @@ export async function slowCodeFromNow(page: Page) {
 const CODE_URL = /\/_next\/static\/chunks\/[^?]+\.js(?:\?.*)?$/u;
 
 /**
- * A slow device: from now on, the script holding `marker` (code only that part of the page needs)
- * waits to arrive until `release()` (or the page closes), while the page's other code and its
- * styles arrive as usual. `held()` says whether the page has asked for it yet.
- */
-export async function holdCodeWith({ marker, page }: { marker: string; page: Page }) {
-  const code = Promise.withResolvers<null>();
-  let held = false;
-  const release = () => code.resolve(null);
-  page.once("close", release);
-
-  await page.route(CODE_URL, async (route) => {
-    const response = await route.fetch();
-    const body = await response.text();
-
-    if (body.includes(marker)) {
-      held = true;
-      await code.promise;
-    }
-
-    await route.fulfill({ body, response });
-  });
-
-  return { held: () => held, release };
-}
-
-/**
  * Notes the scripts holding `marker` the page loads from now on: `requestedAt()` says when it first
  * asked for one, on the page's clock (`performance.now()`, as `PaintedFrame.at`), Infinity if never.
  */
@@ -187,7 +161,7 @@ export function codeArrivedBy({ at, page }: { at: number; page: Page }): Promise
 }
 
 /** Whether React has hydrated what `locator` finds (it marks every node it takes over). */
-export function isHydrated(locator: Locator): Promise<boolean> {
+function isHydrated(locator: Locator): Promise<boolean> {
   return locator.evaluate((node) => Object.keys(node).some((key) => key.startsWith("__react")));
 }
 

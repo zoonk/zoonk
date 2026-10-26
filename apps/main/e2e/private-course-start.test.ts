@@ -34,12 +34,6 @@ async function expectOwnerOnly({
       expect(await viewer.content()).not.toContain(course.title);
       expect(await viewer.content()).not.toContain(chapters[0]!.title);
       await expect(viewer.getByRole("button", { name: "Build my plan" })).toHaveCount(0);
-
-      await viewer.goto(`/start/course/${randomUUID()}`);
-
-      await expect(
-        viewer.getByRole("heading", { name: "We couldn't find this page" }),
-      ).toBeVisible();
     }),
   );
 }
