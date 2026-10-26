@@ -9,19 +9,16 @@ const BELT_PROGRESSION_TITLE_ID = "belt-progression-title";
 type BeltOption = Awaited<ReturnType<typeof getBeltColors>>[number];
 
 /**
- * One belt on the path: its dot in its color once reached (the current one ringed and a little
- * larger), a hollow neutral ring while it's ahead, so earned and not yet read apart at a glance,
- * and from a tablet up its color's name under it (`shortName`, "Yellow"), quiet unless it's the
- * learner's.
+ * One belt on the path: its dot in its color, reached or still ahead (the current one ringed and a
+ * little larger), and from a tablet up its color's name under it (`shortName`, "Yellow"), quiet
+ * unless it's the learner's.
  */
 function BeltStep({
   belt,
-  isAhead,
   isCurrent,
   shortName,
 }: {
   belt: BeltOption;
-  isAhead: boolean;
   isCurrent: boolean;
   shortName: string;
 }) {
@@ -37,15 +34,15 @@ function BeltStep({
         )}
       >
         <span
-          aria-hidden
+          aria-label={belt.label}
           className={cn(
-            "size-3.5 rounded-full ring-inset",
-            // Earned belts get the firmer edge (a white belt would vanish on the page otherwise).
-            isAhead ? "ring-faint ring-1" : cn("ring-foreground/60 ring-[1.5px]", belt.bgClass),
+            // The firmer edge keeps a white belt from vanishing on the page.
+            "ring-foreground/60 size-3.5 rounded-full ring-[1.5px] ring-inset",
+            belt.bgClass,
             isCurrent && "size-4",
           )}
+          role="img"
         />
-        <span className="sr-only">{belt.label}</span>
       </span>
 
       <span
@@ -62,7 +59,7 @@ function BeltStep({
 }
 
 /**
- * Every belt as one path across the page, the learner's ringed, the ones ahead hollow, each named from a tablet up (on a
+ * Every belt as one path across the page in its own color, the learner's ringed, each named from a tablet up (on a
  * phone the first and last are named under the path).
  */
 export async function LevelProgression({ currentBelt }: { currentBelt: BeltLevelResult }) {
@@ -91,7 +88,6 @@ export async function LevelProgression({ currentBelt }: { currentBelt: BeltLevel
           {beltColors.map((belt, index) => (
             <BeltStep
               belt={belt}
-              isAhead={index > currentIndex}
               isCurrent={index === currentIndex}
               key={belt.key}
               shortName={shortName(belt.key)}
