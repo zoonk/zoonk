@@ -144,6 +144,37 @@ describe(lessonPlayerReducer, () => {
     expect(lessonPlayerReducer(movedOn, { type: "writingRestored" })).toBe(movedOn);
   });
 
+  it("keeps today's writing notice and undo when run start reconciles stale progress", () => {
+    const steps = [
+      checkStep("quiz"),
+      typedAnswerStep("write"),
+      explanationStep("tip"),
+      summaryStep("end"),
+    ];
+
+    const resumed = play(steps, [
+      { opening: true, type: "skipWriting" },
+      {
+        answers: [{ answeredAt: ANSWERED_AT, isCorrect: true, stepId: "quiz" }],
+        hyperdrive: { knownStepIds: [], streak: 0 },
+        runId: "run",
+        startedAt: STARTED_AT,
+        type: "runStarted",
+      },
+    ]);
+
+    expect(resumed.notice).toBe("writingSkipped");
+    expect(getCurrentStep(resumed)?.id).toBe("tip");
+    expect(resumed.skippedWritingStepIds).toStrictEqual(["write"]);
+
+    const restored = lessonPlayerReducer(resumed, { type: "writingRestored" });
+    expect(getCurrentStep(restored)?.id).toBe("write");
+    expect(restored.queue).toStrictEqual(["quiz", "write", "tip", "end"]);
+    expect(restored.skippedWritingStepIds).toStrictEqual([]);
+    expect(restored.firstVerdicts).toStrictEqual({ quiz: true });
+    expect(restored.run).toMatchObject({ runId: "run", status: "started" });
+  });
+
   it("brings the learner back to the screen they left with Can't write now", () => {
     const steps = [typedAnswerStep("write"), explanationStep("tip")];
     const skipped = play(steps, [{ type: "skipWriting" }]);

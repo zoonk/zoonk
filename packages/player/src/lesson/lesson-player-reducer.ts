@@ -132,10 +132,15 @@ function resumeFrom(state: LessonPlayerState, answers: LessonRunAnswers): Lesson
     state.support,
   );
 
+  const writingRestore = state.notice === "writingSkipped" ? state.writingRestore : null;
+
+  const skippedWritingStepIds =
+    writingRestore?.skippedWritingStepIds ?? state.skippedWritingStepIds;
+
   const available = {
     ...fresh,
     queue: fresh.queue.filter(
-      (id) => ![...state.unavailableStepIds, ...state.skippedWritingStepIds].includes(id),
+      (id) => ![...state.unavailableStepIds, ...skippedWritingStepIds].includes(id),
     ),
   };
 
@@ -143,12 +148,15 @@ function resumeFrom(state: LessonPlayerState, answers: LessonRunAnswers): Lesson
     return state;
   }
 
-  return {
+  const resumed = {
     ...resumeLesson(available, answers),
     run: state.run,
-    skippedWritingStepIds: state.skippedWritingStepIds,
+    skippedWritingStepIds,
     unavailableStepIds: state.unavailableStepIds,
   };
+
+  // Rebuild the undo from reconciled progress, so it never returns to an already answered screen.
+  return writingRestore ? skipWriting(resumed, { opening: true }) : resumed;
 }
 
 /**

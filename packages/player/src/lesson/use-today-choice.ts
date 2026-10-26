@@ -11,7 +11,7 @@ export const CANT_WRITE_TODAY = "zoonk:cant-write-on";
 const listeners = new Set<() => void>();
 
 /** Where choices live when the browser blocks storage: until the page reloads. */
-const memory = new Map<string, string>();
+const memory = new Map<string, string | null>();
 
 /** The learner's day on this device, which a choice lasts: it's gone tomorrow. */
 function getToday(): string {
@@ -20,10 +20,14 @@ function getToday(): string {
 }
 
 function readDay(key: string): string | null {
+  if (memory.has(key)) {
+    return memory.get(key) ?? null;
+  }
+
   try {
     return globalThis.localStorage.getItem(key);
   } catch {
-    return memory.get(key) ?? null;
+    return null;
   }
 }
 
@@ -36,20 +40,16 @@ export function isChosenToday(key: string): boolean {
 export function setChosenToday(key: string, chosen: boolean): void {
   const today = getToday();
 
-  if (chosen) {
-    memory.set(key, today);
-  } else {
-    memory.delete(key);
-  }
-
   try {
     if (chosen) {
       globalThis.localStorage.setItem(key, today);
     } else {
       globalThis.localStorage.removeItem(key);
     }
+
+    memory.delete(key);
   } catch {
-    // Blocked storage keeps the choice in memory instead.
+    memory.set(key, chosen ? today : null);
   }
 
   for (const listener of listeners) {

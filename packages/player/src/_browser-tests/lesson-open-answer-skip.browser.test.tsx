@@ -3,8 +3,13 @@ import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-conte
 import { describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
 import { onDevice } from "../_test-utils/device-media";
-import { buildAdapters, renderLessonPlayer } from "../_test-utils/render-lesson-player";
-import { CANT_WRITE_TODAY, isChosenToday } from "../lesson/use-today-choice";
+import {
+  buildAdapters,
+  renderLessonPlayer,
+  runAnswer,
+  startedRun,
+} from "../_test-utils/render-lesson-player";
+import { CANT_WRITE_TODAY, isChosenToday, setChosenToday } from "../lesson/use-today-choice";
 import { buildLesson, localAdapters } from "../preview/preview-lesson";
 import { contentStep, teachingStep } from "../preview/preview-steps";
 
@@ -207,6 +212,33 @@ describe("open answer skip", () => {
     renderLessonPlayer({ lesson: buildLesson([writing]) });
     await expect.element(page.getByRole("textbox")).toBeVisible();
     await expect.element(writingSkippedNotice()).not.toBeInTheDocument();
+  });
+
+  it("keeps Write again after run start reconciles progress newer than the page", async () => {
+    const quiz = teachingStep("check");
+    const writing = explanationStep();
+
+    const lesson = buildLesson([
+      quiz,
+      writing,
+      teachingStep("explanation"),
+      teachingStep("summary"),
+    ]);
+
+    const adapters = buildAdapters(lesson, {
+      startLesson: () => Promise.resolve(startedRun({ answers: [runAnswer({ stepId: quiz.id })] })),
+    });
+
+    setChosenToday(CANT_WRITE_TODAY, true);
+    renderLessonPlayer({ adapters, lesson });
+
+    await expect.element(page.getByText("A cloud, not a little ball")).toBeVisible();
+    await expect.element(writingSkippedNotice()).toBeVisible();
+    await page.getByRole("button", { name: "Write again" }).click();
+
+    await expect.element(page.getByRole("textbox")).toBeVisible();
+    await expect.element(writingSkippedNotice()).not.toBeInTheDocument();
+    expect(isChosenToday(CANT_WRITE_TODAY)).toBe(false);
   });
 
   it("asks for writing again the next day", async () => {
