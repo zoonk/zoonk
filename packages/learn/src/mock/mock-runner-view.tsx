@@ -105,7 +105,10 @@ function FlagButton() {
     <Button
       aria-keyshortcuts={FLAG_KEY.toUpperCase()}
       aria-pressed={flagged}
-      className={cn("shrink-0", flagged && "border-warning text-warning hover:text-warning")}
+      className={cn(
+        "shrink-0",
+        flagged && "border-warning text-warning-text hover:text-warning-text",
+      )}
       onClick={runner.toggleFlag}
       size="xl"
       variant="outline"

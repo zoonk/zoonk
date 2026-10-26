@@ -3,13 +3,14 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, MinusIcon, XIcon } from "lucide-react";
 
 /**
- * What an answer's verdict means, for its color and glyph: right (✓ blue), wrong (✕ red), almost (✕
- * amber), or neutral (a blank, a guess, an answer nothing checked) in the text color.
+ * What an answer's verdict means, for its color and glyph: right (✓ blue), wrong (✕ pink-red),
+ * almost (✕ amber), or neutral (a blank, a guess, an answer nothing checked) in the text color.
+ * The verdict is words, so each takes its meaning's `-text` step.
  */
 export type FeedbackTone = "almost" | "neutral" | "right" | "wrong";
 
 const TONE_CLASS: Readonly<Record<FeedbackTone, string>> = {
-  almost: "text-warning",
+  almost: "text-warning-text",
   neutral: "text-foreground",
   right: "text-success-text",
   wrong: "text-destructive-text",

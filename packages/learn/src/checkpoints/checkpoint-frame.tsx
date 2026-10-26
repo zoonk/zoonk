@@ -22,7 +22,11 @@ export function CheckpointError() {
   return (
     <p className="text-destructive-text text-sm" role="alert">
       {t("That didn't go through. Your answers are saved.")}{" "}
-      <button className="font-semibold underline" onClick={() => void duel.retry()} type="button">
+      <button
+        className="text-foreground font-semibold"
+        onClick={() => void duel.retry()}
+        type="button"
+      >
         {t("Try again")}
       </button>
     </p>
