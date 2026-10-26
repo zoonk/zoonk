@@ -2,6 +2,7 @@ import { PlayerPreview } from "@zoonk/player/preview";
 import { getPreviewEntry, previewLesson } from "@zoonk/player/preview/catalog";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { readOption, readParam } from "../_utils/gallery-params";
 import { PreviewIntlProvider } from "./preview-intl-provider";
@@ -16,6 +17,10 @@ async function PreviewScreen({ searchParams }: Pick<PageProps<"/preview">, "sear
   if (!entry || !state) {
     notFound();
   }
+
+  // Each load builds a new lesson (fresh ids, language options shuffled again), so it renders at
+  // request time, never in a prerender or prefetch.
+  await connection();
 
   return (
     <PreviewIntlProvider>
