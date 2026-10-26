@@ -3,8 +3,7 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./define-eloqnt-config": "./src/define-eloqnt-config.ts",
-    "./extract-path": "./src/extract-path.ts"
+    "./define-eloqnt-config": "./src/define-eloqnt-config.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

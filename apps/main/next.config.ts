@@ -2,7 +2,6 @@ import createMDX from "@next/mdx";
 import { withSentryConfig } from "@sentry/nextjs/config";
 import { CACHE_LIFE_PROFILES } from "@zoonk/core/cache-tags";
 import { getPublicAppSecurityHeaders } from "@zoonk/core/security/headers";
-import { getExtractPath } from "@zoonk/i18n/extract-path";
 import { SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { withBotId } from "botid/next/config";
 import { type NextConfig } from "next";
@@ -106,7 +105,7 @@ const withMDX = createMDX();
 
 const withNextIntl = createNextIntlPlugin({
   experimental: {
-    extract: { path: getExtractPath("main") },
+    extract: { path: "./messages" },
     messages: {
       format: "po",
       locales: "infer",
