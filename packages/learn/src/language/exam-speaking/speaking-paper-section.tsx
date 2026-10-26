@@ -124,7 +124,8 @@ export function SpeakingPaperSection({
       )}
 
       <ListGroup>
-        <ol>
+        {/* The router keeps the page: a link asking for another task opens it as on a first visit. */}
+        <ol key={openTask}>
           {paper.tasks.map((task, index) => (
             <li key={task.key}>
               <TaskRow

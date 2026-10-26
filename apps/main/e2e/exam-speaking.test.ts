@@ -99,7 +99,12 @@ test.describe("Exam speaking tasks", () => {
 
     await page.getByRole("link", { name: "Go to task 2" }).click();
     await expect(page).toHaveURL(/\/exam\?task=t2$/u);
-    await page.getByRole("button", { name: /Tarea 2: Describir/u }).click();
+    // The exam page the router kept opens the task the link asks for, ready to start.
+    await expect(page.getByRole("button", { name: /Tarea 2: Describir/u })).toHaveAttribute(
+      "aria-expanded",
+      "true",
+    );
+
     await expect(page.getByRole("button", { name: "Start this task" })).toBeEnabled();
 
     await expect(

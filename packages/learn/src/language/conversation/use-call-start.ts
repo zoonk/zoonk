@@ -1,12 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { type GenerationRun } from "../../generation/generation-run";
 
 /** A call written ahead starts well within this; a slower start is a model writing the call. */
 const WRITING_AFTER_MS = 1000;
 
-type CallStartState = "failed" | "idle" | "ready" | "starting" | "writeFailed" | "writing";
+type CallStartState =
+  | "failed"
+  | "idle"
+  | "opened"
+  | "ready"
+  | "starting"
+  | "writeFailed"
+  | "writing";
 
 /** Where a start stands once `onStart` answered, from where it stood while waiting. */
 function settle({ current, started }: { current: CallStartState; started: boolean }) {
@@ -14,7 +21,7 @@ function settle({ current, started }: { current: CallStartState; started: boolea
 
   if (started) {
     // The call opens next: the button keeps saying so, or the wait shows it's done.
-    return wasWriting ? "ready" : "starting";
+    return wasWriting ? "ready" : "opened";
   }
 
   return wasWriting ? "writeFailed" : "failed";
@@ -55,6 +62,14 @@ function toRun({
 export function useCallStart({ onStart, step }: { onStart: () => Promise<boolean>; step: string }) {
   const [state, setState] = useState<CallStartState>("idle");
 
+  // The router keeps the card's page while the call it opened runs: back on it, that start is over.
+  // A start still waiting when the learner leaves keeps its wait.
+  useLayoutEffect(
+    () => () =>
+      setState((current) => (current === "opened" || current === "ready" ? "idle" : current)),
+    [],
+  );
+
   const start = async () => {
     // Trying again after the call couldn't be written writes it again, so the wait stays.
     setState((current) => (current === "writeFailed" ? "writing" : "starting"));
@@ -71,7 +86,7 @@ export function useCallStart({ onStart, step }: { onStart: () => Promise<boolean
 
   return {
     failed: state === "failed",
-    isStarting: state === "starting",
+    isStarting: state === "starting" || state === "opened",
     run: toRun({ retry: () => void start(), state, step }),
     start: () => void start(),
   };
