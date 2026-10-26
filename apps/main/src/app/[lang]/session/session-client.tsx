@@ -4,6 +4,7 @@ import { type TutorViewer } from "@/components/learn/main-ask-tutor";
 import { SessionCeremony } from "@/components/learn/session-ceremony";
 import { useQuestionTutor } from "@/components/learn/use-question-tutor";
 import { useRouter } from "@/i18n/navigation";
+import { noteAppWrite } from "@/lib/http/app-write-ledger";
 import { useRefreshAfterAppWrites } from "@/lib/http/app-writes";
 import { type LearnerBuddy } from "@/lib/learn/learner-buddy";
 import { recordGenerationWaitAction } from "@/lib/lessons/generation-wait-action";
@@ -75,7 +76,10 @@ export function SessionBlockClient({
       actions={{
         answer: (input) => sendStudyAnswer({ ...ids, ...input }),
         continueSession: navigation.continueSession,
-        finish: () => finishStudyBlockAction({ ...ids, timeZone: getLocalTimeZone() }),
+        // Finishing settles the day without expiring the router's pages (that would draw the
+        // screen again over the moment), so it counts as a write the screen refreshes for on close.
+        finish: () =>
+          noteAppWrite(finishStudyBlockAction({ ...ids, timeZone: getLocalTimeZone() })),
         refresh: () => router.refresh(),
         stop: navigation.stop,
       }}
