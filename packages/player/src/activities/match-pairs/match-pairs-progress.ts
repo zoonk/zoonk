@@ -2,22 +2,27 @@ import { type ActivityAnswer } from "@zoonk/core/library/activities/answer-schem
 import { type MatchCard } from "./match-pairs-columns";
 
 /**
- * Matched pairs (locked in) and each pair's first try. Wrong tries explain themselves and can be
- * retried, but the answer keeps each pair's first try, so finding it by elimination still
- * teaches without counting as knowing it.
+ * Matched pairs (locked in), each pair's first try and the traps that caught the learner. Wrong
+ * tries explain themselves and can be retried, but the answer keeps each pair's first try, so
+ * finding it by elimination still teaches without counting as knowing it. A trap that caught the
+ * learner stays marked as having no match, so it can't catch them twice.
  */
 export type MatchProgress = {
   firstTries: Readonly<Record<string, string>>;
   matched: readonly string[];
+  traps: readonly string[];
 };
 
-const EMPTY_MATCH_PROGRESS: MatchProgress = { firstTries: {}, matched: [] };
+const EMPTY_MATCH_PROGRESS: MatchProgress = { firstTries: {}, matched: [], traps: [] };
 
 export function isMatch(left: MatchCard, right: MatchCard): boolean {
   return !left.isTrap && left.id === right.id;
 }
 
-/** Records a try: its first try if the left card is a real pair, and the pair if it matches. */
+/**
+ * Records a try: its first try if the left card is a real pair, the pair if it matches, and the
+ * trap if one caught the learner.
+ */
 export function recordTry(
   progress: MatchProgress,
   { left, right }: { left: MatchCard; right: MatchCard },
@@ -28,8 +33,9 @@ export function recordTry(
       : { ...progress.firstTries, [left.id]: right.id };
 
   const matched = isMatch(left, right) ? [...progress.matched, left.id] : progress.matched;
+  const traps = [left, right].filter((card) => card.isTrap).map((card) => card.id);
 
-  return { firstTries, matched };
+  return { firstTries, matched, traps: [...progress.traps, ...traps] };
 }
 
 /** The answer once every pair is matched: each pair's first try. */
@@ -53,5 +59,5 @@ export function progressFromAnswer(answer: ActivityAnswer | null): MatchProgress
     return EMPTY_MATCH_PROGRESS;
   }
 
-  return { firstTries: answer.pairs, matched: Object.keys(answer.pairs) };
+  return { firstTries: answer.pairs, matched: Object.keys(answer.pairs), traps: [] };
 }

@@ -48,7 +48,7 @@ function cardState({
     return "matched";
   }
 
-  if (card.isTrap && isComplete) {
+  if (card.isTrap && (isComplete || progress.traps.includes(card.id))) {
     return "noMatch";
   }
 
@@ -62,8 +62,9 @@ function cardState({
 /**
  * Pair cards that belong together, with look-alike traps. Above the cards, how many pairs to find
  * and how many cards have no match. Pick one card on each side: a match locks in, a miss says why
- * the two don't go together (and names the trap when one caught the learner). Once every pair is
- * matched, the traps left over show they have no match. The check grades each pair's first try.
+ * the two don't go together. A trap that catches the learner is named and shows it has no match
+ * right away; once every pair is matched, the traps left over show it too. The check grades each
+ * pair's first try.
  */
 export function MatchPairsActivity({
   answer,

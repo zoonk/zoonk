@@ -81,7 +81,7 @@ describe("reasoning activities", () => {
     await expect.element(page.getByText("Look-alikes with no match")).toBeVisible();
   });
 
-  it("match pairs: a trap explains itself and the first try counts", async () => {
+  it("match pairs: a trap explains itself, stays marked and the first try counts", async () => {
     openActivity({ template: "matchPairs" });
     await matchCards("embarazada", "embarrassed");
 
@@ -92,6 +92,10 @@ describe("reasoning activities", () => {
         }),
       )
       .toBeVisible();
+
+    await expect
+      .element(page.getByRole("button", { name: "embarrassed, no match" }))
+      .toBeDisabled();
 
     await expect.element(page.getByRole("button", { name: "Check" })).toBeDisabled();
     await matchCards("embarazada", "pregnant");
