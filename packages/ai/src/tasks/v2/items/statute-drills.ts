@@ -6,9 +6,10 @@ import { type AiGenerationContext } from "../../../provenance/ai-generation-even
 import { runTaskGeneration } from "../../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../../provider-options";
 import { getPromptLanguageName } from "../../_utils/prompt-language";
+import { selectPromptVariants } from "../../_utils/prompt-variants";
 import { GENERATED_ITEM_SCHEMAS, type GeneratedItem } from "./item-schemas";
 import { checkStatuteDrills } from "./statute-drill-checks";
-import systemPrompt from "./statute-drills.prompt.md";
+import rulesTemplate from "./statute-drills.prompt.md";
 
 /**
  * From the statute-drills eval (CF/88 art. 5 Cebraspe and GDPR art. 33 mix,
@@ -30,8 +31,8 @@ type StatuteDrillFormat = "trueFalse" | "typed" | "multipleChoice";
 
 /**
  * The exam board's format: Cebraspe judges statements right or wrong, FGV
- * asks multiple choice on the literal text, and generic mixes both with
- * fill-in-the-blank passages.
+ * asks multiple choice on the literal text, and generic mixes both, with
+ * fill-in-the-blank passages when the exam asks short written answers.
  */
 type StatuteDrillStyle = "cebraspe" | "fgv" | "generic";
 
@@ -45,6 +46,11 @@ export type StatuteDrillParams = {
   law: { title: string; shortName: string; url: string | null };
   articles: StatuteArticle[];
   style: StatuteDrillStyle;
+  /**
+   * The exam asks short written answers, so the generic style mixes in fill-in-the-blank passages
+   * (typed); otherwise its drills are only ones learners answer by picking, which practice asks.
+   */
+  fillInTheBlank?: boolean;
   /** Drills wanted, from 1 to 20. */
   count: number;
   model?: string;
@@ -81,11 +87,13 @@ const DRILL_SCHEMAS = {
 const STYLE_SCHEMAS = {
   cebraspe: DRILL_SCHEMAS.trueFalse,
   fgv: DRILL_SCHEMAS.multipleChoice,
-  generic: z.union([DRILL_SCHEMAS.trueFalse, DRILL_SCHEMAS.typed, DRILL_SCHEMAS.multipleChoice]),
-} as const satisfies Record<
-  StatuteDrillStyle,
-  z.ZodType<Omit<StatuteDrill, keyof typeof NO_PICTURES>>
->;
+  generic: z.union([DRILL_SCHEMAS.trueFalse, DRILL_SCHEMAS.multipleChoice]),
+  genericWithBlanks: z.union([
+    DRILL_SCHEMAS.trueFalse,
+    DRILL_SCHEMAS.typed,
+    DRILL_SCHEMAS.multipleChoice,
+  ]),
+} as const satisfies Record<string, z.ZodType<Omit<StatuteDrill, keyof typeof NO_PICTURES>>>;
 
 function buildUserPrompt({ articles, count, language, law, style }: StatuteDrillParams): string {
   const references = articles
@@ -111,7 +119,8 @@ ${formatUntrustedInput(texts)}
 /**
  * Turns statute text (lei seca) into drills on its letter, the way exam
  * boards test it: true statements that repeat the text, false ones that
- * change exactly one element, and fill-in-the-blank passages. The statute's
+ * change exactly one element, and, for exams that ask short written answers,
+ * fill-in-the-blank passages, whose rules no other call reads. The statute's
  * text is passed as data. Only drills that pass the statute checks are
  * returned; `dropped` keeps the others with their problems so callers can log
  * them. Callers still run the item checks in `@zoonk/core` before storing.
@@ -126,8 +135,17 @@ export async function generateStatuteDrills(params: StatuteDrillParams) {
     useFallback = true,
   } = params;
 
+  const fillInTheBlank = style === "generic" && Boolean(params.fillInTheBlank);
+
+  const systemPrompt = selectPromptVariants({
+    template: rulesTemplate,
+    variants: { choicesOnly: !fillInTheBlank, fillInTheBlank },
+  });
+
   const userPrompt = buildUserPrompt(params);
-  const schema = z.object({ drills: z.array(STYLE_SCHEMAS[style]) });
+  // Fill-in-the-blank passages only where the exam asks short written answers.
+  const drillSchema = fillInTheBlank ? STYLE_SCHEMAS.genericWithBlanks : STYLE_SCHEMAS[style];
+  const schema = z.object({ drills: z.array(drillSchema) });
   const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 
   const { provenance, result } = await runTaskGeneration({

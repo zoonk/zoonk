@@ -5,7 +5,18 @@ import { type StatuteDrillParams, generateStatuteDrills } from "./statute-drills
 import type * as Ai from "ai";
 
 vi.mock("server-only", () => ({}));
-vi.mock("./statute-drills.prompt.md", () => ({ default: "Drill the law." }));
+
+vi.mock("./statute-drills.prompt.md", () => ({
+  default: [
+    "Drill the law.",
+    "{{#fillInTheBlank}}",
+    "Blank one word.",
+    "{{/fillInTheBlank}}",
+    "{{#choicesOnly}}",
+    "Only picks.",
+    "{{/choicesOnly}}",
+  ].join("\n"),
+}));
 
 vi.mock("ai", async (importOriginal) => {
   const actual = await importOriginal<typeof Ai>();
@@ -76,6 +87,24 @@ describe(generateStatuteDrills, () => {
       expect(names).not.toContain("image");
     },
   );
+
+  it("writes fill-in-the-blank drills only for an exam that asks short written answers", async () => {
+    const picks = await generateStatuteDrills({ ...params, style: "generic" });
+    const picksSchema = propertyNames(await sentSchema());
+
+    const blanks = await generateStatuteDrills({
+      ...params,
+      fillInTheBlank: true,
+      style: "generic",
+    });
+
+    const blanksSchema = propertyNames(await sentSchema());
+
+    expect(picks.systemPrompt).toBe("Drill the law.\nOnly picks.\n");
+    expect(picksSchema).not.toContain("acceptedAnswers");
+    expect(blanks.systemPrompt).toBe("Drill the law.\nBlank one word.\n");
+    expect(blanksSchema).toContain("acceptedAnswers");
+  });
 
   it("returns drills with no chart or picture", async () => {
     const { data } = await generateStatuteDrills({ ...params, style: "cebraspe" });

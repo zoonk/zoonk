@@ -8,6 +8,7 @@ import {
 } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
+import { examFormat } from "../../library/exams/_test-utils/exam-formats";
 import { loadStatuteDrillTargets, writeStatuteDrills } from "./statute-drill-targets";
 
 const LAW_TEXT = `LEI Nº 8.112, DE 11 DE DEZEMBRO DE 1990
@@ -21,21 +22,23 @@ const PROVENANCE = {
   runId: `run-${crypto.randomUUID()}`,
 };
 
-async function lawGoal() {
+/** A goal whose exam's notice links a law; a Cebraspe exam unless the board says otherwise. */
+async function lawGoal({
+  board = "Cebraspe",
+  formats = [],
+  method = "wrongCancelsRight",
+}: { board?: string; formats?: object[]; method?: string } = {}) {
   const user = await userFixture();
 
   const blueprint = await examBlueprintFixture({
-    board: "Cebraspe",
+    board,
     structure: {
-      formats: [],
+      formats,
       mock: {
         adaptive: false,
         citations: [],
         order: null,
-        scoring: {
-          description: "A wrong answer cancels a right one.",
-          method: "wrongCancelsRight",
-        },
+        scoring: { description: "How the exam scores.", method },
         sections: [],
         timeLimitMinutes: null,
         totalQuestions: null,
@@ -102,6 +105,27 @@ describe("statute drills", () => {
         sourceId: law.id,
         style: "cebraspe",
       },
+    ]);
+  });
+
+  // Fill-in-the-blank drills are typed: practice asks them only of an exam that asks short answers.
+  it("fills blanks in a generic board's drills only when its exam asks short written answers", async () => {
+    const [choices, shortAnswers] = await Promise.all([
+      lawGoal({ board: "Vunesp", formats: [examFormat("multipleChoice")], method: "raw" }),
+      lawGoal({
+        board: "Vunesp",
+        formats: [examFormat("multipleChoice"), examFormat("shortAnswer")],
+        method: "raw",
+      }),
+    ]);
+
+    const targets = await Promise.all(
+      [choices, shortAnswers].map(({ goal }) => loadStatuteDrillTargets(goal.id)),
+    );
+
+    expect(targets.map(([target]) => [target?.style, target?.fillInTheBlank])).toStrictEqual([
+      ["generic", false],
+      ["generic", true],
     ]);
   });
 

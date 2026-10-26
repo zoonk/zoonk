@@ -99,100 +99,6 @@
       "categoryScores": [
         {
           "categoryId": "legalAccuracy",
-          "reasoning": "All supplied answer keys agree with the input. The first true statement permissibly omits the timing qualification without denying it; the false statement reverses “unlikely” to “likely.” Both multiple-choice questions have exactly one text-supported answer, and all explanations quote and cite the correct paragraph. The blank reproduces an exact sentence with the correct answer removed. No wrong-key or misquotation cap applies.",
-          "score": 10,
-          "label": "Legal accuracy",
-          "weight": 35
-        },
-        {
-          "categoryId": "boardTraps",
-          "reasoning": "The false statement and every wrong option make identifiable single-element substitutions, and their misconceptions name those substitutions. However, the only gap removes the generic cross-reference noun “Article,” rather than an operative term governing a role, deadline, condition, or duty. Because this is the sole gap, the cap of 6 for mostly filler gaps applies. Several multiple-choice traps also depart from the task-specific requested trap dimensions.",
-          "score": 6,
-          "label": "Board-style traps",
-          "weight": 30
-        },
-        {
-          "categoryId": "styleAndLanguage",
-          "reasoning": "The result provides the requested generic mix of true/false, a fill-in-the-blank passage, and four-option literal-text multiple choice. It consistently uses English, preserves the source's legal phrasing, and explains the substitutions clearly. No language-mixing or exam-style cap applies.",
-          "score": 9,
-          "label": "Style & language",
-          "weight": 20
-        },
-        {
-          "categoryId": "coverage",
-          "reasoning": "All three supplied paragraphs appear, and no two drills test the same element in the same way, so the majority-concentration cap does not apply. Nevertheless, the set is one drill short, omits direct testing of the central 72-hour deadline, undue-delay requirement, and duty to document every breach, and labels a straightforward cross-reference completion as hard. These omissions limit substantive coverage and difficulty variety.",
-          "score": 7,
-          "label": "Coverage & variety",
-          "weight": 15
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "7 of 8 parts passed. Article 33(2) (typed): Repeats an earlier drill.",
-          "score": 8.875,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 2898,
-          "outputTokens": 1159,
-          "reasoningTokens": 490
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "The result supplies only five of the six requested drills. Its only fill-in-the-blank removes “Article,” a generic cross-reference completion rather than the requested load-bearing breach-notification or documentation language.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "The sole “hard” drill is a simple completion and does not provide meaningful difficulty progression. The multiple-choice traps test neighboring article numbers and documentation details rather than the specifically requested deadline, notification roles, risk exception, and duty to document every breach. Neither the 72-hour deadline nor the scope of “any personal data breaches” is tested.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Add a sixth drill on the 72-hour deadline, replace the existing blank with an exact passage omitting “without undue delay” or “controller,” and redirect a multiple-choice question toward the duty to document every breach. Preserve the existing accurate quotations and explicit explanations of changed words.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "A generic mix of drills in US English on GDPR Article 33 (paragraphs 1, 2 and 5): true/false statements, fill-in-the-blank passages copied word for word with one load-bearing gap (such as \"72 hours\", \"controller\", \"processor\", \"without undue delay\") and 4-option multiple choice on the literal text. False statements and wrong options change exactly one element (the 72-hour deadline, who notifies whom, the \"unlikely to result in a risk\" exception, the duty to document every breach). Check every drill against the given text.",
-        "id": "en-generic-gdpr-art33-breach-notification-1",
-        "userInput": {
-          "articles": [
-            {
-              "reference": "Article 33(1)",
-              "text": "1. In the case of a personal data breach, the controller shall without undue delay and, where feasible, not later than 72 hours after having become aware of it, notify the personal data breach to the supervisory authority competent in accordance with Article 55, unless the personal data breach is unlikely to result in a risk to the rights and freedoms of natural persons. Where the notification to the supervisory authority is not made within 72 hours, it shall be accompanied by reasons for the delay."
-            },
-            {
-              "reference": "Article 33(2)",
-              "text": "2. The processor shall notify the controller without undue delay after becoming aware of a personal data breach."
-            },
-            {
-              "reference": "Article 33(5)",
-              "text": "5. The controller shall document any personal data breaches, comprising the facts relating to the personal data breach, its effects and the remedial action taken. That documentation shall enable the supervisory authority to verify compliance with this Article."
-            }
-          ],
-          "count": 6,
-          "language": "en",
-          "law": {
-            "shortName": "GDPR",
-            "title": "Regulation (EU) 2016/679 (General Data Protection Regulation)",
-            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32016R0679"
-          },
-          "style": "generic"
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "legalAccuracy",
           "reasoning": "Checked against the supplied excerpts, each drill has exactly one option matching the relevant text, with the other options changing a textual element. All keys, quoted fragments, and article references are correct. Conditions omitted from the correct consequence-only options are supplied in their question stems. No wrong-key or misquotation cap applies.",
           "score": 10,
           "label": "Legal accuracy",
@@ -280,6 +186,270 @@
             "url": "https://www.planalto.gov.br/ccivil_03/leis/l8112cons.htm"
           },
           "style": "fgv"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "legalAccuracy",
+          "reasoning": "All six drills are correctly keyed against the supplied text. Both blanks reproduce statutory wording with the correct load-bearing word omitted. Each multiple-choice question has exactly one matching option, and the reasons accurately quote and reference the relevant paragraph. No wrong-key or misquotation cap applies.",
+          "score": 10,
+          "label": "Legal accuracy",
+          "weight": 35
+        },
+        {
+          "categoryId": "boardTraps",
+          "reasoning": "The false statement consistently changes the same deadline element from 72 to 48 hours. Each multiple-choice distractor changes one identifiable element: likelihood, risk threshold, protected persons, mandatory wording, verifying authority, or article reference. Misconceptions identify those changes specifically. Both blanks remove substantive words rather than grammatical filler. No cap applies.",
+          "score": 10,
+          "label": "Board-style traps",
+          "weight": 30
+        },
+        {
+          "categoryId": "styleAndLanguage",
+          "reasoning": "The requested generic mix is present: two true/false drills, two fill-in-the-blank drills, and two four-option multiple-choice drills. Statutory wording is preserved apart from deliberate traps, and explanations are clear English. The only polish issue is the exception question's awkward pairing of a “when” stem with “Unless” options; it does not obscure the intended task.",
+          "score": 9,
+          "label": "Style & language",
+          "weight": 20
+        },
+        {
+          "categoryId": "coverage",
+          "reasoning": "Coverage is evenly distributed across paragraphs 1, 2, and 5, with two drills each and three labeled difficulty levels. The set tests the deadline, processor notification, notification recipient, documentation scope, notification exception, and documentation purpose. The two paragraph 2 drills use different formats rather than testing the same element in the same way. No concentration or repetition cap applies.",
+          "score": 10,
+          "label": "Coverage & variety",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3172,
+          "outputTokens": 937,
+          "reasoningTokens": 375
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The Article 33(1) multiple-choice stem asks when the notification duty does not apply, but its options begin with “Unless.” The intended answer remains clear, but the options do not read naturally as answers to that question.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Rephrase the exception question as “Which exception appears in Article 33(1)?” This would preserve the verbatim options while making the question and answers fit together.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "A generic mix of drills in US English on GDPR Article 33 (paragraphs 1, 2 and 5): true/false statements, fill-in-the-blank passages copied word for word with one load-bearing gap (such as \"72 hours\", \"controller\", \"processor\", \"without undue delay\") and 4-option multiple choice on the literal text. False statements and wrong options change exactly one element (the 72-hour deadline, who notifies whom, the \"unlikely to result in a risk\" exception, the duty to document every breach). Check every drill against the given text.",
+        "id": "en-generic-gdpr-art33-breach-notification-1",
+        "userInput": {
+          "articles": [
+            {
+              "reference": "Article 33(1)",
+              "text": "1. In the case of a personal data breach, the controller shall without undue delay and, where feasible, not later than 72 hours after having become aware of it, notify the personal data breach to the supervisory authority competent in accordance with Article 55, unless the personal data breach is unlikely to result in a risk to the rights and freedoms of natural persons. Where the notification to the supervisory authority is not made within 72 hours, it shall be accompanied by reasons for the delay."
+            },
+            {
+              "reference": "Article 33(2)",
+              "text": "2. The processor shall notify the controller without undue delay after becoming aware of a personal data breach."
+            },
+            {
+              "reference": "Article 33(5)",
+              "text": "5. The controller shall document any personal data breaches, comprising the facts relating to the personal data breach, its effects and the remedial action taken. That documentation shall enable the supervisory authority to verify compliance with this Article."
+            }
+          ],
+          "count": 6,
+          "language": "en",
+          "law": {
+            "shortName": "GDPR",
+            "title": "Regulation (EU) 2016/679 (General Data Protection Regulation)",
+            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32016R0679"
+          },
+          "fillInTheBlank": true,
+          "style": "generic"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "legalAccuracy",
+          "reasoning": "All keys agree with the supplied texts. Both multiple-choice questions have exactly one literal match. The blank passage reproduces § 3º word for word apart from the correctly omitted 'irrecorrível'. Explanations quote the relevant language accurately and cite the correct provisions. No accuracy cap applies.",
+          "score": 10,
+          "label": "Legal accuracy",
+          "weight": 35
+        },
+        {
+          "categoryId": "boardTraps",
+          "reasoning": "The false statement changes only the possession condition by removing 'não'. Each distractor changes one substantive element: a sentencing limit, the punishment type, or a statutory action. Misconceptions identify those changes specifically. 'Irrecorrível' is a legally decisive condition, not grammatical filler. No trap cap applies.",
+          "score": 10,
+          "label": "Board-style traps",
+          "weight": 30
+        },
+        {
+          "categoryId": "styleAndLanguage",
+          "reasoning": "The set provides the requested generic mix of true/false, fill-in-the-blank, and four-option multiple choice. It preserves statutory language, with only a harmless connective reformulation in the true § 2º statement. Explanations and misconceptions are clear Portuguese and explain the changes directly. No style cap applies.",
+          "score": 10,
+          "label": "Style & language",
+          "weight": 20
+        },
+        {
+          "categoryId": "coverage",
+          "reasoning": "All four supplied provisions appear, with distinct targets and a reasonable progression from penalty recognition to possession conditions and the finality requirement. Neither repeated § 1º drill tests the same element the same way, and no coverage cap applies. Coverage could nevertheless be broader by testing the caput's conduct instead of devoting a second question to § 1º.",
+          "score": 9,
+          "label": "Coverage & variety",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 7 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3283,
+          "outputTokens": 678,
+          "reasoningTokens": 168
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        { "conclusion": "None", "kind": "minorErrors", "score": 10 },
+        {
+          "conclusion": "For broader coverage within five drills, consider replacing the second § 1º question with a question on the caput's appropriation or diversion conduct. The caput is currently tested only through its penalty.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "A generic mix of drills in Brazilian Portuguese on embezzlement (peculato) in article 312 of the Brazilian Penal Code: the caput and its penalty, § 1º (peculato-furto), § 2º (culpable form) and § 3º (repairing the damage). Traps should change one element, such as \"reclusão\" to \"detenção\", \"dois a doze anos\" to another range, \"precede à sentença irrecorrível\" to \"posterior\", \"extingue a punibilidade\" to \"reduz de metade a pena\". Fill-in-the-blank passages must be copied word for word.",
+        "id": "pt-generic-codigo-penal-art312-peculato-1",
+        "userInput": {
+          "articles": [
+            {
+              "reference": "Art. 312, caput",
+              "text": "Art. 312 - Apropriar-se o funcionário público de dinheiro, valor ou qualquer outro bem móvel, público ou particular, de que tem a posse em razão do cargo, ou desviá-lo, em proveito próprio ou alheio: Pena - reclusão, de dois a doze anos, e multa."
+            },
+            {
+              "reference": "Art. 312, § 1º",
+              "text": "§ 1º - Aplica-se a mesma pena, se o funcionário público, embora não tendo a posse do dinheiro, valor ou bem, o subtrai, ou concorre para que seja subtraído, em proveito próprio ou alheio, valendo-se de facilidade que lhe proporciona a qualidade de funcionário."
+            },
+            {
+              "reference": "Art. 312, § 2º",
+              "text": "§ 2º - Se o funcionário concorre culposamente para o crime de outrem: Pena - detenção, de três meses a um ano."
+            },
+            {
+              "reference": "Art. 312, § 3º",
+              "text": "§ 3º - No caso do parágrafo anterior, a reparação do dano, se precede à sentença irrecorrível, extingue a punibilidade; se lhe é posterior, reduz de metade a pena imposta."
+            }
+          ],
+          "count": 5,
+          "language": "pt",
+          "law": {
+            "shortName": "Código Penal",
+            "title": "Decreto-Lei nº 2.848, de 7 de dezembro de 1940 (Código Penal)",
+            "url": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del2848compilado.htm"
+          },
+          "fillInTheBlank": true,
+          "style": "generic"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "legalAccuracy",
+          "reasoning": "All keys agree with the supplied Amendment V text. Each multiple-choice question has exactly one text-matching answer. Reasons quote the relevant language accurately and identify Amendment V. The shortened statements are permissible under the rubric's rule allowing incomplete statements.",
+          "score": 10,
+          "label": "Legal accuracy",
+          "weight": 35
+        },
+        {
+          "categoryId": "boardTraps",
+          "reasoning": "The false statements and distractors make isolated changes to the relevant wording: jury type, public use, number of jeopardy exposures, protected interest, or military-exception conditions. Misconceptions identify each substitution or reversal specifically. No multi-element or generic-misconception cap is triggered.",
+          "score": 10,
+          "label": "Board-style traps",
+          "weight": 30
+        },
+        {
+          "categoryId": "styleAndLanguage",
+          "reasoning": "The five drills appropriately mix true/false statements and four-option multiple choice, with neither written responses nor a fill-in passage, as the task-specific expectations require. Statements and options closely preserve the supplied legal wording; explanations are clear English and identify what changed.",
+          "score": 10,
+          "label": "Style & language",
+          "weight": 20
+        },
+        {
+          "categoryId": "coverage",
+          "reasoning": "The drills cover the grand-jury requirement, military exception, self-incrimination, double jeopardy, and public-use language without duplicating an element in the same way. However, due process is entirely absent, and just compensation is retained rather than directly tested. The nominal hard drill does not provide a convincing increase in difficulty. With only one supplied article, concentration on Amendment V is appropriate.",
+          "score": 8,
+          "label": "Coverage & variety",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 7 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 2925,
+          "outputTokens": 845,
+          "reasoningTokens": 319
+        }
+      },
+      "steps": [
+        { "conclusion": "None", "kind": "majorErrors", "score": 10 },
+        {
+          "conclusion": "The set never tests the due-process protection for life, liberty, or property. Difficulty calibration is also weak: the drill labeled hard merely substitutes “private use” for “public use,” requiring no more careful reading than the easier substitutions.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Rebalance the five drills to include due process while retaining the military exception. Use a subtle omission of an exception or condition for the hard drill rather than a conspicuous word substitution.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A generic mix of drills in US English on the Fifth Amendment to the US Constitution: grand jury indictment for capital or infamous crimes with the military exception, double jeopardy, self-incrimination \"in any criminal case\", due process and just compensation for takings \"for public use\". Traps change one element (such as \"in time of War or public danger\" dropped or swapped, \"civil case\" for \"criminal case\", \"fair market value\" for \"just compensation\"). Its exam asks no short written answers, so the mix is true/false statements and 4-option multiple choice only, with no fill-in-the-blank passage. Check every drill against the given text.",
+        "id": "en-generic-us-constitution-fifth-amendment-1",
+        "userInput": {
+          "articles": [
+            {
+              "reference": "Amendment V",
+              "text": "No person shall be held to answer for a capital, or otherwise infamous crime, unless on a presentment or indictment of a Grand Jury, except in cases arising in the land or naval forces, or in the Militia, when in actual service in time of War or public danger; nor shall any person be subject for the same offence to be twice put in jeopardy of life or limb; nor shall be compelled in any criminal case to be a witness against himself, nor be deprived of life, liberty, or property, without due process of law; nor shall private property be taken for public use, without just compensation."
+            }
+          ],
+          "count": 5,
+          "language": "en",
+          "law": {
+            "shortName": "US Constitution",
+            "title": "Constitution of the United States",
+            "url": "https://www.archives.gov/founding-docs/bill-of-rights-transcript"
+          },
+          "style": "generic"
         }
       }
     }

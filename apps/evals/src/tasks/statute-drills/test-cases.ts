@@ -68,6 +68,8 @@ export const TEST_CASES: TestCase<unknown, StatuteDrillsInput>[] = [
         },
       ],
       count: 6,
+      // An exam that asks short written answers gets fill-in-the-blank drills.
+      fillInTheBlank: true,
       language: "en",
       law: {
         shortName: "GDPR",
@@ -165,6 +167,7 @@ export const TEST_CASES: TestCase<unknown, StatuteDrillsInput>[] = [
         },
       ],
       count: 5,
+      fillInTheBlank: true,
       language: "pt",
       law: {
         shortName: "Código Penal",
@@ -175,7 +178,7 @@ export const TEST_CASES: TestCase<unknown, StatuteDrillsInput>[] = [
     },
   },
   {
-    expectations: `A generic mix of drills in US English on the Fifth Amendment to the US Constitution: grand jury indictment for capital or infamous crimes with the military exception, double jeopardy, self-incrimination "in any criminal case", due process and just compensation for takings "for public use". Traps change one element (such as "in time of War or public danger" dropped or swapped, "civil case" for "criminal case", "fair market value" for "just compensation"). Check every drill against the given text.`,
+    expectations: `A generic mix of drills in US English on the Fifth Amendment to the US Constitution: grand jury indictment for capital or infamous crimes with the military exception, double jeopardy, self-incrimination "in any criminal case", due process and just compensation for takings "for public use". Traps change one element (such as "in time of War or public danger" dropped or swapped, "civil case" for "criminal case", "fair market value" for "just compensation"). Its exam asks no short written answers, so the mix is true/false statements and 4-option multiple choice only, with no fill-in-the-blank passage. Check every drill against the given text.`,
     id: "en-generic-us-constitution-fifth-amendment",
     userInput: {
       articles: [

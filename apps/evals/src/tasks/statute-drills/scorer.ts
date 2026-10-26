@@ -10,9 +10,18 @@ import { checkItem } from "@zoonk/core/library/items/checks";
 import { STATUTE_DRILLS_SCORE_CATEGORIES } from "./score-categories";
 
 type StatuteDrillsOutput = Awaited<ReturnType<typeof generateStatuteDrills>>["data"];
-type StatuteDrillsCase = Pick<StatuteDrillParams, "count" | "language" | "style">;
 
-const GENERIC_FORMATS: StatuteDrill["format"][] = ["trueFalse", "typed", "multipleChoice"];
+type StatuteDrillsCase = Pick<
+  StatuteDrillParams,
+  "count" | "fillInTheBlank" | "language" | "style"
+>;
+
+/** The generic mix's formats: fill-in-the-blank only for an exam that asks short written answers. */
+function getGenericFormats(input: StatuteDrillsCase): StatuteDrill["format"][] {
+  return input.fillInTheBlank
+    ? ["trueFalse", "typed", "multipleChoice"]
+    : ["trueFalse", "multipleChoice"];
+}
 
 /** The set-level checks below: the count and the format mix. */
 const SET_CHECKS = 2;
@@ -24,11 +33,12 @@ function checkCount(total: number, count: number): string | false {
 /** Schemas already limit Cebraspe and FGV to their format, so only the generic mix can miss one. */
 function checkMix(drills: StatuteDrill[], input: StatuteDrillsCase): string | false {
   const formats = new Set(drills.map((drill) => drill.format));
-  const missing = GENERIC_FORMATS.filter((format) => !formats.has(format));
+  const generic = getGenericFormats(input);
+  const missing = generic.filter((format) => !formats.has(format));
 
   return (
     input.style === "generic" &&
-    input.count >= GENERIC_FORMATS.length &&
+    input.count >= generic.length &&
     missing.length > 0 &&
     `The generic mix has no ${missing.join(" or ")} drill.`
   );

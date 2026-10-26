@@ -3,6 +3,7 @@ import { type StatuteDrill } from "@zoonk/ai/tasks/v2/items/statute-drills";
 import { prisma } from "@zoonk/db";
 import { type LibraryProvenance } from "../../library/_utils/library-rows";
 import { examStructureSchema } from "../../library/exams/blueprint-contract";
+import { asksShortAnswers } from "../../library/exams/short-answers";
 import { createItems } from "../../library/items/create-items";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { namesMatch } from "../_utils/name-match";
@@ -24,6 +25,11 @@ type StatuteDrillStyle = "cebraspe" | "fgv" | "generic";
 export type StatuteDrillTarget = {
   articles: StatuteArticleText[];
   examBlueprintId: string;
+  /**
+   * The exam asks short written answers (`asksShortAnswers`), so its generic drills mix in
+   * fill-in-the-blank passages; any other exam's would never be asked.
+   */
+  fillInTheBlank: boolean;
   language: string;
   law: { shortName: string; title: string; url: string | null };
   skillId: string;
@@ -94,8 +100,14 @@ export async function loadStatuteDrillTargets(goalId: string): Promise<StatuteDr
   });
 
   const skills = parsePlanGraph(goal.plan?.graph).skills;
-  const method = examStructureSchema.safeParse(blueprint.structure).data?.mock?.scoring.method;
-  const style = getStyle({ board: blueprint.board, method: method ?? null });
+  const structure = examStructureSchema.safeParse(blueprint.structure).data ?? null;
+
+  const style = getStyle({
+    board: blueprint.board,
+    method: structure?.mock?.scoring.method ?? null,
+  });
+
+  const fillInTheBlank = asksShortAnswers(structure);
 
   return sources
     .map(({ source }) => source)
@@ -109,6 +121,7 @@ export async function loadStatuteDrillTargets(goalId: string): Promise<StatuteDr
             {
               articles,
               examBlueprintId: blueprint.id,
+              fillInTheBlank,
               language: goal.language,
               law: {
                 shortName: toStatuteShortName(source.title),

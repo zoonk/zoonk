@@ -40,6 +40,7 @@ export async function prepareStatuteDrillsStep({
       analytics: toContentAnalytics({ analytics, scope: { ownerId: null }, workflowRunId }),
       articles: target.articles,
       count: DRILLS_PER_LAW,
+      fillInTheBlank: target.fillInTheBlank,
       language: target.language,
       law: target.law,
       style: target.style,

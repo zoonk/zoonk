@@ -36,6 +36,8 @@ export async function rewriteFlaggedDrillsStep({
       analytics: { contentScope: "shared", traceId: workflowRunId },
       articles: [group.article],
       count: group.itemIds.length,
+      // A flagged fill-in-the-blank is written again as one, in place.
+      fillInTheBlank: group.format === "typed",
       language: group.language,
       law: group.law,
       style: group.style,
