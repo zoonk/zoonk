@@ -17,7 +17,7 @@ import {
   setDefaultCACertificates,
 } from "node:tls";
 import { safeAsync } from "@zoonk/utils/error";
-import { type fetch } from "undici";
+import { fetch } from "undici";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { fetchCompletingChain, isMissingIssuerError } from "./issuer-certificates";
 
@@ -229,6 +229,7 @@ describe(fetchCompletingChain, () => {
   }
 
   beforeAll(async () => {
+    vi.mocked(fetch).mockImplementation(realFetch);
     originalAuthorities = getCACertificates("default");
     root = issueCertificate({ ca: true, name: "Test Root" });
     intermediate = issueCertificate({ ca: true, issuer: root, name: "Test Intermediate" });
@@ -298,18 +299,6 @@ describe(fetchCompletingChain, () => {
     await expect(response.text()).resolves.toBe("Edital for ZoonkBot test");
   });
 
-  it("downloads each issuer once", async () => {
-    published.set("/cached.crt", { body: intermediate.certificate.raw });
-    const leaf = issueLeaf({ dnsName: "cached.example.com", issuerPath: "/cached.crt" });
-    const url = serveLeaf({ host: "cached.example.com", leaf });
-
-    await fetchLeafOnly(url);
-    const response = await fetchLeafOnly(url);
-
-    expect(response.status).toBe(200);
-    expect(downloads.filter((path) => path === "/cached.crt")).toHaveLength(1);
-  });
-
   it("still fails when the issuer doesn't lead to a trusted root", async () => {
     published.set("/untrusted.crt", { body: untrustedIntermediate.certificate.raw });
 
@@ -321,7 +310,9 @@ describe(fetchCompletingChain, () => {
 
     const url = serveLeaf({ host: "untrusted.example.com", leaf });
 
-    await expect(fetchLeafOnly(url)).rejects.toMatchObject({ code: "UNABLE_TO_GET_ISSUER_CERT" });
+    await expect(fetchLeafOnly(url)).rejects.toMatchObject({
+      cause: { code: "UNABLE_TO_GET_ISSUER_CERT" },
+    });
 
     expect(downloads).toContain("/untrusted.crt");
   });
@@ -332,7 +323,7 @@ describe(fetchCompletingChain, () => {
     const url = serveLeaf({ host: "mismatch.example.com", leaf });
 
     await expect(fetchLeafOnly(url)).rejects.toMatchObject({
-      code: "ERR_TLS_CERT_ALTNAME_INVALID",
+      cause: { code: "ERR_TLS_CERT_ALTNAME_INVALID" },
     });
   });
 

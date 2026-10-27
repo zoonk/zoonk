@@ -1,8 +1,7 @@
 import { X509Certificate } from "node:crypto";
 import { type LookupFunction } from "node:net";
 import { connect, getCACertificates } from "node:tls";
-import { type Response } from "undici";
-import { requestWithNode } from "./node-request";
+import { Agent, type Response, fetch } from "undici";
 import { isPublicUrl, publicLookup } from "./public-url";
 import { readLimitedBody } from "./read-limited-body";
 
@@ -14,11 +13,6 @@ const WEB_URL_PATTERN = /^https?:/iu;
 const ISSUER_TIMEOUT_MS = 10_000;
 /** An intermediate certificate takes 1 to 2 KB; anything this large isn't one. */
 const MAX_ISSUER_BYTES = 32_768;
-/** Far more certificate authorities than research meets, so the cache never grows unbounded. */
-const MAX_CACHED_ISSUERS = 50;
-
-/** Issuers by the address a server's certificate names, so each one downloads once per process. */
-const issuersByUrl = new Map<string, X509Certificate>();
 
 type ChainRequest = {
   headers: Record<string, string>;
@@ -41,9 +35,7 @@ function errorCode(error: unknown): unknown {
  * the cause of its generic "fetch failed".
  */
 export function isMissingIssuerError(error: unknown): boolean {
-  const cause = error instanceof Error ? error.cause : undefined;
-
-  return errorCode(error) === MISSING_ISSUER_CODE || errorCode(cause) === MISSING_ISSUER_CODE;
+  return errorCode(error instanceof Error ? error.cause : undefined) === MISSING_ISSUER_CODE;
 }
 
 /**
@@ -52,10 +44,10 @@ export function isMissingIssuerError(error: unknown): boolean {
  * since nothing about the server was verified.
  */
 function readServerCertificate({
-  lookup = publicLookup,
+  lookup,
   url,
 }: {
-  lookup?: LookupFunction;
+  lookup: LookupFunction;
   url: URL;
 }): Promise<Buffer> {
   return new Promise((resolve, reject) => {
@@ -111,11 +103,15 @@ async function downloadCertificate({
   url,
 }: {
   headers: Record<string, string>;
-  lookup?: LookupFunction;
+  lookup: LookupFunction;
   url: string;
 }): Promise<X509Certificate> {
-  const signal = AbortSignal.timeout(ISSUER_TIMEOUT_MS);
-  const response = await requestWithNode({ headers, lookup, signal, url });
+  const response = await fetch(url, {
+    dispatcher: new Agent({ connect: { lookup } }),
+    headers,
+    redirect: "manual",
+    signal: AbortSignal.timeout(ISSUER_TIMEOUT_MS),
+  });
 
   if (!response.ok) {
     await response.body?.cancel();
@@ -129,17 +125,6 @@ async function downloadCertificate({
 
 function isIssuerOf({ issuer, leaf }: { issuer: X509Certificate; leaf: X509Certificate }): boolean {
   return issuer.ca && leaf.checkIssued(issuer) && leaf.verify(issuer.publicKey);
-}
-
-function rememberIssuer({ issuer, url }: { issuer: X509Certificate; url: string }) {
-  issuersByUrl.delete(url);
-  issuersByUrl.set(url, issuer);
-
-  const [oldest] = issuersByUrl.keys();
-
-  if (issuersByUrl.size > MAX_CACHED_ISSUERS && oldest) {
-    issuersByUrl.delete(oldest);
-  }
 }
 
 /**
@@ -157,7 +142,7 @@ async function findIssuer({
   headers: Record<string, string>;
   hostname: string;
   leaf: X509Certificate;
-  lookup?: LookupFunction;
+  lookup: LookupFunction;
 }): Promise<X509Certificate> {
   const url = getIssuerUrl(leaf);
 
@@ -169,19 +154,11 @@ async function findIssuer({
     throw new Error(`Refusing to fetch a certificate from a non-public address: ${url}`);
   }
 
-  const cached = issuersByUrl.get(url);
-
-  if (cached && isIssuerOf({ issuer: cached, leaf })) {
-    return cached;
-  }
-
   const issuer = await downloadCertificate({ headers, lookup, url });
 
   if (!isIssuerOf({ issuer, leaf })) {
     throw new Error(`The certificate at ${url} isn't the authority that issued ${hostname}'s.`);
   }
-
-  rememberIssuer({ issuer, url });
 
   return issuer;
 }
@@ -193,7 +170,7 @@ async function findIssuer({
  */
 export async function fetchCompletingChain({
   headers,
-  lookup,
+  lookup = publicLookup,
   signal,
   url,
 }: ChainRequest): Promise<Response> {
@@ -202,5 +179,10 @@ export async function fetchCompletingChain({
   const issuer = await findIssuer({ headers, hostname: target.hostname, leaf, lookup });
   const ca = [...getCACertificates("default"), issuer.toString()];
 
-  return requestWithNode({ ca, headers, lookup, signal, url });
+  return fetch(url, {
+    dispatcher: new Agent({ connect: { ca, lookup } }),
+    headers,
+    redirect: "manual",
+    signal,
+  });
 }
