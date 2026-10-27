@@ -21,7 +21,6 @@ import {
   addExtraStudyBlockAction,
   openMissionAction,
   openNextStudyBlockAction,
-  openStudyBlockAction,
   openWrittenLessonAction,
   saveMissionDayAction,
   stopStudySessionAction,
@@ -355,7 +354,6 @@ export function useStudyNavigation(sessionId: string) {
   return {
     addExtraTime: () => navigate(() => addExtraStudyBlockAction(input())),
     continueSession: () => navigate(() => openNextStudyBlockAction(input())),
-    openBlock: (blockId: string) => navigate(() => openStudyBlockAction({ ...input(), blockId })),
     openWrittenLesson: (blockId: string) =>
       navigate(() => openWrittenLessonAction({ ...input(), blockId })),
     stop: async () => {

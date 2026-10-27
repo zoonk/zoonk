@@ -5,7 +5,6 @@ import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fix
 import { isJsonObject } from "@zoonk/utils/json";
 import { type Page, expect, test } from "./fixtures";
 import { type StreamEvent, followRun } from "./generation-run";
-import { tabTo } from "./keyboard-focus";
 import { continueToLastStep } from "./result-steps";
 import { answerRight, createStudyDay, openAs, pressUntil, writeStudyLesson } from "./study-day";
 
@@ -172,8 +171,7 @@ test.describe("Today's session", () => {
     const page = await openAs(browser, user);
     await page.goto("/today");
 
-    await tabTo(page, page.getByRole("button", { name: /^Start/u }));
-    await page.keyboard.press("Enter");
+    await page.getByRole("button", { name: /^Start/u }).press("Enter");
     await answerPlacement(page);
 
     await playCapsules(page);
@@ -202,8 +200,7 @@ test.describe("Today's session", () => {
     const page = await openAs(browser, user);
     await page.goto("/today");
 
-    await tabTo(page, page.getByRole("button", { name: /^Start/u }));
-    await page.keyboard.press("Enter");
+    await page.getByRole("button", { name: /^Start/u }).press("Enter");
     await playCapsules(page);
     await expectMoment(page, "Review done");
 
