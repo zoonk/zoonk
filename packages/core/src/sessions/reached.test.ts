@@ -1,36 +1,45 @@
 import { describe, expect, it } from "vitest";
-import { getEnergyReached, getLevelReached } from "./reached";
+import { getReached } from "./reached";
 
-describe(getLevelReached, () => {
+/** Energy that stays put, so a test reads only the level. */
+const SAME_ENERGY = { after: 50, before: 50 };
+
+/** Brain Power that stays put, so a test reads only the tenth of Energy. */
+const SAME_BRAIN_POWER = { after: 10, before: 10 };
+
+/** The tenth of Energy an Energy change reached, its Brain Power unchanged. */
+function energyOf(energy: { after: number; before: number }) {
+  return getReached({ brainPower: SAME_BRAIN_POWER, energy }).energy;
+}
+
+describe(getReached, () => {
   it("names the level a block's Brain Power crossed into", () => {
-    expect(getLevelReached({ after: 260, before: 240 })).toStrictEqual({
-      color: "white",
-      level: 2,
-    });
+    expect(
+      getReached({ brainPower: { after: 260, before: 240 }, energy: SAME_ENERGY }),
+    ).toStrictEqual({ energy: null, level: { color: "white", level: 2 } });
   });
 
   it("names the new belt when the Brain Power crossed into its first level", () => {
-    expect(getLevelReached({ after: 2510, before: 2490 })).toStrictEqual({
-      color: "yellow",
-      level: 1,
-    });
+    expect(
+      getReached({ brainPower: { after: 2510, before: 2490 }, energy: SAME_ENERGY }).level,
+    ).toStrictEqual({ color: "yellow", level: 1 });
   });
 
-  it("reaches nothing while the Brain Power stays within a level", () => {
-    expect(getLevelReached({ after: 249, before: 10 })).toBeNull();
-  });
-});
-
-describe(getEnergyReached, () => {
-  it("names the highest tenth crossed going up", () => {
-    expect(getEnergyReached({ after: 81.4, before: 79.8 })).toBe(80);
-    expect(getEnergyReached({ after: 100, before: 99.6 })).toBe(100);
+  it("reaches no level while the Brain Power stays within one", () => {
+    expect(
+      getReached({ brainPower: { after: 249, before: 10 }, energy: SAME_ENERGY }).level,
+    ).toBeNull();
   });
 
-  it("reaches nothing within a tenth, from exactly a tenth, or going down", () => {
-    expect(getEnergyReached({ after: 79.9, before: 70.2 })).toBeNull();
-    expect(getEnergyReached({ after: 80.2, before: 80 })).toBeNull();
-    expect(getEnergyReached({ after: 59.9, before: 60.1 })).toBeNull();
-    expect(getEnergyReached({ after: 0.2, before: 0 })).toBeNull();
+  it("names the highest tenth of Energy crossed going up", () => {
+    expect(energyOf({ after: 81.4, before: 79.8 })).toBe(80);
+    expect(energyOf({ after: 100, before: 99.6 })).toBe(100);
+  });
+
+  it("reaches no tenth within one, from exactly one, or going down", () => {
+    expect(energyOf({ after: 79.9, before: 70.2 })).toBeNull();
+    expect(energyOf({ after: 80.2, before: 80 })).toBeNull();
+    expect(energyOf({ after: 59.9, before: 60.1 })).toBeNull();
+    expect(energyOf({ after: 0.2, before: 0 })).toBeNull();
   });
 });

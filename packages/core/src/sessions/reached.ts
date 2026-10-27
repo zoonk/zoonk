@@ -28,7 +28,7 @@ export const NOTHING_REACHED: Reached = { energy: null, level: null };
 type Change = { after: number; before: number };
 
 /** The belt level a block's Brain Power took the learner to, when it crossed into a new one. */
-export function getLevelReached({ after, before }: Change): Reached["level"] {
+function getLevelReached({ after, before }: Change): Reached["level"] {
   const from = calculateBeltLevel(before);
   const to = calculateBeltLevel(after);
 
@@ -43,7 +43,7 @@ export function getLevelReached({ after, before }: Change): Reached["level"] {
  * The highest tenth of Energy a block took the learner to on the way up, when it crossed one:
  * Energy that dropped, or moved within a tenth, reached nothing new.
  */
-export function getEnergyReached({ after, before }: Change): Reached["energy"] {
+function getEnergyReached({ after, before }: Change): Reached["energy"] {
   const step = Math.floor(after / ENERGY_STEP) * ENERGY_STEP;
   return step > before && step > 0 ? step : null;
 }
