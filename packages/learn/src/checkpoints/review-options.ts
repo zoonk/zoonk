@@ -1,7 +1,7 @@
 import { type QuestionAnswer } from "@zoonk/core/sessions/contract";
 
 /** One option a reviewed question shows, by its place among the question's options. */
-export type ReviewedOption = { index: number; picked: boolean; result: "right" | "wrong" };
+type ReviewedOption = { index: number; picked: boolean; result: "right" | "wrong" };
 
 /** The options an answer picks: one, several, or a statement's true (the first) or false. */
 function toOptionIndexes(answer: QuestionAnswer): number[] | null {

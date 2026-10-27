@@ -2,7 +2,7 @@ import { type LanguageLevelTestView } from "@zoonk/core/language/level-test/cont
 import { type PollStatus } from "../../_utils/use-poll";
 import { type GenerationRun } from "../../generation/generation-run";
 
-export type PreparingTest = Extract<LanguageLevelTestView, { status: "preparing" }>;
+type PreparingTest = Extract<LanguageLevelTestView, { status: "preparing" }>;
 
 /**
  * A run asked for this long ago still hasn't claimed the pair's questions: its start was lost.

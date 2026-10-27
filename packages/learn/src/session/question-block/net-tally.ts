@@ -1,7 +1,7 @@
 import { type StudyQuestion } from "../session-types";
 import { type QuestionBlockState } from "./question-block-state";
 
-export type NetTally = { blank: number; right: number; wrong: number };
+type NetTally = { blank: number; right: number; wrong: number };
 
 /**
  * Right, wrong and blank so far, for the net score: this visit's answers, else what the block

@@ -89,7 +89,7 @@ export type BuddyScreenHrefs = BuddyDayHrefs & {
  * and the learner's answer to a plan change the buddy proposed in the conversation. Today's
  * missions open where they're done (`missionLinks`).
  */
-export type BuddyScreenActions = {
+type BuddyScreenActions = {
   decidePlanChange: DecideTutorPlanChange;
   missionLinks: MissionLinks;
   saveBuddy: (buddy: AppearanceBuddy) => Promise<boolean>;

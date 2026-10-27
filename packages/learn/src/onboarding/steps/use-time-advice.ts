@@ -31,7 +31,7 @@ export type AdviceAnswer = { advice: PlanTimeAdvice; key: string; minutes: numbe
  * everything for this week, that time's (all of it). Other times are unknown until asked about:
  * extra time can change the exam's mock cadence.
  */
-export type PickedShare = { known: boolean; share: number | null };
+type PickedShare = { known: boolean; share: number | null };
 
 /**
  * A weekend at another time than the weekdays keeps it when the daily time changes, so the time

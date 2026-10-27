@@ -84,7 +84,7 @@ const STATIONS = {
 /** Several stops folded into one (a level not opened yet), as tall as the lines that name them. */
 const ZONE_STATION_CLASS = "w-3.5 rounded-full border-[2.5px] border-subject";
 
-export type RouteStation = keyof typeof STATIONS;
+type RouteStation = keyof typeof STATIONS;
 
 /** A station's look, for a line drawn across rather than down (a chapter's stretch of its course). */
 export function getRouteStationClass(station: RouteStation): string {

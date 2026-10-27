@@ -27,7 +27,7 @@ type QuestionsHeader = { closeHref: string; screen: string; title: string };
 export type ChoiceQuestionAnswer = { answer: ChoiceAnswer; durationMs: number; itemId: string };
 
 /** Questions still being written while the first ones are asked. */
-export type UpcomingQuestions = {
+type UpcomingQuestions = {
   /** The writing stopped short of `total`: the learner can finish with the answers so far. */
   ended: boolean;
   /** How many questions the run asks in all, the ones still being written included. */

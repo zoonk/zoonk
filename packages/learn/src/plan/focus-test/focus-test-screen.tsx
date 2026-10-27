@@ -44,7 +44,7 @@ export type FocusTestView = {
 };
 
 /** How the host writes the test's questions, when it doesn't have them all yet. */
-export type FocusTestPreparing = {
+type FocusTestPreparing = {
   /** The learner's small AI help doesn't cover writing them now. */
   limit: HelpLimit | null;
   /** Asks for the questions (a POST, on the learner's tap). */

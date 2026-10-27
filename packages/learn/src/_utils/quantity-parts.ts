@@ -1,5 +1,5 @@
 /** A run of a formatted quantity: a number (with its "~" or sign) or the words and units around it. */
-export type QuantityPart = { numeric: boolean; text: string };
+type QuantityPart = { numeric: boolean; text: string };
 
 /** A number with its "~" or sign, and its percent sign when it's a share ("3.48%", "3,48 %"). */
 const NUMBER_RUN = /(?<number>[~≈+\-−]?\d[\d.,:]*(?:[\u00A0\u202F]?%)?)/u;

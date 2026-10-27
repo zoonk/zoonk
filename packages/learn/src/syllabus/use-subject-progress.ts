@@ -17,7 +17,7 @@ export type SubjectBar = { known: number; studied: number };
  * beside them, so taking that credit back never lowers what they studied; a topic is ticked only
  * once all its lessons are. `known`: what they skipped because they showed they know it.
  */
-export type SubjectProgress = { bar: SubjectBar | null; known: string | null; label: string };
+type SubjectProgress = { bar: SubjectBar | null; known: string | null; label: string };
 
 /** The subject's bar in its goal's measure (see `SubjectBar`). */
 export function getSubjectBar(

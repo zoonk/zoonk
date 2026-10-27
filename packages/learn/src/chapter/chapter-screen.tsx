@@ -38,7 +38,7 @@ export type { ChapterActions, ChapterHrefs } from "./chapter-context";
  * The chapter's mind map and what the host does for it, with the cap of the learner's plan its
  * maps already reached (`cap`); null for a language's unit.
  */
-export type ChapterMindMap = {
+type ChapterMindMap = {
   actions: MindMapActions;
   cap?: MindMapLimit | null;
   view: ChapterMindMapView;

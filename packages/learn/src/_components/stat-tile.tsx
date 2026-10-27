@@ -16,7 +16,7 @@ const STAT_TONE = {
   time: "text-muted-foreground",
 } as const;
 
-export type StatTone = keyof typeof STAT_TONE;
+type StatTone = keyof typeof STAT_TONE;
 
 /**
  * A few numbers side by side, each on its own tile (a session's minutes, questions and right

@@ -36,7 +36,7 @@ import { getSubjectBar, getSubjectShare, useKnownLine } from "./use-subject-prog
 const TOPICS_TITLE_ID = "subject-topics-title";
 
 /** Where a subject's page leads: back, each chapter's page, and the plan's adjustments. */
-export type SubjectHrefs = {
+type SubjectHrefs = {
   /** The Plan, where the plan is adjusted. */
   adjust: string;
   back: string;
