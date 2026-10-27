@@ -27,11 +27,11 @@ export type LessonQuestionContext =
 
 /**
  * Asked about an answer the learner checked, so the tutor saw it and the right one: a lesson
- * screen's answer, or a session's or practice's question once it's checked (a saved one says so
- * when the tutor's request asks, see `lessonQuestionReadInputSchema`).
+ * screen's answer, or a session's or practice's question once it's checked (`answered`, which a
+ * saved turn keeps too).
  */
 export function isAboutCheckedAnswer(
   context: LessonQuestionContext | LessonQuestionContextSummary,
 ): boolean {
-  return context.kind === "answer" || (context.kind === "item" && context.answered === true);
+  return context.kind === "answer" || (context.kind === "item" && context.answered);
 }
