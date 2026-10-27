@@ -6,12 +6,7 @@ import {
   createLessonQuestionInputSchema,
 } from "@zoonk/core/lesson-questions/contract";
 import { onTestFinished, vi } from "vitest";
-import {
-  asOlderApiRequest,
-  asRequested,
-  getContextSummary,
-  getThreadPage,
-} from "./tutor-api-requests";
+import { asRequested, getContextSummary, getThreadPage } from "./tutor-api-requests";
 
 /** What a question carries before an answer proposes or offers anything. */
 const UNANSWERED = { planChange: null, toolOffer: null } as const;
@@ -25,7 +20,6 @@ const UNANSWERED = { planChange: null, toolOffer: null } as const;
 export const TUTOR_API_URL = "https://api.zoonk.test";
 export const TUTOR_AUTHORIZATION = "Bearer tutor-test-token";
 
-const HTTP_STATUS_BAD_REQUEST = 400;
 const HTTP_STATUS_UNAUTHORIZED = 401;
 const HTTP_STATUS_NOT_FOUND = 404;
 const HTTP_STATUS_CONFLICT = 409;
@@ -169,12 +163,9 @@ function toTutorRequest(request: Request): TutorRequest {
  */
 export function stubTutorApi({
   lesson,
-  olderApi = false,
   pageSize,
 }: {
   lesson?: PlayableLibraryLesson;
-  /** The API from before `include`, as apps can meet it while they deploy (`asOlderApiRequest`). */
-  olderApi?: boolean;
   /** How many questions a thread page holds; without it, the whole thread comes at once. */
   pageSize?: number;
 }) {
@@ -338,13 +329,7 @@ export function stubTutorApi({
       return Promise.resolve(errorResponse(HTTP_STATUS_UNAUTHORIZED));
     }
 
-    const served = olderApi ? asOlderApiRequest(request) : request;
-
-    if (!served) {
-      return Promise.resolve(errorResponse(HTTP_STATUS_BAD_REQUEST));
-    }
-
-    const tutorRequest = toTutorRequest(served);
+    const tutorRequest = toTutorRequest(request);
     api.requests[tutorRequest.route] += 1;
     const respond = responders[tutorRequest.route].shift();
 

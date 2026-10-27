@@ -134,21 +134,14 @@ export async function getLessonQuestionThreadRequest({
 } & GetLessonQuestionThreadInput): Promise<
   LessonQuestionApiResult<LessonQuestionThreadResource | null>
 > {
-  const readThread = (include?: "answered") =>
-    safeAsync(async () =>
-      fetch(questionsUrl({ connection, contextKind, cursor, include, stepId, target }), {
-        cache: "no-store",
-        headers: await connection.getHeaders(),
-      }),
-    );
-
   const include = getThreadInclude(target);
-  const read = await readThread(include);
 
-  // An API from before `include` (met while apps deploy) refuses it: the thread is read again
-  // without it, its turns unannotated, so nothing is held back, as before.
-  const { data: response, error } =
-    include && read.data?.status === HTTP_STATUS_BAD_REQUEST ? await readThread() : read;
+  const { data: response, error } = await safeAsync(async () =>
+    fetch(questionsUrl({ connection, contextKind, cursor, include, stepId, target }), {
+      cache: "no-store",
+      headers: await connection.getHeaders(),
+    }),
+  );
 
   if (error || !response) {
     return { error: { kind: "unknown" }, status: "error" };
@@ -177,7 +170,6 @@ export async function createLessonQuestionRequest({
   input: CreateLessonQuestionInput;
   target: TutorTarget;
 }): Promise<LessonQuestionApiResult<CreatedLessonQuestion>> {
-  // An API from before `include` ignores it on a new question, which then reads unannotated.
   const { data: response, error } = await safeAsync(async () =>
     fetch(questionsUrl({ connection, include: getThreadInclude(target), target }), {
       body: JSON.stringify(input),
@@ -216,8 +208,7 @@ export async function getLessonQuestionRequest({
 }): Promise<LessonQuestionApiResult<LessonQuestionResource>> {
   const url = questionUrl({ connection, questionId });
 
-  // A polled item turn keeps saying whether it was about the learner's checked answer; servers
-  // that don't know `include` ignore it here.
+  // A polled item turn keeps saying whether it was about the learner's checked answer.
   url.searchParams.set("include", "answered");
 
   const { data: response, error } = await safeAsync(async () =>

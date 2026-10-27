@@ -257,19 +257,4 @@ describe("the buddy beside a run of questions", () => {
     await conversation.getByRole("button", { name: "Back" }).click();
     await expect.element(material).toBeVisible();
   });
-
-  // While apps deploy, the tutor can meet the API from before `include`: it reads the conversation
-  // as that API sends it, holding nothing back as it did then, and the aside's composer still sends.
-  it("talks with the API from before `include`, holding nothing back", async () => {
-    const api = stubTutorApi({ olderApi: true });
-    api.questions = earlierDayTurns(api);
-
-    render(<QuestionRun questions={[EVEN]} />);
-    await askFromAside("Another hint?");
-
-    const conversation = dockedConversation();
-    await expect.element(conversation.getByText(TUTOR_ANSWER)).toBeVisible();
-    await expect.element(conversation.getByText("8 is even: it ends in 8.")).toBeVisible();
-    expect(api.inputs).toMatchObject([{ context: { answered: false, kind: "item" } }]);
-  });
 });

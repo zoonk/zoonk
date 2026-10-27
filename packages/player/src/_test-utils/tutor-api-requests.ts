@@ -6,7 +6,7 @@ import {
 /**
  * How the faked tutor API (`stubTutorApi`) reads a request's query, as the API does: a thread
  * page's scope and cursor, and whether an item turn says it was about the learner's checked answer
- * (`include=answered`), or, as the API from before `include`, refuses it.
+ * (`include=answered`).
  */
 
 function isInScope({ question, url }: { question: LessonQuestionResource; url: URL }) {
@@ -68,24 +68,4 @@ export function getThreadPage({
   const hasMore = pageStart > 0;
 
   return { hasMore, nextCursor: hasMore ? (page[0]?.id ?? null) : null, questions: page };
-}
-
-/**
- * A request as the API from before `include` takes it, as apps can meet it while they deploy: a
- * thread read's strict query refuses it (null), and a question or a new one reads as if it weren't
- * there.
- */
-export function asOlderApiRequest(request: Request): Request | null {
-  const url = new URL(request.url);
-
-  if (!url.searchParams.has("include")) {
-    return request;
-  }
-
-  if (request.method === "GET" && url.pathname.endsWith("/questions")) {
-    return null;
-  }
-
-  url.searchParams.delete("include");
-  return new Request(url, request);
 }
