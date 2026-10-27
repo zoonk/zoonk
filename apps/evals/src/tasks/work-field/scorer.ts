@@ -17,5 +17,4 @@ export const scoreWorkField = createDeterministicStringFieldScorer<WorkFieldExpe
   generatedLabel: "Generated field",
   getAcceptedValues: (expected) =>
     expected ? [expected.field, ...(expected.alsoAccepted ?? [])] : [],
-  reportsLabels: true,
 });

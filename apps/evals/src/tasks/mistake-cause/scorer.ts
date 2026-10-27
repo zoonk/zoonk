@@ -12,5 +12,4 @@ export const scoreMistakeCause = createDeterministicStringFieldScorer<MistakeCau
   field: "cause",
   generatedLabel: "Generated cause",
   getAcceptedValues: (expected) => (expected ? [expected.cause] : []),
-  reportsLabels: true,
 });

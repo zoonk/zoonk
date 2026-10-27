@@ -43,7 +43,6 @@ export const examIdentityDecisionTask: Task<
     field: "same",
     generatedLabel: "Generated",
     getAcceptedValues: (expected) => (expected ? [expected.same] : []),
-    reportsLabels: true,
   }),
   testCases: TEST_CASES,
 };

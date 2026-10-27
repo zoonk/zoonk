@@ -31,7 +31,6 @@ export const changingFactsTask: Task<
     field: "topic",
     generatedLabel: "Generated topic",
     getAcceptedValues: (expected) => expected?.topics ?? [],
-    reportsLabels: true,
   }),
   testCases: TEST_CASES,
 };
