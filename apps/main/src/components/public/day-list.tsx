@@ -83,7 +83,8 @@ export function DayList({
 
 /**
  * The example day at a glance, as under Today's title: a segment per step, as long as its
- * minutes, done ones blue and the one under way outlined. Screen readers hear how far along it is.
+ * minutes, done ones blue, the one under way outlined, and one ahead that isn't a lesson tinted in
+ * its kind's hue. Screen readers hear how far along it is.
  */
 export async function DaySegments({
   className,
@@ -105,7 +106,12 @@ export async function DaySegments({
       role="img"
     >
       {steps.map((step) => (
-        <DaySegment key={step.id} minutes={step.minutes} state={SEGMENT_STATE[step.state]} />
+        <DaySegment
+          key={step.id}
+          kind={step.kind}
+          minutes={step.minutes}
+          state={SEGMENT_STATE[step.state]}
+        />
       ))}
     </div>
   );

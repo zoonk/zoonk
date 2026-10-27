@@ -5,8 +5,9 @@ import { KindIcon } from "@zoonk/learn/kind-tile";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CircleCheckIcon } from "lucide-react";
 import { getExtracted, getFormatter } from "next-intl/server";
+import { FRAME_EYEBROW_CLASS } from "./day-one-styles";
 import { SQL_NAMES, getExampleSet } from "./landing-examples";
-import { CARD_CLASS, CARD_LABEL_CLASS } from "./practice-card-styles";
+import { CARD_CLASS } from "./practice-card-styles";
 
 /** The skill the notebook's entry is filed under, as SQL writes it. */
 const MISTAKE_SKILL = "GROUP BY";
@@ -49,7 +50,7 @@ export async function JobPractice() {
   return (
     <Pair aria-label={t("A real problem and the Mistakes notebook")}>
       <ProductWindow className={cn(CARD_CLASS, "gap-3")}>
-        <p className={CARD_LABEL_CLASS}>{t("Real problem · SQL")}</p>
+        <p className={FRAME_EYEBROW_CLASS}>{t("Real problem · SQL")}</p>
         <p className="text-base leading-snug font-[560] tracking-[-0.01em]">
           {t("Which region sold the most?")}
         </p>

@@ -2,13 +2,15 @@ import { NUMERIC_CLASS } from "@/components/public/landing-styles";
 import { Pair } from "@/components/public/pair";
 import { ProductWindow } from "@/components/public/product-window";
 import { getMinutesFormatter } from "@/lib/public/public-labels";
+import { PAGE_SECTION_TITLE_CLASS } from "@zoonk/learn/page";
 import { DoneMark } from "@zoonk/learn/status-mark";
 import { cn } from "@zoonk/ui/lib/utils";
 import { LightbulbIcon, MicIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
+import { FRAME_EYEBROW_CLASS } from "./day-one-styles";
 import { getExampleSet } from "./landing-examples";
-import { CARD_CLASS, CARD_LABEL_CLASS } from "./practice-card-styles";
+import { CARD_CLASS } from "./practice-card-styles";
 
 /** Bar heights of a recording: the spoken part first, then the rest still to say. */
 const RECORDING_BARS = [
@@ -88,7 +90,7 @@ export async function MovePractice() {
   return (
     <Pair aria-label={t("Speaking practice and a practice call")}>
       <ProductWindow className={cn(CARD_CLASS, "gap-4")}>
-        <p className={CARD_LABEL_CLASS}>{t("Say it out loud")}</p>
+        <p className={FRAME_EYEBROW_CLASS}>{t("Say it out loud")}</p>
 
         <div className="flex flex-col gap-1">
           <p
@@ -132,7 +134,7 @@ export async function MovePractice() {
 
       <ProductWindow className={cn(CARD_CLASS, "gap-4")}>
         <div className="flex flex-col gap-1">
-          <p className={CARD_LABEL_CLASS}>{t("Practice call")}</p>
+          <p className={FRAME_EYEBROW_CLASS}>{t("Practice call")}</p>
           <p className="flex items-baseline justify-between gap-3">
             <span className="text-lg font-semibold tracking-[-0.02em]">{t("Renting a flat")}</span>
             <span className={cn(NUMERIC_CLASS, "text-muted-foreground text-xs")}>
@@ -142,7 +144,7 @@ export async function MovePractice() {
         </div>
 
         <div className="flex flex-col">
-          <p className="text-label pb-1">{t("Goals of the call")}</p>
+          <p className={cn(PAGE_SECTION_TITLE_CLASS, "pb-1")}>{t("Goals of the call")}</p>
           <ul className="divided-rows flex flex-col">
             {goals.map((goal) => (
               <li

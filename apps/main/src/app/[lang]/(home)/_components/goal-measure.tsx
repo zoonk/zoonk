@@ -1,6 +1,7 @@
 import { BigQuantity } from "@zoonk/learn/big-quantity";
 import { LevelLadder } from "@zoonk/learn/level-ladder";
 import { Meter, MeterFill } from "@zoonk/learn/meter";
+import { PAGE_SECTION_TITLE_CLASS } from "@zoonk/learn/page";
 import { LessonCells } from "@zoonk/learn/progress-cells";
 import { formatGoalProgress } from "@zoonk/utils/number";
 import { getExtracted, getFormatter } from "next-intl/server";
@@ -27,10 +28,11 @@ const STUDIED_POINT = 0.01;
 const MOVE_LEVELS = "A2 → B1";
 
 /**
- * The goal's measure beside its day, as Today's aside draws it in the goal's own units: an exam's
- * preparation over its subjects, a language's level on the CEFR ladder, another goal's lessons as
- * cells. From 1100px, where the window has room for it. A studied yesterday counts in it: one
- * lesson more, and a point more in each subject yesterday's lessons were in.
+ * The goal's measure beside its day, as Today's aside draws it in the goal's own units, under the
+ * same sentence-case title: an exam's preparation over its subjects, a language's level on the
+ * CEFR ladder, another goal's lessons as cells. From 1100px, where the window has room for it. A
+ * studied yesterday counts in it: one lesson more, and a point more in each subject yesterday's
+ * lessons were in.
  */
 export async function GoalMeasure({ day, goal }: { day: DayState; goal: ExampleGoal }) {
   const t = await getExtracted();
@@ -41,7 +43,7 @@ export async function GoalMeasure({ day, goal }: { day: DayState; goal: ExampleG
   if (goal === "move") {
     return (
       <>
-        <p className="text-label">{t("Level")}</p>
+        <p className={PAGE_SECTION_TITLE_CLASS}>{t("Level")}</p>
         <p className="text-readout text-[1.75rem]">{MOVE_LEVELS}</p>
         <LevelLadder label="A2" target="B1" />
         <p className="text-muted-foreground text-[0.8125rem] leading-snug text-pretty">
@@ -57,7 +59,7 @@ export async function GoalMeasure({ day, goal }: { day: DayState; goal: ExampleG
 
     return (
       <>
-        <p className="text-label">{t("Progress")}</p>
+        <p className={PAGE_SECTION_TITLE_CLASS}>{t("Progress")}</p>
         <p>
           <BigQuantity className="text-[1.75rem]">
             {formatGoalProgress({ format, share: done / JOB_PROGRESS.total })}
@@ -105,7 +107,7 @@ export async function GoalMeasure({ day, goal }: { day: DayState; goal: ExampleG
 
   return (
     <>
-      <p className="text-label">{t("Preparation")}</p>
+      <p className={PAGE_SECTION_TITLE_CLASS}>{t("Preparation")}</p>
       <p>
         <BigQuantity className="text-[1.75rem]">{percent(preparation)}</BigQuantity>
       </p>

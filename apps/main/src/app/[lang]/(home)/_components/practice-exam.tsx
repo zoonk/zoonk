@@ -4,11 +4,13 @@ import { Pair } from "@/components/public/pair";
 import { ProductWindow } from "@/components/public/product-window";
 import { type AnswerOptionResult } from "@zoonk/learn/answer-tone";
 import { CHIP_CLASS } from "@zoonk/learn/chip";
-import { KindDot } from "@zoonk/learn/kind-tile";
+import { KindMark } from "@zoonk/learn/kind-tile";
+import { PAGE_SECTION_TITLE_CLASS } from "@zoonk/learn/page";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
+import { FRAME_EYEBROW_CLASS } from "./day-one-styles";
 import { getExampleSet } from "./landing-examples";
-import { CARD_CLASS, CARD_LABEL_CLASS } from "./practice-card-styles";
+import { CARD_CLASS } from "./practice-card-styles";
 
 type ExamOption = { result?: AnswerOptionResult; tag?: string; text: string };
 
@@ -28,7 +30,7 @@ function ExamQuestionCard({
 }) {
   return (
     <ProductWindow className={cn(CARD_CLASS, "gap-3")}>
-      <p className={CARD_LABEL_CLASS}>{label}</p>
+      <p className={FRAME_EYEBROW_CLASS}>{label}</p>
 
       {context && (
         <p className="text-muted-foreground border-l-2 pl-3 text-sm leading-relaxed text-pretty">
@@ -154,7 +156,7 @@ export async function ExamPractice() {
         </div>
 
         <div className="flex flex-col">
-          <p className="text-label pb-1">{t("By topic")}</p>
+          <p className={cn(PAGE_SECTION_TITLE_CLASS, "pb-1")}>{t("By topic")}</p>
           <ul className="divided-rows flex flex-col">
             {topics.map((topic) => (
               <li
@@ -171,9 +173,9 @@ export async function ExamPractice() {
         </div>
 
         <div className="mt-auto flex flex-col gap-1.5">
-          <p className="text-label">{t("Now")}</p>
+          <p className={PAGE_SECTION_TITLE_CLASS}>{t("Now")}</p>
           <p className="flex items-center gap-2.5 text-[0.84375rem]">
-            <KindDot kind="mistakes" />
+            <KindMark kind="mistakes" />
             {t("{count, plural, one {# mistake to review} other {# mistakes to review}}", {
               count: misses,
             })}
