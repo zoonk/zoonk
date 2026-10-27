@@ -10,6 +10,7 @@ import { type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
 import { type ToolChoice, type ToolSystem } from "@zoonk/core/plans/tools-contract";
 import { type PlanChangeView, type PlanView } from "@zoonk/core/plans/view-contract";
 import { createContext, use, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { isFocusLost } from "../_utils/is-focus-lost";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { getTimeToCoverRevision } from "./time-to-cover-revision";
 
@@ -156,15 +157,6 @@ type Saving = { control: Element | null; plan: PlanView; target?: FocusTarget };
 
 export const PlanScreenContext = createContext<PlanScreenContextValue | null>(null);
 
-/**
- * Focus is lost when it fell to the page, or, inside a sheet (the plan editor), to the sheet
- * itself: the dialog takes focus back when its focused control leaves.
- */
-function isFocusLost(): boolean {
-  const active = document.activeElement;
-  return !active || active === document.body || active.getAttribute("role") === "dialog";
-}
-
 function findFallback(target?: FocusTarget): HTMLElement | null {
   return target?.() ?? document.querySelector<HTMLElement>(`#${PLAN_TITLE_ID}`);
 }
@@ -182,7 +174,7 @@ function useKeepFocus(plan: PlanView) {
 
     saving.current = null;
 
-    if (saved.control && !saved.control.isConnected && isFocusLost()) {
+    if (saved.control && !saved.control.isConnected && isFocusLost(document.activeElement)) {
       findFallback(saved.target)?.focus();
     }
   }, [plan]);
