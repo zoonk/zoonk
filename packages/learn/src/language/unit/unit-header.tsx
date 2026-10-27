@@ -29,7 +29,10 @@ function UnitEyebrow({ unit }: { unit: LanguageUnitView["unit"] }) {
   });
 }
 
-/** "4 lessons · About 26 min · 25% done": how much the unit holds and how far the learner is. */
+/**
+ * "4 lessons · 26 min · 25% done": how much the unit holds and how far the learner is. The time is
+ * its lessons' minutes added up, so it reads like the rows under it.
+ */
 function UnitFacts({ lessons }: { lessons: LanguageUnitView["lessons"] }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
@@ -43,7 +46,7 @@ function UnitFacts({ lessons }: { lessons: LanguageUnitView["lessons"] }) {
 
   const facts = [
     t("{count, plural, one {# lesson} other {# lessons}}", { count: lessons.length }),
-    minutes > 0 && t("About {time}", { time: formatDuration(minutes) }),
+    minutes > 0 && formatDuration(minutes),
     doneShare(done / lessons.length),
   ].filter(Boolean);
 

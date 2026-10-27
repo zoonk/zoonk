@@ -16,7 +16,10 @@ import { ContentVoteMenu } from "../feedback/content-vote-menu";
 import { LearnPageBar } from "../shell/learn-bar";
 import { useChapterScreen } from "./chapter-context";
 
-/** "11 lessons · About 40 min · 33% done": how much the chapter holds and how far the learner is. */
+/**
+ * "11 lessons · 40 min · 33% done": how much the chapter holds and how far the learner is. The time
+ * is its lessons' minutes added up, so it reads like the rows under it and the public chapter page.
+ */
 function ChapterFacts() {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
@@ -32,7 +35,7 @@ function ChapterFacts() {
 
   const facts = [
     t("{count, plural, one {# lesson} other {# lessons}}", { count: lessons.length }),
-    minutes > 0 && t("About {time}", { time: formatDuration(minutes) }),
+    minutes > 0 && formatDuration(minutes),
     doneShare(done / lessons.length),
   ].filter(Boolean);
 

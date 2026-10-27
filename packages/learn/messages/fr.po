@@ -1599,15 +1599,6 @@ msgid "{count, plural, one {# lesson} other {# lessons}}"
 msgstr "{count, plural, one {# leçon} other {# leçons}}"
 
 #: src/chapter/chapter-header.tsx
-#: src/language/unit/unit-header.tsx
-#: src/mock/mock-chooser-picked.tsx
-#: src/mock/mock-option-labels.ts
-#: src/plan/focus-test/focus-test-screen.tsx
-msgctxt "rzrdrM"
-msgid "About {time}"
-msgstr "Environ {time}"
-
-#: src/chapter/chapter-header.tsx
 msgctxt "4g6Lc5"
 msgid "{subject} · Chapter {number, number}"
 msgstr "{subject} · Chapitre {number, number}"
@@ -7014,6 +7005,13 @@ msgstr "Durée"
 msgctxt "-LMjdj"
 msgid "Usually takes"
 msgstr "Durée habituelle"
+
+#: src/mock/mock-chooser-picked.tsx
+#: src/mock/mock-option-labels.ts
+#: src/plan/focus-test/focus-test-screen.tsx
+msgctxt "rzrdrM"
+msgid "About {time}"
+msgstr "Environ {time}"
 
 #: src/mock/mock-chooser-picked.tsx
 msgctxt "TX7Ut7"
