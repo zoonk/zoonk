@@ -201,7 +201,6 @@ describe("a chapter test-out sent and read back", () => {
     await expect(countRecorded(user.id)).resolves.toMatchObject({ events: 3 });
   });
 
-  // Both may record the answers before the progress lock; the day and the ledger count it once.
   it("adds a double submit to the day once", async () => {
     const { send, user } = await setup();
     const requestId = randomUUID();
@@ -213,7 +212,34 @@ describe("a chapter test-out sent and read back", () => {
     expect(firstChange).toBeTruthy();
     expect(second.status === "ready" && second.outcome.changeId).toBe(firstChange);
 
-    await expect(countRecorded(user.id)).resolves.toMatchObject({ correctAnswers: 4, events: 1 });
+    await expect(countRecorded(user.id)).resolves.toStrictEqual({
+      attempts: 4,
+      correctAnswers: 4,
+      events: 1,
+    });
+  });
+
+  it("records a failed double submit once", async () => {
+    const { send, user } = await setup();
+    const requestId = randomUUID();
+
+    const results = await Promise.all([
+      send({ requestId, wrong: 2 }),
+      send({ requestId, wrong: 2 }),
+    ]);
+
+    results.forEach((result) => {
+      expect(result).toMatchObject({
+        outcome: { changeId: null, correct: 2, passed: false, total: 4 },
+        status: "ready",
+      });
+    });
+
+    await expect(countRecorded(user.id)).resolves.toStrictEqual({
+      attempts: 4,
+      correctAnswers: 2,
+      events: 1,
+    });
   });
 
   it("reads a pass back as it was recorded, with its undo while the plan stands", async () => {

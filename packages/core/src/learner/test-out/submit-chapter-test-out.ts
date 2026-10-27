@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type Goal, prisma } from "@zoonk/db";
 import { after } from "next/server";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
@@ -12,7 +12,7 @@ import { getCompletionEnergyContext } from "../../stats/completion-energy";
 import { type ChoiceItem, gradeChoiceAnswer, parseChoiceItem } from "../_utils/choice-items";
 import { markPlanItemsTestedOut } from "../_utils/known-skills";
 import { findOwnedGoal, getAnswerTimeZone } from "../_utils/owned-goal";
-import { unchanged, writeLearnerChange } from "../_utils/write-learner-change";
+import { writeLearnerChange } from "../_utils/write-learner-change";
 import { type ItemAnswerInput } from "../contract";
 import { recordLearnerAnswer } from "../record-learner-answer";
 import { countSkippableItems, getChapterSkills } from "./_utils/chapter-items";
@@ -27,6 +27,10 @@ import { type ChapterTestOutInput } from "./test-out-contract";
 import { scoreTestOut } from "./test-out-rules";
 
 const PERCENT = 100;
+/** Namespaces the per-test submit lock so it never collides with other advisory locks. */
+const SUBMIT_LOCK_NAMESPACE = 51_884;
+/** Includes planning and a second submit waiting for the first, within the request's lifetime. */
+const SUBMIT_TIMEOUT_MS = 300_000;
 
 type ChapterTestOutOutcome = ProgressCelebration & {
   /** The plan change that skipped the lessons, so the result can offer its undo right there. */
@@ -119,9 +123,9 @@ async function recordAnswers({
 
 /**
  * Adds the test to the learner's day (its time, its answers and the Energy they give) with a
- * ledger row that keeps what its result says, once: under the progress lock a double submit finds
- * the first one's row and gets what it said instead (both may have recorded the answers before
- * it). Statistics and the day's totals show it, so it's a learner change.
+ * ledger row that keeps what its result says. The submit lock holds until this receipt is saved,
+ * so a double submit reads it before recording any answers. Statistics and the day's totals show
+ * it, so it's a learner change.
  */
 function countTestOut({
   chapterId,
@@ -139,19 +143,11 @@ function countTestOut({
   said: TestOutReceipt;
   timeZone: string;
   userId: string;
-}): Promise<{
-  progress: { brainPower: ProgressChange; energy: ProgressChange } | null;
-  said: TestOutReceipt;
-}> {
+}): Promise<{ brainPower: ProgressChange; energy: ProgressChange }> {
   return writeLearnerChange({ userId }, async (tx) => {
     const lock = await getCompletionEnergyContext({ timeZone, transaction: tx, userId });
-    const earlier = await findTestOutReceipt({ chapterId, client: tx, goalId, requestId, userId });
 
-    if (earlier) {
-      return unchanged({ progress: null, said: earlier });
-    }
-
-    const progress = await settleAnsweredActivity(tx, {
+    return settleAnsweredActivity(tx, {
       answers: graded.map(({ answer, isCorrect }) => ({
         durationMs: answer.durationMs,
         isCorrect,
@@ -163,8 +159,6 @@ function countTestOut({
       timeZone,
       userId,
     });
-
-    return { progress, said };
   });
 }
 
@@ -189,32 +183,19 @@ function toReadyResult({
   };
 }
 
-/**
- * Grades a chapter test-out and records every answer as diagnostic, so each right answer is the
- * evidence for its skill: nothing the test-out didn't ask about is assumed known. Its answering
- * time counts in the learner's day like any other study. Passing tests
- * out the plan items that teach only skills answered right, so the plan skips them. Every answered
- * question must belong to the chapter. Past a free exam plan's first week it comes with Plus. The
- * same test sent again (`requestId`, a retry after a lost response) returns what it recorded,
- * whatever changed since (a trial that ended, its questions rewritten), without recording, counting
- * or celebrating anything again.
- */
-export async function submitChapterTestOut({
+/** Submits an authorized test while its submit lock is held. */
+async function submitOwnedTestOut({
   chapterId,
-  goalId,
+  goal,
   input,
+  userId,
 }: {
   chapterId: string;
-  goalId: string;
+  goal: Goal;
   input: ChapterTestOutInput;
+  userId: string;
 }): Promise<SubmitChapterTestOutResult> {
-  const owned = await findOwnedGoal(goalId);
-
-  if (owned.status !== "ready") {
-    return owned;
-  }
-
-  const { userId } = owned;
+  const goalId = goal.id;
 
   // Before any check or grade that could say otherwise now: a retry says what was recorded.
   const sent = await findTestOutReceipt({ chapterId, goalId, requestId: input.requestId, userId });
@@ -235,7 +216,7 @@ export async function submitChapterTestOut({
     return { status: "nothingToSkip" };
   }
 
-  if (await isTestOutPlusOnly(owned.goal)) {
+  if (await isTestOutPlusOnly(goal)) {
     return { status: "plusRequired" };
   }
 
@@ -254,7 +235,7 @@ export async function submitChapterTestOut({
   });
 
   const answeredAt = new Date();
-  const timeZone = getAnswerTimeZone({ goal: owned.goal, timeZone: input.timeZone });
+  const timeZone = getAnswerTimeZone({ goal, timeZone: input.timeZone });
   await recordAnswers({ answeredAt, graded, timeZone, userId });
 
   const testedOut = score.passed
@@ -267,45 +248,83 @@ export async function submitChapterTestOut({
       })
     : { changeId: null, lessonsSkipped: 0, planVersion: null };
 
-  // Counted last, with what the result says, so a test is counted once even when sent twice.
-  const counted = await countTestOut({
+  const said = {
+    changeId: testedOut.changeId,
+    correct: score.correct,
+    lessonsSkipped: testedOut.lessonsSkipped,
+    passed: score.passed,
+    planVersion: testedOut.planVersion,
+    total: score.total,
+  };
+
+  const progress = await countTestOut({
     chapterId,
     goalId,
     graded,
     requestId: input.requestId,
-    said: {
-      changeId: testedOut.changeId,
-      correct: score.correct,
-      lessonsSkipped: testedOut.lessonsSkipped,
-      passed: score.passed,
-      planVersion: testedOut.planVersion,
-      total: score.total,
-    },
+    said,
     timeZone,
     userId,
   });
 
-  const celebration = await celebrateProgress({ progress: counted.progress, userId });
+  const celebration = await celebrateProgress({ progress, userId });
   revalidateCacheTags([getLearnerModelCacheTag(userId), getUserProgressCacheTag(userId)]);
 
-  if (counted.progress) {
-    after(() =>
-      trackLearnerEvents({
-        events: [
-          {
-            name: "Test-out Taken",
-            properties: {
-              chapter_id: chapterId,
-              passed: score.passed,
-              score: score.total > 0 ? Math.round((score.correct / score.total) * PERCENT) : 0,
-            },
+  after(() =>
+    trackLearnerEvents({
+      events: [
+        {
+          name: "Test-out Taken",
+          properties: {
+            chapter_id: chapterId,
+            passed: score.passed,
+            score: score.total > 0 ? Math.round((score.correct / score.total) * PERCENT) : 0,
           },
-        ],
-        goalId,
-        userId,
-      }),
-    );
+        },
+      ],
+      goalId,
+      userId,
+    }),
+  );
+
+  return toReadyResult({ celebration, said });
+}
+
+/**
+ * Grades a chapter test-out and records every answer as diagnostic, so each right answer is the
+ * evidence for its skill: nothing the test-out didn't ask about is assumed known. Its answering
+ * time counts in the learner's day like any other study. Passing tests out the plan items that
+ * teach only skills answered right. Every question must belong to the chapter. Past a free exam
+ * plan's first week it comes with Plus. The same test sent again returns its recorded result,
+ * even after its trial ends or questions change, without recording, counting or celebrating again.
+ */
+export async function submitChapterTestOut({
+  chapterId,
+  goalId,
+  input,
+}: {
+  chapterId: string;
+  goalId: string;
+  input: ChapterTestOutInput;
+}): Promise<SubmitChapterTestOutResult> {
+  const owned = await findOwnedGoal(goalId);
+
+  if (owned.status !== "ready") {
+    return owned;
   }
 
-  return toReadyResult({ celebration, said: counted.said });
+  const key = `${owned.userId}:${goalId}:${chapterId}:${input.requestId}`;
+
+  // Only the advisory lock lives in this transaction: answer and plan writers commit their own
+  // transactions. A duplicate waits here, then reads the receipt before checking or writing again.
+  return prisma.$transaction(
+    async (tx) => {
+      await tx.$queryRaw`
+        SELECT pg_advisory_xact_lock(${SUBMIT_LOCK_NAMESPACE}::int, hashtext(${key}))::text
+      `;
+
+      return submitOwnedTestOut({ chapterId, goal: owned.goal, input, userId: owned.userId });
+    },
+    { timeout: SUBMIT_TIMEOUT_MS },
+  );
 }

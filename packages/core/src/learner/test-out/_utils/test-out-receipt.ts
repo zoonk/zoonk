@@ -1,5 +1,5 @@
 import "server-only";
-import { type LearningEvent, type TransactionClient, prisma } from "@zoonk/db";
+import { type LearningEvent, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 
 /**
@@ -63,22 +63,20 @@ function readTestOutReceipt(event: LearningEvent): TestOutReceipt {
 
 /**
  * The learner's test-out of this goal's chapter sent with this id, if it was; the same id sent for
- * another chapter is that chapter's own test. `client` reads inside a transaction.
+ * another chapter is that chapter's own test.
  */
 export async function findTestOutReceipt({
   chapterId,
-  client = prisma,
   goalId,
   requestId,
   userId,
 }: {
   chapterId: string;
-  client?: TransactionClient;
   goalId: string;
   requestId: string;
   userId: string;
 }): Promise<TestOutReceipt | null> {
-  const event = await client.learningEvent.findFirst({
+  const event = await prisma.learningEvent.findFirst({
     where: {
       AND: [
         { contentIds: { equals: requestId, path: ["testOutId"] } },
