@@ -4,23 +4,21 @@ import { type LessonCompletionSlotProps, useLessonPlayer } from "../lesson-playe
 
 /**
  * What the completion moment and its header read once the lesson is done; null before. The score
- * is the server's tally once the lesson is saved, since it's what counted.
+ * counts the header's answered segments, including second tries. The server's first-answer tally
+ * governs rewards and reviews, not this readout of the screens the learner just played.
  */
 export function useCompletionProps(): LessonCompletionSlotProps | null {
-  const { actions, state } = useLessonPlayer();
+  const { actions, screen, state } = useLessonPlayer();
   const { completion } = state;
 
   if (state.phase !== "completed" || !completion || completion.status === "ready") {
     return null;
   }
 
-  const verdicts = Object.values(state.firstVerdicts);
-
   return {
     completion,
-    correctCount: completion.result?.correctCount ?? verdicts.filter(Boolean).length,
-    incorrectCount:
-      completion.result?.incorrectCount ?? verdicts.filter((isCorrect) => !isCorrect).length,
+    correctCount: screen.segments.filter((segment) => segment === "right").length,
+    incorrectCount: screen.segments.filter((segment) => segment === "wrong").length,
     onRetry: actions.retryCompletion,
   };
 }
