@@ -29,7 +29,7 @@
       "ZOONK_DEV_PROJECT"
     ],
     "ui": "tui",
-    "passThroughEnv": ["CODEX_SANDBOX"],
+    "passThroughEnv": ["CODEX_SANDBOX", "ZOONK_QUERY_LOG"],
     "cacheMaxAge": "7d",
     "cacheMaxSize": "10GB"
   },
