@@ -29,6 +29,18 @@ const TRIGGER: Record<"link" | "option" | "secondary", React.ReactElement> = {
   secondary: <Button className="shrink-0" size="xl" variant="outline" />,
 };
 
+/** A sheet's ✕, at the end of its header beside the title. */
+export function DrawerCloseButton() {
+  const t = useExtracted();
+
+  return (
+    <DrawerClose render={<Button className="-mr-2 shrink-0" size="icon" variant="ghost" />}>
+      <XIcon aria-hidden="true" />
+      <span className="sr-only">{t("Close")}</span>
+    </DrawerClose>
+  );
+}
+
 /**
  * Detail that can wait (the questions with their answers, every criterion's comment) behind a
  * quiet text link, a secondary action beside the main one (`trigger="secondary"`) or a quiet
@@ -47,8 +59,6 @@ export function DetailsDrawer({
   title: string;
   trigger?: "link" | "option" | "secondary";
 }) {
-  const t = useExtracted();
-
   return (
     <Drawer>
       <DrawerTrigger render={TRIGGER[trigger]}>{label}</DrawerTrigger>
@@ -56,10 +66,7 @@ export function DetailsDrawer({
       <DrawerPopup>
         <DrawerHeader className="flex-row items-center justify-between gap-3">
           <DrawerTitle className="text-xl font-semibold">{title}</DrawerTitle>
-          <DrawerClose render={<Button className="-mr-2" size="icon" variant="ghost" />}>
-            <XIcon aria-hidden="true" />
-            <span className="sr-only">{t("Close")}</span>
-          </DrawerClose>
+          <DrawerCloseButton />
         </DrawerHeader>
         <DrawerContent className="pt-2">{children}</DrawerContent>
       </DrawerPopup>

@@ -4,7 +4,6 @@ import { type MockQuestion } from "@zoonk/core/exams/mocks/view-contract";
 import { Button } from "@zoonk/ui/components/button";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerDescription,
   DrawerHeader,
@@ -13,9 +12,10 @@ import {
   DrawerTrigger,
 } from "@zoonk/ui/components/drawer";
 import { cn } from "@zoonk/ui/lib/utils";
-import { HistoryIcon, PenLineIcon, PencilRulerIcon, XIcon } from "lucide-react";
+import { HistoryIcon, PenLineIcon, PencilRulerIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { DrawerCloseButton } from "../_components/details-drawer";
 import { type TaskFrameAside } from "../shell/task-frame";
 import { SectionClock } from "./mock-clock";
 import { useMockScreen } from "./mock-context";
@@ -310,10 +310,7 @@ export function MockAnswerSheet({ onHandIn }: { onHandIn: () => void }) {
               {counts}
             </DrawerDescription>
           </div>
-          <DrawerClose render={<Button className="-mr-2" size="icon" variant="ghost" />}>
-            <XIcon aria-hidden="true" />
-            <span className="sr-only">{t("Close")}</span>
-          </DrawerClose>
+          <DrawerCloseButton />
         </DrawerHeader>
 
         <DrawerContent className="pt-2">

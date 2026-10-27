@@ -3,7 +3,6 @@
 import { Button } from "@zoonk/ui/components/button";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerHeader,
   DrawerPopup,
@@ -19,6 +18,7 @@ import {
 import { useIsMobile } from "@zoonk/ui/hooks/mobile";
 import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { DrawerCloseButton } from "../_components/details-drawer";
 import { PlanActivities } from "./plan-activities";
 import { PlanBases } from "./plan-bases";
 import { usePlanScreen } from "./plan-context";
@@ -65,18 +65,7 @@ function EditorSections() {
   );
 }
 
-/** "Close": every change is saved as it's made, so closing is all that's left to do. */
-function CloseLabel() {
-  const t = useExtracted();
-
-  return (
-    <>
-      <XIcon aria-hidden="true" />
-      <span className="sr-only">{t("Close")}</span>
-    </>
-  );
-}
-
+/** Every change is saved as it's made, so the frame's only way out is "Close". */
 type EditorFrameProps = {
   /** Where focus lands on opening: the section's first control, or the frame's default. */
   initialFocus: () => HTMLElement | true;
@@ -104,7 +93,8 @@ function EditorPanel({ initialFocus, onOpenChange, open }: EditorFrameProps) {
           <SheetHeader className="flex-row items-center justify-between gap-3 px-6 pt-5 pb-3">
             <SheetTitle className="text-xl font-semibold">{t("Adjust your plan")}</SheetTitle>
             <SheetClose render={<Button className="-mr-2" size="icon" variant="ghost" />}>
-              <CloseLabel />
+              <XIcon aria-hidden="true" />
+              <span className="sr-only">{t("Close")}</span>
             </SheetClose>
           </SheetHeader>
 
@@ -129,9 +119,7 @@ function EditorSheet({ initialFocus, onOpenChange, open }: EditorFrameProps) {
         <PlanEditorChangeProvider>
           <DrawerHeader className="flex-row items-center justify-between gap-3">
             <DrawerTitle className="text-xl font-semibold">{t("Adjust your plan")}</DrawerTitle>
-            <DrawerClose render={<Button className="-mr-2" size="icon" variant="ghost" />}>
-              <CloseLabel />
-            </DrawerClose>
+            <DrawerCloseButton />
           </DrawerHeader>
 
           <DrawerContent className="flex flex-col gap-7 pt-2">

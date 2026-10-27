@@ -4,7 +4,6 @@ import { Button } from "@zoonk/ui/components/button";
 import { Checkbox } from "@zoonk/ui/components/checkbox";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerDescription,
   DrawerHeader,
@@ -12,9 +11,10 @@ import {
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronRightIcon, CrosshairIcon, XIcon } from "lucide-react";
+import { ChevronRightIcon, CrosshairIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { createContext, use, useId, useState } from "react";
+import { DrawerCloseButton } from "../_components/details-drawer";
 import { KindDot } from "../_components/kind-tile";
 import { LearnLink } from "../learn-link";
 import { CHOICE_CARD_PICKED_CLASS } from "../onboarding/choice-styles";
@@ -261,10 +261,7 @@ export function ChooseFocusHost({ children }: { children: React.ReactNode }) {
                 {t("The subjects you pick come first and get more depth.")}
               </DrawerDescription>
             </div>
-            <DrawerClose render={<Button className="-mr-2" size="icon" variant="ghost" />}>
-              <XIcon aria-hidden="true" />
-              <span className="sr-only">{t("Close")}</span>
-            </DrawerClose>
+            <DrawerCloseButton />
           </DrawerHeader>
 
           {open && <FocusChoices onSaved={() => setOpened(false)} />}

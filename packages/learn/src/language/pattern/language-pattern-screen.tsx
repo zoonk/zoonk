@@ -4,7 +4,6 @@ import { type MistakePatternView } from "@zoonk/core/language/patterns/contract"
 import { Button } from "@zoonk/ui/components/button";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerHeader,
   DrawerPopup,
@@ -17,9 +16,10 @@ import {
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
 import { cn } from "@zoonk/ui/lib/utils";
-import { BookOpenIcon, EllipsisIcon, XIcon } from "lucide-react";
+import { BookOpenIcon, EllipsisIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useState } from "react";
+import { DrawerCloseButton } from "../../_components/details-drawer";
 import { TASK_HEADER_ICON_CLASS, TaskHeaderTitle } from "../../_components/task-header";
 import { TaskActions } from "../../_components/task-layout";
 import { useFormatDuration } from "../../_utils/time-format";
@@ -122,10 +122,7 @@ function RuleMenu({ pattern }: { pattern: MistakePatternView }) {
         <DrawerPopup>
           <DrawerHeader className="flex-row items-start justify-between gap-3">
             <DrawerTitle className="text-xl font-semibold">{pattern.title}</DrawerTitle>
-            <DrawerClose render={<Button className="-mr-2" size="icon" variant="ghost" />}>
-              <XIcon aria-hidden="true" />
-              <span className="sr-only">{t("Close")}</span>
-            </DrawerClose>
+            <DrawerCloseButton />
           </DrawerHeader>
 
           <DrawerContent className="flex flex-col gap-6 pt-2">

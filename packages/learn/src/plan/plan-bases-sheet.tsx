@@ -5,16 +5,16 @@ import { type PlanBaseView, type PlanBasesView } from "@zoonk/core/plans/view-co
 import { Button } from "@zoonk/ui/components/button";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerDescription,
   DrawerHeader,
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
-import { LayersIcon, XIcon } from "lucide-react";
+import { LayersIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
+import { DrawerCloseButton } from "../_components/details-drawer";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import { BasesAdvice, useBasesAdvice } from "./plan-bases-advice";
 import {
@@ -278,10 +278,7 @@ export function PlanBasesSheet({
             <DrawerTitle className="text-xl font-semibold">{t("Prerequisites")}</DrawerTitle>
             <DrawerDescription>{description}</DrawerDescription>
           </div>
-          <DrawerClose render={<Button className="-mr-2" size="icon" variant="ghost" />}>
-            <XIcon aria-hidden="true" />
-            <span className="sr-only">{t("Close")}</span>
-          </DrawerClose>
+          <DrawerCloseButton />
         </DrawerHeader>
 
         {open && <BasesChoices bases={bases} onDone={() => onOpenChange(false)} />}

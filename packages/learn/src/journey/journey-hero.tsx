@@ -5,19 +5,17 @@ import { type LanguageProgressView } from "@zoonk/core/view-models/language/cont
 import { type ProgressView } from "@zoonk/core/view-models/progress/get";
 import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { getLessonShare } from "@zoonk/core/view-models/syllabus/lesson-share";
-import { Button } from "@zoonk/ui/components/button";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerHeader,
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
 import { cn } from "@zoonk/ui/lib/utils";
-import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { DrawerCloseButton } from "../_components/details-drawer";
 import { ListGroup } from "../_components/list-group";
 import { useFormatGoalProgress, useFormatShare } from "../_utils/percent";
 import { useSkillName } from "../language/_utils/use-skill-name";
@@ -215,17 +213,12 @@ function NumberSheet({
   open: boolean;
   title: string;
 }) {
-  const t = useExtracted();
-
   return (
     <Drawer onOpenChange={onOpenChange} open={open}>
       <DrawerPopup>
         <DrawerHeader className="flex-row items-center justify-between gap-3">
           <DrawerTitle className="text-xl font-semibold">{title}</DrawerTitle>
-          <DrawerClose render={<Button className="-mr-2" size="icon" variant="ghost" />}>
-            <XIcon aria-hidden="true" />
-            <span className="sr-only">{t("Close")}</span>
-          </DrawerClose>
+          <DrawerCloseButton />
         </DrawerHeader>
         <DrawerContent className="pt-2">{children}</DrawerContent>
       </DrawerPopup>

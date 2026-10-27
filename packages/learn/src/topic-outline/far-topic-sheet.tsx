@@ -3,7 +3,6 @@
 import { Button } from "@zoonk/ui/components/button";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerDescription,
   DrawerHeader,
@@ -12,9 +11,9 @@ import {
   DrawerTrigger,
 } from "@zoonk/ui/components/drawer";
 import { Spinner } from "@zoonk/ui/components/spinner";
-import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactElement, type ReactNode, useRef, useState } from "react";
+import { DrawerCloseButton } from "../_components/details-drawer";
 import { OutlineLimitNotice } from "../_components/help-limit-notice";
 import { ListGroup, ListRowContent, ListRowLink, ListRowTitle } from "../_components/list-group";
 import { useLearnRoutes } from "../learn-context";
@@ -164,7 +163,6 @@ export function FarTopicSheet({
   /** The row the learner taps, rendered with `children` inside. */
   trigger: ReactElement;
 }) {
-  const t = useExtracted();
   const [open, setOpen] = useState(false);
   const landed = useRef(false);
   const line = useFarTopicLine();
@@ -188,10 +186,7 @@ export function FarTopicSheet({
             <DrawerTitle className="text-xl font-semibold text-balance">{title}</DrawerTitle>
             <DrawerDescription>{line({ lessons, nextDate })}</DrawerDescription>
           </div>
-          <DrawerClose render={<Button className="-mr-2 shrink-0" size="icon" variant="ghost" />}>
-            <XIcon aria-hidden="true" />
-            <span className="sr-only">{t("Close")}</span>
-          </DrawerClose>
+          <DrawerCloseButton />
         </DrawerHeader>
 
         <DrawerContent className="pt-2">

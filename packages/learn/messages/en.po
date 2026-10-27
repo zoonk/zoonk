@@ -162,21 +162,10 @@ msgstr "{percent}% done"
 
 #: src/_components/details-drawer.tsx
 #: src/appearance/buddy-settings.tsx
-#: src/buddies/buddy-today.tsx
 #: src/explain/explain-waiting.tsx
-#: src/journey/journey-hero.tsx
-#: src/journey/plan-sections.tsx
-#: src/language/pattern/language-pattern-screen.tsx
-#: src/language/unit/practice-conversation.tsx
 #: src/memory/memory-fact-row.tsx
 #: src/mind-maps/mind-map-viewer.tsx
-#: src/mock/mock-answer-sheet.tsx
-#: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-editor.tsx
-#: src/plan/plan-focus.tsx
-#: src/plan/study-everything.tsx
-#: src/syllabus/syllabus-summary.tsx
-#: src/topic-outline/far-topic-sheet.tsx
 msgctxt "rbrahO"
 msgid "Close"
 msgstr "Close"

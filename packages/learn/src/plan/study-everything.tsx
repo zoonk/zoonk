@@ -10,9 +10,10 @@ import {
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
-import { LibraryBigIcon, XIcon } from "lucide-react";
+import { LibraryBigIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { createContext, use, useEffect, useEffectEvent, useState } from "react";
+import { DrawerCloseButton } from "../_components/details-drawer";
 import { useCloseSuggestionSheet } from "../_components/suggestion";
 import { PlanChangeApplied } from "./plan-change-applied";
 import { type PlanChangeOutcome, usePlanScreen } from "./plan-context";
@@ -138,10 +139,7 @@ function StudyEverythingSheet({
                 : t("Every part of your goal, at your own pace, with no end date.")}
             </DrawerDescription>
           </div>
-          <DrawerClose render={<Button className="-mr-2" size="icon" variant="ghost" />}>
-            <XIcon aria-hidden="true" />
-            <span className="sr-only">{t("Close")}</span>
-          </DrawerClose>
+          <DrawerCloseButton />
         </DrawerHeader>
 
         {open && <FullCourseChoice course={course} onDone={() => onOpenChange(false)} />}

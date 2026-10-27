@@ -1,7 +1,6 @@
 "use client";
 
 import { type SyllabusSubject, type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
-import { Button } from "@zoonk/ui/components/button";
 import {
   Collapsible,
   CollapsibleContent,
@@ -9,15 +8,15 @@ import {
 } from "@zoonk/ui/components/collapsible";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerHeader,
   DrawerPopup,
   DrawerTitle,
   DrawerTrigger,
 } from "@zoonk/ui/components/drawer";
-import { ChevronDownIcon, XIcon } from "lucide-react";
+import { ChevronDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { DrawerCloseButton } from "../_components/details-drawer";
 import { PageSectionLabel } from "../_components/page";
 import { useFormatDuration } from "../_utils/time-format";
 import { type SubjectGroup, groupSubjects } from "./group-subjects";
@@ -265,10 +264,7 @@ export function SyllabusTopicsSheet({
       <DrawerPopup>
         <DrawerHeader className="flex-row items-center justify-between gap-3">
           <DrawerTitle className="text-xl font-semibold">{t("What you'll study")}</DrawerTitle>
-          <DrawerClose render={<Button className="-mr-2" size="icon" variant="ghost" />}>
-            <XIcon aria-hidden="true" />
-            <span className="sr-only">{t("Close")}</span>
-          </DrawerClose>
+          <DrawerCloseButton />
         </DrawerHeader>
         <DrawerContent className="flex flex-col gap-2 pt-1">
           {groups.map((group) => (

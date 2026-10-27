@@ -4,7 +4,6 @@ import { type LanguageUnitView } from "@zoonk/core/view-models/language/contract
 import { Button } from "@zoonk/ui/components/button";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerDescription,
   DrawerHeader,
@@ -12,9 +11,10 @@ import {
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
 import { cn } from "@zoonk/ui/lib/utils";
-import { PhoneIcon, XIcon } from "lucide-react";
+import { PhoneIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
+import { DrawerCloseButton } from "../../_components/details-drawer";
 import { KindDot } from "../../_components/kind-tile";
 import {
   ListRowButton,
@@ -212,10 +212,7 @@ export function PracticeConversation({
                 </DrawerDescription>
               )}
             </div>
-            <DrawerClose render={<Button className="-mr-2" size="icon" variant="ghost" />}>
-              <XIcon aria-hidden="true" />
-              <span className="sr-only">{t("Close")}</span>
-            </DrawerClose>
+            <DrawerCloseButton />
           </DrawerHeader>
           <DrawerContent className="pt-3">
             {open && <CallSetup conversation={conversation} onStart={start} />}

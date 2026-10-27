@@ -1,16 +1,15 @@
 "use client";
 
-import { Button } from "@zoonk/ui/components/button";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerHeader,
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
-import { GraduationCapIcon, NetworkIcon, XIcon } from "lucide-react";
+import { GraduationCapIcon, NetworkIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { DrawerCloseButton } from "../_components/details-drawer";
 import {
   ListGroup,
   ListRowContent,
@@ -146,10 +145,7 @@ export function PhasesSheet({
       <DrawerPopup>
         <DrawerHeader className="flex-row items-center justify-between gap-3">
           <DrawerTitle className="text-xl font-semibold">{t("Your path")}</DrawerTitle>
-          <DrawerClose render={<Button className="-mr-2" size="icon" variant="ghost" />}>
-            <XIcon aria-hidden="true" />
-            <span className="sr-only">{t("Close")}</span>
-          </DrawerClose>
+          <DrawerCloseButton />
         </DrawerHeader>
         <DrawerContent className="pt-2">
           <JourneyPath links={links} />

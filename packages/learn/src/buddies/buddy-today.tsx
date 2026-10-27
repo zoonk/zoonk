@@ -1,10 +1,8 @@
 "use client";
 
 import { countDoneMissions } from "@zoonk/core/sessions/missions";
-import { Button } from "@zoonk/ui/components/button";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerDescription,
   DrawerHeader,
@@ -12,9 +10,10 @@ import {
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon, XIcon, ZapIcon } from "lucide-react";
+import { CheckIcon, ZapIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { DrawerCloseButton } from "../_components/details-drawer";
 import { useFormatShare } from "../_utils/percent";
 import { FirstStepsSection } from "../missions/first-steps";
 import { type MissionLinks } from "../missions/mission-links";
@@ -89,10 +88,7 @@ function BuddyTodaySheet({
               {growth}
             </DrawerDescription>
           </div>
-          <DrawerClose render={<Button className="-mr-2" size="icon" variant="ghost" />}>
-            <XIcon aria-hidden="true" />
-            <span className="sr-only">{t("Close")}</span>
-          </DrawerClose>
+          <DrawerCloseButton />
         </DrawerHeader>
 
         <DrawerContent className="flex flex-col gap-4 pt-2">
