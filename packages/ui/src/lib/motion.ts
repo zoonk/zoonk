@@ -5,10 +5,10 @@
  */
 
 /** A duration token: `duration-<name>` in Tailwind, `--transition-duration-<name>` in CSS. */
-export type MotionDuration = "base" | "burst" | "fill" | "pop" | "quick" | "settle";
+export type MotionDuration = "base" | "burst" | "fill" | "frame" | "pop" | "quick" | "settle";
 
 /** An easing token: `ease-<name>` in Tailwind, `--ease-<name>` in CSS. */
-export type MotionEasing = "out" | "spring";
+export type MotionEasing = "accelerate" | "follow" | "out" | "spring" | "swing";
 
 const MS_PER_SECOND = 1000;
 

@@ -235,6 +235,10 @@
       }
     },
     {
+      "files": ["packages/ui/src/components/**/*-acts.ts"],
+      "rules": { "eslint/max-lines": "off", "eslint/no-magic-numbers": "off" }
+    },
+    {
       "files": ["**/*skeleton*", "**/*-skeleton*"],
       "rules": { "react/no-array-index-key": "off" }
     },

@@ -135,6 +135,11 @@
   --transition-duration-fill: 700ms;
   /* The sparks of a burst, out and gone. */
   --transition-duration-burst: 750ms;
+  /*
+   * One frame of a character's act, 24 a second: acts are timed in frames, as animators time them
+   * (a blink is 6, a glance's dart 2). With reduced motion it's 0, and an act only changes the face.
+   */
+  --transition-duration-frame: 41.667ms;
   /* Fast out of the gate, gentle landing: everything that enters, responds or fills. */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   /*
@@ -165,6 +170,42 @@
     1.042 59.8%,
     1.007 83.2%,
     1 93%,
+    1
+  );
+  /* A character moving into a pose, speeding up: the dip before a cheer, a lid closing. */
+  --ease-accelerate: cubic-bezier(0.55, 0, 1, 0.45);
+  /* Slow out of one pose and into the next: a head turning, weight shifting, a slump. */
+  --ease-swing: cubic-bezier(0.45, 0, 0.55, 1);
+  /*
+   * Overlapping action: a character's loose part (an antenna, a tail, a crown) lagging behind and
+   * swinging past its stop before it settles. A looser spring (damping 0.45: a 20% overshoot, then
+   * one small swing back), only for those parts, never for a whole character or for data.
+   */
+  --ease-follow: linear(
+    0,
+    0.11 4.2%,
+    0.362 8.3%,
+    0.652 12.5%,
+    0.906 16.7%,
+    1.086 20.8%,
+    1.182 25%,
+    1.205 29.2%,
+    1.178 33.3%,
+    1.124 37.5%,
+    1.065 41.7%,
+    1.014 45.8%,
+    0.979 50%,
+    0.961 54.2%,
+    0.958 58.3%,
+    0.965 62.5%,
+    0.976 66.7%,
+    0.988 70.8%,
+    0.998 75%,
+    1.005 79.2%,
+    1.008 83.3%,
+    1.009 87.5%,
+    1.007 91.7%,
+    1.005 95.8%,
     1
   );
   --default-transition-duration: var(--transition-duration-quick);
@@ -601,6 +642,7 @@
     --transition-duration-settle: 0ms;
     --transition-duration-fill: 0ms;
     --transition-duration-burst: 0ms;
+    --transition-duration-frame: 0ms;
     --animate-settle: none;
     --animate-pop: none;
     --animate-fill: none;

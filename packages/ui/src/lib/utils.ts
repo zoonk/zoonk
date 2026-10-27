@@ -7,20 +7,21 @@ import { createCn } from "cn/config";
  * and another size replaces them; `text-readout` is a number's face, kept beside a size and a
  * color; `rounded-option` is a radius and the measures (`max-w-column`, `max-w-form`,
  * `max-w-wide`) are widths, so another one replaces them. The motion tokens are their kind's too:
- * `duration-quick` to `duration-burst` are durations, `ease-spring` an easing and `animate-settle`,
- * `animate-pop`, `animate-fill` and `animate-spark` animations.
+ * `duration-quick` to `duration-burst` and `duration-frame` are durations, `ease-spring`,
+ * `ease-accelerate`, `ease-swing` and `ease-follow` easings and `animate-settle`, `animate-pop`,
+ * `animate-fill` and `animate-spark` animations.
  */
 export const cn = createCn({
   extend: {
     classGroups: {
-      duration: [{ duration: ["quick", "base", "pop", "settle", "fill", "burst"] }],
+      duration: [{ duration: ["quick", "base", "pop", "settle", "fill", "burst", "frame"] }],
       "font-size": [{ text: ["display", "headline", "title", "section", "lead", "label"] }],
       readout: [{ text: ["readout"] }],
     },
     theme: {
       animate: ["settle", "pop", "fill", "spark"],
       container: ["column", "form", "wide"],
-      ease: ["spring"],
+      ease: ["spring", "accelerate", "swing", "follow"],
       radius: ["option"],
     },
   },
