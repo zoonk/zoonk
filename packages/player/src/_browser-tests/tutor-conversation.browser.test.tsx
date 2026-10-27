@@ -127,6 +127,26 @@ describe("the buddy's conversation", () => {
     expect(api.inputs.map((input) => input.question)).toStrictEqual([question]);
   });
 
+  it("shows the thread the page read at once, without reading it again from the browser", async () => {
+    const api = stubTutorApi({});
+
+    api.questions = [
+      api.question({ answer: TUTOR_ANSWER, question: "What is a share?", status: "completed" }),
+    ];
+
+    renderConversation({
+      initialThread: { hasMore: false, nextCursor: null, questions: api.questions },
+    });
+
+    await expect.element(page.getByText("What is a share?")).toBeVisible();
+
+    await new Promise((resolve) => {
+      setTimeout(resolve, PART_READ_MS);
+    });
+
+    expect(api.requests.thread).toBe(0);
+  });
+
   it("shows a proposed plan change with the words that say it, never alone under Thinking…", async () => {
     const api = stubTutorApi({ lesson: buildLesson([teachingStep("check")]) });
     const stream = tutorAnswerStream();

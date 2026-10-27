@@ -294,7 +294,8 @@ function ConversationBody({
  * ```
  *
  * A host that read the thread on the server passes it as `initialThread`: the conversation shows
- * at once, and the latest is still read again in the background.
+ * at once, without reading it again from the browser. Its page is read again as a whole when it
+ * may be old (a new navigation, the tab shown again later).
  */
 export function TutorConversation({
   goalId,
@@ -320,7 +321,7 @@ export function TutorConversation({
       lessonStepIds: [],
       onMissionMoment: missionMoment.receive,
       page: true,
-      preload: true,
+      preload: !initialThread,
     }),
     [initialThread, missionMoment.receive, tutor.canAsk],
   );
