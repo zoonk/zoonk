@@ -30,12 +30,9 @@ export type ConversationConnection =
 
 /** What the host does with the server for a call's connection. */
 export type CallConnectionActions = {
-  /**
-   * Reserves the call. Sending the same `requestId` again is the same reservation; `takeover`
-   * ends the learner's other open call first.
-   */
-  connect: (input: { requestId: string; takeover: boolean }) => Promise<ConversationConnection>;
-  /** Closes the connection on the server, which collects the provider's final usage. */
+  /** Reserves the call; `takeover` ends the learner's other open call first. */
+  connect: (input: { takeover: boolean }) => Promise<ConversationConnection>;
+  /** Has the server hang the connection up and settle it. */
   end: (
     connectionId: string,
   ) => Promise<{ status: "closed" | "failed" | "previousConnectionClosing" }>;
@@ -45,7 +42,7 @@ const FAILED = { status: "failed" } as const;
 
 /**
  * A call run's one connection on the server. Reserving asks once and, while this call's last
- * connection is still closing, once more with the same request (`reconnecting` meanwhile). A
+ * connection is still closing, once more (`reconnecting` meanwhile). A
  * reservation that arrives after its start was cancelled (`isCurrent`) is ended at once. `end`
  * asks the server to close the connection, one request at a time: true once the server confirmed,
  * which stays true, and false while it hasn't, so asking again sends a new request.
@@ -93,8 +90,7 @@ export function useCallConnection(actions: CallConnectionActions) {
       isCurrent: () => boolean;
       takeover: boolean;
     }): Promise<ConversationConnection | null> => {
-      const input = { requestId: crypto.randomUUID(), takeover };
-      const connect = () => actionsRef.current.connect(input).catch(() => FAILED);
+      const connect = () => actionsRef.current.connect({ takeover }).catch(() => FAILED);
 
       const retry = async () => {
         setReconnecting(true);

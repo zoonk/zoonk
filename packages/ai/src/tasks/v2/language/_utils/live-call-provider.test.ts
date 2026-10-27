@@ -1,6 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { hangUpLiveCallSession } from "../live-call-session";
 import { getLiveCallModel, isLiveCallAvailable } from "./live-call-provider";
-import { closeLiveCallSideband } from "./live-call-sideband";
+
+vi.mock("server-only", () => ({}));
 
 function setLiveKey(key?: string) {
   vi.stubEnv("OPENAI_API_KEY", key);
@@ -45,16 +47,11 @@ describe("Live call admission and test network guards", () => {
     );
   });
 
-  it("blocks sideband attachment before a socket is constructed", async () => {
+  it("blocks a hangup before an HTTP request leaves the process", async () => {
     setLiveKey("unused-test-openai-key");
 
-    await expect(
-      closeLiveCallSideband({
-        deadlineAt: Date.now() + 15_000,
-        headers: { Authorization: "Bearer unused-test-openai-key" },
-        providerSessionId: "live_test",
-        url: "wss://api.openai.com/v1/live/sessions",
-      }),
-    ).rejects.toThrow("Direct provider calls are disabled during tests.");
+    await expect(hangUpLiveCallSession("live_test")).rejects.toThrow(
+      "Direct provider calls are disabled during tests.",
+    );
   });
 });

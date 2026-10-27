@@ -1,14 +1,27 @@
-import { createRequire } from "node:module";
+import { resolve } from "node:path";
+import { workflowTransformPlugin } from "@workflow/rollup";
 import { defineConfig } from "vitest/config";
 import { getTestRunEnvironment } from "../../packages/db/src/test-environment.ts";
 
-const runtimeRequire = createRequire(import.meta.url);
-
-/** Real Workflow execution has its own config: the normal API suite replaces its runtime. */
+/**
+ * Real Workflow execution with `@workflow/vitest`'s manual setup: the app's workflows compile into
+ * one bundle (`workflow-test-bundle.ts`) and run in-process on a local World. The bundle loads
+ * through Vitest's module runner, so its steps run real core against the test database while a
+ * test's `vi.mock` replaces the AI provider.
+ */
 export default defineConfig({
   assetsInclude: ["**/*.md"],
-  resolve: { dedupe: ["next"], tsconfigPaths: true },
-  ssr: { resolve: { conditions: ["react-server", "node"] } },
+  plugins: [workflowTransformPlugin({ exclude: [".workflow-vitest/"] })],
+  resolve: {
+    alias: [
+      {
+        find: /^server-only$/u,
+        replacement: resolve(import.meta.dirname, "./mocks/server-only.ts"),
+      },
+    ],
+    dedupe: ["next"],
+    tsconfigPaths: true,
+  },
   test: {
     env: {
       ...getTestRunEnvironment(),
@@ -17,12 +30,11 @@ export default defineConfig({
       OPENAI_API_KEY: "",
     },
     environment: "node",
-    execArgv: ["--conditions=react-server"],
-    globalSetup: ["../../packages/db/src/test-database.ts", "./workflow-runtime/build-runtime.ts"],
-    include: ["workflow-runtime/*.runtime-spec.ts"],
+    globalSetup: ["../../packages/db/src/test-database.ts", "./workflow-test-bundle.ts"],
+    include: ["src/**/*.integration.test.ts"],
     maxWorkers: 1,
-    // Next's own setup installs Node AsyncLocalStorage before request-store modules load.
-    setupFiles: [runtimeRequire.resolve("next/dist/server/node-environment-baseline.js")],
-    testTimeout: 15_000,
+    server: { deps: { inline: [/@workflow\/vitest/u] } },
+    setupFiles: ["./setup-workflow-tests.ts"],
+    testTimeout: 60_000,
   },
 });

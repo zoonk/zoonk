@@ -11,6 +11,9 @@ import { getBlockElapsedMs } from "../../../sessions/_utils/block-timing";
 import { readBlockPayload } from "../../../sessions/block-payload";
 import { settleConversation } from "./settle-conversation";
 
+/** The review run that claimed each test's call: only it settles the call. */
+const REVIEW_RUN_ID = "wrun_settlement";
+
 async function settlementFixture() {
   const user = await userFixture();
   const goal = await goalFixture({ userId: user.id });
@@ -37,6 +40,7 @@ async function settlementFixture() {
       language: "en",
       level: "A2",
       minutes: 1,
+      reviewRunId: REVIEW_RUN_ID,
       scenario: {},
       studyBlockId: block.id,
       targetLanguage: "es",
@@ -72,6 +76,7 @@ describe("conversation settlement during queue changes", () => {
       feedback: null,
       objectives: 1,
       objectivesMet: ["Completed the goal"],
+      reviewRunId: REVIEW_RUN_ID,
       row,
       spokenSeconds: 5,
       timeZone: "UTC",
@@ -123,6 +128,7 @@ describe("conversation settlement during queue changes", () => {
         feedback: null,
         objectives: 1,
         objectivesMet: ["Completed the goal"],
+        reviewRunId: REVIEW_RUN_ID,
         row,
         spokenSeconds: 20,
         timeZone: "UTC",
@@ -177,6 +183,7 @@ describe("conversation settlement during queue changes", () => {
         feedback: null,
         objectives: 1,
         objectivesMet: ["Completed the goal"],
+        reviewRunId: REVIEW_RUN_ID,
         row,
         spokenSeconds: 20,
         timeZone: "UTC",

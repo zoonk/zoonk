@@ -248,34 +248,6 @@ describe(claimUsage, () => {
     });
   });
 
-  it("keeps what a dropped call ran when it connects again, and holds its length again", async () => {
-    const user = await useLearner();
-    const targetId = randomUUID();
-
-    await claimUsage({ kind: "conversation", seconds: 60, targetId });
-    vi.setSystemTime(new Date(NOW.getTime() + 30_000));
-
-    await expect(
-      claimUsage({ kind: "conversation", seconds: 60, targetId }),
-    ).resolves.toStrictEqual({ heldSeconds: 60, status: "allowed" });
-
-    await expect(
-      prisma.usageRecord.findUniqueOrThrow({
-        where: { userUsageTarget: { kind: "conversation", targetId, userId: user.id } },
-      }),
-    ).resolves.toMatchObject({ seconds: 90 });
-
-    // Another drop: what's left of the day's 2 minutes is too short for a call.
-    vi.setSystemTime(new Date(NOW.getTime() + 90_000));
-
-    await expect(
-      claimUsage({ kind: "conversation", seconds: 60, targetId }),
-    ).resolves.toStrictEqual({
-      limit: { limit: 120, period: "day", resource: "callSeconds", tier: "free" },
-      status: "limitReached",
-    });
-  });
-
   it.each(FREE_CAPS)(
     "stops a free learner's $kind at $day a day and $month a month: no AI work is unlimited on the free plan",
     async ({ day, kind, month }) => {

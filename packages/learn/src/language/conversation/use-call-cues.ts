@@ -14,11 +14,6 @@ const MS_PER_SECOND = 1000;
 const SECONDS_PER_MINUTE = 60;
 /** The character starts wrapping up this long before the call's time is over. */
 const WRAP_UP_SECONDS = 20;
-/**
- * Room for the goodbye before the call ends on its own: the voice session is paid by the second,
- * so a call shown as two minutes lasts about two.
- */
-const GRACE_SECONDS = 10;
 /** The learner quiet this long (no word said or typed): the character asks if they're there. */
 const SILENCE_NUDGE_SECONDS = 20;
 /** Still quiet this long after their last word, the call ends on its own and shows its feedback. */
@@ -61,8 +56,8 @@ export function useOpeningCue(openingLine: string) {
 }
 
 /**
- * When a connected call's own length ends, on this device's clock (`getCallEndsAt`, from the
- * server's absolute deadline), and the plan's call time it reaches by then, if any.
+ * When a connected call's own length ends, on this device's clock (the time the server said was
+ * left, from when its answer arrived), and the plan's call time it reaches by then, if any.
  */
 export type CallLength = { endsAt: number } & Pick<LanguageConversationSetup, "endsAtLimit">;
 
@@ -76,8 +71,8 @@ const NO_CUES: readonly TimedCue[] = [];
  * fixed it (`startClock`), so the time spent connecting is already gone and nothing starts it over;
  * the limit shown is what's left of it when the call went live, less than the call's length when
  * it reaches the plan's call time. Near the end the character wraps up, and when that's the plan's
- * call time running out, today's or this month's, `limitNear` says which; just after the end the
- * call ends on its own, before the server's deadline. A learner quiet for a while (nothing said or
+ * call time running out, today's or this month's, `limitNear` says which; at the end the call ends
+ * on its own, when the server hangs it up too. A learner quiet for a while (nothing said or
  * typed, `markLearnerActive` marks both) is asked once whether they're there, and the call ends if
  * they stay quiet: the voice session is paid by the second, silence included. An exam task's `cues`
  * go out once each when the call has run that long (the examiner moving to the questions).
@@ -148,7 +143,7 @@ export function useCallClock({
         sendLiveCallCue({ content: LIVE_CALL_SILENCE_CUE, session });
       }
 
-      if (tick >= endsAt + GRACE_SECONDS * MS_PER_SECOND || quiet >= SILENCE_END_SECONDS) {
+      if (tick >= endsAt || quiet >= SILENCE_END_SECONDS) {
         hangUp();
       }
     }, TICK_MS);

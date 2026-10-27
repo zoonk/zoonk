@@ -94,8 +94,8 @@ export const boundaries = {
   "@zoonk/ai/tasks/v2/language/language-lesson": { generateLanguageLesson: vi.fn() },
   "@zoonk/ai/tasks/v2/language/level-test-bank": { generateLevelTestBank: vi.fn() },
   "@zoonk/ai/tasks/v2/language/live-call-session": {
-    closeLiveCallSession: vi.fn(),
     createLiveCallSession: vi.fn(),
+    hangUpLiveCallSession: vi.fn(),
     isLiveCallAvailable: vi.fn(),
   },
   "@zoonk/ai/tasks/v2/language/mistake-pattern": { findMistakePattern: vi.fn() },
@@ -159,12 +159,6 @@ export async function resetBoundaries(): Promise<void> {
     sdp: "test-answer",
     sessionId: `session-${crypto.randomUUID()}`,
   }));
-
-  liveCall.closeLiveCallSession.mockResolvedValue({
-    reason: "close_requested",
-    seconds: 15,
-    status: "closed",
-  });
 
   nextHeaders.headers.mockImplementation(async () => new Headers());
 

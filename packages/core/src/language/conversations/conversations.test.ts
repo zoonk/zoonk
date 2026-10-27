@@ -2,8 +2,8 @@ import { writeConversationFeedback } from "@zoonk/ai/tasks/v2/language/conversat
 import { checkConversationObjectives } from "@zoonk/ai/tasks/v2/language/conversation-objectives";
 import { generateConversationScenario } from "@zoonk/ai/tasks/v2/language/conversation-scenario";
 import {
-  closeLiveCallSession,
   createLiveCallSession,
+  hangUpLiveCallSession,
 } from "@zoonk/ai/tasks/v2/language/live-call-session";
 import { prisma } from "@zoonk/db";
 import { planItemFixture } from "@zoonk/testing/fixtures/goals";
@@ -69,7 +69,6 @@ const COMPLETION = {
   timeZone: "America/Sao_Paulo",
   turns: TURNS,
   usedHelp: false,
-  voiceSeconds: 55,
 };
 
 /** The free plan's call time a day, in seconds. */
@@ -150,7 +149,8 @@ describe("language conversations", () => {
       status: "ready",
     });
 
-    expect(result.status === "ready" && result.conversation.instructions).toBeTruthy();
+    // The voice model's prompt stays on the server, which sends it when it creates the session.
+    expect(result.status === "ready" && "instructions" in result.conversation).toBe(false);
   });
 
   it("keeps another learner's call hidden", async () => {
@@ -169,6 +169,7 @@ describe("language conversations", () => {
   });
 
   it("reserves a durable deadline without provider spend, then creates the server-owned session", async () => {
+    freezeClock();
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);
     const conversationId = await startPractice(renting.id);
@@ -180,7 +181,6 @@ describe("language conversations", () => {
         connectionId: expect.any(String),
         deadlineAt: expect.any(String),
         endsAtLimit: null,
-        generation: 1,
         seconds: PRACTICE_SECONDS,
         voice: "marin",
       },
@@ -203,11 +203,7 @@ describe("language conversations", () => {
 
     await expect(
       prisma.liveCallConnection.findUniqueOrThrow({ where: { id: reserved.setup.connectionId } }),
-    ).resolves.toMatchObject({
-      providerSessionId: null,
-      state: "pending",
-      workflowRunId: `test-deadline-${reserved.setup.connectionId}`,
-    });
+    ).resolves.toMatchObject({ providerSessionId: null, state: "reserved" });
 
     await expect(
       redeemLiveCallSdp({
@@ -232,7 +228,10 @@ describe("language conversations", () => {
       prisma.languageConversation.findUniqueOrThrow({ where: { id: conversationId } }),
     ]);
 
-    expect(usage).toMatchObject([{ seconds: PRACTICE_SECONDS, targetId: conversationId }]);
+    expect(usage).toMatchObject([
+      { seconds: PRACTICE_SECONDS, targetId: reserved.setup.connectionId },
+    ]);
+
     expect(row.startedAt).not.toBeNull();
   });
 
@@ -249,37 +248,45 @@ describe("language conversations", () => {
     });
 
     const conversationId = started.status === "ready" ? started.conversationId : "";
-    await connectTestCall(conversationId);
+    const first = await connectTestCall(conversationId);
 
-    // The provider confirms the first connection ran for half a minute before reconnecting.
+    // The first connection ran for half a minute before the learner connected again.
     vi.setSystemTime(new Date(Date.now() + 30_000));
 
+    const second = await reserveTestCall(conversationId);
+
+    expect(second).toMatchObject({ setup: { endsAtLimit: null, seconds: 60 }, status: "ready" });
+
+    const records = await prisma.usageRecord.findMany({
+      orderBy: { createdAt: "asc" },
+      where: { kind: "conversation", userId: user.id },
+    });
+
+    expect(records).toMatchObject([
+      { seconds: 30, targetId: first.setup.connectionId },
+      { seconds: 60, targetId: second.status === "ready" ? second.setup.connectionId : "" },
+    ]);
+  });
+
+  it("connects again a call opened on an earlier day, against today's call time", async () => {
+    freezeClock();
+    const { renting, user } = await languageGoalFixture();
+    mockSession(user.id);
+    const conversationId = await startPractice(renting.id);
+
+    await prisma.languageConversation.update({
+      data: { createdAt: new Date(Date.now() - DAY_MS) },
+      where: { id: conversationId },
+    });
+
     await expect(reserveTestCall(conversationId)).resolves.toMatchObject({
-      setup: { endsAtLimit: null, seconds: 60 },
+      setup: { seconds: PRACTICE_SECONDS },
       status: "ready",
     });
 
-    const record = await prisma.usageRecord.findFirstOrThrow({
-      where: { targetId: conversationId },
-    });
-
-    expect(record.seconds).toBeGreaterThanOrEqual(90);
-    expect(record.seconds).toBeLessThanOrEqual(92);
-  });
-
-  it("can't connect again a call claimed on an earlier day", async () => {
-    const { renting, user } = await languageGoalFixture();
-    mockSession(user.id);
-    const conversationId = await connectPractice(renting.id);
-
-    await prisma.usageRecord.updateMany({
-      data: { createdAt: new Date(Date.now() - DAY_MS) },
-      where: { targetId: conversationId },
-    });
-
-    await expect(reserveTestCall(conversationId)).resolves.toStrictEqual({
-      status: "conversationEnded",
-    });
+    await expect(
+      prisma.usageRecord.findFirstOrThrow({ where: { kind: "conversation", userId: user.id } }),
+    ).resolves.toMatchObject({ createdAt: new Date(), seconds: PRACTICE_SECONDS });
   });
 
   it("ends a call early at the day's call time, and says so", async () => {
@@ -320,39 +327,39 @@ describe("language conversations", () => {
     expect(createLiveCallSession).not.toHaveBeenCalled();
   });
 
-  it("keeps only what a finished call ran in the day's call time", async () => {
+  it("keeps only what a finished call ran in the day's call time, hung up before its review", async () => {
+    freezeClock();
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);
     const conversationId = await connectPractice(renting.id);
 
-    vi.mocked(closeLiveCallSession).mockResolvedValueOnce({
-      reason: "close_requested",
-      seconds: 45,
-      status: "closed",
-    });
+    vi.setSystemTime(new Date(Date.now() + 45_000));
 
     await completeLanguageConversation({
       conversationId,
       input: testCallCompletionInput(conversationId, COMPLETION),
     });
 
-    const record = await prisma.usageRecord.findFirstOrThrow({
-      where: { targetId: conversationId },
+    const connection = await prisma.liveCallConnection.findFirstOrThrow({
+      where: { conversationId },
     });
 
-    expect(record.seconds).toBeGreaterThanOrEqual(45);
-    expect(record.seconds).toBeLessThanOrEqual(47);
-    expect(record.costMicros).toBe(10_000 + Math.round((record.seconds * 50_000) / 60));
+    const record = await prisma.usageRecord.findFirstOrThrow({
+      where: { targetId: connection.id },
+    });
 
-    await expect(
-      prisma.liveCallConnection.findMany({ where: { conversationId } }),
-    ).resolves.toMatchObject([
-      { costConfidence: "confirmed", settledMicros: record.costMicros, state: "closed" },
-    ]);
+    // 45 seconds at $0.05 a minute, and $0.01 for the call's checks.
+    expect(record).toMatchObject({ costMicros: 47_500, seconds: 45 });
 
-    const [closedAt] = vi.mocked(closeLiveCallSession).mock.invocationCallOrder;
+    expect(connection).toMatchObject({
+      costMicros: 47_500,
+      endReason: "completion",
+      state: "ended",
+    });
+
+    const [hungUpAt] = vi.mocked(hangUpLiveCallSession).mock.invocationCallOrder;
     const [reviewedAt] = vi.mocked(writeConversationFeedback).mock.invocationCallOrder;
-    expect(closedAt).toBeLessThan(reviewedAt ?? 0);
+    expect(hungUpAt).toBeLessThan(reviewedAt ?? 0);
   });
 
   it("gives guests no live calls", async () => {

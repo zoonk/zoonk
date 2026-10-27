@@ -21,7 +21,7 @@ export default function LiveCallsPage() {
           <ContainerTitle>Live calls</ContainerTitle>
           <ContainerDescription>
             Who can start a voice call, what free accounts can spend on calls each day, and the
-            connections the provider hasn’t confirmed closed.
+            connections still open.
           </ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>

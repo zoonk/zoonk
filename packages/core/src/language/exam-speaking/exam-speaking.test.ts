@@ -1,6 +1,7 @@
 import { checkConversationObjectives } from "@zoonk/ai/tasks/v2/language/conversation-objectives";
 import { generateExamSpeakingCard } from "@zoonk/ai/tasks/v2/language/exam-speaking-card";
 import { drawExamSpeakingPhoto } from "@zoonk/ai/tasks/v2/language/exam-speaking-photo";
+import { createLiveCallSession } from "@zoonk/ai/tasks/v2/language/live-call-session";
 import { scoreSpeaking } from "@zoonk/ai/tasks/v2/language/speaking-score";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
@@ -182,7 +183,8 @@ describe("exam speaking tasks", () => {
 
   it("starts a DELE B2 task with its card, the AI as its examiner and the exam's own timing", async () => {
     const { goal } = await deleLearner();
-    const view = await readView(await startTask({ goalId: goal.id, task: "t1" }));
+    const conversationId = await startTask({ goalId: goal.id, task: "t1" });
+    const view = await readView(conversationId);
 
     expect(view).toMatchObject({
       kind: "examSpeaking",
@@ -221,7 +223,14 @@ describe("exam speaking tasks", () => {
 
     // The examiner keeps time like a real one: the conversation starts after the monologue.
     expect(view.examTask?.cues.map((cue) => cue.atSeconds)).toStrictEqual([240]);
-    expect(view.instructions).toContain("one task of the DELE B2 speaking paper");
+    await connect(conversationId);
+
+    // Only the server tells the voice model its role, when it creates the session.
+    expect(createLiveCallSession).toHaveBeenCalledWith(
+      expect.objectContaining({
+        instructions: expect.stringContaining("one task of the DELE B2 speaking paper"),
+      }),
+    );
 
     expect(generateExamSpeakingCard).toHaveBeenCalledWith(
       expect.objectContaining({ exam: "dele", level: "B2", previous: null, title: "DELE B2" }),

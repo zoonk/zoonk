@@ -1,30 +1,26 @@
+import { type LanguageConversation, type TransactionClient, sql } from "@zoonk/db";
 import {
-  type LanguageConversation,
-  type LiveCallConnection,
-  type LiveCallSlot,
-  type TransactionClient,
-} from "@zoonk/db";
+  getCallExposureMicros,
+  getEndingCharge,
+} from "../../language/conversations/_utils/live-call-money";
 import { isPlusOnlyLiveCall } from "../../language/conversations/_utils/live-call-plus";
-import {
-  getLiveCallLiability,
-  isLiveCallCleanupHealthy,
-  readLiveCallAdmission,
-} from "../../language/conversations/_utils/live-call-policy";
+import { readLiveCallAdmission } from "../../language/conversations/_utils/live-call-policy";
+import { settleLiveCall } from "../../language/conversations/_utils/settle-live-call";
 import {
   type LiveCallRefusal,
   type LiveCallReservationResult,
 } from "../../language/conversations/live-call-contract";
 import {
-  LIVE_CALL_ATTEMPTS_PER_CONVERSATION,
   LIVE_CALL_ATTEMPTS_PER_DAY,
-  LIVE_CALL_GRACE_SECONDS,
   getCallMonthlyBudgetMicros,
   getLiveCallReservationMicros,
 } from "../limits";
-import { claimLiveCallTime } from "./claim-live-call-time";
+import { claimUsageInTransaction } from "./claim-usage-in-transaction";
 import { type EntitlementViewer } from "./entitlement-viewer";
 import { claimFreeCallSpend } from "./free-call-spend";
 import { getUsagePeriodStarts } from "./usage-periods";
+
+const MS_PER_SECOND = 1000;
 
 /** Refusals after a minute claim must roll back the entire reservation, including free-day writes. */
 export class LiveCallReservationRefusedError extends Error {
@@ -36,17 +32,20 @@ export class LiveCallReservationRefusedError extends Error {
   }
 }
 
+/** A checkpoint keeps the window its first connection opened; other calls start over. */
 async function requestedCallSeconds({
   conversation,
   now,
   transaction,
 }: {
-  conversation: { id: string; kind: string; minutes: number };
+  conversation: LanguageConversation;
   now: Date;
   transaction: TransactionClient;
 }): Promise<number> {
+  const length = conversation.minutes * 60;
+
   if (conversation.kind !== "checkpoint") {
-    return conversation.minutes * 60;
+    return length;
   }
 
   const first = await transaction.liveCallConnection.findFirst({
@@ -55,23 +54,108 @@ async function requestedCallSeconds({
   });
 
   return first
-    ? Math.max(
-        0,
-        Math.ceil((first.deadlineAt.getTime() - now.getTime()) / 1000) - LIVE_CALL_GRACE_SECONDS,
-      )
-    : conversation.minutes * 60;
+    ? Math.max(0, Math.floor((first.deadlineAt.getTime() - now.getTime()) / MS_PER_SECOND))
+    : length;
 }
 
+/**
+ * A learner has at most one connection that isn't ended. A reservation never blocks: it's ended
+ * (refunded) here. A creation in flight waits, and a live call refuses the new one; Connect hangs
+ * those up first when it may, so reaching them here means another request got in between.
+ */
+async function clearOpenConnection({
+  conversationId,
+  now,
+  transaction,
+  userId,
+}: {
+  conversationId: string;
+  now: Date;
+  transaction: TransactionClient;
+  userId: string;
+}): Promise<LiveCallRefusal | null> {
+  const open = await transaction.liveCallConnection.findMany({
+    where: { state: { not: "ended" }, userId },
+  });
+
+  const reservations = open.filter((connection) => connection.state === "reserved");
+  const running = open.find((connection) => connection.state !== "reserved");
+
+  await Promise.all(
+    reservations.map((connection) =>
+      settleLiveCall({
+        connection,
+        ...getEndingCharge({ connection, now }),
+        endReason: connection.conversationId === conversationId ? "reconnect" : "takeover",
+        now,
+        transaction,
+      }),
+    ),
+  );
+
+  if (!running) {
+    return null;
+  }
+
+  return running.state === "live" && running.conversationId !== conversationId
+    ? { connectionId: running.id, conversationId: running.conversationId, status: "callInProgress" }
+    : { status: "previousConnectionClosing" };
+}
+
+/**
+ * The learner's own call cost this month, open calls counted by their exposure, plus this
+ * reservation, must fit the plan's monthly call budget.
+ */
+async function fitsMonthlyBudget({
+  now,
+  reservedMicros,
+  transaction,
+  viewer,
+}: {
+  now: Date;
+  reservedMicros: number;
+  transaction: TransactionClient;
+  viewer: EntitlementViewer;
+}): Promise<boolean> {
+  const connections = await transaction.liveCallConnection.findMany({
+    where: {
+      OR: [{ createdAt: { gte: getUsagePeriodStarts(now).month } }, { state: { not: "ended" } }],
+      userId: viewer.userId,
+    },
+  });
+
+  const exposure = connections.reduce(
+    (total, connection) => total + getCallExposureMicros({ connection, now }),
+    0,
+  );
+
+  return exposure + reservedMicros <= getCallMonthlyBudgetMicros(viewer.tier);
+}
+
+async function newConnectionId(transaction: TransactionClient): Promise<string> {
+  const [row] = await transaction.$queryRaw<{ id: string }[]>(sql`SELECT uuidv7()::text AS id`);
+
+  if (!row) {
+    throw new Error("PostgreSQL returned no id");
+  }
+
+  return row.id;
+}
+
+/**
+ * Holds what's left of the learner's call time for one connection (its own usage record), with
+ * its cost reserved: the learner's monthly call budget, and on the free plan the day's shared
+ * bucket. Its deadline is the reservation plus what it holds, with no grace. Callers hold the
+ * learner's lock.
+ */
 export async function reserveLiveCall({
   conversationId,
   now,
-  requestId,
   transaction,
   viewer,
 }: {
   conversationId: string;
   now: Date;
-  requestId: string;
   transaction: TransactionClient;
   viewer: EntitlementViewer;
 }): Promise<LiveCallReservationResult> {
@@ -83,7 +167,7 @@ export async function reserveLiveCall({
     return { status: "notFound" };
   }
 
-  if (conversation.status !== "ready" || conversation.completionStartedAt !== null) {
+  if (conversation.status !== "ready" || conversation.reviewRunId !== null) {
     return { status: "conversationEnded" };
   }
 
@@ -93,109 +177,67 @@ export async function reserveLiveCall({
 
   const budget = await readLiveCallAdmission({ transaction, userId: viewer.userId });
 
-  if (budget === null || !(await isLiveCallCleanupHealthy({ now, transaction }))) {
+  if (budget === null) {
     return { status: "callsPaused" };
   }
 
-  const existing = await transaction.liveCallConnection.findUnique({
-    where: { userId_requestId: { requestId, userId: viewer.userId } },
+  const open = await clearOpenConnection({
+    conversationId,
+    now,
+    transaction,
+    userId: viewer.userId,
   });
 
-  if (existing) {
-    return existing.conversationId === conversationId && existing.state === "pending"
-      ? { connection: existing, endsAtLimit: existing.shortenedBy, status: "reserved" }
-      : { status: "previousConnectionClosing" };
+  if (open) {
+    return open;
   }
 
-  const slot = await transaction.liveCallSlot.upsert({
-    create: { userId: viewer.userId },
-    update: {},
-    where: { userId: viewer.userId },
+  const today = await transaction.liveCallConnection.count({
+    where: { createdAt: { gte: getUsagePeriodStarts(now).day }, userId: viewer.userId },
   });
-
-  if (slot.connectionId) {
-    const previous = await transaction.liveCallConnection.findUniqueOrThrow({
-      where: { id: slot.connectionId },
-    });
-
-    return previous.conversationId === conversationId
-      ? { status: "previousConnectionClosing" }
-      : {
-          connectionId: previous.id,
-          conversationId: previous.conversationId,
-          status: "callInProgress",
-        };
-  }
-
-  const starts = getUsagePeriodStarts(now);
-
-  const [attempts, today, ledger] = await Promise.all([
-    transaction.liveCallConnection.count({ where: { conversationId, userId: viewer.userId } }),
-    transaction.liveCallConnection.count({
-      where: { createdAt: { gte: starts.day }, userId: viewer.userId },
-    }),
-    transaction.liveCallConnection.findMany({
-      where: {
-        OR: [{ createdAt: { gte: starts.month } }, { state: { not: "closed" } }],
-        userId: viewer.userId,
-      },
-    }),
-  ]);
-
-  if (attempts >= LIVE_CALL_ATTEMPTS_PER_CONVERSATION) {
-    return { period: "conversation", status: "connectionLimitReached" };
-  }
 
   if (today >= LIVE_CALL_ATTEMPTS_PER_DAY) {
     return { period: "day", status: "connectionLimitReached" };
   }
 
-  return reserveCallLedger({
-    attempts,
-    budget,
-    conversation,
-    ledger,
-    now,
-    requestId,
-    slot,
-    transaction,
-    viewer,
-  });
-}
-
-async function reserveCallLedger({
-  attempts,
-  budget,
-  conversation,
-  ledger,
-  now,
-  requestId,
-  slot,
-  transaction,
-  viewer,
-}: {
-  attempts: number;
-  budget: number;
-  conversation: LanguageConversation;
-  ledger: LiveCallConnection[];
-  now: Date;
-  requestId: string;
-  slot: LiveCallSlot;
-  transaction: TransactionClient;
-  viewer: EntitlementViewer;
-}): Promise<LiveCallReservationResult> {
-  const conversationId = conversation.id;
-  const starts = getUsagePeriodStarts(now);
   const seconds = await requestedCallSeconds({ conversation, now, transaction });
 
   if (seconds === 0) {
     return { status: "conversationEnded" };
   }
 
-  const decision = await claimLiveCallTime({ conversationId, now, seconds, transaction, viewer });
+  return holdCallTime({ budget, conversation, now, seconds, transaction, viewer });
+}
+
+async function holdCallTime({
+  budget,
+  conversation,
+  now,
+  seconds,
+  transaction,
+  viewer,
+}: {
+  budget: number;
+  conversation: LanguageConversation;
+  now: Date;
+  seconds: number;
+  transaction: TransactionClient;
+  viewer: EntitlementViewer;
+}): Promise<LiveCallReservationResult> {
+  const id = await newConnectionId(transaction);
+
+  const { decision } = await claimUsageInTransaction({
+    generated: false,
+    kind: "conversation",
+    now,
+    seconds,
+    targetId: id,
+    transaction,
+    viewer,
+  });
 
   if (decision.status !== "allowed") {
-    throw new LiveCallReservationRefusedError(decision);
+    return decision;
   }
 
   const heldSeconds = decision.heldSeconds ?? seconds;
@@ -204,28 +246,27 @@ async function reserveCallLedger({
     throw new LiveCallReservationRefusedError({ status: "conversationEnded" });
   }
 
-  const reservedMicros = getLiveCallReservationMicros(heldSeconds);
-  const monthlyBudget = getCallMonthlyBudgetMicros(viewer.tier);
+  const costMicros = getLiveCallReservationMicros(heldSeconds);
 
-  const liability = ledger.reduce(
-    (total, connection) => total + getLiveCallLiability({ connection, now }),
-    0,
-  );
-
-  if (liability + reservedMicros > monthlyBudget) {
+  if (!(await fitsMonthlyBudget({ now, reservedMicros: costMicros, transaction, viewer }))) {
     throw new LiveCallReservationRefusedError({
-      limit: { limit: monthlyBudget, period: "month", resource: "aiSpend", tier: viewer.tier },
+      limit: {
+        limit: getCallMonthlyBudgetMicros(viewer.tier),
+        period: "month",
+        resource: "aiSpend",
+        tier: viewer.tier,
+      },
       status: "limitReached",
     });
   }
 
-  const freeSpendDay = viewer.tier === "free" ? starts.day : null;
+  const freeSpendDay = viewer.tier === "free" ? getUsagePeriodStarts(now).day : null;
 
   if (
     freeSpendDay &&
     !(await claimFreeCallSpend({
       budgetMicros: budget,
-      costMicros: reservedMicros,
+      costMicros,
       day: freeSpendDay,
       now,
       transaction,
@@ -237,37 +278,24 @@ async function reserveCallLedger({
     });
   }
 
-  const usage = await transaction.usageRecord.findUniqueOrThrow({
-    where: {
-      userUsageTarget: { kind: "conversation", targetId: conversationId, userId: viewer.userId },
-    },
-  });
-
-  const generation = slot.generation + 1;
-
-  const connection = await transaction.liveCallConnection.create({
-    data: {
-      attemptNumber: attempts + 1,
-      conversationId,
-      createdAt: now,
-      deadlineAt: new Date(now.getTime() + (heldSeconds + LIVE_CALL_GRACE_SECONDS) * 1000),
-      freeSpendDay,
-      generation,
-      heldSeconds,
-      liabilityMicros: reservedMicros,
-      priorUsageSeconds: decision.priorUsageSeconds ?? 0,
-      requestId,
-      reservedMicros,
-      shortenedBy: decision.shortenedBy ?? null,
-      usageRecordId: usage.id,
-      userId: viewer.userId,
-    },
-  });
-
-  await transaction.liveCallSlot.update({
-    data: { connectionId: connection.id, generation },
-    where: { userId: viewer.userId },
-  });
+  const [connection] = await Promise.all([
+    transaction.liveCallConnection.create({
+      data: {
+        conversationId: conversation.id,
+        costMicros,
+        createdAt: now,
+        deadlineAt: new Date(now.getTime() + heldSeconds * MS_PER_SECOND),
+        freeSpendDay,
+        heldSeconds,
+        id,
+        userId: viewer.userId,
+      },
+    }),
+    transaction.usageRecord.update({
+      data: { costMicros },
+      where: { userUsageTarget: { kind: "conversation", targetId: id, userId: viewer.userId } },
+    }),
+  ]);
 
   return { connection, endsAtLimit: decision.shortenedBy ?? null, status: "reserved" };
 }

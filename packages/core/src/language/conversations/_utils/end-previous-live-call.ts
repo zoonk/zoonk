@@ -1,45 +1,33 @@
 import { prisma } from "@zoonk/db";
-import { lockUsageForViewer } from "../../../entitlements/_utils/usage-lock";
-import { closeLiveCallConnection } from "../close-live-call-connection";
+import { endLiveCall } from "../end-live-call";
 import { type LiveCallRefusal } from "../live-call-contract";
 
-/** Replacement is refused until the old provider connection is authoritatively terminal. */
+/**
+ * Before a new reservation, the learner's open connection ends: a reservation always (it never
+ * blocks), the same call's connection as a reconnect, and another call's only with `takeover`. A
+ * creation in flight is told to hang up once its session exists, and the new call waits for it,
+ * as it does for a hangup OpenAI didn't confirm, so two sessions never bill at once.
+ */
 export async function endPreviousLiveCall({
   conversationId,
-  requestId,
   takeover,
   userId,
 }: {
   conversationId: string;
-  requestId: string;
   takeover?: boolean;
   userId: string;
 }): Promise<LiveCallRefusal | null> {
-  const previous = await prisma.$transaction(async (transaction) => {
-    await lockUsageForViewer({ transaction, userId });
-
-    /** A delayed replay observes its own attempt; it must never close a newer slot occupant. */
-    const existingRequest = await transaction.liveCallConnection.findUnique({
-      where: { userId_requestId: { requestId, userId } },
-    });
-
-    if (existingRequest) {
-      return null;
-    }
-
-    const slot = await transaction.liveCallSlot.findUnique({
-      include: { connection: true },
-      where: { userId },
-    });
-
-    return slot?.connection ?? null;
+  const previous = await prisma.liveCallConnection.findFirst({
+    where: { state: { not: "ended" }, userId },
   });
 
-  if (!previous || previous.requestId === requestId) {
+  if (!previous) {
     return null;
   }
 
-  if (previous.conversationId !== conversationId && !takeover) {
+  const sameCall = previous.conversationId === conversationId;
+
+  if (previous.state !== "reserved" && !sameCall && !takeover) {
     return {
       connectionId: previous.id,
       conversationId: previous.conversationId,
@@ -47,11 +35,10 @@ export async function endPreviousLiveCall({
     };
   }
 
-  const closed = await closeLiveCallConnection({
+  const ended = await endLiveCall({
     connectionId: previous.id,
-    generation: previous.generation,
-    reason: previous.conversationId === conversationId ? "reconnect" : "takeover",
+    reason: sameCall ? "reconnect" : "takeover",
   });
 
-  return closed.status === "closed" ? null : { status: "previousConnectionClosing" };
+  return ended.status === "closing" ? { status: "previousConnectionClosing" } : null;
 }

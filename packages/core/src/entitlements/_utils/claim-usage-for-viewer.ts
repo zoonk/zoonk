@@ -15,9 +15,8 @@ import { lockUsageForViewer } from "./usage-lock";
  * costs AI also takes its estimated cost from the daily budget all guests share, and once that's
  * spent asks the guest to create a free account (`signUpRequired`). A live call's connection
  * (`seconds`) holds up to that much of the plan's call time (today's and this month's) and
- * returns what it holds; connecting the same call again holds its length again
- * (`holdCallTimeAgain`). A use it records marks the learner, which it does before
- * taking the usage lock (plans, then learners, then everything else, in every writer).
+ * returns what it holds. A use it records marks the learner, which it does before taking the usage
+ * lock (plans, then learners, then everything else, in every writer).
  */
 export async function claimUsageForViewer({
   generated,
@@ -52,11 +51,10 @@ export async function claimUsageForViewer({
   });
 }
 
-/** One atomic minute, money, slot, attempt and free-day claim under the entitlement lock. */
+/** One atomic minute, money and free-day claim for a live call's connection, under the lock. */
 export async function claimLiveCallUsageForViewer(input: {
   conversationId: string;
   now: Date;
-  requestId: string;
   viewer: EntitlementViewer;
 }): Promise<LiveCallReservationResult> {
   try {
@@ -76,12 +74,8 @@ export async function claimLiveCallUsageForViewer(input: {
           return unchanged({ status: "unauthorized" as const });
         }
 
-        const existing = await transaction.liveCallConnection.findUnique({
-          where: { userId_requestId: { requestId: input.requestId, userId: viewer.userId } },
-        });
-
         const result = await reserveLiveCall({ ...input, transaction, viewer });
-        return result.status !== "reserved" || existing ? unchanged(result) : result;
+        return result.status === "reserved" ? result : unchanged(result);
       },
     );
   } catch (error) {

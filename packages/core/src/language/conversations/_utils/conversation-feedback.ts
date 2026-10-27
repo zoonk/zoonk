@@ -23,7 +23,6 @@ import { type SavedScenario } from "./conversation-view";
 import { findNewlyMetObjectives } from "./objective-check";
 
 type ReviewInput = {
-  hasReviewClaim: () => Promise<boolean>;
   level: CefrLevel;
   row: Pick<LanguageConversation, "goalId" | "language" | "objectivesMet" | "targetLanguage">;
   scenario: SavedScenario;
@@ -158,11 +157,7 @@ async function findObjectivesMet(input: ReviewInput): Promise<string[]> {
  */
 export async function reviewConversation(
   input: ReviewInput,
-): Promise<{ feedback: WrittenFeedback | null; objectivesMet: string[] } | null> {
-  if (!(await input.hasReviewClaim())) {
-    return null;
-  }
-
+): Promise<{ feedback: WrittenFeedback | null; objectivesMet: string[] }> {
   const { exam, examTask } = input.scenario;
 
   if (examTask) {
@@ -190,11 +185,6 @@ export async function reviewConversation(
   }
 
   const objectivesMet = await findObjectivesMet(input);
-
-  /** A paused objective check must not start another paid step after its claim was replaced. */
-  if (!(await input.hasReviewClaim())) {
-    return null;
-  }
 
   const feedback = await writeFeedback({
     turns: input.turns,

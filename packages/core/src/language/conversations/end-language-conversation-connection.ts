@@ -1,12 +1,17 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { getSession } from "../../users/get-session";
-import { closeLiveCallConnection } from "./close-live-call-connection";
+import { endLiveCall } from "./end-live-call";
 
 export type EndLanguageConversationConnectionResult = {
   status: "closed" | "previousConnectionClosing" | "unauthorized" | "notFound";
 };
 
+/**
+ * The learner ends their call's connection: its session is hung up and the call settles at that
+ * moment. A hangup OpenAI didn't confirm, or a session still being created, answers
+ * `previousConnectionClosing`; asking again, a later start or the deadline finishes it.
+ */
 export async function endLanguageConversationConnection({
   connectionId,
   conversationId,
@@ -28,11 +33,7 @@ export async function endLanguageConversationConnection({
     return { status: "notFound" };
   }
 
-  const outcome = await closeLiveCallConnection({
-    connectionId,
-    generation: connection.generation,
-    reason: "completion",
-  });
+  const outcome = await endLiveCall({ connectionId, reason: "learner" });
 
-  return { status: outcome.status === "closed" ? "closed" : "previousConnectionClosing" };
+  return { status: outcome.status === "closing" ? "previousConnectionClosing" : "closed" };
 }

@@ -1,11 +1,11 @@
 import "server-only";
+import { getString, isJsonObject } from "@zoonk/utils/json";
 import { APICallError } from "ai";
-import { type LiveCallSessionClosed } from "./_utils/live-call-closed-event";
-import { getLiveCallModel } from "./_utils/live-call-provider";
-import { closeLiveCallSideband } from "./_utils/live-call-sideband";
+import { getLiveCallModel, liveCallFetch } from "./_utils/live-call-provider";
 import { LIVE_CALL_CREATE_TIMEOUT_MS, LiveCallCreationRefusedError } from "./live-call-creation";
 
-const CLOSE_TIMEOUT_MS = 15_000;
+/** OpenAI answers a hangup within a second; one for a session that already ended took 6 s. */
+const HANGUP_TIMEOUT_MS = 15_000;
 
 const BAD_REQUEST = 400;
 const UNAUTHORIZED = 401;
@@ -46,7 +46,6 @@ function toCreationError(error: unknown): unknown {
   return error;
 }
 
-export type { LiveCallSessionClosed } from "./_utils/live-call-closed-event";
 export { isLiveCallAvailable } from "./_utils/live-call-provider";
 
 export type LiveCallSession = { sdp: string; sessionId: string };
@@ -108,12 +107,38 @@ export async function createLiveCallSession({
   });
 }
 
-/** Only a server-observed terminal receipt permits core to release the slot and settle usage. */
-export async function closeLiveCallSession(
-  providerSessionId: string,
-): Promise<LiveCallSessionClosed> {
-  const deadlineAt = Date.now() + CLOSE_TIMEOUT_MS;
-  const { headers, url } = getLiveCallModel().getServerWebSocketConfig();
+/** OpenAI's answer for a session that doesn't exist anymore: it already ended. */
+async function isAlreadyEnded(response: Response): Promise<boolean> {
+  if (response.status !== NOT_FOUND) {
+    return false;
+  }
 
-  return closeLiveCallSideband({ deadlineAt, headers, providerSessionId, url });
+  const body: unknown = await response.json().catch(() => null);
+  const error = isJsonObject(body) ? body.error : null;
+
+  return getString(error, "code") === "session_id_not_found";
+}
+
+/**
+ * Ends the session at once: OpenAI closes it with `close_requested` and stops billing. Resolves
+ * once the session is over, including when it had already ended (on its own, or because the
+ * browser left); rejects when that isn't known, so the caller keeps the call open and tries again.
+ */
+export async function hangUpLiveCallSession(providerSessionId: string): Promise<void> {
+  // The SDK has no hangup helper: the session's REST path sits beside its WebSocket one.
+  const { headers, url } = getLiveCallModel().getServerWebSocketConfig();
+  const endpoint = new URL(`${url}/${encodeURIComponent(providerSessionId)}/hangup`);
+  endpoint.protocol = endpoint.protocol === "ws:" ? "http:" : "https:";
+
+  const response = await liveCallFetch(endpoint, {
+    headers,
+    method: "POST",
+    signal: AbortSignal.timeout(HANGUP_TIMEOUT_MS),
+  });
+
+  if (response.ok || (await isAlreadyEnded(response))) {
+    return;
+  }
+
+  throw new Error(`The provider didn't hang up the Live session (${response.status})`);
 }

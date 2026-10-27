@@ -11,8 +11,12 @@ import { getTestRunEnvironment } from "../../packages/db/src/test-environment.ts
  */
 const OWN_MOCKS = globSync(["src/**/*.test.ts", "scripts/**/*.test.ts"], {
   cwd: import.meta.dirname,
-}).filter((file) =>
-  /\bvi\.(?:mock|doMock|unmock)\(/u.test(readFileSync(resolve(import.meta.dirname, file), "utf8")),
+}).filter(
+  (file) =>
+    !file.endsWith(".integration.test.ts") &&
+    /\bvi\.(?:mock|doMock|unmock)\(/u.test(
+      readFileSync(resolve(import.meta.dirname, file), "utf8"),
+    ),
 );
 
 export default defineConfig({
@@ -56,13 +60,19 @@ export default defineConfig({
       NEXT_PUBLIC_APP_DOMAIN: "localhost:9002",
     },
     environment: "node",
-    exclude: ["**/node_modules/**", "**/e2e/**"],
+    // Real Workflow execution runs in its own config (`vitest.workflow.config.mts`).
+    exclude: ["**/node_modules/**", "**/e2e/**", "**/*.integration.test.ts"],
     globalSetup: ["../../packages/db/src/test-database.ts"],
     projects: [
       {
         extends: true,
         test: {
-          exclude: [...configDefaults.exclude, "**/e2e/**", ...OWN_MOCKS],
+          exclude: [
+            ...configDefaults.exclude,
+            "**/e2e/**",
+            "**/*.integration.test.ts",
+            ...OWN_MOCKS,
+          ],
           isolate: false,
           name: "shared",
         },

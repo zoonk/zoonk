@@ -14,7 +14,6 @@ import {
   useSyncExternalStore,
 } from "react";
 import { type CallLimit } from "../../_components/help-limit-notice";
-import { getCallEndsAt } from "./call-deadline";
 import { type LiveCallSession } from "./live-call-session";
 import { loadLiveCallSession } from "./load-live-call-session";
 import {
@@ -63,6 +62,8 @@ export type LiveCallActions = CallConnectionActions & {
   /** Every goal met so far, from what was said; null when the check didn't run. */
   checkObjectives: (turns: ConversationTurn[]) => Promise<string[] | null>;
 };
+
+const MS_PER_SECOND = 1000;
 
 const EMPTY_STATE: RealtimeState = {
   events: [],
@@ -154,9 +155,8 @@ function useCallProblem({
 
 /**
  * Ending the call. `hangUp` silences it at once on this side (the microphone, what's sent and what
- * plays) and ends the call. `release` silences it and has the server close it: true once the
- * server confirmed, and only then does the browser drop its peer, so the server collects the
- * session's end itself.
+ * plays) and ends the call. `release` silences it and has the server hang it up: true once OpenAI
+ * confirmed the session is over, and only then does the browser drop its peer.
  */
 function useCallEnding({
   endConnection,
@@ -199,8 +199,8 @@ function useCallEnding({
  * and creates the session; the browser sends its audio and plays the character's voice over
  * WebRTC. The transcript builds up from both sides, the goals are checked once the character
  * answers each learner turn, and the call wraps up before its deadline. Ending it, from here or by
- * the server, silences it at once; the server then closes it and confirms before the peer goes and
- * before anything is saved. Typing always works, even while the call connects (those replies go
+ * the server, silences it at once; the server then hangs it up and confirms before the peer goes
+ * and before anything is saved. Typing always works, even while the call connects (those replies go
  * out once it does). A call that doesn't connect within a few seconds fails with a way to try
  * again.
  */
@@ -326,12 +326,9 @@ export function useLiveCall({
       const { createLiveCallSession, watchConnection } = live;
       const { setup } = answer;
 
+      // The time the server said was left, from now: the device's clock can be off.
       const length: CallLength = {
-        endsAt: getCallEndsAt({
-          deadlineAt: setup.deadlineAt,
-          now: Date.now(),
-          seconds: setup.seconds,
-        }),
+        endsAt: Date.now() + setup.seconds * MS_PER_SECOND,
         endsAtLimit: setup.endsAtLimit,
       };
 
@@ -355,7 +352,7 @@ export function useLiveCall({
     [fail, handleEvent, keepAudio, phaseRef, reserve, setPhase, tappedAudio],
   );
 
-  const finish = useCallFinish({ getConnectionId, release, sessionRef, turnsRef });
+  const finish = useCallFinish({ getConnectionId, release, turnsRef });
 
   // Leaving the screen ends the call too. A screen kept hidden in an Activity shows the call as
   // dropped when it's back, with its transcript, since the call can't go on from there.

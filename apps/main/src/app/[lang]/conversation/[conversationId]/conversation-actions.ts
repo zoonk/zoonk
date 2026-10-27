@@ -23,7 +23,7 @@ export async function connectConversationAction({
   locale,
 }: {
   conversationId: string;
-  input?: { requestId?: string; takeover?: boolean };
+  input?: { takeover?: boolean };
   locale: string;
 }): Promise<ConversationConnection> {
   if (!hasLocale(routing.locales, locale)) {

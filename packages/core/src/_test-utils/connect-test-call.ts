@@ -1,39 +1,16 @@
-import { closeLiveCallSession } from "@zoonk/ai/tasks/v2/language/live-call-session";
 import { prisma } from "@zoonk/db";
-import { vi } from "vitest";
 import { connectLanguageConversation } from "../language/conversations/connect-language-conversation";
 import { redeemLiveCallSdp } from "../language/conversations/redeem-live-call-sdp";
-
-const MINIMUM_BILLABLE_SECONDS = 15;
 
 const ownedConversationIds = new Set<string>();
 const originatingConnectionIds = new Map<string, string>();
 
-/** Only provider finalization and durable scheduling are external test boundaries. */
+/** Calls are admitted for everyone; the provider leaf is the shared test boundary. */
 export async function setupTestCalls() {
   await prisma.liveCallSetting.upsert({
     create: { admission: "all", freeDailyBudgetMicros: 150_000_000, id: "live" },
     update: { admission: "all", freeDailyBudgetMicros: 150_000_000 },
     where: { id: "live" },
-  });
-
-  vi.mocked(closeLiveCallSession).mockImplementation(async (sessionId) => {
-    const connection = await prisma.liveCallConnection.findFirstOrThrow({
-      where: { providerSessionId: sessionId },
-    });
-
-    if (!connection.providerStartedAt) {
-      throw new Error("Expected provider start time");
-    }
-
-    return {
-      reason: "close_requested",
-      seconds: Math.max(
-        MINIMUM_BILLABLE_SECONDS,
-        Math.ceil((Date.now() - connection.providerStartedAt.getTime()) / 1000),
-      ),
-      status: "closed",
-    };
   });
 }
 
@@ -42,7 +19,7 @@ export async function reserveTestCall(conversationId: string) {
 
   const reserved = await connectLanguageConversation({
     conversationId,
-    scheduleDeadline: async ({ connectionId }) => ({ runId: `test-deadline-${connectionId}` }),
+    scheduleDeadline: async () => null,
   });
 
   if (reserved.status === "ready") {
@@ -84,11 +61,12 @@ export function testCallCompletionInput<T extends object>(conversationId: string
   return { ...input, connectionId };
 }
 
-/** Fake clock advances must not leave overdue test connections blocking other learners. */
+/** Fake clock advances must not leave this file's open connections in later budget decisions. */
 export async function cleanupTestCalls() {
-  const conversationId = { in: [...ownedConversationIds] };
-  await prisma.liveCallSlot.deleteMany({ where: { connection: { conversationId } } });
-  await prisma.liveCallConnection.deleteMany({ where: { conversationId } });
+  await prisma.liveCallConnection.deleteMany({
+    where: { conversationId: { in: [...ownedConversationIds] } },
+  });
+
   ownedConversationIds.clear();
   originatingConnectionIds.clear();
 }

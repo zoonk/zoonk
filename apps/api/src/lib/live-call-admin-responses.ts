@@ -9,13 +9,9 @@ export function serializeLiveCallAdmission(result: AdmissionView) {
     ...result,
     connections: result.connections.map((connection) => ({
       ...connection,
-      closedAt: connection.closedAt?.toISOString() ?? null,
       createdAt: connection.createdAt.toISOString(),
       deadlineAt: connection.deadlineAt.toISOString(),
-      lastCloseAt: connection.lastCloseAt?.toISOString() ?? null,
-      providerStartedAt: connection.providerStartedAt?.toISOString() ?? null,
-      recoveryUnconfirmedAt: connection.recoveryUnconfirmedAt?.toISOString() ?? null,
-      updatedAt: connection.updatedAt.toISOString(),
+      startedAt: connection.startedAt?.toISOString() ?? null,
     })),
   });
 }

@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import { completedLanguageConversationSchema } from "@zoonk/core/language/conversations/contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
@@ -44,24 +43,14 @@ test("a completed call's HTTP retry returns its mission moment and pays the bonu
       }),
     ]);
 
-    const usage = await prisma.usageRecord.create({
-      data: { kind: "conversation", seconds: 30, targetId: call.id, userId: learner.userId },
-    });
-
     const connection = await prisma.liveCallConnection.create({
       data: {
-        attemptNumber: 1,
-        closedAt: new Date(),
         conversationId: call.id,
-        costConfidence: "confirmed",
+        costMicros: 0,
         deadlineAt: new Date(),
-        generation: 1,
+        endedAt: new Date(),
         heldSeconds: 0,
-        liabilityMicros: 0,
-        requestId: randomUUID(),
-        reservedMicros: 0,
-        state: "closed",
-        usageRecordId: usage.id,
+        state: "ended",
         userId: learner.userId,
       },
     });

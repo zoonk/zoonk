@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import { type LanguageConversation, type LiveCallConnection, prisma } from "@zoonk/db";
 import { RENTING_SCENARIO } from "@zoonk/testing/fixtures/language";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -26,9 +25,8 @@ export async function liveCallFixture({
     });
   }
 
-  /** Unresolved test calls must not trip the global cleanup-health guard in later cases. */
+  /** Open test calls must not stay in later cases' free-day budget decisions. */
   onTestFinished(async () => {
-    await prisma.liveCallSlot.deleteMany({ where: { userId: user.id } });
     await prisma.liveCallConnection.deleteMany({ where: { userId: user.id } });
   });
 
@@ -76,50 +74,21 @@ export function anotherLiveConversation({
   });
 }
 
-async function historyUsageId({
-  conversationId,
-  usageRecordId,
-  userId,
-}: Pick<LiveCallConnection, "conversationId" | "userId"> & {
-  usageRecordId?: string;
-}): Promise<string> {
-  if (usageRecordId) {
-    return usageRecordId;
-  }
-
-  const usage = await prisma.usageRecord.upsert({
-    create: { kind: "conversation", targetId: conversationId, userId },
-    update: {},
-    where: { userUsageTarget: { kind: "conversation", targetId: conversationId, userId } },
-  });
-
-  return usage.id;
-}
-
 /** A persisted earlier connection, for admission limits without spending at the provider. */
-export async function liveCallHistoryFixture({
+export function liveCallHistoryFixture({
   conversationId,
-  usageRecordId,
   userId,
   ...attrs
 }: Partial<LiveCallConnection> & Pick<LiveCallConnection, "conversationId" | "userId">) {
-  const usageId = await historyUsageId({ conversationId, usageRecordId, userId });
-
   return prisma.liveCallConnection.create({
     data: {
-      attemptNumber: 1,
-      closedAt: new Date(),
       conversationId,
-      costConfidence: "confirmed",
+      costMicros: 0,
       createdAt: new Date(),
       deadlineAt: new Date(),
-      generation: 1,
+      endedAt: new Date(),
       heldSeconds: 0,
-      liabilityMicros: 0,
-      requestId: randomUUID(),
-      reservedMicros: 0,
-      state: "closed",
-      usageRecordId: usageId,
+      state: "ended",
       userId,
       ...attrs,
     },
@@ -132,60 +101,4 @@ export function mockLiveCallAdminSession(user: { id: string; role: string | null
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- The existing core auth boundary reads identity and role; the fixture avoids duplicating Better Auth's session internals.
     { user: { id: user.id, role: user.role } } as Awaited<ReturnType<typeof getSession>>,
   );
-}
-
-/** PostgreSQL sequence increments survive rollback, so only this connection's first N receipts fail. */
-export async function failLiveCallReceiptWrites({
-  connectionId,
-  failures,
-}: {
-  connectionId: string;
-  failures: number;
-}) {
-  if (
-    !/^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$/u.test(connectionId) ||
-    !Number.isSafeInteger(failures) ||
-    failures < 1
-  ) {
-    throw new Error("A receipt fault requires a fixture UUID and a positive failure count");
-  }
-
-  const suffix = randomUUID().replaceAll("-", "");
-  const sequence = `live_receipt_seq_${suffix}`;
-  const fault = `live_receipt_fn_${suffix}`;
-  const trigger = `live_receipt_trigger_${suffix}`;
-  /** Names contain only a fixed prefix and UUID hex; DDL cannot bind identifiers as query values. */
-  async function restore(): Promise<void> {
-    await prisma.$executeRawUnsafe(`DROP TRIGGER IF EXISTS ${trigger} ON live_call_connections`);
-    await prisma.$executeRawUnsafe(`DROP FUNCTION IF EXISTS ${fault}()`);
-    await prisma.$executeRawUnsafe(`DROP SEQUENCE IF EXISTS ${sequence}`);
-  }
-
-  onTestFinished(restore);
-  await prisma.$executeRawUnsafe(`CREATE SEQUENCE ${sequence}`);
-
-  await prisma.$executeRawUnsafe(`CREATE FUNCTION ${fault}() RETURNS trigger LANGUAGE plpgsql AS $receipt$
-    BEGIN
-      IF NEW.id = '${connectionId}'::uuid AND NEW.provider_session_id IS NOT NULL THEN
-        IF nextval('${sequence}') <= ${failures} THEN
-          RAISE EXCEPTION 'Test-owned live-call receipt write failure';
-        END IF;
-      END IF;
-      RETURN NEW;
-    END
-  $receipt$`);
-
-  await prisma.$executeRawUnsafe(
-    `CREATE TRIGGER ${trigger} BEFORE UPDATE OF provider_session_id ON live_call_connections FOR EACH ROW EXECUTE FUNCTION ${fault}()`,
-  );
-
-  async function attempts(): Promise<number> {
-    const rows = await prisma.$queryRawUnsafe<{ last_value: bigint }[]>(
-      `SELECT last_value FROM ${sequence}`,
-    );
-
-    return Number(rows[0]?.last_value ?? 0);
-  }
-
-  return { attempts, restore };
 }

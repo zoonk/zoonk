@@ -123,9 +123,30 @@ function toResult({
 }
 
 /**
- * What a call screen shows: the character, the goals of the call with
- * the ones met, hints, and once it ends, the result with the feedback. The voice model's
- * instructions are included only while the call can still be made.
+ * What the voice model is told for a call that can still be made; null once it ended or when its
+ * scenario can't be read. Only the server reads it, when it creates the session.
+ */
+export function buildConversationInstructions(row: ConversationRow): string | null {
+  const data = readSavedScenario(row);
+  const role = data ? toLiveRole(data) : null;
+
+  if (!data || !role || !isCefrLevel(row.level) || row.status !== "ready") {
+    return null;
+  }
+
+  return buildLiveConversationInstructions({
+    ...role,
+    learnerLanguage: row.language,
+    level: row.level,
+    minutes: row.minutes,
+    scenario: data,
+    targetLanguage: row.targetLanguage,
+  });
+}
+
+/**
+ * What a call screen shows: the character, the goals of the call with the ones met, hints, and
+ * once it ends, the result with the feedback.
  */
 export function toConversationView({
   bossKind = "boss",
@@ -143,18 +164,6 @@ export function toConversationView({
 
   const met = new Set(row.objectivesMet);
 
-  const instructions =
-    row.status === "ready"
-      ? buildLiveConversationInstructions({
-          ...role,
-          learnerLanguage: row.language,
-          level: row.level,
-          minutes: row.minutes,
-          scenario: data,
-          targetLanguage: row.targetLanguage,
-        })
-      : null;
-
   return {
     character: data.character,
     exam: data.exam,
@@ -164,7 +173,6 @@ export function toConversationView({
     goalId: row.goalId,
     hints: data.hints,
     id: row.id,
-    instructions,
     kind: row.kind,
     level: row.level,
     locked: false,

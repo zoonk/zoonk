@@ -1,10 +1,13 @@
 import { type TransactionClient, type UsageKind } from "@zoonk/db";
+import { type UsageDecision } from "../contract";
 import { getEstimatedCostMicros } from "../limits";
-import { type UsageClaim, holdCallTimeAgain } from "./call-time";
 import { type EntitlementViewer } from "./entitlement-viewer";
 import { evaluateUsage, getCallHold, getCallTimeLeft } from "./evaluate-usage";
 import { claimGuestSpend } from "./guest-spend-budget";
 import { countUsage } from "./usage-counts";
+
+/** A claim's decision, and whether it wrote: an unchanged claim rolls back its learner marks. */
+type UsageClaim = { decision: UsageDecision; recorded: boolean };
 
 /**
  * Shares the entitlement claim with atomic live-call reservation, never a separate commit. Says
@@ -32,9 +35,7 @@ export async function claimUsageInTransaction({
   });
 
   if (existing) {
-    return seconds === undefined
-      ? { decision: { status: "allowed" }, recorded: false }
-      : holdCallTimeAgain({ now, record: existing, seconds, transaction, viewer });
+    return { decision: { status: "allowed" }, recorded: false };
   }
 
   const counts = await countUsage({ client: transaction, kind, now, userId: viewer.userId });

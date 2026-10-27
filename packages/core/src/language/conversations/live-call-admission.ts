@@ -3,11 +3,8 @@ import { isLiveCallAvailable } from "@zoonk/ai/tasks/v2/language/live-call-sessi
 import { prisma } from "@zoonk/db";
 import { io } from "next/cache";
 import { getAdminAccess } from "../../users/get-admin-access";
-import {
-  LIVE_CALL_SETTING_ID,
-  getLiveCallAdminHealth,
-  isLiveCallCleanupHealthy,
-} from "./_utils/live-call-policy";
+import { getCallExposureMicros } from "./_utils/live-call-money";
+import { LIVE_CALL_SETTING_ID } from "./_utils/live-call-policy";
 import {
   type LiveCallAdmissionInput,
   liveCallAdmissionInputSchema,
@@ -15,6 +12,14 @@ import {
 
 const ADMIN_CONNECTIONS = 100;
 
+/** A hangup takes a second; a connection open this long past its deadline isn't ending. */
+const OVERDUE_AFTER_MS = 60_000;
+
+/**
+ * Admission (Off, Staff or All), the free day's budget and whether the OpenAI key is set, with the
+ * connections still open, oldest deadline first: their cost so far by the clock, and `overdue`
+ * when one is past its deadline by more than a minute, which shows a hangup failing.
+ */
 export async function getLiveCallAdmission() {
   const access = await getAdminAccess();
 
@@ -25,37 +30,20 @@ export async function getLiveCallAdmission() {
   await io();
   const now = new Date();
 
-  const [setting, unresolved, estimated, cleanupHealthy] = await Promise.all([
+  const [setting, open] = await Promise.all([
     prisma.liveCallSetting.findUnique({ where: { id: LIVE_CALL_SETTING_ID } }),
     prisma.liveCallConnection.findMany({
       orderBy: { deadlineAt: "asc" },
       take: ADMIN_CONNECTIONS,
-      where: { state: { not: "closed" } },
+      where: { state: { not: "ended" } },
     }),
-    prisma.liveCallConnection.findMany({
-      orderBy: { closedAt: "desc" },
-      take: ADMIN_CONNECTIONS,
-      where: { costConfidence: "estimated", state: "closed" },
-    }),
-    isLiveCallCleanupHealthy({ now, transaction: prisma }),
   ]);
 
-  /**
-   * Unresolved rows first, then the latest settled by estimate, which no provider confirmed. A
-   * settlement landing between the two reads shows a row in both: its settled copy wins.
-   */
-  const settledIds = new Set(estimated.map(({ id }) => id));
-
-  const connections = [...unresolved.filter(({ id }) => !settledIds.has(id)), ...estimated].slice(
-    0,
-    ADMIN_CONNECTIONS,
-  );
-
   return {
-    cleanupHealthy,
-    connections: connections.map((connection) => ({
+    connections: open.map((connection) => ({
       ...connection,
-      ...getLiveCallAdminHealth({ connection, now }),
+      exposureMicros: getCallExposureMicros({ connection, now }),
+      overdue: connection.deadlineAt.getTime() + OVERDUE_AFTER_MS < now.getTime(),
     })),
     providerAvailable: isLiveCallAvailable(),
     setting: {

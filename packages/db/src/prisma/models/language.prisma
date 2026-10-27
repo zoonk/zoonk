@@ -130,7 +130,8 @@ model LanguageConversation {
   runId               String?                    @map("run_id")
   generatedAt         DateTime?                  @map("generated_at")
   startedAt           DateTime?                  @map("started_at")
-  completionStartedAt DateTime?                  @map("completion_started_at")
+  /// The Workflow run reviewing the call. Once set, the call takes no new connections.
+  reviewRunId         String?                    @map("review_run_id")
   endedAt             DateTime?                  @map("ended_at")
   createdAt           DateTime                   @default(now()) @map("created_at")
   updatedAt           DateTime                   @default(now()) @updatedAt @map("updated_at")

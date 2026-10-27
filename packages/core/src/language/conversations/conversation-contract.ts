@@ -200,15 +200,6 @@ export const languageConversationCompletionInputSchema = z
     timeZone: answerTimeZoneSchema,
     turns: conversationTurnsSchema,
     usedHelp: z.boolean().meta({ description: "The learner used Help" }),
-    voiceSeconds: z
-      .int()
-      .min(0)
-      .max(MAX_SPOKEN_SECONDS)
-      .optional()
-      .meta({
-        description:
-          "The voice session's length that GPT-Live reported in `session.closed` (usage.seconds), for diagnostics only; server-confirmed usage owns cost tracking",
-      }),
   })
   .strict()
   .meta({ id: "LanguageConversationCompletionInput" });
@@ -237,8 +228,6 @@ export const languageConversationViewSchema = z
     goalId: z.uuid().nullable(),
     hints: z.array(z.string()),
     id: z.uuid(),
-    /** What the voice model is told; the app sends it when the call connects. */
-    instructions: z.string().nullable(),
     kind: z.enum(["practice", "checkpoint", "speakingMock", "examSpeaking"]),
     level: z.enum(CEFR_LEVELS),
     locked: z
@@ -280,14 +269,19 @@ export const completedLanguageConversationSchema = languageConversationViewSchem
 
 export type CompletedLanguageConversation = z.infer<typeof completedLanguageConversationSchema>;
 
-/** A reservation can be redeemed only after its server deadline job has a durable receipt. */
+/** A reserved connection: post the browser's offer to `sessionUrl` within a minute. */
 export const languageConversationSetupSchema = z
   .object({
     connectionId: z.uuid(),
-    deadlineAt: z.iso.datetime(),
+    deadlineAt: z.iso.datetime().meta({ description: "When the server hangs the call up" }),
     endsAtLimit: z.enum(["day", "month"]).nullable(),
-    generation: z.int().positive(),
-    seconds: z.int().positive(),
+    seconds: z
+      .int()
+      .positive()
+      .meta({
+        description:
+          "The call time left when the server answered: end the call this long after the answer arrived, whatever the device's clock says",
+      }),
     sessionUrl: z.string(),
     voice: z.string(),
   })
@@ -297,11 +291,10 @@ export type LanguageConversationSetup = z.infer<typeof languageConversationSetup
 
 export const languageConversationConnectInputSchema = z
   .object({
-    requestId: z
-      .uuid()
+    takeover: z
+      .boolean()
       .optional()
-      .meta({ description: "Reuse the same ID when retrying one reservation request" }),
-    takeover: z.boolean().optional(),
+      .meta({ description: "End the learner's call in another conversation first" }),
   })
   .strict()
   .meta({ id: "LanguageConversationConnectInput" });

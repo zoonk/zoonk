@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import { type APIRequestContext, type BrowserContext, type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { RENTING_SCENARIO } from "@zoonk/testing/fixtures/language";
@@ -206,7 +205,7 @@ async function cleanupNativeCall({
   }
 
   const connection = await prisma.liveCallConnection.findFirst({
-    where: { conversationId, state: { not: "closed" } },
+    where: { conversationId, state: { not: "ended" } },
   });
 
   if (!connection) {
@@ -239,20 +238,12 @@ async function cleanupNativeCall({
           return sessions.find((candidate) => candidate.id === session.id)?.closeRequested;
         })
         .toBe(true);
-
-      const seconds = Math.max(15, Math.ceil((Date.now() - connection.createdAt.getTime()) / 1000));
-
-      const closed = await request.post(`${bridge}/control/sessions/${session.id}/closed`, {
-        data: { seconds },
-      });
-
-      expect(closed.ok()).toBe(true);
     })(),
   ]);
 
   await expect
     .poll(() => prisma.liveCallConnection.findUnique({ where: { id: connection.id } }))
-    .toMatchObject({ state: "closed" });
+    .toMatchObject({ state: "ended" });
 }
 
 /** Fixture teardown retains browser/request dependencies and its own budget even when the test times out. */
@@ -313,34 +304,24 @@ const test = base.extend<{ liveCallResources: NativeCallResources }>({
  * call time does, `DEADLINE_MS` from now.
  */
 async function reconnectingCheckpoint({ callId, userId }: { callId: string; userId: string }) {
-  const usage = await prisma.usageRecord.create({
-    data: { kind: "conversation", seconds: 0, targetId: callId, userId },
-  });
-
   const now = Date.now();
 
   return prisma.liveCallConnection.create({
     data: {
-      attemptNumber: 1,
-      closedAt: new Date(now),
       conversationId: callId,
-      costConfidence: "confirmed",
+      costMicros: 0,
       createdAt: new Date(now),
       deadlineAt: new Date(now + DEADLINE_MS),
-      generation: 1,
+      endedAt: new Date(now),
       heldSeconds: 0,
-      liabilityMicros: 0,
-      requestId: randomUUID(),
-      reservedMicros: 0,
-      state: "closed",
-      usageRecordId: usage.id,
+      state: "ended",
       userId,
     },
   });
 }
 
 /** Native browser transport against a local AI fake; this does not establish OpenAI termination semantics. */
-test("the durable deadline closes an established WebRTC peer when the client never ends", async ({
+test("the durable deadline hangs up an established WebRTC peer when the client never ends", async ({
   browser,
   request,
   liveCallResources: owned,
@@ -480,15 +461,14 @@ test("the durable deadline closes an established WebRTC peer when the client nev
     where: { providerSessionId: session.id },
   });
 
-  expect(connection.state).toBe("active");
+  expect(connection.state).toBe("live");
   expect(connection.conversationId).toBe(call.id);
-  expect(connection.workflowRunId).toBeTruthy();
-  // Rounded up to the whole second it holds.
-  const overFirst = connection.deadlineAt.getTime() - first.deadlineAt.getTime();
-  expect(overFirst).toBeGreaterThanOrEqual(0);
-  expect(overFirst).toBeLessThan(1000);
+  // The whole seconds left of the checkpoint's first window, never past it.
+  const underFirst = first.deadlineAt.getTime() - connection.deadlineAt.getTime();
+  expect(underFirst).toBeGreaterThanOrEqual(0);
+  expect(underFirst).toBeLessThan(1000);
 
-  /** Frozen client timers defeat its countdown. Only the actual server Workflow may initiate this close. */
+  /** Frozen client timers defeat its countdown. Only the actual server Workflow may hang it up. */
   await expect
     .poll(
       async () => {
@@ -505,56 +485,19 @@ test("the durable deadline closes an established WebRTC peer when the client nev
   expect(commands).toBe(0);
   expect(shutdown).toEqual({ complete: 0, end: 0 });
 
-  const seconds = Math.max(
-    15,
-    Math.ceil(((requested?.closeRequestedAt ?? 0) - connection.createdAt.getTime()) / 1000),
-  );
-
-  await native.evaluate(
-    async ({ audio, channel, oscillator, pc }, { id, usageSeconds }) => {
-      if (!channel || channel.readyState !== "open") {
-        throw new Error("The native peer lost its data channel before terminal confirmation.");
-      }
-
-      channel.send(
-        JSON.stringify({
-          reason: "close_requested",
-          session: { id },
-          type: "session.closed",
-          usage: { seconds: usageSeconds },
-        }),
-      );
-
-      oscillator.stop();
-      pc.close();
-      await audio.close();
-    },
-    { id: session.id, usageSeconds: seconds },
-  );
-
-  await expect
-    .poll(() =>
-      native.evaluate(({ audio, channel, pc }) => ({
-        audio: audio.state,
-        channel: channel?.readyState,
-        peer: pc.connectionState,
-      })),
-    )
-    .toEqual({ audio: "closed", channel: "closed", peer: "closed" });
-
-  const closed = await request.post(`${bridge}/control/sessions/${session.id}/closed`, {
-    data: { seconds },
+  // OpenAI ends the session: the browser sees its peer close, without a `session.closed` event.
+  await native.evaluate(async ({ audio, oscillator, pc }) => {
+    oscillator.stop();
+    pc.close();
+    await audio.close();
   });
-
-  expect(closed.ok()).toBe(true);
 
   await expect
     .poll(() => prisma.liveCallConnection.findUnique({ where: { id: connection.id } }))
-    .toMatchObject({ costConfidence: "confirmed", endReason: "deadline", state: "closed" });
+    .toMatchObject({ endReason: "deadline", state: "ended" });
+
+  const usage = await prisma.usageRecord.findFirstOrThrow({ where: { targetId: connection.id } });
+  expect(usage.seconds).toBeLessThanOrEqual(connection.heldSeconds);
 
   await native.dispose();
-
-  await expect
-    .poll(() => prisma.liveCallSlot.findUnique({ where: { userId: user.id } }))
-    .toMatchObject({ connectionId: null });
 });

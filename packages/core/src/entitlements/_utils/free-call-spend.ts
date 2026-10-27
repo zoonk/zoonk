@@ -1,11 +1,12 @@
 import { type TransactionClient, sql } from "@zoonk/db";
-import { getLiveCallLiability } from "../../language/conversations/_utils/live-call-policy";
+import { getCallExposureMicros } from "../../language/conversations/_utils/live-call-money";
 
 /**
- * What the day's open calls owe beyond what its bucket holds: liability is posted only when a close
- * runs, so a call that can't close keeps owing more than the bucket shows until it settles.
+ * What the day's open free calls may cost beyond what they posted: a call whose hangup keeps
+ * failing adds its overrun by the clock, and a reservation past its connect window takes back
+ * what it posted. Only calls in progress are open, so the sum stays small.
  */
-async function unpostedLiability({
+async function openOverrunMicros({
   day,
   now,
   transaction,
@@ -15,17 +16,21 @@ async function unpostedLiability({
   transaction: TransactionClient;
 }): Promise<number> {
   const open = await transaction.liveCallConnection.findMany({
-    where: { freeSpendDay: day, state: { not: "closed" } },
+    where: { freeSpendDay: day, state: { not: "ended" } },
   });
 
   return open.reduce(
     (total, connection) =>
-      total + getLiveCallLiability({ connection, now }) - connection.liabilityMicros,
+      total + getCallExposureMicros({ connection, now }) - connection.costMicros,
     0,
   );
 }
 
-/** Conditional upsert serializes different free learners on their original UTC day's bucket. */
+/**
+ * Takes a free call's reservation from the UTC day's shared bucket, or refuses it when the day's
+ * posted cost and its open calls' overrun leave no room. The bucket row is locked first, so free
+ * learners starting at once take turns and a settlement posting to it waits.
+ */
 export async function claimFreeCallSpend({
   budgetMicros,
   costMicros,
@@ -39,28 +44,25 @@ export async function claimFreeCallSpend({
   now: Date;
   transaction: TransactionClient;
 }): Promise<boolean> {
-  /** Locks the bucket first: a close posting to it waits, so what's owed and what's held agree. */
   await transaction.$executeRaw(sql`
     INSERT INTO free_call_spend_days (day, spent_micros) VALUES (${day}::date, 0)
     ON CONFLICT (day) DO NOTHING
   `);
 
-  await transaction.$queryRaw(
-    sql`SELECT day FROM free_call_spend_days WHERE day = ${day}::date FOR UPDATE`,
-  );
+  const [bucket] = await transaction.$queryRaw<{ spentMicros: number }[]>(sql`
+    SELECT spent_micros AS "spentMicros" FROM free_call_spend_days WHERE day = ${day}::date FOR UPDATE
+  `);
 
-  const available = budgetMicros - (await unpostedLiability({ day, now, transaction }));
+  const overrun = await openOverrunMicros({ day, now, transaction });
 
-  if (costMicros > available) {
+  if ((bucket?.spentMicros ?? 0) + overrun + costMicros > budgetMicros) {
     return false;
   }
 
-  const rows = await transaction.$queryRaw<{ spentMicros: number }[]>(sql`
-    INSERT INTO free_call_spend_days (day, spent_micros) VALUES (${day}::date, ${costMicros})
-    ON CONFLICT (day) DO UPDATE SET spent_micros = free_call_spend_days.spent_micros + EXCLUDED.spent_micros
-    WHERE free_call_spend_days.spent_micros + EXCLUDED.spent_micros <= ${available}
-    RETURNING spent_micros AS "spentMicros"
-  `);
+  await transaction.freeCallSpendDay.update({
+    data: { spentMicros: { increment: costMicros } },
+    where: { day },
+  });
 
-  return rows.length > 0;
+  return true;
 }

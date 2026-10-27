@@ -2,7 +2,7 @@ import { APICallError } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { blockTestProviderFetch } from "../../../_utils/block-test-provider-fetch";
 import { LiveCallCreationRefusedError } from "./live-call-creation";
-import { createLiveCallSession } from "./live-call-session";
+import { createLiveCallSession, hangUpLiveCallSession } from "./live-call-session";
 
 vi.mock("server-only", () => ({}));
 
@@ -98,5 +98,43 @@ describe(createLiveCallSession, () => {
 
     expect(failure).toBeInstanceOf(Error);
     expect(failure).not.toBeInstanceOf(LiveCallCreationRefusedError);
+  });
+});
+
+describe(hangUpLiveCallSession, () => {
+  beforeEach(() => {
+    vi.mocked(blockTestProviderFetch).mockReset();
+  });
+
+  it("posts to the session's hangup path and resolves once it ended", async () => {
+    respond(200, "");
+
+    await expect(hangUpLiveCallSession("live_123")).resolves.toBeUndefined();
+
+    const [url, init] = vi.mocked(blockTestProviderFetch).mock.calls[0] ?? [];
+
+    expect(url).toStrictEqual(new URL("https://api.openai.com/v1/live/sessions/live_123/hangup"));
+    expect(init?.method).toBe("POST");
+  });
+
+  it("resolves for a session that already ended", async () => {
+    respond(
+      404,
+      JSON.stringify({
+        error: { code: "session_id_not_found", message: "No session found", type: "error" },
+      }),
+    );
+
+    await expect(hangUpLiveCallSession("live_123")).resolves.toBeUndefined();
+  });
+
+  it.each([
+    [404, "<html><body>Not Found</body></html>"],
+    [500, JSON.stringify({ error: { message: "Server error", type: "error" } })],
+    [429, JSON.stringify({ error: { message: "Too many requests", type: "error" } })],
+  ])("rejects a %i answer, since the session may still run", async (status, body) => {
+    respond(status, body);
+
+    await expect(hangUpLiveCallSession("live_123")).rejects.toThrow(String(status));
   });
 });

@@ -13,14 +13,14 @@ export type LiveCallRefusal =
         | "retryable";
     }
   | { connectionId: string; conversationId: string; status: "callInProgress" }
-  | { period: "day" | "conversation"; status: "connectionLimitReached" };
+  | { period: "day"; status: "connectionLimitReached" };
 
 export type LiveCallReservationResult =
   | LiveCallRefusal
   | { connection: LiveCallConnection; endsAtLimit: "day" | "month" | null; status: "reserved" };
 
-type LiveCallDeadlineInput = { connectionId: string; deadlineAt: Date; generation: number };
-export type LiveCallDeadlineScheduler = (
-  input: LiveCallDeadlineInput,
-) => Promise<{ runId: string }>;
-export type CloseLiveCallResult = { status: "closed" | "closing" | "stale" | "notFound" };
+/** Starts the durable run that ends the connection at its deadline. */
+export type LiveCallDeadlineScheduler = (input: {
+  connectionId: string;
+  deadlineAt: Date;
+}) => Promise<unknown>;

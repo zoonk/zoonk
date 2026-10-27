@@ -14,7 +14,6 @@ import { getAnswersEnergyDelta } from "../../../sessions/brain-power";
 import { getCompletionEnergyContext } from "../../../stats/completion-energy";
 import { recordLearningEvent } from "../../../stats/record-learning-event";
 import { getConversationBrainPower } from "../conversation-rules";
-import { COMPLETION_REVIEW_LEASE_MS } from "./completion-review-lease";
 import { type WrittenFeedback } from "./conversation-feedback";
 import { type ConversationRow, getCheckpointOutcome } from "./conversation-view";
 
@@ -29,28 +28,18 @@ const LEDGER_KINDS = {
 const MS_PER_SECOND = 1000;
 
 type ConversationSettlement = {
-  completionStartedAt?: Date;
   bossKind: "boss" | "finalBoss";
   feedback: WrittenFeedback | null;
   objectives: number;
   objectivesMet: string[];
   row: ConversationRow;
   spokenSeconds: number;
+  /** The review run that claimed the call: only it settles it. */
+  reviewRunId: string;
   timeZone: string;
   usedHelp: boolean;
   userId: string;
 };
-
-function completionSettlementWhere({ row, completionStartedAt }: ConversationSettlement) {
-  return {
-    id: row.id,
-    status: "ready" as const,
-    ...(completionStartedAt && {
-      completionStartedAt,
-      updatedAt: { gt: new Date(Date.now() - COMPLETION_REVIEW_LEASE_MS) },
-    }),
-  };
-}
 
 function getLessonKind({ bossKind, row }: Pick<ConversationSettlement, "bossKind" | "row">) {
   if (row.kind === "checkpoint") {
@@ -121,7 +110,7 @@ export async function settleConversation(
         usedHelp: input.usedHelp,
         ...feedback?.provenance,
       },
-      where: completionSettlementWhere(input),
+      where: { id: row.id, reviewRunId: input.reviewRunId, status: "ready" },
     });
 
     if (count === 0) {

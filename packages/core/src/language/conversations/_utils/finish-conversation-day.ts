@@ -2,7 +2,6 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import { getUserProgressCacheTag } from "../../../cache/tags";
-import { settleCallTime } from "../../../entitlements/settle-call-time";
 import { getLearnerTimeZone } from "../../../learner/_utils/goal-time-zone";
 import { celebrateProgress } from "../../../milestones/celebrate-progress";
 import { type ProgressChange } from "../../../sessions/_utils/session-progress";
@@ -17,7 +16,7 @@ import { withConversationAccess } from "./conversation-access";
 import { toConversationView } from "./conversation-view";
 
 /**
- * The call is committed and its time finalized before any mission or session reward can fail. Its
+ * The call is committed before any mission or session reward can fail. Its
  * end also says what it did to the day's missions, the same on a retry, and what it reached (the
  * level, the tenth of Energy and the milestone not shown yet) when this request settled it.
  */
@@ -40,8 +39,6 @@ export async function finishConversationDay({
   }
 
   if (finished.row.status === "completed") {
-    await settleCallTime({ conversationId, now: finished.row.endedAt ?? new Date(), userId });
-
     const timeZone = await getLearnerTimeZone({ timeZone: input.timeZone, userId });
     const source = { id: conversationId, kind: "conversation" };
 

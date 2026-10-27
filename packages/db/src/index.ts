@@ -53,7 +53,6 @@ export type {
   LessonSkill,
   LiveCallConnection,
   LiveCallSetting,
-  LiveCallSlot,
   MediaAsset,
   MemoryFact,
   MemoryInsight,

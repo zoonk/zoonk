@@ -5647,7 +5647,7 @@
         "tags": [
           "Language"
         ],
-        "description": "A live conversation: the character, the call's goals with the ones met, hints, and the instructions for the voice model while it can still be made; after the call, the result with the feedback.",
+        "description": "A live conversation: the character, the call's goals with the ones met and hints; after the call, the result with the feedback. The voice model's instructions stay on the server, which sends them when it creates the session.",
         "operationId": "getLanguageConversation",
         "summary": "Get a live conversation",
         "parameters": [
@@ -5741,7 +5741,7 @@
         "tags": [
           "Language"
         ],
-        "description": "Requires the originating connectionId and closes only that provider connection before writing feedback or rewards, then finishes the call with its transcript, help used and time spoken. Browser voiceSeconds is informational; provider cost comes from the server connection ledger. The goals met are those marked during the call plus any the full transcript shows; a separate model writes feedback; a won checkpoint closes the unit. The response also says what the call did to the day's missions (`missionMoment`, null when it completed none). Repeating it returns the same result. A takeover cannot award feedback to the old call. Completion from a superseded connection returns CONVERSATION_ENDED and cannot close the current connection or write feedback.",
+        "description": "Requires the originating connectionId. Claims the call's review, so it takes no new connections, hangs that connection up, then finishes the call with its transcript, help used and time spoken. The goals met are those marked during the call plus any the full transcript shows; a separate model writes feedback; a won checkpoint closes the unit. The response also says what the call did to the day's missions (`missionMoment`, null when it completed none). Repeating it returns the same result. A takeover cannot award feedback to the old call (CALL_TAKEN_OVER). Completion from a superseded connection returns CONVERSATION_ENDED and cannot end the current connection or write feedback.",
         "operationId": "completeLanguageConversation",
         "summary": "Finish a live conversation",
         "parameters": [
@@ -5810,7 +5810,7 @@
             }
           },
           "409": {
-            "description": "The call ended or its originating connection was replaced (CONVERSATION_ENDED; current connection is unaffected), was taken over (CALL_TAKEN_OVER; no feedback or reward), another call is in progress (CALL_IN_PROGRESS with its conversationId and connectionId; reserve with takeover: true to end it), the previous connection is still closing (PREVIOUS_CONNECTION_CLOSING; retry after Retry-After), or this reservation expired/already redeemed (CONNECTION_EXPIRED / CONNECTION_USED).",
+            "description": "The call ended or its originating connection was replaced (CONVERSATION_ENDED; current connection is unaffected), was taken over (CALL_TAKEN_OVER; no feedback or reward), another call is in progress (CALL_IN_PROGRESS with its conversationId and connectionId; reserve with takeover: true to end it), a connection is still ending or its review is in progress (PREVIOUS_CONNECTION_CLOSING; retry after Retry-After), or this reservation expired/already redeemed (CONNECTION_EXPIRED / CONNECTION_USED).",
             "content": {
               "application/json": {
                 "schema": {
@@ -5855,7 +5855,7 @@
         "tags": [
           "Language"
         ],
-        "description": "Reserves one live-call connection after fresh authorization, admission and Plus checks. Atomically holds learner call time and dollar exposure, then stores a durable Workflow deadline receipt before returning. No provider session or credential is created here. POST the browser's SDP offer to sessionUrl; its server owns the model, instructions, voice and event permissions. deadlineAt is absolute, including goodbye/drain time; setup delay never restarts the clock. requestId makes retries reuse the same reservation; takeover explicitly ends another call first. Reconnect waits for confirmed closure. Practice can start over; Plus checkpoint reconnects share the original deadline. Calls may be shortened by the day/month allowance. Dollar budgets and per-conversation/day attempt caps also apply.",
+        "description": "Reserves one live-call connection after fresh authorization, admission and Plus checks. Holds the learner's call time and its cost, and starts the run that hangs the call up at deadlineAt (the reservation plus the time held, with no grace) before returning. No provider session or credential is created here. POST the browser's SDP offer to sessionUrl within a minute; its server owns the model, instructions, voice and event permissions. `seconds` is the time left when the server answered: end the call that long after the answer arrives. The learner's open connection ends first: a reservation always, a live connection of the same call as a reconnect (charged up to that moment), and another call's only with takeover. A session still being created or a hangup OpenAI didn't confirm answers PREVIOUS_CONNECTION_CLOSING. Practice can start over; checkpoint reconnects share the original deadline. Calls may be shortened by the day/month allowance. Dollar budgets and a daily connection cap also apply.",
         "operationId": "connectLanguageConversation",
         "summary": "Reserve a live conversation connection",
         "parameters": [
@@ -5944,7 +5944,7 @@
             }
           },
           "409": {
-            "description": "The call ended, its checkpoint block is finished (BLOCK_FINISHED), or the checkpoint waits for earlier work (EARLIER_FIRST, with details.reason `lessons` or `challenge`). No usage is claimed while waiting. CALL_IN_PROGRESS returns the existing call IDs; PREVIOUS_CONNECTION_CLOSING asks for a retry after confirmed closure.",
+            "description": "The call ended, its checkpoint block is finished (BLOCK_FINISHED), or the checkpoint waits for earlier work (EARLIER_FIRST, with details.reason `lessons` or `challenge`). No usage is claimed while waiting. CALL_IN_PROGRESS returns the existing call IDs; PREVIOUS_CONNECTION_CLOSING asks for a retry once the previous connection ended.",
             "content": {
               "application/json": {
                 "schema": {
@@ -5964,7 +5964,7 @@
             }
           },
           "429": {
-            "description": "Call time or dollar budget is exhausted (CONVERSATION_LIMIT_REACHED with details.period), or attempts are exhausted (CONNECTION_LIMIT_REACHED with details.period day/conversation).",
+            "description": "Call time or dollar budget is exhausted (CONVERSATION_LIMIT_REACHED with details.period), or the day's connections are used (CONNECTION_LIMIT_REACHED with details.period day).",
             "content": {
               "application/json": {
                 "schema": {
@@ -5984,7 +5984,7 @@
             }
           },
           "503": {
-            "description": "Calls are paused (CALLS_PAUSED) or deadline dispatch/provider creation failed (CALL_RETRYABLE; retry after Retry-After). No usable SDP is returned.",
+            "description": "Calls are paused (CALLS_PAUSED) or the deadline run or provider creation failed (CALL_RETRYABLE; retry after Retry-After). No usable SDP is returned.",
             "content": {
               "application/json": {
                 "schema": {
@@ -6009,7 +6009,7 @@
         "tags": [
           "Language"
         ],
-        "description": "Closes the owned provider connection before the client drops its peer. Stop microphone and playback immediately, await this terminal result, then close the peer. No feedback or reward is written here. Repeating a confirmed End is safe. Unconfirmed closure returns PREVIOUS_CONNECTION_CLOSING and retains the slot and liability while the original deadline run retries.",
+        "description": "Hangs up the owned connection's session and settles the call at that moment: the learner keeps only the time it ran. Stop microphone and playback immediately; the peer closes once the session ends. No feedback or reward is written here. Repeating it is safe. A hangup OpenAI didn't confirm, or a session still being created, returns PREVIOUS_CONNECTION_CLOSING: ask again; the deadline run also ends it.",
         "operationId": "endLanguageConversationConnection",
         "summary": "End a live conversation connection",
         "parameters": [
@@ -6080,7 +6080,7 @@
             }
           },
           "409": {
-            "description": "The call ended or its originating connection was replaced (CONVERSATION_ENDED; current connection is unaffected), was taken over (CALL_TAKEN_OVER; no feedback or reward), another call is in progress (CALL_IN_PROGRESS with its conversationId and connectionId; reserve with takeover: true to end it), the previous connection is still closing (PREVIOUS_CONNECTION_CLOSING; retry after Retry-After), or this reservation expired/already redeemed (CONNECTION_EXPIRED / CONNECTION_USED).",
+            "description": "The call ended or its originating connection was replaced (CONVERSATION_ENDED; current connection is unaffected), was taken over (CALL_TAKEN_OVER; no feedback or reward), another call is in progress (CALL_IN_PROGRESS with its conversationId and connectionId; reserve with takeover: true to end it), a connection is still ending or its review is in progress (PREVIOUS_CONNECTION_CLOSING; retry after Retry-After), or this reservation expired/already redeemed (CONNECTION_EXPIRED / CONNECTION_USED).",
             "content": {
               "application/json": {
                 "schema": {
@@ -6125,7 +6125,7 @@
         "tags": [
           "Language"
         ],
-        "description": "Redeems the owned reservation once for a server-created GPT-Live WebRTC session. Rechecks admission, Plus and the absolute deadline and requires a persisted Workflow receipt. Browser sessionConfig is ignored. An offer without the lines of a WebRTC audio offer is refused (400) before any provider work. When the provider refuses to create the session, the reservation is released at once, keeping only the shortest call's cost (CALL_RETRYABLE): reserve again. Apply the returned SDP answer to the peer; do not send session.start. Audio uses WebRTC media tracks. No provider key or token is returned.",
+        "description": "Redeems the owned reservation once, within a minute of reserving it, for a server-created GPT-Live WebRTC session. Rechecks admission and Plus. A reservation past its minute, or one a newer start ended, returns CONNECTION_EXPIRED. Browser sessionConfig is ignored. An offer without the lines of a WebRTC audio offer is refused (400) before any provider work. When creation fails (CALL_RETRYABLE), the reservation ends: reserve again. A session that's no longer wanted when it exists (the call was ended, replaced or completed meanwhile) is hung up at once. Apply the returned SDP answer to the peer; do not send session.start. Audio uses WebRTC media tracks; the call's end shows as the data channel closing. No provider key or token is returned.",
         "operationId": "redeemLanguageConversationSdp",
         "summary": "Exchange a live conversation SDP offer",
         "parameters": [
@@ -6216,7 +6216,7 @@
             }
           },
           "409": {
-            "description": "The call ended or its originating connection was replaced (CONVERSATION_ENDED; current connection is unaffected), was taken over (CALL_TAKEN_OVER; no feedback or reward), another call is in progress (CALL_IN_PROGRESS with its conversationId and connectionId; reserve with takeover: true to end it), the previous connection is still closing (PREVIOUS_CONNECTION_CLOSING; retry after Retry-After), or this reservation expired/already redeemed (CONNECTION_EXPIRED / CONNECTION_USED).",
+            "description": "The call ended or its originating connection was replaced (CONVERSATION_ENDED; current connection is unaffected), was taken over (CALL_TAKEN_OVER; no feedback or reward), another call is in progress (CALL_IN_PROGRESS with its conversationId and connectionId; reserve with takeover: true to end it), a connection is still ending or its review is in progress (PREVIOUS_CONNECTION_CLOSING; retry after Retry-After), or this reservation expired/already redeemed (CONNECTION_EXPIRED / CONNECTION_USED).",
             "content": {
               "application/json": {
                 "schema": {
@@ -6246,7 +6246,7 @@
             }
           },
           "503": {
-            "description": "Calls are paused (CALLS_PAUSED) or deadline dispatch/provider creation failed (CALL_RETRYABLE; retry after Retry-After). No usable SDP is returned.",
+            "description": "Calls are paused (CALLS_PAUSED) or the deadline run or provider creation failed (CALL_RETRYABLE; retry after Retry-After). No usable SDP is returned.",
             "content": {
               "application/json": {
                 "schema": {
@@ -6385,7 +6385,7 @@
         "tags": [
           "Language"
         ],
-        "description": "Admins only. Reads admission mode, the free-day dollar cap in micros, and up to 100 connections the provider hasn't confirmed closed: unresolved ones ordered by deadline, then the latest settled by estimate (closed, costConfidence estimated). providerAvailable checks only the API deployment's OpenAI key presence; this GET starts no model, provider session or Workflow. All dates are ISO strings. Missing settings default to off.",
+        "description": "Admins only. Reads admission mode, the free-day dollar cap in micros, and up to 100 connections still open, oldest deadline first, each with its exposure (what it may have cost so far: its reservation or its clock, whichever is more) and overdue (open more than a minute past its deadline, which shows a hangup failing). providerAvailable checks only the API deployment's OpenAI key presence; this GET starts no model, provider session or Workflow. All dates are ISO strings. Missing settings default to off.",
         "operationId": "getLiveCallAdmission",
         "summary": "Read live-call admission (admins)",
         "responses": {
@@ -6443,7 +6443,7 @@
         "tags": [
           "Language"
         ],
-        "description": "Admins only. Sets fresh live-call admission (off/staff/all) and the free accounts' shared UTC-day dollar cap in integer micros. Changing the mode affects the next reserve and SDP redemption without a redeploy; off leaves closure and recovery running. Staff admits admins only. This request starts no provider work.",
+        "description": "Admins only. Sets fresh live-call admission (off/staff/all) and the free accounts' shared UTC-day dollar cap in integer micros. Changing the mode affects the next reserve and SDP redemption without a redeploy; with off, calls already live end by their deadline. Staff admits admins only. This request starts no provider work.",
         "operationId": "updateLiveCallAdmission",
         "summary": "Update live-call admission (admins)",
         "requestBody": {
@@ -6499,66 +6499,6 @@
           },
           "422": {
             "description": "The request is valid but cannot be applied to the resource",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/live-calls/close-all": {
-      "post": {
-        "security": [
-          {
-            "bearerAuth": []
-          },
-          {
-            "cookieAuth": []
-          }
-        ],
-        "tags": [
-          "Language"
-        ],
-        "description": "Admins only. Disables admission before closing a bounded batch of up to 25 unresolved connections, prioritizing never-attempted and least-recently-attempted rows. Returns attempted, closed, and remaining counts; closed includes connections settled from a provider receipt and connections without a provider ID closed with an estimated cost. Repeat while remaining is positive. Failed or ambiguous provider closure retains the slot and cost liability; the original deadline run and existing daily sweep keep recovery available. A connection the provider never gave an ID closes once its deadline has passed and its creation request is over, keeping its estimated cost; if its provider ID turns up later, it opens again until a close confirms the real cost. One with an ID that no close confirms closes once its longest run (taken as 2 hours) is over, keeping that whole run's cost; a receipt that still comes replaces the estimate once. No feedback or rewards are awarded.",
-        "operationId": "closeAllLiveCalls",
-        "summary": "Disable and close live calls (admins)",
-        "responses": {
-          "200": {
-            "description": "The disabled-admission close batch",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/LiveCallCloseAllResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Authentication required",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Request forbidden",
             "content": {
               "application/json": {
                 "schema": {
@@ -23298,12 +23238,6 @@
           "usedHelp": {
             "type": "boolean",
             "description": "The learner used Help"
-          },
-          "voiceSeconds": {
-            "description": "The voice session's length that GPT-Live reported in `session.closed` (usage.seconds), for diagnostics only; server-confirmed usage owns cost tracking",
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 1260
           }
         },
         "required": [
@@ -23338,13 +23272,8 @@
       "LanguageConversationConnectInput": {
         "type": "object",
         "properties": {
-          "requestId": {
-            "description": "Reuse the same ID when retrying one reservation request",
-            "type": "string",
-            "format": "uuid",
-            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-          },
           "takeover": {
+            "description": "End the learner's call in another conversation first",
             "type": "boolean"
           }
         },
@@ -35860,10 +35789,6 @@
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
-          "instructions": {
-            "nullable": true,
-            "type": "string"
-          },
           "kind": {
             "type": "string",
             "enum": [
@@ -36019,7 +35944,6 @@
           "goalId",
           "hints",
           "id",
-          "instructions",
           "kind",
           "level",
           "locked",
@@ -36830,10 +36754,6 @@
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
-          "instructions": {
-            "nullable": true,
-            "type": "string"
-          },
           "kind": {
             "type": "string",
             "enum": [
@@ -37056,7 +36976,6 @@
           "goalId",
           "hints",
           "id",
-          "instructions",
           "kind",
           "level",
           "locked",
@@ -37086,7 +37005,8 @@
           "deadlineAt": {
             "type": "string",
             "format": "date-time",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+            "description": "When the server hangs the call up"
           },
           "endsAtLimit": {
             "nullable": true,
@@ -37096,17 +37016,12 @@
               "month"
             ]
           },
-          "generation": {
-            "type": "integer",
-            "minimum": 0,
-            "exclusiveMinimum": true,
-            "maximum": 9007199254740991
-          },
           "seconds": {
             "type": "integer",
             "minimum": 0,
             "exclusiveMinimum": true,
-            "maximum": 9007199254740991
+            "maximum": 9007199254740991,
+            "description": "The call time left when the server answered: end the call this long after the answer arrived, whatever the device's clock says"
           },
           "sessionUrl": {
             "type": "string"
@@ -37119,7 +37034,6 @@
           "connectionId",
           "deadlineAt",
           "endsAtLimit",
-          "generation",
           "seconds",
           "sessionUrl",
           "voice"
@@ -37176,9 +37090,6 @@
       "LiveCallAdmissionResponse": {
         "type": "object",
         "properties": {
-          "cleanupHealthy": {
-            "type": "boolean"
-          },
           "connections": {
             "type": "array",
             "items": {
@@ -37193,7 +37104,6 @@
           }
         },
         "required": [
-          "cleanupHealthy",
           "connections",
           "providerAvailable",
           "setting"
@@ -37203,33 +37113,16 @@
       "LiveCallAdminConnection": {
         "type": "object",
         "properties": {
-          "cleanupBlocking": {
-            "type": "boolean"
-          },
-          "closeAttempts": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
-          },
-          "closedAt": {
-            "nullable": true,
-            "type": "string",
-            "format": "date-time",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-          },
           "conversationId": {
             "type": "string",
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
-          "costConfidence": {
-            "type": "string",
-            "enum": [
-              "reserved",
-              "unconfirmed",
-              "confirmed",
-              "estimated"
-            ]
+          "costMicros": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "What the connection reserved"
           },
           "createdAt": {
             "type": "string",
@@ -37245,20 +37138,20 @@
             "nullable": true,
             "type": "string",
             "enum": [
+              "learner",
               "deadline",
-              "completion",
               "reconnect",
               "takeover",
-              "admin",
-              "expired",
-              "timerFailed"
+              "completion",
+              "refused",
+              "failed"
             ]
           },
-          "generation": {
+          "exposureMicros": {
             "type": "integer",
             "minimum": 0,
-            "exclusiveMinimum": true,
-            "maximum": 9007199254740991
+            "maximum": 9007199254740991,
+            "description": "What it may have cost so far: its reservation or its clock, whichever is more"
           },
           "heldSeconds": {
             "type": "integer",
@@ -37270,121 +37163,49 @@
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
-          "lastCloseAt": {
-            "nullable": true,
-            "type": "string",
-            "format": "date-time",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-          },
-          "liabilityMicros": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
-          },
           "overdue": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Open more than a minute past its deadline"
           },
           "providerSessionId": {
             "nullable": true,
             "type": "string"
           },
-          "providerStartedAt": {
+          "startedAt": {
             "nullable": true,
             "type": "string",
             "format": "date-time",
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-          },
-          "recoveryUnconfirmedAt": {
-            "nullable": true,
-            "type": "string",
-            "format": "date-time",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-          },
-          "reservedMicros": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
-          },
-          "settledMicros": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
           },
           "state": {
             "type": "string",
             "enum": [
-              "pending",
-              "creating",
-              "active",
-              "closing",
-              "closed"
+              "reserved",
+              "starting",
+              "live",
+              "ended"
             ]
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
           },
           "userId": {
             "type": "string",
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-          },
-          "workflowRunId": {
-            "nullable": true,
-            "type": "string"
           }
         },
         "required": [
-          "cleanupBlocking",
-          "closeAttempts",
-          "closedAt",
           "conversationId",
-          "costConfidence",
+          "costMicros",
           "createdAt",
           "deadlineAt",
           "endReason",
-          "generation",
+          "exposureMicros",
           "heldSeconds",
           "id",
-          "lastCloseAt",
-          "liabilityMicros",
           "overdue",
           "providerSessionId",
-          "providerStartedAt",
-          "recoveryUnconfirmedAt",
-          "reservedMicros",
-          "settledMicros",
+          "startedAt",
           "state",
-          "updatedAt",
-          "userId",
-          "workflowRunId"
-        ],
-        "additionalProperties": false
-      },
-      "LiveCallCloseAllResponse": {
-        "type": "object",
-        "properties": {
-          "attempted": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
-          },
-          "closed": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
-          },
-          "remaining": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
-          }
-        },
-        "required": [
-          "attempted",
-          "closed",
-          "remaining"
+          "userId"
         ],
         "additionalProperties": false
       },

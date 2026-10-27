@@ -1,22 +1,24 @@
 import "server-only";
-import { randomUUID } from "node:crypto";
 import { getLiveConversationVoice } from "@zoonk/ai/tasks/v2/language/live-conversation-models";
 import { prisma } from "@zoonk/db";
+import { safeAsync } from "@zoonk/utils/error";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getAllowanceCacheTag } from "../../cache/tags";
 import { claimLiveCallUsageForViewer } from "../../entitlements/_utils/claim-usage-for-viewer";
 import { getEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
-import { LIVE_CALL_GRACE_SECONDS } from "../../entitlements/limits";
 import { type StartStudyBlockResult, startStudyBlock } from "../../sessions/start-study-block";
 import { endPreviousLiveCall } from "./_utils/end-previous-live-call";
 import { isPlusOnlyLiveCall } from "./_utils/live-call-plus";
-import { attachLiveCallDeadline } from "./_utils/live-call-timer";
+import { readLiveCallAdmission } from "./_utils/live-call-policy";
 import {
   type LanguageConversationConnectInput,
   type LanguageConversationSetup,
 } from "./conversation-contract";
+import { endLiveCall } from "./end-live-call";
 import { findOwnedConversation } from "./get-language-conversation";
 import { type LiveCallDeadlineScheduler, type LiveCallRefusal } from "./live-call-contract";
+
+const MS_PER_SECOND = 1000;
 
 export type ConnectLanguageConversationResult =
   | LiveCallRefusal
@@ -45,7 +47,13 @@ async function startCheckpointBlock(
   return started.status === "ready" ? null : started;
 }
 
-/** Timer receipt is persisted before this reservation can spend anything at the SDP boundary. */
+/**
+ * Reserves one connection of the learner's call: its time and cost are held, and its deadline run
+ * starts before the answer, so the server hangs it up on time. A learner's open connection ends
+ * first (`endPreviousLiveCall`). A deadline run that can't start ends the reservation at once.
+ * `seconds` is the time left until the deadline when the server answered, so the browser's timer
+ * doesn't depend on its clock.
+ */
 export async function connectLanguageConversation({
   conversationId,
   input = {},
@@ -67,12 +75,17 @@ export async function connectLanguageConversation({
     return { status: "notFound" };
   }
 
-  if (owned.row.status !== "ready" || owned.row.completionStartedAt !== null) {
+  if (owned.row.status !== "ready" || owned.row.reviewRunId !== null) {
     return { status: "conversationEnded" };
   }
 
   if (isPlusOnlyLiveCall(owned.row.kind) && viewer.tier !== "plus") {
     return { status: "plusRequired" };
+  }
+
+  // Read again under the lock when reserving; checked here so a paused call never ends another.
+  if ((await readLiveCallAdmission({ transaction: prisma, userId: viewer.userId })) === null) {
+    return { status: "callsPaused" };
   }
 
   if (owned.row.kind === "checkpoint") {
@@ -83,11 +96,8 @@ export async function connectLanguageConversation({
     }
   }
 
-  const requestId = input.requestId ?? randomUUID();
-
   const previous = await endPreviousLiveCall({
     conversationId,
-    requestId,
     takeover: input.takeover,
     userId: viewer.userId,
   });
@@ -96,45 +106,33 @@ export async function connectLanguageConversation({
     return previous;
   }
 
-  const result = await claimLiveCallUsageForViewer({
-    conversationId,
-    now: new Date(),
-    requestId,
-    viewer,
-  });
+  const result = await claimLiveCallUsageForViewer({ conversationId, now: new Date(), viewer });
 
   if (result.status !== "reserved") {
     return result;
   }
 
-  const current = await attachLiveCallDeadline({ connection: result.connection, scheduleDeadline });
+  const { connection } = result;
+  revalidateCacheTags([getAllowanceCacheTag(viewer.userId)]);
 
-  if (!current) {
+  const scheduled = await safeAsync(() =>
+    scheduleDeadline({ connectionId: connection.id, deadlineAt: connection.deadlineAt }),
+  );
+
+  if (scheduled.error) {
+    await endLiveCall({ connectionId: connection.id, reason: "failed" });
     return { status: "retryable" };
   }
 
-  const seconds = Math.min(
-    current.heldSeconds,
-    Math.max(
-      0,
-      Math.ceil((current.deadlineAt.getTime() - Date.now()) / 1000) - LIVE_CALL_GRACE_SECONDS,
-    ),
-  );
-
-  if (seconds === 0) {
-    return { status: "conversationEnded" };
-  }
-
-  revalidateCacheTags([getAllowanceCacheTag(viewer.userId)]);
+  const seconds = Math.floor((connection.deadlineAt.getTime() - Date.now()) / MS_PER_SECOND);
 
   return {
     setup: {
-      connectionId: current.id,
-      deadlineAt: current.deadlineAt.toISOString(),
+      connectionId: connection.id,
+      deadlineAt: connection.deadlineAt.toISOString(),
       endsAtLimit: result.endsAtLimit,
-      generation: current.generation,
-      seconds,
-      sessionUrl: `/v1/language-conversations/${conversationId}/connections/${current.id}/sdp`,
+      seconds: Math.max(1, seconds),
+      sessionUrl: `/v1/language-conversations/${conversationId}/connections/${connection.id}/sdp`,
       voice: getLiveConversationVoice(owned.row.targetLanguage),
     },
     status: "ready",

@@ -57,7 +57,7 @@ async function connectionState(connectionId: string) {
 }
 
 test.describe("Live-call connection HTTP contract", () => {
-  test("reserves with a receipt, redeems SDP once, keeps it private and ends idempotently", async () => {
+  test("reserves with a deadline, redeems SDP once, keeps it private and ends idempotently", async () => {
     const learner = await callFixture("live-contract");
 
     const stranger = await createBearerLearner({
@@ -66,8 +66,7 @@ test.describe("Live-call connection HTTP contract", () => {
     });
 
     try {
-      const input = { requestId: randomUUID() };
-      const reserved = await learner.api.post(learner.path, { data: input });
+      const reserved = await learner.api.post(learner.path);
 
       const setup = await readBody({
         response: reserved,
@@ -83,17 +82,7 @@ test.describe("Live-call connection HTTP contract", () => {
         where: { id: setup.connectionId },
       });
 
-      expect(stored).toMatchObject({ providerSessionId: null, state: "pending" });
-      expect(stored.workflowRunId).toBeTruthy();
-      const repeated = await learner.api.post(learner.path, { data: input });
-      const replay = languageConversationSetupSchema.parse(await repeated.json());
-
-      expect(replay).toMatchObject({
-        connectionId: setup.connectionId,
-        deadlineAt: setup.deadlineAt,
-      });
-
-      expect(replay.seconds).toBeLessThanOrEqual(setup.seconds);
+      expect(stored).toMatchObject({ providerSessionId: null, state: "reserved" });
 
       const hidden = await stranger.api.post(setup.sessionUrl, { data: OFFER });
       expect(hidden.status()).toBe(404);
@@ -119,13 +108,13 @@ test.describe("Live-call connection HTTP contract", () => {
 
       await assertEnded(learner.api, endPath);
       await assertEnded(learner.api, endPath);
-      await expect.poll(() => connectionState(setup.connectionId)).toBe("closed");
+      await expect.poll(() => connectionState(setup.connectionId)).toBe("ended");
     } finally {
       await Promise.all([learner.api.dispose(), stranger.api.dispose()]);
     }
   });
 
-  test("requires authentication, validates input and refuses expired or untimed SDP", async () => {
+  test("requires authentication, validates input and refuses an expired reservation's SDP", async () => {
     const learner = await callFixture("live-refusals");
     const anonymous = await request.newContext({ baseURL: process.env.E2E_BASE_URL ?? "" });
 
@@ -156,19 +145,11 @@ test.describe("Live-call connection HTTP contract", () => {
 
       await expect(
         prisma.liveCallConnection.findUniqueOrThrow({ where: { id: setup.connectionId } }),
-      ).resolves.toMatchObject({ providerStartedAt: null, state: "pending" });
+      ).resolves.toMatchObject({ startedAt: null, state: "reserved" });
 
+      // A reservation past its connect window can't create a session anymore.
       await prisma.liveCallConnection.update({
-        data: { workflowRunId: null },
-        where: { id: setup.connectionId },
-      });
-
-      const untimed = await learner.api.post(setup.sessionUrl, { data: OFFER });
-      expect(untimed.status()).toBe(503);
-      await expect(untimed.json()).resolves.toMatchObject({ error: { code: "CALL_RETRYABLE" } });
-
-      await prisma.liveCallConnection.update({
-        data: { deadlineAt: new Date(Date.now() - 1000), workflowRunId: "expired-test-receipt" },
+        data: { createdAt: new Date(Date.now() - 61_000) },
         where: { id: setup.connectionId },
       });
 
@@ -183,7 +164,7 @@ test.describe("Live-call connection HTTP contract", () => {
     }
   });
 
-  test("requires explicit takeover for a different call and fences the old reservation", async () => {
+  test("requires explicit takeover for a different live call and refuses the old call's completion", async () => {
     const learner = await callFixture("live-takeover");
 
     try {
@@ -192,6 +173,10 @@ test.describe("Live-call connection HTTP contract", () => {
         schema: languageConversationSetupSchema,
         status: 201,
       });
+
+      await expect(statusOf(learner.api.post(first.sessionUrl, { data: OFFER }))).resolves.toBe(
+        201,
+      );
 
       const saved = await prisma.languageConversation.findUniqueOrThrow({
         where: { id: learner.conversationId },
@@ -295,13 +280,8 @@ test.describe("Live-call connection HTTP contract", () => {
 
       expect(stale.status()).toBe(409);
       await expect(stale.json()).resolves.toMatchObject({ error: { code: "CONVERSATION_ENDED" } });
-      expect(await connectionState(replacement.connectionId)).toBe("pending");
-
-      const slot = await prisma.liveCallSlot.findUniqueOrThrow({
-        where: { userId: learner.userId },
-      });
-
-      expect(slot.connectionId).toBe(replacement.connectionId);
+      expect(await connectionState(replacement.connectionId)).toBe("reserved");
+      expect(await connectionState(first.connectionId)).toBe("ended");
 
       await expect(
         statusOf(learner.api.post(replacement.sessionUrl, { data: OFFER })),

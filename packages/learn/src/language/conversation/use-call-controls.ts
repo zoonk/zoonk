@@ -115,8 +115,7 @@ export function useCallMute(liveSession: LiveCallSession | null) {
 
 /**
  * What a finished call saves: the connection it ran on (this run's own, never a newer one), what
- * was said, how long the learner spoke, and the session length GPT-Live reported, kept only to
- * compare with what the server confirmed.
+ * was said and how long the learner spoke.
  */
 type LiveCallSummary = Omit<LanguageConversationCompletionInput, "timeZone" | "usedHelp">;
 
@@ -128,12 +127,10 @@ type LiveCallSummary = Omit<LanguageConversationCompletionInput, "timeZone" | "u
 export function useCallFinish({
   getConnectionId,
   release,
-  sessionRef,
   turnsRef,
 }: {
   getConnectionId: () => string | null;
   release: () => Promise<boolean>;
-  sessionRef: RefObject<LiveCallSession | null>;
   turnsRef: RefObject<TranscriptTurn[]>;
 }) {
   return useCallback(async (): Promise<LiveCallSummary | null> => {
@@ -143,13 +140,10 @@ export function useCallFinish({
       return null;
     }
 
-    const voiceSeconds = sessionRef.current?.getSnapshot().session?.usage?.seconds;
-
     return {
       connectionId,
       spokenSeconds: getSpokenSeconds(turnsRef.current),
       turns: toConversationTurns(turnsRef.current),
-      ...(voiceSeconds === undefined ? {} : { voiceSeconds: Math.round(voiceSeconds) }),
     };
-  }, [getConnectionId, release, sessionRef, turnsRef]);
+  }, [getConnectionId, release, turnsRef]);
 }

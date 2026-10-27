@@ -38,7 +38,7 @@ async function cleanupStateCalls({
   ]);
 
   const connections = await prisma.liveCallConnection.findMany({
-    where: { state: { not: "closed" }, userId: resource.userId },
+    where: { state: { not: "ended" }, userId: resource.userId },
   });
 
   if (connections.length === 0) {
@@ -65,7 +65,7 @@ async function cleanupStateCalls({
         .poll(() => prisma.liveCallConnection.findUnique({ where: { id: connection.id } }), {
           timeout: 5000,
         })
-        .toMatchObject({ state: "closed" });
+        .toMatchObject({ state: "ended" });
     }),
   );
 
@@ -138,7 +138,7 @@ function createCall({ learner }: { learner: Learner }) {
 
 function connectionFor(conversationId: string) {
   return prisma.liveCallConnection.findFirstOrThrow({
-    orderBy: [{ createdAt: "desc" }, { attemptNumber: "desc" }],
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
     where: { conversationId },
   });
 }
@@ -166,6 +166,27 @@ async function closeBehavior({
   expect(response.ok()).toBe(true);
 }
 
+/** Whether the server asked the lane's provider to hang this session up. */
+async function hangupRequested({
+  request,
+  sessionId,
+}: {
+  request: APIRequestContext;
+  sessionId: string | null;
+}) {
+  const bridge = process.env.LIVE_CALL_TEST_PROVIDER_URL;
+  const response = await request.get(`${bridge}/control/sessions`);
+  const sessions: unknown = await response.json();
+
+  return (
+    Array.isArray(sessions) &&
+    sessions.some(
+      (session: unknown) =>
+        isJsonObject(session) && session.id === sessionId && session.closeRequested === true,
+    )
+  );
+}
+
 async function restorePeerClosures({
   request,
   userId,
@@ -174,7 +195,7 @@ async function restorePeerClosures({
   userId: string;
 }) {
   const connections = await prisma.liveCallConnection.findMany({
-    where: { providerSessionId: { not: null }, state: { not: "closed" }, userId },
+    where: { providerSessionId: { not: null }, state: { not: "ended" }, userId },
   });
 
   await Promise.all(
@@ -200,7 +221,7 @@ function callAlert(page: Page) {
 type CallActions = {
   complete: { connectionId: string; turns: unknown[] }[];
   end: string[];
-  reserve: { requestId: string; takeover: boolean }[];
+  reserve: { takeover: boolean }[];
   sdp: unknown[];
 };
 
@@ -238,10 +259,8 @@ function observeActions({ page, conversationId }: { page: Page; conversationId: 
         return;
       }
 
-      const requestId = getString(input, "requestId");
-
-      if (requestId && typeof input.takeover === "boolean") {
-        actions.reserve.push({ requestId, takeover: input.takeover });
+      if (typeof input.takeover === "boolean") {
+        actions.reserve.push({ takeover: input.takeover });
       }
 
       return;
@@ -416,10 +435,6 @@ test.describe("Live call server states", () => {
       expect(actions.sdp).toHaveLength(0);
       expect(actions.complete).toHaveLength(0);
       expect(await prisma.liveCallConnection.count({ where: { conversationId: callId } })).toBe(0);
-
-      expect(
-        await prisma.liveCallSlot.findUnique({ where: { userId: learner.user.id } }),
-      ).toBeNull();
     } finally {
       await owned.cleanup();
     }
@@ -446,17 +461,17 @@ test.describe("Live call server states", () => {
       const actions = observeActions({ conversationId: callId, page });
       await page.getByRole("button", { name: "Start the call" }).click();
       await page.getByRole("button", { name: "End that call and start this one" }).click();
-
+      // The takeover's hangup waits on the provider while the learner leaves.
       await expect
-        .poll(() => prisma.liveCallConnection.findUnique({ where: { id: original.id } }))
-        .toMatchObject({ state: "closing" });
+        .poll(() => hangupRequested({ request, sessionId: original.providerSessionId }))
+        .toBe(true);
 
       await leaveAndReturn({ callId, learner, page });
       await closeBehavior({ mode: "confirm", request, sessionId: original.providerSessionId });
 
       await expect
         .poll(() => prisma.liveCallConnection.findFirst({ where: { conversationId: callId } }))
-        .toMatchObject({ providerSessionId: null, state: "closed" });
+        .toMatchObject({ providerSessionId: null, state: "ended" });
 
       const cancelled = await connectionFor(callId);
       expect(actions.end).toContain(cancelled.id);
@@ -464,15 +479,15 @@ test.describe("Live call server states", () => {
       expect(actions.complete).toHaveLength(0);
       await expect(callAlert(page)).toContainText("The call didn't connect");
 
-      expect(
-        await prisma.liveCallSlot.findUnique({ where: { userId: learner.user.id } }),
-      ).toMatchObject({ connectionId: null });
+      await expect(
+        prisma.liveCallConnection.findUnique({ where: { id: original.id } }),
+      ).resolves.toMatchObject({ endReason: "takeover", state: "ended" });
     } finally {
       await owned.cleanup();
     }
   });
 
-  test("unconfirmed End retains the transcript and retry completes only the originating closed connection", async ({
+  test("an End OpenAI didn't confirm retains the transcript, and retry completes only the originating ended connection", async ({
     stateCallResources: owned,
     request,
   }) => {
@@ -538,7 +553,7 @@ test.describe("Live call server states", () => {
 
       expect(
         await prisma.liveCallConnection.findUnique({ where: { id: connection.id } }),
-      ).toMatchObject({ state: "closed" });
+      ).toMatchObject({ state: "ended" });
     } finally {
       await owned.cleanup();
     }

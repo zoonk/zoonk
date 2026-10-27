@@ -45,7 +45,7 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "server-only": "catalog:",
-    "workflow": "5.1.0",
+    "workflow": "5.2.3",
     "zod": "catalog:"
   },
   "devDependencies": {
@@ -53,6 +53,9 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "@workflow/builders": "5.0.6",
+    "@workflow/rollup": "5.0.6",
+    "@workflow/vitest": "5.0.6",
     "@zoonk/e2e": "workspace:*",
     "@zoonk/i18n": "workspace:*",
     "@zoonk/testing": "workspace:*",

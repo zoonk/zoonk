@@ -2,14 +2,13 @@ import { randomUUID } from "node:crypto";
 import { authenticatedCallFixture } from "@/workflows/v2/calls/_test-utils/live-call-fixtures";
 import { liveCallDeadlineWorkflow } from "@/workflows/v2/calls/live-call-deadline-workflow";
 import {
-  closeLiveCallSession,
   createLiveCallSession,
+  hangUpLiveCallSession,
   isLiveCallAvailable,
 } from "@zoonk/ai/tasks/v2/language/live-call-session";
 import {
   liveCallAdmissionInputSchema,
   liveCallAdmissionResponseSchema,
-  liveCallCloseAllResponseSchema,
 } from "@zoonk/core/language/conversations/admission-contract";
 import {
   languageConversationSetupSchema,
@@ -22,15 +21,14 @@ import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { start } from "workflow/api";
 import { GET as readAdmission, POST as updateAdmission } from "../../../live-calls/admission/route";
-import { POST as closeAll } from "../../../live-calls/close-all/route";
 import { POST as end } from "./[connectionId]/end/route";
 import { POST as redeem } from "./[connectionId]/sdp/route";
 import { POST as reserve } from "./route";
 
 /** Auth and PostgreSQL are real; only Workflow enqueue and the AI provider are replaced. */
 vi.mock("@zoonk/ai/tasks/v2/language/live-call-session", () => ({
-  closeLiveCallSession: vi.fn(),
   createLiveCallSession: vi.fn(),
+  hangUpLiveCallSession: vi.fn(),
   isLiveCallAvailable: vi.fn(),
 }));
 
@@ -84,11 +82,7 @@ describe("Live-call API adapters with real core and PostgreSQL", () => {
       sessionId: randomUUID(),
     }));
 
-    vi.mocked(closeLiveCallSession).mockResolvedValue({
-      reason: "close_requested",
-      seconds: 15,
-      status: "closed",
-    });
+    vi.mocked(hangUpLiveCallSession).mockReset();
 
     await prisma.liveCallSetting.upsert({
       create: { admission: "all", freeDailyBudgetMicros: 100_000_000, id: "live" },
@@ -97,27 +91,17 @@ describe("Live-call API adapters with real core and PostgreSQL", () => {
     });
   });
 
-  it("reserves without spend, persists the timer receipt, then redeems and ends once", async () => {
-    const { conversationId, user } = await authenticatedCallFixture();
-    const response = await reserveCall(conversationId, { requestId: randomUUID() });
+  it("reserves without spend, starts the deadline run, then redeems and ends once", async () => {
+    const { conversationId } = await authenticatedCallFixture();
+    const response = await reserveCall(conversationId);
     expect(response.status).toBe(201);
     expect(response.headers.get("Cache-Control")).toBe("no-store");
     const setup = languageConversationSetupSchema.parse(await response.json());
     expect(createLiveCallSession).not.toHaveBeenCalled();
 
     expect(start).toHaveBeenCalledWith(liveCallDeadlineWorkflow, [
-      {
-        connectionId: setup.connectionId,
-        deadlineAt: new Date(setup.deadlineAt),
-        generation: setup.generation,
-      },
+      { connectionId: setup.connectionId, deadlineAt: new Date(setup.deadlineAt) },
     ]);
-
-    const saved = await prisma.liveCallConnection.findUniqueOrThrow({
-      where: { id: setup.connectionId },
-    });
-
-    expect(saved.workflowRunId).toBeTruthy();
 
     const answer = await redeemCall(conversationId, setup.connectionId, {
       sdp: LIVE_CALL_SDP_OFFER,
@@ -126,7 +110,7 @@ describe("Live-call API adapters with real core and PostgreSQL", () => {
 
     expect(answer.status).toBe(201);
     expect(answer.headers.get("Cache-Control")).toBe("no-store");
-    expect(liveCallSdpResponseSchema.parse(await answer.json()).sdp).toBe("answer");
+    const { sessionId } = liveCallSdpResponseSchema.parse(await answer.json());
 
     expect(createLiveCallSession).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({ sdp: LIVE_CALL_SDP_OFFER, voice: setup.voice }),
@@ -136,36 +120,15 @@ describe("Live-call API adapters with real core and PostgreSQL", () => {
     await expect(statusOf(redeemCall(conversationId, setup.connectionId))).resolves.toBe(409);
     await expect(statusOf(endCall(conversationId, setup.connectionId))).resolves.toBe(200);
     await expect(statusOf(endCall(conversationId, setup.connectionId))).resolves.toBe(200);
-    expect(closeLiveCallSession).toHaveBeenCalledOnce();
+    expect(hangUpLiveCallSession).toHaveBeenCalledExactlyOnceWith(sessionId);
 
     await expect(
-      prisma.liveCallSlot.findUniqueOrThrow({ where: { userId: user.id } }),
-    ).resolves.toMatchObject({ connectionId: null });
+      prisma.liveCallConnection.findUniqueOrThrow({ where: { id: setup.connectionId } }),
+    ).resolves.toMatchObject({ endReason: "learner", state: "ended" });
   });
 
-  it("reuses the same reservation and receipt for a retried request", async () => {
+  it("answers a deadline run that can't start as retryable and ends the reservation", async () => {
     const { conversationId } = await authenticatedCallFixture();
-    const input = { requestId: randomUUID() };
-    const first = await reserveCall(conversationId, input);
-    const again = await reserveCall(conversationId, input);
-    expect(again.status).toBe(201);
-    const initial = languageConversationSetupSchema.parse(await first.json());
-    const replay = languageConversationSetupSchema.parse(await again.json());
-
-    expect(replay).toMatchObject({
-      connectionId: initial.connectionId,
-      deadlineAt: initial.deadlineAt,
-      endsAtLimit: initial.endsAtLimit,
-      generation: initial.generation,
-      sessionUrl: initial.sessionUrl,
-    });
-
-    expect(replay.seconds).toBeLessThanOrEqual(initial.seconds);
-    expect(start).toHaveBeenCalledOnce();
-  });
-
-  it("maps timer start failure to a retryable response and refunds the pending hold", async () => {
-    const { conversationId, user } = await authenticatedCallFixture();
     vi.mocked(start).mockRejectedValueOnce(new Error("Queue unavailable"));
     const response = await reserveCall(conversationId);
     expect(response.status).toBe(503);
@@ -173,8 +136,8 @@ describe("Live-call API adapters with real core and PostgreSQL", () => {
     await expect(response.json()).resolves.toMatchObject({ error: { code: "CALL_RETRYABLE" } });
 
     await expect(
-      prisma.liveCallSlot.findUniqueOrThrow({ where: { userId: user.id } }),
-    ).resolves.toMatchObject({ connectionId: null });
+      prisma.liveCallConnection.findFirstOrThrow({ where: { conversationId } }),
+    ).resolves.toMatchObject({ costMicros: 0, endReason: "failed", state: "ended" });
 
     expect(createLiveCallSession).not.toHaveBeenCalled();
   });
@@ -190,13 +153,13 @@ describe("Live-call API adapters with real core and PostgreSQL", () => {
     expect(createLiveCallSession).not.toHaveBeenCalled();
   });
 
-  it("keeps an unconfirmed End retryable and leaves the original slot held", async () => {
-    const { conversationId, user } = await authenticatedCallFixture();
+  it("keeps an End OpenAI didn't confirm retryable, with the connection still open", async () => {
+    const { conversationId } = await authenticatedCallFixture();
 
     const setup = await setupOf(reserveCall(conversationId));
 
     await expect(statusOf(redeemCall(conversationId, setup.connectionId))).resolves.toBe(201);
-    vi.mocked(closeLiveCallSession).mockRejectedValue(new Error("Sideband unavailable"));
+    vi.mocked(hangUpLiveCallSession).mockRejectedValue(new Error("OpenAI is unavailable"));
     const response = await endCall(conversationId, setup.connectionId);
     expect(response.status).toBe(409);
     expect(response.headers.get("Retry-After")).toBe("5");
@@ -206,13 +169,18 @@ describe("Live-call API adapters with real core and PostgreSQL", () => {
     });
 
     await expect(
-      prisma.liveCallSlot.findUniqueOrThrow({ where: { userId: user.id } }),
-    ).resolves.toMatchObject({ connectionId: setup.connectionId });
+      prisma.liveCallConnection.findUniqueOrThrow({ where: { id: setup.connectionId } }),
+    ).resolves.toMatchObject({ state: "live" });
   });
 
   it("rejects malformed request bodies and connection IDs before spending", async () => {
     const { conversationId } = await authenticatedCallFixture();
     await expect(statusOf(reserveCall(conversationId, { takeover: "yes" }))).resolves.toBe(400);
+
+    await expect(statusOf(reserveCall(conversationId, { requestId: randomUUID() }))).resolves.toBe(
+      400,
+    );
+
     await expect(statusOf(redeemCall(conversationId, "bad-id"))).resolves.toBe(400);
 
     await expect(statusOf(redeemCall(conversationId, randomUUID(), { sdp: "" }))).resolves.toBe(
@@ -233,7 +201,7 @@ describe("Live-call API adapters with real core and PostgreSQL", () => {
 
     await expect(
       prisma.liveCallConnection.findUniqueOrThrow({ where: { id: setup.connectionId } }),
-    ).resolves.toMatchObject({ providerStartedAt: null, state: "pending" });
+    ).resolves.toMatchObject({ startedAt: null, state: "reserved" });
 
     expect(createLiveCallSession).not.toHaveBeenCalled();
     await expect(statusOf(redeemCall(conversationId, setup.connectionId))).resolves.toBe(201);
@@ -263,7 +231,7 @@ describe("Live-call API adapters with real core and PostgreSQL", () => {
     expect(createLiveCallSession).not.toHaveBeenCalled();
   });
 
-  it("authorizes every admin operation, serializes reads without spend and disables before close-all", async () => {
+  it("authorizes every admin operation and lists open connections with their exposure, without spend", async () => {
     vi.mocked(headers).mockResolvedValue(new Headers());
     const input = { admission: "all", freeDailyBudgetMicros: 100_000_000 };
     await expect(statusOf(readAdmission())).resolves.toBe(401);
@@ -272,7 +240,6 @@ describe("Live-call API adapters with real core and PostgreSQL", () => {
       statusOf(updateAdmission(request("/v1/live-calls/admission", input))),
     ).resolves.toBe(401);
 
-    await expect(statusOf(closeAll())).resolves.toBe(401);
     await authenticatedCallFixture();
     await expect(statusOf(readAdmission())).resolves.toBe(403);
 
@@ -280,43 +247,27 @@ describe("Live-call API adapters with real core and PostgreSQL", () => {
       statusOf(updateAdmission(request("/v1/live-calls/admission", input))),
     ).resolves.toBe(403);
 
-    await expect(statusOf(closeAll())).resolves.toBe(403);
-
     const { conversationId } = await authenticatedCallFixture("admin");
+    const saved = await updateAdmission(request("/v1/live-calls/admission", input));
+    expect(saved.status).toBe(200);
+    expect(liveCallAdmissionInputSchema.parse(await saved.json())).toStrictEqual(input);
 
-    try {
-      const saved = await updateAdmission(request("/v1/live-calls/admission", input));
-      expect(saved.status).toBe(200);
-      expect(liveCallAdmissionInputSchema.parse(await saved.json())).toStrictEqual(input);
-      const read = await readAdmission();
-      expect(read.headers.get("Cache-Control")).toBe("no-store");
+    const setup = await setupOf(reserveCall(conversationId));
+    await expect(statusOf(redeemCall(conversationId, setup.connectionId))).resolves.toBe(201);
+    vi.mocked(createLiveCallSession).mockClear();
 
-      expect(liveCallAdmissionResponseSchema.parse(await read.json())).toMatchObject({
-        providerAvailable: true,
-        setting: input,
-      });
+    const read = await readAdmission();
+    expect(read.headers.get("Cache-Control")).toBe("no-store");
 
-      expect(createLiveCallSession).not.toHaveBeenCalled();
-      expect(closeLiveCallSession).not.toHaveBeenCalled();
-      expect(start).not.toHaveBeenCalled();
-      const setup = await setupOf(reserveCall(conversationId));
-      await expect(statusOf(redeemCall(conversationId, setup.connectionId))).resolves.toBe(201);
+    expect(liveCallAdmissionResponseSchema.parse(await read.json())).toMatchObject({
+      connections: expect.arrayContaining([
+        expect.objectContaining({ id: setup.connectionId, overdue: false, state: "live" }),
+      ]),
+      providerAvailable: true,
+      setting: input,
+    });
 
-      vi.mocked(closeLiveCallSession).mockImplementation(async () => {
-        const setting = await prisma.liveCallSetting.findUniqueOrThrow({ where: { id: "live" } });
-        expect(setting.admission).toBe("off");
-        return { reason: "close_requested", seconds: 15, status: "closed" };
-      });
-
-      const closed = await closeAll();
-      expect(closed.status).toBe(200);
-      expect(liveCallCloseAllResponseSchema.parse(await closed.json()).closed).toBeGreaterThan(0);
-
-      await expect(
-        prisma.liveCallConnection.findUniqueOrThrow({ where: { id: setup.connectionId } }),
-      ).resolves.toMatchObject({ state: "closed" });
-    } finally {
-      await updateAdmission(request("/v1/live-calls/admission", input));
-    }
+    expect(createLiveCallSession).not.toHaveBeenCalled();
+    expect(hangUpLiveCallSession).not.toHaveBeenCalled();
   });
 });

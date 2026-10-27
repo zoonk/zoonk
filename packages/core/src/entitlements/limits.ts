@@ -26,17 +26,21 @@ const CALL_SECOND_COST_MICROS = CALL_MINUTE_COST_MICROS / SECONDS_PER_MINUTE;
 /** The checks of what was said during a call and its feedback, whatever its length. */
 const CALL_CHECKS_COST_MICROS = 10_000;
 
-/** Budgeted transport overhead, separate from the learner's practice allowance. */
-export const LIVE_CALL_GRACE_SECONDS = 15;
-const LIVE_CALL_CLOSE_ALLOWANCE_SECONDS = 15;
+/**
+ * Connecting and hanging up, which OpenAI bills around the learner's call time. It counts only in
+ * the money a call reserves, never in the time the call may run.
+ */
+const LIVE_CALL_OVERHEAD_SECONDS = 15;
+/** OpenAI bills at least this much of a session, even one that ends at once. */
 export const LIVE_CALL_INITIALIZATION_SECONDS = 15;
-export const LIVE_CALL_ATTEMPTS_PER_CONVERSATION = 6;
 export const LIVE_CALL_ATTEMPTS_PER_DAY = 30;
-export const LIVE_CALL_HEALTH_THRESHOLD_MS = 300_000;
+/** A reservation waits this long for its SDP offer; after it, the reservation is worth nothing. */
+export const LIVE_CALL_CONNECT_WINDOW_SECONDS = 60;
 
+/** A minute of calls, budgeted as if a dropped call connected again: each connection's overhead. */
 const WORST_CALL_MINUTE_COST_MICROS =
   CALL_MINUTE_COST_MICROS +
-  (LIVE_CALL_GRACE_SECONDS + LIVE_CALL_CLOSE_ALLOWANCE_SECONDS) * CALL_SECOND_COST_MICROS +
+  2 * LIVE_CALL_OVERHEAD_SECONDS * CALL_SECOND_COST_MICROS +
   CALL_CHECKS_COST_MICROS;
 
 /** Admission budget, including every reconnect; actual overrun is still recorded. */
@@ -65,9 +69,7 @@ export function getLiveCallCostMicros(seconds: number): number {
 }
 
 export function getLiveCallReservationMicros(seconds: number): number {
-  return getLiveCallCostMicros(
-    seconds + LIVE_CALL_GRACE_SECONDS + LIVE_CALL_CLOSE_ALLOWANCE_SECONDS,
-  );
+  return getLiveCallCostMicros(seconds + LIVE_CALL_OVERHEAD_SECONDS);
 }
 
 /** A call shorter than this isn't worth starting: with less call time left, calls wait for more. */

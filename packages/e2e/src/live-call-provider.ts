@@ -1,8 +1,9 @@
 import { randomUUID } from "node:crypto";
-import { getNumber, getString } from "@zoonk/utils/json";
+import { getString, isJsonObject } from "@zoonk/utils/json";
 
 const CREATE_TIMEOUT_MS = 30_000;
-const CLOSE_TIMEOUT_MS = 15_000;
+const HANGUP_TIMEOUT_MS = 15_000;
+const NOT_FOUND = 404;
 
 export const TEST_LIVE_SDP_ANSWER = "v=0\r\ns=e2e-provider-peer\r\n";
 
@@ -66,32 +67,31 @@ export async function createLiveCallSession(input: {
   return { sdp, sessionId };
 }
 
+/** Like OpenAI, the peer answers a session that already ended with 404 `session_id_not_found`. */
+async function isAlreadyEnded(response: Response): Promise<boolean> {
+  if (response.status !== NOT_FOUND) {
+    return false;
+  }
+
+  const body: unknown = await response.json().catch(() => null);
+  return getString(isJsonObject(body) ? body.error : null, "code") === "session_id_not_found";
+}
+
 /** @public Next E2E resolveAlias implements this compiler-owned provider interface. */
-export async function closeLiveCallSession(sessionId: string) {
+export async function hangUpLiveCallSession(sessionId: string) {
   assertTestEnvironment();
   const bridge = bridgeUrl();
 
   if (!bridge) {
-    return { reason: "close_requested", seconds: 15, status: "closed" as const };
+    return;
   }
 
-  const response = await fetch(`${bridge}/sessions/${encodeURIComponent(sessionId)}/close`, {
+  const response = await fetch(`${bridge}/sessions/${encodeURIComponent(sessionId)}/hangup`, {
     method: "POST",
-    signal: AbortSignal.timeout(CLOSE_TIMEOUT_MS),
+    signal: AbortSignal.timeout(HANGUP_TIMEOUT_MS),
   });
 
-  const body: unknown = await response.json();
-  const seconds = getNumber(body, "seconds");
-
-  if (
-    !response.ok ||
-    getString(body, "status") !== "closed" ||
-    seconds === null ||
-    !Number.isFinite(seconds) ||
-    seconds < 0
-  ) {
-    throw new Error("The lane-owned Live peer did not confirm closure.");
+  if (!response.ok && !(await isAlreadyEnded(response))) {
+    throw new Error("The lane-owned Live peer didn't hang up.");
   }
-
-  return { reason: "close_requested", seconds, status: "closed" as const };
 }

@@ -33,8 +33,8 @@ const OWN_MOCKS = globSync("src/**/*.test.ts", { cwd: import.meta.dirname }).fil
   /\bvi\.(?:mock|doMock|unmock)\(/u.test(readFileSync(resolve(import.meta.dirname, file), "utf8")),
 );
 
-/** These files change a global policy or use a different clock for live-call health. */
-const LIVE_CALL_POLICY_TEST = "src/language/conversations/live-call-lifecycle.test.ts";
+/** These files change live-call admission and the shared free day, which every learner's call reads. */
+const LIVE_CALL_POLICY_TEST = "src/language/conversations/live-calls.test.ts";
 const MISSION_COMPLETION_TEST = "src/mistakes/mission-completion-paths.test.ts";
 /** Table-wide locks must run after parallel files and apart from one another. */
 const REQUEST_INSTANT_TEST = "src/learner/facts/request-instant.test.ts";

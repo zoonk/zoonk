@@ -15,9 +15,9 @@ type Session = {
   realPeer: boolean;
   createdAt: number;
   closeRequestedAt: number | null;
-  closedSeconds: number | null;
+  ended: boolean;
   answer: ServerResponse | null;
-  closes: Set<ServerResponse>;
+  hangups: Set<ServerResponse>;
   closeMode: "confirm" | "hold" | "reject";
 };
 
@@ -25,7 +25,7 @@ type Sessions = Map<string, Session>;
 
 async function bodyOf(
   request: IncomingMessage,
-): Promise<{ closeMode: Session["closeMode"] | null; sdp: string | null; seconds: number | null }> {
+): Promise<{ closeMode: Session["closeMode"] | null; sdp: string | null }> {
   const body: unknown = JSON.parse(await text(request));
 
   if (!body || typeof body !== "object") {
@@ -39,13 +39,6 @@ async function bodyOf(
         ? body.closeMode
         : null,
     sdp: "sdp" in body && typeof body.sdp === "string" ? body.sdp : null,
-    seconds:
-      "seconds" in body &&
-      typeof body.seconds === "number" &&
-      Number.isFinite(body.seconds) &&
-      body.seconds >= 0
-        ? body.seconds
-        : null,
   };
 }
 
@@ -79,11 +72,11 @@ async function createSession({
 
   const session: Session = {
     answer: realPeer ? response : null,
-    closeMode: realPeer ? "hold" : "confirm",
+    closeMode: "confirm",
     closeRequestedAt: null,
-    closedSeconds: null,
-    closes: new Set(),
     createdAt: Date.now(),
+    ended: false,
+    hangups: new Set(),
     id,
     realPeer,
     sdp: body.sdp,
@@ -96,30 +89,34 @@ async function createSession({
   }
 }
 
-function closeSession(session: Session, response: ServerResponse) {
+/** OpenAI's answers: 200 once the session ends, 404 `session_id_not_found` once it's gone. */
+function hangUpSession(session: Session, response: ServerResponse) {
   session.closeRequestedAt ??= Date.now();
 
-  if (session.closedSeconds !== null) {
-    json(response, { reason: "close_requested", seconds: session.closedSeconds, status: "closed" });
+  if (session.ended) {
+    json(
+      response,
+      { error: { code: "session_id_not_found", message: "No session found" } },
+      HTTP_NOT_FOUND,
+    );
+
     return;
   }
 
   if (session.closeMode === "reject") {
-    json(response, { error: "The fake provider could not confirm termination" }, HTTP_UNAVAILABLE);
+    json(response, { error: "The fake provider could not hang up" }, HTTP_UNAVAILABLE);
     return;
   }
 
   if (session.closeMode === "confirm") {
-    session.closedSeconds = 15;
-  }
-
-  if (session.closedSeconds !== null) {
-    json(response, { reason: "close_requested", seconds: session.closedSeconds, status: "closed" });
+    session.ended = true;
+    response.writeHead(HTTP_OK);
+    response.end();
     return;
   }
 
-  session.closes.add(response);
-  response.once("close", () => session.closes.delete(response));
+  session.hangups.add(response);
+  response.once("close", () => session.hangups.delete(response));
 }
 
 async function controlSession({
@@ -135,20 +132,15 @@ async function controlSession({
 }) {
   const body = await bodyOf(request);
 
-  if (
-    operation === "behavior" &&
-    body.closeMode &&
-    !session.realPeer &&
-    session.closedSeconds === null
-  ) {
+  if (operation === "behavior" && body.closeMode && !session.ended) {
     session.closeMode = body.closeMode;
 
     if (body.closeMode !== "hold") {
-      for (const close of session.closes) {
-        closeSession(session, close);
+      for (const hangup of session.hangups) {
+        hangUpSession(session, hangup);
       }
 
-      session.closes.clear();
+      session.hangups.clear();
     }
 
     json(response, { ok: true });
@@ -164,18 +156,6 @@ async function controlSession({
   ) {
     json(session.answer, { sdp: body.sdp, sessionId: session.id });
     session.answer = null;
-    json(response, { ok: true });
-    return;
-  }
-
-  if (operation === "closed" && session.closeRequestedAt !== null && body.seconds !== null) {
-    session.closedSeconds ??= body.seconds;
-
-    for (const close of session.closes) {
-      json(close, { reason: "close_requested", seconds: session.closedSeconds, status: "closed" });
-    }
-
-    session.closes.clear();
     json(response, { ok: true });
     return;
   }
@@ -217,7 +197,7 @@ async function handle({
   }
 
   const route =
-    /^\/(?<scope>control\/)?sessions\/(?<id>[^/]+)\/(?<operation>close|answer|closed|behavior)$/u.exec(
+    /^\/(?<scope>control\/)?sessions\/(?<id>[^/]+)\/(?<operation>hangup|answer|behavior)$/u.exec(
       path,
     );
 
@@ -233,12 +213,12 @@ async function handle({
     return;
   }
 
-  if (!route.groups.scope && route.groups.operation === "close") {
-    closeSession(session, response);
+  if (!route.groups.scope && route.groups.operation === "hangup") {
+    hangUpSession(session, response);
     return;
   }
 
-  if (route.groups.scope && route.groups.operation !== "close") {
+  if (route.groups.scope && route.groups.operation !== "hangup") {
     await controlSession({ operation: route.groups.operation, request, response, session });
     return;
   }
@@ -246,7 +226,7 @@ async function handle({
   json(response, { error: "Unknown test boundary operation" }, HTTP_NOT_FOUND);
 }
 
-/** Lane-owned AI boundary fake, never OpenAI evidence. Native browser peers answer SDP and acknowledge closes. */
+/** Lane-owned AI boundary fake, never OpenAI evidence. Native browser peers answer SDP; hangups answer like OpenAI's. */
 export async function startLiveCallTestProvider() {
   const sessions: Sessions = new Map();
 

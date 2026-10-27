@@ -33,6 +33,8 @@ coverage
 .next/
 .next-e2e/
 .swc/
+.workflow-data/
+.workflow-vitest/
 out/
 build
 dist

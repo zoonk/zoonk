@@ -6,7 +6,7 @@ import { liveCallAdmissionResponseSchema } from "@zoonk/core/language/conversati
 import { safeAsync } from "@zoonk/utils/error";
 
 /**
- * The API reads the switch, the provider key's presence and the unclosed connections: the key lives
+ * The API reads the switch, the provider key's presence and the open connections: the key lives
  * only in the API's environment, so the admin can't check it here. Reading never calls the provider.
  * Null when the API can't be reached or answers something else.
  */
@@ -25,5 +25,5 @@ export async function getLiveCallControls() {
   return cachedGetLiveCallControls();
 }
 
-export type LiveCallControls = NonNullable<Awaited<ReturnType<typeof getLiveCallControls>>>;
+type LiveCallControls = NonNullable<Awaited<ReturnType<typeof getLiveCallControls>>>;
 export type LiveCallConnectionRow = LiveCallControls["connections"][number];
