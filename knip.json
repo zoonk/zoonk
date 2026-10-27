@@ -50,13 +50,8 @@
     },
     "packages/core": { "project": ["src/**/*.{ts,tsx}!", "!**/_test-utils/**!"] },
     "packages/db": {
-      "entry": ["prisma.config.ts", "src/prisma/sync-content.{ts,mts}!", "src/scripts/*.ts"],
-      "project": [
-        "**/*.{ts,mts}!",
-        "!src/scripts/**!",
-        "!src/prisma/seed.ts!",
-        "!src/test-{database,environment}.ts!"
-      ],
+      "entry": ["prisma.config.ts", "src/prisma/sync-content.ts!"],
+      "project": ["**/*.{ts,mts}!", "!src/prisma/seed.ts!", "!src/test-{database,environment}.ts!"],
       "ignore": ["src/prisma/seed/**"],
       "prisma": false
     },
