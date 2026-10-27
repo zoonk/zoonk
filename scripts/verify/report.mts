@@ -24,7 +24,11 @@ function groupFindings(entries: { findings: Finding[]; place: Place }[]): Group[
     for (const finding of findings) {
       const key = `${finding.level} ${finding.check} ${finding.message}`;
       const group = groups.get(key) ?? { ...finding, values: [], where: [] };
-      group.where.push(place);
+
+      // A message logged twice in one load is still one place.
+      if (!group.where.some((seen) => seen.page === place.page && seen.screen === place.screen)) {
+        group.where.push(place);
+      }
 
       if (finding.value !== undefined) {
         group.values.push(finding.value);

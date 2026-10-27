@@ -18,7 +18,7 @@ It measures this checkout's Main at its Portless URL, whichever of the two serve
 - `--out <dir>` picks the output folder; it defaults to `tmp/verify/<time>` in the checkout (ignored by git).
 - The v2 seed's personas (such as `v2-stocks@zoonk.test`, in `packages/db/src/prisma/seed/v2/learners/personas`) are shared: only read with them. Walks that change a learner's state use your own `pnpm dev:persona` copy.
 
-Each run writes `report.md` (findings grouped across screens, then a row per load and per navigation) and `report.json` (everything measured, every request included). Per page it saves two contact sheets, `screens.png` (every screen in each scheme) and `paints.png` (every paint of each load, by its time in ms), beside the full-page screenshots and each screen's `-frames` folder.
+Each run writes `report.md` (findings grouped across screens, then a row per load and per navigation) and `report.json` (everything measured, every request included). Per page it saves two contact sheets, `screens.png` (every screen in each scheme) and `paints.png` (every paint of each load, by its time in ms), beside the full-page screenshots and each screen's `-frames` folder. A full-page screenshot draws fixed bars, such as the phone's tabs, where the viewport ended; that's the screenshot, not the page.
 
 ## What it judges
 
