@@ -1,7 +1,7 @@
 import { checkConversationObjectives } from "@zoonk/ai/tasks/v2/language/conversation-objectives";
 import { generateExamSpeakingCard } from "@zoonk/ai/tasks/v2/language/exam-speaking-card";
 import { drawExamSpeakingPhoto } from "@zoonk/ai/tasks/v2/language/exam-speaking-photo";
-import { scoreExamSpeaking } from "@zoonk/ai/tasks/v2/language/exam-speaking-score";
+import { scoreSpeaking } from "@zoonk/ai/tasks/v2/language/speaking-score";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
@@ -71,7 +71,7 @@ const COMPLETION = {
 /** Every criterion it's asked for, at one band. */
 function gradeAt(band: number) {
   return vi
-    .mocked(scoreExamSpeaking)
+    .mocked(scoreSpeaking)
     .mockImplementation(async ({ criteria }) => ({
       data: {
         brief: false,
@@ -329,7 +329,7 @@ describe("exam speaking tasks", () => {
 
     expect(completed.status).toBe("completed");
 
-    expect(scoreExamSpeaking).toHaveBeenCalledWith(
+    expect(scoreSpeaking).toHaveBeenCalledWith(
       expect.objectContaining({
         exam: "dele",
         learnerLanguage: "pt",
@@ -433,7 +433,7 @@ describe("exam speaking tasks", () => {
   it("counts a graded task as speaking evidence at the exam's level, by its criteria", async () => {
     const { goal, user } = await deleLearner();
     // Band 2 is DELE's level: four criteria at it, the holistic one below.
-    vi.mocked(scoreExamSpeaking).mockImplementation(async ({ criteria }) => ({
+    vi.mocked(scoreSpeaking).mockImplementation(async ({ criteria }) => ({
       data: {
         brief: false,
         criteria: criteria.map((criterion) => ({
@@ -526,7 +526,7 @@ describe("exam speaking tasks", () => {
     }
 
     // Typed replies are graded only on what words show (as the grader does with no speech).
-    vi.mocked(scoreExamSpeaking).mockImplementation(async ({ criteria }) => ({
+    vi.mocked(scoreSpeaking).mockImplementation(async ({ criteria }) => ({
       data: {
         brief: false,
         criteria: criteria

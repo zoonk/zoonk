@@ -18,7 +18,6 @@ import { courseOutlineTask } from "./course-outline/task";
 import { coverageCheckTask } from "./coverage-check/task";
 import { examIdentityDecisionTask } from "./exam-identity-decision/task";
 import { examSpeakingCardTask } from "./exam-speaking-card/task";
-import { examSpeakingScoreTask } from "./exam-speaking-score/task";
 import { exampleLinesTask } from "./example-lines/task";
 import { explainSpokenAnswerTask } from "./explain-spoken-answer/task";
 import { explainWrongAnswerTask } from "./explain-wrong-answer/task";
@@ -72,7 +71,7 @@ import { skillGraphTask } from "./skill-graph/task";
 import { sourceChangeNoticeTask } from "./source-change-notice/task";
 import { sourceResearchPlanTask } from "./source-research-plan/task";
 import { speakingMockScenarioTask } from "./speaking-mock-scenario/task";
-import { speakingMockScoreTask } from "./speaking-mock-score/task";
+import { speakingScoreTask } from "./speaking-score/task";
 import { statuteDrillsTask } from "./statute-drills/task";
 import { stepVariantTask } from "./step-variant/task";
 import { topicSkillNamesTask } from "./topic-skill-names/task";
@@ -165,8 +164,7 @@ export const TASKS: readonly RegisteredTask[] = [
   examSpeakingCardTask,
   conversationFeedbackTask,
   conversationObjectivesTask,
-  speakingMockScoreTask,
-  examSpeakingScoreTask,
+  speakingScoreTask,
   mistakePatternTask,
   levelTestBankTask,
   alphabetLessonTask,

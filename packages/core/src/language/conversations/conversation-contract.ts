@@ -1,8 +1,4 @@
-import {
-  SPEAKING_MOCK_CRITERIA,
-  SPEAKING_MOCK_EXAMS,
-  SPEAKING_MOCK_SCALES,
-} from "@zoonk/ai/tasks/v2/language/speaking-mock-bands";
+import { SPEAKING_MOCK_EXAMS } from "@zoonk/ai/tasks/v2/language/exam-speaking-exams";
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { z } from "zod";
 import { answerTimeZoneSchema } from "../../learner/contract";
@@ -15,6 +11,7 @@ import {
 } from "../exam-speaking/speaking-contract";
 import { isWebRtcAudioOffer } from "./_utils/webrtc-offer";
 import { MAX_CONVERSATION_TURNS, MAX_CONVERSATION_TURN_LENGTH } from "./conversation-turn-limits";
+import { SPEAKING_MOCK_CRITERIA, SPEAKING_MOCK_SCALES } from "./speaking-mock-format";
 
 const MAX_SDP_LENGTH = 100_000;
 const MAX_PRACTICE_MINUTES = 5;
@@ -84,10 +81,13 @@ const callFeedbackSchema = z
   })
   .meta({ id: "LanguageCallFeedback" });
 
+const HALF_BAND = 0.5;
+
 /** A speaking mock's feedback, by its exam's own criteria and on its band scale. */
 function speakingMockFeedbackFor<const TExam extends SpeakingMockExam>(exam: TExam) {
-  const { max, min, step } = SPEAKING_MOCK_SCALES[exam];
-  const band = z.number().min(min).max(max).multipleOf(step);
+  const { halfBands, maxBand, minBand } = SPEAKING_MOCK_SCALES[exam];
+  const step = halfBands ? HALF_BAND : 1;
+  const band = z.number().min(minBand).max(maxBand).multipleOf(step);
   const criterion = z.enum(SPEAKING_MOCK_CRITERIA[exam]);
 
   return z.object({

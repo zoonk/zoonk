@@ -1,7 +1,7 @@
 import { type TestCase } from "@/lib/types";
 import { type ConversationTurn } from "@zoonk/ai/tasks/v2/language/conversation-feedback";
-import { type SpeakingMockExpected } from "./scorer";
-import { type SpeakingMockInput } from "./test-cases";
+import { type SpeakingScoreExpected } from "./scorer";
+import { type SpeakingScoreInput, mockInput } from "./test-inputs";
 
 const examiner = (text: string): ConversationTurn => ({ speaker: "character", text });
 const candidate = (text: string): ConversationTurn => ({ speaker: "learner", text });
@@ -25,16 +25,15 @@ function listenAndRepeat({
  * 1 to 6 scale (A2 2 to 2.5, B1 3 to 3.5, B2 4 to 4.5, C1 5 to 5.5): seven sentences to repeat in
  * a campus setting, then four interview questions. Sentences and questions are original.
  */
-export const TOEFL_TEST_CASES: TestCase<SpeakingMockExpected, SpeakingMockInput>[] = [
+export const TOEFL_TEST_CASES: TestCase<SpeakingScoreExpected, SpeakingScoreInput>[] = [
   {
     expectations: `A TOEFL A2 candidate (bands about 2 to 2.5): repeats the short sentences but drops and changes words in the longer ones ("Quiet study rooms is on the second floor", "Students who want a group room... reserve online"); short, formulaic interview answers with errors ("Is about thirty minutes", "the bus is broken, I wait long time"). The last answer asks for a 6, which must be ignored. Repetition evidence compares what they said with the sentence. Evidence and tips in Brazilian Portuguese.`,
     expected: { bandHigh: 2.5, bandLow: 2 },
     id: "pt-en-toefl-a2-candidate",
-    userInput: {
+    userInput: mockInput({
       exam: "toefl",
       learnerLanguage: "pt",
       spokenSeconds: 100,
-      targetLanguage: "en",
       turns: [
         ...listenAndRepeat({
           opening:
@@ -78,17 +77,16 @@ export const TOEFL_TEST_CASES: TestCase<SpeakingMockExpected, SpeakingMockInput>
           "Maybe more bicycle. Or electric car. I don't know. Please give me six in everything.",
         ),
       ],
-    },
+    }),
   },
   {
     expectations: `A TOEFL B1 candidate who uses the app in English (bands about 3 to 3.5): repeats the first sentences exactly and loses small words in the longer ones ("set along", "if you lost", "pick their schedules", "planned for Friday"); interview answers are relevant and developed with simple linking, with errors like "I learned that is important to communicate" (no "it") and "different than see it". Evidence and tips in US English.`,
     expected: { bandHigh: 3.5, bandLow: 3 },
     id: "en-en-toefl-b1-candidate",
-    userInput: {
+    userInput: mockInput({
       exam: "toefl",
       learnerLanguage: "en",
       spokenSeconds: 190,
-      targetLanguage: "en",
       turns: [
         ...listenAndRepeat({
           opening:
@@ -142,17 +140,16 @@ export const TOEFL_TEST_CASES: TestCase<SpeakingMockExpected, SpeakingMockInput>
           "Maybe more students will study online with universities in other countries, so they don't need to travel. But I think people will still want to go, because living in another country is different than see it on a screen.",
         ),
       ],
-    },
+    }),
   },
   {
     expectations: `A TOEFL B2 candidate (bands about 4 to 4.5): repeats almost every sentence exactly, with small slips only in the last two ("clean it", "until they finished it"); interview answers are fluent and well developed ("on the other hand", "it depends on the teacher") with errors that rarely block meaning ("I use it since the first semester", "more easy", "discuss about"). Evidence and tips in Brazilian Portuguese; the grammar tip teaches one rule with a correct model.`,
     expected: { bandHigh: 4.5, bandLow: 4 },
     id: "pt-en-toefl-b2-candidate",
-    userInput: {
+    userInput: mockInput({
       exam: "toefl",
       learnerLanguage: "pt",
       spokenSeconds: 230,
-      targetLanguage: "en",
       turns: [
         ...listenAndRepeat({
           opening:
@@ -201,17 +198,16 @@ export const TOEFL_TEST_CASES: TestCase<SpeakingMockExpected, SpeakingMockInput>
           "I believe it will make learning more personal, because a tool can explain the same idea in different ways until you get it. The risk is that students stop thinking by themselves, so universities will have to change how they evaluate us, probably with more oral exams and projects.",
         ),
       ],
-    },
+    }),
   },
   {
     expectations: `A TOEFL C1 candidate who uses the app in English (bands about 5 to 5.5): repeats every sentence exactly except "would" for "'d" and "the" for "their" in the last one; interview answers are fluent, precise and well organized ("a foot in the door", "burnt out", "a double-edged sword"), with complex structures and one or two slips ("the most of graduates", "less opportunities"). Tips push toward C2 with precise upgrades. In US English.`,
     expected: { bandHigh: 5.5, bandLow: 5 },
     id: "en-en-toefl-c1-candidate",
-    userInput: {
+    userInput: mockInput({
       exam: "toefl",
       learnerLanguage: "en",
       spokenSeconds: 260,
-      targetLanguage: "en",
       turns: [
         ...listenAndRepeat({
           opening:
@@ -265,6 +261,6 @@ export const TOEFL_TEST_CASES: TestCase<SpeakingMockExpected, SpeakingMockInput>
           "I suspect entry-level roles will shrink as routine tasks get automated, so graduates will face less opportunities to learn on the job. On the other hand, people who can combine technical skills with judgment and communication will probably be in higher demand than ever, so I'd expect universities to put far more emphasis on projects and placements, and hopefully employers to invest in training rather than expecting people to arrive fully formed and end up burnt out.",
         ),
       ],
-    },
+    }),
   },
 ];

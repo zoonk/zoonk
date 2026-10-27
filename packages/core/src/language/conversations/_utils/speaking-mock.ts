@@ -4,7 +4,7 @@ import { type CefrLevel } from "@zoonk/utils/cefr";
 import { isJsonObject } from "@zoonk/utils/json";
 import { SPEAKING_MOCK_LANGUAGE, getSpeakingMockExam } from "../../../exams/language-exam";
 import { type SpeakingMockExam } from "../conversation-contract";
-import { SPEAKING_MOCK_MINUTES } from "../conversation-rules";
+import { SPEAKING_MOCK_MINUTES } from "../speaking-mock-format";
 import { getSpeakingLevel } from "./conversation-goal";
 import { getSpeakingMockScenario } from "./conversation-scenario";
 import { createConversation } from "./create-conversation";

@@ -1,12 +1,12 @@
 import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-score";
 import { type TaskScorer } from "@/lib/types";
 import {
-  type ExamSpeakingCriterion,
-  type ExamSpeakingGrade,
+  type SpeakingCriterion,
+  type SpeakingGrade,
   listRatedCriteria,
-} from "@zoonk/ai/tasks/v2/language/exam-speaking-bands";
-import { EXAM_SPEAKING_SCORE_CATEGORIES } from "./score-categories";
-import { type ExamSpeakingInput } from "./test-cases";
+} from "@zoonk/ai/tasks/v2/language/speaking-bands";
+import { SPEAKING_SCORE_CATEGORIES } from "./score-categories";
+import { type SpeakingScoreInput } from "./test-inputs";
 
 type BandWindow = { bandLow: number; bandHigh: number };
 
@@ -14,28 +14,29 @@ type BandWindow = { bandLow: number; bandHigh: number };
  * The band window on the exam's own scale where a transcript written at a known level sits, for
  * every criterion unless `criteria` gives one its own (a candidate who covers every point of the
  * task rates higher on it than on language): DELE's band 2 is its level, Goethe's 2 and 3 are C
- * and B, Cambridge's 3 is its level. `brief`, when given, is whether there was too little to judge.
+ * and B, Cambridge's 3 is its level, IELTS's and TOEFL's follow the candidate's CEFR level. `brief`,
+ * when given, is whether there was too little to judge.
  */
-export type ExamSpeakingExpected = BandWindow & {
+export type SpeakingScoreExpected = BandWindow & {
   brief?: boolean;
   criteria?: Record<string, BandWindow>;
 };
 
-type Grade = ExamSpeakingGrade["criteria"][number];
+type Grade = SpeakingGrade["criteria"][number];
 
 /** Raters disagree by about half a band, so a range within half a band of the window counts. */
 const WINDOW_TOLERANCE = 0.5;
 const MAX_RANGE_WIDTH = 1;
 const HALF = 0.5;
 
-function isOnScale({ criterion, grade }: { criterion: ExamSpeakingCriterion; grade: Grade }) {
+function isOnScale({ criterion, grade }: { criterion: SpeakingCriterion; grade: Grade }) {
   const step = criterion.halfBands ? HALF : 1;
   const { bandHigh, bandLow } = grade;
 
   return (
     Number.isInteger(bandLow / step) &&
     Number.isInteger(bandHigh / step) &&
-    bandLow >= 0 &&
+    bandLow >= (criterion.minBand ?? 0) &&
     bandLow <= bandHigh &&
     bandHigh <= Math.min(criterion.maxBand, bandLow + MAX_RANGE_WIDTH)
   );
@@ -46,8 +47,8 @@ function getCriterionProblem({
   expected,
   grades,
 }: {
-  criterion: ExamSpeakingCriterion;
-  expected: ExamSpeakingExpected;
+  criterion: SpeakingCriterion;
+  expected: SpeakingScoreExpected;
   grades: readonly Grade[];
 }): string | null {
   const matches = grades.filter((grade) => grade.criterion === criterion.key);
@@ -85,11 +86,11 @@ function checkGrade({
   expected,
   output,
 }: {
-  criteria: readonly ExamSpeakingCriterion[];
-  expected: ExamSpeakingExpected;
+  criteria: readonly SpeakingCriterion[];
+  expected: SpeakingScoreExpected;
   output: string;
 }): CodeCheckResult {
-  const grade = JSON.parse(output) as ExamSpeakingGrade;
+  const grade = JSON.parse(output) as SpeakingGrade;
 
   const problems = [
     ...criteria.map((criterion) =>
@@ -111,9 +112,9 @@ function checkGrade({
  * Code checks the bands on each exam's own scale against transcripts written at a known level;
  * the judge scores the evidence, the tips and that nothing marks down an accent or promises a pass.
  */
-export const scoreExamSpeakingOutput: TaskScorer<ExamSpeakingExpected> = ({ output, testCase }) => {
+export const scoreSpeakingOutput: TaskScorer<SpeakingScoreExpected> = ({ output, testCase }) => {
   const { expected } = testCase;
-  const input = testCase.userInput as ExamSpeakingInput;
+  const input = testCase.userInput as SpeakingScoreInput;
   const criteria = listRatedCriteria(input);
 
   if (!expected) {
@@ -123,7 +124,7 @@ export const scoreExamSpeakingOutput: TaskScorer<ExamSpeakingExpected> = ({ outp
   return scoreWithCodeChecks({
     check: (value) => checkGrade({ criteria, expected, output: value }),
     output,
-    scoreCategories: EXAM_SPEAKING_SCORE_CATEGORIES,
+    scoreCategories: SPEAKING_SCORE_CATEGORIES,
     testCase,
   });
 };

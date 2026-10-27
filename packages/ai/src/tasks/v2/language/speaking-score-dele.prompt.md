@@ -13,3 +13,5 @@ The criteria, by key:
 - `interviewer` ("Escala del entrevistador", A1 and A2) and `holistic` ("Escala holística", B1 to C2): the interviewer's overall impression of the candidate's communication across the paper: how well they do the tasks, the language they use, how they keep the interaction going and how clear they are. Rate it from this task's evidence.
 
 `languageUse` (A1, A2) and `fluency` (B1 to C2) are the criteria about sound; at A1 and A2 `languageUse` covers more than sound, so rate its language part from the transcript as usual.
+
+Words Spanish shares with Portuguese ("también"/"também", "pero") are correct Spanish, never borrowed.

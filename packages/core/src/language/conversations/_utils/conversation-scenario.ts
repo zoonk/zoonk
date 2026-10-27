@@ -9,7 +9,7 @@ import {
   type SpeakingMockExam,
   conversationScenarioSchema,
 } from "../conversation-contract";
-import { SPEAKING_MOCK_MINUTES } from "../conversation-rules";
+import { SPEAKING_MOCK_MINUTES } from "../speaking-mock-format";
 
 type ScenarioUnit = {
   description: string;

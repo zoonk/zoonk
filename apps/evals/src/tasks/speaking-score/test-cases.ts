@@ -1,53 +1,12 @@
 import { type TestCase } from "@/lib/types";
 import { type ConversationTurn } from "@zoonk/ai/tasks/v2/language/conversation-feedback";
-import { type SpeakingExam } from "@zoonk/ai/tasks/v2/language/exam-speaking-exams";
-import { type ScoreExamSpeakingParams } from "@zoonk/ai/tasks/v2/language/exam-speaking-score";
-import {
-  getSpeakingFormat,
-  getSpeakingTask,
-  listTaskCriteria,
-} from "@zoonk/core/language/exam-speaking/formats";
-import { type CefrLevel } from "@zoonk/utils/cefr";
-import { type ExamSpeakingExpected } from "./scorer";
-
-export type ExamSpeakingInput = Omit<
-  ScoreExamSpeakingParams,
-  "analytics" | "model" | "reasoning" | "useFallback"
->;
+import { IELTS_TEST_CASES } from "./ielts-test-cases";
+import { type SpeakingScoreExpected } from "./scorer";
+import { type SpeakingScoreInput, examTask } from "./test-inputs";
+import { TOEFL_TEST_CASES } from "./toefl-test-cases";
 
 const examiner = (text: string): ConversationTurn => ({ speaker: "character", text });
 const candidate = (text: string): ConversationTurn => ({ speaker: "learner", text });
-
-/** A task's input as core passes it: the paper's title, the task and its criteria from the format table. */
-function examTask({
-  exam,
-  level,
-  task,
-  ...rest
-}: {
-  exam: SpeakingExam;
-  level: CefrLevel;
-  learnerLanguage: string;
-  spokenSeconds: number;
-  task: string;
-  turns: ConversationTurn[];
-}): ExamSpeakingInput {
-  const format = getSpeakingFormat({ exam, level });
-  const found = format ? getSpeakingTask({ format, task }) : null;
-
-  if (!format || !found) {
-    throw new Error(`No ${exam} ${level} task ${task}`);
-  }
-
-  return {
-    ...rest,
-    criteria: listTaskCriteria({ format, task }),
-    exam,
-    level,
-    task: { brief: found.brief, minutes: found.minutes, name: found.name, role: found.role },
-    title: format.title,
-  };
-}
 
 /**
  * Transcripts written at a known level for one task of each paper, with the window a rater would
@@ -55,7 +14,7 @@ function examTask({
  * A), Cambridge 0 to 5 in half bands with 3 at the level. Different exams come first so a small run
  * covers them.
  */
-export const TEST_CASES: TestCase<ExamSpeakingExpected, ExamSpeakingInput>[] = [
+const PAPER_TEST_CASES: TestCase<SpeakingScoreExpected, SpeakingScoreInput>[] = [
   {
     expectations: `A DELE B2 candidate at the level (band 2 on every criterion, 0 to 3): weighs four of the traffic proposals with connectors ("por un lado", "sin embargo", "en cambio"), gives reasons and answers the examiner's questions, with a few B2 slips ("si tendría más tiempo", "la gente están"). Evidence and tips in Brazilian Portuguese quoting the Spanish. Fluency is about how the speech flows, never accent.`,
     expected: { bandHigh: 2, bandLow: 2, brief: false },
@@ -258,3 +217,5 @@ export const TEST_CASES: TestCase<ExamSpeakingExpected, ExamSpeakingInput>[] = [
     }),
   },
 ];
+
+export const TEST_CASES = [...PAPER_TEST_CASES, ...IELTS_TEST_CASES, ...TOEFL_TEST_CASES];

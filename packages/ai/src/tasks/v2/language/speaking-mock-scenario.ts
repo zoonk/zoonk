@@ -7,7 +7,7 @@ import { type Reasoning, buildProviderOptions } from "../../../provider-options"
 import { getLanguagePromptContext } from "../../_utils/prompt-language";
 import { scenarioSchema } from "./_utils/scenario-schema";
 import { type GenerateConversationScenarioSchema } from "./conversation-scenario";
-import { type SpeakingMockExam } from "./speaking-mock-bands";
+import { type SpeakingMockExam } from "./exam-speaking-exams";
 import ieltsPrompt from "./speaking-mock-scenario-ielts.prompt.md";
 import toeflPrompt from "./speaking-mock-scenario-toefl.prompt.md";
 import mockPrompt from "./speaking-mock-scenario.prompt.md";

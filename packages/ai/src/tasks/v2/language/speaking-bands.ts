@@ -1,14 +1,19 @@
 import { isJsonObject } from "@zoonk/utils/json";
 import { type ConversationTurn } from "./_utils/conversation-transcript";
 
-/** A criterion an exam task is rated on, as core's format table gives it. */
-export type ExamSpeakingCriterion = {
+/** The scale a criterion's bands run on. */
+export type SpeakingScale = {
+  /** The lowest band, when the scale doesn't start at 0 (TOEFL's 1). */
+  minBand?: number;
+  maxBand: number;
+  halfBands: boolean;
+};
+
+/** A criterion a speaking task or mock is rated on, as core's format tables give it. */
+export type SpeakingCriterion = SpeakingScale & {
   key: string;
   /** The official name, in the exam's language. */
   name: string;
-  /** Bands run from 0 to this one. */
-  maxBand: number;
-  halfBands: boolean;
   /** The band the scale writes for the exam's level, when it names one. */
   levelBand: number | null;
   /** How the candidate sounds: a transcript can't show it, so its range is wider. */
@@ -24,12 +29,12 @@ export type ExamSpeakingCriterion = {
 
 type BandRange = { bandHigh: number; bandLow: number };
 
-type ExamSpeakingCriterionGrade = BandRange & { criterion: string; evidence: string; tip: string };
+type SpeakingCriterionGrade = BandRange & { criterion: string; evidence: string; tip: string };
 
-export type ExamSpeakingGrade = {
+export type SpeakingGrade = {
   /** The candidate said too little to judge well; the result says so once, not per criterion. */
   brief: boolean;
-  criteria: ExamSpeakingCriterionGrade[];
+  criteria: SpeakingCriterionGrade[];
   focus: string;
   /** The candidate spoke rather than only typed; without their voice, voice-only criteria aren't rated. */
   heard: boolean;
@@ -45,7 +50,7 @@ const BRIEF_WORDS_PER_MINUTE = 25;
  * The criteria a task can be rated on: all of them when the candidate spoke, and without the ones
  * only their voice shows when they typed their replies, since nobody heard them.
  */
-export function listRatedCriteria<Criterion extends Pick<ExamSpeakingCriterion, "voiceOnly">>({
+export function listRatedCriteria<Criterion extends Pick<SpeakingCriterion, "voiceOnly">>({
   criteria,
   spokenSeconds,
 }: {
@@ -63,55 +68,56 @@ const MAX_RANGE_WIDTH = 1;
 /** A transcript shows words, not sounds, so the criterion about sound spans a full band. */
 const SOUND_MIN_WIDTH = 1;
 
-function getStep(criterion: ExamSpeakingCriterion): number {
-  return criterion.halfBands ? HALF : 1;
-}
-
-function toBand({ criterion, value }: { criterion: ExamSpeakingCriterion; value: number }) {
-  const step = getStep(criterion);
-  return Math.min(criterion.maxBand, Math.max(0, Math.round(value / step) * step));
+/** The nearest band to `value` on the scale: a whole or half band, between its ends. */
+export function toBand({ scale, value }: { scale: SpeakingScale; value: number }): number {
+  const step = scale.halfBands ? HALF : 1;
+  const min = scale.minBand ?? 0;
+  return Math.min(scale.maxBand, Math.max(min, Math.round(value / step) * step));
 }
 
 /** A range of `width` starting at the band nearest `center - width / 2`, kept on the scale. */
 function centeredRange({
   center,
-  criterion,
+  scale,
   width,
 }: {
   center: number;
-  criterion: ExamSpeakingCriterion;
+  scale: SpeakingScale;
   width: number;
 }): BandRange {
+  const min = scale.minBand ?? 0;
+
   const bandLow = Math.min(
-    criterion.maxBand - width,
-    Math.max(0, toBand({ criterion, value: center - width / 2 })),
+    scale.maxBand - width,
+    Math.max(min, toBand({ scale, value: center - width / 2 })),
   );
 
   return { bandHigh: bandLow + width, bandLow };
 }
 
 /**
- * Keeps a criterion's estimated range on its official scale (DELE 0 to 3, Goethe 0 to 4 for E to
- * A, Cambridge 0 to 5 in half bands), low end first, at most one band wide, and a full band for the
- * criterion about sound. Models return numbers the learner sees, so a reversed, off-scale or
- * overly narrow range never reaches them.
+ * Keeps a criterion's estimated range on its official scale (IELTS 0 to 9 and Cambridge 0 to 5 in
+ * half bands, TOEFL 1 to 6 in half bands, DELE 0 to 3, Goethe 0 to 4 for E to A), low end first, at
+ * most one band wide, and a full band for the criterion about sound. Models return numbers the
+ * learner sees, so a reversed, off-scale or overly narrow range never reaches them.
  */
-function normalizeExamBandRange({
+function normalizeBandRange({
   bandHigh,
   bandLow,
   criterion,
-}: BandRange & { criterion: ExamSpeakingCriterion }): BandRange {
-  const low = toBand({ criterion, value: Math.min(bandLow, bandHigh) });
-  const high = toBand({ criterion, value: Math.max(bandLow, bandHigh) });
+}: BandRange & { criterion: SpeakingCriterion }): BandRange {
+  const low = toBand({ scale: criterion, value: Math.min(bandLow, bandHigh) });
+  const high = toBand({ scale: criterion, value: Math.max(bandLow, bandHigh) });
   const center = (low + high) / 2;
-  const minWidth = criterion.sound ? Math.min(SOUND_MIN_WIDTH, criterion.maxBand) : 0;
+  const span = criterion.maxBand - (criterion.minBand ?? 0);
+  const minWidth = criterion.sound ? Math.min(SOUND_MIN_WIDTH, span) : 0;
 
   if (high - low > MAX_RANGE_WIDTH) {
-    return centeredRange({ center, criterion, width: MAX_RANGE_WIDTH });
+    return centeredRange({ center, scale: criterion, width: MAX_RANGE_WIDTH });
   }
 
   if (high - low < minWidth) {
-    return centeredRange({ center, criterion, width: minWidth });
+    return centeredRange({ center, scale: criterion, width: minWidth });
   }
 
   return { bandHigh: high, bandLow: low };
@@ -128,19 +134,19 @@ function countCandidateWords(turns: readonly ConversationTurn[]): number {
  * it rests on: whether the candidate spoke (`heard`) and whether they said too little for the task
  * to judge well (`brief`, from the words they said against its shortest official time).
  */
-export function toExamSpeakingGrade({
+export function toSpeakingGrade({
   criteria,
   minMinutes,
   output,
   spokenSeconds,
   turns,
 }: {
-  criteria: readonly ExamSpeakingCriterion[];
+  criteria: readonly SpeakingCriterion[];
   minMinutes: number;
   output: Record<string, unknown> & { focus: string };
   spokenSeconds: number;
   turns: readonly ConversationTurn[];
-}): ExamSpeakingGrade {
+}): SpeakingGrade {
   const brief = countCandidateWords(turns) < minMinutes * BRIEF_WORDS_PER_MINUTE;
 
   const graded = criteria.flatMap((criterion) => {
@@ -155,7 +161,7 @@ export function toExamSpeakingGrade({
         criterion: criterion.key,
         evidence: entry.evidence,
         tip: entry.tip,
-        ...normalizeExamBandRange({ ...entry, criterion }),
+        ...normalizeBandRange({ ...entry, criterion }),
       },
     ];
   });

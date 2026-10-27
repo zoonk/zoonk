@@ -1,11 +1,7 @@
 import { describe, expect, it } from "vitest";
-import {
-  type ExamSpeakingCriterion,
-  listRatedCriteria,
-  toExamSpeakingGrade,
-} from "./exam-speaking-bands";
+import { type SpeakingCriterion, listRatedCriteria, toSpeakingGrade } from "./speaking-bands";
 
-const DELE_FLUENCY: ExamSpeakingCriterion = {
+const DELE_FLUENCY: SpeakingCriterion = {
   halfBands: false,
   key: "fluency",
   levelBand: 2,
@@ -17,14 +13,14 @@ const DELE_FLUENCY: ExamSpeakingCriterion = {
 };
 
 /** A1 and A2's "Uso de la lengua": language and how easily it's understood, so text shows part. */
-const DELE_LANGUAGE_USE: ExamSpeakingCriterion = {
+const DELE_LANGUAGE_USE: SpeakingCriterion = {
   ...DELE_FLUENCY,
   key: "languageUse",
   name: "Uso de la lengua",
   voiceOnly: false,
 };
 
-const DELE_GRAMMAR: ExamSpeakingCriterion = {
+const DELE_GRAMMAR: SpeakingCriterion = {
   ...DELE_FLUENCY,
   key: "accuracy",
   name: "Corrección",
@@ -32,7 +28,7 @@ const DELE_GRAMMAR: ExamSpeakingCriterion = {
   voiceOnly: false,
 };
 
-const CAMBRIDGE_GLOBAL: ExamSpeakingCriterion = {
+const CAMBRIDGE_GLOBAL: SpeakingCriterion = {
   halfBands: true,
   key: "global",
   levelBand: 3,
@@ -43,17 +39,30 @@ const CAMBRIDGE_GLOBAL: ExamSpeakingCriterion = {
   voiceOnly: false,
 };
 
+/** TOEFL's delivery: 1 to 6 in half bands, and about how the candidate sounds. */
+const TOEFL_DELIVERY: SpeakingCriterion = {
+  halfBands: true,
+  key: "delivery",
+  levelBand: null,
+  maxBand: 6,
+  minBand: 1,
+  name: "Delivery",
+  scope: "task",
+  sound: true,
+  voiceOnly: true,
+};
+
 /** The range one criterion keeps from what the model wrote. */
-function normalizeExamBandRange({
+function normalizeBandRange({
   bandHigh,
   bandLow,
   criterion,
 }: {
   bandHigh: number;
   bandLow: number;
-  criterion: ExamSpeakingCriterion;
+  criterion: SpeakingCriterion;
 }) {
-  const grade = toExamSpeakingGrade({
+  const grade = toSpeakingGrade({
     criteria: [criterion],
     minMinutes: 3,
     output: { [criterion.key]: { bandHigh, bandLow, evidence: "", tip: "" }, focus: criterion.key },
@@ -67,45 +76,65 @@ function normalizeExamBandRange({
 
 describe("a criterion's range on its official scale", () => {
   it("keeps a valid range, low end first", () => {
-    expect(
-      normalizeExamBandRange({ bandHigh: 1, bandLow: 2, criterion: DELE_GRAMMAR }),
-    ).toStrictEqual({ bandHigh: 2, bandLow: 1 });
+    expect(normalizeBandRange({ bandHigh: 1, bandLow: 2, criterion: DELE_GRAMMAR })).toStrictEqual({
+      bandHigh: 2,
+      bandLow: 1,
+    });
   });
 
   it("keeps DELE's whole bands from 0 to 3", () => {
     expect(
-      normalizeExamBandRange({ bandHigh: 2.4, bandLow: 1.6, criterion: DELE_GRAMMAR }),
+      normalizeBandRange({ bandHigh: 2.4, bandLow: 1.6, criterion: DELE_GRAMMAR }),
     ).toStrictEqual({ bandHigh: 2, bandLow: 2 });
 
-    expect(
-      normalizeExamBandRange({ bandHigh: 5, bandLow: 3, criterion: DELE_GRAMMAR }),
-    ).toStrictEqual({ bandHigh: 3, bandLow: 3 });
+    expect(normalizeBandRange({ bandHigh: 5, bandLow: 3, criterion: DELE_GRAMMAR })).toStrictEqual({
+      bandHigh: 3,
+      bandLow: 3,
+    });
   });
 
   it("allows Cambridge's half bands", () => {
     expect(
-      normalizeExamBandRange({ bandHigh: 3.6, bandLow: 3.4, criterion: CAMBRIDGE_GLOBAL }),
+      normalizeBandRange({ bandHigh: 3.6, bandLow: 3.4, criterion: CAMBRIDGE_GLOBAL }),
     ).toStrictEqual({ bandHigh: 3.5, bandLow: 3.5 });
   });
 
-  it("narrows a range wider than a band around its middle", () => {
+  it("keeps TOEFL's half bands from 1 to 6", () => {
     expect(
-      normalizeExamBandRange({ bandHigh: 3, bandLow: 0, criterion: DELE_GRAMMAR }),
+      normalizeBandRange({ bandHigh: 4.3, bandLow: 3.8, criterion: TOEFL_DELIVERY }),
+    ).toStrictEqual({ bandHigh: 5, bandLow: 4 });
+
+    expect(
+      normalizeBandRange({ bandHigh: 1, bandLow: 0, criterion: TOEFL_DELIVERY }),
     ).toStrictEqual({ bandHigh: 2, bandLow: 1 });
+
+    expect(
+      normalizeBandRange({ bandHigh: 7, bandLow: 6, criterion: TOEFL_DELIVERY }),
+    ).toStrictEqual({ bandHigh: 6, bandLow: 5 });
+  });
+
+  it("narrows a range wider than a band around its middle", () => {
+    expect(normalizeBandRange({ bandHigh: 3, bandLow: 0, criterion: DELE_GRAMMAR })).toStrictEqual({
+      bandHigh: 2,
+      bandLow: 1,
+    });
   });
 
   it("widens the criterion about sound to a full band, inside the scale", () => {
-    expect(
-      normalizeExamBandRange({ bandHigh: 2, bandLow: 2, criterion: DELE_FLUENCY }),
-    ).toStrictEqual({ bandHigh: 3, bandLow: 2 });
+    expect(normalizeBandRange({ bandHigh: 2, bandLow: 2, criterion: DELE_FLUENCY })).toStrictEqual({
+      bandHigh: 3,
+      bandLow: 2,
+    });
 
-    expect(
-      normalizeExamBandRange({ bandHigh: 3, bandLow: 3, criterion: DELE_FLUENCY }),
-    ).toStrictEqual({ bandHigh: 3, bandLow: 2 });
+    expect(normalizeBandRange({ bandHigh: 3, bandLow: 3, criterion: DELE_FLUENCY })).toStrictEqual({
+      bandHigh: 3,
+      bandLow: 2,
+    });
 
-    expect(
-      normalizeExamBandRange({ bandHigh: 0, bandLow: 0, criterion: DELE_FLUENCY }),
-    ).toStrictEqual({ bandHigh: 1, bandLow: 0 });
+    expect(normalizeBandRange({ bandHigh: 0, bandLow: 0, criterion: DELE_FLUENCY })).toStrictEqual({
+      bandHigh: 1,
+      bandLow: 0,
+    });
   });
 });
 
@@ -125,7 +154,7 @@ function said(words: number) {
 
 /** DELE B2 Task 3's grade (3 minutes at least) after this many seconds and words. */
 function gradeTaskThree({ spokenSeconds, words }: { spokenSeconds: number; words: number }) {
-  return toExamSpeakingGrade({
+  return toSpeakingGrade({
     criteria: [DELE_GRAMMAR],
     minMinutes: 3,
     output: OUTPUT,
@@ -134,9 +163,9 @@ function gradeTaskThree({ spokenSeconds, words }: { spokenSeconds: number; words
   });
 }
 
-describe(toExamSpeakingGrade, () => {
+describe(toSpeakingGrade, () => {
   it("keeps one grade per criterion in the given order, on its scale", () => {
-    const grade = toExamSpeakingGrade({
+    const grade = toSpeakingGrade({
       criteria: [DELE_FLUENCY, DELE_GRAMMAR],
       minMinutes: 6,
       output: OUTPUT,

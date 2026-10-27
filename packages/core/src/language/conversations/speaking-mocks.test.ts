@@ -1,6 +1,6 @@
 import { checkConversationObjectives } from "@zoonk/ai/tasks/v2/language/conversation-objectives";
 import { generateSpeakingMockScenario } from "@zoonk/ai/tasks/v2/language/speaking-mock-scenario";
-import { scoreSpeakingMock } from "@zoonk/ai/tasks/v2/language/speaking-mock-score";
+import { scoreSpeaking } from "@zoonk/ai/tasks/v2/language/speaking-score";
 import { prisma } from "@zoonk/db";
 import { RENTING_SCENARIO, languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -62,6 +62,12 @@ const IELTS_SCORE = {
   focus: "grammar" as const,
   overall: { bandHigh: 6.5, bandLow: 6 },
 };
+
+/** The grader's grade of a mock, which core turns into the feedback with its overall band. */
+function gradeOf(score: typeof IELTS_SCORE | typeof TOEFL_SCORE) {
+  const data = { brief: false, criteria: score.criteria, focus: score.focus, heard: true };
+  return { ...GENERATED, data, userPrompt: "" };
+}
 
 const TURNS = [
   { speaker: "character" as const, text: "Welcome to the science building." },
@@ -216,11 +222,7 @@ describe("speaking mocks", () => {
     const { goal, user } = await examGoalFixture("Preciso do TOEFL para o mestrado");
     const conversationId = await startMock(goal.id);
 
-    vi.mocked(scoreSpeakingMock).mockResolvedValue({
-      ...GENERATED,
-      data: TOEFL_SCORE,
-      userPrompt: "",
-    });
+    vi.mocked(scoreSpeaking).mockResolvedValue(gradeOf(TOEFL_SCORE));
 
     const first = await completeLanguageConversation({
       conversationId,
@@ -232,7 +234,7 @@ describe("speaking mocks", () => {
       input: testCallCompletionInput(conversationId, COMPLETION),
     });
 
-    expect(scoreSpeakingMock).toHaveBeenCalledExactlyOnceWith(
+    expect(scoreSpeaking).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({ exam: "toefl", learnerLanguage: "pt", turns: TURNS }),
     );
 
@@ -258,10 +260,10 @@ describe("speaking mocks", () => {
     const order: string[] = [];
     const scoring = Promise.withResolvers<null>();
 
-    vi.mocked(scoreSpeakingMock).mockImplementation(async () => {
+    vi.mocked(scoreSpeaking).mockImplementation(async () => {
       order.push("score started");
       scoring.resolve(null);
-      return { ...GENERATED, data: IELTS_SCORE, userPrompt: "" };
+      return gradeOf(IELTS_SCORE);
     });
 
     // The check waits for the score to start, or gives up when the score only starts after it.
@@ -277,7 +279,7 @@ describe("speaking mocks", () => {
     });
 
     expect(order).toStrictEqual(["score started", "goals checked"]);
-    expect(scoreSpeakingMock).toHaveBeenCalledWith(expect.objectContaining({ exam: "ielts" }));
+    expect(scoreSpeaking).toHaveBeenCalledWith(expect.objectContaining({ exam: "ielts" }));
 
     expect(result).toMatchObject({
       conversation: {
@@ -320,7 +322,7 @@ describe("speaking mocks", () => {
 
     await waitForDeferredWork();
 
-    expect(scoreSpeakingMock).not.toHaveBeenCalled();
+    expect(scoreSpeaking).not.toHaveBeenCalled();
     expect(generateSpeakingMockScenario).toHaveBeenCalledOnce();
   });
 
@@ -329,11 +331,7 @@ describe("speaking mocks", () => {
     const { goal } = await examGoalFixture("Preciso do TOEFL para o mestrado");
     const first = await startMock(goal.id);
 
-    vi.mocked(scoreSpeakingMock).mockResolvedValue({
-      ...GENERATED,
-      data: TOEFL_SCORE,
-      userPrompt: "",
-    });
+    vi.mocked(scoreSpeaking).mockResolvedValue(gradeOf(TOEFL_SCORE));
 
     await completeLanguageConversation({
       conversationId: first,

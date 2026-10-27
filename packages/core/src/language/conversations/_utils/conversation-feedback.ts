@@ -1,7 +1,6 @@
 import "server-only";
 import { writeConversationFeedback } from "@zoonk/ai/tasks/v2/language/conversation-feedback";
-import { scoreExamSpeaking } from "@zoonk/ai/tasks/v2/language/exam-speaking-score";
-import { scoreSpeakingMock } from "@zoonk/ai/tasks/v2/language/speaking-mock-score";
+import { scoreSpeaking } from "@zoonk/ai/tasks/v2/language/speaking-score";
 import { type LanguageConversation } from "@zoonk/db";
 import { type CefrLevel } from "@zoonk/utils/cefr";
 import { logError } from "@zoonk/utils/logger";
@@ -16,8 +15,10 @@ import {
   type ConversationFeedback,
   type ConversationTurn,
   type SpeakingMockExam,
+  conversationFeedbackSchema,
 } from "../conversation-contract";
 import { getMetObjectives } from "../conversation-rules";
+import { getSpeakingMockOverall, getSpeakingMockRating } from "../speaking-mock-format";
 import { type SavedScenario } from "./conversation-view";
 import { findNewlyMetObjectives } from "./objective-check";
 
@@ -36,6 +37,7 @@ export type WrittenFeedback = {
   provenance: ReturnType<typeof toProvenanceData>;
 };
 
+/** A mock's estimated bands on its exam's criteria, and the overall band the exam's way. */
 async function writeMockFeedback({
   exam,
   input,
@@ -43,16 +45,24 @@ async function writeMockFeedback({
   exam: SpeakingMockExam;
   input: ReviewInput;
 }): Promise<WrittenFeedback> {
-  const { data, provenance } = await scoreSpeakingMock({
+  const { data, provenance } = await scoreSpeaking({
+    ...getSpeakingMockRating(exam),
     analytics: { contentScope: "personal", distinctId: input.userId },
     exam,
     learnerLanguage: input.row.language,
     spokenSeconds: input.spokenSeconds,
-    targetLanguage: input.row.targetLanguage,
     turns: input.turns,
   });
 
-  return { feedback: { ...data, kind: "speakingMock" }, provenance: toProvenanceData(provenance) };
+  const feedback = conversationFeedbackSchema.parse({
+    criteria: data.criteria,
+    exam,
+    focus: data.focus,
+    kind: "speakingMock",
+    overall: getSpeakingMockOverall({ criteria: data.criteria, exam }),
+  });
+
+  return { feedback, provenance: toProvenanceData(provenance) };
 }
 
 /** An exam task's estimated bands on the criteria its paper rates it on, never a score. */
@@ -70,7 +80,7 @@ async function writeExamTaskFeedback({
     throw new Error(`No speaking paper for ${examTask.exam} ${examTask.level} ${examTask.task}`);
   }
 
-  const { data, provenance } = await scoreExamSpeaking({
+  const { data, provenance } = await scoreSpeaking({
     analytics: { contentScope: "personal", distinctId: input.userId },
     criteria: listTaskCriteria({ format, task: task.key }),
     exam: format.exam,

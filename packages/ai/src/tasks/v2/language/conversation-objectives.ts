@@ -12,7 +12,7 @@ import {
 } from "./_utils/conversation-transcript";
 import testPrompt from "./conversation-objectives-test.prompt.md";
 import basePrompt from "./conversation-objectives.prompt.md";
-import { type SpeakingMockExam } from "./speaking-mock-bands";
+import { type SpeakingMockExam } from "./exam-speaking-exams";
 
 /**
  * Runs once the character has answered each learner turn of a live call, so the objectives tick

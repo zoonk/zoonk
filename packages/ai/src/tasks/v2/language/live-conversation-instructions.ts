@@ -3,13 +3,16 @@ import { getPromptVersion } from "@zoonk/utils/prompt-version";
 import { getLanguagePromptContext } from "../../_utils/prompt-language";
 import { selectPromptVariants } from "../../_utils/prompt-variants";
 import { type GenerateConversationScenarioSchema } from "./conversation-scenario";
-import { SPEAKING_EXAM_VARIETIES, type SpeakingExam } from "./exam-speaking-exams";
+import {
+  SPEAKING_EXAM_VARIETIES,
+  type SpeakingExam,
+  type SpeakingMockExam,
+} from "./exam-speaking-exams";
 import examTaskTemplate from "./live-conversation-exam-task.prompt.md";
 import template from "./live-conversation-instructions.prompt.md";
 import rolePlayTemplate from "./live-conversation-role-play.prompt.md";
 import toeflMockTemplate from "./live-conversation-speaking-mock-toefl.prompt.md";
 import speakingMockTemplate from "./live-conversation-speaking-mock.prompt.md";
-import { type SpeakingMockExam } from "./speaking-mock-bands";
 
 /**
  * How the character talks at each level: the same limits the scenario's

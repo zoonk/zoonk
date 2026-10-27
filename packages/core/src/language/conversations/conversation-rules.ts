@@ -18,9 +18,6 @@ const CHECKPOINT_MINUTES: Readonly<Record<CefrLevel, number>> = {
 /** A unit's call in today's session: up to four minutes of talk, the intro and the feedback. */
 export const CHECKPOINT_CALL_BLOCK_MINUTES = 6;
 
-/** A speaking mock: IELTS's three parts or TOEFL's two tasks, shortened to about five minutes. */
-export const SPEAKING_MOCK_MINUTES = 5;
-
 /** Each goal of the call met earns what finishing a lesson does. */
 const POINTS_PER_OBJECTIVE = 10;
 
