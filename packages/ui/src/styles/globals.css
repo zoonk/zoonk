@@ -323,7 +323,8 @@
     --warning-text: var(--warning);
     --success: oklch(0.77 0.11 248);
     --success-text: var(--success);
-    --ground: oklch(0.18 0.004 286);
+    /* A band a step above the page and under a panel, so a card on it reads as a sheet, as in light. */
+    --ground: oklch(0.16 0.003 286);
     --border: oklch(1 0 0 / 7.5%);
     --input: oklch(1 0 0 / 13%);
     --ring: var(--color-primary);
