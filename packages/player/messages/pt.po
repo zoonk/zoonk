@@ -3058,7 +3058,7 @@ msgid "See Plus"
 msgstr "Conheça o Plus"
 
 #: src/lesson/access/lesson-access-screen.tsx
-#: src/questions/item-tutor-aside.tsx
+#: src/questions/tutor-dock.tsx
 msgctxt "cyR7Kh"
 msgid "Back"
 msgstr "Voltar"
@@ -3182,11 +3182,8 @@ msgid "Taking your time? {name} can explain it another way."
 msgstr "Quer mais um tempinho? {name} pode explicar de outro jeito."
 
 #: src/lesson/controls/ask-buddy-offer.tsx
-#: src/lesson/tutor/ask-tutor-button.tsx
-#: src/lesson/tutor/lesson-dock.tsx
 #: src/questions/ask-tutor.tsx
-#: src/questions/item-tutor-aside.tsx
-#: src/questions/item-tutor.tsx
+#: src/questions/tutor-dock.tsx
 msgctxt "bH47Z4"
 msgid "Ask {name}"
 msgstr "Pergunte para {name}"
@@ -3375,7 +3372,7 @@ msgid "Result"
 msgstr "Resultado"
 
 #: src/lesson/lesson-aside.tsx
-#: src/lesson/tutor/lesson-dock.tsx
+#: src/questions/tutor-dock.tsx
 msgctxt "C9sbYe"
 msgid "From the lesson"
 msgstr "Da aula"
@@ -3702,40 +3699,6 @@ msgctxt "RW_YMt"
 msgid "Worked example"
 msgstr "Exemplo resolvido"
 
-#: src/lesson/tutor/lesson-dock.tsx
-#: src/questions/item-tutor-aside.tsx
-msgctxt "nete1_"
-msgid "Ask {name} about your answer"
-msgstr "Pergunte para {name} sobre sua resposta"
-
-#: src/lesson/tutor/lesson-dock.tsx
-msgctxt "_Kuebo"
-msgid "Ask {name} about this screen"
-msgstr "Pergunte para {name} sobre esta tela"
-
-#: src/lesson/tutor/lesson-dock.tsx
-#: src/questions/lesson-question-thread.tsx
-msgctxt "OK6Mb4"
-msgid "Create a free account to ask questions"
-msgstr "Crie uma conta grátis para fazer perguntas"
-
-#: src/lesson/tutor/lesson-dock.tsx
-#: src/questions/item-tutor-aside.tsx
-msgctxt "8ToTqX"
-msgid "Suggested questions"
-msgstr "Perguntas sugeridas"
-
-#: src/lesson/tutor/lesson-dock.tsx
-msgctxt "UIUcbm"
-msgid "{count, plural, one {# question} other {# questions}}"
-msgstr "{count, plural, one {# pergunta} other {# perguntas}}"
-
-#: src/lesson/tutor/lesson-dock.tsx
-#: src/questions/item-tutor-aside.tsx
-msgctxt "LxqaIF"
-msgid "Questions to {name}"
-msgstr "Perguntas para {name}"
-
 #: src/lesson/tutor/tutor-quote.tsx
 #: src/questions/item-tutor.tsx
 msgctxt "NvBay_"
@@ -3771,11 +3734,6 @@ msgstr "Pergunte para {name} sobre seu plano"
 msgctxt "dHV3p3"
 msgid "Ask {name} about this subject"
 msgstr "Pergunte para {name} sobre esta matéria"
-
-#: src/questions/item-tutor-aside.tsx
-msgctxt "Fp8B9R"
-msgid "Ask {name} about this question"
-msgstr "Pergunte para {name} sobre esta questão"
 
 #: src/questions/item-tutor.tsx
 msgctxt "_DwRra"
@@ -3973,14 +3931,10 @@ msgid "{name} is an AI study buddy and can make mistakes."
 msgstr "{name} é um parceiro de estudos com IA e pode cometer erros."
 
 #: src/questions/lesson-question-thread.tsx
-msgctxt "wMoDaY"
-msgid "Couldn't load earlier questions. Try again."
-msgstr "Não foi possível carregar as perguntas anteriores. Tente de novo."
-
-#: src/questions/lesson-question-thread.tsx
-msgctxt "nCFX1M"
-msgid "Load earlier questions"
-msgstr "Carregar perguntas anteriores"
+#: src/questions/tutor-dock.tsx
+msgctxt "OK6Mb4"
+msgid "Create a free account to ask questions"
+msgstr "Crie uma conta grátis para fazer perguntas"
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "V-WZ__"
@@ -4053,6 +4007,26 @@ msgid "Thinking…"
 msgstr "Pensando…"
 
 #: src/questions/lesson-question-turn.tsx
+msgctxt "wfxYSP"
+msgid "Couldn't load earlier messages. Try again."
+msgstr "Não foi possível carregar as mensagens anteriores. Tente de novo."
+
+#: src/questions/lesson-question-turn.tsx
+msgctxt "wMoDaY"
+msgid "Couldn't load earlier questions. Try again."
+msgstr "Não foi possível carregar as perguntas anteriores. Tente de novo."
+
+#: src/questions/lesson-question-turn.tsx
+msgctxt "_V89Z1"
+msgid "Load earlier messages"
+msgstr "Carregar mensagens anteriores"
+
+#: src/questions/lesson-question-turn.tsx
+msgctxt "nCFX1M"
+msgid "Load earlier questions"
+msgstr "Carregar perguntas anteriores"
+
+#: src/questions/lesson-question-turn.tsx
 msgctxt "LIVM_k"
 msgid "Your question"
 msgstr "Sua pergunta"
@@ -4083,19 +4057,39 @@ msgid "Create a free account to start the conversation."
 msgstr "Crie uma conta grátis para começar a conversa."
 
 #: src/questions/tutor-conversation.tsx
-msgctxt "wfxYSP"
-msgid "Couldn't load earlier messages. Try again."
-msgstr "Não foi possível carregar as mensagens anteriores. Tente de novo."
-
-#: src/questions/tutor-conversation.tsx
-msgctxt "_V89Z1"
-msgid "Load earlier messages"
-msgstr "Carregar mensagens anteriores"
-
-#: src/questions/tutor-conversation.tsx
 msgctxt "WGAYmP"
 msgid "Conversation with {name}"
 msgstr "Conversa com {name}"
+
+#: src/questions/tutor-dock.tsx
+msgctxt "nete1_"
+msgid "Ask {name} about your answer"
+msgstr "Pergunte para {name} sobre sua resposta"
+
+#: src/questions/tutor-dock.tsx
+msgctxt "Fp8B9R"
+msgid "Ask {name} about this question"
+msgstr "Pergunte para {name} sobre esta questão"
+
+#: src/questions/tutor-dock.tsx
+msgctxt "_Kuebo"
+msgid "Ask {name} about this screen"
+msgstr "Pergunte para {name} sobre esta tela"
+
+#: src/questions/tutor-dock.tsx
+msgctxt "8ToTqX"
+msgid "Suggested questions"
+msgstr "Perguntas sugeridas"
+
+#: src/questions/tutor-dock.tsx
+msgctxt "LxqaIF"
+msgid "Questions to {name}"
+msgstr "Perguntas para {name}"
+
+#: src/questions/tutor-dock.tsx
+msgctxt "UIUcbm"
+msgid "{count, plural, one {# question} other {# questions}}"
+msgstr "{count, plural, one {# pergunta} other {# perguntas}}"
 
 #: src/questions/tutor-markdown.tsx
 msgctxt "13bnyN"
