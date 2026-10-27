@@ -4,20 +4,13 @@ import {
   type MemoryFact,
   type MemoryOrigin,
   type TransactionClient,
-  prisma,
 } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
-import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { type MemorySource } from "../memory-contract";
 import { forgetExampleLines } from "./forget-example-lines";
 
 /** A replaced fact's history is short; this bounds the walk if rows were ever edited by hand. */
 const MAX_HISTORY_DEPTH = 50;
-
-/** Losing an active fact after admission must roll back its revision and any replacement. */
-class MemoryFactUnavailableError extends Error {
-  override name = "MemoryFactUnavailableError";
-}
 
 export type NewMemoryFact = {
   category: MemoryCategory;
@@ -54,10 +47,9 @@ export async function addMemoryFact({
   fact: NewMemoryFact;
   userId: string;
 }): Promise<MemoryFact> {
-  return prisma.$transaction(async (transaction) => {
-    await markLearnerChanged(transaction, { planInputs: false, userId });
-    return transaction.memoryFact.create({ data: toFactData({ fact, userId }) });
-  });
+  return writeLearnerChange({ userId }, (transaction) =>
+    transaction.memoryFact.create({ data: toFactData({ fact, userId }) }),
+  );
 }
 
 /**
@@ -75,49 +67,29 @@ export async function replaceMemoryFact({
   previousId: string;
   userId: string;
 }): Promise<{ fact: MemoryFact; previous: MemoryFact } | null> {
-  const { data, error } = await safeAsync(() =>
-    prisma.$transaction(async (transaction) => {
-      const existing = await transaction.memoryFact.findFirst({
-        select: { id: true },
-        where: { id: previousId, status: "active", userId },
-      });
+  return writeLearnerChange({ userId }, async (transaction) => {
+    const existing = await transaction.memoryFact.findFirst({
+      where: { id: previousId, status: "active", userId },
+    });
 
-      if (!existing) {
-        return null;
-      }
+    if (!existing) {
+      return unchanged(null);
+    }
 
-      await markLearnerChanged(transaction, { planInputs: false, userId });
+    const created = await transaction.memoryFact.create({ data: toFactData({ fact, userId }) });
 
-      const created = await transaction.memoryFact.create({ data: toFactData({ fact, userId }) });
+    const [previous] = await transaction.memoryFact.updateManyAndReturn({
+      data: { status: "superseded", supersededById: created.id },
+      where: { id: previousId, status: "active", userId },
+    });
 
-      const { count } = await transaction.memoryFact.updateMany({
-        data: { status: "superseded", supersededById: created.id },
-        where: { id: previousId, status: "active", userId },
-      });
+    if (!previous) {
+      return unchanged(null);
+    }
 
-      if (count === 0) {
-        throw new MemoryFactUnavailableError();
-      }
-
-      await forgetExampleLines({ client: transaction, userId });
-
-      const previous = await transaction.memoryFact.findUniqueOrThrow({
-        where: { id: previousId },
-      });
-
-      return { fact: created, previous };
-    }),
-  );
-
-  if (error instanceof MemoryFactUnavailableError) {
-    return null;
-  }
-
-  if (error) {
-    throw error;
-  }
-
-  return data;
+    await forgetExampleLines({ client: transaction, userId });
+    return { fact: created, previous };
+  });
 }
 
 /**
@@ -163,53 +135,30 @@ export async function removeMemoryFact({
   factId: string;
   userId: string;
 }): Promise<MemoryFact | null> {
-  const { data, error } = await safeAsync(() =>
-    prisma.$transaction(async (transaction) => {
-      const existing = await transaction.memoryFact.findFirst({
-        select: { id: true },
-        where: { id: factId, status: "active", userId },
-      });
+  return writeLearnerChange({ userId }, async (transaction) => {
+    const deletedAt = new Date();
 
-      if (!existing) {
-        return null;
-      }
+    const [removed] = await transaction.memoryFact.updateManyAndReturn({
+      data: { deletedAt, status: "deleted" },
+      where: { id: factId, status: "active", userId },
+    });
 
-      await markLearnerChanged(transaction, { planInputs: false, userId });
+    if (!removed) {
+      return unchanged(null);
+    }
 
-      const deletedAt = new Date();
+    const historyIds = await findHistoryIds({ factId, status: "superseded", transaction });
 
-      const { count } = await transaction.memoryFact.updateMany({
+    await Promise.all([
+      transaction.memoryFact.updateMany({
         data: { deletedAt, status: "deleted" },
-        where: { id: factId, status: "active", userId },
-      });
+        where: { id: { in: historyIds }, userId },
+      }),
+      forgetExampleLines({ client: transaction, userId }),
+    ]);
 
-      if (count === 0) {
-        throw new MemoryFactUnavailableError();
-      }
-
-      const historyIds = await findHistoryIds({ factId, status: "superseded", transaction });
-
-      await Promise.all([
-        transaction.memoryFact.updateMany({
-          data: { deletedAt, status: "deleted" },
-          where: { id: { in: historyIds }, userId },
-        }),
-        forgetExampleLines({ client: transaction, userId }),
-      ]);
-
-      return transaction.memoryFact.findUniqueOrThrow({ where: { id: factId } });
-    }),
-  );
-
-  if (error instanceof MemoryFactUnavailableError) {
-    return null;
-  }
-
-  if (error) {
-    throw error;
-  }
-
-  return data;
+    return removed;
+  });
 }
 
 /**
@@ -235,7 +184,7 @@ export async function restoreRemovedMemoryFact({
 
   const historyIds = await findHistoryIds({ factId, status: "deleted", transaction });
 
-  await Promise.all([
+  const [restored] = await Promise.all([
     transaction.memoryFact.update({
       data: { deletedAt: null, status: "active" },
       where: { id: factId },
@@ -246,5 +195,5 @@ export async function restoreRemovedMemoryFact({
     }),
   ]);
 
-  return transaction.memoryFact.findUniqueOrThrow({ where: { id: factId } });
+  return restored;
 }

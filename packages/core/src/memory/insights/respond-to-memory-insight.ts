@@ -118,14 +118,14 @@ export async function respondToMemoryInsight({
     await applyAnswer({ answer: input.status, goalId: insight.goalId, insight });
   }
 
-  const count = await writeLearnerChange({ userId }, async (tx) => {
-    const saved = await tx.memoryInsight.updateMany({
+  const updated = await writeLearnerChange({ userId }, async (tx) => {
+    const [saved] = await tx.memoryInsight.updateManyAndReturn({
       data: { respondedAt: new Date(), status: input.status },
       where: { id: insightId, status: "pending", userId },
     });
 
-    if (saved.count === 0) {
-      return unchanged(0);
+    if (!saved) {
+      return unchanged(null);
     }
 
     const payload = readInsightPayload(insight.payload);
@@ -144,10 +144,10 @@ export async function respondToMemoryInsight({
       });
     }
 
-    return saved.count;
+    return saved;
   });
 
-  if (count === 0) {
+  if (!updated) {
     return { status: "alreadyAnswered" };
   }
 
@@ -157,7 +157,6 @@ export async function respondToMemoryInsight({
     revalidateCacheTags([getGoalsCacheTag(userId)]);
   }
 
-  const updated = await prisma.memoryInsight.findUniqueOrThrow({ where: { id: insightId } });
   const view = toMemoryInsightView(updated);
 
   return view ? { insight: view, status: "updated" } : { status: "notFound" };

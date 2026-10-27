@@ -73,7 +73,7 @@ export async function updateMemoryFact({
       return unchanged({ changed: false, fact: existing });
     }
 
-    await tx.memoryFact.update({
+    const updated = await tx.memoryFact.update({
       data: {
         category: input.category,
         confidence: LEARNER_CONFIDENCE,
@@ -82,8 +82,6 @@ export async function updateMemoryFact({
       },
       where: { id: factId },
     });
-
-    const updated = await tx.memoryFact.findUniqueOrThrow({ where: { id: factId } });
 
     if (input.statement !== undefined) {
       await forgetExampleLines({ client: tx, userId });
