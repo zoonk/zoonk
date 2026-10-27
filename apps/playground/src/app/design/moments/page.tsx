@@ -13,8 +13,10 @@ import {
   Specimen,
   renderCode,
 } from "../_components/doc";
+import { MotionSpecimen } from "../_components/motion-specimen";
 import {
   CeremonySpecimen,
+  ChallengeWonSpecimen,
   MissionDoneSpecimen,
   MissionsCompleteSpecimen,
   MockEndSpecimen,
@@ -102,14 +104,33 @@ function devOnly(Example: () => React.ReactNode) {
   };
 }
 
-const SPECIMENS: Record<string, () => React.ReactNode> = {
-  ceremony: devOnly(CeremonySpecimen),
-  mission: devOnly(MissionDoneSpecimen),
-  missions: MissionsSpecimen,
-  mock: devOnly(MockEndSpecimen),
-  reached: devOnly(ReachedSpecimen),
-  "task-end": RewardSpecimen,
+/** Each moment's live specimen; the ones that move on their own replay (a ceremony opens anew). */
+const SPECIMENS: Record<string, { Example: () => React.ReactNode; replays: boolean }> = {
+  ceremony: { Example: devOnly(CeremonySpecimen), replays: false },
+  challenge: { Example: devOnly(ChallengeWonSpecimen), replays: true },
+  mission: { Example: devOnly(MissionDoneSpecimen), replays: true },
+  missions: { Example: MissionsSpecimen, replays: true },
+  mock: { Example: devOnly(MockEndSpecimen), replays: true },
+  reached: { Example: devOnly(ReachedSpecimen), replays: true },
+  "task-end": { Example: RewardSpecimen, replays: true },
 };
+
+function MomentSpecimen({ id }: { id: string }) {
+  const specimen = SPECIMENS[id];
+
+  if (!specimen) {
+    return null;
+  }
+
+  const { Example, replays } = specimen;
+  const Frame = replays ? MotionSpecimen : Specimen;
+
+  return (
+    <Frame>
+      <Example />
+    </Frame>
+  );
+}
 
 export default function MomentsPage() {
   return (
@@ -124,20 +145,12 @@ export default function MomentsPage() {
         <DocRules rules={MOMENT_RULES} />
       </DocSection>
 
-      {MOMENTS.map((moment) => {
-        const Example = SPECIMENS[moment.id];
-
-        return (
-          <DocSection id={moment.id} intro={moment.summary} key={moment.id} title={moment.title}>
-            {Example && (
-              <Specimen>
-                <Example />
-              </Specimen>
-            )}
-            <p className="text-muted-foreground text-sm">Where: {renderCode(moment.where)}</p>
-          </DocSection>
-        );
-      })}
+      {MOMENTS.map((moment) => (
+        <DocSection id={moment.id} intro={moment.summary} key={moment.id} title={moment.title}>
+          <MomentSpecimen id={moment.id} />
+          <p className="text-muted-foreground text-sm">Where: {renderCode(moment.where)}</p>
+        </DocSection>
+      ))}
     </PreviewIntlProvider>
   );
 }

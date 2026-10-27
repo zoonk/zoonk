@@ -1,13 +1,15 @@
 "use client";
 
 import { type CeremonyMilestone, MilestoneCeremony } from "@zoonk/learn/ceremony";
-import { MissionMoment } from "@zoonk/learn/mission-moment";
+import { MissionMoment, getAfterMissionsDelay } from "@zoonk/learn/mission-moment";
 import { MomentReadouts } from "@zoonk/learn/moment-readouts";
 import { LearnProvider } from "@zoonk/learn/provider";
 import { ReachedMoment } from "@zoonk/learn/reached-moment";
 import { StatTile, StatTiles } from "@zoonk/learn/stat-tile";
 import { StepDetail, StepTitleLabel, StepTitleNumber } from "@zoonk/learn/step-card";
+import { TricksterArt } from "@zoonk/learn/trickster-art";
 import { Button } from "@zoonk/ui/components/button";
+import { BEAT_MS } from "@zoonk/ui/lib/motion";
 import { CheckIcon, MinusIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 
@@ -57,6 +59,19 @@ const ALL_DONE: MissionMomentProps["missions"] = [
 const MOCK_DAY: MissionMomentProps["missions"] = [
   { done: 1, kind: "review", status: "done", total: 1 },
   { done: 1, kind: "mock", status: "done", total: 1 },
+];
+
+/** What the mock did to the day: it was the day's last mission, so it paid the bonus. */
+const MOCK_MISSIONS = {
+  completed: ["mock"],
+  fullMeal: { bonus: BONUS, paid: true },
+  missions: MOCK_DAY,
+} satisfies Pick<MissionMomentProps, "completed" | "fullMeal" | "missions">;
+
+const CHALLENGE_DONE: MissionMomentProps["missions"] = [
+  { done: 1, kind: "review", status: "done", total: 1 },
+  { done: 1, kind: "challenge", status: "done", total: 1 },
+  { done: 0, kind: "practice", minutes: 6, status: "todo", total: 1 },
 ];
 
 /** A block's end, as the session shows it: its title and readouts, then the day's moment. */
@@ -115,12 +130,18 @@ export function ReachedSpecimen() {
           <ReachedMoment
             buddy={BUDDY}
             ceremony={null}
+            delay={BEAT_MS}
             reached={{ energy: 80, level: { color: "yellow", level: 3 } }}
           />
         </BlockEnd>
         <div className="max-w-column flex flex-col items-start gap-6">
           <p className="text-muted-foreground text-xs">At the most Energy goes</p>
-          <ReachedMoment buddy={BUDDY} ceremony={null} reached={{ energy: 100, level: null }} />
+          <ReachedMoment
+            buddy={BUDDY}
+            ceremony={null}
+            delay={BEAT_MS}
+            reached={{ energy: 100, level: null }}
+          />
         </div>
       </div>
     </LearnProvider>
@@ -149,16 +170,36 @@ export function MockEndSpecimen() {
           <StatTile icon={<XIcon />} label="Wrong" tone="danger" value="13" />
           <StatTile icon={<MinusIcon />} label="Blank" value="2" />
         </StatTiles>
-        <MissionMoment
-          buddy={BUDDY}
-          completed={["mock"]}
-          fullMeal={{ bonus: BONUS, paid: true }}
-          missions={MOCK_DAY}
-        />
+        <MissionMoment buddy={BUDDY} {...MOCK_MISSIONS} />
         <ReachedMoment
           buddy={BUDDY}
           ceremony={null}
+          delay={getAfterMissionsDelay(MOCK_MISSIONS)}
           reached={{ energy: 90, level: { color: "yellow", level: 4 } }}
+        />
+      </div>
+    </LearnProvider>
+  );
+}
+
+/**
+ * A challenge won, as its result opens right after the duel: the Trickster tips back into his
+ * beaten pose (`CheckpointResultView` does so only then), the score, then the day's moment.
+ */
+export function ChallengeWonSpecimen() {
+  return (
+    <LearnProvider adapters={ADAPTERS}>
+      <div className="max-w-column flex flex-col items-start gap-6">
+        <TricksterArt beaten className="animate-tip" />
+        <div className="flex flex-col items-start gap-3">
+          <p className="text-title">You beat the Trickster!</p>
+          <MomentReadouts brainPower={0} score={{ answered: 6, correct: 5 }} />
+        </div>
+        <MissionMoment
+          buddy={BUDDY}
+          completed={["challenge"]}
+          fullMeal={{ bonus: BONUS, paid: false }}
+          missions={CHALLENGE_DONE}
         />
       </div>
     </LearnProvider>

@@ -33,7 +33,7 @@ export const MOTION_TIERS: readonly MotionTier[] = [
     id: "celebration",
     rules: [
       "Only when something is earned, from the action that earned it, once: a reload, a revisit or the way back shows the end state, still.",
-      "The only place for the spring, a number counting up, a reward lighting up, the buddy's hop and a burst.",
+      "The only place for the spring, a number counting up, a meter filling from where it was, the buddy's hop and a burst.",
       "Louder as it's rarer, and never in the learner's way: Continue works from the first frame.",
     ],
     summary:
@@ -159,22 +159,14 @@ export const MOTION_PATTERNS: readonly MotionPattern[] = [
       "Brain Power at a task's end (its readout or tile), the missions' bonus, the summary's total.",
   },
   {
-    communicates: "Earned, and it's this one.",
-    how: "The chip's fill, color and check change in the quick time, then `animate-pop` once.",
-    id: "chip",
-    reduced: "Lit from the first frame.",
-    tier: "celebration",
-    title: "A reward lighting up",
-    where: "`BrainPowerReward` when today's missions complete, in the moment that completed them.",
-  },
-  {
     communicates: "Something new is mine.",
-    how: "`animate-settle`: it grows in from `--settle-from` (0.5; large art 0.85) and lands on the spring.",
+    how: "`animate-settle`: it grows in from `--settle-from` (0.5; large art 0.85) and lands on the spring. Something beaten tips back into its pose instead (`animate-tip`).",
     id: "settle",
     reduced: "In place from the first frame.",
     tier: "celebration",
     title: "Something earned lands",
-    where: "A new level's badge, a mission's check stamping in, a ceremony's art.",
+    where:
+      "A new level's badge, a mission's check, a call's star, the buddy on a ceremony's stage; the beaten Trickster tips back.",
   },
   {
     communicates: "How far it moved, from where it was.",
@@ -193,7 +185,7 @@ export const MOTION_PATTERNS: readonly MotionPattern[] = [
     reduced: "Cheering, still.",
     tier: "celebration",
     title: "The buddy's reaction",
-    where: "The missions' moment, the summary's rewards, a ceremony.",
+    where: "Today's missions all done, the session's summary.",
   },
   {
     communicates: "This one is rare.",
@@ -212,7 +204,7 @@ export type CelebrationStep = { how: string; moment: string; often: string };
 
 export const CELEBRATION_LADDER: readonly CelebrationStep[] = [
   {
-    how: "Its Brain Power counts up; its meters fill.",
+    how: "Its Brain Power counts up; the score and the rest hold still.",
     moment: "A lesson's or a block's end",
     often: "Several a day",
   },
@@ -220,6 +212,11 @@ export const CELEBRATION_LADDER: readonly CelebrationStep[] = [
     how: "Its check lands; its part of the missions' track fills.",
     moment: "A mission done",
     often: "Up to three a day",
+  },
+  {
+    how: "The day's Brain Power counts up and the buddy hops; what was celebrated where it was earned (the bonus, a belt's new levels) holds still. Once per day's result: opened again, it's still.",
+    moment: "The session's summary",
+    often: "Once a day",
   },
   {
     how: "The level's badge lands and its tick fills; Energy's bolt pops once, its meter where Energy is.",
@@ -232,12 +229,12 @@ export const CELEBRATION_LADDER: readonly CelebrationStep[] = [
     often: "A few a month",
   },
   {
-    how: "The reward lights up and pops, +50 counts up, the buddy hops, one burst.",
+    how: "+50 counts up as the whole buddy hops, then one burst from it.",
     moment: "Today's missions all done",
     often: "Once a day at most",
   },
   {
-    how: "The art lands on the spring, then one burst.",
+    how: "The buddy lands on its stage on the spring, then one burst (new glasses get none: violet is Brain Power's).",
     moment: "A milestone's ceremony: a new belt, the buddy's next stage, new glasses",
     often: "Weeks apart",
   },

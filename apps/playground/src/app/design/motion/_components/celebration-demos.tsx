@@ -3,10 +3,8 @@
 import { Buddy } from "@zoonk/ui/components/buddy";
 import { Burst } from "@zoonk/ui/components/burst";
 import { CountUp } from "@zoonk/ui/components/count-up";
-import { readDuration } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
-import { BrainIcon, CheckIcon } from "lucide-react";
-import { useLayoutEffect, useRef, useState } from "react";
+import { CheckIcon, StarIcon } from "lucide-react";
 import { BeltTicks, LevelBadge, MissionsTrack, plus } from "./demo-parts";
 
 const EARNED = 27;
@@ -15,9 +13,6 @@ const BONUS = 50;
 
 /** Enough Energy for a glad buddy, short of its glow. */
 const BUDDY_ENERGY = 70;
-
-/** When the reward lights up after the moment shows: its beat, once the numbers are in. */
-const LIGHT_UP_MS = 400;
 
 /** A readout's number, as a task's end draws it. */
 const READOUT_CLASS = "text-readout text-[2.5rem]";
@@ -40,42 +35,9 @@ export function CountDemo() {
 }
 
 /**
- * Today's reward lighting up: from its violet words to a solid chip with a check, then a pop. With
- * reduced motion it's lit from the first frame.
+ * A new level's badge, a mission's check, a call's star and a ceremony's buddy, each landing on
+ * the spring.
  */
-export function ChipDemo() {
-  const chip = useRef<HTMLSpanElement>(null);
-  const [lit, setLit] = useState(false);
-
-  useLayoutEffect(() => {
-    if (!chip.current || readDuration(chip.current, "pop") === 0) {
-      setLit(true);
-      return;
-    }
-
-    const timer = setTimeout(() => setLit(true), LIGHT_UP_MS);
-    return () => clearTimeout(timer);
-  }, []);
-
-  return (
-    <span
-      className={cn(
-        "flex w-fit items-center gap-1 rounded-md py-1 pr-1.5 pl-1 font-mono text-base leading-none font-semibold tabular-nums transition-colors",
-        lit ? "bg-brain text-background animate-pop" : "text-brain-text",
-      )}
-      ref={chip}
-    >
-      {lit ? (
-        <CheckIcon aria-hidden="true" className="size-3.5" strokeWidth={3} />
-      ) : (
-        <BrainIcon aria-hidden="true" className="text-brain size-3.5" />
-      )}
-      {plus(BONUS)}
-    </span>
-  );
-}
-
-/** A new level's badge, a mission's check and a ceremony's art, each landing on the spring. */
 export function SettleDemo() {
   return (
     <div className="flex flex-wrap items-center gap-10">
@@ -86,6 +48,8 @@ export function SettleDemo() {
         className="text-success animate-settle size-5"
         strokeWidth={2.5}
       />
+
+      <StarIcon aria-hidden="true" className="fill-success text-success animate-settle size-5" />
 
       <Buddy
         beltColor="orange"

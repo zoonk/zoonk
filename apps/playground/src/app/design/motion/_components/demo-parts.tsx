@@ -1,4 +1,4 @@
-import { Meter, MeterFill } from "@zoonk/learn/meter";
+import { Meter, MeterFill, MeterPart, MeterParts } from "@zoonk/learn/meter";
 import { beltColorClasses } from "@zoonk/ui/components/belt-indicator";
 import { type CSSPropertiesWithVariables } from "@zoonk/ui/lib/css-variables";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -30,13 +30,13 @@ export function beat(delayMs: number): React.CSSProperties {
   return { animationDelay: `${delayMs}ms` };
 }
 
-/** A new level's number on its belt's color, landing on the spring. */
+/** A new level's number on its belt's color, landing on the spring, as `ReachedMoment` draws it. */
 export function LevelBadge({ delayMs = 0 }: { delayMs?: number }) {
   return (
     <span
       aria-hidden="true"
       className={cn(
-        "animate-settle flex size-8 shrink-0 items-center justify-center rounded-full font-mono text-sm font-semibold tabular-nums ring-1 ring-black/10 ring-inset",
+        "animate-settle flex size-10 shrink-0 items-center justify-center rounded-full text-base font-semibold tabular-nums ring-1 ring-black/10 ring-inset",
         beltColorClasses.orange,
         "text-black/80",
       )}
@@ -47,31 +47,41 @@ export function LevelBadge({ delayMs = 0 }: { delayMs?: number }) {
   );
 }
 
-/** The belt's ten levels as ticks, the new one filling from empty. */
+/** The belt's ten levels as a meter's parts, the new one filling over its track (`BeltTicks`). */
 export function BeltTicks({ delayMs = 0 }: { delayMs?: number }) {
   return (
-    <span aria-hidden="true" className="flex h-1 gap-[3px]">
-      {Array.from({ length: LEVELS_PER_BELT }, (_, index) => (
-        <span
-          className={cn(
-            "flex-1 rounded-xs",
-            index < DEMO_LEVEL ? beltColorClasses.orange : "bg-surface-3",
-            index === DEMO_LEVEL - 1 && "animate-fill origin-left",
-          )}
-          // oxlint-disable-next-line react/no-array-index-key -- Ticks are the belt's levels, not items.
-          key={index}
-          style={index === DEMO_LEVEL - 1 ? beat(delayMs) : undefined}
-        />
-      ))}
-    </span>
+    <MeterParts as="span">
+      {Array.from({ length: LEVELS_PER_BELT }, (_, index) => {
+        const fills = index === DEMO_LEVEL - 1;
+
+        return (
+          <MeterPart
+            as="span"
+            className={cn(
+              index < DEMO_LEVEL && !fills && beltColorClasses.orange,
+              fills && "relative overflow-hidden",
+            )}
+            // oxlint-disable-next-line react/no-array-index-key -- Ticks are the belt's levels, not items.
+            key={index}
+          >
+            {fills && (
+              <span
+                className={cn("animate-fill absolute inset-0 origin-left", beltColorClasses.orange)}
+                style={beat(delayMs)}
+              />
+            )}
+          </MeterPart>
+        );
+      })}
+    </MeterParts>
   );
 }
 
 /** Energy's meter where Energy is: a moment knows only where it is now, so it doesn't fill. */
 export function EnergyMeter() {
   return (
-    <Meter className="h-1 rounded-[2px]">
-      <MeterFill className="bg-energy rounded-[2px]" share={ENERGY_NOW / PERCENT} />
+    <Meter>
+      <MeterFill className="bg-energy" share={ENERGY_NOW / PERCENT} />
     </Meter>
   );
 }

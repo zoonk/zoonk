@@ -14,10 +14,10 @@ import { type MotionDuration, type MotionEasing } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type Metadata } from "next";
 import { DocHeader, DocRules, DocSection, renderCode } from "../_components/doc";
+import { MotionSpecimen } from "../_components/motion-specimen";
 import {
   BuddyDemo,
   BurstDemo,
-  ChipDemo,
   CountDemo,
   FillDemo,
   SettleDemo,
@@ -26,7 +26,6 @@ import { EasingCurve } from "./_components/easing-curve";
 import { PressDemo, StateDemo } from "./_components/feedback-demos";
 import { MomentDemo } from "./_components/moment-demo";
 import { MotionPreview } from "./_components/motion-preview";
-import { MotionSpecimen } from "./_components/motion-specimen";
 import { TokenValue } from "./_components/token-value";
 
 export const metadata: Metadata = { title: "Motion" };
@@ -34,7 +33,6 @@ export const metadata: Metadata = { title: "Motion" };
 const DEMOS: Record<string, () => React.ReactNode> = {
   buddy: BuddyDemo,
   burst: BurstDemo,
-  chip: ChipDemo,
   count: CountDemo,
   fill: FillDemo,
   press: PressDemo,
