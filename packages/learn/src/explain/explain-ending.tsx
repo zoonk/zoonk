@@ -1,6 +1,5 @@
 "use client";
 
-import { type ProgressCelebration } from "@zoonk/core/sessions/progress-celebration";
 import { type ExplanationView } from "@zoonk/core/view-models/explain/contract";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
@@ -30,19 +29,15 @@ import {
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { LearnLink } from "../learn-link";
 import { DayMoment } from "../session/day-moment";
+import { type LessonCelebration } from "../session/lesson-celebration";
 import { MOMENT_TITLE_PROPS } from "../session/moment-ceremony";
 import { useQuickExplanationLabel } from "./quick-explanation-label";
 
 /**
- * What the check earned, once the explanation is saved, with the belt level and the tenth of
- * Energy it reached (`celebration`, null until it's saved).
+ * What the check earned, once the explanation is saved (`celebration`, null until then): its Brain
+ * Power, the day's missions it completed and the belt level and tenth of Energy it reached.
  */
-type ExplainResult = {
-  answered: number;
-  brainPower: number | null;
-  celebration: ProgressCelebration | null;
-  correct: number;
-};
+type ExplainResult = { answered: number; celebration: LessonCelebration | null; correct: number };
 
 const DONE_CLASS = cn(buttonVariants({ size: "xl" }), TASK_MAIN_ACTION_CLASS);
 
@@ -75,7 +70,7 @@ function DoneLink({ href, saving }: { href: string; saving: boolean }) {
 function ResultTiles({ result }: { result: ExplainResult }) {
   const t = useExtracted();
   // "+0" would only read as a loss.
-  const brainPower = result.brainPower ?? 0;
+  const brainPower = result.celebration?.brainPower ?? 0;
 
   if (result.answered === 0 && brainPower === 0) {
     return null;
@@ -212,7 +207,7 @@ export function ExplainEnding({
           <DayMoment
             buddy={buddy}
             ceremony={result.celebration.ceremony}
-            missionMoment={null}
+            missionMoment={result.celebration.missionMoment}
             reached={result.celebration.reached}
           />
         )}

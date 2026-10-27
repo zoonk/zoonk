@@ -1,5 +1,6 @@
 "use client";
 
+import { getLessonCelebration } from "@zoonk/learn/session/lesson-celebration";
 import { MomentAfterCeremony } from "@zoonk/learn/session/moment-ceremony";
 import { getTaskAsideRootProps } from "@zoonk/learn/task-layout";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -59,7 +60,9 @@ function LessonCompletion() {
 
   return (
     <MomentAfterCeremony
-      milestone={props.completion.result?.ceremony ?? null}
+      milestone={
+        props.completion.result ? getLessonCelebration(props.completion.result).ceremony : null
+      }
       render={slots.ceremony}
     >
       {slots.completion ? slots.completion(props) : <LessonCompletionMoment {...props} />}

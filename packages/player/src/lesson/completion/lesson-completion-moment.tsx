@@ -1,6 +1,7 @@
 "use client";
 
 import { DayMoment } from "@zoonk/learn/session/day-moment";
+import { getLessonCelebration } from "@zoonk/learn/session/lesson-celebration";
 import { MOMENT_TITLE_PROPS } from "@zoonk/learn/session/moment-ceremony";
 import {
   TASK_MAIN_ACTION_CLASS,
@@ -39,14 +40,17 @@ function CompletionFacts({
   const facts = [
     answered > 0 &&
       t("{correct} of {answered} right", { answered: String(answered), correct: String(correct) }),
-    brainPower > 0 && t("+{points} Brain Power", { points: format.number(brainPower) }),
     reviewAt &&
       t("Review on {date}", {
         date: format.dateTime(new Date(reviewAt), { day: "numeric", month: "short" }),
       }),
   ].filter((fact): fact is string => Boolean(fact));
 
-  if (facts.length === 0) {
+  // The reward comes last, in Brain Power's violet, as every reward amount reads.
+  const reward =
+    brainPower > 0 && t("+{points} Brain Power", { points: format.number(brainPower) });
+
+  if (facts.length === 0 && !reward) {
     return null;
   }
 
@@ -61,6 +65,12 @@ function CompletionFacts({
           <span>{fact}</span>
         </Fragment>
       ))}
+      {reward && (
+        <>
+          {facts.length > 0 && " · "}
+          <span className="text-brain-text">{reward}</span>
+        </>
+      )}
     </p>
   );
 }
@@ -117,7 +127,7 @@ export function LessonCompletionMoment(props: LessonCompletionSlotProps) {
   const t = useExtracted();
   const { buddy, slots } = useLessonPlayerConfig();
   const { result } = completion;
-  const brainPower = result ? (result.studyBlock?.brainPower ?? result.brainPower) : 0;
+  const celebration = result ? getLessonCelebration(result) : null;
   const isSaved = completion.status === "saved";
 
   return (
@@ -133,19 +143,19 @@ export function LessonCompletionMoment(props: LessonCompletionSlotProps) {
           {isSaved && (
             <CompletionFacts
               answered={correctCount + incorrectCount}
-              brainPower={brainPower}
+              brainPower={celebration?.brainPower ?? 0}
               correct={correctCount}
               reviewAt={result?.nextReviewAt ?? null}
             />
           )}
         </div>
 
-        {isSaved && result && (
+        {isSaved && celebration && (
           <DayMoment
             buddy={buddy}
-            ceremony={result.ceremony}
-            missionMoment={null}
-            reached={result.reached}
+            ceremony={celebration.ceremony}
+            missionMoment={celebration.missionMoment}
+            reached={celebration.reached}
           />
         )}
 

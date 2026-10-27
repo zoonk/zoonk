@@ -9,6 +9,7 @@ import { type LessonTutorSuggestion } from "@zoonk/core/lesson-questions/contrac
 import { type ExplanationView } from "@zoonk/core/view-models/explain/contract";
 import { ExplainEnding } from "@zoonk/learn/explain/ending";
 import { ExplainDeeperLink, ExplainWaiting } from "@zoonk/learn/explain/waiting";
+import { getLessonCelebration } from "@zoonk/learn/session/lesson-celebration";
 import { useExtracted, useLocale } from "next-intl";
 import { type ComponentProps, startTransition, useEffect, useMemo, useRef, useState } from "react";
 import { retryExplanationAction } from "./explain-actions";
@@ -104,8 +105,9 @@ function createExplainEnding({
           questionHref={getGoalStartHref}
           result={{
             answered: slot.correctCount + slot.incorrectCount,
-            brainPower: slot.completion.result?.brainPower ?? null,
-            celebration: slot.completion.result,
+            celebration: slot.completion.result
+              ? getLessonCelebration(slot.completion.result)
+              : null,
             correct: slot.correctCount,
           }}
           saving={slot.completion.status === "saving"}

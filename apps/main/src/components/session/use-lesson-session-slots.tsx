@@ -1,7 +1,6 @@
 "use client";
 
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
-import { SessionCeremony } from "@/components/learn/session-ceremony";
 import { useRouter } from "@/i18n/navigation";
 import { type LessonSessionContext } from "@/lib/session/lesson-session-context";
 import { useStudyNavigation } from "@/lib/session/use-study-navigation";
@@ -49,9 +48,6 @@ export function useLessonSessionSlots({
         <MainLearnProvider>
           <LessonMoment
             buddy={buddy}
-            renderCeremony={(milestone, onClose) => (
-              <SessionCeremony buddy={buddy} milestone={milestone} onClose={onClose} />
-            )}
             completion={completion}
             onContinue={navigation.continueSession}
             onRetry={onRetry}

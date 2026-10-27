@@ -102,6 +102,7 @@
     "./provider": "./src/learn-provider.tsx",
     "./session/block": "./src/session/question-block/question-block.tsx",
     "./session/day-moment": "./src/session/day-moment.tsx",
+    "./session/lesson-celebration": "./src/session/lesson-celebration.ts",
     "./session/lesson-moment": "./src/session/lesson-moment.tsx",
     "./session/moment-ceremony": "./src/session/moment-ceremony.tsx",
     "./session/next-stop": "./src/session/next-stop.tsx",
