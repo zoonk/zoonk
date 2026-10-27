@@ -4,6 +4,7 @@ import { type ExplanationView } from "@zoonk/core/view-models/explain/contract";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { Spinner } from "@zoonk/ui/components/spinner";
+import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
 import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
 import { CircleHelpIcon, GraduationCapIcon, XIcon } from "lucide-react";
@@ -109,18 +110,6 @@ function RefreshUntilShown({ isReady, onCheck }: { isReady: boolean; onCheck: ()
   return null;
 }
 
-/** Whether this wait has gone on longer than the first screen usually takes. */
-function useTakingLong(): boolean {
-  const [slow, setSlow] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setSlow(true), SLOW_MS);
-    return () => clearTimeout(timer);
-  }, []);
-
-  return slow;
-}
-
 /**
  * A run's wait past the time the first screen usually takes says so, with "Try again". A retry
  * joins the run already writing it, so the wait on screen goes on as it was: the tap says at once
@@ -131,7 +120,7 @@ function useTakingLong(): boolean {
  */
 function SlowWait({ onRetry }: { onRetry: () => Promise<boolean> }) {
   const t = useExtracted();
-  const isSlow = useTakingLong();
+  const isSlow = useTakingLong({ active: true, afterMs: SLOW_MS });
   const [isRetrying, startRetry] = useTransition();
   const [joined, setJoined] = useState(false);
   const lineRef = useRef<HTMLParagraphElement>(null);
