@@ -1,11 +1,8 @@
 /**
- * Seeds Zoonk v2 with the plans the planner makes (see `seedV2`), or, with `--persona`, writes a
- * copy of one persona (see `seedV2PersonaCopy`), on `--day` of its plan when given, back after
- * `--away` days without studying when given, living in `--time-zone` instead of its own when given,
- * and prints it as JSON; with `--serve`, it writes copies on request until stdin closes. For
- * processes that can't load core's server code: Prisma's seed command and Playwright run it as
- * `pnpm seed:v2`, which sets the app domain auth reads as core loads (the seed builds no URL). No
- * model is called.
+ * Seeds Zoonk v2 with the plans the planner makes (see `seedV2`); with `--serve`, it writes persona
+ * copies (see `seedV2PersonaCopy`) on request until stdin closes. For processes that can't load
+ * core's server code: Prisma's seed command and Playwright run it as `pnpm seed:v2`, which sets the
+ * app domain auth reads as core loads (the seed builds no URL). No model is called.
  */
 import { createInterface } from "node:readline";
 import { parseArgs } from "node:util";
@@ -55,7 +52,7 @@ async function copyPersona({
     (timeZone !== undefined && !isValidTimeZone(timeZone))
   ) {
     throw new Error(
-      `Usage: pnpm seed:v2 [--serve | --persona <${SEED_PERSONA_NAMES.join("|")}> --copy-key <key> --email <email> [--day <day of its plan>] [--away <days without studying>] [--time-zone <IANA zone>]]`,
+      `A copy needs a persona (${SEED_PERSONA_NAMES.join("|")}), a copy key and an email, and whole days and an IANA zone when given.`,
     );
   }
 
@@ -85,38 +82,14 @@ async function serveCopies() {
 }
 
 async function main() {
-  const { values } = parseArgs({
-    options: {
-      away: { type: "string" },
-      "copy-key": { type: "string" },
-      day: { type: "string" },
-      email: { type: "string" },
-      persona: { type: "string" },
-      serve: { type: "boolean" },
-      "time-zone": { type: "string" },
-    },
-  });
+  const { values } = parseArgs({ options: { serve: { type: "boolean" } } });
 
   if (values.serve) {
     await serveCopies();
     return;
   }
 
-  if (values.persona === undefined) {
-    await seedV2();
-    return;
-  }
-
-  const copy = await copyPersona({
-    away: values.away,
-    copyKey: values["copy-key"],
-    day: values.day,
-    email: values.email,
-    persona: values.persona,
-    timeZone: values["time-zone"],
-  });
-
-  process.stdout.write(`${JSON.stringify(copy)}\n`);
+  await seedV2();
 }
 
 // The database pool keeps idle connections open for a while: exit as soon as the seed is written.
