@@ -29,18 +29,16 @@ export const INITIAL_BANK_WAIT: BankWait = {
   startFailed: false,
 };
 
-/** What a new answer from the test means for the wait, `now` being when it came. */
+/** What a new answer from the test means for the wait, as it comes. */
 export function updateBankWait({
-  now = Date.now(),
   preparing,
   wait,
 }: {
-  now?: number;
   preparing: PreparingTest;
   wait: BankWait;
 }): BankWait {
   const writing = preparing.startedAt !== null;
-  const lostStart = !writing && wait.askedAt !== null && now - wait.askedAt > BANK_START_MS;
+  const lostStart = !writing && wait.askedAt !== null && Date.now() - wait.askedAt > BANK_START_MS;
 
   return {
     ...wait,
@@ -56,17 +54,15 @@ function isWriting(wait: BankWait): boolean {
 
 /** The wait once this learner's tap asked for the questions: `started` when the request went through. */
 export function askedBankWait({
-  now = Date.now(),
   preparing,
   started,
 }: {
-  now?: number;
   preparing: PreparingTest;
   started: boolean;
 }): BankWait {
   return {
-    ...updateBankWait({ now, preparing, wait: INITIAL_BANK_WAIT }),
-    askedAt: now,
+    ...updateBankWait({ preparing, wait: INITIAL_BANK_WAIT }),
+    askedAt: Date.now(),
     startFailed: !started,
   };
 }

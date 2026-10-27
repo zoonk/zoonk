@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   INITIAL_BANK_WAIT,
   askedBankWait,
@@ -23,11 +23,20 @@ function run(
 }
 
 describe(toBankRun, () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ now: ASKED_AT });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it("waits for the run it asked for until it claims the questions", () => {
-    const asked = askedBankWait({ now: ASKED_AT, preparing: idle, started: true });
+    const asked = askedBankWait({ preparing: idle, started: true });
     expect(run(asked)).toMatchObject({ failure: null, status: "waiting" });
 
-    const claimed = updateBankWait({ now: ASKED_AT + 3000, preparing: writing, wait: asked });
+    vi.setSystemTime(ASKED_AT + 3000);
+    const claimed = updateBankWait({ preparing: writing, wait: asked });
 
     expect(run(claimed)).toMatchObject({
       status: "following",
@@ -36,24 +45,27 @@ describe(toBankRun, () => {
   });
 
   it("says the start failed when asking didn't go through", () => {
-    const asked = askedBankWait({ now: ASKED_AT, preparing: idle, started: false });
+    const asked = askedBankWait({ preparing: idle, started: false });
 
     expect(run(asked)).toMatchObject({ failure: "notStarted", status: "failed" });
     expect(isBankStopped(asked)).toBe(true);
   });
 
   it("says the start failed when the run it asked for never claims the questions", () => {
-    const asked = askedBankWait({ now: ASKED_AT, preparing: idle, started: true });
-    const soon = updateBankWait({ now: ASKED_AT + BANK_START_MS, preparing: idle, wait: asked });
-    const late = updateBankWait({ now: ASKED_AT + BANK_START_MS + 1, preparing: idle, wait: soon });
+    const asked = askedBankWait({ preparing: idle, started: true });
+    vi.setSystemTime(ASKED_AT + BANK_START_MS);
+    const soon = updateBankWait({ preparing: idle, wait: asked });
+    vi.setSystemTime(ASKED_AT + BANK_START_MS + 1);
+    const late = updateBankWait({ preparing: idle, wait: soon });
 
     expect(run(soon).status).toBe("waiting");
     expect(run(late)).toMatchObject({ failure: "notStarted", status: "failed" });
   });
 
   it("says writing stopped when the writer it saw lets go without finishing", () => {
-    const followed = updateBankWait({ now: ASKED_AT, preparing: writing, wait: INITIAL_BANK_WAIT });
-    const stopped = updateBankWait({ now: ASKED_AT + 3000, preparing: idle, wait: followed });
+    const followed = updateBankWait({ preparing: writing, wait: INITIAL_BANK_WAIT });
+    vi.setSystemTime(ASKED_AT + 3000);
+    const stopped = updateBankWait({ preparing: idle, wait: followed });
 
     expect(run(followed).status).toBe("following");
     expect(run(stopped)).toMatchObject({ failure: "generation", status: "failed" });
@@ -61,7 +73,7 @@ describe(toBankRun, () => {
   });
 
   it("offers to check again once checking keeps failing, while writing may go on", () => {
-    const followed = updateBankWait({ now: ASKED_AT, preparing: writing, wait: INITIAL_BANK_WAIT });
+    const followed = updateBankWait({ preparing: writing, wait: INITIAL_BANK_WAIT });
 
     expect(run(followed, "failed")).toMatchObject({
       failure: "connection",

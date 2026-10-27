@@ -6,18 +6,10 @@
  */
 export type DraftSaveStatus = "refused" | "retrying" | "saved" | "saving";
 
-/** Runs `run` after `ms`; returns a way to cancel it. Tests pass their own to control time. */
-type Schedule = (run: () => void, ms: number) => () => void;
-
 /** The wait before the first new try after a failed request; each next one doubles, up to the last. */
 const FIRST_RETRY_MS = 1000;
 const LONGEST_RETRY_MS = 15_000;
 const RETRY_BACKOFF = 2;
-
-const scheduleTimeout: Schedule = (run, ms) => {
-  const timer = setTimeout(run, ms);
-  return () => clearTimeout(timer);
-};
 
 function getRetryDelay(attempt: number): number {
   return Math.min(FIRST_RETRY_MS * RETRY_BACKOFF ** attempt, LONGEST_RETRY_MS);
@@ -36,24 +28,22 @@ export function createDraftSaveQueue<TDraft>({
   keyOf,
   onStatus,
   save,
-  schedule = scheduleTimeout,
 }: {
   /** The question an answer is to: a newer answer to it replaces one still waiting. */
   keyOf: (draft: TDraft) => string;
   onStatus: (status: DraftSaveStatus) => void;
   /** Stores one answer: true once stored, false when refused; rejects when it didn't get through. */
   save: (draft: TDraft) => Promise<boolean>;
-  schedule?: Schedule;
 }) {
   const waiting: TDraft[] = [];
   const idleWaiters: (() => void)[] = [];
   let sending = false;
   let attempt = 0;
   let refused = false;
-  let cancelRetry: (() => void) | null = null;
+  let retryTimer: ReturnType<typeof setTimeout> | null = null;
 
   function getStatus(): DraftSaveStatus {
-    if (cancelRetry) {
+    if (retryTimer) {
       return "retrying";
     }
 
@@ -89,8 +79,8 @@ export function createDraftSaveQueue<TDraft>({
     const delay = getRetryDelay(attempt);
     attempt += 1;
 
-    cancelRetry = schedule(() => {
-      cancelRetry = null;
+    retryTimer = setTimeout(() => {
+      retryTimer = null;
       void sendNext();
     }, delay);
   }
@@ -98,7 +88,7 @@ export function createDraftSaveQueue<TDraft>({
   async function sendNext(): Promise<void> {
     const draft = waiting.shift();
 
-    if (sending || cancelRetry || draft === undefined) {
+    if (sending || retryTimer || draft === undefined) {
       if (draft !== undefined) {
         waiting.unshift(draft);
       }
@@ -157,12 +147,12 @@ export function createDraftSaveQueue<TDraft>({
     isBusy,
     /** Tries the waiting answers again now (the connection is back, or the learner asked to). */
     retryNow() {
-      if (!cancelRetry) {
+      if (!retryTimer) {
         return;
       }
 
-      cancelRetry();
-      cancelRetry = null;
+      clearTimeout(retryTimer);
+      retryTimer = null;
       void sendNext();
     },
   };
