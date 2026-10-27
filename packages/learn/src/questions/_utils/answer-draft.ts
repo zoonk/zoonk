@@ -36,9 +36,36 @@ export function writeAnswerDraft<TAnswer extends { itemId: string }>({
   }
 }
 
+/** Where a run's own id is kept beside its answers (`keepDraftRequestId`). */
+function getRequestIdKey(key: string): string {
+  return `${key}:requestId`;
+}
+
+/**
+ * The run's own id, kept with its draft from its first send until the draft is cleared: a reload
+ * after a send whose response never came sends the same id again, so the run counts once.
+ * `fallback` is the id when none is kept yet, and the one used without storage.
+ */
+export function keepDraftRequestId({ fallback, key }: { fallback: string; key: string }): string {
+  try {
+    const kept = globalThis.localStorage.getItem(getRequestIdKey(key));
+
+    if (kept) {
+      return kept;
+    }
+
+    globalThis.localStorage.setItem(getRequestIdKey(key), fallback);
+  } catch {
+    // Without storage the id lasts as long as the page.
+  }
+
+  return fallback;
+}
+
 export function clearAnswerDraft(key: string) {
   try {
     globalThis.localStorage.removeItem(key);
+    globalThis.localStorage.removeItem(getRequestIdKey(key));
   } catch {
     // Nothing to clear without storage.
   }

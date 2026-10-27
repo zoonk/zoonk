@@ -21,7 +21,7 @@ import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { DayMoment, StepWithDayMoment } from "../session/day-moment";
 import { type MomentCeremony, getCeremonyMoment } from "../session/moment-ceremony";
 import { type TaskFrameAside, TaskMainLink, TaskSaveError } from "../shell/task-frame";
-import { clearAnswerDraft } from "./_utils/answer-draft";
+import { clearAnswerDraft, keepDraftRequestId } from "./_utils/answer-draft";
 import { type ChoiceQuestionView } from "./choice-question";
 import { type ChoiceQuestionAnswer, ChoiceQuestionsRun } from "./choice-questions-run";
 import { UndoButton } from "./undo-button";
@@ -300,8 +300,9 @@ export function TestOutRun({
   /** The chapter's lessons still on the plan, which a pass skips; null when the plan doesn't say. */
   lessonsLeft?: number | null;
   /**
-   * Grades the answers. `requestId` is the test's own id, made when it opens: a retry sends it
-   * again, so the test is counted once.
+   * Grades the answers. `requestId` is the test's own id, kept with the answers (`draftKey`) from
+   * its first send until it's graded: a retry, after a reload too, sends it again, so the test is
+   * counted once.
    */
   onSubmit: (input: {
     answers: ChoiceQuestionAnswer[];
@@ -320,14 +321,15 @@ export function TestOutRun({
   // The answers whose grading didn't go through, to send again.
   const [unsent, setUnsent] = useState<ChoiceQuestionAnswer[] | null>(null);
   const [isPending, startTransition] = useTransition();
-  const requestId = useMemo(() => crypto.randomUUID(), []);
+  const ownId = useMemo(() => crypto.randomUUID(), []);
 
   const submit = (answers: ChoiceQuestionAnswer[]) =>
     startTransition(async () => {
+      const requestId = draftKey ? keepDraftRequestId({ fallback: ownId, key: draftKey }) : ownId;
       const graded = await onSubmit({ answers, requestId }).catch(() => null);
 
-      // Graded answers are done with the device's draft; ones that didn't go through keep it, so
-      // leaving and coming back still has them.
+      // Graded answers are done with the device's draft and the test's id; ones that didn't go
+      // through keep both, so leaving and coming back still has them and sends the same test.
       if (graded && draftKey) {
         clearAnswerDraft(draftKey);
       }
