@@ -30,17 +30,9 @@ export function PublicHomeLink() {
  * Pages that never show the account menu (the visitor home) use it directly, so its code never
  * ships to them; the others use `PublicHeader`.
  */
-export function PublicTopBar({
-  actions,
-  className,
-  start,
-}: {
-  actions: ReactNode;
-  className?: string;
-  start?: ReactNode;
-}) {
+export function PublicTopBar({ actions, start }: { actions: ReactNode; start?: ReactNode }) {
   return (
-    <PublicTopBarSurface className={className}>
+    <PublicTopBarSurface>
       <div className={cn(PUBLIC_CONTAINER_CLASS, "flex h-14 items-center gap-8 sm:h-[72px]")}>
         <div className="flex min-w-0 items-center">{start ?? <PublicHomeLink />}</div>
         <div className="ml-auto flex shrink-0 items-center gap-2">{actions}</div>

@@ -1,12 +1,8 @@
-import { Link } from "@/i18n/navigation";
-import { type getChapterHref, type getLessonHref } from "@/lib/public/public-hrefs";
 import { cn } from "@zoonk/ui/lib/utils";
 
-export type NumberedRow = {
+type NumberedRow = {
   /** A line under the title, such as the first chapters of a level. */
   description?: string;
-  /** Where the row opens, when it's a page of its own. */
-  href?: ReturnType<typeof getChapterHref> | ReturnType<typeof getLessonHref>;
   id: string;
   /** The row's name: text, or a component that writes it (a plan phase's name). */
   title: React.ReactNode;
@@ -21,9 +17,6 @@ export type NumberedRow = {
  */
 const ROW_CLASS =
   "relative isolate flex items-start gap-3 py-3 before:pointer-events-none before:absolute before:-inset-x-2.5 before:inset-y-0.5 before:-z-10 before:rounded-[0.625rem] before:transition-colors";
-
-const LINK_ROW_CLASS =
-  "outline-none hover:before:bg-muted/70 focus-visible:before:ring-[3px] focus-visible:before:ring-ring/50";
 
 const HIGHLIGHTED_ROW_CLASS = "before:bg-muted hover:before:bg-muted";
 
@@ -53,42 +46,20 @@ function NumberedRowContent({ number, row }: { number: number; row: NumberedRow 
 }
 
 /**
- * A course's or a chapter's outline as flat rows: a quiet mono number, the title and a count or a
- * length at the end, with a hairline between rows. One row stands out on a soft fill: the page
- * being read (`currentId`, which screen readers hear too), or else where the outline starts
- * (`startId`).
+ * An outline as flat rows: a quiet mono number, the title and a count or a length at the end, with
+ * a hairline between rows. Where the outline starts (`startId`) stands out on a soft fill.
  */
-export function NumberedRows({
-  currentId,
-  rows,
-  startId,
-}: {
-  currentId?: string;
-  rows: NumberedRow[];
-  startId?: string;
-}) {
+export function NumberedRows({ rows, startId }: { rows: NumberedRow[]; startId: string }) {
   return (
     <ol className="divided-rows flex flex-col">
       {rows.map((row, index) => {
-        const isCurrent = row.id === currentId;
-        const highlighted = isCurrent || (!currentId && row.id === startId);
+        const highlighted = row.id === startId;
 
         return (
           <li data-highlighted={highlighted || undefined} key={row.id}>
-            {row.href ? (
-              <Link
-                aria-current={isCurrent ? "page" : undefined}
-                className={cn(ROW_CLASS, LINK_ROW_CLASS, highlighted && HIGHLIGHTED_ROW_CLASS)}
-                href={row.href}
-                prefetch
-              >
-                <NumberedRowContent number={index + 1} row={row} />
-              </Link>
-            ) : (
-              <div className={cn(ROW_CLASS, highlighted && HIGHLIGHTED_ROW_CLASS)}>
-                <NumberedRowContent number={index + 1} row={row} />
-              </div>
-            )}
+            <div className={cn(ROW_CLASS, highlighted && HIGHLIGHTED_ROW_CLASS)}>
+              <NumberedRowContent number={index + 1} row={row} />
+            </div>
           </li>
         );
       })}

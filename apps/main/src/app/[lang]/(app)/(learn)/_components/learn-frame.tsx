@@ -41,7 +41,7 @@ function LearnTopBar() {
           <LearnGoalMenu />
         </LearnShellStart>
 
-        <LearnBarEnd stats visitor={<VisitorBarLinks />} />
+        <LearnBarEnd visitor={<VisitorBarLinks />} />
 
         <LearnSidebarSearch className="col-span-2 mt-1.5" placement="bar" />
       </LearnShellHeader>

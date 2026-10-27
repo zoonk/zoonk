@@ -7,7 +7,6 @@ import { Link } from "@/i18n/navigation";
 import { useBeltLabel } from "@/lib/belt-label";
 import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
 import { getMenu } from "@/lib/menu";
-import { LearnAvatarBelt } from "@zoonk/learn/avatar-belt";
 import { LearnShellEnd } from "@zoonk/learn/shell";
 import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
 import { type BeltColor } from "@zoonk/utils/belt-level";
@@ -72,20 +71,13 @@ function PendingBarEnd({ visitor }: { visitor: React.ReactNode }) {
 }
 
 /**
- * The right of the learner's top bar: their belt and level opening Statistics (`stats`, on the
- * tabs), and the account avatar. A visitor has no account to open, so Pricing and the way in
- * (`visitor`) stand there, as in the sidebar and the catalog's bar; the search field's palette
- * holds what the menu would. Nothing of a level before the learner has one.
- * Without the level link (as in onboarding) the avatar wears the belt as a dot. Energy lives on
- * the buddy's tab, and search opens with Cmd/Ctrl+K or from the field under the bar.
+ * The right of the learner's top bar: their belt and level opening Statistics, and the account
+ * avatar. A visitor has no account to open, so Pricing and the way in (`visitor`) stand there, as
+ * in the sidebar and the catalog's bar; the search field's palette holds what the menu would.
+ * Nothing of a level before the learner has one. Energy lives on the buddy's tab, and search opens
+ * with Cmd/Ctrl+K or from the field under the bar.
  */
-export function LearnBarEnd({
-  stats = false,
-  visitor,
-}: {
-  stats?: boolean;
-  visitor: React.ReactNode;
-}) {
+export function LearnBarEnd({ visitor }: { visitor: React.ReactNode }) {
   const learner = useLearnerSummary();
 
   if (learner.status === "visitor") {
@@ -97,14 +89,11 @@ export function LearnBarEnd({
   }
 
   const { level } = learner.summary;
-  const shownLevel = stats ? level : null;
 
   return (
     <LearnShellEnd>
-      {shownLevel && <LevelLink level={shownLevel} />}
-      <LearnAvatarBelt color={shownLevel ? null : (level?.color ?? null)}>
-        <UserAvatarMenu />
-      </LearnAvatarBelt>
+      {level && <LevelLink level={level} />}
+      <UserAvatarMenu />
     </LearnShellEnd>
   );
 }

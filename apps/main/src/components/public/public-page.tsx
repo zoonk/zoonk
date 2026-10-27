@@ -8,25 +8,20 @@ import { PublicHeader } from "./public-header";
 /** One centered reading column, for the legal pages. */
 export const PUBLIC_COLUMN_CLASS = "mx-auto w-full max-w-[704px] px-5 sm:px-8";
 
-/**
- * A public page: the quiet top bar, the page and the footer. `options` puts a page's "…" menu in
- * the top bar, away from the page's one next step.
- */
+/** A public page: the quiet top bar, the page and the footer. */
 export function PublicPage({
   children,
   className,
-  options,
   pathname,
 }: {
   children: ReactNode;
   className?: string;
-  options?: ReactNode;
   /** The page's own path without the language, for the footer's language links. */
   pathname?: string;
 }) {
   return (
     <div className="flex min-h-dvh flex-col">
-      <PublicHeader options={options} />
+      <PublicHeader />
       <main className={cn("flex-1", className)}>{children}</main>
       <PublicFooter pathname={pathname} />
     </div>

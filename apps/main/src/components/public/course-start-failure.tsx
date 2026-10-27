@@ -64,7 +64,6 @@ function FailureAction({
  */
 export function CourseStartFailureNote({
   actionClassName,
-  announce = true,
   className,
   failure,
   onRetry,
@@ -72,11 +71,6 @@ export function CourseStartFailureNote({
 }: {
   /** The action's look where the note sits; an outline button by default. */
   actionClassName?: string;
-  /**
-   * Whether screen readers hear it as it appears: only where the start was pressed, when a page
-   * repeats the note under each of its start controls.
-   */
-  announce?: boolean;
   className?: string;
   failure: CourseStartFailure | null;
   onRetry: () => void;
@@ -94,7 +88,7 @@ export function CourseStartFailureNote({
     <div
       className={cn("flex max-w-md flex-col items-start gap-3", className)}
       data-slot={START_FAILURE_SLOT}
-      role={announce ? "alert" : undefined}
+      role="alert"
     >
       <p className="text-muted-foreground text-sm text-pretty">
         {failure.status === "limitReached"
