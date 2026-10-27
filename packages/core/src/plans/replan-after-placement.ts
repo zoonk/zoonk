@@ -52,11 +52,7 @@ export async function replanAfterPlacement({
       change: getCoverageChange({
         computed,
         context,
-        fromPlacement: true,
-        listeningPastBasics: getListeningPastBasicsEffect({
-          areas: pastBasicsAreas,
-          state: context.state,
-        }).listeningPastBasics,
+        ...getListeningPastBasicsEffect({ areas: pastBasicsAreas, state: context.state }),
       }),
       computed,
       context,

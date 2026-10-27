@@ -55,7 +55,6 @@ export function getChangePlanning(operations: readonly PlanOperation[]) {
 
   return {
     bringBackSetAside: !movesWeeklyOnly,
-    keepLastPhaseDate: movesWeeklyOnly,
     keepPhaseDates: movesWeeklyOnly || getSteeredAreas(operations) !== null,
     keepSelection: movesWeeklyOnly,
     mode: movesWeeklyOnly ? ("automatic" as const) : ("forced" as const),

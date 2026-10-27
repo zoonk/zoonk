@@ -1,7 +1,8 @@
 import "server-only";
 import { type LearnerPlanOperation } from "../plan-contract";
 import { type PlanOffer } from "../plan-view-contract";
-import { planLearnerChange } from "./learner-change";
+import { computeChange } from "./compute-change";
+import { applyChangeOperations } from "./part-areas";
 import { type PlanContext } from "./plan-context";
 import { areLessonsFinished, hasPlanDeadline } from "./plan-end";
 import { type ShownFeasibility } from "./plan-feasibility-view";
@@ -56,13 +57,20 @@ export async function loadFitOffer({
     return null;
   }
 
-  const change = await planLearnerChange({
+  const applied = await applyChangeOperations({ context, operations: FIT_OPERATIONS });
+
+  if ("error" in applied) {
+    return null;
+  }
+
+  const change = await computeChange({
     context,
-    operations: FIT_OPERATIONS,
+    operations: applied.operations,
     reuseReadBuild: true,
+    state: applied.state,
   });
 
-  return change && !change.unchanged && change.effect.lessonsAdded > 0
+  return !change.unchanged && change.effect.lessonsAdded > 0
     ? { effect: change.effect, fits: change.computed.feasibility.fits, operations: FIT_OPERATIONS }
     : null;
 }

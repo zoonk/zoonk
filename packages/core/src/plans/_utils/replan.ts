@@ -102,9 +102,10 @@ type ComputePlanRequest = {
    * them as the lessons fall, as a learner's change does, or to compare.
    */
   keepPhaseDates?: boolean;
-  /** Moving a weekly event also keeps the last phase's challenge, rather than shortening the plan. */
-  keepLastPhaseDate?: boolean;
-  /** Moving an event keeps the teaching and funding the learner already selected. */
+  /**
+   * Moving an event keeps the teaching and funding the learner already selected, and the last
+   * phase's challenge, rather than shortening the plan.
+   */
   keepSelection?: boolean;
   mode: PlanningMode;
   /** The kept ends moving the phase dates puts on other days, by phase (see `planPhaseDatesMove`). */
@@ -152,7 +153,6 @@ export async function computePlan({
   context,
   mode,
   keepPhaseDates = mode === "automatic",
-  keepLastPhaseDate = false,
   now = new Date(),
   movedEnds,
   pace: paceSource = "saved",
@@ -251,7 +251,7 @@ export async function computePlan({
     paceFactor: settings.pace.factor,
     phaseEnds: keepPhaseDates
       ? getShownPhaseEnds({
-          includeLast: keepLastPhaseDate,
+          includeLast: options.keepSelection,
           items: context.items,
           moved: movedEnds,
           phases: context.phases,

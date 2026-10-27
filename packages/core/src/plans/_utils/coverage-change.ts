@@ -10,13 +10,10 @@ const COVERAGE_NOTE = "Planned again, the plan teaches other topics by its date.
 export function getCoverageChange({
   computed,
   context,
-  fromPlacement = false,
-  listeningPastBasics = [],
+  listeningPastBasics,
 }: {
   computed: ComputedPlan;
   context: PlanContext;
-  /** Placement's answers planned it again (see `PlanEffect.fromPlacement`). */
-  fromPlacement?: boolean;
   /** The listening areas those answers started past their basics (`PlanEffect`'s). */
   listeningPastBasics?: string[];
 }): PlanChangeRecord | null {
@@ -35,8 +32,8 @@ export function getCoverageChange({
       effect: {
         ...effect,
         ...seen,
-        ...(fromPlacement ? { fromPlacement } : {}),
-        ...(listeningPastBasics.length > 0 ? { listeningPastBasics } : {}),
+        fromPlacement: true,
+        ...(listeningPastBasics && { listeningPastBasics }),
       },
       source: "system",
     }),
