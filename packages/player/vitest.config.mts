@@ -101,7 +101,6 @@ export default defineConfig({
     tsconfigPaths: true,
   },
   test: {
-    deps: { optimizer: { ssr: { include: ["next"] } } },
     projects: [
       {
         extends: true,
@@ -138,11 +137,5 @@ export default defineConfig({
         },
       },
     ],
-    server: {
-      deps: {
-        // https://github.com/vercel/next.js/issues/77200
-        inline: ["next-intl"],
-      },
-    },
   },
 });
