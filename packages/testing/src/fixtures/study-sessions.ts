@@ -16,11 +16,14 @@ export async function studySessionFixture(
   attrs: FixtureAttrs<StudySession, "startSnapshot" | "endSnapshot" | "missions"> &
     Pick<StudySession, "userId">,
 ) {
+  const { missions = { picks: [], version: 1 }, ...data } = attrs;
+
   return prisma.studySession.create({
     data: {
       localDate: toUTCMidnight(new Date()),
+      missions,
       plannedMinutes: DEFAULT_PLANNED_MINUTES,
-      ...attrs,
+      ...data,
     },
   });
 }

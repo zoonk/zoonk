@@ -185,6 +185,7 @@ async function writeStudyDay(
       goalId,
       id: sessionId,
       localDate: scopeDay(scope, day),
+      missions: { picks: [], version: 1 },
       plannedMinutes: blocks.reduce((sum, block) => sum + block.estimatedMinutes, 0),
       startSnapshot: Prisma.DbNull,
       startedAt: first.startedAt,

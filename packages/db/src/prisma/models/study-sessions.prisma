@@ -49,8 +49,8 @@ model StudySession {
   /// Energy, Brain Power, preparation and skill states when the session ended, so its summary keeps
   /// saying what that session changed after lessons played later.
   endSnapshot    Json?               @map("end_snapshot")
-  /// Daily mission picks fixed when the day is built; null for sessions built before deployment.
-  missions       Json?
+  /// Daily mission picks fixed when the day is built.
+  missions       Json
   /// When every offered mission made a full meal (+50 Brain Power, once per learner-local day).
   fullMealAt     DateTime?           @map("full_meal_at")
   startedAt      DateTime?           @map("started_at")

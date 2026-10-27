@@ -8,6 +8,7 @@ import {
 } from "@zoonk/db/seed/v2";
 import { buildSeededDay } from "./build-seeded-day";
 import { buildSeededPast } from "./build-seeded-past";
+import { buildSeededPastMissions } from "./build-seeded-past-missions";
 import { planSeededGoal } from "./plan-seeded-goal";
 
 /**
@@ -28,6 +29,7 @@ async function planSeededLearner({
 }): Promise<void> {
   await planSeededGoal({ goalId, now });
   await buildSeededPast({ goalId, past });
+  await buildSeededPastMissions(goalId);
 
   if (today) {
     await buildSeededDay({ goalId, today });

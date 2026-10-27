@@ -1,6 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { addDays, toIsoDate } from "../plans/planner/plan-calendar";
+import { readMissionDocument } from "../sessions/missions/catalog";
 import { seedV2PersonaCopy } from "./seed-v2";
 
 /** Ana's Friday, Oct 16 in São Paulo. */
@@ -60,6 +61,16 @@ describe("a persona's copy", () => {
         dates: ANA_STUDY_DATES,
         freshStart: null,
       });
+
+      const sessions = await prisma.studySession.findMany({
+        where: { localDate: { lt: TODAY }, userId: copy.userId },
+      });
+
+      const missions = sessions.map((session) => readMissionDocument(session.missions));
+
+      expect(missions).toHaveLength(HISTORY_DAYS);
+      expect(missions.every((document) => document !== null)).toBe(true);
+      expect(missions.some((document) => (document?.picks.length ?? 0) > 0)).toBe(true);
     },
   );
 });

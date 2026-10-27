@@ -297,6 +297,7 @@ describe("First steps from real learner history", () => {
     });
 
     const facts = await load(input);
+
     expect(facts.firstSteps?.steps.find((step) => step.kind === "askBuddy")?.status).toBe("done");
   });
 
@@ -337,6 +338,7 @@ describe("First steps from real learner history", () => {
 
     await studySessionBlockFixture({ kind: "review", sessionId: session.id, status: "completed" });
     const facts = await load(input);
+
     expect(facts.firstSteps?.steps.find((step) => step.kind === "review")?.status).toBe("done");
   });
 
@@ -408,18 +410,14 @@ describe("First steps from real learner history", () => {
     expect(facts.firstSteps).toBeNull();
   });
 
-  it("skips an experienced learner whose studied session predates mission persistence", async () => {
-    const input = await learner();
-    await studySessionFixture({ goalId: input.goal.id, startedAt: now, userId: input.userId });
-    const facts = await load(input);
-    expect(facts.firstSteps).toBeNull();
-  });
-
-  it("skips legacy standalone learning without a new mission-bearing session", async () => {
+  it("counts learning before the first session toward first steps", async () => {
     const input = await learner();
     await learningEventFixture({ endedAt: now, userId: input.userId });
     const facts = await load(input);
-    expect(facts.firstSteps).toBeNull();
+
+    expect(facts.firstSteps?.steps.find((step) => step.kind === "somethingNew")?.status).toBe(
+      "done",
+    );
   });
 
   it("ends the list on the fourteenth account-wide study day", async () => {
