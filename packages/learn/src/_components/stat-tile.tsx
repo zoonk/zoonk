@@ -1,4 +1,5 @@
 import { cn } from "@zoonk/ui/lib/utils";
+import { BigQuantity } from "./big-quantity";
 
 /**
  * A stat's color, on its icon only: what the number counts (Brain Power, Energy, right answers)
@@ -42,7 +43,8 @@ export function StatTiles({ className, ...props }: React.ComponentProps<"ul">) {
 
 /**
  * One number on its tile, a hairline box: the icon in its color and what it counts as a quiet
- * label on top, the number big in the mono face under it, and an optional quiet line
+ * label on top, the number as a readout under it (a quantity with units, "15 hr 1 min" or "90
+ * days", sets its units small and muted, as every readout does), and an optional quiet line
  * ("33% → 35%").
  */
 export function StatTile({
@@ -81,7 +83,13 @@ export function StatTile({
         <span className="truncate">{label}</span>
       </span>{" "}
       {/* The spaces keep "Questions 20" one phrase for screen readers; the column hides them. */}
-      <span className="text-readout text-2xl leading-tight">{value}</span>
+      <span className="text-readout text-2xl leading-tight">
+        {typeof value === "string" && /\d/u.test(value) ? (
+          <BigQuantity>{value}</BigQuantity>
+        ) : (
+          value
+        )}
+      </span>
       {detail && (
         <>
           {" "}
