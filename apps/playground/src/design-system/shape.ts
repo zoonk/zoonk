@@ -39,6 +39,6 @@ export const SHAPE_RULES: readonly string[] = [
 export const ICON_RULES: readonly string[] = [
   "Lucide, 16px (`size-4`) beside 14px text, 14px (`size-3.5`) as a list's mark.",
   "Navigation, meta and plan-line icons are neutral (`muted-foreground`); the current item takes the text color.",
-  "A kind's icon in its hue only where kinds sit side by side (`KindMark`); done is one blue check (`DoneMark`); no tinted icon tiles.",
+  "A kind's icon in its hue only where kinds sit side by side (`KindMark`); done is one blue check (`DoneMark`); no icon tiles, tinted or gray: an icon sits bare beside its words, in a row, an empty state or an error page.",
   "An icon beside words is decorative (`aria-hidden`); an icon alone has a name.",
 ];
