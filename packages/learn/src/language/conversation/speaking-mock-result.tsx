@@ -21,6 +21,7 @@ import {
   StepTitleNumber,
 } from "../../_components/step-card";
 import { Steps, type StepsItem } from "../../_components/steps";
+import { StepWithDayMoment } from "../../session/day-moment";
 import { TaskMainLink } from "../../shell/task-frame";
 import { CallNote } from "./call-note";
 import { useConversationTitle, useCriterionName } from "./conversation-labels";
@@ -214,15 +215,13 @@ export function SpeakingMockResult({
   const t = useExtracted();
   const focus = feedback?.criteria.find((criterion) => criterion.criterion === feedback.focus);
 
-  // Last on the first step, as a call's result has it under its stars.
   const items: StepsItem[] = feedback
     ? [
         {
           content: (
-            <>
+            <StepWithDayMoment dayMoment={dayMoment}>
               <BandStep conversation={conversation} feedback={feedback} />
-              {dayMoment}
-            </>
+            </StepWithDayMoment>
           ),
           id: "band",
           moment: ceremony,
@@ -236,10 +235,9 @@ export function SpeakingMockResult({
     : [
         {
           content: (
-            <>
+            <StepWithDayMoment dayMoment={dayMoment}>
               <NoScoreStep />
-              {dayMoment}
-            </>
+            </StepWithDayMoment>
           ),
           id: "noScore",
           moment: ceremony,

@@ -58,8 +58,14 @@ function PracticeStats({
   const missed = summary !== null && summary.correct < summary.total;
 
   return (
-    <>
-      <StatTiles className={cn(tiles === 3 && "sm:grid-cols-3", tiles === 1 && "grid-cols-1")}>
+    <div className="flex w-full flex-col items-start gap-3">
+      <StatTiles
+        className={cn(
+          // Three share one row from `sm`, the last one no wider than the others.
+          tiles === 3 && "sm:grid-cols-3 sm:[&>li:last-child:nth-child(odd)]:col-span-1",
+          tiles === 1 && "grid-cols-1",
+        )}
+      >
         {fixed > 0 && (
           <StatTile icon={<CheckCheckIcon />} label={t("Mistakes fixed")} value={fixed} />
         )}
@@ -84,7 +90,7 @@ function PracticeStats({
       {missed && (
         <StepDetail>{t("The rest come back another day, when they stick better.")}</StepDetail>
       )}
-    </>
+    </div>
   );
 }
 
@@ -112,10 +118,10 @@ export function NothingToPractice({ backHref }: { backHref: string }) {
 
 /**
  * The end of a run, at the last question or stopped early, straight on the page under the run's
- * header (its title a step under the header's): what it did as numbers on their tiles (mistakes
- * fixed, right answers, Brain Power), what it did to the day (its missions, the level and the tenth
- * of Energy the whole run reached), and back to the notebook from the pinned bar. A milestone it
- * earned opens first, on its own.
+ * header (its title a step under the header's), each part 24px from the next as every task's end
+ * has them: what it did as numbers on their tiles (mistakes fixed, right answers, Brain Power),
+ * what it did to the day (its missions, the level and the tenth of Energy the whole run reached),
+ * and back to the notebook from the pinned bar. A milestone it earned opens first, on its own.
  */
 export function PracticeDone({
   backHref,
@@ -140,19 +146,19 @@ export function PracticeDone({
   return (
     <MomentAfterCeremony milestone={ceremony} render={renderCeremony}>
       <TaskBody>
-        <StepCard aria-live="polite" role="status">
+        <StepCard aria-live="polite" className="gap-6" role="status">
           <h2 className="text-title outline-none" {...MOMENT_TITLE_PROPS}>
             {t("Practice done")}
           </h2>
           <PracticeStats fixed={fixed} summary={summary} />
-
-          <DayMoment
-            buddy={buddy}
-            ceremony={ceremony}
-            missionMoment={summary?.missionMoment ?? null}
-            reached={reached}
-          />
         </StepCard>
+
+        <DayMoment
+          buddy={buddy}
+          ceremony={ceremony}
+          missionMoment={summary?.missionMoment ?? null}
+          reached={reached}
+        />
       </TaskBody>
 
       <BackBar backHref={backHref} />

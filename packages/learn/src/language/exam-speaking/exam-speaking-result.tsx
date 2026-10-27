@@ -20,6 +20,7 @@ import {
   StepTitle,
 } from "../../_components/step-card";
 import { Steps, type StepsItem } from "../../_components/steps";
+import { StepWithDayMoment } from "../../session/day-moment";
 import { TaskMainLink } from "../../shell/task-frame";
 import { CallNote } from "../conversation/call-note";
 import { EstimateNote, ResultRow, ResultRows } from "../conversation/result-rows";
@@ -284,16 +285,14 @@ export function ExamSpeakingResult({
   const graded = criteria.filter((item) => isGraded(item));
   const focus = graded.find(({ criterion }) => criterion.key === feedback?.focus);
 
-  // Last on the first step, as a call's result has it under its stars.
   const items: StepsItem[] =
     feedback && graded.length > 0
       ? [
           {
             content: (
-              <>
+              <StepWithDayMoment dayMoment={dayMoment}>
                 <CriteriaStep conversation={conversation} examTask={examTask} feedback={feedback} />
-                {dayMoment}
-              </>
+              </StepWithDayMoment>
             ),
             id: "criteria",
             moment: ceremony,
@@ -303,10 +302,9 @@ export function ExamSpeakingResult({
       : [
           {
             content: (
-              <>
+              <StepWithDayMoment dayMoment={dayMoment}>
                 <NoGradeStep />
-                {dayMoment}
-              </>
+              </StepWithDayMoment>
             ),
             id: "noGrade",
             moment: ceremony,

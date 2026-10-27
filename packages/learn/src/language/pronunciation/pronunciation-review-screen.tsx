@@ -89,8 +89,9 @@ function RoundScore({ result }: { result: PronunciationRoundResult }) {
 }
 
 /**
- * The round's end, as every task's end reads: the count as a readout and the Brain Power it paid
- * in its violet, then what it did to the day; with nothing said, a plain title.
+ * The round's end, as every task's end reads, at the top of the task's column: the count as a
+ * readout and the Brain Power it paid in its violet, then what it did to the day 24px under them;
+ * with nothing said, a plain title.
  */
 function RoundResult({
   buddy,
@@ -102,28 +103,30 @@ function RoundResult({
   const t = useExtracted();
 
   return (
-    <div aria-live="polite" className="flex flex-col items-start gap-3 py-6" role="status">
-      {result ? (
-        <div className="flex flex-wrap items-baseline gap-x-8 gap-y-2">
-          <h1
-            className="text-muted-foreground text-sm font-medium outline-none"
-            {...MOMENT_TITLE_PROPS}
-          >
-            <RoundScore result={result} />
-          </h1>
-          {result.brainPower > 0 && (
-            <p>
-              <BrainPowerReadout points={result.brainPower} />
-            </p>
-          )}
-        </div>
-      ) : (
-        <h1 className="text-title text-balance">{t("Nothing said this time")}</h1>
-      )}
+    <>
+      <div aria-live="polite" className="flex flex-col items-start gap-3" role="status">
+        {result ? (
+          <div className="flex flex-wrap items-baseline gap-x-8 gap-y-2">
+            <h1
+              className="text-muted-foreground text-sm font-medium outline-none"
+              {...MOMENT_TITLE_PROPS}
+            >
+              <RoundScore result={result} />
+            </h1>
+            {result.brainPower > 0 && (
+              <p>
+                <BrainPowerReadout points={result.brainPower} />
+              </p>
+            )}
+          </div>
+        ) : (
+          <h1 className="text-title text-balance">{t("Nothing said this time")}</h1>
+        )}
 
-      <p className="text-muted-foreground text-pretty">
-        {t("An accent never blocks you. Words that still sound different come back tomorrow.")}
-      </p>
+        <p className="text-muted-foreground text-pretty">
+          {t("An accent never blocks you. Words that still sound different come back tomorrow.")}
+        </p>
+      </div>
 
       {result && (
         <DayMoment
@@ -133,7 +136,7 @@ function RoundResult({
           reached={result.reached}
         />
       )}
-    </div>
+    </>
   );
 }
 

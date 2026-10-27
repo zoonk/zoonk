@@ -79,7 +79,7 @@ function ResultTiles({ result }: { result: ExplainResult }) {
   }
 
   return (
-    <StatTiles className={cn("mt-3", (result.answered === 0 || brainPower === 0) && "grid-cols-1")}>
+    <StatTiles className={cn((result.answered === 0 || brainPower === 0) && "grid-cols-1")}>
       {result.answered > 0 && (
         <StatTile
           icon={<TargetIcon />}
@@ -163,8 +163,9 @@ function ExplainRecap({ recap }: { recap: ExplanationView["recap"] }) {
 
 /**
  * The end of a quick explanation: "✓ Now you know" over its title, what the one question earned
- * and the belt level and the tenth of Energy it reached (its milestone opened before, from the
- * lesson player's `ceremony`), the recap in three numbered sentences, and "Want to go further?":
+ * and what it did to the day (its missions, the belt level and the tenth of Energy it reached; its
+ * milestone opened before, from the lesson player's `ceremony`), 24px apart as on every task's end,
+ * the recap in three numbered sentences, and "Want to go further?":
  * learning the subject in depth as a plan of its own (the host's `deeper` control) or another
  * quick question. "Done" finishes, in the action bar at the bottom. From `lg` the recap sits in the aside, where the outline and
  * "From the lesson" were, as a lesson's summary does at its end, so the aside is never left empty
@@ -197,22 +198,26 @@ export function ExplainEnding({
   return (
     <>
       <TaskBody className="gap-7" data-slot="explain-ending">
-        <div className="flex flex-col gap-2" role="status">
-          <SuccessEyebrow>{t("Now you know")}</SuccessEyebrow>
-          <h2 className="text-title outline-none" {...MOMENT_TITLE_PROPS}>
-            {explanation.title}
-          </h2>
-          <ResultTiles result={result} />
-        </div>
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-6" role="status">
+            <div className="flex flex-col gap-2">
+              <SuccessEyebrow>{t("Now you know")}</SuccessEyebrow>
+              <h2 className="text-title outline-none" {...MOMENT_TITLE_PROPS}>
+                {explanation.title}
+              </h2>
+            </div>
+            <ResultTiles result={result} />
+          </div>
 
-        {result.celebration && (
-          <DayMoment
-            buddy={buddy}
-            ceremony={result.celebration.ceremony}
-            missionMoment={result.celebration.missionMoment}
-            reached={result.celebration.reached}
-          />
-        )}
+          {result.celebration && (
+            <DayMoment
+              buddy={buddy}
+              ceremony={result.celebration.ceremony}
+              missionMoment={result.celebration.missionMoment}
+              reached={result.celebration.reached}
+            />
+          )}
+        </div>
 
         <ExplainRecap recap={explanation.recap} />
 

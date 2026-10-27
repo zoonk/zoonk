@@ -16,7 +16,7 @@ import {
 import { Steps } from "../../_components/steps";
 import { type LearnBuddy } from "../../buddies/use-buddy-name";
 import { UndoButton } from "../../questions/undo-button";
-import { DayMoment } from "../../session/day-moment";
+import { DayMoment, StepWithDayMoment } from "../../session/day-moment";
 import { type MomentCeremony, getCeremonyMoment } from "../../session/moment-ceremony";
 import { TaskMainLink } from "../../shell/task-frame";
 
@@ -68,25 +68,30 @@ function AreasStep({ buddy, outcome }: { buddy?: LearnBuddy | null; outcome: Foc
   const t = useExtracted();
 
   return (
-    <StepCard>
-      <StepHeader>
-        <StepTitle>{t("How you did")}</StepTitle>
-      </StepHeader>
-      <StepRows>
-        {outcome.areas.map((area) => (
-          <StepRow key={area.label}>
-            <span className="min-w-0 flex-1 leading-snug">{area.label}</span>
-            <AnswerSegments answers={area.answers} />
-          </StepRow>
-        ))}
-      </StepRows>
-      <DayMoment
-        buddy={buddy}
-        ceremony={outcome.ceremony}
-        missionMoment={null}
-        reached={outcome.reached}
-      />
-    </StepCard>
+    <StepWithDayMoment
+      dayMoment={
+        <DayMoment
+          buddy={buddy}
+          ceremony={outcome.ceremony}
+          missionMoment={null}
+          reached={outcome.reached}
+        />
+      }
+    >
+      <StepCard>
+        <StepHeader>
+          <StepTitle>{t("How you did")}</StepTitle>
+        </StepHeader>
+        <StepRows>
+          {outcome.areas.map((area) => (
+            <StepRow key={area.label}>
+              <span className="min-w-0 flex-1 leading-snug">{area.label}</span>
+              <AnswerSegments answers={area.answers} />
+            </StepRow>
+          ))}
+        </StepRows>
+      </StepCard>
+    </StepWithDayMoment>
   );
 }
 

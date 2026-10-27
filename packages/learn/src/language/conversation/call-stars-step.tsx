@@ -18,6 +18,7 @@ import {
   StepTitle,
 } from "../../_components/step-card";
 import { ChallengeCallPlusNotice } from "../../challenge/challenge-plus-lock";
+import { StepWithDayMoment } from "../../session/day-moment";
 import { useConversationTitle } from "./conversation-labels";
 
 type Result = NonNullable<LanguageConversationView["result"]>;
@@ -154,7 +155,7 @@ export function StarsStep({
   const lost = conversation.kind === "checkpoint" && !result.passed;
 
   return (
-    <>
+    <StepWithDayMoment dayMoment={dayMoment}>
       <StepCard>
         <Stars lost={lost} stars={result.stars} />
         <StepHeader>
@@ -181,8 +182,6 @@ export function StarsStep({
           {t("A star for finishing, one for getting everything across and one without Help.")}
         </p>
       )}
-
-      {dayMoment}
-    </>
+    </StepWithDayMoment>
   );
 }

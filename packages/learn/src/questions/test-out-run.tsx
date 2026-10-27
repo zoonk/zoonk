@@ -16,7 +16,7 @@ import {
 import { Steps } from "../_components/steps";
 import { TaskMeta } from "../_components/task-meta";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
-import { DayMoment } from "../session/day-moment";
+import { DayMoment, StepWithDayMoment } from "../session/day-moment";
 import { type MomentCeremony, getCeremonyMoment } from "../session/moment-ceremony";
 import { type TaskFrameAside, TaskMainLink, TaskSaveError } from "../shell/task-frame";
 import { clearAnswerDraft } from "./_utils/answer-draft";
@@ -77,30 +77,34 @@ function ResultStep({
   const detail = useResultDetail({ outcome, undone });
 
   return (
-    <StepCard aria-live="polite" role="status">
-      <StepHeader>
-        <StepTitle>
-          {outcome.passed ? t("You already know this") : t("Not yet, and that's fine")}
-        </StepTitle>
-        <StepDetail>{detail}</StepDetail>
-      </StepHeader>
+    <StepWithDayMoment
+      dayMoment={
+        <DayMoment
+          buddy={buddy}
+          ceremony={outcome.ceremony}
+          missionMoment={null}
+          reached={outcome.reached}
+        />
+      }
+    >
+      <StepCard aria-live="polite" role="status">
+        <StepHeader>
+          <StepTitle>
+            {outcome.passed ? t("You already know this") : t("Not yet, and that's fine")}
+          </StepTitle>
+          <StepDetail>{detail}</StepDetail>
+        </StepHeader>
 
-      <TaskMeta
-        facts={[
-          t("{correct, number} of {total, number} right", {
-            correct: outcome.correct,
-            total: outcome.total,
-          }),
-        ]}
-      />
-
-      <DayMoment
-        buddy={buddy}
-        ceremony={outcome.ceremony}
-        missionMoment={null}
-        reached={outcome.reached}
-      />
-    </StepCard>
+        <TaskMeta
+          facts={[
+            t("{correct, number} of {total, number} right", {
+              correct: outcome.correct,
+              total: outcome.total,
+            }),
+          ]}
+        />
+      </StepCard>
+    </StepWithDayMoment>
   );
 }
 

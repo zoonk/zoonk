@@ -102,9 +102,9 @@ function readoutScore(chunks: React.ReactNode) {
 }
 
 /**
- * The drill's result, as every task's end reads: right answers of the total as a readout ("5/6
- * right", screen readers hear "5 of 6 right"), the Brain Power it paid in its violet, and what it
- * did to the day.
+ * The drill's result, as every task's end reads, at the top of the task's column: right answers of
+ * the total as a readout ("5/6 right", screen readers hear "5 of 6 right") and the Brain Power it
+ * paid in its violet, then what it did to the day 24px under them.
  */
 export function PatternDrillResult({
   buddy,
@@ -118,31 +118,35 @@ export function PatternDrillResult({
   const counts = { correct: result.correct, total: result.total };
 
   return (
-    <div aria-live="polite" className="flex flex-col items-start gap-3 py-6" role="status">
-      <div className="flex flex-wrap items-baseline gap-x-8 gap-y-2">
-        <h1
-          className="text-muted-foreground text-sm font-medium outline-none"
-          {...MOMENT_TITLE_PROPS}
-        >
-          <span aria-hidden="true">
-            {t.rich("<score>{correct, number}/{total, number}</score> right", {
-              ...counts,
-              score: readoutScore,
-            })}
-          </span>
-          <span className="sr-only">{t("{correct, number} of {total, number} right", counts)}</span>
-        </h1>
-        {result.brainPower > 0 && (
-          <p>
-            <BrainPowerReadout points={result.brainPower} />
-          </p>
-        )}
+    <>
+      <div aria-live="polite" className="flex flex-col items-start gap-3" role="status">
+        <div className="flex flex-wrap items-baseline gap-x-8 gap-y-2">
+          <h1
+            className="text-muted-foreground text-sm font-medium outline-none"
+            {...MOMENT_TITLE_PROPS}
+          >
+            <span aria-hidden="true">
+              {t.rich("<score>{correct, number}/{total, number}</score> right", {
+                ...counts,
+                score: readoutScore,
+              })}
+            </span>
+            <span className="sr-only">
+              {t("{correct, number} of {total, number} right", counts)}
+            </span>
+          </h1>
+          {result.brainPower > 0 && (
+            <p>
+              <BrainPowerReadout points={result.brainPower} />
+            </p>
+          )}
+        </div>
+        <p className="text-muted-foreground text-pretty">
+          {allRight
+            ? t("You've got this rule.")
+            : t("Knowing the rule is the first step. It gets easier each time you use it.")}
+        </p>
       </div>
-      <p className="text-muted-foreground text-pretty">
-        {allRight
-          ? t("You've got this rule.")
-          : t("Knowing the rule is the first step. It gets easier each time you use it.")}
-      </p>
 
       <DayMoment
         buddy={buddy}
@@ -150,6 +154,6 @@ export function PatternDrillResult({
         missionMoment={result.missionMoment ?? null}
         reached={result.reached}
       />
-    </div>
+    </>
   );
 }
