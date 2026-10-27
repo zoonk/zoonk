@@ -6,7 +6,9 @@ import { type RequestRecord, classifyRequest, describeRequest } from "./requests
  * production build (`pnpm start`): a dev server compiles on demand, streams without
  * prefetching and shows loading states a learner never sees.
  */
-const BUDGETS = {
+export const BUDGETS = {
+  /** Lighthouse's Total Blocking Time lines: past them, taps wait on the main thread (INP). */
+  blockingMs: { fail: 600, warn: 200 },
   /** Core Web Vitals' "good" line fails; any shift at all is listed, since a page shouldn't jump. */
   cls: { fail: 0.1, warn: 0 },
   fcpMs: { fail: 1800, warn: 1000 },
@@ -36,11 +38,13 @@ export type Finding = {
   value?: number;
 };
 
-type LayoutShift = { at: number; sources: string[]; value: number };
+export type LayoutShift = { at: number; sources: string[]; value: number };
 
 /** What one page load measured, at one screen size and color scheme. */
 export type LoadMeasurement = {
   accessibility: string[];
+  /** Total Blocking Time: each long task's time past 50 ms, after the first contentful paint. */
+  blockingMs: number | null;
   console: { text: string; type: "error" | "warning" }[];
   fcpMs: number | null;
   /** The last paint the screencast saw, in ms since the navigation started. */
@@ -49,28 +53,20 @@ export type LoadMeasurement = {
   overflow: { offenders: string[]; scrollWidth: number; viewportWidth: number };
   pageErrors: string[];
   production: boolean;
+  /** Contrast failures in the regular look (the checks above run with more contrast). */
+  regularContrast: string[];
   requests: RequestRecord[];
   serverCpuMs: number | null;
+  /** Whether the page stopped changing before the wait's deadline. */
+  settled: boolean;
   shifts: LayoutShift[];
   /** The last frame a loading skeleton was visible on. */
   skeletonLastMs: number | null;
   skeletonSeenMs: number | null;
+  /** Text the layout cuts off, as it showed. */
+  truncated: string[];
   ttfbMs: number | null;
   unprefetchedLinks: string[];
-};
-
-/** A navigation from one page to the next, by tapping or clicking its link. */
-export type NavigationMeasurement = Pick<LoadMeasurement, "console" | "pageErrors" | "requests"> & {
-  /** Whether the tap ended on the page it was meant to reach. */
-  arrived: boolean;
-  /** From the tap to the new URL (a client navigation) or the new document's first paint. */
-  commitMs: number | null;
-  /** The tap loaded a whole new document instead of navigating on the client. */
-  fullLoad: boolean;
-  linkFound: boolean;
-  production: boolean;
-  shifts: LayoutShift[];
-  skeletonSeenMs: number | null;
 };
 
 const HTTP_CLIENT_ERROR = 400;
@@ -79,6 +75,19 @@ const LISTED_SOURCES = 5;
 /** Core Web Vitals' session window: shifts under 1 s apart, within 5 s of the first. */
 const SESSION_GAP_MS = 1000;
 const SESSION_LIMIT_MS = 5000;
+
+/** A long task's share that blocks input: everything past 50 ms. */
+const BLOCKING_AFTER_MS = 50;
+
+/** Total Blocking Time as Lighthouse scores it: long tasks' time past 50 ms, from the first paint. */
+export function totalBlockingTime(
+  longTasks: { at: number; duration: number }[],
+  fcpMs: number | null,
+): number {
+  return longTasks
+    .filter((task) => fcpMs === null || task.at >= fcpMs)
+    .reduce((total, task) => total + Math.max(0, task.duration - BLOCKING_AFTER_MS), 0);
+}
 
 /** CLS as Core Web Vitals scores it: the largest session window's total, not every shift's. */
 export function cumulativeLayoutShift(shifts: LayoutShift[]): number {
@@ -101,7 +110,7 @@ export function cumulativeLayoutShift(shifts: LayoutShift[]): number {
     }, start).largest;
 }
 
-function budgetFinding({
+export function budgetFinding({
   budget,
   check,
   value,
@@ -119,7 +128,7 @@ function budgetFinding({
   return [{ check, level, message: `over ${limit} ms`, unit: "ms", value }];
 }
 
-function shiftFindings(cls: number, shifts: LayoutShift[]): Finding[] {
+export function shiftFindings(cls: number, shifts: LayoutShift[]): Finding[] {
   if (cls <= BUDGETS.cls.warn) {
     return [];
   }
@@ -137,7 +146,7 @@ function shiftFindings(cls: number, shifts: LayoutShift[]): Finding[] {
   ];
 }
 
-function skeletonFindings(seenMs: number | null, when: string): Finding[] {
+export function skeletonFindings(seenMs: number | null, when: string): Finding[] {
   return seenMs === null
     ? []
     : [
@@ -160,7 +169,7 @@ function isNoise(text: string): boolean {
 }
 
 /** Errors and failed responses: what breaks the page whatever server it runs on. */
-function errorFindings(
+export function errorFindings(
   load: Pick<LoadMeasurement, "console" | "pageErrors" | "requests">,
 ): Finding[] {
   const own = load.requests.filter((request) => classifyRequest(request) !== "analytics");
@@ -205,7 +214,7 @@ function errorFindings(
  * learner's click does; data the client fetched for itself is usually data the server should
  * have rendered with the page.
  */
-function requestFindings(requests: RequestRecord[]): Finding[] {
+export function requestFindings(requests: RequestRecord[]): Finding[] {
   return requests.flatMap((request): Finding[] => {
     const kind = classifyRequest(request);
 
@@ -240,6 +249,11 @@ function speedFindings(load: LoadMeasurement): Finding[] {
   return [
     ...budgetFinding({ budget: BUDGETS.lcpMs, check: "LCP", value: load.lcpMs }),
     ...budgetFinding({ budget: BUDGETS.fcpMs, check: "FCP", value: load.fcpMs }),
+    ...budgetFinding({
+      budget: BUDGETS.blockingMs,
+      check: "blocking time",
+      value: load.blockingMs,
+    }),
     ...budgetFinding({ budget: BUDGETS.serverCpuMs, check: "server CPU", value: load.serverCpuMs }),
     ...skeletonFindings(load.skeletonSeenMs, "while the page loaded"),
     ...(lateChangeMs !== null && lateChangeMs > BUDGETS.lateChangeMs.warn
@@ -275,6 +289,29 @@ function overflowFindings({ offenders, scrollWidth, viewportWidth }: LoadMeasure
     : [];
 }
 
+export const UNSETTLED: Finding = {
+  check: "never settled",
+  level: "warn",
+  message:
+    "still changing or loading 10 s later: a poll, a loop or an endless animation? Its numbers are partial",
+};
+
+/** What a load's measurements can't vouch for: a page still changing, or a paint never measured. */
+function trustFindings(load: LoadMeasurement): Finding[] {
+  return [
+    ...(load.settled ? [] : [UNSETTLED]),
+    ...(load.production && load.lcpMs === null
+      ? [
+          {
+            check: "LCP",
+            level: "warn" as const,
+            message: "not measured: no largest paint was reported",
+          },
+        ]
+      : []),
+  ];
+}
+
 /** Everything one page load did wrong, failures first. */
 export function judgeLoad(load: LoadMeasurement): Finding[] {
   const findings: Finding[] = [
@@ -288,52 +325,18 @@ export function judgeLoad(load: LoadMeasurement): Finding[] {
       level: "fail",
       message,
     })),
+    ...trustFindings(load),
+    ...load.regularContrast.map((message): Finding => ({
+      check: "contrast in the regular look",
+      level: "warn",
+      message: `${message} (neutral text must pass; a soft colored mark may be meant)`,
+    })),
+    ...load.truncated.map((text): Finding => ({
+      check: "cut off",
+      level: "warn",
+      message: `"${text}" doesn't fit its box`,
+    })),
   ];
 
   return findings.toSorted((a, b) => Number(a.level === "warn") - Number(b.level === "warn"));
-}
-
-/** What a navigation did wrong: no link, never arriving, errors, a skeleton, a jump, a slow switch. */
-export function judgeNavigation(navigation: NavigationMeasurement): Finding[] {
-  if (!navigation.linkFound) {
-    return [{ check: "navigation", level: "warn", message: "no visible link to the next page" }];
-  }
-
-  if (!navigation.arrived) {
-    return [{ check: "navigation", level: "fail", message: "the tap didn't reach the page" }];
-  }
-
-  // The page's own load lists its data fetches; a navigation adds only what nobody clicked for.
-  const requests = requestFindings(navigation.requests).filter(
-    (finding) => finding.check !== "client data fetch",
-  );
-
-  const always = [
-    ...errorFindings(navigation),
-    ...shiftFindings(cumulativeLayoutShift(navigation.shifts), navigation.shifts),
-    ...requests,
-  ];
-
-  if (!navigation.production) {
-    return always;
-  }
-
-  return [
-    ...skeletonFindings(navigation.skeletonSeenMs, "after the tap"),
-    ...budgetFinding({
-      budget: BUDGETS.navigationCommitMs,
-      check: "navigation",
-      value: navigation.commitMs,
-    }),
-    ...(navigation.fullLoad
-      ? [
-          {
-            check: "full page load",
-            level: "warn" as const,
-            message: "the tap loaded a whole new document instead of navigating on the client",
-          },
-        ]
-      : []),
-    ...always,
-  ];
 }

@@ -12,6 +12,8 @@ import {
   getServiceUrl,
 } from "../dev/config.mts";
 import { readActionNames } from "./actions.mts";
+import { compareWithBaseline, comparisonRows, readBaseline } from "./baseline.mts";
+import { checkExposure, readLearner } from "./exposure.mts";
 import {
   type LoadReport,
   type NavigationReport,
@@ -19,9 +21,11 @@ import {
   measureNavigations,
   warmUp,
 } from "./measure.mts";
+import { type SoakReport, judgeSoak, measureSoak, soakRows } from "./memory.mts";
 import { renderReport } from "./report.mts";
-import { findServerPid } from "./server-cpu.mts";
-import { renderSheets } from "./sheets.mts";
+import { savedRequest } from "./requests.mts";
+import { findServerPid } from "./server-process.mts";
+import { renderNavigationSheet, renderSheets } from "./sheets.mts";
 import { signIn } from "./sign-in.mts";
 import { THROTTLING, VIEWPORT_NAMES, type ViewportName } from "./viewports.mts";
 
@@ -37,10 +41,13 @@ const SCHEMES = ["light", "dark"] as const;
 const { positionals, values } = parseArgs({
   allowPositionals: true,
   options: {
+    baseline: { type: "string" },
     email: { type: "string" },
+    intruder: { type: "string" },
     nav: { default: false, type: "boolean" },
     out: { type: "string" },
     schemes: { default: SCHEMES.join(","), type: "string" },
+    soak: { type: "string" },
     throttle: { default: false, type: "boolean" },
     url: { type: "string" },
     viewports: { default: VIEWPORT_NAMES.join(","), type: "string" },
@@ -82,13 +89,21 @@ const serverPid = findServerPid(new URL(baseUrl));
 
 assertBrowserLaunchAllowed();
 
+const mailboxUrl =
+  values.email || values.intruder ? getMailboxCaptureUrl(devServiceUrl("mailbox")) : "";
+
 const storageState = values.email
-  ? await signIn({
-      baseUrl,
-      email: values.email,
-      mailboxUrl: getMailboxCaptureUrl(devServiceUrl("mailbox")),
-    })
+  ? await signIn({ baseUrl, email: values.email, mailboxUrl })
   : undefined;
+
+const learner = storageState ? await readLearner(baseUrl, storageState) : null;
+
+const intruder = values.intruder
+  ? await signIn({ baseUrl, email: values.intruder, mailboxUrl })
+  : undefined;
+
+const baseline = values.baseline ? await readBaseline(resolve(values.baseline)) : null;
+const laps = Number(values.soak ?? 0);
 
 await mkdir(out, { recursive: true });
 const browser = await chromium.launch();
@@ -107,6 +122,7 @@ const target = {
 const loads: LoadReport[] = [];
 const navigations: NavigationReport[] = [];
 const sheets: string[] = [];
+let soak: SoakReport | null = null;
 
 /** Navigations run on a phone and a laptop (whichever were asked for), or the first screen asked. */
 const navigationViewports: ViewportName[] = viewports.filter(
@@ -137,26 +153,74 @@ try {
     }
   }
 
-  sheets.push(...(await renderSheets(browser, loads)));
+  if (laps > 0) {
+    soak = await measureSoak(target, { laps, paths });
+  }
+
+  sheets.push(
+    ...(await renderSheets(browser, { baseline: baseline ?? [], loads })),
+    ...(await renderNavigationSheet(browser, { navigations, out })),
+  );
 } finally {
   await browser.close();
 }
 
 const production = loads.every((load) => load.production);
+const exposures = learner ? await checkExposure({ baseUrl, intruder, learner, paths }) : [];
+const comparison = baseline ? compareWithBaseline(baseline, loads) : null;
+
+const header = [
+  `Target: ${baseUrl} (${production ? "production build" : "next dev: speed, skeletons and prefetching aren't judged; measure them on pnpm start"})`,
+  `Throttled: ${values.throttle ? `${THROTTLING.cpuRate}× CPU, slow 4G` : "no"}; signed in: ${values.email ?? "no"}; server CPU: ${serverPid ? `pid ${serverPid}` : "not measured"}`,
+  `Output: ${out}`,
+];
 
 const report = renderReport({
+  extra: [
+    ...exposures.map(({ findings, path, viewer }) => ({
+      findings,
+      place: { page: path, screen: viewer },
+    })),
+    ...(soak
+      ? [{ findings: judgeSoak(soak), place: { page: "memory", screen: `${soak.laps} laps` } }]
+      : []),
+    ...(comparison?.findings ?? []).map(({ finding, path }) => ({
+      findings: [finding],
+      place: { page: path, screen: "median of its screens" },
+    })),
+  ],
   header: [
-    `Target: ${baseUrl} (${production ? "production build" : "next dev: speed, skeletons and prefetching aren't judged; measure them on pnpm start"})`,
-    `Throttled: ${values.throttle ? `${THROTTLING.cpuRate}× CPU, slow 4G` : "no"}; signed in: ${values.email ?? "no"}; server CPU: ${serverPid ? `pid ${serverPid}` : "not measured"}`,
-    `Output: ${out}`,
+    ...header,
+    ...(learner
+      ? [
+          `Exposure: each path opened signed out${intruder ? ` and as ${values.intruder}` : ""} must not carry ${learner.email}'s email or name`,
+        ]
+      : []),
+    ...(baseline ? [`Baseline: ${values.baseline}`] : []),
   ],
   loads,
   navigations,
   out,
+  sections: [...(soak ? soakRows(soak) : []), ...(comparison ? comparisonRows(comparison) : [])],
   sheets,
 });
 
 await writeFile(join(out, "report.md"), `${report.markdown}\n`);
-await writeFile(join(out, "report.json"), JSON.stringify({ baseUrl, loads, navigations }, null, 2));
+
+await writeFile(
+  join(out, "report.json"),
+  JSON.stringify(
+    {
+      baseUrl,
+      exposures,
+      loads: loads.map((load) => ({ ...load, requests: load.requests.map(savedRequest) })),
+      navigations: navigations.map((hop) => ({ ...hop, requests: hop.requests.map(savedRequest) })),
+      soak,
+    },
+    null,
+    2,
+  ),
+);
+
 console.log(`\n${report.markdown}\n\nReport: ${join(out, "report.md")}`);
 process.exitCode = report.failures > 0 ? 1 : 0;

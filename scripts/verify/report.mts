@@ -3,7 +3,7 @@ import { CLS_DIGITS, type Finding, cumulativeLayoutShift } from "./checks.mts";
 import { type LoadReport, type NavigationReport } from "./measure.mts";
 import { classifyRequest } from "./requests.mts";
 
-type Place = { page: string; screen: string };
+export type Place = { page: string; screen: string };
 type Group = Finding & { values: number[]; where: Place[] };
 
 const KILOBYTE = 1024;
@@ -80,8 +80,8 @@ function list(title: string, groups: Group[], screensPerPage: Map<string, number
 
 function loadRows(loads: LoadReport[], out: string): string[] {
   return [
-    "| Page | Screen | TTFB | FCP | LCP | CLS | Server CPU | KB (HTML/JS/all) | Skeleton shown | Paints (last) | Screenshots |",
-    "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+    "| Page | Screen | TTFB | FCP | LCP | TBT | CLS | Server CPU | KB (HTML/JS/all) | Skeleton shown | Paints (last) | Screenshots |",
+    "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ...loads.map((load) => {
       const kilobytes = [load.bytes.html, load.bytes.scripts, load.bytes.total].map((bytes) =>
         Math.round(bytes / KILOBYTE),
@@ -93,6 +93,7 @@ function loadRows(loads: LoadReport[], out: string): string[] {
         format(load.ttfbMs),
         format(load.fcpMs),
         format(load.lcpMs),
+        format(load.blockingMs),
         cumulativeLayoutShift(load.shifts).toFixed(CLS_DIGITS),
         format(load.serverCpuMs),
         kilobytes.join("/"),
@@ -132,19 +133,26 @@ function navigationRows(navigations: NavigationReport[]): string[] {
 
 /** The run's report in Markdown, its failures first, and how many failures it has. */
 export function renderReport({
+  extra,
   header,
   loads,
   navigations,
   out,
+  sections,
   sheets,
 }: {
+  /** Findings from the run's other checks (exposure, memory, the baseline), with where they apply. */
+  extra: { findings: Finding[]; place: Place }[];
   header: string[];
   loads: LoadReport[];
   navigations: NavigationReport[];
   out: string;
+  /** Those checks' own tables, after the loads and navigations. */
+  sections: string[];
   sheets: string[];
 }) {
   const groups = groupFindings([
+    ...extra,
     ...loads.map((load) => ({
       findings: load.findings,
       place: { page: load.path, screen: load.viewport },
@@ -187,6 +195,7 @@ export function renderReport({
     ...loadRows(loads, out),
     "",
     ...navigationRows(navigations),
+    ...sections,
     "Paints are the screencast's frames after the navigation started, in the first color scheme, saved beside the screenshots in each screen's `-frames` folder and named by their time. More than a couple after the first paint, or a late last one, means the page changed after it appeared: a flash, a swap, a late image or an animation. Open them to see which.",
   ].join("\n");
 

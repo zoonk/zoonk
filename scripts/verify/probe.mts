@@ -9,6 +9,8 @@ export type ProbeState = {
   fcp: number | null;
   lastMutationAt: number;
   lcp: number | null;
+  /** Main-thread tasks over 50 ms: while one runs, the page can't answer a tap. */
+  longTasks: { at: number; duration: number }[];
   shifts: { at: number; sources: string[]; value: number }[];
   /** Frames on which a loading skeleton was visible. */
   skeletonFrames: number[];
@@ -30,6 +32,7 @@ export function installProbe() {
     fcp: null,
     lastMutationAt: 0,
     lcp: null,
+    longTasks: [],
     shifts: [],
     skeletonFrames: [],
     urls: [{ at: 0, href: location.href }],
@@ -73,6 +76,12 @@ export function installProbe() {
   new PerformanceObserver((list) => {
     state.lcp = list.getEntries().at(-1)?.startTime ?? state.lcp;
   }).observe({ buffered: true, type: "largest-contentful-paint" });
+
+  new PerformanceObserver((list) => {
+    for (const entry of list.getEntries()) {
+      state.longTasks.push({ at: entry.startTime, duration: entry.duration });
+    }
+  }).observe({ buffered: true, type: "longtask" });
 
   new PerformanceObserver((list) => {
     state.fcp = list.getEntriesByName("first-contentful-paint")[0]?.startTime ?? state.fcp;
@@ -182,6 +191,43 @@ export function findOverflow() {
     scrollWidth,
     viewportWidth,
   };
+}
+
+/**
+ * Text the layout cuts off: an element whose own text overflows a box that clips it (an ellipsis,
+ * hidden overflow or a line clamp), as people see it now.
+ */
+export function findTruncated(): string[] {
+  const MAX_CUT = 10;
+  const TEXT_LENGTH = 40;
+
+  const cut = [...document.body.querySelectorAll<HTMLElement>("*")].filter((element) => {
+    const ownText = [...element.childNodes].some(
+      (node) => node.nodeType === Node.TEXT_NODE && node.textContent?.trim(),
+    );
+
+    const style = getComputedStyle(element);
+    const box = element.getBoundingClientRect();
+
+    // Text only screen readers get (`sr-only`) is clipped to nothing on purpose.
+    const visuallyHidden = box.width <= 1 || box.height <= 1 || style.clipPath === "inset(50%)";
+
+    if (!ownText || visuallyHidden || !element.checkVisibility()) {
+      return false;
+    }
+
+    const clipsWidth = style.overflowX !== "visible" || style.textOverflow === "ellipsis";
+    const clipsHeight = style.overflowY !== "visible" || style.webkitLineClamp !== "none";
+
+    return (
+      (clipsWidth && element.scrollWidth > element.clientWidth + 1) ||
+      (clipsHeight && element.scrollHeight > element.clientHeight + 1)
+    );
+  });
+
+  return [...new Set(cut.map((element) => element.textContent?.trim().slice(0, TEXT_LENGTH) ?? ""))]
+    .filter(Boolean)
+    .slice(0, MAX_CUT);
 }
 
 /** This site's links someone can see on screen now (path and query), other than the page's own. */

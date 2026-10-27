@@ -71,6 +71,14 @@ export function findServerPid(url: URL): number | null {
   return pid && read("ps", ["-o", "command=", "-p", String(pid)]).includes("next") ? pid : null;
 }
 
+const KB_PER_MB = 1024;
+
+/** The process's resident memory now, in MB (`ps -o rss=` reports KB on macOS and Linux). */
+export function readRssMb(pid: number): number | null {
+  const kilobytes = Number(read("ps", ["-o", "rss=", "-p", String(pid)]).trim());
+  return kilobytes > 0 ? kilobytes / KB_PER_MB : null;
+}
+
 /** The process's CPU time so far (user and system), in milliseconds. */
 export function readCpuMs(pid: number): number | null {
   try {

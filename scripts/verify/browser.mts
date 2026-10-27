@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { join, resolve } from "node:path";
@@ -33,9 +34,16 @@ const CONSOLE_TEXT_LENGTH = 500;
 const FRAME_NAME_DIGITS = 5;
 const SCREENCAST = { format: "jpeg", maxHeight: 1600, maxWidth: 800, quality: 60 } as const;
 
-const axeSource = createRequire(
-  resolve(import.meta.dirname, "../../packages/testing/package.json"),
-).resolve("axe-core/axe.min.js");
+/**
+ * axe-core's source, run through DevTools' evaluate rather than a script tag, so the page keeps its
+ * own Content Security Policy while it's measured.
+ */
+const axeScript = readFileSync(
+  createRequire(resolve(import.meta.dirname, "../../packages/testing/package.json")).resolve(
+    "axe-core/axe.min.js",
+  ),
+  "utf8",
+);
 
 type Violations = Parameters<typeof describeViolations>[0];
 
@@ -98,8 +106,11 @@ function recordTraffic(page: Page, actions: Map<string, string>) {
 
 export type Traffic = ReturnType<typeof recordTraffic>;
 
-/** Waits until the page stops changing: no DOM changes and no requests for a second. */
-export async function waitForQuiet(page: Page, traffic: Traffic) {
+/**
+ * Waits until the page stops changing: no DOM changes and no requests for a second. False when it
+ * was still changing at the deadline (a poll, a loop or an endless animation).
+ */
+export async function waitForQuiet(page: Page, traffic: Traffic): Promise<boolean> {
   const deadline = Date.now() + QUIET_LIMIT_MS;
 
   while (Date.now() < deadline) {
@@ -109,12 +120,14 @@ export async function waitForQuiet(page: Page, traffic: Traffic) {
     const networkQuiet = traffic.inFlight <= 0 && Date.now() - traffic.lastRequestAt >= QUIET_MS;
 
     if (domQuiet && networkQuiet) {
-      return;
+      return true;
     }
 
     // oxlint-disable-next-line no-await-in-loop -- Waits between polls.
     await page.waitForTimeout(QUIET_POLL_MS);
   }
+
+  return false;
 }
 
 /** A fresh browser context on one screen and scheme, probed, throttled when asked, recorded. */
@@ -135,7 +148,6 @@ export async function openPage({
 }) {
   const context = await browser.newContext({
     ...VIEWPORTS[viewport],
-    bypassCSP: true,
     colorScheme: scheme,
     storageState,
   });
@@ -169,8 +181,7 @@ export async function unthrottle(cdp: CDPSession) {
  * axe-core's serious and critical violations and targets under 44 px, by the player's scan rules:
  * on a device asking for more contrast, where the app keeps WCAG AA (its regular look is softer).
  */
-async function scanAccessibility(page: Page, where: string): Promise<string[]> {
-  await page.emulateMedia({ contrast: "more" });
+async function scanAccessibility(page: Page, where: string) {
   await page.evaluate(stillAnimations);
 
   for (let attempt = 0; attempt < ANIMATION_TRIES; attempt += 1) {
@@ -180,8 +191,17 @@ async function scanAccessibility(page: Page, where: string): Promise<string[]> {
     }
   }
 
-  await page.addScriptTag({ path: axeSource });
-  await page.evaluate(`(${readMissingHuesAsZero.toString()})(window.axe)`);
+  if (!(await page.evaluate("Boolean(globalThis.axe)"))) {
+    await page.evaluate(axeScript);
+    await page.evaluate(`(${readMissingHuesAsZero.toString()})(window.axe)`);
+  }
+
+  // The regular look keeps colored marks soft by design, but neutral text meets WCAG AA in it too.
+  const regular: Violations = await page.evaluate(
+    "axe.run(document, { resultTypes: ['violations'], runOnly: ['color-contrast'] }).then((results) => results.violations)",
+  );
+
+  await page.emulateMedia({ contrast: "more" });
 
   const violations: Violations = await page.evaluate(
     "axe.run(document, { resultTypes: ['violations'] }).then((results) => results.violations)",
@@ -191,10 +211,13 @@ async function scanAccessibility(page: Page, where: string): Promise<string[]> {
   await page.evaluate(resumeAnimations);
   await page.emulateMedia({ contrast: "no-preference" });
 
-  return [
-    ...describeViolations(violations, where).failing,
-    ...targets.map((target) => `${where}: [target-size] ${target}`),
-  ];
+  return {
+    failing: [
+      ...describeViolations(violations, where).failing,
+      ...targets.map((target) => `${where}: [target-size] ${target}`),
+    ],
+    regular: describeViolations(regular, where).failing,
+  };
 }
 
 /** A saved paint's file name, by its time in ms, so names sort in the order they were painted. */
@@ -231,13 +254,20 @@ export async function saveFrames({
 export async function recordScreencast(cdp: CDPSession) {
   const frames: { data: string; timestamp: number }[] = [];
 
-  cdp.on("Page.screencastFrame", (frame) => {
+  function keep(frame: { data: string; metadata: { timestamp?: number }; sessionId: number }) {
     frames.push({ data: frame.data, timestamp: frame.metadata.timestamp ?? 0 });
     void cdp.send("Page.screencastFrameAck", { sessionId: frame.sessionId }).catch(() => null);
-  });
+  }
 
+  cdp.on("Page.screencastFrame", keep);
   await cdp.send("Page.startScreencast", SCREENCAST);
-  return { frames, stop: async () => cdp.send("Page.stopScreencast") };
+
+  async function stop() {
+    await cdp.send("Page.stopScreencast");
+    cdp.off("Page.screencastFrame", keep);
+  }
+
+  return { frames, stop };
 }
 
 /**
@@ -249,6 +279,7 @@ export async function checkSchemes(
   { name, schemes }: { name: string; schemes: Scheme[] },
 ) {
   const accessibility = new Set<string>();
+  const regularContrast = new Set<string>();
   const screenshots: string[] = [];
 
   for (const colorScheme of schemes) {
@@ -256,8 +287,14 @@ export async function checkSchemes(
     await page.emulateMedia({ colorScheme });
 
     // oxlint-disable-next-line no-await-in-loop -- Scans the scheme showing now.
-    for (const finding of await scanAccessibility(page, "axe")) {
+    const scan = await scanAccessibility(page, "axe");
+
+    for (const finding of scan.failing) {
       accessibility.add(finding);
+    }
+
+    for (const finding of scan.regular) {
+      regularContrast.add(finding);
     }
 
     const screenshot = `${name}-${colorScheme}.png`;
@@ -266,5 +303,5 @@ export async function checkSchemes(
     screenshots.push(screenshot);
   }
 
-  return { accessibility: [...accessibility], screenshots };
+  return { accessibility: [...accessibility], regularContrast: [...regularContrast], screenshots };
 }

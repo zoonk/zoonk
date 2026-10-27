@@ -26,9 +26,13 @@ export type RequestKind =
 
 const DATA_TYPES = new Set(["eventsource", "fetch", "websocket", "xhr"]);
 
-/** Vercel Analytics and Speed Insights (`/_vercel/…`) and Sentry's ingest. */
+/** Vercel Analytics and Speed Insights (`/_vercel/…`, and their dev scripts) and Sentry's ingest. */
 function isAnalytics(url: URL): boolean {
-  return url.pathname.startsWith("/_vercel/") || url.hostname.endsWith("sentry.io");
+  return (
+    url.pathname.startsWith("/_vercel/") ||
+    url.hostname.endsWith("vercel-scripts.com") ||
+    url.hostname.endsWith("sentry.io")
+  );
 }
 
 export function classifyRequest(
@@ -60,6 +64,23 @@ export function pathOf(url: string | URL): string {
   const parsed = new URL(url);
   parsed.searchParams.delete("_rsc");
   return parsed.pathname + parsed.search;
+}
+
+/**
+ * A request as the saved report keeps it: no headers (cookies, tokens) and no query string (signed
+ * URLs), only what the findings need.
+ */
+export function savedRequest(request: RequestRecord) {
+  const { origin, pathname } = new URL(request.url);
+
+  return {
+    action: request.action,
+    failure: request.failure,
+    kind: classifyRequest(request),
+    method: request.method,
+    status: request.status,
+    url: `${origin}${pathname}`,
+  };
 }
 
 /** A request's method and URL without its query, and the Server Action it ran, as a finding names it. */

@@ -1,9 +1,9 @@
 import { writeFile } from "node:fs/promises";
-import { dirname, join } from "node:path";
+import { basename, dirname, join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { type Browser } from "@playwright/test";
 import { frameFile } from "./browser.mts";
-import { type LoadReport } from "./measure.mts";
+import { type LoadReport, type NavigationReport } from "./measure.mts";
 
 const SHEET_VIEWPORT = { height: 900, width: 1600 };
 
@@ -46,16 +46,31 @@ async function shoot(browser: Browser, { file, html }: { file: string; html: str
  * each screen's load in order (`paints.png`), so a run is reviewed in two looks per page instead of
  * dozens of files. Returns the sheets' paths.
  */
-export async function renderSheets(browser: Browser, loads: LoadReport[]): Promise<string[]> {
+export async function renderSheets(
+  browser: Browser,
+  {
+    baseline = [],
+    loads,
+  }: { baseline?: Pick<LoadReport, "path" | "screenshots" | "viewport">[]; loads: LoadReport[] },
+): Promise<string[]> {
   const sheets: string[] = [];
 
   for (const [path, here] of Map.groupBy(loads, (load) => load.path)) {
     const directory = dirname(here[0]?.framesDirectory ?? "");
 
+    // With a baseline, each screen shows before beside after, so unintended changes stand out.
     const screens = here.flatMap((load) =>
-      load.screenshots.map((file) =>
-        figure("screen", file.slice(file.lastIndexOf("/") + 1, -".png".length), file),
-      ),
+      load.screenshots.flatMap((file) => {
+        const name = basename(file, ".png");
+
+        const before = baseline
+          .find((old) => old.path === path && old.viewport === load.viewport)
+          ?.screenshots.find((old) => basename(old) === basename(file));
+
+        return before
+          ? [figure("screen", `${name}, before`, before), figure("screen", `${name}, after`, file)]
+          : [figure("screen", name, file)];
+      }),
     );
 
     const paints = here.map(
@@ -82,4 +97,30 @@ export async function renderSheets(browser: Browser, loads: LoadReport[]): Promi
   }
 
   return sheets;
+}
+
+/** One image with every paint after each tap, in order, so a navigation is judged by what showed. */
+export async function renderNavigationSheet(
+  browser: Browser,
+  { navigations, out }: { navigations: NavigationReport[]; out: string },
+): Promise<string[]> {
+  if (navigations.length === 0) {
+    return [];
+  }
+
+  const hops = navigations.map(
+    (hop) =>
+      `<h2>${hop.from} → ${hop.to}, ${hop.viewport}</h2><div class="row">${hop.frames
+        .map((ms) => figure("paint", `${ms} ms`, join(hop.framesDirectory, frameFile(ms))))
+        .join("")}</div>`,
+  );
+
+  const file = join(out, "navigations", "paints.png");
+
+  await shoot(browser, {
+    file,
+    html: document("Every paint after each tap, by ms since the tap", hops.join("")),
+  });
+
+  return [file];
 }

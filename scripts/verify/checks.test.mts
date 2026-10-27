@@ -2,16 +2,18 @@ import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 import {
   type LoadMeasurement,
-  type NavigationMeasurement,
   cumulativeLayoutShift,
   judgeLoad,
-  judgeNavigation,
+  totalBlockingTime,
 } from "./checks.mts";
+import { type NavigationMeasurement, judgeNavigation } from "./navigation-checks.mts";
 import { type RequestRecord, classifyRequest, pathOf } from "./requests.mts";
-import { parseCpuTime } from "./server-cpu.mts";
+import { parseCpuTime } from "./server-process.mts";
 
 const PAGE = "http://localhost:3000";
 const STEADY_GAP_MS = 800;
+const FIRST_PAINT_MS = 800;
+const BLOCKED_MS = 70;
 
 function requestTo(path: string, overrides: Partial<RequestRecord> = {}): RequestRecord {
   return { headers: {}, method: "GET", resourceType: "fetch", url: `${PAGE}${path}`, ...overrides };
@@ -20,6 +22,7 @@ function requestTo(path: string, overrides: Partial<RequestRecord> = {}): Reques
 function load(overrides: Partial<LoadMeasurement> = {}): LoadMeasurement {
   return {
     accessibility: [],
+    blockingMs: 120,
     console: [],
     fcpMs: 300,
     lastPaintMs: 400,
@@ -27,11 +30,14 @@ function load(overrides: Partial<LoadMeasurement> = {}): LoadMeasurement {
     overflow: { offenders: [], scrollWidth: 390, viewportWidth: 390 },
     pageErrors: [],
     production: true,
+    regularContrast: [],
     requests: [requestTo("/today", { resourceType: "document", status: 200 })],
     serverCpuMs: 40,
+    settled: true,
     shifts: [],
     skeletonLastMs: null,
     skeletonSeenMs: null,
+    truncated: [],
     ttfbMs: 100,
     unprefetchedLinks: [],
     ...overrides,
@@ -49,6 +55,7 @@ describe("what a page's requests were for", () => {
     [requestTo("/plan", { headers: { rsc: "1" } }), "navigation"],
     [requestTo("/today", { headers: { "next-action": "abc" }, method: "POST" }), "action"],
     [requestTo("/_vercel/insights/view", { method: "POST" }), "analytics"],
+    [{ ...requestTo("/"), url: "https://va.vercel-scripts.com/v1/script.debug.js" }, "analytics"],
     [requestTo("/api/goals"), "data"],
     [requestTo("/_next/static/chunks/app.js", { resourceType: "script" }), "asset"],
   ] as const)("%o is %s", (request, kind) => {
@@ -126,6 +133,13 @@ describe("judging a page load", () => {
     ]);
   });
 
+  it("says when it can't vouch for a load: still changing, or no largest paint", () => {
+    assert.deepEqual(checks(load({ lcpMs: null, settled: false })), [
+      "warn never settled",
+      "warn LCP",
+    ]);
+  });
+
   it("asks about a screen that changed long after its largest paint", () => {
     assert.deepEqual(checks(load({ lastPaintMs: 900 })), []);
     assert.deepEqual(checks(load({ lastPaintMs: 5600 })), ["warn late change"]);
@@ -165,6 +179,24 @@ describe("judging a page load", () => {
   });
 });
 
+describe("main-thread blocking and cut-off text", () => {
+  it("counts each long task's time past 50 ms, from the first paint", () => {
+    const tasks = [
+      { at: 100, duration: 400 },
+      { at: 900, duration: 120 },
+      { at: 1200, duration: 40 },
+    ];
+
+    // The first task ran before the first paint; the third blocked nothing.
+    assert.equal(totalBlockingTime(tasks, FIRST_PAINT_MS), BLOCKED_MS);
+    assert.deepEqual(checks(load({ blockingMs: 700 })), ["fail blocking time"]);
+  });
+
+  it("asks about text that doesn't fit, once per text", () => {
+    assert.deepEqual(checks(load({ truncated: ["Por que os preços se mexem"] })), ["warn cut off"]);
+  });
+});
+
 describe("judging a navigation", () => {
   const navigation: NavigationMeasurement = {
     arrived: true,
@@ -175,6 +207,7 @@ describe("judging a navigation", () => {
     pageErrors: [],
     production: true,
     requests: [],
+    settled: true,
     shifts: [],
     skeletonSeenMs: null,
   };
