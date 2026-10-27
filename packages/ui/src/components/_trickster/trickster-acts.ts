@@ -37,10 +37,17 @@ const SLY: Act<TricksterExpression> = {
   ],
 };
 
+/** His left arm's two-beat chuckle, which the sign he holds in that hand follows. */
+const CHUCKLE_LEFT_ARM: ActTrack["keys"] = [
+  { at: 6, ease: "swing", rotate: 13 },
+  { at: 9, ease: "swing", rotate: -4 },
+  { at: 12, ease: "swing", rotate: 10 },
+];
+
 /**
  * Smug: a squint that lowers his lids (the face swaps behind it), the far brow climbing, the grin
- * widening, a two-beat chuckle through the body and the arms, the crown cocked past its new angle
- * and the tail swished, both settling late on their loose spring.
+ * widening, a two-beat chuckle through the body and the arms (the sign shaking in his hand), the
+ * crown cocked past its new angle and the tail swished, both settling late on their loose spring.
  */
 const SMUG: Act<TricksterExpression> = {
   frames: 22,
@@ -78,15 +85,8 @@ const SMUG: Act<TricksterExpression> = {
       part: "body",
       settle: "spring",
     },
-    {
-      keys: [
-        { at: 6, ease: "swing", rotate: 13 },
-        { at: 9, ease: "swing", rotate: -4 },
-        { at: 12, ease: "swing", rotate: 10 },
-      ],
-      part: "arm-left",
-      settle: "swing",
-    },
+    { keys: CHUCKLE_LEFT_ARM, part: "arm-left", settle: "swing" },
+    { keys: CHUCKLE_LEFT_ARM, part: "sign", settle: "swing" },
     {
       keys: [
         { at: 7, ease: "swing", rotate: -11 },

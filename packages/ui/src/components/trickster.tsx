@@ -355,10 +355,13 @@ function Crown({ uid }: { uid: string }) {
   );
 }
 
-/** The "?" sign on a stick he holds up when he's the star of the card. */
+/**
+ * The "?" sign on a stick he holds up when he's the star of the card. It turns around his left
+ * shoulder, as the arm holding it does, so an act moves both together.
+ */
 function QuestionSign() {
   return (
-    <Part name="sign" pivot={[34, 121]}>
+    <Part name="sign" pivot={[46, 116]}>
       <g transform="rotate(-14 30 120)">
         <path d="M30 124 V104" stroke="#c4b5fd" strokeLinecap="round" strokeWidth="3" />
         <circle cx="30" cy="96" fill="#fbfaff" r="13" stroke="#c4b5fd" strokeWidth="1.8" />
