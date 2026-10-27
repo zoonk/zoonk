@@ -1,3 +1,4 @@
+import { Part } from "../_character/part";
 import {
   BELT_FILL,
   type BuddyBodyProps,
@@ -11,9 +12,9 @@ import {
 /** The faint third spark never fully disappears while Noodle is awake. */
 const FAINT_SPARK_MIN_OPACITY = 0.25;
 
-function NoodleSparks({ glow, uid }: Omit<BuddyBodyProps, "isNapping">) {
+function NoodleSparks({ glow, uid }: Pick<BuddyBodyProps, "glow" | "uid">) {
   return (
-    <g>
+    <Part name="sparks" pivot={[60, 40]}>
       <BuddyHalo cx={15} cy={21} glow={glow} radius={10} uid={uid} />
       <BuddyHalo cx={104} cy={19} glow={glow} radius={11} uid={uid} />
       <Spark fill="#ff8a3d" size={12} x={9} y={15} />
@@ -25,12 +26,12 @@ function NoodleSparks({ glow, uid }: Omit<BuddyBodyProps, "isNapping">) {
         x={88}
         y={1}
       />
-    </g>
+    </Part>
   );
 }
 
 /** Noodle, a brain with legs whose sparks glow with Energy. Sparks rest while it naps. */
-export function NoodleBody({ glow, isNapping, uid }: BuddyBodyProps) {
+export function NoodleBody({ face, glow, isNapping, uid }: BuddyBodyProps) {
   return (
     <>
       <defs>
@@ -47,68 +48,81 @@ export function NoodleBody({ glow, isNapping, uid }: BuddyBodyProps) {
         </clipPath>
       </defs>
 
-      <ellipse cx="60" cy="113" fill="#000" opacity=".08" rx="30" ry="4.5" />
-      <ellipse cx="47" cy="106" fill="#e8628f" rx="9" ry="6" />
-      <ellipse cx="73" cy="106" fill="#e8628f" rx="9" ry="6" />
-      <ellipse cx="17" cy="74" fill="#ff8fb3" rx="7" ry="9" transform="rotate(25 17 74)" />
-      <ellipse cx="103" cy="74" fill="#ff8fb3" rx="7" ry="9" transform="rotate(-25 103 74)" />
-      <g clipPath={buddyDefUrl(uid, "noodle-clip")}>
-        <rect fill={buddyDefUrl(uid, "noodle-shade")} height="120" width="120" x="0" y="0" />
-        <rect height="11" style={BELT_FILL} width="120" x="0" y="86" />
-        <rect
-          fill="none"
-          height="11"
-          stroke="#000"
-          strokeOpacity=".12"
-          strokeWidth="1.5"
-          width="120"
-          x="0"
-          y="86"
-        />
-      </g>
-      <g fill="none" opacity=".8" stroke="#e0598a" strokeLinecap="round" strokeWidth="3">
-        <path d="M47 27 q6 -7 13 -1" />
-        <path d="M65 22 q7 -5 13 2" />
-        <path d="M28 46 q5 -6 11 -2" />
-        <path d="M82 44 q6 -4 11 2" />
-        <path d="M58 40 q3 -4 7 -2" />
-      </g>
-      <ellipse
-        cx="44"
-        cy="30"
-        fill="#fff"
-        opacity=".35"
-        rx="9"
-        ry="5"
-        transform="rotate(-20 44 30)"
-      />
-      <path
-        d="M58 91 l-9 14 l5 2 l8 -12 z"
-        stroke="#000"
-        strokeOpacity=".15"
-        strokeWidth="1.2"
-        style={BELT_FILL}
-      />
-      <path
-        d="M62 91 l9 14 l-5 2 l-8 -12 z"
-        stroke="#000"
-        strokeOpacity=".15"
-        strokeWidth="1.2"
-        style={BELT_FILL}
-      />
-      <rect
-        height="14"
-        rx="4"
-        stroke="#000"
-        strokeOpacity=".18"
-        strokeWidth="1.2"
-        style={BELT_FILL}
-        width="14"
-        x="53"
-        y="84"
-      />
+      <Part name="shadow" pivot={[60, 113]}>
+        <ellipse cx="60" cy="113" fill="#000" opacity=".08" rx="30" ry="4.5" />
+      </Part>
+      <Part name="feet" pivot={[60, 106]}>
+        <ellipse cx="47" cy="106" fill="#e8628f" rx="9" ry="6" />
+        <ellipse cx="73" cy="106" fill="#e8628f" rx="9" ry="6" />
+      </Part>
+      <Part name="body" pivot={[60, 108]}>
+        <Part name="arm-left" pivot={[22, 70]}>
+          <ellipse cx="17" cy="74" fill="#ff8fb3" rx="7" ry="9" transform="rotate(25 17 74)" />
+        </Part>
+        <Part name="arm-right" pivot={[98, 70]}>
+          <ellipse cx="103" cy="74" fill="#ff8fb3" rx="7" ry="9" transform="rotate(-25 103 74)" />
+        </Part>
+        <Part name="head" pivot={[60, 104]}>
+          <g clipPath={buddyDefUrl(uid, "noodle-clip")}>
+            <rect fill={buddyDefUrl(uid, "noodle-shade")} height="120" width="120" x="0" y="0" />
+            <rect height="11" style={BELT_FILL} width="120" x="0" y="86" />
+            <rect
+              fill="none"
+              height="11"
+              stroke="#000"
+              strokeOpacity=".12"
+              strokeWidth="1.5"
+              width="120"
+              x="0"
+              y="86"
+            />
+          </g>
+          <g fill="none" opacity=".8" stroke="#e0598a" strokeLinecap="round" strokeWidth="3">
+            <path d="M47 27 q6 -7 13 -1" />
+            <path d="M65 22 q7 -5 13 2" />
+            <path d="M28 46 q5 -6 11 -2" />
+            <path d="M82 44 q6 -4 11 2" />
+            <path d="M58 40 q3 -4 7 -2" />
+          </g>
+          <ellipse
+            cx="44"
+            cy="30"
+            fill="#fff"
+            opacity=".35"
+            rx="9"
+            ry="5"
+            transform="rotate(-20 44 30)"
+          />
+          <path
+            d="M58 91 l-9 14 l5 2 l8 -12 z"
+            stroke="#000"
+            strokeOpacity=".15"
+            strokeWidth="1.2"
+            style={BELT_FILL}
+          />
+          <path
+            d="M62 91 l9 14 l-5 2 l-8 -12 z"
+            stroke="#000"
+            strokeOpacity=".15"
+            strokeWidth="1.2"
+            style={BELT_FILL}
+          />
+          <rect
+            height="14"
+            rx="4"
+            stroke="#000"
+            strokeOpacity=".18"
+            strokeWidth="1.2"
+            style={BELT_FILL}
+            width="14"
+            x="53"
+            y="84"
+          />
 
-      {!isNapping && <NoodleSparks glow={glow} uid={uid} />}
+          {!isNapping && <NoodleSparks glow={glow} uid={uid} />}
+          {face}
+        </Part>
+      </Part>
     </>
   );
 }

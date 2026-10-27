@@ -18,6 +18,7 @@ import { type BuddyBodyProps, Spark, buddyDefId, buddyDefUrl } from "./_buddy/bu
 import { NoodleBody } from "./_buddy/noodle";
 import { OttoBody } from "./_buddy/otto";
 import { ZuBody } from "./_buddy/zu";
+import { Part } from "./_character/part";
 
 export type { BuddyExpression } from "./_buddy/buddy-face";
 
@@ -42,6 +43,8 @@ function getFaceViewBox(scale: number) {
 
   return `${GROUND_X - size / 2} ${centerY - size / 2} ${size} ${size}`;
 }
+
+const NO_SWAPS: readonly BuddyExpression[] = [];
 
 const EXPRESSION_BY_ENERGY: Record<BuddyEnergyState, BuddyExpression> = {
   awake: "happy",
@@ -86,26 +89,7 @@ function WiseAura({ uid }: { uid: string }) {
   );
 }
 
-/**
- * The learner's buddy: Zu, Noodle, Beep or Otto. The stage comes from the belt, the
- * glow and the default expression from Energy, and every pair of glasses fits
- * every buddy. Pass a translated `label` so the buddy is announced as an image; omit
- * it only when adjacent text already names the buddy. `crop="face"` frames only the face, for
- * icon sizes such as a tab.
- */
-function Buddy({
-  beltColor,
-  className,
-  crop,
-  energy,
-  expression,
-  glasses = "round",
-  kind,
-  label,
-  studiedToday = false,
-  style,
-  ...props
-}: Omit<React.ComponentProps<"svg">, "children" | "viewBox"> & {
+export type BuddyProps = Omit<React.ComponentProps<"svg">, "children" | "viewBox"> & {
   beltColor: BeltColor;
   crop?: "face";
   /** Null before the learner has any Energy: the buddy is awake, without a glow. */
@@ -116,7 +100,26 @@ function Buddy({
   label?: string;
   /** Learning wakes the buddy: on a day with study it never naps, even while Energy is low. */
   studiedToday?: boolean;
-}) {
+};
+
+/**
+ * The buddy's drawing, with the faces an act swaps in (`swapFaces`) drawn hidden over its own.
+ * `Buddy` draws it still; `BuddyActor` (`@zoonk/ui/components/buddy-actor`) makes it act.
+ */
+export function BuddyFigure({
+  beltColor,
+  className,
+  crop,
+  energy,
+  expression,
+  glasses = "round",
+  kind,
+  label,
+  studiedToday = false,
+  style,
+  swapFaces = NO_SWAPS,
+  ...props
+}: BuddyProps & { swapFaces?: readonly BuddyExpression[] }) {
   const uid = useId().replaceAll(/[^\w-]/gu, "");
   const stage = getBuddyStage(beltColor);
   const energyState = getBuddyEnergyState(energy, { studiedToday });
@@ -150,14 +153,40 @@ function Buddy({
         filter={stage === "wise" ? buddyDefUrl(uid, "wise-glow") : undefined}
         transform={`translate(${GROUND_X} ${GROUND_Y}) scale(${scale}) translate(${-GROUND_X} ${-GROUND_Y})`}
       >
-        <BuddyBody glow={getBuddyGlow(energy)} isNapping={isNapping} kind={kind} uid={uid} />
-        <BuddyFace expression={face} />
-        <g transform={isNapping ? `translate(0 ${SLEEPY_EYES_OFFSET})` : undefined}>
-          <BuddyGlassesFrame glasses={glasses} uid={uid} />
-        </g>
+        <BuddyBody
+          face={
+            <Part name="face" pivot={[60, 64]}>
+              <BuddyFace expression={face} />
+              {swapFaces
+                .filter((swapped) => swapped !== face)
+                .map((swapped) => (
+                  <BuddyFace expression={swapped} hidden key={swapped} />
+                ))}
+              <g transform={isNapping ? `translate(0 ${SLEEPY_EYES_OFFSET})` : undefined}>
+                <BuddyGlassesFrame glasses={glasses} uid={uid} />
+              </g>
+            </Part>
+          }
+          glow={getBuddyGlow(energy)}
+          isNapping={isNapping}
+          kind={kind}
+          uid={uid}
+        />
       </g>
     </svg>
   );
+}
+
+/**
+ * The learner's buddy: Zu, Noodle, Beep or Otto. The stage comes from the belt, the
+ * glow and the default expression from Energy, and every pair of glasses fits
+ * every buddy. Pass a translated `label` so the buddy is announced as an image; omit
+ * it only when adjacent text already names the buddy. `crop="face"` frames only the face, for
+ * icon sizes such as a tab. It holds still: a character never moves as one block, and only
+ * `BuddyActor` makes its parts act.
+ */
+function Buddy(props: BuddyProps) {
+  return <BuddyFigure {...props} />;
 }
 
 export { Buddy };
