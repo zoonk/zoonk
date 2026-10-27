@@ -4,7 +4,8 @@ import { getExtracted } from "next-intl/server";
 
 /**
  * Whose settings these are, over the section's title: the account's email, and "Plus" when that's
- * the plan. A guest or a visitor has no account to name.
+ * the plan. A guest or a visitor has no account to name. An email keeps its own case: the line's
+ * capitals made it read "PERSONA@ZOONK.TEST".
  */
 export async function SettingsEyebrow() {
   const t = await getExtracted();
@@ -14,5 +15,9 @@ export async function SettingsEyebrow() {
     return null;
   }
 
-  return subscription ? t("{email} · Plus", { email: session.user.email }) : session.user.email;
+  return (
+    <span className="normal-case">
+      {subscription ? t("{email} · Plus", { email: session.user.email }) : session.user.email}
+    </span>
+  );
 }
