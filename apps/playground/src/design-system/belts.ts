@@ -5,7 +5,7 @@ import { type ColorGroup } from "./color";
 export const BELT_GROUP: ColorGroup = {
   id: "belts",
   intro:
-    "A belt wears its color once reached: the learner's identity, as a dot by their name, drawn on the level page and on their buddy. Each keeps its hue, softened like every colored thing, blue and purple apart from progress's blue and Brain Power's violet; with more contrast they're the full-strength colors. White and black take an outline where they'd vanish.",
+    "A belt wears its color once reached: the learner's identity, as a dot by their name, drawn with a stripe per level on the level page, every belt in its color on the rack, and on their buddy. Identity, not a meaning, so belts keep their full colors in every mode, the one place a strong color is the rule; nothing else borrows them. White and black take an outline where they'd vanish.",
   title: "Belts",
   tokens: BELT_COLORS_ORDER.map((belt) => ({
     meaning: `The ${belt} belt.`,
