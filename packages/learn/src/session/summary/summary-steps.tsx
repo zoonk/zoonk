@@ -9,6 +9,7 @@ import { StepsBackButton, focusStepTitle } from "../../_components/steps";
 import { TaskActions } from "../../_components/task-layout";
 import { isFocusLost } from "../../_utils/is-focus-lost";
 import { TaskFrame, TaskMainButton } from "../../shell/task-frame";
+import { MomentAfterCeremony } from "../moment-ceremony";
 import { OpenNextStep } from "../open-next-step";
 import { SessionHeader } from "../session-header";
 import {
@@ -128,18 +129,9 @@ export function SummarySteps() {
   const stepRef = useRef<HTMLDivElement>(null);
   const rewards = useRewardsStep(stepRef);
   const keepGoing = useKeepGoing();
-  const [momentShown, setMomentShown] = useState(false);
   const firstVisit = useFirstSummaryVisit(summary);
 
-  // Once the milestone's moment is gone, the summary's title takes the focus, so the summary reads
-  // on from there.
-  useEffect(() => {
-    if (momentShown) {
-      focusStepTitle(stepRef.current);
-    }
-  }, [momentShown]);
-
-  // So does a summary the learner just reached with the focus nowhere (the tapped "Stop for today"
+  // A summary the learner just reached with the focus nowhere (the tapped "Stop for today"
   // went with the screen before it), so a screen reader starts at its title.
   const shown = stopped || summary.finished;
 
@@ -162,53 +154,54 @@ export function SummarySteps() {
 
   const milestone = summary.ceremony;
   const continuesToRewards = rewards.exists && !rewards.open;
-  // What the day earned celebrates once, after the milestone's ceremony when there is one.
-  const celebrates = firstVisit && (!milestone || momentShown);
 
   return (
-    <TaskFrame
-      aside={{
-        children: (
-          <CelebrationScope play={celebrates}>
-            <EarnedToday />
-          </CelebrationScope>
-        ),
-        label: t("Earned today"),
-        title: t("Earned today"),
-      }}
-      closeOnEscape
-      exitHref={exitHref}
-      footer={
-        <>
-          <KeepGoingFailed keepGoing={keepGoing} />
-
-          <SummaryButtons
-            continuesToRewards={continuesToRewards}
-            keepGoing={keepGoing}
-            rewards={rewards}
-          />
-
-          <SummaryOptions lastStep={!continuesToRewards} />
-        </>
-      }
-      headerTitle={
-        rewards.exists ? (
-          <StepDots className="lg:hidden" current={rewards.open ? 1 : 0} total={2} />
-        ) : null
-      }
+    <MomentAfterCeremony
+      milestone={milestone}
+      render={ceremony && milestone ? (_, close) => ceremony(milestone, close) : undefined}
     >
-      <div
-        className="flex flex-col gap-4"
-        data-slot="steps-step"
-        key={rewards.open ? "rewards" : "done"}
-        ref={stepRef}
-      >
-        <CelebrationScope play={celebrates && !rewards.revisited}>
-          {rewards.open ? <RewardsStep /> : <DoneStep />}
-        </CelebrationScope>
-      </div>
+      <TaskFrame
+        aside={{
+          children: (
+            <CelebrationScope play={firstVisit}>
+              <EarnedToday />
+            </CelebrationScope>
+          ),
+          label: t("Earned today"),
+          title: t("Earned today"),
+        }}
+        closeOnEscape
+        exitHref={exitHref}
+        footer={
+          <>
+            <KeepGoingFailed keepGoing={keepGoing} />
 
-      {ceremony && milestone && !momentShown && ceremony(milestone, () => setMomentShown(true))}
-    </TaskFrame>
+            <SummaryButtons
+              continuesToRewards={continuesToRewards}
+              keepGoing={keepGoing}
+              rewards={rewards}
+            />
+
+            <SummaryOptions lastStep={!continuesToRewards} />
+          </>
+        }
+        headerTitle={
+          rewards.exists ? (
+            <StepDots className="lg:hidden" current={rewards.open ? 1 : 0} total={2} />
+          ) : null
+        }
+      >
+        <div
+          className="flex flex-col gap-4"
+          data-slot="steps-step"
+          key={rewards.open ? "rewards" : "done"}
+          ref={stepRef}
+        >
+          <CelebrationScope play={firstVisit && !rewards.revisited}>
+            {rewards.open ? <RewardsStep /> : <DoneStep />}
+          </CelebrationScope>
+        </div>
+      </TaskFrame>
+    </MomentAfterCeremony>
   );
 }
