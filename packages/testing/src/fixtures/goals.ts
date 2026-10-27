@@ -64,13 +64,16 @@ async function snapshotPlan(planId: string) {
   return {
     coveredShare: plan.coveredShare,
     estimateHours: plan.estimateHours,
+    inputsKey: plan.inputsKey,
     items: plan.items.map((item) => ({
       chapterId: item.chapterId,
       completedAt: item.completedAt?.toISOString() ?? null,
+      facts: item.facts,
       id: item.id,
       kind: item.kind,
       lessonId: item.lessonId,
       lessons: item.lessons,
+      minutes: item.minutes,
       phase: item.phase,
       scheduledFor: toIsoDay(item.scheduledFor),
       skillId: item.skillId,
@@ -78,11 +81,14 @@ async function snapshotPlan(planId: string) {
       titleSnapshot: item.titleSnapshot,
     })),
     phases: plan.phases,
+    sourceSkillIds: plan.sourceSkillIds,
     state: {
       goal: { dailyMinutes: plan.goal.dailyMinutes, targetDate: toIsoDay(plan.goal.targetDate) },
       graph: plan.graph,
       settings: plan.settings,
     },
+    summary: plan.summary,
+    todaySession: null,
   };
 }
 
