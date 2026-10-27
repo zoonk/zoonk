@@ -60,7 +60,7 @@ function AlphabetForms({ forms }: { forms: AlphabetForm[] }) {
     <dl className="border-border grid w-full grid-cols-2 gap-x-6 gap-y-4 border-y py-4 sm:grid-cols-4">
       {forms.map((form) => (
         <div className="flex min-w-0 flex-col gap-1" key={`${form.label}-${form.symbol}`}>
-          <dt className="text-label">{form.label}</dt>
+          <dt className="text-muted-foreground text-xs font-medium">{form.label}</dt>
           <dd className="text-2xl font-medium" dir="auto">
             {form.symbol}
           </dd>

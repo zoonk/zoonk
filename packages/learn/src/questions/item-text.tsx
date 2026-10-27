@@ -25,7 +25,7 @@ function InlineMarkupView({ segments }: { segments: InlineMarkup[] }) {
     if (segment.kind === "code") {
       return (
         <code
-          className="bg-foreground text-background rounded-sm px-1 py-0.5 font-mono text-[0.85em]"
+          className="bg-muted text-foreground rounded-sm px-1 py-0.5 font-mono text-[0.85em]"
           key={key}
         >
           {segment.text}
