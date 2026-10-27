@@ -91,10 +91,10 @@ describe(readPlanSummary, () => {
 describe(readFreshPlanSummary, () => {
   it("checks the session's input version and study day against a layout summary", () => {
     const basis = {
-      inputVersion: 4,
+      layoutInputVersion: 4,
+      layoutStudyDay: "2026-10-14",
       planId: plan.id,
       planVersion: plan.version,
-      studyDay: "2026-10-14",
       timeZone: "America/Sao_Paulo",
       userId: plan.userId,
     };
@@ -104,21 +104,12 @@ describe(readFreshPlanSummary, () => {
     );
 
     expect(
-      readFreshPlanSummary({ basis: { ...basis, inputVersion: 5 }, value: summary }),
+      readFreshPlanSummary({ basis: { ...basis, layoutInputVersion: 5 }, value: summary }),
     ).toBeNull();
 
     expect(
-      readFreshPlanSummary({ basis: { ...basis, studyDay: "2026-10-15" }, value: summary }),
+      readFreshPlanSummary({ basis: { ...basis, layoutStudyDay: "2026-10-15" }, value: summary }),
     ).toBeNull();
-
-    // Session metadata writes keep the same selected facts with the updated input basis.
-    const restamped = { basis, schemaVersion: 1, selected: summary.selected };
-
-    expect(readFreshPlanSummary({ basis, value: restamped })?.selected).toStrictEqual(
-      summary.selected,
-    );
-
-    expect(readPlanSummary({ plan, value: restamped })).toBeNull();
   });
 });
 

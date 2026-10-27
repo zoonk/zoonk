@@ -60,10 +60,10 @@ function assertFresh(plan: Awaited<ReturnType<typeof saved>>, userId: string) {
   expect(
     readFreshPlanSummary({
       basis: {
-        inputVersion: plan.inputVersion,
+        layoutInputVersion: plan.inputVersion,
+        layoutStudyDay: "2026-09-30",
         planId: plan.id,
         planVersion: plan.version,
-        studyDay: "2026-09-30",
         timeZone: "UTC",
         userId,
       },

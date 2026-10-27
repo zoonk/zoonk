@@ -42,8 +42,7 @@ export type PlanSummary = z.infer<typeof planSummarySchema>;
 /**
  * The stored plan's summary when it describes that plan: the version it was posted with is the
  * plan's, for its owner. It describes the plan whatever happened since (studying, a new day), never
- * a reason to build again. Null for any other value (a session's restamp included, see
- * `savedPlanSummarySchema`), which reads as pending, never as a plan with no work.
+ * a reason to build again. Null for any other value, which reads as pending, never as a plan with no work.
  */
 export function readPlanSummary({
   plan,
@@ -216,65 +215,23 @@ export function reduceRestoredSummary({
   return reduction.kind === "reduced" ? reduction.summary : restored;
 }
 
-/**
- * The basis a session's metadata write stamps on the selected facts it keeps: the input version and
- * study day it read them fresh at (see `prepareSelectedPlanSave`).
- */
-const sessionBasisSchema = z
-  .object({
-    inputVersion: z.int().nonnegative(),
-    planId: z.string(),
-    planVersion: z.int().positive(),
-    studyDay: z.iso.date(),
-    timeZone: z.string().min(1),
-    userId: z.string(),
-  })
-  .strict();
-
-/** The session reader's input basis for both layout writes and session metadata writes. */
-export const savedPlanSummarySchema = z.union([
-  z
-    .object({
-      basis: sessionBasisSchema,
-      schemaVersion: z.literal(1),
-      selected: selectedSummarySchema,
-    })
-    .strict(),
-  planSummarySchema.transform(
-    ({ basis: { layoutInputVersion, layoutStudyDay, ...basis }, selected }) => ({
-      basis: { ...basis, inputVersion: layoutInputVersion, studyDay: layoutStudyDay },
-      schemaVersion: 1 as const,
-      selected,
-    }),
-  ),
-]);
-
-export type SavedPlanSummary = z.infer<typeof savedPlanSummarySchema>;
-
-/**
- * The session reader's complete basis must match before it may skip a selected build.
- */
+/** The session reader's complete basis must match before it may skip a selected build. */
 export function readFreshPlanSummary({
   basis,
   value,
 }: {
-  basis: SavedPlanSummary["basis"];
+  basis: PlanSummary["basis"];
   value: unknown;
-}): SavedPlanSummary | null {
-  const parsed = savedPlanSummarySchema.safeParse(value);
+}): PlanSummary | null {
+  const summary = readPlanSummary({
+    plan: { id: basis.planId, userId: basis.userId, version: basis.planVersion },
+    value,
+  });
 
-  if (!parsed.success) {
-    return null;
-  }
-
-  const saved = parsed.data.basis;
-
-  return saved.userId === basis.userId &&
-    saved.planId === basis.planId &&
-    saved.inputVersion === basis.inputVersion &&
-    saved.planVersion === basis.planVersion &&
-    saved.studyDay === basis.studyDay &&
-    saved.timeZone === basis.timeZone
-    ? parsed.data
+  return summary &&
+    summary.basis.layoutInputVersion === basis.layoutInputVersion &&
+    summary.basis.layoutStudyDay === basis.layoutStudyDay &&
+    summary.basis.timeZone === basis.timeZone
+    ? summary
     : null;
 }

@@ -1,20 +1,20 @@
 import { describe, expect, it } from "vitest";
-import { type SavedPlanSummary, readFreshPlanSummary } from "./_utils/plan-summary";
+import { type PlanSummary, readFreshPlanSummary } from "./_utils/plan-summary";
 
-type Basis = SavedPlanSummary["basis"];
+type Basis = PlanSummary["basis"];
 
 const basis: Basis = {
-  inputVersion: 4,
+  layoutInputVersion: 4,
+  layoutStudyDay: "2026-10-14",
   planId: "plan-a",
   planVersion: 7,
-  studyDay: "2026-10-14",
   timeZone: "America/Sao_Paulo",
   userId: "learner-a",
 };
 
-const summary: SavedPlanSummary = {
+const summary: PlanSummary = {
   basis,
-  schemaVersion: 1,
+  schemaVersion: 2,
   selected: {
     bases: null,
     coverage: null,
@@ -37,10 +37,10 @@ describe("saved plan freshness", () => {
   });
 
   it.each<Partial<Basis>>([
-    { inputVersion: 5 },
+    { layoutInputVersion: 5 },
     { planId: "plan-b" },
     { planVersion: 8 },
-    { studyDay: "2026-10-15" },
+    { layoutStudyDay: "2026-10-15" },
     { timeZone: "UTC" },
     { userId: "learner-b" },
   ])("requires a build when a basis input changes (%j)", (change) => {

@@ -76,10 +76,10 @@ describe("selected plan persistence", () => {
 
     const summary = readFreshPlanSummary({
       basis: {
-        inputVersion: saved.inputVersion,
+        layoutInputVersion: saved.inputVersion,
+        layoutStudyDay: "2020-09-28",
         planId: saved.id,
         planVersion: saved.version,
-        studyDay: "2020-09-28",
         timeZone: "UTC",
         userId: user.id,
       },

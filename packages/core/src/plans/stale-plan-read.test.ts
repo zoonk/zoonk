@@ -12,7 +12,7 @@ import { seedV2PersonaCopy } from "../seed/seed-v2";
 import { openStudyDay } from "../sessions/open-study-day";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
-import { savedPlanSummarySchema } from "./_utils/plan-summary";
+import { planSummarySchema } from "./_utils/plan-summary";
 import { createGoalPlan } from "./create-goal-plan";
 import { getGoalPlan } from "./get-goal-plan";
 
@@ -171,10 +171,10 @@ describe("the visible Plan after days away, before any learner POST", () => {
     const before = await saved(plan.id);
     expect(before.inputVersion).toBe(plan.inputVersion);
 
-    expect(savedPlanSummarySchema.parse(before.summary).basis).toMatchObject({
-      inputVersion: plan.inputVersion,
+    expect(planSummarySchema.parse(before.summary).basis).toMatchObject({
+      layoutInputVersion: plan.inputVersion,
+      layoutStudyDay: "2026-10-15",
       planVersion: plan.version,
-      studyDay: "2026-10-15",
     });
 
     const read = await countDatabaseStatements(() => getTodayView(input));

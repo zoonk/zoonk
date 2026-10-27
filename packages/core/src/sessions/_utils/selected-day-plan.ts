@@ -8,7 +8,7 @@ import {
   addsLessonsAfterLessonsDone,
   isPlanLaidOut,
 } from "../../plans/_utils/plan-refresh-admission";
-import { readFreshPlanSummary, savedPlanSummarySchema } from "../../plans/_utils/plan-summary";
+import { planSummarySchema, readFreshPlanSummary } from "../../plans/_utils/plan-summary";
 import { isPlanUnchanged } from "../../plans/_utils/plan-unchanged";
 import { type ComputedPlan, computePlan } from "../../plans/_utils/replan";
 import { type SelectedSummary } from "../../plans/_utils/selected-summary-contract";
@@ -105,7 +105,7 @@ function needsCheckpointReconciliation(context: PlanContext): boolean {
 function keepsShownLayout(context: PlanContext): boolean {
   const { goal, timeZone } = context;
 
-  const stored = savedPlanSummarySchema.safeParse(context.plan.summary);
+  const stored = planSummarySchema.safeParse(context.plan.summary);
 
   const hasManualPlaceholder = context.items.some(
     (item) => item.chapterId !== null && item.lessonId === null && !item.facts,
@@ -117,10 +117,10 @@ function keepsShownLayout(context: PlanContext): boolean {
     !stored.success ||
     readFreshPlanSummary({
       basis: {
-        inputVersion: context.plan.inputVersion,
+        layoutInputVersion: context.plan.inputVersion,
+        layoutStudyDay: stored.data.basis.layoutStudyDay,
         planId: context.plan.id,
         planVersion: context.plan.version,
-        studyDay: stored.data.basis.studyDay,
         timeZone,
         userId: goal.userId,
       },
@@ -170,10 +170,10 @@ export async function selectDayPlanFromContext({
 
   const fresh = readFreshPlanSummary({
     basis: {
-      inputVersion: context.plan.inputVersion,
+      layoutInputVersion: context.plan.inputVersion,
+      layoutStudyDay: toIsoDate(context.today),
       planId: context.plan.id,
       planVersion: context.plan.version,
-      studyDay: toIsoDate(context.today),
       timeZone,
       userId: goal.userId,
     },

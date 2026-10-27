@@ -4,7 +4,7 @@ import { toComputedPlanWrite } from "../../plans/_utils/computed-plan-write";
 import { getEstimateChange } from "../../plans/_utils/estimate-change";
 import { parsePlanChangePayload } from "../../plans/_utils/plan-change-payload";
 import { type PlanContext } from "../../plans/_utils/plan-context";
-import { type SavedPlanSummary, readFreshPlanSummary } from "../../plans/_utils/plan-summary";
+import { type PlanSummary, readFreshPlanSummary } from "../../plans/_utils/plan-summary";
 import { type PlanChangeRecord } from "../../plans/_utils/replan";
 import { getSettledPlanChange } from "../../plans/_utils/settled-change";
 import { type PlanWrite, writePlan } from "../../plans/_utils/write-plan";
@@ -30,7 +30,7 @@ export function getSelectedPlanChange(selection: SelectedDayPlan): PlanChangeRec
 type SelectedPlanMetadata = {
   graph?: PlanState["graph"];
   inputsKey?: string;
-  summary?: SavedPlanSummary;
+  summary?: PlanSummary;
 };
 
 /** Only materialized data enters the transaction; lazy advice cannot extend its lock lifetime. */
@@ -50,10 +50,10 @@ function prepareMetadata(selection: SelectedDayPlan): SelectedPlanMetadata | nul
 
   const summary = readFreshPlanSummary({
     basis: {
-      inputVersion: context.plan.inputVersion,
+      layoutInputVersion: context.plan.inputVersion,
+      layoutStudyDay: toIsoDate(context.today),
       planId: context.plan.id,
       planVersion: context.plan.version,
-      studyDay: toIsoDate(context.today),
       timeZone: context.timeZone,
       userId: context.goal.userId,
     },
@@ -71,14 +71,14 @@ function prepareMetadata(selection: SelectedDayPlan): SelectedPlanMetadata | nul
     ...(selected && {
       summary: {
         basis: {
-          inputVersion: context.plan.inputVersion + 1,
+          layoutInputVersion: context.plan.inputVersion + 1,
+          layoutStudyDay: toIsoDate(context.today),
           planId: context.plan.id,
           planVersion: context.plan.version,
-          studyDay: toIsoDate(context.today),
           timeZone: context.timeZone,
           userId: context.goal.userId,
         },
-        schemaVersion: 1,
+        schemaVersion: 2,
         selected,
       },
     }),
