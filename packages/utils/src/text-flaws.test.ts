@@ -78,11 +78,9 @@ describe(findUnrenderedMarkdown, () => {
 });
 
 describe(findPlaceholderText, () => {
-  it("passes real text, quotes with elisions and the learner's name slot", () => {
+  it("passes real text and quotes with elisions", () => {
     expect(
-      findPlaceholderText(
-        String.raw`O texto diz que [...] a lei vale, {{NAME}}, e $\frac{1}{2}$ basta.`,
-      ),
+      findPlaceholderText(String.raw`O texto diz que [...] a lei vale, e $\frac{1}{2}$ basta.`),
     ).toStrictEqual([]);
   });
 

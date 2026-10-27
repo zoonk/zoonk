@@ -1,6 +1,5 @@
 import { RichTextBlocks } from "@zoonk/learn/rich-text";
 import { cn } from "@zoonk/ui/lib/utils";
-import { useReplaceName } from "../user-name-context";
 import { stripWrappingQuotes } from "./_utils/strip-wrapping-quotes";
 
 /**
@@ -13,13 +12,8 @@ export const QUESTION_TEXT_CLASS =
 
 /** The situation before a question, read before answering, quieter than the question itself. */
 export function ContextText({ children }: { children: React.ReactNode }) {
-  const replaceName = useReplaceName();
-
   return typeof children === "string" ? (
-    <RichTextBlocks
-      className="text-base leading-relaxed"
-      text={stripWrappingQuotes(replaceName(children))}
-    />
+    <RichTextBlocks className="text-base leading-relaxed" text={stripWrappingQuotes(children)} />
   ) : (
     <p className="text-base leading-relaxed">{children}</p>
   );
@@ -33,14 +27,12 @@ export function QuestionText({
   children: React.ReactNode;
   className?: string;
 }) {
-  const replaceName = useReplaceName();
-
   if (typeof children === "string") {
     return (
       <RichTextBlocks
         className={cn(QUESTION_TEXT_CLASS, className)}
         paragraphTag="h2"
-        text={stripWrappingQuotes(replaceName(children))}
+        text={stripWrappingQuotes(children)}
       />
     );
   }

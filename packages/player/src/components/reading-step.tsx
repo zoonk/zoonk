@@ -19,7 +19,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { Fragment } from "react";
 import { type SelectedAnswer, type StepResult } from "../step-answer";
-import { useReplaceName } from "../user-name-context";
 import {
   type ReadingPromptWordHint,
   buildReadingPromptWordHints,
@@ -85,8 +84,7 @@ function ReadingPromptText({
   sentence: string;
   sentenceWordOptions: WordBankOption[];
 }) {
-  const replaceName = useReplaceName();
-  const prompt = stripWrappingQuotes(replaceName(sentence));
+  const prompt = stripWrappingQuotes(sentence);
   const hints = buildReadingPromptWordHints({ prompt, sentenceWordOptions });
   const hasWordSpaces = prompt.includes(" ");
 

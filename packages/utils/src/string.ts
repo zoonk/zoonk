@@ -1,5 +1,4 @@
 const SLUG_MAX_LENGTH = 50;
-const NAME_PLACEHOLDER = "{{NAME}}";
 const WORD_CONNECTOR_PATTERN = /^[-'’‐‑‒–]$/u;
 const wordSegmenter = new Intl.Segmenter(undefined, { granularity: "word" });
 
@@ -180,40 +179,6 @@ export function getFirstSentence(text: string, locale: string): string {
   const [first] = new Intl.Segmenter(locale, { granularity: "sentence" }).segment(text.trim());
 
   return first?.segment.trim() ?? "";
-}
-
-/**
- * Capitalize the first letter of a string without mutating the rest.
- * Needed after stripping a leading `{{NAME}}` placeholder so the
- * remaining sentence still starts with an uppercase letter.
- */
-function capitalizeFirst(text: string): string {
-  return text.charAt(0).toUpperCase() + text.slice(1);
-}
-
-/**
- * Replace `{{NAME}}` placeholders with the user's display name.
- * When the user is unauthenticated (`name` is null), strip the
- * placeholder and any surrounding comma-space punctuation, then
- * capitalize the result so sentences that started with `{{NAME}}`
- * still begin with an uppercase letter.
- */
-export function replaceNamePlaceholder(text: string, name: string | null): string {
-  if (!text.includes(NAME_PLACEHOLDER)) {
-    return text;
-  }
-
-  if (name) {
-    return text.replaceAll(NAME_PLACEHOLDER, name);
-  }
-
-  const stripped = text
-    .replaceAll(/\{\{NAME\}\},\s*/gu, "")
-    .replaceAll(/,\s*\{\{NAME\}\}/gu, "")
-    .replaceAll(NAME_PLACEHOLDER, "")
-    .trim();
-
-  return capitalizeFirst(stripped);
 }
 
 /** Repeated titles get the first free numbered suffix inside their owner, course or chapter. */

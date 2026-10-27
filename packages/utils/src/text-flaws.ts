@@ -202,9 +202,6 @@ export function findWritingFlaws({
 /** Only dots, dashes or marks: nothing a learner can read. */
 const EMPTY = /^[\s.…\-–—_*?!]*$/u;
 
-/** The learner's name slot (`NAME_PLACEHOLDER`), which the player fills in. */
-const NAME_SLOT = "{{NAME}}";
-
 const PLACEHOLDERS: readonly RegExp[] = [
   /lorem ipsum/iu,
   /^\s*(?:TODO|TBD|FIXME)\b|\bXXX\b/u,
@@ -216,17 +213,15 @@ const PLACEHOLDERS: readonly RegExp[] = [
 /**
  * Text a writer left unfinished: nothing to read, or a slot or note meant for someone to fill in
  * ("{{name}}", "[Insert example]", "TODO", "lorem ipsum"). An elision in a quote ("[...]") is
- * real text, and so is the learner's name slot.
+ * real text.
  */
 export function findPlaceholderText(text: string): string[] {
   if (EMPTY.test(text)) {
     return ["The text is empty."];
   }
 
-  const written = text.replaceAll(NAME_SLOT, "");
-
   return PLACEHOLDERS.flatMap((pattern) => {
-    const match = pattern.exec(written);
+    const match = pattern.exec(text);
     return match ? [`Has a placeholder a writer left: ${quote(match[0])}.`] : [];
   });
 }

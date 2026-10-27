@@ -8,7 +8,6 @@ import {
   normalizeString,
   removeAccents,
   replaceEmDashes,
-  replaceNamePlaceholder,
   segmentWords,
   stripPunctuation,
   toSlug,
@@ -382,39 +381,6 @@ describe(stripPunctuation, () => {
 
   it("handles empty string", () => {
     expect(stripPunctuation("")).toBe("");
-  });
-});
-
-describe(replaceNamePlaceholder, () => {
-  it("replaces {{NAME}} with provided name", () => {
-    expect(replaceNamePlaceholder("Hello, {{NAME}}!", "Alice")).toBe("Hello, Alice!");
-  });
-
-  it("handles multiple occurrences", () => {
-    expect(replaceNamePlaceholder("{{NAME}}, meet {{NAME}}", "Bob")).toBe("Bob, meet Bob");
-  });
-
-  it("strips '{{NAME}}, ' pattern when name is null", () => {
-    expect(replaceNamePlaceholder("{{NAME}}, I think we have a problem.", null)).toBe(
-      "I think we have a problem.",
-    );
-  });
-
-  it("strips ', {{NAME}}' pattern when name is null", () => {
-    expect(replaceNamePlaceholder("Hello there, {{NAME}}", null)).toBe("Hello there");
-  });
-
-  it("strips standalone {{NAME}} when name is null", () => {
-    expect(replaceNamePlaceholder("{{NAME}} welcome back", null)).toBe("Welcome back");
-  });
-
-  it("capitalizes first letter after stripping leading {{NAME}} with comma", () => {
-    expect(replaceNamePlaceholder("{{NAME}}, welcome back!", null)).toBe("Welcome back!");
-  });
-
-  it("returns original text when no placeholder present", () => {
-    expect(replaceNamePlaceholder("No placeholder here", "Alice")).toBe("No placeholder here");
-    expect(replaceNamePlaceholder("No placeholder here", null)).toBe("No placeholder here");
   });
 });
 

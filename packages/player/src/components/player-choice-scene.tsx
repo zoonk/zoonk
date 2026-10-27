@@ -74,13 +74,7 @@ export function PlayerChoiceSceneEyebrow({ children }: { children: React.ReactNo
   return <ScreenChip>{children}</ScreenChip>;
 }
 
-/**
- * Replaces the player-name placeholder before rendering contextual copy.
- *
- * Choice scenes often reuse authored text that may contain the learner's name,
- * so the replacement logic needs to stay in the shared scene layer rather than
- * being repeated in every adapter component.
- */
+/** The situation before a choice question, when it has one. */
 export function PlayerChoiceSceneContext({ children }: { children?: string | null }) {
   if (!children) {
     return null;
@@ -89,12 +83,7 @@ export function PlayerChoiceSceneContext({ children }: { children?: string | nul
   return <ContextText>{children}</ContextText>;
 }
 
-/**
- * Replaces the player-name placeholder before rendering the main question.
- *
- * This keeps multiple-choice and translation prompts aligned on the same copy
- * treatment even though they come from different step kinds.
- */
+/** A choice question's line, when it has one. */
 export function PlayerChoiceSceneQuestion({ children }: { children?: string | null }) {
   if (!children) {
     return null;

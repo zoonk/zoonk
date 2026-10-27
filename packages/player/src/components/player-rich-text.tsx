@@ -2,7 +2,6 @@
 
 import { type RichInlineSegment, RichInlineSegments } from "@zoonk/learn/rich-text/inline";
 import { parseInlineMarkup } from "@zoonk/utils/inline-markup";
-import { useReplaceName } from "../user-name-context";
 import { stripWrappingQuotes } from "./_utils/strip-wrapping-quotes";
 
 const MATH_DELIMITERS = [
@@ -62,8 +61,5 @@ function parseMathSegments(text: string): RichInlineSegment[] {
  * in player content: LaTeX math, inline code, and bold/italic emphasis.
  */
 export function PlayerRichText({ text }: { text: string }) {
-  const replaceName = useReplaceName();
-  const displayText = stripWrappingQuotes(replaceName(text));
-
-  return <RichInlineSegments segments={parseMathSegments(displayText)} />;
+  return <RichInlineSegments segments={parseMathSegments(stripWrappingQuotes(text))} />;
 }

@@ -6,7 +6,6 @@ import { type ChallengeTeam } from "@zoonk/core/library/challenges/team";
 import { usePreloadMath } from "@zoonk/learn/rich-text/preload-math";
 import { useEffect, useEffectEvent, useMemo, useReducer } from "react";
 import { type PlayerLinkComponent } from "../player-context";
-import { UserNameProvider } from "../user-name-context";
 import { LessonPicturesProvider } from "./_components/lesson-pictures";
 import { resumeLesson } from "./_utils/lesson-resume";
 import {
@@ -134,7 +133,7 @@ export type LessonPlayerProviderProps = {
   track?: TrackEvent;
   /** The tutor in the step. Without it, the lesson plays without questions. */
   tutor?: LessonTutorConfig;
-  viewer: { hasSession: boolean; userName?: string | null };
+  viewer: { hasSession: boolean };
 };
 
 function noTracking() {
@@ -265,7 +264,7 @@ export function LessonPlayerProvider({
             onPicturesLost={actions.skipSteps}
             steps={pictureSteps}
           >
-            <UserNameProvider initialName={viewer.userName}>{children}</UserNameProvider>
+            {children}
           </LessonPicturesProvider>
         </LessonTutor>
       </LessonPlayerRuntimeContext>
