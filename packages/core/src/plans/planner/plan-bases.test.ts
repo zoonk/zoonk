@@ -402,24 +402,3 @@ describe(adviseOnBases, () => {
     });
   });
 });
-
-describe(parsePlanSettings, () => {
-  it("reads base choices saved before there were four: a first lesson only is a quick lesson now", () => {
-    expect(
-      parsePlanSettings({
-        baseChoices: [
-          { choice: "essentials", skillId: "living" },
-          { choice: "learn", skillId: "water" },
-          { choice: "skip", skillId: "cells" },
-        ],
-        focusAreas: ["Biologia"],
-      }),
-    ).toMatchObject({
-      baseChoices: [
-        { choice: "quick", skillId: "living" },
-        { choice: "skip", skillId: "cells" },
-      ],
-      focusAreas: ["Biologia"],
-    });
-  });
-});

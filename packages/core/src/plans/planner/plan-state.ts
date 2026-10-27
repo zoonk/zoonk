@@ -1,5 +1,4 @@
 import { CourseLevel } from "@zoonk/db/enums";
-import { isJsonObject } from "@zoonk/utils/json";
 import { z } from "zod";
 import { examChoicePickSchema } from "../../exams/choices/exam-choice-contract";
 import { LANGUAGE_ACTIVITY_TYPES } from "../../language/activities/language-activities";
@@ -170,34 +169,12 @@ const baseChoiceSchema = z.object({
 });
 
 /**
- * Choices saved before there were four: studying only a base's first lesson is its quick lesson
- * now, and learning it first is its core, the default, which isn't stored.
- */
-function upgradeBaseChoices(value: unknown): unknown {
-  if (!Array.isArray(value)) {
-    return value;
-  }
-
-  return value.flatMap((entry: unknown) => {
-    if (!isJsonObject(entry)) {
-      return [entry];
-    }
-
-    if (entry.choice === "learn") {
-      return [];
-    }
-
-    return [entry.choice === "essentials" ? { ...entry, choice: "quick" } : entry];
-  });
-}
-
-/**
  * How the learner shaped the plan. `weekdayMinutes` (Sunday first) overrides the goal's daily
  * minutes per weekday, with 0 for rest days; null means every day gets the daily minutes.
  */
 const planSettingsSchema = z.object({
   /** The bases the learner studies another way than for their core (see `BaseChoice`). */
-  baseChoices: z.preprocess(upgradeBaseChoices, z.array(baseChoiceSchema)).default([]),
+  baseChoices: z.array(baseChoiceSchema).default([]),
   /**
    * The time each day's checkpoints (a phase's, the week's mixed one) take past the learner's time,
    * as the last planning run laid them out (see `listCheckpointOverflow`): they run whole, and the

@@ -23,12 +23,12 @@ import { isStandIn } from "./stand-in-lessons";
 const snapshotItemSchema = z.object({
   chapterId: z.string().nullable(),
   completedAt: z.iso.datetime().nullable(),
-  facts: selectedItemFactsSchema.nullable().default(null),
+  facts: selectedItemFactsSchema.nullable(),
   id: z.string(),
   kind: z.enum(PlanItemKind),
   lessonId: z.string().nullable(),
   lessons: z.int().nullable(),
-  minutes: z.number().nonnegative().nullable().default(null),
+  minutes: z.number().nonnegative().nullable(),
   phase: z.int(),
   scheduledFor: z.iso.date().nullable(),
   skillId: z.string().nullable(),
@@ -39,16 +39,13 @@ const snapshotItemSchema = z.object({
 const planSnapshotSchema = z.object({
   coveredShare: z.number().nullable(),
   estimateHours: z.number().nullable(),
-  inputsKey: z.string().nullable().default(null),
+  inputsKey: z.string().nullable(),
   items: z.array(snapshotItemSchema),
   phases: z.unknown(),
-  sourceSkillIds: z.array(z.string()).default([]),
+  sourceSkillIds: z.array(z.string()),
   state: z.object({ goal: planStateSchema.shape.goal, graph: z.unknown(), settings: z.unknown() }),
-  summary: z
-    .unknown()
-    .optional()
-    .transform((value) => planSummarySchema.safeParse(value).data ?? null),
-  todaySession: daySessionSnapshotSchema.nullable().default(null),
+  summary: planSummarySchema.nullable(),
+  todaySession: daySessionSnapshotSchema.nullable(),
 });
 
 /**
@@ -67,7 +64,7 @@ export type PlanSnapshot = {
   phases: PlanPhase[];
   sourceSkillIds: string[];
   state: PlanState;
-  /** The plan's summary when it described the plan (see `readPlanSummary`); null for a legacy one. */
+  /** The plan's summary when it described the plan (see `readPlanSummary`). */
   summary: PlanSummary | null;
   /** Today's session when the change was made; null when it wasn't built yet. */
   todaySession: DaySessionSnapshot | null;
