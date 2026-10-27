@@ -83,15 +83,11 @@ function ChallengeRow() {
   );
 }
 
-/** The buddy quizzes the learner on anything in the plan, when the host has the buddy's tab. */
+/** The buddy quizzes the learner on anything in the plan. */
 function BuddyPracticeRow() {
   const t = useExtracted();
   const { actions, buddy } = useTodayScreen();
   const name = useBuddyName(buddy);
-
-  if (!actions.buddyHref) {
-    return null;
-  }
 
   return (
     <ListRowLink href={actions.buddyHref}>

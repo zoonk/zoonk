@@ -65,7 +65,7 @@ export function TodayExamMoment() {
       </SuggestionLine>
 
       <SuggestionContent>
-        <ExamMomentCard href={actions.examHref ?? null} moment={moment} />
+        <ExamMomentCard href={actions.examHref} moment={moment} />
       </SuggestionContent>
     </Suggestion>
   );

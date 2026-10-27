@@ -27,8 +27,8 @@ export type TodayActions = {
     status: "accepted" | "dismissed";
     suggestion: SuggestedGoalView;
   }) => Promise<boolean>;
-  /** Where the buddy's tab is, which a day with nothing new offers for practice; none without one. */
-  buddyHref?: string;
+  /** Where the buddy's tab is, which a day with nothing new offers for practice. */
+  buddyHref: string;
   /**
    * "Catch up today": the lessons earlier days left that today's time didn't fit join today's
    * session. Resolves to whether they were added (Today reads itself again to show them).
@@ -89,8 +89,8 @@ export type TodayActions = {
   refresh: () => unknown;
   /** "Already know this?" on the next lesson: opens its chapter's test (`chapterId`). */
   startTestOut: (chapterId: string) => Promise<TestOutStart>;
-  /** Where an exam goal's screen is (exam map, mocks, "How did it go?"); none for other hosts. */
-  examHref?: string;
+  /** Where an exam goal's screen is (exam map, mocks, "How did it go?"). */
+  examHref: string;
   /** Where "See Plus" goes when a free exam plan's first week is over. */
   plusHref: string;
   /** Where "See today's summary" goes once the day's blocks are done. */
