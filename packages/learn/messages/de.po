@@ -8432,11 +8432,6 @@ msgid "{number, number} of {total, plural, one {# lesson} other {# lessons}}"
 msgstr "{number, number} von {total, plural, one {# Lektion} other {# Lektionen}}"
 
 #: src/onboarding/guest-lesson-ending.tsx
-msgctxt "nfj8ez"
-msgid "Lessons done in this chapter"
-msgstr "Abgeschlossene Lektionen in diesem Kapitel"
-
-#: src/onboarding/guest-lesson-ending.tsx
 msgctxt "xu1JYC"
 msgid "Save your progress and a quick review comes back to help it stick."
 msgstr "Speichere deinen Fortschritt und wiederhole das Gelernte später kurz, damit es hängen bleibt."

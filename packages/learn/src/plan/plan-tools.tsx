@@ -29,14 +29,11 @@ const ICONS = [
   { icon: CodeIcon, pattern: /python|code|código|javascript|sql|editor|\bR\b/iu },
 ] as const;
 
+/** The tool's icon as a row's leading mark: bare and quiet, as every list draws one. */
 function ToolIcon({ name }: { name: string }) {
   const Icon = ICONS.find((entry) => entry.pattern.test(name))?.icon ?? WrenchIcon;
 
-  return (
-    <span className="bg-muted flex size-10 shrink-0 items-center justify-center rounded-xl">
-      <Icon aria-hidden="true" className="size-5" />
-    </span>
-  );
+  return <Icon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />;
 }
 
 function ToolStatus({ tool }: { tool: PlanToolView }) {

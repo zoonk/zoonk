@@ -2,30 +2,28 @@
 
 import { type LessonFit } from "@zoonk/core/view-models/onboarding/get-lesson-fit";
 import { buttonVariants } from "@zoonk/ui/components/button";
-import { Progress } from "@zoonk/ui/components/progress";
 import { cn } from "@zoonk/ui/lib/utils";
 import { BookOpenIcon, CalendarClockIcon } from "lucide-react";
-import { useExtracted, useLocale } from "next-intl";
+import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
+import { MeterPart, MeterParts } from "../_components/meter";
 import { useFormatDuration } from "../_utils/time-format";
 
 const MINUTES_PER_HOUR = 60;
 
 function WhereItFits({ fit }: { fit: LessonFit }) {
   const t = useExtracted();
-  const locale = useLocale();
   const formatDuration = useFormatDuration();
   const { chapter, course } = fit;
+  const lessons = Math.max(1, chapter.lessonCount);
 
   return (
     <section className="bg-card ring-border flex flex-col gap-3 rounded-xl p-4 ring-1">
       <p className="text-muted-foreground text-sm">{t("This is part of")}</p>
 
       {course && (
-        <div className="flex items-center gap-3">
-          <span className="bg-muted flex size-10 shrink-0 items-center justify-center rounded-xl">
-            <BookOpenIcon aria-hidden="true" className="size-5" />
-          </span>
+        <div className="flex items-start gap-3">
+          <BookOpenIcon aria-hidden="true" className="text-muted-foreground mt-1 size-4 shrink-0" />
           <span className="flex min-w-0 flex-col">
             <span className="font-semibold">{course.title}</span>
             <span className="text-muted-foreground text-sm">
@@ -43,7 +41,8 @@ function WhereItFits({ fit }: { fit: LessonFit }) {
         </div>
       )}
 
-      {/* The bar is the chapter's, named above it: under the course alone it read as the course's. */}
+      {/* The meter is the chapter's, named above it: under the course alone it read as the course's.
+          A part per lesson, as every meter of steps draws them: done in blue, the rest on the track. */}
       <div className="flex flex-col gap-1.5">
         <span className="flex items-baseline justify-between gap-3 text-xs">
           <span className="min-w-0 truncate font-medium">{chapter.title}</span>
@@ -54,12 +53,15 @@ function WhereItFits({ fit }: { fit: LessonFit }) {
             })}
           </span>
         </span>
-        <Progress
-          locale={locale}
-          aria-label={t("Lessons done in this chapter")}
-          className="**:data-[slot=progress-track]:h-1.5"
-          value={(chapter.lessonNumber / Math.max(1, chapter.lessonCount)) * 100}
-        />
+        <MeterParts>
+          {Array.from({ length: lessons }, (_, index) => (
+            <MeterPart
+              className={cn(index < chapter.lessonNumber && "bg-success")}
+              // oxlint-disable-next-line react/no-array-index-key -- A chapter's lessons never reorder.
+              key={index}
+            />
+          ))}
+        </MeterParts>
       </div>
     </section>
   );
