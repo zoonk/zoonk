@@ -1,24 +1,85 @@
+import { getBrowserApiUrl } from "@/lib/browser-api-url";
+
 /**
- * Learner writes whose screen doesn't render again when they save: posts to the app's own routes
- * (`postToApp`) and Server Actions that leave the page alone, such as opening a day's step. Next.js
- * drops the pages the router keeps only after a Server Action that expires tags, so the screen that
- * sent these refreshes the router once when it closes (`useRefreshAfterAppWrites`).
+ * Learner writes the router doesn't show yet: Next.js drops the pages it keeps only after a Server
+ * Action that expires tags, so a post to the app's own routes or to the public API, or a Server
+ * Action that leaves the page alone (opening a day's step), leaves them as they were. Each write
+ * belongs to the page it was sent from; `RefreshStalePages` reads the pages again once they settle.
  */
-const writes = new Set<Promise<unknown>>();
+const writes = new Set<{ page: string; request: Promise<unknown> }>();
+
+/** Tells the browser's other tabs; a channel never hears its own messages. */
+let channel: BroadcastChannel | null | undefined;
+
+function getChannel(): BroadcastChannel | null {
+  // Tabs only: a server render has no other tab to tell.
+  channel ??= typeof document === "undefined" ? null : new BroadcastChannel("zoonk-writes");
+  return channel;
+}
+
+function announceWrite() {
+  // oxlint-disable-next-line unicorn/require-post-message-target-origin -- A BroadcastChannel has no target origin.
+  getChannel()?.postMessage(null);
+}
 
 /** A write on its way. It counts from the moment it's sent: one whose answer never came may have saved. */
 export function noteAppWrite<T>(request: Promise<T>): Promise<T> {
-  writes.add(request);
+  writes.add({ page: location.pathname, request });
+  void request.then(announceWrite, announceWrite);
   return request;
 }
 
 /**
- * Takes every write noted so far and waits for them to settle: true when there was any. A write
- * sent after, from the next screen, stays for that screen's own refresh.
+ * Takes the writes noted so far, those sent from `page` when it's given, and waits for them to
+ * settle: true when there was any. A write sent after stays for its own page.
  */
-export async function takeSettledAppWrites(): Promise<boolean> {
-  const sent = [...writes];
-  writes.clear();
-  await Promise.allSettled(sent);
+export async function takeSettledAppWrites(page?: string): Promise<boolean> {
+  const sent = [...writes].filter((write) => page === undefined || write.page === page);
+  sent.forEach((write) => writes.delete(write));
+  await Promise.allSettled(sent.map((write) => write.request));
   return sent.length > 0;
+}
+
+/** Calls `onWrite` when another tab of this browser saved a write. Returns the cleanup. */
+export function onOtherTabWrite(onWrite: () => void): () => void {
+  const listening = getChannel();
+  listening?.addEventListener("message", onWrite);
+  return () => listening?.removeEventListener("message", onWrite);
+}
+
+function isAppWrite(input: RequestInfo | URL, init?: RequestInit): boolean {
+  const request = input instanceof Request ? input : null;
+  const method = (init?.method ?? request?.method ?? "GET").toUpperCase();
+
+  if (method === "GET" || method === "HEAD") {
+    return false;
+  }
+
+  const url = new URL(input instanceof Request ? input.url : input, location.href);
+  const api = new URL(getBrowserApiUrl());
+
+  return (
+    (url.origin === location.origin && url.pathname.startsWith("/api/")) ||
+    (url.origin === api.origin && url.pathname.startsWith("/v1/"))
+  );
+}
+
+/**
+ * Notes every request the page sends that may write: anything but a read to the app's own routes
+ * (`/api/…`) or the public API (`/v1/…`), from this app's code or a package's (the player, the
+ * buddy). Server Actions post to the page's address, so a Server Action that leaves the page alone
+ * notes itself where it's called. Runs once, before the page hydrates (`instrumentation-client.ts`).
+ */
+export function noteAppWritesSent(): void {
+  const send = globalThis.fetch;
+
+  globalThis.fetch = (input, init) => {
+    const response = send(input, init);
+
+    if (isAppWrite(input, init)) {
+      void noteAppWrite(response);
+    }
+
+    return response;
+  };
 }

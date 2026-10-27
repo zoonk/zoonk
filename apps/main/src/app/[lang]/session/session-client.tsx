@@ -5,7 +5,6 @@ import { SessionCeremony } from "@/components/learn/session-ceremony";
 import { useQuestionTutor } from "@/components/learn/use-question-tutor";
 import { useRouter } from "@/i18n/navigation";
 import { noteAppWrite } from "@/lib/http/app-write-ledger";
-import { useRefreshAfterAppWrites } from "@/lib/http/app-writes";
 import { type LearnerBuddy } from "@/lib/learn/learner-buddy";
 import { recordGenerationWaitAction } from "@/lib/lessons/generation-wait-action";
 import { useLessonPlayerHref } from "@/lib/lessons/use-lesson-player-href";
@@ -64,7 +63,6 @@ export function SessionBlockClient({
   const questionTutor = useQuestionTutor(tutor);
   const ids = { blockId: detail.block.id, sessionId: session.id };
   const firstUnanswered = detail.questions.find((question) => question.answered === null)?.itemId;
-  useRefreshAfterAppWrites();
 
   // The question block a tap opened is on screen: the tap is done.
   useEffect(() => {
@@ -77,7 +75,7 @@ export function SessionBlockClient({
         answer: (input) => sendStudyAnswer({ ...ids, ...input }),
         continueSession: navigation.continueSession,
         // Finishing settles the day without expiring the router's pages (that would draw the
-        // screen again over the moment), so it counts as a write the screen refreshes for on close.
+        // screen again over the moment), so it's noted for the pages to read again once it closes.
         finish: () =>
           noteAppWrite(finishStudyBlockAction({ ...ids, timeZone: getLocalTimeZone() })),
         refresh: () => router.refresh(),

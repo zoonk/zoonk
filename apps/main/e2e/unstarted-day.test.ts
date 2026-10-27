@@ -67,4 +67,29 @@ test.describe("An unstarted day", () => {
     await expect(countSessions(day.user.id)).resolves.toBe(1);
     await page.context().close();
   });
+
+  test("Today kept in the history reads again when the learner goes back to it five minutes later", async ({
+    browser,
+  }) => {
+    const day = await createUnstartedDay();
+    const page = await openAs(browser, day.user);
+
+    await page.clock.install();
+    await openToday(page);
+    await page.getByRole("link", { exact: true, name: "Plan" }).click();
+    await expect(page).toHaveURL(/\/plan$/u);
+
+    // Another device opens the day meanwhile.
+    const phone = await openAs(browser, day.user);
+    await phone.goto("/today");
+    await phone.getByRole("button", { name: "Start session" }).click();
+    await expect(phone.getByRole("heading", { name: day.reviewQuestion })).toBeVisible();
+    await phone.context().close();
+
+    await page.clock.fastForward("05:00");
+    await page.goBack();
+    await expect(page).toHaveURL(/\/today$/u);
+    await expect(page.getByRole("button", { name: "Continue session" })).toBeVisible();
+    await page.context().close();
+  });
 });

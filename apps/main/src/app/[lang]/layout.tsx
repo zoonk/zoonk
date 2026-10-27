@@ -3,6 +3,7 @@ import { MainSpeechProvider } from "@/components/speech/main-speech-provider";
 import { ClientMessagesProvider } from "@/i18n/client-messages-provider";
 import { routing } from "@/i18n/routing";
 import { geistMono, geistSans } from "@/lib/fonts";
+import { RefreshStalePages } from "@/lib/http/refresh-stale-pages";
 import { Toaster } from "@zoonk/ui/components/toast";
 import { getBaseUrl } from "@zoonk/utils/origin";
 import { type Metadata } from "next";
@@ -77,6 +78,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
         <AuthChangeReload />
         <Suspense fallback={null}>
           <LearnerSummarySync />
+          <RefreshStalePages />
         </Suspense>
         <AppAnalytics locale={locale} />
       </body>

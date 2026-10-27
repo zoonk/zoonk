@@ -2,7 +2,6 @@
 
 import { SessionCeremony } from "@/components/learn/session-ceremony";
 import { useRouter } from "@/i18n/navigation";
-import { useRefreshAfterAppWrites } from "@/lib/http/app-writes";
 import { postToApp } from "@/lib/http/post-to-app";
 import { type LearnerBuddy } from "@/lib/learn/learner-buddy";
 import { type PronunciationReviewsView } from "@zoonk/core/language/pronunciation/contract";
@@ -26,7 +25,6 @@ export function PronunciationClient({
   reviews: PronunciationReviewsView;
 }) {
   const { bfcacheId } = useRouter();
-  useRefreshAfterAppWrites();
 
   const actions = useMemo(
     () => ({

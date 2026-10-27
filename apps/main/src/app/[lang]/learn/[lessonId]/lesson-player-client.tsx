@@ -7,7 +7,6 @@ import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { SessionCeremony } from "@/components/learn/session-ceremony";
 import { useLessonSessionSlots } from "@/components/session/use-lesson-session-slots";
 import { redirect, useRouter } from "@/i18n/navigation";
-import { useRefreshAfterAppWrites } from "@/lib/http/app-writes";
 import { getTutorConfig } from "@/lib/learn/tutor-config";
 import { useTutorCards } from "@/lib/learn/use-tutor-cards";
 import {
@@ -139,7 +138,6 @@ export function LessonPlayerClient({
 }) {
   const router = useRouter();
   const locale = useLocale();
-  useRefreshAfterAppWrites();
 
   /** A completion action refreshes props in place; only a newly opened finished lesson redirects. */
   const [reopenedBlockId, setReopenedBlockId] = useState(

@@ -2,7 +2,6 @@
 
 import { SessionCeremony } from "@/components/learn/session-ceremony";
 import { useRouter } from "@/i18n/navigation";
-import { useRefreshAfterAppWrites } from "@/lib/http/app-writes";
 import { sendStudyAnswer } from "@/lib/session/study-answer-request";
 import { finishStudyBlockAction } from "@/lib/session/study-session-actions";
 import { type CheckpointView } from "@zoonk/core/checkpoints/contract";
@@ -28,7 +27,6 @@ export function CheckpointClient({
 }) {
   const { blockId, sessionId } = checkpoint;
   const router = useRouter();
-  useRefreshAfterAppWrites();
 
   const actions = useMemo<CheckpointActions>(() => {
     const ids = { blockId, sessionId };

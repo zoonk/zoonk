@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { type DayOpenOutcome, openStudyDayAction } from "./day-open-action";
 import { sendDayOpen, toDestinationResult, toTapResult } from "./day-tap";
 
@@ -23,6 +23,12 @@ const RETRYABLE: DayOpenOutcome = { status: "retryable" };
 describe(sendDayOpen, () => {
   beforeEach(() => {
     vi.mocked(openStudyDayAction).mockReset();
+    // The page the tap was made on, which the noted write belongs to.
+    vi.stubGlobal("location", new URL("https://zoonk.test/en/today"));
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
   it("sends once more, in a request of its own, after losing a race", async () => {

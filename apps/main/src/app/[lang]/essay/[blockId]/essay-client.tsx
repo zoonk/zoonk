@@ -1,6 +1,5 @@
 "use client";
 
-import { useRefreshAfterAppWrites } from "@/lib/http/app-writes";
 import { postToApp } from "@/lib/http/post-to-app";
 import { finishStudyBlockAction } from "@/lib/session/study-session-actions";
 import { useStudyNavigation } from "@/lib/session/use-study-navigation";
@@ -21,7 +20,6 @@ type Submission = Promise<EssayDraft | "limitReached" | null>;
  */
 export function EssayClient({ essay }: { essay: EssayView }) {
   const navigation = useStudyNavigation(essay.sessionId);
-  useRefreshAfterAppWrites();
   const grading = useRef<Promise<unknown>>(Promise.resolve());
   const sending = useRef(new Map<string, Submission>());
   const ids = { blockId: essay.blockId, sessionId: essay.sessionId };

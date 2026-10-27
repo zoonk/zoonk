@@ -3,7 +3,6 @@
 import { type TutorViewer } from "@/components/learn/main-ask-tutor";
 import { SessionCeremony } from "@/components/learn/session-ceremony";
 import { useQuestionTutor } from "@/components/learn/use-question-tutor";
-import { useRefreshAfterAppWrites } from "@/lib/http/app-writes";
 import { postToApp } from "@/lib/http/post-to-app";
 import { useLessonPlayerHref } from "@/lib/lessons/use-lesson-player-href";
 import { type MistakePracticeFeedback, MistakePracticeRun } from "@zoonk/learn/mistakes/practice";
@@ -32,7 +31,6 @@ export function MistakePracticeClient({
 }) {
   const lessonHref = useLessonPlayerHref();
   const questionTutor = useQuestionTutor(tutor);
-  useRefreshAfterAppWrites();
 
   return (
     <MistakePracticeRun

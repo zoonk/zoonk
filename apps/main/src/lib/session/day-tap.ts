@@ -37,8 +37,8 @@ export function toDestinationResult(destination: StudyDestination | null): TapRe
  * the click, before navigating, so the navigation never holds it back). When it lost a race to
  * another write of the learner's (`retryable`), it's sent once more, in a request of its own, while
  * the tab is still where the tap was made for the same identity (`stillHere`); a second loss is a
- * failure. Opening leaves the screen alone, so the screen it opens refreshes the pages it changed
- * when it closes (`noteAppWrite`).
+ * failure. Opening leaves the screen alone, so it's noted for the pages to read again once the
+ * learner is back in the frame (`noteAppWrite`).
  */
 export async function sendDayOpen({
   input,

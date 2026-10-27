@@ -1,5 +1,4 @@
 import { safeAsync } from "@zoonk/utils/error";
-import { noteAppWrite } from "./app-write-ledger";
 
 /** A recording goes as multipart (the browser sets its boundary), anything else as JSON. */
 function toRequest(body: unknown): RequestInit {
@@ -32,7 +31,7 @@ async function send<Outcome>({ body, path }: { body: unknown; path: string }) {
 /**
  * Posts to one of this app's own routes (`appPostRoute`) from the browser and reads the outcome it
  * answers with. These run alongside each other instead of queuing like Server Actions, and never
- * re-render the page (the screen refreshes once when it closes: `useRefreshAfterAppWrites`). Null
+ * re-render the page (the pages read again once the learner leaves it: `noteAppWritesSent`). Null
  * when the request didn't get through: offline, or a server error.
  */
 export function postToApp<Outcome>({
@@ -42,5 +41,5 @@ export function postToApp<Outcome>({
   body: unknown;
   path: `/api/${string}`;
 }): Promise<Outcome | null> {
-  return noteAppWrite(send<Outcome>({ body, path }));
+  return send<Outcome>({ body, path });
 }
