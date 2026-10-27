@@ -5,7 +5,6 @@ import { type PlanContext } from "./plan-context";
 import {
   type SelectedCoverage,
   type SelectedSummary,
-  legacySelectedSummarySchema,
   selectedSummarySchema,
 } from "./selected-summary-contract";
 
@@ -227,24 +226,15 @@ const legacyBasisSchema = z
   })
   .strict();
 
-/**
- * A stored summary as the legacy reader sees it: its v1 basis (a v2 one with its layout's input
- * version and study day in the v1 fields), so the reader's callers keep their behavior until they
- * read with `readPlanSummary` (then it goes). A v1 value's facts have the v1 shape (see
- * `legacySelectedSummarySchema`), which no v2 reader takes: its `selected` reads as null.
- */
+/** The session reader's input basis for both layout writes and session metadata writes. */
 export const savedPlanSummarySchema = z.union([
   z
     .object({
       basis: legacyBasisSchema,
       schemaVersion: z.literal(1),
-      selected: z.union([selectedSummarySchema, legacySelectedSummarySchema]),
+      selected: selectedSummarySchema,
     })
-    .strict()
-    .transform(({ selected, ...summary }) => ({
-      ...summary,
-      selected: selectedSummarySchema.safeParse(selected).data ?? null,
-    })),
+    .strict(),
   planSummarySchema.transform(
     ({ basis: { layoutInputVersion, layoutStudyDay, ...basis }, selected }) => ({
       basis: { ...basis, inputVersion: layoutInputVersion, studyDay: layoutStudyDay },
@@ -254,17 +244,10 @@ export const savedPlanSummarySchema = z.union([
   ),
 ]);
 
-/** A stored summary as the legacy reader sees it (see `savedPlanSummarySchema`). */
-export type SavedPlanSummary = {
-  basis: z.infer<typeof legacyBasisSchema>;
-  schemaVersion: 1;
-  selected: SelectedSummary | null;
-};
+export type SavedPlanSummary = z.infer<typeof savedPlanSummarySchema>;
 
 /**
- * The authorized reader's complete basis must match before it may skip a selected build: the
- * legacy reading, until its callers read with `readPlanSummary` (a summary describes its plan
- * version, whatever happened since).
+ * The session reader's complete basis must match before it may skip a selected build.
  */
 export function readFreshPlanSummary({
   basis,

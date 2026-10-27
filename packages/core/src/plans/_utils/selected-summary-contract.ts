@@ -119,25 +119,6 @@ export const selectedSummarySchema = z
   })
   .strict();
 
-/**
- * The facts a v1 summary kept (before its daily need moved into the forecast, the coverage kept its
- * date and short lessons, and the bases what each is): only the legacy reader parses them.
- */
-export const legacySelectedSummarySchema = selectedSummarySchema
-  .omit({ bases: true, coverage: true, forecast: true, phaseDates: true })
-  .extend({
-    bases: z
-      .object({
-        bases: z.array(baseSchema.omit({ area: true, name: true, neededFor: true })),
-        daysLeft: z.int().nullable(),
-        defaultChoice: z.enum(["essential", "quick"]),
-      })
-      .nullable(),
-    coverage: coverageSchema.omit({ shortLessons: true, targetDate: true }).nullable(),
-    dailyNeed: dailyNeedSchema,
-  })
-  .strict();
-
 export type SelectedSummary = z.infer<typeof selectedSummarySchema>;
 export type SelectedCoverage = NonNullable<SelectedSummary["coverage"]>;
 export type DailyNeed = z.infer<typeof dailyNeedSchema>;

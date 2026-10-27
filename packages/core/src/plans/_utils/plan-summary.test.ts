@@ -89,7 +89,7 @@ describe(readPlanSummary, () => {
 });
 
 describe(readFreshPlanSummary, () => {
-  it("keeps the legacy reader's input version and study day on a v2 summary's layout", () => {
+  it("checks the session's input version and study day against a layout summary", () => {
     const basis = {
       inputVersion: 4,
       planId: plan.id,
@@ -111,7 +111,7 @@ describe(readFreshPlanSummary, () => {
       readFreshPlanSummary({ basis: { ...basis, studyDay: "2026-10-15" }, value: summary }),
     ).toBeNull();
 
-    // A v1 basis re-stamped over v2 facts (an acknowledgment before its callers move) keeps them.
+    // Session metadata writes keep the same selected facts with the updated input basis.
     const restamped = { basis, schemaVersion: 1, selected: summary.selected };
 
     expect(readFreshPlanSummary({ basis, value: restamped })?.selected).toStrictEqual(
