@@ -19,12 +19,11 @@ export const nextCache = {
   // Outside a request, Next.js' `io()` resolves at once, as it does here.
   io: async () => null,
   revalidateTag: vi.fn(),
-  updateTag: vi.fn(),
 };
 
-// Tests run outside a request, where Next.js' `after` throws and `connection` has no request to wait
-// for. Tests that check deferred work run it with `runDeferredWork` from `deferred-work.ts`.
-export const nextServer = { after: vi.fn(), connection: vi.fn() };
+// Tests run outside a request, where Next.js' `after` throws. Tests that check deferred work run it
+// with `runDeferredWork` from `deferred-work.ts`.
+export const nextServer = { after: vi.fn() };
 
 export const nextHeaders = { headers: vi.fn() };
 
@@ -169,7 +168,6 @@ export async function resetBoundaries(): Promise<void> {
     status: "closed",
   });
 
-  nextServer.connection.mockResolvedValue(null);
   nextHeaders.headers.mockImplementation(async () => new Headers());
 
   dateContext.getRequestProgressDateContext.mockImplementation(

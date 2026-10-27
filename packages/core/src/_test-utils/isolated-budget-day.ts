@@ -7,9 +7,8 @@ const ISOLATED_DAYS = 10_000;
 
 /**
  * Moves the faked clock to a far-future day of its own and empties that day's budget all guests
- * share, so the spending of other tests never mixes in. Rows outlive a run in the shared test
- * database (the reset before each run keeps far-future days for runs going on at the same time),
- * so a day an earlier run drew, and maybe filled, starts empty again.
+ * share, so the spending of other tests never mixes in: a day an earlier test in the run drew,
+ * and maybe filled, starts empty again.
  */
 export async function useIsolatedBudgetDay(): Promise<void> {
   const offset = Math.floor(Math.random() * ISOLATED_DAYS);
