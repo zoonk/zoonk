@@ -2,7 +2,7 @@ import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { loadNoticeDay } from "../exams/_utils/notice-day";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
-import { examEditionSchema, readStoredSourceHash } from "../library/exams/blueprint-contract";
+import { examEditionSchema } from "../library/exams/blueprint-contract";
 import { proposeChange } from "./_utils/apply-plan-change";
 import { parsePlanChangePayload } from "./_utils/plan-change-payload";
 import { type PlanContext, loadPlanContext } from "./_utils/plan-context";
@@ -50,7 +50,7 @@ async function getNoticeEdition(examBlueprintId: string | null): Promise<string 
 
   const edition = examEditionSchema.safeParse(blueprint?.edition).data;
 
-  return readStoredSourceHash(blueprint?.edition) ?? (edition?.year ? String(edition.year) : null);
+  return edition?.sourceHash ?? (edition?.year ? String(edition.year) : null);
 }
 
 /**

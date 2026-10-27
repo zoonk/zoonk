@@ -446,29 +446,6 @@ describe(findNoticeReading, () => {
     ).resolves.toStrictEqual({ status: "settled" });
   });
 
-  // A change to how editions are stored never reads a notice again: the reading stands, and the
-  // change that moved the shape migrates its rows.
-  it("never reads a notice again because its stored reading is in an older shape", async () => {
-    const source = await sourceFixture({ language: "pt" });
-    const examIdentity = identity();
-
-    const saved = await saveExamBlueprint({
-      content: content({ questions: 10, sourceHash: source.contentHash, sourceId: source.id }),
-      identity: examIdentity,
-      provenance: PROVENANCE,
-      sourceId: source.id,
-    });
-
-    await prisma.examBlueprint.update({
-      data: { edition: { questionCount: "ten", sourceHash: source.contentHash } },
-      where: { id: saved.blueprint.id },
-    });
-
-    await expect(
-      findNoticeReading({ identity: examIdentity, sourceId: source.id }),
-    ).resolves.toStrictEqual({ status: "settled" });
-  });
-
   it("never reads a learner's own material again for a check", async () => {
     const [user, source] = await Promise.all([userFixture(), sourceFixture({ language: "pt" })]);
     const examIdentity = identity({ ownerId: user.id });

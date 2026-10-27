@@ -396,17 +396,6 @@ export const examEditionSchema = z.object({
   year: z.number().int().nullable(),
 });
 
-const storedSourceHashSchema = z.object({ sourceHash: z.string() });
-
-/**
- * The hash of the source a stored edition was read from, read on its own: an edition stored in an
- * older shape still says which document it was read from, so a change to the shape never makes a
- * notice look unread (and read again, with learners told it changed). Null when it names none.
- */
-export function readStoredSourceHash(edition: unknown): string | null {
-  return storedSourceHashSchema.safeParse(edition).data?.sourceHash ?? null;
-}
-
 /** How often the board asks each topic, from its past papers. */
 export const topicFrequencySchema = z.array(
   z.object({

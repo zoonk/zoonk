@@ -17,7 +17,6 @@ import {
   type ExamDate,
   examEditionSchema,
   examStructureSchema,
-  readStoredSourceHash,
   topicFrequencySchema,
 } from "./blueprint-contract";
 import { type BlueprintChange, mergeBlueprintContent, movesExamDays } from "./blueprint-diff";
@@ -208,9 +207,9 @@ async function updateBlueprint({
 /**
  * How the exam's stored blueprint stands with this document: `unread` when it wasn't read from
  * this very document (a new edition, a corrected notice, or no blueprint yet), which research
- * reads; otherwise how its reading stands (`getReadingStatus`). Newer reading instructions or a
- * new shape for stored editions never read a notice again, since every learner of the exam shares
- * the one reading: only a reading whose check found problems is read again.
+ * reads; otherwise how its reading stands (`getReadingStatus`). Newer reading instructions never
+ * read a notice again, since every learner of the exam shares the one reading: only a reading
+ * whose check found problems is read again.
  */
 export async function findNoticeReading({
   identity,
@@ -231,7 +230,7 @@ export async function findNoticeReading({
     return { status: "unread" };
   }
 
-  return readStoredSourceHash(blueprint.edition) === source.contentHash
+  return examEditionSchema.safeParse(blueprint.edition).data?.sourceHash === source.contentHash
     ? getReadingStatus(blueprint)
     : { status: "unread" };
 }
