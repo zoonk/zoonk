@@ -1,9 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
+import { userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { getString } from "@zoonk/utils/json";
 import { getAiOrganization } from "./orgs";
-import { createE2EProgressData } from "./progress";
 
 const SHORT_UUID_LENGTH = 8;
 
@@ -74,7 +74,7 @@ export async function createE2EUser(
   }
 
   if (options?.withProgress) {
-    await createE2EProgressData(user.id);
+    await userProgressFixture({ currentEnergy: 75, totalBrainPower: 15_000n, userId: user.id });
   }
 
   const storageState = await signupContext.storageState();
