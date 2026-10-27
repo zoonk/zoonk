@@ -1,10 +1,8 @@
 "use client";
 
 import { type CheckpointQuestion } from "@zoonk/core/checkpoints/contract";
-import { type ActorHandle, type TricksterActName } from "@zoonk/ui/components/trickster-actor";
 import { BrainIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
-import { useEffect, useRef } from "react";
 import { StepRow, StepRows } from "../_components/step-card";
 import { TaskHeaderSegments, TaskHeaderTitle, type TaskSegment } from "../_components/task-header";
 import { TaskActions } from "../_components/task-layout";
@@ -23,6 +21,7 @@ import { phaseNumber, useCheckpointEyebrow } from "./checkpoint-labels";
 import { CheckpointOptions } from "./checkpoint-options";
 import { TricksterArt } from "./trickster-art";
 import { TricksterShield, TricksterShieldPlates } from "./trickster-shield";
+import { useVerdictReactions } from "./use-verdict-reactions";
 
 const PERCENT = 100;
 
@@ -219,24 +218,6 @@ function PrizeRow() {
       </StepRow>
     </StepRows>
   );
-}
-
-/**
- * The Trickster reacting to each verdict as it comes in: smug when the learner misses one, and when
- * they get one past him a blink that drops his grin, back to sly. A reload draws him sly.
- */
-function useVerdictReactions() {
-  const { duel } = useCheckpointScreen();
-  const trickster = useRef<ActorHandle<TricksterActName>>(null);
-  const { feedback } = duel.state;
-
-  useEffect(() => {
-    if (feedback) {
-      void trickster.current?.play(feedback.isCorrect ? "sly" : "smug");
-    }
-  }, [feedback]);
-
-  return trickster;
 }
 
 /**
