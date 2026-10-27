@@ -15,13 +15,7 @@ import { physicsCourse } from "./library/physics/physics-course";
 import { stockMarketCourse } from "./library/stock-market/stock-market-course";
 import { writeLibraryCourse } from "./library/write-course";
 
-export { type SeedCourse } from "./library/types";
-export { writeLibraryCourse } from "./library/write-course";
-export {
-  type PastCheckpoint,
-  type PastResult,
-  type SeededPast,
-} from "./learners/write-past-sessions";
+export { type PastCheckpoint, type SeededPast } from "./learners/write-past-sessions";
 export { type SeededToday } from "./learners/write-session";
 
 const LIBRARY_COURSES = [physicsCourse, enemCourse, stockMarketCourse, englishCourse] as const;
