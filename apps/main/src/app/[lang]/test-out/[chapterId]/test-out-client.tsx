@@ -22,8 +22,8 @@ function notStartedRun(retry: () => void): GenerationRun {
 }
 
 /**
- * Names the sent test in the address (`?result=`) once its result shows, in place: a reload, Back
- * or the link opened later shows that result instead of a new test.
+ * Names the test before submitting: cache invalidation re-renders this address, which must
+ * find the saved receipt instead of redirecting away from the result it just earned.
  */
 function showResultInAddress(requestId: string) {
   const query = new URLSearchParams(globalThis.location.search);
@@ -61,13 +61,8 @@ export function TestOutClient({
       draftKey={`test-out:${page.goalId}:${page.chapterId}`}
       lessonsLeft={lessonsLeft}
       onSubmit={async (input) => {
-        const outcome = await submitTestOutAction(target, input);
-
-        if (outcome) {
-          showResultInAddress(input.requestId);
-        }
-
-        return outcome;
+        showResultInAddress(input.requestId);
+        return submitTestOutAction(target, input);
       }}
       onUndo={(changeId) => decidePlanChangeAction(page.goalId, { changeId, status: "undone" })}
       recorded={recorded}

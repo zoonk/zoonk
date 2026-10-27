@@ -309,6 +309,74 @@ describe(submitChapterTestOut, () => {
     ).resolves.toMatchObject({ status: "todo" });
   });
 
+  it("offers nothing after a pass, refuses new submissions, and replays the saved result", async () => {
+    const { chapters, goal, items, user } = await setup();
+    const chapterId = chapters[0]?.id ?? "";
+
+    const input = {
+      answers: items
+        .slice(0, 4)
+        .map((item) => ({ answer: RIGHT, durationMs: 8000, itemId: item.id })),
+      requestId: randomUUID(),
+    };
+
+    const passed = await submitChapterTestOut({ chapterId, goalId: goal.id, input });
+    expect(passed).toMatchObject({ outcome: { lessonsSkipped: 4, passed: true }, status: "ready" });
+
+    // Even if its bank now needs writing, an exhausted chapter must start no AI work.
+    await prisma.item.deleteMany({
+      where: { id: { in: items.slice(0, 4).map((item) => item.id) } },
+    });
+
+    await expect(getChapterTestOut({ chapterId, goalId: goal.id })).resolves.toStrictEqual({
+      status: "nothingToSkip",
+    });
+
+    await expect(requestTestOutQuestions({ chapterId, goalId: goal.id })).resolves.toStrictEqual({
+      status: "nothingToSkip",
+    });
+
+    await expect(
+      submitChapterTestOut({
+        chapterId,
+        goalId: goal.id,
+        input: { ...input, requestId: randomUUID() },
+      }),
+    ).resolves.toStrictEqual({ status: "nothingToSkip" });
+
+    await expect(
+      submitChapterTestOut({ chapterId, goalId: goal.id, input }),
+    ).resolves.toMatchObject({ outcome: { lessonsSkipped: 4, passed: true }, status: "ready" });
+
+    await expect(prisma.usageRecord.count({ where: { userId: user.id } })).resolves.toBe(0);
+
+    await expect(
+      prisma.learningEvent.count({ where: { lessonKind: "testOut", userId: user.id } }),
+    ).resolves.toBe(1);
+
+    await expect(
+      getChapterTestOut({ chapterId: chapters[1]?.id ?? "", goalId: goal.id }),
+    ).resolves.toMatchObject({ status: "ready" });
+  });
+
+  it("offers nothing when the chapter's lessons were completed", async () => {
+    const { chapters, goal, planItems } = await setup();
+    const chapterId = chapters[0]?.id ?? "";
+
+    await prisma.planItem.updateMany({
+      data: { status: "done" },
+      where: { id: { in: planItems.slice(0, 4).map((item) => item.id) } },
+    });
+
+    await expect(getChapterTestOut({ chapterId, goalId: goal.id })).resolves.toStrictEqual({
+      status: "nothingToSkip",
+    });
+
+    await expect(requestTestOutQuestions({ chapterId, goalId: goal.id })).resolves.toStrictEqual({
+      status: "nothingToSkip",
+    });
+  });
+
   it("celebrates the tenth of Energy its answers reach", async () => {
     const { chapters, goal, items, user } = await setup();
 

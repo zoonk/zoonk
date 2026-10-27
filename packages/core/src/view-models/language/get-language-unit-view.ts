@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal, prisma } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { findLearnerLanguageGoal } from "../../language/_utils/language-goal";
 import { getSpeakingLevel } from "../../language/conversations/_utils/conversation-goal";
@@ -7,9 +7,9 @@ import { loadPracticeCall } from "../../language/conversations/_utils/practice-c
 import { CEFR_BANDS } from "../../language/levels/skill-level-rules";
 import { findFreshMistakePattern } from "../../language/patterns/find-fresh-pattern";
 import { loadDuePronunciation } from "../../language/pronunciation/load-due-pronunciation";
-import { loadLanguageUnits } from "../../language/units/language-units";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
+import { loadTestOutPlan } from "../../learner/test-out/_utils/test-out-plan";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { toSummaryIdeas } from "../../library/lessons/_utils/summary-ideas";
 import { getSession } from "../../users/get-session";
@@ -42,36 +42,6 @@ function findVisibleUnit({ chapterId, userId }: { chapterId: string; userId: str
     },
     where: { ...libraryRowsVisibleTo(userId), id: chapterId },
   });
-}
-
-/**
- * The order the unit's lessons come in for the learner: today's session's, then the plan's
- * lessons not done, so the page's next lesson is the one Today opens (`findUpNextLessonId`).
- */
-async function loadLessonOrder({
-  goal,
-  lessonIds,
-}: {
-  goal: Goal | null;
-  lessonIds: string[];
-}): Promise<{ planLessonIds: string[]; sessionLessonIds: string[] }> {
-  if (!goal) {
-    return { planLessonIds: [], sessionLessonIds: [] };
-  }
-
-  const [items, todayBlocks] = await Promise.all([
-    prisma.planItem.findMany({
-      orderBy: { position: "asc" },
-      select: { lessonId: true },
-      where: { lessonId: { in: lessonIds }, plan: { goalId: goal.id }, status: "todo" },
-    }),
-    loadTodayLearnBlocks(goal),
-  ]);
-
-  return {
-    planLessonIds: items.flatMap((item) => (item.lessonId ? [item.lessonId] : [])),
-    sessionLessonIds: todayBlocks.flatMap((block) => block.lessonId ?? []),
-  };
 }
 
 function getLessonState({ done, next }: { done: boolean; next: boolean }) {
@@ -119,19 +89,21 @@ export async function getLanguageUnitView({
   const goal = await findLearnerLanguageGoal({ goalId, targetLanguage, userId });
   const lessonIds = chapter.lessons.map(({ lesson }) => lesson.id);
 
-  const [units, level, grammarTips, words, mistakes, pronunciation, order, blockedTestOutChapters] =
+  const plan = goal ? await loadTestOutPlan(goal.id, { goal }) : null;
+
+  const [todayBlocks, level, grammarTips, words, mistakes, pronunciation, blockedTestOutChapters] =
     await Promise.all([
-      goal ? loadLanguageUnits(goal) : [],
+      goal ? loadTodayLearnBlocks(goal) : [],
       getSpeakingLevel({ goal, targetLanguage, userId }),
       loadGrammarTips(lessonIds),
       loadUnitWords(lessonIds),
       loadUnitMistakes({ lessonIds, userId }),
       loadDuePronunciation({ language: targetLanguage, userId }),
-      loadLessonOrder({ goal, lessonIds }),
       goal
         ? loadBlockedTestOutChapters({
             chapterIds: [chapter.id],
             goalId: goal.id,
+            known: { goal, ...(plan && { plan }) },
             now: new Date(),
             timeZone: getAnswerTimeZone({ goal }),
             userId,
@@ -139,15 +111,24 @@ export async function getLanguageUnitView({
         : new Set<string>(),
     ]);
 
-  const unit = units.find((candidate) => candidate.chapterId === chapter.id);
+  const chapterIds = [...new Set(plan?.items.flatMap((item) => item.chapterId ?? []))];
+  const unitIndex = chapterIds.indexOf(chapter.id);
 
   const done = new Set(
-    unit?.lessons.filter((lesson) => lesson.done).map((lesson) => lesson.lessonId),
+    plan?.items.flatMap((item) =>
+      item.lessonId && (item.status === "done" || item.status === "testedOut")
+        ? [item.lessonId]
+        : [],
+    ),
   );
 
   const nextId = findUpNextLessonId({
     lessons: lessonIds.map((lessonId) => ({ done: done.has(lessonId), lessonId })),
-    ...order,
+    planLessonIds:
+      plan?.items.flatMap((item) =>
+        item.status === "todo" && item.lessonId ? [item.lessonId] : [],
+      ) ?? [],
+    sessionLessonIds: todayBlocks.flatMap((block) => block.lessonId ?? []),
   });
 
   const pattern =
@@ -167,8 +148,7 @@ export async function getLanguageUnitView({
   return {
     status: "ready",
     unit: {
-      canTestOut:
-        Boolean(goal) && done.size < lessonIds.length && !blockedTestOutChapters.has(chapter.id),
+      canTestOut: Boolean(goal) && !blockedTestOutChapters.has(chapter.id),
       conversation: await loadPracticeCall({ chapterId: chapter.id, level }),
       goalId: goal?.id ?? null,
       grammarTips,
@@ -189,7 +169,7 @@ export async function getLanguageUnitView({
         description: chapter.description,
         levelRange: CEFR_BANDS[chapter.level],
         objectives: chapter.objectives,
-        position: unit?.position ?? null,
+        position: unitIndex === -1 ? null : unitIndex + 1,
         title: chapter.title,
       },
       words,

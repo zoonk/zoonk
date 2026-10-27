@@ -157,7 +157,7 @@ describe("a chapter test-out sent and read back", () => {
 
     await expect(send({ requestId })).resolves.toStrictEqual(sentAgain(first));
 
-    // A free exam plan past its first week: a new test takes Plus, the one taken stays taken.
+    // Even after the free week ends, the saved test stays taken and a new one has nothing to skip.
     await prisma.goal.update({
       data: { createdAt: new Date(NOW.getTime() - 10 * DAY_MS), kind: "exam" },
       where: { id: goal.id },
@@ -166,7 +166,7 @@ describe("a chapter test-out sent and read back", () => {
     await expect(send({ requestId })).resolves.toStrictEqual(sentAgain(first));
 
     await expect(send({ requestId: randomUUID() })).resolves.toStrictEqual({
-      status: "plusRequired",
+      status: "nothingToSkip",
     });
 
     await expect(countRecorded(user.id)).resolves.toStrictEqual(counted);

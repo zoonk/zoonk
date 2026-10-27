@@ -124,7 +124,7 @@ async function toSurvivingMembers(entries: readonly MemberEntry[]): Promise<Memb
 }
 
 /** Plan items may still point at a merged skill; the learner's state lives on the survivor. */
-async function toSurvivingSkills(entries: readonly SkillEntry[]): Promise<SkillEntry[]> {
+export async function toSurvivingSkills(entries: readonly SkillEntry[]): Promise<SkillEntry[]> {
   const survivorOf = await loadSkillSurvivors(unique(entries.map((entry) => entry.skillId)));
   return entries.map((entry) => ({ ...entry, skillId: survivorOf(entry.skillId) }));
 }
@@ -196,11 +196,10 @@ function toMemberSkillIds(skillId: string, membersOf: ReadonlyMap<string, Member
 }
 
 /**
- * The plan's rows and the skills it covers, in plan order (one entry per skill), with each skill's
- * finer member skills: what `loadPlan` decorates and the goal's skill scope reads. Null without a
- * plan; a plan whose items lost every skill falls back to its skill graph's.
+ * The raw teaching entries and rows shared by the full skill projection and test-out eligibility.
+ * Null without a plan; a plan whose items lost every skill falls back to its skill graph's.
  */
-async function loadPlanEntries({
+export async function loadPlanEntryRows({
   goalId,
   source,
   withLeftOut,
@@ -224,16 +223,26 @@ async function loadPlanEntries({
     ? toLeftOutEntries({ graph: plan.graph, planned, settings: plan.settings })
     : [];
 
+  return { allEntries: [...planned, ...leftOut], itemSkills, plan };
+}
+
+async function loadPlanEntries(input: Parameters<typeof loadPlanEntryRows>[0]) {
+  const loaded = await loadPlanEntryRows(input);
+
+  if (!loaded) {
+    return null;
+  }
+
   const [allEntries, members] = await Promise.all([
-    toSurvivingSkills([...planned, ...leftOut]),
-    toSurvivingMembers(toMemberEntries({ items: plan.items, skills: itemSkills })),
+    toSurvivingSkills(loaded.allEntries),
+    toSurvivingMembers(toMemberEntries({ items: loaded.plan.items, skills: loaded.itemSkills })),
   ]);
 
   return {
+    ...loaded,
     allEntries,
     entries: firstPerSkill(allEntries),
     membersOf: Map.groupBy(members, (entry) => entry.skillId),
-    plan,
   };
 }
 
@@ -392,15 +401,6 @@ async function loadTextTestPlan({
  */
 export function loadPlacementPlan(goalId: string): Promise<GoalPlan> {
   return loadTextTestPlan({ goalId, withLeftOut: true });
-}
-
-/**
- * The goal's plan as a chapter test-out reads it: without the skills its exam practices only with
- * recordings, which a text question can't show known, so a pass never skips their lessons and a
- * chapter that teaches only them offers no test-out.
- */
-export function loadTestOutPlan(goalId: string): Promise<GoalPlan> {
-  return loadTextTestPlan({ goalId, withLeftOut: false });
 }
 
 /** The ids of every skill a goal's plan covers, in plan order. */

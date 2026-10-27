@@ -4,7 +4,6 @@ import { type AnalyticsPlatform } from "../../analytics/shared-properties";
 import { claimAssist } from "../../entitlements/claim-usage";
 import { type RefusedUsage } from "../../entitlements/contract";
 import { findOwnedGoal } from "../_utils/owned-goal";
-import { isTestOutPlusOnly } from "./_utils/test-out-access";
 import { loadChapterTestOut } from "./get-chapter-test-out";
 
 /**
@@ -23,6 +22,7 @@ export type TestOutQuestionsRequest =
     }
   | { decision: RefusedUsage; status: "refused" }
   | { status: "notFound" }
+  | { status: "nothingToSkip" }
   | { status: "plusRequired" }
   | { status: "unauthorized" };
 
@@ -45,15 +45,13 @@ export async function requestTestOutQuestions({
     return owned;
   }
 
-  if (await isTestOutPlusOnly(owned.goal)) {
-    return { status: "plusRequired" };
+  const result = await loadChapterTestOut({ chapterId, goal: owned.goal, userId: owned.userId });
+
+  if (result.status !== "ready") {
+    return result;
   }
 
-  const testOut = await loadChapterTestOut({ chapterId, goal: owned.goal, userId: owned.userId });
-
-  if (!testOut) {
-    return { status: "notFound" };
-  }
+  const { testOut } = result;
 
   if (testOut.needsItems.length === 0) {
     return { status: "ready" };

@@ -1,7 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { loadTestOutPlan } from "../../learner/_utils/goal-skill-graph";
 import { countSkippableItems, getChapterSkills } from "../../learner/test-out/_utils/chapter-items";
+import { loadTestOutPlan } from "../../learner/test-out/_utils/test-out-plan";
 import { CAPSULE_LEDGER_KIND } from "../../milestones/award-milestones";
 import { type TestOutOffer } from "../completion-contract";
 import { readFinishedLessonId } from "./lesson-block";

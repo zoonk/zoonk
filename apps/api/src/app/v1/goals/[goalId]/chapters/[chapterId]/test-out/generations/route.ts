@@ -46,6 +46,10 @@ async function createTestOutGeneration(
     return plusRequiredError();
   }
 
+  if (result.status === "nothingToSkip") {
+    return NextResponse.json(result);
+  }
+
   if (result.status === "ready") {
     return NextResponse.json({ generationId: null, status: "ready" });
   }

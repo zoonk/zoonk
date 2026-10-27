@@ -100,6 +100,7 @@ export async function getChapterView({
     loadBlockedTestOutChapters({
       chapterIds: [chapterId],
       goalId: goal.id,
+      known: { goal, plan: map.plan },
       now: new Date(),
       timeZone: getAnswerTimeZone({ goal }),
       userId: goal.userId,

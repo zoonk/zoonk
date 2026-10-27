@@ -90,6 +90,11 @@ async function TestOutBody({ params, searchParams }: Props) {
     getLearnerBuddy(),
   ]);
 
+  if (result.status === "nothingToSkip") {
+    redirect({ href: `/content/chapters/${chapterId}`, locale: lang });
+    return null;
+  }
+
   if (
     result.status !== "ready" &&
     result.status !== "plusRequired" &&

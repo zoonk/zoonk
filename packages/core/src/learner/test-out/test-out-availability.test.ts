@@ -59,6 +59,21 @@ async function readOffers(fixture: Awaited<ReturnType<typeof setup>>) {
 }
 
 describe("test-out offers after a failed test", () => {
+  it("removes every offer when the plan has nothing the chapter's test can skip", async () => {
+    const fixture = await setup();
+
+    await prisma.planItem.updateMany({
+      data: { status: "testedOut" },
+      where: { chapterId: fixture.chapterId, planId: fixture.items[0]?.planId },
+    });
+
+    await expect(readOffers(fixture)).resolves.toMatchObject({
+      block: { canTestOut: false },
+      chapter: { available: false },
+      detailBlock: { canTestOut: false },
+    });
+  });
+
   it("recognizes studying a chapter's lesson when the plan schedules its whole chapter", async () => {
     const fixture = await setup();
 

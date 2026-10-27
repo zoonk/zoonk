@@ -10,6 +10,7 @@ import {
   chapterTestOutRecordSchema,
   chapterTestOutResponseSchema,
   chapterTestOutResultSchema,
+  nothingToSkipSchema,
   placementAnswerResponseSchema,
   placementCompletionResponseSchema,
   placementResponseSchema,
@@ -53,8 +54,13 @@ export const placementPaths = {
       responses: {
         ...learnerErrors,
         "200": {
-          content: { "application/json": { schema: chapterTestOutResponseSchema } },
-          description: "The chapter's test-out questions",
+          content: {
+            "application/json": {
+              schema: z.union([chapterTestOutResponseSchema, nothingToSkipSchema]),
+            },
+          },
+          description:
+            "The chapter's test-out questions, or nothingToSkip when no lessons remain to skip",
         },
         "402": testOutPlusRequired,
       },
@@ -74,8 +80,13 @@ export const placementPaths = {
       responses: {
         ...learnerErrors,
         "200": {
-          content: { "application/json": { schema: chapterTestOutResultSchema } },
-          description: "The test-out result",
+          content: {
+            "application/json": {
+              schema: z.union([chapterTestOutResultSchema, nothingToSkipSchema]),
+            },
+          },
+          description:
+            "The test-out result, or nothingToSkip for a new submission with no lessons left to skip",
         },
         "402": testOutPlusRequired,
         "422": unprocessableEntityResponse,
@@ -94,8 +105,11 @@ export const placementPaths = {
       responses: {
         ...learnerErrors,
         "200": {
-          content: { "application/json": { schema: testOutGenerationSchema } },
-          description: "The test-out has its questions",
+          content: {
+            "application/json": { schema: z.union([testOutGenerationSchema, nothingToSkipSchema]) },
+          },
+          description:
+            "The test-out has its questions, or nothingToSkip without starting generation",
         },
         "202": {
           content: { "application/json": { schema: testOutGenerationSchema } },

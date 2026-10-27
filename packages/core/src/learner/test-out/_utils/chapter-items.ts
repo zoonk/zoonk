@@ -2,7 +2,8 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { getItemAudienceFilter } from "../../../library/items/item-field";
 import { GRADABLE_ITEM_FORMATS } from "../../_utils/choice-items";
-import { type GoalPlan, type GoalSkillNode } from "../../_utils/goal-skill-graph";
+import { type GoalSkillNode } from "../../_utils/goal-skill-graph";
+import { type TestOutPlan } from "./test-out-plan";
 
 /**
  * The chapter's skills inside the goal's plan, in plan order: the skills whose area it is and the
@@ -14,8 +15,8 @@ export function getChapterSkills({
   plan,
 }: {
   chapterId: string;
-  plan: GoalPlan;
-}): GoalSkillNode[] {
+  plan: TestOutPlan;
+}): TestOutPlan["skills"] {
   const taught = new Set(
     plan.items.filter((item) => item.chapterId === chapterId).flatMap((item) => item.skillIds),
   );
@@ -31,7 +32,7 @@ export function countSkippableItems({
   plan,
   skills,
 }: {
-  plan: GoalPlan;
+  plan: TestOutPlan;
   skills: readonly Pick<GoalSkillNode, "id">[];
 }): number {
   const ids = new Set(skills.map((skill) => skill.id));

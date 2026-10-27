@@ -13122,11 +13122,18 @@
         ],
         "responses": {
           "200": {
-            "description": "The chapter's test-out questions",
+            "description": "The chapter's test-out questions, or nothingToSkip when no lessons remain to skip",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ChapterTestOut"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/ChapterTestOut"
+                    },
+                    {
+                      "$ref": "#/components/schemas/NothingToSkip"
+                    }
+                  ]
                 }
               }
             }
@@ -13236,11 +13243,18 @@
         },
         "responses": {
           "200": {
-            "description": "The test-out result",
+            "description": "The test-out result, or nothingToSkip for a new submission with no lessons left to skip",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ChapterTestOutResult"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/ChapterTestOutResult"
+                    },
+                    {
+                      "$ref": "#/components/schemas/NothingToSkip"
+                    }
+                  ]
                 }
               }
             },
@@ -13361,11 +13375,18 @@
         ],
         "responses": {
           "200": {
-            "description": "The test-out has its questions",
+            "description": "The test-out has its questions, or nothingToSkip without starting generation",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TestOutGeneration"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/TestOutGeneration"
+                    },
+                    {
+                      "$ref": "#/components/schemas/NothingToSkip"
+                    }
+                  ]
                 }
               }
             },
@@ -68768,6 +68789,22 @@
         ],
         "description": "A bank question without its answers",
         "type": "object"
+      },
+      "NothingToSkip": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "nothingToSkip"
+            ]
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "additionalProperties": false,
+        "description": "No lessons remain for a test-out to skip. Open the chapter instead."
       },
       "ChapterTestOutResult": {
         "type": "object",

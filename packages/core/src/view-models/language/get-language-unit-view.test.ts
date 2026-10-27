@@ -2,9 +2,11 @@ import { prisma } from "@zoonk/db";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
+import { lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { pronunciationReviewFixture } from "@zoonk/testing/fixtures/pronunciation-reviews";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
   studySessionBlockFixture,
   studySessionFixture,
@@ -47,6 +49,15 @@ describe("a language unit's page", () => {
     freezeClock();
     const { goal, lessons, renting, user } = await languageGoalFixture();
     mockSession(user.id);
+
+    // The unit test needs a skill its planned lessons can actually skip.
+    const skill = await skillFixture();
+
+    await Promise.all(
+      lessons
+        .slice(2)
+        .map((lesson) => lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id })),
+    );
 
     // It failed just now: a minute earlier is yesterday when the test runs just after midnight.
     await learningEventFixture({

@@ -10,14 +10,14 @@ import { type ProgressCelebration } from "../../sessions/progress-celebration";
 import { settleAnsweredActivity } from "../../stats/_utils/settle-answered-activity";
 import { getCompletionEnergyContext } from "../../stats/completion-energy";
 import { type ChoiceItem, gradeChoiceAnswer, parseChoiceItem } from "../_utils/choice-items";
-import { loadTestOutPlan } from "../_utils/goal-skill-graph";
 import { markPlanItemsTestedOut } from "../_utils/known-skills";
 import { findOwnedGoal, getAnswerTimeZone } from "../_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../_utils/write-learner-change";
 import { type ItemAnswerInput } from "../contract";
 import { recordLearnerAnswer } from "../record-learner-answer";
-import { getChapterSkills } from "./_utils/chapter-items";
+import { countSkippableItems, getChapterSkills } from "./_utils/chapter-items";
 import { isTestOutPlusOnly } from "./_utils/test-out-access";
+import { loadTestOutPlan } from "./_utils/test-out-plan";
 import {
   type TestOutReceipt,
   findTestOutReceipt,
@@ -42,6 +42,7 @@ export type SubmitChapterTestOutResult =
   | { outcome: ChapterTestOutOutcome; status: "ready" }
   | { status: "invalidItem" }
   | { status: "notFound" }
+  | { status: "nothingToSkip" }
   | { status: "plusRequired" }
   | { status: "unauthorized" };
 
@@ -214,30 +215,33 @@ export async function submitChapterTestOut({
   }
 
   const { userId } = owned;
-  const { requestId } = input;
 
   // Before any check or grade that could say otherwise now: a retry says what was recorded.
-  const sent = await findTestOutReceipt({ chapterId, goalId, requestId, userId });
+  const sent = await findTestOutReceipt({ chapterId, goalId, requestId: input.requestId, userId });
 
   if (sent) {
     const celebration = await celebrateProgress({ progress: null, userId });
     return toReadyResult({ celebration, said: sent });
   }
 
+  const plan = await loadTestOutPlan(goalId);
+  const chapterSkills = getChapterSkills({ chapterId, plan });
+
+  if (chapterSkills.length === 0) {
+    return { status: "notFound" };
+  }
+
+  if (countSkippableItems({ plan, skills: chapterSkills }) === 0) {
+    return { status: "nothingToSkip" };
+  }
+
   if (await isTestOutPlusOnly(owned.goal)) {
     return { status: "plusRequired" };
   }
 
-  const plan = await loadTestOutPlan(goalId);
-  const chapterSkillIds = getChapterSkills({ chapterId, plan }).map((skill) => skill.id);
-
-  if (chapterSkillIds.length === 0) {
-    return { status: "notFound" };
-  }
-
   const graded = await gradeAnswers({
     answers: firstAnswerPerItem(input.answers),
-    chapterSkillIds,
+    chapterSkillIds: chapterSkills.map((skill) => skill.id),
   });
 
   if (!graded) {
@@ -245,7 +249,7 @@ export async function submitChapterTestOut({
   }
 
   const score = scoreTestOut({
-    chapterSkillIds,
+    chapterSkillIds: chapterSkills.map((skill) => skill.id),
     results: graded.map(({ isCorrect, item }) => ({ isCorrect, skillId: item.skillId })),
   });
 
@@ -268,7 +272,7 @@ export async function submitChapterTestOut({
     chapterId,
     goalId,
     graded,
-    requestId,
+    requestId: input.requestId,
     said: {
       changeId: testedOut.changeId,
       correct: score.correct,

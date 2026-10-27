@@ -224,6 +224,13 @@ export const placementCompletionResponseSchema = z
   })
   .meta({ id: "PlacementCompletion" });
 
+export const nothingToSkipSchema = z
+  .object({ status: z.literal("nothingToSkip") })
+  .meta({
+    description: "No lessons remain for a test-out to skip. Open the chapter instead.",
+    id: "NothingToSkip",
+  });
+
 export const chapterTestOutResponseSchema = z
   .object({
     chapterId: z.uuid(),

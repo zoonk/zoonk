@@ -1,27 +1,31 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type Goal, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { CAPSULE_LEDGER_KIND } from "../../../milestones/award-milestones";
 import { getStartOfLocalDay } from "../../_utils/local-time";
+import { countSkippableItems, getChapterSkills } from "./chapter-items";
+import { type TestOutPlan, loadTestOutPlan } from "./test-out-plan";
 
 function failedTest(event: { contentIds: unknown }) {
   return isJsonObject(event.contentIds) && event.contentIds.testOutPassed === "false";
 }
 
 /**
- * A failed chapter test waits until the learner studies a lesson there or their next local day.
- * Session, chapter, language-unit and new Buddy offers share this rule; direct test access stays open.
+ * Chapters with no skippable lessons offer no test. A failed chapter test waits until the learner studies a lesson there or their next local day.
+ * Session, chapter, language-unit and new Buddy offers share this rule; direct test access stays open while lessons remain.
  */
 export async function loadBlockedTestOutChapters({
   chapterIds,
   goalId,
+  known,
   now,
   timeZone,
   userId,
 }: {
   chapterIds: readonly string[];
   goalId: string;
+  known?: { goal?: Pick<Goal, "kind">; plan?: TestOutPlan };
   now: Date;
   timeZone: string;
   userId: string;
@@ -35,23 +39,31 @@ export async function loadBlockedTestOutChapters({
     timeZone,
   });
 
-  const tests = await prisma.learningEvent.findMany({
-    orderBy: { endedAt: "desc" },
-    where: {
-      OR: chapterIds.map((chapterId) => ({
-        contentIds: { equals: chapterId, path: ["chapterId"] },
-      })),
-      endedAt: { gte: start, lte: now },
-      goalId,
-      lessonKind: "testOut",
-      userId,
-    },
-  });
+  const [plan, tests] = await Promise.all([
+    loadTestOutPlan(goalId, known),
+    prisma.learningEvent.findMany({
+      orderBy: { endedAt: "desc" },
+      where: {
+        OR: chapterIds.map((chapterId) => ({
+          contentIds: { equals: chapterId, path: ["chapterId"] },
+        })),
+        endedAt: { gte: start, lte: now },
+        goalId,
+        lessonKind: "testOut",
+        userId,
+      },
+    }),
+  ]);
+
+  const nothingToSkip = chapterIds.filter(
+    (chapterId) =>
+      countSkippableItems({ plan, skills: getChapterSkills({ chapterId, plan }) }) === 0,
+  );
 
   const failed = tests.filter((event) => failedTest(event));
 
   if (failed.length === 0) {
-    return new Set();
+    return new Set(nothingToSkip);
   }
 
   const [plannedLessons, chapterLessons] = await Promise.all([
@@ -84,8 +96,9 @@ export async function loadBlockedTestOutChapters({
           },
         });
 
-  return new Set(
-    chapterIds.filter((chapterId) => {
+  return new Set([
+    ...nothingToSkip,
+    ...chapterIds.filter((chapterId) => {
       const lastFailure = failed.find(
         (event) => isJsonObject(event.contentIds) && event.contentIds.chapterId === chapterId,
       );
@@ -111,5 +124,5 @@ export async function loadBlockedTestOutChapters({
           ids.has(event.contentIds.lessonId),
       );
     }),
-  );
+  ]);
 }

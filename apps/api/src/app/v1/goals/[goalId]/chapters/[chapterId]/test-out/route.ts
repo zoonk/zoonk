@@ -25,6 +25,10 @@ async function getTestOut(_request: Request, context: TestOutContext) {
 
   const result = await getChapterTestOut(path.data);
 
+  if (result.status === "nothingToSkip") {
+    return NextResponse.json(result);
+  }
+
   if (result.status !== "ready") {
     return learnerAccessError(result.status);
   }
@@ -50,6 +54,10 @@ async function submitTestOut(request: NextRequest, context: TestOutContext) {
   }
 
   const result = await submitChapterTestOut({ ...path.data, input: body.data });
+
+  if (result.status === "nothingToSkip") {
+    return NextResponse.json(result);
+  }
 
   if (result.status !== "ready") {
     return learnerAccessError(result.status);

@@ -4,11 +4,11 @@ import { type TrueFalseLabels, getTrueFalseLabels } from "../../library/exams/tr
 import { ITEM_IMAGE_INCLUDE } from "../../library/items/item-image";
 import { loadExamStructure } from "../../sessions/_utils/exam-structure";
 import { type QuestionView, parseChoiceItem, toQuestionView } from "../_utils/choice-items";
-import { loadTestOutPlan } from "../_utils/goal-skill-graph";
 import { findOwnedGoal } from "../_utils/owned-goal";
 import { pickPlacementItem } from "../placement/placement-item-choice";
 import { countSkippableItems, getChapterSkills, loadSkillItems } from "./_utils/chapter-items";
 import { isTestOutPlusOnly } from "./_utils/test-out-access";
+import { loadTestOutPlan } from "./_utils/test-out-plan";
 import {
   TEST_OUT_PASS_MARK,
   getQuestionsPerSkill,
@@ -37,6 +37,7 @@ type ChapterTestOut = {
 
 export type ChapterTestOutResult =
   | { status: "notFound" }
+  | { status: "nothingToSkip" }
   | { status: "plusRequired" }
   | { status: "ready"; testOut: ChapterTestOut }
   | { status: "unauthorized" };
@@ -77,8 +78,8 @@ function interleave(picks: readonly { itemIds: string[] }[]): string[] {
 }
 
 /**
- * The test-out for one chapter of the learner's own goal, or null when the chapter isn't in its
- * plan. For the capabilities that read it after checking the goal is the learner's.
+ * The test-out for one chapter of the learner's own goal, or why it has none: outside the plan
+ * or nothing left to skip. Callers first check the goal belongs to the learner.
  */
 export async function loadChapterTestOut({
   chapterId,
@@ -86,23 +87,30 @@ export async function loadChapterTestOut({
   userId,
 }: {
   chapterId: string;
-  goal: Pick<Goal, "examBlueprintId" | "id">;
+  goal: Pick<Goal, "createdAt" | "examBlueprintId" | "id" | "kind" | "timezone">;
   userId: string;
-}): Promise<ChapterTestOut | null> {
-  const plan = await loadTestOutPlan(goal.id);
+}): Promise<Exclude<ChapterTestOutResult, { status: "unauthorized" }>> {
+  const plan = await loadTestOutPlan(goal.id, { goal });
   const chapterSkills = getChapterSkills({ chapterId, plan });
 
   if (chapterSkills.length === 0) {
-    return null;
+    return { status: "notFound" };
+  }
+
+  const skippable = countSkippableItems({ plan, skills: chapterSkills });
+
+  if (skippable === 0) {
+    return { status: "nothingToSkip" };
+  }
+
+  if (await isTestOutPlusOnly(goal)) {
+    return { status: "plusRequired" };
   }
 
   const sampled = pickTestOutSkills(chapterSkills);
 
   // Every sampled skill gets a question, and a chapter of few skills asks them more than once.
-  const count = Math.max(
-    sampled.length,
-    getTestOutQuestionCount(countSkippableItems({ plan, skills: chapterSkills })),
-  );
+  const count = Math.max(sampled.length, getTestOutQuestionCount(skippable));
 
   const questionsPerSkill = getQuestionsPerSkill({ questions: count, skills: sampled.length });
 
@@ -138,12 +146,15 @@ export async function loadChapterTestOut({
     .map((item) => toQuestionView(item));
 
   return {
-    chapterId,
-    needsItems,
-    passMark: TEST_OUT_PASS_MARK,
-    questions,
-    questionsPerSkill,
-    trueFalseLabels: getTrueFalseLabels(structure),
+    status: "ready",
+    testOut: {
+      chapterId,
+      needsItems,
+      passMark: TEST_OUT_PASS_MARK,
+      questions,
+      questionsPerSkill,
+      trueFalseLabels: getTrueFalseLabels(structure),
+    },
   };
 }
 
@@ -167,10 +178,5 @@ export async function getChapterTestOut({
     return owned;
   }
 
-  if (await isTestOutPlusOnly(owned.goal)) {
-    return { status: "plusRequired" };
-  }
-
-  const testOut = await loadChapterTestOut({ chapterId, goal: owned.goal, userId: owned.userId });
-  return testOut ? { status: "ready", testOut } : { status: "notFound" };
+  return loadChapterTestOut({ chapterId, goal: owned.goal, userId: owned.userId });
 }

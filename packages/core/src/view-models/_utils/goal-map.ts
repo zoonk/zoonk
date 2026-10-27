@@ -3,6 +3,7 @@ import { type Goal, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { isUuid } from "@zoonk/utils/uuid";
 import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-challenge-access";
+import { type GoalPlan } from "../../learner/_utils/goal-skill-graph";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { readGoalPlan } from "../../learner/_utils/read-goal-plan";
 import { toSkillStatus } from "../../learner/_utils/skill-status";
@@ -22,6 +23,8 @@ export type GoalMap = {
   courseIds: string[];
   /** The plan studies everything, an exam's going on after it (see `PlanSettings.fullCourse`). */
   fullCourse: boolean;
+  /** The loaded skill projection, shared with chapter test-out eligibility. */
+  plan: GoalPlan;
   /** The plan's items with the skills each teaches, for chapter pages. */
   items: MapItem[];
   phases: MapPhase[];
@@ -217,6 +220,7 @@ export async function loadGoalMap({
     fullCourse: rows.settings.fullCourse,
     items,
     phaseChallengesRequired,
+    plan: graph,
     todayBlocks,
   };
 }
