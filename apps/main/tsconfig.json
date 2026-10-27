@@ -1,5 +1,5 @@
 {
-  "compilerOptions": { "paths": { "@/*": ["./src/*"] } },
+  "compilerOptions": { "allowImportingTsExtensions": true, "paths": { "@/*": ["./src/*"] } },
   "exclude": ["node_modules"],
   "extends": "@zoonk/tsconfig/nextjs.json",
   "include": [

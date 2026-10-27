@@ -1,5 +1,5 @@
 import { defineConfig } from "vitest/config";
-import { getTestRunEnvironment } from "../db/src/test-environment";
+import { getTestRunEnvironment } from "../db/src/test-environment.ts";
 
 export default defineConfig({
   resolve: { tsconfigPaths: true },

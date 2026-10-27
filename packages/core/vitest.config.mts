@@ -2,7 +2,7 @@ import { globSync, readFileSync } from "node:fs";
 import { availableParallelism } from "node:os";
 import { resolve } from "node:path";
 import { configDefaults, defineConfig } from "vitest/config";
-import { getTestRunEnvironment } from "../db/src/test-environment";
+import { getTestRunEnvironment } from "../db/src/test-environment.ts";
 
 /**
  * Prompts load as their text, as the apps' raw-loader serves them, so a prompt's version here is

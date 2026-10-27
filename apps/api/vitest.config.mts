@@ -1,7 +1,7 @@
 import { globSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { configDefaults, defineConfig } from "vitest/config";
-import { getTestRunEnvironment } from "../../packages/db/src/test-environment";
+import { getTestRunEnvironment } from "../../packages/db/src/test-environment.ts";
 
 /**
  * Test files that mock modules of their own (`vi.mock`, `vi.doMock`, `vi.unmock`): a mocked module

@@ -1,5 +1,5 @@
 {
-  "compilerOptions": { "jsx": "react-jsx" },
+  "compilerOptions": { "allowImportingTsExtensions": true, "jsx": "react-jsx" },
   "exclude": ["node_modules", "dist"],
   "extends": "@zoonk/tsconfig/base.json",
   "include": ["src", "vite.config.ts"]

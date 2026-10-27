@@ -1,5 +1,5 @@
 import { isJsonObject } from "@zoonk/utils/json";
-import { type EmailPayload, isEmailPayload } from "./email-payload";
+import { type EmailPayload, isEmailPayload } from "./email-payload.ts";
 
 export type CapturedEmail = EmailPayload & { id: string; receivedAt: string };
 

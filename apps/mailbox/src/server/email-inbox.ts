@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { type CapturedEmail } from "../email";
-import { type EmailPayload } from "../email-payload";
+import { type EmailPayload } from "../email-payload.ts";
+import { type CapturedEmail } from "../email.ts";
 
 const MAX_EMAIL_COUNT = 100;
 

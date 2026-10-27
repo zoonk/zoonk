@@ -1,6 +1,6 @@
 import { createRequire } from "node:module";
 import { defineConfig } from "vitest/config";
-import { getTestRunEnvironment } from "../../packages/db/src/test-environment";
+import { getTestRunEnvironment } from "../../packages/db/src/test-environment.ts";
 
 const runtimeRequire = createRequire(import.meta.url);
 

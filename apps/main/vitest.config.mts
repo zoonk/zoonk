@@ -1,6 +1,6 @@
 import { resolve } from "node:path";
 import { defineConfig } from "vitest/config";
-import { getTestRunEnvironment } from "../../packages/db/src/test-environment";
+import { getTestRunEnvironment } from "../../packages/db/src/test-environment.ts";
 
 export default defineConfig({
   assetsInclude: ["**/*.md"],

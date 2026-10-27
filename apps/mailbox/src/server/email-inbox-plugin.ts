@@ -1,7 +1,7 @@
 import { type IncomingMessage, type ServerResponse } from "node:http";
 import { type Plugin } from "vite";
-import { type EmailPayload, isEmailPayload } from "../email-payload";
-import { type EmailInbox, createEmailInbox } from "./email-inbox";
+import { type EmailPayload, isEmailPayload } from "../email-payload.ts";
+import { type EmailInbox, createEmailInbox } from "./email-inbox.ts";
 
 const EMAILS_PATH = "/api/emails";
 
