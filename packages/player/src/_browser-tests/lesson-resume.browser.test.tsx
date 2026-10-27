@@ -1,7 +1,7 @@
 import { MAX_ANSWER_DURATION_MS } from "@zoonk/core/learner/contract";
 import { lessonStepCheckInputSchema } from "@zoonk/core/lesson-player/contract";
 import { describe, expect, it, vi } from "vitest";
-import { page } from "vitest/browser";
+import { page, userEvent } from "vitest/browser";
 import {
   buildAdapters,
   renderLessonPlayer,
@@ -233,7 +233,7 @@ describe("coming back to a lesson", () => {
     expect(completeLesson).toHaveBeenCalledTimes(2);
   });
 
-  it("offers to save again when the save never reached the server, then finishes", async () => {
+  it("makes Try again the lesson end's main action when the save never reached the server", async () => {
     const lesson = buildLesson([teachingStep("explanation")]);
     const finished = buildAdapters(lesson).completeLesson;
 
@@ -250,7 +250,11 @@ describe("coming back to a lesson", () => {
       .element(page.getByText("That didn't go through. Your answers are kept."))
       .toBeVisible();
 
-    await page.getByRole("button", { name: "Try again" }).click();
+    // The only way on, as the end's main action: one Try again, which Enter presses.
+    await expect.element(page.getByRole("button", { name: /^Try again/u })).toBeVisible();
+    await expect.element(page.getByRole("link", { name: /^Continue/u })).not.toBeInTheDocument();
+    await userEvent.keyboard("{Enter}");
+
     await expect.element(page.getByText("+10 Brain Power")).toBeVisible();
     await expect.element(page.getByRole("link", { name: /^Continue/u })).toBeVisible();
   });

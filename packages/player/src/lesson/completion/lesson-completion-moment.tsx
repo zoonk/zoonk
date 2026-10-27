@@ -1,8 +1,8 @@
 "use client";
 
 import { MomentReadouts } from "@zoonk/learn/moment-readouts";
-import { AnswersSaveError } from "@zoonk/learn/save-error";
 import { DayMoment } from "@zoonk/learn/session/day-moment";
+import { FailedMoment } from "@zoonk/learn/session/failed-moment";
 import { getLessonCelebration } from "@zoonk/learn/session/lesson-celebration";
 import { MomentHeader, MomentSaving, PendingMainAction } from "@zoonk/learn/session/moment-header";
 import {
@@ -117,13 +117,16 @@ export function LessonCompletionMoment(props: LessonCompletionSlotProps) {
   const { result } = completion;
   const celebration = result ? getLessonCelebration(result) : null;
   const isSaved = completion.status === "saved";
+  const title = completion.testedOut ? t("You already knew this") : t("Lesson complete");
+
+  if (completion.status === "failed") {
+    return <FailedMoment onRetry={onRetry} title={title} />;
+  }
 
   return (
     <>
       <TaskBody data-slot="lesson-completion">
-        <MomentHeader
-          title={completion.testedOut ? t("You already knew this") : t("Lesson complete")}
-        >
+        <MomentHeader title={title}>
           {completion.status === "saving" && <MomentSaving />}
 
           {isSaved && (
@@ -134,8 +137,6 @@ export function LessonCompletionMoment(props: LessonCompletionSlotProps) {
               reviewAt={result?.nextReviewAt ?? null}
             />
           )}
-
-          {completion.status === "failed" && <AnswersSaveError onRetry={onRetry} />}
         </MomentHeader>
 
         {isSaved && celebration && (
@@ -150,9 +151,7 @@ export function LessonCompletionMoment(props: LessonCompletionSlotProps) {
         {isSaved && slots.completionActions?.(props)}
       </TaskBody>
 
-      {completion.status !== "failed" && !slots.completionActions && (
-        <CompletionLinks pending={!isSaved} />
-      )}
+      {!slots.completionActions && <CompletionLinks pending={!isSaved} />}
     </>
   );
 }

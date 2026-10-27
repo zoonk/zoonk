@@ -6,17 +6,23 @@ import { useExtracted } from "next-intl";
 
 /**
  * A save of the learner's answers that didn't go through, said the same way on every task: what
- * they answered stays on screen, and Try again sends it again.
+ * they answered stays on screen, and Try again sends it again. Without `onRetry`, the screen's
+ * main action is Try again (a task's end, `FailedMoment`), so the line only says what happened.
  */
-export function AnswersSaveError({ onRetry }: { onRetry: () => void }) {
+export function AnswersSaveError({ onRetry }: { onRetry?: () => void }) {
   const t = useExtracted();
 
   return (
     <p className="text-destructive-text text-sm" role="alert">
-      {t("That didn't go through. Your answers are kept.")}{" "}
-      <Button onClick={onRetry} variant="link">
-        {t("Try again")}
-      </Button>
+      {t("That didn't go through. Your answers are kept.")}
+      {onRetry && (
+        <>
+          {" "}
+          <Button onClick={onRetry} variant="link">
+            {t("Try again")}
+          </Button>
+        </>
+      )}
     </p>
   );
 }
