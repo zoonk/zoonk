@@ -63,6 +63,7 @@ describe(isHumanRequest, () => {
 
   it("propagates a failed deployed BotID check", async () => {
     vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("VERCEL_ENV", "preview");
     const error = new Error("BotID unavailable");
     vi.mocked(checkBotId).mockRejectedValue(error);
 

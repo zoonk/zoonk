@@ -91,8 +91,9 @@ describe(getAllowedHosts, () => {
     expect(getAllowedHosts()).toContain("localhost:*");
   });
 
-  it("excludes localhost:* in production (non-e2e)", () => {
+  it.each(["preview", "production"])("excludes localhost:* in Vercel %s", (environment) => {
     vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("VERCEL_ENV", environment);
     vi.stubEnv("E2E_TESTING", "false");
 
     expect(getAllowedHosts()).not.toStrictEqual(
@@ -199,8 +200,9 @@ describe(isCorsAllowedOrigin, () => {
       expect(isCorsAllowedOrigin("http://localhost:3000@evil.com")).toBe(false);
     });
 
-    it("rejects localhost in production (non-e2e)", () => {
+    it.each(["preview", "production"])("rejects localhost in Vercel %s", (environment) => {
       vi.stubEnv("NODE_ENV", "production");
+      vi.stubEnv("VERCEL_ENV", environment);
       vi.stubEnv("E2E_TESTING", "false");
       expect(isCorsAllowedOrigin("http://localhost:3000")).toBe(false);
     });
@@ -226,12 +228,16 @@ describe(isCorsAllowedOrigin, () => {
       expect(isCorsAllowedOrigin("http://user@main.zoonk.localhost:1355")).toBe(false);
     });
 
-    it("rejects named localhost and LAN origins in production", () => {
-      vi.stubEnv("NODE_ENV", "production");
-      vi.stubEnv("E2E_TESTING", "false");
-      expect(isCorsAllowedOrigin("http://main.zoonk.localhost:1355")).toBe(false);
-      expect(isCorsAllowedOrigin("http://main.zoonk.wills-mac-studio.local:1356")).toBe(false);
-    });
+    it.each(["preview", "production"])(
+      "rejects named localhost and LAN origins in Vercel %s",
+      (environment) => {
+        vi.stubEnv("NODE_ENV", "production");
+        vi.stubEnv("VERCEL_ENV", environment);
+        vi.stubEnv("E2E_TESTING", "false");
+        expect(isCorsAllowedOrigin("http://main.zoonk.localhost:1355")).toBe(false);
+        expect(isCorsAllowedOrigin("http://main.zoonk.wills-mac-studio.local:1356")).toBe(false);
+      },
+    );
   });
 
   describe("vercel previews", () => {
