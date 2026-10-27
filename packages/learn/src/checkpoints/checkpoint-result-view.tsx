@@ -1,5 +1,6 @@
 "use client";
 
+import { CelebrationScope } from "@zoonk/ui/hooks/celebration";
 import { useExtracted } from "next-intl";
 import { MomentReadouts } from "../_components/moment-readouts";
 import { StepCard, StepHeader, StepTitle } from "../_components/step-card";
@@ -68,17 +69,22 @@ function ScoreLine() {
 
 /**
  * The Trickster, beaten or not; the week's challenge has no art, its title says it all. As the
- * result comes in he acts it out: his defeat when the learner won, smug when he did.
+ * result comes in he acts it out: his defeat when the learner won, smug when he did. A result
+ * opened again later (no fresh completion) draws him still, in the pose he ended in.
  */
 function ResultArt() {
-  const { checkpoint } = useCheckpointScreen();
+  const { checkpoint, duel } = useCheckpointScreen();
   const won = useIsWon();
 
   if (checkpoint.kind === "weekly") {
     return null;
   }
 
-  return <TricksterArt beaten={won} reacts />;
+  return (
+    <CelebrationScope play={duel.state.completion !== null}>
+      <TricksterArt beaten={won} reacts />
+    </CelebrationScope>
+  );
 }
 
 /**
