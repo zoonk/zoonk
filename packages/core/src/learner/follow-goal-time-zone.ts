@@ -20,10 +20,8 @@ export type FollowGoalTimeZoneResult =
 /**
  * A goal's zone move once written, or `unchanged` when the goal can't move (the learner studied
  * today, the zone isn't one, or it's already the goal's), before anything is written.
- *
- * @internal
  */
-export type GoalTimeZoneMove =
+type GoalTimeZoneMove =
   | { kind: "moved"; learnerRevision: bigint; planInputsChanged: boolean }
   | { kind: "unchanged" };
 
@@ -32,20 +30,16 @@ export type GoalTimeZoneMove =
  * waited (`studied`, the day stays theirs until the next one), another writer moved the zone
  * first (`zoneChanged`), or a midnight passed that changes whether the plan's days move
  * (`dayChanged`). The last two are worth trying again from a fresh read of the goal.
- *
- * @internal
  */
-export type TimeZoneUnchangedReason = "dayChanged" | "studied" | "zoneChanged";
+type TimeZoneUnchangedReason = "dayChanged" | "studied" | "zoneChanged";
 
 /**
  * The move can't happen after all, found once it held the learner's lock: thrown so the caller's
  * transaction rolls back the revision it already raised. A caller tells it from a real failure with
  * `isTimeZoneUnchanged` and reads its `reason`; anything else thrown is an infrastructure failure,
  * never retried as this.
- *
- * @internal
  */
-export class TimeZoneUnchangedError extends Error {
+class TimeZoneUnchangedError extends Error {
   override name = "TimeZoneUnchangedError";
 
   readonly reason: TimeZoneUnchangedReason;
@@ -58,8 +52,6 @@ export class TimeZoneUnchangedError extends Error {
 
 /**
  * Whether a move's transaction rolled back because the move found nothing to do after all.
- *
- * @internal
  */
 export function isTimeZoneUnchanged(error: unknown): error is TimeZoneUnchangedError {
   return error instanceof TimeZoneUnchangedError;
@@ -101,8 +93,6 @@ async function readGoalZone(
  * `fromZone`. `unchanged` when the goal can't move, having written nothing; when that's only found
  * under the lock, it throws `TimeZoneUnchangedError` instead, so the caller's transaction rolls
  * back (with its early revision). It expires no cache: the caller does, once committed.
- *
- * @internal Core's writers that move a goal's zone (the follow here, the planner's study-day POST).
  */
 export async function moveGoalTimeZoneInTransaction(
   tx: TransactionClient,
