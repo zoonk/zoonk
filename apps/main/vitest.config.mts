@@ -27,5 +27,8 @@ export default defineConfig({
       },
     },
     setupFiles: "./setup-tests.ts",
+    // Actions read and write the real database; on CI two suites share a 4-vCPU runner, where a
+    // test that takes a second locally takes four or five. A test that hangs still fails.
+    testTimeout: 15_000,
   },
 });

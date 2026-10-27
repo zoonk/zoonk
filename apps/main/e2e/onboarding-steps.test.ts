@@ -15,6 +15,12 @@ import { ANSWERED, mapGoalSkills } from "./onboarding-fixtures";
 /** A run that doesn't appear within 45 s didn't start. */
 const RUN_START_LIMIT_MS = 46_000;
 
+/**
+ * Placement checks for its questions every 3 s, and one in flight as they land leaves them to the
+ * next: two checks and their replies.
+ */
+const NEXT_CHECK_TIMEOUT_MS = 10_000;
+
 /** A goal whose run is still drawing its skill map: placement and the plan wait for it. */
 async function createGoalBeingMapped({
   answered = ANSWERED,
@@ -105,7 +111,10 @@ test.describe("Waiting for placement's questions", () => {
 
     // The run writes the skill map and its questions: the first one shows without a refresh.
     await mapGoalSkills({ goalId: goal.id });
-    await expect(page.getByText("Question 1", { exact: true })).toBeVisible();
+
+    await expect(page.getByText("Question 1", { exact: true })).toBeVisible({
+      timeout: NEXT_CHECK_TIMEOUT_MS,
+    });
   });
 });
 
