@@ -338,7 +338,7 @@ test.describe("Tutor threads beyond lessons", () => {
       ask({ api, context: { ...context, blockId: randomUUID() }, path }),
     ]);
 
-    expect(question.context).toStrictEqual({ kind: "item" });
+    expect(question.context).toStrictEqual(context);
     expect(foreignBlock.status()).toBe(422);
 
     await api.dispose();
