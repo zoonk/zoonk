@@ -50,8 +50,10 @@ Passing checks don't show the change working. Run the app and do what the change
 
 - On `pnpm dev`, it judges correctness and layout. Speed, skeletons, late changes, prefetching, memory and regressions are judged only on a production build: run it again on `pnpm start` with `--throttle` and, for pages a learner moves between, `--nav`.
 - Before you change a page, save a run of it; afterwards pass that run's folder as `--baseline` to see what got slower or heavier, and before and after side by side in the contact sheets.
+- For data reads, start the server with `ZOONK_QUERY_LOG=$PWD/tmp/verify/queries.jsonl pnpm start` and pass `--queries tmp/verify/queries.jsonl`: each page's render lists its statements, flags reads repeated per item (N+1), results over 1,000 rows and filters no index serves.
 - `--email` also opens every path signed out, and `--intruder <another learner>` as someone else: neither may receive the learner's email, account id or full name. `--soak 10` walks the paths ten times and compares memory after the first lap and the last.
 - Narrow the run while you fix (`--viewports phone,laptop`), then run every screen once at the end.
+- Timings measure the machine as much as the page when other work is running: past three runnable tasks per core, the report marks speed, memory and regressions inconclusive. Main-thread work, request and statement counts and bytes still hold; compare timings back to back on a quiet machine.
 - Look at each page's contact sheets first (`screens.png`: every screen in each scheme; `paints.png`: every paint of each load), then open a full screenshot or frame where something looks off. A change to speed or server cost reports the numbers before and after on the same setup.
 
 ## 5. Review it as a principal engineer, a security researcher and a designer
