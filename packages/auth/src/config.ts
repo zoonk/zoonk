@@ -13,5 +13,5 @@ export const AUTH_ADVANCED_OPTIONS = {
   database: { generateId: "uuid", joins: true },
 } satisfies NonNullable<BetterAuthOptions["advanced"]>;
 
-/** Better Auth defaults to 100 members and requires a numeric membership limit. */
+/** Better Auth defaults to 100 members per organization. */
 export const AUTH_MEMBERSHIP_LIMIT = Number.MAX_SAFE_INTEGER;

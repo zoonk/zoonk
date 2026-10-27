@@ -301,7 +301,6 @@ describe(placementItemsWorkflow, () => {
     // questions may serve one learner, so its first question gets no premium either.
     expect(calledSkillCounts()).toStrictEqual([1, 2, 2, 2]);
 
-    // A second pick confirms a right one in the same call, where a typed question used to.
     expect(vi.mocked(generatePlacementItems).mock.calls[0]?.[0]).toMatchObject({
       examFormat: null,
       quickCount: 2,

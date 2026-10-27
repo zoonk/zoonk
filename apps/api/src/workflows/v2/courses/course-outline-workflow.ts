@@ -170,8 +170,7 @@ async function writeBand({ context, plan }: { context: RunContext; plan: BandPla
 
 /**
  * Every band at once: each was planned up front from what the course had (`planBands`), with its
- * own level's positions, so none reads another's chapters, and the band the learner reaches first
- * no longer waits for the ones before it to land. Chapter ids come back in band order.
+ * own level's positions, so none reads another's chapters. Chapter ids come back in band order.
  */
 async function writeBands({
   bands,

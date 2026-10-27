@@ -451,8 +451,6 @@ describe(goalContentWorkflow, () => {
       );
 
       expect(vi.mocked(generateSkillGraph).mock.calls[0]?.[0].serviceTier).toBeUndefined();
-      // Placement's questions come two skills per call, each skill with a quick question and a
-      // second one that confirms a right pick, where a typed one used to.
       const placementCalls = vi.mocked(generatePlacementItems).mock.calls.map(([params]) => params);
       const placementSkills = placementCalls.reduce((total, call) => total + call.skills.length, 0);
 
