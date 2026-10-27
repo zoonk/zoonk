@@ -147,11 +147,12 @@ function BeltDetail({ belt }: { belt: NonNullable<StudySessionSummary["belt"]> }
 }
 
 /**
- * The day's four numbers, two by two on a phone and in one row from `md`: right answers (with the
- * share and, in an exam scored net, the net score), the goal's number and how it moved, what
+ * The day's four numbers, two by two on a phone and sharing one row from `md`: right answers (with
+ * the share and, in an exam scored net, the net score), the goal's number and how it moved, what
  * goes to review and when it comes back, and the Brain Power earned toward the belt. Each only
- * when it means something for this goal: a language goal says its level elsewhere. The icons stay
- * quiet; the lines under the numbers carry the color.
+ * when it means something for this goal: a language goal says its level elsewhere. From `lg` the
+ * aside celebrates the Brain Power (`EarnedToday`), so its tile leaves the row rather than say it
+ * twice. The icons stay quiet; the lines under the numbers carry the color.
  */
 function SessionNumbers() {
   const t = useExtracted();
@@ -161,7 +162,7 @@ function SessionNumbers() {
   const dropped = goalNumber?.dropped ?? false;
 
   return (
-    <StatTiles className="md:grid-cols-4 md:[&>li:last-child:nth-child(odd)]:col-span-1">
+    <StatTiles className="md:flex md:[&>li]:min-w-0 md:[&>li]:flex-1">
       {summary.questions > 0 && (
         <StatTile
           detail={<RightAnswersDetail summary={summary} />}
@@ -205,6 +206,7 @@ function SessionNumbers() {
       />
 
       <StatTile
+        className="lg:hidden"
         detail={summary.belt && <BeltDetail belt={summary.belt} />}
         icon={<BrainIcon />}
         label={t("Brain Power")}

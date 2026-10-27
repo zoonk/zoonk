@@ -59,7 +59,7 @@ export const MOMENTS: readonly Moment[] = [
   {
     id: "summary",
     summary:
-      "The session's end: the day's numbers as tiles and the skills that rose, then what it earned: the buddy glad, Brain Power as its violet readout, and the bonus, a belt's new stripes and the best streak as rows.",
+      "The session's end: the day's numbers as tiles and the skills that rose, then what it earned: the buddy glad, Brain Power as its violet readout, and the bonus, a belt's new stripes and the best streak as rows. On a wide screen what it earned is the aside, so the tiles leave Brain Power to it.",
     title: "The session's end",
     where: "`SessionSummary`, `RewardsStep` and `EarnedToday` (`BrainPowerReadout`, `BeltTicks`).",
   },
