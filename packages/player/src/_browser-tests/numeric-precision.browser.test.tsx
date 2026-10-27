@@ -12,7 +12,7 @@ import { buildLesson } from "../preview/preview-lesson";
 import { activityStep } from "../preview/preview-steps";
 import type * as NextIntl from "next-intl";
 
-/** The shared player shim supplies English messages; this test uses Portuguese number formatting. */
+/** The harness reads the player in English; this test formats numbers as Portuguese. */
 vi.mock("next-intl", async (importOriginal) => ({
   ...(await importOriginal<typeof NextIntl>()),
   useLocale: () => "pt",

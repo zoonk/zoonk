@@ -1,10 +1,10 @@
-import { render } from "@testing-library/react";
 import { type TutorItem } from "@zoonk/learn/question-tutor";
 import { TaskAside, TaskAsideContent, getTaskAsideRootProps } from "@zoonk/learn/task-layout";
 import { useState } from "react";
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import { press } from "../_test-utils/activity-player";
+import { render } from "../_test-utils/render";
 import { TUTOR_ANSWER, stubTutorApi } from "../_test-utils/tutor-api";
 import { buildTutor } from "../_test-utils/tutor-config";
 import { ItemTutor } from "../questions/item-tutor";

@@ -1,10 +1,10 @@
-import { render } from "@testing-library/react";
 import { ListeningPlayer } from "@zoonk/learn/listening/player";
 import { ListeningStimulus } from "@zoonk/learn/listening/stimulus";
 import { useState } from "react";
 import { renderToString } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
+import { TestIntl, render } from "../_test-utils/render";
 import { wavClip } from "../_test-utils/speech-clips";
 
 /**
@@ -236,7 +236,7 @@ describe("a set's recording", () => {
     // on screen stays in view.
     unmount();
     const container = document.createElement("div");
-    container.innerHTML = renderToString(ui);
+    container.innerHTML = renderToString(<TestIntl>{ui}</TestIntl>);
     document.body.append(container);
     render(ui, { container, hydrate: true });
 

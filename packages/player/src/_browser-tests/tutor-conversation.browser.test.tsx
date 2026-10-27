@@ -1,4 +1,3 @@
-import { render } from "@testing-library/react";
 import {
   LESSON_QUESTION_PLAN_CHANGE_PART,
   LESSON_QUESTION_REPLACED_CHANGES_PART,
@@ -9,6 +8,7 @@ import {
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { describe, expect, it, onTestFinished, vi } from "vitest";
 import { page, userEvent } from "vitest/browser";
+import { render } from "../_test-utils/render";
 import { TUTOR_ANSWER, stubTutorApi, tutorAnswerStream } from "../_test-utils/tutor-api";
 import { buildTutor } from "../_test-utils/tutor-config";
 import { buildLesson } from "../preview/preview-lesson";

@@ -1,4 +1,3 @@
-import { render } from "@testing-library/react";
 import {
   type PlayableLibraryLesson,
   type PlayableTeachingStepOf,
@@ -15,6 +14,7 @@ import { LessonPlayerShell } from "../lesson/lesson-player-shell";
 import { type LessonPlayerAdapters, type LessonStartOutcome } from "../lesson/lesson-player-types";
 import { type PlayerLinkComponent } from "../player-context";
 import { localAdapters } from "../preview/preview-lesson";
+import { render } from "./render";
 import { speechClips } from "./speech-clips";
 
 /** A link that stays on the page: following it would navigate away from the test's frame. */

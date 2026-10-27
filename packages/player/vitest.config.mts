@@ -20,8 +20,6 @@ const nextImageShim = fileURLToPath(
   new URL("src/_test-utils/shims/next-image.tsx", import.meta.url),
 );
 
-const nextIntlShim = fileURLToPath(new URL("src/_test-utils/shims/next-intl.ts", import.meta.url));
-
 const webHapticsShim = fileURLToPath(
   new URL("src/_test-utils/shims/web-haptics-react.ts", import.meta.url),
 );
@@ -93,11 +91,7 @@ export default defineConfig({
   },
   plugins: [react()],
   resolve: {
-    alias: {
-      "next-intl": nextIntlShim,
-      "next/image": nextImageShim,
-      "web-haptics/react": webHapticsShim,
-    },
+    alias: { "next/image": nextImageShim, "web-haptics/react": webHapticsShim },
     tsconfigPaths: true,
   },
   test: {
