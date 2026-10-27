@@ -1,8 +1,6 @@
-import { settleAnimations } from "@zoonk/testing/accessibility/scan";
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
-import { onDevice } from "../_test-utils/device-media";
 import {
   buildAdapters,
   renderLessonPlayer,
@@ -12,18 +10,6 @@ import {
 import { CANT_WRITE_TODAY, isChosenToday, setChosenToday } from "../lesson/use-today-choice";
 import { buildLesson, localAdapters } from "../preview/preview-lesson";
 import { contentStep, teachingStep } from "../preview/preview-steps";
-
-async function captureOpenAnswer(width: number, colorScheme: "light" | "dark", state = "empty") {
-  await page.viewport(width, 900);
-
-  await onDevice({ colorScheme, reducedMotion: "reduce" }, async () => {
-    await expect.poll(() => settleAnimations(3000), { timeout: 15_000 }).toBe(0);
-
-    await page.screenshot({
-      path: `../../.vitest/attachments/walk-fixes-learn/open-answer-${state}-${width}-${colorScheme}.png`,
-    });
-  });
-}
 
 const SAMPLE_ANSWER =
   "Because we can't pin down where the electron is. The cloud maps where it's most likely to be.";
@@ -75,19 +61,10 @@ describe("open answer skip", () => {
       .element(page.getByRole("button", { name: "I don't know yet" }))
       .not.toBeInTheDocument();
 
-    await captureOpenAnswer(390, "light");
-    await captureOpenAnswer(390, "dark");
-    await captureOpenAnswer(1440, "light");
-    await captureOpenAnswer(1440, "dark");
-    await page.viewport(1280, 720);
-
     await page.getByRole("button", { name: "Explain first" }).click();
     await expect.element(page.getByText("A cloud, not a little ball")).toBeVisible();
     await page.getByRole("button", { name: /^Next/u }).click();
     await expect.element(page.getByRole("textbox")).toBeVisible();
-    await captureOpenAnswer(390, "light", "after-explanation");
-    await captureOpenAnswer(1440, "dark", "after-explanation");
-    await page.viewport(1280, 720);
 
     await page.getByRole("button", { name: "I don't know yet" }).click();
 
@@ -96,28 +73,16 @@ describe("open answer skip", () => {
     await expect.element(verdict(SAMPLE_ANSWER)).toBeVisible();
     await expect.element(verdict("Not quite")).not.toBeInTheDocument();
     await expect.element(page.getByRole("button", { name: /^Continue/u })).toHaveFocus();
-    await captureOpenAnswer(390, "light", "dont-know");
-    await captureOpenAnswer(1440, "light", "dont-know");
-    await page.viewport(1280, 720);
 
     await page.getByRole("button", { name: /^Continue/u }).click();
     await expect.element(page.getByRole("textbox")).toBeVisible();
     await page.getByRole("textbox").fill("An unfinished thought");
-    await captureOpenAnswer(390, "light", "typed");
-    await captureOpenAnswer(390, "dark", "typed");
-    await captureOpenAnswer(1440, "light", "typed");
-    await captureOpenAnswer(1440, "dark", "typed");
     await page.getByRole("button", { name: "I don't know yet" }).click();
     await expect.element(verdict(SAMPLE_ANSWER)).toBeVisible();
     await page.getByRole("button", { name: /^Continue/u }).click();
 
     await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
     await expect.element(page.getByText("1 of 1 right")).not.toBeInTheDocument();
-    await captureOpenAnswer(390, "light", "complete");
-    await captureOpenAnswer(390, "dark", "complete");
-    await captureOpenAnswer(1440, "light", "complete");
-    await captureOpenAnswer(1440, "dark", "complete");
-    await page.viewport(1280, 720);
     expect(adapters.checkStep).not.toHaveBeenCalled();
 
     expect(adapters.completeLesson).toHaveBeenCalledExactlyOnceWith({
@@ -127,15 +92,11 @@ describe("open answer skip", () => {
   });
 
   it.each([
-    { kind: "a lesson", overrides: {}, slug: "lesson" },
-    {
-      kind: "a language lesson",
-      overrides: { language: "pt", targetLanguage: "en" },
-      slug: "language",
-    },
+    { kind: "a lesson", overrides: {} },
+    { kind: "a language lesson", overrides: { language: "pt", targetLanguage: "en" } },
   ] as const)(
     "leaves the writing out of $kind with Can't write now, unchecked, and of every lesson today",
-    async ({ overrides, slug }) => {
+    async ({ overrides }) => {
       const first = explanationStep();
       const second = explanationStep();
 
@@ -157,11 +118,6 @@ describe("open answer skip", () => {
       await expect.element(writingSkippedNotice()).toBeVisible();
       await expect.element(page.getByRole("button", { name: "Write again" })).toBeVisible();
       await expect.element(page.getByRole("button", { name: /^Next/u })).toHaveFocus();
-      await captureOpenAnswer(390, "light", `writing-skipped-${slug}`);
-      await captureOpenAnswer(390, "dark", `writing-skipped-${slug}`);
-      await captureOpenAnswer(1440, "light", `writing-skipped-${slug}`);
-      await captureOpenAnswer(1440, "dark", `writing-skipped-${slug}`);
-      await page.viewport(1280, 720);
 
       await page.getByRole("button", { name: /^Next/u }).click();
       await expect.element(page.getByRole("heading", { name: "Summary" })).toBeVisible();
@@ -195,9 +151,6 @@ describe("open answer skip", () => {
 
     const { unmount } = renderLessonPlayer({ lesson });
     await expect.element(writingSkippedNotice()).toBeVisible();
-    await captureOpenAnswer(390, "light", "writing-off-today");
-    await captureOpenAnswer(1440, "dark", "writing-off-today");
-    await page.viewport(1280, 720);
 
     await page.getByRole("button", { name: "Write again" }).click();
     await expect.element(writingSkippedNotice()).not.toBeInTheDocument();

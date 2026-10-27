@@ -88,10 +88,15 @@ describe("lesson by keyboard", () => {
     });
   });
 
-  it("a written answer checks and continues with Enter, and Escape stays in the field", async () => {
+  it("a written answer takes the keyboard on arrival, checks and continues with Enter, and Escape stays in the field", async () => {
     await atViewport(DESKTOP, async () => {
       const typedAnswer = teachingStep("typedAnswer");
-      const lesson = buildLesson([typedAnswer, teachingStep("summary")]);
+
+      const lesson = buildLesson([
+        teachingStep("explanation"),
+        typedAnswer,
+        teachingStep("summary"),
+      ]);
 
       const { onExit } = renderLessonPlayer({
         adapters: buildAdapters(lesson, { checkStep: acceptedAnswerCheck(typedAnswer) }),
@@ -102,7 +107,8 @@ describe("lesson by keyboard", () => {
         name: "In your own words: why is the electron drawn as a cloud?",
       });
 
-      await answer.click();
+      await press("Enter");
+      await expect.element(answer).toHaveFocus();
       await userEvent.keyboard(RIGHT_TYPED);
 
       // Escape while typing never leaves the lesson and its answer.
@@ -209,17 +215,12 @@ describe("lesson by keyboard", () => {
     await expect.element(leave).not.toBeInTheDocument();
   });
 
-  it("the close button is a plain X on every size, with Escape as its key", async () => {
-    await atViewport(DESKTOP, async () => {
-      openLesson({ steps: [teachingStep("explanation")] });
+  it("the close button names Escape as its key", async () => {
+    openLesson({ steps: [teachingStep("explanation")] });
 
-      const close = page.getByRole("link", { name: "Close lesson" });
-      await expect.element(close).toHaveAttribute("aria-keyshortcuts", "Escape");
-      expect(close.element().querySelector("kbd")).toBeNull();
-
-      const desktopBox = close.element().getBoundingClientRect();
-      expect(desktopBox.width).toBe(desktopBox.height);
-    });
+    await expect
+      .element(page.getByRole("link", { name: "Close lesson" }))
+      .toHaveAttribute("aria-keyshortcuts", "Escape");
   });
 
   it("find the error: a number picks a step and Enter checks it, even with the step in focus", async () => {

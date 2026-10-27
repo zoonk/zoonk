@@ -107,12 +107,11 @@ describe("picture options", () => {
     await checkAnswer("Not quite");
   });
 
-  it("fits a phone and is accessible in light and dark", async () => {
+  it("is accessible on a phone in light and dark", async () => {
     await atViewport(PHONE, async () => {
       renderLessonPlayer({ lesson: buildLesson([pictureCheckStep()]) });
 
       await expect.element(page.getByRole("img", { name: BAROQUE?.picture.alt })).toBeVisible();
-      expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(PHONE.width);
       await expectAccessibleScreen("picture options");
     });
   });

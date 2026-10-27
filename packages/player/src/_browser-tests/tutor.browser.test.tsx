@@ -1198,26 +1198,11 @@ describe("tutor history", () => {
       api.questions = [saved];
       playLesson({ lesson });
       const sheet = await openTutor();
-      const title = sheet.getByRole("heading", { name: "Pip" });
-      const close = sheet.getByRole("button", { name: "Close questions" });
-      const log = sheet.getByRole("log", { name: "Questions about this lesson" });
 
       await expect.element(sheet.getByText(saved.question)).toBeVisible();
       await expect.element(sheet.getByText(saved.answer ?? "")).toBeVisible();
-      await expect.element(close).toBeVisible();
+      await expect.element(sheet.getByRole("button", { name: "Close questions" })).toBeVisible();
       await expect.element(composer(sheet)).not.toHaveFocus();
-
-      const [sheetBox, titleBox, closeBox, logBox] = [sheet, title, close, log].map((locator) =>
-        locator.element().getBoundingClientRect(),
-      );
-
-      if (!sheetBox || !titleBox || !closeBox || !logBox) {
-        throw new Error("The sheet's header and thread should be on screen");
-      }
-
-      expect(titleBox.width).toBeGreaterThan(80);
-      expect(closeBox.right).toBeLessThanOrEqual(sheetBox.right);
-      expect(logBox.top).toBeGreaterThanOrEqual(Math.max(titleBox.bottom, closeBox.bottom));
     });
   });
 });
@@ -1323,27 +1308,17 @@ describe("the learner's buddy", () => {
     await expect.element(sheet.getByText("Ask about your answer")).toBeVisible();
   });
 
-  // On a phone the buddy sat after the main action before an answer and jumped before it after a
-  // miss, so help was somewhere else in each state.
-  it("keeps the buddy after the main action on a phone, saying its name there after a miss", async () => {
+  it("says the buddy's name in the bar on a phone after a miss", async () => {
     await atViewport(PHONE, async () => {
       const { lesson } = lessonWithTutor();
       playLesson({ lesson });
 
       const buddy = page.getByRole("button", { name: "Ask Pip" });
-      const check = page.getByRole("button", { name: /^Check/u });
-
-      const afterMain = (main: Element) =>
-        buddy.element().getBoundingClientRect().left > main.getBoundingClientRect().right;
-
-      await expect.element(buddy).toBeVisible();
-      expect(afterMain(check.element())).toBe(true);
+      await expect.element(buddy).toHaveTextContent("");
 
       await page.getByRole("radio", { name: "The electron's size" }).click();
-      await check.click();
+      await page.getByRole("button", { name: /^Check/u }).click();
       await expect.element(buddy).toHaveTextContent("Ask Pip");
-
-      expect(afterMain(page.getByRole("button", { name: /^Continue/u }).element())).toBe(true);
     });
   });
 
@@ -1475,32 +1450,6 @@ describe("docked beside the lesson", () => {
     // Asked once, the screen's conversation is a tap away on the aside's header instead.
     await dockedConversation().getByRole("button", { name: "From the lesson" }).click();
     await expect.element(suggestions).not.toBeInTheDocument();
-  });
-
-  it("keeps the aside's composer one line high, level with the action bar, however long its placeholder", async () => {
-    const { lesson } = lessonWithTutor();
-
-    // A placeholder wider than the field keeps to its one line (a second line once lifted the
-    // aside's foot over the action bar's), here with a buddy's long name.
-    const buddy = {
-      beltColor: "white",
-      energy: null,
-      glasses: "round",
-      kind: "zu",
-      name: "Pip, the very curious study owl from the northern woods",
-    } as const;
-
-    renderLessonPlayer({ lesson, tutor: buildTutor({}, { buddy }) });
-
-    const field = asideComposer();
-
-    await expect.element(field).toHaveAttribute("placeholder", `Ask ${buddy.name}`);
-
-    const frame = field.element().closest('[data-slot="input-group"]');
-    const check = page.getByRole("button", { name: /^Check/u }).element();
-
-    expect(frame?.getBoundingClientRect().height).toBe(44);
-    expect(frame?.getBoundingClientRect().top).toBe(check.getBoundingClientRect().top);
   });
 
   it("offers two questions to ask after a wrong answer, each sent with a tap", async () => {

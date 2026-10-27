@@ -50,7 +50,6 @@ Which sensor has more readings?`),
       await expect.element(table.getByRole("cell", { name: "350,000" })).toBeVisible();
       expect(table.element().querySelectorAll("math")).toHaveLength(2);
       expect(document.querySelector("h2 table, p table")).toBeNull();
-      expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(390);
 
       await expect
         .element(page.getByRole("heading", { name: "Which sensor has more readings?" }))

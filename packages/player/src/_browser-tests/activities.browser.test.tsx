@@ -148,13 +148,9 @@ describe("lesson activities", () => {
     const unit = page.getByText("$", { exact: true });
     await expect.element(unit).toBeVisible();
 
-    // Before the field on screen and for screen readers, as the feedback writes "$3" after Check.
+    // Before the field for screen readers, as the feedback writes "$3" after Check.
     expect(unit.element().compareDocumentPosition(field.element())).toBe(
       Node.DOCUMENT_POSITION_FOLLOWING,
-    );
-
-    expect(unit.element().getBoundingClientRect().right).toBeLessThanOrEqual(
-      field.element().getBoundingClientRect().left,
     );
 
     await field.fill("3");

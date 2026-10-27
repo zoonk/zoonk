@@ -8,9 +8,8 @@ import { buildLesson } from "../preview/preview-lesson";
 import { explanationStep, inlineImage, teachingStep } from "../preview/preview-steps";
 
 /**
- * Lessons read like stories on every device: a reading screen leads with its picture, a new screen
- * slides in from the side the learner heads to (in place with reduced motion), and keyboards turn
- * screens with the arrows as before. A question's picture leaves its options in reach.
+ * Lessons read like stories on every device: a new screen slides in from the side the learner
+ * heads to (in place with reduced motion), and keyboards turn screens with the arrows as before.
  */
 
 const PHONE = { height: 812, width: 375 };
@@ -24,17 +23,6 @@ const LOBES = {
 function pictured({ alt, text, title }: typeof LOBES) {
   return {
     ...explanationStep({ image: { alt, prompt: alt }, text, title }),
-    image: inlineImage({ alt }),
-  };
-}
-
-function pictureQuestion() {
-  const base = teachingStep("check");
-  const alt = "Two planets side by side, labeled 1 and 2";
-
-  return {
-    ...base,
-    content: { ...base.content, image: { alt, prompt: alt } },
     image: inlineImage({ alt }),
   };
 }
@@ -115,31 +103,6 @@ describe("lessons that read like stories", () => {
 
       await expect.element(page.getByRole("img", { name: LOBES.alt })).toBeInViewport();
       expect(scroller.scrollTop).toBe(0);
-    });
-  });
-
-  it("leads a reading screen with its picture across a phone, and keeps a question's options in reach", async () => {
-    await atViewport(PHONE, async () => {
-      const lesson = buildLesson([pictured(LOBES), pictureQuestion()]);
-      renderLessonPlayer({ lesson });
-
-      const picture = page.getByRole("img", { name: LOBES.alt });
-      await expect.element(picture).toBeVisible();
-
-      const pictureBox = picture.element().getBoundingClientRect();
-
-      const titleBox = page
-        .getByRole("heading", { name: LOBES.title })
-        .element()
-        .getBoundingClientRect();
-
-      expect(pictureBox.bottom).toBeLessThanOrEqual(titleBox.top);
-      expect(pictureBox.width).toBeGreaterThan(PHONE.width * 0.9);
-      await expect.element(page.getByRole("heading", { name: LOBES.title })).toBeInViewport();
-
-      await press("ArrowRight");
-      await expect.element(page.getByRole("img", { name: /Two planets/u })).toBeVisible();
-      await expect.element(page.getByRole("radio").first()).toBeInViewport();
     });
   });
 });

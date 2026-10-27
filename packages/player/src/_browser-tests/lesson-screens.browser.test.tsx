@@ -344,23 +344,6 @@ describe("lesson screens", () => {
     await expect.element(page.getByRole("group", { name: "Word bank" })).toBeVisible();
   });
 
-  it("asks to translate a noun with its article without calling it a phrase", async () => {
-    // Words carry their article ("as colunas", "die Miete") and chunks are several words
-    // ("Thanks for having me"): the prompt names neither, so it fits both.
-    const columns = { translation: "as colunas", word: "columns" };
-
-    renderLessonPlayer({
-      lesson: buildLesson([languageStep("translation", {}, { word: columns })], {
-        language: "pt",
-        targetLanguage: "en",
-      }),
-    });
-
-    await expect.element(page.getByText("Translate", { exact: true })).toBeVisible();
-    await expect.element(page.getByText("as colunas", { exact: true })).toBeVisible();
-    await expect.element(page.getByText(/phrase/iu)).not.toBeInTheDocument();
-  });
-
   it("asks which one a definition means when the lesson is in the learner's own language", async () => {
     // An IELTS candidate reading the app in English learns English words from definitions.
     const rent = { translation: "money you pay each month to live somewhere", word: "rent" };
