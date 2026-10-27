@@ -476,14 +476,17 @@
 }
 
 /*
- * A course's subject, from one table: each category's hue (muted subjects take 60% of the chroma),
- * turned into three roles wherever an element carries `data-subject` (`getSubject` in
- * `@zoonk/learn/subject-label` picks it): `subject` for its line, glyph and strokes, `subject-tint`
- * behind its label and `subject-text` for the label's words. Soft in the regular theme; with more
- * contrast the label is plain text and the line goes deep.
+ * A course's subject, from one table: each category's hue and chroma, turned into three roles
+ * wherever an element carries `data-subject` (`getSubject` in `@zoonk/learn/subject-label` picks
+ * it): `subject` for its line, glyph and strokes, `subject-tint` behind its label and
+ * `subject-text` for the label's words. Every subject reads at one strength: its chroma is about
+ * the same share (55%) of the most the screen can show at its hue, and at most 0.11 for the pinks,
+ * whose room is widest. One chroma for all made teal and cyan, which reach the screen's edge
+ * first, look neon beside a dusty pink, and the old muted olives and slates look gray. Soft in the
+ * regular theme; with more contrast the label is plain text and the line goes deep.
  */
 [data-subject] {
-  --subject-chroma: 1;
+  --subject-chroma: 0.84;
   --subject-hue: 290;
   --subject: oklch(0.68 calc(0.12 * var(--subject-chroma)) var(--subject-hue));
   --subject-text: oklch(0.47 calc(0.1 * var(--subject-chroma)) var(--subject-hue));
@@ -508,76 +511,87 @@
 
 [data-subject="health"] {
   --subject-hue: 5;
+  --subject-chroma: 0.92;
 }
 
 [data-subject="languages"] {
   --subject-hue: 32;
+  --subject-chroma: 0.92;
 }
 
 [data-subject="history"] {
   --subject-hue: 50;
-  --subject-chroma: 0.6;
+  --subject-chroma: 0.82;
 }
 
 [data-subject="culture"] {
   --subject-hue: 68;
+  --subject-chroma: 0.68;
 }
 
 [data-subject="law"] {
   --subject-hue: 82;
-  --subject-chroma: 0.6;
+  --subject-chroma: 0.64;
 }
 
 [data-subject="business"] {
   --subject-hue: 96;
+  --subject-chroma: 0.64;
 }
 
 [data-subject="society"] {
   --subject-hue: 122;
-  --subject-chroma: 0.6;
+  --subject-chroma: 0.76;
 }
 
 [data-subject="economics"] {
   --subject-hue: 150;
+  --subject-chroma: 0.86;
 }
 
 [data-subject="geography"] {
   --subject-hue: 172;
+  --subject-chroma: 0.6;
 }
 
 [data-subject="science"] {
   --subject-hue: 198;
+  --subject-chroma: 0.53;
 }
 
 [data-subject="math"] {
   --subject-hue: 222;
+  --subject-chroma: 0.58;
 }
 
 [data-subject="communication"] {
   --subject-hue: 238;
+  --subject-chroma: 0.69;
 }
 
 [data-subject="engineering"] {
   --subject-hue: 250;
-  --subject-chroma: 0.6;
+  --subject-chroma: 0.81;
 }
 
 [data-subject="tech"] {
   --subject-hue: 262;
+  --subject-chroma: 0.77;
 }
 
 [data-subject="exams"] {
   --subject-hue: 280;
-  --subject-chroma: 0.6;
+  --subject-chroma: 0.79;
 }
 
 [data-subject="general"] {
   --subject-hue: 290;
-  --subject-chroma: 0.6;
+  --subject-chroma: 0.84;
 }
 
 [data-subject="arts"] {
   --subject-hue: 330;
+  --subject-chroma: 0.92;
 }
 
 /*

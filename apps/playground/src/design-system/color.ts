@@ -246,7 +246,7 @@ export const COLOR_GROUPS: readonly ColorGroup[] = [
   {
     id: "subjects",
     intro:
-      "What a course is about. One table in `globals.css` gives each category a hue; an element with `data-subject` (`getSubject`) gets three roles from it. Subtle on purpose: a label and a line, never a surface.",
+      "What a course is about. One table in `globals.css` gives each category a hue, every one at the same soft strength (no subject looks louder than another); an element with `data-subject` (`getSubject`) gets three roles from it. Subtle on purpose: a label and a line, never a surface.",
     title: "Subjects",
     tokens: [
       {
