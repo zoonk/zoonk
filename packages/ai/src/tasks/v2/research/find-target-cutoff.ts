@@ -1,19 +1,13 @@
 import "server-only";
-import { Output, generateText, isStepCount } from "ai";
 import { z } from "zod";
 import { formatUntrustedInput } from "../../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../../provenance/ai-generation-event";
-import { runTaskGeneration } from "../../../provenance/run-task-generation";
-import { type Reasoning, buildProviderOptions } from "../../../provider-options";
+import { type Reasoning } from "../../../provider-options";
 import coursePrompt from "./find-target-cutoff-course.prompt.md";
 import positionPrompt from "./find-target-cutoff-position.prompt.md";
 import basePrompt from "./find-target-cutoff.prompt.md";
-import {
-  type ResearchSearchTool,
-  buildResearchSearchTools,
-  collectSearchedHosts,
-  isOnSearchedHost,
-} from "./research-search-tools";
+import { type ResearchSearchTool } from "./research-search-tools";
+import { runSearchTask } from "./run-search-task";
 import { toTargetCutoffFinding } from "./target-cutoff-finding";
 
 export type { TargetCutoffFinding } from "./target-cutoff-finding";
@@ -108,35 +102,20 @@ export async function findTargetCutoff({
   const userPrompt = buildUserPrompt(input);
   // A target is a course at an institution or a position (see `getCutoffTarget`), never both.
   const systemPrompt = input.position === null ? courseSystemPrompt : positionSystemPrompt;
-  const providerOptions = buildProviderOptions({ fallbackModels: [], model, useFallback: false });
 
-  const { provenance, result } = await runTaskGeneration({
+  const { isSearched, output, provenance, usage } = await runSearchTask({
     analytics,
-    generate: () =>
-      generateText({
-        instructions: systemPrompt,
-        model,
-        output: Output.object({ schema }),
-        prompt: userPrompt,
-        providerOptions,
-        reasoning,
-        stopWhen: isStepCount(MAX_STEPS),
-        tools: buildResearchSearchTools({ model, searchTool }),
-      }),
-    promptVersion: `search:${searchTool}`,
+    maxSteps: MAX_STEPS,
+    model,
+    reasoning,
+    schema,
+    searchTool,
     systemPrompt,
     task: "find-target-cutoff",
+    userPrompt,
   });
 
-  const hosts = collectSearchedHosts({
-    sources: result.sources,
-    toolResults: result.steps.flatMap((step) => step.toolResults),
-  });
+  const data = toTargetCutoffFinding({ isSearched, raw: output });
 
-  const data = toTargetCutoffFinding({
-    isSearched: (url) => isOnSearchedHost({ hosts, url }),
-    raw: result.output,
-  });
-
-  return { data, provenance, systemPrompt, usage: result.usage, userPrompt };
+  return { data, provenance, systemPrompt, usage, userPrompt };
 }

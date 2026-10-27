@@ -1,18 +1,12 @@
 import "server-only";
-import { Output, generateText, isStepCount } from "ai";
 import { z } from "zod";
 import { formatUntrustedInput } from "../../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../../provenance/ai-generation-event";
-import { runTaskGeneration } from "../../../provenance/run-task-generation";
-import { type Reasoning, buildProviderOptions } from "../../../provider-options";
+import { type Reasoning } from "../../../provider-options";
 import { toChoiceOptionsFinding } from "./choice-options-finding";
 import systemPrompt from "./find-choice-options.prompt.md";
-import {
-  type ResearchSearchTool,
-  buildResearchSearchTools,
-  collectSearchedHosts,
-  isOnSearchedHost,
-} from "./research-search-tools";
+import { type ResearchSearchTool } from "./research-search-tools";
+import { runSearchTask } from "./run-search-task";
 
 export type { ChoiceOptionsFinding } from "./choice-options-finding";
 
@@ -74,36 +68,21 @@ export async function findChoiceOptions({
   ...input
 }: FindChoiceOptionsParams) {
   const userPrompt = buildUserPrompt(input);
-  const providerOptions = buildProviderOptions({ fallbackModels: [], model, useFallback: false });
 
-  const { provenance, result } = await runTaskGeneration({
+  const { isSearched, output, provenance, usage } = await runSearchTask({
     analytics,
-    generate: () =>
-      generateText({
-        instructions: systemPrompt,
-        model,
-        output: Output.object({ schema }),
-        prompt: userPrompt,
-        providerOptions,
-        reasoning,
-        stopWhen: isStepCount(MAX_STEPS),
-        tools: buildResearchSearchTools({ model, searchTool }),
-      }),
     libraryInput: true,
-    promptVersion: `search:${searchTool}`,
+    maxSteps: MAX_STEPS,
+    model,
+    reasoning,
+    schema,
+    searchTool,
     systemPrompt,
     task: "find-choice-options",
+    userPrompt,
   });
 
-  const hosts = collectSearchedHosts({
-    sources: result.sources,
-    toolResults: result.steps.flatMap((step) => step.toolResults),
-  });
+  const data = toChoiceOptionsFinding({ isSearched, raw: output });
 
-  const data = toChoiceOptionsFinding({
-    isSearched: (url) => isOnSearchedHost({ hosts, url }),
-    raw: result.output,
-  });
-
-  return { data, provenance, systemPrompt, usage: result.usage, userPrompt };
+  return { data, provenance, systemPrompt, usage, userPrompt };
 }

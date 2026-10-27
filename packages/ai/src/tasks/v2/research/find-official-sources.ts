@@ -1,9 +1,7 @@
 import "server-only";
-import { Output, generateText, isStepCount } from "ai";
 import { z } from "zod";
 import { type AiGenerationContext } from "../../../provenance/ai-generation-event";
-import { runTaskGeneration } from "../../../provenance/run-task-generation";
-import { type Reasoning, buildProviderOptions } from "../../../provider-options";
+import { type Reasoning } from "../../../provider-options";
 import { selectPromptVariants } from "../../_utils/prompt-variants";
 import promptTemplate from "./find-official-sources.prompt.md";
 import {
@@ -11,12 +9,8 @@ import {
   type ResearchSearchPlan,
   type ResearchTopic,
 } from "./research-plan";
-import {
-  type ResearchSearchTool,
-  buildResearchSearchTools,
-  collectSearchedHosts,
-  isOnSearchedHost,
-} from "./research-search-tools";
+import { type ResearchSearchTool } from "./research-search-tools";
+import { runSearchTask } from "./run-search-task";
 
 /**
  * The `find-official-sources` eval (5 real exams): Flash with Parallel found the
@@ -130,46 +124,33 @@ export async function findOfficialSources({
     variants: { unreadable: unreadable.length > 0 },
   });
 
-  const providerOptions = buildProviderOptions({ fallbackModels: [], model, useFallback: false });
-
-  const { provenance, result } = await runTaskGeneration({
+  const { isSearched, output, provenance, searchCalls, usage } = await runSearchTask({
     analytics,
-    generate: () =>
-      generateText({
-        instructions: systemPrompt,
-        model,
-        output: Output.object({ schema }),
-        prompt: userPrompt,
-        providerOptions,
-        reasoning,
-        stopWhen: isStepCount(MAX_STEPS),
-        tools: buildResearchSearchTools({ model, searchTool }),
-      }),
     libraryInput: true,
-    promptVersion: `search:${searchTool}`,
+    maxSteps: MAX_STEPS,
+    model,
+    reasoning,
+    schema,
+    searchTool,
     systemPrompt,
     task: "find-official-sources",
+    userPrompt,
   });
 
-  const hosts = collectSearchedHosts({
-    sources: result.sources,
-    toolResults: result.steps.flatMap((step) => step.toolResults),
-  });
-
-  const documents = result.output.documents
-    .filter((document) => isOnSearchedHost({ hosts, url: document.url }))
+  const documents = output.documents
+    .filter((document) => isSearched(document.url))
     .slice(0, MAX_DOCUMENTS);
 
   return {
     data: {
       documents,
       officialFound:
-        result.output.officialFound && documents.some((document) => document.kind === "official"),
-      searchCalls: result.steps.flatMap((step) => step.toolCalls).length,
+        output.officialFound && documents.some((document) => document.kind === "official"),
+      searchCalls,
     },
     provenance,
     systemPrompt,
-    usage: result.usage,
+    usage,
     userPrompt,
   };
 }

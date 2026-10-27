@@ -1,17 +1,11 @@
 import "server-only";
-import { Output, generateText, isStepCount } from "ai";
 import { z } from "zod";
 import { formatUntrustedInput } from "../../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../../provenance/ai-generation-event";
-import { runTaskGeneration } from "../../../provenance/run-task-generation";
-import { type Reasoning, buildProviderOptions } from "../../../provider-options";
+import { type Reasoning } from "../../../provider-options";
 import systemPrompt from "./find-topic-frequency.prompt.md";
-import {
-  type ResearchSearchTool,
-  buildResearchSearchTools,
-  collectSearchedHosts,
-  isOnSearchedHost,
-} from "./research-search-tools";
+import { type ResearchSearchTool } from "./research-search-tools";
+import { runSearchTask } from "./run-search-task";
 import {
   TOPIC_FREQUENCY_LEVELS,
   type TopicFrequencySubject,
@@ -106,37 +100,21 @@ export async function findTopicFrequency({
   ...input
 }: FindTopicFrequencyParams) {
   const userPrompt = buildUserPrompt(input);
-  const providerOptions = buildProviderOptions({ fallbackModels: [], model, useFallback: false });
 
-  const { provenance, result } = await runTaskGeneration({
+  const { isSearched, output, provenance, usage } = await runSearchTask({
     analytics,
-    generate: () =>
-      generateText({
-        instructions: systemPrompt,
-        model,
-        output: Output.object({ schema }),
-        prompt: userPrompt,
-        providerOptions,
-        reasoning,
-        stopWhen: isStepCount(MAX_STEPS),
-        tools: buildResearchSearchTools({ model, searchTool }),
-      }),
     libraryInput: true,
-    promptVersion: `search:${searchTool}`,
+    maxSteps: MAX_STEPS,
+    model,
+    reasoning,
+    schema,
+    searchTool,
     systemPrompt,
     task: "find-topic-frequency",
+    userPrompt,
   });
 
-  const hosts = collectSearchedHosts({
-    sources: result.sources,
-    toolResults: result.steps.flatMap((step) => step.toolResults),
-  });
+  const data = toTopicFrequencyFinding({ isSearched, raw: output, subjects: input.subjects });
 
-  const data = toTopicFrequencyFinding({
-    isSearched: (url) => isOnSearchedHost({ hosts, url }),
-    raw: result.output,
-    subjects: input.subjects,
-  });
-
-  return { data, provenance, systemPrompt, usage: result.usage, userPrompt };
+  return { data, provenance, systemPrompt, usage, userPrompt };
 }
