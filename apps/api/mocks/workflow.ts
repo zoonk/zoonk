@@ -48,7 +48,6 @@ export const createHook = vi.fn((options?: { token?: string }) => ({
     ),
   token: options?.token ?? "generated-token",
 }));
-export const workflowStep = vi.fn((_name: string, fn: unknown) => fn);
 
 /**
  * Restores the shared workflow mock to the default state before each test.
@@ -63,7 +62,6 @@ export function resetWorkflowMockState(): void {
   workflowWriteMock.mockReset().mockResolvedValue(null);
   getWorkflowMetadata.mockReset().mockImplementation(() => workflowMetadata);
   getWritable.mockReset().mockReturnValue(createWritable());
-  workflowStep.mockReset().mockImplementation((_name: string, fn: unknown) => fn);
   // Resetting keeps the implementations `vi.fn` was created with.
   sleep.mockReset();
   createHook.mockReset();
