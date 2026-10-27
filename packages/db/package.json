@@ -25,7 +25,6 @@
     "db:reset:e2e": "node ../../scripts/run-test-env.mts e2e prisma migrate reset",
     "db:reset:test": "node ../../scripts/run-test-env.mts test prisma migrate reset",
     "db:sync-content": "tsx src/prisma/sync-content.ts",
-    "sim:export-fixtures": "tsx --env-file=.env src/scripts/export-sim-fixtures.ts",
     "db:seed": "prisma db seed",
     "db:seed:e2e": "node ../../scripts/run-test-env.mts e2e prisma db seed",
     "prisma:seed": "tsx src/prisma/seed.ts && pnpm --filter @zoonk/core seed:v2",
