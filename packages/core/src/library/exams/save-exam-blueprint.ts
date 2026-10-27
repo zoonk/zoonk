@@ -107,15 +107,9 @@ function toContentColumns(content: BlueprintContent) {
  * its exam (the next one isn't out), whose new reading tells learners preparing for the next
  * edition nothing they'd act on, so it gets no learner notice.
  */
-export function isPastEdition({
-  content,
-  now = new Date(),
-}: {
-  content: BlueprintContent;
-  now?: Date;
-}): boolean {
+export function isPastEdition({ content }: { content: BlueprintContent }): boolean {
   const examDate = findLastDate(content.edition.dates, "exam");
-  return examDate !== null && examDate.getTime() + MS_PER_DAY <= now.getTime();
+  return examDate !== null && examDate.getTime() + MS_PER_DAY <= Date.now();
 }
 
 /**

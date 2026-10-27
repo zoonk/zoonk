@@ -30,10 +30,8 @@ function describeExam(blueprint: Pick<ExamBlueprint, "name" | "role">): string {
  */
 export async function findTopicFrequencyLookup({
   examBlueprintId,
-  now = new Date(),
 }: {
   examBlueprintId: string;
-  now?: Date;
 }): Promise<TopicFrequencyLookup | null> {
   const blueprint = await prisma.examBlueprint.findUnique({ where: { id: examBlueprintId } });
   const structure = examStructureSchema.safeParse(blueprint?.structure).data;
@@ -43,7 +41,7 @@ export async function findTopicFrequencyLookup({
     !blueprint ||
     blueprint.ownerId ||
     !structure ||
-    !needsTopicFrequency({ now, structure, topicFrequency })
+    !needsTopicFrequency({ now: new Date(), structure, topicFrequency })
   ) {
     return null;
   }
@@ -69,12 +67,10 @@ export async function findTopicFrequencyLookup({
 export async function recordTopicFrequency({
   complete = true,
   examBlueprintId,
-  now = new Date(),
   subjects,
 }: {
   complete?: boolean;
   examBlueprintId: string;
-  now?: Date;
   subjects: PastTopicFrequency["subjects"];
 }): Promise<void> {
   const blueprint = await prisma.examBlueprint.findUnique({
@@ -84,6 +80,7 @@ export async function recordTopicFrequency({
 
   const earlier = examStructureSchema.safeParse(blueprint?.structure).data?.pastTopicFrequency;
   const found = new Set(subjects.map((subject) => subject.name));
+  const now = new Date();
 
   const pastTopicFrequency: PastTopicFrequency = {
     checkedAt: complete ? now.toISOString() : null,

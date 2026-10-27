@@ -17,7 +17,7 @@ export async function loadExamChoices(goalId: string): Promise<ExamChoice[]> {
 
 async function loadStructure(
   examBlueprintId: string | null,
-  knownBlueprint: Pick<ExamBlueprint, "structure"> | null | undefined,
+  knownBlueprint?: Pick<ExamBlueprint, "structure"> | null,
 ): Promise<ExamStructure | null> {
   if (!examBlueprintId) {
     return null;
@@ -56,14 +56,12 @@ export async function loadExamChoiceViews({
  * subject's area (see `findPartAreas`); none for a goal without an exam notice.
  */
 export async function loadPartAreas({
-  blueprint,
   areas,
   examBlueprintId,
 }: {
-  blueprint?: Pick<ExamBlueprint, "structure"> | null;
   areas: readonly string[];
   examBlueprintId: string | null;
 }): Promise<Map<string, string>> {
-  const structure = await loadStructure(examBlueprintId, blueprint);
+  const structure = await loadStructure(examBlueprintId);
   return structure ? findPartAreas({ areas, structure }) : new Map();
 }

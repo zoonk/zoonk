@@ -26,15 +26,18 @@ function describeExam(blueprint: Pick<ExamBlueprint, "name" | "role">): string {
  */
 export async function findSubjectQuestionsLookup({
   examBlueprintId,
-  now = new Date(),
 }: {
   examBlueprintId: string;
-  now?: Date;
 }): Promise<SubjectQuestionsLookup | null> {
   const blueprint = await prisma.examBlueprint.findUnique({ where: { id: examBlueprintId } });
   const structure = examStructureSchema.safeParse(blueprint?.structure).data;
 
-  if (!blueprint || blueprint.ownerId || !structure || !needsPastQuestions({ now, structure })) {
+  if (
+    !blueprint ||
+    blueprint.ownerId ||
+    !structure ||
+    !needsPastQuestions({ now: new Date(), structure })
+  ) {
     return null;
   }
 
@@ -59,14 +62,12 @@ export async function findSubjectQuestionsLookup({
 export async function recordSubjectQuestions({
   edition,
   examBlueprintId,
-  now = new Date(),
   questions,
   source,
   subjects,
 }: {
   edition: string | null;
   examBlueprintId: string;
-  now?: Date;
   /**
    * One count per subject, in the order of `subjects` (null for one the source gave no count);
    * empty when nothing was found.
@@ -86,6 +87,8 @@ export async function recordSubjectQuestions({
     const count = questions[index];
     return count === undefined || count === null ? [] : [{ name, questions: count }];
   });
+
+  const now = new Date();
 
   const pastQuestions: NonNullable<ExamStructure["pastQuestions"]> = {
     checkedAt: now.toISOString(),

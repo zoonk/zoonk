@@ -30,8 +30,6 @@ export async function createItemSet({
   minItems = 1,
   optionCount = null,
   provenance,
-  sourceCitation = null,
-  sourceId = null,
 }: {
   /** The stimulus, in the shape its kind stores (`listeningContentSchema` for a recording). */
   content: object;
@@ -44,8 +42,6 @@ export async function createItemSet({
   /** Options every multiple-choice question must have, from the exam format. */
   optionCount?: number | null;
   provenance: LibraryProvenance;
-  sourceCitation?: string | null;
-  sourceId?: string | null;
 }): Promise<{ rejected: RejectedItem[]; set: (ItemSet & { items: Item[] }) | null }> {
   parseItemSetContent({ content, kind });
 
@@ -72,7 +68,7 @@ export async function createItemSet({
     return { rejected, set: null };
   }
 
-  const shared = { examBlueprintId, language, sourceCitation, sourceId };
+  const shared = { examBlueprintId, language };
 
   const set = await prisma.$transaction(async (transaction) => {
     const existing = await transaction.itemSet.findFirst({
@@ -90,7 +86,7 @@ export async function createItemSet({
         content,
         items: {
           create: passing.map(({ answerFormat, item, skillId }, position) => ({
-            ...toStoredItem(item, { ...answerFormat, citesSource: sourceCitation !== null }),
+            ...toStoredItem(item, answerFormat),
             ...shared,
             setPosition: position,
             skillId,
