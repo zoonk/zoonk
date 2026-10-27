@@ -17,20 +17,17 @@ async function useLearner() {
   return user;
 }
 
-const MAX_LEARNER_REVISION = 9_223_372_036_854_775_807n;
 const INVALID_DAILY_LIMIT = 32_768;
 
-async function revisions(userId: string) {
-  const [user, plans] = await Promise.all([
-    prisma.user.findUniqueOrThrow({ select: { learnerRevision: true }, where: { id: userId } }),
-    prisma.plan.findMany({
-      orderBy: { id: "asc" },
-      select: { inputVersion: true },
-      where: { goal: { userId } },
-    }),
-  ]);
+/** The input version of each of the learner's plans, in id order. */
+async function planInputs(userId: string) {
+  const plans = await prisma.plan.findMany({
+    orderBy: { id: "asc" },
+    select: { inputVersion: true },
+    where: { goal: { userId } },
+  });
 
-  return { learner: user.learnerRevision, plans: plans.map((plan) => plan.inputVersion) };
+  return plans.map((plan) => plan.inputVersion);
 }
 
 async function plannedLearner(isAnonymous = false) {
@@ -138,7 +135,7 @@ describe(updateLearningProfile, () => {
         }),
       ).resolves.toMatchObject({ status: "updated" });
 
-      await expect(revisions(user.id)).resolves.toStrictEqual({ learner: 1n, plans: [1, 1] });
+      await expect(planInputs(user.id)).resolves.toStrictEqual([1, 1]);
 
       expect(revalidateTag).toHaveBeenCalledWith(getLearningProfileCacheTag(user.id), {
         expire: 0,
@@ -158,14 +155,14 @@ describe(updateLearningProfile, () => {
     };
 
     await updateLearningProfile(input);
-    await expect(revisions(user.id)).resolves.toStrictEqual({ learner: 1n, plans: [0, 0] });
+    await expect(planInputs(user.id)).resolves.toStrictEqual([0, 0]);
 
     const saved = await prisma.userLearningProfile.findUniqueOrThrow({
       where: { userId: user.id },
     });
 
     await updateLearningProfile(input);
-    await expect(revisions(user.id)).resolves.toStrictEqual({ learner: 1n, plans: [0, 0] });
+    await expect(planInputs(user.id)).resolves.toStrictEqual([0, 0]);
 
     await expect(
       prisma.userLearningProfile.findUniqueOrThrow({ where: { userId: user.id } }),
@@ -190,7 +187,7 @@ describe(updateLearningProfile, () => {
       prisma.userLearningProfile.findUnique({ where: { userId: user.id } }),
     ).resolves.toBeNull();
 
-    await expect(revisions(user.id)).resolves.toStrictEqual({ learner: 0n, plans: [0, 0] });
+    await expect(planInputs(user.id)).resolves.toStrictEqual([0, 0]);
     expect(revalidateTag).not.toHaveBeenCalled();
   });
 
@@ -204,35 +201,10 @@ describe(updateLearningProfile, () => {
 
     await learningProfileFixture({ activeGoalId: goal.id, dailyLimitMinutes: 30, userId: user.id });
     await updateLearningProfile({ activeGoalId: null, dailyLimitMinutes: null });
-    await expect(revisions(user.id)).resolves.toStrictEqual({ learner: 1n, plans: [1, 1] });
+    await expect(planInputs(user.id)).resolves.toStrictEqual([1, 1]);
   });
 
-  it("rolls back plan marks and the profile when the learner revision cannot advance", async () => {
-    const { user } = await plannedLearner();
-    await learningProfileFixture({ dailyLimitMinutes: 30, userId: user.id });
-
-    await prisma.user.update({
-      data: { learnerRevision: MAX_LEARNER_REVISION },
-      where: { id: user.id },
-    });
-
-    await expect(updateLearningProfile({ dailyLimitMinutes: 60 })).rejects.toThrow(
-      "bigint out of range",
-    );
-
-    await expect(revisions(user.id)).resolves.toStrictEqual({
-      learner: MAX_LEARNER_REVISION,
-      plans: [0, 0],
-    });
-
-    await expect(
-      prisma.userLearningProfile.findUniqueOrThrow({ where: { userId: user.id } }),
-    ).resolves.toMatchObject({ dailyLimitMinutes: 30 });
-
-    expect(revalidateTag).not.toHaveBeenCalled();
-  });
-
-  it("rolls back both marks when PostgreSQL rejects the profile write", async () => {
+  it("rolls back the plan marks when PostgreSQL rejects the profile write", async () => {
     const { user } = await plannedLearner();
     await learningProfileFixture({ dailyLimitMinutes: 30, userId: user.id });
     /** Bypass delivery validation to produce a real SMALLINT failure after admission. */
@@ -240,7 +212,7 @@ describe(updateLearningProfile, () => {
       updateLearningProfile({ dailyLimitMinutes: INVALID_DAILY_LIMIT }),
     ).rejects.toThrow();
 
-    await expect(revisions(user.id)).resolves.toStrictEqual({ learner: 0n, plans: [0, 0] });
+    await expect(planInputs(user.id)).resolves.toStrictEqual([0, 0]);
 
     await expect(
       prisma.userLearningProfile.findUniqueOrThrow({ where: { userId: user.id } }),
@@ -263,10 +235,10 @@ describe(updateLearningProfile, () => {
         userId: user.id,
       });
 
-      await expect(revisions(user.id)).resolves.toStrictEqual({
-        learner: 2n,
-        plans: [expectedPlanVersion, expectedPlanVersion],
-      });
+      await expect(planInputs(user.id)).resolves.toStrictEqual([
+        expectedPlanVersion,
+        expectedPlanVersion,
+      ]);
 
       await expect(
         prisma.userLearningProfile.findUniqueOrThrow({ where: { userId: user.id } }),
@@ -282,11 +254,11 @@ describe(updateLearningProfile, () => {
 
     await saveDuringConcurrentLimitChange({ input: { dailyLimitMinutes: 60 }, userId: user.id });
 
-    await expect(revisions(user.id)).resolves.toStrictEqual({ learner: 1n, plans: [1, 1] });
+    await expect(planInputs(user.id)).resolves.toStrictEqual([1, 1]);
     expect(revalidateTag).not.toHaveBeenCalled();
   });
 
-  it("commits only one revision and plan-input bump for concurrent identical saves", async () => {
+  it("commits only one plan-input bump for concurrent identical saves", async () => {
     const { user } = await plannedLearner();
     await learningProfileFixture({ dailyLimitMinutes: 30, userId: user.id });
 
@@ -295,7 +267,7 @@ describe(updateLearningProfile, () => {
       updateLearningProfile({ dailyLimitMinutes: 60 }),
     ]);
 
-    await expect(revisions(user.id)).resolves.toStrictEqual({ learner: 1n, plans: [1, 1] });
+    await expect(planInputs(user.id)).resolves.toStrictEqual([1, 1]);
     expect(revalidateTag).toHaveBeenCalledOnce();
   });
 

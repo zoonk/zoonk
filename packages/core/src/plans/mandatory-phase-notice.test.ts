@@ -70,7 +70,6 @@ describe("mandatory phase notices after missed days", () => {
     const otherGoal = await goalFixture({ userId: user.id });
     const otherPlan = await planFixture({ goalId: otherGoal.id });
     const before = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
-    const beforeUser = await prisma.user.findUniqueOrThrow({ where: { id: user.id } });
 
     await expect(
       openStudyDay({ goalId: goal.id, keepEmpty: true, shownDate: "2026-10-14", timeZone: "UTC" }),
@@ -92,10 +91,6 @@ describe("mandatory phase notices after missed days", () => {
     await expect(
       prisma.plan.findUniqueOrThrow({ where: { id: otherPlan.id } }),
     ).resolves.toStrictEqual(otherPlan);
-
-    await expect(prisma.user.findUniqueOrThrow({ where: { id: user.id } })).resolves.toMatchObject({
-      learnerRevision: beforeUser.learnerRevision + 1n,
-    });
 
     expect(replaced.status).toBe("replaced");
 

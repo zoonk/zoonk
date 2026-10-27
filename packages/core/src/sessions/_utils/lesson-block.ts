@@ -19,7 +19,7 @@ import { type StudySessionRow } from "./study-session-access";
 
 const lessonIdsSchema = z.object({ lessonId: z.string() });
 
-/** A completed block's retry must roll back the revision acquired before checking it. */
+/** A completed block's retry must roll back the marks taken before checking it. */
 class LessonBlockUnchangedError extends Error {
   override name = "LessonBlockUnchangedError";
 }

@@ -105,15 +105,6 @@ async function whileLearnerLocked<T>({
   return result;
 }
 
-async function readRevision(userId: string) {
-  const user = await prisma.user.findUniqueOrThrow({
-    select: { learnerRevision: true },
-    where: { id: userId },
-  });
-
-  return user.learnerRevision;
-}
-
 /** A model's grade of a written answer. */
 function typedGrade({
   feedback,
@@ -236,7 +227,6 @@ describe(checkLessonStep, () => {
     const answer = { kind: "check", optionId: "size" } as const;
 
     const first = await check({ answer, attemptId, runId: run.id, stepId });
-    const revision = await readRevision(user.id);
     const again = await check({ answer, attemptId, runId: run.id, stepId });
 
     expect(first).toMatchObject({ result: { savedMistake: true }, status: "checked" });
@@ -245,7 +235,6 @@ describe(checkLessonStep, () => {
     await expect(prisma.attempt.count({ where: { stepId, userId: user.id } })).resolves.toBe(1);
 
     await expect(prisma.mistake.count({ where: { userId: user.id } })).resolves.toBe(1);
-    await expect(readRevision(user.id)).resolves.toBe(revision);
   });
 
   it("records the same answer sent twice at once a single time", async () => {
@@ -253,7 +242,6 @@ describe(checkLessonStep, () => {
     const stepId = stepOfKind(steps, "check").id;
     const attemptId = randomUUID();
     const answer = { kind: "check", optionId: "size" } as const;
-    const revision = await readRevision(user.id);
 
     // Both requests look for the id before either records it, then queue on the learner's row.
     const outcomes = await whileLearnerLocked({
@@ -272,7 +260,6 @@ describe(checkLessonStep, () => {
     await expect(prisma.attempt.count({ where: { stepId, userId: user.id } })).resolves.toBe(1);
 
     await expect(prisma.mistake.count({ where: { userId: user.id } })).resolves.toBe(1);
-    await expect(readRevision(user.id)).resolves.toBe(revision + 1n);
   });
 
   it("keeps two learners' answers apart when they send the same id", async () => {
@@ -330,7 +317,6 @@ describe(checkLessonStep, () => {
   it("doesn't record an answer whose run was finished while it was graded", async () => {
     const { run, steps, user } = await setupRun();
     const stepId = stepOfKind(steps, "typedAnswer").id;
-    const revision = await readRevision(user.id);
 
     vi.mocked(gradeTypedAnswer).mockImplementationOnce(async () => {
       // The learner finished the lesson while the answer was still being graded.
@@ -362,7 +348,6 @@ describe(checkLessonStep, () => {
 
     expect(outcome).toStrictEqual({ status: "runEnded" });
     await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(0);
-    await expect(readRevision(user.id)).resolves.toBe(revision);
   });
 
   it("doesn't record a grade the screen stopped waiting for once the answer checked after it was recorded", async () => {

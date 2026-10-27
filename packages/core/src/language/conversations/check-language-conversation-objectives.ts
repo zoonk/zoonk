@@ -62,7 +62,7 @@ export async function checkLanguageConversationObjectives({
     ? []
     : await findNewlyMetObjectives({ row, scenario, turns: input.turns, userId });
 
-  // Read the goals met again under the revision lock: an overlapping check may have just marked
+  // Read the goals met again under the learner's lock: an overlapping check may have just marked
   // the same one, and a call that ended meanwhile keeps its goals. Either changes nothing.
   const labels =
     newlyMet.length === 0
@@ -79,7 +79,7 @@ export async function checkLanguageConversationObjectives({
             return unchanged(current.objectivesMet);
           }
 
-          // Completion doesn't take the revision lock: the status guard keeps a call that just
+          // Completion doesn't take the learner's lock: the status guard keeps a call that just
           // ended from gaining goals after its rewards were counted.
           const { count } = await tx.languageConversation.updateMany({
             data: { objectivesMet: { push: fresh } },

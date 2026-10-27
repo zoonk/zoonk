@@ -4,7 +4,6 @@ import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { runDeferredWork } from "../_test-utils/deferred-work";
-import { readLearnerRevision } from "../_test-utils/learner-revision";
 import { scheduleMistakeCause } from "./resolve-mistake-cause";
 
 const INPUT = {
@@ -32,8 +31,8 @@ async function classify(request: { mistakeId: string; userId: string }) {
   await flush();
 }
 
-describe("mistake cause revisions", () => {
-  it("raises the revision once when the notebook entry gets its cause", async () => {
+describe("mistake cause writes", () => {
+  it("saves the cause once when the notebook entry gets it", async () => {
     const user = await userFixture();
     const mistake = await mistakeFixture({ cause: null, userId: user.id });
 
@@ -43,8 +42,6 @@ describe("mistake cause revisions", () => {
     await expect(
       prisma.mistake.findUniqueOrThrow({ where: { id: mistake.id } }),
     ).resolves.toMatchObject({ cause: "trap" });
-
-    await expect(readLearnerRevision(user.id)).resolves.toBe(1n);
   });
 
   it("changes nothing when the cause was set meanwhile or the model fails", async () => {
@@ -65,7 +62,5 @@ describe("mistake cause revisions", () => {
     await expect(
       prisma.mistake.findUniqueOrThrow({ where: { id: open.id } }),
     ).resolves.toMatchObject({ cause: null });
-
-    await expect(readLearnerRevision(user.id)).resolves.toBe(0n);
   });
 });

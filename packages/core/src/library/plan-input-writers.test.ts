@@ -5,7 +5,7 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
-import { waitForBlockedStatement } from "../_test-utils/learner-revision";
+import { waitForBlockedStatement } from "../_test-utils/learner-lock";
 import { mockSession } from "../_test-utils/mock-session";
 import { followGoalTimeZone } from "../learner/follow-goal-time-zone";
 import { getSession } from "../users/get-session";
@@ -155,27 +155,6 @@ async function inputVersions(planIds: string[]) {
 }
 
 describe("plan input writers", () => {
-  it.each(WRITERS)(
-    "%s rolls back its domain write when an owner cannot be marked",
-    async (writer) => {
-      const context = await fixture(writer);
-      const before = await context.read();
-      const goal = await prisma.goal.findUniqueOrThrow({ where: { id: context.plans[0]!.goalId } });
-
-      await prisma.user.update({
-        data: { learnerRevision: 9_223_372_036_854_775_807n },
-        where: { id: goal.userId },
-      });
-
-      await expect(context.write()).rejects.toThrow();
-      await expect(context.read()).resolves.toStrictEqual(before);
-
-      await expect(inputVersions(context.plans.map(({ id }) => id))).resolves.toStrictEqual(
-        context.plans.map(() => ({ inputVersion: 0 })),
-      );
-    },
-  );
-
   it.each(WRITERS)(
     "%s marks the complete affected union without touching unrelated plans",
     async (writer) => {

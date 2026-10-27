@@ -18,7 +18,7 @@ import {
 /** The ledger's count of opened capsules: one `review` row per capsule, marked as such. */
 export const CAPSULE_LEDGER_KIND = "capsule";
 
-/** A competing award owns the new rows; this transaction's redundant revision must roll back. */
+/** A competing award owns the new rows; this transaction's redundant marks must roll back. */
 class MilestoneAwardUnchangedError extends Error {
   override name = "MilestoneAwardUnchangedError";
 }

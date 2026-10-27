@@ -2,7 +2,7 @@ import { prisma, sql } from "@zoonk/db";
 import { skillFixture, skillPrerequisiteFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
-import { waitForBlockedStatement } from "../../_test-utils/learner-revision";
+import { waitForBlockedStatement } from "../../_test-utils/learner-lock";
 import { getSession } from "../../users/get-session";
 import { setSkillPrerequisites } from "./create-skill";
 import { mergeSkillForAdmin } from "./merge-skill";

@@ -23,9 +23,16 @@ import { toIsoDate } from "./planner/plan-calendar";
 import {
   type AcknowledgeTodayPlanChangeInput,
   type AcknowledgeTodayPlanChangeResult,
+  type NoticeBasis,
 } from "./today-change-contract";
 
 type ComputedInput = Extract<AcknowledgeTodayPlanChangeInput, { kind: "computed" }>;
+
+/** Whether the day's selection works from the plan Today read when it showed the notice. */
+function isNoticeBasis({ basis, selection }: { basis: NoticeBasis; selection: SelectedDayPlan }) {
+  const { plan } = selection.context;
+  return plan.inputVersion === basis.inputVersion && plan.version === basis.version;
+}
 
 class NoticeSelectionChangedError extends Error {
   override name = "NoticeSelectionChangedError";
@@ -48,23 +55,17 @@ async function persistAcknowledgment({
     return await prisma.$transaction(async (tx) => {
       await markPlansChanged(tx, { planIds: [selection.context.plan.id] });
 
-      const actor = await tx.user.findUniqueOrThrow({
-        select: { learnerRevision: true },
-        where: { id: userId },
-      });
-
       const day = toIsoDate(getDateInTimeZone({ date: new Date(), timeZone }));
 
       if (
         day !== input.shownDate ||
-        actor.learnerRevision !== BigInt(input.revision) + 1n ||
         !(await isSelectedPlanCurrent({ increment: 1, selection, tx }))
       ) {
         throw new NoticeSelectionChangedError();
       }
 
       await saveSelectedPlan({
-        acknowledge: { revision: input.revision, studyDay: input.shownDate },
+        acknowledge: { ...input.basis, studyDay: input.shownDate },
         context: selection.context,
         prepared,
         tx,
@@ -97,13 +98,10 @@ async function acknowledgeComputed({
   const replay = await findAcknowledgedRead({ input, userId });
 
   if (replay) {
-    return acknowledgmentResult({ changeId: replay, userId });
+    return acknowledgmentResult(replay);
   }
 
-  const [goal, actor] = await Promise.all([
-    prisma.goal.findFirst({ where: { id: input.goalId, userId } }),
-    prisma.user.findUniqueOrThrow({ select: { learnerRevision: true }, where: { id: userId } }),
-  ]);
+  const goal = await prisma.goal.findFirst({ where: { id: input.goalId, userId } });
 
   if (!goal) {
     return { status: "notFound" };
@@ -120,13 +118,10 @@ async function acknowledgeComputed({
     return { status: "otherDay" };
   }
 
-  if (String(actor.learnerRevision) !== input.revision) {
-    return { status: "retryable" };
-  }
-
   const selection = await selectDayPlan({ goal, now, timeZone });
 
-  if (!selection) {
+  // Another plan than the one Today read can work out another notice than the one shown.
+  if (!selection || !isNoticeBasis({ basis: input.basis, selection })) {
     return { status: "retryable" };
   }
 
@@ -143,7 +138,7 @@ async function acknowledgeComputed({
   }
 
   const changeId = await persistAcknowledgment({ input, prepared, selection, timeZone, userId });
-  return changeId ? acknowledgmentResult({ changeId, userId }) : { status: "retryable" };
+  return changeId ? acknowledgmentResult(changeId) : { status: "retryable" };
 }
 
 /**

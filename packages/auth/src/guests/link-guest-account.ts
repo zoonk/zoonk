@@ -1,6 +1,6 @@
 import { isPrismaTransactionConflictError, isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
 import { lockCourseHome } from "@zoonk/db/course-home";
-import { markLearnerRevision, markPlanInputsChanged } from "@zoonk/db/learner-revision";
+import { lockLearner, markPlanInputsChanged } from "@zoonk/db/learner-writes";
 import { safeAsync } from "@zoonk/utils/error";
 import { type GuestLinkContext, moveKeyedRows } from "./_utils/merge-keyed-rows";
 import { mergeLanguageLevels } from "./_utils/merge-language-levels";
@@ -49,8 +49,8 @@ function isRetryableTransferError(error: unknown) {
 }
 
 /**
- * Marks the account's summary and every plan the move feeds as changed, before any domain lock:
- * the plans (the account's and the guest's, which read the merged skills and evidence), then the
+ * Marks every plan the move feeds as changed and locks the account, before any domain lock: the
+ * plans (the account's and the guest's, which read the merged skills and evidence), then the
  * account, in the order every learner writer locks them.
  */
 async function markAccountChanged({ guestUserId, transaction, userId }: GuestLinkContext) {
@@ -58,7 +58,7 @@ async function markAccountChanged({ guestUserId, transaction, userId }: GuestLin
 
   const markedPlanIds = new Set(await markPlanInputsChanged(transaction, { userIds }));
 
-  await markLearnerRevision(transaction, { userId });
+  await lockLearner(transaction, { userId });
 
   const plans = await transaction.plan.findMany({
     select: { id: true },

@@ -47,7 +47,6 @@ describe("the frame's explicit Continue after Plus lapses", () => {
 
     expect(continued.session.blocks.some((block) => block.kind === "checkpoint")).toBe(false);
     const after = await readLapsedDayState(day.user.id);
-    expect(after.user.learnerRevision).toBe(before.user.learnerRevision + 1n);
     expect(after.plans[0]?.inputVersion).toBe(before.plans[0]!.inputVersion + 1);
 
     const replay = await countDatabaseStatements(() =>

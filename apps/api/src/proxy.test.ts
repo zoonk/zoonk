@@ -43,7 +43,7 @@ describe(proxy, () => {
     const response = proxy(request);
 
     expect(response.headers.get("access-control-allow-origin")).toBe("https://www.zoonk.com");
-    expect(response.headers.get("access-control-expose-headers")).toBe("Date, Learner-Revision");
+    expect(response.headers.get("access-control-expose-headers")).toBe("Date");
   });
 
   it("blocks cookie-authenticated API requests from a different origin", async () => {

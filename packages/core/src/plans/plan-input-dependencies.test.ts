@@ -71,21 +71,12 @@ async function contentScope() {
 }
 
 async function readVersions(scope: Awaited<ReturnType<typeof contentScope>>) {
-  const [plans, users] = await Promise.all([
-    prisma.plan.findMany({
-      orderBy: { id: "asc" },
-      where: { id: { in: scope.plans.map(({ id }) => id) } },
-    }),
-    prisma.user.findMany({
-      orderBy: { id: "asc" },
-      where: { id: { in: scope.users.map(({ id }) => id) } },
-    }),
-  ]);
+  const plans = await prisma.plan.findMany({
+    orderBy: { id: "asc" },
+    where: { id: { in: scope.plans.map(({ id }) => id) } },
+  });
 
-  return {
-    plans: plans.map(({ id, inputVersion, version }) => ({ id, inputVersion, version })),
-    users: users.map(({ id, learnerRevision }) => ({ id, learnerRevision })),
-  };
+  return { plans: plans.map(({ id, inputVersion, version }) => ({ id, inputVersion, version })) };
 }
 
 describe("question-bank plan invalidation", () => {
@@ -99,16 +90,11 @@ describe("question-bank plan invalidation", () => {
 
     const after = await readVersions(scope);
     const affectedIds = new Set(scope.affected.map(({ id }) => id));
-    const affectedUsers = new Set(scope.users.slice(0, 2).map(({ id }) => id));
 
     expect(after).toStrictEqual({
       plans: before.plans.map((plan) => ({
         ...plan,
         inputVersion: plan.inputVersion + Number(affectedIds.has(plan.id)),
-      })),
-      users: before.users.map((user) => ({
-        ...user,
-        learnerRevision: user.learnerRevision + BigInt(affectedUsers.has(user.id)),
       })),
     });
   });
@@ -130,7 +116,7 @@ describe("question-bank plan invalidation", () => {
     ).resolves.toBe(2);
   });
 
-  it("rolls back plan versions and owner revisions when the real item insert fails", async () => {
+  it("rolls back plan versions when the real item insert fails", async () => {
     const scope = await contentScope();
     const before = await readVersions(scope);
 

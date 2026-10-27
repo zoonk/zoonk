@@ -6,10 +6,10 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import {
-  holdLearnerRevision,
-  readLearnerRevision,
+  LEARNER_LOCK,
+  holdLearnerLock,
   waitForBlockedStatement,
-} from "../../_test-utils/learner-revision";
+} from "../../_test-utils/learner-lock";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getSpeakingSection } from "../../language/exam-speaking/get-speaking-section";
 import { type SpeakingSectionView } from "../../language/exam-speaking/speaking-contract";
@@ -165,7 +165,6 @@ describe(startMockSpeaking, () => {
     const reached = await getMock(started.id);
     expect(reached.status === "ready" && reached.mock.current).toMatchObject({ kind: "speaking" });
     const before = await prisma.mockExam.findUniqueOrThrow({ where: { id: started.id } });
-    const revision = await readLearnerRevision(goal.userId);
 
     await expect(startMockSpeaking({ blockId: started.id })).resolves.toStrictEqual({
       status: "callsPaused",
@@ -176,7 +175,6 @@ describe(startMockSpeaking, () => {
     expect(after.conditions).not.toHaveProperty("sections.1.speakingSectionId");
     expect(startSpeakingSection).toHaveBeenCalledExactlyOnceWith({ goalId: goal.id });
     expect(getSpeakingSection).not.toHaveBeenCalled();
-    await expect(readLearnerRevision(goal.userId)).resolves.toBe(revision);
   });
 
   it("marks before competing paper attachments and keeps only one marker", async () => {
@@ -207,8 +205,7 @@ describe(startMockSpeaking, () => {
     }
 
     await submitMockSection({ blockId: started.id, input: { timeZone: "UTC" }, section: 0 });
-    const before = await readLearnerRevision(goal.userId);
-    const held = holdLearnerRevision({ userId: goal.userId });
+    const held = holdLearnerLock({ userId: goal.userId });
     const pid = await held.pid;
 
     const requests = [
@@ -229,7 +226,7 @@ describe(startMockSpeaking, () => {
     try {
       // Ownership reads and paper generation finish before timing the marker-lock observation.
       await papersReady.promise;
-      await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u, 2);
+      await waitForBlockedStatement(pid, LEARNER_LOCK, 2);
     } finally {
       held.release();
       await Promise.all([held.done, drained]);
@@ -239,8 +236,6 @@ describe(startMockSpeaking, () => {
       { section: paper, status: "ready" },
       { section: paper, status: "ready" },
     ]);
-
-    await expect(readLearnerRevision(goal.userId)).resolves.toBe(before + 2n);
   });
 
   it("sits the speaking paper in a full mock only: written once the learner reaches it, the same one after", async () => {
@@ -283,8 +278,6 @@ describe(startMockSpeaking, () => {
       questions: [],
     });
 
-    const revision = await readLearnerRevision(goal.userId);
-
     await expect(startMockSpeaking({ blockId: started.id })).resolves.toStrictEqual({
       section: paper,
       status: "ready",
@@ -295,7 +288,6 @@ describe(startMockSpeaking, () => {
     });
 
     expect(startSpeakingSection).toHaveBeenCalledOnce();
-    await expect(readLearnerRevision(goal.userId)).resolves.toBe(revision + 1n);
 
     const sat = await getMock(started.id);
 

@@ -91,7 +91,10 @@ const planChangePayloadSchema = z.object({
    * and for proposals.
    */
   /** Replay binding for an acknowledged computed Today notice, never a client-supplied row ID. */
-  acknowledgedRead: z.object({ revision: z.string(), studyDay: z.iso.date() }).strict().optional(),
+  acknowledgedRead: z
+    .object({ inputVersion: z.number().int(), studyDay: z.iso.date(), version: z.number().int() })
+    .strict()
+    .optional(),
   /**
    * For `missedDays`: falling behind made the plan cover less of its goal by its date (see
    * `FallingBehind`), so Today asks what the learner wants. Null when the date isn't at risk.

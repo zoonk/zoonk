@@ -17,7 +17,7 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { scopeIdentityKey } from "@zoonk/utils/identity-key";
 import { describe, expect, it } from "vitest";
-import { holdLearnerRevision, waitForBlockedStatement } from "../../_test-utils/learner-revision";
+import { holdLearnerLock, waitForBlockedStatement } from "../../_test-utils/learner-lock";
 import { languageLessonDraft } from "../language/_test-utils/language-lesson-draft";
 import { saveLanguageLesson } from "../language/_utils/save-language-lesson";
 import { pullLessonForFix } from "../quality/later-reviews";
@@ -89,21 +89,14 @@ async function selectionScope() {
 
 type Scope = Awaited<ReturnType<typeof selectionScope>>;
 
-async function versions({ plans, first, second, untouched }: Scope) {
-  const [savedPlans, users] = await Promise.all([
-    prisma.plan.findMany({
-      orderBy: { id: "asc" },
-      where: { id: { in: plans.map(({ id }) => id) } },
-    }),
-    prisma.user.findMany({
-      orderBy: { id: "asc" },
-      where: { id: { in: [first.id, second.id, untouched.id] } },
-    }),
-  ]);
+async function versions({ plans }: Scope) {
+  const savedPlans = await prisma.plan.findMany({
+    orderBy: { id: "asc" },
+    where: { id: { in: plans.map(({ id }) => id) } },
+  });
 
   return {
     plans: savedPlans.map(({ id, inputVersion, version }) => ({ id, inputVersion, version })),
-    users: users.map(({ id, learnerRevision }) => ({ id, learnerRevision })),
   };
 }
 
@@ -111,24 +104,15 @@ function changedVersions({
   before,
   scope,
   writes,
-  holder = false,
 }: {
   before: Awaited<ReturnType<typeof versions>>;
   scope: Scope;
   writes: number;
-  holder?: boolean;
 }) {
   return {
     plans: before.plans.map((plan) => ({
       ...plan,
       inputVersion: plan.inputVersion + (plan.id === scope.plans[6]!.id ? 0 : writes),
-    })),
-    users: before.users.map((user) => ({
-      ...user,
-      learnerRevision:
-        user.learnerRevision +
-        BigInt(user.id === scope.untouched.id ? 0 : writes) +
-        BigInt(holder && user.id === scope.first.id),
     })),
   };
 }
@@ -252,7 +236,7 @@ describe("D5 sibling writer admission", () => {
       const write = await prepareWriter(scope, writer);
       const before = await versions(scope);
 
-      const holder = holdLearnerRevision({
+      const holder = holdLearnerLock({
         beforeCommit: async (tx) => {
           await tx.$queryRaw`SELECT id FROM library_lessons WHERE id = ${scope.lesson.id}::uuid FOR UPDATE`;
         },
@@ -274,7 +258,7 @@ describe("D5 sibling writer admission", () => {
       expect(results.toSorted()).toStrictEqual([false, true]);
 
       await expect(versions(scope)).resolves.toStrictEqual(
-        changedVersions({ before, holder: true, scope, writes: 1 }),
+        changedVersions({ before, scope, writes: 1 }),
       );
     },
   );
@@ -288,7 +272,7 @@ describe("D5 sibling writer admission", () => {
       const replacement = randomUUID();
       const stored = await lessonState(scope);
 
-      const holder = holdLearnerRevision({
+      const holder = holdLearnerLock({
         beforeCommit: async (tx) => {
           await tx.lesson.update({
             data: { contentRunId: replacement, contentStatus: "running" },
@@ -311,7 +295,7 @@ describe("D5 sibling writer admission", () => {
       await expect(pending).resolves.toBe(false);
 
       await expect(versions(scope)).resolves.toStrictEqual(
-        changedVersions({ before, holder: true, scope, writes: 0 }),
+        changedVersions({ before, scope, writes: 0 }),
       );
 
       const after = await lessonState(scope);
@@ -399,7 +383,7 @@ describe("D5 sibling writer admission", () => {
     const first = creationInput(scope);
     const second = { ...creationInput(scope), title: first.title };
     const before = await versions(scope);
-    const holder = holdLearnerRevision({ userId: scope.first.id });
+    const holder = holdLearnerLock({ userId: scope.first.id });
     const pid = await holder.pid;
     const calls = Promise.all([createLibraryLesson(first), createLibraryLesson(second)]);
 
@@ -416,7 +400,7 @@ describe("D5 sibling writer admission", () => {
     expect(new Set(results.map(({ lesson }) => lesson.slug)).size).toBe(2);
 
     await expect(versions(scope)).resolves.toStrictEqual(
-      changedVersions({ before, holder: true, scope, writes: 2 }),
+      changedVersions({ before, scope, writes: 2 }),
     );
   });
 });

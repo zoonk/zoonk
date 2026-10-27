@@ -7,14 +7,13 @@ import { type NextRequest, NextResponse } from "next/server";
 
 /**
  * `Date` is exposed so a wait following a run's events reads the server's clock, the one the
- * events' times are on, to time the step running now. Learner-Revision lets the browser accept a
- * write's committed watermark without discarding unrelated prefetched pages.
+ * events' times are on, to time the step running now.
  */
 const corsHeaders = {
   "Access-Control-Allow-Credentials": "true",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
   "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
-  "Access-Control-Expose-Headers": "Date, Learner-Revision",
+  "Access-Control-Expose-Headers": "Date",
   "Access-Control-Max-Age": "86400",
 };
 

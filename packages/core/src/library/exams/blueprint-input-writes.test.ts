@@ -3,7 +3,7 @@ import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
-import { waitForBlockedStatement } from "../../_test-utils/learner-revision";
+import { waitForBlockedStatement } from "../../_test-utils/learner-lock";
 import { createGoal } from "../../goals/_utils/create-goal-records";
 import { buildExamIdentityKey } from "./exam-identity";
 import { linkGoalToExamBlueprint } from "./exam-learners";

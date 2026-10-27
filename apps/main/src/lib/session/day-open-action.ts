@@ -12,22 +12,20 @@ import { openStudyBlock } from "./open-study-block";
 import { type StudyDestination } from "./study-destination";
 
 /**
- * What opening a day comes back with, for the tap that sent it: the day opened, for whom and at
- * which revision, its session, and where the tapped step plays once it started (`destination`;
+ * What opening a day comes back with, for the tap that sent it: the day opened, its session, and
+ * where the tapped step plays once it started (`destination`;
  * null when no step was asked for or it changed since the screen showed it, which `targetStatus`
  * says). `retryable` asks for one more try in a request of its own; `empty` is a day with nothing
  * to open. A step that should have started and didn't is `failed`, like an error.
  */
 export type DayOpenOutcome =
   | {
-      actorId: string;
       destination: StudyDestination | null;
-      revision: string;
       sessionId: string;
       status: "opened";
       targetStatus: DayTargetStatus | null;
     }
-  | { actorId: string; revision: string; status: "empty" | "retryable" }
+  | { status: "empty" | "retryable" }
   | { status: "failed" | "goalNotActive" | "notFound" | "preparing" | "unauthorized" };
 
 /** The browser's zone is part of every tap here, as for the session's other actions. */
@@ -54,9 +52,7 @@ export async function openStudyDayAction(input: OpenStudyDayInput): Promise<DayO
     const opened = await openStudyDay(parsed.data);
 
     if (opened.status !== "opened") {
-      return "actorId" in opened
-        ? { actorId: opened.actorId, revision: opened.revision, status: opened.status }
-        : { status: opened.status };
+      return { status: opened.status };
     }
 
     const { sessionId, target, targetStatus } = opened;
@@ -70,14 +66,7 @@ export async function openStudyDayAction(input: OpenStudyDayInput): Promise<DayO
       return { status: "failed" };
     }
 
-    return {
-      actorId: opened.actorId,
-      destination,
-      revision: opened.revision,
-      sessionId,
-      status: "opened",
-      targetStatus,
-    };
+    return { destination, sessionId, status: "opened", targetStatus };
   });
 
   if (error) {

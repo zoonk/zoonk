@@ -23,13 +23,9 @@ async function setup() {
   };
 }
 
-async function revisions(fixture: Awaited<ReturnType<typeof setup>>) {
-  const [actor, plan] = await Promise.all([
-    prisma.user.findUniqueOrThrow({ where: { id: fixture.user.id } }),
-    prisma.plan.findUniqueOrThrow({ where: { id: fixture.plan.id } }),
-  ]);
-
-  return { inputVersion: plan.inputVersion, revision: actor.learnerRevision };
+async function versions(fixture: Awaited<ReturnType<typeof setup>>) {
+  const plan = await prisma.plan.findUniqueOrThrow({ where: { id: fixture.plan.id } });
+  return { inputVersion: plan.inputVersion };
 }
 
 describe("the explicit study-day open", () => {
@@ -68,9 +64,9 @@ describe("the explicit study-day open", () => {
     expect(before.day.blocks.every((block) => !("id" in block))).toBe(true);
   });
 
-  it("creates one queue and commits one revision across concurrent opens", async () => {
+  it("creates one queue and marks the plan once across concurrent opens", async () => {
     const fixture = await setup();
-    const before = await revisions(fixture);
+    const before = await versions(fixture);
     const results = await Promise.all(Array.from({ length: 5 }, () => openStudyDay(fixture.input)));
     const sessions = results.flatMap((result) => (result.status === "opened" ? [result] : []));
 
@@ -91,26 +87,25 @@ describe("the explicit study-day open", () => {
       1,
     );
 
-    await expect(revisions(fixture)).resolves.toStrictEqual({
+    await expect(versions(fixture)).resolves.toStrictEqual({
       inputVersion: before.inputVersion + 1,
-      revision: before.revision + 1n,
     });
   });
 
-  it("replays an existing queue without a write or another revision", async () => {
+  it("replays an existing queue without a write", async () => {
     const fixture = await setup();
     const first = await openStudyDay(fixture.input);
-    const before = await revisions(fixture);
+    const before = await versions(fixture);
     const replay = await countDatabaseStatements(() => openStudyDay(fixture.input));
 
     expect(replay.writes).toBe(0);
     expect(replay.result).toStrictEqual({ ...first, created: false });
-    await expect(revisions(fixture)).resolves.toStrictEqual(before);
+    await expect(versions(fixture)).resolves.toStrictEqual(before);
   });
 
   it("rolls back its own mark when inputs change while opening waits, leaving retry to another request", async () => {
     const fixture = await setup();
-    const before = await revisions(fixture);
+    const before = await versions(fixture);
     const ready = Promise.withResolvers<number>();
     const release = Promise.withResolvers<null>();
 
@@ -150,19 +145,15 @@ describe("the explicit study-day open", () => {
     await expect(held).resolves.toMatchObject([{ status: "fulfilled" }]);
 
     await expect(opening).resolves.toMatchObject([
-      {
-        status: "fulfilled",
-        value: { actorId: fixture.user.id, goalId: fixture.goal.id, status: "retryable" },
-      },
+      { status: "fulfilled", value: { goalId: fixture.goal.id, status: "retryable" } },
     ]);
 
     await expect(prisma.studySession.count({ where: { goalId: fixture.goal.id } })).resolves.toBe(
       0,
     );
 
-    await expect(revisions(fixture)).resolves.toStrictEqual({
+    await expect(versions(fixture)).resolves.toStrictEqual({
       inputVersion: before.inputVersion + 1,
-      revision: before.revision + 1n,
     });
 
     await expect(openStudyDay(fixture.input)).resolves.toMatchObject({

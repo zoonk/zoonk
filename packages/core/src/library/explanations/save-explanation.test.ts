@@ -134,10 +134,6 @@ describe(saveExplanationLesson, () => {
       );
 
       async function expectMarks(writes: number) {
-        await expect(readRevision(owner.id)).resolves.toBe(BigInt(writes));
-        await expect(readRevision(other.id)).resolves.toBe(BigInt(writes));
-        await expect(readRevision(unrelated.id)).resolves.toBe(0n);
-
         const updated = await prisma.plan.findMany({
           where: { id: { in: plans.map((plan) => plan.id) } },
         });
@@ -249,7 +245,6 @@ describe(saveExplanationLesson, () => {
     }
 
     await expect(publishing).resolves.toStrictEqual({ lessonId: saved.lessonId, status: "busy" });
-    await expect(readRevision(user.id)).resolves.toBe(0n);
 
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
       inputVersion: plan.inputVersion,
@@ -312,8 +307,6 @@ describe(linkExplanationToGoal, () => {
       prisma.plan.findUniqueOrThrow({ where: { id: otherPlan.id } }),
     ).resolves.toMatchObject({ inputVersion: otherPlan.inputVersion + 1 });
 
-    const revisionBefore = await readRevision(user.id);
-
     await linkExplanationToGoal({
       courseId: course.id,
       goalId: goal.id,
@@ -321,8 +314,6 @@ describe(linkExplanationToGoal, () => {
       skill: { id: skill.id, name: skill.name },
       title: "What “the market is up 2%” means",
     });
-
-    await expect(readRevision(user.id)).resolves.toBe(revisionBefore + 1n);
 
     await linkExplanationToGoal({
       courseId: course.id,
@@ -385,15 +376,12 @@ describe(linkGoFurtherCourse, () => {
       explanation: { goFurther: { course: null }, lesson: { id: saved.lessonId }, status: "ready" },
     });
 
-    const revisionBefore = await readRevision(user.id);
     const readPlan = () => prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
     const planBefore = await readPlan();
 
     await linkGoFurtherCourse({ courseId: first.id, goalId: goal.id, lessonId: saved.lessonId });
-    await expect(readRevision(user.id)).resolves.toBe(revisionBefore + 1n);
     await expect(readPlan()).resolves.toMatchObject({ inputVersion: planBefore.inputVersion + 1 });
     await linkGoFurtherCourse({ courseId: second.id, goalId: goal.id, lessonId: saved.lessonId });
-    await expect(readRevision(user.id)).resolves.toBe(revisionBefore + 1n);
 
     await expect(getExplanation({ goalId: goal.id })).resolves.toMatchObject({
       explanation: { goFurther: { course: { title: "Investing" } } },
@@ -453,8 +441,3 @@ describe(findExplanationGoFurther, () => {
     });
   });
 });
-
-async function readRevision(userId: string) {
-  const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
-  return user.learnerRevision;
-}

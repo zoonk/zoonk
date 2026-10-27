@@ -2,12 +2,12 @@ import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
+import {
+  LEARNER_LOCK,
+  holdLearnerLock,
+  waitForBlockedStatement,
+} from "../../_test-utils/learner-lock";
 import { markLearnerChanged, markPlansChanged } from "./mark-learner-changed";
-
-async function revision(userId: string) {
-  const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
-  return user.learnerRevision;
-}
 
 async function plan(userId: string) {
   const goal = await goalFixture({ userId });
@@ -47,19 +47,6 @@ function observeStatements() {
 }
 
 describe(markLearnerChanged, () => {
-  it("increments monotonically once per call, including plan-input changes", async () => {
-    const user = await userFixture();
-    await expect(revision(user.id)).resolves.toBe(0n);
-
-    const results = await prisma.$transaction(async (tx) => [
-      await markLearnerChanged(tx, { userId: user.id }),
-      await markLearnerChanged(tx, { planInputs: true, userId: user.id }),
-    ]);
-
-    expect(results).toStrictEqual([{ learnerRevision: 1n }, { learnerRevision: 2n }]);
-    await expect(revision(user.id)).resolves.toBe(2n);
-  });
-
   it("invalidates only the learner's owned plans and leaves plan edit versions alone", async () => {
     const [owner, other] = await Promise.all([userFixture(), userFixture()]);
     const plans = await Promise.all([plan(owner.id), plan(owner.id), plan(other.id)]);
@@ -86,7 +73,6 @@ describe(markLearnerChanged, () => {
 
     expect(plans.map((row) => versions.get(row.id))).toStrictEqual([1, 1, 0]);
     expect(rows.every((row) => row.version === 1)).toBe(true);
-    await expect(revision(other.id)).resolves.toBe(0n);
   });
 
   it("locks requested owned plans before the learner without invalidating planning inputs", async () => {
@@ -102,57 +88,31 @@ describe(markLearnerChanged, () => {
     );
 
     expect(statements[0]).toMatch(/SELECT plan\.id[\s\S]*ORDER BY plan\.id FOR UPDATE OF plan/u);
-    expect(statements[1]).toMatch(/UPDATE users/u);
+    expect(statements[1]).toMatch(LEARNER_LOCK);
     expect(statements.some((query) => query.includes("input_version"))).toBe(false);
-    await expect(revision(user.id)).resolves.toBe(1n);
 
     await expect(
       prisma.plan.findMany({ where: { id: { in: plans.map((row) => row.id) } } }),
     ).resolves.toMatchObject(plans.map(() => ({ inputVersion: 0, version: 1 })));
   });
 
-  it("serializes concurrent transactions without losing increments", async () => {
+  it("makes a second writer of the same learner wait for the first", async () => {
     const user = await userFixture();
+    const held = holdLearnerLock({ userId: user.id });
+    const pid = await held.pid;
+    const second = prisma.$transaction((tx) => markLearnerChanged(tx, { userId: user.id }));
 
-    const results = await Promise.all(
-      Array.from({ length: 4 }, () =>
-        prisma.$transaction((tx) => markLearnerChanged(tx, { userId: user.id })),
-      ),
-    );
+    try {
+      await waitForBlockedStatement(pid, LEARNER_LOCK);
+    } finally {
+      held.release();
+      await held.done;
+    }
 
-    expect(new Set(results.map((result) => result.learnerRevision))).toStrictEqual(
-      new Set([1n, 2n, 3n, 4n]),
-    );
-
-    await expect(revision(user.id)).resolves.toBe(4n);
+    await expect(second).resolves.toBeUndefined();
   });
 
-  it("includes guest learners and rolls the revision back with the domain write", async () => {
-    const user = await userFixture();
-    await prisma.user.update({ data: { isAnonymous: true }, where: { id: user.id } });
-
-    await expect(
-      prisma.$transaction(async (tx) => {
-        await tx.user.update({ data: { name: "Rolled back" }, where: { id: user.id } });
-
-        await expect(markLearnerChanged(tx, { userId: user.id })).resolves.toStrictEqual({
-          learnerRevision: 1n,
-        });
-
-        throw new Error("Roll back domain write");
-      }),
-    ).rejects.toThrow("Roll back domain write");
-
-    await expect(revision(user.id)).resolves.toBe(0n);
-    const restoredUser = await prisma.user.findUniqueOrThrow({ where: { id: user.id } });
-    expect(restoredUser.name).toBe(user.name);
-
-    await expect(
-      prisma.$transaction((tx) => markLearnerChanged(tx, { userId: user.id })),
-    ).resolves.toStrictEqual({ learnerRevision: 1n });
-  });
-
-  it("marks plan inputs with one plans update, its locks taken before one user update", async () => {
+  it("marks plan inputs with one plans update, its locks taken before the learner's", async () => {
     const user = await userFixture();
     const plans = await Promise.all([plan(user.id), plan(user.id)]);
     const { client, statements } = observeStatements();
@@ -162,16 +122,15 @@ describe(markLearnerChanged, () => {
     );
 
     expect(statements.filter((query) => /^\s*UPDATE plans\b/iu.test(query))).toHaveLength(1);
-    expect(statements.filter((query) => /^\s*UPDATE users\b/iu.test(query))).toHaveLength(1);
-    const learnerWrite = statements.findIndex((query) => /^\s*UPDATE users\b/iu.test(query));
+    expect(statements.filter((query) => LEARNER_LOCK.test(query))).toHaveLength(1);
+    const learnerLock = statements.findIndex((query) => LEARNER_LOCK.test(query));
 
     const locks = statements.flatMap((query, index) =>
       /FOR UPDATE OF plan/u.test(query) ? [index] : [],
     );
 
     expect(locks.length).toBeGreaterThan(0);
-    expect(locks.every((index) => index < learnerWrite)).toBe(true);
-    await expect(revision(user.id)).resolves.toBe(1n);
+    expect(locks.every((index) => index < learnerLock)).toBe(true);
     const rows = await prisma.plan.findMany({ where: { id: { in: plans.map((row) => row.id) } } });
     expect(rows.every((row) => row.inputVersion === 1 && row.version === 1)).toBe(true);
   });
@@ -184,12 +143,11 @@ describe(markLearnerChanged, () => {
     );
 
     await expect(prisma.plan.count({ where: { goal: { userId: user.id } } })).resolves.toBe(0);
-    await expect(revision(user.id)).resolves.toBe(1n);
   });
 });
 
 describe(markPlansChanged, () => {
-  it("updates dependent owners in one statement rather than one round trip per learner", async () => {
+  it("locks dependent owners in one statement rather than one round trip per learner", async () => {
     const users = await Promise.all(Array.from({ length: 4 }, () => userFixture()));
 
     const plans = await Promise.all([
@@ -205,14 +163,9 @@ describe(markPlansChanged, () => {
       markPlansChanged(tx, { planIds: [...plans.map((row) => row.id), plans[0]!.id].toReversed() }),
     );
 
-    expect(statements.filter((query) => /^\s*UPDATE\s+users\b/iu.test(query))).toHaveLength(1);
-
-    await expect(Promise.all(users.map((user) => revision(user.id)))).resolves.toStrictEqual([
-      1n,
-      1n,
-      1n,
-      0n,
-    ]);
+    expect(statements.filter((query) => /^\s*SELECT id FROM users\b/iu.test(query))).toHaveLength(
+      1,
+    );
 
     await expect(
       prisma.plan.findMany({ where: { id: { in: plans.map((row) => row.id) } } }),
@@ -267,8 +220,16 @@ describe(markPlansChanged, () => {
     await Promise.all([firstWriter, secondWriter]);
 
     await expect(
-      Promise.all([revision(firstUser.id), revision(secondUser.id)]),
-    ).resolves.toStrictEqual([2n, 1n]);
+      prisma.plan.findMany({
+        orderBy: { id: "asc" },
+        where: { id: { in: [firstPlan.id, secondPlan.id] } },
+      }),
+    ).resolves.toMatchObject(
+      [
+        { id: firstPlan.id, inputVersion: 2 },
+        { id: secondPlan.id, inputVersion: 1 },
+      ].toSorted((a, b) => a.id.localeCompare(b.id)),
+    );
   });
 
   it("serializes overlapping plans in opposite input orders and mixed helper calls", async () => {
@@ -283,17 +244,12 @@ describe(markPlansChanged, () => {
       prisma.$transaction((tx) => markLearnerChanged(tx, { planInputs: true, userId: second.id })),
     ]);
 
-    await expect(Promise.all([revision(first.id), revision(second.id)])).resolves.toStrictEqual([
-      3n,
-      3n,
-    ]);
-
     await expect(prisma.plan.findMany({ where: { id: { in: planIds } } })).resolves.toMatchObject(
       planIds.map(() => ({ inputVersion: 3 })),
     );
   });
 
-  it("deduplicates plan owners, includes guests, and returns no revisions", async () => {
+  it("deduplicates plans, includes guests' plans, and marks no other learner's", async () => {
     const [first, guest, unaffected] = await Promise.all([
       userFixture(),
       userFixture(),
@@ -315,10 +271,6 @@ describe(markPlansChanged, () => {
       ),
     ).resolves.toBeUndefined();
 
-    await expect(
-      Promise.all([revision(first.id), revision(guest.id), revision(unaffected.id)]),
-    ).resolves.toStrictEqual([1n, 1n, 0n]);
-
     const rows = await prisma.plan.findMany({
       where: { id: { in: [one.id, two.id, three.id, other.id] } },
     });
@@ -327,11 +279,10 @@ describe(markPlansChanged, () => {
     expect([one, two, three, other].map((row) => versions.get(row.id))).toStrictEqual([1, 1, 1, 0]);
 
     await prisma.$transaction((tx) => markPlansChanged(tx, { planIds: [] }));
-    await expect(revision(first.id)).resolves.toBe(1n);
     expect(other.id).not.toBe(one.id);
   });
 
-  it("rolls every owner increment back together", async () => {
+  it("rolls every plan mark back together", async () => {
     const [first, second] = await Promise.all([userFixture(), userFixture()]);
     const plans = await Promise.all([plan(first.id), plan(second.id)]);
 
@@ -341,11 +292,6 @@ describe(markPlansChanged, () => {
         throw new Error("Roll back shared write");
       }),
     ).rejects.toThrow("Roll back shared write");
-
-    await expect(Promise.all([revision(first.id), revision(second.id)])).resolves.toStrictEqual([
-      0n,
-      0n,
-    ]);
 
     await expect(
       prisma.plan.findMany({ where: { id: { in: plans.map((row) => row.id) } } }),

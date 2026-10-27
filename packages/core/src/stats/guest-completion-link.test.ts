@@ -7,7 +7,6 @@ import {
   signInAsGuest,
   signInWithPassword,
 } from "../../../auth/src/guests/_test-utils/guest-auth";
-import { readLearnerRevision } from "../_test-utils/learner-revision";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { lessonRunFixture } from "../lesson-player/_test-utils/lesson-run-fixture";
 import { completeLibraryLesson } from "../lesson-player/complete-library-lesson";
@@ -287,16 +286,14 @@ describe("guest completion during account linking", () => {
     await linkBeforeSettlement({
       account,
       guest,
-      // Marking the guest's revision finds no guest anymore, before anything is written.
-      rejection: { message: "Cannot mark a missing learner changed" },
+      // Locking the guest finds no guest anymore, before anything is written.
+      rejection: { message: "Cannot lock a missing learner" },
       settle: () => recordAnsweredActivity({ ...activity, userId: guest.guestId }),
     });
 
     await expect(prisma.learningEvent.count({ where: { goalId: goal.id } })).resolves.toBe(0);
 
-    const linked = await readLearnerRevision(account.userId);
     await recordAnsweredActivity({ ...activity, userId: account.userId });
-    await expect(readLearnerRevision(account.userId)).resolves.toBe(linked + 1n);
 
     await expect(
       prisma.dailyProgress.findMany({ where: { userId: account.userId } }),

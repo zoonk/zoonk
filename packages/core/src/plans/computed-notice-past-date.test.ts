@@ -87,7 +87,7 @@ describe("computed mandatory notice past-date eligibility", () => {
       }
 
       expect(read.result.today.planChange).toBeNull();
-      const revision = read.result.today.revision;
+      expect(read.result.today.noticeBasis).toBeNull();
 
       await expect(
         prisma.plan.findUniqueOrThrow({ include: { items: true }, where: { id: fixture.plan.id } }),
@@ -95,9 +95,9 @@ describe("computed mandatory notice past-date eligibility", () => {
 
       const acknowledgment = await countDatabaseStatements(() =>
         acknowledgeTodayPlanChange({
+          basis: { inputVersion: fixture.plan.inputVersion, version: fixture.plan.version },
           goalId: fixture.goal.id,
           kind: "computed",
-          revision,
           shownDate: "2020-10-20",
           timeZone: "UTC",
         }),

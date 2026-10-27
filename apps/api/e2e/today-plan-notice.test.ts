@@ -40,9 +40,9 @@ test.describe("Today's mandatory notice acknowledgment API", () => {
     await expect(prisma.studySession.count({ where: { userId } })).resolves.toBe(0);
 
     const input = {
+      basis: today.noticeBasis,
       goalId: fixture.goal.id,
       kind: "computed",
-      revision: today.revision,
       shownDate: localDate.toISOString().slice(0, 10),
       timeZone: "UTC",
     };
@@ -50,17 +50,11 @@ test.describe("Today's mandatory notice acknowledgment API", () => {
     const acknowledged = await api.post(PATH, { data: input });
     expect(acknowledged.status(), await acknowledged.text()).toBe(200);
     const receipt = acknowledgedTodayPlanChangeSchema.parse(await acknowledged.json());
-    expect(receipt.userId).toBe(userId);
     const saved = await prisma.planChange.findUniqueOrThrow({ where: { id: receipt.changeId } });
     expect(saved).toMatchObject({ planId: fixture.plan.id, status: "applied" });
-    const after = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
     const replay = await api.post(PATH, { data: input });
     expect(replay.status()).toBe(200);
     await expect(replay.json()).resolves.toStrictEqual(receipt);
-
-    await expect(prisma.user.findUniqueOrThrow({ where: { id: userId } })).resolves.toStrictEqual(
-      after,
-    );
 
     await expect(
       prisma.planChange.count({ where: { planId: fixture.plan.id, status: "applied" } }),

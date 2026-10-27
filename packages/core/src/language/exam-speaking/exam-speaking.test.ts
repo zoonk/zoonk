@@ -16,7 +16,6 @@ import {
   testCallCompletionInput,
 } from "../../_test-utils/connect-test-call";
 import { freezeClock } from "../../_test-utils/frozen-clock";
-import { readLearnerRevision } from "../../_test-utils/learner-revision";
 import { mockSession } from "../../_test-utils/mock-session";
 import { completeLanguageConversation } from "../conversations/complete-language-conversation";
 import { getLanguageConversation } from "../conversations/get-language-conversation";
@@ -175,13 +174,10 @@ describe("exam speaking tasks", () => {
   afterEach(cleanupTestCalls);
 
   it("marks a new exam task once and leaves its waiting retry unchanged", async () => {
-    const { goal, user } = await deleLearner();
-    const before = await readLearnerRevision(user.id);
+    const { goal } = await deleLearner();
     const conversationId = await startTask({ goalId: goal.id, task: "t1" });
 
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 1n);
     await expect(startTask({ goalId: goal.id, task: "t1" })).resolves.toBe(conversationId);
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 1n);
   });
 
   it("starts a DELE B2 task with its card, the AI as its examiner and the exam's own timing", async () => {

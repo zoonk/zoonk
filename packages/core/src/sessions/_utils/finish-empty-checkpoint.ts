@@ -10,7 +10,7 @@ import { getNextBlockId, getSessionBar } from "./session-view";
 import { settleSessionDay } from "./settle-session-day";
 import { type StudySessionRow } from "./study-session-access";
 
-/** A duplicate abandonment rolls back the revision mark taken before its block transition. */
+/** A duplicate abandonment rolls back the learner mark taken before its block transition. */
 class EmptyCheckpointUnchangedError extends Error {
   override name = "EmptyCheckpointUnchangedError";
 }

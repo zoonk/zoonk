@@ -8,7 +8,7 @@ import { countUsage } from "./usage-counts";
 
 /**
  * Shares the entitlement claim with atomic live-call reservation, never a separate commit. Says
- * whether it wrote, so a retried target or a refusal can leave the learner's revision alone.
+ * whether it wrote, so a retried target or a refusal can roll back the learner's marks.
  */
 export async function claimUsageInTransaction({
   generated,

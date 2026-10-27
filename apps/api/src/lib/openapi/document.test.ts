@@ -192,57 +192,6 @@ describe("OpenAPI document", () => {
     expect(openAPIDocument.openapi).toBe("3.1.0");
   });
 
-  it("documents optional write revisions without adding them to ordinary reads or errors", () => {
-    const document = documentContractSchema.parse(openAPIDocument);
-
-    const responses = Object.values(document.paths).flatMap((path) =>
-      DOCUMENTED_METHODS.flatMap((method) =>
-        Object.entries(path[method]?.responses ?? {}).map(([status, response]) => ({
-          response,
-          status,
-          write: method !== "get" && /^2\d\d$/u.test(status),
-        })),
-      ),
-    );
-
-    const writes = responses.filter((entry) => entry.write);
-    const errors = responses.filter((entry) => /^(?:[45]\d\d|default)$/u.test(entry.status));
-
-    expect(writes.length).toBeGreaterThan(0);
-
-    for (const { response } of writes) {
-      expect(response).toHaveProperty("headers.Learner-Revision.schema", {
-        pattern: "^[0-9]+$",
-        type: "string",
-      });
-
-      expect(response).not.toHaveProperty("headers.Learner-Revision.required", true);
-    }
-
-    for (const { response } of errors) {
-      expect(response).not.toHaveProperty("headers.Learner-Revision");
-    }
-
-    expect(document.paths["/me/learning-profile"]?.get?.responses["200"]).not.toHaveProperty(
-      "headers.Learner-Revision",
-    );
-  });
-
-  it("retains an existing run Location header alongside a write's learner revision", () => {
-    const document = documentContractSchema.parse(openAPIDocument);
-
-    expect(
-      document.paths["/goals/{goalId}/chapters/{chapterId}/mind-map/generations"]?.post?.responses[
-        "202"
-      ],
-    ).toMatchObject({
-      headers: {
-        "Learner-Revision": { schema: { type: "string" } },
-        Location: { schema: { type: "string" } },
-      },
-    });
-  });
-
   it("creates an OpenAPI 3.0 compatibility document for Swift generation", () => {
     const swiftDocument = createOpenAPIDocument({
       cookieName: "__Secure-better-auth.session_token",

@@ -2,7 +2,6 @@ import { prisma } from "@zoonk/db";
 import { findActiveGoalId } from "../../../goals/_utils/goal-view";
 import { hasStudyGoal } from "../../../goals/_utils/study-goal";
 import { getCurrentSuggestedGoal } from "../../../goals/suggestions/get-current-suggested-goal";
-import { loadViewerStamp } from "../../../learner/_utils/load-viewer-stamp";
 import { type OwnedGoal, findOwnedGoal } from "../../../learner/_utils/owned-goal";
 import { getSession } from "../../../users/get-session";
 import { isCourseSetupLeft } from "../../onboarding/onboarding-steps";
@@ -20,11 +19,7 @@ async function isPlanBuilt(goalId: string): Promise<boolean> {
 /** Today's own refusal, or the learner's goal it shows a day for (`admitted`). */
 export type TodayAdmission =
   | Exclude<TodayViewResult, { status: "ready" }>
-  | {
-      owned: Extract<OwnedGoal, { status: "ready" }>;
-      stamp: { revision: string; userId: string };
-      status: "admitted";
-    };
+  | { owned: Extract<OwnedGoal, { status: "ready" }>; status: "admitted" };
 
 /**
  * Whether Today shows a day for the requested goal (the active one by default): the learner's own
@@ -39,13 +34,10 @@ export async function admitToday(requestedGoalId?: string): Promise<TodayAdmissi
   }
 
   const userId = session.user.id;
-
-  const stamp = await loadViewerStamp(userId);
-
   const goalId = requestedGoalId ?? (await findActiveGoalId(userId));
 
   if (!goalId) {
-    return { ...stamp, status: "noGoal", suggestedGoal: await getCurrentSuggestedGoal() };
+    return { status: "noGoal", suggestedGoal: await getCurrentSuggestedGoal(), userId };
   }
 
   // Whether the plan is built is read alongside the goal; it's only used once the goal is theirs.
@@ -57,20 +49,20 @@ export async function admitToday(requestedGoalId?: string): Promise<TodayAdmissi
 
   // A paused, completed or archived goal has no day to plan: nothing is built for it.
   if (owned.goal.status !== "active") {
-    return { ...stamp, status: "goalNotActive" };
+    return { status: "goalNotActive", userId };
   }
 
   // A quick explanation is a one-off: a learner with only explanations has no day to plan.
   if (owned.goal.kind === "explain" && !(await hasStudyGoal(userId))) {
-    return { ...stamp, status: "noGoal", suggestedGoal: await getCurrentSuggestedGoal() };
+    return { status: "noGoal", suggestedGoal: await getCurrentSuggestedGoal(), userId };
   }
 
   const { id, kind, title } = owned.goal;
 
   // A course's default plan is ready before its questions are answered (see `isCourseSetupLeft`).
   if (!built || isCourseSetupLeft(owned.goal)) {
-    return { ...stamp, goal: { id, kind, title }, status: "preparing" };
+    return { goal: { id, kind, title }, status: "preparing", userId };
   }
 
-  return { owned, stamp, status: "admitted" };
+  return { owned, status: "admitted" };
 }

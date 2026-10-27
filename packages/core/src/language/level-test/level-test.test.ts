@@ -10,10 +10,10 @@ import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../../_test-utils/frozen-clock";
 import { GUEST_OUT_OF_HELP } from "../../_test-utils/guest-out-of-help";
 import {
-  holdLearnerRevision,
-  readLearnerRevision,
+  LEARNER_LOCK,
+  holdLearnerLock,
   waitForBlockedStatement,
-} from "../../_test-utils/learner-revision";
+} from "../../_test-utils/learner-lock";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { getUsageRule } from "../../entitlements/limits";
 import * as learnerWrite from "../../learner/_utils/write-learner-change";
@@ -77,10 +77,9 @@ async function answerNextQuestion(goalId: string): Promise<string> {
   return questionId;
 }
 
-/** What a finish can change: the learner's revision, the goal and their skill levels. */
+/** What a finish can change: the goal and the learner's skill levels. */
 function readFinishState({ goalId, userId }: { goalId: string; userId: string }) {
   return Promise.all([
-    readLearnerRevision(userId),
     prisma.goal.findUniqueOrThrow({ where: { id: goalId } }),
     prisma.languageSkillLevel.findMany({ orderBy: { skill: "asc" }, where: { userId } }),
   ]);
@@ -192,7 +191,6 @@ describe("language level test", () => {
     });
 
     expect(wrongQuestion).toStrictEqual({ status: "invalid" });
-    await expect(readLearnerRevision(user.id)).resolves.toBe(0n);
 
     const answered = await answerLanguageLevelTest({
       goalId: goal.id,
@@ -201,7 +199,6 @@ describe("language level test", () => {
 
     expect(answered).toMatchObject({ status: "ready", test: { answered: 1, lastCorrect: true } });
     // The answer is saved on the goal the test screen reads: one change.
-    await expect(readLearnerRevision(user.id)).resolves.toBe(1n);
 
     const answeredLevels =
       answered.status === "ready" && answered.test.status === "ready"
@@ -244,11 +241,11 @@ describe("language level test", () => {
         input: { answerIndex: 1, questionId: "reading-A2-0" },
       });
 
-    // Both read the test before either saves: another write holds the learner's revision.
-    const writer = holdLearnerRevision({ userId: user.id });
+    // Both read the test before either saves: another write holds the learner's lock.
+    const writer = holdLearnerLock({ userId: user.id });
     const pid = await writer.pid;
     const both = Promise.all([answer(), answer()]);
-    await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u, 2);
+    await waitForBlockedStatement(pid, LEARNER_LOCK, 2);
     writer.release();
     await writer.done;
 
@@ -256,7 +253,6 @@ describe("language level test", () => {
     expect(results.map((result) => result.status).toSorted()).toStrictEqual(["invalid", "ready"]);
 
     // The held writer's change and the one saved answer.
-    await expect(readLearnerRevision(user.id)).resolves.toBe(2n);
   });
 
   // Marcos' level test took him minutes that his statistics never showed.
@@ -300,11 +296,9 @@ describe("language level test", () => {
     await saveBank();
     const { goal, user } = await languageGoalFixture();
     mockSession(user.id);
-    const before = await readLearnerRevision(user.id);
     const first = await finishLanguageLevelTest(goal.id);
     expect(first.status).toBe("ready");
     // The test's result with its levels, then marking it placed.
-    expect.soft(await readLearnerRevision(user.id)).toBe(before + 2n);
 
     const saved = await prisma.languageSkillLevel.findMany({
       orderBy: { skill: "asc" },
@@ -314,7 +308,6 @@ describe("language level test", () => {
     const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
     const retry = await finishLanguageLevelTest(goal.id);
     expect(retry).toStrictEqual(first);
-    expect.soft(await readLearnerRevision(user.id)).toBe(before + 2n);
 
     await expect(
       prisma.languageSkillLevel.findMany({ orderBy: { skill: "asc" }, where: { userId: user.id } }),
@@ -367,15 +360,13 @@ describe("language level test", () => {
       input: { answerIndex: 1, durationMs: 40_000, questionId: "reading-A2-0" },
     });
 
-    const before = await readLearnerRevision(user.id);
-
-    // Both read the test before either saves: another write holds the learner's revision.
-    const writer = holdLearnerRevision({ userId: user.id });
+    // Both read the test before either saves: another write holds the learner's lock.
+    const writer = holdLearnerLock({ userId: user.id });
     const pid = await writer.pid;
     const both = Promise.all([finishLanguageLevelTest(goal.id), finishLanguageLevelTest(goal.id)]);
 
     try {
-      await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u, 2);
+      await waitForBlockedStatement(pid, LEARNER_LOCK, 2);
     } finally {
       writer.release();
       await writer.done;
@@ -385,7 +376,6 @@ describe("language level test", () => {
     expect(one).toStrictEqual(other);
 
     // The held writer's change, then the test's result with its levels and marking it placed, once.
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 3n);
 
     await expect(
       prisma.learningEvent.count({ where: { goalId: goal.id, lessonKind: "levelTest" } }),
@@ -417,13 +407,13 @@ describe("language level test", () => {
         // Meanwhile the learner answers one more question and finishes again, with new levels.
         await answerNextQuestion(goal.id);
         await expect(finishLanguageLevelTest(goal.id)).rejects.toThrow("Plan busy");
-        const [, latestGoal, latestSkills] = await readFinishState(owner);
+        const [latestGoal, latestSkills] = await readFinishState(owner);
 
         pause.resume();
         await retry;
 
         // The retry places the newer result, which its own finish left unplaced, at its levels.
-        const [, goalAfter, skillsAfter] = await readFinishState(owner);
+        const [goalAfter, skillsAfter] = await readFinishState(owner);
         const { level, skillLevels } = readGoalDetails(latestGoal);
         expect(skillsAfter).toStrictEqual(latestSkills);
 
@@ -518,9 +508,8 @@ describe("language level test", () => {
     const { goal, user } = await languageGoalFixture();
     await prisma.plan.delete({ where: { goalId: goal.id } });
     mockSession(user.id);
-    const before = await readLearnerRevision(user.id);
 
-    const holder = holdLearnerRevision({
+    const holder = holdLearnerLock({
       beforeCommit: async (transaction) => {
         await transaction.userProgress.upsert({
           create: { userId: user.id },
@@ -537,14 +526,13 @@ describe("language level test", () => {
     const both = Promise.all([finishLanguageLevelTest(goal.id), finishLanguageLevelTest(goal.id)]);
 
     try {
-      await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u, 2);
+      await waitForBlockedStatement(pid, LEARNER_LOCK, 2);
     } finally {
       holder.release();
       await Promise.all([holder.done, both]);
     }
 
-    // The holder's change, then one finish's result with its levels and marking it placed.
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 3n);
+    await expect(both).resolves.toHaveLength(2);
   });
 
   it("sets the speaking level from the sentence said out loud", async () => {
@@ -664,9 +652,7 @@ describe("language level test", () => {
     ]);
 
     // Finishing again places nothing new: the units it tested out stay, and nothing changes.
-    const revision = await readLearnerRevision(user.id);
     await expect(finishLanguageLevelTest(goal.id)).resolves.toMatchObject({ status: "ready" });
-    await expect(readLearnerRevision(user.id)).resolves.toBe(revision);
   });
 
   it("keeps the units the learner brought back when the test is finished again", async () => {
@@ -676,13 +662,11 @@ describe("language level test", () => {
 
     await bringBackTestedOutUnits({ itemIds, userId: user.id });
 
-    const before = await Promise.all([readLearnerRevision(user.id), readItemStatuses(itemIds)]);
+    const before = await readItemStatuses(itemIds);
 
     await finishLanguageLevelTest(goal.id);
 
-    await expect(
-      Promise.all([readLearnerRevision(user.id), readItemStatuses(itemIds)]),
-    ).resolves.toStrictEqual(before);
+    await expect(readItemStatuses(itemIds)).resolves.toStrictEqual(before);
   });
 
   it("places a result whose finish failed before placing it, once", async () => {
@@ -715,9 +699,7 @@ describe("language level test", () => {
       "todo",
     ]);
 
-    const revision = await readLearnerRevision(user.id);
     await finishLanguageLevelTest(goal.id);
-    await expect(readLearnerRevision(user.id)).resolves.toBe(revision);
   });
 
   it("leaves the units the learner brought back to a finish that stalled before placing", async () => {
@@ -732,14 +714,12 @@ describe("language level test", () => {
       // Meanwhile a retry places the result, and the learner undoes its test-out.
       await finishLanguageLevelTest(goal.id);
       await bringBackTestedOutUnits({ itemIds, userId: user.id });
-      const before = await Promise.all([readLearnerRevision(user.id), readItemStatuses(itemIds)]);
+      const before = await readItemStatuses(itemIds);
 
       pause.resume();
       await stalled;
 
-      await expect(
-        Promise.all([readLearnerRevision(user.id), readItemStatuses(itemIds)]),
-      ).resolves.toStrictEqual(before);
+      await expect(readItemStatuses(itemIds)).resolves.toStrictEqual(before);
     } finally {
       pause.resume();
     }
@@ -786,7 +766,6 @@ describe("level test on a non-Latin script", () => {
     });
 
     // The answer, the test's result with its levels, then marking it placed.
-    await expect(readLearnerRevision(user.id)).resolves.toBe(3n);
 
     const lessons = await prisma.languageSkillLevel.update({
       data: { windowCeiling: 1.5, windowCorrect: 2, windowTotal: 3 },
@@ -795,13 +774,11 @@ describe("level test on a non-Latin script", () => {
 
     // Finishing the same test again keeps what lessons showed since.
     await finishLanguageLevelTest(goal.id);
-    await expect(readLearnerRevision(user.id)).resolves.toBe(3n);
     await expect(readReading()).resolves.toStrictEqual(lessons);
 
     // A listening answer gives a new result, with the same reading level: reading starts over.
     await answerNextQuestion(goal.id);
     await finishLanguageLevelTest(goal.id);
-    await expect(readLearnerRevision(user.id)).resolves.toBe(6n);
 
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
       inputVersion: plan.inputVersion + 2,
@@ -934,7 +911,7 @@ function holdNextAnnouncement() {
 
 describe("placing a level test's result on the planner's plan", () => {
   it("skips the lessons below the level once, with one undo, when two finishes race", async () => {
-    const { goalId, readPlacement, userId } = await plannedLearnerFixture();
+    const { goalId, readPlacement } = await plannedLearnerFixture();
     const reads = holdPlacementReads(2);
 
     try {
@@ -958,16 +935,14 @@ describe("placing a level test's result on the planner's plan", () => {
     });
 
     // Finishing again changes nothing.
-    const revision = await readLearnerRevision(userId);
     await finishLanguageLevelTest(goalId);
     await expect(readPlacement()).resolves.toStrictEqual(placed);
-    await expect(readLearnerRevision(userId)).resolves.toBe(revision);
   });
 
   // A finish that stalled went on after the learner undid the skip another finish announced: it
   // skipped the lessons again, with a second announcement.
   it("leaves the skip the learner undid to a finish that stalled before placing", async () => {
-    const { goalId, readPlacement, undo, userId } = await plannedLearnerFixture();
+    const { goalId, readPlacement, undo } = await plannedLearnerFixture();
     const reads = holdPlacementReads();
 
     try {
@@ -980,21 +955,19 @@ describe("placing a level test's result on the planner's plan", () => {
       await undo(skip?.id ?? "");
 
       const undone = await readPlacement();
-      const revision = await readLearnerRevision(userId);
       expect(undone).toMatchObject({ items: ["todo", "todo"], reps: 0 });
 
       reads.release();
       await stalled;
 
       await expect(readPlacement()).resolves.toStrictEqual(undone);
-      await expect(readLearnerRevision(userId)).resolves.toBe(revision);
     } finally {
       reads.release();
     }
   });
 
   it("leaves the skip the learner undid to a finish that stalled before announcing it", async () => {
-    const { goalId, readPlacement, undo, userId } = await plannedLearnerFixture();
+    const { goalId, readPlacement, undo } = await plannedLearnerFixture();
     const held = holdNextAnnouncement();
 
     try {
@@ -1008,20 +981,18 @@ describe("placing a level test's result on the planner's plan", () => {
       await undo(skip?.id ?? "");
 
       const undone = await readPlacement();
-      const revision = await readLearnerRevision(userId);
 
       held.release();
       await stalled;
 
       await expect(readPlacement()).resolves.toStrictEqual(undone);
-      await expect(readLearnerRevision(userId)).resolves.toBe(revision);
     } finally {
       held.release();
     }
   });
 
   it("announces what a finish placed before it failed, once", async () => {
-    const { goalId, readPlacement, userId } = await plannedLearnerFixture();
+    const { goalId, readPlacement } = await plannedLearnerFixture();
 
     const announcing = vi
       .spyOn(announcement, "announceTestedOutItems")
@@ -1042,9 +1013,7 @@ describe("placing a level test's result on the planner's plan", () => {
     const announced = await readPlacement();
     expect(announced.changes).toHaveLength(1);
 
-    const revision = await readLearnerRevision(userId);
     await finishLanguageLevelTest(goalId);
     await expect(readPlacement()).resolves.toStrictEqual(announced);
-    await expect(readLearnerRevision(userId)).resolves.toBe(revision);
   });
 });

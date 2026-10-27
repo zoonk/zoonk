@@ -53,13 +53,9 @@ async function setup(pendingMission = false) {
   };
 }
 
-async function versions({ plan, user }: Awaited<ReturnType<typeof setup>>) {
-  const [saved, actor] = await Promise.all([
-    prisma.plan.findUniqueOrThrow({ where: { id: plan.id } }),
-    prisma.user.findUniqueOrThrow({ where: { id: user.id } }),
-  ]);
-
-  return { inputVersion: saved.inputVersion, learnerRevision: actor.learnerRevision };
+async function versions({ plan }: Awaited<ReturnType<typeof setup>>) {
+  const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+  return { inputVersion: saved.inputVersion };
 }
 
 async function assertMission(day: Awaited<ReturnType<typeof setup>>) {
@@ -75,13 +71,13 @@ async function assertMission(day: Awaited<ReturnType<typeof setup>>) {
   ).resolves.toMatchObject({ totalBrainPower: 50n });
 }
 
-describe("the mission owning transaction raises the visible revision once", () => {
+describe("the mission owning transaction", () => {
   it("marks partial progress without paying the completion bonus or changing teaching inputs", async () => {
     const day = await setup(true);
     const before = await versions(day);
 
     await expect(day.write()).resolves.toMatchObject({ fullMealPaid: false });
-    const changed = { ...before, learnerRevision: before.learnerRevision + 1n };
+    const changed = { ...before };
     await expect(versions(day)).resolves.toStrictEqual(changed);
 
     await expect(
@@ -102,23 +98,20 @@ describe("the mission owning transaction raises the visible revision once", () =
     const before = await versions(day);
     await expect(day.write()).resolves.toMatchObject({ fullMealPaid: true });
     await assertMission(day);
-    const changed = { ...before, learnerRevision: before.learnerRevision + 1n };
+    const changed = { ...before };
     await expect(versions(day)).resolves.toStrictEqual(changed);
     await expect(day.write()).resolves.toMatchObject({ fullMealPaid: false });
     await expect(versions(day)).resolves.toStrictEqual(changed);
     await assertMission(day);
   });
 
-  it("two completing activities commit one reward and one revision", async () => {
+  it("two completing activities commit one reward", async () => {
     const day = await setup();
     const before = await versions(day);
     const results = await Promise.all([day.write(), day.write()]);
     expect(results.filter((result) => result.fullMealPaid)).toHaveLength(1);
     await assertMission(day);
 
-    await expect(versions(day)).resolves.toStrictEqual({
-      ...before,
-      learnerRevision: before.learnerRevision + 1n,
-    });
+    await expect(versions(day)).resolves.toStrictEqual({ ...before });
   });
 });

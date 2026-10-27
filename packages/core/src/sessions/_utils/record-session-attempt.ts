@@ -13,7 +13,7 @@ type SessionAttemptResult =
   | { created: boolean; recorded: RecordedLearnerAnswer; status: "ready" }
   | { status: "alreadyAnswered" | "blockNotActive" | "invalidItem" | "notFound" };
 
-/** A replay or refusal rolls back the revision mark taken before the block locks. */
+/** A replay or refusal rolls back the learner mark taken before the block locks. */
 class SessionAnswerUnchangedError extends Error {
   readonly result: SessionAttemptResult;
 

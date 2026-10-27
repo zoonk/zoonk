@@ -281,7 +281,7 @@ describe(processAppleSubscriptionNotification, () => {
 
     await expect(
       reconcileAppleSubscription({ product, referenceId: user.id, verifiedSubscription }),
-    ).rejects.toThrow("Cannot mark a missing learner changed");
+    ).rejects.toThrow("Cannot lock a missing learner");
 
     await expect(
       prisma.subscription.count({

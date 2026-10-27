@@ -1,7 +1,6 @@
 import "server-only";
 import { type GoalKind, prisma } from "@zoonk/db";
 import { findActiveGoalId } from "../goals/_utils/goal-view";
-import { loadViewerStamp } from "../learner/_utils/load-viewer-stamp";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import {
   type LessonGenerationState,
@@ -23,7 +22,6 @@ type SessionPageFields = {
   lessonStatus: Record<string, LessonGenerationState["status"]>;
   localDate: Date;
   next: NextStopFacts | null;
-  revision: string;
   userId: string;
 };
 export type SessionPageView = SessionPageFields & { session: StudySessionView };
@@ -67,8 +65,6 @@ export async function getSessionPageView(
   }
 
   const userId = actor.user.id;
-
-  const stamp = await loadViewerStamp(userId);
 
   const saved = input.blockId
     ? await prisma.studySession.findFirst({
@@ -116,12 +112,12 @@ export async function getSessionPageView(
   ]);
 
   const fields: SessionPageFields = {
-    ...stamp,
     dayEndsAt: session.dayEndsAt,
     goal: goalView,
     lessonStatus: Object.fromEntries([...lessons].map(([id, state]) => [id, state.status])),
     localDate: session.localDate,
     next: readNextStop({ lessons, session }),
+    userId,
   };
 
   return session.status === "unstarted"

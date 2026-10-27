@@ -9,22 +9,11 @@ import { parsePlanChangePayload, toPlanChangePayload } from "./plan-change-paylo
 
 type ComputedNoticeInput = Extract<AcknowledgeTodayPlanChangeInput, { kind: "computed" }>;
 
-export async function acknowledgmentResult({
-  changeId,
-  userId,
-}: {
-  changeId: string;
-  userId: string;
-}): Promise<AcknowledgeTodayPlanChangeResult> {
-  const actor = await prisma.user.findUniqueOrThrow({
-    select: { learnerRevision: true },
-    where: { id: userId },
-  });
-
-  return { changeId, revision: String(actor.learnerRevision), status: "acknowledged", userId };
+export function acknowledgmentResult(changeId: string): AcknowledgeTodayPlanChangeResult {
+  return { changeId, status: "acknowledged" };
 }
 
-/** The original read revision identifies a replay even after its first POST changed the plan. */
+/** The plan the notice was read from identifies a replay even after its first POST changed it. */
 export async function findAcknowledgedRead({
   client = prisma,
   input,
@@ -39,7 +28,10 @@ export async function findAcknowledgedRead({
     select: { id: true },
     where: {
       AND: [
-        { payload: { equals: input.revision, path: ["acknowledgedRead", "revision"] } },
+        {
+          payload: { equals: input.basis.inputVersion, path: ["acknowledgedRead", "inputVersion"] },
+        },
+        { payload: { equals: input.basis.version, path: ["acknowledgedRead", "version"] } },
         { payload: { equals: input.shownDate, path: ["acknowledgedRead", "studyDay"] } },
       ],
       plan: { goal: { id: input.goalId, userId } },
@@ -81,7 +73,7 @@ export async function acknowledgeStoredNotice({
   }
 
   if (parsePlanChangePayload(owned.payload).seenAt !== null) {
-    return acknowledgmentResult({ changeId, userId });
+    return acknowledgmentResult(changeId);
   }
 
   try {
@@ -114,5 +106,5 @@ export async function acknowledgeStoredNotice({
     }
   }
 
-  return acknowledgmentResult({ changeId, userId });
+  return acknowledgmentResult(changeId);
 }

@@ -72,9 +72,9 @@ type RecordAnswerInput = {
 };
 
 /**
- * Records an answer in one transaction with the learner's revision:
+ * Records an answer in one transaction under the learner's lock:
  * - once under its id: the same answer sent twice at once fails on the id in the second request,
- *   which rolls back with its revision and gets the attempt the first one saved;
+ *   which rolls back with its marks and gets the attempt the first one saved;
  * - only when `refuse` finds nothing against it: it locks what the answer belongs to (a lesson
  *   run, a writing block) and says why the answer can't be recorded now (it closed, or a later
  *   answer to the question was recorded first). It runs after the learner's lock, which every one

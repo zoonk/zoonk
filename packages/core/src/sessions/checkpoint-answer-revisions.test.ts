@@ -53,16 +53,12 @@ async function setup() {
   return { answer, item, plan, session, user };
 }
 
-async function versions({ plan, user }: Awaited<ReturnType<typeof setup>>) {
-  const [saved, actor] = await Promise.all([
-    prisma.plan.findUniqueOrThrow({ where: { id: plan.id } }),
-    prisma.user.findUniqueOrThrow({ where: { id: user.id } }),
-  ]);
-
-  return { inputVersion: saved.inputVersion, learnerRevision: actor.learnerRevision };
+async function versions({ plan }: Awaited<ReturnType<typeof setup>>) {
+  const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+  return { inputVersion: saved.inputVersion };
 }
 
-describe("checkpoint answers cross the same revision boundary as other answers", () => {
+describe("checkpoint answers cross the same lock boundary as other answers", () => {
   it("marks the answer once and leaves the input version unchanged on replay", async () => {
     const day = await setup();
     const before = await versions(day);
@@ -72,10 +68,7 @@ describe("checkpoint answers cross the same revision boundary as other answers",
       status: "ready",
     });
 
-    const recorded = {
-      inputVersion: before.inputVersion + 1,
-      learnerRevision: before.learnerRevision + 1n,
-    };
+    const recorded = { inputVersion: before.inputVersion + 1 };
 
     await expect(versions(day)).resolves.toStrictEqual(recorded);
 
@@ -87,7 +80,7 @@ describe("checkpoint answers cross the same revision boundary as other answers",
     await expect(versions(day)).resolves.toStrictEqual(recorded);
   });
 
-  it("serializes competing answers and commits one answer with one revision", async () => {
+  it("serializes competing answers and commits one answer", async () => {
     const day = await setup();
     const before = await versions(day);
 
@@ -96,10 +89,7 @@ describe("checkpoint answers cross the same revision boundary as other answers",
       { feedback: { isCorrect: true }, status: "ready" },
     ]);
 
-    await expect(versions(day)).resolves.toStrictEqual({
-      inputVersion: before.inputVersion + 1,
-      learnerRevision: before.learnerRevision + 1n,
-    });
+    await expect(versions(day)).resolves.toStrictEqual({ inputVersion: before.inputVersion + 1 });
 
     await expect(
       prisma.attempt.count({

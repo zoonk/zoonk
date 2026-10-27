@@ -168,8 +168,6 @@ describe("a changed day's queue and missions share its post-commit plan facts", 
         // Non-exam listening lookup has two fewer blueprint queries than the real-size exam probes.
         expect(unsharedFacts.statements - sharedFacts.statements).toBe(18);
 
-        const revision = await prisma.user.findUniqueOrThrow({ where: { id: user.id } });
-
         await expect(
           followPlanChangeToday({
             goalId: goal.id,
@@ -180,10 +178,6 @@ describe("a changed day's queue and missions share its post-commit plan facts", 
         ).resolves.toBe("same");
 
         await expect(readDay()).resolves.toStrictEqual(after);
-
-        await expect(
-          prisma.user.findUniqueOrThrow({ where: { id: user.id } }),
-        ).resolves.toStrictEqual({ ...revision, learnerRevision: revision.learnerRevision + 1n });
 
         if (measured.result.status !== "applied" || !measured.result.change) {
           throw new Error("Expected an applied change with an Undo snapshot");
@@ -252,8 +246,6 @@ describe("a changed day's queue and missions share its post-commit plan facts", 
         after.blocks.map((_, index) => index),
       );
 
-      const revision = await prisma.user.findUniqueOrThrow({ where: { id: user.id } });
-
       await expect(
         followPlanChangeToday({
           goalId: goal.id,
@@ -264,9 +256,5 @@ describe("a changed day's queue and missions share its post-commit plan facts", 
       ).resolves.toBe("same");
 
       await expect(readDay()).resolves.toStrictEqual(after);
-
-      await expect(
-        prisma.user.findUniqueOrThrow({ where: { id: user.id } }),
-      ).resolves.toStrictEqual({ ...revision, learnerRevision: revision.learnerRevision + 1n });
     }));
 });

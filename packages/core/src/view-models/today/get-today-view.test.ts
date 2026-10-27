@@ -77,7 +77,6 @@ describe(getTodayView, () => {
     mockSession(user.id);
 
     await expect(getTodayView({})).resolves.toStrictEqual({
-      revision: String(user.learnerRevision),
       status: "noGoal",
       suggestedGoal: null,
       userId: user.id,
@@ -100,7 +99,6 @@ describe(getTodayView, () => {
     ]);
 
     await expect(getTodayView({})).resolves.toStrictEqual({
-      revision: String(user.learnerRevision),
       status: "noGoal",
       suggestedGoal: { courseId: null, id: newest.id, status: "pending", title: "Physics" },
       userId: user.id,
@@ -429,7 +427,6 @@ describe(getTodayView, () => {
 
     await expect(getTodayView({})).resolves.toStrictEqual({
       goal: { id: goal.id, kind: "learn", title: "Quantum physics" },
-      revision: String(user.learnerRevision),
       status: "preparing",
       userId: user.id,
     });
@@ -442,7 +439,6 @@ describe(getTodayView, () => {
     await prisma.goal.update({ data: { status: "paused" }, where: { id: goal.id } });
 
     await expect(getTodayView({})).resolves.toStrictEqual({
-      revision: String(user.learnerRevision),
       status: "goalNotActive",
       userId: user.id,
     });
@@ -460,7 +456,6 @@ describe(getTodayView, () => {
     mockSession(user.id);
 
     await expect(getTodayView({})).resolves.toStrictEqual({
-      revision: String(user.learnerRevision),
       status: "noGoal",
       suggestedGoal: null,
       userId: user.id,

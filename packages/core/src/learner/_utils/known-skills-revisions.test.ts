@@ -5,10 +5,10 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import {
-  holdLearnerRevision,
-  readLearnerRevision,
+  LEARNER_LOCK,
+  holdLearnerLock,
   waitForBlockedStatement,
-} from "../../_test-utils/learner-revision";
+} from "../../_test-utils/learner-lock";
 import { type GoalPlanItem } from "./goal-skill-graph";
 import { markPlanItemsTestedOut, markSkillsKnown } from "./known-skills";
 
@@ -23,12 +23,8 @@ async function setup() {
 }
 
 async function versions(fixture: Awaited<ReturnType<typeof setup>>) {
-  const [revision, plan] = await Promise.all([
-    readLearnerRevision(fixture.user.id),
-    prisma.plan.findUniqueOrThrow({ where: { id: fixture.plan.id } }),
-  ]);
-
-  return { inputVersion: plan.inputVersion, revision, version: plan.version };
+  const plan = await prisma.plan.findUniqueOrThrow({ where: { id: fixture.plan.id } });
+  return { inputVersion: plan.inputVersion, version: plan.version };
 }
 
 function markKnown(fixture: Awaited<ReturnType<typeof setup>>) {
@@ -59,7 +55,7 @@ function testOut({
   });
 }
 
-describe("known skill revisions", () => {
+describe("known skill writes", () => {
   it("marks a new skill once and leaves repeated or empty claims unchanged", async () => {
     const fixture = await setup();
     const before = await versions(fixture);
@@ -71,11 +67,7 @@ describe("known skill revisions", () => {
 
     expect(saved.reps).toBe(1);
 
-    const changed = {
-      ...before,
-      inputVersion: before.inputVersion + 1,
-      revision: before.revision + 1n,
-    };
+    const changed = { ...before, inputVersion: before.inputVersion + 1 };
 
     await expect(versions(fixture)).resolves.toStrictEqual(changed);
     await markKnown(fixture);
@@ -115,7 +107,6 @@ describe("known skill revisions", () => {
     await expect(versions(fixture)).resolves.toStrictEqual({
       ...before,
       inputVersion: before.inputVersion + 1,
-      revision: before.revision + 1n,
     });
 
     await expect(
@@ -133,7 +124,7 @@ describe("known skill revisions", () => {
 
     const before = await versions(fixture);
 
-    const holder = holdLearnerRevision({
+    const holder = holdLearnerLock({
       beforeCommit: (tx) =>
         tx.$queryRaw`SELECT id FROM learner_skills WHERE id = ${memory.id}::uuid FOR UPDATE`,
       userId: fixture.user.id,
@@ -143,7 +134,7 @@ describe("known skill revisions", () => {
     const claims = Promise.all([markKnown(fixture), markKnown(fixture)]);
 
     try {
-      await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u);
+      await waitForBlockedStatement(pid, LEARNER_LOCK);
     } finally {
       holder.release();
       await Promise.all([holder.done, claims]);
@@ -152,12 +143,11 @@ describe("known skill revisions", () => {
     await expect(versions(fixture)).resolves.toStrictEqual({
       ...before,
       inputVersion: before.inputVersion + 1,
-      revision: before.revision + 2n,
     });
   });
 });
 
-describe("tested-out plan item revisions", () => {
+describe("tested-out plan item writes", () => {
   it("marks the item transition once even when a retry still carries the old item", async () => {
     const fixture = await setup();
     const item = await planItemFixture({ planId: fixture.plan.id, skillId: fixture.skill.id });
@@ -169,11 +159,7 @@ describe("tested-out plan item revisions", () => {
       prisma.planItem.findUniqueOrThrow({ where: { id: item.id } }),
     ).resolves.toMatchObject({ completedAt: KNOWN_AT, status: "testedOut" });
 
-    const changed = {
-      ...before,
-      inputVersion: before.inputVersion + 1,
-      revision: before.revision + 1n,
-    };
+    const changed = { ...before, inputVersion: before.inputVersion + 1 };
 
     await expect(versions(fixture)).resolves.toStrictEqual(changed);
     await testOut({ fixture, items });
@@ -186,7 +172,7 @@ describe("tested-out plan item revisions", () => {
     const items = [{ ...item, skillIds: [fixture.skill.id] }];
     const before = await versions(fixture);
 
-    const holder = holdLearnerRevision({
+    const holder = holdLearnerLock({
       beforeCommit: (tx) =>
         tx.$queryRaw`SELECT id FROM plan_items WHERE id = ${item.id}::uuid FOR UPDATE`,
       userId: fixture.user.id,
@@ -196,7 +182,7 @@ describe("tested-out plan item revisions", () => {
     const transitions = Promise.all([testOut({ fixture, items }), testOut({ fixture, items })]);
 
     try {
-      await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u);
+      await waitForBlockedStatement(pid, LEARNER_LOCK);
     } finally {
       holder.release();
       await Promise.all([holder.done, transitions]);
@@ -205,12 +191,11 @@ describe("tested-out plan item revisions", () => {
     await expect(versions(fixture)).resolves.toStrictEqual({
       ...before,
       inputVersion: before.inputVersion + 1,
-      revision: before.revision + 2n,
     });
   });
 });
 
-describe("tested-out stand-in revisions", () => {
+describe("tested-out stand-in writes", () => {
   it("marks an insertion once and rolls back plan versions for an already planned skill", async () => {
     const fixture = await setup();
     const before = await versions(fixture);
@@ -223,11 +208,7 @@ describe("tested-out stand-in revisions", () => {
       { completedAt: KNOWN_AT, skillId: fixture.skill.id, status: "testedOut" },
     ]);
 
-    const changed = {
-      inputVersion: before.inputVersion + 1,
-      revision: before.revision + 1n,
-      version: before.version + 1,
-    };
+    const changed = { inputVersion: before.inputVersion + 1, version: before.version + 1 };
 
     await expect(versions(fixture)).resolves.toStrictEqual(changed);
     await expect(testOut({ fixture, standIn: true })).resolves.toMatchObject({ planItemIds: [] });
@@ -237,15 +218,13 @@ describe("tested-out stand-in revisions", () => {
   it("does not mark a missing plan", async () => {
     const fixture = await setup();
     await prisma.plan.delete({ where: { id: fixture.plan.id } });
-    const before = await readLearnerRevision(fixture.user.id);
     await expect(testOut({ fixture, standIn: true })).resolves.toMatchObject({ planItemIds: [] });
-    await expect(readLearnerRevision(fixture.user.id)).resolves.toBe(before);
   });
 
   it("waits at the marker before moving the plan version and keeps one stand-in in a race", async () => {
     const fixture = await setup();
     const before = await versions(fixture);
-    const holder = holdLearnerRevision({ userId: fixture.user.id });
+    const holder = holdLearnerLock({ userId: fixture.user.id });
     const pid = await holder.pid;
 
     const insertions = Promise.all([
@@ -254,7 +233,7 @@ describe("tested-out stand-in revisions", () => {
     ]);
 
     try {
-      await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u);
+      await waitForBlockedStatement(pid, LEARNER_LOCK);
 
       await expect(
         prisma.plan.findUniqueOrThrow({ where: { id: fixture.plan.id } }),
@@ -266,7 +245,6 @@ describe("tested-out stand-in revisions", () => {
 
     await expect(versions(fixture)).resolves.toStrictEqual({
       inputVersion: before.inputVersion + 1,
-      revision: before.revision + 2n,
       version: before.version + 1,
     });
 

@@ -150,7 +150,7 @@ async function finishWhileLinking({
           SELECT pid FROM pg_stat_activity
           WHERE datname = current_database()
             AND ${linkPid} = ANY(pg_blocking_pids(pid))
-            AND query LIKE '%UPDATE users SET learner_revision%'
+            AND query LIKE '%FROM users WHERE id = %FOR NO KEY UPDATE%'
         `;
 
         expect(waiting).toHaveLength(1);
@@ -164,10 +164,10 @@ async function finishWhileLinking({
     observed.mockRestore();
   }
 
-  /** The revision marker now rejects the linked-away guest before a progress insert can fail its FK. */
+  /** The learner's lock now rejects the linked-away guest before a progress insert can fail its FK. */
   await expect(Promise.all([linking, finished])).resolves.toMatchObject([
     [{ status: "fulfilled" }],
-    [{ reason: { message: "Cannot mark a missing learner changed" }, status: "rejected" }],
+    [{ reason: { message: "Cannot lock a missing learner" }, status: "rejected" }],
   ]);
 }
 

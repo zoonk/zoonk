@@ -31,7 +31,7 @@ import { type StudySessionRow } from "./study-session-access";
 
 const SECONDS_PER_MINUTE = 60;
 
-/** The loser must roll back its early revision mark along with the no-transition settlement. */
+/** The loser must roll back its early learner mark along with the no-transition settlement. */
 class QuestionBlockUnchangedError extends Error {
   override name = "QuestionBlockUnchangedError";
 }

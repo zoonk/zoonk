@@ -78,8 +78,5 @@ describe("Completion follows the current session queue", () => {
 
     const current = await prisma.studySession.findUniqueOrThrow({ where: { id: session.id } });
     expect(current).toMatchObject({ endedAt: null, status: "active" });
-
-    const actor = await prisma.user.findUniqueOrThrow({ where: { id: user.id } });
-    expect(actor.learnerRevision).toBe(user.learnerRevision);
   });
 });

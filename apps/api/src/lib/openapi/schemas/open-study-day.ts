@@ -9,11 +9,9 @@ export const openStudyDayBodySchema = openStudyDayInputSchema.omit({ goalId: tru
 
 export const openedStudyDayResponseSchema = z
   .object({
-    actorId: z.uuid(),
     created: z.boolean(),
     goalId: z.uuid(),
     localDate: logicalDateSchema,
-    revision: z.string().regex(/^\d+$/u),
     session: studySessionResponseSchema,
     sessionId: z.uuid(),
     status: z.literal("opened"),

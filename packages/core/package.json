@@ -176,7 +176,6 @@
     "./learner/placement/finish": "./src/learner/placement/finish-goal-placement.ts",
     "./learner/placement/get": "./src/learner/placement/get-goal-placement.ts",
     "./learner/placement/picks": "./src/learner/placement/placement-item-picks.ts",
-    "./learner/revision": "./src/learner/get-learner-revision.ts",
     "./learner/review-schedule": "./src/learner/get-current-user-review-schedule.ts",
     "./learner/summary": "./src/learner/summary/get-learner-summary.ts",
     "./learner/summary/contract": "./src/learner/summary/learner-summary-contract.ts",

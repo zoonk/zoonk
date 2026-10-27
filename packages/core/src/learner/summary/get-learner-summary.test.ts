@@ -181,19 +181,10 @@ describe(getLearnerSummary, () => {
       nextChangeAt: new Date("2026-03-11T00:00:00.000Z").getTime(),
       places: { exam: false, mindMaps: false, speaking: false },
       readAt: NOW.getTime(),
-      revision: "0",
       tier: "free",
       timeZone: null,
       today: null,
     });
-  });
-
-  it("carries the revision of the learner's latest change", async () => {
-    const user = await userFixture();
-    await prisma.user.update({ data: { learnerRevision: 7n }, where: { id: user.id } });
-    signIn(user);
-
-    await expect(getLearnerSummary()).resolves.toMatchObject({ revision: "7" });
   });
 
   it("names the learner from their row, not the session's older copy of it", async () => {

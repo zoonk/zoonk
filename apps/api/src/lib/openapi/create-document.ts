@@ -5,7 +5,6 @@ import {
   type ZodOpenApiPathsObject,
   type ZodOpenApiVersion,
   createDocument,
-  type oas32,
 } from "zod-openapi";
 import { accountPaths } from "./paths/account";
 import { catalogPaths } from "./paths/catalog";
@@ -162,49 +161,6 @@ const paths = withInternalErrorResponses({
   ...todayPaths,
 });
 
-/** Add metadata after Zod resolves headers, preserving existing run and retry headers. */
-function withRevisionHeader(response: oas32.ResponseObject | oas32.ReferenceObject) {
-  if ("$ref" in response) {
-    return response;
-  }
-
-  return {
-    ...response,
-    headers: {
-      ...response.headers,
-      "Learner-Revision": {
-        description:
-          "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
-        schema: { pattern: "^[0-9]+$", type: "string" },
-      },
-    },
-  };
-}
-
-function withOperationRevisionHeaders(operation: oas32.OperationObject) {
-  return {
-    ...operation,
-    responses: Object.fromEntries(
-      Object.entries<oas32.ResponseObject | oas32.ReferenceObject>(operation.responses ?? {}).map(
-        ([status, response]) => [
-          status,
-          /^2\d\d$/u.test(status) ? withRevisionHeader(response) : response,
-        ],
-      ),
-    ),
-  };
-}
-
-function withWriteRevisionHeaders(path: oas32.PathItemObject) {
-  return {
-    ...path,
-    ...(path.put && { put: withOperationRevisionHeaders(path.put) }),
-    ...(path.post && { post: withOperationRevisionHeaders(path.post) }),
-    ...(path.delete && { delete: withOperationRevisionHeaders(path.delete) }),
-    ...(path.patch && { patch: withOperationRevisionHeaders(path.patch) }),
-  };
-}
-
 /** OpenAPI 3.0 uses singular `example`, while the canonical 3.1 schemas use JSON Schema's `examples` array. */
 function getDocumentOptions(openapi: ZodOpenApiVersion): CreateDocumentOptions | undefined {
   if (!openapi.startsWith("3.0.")) {
@@ -249,13 +205,5 @@ export function createOpenAPIDocument({
     getDocumentOptions(openapi),
   );
 
-  return {
-    ...document,
-    paths: Object.fromEntries(
-      Object.entries(document.paths ?? {}).map(([path, item]) => [
-        path,
-        withWriteRevisionHeaders(item),
-      ]),
-    ),
-  };
+  return document;
 }

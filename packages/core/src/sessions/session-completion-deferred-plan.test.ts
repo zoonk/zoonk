@@ -290,7 +290,6 @@ describe("the completion moment precedes replanning", () => {
     ).resolves.toMatchObject({ completion: { sessionCompleted: true }, status: "ready" });
 
     const before = await readPlan(plan.id);
-    const actor = await prisma.user.findUniqueOrThrow({ where: { id: user.id } });
     const winner = await holdCalendarWrite({ goalId: goal.id, userId: user.id });
     const background = deferred.run();
 
@@ -313,10 +312,6 @@ describe("the completion moment precedes replanning", () => {
 
     const saved = await readPlan(plan.id);
     expect(saved).toStrictEqual({ ...before, inputVersion: before.inputVersion + 1 });
-
-    await expect(prisma.user.findUniqueOrThrow({ where: { id: user.id } })).resolves.toMatchObject({
-      learnerRevision: actor.learnerRevision + 1n,
-    });
 
     const read = await getGoalPlan(goal.id);
     expect(read).toMatchObject({ plan: { schedule: { dailyMinutes: 20 } }, status: "ready" });

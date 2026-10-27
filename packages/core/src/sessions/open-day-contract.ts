@@ -34,22 +34,14 @@ export type DayTargetStatus = z.infer<typeof dayTargetStatusSchema>;
 /** An opened result contains only real persisted IDs; logical refs are resolved after the write. */
 export type OpenStudyDayResult =
   | {
-      actorId: string;
       created: boolean;
       goalId: string;
       localDate: Date;
-      revision: string;
       session: StudySessionView;
       sessionId: string;
       status: "opened";
       target: StudyBlockView | null;
       targetStatus: DayTargetStatus | null;
     }
-  | {
-      actorId: string;
-      goalId: string;
-      localDate: Date;
-      revision: string;
-      status: "empty" | "retryable";
-    }
+  | { goalId: string; localDate: Date; status: "empty" | "retryable" }
   | { status: "unauthorized" | "notFound" | "goalNotActive" | "preparing" };

@@ -84,7 +84,6 @@ describe("Open binds the goal snapshot to the later plan basis", () => {
       expect(opening).toMatchObject([{ status: "fulfilled", value: { status: "retryable" } }]);
       const after = await readLapsedDayState(day.user.id);
       expect(after.sessions).toStrictEqual(before.sessions);
-      expect(after.user.learnerRevision).toBe(before.user.learnerRevision + 1n);
       expect(after.plans[0]?.inputVersion).toBe(before.plans[0]!.inputVersion + 1);
 
       await expect(

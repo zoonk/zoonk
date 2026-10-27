@@ -44,7 +44,7 @@ export type StartStudyBlockResult =
   | { status: "questionsNeeded" }
   | { status: "unauthorized" };
 
-/** Replays and refusals must roll back the revision taken before the domain locks. */
+/** Replays and refusals must roll back the marks taken before the domain locks. */
 class StudyBlockStartUnchangedError extends Error {
   readonly result: StartStudyBlockResult;
 

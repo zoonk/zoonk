@@ -7,7 +7,7 @@ import { getSession } from "../users/get-session";
 import { loadMilestoneCounts } from "./award-milestones";
 import { type GlassesProgress, getGlassesProgress, pickCeremony } from "./milestone-rules";
 
-/** A replay or another learner's id changes neither ceremony nor actor revision. */
+/** A replay or another learner's id changes no ceremony. */
 class MilestoneShownUnchangedError extends Error {
   override name = "MilestoneShownUnchangedError";
 }

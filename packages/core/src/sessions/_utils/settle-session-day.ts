@@ -20,7 +20,7 @@ import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-acc
 
 type SessionDay = { session: StudySessionRow; timeZone: string; userId: string };
 
-/** A no-transition result must roll back the revision mark taken before the session lock. */
+/** A no-transition result must roll back the learner mark taken before the session lock. */
 class SessionCompletionUnchangedError extends Error {
   readonly status: "open" | "alreadyCompleted";
 
@@ -187,7 +187,7 @@ export async function settleSessionDay({
   const [answers, settled] = await Promise.all([
     loadSessionAnswers({ blocks: session.blocks, sessionId, userId }),
     // No tag expiry: in a Server Action it draws the page again, which would swap the block's
-    // moment (the missions it completed) for the next step. Pages read the change by revision.
+    // moment (the missions it completed) for the next step. The screen refreshes when it closes.
     rewardMissions
       ? settleMissions({ blockId, revalidation: "skip", sessionId, source, timeZone, userId })
       : getDayMissions({ session, timeZone }).then((missions) => ({

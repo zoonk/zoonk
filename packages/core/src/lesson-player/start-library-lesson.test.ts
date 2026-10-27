@@ -90,7 +90,6 @@ describe(startLibraryLesson, () => {
 
     expect(firstPlan.inputVersion).toBe(1);
     expect(firstPlan.version).toBe(plan.version);
-    expect(firstUser.learnerRevision).toBeGreaterThan(0n);
 
     await expect(start(lesson.id)).resolves.toMatchObject({ status: "started" });
 

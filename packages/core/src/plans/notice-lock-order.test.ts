@@ -29,16 +29,11 @@ async function waitForBlockedBy(holderPid: number) {
   });
 }
 
-async function readRevision(userId: string) {
-  const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
-  return user.learnerRevision;
-}
-
-describe("revision-only notice writes with the planner", () => {
+describe("notice writes that keep plan inputs, with the planner", () => {
   it.each([1, 2, 3, 4, 5])(
     "completes both writes when the planner holds the plan first (run %i)",
     async () => {
-      const { goal, plan, user } = await setup();
+      const { goal, plan } = await setup();
       const held = Promise.withResolvers<number>();
       const release = Promise.withResolvers<null>();
 
@@ -80,11 +75,8 @@ describe("revision-only notice writes with the planner", () => {
         version: plan.version + 1,
       });
 
-      await expect(readRevision(user.id)).resolves.toBe(user.learnerRevision + 2n);
-
-      // A repeated notice transition cannot retain either a revision or input-version bump.
+      // A repeated notice transition cannot retain an input-version bump.
       await startNoticeWait({ goalId: goal.id, now: NOW });
-      await expect(readRevision(user.id)).resolves.toBe(user.learnerRevision + 2n);
 
       await expect(
         prisma.plan.findUniqueOrThrow({ where: { id: plan.id } }),
@@ -139,13 +131,11 @@ describe("revision-only notice writes with the planner", () => {
         noticeWaitUntil: new Date(NOW.getTime() + WAIT_MS),
         version: plan.version + 1,
       });
-
-      await expect(readRevision(user.id)).resolves.toBe(user.learnerRevision + 2n);
     },
   );
 
   it("leaves a replacement plan untouched when a notice loses its original plan lock", async () => {
-    const { goal, plan, user } = await setup();
+    const { goal, plan } = await setup();
     const held = Promise.withResolvers<number>();
     const replace = Promise.withResolvers<null>();
 
@@ -175,12 +165,10 @@ describe("revision-only notice writes with the planner", () => {
     await expect(
       prisma.plan.findUniqueOrThrow({ where: { id: replacement.id } }),
     ).resolves.toMatchObject({ inputVersion: 0, noticeWaitUntil: null });
-
-    await expect(readRevision(user.id)).resolves.toBe(user.learnerRevision);
   });
 
   it("records a run without clearing a replacement plan's newer failure", async () => {
-    const { goal, plan, user } = await setup();
+    const { goal, plan } = await setup();
     const held = Promise.withResolvers<number>();
     const replace = Promise.withResolvers<null>();
 
@@ -215,7 +203,5 @@ describe("revision-only notice writes with the planner", () => {
     await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
       generationRunId: generationId,
     });
-
-    await expect(readRevision(user.id)).resolves.toBe(user.learnerRevision + 1n);
   });
 });

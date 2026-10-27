@@ -3,7 +3,11 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { isJsonObject } from "@zoonk/utils/json";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { holdLearnerRevision, waitForBlockedStatement } from "../_test-utils/learner-revision";
+import {
+  LEARNER_LOCK,
+  holdLearnerLock,
+  waitForBlockedStatement,
+} from "../_test-utils/learner-lock";
 import { mockSession } from "../_test-utils/mock-session";
 import { getTodayStudySession } from "../sessions/_test-utils/open-today";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
@@ -96,9 +100,8 @@ describe("plan decisions preserve the first committed answer", () => {
       const fixture = await setup();
       const before = await readPlanAndDay(fixture);
       expect(before.day.blocks.length).toBeGreaterThan(0);
-      const owner = await prisma.user.findUniqueOrThrow({ where: { id: fixture.user.id } });
 
-      const held = holdLearnerRevision({
+      const held = holdLearnerLock({
         beforeCommit: (tx) =>
           tx.planChange.update({ data: { status: "declined" }, where: { id: fixture.changeId } }),
         userId: fixture.user.id,
@@ -128,17 +131,12 @@ describe("plan decisions preserve the first committed answer", () => {
       await expect(
         prisma.planChange.findUniqueOrThrow({ where: { id: fixture.changeId } }),
       ).resolves.toMatchObject({ status: "declined" });
-
-      await expect(
-        prisma.user.findUniqueOrThrow({ where: { id: fixture.user.id } }),
-      ).resolves.toMatchObject({ learnerRevision: owner.learnerRevision + 1n });
     }));
 
   it("marks a decline once without changing plan inputs, and rejects its replay without a write", () =>
     runBody(async () => {
       const fixture = await setup();
       const before = await readPlanAndDay(fixture);
-      const owner = await prisma.user.findUniqueOrThrow({ where: { id: fixture.user.id } });
       const change = await prisma.planChange.findUniqueOrThrow({ where: { id: fixture.changeId } });
 
       const decision = {
@@ -160,24 +158,15 @@ describe("plan decisions preserve the first committed answer", () => {
 
       expect(declined.payload).toStrictEqual(change.payload);
 
-      await expect(
-        prisma.user.findUniqueOrThrow({ where: { id: fixture.user.id } }),
-      ).resolves.toMatchObject({ learnerRevision: owner.learnerRevision + 1n });
-
       const replay = await countDatabaseStatements(() => decidePlanChange(decision));
       expect(replay.result).toStrictEqual({ status: "conflict" });
       expect(replay.writes).toBe(0);
-
-      await expect(
-        prisma.user.findUniqueOrThrow({ where: { id: fixture.user.id } }),
-      ).resolves.toMatchObject({ learnerRevision: owner.learnerRevision + 1n });
     }));
 
   it("commits only one decline when two taps read the same waiting proposal", () =>
     runBody(async () => {
       const fixture = await setup();
       const before = await readPlanAndDay(fixture);
-      const owner = await prisma.user.findUniqueOrThrow({ where: { id: fixture.user.id } });
 
       const decision = {
         changeId: fixture.changeId,
@@ -193,10 +182,6 @@ describe("plan decisions preserve the first committed answer", () => {
       ]);
 
       await expect(readPlanAndDay(fixture)).resolves.toStrictEqual(before);
-
-      await expect(
-        prisma.user.findUniqueOrThrow({ where: { id: fixture.user.id } }),
-      ).resolves.toMatchObject({ learnerRevision: owner.learnerRevision + 1n });
     }));
 
   it("marks the first acknowledgment once, preserving its payload and timestamp on duplicate taps", () =>
@@ -212,7 +197,6 @@ describe("plan decisions preserve the first committed answer", () => {
       ).resolves.toMatchObject({ status: "updated" });
 
       const before = await readPlanAndDay(fixture);
-      const owner = await prisma.user.findUniqueOrThrow({ where: { id: fixture.user.id } });
 
       const applied = await prisma.planChange.findUniqueOrThrow({
         where: { id: fixture.changeId },
@@ -238,33 +222,24 @@ describe("plan decisions preserve the first committed answer", () => {
       expect(seen.payload).toStrictEqual({ ...applied.payload, seenAt: NOW.toISOString() });
       await expect(readPlanAndDay(fixture)).resolves.toStrictEqual(before);
 
-      await expect(
-        prisma.user.findUniqueOrThrow({ where: { id: fixture.user.id } }),
-      ).resolves.toMatchObject({ learnerRevision: owner.learnerRevision + 1n });
-
       vi.setSystemTime(new Date(NOW.getTime() + 1000));
       await expect(decidePlanChange(decision)).resolves.toMatchObject({ status: "updated" });
 
       await expect(
         prisma.planChange.findUniqueOrThrow({ where: { id: fixture.changeId } }),
       ).resolves.toStrictEqual(seen);
-
-      await expect(
-        prisma.user.findUniqueOrThrow({ where: { id: fixture.user.id } }),
-      ).resolves.toMatchObject({ learnerRevision: owner.learnerRevision + 1n });
     }));
 
   it("rolls back a decline whose proposal was declined while it waited for its marker", () =>
     runBody(async () => {
       const fixture = await setup();
       const before = await readPlanAndDay(fixture);
-      const owner = await prisma.user.findUniqueOrThrow({ where: { id: fixture.user.id } });
 
       const original = await prisma.planChange.findUniqueOrThrow({
         where: { id: fixture.changeId },
       });
 
-      const held = holdLearnerRevision({
+      const held = holdLearnerLock({
         beforeCommit: (tx) =>
           tx.planChange.update({ data: { status: "declined" }, where: { id: fixture.changeId } }),
         userId: fixture.user.id,
@@ -281,7 +256,7 @@ describe("plan decisions preserve the first committed answer", () => {
       const settled = Promise.allSettled([held.done, declining]);
 
       try {
-        await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u);
+        await waitForBlockedStatement(pid, LEARNER_LOCK);
       } finally {
         held.release();
         await settled;
@@ -294,10 +269,6 @@ describe("plan decisions preserve the first committed answer", () => {
       await expect(
         prisma.planChange.findUniqueOrThrow({ where: { id: fixture.changeId } }),
       ).resolves.toMatchObject({ payload: original.payload, status: "declined" });
-
-      await expect(
-        prisma.user.findUniqueOrThrow({ where: { id: fixture.user.id } }),
-      ).resolves.toMatchObject({ learnerRevision: owner.learnerRevision + 1n });
     }));
 
   it("keeps an acknowledgment committed while it waited for its marker", () =>
@@ -313,7 +284,6 @@ describe("plan decisions preserve the first committed answer", () => {
       ).resolves.toMatchObject({ status: "updated" });
 
       const before = await readPlanAndDay(fixture);
-      const owner = await prisma.user.findUniqueOrThrow({ where: { id: fixture.user.id } });
 
       const current = await prisma.planChange.findUniqueOrThrow({
         where: { id: fixture.changeId },
@@ -324,7 +294,7 @@ describe("plan decisions preserve the first committed answer", () => {
         seenAt: new Date(NOW.getTime() - 1000).toISOString(),
       });
 
-      const held = holdLearnerRevision({
+      const held = holdLearnerLock({
         beforeCommit: async (tx) => {
           const fresh = await tx.planChange.findUniqueOrThrow({ where: { id: fixture.changeId } });
 
@@ -352,7 +322,7 @@ describe("plan decisions preserve the first committed answer", () => {
       const settled = Promise.allSettled([held.done, seeing]);
 
       try {
-        await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u);
+        await waitForBlockedStatement(pid, LEARNER_LOCK);
       } finally {
         held.release();
         await settled;
@@ -370,9 +340,5 @@ describe("plan decisions preserve the first committed answer", () => {
       ).resolves.toMatchObject({ payload });
 
       await expect(readPlanAndDay(fixture)).resolves.toStrictEqual(before);
-
-      await expect(
-        prisma.user.findUniqueOrThrow({ where: { id: fixture.user.id } }),
-      ).resolves.toMatchObject({ learnerRevision: owner.learnerRevision + 1n });
     }));
 });

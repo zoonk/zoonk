@@ -29,7 +29,7 @@ import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statem
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it, vi } from "vitest";
 import { serveStoredFile, storeBlobUploads } from "../_test-utils/blob-uploads";
-import { readLearnerRevision, waitForBlockedStatement } from "../_test-utils/learner-revision";
+import { waitForBlockedStatement } from "../_test-utils/learner-lock";
 import {
   ENGLISH,
   LANGUAGES,
@@ -1802,8 +1802,6 @@ function holdPlan(planId: string) {
 describe("a publisher that loses its claim while it waits for a plan", () => {
   it("marks nothing: the alphabet lesson's plan and its learner keep their versions", async () => {
     const { plan, root, write } = await alphabetCase();
-    const { userId } = await prisma.goal.findFirstOrThrow({ where: { plan: { id: plan.id } } });
-    const revision = await readLearnerRevision(userId);
     const holder = holdPlan(plan.id);
     const holderPid = await holder.pid;
     const writing = write();
@@ -1826,7 +1824,5 @@ describe("a publisher that loses its claim while it waits for a plan", () => {
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
       inputVersion: plan.inputVersion,
     });
-
-    await expect(readLearnerRevision(userId)).resolves.toBe(revision);
   });
 });

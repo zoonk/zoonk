@@ -99,13 +99,8 @@ export type LearnerSummary = {
    */
   nextChangeAt: number;
   places: LearnerSummaryPlaces;
-  /** When the server read it (milliseconds), ordering snapshots of the same revision. */
+  /** When the server read it (milliseconds): a later read is the newer snapshot. */
   readAt: number;
-  /**
-   * The learner's change counter (a decimal string): every write they can see raises it, so a
-   * snapshot with a higher one is newer.
-   */
-  revision: string;
   tier: LearnerTier;
   /** The active goal's saved time zone, or null when it has none yet. */
   timeZone: string | null;

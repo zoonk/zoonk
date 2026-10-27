@@ -46,10 +46,9 @@ describe("plan-scoped Open marking", () => {
     const learn = await goalFor({ kind: "learn", userId: user.id });
     mockSession(user.id);
 
-    const [beforeExam, beforeLearn, beforeUser] = await Promise.all([
+    const [beforeExam, beforeLearn] = await Promise.all([
       readPlan(exam.plan.id),
       readPlan(learn.plan.id),
-      prisma.user.findUniqueOrThrow({ where: { id: user.id } }),
     ]);
 
     const input = { shownDate: "2026-09-30", timeZone: "UTC" };
@@ -65,10 +64,6 @@ describe("plan-scoped Open marking", () => {
       version: beforeExam.version,
     });
 
-    await expect(prisma.user.findUniqueOrThrow({ where: { id: user.id } })).resolves.toMatchObject({
-      learnerRevision: beforeUser.learnerRevision + 1n,
-    });
-
     await expect(openStudyDay({ ...input, goalId: learn.goal.id })).resolves.toMatchObject({
       status: "opened",
     });
@@ -77,10 +72,6 @@ describe("plan-scoped Open marking", () => {
       inputVersion: beforeLearn.inputVersion + 1,
       items: beforeLearn.items,
       version: beforeLearn.version,
-    });
-
-    await expect(prisma.user.findUniqueOrThrow({ where: { id: user.id } })).resolves.toMatchObject({
-      learnerRevision: beforeUser.learnerRevision + 2n,
     });
   });
 });

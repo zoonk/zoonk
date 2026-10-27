@@ -162,9 +162,6 @@ function getAnalyticsGoal({
  * Everything the app's frame, the command palette and analytics show about the signed-in learner
  * or guest (see `LearnerSummary`): one bounded read of saved rows that never writes, never builds
  * or settles a day, and never runs the planner. Null without a session.
- *
- * The learner's revision is read first, with their own row, so everything read after it is at
- * least as new as the revision the summary carries.
  */
 export async function getLearnerSummary(): Promise<LearnerSummary | null> {
   "use cache: private";
@@ -188,13 +185,7 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
   );
 
   const user = await prisma.user.findUnique({
-    select: {
-      analyticsDisabled: true,
-      image: true,
-      learnerRevision: true,
-      name: true,
-      username: true,
-    },
+    select: { analyticsDisabled: true, image: true, name: true, username: true },
     where: { id: userId },
   });
 
@@ -274,7 +265,6 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
     }),
     places: getPlaces({ activeGoal, facts, goal: current, readyMistakes: ready }),
     readAt: now.getTime(),
-    revision: String(user.learnerRevision),
     tier: getTier({ isAnonymous, subscription }),
     timeZone: getSavedTimeZone(activeGoal),
     today: goalDay.today,

@@ -9,7 +9,7 @@ import { getUsagePeriodStarts } from "./usage-periods";
 
 const MS_PER_SECOND = 1000;
 
-/** A claim's decision, and whether it wrote: an unchanged claim leaves the learner's revision alone. */
+/** A claim's decision, and whether it wrote: an unchanged claim rolls back its learner marks. */
 export type UsageClaim = { decision: UsageDecision; recorded: boolean };
 
 /**

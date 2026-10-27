@@ -10,10 +10,10 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import {
-  holdLearnerRevision,
-  readLearnerRevision,
+  LEARNER_LOCK,
+  holdLearnerLock,
   waitForBlockedStatement,
-} from "../../_test-utils/learner-revision";
+} from "../../_test-utils/learner-lock";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getAlphabetIdentityKey } from "../../library/language/alphabet/alphabet-identity";
 import { getTodayStudySession } from "../../sessions/_test-utils/open-today";
@@ -221,7 +221,7 @@ describe("alphabet skip admission", () => {
       }),
     ]);
 
-    const holder = holdLearnerRevision({
+    const holder = holdLearnerLock({
       beforeCommit: async (tx) => {
         await tx.$queryRaw`SELECT id FROM study_session_blocks WHERE id = ${pending.id}::uuid FOR UPDATE`;
 
@@ -237,7 +237,7 @@ describe("alphabet skip admission", () => {
     const skips = Promise.all([skipAlphabetIntro(goal.id), skipAlphabetIntro(goal.id)]);
 
     try {
-      await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u);
+      await waitForBlockedStatement(pid, LEARNER_LOCK);
       await waitForBlockedStatement(pid, /SELECT plan.id FROM plans/u);
     } finally {
       holder.release();
@@ -245,7 +245,6 @@ describe("alphabet skip admission", () => {
     }
 
     await expect(skips).resolves.toStrictEqual([{ status: "skipped" }, { status: "skipped" }]);
-    await expect(readLearnerRevision(user.id)).resolves.toBe(2n);
 
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
       inputVersion: plan.inputVersion + 1,
@@ -264,13 +263,12 @@ describe("alphabet skip admission", () => {
     ).resolves.toMatchObject({ status: "active" });
 
     await skipAlphabetIntro(goal.id);
-    await expect(readLearnerRevision(user.id)).resolves.toBe(2n);
   });
 
   it("rolls back admission if the goal becomes ineligible while it waits", async () => {
     const { goal, user, plan } = await japaneseGoal();
 
-    const holder = holdLearnerRevision({
+    const holder = holdLearnerLock({
       beforeCommit: async (tx) =>
         tx.goal.update({ data: { targetLanguage: "en" }, where: { id: goal.id } }),
       userId: user.id,
@@ -280,14 +278,13 @@ describe("alphabet skip admission", () => {
     const skip = skipAlphabetIntro(goal.id);
 
     try {
-      await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u);
+      await waitForBlockedStatement(pid, LEARNER_LOCK);
     } finally {
       holder.release();
       await Promise.all([holder.done, skip]);
     }
 
     await expect(skip).resolves.toStrictEqual({ status: "notLanguage" });
-    await expect(readLearnerRevision(user.id)).resolves.toBe(1n);
 
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
       inputVersion: plan.inputVersion,

@@ -154,7 +154,7 @@ describe("automatic refresh admits fresh inputs before running the producer", ()
 
   it("withdraws only an obsolete phase quote without rebuilding, then does no work on replay", () =>
     runBody(async () => {
-      const { goal, plan, readPlan, user } = await setup();
+      const { goal, plan, readPlan } = await setup();
       const before = await readPlan();
       const phase = parsePlanPhases(before.phases).find((entry) => entry.endDate !== null);
 
@@ -187,7 +187,6 @@ describe("automatic refresh admits fresh inputs before running the producer", ()
       );
 
       const builds = vi.spyOn(producer, "buildPlan");
-      const actor = await prisma.user.findUniqueOrThrow({ where: { id: user.id } });
 
       await expect(refreshGoalPlan({ goalId: goal.id })).resolves.toStrictEqual({
         status: "unchanged",
@@ -208,10 +207,6 @@ describe("automatic refresh admits fresh inputs before running the producer", ()
       expect(after.items).toStrictEqual(before.items);
       expect(after.version).toBe(before.version);
       expect(after.inputVersion).toBe(before.inputVersion + 1);
-
-      await expect(
-        prisma.user.findUniqueOrThrow({ where: { id: user.id } }),
-      ).resolves.toMatchObject({ learnerRevision: actor.learnerRevision + 1n });
 
       const replay = await countDatabaseStatements(() => refreshGoalPlan({ goalId: goal.id }));
       expect(replay.result).toStrictEqual({ status: "unchanged" });

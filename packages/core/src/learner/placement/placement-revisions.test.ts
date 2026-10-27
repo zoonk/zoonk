@@ -3,10 +3,10 @@ import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import {
-  holdLearnerRevision,
-  readLearnerRevision,
+  LEARNER_LOCK,
+  holdLearnerLock,
   waitForBlockedStatement,
-} from "../../_test-utils/learner-revision";
+} from "../../_test-utils/learner-lock";
 import { mockSession } from "../../_test-utils/mock-session";
 import { finishGoalPlacement } from "./finish-goal-placement";
 
@@ -19,19 +19,15 @@ async function setup() {
 }
 
 async function versions(fixture: Awaited<ReturnType<typeof setup>>) {
-  const [revision, plan] = await Promise.all([
-    readLearnerRevision(fixture.user.id),
-    prisma.plan.findUniqueOrThrow({ where: { id: fixture.plan.id } }),
-  ]);
-
-  return { inputVersion: plan.inputVersion, revision };
+  const plan = await prisma.plan.findUniqueOrThrow({ where: { id: fixture.plan.id } });
+  return { inputVersion: plan.inputVersion };
 }
 
 function decline(goalId: string) {
   return finishGoalPlacement({ goalId, input: { fromScratch: true } });
 }
 
-describe("declined placement revisions", () => {
+describe("declined placement writes", () => {
   it("marks the choice and plan inputs once, keeping a repeated choice unchanged", async () => {
     const fixture = await setup();
     const before = await versions(fixture);
@@ -41,7 +37,7 @@ describe("declined placement revisions", () => {
       prisma.goal.findUniqueOrThrow({ where: { id: fixture.goal.id } }),
     ).resolves.toMatchObject({ details: { placementDeclined: true, subject: "Physics" } });
 
-    const changed = { inputVersion: before.inputVersion + 1, revision: before.revision + 1n };
+    const changed = { inputVersion: before.inputVersion + 1 };
     await expect(versions(fixture)).resolves.toStrictEqual(changed);
     await decline(fixture.goal.id);
     await expect(versions(fixture)).resolves.toStrictEqual(changed);
@@ -54,14 +50,13 @@ describe("declined placement revisions", () => {
     mockSession(stranger.id);
     await expect(decline(fixture.goal.id)).resolves.toStrictEqual({ status: "notFound" });
     await expect(versions(fixture)).resolves.toStrictEqual(before);
-    await expect(readLearnerRevision(stranger.id)).resolves.toBe(0n);
   });
 
   it("reads the current details after the marker and commits one choice in a race", async () => {
     const fixture = await setup();
     const before = await versions(fixture);
 
-    const holder = holdLearnerRevision({
+    const holder = holdLearnerLock({
       beforeCommit: (tx) =>
         tx.goal.update({
           data: { details: { subject: "Physics", updatedBeforeDecline: true } },
@@ -74,7 +69,7 @@ describe("declined placement revisions", () => {
     const declines = Promise.all([decline(fixture.goal.id), decline(fixture.goal.id)]);
 
     try {
-      await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u);
+      await waitForBlockedStatement(pid, LEARNER_LOCK);
     } finally {
       holder.release();
       await Promise.all([holder.done, declines]);
@@ -82,7 +77,6 @@ describe("declined placement revisions", () => {
 
     await expect(versions(fixture)).resolves.toStrictEqual({
       inputVersion: before.inputVersion + 1,
-      revision: before.revision + 2n,
     });
 
     await expect(

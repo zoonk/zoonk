@@ -80,13 +80,9 @@ async function waitForClaims(userId: string, count: number) {
     .toBe(count);
 }
 
-async function versions({ plan, user }: Awaited<ReturnType<typeof setup>>) {
-  const [saved, actor] = await Promise.all([
-    prisma.plan.findUniqueOrThrow({ where: { id: plan.id } }),
-    prisma.user.findUniqueOrThrow({ where: { id: user.id } }),
-  ]);
-
-  return { inputVersion: saved.inputVersion, revision: actor.learnerRevision };
+async function versions({ plan }: Awaited<ReturnType<typeof setup>>) {
+  const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+  return { inputVersion: saved.inputVersion };
 }
 
 describe("onboarding recounts active goals under the creation lock", () => {
@@ -133,10 +129,7 @@ describe("onboarding recounts active goals under the creation lock", () => {
     ).resolves.toMatchObject({ activeGoalId: created[0]?.id });
 
     // Two claims, one creation and one profile switch; the refused creator's marker rolls back.
-    await expect(versions(day)).resolves.toStrictEqual({
-      inputVersion: before.inputVersion + 2,
-      revision: before.revision + 4n,
-    });
+    await expect(versions(day)).resolves.toStrictEqual({ inputVersion: before.inputVersion + 2 });
   });
 
   it("refuses creation if another goal activates after its claim but before it takes the lock", async () => {
@@ -171,10 +164,7 @@ describe("onboarding recounts active goals under the creation lock", () => {
     await expect(prisma.goal.count({ where: { userId: day.user.id } })).resolves.toBe(1);
     await expect(prisma.plan.count({ where: { goal: { userId: day.user.id } } })).resolves.toBe(1);
 
-    await expect(versions(day)).resolves.toStrictEqual({
-      inputVersion: before.inputVersion + 1,
-      revision: before.revision + 2n,
-    });
+    await expect(versions(day)).resolves.toStrictEqual({ inputVersion: before.inputVersion + 1 });
   });
 
   it("keeps both simultaneous goals available to Plus", async () => {

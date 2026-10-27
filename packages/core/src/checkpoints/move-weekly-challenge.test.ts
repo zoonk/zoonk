@@ -6,10 +6,10 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
-  holdLearnerRevision,
-  readLearnerRevision,
+  LEARNER_LOCK,
+  holdLearnerLock,
   waitForBlockedStatement,
-} from "../_test-utils/learner-revision";
+} from "../_test-utils/learner-lock";
 import { mockSession } from "../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../plans/create-goal-plan";
@@ -292,7 +292,7 @@ describe(moveWeeklyChallenge, () => {
   });
 });
 
-describe("challenge block learner revisions", () => {
+describe("challenge block learner locks", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(MONDAY);
@@ -307,7 +307,6 @@ describe("challenge block learner revisions", () => {
     async (status) => {
       const { block, challenge, plan, user } = await setup();
       await prisma.studySessionBlock.update({ data: { status }, where: { id: block.id } });
-      const before = await readLearnerRevision(user.id);
 
       const result = await applyChallengeMove({
         block,
@@ -320,10 +319,6 @@ describe("challenge block learner revisions", () => {
 
       expect(result.status).toBe("moved");
 
-      await expect(readLearnerRevision(user.id)).resolves.toBe(
-        before + (status === "pending" ? 2n : 1n),
-      );
-
       await expect(statusOf(block.id)).resolves.toBe(
         status === "pending" ? "skipped" : "completed",
       );
@@ -335,11 +330,8 @@ describe("challenge block learner revisions", () => {
     const session = await studySessionFixture({ userId: user.id });
     const block = await studySessionBlockFixture({ sessionId: session.id, status: "skipped" });
     const challenge = { id: crypto.randomUUID() };
-    const before = await readLearnerRevision(user.id);
     await restoreChallengeBlock({ block, challenge, userId: user.id });
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 1n);
     await restoreChallengeBlock({ block, challenge, userId: user.id });
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 1n);
     await expect(statusOf(block.id)).resolves.toBe("pending");
   });
 
@@ -348,9 +340,8 @@ describe("challenge block learner revisions", () => {
     const session = await studySessionFixture({ userId: user.id });
     const block = await studySessionBlockFixture({ sessionId: session.id, status: "skipped" });
     const challenge = { id: crypto.randomUUID() };
-    const before = await readLearnerRevision(user.id);
 
-    const holder = holdLearnerRevision({
+    const holder = holdLearnerLock({
       beforeCommit: async (transaction) => {
         await transaction.$queryRaw`SELECT id FROM study_session_blocks WHERE id = ${block.id}::uuid FOR UPDATE`;
       },
@@ -365,12 +356,12 @@ describe("challenge block learner revisions", () => {
     ]);
 
     try {
-      await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u, 2);
+      await waitForBlockedStatement(pid, LEARNER_LOCK, 2);
     } finally {
       holder.release();
       await Promise.all([holder.done, contenders]);
     }
 
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 2n);
+    await expect(contenders).resolves.toHaveLength(2);
   });
 });

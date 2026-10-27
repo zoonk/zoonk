@@ -78,8 +78,6 @@ describe("mission identity before a selected checkpoint has a saved plan ID", ()
         },
       ]);
 
-      const revision = await prisma.user.findUniqueOrThrow({ where: { id: user.id } });
-
       await expect(
         settleMissions({
           revalidation: "skip",
@@ -88,10 +86,6 @@ describe("mission identity before a selected checkpoint has a saved plan ID", ()
           userId: user.id,
         }),
       ).resolves.toMatchObject({ fullMealPaid: false, newlyDone: [] });
-
-      await expect(
-        prisma.user.findUniqueOrThrow({ where: { id: user.id } }),
-      ).resolves.toMatchObject({ learnerRevision: revision.learnerRevision });
 
       await expect(
         prisma.studySession.findUniqueOrThrow({ where: { id: session.id } }),

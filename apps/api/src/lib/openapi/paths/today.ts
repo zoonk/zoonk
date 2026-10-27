@@ -76,7 +76,7 @@ export const todayPaths = {
   "/today/plan-change/acknowledgments": {
     post: {
       description:
-        "Acknowledges Today's mandatory notice in one learner POST. A stored notice uses its UUID. A computed notice has no ID yet: send its goal, shown day and the revision from the Today read. The POST atomically persists the same selected plan, the real notice and its seenAt; it never opens a study session. Replays return the same real notice ID without another revision. If the day or input revision changed, read Today again before acknowledging.",
+        "Acknowledges Today's mandatory notice in one learner POST. A stored notice uses its UUID. A computed notice has no ID yet: send its goal, shown day and Today's `noticeBasis`. The POST atomically persists the same selected plan, the real notice and its seenAt; it never opens a study session. Replays return the same real notice ID. If the day or the plan changed, read Today again before acknowledging.",
       operationId: "acknowledgeTodayPlanChange",
       requestBody: {
         content: { "application/json": { schema: acknowledgeTodayPlanChangeInputSchema } },
@@ -85,7 +85,7 @@ export const todayPaths = {
       responses: {
         "200": {
           content: { "application/json": { schema: acknowledgedTodayPlanChangeSchema } },
-          description: "The stored notice ID and current learner revision",
+          description: "The stored notice ID",
         },
         "400": validationErrorResponse,
         "401": unauthorizedResponse,

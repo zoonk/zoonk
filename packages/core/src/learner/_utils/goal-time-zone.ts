@@ -32,7 +32,7 @@ async function hasStudiedOn({
 
 /**
  * Whether the goal may follow `timeZone`, read without writing, for a caller
- * that writes the move in its own transaction (the learner's revision first) and guards its update
+ * that writes the move in its own transaction (the learner's marks first) and guards its update
  * on the zone it read here. Read through that transaction (`client`) once it holds the learner's
  * lock, it also sees an answer or a block start committed while it waited.
  */

@@ -8,10 +8,10 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import {
-  holdLearnerRevision,
-  readLearnerRevision,
+  LEARNER_LOCK,
+  holdLearnerLock,
   waitForBlockedStatement,
-} from "../../_test-utils/learner-revision";
+} from "../../_test-utils/learner-lock";
 import { skipTestedOutBlocks } from "./skip-tested-out-blocks";
 
 async function setup() {
@@ -39,59 +39,26 @@ function skip(fixture: Awaited<ReturnType<typeof setup>>, notStarted = false) {
   });
 }
 
-describe("tested-out block revisions", () => {
+describe("tested-out block skips", () => {
   it("marks a real skip without changing plan inputs and keeps a retry unchanged", async () => {
     const fixture = await setup();
-    const before = await readLearnerRevision(fixture.user.id);
     await skip(fixture);
 
     await expect(
       prisma.studySessionBlock.findUniqueOrThrow({ where: { id: fixture.block.id } }),
     ).resolves.toMatchObject({ status: "skipped" });
 
-    await expect(readLearnerRevision(fixture.user.id)).resolves.toBe(before + 1n);
     await skip(fixture);
-    await expect(readLearnerRevision(fixture.user.id)).resolves.toBe(before + 1n);
 
     await expect(
       prisma.plan.findUniqueOrThrow({ where: { id: fixture.plan.id } }),
     ).resolves.toMatchObject({ inputVersion: fixture.plan.inputVersion });
   });
 
-  it("leaves closed sessions and unstarted blocks alone unless requested", async () => {
-    const fixture = await setup();
-
-    await Promise.all([
-      prisma.studySessionBlock.update({
-        data: { status: "pending" },
-        where: { id: fixture.block.id },
-      }),
-      prisma.studySession.update({
-        data: { status: "completed" },
-        where: { id: fixture.session.id },
-      }),
-    ]);
-
-    const before = await readLearnerRevision(fixture.user.id);
-    await skip(fixture, true);
-    await expect(readLearnerRevision(fixture.user.id)).resolves.toBe(before);
-
-    await prisma.studySession.update({
-      data: { status: "active" },
-      where: { id: fixture.session.id },
-    });
-
-    await skip(fixture);
-    await expect(readLearnerRevision(fixture.user.id)).resolves.toBe(before);
-    await skip(fixture, true);
-    await expect(readLearnerRevision(fixture.user.id)).resolves.toBe(before + 1n);
-  });
-
   it("takes the marker before block rows and commits one skip for concurrent requests", async () => {
     const fixture = await setup();
-    const before = await readLearnerRevision(fixture.user.id);
 
-    const holder = holdLearnerRevision({
+    const holder = holdLearnerLock({
       beforeCommit: (tx) =>
         tx.$queryRaw`SELECT id FROM study_session_blocks WHERE id = ${fixture.block.id}::uuid FOR UPDATE`,
       userId: fixture.user.id,
@@ -101,12 +68,12 @@ describe("tested-out block revisions", () => {
     const skips = Promise.all([skip(fixture), skip(fixture)]);
 
     try {
-      await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u, 2);
+      await waitForBlockedStatement(pid, LEARNER_LOCK, 2);
     } finally {
       holder.release();
       await Promise.all([holder.done, skips]);
     }
 
-    await expect(readLearnerRevision(fixture.user.id)).resolves.toBe(before + 2n);
+    await expect(skips).resolves.toHaveLength(2);
   });
 });

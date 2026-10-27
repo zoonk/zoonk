@@ -2,7 +2,7 @@ import { prisma } from "@zoonk/db";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { describe, expect, it } from "vitest";
-import { waitForBlockedStatement } from "../../_test-utils/learner-revision";
+import { waitForBlockedStatement } from "../../_test-utils/learner-lock";
 import { lockSourceRoots } from "./plan-source-publication";
 
 type Roots = Parameters<typeof lockSourceRoots>[1];

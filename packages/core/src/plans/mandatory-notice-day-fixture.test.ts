@@ -58,10 +58,14 @@ describe("date-parameterized mandatory Today seed", () => {
         0,
       );
 
+      if (!read.result.today.noticeBasis) {
+        throw new Error("Expected the notice's plan");
+      }
+
       const acknowledged = await acknowledgeTodayPlanChange({
+        basis: read.result.today.noticeBasis,
         goalId: fixture.goal.id,
         kind: "computed",
-        revision: read.result.today.revision,
         shownDate: date,
         timeZone: "UTC",
       });

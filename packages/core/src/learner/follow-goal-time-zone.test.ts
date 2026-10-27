@@ -67,14 +67,9 @@ function todayGoalId(result: TodayViewResult): string | null {
   return "goal" in result ? result.goal.id : null;
 }
 
-/** The learner's revision and their goal plan's input version, as writers raise them. */
-async function readVersions({ planId, userId }: { planId: string; userId: string }) {
-  const [user, plan] = await Promise.all([
-    prisma.user.findUniqueOrThrow({ select: { learnerRevision: true }, where: { id: userId } }),
-    prisma.plan.findUniqueOrThrow({ select: { inputVersion: true }, where: { id: planId } }),
-  ]);
-
-  return { inputVersion: plan.inputVersion, learnerRevision: user.learnerRevision };
+/** The goal plan's input version, as writers raise it. */
+function readVersions({ planId }: { planId: string; userId: string }) {
+  return prisma.plan.findUniqueOrThrow({ select: { inputVersion: true }, where: { id: planId } });
 }
 
 describe("the learner's day", () => {
@@ -106,7 +101,6 @@ describe("following a learner who moves", () => {
     const zone = zoneOnAnotherDay();
 
     await expect(followGoalTimeZone({ goalId: goal.id, timeZone: zone })).resolves.toStrictEqual({
-      learnerRevision: "1",
       moved: true,
       status: "ready",
     });
@@ -114,7 +108,7 @@ describe("following a learner who moves", () => {
     await expect(readZone(goal.id)).resolves.toBe(zone);
   });
 
-  it("raises the learner's revision and marks the plan's calendar changed when the goal's today becomes another date", async () => {
+  it("marks the plan's calendar changed when the goal's today becomes another date", async () => {
     const { goal, user } = await setup();
     const otherGoal = await goalFixture({ timezone: SAO_PAULO, userId: user.id });
 
@@ -127,11 +121,10 @@ describe("following a learner who moves", () => {
 
     await expect(
       followGoalTimeZone({ goalId: goal.id, timeZone: zoneOnAnotherDay() }),
-    ).resolves.toMatchObject({ learnerRevision: String(before.learnerRevision + 1n), moved: true });
+    ).resolves.toMatchObject({ moved: true });
 
     await expect(readVersions({ planId: plan.id, userId: user.id })).resolves.toStrictEqual({
       inputVersion: before.inputVersion + 1,
-      learnerRevision: before.learnerRevision + 1n,
     });
 
     // The learner's other goal kept its zone; marking a learner's plan inputs marks all their plans.
@@ -140,7 +133,7 @@ describe("following a learner who moves", () => {
     ).resolves.toMatchObject({ inputVersion: otherPlan.inputVersion + 1 });
   });
 
-  it("raises the learner's revision and marks the plan's calendar changed when the zone moves within the same date", async () => {
+  it("marks the plan's calendar changed when the zone moves within the same date", async () => {
     // Buenos Aires keeps São Paulo's clock all year: the zone moves, the day doesn't.
     const { goal, user } = await setup();
     const plan = await planFixture({ goalId: goal.id });
@@ -152,11 +145,10 @@ describe("following a learner who moves", () => {
 
     await expect(readVersions({ planId: plan.id, userId: user.id })).resolves.toStrictEqual({
       inputVersion: before.inputVersion + 1,
-      learnerRevision: before.learnerRevision + 1n,
     });
   });
 
-  it("keeps the goal's zone until the next day once the learner answered today, with no revision", async () => {
+  it("keeps the goal's zone until the next day once the learner answered today, unmarked", async () => {
     const { goal, user } = await setup();
     const plan = await planFixture({ goalId: goal.id });
     await attemptFixture({ localDate: localDay(SAO_PAULO), userId: user.id });
@@ -195,7 +187,7 @@ describe("following a learner who moves", () => {
 
     await expect(
       followGoalTimeZone({ goalId: goal.id, timeZone: SAO_PAULO }),
-    ).resolves.toStrictEqual({ learnerRevision: "1", moved: true, status: "ready" });
+    ).resolves.toStrictEqual({ moved: true, status: "ready" });
 
     await expect(readZone(goal.id)).resolves.toBe(SAO_PAULO);
   });
@@ -277,24 +269,24 @@ describe("Today following the device", () => {
   });
 });
 
-/** Backends waiting for a learner's revision lock right now (a writer queued behind another). */
-async function waitingOnRevision(): Promise<number[]> {
+/** Backends waiting for a learner's lock right now (a writer queued behind another). */
+async function waitingOnLearnerLock(): Promise<number[]> {
   const rows = await prisma.$queryRaw<{ pid: number }[]>`
     SELECT pid FROM pg_stat_activity
-    WHERE wait_event_type = 'Lock' AND query ILIKE '%learner_revision%'
+    WHERE wait_event_type = 'Lock' AND query ILIKE '%FROM users WHERE id = %FOR NO KEY UPDATE%'
   `;
 
   return rows.map((row) => row.pid);
 }
 
 describe("following a learner who studies while the move waits", () => {
-  it("keeps the zone, and no revision of the move, when an answer commits first", async () => {
+  it("keeps the zone, and none of the move's marks, when an answer commits first", async () => {
     const { goal, user } = await setup();
     const plan = await planFixture({ goalId: goal.id });
     const before = await readVersions({ planId: plan.id, userId: user.id });
     const answering = Promise.withResolvers<null>();
     const commitAnswer = Promise.withResolvers<null>();
-    const waitingBefore = new Set(await waitingOnRevision());
+    const waitingBefore = new Set(await waitingOnLearnerLock());
 
     // An answer holds the learner's lock, its attempt written but not committed yet.
     const answer = prisma.$transaction(async (tx) => {
@@ -325,7 +317,7 @@ describe("following a learner who studies while the move waits", () => {
     try {
       await expect
         .poll(async () => {
-          const waiting = await waitingOnRevision();
+          const waiting = await waitingOnLearnerLock();
           return waiting.some((pid) => !waitingBefore.has(pid));
         })
         .toBe(true);
@@ -338,10 +330,9 @@ describe("following a learner who studies while the move waits", () => {
     await expect(follow).resolves.toMatchObject({ moved: false, status: "ready" });
     await expect(readZone(goal.id)).resolves.toBe(SAO_PAULO);
 
-    // Only the answer's revision: the move's, and its plan inputs, rolled back with it.
+    // The move's plan inputs rolled back with it.
     await expect(readVersions({ planId: plan.id, userId: user.id })).resolves.toStrictEqual({
       inputVersion: before.inputVersion,
-      learnerRevision: before.learnerRevision + 1n,
     });
   });
 });
@@ -361,11 +352,11 @@ function holdLearnerLock(userId: string, write?: (tx: TransactionClient) => Prom
   return { done, held: held.promise, release: () => release.resolve(null) };
 }
 
-/** Waits until a backend that wasn't waiting before queues behind a learner's revision lock. */
+/** Waits until a backend that wasn't waiting before queues behind a learner's lock. */
 async function untilQueued(waitingBefore: Set<number>) {
   await expect
     .poll(async () => {
-      const waiting = await waitingOnRevision();
+      const waiting = await waitingOnLearnerLock();
       return waiting.some((pid) => !waitingBefore.has(pid));
     })
     .toBe(true);
@@ -379,7 +370,7 @@ describe("following a learner whose goal moves or whose day turns while the move
   it("moves from where another writer just moved the goal, not from where it read it", async () => {
     const { goal } = await setup();
     const device = zoneOnAnotherDay();
-    const waitingBefore = new Set(await waitingOnRevision());
+    const waitingBefore = new Set(await waitingOnLearnerLock());
 
     // Another writer moves the goal to Tokyo while this follow reads São Paulo, then waits.
     const tokyo = holdLearnerLock(goal.userId, (tx) =>
@@ -409,7 +400,7 @@ describe("following a learner whose goal moves or whose day turns while the move
     const { goal, user } = await setup();
     const plan = await planFixture({ goalId: goal.id });
     const before = await readVersions({ planId: plan.id, userId: user.id });
-    const waitingBefore = new Set(await waitingOnRevision());
+    const waitingBefore = new Set(await waitingOnLearnerLock());
     const other = holdLearnerLock(user.id);
 
     await other.held;
@@ -429,7 +420,6 @@ describe("following a learner whose goal moves or whose day turns while the move
 
     await expect(readVersions({ planId: plan.id, userId: user.id })).resolves.toStrictEqual({
       inputVersion: before.inputVersion + 1,
-      learnerRevision: before.learnerRevision + 2n,
     });
   });
 });
@@ -484,7 +474,7 @@ describe("moving a goal's zone inside a writer's transaction", () => {
     }
   });
 
-  it("rolls its revision back when another writer moved the zone first, which keeps its own", async () => {
+  it("rolls its marks back when another writer moved the zone first, which keeps its own", async () => {
     const { goal, user } = await setup();
     const plan = await planFixture({ goalId: goal.id });
 
@@ -565,7 +555,7 @@ describe("moving a goal's zone inside a writer's transaction", () => {
 
     await expect(Promise.all([planWriter, move])).resolves.toMatchObject([
       undefined,
-      { kind: "moved", learnerRevision: 2n, planInputsChanged: true },
+      { kind: "moved", planInputsChanged: true },
     ]);
 
     await expect(readZone(goal.id)).resolves.toBe(zoneOnAnotherDay());

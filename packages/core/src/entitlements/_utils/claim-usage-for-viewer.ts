@@ -16,7 +16,7 @@ import { lockUsageForViewer } from "./usage-lock";
  * spent asks the guest to create a free account (`signUpRequired`). A live call's connection
  * (`seconds`) holds up to that much of the plan's call time (today's and this month's) and
  * returns what it holds; connecting the same call again holds its length again
- * (`holdCallTimeAgain`). A use it records raises the learner's revision, which it marks before
+ * (`holdCallTimeAgain`). A use it records marks the learner, which it does before
  * taking the usage lock (plans, then learners, then everything else, in every writer).
  */
 export async function claimUsageForViewer({
@@ -47,7 +47,7 @@ export async function claimUsageForViewer({
       viewer,
     });
 
-    // A retried target or a refusal records nothing, so it leaves the revision alone.
+    // A retried target or a refusal records nothing, so it rolls back its marks.
     return claim.recorded ? claim.decision : unchanged(claim.decision);
   });
 }

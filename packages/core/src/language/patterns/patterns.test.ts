@@ -6,7 +6,6 @@ import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { after } from "next/server";
 import { describe, expect, it, vi } from "vitest";
-import { readLearnerRevision } from "../../_test-utils/learner-revision";
 import { mockSession } from "../../_test-utils/mock-session";
 import { dismissMistakePattern } from "./dismiss-mistake-pattern";
 import { scheduleMistakePatternCheck } from "./find-mistake-pattern";
@@ -147,7 +146,6 @@ describe("mistake patterns", () => {
       expect.objectContaining({ learnerLanguage: "pt" }),
     );
     // Today shows the new pattern's card.
-    await expect(readLearnerRevision(user.id)).resolves.toBe(1n);
   });
 
   it("waits for a few new mistakes before checking", async () => {
@@ -157,7 +155,6 @@ describe("mistake patterns", () => {
     await runScheduledCheck();
 
     expect(findMistakePattern).not.toHaveBeenCalled();
-    await expect(readLearnerRevision(user.id)).resolves.toBe(0n);
   });
 
   it("checks 21 eligible mistakes using only the newest 20 and saves their pattern", async () => {
@@ -185,8 +182,6 @@ describe("mistake patterns", () => {
       mistakeIds: [mistakes[20]?.id, mistakes[18]?.id],
       title: PATTERN_OUTPUT.title,
     });
-
-    await expect(readLearnerRevision(user.id)).resolves.toBe(1n);
   });
 
   it("waits at 22 eligible mistakes even when the newest sample is full", async () => {
@@ -198,7 +193,6 @@ describe("mistake patterns", () => {
 
     expect(findMistakePattern).not.toHaveBeenCalled();
     await expect(prisma.mistakePattern.count({ where: { userId: user.id } })).resolves.toBe(0);
-    await expect(readLearnerRevision(user.id)).resolves.toBe(0n);
   });
 
   it("drills a pattern once for full Brain Power and takes it off Today", async () => {
@@ -229,16 +223,12 @@ describe("mistake patterns", () => {
     expect(result).toMatchObject({ result: { correct: 1, total: 2 }, status: "ready" });
     expect(result.status === "ready" && result.result.brainPower).toBeGreaterThan(0);
 
-    // Today's day saved first, the drill and the mission it completed each commit one change;
-    // sending the drill again changes nothing.
-    await expect(readLearnerRevision(user.id)).resolves.toBe(3n);
+    // The drill counts once; sending it again changes nothing.
 
     await practiceMistakePattern({
       input: { answers: ["since", "since"], requestId, timeZone: "America/Sao_Paulo" },
       patternId: pattern.id,
     });
-
-    await expect(readLearnerRevision(user.id)).resolves.toBe(3n);
 
     await expect(getMistakePattern(pattern.id)).resolves.toMatchObject({
       pattern: { practiced: true },

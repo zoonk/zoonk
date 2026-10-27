@@ -20,7 +20,6 @@ import {
   setupTestCalls,
 } from "../../_test-utils/connect-test-call";
 import { freezeClock } from "../../_test-utils/frozen-clock";
-import { readLearnerRevision } from "../../_test-utils/learner-revision";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getChallenge } from "../../checkpoints/get-challenge";
 import { readBlockPayload } from "../../sessions/block-payload";
@@ -306,8 +305,7 @@ describe("language checkpoint calls", () => {
   });
 
   it("opening a written checkpoint scenario issues no writes or generation", async () => {
-    const { block, user } = await reachedCheckpointFixture({ speaking: 1 });
-    const revision = await readLearnerRevision(user.id);
+    const { block } = await reachedCheckpointFixture({ speaking: 1 });
 
     const opened = await countDatabaseStatements(() => openLanguageCheckpointCall(block.id));
 
@@ -322,8 +320,6 @@ describe("language checkpoint calls", () => {
     await expect(
       prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),
     ).resolves.toStrictEqual(block);
-
-    await expect(readLearnerRevision(user.id)).resolves.toBe(revision);
   });
 
   it("says a pending checkpoint opened past today's study time can't start today, as its Start does", async () => {
@@ -369,9 +365,8 @@ describe("language checkpoint calls", () => {
   });
 
   it("opens a checkpoint's call from its unit's written call without a model", async () => {
-    const { block, user } = await reachedCheckpointFixture({ speaking: 1 });
+    const { block } = await reachedCheckpointFixture({ speaking: 1 });
 
-    const before = await readLearnerRevision(user.id);
     const first = await openLanguageCheckpointCall(block.id);
     const again = await openLanguageCheckpointCall(block.id);
 
@@ -390,8 +385,6 @@ describe("language checkpoint calls", () => {
     await expect(
       prisma.studySession.findUniqueOrThrow({ where: { id: block.sessionId } }),
     ).resolves.toMatchObject({ startSnapshot: null, startedAt: null, status: "planned" });
-
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before);
 
     const started = await startLanguageConversation({ blockId: block.id, kind: "checkpoint" });
     await expect(openLanguageCheckpointCall(block.id)).resolves.toStrictEqual(started);

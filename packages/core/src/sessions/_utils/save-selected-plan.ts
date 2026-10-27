@@ -125,7 +125,7 @@ export async function saveSelectedPlan({
   prepared,
   tx,
 }: {
-  acknowledge?: { revision: string; studyDay: string };
+  acknowledge?: { inputVersion: number; studyDay: string; version: number };
   context: PlanContext;
   prepared: PreparedSelectedPlanSave;
   tx: TransactionClient;

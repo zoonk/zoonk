@@ -2,11 +2,8 @@ import { type TransactionClient, prisma } from "@zoonk/db";
 import { expect, vi } from "vitest";
 import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 
-/** The learner's committed revision, as the summary reads it. */
-export async function readLearnerRevision(userId: string): Promise<bigint> {
-  const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
-  return user.learnerRevision;
-}
+/** The statement a learner write waits on while another holds the learner's lock (`lockLearner`). */
+export const LEARNER_LOCK = /FROM users WHERE id = \S+::uuid FOR NO KEY UPDATE/u;
 
 /**
  * Waits until `count` backends waiting on `holderPID` (directly or behind another waiter) run a statement that matches `statement`, so
@@ -37,11 +34,11 @@ export async function waitForBlockedStatement(
 }
 
 /**
- * Holds the learner's revision lock in an open transaction, as a concurrent writer that marked
- * first does, until `release`. `beforeCommit` runs after the release, still inside the
- * transaction, to take the locks that writer takes next.
+ * Holds the learner's lock in an open transaction, as a concurrent writer that marked first does,
+ * until `release`. `beforeCommit` runs after the release, still inside the transaction, to take the
+ * locks that writer takes next.
  */
-export function holdLearnerRevision({
+export function holdLearnerLock({
   beforeCommit,
   userId,
 }: {

@@ -399,7 +399,6 @@ describe("checkpoint answer recording", () => {
     "rechecks a checkpoint that was %s while the answer waited for its block lock",
     async (change) => {
       const { block, session, submit, user } = await setup();
-      const before = await prisma.user.findUniqueOrThrow({ where: { id: user.id } });
       const ready = Promise.withResolvers<number>();
       const release = Promise.withResolvers<null>();
 
@@ -466,10 +465,6 @@ describe("checkpoint answer recording", () => {
       ).resolves.toBe(0);
 
       await expect(prisma.learnerSkill.count({ where: { userId: user.id } })).resolves.toBe(0);
-
-      await expect(
-        prisma.user.findUniqueOrThrow({ where: { id: user.id } }),
-      ).resolves.toMatchObject({ learnerRevision: before.learnerRevision });
     },
   );
 

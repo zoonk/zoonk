@@ -208,12 +208,8 @@ describe(getStepExampleLine, () => {
 
     mockLines(["Na farmácia, 25% de desconto numa caixa de R$ 40 poupa R$ 10."]);
 
-    const revisionBefore = await readRevision(learner.id);
-
     const first = await requestStepExampleLine({ stepId: step.id });
-    await expect(readRevision(learner.id)).resolves.toBe(revisionBefore + 2n);
     await requestStepExampleLine({ stepId: step.id });
-    await expect(readRevision(learner.id)).resolves.toBe(revisionBefore + 2n);
     const second = await getStepExampleLine({ stepId: step.id });
 
     expect(first).toStrictEqual({
@@ -414,8 +410,3 @@ describe(getStepExampleLine, () => {
     expect(generateExampleLines).not.toHaveBeenCalled();
   });
 });
-
-async function readRevision(userId: string) {
-  const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
-  return user.learnerRevision;
-}

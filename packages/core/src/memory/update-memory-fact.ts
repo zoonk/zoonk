@@ -59,7 +59,7 @@ export async function updateMemoryFact({
   const userId = session.user.id;
 
   const saved = await writeLearnerChange({ userId }, async (tx) => {
-    // Read under the revision lock: a concurrent save or delete of this fact finished first.
+    // Read under the learner's lock: a concurrent save or delete of this fact finished first.
     const existing = await tx.memoryFact.findFirst({
       where: { id: factId, status: "active", userId },
     });
@@ -68,7 +68,7 @@ export async function updateMemoryFact({
       return unchanged(null);
     }
 
-    // The same correction saved again leaves the fact, its example lines and the revision alone.
+    // The same correction saved again leaves the fact and its example lines alone.
     if (isSameCorrection({ fact: existing, input })) {
       return unchanged({ changed: false, fact: existing });
     }

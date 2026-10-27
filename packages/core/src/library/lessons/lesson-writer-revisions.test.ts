@@ -13,7 +13,7 @@ import {
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
-import { waitForBlockedStatement } from "../../_test-utils/learner-revision";
+import { waitForBlockedStatement } from "../../_test-utils/learner-lock";
 import { markPlansChanged } from "../../learner/_utils/mark-learner-changed";
 import { holdBackLessonDraft } from "../generation/hold-back-lesson";
 import {
@@ -24,7 +24,6 @@ import {
 
 const WRITERS = ["holdback", "publish", "version"] as const;
 type Writer = (typeof WRITERS)[number];
-const MAX_REVISION = 9_223_372_036_854_775_807n;
 
 function screen(invalidSource = false): LessonScreenToSave {
   return {
@@ -117,18 +116,12 @@ function write({
   return saveLessonVersion({ ...input, replaces: stale ? 0 : 1 });
 }
 
-async function revision(userId: string) {
-  const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
-  return user.learnerRevision;
-}
-
 async function inputVersion(planId: string) {
   const plan = await prisma.plan.findUniqueOrThrow({ where: { id: planId } });
   return plan.inputVersion;
 }
 
 async function unchanged(context: Awaited<ReturnType<typeof fixture>>) {
-  await expect(revision(context.user.id)).resolves.toBe(0n);
   await expect(inputVersion(context.plan.id)).resolves.toBe(0);
 
   await expect(
@@ -148,7 +141,7 @@ async function unchanged(context: Awaited<ReturnType<typeof fixture>>) {
   ).resolves.toStrictEqual(context.block);
 }
 
-describe("lesson writer learner revisions", () => {
+describe("lesson writer plan marks", () => {
   it.each(WRITERS)(
     "%s marks each dependent plan and owner once, including guests",
     async (writer) => {
@@ -163,9 +156,6 @@ describe("lesson writer learner revisions", () => {
       ]);
 
       await expect(write({ ...context, writer })).resolves.not.toBeNull();
-      await expect(revision(context.user.id)).resolves.toBe(1n);
-      await expect(revision(guest.id)).resolves.toBe(1n);
-      await expect(revision(outsider.id)).resolves.toBe(0n);
       await expect(inputVersion(context.plan.id)).resolves.toBe(1);
       await expect(inputVersion(second.plan.id)).resolves.toBe(1);
       await expect(inputVersion(guestPlan.plan.id)).resolves.toBe(1);
@@ -193,38 +183,6 @@ describe("lesson writer learner revisions", () => {
       const context = await fixture(writer);
       await expect(write({ ...context, stale: true, writer })).resolves.toBeNull();
       await unchanged(context);
-    },
-  );
-
-  it.each(WRITERS)(
-    "%s leaves content and queues unchanged if an owner revision overflows",
-    async (writer) => {
-      const context = await fixture(writer);
-
-      await prisma.user.update({
-        data: { learnerRevision: MAX_REVISION },
-        where: { id: context.user.id },
-      });
-
-      await expect(write({ ...context, writer })).rejects.toThrow();
-      await expect(revision(context.user.id)).resolves.toBe(MAX_REVISION);
-      await expect(inputVersion(context.plan.id)).resolves.toBe(0);
-
-      await expect(
-        prisma.lesson.findUniqueOrThrow({ where: { id: context.lesson.id } }),
-      ).resolves.toStrictEqual(context.lesson);
-
-      await expect(
-        prisma.step.findMany({ where: { lessonId: context.lesson.id } }),
-      ).resolves.toStrictEqual([context.step]);
-
-      await expect(
-        prisma.planItem.findUniqueOrThrow({ where: { id: context.item.id } }),
-      ).resolves.toStrictEqual(context.item);
-
-      await expect(
-        prisma.studySessionBlock.findUniqueOrThrow({ where: { id: context.block.id } }),
-      ).resolves.toStrictEqual(context.block);
     },
   );
 
@@ -272,7 +230,6 @@ describe("lesson writer learner revisions", () => {
     }
 
     await expect(attempt).resolves.toBeNull();
-    await expect(revision(context.user.id)).resolves.toBe(1n);
     await expect(inputVersion(context.plan.id)).resolves.toBe(1);
     await expect(prisma.step.count({ where: { lessonId: context.lesson.id } })).resolves.toBe(1);
 

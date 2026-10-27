@@ -55,13 +55,9 @@ function finish({ block, session }: Awaited<ReturnType<typeof setup>>) {
   return finishStudyBlock({ blockId: block.id, input: { timeZone: "UTC" }, sessionId: session.id });
 }
 
-async function readVersions({ plan, user }: Awaited<ReturnType<typeof setup>>) {
-  const [saved, actor] = await Promise.all([
-    prisma.plan.findUniqueOrThrow({ where: { id: plan.id } }),
-    prisma.user.findUniqueOrThrow({ where: { id: user.id } }),
-  ]);
-
-  return { inputVersion: saved.inputVersion, learnerRevision: actor.learnerRevision };
+async function readVersions({ plan }: Awaited<ReturnType<typeof setup>>) {
+  const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+  return { inputVersion: saved.inputVersion };
 }
 
 describe("only the session completion transition changes plan inputs", () => {
@@ -71,7 +67,7 @@ describe("only the session completion transition changes plan inputs", () => {
 
   it("a duplicate completion leaves the real deferred work's input version intact", async () => {
     const day = await setup();
-    // Hold only Next's after-response boundary; every completion and revision write is real.
+    // Hold only Next's after-response boundary; every completion write is real.
     const scheduled = vi.mocked(after).mockClear();
 
     await expect(finish(day)).resolves.toMatchObject({
@@ -102,7 +98,7 @@ describe("only the session completion transition changes plan inputs", () => {
     ).resolves.toBe(1);
   });
 
-  it("concurrent completions commit one revision mark and one end ledger", async () => {
+  it("concurrent completions commit one plan mark and one end ledger", async () => {
     const day = await setup();
 
     const session = await prisma.studySession.findUniqueOrThrow({
@@ -123,7 +119,6 @@ describe("only the session completion transition changes plan inputs", () => {
 
     await expect(readVersions(day)).resolves.toStrictEqual({
       inputVersion: before.inputVersion + 1,
-      learnerRevision: before.learnerRevision + 1n,
     });
 
     await expect(

@@ -17,10 +17,10 @@ function isUnchanged<T, Kept>(written: T | Unchanged<Kept>): written is Unchange
 }
 
 /**
- * Runs one learner-visible write in its own transaction with the learner's revision marked first,
+ * Runs one learner write in its own transaction with the learner marked (`markLearnerChanged`) first,
  * so every writer takes its locks in the same order: plans, then learners, then everything else. A
  * write that finds nothing to change returns `unchanged(result)`: the transaction rolls back with
- * its mark, and `result` is the outcome, so no revision is committed for it.
+ * its marks, and `result` is the outcome, so no plan input is marked for it.
  */
 export async function writeLearnerChange<T, Kept = T>(
   marker: Parameters<typeof markLearnerChanged>[1],

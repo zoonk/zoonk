@@ -13,7 +13,6 @@ import {
 } from "../../_test-utils/connect-test-call";
 import { runDeferredWork } from "../../_test-utils/deferred-work";
 import { freezeClock } from "../../_test-utils/frozen-clock";
-import { readLearnerRevision } from "../../_test-utils/learner-revision";
 import { mockSession } from "../../_test-utils/mock-session";
 import { completeLanguageConversation } from "./complete-language-conversation";
 import { getLanguageConversation } from "./get-language-conversation";
@@ -136,19 +135,14 @@ describe("speaking mocks", () => {
   afterEach(cleanupTestCalls);
 
   it("marks a new speaking mock once and leaves its waiting retry unchanged", async () => {
-    const { goal, user } = await examGoalFixture("Vou fazer o IELTS");
-    const before = await readLearnerRevision(user.id);
+    const { goal } = await examGoalFixture("Vou fazer o IELTS");
     const started = await startLanguageConversation({ goalId: goal.id, kind: "speakingMock" });
 
     expect(started.status).toBe("ready");
-    // Starting it saved today's day first, then marked the new mock.
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 2n);
 
     await expect(
       startLanguageConversation({ goalId: goal.id, kind: "speakingMock" }),
     ).resolves.toStrictEqual(started);
-
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 2n);
   });
 
   it("starts an IELTS mock with its own examiner and topic for a goal preparing for IELTS", async () => {

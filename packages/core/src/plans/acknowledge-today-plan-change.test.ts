@@ -26,7 +26,11 @@ async function computedNoticeFixture() {
   expect(read.writes).toBe(0);
   expect(read.result.status).toBe("ready");
 
-  if (read.result.status !== "ready" || !read.result.today.planChange) {
+  if (
+    read.result.status !== "ready" ||
+    !read.result.today.planChange ||
+    !read.result.today.noticeBasis
+  ) {
     throw new Error("Expected the actual computed mandatory notice");
   }
 
@@ -35,9 +39,9 @@ async function computedNoticeFixture() {
   return {
     ...fixture,
     input: {
+      basis: read.result.today.noticeBasis,
       goalId: fixture.goal.id,
       kind: "computed" as const,
-      revision: read.result.today.revision,
       shownDate: "2026-10-14",
       timeZone: "UTC",
     },
@@ -46,8 +50,7 @@ async function computedNoticeFixture() {
 }
 
 async function noticeState(userId: string) {
-  const [actor, plans, changes, sessions] = await Promise.all([
-    prisma.user.findUniqueOrThrow({ where: { id: userId } }),
+  const [plans, changes, sessions] = await Promise.all([
     prisma.plan.findMany({
       include: { items: { orderBy: { id: "asc" } } },
       orderBy: { id: "asc" },
@@ -57,7 +60,7 @@ async function noticeState(userId: string) {
     prisma.studySession.findMany({ include: { blocks: true }, where: { userId } }),
   ]);
 
-  return { actor, changes, plans, sessions };
+  return { changes, plans, sessions };
 }
 
 describe("acknowledging Today's computed mandatory notice", () => {
@@ -72,9 +75,8 @@ describe("acknowledging Today's computed mandatory notice", () => {
     const fixture = await computedNoticeFixture();
     const otherGoal = await goalFixture({ userId: fixture.user.id });
     const otherPlan = await planFixture({ goalId: otherGoal.id });
-    const before = await noticeState(fixture.user.id);
     const result = await acknowledgeTodayPlanChange(fixture.input);
-    expect(result).toMatchObject({ status: "acknowledged", userId: fixture.user.id });
+    expect(result).toMatchObject({ status: "acknowledged" });
 
     if (result.status !== "acknowledged") {
       throw new Error("Expected the persisted acknowledgment");
@@ -82,7 +84,6 @@ describe("acknowledging Today's computed mandatory notice", () => {
 
     const after = await noticeState(fixture.user.id);
     expect(after.sessions).toStrictEqual([]);
-    expect(after.actor.learnerRevision).toBe(before.actor.learnerRevision + 1n);
 
     expect(after.plans.find((plan) => plan.id === fixture.plan.id)).toMatchObject({
       inputVersion: fixture.plan.inputVersion + 1,
@@ -106,8 +107,9 @@ describe("acknowledging Today's computed mandatory notice", () => {
     expect(payload.seenAt).toBe(NEXT_DAY.toISOString());
 
     expect(payload.acknowledgedRead).toStrictEqual({
-      revision: fixture.input.revision,
+      inputVersion: fixture.input.basis.inputVersion,
       studyDay: fixture.input.shownDate,
+      version: fixture.input.basis.version,
     });
 
     expect(after.changes.find((row) => row.id === fixture.pending.id)?.status).toBe("replaced");
@@ -119,7 +121,7 @@ describe("acknowledging Today's computed mandatory notice", () => {
     expect(next).toMatchObject({ status: "ready", today: { planChange: null } });
   });
 
-  it("concurrent duplicate acknowledgments publish one notice and commit one revision", async () => {
+  it("concurrent duplicate acknowledgments publish one notice and mark the plan once", async () => {
     const fixture = await computedNoticeFixture();
     const before = await noticeState(fixture.user.id);
 
@@ -131,7 +133,6 @@ describe("acknowledging Today's computed mandatory notice", () => {
     expect(results[0]).toMatchObject({ status: "acknowledged" });
     expect(results[1]).toStrictEqual(results[0]);
     const after = await noticeState(fixture.user.id);
-    expect(after.actor.learnerRevision).toBe(before.actor.learnerRevision + 1n);
     expect(after.changes.filter((row) => row.status === "applied")).toHaveLength(1);
     expect(after.sessions).toStrictEqual([]);
     expect(after.plans[0]?.inputVersion).toBe(before.plans[0]!.inputVersion + 1);
@@ -180,7 +181,6 @@ describe("acknowledging Today's computed mandatory notice", () => {
     await expect(writing).resolves.toBeUndefined();
     await expect(acknowledging).resolves.toStrictEqual({ status: "retryable" });
     const after = await noticeState(fixture.user.id);
-    expect(after.actor.learnerRevision).toBe(before.actor.learnerRevision + 1n);
     expect(after.plans[0]?.inputVersion).toBe(before.plans[0]!.inputVersion + 1);
     expect(after.changes).toStrictEqual(before.changes);
     expect(after.sessions).toStrictEqual([]);
@@ -213,7 +213,6 @@ describe("acknowledging Today's computed mandatory notice", () => {
     expect(results[0]).toMatchObject({ changeId: change.id, status: "acknowledged" });
     expect(results[1]).toStrictEqual(results[0]);
     const after = await noticeState(fixture.user.id);
-    expect(after.actor.learnerRevision).toBe(before.actor.learnerRevision + 1n);
     expect(after.plans).toStrictEqual(before.plans);
     expect(after.sessions).toStrictEqual(before.sessions);
     const replay = await countDatabaseStatements(() => acknowledgeTodayPlanChange(input));
@@ -221,13 +220,15 @@ describe("acknowledging Today's computed mandatory notice", () => {
     expect(replay.result).toStrictEqual(results[0]);
   });
 
-  it.each(["revision", "day", "inactive", "foreign", "signedOut"] as const)(
+  it.each(["planInputs", "day", "inactive", "foreign", "signedOut"] as const)(
     "refuses %s without any writes",
     async (reason) => {
       const fixture = await computedNoticeFixture();
 
-      if (reason === "revision") {
-        await prisma.$transaction((tx) => markLearnerChanged(tx, { userId: fixture.user.id }));
+      if (reason === "planInputs") {
+        await prisma.$transaction((tx) =>
+          markLearnerChanged(tx, { planInputs: true, userId: fixture.user.id }),
+        );
       }
 
       if (reason === "inactive") {
@@ -253,7 +254,7 @@ describe("acknowledging Today's computed mandatory notice", () => {
         day: "otherDay",
         foreign: "notFound",
         inactive: "goalNotActive",
-        revision: "retryable",
+        planInputs: "retryable",
         signedOut: "unauthorized",
       };
 

@@ -1,6 +1,5 @@
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
-import { RENTING_SCENARIO } from "@zoonk/testing/fixtures/language";
 import {
   studySessionBlockFixture,
   studySessionFixture,
@@ -8,12 +7,11 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import {
-  holdLearnerRevision,
-  readLearnerRevision,
+  LEARNER_LOCK,
+  holdLearnerLock,
   waitForBlockedStatement,
-} from "../../_test-utils/learner-revision";
+} from "../../_test-utils/learner-lock";
 import { mockSession } from "../../_test-utils/mock-session";
-import { createConversation } from "../../language/conversations/_utils/create-conversation";
 import { toBlockPayload } from "../../sessions/block-payload";
 import { startStudyBlock } from "../../sessions/start-study-block";
 import { scheduledMockSetup } from "./_test-utils/scheduled-mock";
@@ -75,36 +73,12 @@ async function ownedSitting(id: string) {
   return { mock: found.owned.mock, owned: found.owned };
 }
 
-describe("mock learner revisions", () => {
-  it.each(["speakingMock", "examSpeaking"] as const)(
-    "marks a new %s conversation through the shared insert",
-    async (kind) => {
-      const user = await userFixture();
-      const before = await readLearnerRevision(user.id);
-
-      await createConversation({
-        chapterId: null,
-        goal: null,
-        kind,
-        language: "pt",
-        level: "A2",
-        markChanged: true,
-        minutes: 2,
-        scenario: RENTING_SCENARIO,
-        targetLanguage: "en",
-        userId: user.id,
-      });
-
-      await expect(readLearnerRevision(user.id)).resolves.toBe(before + 1n);
-    },
-  );
-
+describe("mock writes under the learner's lock", () => {
   it("marks scheduled creation and expired unlink, while an existing sitting is unchanged", async () => {
     const { blockId, user } = await scheduledMockSetup();
     const block = await prisma.studySessionBlock.findUniqueOrThrow({ where: { id: blockId } });
     await startStudyBlock({ blockId, input: {}, sessionId: block.sessionId });
-    const before = await readLearnerRevision(user.id);
-    const held = holdLearnerRevision({ userId: user.id });
+    const held = holdLearnerLock({ userId: user.id });
     const pid = await held.pid;
 
     const starts = Promise.all([
@@ -113,17 +87,15 @@ describe("mock learner revisions", () => {
     ]);
 
     try {
-      await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u, 2);
+      await waitForBlockedStatement(pid, LEARNER_LOCK, 2);
     } finally {
       held.release();
       await held.done;
     }
 
     await starts;
-    // The lock holder contributes one revision, and only one contender creates the sitting.
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 2n);
+    // Only one contender creates the sitting.
     await startMock({ blockId, input: {} });
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 2n);
     const sitting = await prisma.mockExam.findUniqueOrThrow({ where: { blockId } });
 
     await prisma.mockExam.update({
@@ -132,7 +104,6 @@ describe("mock learner revisions", () => {
     });
 
     await startMock({ blockId, input: {} });
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 4n);
 
     await expect(
       prisma.mockExam.findUniqueOrThrow({ where: { id: sitting.id } }),
@@ -153,15 +124,14 @@ describe("mock learner revisions", () => {
     }
 
     const input = { acceptFewer: true, goal, pick, setup, userId: user.id, writesCap: null };
-    const before = await readLearnerRevision(user.id);
 
-    const held = holdLearnerRevision({ userId: user.id });
+    const held = holdLearnerLock({ userId: user.id });
 
     const pid = await held.pid;
     const requests = Promise.all([createAnytimeMock(input), createAnytimeMock(input)]);
 
     try {
-      await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u, 2);
+      await waitForBlockedStatement(pid, LEARNER_LOCK, 2);
     } finally {
       held.release();
       await held.done;
@@ -170,9 +140,7 @@ describe("mock learner revisions", () => {
     const outcomes = await requests;
 
     expect(outcomes.map(({ status }) => status).toSorted()).toStrictEqual(["running", "started"]);
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 2n);
     await expect(createAnytimeMock(input)).resolves.toMatchObject({ status: "running" });
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 2n);
   });
 
   it.each([
@@ -199,8 +167,6 @@ describe("mock learner revisions", () => {
         written: [],
       };
 
-      const before = await readLearnerRevision(user.id);
-
       await expect(
         createAnytimeMock({
           acceptFewer,
@@ -212,7 +178,6 @@ describe("mock learner revisions", () => {
         }),
       ).resolves.toStrictEqual({ status });
 
-      await expect(readLearnerRevision(user.id)).resolves.toBe(before);
       await expect(prisma.mockExam.count({ where: { goalId: goal.id } })).resolves.toBe(0);
       expect(mock.goalId).toBeNull();
     },
@@ -231,8 +196,6 @@ describe("mock learner revisions", () => {
       throw new Error("Expected a full mock option");
     }
 
-    const before = await readLearnerRevision(user.id);
-
     await expect(
       createAnytimeMock({
         acceptFewer: false,
@@ -244,7 +207,6 @@ describe("mock learner revisions", () => {
       }),
     ).resolves.toMatchObject({ limit: "day", status: "short" });
 
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before);
     await expect(prisma.mockExam.count({ where: { goalId: goal.id } })).resolves.toBe(0);
   });
 
@@ -261,13 +223,12 @@ describe("mock learner revisions", () => {
 
     const sitting = await ownedSitting(mock.id);
     const owned = { ...sitting.owned, block };
-    const revision = await readLearnerRevision(user.id);
-    const held = holdLearnerRevision({ userId: user.id });
+    const held = holdLearnerLock({ userId: user.id });
     const pid = await held.pid;
     const request = completeMock({ mock: sitting.mock, owned, timeZone: "UTC" });
 
     try {
-      await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u);
+      await waitForBlockedStatement(pid, LEARNER_LOCK);
       const stored = await prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } });
       expect(stored.payload).toStrictEqual(block.payload);
     } finally {
@@ -278,7 +239,6 @@ describe("mock learner revisions", () => {
     const result = await request;
 
     // The lock holder, the changed payload, and the finished result each commit one mark.
-    await expect(readLearnerRevision(user.id)).resolves.toBe(revision + 3n);
 
     await expect(
       prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),
@@ -288,9 +248,7 @@ describe("mock learner revisions", () => {
 
     expect(finished).toMatchObject({ finishedAt: expect.any(Date), result, status: "finished" });
 
-    const before = await readLearnerRevision(user.id);
     await completeMock({ mock: sitting.mock, owned, timeZone: "UTC" });
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before);
 
     await expect(
       prisma.mockExam.findUniqueOrThrow({ where: { id: mock.id } }),
@@ -299,8 +257,7 @@ describe("mock learner revisions", () => {
 
   it("marks one section advance, then leaves duplicate submissions unchanged", async () => {
     const { mock, user } = await sittingFixture();
-    const before = await readLearnerRevision(user.id);
-    const held = holdLearnerRevision({ userId: user.id });
+    const held = holdLearnerLock({ userId: user.id });
     const pid = await held.pid;
 
     const requests = Promise.all([
@@ -309,7 +266,7 @@ describe("mock learner revisions", () => {
     ]);
 
     try {
-      await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u, 2);
+      await waitForBlockedStatement(pid, LEARNER_LOCK, 2);
     } finally {
       held.release();
       await held.done;
@@ -318,13 +275,10 @@ describe("mock learner revisions", () => {
     const outcomes = await requests;
 
     expect(outcomes.map(({ status }) => status).toSorted()).toStrictEqual(["next", "notRunning"]);
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 2n);
 
     await expect(
       submitMockSection({ blockId: mock.id, input: {}, section: 0 }),
     ).resolves.toStrictEqual({ status: "notRunning" });
-
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 2n);
   });
 
   it("serializes competing break ends at the learner marker and commits only one", async () => {
@@ -335,8 +289,7 @@ describe("mock learner revisions", () => {
       where: { id: mock.id },
     });
 
-    const before = await readLearnerRevision(user.id);
-    const held = holdLearnerRevision({ userId: user.id });
+    const held = holdLearnerLock({ userId: user.id });
     const pid = await held.pid;
 
     const requests = Promise.all([
@@ -345,7 +298,7 @@ describe("mock learner revisions", () => {
     ]);
 
     try {
-      await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u, 2);
+      await waitForBlockedStatement(pid, LEARNER_LOCK, 2);
     } finally {
       held.release();
       await held.done;
@@ -357,15 +310,12 @@ describe("mock learner revisions", () => {
       "notOnBreak",
       "started",
     ]);
-
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 2n);
   });
 
   it("marks anytime progress before its progress locks and rolls back a retried settlement", async () => {
     const { mock, user } = await sittingFixture();
     const sitting = await ownedSitting(mock.id);
-    const before = await readLearnerRevision(user.id);
-    const held = holdLearnerRevision({ userId: user.id });
+    const held = holdLearnerLock({ userId: user.id });
     const pid = await held.pid;
 
     const requests = Promise.all([
@@ -374,16 +324,14 @@ describe("mock learner revisions", () => {
     ]);
 
     try {
-      await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u, 2);
+      await waitForBlockedStatement(pid, LEARNER_LOCK, 2);
     } finally {
       held.release();
       await held.done;
     }
 
     await requests;
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 2n);
     await settleAnytimeMock({ graded: [], mock: sitting.mock, timeZone: "UTC" });
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 2n);
 
     await expect(
       prisma.learningEvent.findMany({ where: { kind: "mock", userId: user.id } }),
@@ -392,8 +340,7 @@ describe("mock learner revisions", () => {
 
   it("marks hand-in, progress and final result separately, then retries without a bump", async () => {
     const { mock, user } = await sittingFixture();
-    const before = await readLearnerRevision(user.id);
-    const held = holdLearnerRevision({ userId: user.id });
+    const held = holdLearnerLock({ userId: user.id });
     const pid = await held.pid;
 
     const requests = Promise.all([
@@ -402,19 +349,16 @@ describe("mock learner revisions", () => {
     ]);
 
     try {
-      await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u);
+      await waitForBlockedStatement(pid, LEARNER_LOCK);
     } finally {
       held.release();
       await held.done;
     }
 
     await expect(requests).resolves.toStrictEqual([{ status: "finished" }, { status: "finished" }]);
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 4n);
 
     await expect(finishMock({ blockId: mock.id, input: {} })).resolves.toStrictEqual({
       status: "finished",
     });
-
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 4n);
   });
 });

@@ -21,12 +21,11 @@ import { updateMemoryFact } from "./update-memory-fact";
 import { updateMemorySettings } from "./update-memory-settings";
 
 const DAY_MS = 86_400_000;
-const MAX_LEARNER_REVISION = 9_223_372_036_854_775_807n;
 const TOTAL_PAIRS = 20;
 /** Eight transactions leave room in the ten-connection pool for post-commit queries. */
 const CONCURRENT_PAIRS = 4;
 
-/** Observe the real waiting lock, rather than guessing when a write reached the revision row. */
+/** Observe the real waiting lock, rather than guessing when a write reached the learner row. */
 async function waitForBlockedBy(holderPID: number): Promise<void> {
   await vi.waitFor(async () => {
     const [row] = await prisma.$queryRaw<{ blocked: boolean }[]>`
@@ -38,15 +37,6 @@ async function waitForBlockedBy(holderPID: number): Promise<void> {
 
     expect(row?.blocked).toBe(true);
   });
-}
-
-async function learnerRevision(userId: string) {
-  const user = await prisma.user.findUniqueOrThrow({
-    select: { learnerRevision: true },
-    where: { id: userId },
-  });
-
-  return user.learnerRevision;
 }
 
 async function useLearner() {
@@ -101,7 +91,7 @@ describe(getCurrentUserMemory, () => {
 });
 
 describe(updateMemorySettings, () => {
-  it("takes the revision lock before an existing profile, beside a user-first writer", async () => {
+  it("takes the learner's lock before an existing profile, beside a user-first writer", async () => {
     const user = await useLearner();
     await learningProfileFixture({ memoryEnabled: true, userId: user.id });
     const locked = Promise.withResolvers<number>();
@@ -136,7 +126,6 @@ describe(updateMemorySettings, () => {
 
     await expect(first).resolves.toBeUndefined();
     await expect(memory).resolves.toStrictEqual({ enabled: false, status: "updated" });
-    await expect(learnerRevision(user.id)).resolves.toBe(2n);
 
     await expect(
       prisma.userLearningProfile.findUniqueOrThrow({ where: { userId: user.id } }),
@@ -157,30 +146,24 @@ describe(updateMemorySettings, () => {
 
     expect(off?.enabled).toBe(false);
     expect(off?.facts).toHaveLength(1);
-    await expect(learnerRevision(user.id)).resolves.toBe(1n);
 
     await updateMemorySettings({ enabled: true });
     await expect(getCurrentUserMemory()).resolves.toMatchObject({ enabled: true });
-    await expect(learnerRevision(user.id)).resolves.toBe(2n);
 
     // Turning on what's already on changes nothing.
     await expect(updateMemorySettings({ enabled: true })).resolves.toStrictEqual({
       enabled: true,
       status: "updated",
     });
-
-    await expect(learnerRevision(user.id)).resolves.toBe(2n);
   });
 
   it("changes nothing for a learner without a profile who keeps memory on", async () => {
-    const user = await useLearner();
+    await useLearner();
 
     await expect(updateMemorySettings({ enabled: true })).resolves.toStrictEqual({
       enabled: true,
       status: "updated",
     });
-
-    await expect(learnerRevision(user.id)).resolves.toBe(0n);
   });
 
   it("creates the profile for a learner who has none yet", async () => {
@@ -191,40 +174,11 @@ describe(updateMemorySettings, () => {
 
     const profile = await prisma.userLearningProfile.findUnique({ where: { userId: user.id } });
     expect(profile?.memoryEnabled).toBe(false);
-    await expect(learnerRevision(user.id)).resolves.toBe(1n);
-  });
-
-  it("leaves settings untouched when its revision cannot advance", async () => {
-    const user = await useLearner();
-    await prisma.userLearningProfile.create({ data: { memoryEnabled: true, userId: user.id } });
-    // PostgreSQL rejects the real increment at bigint's limit, before any profile write.
-    await prisma.user.update({
-      data: { learnerRevision: MAX_LEARNER_REVISION },
-      where: { id: user.id },
-    });
-
-    await expect(updateMemorySettings({ enabled: false })).rejects.toThrow("bigint out of range");
-
-    await expect(
-      prisma.userLearningProfile.findUniqueOrThrow({ where: { userId: user.id } }),
-    ).resolves.toMatchObject({ memoryEnabled: true });
-
-    await expect(learnerRevision(user.id)).resolves.toBe(MAX_LEARNER_REVISION);
-    expect(revalidateTag).not.toHaveBeenCalled();
-  });
-
-  it("bumps a guest's revision once as well", async () => {
-    const user = await useLearner();
-    await prisma.user.update({ data: { isAnonymous: true }, where: { id: user.id } });
-
-    await updateMemorySettings({ enabled: false });
-
-    await expect(learnerRevision(user.id)).resolves.toBe(1n);
   });
 });
 
 describe(updateMemoryFact, () => {
-  it("rolls back its bump when the fact is deactivated while the revision lock waits", async () => {
+  it("rolls back its marks when the fact is deactivated while the learner lock waits", async () => {
     const user = await useLearner();
     const fact = await memoryFactFixture({ statement: "Original", userId: user.id });
     const locked = Promise.withResolvers<number>();
@@ -255,7 +209,6 @@ describe(updateMemoryFact, () => {
 
     await expect(first).resolves.toBeUndefined();
     await expect(memory).resolves.toStrictEqual({ status: "notFound" });
-    await expect(learnerRevision(user.id)).resolves.toBe(1n);
 
     await expect(
       prisma.memoryFact.findUniqueOrThrow({ where: { id: fact.id } }),
@@ -272,8 +225,6 @@ describe(updateMemoryFact, () => {
     await expect(
       updateMemoryFact({ factId: fact.id, input: { category: "context" } }),
     ).resolves.toStrictEqual({ status: "notFound" });
-
-    await expect(learnerRevision(user.id)).resolves.toBe(0n);
   });
 
   it("corrects a fact in place and makes it something the learner said", async () => {
@@ -304,10 +255,8 @@ describe(updateMemoryFact, () => {
     });
 
     await expect(prisma.memoryFact.count({ where: { userId: user.id } })).resolves.toBe(1);
-    await expect(learnerRevision(user.id)).resolves.toBe(1n);
 
     await updateMemoryFact({ factId: fact.id, input: { category: "preferences" } });
-    await expect(learnerRevision(user.id)).resolves.toBe(2n);
 
     // Saving the same correction again changes nothing.
     await expect(
@@ -319,30 +268,6 @@ describe(updateMemoryFact, () => {
       fact: { category: "preferences", statement: "Studies after 9 pm on weekdays" },
       status: "updated",
     });
-
-    await expect(learnerRevision(user.id)).resolves.toBe(2n);
-  });
-
-  it("leaves the fact untouched when its revision cannot advance", async () => {
-    const user = await useLearner();
-    const fact = await memoryFactFixture({ statement: "Studies after 8 pm", userId: user.id });
-    // This fails at the real revision UPDATE, rather than mocking the transaction boundary.
-    await prisma.user.update({
-      data: { learnerRevision: MAX_LEARNER_REVISION },
-      where: { id: user.id },
-    });
-
-    await expect(
-      updateMemoryFact({ factId: fact.id, input: { statement: "Studies after 9 pm" } }),
-    ).rejects.toThrow("bigint out of range");
-
-    await expect(
-      prisma.memoryFact.findUniqueOrThrow({ where: { id: fact.id } }),
-    ).resolves.toMatchObject({ statement: "Studies after 8 pm" });
-
-    await expect(learnerRevision(user.id)).resolves.toBe(MAX_LEARNER_REVISION);
-    expect(revalidateTag).not.toHaveBeenCalled();
-    expect(after).not.toHaveBeenCalled();
   });
 
   it("flags a correction that reveals something sensitive, after the response", async () => {
@@ -367,7 +292,7 @@ describe(updateMemoryFact, () => {
   });
 
   it("never reveals or changes another learner's fact", async () => {
-    const [owner, learner] = await Promise.all([userFixture(), useLearner()]);
+    const [owner] = await Promise.all([userFixture(), useLearner()]);
     const fact = await memoryFactFixture({ statement: "Owner's fact", userId: owner.id });
 
     await expect(
@@ -380,8 +305,6 @@ describe(updateMemoryFact, () => {
 
     const unchanged = await prisma.memoryFact.findUniqueOrThrow({ where: { id: fact.id } });
     expect(unchanged.statement).toBe("Owner's fact");
-    await expect(learnerRevision(learner.id)).resolves.toBe(0n);
-    await expect(learnerRevision(owner.id)).resolves.toBe(0n);
   });
 });
 
@@ -410,7 +333,7 @@ describe("memory and answer transaction lock order", () => {
       ]);
 
       // Each batch asks for the other value: its first save changes it, the rest find it already
-      // so and roll their revision back, all still taking the revision lock first.
+      // so and roll their marks back, all still taking the learner's lock first.
       const saveMemory = (batch: number) =>
         kind === "settings"
           ? updateMemorySettings({ enabled: batch % 2 === 1 })
@@ -450,8 +373,6 @@ describe("memory and answer transaction lock order", () => {
       }
 
       // One per answer, and one per batch of memory saves.
-      const batches = BigInt(Math.ceil(TOTAL_PAIRS / CONCURRENT_PAIRS));
-      await expect(learnerRevision(user.id)).resolves.toBe(BigInt(TOTAL_PAIRS) + batches);
 
       await expect(
         prisma.plan.findUniqueOrThrow({ where: { id: plan.id } }),
@@ -557,7 +478,6 @@ describe(undoMemoryChanges, () => {
 
     const memory = await getCurrentUserMemory();
     expect(memory?.facts.map((fact) => fact.statement)).toStrictEqual(["Wants Medicine"]);
-    await expect(learnerRevision(user.id)).resolves.toBe(1n);
   });
 
   it("undoes nothing when one change can't be undone anymore", async () => {
@@ -580,12 +500,11 @@ describe(undoMemoryChanges, () => {
 
     const untouched = await prisma.memoryFact.findUniqueOrThrow({ where: { id: added.id } });
     expect(untouched.status).toBe("active");
-    await expect(learnerRevision(user.id)).resolves.toBe(0n);
     expect(revalidateTag).not.toHaveBeenCalled();
   });
 
   it("never touches another learner's facts", async () => {
-    const [owner, learner] = await Promise.all([userFixture(), useLearner()]);
+    const [owner] = await Promise.all([userFixture(), useLearner()]);
     const theirs = await memoryFactFixture({ userId: owner.id });
 
     await expect(
@@ -594,8 +513,6 @@ describe(undoMemoryChanges, () => {
 
     const untouched = await prisma.memoryFact.findUniqueOrThrow({ where: { id: theirs.id } });
     expect(untouched.status).toBe("active");
-    await expect(learnerRevision(owner.id)).resolves.toBe(0n);
-    await expect(learnerRevision(learner.id)).resolves.toBe(0n);
     expect(revalidateTag).not.toHaveBeenCalled();
   });
 
@@ -615,36 +532,13 @@ describe(undoMemoryChanges, () => {
       }),
     ).resolves.toMatchObject({ status: "undone" });
 
-    await expect(learnerRevision(guest.id)).resolves.toBe(1n);
-
     await expect(
       prisma.memoryFact.count({ where: { status: "deleted", userId: guest.id } }),
     ).resolves.toBe(2);
   });
 
-  it("leaves facts untouched when the undo revision cannot advance", async () => {
-    const user = await useLearner();
-    const fact = await memoryFactFixture({ userId: user.id });
-
-    await prisma.user.update({
-      data: { learnerRevision: MAX_LEARNER_REVISION },
-      where: { id: user.id },
-    });
-
-    await expect(
-      undoMemoryChanges({ changes: [{ factId: fact.id, previousFactId: null }] }),
-    ).rejects.toThrow("bigint out of range");
-
-    await expect(
-      prisma.memoryFact.findUniqueOrThrow({ where: { id: fact.id } }),
-    ).resolves.toMatchObject({ deletedAt: null, status: "active" });
-
-    await expect(learnerRevision(user.id)).resolves.toBe(MAX_LEARNER_REVISION);
-    expect(revalidateTag).not.toHaveBeenCalled();
-  });
-
   it("does not bump an empty undo or an unauthenticated attempt", async () => {
-    const user = await useLearner();
+    await useLearner();
 
     await expect(undoMemoryChanges({ changes: [] })).resolves.toStrictEqual({
       removedFactIds: [],
@@ -657,8 +551,6 @@ describe(undoMemoryChanges, () => {
     await expect(undoMemoryChanges({ changes: [] })).resolves.toStrictEqual({
       status: "unauthorized",
     });
-
-    await expect(learnerRevision(user.id)).resolves.toBe(0n);
   });
 });
 

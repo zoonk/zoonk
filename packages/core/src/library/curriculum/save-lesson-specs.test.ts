@@ -10,7 +10,7 @@ import {
 } from "@zoonk/testing/fixtures/library-lessons";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { readLearnerRevision, waitForBlockedStatement } from "../../_test-utils/learner-revision";
+import { waitForBlockedStatement } from "../../_test-utils/learner-lock";
 import { claimLibraryGeneration } from "../claims/generation-claim";
 import { mockDecision, mockSearchTerms, uniqueWord } from "../identity/_test-utils/identity-mocks";
 import { temperatureSpec } from "../quality/_test-utils/written-lessons";
@@ -200,7 +200,6 @@ describe(saveLessonSpecs, () => {
     const goal = await goalFixture({ userId: user.id });
     const plan = await planFixture({ goalId: goal.id });
     await planItemFixture({ lessonId: first.id, planId: plan.id });
-    const revision = await readLearnerRevision(user.id);
     const held = Promise.withResolvers<number>();
     const released = Promise.withResolvers<null>();
 
@@ -237,7 +236,5 @@ describe(saveLessonSpecs, () => {
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
       inputVersion: plan.inputVersion,
     });
-
-    await expect(readLearnerRevision(user.id)).resolves.toBe(revision);
   });
 });

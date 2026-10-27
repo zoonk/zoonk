@@ -5,7 +5,7 @@ import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixture
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
-import { waitForBlockedStatement } from "../../../_test-utils/learner-revision";
+import { waitForBlockedStatement } from "../../../_test-utils/learner-lock";
 import { mockSession } from "../../../_test-utils/mock-session";
 import { learnerGoalFixture } from "../../../learner/_test-utils/learner-goal";
 import { lessonRunFixture } from "../../../lesson-player/_test-utils/lesson-run-fixture";

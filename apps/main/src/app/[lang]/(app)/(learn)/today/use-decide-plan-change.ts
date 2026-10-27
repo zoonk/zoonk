@@ -32,14 +32,14 @@ export function useDecidePlanChange(today: TodayView) {
 
       const change = today.planChange;
 
-      if (change?.id !== null || status !== "seen") {
+      if (change?.id !== null || status !== "seen" || !today.noticeBasis) {
         return null;
       }
 
       const result = await acknowledgeTodayPlanChangeAction({
+        basis: today.noticeBasis,
         goalId: today.goal.id,
         kind: "computed",
-        revision: today.revision,
         shownDate: toStudyDayDate(today.session.localDate),
         timeZone: getLocalTimeZone(),
       });

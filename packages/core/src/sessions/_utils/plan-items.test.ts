@@ -5,7 +5,7 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it } from "vitest";
-import { waitForBlockedStatement } from "../../_test-utils/learner-revision";
+import { waitForBlockedStatement } from "../../_test-utils/learner-lock";
 import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
 import { planSummarySchema } from "../../plans/_utils/plan-summary";
 import { completeLessonPlanItems, completePlanItem } from "./plan-items";

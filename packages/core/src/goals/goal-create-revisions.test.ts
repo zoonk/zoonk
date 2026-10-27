@@ -29,13 +29,9 @@ async function setup() {
   return { goal, plan, user };
 }
 
-async function versions({ plan, user }: Awaited<ReturnType<typeof setup>>) {
-  const [saved, actor] = await Promise.all([
-    prisma.plan.findUniqueOrThrow({ where: { id: plan.id } }),
-    prisma.user.findUniqueOrThrow({ where: { id: user.id } }),
-  ]);
-
-  return { inputVersion: saved.inputVersion, learnerRevision: actor.learnerRevision };
+async function versions({ plan }: Awaited<ReturnType<typeof setup>>) {
+  const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+  return { inputVersion: saved.inputVersion };
 }
 
 async function createReplacement(day: Awaited<ReturnType<typeof setup>>, goalDraft = draft()) {
@@ -51,7 +47,7 @@ async function createReplacement(day: Awaited<ReturnType<typeof setup>>, goalDra
   return result.goals[0];
 }
 
-describe("new goal revision boundaries", () => {
+describe("new goal plan marks", () => {
   it("marks creation and the real active-goal switch in their owning transactions", async () => {
     const day = await setup();
     const before = await versions(day);
@@ -65,10 +61,7 @@ describe("new goal revision boundaries", () => {
       prisma.userLearningProfile.findUniqueOrThrow({ where: { userId: day.user.id } }),
     ).resolves.toMatchObject({ activeGoalId: created.id });
 
-    await expect(versions(day)).resolves.toStrictEqual({
-      inputVersion: before.inputVersion + 2,
-      learnerRevision: before.learnerRevision + 2n,
-    });
+    await expect(versions(day)).resolves.toStrictEqual({ inputVersion: before.inputVersion + 2 });
 
     await expect(
       prisma.plan.findUniqueOrThrow({ where: { goalId: created.id } }),
@@ -86,10 +79,7 @@ describe("new goal revision boundaries", () => {
       prisma.userLearningProfile.findUniqueOrThrow({ where: { userId: day.user.id } }),
     ).resolves.toMatchObject({ activeGoalId: day.goal.id });
 
-    await expect(versions(day)).resolves.toStrictEqual({
-      inputVersion: before.inputVersion + 1,
-      learnerRevision: before.learnerRevision + 1n,
-    });
+    await expect(versions(day)).resolves.toStrictEqual({ inputVersion: before.inputVersion + 1 });
 
     await expect(
       prisma.plan.findUniqueOrThrow({ where: { goalId: created.id } }),

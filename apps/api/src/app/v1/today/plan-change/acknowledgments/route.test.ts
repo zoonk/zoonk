@@ -43,9 +43,9 @@ describe("POST /v1/today/plan-change/acknowledgments", () => {
     expect(read.today.planChange?.id).toBeNull();
 
     const input = {
+      basis: read.today.noticeBasis,
       goalId: fixture.goal.id,
       kind: "computed",
-      revision: read.today.revision,
       shownDate: "2026-10-14",
       timeZone: "UTC",
     };
@@ -53,7 +53,6 @@ describe("POST /v1/today/plan-change/acknowledgments", () => {
     const response = await acknowledge(input);
     expect(response.status).toBe(200);
     const result = acknowledgedTodayPlanChangeSchema.parse(await response.json());
-    expect(result.userId).toBe(fixture.user.id);
     const saved = await prisma.planChange.findUniqueOrThrow({ where: { id: result.changeId } });
     expect(saved).toMatchObject({ kind: "missedDays", planId: fixture.plan.id, status: "applied" });
 
@@ -93,9 +92,9 @@ describe("POST /v1/today/plan-change/acknowledgments", () => {
 
     const result = await countDatabaseStatements(() =>
       acknowledge({
+        basis: { inputVersion: fixture.plan.inputVersion, version: fixture.plan.version },
         goalId: fixture.goal.id,
         kind: "computed",
-        revision: "0",
         shownDate: "2026-10-14",
         timeZone: "UTC",
       }),

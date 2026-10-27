@@ -23,15 +23,11 @@ async function setup() {
 }
 
 async function stamp(userId: string, planId: string) {
-  const [user, plan] = await Promise.all([
-    prisma.user.findUniqueOrThrow({ where: { id: userId } }),
-    prisma.plan.findUniqueOrThrow({ where: { id: planId } }),
-  ]);
-
-  return { inputVersion: plan.inputVersion, revision: user.learnerRevision };
+  const plan = await prisma.plan.findUniqueOrThrow({ where: { id: planId } });
+  return { inputVersion: plan.inputVersion };
 }
 
-describe("background goal revision markers", () => {
+describe("background goal plan marks", () => {
   it("marks the generation run and cleared failure once, without changing planning inputs", async () => {
     const { goal, plan, user } = await setup();
     await prisma.plan.update({ data: { buildFailedAt: new Date() }, where: { id: plan.id } });
@@ -39,10 +35,7 @@ describe("background goal revision markers", () => {
     const input = { generationId: randomUUID(), goalId: goal.id };
     await Promise.all([recordGoalGeneration(input), recordGoalGeneration(input)]);
 
-    await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({
-      ...before,
-      revision: before.revision + 1n,
-    });
+    await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({ ...before });
 
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
       buildFailedAt: null,
@@ -50,10 +43,7 @@ describe("background goal revision markers", () => {
 
     await recordGoalGeneration({ ...input, goalId: randomUUID() });
 
-    await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({
-      ...before,
-      revision: before.revision + 1n,
-    });
+    await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({ ...before });
   });
 
   it("marks a build failure once and leaves a missing goal alone", async () => {
@@ -61,10 +51,7 @@ describe("background goal revision markers", () => {
     const before = await stamp(user.id, plan.id);
     await Promise.all([recordGoalBuildFailure(goal.id), recordGoalBuildFailure(goal.id)]);
 
-    await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({
-      ...before,
-      revision: before.revision + 1n,
-    });
+    await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({ ...before });
 
     await recordGoalBuildFailure(randomUUID());
   });
@@ -85,7 +72,6 @@ describe("background goal revision markers", () => {
 
     await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({
       inputVersion: before.inputVersion + 1,
-      revision: before.revision + 1n,
     });
 
     const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
@@ -103,14 +89,12 @@ describe("background goal revision markers", () => {
 
     await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({
       inputVersion: before.inputVersion + 1,
-      revision: before.revision + 1n,
     });
 
     await Promise.all([unlinkGoalFromSharedExam(goal.id), unlinkGoalFromSharedExam(goal.id)]);
 
     await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({
       inputVersion: before.inputVersion + 2,
-      revision: before.revision + 2n,
     });
 
     const own = await examBlueprintFixture({ ownerId: user.id, visibility: "private" });
@@ -119,7 +103,6 @@ describe("background goal revision markers", () => {
 
     await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({
       inputVersion: before.inputVersion + 2,
-      revision: before.revision + 2n,
     });
 
     await expect(
@@ -153,10 +136,7 @@ describe("background goal revision markers", () => {
 
     await Promise.all([recordGoalNoticeFormats(request), recordGoalNoticeFormats(request)]);
 
-    await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({
-      ...before,
-      revision: before.revision + 1n,
-    });
+    await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({ ...before });
 
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
       version: plan.version,
@@ -168,17 +148,11 @@ describe("background goal revision markers", () => {
 
     await recordGoalNoticeFormats(request);
 
-    await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({
-      ...before,
-      revision: before.revision + 1n,
-    });
+    await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({ ...before });
 
     await recordGoalNoticeFormats({ ...request, formats: [] });
 
-    await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({
-      ...before,
-      revision: before.revision + 1n,
-    });
+    await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({ ...before });
 
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
       version: plan.version,
@@ -195,35 +169,23 @@ describe("background goal revision markers", () => {
       startNoticeWait({ goalId: goal.id, now }),
     ]);
 
-    await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({
-      ...before,
-      revision: before.revision + 1n,
-    });
+    await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({ ...before });
 
     const landing = { goalId: goal.id, now: new Date(now.getTime() + 120_000) };
     await expect(claimNoticeLanding(landing)).resolves.toBe(true);
     await expect(claimNoticeLanding(landing)).resolves.toBe(true);
 
-    await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({
-      ...before,
-      revision: before.revision + 2n,
-    });
+    await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({ ...before });
 
     await expect(
       claimNoticeLanding({ goalId: goal.id, now: new Date(now.getTime() + 600_000) }),
     ).resolves.toBe(false);
 
-    await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({
-      ...before,
-      revision: before.revision + 2n,
-    });
+    await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({ ...before });
 
     await Promise.all([endNoticeWait(goal.id), endNoticeWait(goal.id)]);
 
-    await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({
-      ...before,
-      revision: before.revision + 3n,
-    });
+    await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({ ...before });
   });
 
   it("marks today's kept-session stamp once while queue attempts mark freshness", async () => {
@@ -263,10 +225,7 @@ describe("background goal revision markers", () => {
       }),
     ).resolves.toStrictEqual(queue);
 
-    await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({
-      ...before,
-      revision: before.revision + 2n,
-    });
+    await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({ ...before });
 
     await followPlanToday({ changeId: change.id, context });
 
@@ -277,10 +236,7 @@ describe("background goal revision markers", () => {
       }),
     ).resolves.toStrictEqual(queue);
 
-    await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({
-      ...before,
-      revision: before.revision + 3n,
-    });
+    await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({ ...before });
 
     await expect(
       prisma.planChange.findUniqueOrThrow({ where: { id: change.id } }),
@@ -349,7 +305,6 @@ describe("background goal revision markers", () => {
 
     await expect(stamp(user.id, plan.id)).resolves.toStrictEqual({
       inputVersion: plan.inputVersion,
-      revision: user.learnerRevision + 1n,
     });
   });
 });

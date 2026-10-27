@@ -28,7 +28,6 @@ import { ac, admin, member, owner } from "./permissions";
 import { accessGuardsPlugin } from "./plugins/access-guards";
 import { botCheckPlugin } from "./plugins/bot-check";
 import { guestPlugin } from "./plugins/guest";
-import { learnerIdentityPlugin } from "./plugins/learner-identity";
 import { sessionHintPlugin } from "./plugins/session-hint";
 import { trustedOriginPlugin } from "./plugins/trusted-origin";
 import { nameProviderAccount } from "./provider-username";
@@ -76,7 +75,6 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
 
 export const baseAuthPlugins = [
   adminPlugin(),
-  learnerIdentityPlugin(),
   username({
     maxUsernameLength: USERNAME_MAX_LENGTH,
     minUsernameLength: USERNAME_MIN_LENGTH,

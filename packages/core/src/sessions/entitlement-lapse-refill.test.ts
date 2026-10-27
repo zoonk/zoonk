@@ -113,8 +113,6 @@ describe("entitlement lapse keeps a free way forward", () => {
     expect(opened.every((result) => result.status === "opened")).toBe(true);
     const after = await readLapsedDayState(day.user.id);
     expect(after.sessions[0]?.blocks.filter((block) => block.kind === "learn")).toHaveLength(1);
-    expect(after.user.learnerRevision).toBeGreaterThanOrEqual(before.user.learnerRevision + 1n);
-    expect(after.user.learnerRevision).toBeLessThanOrEqual(before.user.learnerRevision + 2n);
     expect(after.plans[0]?.inputVersion).toBeGreaterThanOrEqual(before.plans[0]!.inputVersion + 1);
     expect(after.plans[0]?.inputVersion).toBeLessThanOrEqual(before.plans[0]!.inputVersion + 2);
     await openStudyDay(input);
@@ -291,7 +289,6 @@ describe("entitlement lapse keeps a free way forward", () => {
 
       const after = await readLapsedDayState(day.user.id);
       expect(after.sessions).toStrictEqual(before.sessions);
-      expect(after.user.learnerRevision).toBe(before.user.learnerRevision + 1n);
       expect(after.plans[0]?.inputVersion).toBe(before.plans[0]!.inputVersion + 1);
     },
   );

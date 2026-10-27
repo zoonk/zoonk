@@ -673,7 +673,7 @@ describe(proposeNoticeChange, () => {
   });
 
   it("marks replacement of obsolete waiting notices once, with no planning-input bump", async () => {
-    const { goal, user } = await plannedExam({
+    const { goal } = await plannedExam({
       days: ["2020-11-08"],
       targetDate: "2020-11-08",
       year: 2020,
@@ -687,14 +687,11 @@ describe(proposeNoticeChange, () => {
       status: "proposed",
     });
 
-    const before = await readRevision(user.id);
-
     await Promise.all([
       proposeNoticeChange({ goalId: goal.id }),
       proposeNoticeChange({ goalId: goal.id }),
     ]);
 
-    await expect(readRevision(user.id)).resolves.toBe(before + 1n);
     await expect(readInputVersion(plan.id)).resolves.toBe(plan.inputVersion);
 
     await expect(
@@ -702,11 +699,6 @@ describe(proposeNoticeChange, () => {
     ).resolves.toMatchObject({ status: "replaced" });
   });
 });
-
-async function readRevision(userId: string) {
-  const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
-  return user.learnerRevision;
-}
 
 async function readInputVersion(planId: string) {
   const plan = await prisma.plan.findUniqueOrThrow({ where: { id: planId } });

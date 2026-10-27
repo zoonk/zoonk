@@ -27,18 +27,15 @@ function daysAgo(milliseconds: number) {
   return new Date(Date.now() - milliseconds);
 }
 
-/** The account's revision and the input versions of the plans these goals have. */
-async function readMarks({ goalIds, userId }: { goalIds: string[]; userId: string }) {
-  const [user, plans] = await Promise.all([
-    prisma.user.findUniqueOrThrow({ select: { learnerRevision: true }, where: { id: userId } }),
-    prisma.plan.findMany({
-      orderBy: { goalId: "asc" },
-      select: { goalId: true, inputVersion: true },
-      where: { goalId: { in: goalIds } },
-    }),
-  ]);
+/** The input versions of the plans these goals have. */
+async function readMarks({ goalIds }: { goalIds: string[] }) {
+  const plans = await prisma.plan.findMany({
+    orderBy: { goalId: "asc" },
+    select: { goalId: true, inputVersion: true },
+    where: { goalId: { in: goalIds } },
+  });
 
-  return { learnerRevision: user.learnerRevision, plans };
+  return { plans };
 }
 
 /** An account and a guest, each following a goal with a plan. */
@@ -217,14 +214,13 @@ describe("guest accounts", () => {
     await expect(prisma.user.findUnique({ where: { id: guest.guestId } })).resolves.toBeNull();
   });
 
-  it("marks the account and every plan the guest's learning feeds as changed", async () => {
+  it("marks every plan the guest's learning feeds as changed", async () => {
     const { account, goalIds, guest } = await createLearnersWithPlans();
-    const before = await readMarks({ goalIds, userId: account.userId });
+    const before = await readMarks({ goalIds });
 
     await signInWithPassword({ email: account.email, headers: guest.headers });
 
-    await expect(readMarks({ goalIds, userId: account.userId })).resolves.toStrictEqual({
-      learnerRevision: before.learnerRevision + 1n,
+    await expect(readMarks({ goalIds })).resolves.toStrictEqual({
       plans: before.plans.map((plan) => ({ ...plan, inputVersion: plan.inputVersion + 1 })),
     });
   });
@@ -232,11 +228,11 @@ describe("guest accounts", () => {
   it("changes nothing when another sign-in already moved the guest", async () => {
     const { account, goalIds, guest } = await createLearnersWithPlans();
     await signInWithPassword({ email: account.email, headers: guest.headers });
-    const linked = await readMarks({ goalIds, userId: account.userId });
+    const linked = await readMarks({ goalIds });
 
     await linkGuestAccount({ account: { id: account.userId }, guestUserId: guest.guestId });
 
-    await expect(readMarks({ goalIds, userId: account.userId })).resolves.toStrictEqual(linked);
+    await expect(readMarks({ goalIds })).resolves.toStrictEqual(linked);
   });
 
   it("marks the account before it takes any lock of its own rows", async () => {
@@ -288,7 +284,7 @@ describe("guest accounts", () => {
     const goals = await Promise.all(guests.map((guest) => createGoal(guest.guestId)));
     const goalIds = goals.map((goal) => goal.id);
     await Promise.all(goalIds.map((goalId) => prisma.plan.create({ data: { goalId } })));
-    const before = await readMarks({ goalIds, userId: account.userId });
+    const before = await readMarks({ goalIds });
 
     // A writer holds the account, so both links read their plans before either moves its own.
     const writing = await holdTransaction(
@@ -308,11 +304,9 @@ describe("guest accounts", () => {
 
     await writing.held;
     await linking;
-    const after = await readMarks({ goalIds, userId: account.userId });
+    const after = await readMarks({ goalIds });
 
     // The first link's plan is marked again by the second, which merges into it too.
-    expect(after.learnerRevision).toBe(before.learnerRevision + 2n);
-
     expect(
       after.plans
         .map((plan, index) => plan.inputVersion - (before.plans[index]?.inputVersion ?? 0))

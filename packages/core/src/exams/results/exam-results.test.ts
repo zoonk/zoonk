@@ -104,8 +104,6 @@ describe("how did it go", () => {
     const { goal, user } = await examGoal();
     const input = { maxScore: null, passed: true, scale: "irt" as const, score: 702 };
 
-    const revisionBefore = await readRevision(user.id);
-
     vi.setSystemTime(new Date("2026-11-01T12:00:00Z"));
     await irtMock({ goalId: goal.id, theta: 1.6, userId: user.id });
 
@@ -113,7 +111,6 @@ describe("how did it go", () => {
       status: "tooEarly",
     });
 
-    await expect(readRevision(user.id)).resolves.toBe(revisionBefore);
     vi.setSystemTime(new Date("2026-11-20T12:00:00Z"));
 
     await expect(reportExamResult({ goalId: goal.id, input })).resolves.toMatchObject({
@@ -121,9 +118,7 @@ describe("how did it go", () => {
       status: "reported",
     });
 
-    await expect(readRevision(user.id)).resolves.toBe(revisionBefore + 1n);
     await reportExamResult({ goalId: goal.id, input });
-    await expect(readRevision(user.id)).resolves.toBe(revisionBefore + 1n);
     const stored = await prisma.examResult.findUniqueOrThrow({ where: { goalId: goal.id } });
 
     expect(stored).toMatchObject({ examName: "ENEM", mocksTaken: 1, score: 702 });
@@ -290,8 +285,3 @@ describe("how did it go", () => {
     ).resolves.toStrictEqual({ status: "notExam" });
   });
 });
-
-async function readRevision(userId: string) {
-  const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
-  return user.learnerRevision;
-}

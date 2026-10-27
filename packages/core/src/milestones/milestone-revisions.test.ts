@@ -15,17 +15,13 @@ async function setup() {
   return { plan, user };
 }
 
-async function versions({ plan, user }: Awaited<ReturnType<typeof setup>>) {
-  const [saved, actor] = await Promise.all([
-    prisma.plan.findUniqueOrThrow({ where: { id: plan.id } }),
-    prisma.user.findUniqueOrThrow({ where: { id: user.id } }),
-  ]);
-
-  return { inputVersion: saved.inputVersion, learnerRevision: actor.learnerRevision };
+async function versions({ plan }: Awaited<ReturnType<typeof setup>>) {
+  const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+  return { inputVersion: saved.inputVersion };
 }
 
-describe("milestone writes publish the actor's visible revision", () => {
-  it("concurrent awards commit once and a replay adds no revision", async () => {
+describe("milestone writes", () => {
+  it("concurrent awards commit once and a replay writes nothing", async () => {
     const day = await setup();
     const before = await versions(day);
 
@@ -40,13 +36,13 @@ describe("milestone writes publish the actor's visible revision", () => {
       "buddyStage:young",
     ]);
 
-    const changed = { ...before, learnerRevision: before.learnerRevision + 1n };
+    const changed = { ...before };
     await expect(versions(day)).resolves.toStrictEqual(changed);
     await expect(award()).resolves.toStrictEqual([]);
     await expect(versions(day)).resolves.toStrictEqual(changed);
   });
 
-  it("concurrent ceremony acknowledgements keep one timestamp and revision without invalidating", async () => {
+  it("concurrent ceremony acknowledgements keep one timestamp without invalidating", async () => {
     const day = await setup();
     const row = await milestoneFixture({ key: "young", kind: "buddyStage", userId: day.user.id });
     const before = await versions(day);
@@ -57,7 +53,7 @@ describe("milestone writes publish the actor's visible revision", () => {
 
     const shown = await prisma.milestone.findUniqueOrThrow({ where: { id: row.id } });
     expect(shown.shownAt).toBeInstanceOf(Date);
-    const changed = { ...before, learnerRevision: before.learnerRevision + 1n };
+    const changed = { ...before };
     await expect(versions(day)).resolves.toStrictEqual(changed);
     expect(revalidateTag).not.toHaveBeenCalled();
 

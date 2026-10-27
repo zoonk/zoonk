@@ -10,7 +10,7 @@ import { type SelectedDayPlan } from "./selected-day-plan";
 import { isSelectedPlanCurrent } from "./selected-plan-current";
 import { type SessionDayContext } from "./session-placement";
 
-/** A duplicate open and an input race roll back their early revision, not just their domain rows. */
+/** A duplicate open and an input race roll back their early marks, not just their domain rows. */
 class StudyDayUnchangedError extends Error {
   override name = "StudyDayUnchangedError";
   readonly status: "exists" | "stale";

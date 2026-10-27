@@ -79,8 +79,7 @@ describe(findCourseWeightsLookup, () => {
 
     const otherGoal = await goalFixture({ userId: goal.userId });
 
-    const [revisionBefore, plan, otherPlan] = await Promise.all([
-      readRevision(goal.userId),
+    const [plan, otherPlan] = await Promise.all([
       planFixture({ goalId: goal.id }),
       planFixture({ goalId: otherGoal.id }),
     ]);
@@ -89,7 +88,6 @@ describe(findCourseWeightsLookup, () => {
       prisma.plan.findUniqueOrThrow({ select: { inputVersion: true }, where: { id: planId } });
 
     await recordCourseWeights({ finding: FOUND, goalId: goal.id, lookup, provenance });
-    await expect(readRevision(goal.userId)).resolves.toBe(revisionBefore + 1n);
 
     await expect(readPlan()).resolves.toStrictEqual({ inputVersion: plan.inputVersion + 1 });
 
@@ -102,7 +100,6 @@ describe(findCourseWeightsLookup, () => {
       copyStoredCourseWeights({ goalId: goal.id, lookup }),
     ]);
 
-    await expect(readRevision(goal.userId)).resolves.toBe(revisionBefore + 1n);
     await expect(readPlan()).resolves.toMatchObject({ inputVersion: plan.inputVersion + 1 });
 
     const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
@@ -254,8 +251,3 @@ describe(copyStoredCourseWeights, () => {
     ]);
   });
 });
-
-async function readRevision(userId: string) {
-  const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
-  return user.learnerRevision;
-}

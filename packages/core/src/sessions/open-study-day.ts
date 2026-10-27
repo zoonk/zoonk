@@ -68,17 +68,7 @@ export async function openStudyDay(input: OpenStudyDayInput): Promise<OpenStudyD
         })
       : null;
 
-  const viewer = await prisma.user.findUniqueOrThrow({
-    select: { learnerRevision: true },
-    where: { id: userId },
-  });
-
-  const binding = {
-    actorId: userId,
-    goalId: goal.id,
-    localDate,
-    revision: String(viewer.learnerRevision),
-  };
+  const binding = { goalId: goal.id, localDate };
 
   if (opened.status !== "opened" || !session) {
     return opened.status === "preparing"

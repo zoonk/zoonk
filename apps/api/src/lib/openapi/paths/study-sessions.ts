@@ -68,7 +68,7 @@ export const studySessionPaths = {
         "409": {
           ...conflictResponse,
           description:
-            "The day is empty (NOTHING_TO_OPEN), the goal is inactive (GOAL_NOT_ACTIVE), the plan is not ready (PLAN_NOT_READY), or an input race requires one separate-request retry (STUDY_DAY_RETRYABLE). Empty and retryable outcomes retain actorId, goalId, localDate and revision in error details. Never retry by rebuilding within the same request.",
+            "The day is empty (NOTHING_TO_OPEN), the goal is inactive (GOAL_NOT_ACTIVE), the plan is not ready (PLAN_NOT_READY), or an input race requires one separate-request retry (STUDY_DAY_RETRYABLE). Empty and retryable outcomes retain goalId and localDate in error details. Never retry by rebuilding within the same request.",
         },
       },
       security: AUTHENTICATED_SECURITY,

@@ -58,7 +58,7 @@ function getProfileData(input: LearningProfileUpdateInput) {
 
 type ProfileData = ReturnType<typeof getProfileData>;
 
-/** Unsaved defaults are a view, not a reason to create a row or change a revision. */
+/** Unsaved defaults are a view, not a reason to create a row or mark plan inputs. */
 const UNSAVED_PROFILE = {
   activeGoalId: null,
   buddyGlasses: DEFAULT_BUDDY.glasses,

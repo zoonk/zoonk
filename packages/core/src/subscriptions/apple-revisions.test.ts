@@ -3,7 +3,11 @@ import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
-import { holdLearnerRevision, waitForBlockedStatement } from "../_test-utils/learner-revision";
+import {
+  LEARNER_LOCK,
+  holdLearnerLock,
+  waitForBlockedStatement,
+} from "../_test-utils/learner-lock";
 import { type VerifiedAppleSubscription } from "./apple-store-payload";
 import { reconcileAppleSubscription } from "./reconcile-apple-subscription";
 
@@ -35,16 +39,12 @@ async function learner() {
   return { plan, user };
 }
 
-async function versions({ planId, userId }: { planId: string; userId: string }) {
-  const [plan, user] = await Promise.all([
-    prisma.plan.findUniqueOrThrow({ where: { id: planId } }),
-    prisma.user.findUniqueOrThrow({ where: { id: userId } }),
-  ]);
-
-  return { inputs: plan.inputVersion, revision: user.learnerRevision };
+async function versions({ planId }: { planId: string; userId: string }) {
+  const plan = await prisma.plan.findUniqueOrThrow({ where: { id: planId } });
+  return { inputs: plan.inputVersion };
 }
 
-describe("Apple entitlement writer revisions", () => {
+describe("Apple entitlement writes", () => {
   it("marks a new entitlement and a renewal once, leaving replays and stale events unchanged", async () => {
     const { plan, user } = await learner();
     const state = verified(user.id);
@@ -56,7 +56,6 @@ describe("Apple entitlement writer revisions", () => {
 
     await expect(versions({ planId: plan.id, userId: user.id })).resolves.toStrictEqual({
       inputs: before.inputs + 1,
-      revision: before.revision + 1n,
     });
 
     await reconcileAppleSubscription({
@@ -73,7 +72,6 @@ describe("Apple entitlement writer revisions", () => {
 
     await expect(versions({ planId: plan.id, userId: user.id })).resolves.toStrictEqual({
       inputs: before.inputs + 2,
-      revision: before.revision + 2n,
     });
   });
 
@@ -96,14 +94,13 @@ describe("Apple entitlement writer revisions", () => {
 
     await expect(versions({ planId: plan.id, userId: user.id })).resolves.toStrictEqual({
       inputs: before.inputs + 1,
-      revision: before.revision + 1n,
     });
   });
 
   it("marks before inserting the subscription", async () => {
     const { plan, user } = await learner();
     const state = verified(user.id);
-    const holder = holdLearnerRevision({ userId: user.id });
+    const holder = holdLearnerLock({ userId: user.id });
     const pid = await holder.pid;
 
     const writing = reconcileAppleSubscription({
@@ -113,7 +110,7 @@ describe("Apple entitlement writer revisions", () => {
     });
 
     try {
-      await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u);
+      await waitForBlockedStatement(pid, LEARNER_LOCK);
 
       await expect(
         prisma.subscription.count({
@@ -126,9 +123,7 @@ describe("Apple entitlement writer revisions", () => {
       await writing;
     }
 
-    await expect(versions({ planId: plan.id, userId: user.id })).resolves.toMatchObject({
-      revision: 2n,
-    });
+    await expect(versions({ planId: plan.id, userId: user.id })).resolves.toMatchObject({});
   });
 
   it("rolls back the refused owner's mark when a subscription belongs to another account", async () => {

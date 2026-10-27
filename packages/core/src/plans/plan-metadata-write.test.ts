@@ -13,7 +13,7 @@ async function setup() {
 
 describe("plan metadata uses the same transactional version guard", () => {
   it("marks the affected plan and owner once before saving its proposal", async () => {
-    const { plan, user } = await setup();
+    const { plan } = await setup();
 
     const created = await writePlanMetadata({
       plan,
@@ -28,16 +28,12 @@ describe("plan metadata uses the same transactional version guard", () => {
       version: plan.version,
     });
 
-    await expect(prisma.user.findUniqueOrThrow({ where: { id: user.id } })).resolves.toMatchObject({
-      learnerRevision: user.learnerRevision + 1n,
-    });
-
     await expect(
       prisma.planChange.findUnique({ where: { id: created.id } }),
     ).resolves.toMatchObject({ planId: plan.id, status: "proposed" });
   });
 
-  it("a stale proposal rolls back its revision mark and writes nothing", async () => {
+  it("a stale proposal rolls back its marks and writes nothing", async () => {
     const { plan, user } = await setup();
 
     await writePlanMetadata({

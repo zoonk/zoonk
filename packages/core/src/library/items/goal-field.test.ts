@@ -44,12 +44,8 @@ describe(resolveGoalField, () => {
     const goal = await goalWith({ purpose: "work", role: "Enfermeira de UTI", tasks: "Escalas" });
     mockField("nursing");
 
-    const revisionBefore = await readRevision(goal.userId);
-
     await expect(resolveGoalField({ goalId: goal.id })).resolves.toBe("nursing");
     await expect(resolveGoalField({ goalId: goal.id })).resolves.toBe("nursing");
-
-    await expect(readRevision(goal.userId)).resolves.toBe(revisionBefore + 1n);
 
     expect(classifyWorkField).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
@@ -147,8 +143,3 @@ describe(resolveGoalField, () => {
     expect(classifyWorkField).not.toHaveBeenCalled();
   });
 });
-
-async function readRevision(userId: string) {
-  const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
-  return user.learnerRevision;
-}

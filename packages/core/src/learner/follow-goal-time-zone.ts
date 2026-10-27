@@ -12,8 +12,7 @@ import { findOwnedGoal, getAnswerTimeZone } from "./_utils/owned-goal";
 const MAX_FOLLOW_ATTEMPTS = 2;
 
 export type FollowGoalTimeZoneResult =
-  | { learnerRevision: string; moved: true; status: "ready" }
-  | { moved: false; status: "ready" }
+  | { moved: boolean; status: "ready" }
   | { status: "notFound" }
   | { status: "unauthorized" };
 
@@ -21,9 +20,7 @@ export type FollowGoalTimeZoneResult =
  * A goal's zone move once written, or `unchanged` when the goal can't move (the learner studied
  * today, the zone isn't one, or it's already the goal's), before anything is written.
  */
-type GoalTimeZoneMove =
-  | { kind: "moved"; learnerRevision: bigint; planInputsChanged: boolean }
-  | { kind: "unchanged" };
+type GoalTimeZoneMove = { kind: "moved"; planInputsChanged: boolean } | { kind: "unchanged" };
 
 /**
  * Why a move found nothing to do once it held the learner's lock: the learner studied while it
@@ -35,7 +32,7 @@ type TimeZoneUnchangedReason = "dayChanged" | "studied" | "zoneChanged";
 
 /**
  * The move can't happen after all, found once it held the learner's lock: thrown so the caller's
- * transaction rolls back the revision it already raised. A caller tells it from a real failure with
+ * transaction rolls back the plan inputs it already marked. A caller tells it from a real failure with
  * `isTimeZoneUnchanged` and reads its `reason`; anything else thrown is an infrastructure failure,
  * never retried as this.
  */
@@ -86,13 +83,13 @@ async function readGoalZone(
 
 /**
  * Moves a goal from `fromZone` (the zone the caller read) to `toZone` inside the caller's
- * transaction, when `canMoveGoalTimeZone` allows it: the plans' inputs and learner's revision
+ * transaction, when `canMoveGoalTimeZone` allows it: the plans' inputs and the learner's lock
  * first (a zone is an input even while its local date stays the same), then the same checks at the
  * moment it holds the learner's lock (the goal may have moved, an answer or a block start may have
  * committed, or a midnight passed, while it waited), then the zone, set only while it's still
  * `fromZone`. `unchanged` when the goal can't move, having written nothing; when that's only found
  * under the lock, it throws `TimeZoneUnchangedError` instead, so the caller's transaction rolls
- * back (with its early revision). It expires no cache: the caller does, once committed.
+ * back (with its early marks). It expires no cache: the caller does, once committed.
  */
 export async function moveGoalTimeZoneInTransaction(
   tx: TransactionClient,
@@ -113,7 +110,7 @@ export async function moveGoalTimeZoneInTransaction(
 
   const dateChanges = movesTheDate({ goal, now: readAt, toZone });
 
-  const { learnerRevision } = await markLearnerChanged(tx, { planInputs: true, userId });
+  await markLearnerChanged(tx, { planInputs: true, userId });
 
   const lockedAt = new Date();
 
@@ -139,15 +136,15 @@ export async function moveGoalTimeZoneInTransaction(
     throw new TimeZoneUnchangedError("zoneChanged");
   }
 
-  return { kind: "moved", learnerRevision, planInputsChanged: true };
+  return { kind: "moved", planInputsChanged: true };
 }
 
 /**
  * Follows the learner to their device's zone when a screen of the goal opens: a goal without a
  * zone stores it, and a learner who moved takes it while nothing was done yet in the goal's day
  * (see `moveGoalTimeZoneInTransaction`). A move that lost a race to another writer, or to
- * midnight, tries once more from a fresh read of the goal. A move returns the learner's revision,
- * so the screen can read itself again once.
+ * midnight, tries once more from a fresh read of the goal. Says whether the goal moved, so the
+ * screen can read itself again when it did.
  */
 export async function followGoalTimeZone({
   attempt = 1,
@@ -199,5 +196,5 @@ export async function followGoalTimeZone({
   }
 
   revalidateCacheTags([getGoalsCacheTag(userId), getLearnerModelCacheTag(userId)]);
-  return { learnerRevision: String(move.learnerRevision), moved: true, status: "ready" };
+  return { moved: true, status: "ready" };
 }

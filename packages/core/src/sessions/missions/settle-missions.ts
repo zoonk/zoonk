@@ -52,7 +52,7 @@ type MissionSettlement = {
   session: StudySessionRow;
 };
 
-/** No changed mission or reward means the owning transaction must roll back its early revision. */
+/** No changed mission or reward means the owning transaction must roll back its early marks. */
 class MissionsUnchangedError extends Error {
   override name = "MissionsUnchangedError";
   readonly settlement: MissionSettlement;

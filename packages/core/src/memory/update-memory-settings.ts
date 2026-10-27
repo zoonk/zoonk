@@ -23,7 +23,7 @@ export async function updateMemorySettings(
   const userId = session.user.id;
 
   const changed = await writeLearnerChange({ userId }, async (tx) => {
-    // Read under the revision lock, so a concurrent switch can't make this one look unchanged.
+    // Read under the learner's lock, so a concurrent switch can't make this one look unchanged.
     const profile = await tx.userLearningProfile.findUnique({ where: { userId } });
 
     // Memory is on until the learner turns it off; asking for what it already is changes nothing.

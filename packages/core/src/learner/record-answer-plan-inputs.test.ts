@@ -38,20 +38,13 @@ async function setup() {
 }
 
 async function versions(userIds: string[]) {
-  const [users, plans] = await Promise.all([
-    prisma.user.findMany({
-      orderBy: { id: "asc" },
-      select: { id: true, learnerRevision: true },
-      where: { id: { in: userIds } },
-    }),
-    prisma.plan.findMany({
-      orderBy: { id: "asc" },
-      select: { goal: { select: { userId: true } }, id: true, inputVersion: true },
-      where: { goal: { userId: { in: userIds } } },
-    }),
-  ]);
+  const plans = await prisma.plan.findMany({
+    orderBy: { id: "asc" },
+    select: { goal: { select: { userId: true } }, id: true, inputVersion: true },
+    where: { goal: { userId: { in: userIds } } },
+  });
 
-  return { plans, users };
+  return { plans };
 }
 
 describe("answer input freshness", () => {
@@ -69,13 +62,6 @@ describe("answer input freshness", () => {
       const old = before.plans.find((row) => row.id === plan.id)!;
       expect(plan.inputVersion).toBe(old.inputVersion + (plan.goal.userId === user.id ? 1 : 0));
     }
-
-    expect(after.users).toStrictEqual(
-      before.users.map((row) => ({
-        ...row,
-        learnerRevision: row.learnerRevision + (row.id === user.id ? 1n : 0n),
-      })),
-    );
   });
 
   it("counts each concurrent answer once without losing its skill or plan update", async () => {
@@ -92,13 +78,6 @@ describe("answer input freshness", () => {
       expect(plan.inputVersion).toBe(old.inputVersion + (plan.goal.userId === user.id ? 3 : 0));
     }
 
-    expect(after.users).toStrictEqual(
-      before.users.map((row) => ({
-        ...row,
-        learnerRevision: row.learnerRevision + (row.id === user.id ? 3n : 0n),
-      })),
-    );
-
     await expect(
       prisma.learnerSkill.findUniqueOrThrow({
         where: { userSkill: { skillId: skill.id, userId: user.id } },
@@ -106,7 +85,7 @@ describe("answer input freshness", () => {
     ).resolves.toMatchObject({ reps: 3 });
   });
 
-  it("rolls back input and learner revisions when the answer's real item FK fails", async () => {
+  it("rolls back plan inputs when the answer's real item FK fails", async () => {
     const { input, other, user } = await setup();
     const before = await versions([user.id, other.id]);
 
@@ -119,7 +98,7 @@ describe("answer input freshness", () => {
     await expect(prisma.learnerSkill.count({ where: { userId: user.id } })).resolves.toBe(0);
   });
 
-  it("serializes answers with racing lesson starts without deadlock or duplicate revisions", async () => {
+  it("serializes answers with racing lesson starts without deadlock", async () => {
     const { input, other, user } = await setup();
     const lessons = await Promise.all(Array.from({ length: 3 }, () => playableLessonFixture()));
     const before = await versions([user.id, other.id]);
@@ -153,12 +132,6 @@ describe("answer input freshness", () => {
 
     // Per lesson: the answer, the one new run, and the lesson start the allowance counts once (the
     // racing start reuses both). Counting the start doesn't change what plans read.
-    expect(after.users).toStrictEqual(
-      before.users.map((row) => ({
-        ...row,
-        learnerRevision: row.learnerRevision + (row.id === user.id ? 9n : 0n),
-      })),
-    );
 
     await expect(prisma.learningEvent.count({ where: { userId: user.id } })).resolves.toBe(3);
     await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(3);

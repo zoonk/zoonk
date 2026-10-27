@@ -50,7 +50,6 @@ describe("mission recovery belongs to the learner's open POST", () => {
 
   it("reads ready progress without paying it, then two opens pay and mark it once without expiring tags", async () => {
     const fixture = await setup();
-    const before = await prisma.user.findUniqueOrThrow({ where: { id: fixture.user.id } });
     const read = await countDatabaseStatements(() => getTodayView(fixture.input));
     expect(read.writes).toBe(0);
 
@@ -77,10 +76,6 @@ describe("mission recovery belongs to the learner's open POST", () => {
     await expect(
       prisma.userProgress.findUniqueOrThrow({ where: { userId: fixture.user.id } }),
     ).resolves.toMatchObject({ totalBrainPower: 50n });
-
-    await expect(
-      prisma.user.findUniqueOrThrow({ where: { id: fixture.user.id } }),
-    ).resolves.toMatchObject({ learnerRevision: before.learnerRevision + 1n });
 
     expect(revalidateTag).toHaveBeenCalledTimes(expirations);
     const replay = await countDatabaseStatements(() => openStudyDay(fixture.input));

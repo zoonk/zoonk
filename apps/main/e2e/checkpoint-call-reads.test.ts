@@ -7,11 +7,10 @@ import { openAs } from "./study-day";
 
 /**
  * Everything of the learner's that starting a call would change: their sessions and blocks, the
- * call, model calls, usage, the plan's items and the learner's revision.
+ * call, model calls, usage and the plan's items.
  */
 async function readLearnerState(userId: string) {
-  const [user, sessions, conversations, aiCalls, usage, items] = await Promise.all([
-    prisma.user.findUniqueOrThrow({ select: { learnerRevision: true }, where: { id: userId } }),
+  const [sessions, conversations, aiCalls, usage, items] = await Promise.all([
     prisma.studySession.findMany({
       include: { blocks: { orderBy: { position: "asc" } } },
       orderBy: { localDate: "asc" },
@@ -26,7 +25,7 @@ async function readLearnerState(userId: string) {
     }),
   ]);
 
-  return { aiCalls, conversations, items, revision: user.learnerRevision, sessions, usage };
+  return { aiCalls, conversations, items, sessions, usage };
 }
 
 /** Resolves once the router has prefetched the page at `path` (a link's prefetch, not a visit). */

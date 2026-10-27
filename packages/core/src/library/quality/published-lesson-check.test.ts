@@ -12,11 +12,7 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
-import {
-  holdLearnerRevision,
-  readLearnerRevision,
-  waitForBlockedStatement,
-} from "../../_test-utils/learner-revision";
+import { holdLearnerLock, waitForBlockedStatement } from "../../_test-utils/learner-lock";
 import { writeLessonContent } from "../lessons/write-lesson-content";
 import { PAGE_BREAK, PDF_CONTENT_TYPE, PPTX_CONTENT_TYPE } from "../sources/source-contract";
 import { temperatureSpec, writtenTemperatureLesson } from "./_test-utils/written-lessons";
@@ -539,13 +535,9 @@ async function setAsideScope() {
 
 describe("set-aside selection admission", () => {
   it("marks dependent plans and each owner once, and leaves rejected and repeated calls unchanged", async () => {
-    const { user, other, untouched, lesson, plans } = await setAsideScope();
+    const { lesson, plans } = await setAsideScope();
     await expect(setAsidePublishedLesson({ lessonId: lesson.id, version: 7 })).resolves.toBe(false);
-    await expect(readLearnerRevision(user.id)).resolves.toBe(0n);
     await expect(setAsidePublishedLesson({ lessonId: lesson.id, version: 1 })).resolves.toBe(true);
-    await expect(readLearnerRevision(user.id)).resolves.toBe(1n);
-    await expect(readLearnerRevision(other.id)).resolves.toBe(1n);
-    await expect(readLearnerRevision(untouched.id)).resolves.toBe(0n);
 
     await Promise.all(
       plans.map((plan) =>
@@ -556,13 +548,12 @@ describe("set-aside selection admission", () => {
     );
 
     await expect(setAsidePublishedLesson({ lessonId: lesson.id, version: 1 })).resolves.toBe(false);
-    await expect(readLearnerRevision(user.id)).resolves.toBe(1n);
   });
 
   it("marks before the lesson lock and rolls back a version that loses while admission waits", async () => {
-    const { user, other, lesson, plans, item } = await setAsideScope();
+    const { user, lesson, plans, item } = await setAsideScope();
 
-    const holder = holdLearnerRevision({
+    const holder = holdLearnerLock({
       beforeCommit: async (tx) => {
         await tx.$queryRaw`SELECT id FROM library_lessons WHERE id = ${lesson.id}::uuid FOR UPDATE`;
         await tx.step.updateMany({ data: { version: 2 }, where: { lessonId: lesson.id } });
@@ -581,8 +572,6 @@ describe("set-aside selection admission", () => {
     }
 
     await expect(pending).resolves.toBe(false);
-    await expect(readLearnerRevision(user.id)).resolves.toBe(1n);
-    await expect(readLearnerRevision(other.id)).resolves.toBe(0n);
 
     await Promise.all(
       plans.map((plan) =>
@@ -602,8 +591,8 @@ describe("set-aside selection admission", () => {
   });
 
   it("commits one selection change for two set-aside requests that race", async () => {
-    const { user, other, lesson, plans } = await setAsideScope();
-    const holder = holdLearnerRevision({ userId: user.id });
+    const { user, lesson, plans } = await setAsideScope();
+    const holder = holdLearnerLock({ userId: user.id });
     const pid = await holder.pid;
 
     const calls = Promise.all([
@@ -621,8 +610,6 @@ describe("set-aside selection admission", () => {
 
     const outcomes = await calls;
     expect(outcomes.toSorted()).toStrictEqual([false, true]);
-    await expect(readLearnerRevision(user.id)).resolves.toBe(2n);
-    await expect(readLearnerRevision(other.id)).resolves.toBe(1n);
 
     await expect(
       prisma.plan.findUniqueOrThrow({ where: { id: plans[0]!.id } }),

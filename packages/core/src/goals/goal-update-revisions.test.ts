@@ -18,12 +18,8 @@ async function setup() {
 }
 
 async function versions(fixture: Awaited<ReturnType<typeof setup>>) {
-  const [actor, plan] = await Promise.all([
-    prisma.user.findUniqueOrThrow({ where: { id: fixture.user.id } }),
-    prisma.plan.findUniqueOrThrow({ where: { id: fixture.plan.id } }),
-  ]);
-
-  return { inputVersion: plan.inputVersion, revision: actor.learnerRevision };
+  const plan = await prisma.plan.findUniqueOrThrow({ where: { id: fixture.plan.id } });
+  return { inputVersion: plan.inputVersion };
 }
 
 async function activeGoal(userId: string) {
@@ -31,7 +27,7 @@ async function activeGoal(userId: string) {
   return profile.activeGoalId;
 }
 
-describe("goal metadata revision boundaries", () => {
+describe("goal metadata plan marks", () => {
   it("marks visible metadata once without invalidating plan inputs, and rolls back a replay", async () => {
     const fixture = await setup();
     const before = await versions(fixture);
@@ -42,7 +38,7 @@ describe("goal metadata revision boundaries", () => {
       status: "updated",
     });
 
-    const expected = { inputVersion: before.inputVersion, revision: before.revision + 1n };
+    const expected = { inputVersion: before.inputVersion };
     await expect(versions(fixture)).resolves.toStrictEqual(expected);
     await updateGoal({ goalId: fixture.goal.id, input });
     await expect(versions(fixture)).resolves.toStrictEqual(expected);
@@ -58,7 +54,6 @@ describe("goal metadata revision boundaries", () => {
 
     await expect(versions(fixture)).resolves.toStrictEqual({
       inputVersion: before.inputVersion + 1,
-      revision: before.revision + 1n,
     });
   });
 
@@ -81,7 +76,6 @@ describe("goal metadata revision boundaries", () => {
 
     await expect(versions(fixture)).resolves.toStrictEqual({
       inputVersion: before.inputVersion + 1,
-      revision: before.revision + 1n,
     });
   });
 
@@ -99,7 +93,7 @@ describe("goal metadata revision boundaries", () => {
   });
 });
 
-describe("explanation completion revision boundary", () => {
+describe("explanation completion plan marks", () => {
   it("marks once with the completed explanations and active-profile move, retaining another learner's goal", async () => {
     const fixture = await setup();
 
@@ -142,7 +136,6 @@ describe("explanation completion revision boundary", () => {
 
     await expect(versions(fixture)).resolves.toStrictEqual({
       inputVersion: before.inputVersion + 1,
-      revision: before.revision + 1n,
     });
 
     await expect(

@@ -3,7 +3,7 @@ import { type TransactionClient } from "@zoonk/db";
 import { hasSameGoalInputs } from "./goal-input-snapshot";
 import { type SelectedDayPlan } from "./selected-day-plan";
 
-/** Called after the first revision mark: no stale selection may publish its items or notice. */
+/** Called after the first plan mark: no stale selection may publish its items or notice. */
 export async function isSelectedPlanCurrent({
   increment,
   selection,

@@ -3,7 +3,7 @@ import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
-import { waitForBlockedStatement } from "../_test-utils/learner-revision";
+import { LEARNER_LOCK, waitForBlockedStatement } from "../_test-utils/learner-lock";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 import {
@@ -14,7 +14,6 @@ import {
 } from "./_utils/memory-writes";
 import { deleteMemoryFact } from "./delete-memory-fact";
 
-const MAX_REVISION = 9_223_372_036_854_775_807n;
 const WRITERS = ["add", "replace", "remove"] as const;
 type Writer = (typeof WRITERS)[number];
 
@@ -53,12 +52,7 @@ function write({
   return removeMemoryFact({ factId, userId });
 }
 
-async function revision(userId: string) {
-  const row = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
-  return row.learnerRevision;
-}
-
-describe("memory write learner revisions", () => {
+describe("memory writes under the learner's lock", () => {
   it.each(WRITERS)("%s bumps once without invalidating plan inputs", async (writer) => {
     const user = await userFixture();
     const goal = await goalFixture({ userId: user.id });
@@ -69,8 +63,6 @@ describe("memory write learner revisions", () => {
     ]);
 
     await expect(write({ factId: fact.id, userId: user.id, writer })).resolves.not.toBeNull();
-
-    await expect(revision(user.id)).resolves.toBe(1n);
 
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
       inputVersion: 7,
@@ -83,7 +75,6 @@ describe("memory write learner revisions", () => {
     mockGuestSession(user.id);
 
     const added = await addMemoryFact({ fact: newFact(), userId: user.id });
-    await expect(revision(user.id)).resolves.toBe(1n);
 
     const replacement = await replaceMemoryFact({
       fact: newFact("Wants Medicine"),
@@ -92,33 +83,14 @@ describe("memory write learner revisions", () => {
     });
 
     expect(replacement).not.toBeNull();
-    await expect(revision(user.id)).resolves.toBe(2n);
 
     await expect(deleteMemoryFact(replacement!.fact.id)).resolves.toMatchObject({
       status: "deleted",
     });
 
-    await expect(revision(user.id)).resolves.toBe(3n);
-
     await expect(deleteMemoryFact(replacement!.fact.id)).resolves.toStrictEqual({
       status: "notFound",
     });
-
-    await expect(revision(user.id)).resolves.toBe(3n);
-  });
-
-  it.each(WRITERS)("%s cannot persist its domain write if the revision fails", async (writer) => {
-    const user = await userFixture();
-    const fact = await memoryFactFixture({ userId: user.id });
-    await prisma.user.update({ data: { learnerRevision: MAX_REVISION }, where: { id: user.id } });
-
-    await expect(write({ factId: fact.id, userId: user.id, writer })).rejects.toThrow();
-
-    await expect(revision(user.id)).resolves.toBe(MAX_REVISION);
-
-    await expect(prisma.memoryFact.findMany({ where: { userId: user.id } })).resolves.toStrictEqual(
-      [fact],
-    );
   });
 
   it.each(["add", "replace"] as const)(
@@ -127,12 +99,10 @@ describe("memory write learner revisions", () => {
       const user = await userFixture();
       const fact = await memoryFactFixture({ userId: user.id });
 
-      /** PostgreSQL rejects NUL in text; this fails the real insert after revision admission. */
+      /** PostgreSQL rejects NUL in text; this fails the real insert after the learner's lock. */
       await expect(
         write({ factId: fact.id, statement: "Invalid\u0000text", userId: user.id, writer }),
       ).rejects.toThrow();
-
-      await expect(revision(user.id)).resolves.toBe(0n);
 
       await expect(
         prisma.memoryFact.findMany({ where: { userId: user.id } }),
@@ -156,8 +126,6 @@ describe("memory write learner revisions", () => {
         ),
       );
 
-      await expect(revision(learner.id)).resolves.toBe(0n);
-      await expect(revision(other.id)).resolves.toBe(0n);
       await expect(prisma.memoryFact.count({ where: { userId: learner.id } })).resolves.toBe(1);
     },
   );
@@ -183,7 +151,7 @@ describe("memory write learner revisions", () => {
       const attempt = write({ factId: fact.id, userId: user.id, writer });
 
       try {
-        await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u);
+        await waitForBlockedStatement(pid, LEARNER_LOCK);
       } finally {
         resume.resolve(null);
         const outcomes = await Promise.allSettled([first, attempt]);
@@ -194,7 +162,6 @@ describe("memory write learner revisions", () => {
       }
 
       await expect(attempt).resolves.toBeNull();
-      await expect(revision(user.id)).resolves.toBe(1n);
       await expect(prisma.memoryFact.count({ where: { userId: user.id } })).resolves.toBe(1);
 
       await expect(
@@ -209,7 +176,6 @@ describe("memory write learner revisions", () => {
     mockSession(null);
 
     await expect(deleteMemoryFact(fact.id)).resolves.toStrictEqual({ status: "unauthorized" });
-    await expect(revision(user.id)).resolves.toBe(0n);
 
     await expect(
       prisma.memoryFact.findUniqueOrThrow({ where: { id: fact.id } }),

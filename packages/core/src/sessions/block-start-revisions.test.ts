@@ -24,20 +24,16 @@ async function setup() {
   return { block, plan, session, user };
 }
 
-async function versions({ plan, user }: Awaited<ReturnType<typeof setup>>) {
-  const [saved, actor] = await Promise.all([
-    prisma.plan.findUniqueOrThrow({ where: { id: plan.id } }),
-    prisma.user.findUniqueOrThrow({ where: { id: user.id } }),
-  ]);
-
-  return { inputVersion: saved.inputVersion, learnerRevision: actor.learnerRevision };
+async function versions({ plan }: Awaited<ReturnType<typeof setup>>) {
+  const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+  return { inputVersion: saved.inputVersion };
 }
 
 function start(day: Awaited<ReturnType<typeof setup>>, blockId = day.block.id) {
   return startStudyBlock({ blockId, input: { timeZone: "UTC" }, sessionId: day.session.id });
 }
 
-describe("block start revisions", () => {
+describe("block starts", () => {
   it("commits one visible start for concurrent requests and keeps a running retry read-only", async () => {
     const day = await setup();
     const before = await versions(day);
@@ -52,7 +48,7 @@ describe("block start revisions", () => {
     expect(active.status).toBe("active");
     expect(readBlockPayload(active).timing?.activeAt).toBeTypeOf("string");
 
-    const changed = { ...before, learnerRevision: before.learnerRevision + 1n };
+    const changed = { ...before };
     await expect(versions(day)).resolves.toStrictEqual(changed);
     vi.setSystemTime(new Date(Date.now() + 60_000));
     await expect(start(day)).resolves.toStrictEqual(results[0]);
@@ -84,10 +80,7 @@ describe("block start revisions", () => {
     expect(readBlockPayload(paused).timing).toMatchObject({ activeAt: null, elapsedMs: 60_000 });
     await expect(start(day)).resolves.toMatchObject({ status: "ready" });
 
-    await expect(versions(day)).resolves.toStrictEqual({
-      ...before,
-      learnerRevision: before.learnerRevision + 3n,
-    });
+    await expect(versions(day)).resolves.toStrictEqual({ ...before });
 
     const resumed = await prisma.studySessionBlock.findUniqueOrThrow({
       where: { id: day.block.id },

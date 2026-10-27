@@ -55,10 +55,7 @@ describe(continueGoalAtNextLevel, () => {
 
     const flush = runDeferredWork();
 
-    const revisionBefore = await readRevision(user.id);
-
     const result = await continueGoalAtNextLevel(goal.id);
-    await expect(readRevision(user.id)).resolves.toBe(revisionBefore + 3n);
     const next = result.status === "created" ? result.goal : null;
     await flush();
 
@@ -131,8 +128,3 @@ describe(continueGoalAtNextLevel, () => {
     expect(unchanged.status).toBe("active");
   });
 });
-
-async function readRevision(userId: string) {
-  const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
-  return user.learnerRevision;
-}

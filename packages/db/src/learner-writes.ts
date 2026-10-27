@@ -1,11 +1,11 @@
 import { type TransactionClient } from "./index";
 
-/** Marking only runs SQL, so any transaction or client that can do that may mark. */
-export type LearnerRevisionTransaction = Pick<TransactionClient, "$executeRaw" | "$queryRaw">;
+/** Marking and locking only run SQL, so any transaction or client that can do that may. */
+export type LearnerWriteTransaction = Pick<TransactionClient, "$executeRaw" | "$queryRaw">;
 
 /** Raises these plans' input version. The caller already holds their locks. */
 export async function markLockedPlanInputsChanged(
-  tx: LearnerRevisionTransaction,
+  tx: LearnerWriteTransaction,
   { planIds }: { planIds: readonly string[] },
 ): Promise<void> {
   await tx.$executeRaw`
@@ -20,7 +20,7 @@ export async function markLockedPlanInputsChanged(
  * deadlocking. A writer that reads what it then marks takes them first; marking retakes them.
  */
 async function lockLearnerPlans(
-  tx: LearnerRevisionTransaction,
+  tx: LearnerWriteTransaction,
   { userIds }: { userIds: readonly string[] },
 ): Promise<string[]> {
   const plans = await tx.$queryRaw<{ id: string }[]>`
@@ -39,7 +39,7 @@ async function lockLearnerPlans(
  * guest link share it.
  */
 export async function markPlanInputsChanged(
-  tx: LearnerRevisionTransaction,
+  tx: LearnerWriteTransaction,
   { userIds }: { userIds: readonly string[] },
 ): Promise<string[]> {
   const planIds = await lockLearnerPlans(tx, { userIds });
@@ -48,13 +48,15 @@ export async function markPlanInputsChanged(
 }
 
 /**
- * Raises the revision clients compare to know a learner's summary changed. Revision-only writers
- * that update plans lock those owned plans here first, without invalidating their planning inputs.
+ * Locks the learner's row until the transaction ends, so their writes take turns: a writer reads
+ * what it then changes under it. Writers that update plans without changing their inputs lock those
+ * owned plans here first: every writer locks plans, then learners, then its own rows, so two of them
+ * wait for each other instead of deadlocking.
  */
-export async function markLearnerRevision(
-  tx: LearnerRevisionTransaction,
+export async function lockLearner(
+  tx: LearnerWriteTransaction,
   { lockPlanIds = [], userId }: { lockPlanIds?: readonly string[]; userId: string },
-): Promise<{ learnerRevision: bigint }> {
+): Promise<void> {
   if (lockPlanIds.length > 0) {
     await tx.$queryRaw`
       SELECT plan.id FROM plans AS plan
@@ -64,15 +66,11 @@ export async function markLearnerRevision(
     `;
   }
 
-  const [user] = await tx.$queryRaw<{ learnerRevision: bigint }[]>`
-    UPDATE users SET learner_revision = learner_revision + 1
-    WHERE id = ${userId}::uuid
-    RETURNING learner_revision AS "learnerRevision"
+  const [user] = await tx.$queryRaw<{ id: string }[]>`
+    SELECT id FROM users WHERE id = ${userId}::uuid FOR NO KEY UPDATE
   `;
 
   if (!user) {
-    throw new Error("Cannot mark a missing learner changed");
+    throw new Error("Cannot lock a missing learner");
   }
-
-  return user;
 }

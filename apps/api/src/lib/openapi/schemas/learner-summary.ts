@@ -90,12 +90,6 @@ const learnerSummarySchema = z
       })
       .meta({ description: "The active goal's own places beside the tabs" }),
     readAt: millisecondsSchema,
-    revision: z
-      .string()
-      .meta({
-        description:
-          "The learner's change counter as a decimal string: every write they can see raises it, so a higher one is newer",
-      }),
     tier: z.enum(["free", "guest", "plus"]),
     timeZone: z.string().nullable().meta({ description: "The active goal's saved time zone" }),
     today: z

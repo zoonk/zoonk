@@ -16,12 +16,8 @@ async function setup() {
 }
 
 async function versions(fixture: Awaited<ReturnType<typeof setup>>) {
-  const [actor, plan] = await Promise.all([
-    prisma.user.findUniqueOrThrow({ where: { id: fixture.user.id } }),
-    prisma.plan.findUniqueOrThrow({ where: { id: fixture.plan.id } }),
-  ]);
-
-  return { inputVersion: plan.inputVersion, revision: actor.learnerRevision };
+  const plan = await prisma.plan.findUniqueOrThrow({ where: { id: fixture.plan.id } });
+  return { inputVersion: plan.inputVersion };
 }
 
 describe("the explicit day open follows the device zone", () => {
@@ -61,7 +57,6 @@ describe("the explicit day open follows the device zone", () => {
 
       await expect(versions(fixture)).resolves.toStrictEqual({
         inputVersion: before.inputVersion + input.inputIncrement,
-        revision: before.revision + 2n,
       });
 
       const settled = await versions(fixture);
@@ -93,7 +88,6 @@ describe("the explicit day open follows the device zone", () => {
 
     await expect(versions(fixture)).resolves.toStrictEqual({
       inputVersion: before.inputVersion + 1,
-      revision: before.revision + 1n,
     });
   });
 
@@ -146,10 +140,7 @@ describe("the explicit day open follows the device zone", () => {
     await expect(held).resolves.toMatchObject([{ status: "fulfilled" }]);
 
     await expect(opening).resolves.toMatchObject([
-      {
-        status: "fulfilled",
-        value: { actorId: fixture.user.id, goalId: fixture.goal.id, status: "retryable" },
-      },
+      { status: "fulfilled", value: { goalId: fixture.goal.id, status: "retryable" } },
     ]);
 
     await expect(prisma.studySession.count({ where: { goalId: fixture.goal.id } })).resolves.toBe(
@@ -162,7 +153,6 @@ describe("the explicit day open follows the device zone", () => {
 
     await expect(versions(fixture)).resolves.toStrictEqual({
       inputVersion: before.inputVersion + 1,
-      revision: before.revision + 1n,
     });
   });
 });

@@ -12,15 +12,13 @@ const INPUT = {
 };
 
 const OPENED: DayOpenOutcome = {
-  actorId: "learner",
   destination: { blockId: "block", kind: "session" },
-  revision: "8",
   sessionId: "session",
   status: "opened",
   targetStatus: "next",
 };
 
-const RETRYABLE: DayOpenOutcome = { actorId: "learner", revision: "7", status: "retryable" };
+const RETRYABLE: DayOpenOutcome = { status: "retryable" };
 
 describe(sendDayOpen, () => {
   beforeEach(() => {
@@ -65,9 +63,7 @@ describe(toTapResult, () => {
       kind: "refresh",
     });
 
-    expect(toTapResult({ actorId: "learner", revision: "7", status: "empty" })).toStrictEqual({
-      kind: "refresh",
-    });
+    expect(toTapResult({ status: "empty" })).toStrictEqual({ kind: "refresh" });
 
     expect(toTapResult({ status: "goalNotActive" })).toStrictEqual({ kind: "refresh" });
   });

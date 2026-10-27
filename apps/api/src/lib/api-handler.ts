@@ -1,4 +1,3 @@
-import { getLearnerRevision } from "@zoonk/core/learner/revision";
 import { isInputRangeError } from "@zoonk/core/plans/target-date-range";
 import { logError } from "@zoonk/utils/logger";
 import { unstable_rethrow } from "next/navigation";
@@ -16,34 +15,6 @@ function isQuery(args: unknown[]): boolean {
   return request instanceof Request && request.method === "GET";
 }
 
-/** Only successful writes carry a committed watermark; reads and HTTP refusals do not. */
-async function withLearnerRevision(response: Response, args: unknown[]): Promise<Response> {
-  const [request] = args;
-
-  if (
-    !(request instanceof Request) ||
-    ["GET", "HEAD", "OPTIONS"].includes(request.method) ||
-    !response.ok
-  ) {
-    return response;
-  }
-
-  const stamp = await getLearnerRevision();
-
-  if (!stamp) {
-    return response;
-  }
-
-  const headers = new Headers(response.headers);
-  headers.set("Learner-Revision", stamp.revision);
-
-  return new Response(response.body, {
-    headers,
-    status: response.status,
-    statusText: response.statusText,
-  });
-}
-
 /**
  * Keeps unexpected product API failures on the same JSON error contract as
  * explicit validation and authorization failures. Better Auth and documentation
@@ -56,7 +27,7 @@ export function withApiErrorBoundary<TArguments extends unknown[]>(
 ) {
   return async (...args: TArguments): Promise<Response> => {
     try {
-      return await withLearnerRevision(await handler(...args), args);
+      return await handler(...args);
     } catch (error) {
       unstable_rethrow(error);
 

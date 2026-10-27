@@ -21,6 +21,7 @@ import {
 } from "../../plans/_utils/today-plan-change";
 import { type MockFundingView } from "../../plans/mock-funding-contract";
 import { daysBetween } from "../../plans/planner/plan-calendar";
+import { type NoticeBasis } from "../../plans/today-change-contract";
 import { type PlanStatus } from "../../preparation/plan-status";
 import { type ReadStudyDay, readStudyDay } from "../../sessions/_utils/read-study-day";
 import {
@@ -87,8 +88,6 @@ type TodayWeeklyChallenge = {
  * and the plan change to answer. The apps and the public API read this.
  */
 export type TodayView = {
-  /** Read before the view's data, so delayed delivery never claims a newer learner revision. */
-  revision: string;
   /** An exam goal's final stretch, day before, exam day or "How did it go?"; null otherwise. */
   exam: ExamMomentView | null;
   /**
@@ -105,6 +104,11 @@ export type TodayView = {
   lessonStatus: Record<string, LessonGenerationState["status"]>;
   /** Exact saved contribution explaining a lighter day, welcome backs included; null without one. */
   mockFunding: MockFundingView | null;
+  /**
+   * The plan a notice Today worked out (`planChange` without an id) came from: acknowledging it
+   * sends this back, so only the notice shown is saved. Null without such a notice.
+   */
+  noticeBasis: NoticeBasis | null;
   /**
    * A language goal's pattern noticed in recent mistakes, offered beside the day; null when one of
    * the day's missions is already its drill (`selectDayPattern`), and for any other goal.
@@ -133,16 +137,11 @@ export type TodayView = {
 };
 
 export type TodayViewResult =
-  | { revision: string; status: "goalNotActive"; userId: string }
+  | { status: "goalNotActive"; userId: string }
   /** No goal yet: the apps open onboarding, or first offer the suggested goal when there's one. */
-  | { revision: string; status: "noGoal"; suggestedGoal: SuggestedGoalView | null; userId: string }
+  | { status: "noGoal"; suggestedGoal: SuggestedGoalView | null; userId: string }
   | { status: "notFound" }
-  | {
-      goal: Pick<TodayGoal, "id" | "kind" | "title">;
-      revision: string;
-      status: "preparing";
-      userId: string;
-    }
+  | { goal: Pick<TodayGoal, "id" | "kind" | "title">; status: "preparing"; userId: string }
   | { status: "ready"; today: TodayView }
   | { status: "unauthorized" };
 
@@ -264,7 +263,7 @@ async function loadDayPlanChange({
 
 /** The day Today shows for an admitted goal, with the read-only cards around it. */
 async function readAdmittedToday({
-  admission: { owned, stamp },
+  admission: { owned },
   timeZone,
 }: {
   admission: Extract<TodayAdmission, { status: "admitted" }>;
@@ -277,7 +276,7 @@ async function readAdmittedToday({
   const day = await readStudyDay({ goal: owned.goal, now: new Date(), timeZone, userId });
 
   if (!day) {
-    return { ...stamp, goal: { id, kind, title }, status: "preparing" };
+    return { goal: { id, kind, title }, status: "preparing", userId };
   }
 
   const mockFunding = await loadDayMockFunding({
@@ -305,10 +304,12 @@ async function readAdmittedToday({
     ? await countLessonsLeftToday({ selectedItems: day.selection?.items, session: studySession })
     : 0;
 
+  const shownChange = !proposalsOpen && planChange?.status === "proposed" ? null : planChange;
+  const plan = shownChange?.id === null ? day.selection?.context.plan : undefined;
+
   return {
     status: "ready",
     today: {
-      ...stamp,
       exam,
       examChoice,
       goal: {
@@ -324,13 +325,15 @@ async function readAdmittedToday({
         [...lessonStates].map(([lessonId, state]) => [lessonId, state.status]),
       ),
       mockFunding,
+      noticeBasis: plan ? { inputVersion: plan.inputVersion, version: plan.version } : null,
       pattern: selectDayPattern({ day: studySession, pattern: noticedPattern }),
-      planChange: !proposalsOpen && planChange?.status === "proposed" ? null : planChange,
+      planChange: shownChange,
       progress: toTodayProgress({ ...around, lessonsToday }),
       session: studySession,
       shortPlan,
       studiedToday: studied || studySession.minutes.done > 0,
       suggestedGoal,
+      userId,
       weeklyChallenge: around.challenge,
     },
   };

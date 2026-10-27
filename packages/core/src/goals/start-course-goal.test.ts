@@ -632,8 +632,6 @@ describe(startCourseGoal, () => {
 
     mockSession(user.id);
 
-    const before = await readRevision(user.id);
-
     const result = await startCourseGoal({ courseId: course.id, input: {} });
 
     expect(result).toMatchObject({
@@ -641,7 +639,6 @@ describe(startCourseGoal, () => {
       status: "created",
     });
 
-    await expect(readRevision(user.id)).resolves.toBe(before + 4n);
     const goalId = result.status === "created" ? result.goal.id : "";
 
     await expect(prisma.plan.findUniqueOrThrow({ where: { goalId } })).resolves.toMatchObject({
@@ -650,7 +647,6 @@ describe(startCourseGoal, () => {
     });
 
     await startCourseGoal({ courseId: course.id, input: {} });
-    await expect(readRevision(user.id)).resolves.toBe(before + 4n);
   });
 
   it("starts an exam course without a stored exam as an exam goal, which research reads", async () => {
@@ -797,8 +793,3 @@ describe(startCourseGoal, () => {
     });
   });
 });
-
-async function readRevision(userId: string) {
-  const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
-  return user.learnerRevision;
-}

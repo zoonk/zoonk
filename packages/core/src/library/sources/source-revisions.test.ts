@@ -6,10 +6,10 @@ import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import {
-  holdLearnerRevision,
-  readLearnerRevision,
+  LEARNER_LOCK,
+  holdLearnerLock,
   waitForBlockedStatement,
-} from "../../_test-utils/learner-revision";
+} from "../../_test-utils/learner-lock";
 import { mockSession } from "../../_test-utils/mock-session";
 import { claimUsage } from "../../entitlements/claim-usage";
 import { createOnboardingGoals } from "../../view-models/onboarding/create-onboarding-goals";
@@ -37,31 +37,25 @@ async function setup() {
   return { goal, plan, user };
 }
 
-describe("source revisions", () => {
+describe("source writes", () => {
   it("marks an upload answer once and keeps retries, no-source checks and private-source refusals unchanged", async () => {
-    const { goal, plan, user } = await setup();
+    const { goal, plan } = await setup();
     const [source, other] = await Promise.all([sourceFixture(), userFixture()]);
     const privateSource = await sourceFixture({ ownerId: other.id, visibility: "private" });
-    const before = await readLearnerRevision(user.id);
 
     await expect(
       answerGoalUploadRequest({ goalId: goal.id, sourceIds: [privateSource.id] }),
     ).resolves.toMatchObject({ status: "notFound" });
 
     await answerGoalUploadRequest({ goalId: goal.id });
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before);
 
     await expect(
       answerGoalUploadRequest({ goalId: goal.id, sourceIds: [source.id] }),
     ).resolves.toMatchObject({ status: "ready" });
 
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 1n);
-
     await expect(
       answerGoalUploadRequest({ goalId: goal.id, sourceIds: [source.id] }),
     ).resolves.toMatchObject({ status: "noUploadRequest" });
-
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 1n);
 
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
       inputVersion: plan.inputVersion,
@@ -85,8 +79,6 @@ describe("source revisions", () => {
         userId: user.id,
       });
 
-      const before = await readLearnerRevision(user.id);
-
       await expect(
         createOnboardingGoals({
           dailyMinutes: 15,
@@ -95,7 +87,6 @@ describe("source revisions", () => {
         }),
       ).resolves.toMatchObject({ status: "created" });
       // Usage, goal creation and selection already have separate markers; only a new source link adds one.
-      await expect(readLearnerRevision(user.id)).resolves.toBe(before + (attached ? 3n : 4n));
 
       await expect(
         prisma.plan.findUniqueOrThrow({ where: { id: plan.id } }),
@@ -109,21 +100,17 @@ describe("source revisions", () => {
   it("marks private source creation and linking separately from usage, while a duplicate upload or refusal commits no extra mark", async () => {
     const { plan, user } = await setup();
     const text = `Physics notes ${randomUUID()}`;
-    const before = await readLearnerRevision(user.id);
 
     await expect(
       registerSourceUpload({ kind: "text", language: "en", text }),
     ).resolves.toMatchObject({ status: "ready" });
 
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 3n);
     await registerSourceUpload({ kind: "text", language: "en", text });
     await usageRecordsFixture({ count: 2, kind: "upload", userId: user.id });
 
     await expect(
       registerSourceUpload({ kind: "text", language: "en", text: randomUUID() }),
     ).resolves.toMatchObject({ status: "limitReached" });
-
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 3n);
 
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
       inputVersion: plan.inputVersion,
@@ -135,9 +122,8 @@ describe("source revisions", () => {
   it("takes the marker before answering an upload request and rolls back a concurrent loser", async () => {
     const { goal, user } = await setup();
     const sources = await Promise.all([sourceFixture(), sourceFixture()]);
-    const before = await readLearnerRevision(user.id);
 
-    const holder = holdLearnerRevision({
+    const holder = holdLearnerLock({
       beforeCommit: (tx) =>
         tx.$queryRaw`SELECT id FROM goals WHERE id = ${goal.id}::uuid FOR UPDATE`,
       userId: user.id,
@@ -150,13 +136,12 @@ describe("source revisions", () => {
     );
 
     try {
-      await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u, 2);
+      await waitForBlockedStatement(pid, LEARNER_LOCK, 2);
     } finally {
       holder.release();
       await Promise.all([holder.done, writes]);
     }
 
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 2n);
     await expect(prisma.learnerSource.count({ where: { userId: user.id } })).resolves.toBe(1);
   });
 
@@ -172,7 +157,6 @@ describe("source revisions", () => {
         });
       }
 
-      const before = await readLearnerRevision(user.id);
       const actual = await vi.importActual<typeof ClaimUsage>("../../entitlements/claim-usage");
       const claimed = Promise.withResolvers<null>();
       const resume = Promise.withResolvers<null>();
@@ -189,12 +173,12 @@ describe("source revisions", () => {
 
       // Another marked writer takes the lock once usage is committed, so the source write has to
       // wait on its own marker.
-      const holder = holdLearnerRevision({ userId: user.id });
+      const holder = holdLearnerLock({ userId: user.id });
 
       try {
         const pid = await holder.pid;
         resume.resolve(null);
-        await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u);
+        await waitForBlockedStatement(pid, LEARNER_LOCK);
         await expect(prisma.source.count({ where: { ownerId: user.id } })).resolves.toBe(0);
         await expect(prisma.learnerSource.count({ where: { userId: user.id } })).resolves.toBe(0);
       } finally {
@@ -204,18 +188,12 @@ describe("source revisions", () => {
       }
 
       await expect(upload).resolves.toMatchObject({ status: "ready" });
-
-      await expect(readLearnerRevision(user.id)).resolves.toBe(
-        before + (kind === "private" ? 4n : 3n),
-      );
     },
   );
 
-  it("marks dismissal once and preserves no-op and refused revisions", async () => {
-    const { goal, plan, user } = await setup();
-    const before = await readLearnerRevision(user.id);
+  it("marks dismissal once and leaves no-op and refused dismissals unmarked", async () => {
+    const { goal, plan } = await setup();
     await dismissGoalUploadRequest({ goalId: goal.id });
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 1n);
     await dismissGoalUploadRequest({ goalId: goal.id });
     const other = await userFixture();
     mockSession(other.id);
@@ -224,33 +202,17 @@ describe("source revisions", () => {
       status: "notFound",
     });
 
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 1n);
-    await expect(readLearnerRevision(other.id)).resolves.toBe(other.learnerRevision);
-
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
       inputVersion: plan.inputVersion,
     });
-  });
-
-  it("marks a changed research outcome and clearing it, but skips equal or missing goals", async () => {
-    const { goal, user } = await setup();
-    const before = await readLearnerRevision(user.id);
-    await recordGoalResearchOutcome({ goalId: goal.id, uploadReason: "classMaterial" });
-    await recordGoalResearchOutcome({ goalId: goal.id, uploadReason: "classMaterial" });
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 1n);
-    await recordGoalResearchOutcome({ goalId: goal.id, uploadReason: null });
-    await recordGoalResearchOutcome({ goalId: goal.id, uploadReason: null });
-    await recordGoalResearchOutcome({ goalId: randomUUID(), uploadReason: "classMaterial" });
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 2n);
   });
 
   it.each(["dismiss", "outcome"] as const)(
     "takes the marker before goal rows and commits one concurrent %s",
     async (kind) => {
       const { goal, user } = await setup();
-      const before = await readLearnerRevision(user.id);
 
-      const holder = holdLearnerRevision({
+      const holder = holdLearnerLock({
         beforeCommit: (tx) =>
           tx.$queryRaw`SELECT id FROM goals WHERE id = ${goal.id}::uuid FOR UPDATE`,
         userId: user.id,
@@ -266,13 +228,13 @@ describe("source revisions", () => {
       const writes = Promise.all([write(), write()]);
 
       try {
-        await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u, 2);
+        await waitForBlockedStatement(pid, LEARNER_LOCK, 2);
       } finally {
         holder.release();
         await Promise.all([holder.done, writes]);
       }
 
-      await expect(readLearnerRevision(user.id)).resolves.toBe(before + 2n);
+      await expect(writes).resolves.toHaveLength(2);
     },
   );
 });

@@ -7,7 +7,7 @@
     "./anonymous-records": "./src/anonymous-records.ts",
     "./course-home": "./src/course-home.ts",
     "./enums": "./src/generated/prisma/enums.ts",
-    "./learner-revision": "./src/learner-revision.ts",
+    "./learner-writes": "./src/learner-writes.ts",
     "./live-call-enums": "./src/live-call-enums.ts",
     "./local-database": "./src/local-database.ts",
     "./seed/emails": "./src/prisma/seed/emails.ts",

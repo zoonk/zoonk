@@ -6,10 +6,10 @@ import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { after } from "next/server";
 import { describe, expect, it } from "vitest";
 import {
-  holdLearnerRevision,
-  readLearnerRevision,
+  LEARNER_LOCK,
+  holdLearnerLock,
   waitForBlockedStatement,
-} from "../../_test-utils/learner-revision";
+} from "../../_test-utils/learner-lock";
 import {
   recordLanguageSkillEvidence,
   recordLanguageStepEvidence,
@@ -53,8 +53,6 @@ describe(recordLanguageStepEvidence, () => {
       windowCorrect: 1,
       windowTotal: 1,
     });
-    // The level is on the learner's language screens, so the answer raises the revision once.
-    await expect(readLearnerRevision(user.id)).resolves.toBe(1n);
   });
 
   it("remembers a word learned once, and looks for a pattern after a wrong answer", async () => {
@@ -89,7 +87,6 @@ describe(recordLanguageStepEvidence, () => {
     await expect(prisma.learnerWord.count({ where: { userId: user.id } })).resolves.toBe(1);
     expect(after).toHaveBeenCalledOnce();
     // One level change per answer; the word list has no screen, so it adds none.
-    await expect(readLearnerRevision(user.id)).resolves.toBe(3n);
   });
 
   it("counts every answer given at the same moment, even before the skill has a level", async () => {
@@ -155,15 +152,13 @@ describe("language evidence selection admission", () => {
         userId: user.id,
       });
 
-      await expect(readLearnerRevision(user.id)).resolves.toBe(1n);
-
       await expect(
         prisma.plan.findUniqueOrThrow({ where: { id: plan.id } }),
       ).resolves.toMatchObject({ inputVersion: plan.inputVersion + expectedInputs });
     },
   );
 
-  it("keeps windows revision-only and bumps inputs only when the reading score changes", async () => {
+  it("bumps inputs only when the reading score changes", async () => {
     const user = await userFixture();
 
     const goal = await goalFixture({
@@ -210,8 +205,6 @@ describe("language evidence selection admission", () => {
     await expect(
       prisma.languageSkillLevel.findUniqueOrThrow({ where: { id: row.id } }),
     ).resolves.toMatchObject({ score: 1, windowTotal: 0 });
-
-    await expect(readLearnerRevision(user.id)).resolves.toBe(2n);
   });
 
   it("rechecks the input classification after admission without taking plan locks after the learner", async () => {
@@ -239,7 +232,7 @@ describe("language evidence selection admission", () => {
       },
     });
 
-    const holder = holdLearnerRevision({
+    const holder = holdLearnerLock({
       beforeCommit: async (tx) =>
         tx.languageSkillLevel.update({
           data: { windowCorrect: 19, windowTotal: 19 },
@@ -258,13 +251,11 @@ describe("language evidence selection admission", () => {
     });
 
     try {
-      await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u);
+      await waitForBlockedStatement(pid, LEARNER_LOCK);
     } finally {
       holder.release();
       await Promise.all([holder.done, evidence]);
     }
-
-    await expect(readLearnerRevision(user.id)).resolves.toBe(2n);
 
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
       inputVersion: plan.inputVersion + 1,
@@ -300,7 +291,7 @@ describe("language evidence selection admission", () => {
       },
     });
 
-    const holder = holdLearnerRevision({
+    const holder = holdLearnerLock({
       beforeCommit: async (tx) =>
         tx.languageSkillLevel.update({
           data: { windowCeiling: null, windowCorrect: 0, windowTotal: 0 },
@@ -319,13 +310,11 @@ describe("language evidence selection admission", () => {
     });
 
     try {
-      await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u);
+      await waitForBlockedStatement(pid, LEARNER_LOCK);
     } finally {
       holder.release();
       await Promise.all([holder.done, evidence]);
     }
-
-    await expect(readLearnerRevision(user.id)).resolves.toBe(2n);
 
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
       inputVersion: plan.inputVersion,
@@ -359,8 +348,6 @@ describe("language evidence selection admission", () => {
         }),
       ),
     );
-
-    await expect(readLearnerRevision(user.id)).resolves.toBe(BigInt(answers));
 
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
       inputVersion: plan.inputVersion + 1,

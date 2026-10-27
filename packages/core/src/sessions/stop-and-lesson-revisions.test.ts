@@ -1,7 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { readLearnerRevision, waitForBlockedStatement } from "../_test-utils/learner-revision";
+import { waitForBlockedStatement } from "../_test-utils/learner-lock";
 import { mockSession } from "../_test-utils/mock-session";
 import { getTodayStudySession } from "./_test-utils/open-today";
 import { SESSION_NOW, sessionGoalFixture } from "./_test-utils/session-goal";
@@ -22,7 +22,7 @@ async function today() {
   return { ...fixture, session: result.session, user };
 }
 
-describe("stop and lesson revisions", () => {
+describe("stop and lesson writes", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(SESSION_NOW);
@@ -32,9 +32,8 @@ describe("stop and lesson revisions", () => {
     vi.useRealTimers();
   });
 
-  it("raises the revision once for the first stop, which Today shows, and not for a second", async () => {
-    const { session, user } = await today();
-    const before = await readLearnerRevision(user.id);
+  it("saves the first stop, which Today shows, and not a second", async () => {
+    const { session } = await today();
 
     await stopStudySession({ input: {}, sessionId: session.id });
 
@@ -42,17 +41,13 @@ describe("stop and lesson revisions", () => {
       prisma.studySession.findUniqueOrThrow({ where: { id: session.id } }),
     ).resolves.toMatchObject({ stoppedAt: expect.any(Date) });
 
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 1n);
-
     await stopStudySession({ input: {}, sessionId: session.id });
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 1n);
   });
 
   it("raises it once when a finished lesson checks off its plan items, and not again", async () => {
     const { user } = await today();
     const elsewhere = await sessionGoalFixture({ lessons: 1, userId: user.id });
     const lessonId = elsewhere.lessons[0]?.id ?? "";
-    const before = await readLearnerRevision(user.id);
 
     // Outside today's session: only the plan changes, and it changes once.
     await expect(
@@ -63,10 +58,7 @@ describe("stop and lesson revisions", () => {
       prisma.planItem.findUniqueOrThrow({ where: { id: elsewhere.planItems[0]?.id } }),
     ).resolves.toMatchObject({ status: "done" });
 
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 1n);
-
     await settleFinishedLesson({ lessonId, timeZone: "UTC", userId: user.id });
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 1n);
   });
 
   it("changes nothing when a test-out takes the lesson's last item while the check-off waits", async () => {
@@ -74,7 +66,6 @@ describe("stop and lesson revisions", () => {
     const elsewhere = await sessionGoalFixture({ lessons: 1, userId: user.id });
     const lessonId = elsewhere.lessons[0]?.id ?? "";
     const itemId = elsewhere.planItems[0]?.id ?? "";
-    const before = await readLearnerRevision(user.id);
 
     const held = Promise.withResolvers<number>();
     const release = Promise.withResolvers<null>();
@@ -102,7 +93,5 @@ describe("stop and lesson revisions", () => {
     await expect(
       prisma.planItem.findUniqueOrThrow({ where: { id: itemId } }),
     ).resolves.toMatchObject({ status: "testedOut" });
-
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before);
   });
 });

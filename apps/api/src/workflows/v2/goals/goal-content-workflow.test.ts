@@ -21,7 +21,7 @@ import { fitPlanToRoutineFacts } from "@zoonk/ai/tasks/v2/plans/routine-fit";
 import { trackServerEvent } from "@zoonk/core/analytics/server";
 import { isPlanConflictError } from "@zoonk/core/plans/conflict";
 import { prisma } from "@zoonk/db";
-import { markPlanInputsChanged } from "@zoonk/db/learner-revision";
+import { markPlanInputsChanged } from "@zoonk/db/learner-writes";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";

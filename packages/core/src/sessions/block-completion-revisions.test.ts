@@ -73,7 +73,7 @@ async function setup(kind: CompletionKind) {
     startedAt: new Date(Date.now() - 60_000),
     status: "active",
   });
-  // Keep the day open, so its separate session-completion revision cannot hide this block's gap.
+  // Keep the day open, so its separate session completion cannot hide this block's gap.
   const later = await studySessionBlockFixture({
     kind: "practice",
     position: 1,
@@ -124,13 +124,9 @@ async function prepareCompletion({
   });
 }
 
-async function versions({ plan, user }: Awaited<ReturnType<typeof setup>>) {
-  const [saved, actor] = await Promise.all([
-    prisma.plan.findUniqueOrThrow({ where: { id: plan.id } }),
-    prisma.user.findUniqueOrThrow({ where: { id: user.id } }),
-  ]);
-
-  return { inputVersion: saved.inputVersion, learnerRevision: actor.learnerRevision };
+async function versions({ plan }: Awaited<ReturnType<typeof setup>>) {
+  const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+  return { inputVersion: saved.inputVersion };
 }
 
 function finish({ block, session }: Awaited<ReturnType<typeof setup>>) {
@@ -162,7 +158,7 @@ async function assertCompleted({
   ).resolves.toMatchObject({ status: "active" });
 }
 
-describe("block completion revisions before the day finishes", () => {
+describe("block completions before the day finishes", () => {
   it.each(CASES)(
     "marks $kind once and rolls back a replay",
     async ({ kind, planStatus, status }) => {
@@ -171,10 +167,7 @@ describe("block completion revisions before the day finishes", () => {
       await expect(finish(day)).resolves.toMatchObject({ status: "ready" });
       await assertCompleted({ day, planStatus, status });
 
-      const after = {
-        inputVersion: before.inputVersion + 1,
-        learnerRevision: before.learnerRevision + 1n,
-      };
+      const after = { inputVersion: before.inputVersion + 1 };
 
       await expect(versions(day)).resolves.toStrictEqual(after);
       await finish(day);
@@ -183,7 +176,7 @@ describe("block completion revisions before the day finishes", () => {
   );
 
   it.each(CASES)(
-    "commits one $kind revision for concurrent completions",
+    "commits one $kind for concurrent completions",
     async ({ kind, planStatus, status }) => {
       const day = await setup(kind);
       const before = await versions(day);
@@ -195,10 +188,7 @@ describe("block completion revisions before the day finishes", () => {
 
       await assertCompleted({ day, planStatus, status });
 
-      await expect(versions(day)).resolves.toStrictEqual({
-        inputVersion: before.inputVersion + 1,
-        learnerRevision: before.learnerRevision + 1n,
-      });
+      await expect(versions(day)).resolves.toStrictEqual({ inputVersion: before.inputVersion + 1 });
     },
   );
 });

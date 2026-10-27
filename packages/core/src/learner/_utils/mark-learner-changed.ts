@@ -1,32 +1,39 @@
 import "server-only";
 import {
-  type LearnerRevisionTransaction,
-  markLearnerRevision,
+  type LearnerWriteTransaction,
+  lockLearner,
   markLockedPlanInputsChanged,
   markPlanInputsChanged,
-} from "@zoonk/db/learner-revision";
+} from "@zoonk/db/learner-writes";
 
-/** Each learner-visible writer calls this once, in the transaction that owns its domain write. */
+/**
+ * Each learner write calls this once, first, in the transaction that owns its domain write: it
+ * raises the plans' input version when the write changes what the planner reads (`planInputs`),
+ * then locks the learner, so the learner's writes take turns.
+ */
 export async function markLearnerChanged(
-  tx: LearnerRevisionTransaction,
+  tx: LearnerWriteTransaction,
   {
     lockPlanIds = [],
     planInputs = false,
     userId,
   }: { lockPlanIds?: readonly string[]; planInputs?: boolean; userId: string },
-): Promise<{ learnerRevision: bigint }> {
+): Promise<void> {
   if (planInputs) {
     /** Always acquire plan locks before the learner row, including in mixed writer transactions. */
     await markPlanInputsChanged(tx, { userIds: [userId] });
   }
 
-  /** Planning-input writes already hold every owned plan; revision-only plan writes opt in. */
-  return markLearnerRevision(tx, { lockPlanIds: planInputs ? [] : lockPlanIds, userId });
+  /** Planning-input writes already hold every owned plan; plan writes that keep inputs opt in. */
+  await lockLearner(tx, { lockPlanIds: planInputs ? [] : lockPlanIds, userId });
 }
 
-/** A shared-content writer marks dependent plans, without returning another learner's revision. */
+/**
+ * A shared-content writer marks dependent plans, then locks their learners in id order, so it
+ * takes turns with each learner's own writes without deadlocking against another such writer.
+ */
 export async function markPlansChanged(
-  tx: LearnerRevisionTransaction,
+  tx: LearnerWriteTransaction,
   { planIds }: { planIds: readonly string[] },
 ): Promise<void> {
   if (planIds.length === 0) {
@@ -42,17 +49,11 @@ export async function markPlansChanged(
 
   await markLockedPlanInputsChanged(tx, { planIds: plans.map((plan) => plan.id) });
 
-  /** Stable lock order prevents overlapping multi-owner writes from deadlocking each other. */
   const userIds = [...new Set(plans.map((plan) => plan.userId))].toSorted();
 
   await tx.$queryRaw`
     SELECT id FROM users
     WHERE id = ANY(${userIds}::uuid[])
     ORDER BY id FOR UPDATE
-  `;
-
-  await tx.$executeRaw`
-    UPDATE users SET learner_revision = learner_revision + 1
-    WHERE id = ANY(${userIds}::uuid[])
   `;
 }

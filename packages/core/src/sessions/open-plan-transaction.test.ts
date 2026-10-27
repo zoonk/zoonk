@@ -175,17 +175,12 @@ describe("opening a real-size selected plan", () => {
     expect(payload.behind).toStrictEqual(notice.behind);
 
     const before = await prisma.plan.findUniqueOrThrow({ where: { id: fixture.plan.id } });
-    const actor = await prisma.user.findUniqueOrThrow({ where: { id: fixture.user.id } });
     const replay = await openStudyDay(input);
     expect(replay.status).toBe("opened");
 
     await expect(
       prisma.plan.findUniqueOrThrow({ where: { id: fixture.plan.id } }),
     ).resolves.toStrictEqual(before);
-
-    await expect(
-      prisma.user.findUniqueOrThrow({ where: { id: fixture.user.id } }),
-    ).resolves.toMatchObject({ learnerRevision: actor.learnerRevision });
   });
 
   // Away from 09-30 to 12-20: 1440 minutes of lessons left, and the twelve days of an hour left to

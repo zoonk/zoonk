@@ -4,20 +4,19 @@ import { memoryInsightFixture } from "@zoonk/testing/fixtures/memory";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import {
-  holdLearnerRevision,
-  readLearnerRevision,
+  LEARNER_LOCK,
+  holdLearnerLock,
   waitForBlockedStatement,
-} from "../../_test-utils/learner-revision";
+} from "../../_test-utils/learner-lock";
 import { mockSession } from "../../_test-utils/mock-session";
 import { respondToMemoryInsight } from "../../memory/insights/respond-to-memory-insight";
 import { respondToSuggestedGoal } from "./respond-to-suggested-goal";
 
-describe("Today card revisions", () => {
+describe("Today card writes", () => {
   it("marks a suggestion answer once, with no bumps on retries or another learner's suggestion", async () => {
     const [user, other] = await Promise.all([userFixture(), userFixture()]);
     const suggestion = await suggestedGoalFixture({ userId: user.id });
     mockSession(user.id);
-    const before = await readLearnerRevision(user.id);
     const answer = { input: { status: "accepted" }, suggestionId: suggestion.id } as const;
     await expect(respondToSuggestedGoal(answer)).resolves.toMatchObject({ status: "updated" });
 
@@ -27,8 +26,6 @@ describe("Today card revisions", () => {
 
     mockSession(other.id);
     await expect(respondToSuggestedGoal(answer)).resolves.toMatchObject({ status: "notFound" });
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 1n);
-    await expect(readLearnerRevision(other.id)).resolves.toBe(other.learnerRevision);
   });
 
   it.each(["tip", "scheduleIdea"] as const)(
@@ -46,16 +43,12 @@ describe("Today card revisions", () => {
       });
 
       mockSession(user.id);
-      const before = await readLearnerRevision(user.id);
       const answer = { input: { status: "accepted" }, insightId: insight.id } as const;
       await expect(respondToMemoryInsight(answer)).resolves.toMatchObject({ status: "updated" });
-      await expect(readLearnerRevision(user.id)).resolves.toBe(before + 1n);
 
       await expect(respondToMemoryInsight(answer)).resolves.toMatchObject({
         status: "alreadyAnswered",
       });
-
-      await expect(readLearnerRevision(user.id)).resolves.toBe(before + 1n);
 
       await expect(
         prisma.goal.findUniqueOrThrow({ where: { id: goal.id } }),
@@ -78,9 +71,8 @@ describe("Today card revisions", () => {
           : await memoryInsightFixture({ userId: user.id });
 
       mockSession(user.id);
-      const before = await readLearnerRevision(user.id);
 
-      const holder = holdLearnerRevision({
+      const holder = holdLearnerLock({
         beforeCommit: (tx) =>
           kind === "suggestion"
             ? tx.$queryRaw`SELECT id FROM suggested_goals WHERE id = ${row.id}::uuid FOR UPDATE`
@@ -98,7 +90,7 @@ describe("Today card revisions", () => {
       const writes = Promise.all([answer(), answer()]);
 
       try {
-        await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u, 2);
+        await waitForBlockedStatement(pid, LEARNER_LOCK, 2);
       } finally {
         holder.release();
         await Promise.all([holder.done, writes]);
@@ -110,8 +102,6 @@ describe("Today card revisions", () => {
           expect.objectContaining({ status: "updated" }),
         ]),
       );
-
-      await expect(readLearnerRevision(user.id)).resolves.toBe(before + 2n);
     },
   );
 
@@ -127,9 +117,8 @@ describe("Today card revisions", () => {
     });
 
     mockSession(user.id);
-    const before = await readLearnerRevision(user.id);
 
-    const holder = holdLearnerRevision({
+    const holder = holdLearnerLock({
       beforeCommit: (tx) =>
         tx.memoryInsight.update({ data: { status: "dismissed" }, where: { id: insight.id } }),
       userId: user.id,
@@ -139,14 +128,13 @@ describe("Today card revisions", () => {
     const answer = respondToMemoryInsight({ input: { status: "accepted" }, insightId: insight.id });
 
     try {
-      await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u);
+      await waitForBlockedStatement(pid, LEARNER_LOCK);
     } finally {
       holder.release();
       await Promise.all([holder.done, answer]);
     }
 
     await expect(answer).resolves.toStrictEqual({ status: "alreadyAnswered" });
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 1n);
 
     await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
       studyTime: "07:00",

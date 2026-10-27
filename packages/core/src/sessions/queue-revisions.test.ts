@@ -40,11 +40,6 @@ async function setup() {
   return { ...day, user };
 }
 
-async function revision(userId: string) {
-  const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
-  return user.learnerRevision;
-}
-
 describe("queue attempts mark freshness while preserving the queue", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
@@ -55,7 +50,6 @@ describe("queue attempts mark freshness while preserving the queue", () => {
 
   it("two taps and a replay reuse the same practice block and mark each attempt", async () => {
     const day = await setup();
-    const before = await revision(day.user.id);
 
     const input = {
       goalId: day.goal.id,
@@ -67,14 +61,11 @@ describe("queue attempts mark freshness while preserving the queue", () => {
 
     expect(blocks).toHaveLength(2);
     expect(blocks[0]?.id).toBe(blocks[1]?.id);
-    await expect(revision(day.user.id)).resolves.toBe(before + 2n);
 
     await expect(addAreaPracticeBlock(input)).resolves.toMatchObject({
       block: { id: blocks[0]?.id },
       status: "ready",
     });
-
-    await expect(revision(day.user.id)).resolves.toBe(before + 3n);
   });
 
   it("a refused third bonus marks freshness and leaves the queue unchanged", async () => {
@@ -90,8 +81,6 @@ describe("queue attempts mark freshness while preserving the queue", () => {
         ).resolves.toMatchObject({ status: "ready" }),
       ),
     );
-
-    const before = await revision(day.user.id);
 
     const queues = await prisma.studySession.findMany({
       include: { blocks: { orderBy: { position: "asc" } } },
@@ -118,8 +107,6 @@ describe("queue attempts mark freshness while preserving the queue", () => {
     await expect(
       addAreaPracticeBlock({ goalId: day.goal.id, input: { areaId: chapter.id, timeZone: "UTC" } }),
     ).resolves.toMatchObject({ status: "unavailable" });
-
-    await expect(revision(day.user.id)).resolves.toBe(before + 1n);
 
     await expect(prisma.studySessionBlock.count({ where: { sessionId: first.id } })).resolves.toBe(
       first.blocks.length,

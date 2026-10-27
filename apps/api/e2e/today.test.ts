@@ -209,12 +209,7 @@ test.describe("Today API", () => {
     expect(openedResponse.status()).toBe(201);
     const opened = openedStudyDayResponseSchema.parse(await openedResponse.json());
 
-    expect(opened).toMatchObject({
-      actorId: userId,
-      created: true,
-      goalId: goal.id,
-      status: "opened",
-    });
+    expect(opened).toMatchObject({ created: true, goalId: goal.id, status: "opened" });
 
     const saved = await prisma.studySession.findUniqueOrThrow({
       include: { blocks: { orderBy: { position: "asc" } } },

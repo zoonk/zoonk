@@ -220,7 +220,7 @@ describe("undoing a change in the app", () => {
     await expect(readDaySession(goal.id)).resolves.toStrictEqual(day);
   });
 
-  it("announces Undo with one revision and restores the whole original queue, with a no-op replay", async () => {
+  it("announces Undo once and restores the whole original queue, with a no-op replay", async () => {
     const { goal } = await setupDayWithMistake({ dailyMinutes: 15 });
     const original = await readDaySession(goal.id);
     expect(original.blocks).toHaveLength(4);
@@ -235,7 +235,6 @@ describe("undoing a change in the app", () => {
     }
 
     const before = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
-    const owner = await prisma.user.findUniqueOrThrow({ where: { id: goal.userId } });
     await expect(readDaySession(goal.id)).resolves.not.toStrictEqual(original);
 
     const decision = {
@@ -254,18 +253,10 @@ describe("undoing a change in the app", () => {
       version: before.version + 1,
     });
 
-    await expect(
-      prisma.user.findUniqueOrThrow({ where: { id: goal.userId } }),
-    ).resolves.toMatchObject({ learnerRevision: owner.learnerRevision + 1n });
-
     const replay = await countDatabaseStatements(() => decidePlanChange(decision));
     expect(replay.result).toMatchObject({ status: "conflict" });
     expect(replay.writes).toBe(0);
     await expect(readDaySession(goal.id)).resolves.toStrictEqual(original);
-
-    await expect(
-      prisma.user.findUniqueOrThrow({ where: { id: goal.userId } }),
-    ).resolves.toMatchObject({ learnerRevision: owner.learnerRevision + 1n });
   });
 
   // What the learner did between Apply and Undo is theirs: the lesson they finished stays done, and
