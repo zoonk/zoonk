@@ -2,6 +2,7 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
+import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { type CallLimit } from "../../_components/help-limit-notice";
@@ -173,36 +174,76 @@ export function CallProblem({
 }
 
 /**
- * Saving a finished call: its feedback being written, or why not yet, with a way to try again.
- * While the server hasn't confirmed the call closed, nothing is saved and the transcript waits
- * here; trying again asks the server to close it again.
+ * Past this a save says it's still working: a call's feedback takes a few seconds, an exam's grade
+ * 13 to 33 (about 23 for most).
+ */
+const SLOW_SAVE_MS = { feedback: 20_000, grade: 45_000 } as const;
+
+/** What the wait is doing, and when it's taking longer than it usually does. */
+function SavingLine({ grading }: { grading: boolean }) {
+  const t = useExtracted();
+  const afterMs = SLOW_SAVE_MS[grading ? "grade" : "feedback"];
+  const isSlow = useTakingLong({ active: true, afterMs });
+
+  if (grading) {
+    return isSlow
+      ? t("Still rating your speaking. This is taking longer than usual.")
+      : t("Rating your speaking on the exam's criteria. It usually takes about half a minute.");
+  }
+
+  return isSlow
+    ? t("Still writing your feedback. This is taking longer than usual.")
+    : t("Writing your feedback…");
+}
+
+/**
+ * Saving a finished call: its feedback being written (a mock's or an exam task's grade, which takes
+ * longer, says so), or why not yet, with Try again as the screen's main action. While the server
+ * hasn't confirmed the call closed, nothing is saved and the transcript waits here; trying again
+ * asks the server to close it again.
  */
 export function SavingCall({
+  grading,
   onRetry,
   state,
+  title,
 }: {
+  /** The call is graded on its exam's criteria (a speaking mock, a certificate's task). */
+  grading: boolean;
   onRetry: () => void;
   state: "closing" | "failed" | "saving";
+  title: string;
 }) {
   const t = useExtracted();
 
   if (state === "saving") {
     return (
-      <p className="text-muted-foreground flex items-center gap-2 py-6" role="status">
-        <Spinner aria-hidden="true" />
-        {t("Writing your feedback…")}
-      </p>
+      <TaskFrame exitHref={null} headerTitle={title}>
+        <p className="text-muted-foreground flex items-start gap-2 py-6 text-pretty" role="status">
+          <Spinner aria-hidden="true" className="mt-1 shrink-0" />
+          <span>
+            <SavingLine grading={grading} />
+          </span>
+        </p>
+      </TaskFrame>
     );
   }
 
   return (
-    <div className="flex flex-col items-start gap-4 py-6" role="alert">
-      <p>
+    <TaskFrame
+      exitHref={null}
+      footer={
+        <TaskActions>
+          <TaskMainButton onClick={onRetry}>{t("Try again")}</TaskMainButton>
+        </TaskActions>
+      }
+      headerTitle={title}
+    >
+      <p className="py-6 text-pretty" role="alert">
         {state === "closing"
           ? t("The call is still closing. Try again in a moment.")
           : t("We couldn't save the call.")}
       </p>
-      <TaskMainButton onClick={onRetry}>{t("Try again")}</TaskMainButton>
-    </div>
+    </TaskFrame>
   );
 }

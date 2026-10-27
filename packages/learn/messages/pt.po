@@ -4498,6 +4498,21 @@ msgid "The call didn't connect"
 msgstr "Não foi possível conectar à conversa"
 
 #: src/language/conversation/call-problem.tsx
+msgctxt "qxVLmW"
+msgid "Still rating your speaking. This is taking longer than usual."
+msgstr "Ainda estamos avaliando sua conversação. Isso está demorando mais que o normal."
+
+#: src/language/conversation/call-problem.tsx
+msgctxt "foEK61"
+msgid "Rating your speaking on the exam's criteria. It usually takes about half a minute."
+msgstr "Estamos avaliando sua conversação pelos critérios da prova. Costuma levar cerca de meio minuto."
+
+#: src/language/conversation/call-problem.tsx
+msgctxt "pUiJI5"
+msgid "Still writing your feedback. This is taking longer than usual."
+msgstr "Ainda estamos escrevendo seu feedback. Isso está demorando mais que o normal."
+
+#: src/language/conversation/call-problem.tsx
 msgctxt "isO0rt"
 msgid "Writing your feedback…"
 msgstr "Gerando seu feedback…"

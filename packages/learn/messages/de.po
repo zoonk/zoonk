@@ -4498,6 +4498,21 @@ msgid "The call didn't connect"
 msgstr "Der Anruf kam nicht zustande"
 
 #: src/language/conversation/call-problem.tsx
+msgctxt "qxVLmW"
+msgid "Still rating your speaking. This is taking longer than usual."
+msgstr "Deine Sprechleistung wird noch bewertet. Das dauert länger als sonst."
+
+#: src/language/conversation/call-problem.tsx
+msgctxt "foEK61"
+msgid "Rating your speaking on the exam's criteria. It usually takes about half a minute."
+msgstr "Deine Sprechleistung wird anhand der Prüfungskriterien bewertet. Das dauert normalerweise etwa eine halbe Minute."
+
+#: src/language/conversation/call-problem.tsx
+msgctxt "pUiJI5"
+msgid "Still writing your feedback. This is taking longer than usual."
+msgstr "Dein Feedback wird noch erstellt. Das dauert länger als sonst."
+
+#: src/language/conversation/call-problem.tsx
 msgctxt "isO0rt"
 msgid "Writing your feedback…"
 msgstr "Dein Feedback wird erstellt…"

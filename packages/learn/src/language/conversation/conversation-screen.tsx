@@ -11,7 +11,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { type LearnBuddy } from "../../buddies/use-buddy-name";
 import { DayMoment } from "../../session/day-moment";
 import { type MomentCeremony, getCeremonyMoment } from "../../session/moment-ceremony";
-import { TaskFrame } from "../../shell/task-frame";
 import { ExamSpeakingResult } from "../exam-speaking/exam-speaking-result";
 import { CallProblem, SavingCall } from "./call-problem";
 import { ConversationIntro } from "./conversation-intro";
@@ -175,9 +174,12 @@ function LiveCallRun({
 
   if (saving || call.phase === "ended") {
     return (
-      <TaskFrame exitHref={null} headerTitle={title}>
-        <SavingCall onRetry={() => void save()} state={saving ?? "saving"} />
-      </TaskFrame>
+      <SavingCall
+        grading={conversation.kind === "speakingMock" || conversation.examTask !== null}
+        onRetry={() => void save()}
+        state={saving ?? "saving"}
+        title={title}
+      />
     );
   }
 
