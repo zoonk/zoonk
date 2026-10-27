@@ -3,9 +3,11 @@
 import { type SpeakingTaskView } from "@zoonk/core/language/exam-speaking/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted, useFormatter } from "next-intl";
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useRef, useState, useSyncExternalStore } from "react";
 import { formatClock } from "../../_utils/clock";
+import { deviceStorage } from "../../_utils/device-storage";
 import { useFormatDuration } from "../../_utils/time-format";
+import { useTimeLeft } from "../../_utils/use-time-left";
 
 const MS_PER_MINUTE = 60_000;
 const TICK_MS = 500;
@@ -19,26 +21,30 @@ function getStorageKey(cardId: string): string {
 
 /** When this card's preparation started on this device, if it did and isn't stale. */
 function readStartedAt(cardId: string): number | null {
-  try {
-    const value = Number(globalThis.localStorage.getItem(getStorageKey(cardId)));
-    return value > 0 && Date.now() - value < STALE_MINUTES * MS_PER_MINUTE ? value : null;
-  } catch {
-    return null;
-  }
-}
-
-function writeStartedAt({ cardId, startedAt }: { cardId: string; startedAt: number }) {
-  try {
-    globalThis.localStorage.setItem(getStorageKey(cardId), String(startedAt));
-  } catch {
-    // Without storage the clock still runs; a reload just shows it ready to start again.
-  }
+  const value = Number(deviceStorage.get(getStorageKey(cardId)));
+  return value > 0 && Date.now() - value < STALE_MINUTES * MS_PER_MINUTE ? value : null;
 }
 
 /** Another tab of the same card starting its clock starts this one too. */
 function subscribeToStorage(onChange: () => void) {
   globalThis.addEventListener("storage", onChange);
   return () => globalThis.removeEventListener("storage", onChange);
+}
+
+/** The preparation's time left, ticking twice a second, and a line once it's over. */
+function PrepTimeLeft({ deadline }: { deadline: number }) {
+  const t = useExtracted();
+  const leftMs = useTimeLeft({ deadline, tickMs: TICK_MS });
+
+  if (leftMs === 0) {
+    return (
+      <p className="text-[0.8125rem] leading-snug text-pretty">
+        {t("Preparation time is over. Start the call when you're ready.")}
+      </p>
+    );
+  }
+
+  return <p className="text-readout text-2xl leading-tight">{formatClock(leftMs)}</p>;
 }
 
 /** "The exam gives 10 min…", or the shared time and this task's share of it. */
@@ -85,25 +91,12 @@ export function PrepTimer({
   );
 
   const [restartedAt, setRestartedAt] = useState<number | null>(null);
-  const [now, setNow] = useState(() => Date.now());
   const startedAt = restartedAt ?? saved;
-  const totalMs = task.prepMinutes * MS_PER_MINUTE;
-  const leftMs = startedAt === null ? totalMs : Math.max(0, totalMs - (now - startedAt));
-
-  useEffect(() => {
-    if (startedAt === null || leftMs === 0) {
-      return;
-    }
-
-    const timer = setInterval(() => setNow(Date.now()), TICK_MS);
-    return () => clearInterval(timer);
-  }, [leftMs, startedAt]);
 
   const start = () => {
     const at = Date.now();
-    writeStartedAt({ cardId, startedAt: at });
+    deviceStorage.set(getStorageKey(cardId), String(at));
     setRestartedAt(at);
-    setNow(at);
     // The button that started it gives way to the clock, so focus moves there with it.
     requestAnimationFrame(() => clock.current?.focus());
   };
@@ -133,13 +126,8 @@ export function PrepTimer({
         tabIndex={-1}
       >
         <p className="text-sm leading-5 font-medium">{t("Preparation")}</p>
-        {leftMs === 0 ? (
-          <p className="text-[0.8125rem] leading-snug text-pretty">
-            {t("Preparation time is over. Start the call when you're ready.")}
-          </p>
-        ) : (
-          <p className="text-readout text-2xl leading-tight">{formatClock(leftMs)}</p>
-        )}
+        {/* A new clock for every start, so it begins from the full time. */}
+        <PrepTimeLeft deadline={startedAt + task.prepMinutes * MS_PER_MINUTE} key={startedAt} />
       </div>
       <Button className="shrink-0" onClick={start} size="sm" variant="ghost">
         {t("Start again")}

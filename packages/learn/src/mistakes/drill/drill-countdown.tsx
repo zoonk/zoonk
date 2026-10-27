@@ -1,45 +1,18 @@
 "use client";
 
+import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { cn } from "@zoonk/ui/lib/utils";
 import { TimerIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useEffect, useEffectEvent, useRef, useState } from "react";
+import { useState } from "react";
 import { Meter, MeterFill } from "../../_components/meter";
 import { formatClock } from "../../_utils/clock";
+import { useTimeLeft } from "../../_utils/use-time-left";
 import { WARNING_SECONDS, getAnnouncedSeconds } from "./countdown-announcement";
 
+/** Often enough for the bar to slide smoothly. */
 const TICK_MS = 250;
 const MS_PER_SECOND = 1000;
-
-/** Time left since the question showed. When it reaches zero, `onTimeUp` runs once. */
-function useCountdown({ onTimeUp, seconds }: { onTimeUp: () => void; seconds: number }) {
-  const [clock, setClock] = useState(() => {
-    const shownAt = Date.now();
-    return { now: shownAt, shownAt };
-  });
-
-  const remaining = Math.max(0, seconds * MS_PER_SECOND - (clock.now - clock.shownAt));
-  const timeUp = useEffectEvent(onTimeUp);
-  const called = useRef(false);
-
-  useEffect(() => {
-    const timer = setInterval(
-      () => setClock((current) => ({ ...current, now: Date.now() })),
-      TICK_MS,
-    );
-
-    return () => clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
-    if (remaining === 0 && !called.current) {
-      called.current = true;
-      timeUp();
-    }
-  }, [remaining]);
-
-  return remaining;
-}
 
 /** What screen readers hear: the seconds left at a few marks (see `getAnnouncedSeconds`), then "Time's up". */
 function useCountdownAnnouncement(secondsLeft: number): string {
@@ -66,7 +39,8 @@ function useCountdownAnnouncement(secondsLeft: number): string {
  */
 export function DrillCountdown({ onTimeUp, seconds }: { onTimeUp: () => void; seconds: number }) {
   const t = useExtracted();
-  const remaining = useCountdown({ onTimeUp, seconds });
+  const deadline = useMountTime().getTime() + seconds * MS_PER_SECOND;
+  const remaining = useTimeLeft({ deadline, onTimeUp, tickMs: TICK_MS });
   const secondsLeft = Math.ceil(remaining / MS_PER_SECOND);
   const warning = secondsLeft <= WARNING_SECONDS;
   const announcement = useCountdownAnnouncement(secondsLeft);

@@ -1,12 +1,12 @@
 "use client";
 
+import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { RotateCcwIcon, StepForwardIcon, TimerIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { formatClock } from "../_utils/clock";
+import { useTimeLeft } from "../_utils/use-time-left";
 import { useMockScreen } from "./mock-context";
 
-const TICK_MS = 1000;
 const MS_PER_SECOND = 1000;
 
 /**
@@ -61,28 +61,8 @@ export function MovesNote() {
 function ItemCountdown({ seconds }: { seconds: number }) {
   const t = useExtracted();
   const { runner } = useMockScreen();
-  // When the question appeared, and the clock's latest tick.
-  const [clock, setClock] = useState(() => ({ now: Date.now(), start: Date.now() }));
-  const remaining = Math.max(0, clock.start + seconds * MS_PER_SECOND - clock.now);
-  const done = useRef(false);
-
-  const moveOn = useEffectEvent(() => runner.timeOutQuestion());
-
-  useEffect(() => {
-    const timer = setInterval(
-      () => setClock((current) => ({ ...current, now: Date.now() })),
-      TICK_MS,
-    );
-
-    return () => clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
-    if (remaining === 0 && !done.current) {
-      done.current = true;
-      moveOn();
-    }
-  }, [remaining]);
+  const deadline = useMountTime().getTime() + seconds * MS_PER_SECOND;
+  const remaining = useTimeLeft({ deadline, onTimeUp: runner.timeOutQuestion });
 
   return (
     <span className="text-foreground flex items-center gap-1 font-mono font-medium tabular-nums">

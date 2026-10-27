@@ -1,7 +1,6 @@
 "use client";
 
 import { useExtracted } from "next-intl";
-import { useEffect, useEffectEvent, useRef, useState } from "react";
 import {
   ListGroup,
   ListRow,
@@ -14,36 +13,11 @@ import { StepCard, StepDetail, StepHeader, StepTitle } from "../_components/step
 import { TaskActions } from "../_components/task-layout";
 import { formatClock } from "../_utils/clock";
 import { useFormatDuration } from "../_utils/time-format";
+import { useTimeLeft } from "../_utils/use-time-left";
 import { TaskMainButton } from "../shell/task-frame";
 import { useMockScreen } from "./mock-context";
 import { MockFrame, MockStepStatus } from "./mock-frame";
 import { SheetSections, hasSeveralSections } from "./mock-sheet-sections";
-
-const TICK_MS = 1000;
-
-/** The break's time left, ticking every second; when it runs out, the next section shows. */
-function useBreakLeft(until: string): number {
-  const { runner } = useMockScreen();
-  const [now, setNow] = useState(() => Date.now());
-  const remaining = Math.max(0, new Date(until).getTime() - now);
-  const shown = useRef<string | null>(null);
-  const showNext = useEffectEvent(() => void runner.endBreak());
-
-  useEffect(() => {
-    const timer = setInterval(() => setNow(Date.now()), TICK_MS);
-    return () => clearInterval(timer);
-  }, []);
-
-  // Once per break: its clock already started the next section on the server.
-  useEffect(() => {
-    if (remaining === 0 && shown.current !== until) {
-      shown.current = until;
-      showNext();
-    }
-  }, [remaining, until]);
-
-  return remaining;
-}
 
 /**
  * The break the notice gives between two sections, like the real exam's, straight on the page:
@@ -56,7 +30,8 @@ export function MockBreak({ until }: { until: string }) {
   const t = useExtracted();
   const duration = useFormatDuration();
   const { runner } = useMockScreen();
-  const remaining = useBreakLeft(until);
+  // When the break ends, its clock already started the next section on the server; this shows it.
+  const remaining = useTimeLeft({ deadline: until, onTimeUp: () => void runner.endBreak() });
   const next = runner.view.sections.find((section) => section.status === "current");
 
   return (
