@@ -76,6 +76,25 @@ export type SpeakingCriterionFormat = {
   interactive?: boolean;
 };
 
+/** What a criterion sets itself; the rest is its format's scale (`speakingCriteria`). */
+type CriterionFields = Pick<SpeakingCriterionFormat, "key" | "name"> &
+  Partial<Omit<SpeakingCriterionFormat, "key" | "name">>;
+
+/**
+ * A format's criterion builder: each criterion is on the format's `scale` unless it says
+ * otherwise, and one about how the candidate sounds is rated on the voice alone (`voiceOnly`)
+ * unless it says it isn't.
+ */
+export function speakingCriteria(
+  scale: Pick<SpeakingCriterionFormat, "display" | "halfBands" | "levelBand" | "maxBand" | "scope">,
+) {
+  return ({
+    sound = false,
+    voiceOnly = sound,
+    ...fields
+  }: CriterionFields): SpeakingCriterionFormat => ({ ...scale, ...fields, sound, voiceOnly });
+}
+
 /** One line of the official mark sheet: a criterion in a task (or the whole paper) and its points. */
 export type SpeakingScoreRow = {
   criterion: string;

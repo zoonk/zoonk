@@ -1,9 +1,9 @@
 import { type CefrLevel } from "@zoonk/utils/cefr";
 import {
-  type SpeakingCriterionFormat,
   type SpeakingFormat,
   type SpeakingScoreRow,
   evenPoints,
+  speakingCriteria,
 } from "../speaking-format";
 import { GOETHE_TASKS } from "./goethe-tasks";
 
@@ -20,33 +20,13 @@ import { GOETHE_TASKS } from "./goethe-tasks";
 const LETTER_BANDS = 4;
 const A1_BANDS = 2;
 
-function criterion({
-  key,
-  maxBand = LETTER_BANDS,
-  name,
-  scope = "task",
-  sound = false,
-  voiceOnly = sound,
-}: {
-  key: string;
-  maxBand?: number;
-  name: string;
-  scope?: "task" | "test";
-  sound?: boolean;
-  voiceOnly?: boolean;
-}): SpeakingCriterionFormat {
-  return {
-    display: maxBand === LETTER_BANDS ? "letter" : "points",
-    halfBands: false,
-    key,
-    levelBand: null,
-    maxBand,
-    name,
-    scope,
-    sound,
-    voiceOnly,
-  };
-}
+const criterion = speakingCriteria({
+  display: "letter",
+  halfBands: false,
+  levelBand: null,
+  maxBand: LETTER_BANDS,
+  scope: "task",
+});
 
 const TASK_COMPLETION = criterion({ key: "taskCompletion", name: "Erfüllung" });
 const INTERACTION = criterion({ key: "interaction", name: "Interaktion" });
@@ -108,6 +88,7 @@ export const GOETHE_FORMATS: readonly SpeakingFormat[] = [
   goetheFormat({
     criteria: [
       criterion({
+        display: "points",
         key: "taskCompletion",
         maxBand: A1_BANDS,
         name: "Erfüllung der Aufgabenstellung und sprachliche Realisierung",

@@ -4,6 +4,7 @@ import {
   type SpeakingFormat,
   type SpeakingTaskFormat,
   evenPoints,
+  speakingCriteria,
 } from "../speaking-format";
 import { CAMBRIDGE_TASKS } from "./cambridge-tasks";
 
@@ -21,29 +22,13 @@ import { CAMBRIDGE_TASKS } from "./cambridge-tasks";
 const MAX_BAND = 5;
 const LEVEL_BAND = 3;
 
-function criterion({
-  key,
-  name,
-  sound = false,
-  voiceOnly = sound,
-}: {
-  key: string;
-  name: string;
-  sound?: boolean;
-  voiceOnly?: boolean;
-}): SpeakingCriterionFormat {
-  return {
-    display: "band",
-    halfBands: true,
-    key,
-    levelBand: LEVEL_BAND,
-    maxBand: MAX_BAND,
-    name,
-    scope: "test",
-    sound,
-    voiceOnly,
-  };
-}
+const criterion = speakingCriteria({
+  display: "band",
+  halfBands: true,
+  levelBand: LEVEL_BAND,
+  maxBand: MAX_BAND,
+  scope: "test",
+});
 
 const GRAMMAR_VOCABULARY = criterion({ key: "grammarVocabulary", name: "Grammar and Vocabulary" });
 const GRAMMAR = criterion({ key: "grammar", name: "Grammatical Resource" });
@@ -51,10 +36,11 @@ const LEXIS = criterion({ key: "lexis", name: "Lexical Resource" });
 const DISCOURSE = criterion({ key: "discourse", name: "Discourse Management" });
 const PRONUNCIATION = criterion({ key: "pronunciation", name: "Pronunciation", sound: true });
 
-const INTERACTION = {
-  ...criterion({ key: "interaction", name: "Interactive Communication" }),
+const INTERACTION = criterion({
   interactive: true,
-};
+  key: "interaction",
+  name: "Interactive Communication",
+});
 
 const GLOBAL = criterion({ key: "global", name: "Global Achievement" });
 

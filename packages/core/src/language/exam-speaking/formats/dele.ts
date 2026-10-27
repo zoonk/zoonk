@@ -1,9 +1,9 @@
 import { type CefrLevel } from "@zoonk/utils/cefr";
 import {
-  type SpeakingCriterionFormat,
   type SpeakingFormat,
   type SpeakingScoreRow,
   evenPoints,
+  speakingCriteria,
 } from "../speaking-format";
 import { DELE_TASKS } from "./dele-tasks";
 
@@ -28,31 +28,13 @@ const C2_PAPER_POINTS = 33.34;
 
 const GROUP_PASS = { kind: "group", min: 30, of: 50 } as const;
 
-function criterion({
-  key,
-  name,
-  scope = "task",
-  sound = false,
-  voiceOnly = sound,
-}: {
-  key: string;
-  name: string;
-  scope?: "task" | "test";
-  sound?: boolean;
-  voiceOnly?: boolean;
-}): SpeakingCriterionFormat {
-  return {
-    display: "band",
-    halfBands: false,
-    key,
-    levelBand: LEVEL_BAND,
-    maxBand: MAX_BAND,
-    name,
-    scope,
-    sound,
-    voiceOnly,
-  };
-}
+const criterion = speakingCriteria({
+  display: "band",
+  halfBands: false,
+  levelBand: LEVEL_BAND,
+  maxBand: MAX_BAND,
+  scope: "task",
+});
 
 /** The rater's task bands (each task and criterion its share of 60%) and the interviewer's 40%. */
 function deleRows({

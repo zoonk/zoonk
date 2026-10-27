@@ -1,9 +1,9 @@
 import { type CefrLevel } from "@zoonk/utils/cefr";
 import {
-  type SpeakingCriterionFormat,
   type SpeakingFormat,
   type SpeakingScoreRow,
   type SpeakingTaskFormat,
+  speakingCriteria,
 } from "../speaking-format";
 import { DELF_TASKS } from "./delf-tasks";
 
@@ -21,31 +21,13 @@ const MAX_BAND = 3;
 /** At the level: the third of the four columns. */
 const LEVEL_BAND = 2;
 
-function criterion({
-  key,
-  name,
-  scope = "test",
-  sound = false,
-  voiceOnly = sound,
-}: {
-  key: string;
-  name: string;
-  scope?: "task" | "test";
-  sound?: boolean;
-  voiceOnly?: boolean;
-}): SpeakingCriterionFormat {
-  return {
-    display: "points",
-    halfBands: false,
-    key,
-    levelBand: LEVEL_BAND,
-    maxBand: MAX_BAND,
-    name,
-    scope,
-    sound,
-    voiceOnly,
-  };
-}
+const criterion = speakingCriteria({
+  display: "points",
+  halfBands: false,
+  levelBand: LEVEL_BAND,
+  maxBand: MAX_BAND,
+  scope: "test",
+});
 
 const CRITERIA = [
   criterion({ key: "taskCompletion", name: "Réalisation de la tâche", scope: "task" }),
