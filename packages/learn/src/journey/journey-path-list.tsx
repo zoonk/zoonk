@@ -9,7 +9,6 @@ import {
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronDownIcon, ChevronRightIcon, FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useId } from "react";
 import { ChapterMark } from "../_components/chapter-mark";
 import { LearnLink } from "../learn-link";
 import { usePlanScreen } from "../plan/plan-context";
@@ -18,35 +17,25 @@ import { usePhaseName } from "../plan/use-phase-name";
 import { JourneyChapters, WritingAheadLine } from "./journey-chapters";
 import { type JourneyPathLinks } from "./journey-links";
 import { CheckpointRow, PATH_ROW_CLASS, PATH_ROW_LEADING_CLASS } from "./journey-phase-events";
-import { PhaseLessons, PhaseMark, PhaseName, PhaseUntil, usePhaseLabel } from "./path-phase-row";
+import { PhaseLessons, PhaseMark, PhaseName, PhaseUntil } from "./path-phase-row";
 import { findOpenPhase, findOwnChapter, isNamedLikeAChapter } from "./path-phases";
 import { useRoadmapFinish } from "./use-roadmap";
 
 /** A phase row's columns: its mark, its name, its lessons, when it ends, its chevron. */
 const PHASE_ROW_CLASS = cn(PATH_ROW_CLASS, "min-h-12");
 
-/** What describes a phase row, after its name: what it waits for, then its lessons and end. */
-function usePhaseRowIds() {
-  const meta = useId();
-  const trailing = useId();
-  return { describedBy: `${meta} ${trailing}`, meta, trailing };
-}
-
 /**
  * A phase row's columns: its mark, its name, its lessons and when it ends. A row that opens
- * something is named by the phase's name and state in one run (`usePhaseLabel`) and described by
- * the rest (`ids`).
+ * something is named by all of them, in the order they show.
  */
 function PhaseColumns({
   byPlace = false,
-  ids,
   isLast,
   nextChapter,
   open,
   phase,
 }: {
   byPlace?: boolean;
-  ids: ReturnType<typeof usePhaseRowIds>;
   isLast: boolean;
   nextChapter?: PlanChapterView;
   open: boolean;
@@ -57,11 +46,9 @@ function PhaseColumns({
       <span className={PATH_ROW_LEADING_CLASS}>
         {nextChapter ? <ChapterMark chapter={nextChapter} isNext /> : <PhaseMark phase={phase} />}
       </span>
-      <PhaseName byPlace={byPlace} metaId={ids.meta} open={open} phase={phase} />
-      <span className="contents" id={ids.trailing}>
-        <PhaseLessons phase={phase} />
-        <PhaseUntil isLast={isLast} phase={phase} />
-      </span>
+      <PhaseName byPlace={byPlace} isNext={Boolean(nextChapter)} open={open} phase={phase} />
+      <PhaseLessons phase={phase} />
+      <PhaseUntil isLast={isLast} phase={phase} />
     </>
   );
 }
@@ -102,20 +89,15 @@ function ChapterPhase({
   open: boolean;
   phase: PlanPhaseView;
 }) {
-  const label = usePhaseLabel();
-  const ids = usePhaseRowIds();
   const isNext = chapter.state === "current";
 
   return (
     <li aria-current={phase.state === "current" ? "step" : undefined} data-state={phase.state}>
       <LearnLink
-        aria-describedby={ids.describedBy}
-        aria-label={label(phase, { isNext })}
         className={cn(PHASE_ROW_CLASS, "hover:bg-muted/70", isNext && "bg-muted hover:bg-muted")}
         href={links.chapter(chapter.chapterId)}
       >
         <PhaseColumns
-          ids={ids}
           isLast={isLast}
           nextChapter={isNext ? chapter : undefined}
           open={open}
@@ -146,13 +128,9 @@ function ChaptersPhase({
   open: boolean;
   phase: PlanPhaseView;
 }) {
-  const label = usePhaseLabel();
-  const ids = usePhaseRowIds();
   const hasContent = phase.chapters.length > 0 || phase.checkpoint !== null;
 
-  const header = (
-    <PhaseColumns byPlace={byPlace} ids={ids} isLast={isLast} open={open} phase={phase} />
-  );
+  const header = <PhaseColumns byPlace={byPlace} isLast={isLast} open={open} phase={phase} />;
 
   if (!hasContent) {
     return (
@@ -170,18 +148,7 @@ function ChaptersPhase({
       {/* Opened or shut by hand, a phase keeps it until the plan goes on elsewhere: a change, a
           finished phase or another goal's plan opens the phase the plan goes on in. */}
       <Collapsible defaultOpen={open} key={open ? "open" : "shut"}>
-        <CollapsibleTrigger
-          aria-describedby={ids.describedBy}
-          className={cn(PHASE_ROW_CLASS, "hover:bg-muted/70 group/phase")}
-          render={(props, state) => (
-            // Open, a phase named like one of its chapters goes by its place, as it reads then.
-            <button
-              {...props}
-              aria-label={label(phase, { byPlace: byPlace && state.open })}
-              type="button"
-            />
-          )}
-        >
+        <CollapsibleTrigger className={cn(PHASE_ROW_CLASS, "hover:bg-muted/70 group/phase")}>
           {header}
           <ChevronDownIcon
             aria-hidden="true"

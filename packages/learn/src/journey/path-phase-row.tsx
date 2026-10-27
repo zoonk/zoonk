@@ -198,13 +198,20 @@ function PhaseMeta({ open, phase }: { open: boolean; phase: PlanPhaseView }) {
   );
 }
 
-/** What screen readers hear after a phase's name: ", you are here" or ", done". */
+/**
+ * What screen readers hear after a phase's name: ", you are here", ", done", or ", up next" for the
+ * phase holding the next chapter (`isNext`) when it isn't the current one.
+ */
 function usePhaseState() {
   const t = useExtracted();
 
-  return (phase: Pick<PlanPhaseView, "state">): string => {
+  return (phase: Pick<PlanPhaseView, "state">, { isNext = false } = {}): string => {
     if (phase.state === "current") {
       return t(", you are here");
+    }
+
+    if (isNext) {
+      return t(", up next");
     }
 
     return phase.state === "done" ? t(", done") : "";
@@ -212,41 +219,33 @@ function usePhaseState() {
 }
 
 /**
- * A phase's name and state in one run ("Phase 3, you are here"), to name the row or band it's on,
- * as a mission's row is named: from its words, a browser reads the hidden state as a block of its
- * own and named the row "Phase 3 , you are here". `byPlace` as in `PhaseName`.
+ * A phase's name and state in one run ("Phase 3, you are here"), to name the band it's on, as a
+ * mission's row is named: from its words, a browser reads the hidden state as a block of its own
+ * and named the band "Phase 3 , you are here".
  */
 export function usePhaseLabel() {
-  const t = useExtracted();
   const phaseName = usePhaseName();
   const phaseState = usePhaseState();
   const { plan } = usePlanScreen();
 
-  return (phase: PlanPhaseView, { byPlace = false, isNext = false } = {}): string => {
-    const name = phaseName(phase, { byPlace, mocksRequirePlus: plan.access.mocksRequirePlus });
-
-    if (isNext && phase.state !== "current") {
-      return `${name}${t(", up next")}`;
-    }
-
-    return `${name}${phaseState(phase)}`;
-  };
+  return (phase: PlanPhaseView): string =>
+    `${phaseName(phase, { mocksRequirePlus: plan.access.mocksRequirePlus })}${phaseState(phase)}`;
 }
 
 /**
  * A phase's name, with what screen readers need to hear about its state, and what it waits for
- * under it (in `metaId`, for a row named by `usePhaseLabel` to be described by). Open over
- * chapters one of which has its name (`byPlace`, see `isNamedLikeAChapter`), it goes by its place
- * while its chapters show, so that chapter carries the name; closed, it keeps it.
+ * under it. Open over chapters one of which has its name (`byPlace`, see `isNamedLikeAChapter`),
+ * it goes by its place while its chapters show, so that chapter carries the name; closed, it
+ * keeps it.
  */
 export function PhaseName({
   byPlace = false,
-  metaId,
+  isNext = false,
   open,
   phase,
 }: {
   byPlace?: boolean;
-  metaId?: string;
+  isNext?: boolean;
   open: boolean;
   phase: PlanPhaseView;
 }) {
@@ -254,7 +253,7 @@ export function PhaseName({
   const phaseState = usePhaseState();
   const { plan } = usePlanScreen();
   const name = phaseName(phase, { mocksRequirePlus: plan.access.mocksRequirePlus });
-  const state = phaseState(phase);
+  const state = phaseState(phase, { isNext });
 
   return (
     <span className="flex min-w-0 flex-1 flex-col">
@@ -271,9 +270,7 @@ export function PhaseName({
         )}
         {state && <span className="sr-only">{state}</span>}
       </span>
-      <span className="contents" id={metaId}>
-        <PhaseMeta open={open} phase={phase} />
-      </span>
+      <PhaseMeta open={open} phase={phase} />
     </span>
   );
 }
