@@ -69,7 +69,7 @@ function stopActing(running: React.RefObject<Running>) {
  */
 function landOnInput(animations: readonly Animation[]): () => void {
   const land = (event: Event) => {
-    if (event instanceof KeyboardEvent && !LANDING_KEYS.has(event.key)) {
+    if (event instanceof KeyboardEvent && (event.repeat || !LANDING_KEYS.has(event.key))) {
       return;
     }
 
