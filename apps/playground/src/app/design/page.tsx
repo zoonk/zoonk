@@ -17,7 +17,7 @@ const SOURCES = [
   "Values: `packages/ui/src/styles/globals.css`, every color in light, dark and both more-contrast modes, the type utilities and the subjects' hue table.",
   "Meanings and usage: `apps/playground/src/design-system/`, the typed module these pages render.",
   "Components: `@zoonk/ui` for controls, the learn kit (`packages/learn/src/_components`) for pages and data, the shell (`packages/learn/src/shell`) for the frame.",
-  "How to design with it: the `zoonk-design` skill (`.agents/skills/zoonk-design`).",
+  "How to design with it: the `zoonk-design` skill (`.agents/skills/zoonk-design`); when and how things move: the `zoonk-motion` skill (`.agents/skills/zoonk-motion`).",
 ];
 
 const MODE_CHECKS = [

@@ -44,7 +44,7 @@ function scopeOf(selectorText: string): Scope | null {
 }
 
 /** Walks the stylesheet's rules in order, through media, supported and layer blocks. */
-function walk(
+export function walk(
   rules: CSSRuleList,
   conditions: readonly string[],
   visit: (scope: Scope, style: CSSStyleDeclaration, conditions: readonly string[]) => void,
@@ -68,7 +68,8 @@ function walk(
   }
 }
 
-function readRules(sheet: CSSStyleSheet): CSSRuleList | null {
+/** A stylesheet's rules, or null where the browser won't share them (another origin's sheet). */
+export function readRules(sheet: CSSStyleSheet): CSSRuleList | null {
   try {
     return sheet.cssRules;
   } catch {
