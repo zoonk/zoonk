@@ -61,27 +61,32 @@ function PendingSidebarAccount({ visitor }: { visitor: React.ReactNode }) {
   );
 }
 
+/**
+ * The row is named by its words: the learner's name on screen, then what only screen readers hear
+ * (`said`), so voice control users press it by the name they see.
+ */
 function AccountTrigger({
   children,
-  label,
   name,
+  said,
 }: {
   children?: React.ReactNode;
-  label: string;
   name: string;
+  said: string[];
 }) {
   return (
-    <DropdownMenuTrigger aria-label={label} className={ACCOUNT_ROW_CLASS}>
+    <DropdownMenuTrigger className={ACCOUNT_ROW_CLASS}>
       <span aria-hidden="true" className="flex size-6 shrink-0 overflow-hidden rounded-full">
         <LearnerAvatar />
       </span>
       <span className="min-w-0 flex-1 truncate">{name}</span>
+      <span className="sr-only">{`, ${said.join(", ")}`}</span>
       {children}
     </DropdownMenuTrigger>
   );
 }
 
-/** The row of a learner with a level: their belt and level after the name, said in its label. */
+/** The row of a learner with a level: their belt and level after the name, said in its name. */
 function AccountTriggerWithLevel({
   level,
   name,
@@ -93,14 +98,10 @@ function AccountTriggerWithLevel({
   const belt = useBeltLabel(level.color);
   const levelNumber = String(level.level);
 
-  const label = [
-    name,
-    t("{belt}, level {level}", { belt, level: levelNumber }),
-    t("User menu"),
-  ].join(", ");
+  const said = [t("{belt}, level {level}", { belt, level: levelNumber }), t("User menu")];
 
   return (
-    <AccountTrigger label={label} name={name}>
+    <AccountTrigger name={name} said={said}>
       <span className="text-muted-foreground flex shrink-0 items-center gap-1.5 pr-1 font-mono text-xs font-normal tabular-nums">
         <BeltLevel belt={belt} color={level.color} level={levelNumber} />
       </span>
@@ -110,7 +111,7 @@ function AccountTriggerWithLevel({
 
 function AccountTriggerWithoutLevel({ name }: { name: string }) {
   const t = useExtracted();
-  return <AccountTrigger label={[name, t("User menu")].join(", ")} name={name} />;
+  return <AccountTrigger name={name} said={[t("User menu")]} />;
 }
 
 function AccountRow({ summary }: { summary: LearnerSummary }) {
