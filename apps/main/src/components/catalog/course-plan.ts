@@ -1,5 +1,4 @@
 import "server-only";
-import { cacheUntilMidnight } from "@/lib/public/cache-until-midnight";
 import { daysBetweenIsoDays, getIsoDay } from "@/lib/public/calendar-day";
 import { getCourseCacheTag, getCourseCurriculumCacheTag } from "@zoonk/core/cache-tags";
 import { estimateCoursePlan } from "@zoonk/core/catalog/course-estimate";
@@ -26,8 +25,6 @@ export type CoursePlanExample = {
   pace: PaceEstimate | null;
 };
 
-/** Core's estimate starts its plan from the day in UTC. */
-const UTC = "UTC";
 const ISO_DAY_LENGTH = 10;
 const ISO_HOUR_LENGTH = 13;
 
@@ -69,17 +66,16 @@ type ExampleBasis = {
 
 /**
  * The example plan in the app's shared cache, so the course's page is static: the same for every
- * visitor, worked out again every hour and at each midnight it counts by, in the background
- * (`cacheUntilMidnight`). The course's and its curriculum's tags expire it when the course or its
- * outline changes, and an exam's notice does through the tag core's exam days carry; the other
- * inputs the planner reads (lesson specs, skills, item banks, paces) show at its next hourly run.
+ * visitor, worked out again in the background as the default cache lifetime revalidates it, so a
+ * new hour or day shows soon after it starts. The course's and its curriculum's tags expire it when
+ * the course or its outline changes, and an exam's notice does through the tag core's exam days
+ * carry; the other inputs the planner reads (lesson specs, skills, item banks, paces) show at its
+ * next revalidation.
  */
 async function getCachedExampleBasis(course: ExampleCourse): Promise<ExampleBasis> {
   "use cache";
   cacheTag(getCourseCacheTag(course.id), getCourseCurriculumCacheTag(course.id));
   const exam = course.format === "exam" ? await getUpcomingExam(course.id) : null;
-  // Both days the plan reads change at their own midnight: the estimate's and the countdown's.
-  cacheUntilMidnight(exam ? [UTC, exam.timeZone] : [UTC]);
 
   return {
     contentRevision: course.updatedAt,
@@ -100,7 +96,6 @@ async function getCachedCoursePlanExample(basis: ExampleBasis): Promise<CoursePl
   // The serialized basis doesn't transfer its cache tags. This entry must also depend on the
   // notice, including corrections to its structure that leave every sitting day unchanged.
   const exam = basis.exam ? await getUpcomingExam(basis.courseId) : null;
-  cacheUntilMidnight(exam ? [UTC, exam.timeZone] : [UTC]);
   const targetDate = exam?.days[0] ?? null;
   const minutes = targetDate ? DEFAULT_EXAM_PACE : DEFAULT_COURSE_PACE;
 

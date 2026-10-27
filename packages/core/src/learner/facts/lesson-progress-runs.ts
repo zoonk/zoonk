@@ -1,5 +1,4 @@
 import "server-only";
-import { cacheLife } from "next/cache";
 import { loadProgressRuns } from "../../lesson-player/_utils/lesson-runs";
 import { getRequestInstant } from "./request-instant";
 
@@ -7,6 +6,5 @@ import { getRequestInstant } from "./request-instant";
 export async function readLessonProgressRuns(userId: string, lessonId: string) {
   "use cache: private";
 
-  cacheLife({ stale: Infinity });
   return loadProgressRuns({ lessonId, until: await getRequestInstant(), userId });
 }

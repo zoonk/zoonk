@@ -2,20 +2,18 @@ import "server-only";
 import { getDefaultChapterImage } from "@/lib/catalog/default-images";
 import { getCourse } from "@zoonk/core/courses/get-by-slug";
 import { decodeRouteParam } from "@zoonk/core/navigation/decode-route-param";
-import { cacheLife } from "next/cache";
 import { createCatalogOpenGraphImage } from "./catalog-opengraph-image";
 
 type CourseRoute = { brandSlug: string; courseSlug: string };
 
 /**
  * The card as its PNG and the image response's headers, per course address: the course's read, its
- * thumbnail's download and conversion and the render happen once for the catalog's lifetime, as
- * long as the course page's own copy of the course. The course read's tags expire it when the
- * course changes, and its chapter and lesson pages, which share the card, share the entry.
+ * thumbnail's download and conversion and the render happen once per cache lifetime. The course
+ * read's tags expire it when the course changes, and its chapter and lesson pages, which share the
+ * card, share the entry.
  */
 async function getCourseCard(route: CourseRoute) {
   "use cache";
-  cacheLife("catalog");
 
   const course = await getCourse(route);
 

@@ -1,15 +1,13 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { cacheLife } from "next/cache";
 import { getSitemapCourseWhere } from "./course-where";
 import { getSitemapPageRowIds, isSitemapPage, warnIfSitemapPageIsFull } from "./sitemap-pages";
 
 type SitemapCourse = { brandSlug: string; courseSlug: string; language: string; updatedAt: Date };
 
-/** A page's courses (`getSitemapPage`), read once a day. */
+/** A page's courses (`getSitemapPage`), cached. */
 async function listSitemapCoursePage(page: number): Promise<SitemapCourse[]> {
   "use cache";
-  cacheLife("days");
 
   const where = await getSitemapCourseWhere();
   const listed = await prisma.course.findMany({ select: { id: true }, where });

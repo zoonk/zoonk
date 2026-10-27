@@ -1,6 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { cacheLife, cacheTag } from "next/cache";
+import { cacheTag } from "next/cache";
 import { getUserSubscriptionCacheTag } from "../../cache/tags";
 import { getRequestInstant } from "./request-instant";
 
@@ -23,7 +23,6 @@ export function getActiveSubscriptionQuery({ now, userId }: { now: Date; userId:
 export async function readActiveSubscription(userId: string) {
   "use cache: private";
 
-  cacheLife({ stale: Infinity });
   cacheTag(getUserSubscriptionCacheTag(userId));
 
   const now = await getRequestInstant();

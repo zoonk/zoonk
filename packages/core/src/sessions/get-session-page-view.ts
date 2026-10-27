@@ -1,6 +1,5 @@
 import "server-only";
 import { type GoalKind, prisma } from "@zoonk/db";
-import { cacheLife } from "next/cache";
 import { findActiveGoalId } from "../goals/_utils/goal-view";
 import { loadViewerStamp } from "../learner/_utils/load-viewer-stamp";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
@@ -56,7 +55,6 @@ export async function getSessionPageView(
   input: TodayStudySessionInput & { blockId?: string },
 ): Promise<SessionPageViewResult> {
   "use cache: private";
-  cacheLife("learner");
 
   const actor = await getSession();
 

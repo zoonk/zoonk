@@ -1,6 +1,6 @@
 import "server-only";
 import { auth } from "@zoonk/auth";
-import { cacheLife, cacheTag } from "next/cache";
+import { cacheTag } from "next/cache";
 import { headers } from "next/headers";
 import { getUserSessionCacheTag } from "../cache/tags";
 
@@ -11,8 +11,6 @@ import { getUserSessionCacheTag } from "../cache/tags";
  */
 export async function getSession() {
   "use cache: private";
-
-  cacheLife({ stale: Infinity });
 
   const requestHeaders = await headers();
   const session = await auth.api.getSession({ headers: requestHeaders });

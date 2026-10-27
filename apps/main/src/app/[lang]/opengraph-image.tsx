@@ -3,7 +3,6 @@ import { join } from "node:path";
 import { routing } from "@/i18n/routing";
 import { DEFAULT_LOCALE, isValidLocale } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
-import { cacheLife } from "next/cache";
 import { ImageResponse } from "next/og";
 
 const LOGO_PATH = join(process.cwd(), "src/app/icon.svg");
@@ -19,7 +18,6 @@ export const size = { height: 630, width: 1200 };
  */
 async function getLogoDataUrl(): Promise<string> {
   "use cache";
-  cacheLife("days");
 
   const icon = await readFile(LOGO_PATH, "utf8");
 

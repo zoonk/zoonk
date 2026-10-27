@@ -1,4 +1,3 @@
-import { cacheUntilMidnight } from "@/lib/public/cache-until-midnight";
 import { addIsoDays, daysBetweenIsoDays, getIsoDay } from "@/lib/public/calendar-day";
 import { getCourseExamDaysByRoute } from "@zoonk/core/catalog/course-exam-days-by-route";
 import { MS_PER_DAY } from "@zoonk/utils/date";
@@ -60,15 +59,15 @@ const ENEM_ROUTE = { brandSlug: AI_ORG_SLUG, courseSlug: "enem-pt" };
 type ExampleDays = { enemDay: string | null; today: string };
 
 /**
- * Today, and for the ENEM examples the exam's next day, cached until the day changes (in the
- * exam's time zone), so the page stays prerendered and its countdown matches the course's.
+ * Today, and for the ENEM examples the exam's next day (in the exam's time zone), cached so the page
+ * stays prerendered; the default cache lifetime works it out again soon after the day changes, as
+ * the course's countdown.
  */
 async function getCachedExampleDays(exam: ExampleSet["exam"]): Promise<ExampleDays> {
   "use cache";
 
   const found = exam === "enem" ? await getCourseExamDaysByRoute(ENEM_ROUTE) : null;
   const timeZone = found?.timeZone ?? "UTC";
-  cacheUntilMidnight([timeZone]);
 
   const today = getIsoDay({ now: new Date(), timeZone });
   return { enemDay: found?.days.find((day) => day > today) ?? null, today };

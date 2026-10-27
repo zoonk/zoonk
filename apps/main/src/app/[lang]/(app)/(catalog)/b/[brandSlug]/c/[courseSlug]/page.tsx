@@ -17,7 +17,7 @@ type Props = PageProps<"/[lang]/b/[brandSlug]/c/[courseSlug]">;
 /**
  * The same for everyone and fully static: the build writes the most popular courses' pages, any
  * other is written on its first request, and each is kept until its content's tags expire it or the
- * catalog's lifetime ends. The learner's own bits are read in the browser.
+ * default cache lifetime revalidates it. The learner's own bits are read in the browser.
  */
 export const ensureStatic = "navigation";
 

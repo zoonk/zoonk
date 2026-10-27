@@ -1,7 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
-import { cacheLife, cacheTag } from "next/cache";
+import { cacheTag } from "next/cache";
 import { getLibraryLessonCacheTag } from "../../cache/tags";
 import { type PublicFirstScreen, toPublicFirstScreen } from "./_utils/public-first-screen";
 import { toSummaryIdeas } from "./_utils/summary-ideas";
@@ -10,7 +10,6 @@ import { CURRENT_STEPS } from "./lesson-versions";
 /** Kept for the catalog's lifetime, like the public pages that show it. */
 async function getCachedPublicLesson(lessonId: string) {
   "use cache";
-  cacheLife("catalog");
   cacheTag(getLibraryLessonCacheTag(lessonId));
 
   return prisma.lesson.findUnique({

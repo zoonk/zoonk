@@ -1,6 +1,6 @@
 import "server-only";
 import { type DailyProgress, prisma } from "@zoonk/db";
-import { cacheLife, cacheTag } from "next/cache";
+import { cacheTag } from "next/cache";
 import { getUserProgressCacheTag } from "../../cache/tags";
 
 /** Only opt in when the caller already needs lifetime history; detail reads keep their bounds. */
@@ -9,7 +9,6 @@ export type ProgressHistoryOptions = { history?: "lifetime" };
 /** Authenticated capabilities share the rows already needed for lifetime Energy on Statistics. */
 export async function readLifetimeDailyProgress(userId: string) {
   "use cache: private";
-  cacheLife({ stale: Infinity });
   cacheTag(getUserProgressCacheTag(userId));
 
   return prisma.dailyProgress.findMany({ orderBy: { date: "asc" }, where: { userId } });

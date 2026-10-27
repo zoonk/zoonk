@@ -1,7 +1,6 @@
 import "server-only";
 import { QUICK_LESSON_KEY_WHERE } from "@zoonk/core/library/quick-lessons/identity";
 import { prisma } from "@zoonk/db";
-import { cacheLife } from "next/cache";
 import { getSitemapCourseWhere } from "./course-where";
 import { getSitemapPageRowIds, isSitemapPage, warnIfSitemapPageIsFull } from "./sitemap-pages";
 
@@ -29,10 +28,9 @@ type SitemapLesson = {
   updatedAt: Date;
 };
 
-/** A page's lessons (`getSitemapPage`), read once a day. */
+/** A page's lessons (`getSitemapPage`), cached. */
 async function listSitemapLibraryLessonPage(page: number): Promise<SitemapLesson[]> {
   "use cache";
-  cacheLife("days");
 
   const where = await getSitemapLibraryLessonWhere();
   const listed = await prisma.lesson.findMany({ select: { id: true }, where });

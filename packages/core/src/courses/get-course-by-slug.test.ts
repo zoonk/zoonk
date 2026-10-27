@@ -6,7 +6,7 @@ import { prisma } from "@zoonk/db";
 import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { cacheLife, cacheTag, revalidateTag } from "next/cache";
+import { cacheTag, revalidateTag } from "next/cache";
 import { loadBindings, transform } from "next/dist/build/swc";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { appCacheTagsSchema } from "../cache/app-cache-contract";
@@ -71,7 +71,7 @@ function courseCachePlatform(code: string) {
     "../cache/tags": courseTags,
     "../navigation/decode-route-param": routeParams,
     "@zoonk/db": database,
-    "next/cache": { cacheLife, cacheTag },
+    "next/cache": { cacheTag },
     "private-next-rsc-cache-wrapper": { cache },
     "private-next-rsc-server-reference": { registerServerReference: (read: unknown) => read },
     react: { cache: (read: unknown) => read },
@@ -315,9 +315,8 @@ describe("the complete course route cache", () => {
     const params = { brandSlug: organization.slug, courseSlug: course.slug };
     const first = await platform.getCourse(params);
     expect(first?.id).toBe(course.id);
-    expect(cacheLife).toHaveBeenCalledWith("catalog");
 
-    // A write whose tags don't reach this app shows once the catalog's lifetime ends, not before.
+    // A write whose tags don't reach this app shows once the default lifetime revalidates it.
     await prisma.course.update({
       data: { categories: { create: { category: "languages" } }, title: "Updated elsewhere" },
       where: { id: course.id },

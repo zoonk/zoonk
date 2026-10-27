@@ -1,19 +1,18 @@
 import "server-only";
 import { getCourseRouteWhere, prisma } from "@zoonk/db";
-import { cacheLife, cacheTag } from "next/cache";
+import { cacheTag } from "next/cache";
 import { getCourseCacheTag, getCourseRouteCacheTag } from "../cache/tags";
 import { decodeRouteParam } from "../navigation/decode-route-param";
 
 /**
- * Caches one normalized public course route for the catalog's lifetime and tags the route and the
- * course it resolves to: publishing, renaming or unpublishing expires the route's tags, so a cached
- * "not found" never hides a newly published course, and a course's edits expire its own tag. A
- * write whose tags don't reach this app shows within the catalog's lifetime. Only shared courses:
- * the pages that read it are the same for everyone and never read a session.
+ * Caches one normalized public course route and tags the route and the course it resolves to:
+ * publishing, renaming or unpublishing expires the route's tags, so a cached "not found" never
+ * hides a newly published course, and a course's edits expire its own tag. A write in another app
+ * shows once the default cache lifetime revalidates it. Only shared courses: the pages that read it
+ * are the same for everyone and never read a session.
  */
 async function getCachedCourse(params: { brandSlug: string; courseSlug: string }) {
   "use cache";
-  cacheLife("catalog");
   cacheTag(getCourseRouteCacheTag(params));
 
   const course = await prisma.course.findFirst({

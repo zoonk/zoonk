@@ -12,7 +12,6 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { toUTCMidnight } from "@zoonk/utils/date";
-import { cacheLife } from "next/cache";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   cleanupTestCalls,
@@ -333,7 +332,6 @@ describe("language checkpoint calls", () => {
     // Without a limit the intro reads no day's progress; the limit comes with the learner's profile.
     const unlimited = await countDatabaseStatements(() => openLanguageCheckpointCall(block.id));
     expect(unlimited.result).toMatchObject({ dailyLimitReached: false, status: "notStarted" });
-    expect(cacheLife).not.toHaveBeenCalledWith("seconds");
 
     await Promise.all([
       learningProfileFixture({ dailyLimitMinutes: 30, userId: user.id }),
@@ -352,8 +350,6 @@ describe("language checkpoint calls", () => {
       intro: { title: RENTING_SCENARIO.title },
       status: "notStarted",
     });
-
-    expect(cacheLife).toHaveBeenCalledWith("seconds");
 
     await expect(
       startLanguageConversation({ blockId: block.id, kind: "checkpoint" }),

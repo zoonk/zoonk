@@ -1,6 +1,5 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { cacheLife } from "next/cache";
 import { getSitemapCourseWhere } from "./course-where";
 import { getSitemapPageRowIds, isSitemapPage, warnIfSitemapPageIsFull } from "./sitemap-pages";
 
@@ -21,10 +20,9 @@ type SitemapChapter = {
   updatedAt: Date;
 };
 
-/** A page's chapters (`getSitemapPage`), read once a day. */
+/** A page's chapters (`getSitemapPage`), cached. */
 async function listSitemapLibraryChapterPage(page: number): Promise<SitemapChapter[]> {
   "use cache";
-  cacheLife("days");
 
   const where = await getSitemapLibraryChapterWhere();
   const listed = await prisma.chapter.findMany({ select: { id: true }, where });

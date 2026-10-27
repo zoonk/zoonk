@@ -1,6 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { cacheLife, cacheTag } from "next/cache";
+import { cacheTag } from "next/cache";
 import { getGoalsCacheTag, getLearningProfileCacheTag } from "../../cache/tags";
 import { readOwnedGoal } from "./owned-goal";
 
@@ -8,7 +8,6 @@ import { readOwnedGoal } from "./owned-goal";
 export async function readLearningProfile(userId: string) {
   "use cache: private";
 
-  cacheLife({ stale: Infinity });
   cacheTag(getLearningProfileCacheTag(userId));
 
   return prisma.userLearningProfile.findUnique({ where: { userId } });
@@ -18,7 +17,6 @@ export async function readLearningProfile(userId: string) {
 export async function readActiveGoal(userId: string) {
   "use cache: private";
 
-  cacheLife({ stale: Infinity });
   cacheTag(getGoalsCacheTag(userId), getLearningProfileCacheTag(userId));
 
   const profile = await readLearningProfile(userId);

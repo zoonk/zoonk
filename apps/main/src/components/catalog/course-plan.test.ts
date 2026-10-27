@@ -25,7 +25,10 @@ import { type getCoursePlanExample } from "./course-plan";
 import * as planEstimate from "./plan-estimate";
 
 type CachedRead = (...args: unknown[]) => Promise<unknown>;
-type CacheEntry = { revalidateAt: number | null; result: Promise<unknown>; tags: Set<string> };
+type CacheEntry = { revalidateAt: number; result: Promise<unknown>; tags: Set<string> };
+
+/** Next.js' default cache profile works a shared entry out again 15 minutes after it was made. */
+const DEFAULT_REVALIDATE_MS = 15 * 60 * 1000;
 
 type GetCoursePlanExample = typeof getCoursePlanExample;
 
@@ -35,9 +38,10 @@ const SOURCE = new URL("course-plan.ts", import.meta.url).pathname;
 
 /**
  * Vitest doesn't compile cache directives, so the module is compiled with the installed Next
- * compiler and run on a stand-in for the app's shared cache: entries kept across requests, with
- * the tags their reads (core's too) attached, and tag expiry. Core's reads and PostgreSQL stay
- * real; another app's write is a database write followed by the tag expiry it sends this app.
+ * compiler and run on a stand-in for the app's shared cache: entries kept across requests for the
+ * default profile's revalidation time, with the tags their reads (core's too) attached, and tag
+ * expiry. Core's reads and PostgreSQL stay real; a write is a database write followed by the tag
+ * expiry its app sends.
  */
 function cachePlatform(code: string) {
   const sharedEntries = new Map<string, CacheEntry>();
@@ -51,13 +55,13 @@ function cachePlatform(code: string) {
     const tags = new Set<string>();
 
     const found = entries.get(key);
-    const kept = found && (found.revalidateAt === null || found.revalidateAt > Date.now());
+    const kept = found && found.revalidateAt > Date.now();
 
     const entry: CacheEntry = kept
       ? found
       : {
           result: Promise.resolve().then(() => activeEntry.run(entry, () => read(...args))),
-          revalidateAt: null,
+          revalidateAt: Date.now() + DEFAULT_REVALIDATE_MS,
           tags,
         };
 
@@ -71,22 +75,6 @@ function cachePlatform(code: string) {
 
   const imports: Record<string, unknown> = {
     "./plan-estimate": planEstimate,
-    "@/lib/public/cache-until-midnight": {
-      cacheUntilMidnight: (timeZones: string[]) => {
-        const entry = activeEntry.getStore();
-
-        if (entry) {
-          const seconds = Math.min(
-            3600,
-            ...timeZones.map((timeZone) =>
-              calendarDay.getSecondsToMidnight({ now: new Date(), timeZone }),
-            ),
-          );
-
-          entry.revalidateAt = Date.now() + seconds * 1000;
-        }
-      },
-    },
     "@/lib/public/calendar-day": calendarDay,
     "@zoonk/core/cache-tags": cacheTags,
     "@zoonk/core/catalog/course-estimate": estimate,
@@ -314,7 +302,7 @@ describe("the course page's example plan cache", () => {
     expect(first).not.toBe(90);
   });
 
-  it("renews the selected exam example by the hour and the exam's own midnight", async () => {
+  it("renews the selected exam example by the hour and the exam's own day", async () => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(new Date("2026-09-30T12:15:00Z"));
     const platform = cachePlatform(compiled.code);

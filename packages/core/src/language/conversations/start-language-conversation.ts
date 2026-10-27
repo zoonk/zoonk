@@ -1,6 +1,5 @@
 import "server-only";
 import { isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
-import { cacheLife } from "next/cache";
 import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-challenge-access";
 import { type AllowanceLimit } from "../../entitlements/contract";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
@@ -373,13 +372,5 @@ export async function openLanguageCheckpointCall(
     return { conversationId: completed.id, status: "ready" };
   }
 
-  const call = await startCheckpoint({ blockId, userId: session.user.id, write: false });
-
-  // Today's study time comes back at the learner's midnight, which nothing announces to the
-  // browser: a refusal ("it'll be here tomorrow") is kept for the shortest time it allows.
-  if (call.status === "notStarted" && call.dailyLimitReached) {
-    cacheLife("seconds");
-  }
-
-  return call;
+  return startCheckpoint({ blockId, userId: session.user.id, write: false });
 }

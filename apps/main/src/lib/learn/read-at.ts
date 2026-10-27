@@ -1,6 +1,5 @@
 import "server-only";
 import { getLearnerRevision } from "@zoonk/core/learner/revision";
-import { cacheLife } from "next/cache";
 
 /**
  * When the page's private reads ran, in milliseconds since the epoch. Read inside the same private
@@ -9,7 +8,6 @@ import { cacheLife } from "next/cache";
  */
 export async function getReadAt(): Promise<number> {
   "use cache: private";
-  cacheLife({ stale: Infinity });
   return Date.now();
 }
 
@@ -25,7 +23,6 @@ export type ReadStamp = { readAt: number; revision: string | null };
  */
 export async function getReadStamp(): Promise<ReadStamp> {
   "use cache: private";
-  cacheLife({ stale: Infinity });
 
   const learner = await getLearnerRevision();
   return { readAt: Date.now(), revision: learner?.revision ?? null };

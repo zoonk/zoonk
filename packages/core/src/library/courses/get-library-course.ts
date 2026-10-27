@@ -1,7 +1,7 @@
 import "server-only";
 import { CourseLevel, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
-import { cacheLife, cacheTag } from "next/cache";
+import { cacheTag } from "next/cache";
 import { getCourseCacheTag, getCourseCurriculumCacheTag } from "../../cache/tags";
 import { canViewLibraryRow, filterVisibleLibraryRows } from "../_utils/library-visibility";
 
@@ -31,7 +31,6 @@ const outlineLessonSelect = {
  */
 async function getCachedLibraryCourse(courseId: string) {
   "use cache";
-  cacheLife("catalog");
   cacheTag(getCourseCacheTag(courseId), getCourseCurriculumCacheTag(courseId));
 
   return prisma.course.findUnique({

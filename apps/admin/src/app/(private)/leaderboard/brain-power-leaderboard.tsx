@@ -43,8 +43,8 @@ export async function BrainPowerLeaderboard({
 }
 
 /**
- * Parsed pagination values and the minute cache lifetime keep the rolling
- * leaderboard deterministic and available to runtime prefetching.
+ * Parsed pagination values keep the rolling leaderboard deterministic and
+ * available to runtime prefetching.
  */
 async function CachedBrainPowerLeaderboard({
   limit,

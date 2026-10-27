@@ -2,7 +2,7 @@ import "server-only";
 import { type Goal, type Subscription, prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getDateInTimeZone, isValidTimeZone } from "@zoonk/utils/time-zone";
-import { cacheLife, cacheTag } from "next/cache";
+import { cacheTag } from "next/cache";
 import { getActiveSubscription } from "../../auth/subscription";
 import {
   getGoalsCacheTag,
@@ -168,10 +168,6 @@ function getAnalyticsGoal({
  */
 export async function getLearnerSummary(): Promise<LearnerSummary | null> {
   "use cache: private";
-
-  // Request dedupe only: the browser's store decides when it's old (its revision, `nextChangeAt`),
-  // so it never shortens how long the router keeps the pages that seed it.
-  cacheLife({ stale: Infinity });
 
   const session = await getSession();
 

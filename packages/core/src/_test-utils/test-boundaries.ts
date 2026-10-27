@@ -14,7 +14,6 @@ import { type getRequestProgressDateContext } from "../progress/get-request-date
  * starts with them as a fresh worker would (`resetBoundaries`).
  */
 export const nextCache = {
-  cacheLife: vi.fn(),
   cacheTag: vi.fn(),
   // Outside a request, Next.js' `io()` resolves at once, as it does here.
   io: async () => null,

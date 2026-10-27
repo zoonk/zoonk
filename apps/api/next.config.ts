@@ -1,5 +1,4 @@
 import { withSentryConfig } from "@sentry/nextjs/config";
-import { CACHE_LIFE_PROFILES } from "@zoonk/core/cache-tags";
 import { getPublicAppSecurityHeaders } from "@zoonk/core/security/headers";
 import { withBotId } from "botid/next/config";
 import { type NextConfig } from "next";
@@ -19,7 +18,6 @@ const e2eAliases: Record<string, string> = isE2E
 const nextConfig: NextConfig = {
   allowedDevOrigins: ["**.local"],
   cacheComponents: true,
-  cacheLife: { ...CACHE_LIFE_PROFILES },
   distDir: isE2E ? ".next-e2e" : ".next",
   experimental: {
     authInterrupts: true,
