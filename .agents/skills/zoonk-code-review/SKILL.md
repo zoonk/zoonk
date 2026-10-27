@@ -50,7 +50,7 @@ Choose the relevant areas below rather than running a fixed audit of every subsy
 
 ## Checks and output
 
-Use current CI results when available. Run local checks to answer a concrete question, reproduce a defect, or close a coverage gap. In read-only reviews use check-only commands. Do not repeat the entire pipeline by default or treat an intermittent failure as a pass.
+Start from `pnpm verify:diff --base <base>`, which lists the lines a principal engineer, a security researcher and a designer would each question; the [verify skill's checklists](../verify/references/review.md) say how to check them. Use current CI results when available. Run local checks to answer a concrete question, reproduce a defect, or close a coverage gap. In read-only reviews use check-only commands. Do not repeat the entire pipeline by default or treat an intermittent failure as a pass.
 
 Lead with actionable findings ordered by impact: P0 for immediate catastrophic impact, P1 for high-impact failures, P2 for functional or architectural defects, and P3 for small real defects. Severity describes impact, not certainty, and does not excuse leaving an authorized confirmed fix unfinished.
 
