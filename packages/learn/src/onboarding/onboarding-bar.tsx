@@ -38,11 +38,11 @@ export function TestProgress({ value }: { value: number }) {
 
 /**
  * Back to the flow's previous screen: a chevron under `lg`, "‹ Back" from `lg`, in the face of a
- * page's breadcrumb. On a page's bar Escape presses it too.
+ * page's breadcrumb. Escape presses it too.
  */
-function BackButton({ escape = false, onBack }: { escape?: boolean; onBack: () => void }) {
+function BackButton({ onBack }: { onBack: () => void }) {
   const t = useExtracted();
-  const ref = useEscapeClick<HTMLButtonElement>({ enabled: escape });
+  const ref = useEscapeClick<HTMLButtonElement>();
 
   return (
     <button className={CRUMB_LINK_CLASS} onClick={onBack} ref={ref} type="button">
@@ -64,9 +64,7 @@ export function OnboardingBarRow({ bar, className }: { bar: OnboardingBar; class
         className,
       )}
     >
-      <div className="justify-self-start">
-        {bar.onBack && <BackButton escape onBack={bar.onBack} />}
-      </div>
+      <div className="justify-self-start">{bar.onBack && <BackButton onBack={bar.onBack} />}</div>
       {bar.middle ?? <span />}
       <div className="justify-self-end">{bar.end}</div>
     </div>
@@ -108,7 +106,7 @@ export function OnboardingPageBar({
         {/* Under `lg` the chevron's and the ✕'s glyphs sit on the page's edge, as the "⋯"'s does. */}
         <div className="justify-self-start max-lg:-ml-3">
           {bar.onBack ? (
-            <BackButton escape onBack={bar.onBack} />
+            <BackButton onBack={bar.onBack} />
           ) : (
             <LearnBackLink className="lg:hidden" href={backHref} leave toApp />
           )}

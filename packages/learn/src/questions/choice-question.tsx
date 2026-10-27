@@ -127,15 +127,9 @@ function usePicks({
 
 /**
  * The grade after an answer, on the panel every question's feedback uses: the verdict (only it
- * carries color), why, and the notes the host adds last (a drill's trap, the time running out).
+ * carries color) and why.
  */
-function ChoiceGrade({
-  children,
-  feedback,
-}: {
-  children?: React.ReactNode;
-  feedback: ChoiceFeedback;
-}) {
+function ChoiceGrade({ feedback }: { feedback: ChoiceFeedback }) {
   const t = useExtracted();
 
   return (
@@ -148,22 +142,20 @@ function ChoiceGrade({
           <ItemText text={feedback.explanation} />
         </FeedbackExplanation>
       )}
-      {children}
     </FeedbackPanel>
   );
 }
 
 /**
  * One multiple-choice or true-or-false question, for test-outs and mistake practice. The host
- * decides what happens on an answer; with feedback, the right answer and why appear in place,
- * with the host's notes about it (`feedbackNotes`). A question that asks for several options
+ * decides what happens on an answer; with feedback, the right answer and why appear in place. A
+ * question that asks for several options
  * (`select`) toggles them, and the host gets an answer only once as many as it asks are picked
  * (null before).
  */
 export function ChoiceQuestion({
   disabled = false,
   feedback = null,
-  feedbackNotes,
   onSelect,
   question,
   selected,
@@ -171,8 +163,6 @@ export function ChoiceQuestion({
 }: {
   disabled?: boolean;
   feedback?: ChoiceFeedback | null;
-  /** What the host adds under the grade, such as a drill's trap. */
-  feedbackNotes?: React.ReactNode;
   onSelect: (answer: ChoiceAnswer | null) => void;
   question: ChoiceQuestionView;
   selected: ChoiceAnswer | null;
@@ -242,7 +232,7 @@ export function ChoiceQuestion({
         })}
       </AnswerOptionGroup>
 
-      {feedback && <ChoiceGrade feedback={feedback}>{feedbackNotes}</ChoiceGrade>}
+      {feedback && <ChoiceGrade feedback={feedback} />}
     </div>
   );
 }

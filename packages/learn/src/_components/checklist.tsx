@@ -27,16 +27,12 @@ function CheckMark({ checked }: { checked: boolean }) {
  * and nothing waits for it.
  */
 export function Checklist<Item extends string>({
-  className,
   items,
   label,
-  listClassName,
   title,
 }: {
-  className?: string;
   items: readonly Item[];
   label: (item: Item) => React.ReactNode;
-  listClassName?: string;
   title: string;
 }) {
   const t = useExtracted();
@@ -60,7 +56,7 @@ export function Checklist<Item extends string>({
   }
 
   return (
-    <section aria-labelledby={titleId} className={cn("flex flex-col gap-3", className)}>
+    <section aria-labelledby={titleId} className="flex flex-col gap-3">
       <div className="flex items-baseline justify-between gap-2">
         <h2 className="text-label" id={titleId}>
           {title}
@@ -70,7 +66,7 @@ export function Checklist<Item extends string>({
         </span>
       </div>
 
-      <ul className={cn("flex flex-col [&>li+li]:border-t", listClassName)}>
+      <ul className="flex flex-col [&>li+li]:border-t">
         {items.map((item) => {
           const checked = done.has(item);
 

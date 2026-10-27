@@ -234,7 +234,6 @@ export function PlanEffectDiff({
   byDate = true,
   className,
   effect,
-  fallback,
   goalDate,
 }: {
   /**
@@ -244,8 +243,6 @@ export function PlanEffectDiff({
   byDate?: boolean;
   className?: string;
   effect: PlanEffect | null;
-  /** What changes when the effect has no dates or counts to compare. */
-  fallback?: React.ReactNode;
   /** The goal's date a change moves, when the card knows both: it comes right after the lessons. */
   goalDate?: GoalDateMove;
 }) {
@@ -253,7 +250,7 @@ export function PlanEffectDiff({
   const lines = usePlanEffectLines()(effect, goalDate, byDate);
 
   if (lines.length === 0) {
-    return fallback ?? null;
+    return null;
   }
 
   return (

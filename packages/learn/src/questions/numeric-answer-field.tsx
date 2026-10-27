@@ -80,11 +80,9 @@ function UnitAddon({ id, unit }: { id: string; unit: NumericUnit }) {
  * (either works in any language) next to its unit, and Enter submits it. A box that takes less
  * than any number (`entry`: a whole number, n decimal places, a fraction) says so under the field,
  * and a fraction box takes "2/3" as its value. Typing digits here never picks an option. Once
- * graded, it locks and marks the answer right or wrong. `children` go inside the form, such as a
- * submit button.
+ * graded, it locks and marks the answer right or wrong.
  */
 export function NumericAnswerField({
-  children,
   defaultText = "",
   entry = null,
   locked,
@@ -93,7 +91,6 @@ export function NumericAnswerField({
   result,
   unit,
 }: {
-  children?: React.ReactNode;
   /** The answer typed before, shown when the field opens again (a mock's draft). */
   defaultText?: string;
   entry?: NumericEntry | null;
@@ -183,8 +180,6 @@ export function NumericAnswerField({
 
       {showsRule && <EntryRule entry={entry} id={ruleId} />}
       {invalid && <InvalidHint entry={entry} id={hintId} />}
-
-      {children}
     </form>
   );
 }

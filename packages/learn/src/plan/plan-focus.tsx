@@ -291,12 +291,12 @@ export function useChooseFocus(): () => void {
  * get the depth, and an exam's prerequisites, to say how to study each. Every topic stays in the
  * plan either way.
  */
-export function ChooseFocus({ variant = "outline" }: { variant?: "ghost" | "outline" }) {
+export function ChooseFocus() {
   const t = useExtracted();
   const open = useChooseFocus();
 
   return (
-    <Button className="self-start" onClick={open} size="sm" type="button" variant={variant}>
+    <Button className="self-start" onClick={open} size="sm" type="button" variant="outline">
       {t("Choose where to focus")}
     </Button>
   );

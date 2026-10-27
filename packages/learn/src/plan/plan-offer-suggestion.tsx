@@ -36,20 +36,14 @@ import { usePlanChange } from "./use-plan-change";
 export function PlanOfferSuggestion({
   actions,
   description,
-  goalDate,
   item,
-  mark,
   offer,
   title,
 }: {
   /** The other ways on, after Apply: "Not now", or a menu of them. */
   actions: React.ReactNode;
   description: string[];
-  /** The goal's own date the offer moves, from the one the plan has (see `PlanEffectDiff`). */
-  goalDate?: { after: string; before: string | null };
   item: SlotItem;
-  /** The kind's icon; the amber sparkle when absent. */
-  mark?: React.ReactNode;
   offer: PlanOffer | null;
   title: string;
 }) {
@@ -82,7 +76,7 @@ export function PlanOfferSuggestion({
     <Suggestion
       answered={answered}
       label={t("Plan suggestion")}
-      mark={answer ? <DoneMark /> : mark}
+      mark={answer ? <DoneMark /> : undefined}
     >
       <SuggestionLine>
         {answer ? (
@@ -111,7 +105,7 @@ export function PlanOfferSuggestion({
             {description.map((line) => (
               <SuggestionDescription key={line}>{line}</SuggestionDescription>
             ))}
-            {offer && <PlanEffectDiff effect={offer.effect} goalDate={goalDate} />}
+            {offer && <PlanEffectDiff effect={offer.effect} />}
 
             <SuggestionActions>
               {offer && (

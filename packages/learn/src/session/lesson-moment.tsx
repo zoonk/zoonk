@@ -12,8 +12,7 @@ import { DayMoment } from "./day-moment";
 import { MomentHeader, MomentSaveFailed } from "./moment-header";
 import { PendingMoment } from "./pending-moment";
 import { SessionHeader } from "./session-header";
-import { getSessionQueue } from "./session-queue-rows";
-import { type StudyBlock, type StudyMomentView, type StudySession } from "./session-types";
+import { type StudyMomentView, type StudySession } from "./session-types";
 import { StudyMoment } from "./study-moment";
 import { useMomentEvents } from "./use-moment-events";
 import { useMomentTitle } from "./use-moment-title";
@@ -147,18 +146,15 @@ function OutsideSession({
 
 /**
  * The header over a lesson's completion moment when it's one of today's blocks: the session's,
- * with the day as one segment per block (each as long as its minutes when the day's `blocks` are
- * given), like between every other block, in place of the lesson's own segments, and the lesson's
- * `menu` (its summary card). Nothing until the lesson is saved (the lesson's header stays
+ * with the day as one segment per block, like between every other block, in place of the lesson's
+ * own segments, and the lesson's `menu` (its summary card). Nothing until the lesson is saved (the lesson's header stays
  * meanwhile).
  */
 export function LessonMomentHeader({
-  blocks,
   completion,
   exitHref,
   menu,
 }: {
-  blocks?: readonly StudyBlock[];
   completion: LessonMomentCompletion;
   exitHref: string;
   menu?: ReactNode;
@@ -169,13 +165,7 @@ export function LessonMomentHeader({
     return null;
   }
 
-  const queue = blocks
-    ? getSessionQueue({ blocks, finishedId: moment.blockId, nextId: moment.nextBlockId }).rows
-    : undefined;
-
-  return (
-    <SessionHeader exitHref={exitHref} menu={menu} queue={queue} sessionBar={moment.sessionBar} />
-  );
+  return <SessionHeader exitHref={exitHref} menu={menu} sessionBar={moment.sessionBar} />;
 }
 
 /**

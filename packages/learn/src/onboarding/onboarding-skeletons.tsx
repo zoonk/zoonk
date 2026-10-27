@@ -40,11 +40,11 @@ function RowsSkeleton({ rows, twoLines = false }: { rows: number; twoLines?: boo
 }
 
 /** The rail while it loads: its label and its rows, in the page's aside from 72rem. */
-function RailSkeleton({ rows }: { rows: number }) {
+function RailSkeleton() {
   return (
     <div className="flex flex-col gap-2">
       <Skeleton className="h-3 w-24" />
-      <RowsSkeleton rows={rows} />
+      <RowsSkeleton rows={3} />
     </div>
   );
 }
@@ -72,7 +72,7 @@ export function StartEntrySkeleton() {
   const t = useExtracted();
 
   return (
-    <OnboardingRailProvider rail={<RailSkeleton rows={3} />}>
+    <OnboardingRailProvider rail={<RailSkeleton />}>
       <OnboardingFrame>
         <OnboardingColumn aria-busy="true">
           <OnboardingHeading>
@@ -117,7 +117,7 @@ export function StartSentGoal({ goal, hasAccount }: { goal: string; hasAccount: 
  */
 export function StartWaitSkeleton() {
   return (
-    <OnboardingRailProvider rail={<RailSkeleton rows={3} />}>
+    <OnboardingRailProvider rail={<RailSkeleton />}>
       <OnboardingFrame>
         <OnboardingColumn aria-busy="true">
           <Skeleton className="h-11 w-3/5 self-end rounded-xl rounded-br-sm" />
@@ -146,7 +146,7 @@ export function StartWaitSkeleton() {
  */
 export function StepsSkeleton() {
   return (
-    <OnboardingRailProvider rail={<RailSkeleton rows={3} />}>
+    <OnboardingRailProvider rail={<RailSkeleton />}>
       <OnboardingFrame
         bar={{
           end: <StartOverMenuSkeleton />,

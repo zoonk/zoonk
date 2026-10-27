@@ -367,9 +367,9 @@ function useActionSize(): "lg" | "sm" {
 }
 
 /** One answer ("Apply", "Not now", "Undo"): the main one is the default; the others `outline`. */
-export function SuggestionAction({ size, ...props }: React.ComponentProps<typeof Button>) {
-  const actionSize = useActionSize();
-  return <Button focusableWhenDisabled size={size ?? actionSize} {...props} />;
+export function SuggestionAction(props: Omit<React.ComponentProps<typeof Button>, "size">) {
+  const size = useActionSize();
+  return <Button focusableWhenDisabled size={size} {...props} />;
 }
 
 /** An answer that opens another screen ("Open", "See Plus"), drawn as `SuggestionAction`. */
