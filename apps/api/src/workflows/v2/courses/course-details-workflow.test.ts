@@ -48,7 +48,7 @@ describe(courseDetailsWorkflow, () => {
   beforeEach(() => {
     vi.mocked(uploadImage).mockResolvedValue({ data: ICON_URL, error: null });
 
-    // Current copy, as a real run writes it: copy from an older prompt is what the daily sweep
+    // Current copy, as a real run writes it: copy from an older prompt is what the admin batch
     // (run by other files on the same database) claims and clears.
     vi.mocked(generateCourseDetails).mockResolvedValue({
       data: details,

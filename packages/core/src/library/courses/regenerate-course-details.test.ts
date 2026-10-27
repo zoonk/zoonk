@@ -18,12 +18,9 @@ import { writeCourseDetails } from "./course-details";
 import {
   getCourseDetailsRegenerationPreview,
   regenerateCourseDetails,
-  sweepCourseDetails,
 } from "./regenerate-course-details";
 
 const getInFlightCourseIds = async (): Promise<ReadonlySet<string>> => new Set();
-
-const MAX_DAILY_COURSE_COPY_REWRITES = 500;
 
 const landingPage = {
   audience: ["Readers"],
@@ -281,45 +278,6 @@ describe(regenerateCourseDetails, () => {
     }
   });
 
-  it("caps automatic daily claims across overlapping sweeps and repeated runs", async () => {
-    const promptVersion = randomUUID();
-
-    const courses = await Promise.all(
-      Array.from({ length: MAX_DAILY_COURSE_COPY_REWRITES + 1 }, (_, index) =>
-        staleCourse({
-          detailsGeneratedAt: new Date(index + 1),
-          detailsPromptVersion: promptVersion,
-        }),
-      ),
-    );
-
-    const startCourseDetails = vi.fn().mockResolvedValue(null);
-    mockSession(null);
-
-    try {
-      const results = await Promise.all([
-        sweepCourseDetails({ getInFlightCourseIds, promptVersion, startCourseDetails }),
-        sweepCourseDetails({ getInFlightCourseIds, promptVersion, startCourseDetails }),
-      ]);
-
-      const started = results.flatMap((result) => result.courseIds);
-      expect(started.length).toBeGreaterThan(0);
-      expect(started.length).toBeLessThanOrEqual(MAX_DAILY_COURSE_COPY_REWRITES);
-      expect(new Set(started).size).toBe(started.length);
-      expect(startCourseDetails).toHaveBeenCalledWith(courses[0]!.id);
-
-      expect(startCourseDetails).not.toHaveBeenCalledWith(
-        courses[MAX_DAILY_COURSE_COPY_REWRITES]!.id,
-      );
-
-      await expect(
-        sweepCourseDetails({ getInFlightCourseIds, promptVersion, startCourseDetails }),
-      ).resolves.toMatchObject({ courseIds: [], failed: 0 });
-    } finally {
-      await removeCourses(courses.map((course) => course.id));
-    }
-  });
-
   it("refreshes unversioned legacy copy while preserving explicit hand-written copy", async () => {
     await adminSession();
 
@@ -390,7 +348,7 @@ describe(regenerateCourseDetails, () => {
       { data: details, provenance } as Awaited<ReturnType<typeof generateCourseDetails>>,
     );
 
-    /** Run the writer suite's shared producer after the ID query and before sweep selection. */
+    /** Run the writer suite's shared producer after the ID query and before batch selection. */
     const active = async () => {
       const inFlight = await otherCoursesInFlight({ inFlight: [courses[2]!.id], owned });
       const course = await outlinedCourse();
@@ -411,7 +369,7 @@ describe(regenerateCourseDetails, () => {
       ).resolves.toMatchObject({ matching: 3 });
 
       await expect(
-        sweepCourseDetails({
+        regenerateCourseDetails({
           getInFlightCourseIds: active,
           promptVersion: version,
           startCourseDetails,
@@ -497,32 +455,6 @@ describe(regenerateCourseDetails, () => {
       ).resolves.toMatchObject({ landingPage: null, updatedAt: old });
     } finally {
       await removeCourses([course.id]);
-    }
-  });
-
-  it("does not let private, outline-free or hand-written empty courses consume the automatic allowance", async () => {
-    const promptVersion = randomUUID();
-
-    const [course, curated, outlineFree, privateCourses] = await Promise.all([
-      staleCourse({ detailsGeneratedAt: new Date(1), detailsPromptVersion: promptVersion }),
-      staleCourse({ detailsModel: "zoonk/hand-written", landingPage: DbNull }),
-      courseFixture({ detailsModel: null, landingPage: DbNull, visibility: "public" }),
-      Promise.all(
-        Array.from({ length: MAX_DAILY_COURSE_COPY_REWRITES }, () =>
-          courseFixture({ detailsModel: null, landingPage: DbNull, visibility: "private" }),
-        ),
-      ),
-    ]);
-
-    const ids = [course.id, curated.id, outlineFree.id, ...privateCourses.map((row) => row.id)];
-    const startCourseDetails = vi.fn().mockResolvedValue(null);
-
-    try {
-      await expect(
-        sweepCourseDetails({ getInFlightCourseIds, promptVersion, startCourseDetails }),
-      ).resolves.toMatchObject({ courseIds: [course.id] });
-    } finally {
-      await removeCourses(ids);
     }
   });
 
