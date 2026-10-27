@@ -5,11 +5,13 @@
 --   1. Copy legacy progress into the content-free stats tables (daily_progress.lessons_completed and
 --      the learning_events ledger), so every progress page shows the same numbers afterwards.
 --   2. Offer each learner their three most recent courses as suggested goals.
---   3. Delete the courses learners made for themselves before the Library.
---   4. Drop the legacy tables, columns and enums.
--- Kept: organization courses, course prompts, words, sentences, pronunciations, user_progress,
--- daily_progress, learning_events, question threads and questions (without their legacy links),
--- feedback, users, profiles and subscriptions. Generation quotas and course edition requests go too.
+--   3. Drop the legacy tables, columns and enums, and the ones learning v2 no longer uses (course
+--      prompts, generation quotas and course edition requests).
+--   4. Delete the courses learners made for themselves before the Library.
+--   5. List exam courses under exams.
+-- Kept: organization courses, words, sentences, pronunciations, user_progress, daily_progress,
+-- learning_events, question threads and questions (without their legacy links), feedback, users,
+-- profiles and subscriptions.
 BEGIN;
 
 -- The running release keeps writing legacy progress while this deploy builds. Blocking those writes
@@ -244,6 +246,18 @@ UNION ALL
 SELECT * FROM replay_events
 ON CONFLICT (id) DO NOTHING;
 
+-- 1c. The ledger's indexes, built once over the copied rows: inserting into indexed tables is slower.
+
+CREATE INDEX "learning_events_user_id_local_date_idx" ON "learning_events"("user_id", "local_date");
+
+CREATE INDEX "learning_events_user_id_hour_idx" ON "learning_events"("user_id", "hour");
+
+CREATE INDEX "learning_events_user_id_lesson_kind_id_idx" ON "learning_events"("user_id", "lesson_kind", "id");
+
+CREATE INDEX "learning_events_local_date_idx" ON "learning_events"("local_date");
+
+CREATE INDEX "learning_events_content_ids_idx" ON "learning_events" USING GIN ("content_ids" jsonb_path_ops);
+
 -- 2. Suggested goals: each learner's three most recent courses, newest first (where they finished or
 --    replayed lessons, the courses they started and their own courses), leaving out courses they
 --    completed. Today offers them one at a time ("Continue Physics?").
@@ -292,13 +306,9 @@ JOIN courses c ON c.id = ranked.course_id
 WHERE ranked.position <= 3
 ON CONFLICT (user_id, course_id) DO NOTHING;
 
--- 3. Courses a learner made for themselves before the Library (owned by a user, not an organization,
---    and public: private Library courses are never matched). Their suggested goals keep the title.
-DELETE FROM courses
-WHERE user_id IS NOT NULL AND organization_id IS NULL AND visibility = 'public';
-
--- 4. The legacy tables, columns and enums, and the legacy tables learning v2 no longer uses
---    (generation quotas and course edition requests).
+-- 3. The legacy tables, columns and enums, and the legacy tables learning v2 no longer uses (course
+--    prompts, generation quotas and course edition requests). Dropping them before step 4 spares its
+--    delete from cascading through the legacy chapters, lessons, steps and progress of those courses.
 
 -- DropForeignKey
 ALTER TABLE "chapter_completions" DROP CONSTRAINT "chapter_completions_chapter_id_fkey";
@@ -341,6 +351,9 @@ ALTER TABLE "course_edition_requests" DROP CONSTRAINT "course_edition_requests_c
 
 -- DropForeignKey
 ALTER TABLE "course_edition_requests" DROP CONSTRAINT "course_edition_requests_source_course_id_fkey";
+
+-- DropForeignKey
+ALTER TABLE "course_prompts" DROP CONSTRAINT "course_prompts_course_id_fkey";
 
 -- DropForeignKey
 ALTER TABLE "course_users" DROP CONSTRAINT "course_users_course_id_fkey";
@@ -426,6 +439,9 @@ DROP TABLE "course_completions";
 DROP TABLE "course_edition_requests";
 
 -- DropTable
+DROP TABLE "course_prompts";
+
+-- DropTable
 DROP TABLE "course_users";
 
 -- DropTable
@@ -447,6 +463,9 @@ DROP TABLE "step_attempts";
 DROP TABLE "steps";
 
 -- DropEnum
+DROP TYPE "CoursePromptIntent";
+
+-- DropEnum
 DROP TYPE "GenerationQuotaPeriod";
 
 -- DropEnum
@@ -457,5 +476,25 @@ DROP TYPE "LessonKind";
 
 -- DropEnum
 DROP TYPE "StepKind";
+
+-- 4. Courses a learner made for themselves before the Library (owned by a user, not an organization,
+--    and public: private Library courses are never matched). Their suggested goals keep the title.
+DELETE FROM courses
+WHERE user_id IS NOT NULL AND organization_id IS NULL AND visibility = 'public';
+
+-- 5. Exam courses are listed under exams because of what they are, as language courses are under
+--    languages (a language exam such as IELTS keeps both), instead of the subjects a model picked.
+INSERT INTO "course_categories" ("course_id", "category")
+SELECT DISTINCT "course_categories"."course_id", 'exams'
+FROM "course_categories"
+JOIN "courses" ON "courses"."id" = "course_categories"."course_id"
+WHERE "courses"."format" = 'exam'
+ON CONFLICT ("course_id", "category") DO NOTHING;
+
+DELETE FROM "course_categories"
+USING "courses"
+WHERE "courses"."id" = "course_categories"."course_id"
+  AND "courses"."format" = 'exam'
+  AND "course_categories"."category" NOT IN ('exams', 'languages');
 
 COMMIT;

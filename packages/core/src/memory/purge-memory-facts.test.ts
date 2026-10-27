@@ -28,6 +28,12 @@ describe(purgeMemoryFacts, () => {
       userId: user.id,
     });
 
+    const replacedEarlier = await memoryFactFixture({
+      status: "superseded",
+      supersededById: replacedByExpired.id,
+      userId: user.id,
+    });
+
     const replacedByActive = await memoryFactFixture({
       status: "superseded",
       supersededById: active.id,
@@ -36,7 +42,7 @@ describe(purgeMemoryFacts, () => {
 
     const { purged } = await purgeMemoryFacts();
 
-    expect(purged).toBeGreaterThanOrEqual(3);
+    expect(purged).toBeGreaterThanOrEqual(2);
 
     const remaining = await prisma.memoryFact.findMany({
       select: { id: true },
@@ -49,5 +55,6 @@ describe(purgeMemoryFacts, () => {
 
     expect(remaining.map((fact) => fact.id)).not.toContain(oldDeleted.id);
     expect(remaining.map((fact) => fact.id)).not.toContain(replacedByExpired.id);
+    expect(remaining.map((fact) => fact.id)).not.toContain(replacedEarlier.id);
   });
 });

@@ -157,9 +157,6 @@ model ItemSet {
   content         Json
   examBlueprintId String?        @map("exam_blueprint_id") @db.Uuid
   examBlueprint   ExamBlueprint? @relation(fields: [examBlueprintId], references: [id], onDelete: SetNull)
-  sourceId        String?        @map("source_id") @db.Uuid
-  source          Source?        @relation(fields: [sourceId], references: [id], onDelete: SetNull)
-  sourceCitation  String?        @map("source_citation")
   mediaAssetId    String?        @map("media_asset_id") @db.Uuid
   mediaAsset      MediaAsset?    @relation(fields: [mediaAssetId], references: [id], onDelete: SetNull)
   model           String
@@ -171,7 +168,6 @@ model ItemSet {
   items           Item[]
 
   @@index([examBlueprintId])
-  @@index([sourceId])
   @@index([mediaAssetId])
   @@map("item_sets")
 }

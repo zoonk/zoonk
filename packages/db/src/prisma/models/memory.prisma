@@ -38,9 +38,10 @@ enum MilestoneKind {
 }
 
 /// One short fact the learner shared (`said`) or Zoonk noticed from activity (`noticed`), read by
-/// category so tasks load only what they need. A replaced fact points at the fact that replaced it.
-/// Sensitive facts are stored only when the learner explicitly asks, and deleted facts are purged 30
-/// days after `deletedAt`. Provenance is set when a model extracted the fact.
+/// category so tasks load only what they need. A replaced fact points at the fact that replaced it and
+/// goes with it when that fact is removed for good. Sensitive facts are stored only when the learner
+/// explicitly asks, and deleted facts are purged 30 days after `deletedAt`. Provenance is set when a
+/// model extracted the fact.
 model MemoryFact {
   id             String           @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId         String           @map("user_id") @db.Uuid
@@ -50,7 +51,7 @@ model MemoryFact {
   origin         MemoryOrigin
   status         MemoryFactStatus @default(active)
   supersededById String?          @map("superseded_by_id") @db.Uuid
-  supersededBy   MemoryFact?      @relation("MemoryFactSupersession", fields: [supersededById], references: [id], onDelete: SetNull)
+  supersededBy   MemoryFact?      @relation("MemoryFactSupersession", fields: [supersededById], references: [id], onDelete: Cascade)
   supersedes     MemoryFact[]     @relation("MemoryFactSupersession")
   confidence     Float?
   sensitive      Boolean          @default(false)

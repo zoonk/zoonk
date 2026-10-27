@@ -34,7 +34,6 @@ model Source {
   updatedAt      DateTime             @default(now()) @updatedAt @map("updated_at")
   examBlueprints ExamBlueprint[]
   items          Item[]
-  itemSets       ItemSet[]
   learnerSources LearnerSource[]
   changeNotices  SourceChangeNotice[]
   steps          Step[]
