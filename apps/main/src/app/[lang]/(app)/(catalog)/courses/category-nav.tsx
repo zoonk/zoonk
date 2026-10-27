@@ -32,7 +32,7 @@ const LIST_FRAME_CLASS = "sticky top-8 hidden self-start lg:block";
  * glyph before its name (a key to the courses' labels; "All" keeps the glyph's room).
  */
 const LIST_LINK_CLASS =
-  "text-muted-foreground hover:bg-muted/70 hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:text-foreground focus-visible:ring-ring/50 hit-area relative flex h-8 items-center gap-2.5 rounded-md px-2 text-[0.84375rem] font-medium outline-none transition-colors focus-visible:ring-[3px]";
+  "text-muted-foreground hover:bg-muted/50 hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:text-foreground focus-visible:ring-ring/50 hit-area relative flex h-8 items-center gap-2.5 rounded-md px-2 text-[0.84375rem] font-medium outline-none transition-colors focus-visible:ring-[3px]";
 
 /**
  * A page opened on a category (a link, a reload) brings its chip into the row's view, clear of the
