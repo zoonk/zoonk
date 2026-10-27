@@ -127,7 +127,13 @@ function QuestionRow({ href, question }: { href: string; question: string }) {
  * aside, where the outline and "From the lesson" were, as a lesson's summary is at its end: from
  * the aside's top, its label drawn as the aside's header row.
  */
-function ExplainRecap({ recap }: { recap: ExplanationView["recap"] }) {
+function ExplainRecap({
+  className,
+  recap,
+}: {
+  className?: string;
+  recap: ExplanationView["recap"];
+}) {
   const t = useExtracted();
 
   if (recap.length === 0) {
@@ -135,7 +141,7 @@ function ExplainRecap({ recap }: { recap: ExplanationView["recap"] }) {
   }
 
   return (
-    <TaskAsideContent className="lg:top-0">
+    <TaskAsideContent className={cn("lg:top-0", className)}>
       <section aria-labelledby="explain-recap" className="flex flex-col gap-1 lg:gap-0">
         <SectionLabel
           className="lg:flex lg:h-13 lg:shrink-0 lg:items-center xl:h-15"
@@ -169,7 +175,9 @@ function ExplainRecap({ recap }: { recap: ExplanationView["recap"] }) {
  * learning the subject in depth as a plan of its own (the host's `deeper` control) or another
  * quick question. "Done" finishes, in the action bar at the bottom. From `lg` the recap sits in the aside, where the outline and
  * "From the lesson" were, as a lesson's summary does at its end, so the aside is never left empty
- * and the column keeps the result and the way on.
+ * and the column keeps the result and the way on. While the reading saves, its title holds the
+ * place, as every task's end does, and the column under it comes once it's saved, all at once, so
+ * nothing moves under the learner as the day's moment lands.
  */
 export function ExplainEnding({
   buddy,
@@ -206,7 +214,7 @@ export function ExplainEnding({
                 {explanation.title}
               </h2>
             </div>
-            <ResultTiles result={result} />
+            {!saving && <ResultTiles result={result} />}
           </div>
 
           {result.celebration && (
@@ -219,21 +227,23 @@ export function ExplainEnding({
           )}
         </div>
 
-        <ExplainRecap recap={explanation.recap} />
+        <ExplainRecap className={cn(saving && "max-lg:hidden")} recap={explanation.recap} />
 
-        <section aria-labelledby="explain-go-further" className="flex flex-col gap-1">
-          <PageSectionTitle id="explain-go-further">{t("Want to go further?")}</PageSectionTitle>
+        {!saving && (
+          <section aria-labelledby="explain-go-further" className="flex flex-col gap-1">
+            <PageSectionTitle id="explain-go-further">{t("Want to go further?")}</PageSectionTitle>
 
-          {deeper}
+            {deeper}
 
-          {questions.length > 0 && (
-            <ListGroup>
-              {questions.map((question) => (
-                <QuestionRow href={questionHref(question)} key={question} question={question} />
-              ))}
-            </ListGroup>
-          )}
-        </section>
+            {questions.length > 0 && (
+              <ListGroup>
+                {questions.map((question) => (
+                  <QuestionRow href={questionHref(question)} key={question} question={question} />
+                ))}
+              </ListGroup>
+            )}
+          </section>
+        )}
       </TaskBody>
 
       <TaskActionBar>
