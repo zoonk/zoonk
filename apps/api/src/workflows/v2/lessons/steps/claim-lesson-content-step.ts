@@ -86,7 +86,7 @@ export async function admitLessonContentStep(input: {
   const admitted = await admitPlanLessons({
     goalId: input.goalId,
     lessonIds: [input.lessonId],
-    manifest: input.manifest,
+    manifest: input.manifest ?? null,
   });
 
   return admitted.includes(input.lessonId);

@@ -8,7 +8,7 @@ import { mockSession } from "../_test-utils/mock-session";
 import { getChallenge } from "../checkpoints/get-challenge";
 import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 import { getLearnerSummary } from "../learner/summary/get-learner-summary";
-import { admitPlanLessons } from "../lookahead/speculative-lessons";
+import { admitPlanLessons, createPlanGenerationManifest } from "../lookahead/speculative-lessons";
 import { listGoalMindMaps } from "../mind-maps/list-goal-mind-maps";
 import { lapsedDayFixture, readLapsedDayState } from "../sessions/_test-utils/entitlement-lapse";
 import {
@@ -60,13 +60,14 @@ describe("row-5 callers read their saved artifacts", () => {
   it("an admitted child checks its selected lesson without a plan build", async () => {
     const { goal, lessons, user } = await savedPlan();
     const lessonIds = lessons.map((lesson) => lesson.id);
+    const manifest = await createPlanGenerationManifest({ goalId: goal.id, lessonIds });
 
     await prisma.$transaction(async (tx) => {
       await markLearnerChanged(tx, { planInputs: true, userId: user.id });
       await tx.goal.update({ data: { dailyMinutes: 18 }, where: { id: goal.id } });
     });
 
-    const admitted = await admitPlanLessons({ goalId: goal.id, lessonIds });
+    const admitted = await admitPlanLessons({ goalId: goal.id, lessonIds, manifest });
 
     expect(admitted).toStrictEqual(lessonIds);
     expect(buildPlan).toHaveBeenCalledTimes(0);

@@ -187,7 +187,7 @@ export async function createPlanGenerationManifest({
 
 /**
  * Checks a child's manifest in one statement. Only changed targets re-read their saved source;
- * neither a changed epoch nor a legacy queued child can enter the planner to ask membership.
+ * a changed epoch never enters the planner to ask membership.
  */
 export async function admitPlanLessons({
   goalId,
@@ -196,19 +196,17 @@ export async function admitPlanLessons({
 }: {
   goalId: string;
   lessonIds: readonly string[];
-  manifest?: PlanGenerationManifest | null;
+  manifest: PlanGenerationManifest | null;
 }): Promise<string[]> {
-  if (manifest && manifest.goalId !== goalId) {
+  if (!manifest || manifest.goalId !== goalId) {
     return [];
   }
 
-  const admitted = manifest ? await readCurrentGenerationTargets({ lessonIds, manifest }) : [];
+  const admitted = await readCurrentGenerationTargets({ lessonIds, manifest });
   const current = new Set(admitted);
-  const allowed = manifest ? new Set(manifest.targets.map((target) => target.lessonId)) : null;
+  const allowed = new Set(manifest.targets.map((target) => target.lessonId));
 
-  const changed = lessonIds.filter(
-    (lessonId) => !current.has(lessonId) && (!allowed || allowed.has(lessonId)),
-  );
+  const changed = lessonIds.filter((lessonId) => !current.has(lessonId) && allowed.has(lessonId));
 
   if (changed.length === 0) {
     return admitted;

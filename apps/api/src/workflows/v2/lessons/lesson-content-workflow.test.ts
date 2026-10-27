@@ -114,7 +114,13 @@ describe(lessonContentWorkflow, () => {
     "does not claim or generate a lesson made obsolete by %s before the run starts",
     async (change) => {
       const { goal, item, lesson } = await plannedLesson();
-      const pick = { goalId: goal.id, lessonIds: [lesson.id] };
+
+      const planManifest = await createPlanGenerationManifest({
+        goalId: goal.id,
+        lessonIds: [lesson.id],
+      });
+
+      const pick = { goalId: goal.id, lessonIds: [lesson.id], manifest: planManifest };
       await expect(admitPlanLessons(pick)).resolves.toStrictEqual([lesson.id]);
       const before = await prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } });
 
@@ -131,6 +137,7 @@ describe(lessonContentWorkflow, () => {
           analytics: { goalId: goal.id },
           lessonId: lesson.id,
           planGoalId: goal.id,
+          planManifest,
         }),
       ).resolves.toStrictEqual({ lessonId: lesson.id, status: "missing" });
 
@@ -151,7 +158,11 @@ describe(lessonContentWorkflow, () => {
     const lesson = await outlinedLesson();
 
     await expect(
-      admitPlanLessons({ goalId: goal.id, lessonIds: [lesson.id] }),
+      admitPlanLessons({
+        goalId: goal.id,
+        lessonIds: [lesson.id],
+        manifest: await createPlanGenerationManifest({ goalId: goal.id, lessonIds: [lesson.id] }),
+      }),
     ).resolves.toStrictEqual([]);
 
     await expect(
@@ -168,11 +179,17 @@ describe(lessonContentWorkflow, () => {
   it("writes a lesson its goal still has to do when the queued run starts", async () => {
     const { goal, lesson } = await plannedLesson();
 
+    const planManifest = await createPlanGenerationManifest({
+      goalId: goal.id,
+      lessonIds: [lesson.id],
+    });
+
     await expect(
       lessonContentWorkflow({
         analytics: { goalId: goal.id },
         lessonId: lesson.id,
         planGoalId: goal.id,
+        planManifest,
       }),
     ).resolves.toStrictEqual({ lessonId: lesson.id, status: "ready" });
 

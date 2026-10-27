@@ -155,7 +155,7 @@ describe("parent-issued generation manifests", () => {
     expect(buildPlan).not.toHaveBeenCalled();
   });
 
-  it("includes newly outlined lessons while their saved stand-in remains todo", async () => {
+  it("admits newly outlined lessons until placement settles their saved stand-in", async () => {
     const { goal, lessonIds, plan } = await outlinedWaitingGoal();
     const saved = await prisma.planItem.findMany({ where: { kind: "lesson", planId: plan.id } });
     expect(saved.every((item) => item.lessonId === null)).toBe(true);
@@ -166,6 +166,15 @@ describe("parent-issued generation manifests", () => {
 
     await expect(admitPlanLessons({ goalId: goal.id, lessonIds, manifest })).resolves.toStrictEqual(
       lessonIds,
+    );
+
+    await prisma.planItem.updateMany({
+      data: { status: "testedOut" },
+      where: { lessonId: null, planId: plan.id },
+    });
+
+    await expect(admitPlanLessons({ goalId: goal.id, lessonIds, manifest })).resolves.toStrictEqual(
+      [],
     );
 
     expect(buildPlan).not.toHaveBeenCalled();
@@ -216,9 +225,13 @@ describe("parent-issued generation manifests", () => {
     expect(reads).toHaveBeenCalledOnce();
   });
 
-  it("does not let another goal or an unadmitted target use a manifest", async () => {
+  it("requires the parent's manifest for the same goal and an admitted target", async () => {
     const { goal, lessonIds, manifest } = await manifestFixture();
     const other = await userFixture();
+
+    await expect(
+      admitPlanLessons({ goalId: goal.id, lessonIds, manifest: null }),
+    ).resolves.toStrictEqual([]);
 
     await expect(
       admitPlanLessons({ goalId: other.id, lessonIds, manifest }),
