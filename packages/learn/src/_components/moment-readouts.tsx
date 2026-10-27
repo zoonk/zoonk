@@ -10,7 +10,7 @@ import { TaskMeta } from "./task-meta";
  * the text face (the app's 40px readout). The words around it stay small and muted. Its own
  * element (`data-slot="readout-number"`), so a moment's motion can move the number alone.
  */
-export function ReadoutNumber({ className, ...props }: React.ComponentProps<"span">) {
+function ReadoutNumber({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
       className={cn("text-readout inline-block text-[2.5rem]", className)}
