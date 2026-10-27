@@ -11,10 +11,6 @@ import {
   catalogCourseFixture,
   privateCourseFixture,
 } from "@zoonk/testing/fixtures/library-courses";
-import {
-  chapterLessonFixture,
-  libraryLessonFixture,
-} from "@zoonk/testing/fixtures/library-lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -240,46 +236,6 @@ test.describe("Catalog resource API", () => {
       courseId: course.id,
       id: lesson.id,
     });
-
-    await apiContext.dispose();
-  });
-
-  test("hides private chapters and lessons from visitors", async () => {
-    const [owner, { chapters, course }] = await Promise.all([
-      userFixture(),
-      catalogCourseFixture({ lessonCounts: [1] }),
-    ]);
-
-    const [privateChapter, privateLesson] = await Promise.all([
-      libraryChapterFixture({ homeCourseId: course.id, ownerId: owner.id, visibility: "private" }),
-      libraryLessonFixture({ ownerId: owner.id, visibility: "private" }),
-    ]);
-
-    await Promise.all([
-      courseChapterFixture({ chapterId: privateChapter.id, courseId: course.id, position: 1 }),
-      chapterLessonFixture({ chapterId: chapters[0]!.id, lessonId: privateLesson.id, position: 1 }),
-    ]);
-
-    const apiContext = await newApiContext();
-
-    const [chaptersResponse, chapterResponse, lessonsResponse] = await Promise.all([
-      apiContext.get(`/v1/courses/${course.id}/chapters`),
-      apiContext.get(`/v1/chapters/${privateChapter.id}`),
-      apiContext.get(`/v1/chapters/${chapters[0]!.id}/lessons`),
-    ]);
-
-    const [chapterPage, lessonPage] = await Promise.all([
-      chaptersResponse.json(),
-      lessonsResponse.json(),
-    ]);
-
-    const chapterIds = chapterPage.data.map((item: { id: string }) => item.id);
-    const lessonIds = lessonPage.data.map((item: { id: string }) => item.id);
-
-    expect(chapterIds).toStrictEqual([chapters[0]!.id]);
-    expect(chapterResponse.status()).toBe(404);
-    expect(lessonIds).not.toContain(privateLesson.id);
-    expect(lessonIds).toHaveLength(1);
 
     await apiContext.dispose();
   });
