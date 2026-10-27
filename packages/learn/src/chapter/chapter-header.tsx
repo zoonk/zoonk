@@ -82,7 +82,6 @@ export function ChapterHeader() {
           screen="chapter"
           size="detail"
           target={{ contentId: chapter.chapter.chapterId, contentKind: "chapter" }}
-          votes={false}
         />
       </DetailActions>
     </DetailHero>

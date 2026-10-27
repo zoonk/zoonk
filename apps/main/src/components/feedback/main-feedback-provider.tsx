@@ -3,7 +3,6 @@
 import { trackEvent } from "@zoonk/core/analytics/client";
 import { type ContentFeedbackAdapters, ContentFeedbackProvider } from "@zoonk/learn/feedback";
 import { safeAsync } from "@zoonk/utils/error";
-import { readContentVoteAction, voteOnContentAction } from "./content-vote-action";
 import { sendFeedbackRequest } from "./feedback-request";
 
 /**
@@ -25,15 +24,13 @@ async function getViewerEmail(): Promise<string | null> {
 const MAIN_FEEDBACK_ADAPTERS: ContentFeedbackAdapters = {
   getViewerEmail,
   platform: "web",
-  readVote: readContentVoteAction,
   sendMessage: sendFeedbackRequest,
   track: trackEvent,
-  vote: voteOnContentAction,
 };
 
 /**
- * Gives every page votes and the feedback form: messages go through the public API (the same
- * validation and quotas as native apps) and votes through core, like the rest of main.
+ * Gives every page the feedback form: messages go through the public API, with the same validation
+ * and quotas as native apps.
  */
 export function MainFeedbackProvider({ children }: { children: React.ReactNode }) {
   return (

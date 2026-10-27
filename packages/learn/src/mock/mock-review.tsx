@@ -108,7 +108,6 @@ function ReviewEntry({
           label={t("Question options")}
           screen="mock-review"
           target={{ contentId: entry.itemId, contentKind: "item" }}
-          votes={false}
         />
       </div>
       {entry.set && <ItemSetStimulus continued={continued} set={entry.set} />}

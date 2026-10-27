@@ -104,7 +104,6 @@ function QuestionMenu({ run }: { run: Run }) {
       screen="mistake-practice"
       size="task"
       target={{ contentId: run.step.question.itemId, contentKind: "item" }}
-      votes={false}
     />
   );
 }

@@ -119,7 +119,6 @@ function ReviewItem({
           label={t("Question options")}
           screen="checkpoint-review"
           target={{ contentId: answer.itemId, contentKind: "item" }}
-          votes={false}
         />
       </div>
 

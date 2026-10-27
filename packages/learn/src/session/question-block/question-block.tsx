@@ -153,7 +153,6 @@ function BlockMenu({ target }: { target: ReturnType<typeof getVoteTarget> }) {
       screen="question-block"
       size="task"
       target={target}
-      votes={false}
     />
   );
 }

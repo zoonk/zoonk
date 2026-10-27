@@ -202,7 +202,6 @@ export async function LibraryChapterPage({
             screen="chapter"
             size="icon-bar"
             target={{ contentId: chapter.id, contentKind: "chapter" }}
-            votes={false}
           />
         }
         title={chapter.title}

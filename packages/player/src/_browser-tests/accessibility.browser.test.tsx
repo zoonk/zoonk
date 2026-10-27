@@ -1,5 +1,5 @@
 import { type ContentFeedbackAdapters, ContentFeedbackProvider } from "@zoonk/learn/feedback";
-import { ContentVoteMenuItems } from "@zoonk/learn/feedback/menu-items";
+import { ReportProblemItem } from "@zoonk/learn/feedback/menu-items";
 import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { describe, expect, it } from "vitest";
@@ -74,18 +74,14 @@ const SCREENS: [string, () => PlayableLibraryStep][] = [
  * menu. Nothing is saved anywhere.
  */
 const FEEDBACK_SLOTS: LessonPlayerSlots = {
-  reportMenuItem: (target) => (
-    <ContentVoteMenuItems screen="lesson-step" target={target} votes={false} />
-  ),
+  reportMenuItem: (target) => <ReportProblemItem screen="lesson-step" target={target} />,
 };
 
 const FEEDBACK_ADAPTERS: ContentFeedbackAdapters = {
   getViewerEmail: () => Promise.resolve(null),
   platform: "web",
-  readVote: () => Promise.resolve(null),
   sendMessage: () => Promise.resolve(true),
   track: () => null,
-  vote: () => Promise.resolve(true),
 };
 
 const RIGHT_TYPED = "It shows where the electron is likely to be";

@@ -92,7 +92,6 @@ export function UnitHeader({
           screen="unit"
           size="detail"
           target={{ contentId: unit.chapterId, contentKind: "chapter" }}
-          votes={false}
         />
       </DetailActions>
     </DetailHero>

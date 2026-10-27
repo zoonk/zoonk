@@ -183,21 +183,18 @@ export const DETAIL_MENU_TRIGGER_CLASS = "size-11 shrink-0";
 
 /**
  * The page's other actions beside its main one: an outline "…" the height of the main action,
- * opening a menu of `children` (`DropdownMenuItem`s, or `ContentVoteMenuItems`). `onOpenChange`
- * lets a screen pause its keys while the menu is open.
+ * opening a menu of `children` (`DropdownMenuItem`s, or `ReportProblemItem`).
  */
 export function DetailMenu({
   children,
   label,
-  onOpenChange,
 }: {
   children: React.ReactNode;
   /** Names the button for screen readers ("Chapter options"). */
   label: string;
-  onOpenChange?: (open: boolean) => void;
 }) {
   return (
-    <DropdownMenu onOpenChange={onOpenChange}>
+    <DropdownMenu>
       <DropdownMenuTrigger
         render={<Button className={DETAIL_MENU_TRIGGER_CLASS} size="icon" variant="outline" />}
       >

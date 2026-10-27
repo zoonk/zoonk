@@ -3091,87 +3091,6 @@ msgctxt "feedback.Hf_X9X"
 msgid "Report a problem"
 msgstr "Problem melden"
 
-#: src/feedback/content-vote-menu-items.tsx
-msgctxt "feedback._9_Kn3"
-msgid "Thanks, that helps"
-msgstr "Danke, das hilft uns weiter"
-
-#: src/feedback/content-vote-menu-items.tsx
-msgctxt "feedback.5vwKkg"
-msgid "Helpful"
-msgstr "Hilfreich"
-
-#: src/feedback/content-vote-menu-items.tsx
-msgctxt "feedback.04tuTF"
-msgid "Not helpful"
-msgstr "Nicht hilfreich"
-
-#: src/feedback/downvote-sheet.tsx
-msgctxt "feedback.C1IDNT"
-msgid "Hard to follow"
-msgstr "Schwer nachzuvollziehen"
-
-#: src/feedback/downvote-sheet.tsx
-msgctxt "feedback.ssgeGF"
-msgid "Wrong or outdated"
-msgstr "Falsch oder veraltet"
-
-#: src/feedback/downvote-sheet.tsx
-msgctxt "feedback.zpMMIi"
-msgid "Too easy"
-msgstr "Zu einfach"
-
-#: src/feedback/downvote-sheet.tsx
-msgctxt "feedback.zW6NKq"
-msgid "Too hard"
-msgstr "Zu schwer"
-
-#: src/feedback/downvote-sheet.tsx
-msgctxt "feedback.1uQ0bN"
-msgid "Not what I needed"
-msgstr "Nicht das, was ich gebraucht habe"
-
-#: src/feedback/downvote-sheet.tsx
-msgctxt "feedback.qm_eL5"
-msgid "Something else"
-msgstr "Sonstiges"
-
-#: src/feedback/downvote-sheet.tsx
-msgctxt "feedback.rpj2cV"
-msgid "Reasons"
-msgstr "Gründe"
-
-#: src/feedback/downvote-sheet.tsx
-msgctxt "feedback.RKkDIN"
-msgid "Tell us more (optional)"
-msgstr "Erzähl uns mehr (optional)"
-
-#: src/feedback/downvote-sheet.tsx
-#: src/feedback/feedback-form.tsx
-msgctxt "feedback.lknSi2"
-msgid "This screen is attached"
-msgstr "Dieser Bildschirm wird angehängt"
-
-#: src/feedback/downvote-sheet.tsx
-msgctxt "feedback._4tOwT"
-msgid "Skip"
-msgstr "Überspringen"
-
-#: src/feedback/downvote-sheet.tsx
-msgctxt "feedback.9WRlF4"
-msgid "Send"
-msgstr "Senden"
-
-#: src/feedback/downvote-sheet.tsx
-msgctxt "feedback.ercG9U"
-msgid "What went wrong?"
-msgstr "Was ist schiefgelaufen?"
-
-#: src/feedback/downvote-sheet.tsx
-msgctxt "feedback.hZhNBr"
-msgid "Pick what fits. It helps us fix this for everyone."
-msgstr "Wähle aus, was passt. So können wir das für alle verbessern."
-
 #: src/feedback/feedback-form-dialog.tsx
 msgctxt "feedback.Ejhdi4"
 msgid "Feedback"
@@ -3216,6 +3135,11 @@ msgstr "Wie können wir dir helfen?"
 msgctxt "feedback.vD72E5"
 msgid "Message sent successfully! We'll get back to you soon."
 msgstr "Nachricht erfolgreich gesendet! Wir melden uns bald bei dir."
+
+#: src/feedback/feedback-form.tsx
+msgctxt "feedback.lknSi2"
+msgid "This screen is attached"
+msgstr "Dieser Bildschirm wird angehängt"
 
 #: src/feedback/feedback-form.tsx
 msgctxt "feedback.dpjZ-X"

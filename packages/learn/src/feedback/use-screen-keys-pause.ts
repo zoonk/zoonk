@@ -26,10 +26,10 @@ const POPUP_SELECTOR = "[role='dialog'], [role='alertdialog'], [role='menu'], [r
 const CAPTURE = { capture: true } as const;
 
 /**
- * While a vote menu, the downvote sheet or the feedback form is open, the screen underneath keeps
- * still. Screen shortcuts skip keys already handled, so Enter, number and arrow keys pressed
- * outside the popup (as it opens or closes, or with focus left on the page) are handled here first
- * and answer nothing. Keys pressed inside the popup stay its own.
+ * While a report menu or the feedback form is open, the screen underneath keeps still. Screen
+ * shortcuts skip keys already handled, so Enter, number and arrow keys pressed outside the popup (as
+ * it opens or closes, or with focus left on the page) are handled here first and answer nothing.
+ * Keys pressed inside the popup stay its own.
  */
 export function useScreenKeysPause(paused: boolean) {
   useEffect(() => {

@@ -249,7 +249,6 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
             screen={header.screen}
             size="task"
             target={{ contentId: itemId, contentKind: "item" }}
-            votes={false}
           />
         )
       }

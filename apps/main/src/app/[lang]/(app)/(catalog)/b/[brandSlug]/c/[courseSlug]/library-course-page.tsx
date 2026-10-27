@@ -286,7 +286,6 @@ export async function LibraryCoursePage({
               screen="course"
               size="icon-bar"
               target={{ contentId: course.id, contentKind: "course" }}
-              votes={false}
             />
           }
           title={course.title}
