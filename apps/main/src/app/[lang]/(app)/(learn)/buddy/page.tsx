@@ -1,5 +1,7 @@
 import { AuthGatePage } from "@/components/auth-gate";
-import { ClientMessagesProvider } from "@/i18n/client-messages-provider";
+import { FirstPaintContent } from "@/components/first-paint-content";
+import { NextIntlClientProvider } from "@/i18n/intl-client-provider";
+import { getClientMessages } from "@/i18n/messages";
 import { getReadAt } from "@/lib/learn/read-at";
 import { getActiveGoalId } from "@zoonk/core/goals/active-goal";
 import { getOwnedGoal } from "@zoonk/core/goals/owned-goal";
@@ -13,8 +15,7 @@ import { BUDDY_COLUMN_CLASS, BuddyDaySkeleton } from "@zoonk/learn/buddy";
 import { PageWithAside } from "@zoonk/learn/shell";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
-import { getExtracted } from "next-intl/server";
-import { Suspense } from "react";
+import { getExtracted, getLocale, getTimeZone } from "next-intl/server";
 import { BuddyGoalStartClient } from "./buddy-goal-start-client";
 import { BuddyPageClient } from "./buddy-page-client";
 
@@ -96,16 +97,20 @@ async function BuddyContent() {
   }
 
   const canAsk = !session.user.isAnonymous;
+  const locale = await getLocale();
+  const timeZone = await getTimeZone();
 
-  const [hasMistake, thread, memoryCount] = await Promise.all([
+  const [hasMistake, thread, memoryCount, messages] = await Promise.all([
     hasOpenMistake(goal.id),
     loadThread({ canAsk, goalId: goal.id }),
     countCurrentUserMemory(),
+    getClientMessages({ locale, scope: "player" }),
   ]);
 
-  // The conversation is the lesson tutor's, so the tab needs the player's messages.
+  // The conversation is the lesson tutor's, so the tab needs the player's messages, read with the
+  // rest: the content renders in one pass, as the first paint waits for its end.
   return (
-    <ClientMessagesProvider scope="player">
+    <NextIntlClientProvider locale={locale} messages={messages} timeZone={timeZone}>
       <BuddyPageClient
         canAsk={canAsk}
         goalId={goal.id}
@@ -117,7 +122,7 @@ async function BuddyContent() {
         status={result.buddy}
         viewerId={session.user.id}
       />
-    </ClientMessagesProvider>
+    </NextIntlClientProvider>
   );
 }
 
@@ -165,8 +170,10 @@ export default async function BuddyPage() {
   const t = await getExtracted();
 
   return (
-    <Suspense fallback={<BuddySkeleton dayLabel={t("Your day")} />}>
-      <BuddyContent />
-    </Suspense>
+    <FirstPaintContent
+      content={BuddyContent}
+      fallback={<BuddySkeleton dayLabel={t("Your day")} />}
+      id="buddy-ready"
+    />
   );
 }

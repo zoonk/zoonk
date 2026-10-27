@@ -3,6 +3,7 @@ import { loadStartView } from "@/app/[lang]/(app)/(onboarding)/start/start-view"
 import { LessonPlayerPreload } from "@/app/[lang]/explain/[goalId]/lazy-lesson-player";
 import { AuthGatePage } from "@/components/auth-gate";
 import { NotFoundPage } from "@/components/errors/not-found-page";
+import { FirstPaintContent } from "@/components/first-paint-content";
 import { Link } from "@/i18n/navigation";
 import { hasSessionCookie } from "@zoonk/auth/cookies";
 import { listCurrentUserGoals } from "@zoonk/core/goals/list-current-user";
@@ -17,7 +18,6 @@ import { PlayIcon } from "lucide-react";
 import { type Metadata } from "next";
 import { getExtracted, getLocale } from "next-intl/server";
 import { cookies } from "next/headers";
-import { Suspense } from "react";
 import { LearnNotFound } from "../_components/learn-not-found";
 import { SuggestedGoalClient, TodayClient, TodayPreparingClient } from "./today-client";
 import { TodayGoalPaused } from "./today-goal-paused";
@@ -224,13 +224,10 @@ async function TodayPreparingState({ goal }: { goal: { id: string; title: string
 
 /**
  * Today, the screen learners open every day: one next step for the active goal. A client
- * navigation paints it from its prefetch; a hard load paints Today's frame (`TodayShell`) until the
- * day streams into the same response, with no placeholders, and the title doesn't move.
+ * navigation paints it from its prefetch; a hard load paints it with the day, which streams into
+ * the same response (`FirstPaintContent`), or Today's frame (`TodayShell`) until it does, with no
+ * placeholders, and the title doesn't move.
  */
 export default function TodayPage() {
-  return (
-    <Suspense fallback={<TodayShell />}>
-      <TodayContent />
-    </Suspense>
-  );
+  return <FirstPaintContent content={TodayContent} fallback={<TodayShell />} id="today-ready" />;
 }
