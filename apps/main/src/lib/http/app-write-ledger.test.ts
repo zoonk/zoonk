@@ -51,14 +51,27 @@ describe("app write ledger", () => {
     await expect(nextScreenRefresh).resolves.toBe(true);
   });
 
-  it("takes only the writes sent from the page the learner leaves", async () => {
-    heldWrite().save();
+  it("takes the writes sent from the page the learner leaves, and others saved by then", async () => {
     vi.stubGlobal("location", new URL("https://zoonk.test/en/today"));
+    heldWrite().save();
+    vi.stubGlobal("location", new URL(PAGE));
     heldWrite().save();
 
     await expect(takeSettledAppWrites("/en/learn/lesson-1")).resolves.toBe(true);
-    await expect(takeSettledAppWrites("/en/learn/lesson-1")).resolves.toBe(false);
-    await expect(takeSettledAppWrites()).resolves.toBe(true);
+    await expect(takeSettledAppWrites()).resolves.toBe(false);
+  });
+
+  it("leaves another page's write still on its way for that page", async () => {
+    vi.stubGlobal("location", new URL("https://zoonk.test/en/today"));
+    const stillSending = heldWrite();
+    vi.stubGlobal("location", new URL(PAGE));
+    heldWrite().save();
+
+    await expect(takeSettledAppWrites("/en/learn/lesson-1")).resolves.toBe(true);
+
+    const today = takeSettledAppWrites("/en/today");
+    stillSending.save();
+    await expect(today).resolves.toBe(true);
   });
 
   describe("requests the page sends", () => {

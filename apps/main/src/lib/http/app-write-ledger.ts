@@ -6,7 +6,7 @@ import { getBrowserApiUrl } from "@/lib/browser-api-url";
  * Action that leaves the page alone (opening a day's step), leaves them as they were. Each write
  * belongs to the page it was sent from; `RefreshStalePages` reads the pages again once they settle.
  */
-const writes = new Set<{ page: string; request: Promise<unknown> }>();
+const writes = new Set<{ page: string; request: Promise<unknown>; settled: boolean }>();
 
 /** Tells the browser's other tabs; a channel never hears its own messages. */
 let channel: BroadcastChannel | null | undefined;
@@ -24,20 +24,34 @@ function announceWrite() {
 
 /** A write on its way. It counts from the moment it's sent: one whose answer never came may have saved. */
 export function noteAppWrite<T>(request: Promise<T>): Promise<T> {
-  writes.add({ page: location.pathname, request });
-  void request.then(announceWrite, announceWrite);
+  const write = { page: location.pathname, request, settled: false };
+
+  const settle = () => {
+    write.settled = true;
+    announceWrite();
+  };
+
+  writes.add(write);
+  void request.then(settle, settle);
   return request;
 }
 
 /**
  * Takes the writes noted so far, those sent from `page` when it's given, and waits for them to
- * settle: true when there was any. A write sent after stays for its own page.
+ * settle: true when there was any. Every other write settled by then goes too, since the read that
+ * follows shows it; one still on its way stays for its own page.
  */
 export async function takeSettledAppWrites(page?: string): Promise<boolean> {
   const sent = [...writes].filter((write) => page === undefined || write.page === page);
   sent.forEach((write) => writes.delete(write));
   await Promise.allSettled(sent.map((write) => write.request));
-  return sent.length > 0;
+
+  if (sent.length === 0) {
+    return false;
+  }
+
+  [...writes].filter((write) => write.settled).forEach((write) => writes.delete(write));
+  return true;
 }
 
 /** Calls `onWrite` when another tab of this browser saved a write. Returns the cleanup. */
