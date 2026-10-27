@@ -1,0 +1,4 @@
+interface:
+  display_name: "Verify"
+  short_description: "Verify finished work: checks, the running app, pages, design and learners"
+  default_prompt: "Use $verify to verify this change before calling it done."
