@@ -57,7 +57,6 @@ async function recording({
     content: listeningContent(),
     examBlueprintId,
     mediaAssetId: media?.id ?? null,
-    sourceId,
   });
 
   const items = await Promise.all(
@@ -569,7 +568,6 @@ describe("checkpoint kind facts share the actual planned and played duration", (
       }),
     ]);
 
-    expect(privateAudio.set.sourceId).toBeNull();
     expect(publicAudio.items).toHaveLength(12);
     const input = { courseId: course.id, dailyMinutes: 60, studyDays: DAYS };
     mockSession(null);

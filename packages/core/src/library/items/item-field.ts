@@ -102,24 +102,26 @@ export function getFieldRank({
  * source or on a private skill, which only their owner's own plans read.
  */
 export function getPublicItemFilter() {
+  const visible = { visibility: "public" as const };
+
   return {
     AND: [
       ...getPublicMaterialFilters(),
-      { skill: { visibility: "public" as const } },
+      { OR: [{ sourceId: null }, { source: { is: visible } }] },
+      { skill: visible },
       { OR: [{ setId: null }, { set: { is: { AND: getPublicMaterialFilters() } } }] },
     ],
   };
 }
 
 /**
- * What an item or a set comes from, public for a read with no learner: its source, its recording
- * or image, and its exam's notice, each when it has one.
+ * What an item or a set comes with, public for a read with no learner: its recording or image, and
+ * its exam's notice, each when it has one.
  */
 export function getPublicMaterialFilters() {
   const visible = { visibility: "public" as const };
 
   return [
-    { OR: [{ sourceId: null }, { source: { is: visible } }] },
     { OR: [{ mediaAssetId: null }, { mediaAsset: { is: visible } }] },
     { OR: [{ examBlueprintId: null }, { examBlueprint: { is: visible } }] },
   ];
