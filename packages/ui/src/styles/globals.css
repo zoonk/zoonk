@@ -232,15 +232,21 @@
   --viz-highlight-soft: var(--color-amber-100);
   --viz-secondary: oklch(0.56 0.19 325);
   --viz-secondary-soft: var(--color-fuchsia-100);
+  /*
+   * A belt wears its color: the learner's identity, so each keeps its hue, softened like every
+   * colored thing here (the dot by a name, the belt drawn on the level page, the buddy's). Blue and
+   * purple sit apart from progress's blue and Brain Power's violet. With more contrast they're the
+   * full-strength colors.
+   */
   --belt-white: var(--color-white);
-  --belt-yellow: var(--color-yellow-400);
-  --belt-orange: var(--color-orange-400);
-  --belt-green: var(--color-green-500);
-  --belt-blue: var(--color-blue-500);
-  --belt-purple: var(--color-purple-500);
-  --belt-brown: var(--color-amber-800);
-  --belt-red: var(--color-red-500);
-  --belt-gray: var(--color-gray-500);
+  --belt-yellow: oklch(0.86 0.14 92);
+  --belt-orange: oklch(0.77 0.13 56);
+  --belt-green: oklch(0.74 0.12 150);
+  --belt-blue: oklch(0.62 0.15 263);
+  --belt-purple: oklch(0.65 0.17 306);
+  --belt-brown: oklch(0.55 0.09 50);
+  --belt-red: oklch(0.65 0.17 25);
+  --belt-gray: oklch(0.6 0.02 264);
   --belt-black: var(--color-black);
 }
 
@@ -293,6 +299,14 @@
     --viz-accent: var(--color-teal-800);
     --viz-highlight: var(--color-amber-800);
     --viz-secondary: var(--color-fuchsia-800);
+    --belt-yellow: var(--color-yellow-400);
+    --belt-orange: var(--color-orange-400);
+    --belt-green: var(--color-green-500);
+    --belt-blue: var(--color-blue-500);
+    --belt-purple: var(--color-purple-500);
+    --belt-brown: var(--color-amber-800);
+    --belt-red: var(--color-red-500);
+    --belt-gray: var(--color-gray-500);
   }
 }
 
@@ -349,6 +363,14 @@
     --viz-highlight-soft: var(--color-amber-950);
     --viz-secondary: oklch(0.8 0.13 325);
     --viz-secondary-soft: var(--color-fuchsia-950);
+    --belt-yellow: oklch(0.86 0.13 92);
+    --belt-orange: oklch(0.79 0.12 58);
+    --belt-green: oklch(0.79 0.11 152);
+    --belt-blue: oklch(0.7 0.13 263);
+    --belt-purple: oklch(0.72 0.14 306);
+    --belt-brown: oklch(0.6 0.08 52);
+    --belt-red: oklch(0.7 0.15 25);
+    --belt-gray: oklch(0.64 0.02 264);
     --belt-black: var(--color-neutral-700);
   }
 }
@@ -409,6 +431,14 @@
       --viz-accent: var(--color-teal-200);
       --viz-highlight: var(--color-amber-200);
       --viz-secondary: var(--color-fuchsia-200);
+      --belt-yellow: var(--color-yellow-400);
+      --belt-orange: var(--color-orange-400);
+      --belt-green: var(--color-green-500);
+      --belt-blue: var(--color-blue-500);
+      --belt-purple: var(--color-purple-500);
+      --belt-brown: var(--color-amber-800);
+      --belt-red: var(--color-red-500);
+      --belt-gray: var(--color-gray-500);
       --belt-black: var(--color-neutral-500);
     }
   }

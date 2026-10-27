@@ -4,6 +4,8 @@
  * playground's `/design/color` page shows them live beside these words.
  */
 
+import { BELT_GROUP } from "./belts";
+
 /** A color token: its CSS variable in `globals.css` (`--name`, used as `bg-name`, `text-name`). */
 export type ColorToken = {
   /** Where it never goes, when that's a mistake worth naming. */
@@ -224,8 +226,7 @@ export const COLOR_GROUPS: readonly ColorGroup[] = [
     title: "Kinds",
     tokens: [
       {
-        meaning:
-          "Going back over what was learned: a review, practice, and the mistakes notebook and its practice.",
+        meaning: "Going back over what was learned: a review, practice or the mistakes notebook.",
         name: "kind-review",
         use: "`KindMark` review, practice and mistakes, each with its own icon; their part of a meter.",
       },
@@ -295,6 +296,7 @@ export const COLOR_GROUPS: readonly ColorGroup[] = [
       },
     ],
   },
+  BELT_GROUP,
 ];
 
 /** How color is used, whatever the token. */
