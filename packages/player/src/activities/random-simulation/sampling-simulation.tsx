@@ -12,9 +12,11 @@ import {
   ActivityReadout,
   ActivityTextAlternative,
 } from "../_components/activity-canvas";
+import { ActivitySlider } from "../_components/activity-slider";
 import { useReducedMotion } from "../_utils/use-reduced-motion";
 import { useRevealCount } from "../_utils/use-reveal-count";
 import { type RandomSimulationMode } from "./random-simulation-mode";
+import { SampleSizeStops } from "./sample-size-stops";
 import {
   histogram,
   middleRange,
@@ -25,7 +27,6 @@ import {
 } from "./sampling";
 import { SamplingChart } from "./sampling-chart";
 import { SamplingExpectedSpread } from "./sampling-expected-spread";
-import { SamplingSizeSlider } from "./sampling-size-slider";
 import { useSamplingFormat } from "./use-sampling-format";
 
 type SamplingProps = RandomSimulationMode<"sampling">;
@@ -160,12 +161,21 @@ export function SamplingSimulation({ content, labelId, phase }: SamplingProps) {
         </div>
       )}
 
-      <SamplingSizeSlider
+      <ActivitySlider
         disabled={isChecked}
-        index={sizeIndex}
         label={sizeLabel}
-        onIndexChange={setSizeIndex}
-        sizeLabels={fields.sampleSizes.map((item) => formatSize(item))}
+        max={fields.sampleSizes.length - 1}
+        min={0}
+        onValueChange={setSizeIndex}
+        scale={
+          <SampleSizeStops
+            index={sizeIndex}
+            labels={fields.sampleSizes.map((item) => formatSize(item))}
+          />
+        }
+        step={1}
+        value={sizeIndex}
+        valueLabel={formatSize(size)}
         valueText={t("{size}. 95% of samples within {margin}.", {
           margin: formatMargin(margin),
           size: formatSize(size),

@@ -48,10 +48,17 @@ export function ActivityModelSliders({
             key={variable.name}
             label={variable.label}
             max={variable.max}
-            maxLabel={formatInput(variable.max)}
             min={variable.min}
-            minLabel={formatInput(variable.min)}
             onValueChange={(next) => onChange(variable.name, next)}
+            scale={
+              <div
+                aria-hidden="true"
+                className="text-muted-foreground flex justify-between text-xs tabular-nums"
+              >
+                <span>{formatInput(variable.min)}</span>
+                <span>{formatInput(variable.max)}</span>
+              </div>
+            }
             step={variable.step}
             value={value}
             valueLabel={formatInput(value)}

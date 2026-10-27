@@ -11,19 +11,19 @@ import {
 import { cn } from "@zoonk/ui/lib/utils";
 
 /**
- * The slider every activity uses to change a value: its label and current value on top, the
- * range's ends underneath. `valueText` is what screen readers announce as it moves, so it should
- * name the value with its unit and anything the move changes, like the output it produces.
+ * The slider every activity uses to change a value: its label and current value on top, what's
+ * written under the track (`scale`: the range's ends, or its stops) underneath. `valueText` is what
+ * screen readers announce as it moves, so it should name the value with its unit and anything the
+ * move changes, like the output it produces.
  */
 export function ActivitySlider({
   className,
   disabled,
   label,
   max,
-  maxLabel,
   min,
-  minLabel,
   onValueChange,
+  scale,
   step,
   value,
   valueLabel,
@@ -33,10 +33,9 @@ export function ActivitySlider({
   disabled?: boolean;
   label: string;
   max: number;
-  maxLabel: string;
   min: number;
-  minLabel: string;
   onValueChange: (value: number) => void;
+  scale: React.ReactNode;
   step: number;
   value: number;
   valueLabel: string;
@@ -66,13 +65,7 @@ export function ActivitySlider({
         </SliderTrack>
       </SliderControl>
 
-      <div
-        aria-hidden="true"
-        className="text-muted-foreground flex justify-between text-xs tabular-nums"
-      >
-        <span>{minLabel}</span>
-        <span>{maxLabel}</span>
-      </div>
+      {scale}
     </Slider>
   );
 }
