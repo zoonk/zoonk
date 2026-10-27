@@ -11,7 +11,7 @@ export function CatalogAsideBlock({
   title,
 }: {
   children: ReactNode;
-  /** The block's numbers in one line ("37 short lessons · about 2 hr"). */
+  /** The block's numbers in one line ("37 short lessons · ~2 hr"). */
   facts?: ReactNode;
   /** Names the block for screen readers by its label. */
   id: string;

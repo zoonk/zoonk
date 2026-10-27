@@ -1,6 +1,6 @@
 import { DayList, type DayListStep } from "@/components/public/day-list";
 import { NUMERIC_CLASS } from "@/components/public/landing-styles";
-import { getApproxDurationFormatter, getMinutesFormatter } from "@/lib/public/public-labels";
+import { getMinutesFormatter, getTotalDurationFormatter } from "@/lib/public/public-labels";
 import { BigQuantity } from "@zoonk/learn/big-quantity";
 import { RouteTitle } from "@zoonk/learn/route-line";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
@@ -195,8 +195,8 @@ async function DatedHeadline({
 }) {
   const t = await getExtracted();
   const minutesText = await getMinutesFormatter();
-  const durationText = await getApproxDurationFormatter();
-  // The big number in the mono face, "~3 h", its words beside it.
+  const durationText = await getTotalDurationFormatter();
+  // The big number as a readout, "~3 hr", its words beside it.
   const studyTime = durationText(getStudyMinutes(estimate));
 
   const hasQuickLessons = estimate.areas.some((area) => area.quickLessons > 0);

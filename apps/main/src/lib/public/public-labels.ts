@@ -29,26 +29,11 @@ export async function getIsoDayFormatter(): Promise<(isoDate: string) => string>
 
 /**
  * How long a chapter, a course or a part of a plan takes, from its lessons' estimates
- * (`getTotalDuration`): read once, for a page that writes several.
+ * (`getTotalDuration`): its minutes under an hour, beyond that the whole hours it rounds to, marked
+ * "~" as the estimate they are ("~3 hr"), as the app marks every estimate in a line of data. Read
+ * once, for a page that writes several.
  */
 export async function getTotalDurationFormatter(): Promise<(totalMinutes: number) => string> {
-  const t = await getExtracted();
-  const formatMinutes = await getMinutesFormatter();
-
-  return (totalMinutes) => {
-    const duration = getTotalDuration(Math.round(totalMinutes));
-
-    return "minutes" in duration
-      ? formatMinutes(duration.minutes)
-      : t("about {time}", { time: formatMinutes(duration.hours * MINUTES_PER_HOUR) });
-  };
-}
-
-/**
- * A plan's time as its example writes it, beside its big numbers: its minutes under an hour, beyond
- * that the whole hours `getTotalDuration` rounds to, marked "~" as the estimate they are ("~3 h").
- */
-export async function getApproxDurationFormatter(): Promise<(totalMinutes: number) => string> {
   const formatMinutes = await getMinutesFormatter();
 
   return (totalMinutes) => {

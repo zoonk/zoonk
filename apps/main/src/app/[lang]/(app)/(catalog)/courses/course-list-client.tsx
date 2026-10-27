@@ -38,9 +38,8 @@ const MINUTES_PER_HOUR = 60;
 const COURSE_LINK_CLASS =
   "hover:bg-muted/60 focus-visible:ring-ring/50 relative flex h-full min-w-0 items-start gap-3.5 px-4 py-4 transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-inset sm:px-5 lg:flex-col lg:gap-4 lg:py-5 motion-reduce:transition-none";
 
-/** How long a course takes, from its lessons' estimates, as its own page says it. */
+/** How long a course takes, from its lessons' estimates, as its own page says it ("~2 hr"). */
 function useDurationLabel(totalMinutes: number) {
-  const t = useExtracted();
   const formatDuration = useFormatDuration();
   const duration = getTotalDuration(totalMinutes);
 
@@ -48,11 +47,11 @@ function useDurationLabel(totalMinutes: number) {
     return formatDuration(duration.minutes);
   }
 
-  return t("about {time}", { time: formatDuration(duration.hours * MINUTES_PER_HOUR) });
+  return `~${formatDuration(duration.hours * MINUTES_PER_HOUR)}`;
 }
 
 /**
- * The course in numbers, in mono under its words: "37 lessons · about 2 hr", the numbers its page
+ * The course in numbers, in mono under its words: "37 lessons · ~2 hr", the numbers its page
  * states. A course whose lessons aren't written yet has no numbers to show. On a card it sits at
  * the bottom, so the cards of a row line theirs up; a narrow card balances it over two lines
  * rather than leaving "hr" alone on the second.

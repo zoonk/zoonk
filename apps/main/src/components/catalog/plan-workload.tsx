@@ -1,5 +1,5 @@
 import { NUMERIC_CLASS } from "@/components/public/landing-styles";
-import { getApproxDurationFormatter } from "@/lib/public/public-labels";
+import { getTotalDurationFormatter } from "@/lib/public/public-labels";
 import { type PlanNumbers } from "@zoonk/core/plans/numbers-contract";
 import { KindMark, type LearnKind, kindFillClass } from "@zoonk/learn/kind-tile";
 import { MeterPart, MeterParts } from "@zoonk/learn/meter";
@@ -77,7 +77,7 @@ export async function PlanWorkload({
     return null;
   }
 
-  const durationText = await getApproxDurationFormatter();
+  const durationText = await getTotalDurationFormatter();
   const afterDate = Math.round(numbers.afterDeadlineMinutes ?? 0);
 
   return (

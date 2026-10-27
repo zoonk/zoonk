@@ -679,12 +679,6 @@ msgid "Course categories"
 msgstr "Categorias de cursos"
 
 #: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
-#: src/lib/public/public-labels.ts
-msgctxt "1g9mZ7"
-msgid "about {time}"
-msgstr "cerca de {time}"
-
-#: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
 msgctxt "zJxO2f"
 msgid "No courses"
 msgstr "Nenhum curso"
