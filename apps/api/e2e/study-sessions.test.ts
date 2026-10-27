@@ -527,6 +527,7 @@ test.describe("Study sessions API", () => {
       api.post(testOutPath, {
         data: {
           answers: [{ answer: { selectedIndex: 0 }, durationMs: 4000, itemId: randomUUID() }],
+          requestId: randomUUID(),
         },
       }),
     ]);

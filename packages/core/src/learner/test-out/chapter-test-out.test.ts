@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
@@ -108,6 +109,7 @@ describe(getChapterTestOut, () => {
           durationMs: 6000,
           itemId: question.itemId,
         })),
+        requestId: randomUUID(),
       },
     });
 
@@ -211,6 +213,7 @@ describe(submitChapterTestOut, () => {
           durationMs: index === 3 ? 3_600_000 : 20_000,
           itemId: item.id,
         })),
+        requestId: randomUUID(),
       },
     });
 
@@ -269,16 +272,26 @@ describe(submitChapterTestOut, () => {
         answers: items
           .slice(0, 4)
           .map((item) => ({ answer: RIGHT, durationMs: 8000, itemId: item.id })),
+        requestId: randomUUID(),
       },
     });
 
     expect(result.status === "ready" && result.outcome).toMatchObject({
       correct: 4,
+      lessonsSkipped: 4,
       missedSkillIds: [],
       passed: true,
-      testedOutPlanItemIds: planItems.slice(0, 4).map((item) => item.id),
       total: 4,
     });
+
+    const testedOut = await prisma.planItem.findMany({
+      orderBy: { position: "asc" },
+      where: { planId: planItems[0]?.planId, status: "testedOut" },
+    });
+
+    expect(testedOut.map((item) => item.id)).toStrictEqual(
+      planItems.slice(0, 4).map((item) => item.id),
+    );
 
     const known = await prisma.learnerSkill.findMany({ where: { userId: user.id } });
 
@@ -308,6 +321,7 @@ describe(submitChapterTestOut, () => {
         answers: items
           .slice(0, 4)
           .map((item) => ({ answer: RIGHT, durationMs: 8000, itemId: item.id })),
+        requestId: randomUUID(),
       },
     });
 
@@ -329,13 +343,17 @@ describe(submitChapterTestOut, () => {
     const result = await submitChapterTestOut({
       chapterId: chapters[0]?.id ?? "",
       goalId: goal.id,
-      input: { answers: [{ answer: RIGHT, durationMs: 8000, itemId: asked?.id ?? "" }] },
+      input: {
+        answers: [{ answer: RIGHT, durationMs: 8000, itemId: asked?.id ?? "" }],
+        requestId: randomUUID(),
+      },
     });
 
     expect(result.status === "ready" && result.outcome).toMatchObject({
+      changeId: null,
       knownSkillIds: [skills[0]?.id],
+      lessonsSkipped: 0,
       passed: false,
-      testedOutPlanItemIds: [],
     });
 
     await expect(
@@ -377,6 +395,7 @@ describe(submitChapterTestOut, () => {
           durationMs: 8000,
           itemId: question.itemId,
         })),
+        requestId: randomUUID(),
       },
     });
 
@@ -406,7 +425,10 @@ describe(submitChapterTestOut, () => {
     const result = await submitChapterTestOut({
       chapterId: chapters[0]?.id ?? "",
       goalId: goal.id,
-      input: { answers: [{ answer: RIGHT, durationMs: 8000, itemId: items[5]?.id ?? "" }] },
+      input: {
+        answers: [{ answer: RIGHT, durationMs: 8000, itemId: items[5]?.id ?? "" }],
+        requestId: randomUUID(),
+      },
     });
 
     expect(result).toStrictEqual({ status: "invalidItem" });
@@ -448,7 +470,10 @@ describe("a free exam plan past its first week", () => {
     await expect(
       submitChapterTestOut({
         ...target,
-        input: { answers: [{ answer: RIGHT, durationMs: 8000, itemId: items[0]?.id ?? "" }] },
+        input: {
+          answers: [{ answer: RIGHT, durationMs: 8000, itemId: items[0]?.id ?? "" }],
+          requestId: randomUUID(),
+        },
       }),
     ).resolves.toStrictEqual({ status: "plusRequired" });
 

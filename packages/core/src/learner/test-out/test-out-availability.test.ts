@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
@@ -211,6 +212,7 @@ describe("test-out offers after a failed test", () => {
             durationMs: 1000,
             itemId: question.id,
           })),
+          requestId: randomUUID(),
         },
       }),
     ).resolves.toMatchObject({ outcome: { correct: 4, passed: false }, status: "ready" });

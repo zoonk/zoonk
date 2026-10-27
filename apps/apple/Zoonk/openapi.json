@@ -13102,7 +13102,7 @@
         }
       },
       "post": {
-        "description": "Grades the test-out. Passing (at least four answers, every sampled skill answered, 80% right) marks the skills answered 80% right known and tests out the plan items that teach only known skills.",
+        "description": "Grades the test-out. Passing (at least four answers, every sampled skill answered, 80% right) marks the skills answered 80% right known and tests out the plan items that teach only known skills. The same test sent again (its `requestId`) returns what it recorded without grading, counting or celebrating it again.",
         "operationId": "submitChapterTestOut",
         "security": [
           {
@@ -26047,13 +26047,20 @@
               "$ref": "#/components/schemas/ItemAnswerInput"
             }
           },
+          "requestId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "description": "The test's own id, made when it starts. Sending it again (a retry) returns what it already recorded instead of grading and counting it twice, and `GET .../test-out/results/{requestId}` reads that result back."
+          },
           "timeZone": {
             "description": "The device's IANA timezone. The learner's day follows the goal's stored timezone; this one is used only when the goal has none, then UTC",
             "type": "string"
           }
         },
         "required": [
-          "answers"
+          "answers",
+          "requestId"
         ],
         "additionalProperties": false
       },
@@ -68681,14 +68688,6 @@
           "passed": {
             "type": "boolean"
           },
-          "testedOutPlanItemIds": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-            }
-          },
           "total": {
             "type": "integer",
             "minimum": 0,
@@ -68705,7 +68704,6 @@
           "lessonsSkipped",
           "missedSkillIds",
           "passed",
-          "testedOutPlanItemIds",
           "total"
         ],
         "additionalProperties": false

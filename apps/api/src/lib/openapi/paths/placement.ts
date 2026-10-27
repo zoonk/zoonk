@@ -59,7 +59,7 @@ export const placementPaths = {
     },
     post: {
       description:
-        "Grades the test-out. Passing (at least four answers, every sampled skill answered, 80% right) marks the skills answered 80% right known and tests out the plan items that teach only known skills.",
+        "Grades the test-out. Passing (at least four answers, every sampled skill answered, 80% right) marks the skills answered 80% right known and tests out the plan items that teach only known skills. The same test sent again (its `requestId`) returns what it recorded without grading, counting or celebrating it again.",
       operationId: "submitChapterTestOut",
       requestBody: {
         content: { "application/json": { schema: chapterTestOutInputSchema } },

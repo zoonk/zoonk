@@ -235,13 +235,18 @@ test.describe("Learner model API", () => {
             durationMs: 6000,
             itemId: question.itemId,
           })),
+          requestId: randomUUID(),
         },
       }),
       schema: chapterTestOutResultSchema,
     });
 
-    expect(result).toMatchObject({ correct: SKILLS, passed: true, total: SKILLS });
-    expect(result.testedOutPlanItemIds).toHaveLength(SKILLS);
+    expect(result).toMatchObject({
+      correct: SKILLS,
+      lessonsSkipped: SKILLS,
+      passed: true,
+      total: SKILLS,
+    });
 
     await apiContext.dispose();
   });

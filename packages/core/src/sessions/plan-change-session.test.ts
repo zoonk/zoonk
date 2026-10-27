@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
@@ -169,6 +170,7 @@ describe("today's session after a plan change", () => {
           durationMs: 5000,
           itemId: question.itemId,
         })),
+        requestId: randomUUID(),
         timeZone: "UTC",
       },
     });

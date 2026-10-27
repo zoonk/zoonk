@@ -289,7 +289,6 @@ export const chapterTestOutResultSchema = z
       }),
     missedSkillIds: z.array(skillIdSchema),
     passed: z.boolean(),
-    testedOutPlanItemIds: z.array(z.uuid()),
     total: z.number().int().min(0),
   })
   .meta({ id: "ChapterTestOutResult" });

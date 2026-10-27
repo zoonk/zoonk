@@ -4,7 +4,7 @@ import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-label
 import { type ProgressCelebration } from "@zoonk/core/sessions/progress-celebration";
 import { BookOpenIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useState, useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
 import {
   StepCard,
   StepDetail,
@@ -241,7 +241,14 @@ export function TestOutRun({
   draftKey?: string;
   /** The chapter's lessons still on the plan, which a pass skips; null when the plan doesn't say. */
   lessonsLeft?: number | null;
-  onSubmit: (answers: ChoiceQuestionAnswer[]) => Promise<TestOutOutcome>;
+  /**
+   * Grades the answers. `requestId` is the test's own id, made when it opens: a retry sends it
+   * again, so the test is counted once.
+   */
+  onSubmit: (input: {
+    answers: ChoiceQuestionAnswer[];
+    requestId: string;
+  }) => Promise<TestOutOutcome>;
   /** Puts the lessons a passed test-out skipped back in the plan; false when it didn't work. */
   onUndo: (changeId: string) => Promise<boolean>;
   passMark: number;
@@ -258,10 +265,11 @@ export function TestOutRun({
   // The answers whose grading didn't go through, to send again.
   const [unsent, setUnsent] = useState<ChoiceQuestionAnswer[] | null>(null);
   const [isPending, startTransition] = useTransition();
+  const requestId = useMemo(() => crypto.randomUUID(), []);
 
   const submit = (answers: ChoiceQuestionAnswer[]) =>
     startTransition(async () => {
-      const graded = await onSubmit(answers).catch(() => null);
+      const graded = await onSubmit({ answers, requestId }).catch(() => null);
 
       // Graded answers are done with the device's draft; ones that didn't go through keep it, so
       // leaving and coming back still has them.
