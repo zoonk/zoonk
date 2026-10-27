@@ -12,7 +12,6 @@ import {
   getMockOptionKey,
 } from "@zoonk/learn/mock/chooser";
 import { safeAsync } from "@zoonk/utils/error";
-import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useState, useTransition } from "react";
 import { type MockStartOutcome, startAnytimeMockAction } from "./mock-start-actions";
 
@@ -143,11 +142,7 @@ export function MockChooserClient({
     start: MockStart;
   }): Promise<MockStartOutcome> => {
     const { data: outcome } = await safeAsync(() =>
-      startAnytimeMockAction(page.goalId, {
-        ...toChoice(start),
-        acceptFewer,
-        timeZone: getLocalTimeZone(),
-      }),
+      startAnytimeMockAction(page.goalId, { ...toChoice(start), acceptFewer }),
     );
 
     return outcome ?? { status: "failed" };

@@ -172,10 +172,7 @@ async function readMock(id: string): Promise<MockView> {
 }
 
 async function startFull(goalId: string) {
-  const started = await startAnytimeMock({
-    goalId,
-    input: { acceptFewer: true, shape: FULL, timeZone: UTC },
-  });
+  const started = await startAnytimeMock({ goalId, input: { acceptFewer: true, shape: FULL } });
 
   if (started.status !== "started") {
     throw new Error(`Expected a started mock, got ${started.status}`);

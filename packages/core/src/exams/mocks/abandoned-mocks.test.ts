@@ -33,10 +33,7 @@ async function startAnytime(goalId: string) {
 
   const shape = { area: option.area, day: option.day, kind: option.kind };
   // The bank holds fewer questions than the exam asks: the mock asks the ones there are.
-  const started = await startAnytimeMock({
-    goalId,
-    input: { acceptFewer: true, shape, timeZone: UTC },
-  });
+  const started = await startAnytimeMock({ goalId, input: { acceptFewer: true, shape } });
 
   if (started.status !== "started") {
     throw new Error(`Expected a started mock, got ${started.status}`);
@@ -168,7 +165,7 @@ describe("a mock whose time ran out while the learner was away", () => {
 
     const again = await startAnytimeMock({
       goalId: goal.id,
-      input: { acceptFewer: true, shape: first.shape, timeZone: UTC },
+      input: { acceptFewer: true, shape: first.shape },
     });
 
     expect(again).toMatchObject({ status: "started" });

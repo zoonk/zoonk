@@ -61,10 +61,7 @@ export const hookContentSchema = z.discriminatedUnion("variant", [
 export const explanationContentSchema = z
   .object({
     exampleLineSlot: z.object({ idea: explanationSchema }).strict().optional(),
-    // An explored template that no longer reads (one merged into an engine since) drops out on
-    // its own: the screen still teaches with its text.
-    // oxlint-disable-next-line unicorn/no-useless-undefined, unicorn/prefer-top-level-await -- Zod's `.catch(value)`, not a promise: the value is "no explore".
-    explore: exploreActivitySchema.optional().catch(undefined),
+    explore: exploreActivitySchema.optional(),
     image: stepImageRequestSchema.optional(),
     text: richTextSchema,
     title: promptSchema.optional(),

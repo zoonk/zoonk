@@ -151,7 +151,7 @@ async function answerSection({ id, rightOn }: { id: string; rightOn: ReadonlySet
 }
 
 async function startMath(goalId: string) {
-  const started = await startAnytimeMock({ goalId, input: { shape: MATH_SHAPE, timeZone: UTC } });
+  const started = await startAnytimeMock({ goalId, input: { shape: MATH_SHAPE } });
 
   if (started.status !== "started") {
     throw new Error(`Expected a started mock, got ${started.status}`);
@@ -291,7 +291,7 @@ describe("mocks taken any time", () => {
     const id = await startMath(goal.id);
 
     await expect(
-      startAnytimeMock({ goalId: goal.id, input: { shape: MATH_SHAPE, timeZone: UTC } }),
+      startAnytimeMock({ goalId: goal.id, input: { shape: MATH_SHAPE } }),
     ).resolves.toStrictEqual({ id, status: "running" });
 
     const mock = await readMock(id);
@@ -320,7 +320,7 @@ describe("mocks taken any time", () => {
     const everyTopic = new Set(skills.map((skill) => skill.id));
 
     async function take(shape: MockShape, rightOn: ReadonlySet<string>) {
-      const started = await startAnytimeMock({ goalId: goal.id, input: { shape, timeZone: UTC } });
+      const started = await startAnytimeMock({ goalId: goal.id, input: { shape } });
       const id = started.status === "started" ? started.id : "";
 
       await answerSection({ id, rightOn });
@@ -351,7 +351,7 @@ describe("mocks taken any time", () => {
 
     const half = await startAnytimeMock({
       goalId: goal.id,
-      input: { shape: { area: null, day: null, kind: "half" }, timeZone: UTC },
+      input: { shape: { area: null, day: null, kind: "half" } },
     });
 
     const halfId = half.status === "started" ? half.id : "";
@@ -471,7 +471,7 @@ describe("mocks taken any time", () => {
 
     const started = await startAnytimeMock({
       goalId: goal.id,
-      input: { shape: { area: null, day: null, kind: "full" }, timeZone: UTC },
+      input: { shape: { area: null, day: null, kind: "full" } },
     });
 
     const id = started.status === "started" ? started.id : "";
@@ -497,7 +497,7 @@ describe("mocks taken any time", () => {
     const { goal, skills } = await anytimeSetup({ itemsPerSkill: 3 });
 
     await expect(
-      startAnytimeMock({ goalId: goal.id, input: { shape: MATH_SHAPE, timeZone: UTC } }),
+      startAnytimeMock({ goalId: goal.id, input: { shape: MATH_SHAPE } }),
     ).resolves.toStrictEqual({ status: "needsQuestions" });
 
     await expect(
@@ -518,7 +518,7 @@ describe("mocks taken any time", () => {
 
     const started = await startAnytimeMock({
       goalId: goal.id,
-      input: { acceptFewer: true, shape: MATH_SHAPE, timeZone: UTC },
+      input: { acceptFewer: true, shape: MATH_SHAPE },
     });
 
     const id = started.status === "started" ? started.id : "";
@@ -567,10 +567,7 @@ describe("mocks taken any time", () => {
     const { goal } = await anytimeSetup({ itemsPerSkill: 1 });
 
     await expect(
-      startAnytimeMock({
-        goalId: goal.id,
-        input: { acceptFewer: true, shape: MATH_SHAPE, timeZone: UTC },
-      }),
+      startAnytimeMock({ goalId: goal.id, input: { acceptFewer: true, shape: MATH_SHAPE } }),
     ).resolves.toStrictEqual({ status: "notEnoughQuestions" });
   });
 
@@ -587,7 +584,7 @@ describe("mocks taken any time", () => {
     const full = { area: null, day: null, kind: "full" } as const;
 
     await expect(
-      startAnytimeMock({ goalId: goal.id, input: { shape: full, timeZone: UTC } }),
+      startAnytimeMock({ goalId: goal.id, input: { shape: full } }),
     ).resolves.toStrictEqual({ status: "invalidOption" });
 
     // Once the bank holds enough questions on its skills, mocks can be built from them.
@@ -728,7 +725,7 @@ describe("repeating mocks", () => {
       useEveryMockWriteToday(user.id),
     ]);
 
-    const full = { shape: { area: null, day: null, kind: "full" as const }, timeZone: UTC };
+    const full = { shape: { area: null, day: null, kind: "full" as const } };
 
     // Past fair use nothing can be written: the learner hears what's ready before it starts.
     await expect(startAnytimeMock({ goalId: goal.id, input: full })).resolves.toStrictEqual({
@@ -770,7 +767,7 @@ describe("repeating mocks", () => {
 
     // Every Mathematics question is answered: new ones are written first.
     await expect(
-      startAnytimeMock({ goalId: goal.id, input: { shape: MATH_SHAPE, timeZone: UTC } }),
+      startAnytimeMock({ goalId: goal.id, input: { shape: MATH_SHAPE } }),
     ).resolves.toStrictEqual({ status: "needsQuestions" });
 
     await expect(
@@ -831,7 +828,7 @@ describe("a mock taken as placement", () => {
 
     const started = await startAnytimeMock({
       goalId: goal.id,
-      input: { length: "short", purpose: "placement", timeZone: UTC },
+      input: { length: "short", purpose: "placement" },
     });
 
     const id = started.status === "started" ? started.id : "";
@@ -892,10 +889,7 @@ describe("a mock taken as placement", () => {
   it("starts the suggested length, the quick check, when none is picked", async () => {
     const { goal } = await anytimeSetup();
 
-    const started = await startAnytimeMock({
-      goalId: goal.id,
-      input: { purpose: "placement", timeZone: UTC },
-    });
+    const started = await startAnytimeMock({ goalId: goal.id, input: { purpose: "placement" } });
 
     await expect(readMock(started.status === "started" ? started.id : "")).resolves.toMatchObject({
       purpose: "placement",
@@ -911,7 +905,7 @@ describe("a mock taken as placement", () => {
     });
 
     await expect(
-      startAnytimeMock({ goalId: goal.id, input: { purpose: "placement", timeZone: UTC } }),
+      startAnytimeMock({ goalId: goal.id, input: { purpose: "placement" } }),
     ).resolves.toStrictEqual({ status: "plusRequired" });
 
     await expect(
@@ -926,7 +920,7 @@ describe("a mock taken as placement", () => {
     });
 
     await expect(
-      startAnytimeMock({ goalId: goal.id, input: { purpose: "placement", timeZone: UTC } }),
+      startAnytimeMock({ goalId: goal.id, input: { purpose: "placement" } }),
     ).resolves.toStrictEqual({ status: "plusRequired" });
   });
 

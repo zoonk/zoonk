@@ -95,7 +95,7 @@ describe("a mock's listening section", () => {
 
     const started = await startAnytimeMock({
       goalId: goal.id,
-      input: { acceptFewer: true, shape: FULL, timeZone: "UTC" },
+      input: { acceptFewer: true, shape: FULL },
     });
 
     if (started.status !== "started") {
@@ -141,7 +141,7 @@ describe("a mock's listening section", () => {
     // When the recording couldn't be written, the mock sits the rest and says what it leaves out.
     const started = await startAnytimeMock({
       goalId: goal.id,
-      input: { acceptFewer: true, shape: FULL, timeZone: "UTC" },
+      input: { acceptFewer: true, shape: FULL },
     });
 
     if (started.status !== "started") {
@@ -166,7 +166,7 @@ describe("a mock's listening section", () => {
     const { goal } = await listeningSetup({ readingQuestions: 40, voiced: [false, false] });
 
     await expect(
-      startAnytimeMock({ goalId: goal.id, input: { shape: FULL, timeZone: "UTC" } }),
+      startAnytimeMock({ goalId: goal.id, input: { shape: FULL } }),
     ).resolves.toStrictEqual({ status: "needsQuestions" });
   });
 
@@ -192,7 +192,7 @@ describe("a mock's listening section", () => {
 
     const started = await startAnytimeMock({
       goalId: goal.id,
-      input: { acceptFewer: true, shape: FULL, timeZone: "UTC" },
+      input: { acceptFewer: true, shape: FULL },
     });
 
     if (started.status !== "started") {

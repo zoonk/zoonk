@@ -113,7 +113,7 @@ async function breakSetup() {
 
   const started = await startAnytimeMock({
     goalId: goal.id,
-    input: { acceptFewer: true, shape: { area: null, day: null, kind: "full" }, timeZone: UTC },
+    input: { acceptFewer: true, shape: { area: null, day: null, kind: "full" } },
   });
 
   if (started.status !== "started") {

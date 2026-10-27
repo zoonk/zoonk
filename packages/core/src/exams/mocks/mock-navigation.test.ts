@@ -106,7 +106,7 @@ async function navigationSetup(navigation: SectionNavigation) {
 
   const started = await startAnytimeMock({
     goalId: goal.id,
-    input: { shape: { area: null, day: null, kind: "full" }, timeZone: "UTC" },
+    input: { shape: { area: null, day: null, kind: "full" } },
   });
 
   if (started.status !== "started") {

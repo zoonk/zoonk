@@ -132,10 +132,7 @@ describe("a mock in the exam's own mix of formats", () => {
   it("asks each format its share of the paper, format by format", async () => {
     const { goal } = await formatsSetup({ numbers: 3, onePicks: 3, severalPicks: 3 });
 
-    const started = await startAnytimeMock({
-      goalId: goal.id,
-      input: { shape: FULL, timeZone: "UTC" },
-    });
+    const started = await startAnytimeMock({ goalId: goal.id, input: { shape: FULL } });
 
     if (started.status !== "started") {
       throw new Error(`Expected a started mock, got ${started.status}`);
@@ -167,7 +164,7 @@ describe("a mock in the exam's own mix of formats", () => {
     });
 
     await expect(
-      startAnytimeMock({ goalId: goal.id, input: { shape: FULL, timeZone: "UTC" } }),
+      startAnytimeMock({ goalId: goal.id, input: { shape: FULL } }),
     ).resolves.toStrictEqual({ status: "needsQuestions" });
 
     const request = await requestMockQuestions({ goalId: goal.id, input: { shape: FULL } });

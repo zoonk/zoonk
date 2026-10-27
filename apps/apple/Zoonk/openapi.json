@@ -26029,10 +26029,6 @@
           "acceptFewer": {
             "description": "Start with the questions there are when the bank holds fewer than the option asks; send it after a question-writing run finished",
             "type": "boolean"
-          },
-          "timeZone": {
-            "description": "The device's IANA timezone. The learner's day follows the goal's stored timezone; this one is used only when the goal has none, then UTC",
-            "type": "string"
           }
         },
         "additionalProperties": false

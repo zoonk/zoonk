@@ -389,7 +389,6 @@ export const anytimeMockInputSchema = anytimeMockChoiceSchema
         description:
           "Start with the questions there are when the bank holds fewer than the option asks; send it after a question-writing run finished",
       }),
-    timeZone: answerTimeZoneSchema,
   })
   .strict()
   .meta({ id: "AnytimeMockInput" });

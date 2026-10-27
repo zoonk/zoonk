@@ -159,7 +159,7 @@ test.describe("Mock listening API", () => {
 
     const started = await readBody({
       response: await api.post(`/v1/goals/${goal.id}/mocks`, {
-        data: { shape: { area: null, day: null, kind: "full" }, timeZone: "UTC" },
+        data: { shape: { area: null, day: null, kind: "full" } },
       }),
       schema: anytimeMockResponseSchema,
       status: 201,
