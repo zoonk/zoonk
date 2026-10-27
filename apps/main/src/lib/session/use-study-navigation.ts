@@ -2,8 +2,8 @@
 
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
+import { noteAppWrite } from "@/lib/http/app-write-ledger";
 import { getLearnerGeneration } from "@/lib/learner/learner-store";
-import { withLearnerWrite } from "@/lib/learner/learner-views";
 import { LESSON_GENERATION_PARAM } from "@/lib/lessons/lesson-writing-href";
 import { askToWriteLesson } from "@/lib/lessons/lesson-writing-request";
 import { type DayBlockRef } from "@zoonk/core/sessions/day-block";
@@ -176,7 +176,7 @@ function useOpenUnwrittenLesson() {
       // Written by the time the request answered: it opens in the player, as a wait that sees it
       // written does, without asking for anything more.
       if (answer.status === "ready") {
-        const written = await withLearnerWrite(() =>
+        const written = await noteAppWrite(
           openWrittenLessonAction({
             blockId: destination.blockId,
             sessionId: destination.sessionId,
@@ -319,10 +319,9 @@ export function useMissionLinks(
       openBlock: async (blockId) => {
         const openedFrom = getCurrentLocation();
 
-        // Starting the block is a write: another tab's Today shows the day started, as after a
-        // row's tap.
+        // Starting the block is a write that leaves the page alone, as a row's tap.
         const opened = await navigate(() =>
-          withLearnerWrite(() => openMissionAction({ blockId, timeZone: getLocalTimeZone() })),
+          noteAppWrite(openMissionAction({ blockId, timeZone: getLocalTimeZone() })),
         );
 
         if (!opened && openedFrom === getCurrentLocation()) {

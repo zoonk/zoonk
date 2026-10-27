@@ -1,7 +1,6 @@
 "use client";
 
-import { getLearnerGeneration } from "@/lib/learner/learner-store";
-import { noteLearnerRevision } from "@/lib/learner/learner-views";
+import { useRouter } from "@/i18n/navigation";
 import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useEffect } from "react";
@@ -15,11 +14,11 @@ const askedFollows = new Set<string>();
  * stores it, and a learner who moved takes it before their day starts. It asks only once the
  * learner summary says this goal's saved zone isn't the device's, so opening Today writes nothing
  * otherwise (nor for a goal the learner just switched away from), and once per goal and zone on a
- * page load. When that moves the day, the move's revision tells the learner's views (Today) and
- * summary to read themselves again, once, so the screen and its actions read the same day, without
- * rendering the page again.
+ * page load. When that moves the day, the page reads itself again, so the screen, its actions and
+ * the frame's summary read the same day.
  */
-export function useFollowTimeZone({ goalId, userId }: { goalId: string; userId: string }) {
+export function useFollowTimeZone(goalId: string) {
+  const router = useRouter();
   const learner = useLearnerSummary();
 
   const summary =
@@ -35,15 +34,14 @@ export function useFollowTimeZone({ goalId, userId }: { goalId: string; userId: 
     }
 
     askedFollows.add(key);
-    const generation = getLearnerGeneration();
 
     void requestTimeZoneFollow({ goalId, timeZone: deviceZone }).then(
       (result) => {
         if (result.moved) {
-          noteLearnerRevision({ generation, revision: result.learnerRevision, userId });
+          router.refresh();
         }
       },
       () => null,
     );
-  }, [goalId, summary, userId]);
+  }, [goalId, router, summary]);
 }

@@ -5,7 +5,6 @@ import { askMaterialQuestion } from "@/lib/goals/goal-material-questions";
 import { findGoalTimeToCover, getGoalTimeAdvice } from "@/lib/goals/goal-time-advice";
 import { attachGoalFile, attachGoalLink, attachGoalText } from "@/lib/goals/goal-uploads";
 import { ensureGuestSession } from "@/lib/guest/ensure-guest-session";
-import { withLearnerWrite } from "@/lib/learner/learner-views";
 import { recordGenerationWaitAction } from "@/lib/lessons/generation-wait-action";
 import { type OnboardingActions, type OnboardingRoutes } from "@zoonk/learn/onboarding/actions";
 import { isValidLocale } from "@zoonk/utils/locale";
@@ -33,14 +32,6 @@ import { createGoalsFromPlanLinkAction } from "./plan-link-actions";
 import { WEB_UNDERSTANDING_ACTIONS } from "./understanding-client-actions";
 
 /**
- * Whether goals were created: the learner's other tabs read Today again then, after the guest
- * session exists, so a tab offering to start a goal shows the new one instead.
- */
-function isCreated(result: { status: string }): boolean {
-  return result.status === "created";
-}
-
-/**
  * Onboarding's actions for the web: the app's Server Actions, which call the same core
  * capabilities as the public API. A visitor becomes a guest before their goal is read, so the
  * goal, placement and plan are theirs and move to their account when they sign up. Material goes
@@ -52,9 +43,7 @@ export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
   askMaterial: askMaterialQuestion,
   attach: { file: attachGoalFile, link: attachGoalLink, text: attachGoalText },
   createGoals: async (input) =>
-    (await ensureGuestSession())
-      ? withLearnerWrite(() => createOnboardingGoalsAction(input), isCreated)
-      : { status: "failed" },
+    (await ensureGuestSession()) ? createOnboardingGoalsAction(input) : { status: "failed" },
   findTimeToCover: findGoalTimeToCover,
   finishPlacement: (input) => finishPlacementAction({ ...input, timeZone: getLocalTimeZone() }),
   getPlacement: (goalId) => getPlacementAction({ goalId, timeZone: getLocalTimeZone() }),
@@ -109,7 +98,7 @@ export function getPlanLinkOnboardingActions(planId: string): OnboardingActions 
     ...WEB_ONBOARDING_ACTIONS,
     createGoals: async (input) =>
       (await ensureGuestSession())
-        ? withLearnerWrite(() => createGoalsFromPlanLinkAction(planId, input), isCreated)
+        ? createGoalsFromPlanLinkAction(planId, input)
         : { status: "failed" },
   };
 }

@@ -1,15 +1,9 @@
-import { getLearnerGeneration, getLearnerSummaryState } from "@/lib/learner/learner-store";
-import { noteLearnerRevision, noteLearnerWrite } from "@/lib/learner/learner-views";
+import { noteAppWrite } from "@/lib/http/app-write-ledger";
+import { getLearnerGeneration } from "@/lib/learner/learner-store";
 import { type OpenStudyDayInput } from "@zoonk/core/sessions/open-day-contract";
 import { type TapResult } from "./day-entry";
 import { type DayOpenOutcome, openStudyDayAction } from "./day-open-action";
 import { type StudyDestination } from "./study-destination";
-
-/** The learner the browser holds now, whose outcomes this tab applies. */
-function getHeldUserId(): string | null {
-  const state = getLearnerSummaryState();
-  return state.status === "ready" ? state.summary.identity.userId : null;
-}
 
 /**
  * What a day's open came to, for the screen that tapped: where the step plays once it started, a
@@ -39,27 +33,12 @@ export function toDestinationResult(destination: StudyDestination | null): TapRe
 }
 
 /**
- * Tells the views what a write left: the revision an outcome carries for the learner the browser
- * holds, or else that something may have changed, so every view on screen reads itself once.
- */
-function noteOutcome({ generation, outcome }: { generation: number; outcome: DayOpenOutcome }) {
-  if ("actorId" in outcome) {
-    if (outcome.actorId === getHeldUserId()) {
-      noteLearnerRevision({ generation, revision: outcome.revision, userId: outcome.actorId });
-    }
-
-    return;
-  }
-
-  noteLearnerWrite({ generation });
-}
-
-/**
  * Opens the day the screen showed, from the learner's tap: the request leaves at once (call this in
  * the click, before navigating, so the navigation never holds it back). When it lost a race to
  * another write of the learner's (`retryable`), it's sent once more, in a request of its own, while
  * the tab is still where the tap was made for the same identity (`stillHere`); a second loss is a
- * failure.
+ * failure. Opening leaves the screen alone, so the screen it opens refreshes the pages it changed
+ * when it closes (`noteAppWrite`).
  */
 export async function sendDayOpen({
   input,
@@ -69,13 +48,10 @@ export async function sendDayOpen({
   stillHere: () => boolean;
 }): Promise<DayOpenOutcome> {
   const generation = getLearnerGeneration();
-  const first = await openStudyDayAction(input);
+  const first = await noteAppWrite(openStudyDayAction(input));
 
   const again =
     first.status === "retryable" && stillHere() && generation === getLearnerGeneration();
 
-  const outcome = again ? await openStudyDayAction(input) : first;
-
-  noteOutcome({ generation, outcome });
-  return outcome;
+  return again ? noteAppWrite(openStudyDayAction(input)) : first;
 }

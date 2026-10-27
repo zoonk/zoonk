@@ -1,15 +1,14 @@
 "use client";
 
 import { useRouter } from "@/i18n/navigation";
+import { noteAppWrite } from "@/lib/http/app-write-ledger";
 import { getLearnerGeneration } from "@/lib/learner/learner-store";
-import { noteLearnerWrite } from "@/lib/learner/learner-views";
 import { type OpenStudyDayInput } from "@zoonk/core/sessions/open-day-contract";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useCallback } from "react";
 import { type TapDay, type TapResult, type TapStep } from "./day-entry";
 import { beginDayEntry, endDayEntry, updateDayEntry } from "./day-entry-registry";
 import { sendDayOpen, toDestinationResult, toTapResult } from "./day-tap";
-import { type StudyDestination } from "./study-destination";
 import {
   addExtraStudyBlockAction,
   catchUpTodayAction,
@@ -39,20 +38,7 @@ function isFocusOnControl(): boolean {
   return active instanceof HTMLElement && active !== document.body;
 }
 
-/** A saved day's action resolved: the tab doesn't know the revision it left, so views read again. */
-function noteSavedDayWrite({
-  destination,
-  generation,
-}: {
-  destination: StudyDestination | null;
-  generation: number;
-}): TapResult {
-  noteLearnerWrite({ generation });
-  return toDestinationResult(destination);
-}
-
 type TapRequest = {
-  generation: number;
   next: boolean;
   openInput: (fields: Pick<OpenStudyDayInput, "keepEmpty" | "target">) => OpenStudyDayInput;
   sessionId: string | null;
@@ -65,7 +51,6 @@ type TapRequest = {
  * names an id the day doesn't have; a saved day's step opens by its id.
  */
 function requestTap({
-  generation,
   next,
   openInput,
   sessionId,
@@ -82,11 +67,10 @@ function requestTap({
 
     const target = next ? { kind: "next" as const, shown: ref } : { kind: "ref" as const, ref };
 
-    return sendDayOpen({ input: openInput({ target }), stillHere }).then(toTapResult, () => {
-      // No answer (a lost connection): the open may have saved the day anyway.
-      noteLearnerWrite({ generation });
-      return { kind: "failed" } satisfies TapResult;
-    });
+    return sendDayOpen({ input: openInput({ target }), stillHere }).then(
+      toTapResult,
+      (): TapResult => ({ kind: "failed" }),
+    );
   }
 
   const timeZone = getLocalTimeZone();
@@ -95,10 +79,7 @@ function requestTap({
     ? openNextStudyBlockAction({ expectedBlockId: step.blockId, sessionId, timeZone })
     : openStudyBlockAction({ blockId: step.blockId, sessionId, timeZone });
 
-  return action.then(
-    (destination) => noteSavedDayWrite({ destination, generation }),
-    (): TapResult => ({ kind: "failed" }),
-  );
+  return noteAppWrite(action).then(toDestinationResult, (): TapResult => ({ kind: "failed" }));
 }
 
 /**
@@ -171,7 +152,7 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
         generation === getLearnerGeneration() && [origin, href].includes(getCurrentLocation());
 
       // Sent before navigating, so the navigation never holds it back.
-      const answer = request({ generation, next, step, stillHere });
+      const answer = request({ next, step, stillHere });
 
       if (href) {
         const entry = beginDayEntry({
@@ -245,13 +226,11 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
         return false;
       }
 
-      const destination = await addExtraStudyBlockAction({
-        sessionId: opened,
-        timeZone: getLocalTimeZone(),
-      });
+      const destination = await noteAppWrite(
+        addExtraStudyBlockAction({ sessionId: opened, timeZone: getLocalTimeZone() }),
+      );
 
-      const result = noteSavedDayWrite({ destination, generation: scope.generation });
-      return isStill(scope) ? applyHere(result) : false;
+      return isStill(scope) ? applyHere(toDestinationResult(destination)) : false;
     },
     /**
      * "Catch up today": opens the day if needed, then its earlier lessons join it, while the
@@ -265,8 +244,9 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
         return false;
       }
 
-      const added = await catchUpTodayAction({ sessionId: opened, timeZone: getLocalTimeZone() });
-      noteLearnerWrite({ generation: scope.generation });
+      const added = await noteAppWrite(
+        catchUpTodayAction({ sessionId: opened, timeZone: getLocalTimeZone() }),
+      );
 
       if (added && isStill(scope)) {
         refresh();

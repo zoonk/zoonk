@@ -1,5 +1,4 @@
 import "server-only";
-import { getLearnerRevision } from "@zoonk/core/learner/revision";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { isSameOriginRequest } from "./is-same-origin-request";
@@ -23,14 +22,9 @@ export function appPostRoute<Params>(
       return new Response(null, { status: 403 });
     }
 
-    const { data, error } = await safeAsync(async () => {
-      const outcome = await respond(request, await context.params);
-      const stamp = await getLearnerRevision();
-
-      return Response.json(outcome, {
-        headers: stamp ? { "Learner-Revision": stamp.revision } : undefined,
-      });
-    });
+    const { data, error } = await safeAsync(async () =>
+      Response.json(await respond(request, await context.params)),
+    );
 
     if (error) {
       logError(`[${name}] Failed to respond:`, error);

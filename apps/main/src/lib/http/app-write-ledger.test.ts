@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { forgetAppWrites, noteAppWrite, takeSettledAppWrites } from "./app-write-ledger";
+import { noteAppWrite, takeSettledAppWrites } from "./app-write-ledger";
 
 function heldWrite() {
   const { promise, reject, resolve } = Promise.withResolvers<null>();
@@ -40,18 +40,5 @@ describe("app write ledger", () => {
     const nextScreenRefresh = takeSettledAppWrites();
     next.save();
     await expect(nextScreenRefresh).resolves.toBe(true);
-  });
-
-  it("forgets the writes a purging Server Action already showed, not the ones still on their way", async () => {
-    heldWrite().save();
-    await Promise.resolve();
-    const pending = heldWrite();
-
-    forgetAppWrites();
-    const taken = takeSettledAppWrites();
-    pending.save();
-
-    await expect(taken).resolves.toBe(true);
-    await expect(takeSettledAppWrites()).resolves.toBe(false);
   });
 });

@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "@/i18n/navigation";
-import { withLearnerWrite } from "@/lib/learner/learner-views";
 import { getCourseStartHref, getGoalStartHref } from "@/lib/public/public-hrefs";
 import { type SuggestedGoalView } from "@zoonk/core/goals/suggestions/contract";
 import { useCallback } from "react";
@@ -21,10 +20,7 @@ export function useAnswerSuggestedGoal({ hasGoal }: { hasGoal: boolean }) {
 
   return useCallback(
     async ({ status, suggestion }: SuggestedGoalAnswer): Promise<boolean> => {
-      // Another tab's Today drops the suggestion too, rather than offering one answered already.
-      const answered = await withLearnerWrite(() =>
-        answerSuggestedGoalAction({ status, suggestionId: suggestion.id }),
-      );
+      const answered = await answerSuggestedGoalAction({ status, suggestionId: suggestion.id });
 
       if (!answered) {
         return false;

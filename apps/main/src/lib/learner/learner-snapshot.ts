@@ -68,21 +68,6 @@ export function isSameIdentity(a: LearnerIdentity | null, b: LearnerIdentity | n
   return a.userId === b.userId;
 }
 
-/** The same learner's later snapshot: a higher revision, or the same one read later. */
-export function isNewerSummary({
-  held,
-  next,
-}: {
-  held: LearnerSummary;
-  next: LearnerSummary;
-}): boolean {
-  if (held.revision !== next.revision) {
-    return BigInt(next.revision) > BigInt(held.revision);
-  }
-
-  return next.readAt >= held.readAt;
-}
-
 /** The browser's one learner store, in memory (see `learner-store.ts`). */
 export type LearnerStore = {
   changeTimer: ReturnType<typeof setTimeout> | undefined;
@@ -97,21 +82,3 @@ export type LearnerStore = {
   /** The generation of the last identity check, until a read sent since answers: seeds wait. */
   verifying: number | null;
 };
-
-/**
- * A write this tab sent for the identity it held (`generation`), and the learner revision it
- * committed for `userId`.
- */
-export type LearnerRevisionNote = { generation: number; revision: string; userId: string };
-
-/** Whether the held summary is that learner's, and older than a revision their write committed. */
-export function isSummaryBehind(
-  state: LearnerSummaryState,
-  { revision, userId }: Pick<LearnerRevisionNote, "revision" | "userId">,
-): boolean {
-  return (
-    state.status === "ready" &&
-    state.summary.identity.userId === userId &&
-    BigInt(state.summary.revision) < BigInt(revision)
-  );
-}

@@ -12,8 +12,8 @@ const followInputSchema = z.object({ timeZone: z.string().refine(isValidTimeZone
  * Follows the learner to their device's zone when Today opens (the API's `GET /v1/today` does the
  * same with its `timeZone`). A plain request rather than a Server Action: an action's expired tags
  * would drop every page the browser prefetched, and an ordinary write never does. Same-origin only,
- * since it reads the session cookie. Answers whether the learner's day moved, with the learner's
- * revision when it did, so Today reads itself again once.
+ * since it reads the session cookie. Answers whether the learner's day moved, so Today reads itself
+ * again when it did.
  */
 export async function POST(
   request: Request,
@@ -54,7 +54,5 @@ export async function POST(
     return new Response(null, { status: 404 });
   }
 
-  return Response.json(
-    result.moved ? { learnerRevision: result.learnerRevision, moved: true } : { moved: false },
-  );
+  return Response.json({ moved: result.moved });
 }

@@ -4,7 +4,6 @@ import { LessonPlayerPreload } from "@/app/[lang]/explain/[goalId]/lazy-lesson-p
 import { AuthGatePage } from "@/components/auth-gate";
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { Link } from "@/i18n/navigation";
-import { type LearnerViewStamp } from "@/lib/learner/learner-view-copies";
 import { hasSessionCookie } from "@zoonk/auth/cookies";
 import { listCurrentUserGoals } from "@zoonk/core/goals/list-current-user";
 import { type SuggestedGoalView } from "@zoonk/core/goals/suggestions/contract";
@@ -20,12 +19,7 @@ import { getExtracted, getLocale } from "next-intl/server";
 import { cookies } from "next/headers";
 import { Suspense } from "react";
 import { LearnNotFound } from "../_components/learn-not-found";
-import {
-  SuggestedGoalClient,
-  TodayClient,
-  TodayPreparingClient,
-  TodayStateSync,
-} from "./today-client";
+import { SuggestedGoalClient, TodayClient, TodayPreparingClient } from "./today-client";
 import { TodayGoalPaused } from "./today-goal-paused";
 import { getLocalDay } from "./today-local-day";
 import { TodayOnboardingLeft, isOnboardingLeft } from "./today-onboarding-left";
@@ -169,24 +163,14 @@ async function TodaySessionEnded() {
   );
 }
 
-/** The learner and the revision a state other than the day was read at, to keep it fresh. */
-function toStamp(result: { revision: string; userId: string }): LearnerViewStamp {
-  return { day: null, revision: result.revision, userId: result.userId };
-}
-
 async function TodayContent() {
   const result = await loadTodayScreen();
 
   if (result.status === "noGoal") {
-    return (
-      <>
-        <TodayStateSync stamp={toStamp(result)} state={result.status} />
-        {result.suggestedGoal ? (
-          <WelcomeBack suggestion={result.suggestedGoal} />
-        ) : (
-          <TodayFirstGoal />
-        )}
-      </>
+    return result.suggestedGoal ? (
+      <WelcomeBack suggestion={result.suggestedGoal} />
+    ) : (
+      <TodayFirstGoal />
     );
   }
 
@@ -202,21 +186,11 @@ async function TodayContent() {
   }
 
   if (result.status === "goalNotActive") {
-    return (
-      <>
-        <TodayStateSync stamp={toStamp(result)} state={result.status} />
-        <TodayGoalPaused revision={result.revision} />
-      </>
-    );
+    return <TodayGoalPaused />;
   }
 
   if (result.status === "preparing") {
-    return (
-      <>
-        <TodayStateSync stamp={toStamp(result)} state={result.status} />
-        <TodayPreparingState goal={result.goal} />
-      </>
-    );
+    return <TodayPreparingState goal={result.goal} />;
   }
 
   // A goal Today can't find says so in Today's place; the app's bar stays Today's own.
@@ -228,7 +202,14 @@ async function TodayContent() {
     );
   }
 
-  return <TodayClient copy={result.copy} key={result.copy.day} />;
+  return (
+    <TodayClient
+      data={result.data}
+      key={result.day}
+      readAt={result.readAt}
+      userId={result.userId}
+    />
+  );
 }
 
 /** A goal whose plan is being built, or one left halfway through its questions. */

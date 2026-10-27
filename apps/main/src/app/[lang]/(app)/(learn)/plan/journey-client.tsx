@@ -9,7 +9,6 @@ import { findGoalTimeToCover } from "@/lib/goals/goal-time-advice";
 import { readGoalGenerationId } from "@/lib/goals/read-goal-generation-id";
 import { useStartLanguageConversation } from "@/lib/language/use-start-language-conversation";
 import { useRefreshOnPlanChange } from "@/lib/learn/use-refresh-on-plan-change";
-import { useRefreshWhenOld } from "@/lib/learn/use-refresh-when-old";
 import { useTopicOutlineActions } from "@/lib/topic-outlines/use-topic-outline-actions";
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
 import { type LanguageProgressView } from "@zoonk/core/view-models/language/contract";
@@ -135,9 +134,8 @@ type JourneyClientProps = Omit<
   hasMindMaps: boolean;
   language: LanguageProgressView | null;
   preparation: Extract<JourneyStanding, { kind: "preparation" }> | null;
-  /** When the page read the Plan, and the learner revision it read (`getReadStamp`). */
+  /** When the page read the Plan (`getReadAt`). */
   readAt: number;
-  revision: string | null;
   /** What resuming the paused goal would do to its plan (`getGoalResumePreview`). */
   resume: GoalStatusControl["resume"];
 };
@@ -175,9 +173,8 @@ function useGoalStatus({
 }
 
 /**
- * The Plan, read again while lessons in it are still being written, and when it opens from an
- * old prefetched copy whose plan changed since. Its "…" leads to the buddy's conversation for
- * questions about the plan, as the plan editor's last row does.
+ * The Plan, read again while lessons in it are still being written. Its "…" leads to the buddy's
+ * conversation for questions about the plan, as the plan editor's last row does.
  */
 export function JourneyClient({
   actions,
@@ -190,12 +187,10 @@ export function JourneyClient({
   preparation,
   readAt,
   resume,
-  revision,
   ...props
 }: JourneyClientProps & { buddy: PlanTutor["buddy"] }) {
   const router = useRouter();
-  const refreshOnPlanChange = useRefreshOnPlanChange({ goalId, readAt, revision, watch: "plan" });
-  useRefreshWhenOld(readAt, refreshOnPlanChange);
+  const refreshOnPlanChange = useRefreshOnPlanChange({ goalId, readAt, watch: "plan" });
   const languageStanding = useLanguageStanding(language);
   const status = useGoalStatus({ goalId, resume, status: goalStatus });
   const arrival = useArrivalChoice();

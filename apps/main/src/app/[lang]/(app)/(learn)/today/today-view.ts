@@ -2,7 +2,6 @@ import "server-only";
 import { type LearnerBuddy, getLearnerBuddy } from "@/lib/learn/learner-buddy";
 import { getReadAt } from "@/lib/learn/read-at";
 import { toStudyDayDate } from "@/lib/learn/tab-missions";
-import { type LearnerViewCopy } from "@/lib/learner/learner-view-copies";
 import { type MockOptionsView } from "@zoonk/core/exams/mocks/contract";
 import { getMockOptions } from "@zoonk/core/exams/mocks/options";
 import { listGoalChangeNotices } from "@zoonk/core/library/sources/notices";
@@ -32,10 +31,7 @@ import { type TodaySyllabus } from "@zoonk/learn/today";
  */
 type TodayStep = { ref: DayBlockRef; screen: ReturnType<typeof getDayBlockScreen> };
 
-/**
- * Everything Today draws for the learner, read in one go by the page and by the browser's reads
- * of the view (`GET /api/learner/views/today`), so a view read again draws the same screen.
- */
+/** Everything Today draws for the learner, read in one go by the page. */
 export type TodayScreenData = {
   brainPower: number | null;
   buddy: LearnerBuddy;
@@ -53,10 +49,13 @@ export type TodayScreenData = {
   today: TodayView;
 };
 
-/** Today's states the page draws itself, and its own copy of the learner's day once there is one. */
+/**
+ * Today's states the page draws itself, and the learner's day once there is one: what it draws, the
+ * study day it is, when it was read and for whom.
+ */
 export type TodayScreenResult =
   | Exclude<TodayViewResult, { status: "ready" }>
-  | { copy: LearnerViewCopy<TodayScreenData>; status: "ready" };
+  | { data: TodayScreenData; day: string; readAt: number; status: "ready"; userId: string };
 
 /** The study day a Today read shows, as the learner summary names it: `goalId:YYYY-MM-DD`. */
 function getTodayDayKey(today: TodayView): string {
@@ -204,24 +203,21 @@ export async function loadTodayScreen(): Promise<TodayScreenResult> {
   );
 
   return {
-    copy: {
-      day: getTodayDayKey(today),
-      readAt,
-      revision: today.revision,
-      userId: today.userId,
-      view: {
-        brainPower: belt?.totalBrainPower ?? 0,
-        buddy,
-        language,
-        mistakes,
-        mocks,
-        notices,
-        planEnd,
-        steps,
-        syllabus,
-        today,
-      },
+    data: {
+      brainPower: belt?.totalBrainPower ?? 0,
+      buddy,
+      language,
+      mistakes,
+      mocks,
+      notices,
+      planEnd,
+      steps,
+      syllabus,
+      today,
     },
+    day: getTodayDayKey(today),
+    readAt,
     status: "ready",
+    userId: today.userId,
   };
 }

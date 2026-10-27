@@ -1,7 +1,6 @@
 "use client";
 
 import { setGoalStatusAction } from "@/app/[lang]/(app)/(learn)/_components/goal-status-action";
-import { withLearnerWrite } from "@/lib/learner/learner-views";
 import { type GoalStatusOutcome } from "@zoonk/learn/journey";
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
@@ -32,16 +31,11 @@ export function ResumeGoalButton({ goalId, goalTitle }: { goalId: string; goalTi
   const [outcome, setOutcome] = useState<GoalStatusOutcome | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  // Saved, the resume is a learner write: Today here reads itself again from it (its state sync),
-  // once, and so do the learner's other tabs. The button stays busy until the day replaces it.
+  // Saved, the resume expires the learner's goals, so Today renders again with the day. The button
+  // stays busy until the day replaces it.
   const resume = () => {
     startTransition(async () => {
-      const result = await withLearnerWrite(
-        () => setGoalStatusAction(goalId, "active"),
-        (status) => status === "saved",
-      );
-
-      setOutcome(result);
+      setOutcome(await setGoalStatusAction(goalId, "active"));
     });
   };
 

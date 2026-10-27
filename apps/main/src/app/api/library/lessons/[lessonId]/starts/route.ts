@@ -1,5 +1,4 @@
 import { isSameOriginRequest } from "@/lib/http/is-same-origin-request";
-import { getLearnerRevision } from "@zoonk/core/learner/revision";
 import { libraryLessonStartInputSchema } from "@zoonk/core/lesson-player/contract";
 import { startLibraryLesson } from "@zoonk/core/lesson-player/start";
 import { safeAsync } from "@zoonk/utils/error";
@@ -37,14 +36,9 @@ export async function POST(
     return new Response(null, { status: 400 });
   }
 
-  const { data: response, error } = await safeAsync(async () => {
-    const outcome = await startLibraryLesson({ input: input.data, lessonId });
-    const stamp = await getLearnerRevision();
-
-    return Response.json(outcome, {
-      headers: stamp ? { "Learner-Revision": stamp.revision } : undefined,
-    });
-  });
+  const { data: response, error } = await safeAsync(async () =>
+    Response.json(await startLibraryLesson({ input: input.data, lessonId })),
+  );
 
   if (error) {
     logError("[libraryLessonStartRoute] Failed to start a lesson:", error);

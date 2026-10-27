@@ -24,7 +24,7 @@ async function loadResumePreview(goal: { id: string; status: string } | undefine
  * frame and says so in one line; a paused goal comes back with one tap, a new goal is the other
  * way on. When the pause left lessons behind, what resuming moves shows before the tap.
  */
-export async function TodayGoalPaused({ revision }: { revision: string }) {
+export async function TodayGoalPaused() {
   const t = await getExtracted();
   const locale = await getLocale();
   const list = await listCurrentUserGoals();
@@ -56,14 +56,7 @@ export async function TodayGoalPaused({ revision }: { revision: string }) {
     <TodayAtRest
       actions={
         <>
-          {/* A newer paused state (paused again elsewhere) gets a fresh Resume, not a busy one. */}
-          {goal && (
-            <ResumeGoalButton
-              goalId={goal.id}
-              goalTitle={goal.title}
-              key={`${goal.id}:${revision}`}
-            />
-          )}
+          {goal && <ResumeGoalButton goalId={goal.id} goalTitle={goal.title} key={goal.id} />}
           <Link
             className={buttonVariants({ size: "lg", variant: goal ? "outline" : "default" })}
             href="/start"

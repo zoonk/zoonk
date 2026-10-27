@@ -7,7 +7,6 @@ import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { SessionCeremony } from "@/components/learn/session-ceremony";
 import { useLessonSessionSlots } from "@/components/session/use-lesson-session-slots";
 import { redirect, useRouter } from "@/i18n/navigation";
-import { forgetAppWrites } from "@/lib/http/app-write-ledger";
 import { useRefreshAfterAppWrites } from "@/lib/http/app-writes";
 import { getTutorConfig } from "@/lib/learn/tutor-config";
 import { useTutorCards } from "@/lib/learn/use-tutor-cards";
@@ -71,20 +70,8 @@ function createAdapters({
 }): LessonPlayerAdapters {
   return {
     checkStep: checkLessonStep,
-    completeLesson: async (input) => {
-      const outcome = await completeLibraryLessonAction({
-        ...input,
-        lessonId,
-        timeZone: getLocalTimeZone(),
-      });
-
-      // Saving the completion changed cached data, so the router dropped every kept page already.
-      if (outcome.status === "completed") {
-        forgetAppWrites();
-      }
-
-      return outcome;
-    },
+    completeLesson: (input) =>
+      completeLibraryLessonAction({ ...input, lessonId, timeZone: getLocalTimeZone() }),
     explainAnswer: requestAnswerExplanation,
     getExampleLine,
     getLessonPictures: (stepIds) => getLessonPicturesAction(lessonId, stepIds),

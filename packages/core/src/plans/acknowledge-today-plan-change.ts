@@ -17,6 +17,7 @@ import {
   acknowledgmentResult,
   findAcknowledgedRead,
 } from "./_utils/acknowledge-today-change";
+import { revalidatePlanTags } from "./_utils/replan";
 import { PlanConflictError } from "./plan-conflict";
 import { toIsoDate } from "./planner/plan-calendar";
 import {
@@ -145,7 +146,10 @@ async function acknowledgeComputed({
   return changeId ? acknowledgmentResult({ changeId, userId }) : { status: "retryable" };
 }
 
-/** One explicit learner POST acknowledges a stored notice or atomically publishes the exact computed one. */
+/**
+ * One explicit learner POST acknowledges a stored notice or atomically publishes the exact computed
+ * one. An acknowledged notice expires the learner's plan reads, so Today shows it answered.
+ */
 export async function acknowledgeTodayPlanChange(
   input: AcknowledgeTodayPlanChangeInput,
 ): Promise<AcknowledgeTodayPlanChangeResult> {
@@ -155,7 +159,14 @@ export async function acknowledgeTodayPlanChange(
     return { status: "unauthorized" };
   }
 
-  return input.kind === "stored"
-    ? acknowledgeStoredNotice({ changeId: input.changeId, userId: actor.user.id })
-    : acknowledgeComputed({ input, userId: actor.user.id });
+  const result =
+    input.kind === "stored"
+      ? await acknowledgeStoredNotice({ changeId: input.changeId, userId: actor.user.id })
+      : await acknowledgeComputed({ input, userId: actor.user.id });
+
+  if (result.status === "acknowledged") {
+    revalidatePlanTags(actor.user.id);
+  }
+
+  return result;
 }

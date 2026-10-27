@@ -1,9 +1,9 @@
 "use client";
 
+import { useRouter } from "@/i18n/navigation";
 import { attachGoalFile, attachGoalLink, attachGoalText } from "@/lib/goals/goal-uploads";
 import { answerUploadRequest } from "@/lib/goals/research-uploads";
 import { dismissUploadRequestAction } from "@/lib/goals/upload-request-actions";
-import { withLearnerWrite } from "@/lib/learner/learner-views";
 import { type GoalUploadRequest } from "@zoonk/core/library/sources/upload-request";
 import {
   Suggestion,
@@ -38,6 +38,7 @@ export function UploadRequestClient({
   request: GoalUploadRequest;
 }) {
   const t = useExtracted();
+  const router = useRouter();
   const copy = useRequestCopy(request);
   const [answer, setAnswer] = useState<RequestState>("asking");
 
@@ -51,8 +52,11 @@ export function UploadRequestClient({
       setAnswer(done);
     }
 
+    // The answer goes to the API, which leaves the page alone: the page reads itself again, so the
+    // ask stays answered when the learner comes back to it. A dismissal renders it again itself.
     if (saved && done === "answered") {
       onAnswered?.();
+      router.refresh();
     }
 
     return saved;
@@ -90,18 +94,13 @@ export function UploadRequestClient({
           <UploadRequestCard
             actions={{
               answer: (sourceIds) =>
-                withLearnerWrite(() => answerUploadRequest({ goalId, sourceIds })).then(
-                  settle("answered"),
-                ),
+                answerUploadRequest({ goalId, sourceIds }).then(settle("answered")),
               attach: {
                 file: (input) => attachGoalFile({ ...input, goalId }),
                 link: (input) => attachGoalLink({ ...input, goalId }),
                 text: (input) => attachGoalText({ ...input, goalId }),
               },
-              dismiss: () =>
-                withLearnerWrite(() => dismissUploadRequestAction(goalId)).then(
-                  settle("dismissed"),
-                ),
+              dismiss: () => dismissUploadRequestAction(goalId).then(settle("dismissed")),
             }}
             className="rounded-none bg-transparent p-0"
             language={request.language}

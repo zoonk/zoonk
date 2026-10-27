@@ -1,6 +1,6 @@
 import { AuthGatePage } from "@/components/auth-gate";
 import { ClientMessagesProvider } from "@/i18n/client-messages-provider";
-import { getReadStamp } from "@/lib/learn/read-at";
+import { getReadAt } from "@/lib/learn/read-at";
 import { getActiveGoalId } from "@zoonk/core/goals/active-goal";
 import { getOwnedGoal } from "@zoonk/core/goals/owned-goal";
 import { hasEarlierQuestions } from "@zoonk/core/lesson-questions/earlier";
@@ -69,10 +69,8 @@ async function hasOpenMistake(goalId: string): Promise<boolean> {
 }
 
 async function BuddyContent() {
-  // The learner revision comes first, so it never claims more than the reads after it show.
-  const stamp = await getReadStamp();
-
-  const [result, goal, session, earlierQuestions] = await Promise.all([
+  const [readAt, result, goal, session, earlierQuestions] = await Promise.all([
+    getReadAt(),
     getBuddyStatus({}),
     findTutoredGoal(),
     getSession(),
@@ -114,8 +112,7 @@ async function BuddyContent() {
         hasEarlierQuestions={earlierQuestions}
         initialThread={thread}
         memoryCount={memoryCount ?? 0}
-        readAt={stamp.readAt}
-        revision={stamp.revision}
+        readAt={readAt}
         situation={{ hasMistake, hasToday: Boolean(result.buddy.today) }}
         status={result.buddy}
         viewerId={session.user.id}

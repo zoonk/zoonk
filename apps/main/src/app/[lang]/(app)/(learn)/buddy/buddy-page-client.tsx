@@ -4,8 +4,6 @@ import { saveBuddyAction } from "@/app/[lang]/(app)/(settings)/settings/appearan
 import { useRouter } from "@/i18n/navigation";
 import { useReportTabMissions } from "@/lib/learn/tab-missions-provider";
 import { getTutorConfig } from "@/lib/learn/tutor-config";
-import { useRefreshOnPlanChange } from "@/lib/learn/use-refresh-on-plan-change";
-import { useRefreshWhenOld } from "@/lib/learn/use-refresh-when-old";
 import { useTutorAppLinks } from "@/lib/learn/use-tutor-app-links";
 import { useTutorCardActions } from "@/lib/learn/use-tutor-cards";
 import { useMissionLinks } from "@/lib/session/use-study-navigation";
@@ -86,7 +84,6 @@ export function BuddyPageClient({
   initialThread,
   memoryCount,
   readAt,
-  revision,
   situation,
   status,
   viewerId,
@@ -99,9 +96,8 @@ export function BuddyPageClient({
   /** The conversation as the page read it, shown at once and read again in the background. */
   initialThread: ThreadPage | null;
   memoryCount: number;
-  /** When the page read the buddy's day, and the learner revision it read (`getReadStamp`). */
+  /** When the page read the buddy's day (`getReadAt`). */
   readAt: number;
-  revision: string | null;
   situation: TutorSituation;
   status: BuddyStatusView;
   /** The learner the page read the buddy's day for, whose missions the tab may show. */
@@ -110,9 +106,6 @@ export function BuddyPageClient({
   const router = useRouter();
   const { decide, tools } = useTutorCardActions(goalId);
   const missionLinks = useMissionLinks(goalId);
-  // The buddy's day (its missions, the energy they spent) moves with the goal's sessions.
-  const refreshIfChanged = useRefreshOnPlanChange({ goalId, readAt, revision, watch: "today" });
-  useRefreshWhenOld(readAt, refreshIfChanged);
 
   useReportTabMissions({
     day: status.today && { goalId: status.today.goalId, localDate: status.today.localDate },

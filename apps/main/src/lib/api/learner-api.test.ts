@@ -10,22 +10,7 @@ describe(postAsLearner, () => {
     vi.unstubAllGlobals();
   });
 
-  it("forwards the API's committed watermark alongside its unchanged JSON outcome", async () => {
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(async () =>
-        Response.json({ status: "ready" }, { headers: { "Learner-Revision": "42" } }),
-      ),
-    );
-
-    await expect(postAsLearner({ path: "/v1/example" })).resolves.toStrictEqual({
-      json: { status: "ready" },
-      learnerRevision: "42",
-      ok: true,
-    });
-  });
-
-  it("keeps a response without a learner and an HTTP refusal distinct", async () => {
+  it("keeps the API's JSON outcome and an HTTP refusal distinct", async () => {
     const fetcher = vi
       .fn()
       .mockResolvedValueOnce(Response.json({ status: "ready" }))
@@ -35,7 +20,6 @@ describe(postAsLearner, () => {
 
     await expect(postAsLearner({ path: "/v1/example" })).resolves.toStrictEqual({
       json: { status: "ready" },
-      learnerRevision: null,
       ok: true,
     });
 

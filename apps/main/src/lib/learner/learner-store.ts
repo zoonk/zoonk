@@ -1,17 +1,14 @@
 import { type LearnerSummary } from "@zoonk/core/learner/summary/contract";
 import {
-  type LearnerRevisionNote,
   type LearnerSummarySeedValue,
   type LearnerSummaryState,
   getUntilChange,
   isSeedExpected,
-  isSummaryBehind,
 } from "./learner-snapshot";
 import {
   NOT_LOADED,
   accept,
   fail,
-  getHeldIdentity,
   install,
   readLearnerSummary,
   readOrGuess,
@@ -114,27 +111,6 @@ export function getLearnerGeneration(): number {
 }
 
 /**
- * A write this tab sent for the identity it held (`generation`) committed `revision` for `userId`:
- * a summary older than that is read again, so the frame says what the write changed (the day a
- * zone follow moved, the step an open saved). Another learner's write, or one sent before the
- * identity changed, reads nothing.
- */
-export function catchUpLearnerSummary({ generation, revision, userId }: LearnerRevisionNote): void {
-  if (generation !== store.generation || !isSummaryBehind(store.state, { revision, userId })) {
-    return;
-  }
-
-  // A read already on its way may have left before the write: once it answers, still behind means
-  // one more read.
-  if (store.inFlight?.generation === store.generation) {
-    void store.inFlight.promise.then(() => catchUpLearnerSummary({ generation, revision, userId }));
-    return;
-  }
-
-  void readLearnerSummary();
-}
-
-/**
  * Takes a summary a Server Action returned with its outcome (a goal switch) for the identity the
  * browser held when it sent the action (`generation`), so an old session's cookies never restore
  * it; when the session was checked meanwhile, the summary is read again with the cookies of now.
@@ -159,15 +135,6 @@ export function mergeLearnerSummary({
 
 export function getLearnerSummaryState(): LearnerSummaryState {
   return store.state;
-}
-
-/**
- * Whose session the browser holds, as far as it knows: the learner's id, null once the server said
- * nobody holds one (signed out), or undefined while it doesn't know (nothing read yet, a failed
- * read, or its own guess that nobody is signed in, whose `readAt` is 0).
- */
-export function getHeldLearnerId(): string | null | undefined {
-  return store.readAt > 0 ? (getHeldIdentity()?.userId ?? null) : undefined;
 }
 
 export function getServerLearnerSummaryState(): LearnerSummaryState {

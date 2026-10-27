@@ -1,4 +1,5 @@
 import { LinkIntentPreloads } from "@/components/learn/link-intent-preloads";
+import { RefreshOnReturn } from "@/components/learn/refresh-on-return";
 import { ClientMessagesProvider } from "@/i18n/client-messages-provider";
 import { LearnFrame } from "./(learn)/_components/learn-frame";
 
@@ -11,6 +12,7 @@ export default function AppLayout({ children }: LayoutProps<"/[lang]">) {
   return (
     <ClientMessagesProvider scope="learn">
       <LinkIntentPreloads />
+      <RefreshOnReturn />
       <LearnFrame>{children}</LearnFrame>
     </ClientMessagesProvider>
   );

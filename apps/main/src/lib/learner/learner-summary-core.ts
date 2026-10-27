@@ -4,7 +4,6 @@ import {
   type LearnerSummaryState,
   type Snapshot,
   getUntilChange,
-  isNewerSummary,
   isSameIdentity,
 } from "./learner-snapshot";
 import { fetchLearnerSummary } from "./learner-summary-response";
@@ -53,7 +52,7 @@ function notify() {
 }
 
 /** The identity held: undefined while unknown, null for a visitor. */
-export function getHeldIdentity(): LearnerIdentity | null | undefined {
+function getHeldIdentity(): LearnerIdentity | null | undefined {
   if (store.state.status === "ready") {
     return store.state.summary.identity;
   }
@@ -61,12 +60,8 @@ export function getHeldIdentity(): LearnerIdentity | null | undefined {
   return store.state.status === "visitor" ? null : undefined;
 }
 
-/** A later snapshot of the identity held: the learner's newer summary, or nobody read again. */
+/** A later snapshot of the identity held: read no earlier than the one held. */
 function isNewerSnapshot(snapshot: Snapshot): boolean {
-  if (store.state.status === "ready" && snapshot.summary) {
-    return isNewerSummary({ held: store.state.summary, next: snapshot.summary });
-  }
-
   return snapshot.readAt >= store.readAt;
 }
 

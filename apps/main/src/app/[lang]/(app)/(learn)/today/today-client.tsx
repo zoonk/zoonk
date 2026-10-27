@@ -13,13 +13,6 @@ import { useFollowTimeZone } from "@/lib/goals/use-follow-time-zone";
 import { toStudyDayDate } from "@/lib/learn/tab-missions";
 import { useReportTabMissions } from "@/lib/learn/tab-missions-provider";
 import { useRefreshOnPlanChange } from "@/lib/learn/use-refresh-on-plan-change";
-import {
-  type LearnerViewCopy,
-  type LearnerViewRead,
-  type LearnerViewStamp,
-} from "@/lib/learner/learner-view-copies";
-import { withLearnerWrite } from "@/lib/learner/learner-views";
-import { useLearnerView, useLearnerViewState } from "@/lib/learner/use-learner-view";
 import { MOCK_ENTRY_HREFS } from "@/lib/mocks/mock-entry-hrefs";
 import { type TapStep } from "@/lib/session/day-entry";
 import { answerMemoryInsightAction } from "@/lib/session/study-session-actions";
@@ -37,7 +30,6 @@ import { type DayStep } from "@zoonk/learn/session/types";
 import { type TodayHostNotices, TodayScreen } from "@zoonk/learn/today";
 import { TodayChangeNotice } from "@zoonk/learn/today/change-notice";
 import { TodayPreparing } from "@zoonk/learn/today/preparing";
-import { TodayShell } from "@zoonk/learn/today/shell";
 import { SuggestedGoalOffer } from "@zoonk/learn/today/suggested-goal";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { type TodayScreenData } from "./today-view";
@@ -70,8 +62,8 @@ function usePrefetchSessionFrame(href: string) {
 }
 
 /**
- * Today's notices that need main's components, drawn from what the view read: a language goal's
- * due practice, the newest change to a source the goal is built on, and an upload research asks for.
+ * Today's notices that need main's components, drawn from what Today read: a language goal's due
+ * practice, the newest change to a source the goal is built on, and an upload research asks for.
  * An upload ask the learner answered here (`answeredUpload`) shows its thanks while they stay,
  * whatever Today read since, even when a read dropped it before the answer arrived; another tab
  * drops it.
@@ -113,7 +105,7 @@ function toHostNotices({
   };
 }
 
-/** The day's steps with where each plays and the work it is, as the view read them. */
+/** The day's steps with where each plays and the work it is, as Today read them. */
 function toTapSteps(data: TodayScreenData): TapStep[] {
   return data.today.session.blocks.flatMap((block, index) => {
     const step = data.steps[index];
@@ -126,23 +118,23 @@ function toTapSteps(data: TodayScreenData): TapStep[] {
 
 /**
  * The day on Today with main's actions: each one opens where the step is played, opening a day
- * the learner hasn't opened yet with the tap that names its step. Keyed by its goal and day, so a
- * new day (midnight, a goal switch) draws fresh.
+ * the learner hasn't opened yet with the tap that names its step. The page keys it by its goal and
+ * day, so a new day (midnight, a goal switch) draws fresh. Writes that expire the learner's tags
+ * render Today again on their own; a tap that reads the day again refreshes it.
  */
-function TodayDay({
+export function TodayClient({
   data,
   readAt,
-  refreshView,
   userId,
 }: {
   data: TodayScreenData;
   readAt: number;
-  refreshView: () => Promise<LearnerViewRead>;
   userId: string;
 }) {
+  const router = useRouter();
   const { today } = data;
   const goalId = today.session.goalId ?? today.goal.id;
-  const refresh = useCallback(() => void refreshView(), [refreshView]);
+  const refresh = useCallback(() => router.refresh(), [router]);
   const steps = useMemo(() => toTapSteps(data), [data]);
 
   const taps = useDayTaps({
@@ -170,8 +162,8 @@ function TodayDay({
   const sessionHref = getSessionHref({ goalId, limit: null });
   const call = findNextCall({ goalKind: today.goal.kind, session: today.session });
 
-  useFollowTimeZone({ goalId: today.goal.id, userId });
-  const decidePlanChange = useDecidePlanChange({ refreshView, today });
+  useFollowTimeZone(today.goal.id);
+  const decidePlanChange = useDecidePlanChange(today);
 
   useReportTabMissions({
     day: { goalId, localDate: toStudyDayDate(today.session.localDate) },
@@ -183,7 +175,6 @@ function TodayDay({
   const refreshOnPlanChange = useRefreshOnPlanChange({
     goalId: today.goal.id,
     readAt,
-    refresh,
     watch: "today",
   });
 
@@ -196,24 +187,17 @@ function TodayDay({
       actions={{
         addExtraTime: taps.addExtraTime,
         adjustTimeHref: "/plan?focus=time",
-        answerInsight: (input) => withLearnerWrite(() => answerMemoryInsightAction(input)),
+        answerInsight: answerMemoryInsightAction,
         answerSuggestedGoal,
         buddyHref: "/buddy",
         catchUp: taps.catchUp,
         challengeHref: (planItemId) => `/challenge/${planItemId}`,
         changePlan: async (operations) => {
-          const outcome = await withLearnerWrite(
-            () => changePlanAction(today.goal.id, operations),
-            (result) => result?.status === "applied",
-          );
-
+          const outcome = await changePlanAction(today.goal.id, operations);
           return outcome?.status === "applied" ? outcome.change : null;
         },
         chooseExamOption: async (input) => {
-          const outcome = await withLearnerWrite(() =>
-            chooseExamOptionAction(today.goal.id, input),
-          );
-
+          const outcome = await chooseExamOptionAction(today.goal.id, input);
           return outcome?.change ?? null;
         },
         chooseFocusHref: "/plan?focus=choose",
@@ -258,41 +242,6 @@ function TodayDay({
       today={today}
     />
   );
-}
-
-/**
- * Today from the copy the page rendered (prefetched, or read with the page), or a newer one this
- * tab read since: shown at once, and read again, as one small view read, only once it's old (a
- * write, another day, another tab), never by rendering the page again. A copy rendered for another
- * learner than the one the browser holds now (a sign-in in another tab while it was on its way)
- * leaves Today's frame until the page reads itself again for them.
- */
-export function TodayClient({ copy }: { copy: LearnerViewCopy<TodayScreenData> }) {
-  const { refresh, shown } = useLearnerView({ copy, kind: "today" });
-
-  if (!shown) {
-    return <TodayShell />;
-  }
-
-  return (
-    <TodayDay
-      data={shown.view}
-      key={shown.day ?? "today"}
-      readAt={shown.readAt}
-      refreshView={refresh}
-      userId={shown.userId}
-    />
-  );
-}
-
-/**
- * Keeps one of Today's other states (no goal yet, a paused goal, a plan being built) as fresh as
- * Today's day: when it's shown and old, Today's view is read, and the page reads itself again once
- * the learner's Today is something else now (a goal started or resumed elsewhere).
- */
-export function TodayStateSync({ stamp, state }: { stamp: LearnerViewStamp; state: string }) {
-  useLearnerViewState({ kind: "today", stamp, state });
-  return null;
 }
 
 /**

@@ -1,10 +1,8 @@
 "use client";
 
 import { answerPlanChangeAction } from "@/app/[lang]/(app)/(learn)/plan/journey-actions";
+import { useRouter } from "@/i18n/navigation";
 import { toStudyDayDate } from "@/lib/learn/tab-missions";
-import { getLearnerGeneration } from "@/lib/learner/learner-store";
-import { type LearnerViewRead } from "@/lib/learner/learner-view-copies";
-import { noteLearnerRevision, withLearnerWrite } from "@/lib/learner/learner-views";
 import { type PlanChangeDecisionInput } from "@zoonk/core/plans/contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { type TodayView } from "@zoonk/core/view-models/today/get";
@@ -17,24 +15,19 @@ type Decision = { changeId: string | null; status: PlanChangeDecisionInput["stat
 /**
  * Answers Today's plan change. A saved one goes through the plan's own answer. "Got it" on one
  * Today worked out before the day saved it (no id yet) saves and acknowledges it in one go, for the
- * copy that showed it (Today's notice follows its copy until it's answered); the learner's revision
- * then makes Today read itself again, so it leaves. One out of date by then (the goal paused, the
- * day moved on, the change gone) says nothing: Today reads itself again first, and its copy, or the
- * page's other state, replaces it (`stale`; the notice stays busy until then). Resolves to null when
- * it didn't save: Today reads itself again meanwhile, since the learner may have moved on
- * elsewhere, so the next try answers what Today shows then.
+ * day that showed it; saving renders Today again, so it leaves. One out of date by then (the goal
+ * paused, the day moved on, the change gone) says nothing: Today reads itself again, and what
+ * replaces it shows (`stale`; the notice stays busy until then). Resolves to null when it didn't
+ * save, reading Today again when the learner may have moved on elsewhere, so the next try answers
+ * what Today shows then.
  */
-export function useDecidePlanChange({
-  refreshView,
-  today,
-}: {
-  refreshView: () => Promise<LearnerViewRead>;
-  today: TodayView;
-}) {
+export function useDecidePlanChange(today: TodayView) {
+  const router = useRouter();
+
   return useCallback(
     async ({ changeId, status }: Decision): Promise<PlanChangeView | "stale" | null> => {
       if (changeId !== null) {
-        return withLearnerWrite(() => answerPlanChangeAction(today.goal.id, { changeId, status }));
+        return answerPlanChangeAction(today.goal.id, { changeId, status });
       }
 
       const change = today.planChange;
@@ -42,8 +35,6 @@ export function useDecidePlanChange({
       if (change?.id !== null || status !== "seen") {
         return null;
       }
-
-      const generation = getLearnerGeneration();
 
       const result = await acknowledgeTodayPlanChangeAction({
         goalId: today.goal.id,
@@ -54,23 +45,16 @@ export function useDecidePlanChange({
       });
 
       if (result.status === "acknowledged") {
-        noteLearnerRevision({ generation, revision: result.revision, userId: result.userId });
         return { ...change, id: result.changeId };
-      }
-
-      if (result.status === "retryable") {
-        void refreshView();
-        return null;
       }
 
       if (result.status === "unauthorized") {
         return null;
       }
 
-      // Says nothing only once what replaces it is on screen, or on its way: Today's new copy, or
-      // the page drawing another state. Settling either way lets that render commit.
-      return (await refreshView()) === "failed" ? null : "stale";
+      router.refresh();
+      return result.status === "retryable" ? null : "stale";
     },
-    [refreshView, today],
+    [router, today],
   );
 }

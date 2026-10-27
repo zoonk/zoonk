@@ -1,10 +1,7 @@
 import { z } from "zod";
 
-/** A follow's answer: whether the learner's day moved, with the learner's revision when it did. */
-const timeZoneFollowSchema = z.union([
-  z.object({ learnerRevision: z.string(), moved: z.literal(true) }),
-  z.object({ moved: z.literal(false) }),
-]);
+/** A follow's answer: whether the learner's day moved. */
+const timeZoneFollowSchema = z.object({ moved: z.boolean() });
 
 type TimeZoneFollow = z.infer<typeof timeZoneFollowSchema>;
 
