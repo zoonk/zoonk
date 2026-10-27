@@ -10,7 +10,7 @@ import { CourseExamEyebrow } from "@/components/catalog/course-exam-eyebrow";
 import { CourseMark } from "@/components/catalog/course-mark";
 import { type CoursePlanExample, getCoursePlanExample } from "@/components/catalog/course-plan";
 import { CoursePlanWindow } from "@/components/catalog/course-plan-window";
-import { CourseProgressScope } from "@/components/catalog/course-progress";
+import { CourseGoalSwitch, CourseProgressScope } from "@/components/catalog/course-progress";
 import { CourseSubjectLabel } from "@/components/catalog/course-subject-label";
 import {
   TryLesson,
@@ -180,7 +180,11 @@ function getTryCandidates(outline: LibraryOutline): TryLessonCandidate[] {
   );
 }
 
-/** The page's last word, where its route ends: the one way in again. */
+/**
+ * The page's last word, where its route ends: the one way in again. A learner whose goal already
+ * follows the course is past the start, so the end says so above "Continue your plan" instead of
+ * promising them the first questions again.
+ */
 async function CourseClosing({ courseId, pace }: { courseId: string; pace: number | null }) {
   const t = await getExtracted();
   const titleId = `course-closing-${courseId}`;
@@ -188,12 +192,20 @@ async function CourseClosing({ courseId, pace }: { courseId: string; pace: numbe
   return (
     <RouteStop aria-labelledby={titleId} className="flex flex-col gap-1.5">
       <RouteTitle id={titleId} station="end" up>
-        {t("Start today, at your level")}
+        <CourseGoalSwitch
+          continueLink={t("Your plan follows this course")}
+          startLinks={t("Start today, at your level")}
+        />
       </RouteTitle>
 
-      <p className="text-muted-foreground max-w-column text-[0.9375rem] leading-relaxed text-pretty">
-        {t("A few quick questions, then your plan and your first lesson.")}
-      </p>
+      <CourseGoalSwitch
+        continueLink={null}
+        startLinks={
+          <p className="text-muted-foreground max-w-column text-[0.9375rem] leading-relaxed text-pretty">
+            {t("A few quick questions, then your plan and your first lesson.")}
+          </p>
+        }
+      />
 
       <CourseStart className="mt-5 sm:mt-6" courseId={courseId} pace={pace} />
     </RouteStop>

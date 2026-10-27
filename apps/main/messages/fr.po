@@ -577,6 +577,11 @@ msgid "This course is also available in your language."
 msgstr "Ce cours est aussi disponible dans ta langue."
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
+msgctxt "vZu-i7"
+msgid "Your plan follows this course"
+msgstr "Ton plan suit ce cours"
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
 msgctxt "Sm_2tk"
 msgid "Course options"
 msgstr "Options du cours"
