@@ -1,8 +1,7 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { learnerAccessError } from "@/lib/learner-errors";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
 import { getProgressView } from "@zoonk/core/view-models/progress/get";
 import { NextResponse } from "next/server";
 
@@ -11,13 +10,9 @@ async function getProgress(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/progress">,
 ) {
-  const path = parsePathParams({ params: await context.params, schema: goalPathParamsSchema });
+  const path = await readPathParams(context, goalPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const result = await getProgressView({ goalId: path.data.goalId });
+  const result = await getProgressView({ goalId: path.goalId });
 
   if (result.status !== "ready") {
     return learnerAccessError(result.status === "unauthorized" ? "unauthorized" : "notFound");

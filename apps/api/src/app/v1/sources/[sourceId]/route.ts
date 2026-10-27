@@ -1,7 +1,7 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { sourcePathParamsSchema } from "@/lib/openapi/schemas/research-sources";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
 import { toSourceResource } from "@/lib/source-resources";
 import { getSource } from "@zoonk/core/library/sources/get";
 import { NextResponse } from "next/server";
@@ -11,13 +11,9 @@ async function getSourceResource(
   _request: Request,
   context: RouteContext<"/v1/sources/[sourceId]">,
 ) {
-  const parsed = parsePathParams({ params: await context.params, schema: sourcePathParamsSchema });
+  const parsed = await readPathParams(context, sourcePathParamsSchema);
 
-  if (!parsed.success) {
-    return errors.validation(parsed.error);
-  }
-
-  const source = await getSource({ sourceId: parsed.data.sourceId });
+  const source = await getSource({ sourceId: parsed.sourceId });
 
   if (!source) {
     return errors.notFound("Source not found");

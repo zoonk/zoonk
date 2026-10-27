@@ -1,10 +1,9 @@
 import { createErrorResponse, errors, httpStatus } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { startGoalGeneration } from "@/lib/goal-content";
 import { planLinkPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
 import { goalRefusedError, planErrorCodes } from "@/lib/plan-errors";
+import { readBody, readPathParams } from "@/lib/request-input";
 import { planLinkStartInputSchema } from "@zoonk/core/plans/link-contract";
 import { startGoalFromPlanLink } from "@zoonk/core/plans/start-from-link";
 import { safeAsync } from "@zoonk/utils/error";
@@ -33,19 +32,11 @@ async function startFromLink(
   context: RouteContext<"/v1/plan-links/[planId]/goals">,
 ) {
   const [body, path] = await Promise.all([
-    parseBody(request, planLinkStartInputSchema),
-    context.params.then((params) => parsePathParams({ params, schema: planLinkPathParamsSchema })),
+    readBody(request, planLinkStartInputSchema),
+    readPathParams(context, planLinkPathParamsSchema),
   ]);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
-  const result = await startGoalFromPlanLink({ input: body.data, planId: path.data.planId });
+  const result = await startGoalFromPlanLink({ input: body, planId: path.planId });
 
   switch (result.status) {
     case "created":

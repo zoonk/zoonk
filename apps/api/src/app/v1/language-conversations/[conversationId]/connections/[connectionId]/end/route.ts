@@ -1,8 +1,7 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { conversationRefusalError } from "@/lib/language-errors";
 import { languageConversationConnectionPathParamsSchema } from "@/lib/openapi/schemas/language";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
 import { endLanguageConversationConnection } from "@zoonk/core/language/conversations/end-connection";
 import { NextResponse } from "next/server";
 
@@ -11,16 +10,9 @@ async function endConnection(
   _request: Request,
   context: RouteContext<"/v1/language-conversations/[conversationId]/connections/[connectionId]/end">,
 ) {
-  const path = parsePathParams({
-    params: await context.params,
-    schema: languageConversationConnectionPathParamsSchema,
-  });
+  const path = await readPathParams(context, languageConversationConnectionPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const result = await endLanguageConversationConnection(path.data);
+  const result = await endLanguageConversationConnection(path);
 
   if (result.status !== "closed") {
     return conversationRefusalError({ status: result.status });

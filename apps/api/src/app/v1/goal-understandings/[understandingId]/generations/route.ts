@@ -1,9 +1,9 @@
-import { accessError, errors } from "@/lib/api-errors";
+import { accessError } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { isUnderstandingRunning, startUnderstandingRun } from "@/lib/goal-understanding";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { goalUnderstandingPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
 import { isRefusedUsage } from "@zoonk/core/entitlements/contract";
 import { getOnboardingDraft } from "@zoonk/core/view-models/onboarding/get-draft";
 import { prepareGoalUnderstandingRun } from "@zoonk/core/view-models/onboarding/prepare-understanding-run";
@@ -19,16 +19,9 @@ async function createGoalUnderstandingGeneration(
   _request: NextRequest,
   context: RouteContext<"/v1/goal-understandings/[understandingId]/generations">,
 ) {
-  const path = parsePathParams({
-    params: await context.params,
-    schema: goalUnderstandingPathParamsSchema,
-  });
+  const path = await readPathParams(context, goalUnderstandingPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const draftId = path.data.understandingId;
+  const draftId = path.understandingId;
   const current = await getOnboardingDraft({ draftId });
 
   if (current.status !== "ready") {

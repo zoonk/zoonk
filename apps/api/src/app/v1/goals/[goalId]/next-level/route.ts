@@ -2,7 +2,7 @@ import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { startGoalWork } from "@/lib/goal-content";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
 import { continueGoalAtNextLevel } from "@zoonk/core/goals/continue-next-level";
 import { NextResponse } from "next/server";
 
@@ -36,13 +36,9 @@ async function postNextLevel(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/next-level">,
 ) {
-  const path = parsePathParams({ params: await context.params, schema: goalPathParamsSchema });
+  const path = await readPathParams(context, goalPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const result = await continueGoalAtNextLevel(path.data.goalId);
+  const result = await continueGoalAtNextLevel(path.goalId);
 
   if (result.status !== "created") {
     return refuse(result);

@@ -1,9 +1,8 @@
-import { accessError, errors } from "@/lib/api-errors";
+import { accessError } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { planTimeToCoverInputSchema } from "@/lib/openapi/schemas/time-advice";
-import { parsePathParams } from "@/lib/path-params";
+import { readBody, readPathParams } from "@/lib/request-input";
 import { findPlanTimeToCover } from "@zoonk/core/plans/time-advice";
 import { type NextRequest, NextResponse } from "next/server";
 
@@ -17,21 +16,13 @@ async function findTimeToCover(
   context: RouteContext<"/v1/goals/[goalId]/plan/time-to-cover">,
 ) {
   const [body, path] = await Promise.all([
-    parseBody(request, planTimeToCoverInputSchema),
-    context.params.then((params) => parsePathParams({ params, schema: goalPathParamsSchema })),
+    readBody(request, planTimeToCoverInputSchema),
+    readPathParams(context, goalPathParamsSchema),
   ]);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
   const result = await findPlanTimeToCover({
-    goalId: path.data.goalId,
-    input: { studyDays: body.data.studyDays, weekendMinutes: body.data.weekendMinutes },
+    goalId: path.goalId,
+    input: { studyDays: body.studyDays, weekendMinutes: body.weekendMinutes },
   });
 
   return result.status === "ready" ? NextResponse.json(result.time) : accessError(result.status);

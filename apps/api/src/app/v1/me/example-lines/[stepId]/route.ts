@@ -2,7 +2,7 @@ import { errors, slowDownError } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { stepPathParamsSchema } from "@/lib/openapi/schemas/steps";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
 import { isRefusedUsage } from "@zoonk/core/entitlements/contract";
 import {
   getStepExampleLine,
@@ -18,14 +18,10 @@ async function exampleLine(
   request: NextRequest,
   context: RouteContext<"/v1/me/example-lines/[stepId]">,
 ) {
-  const path = parsePathParams({ params: await context.params, schema: stepPathParamsSchema });
-
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
+  const path = await readPathParams(context, stepPathParamsSchema);
 
   const capability = request.method === "POST" ? requestStepExampleLine : getStepExampleLine;
-  const result = await capability({ stepId: path.data.stepId });
+  const result = await capability({ stepId: path.stepId });
 
   if (result.status === "unauthorized") {
     return errors.unauthorized();
@@ -50,7 +46,7 @@ async function exampleLine(
   return NextResponse.json({
     canRequest: result.canRequest,
     line: result.line,
-    stepId: path.data.stepId,
+    stepId: path.stepId,
   });
 }
 

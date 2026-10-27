@@ -3,7 +3,7 @@ import { withApiErrorBoundary } from "@/lib/api-handler";
 import { toCatalogCourse } from "@/lib/catalog-responses";
 import { courseListQuerySchema } from "@/lib/openapi/schemas/courses";
 import { createPaginatedResponse, decodeCursor } from "@/lib/pagination";
-import { parseQueryParams } from "@/lib/query-params";
+import { readQueryParams } from "@/lib/request-input";
 import { listCoursesPage } from "@zoonk/core/courses/list";
 import { NextResponse } from "next/server";
 
@@ -26,14 +26,7 @@ function toCoursePageResponse({ offset, page }: { offset: number; page: CoursePa
  * Cross-resource search remains a separate catalog capability.
  */
 async function listCourses(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const parsed = parseQueryParams(searchParams, courseListQuerySchema);
-
-  if (!parsed.success) {
-    return errors.validation(parsed.error);
-  }
-
-  const { category, cursor, language, limit } = parsed.data;
+  const { category, cursor, language, limit } = readQueryParams(request, courseListQuerySchema);
   const offset = cursor ? decodeCursor(cursor) : 0;
 
   if (offset === null) {

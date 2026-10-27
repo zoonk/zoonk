@@ -7,7 +7,7 @@ import {
 } from "@/lib/lesson-player-errors";
 import { startLessonWriting } from "@/lib/lesson-writing";
 import { lessonPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
 import { NextResponse } from "next/server";
 
 const ACCEPTED = 202;
@@ -33,13 +33,9 @@ async function createLessonGeneration(
   _request: Request,
   context: RouteContext<"/v1/library/lessons/[lessonId]/generations">,
 ) {
-  const path = parsePathParams({ params: await context.params, schema: lessonPathParamsSchema });
+  const path = await readPathParams(context, lessonPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const result = await startLessonWriting(path.data.lessonId);
+  const result = await startLessonWriting(path.lessonId);
 
   if (result.status === "unauthorized") {
     return errors.unauthorized();

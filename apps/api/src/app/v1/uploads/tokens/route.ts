@@ -1,8 +1,8 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { uploadTokenRequestSchema } from "@/lib/openapi/schemas/research-sources";
+import { readBody } from "@/lib/request-input";
 import { handleUploadPresigned } from "@vercel/blob/client";
 import { isRefusedUsage } from "@zoonk/core/entitlements/contract";
 import { createSourceUploadToken } from "@zoonk/core/library/sources/upload-token";
@@ -22,13 +22,9 @@ const NO_CALLBACK_KEY = "unused: uploads are registered with POST /v1/uploads";
  * of a storage callback, which also works where callbacks can't reach.
  */
 async function createUploadToken(request: NextRequest) {
-  const parsed = await parseBody(request, uploadTokenRequestSchema);
+  const parsed = await readBody(request, uploadTokenRequestSchema);
 
-  if (!parsed.success) {
-    return errors.validation(parsed.error);
-  }
-
-  const result = await createSourceUploadToken({ pathname: parsed.data.payload.pathname });
+  const result = await createSourceUploadToken({ pathname: parsed.payload.pathname });
 
   if (result.status === "unauthorized") {
     return errors.unauthorized();
@@ -43,7 +39,7 @@ async function createUploadToken(request: NextRequest) {
   }
 
   const presigned = await handleUploadPresigned({
-    body: parsed.data,
+    body: parsed,
     getSignedToken: async () => ({ token: result.token, urlOptions: result.urlOptions }),
     request,
     webhookPublicKey: NO_CALLBACK_KEY,

@@ -1,21 +1,16 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { withApiImageUrls } from "@/lib/file-urls";
 import { learnerAccessError } from "@/lib/learner-errors";
-import { parseQueryParams } from "@/lib/query-params";
+import { readQueryParams } from "@/lib/request-input";
 import { mistakePracticeInputSchema } from "@zoonk/core/mistakes/contract";
 import { getMistakePractice } from "@zoonk/core/mistakes/practice";
 import { NextResponse } from "next/server";
 
 /** Returns the mistakes to practice now, each with its targeted drill. */
 async function getPractice(request: Request) {
-  const query = parseQueryParams(new URL(request.url).searchParams, mistakePracticeInputSchema);
+  const query = readQueryParams(request, mistakePracticeInputSchema);
 
-  if (!query.success) {
-    return errors.validation(query.error);
-  }
-
-  const result = await getMistakePractice(query.data);
+  const result = await getMistakePractice(query);
 
   if (result.status !== "ready") {
     return learnerAccessError(result.status);

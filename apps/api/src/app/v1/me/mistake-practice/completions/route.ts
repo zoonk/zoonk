@@ -1,6 +1,6 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
+import { readBody } from "@/lib/request-input";
 import { mistakePracticeFinishInputSchema } from "@zoonk/core/mistakes/contract";
 import { finishMistakePractice } from "@zoonk/core/mistakes/practice-finish";
 import { type NextRequest, NextResponse } from "next/server";
@@ -10,13 +10,9 @@ import { type NextRequest, NextResponse } from "next/server";
  * Finishing the same answers again counts nothing new and returns what the run earned.
  */
 async function createMistakePracticeCompletion(request: NextRequest) {
-  const body = await parseBody(request, mistakePracticeFinishInputSchema);
+  const body = await readBody(request, mistakePracticeFinishInputSchema);
 
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
-  const result = await finishMistakePractice(body.data);
+  const result = await finishMistakePractice(body);
 
   if (result.status === "unauthorized") {
     return errors.unauthorized();

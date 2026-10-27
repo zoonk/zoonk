@@ -2,7 +2,7 @@ import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { goalChapterPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
 import { chapterMindMapWorkflow } from "@/workflows/v2/mind-maps/chapter-mind-map-workflow";
 import { requestChapterMindMap } from "@zoonk/core/mind-maps/request";
 import { NextResponse } from "next/server";
@@ -32,16 +32,9 @@ async function createMindMapGeneration(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/chapters/[chapterId]/mind-map/generations">,
 ) {
-  const path = parsePathParams({
-    params: await context.params,
-    schema: goalChapterPathParamsSchema,
-  });
+  const path = await readPathParams(context, goalChapterPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const result = await requestChapterMindMap(path.data);
+  const result = await requestChapterMindMap(path);
 
   if (result.status === "unauthorized") {
     return errors.unauthorized();
@@ -70,7 +63,7 @@ async function createMindMapGeneration(
   }
 
   const run = await start(chapterMindMapWorkflow, [
-    { analytics: result.analytics, chapterId: path.data.chapterId },
+    { analytics: result.analytics, chapterId: path.chapterId },
   ]);
 
   return generating(run.runId);

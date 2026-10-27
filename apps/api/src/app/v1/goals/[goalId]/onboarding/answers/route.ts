@@ -1,8 +1,7 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readBody, readPathParams } from "@/lib/request-input";
 import { scheduleGoalPreparation } from "@/lib/session-preparation";
 import { answerOnboardingQuestion } from "@zoonk/core/view-models/onboarding/answer";
 import { onboardingAnswerInputSchema } from "@zoonk/core/view-models/onboarding/contract";
@@ -15,20 +14,12 @@ async function createOnboardingAnswer(
   context: RouteContext<"/v1/goals/[goalId]/onboarding/answers">,
 ) {
   const [body, path] = await Promise.all([
-    parseBody(request, onboardingAnswerInputSchema),
-    context.params.then((params) => parsePathParams({ params, schema: goalPathParamsSchema })),
+    readBody(request, onboardingAnswerInputSchema),
+    readPathParams(context, goalPathParamsSchema),
   ]);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
-  const { goalId } = path.data;
-  const result = await answerOnboardingQuestion({ goalId, input: body.data });
+  const { goalId } = path;
+  const result = await answerOnboardingQuestion({ goalId, input: body });
 
   if (result.status === "unauthorized") {
     return errors.unauthorized();
@@ -44,7 +35,7 @@ async function createOnboardingAnswer(
 
   // The time a day re-plans the first days: the lessons and outlines they now hold start being
   // written after the response, so Today doesn't wait on them after the plan's reveal.
-  if (body.data.question === "schedule") {
+  if (body.question === "schedule") {
     await scheduleGoalPreparation(goalId);
   }
 

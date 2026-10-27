@@ -1,9 +1,8 @@
-import { accessError, errors } from "@/lib/api-errors";
+import { accessError } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
 import { planChangeInvalid } from "@/lib/plan-errors";
+import { readBody, readPathParams } from "@/lib/request-input";
 import { scheduleGoalPreparation } from "@/lib/session-preparation";
 import { chooseExamOption } from "@zoonk/core/exams/choices/choose";
 import { examChoiceInputSchema } from "@zoonk/core/exams/choices/contract";
@@ -15,19 +14,11 @@ async function createExamChoice(
   context: RouteContext<"/v1/goals/[goalId]/plan/exam-choices">,
 ) {
   const [body, path] = await Promise.all([
-    parseBody(request, examChoiceInputSchema),
-    context.params.then((params) => parsePathParams({ params, schema: goalPathParamsSchema })),
+    readBody(request, examChoiceInputSchema),
+    readPathParams(context, goalPathParamsSchema),
   ]);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
-  const result = await chooseExamOption({ goalId: path.data.goalId, input: body.data });
+  const result = await chooseExamOption({ goalId: path.goalId, input: body });
 
   if (result.status === "invalid") {
     return planChangeInvalid(result);
@@ -40,7 +31,7 @@ async function createExamChoice(
   // The picked option's topics come into the plan: their lessons start being written after the
   // response, as after any plan change.
   if (result.change) {
-    await scheduleGoalPreparation(path.data.goalId);
+    await scheduleGoalPreparation(path.goalId);
   }
 
   return NextResponse.json({ change: result.change, status: result.status });

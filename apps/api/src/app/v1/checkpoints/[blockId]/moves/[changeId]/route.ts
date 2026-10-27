@@ -1,9 +1,8 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { checkpointMovePathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
 import { planChangeConflict } from "@/lib/plan-errors";
-import { parseQueryParams } from "@/lib/query-params";
+import { readPathParams, readQueryParams } from "@/lib/request-input";
 import { undoWeeklyChallengeMove } from "@zoonk/core/checkpoints/move";
 import { studySessionTimeZoneInputSchema } from "@zoonk/core/sessions/contract";
 import { NextResponse } from "next/server";
@@ -13,25 +12,11 @@ async function undoMove(
   request: Request,
   context: RouteContext<"/v1/checkpoints/[blockId]/moves/[changeId]">,
 ) {
-  const path = parsePathParams({
-    params: await context.params,
-    schema: checkpointMovePathParamsSchema,
-  });
+  const path = await readPathParams(context, checkpointMovePathParamsSchema);
 
-  const query = parseQueryParams(
-    new URL(request.url).searchParams,
-    studySessionTimeZoneInputSchema,
-  );
+  const query = readQueryParams(request, studySessionTimeZoneInputSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!query.success) {
-    return errors.validation(query.error);
-  }
-
-  const result = await undoWeeklyChallengeMove({ ...path.data, input: query.data });
+  const result = await undoWeeklyChallengeMove({ ...path, input: query });
 
   if (result.status === "unauthorized") {
     return errors.unauthorized();

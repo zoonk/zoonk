@@ -1,8 +1,6 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readBody, readPathParams } from "@/lib/request-input";
 import { studySessionError } from "@/lib/study-session-errors";
 import { addAreaPracticeBlock } from "@zoonk/core/sessions/area-practice";
 import { areaPracticeInputSchema } from "@zoonk/core/sessions/contract";
@@ -16,19 +14,11 @@ async function createAreaPractice(
   context: RouteContext<"/v1/goals/[goalId]/area-practice">,
 ) {
   const [body, path] = await Promise.all([
-    parseBody(request, areaPracticeInputSchema),
-    context.params.then((params) => parsePathParams({ params, schema: goalPathParamsSchema })),
+    readBody(request, areaPracticeInputSchema),
+    readPathParams(context, goalPathParamsSchema),
   ]);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
-  const result = await addAreaPracticeBlock({ goalId: path.data.goalId, input: body.data });
+  const result = await addAreaPracticeBlock({ goalId: path.goalId, input: body });
 
   if (result.status !== "ready") {
     return studySessionError(result);

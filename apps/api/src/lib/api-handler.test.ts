@@ -4,9 +4,14 @@ import { unstable_rethrow } from "next/navigation";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { z } from "zod";
 import { withApiErrorBoundary } from "./api-handler";
+import { readBody, readPathParams } from "./request-input";
 
 vi.mock("@zoonk/utils/logger", () => ({ logError: vi.fn() }));
 vi.mock("next/navigation", () => ({ unstable_rethrow: vi.fn() }));
+
+function post(body: string) {
+  return new Request("http://localhost/v1/goals/1", { body, method: "POST" });
+}
 
 describe(withApiErrorBoundary, () => {
   beforeEach(() => {
@@ -84,6 +89,36 @@ describe(withApiErrorBoundary, () => {
     await expect(query.json()).resolves.toMatchObject({
       error: { code: "VALIDATION_ERROR", details: [{ path: ["targetDate"] }] },
     });
+  });
+
+  it("answers a path or body its schema refuses as the request's validation error", async () => {
+    const wrappedHandler = withApiErrorBoundary(
+      async (request: Request, context: { params: Promise<unknown> }) => {
+        await readPathParams(context, z.object({ goalId: z.uuid() }));
+        await readBody(request, z.object({ minutes: z.number() }));
+        return Response.json({});
+      },
+    );
+
+    const [path, json, body] = await Promise.all([
+      wrappedHandler(post("{}"), { params: Promise.resolve({ goalId: "1" }) }),
+      wrappedHandler(post("{"), { params: Promise.resolve({ goalId: crypto.randomUUID() }) }),
+      wrappedHandler(post("{}"), { params: Promise.resolve({ goalId: crypto.randomUUID() }) }),
+    ]);
+
+    await expect(path.json()).resolves.toMatchObject({
+      error: { code: "VALIDATION_ERROR", details: [{ path: ["goalId"] }] },
+    });
+
+    await expect(json.json()).resolves.toMatchObject({
+      error: { code: "VALIDATION_ERROR", details: [{ message: "Invalid JSON body" }] },
+    });
+
+    await expect(body.json()).resolves.toMatchObject({
+      error: { code: "VALIDATION_ERROR", details: [{ path: ["minutes"] }] },
+    });
+
+    expect(logError).not.toHaveBeenCalled();
   });
 
   it("keeps any other ZodError a server error", async () => {

@@ -1,8 +1,6 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
-import { parseQueryParams } from "@/lib/query-params";
+import { readPathParams, readQueryParams } from "@/lib/request-input";
 import { studySessionError } from "@/lib/study-session-errors";
 import { serializeWeeklyChallenge } from "@/lib/study-session-serializers";
 import { getWeeklyChallenge } from "@zoonk/core/checkpoints/weekly-challenge";
@@ -14,25 +12,11 @@ async function getChallenge(
   request: Request,
   context: RouteContext<"/v1/goals/[goalId]/weekly-challenge">,
 ) {
-  const path = parsePathParams({ params: await context.params, schema: goalPathParamsSchema });
+  const path = await readPathParams(context, goalPathParamsSchema);
 
-  const query = parseQueryParams(
-    new URL(request.url).searchParams,
-    studySessionTimeZoneInputSchema,
-  );
+  const query = readQueryParams(request, studySessionTimeZoneInputSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!query.success) {
-    return errors.validation(query.error);
-  }
-
-  const result = await getWeeklyChallenge({
-    goalId: path.data.goalId,
-    timeZone: query.data.timeZone,
-  });
+  const result = await getWeeklyChallenge({ goalId: path.goalId, timeZone: query.timeZone });
 
   if (result.status !== "ready") {
     return studySessionError(result);

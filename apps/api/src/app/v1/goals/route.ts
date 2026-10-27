@@ -1,8 +1,8 @@
 import { createErrorResponse, errors, httpStatus } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { startGoalWork } from "@/lib/goal-content";
 import { goalRefusedError, planErrorCodes } from "@/lib/plan-errors";
+import { readBody } from "@/lib/request-input";
 import { goalCreateInputSchema } from "@zoonk/core/goals/contract";
 import { type GoalRefusal } from "@zoonk/core/goals/create";
 import { listCurrentUserGoals } from "@zoonk/core/goals/list-current-user";
@@ -33,13 +33,9 @@ async function listGoals() {
 
 /** Creates one goal, or several that share the day's time ("ENEM and English"). */
 async function createGoal(request: NextRequest) {
-  const parsed = await parseBody(request, goalCreateInputSchema);
+  const parsed = await readBody(request, goalCreateInputSchema);
 
-  if (!parsed.success) {
-    return errors.validation(parsed.error);
-  }
-
-  const result = await createOnboardingGoals(parsed.data);
+  const result = await createOnboardingGoals(parsed);
 
   if (result.status === "unauthorized") {
     return errors.unauthorized();

@@ -1,9 +1,7 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { conversationRefusalError } from "@/lib/language-errors";
 import { languageConversationConnectionPathParamsSchema } from "@/lib/openapi/schemas/language";
-import { parsePathParams } from "@/lib/path-params";
+import { readBody, readPathParams } from "@/lib/request-input";
 import { liveCallSdpInputSchema } from "@zoonk/core/language/conversations/contract";
 import { redeemLiveCallSdp } from "@zoonk/core/language/conversations/redeem-sdp";
 import { type NextRequest, NextResponse } from "next/server";
@@ -14,21 +12,11 @@ async function redeemSdp(
   context: RouteContext<"/v1/language-conversations/[conversationId]/connections/[connectionId]/sdp">,
 ) {
   const [body, path] = await Promise.all([
-    parseBody(request, liveCallSdpInputSchema),
-    context.params.then((params) =>
-      parsePathParams({ params, schema: languageConversationConnectionPathParamsSchema }),
-    ),
+    readBody(request, liveCallSdpInputSchema),
+    readPathParams(context, languageConversationConnectionPathParamsSchema),
   ]);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
-  const result = await redeemLiveCallSdp({ ...path.data, input: body.data });
+  const result = await redeemLiveCallSdp({ ...path, input: body });
 
   if (result.status !== "ready") {
     return conversationRefusalError(result);

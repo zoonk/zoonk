@@ -1,8 +1,6 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readBody, readPathParams } from "@/lib/request-input";
 import { studySessionError } from "@/lib/study-session-errors";
 import { studySessionTimeZoneInputSchema } from "@zoonk/core/sessions/contract";
 import { addRefreshPracticeBlock } from "@zoonk/core/sessions/refresh-practice";
@@ -16,19 +14,11 @@ async function createRefreshPractice(
   context: RouteContext<"/v1/goals/[goalId]/refresh-practice">,
 ) {
   const [body, path] = await Promise.all([
-    parseBody(request, studySessionTimeZoneInputSchema),
-    context.params.then((params) => parsePathParams({ params, schema: goalPathParamsSchema })),
+    readBody(request, studySessionTimeZoneInputSchema),
+    readPathParams(context, goalPathParamsSchema),
   ]);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
-  const result = await addRefreshPracticeBlock({ goalId: path.data.goalId, input: body.data });
+  const result = await addRefreshPracticeBlock({ goalId: path.goalId, input: body });
 
   if (result.status !== "ready") {
     return studySessionError(result);

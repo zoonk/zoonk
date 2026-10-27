@@ -2,7 +2,7 @@ import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { goalSkillPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
 import { courseOutlineWorkflow } from "@/workflows/v2/courses/course-outline-workflow";
 import { requestSkillOutline } from "@zoonk/core/lookahead/skill-outline";
 import { NextResponse } from "next/server";
@@ -33,13 +33,9 @@ async function createOutlineGeneration(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/skills/[skillId]/outline/generations">,
 ) {
-  const path = parsePathParams({ params: await context.params, schema: goalSkillPathParamsSchema });
+  const path = await readPathParams(context, goalSkillPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const result = await requestSkillOutline(path.data);
+  const result = await requestSkillOutline(path);
 
   if (result.status === "unauthorized") {
     return errors.unauthorized();
@@ -72,7 +68,7 @@ async function createOutlineGeneration(
       ...result.need,
       analytics: result.analytics,
       forGuest: result.forGuest,
-      waitedSkillId: path.data.skillId,
+      waitedSkillId: path.skillId,
     },
   ]);
 

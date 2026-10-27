@@ -1,12 +1,11 @@
-import { accessError, errors } from "@/lib/api-errors";
+import { accessError } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { startGoalGeneration } from "@/lib/goal-content";
 import { learnerAccessError } from "@/lib/learner-errors";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { goalGenerationQuerySchema } from "@/lib/openapi/schemas/content-generation";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
-import { parseQueryParams } from "@/lib/query-params";
+import { readPathParams, readQueryParams } from "@/lib/request-input";
 import { isRefusedUsage } from "@zoonk/core/entitlements/contract";
 import { getGoalGenerationId } from "@zoonk/core/goals/generation-id";
 import { getGoalGenerationAccess } from "@zoonk/core/lookahead/goal-generation-access";
@@ -22,13 +21,8 @@ async function readGoalGeneration(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/generations">,
 ) {
-  const path = parsePathParams({ params: await context.params, schema: goalPathParamsSchema });
-
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const result = await getGoalGenerationId({ goalId: path.data.goalId });
+  const path = await readPathParams(context, goalPathParamsSchema);
+  const result = await getGoalGenerationId({ goalId: path.goalId });
 
   return result.status === "ready"
     ? NextResponse.json({ generationId: result.generationId })
@@ -43,20 +37,12 @@ async function createGoalGeneration(
   request: NextRequest,
   context: RouteContext<"/v1/goals/[goalId]/generations">,
 ) {
-  const path = parsePathParams({ params: await context.params, schema: goalPathParamsSchema });
-  const query = parseQueryParams(request.nextUrl.searchParams, goalGenerationQuerySchema);
-
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!query.success) {
-    return errors.validation(query.error);
-  }
+  const path = await readPathParams(context, goalPathParamsSchema);
+  const query = readQueryParams(request, goalGenerationQuerySchema);
 
   const access = await getGoalGenerationAccess({
-    goalId: path.data.goalId,
-    withResearch: Boolean(query.data.researchId),
+    goalId: path.goalId,
+    withResearch: Boolean(query.researchId),
   });
 
   if (isRefusedUsage(access)) {
@@ -69,7 +55,7 @@ async function createGoalGeneration(
 
   const generation = await startGoalGeneration({
     goal: access.goal,
-    researchId: query.data.researchId ?? null,
+    researchId: query.researchId ?? null,
   });
 
   return NextResponse.json(generation, {

@@ -1,9 +1,8 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { stepPathParamsSchema } from "@/lib/openapi/schemas/steps";
-import { parsePathParams } from "@/lib/path-params";
+import { readBody, readPathParams } from "@/lib/request-input";
 import { answerExplanationInputSchema } from "@zoonk/core/lesson-player/contract";
 import { explainAnswer } from "@zoonk/core/library/items/explain-answer";
 import { type NextRequest, NextResponse } from "next/server";
@@ -17,22 +16,11 @@ async function createAnswerExplanation(
   context: RouteContext<"/v1/steps/[stepId]/answer-explanations">,
 ) {
   const [body, path] = await Promise.all([
-    parseBody(request, answerExplanationInputSchema),
-    context.params.then((params) => parsePathParams({ params, schema: stepPathParamsSchema })),
+    readBody(request, answerExplanationInputSchema),
+    readPathParams(context, stepPathParamsSchema),
   ]);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
-  const result = await explainAnswer({
-    answer: body.data.answer,
-    target: { stepId: path.data.stepId },
-  });
+  const result = await explainAnswer({ answer: body.answer, target: { stepId: path.stepId } });
 
   switch (result.status) {
     case "unauthorized":

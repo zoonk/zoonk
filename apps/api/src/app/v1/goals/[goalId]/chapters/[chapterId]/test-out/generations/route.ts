@@ -2,7 +2,7 @@ import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { plusRequiredError, usageDecisionError } from "@/lib/lesson-player-errors";
 import { goalChapterPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
 import { testOutQuestionsWorkflow } from "@/workflows/v2/goals/test-out-questions-workflow";
 import { requestTestOutQuestions } from "@zoonk/core/learner/test-out/request-questions";
 import { NextResponse } from "next/server";
@@ -19,16 +19,9 @@ async function createTestOutGeneration(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/chapters/[chapterId]/test-out/generations">,
 ) {
-  const path = parsePathParams({
-    params: await context.params,
-    schema: goalChapterPathParamsSchema,
-  });
+  const path = await readPathParams(context, goalChapterPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const result = await requestTestOutQuestions(path.data);
+  const result = await requestTestOutQuestions(path);
 
   if (result.status === "unauthorized") {
     return errors.unauthorized();
@@ -59,7 +52,7 @@ async function createTestOutGeneration(
       analytics: result.analytics,
       questionsPerSkill: result.questionsPerSkill,
       skillIds: result.skillIds,
-      ...path.data,
+      ...path,
     },
   ]);
 

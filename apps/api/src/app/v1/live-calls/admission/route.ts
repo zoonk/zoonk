@@ -1,7 +1,7 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { serializeLiveCallAdmission } from "@/lib/live-call-admin-responses";
+import { readBody } from "@/lib/request-input";
 import {
   getLiveCallAdmission,
   updateLiveCallAdmission,
@@ -23,13 +23,9 @@ async function readAdmission() {
 }
 
 async function updateAdmission(request: NextRequest) {
-  const body = await parseBody(request, liveCallAdmissionInputSchema);
+  const body = await readBody(request, liveCallAdmissionInputSchema);
 
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
-  const result = await updateLiveCallAdmission(body.data);
+  const result = await updateLiveCallAdmission(body);
 
   if (result.status !== "ready") {
     if (result.status === "invalid") {

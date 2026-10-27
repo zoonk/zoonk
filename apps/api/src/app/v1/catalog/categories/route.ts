@@ -1,7 +1,6 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { courseCategoryCountsQuerySchema } from "@/lib/openapi/schemas/courses";
-import { parseQueryParams } from "@/lib/query-params";
+import { readQueryParams } from "@/lib/request-input";
 import { countCatalogCourses } from "@zoonk/core/courses/count-catalog";
 import { NextResponse } from "next/server";
 
@@ -10,16 +9,9 @@ import { NextResponse } from "next/server";
  * client can list the catalog's categories with their sizes.
  */
 async function listCourseCategoryCounts(request: Request) {
-  const parsed = parseQueryParams(
-    new URL(request.url).searchParams,
-    courseCategoryCountsQuerySchema,
-  );
+  const parsed = readQueryParams(request, courseCategoryCountsQuerySchema);
 
-  if (!parsed.success) {
-    return errors.validation(parsed.error);
-  }
-
-  return NextResponse.json(await countCatalogCourses({ language: parsed.data.language }));
+  return NextResponse.json(await countCatalogCourses({ language: parsed.language }));
 }
 
 export const GET = withApiErrorBoundary(listCourseCategoryCounts);

@@ -1,9 +1,8 @@
-import { accessError, errors } from "@/lib/api-errors";
+import { accessError } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
 import { goalRefusedError, planChangeInvalid } from "@/lib/plan-errors";
+import { readBody, readPathParams } from "@/lib/request-input";
 import { goalUpdateInputSchema } from "@zoonk/core/goals/contract";
 import { getGoal } from "@zoonk/core/goals/get";
 import { updateGoal } from "@zoonk/core/goals/update";
@@ -11,13 +10,9 @@ import { type NextRequest, NextResponse } from "next/server";
 
 /** One of the learner's goals with a short summary of its plan. */
 async function readGoal(_request: Request, context: RouteContext<"/v1/goals/[goalId]">) {
-  const path = parsePathParams({ params: await context.params, schema: goalPathParamsSchema });
+  const path = await readPathParams(context, goalPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const result = await getGoal(path.data.goalId);
+  const result = await getGoal(path.goalId);
 
   return result.status === "ready" ? NextResponse.json(result.goal) : accessError(result.status);
 }
@@ -25,19 +20,11 @@ async function readGoal(_request: Request, context: RouteContext<"/v1/goals/[goa
 /** Edits a goal: title and details, time, study days and date (re-planning), or its status. */
 async function editGoal(request: NextRequest, context: RouteContext<"/v1/goals/[goalId]">) {
   const [body, path] = await Promise.all([
-    parseBody(request, goalUpdateInputSchema),
-    context.params.then((params) => parsePathParams({ params, schema: goalPathParamsSchema })),
+    readBody(request, goalUpdateInputSchema),
+    readPathParams(context, goalPathParamsSchema),
   ]);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
-  const result = await updateGoal({ goalId: path.data.goalId, input: body.data });
+  const result = await updateGoal({ goalId: path.goalId, input: body });
 
   if (result.status === "invalid") {
     return planChangeInvalid(result);

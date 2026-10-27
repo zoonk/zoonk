@@ -1,7 +1,7 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { planLinkPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
 import { getPlanLink } from "@zoonk/core/plans/link";
 import { NextResponse } from "next/server";
 
@@ -10,13 +10,9 @@ import { NextResponse } from "next/server";
  * owners are told the link is theirs.
  */
 async function readPlanLink(_request: Request, context: RouteContext<"/v1/plan-links/[planId]">) {
-  const path = parsePathParams({ params: await context.params, schema: planLinkPathParamsSchema });
+  const path = await readPathParams(context, planLinkPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const result = await getPlanLink(path.data.planId);
+  const result = await getPlanLink(path.planId);
 
   if (result.status !== "ready") {
     return errors.notFound();

@@ -2,7 +2,7 @@ import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { withApiImageUrls } from "@/lib/file-urls";
 import { lessonPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
 import { getPlayableLibraryLesson } from "@zoonk/core/lesson-player/get";
 import { wordTutorSuggestions } from "@zoonk/player/tutor/suggestion-words";
 import { NextResponse } from "next/server";
@@ -17,13 +17,9 @@ async function getLibraryLessonRoute(
   _request: Request,
   context: RouteContext<"/v1/library/lessons/[lessonId]">,
 ) {
-  const parsed = parsePathParams({ params: await context.params, schema: lessonPathParamsSchema });
+  const parsed = await readPathParams(context, lessonPathParamsSchema);
 
-  if (!parsed.success) {
-    return errors.validation(parsed.error);
-  }
-
-  const result = await getPlayableLibraryLesson({ lessonId: parsed.data.lessonId });
+  const result = await getPlayableLibraryLesson({ lessonId: parsed.lessonId });
 
   if (!result) {
     return errors.notFound();

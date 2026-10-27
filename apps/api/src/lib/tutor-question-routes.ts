@@ -1,8 +1,6 @@
 import { accessError, errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
-import { parsePathParams } from "@/lib/path-params";
-import { parseQueryParams } from "@/lib/query-params";
+import { readBody, readPathParams, readQueryParams } from "@/lib/request-input";
 import {
   type TutorTarget,
   createLessonQuestionInputSchema,
@@ -30,22 +28,11 @@ export function tutorQuestionRoutes<TPath>({
   toTarget: (path: TPath) => TutorTarget;
 }) {
   async function getQuestions(request: Request, context: QuestionsRouteContext) {
-    const query = parseQueryParams(
-      new URL(request.url).searchParams,
-      getLessonQuestionThreadInputSchema,
-    );
+    const query = readQueryParams(request, getLessonQuestionThreadInputSchema);
 
-    const path = parsePathParams({ params: await context.params, schema: pathSchema });
+    const path = await readPathParams(context, pathSchema);
 
-    if (!path.success) {
-      return errors.validation(path.error);
-    }
-
-    if (!query.success) {
-      return errors.validation(query.error);
-    }
-
-    const result = await getLessonQuestionThread({ ...query.data, target: toTarget(path.data) });
+    const result = await getLessonQuestionThread({ ...query, target: toTarget(path) });
 
     if (result.status === "invalidCursor") {
       return errors.badRequest("Invalid lesson question cursor");
@@ -63,29 +50,17 @@ export function tutorQuestionRoutes<TPath>({
    * retries can target the same durable resource.
    */
   async function postQuestion(request: NextRequest, context: QuestionsRouteContext) {
-    const query = parseQueryParams(request.nextUrl.searchParams, lessonQuestionReadInputSchema);
+    const query = readQueryParams(request, lessonQuestionReadInputSchema);
 
     const [body, path] = await Promise.all([
-      parseBody(request, createLessonQuestionInputSchema),
-      context.params.then((params) => parsePathParams({ params, schema: pathSchema })),
+      readBody(request, createLessonQuestionInputSchema),
+      readPathParams(context, pathSchema),
     ]);
 
-    if (!path.success) {
-      return errors.validation(path.error);
-    }
-
-    if (!query.success) {
-      return errors.validation(query.error);
-    }
-
-    if (!body.success) {
-      return errors.validation(body.error);
-    }
-
     const result = await createLessonQuestion({
-      ...query.data,
-      input: body.data,
-      target: toTarget(path.data),
+      ...query,
+      input: body,
+      target: toTarget(path),
       wordSuggestion: wordTutorSuggestion,
     });
 

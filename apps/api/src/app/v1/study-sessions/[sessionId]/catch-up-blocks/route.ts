@@ -1,8 +1,6 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { studySessionPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readBody, readPathParams } from "@/lib/request-input";
 import { studySessionError } from "@/lib/study-session-errors";
 import { serializeStudySession } from "@/lib/study-session-serializers";
 import { catchUpToday } from "@zoonk/core/sessions/catch-up";
@@ -15,21 +13,11 @@ async function createCatchUpBlocks(
   context: RouteContext<"/v1/study-sessions/[sessionId]/catch-up-blocks">,
 ) {
   const [body, path] = await Promise.all([
-    parseBody(request, studySessionTimeZoneInputSchema),
-    context.params.then((params) =>
-      parsePathParams({ params, schema: studySessionPathParamsSchema }),
-    ),
+    readBody(request, studySessionTimeZoneInputSchema),
+    readPathParams(context, studySessionPathParamsSchema),
   ]);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
-  const result = await catchUpToday({ input: body.data, sessionId: path.data.sessionId });
+  const result = await catchUpToday({ input: body, sessionId: path.sessionId });
 
   if (result.status !== "ready") {
     return studySessionError(result);

@@ -1,9 +1,8 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { withApiImageUrls } from "@/lib/file-urls";
 import { learnerAccessError } from "@/lib/learner-errors";
 import { goalChapterPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
 import { getChapterMindMap } from "@zoonk/core/mind-maps/get-chapter";
 import { NextResponse } from "next/server";
 
@@ -12,16 +11,9 @@ async function getMindMap(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/chapters/[chapterId]/mind-map">,
 ) {
-  const path = parsePathParams({
-    params: await context.params,
-    schema: goalChapterPathParamsSchema,
-  });
+  const path = await readPathParams(context, goalChapterPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const result = await getChapterMindMap(path.data);
+  const result = await getChapterMindMap(path);
 
   if (result.status !== "ready") {
     return learnerAccessError(result.status === "unauthorized" ? "unauthorized" : "notFound");

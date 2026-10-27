@@ -1,8 +1,7 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { mockPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readBody, readPathParams } from "@/lib/request-input";
 import { adaptPlanFromMock } from "@zoonk/core/exams/mocks/adapt-plan";
 import { mockPlanOfferInputSchema } from "@zoonk/core/exams/mocks/contract";
 import { type NextRequest, NextResponse } from "next/server";
@@ -13,19 +12,11 @@ async function postPlanChange(
   context: RouteContext<"/v1/mocks/[blockId]/plan-changes">,
 ) {
   const [body, path] = await Promise.all([
-    parseBody(request, mockPlanOfferInputSchema),
-    context.params.then((params) => parsePathParams({ params, schema: mockPathParamsSchema })),
+    readBody(request, mockPlanOfferInputSchema),
+    readPathParams(context, mockPathParamsSchema),
   ]);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
-  const result = await adaptPlanFromMock({ blockId: path.data.blockId, input: body.data });
+  const result = await adaptPlanFromMock({ blockId: path.blockId, input: body });
 
   if (result.status === "applied") {
     return NextResponse.json({ ...result, reason: null });

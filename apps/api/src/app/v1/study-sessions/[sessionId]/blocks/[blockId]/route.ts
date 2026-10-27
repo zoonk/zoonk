@@ -1,8 +1,7 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { withApiImageUrls } from "@/lib/file-urls";
 import { studyBlockPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
 import { studySessionError } from "@/lib/study-session-errors";
 import { getStudyBlock } from "@zoonk/core/sessions/block";
 import { NextResponse } from "next/server";
@@ -12,16 +11,9 @@ async function getBlock(
   _request: Request,
   context: RouteContext<"/v1/study-sessions/[sessionId]/blocks/[blockId]">,
 ) {
-  const path = parsePathParams({
-    params: await context.params,
-    schema: studyBlockPathParamsSchema,
-  });
+  const path = await readPathParams(context, studyBlockPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const result = await getStudyBlock(path.data);
+  const result = await getStudyBlock(path);
 
   if (result.status !== "ready") {
     return studySessionError(result);

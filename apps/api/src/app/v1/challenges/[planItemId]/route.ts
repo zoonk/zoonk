@@ -1,8 +1,6 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { challengePathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
-import { parseQueryParams } from "@/lib/query-params";
+import { readPathParams, readQueryParams } from "@/lib/request-input";
 import { studySessionError } from "@/lib/study-session-errors";
 import { getChallenge } from "@zoonk/core/checkpoints/challenge";
 import { studySessionTimeZoneInputSchema } from "@zoonk/core/sessions/contract";
@@ -13,22 +11,11 @@ async function getChallengeRoute(
   request: Request,
   context: RouteContext<"/v1/challenges/[planItemId]">,
 ) {
-  const path = parsePathParams({ params: await context.params, schema: challengePathParamsSchema });
+  const path = await readPathParams(context, challengePathParamsSchema);
 
-  const query = parseQueryParams(
-    new URL(request.url).searchParams,
-    studySessionTimeZoneInputSchema,
-  );
+  const query = readQueryParams(request, studySessionTimeZoneInputSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!query.success) {
-    return errors.validation(query.error);
-  }
-
-  const result = await getChallenge({ input: query.data, planItemId: path.data.planItemId });
+  const result = await getChallenge({ input: query, planItemId: path.planItemId });
 
   if (result.status !== "ready") {
     return studySessionError(result);

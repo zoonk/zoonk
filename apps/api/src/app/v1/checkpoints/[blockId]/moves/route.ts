@@ -1,9 +1,8 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { checkpointPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
 import { planChangeInvalid } from "@/lib/plan-errors";
+import { readBody, readPathParams } from "@/lib/request-input";
 import { moveWeeklyChallenge } from "@zoonk/core/checkpoints/move";
 import { studySessionTimeZoneInputSchema } from "@zoonk/core/sessions/contract";
 import { type NextRequest, NextResponse } from "next/server";
@@ -13,22 +12,11 @@ async function moveChallenge(
   request: NextRequest,
   context: RouteContext<"/v1/checkpoints/[blockId]/moves">,
 ) {
-  const path = parsePathParams({
-    params: await context.params,
-    schema: checkpointPathParamsSchema,
-  });
+  const path = await readPathParams(context, checkpointPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
+  const body = await readBody(request, studySessionTimeZoneInputSchema);
 
-  const body = await parseBody(request, studySessionTimeZoneInputSchema);
-
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
-  const result = await moveWeeklyChallenge({ blockId: path.data.blockId, input: body.data });
+  const result = await moveWeeklyChallenge({ blockId: path.blockId, input: body });
 
   if (result.status === "moved") {
     return NextResponse.json(result.move);

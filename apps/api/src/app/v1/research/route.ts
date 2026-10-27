@@ -1,7 +1,7 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { createResearchRequestSchema } from "@/lib/openapi/schemas/research-sources";
+import { readBody } from "@/lib/request-input";
 import { readClientRunStatus } from "@/workflows/v2/_shared/run-activity";
 import { researchWorkflow } from "@/workflows/v2/research/research-workflow";
 import { answerGoalUploadRequest } from "@zoonk/core/library/sources/upload-request";
@@ -41,13 +41,9 @@ async function findFollowableRun(runId: string | null) {
  * research has read it.
  */
 async function createResearch(request: NextRequest) {
-  const parsed = await parseBody(request, createResearchRequestSchema);
+  const parsed = await readBody(request, createResearchRequestSchema);
 
-  if (!parsed.success) {
-    return errors.validation(parsed.error);
-  }
-
-  const access = await answerGoalUploadRequest(parsed.data);
+  const access = await answerGoalUploadRequest(parsed);
 
   if (access.status === "unauthorized") {
     return errors.unauthorized();

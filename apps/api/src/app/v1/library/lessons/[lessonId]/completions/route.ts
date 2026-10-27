@@ -1,8 +1,7 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { lessonPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readBody, readPathParams } from "@/lib/request-input";
 import { completeLibraryLesson } from "@zoonk/core/lesson-player/complete";
 import { libraryLessonCompletionInputSchema } from "@zoonk/core/lesson-player/completion-input-contract";
 import { type NextRequest, NextResponse } from "next/server";
@@ -16,19 +15,11 @@ async function createLibraryLessonCompletion(
   context: RouteContext<"/v1/library/lessons/[lessonId]/completions">,
 ) {
   const [body, path] = await Promise.all([
-    parseBody(request, libraryLessonCompletionInputSchema),
-    context.params.then((params) => parsePathParams({ params, schema: lessonPathParamsSchema })),
+    readBody(request, libraryLessonCompletionInputSchema),
+    readPathParams(context, lessonPathParamsSchema),
   ]);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
-  const outcome = await completeLibraryLesson({ input: body.data, lessonId: path.data.lessonId });
+  const outcome = await completeLibraryLesson({ input: body, lessonId: path.lessonId });
 
   switch (outcome.status) {
     case "unauthorized":

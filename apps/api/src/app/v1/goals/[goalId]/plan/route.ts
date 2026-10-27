@@ -1,19 +1,15 @@
-import { accessError, errors } from "@/lib/api-errors";
+import { accessError } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
 import { getGoalPlan } from "@zoonk/core/plans/get";
 import { NextResponse } from "next/server";
 
 /** The goal's plan at every zoom level. */
 async function readPlan(_request: Request, context: RouteContext<"/v1/goals/[goalId]/plan">) {
-  const path = parsePathParams({ params: await context.params, schema: goalPathParamsSchema });
+  const path = await readPathParams(context, goalPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const result = await getGoalPlan(path.data.goalId);
+  const result = await getGoalPlan(path.goalId);
 
   return result.status === "ready" ? NextResponse.json(result.plan) : accessError(result.status);
 }

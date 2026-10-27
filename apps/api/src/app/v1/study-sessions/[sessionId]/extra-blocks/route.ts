@@ -1,7 +1,6 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { studySessionPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
 import { studySessionError } from "@/lib/study-session-errors";
 import { addExtraStudyBlock } from "@zoonk/core/sessions/extra-block";
 import { NextResponse } from "next/server";
@@ -13,16 +12,9 @@ async function createExtraBlock(
   _request: Request,
   context: RouteContext<"/v1/study-sessions/[sessionId]/extra-blocks">,
 ) {
-  const path = parsePathParams({
-    params: await context.params,
-    schema: studySessionPathParamsSchema,
-  });
+  const path = await readPathParams(context, studySessionPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const result = await addExtraStudyBlock({ sessionId: path.data.sessionId });
+  const result = await addExtraStudyBlock({ sessionId: path.sessionId });
 
   if (result.status !== "ready") {
     return studySessionError(result);

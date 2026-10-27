@@ -1,8 +1,7 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { learnerAccessError } from "@/lib/learner-errors";
 import { goalChapterPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
 import { getChapterView } from "@zoonk/core/view-models/chapter/get";
 import { NextResponse } from "next/server";
 
@@ -11,16 +10,9 @@ async function getChapter(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/chapters/[chapterId]">,
 ) {
-  const path = parsePathParams({
-    params: await context.params,
-    schema: goalChapterPathParamsSchema,
-  });
+  const path = await readPathParams(context, goalChapterPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const result = await getChapterView(path.data);
+  const result = await getChapterView(path);
 
   if (result.status !== "ready") {
     return learnerAccessError(result.status === "unauthorized" ? "unauthorized" : "notFound");

@@ -1,7 +1,6 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { toNextLessonResponse } from "@/lib/api-handlers/next-lesson";
-import { parseChapterContext } from "@/lib/chapter-context";
+import { readChapterContext } from "@/lib/chapter-context";
 import { getCatalogChapterNextLesson } from "@zoonk/core/catalog/next-lesson";
 
 /**
@@ -12,13 +11,9 @@ async function getChapterNextLesson(
   request: Request,
   context: RouteContext<"/v1/chapters/[chapterId]/next-lesson">,
 ) {
-  const parsed = parseChapterContext({ params: await context.params, request });
+  const parsed = await readChapterContext({ context, request });
 
-  if (!parsed.success) {
-    return errors.validation(parsed.error);
-  }
-
-  return toNextLessonResponse(await getCatalogChapterNextLesson(parsed.data));
+  return toNextLessonResponse(await getCatalogChapterNextLesson(parsed));
 }
 
 export const GET = withApiErrorBoundary(getChapterNextLesson);

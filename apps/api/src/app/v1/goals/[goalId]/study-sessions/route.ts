@@ -1,10 +1,9 @@
-import { errors, httpStatus } from "@/lib/api-errors";
+import { httpStatus } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { openStudyDayError } from "@/lib/open-study-day-error";
 import { openStudyDayBodySchema } from "@/lib/openapi/schemas/open-study-day";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readBody, readPathParams } from "@/lib/request-input";
 import { serializeStudySession } from "@/lib/study-session-serializers";
 import { openStudyDay } from "@zoonk/core/sessions/open";
 import { type NextRequest, NextResponse } from "next/server";
@@ -15,19 +14,11 @@ async function openDay(
   context: RouteContext<"/v1/goals/[goalId]/study-sessions">,
 ) {
   const [body, path] = await Promise.all([
-    parseBody(request, openStudyDayBodySchema),
-    context.params.then((params) => parsePathParams({ params, schema: goalPathParamsSchema })),
+    readBody(request, openStudyDayBodySchema),
+    readPathParams(context, goalPathParamsSchema),
   ]);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
-  const result = await openStudyDay({ ...body.data, goalId: path.data.goalId });
+  const result = await openStudyDay({ ...body, goalId: path.goalId });
 
   if (result.status !== "opened") {
     return openStudyDayError(result);

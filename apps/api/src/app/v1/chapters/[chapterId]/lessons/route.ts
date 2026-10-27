@@ -1,7 +1,7 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { toChapterLessons } from "@/lib/catalog-responses";
-import { parseChapterContext } from "@/lib/chapter-context";
+import { readChapterContext } from "@/lib/chapter-context";
 import { listCatalogChapterLessons } from "@zoonk/core/catalog/chapter-lessons";
 import { NextResponse } from "next/server";
 
@@ -13,13 +13,9 @@ async function listChapterLessonResources(
   request: Request,
   context: RouteContext<"/v1/chapters/[chapterId]/lessons">,
 ) {
-  const parsed = parseChapterContext({ params: await context.params, request });
+  const parsed = await readChapterContext({ context, request });
 
-  if (!parsed.success) {
-    return errors.validation(parsed.error);
-  }
-
-  const chapterLessons = await listCatalogChapterLessons(parsed.data);
+  const chapterLessons = await listCatalogChapterLessons(parsed);
 
   if (!chapterLessons) {
     return errors.notFound("Chapter not found");

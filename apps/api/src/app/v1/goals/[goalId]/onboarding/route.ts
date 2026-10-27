@@ -1,7 +1,7 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
 import { getOnboarding } from "@zoonk/core/view-models/onboarding/get";
 import { NextResponse } from "next/server";
 
@@ -10,13 +10,9 @@ async function getGoalOnboarding(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/onboarding">,
 ) {
-  const path = parsePathParams({ params: await context.params, schema: goalPathParamsSchema });
+  const path = await readPathParams(context, goalPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const result = await getOnboarding({ goalId: path.data.goalId });
+  const result = await getOnboarding({ goalId: path.goalId });
 
   if (result.status === "unauthorized") {
     return errors.unauthorized();

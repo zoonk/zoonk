@@ -1,7 +1,7 @@
-import { errors, httpStatus } from "@/lib/api-errors";
+import { httpStatus } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { usernameAvailabilityPathSchema } from "@/lib/openapi/schemas/usernames";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
 import { getAuthError } from "@zoonk/auth/errors";
 import { getUsernameAvailability } from "@zoonk/core/users/current";
 import { safeAsync } from "@zoonk/utils/error";
@@ -15,16 +15,9 @@ async function getUsernameAvailabilityRoute(
   _request: Request,
   context: RouteContext<"/v1/usernames/[username]/availability">,
 ) {
-  const parsed = parsePathParams({
-    params: await context.params,
-    schema: usernameAvailabilityPathSchema,
-  });
+  const parsed = await readPathParams(context, usernameAvailabilityPathSchema);
 
-  if (!parsed.success) {
-    return errors.validation(parsed.error);
-  }
-
-  const { data, error } = await safeAsync(() => getUsernameAvailability(parsed.data.username));
+  const { data, error } = await safeAsync(() => getUsernameAvailability(parsed.username));
 
   if (!error && data) {
     return NextResponse.json(data);
@@ -33,7 +26,7 @@ async function getUsernameAvailabilityRoute(
   const authError = getAuthError(error);
 
   if (authError?.statusCode === httpStatus.unprocessableEntity) {
-    return NextResponse.json({ isAvailable: false, username: parsed.data.username });
+    return NextResponse.json({ isAvailable: false, username: parsed.username });
   }
 
   throw error ?? new Error("Username availability returned no result");

@@ -1,9 +1,8 @@
-import { accessError, errors } from "@/lib/api-errors";
+import { accessError } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
 import { planChangeInvalid } from "@/lib/plan-errors";
+import { readBody, readPathParams } from "@/lib/request-input";
 import { scheduleGoalPreparation } from "@/lib/session-preparation";
 import { changeGoalPlan } from "@zoonk/core/plans/change";
 import { planChangeInputSchema } from "@zoonk/core/plans/contract";
@@ -19,19 +18,11 @@ async function createChange(
   context: RouteContext<"/v1/goals/[goalId]/plan/changes">,
 ) {
   const [body, path] = await Promise.all([
-    parseBody(request, planChangeInputSchema),
-    context.params.then((params) => parsePathParams({ params, schema: goalPathParamsSchema })),
+    readBody(request, planChangeInputSchema),
+    readPathParams(context, goalPathParamsSchema),
   ]);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
-  const result = await changeGoalPlan({ goalId: path.data.goalId, input: body.data });
+  const result = await changeGoalPlan({ goalId: path.goalId, input: body });
 
   if (result.status === "invalid") {
     return planChangeInvalid(result);
@@ -45,7 +36,7 @@ async function createChange(
     return accessError(result.status);
   }
 
-  await scheduleGoalPreparation(path.data.goalId);
+  await scheduleGoalPreparation(path.goalId);
 
   return NextResponse.json({ change: result.change, reason: null, status: result.status });
 }

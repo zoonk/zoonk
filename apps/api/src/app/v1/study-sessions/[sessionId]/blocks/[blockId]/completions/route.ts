@@ -1,8 +1,6 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { studyBlockPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readBody, readPathParams } from "@/lib/request-input";
 import { scheduleSessionPreparation } from "@/lib/session-preparation";
 import { studySessionError } from "@/lib/study-session-errors";
 import { serializeStudyBlockCompletion } from "@zoonk/core/sessions/completion-contract";
@@ -16,21 +14,11 @@ async function createCompletion(
   context: RouteContext<"/v1/study-sessions/[sessionId]/blocks/[blockId]/completions">,
 ) {
   const [body, path] = await Promise.all([
-    parseBody(request, studySessionTimeZoneInputSchema),
-    context.params.then((params) =>
-      parsePathParams({ params, schema: studyBlockPathParamsSchema }),
-    ),
+    readBody(request, studySessionTimeZoneInputSchema),
+    readPathParams(context, studyBlockPathParamsSchema),
   ]);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
-  const result = await finishStudyBlock({ ...path.data, input: body.data });
+  const result = await finishStudyBlock({ ...path, input: body });
 
   if (result.status !== "ready") {
     return studySessionError(result);
@@ -38,7 +26,7 @@ async function createCompletion(
 
   // The last block ended the session: prepare the next one.
   if (result.completion.sessionCompleted) {
-    await scheduleSessionPreparation(path.data.sessionId);
+    await scheduleSessionPreparation(path.sessionId);
   }
 
   return NextResponse.json(serializeStudyBlockCompletion(result.completion));

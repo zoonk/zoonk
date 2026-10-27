@@ -1,8 +1,6 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { studySessionPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
-import { parseQueryParams } from "@/lib/query-params";
+import { readPathParams, readQueryParams } from "@/lib/request-input";
 import { studySessionError } from "@/lib/study-session-errors";
 import { serializeStudySessionSummary } from "@/lib/study-session-serializers";
 import { studySessionTimeZoneInputSchema } from "@zoonk/core/sessions/contract";
@@ -14,28 +12,11 @@ async function getSummary(
   request: Request,
   context: RouteContext<"/v1/study-sessions/[sessionId]/summary">,
 ) {
-  const path = parsePathParams({
-    params: await context.params,
-    schema: studySessionPathParamsSchema,
-  });
+  const path = await readPathParams(context, studySessionPathParamsSchema);
 
-  const query = parseQueryParams(
-    new URL(request.url).searchParams,
-    studySessionTimeZoneInputSchema,
-  );
+  const query = readQueryParams(request, studySessionTimeZoneInputSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!query.success) {
-    return errors.validation(query.error);
-  }
-
-  const result = await getStudySessionSummary({
-    input: query.data,
-    sessionId: path.data.sessionId,
-  });
+  const result = await getStudySessionSummary({ input: query, sessionId: path.sessionId });
 
   if (result.status !== "ready") {
     return studySessionError(result);

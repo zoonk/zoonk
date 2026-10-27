@@ -1,19 +1,15 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseQueryParams } from "@/lib/query-params";
+import { readQueryParams } from "@/lib/request-input";
 import { memoryInsightQuerySchema } from "@zoonk/core/memory/contract";
 import { getCurrentMemoryInsight } from "@zoonk/core/memory/insights/get-current";
 import { NextResponse } from "next/server";
 
 /** The insight Today shows, or null when there is none to answer. */
 async function getCurrentInsight(request: Request) {
-  const query = parseQueryParams(new URL(request.url).searchParams, memoryInsightQuerySchema);
+  const query = readQueryParams(request, memoryInsightQuerySchema);
 
-  if (!query.success) {
-    return errors.validation(query.error);
-  }
-
-  const result = await getCurrentMemoryInsight(query.data);
+  const result = await getCurrentMemoryInsight(query);
 
   if (result.status === "unauthorized") {
     return errors.unauthorized();

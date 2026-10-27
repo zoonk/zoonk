@@ -2,7 +2,6 @@ import { type ConnectLanguageConversationResult } from "@zoonk/core/language/con
 import { type endLanguageConversationConnection } from "@zoonk/core/language/conversations/end-connection";
 import { type redeemLiveCallSdp } from "@zoonk/core/language/conversations/redeem-sdp";
 import { type StartLanguageConversationResult } from "@zoonk/core/language/conversations/start";
-import { z } from "zod";
 import { createErrorResponse, errors, httpStatus, slowDownError } from "./api-errors";
 import { signUpRequiredError } from "./lesson-player-errors";
 import { studySessionError } from "./study-session-errors";
@@ -83,15 +82,6 @@ export function conversationRefusalError(
   }
 
   return languageError(result.status, notFoundMessage);
-}
-
-/** A spoken answer's multipart body without its recording. */
-export function missingAudioError() {
-  return errors.validation(
-    new z.ZodError([
-      { code: "custom", message: "Send the recording as the `audio` file field", path: [] },
-    ]),
-  );
 }
 
 /** A recording the grader can't take: empty, too big, or not a format it reads. */

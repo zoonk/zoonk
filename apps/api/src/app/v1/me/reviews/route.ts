@@ -1,7 +1,6 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { learnerAccessError } from "@/lib/learner-errors";
-import { parseQueryParams } from "@/lib/query-params";
+import { readQueryParams } from "@/lib/request-input";
 import { reviewScheduleInputSchema } from "@zoonk/core/learner/contract";
 import { getCurrentUserReviewSchedule } from "@zoonk/core/learner/review-schedule";
 import { NextResponse } from "next/server";
@@ -10,13 +9,9 @@ const LOGICAL_DATE_LENGTH = 10;
 
 /** Returns today's capped reviews and the coming week's review load. */
 async function getReviewSchedule(request: Request) {
-  const query = parseQueryParams(new URL(request.url).searchParams, reviewScheduleInputSchema);
+  const query = readQueryParams(request, reviewScheduleInputSchema);
 
-  if (!query.success) {
-    return errors.validation(query.error);
-  }
-
-  const result = await getCurrentUserReviewSchedule(query.data);
+  const result = await getCurrentUserReviewSchedule(query);
 
   if (result.status !== "ready") {
     return learnerAccessError(result.status);

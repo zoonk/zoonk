@@ -1,7 +1,7 @@
 import { accessErrorCodes } from "@/lib/access-error-codes";
 import { createErrorResponse, errors, httpStatus } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
+import { readBody } from "@/lib/request-input";
 import { learningProfileUpdateSchema } from "@zoonk/core/profile/contract";
 import { getLearningProfile } from "@zoonk/core/profile/get";
 import {
@@ -46,13 +46,9 @@ function getUpdateErrorResponse(
 
 /** Saves what a screen changed. */
 async function updateProfile(request: NextRequest) {
-  const parsed = await parseBody(request, learningProfileUpdateSchema);
+  const parsed = await readBody(request, learningProfileUpdateSchema);
 
-  if (!parsed.success) {
-    return errors.validation(parsed.error);
-  }
-
-  const result = await updateLearningProfile(parsed.data);
+  const result = await updateLearningProfile(parsed);
 
   if (result.status !== "updated") {
     return getUpdateErrorResponse(result);

@@ -1,9 +1,8 @@
-import { accessError, errors } from "@/lib/api-errors";
+import { accessError } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
 import { planChangeInvalid } from "@/lib/plan-errors";
+import { readBody, readPathParams } from "@/lib/request-input";
 import { choosePlanTools } from "@zoonk/core/plans/choose-tools";
 import { planToolChoiceInputSchema } from "@zoonk/core/plans/contract";
 import { type NextRequest, NextResponse } from "next/server";
@@ -14,19 +13,11 @@ async function createToolChoice(
   context: RouteContext<"/v1/goals/[goalId]/plan/tool-choices">,
 ) {
   const [body, path] = await Promise.all([
-    parseBody(request, planToolChoiceInputSchema),
-    context.params.then((params) => parsePathParams({ params, schema: goalPathParamsSchema })),
+    readBody(request, planToolChoiceInputSchema),
+    readPathParams(context, goalPathParamsSchema),
   ]);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
-  const result = await choosePlanTools({ goalId: path.data.goalId, input: body.data });
+  const result = await choosePlanTools({ goalId: path.goalId, input: body });
 
   if (result.status === "invalid") {
     return planChangeInvalid(result);

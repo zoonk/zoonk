@@ -2,7 +2,7 @@ import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { plusRequiredError, usageDecisionError } from "@/lib/lesson-player-errors";
 import { challengePathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
 import { challengeQuestionsWorkflow } from "@/workflows/v2/goals/challenge-questions-workflow";
 import { requestChallengeQuestions } from "@zoonk/core/checkpoints/challenge-questions";
 import { NextResponse } from "next/server";
@@ -19,13 +19,9 @@ async function createChallengeGeneration(
   _request: Request,
   context: RouteContext<"/v1/challenges/[planItemId]/generations">,
 ) {
-  const path = parsePathParams({ params: await context.params, schema: challengePathParamsSchema });
+  const path = await readPathParams(context, challengePathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const result = await requestChallengeQuestions(path.data);
+  const result = await requestChallengeQuestions(path);
 
   if (result.status === "unauthorized") {
     return errors.unauthorized();

@@ -1,9 +1,7 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { examError } from "@/lib/exam-errors";
 import { mockSectionPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readBody, readPathParams } from "@/lib/request-input";
 import { mockTimeZoneInputSchema } from "@zoonk/core/exams/mocks/contract";
 import { submitMockSection } from "@zoonk/core/exams/mocks/submit-section";
 import { type NextRequest, NextResponse } from "next/server";
@@ -16,25 +14,14 @@ async function postSubmission(
   request: NextRequest,
   context: RouteContext<"/v1/mocks/[blockId]/sections/[section]/submissions">,
 ) {
-  const path = parsePathParams({
-    params: await context.params,
-    schema: mockSectionPathParamsSchema,
-  });
+  const path = await readPathParams(context, mockSectionPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const body = await parseBody(request, mockTimeZoneInputSchema);
-
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
+  const body = await readBody(request, mockTimeZoneInputSchema);
 
   const result = await submitMockSection({
-    blockId: path.data.blockId,
-    input: body.data,
-    section: path.data.section,
+    blockId: path.blockId,
+    input: body,
+    section: path.section,
   });
 
   if (result.status === "next" || result.status === "finished" || result.status === "expired") {

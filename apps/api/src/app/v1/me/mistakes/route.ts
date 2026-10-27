@@ -3,19 +3,15 @@ import { withApiErrorBoundary } from "@/lib/api-handler";
 import { learnerAccessError } from "@/lib/learner-errors";
 import { mistakeListQuerySchema } from "@/lib/openapi/schemas/mistakes";
 import { createPaginatedResponse, decodeCursor } from "@/lib/pagination";
-import { parseQueryParams } from "@/lib/query-params";
+import { readQueryParams } from "@/lib/request-input";
 import { listCurrentUserMistakes } from "@zoonk/core/mistakes/list-current-user";
 import { NextResponse } from "next/server";
 
 /** Returns one page of the learner's mistakes notebook with counts for the filters. */
 async function listMistakes(request: Request) {
-  const query = parseQueryParams(new URL(request.url).searchParams, mistakeListQuerySchema);
+  const query = readQueryParams(request, mistakeListQuerySchema);
 
-  if (!query.success) {
-    return errors.validation(query.error);
-  }
-
-  const { cursor, ...filters } = query.data;
+  const { cursor, ...filters } = query;
   const offset = cursor ? decodeCursor(cursor) : 0;
 
   if (offset === null) {

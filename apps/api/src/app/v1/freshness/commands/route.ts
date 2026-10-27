@@ -1,7 +1,7 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { freshnessCommandRequestSchema } from "@/lib/openapi/schemas/research-sources";
+import { readBody } from "@/lib/request-input";
 import { freshnessWorkflow } from "@/workflows/v2/freshness/freshness-workflow";
 import { readNoticeAgainWorkflow } from "@/workflows/v2/freshness/read-notice-again-workflow";
 import { getFreshnessCommandAccess } from "@zoonk/core/library/exams/freshness-access";
@@ -14,13 +14,9 @@ import { start } from "workflow/api";
  * reading is redone), or stop its checks until a learner's goal needs them again.
  */
 async function sendFreshnessCommand(request: NextRequest) {
-  const parsed = await parseBody(request, freshnessCommandRequestSchema);
+  const parsed = await readBody(request, freshnessCommandRequestSchema);
 
-  if (!parsed.success) {
-    return errors.validation(parsed.error);
-  }
-
-  const { command, target } = parsed.data;
+  const { command, target } = parsed;
 
   if (command === "readAgain" && target.kind !== "exam") {
     return errors.badRequest("Only an exam's notice can be read again");

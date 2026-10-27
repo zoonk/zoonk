@@ -1,10 +1,7 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { examError } from "@/lib/exam-errors";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
-import { parseQueryParams } from "@/lib/query-params";
+import { readBody, readPathParams, readQueryParams } from "@/lib/request-input";
 import { examResultInputSchema } from "@zoonk/core/exams/results/contract";
 import { reportExamResult } from "@zoonk/core/exams/results/report";
 import { studySessionTimeZoneInputSchema } from "@zoonk/core/sessions/contract";
@@ -15,31 +12,16 @@ async function putExamResult(
   request: NextRequest,
   context: RouteContext<"/v1/goals/[goalId]/exam-result">,
 ) {
-  const path = parsePathParams({ params: await context.params, schema: goalPathParamsSchema });
+  const path = await readPathParams(context, goalPathParamsSchema);
 
-  const query = parseQueryParams(
-    new URL(request.url).searchParams,
-    studySessionTimeZoneInputSchema,
-  );
+  const query = readQueryParams(request, studySessionTimeZoneInputSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!query.success) {
-    return errors.validation(query.error);
-  }
-
-  const body = await parseBody(request, examResultInputSchema);
-
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
+  const body = await readBody(request, examResultInputSchema);
 
   const result = await reportExamResult({
-    goalId: path.data.goalId,
-    input: body.data,
-    timeZone: query.data.timeZone,
+    goalId: path.goalId,
+    input: body,
+    timeZone: query.timeZone,
   });
 
   if (result.status !== "reported") {

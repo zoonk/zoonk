@@ -2,7 +2,7 @@ import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { toCourseResource } from "@/lib/catalog-responses";
 import { coursePathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
 import { getCourseDetail } from "@zoonk/core/courses/get-detail";
 import { NextResponse } from "next/server";
 
@@ -11,13 +11,9 @@ import { NextResponse } from "next/server";
  * signed-in learner's own private course.
  */
 async function getCourse(_request: Request, context: RouteContext<"/v1/courses/[courseId]">) {
-  const parsed = parsePathParams({ params: await context.params, schema: coursePathParamsSchema });
+  const parsed = await readPathParams(context, coursePathParamsSchema);
 
-  if (!parsed.success) {
-    return errors.validation(parsed.error);
-  }
-
-  const course = await getCourseDetail({ courseId: parsed.data.courseId });
+  const course = await getCourseDetail({ courseId: parsed.courseId });
 
   if (!course) {
     return errors.notFound("Course not found");

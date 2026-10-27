@@ -2,8 +2,7 @@ import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { generationPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { workflowEventsQuerySchema } from "@/lib/openapi/schemas/workflows";
-import { parsePathParams } from "@/lib/path-params";
-import { parseQueryParams } from "@/lib/query-params";
+import { readPathParams, readQueryParams } from "@/lib/request-input";
 import { readRunState } from "@/workflows/v2/_shared/run-activity";
 import { getRun } from "workflow/api";
 
@@ -20,22 +19,11 @@ async function streamGenerationEvents(
   request: Request,
   context: RouteContext<"/v1/generations/[generationId]/events">,
 ) {
-  const path = parsePathParams({
-    params: await context.params,
-    schema: generationPathParamsSchema,
-  });
+  const path = await readPathParams(context, generationPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
+  const query = readQueryParams(request, workflowEventsQuerySchema);
 
-  const query = parseQueryParams(new URL(request.url).searchParams, workflowEventsQuerySchema);
-
-  if (!query.success) {
-    return errors.validation(query.error);
-  }
-
-  const { stalled, status } = await readRunState(path.data.generationId);
+  const { stalled, status } = await readRunState(path.generationId);
 
   if (!status) {
     return errors.notFound("Generation not found");
@@ -45,7 +33,7 @@ async function streamGenerationEvents(
   // (failed, see `readClientRunStatus`) has the client offer to start it again.
   const stream = stalled
     ? ""
-    : getRun(path.data.generationId).getReadable<string>({ startIndex: query.data.startIndex });
+    : getRun(path.generationId).getReadable<string>({ startIndex: query.startIndex });
 
   return new Response(stream, { headers: SSE_HEADERS });
 }

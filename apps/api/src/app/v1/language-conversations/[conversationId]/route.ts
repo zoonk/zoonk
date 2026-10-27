@@ -1,8 +1,7 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { languageError } from "@/lib/language-errors";
 import { languageConversationPathParamsSchema } from "@/lib/openapi/schemas/language";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
 import { getLanguageConversation } from "@zoonk/core/language/conversations/get";
 import { NextResponse } from "next/server";
 
@@ -11,16 +10,9 @@ async function getConversation(
   _request: Request,
   context: RouteContext<"/v1/language-conversations/[conversationId]">,
 ) {
-  const path = parsePathParams({
-    params: await context.params,
-    schema: languageConversationPathParamsSchema,
-  });
+  const path = await readPathParams(context, languageConversationPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const result = await getLanguageConversation(path.data.conversationId);
+  const result = await getLanguageConversation(path.conversationId);
 
   if (result.status !== "ready") {
     return languageError(result.status, "Conversation not found");

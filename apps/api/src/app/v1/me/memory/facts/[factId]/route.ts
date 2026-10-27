@@ -1,8 +1,7 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { memoryFactPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readBody, readPathParams } from "@/lib/request-input";
 import { memoryFactUpdateSchema } from "@zoonk/core/memory/contract";
 import { deleteMemoryFact } from "@zoonk/core/memory/delete-fact";
 import { updateMemoryFact } from "@zoonk/core/memory/update-fact";
@@ -10,28 +9,14 @@ import { type NextRequest, NextResponse } from "next/server";
 
 type FactContext = RouteContext<"/v1/me/memory/facts/[factId]">;
 
-function parseFactPath(context: FactContext) {
-  return context.params.then((params) =>
-    parsePathParams({ params, schema: memoryFactPathParamsSchema }),
-  );
-}
-
 /** Saves the learner's correction of one fact. */
 async function updateFact(request: NextRequest, context: FactContext) {
   const [body, path] = await Promise.all([
-    parseBody(request, memoryFactUpdateSchema),
-    parseFactPath(context),
+    readBody(request, memoryFactUpdateSchema),
+    readPathParams(context, memoryFactPathParamsSchema),
   ]);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
-  const result = await updateMemoryFact({ factId: path.data.factId, input: body.data });
+  const result = await updateMemoryFact({ factId: path.factId, input: body });
 
   if (result.status !== "updated") {
     return result.status === "unauthorized" ? errors.unauthorized() : errors.notFound();
@@ -42,13 +27,9 @@ async function updateFact(request: NextRequest, context: FactContext) {
 
 /** Deletes one fact with the facts it replaced; the returned change undoes it. */
 async function deleteFact(_request: NextRequest, context: FactContext) {
-  const path = await parseFactPath(context);
+  const path = await readPathParams(context, memoryFactPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const result = await deleteMemoryFact(path.data.factId);
+  const result = await deleteMemoryFact(path.factId);
 
   if (result.status !== "deleted") {
     return result.status === "unauthorized" ? errors.unauthorized() : errors.notFound();

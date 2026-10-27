@@ -1,9 +1,7 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { languageError } from "@/lib/language-errors";
 import { languageConversationPathParamsSchema } from "@/lib/openapi/schemas/language";
-import { parsePathParams } from "@/lib/path-params";
+import { readBody, readPathParams } from "@/lib/request-input";
 import { checkLanguageConversationObjectives } from "@zoonk/core/language/conversations/check-objectives";
 import { languageConversationObjectiveCheckInputSchema } from "@zoonk/core/language/conversations/contract";
 import { type NextRequest, NextResponse } from "next/server";
@@ -17,23 +15,13 @@ async function checkObjectives(
   context: RouteContext<"/v1/language-conversations/[conversationId]/objective-checks">,
 ) {
   const [body, path] = await Promise.all([
-    parseBody(request, languageConversationObjectiveCheckInputSchema),
-    context.params.then((params) =>
-      parsePathParams({ params, schema: languageConversationPathParamsSchema }),
-    ),
+    readBody(request, languageConversationObjectiveCheckInputSchema),
+    readPathParams(context, languageConversationPathParamsSchema),
   ]);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
   const result = await checkLanguageConversationObjectives({
-    conversationId: path.data.conversationId,
-    input: body.data,
+    conversationId: path.conversationId,
+    input: body,
   });
 
   if (result.status !== "ready") {

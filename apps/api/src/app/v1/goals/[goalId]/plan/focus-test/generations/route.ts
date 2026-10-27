@@ -2,7 +2,7 @@ import { accessError, errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
 import { focusTestQuestionsWorkflow } from "@/workflows/v2/goals/focus-test-questions-workflow";
 import { requestFocusTestQuestions } from "@zoonk/core/plans/focus-test/request-questions";
 import { NextResponse } from "next/server";
@@ -19,13 +19,9 @@ async function createFocusTestGeneration(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/plan/focus-test/generations">,
 ) {
-  const path = parsePathParams({ params: await context.params, schema: goalPathParamsSchema });
+  const path = await readPathParams(context, goalPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const result = await requestFocusTestQuestions(path.data);
+  const result = await requestFocusTestQuestions(path);
 
   if (result.status === "unauthorized" || result.status === "notFound") {
     return accessError(result.status);
@@ -47,7 +43,7 @@ async function createFocusTestGeneration(
     {
       analytics: result.analytics,
       format: result.format,
-      goalId: path.data.goalId,
+      goalId: path.goalId,
       questionsPerSkill: result.questionsPerSkill,
       skillIds: result.skillIds,
     },

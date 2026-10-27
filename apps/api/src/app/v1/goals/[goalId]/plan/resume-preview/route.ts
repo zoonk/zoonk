@@ -1,7 +1,7 @@
-import { accessError, errors } from "@/lib/api-errors";
+import { accessError } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
 import { getGoalResumePreview } from "@zoonk/core/plans/resume-preview";
 import { NextResponse } from "next/server";
 
@@ -10,13 +10,9 @@ async function readResumePreview(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/plan/resume-preview">,
 ) {
-  const path = parsePathParams({ params: await context.params, schema: goalPathParamsSchema });
+  const path = await readPathParams(context, goalPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const result = await getGoalResumePreview(path.data.goalId);
+  const result = await getGoalResumePreview(path.goalId);
 
   return result.status === "ready" ? NextResponse.json(result.preview) : accessError(result.status);
 }

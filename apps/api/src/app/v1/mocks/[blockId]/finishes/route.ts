@@ -1,9 +1,7 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { examError } from "@/lib/exam-errors";
 import { mockPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readBody, readPathParams } from "@/lib/request-input";
 import { mockTimeZoneInputSchema } from "@zoonk/core/exams/mocks/contract";
 import { finishMock } from "@zoonk/core/exams/mocks/finish";
 import { type NextRequest, NextResponse } from "next/server";
@@ -13,19 +11,11 @@ async function postFinish(
   request: NextRequest,
   context: RouteContext<"/v1/mocks/[blockId]/finishes">,
 ) {
-  const path = parsePathParams({ params: await context.params, schema: mockPathParamsSchema });
+  const path = await readPathParams(context, mockPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
+  const body = await readBody(request, mockTimeZoneInputSchema);
 
-  const body = await parseBody(request, mockTimeZoneInputSchema);
-
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
-  const result = await finishMock({ blockId: path.data.blockId, input: body.data });
+  const result = await finishMock({ blockId: path.blockId, input: body });
 
   if (result.status !== "finished" && result.status !== "expired") {
     return examError(result);

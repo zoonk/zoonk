@@ -1,9 +1,8 @@
-import { accessError, errors } from "@/lib/api-errors";
+import { accessError } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { planChangePathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
 import { planChangeConflict, planChangeInvalid } from "@/lib/plan-errors";
+import { readBody, readPathParams } from "@/lib/request-input";
 import { scheduleGoalPreparation } from "@/lib/session-preparation";
 import { planChangeDecisionInputSchema } from "@zoonk/core/plans/contract";
 import { decidePlanChange } from "@zoonk/core/plans/decide-change";
@@ -19,24 +18,14 @@ async function decideChange(
   context: RouteContext<"/v1/goals/[goalId]/plan/changes/[changeId]">,
 ) {
   const [body, path] = await Promise.all([
-    parseBody(request, planChangeDecisionInputSchema),
-    context.params.then((params) =>
-      parsePathParams({ params, schema: planChangePathParamsSchema }),
-    ),
+    readBody(request, planChangeDecisionInputSchema),
+    readPathParams(context, planChangePathParamsSchema),
   ]);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
   const result = await decidePlanChange({
-    changeId: path.data.changeId,
-    goalId: path.data.goalId,
-    input: body.data,
+    changeId: path.changeId,
+    goalId: path.goalId,
+    input: body,
   });
 
   if (result.status === "invalid") {
@@ -51,8 +40,8 @@ async function decideChange(
     return accessError(result.status);
   }
 
-  if (body.data.status === "applied" || body.data.status === "undone") {
-    await scheduleGoalPreparation(path.data.goalId);
+  if (body.status === "applied" || body.status === "undone") {
+    await scheduleGoalPreparation(path.goalId);
   }
 
   return NextResponse.json(result.change);

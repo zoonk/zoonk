@@ -1,9 +1,8 @@
 import { createErrorResponse, errors, httpStatus } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { memoryErrorCodes } from "@/lib/memory-error-codes";
 import { memoryInsightPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readBody, readPathParams } from "@/lib/request-input";
 import { memoryInsightAnswerSchema } from "@zoonk/core/memory/contract";
 import { respondToMemoryInsight } from "@zoonk/core/memory/insights/respond";
 import { type NextRequest, NextResponse } from "next/server";
@@ -14,21 +13,11 @@ async function answerInsight(
   context: RouteContext<"/v1/me/memory/insights/[insightId]">,
 ) {
   const [body, path] = await Promise.all([
-    parseBody(request, memoryInsightAnswerSchema),
-    context.params.then((params) =>
-      parsePathParams({ params, schema: memoryInsightPathParamsSchema }),
-    ),
+    readBody(request, memoryInsightAnswerSchema),
+    readPathParams(context, memoryInsightPathParamsSchema),
   ]);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
-  const result = await respondToMemoryInsight({ input: body.data, insightId: path.data.insightId });
+  const result = await respondToMemoryInsight({ input: body, insightId: path.insightId });
 
   if (result.status === "updated") {
     return NextResponse.json({ insight: result.insight });

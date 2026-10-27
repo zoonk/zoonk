@@ -1,7 +1,7 @@
-import { accessError, errors } from "@/lib/api-errors";
+import { accessError } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
 import { getPlanBasesAdvice } from "@zoonk/core/plans/bases-advice";
 import { NextResponse } from "next/server";
 
@@ -14,13 +14,9 @@ async function adviseOnBases(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/plan/bases-advice">,
 ) {
-  const path = parsePathParams({ params: await context.params, schema: goalPathParamsSchema });
+  const path = await readPathParams(context, goalPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const result = await getPlanBasesAdvice(path.data.goalId);
+  const result = await getPlanBasesAdvice(path.goalId);
 
   return result.status === "ready" ? NextResponse.json(result.advice) : accessError(result.status);
 }

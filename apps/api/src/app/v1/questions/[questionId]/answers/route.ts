@@ -2,7 +2,7 @@ import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { lessonQuestionPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
 import {
   type AnswerGeneration,
   type AnswerRun,
@@ -250,17 +250,10 @@ async function createLessonQuestionAnswer(
   _request: Request,
   context: RouteContext<"/v1/questions/[questionId]/answers">,
 ) {
-  const path = parsePathParams({
-    params: await context.params,
-    schema: lessonQuestionPathParamsSchema,
-  });
-
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
+  const path = await readPathParams(context, lessonQuestionPathParamsSchema);
 
   const result = await claimLessonQuestionAnswer({
-    questionId: path.data.questionId,
+    questionId: path.questionId,
     requestedModel: getTutorModel,
   });
 

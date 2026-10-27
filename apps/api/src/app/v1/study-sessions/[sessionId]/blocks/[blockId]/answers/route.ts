@@ -1,8 +1,6 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { studyBlockPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readBody, readPathParams } from "@/lib/request-input";
 import { studySessionError } from "@/lib/study-session-errors";
 import { answerStudyQuestion } from "@zoonk/core/sessions/answer";
 import { studyAnswerInputSchema } from "@zoonk/core/sessions/contract";
@@ -14,21 +12,11 @@ async function createAnswer(
   context: RouteContext<"/v1/study-sessions/[sessionId]/blocks/[blockId]/answers">,
 ) {
   const [body, path] = await Promise.all([
-    parseBody(request, studyAnswerInputSchema),
-    context.params.then((params) =>
-      parsePathParams({ params, schema: studyBlockPathParamsSchema }),
-    ),
+    readBody(request, studyAnswerInputSchema),
+    readPathParams(context, studyBlockPathParamsSchema),
   ]);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
-  const result = await answerStudyQuestion({ ...path.data, input: body.data });
+  const result = await answerStudyQuestion({ ...path, input: body });
 
   if (result.status !== "ready") {
     return studySessionError(result);

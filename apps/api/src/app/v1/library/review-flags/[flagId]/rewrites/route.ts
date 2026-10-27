@@ -1,7 +1,7 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { reviewFlagPathParamsSchema } from "@/lib/openapi/schemas/review-flags";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
 import { flaggedContentWorkflow } from "@/workflows/v2/review-flags/flagged-content-workflow";
 import { getOpenReviewFlagForAdmin } from "@zoonk/core/library/review-flags/admin";
 import { NextResponse } from "next/server";
@@ -17,16 +17,9 @@ async function createReviewFlagRewrite(
   _request: Request,
   context: RouteContext<"/v1/library/review-flags/[flagId]/rewrites">,
 ) {
-  const path = parsePathParams({
-    params: await context.params,
-    schema: reviewFlagPathParamsSchema,
-  });
+  const path = await readPathParams(context, reviewFlagPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const result = await getOpenReviewFlagForAdmin(path.data.flagId);
+  const result = await getOpenReviewFlagForAdmin(path.flagId);
 
   if (result.status === "unauthorized") {
     return errors.unauthorized();

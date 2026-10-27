@@ -1,6 +1,6 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
+import { readBody } from "@/lib/request-input";
 import { memorySettingsUpdateSchema } from "@zoonk/core/memory/contract";
 import { getCurrentUserMemory } from "@zoonk/core/memory/get";
 import { updateMemorySettings } from "@zoonk/core/memory/settings";
@@ -19,13 +19,9 @@ async function getMemory() {
 
 /** Turns memory on or off; the facts stay listed either way. */
 async function updateSettings(request: NextRequest) {
-  const parsed = await parseBody(request, memorySettingsUpdateSchema);
+  const parsed = await readBody(request, memorySettingsUpdateSchema);
 
-  if (!parsed.success) {
-    return errors.validation(parsed.error);
-  }
-
-  const result = await updateMemorySettings(parsed.data);
+  const result = await updateMemorySettings(parsed);
 
   if (result.status === "unauthorized") {
     return errors.unauthorized();

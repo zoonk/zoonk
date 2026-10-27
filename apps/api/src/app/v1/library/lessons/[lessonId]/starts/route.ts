@@ -1,9 +1,8 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { plusRequiredError, usageDecisionError } from "@/lib/lesson-player-errors";
 import { lessonPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readBody, readPathParams } from "@/lib/request-input";
 import { libraryLessonStartInputSchema } from "@zoonk/core/lesson-player/contract";
 import { startLibraryLesson } from "@zoonk/core/lesson-player/start";
 import { type NextRequest, NextResponse } from "next/server";
@@ -20,19 +19,11 @@ async function createLibraryLessonStart(
   context: RouteContext<"/v1/library/lessons/[lessonId]/starts">,
 ) {
   const [body, path] = await Promise.all([
-    parseBody(request, libraryLessonStartInputSchema),
-    context.params.then((params) => parsePathParams({ params, schema: lessonPathParamsSchema })),
+    readBody(request, libraryLessonStartInputSchema),
+    readPathParams(context, lessonPathParamsSchema),
   ]);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
-  const outcome = await startLibraryLesson({ input: body.data, lessonId: path.data.lessonId });
+  const outcome = await startLibraryLesson({ input: body, lessonId: path.lessonId });
 
   if (outcome.status === "started") {
     return NextResponse.json(outcome.run, { status: CREATED });

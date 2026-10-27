@@ -1,7 +1,7 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { studySessionPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
 import { startSessionPreparation } from "@/lib/session-preparation";
 import { NextResponse } from "next/server";
 
@@ -17,16 +17,9 @@ async function createPreparation(
   _request: Request,
   context: RouteContext<"/v1/study-sessions/[sessionId]/preparations">,
 ) {
-  const path = parsePathParams({
-    params: await context.params,
-    schema: studySessionPathParamsSchema,
-  });
+  const path = await readPathParams(context, studySessionPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const result = await startSessionPreparation({ sessionId: path.data.sessionId });
+  const result = await startSessionPreparation({ sessionId: path.sessionId });
 
   if (result.status === "unauthorized") {
     return errors.unauthorized();

@@ -1,8 +1,7 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { examError } from "@/lib/exam-errors";
 import { mockPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
 import { endMockBreak } from "@zoonk/core/exams/mocks/end-break";
 import { type NextRequest } from "next/server";
 
@@ -11,13 +10,9 @@ async function postBreakEnd(
   _request: NextRequest,
   context: RouteContext<"/v1/mocks/[blockId]/break-ends">,
 ) {
-  const path = parsePathParams({ params: await context.params, schema: mockPathParamsSchema });
+  const path = await readPathParams(context, mockPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const result = await endMockBreak({ blockId: path.data.blockId });
+  const result = await endMockBreak({ blockId: path.blockId });
 
   if (result.status !== "started") {
     return examError({ status: result.status });

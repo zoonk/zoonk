@@ -1,9 +1,7 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { examError } from "@/lib/exam-errors";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readBody, readPathParams } from "@/lib/request-input";
 import { anytimeMockInputSchema } from "@zoonk/core/exams/mocks/contract";
 import { getMockOptions } from "@zoonk/core/exams/mocks/options";
 import { startAnytimeMock } from "@zoonk/core/exams/mocks/start-anytime";
@@ -15,13 +13,9 @@ const CREATED = 201;
 
 /** The mocks the learner can take any time for an exam goal, with their size and time. */
 async function listMocks(_request: Request, context: MocksContext) {
-  const path = parsePathParams({ params: await context.params, schema: goalPathParamsSchema });
+  const path = await readPathParams(context, goalPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const result = await getMockOptions({ goalId: path.data.goalId });
+  const result = await getMockOptions({ goalId: path.goalId });
 
   if (result.status !== "ready") {
     return examError(result);
@@ -33,19 +27,11 @@ async function listMocks(_request: Request, context: MocksContext) {
 /** Starts one of the goal's mocks now, or the whole exam as placement in onboarding. */
 async function startMock(request: NextRequest, context: MocksContext) {
   const [body, path] = await Promise.all([
-    parseBody(request, anytimeMockInputSchema),
-    context.params.then((params) => parsePathParams({ params, schema: goalPathParamsSchema })),
+    readBody(request, anytimeMockInputSchema),
+    readPathParams(context, goalPathParamsSchema),
   ]);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
-  const result = await startAnytimeMock({ goalId: path.data.goalId, input: body.data });
+  const result = await startAnytimeMock({ goalId: path.goalId, input: body });
 
   if (result.status === "needsQuestions" || result.status === "short") {
     return NextResponse.json({ ...result, id: null });

@@ -1,19 +1,15 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { earlierQuestionsQuerySchema } from "@/lib/openapi/schemas/lesson-questions";
-import { parseQueryParams } from "@/lib/query-params";
+import { readQueryParams } from "@/lib/request-input";
 import { listEarlierQuestions } from "@zoonk/core/lesson-questions/earlier";
 import { type NextRequest, NextResponse } from "next/server";
 
 /** A page of the learner's questions from an earlier version of their courses, as history. */
 async function listQuestions(request: NextRequest) {
-  const query = parseQueryParams(request.nextUrl.searchParams, earlierQuestionsQuerySchema);
+  const query = readQueryParams(request, earlierQuestionsQuerySchema);
 
-  if (!query.success) {
-    return errors.validation(query.error);
-  }
-
-  const result = await listEarlierQuestions(query.data);
+  const result = await listEarlierQuestions(query);
 
   if (result.status === "unauthorized") {
     return errors.unauthorized();

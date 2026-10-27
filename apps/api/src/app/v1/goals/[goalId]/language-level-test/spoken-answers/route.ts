@@ -1,46 +1,26 @@
-import { createErrorResponse, errors, httpStatus, slowDownError } from "@/lib/api-errors";
+import { createErrorResponse, httpStatus, slowDownError } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { invalidAudioError, missingAudioError } from "@/lib/language-errors";
+import { invalidAudioError } from "@/lib/language-errors";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { levelTestError } from "@/lib/level-test-errors";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readAudioForm, readPathParams } from "@/lib/request-input";
 import { isRefusedUsage } from "@zoonk/core/entitlements/contract";
 import { gradeLevelTestSpeech } from "@zoonk/core/language/level-test/speech";
-import { safeAsync } from "@zoonk/utils/error";
 import { type NextRequest, NextResponse } from "next/server";
-
-/** Reads the recording from the multipart body. */
-async function readAudio(request: NextRequest) {
-  const { data: form } = await safeAsync(() => request.formData());
-  const audio = form?.get("audio");
-
-  if (!(audio instanceof File)) {
-    return null;
-  }
-
-  return { bytes: new Uint8Array(await audio.arrayBuffer()), mediaType: audio.type };
-}
+import { z } from "zod";
 
 /** The level test's one sentence out loud: checked word by word, it sets the speaking level. */
 async function answerLevelTestOutLoud(
   request: NextRequest,
   context: RouteContext<"/v1/goals/[goalId]/language-level-test/spoken-answers">,
 ) {
-  const [audio, path] = await Promise.all([
-    readAudio(request),
-    context.params.then((params) => parsePathParams({ params, schema: goalPathParamsSchema })),
+  const [{ audio }, path] = await Promise.all([
+    readAudioForm(request, z.object({})),
+    readPathParams(context, goalPathParamsSchema),
   ]);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!audio) {
-    return missingAudioError();
-  }
-
-  const result = await gradeLevelTestSpeech({ audio, goalId: path.data.goalId });
+  const result = await gradeLevelTestSpeech({ audio, goalId: path.goalId });
 
   if (result.status === "invalidAudio") {
     return invalidAudioError();

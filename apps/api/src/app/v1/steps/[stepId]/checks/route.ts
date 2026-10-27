@@ -1,9 +1,8 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { runEndedError } from "@/lib/lesson-player-errors";
 import { stepPathParamsSchema } from "@/lib/openapi/schemas/steps";
-import { parsePathParams } from "@/lib/path-params";
+import { readBody, readPathParams } from "@/lib/request-input";
 import { checkLessonStep } from "@zoonk/core/lesson-player/check";
 import { lessonStepCheckInputSchema } from "@zoonk/core/lesson-player/contract";
 import { type NextRequest, NextResponse } from "next/server";
@@ -17,19 +16,11 @@ async function createStepCheck(
   context: RouteContext<"/v1/steps/[stepId]/checks">,
 ) {
   const [body, path] = await Promise.all([
-    parseBody(request, lessonStepCheckInputSchema),
-    context.params.then((params) => parsePathParams({ params, schema: stepPathParamsSchema })),
+    readBody(request, lessonStepCheckInputSchema),
+    readPathParams(context, stepPathParamsSchema),
   ]);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
-  const outcome = await checkLessonStep({ input: body.data, stepId: path.data.stepId });
+  const outcome = await checkLessonStep({ input: body, stepId: path.stepId });
 
   switch (outcome.status) {
     case "unauthorized":

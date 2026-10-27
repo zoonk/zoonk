@@ -1,9 +1,7 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { examError } from "@/lib/exam-errors";
 import { essayPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readBody, readPathParams } from "@/lib/request-input";
 import { essaySubmissionInputSchema } from "@zoonk/core/exams/essays/contract";
 import { submitEssay } from "@zoonk/core/exams/essays/submit";
 import { type NextRequest, NextResponse } from "next/server";
@@ -13,19 +11,11 @@ async function postSubmission(
   request: NextRequest,
   context: RouteContext<"/v1/essays/[blockId]/submissions">,
 ) {
-  const path = parsePathParams({ params: await context.params, schema: essayPathParamsSchema });
+  const path = await readPathParams(context, essayPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
+  const body = await readBody(request, essaySubmissionInputSchema);
 
-  const body = await parseBody(request, essaySubmissionInputSchema);
-
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
-  const result = await submitEssay({ blockId: path.data.blockId, input: body.data });
+  const result = await submitEssay({ blockId: path.blockId, input: body });
 
   if (result.status !== "graded") {
     return examError({ status: result.status });

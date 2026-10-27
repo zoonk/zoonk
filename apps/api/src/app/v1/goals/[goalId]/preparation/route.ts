@@ -1,8 +1,7 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { learnerAccessError } from "@/lib/learner-errors";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
 import { getGoalPreparation } from "@zoonk/core/preparation/get-goal";
 import { NextResponse } from "next/server";
 
@@ -11,13 +10,9 @@ async function getPreparation(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/preparation">,
 ) {
-  const path = parsePathParams({ params: await context.params, schema: goalPathParamsSchema });
+  const path = await readPathParams(context, goalPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const result = await getGoalPreparation(path.data.goalId);
+  const result = await getGoalPreparation(path.goalId);
 
   if (result.status !== "ready") {
     return learnerAccessError(result.status);

@@ -1,10 +1,8 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { learnerAccessError } from "@/lib/learner-errors";
 import { scheduleLessonWriting } from "@/lib/lesson-writing";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readBody, readPathParams } from "@/lib/request-input";
 import { scheduleGoalPreparation } from "@/lib/session-preparation";
 import { placementCompletionInputSchema } from "@zoonk/core/learner/placement/contract";
 import { finishGoalPlacement } from "@zoonk/core/learner/placement/finish";
@@ -21,19 +19,11 @@ async function completePlacement(
   context: RouteContext<"/v1/goals/[goalId]/placement/completion">,
 ) {
   const [body, path] = await Promise.all([
-    parseBody(request, placementCompletionInputSchema),
-    context.params.then((params) => parsePathParams({ params, schema: goalPathParamsSchema })),
+    readBody(request, placementCompletionInputSchema),
+    readPathParams(context, goalPathParamsSchema),
   ]);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
-  const result = await finishGoalPlacement({ goalId: path.data.goalId, input: body.data });
+  const result = await finishGoalPlacement({ goalId: path.goalId, input: body });
 
   if (result.status !== "ready") {
     return learnerAccessError(result.status);
@@ -43,7 +33,7 @@ async function completePlacement(
     scheduleLessonWriting(result.firstLessonId);
   }
 
-  await scheduleGoalPreparation(path.data.goalId);
+  await scheduleGoalPreparation(path.goalId);
 
   return NextResponse.json(result.completion);
 }

@@ -4,6 +4,7 @@ import { logError } from "@zoonk/utils/logger";
 import { unstable_rethrow } from "next/navigation";
 import { errors } from "./api-errors";
 import { targetDateOutOfRange } from "./plan-errors";
+import { InvalidRequestError } from "./request-input";
 
 type ProductRouteHandler<TArguments extends unknown[]> = (
   ...args: TArguments
@@ -58,6 +59,10 @@ export function withApiErrorBoundary<TArguments extends unknown[]>(
       return await withLearnerRevision(await handler(...args), args);
     } catch (error) {
       unstable_rethrow(error);
+
+      if (error instanceof InvalidRequestError) {
+        return errors.validation(error.zodError);
+      }
 
       // A target date out of range is the request's to fix: a query's like any other parameter,
       // a change's with its own code. Every other error, a ZodError included, is the server's.

@@ -1,9 +1,8 @@
-import { accessError, errors } from "@/lib/api-errors";
+import { accessError } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { planTimeAdviceQuerySchema } from "@/lib/openapi/schemas/time-advice";
-import { parsePathParams } from "@/lib/path-params";
-import { parseQueryParams } from "@/lib/query-params";
+import { readPathParams, readQueryParams } from "@/lib/request-input";
 import { getPlanTimeAdvice } from "@zoonk/core/plans/time-advice";
 import { NextResponse } from "next/server";
 
@@ -16,25 +15,17 @@ async function readTimeAdvice(
   request: Request,
   context: RouteContext<"/v1/goals/[goalId]/plan/time-advice">,
 ) {
-  const path = parsePathParams({ params: await context.params, schema: goalPathParamsSchema });
+  const path = await readPathParams(context, goalPathParamsSchema);
 
-  const query = parseQueryParams(new URL(request.url).searchParams, planTimeAdviceQuerySchema);
-
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!query.success) {
-    return errors.validation(query.error);
-  }
+  const query = readQueryParams(request, planTimeAdviceQuerySchema);
 
   const result = await getPlanTimeAdvice({
-    goalId: path.data.goalId,
+    goalId: path.goalId,
     input: {
-      dailyMinutes: query.data.dailyMinutes,
-      fullCourse: query.data.fullCourse === "true",
-      studyDays: query.data.studyDays?.split(",").map(Number),
-      weekendMinutes: query.data.weekendMinutes,
+      dailyMinutes: query.dailyMinutes,
+      fullCourse: query.fullCourse === "true",
+      studyDays: query.studyDays?.split(",").map(Number),
+      weekendMinutes: query.weekendMinutes,
     },
   });
 

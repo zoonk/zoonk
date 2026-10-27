@@ -1,7 +1,7 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { lessonRegenerationRequestSchema } from "@/lib/openapi/schemas/lesson-regenerations";
+import { readBody } from "@/lib/request-input";
 import { lessonContentWorkflow } from "@/workflows/v2/lessons/lesson-content-workflow";
 import { pullLessonsForRegeneration } from "@zoonk/core/library/lessons/regenerate";
 import { type NextRequest, NextResponse } from "next/server";
@@ -27,13 +27,9 @@ function refusedRegeneration(status: "forbidden" | "invalid" | "unauthorized") {
  * run with the reasoning check, like a lesson that failed a later review.
  */
 async function createLessonRegeneration(request: NextRequest) {
-  const parsed = await parseBody(request, lessonRegenerationRequestSchema);
+  const parsed = await readBody(request, lessonRegenerationRequestSchema);
 
-  if (!parsed.success) {
-    return errors.validation(parsed.error);
-  }
-
-  const result = await pullLessonsForRegeneration(parsed.data);
+  const result = await pullLessonsForRegeneration(parsed);
 
   if (result.status !== "pulled") {
     return refusedRegeneration(result.status);

@@ -1,8 +1,8 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { createUploadRequestSchema } from "@/lib/openapi/schemas/research-sources";
+import { readBody } from "@/lib/request-input";
 import { toSourceResource } from "@/lib/source-resources";
 import { sourceVisibilityWorkflow } from "@/workflows/v2/research/source-visibility-workflow";
 import { isRefusedUsage } from "@zoonk/core/entitlements/contract";
@@ -17,13 +17,9 @@ import { start } from "workflow/api";
  * shared, such as a known exam notice, is linked at once.
  */
 async function createUpload(request: NextRequest) {
-  const parsed = await parseBody(request, createUploadRequestSchema);
+  const parsed = await readBody(request, createUploadRequestSchema);
 
-  if (!parsed.success) {
-    return errors.validation(parsed.error);
-  }
-
-  const result = await registerSourceUpload(parsed.data);
+  const result = await registerSourceUpload(parsed);
 
   if (result.status === "unauthorized") {
     return errors.unauthorized();

@@ -3,7 +3,7 @@ import { withApiErrorBoundary } from "@/lib/api-handler";
 import { examError } from "@/lib/exam-errors";
 import { startGoalWork } from "@/lib/goal-content";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
 import { moveLanguageGoalToExam } from "@zoonk/core/exams/language-goal";
 import { NextResponse } from "next/server";
 
@@ -27,13 +27,9 @@ async function postExamMove(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/exam-moves">,
 ) {
-  const path = parsePathParams({ params: await context.params, schema: goalPathParamsSchema });
+  const path = await readPathParams(context, goalPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const result = await moveLanguageGoalToExam(path.data.goalId);
+  const result = await moveLanguageGoalToExam(path.goalId);
 
   if (result.status !== "moved") {
     return refuseMove(result.status);

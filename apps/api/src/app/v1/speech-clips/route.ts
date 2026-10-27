@@ -1,12 +1,12 @@
 import { createErrorResponse, errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { toApiImageUrl } from "@/lib/file-urls";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
 import {
   speechClipRequestSchema,
   speechClipResponseSchema,
 } from "@/lib/openapi/schemas/speech-clips";
+import { readBody } from "@/lib/request-input";
 import { requestSpeechClip } from "@zoonk/core/audio/speech-clip";
 import { type NextRequest, NextResponse } from "next/server";
 
@@ -18,13 +18,9 @@ const SERVICE_UNAVAILABLE = 503;
  * own words (`personal`) are theirs alone: the clip points at the file route only they can read.
  */
 async function postSpeechClip(request: NextRequest) {
-  const body = await parseBody(request, speechClipRequestSchema);
+  const body = await readBody(request, speechClipRequestSchema);
 
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
-  const result = await requestSpeechClip(body.data);
+  const result = await requestSpeechClip(body);
 
   if (result.status === "ready") {
     return NextResponse.json(

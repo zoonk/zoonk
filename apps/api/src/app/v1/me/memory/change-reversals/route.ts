@@ -1,20 +1,16 @@
 import { createErrorResponse, errors, httpStatus } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { memoryErrorCodes } from "@/lib/memory-error-codes";
+import { readBody } from "@/lib/request-input";
 import { memoryUndoInputSchema } from "@zoonk/core/memory/contract";
 import { undoMemoryChanges } from "@zoonk/core/memory/undo";
 import { type NextRequest, NextResponse } from "next/server";
 
 /** Undoes what a "Memory updated" notice or a delete showed, all together or not at all. */
 async function reverseChanges(request: NextRequest) {
-  const parsed = await parseBody(request, memoryUndoInputSchema);
+  const parsed = await readBody(request, memoryUndoInputSchema);
 
-  if (!parsed.success) {
-    return errors.validation(parsed.error);
-  }
-
-  const result = await undoMemoryChanges(parsed.data);
+  const result = await undoMemoryChanges(parsed);
 
   if (result.status === "undone") {
     return NextResponse.json({ removedFactIds: result.removedFactIds, restored: result.restored });

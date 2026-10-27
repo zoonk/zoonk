@@ -1,8 +1,7 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { languageError } from "@/lib/language-errors";
 import { mistakePatternPathParamsSchema } from "@/lib/openapi/schemas/language";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
 import { dismissMistakePattern } from "@zoonk/core/language/patterns/dismiss";
 import { NextResponse } from "next/server";
 
@@ -11,16 +10,9 @@ async function dismissPattern(
   _request: Request,
   context: RouteContext<"/v1/mistake-patterns/[patternId]/dismissals">,
 ) {
-  const path = parsePathParams({
-    params: await context.params,
-    schema: mistakePatternPathParamsSchema,
-  });
+  const path = await readPathParams(context, mistakePatternPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const result = await dismissMistakePattern(path.data.patternId);
+  const result = await dismissMistakePattern(path.patternId);
 
   if (result.status !== "dismissed") {
     return languageError(result.status, "Pattern not found");

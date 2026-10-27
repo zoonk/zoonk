@@ -1,9 +1,8 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { challengeMovePathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
 import { planChangeConflict } from "@/lib/plan-errors";
-import { parseQueryParams } from "@/lib/query-params";
+import { readPathParams, readQueryParams } from "@/lib/request-input";
 import { undoChallengeMove } from "@zoonk/core/checkpoints/challenge-move";
 import { studySessionTimeZoneInputSchema } from "@zoonk/core/sessions/contract";
 import { NextResponse } from "next/server";
@@ -13,25 +12,11 @@ async function undoMoveRoute(
   request: Request,
   context: RouteContext<"/v1/challenges/[planItemId]/moves/[changeId]">,
 ) {
-  const path = parsePathParams({
-    params: await context.params,
-    schema: challengeMovePathParamsSchema,
-  });
+  const path = await readPathParams(context, challengeMovePathParamsSchema);
 
-  const query = parseQueryParams(
-    new URL(request.url).searchParams,
-    studySessionTimeZoneInputSchema,
-  );
+  const query = readQueryParams(request, studySessionTimeZoneInputSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!query.success) {
-    return errors.validation(query.error);
-  }
-
-  const result = await undoChallengeMove({ ...path.data, input: query.data });
+  const result = await undoChallengeMove({ ...path, input: query });
 
   if (result.status === "undone") {
     return NextResponse.json({ planItemId: result.planItemId });

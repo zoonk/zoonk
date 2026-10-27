@@ -1,7 +1,7 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { toChapterResource } from "@/lib/catalog-responses";
-import { parseChapterContext } from "@/lib/chapter-context";
+import { readChapterContext } from "@/lib/chapter-context";
 import { getCatalogChapter } from "@zoonk/core/catalog/chapter";
 import { NextResponse } from "next/server";
 
@@ -10,13 +10,9 @@ import { NextResponse } from "next/server";
  * from the query, or the chapter's home course.
  */
 async function getChapter(request: Request, context: RouteContext<"/v1/chapters/[chapterId]">) {
-  const parsed = parseChapterContext({ params: await context.params, request });
+  const parsed = await readChapterContext({ context, request });
 
-  if (!parsed.success) {
-    return errors.validation(parsed.error);
-  }
-
-  const chapter = await getCatalogChapter(parsed.data);
+  const chapter = await getCatalogChapter(parsed);
 
   if (!chapter) {
     return errors.notFound("Chapter not found");

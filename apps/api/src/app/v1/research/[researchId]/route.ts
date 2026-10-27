@@ -1,7 +1,7 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { researchPathParamsSchema } from "@/lib/openapi/schemas/research-sources";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
 import { readClientRunStatus } from "@/workflows/v2/_shared/run-activity";
 import { researchResultSchema } from "@/workflows/v2/research/research-result";
 import { NextResponse } from "next/server";
@@ -13,16 +13,9 @@ import { getRun } from "workflow/api";
  * generations, the unguessable run id is the capability.
  */
 async function getResearch(_request: Request, context: RouteContext<"/v1/research/[researchId]">) {
-  const parsed = parsePathParams({
-    params: await context.params,
-    schema: researchPathParamsSchema,
-  });
+  const parsed = await readPathParams(context, researchPathParamsSchema);
 
-  if (!parsed.success) {
-    return errors.validation(parsed.error);
-  }
-
-  const run = getRun(parsed.data.researchId);
+  const run = getRun(parsed.researchId);
   const status = await readClientRunStatus(run.runId);
 
   if (!status) {

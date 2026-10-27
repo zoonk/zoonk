@@ -1,7 +1,7 @@
 import { accessErrorCodes } from "@/lib/access-error-codes";
 import { createErrorResponse, errors, httpStatus } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
+import { readBody } from "@/lib/request-input";
 import { instrumentWaitlistJoinSchema } from "@zoonk/core/instrument-waitlist/contract";
 import { joinInstrumentWaitlist } from "@zoonk/core/instrument-waitlist/join";
 import { listInstrumentWaitlist } from "@zoonk/core/instrument-waitlist/list";
@@ -20,13 +20,9 @@ async function listEntries() {
 
 /** Adds an instrument to the learner's waitlist; joining again returns the same entry. */
 async function joinWaitlist(request: NextRequest) {
-  const parsed = await parseBody(request, instrumentWaitlistJoinSchema);
+  const parsed = await readBody(request, instrumentWaitlistJoinSchema);
 
-  if (!parsed.success) {
-    return errors.validation(parsed.error);
-  }
-
-  const result = await joinInstrumentWaitlist(parsed.data);
+  const result = await joinInstrumentWaitlist(parsed);
 
   if (result.status === "unauthorized") {
     return errors.unauthorized();

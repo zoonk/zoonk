@@ -1,8 +1,7 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { getUnderstandingLocation, startUnderstandingRun } from "@/lib/goal-understanding";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
+import { readBody } from "@/lib/request-input";
 import { isRefusedUsage } from "@zoonk/core/entitlements/contract";
 import { goalUnderstandingInputSchema } from "@zoonk/core/view-models/onboarding/contract";
 import { startGoalUnderstanding } from "@zoonk/core/view-models/onboarding/start-understanding";
@@ -16,13 +15,9 @@ const ACCEPTED = 202;
  * understood" card: at once when the same words were understood today, otherwise in a run.
  */
 async function createGoalUnderstanding(request: NextRequest) {
-  const parsed = await parseBody(request, goalUnderstandingInputSchema);
+  const parsed = await readBody(request, goalUnderstandingInputSchema);
 
-  if (!parsed.success) {
-    return errors.validation(parsed.error);
-  }
-
-  const result = await startGoalUnderstanding(parsed.data);
+  const result = await startGoalUnderstanding(parsed);
 
   if (result.status === "unauthorized" || isRefusedUsage(result)) {
     return usageDecisionError(result);

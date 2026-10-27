@@ -1,7 +1,6 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { feedbackSubmissionSchema } from "@/lib/openapi/schemas/feedback";
+import { readBody } from "@/lib/request-input";
 import { submitFeedback } from "@zoonk/core/feedback/submit";
 import { type NextRequest, NextResponse } from "next/server";
 
@@ -10,13 +9,9 @@ import { type NextRequest, NextResponse } from "next/server";
  * feedback used by the web feedback form.
  */
 async function createFeedback(request: NextRequest) {
-  const parsed = await parseBody(request, feedbackSubmissionSchema);
+  const parsed = await readBody(request, feedbackSubmissionSchema);
 
-  if (!parsed.success) {
-    return errors.validation(parsed.error);
-  }
-
-  await submitFeedback(parsed.data);
+  await submitFeedback(parsed);
 
   return NextResponse.json({ message: "Feedback received" });
 }

@@ -1,6 +1,5 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseQueryParams } from "@/lib/query-params";
+import { readQueryParams } from "@/lib/request-input";
 import { studySessionError } from "@/lib/study-session-errors";
 import { serializeToday } from "@/lib/study-session-serializers";
 import { noGoalError, planNotReadyError } from "@/lib/today-errors";
@@ -14,13 +13,9 @@ import { NextResponse } from "next/server";
  * the day with POST /v1/goals/{goalId}/study-sessions.
  */
 async function getToday(request: Request) {
-  const query = parseQueryParams(new URL(request.url).searchParams, todayStudySessionInputSchema);
+  const query = readQueryParams(request, todayStudySessionInputSchema);
 
-  if (!query.success) {
-    return errors.validation(query.error);
-  }
-
-  const result = await getTodayViewFollowingDevice(query.data);
+  const result = await getTodayViewFollowingDevice(query);
 
   if (result.status === "noGoal") {
     return noGoalError(result.suggestedGoal);

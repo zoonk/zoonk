@@ -1,10 +1,8 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { examError } from "@/lib/exam-errors";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readBody, readPathParams } from "@/lib/request-input";
 import { mockQuestionsWorkflow } from "@/workflows/v2/goals/mock-questions-workflow";
 import { mockQuestionsInputSchema } from "@zoonk/core/exams/mocks/contract";
 import { requestMockQuestions } from "@zoonk/core/exams/mocks/request-questions";
@@ -24,19 +22,11 @@ async function createMockQuestions(
   context: RouteContext<"/v1/goals/[goalId]/mocks/generations">,
 ) {
   const [body, path] = await Promise.all([
-    parseBody(request, mockQuestionsInputSchema),
-    context.params.then((params) => parsePathParams({ params, schema: goalPathParamsSchema })),
+    readBody(request, mockQuestionsInputSchema),
+    readPathParams(context, goalPathParamsSchema),
   ]);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
-  const result = await requestMockQuestions({ goalId: path.data.goalId, input: body.data });
+  const result = await requestMockQuestions({ goalId: path.goalId, input: body });
 
   if (result.status === "refused") {
     return usageDecisionError(result.decision);
@@ -53,7 +43,7 @@ async function createMockQuestions(
   const run = await start(mockQuestionsWorkflow, [
     {
       analytics: result.analytics,
-      goalId: path.data.goalId,
+      goalId: path.goalId,
       listening: result.listening,
       quickFormat: result.quickFormat,
       writes: result.writes,

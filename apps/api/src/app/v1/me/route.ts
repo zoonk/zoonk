@@ -1,7 +1,7 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { type MeDeletionInput, meDeletionSchema, meUpdateSchema } from "@/lib/openapi/schemas/me";
+import { readBody } from "@/lib/request-input";
 import { getActiveSubscription } from "@zoonk/core/auth/subscription";
 import { updateCurrentUser } from "@zoonk/core/users/current";
 import { deleteCurrentUser } from "@zoonk/core/users/delete-current";
@@ -25,13 +25,9 @@ async function getCurrentUserAccount() {
  * as the main app, including username validation and uniqueness checks.
  */
 async function updateCurrentUserAccount(request: NextRequest) {
-  const parsed = await parseBody(request, meUpdateSchema);
+  const parsed = await readBody(request, meUpdateSchema);
 
-  if (!parsed.success) {
-    return errors.validation(parsed.error);
-  }
-
-  const { data: result, error } = await safeAsync(() => updateCurrentUser({ input: parsed.data }));
+  const { data: result, error } = await safeAsync(() => updateCurrentUser({ input: parsed }));
 
   if (error) {
     const response = getProfileUpdateErrorResponse(error);
@@ -80,13 +76,9 @@ function deleteValidatedCurrentUser(credentials: MeDeletionInput) {
  * that the bearer or cookie session is authoritative and recent enough.
  */
 async function deleteCurrentUserAccount(request: NextRequest) {
-  const parsed = await parseBody(request, meDeletionSchema);
+  const parsed = await readBody(request, meDeletionSchema);
 
-  if (!parsed.success) {
-    return errors.validation(parsed.error);
-  }
-
-  const { data: result, error } = await safeAsync(() => deleteValidatedCurrentUser(parsed.data));
+  const { data: result, error } = await safeAsync(() => deleteValidatedCurrentUser(parsed));
 
   if (error) {
     const response = getAccountDeletionErrorResponse(error);

@@ -1,9 +1,7 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { examError } from "@/lib/exam-errors";
 import { mockPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readBody, readPathParams } from "@/lib/request-input";
 import { mockTimeZoneInputSchema } from "@zoonk/core/exams/mocks/contract";
 import { startMock } from "@zoonk/core/exams/mocks/start";
 import { type NextRequest } from "next/server";
@@ -15,19 +13,11 @@ async function postStart(
   request: NextRequest,
   context: RouteContext<"/v1/mocks/[blockId]/starts">,
 ) {
-  const path = parsePathParams({ params: await context.params, schema: mockPathParamsSchema });
+  const path = await readPathParams(context, mockPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
+  const body = await readBody(request, mockTimeZoneInputSchema);
 
-  const body = await parseBody(request, mockTimeZoneInputSchema);
-
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
-  const result = await startMock({ blockId: path.data.blockId, input: body.data });
+  const result = await startMock({ blockId: path.blockId, input: body });
 
   if (result.status !== "ready") {
     return examError({ status: result.status });

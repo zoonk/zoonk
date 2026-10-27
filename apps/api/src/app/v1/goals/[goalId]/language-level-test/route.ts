@@ -1,8 +1,7 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { levelTestError } from "@/lib/level-test-errors";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
 import { getLanguageLevelTest } from "@zoonk/core/language/level-test/get";
 import { NextResponse } from "next/server";
 
@@ -15,13 +14,9 @@ async function getLevelTest(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/language-level-test">,
 ) {
-  const path = parsePathParams({ params: await context.params, schema: goalPathParamsSchema });
+  const path = await readPathParams(context, goalPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const result = await getLanguageLevelTest(path.data.goalId);
+  const result = await getLanguageLevelTest(path.goalId);
 
   if (result.status !== "ready") {
     return levelTestError(result.status);

@@ -1,7 +1,7 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
 import { startGoalPreparation } from "@/lib/session-preparation";
 import { NextResponse } from "next/server";
 
@@ -17,13 +17,9 @@ async function createLessonPreparation(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/lesson-preparations">,
 ) {
-  const path = parsePathParams({ params: await context.params, schema: goalPathParamsSchema });
+  const path = await readPathParams(context, goalPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const result = await startGoalPreparation({ goalId: path.data.goalId });
+  const result = await startGoalPreparation({ goalId: path.goalId });
 
   if (result.status === "unauthorized") {
     return errors.unauthorized();

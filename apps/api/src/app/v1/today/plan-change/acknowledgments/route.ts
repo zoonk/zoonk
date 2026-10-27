@@ -1,6 +1,6 @@
-import { createErrorResponse, errors, httpStatus } from "@/lib/api-errors";
+import { createErrorResponse, httpStatus } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
+import { readBody } from "@/lib/request-input";
 import { studySessionError } from "@/lib/study-session-errors";
 import { todayErrorCodes } from "@/lib/today-errors";
 import { acknowledgeTodayPlanChange } from "@zoonk/core/plans/acknowledge-today-change";
@@ -9,13 +9,9 @@ import { type NextRequest, NextResponse } from "next/server";
 
 /** A learner's Got it persists only the selected plan and seen notice, never a study session. */
 async function acknowledgeChange(request: NextRequest) {
-  const body = await parseBody(request, acknowledgeTodayPlanChangeInputSchema);
+  const body = await readBody(request, acknowledgeTodayPlanChangeInputSchema);
 
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
-  const result = await acknowledgeTodayPlanChange(body.data);
+  const result = await acknowledgeTodayPlanChange(body);
 
   if (result.status === "acknowledged") {
     return NextResponse.json(result);

@@ -1,7 +1,7 @@
-import { accessError, errors } from "@/lib/api-errors";
+import { accessError } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readPathParams } from "@/lib/request-input";
 import {
   dismissGoalUploadRequest,
   getGoalUploadRequest,
@@ -16,13 +16,9 @@ type Context = RouteContext<"/v1/goals/[goalId]/upload-request">;
  * needs nothing. Answer it with `POST /v1/research` and the uploaded `sourceIds`.
  */
 async function getUploadRequest(_request: Request, context: Context) {
-  const path = parsePathParams({ params: await context.params, schema: goalPathParamsSchema });
+  const path = await readPathParams(context, goalPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const result = await getGoalUploadRequest({ goalId: path.data.goalId });
+  const result = await getGoalUploadRequest({ goalId: path.goalId });
 
   if (result.status !== "ready") {
     return accessError(result.status, "Goal not found");
@@ -33,13 +29,9 @@ async function getUploadRequest(_request: Request, context: Context) {
 
 /** The learner doesn't have the document: the ask leaves Plan and Today. */
 async function dismissUploadRequest(_request: Request, context: Context) {
-  const path = parsePathParams({ params: await context.params, schema: goalPathParamsSchema });
+  const path = await readPathParams(context, goalPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const result = await dismissGoalUploadRequest({ goalId: path.data.goalId });
+  const result = await dismissGoalUploadRequest({ goalId: path.goalId });
 
   if (result.status !== "dismissed") {
     return accessError(result.status, "Goal not found");

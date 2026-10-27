@@ -1,9 +1,7 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { learnerAccessError } from "@/lib/learner-errors";
 import { mistakePathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readBody, readPathParams } from "@/lib/request-input";
 import { mistakePracticeAnswerInputSchema } from "@zoonk/core/mistakes/contract";
 import { answerMistakePractice } from "@zoonk/core/mistakes/practice-answer";
 import { type NextRequest, NextResponse } from "next/server";
@@ -14,19 +12,11 @@ async function createMistakePracticeAnswer(
   context: RouteContext<"/v1/me/mistakes/[mistakeId]/answers">,
 ) {
   const [body, path] = await Promise.all([
-    parseBody(request, mistakePracticeAnswerInputSchema),
-    context.params.then((params) => parsePathParams({ params, schema: mistakePathParamsSchema })),
+    readBody(request, mistakePracticeAnswerInputSchema),
+    readPathParams(context, mistakePathParamsSchema),
   ]);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
-  const result = await answerMistakePractice({ input: body.data, mistakeId: path.data.mistakeId });
+  const result = await answerMistakePractice({ input: body, mistakeId: path.mistakeId });
 
   if (result.status !== "ready") {
     return learnerAccessError(result.status);

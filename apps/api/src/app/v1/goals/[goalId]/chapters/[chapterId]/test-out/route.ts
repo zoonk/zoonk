@@ -1,10 +1,8 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { withApiImageUrls } from "@/lib/file-urls";
 import { learnerAccessError } from "@/lib/learner-errors";
 import { goalChapterPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
+import { readBody, readPathParams } from "@/lib/request-input";
 import { chapterTestOutInputSchema } from "@zoonk/core/learner/test-out/contract";
 import { getChapterTestOut } from "@zoonk/core/learner/test-out/get";
 import { submitChapterTestOut } from "@zoonk/core/learner/test-out/submit";
@@ -14,16 +12,9 @@ type TestOutContext = RouteContext<"/v1/goals/[goalId]/chapters/[chapterId]/test
 
 /** Returns the chapter's test-out questions. */
 async function getTestOut(_request: Request, context: TestOutContext) {
-  const path = parsePathParams({
-    params: await context.params,
-    schema: goalChapterPathParamsSchema,
-  });
+  const path = await readPathParams(context, goalChapterPathParamsSchema);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  const result = await getChapterTestOut(path.data);
+  const result = await getChapterTestOut(path);
 
   if (result.status === "nothingToSkip") {
     return NextResponse.json(result);
@@ -39,21 +30,11 @@ async function getTestOut(_request: Request, context: TestOutContext) {
 /** Grades the test-out; passing tests out what the learner already knows. */
 async function submitTestOut(request: NextRequest, context: TestOutContext) {
   const [body, path] = await Promise.all([
-    parseBody(request, chapterTestOutInputSchema),
-    context.params.then((params) =>
-      parsePathParams({ params, schema: goalChapterPathParamsSchema }),
-    ),
+    readBody(request, chapterTestOutInputSchema),
+    readPathParams(context, goalChapterPathParamsSchema),
   ]);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
-  const result = await submitChapterTestOut({ ...path.data, input: body.data });
+  const result = await submitChapterTestOut({ ...path, input: body });
 
   if (result.status === "nothingToSkip") {
     return NextResponse.json(result);

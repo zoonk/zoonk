@@ -1,7 +1,7 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { usageDecisionError } from "@/lib/lesson-player-errors";
+import { readBody } from "@/lib/request-input";
 import { answerMaterialQuestion } from "@zoonk/core/library/sources/answer-question";
 import { materialQuestionInputSchema } from "@zoonk/core/library/sources/material-question-contract";
 import { type NextRequest, NextResponse } from "next/server";
@@ -11,13 +11,9 @@ import { type NextRequest, NextResponse } from "next/server";
  * came from. Each question counts as a tutor message against the learner's allowance.
  */
 async function askMaterialQuestion(request: NextRequest) {
-  const parsed = await parseBody(request, materialQuestionInputSchema);
+  const parsed = await readBody(request, materialQuestionInputSchema);
 
-  if (!parsed.success) {
-    return errors.validation(parsed.error);
-  }
-
-  const result = await answerMaterialQuestion(parsed.data);
+  const result = await answerMaterialQuestion(parsed);
 
   if (result.status === "answered") {
     return NextResponse.json(result.answer);

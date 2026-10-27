@@ -1,10 +1,9 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
-import { parseBody } from "@/lib/body-parser";
 import { startGoalGeneration, startGoalWork } from "@/lib/goal-content";
 import { coursePathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { parsePathParams } from "@/lib/path-params";
 import { goalRefusedError } from "@/lib/plan-errors";
+import { readBody, readPathParams } from "@/lib/request-input";
 import { type GoalView } from "@zoonk/core/goals/contract";
 import { courseGoalStartInputSchema } from "@zoonk/core/goals/course-start-contract";
 import { isResearchedCourseStart } from "@zoonk/core/goals/research";
@@ -40,19 +39,11 @@ async function startFromCourse(
   context: RouteContext<"/v1/courses/[courseId]/goals">,
 ) {
   const [body, path] = await Promise.all([
-    parseBody(request, courseGoalStartInputSchema),
-    context.params.then((params) => parsePathParams({ params, schema: coursePathParamsSchema })),
+    readBody(request, courseGoalStartInputSchema),
+    readPathParams(context, coursePathParamsSchema),
   ]);
 
-  if (!path.success) {
-    return errors.validation(path.error);
-  }
-
-  if (!body.success) {
-    return errors.validation(body.error);
-  }
-
-  const result = await startCourseGoal({ courseId: path.data.courseId, input: body.data });
+  const result = await startCourseGoal({ courseId: path.courseId, input: body });
 
   switch (result.status) {
     case "created":
