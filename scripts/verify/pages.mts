@@ -1,6 +1,6 @@
 /* oxlint-disable no-console, no-await-in-loop -- This CLI measures one page load at a time, in order, and prints its report. */
 import { mkdir, writeFile } from "node:fs/promises";
-import { homedir } from "node:os";
+import { availableParallelism, homedir, loadavg } from "node:os";
 import { join, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { chromium } from "@playwright/test";
@@ -13,6 +13,7 @@ import {
 } from "../dev/config.mts";
 import { readActionNames } from "./actions.mts";
 import { compareWithBaseline, comparisonRows, readBaseline } from "./baseline.mts";
+import { type Finding, markBusy } from "./checks.mts";
 import { checkExposure, readLearner } from "./exposure.mts";
 import {
   type LoadReport,
@@ -22,8 +23,16 @@ import {
   warmUp,
 } from "./measure.mts";
 import { type SoakReport, judgeSoak, measureSoak, soakRows } from "./memory.mts";
+import {
+  type RenderReport,
+  findUnindexed,
+  measureRender,
+  queryFindings,
+  renderRows,
+  summarizeStatements,
+} from "./queries.mts";
 import { renderReport } from "./report.mts";
-import { savedRequest } from "./requests.mts";
+import { redactQuery, savedRequest } from "./requests.mts";
 import { findServerPid } from "./server-process.mts";
 import { renderNavigationSheet, renderSheets } from "./sheets.mts";
 import { signIn } from "./sign-in.mts";
@@ -46,6 +55,7 @@ const { positionals, values } = parseArgs({
     intruder: { type: "string" },
     nav: { default: false, type: "boolean" },
     out: { type: "string" },
+    queries: { type: "string" },
     schemes: { default: SCHEMES.join(","), type: "string" },
     soak: { type: "string" },
     throttle: { default: false, type: "boolean" },
@@ -106,14 +116,24 @@ const baseline = values.baseline ? await readBaseline(resolve(values.baseline)) 
 const laps = Number(values.soak ?? 0);
 
 await mkdir(out, { recursive: true });
+/**
+ * Runnable tasks per core over the last minute. Back-to-back runs of the same build at 2 per core
+ * agreed within 1% (6% for server CPU); at 4.6 per core single loads swung by seconds.
+ */
+const loadPerCore = () => (loadavg()[0] ?? 0) / availableParallelism();
+const BUSY_LOAD_PER_CORE = 3;
+const loadAtStart = loadPerCore();
 const browser = await chromium.launch();
 const actions = readActionNames(repository);
+
+const queries = values.queries ? resolve(values.queries) : undefined;
 
 const target = {
   actions,
   baseUrl,
   browser,
   out,
+  queries,
   serverPid,
   storageState,
   throttle: values.throttle,
@@ -123,6 +143,7 @@ const loads: LoadReport[] = [];
 const navigations: NavigationReport[] = [];
 const sheets: string[] = [];
 let soak: SoakReport | null = null;
+const renders: RenderReport[] = [];
 
 /** Navigations run on a phone and a laptop (whichever were asked for), or the first screen asked. */
 const navigationViewports: ViewportName[] = viewports.filter(
@@ -153,12 +174,28 @@ try {
     }
   }
 
+  // Each page's render on its own: the statements it sends, and the plans of its reads.
+  for (const path of queries ? paths : []) {
+    const summary = summarizeStatements(
+      await measureRender({ baseUrl, file: queries ?? "", path, storageState }),
+    );
+
+    const production = loads.every((load) => load.production);
+    const unindexed = await findUnindexed(repository, { production, reads: summary.reads });
+
+    renders.push({
+      findings: [...queryFindings(summary), ...unindexed],
+      path: redactQuery(path),
+      summary,
+    });
+  }
+
   if (laps > 0) {
     soak = await measureSoak(target, { laps, paths });
   }
 
   sheets.push(
-    ...(await renderSheets(browser, { baseline: baseline ?? [], loads })),
+    ...(await renderSheets(browser, { baseline: baseline?.loads ?? [], loads })),
     ...(await renderNavigationSheet(browser, { navigations, out })),
   );
 } finally {
@@ -166,27 +203,47 @@ try {
 }
 
 const production = loads.every((load) => load.production);
+const loadAtEnd = loadPerCore();
+const busy = Math.max(loadAtStart, loadAtEnd) > BUSY_LOAD_PER_CORE;
+const judge = (findings: Finding[]) => (busy ? markBusy(findings) : findings);
+const judgedLoads = loads.map((load) => ({ ...load, findings: judge(load.findings) }));
+const judgedNavigations = navigations.map((hop) => ({ ...hop, findings: judge(hop.findings) }));
 const exposures = learner ? await checkExposure({ baseUrl, intruder, learner, paths }) : [];
-const comparison = baseline ? compareWithBaseline(baseline, loads) : null;
+
+const comparison = baseline
+  ? compareWithBaseline(baseline.loads, loads, {
+      sameSettings: baseline.throttle === values.throttle,
+    })
+  : null;
 
 const header = [
   `Target: ${baseUrl} (${production ? "production build" : "next dev: speed, skeletons and prefetching aren't judged; measure them on pnpm start"})`,
   `Throttled: ${values.throttle ? `${THROTTLING.cpuRate}× CPU, slow 4G` : "no"}; signed in: ${values.email ?? "no"}; server CPU: ${serverPid ? `pid ${serverPid}` : "not measured"}`,
   `Output: ${out}`,
+  `Machine load: ${loadAtStart.toFixed(1)} runnable tasks per core at the start, ${loadAtEnd.toFixed(1)} at the end${busy ? " (busy: speed, memory and regressions are inconclusive; main-thread work and counts still hold)" : ""}`,
 ];
 
 const report = renderReport({
   extra: [
+    ...renders.map(({ findings, path }) => ({
+      findings,
+      place: { page: path, screen: "its render" },
+    })),
     ...exposures.map(({ findings, path, viewer }) => ({
       findings,
       place: { page: path, screen: viewer },
     })),
     ...(soak
-      ? [{ findings: judgeSoak(soak), place: { page: "memory", screen: `${soak.laps} laps` } }]
+      ? [
+          {
+            findings: judge(judgeSoak(soak)),
+            place: { page: "memory", screen: `${soak.laps} laps` },
+          },
+        ]
       : []),
-    ...(comparison?.findings ?? []).map(({ finding, path }) => ({
-      findings: [finding],
-      place: { page: path, screen: "median of its screens" },
+    ...(comparison?.findings ?? []).map(({ finding, path, viewport }) => ({
+      findings: judge([finding]),
+      place: { page: path, screen: viewport },
     })),
   ],
   header: [
@@ -198,10 +255,14 @@ const report = renderReport({
       : []),
     ...(baseline ? [`Baseline: ${values.baseline}`] : []),
   ],
-  loads,
-  navigations,
+  loads: judgedLoads,
+  navigations: judgedNavigations,
   out,
-  sections: [...(soak ? soakRows(soak) : []), ...(comparison ? comparisonRows(comparison) : [])],
+  sections: [
+    ...renderRows(renders),
+    ...(soak ? soakRows(soak) : []),
+    ...(comparison ? comparisonRows(comparison) : []),
+  ],
   sheets,
 });
 
@@ -213,9 +274,15 @@ await writeFile(
     {
       baseUrl,
       exposures,
-      loads: loads.map((load) => ({ ...load, requests: load.requests.map(savedRequest) })),
-      navigations: navigations.map((hop) => ({ ...hop, requests: hop.requests.map(savedRequest) })),
+      loadPerCore: { end: loadAtEnd, start: loadAtStart },
+      loads: judgedLoads.map((load) => ({ ...load, requests: load.requests.map(savedRequest) })),
+      navigations: judgedNavigations.map((hop) => ({
+        ...hop,
+        requests: hop.requests.map(savedRequest),
+      })),
+      renders,
       soak,
+      throttle: values.throttle,
     },
     null,
     2,

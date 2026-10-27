@@ -4,6 +4,7 @@ import {
   type LoadMeasurement,
   cumulativeLayoutShift,
   judgeLoad,
+  markBusy,
   totalBlockingTime,
 } from "./checks.mts";
 import { type NavigationMeasurement, judgeNavigation } from "./navigation-checks.mts";
@@ -177,6 +178,29 @@ describe("judging a page load", () => {
       "fail horizontal overflow",
       "warn client data fetch",
     ]);
+  });
+});
+
+describe("judging on a busy machine", () => {
+  it("keeps timing to look at, marked inconclusive, and everything else as it was", () => {
+    const findings = markBusy([
+      { check: "LCP", level: "fail", message: "over 2500 ms", unit: "ms", value: 3000 },
+      { check: "navigation", level: "fail", message: "the tap didn't reach the page" },
+      {
+        check: "skeleton",
+        level: "fail",
+        message: "a loading skeleton showed",
+        unit: "ms",
+        value: 40,
+      },
+    ]);
+
+    assert.deepEqual(
+      findings.map((finding) => `${finding.level} ${finding.check}`),
+      ["warn LCP", "fail navigation", "fail skeleton"],
+    );
+
+    assert.match(findings[0]?.message ?? "", /inconclusive: the machine was busy/u);
   });
 });
 

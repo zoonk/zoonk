@@ -19,19 +19,19 @@ export type MemorySample = {
 };
 
 export type SoakReport = {
-  first: MemorySample;
   laps: number;
-  last: MemorySample;
   paths: string[];
   /** Memory is judged only on a production build: dev tooling and on-demand compiling grow it. */
   production: boolean;
   /** The tab kept one document through every lap; a reload resets the browser's memory. */
   sameDocument: boolean;
+  /** One sample after each lap, in order. */
+  samples: MemorySample[];
 };
 
 /**
- * Growth per lap, after the first lap warmed the caches, that points at a leak: memory a page
- * keeps after the learner left it. A steady app levels off; a leak grows every lap.
+ * Growth per lap over the second half of the laps that points at a leak: memory a page keeps after
+ * the learner left it. Caches fill in the first laps and level off; a leak keeps growing.
  */
 const LEAK_PER_LAP = { heapMb: 1, listeners: 20, nodes: 200, serverRssMb: 5 };
 
@@ -72,7 +72,6 @@ export async function measureSoak(
   const state = { production: false, sameDocument: false, startedAt: 0 };
 
   try {
-    await cdp.send("Performance.enable");
     await page.goto(new URL(start, target.baseUrl).toString(), { timeout: LOAD_TIMEOUT_MS });
     await waitForQuiet(page, traffic);
     state.production = !(await page.evaluate(isNextDev));
@@ -93,10 +92,8 @@ export async function measureSoak(
         await waitForQuiet(page, traffic);
       }
 
-      if (round === 1 || round === laps) {
-        // oxlint-disable-next-line no-await-in-loop -- Samples after this lap.
-        samples.push(await sample(cdp, target.serverPid));
-      }
+      // oxlint-disable-next-line no-await-in-loop -- Samples after every lap.
+      samples.push(await sample(cdp, target.serverPid));
     }
     // A path with no link to the next one is loaded instead, which replaces the document.
     state.sameDocument = (await page.evaluate(() => performance.timeOrigin)) === state.startedAt;
@@ -104,59 +101,59 @@ export async function measureSoak(
     await context.close();
   }
 
-  const [first, last = first] = samples;
-
-  if (!first || !last) {
-    throw new Error("The soak took no memory samples.");
-  }
-
   return {
-    first,
     laps,
-    last,
     paths: paths.map((path) => redactQuery(path)),
     production: state.production,
     sameDocument: paths.length > 1 && state.sameDocument,
+    samples,
   };
 }
 
+/** The lap from which growth is judged: caches have filled by halfway. */
+const middle = (laps: number) => Math.ceil(laps / 2);
+
+/** How much `key` grew per lap from the middle lap to the last one. */
+function lateGrowth(samples: MemorySample[], key: keyof MemorySample): number {
+  const from = samples[middle(samples.length) - 1]?.[key];
+  const to = samples.at(-1)?.[key];
+  const laps = samples.length - middle(samples.length);
+
+  return from === null || from === undefined || to === null || to === undefined || laps === 0
+    ? 0
+    : (to - from) / laps;
+}
+
 /**
- * Memory that keeps growing lap after lap. The browser's counts only when the tab kept one
- * document (one path reloads itself, and a missing link loads the next page), the server's always.
+ * Memory that keeps growing through the later laps. The browser's counts only when the tab kept
+ * one document (one path reloads itself, and a missing link loads the next page), the server's
+ * always.
  */
-export function judgeSoak({ first, laps, last, production, sameDocument }: SoakReport): Finding[] {
-  if (laps < 2 || !production) {
+export function judgeSoak({ production, sameDocument, samples }: SoakReport): Finding[] {
+  if (samples.length < 2 || !production) {
     return [];
   }
 
-  const perLap = (before: number | null, after: number | null) =>
-    before === null || after === null ? 0 : (after - before) / (laps - 1);
-
   const growth = [
     {
+      key: "serverRssMb" as const,
       limit: LEAK_PER_LAP.serverRssMb,
       unit: "MB",
-      value: perLap(first.serverRssMb, last.serverRssMb),
       what: "server memory (RSS)",
     },
     ...(sameDocument
       ? [
           {
+            key: "heapMb" as const,
             limit: LEAK_PER_LAP.heapMb,
             unit: "MB",
-            value: perLap(first.heapMb, last.heapMb),
             what: "browser JS heap",
           },
+          { key: "nodes" as const, limit: LEAK_PER_LAP.nodes, unit: "nodes", what: "DOM nodes" },
           {
-            limit: LEAK_PER_LAP.nodes,
-            unit: "nodes",
-            value: perLap(first.nodes, last.nodes),
-            what: "DOM nodes kept",
-          },
-          {
+            key: "listeners" as const,
             limit: LEAK_PER_LAP.listeners,
             unit: "listeners",
-            value: perLap(first.listeners, last.listeners),
             what: "event listeners",
           },
         ]
@@ -164,11 +161,12 @@ export function judgeSoak({ first, laps, last, production, sameDocument }: SoakR
   ];
 
   return growth
+    .map((metric) => ({ ...metric, value: lateGrowth(samples, metric.key) }))
     .filter((metric) => metric.value > metric.limit)
     .map((metric) => ({
       check: "memory",
       level: "warn",
-      message: `${metric.what} grew every lap (over ${metric.limit} ${metric.unit} a lap): a leak?`,
+      message: `${metric.what} kept growing through the later laps (over ${metric.limit} ${metric.unit} a lap): a leak?`,
       unit: metric.unit,
       value: metric.value,
     }));
@@ -179,7 +177,7 @@ function format(value: number | null, digits: number): string {
 }
 
 /** The soak's samples as a report table: after the first lap, after the last, and per lap. */
-export function soakRows({ first, laps, last, paths, sameDocument }: SoakReport): string[] {
+export function soakRows({ laps, paths, sameDocument, samples }: SoakReport): string[] {
   const rows: [string, keyof MemorySample, number][] = [
     ["Browser JS heap (MB)", "heapMb", 1],
     ["DOM nodes", "nodes", 0],
@@ -188,23 +186,20 @@ export function soakRows({ first, laps, last, paths, sameDocument }: SoakReport)
     ["Server RSS (MB)", "serverRssMb", 1],
   ];
 
+  const half = middle(samples.length);
+
   return [
     `## Memory over ${laps} laps of ${paths.join(" → ")}`,
     "",
     sameDocument
-      ? "Sampled after a forced garbage collection, after the first lap (caches warm) and after the last."
+      ? "Sampled after a forced garbage collection after every lap; growth is judged from the middle lap on, once caches have filled."
       : "The tab reloaded during the laps (one path, or no link to the next), so only the server's memory is judged.",
     "",
-    "| | After lap 1 | After the last lap | Per lap |",
-    "| --- | --- | --- | --- |",
+    `| | After lap 1 | After lap ${half} | After lap ${samples.length} | Per lap since lap ${half} |`,
+    "| --- | --- | --- | --- | --- |",
     ...rows.map(([label, key, digits]) => {
-      const before = first[key];
-      const after = last[key];
-
-      const perLap =
-        before === null || after === null || laps < 2 ? null : (after - before) / (laps - 1);
-
-      return `| ${label} | ${format(before, digits)} | ${format(after, digits)} | ${format(perLap, digits)} |`;
+      const at = (lap: number) => samples[lap - 1]?.[key] ?? null;
+      return `| ${label} | ${format(at(1), digits)} | ${format(at(half), digits)} | ${format(at(samples.length), digits)} | ${format(lateGrowth(samples, key), digits)} |`;
     }),
     "",
   ];

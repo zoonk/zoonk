@@ -2,84 +2,56 @@ import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 import { type MemorySample, judgeSoak } from "./memory.mts";
 
-const steady: MemorySample = {
+const steady = {
   documents: 1,
   heapMb: 40,
   listeners: 300,
   nodes: 4000,
   serverRssMb: 600,
-};
+} satisfies MemorySample;
+
+/** Six laps whose heap, nodes and server memory grow by these amounts each lap. */
+function laps(growth: { heapMb?: number; nodes?: number; serverRssMb?: number }): MemorySample[] {
+  return Array.from({ length: 6 }, (_, index) => ({
+    ...steady,
+    heapMb: steady.heapMb + index * (growth.heapMb ?? 0),
+    nodes: steady.nodes + index * (growth.nodes ?? 0),
+    serverRssMb: steady.serverRssMb + index * (growth.serverRssMb ?? 0),
+  }));
+}
+
+const soak = { laps: 6, paths: ["/today", "/plan"], production: true, sameDocument: true };
 
 describe("judging memory over repeated laps", () => {
-  it("passes memory that levels off after the first lap", () => {
-    const last = { ...steady, heapMb: 41, nodes: 4100, serverRssMb: 610 };
+  it("passes memory that filled caches early, then levelled off", () => {
+    const samples = [
+      steady,
+      { ...steady, heapMb: 60, nodes: 6000 },
+      ...laps({}).map((sample) => ({ ...sample, heapMb: 60, nodes: 6000 })),
+    ];
 
-    assert.deepEqual(
-      judgeSoak({
-        first: steady,
-        laps: 10,
-        last,
-        paths: ["/today", "/plan"],
-        production: true,
-        sameDocument: true,
-      }),
-      [],
-    );
+    assert.deepEqual(judgeSoak({ ...soak, laps: samples.length, samples }), []);
   });
 
-  it("asks about memory that grows every lap, in the browser and on the server", () => {
-    const last = { ...steady, heapMb: 70, nodes: 9000, serverRssMb: 800 };
-
+  it("asks about memory still growing in the later laps, in the browser and on the server", () => {
     const findings = judgeSoak({
-      first: steady,
-      laps: 6,
-      last,
-      paths: ["/today", "/plan"],
-      production: true,
-      sameDocument: true,
+      ...soak,
+      samples: laps({ heapMb: 5, nodes: 900, serverRssMb: 40 }),
     });
 
     assert.deepEqual(
-      findings.map((finding) => finding.message.split(" grew")[0]),
-      ["server memory (RSS)", "browser JS heap", "DOM nodes kept"],
+      findings.map((finding) => finding.message.split(" kept")[0]),
+      ["server memory (RSS)", "browser JS heap", "DOM nodes"],
     );
   });
 
   it("judges nothing on a dev server, whose tooling and compiling grow memory", () => {
-    const last = { ...steady, heapMb: 90, serverRssMb: 3000 };
-
-    assert.deepEqual(
-      judgeSoak({
-        first: steady,
-        laps: 6,
-        last,
-        paths: ["/today", "/plan"],
-        production: false,
-        sameDocument: true,
-      }),
-      [],
-    );
+    const samples = laps({ heapMb: 5, serverRssMb: 400 });
+    assert.deepEqual(judgeSoak({ ...soak, production: false, samples }), []);
   });
 
   it("judges only the server when a lap reloaded the page, which resets the browser's memory", () => {
-    const last = { ...steady, heapMb: 70, nodes: 9000, serverRssMb: 601 };
-    const lap = { first: steady, laps: 6, last, paths: ["/today", "/plan"], production: true };
-    assert.deepEqual(judgeSoak({ ...lap, sameDocument: false }), []);
-  });
-
-  it("judges only the server when one path reloads itself, since each reload starts a new page", () => {
-    const last = { ...steady, heapMb: 70, serverRssMb: 601 };
-
-    assert.deepEqual(
-      judgeSoak({
-        first: steady,
-        laps: 6,
-        last,
-        paths: ["/today"],
-        production: true,
-        sameDocument: false,
-      }),
-      [],
-    );
+    const samples = laps({ heapMb: 5, nodes: 900 });
+    assert.deepEqual(judgeSoak({ ...soak, sameDocument: false, samples }), []);
   });
 });

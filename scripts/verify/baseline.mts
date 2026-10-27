@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { type Finding, cumulativeLayoutShift } from "./checks.mts";
+import { cumulativeLayoutShift } from "./checks.mts";
 import { type LoadReport } from "./measure.mts";
 
 const KILOBYTE = 1024;
@@ -12,6 +12,7 @@ type Loaded = Pick<
   | "bytes"
   | "fcpMs"
   | "lcpMs"
+  | "mainThreadMs"
   | "path"
   | "production"
   | "screenshots"
@@ -20,12 +21,21 @@ type Loaded = Pick<
   | "viewport"
 >;
 
-const METRICS = ["lcpMs", "fcpMs", "blockingMs", "cls", "serverCpuMs", "scriptsKb"] as const;
+const METRICS = [
+  "lcpMs",
+  "fcpMs",
+  "blockingMs",
+  "mainThreadMs",
+  "cls",
+  "serverCpuMs",
+  "scriptsKb",
+] as const;
+
 type Metric = (typeof METRICS)[number];
 
 /**
- * How much worse a page's median may get before it's called a regression: past both a share and
- * an amount, so noise on small numbers and small moves on big ones don't count.
+ * How much worse a load may get before it's called a regression: past both a share and an
+ * amount, so noise on small numbers and small moves on big ones don't count.
  */
 const REGRESSION: Record<Metric, { label: string; minimum: number; share: number; unit: string }> =
   {
@@ -33,49 +43,29 @@ const REGRESSION: Record<Metric, { label: string; minimum: number; share: number
     cls: { label: "CLS", minimum: 0.01, share: 0, unit: "" },
     fcpMs: { label: "FCP", minimum: 100, share: 0.2, unit: "ms" },
     lcpMs: { label: "LCP", minimum: 100, share: 0.2, unit: "ms" },
+    mainThreadMs: { label: "main-thread work", minimum: 50, share: 0.2, unit: "ms" },
     scriptsKb: { label: "JS", minimum: 10, share: 0.05, unit: "KB" },
     serverCpuMs: { label: "server CPU", minimum: 50, share: 0.25, unit: "ms" },
   };
 
-/** The middle value, skipping ones a load didn't measure (or an older report didn't record). */
-function median(values: (number | null | undefined)[]): number | null {
-  const known = values.filter((value) => typeof value === "number").toSorted((a, b) => a - b);
-  return known.length === 0 ? null : (known[Math.floor((known.length - 1) / 2)] ?? null);
-}
-
+/** A load's value for `metric`, or null when it (or an older report) didn't measure it. */
 function measure(load: Loaded, metric: Metric): number | null {
   if (metric === "cls") {
     return cumulativeLayoutShift(load.shifts);
   }
 
-  return metric === "scriptsKb" ? load.bytes.scripts / KILOBYTE : load[metric];
+  const value = metric === "scriptsKb" ? load.bytes.scripts / KILOBYTE : load[metric];
+  return typeof value === "number" ? value : null;
 }
 
-function summary(here: Loaded[]): Record<Metric, number | null> {
-  const of = (metric: Metric) => median(here.map((load) => measure(load, metric)));
-
-  return {
-    blockingMs: of("blockingMs"),
-    cls: of("cls"),
-    fcpMs: of("fcpMs"),
-    lcpMs: of("lcpMs"),
-    scriptsKb: of("scriptsKb"),
-    serverCpuMs: of("serverCpuMs"),
-  };
-}
-
-/** Each page's median of every compared number across the screens it loaded on. */
-function summarize(loads: Loaded[]): Map<string, Record<Metric, number | null>> {
-  return new Map(
-    [...Map.groupBy(loads, (load) => load.path)].map(([path, here]) => [path, summary(here)]),
-  );
-}
-
-/** The loads a previous run saved (`--baseline <its folder>`). */
-export async function readBaseline(directory: string): Promise<Loaded[]> {
+/** The loads a previous run saved (`--baseline <its folder>`), and whether it throttled them. */
+export async function readBaseline(
+  directory: string,
+): Promise<{ loads: Loaded[]; throttle: boolean | null }> {
   const report: unknown = JSON.parse(await readFile(join(directory, "report.json"), "utf8"));
   // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- This script's own report shape.
-  return (report as { loads: Loaded[] }).loads;
+  const { loads, throttle } = report as { loads: Loaded[]; throttle?: boolean };
+  return { loads, throttle: throttle ?? null };
 }
 
 function format(value: number | null, metric: Metric): string {
@@ -86,65 +76,76 @@ function format(value: number | null, metric: Metric): string {
   return metric === "cls" ? value.toFixed(3) : `${Math.round(value)} ${REGRESSION[metric].unit}`;
 }
 
-/**
- * Each page's numbers before and after, and, when both runs measured production builds, a finding
- * for every one that got clearly worse (a dev server's numbers swing with compiling).
- */
-export function compareWithBaseline(baseline: Loaded[], current: Loaded[]) {
-  const before = summarize(baseline);
-  const after = summarize(current);
-
-  const rows = [...after].map(([path, now]) => {
-    const then = before.get(path);
-
-    return [
-      path,
-      ...METRICS.map(
-        (metric) => `${format(then?.[metric] ?? null, metric)} → ${format(now[metric], metric)}`,
-      ),
-    ];
-  });
-
-  const judged = [...baseline, ...current].every((load) => load.production);
-
-  const findings = [...after].flatMap(([path, now]) =>
-    METRICS.flatMap((metric): { finding: Finding; path: string }[] => {
-      const was = before.get(path)?.[metric] ?? null;
-      const is = now[metric];
-      const rule = REGRESSION[metric];
-
-      if (
-        !judged ||
-        was === null ||
-        is === null ||
-        is - was <= rule.minimum ||
-        is <= was * (1 + rule.share)
-      ) {
-        return [];
-      }
-
-      return [
-        {
-          finding: {
-            check: "regression",
-            level: "warn",
-            message: `${rule.label} got worse: ${format(was, metric)} → ${format(is, metric)}`,
-          },
-          path,
-        },
-      ];
-    }),
-  );
-
-  return { findings, header: ["Page", ...METRICS.map((metric) => REGRESSION[metric].label)], rows };
+function regressed(metric: Metric, was: number | null, is: number | null): boolean {
+  const rule = REGRESSION[metric];
+  return was !== null && is !== null && is - was > rule.minimum && is > was * (1 + rule.share);
 }
 
-/** The comparison as a report table: each page's medians, before → after. */
-export function comparisonRows({ header, rows }: ReturnType<typeof compareWithBaseline>): string[] {
+/**
+ * Each page's numbers on each screen before and after, and, when both runs measured production
+ * builds with the same throttling, a finding for every one that got clearly worse. Screens are
+ * compared one by one, so a regression on the phone alone isn't averaged away by the others.
+ */
+export function compareWithBaseline(
+  baseline: Loaded[],
+  current: Loaded[],
+  { sameSettings }: { sameSettings: boolean },
+) {
+  const key = (load: Loaded) => `${load.path} ${load.viewport}`;
+  const before = new Map(baseline.map((load) => [key(load), load]));
+  const judged = sameSettings && [...baseline, ...current].every((load) => load.production);
+
+  const rows = current.map((now) => {
+    const then = before.get(key(now));
+
+    const cells = METRICS.map((metric) => {
+      const was = then ? measure(then, metric) : null;
+      return `${format(was, metric)} → ${format(measure(now, metric), metric)}`;
+    });
+
+    return [now.path, now.viewport, ...cells];
+  });
+
+  const findings = current.flatMap((now) => {
+    const then = before.get(key(now));
+
+    if (!judged || !then) {
+      return [];
+    }
+
+    return METRICS.filter((metric) =>
+      regressed(metric, measure(then, metric), measure(now, metric)),
+    ).map((metric) => ({
+      finding: {
+        check: "regression",
+        level: "warn" as const,
+        message: `${REGRESSION[metric].label} got worse: ${format(measure(then, metric), metric)} → ${format(measure(now, metric), metric)}`,
+      },
+      path: now.path,
+      viewport: now.viewport,
+    }));
+  });
+
+  return {
+    findings,
+    header: ["Page", "Screen", ...METRICS.map((metric) => REGRESSION[metric].label)],
+    rows,
+    sameSettings,
+  };
+}
+
+/** The comparison as a report table: each load's numbers, before → after. */
+export function comparisonRows({
+  header,
+  rows,
+  sameSettings,
+}: ReturnType<typeof compareWithBaseline>): string[] {
   return [
     "## Compared with the baseline",
     "",
-    "Each page's median across its screens, before → after.",
+    sameSettings
+      ? "Each page on each screen, before → after. One run on each side is a lab sample, not a verdict: compare runs taken back to back on a quiet machine."
+      : "The baseline was measured with different throttling, so its timings aren't comparable and nothing is judged; counts and bytes still are.",
     "",
     `| ${header.join(" | ")} |`,
     `| ${header.map(() => "---").join(" | ")} |`,

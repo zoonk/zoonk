@@ -15,7 +15,7 @@ export const ENGINEERING_RULES: Rule[] = [
     line: /\buse(?:Layout)?Effect\(/u,
     name: "Effect",
     question:
-      "Does this sync with something outside React (a subscription, a browser API, a timer)? If it derives state, answers an event or loads data, it isn't an effect: compute it while rendering, do it in the handler, or read it on the server.",
+      "Effects sync with something outside React: a browser API, a non-React widget, a subscription, or work that runs because the screen showed. None is needed for a value computed from props or state (compute it while rendering), state reset when a prop changes (a `key`), a POST, parent `onChange` or chained updates caused by an event (do them in its handler), data the page needs (read it on the server), or an external store (`useSyncExternalStore`). If it stays, does it clean up after itself? (react.dev/learn/you-might-not-need-an-effect)",
     role: "engineering",
   },
   {

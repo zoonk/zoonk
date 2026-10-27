@@ -333,9 +333,9 @@ export function judgeLoad(load: LoadMeasurement): Finding[] {
     })),
     ...trustFindings(load),
     ...load.regularContrast.map((message): Finding => ({
-      check: "contrast in the regular look",
+      check: "neutral text contrast",
       level: "warn",
-      message: `${message} (neutral text must pass; a soft colored mark may be meant)`,
+      message: `${message} (gray text below WCAG AA in the regular look; leave colored marks soft)`,
     })),
     ...load.truncated.map((text): Finding => ({
       check: "cut off",
@@ -345,4 +345,34 @@ export function judgeLoad(load: LoadMeasurement): Finding[] {
   ];
 
   return findings.toSorted((a, b) => Number(a.level === "warn") - Number(b.level === "warn"));
+}
+
+/** Checks whose numbers swing with whatever else the machine is running. */
+const TIMING_CHECKS = new Set([
+  "FCP",
+  "LCP",
+  "blocking time",
+  "late change",
+  "memory",
+  "navigation",
+  "regression",
+  "server CPU",
+]);
+
+/**
+ * On a busy machine, timing findings can't tell the change from the load: they stay to look at,
+ * marked inconclusive, rather than fail. A tap that never arrived still fails.
+ */
+export function markBusy(findings: Finding[]): Finding[] {
+  return findings.map((finding) =>
+    // A navigation's timing has a unit; one that never arrived or had no link doesn't.
+    TIMING_CHECKS.has(finding.check) &&
+    (finding.check !== "navigation" || finding.unit !== undefined)
+      ? {
+          ...finding,
+          level: "warn",
+          message: `${finding.message} (inconclusive: the machine was busy)`,
+        }
+      : finding,
+  );
 }

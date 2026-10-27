@@ -5,6 +5,7 @@ import {
   type Traffic,
   checkSchemes,
   openPage,
+  readMainThreadMs,
   recordScreencast,
   saveFrames,
   unthrottle,
@@ -20,6 +21,7 @@ import {
   transferredBytes,
   visibleLinks,
 } from "./probe.mts";
+import { readStatements } from "./queries.mts";
 import { classifyRequest, pathOf, redactQuery } from "./requests.mts";
 import { readCpuMs } from "./server-process.mts";
 import { LOAD_TIMEOUT_MS, tapTo } from "./tap.mts";
@@ -30,6 +32,8 @@ const NETWORK_IDLE_MS = 15_000;
 /** Where and how a run measures: the app, who is signed in, and the run's output folder. */
 export type Target = {
   actions: Map<string, string>;
+  /** The `ZOONK_QUERY_LOG` file the server writes, when it logs its statements. */
+  queries?: string;
   baseUrl: string;
   browser: Browser;
   out: string;
@@ -40,6 +44,10 @@ export type Target = {
 
 export type LoadReport = LoadMeasurement & {
   bytes: { html: number; scripts: number; total: number };
+  /** CPU time the page's main thread spent during the load, from DevTools' thread clock. */
+  mainThreadMs: number;
+  /** Statements the server sent during the load, its prefetches included, and their time. */
+  database: { count: number; ms: number } | null;
   findings: Finding[];
   frames: number[];
   framesDirectory: string;
@@ -140,11 +148,15 @@ export async function measureLoad(
 
   try {
     const cpuBefore = target.serverPid ? readCpuMs(target.serverPid) : null;
+    const workBefore = await readMainThreadMs(cdp);
+    const from = Date.now();
     const url = new URL(path, target.baseUrl).toString();
     const response = await page.goto(url, { timeout: LOAD_TIMEOUT_MS, waitUntil: "load" });
     await page.waitForLoadState("networkidle", { timeout: NETWORK_IDLE_MS }).catch(() => null);
     const settled = await waitForQuiet(page, traffic);
     const cpuAfter = target.serverPid ? readCpuMs(target.serverPid) : null;
+    const window = { from, to: Date.now() };
+    const mainThreadMs = (await readMainThreadMs(cdp)) - workBefore;
     await screencast.stop();
     const loaded = await readLoadedPage(page, traffic);
     // Chrome's in-page navigation timing can put a streamed page's first byte before the network
@@ -180,12 +192,19 @@ export async function measureLoad(
       ttfbMs: responseStart >= 0 ? responseStart : null,
     };
 
+    const statements = target.queries ? readStatements(target.queries, window) : null;
+
     return {
       ...measurement,
       bytes,
+      database: statements && {
+        count: statements.length,
+        ms: statements.reduce((total, statement) => total + statement.ms, 0),
+      },
       findings: judgeLoad(measurement),
       frames: paints,
       framesDirectory: `${name}-frames`,
+      mainThreadMs,
       path: redactQuery(path),
       screenshots: appearances.screenshots,
       viewport,

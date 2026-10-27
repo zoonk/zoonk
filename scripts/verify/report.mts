@@ -80,8 +80,8 @@ function list(title: string, groups: Group[], screensPerPage: Map<string, number
 
 function loadRows(loads: LoadReport[], out: string): string[] {
   return [
-    "| Page | Screen | TTFB | FCP | LCP | TBT | CLS | Server CPU | KB (HTML/JS/all) | Skeleton shown | Paints (last) | Screenshots |",
-    "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+    "| Page | Screen | TTFB | FCP | LCP | Blocking | CLS | Main thread | Server CPU | SQL (ms) | KB (HTML/JS/all) | Skeleton shown | Paints (last) | Screenshots |",
+    "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ...loads.map((load) => {
       const kilobytes = [load.bytes.html, load.bytes.scripts, load.bytes.total].map((bytes) =>
         Math.round(bytes / KILOBYTE),
@@ -95,7 +95,9 @@ function loadRows(loads: LoadReport[], out: string): string[] {
         format(load.lcpMs),
         format(load.blockingMs),
         cumulativeLayoutShift(load.shifts).toFixed(CLS_DIGITS),
+        format(load.mainThreadMs),
         format(load.serverCpuMs),
+        load.database ? `${load.database.count} (${Math.round(load.database.ms)})` : "–",
         kilobytes.join("/"),
         load.skeletonSeenMs === null
           ? "–"

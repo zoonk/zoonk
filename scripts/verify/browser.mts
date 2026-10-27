@@ -21,6 +21,7 @@ import {
   sampleTargets,
 } from "../../packages/testing/src/accessibility/target-size.ts";
 import { type LoadMeasurement } from "./checks.mts";
+import { neutralTextOnly } from "./contrast.mts";
 import { installProbe, readProbe } from "./probe.mts";
 import { type RequestRecord } from "./requests.mts";
 import { type Scheme, THROTTLING, VIEWPORTS, type ViewportName } from "./viewports.mts";
@@ -155,6 +156,8 @@ export async function openPage({
   await context.addInitScript(installProbe);
   const page = await context.newPage();
   const cdp = await context.newCDPSession(page);
+  // Thread time counts only the main thread's own work, so a busy machine barely moves it.
+  await cdp.send("Performance.enable", { timeDomain: "threadTicks" });
 
   if (throttle) {
     await cdp.send("Emulation.setCPUThrottlingRate", { rate: THROTTLING.cpuRate });
@@ -163,6 +166,12 @@ export async function openPage({
   }
 
   return { cdp, context, page, traffic: recordTraffic(page, actions) };
+}
+
+/** The CPU time the page's main thread has spent on tasks so far, in ms. */
+export async function readMainThreadMs(cdp: CDPSession): Promise<number> {
+  const { metrics } = await cdp.send("Performance.getMetrics");
+  return (metrics.find((metric) => metric.name === "TaskDuration")?.value ?? 0) * 1000;
 }
 
 /** Lifts the throttling once a load is measured, so scans and screenshots don't crawl. */
@@ -196,7 +205,7 @@ async function scanAccessibility(page: Page, where: string) {
     await page.evaluate(`(${readMissingHuesAsZero.toString()})(window.axe)`);
   }
 
-  // The regular look keeps colored marks soft by design, but neutral text meets WCAG AA in it too.
+  // Neutral text meets WCAG AA in the regular look too; colored marks there are soft by design.
   const regular: Violations = await page.evaluate(
     "axe.run(document, { resultTypes: ['violations'], runOnly: ['color-contrast'] }).then((results) => results.violations)",
   );
@@ -216,7 +225,7 @@ async function scanAccessibility(page: Page, where: string) {
       ...describeViolations(violations, where).failing,
       ...targets.map((target) => `${where}: [target-size] ${target}`),
     ],
-    regular: describeViolations(regular, where).failing,
+    regular: describeViolations(neutralTextOnly(regular), where).failing,
   };
 }
 
