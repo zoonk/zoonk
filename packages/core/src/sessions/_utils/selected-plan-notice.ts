@@ -49,7 +49,7 @@ export function getSelectedPlanNotice({
     examDocument: getExamDocument(selection.context.goal),
     id: null,
     kind: change.kind,
-    lessonsSkipped: payload.lessonsSkipped ?? payload.planItemIds.length,
+    lessonsSkipped: payload.lessonsSkipped ?? 0,
     officialDate: payload.officialDate,
     operations: payload.operations,
     reason: null,

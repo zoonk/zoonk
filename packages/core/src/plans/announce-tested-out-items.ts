@@ -256,7 +256,7 @@ export async function announceTestedOutItems({
               payload: toPlanChangePayload({
                 ...added,
                 effect: joinSkipEffects(added.effect, effect),
-                lessonsSkipped: (added.lessonsSkipped ?? added.planItemIds.length) + newlySkipped,
+                lessonsSkipped: (added.lessonsSkipped ?? 0) + newlySkipped,
                 planItemIds: [...new Set([...added.planItemIds, ...skipped])],
                 versionAfter: context.plan.version + 1,
               }),

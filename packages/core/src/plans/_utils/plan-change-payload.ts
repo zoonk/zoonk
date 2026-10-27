@@ -95,8 +95,6 @@ const planChangePayloadSchema = z.object({
   /**
    * For `missedDays`: falling behind made the plan cover less of its goal by its date (see
    * `FallingBehind`), so Today asks what the learner wants. Null when the date isn't at risk.
-   * Changes saved before it said only facts also kept the time and date a search found to offer;
-   * reading drops those keys.
    */
   behind: z
     .object({
@@ -126,7 +124,7 @@ const planChangePayloadSchema = z.object({
   /**
    * For `testedOut`: the lessons it skipped as every screen counts them (`countLessons`, a stand-in
    * the lessons the plan taught in its place), so Today's "We skipped 235 lessons you already know"
-   * adds up with the Plan's subjects. Null on changes saved before it was kept: one per item.
+   * adds up with the Plan's subjects. Null for every other kind.
    */
   lessonsSkipped: z.int().min(0).nullable().default(null),
   /**

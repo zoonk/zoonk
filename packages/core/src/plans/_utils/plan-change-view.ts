@@ -64,7 +64,7 @@ export function toPlanChangeView({
     examDocument: getExamDocument(goal),
     id: change.id,
     kind: change.kind,
-    lessonsSkipped: payload.lessonsSkipped ?? payload.planItemIds.length,
+    lessonsSkipped: payload.lessonsSkipped ?? 0,
     officialDate: payload.officialDate,
     operations: payload.operations,
     // A change without a sentence of its own (an exam notice's, say) is said by the app.
