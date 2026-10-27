@@ -196,6 +196,32 @@ export function ListRowTitle({ className, ...props }: React.ComponentProps<"span
   );
 }
 
+/**
+ * A numbered row's title: its place ("2.") hung before the words in the mono face, so a long title
+ * wraps under its own first word, never under the number. `textClassName` reaches the words (a
+ * clamp, a muted done row).
+ */
+export function ListRowNumberedTitle({
+  children,
+  className,
+  number,
+  textClassName,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  number: number;
+  textClassName?: string;
+}) {
+  return (
+    <ListRowTitle className={cn("flex items-baseline gap-1.5", className)}>
+      <span className="text-muted-foreground shrink-0 font-mono text-xs font-normal tabular-nums">
+        {`${number}.`}
+      </span>
+      <span className={cn("min-w-0", textClassName)}>{children}</span>
+    </ListRowTitle>
+  );
+}
+
 export function ListRowDescription({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span

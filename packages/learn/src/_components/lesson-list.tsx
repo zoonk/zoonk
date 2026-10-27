@@ -10,7 +10,7 @@ import {
   ListRowContent,
   ListRowLeading,
   ListRowLink,
-  ListRowTitle,
+  ListRowNumberedTitle,
   ListRowTrailing,
 } from "./list-group";
 import { MeterPart, MeterParts } from "./meter";
@@ -71,10 +71,12 @@ function LessonRow({
         <LessonMark isNext={isNext} lesson={lesson} />
       </ListRowLeading>
       <ListRowContent>
-        <ListRowTitle className={cn(lesson.state === "done" && "text-muted-foreground")}>
-          <span className="text-muted-foreground font-mono text-xs font-normal tabular-nums">{`${position}. `}</span>
+        <ListRowNumberedTitle
+          number={position}
+          textClassName={cn(lesson.state === "done" && "text-muted-foreground")}
+        >
           {lesson.title}
-        </ListRowTitle>
+        </ListRowNumberedTitle>
       </ListRowContent>
       {(lesson.plusRequired || lesson.minutes > 0) && (
         <ListRowTrailing>

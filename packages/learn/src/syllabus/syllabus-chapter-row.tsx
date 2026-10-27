@@ -12,7 +12,7 @@ import {
   ListRowDescription,
   ListRowLeading,
   ListRowLink,
-  ListRowTitle,
+  ListRowNumberedTitle,
   ListRowTrailing,
 } from "../_components/list-group";
 import { useFormatPlanDate } from "../plan/plan-date-text";
@@ -90,15 +90,15 @@ export function SyllabusChapterRow({
         <ChapterMark chapter={chapter} isNext={isNext} skipped={chapter.known} />
       </ListRowLeading>
       <ListRowContent>
-        <ListRowTitle
-          className={cn(
+        <ListRowNumberedTitle
+          number={chapter.position}
+          textClassName={cn(
             "line-clamp-2",
             (chapter.state === "done" || (!href && !chapter.skillId)) && "text-muted-foreground",
           )}
         >
-          <span className="text-muted-foreground font-mono text-xs font-normal tabular-nums">{`${chapter.position}. `}</span>
           {chapter.title}
-        </ListRowTitle>
+        </ListRowNumberedTitle>
         <ChapterLine chapter={chapter} />
       </ListRowContent>
       <ListRowTrailing>
