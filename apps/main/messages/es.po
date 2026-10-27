@@ -189,7 +189,6 @@ msgid "Start a new goal"
 msgstr "Empezar un nuevo objetivo"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
-#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-plan-day.tsx
 #: src/app/[lang]/(app)/(learn)/today/page.tsx
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
 #: src/app/[lang]/(app)/(learn)/today/today-onboarding-left.tsx
@@ -470,6 +469,12 @@ msgstr "Ir al capítulo"
 msgctxt "f-_t_p"
 msgid "This lesson is part of the {course} course."
 msgstr "Esta lección forma parte del curso {course}."
+
+#: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-plan-day.tsx
+#: src/components/catalog/course-plan-window.tsx
+msgctxt "TEMmOs"
+msgid "Example plan"
+msgstr "Plan de ejemplo"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-plan-day.tsx
 #: src/components/catalog/course-plan-window.tsx
@@ -3502,11 +3507,6 @@ msgstr "Eso abarca todos los temas del examen del curso en profundidad."
 msgctxt "YTiAat"
 msgid "<big>{time}</big> of study"
 msgstr "<big>{time}</big> de estudio"
-
-#: src/components/catalog/course-plan-window.tsx
-msgctxt "TEMmOs"
-msgid "Example plan"
-msgstr "Plan de ejemplo"
 
 #: src/components/catalog/first-question.tsx
 msgctxt "xpsuUj"
