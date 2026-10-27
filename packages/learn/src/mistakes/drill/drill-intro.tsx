@@ -66,9 +66,9 @@ function StartButton({ onStart }: { onStart: () => void }) {
 }
 
 /**
- * A content gap's idea, back before its questions, on a screen of its own: what the drill is for,
- * the lesson's name as the title, its ideas as one flat numbered list, the whole lesson a tap away,
- * and one button (or Enter) to start at the end of the column.
+ * A content gap's idea, back before its questions, on a screen of its own: the lesson's name as the
+ * title with what the drill is for under it, its ideas as one flat numbered list, the whole lesson
+ * a tap away, and one button (or Enter) to start at the end of the column.
  */
 function IdeaScreen({
   drill,
@@ -88,8 +88,8 @@ function IdeaScreen({
       <div className="flex flex-1 flex-col">
         <section className="flex flex-col items-start gap-5">
           <div className="flex flex-col gap-1.5">
-            <p className="text-label">{drillLine(drill)}</p>
             <h2 className="text-title">{lesson.title}</h2>
+            <p className="text-muted-foreground text-balance">{drillLine(drill)}</p>
           </div>
 
           <ol className="flex w-full flex-col leading-relaxed [&>li+li]:border-t">
@@ -97,7 +97,7 @@ function IdeaScreen({
               <li className="flex gap-3 py-2.75" key={idea}>
                 <span
                   aria-hidden="true"
-                  className="text-muted-foreground w-4 shrink-0 font-mono text-sm leading-relaxed tabular-nums"
+                  className="text-faint w-4 shrink-0 font-mono text-sm leading-relaxed tabular-nums"
                 >
                   {index + 1}
                 </span>

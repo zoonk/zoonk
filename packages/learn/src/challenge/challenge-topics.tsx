@@ -10,6 +10,7 @@ import {
   ListRowTitle,
   ListRowTrailing,
 } from "../_components/list-group";
+import { PageSectionTitle } from "../_components/page";
 import { TaskAsideContent } from "../_components/task-layout";
 import { useChallengeScreen } from "./challenge-context";
 
@@ -68,7 +69,7 @@ export function ChallengeTopics() {
 
   return (
     <section className="flex flex-col gap-2">
-      <h3 className="text-label lg:sr-only">{title}</h3>
+      <PageSectionTitle className="lg:sr-only">{title}</PageSectionTitle>
       <ListGroup>
         {rows.map((row) => (
           <ListRow key={`${row.subject ?? ""}:${row.topics.join(",")}`}>

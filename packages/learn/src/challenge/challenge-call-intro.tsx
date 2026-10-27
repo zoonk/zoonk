@@ -2,7 +2,7 @@
 
 import { type ChallengeCall } from "@zoonk/core/checkpoints/challenge-contract";
 import { useExtracted } from "next-intl";
-import { SectionLabel } from "../_components/section-label";
+import { PageSectionTitle } from "../_components/page";
 import { StepCard } from "../_components/step-card";
 import { TaskAsideContent } from "../_components/task-layout";
 import { TaskMeta } from "../_components/task-meta";
@@ -26,7 +26,7 @@ function CallGoals({ call }: { call: ChallengeCall }) {
 
   return (
     <TaskAsideContent className="flex w-full flex-col gap-1">
-      <SectionLabel className="lg:sr-only">{t("What to get across")}</SectionLabel>
+      <PageSectionTitle className="lg:sr-only">{t("What to get across")}</PageSectionTitle>
       <ChecklistRows>
         {call.goals.map((goal) => (
           <ChecklistRow

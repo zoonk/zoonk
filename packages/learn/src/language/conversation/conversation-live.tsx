@@ -9,7 +9,7 @@ import { ClockIcon, LightbulbIcon, SendIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { LIST_GROUP_CLASS } from "../../_components/list-group";
-import { SectionLabel } from "../../_components/section-label";
+import { PageSectionTitle } from "../../_components/page";
 import { TaskHeaderTitle } from "../../_components/task-header";
 import { formatClock } from "../../_utils/clock";
 import { TaskFrame } from "../../shell/task-frame";
@@ -109,7 +109,7 @@ function Phrases({ conversation }: { conversation: LanguageConversationView }) {
 
   return (
     <div className="flex flex-col gap-2">
-      <SectionLabel id={titleId}>{t("Phrases you can use")}</SectionLabel>
+      <PageSectionTitle id={titleId}>{t("Phrases you can use")}</PageSectionTitle>
       <ul aria-labelledby={titleId} className={LIST_GROUP_CLASS}>
         {conversation.hints.map((hint) => (
           <li

@@ -3,7 +3,7 @@
 import { type LanguageConversationView } from "@zoonk/core/language/conversations/contract";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
-import { SectionLabel } from "../../_components/section-label";
+import { PageSectionTitle } from "../../_components/page";
 import { ChecklistRow, ChecklistRows } from "../checklist-rows";
 import { SpeakingCard } from "../exam-speaking/speaking-card";
 
@@ -51,7 +51,7 @@ export function CallObjectives({
     >
       {titled && (
         <div className="flex items-center justify-between gap-3">
-          <SectionLabel id={titleId}>{t("Goals of the call")}</SectionLabel>
+          <PageSectionTitle id={titleId}>{t("Goals of the call")}</PageSectionTitle>
           <span
             aria-hidden="true"
             className="text-muted-foreground font-mono text-xs tabular-nums"

@@ -2,6 +2,7 @@
 
 import { type EssayView } from "@zoonk/core/exams/essays/contract";
 import { useExtracted } from "next-intl";
+import { PageSectionTitle } from "../_components/page";
 import { TaskAsideContent } from "../_components/task-layout";
 import { ItemStem, ItemText, QUESTION_TEXT_CLASS } from "../questions/item-text";
 import { useEssayScreen } from "./essay-context";
@@ -53,7 +54,7 @@ export function EssayTexts({ criteria, texts }: { criteria: boolean; texts: stri
     <TaskAsideContent className="flex flex-col gap-6" data-slot="essay-texts">
       {texts && (
         <section className="flex flex-col gap-3">
-          <h2 className="text-label lg:group-data-aside/task:sr-only">{label}</h2>
+          <PageSectionTitle className="lg:group-data-aside/task:sr-only">{label}</PageSectionTitle>
           <ItemText
             className="border-border border-l-2 pl-4 text-sm leading-relaxed lg:group-data-aside/task:border-l-0 lg:group-data-aside/task:pl-0"
             text={texts}

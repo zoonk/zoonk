@@ -4,6 +4,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { LightbulbIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Callout } from "../_components/callout";
+import { PageSectionTitle } from "../_components/page";
 import { useEssayScreen } from "./essay-context";
 import { CriteriaRows } from "./essay-feedback";
 import { useCriterionName } from "./essay-labels";
@@ -23,7 +24,7 @@ export function CriteriaInView() {
 
   return (
     <section className="hidden flex-col gap-1 lg:flex">
-      <h2 className="text-label">{t("Your last grade")}</h2>
+      <PageSectionTitle>{t("Your last grade")}</PageSectionTitle>
       <CriteriaRows grade={grade} rubric={essay.rubric} />
     </section>
   );

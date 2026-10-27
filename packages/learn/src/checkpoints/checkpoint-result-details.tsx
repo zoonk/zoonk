@@ -9,17 +9,18 @@ import {
   SearchCheckIcon,
 } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
+import { PageSectionTitle } from "../_components/page";
 import { StepRow, StepRows } from "../_components/step-card";
 import { getOwnBrainPower } from "../session/block-brain-power";
 import { useCheckpointScreen } from "./checkpoint-context";
 import { phaseNumber, usePhaseLabel } from "./checkpoint-labels";
 import { useIsWon, useRetry } from "./use-checkpoint-outcome";
 
-/** A block of the result's details: its label, then its flat rows. */
+/** A block of the result's details: its sentence-case title, then its flat rows. */
 function DetailsSection({ children, title }: { children: React.ReactNode; title: string }) {
   return (
     <section className="flex w-full flex-col gap-1">
-      <h2 className="text-label">{title}</h2>
+      <PageSectionTitle>{title}</PageSectionTitle>
       <StepRows>{children}</StepRows>
     </section>
   );

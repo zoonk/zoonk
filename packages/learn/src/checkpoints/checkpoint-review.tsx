@@ -9,6 +9,7 @@ import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { AnswerOption, AnswerOptionGroup } from "../_components/answer-option";
 import { DetailsDrawer } from "../_components/details-drawer";
+import { PageSectionTitle } from "../_components/page";
 import { ContentVoteMenu } from "../feedback/content-vote-menu";
 import { ItemSetStimulus } from "../questions/item-set-stimulus";
 import { ItemLine, ItemStem, ItemText } from "../questions/item-text";
@@ -192,9 +193,7 @@ export function CheckpointReviewSection() {
 
   return (
     <section aria-labelledby={titleId} className="flex w-full flex-col gap-3">
-      <h2 className="text-label" id={titleId}>
-        {t("The answers")}
-      </h2>
+      <PageSectionTitle id={titleId}>{t("The answers")}</PageSectionTitle>
       <ReviewList />
     </section>
   );

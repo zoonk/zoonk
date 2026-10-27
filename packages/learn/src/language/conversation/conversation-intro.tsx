@@ -5,8 +5,7 @@ import { type LanguageConversationIntro } from "@zoonk/core/language/conversatio
 import { PhoneIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode, useEffect, useRef, useState } from "react";
-import { PageEyebrow } from "../../_components/page";
-import { SectionLabel } from "../../_components/section-label";
+import { PageEyebrow, PageSectionTitle } from "../../_components/page";
 import { StudyTimeUsedUpActions, StudyTimeUsedUpLine } from "../../_components/study-time-used-up";
 import { TaskActions, TaskAsideContent } from "../../_components/task-layout";
 import { useFormatDuration } from "../../_utils/time-format";
@@ -269,9 +268,9 @@ function CallIntro({
         className="flex w-full flex-col gap-1"
         role="region"
       >
-        <SectionLabel className="lg:sr-only" id="call-goals">
+        <PageSectionTitle className="lg:sr-only" id="call-goals">
           {t("What to get across")}
-        </SectionLabel>
+        </PageSectionTitle>
         <ChecklistRows>
           {conversation.objectives.map((objective) => (
             <ChecklistRow

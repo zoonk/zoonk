@@ -1,6 +1,6 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { LIST_GROUP_CLASS } from "../../_components/list-group";
-import { SectionLabel } from "../../_components/section-label";
+import { PageSectionTitle } from "../../_components/page";
 
 /**
  * A few facts of a call's result, one per row, flat with a hairline between them and as wide as
@@ -42,7 +42,7 @@ export function ResultGroup({
 }) {
   return (
     <section aria-labelledby={id} className="flex w-full flex-col gap-1 text-left">
-      <SectionLabel id={id}>{label}</SectionLabel>
+      <PageSectionTitle id={id}>{label}</PageSectionTitle>
       {children}
     </section>
   );

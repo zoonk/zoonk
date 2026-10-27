@@ -6,8 +6,7 @@ import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { DiffLines } from "../../_components/diff-lines";
 import { LIST_GROUP_CLASS } from "../../_components/list-group";
-import { PageEyebrow, PageTitle } from "../../_components/page";
-import { SectionLabel } from "../../_components/section-label";
+import { PageEyebrow, PageSectionTitle, PageTitle } from "../../_components/page";
 
 type PatternExample = MistakePatternView["examples"][number];
 
@@ -89,7 +88,7 @@ export function PatternSlip({ pattern }: { pattern: MistakePatternView }) {
 
   return (
     <section aria-labelledby={titleId} className="flex flex-col gap-2">
-      <SectionLabel id={titleId}>{t("Where you slipped")}</SectionLabel>
+      <PageSectionTitle id={titleId}>{t("Where you slipped")}</PageSectionTitle>
       <DiffLines
         labels={{ added: t("Correct version"), removed: t("You said") }}
         lines={[
@@ -110,7 +109,7 @@ function AlsoCameUp({ examples }: { examples: PatternExample[] }) {
 
   return (
     <section aria-labelledby="pattern-also" className="flex flex-col gap-2">
-      <SectionLabel id="pattern-also">{t("Also came up in")}</SectionLabel>
+      <PageSectionTitle id="pattern-also">{t("Also came up in")}</PageSectionTitle>
       <ul className="text-muted-foreground flex flex-col gap-1.5 text-sm">
         {examples.map((example) => {
           const Icon = example.format.startsWith("spoken") ? MicIcon : PenLineIcon;

@@ -7,6 +7,7 @@ import { CheckIcon, CircleIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { DetailsDrawer } from "../_components/details-drawer";
 import { Meter, MeterFill } from "../_components/meter";
+import { PageSectionTitle } from "../_components/page";
 import {
   StepCard,
   StepDetail,
@@ -41,9 +42,9 @@ function hasMissingElements(grade: Grade): boolean {
 
 type Criterion = Grade["criteria"][number];
 
-/** A number in a sentence, in the mono face like every number. */
-function renderMono(chunks: React.ReactNode) {
-  return <span className="font-mono tabular-nums">{chunks}</span>;
+/** A number in a sentence keeps the sentence's face, with figures that line up. */
+function renderNumber(chunks: React.ReactNode) {
+  return <span className="tabular-nums">{chunks}</span>;
 }
 
 /**
@@ -139,7 +140,7 @@ export function EssayGradeCard({ grade, rubric }: { grade: Grade; rubric: string
         <StepDetail className="text-sm">
           {t.rich("Estimated score, from <mono>0</mono> to <mono>{max}</mono>", {
             max: formatScore(grade.total.maxScore),
-            mono: renderMono,
+            mono: renderNumber,
           })}
         </StepDetail>
       </StepHeader>
@@ -217,7 +218,7 @@ function ProposalElements({ grade }: { grade: Grade }) {
 
   return (
     <section className="flex w-full flex-col gap-1">
-      <h2 className="text-label">{t("The five elements of the proposal")}</h2>
+      <PageSectionTitle>{t("The five elements of the proposal")}</PageSectionTitle>
       <StepRows>
         {ELEMENTS.map((key) => (
           <StepRow key={key}>
