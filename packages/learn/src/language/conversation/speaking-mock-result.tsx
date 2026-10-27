@@ -5,11 +5,11 @@ import {
   type SpeakingMockExam,
   type SpeakingMockFeedback,
 } from "@zoonk/core/language/conversations/contract";
-import { Badge } from "@zoonk/ui/components/badge";
 import { Button } from "@zoonk/ui/components/button";
 import { LightbulbIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { useTransition } from "react";
+import { CHIP_CLASS } from "../../_components/chip";
 import { DetailsDrawer } from "../../_components/details-drawer";
 import {
   StepCard,
@@ -72,7 +72,7 @@ function BandStep({
     <>
       <StepCard>
         <StepHeader>
-          <StepTitle className="flex flex-col items-center gap-1.5">
+          <StepTitle className="flex flex-col items-start gap-1.5">
             <StepTitleLabel>{title}</StepTitleLabel>
             <StepTitleNumber>{range(feedback.overall)}</StepTitleNumber>
           </StepTitle>
@@ -100,7 +100,7 @@ function CriteriaStep({ feedback }: { feedback: SpeakingMockFeedback }) {
             <span className="flex min-w-0 items-center gap-2 font-medium">
               {criterionName(criterion.criterion)}
               {criterion.criterion === feedback.focus && (
-                <Badge variant="outline">{t("Focus")}</Badge>
+                <span className={CHIP_CLASS}>{t("Focus")}</span>
               )}
             </span>
             <span className="shrink-0 font-mono font-medium whitespace-nowrap tabular-nums">

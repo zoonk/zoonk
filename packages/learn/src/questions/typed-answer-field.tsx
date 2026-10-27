@@ -48,7 +48,7 @@ export function TypedAnswerField({
       </label>
 
       <InputGroup
-        className="bg-background data-[result=correct]:border-success data-[result=wrong]:border-destructive h-14 rounded-xl"
+        className="bg-background data-[result=correct]:border-success data-[result=wrong]:border-destructive h-14 rounded-lg"
         data-result={result ?? undefined}
       >
         <InputGroupInput

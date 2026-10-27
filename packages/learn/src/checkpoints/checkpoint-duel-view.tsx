@@ -182,7 +182,15 @@ function DuelAction() {
   );
 }
 
-/** What winning (or finishing the week's challenge) is worth, as one row: "+300 · phase 1 done". */
+/** A prize's Brain Power, in its violet. */
+function reward(chunks: React.ReactNode) {
+  return <span className="text-brain-text">{chunks}</span>;
+}
+
+/**
+ * What winning (or finishing the week's challenge) is worth, as one row: "+300 · phase 1 done",
+ * its Brain Power in violet, as every reward amount reads, offered or earned.
+ */
 function PrizeRow() {
   const t = useExtracted();
   const format = useFormatter();
@@ -193,8 +201,8 @@ function PrizeRow() {
 
   const value =
     phase && checkpoint.reward.phaseComplete
-      ? t("+{points} · phase {phase} done", { phase, points })
-      : t("+{points}", { points });
+      ? t.rich("<reward>+{points}</reward> · phase {phase} done", { phase, points, reward })
+      : reward(t("+{points}", { points }));
 
   return (
     <StepRows>

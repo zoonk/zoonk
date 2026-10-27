@@ -3,7 +3,7 @@
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { KindDot } from "../_components/kind-tile";
+import { KindMark } from "../_components/kind-tile";
 import {
   ListGroup,
   ListRow,
@@ -53,7 +53,7 @@ export function MockNextRow({ count }: { count: number }) {
     <ListGroup>
       <ListRow>
         <ListRowLeading>
-          <KindDot kind="mistakes" />
+          <KindMark kind="mistakes" />
         </ListRowLeading>
         <ListRowContent>
           <ListRowTitle>{title(count)}</ListRowTitle>

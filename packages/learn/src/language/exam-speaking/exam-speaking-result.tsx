@@ -6,12 +6,12 @@ import {
   type ExamTaskView,
   type SpeakingCriterionView,
 } from "@zoonk/core/language/exam-speaking/contract";
-import { Badge } from "@zoonk/ui/components/badge";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { LightbulbIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useTransition } from "react";
+import { CHIP_CLASS } from "../../_components/chip";
 import {
   StepCard,
   StepDetail,
@@ -128,7 +128,7 @@ function CriterionEstimate({
       >
         {text}
       </span>
-      {focus && <Badge variant="outline">{t("Focus")}</Badge>}
+      {focus && <span className={CHIP_CLASS}>{t("Focus")}</span>}
     </span>
   );
 }

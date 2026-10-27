@@ -143,7 +143,7 @@ export function NumericAnswerField({
       </label>
 
       <InputGroup
-        className="bg-background data-[result=correct]:border-success data-[result=wrong]:border-destructive h-14 rounded-xl"
+        className="bg-background data-[result=correct]:border-success data-[result=wrong]:border-destructive h-14 rounded-lg"
         data-result={result ?? undefined}
       >
         {unit?.position === "prefix" && <UnitAddon id={unitId} unit={unit} />}

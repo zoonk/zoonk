@@ -36,10 +36,7 @@ export function TurnaroundChart({ turnaround }: { turnaround: Turnaround }) {
     .join(" ");
 
   return (
-    <figure
-      className="ring-border flex w-full flex-col gap-2 rounded-lg p-4 ring-1 ring-inset"
-      data-slot="turnaround-chart"
-    >
+    <figure className="flex w-full flex-col gap-2" data-slot="turnaround-chart">
       <svg
         aria-hidden="true"
         className="h-auto w-full overflow-visible"
