@@ -7,10 +7,10 @@ export const MOMENTS: readonly Moment[] = [
   {
     id: "task-end",
     summary:
-      "The end of any work that earns Brain Power or Energy (a lesson in the session or on its own, a session's block, a notebook practice, a drill, a round, a call, a test, a quick explanation): its title says what happened, then what it earned as readouts (the score in the text color, Brain Power in violet), or as tiles where it has several numbers (a practice, a call, a quick explanation), the facts on one mono line, then what it did to the day and what's next. While it saves, the title is already in place.",
+      'The end of any work that earns Brain Power or Energy (a lesson in the session or on its own, a session\'s block, a notebook practice, a drill, a round, a quick explanation) opens one way: its title says what happened ("Practice done"), with a quiet line under it where it has one, then what it earned as readouts (the score in the text color, Brain Power in violet) and its other facts on one mono line ("2 mistakes fixed"), then what it did to the day and what\'s next. While it saves, the title is already in place, a quiet shimmering line sits where the readouts land and the main action waits in the bar; an end whose last button sends the work (a drill, a round) keeps that button busy until it opens. A result told in steps (a call, a mock, a test) leads with its own anchor and puts its facts on tiles, Brain Power\'s number violet there too.',
     title: "A task's end",
     where:
-      "`MomentReadouts` (with `BrainPowerReadout`) or `StatTile`s, then `DayMoment`; `StudyMoment`, the lesson's `LessonCompletionMoment`, `PracticeDone`, `PatternDrillResult`, and `PendingMoment` while it saves.",
+      "`MomentHeader` with `MomentReadouts` (`BrainPowerReadout`), then `DayMoment`; `PendingMoment` (`MomentSaving`, `PendingMainAction`) while it saves. `StudyMoment`, the lesson's `LessonCompletionMoment`, `PracticeDone`, `PatternDrillResult`, the round's result and `ExplainEnding` all use them.",
   },
   {
     id: "mission",
@@ -38,7 +38,7 @@ export const MOMENTS: readonly Moment[] = [
   {
     id: "ceremony",
     summary:
-      "A new belt, the buddy's next stage or new glasses: the loudest moment, full screen and before the result it crowned, wherever the work earned it (a block, a lesson on its own, a mock, a duel, a practice, a drill, a round, a call, a test). The buddy big, wearing what changed, a title, one line and one action (new glasses add \"Not now\"). Once it closes, the result's title takes the focus and its moment plays. A badge has no ceremony: the challenge's result shows it, and the result shows at once.",
+      "A new belt, the buddy's next stage or new glasses: the loudest moment, full screen and before the result it crowned, wherever the work earned it (a block, a lesson on its own, a mock, a duel, a practice, a drill, a round, a call, a test). The buddy big, wearing what changed, a title, one line and one action (new glasses add \"Not now\"). As it closes, the result is drawn under it and its moment plays, so the ceremony fades out over the result, never over an empty screen; once it's gone, the result's title takes the focus. A badge has no ceremony: the challenge's result shows it, and the result shows at once.",
     title: "A milestone's ceremony",
     where:
       "`MilestoneCeremony`, put first by `MomentAfterCeremony` or a step's `moment` (`getCeremonyMoment`); the result's title carries `MOMENT_TITLE_PROPS`.",

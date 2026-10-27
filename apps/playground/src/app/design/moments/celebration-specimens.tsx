@@ -4,6 +4,7 @@ import { type CeremonyMilestone, MilestoneCeremony } from "@zoonk/learn/ceremony
 import { MomentReadouts } from "@zoonk/learn/moment-readouts";
 import { LearnProvider } from "@zoonk/learn/provider";
 import { DayMoment, StepWithDayMoment } from "@zoonk/learn/session/day-moment";
+import { MomentSaving } from "@zoonk/learn/session/moment-header";
 import { StatTile, StatTiles } from "@zoonk/learn/stat-tile";
 import {
   StepCard,
@@ -14,8 +15,7 @@ import {
 } from "@zoonk/learn/step-card";
 import { TricksterArt } from "@zoonk/learn/trickster-art";
 import { Button } from "@zoonk/ui/components/button";
-import { CountUp } from "@zoonk/ui/components/count-up";
-import { BrainIcon, CheckCheckIcon, CheckIcon, MinusIcon, TargetIcon, XIcon } from "lucide-react";
+import { CheckIcon, MinusIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 
 type DayMomentProps = React.ComponentProps<typeof DayMoment>;
@@ -115,23 +115,22 @@ function Variant({ children }: { children: React.ReactNode }) {
 }
 
 /**
- * A notebook practice's end, a result with several numbers: they're tiles (Brain Power's counting
- * up in violet), then what the run did to the day, as `PracticeDone` lays them out.
+ * A notebook practice's end, as `PracticeDone` lays it out: its title with the line a run with a
+ * miss has under it, right answers and Brain Power as readouts with the mistakes it fixed on the
+ * mono line, then what the run did to the day.
  */
 function PracticeEnd() {
   return (
     <div className="max-w-column flex flex-col items-start gap-6">
-      <p className="text-title">Practice done</p>
-      <StatTiles className="sm:grid-cols-3 sm:[&>li:last-child:nth-child(odd)]:col-span-1">
-        <StatTile icon={<CheckCheckIcon />} label="Mistakes fixed" value={2} />
-        <StatTile icon={<TargetIcon />} label="Right answers" tone="success" value="4/5" />
-        <StatTile
-          icon={<BrainIcon />}
-          label="Brain Power"
-          tone="brain"
-          value={<CountUp format={(points) => `+${points}`} value={24} />}
-        />
-      </StatTiles>
+      <StepHeader>
+        <p className="text-title">Practice done</p>
+        <StepDetail>The rest come back another day, when they stick better.</StepDetail>
+      </StepHeader>
+      <MomentReadouts
+        brainPower={24}
+        facts={["2 mistakes fixed"]}
+        score={{ answered: 5, correct: 4 }}
+      />
       <DayMoment
         buddy={BUDDY}
         ceremony={null}
@@ -143,9 +142,10 @@ function PracticeEnd() {
 }
 
 /**
- * A task's end: a lesson's readouts, and a notebook practice's tiles with what it did to the day.
- * Every result that earns Brain Power or Energy ends this way (a block, a lesson on its own, a
- * drill, a round, a call, a test, a quick explanation).
+ * A task's end: a lesson's readouts, a notebook practice's with a line under its title and what it
+ * did to the day, and the end while it saves (`PendingMoment`: the title in place, the line where
+ * the readouts land). Every result that earns Brain Power or Energy ends
+ * this way (a block, a lesson on its own, a drill, a round, a quick explanation).
  */
 export function TaskEndSpecimen() {
   return (
@@ -153,8 +153,15 @@ export function TaskEndSpecimen() {
       <div className="flex flex-col gap-10">
         <BlockEnd title="Lesson complete" />
         <div className="flex flex-col gap-3">
-          <Variant>With several numbers, as tiles</Variant>
+          <Variant>With a line under its title and a fact on the mono line</Variant>
           <PracticeEnd />
+        </div>
+        <div className="flex flex-col gap-3">
+          <Variant>While it saves</Variant>
+          <div className="max-w-column flex flex-col items-start gap-6">
+            <p className="text-title">Lesson complete</p>
+            <MomentSaving />
+          </div>
         </div>
       </div>
     </LearnProvider>
