@@ -96,7 +96,6 @@ export function useCallClock({
   const [startedAt, setStartedAt] = useState<number | null>(null);
   const [length, setLength] = useState<CallLength | null>(null);
   const [now, setNow] = useState(0);
-  const [wrappingUp, setWrappingUp] = useState(false);
   const wrappedUp = useRef(false);
   const lastLearnerAt = useRef(0);
   const nudged = useRef(false);
@@ -141,7 +140,6 @@ export function useCallClock({
 
       if (!wrappedUp.current && tick >= endsAt - WRAP_UP_SECONDS * MS_PER_SECOND) {
         wrappedUp.current = true;
-        setWrappingUp(true);
         sendLiveCallCue({ content: LIVE_CALL_WRAP_UP_CUE, session });
       }
 
@@ -159,6 +157,7 @@ export function useCallClock({
   }, [cues, endsAt, hangUp, session, startedAt]);
 
   const elapsedSeconds = startedAt === null ? 0 : Math.floor((now - startedAt) / MS_PER_SECOND);
+  const wrappingUp = endsAt !== null && now >= endsAt - WRAP_UP_SECONDS * MS_PER_SECOND;
 
   return {
     elapsedSeconds,
