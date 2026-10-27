@@ -7,8 +7,7 @@ import { press } from "../_test-utils/activity-player";
 import { render } from "../_test-utils/render";
 import { TUTOR_ANSWER, stubTutorApi } from "../_test-utils/tutor-api";
 import { buildTutor } from "../_test-utils/tutor-config";
-import { ItemTutor } from "../questions/item-tutor";
-import { TutorAskButton, TutorDock } from "../questions/tutor-dock";
+import { getQuestionTutor } from "../questions/item-tutor";
 
 /**
  * The buddy in a run of questions (a session's block, mistakes practice), docked at the foot of
@@ -16,7 +15,8 @@ import { TutorAskButton, TutorDock } from "../questions/tutor-dock";
  * (`stubTutorApi`).
  */
 
-const TUTOR = buildTutor();
+/** The buddy as a session's block and mistakes practice get it from their host. */
+const TUTOR = getQuestionTutor(buildTutor());
 
 /** A question of the item bank, as a run shows it. */
 type RunQuestion = Pick<TutorItem, "itemId" | "text">;
@@ -45,29 +45,28 @@ function QuestionRun({ material, questions }: { material?: string; questions: Ru
     setAnswered(false);
   };
 
-  return (
-    <ItemTutor item={item} tutor={TUTOR}>
-      <div className={root.className} data-aside={root["data-aside"]}>
-        {material && <TaskAsideContent>{material}</TaskAsideContent>}
-        <p>{question?.text}</p>
+  return TUTOR.wrap(
+    item,
+    <div className={root.className} data-aside={root["data-aside"]}>
+      {material && <TaskAsideContent>{material}</TaskAsideContent>}
+      <p>{question?.text}</p>
 
-        {answered ? (
-          <button onClick={next} type="button">
-            Continue
-          </button>
-        ) : (
-          <button onClick={() => setAnswered(true)} type="button">
-            Check
-          </button>
-        )}
+      {answered ? (
+        <button onClick={next} type="button">
+          Continue
+        </button>
+      ) : (
+        <button onClick={() => setAnswered(true)} type="button">
+          Check
+        </button>
+      )}
 
-        <TutorAskButton />
+      {TUTOR.button}
 
-        <TaskAside label="About this question">
-          <TutorDock />
-        </TaskAside>
-      </div>
-    </ItemTutor>
+      <TaskAside label="About this question" meta={TUTOR.asideMeta(null)}>
+        {TUTOR.aside}
+      </TaskAside>
+    </div>,
   );
 }
 
@@ -237,6 +236,21 @@ describe("the buddy beside a run of questions", () => {
     await page.getByRole("button", { name: "Check" }).click();
     await expect.element(conversation.getByText("8 is even: it ends in 8.")).toBeVisible();
     await expect.element(conversation.getByText("About your answer")).toBeVisible();
+  });
+
+  // Back from the conversation, the aside's header leads to it again, as a lesson's screen does.
+  it("leads back to the question's conversation from the aside's header", async () => {
+    stubTutorApi({});
+    render(<QuestionRun questions={[EVEN]} />);
+    await missAndAskWhy();
+
+    await dockedConversation().getByRole("button", { name: "Back" }).click();
+    await expect.element(dockedConversation()).not.toBeInTheDocument();
+
+    const conversationLink = runAside().getByRole("button", { name: "1 question" });
+    await expect.element(conversationLink).toBeVisible();
+    await conversationLink.click();
+    await expect.element(dockedConversation().getByText(TUTOR_ANSWER)).toBeVisible();
   });
 
   // The conversation docks over the aside's body, where a question's shared text is read: the text

@@ -244,7 +244,14 @@ export function MistakePracticeRun({
         trueFalseLabels={trueFalseLabels}
       />
 
-      {tutor && <TaskAside label={t("Help with this question")}>{asking && tutor.aside}</TaskAside>}
+      {tutor && (
+        <TaskAside
+          label={t("Help with this question")}
+          meta={asking ? tutor.asideMeta(null) : undefined}
+        >
+          {asking && tutor.aside}
+        </TaskAside>
+      )}
     </div>
   );
 

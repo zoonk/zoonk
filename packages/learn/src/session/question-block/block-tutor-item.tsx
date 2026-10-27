@@ -39,7 +39,10 @@ export function getBlockTutorItem({
   };
 }
 
-/** The block's aside with the buddy docked at its foot, when the host has one. */
+/**
+ * The block's aside with the buddy docked at its foot and the way back to its conversation on the
+ * header, when the host has one.
+ */
 export function withTutorAside({
   aside,
   tutor,
@@ -59,5 +62,6 @@ export function withTutorAside({
         {tutor.aside}
       </>
     ),
+    meta: tutor.asideMeta(aside.meta),
   };
 }

@@ -4,10 +4,7 @@ import { type TutorIdentity, useTutorIdentity } from "@zoonk/learn/tutor-identit
 import { useMemo } from "react";
 import { type LessonQuestionContext } from "../../questions/lesson-question-context";
 import { type LessonQuestionNavigation } from "../../questions/lesson-question-navigation";
-import {
-  LessonQuestionHostProvider,
-  useLessonQuestionController,
-} from "../../questions/lesson-question-provider";
+import { LessonQuestionHostProvider } from "../../questions/lesson-question-provider";
 import { TutorBuddyProvider } from "../../questions/tutor-buddy";
 import { isLanguageStep, isReadStep } from "../_utils/lesson-steps";
 import { useLessonPlayer, useLessonPlayerConfig } from "../lesson-player-context";
@@ -48,8 +45,7 @@ function isTeachingRead(step: PlayableLibraryStep | null): boolean {
 /**
  * The buddy about the screen in view, by its place in the lesson, so a question coming back at the
  * end is another visit. The aside offers two questions over its composer after a wrong answer,
- * about it, and on a reading screen nothing was asked about yet, the lesson's own (simpler,
- * deeper).
+ * about it, and on a reading screen the lesson's own (simpler, deeper).
  */
 function LessonBuddy({
   children,
@@ -61,7 +57,6 @@ function LessonBuddy({
   navigation: LessonQuestionNavigation;
 }) {
   const { screen, state } = useLessonPlayer();
-  const { questions } = useLessonQuestionController().state;
   const context = useTutorContext();
   const missed = useShowsMiss();
 
@@ -72,7 +67,7 @@ function LessonBuddy({
       missed={missed}
       navigation={navigation}
       quote={<TutorQuote />}
-      suggests={missed || (isTeachingRead(screen.step) && questions.length === 0)}
+      suggests={missed || isTeachingRead(screen.step)}
       visit={`${state.position}:${screen.step?.id ?? ""}`}
     >
       {children}

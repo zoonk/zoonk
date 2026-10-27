@@ -17,11 +17,17 @@ export type TutorItem = {
  * The learner's buddy for a run of questions, from the host (the player's tutor for a question):
  * `wrap` puts the conversation about the question in view around the run (null between questions,
  * and while asking would spoil the question, as a placement question or a timed drill's clock),
- * `button` asks beside the main action under `lg`, and `aside` docks the buddy in the aside from
- * `lg`. Opening it only reads the conversation; what the learner sends is answered.
+ * `button` asks beside the main action under `lg`, `aside` docks the buddy in the aside from `lg`,
+ * and `asideMeta` draws the aside header's quiet fact. Opening it only reads the conversation; what
+ * the learner sends is answered.
  */
 export type QuestionTutor = {
   aside: React.ReactNode;
+  /**
+   * The aside header's quiet fact: the run's own (`meta`, such as the minutes left) until the
+   * learner has asked about the question in view, then the way back to that conversation.
+   */
+  asideMeta: (meta: React.ReactNode) => React.ReactNode;
   button: React.ReactNode;
   wrap: (item: TutorItem | null, children: React.ReactNode) => React.ReactNode;
 };

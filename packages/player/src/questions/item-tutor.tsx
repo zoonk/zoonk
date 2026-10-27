@@ -1,6 +1,6 @@
 "use client";
 
-import { type TutorItem } from "@zoonk/learn/question-tutor";
+import { type QuestionTutor, type TutorItem } from "@zoonk/learn/question-tutor";
 import { useTaskAsideShown } from "@zoonk/learn/task-header";
 import { type TutorIdentity, useTutorIdentity } from "@zoonk/learn/tutor-identity";
 import { useExtracted } from "next-intl";
@@ -8,11 +8,9 @@ import { useMemo } from "react";
 import { type LessonTutorConfig } from "../lesson/tutor/lesson-tutor-context";
 import { type LessonQuestionContext } from "./lesson-question-context";
 import { type LessonQuestionNavigation } from "./lesson-question-navigation";
-import {
-  LessonQuestionHostProvider,
-  useLessonQuestionController,
-} from "./lesson-question-provider";
+import { LessonQuestionHostProvider } from "./lesson-question-provider";
 import { TutorBuddyProvider } from "./tutor-buddy";
+import { TutorAskButton, TutorConversationLink, TutorDock } from "./tutor-dock";
 
 /**
  * The question asked about, quoted as the drawer's first line, so it stays in view: "About “…”",
@@ -36,8 +34,7 @@ function ItemQuote({ item }: { item: TutorItem }) {
 
 /**
  * The buddy about the question in view, by its place in the run, so a question asked again later
- * opens fresh. After a missed answer, before anything was asked about it, the aside offers two
- * questions to send in one tap.
+ * opens fresh. After a missed answer the aside offers two questions to send in one tap.
  */
 function ItemBuddy({
   children,
@@ -52,7 +49,6 @@ function ItemBuddy({
   item: TutorItem | null;
   navigation: LessonQuestionNavigation;
 }) {
-  const { questions } = useLessonQuestionController().state;
   const missed = item?.missed ?? false;
 
   return (
@@ -62,7 +58,7 @@ function ItemBuddy({
       missed={missed}
       navigation={navigation}
       quote={item && <ItemQuote item={item} />}
-      suggests={missed && questions.length === 0}
+      suggests={missed}
       visit={item ? `${item.position}:${item.itemId}` : ""}
     >
       {children}
@@ -122,4 +118,22 @@ export function ItemTutor({
       </ItemBuddy>
     </LessonQuestionHostProvider>
   );
+}
+
+/**
+ * The buddy for a run of questions as its host places it (`QuestionTutor`): around the run, docked
+ * at the foot of its aside from `lg` with the way back to its conversation on the aside's header,
+ * and asked beside its main action under `lg`.
+ */
+export function getQuestionTutor(tutor: LessonTutorConfig): QuestionTutor {
+  return {
+    aside: <TutorDock />,
+    asideMeta: (meta) => <TutorConversationLink fallback={meta} />,
+    button: <TutorAskButton />,
+    wrap: (item, children) => (
+      <ItemTutor item={item} tutor={tutor}>
+        {children}
+      </ItemTutor>
+    ),
+  };
 }

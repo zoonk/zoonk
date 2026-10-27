@@ -1473,6 +1473,26 @@ describe("docked beside the lesson", () => {
     });
   });
 
+  // Once the learner has asked about the screen, a miss leaves them to that conversation, as a
+  // session's question does.
+  it("offers no suggested questions after a miss once the learner asked about the screen", async () => {
+    const { lesson } = lessonWithTutor();
+    playLesson({ lesson });
+
+    await asideComposer().fill("Why does the cloud show chances?");
+    await press("Enter");
+    await expect.element(dockedConversation().getByText(TUTOR_ANSWER)).toBeVisible();
+    await dockedConversation().getByRole("button", { name: "From the lesson" }).click();
+
+    await page.getByRole("radio", { name: "The electron's size" }).click();
+    await page.getByRole("button", { name: /^Check/u }).click();
+    await expect.element(asideComposer()).toHaveAccessibleName("Ask Pip about your answer");
+
+    await expect
+      .element(lessonAside().getByRole("group", { name: "Suggested questions" }))
+      .not.toBeInTheDocument();
+  });
+
   // Maya asked Zu about a miss; when the question came back at the end, the conversation came
   // back docked with the worked answer in it, and its composer took the number keys she answered
   // with.

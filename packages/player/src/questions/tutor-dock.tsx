@@ -5,7 +5,7 @@ import { TASK_ASIDE_PLACE_CLASS } from "@zoonk/learn/task-layout";
 import { Button } from "@zoonk/ui/components/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@zoonk/ui/components/tooltip";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronLeftIcon, MessageCircleQuestionIcon } from "lucide-react";
+import { ChevronLeftIcon, ChevronRightIcon, MessageCircleQuestionIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useMemo, useRef } from "react";
 import { getLessonFocusTarget } from "../lesson/_utils/lesson-focus";
@@ -238,6 +238,37 @@ function Dock({ buddy }: { buddy: TutorBuddy }) {
 export function TutorDock() {
   const buddy = useTutorBuddy();
   return buddy ? <Dock buddy={buddy} /> : null;
+}
+
+function ConversationLink({ buddy, fallback }: { buddy: TutorBuddy; fallback: React.ReactNode }) {
+  const t = useExtracted();
+  const count = useLessonQuestionController().state.questions.length;
+
+  if (count === 0) {
+    return fallback;
+  }
+
+  return (
+    <button
+      className="text-muted-foreground hover:text-foreground focus-visible:outline-ring hit-area relative -mr-1 inline-flex items-center gap-0.5 rounded-md px-1 font-sans text-xs font-medium transition-colors outline-none focus-visible:outline-2 focus-visible:outline-solid"
+      onClick={() => buddy.open()}
+      type="button"
+    >
+      {t("{count, plural, one {# question} other {# questions}}", { count })}
+      <ChevronRightIcon aria-hidden="true" className="size-3.5" />
+    </button>
+  );
+}
+
+/**
+ * The way back to the conversation about where the learner is (a lesson's screen, a run's
+ * question), on the task aside's header once they have asked about it: how many questions it
+ * holds. Until then, and without a buddy, the header's own quiet fact (`fallback`: the screen's
+ * number, the minutes left) shows there.
+ */
+export function TutorConversationLink({ fallback }: { fallback: React.ReactNode }) {
+  const buddy = useTutorBuddy();
+  return buddy ? <ConversationLink buddy={buddy} fallback={fallback} /> : fallback;
 }
 
 /**

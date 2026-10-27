@@ -49,7 +49,11 @@ export type TutorBuddy = {
    * one of a lesson's suggestions ready to send, in the words its chip reads.
    */
   open: (suggestion?: LessonScreenSuggestion) => void;
-  /** The aside offers two of the buddy's suggested questions over its composer. */
+  /**
+   * The aside offers two of the buddy's suggested questions over its composer: where the host
+   * offers them (after a miss, on a lesson's reading screen), until the learner has asked about
+   * where they are, when the conversation is theirs to go back to instead.
+   */
   suggests: boolean;
 };
 
@@ -133,7 +137,7 @@ export function TutorBuddyProvider({
           chooseSuggestion({ question: offered.label, suggestion: offered.id });
         }
       },
-      suggests,
+      suggests: suggests && state.questions.length === 0,
     };
   }, [
     askAbout,
@@ -149,6 +153,7 @@ export function TutorBuddyProvider({
     navigation,
     open,
     state.context,
+    state.questions.length,
     suggestions,
     suggests,
     visit,

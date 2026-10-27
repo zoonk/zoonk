@@ -3,8 +3,7 @@
 import { getTutorConfig } from "@/lib/learn/tutor-config";
 import { useTutorCards } from "@/lib/learn/use-tutor-cards";
 import { type QuestionTutor } from "@zoonk/learn/question-tutor";
-import { TutorAskButton, TutorDock } from "@zoonk/player/tutor/dock";
-import { ItemTutor } from "@zoonk/player/tutor/item";
+import { getQuestionTutor } from "@zoonk/player/tutor/item";
 import { useMemo } from "react";
 import { type TutorViewer } from "./main-ask-tutor";
 
@@ -17,17 +16,5 @@ import { type TutorViewer } from "./main-ask-tutor";
 export function useQuestionTutor({ buddy, canAsk, goalId }: TutorViewer): QuestionTutor {
   const cards = useTutorCards(goalId);
   const tutor = useMemo(() => getTutorConfig({ buddy, canAsk, cards }), [buddy, canAsk, cards]);
-
-  return useMemo(
-    () => ({
-      aside: <TutorDock />,
-      button: <TutorAskButton />,
-      wrap: (item, children) => (
-        <ItemTutor item={item} tutor={tutor}>
-          {children}
-        </ItemTutor>
-      ),
-    }),
-    [tutor],
-  );
+  return useMemo(() => getQuestionTutor(tutor), [tutor]);
 }
