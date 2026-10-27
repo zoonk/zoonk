@@ -1,13 +1,11 @@
 "use client";
 
 import { getBrowserApiUrl } from "@/lib/browser-api-url";
-import { type StepStreamMessage } from "@zoonk/core/workflows/steps";
 import { type GenerationKind } from "@zoonk/learn/generation/kinds";
 import { type GenerationRun } from "@zoonk/learn/generation/run";
 import { safeAsync } from "@zoonk/utils/error";
 import { getString } from "@zoonk/utils/json";
 import { useEffect, useEffectEvent, useReducer } from "react";
-import { getGenerationEventsUrl } from "./_utils/generation-events-url";
 import {
   INITIAL_WORKFLOW_RUN_STATE,
   type RunStatus,
@@ -16,7 +14,7 @@ import {
   workflowRunReducer,
 } from "./_utils/workflow-run-state";
 import { getWorkflowAuthHeaders } from "./auth-headers";
-import { useSSE } from "./use-sse";
+import { useGenerationEvents } from "./use-generation-events";
 
 /** A run saves its id within a few seconds of starting; the page asks for it this often. */
 const ID_POLL_MS = 2000;
@@ -137,16 +135,8 @@ export function useWorkflowRun({
     return () => clearInterval(timer);
   }, [isConnected, runId]);
 
-  const url =
-    isConnected && runId
-      ? getGenerationEventsUrl({
-          baseUrl: `${getBrowserApiUrl()}/v1/generations`,
-          generationId: runId,
-          reconnectCount: state.connection,
-        })
-      : null;
-
-  useSSE<StepStreamMessage>(url, {
+  useGenerationEvents({
+    connection: state.connection,
     onComplete: () => {
       if (runId) {
         void checkRun(runId);
@@ -161,7 +151,7 @@ export function useWorkflowRun({
         dispatch({ offsetMs: Date.now() - serverNow, type: "serverClock" });
       }
     },
-    resumeKey: runId,
+    runId: isConnected ? runId : null,
   });
 
   const notifyReady = useEffectEvent(() => onReady?.());
