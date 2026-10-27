@@ -10,6 +10,7 @@ import { loadPreparationInputs } from "../../../preparation/_utils/load-preparat
 import { measurePreparation } from "../../../preparation/section-preparation";
 import { readBlockPayload } from "../../../sessions/block-payload";
 import { finishStudyBlock } from "../../../sessions/finish-study-block";
+import { NOTHING_REACHED, type Reached, getReached } from "../../../sessions/reached";
 import { type GradedMockAnswer, analyzeMock, getMockMeasure } from "../mock-analysis";
 import {
   type MockConditions,
@@ -129,7 +130,8 @@ async function keepAskedQuestions({ blockId, mock }: { blockId: string; mock: Mo
 
 /**
  * Settles what the mock earned: a scheduled mock's session block (Brain Power, the ledger row that
- * feeds preparation, the plan item checked off), or a mock taken any time on its own.
+ * feeds preparation, the plan item checked off), or a mock taken any time on its own. Returns the
+ * belt level and the tenth of Energy it took the learner to, for its result to celebrate.
  */
 async function settleMock({
   graded,
@@ -141,19 +143,21 @@ async function settleMock({
   mock: MockSitting;
   owned: OwnedMock;
   timeZone: string;
-}) {
+}): Promise<Reached> {
   if (!owned.block) {
-    await settleAnytimeMock({ graded, mock, timeZone });
-    return;
+    const progress = await settleAnytimeMock({ graded, mock, timeZone });
+    return progress ? getReached(progress) : NOTHING_REACHED;
   }
 
   await keepAskedQuestions({ blockId: owned.block.id, mock });
 
-  await finishStudyBlock({
+  const finished = await finishStudyBlock({
     blockId: owned.block.id,
     input: { timeZone },
     sessionId: owned.block.sessionId,
   });
+
+  return finished.status === "ready" ? finished.completion.reached : NOTHING_REACHED;
 }
 
 async function trackCompletion({
@@ -211,7 +215,7 @@ export async function completeMock({
     timeZone,
   });
 
-  await settleMock({ graded, mock, owned, timeZone });
+  const reached = await settleMock({ graded, mock, owned, timeZone });
 
   // A miss on a topic the learner was taken to know brings its lessons back (see `SkillClaim`).
   if (mock.goalId) {
@@ -238,7 +242,8 @@ export async function completeMock({
 
   const finished = await writeLearnerChange({ userId: mock.userId }, async (tx) => {
     const { count } = await tx.mockExam.updateMany({
-      data: { finishedAt: new Date(), result, status: "finished" },
+      // What it reached is kept beside what it showed, so every read of the result celebrates it.
+      data: { finishedAt: new Date(), result: { ...result, reached }, status: "finished" },
       where: { id: mock.id, status: "active" },
     });
 

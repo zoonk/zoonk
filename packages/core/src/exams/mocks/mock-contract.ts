@@ -7,7 +7,8 @@ import { answerTimeZoneSchema } from "../../learner/contract";
 import { sectionNavigationSchema } from "../../library/exams/blueprint-contract";
 import { type PassMarks } from "../../library/exams/pass-marks";
 import { type TrueFalseLabels } from "../../library/exams/true-false-labels";
-import { type MissionMomentView } from "../../sessions/completion-contract";
+import { type MilestoneView, type MissionMomentView } from "../../sessions/completion-contract";
+import { type Reached } from "../../sessions/reached";
 import { type EssayView } from "../essays/essay-contract";
 import { type ExamDocument } from "../exam-document";
 import { type ExamMockSummary } from "../view/exam-view-contract";
@@ -253,6 +254,11 @@ export type MockView = {
   /** On the break between two sections: when the next one's clock starts (it can start earlier). */
   breakUntil: string | null;
   canMove: boolean;
+  /**
+   * Once it's over, the one milestone not shown yet (a belt it crossed, new glasses), for a
+   * full-screen moment before its result; null before it's over and once it's been shown.
+   */
+  ceremony: MilestoneView | null;
   checklist: ExamDayChecklistItem[];
   current: MockCurrentSection | null;
   /** The session's day, YYYY-MM-DD. */
@@ -294,6 +300,8 @@ export type MockView = {
   planItemId: string | null;
   purpose: MockPurpose;
   questions: number;
+  /** Once it's over, the belt level and the tenth of Energy it took the learner to. */
+  reached: Reached;
   result: MockResult | null;
   /**
    * Questions it asks that the learner answered before, because the bank had no new ones left for

@@ -427,6 +427,38 @@ describe("mocks taken any time", () => {
     await expect(readMock(id)).resolves.toMatchObject({ adapt: null });
   });
 
+  it("earns the belt its Brain Power crosses, with the level, Energy and ceremony on its result", async () => {
+    const { goal, skills, user } = await anytimeSetup();
+    const id = await startMath(goal.id);
+
+    // Just short of the yellow belt and of 80% Energy: its right answers take the learner across.
+    await prisma.userProgress.create({
+      data: {
+        currentEnergy: 79.9,
+        lastActiveAt: SESSION_NOW,
+        totalBrainPower: 2499n,
+        userId: user.id,
+      },
+    });
+
+    await answerSection({ id, rightOn: new Set(skills.map((skill) => skill.id)) });
+    await finishMock({ blockId: id, input: { timeZone: UTC } });
+
+    await expect(
+      prisma.milestone.findMany({ select: { key: true, kind: true }, where: { userId: user.id } }),
+    ).resolves.toStrictEqual([{ key: "yellow", kind: "belt" }]);
+
+    const result = {
+      ceremony: { key: "yellow", kind: "belt", shownAt: null },
+      reached: { energy: 80, level: { color: "yellow", level: 1 } },
+    };
+
+    await expect(readMock(id)).resolves.toMatchObject(result);
+
+    // A reload of the result celebrates the same.
+    await expect(readMock(id)).resolves.toMatchObject(result);
+  });
+
   it("offers the area that went worst more of the plan's time, and says when it has it all", async () => {
     const { goal, plan, skills } = await anytimeSetup();
     const mathSkills = new Set(skills.slice(0, SKILLS_PER_AREA).map((skill) => skill.id));

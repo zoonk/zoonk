@@ -5,7 +5,7 @@ import { type BlockPayload } from "../block-payload";
 import { type StudyBlockCompletion } from "../completion-contract";
 import { getMissionBonus } from "../missions";
 import { type MissionCompletionSource } from "../missions/settle-missions";
-import { type Reached, getEnergyReached, getLevelReached } from "../reached";
+import { NOTHING_REACHED, getReached } from "../reached";
 import { type ProgressChange } from "./session-progress";
 import { getNextBlockId, getSessionBar } from "./session-view";
 import { settleSessionDay } from "./settle-session-day";
@@ -22,9 +22,6 @@ type BlockResult = Pick<
   | "topHyperdrive"
   | "total"
 >;
-
-/** Nothing new reached: a block read back after an earlier request settled it. */
-const NOTHING_REACHED: Reached = { energy: null, level: null };
 
 /**
  * Settles the day after a block finished (full meal, session completion), awards milestones from
@@ -93,13 +90,13 @@ export async function completeBlockMoment({
     missions: settled.missions,
     nextBlockId: getNextBlockId(blocks),
     reached: energy
-      ? {
-          energy: getEnergyReached(energy),
-          level: getLevelReached({
+      ? getReached({
+          brainPower: {
             after: reward.brainPower.after + fullMeal,
             before: reward.brainPower.before,
-          }),
-        }
+          },
+          energy,
+        })
       : NOTHING_REACHED,
     sessionBar: getSessionBar(blocks),
     sessionCompleted: settled.sessionCompleted,

@@ -2,13 +2,17 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { isUuid } from "@zoonk/utils/uuid";
+import { z } from "zod";
 import { getMovableDay, loadChallengeMoveRules } from "../../checkpoints/_utils/challenge-move";
 import { EXAM_DAY_CHECKLIST } from "../../checkpoints/weekly-challenge-rules";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { type PassMarks, getPassMarks } from "../../library/exams/pass-marks";
 import { getTrueFalseLabels } from "../../library/exams/true-false-labels";
+import { loadCeremony } from "../../milestones/load-ceremony";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { BRAIN_POWER_BONUS } from "../../sessions/brain-power";
+import { serializeMilestone } from "../../sessions/completion-contract";
+import { NOTHING_REACHED, reachedSchema } from "../../sessions/reached";
 import { getEssayRubric } from "../essays/essay-rubric";
 import { getExamDocument } from "../exam-document";
 import { getScoreNotes } from "../scoring/mock-scoring";
@@ -42,6 +46,9 @@ import { type MockConditions, type MockView, mockResultSchema } from "./mock-con
 import { type MockTypedPart, listSatMockLeftOut } from "./mock-left-out";
 import { getMockDays } from "./mock-plan";
 import { type MockQuestion } from "./mock-view-contract";
+
+/** The level and the tenth of Energy a finished mock reached, kept with its result. */
+const keptReachedSchema = z.object({ reached: reachedSchema });
 
 export type MockViewResult =
   | { mock: MockView; status: "ready" }
@@ -177,10 +184,19 @@ async function loadFinished({
   owned: OwnedMock;
 }) {
   if (owned.mock?.status !== "finished") {
-    return { adapt: null, essays: [], mistakes: [], result: null, review: [] };
+    return {
+      adapt: null,
+      essays: [],
+      mistakes: [],
+      reached: NOTHING_REACHED,
+      result: null,
+      review: [],
+    };
   }
 
   const result = mockResultSchema.safeParse(owned.mock.result).data ?? null;
+  // What it reached is kept beside what it showed (see `completeMock`); older mocks kept none.
+  const reached = keptReachedSchema.safeParse(owned.mock.result).data?.reached ?? NOTHING_REACHED;
 
   const [review, offers, essays] = await Promise.all([
     loadMockReview({ areas, conditions, mockExamId: owned.mock.id, userId: owned.userId }),
@@ -188,7 +204,7 @@ async function loadFinished({
     loadMockEssayViews({ areas, mock: owned.mock }),
   ]);
 
-  return { ...review, adapt: offers?.view ?? null, essays, result };
+  return { ...review, adapt: offers?.view ?? null, essays, reached, result };
 }
 
 /**
@@ -272,15 +288,18 @@ export async function getMock(blockId: string): Promise<MockViewResult> {
   const breakUntil =
     running && running.sectionStartedAt.getTime() > Date.now() ? running.sectionStartedAt : null;
 
-  const [number, current, finished, canMove, typed, speaking, missionMoment] = await Promise.all([
-    getMockNumber(owned),
-    running && !breakUntil ? loadCurrentSection({ areas, mock: running }) : null,
-    loadFinished({ areas, conditions, owned }),
-    canMoveMock(owned),
-    loadAskedTypedParts(getAskedItemIds(conditions).map((entry) => entry.itemId)),
-    loadMockSpeaking(conditions),
-    loadMockMissionMoment({ mock, timeZone: getAnswerTimeZone({ goal: owned.goal }) }),
-  ]);
+  const [number, current, finished, canMove, typed, speaking, missionMoment, ceremony] =
+    await Promise.all([
+      getMockNumber(owned),
+      running && !breakUntil ? loadCurrentSection({ areas, mock: running }) : null,
+      loadFinished({ areas, conditions, owned }),
+      canMoveMock(owned),
+      loadAskedTypedParts(getAskedItemIds(conditions).map((entry) => entry.itemId)),
+      loadMockSpeaking(conditions),
+      loadMockMissionMoment({ mock, timeZone: getAnswerTimeZone({ goal: owned.goal }) }),
+      // Once it's over, a milestone it earned (or one still waiting) opens over its result.
+      mock?.status === "finished" ? loadCeremony(owned.userId) : null,
+    ]);
 
   return {
     mock: {
@@ -290,6 +309,7 @@ export async function getMock(blockId: string): Promise<MockViewResult> {
       brainPower: BRAIN_POWER_BONUS.weeklyChallenge,
       breakUntil: breakUntil?.toISOString() ?? null,
       canMove,
+      ceremony: ceremony ? serializeMilestone(ceremony) : null,
       checklist: [...EXAM_DAY_CHECKLIST],
       current,
       day: conditions.day,
@@ -303,6 +323,7 @@ export async function getMock(blockId: string): Promise<MockViewResult> {
       planItemId: owned.payload.planItemId,
       purpose: conditions.purpose,
       questions: conditions.sections.reduce((sum, section) => sum + section.questions, 0),
+      reached: finished.reached,
       result: finished.result,
       reusedQuestions: conditions.reused,
       review: finished.review,

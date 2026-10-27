@@ -1,6 +1,10 @@
 import "server-only";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
-import { applySessionProgress } from "../../../sessions/_utils/session-progress";
+import { awardMilestones } from "../../../milestones/award-milestones";
+import {
+  type ProgressChange,
+  applySessionProgress,
+} from "../../../sessions/_utils/session-progress";
 import { getAnswersEnergyDelta, scoreAnswers } from "../../../sessions/brain-power";
 import { getCompletionEnergyContext } from "../../../stats/completion-energy";
 import { recordLearningEvent } from "../../../stats/record-learning-event";
@@ -11,10 +15,11 @@ const MS_PER_SECOND = 1000;
 
 /**
  * A mock taken any time counts like the rest of the learner's study, once: its right answers earn
- * Brain Power (each question is new to them, Hyperdrive building as in a session), its answers
- * move Energy, its time counts for the day, and one ledger row of kind `mock` lets preparation
- * read it like the plan's mocks. It has no session block, so no checkpoint bonus: taking mocks
- * again and again earns what their answers earn.
+ * Brain Power (each question is new to them, Hyperdrive building as in a session) and the belts
+ * and buddy stages it crosses, its answers move Energy, its time counts for the day, and one
+ * ledger row of kind `mock` lets preparation read it like the plan's mocks. It has no session
+ * block, so no checkpoint bonus: taking mocks again and again earns what their answers earn.
+ * Returns the Brain Power and Energy before and after it, or null when it was settled before.
  */
 export async function settleAnytimeMock({
   graded,
@@ -24,7 +29,7 @@ export async function settleAnytimeMock({
   graded: readonly GradedMockAnswer[];
   mock: MockSitting;
   timeZone: string;
-}): Promise<void> {
+}): Promise<{ brainPower: ProgressChange; energy: ProgressChange } | null> {
   const correct = graded.filter((answer) => answer.outcome === "right").length;
   const incorrect = graded.length - correct;
 
@@ -42,7 +47,7 @@ export async function settleAnytimeMock({
     })),
   });
 
-  await writeLearnerChange({ userId: mock.userId }, async (tx) => {
+  const progress = await writeLearnerChange({ userId: mock.userId }, async (tx) => {
     const lock = await getCompletionEnergyContext({
       timeZone,
       transaction: tx,
@@ -63,7 +68,7 @@ export async function settleAnytimeMock({
       return unchanged(null);
     }
 
-    await applySessionProgress(tx, {
+    const applied = await applySessionProgress(tx, {
       completion: true,
       delta: {
         brainPower,
@@ -93,6 +98,12 @@ export async function settleAnytimeMock({
       userId: mock.userId,
     });
 
-    return null;
+    return applied;
   });
+
+  if (progress) {
+    await awardMilestones({ brainPower: progress.brainPower, userId: mock.userId });
+  }
+
+  return progress;
 }

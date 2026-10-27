@@ -3,13 +3,13 @@ import { type Milestone, prisma } from "@zoonk/db";
 import { type BeltLevelResult, calculateBeltLevel } from "@zoonk/utils/belt-level";
 import { io } from "next/cache";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
+import { loadCeremony } from "../milestones/load-ceremony";
 import { measureSessionState } from "./_utils/capture-snapshot";
 import { isCurrentSession } from "./_utils/current-session";
 import { withExtraStudyCheck } from "./_utils/extra-blocks";
 import {
   type SkillMove,
   loadBuddyMeal,
-  loadCeremony,
   loadComesBack,
   loadSealedCapsules,
   loadSkillNames,

@@ -1,8 +1,7 @@
 import "server-only";
-import { type MasteryState, type Milestone, prisma } from "@zoonk/db";
+import { type MasteryState, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { loadAnswersReviewSkillIds } from "../../learner/_utils/lesson-plan-skills";
-import { pickCeremony } from "../../milestones/milestone-rules";
 import { addDays } from "../../plans/planner/plan-calendar";
 import { readBlockPayload } from "../block-payload";
 import { capReviewDay } from "../capsules";
@@ -120,12 +119,6 @@ export async function loadBuddyMeal({
     newIdeas,
     reviews: answers.filter((answer) => answer.itemId && due.has(answer.itemId)).length,
   };
-}
-
-/** The one ceremony this session may show: the most important milestone not shown yet. */
-export async function loadCeremony(userId: string): Promise<Milestone | null> {
-  const unshown = await prisma.milestone.findMany({ where: { shownAt: null, userId } });
-  return pickCeremony(unshown);
 }
 
 /**

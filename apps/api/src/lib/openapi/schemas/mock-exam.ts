@@ -11,7 +11,8 @@ import {
 import { speakingSectionViewSchema } from "@zoonk/core/language/exam-speaking/contract";
 import { passMarksSchema } from "@zoonk/core/library/exams/pass-marks";
 import { trueFalseLabelsSchema } from "@zoonk/core/library/exams/true-false-labels";
-import { missionMomentSchema } from "@zoonk/core/sessions/completion-contract";
+import { milestoneSchema, missionMomentSchema } from "@zoonk/core/sessions/completion-contract";
+import { reachedSchema } from "@zoonk/core/sessions/reached";
 import { MistakeCause } from "@zoonk/db";
 import { z } from "zod";
 import {
@@ -118,6 +119,12 @@ export const mockViewResponseSchema = z
           "On the break the notice gives between two sections: when the next one's clock starts on its own. `current` is null meanwhile; POST /v1/mocks/{blockId}/break-ends starts it earlier",
       }),
     canMove: z.boolean().meta({ description: '"Move to Monday" is possible before it starts' }),
+    ceremony: milestoneSchema
+      .nullable()
+      .meta({
+        description:
+          "Once it's over, the one milestone the learner hasn't been shown yet (a belt it crossed, new glasses): show it as a full-screen moment before the result, then mark it shown; null before it's over and once it's been shown",
+      }),
     checklist: z.array(z.enum(EXAM_DAY_CHECKLIST)),
     current: z
       .object({
@@ -217,6 +224,10 @@ export const mockViewResponseSchema = z
       .meta({ description: "The plan item it plays: its challenge, before and on its day" }),
     purpose: mockPurposeSchema,
     questions: z.number().int(),
+    reached: reachedSchema.meta({
+      description:
+        "Once it's over, the belt level and the tenth of Energy it took the learner to, for its result to celebrate on every read; nothing before it's over",
+    }),
     result: mockResultSchema.nullable(),
     reusedQuestions: z
       .number()

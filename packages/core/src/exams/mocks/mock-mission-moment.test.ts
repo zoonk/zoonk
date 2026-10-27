@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { calculateBeltLevel } from "@zoonk/utils/belt-level";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { SESSION_NOW } from "../../sessions/_test-utils/session-goal";
@@ -165,6 +166,32 @@ describe("a mock's mission moment", () => {
       );
     },
   );
+
+  it("keeps the level its Brain Power reached for every read of its result", async () => {
+    const { blockId, user } = await scheduledMockSetup();
+
+    // One point short of the white belt's level 2.
+    await prisma.userProgress.upsert({
+      create: { lastActiveAt: SESSION_NOW, totalBrainPower: 249n, userId: user.id },
+      update: { totalBrainPower: 249n },
+      where: { userId: user.id },
+    });
+
+    await sitMock(blockId);
+
+    const read = async () => {
+      const result = await getMock(blockId);
+      return result.status === "ready" ? result.mock.reached : "notReady";
+    };
+
+    // The level its points (the challenge's bonus included) took the learner to.
+    const progress = await prisma.userProgress.findUniqueOrThrow({ where: { userId: user.id } });
+    const { color, level } = calculateBeltLevel(Number(progress.totalBrainPower));
+
+    expect(level).toBeGreaterThan(1);
+    await expect(read()).resolves.toMatchObject({ level: { color, level } });
+    await expect(read()).resolves.toMatchObject({ level: { color, level } });
+  });
 
   it("has no moment before it's over", async () => {
     const { blockId, mockItem } = await scheduledMockSetup();

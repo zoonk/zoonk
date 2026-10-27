@@ -64031,7 +64031,7 @@
             "properties": {
               "energy": {
                 "nullable": true,
-                "description": "The tenth of Energy the block reached going up (60, 80, 100)",
+                "description": "The tenth of Energy its answers reached going up (60, 80, 100)",
                 "type": "integer",
                 "minimum": -9007199254740991,
                 "maximum": 9007199254740991
@@ -74950,6 +74950,15 @@
             "type": "boolean",
             "description": "\"Move to Monday\" is possible before it starts"
           },
+          "ceremony": {
+            "nullable": true,
+            "description": "Once it's over, the one milestone the learner hasn't been shown yet (a belt it crossed, new glasses): show it as a full-screen moment before the result, then mark it shown; null before it's over and once it's been shown",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Milestone"
+              }
+            ]
+          },
           "checklist": {
             "type": "array",
             "items": {
@@ -75345,6 +75354,56 @@
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
           },
+          "reached": {
+            "type": "object",
+            "properties": {
+              "energy": {
+                "nullable": true,
+                "description": "The tenth of Energy its answers reached going up (60, 80, 100)",
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "level": {
+                "nullable": true,
+                "description": "The belt level its Brain Power reached, the day's bonus included",
+                "type": "object",
+                "properties": {
+                  "color": {
+                    "type": "string",
+                    "enum": [
+                      "white",
+                      "yellow",
+                      "orange",
+                      "green",
+                      "blue",
+                      "purple",
+                      "brown",
+                      "red",
+                      "gray",
+                      "black"
+                    ]
+                  },
+                  "level": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "color",
+                  "level"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "energy",
+              "level"
+            ],
+            "additionalProperties": false,
+            "description": "Once it's over, the belt level and the tenth of Energy it took the learner to, for its result to celebrate on every read; nothing before it's over"
+          },
           "result": {
             "nullable": true,
             "allOf": [
@@ -75650,6 +75709,7 @@
           "brainPower",
           "breakUntil",
           "canMove",
+          "ceremony",
           "checklist",
           "current",
           "date",
@@ -75670,6 +75730,7 @@
           "planItemId",
           "purpose",
           "questions",
+          "reached",
           "result",
           "reusedQuestions",
           "review",

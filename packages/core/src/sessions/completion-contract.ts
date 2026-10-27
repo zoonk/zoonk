@@ -1,11 +1,10 @@
 import { type Milestone } from "@zoonk/db";
-import { BELT_COLORS_ORDER } from "@zoonk/utils/belt-level";
 import { z } from "zod";
 import { type CheckpointOutcome } from "../checkpoints/_utils/checkpoint-outcome";
 import { type QuestionAnswer } from "./contract";
 import { type Mission } from "./missions";
 import { FIRST_STEP_KINDS, MISSION_KINDS } from "./missions/catalog";
-import { type Reached } from "./reached";
+import { type Reached, reachedSchema } from "./reached";
 
 const LOGICAL_DATE_LENGTH = 10;
 
@@ -264,24 +263,10 @@ export const studyBlockCompletionSchema = z
         description: "Right minus wrong, for net-scored (Cebraspe) swipe capsules and practice",
       }),
     nextBlockId: idSchema.nullable(),
-    reached: z
-      .object({
-        energy: z
-          .number()
-          .int()
-          .nullable()
-          .meta({ description: "The tenth of Energy the block reached going up (60, 80, 100)" }),
-        level: z
-          .object({ color: z.enum(BELT_COLORS_ORDER), level: countSchema })
-          .nullable()
-          .meta({
-            description: "The belt level its Brain Power reached, the day's bonus included",
-          }),
-      })
-      .meta({
-        description:
-          "What the block took the learner to, for its moment to celebrate; nothing on a retry, which celebrates none of it again",
-      }),
+    reached: reachedSchema.meta({
+      description:
+        "What the block took the learner to, for its moment to celebrate; nothing on a retry, which celebrates none of it again",
+    }),
     sessionBar: z.object({ completed: countSchema, total: countSchema }),
     sessionCompleted: z.boolean(),
     testOutOffer: z
@@ -305,7 +290,10 @@ export const studyBlockCompletionSchema = z
 
 export type StudyBlockCompletionView = z.infer<typeof studyBlockCompletionSchema>;
 
-function serializeMilestone(milestone: Milestone) {
+export type MilestoneView = z.infer<typeof milestoneSchema>;
+
+/** A milestone as it goes over the wire: its instants in ISO. */
+export function serializeMilestone(milestone: Milestone): MilestoneView {
   return {
     earnedAt: milestone.earnedAt.toISOString(),
     id: milestone.id,
