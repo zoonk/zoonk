@@ -3,10 +3,11 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { BigQuantity } from "../_components/big-quantity";
+import { METER_PARTS_CLASS } from "../_components/meter";
 import { useFormatDuration } from "../_utils/time-format";
 import { getBlockKind } from "../session/block-kind";
 import { type DayStep } from "../session/session-types";
-import { DAY_SEGMENTS_CLASS, DaySegment, type DaySegmentState } from "./day-segments";
+import { DaySegment, type DaySegmentState } from "./day-segments";
 import { TodayContinueStatus, useTodayContinueSpeaking } from "./today-action";
 import { useTodayScreen } from "./today-context";
 import { isFinished } from "./today-queue";
@@ -63,7 +64,7 @@ export function DayProgress({ className }: { className?: string }) {
         "{done, plural, =0 {# of {total, number} done} one {# of {total, number} done} other {# of {total, number} done}}",
         { done, total: blocks.length },
       )}
-      className={cn(DAY_SEGMENTS_CLASS, className)}
+      className={cn(METER_PARTS_CLASS, className)}
       data-slot="today-day-progress"
       role="img"
     >

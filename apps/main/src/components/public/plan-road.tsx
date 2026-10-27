@@ -1,5 +1,6 @@
-import { DAY_SEGMENTS_CLASS, DaySegment, type DaySegmentState } from "@zoonk/learn/day-segments";
+import { DaySegment, type DaySegmentState } from "@zoonk/learn/day-segments";
 import { KindDot } from "@zoonk/learn/kind-tile";
+import { METER_PARTS_CLASS } from "@zoonk/learn/meter";
 import { AXIS_LABEL_CLASS, BAND_CLASS, BAND_STATE_CLASS } from "@zoonk/learn/roadmap-styles";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, FlagIcon } from "lucide-react";
@@ -185,7 +186,7 @@ export function PlanRoad({
       <p className="sr-only">{caption}</p>
 
       <div aria-hidden="true" className={cn("flex flex-col gap-2", FULL_FROM[fullFrom].compact)}>
-        <span className={DAY_SEGMENTS_CLASS}>
+        <span className={METER_PARTS_CLASS}>
           {bands.map((band) => (
             <DaySegment
               className="min-w-6"

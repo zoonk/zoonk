@@ -20,12 +20,6 @@ const SEGMENT_STATE_CLASS: Record<DaySegmentState, string> = {
 };
 
 /**
- * The day's segments in one row, a meter of parts (`MeterParts`): 6px tall, 2px apart, as Today
- * draws them under its title. A public page adds `h-2`.
- */
-export { METER_PARTS_CLASS as DAY_SEGMENTS_CLASS } from "../_components/meter";
-
-/**
  * A block still ahead that isn't a lesson (a review, practice, a challenge, a mock) is tinted in
  * its kind's hue, at half strength so it never reads as done, and the day's shape shows at a
  * glance; its row says what it is. A lesson, most of every day, keeps the track.

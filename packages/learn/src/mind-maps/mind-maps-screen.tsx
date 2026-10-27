@@ -6,7 +6,6 @@ import { useExtracted } from "next-intl";
 import {
   DetailAside,
   DetailContent,
-  DetailEyebrow,
   DetailFacts,
   DetailHero,
   DetailHeroText,
@@ -15,6 +14,7 @@ import {
 } from "../_components/detail-page";
 import { type MindMapLimit, MindMapLimitNotice } from "../_components/help-limit-notice";
 import {
+  PageEyebrow,
   PageSection,
   PageSectionDetail,
   PageSectionHeader,
@@ -154,7 +154,7 @@ export function MindMapsScreen({
       <DetailAside>
         <DetailHero>
           <DetailHeroText>
-            <DetailEyebrow>{mindMaps.goal.title}</DetailEyebrow>
+            <PageEyebrow>{mindMaps.goal.title}</PageEyebrow>
             <DetailTitle>{t("Mind maps")}</DetailTitle>
             {mindMaps.chapters.length > 0 && (
               <DetailFacts>

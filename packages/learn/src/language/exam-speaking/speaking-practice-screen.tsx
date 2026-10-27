@@ -6,7 +6,6 @@ import { useExtracted } from "next-intl";
 import {
   DetailAside,
   DetailContent,
-  DetailEyebrow,
   DetailFacts,
   DetailHero,
   DetailHeroText,
@@ -22,6 +21,7 @@ import {
   ListRowTitle,
   ListRowTrailing,
 } from "../../_components/list-group";
+import { PageEyebrow } from "../../_components/page";
 import { PlusMark } from "../../_components/plus-lock";
 import { LearnPageBar } from "../../shell/learn-bar";
 import { type ExamTaskStart, SpeakingPaperSection } from "./speaking-paper-section";
@@ -90,7 +90,7 @@ export function SpeakingPracticeScreen({
         <DetailAside>
           <DetailHero>
             <DetailHeroText>
-              <DetailEyebrow>{t("Exam-style speaking")}</DetailEyebrow>
+              <PageEyebrow>{t("Exam-style speaking")}</PageEyebrow>
               <DetailTitle>{paper.title}</DetailTitle>
               <DetailFacts>
                 {t("{count, plural, one {# task} other {# tasks}} · {minutes} in the exam", {

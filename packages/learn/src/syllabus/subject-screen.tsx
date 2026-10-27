@@ -7,7 +7,6 @@ import {
   DetailAside,
   DetailContent,
   DetailContinueLink,
-  DetailEyebrow,
   DetailFacts,
   DetailHero,
   DetailHeroText,
@@ -16,6 +15,7 @@ import {
   useDoneShare,
 } from "../_components/detail-page";
 import {
+  PageEyebrow,
   PageSection,
   PageSectionDetail,
   PageSectionHeader,
@@ -179,7 +179,7 @@ function SubjectHeader({
   return (
     <DetailHero>
       <DetailHeroText>
-        <DetailEyebrow>{eyebrow}</DetailEyebrow>
+        <PageEyebrow>{eyebrow}</PageEyebrow>
         <DetailTitle>{subject.name}</DetailTitle>
         <SubjectFacts subject={subject} />
       </DetailHeroText>

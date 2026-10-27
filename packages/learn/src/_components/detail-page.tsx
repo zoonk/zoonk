@@ -33,7 +33,7 @@ import { PAGE_COLUMN_CLASS, PageSection, PageSectionHeader, PageSectionTitle } f
  *   <DetailAside>
  *     <DetailHero>
  *       <DetailHeroText>
- *         <DetailEyebrow>Chapter 5</DetailEyebrow>
+ *         <PageEyebrow>Chapter 5</PageEyebrow>
  *         <DetailTitle>Circuits</DetailTitle>
  *         <DetailFacts>4 lessons · 26 min · 50% done</DetailFacts>
  *       </DetailHeroText>
@@ -132,9 +132,6 @@ export function DetailHeroText({ className, ...props }: React.ComponentProps<"di
     />
   );
 }
-
-/** What the page belongs to: "Chapter 5", the notice's group, the unit's level. */
-export { PageEyebrow as DetailEyebrow } from "./page";
 
 export function DetailTitle({ children, className, ...props }: React.ComponentProps<"h1">) {
   return (

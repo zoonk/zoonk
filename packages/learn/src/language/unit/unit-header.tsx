@@ -5,13 +5,13 @@ import { useExtracted } from "next-intl";
 import {
   DetailActions,
   DetailContinueLink,
-  DetailEyebrow,
   DetailFacts,
   DetailHero,
   DetailHeroText,
   DetailTitle,
   useDoneShare,
 } from "../../_components/detail-page";
+import { PageEyebrow } from "../../_components/page";
 import { useFormatDuration } from "../../_utils/time-format";
 import { ContentVoteMenu } from "../../feedback/content-vote-menu";
 import { LearnPageBar } from "../../shell/learn-bar";
@@ -72,9 +72,9 @@ export function UnitHeader({
   return (
     <DetailHero>
       <DetailHeroText>
-        <DetailEyebrow>
+        <PageEyebrow>
           <UnitEyebrow unit={unit} />
-        </DetailEyebrow>
+        </PageEyebrow>
         <DetailTitle>{unit.title}</DetailTitle>
         <UnitFacts lessons={lessons} />
       </DetailHeroText>

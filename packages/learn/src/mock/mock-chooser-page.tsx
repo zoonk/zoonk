@@ -15,13 +15,12 @@ import { type ReactNode } from "react";
 import {
   DETAIL_PRIMARY_CLASS,
   DetailActions,
-  DetailEyebrow,
   DetailHero,
   DetailHeroText,
   DetailTitle,
 } from "../_components/detail-page";
 import { HelpLimitNotice } from "../_components/help-limit-notice";
-import { Page } from "../_components/page";
+import { Page, PageEyebrow } from "../_components/page";
 import { useFormatDuration } from "../_utils/time-format";
 import { type GenerationRun } from "../generation/generation-run";
 import { GenerationWait } from "../generation/generation-wait";
@@ -142,7 +141,7 @@ export function ChooserHeader({
   return (
     <DetailHero>
       <DetailHeroText>
-        <DetailEyebrow>{eyebrow}</DetailEyebrow>
+        <PageEyebrow>{eyebrow}</PageEyebrow>
         <DetailTitle>{title}</DetailTitle>
         <ChooserLine detail={detail} status={status} />
       </DetailHeroText>

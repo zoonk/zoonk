@@ -15,7 +15,6 @@ import {
   DetailActions,
   DetailAside,
   DetailContent,
-  DetailEyebrow,
   DetailFacts,
   DetailHero,
   DetailHeroText,
@@ -30,7 +29,7 @@ import {
   ListRowTitle,
   ListRowTrailing,
 } from "../_components/list-group";
-import { INBOX_PAGE_CLASS } from "../_components/page";
+import { INBOX_PAGE_CLASS, PageEyebrow } from "../_components/page";
 import { DoneMark } from "../_components/status-mark";
 import { PatternRow } from "../language/today/language-today-section";
 import { LearnLink } from "../learn-link";
@@ -108,7 +107,7 @@ function NotebookHero({
   return (
     <DetailHero>
       <DetailHeroText>
-        {goalTitle && <DetailEyebrow>{goalTitle}</DetailEyebrow>}
+        {goalTitle && <PageEyebrow>{goalTitle}</PageEyebrow>}
         <DetailTitle>{t("Mistakes notebook")}</DetailTitle>
         <DetailFacts>
           <NotebookAvailabilityText availability={availability} fixed={counts.fixed} />

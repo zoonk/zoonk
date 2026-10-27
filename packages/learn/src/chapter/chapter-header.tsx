@@ -4,13 +4,13 @@ import { useExtracted } from "next-intl";
 import {
   DetailActions,
   DetailContinueLink,
-  DetailEyebrow,
   DetailFacts,
   DetailHero,
   DetailHeroText,
   DetailTitle,
   useDoneShare,
 } from "../_components/detail-page";
+import { PageEyebrow } from "../_components/page";
 import { useFormatDuration } from "../_utils/time-format";
 import { ContentVoteMenu } from "../feedback/content-vote-menu";
 import { LearnPageBar } from "../shell/learn-bar";
@@ -57,14 +57,14 @@ export function ChapterHeader() {
   return (
     <DetailHero>
       <DetailHeroText>
-        <DetailEyebrow>
+        <PageEyebrow>
           {chapter.chapter.subject
             ? t("{subject} · Chapter {number, number}", {
                 number: chapter.chapter.position,
                 subject: chapter.chapter.subject.name,
               })
             : t("Chapter {number, number}", { number: chapter.chapter.position })}
-        </DetailEyebrow>
+        </PageEyebrow>
         <DetailTitle>{chapter.chapter.title}</DetailTitle>
         <ChapterFacts />
       </DetailHeroText>

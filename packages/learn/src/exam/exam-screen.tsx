@@ -6,13 +6,13 @@ import {
   DetailActions,
   DetailAside,
   DetailContent,
-  DetailEyebrow,
   DetailFacts,
   DetailHero,
   DetailHeroText,
   DetailLayout,
   DetailTitle,
 } from "../_components/detail-page";
+import { PageEyebrow } from "../_components/page";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { toLabelCase } from "../_utils/label-case";
 import { useFormatTimeOfDay } from "../_utils/time-format";
@@ -86,28 +86,28 @@ function ExamEyebrow() {
   const days = exam.daysLeft;
 
   if (days === null || days <= 0) {
-    return <DetailEyebrow>{t("Exam")}</DetailEyebrow>;
+    return <PageEyebrow>{t("Exam")}</PageEyebrow>;
   }
 
   if (!exam.daysEstimated) {
     return (
-      <DetailEyebrow>
+      <PageEyebrow>
         {t("Exam · {days, plural, =0 {The day is here} one {# day left} other {# days left}}", {
           days,
         })}
-      </DetailEyebrow>
+      </PageEyebrow>
     );
   }
 
   return (
-    <DetailEyebrow>
+    <PageEyebrow>
       <span aria-hidden="true">
         {t("Exam · {days, plural, one {~# day left} other {~# days left}}", { days })}
       </span>
       <span className="sr-only">
         {t("Exam · {days, plural, one {About # day left} other {About # days left}}", { days })}
       </span>
-    </DetailEyebrow>
+    </PageEyebrow>
   );
 }
 
