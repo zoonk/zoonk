@@ -16,7 +16,6 @@ export type E2EUser = {
 
 type CreateE2EUserOptions = {
   orgRole?: "admin" | "member" | "owner";
-  orgSlug?: string;
   withProgress?: boolean;
   withSubscription?: boolean;
 };
@@ -51,9 +50,7 @@ export async function createE2EUser(
   const user = await prisma.user.findUniqueOrThrow({ where: { email } });
 
   if (options?.orgRole) {
-    const org = options.orgSlug
-      ? await prisma.organization.findUniqueOrThrow({ where: { slug: options.orgSlug } })
-      : await getAiOrganization();
+    const org = await getAiOrganization();
 
     await prisma.member.create({
       data: { id: randomUUID(), organizationId: org.id, role: options.orgRole, userId: user.id },
