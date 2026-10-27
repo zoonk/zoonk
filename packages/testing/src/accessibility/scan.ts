@@ -11,9 +11,16 @@ const FAILING_IMPACTS = new Set(["critical", "serious"]);
 /** How many offending elements a violation lists before it only counts the rest. */
 const LISTED_TARGETS = 5;
 
-/** Contrast findings name their colors, so a failure says which token to fix. */
+/** How much of an offending element's HTML a failure quotes, so a generated selector has context. */
+const HTML_LENGTH = 120;
+
+/**
+ * Each offending element by its selector and the start of its HTML (selectors like
+ * `#base-ui-_r_f_` say little alone); contrast findings name their colors, so a failure says which
+ * token to fix.
+ */
 function describeNode(node: NodeResult) {
-  const target = node.target.join(" ");
+  const target = `${node.target.join(" ")} \`${node.html.slice(0, HTML_LENGTH)}\``;
   const data: unknown = node.any[0]?.data;
 
   if (data && typeof data === "object" && "contrastRatio" in data) {
@@ -29,7 +36,7 @@ function describeViolation(violation: Result, where: string) {
   const listed = targets.slice(0, LISTED_TARGETS).join(" | ");
   const more = targets.length > LISTED_TARGETS ? ` (+${targets.length - LISTED_TARGETS} more)` : "";
 
-  return `${where}: [${violation.impact}] ${violation.id}: ${violation.help} → ${listed}${more}`;
+  return `${where}: [${violation.impact}] ${violation.id}: ${violation.help} (${violation.helpUrl}) → ${listed}${more}`;
 }
 
 /** A scan's violations, described: the ones that fail it, and the lesser ones it only lists. */
@@ -41,6 +48,24 @@ export function describeViolations(violations: Result[], where: string) {
     minor: violations
       .filter((violation) => !failing.includes(violation))
       .map((violation) => describeViolation(violation, where)),
+  };
+}
+
+type AxeColor = { prototype: { parseString: (this: unknown, color: string) => unknown } };
+
+/**
+ * Chrome writes a gray's hue as `none` (`oklch(0.145 0 none)`, which is every neutral token), and
+ * axe-core 4.13 can't parse it, so it leaves those contrast checks incomplete instead of measuring
+ * them. Until it can, a missing hue reads as 0, the same gray. Pass the loaded axe-core; it reads
+ * nothing outside itself, so Playwright can send it into a page that loaded axe as `window.axe`.
+ */
+export function readMissingHuesAsZero(axe: { commons: unknown }) {
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- axe's color tools aren't typed.
+  const { Color } = (axe.commons as { color: { Color: AxeColor } }).color;
+  const parse = Color.prototype.parseString;
+
+  Color.prototype.parseString = function parseString(color) {
+    return parse.call(this, color.replaceAll(" none", " 0"));
   };
 }
 

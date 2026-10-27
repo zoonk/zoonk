@@ -1,5 +1,6 @@
 import {
   describeViolations,
+  readMissingHuesAsZero,
   resumeAnimations,
   settleAnimations,
   stillAnimations,
@@ -36,24 +37,7 @@ const HOST_DOCUMENT_RULES = {
   "html-has-lang": { enabled: false },
 };
 
-type AxeColor = { prototype: { parseString: (this: unknown, color: string) => unknown } };
-
-/**
- * Chrome writes a gray's hue as `none` (`oklch(0.145 0 none)`, which is every neutral token), and
- * axe-core 4.13 can't parse it, so it leaves those contrast checks incomplete instead of measuring
- * them. Until it can, a missing hue reads as 0, the same gray.
- */
-function readMissingHuesAsZero() {
-  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- axe's color tools aren't typed.
-  const { Color } = (axe.commons as unknown as { color: { Color: AxeColor } }).color;
-  const parse = Color.prototype.parseString;
-
-  Color.prototype.parseString = function parseString(color) {
-    return parse.call(this, color.replaceAll(" none", " 0"));
-  };
-}
-
-readMissingHuesAsZero();
+readMissingHuesAsZero(axe);
 
 /**
  * Lets entrance animations and theme transitions end, so contrast is read on the screen people
