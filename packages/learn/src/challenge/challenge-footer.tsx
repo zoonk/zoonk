@@ -36,9 +36,9 @@ function StatusLine({ children, icon }: { children: React.ReactNode; icon: React
   );
 }
 
-/** A count in a sentence, in the mono face like every number. */
-function renderMono(chunks: React.ReactNode) {
-  return <span className="font-mono tabular-nums">{chunks}</span>;
+/** A count in a sentence keeps the sentence's face, with figures that line up. */
+function renderNumber(chunks: React.ReactNode) {
+  return <span className="tabular-nums">{chunks}</span>;
 }
 
 /**
@@ -57,7 +57,7 @@ function OpensLine() {
       <StatusLine icon={icon}>
         {t.rich("{count, plural, one {Opens tomorrow} other {Opens in <mono>#</mono> days}}", {
           count: days,
-          mono: renderMono,
+          mono: renderNumber,
         })}
       </StatusLine>
     );

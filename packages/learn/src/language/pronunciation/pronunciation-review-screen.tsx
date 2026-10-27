@@ -13,8 +13,9 @@ import {
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CheckCircle2Icon, EllipsisIcon, RotateCcwIcon, SkipForwardIcon } from "lucide-react";
+import { EllipsisIcon, RotateCcwIcon, SkipForwardIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
+import { FeedbackVerdict } from "../../_components/feedback-panel";
 import { BrainPowerReadout, ReadoutNumber } from "../../_components/moment-readouts";
 import { TASK_HEADER_ICON_CLASS } from "../../_components/task-header";
 import { TaskActions } from "../../_components/task-layout";
@@ -46,10 +47,7 @@ function GradeNote({ grade }: { grade: PronunciationAnswerGrade }) {
   return (
     <div aria-live="polite" className="flex flex-col items-start gap-1" role="status">
       {grade.isCorrect ? (
-        <p className="text-success-text flex items-center gap-2 font-semibold">
-          <CheckCircle2Icon aria-hidden="true" className="size-5" />
-          {t("That sounded right")}
-        </p>
+        <FeedbackVerdict tone="right">{t("That sounded right")}</FeedbackVerdict>
       ) : (
         <p className="font-semibold">{t("We heard “{heard}”", { heard: grade.transcript })}</p>
       )}
