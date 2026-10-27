@@ -1,23 +1,14 @@
-import { createOpenAI } from "@ai-sdk/openai";
-import { blockTestProviderFetch } from "../../../../_utils/block-test-provider-fetch";
-import { isTestEnvironment } from "../../../../_utils/is-test-environment";
+import { directOpenAI } from "../../../../direct-providers";
 
-/** Admission can safely pause before reserving money when the dedicated key is absent. */
+/** Admission can safely pause before reserving money when the OpenAI key is absent. */
 export function isLiveCallAvailable(): boolean {
-  return Boolean(process.env.OPENAI_LIVE_API_KEY?.trim());
+  return Boolean(process.env.OPENAI_API_KEY?.trim());
 }
 
+/**
+ * Live calls go to OpenAI directly, not through AI Gateway: only OpenAI's own API lets the server
+ * create a browser's WebRTC session, hang it up and attach to it.
+ */
 export function getLiveCallModel() {
-  const isTest = isTestEnvironment();
-  const apiKey = isTest ? "test-disabled" : process.env.OPENAI_LIVE_API_KEY?.trim();
-
-  if (!apiKey) {
-    throw new Error("Live calls need OPENAI_LIVE_API_KEY.");
-  }
-
-  return createOpenAI({
-    apiKey,
-    baseURL: "https://api.openai.com/v1",
-    fetch: isTest ? blockTestProviderFetch : undefined,
-  }).experimental_realtime("gpt-live-1");
+  return directOpenAI.experimental_realtime("gpt-live-1");
 }

@@ -18,7 +18,6 @@
       "MAIN_APP_URL",
       "NEXT_PUBLIC_API_URL",
       "OPENAI_API_KEY",
-      "OPENAI_LIVE_API_KEY",
       "SENTRY_AUTH_TOKEN",
       "STRIPE_*",
       "VERCEL_*",

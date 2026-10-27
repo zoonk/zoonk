@@ -20,7 +20,7 @@ export const liveCallAdminPaths = {
     get: {
       ...common,
       description:
-        "Admins only. Reads admission mode, the free-day dollar cap in micros, and up to 100 connections the provider hasn't confirmed closed: unresolved ones ordered by deadline, then the latest settled by estimate (closed, costConfidence estimated). providerAvailable checks only the API deployment's dedicated key presence; this GET starts no model, provider session or Workflow. All dates are ISO strings. Missing settings default to off.",
+        "Admins only. Reads admission mode, the free-day dollar cap in micros, and up to 100 connections the provider hasn't confirmed closed: unresolved ones ordered by deadline, then the latest settled by estimate (closed, costConfidence estimated). providerAvailable checks only the API deployment's OpenAI key presence; this GET starts no model, provider session or Workflow. All dates are ISO strings. Missing settings default to off.",
       operationId: "getLiveCallAdmission",
       responses: {
         "200": jsonResponse(
