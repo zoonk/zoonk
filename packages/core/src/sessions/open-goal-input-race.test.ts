@@ -3,6 +3,10 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockAccountSession } from "../_test-utils/mock-session";
 import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
+import { findOwnedPlan } from "../plans/_utils/owned-plan";
+import { loadPlanAtToken } from "../plans/_utils/plan-token";
+import { commitPlan, computePlan } from "../plans/_utils/replan";
+import { withPlanRetry } from "../plans/plan-conflict";
 import { lapsedDayFixture, readLapsedDayState } from "./_test-utils/entitlement-lapse";
 import { SESSION_NOW, sessionGoalFixture } from "./_test-utils/session-goal";
 import { openStudyDay } from "./open-study-day";
@@ -15,7 +19,15 @@ async function unopenedDayFixture() {
 }
 
 /** A real table lock pauses only the later plan-basis read, after Open read the old goal. */
-async function changeBeforeBasis({ goalId, userId }: { goalId: string; userId: string }) {
+async function changeBeforeBasis({
+  goalId,
+  userId,
+  read,
+}: {
+  goalId: string;
+  userId: string;
+  read?: () => Promise<unknown>;
+}) {
   const ready = Promise.withResolvers<number>();
   const release = Promise.withResolvers<null>();
 
@@ -39,7 +51,7 @@ async function changeBeforeBasis({ goalId, userId }: { goalId: string; userId: s
     const pid = await ready.promise;
 
     const opening = Promise.allSettled([
-      openStudyDay({ goalId, shownDate: "2026-09-30", timeZone: "UTC" }),
+      read ? read() : openStudyDay({ goalId, shownDate: "2026-09-30", timeZone: "UTC" }),
     ]);
 
     try {
@@ -73,6 +85,47 @@ describe("Open binds the goal snapshot to the later plan basis", () => {
   });
 
   afterEach(() => vi.useRealTimers());
+
+  it("loads a writer's goal only after the token it will commit", async () => {
+    const { goal, user } = await unopenedDayFixture();
+
+    const result = await changeBeforeBasis({
+      goalId: goal.id,
+      read: () => findOwnedPlan({ goalId: goal.id }),
+      userId: user.id,
+    });
+
+    expect(result).toMatchObject([
+      { status: "fulfilled", value: { context: { goal: { dailyMinutes: 5 } }, status: "ready" } },
+    ]);
+  });
+
+  it("retries a computed writer from fresh inputs after losing its token", async () => {
+    const { goal, user } = await unopenedDayFixture();
+    const attempts: number[] = [];
+
+    await withPlanRetry(async () => {
+      const context = await loadPlanAtToken(goal.id);
+      expect(context).not.toBeNull();
+      attempts.push(context!.goal.dailyMinutes);
+      const computed = await computePlan({ context: context!, mode: "automatic" });
+
+      if (attempts.length === 1) {
+        await prisma.$transaction(async (tx) => {
+          await markLearnerChanged(tx, { planInputs: true, userId: user.id });
+          await tx.goal.update({ data: { dailyMinutes: 5 }, where: { id: goal.id } });
+        });
+      }
+
+      await commitPlan({ change: null, computed, context: context! });
+    });
+
+    expect(attempts).toStrictEqual([30, 5]);
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
+      dailyMinutes: 5,
+    });
+  });
 
   it.each(["first day", "entitlement refill"])(
     "rolls back stale %s admission when minutes change before the basis read",

@@ -18,6 +18,7 @@ import {
 } from "./own-level-contract";
 import { withPlanRetry } from "./plan-conflict";
 import { type PlanChangeView } from "./plan-view-contract";
+import { refreshGoalPlan } from "./refresh-goal-plan";
 
 /** Not shown to the learner: the app announces the foundations from the change's operations. */
 const OWN_LEVEL_NOTE = "The learner lowered their own level; foundations were added.";
@@ -112,6 +113,8 @@ export async function changeOwnLevel({
         ? loadGoalPlan(goalId).then((plan) => findLevelTestOuts({ level: input.level, plan }))
         : [],
     ]);
+
+    await refreshGoalPlan({ goalId });
 
     return { ownLevel: { change, direction, level: input.level, testOuts }, status: "ready" };
   });

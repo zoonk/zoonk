@@ -4,6 +4,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getLearnerModelCacheTag } from "../cache/tags";
+import { refreshGoalPlan } from "../plans/refresh-goal-plan";
 import { canMoveGoalTimeZone } from "./_utils/goal-time-zone";
 import { markLearnerChanged } from "./_utils/mark-learner-changed";
 import { findOwnedGoal, getAnswerTimeZone } from "./_utils/owned-goal";
@@ -194,6 +195,8 @@ export async function followGoalTimeZone({
   if (move.kind !== "moved") {
     return { moved: false, status: "ready" };
   }
+
+  await refreshGoalPlan({ goalId });
 
   revalidateCacheTags([getGoalsCacheTag(userId), getLearnerModelCacheTag(userId)]);
   return { moved: true, status: "ready" };

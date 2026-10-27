@@ -158,16 +158,22 @@ export async function savePlanInputsKey({
   context,
   graph,
   inputsKey,
+  summary,
 }: {
   context: Pick<PlanContext, "plan">;
   graph: PlanState["graph"];
   inputsKey: string;
+  summary?: PlanSummary;
 }): Promise<void> {
   await prisma.$transaction(async (tx) => {
     const plan = await markPlanWrite(tx, context.plan);
 
     const { count } = await tx.plan.updateMany({
-      data: { graph, inputsKey },
+      data: {
+        graph,
+        inputsKey,
+        ...(summary && { coveredShare: summary.selected.coverage?.coveredShare ?? null, summary }),
+      },
       where: { id: plan.id, inputVersion: plan.inputVersion, version: plan.version },
     });
 

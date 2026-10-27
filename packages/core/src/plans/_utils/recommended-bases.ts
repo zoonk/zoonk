@@ -6,7 +6,8 @@ import { toRecommendedBaseChoices } from "../planner/recommended-base-choices";
 import { isPlanReady } from "./apply-plan-change";
 import { withPastBasicsAreas } from "./level-listening-starts";
 import { listListeningPastBasicsAreas } from "./load-listening-starts";
-import { type PlanContext, loadPlanContext } from "./plan-context";
+import { type PlanContext } from "./plan-context";
+import { loadPlanAtToken } from "./plan-token";
 import { ensureQuickBaseLessons } from "./quick-bases";
 import { type ComputedPlan, commitPlan, computePlan } from "./replan";
 
@@ -86,15 +87,14 @@ export async function settleNewPlan({
   goalId: string;
 }): Promise<void> {
   await withPlanRetry(async () => {
-    const goal = await prisma.goal.findUnique({ where: { id: goalId } });
-    const context = goal ? await loadPlanContext({ goal }) : null;
+    const context = await loadPlanAtToken(goalId);
 
     if (!context || !isPlanReady(context)) {
       return;
     }
 
     const { state } = context;
-    const studiesEverything = goal?.kind === "exam" && fullCourse !== undefined;
+    const studiesEverything = context.goal.kind === "exam" && fullCourse !== undefined;
 
     const levelStarts = await listListeningPastBasicsAreas({
       goal: context.goal,

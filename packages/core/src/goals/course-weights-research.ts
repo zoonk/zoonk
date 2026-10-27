@@ -9,6 +9,7 @@ import { getCutoffTarget } from "../exams/cutoffs/cutoff-target";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { examStructureSchema } from "../library/exams/blueprint-contract";
 import { type CourseWeights, readCourseWeightSubjects } from "../plans/planner/course-weights";
+import { refreshGoalPlan } from "../plans/refresh-goal-plan";
 
 /** What research needs to look up how a course weighs the exam's parts, once a year for everyone. */
 export type CourseWeightsLookup = {
@@ -143,6 +144,7 @@ async function copyToGoal({
   });
 
   if (count > 0) {
+    await refreshGoalPlan({ goalId });
     revalidateCacheTags([getGoalsCacheTag(goal.userId)]);
   }
 }

@@ -5,6 +5,7 @@ import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLearnerModelCacheTag, getUserProgressCacheTag } from "../../cache/tags";
 import { celebrateProgress } from "../../milestones/celebrate-progress";
+import { refreshGoalPlan } from "../../plans/refresh-goal-plan";
 import { type ProgressChange } from "../../sessions/_utils/session-progress";
 import { type ProgressCelebration } from "../../sessions/progress-celebration";
 import { settleAnsweredActivity } from "../../stats/_utils/settle-answered-activity";
@@ -246,7 +247,11 @@ async function submitOwnedTestOut({
         testedOutAt: answeredAt,
         timeZone,
       })
-    : { changeId: null, lessonsSkipped: 0, planVersion: null };
+    : await refreshGoalPlan({ goalId }).then(() => ({
+        changeId: null,
+        lessonsSkipped: 0,
+        planVersion: null,
+      }));
 
   const said = {
     changeId: testedOut.changeId,

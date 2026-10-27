@@ -131,6 +131,31 @@ describe(updateGoal, () => {
     expect(weekend).toBe(0);
   });
 
+  it("saves the resulting local-day plan after a timezone-only edit", async () => {
+    const { goal, plan } = await setup();
+    const before = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+
+    await expect(
+      updateGoal({ goalId: goal.id, input: { timeZone: "Pacific/Kiritimati" } }),
+    ).resolves.toMatchObject({ status: "updated" });
+
+    const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    expect(saved.version).toBeGreaterThan(before.version);
+
+    expect(saved.summary).toMatchObject({
+      basis: { layoutStudyDay: "2020-09-29", timeZone: "Pacific/Kiritimati" },
+    });
+  });
+
+  it("saves a plan after planner-relevant details change", async () => {
+    const { goal, plan } = await setup();
+    const before = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    await updateGoal({ goalId: goal.id, input: { details: { level: "advanced" } } });
+    const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    expect(saved.summary).toMatchObject({ basis: { layoutInputVersion: saved.inputVersion } });
+    expect(saved.inputsKey).not.toBe(before.inputsKey);
+  });
+
   it("refuses a past target date", async () => {
     const { goal } = await setup();
 

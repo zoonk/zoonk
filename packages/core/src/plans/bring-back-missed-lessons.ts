@@ -3,7 +3,8 @@ import { prisma } from "@zoonk/db";
 import { isPlanReady } from "./_utils/apply-plan-change";
 import { updatePhaseDatesProposal } from "./_utils/phase-dates-proposal";
 import { toPlanChangePayload } from "./_utils/plan-change-payload";
-import { type PlanContext, loadPlanContext } from "./_utils/plan-context";
+import { type PlanContext } from "./_utils/plan-context";
+import { loadPlanAtToken } from "./_utils/plan-token";
 import { type ComputedPlan, commitPlan, computePlan } from "./_utils/replan";
 import { withSeenTopics } from "./_utils/seen-effect";
 import { withPlanRetry } from "./plan-conflict";
@@ -150,8 +151,7 @@ export async function bringBackMissedLessons({
   }
 
   await withPlanRetry(async () => {
-    const goal = await prisma.goal.findUnique({ where: { id: goalId } });
-    const context = goal ? await loadPlanContext({ goal, now, timeZone }) : null;
+    const context = await loadPlanAtToken(goalId, { now, timeZone });
 
     if (!context || !isPlanReady(context)) {
       return;

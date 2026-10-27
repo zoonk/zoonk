@@ -4,10 +4,11 @@ import { prisma } from "@zoonk/db";
 import { toProvenanceData } from "../../library/_utils/library-rows";
 import { withPlanRetry } from "../plan-conflict";
 import { applyChangeNow, isPlanReady } from "./apply-plan-change";
-import { type PlanContext, loadPlanContext } from "./plan-context";
+import { type PlanContext } from "./plan-context";
 import { toPlanEditInput } from "./plan-edit-input";
 import { loadPlanMemory } from "./plan-memory";
 import { endPlanSetupTask, endPlanSetupTaskWith } from "./plan-setup-tasks";
+import { loadPlanAtToken } from "./plan-token";
 
 /** Memory proposed it; the change shows the model's sentence saying what changed and why. */
 const ROUTINE_SOURCE = "memory";
@@ -52,7 +53,7 @@ async function readRoutine(context: PlanContext) {
 export async function fitPlanToRoutine(goalId: string): Promise<void> {
   const task = { goalId, task: "routine" as const };
   const goal = await prisma.goal.findUnique({ where: { id: goalId } });
-  const context = goal && goal.kind !== "explain" ? await loadPlanContext({ goal }) : null;
+  const context = goal && goal.kind !== "explain" ? await loadPlanAtToken(goal.id) : null;
 
   const routine =
     context && isPlanReady(context) && context.state.settings.weekdayMinutes === null
@@ -62,7 +63,7 @@ export async function fitPlanToRoutine(goalId: string): Promise<void> {
   const applied =
     context && routine
       ? await withPlanRetry(async () => {
-          const fresh = await loadPlanContext({ goal: context.goal });
+          const fresh = await loadPlanAtToken(goalId);
 
           return fresh
             ? applyChangeNow({

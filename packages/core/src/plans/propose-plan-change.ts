@@ -1,7 +1,6 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
 import { type AppliedChange, proposeChange } from "./_utils/apply-plan-change";
-import { loadPlanContext } from "./_utils/plan-context";
+import { loadPlanAtToken } from "./_utils/plan-token";
 import { type PlanChangeRecord } from "./_utils/replan";
 import { withPlanRetry } from "./plan-conflict";
 import { type PlanOperation } from "./plan-contract";
@@ -33,8 +32,7 @@ export async function proposePlanChange({
   source: string;
 }): Promise<PlanProposalResult> {
   const propose = async (): Promise<PlanProposalResult> => {
-    const goal = await prisma.goal.findUnique({ where: { id: goalId } });
-    const context = goal ? await loadPlanContext({ goal }) : null;
+    const context = await loadPlanAtToken(goalId);
 
     if (!context) {
       return { status: "notFound" };

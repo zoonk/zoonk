@@ -10,6 +10,7 @@ import {
 } from "./_utils/phase-dates-proposal";
 import { type PlanContext } from "./_utils/plan-context";
 import { addsLessonsAfterLessonsDone, isPlanLaidOut } from "./_utils/plan-refresh-admission";
+import { toPlanSummary } from "./_utils/plan-summary";
 import { loadPlanAtToken } from "./_utils/plan-token";
 import { isPlanUnchanged } from "./_utils/plan-unchanged";
 import {
@@ -291,7 +292,22 @@ async function refreshPlanned({
 
   const saved = await saveOrLetGo(lostSave, () =>
     unchanged
-      ? savePlanInputsKey({ context, graph: computed.state.graph, inputsKey: computed.inputsKey })
+      ? savePlanInputsKey({
+          context,
+          graph: computed.state.graph,
+          inputsKey: computed.inputsKey,
+          summary: toPlanSummary({
+            context: {
+              ...context,
+              plan: {
+                ...context.plan,
+                inputVersion: context.plan.inputVersion + 1,
+                version: context.plan.version - 1,
+              },
+            },
+            selected: computed.summarizeRetained() ?? computed.selected,
+          }),
+        })
       : commitPlan({ change, computed, context, revalidation }),
   );
 

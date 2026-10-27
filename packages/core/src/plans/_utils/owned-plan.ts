@@ -9,12 +9,14 @@ import {
 } from "../../cache/tags";
 import { findOwnedGoal } from "../../learner/_utils/owned-goal";
 import { getRequestProgressDateContext } from "../../progress/get-request-date-context";
+import { getSession } from "../../users/get-session";
 import { type PlanChangeView } from "../plan-view-contract";
 import { parsePlanGraph } from "../planner/plan-state";
 import { foldChangeAreas } from "./fold-part-areas";
 import { loadGraphPartAreas } from "./part-areas";
 import { changeGoalSelect, toPlanChangeView } from "./plan-change-view";
 import { type PlanContext, loadPlanContext } from "./plan-context";
+import { loadPlanAtToken } from "./plan-token";
 
 export type OwnedPlan =
   | { context: PlanContext; status: "ready" }
@@ -28,15 +30,17 @@ export async function findOwnedPlan({
   goalId: string;
   timeZone?: string | null;
 }): Promise<OwnedPlan> {
-  const owned = await findOwnedGoal(goalId);
+  const session = await getSession();
 
-  if (owned.status !== "ready") {
-    return owned;
+  if (!session) {
+    return { status: "unauthorized" };
   }
 
-  const context = await loadPlanContext({ goal: owned.goal, timeZone });
+  const context = await loadPlanAtToken(goalId, { timeZone });
 
-  return context ? { context, status: "ready" } : { status: "notFound" };
+  return context?.goal.userId === session.user.id
+    ? { context, status: "ready" }
+    : { status: "notFound" };
 }
 
 /**

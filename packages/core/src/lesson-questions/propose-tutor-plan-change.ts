@@ -5,7 +5,8 @@ import { toProvenanceData } from "../library/_utils/library-rows";
 import { isPlanReady, proposeChange } from "../plans/_utils/apply-plan-change";
 import { type PlanChangeCaution, findChangeCautions } from "../plans/_utils/change-cautions";
 import { findOwnedPlan, loadPlanChangeView } from "../plans/_utils/owned-plan";
-import { type PlanContext, loadPlanContext } from "../plans/_utils/plan-context";
+import { type PlanContext } from "../plans/_utils/plan-context";
+import { loadPlanAtToken } from "../plans/_utils/plan-token";
 import { interpretPlanWords } from "../plans/_utils/plan-words";
 import { revalidatePlanTags } from "../plans/_utils/replan";
 import { withPlanRetry } from "../plans/plan-conflict";
@@ -106,7 +107,7 @@ async function proposeForGoal({
   }
 
   return withPlanRetry(async () => {
-    const context = await loadPlanContext({ goal: owned.context.goal });
+    const context = await loadPlanAtToken(owned.context.goal.id);
 
     if (!context) {
       return { status: "notFound" as const };

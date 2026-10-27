@@ -4,7 +4,8 @@ import { findOwnedGoal } from "../../learner/_utils/owned-goal";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import { applyChangeNow } from "../../plans/_utils/apply-plan-change";
 import { loadPlanChangeView } from "../../plans/_utils/owned-plan";
-import { type PlanContext, loadPlanContext } from "../../plans/_utils/plan-context";
+import { type PlanContext } from "../../plans/_utils/plan-context";
+import { loadPlanAtToken } from "../../plans/_utils/plan-token";
 import { withPlanRetry } from "../../plans/plan-conflict";
 import { type PlanChangeView } from "../../plans/plan-view-contract";
 import { type PlanOperationError } from "../../plans/planner/plan-operations";
@@ -108,7 +109,7 @@ export async function pickExamOptions({
   }
 
   return withPlanRetry(async () => {
-    const context = await loadPlanContext({ goal, timeZone });
+    const context = await loadPlanAtToken(goal.id, { timeZone });
 
     return context
       ? applyChoices({ choices: offered, context, followToday })

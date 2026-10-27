@@ -76,6 +76,15 @@ describe(changeOwnLevel, () => {
     vi.restoreAllMocks();
   });
 
+  it("refreshes the saved plan for a higher level even without adding foundations", async () => {
+    const { goal, plan } = await setup();
+    const before = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    await expect(change(goal.id, "advanced")).resolves.toMatchObject({ status: "ready" });
+    const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    expect(saved.summary).toMatchObject({ basis: { layoutInputVersion: saved.inputVersion } });
+    expect(saved.inputsKey).not.toBe(before.inputsKey);
+  });
+
   it("lowering adds the missing foundations first, keeps tested-out work, and can be undone", async () => {
     const { goal, library, plan } = await setup();
     const [first] = library.skills;
@@ -237,12 +246,13 @@ describe(changeOwnLevel, () => {
     await expect(change(goal.id, "basic")).resolves.toStrictEqual({ status: "unauthorized" });
   });
 
-  it("marks a saved own level once and serializes duplicate saves without another planning bump", async () => {
+  it("saves a changed level and its plan once across duplicate submissions", async () => {
     const { goal, plan } = await setup();
     const planBefore = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
     await Promise.all([change(goal.id, "advanced"), change(goal.id, "advanced")]);
-    await expect(readInputVersion(plan.id)).resolves.toBe(planBefore.inputVersion + 1);
+    await expect(readInputVersion(plan.id)).resolves.toBe(planBefore.inputVersion + 2);
     await change(goal.id, "advanced");
+    await expect(readInputVersion(plan.id)).resolves.toBe(planBefore.inputVersion + 2);
   });
 });
 

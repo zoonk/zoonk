@@ -6,7 +6,7 @@ import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getLibraryLessonCacheTag } from "../../cache/tags";
 import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { type HeldBackDraft } from "../generation/held-back-drafts";
-import { moveOnWithoutLesson } from "../generation/hold-back-lesson";
+import { moveOnWithoutLesson, refreshPlansWithoutLesson } from "../generation/hold-back-lesson";
 import {
   type CheckedVersion,
   type GateResult,
@@ -330,6 +330,8 @@ export async function setAsidePublishedLesson({
   if (!userIds) {
     return false;
   }
+
+  await refreshPlansWithoutLesson(lessonId);
 
   revalidateCacheTags([
     getLibraryLessonCacheTag(lessonId),

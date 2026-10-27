@@ -1,10 +1,9 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
 import { isPlanReady } from "./_utils/apply-plan-change";
 import { getCoverageChange } from "./_utils/coverage-change";
 import { followPlanToday } from "./_utils/follow-plan-today";
 import { getListeningPastBasicsEffect, withPastBasicsAreas } from "./_utils/level-listening-starts";
-import { loadPlanContext } from "./_utils/plan-context";
+import { loadPlanAtToken } from "./_utils/plan-token";
 import { commitPlan, computePlan } from "./_utils/replan";
 import { withPlanRetry } from "./plan-conflict";
 
@@ -30,8 +29,7 @@ export async function replanAfterPlacement({
   timeZone: string;
 }): Promise<void> {
   await withPlanRetry(async () => {
-    const goal = await prisma.goal.findUnique({ where: { id: goalId } });
-    const context = goal ? await loadPlanContext({ goal, now, timeZone }) : null;
+    const context = await loadPlanAtToken(goalId, { now, timeZone });
 
     if (!context || !isPlanReady(context)) {
       return;

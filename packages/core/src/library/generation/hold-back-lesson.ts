@@ -1,8 +1,11 @@
 import "server-only";
-import { type StudySessionStatus, type TransactionClient } from "@zoonk/db";
+import { type StudySessionStatus, type TransactionClient, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getLibraryLessonCacheTag } from "../../cache/tags";
+import { toPlanChangePayload } from "../../plans/_utils/plan-change-payload";
+import { getPlanEffect } from "../../plans/planner/plan-effect";
+import { refreshGoalPlan } from "../../plans/refresh-goal-plan";
 import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { type HeldBackDraft, MAX_LESSON_DRAFTS, parseHeldBackDrafts } from "./held-back-drafts";
 
@@ -31,7 +34,7 @@ export async function moveOnWithoutLesson(
   lessonId: string,
 ): Promise<string[]> {
   const items = await tx.planItem.findMany({
-    select: { id: true, plan: { select: { goal: { select: { userId: true } } } } },
+    include: { plan: { include: { goal: true, items: true } } },
     where: { lessonId, status: "todo" },
   });
 
@@ -60,7 +63,43 @@ export async function moveOnWithoutLesson(
     where: { id: { in: items.map((item) => item.id) }, status: "todo" },
   });
 
+  await Promise.all(
+    [...Map.groupBy(items, (item) => item.planId)].map(async ([planId, removed]) => {
+      const before = removed.at(0)?.plan.items ?? [];
+      const ids = new Set(removed.map((item) => item.id));
+
+      const effect = getPlanEffect({
+        after: before.map((item) =>
+          ids.has(item.id) ? { ...item, status: "skipped" as const } : item,
+        ),
+        before,
+        standInLessons: new Map(
+          before.flatMap((item) => (item.skillId ? [[item.skillId, item.lessons ?? 1]] : [])),
+        ),
+      });
+
+      await tx.planChange.create({
+        data: {
+          kind: "estimateUpdated",
+          payload: toPlanChangePayload({
+            effect: { ...effect, lessonsLeftOut: removed.map((item) => item.titleSnapshot) },
+            source: "system",
+          }),
+          planId,
+          reason: "An unplayable lesson was set aside.",
+          status: "applied",
+        },
+      });
+    }),
+  );
+
   return [...new Set(items.map((item) => item.plan.goal.userId))];
+}
+
+/** The quality write removes unplayable blocks immediately; its response also waits for the saved plan. */
+export async function refreshPlansWithoutLesson(lessonId: string): Promise<void> {
+  const plans = await prisma.plan.findMany({ where: { items: { some: { lessonId } } } });
+  await Promise.all(plans.map((plan) => refreshGoalPlan({ goalId: plan.goalId })));
 }
 
 /**
@@ -129,6 +168,10 @@ export async function holdBackLessonDraft({
 
   if (!heldBack) {
     return null;
+  }
+
+  if (heldBack.setAside) {
+    await refreshPlansWithoutLesson(lessonId);
   }
 
   revalidateCacheTags([

@@ -8,7 +8,8 @@ import {
 import { applyChangeNow } from "./_utils/apply-plan-change";
 import { findOwnedPlan, loadPlanChangeView } from "./_utils/owned-plan";
 import { findCurrentPhase } from "./_utils/phase-states";
-import { type PlanContext, loadPlanContext } from "./_utils/plan-context";
+import { type PlanContext } from "./_utils/plan-context";
+import { loadPlanAtToken } from "./_utils/plan-token";
 import { type PlanTool, findToolAnchorSkill, loadPlanTools } from "./_utils/plan-tools";
 import { withPlanRetry } from "./plan-conflict";
 import { type PlanOperation, type PlanToolChoiceInput } from "./plan-contract";
@@ -144,7 +145,7 @@ export async function choosePlanTools({
   const chosen = await prepareSetups({ goal, input, tools });
 
   return withPlanRetry(async () => {
-    const context = await loadPlanContext({ goal, timeZone: input.timeZone });
+    const context = await loadPlanAtToken(goal.id, { timeZone: input.timeZone });
 
     if (!context) {
       return { status: "notFound" as const };

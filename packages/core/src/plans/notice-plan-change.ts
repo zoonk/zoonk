@@ -5,8 +5,9 @@ import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-c
 import { examEditionSchema } from "../library/exams/blueprint-contract";
 import { proposeChange } from "./_utils/apply-plan-change";
 import { parsePlanChangePayload } from "./_utils/plan-change-payload";
-import { type PlanContext, loadPlanContext } from "./_utils/plan-context";
+import { type PlanContext } from "./_utils/plan-context";
 import { endPlanSetupTask, endPlanSetupTaskWith } from "./_utils/plan-setup-tasks";
+import { loadPlanAtToken } from "./_utils/plan-token";
 import { revalidatePlanTags } from "./_utils/replan";
 import { NOTICE_SOURCE } from "./plan-change-contract";
 import { withPlanRetry } from "./plan-conflict";
@@ -126,8 +127,8 @@ async function proposeForGoal({
   graph: PlanGraph | null;
   noticeId: string | null;
 }): Promise<NoticeChangeOutcome> {
-  const goal = await prisma.goal.findUnique({ where: { id: goalId } });
-  const context = goal?.status === "active" ? await loadPlanContext({ goal }) : null;
+  const loaded = await loadPlanAtToken(goalId);
+  const context = loaded?.goal.status === "active" ? loaded : null;
 
   if (!context || context.state.graph.skills.length === 0) {
     return "none";

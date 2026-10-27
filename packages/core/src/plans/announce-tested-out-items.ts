@@ -6,7 +6,8 @@ import { isPlanReady } from "./_utils/apply-plan-change";
 import { followPlanToday } from "./_utils/follow-plan-today";
 import { getListeningPastBasicsEffect, withPastBasicsAreas } from "./_utils/level-listening-starts";
 import { parsePlanChangePayload, toPlanChangePayload } from "./_utils/plan-change-payload";
-import { type PlanContext, loadPlanContext } from "./_utils/plan-context";
+import { type PlanContext } from "./_utils/plan-context";
+import { loadPlanAtToken } from "./_utils/plan-token";
 import { commitPlan, computePlan } from "./_utils/replan";
 import { withSeenTopics } from "./_utils/seen-effect";
 import { countLessons } from "./_utils/stand-in-lessons";
@@ -209,8 +210,7 @@ export async function announceTestedOutItems({
   const skipped = new Set(planItemIds);
 
   return withPlanRetry(async () => {
-    const goal = await prisma.goal.findUnique({ where: { id: goalId } });
-    const context = goal ? await loadPlanContext({ goal, now, timeZone }) : null;
+    const context = await loadPlanAtToken(goalId, { now, timeZone });
 
     if (!context || !isPlanReady(context)) {
       return null;

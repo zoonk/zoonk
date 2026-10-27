@@ -13,7 +13,8 @@ import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-c
 import { applyChangeNow, isPlanReady } from "../plans/_utils/apply-plan-change";
 import { loadPlanChangeView } from "../plans/_utils/owned-plan";
 import { toPlanChangePayload } from "../plans/_utils/plan-change-payload";
-import { type PlanContext, loadPlanContext } from "../plans/_utils/plan-context";
+import { type PlanContext } from "../plans/_utils/plan-context";
+import { loadPlanAtToken } from "../plans/_utils/plan-token";
 import { commitPlan } from "../plans/_utils/replan";
 import { computeResumedPlan } from "../plans/_utils/resumed-plan";
 import { withPlanRetry } from "../plans/plan-conflict";
@@ -21,6 +22,7 @@ import { type PlanChangeView } from "../plans/plan-view-contract";
 import { toIsoDate } from "../plans/planner/plan-calendar";
 import { type PlanOperationError } from "../plans/planner/plan-operations";
 import { getScheduleOperations } from "../plans/planner/schedule-operations";
+import { refreshGoalPlan } from "../plans/refresh-goal-plan";
 import { assertTargetDates } from "../plans/target-date-range";
 import { findActiveGoalLimit, moveActiveGoalAway } from "./_utils/goal-status";
 import { findActiveGoalId, loadGoalViews } from "./_utils/goal-view";
@@ -121,7 +123,7 @@ async function resumePlan(context: PlanContext): Promise<string | null> {
 
 async function updatePlan({ goal, input }: { goal: Goal; input: GoalUpdateInput }) {
   return withPlanRetry(async () => {
-    const context = await loadPlanContext({ goal, timeZone: input.timeZone });
+    const context = await loadPlanAtToken(goal.id, { timeZone: input.timeZone });
 
     // Checked against the plan's own today and date, before anything is planned or saved.
     if (context) {
@@ -197,6 +199,13 @@ export async function updateGoal({
   }
 
   const { completed, goal: updated } = await saveMetadata({ goal, input, userId });
+
+  if (
+    updated.status === "active" &&
+    (input.details !== undefined || input.timeZone !== undefined)
+  ) {
+    await refreshGoalPlan({ goalId });
+  }
 
   if (completed) {
     trackGoalReached(updated);
