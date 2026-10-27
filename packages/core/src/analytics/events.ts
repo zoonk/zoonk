@@ -184,8 +184,6 @@ type AccountEvents = {
 
 type QualityEvents = {
   "Content Reported": { content_id: string; content_kind: string; reason: string };
-  /** A vote from a screen's menu or thumbs on AI content, named by its id and kind. */
-  "Content Voted": { content_id: string; content_kind: string; vote: "down" | "up" };
   "Feedback Sent": { content_kind: string | null };
   /** A run that gave up on content; `model` is null when the failure isn't tied to one model call. */
   "Generation Failed": { content_kind: string; model: string | null; task: string };
