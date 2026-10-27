@@ -11,10 +11,12 @@ import { useCheckpointScreen } from "./checkpoint-context";
 export function useVerdictReactions() {
   const { duel } = useCheckpointScreen();
   const trickster = useRef<ActorHandle<TricksterActName>>(null);
+  const reactedTo = useRef<string | null>(null);
   const { feedback } = duel.state;
 
   useEffect(() => {
-    if (feedback) {
+    if (feedback && reactedTo.current !== feedback.itemId) {
+      reactedTo.current = feedback.itemId;
       void trickster.current?.play(feedback.isCorrect ? "sly" : "smug");
     }
   }, [feedback]);
