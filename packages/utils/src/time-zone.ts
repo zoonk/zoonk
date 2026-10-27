@@ -1,5 +1,41 @@
 const MS_PER_SECOND = 1000;
 
+const DATE_PARTS = { day: "numeric", month: "numeric", year: "numeric" } as const;
+
+const DATE_TIME_PARTS = {
+  ...DATE_PARTS,
+  hour: "numeric",
+  hourCycle: "h23",
+  minute: "numeric",
+  second: "numeric",
+} as const;
+
+const HOUR_PARTS = { hour: "numeric", hourCycle: "h23" } as const;
+
+/**
+ * Making a formatter costs far more than formatting with one, and a page's planner asks a
+ * learner's zone for hundreds of dates, so each shape keeps one formatter per zone.
+ */
+function formatterCache(options: Intl.DateTimeFormatOptions) {
+  const formatters = new Map<string, Intl.DateTimeFormat>();
+
+  return (timeZone: string): Intl.DateTimeFormat => {
+    const cached = formatters.get(timeZone);
+
+    if (cached) {
+      return cached;
+    }
+
+    const formatter = new Intl.DateTimeFormat("en", { ...options, timeZone });
+    formatters.set(timeZone, formatter);
+    return formatter;
+  };
+}
+
+const dateFormatter = formatterCache(DATE_PARTS);
+const dateTimeFormatter = formatterCache(DATE_TIME_PARTS);
+const hourFormatter = formatterCache(HOUR_PARTS);
+
 /**
  * DateTimeFormat returns multiple part kinds, so this helper makes the required
  * calendar fields explicit before they become a UTC date-only value.
@@ -20,12 +56,7 @@ function getNumericDatePart({
  * introducing the server's timezone.
  */
 export function getDateInTimeZone({ date, timeZone }: { date: Date; timeZone: string }): Date {
-  const dateParts = new Intl.DateTimeFormat("en", {
-    day: "numeric",
-    month: "numeric",
-    timeZone,
-    year: "numeric",
-  }).formatToParts(date);
+  const dateParts = dateFormatter(timeZone).formatToParts(date);
 
   return new Date(
     Date.UTC(
@@ -41,7 +72,7 @@ export function getDateInTimeZone({ date, timeZone }: { date: Date; timeZone: st
  * stats never depend on the server's timezone. `hourCycle: "h23"` keeps midnight at 0, not 24.
  */
 export function getHourInTimeZone({ date, timeZone }: { date: Date; timeZone: string }): number {
-  const hour = new Intl.DateTimeFormat("en", { hour: "numeric", hourCycle: "h23", timeZone })
+  const hour = hourFormatter(timeZone)
     .formatToParts(date)
     .find((part) => part.type === "hour")?.value;
 
@@ -50,16 +81,7 @@ export function getHourInTimeZone({ date, timeZone }: { date: Date; timeZone: st
 
 /** How far a timezone's wall clock is ahead of UTC at one instant, in milliseconds. */
 export function getTimeZoneOffsetMs({ date, timeZone }: { date: Date; timeZone: string }): number {
-  const dateParts = new Intl.DateTimeFormat("en", {
-    day: "numeric",
-    hour: "numeric",
-    hourCycle: "h23",
-    minute: "numeric",
-    month: "numeric",
-    second: "numeric",
-    timeZone,
-    year: "numeric",
-  }).formatToParts(date);
+  const dateParts = dateTimeFormatter(timeZone).formatToParts(date);
 
   const wallClock = Date.UTC(
     getNumericDatePart({ dateParts, type: "year" }),

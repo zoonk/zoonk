@@ -25,19 +25,7 @@ async function appMessages(locale: string): Promise<Messages> {
   return translations.default;
 }
 
-/** Every catalog, for server components. App messages win a key collision unless still untranslated. */
-export async function getAllMessages(locale: string): Promise<Messages> {
-  const [player, learn, app] = await Promise.all([
-    playerMessages(locale),
-    learnMessages(locale),
-    appMessages(locale),
-  ]);
-
-  return mergeMessages(player, learn, app);
-}
-
-/** The messages client components need in a scope, so pages don't ship every catalog. */
-export async function getClientMessages({
+async function loadMessages({
   locale,
   scope,
 }: {
@@ -45,7 +33,13 @@ export async function getClientMessages({
   scope: ClientMessagesScope;
 }): Promise<Messages> {
   if (scope === "player") {
-    return getAllMessages(locale);
+    const [player, learn, app] = await Promise.all([
+      playerMessages(locale),
+      learnMessages(locale),
+      appMessages(locale),
+    ]);
+
+    return mergeMessages(player, learn, app);
   }
 
   if (scope === "learn") {
@@ -55,4 +49,40 @@ export async function getClientMessages({
 
   const [site, app] = await Promise.all([learnSiteMessages(locale), appMessages(locale)]);
   return mergeMessages(site, app);
+}
+
+/**
+ * A production build's catalogs never change, so each locale's and scope's merge is made once per
+ * server instead of on every render: merging walks thousands of keys, and every page renders it
+ * two or three times (the server's messages, then each scope's provider), prefetches included. In
+ * development extraction rewrites the catalogs as code changes, so each render merges them again.
+ */
+const merged = new Map<string, Promise<Messages>>();
+
+/** The messages client components need in a scope, so pages don't ship every catalog. */
+export function getClientMessages(input: {
+  locale: string;
+  scope: ClientMessagesScope;
+}): Promise<Messages> {
+  if (process.env.NODE_ENV !== "production") {
+    return loadMessages(input);
+  }
+
+  const key = `${input.scope}:${input.locale}`;
+  const cached = merged.get(key);
+
+  if (cached) {
+    return cached;
+  }
+
+  const loading = loadMessages(input);
+  merged.set(key, loading);
+  // A failed load isn't kept: the next render tries again.
+  loading.catch(() => merged.delete(key));
+  return loading;
+}
+
+/** Every catalog, for server components. App messages win a key collision unless still untranslated. */
+export function getAllMessages(locale: string): Promise<Messages> {
+  return getClientMessages({ locale, scope: "player" });
 }
