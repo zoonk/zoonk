@@ -91,7 +91,10 @@ test.describe("Exam speaking tasks", () => {
     await expect(transcript.getByText(CHARACTER_REPLY)).toBeVisible();
     await page.getByRole("button", { exact: true, name: "End" }).click();
 
-    await expect(page.getByRole("heading", { name: "This task has no estimate" })).toBeVisible();
+    // E2E blocks the scoring model: the review tries it again a few times, then saves no estimate.
+    await expect(page.getByRole("heading", { name: "This task has no estimate" })).toBeVisible({
+      timeout: 20_000,
+    });
 
     await expect(
       prisma.languageConversation.findUniqueOrThrow({ where: { id: waiting.id } }),

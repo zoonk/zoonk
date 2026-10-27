@@ -10,7 +10,11 @@ import { type ProgressChange } from "../../sessions/_utils/session-progress";
 import { getExamTaskEvidence } from "../exam-speaking/speaking-evidence";
 import { recordLanguageSkillEvidence } from "../levels/record-language-evidence";
 import { type LevelEvidence } from "../levels/skill-level-rules";
-import { type WrittenFeedback, reviewConversation } from "./_utils/conversation-feedback";
+import {
+  type WrittenFeedback,
+  getExamTaskObjectives,
+  reviewConversation,
+} from "./_utils/conversation-feedback";
 import {
   type ConversationRow,
   type SavedScenario,
@@ -247,7 +251,7 @@ async function trackCall({
  * Writes the reviewed call once, for the run that claimed it (`settleConversation`): its feedback,
  * Brain Power and Energy, the ledger and a checkpoint's block, then the speaking level's evidence
  * and analytics. With no review (the model kept failing), the call completes without feedback,
- * with the goals marked during it.
+ * with the goals code can tell: those marked during it, or an exam task's once the candidate spoke.
  */
 export async function settleConversationReview({
   conversationId,
@@ -257,7 +261,8 @@ export async function settleConversationReview({
   timeZone,
   usedHelp,
   userId,
-}: Omit<ConversationReviewInput, "connectionId" | "turns"> & {
+  turns,
+}: Omit<ConversationReviewInput, "connectionId"> & {
   review: ConversationReview | null;
   runId: string;
 }): Promise<ConversationReviewOutcome> {
@@ -265,10 +270,9 @@ export async function settleConversationReview({
 
   const { feedback, objectivesMet } = review ?? {
     feedback: null,
-    objectivesMet: getMetObjectives({
-      labels: owned.row.objectivesMet,
-      objectives: scenario.objectives,
-    }),
+    objectivesMet: scenario.examTask
+      ? getExamTaskObjectives({ scenario, turns })
+      : getMetObjectives({ labels: owned.row.objectivesMet, objectives: scenario.objectives }),
   };
 
   const progress = await settleConversation({

@@ -132,6 +132,18 @@ async function writeFeedback({
   return write();
 }
 
+/** An exam task's one goal is doing the task: met once the candidate spoke in it. */
+export function getExamTaskObjectives({
+  scenario,
+  turns,
+}: {
+  scenario: SavedScenario;
+  turns: ConversationTurn[];
+}): string[] {
+  const spoke = turns.some((turn) => turn.speaker === "learner");
+  return spoke ? scenario.objectives.map((objective) => objective.label) : [];
+}
+
 /** The goals marked during the call plus any the full transcript shows. */
 async function findObjectivesMet(input: ReviewInput): Promise<string[]> {
   const newlyMet = await findNewlyMetObjectives(input);
@@ -160,13 +172,7 @@ export async function reviewConversation(
       write: () => writeExamTaskFeedback({ examTask, input }),
     });
 
-    const spoke = input.turns.some((turn) => turn.speaker === "learner");
-
-    const objectivesMet = spoke
-      ? input.scenario.objectives.map((objective) => objective.label)
-      : [];
-
-    return { feedback, objectivesMet };
+    return { feedback, objectivesMet: getExamTaskObjectives(input) };
   }
 
   if (exam) {

@@ -1,8 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { writeConversationFeedback } from "@zoonk/ai/tasks/v2/language/conversation-feedback";
 import { checkConversationObjectives } from "@zoonk/ai/tasks/v2/language/conversation-objectives";
+import { scoreSpeaking } from "@zoonk/ai/tasks/v2/language/speaking-score";
 import { prisma } from "@zoonk/db";
-import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
+import { RENTING_SCENARIO, languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import {
   cleanupTestCalls,
@@ -12,6 +13,7 @@ import {
 } from "../../_test-utils/connect-test-call";
 import { mockSession } from "../../_test-utils/mock-session";
 import { reviewRunsInline } from "../../_test-utils/review-runs";
+import { liveCallFixture } from "./_test-utils/live-call-fixture";
 import { claimConversationReview } from "./claim-conversation-review";
 import { completeLanguageConversation } from "./complete-language-conversation";
 import { startLanguageConversation } from "./start-language-conversation";
@@ -214,6 +216,26 @@ describe("a completed call's review", () => {
     await expect(
       prisma.languageConversation.findUniqueOrThrow({ where: { id: call.conversationId } }),
     ).resolves.toMatchObject({ feedback: null, objectivesMet: ["Is it available?"] });
+  });
+
+  it("[3] completes an exam task the candidate spoke in with its goal when its scoring keeps failing", async () => {
+    const { conversation, user } = await liveCallFixture({ kind: "examSpeaking", plus: true });
+    mockSession(user.id);
+    const { setup } = await connectTestCall(conversation.id);
+    vi.mocked(scoreSpeaking).mockRejectedValue(new Error("The model is down"));
+
+    await expect(
+      complete({ connectionId: setup.connectionId, conversationId: conversation.id }),
+    ).resolves.toMatchObject({ status: "completed" });
+
+    const saved = await prisma.languageConversation.findUniqueOrThrow({
+      where: { id: conversation.id },
+    });
+
+    expect(saved).toMatchObject({ feedback: null, status: "completed" });
+    expect(saved.objectivesMet).toStrictEqual(
+      RENTING_SCENARIO.objectives.map((objective) => objective.label),
+    );
   });
 
   it("[3] keeps a finished review when settling fails, and completes on retry without grading again", async () => {
