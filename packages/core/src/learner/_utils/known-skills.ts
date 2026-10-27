@@ -201,9 +201,9 @@ export async function testOutKnownPlanItems(
  * from today: the items this call found still to do, whichever test-out changed them, so a run
  * whose announcement ends a task (`applyPlacementToNewPlan`) announces them even when another run
  * that lost its announcement tested them out first. Returns the ids, the plan change that
- * announced them (null when the plan isn't the planner's yet), whose undo brings them back, and
- * the lessons it says it skipped (`countLessons`: a stand-in, the lessons the plan taught in its
- * place), so a result says the count Today and the Plan say.
+ * announced them (null when the plan isn't the planner's yet), whose undo brings them back, the
+ * lessons it says it skipped (`countLessons`: a stand-in, the lessons the plan taught in its
+ * place), so a result says the count Today and the Plan say, and the plan's version it left.
  */
 export async function markPlanItemsTestedOut({
   announceAlso = [],
@@ -234,12 +234,17 @@ export async function markPlanItemsTestedOut({
   placedSkills?: readonly LeftOutSkill[];
   testedOutAt: Date;
   timeZone: string;
-}): Promise<{ changeId: string | null; lessonsSkipped: number; planItemIds: string[] }> {
+}): Promise<{
+  changeId: string | null;
+  lessonsSkipped: number;
+  planItemIds: string[];
+  planVersion: number | null;
+}> {
   const { ids, leftOut } = findTestOut({ items, knownSkillIds, placedSkills });
   const goal = await prisma.goal.findUnique({ where: { id: goalId } });
 
   if (!goal) {
-    return { changeId: null, lessonsSkipped: 0, planItemIds: [] };
+    return { changeId: null, lessonsSkipped: 0, planItemIds: [], planVersion: null };
   }
 
   const standInIds =
@@ -264,7 +269,7 @@ export async function markPlanItemsTestedOut({
   const announced = [...new Set([...announceAlso, ...planItemIds])];
 
   if (announced.length === 0) {
-    return { changeId: null, lessonsSkipped: 0, planItemIds: [] };
+    return { changeId: null, lessonsSkipped: 0, planItemIds: [], planVersion: null };
   }
 
   const announcement = await announceTestedOutItems({
@@ -281,6 +286,7 @@ export async function markPlanItemsTestedOut({
     changeId: announcement?.changeId ?? null,
     lessonsSkipped: announcement?.lessonsSkipped ?? planItemIds.length,
     planItemIds,
+    planVersion: announcement?.planVersion ?? null,
   };
 }
 

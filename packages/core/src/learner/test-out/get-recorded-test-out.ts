@@ -6,7 +6,7 @@ import { findTestOutReceipt } from "./_utils/test-out-receipt";
 
 /** A chapter test-out the learner sent, as it was recorded then. */
 type RecordedTestOut = {
-  /** Whether its plan change can still be undone: the plan is exactly as the skip left it. */
+  /** Whether its plan change can still be undone: the plan is exactly as this skip left it. */
   canUndo: boolean;
   /** The plan change that skipped its lessons; null when it skipped none. */
   changeId: string | null;
@@ -27,7 +27,8 @@ export type RecordedTestOutResult =
 /**
  * The result of a chapter test-out the learner sent (its `requestId`), as it was recorded, so a
  * reload, Back or the link opened later shows that result again instead of a new test. Its undo
- * holds while the plan is as the skip left it, as on the Plan. Nothing is written.
+ * holds while the plan is as this skip left it, as on the Plan: a later skip joins the same plan
+ * change, and undoing it from here would bring that one's lessons back too. Nothing is written.
  */
 export async function getRecordedTestOut({
   chapterId,
@@ -59,7 +60,11 @@ export async function getRecordedTestOut({
 
   return {
     result: {
-      canUndo: Boolean(change && plan && canUndoChange({ change, planVersion: plan.version })),
+      canUndo: Boolean(
+        change &&
+        plan?.version === receipt.planVersion &&
+        canUndoChange({ change, planVersion: plan.version }),
+      ),
       changeId: receipt.changeId,
       correct: receipt.correct,
       lessonsSkipped: receipt.lessonsSkipped,

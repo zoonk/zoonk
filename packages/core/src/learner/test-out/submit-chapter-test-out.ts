@@ -261,7 +261,7 @@ export async function submitChapterTestOut({
         testedOutAt: answeredAt,
         timeZone,
       })
-    : { changeId: null, lessonsSkipped: 0 };
+    : { changeId: null, lessonsSkipped: 0, planVersion: null };
 
   // Counted last, with what the result says, so a test is counted once even when sent twice.
   const counted = await countTestOut({
@@ -274,6 +274,7 @@ export async function submitChapterTestOut({
       correct: score.correct,
       lessonsSkipped: testedOut.lessonsSkipped,
       passed: score.passed,
+      planVersion: testedOut.planVersion,
       total: score.total,
     },
     timeZone,

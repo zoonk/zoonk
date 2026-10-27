@@ -255,6 +255,26 @@ describe("a chapter test-out sent and read back", () => {
     });
   });
 
+  it("offers an earlier result's undo only while the plan is as its skip left it", async () => {
+    const { chapterIds, goal, send } = await setup();
+    const [first, second] = [randomUUID(), randomUUID()];
+    const passed = await send({ requestId: first });
+    const later = await send({ chapter: 1, requestId: second });
+    const changeId = passed.status === "ready" ? passed.outcome.changeId : null;
+
+    // The later skip joins the same plan change: its undo would bring both chapters back.
+    expect(changeId).toBeTruthy();
+    expect(later.status === "ready" && later.outcome.changeId).toBe(changeId);
+
+    await expect(
+      getRecordedTestOut({ chapterId: chapterIds[0] ?? "", goalId: goal.id, requestId: first }),
+    ).resolves.toMatchObject({ result: { canUndo: false, changeId, undone: false } });
+
+    await expect(
+      getRecordedTestOut({ chapterId: chapterIds[1] ?? "", goalId: goal.id, requestId: second }),
+    ).resolves.toMatchObject({ result: { canUndo: true, changeId, undone: false } });
+  });
+
   it("reads a fail back without a plan change", async () => {
     const { chapterId, goal, send } = await setup();
     const requestId = randomUUID();

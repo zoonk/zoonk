@@ -170,8 +170,8 @@ async function findUnseenSkip({
  * already know", with an undo) and re-plans from today, so the time those lessons would have
  * taken goes to what comes next, today's blocks not started included. Skips the learner hasn't
  * seen yet are one change (see `findUnseenSkip`). Returns the change, so the screen that skipped
- * them can offer its undo right there, and the lessons it skipped as every screen counts them;
- * null when the plan isn't the planner's yet.
+ * them can offer its undo right there, the lessons it skipped as every screen counts them, and the
+ * plan's version the skip left (`planVersion`); null when the plan isn't the planner's yet.
  */
 export async function announceTestedOutItems({
   extraWrites,
@@ -201,7 +201,7 @@ export async function announceTestedOutItems({
   pastBasicsAreas?: readonly string[];
   planItemIds: readonly string[];
   timeZone: string;
-}): Promise<{ changeId: string | null; lessonsSkipped: number } | null> {
+}): Promise<{ changeId: string | null; lessonsSkipped: number; planVersion: number } | null> {
   if (planItemIds.length === 0) {
     return null;
   }
@@ -302,6 +302,6 @@ export async function announceTestedOutItems({
       await followPlanToday({ changeId, context });
     }
 
-    return { changeId, lessonsSkipped };
+    return { changeId, lessonsSkipped, planVersion: context.plan.version + 1 };
   });
 }

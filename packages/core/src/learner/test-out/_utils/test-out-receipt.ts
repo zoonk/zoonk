@@ -13,6 +13,11 @@ export type TestOutReceipt = {
   correct: number;
   lessonsSkipped: number;
   passed: boolean;
+  /**
+   * The plan's version its skip left: its undo holds only while the plan is still there, since a
+   * later skip joins the same plan change; null when it skipped none.
+   */
+  planVersion: number | null;
   total: number;
 };
 
@@ -22,18 +27,21 @@ export function toTestOutContentIds({
   chapterId,
   lessonsSkipped,
   passed,
+  planVersion,
   requestId,
 }: {
   changeId: string | null;
   chapterId: string;
   lessonsSkipped: number;
   passed: boolean;
+  planVersion: number | null;
   requestId: string;
 }): Record<string, string> {
   return {
     chapterId,
     lessonsSkipped: String(lessonsSkipped),
     ...(changeId ? { planChangeId: changeId } : {}),
+    ...(planVersion === null ? {} : { planVersion: String(planVersion) }),
     testOutId: requestId,
     testOutPassed: String(passed),
   };
@@ -41,12 +49,14 @@ export function toTestOutContentIds({
 
 function readTestOutReceipt(event: LearningEvent): TestOutReceipt {
   const content = isJsonObject(event.contentIds) ? event.contentIds : {};
+  const planVersion = Number(content.planVersion);
 
   return {
     changeId: typeof content.planChangeId === "string" ? content.planChangeId : null,
     correct: event.correctAnswers,
     lessonsSkipped: Number(content.lessonsSkipped) || 0,
     passed: content.testOutPassed === "true",
+    planVersion: Number.isInteger(planVersion) ? planVersion : null,
     total: event.correctAnswers + event.incorrectAnswers,
   };
 }
