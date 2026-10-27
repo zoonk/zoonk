@@ -519,9 +519,9 @@ test.describe("Exams API", () => {
         response: await api.get(`/v1/goals/${goal.id}/mocks`),
         schema: mockOptionsResponseSchema,
       }),
-      api.post(`/v1/goals/${goal.id}/mocks`, { data: { shape, timeZone: "UTC" } }),
+      api.post(`/v1/goals/${goal.id}/mocks`, { data: { shape } }),
       api.post(`/v1/goals/${goal.id}/mocks/generations`, { data: { shape } }),
-      api.post(`/v1/goals/${goal.id}/mocks`, { data: { ...placement, timeZone: "UTC" } }),
+      api.post(`/v1/goals/${goal.id}/mocks`, { data: placement }),
     ]);
 
     // The free plan still sees the diagnostic mock's lengths, with what it takes.
