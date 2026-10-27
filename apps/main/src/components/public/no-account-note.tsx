@@ -43,12 +43,20 @@ export function NoAccountStartNote({ children }: { children: ReactNode }) {
  * A lesson's "No sign-up needed.", only for a visitor: a guest's free lessons run out, and their
  * next lesson then asks for an account, so a guest, like an account, never reads it. Hidden from
  * the first paint on a page the session hint marks signed in, and once the learner summary finds a
- * session.
+ * session. The short sentence stays on one line, so a narrow panel moves it whole to the next line
+ * instead of breaking it at its hyphen ("sign- / up").
  */
 export function NoSessionNote({ children }: { children: ReactNode }) {
   const learner = useLearnerSummary();
 
   return (
-    <span className={learner.status === "ready" ? "hidden" : "signed-in:hidden"}>{children}</span>
+    <span
+      className={cn(
+        "whitespace-nowrap",
+        learner.status === "ready" ? "hidden" : "signed-in:hidden",
+      )}
+    >
+      {children}
+    </span>
   );
 }
