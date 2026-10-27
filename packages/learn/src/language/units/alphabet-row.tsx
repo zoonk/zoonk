@@ -13,6 +13,7 @@ import {
   ListRowLink,
   ListRowTitle,
 } from "../../_components/list-group";
+import { ChangeSaveError } from "../../_components/save-error";
 import { useFormatDuration } from "../../_utils/time-format";
 
 /** The script's alphabet lesson as Content lists it, and whether it still opens the sessions. */
@@ -68,11 +69,7 @@ export function AlphabetRow({
           <Button disabled={isPending} onClick={skip} size="sm" variant="outline">
             {t("I can already read it")}
           </Button>
-          {failed && (
-            <p className="text-destructive-text text-sm" role="alert">
-              {t("That didn't save. Try again.")}
-            </p>
-          )}
+          {failed && <ChangeSaveError />}
         </div>
       )}
     </div>

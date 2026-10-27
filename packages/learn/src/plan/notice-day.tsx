@@ -14,6 +14,7 @@ import {
   NoticeCardLeading,
   NoticeCardTitle,
 } from "../_components/notice-card";
+import { ChangeSaveError } from "../_components/save-error";
 import { useFormatIsoDate } from "../_utils/iso-date";
 
 /**
@@ -76,16 +77,6 @@ function CalendarTile() {
   );
 }
 
-function FailedMessage() {
-  const t = useExtracted();
-
-  return (
-    <p className="text-destructive-text mt-2 text-sm" role="alert">
-      {t("That didn't work. Try again in a moment.")}
-    </p>
-  );
-}
-
 /**
  * The notice's day as a note with its one tap, where a page wants it read before the rest (the
  * plan's reveal, the exam's page). The learner's own date stays until they take it.
@@ -117,7 +108,7 @@ function NoticeDayCard({
           <UseDateButton onUse={use} variant="secondary" />
         </NoticeCardActions>
 
-        {failed && <FailedMessage />}
+        {failed && <ChangeSaveError className="mt-2" />}
       </NoticeCardContent>
     </NoticeCard>
   );
@@ -178,7 +169,7 @@ function NoSittingCard({
           ))}
         </NoticeCardActions>
 
-        {failed && <FailedMessage />}
+        {failed && <ChangeSaveError className="mt-2" />}
       </NoticeCardContent>
     </NoticeCard>
   );

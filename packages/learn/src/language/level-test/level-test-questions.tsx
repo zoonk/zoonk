@@ -50,7 +50,7 @@ export function LevelTestQuestion({
   return (
     <PlacementQuestionScreen
       dontKnowLabel={isListening ? t("I didn't understand the audio") : undefined}
-      error={failed ? t("We couldn't save your answer. Try again.") : null}
+      failed={failed}
       key={question.id}
       media={
         isListening ? <ListeningMessage language={targetLanguage} text={question.passage} /> : null

@@ -2,6 +2,7 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
+import { ChangeSaveError } from "../_components/save-error";
 import { useSessionAction } from "../session/use-session-action";
 
 /**
@@ -43,11 +44,7 @@ export function TodayExtraTime({
         {label ?? t("Study {minutes} more minutes", { minutes: String(minutes) })}
       </Button>
 
-      {failed && (
-        <p className="text-destructive-text text-sm" role="alert">
-          {t("We couldn't add more time. Try again.")}
-        </p>
-      )}
+      {failed && <ChangeSaveError />}
     </>
   );
 }

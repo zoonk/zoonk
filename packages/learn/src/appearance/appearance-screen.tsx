@@ -7,6 +7,7 @@ import { useExtracted } from "next-intl";
 import { useOptimistic } from "react";
 import { ListGroup } from "../_components/list-group";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
+import { ChangeSaveError } from "../_components/save-error";
 import { SwitchSettingRow } from "../_components/setting-rows";
 import { useOptimisticSave } from "../_utils/use-optimistic-save";
 import { type BuddyLook } from "../buddies/buddy-picker";
@@ -130,11 +131,7 @@ export function AppearanceScreen({
         </ListGroup>
       </PageSection>
 
-      {appearance.failed && (
-        <p className="text-destructive-text text-sm" role="alert">
-          {t("That didn't save. Try again.")}
-        </p>
-      )}
+      {appearance.failed && <ChangeSaveError />}
     </div>
   );
 }

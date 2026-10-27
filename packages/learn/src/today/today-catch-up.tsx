@@ -3,6 +3,7 @@
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
+import { ChangeSaveError } from "../_components/save-error";
 import { useFormatDuration } from "../_utils/time-format";
 import { type DayStep } from "../session/session-types";
 import { useTodayScreen } from "./today-context";
@@ -76,11 +77,7 @@ export function CatchUpLater() {
         {t("Catch up today · +{time}", { time: formatDuration(later.minutes) })}
       </Button>
 
-      {failed && (
-        <p className="text-destructive-text basis-full text-sm" role="alert">
-          {t("We couldn't add them. Try again.")}
-        </p>
-      )}
+      {failed && <ChangeSaveError className="basis-full" />}
     </div>
   );
 }

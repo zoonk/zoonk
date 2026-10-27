@@ -66,20 +66,6 @@ export function MomentSaving() {
   return <p className="text-muted-foreground shimmer text-sm">{t("Saving your progress…")}</p>;
 }
 
-/** A task's end whose work couldn't be saved: it says so in the readouts' place, with a retry. */
-export function MomentSaveFailed({ onRetry }: { onRetry: () => void }) {
-  const t = useExtracted();
-
-  return (
-    <div className="flex flex-col items-start gap-3" role="alert">
-      <p className="text-sm">{t("We couldn't save your progress yet.")}</p>
-      <Button onClick={onRetry} size="lg" variant="outline">
-        {t("Try again")}
-      </Button>
-    </div>
-  );
-}
-
 /**
  * A task's end's main action while its work saves, in its place in the bar: its label, waiting
  * until the result is ready. The line above says why, so it shows no spinner of its own.

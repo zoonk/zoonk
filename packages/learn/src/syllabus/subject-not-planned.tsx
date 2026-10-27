@@ -7,6 +7,7 @@ import { CircleMinusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { NoticeCard } from "../_components/notice-card";
+import { ChangeSaveError } from "../_components/save-error";
 import { LearnLink } from "../learn-link";
 
 /**
@@ -44,11 +45,7 @@ function RestoreButton({
       >
         {t("Bring it back")}
       </Button>
-      {failed && (
-        <p className="text-destructive-text text-sm" role="status">
-          {t("That didn't work. Try again in a moment.")}
-        </p>
-      )}
+      {failed && <ChangeSaveError />}
     </div>
   );
 }

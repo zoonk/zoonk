@@ -18,10 +18,10 @@ import {
   SuggestionAction,
   SuggestionActions,
   SuggestionDescription,
-  SuggestionError,
   SuggestionHeader,
   SuggestionLine,
   SuggestionOpen,
+  SuggestionSaveError,
   SuggestionSummary,
 } from "../_components/suggestion";
 import { useLevelName } from "../course/use-level-name";
@@ -53,7 +53,7 @@ function ContinueAtNextLevel({
       <SuggestionAction disabled={isPending} onClick={start}>
         {t("Continue at {level}", { level: levelName(next.level) })}
       </SuggestionAction>
-      {failed && <SuggestionError>{t("That didn't work. Try again in a moment.")}</SuggestionError>}
+      {failed && <SuggestionSaveError />}
     </>
   );
 }

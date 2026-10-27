@@ -9,6 +9,7 @@ import { CircleHelpIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { AnswerOption, AnswerOptionGroup } from "../../_components/answer-option";
+import { AnswersSaveError } from "../../_components/save-error";
 import { ItemLine, ItemStem, ItemSupport } from "../../questions/item-text";
 import { useTrueFalseLabels } from "../../questions/use-true-false-labels";
 import { type Choice } from "../choice-list";
@@ -150,15 +151,16 @@ function TypedAnswerField({
 function PlacementActions({
   canConfirm,
   dontKnowLabel,
-  error,
   onDontKnow,
+  onRetry,
   onStop,
   pending,
 }: {
   canConfirm: boolean;
   dontKnowLabel: string;
-  error: string | null;
   onDontKnow: () => void;
+  /** Sends the last answer again after its save failed; null while nothing failed. */
+  onRetry: (() => void) | null;
   onStop: () => void;
   pending: boolean;
 }) {
@@ -166,11 +168,7 @@ function PlacementActions({
 
   return (
     <OnboardingFooter>
-      {error && (
-        <p className="text-destructive-text text-center text-sm" role="alert">
-          {error}
-        </p>
-      )}
+      {onRetry && <AnswersSaveError onRetry={onRetry} />}
 
       <div className="flex flex-wrap-reverse gap-2">
         <Button
@@ -216,7 +214,7 @@ function PlacementActions({
  */
 export function PlacementQuestionScreen({
   dontKnowLabel,
-  error = null,
+  failed = false,
   media,
   number,
   onAnswer,
@@ -229,8 +227,8 @@ export function PlacementQuestionScreen({
 }: {
   /** What "I don't know" says for this question, such as "I didn't understand the audio". */
   dontKnowLabel?: string;
-  /** Why the last answer didn't go through, such as a lost connection. */
-  error?: string | null;
+  /** The last answer didn't save (a lost connection): it stays picked, and Try again sends it. */
+  failed?: boolean;
   /** Shown above the question, such as a voice message to listen to. */
   media?: React.ReactNode;
   /** This question's number: how many came before, with no total and no score. */
@@ -251,12 +249,14 @@ export function PlacementQuestionScreen({
   const choices = useQuestionChoices({ question, trueFalseLabels });
   const [value, setValue] = useState<string | null>(null);
   const [shownAt, setShownAt] = useState(() => Date.now());
+  const [sent, setSent] = useState<{ answer: PlacementAnswer; durationMs: number } | null>(null);
   const canConfirm = value !== null && value.trim().length > 0;
 
+  // The next question is a new screen (keyed by its item), so the pick stays while this one saves.
   const send = (answer: PlacementAnswer) => {
     const now = Date.now();
-    setValue(null);
     setShownAt(now);
+    setSent({ answer, durationMs: now - shownAt });
     onAnswer(answer, now - shownAt);
   };
 
@@ -306,8 +306,10 @@ export function PlacementQuestionScreen({
           <PlacementActions
             canConfirm={canConfirm}
             dontKnowLabel={dontKnowLabel ?? t("I don't know yet")}
-            error={error}
             onDontKnow={() => send({ dontKnow: true })}
+            onRetry={
+              failed && sent && !pending ? () => onAnswer(sent.answer, sent.durationMs) : null
+            }
             onStop={onStop}
             pending={pending}
           />

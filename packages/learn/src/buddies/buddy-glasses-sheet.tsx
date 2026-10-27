@@ -10,6 +10,7 @@ import {
 } from "@zoonk/ui/components/drawer";
 import { type BuddyGlasses } from "@zoonk/utils/buddy";
 import { useExtracted } from "next-intl";
+import { ChangeSaveError } from "../_components/save-error";
 import { BuddyGlassesPicker } from "./buddy-glasses-picker";
 import { type BuddyGlassesProgress } from "./buddy-status-view";
 import { type LearnBuddy } from "./use-buddy-name";
@@ -45,11 +46,7 @@ export function BuddyGlassesSheet({
         </DrawerHeader>
 
         <DrawerContent className="flex flex-col gap-3">
-          {failed && (
-            <p className="text-destructive-text text-sm" role="alert">
-              {t("That didn't save. Try again in a moment.")}
-            </p>
-          )}
+          {failed && <ChangeSaveError />}
 
           <BuddyGlassesPicker
             kind={buddy.kind}

@@ -265,20 +265,6 @@ export function TaskFrame({
   );
 }
 
-/** A save that didn't go through, with a retry; what the learner answered stays on screen. */
-export function TaskSaveError({ onRetry }: { onRetry: () => void }) {
-  const t = useExtracted();
-
-  return (
-    <p className="text-destructive-text text-sm" role="alert">
-      {t("That didn't go through. Your answers are kept.")}{" "}
-      <Button onClick={onRetry} variant="link">
-        {t("Try again")}
-      </Button>
-    </p>
-  );
-}
-
 /**
  * Whether an element is drawn: a main action one screen size hides (`lg:hidden`) leaves Enter to
  * the one that size shows.

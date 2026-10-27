@@ -15,8 +15,8 @@ import { Toggle } from "@zoonk/ui/components/toggle";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { ChangeSaveError } from "../_components/save-error";
 import { type Choice, ChoiceList } from "../onboarding/choice-list";
-import { PlanFailedMessage } from "./plan-failed-message";
 import { useSystemName } from "./use-system-name";
 import { useToolChoice } from "./use-tool-choice";
 
@@ -103,7 +103,7 @@ function ToolChoiceForm({ onClose, tool }: { onClose: () => void; tool: PlanTool
         />
 
         {choice === "setup" && <SystemPicker onChange={setSystem} value={system} />}
-        {failed && <PlanFailedMessage />}
+        {failed && <ChangeSaveError />}
 
         <div className="grid grid-cols-2 gap-3">
           <Button onClick={onClose} size="lg" type="button" variant="outline">

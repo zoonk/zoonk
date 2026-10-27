@@ -30,6 +30,7 @@ import {
   useState,
   useTransition,
 } from "react";
+import { ChangeSaveError } from "../_components/save-error";
 import { type AppearanceBuddy, BuddyEditor } from "../appearance/buddy-settings";
 import {
   type TutorConversationContent,
@@ -348,11 +349,7 @@ export function BuddyScreen({
           />
         </BuddyHeader>
 
-        {failed && !editing && (
-          <p className="text-destructive-text text-sm" role="alert">
-            {t("That didn't save. Try again in a moment.")}
-          </p>
-        )}
+        {failed && !editing && <ChangeSaveError />}
 
         <TutorContentContext value={tutorContent}>{children}</TutorContentContext>
       </div>

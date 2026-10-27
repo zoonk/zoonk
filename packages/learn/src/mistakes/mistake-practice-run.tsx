@@ -6,6 +6,7 @@ import { useEscapeClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { AnswersSaveError } from "../_components/save-error";
 import { TASK_HEADER_ICON_CLASS } from "../_components/task-header";
 import {
   TaskActionBar,
@@ -108,17 +109,6 @@ function QuestionMenu({ run }: { run: Run }) {
   );
 }
 
-/** What the bar says above its actions when an answer couldn't be saved. */
-function AnswerFailed() {
-  const t = useExtracted();
-
-  return (
-    <p className="text-destructive-text text-sm" role="alert">
-      {t("We couldn't save that answer. Check it again.")}
-    </p>
-  );
-}
-
 /** The run's body for where it is: a question with its pinned actions, saving, or done. */
 function PracticeBody({
   askButton,
@@ -175,7 +165,9 @@ function PracticeBody({
       {/* A gap's idea screen has its own Start. */}
       {phase.kind !== "idea" && (
         <TaskActionBar>
-          {phase.kind === "answerFailed" && <AnswerFailed />}
+          {phase.kind === "answerFailed" && (
+            <AnswersSaveError onRetry={() => run.check(phase.answer)} />
+          )}
           <QuestionActionsRow ask={askButton}>
             <PracticeStepActions run={run} step={run.step} />
           </QuestionActionsRow>

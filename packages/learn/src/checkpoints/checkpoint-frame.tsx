@@ -1,7 +1,6 @@
 "use client";
 
-import { Button } from "@zoonk/ui/components/button";
-import { useExtracted } from "next-intl";
+import { AnswersSaveError } from "../_components/save-error";
 import { TaskFrame } from "../shell/task-frame";
 import { useCheckpointScreen } from "./checkpoint-context";
 
@@ -13,19 +12,6 @@ export function CheckpointFrame(props: Omit<React.ComponentProps<typeof TaskFram
 
 /** A failed request says so plainly and offers to try again; nothing answered is lost. */
 export function CheckpointError() {
-  const t = useExtracted();
   const { duel } = useCheckpointScreen();
-
-  if (!duel.state.error) {
-    return null;
-  }
-
-  return (
-    <p className="text-destructive-text text-sm" role="alert">
-      {t("That didn't go through. Your answers are saved.")}{" "}
-      <Button onClick={() => void duel.retry()} variant="link">
-        {t("Try again")}
-      </Button>
-    </p>
-  );
+  return duel.state.error ? <AnswersSaveError onRetry={() => void duel.retry()} /> : null;
 }

@@ -933,11 +933,6 @@ msgid "The free plan follows one goal at a time. Pause your other goal to resume
 msgstr "O plano Grátis permite acompanhar uma meta por vez. Pause outra meta para retomar esta ou assine o Plus para acompanhar mais."
 
 #: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
-msgctxt "i5jfUY"
-msgid "We couldn't change this goal. Try again."
-msgstr "Não foi possível mudar esta meta. Tente de novo."
-
-#: src/app/[lang]/(app)/(learn)/today/resume-goal-button.tsx
 msgctxt "4CJCep"
 msgid "Resume {goal}"
 msgstr "Retomar {goal}"
@@ -1220,11 +1215,6 @@ msgstr "{username} já está em uso"
 msgctxt "jvo0vs"
 msgid "Save"
 msgstr "Salvar"
-
-#: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
-msgctxt "bz5AYp"
-msgid "We couldn't save your profile. Try again."
-msgstr "Não foi possível salvar seu perfil. Tente de novo."
 
 #: src/app/[lang]/(app)/(settings)/profile/profile-form.tsx
 msgctxt "GrnZDN"

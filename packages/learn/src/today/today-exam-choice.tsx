@@ -11,11 +11,11 @@ import {
   SuggestionActions,
   SuggestionContent,
   SuggestionDescription,
-  SuggestionError,
   SuggestionHeader,
   SuggestionLine,
   SuggestionOpen,
   SuggestionResult,
+  SuggestionSaveError,
   SuggestionSummary,
 } from "../_components/suggestion";
 import { useLearnAnalytics } from "../learn-context";
@@ -92,9 +92,7 @@ function ChoiceQuestion({
           ))}
         </SuggestionActions>
 
-        {failed && (
-          <SuggestionError>{t("That didn't work. Try again in a moment.")}</SuggestionError>
-        )}
+        {failed && <SuggestionSaveError />}
       </SuggestionContent>
     </>
   );
@@ -127,9 +125,7 @@ function ChoicePicked({ change, onUndone }: { change: PlanChangeView; onUndone: 
         <SuggestionResult>{sentence(change)}</SuggestionResult>
         <ProposalEffect change={change} />
         {undoButton && <SuggestionActions>{undoButton}</SuggestionActions>}
-        {failed && (
-          <SuggestionError>{t("That didn't work. Try again in a moment.")}</SuggestionError>
-        )}
+        {failed && <SuggestionSaveError />}
       </SuggestionContent>
     </>
   );

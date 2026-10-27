@@ -4,10 +4,10 @@ import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { Switch } from "@zoonk/ui/components/switch";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
+import { ChangeSaveError } from "../_components/save-error";
 import { useFormatGoalDate, useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { usePlanScreen } from "./plan-context";
-import { PlanFailedMessage } from "./plan-failed-message";
 import { usePlanChange } from "./use-plan-change";
 
 /**
@@ -196,7 +196,7 @@ export function FullCourseSwitch() {
           : t("What doesn't fit by the exam is left out of your plan.")}
       </p>
 
-      {failed && <PlanFailedMessage />}
+      {failed && <ChangeSaveError />}
     </div>
   );
 }

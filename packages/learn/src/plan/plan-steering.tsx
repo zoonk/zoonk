@@ -4,8 +4,8 @@ import { type LearnerPlanOperation } from "@zoonk/core/plans/contract";
 import { type PlanView } from "@zoonk/core/plans/view-contract";
 import { Toggle } from "@zoonk/ui/components/toggle";
 import { useExtracted } from "next-intl";
+import { ChangeSaveError } from "../_components/save-error";
 import { usePlanScreen } from "./plan-context";
-import { PlanFailedMessage } from "./plan-failed-message";
 import { useDifficultySentence } from "./use-change-sentence";
 import { usePlanChange } from "./use-plan-change";
 import { useTappedChoice } from "./use-tapped-choice";
@@ -113,7 +113,7 @@ export function PlanSteering() {
         </p>
       )}
 
-      {failed && <PlanFailedMessage />}
+      {failed && <ChangeSaveError />}
     </fieldset>
   );
 }

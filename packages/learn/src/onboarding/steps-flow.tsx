@@ -6,8 +6,8 @@ import {
   type OnboardingView,
 } from "@zoonk/core/view-models/onboarding/contract";
 import { safeAsync } from "@zoonk/utils/error";
-import { useExtracted } from "next-intl";
 import { useRef, useState, useTransition } from "react";
+import { ChangeSaveError } from "../_components/save-error";
 import { StepDots } from "../_components/step-dots";
 import { type GenerationRun } from "../generation/generation-run";
 import { type PlanActions } from "../plan/plan-context";
@@ -87,7 +87,6 @@ export function StepsFlow({
   planActions: PlanActions;
   routes: OnboardingRoutes;
 }) {
-  const t = useExtracted();
   const [isPending, startTransition] = useTransition();
   const [failed, setFailed] = useState(false);
 
@@ -190,13 +189,7 @@ export function StepsFlow({
             // going back through the questions.
             onBack: state.history.length > 0 && !isPlan ? back : undefined,
           }}
-          notice={
-            failed && (
-              <p className="text-destructive-text text-sm" role="alert">
-                {t("We couldn't save that. Try again in a moment.")}
-              </p>
-            )
-          }
+          notice={failed && <ChangeSaveError />}
         >
           {/* Placement follows the run itself, so only the questions say it stopped. */}
           <PlanStartNoticeProvider

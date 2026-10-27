@@ -8,6 +8,7 @@ import {
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { type HelpLimit, HelpLimitNotice } from "../../_components/help-limit-notice";
+import { AnswersSaveError } from "../../_components/save-error";
 import { StepCard, StepDetail, StepHeader, StepTitle } from "../../_components/step-card";
 import { TaskMeta } from "../../_components/task-meta";
 import { useFormatDuration } from "../../_utils/time-format";
@@ -22,7 +23,7 @@ import {
   ChoiceQuestionsRun,
 } from "../../questions/choice-questions-run";
 import { type MomentCeremony } from "../../session/moment-ceremony";
-import { TaskFrame, TaskMainButton, TaskSaveError } from "../../shell/task-frame";
+import { TaskFrame, TaskMainButton } from "../../shell/task-frame";
 import { type FocusTestOutcome, FocusTestResult } from "./focus-test-result";
 
 export type { FocusTestOutcome } from "./focus-test-result";
@@ -233,7 +234,7 @@ function FocusTestRun({
   if (outcome === null && answers && !isPending) {
     return (
       <TaskFrame exitHref={closeHref}>
-        <TaskSaveError onRetry={() => submit(answers)} />
+        <AnswersSaveError onRetry={() => submit(answers)} />
       </TaskFrame>
     );
   }

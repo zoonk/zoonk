@@ -21,6 +21,7 @@ import {
   PageSectionHeader,
   PageSectionTitle,
 } from "../_components/page";
+import { ChangeSaveError } from "../_components/save-error";
 import { SettingRow, SwitchSettingRow } from "../_components/setting-rows";
 import { useOptimisticSave } from "../_utils/use-optimistic-save";
 import { MemoryFactRow } from "./memory-fact-row";
@@ -197,11 +198,7 @@ export function MemoryScreen({ actions, memory }: { actions: MemoryActions; memo
         />
       )}
 
-      {screen.failed && (
-        <p className="text-destructive-text text-sm" role="alert">
-          {t("That didn't save. Try again.")}
-        </p>
-      )}
+      {screen.failed && <ChangeSaveError />}
 
       {groups.length === 0 ? (
         <p className="text-muted-foreground text-sm">

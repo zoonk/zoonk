@@ -1,18 +1,21 @@
 "use client";
 
-import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
+import { AnswersSaveError } from "../../_components/save-error";
 import { ContinueButton, QuestionActionsRow } from "./question-actions";
 import { type QuestionBlockPhase } from "./question-block-state";
 
 /** What the bar says above its actions while an answer or the block is being saved, or failed. */
 export function QuestionBlockStatus({
   onContinue,
-  onRetry,
+  onRetryAnswer,
+  onRetryFinish,
   phase,
 }: {
   onContinue: () => void;
-  onRetry: () => void;
+  /** Sends the answer on screen again, as Check does. */
+  onRetryAnswer: () => void;
+  onRetryFinish: () => void;
   phase: QuestionBlockPhase;
 }) {
   const t = useExtracted();
@@ -31,22 +34,11 @@ export function QuestionBlockStatus({
   }
 
   if (phase.kind === "answerFailed") {
-    return (
-      <p className="text-destructive-text text-sm" role="alert">
-        {t("We couldn't save that answer. Check it again.")}
-      </p>
-    );
+    return <AnswersSaveError onRetry={onRetryAnswer} />;
   }
 
   if (phase.kind === "finishFailed") {
-    return (
-      <div className="flex flex-col items-start gap-2" role="alert">
-        <p className="text-destructive-text text-sm">{t("We couldn't save this block yet.")}</p>
-        <Button onClick={onRetry} size="sm" variant="outline">
-          {t("Try again")}
-        </Button>
-      </div>
-    );
+    return <AnswersSaveError onRetry={onRetryFinish} />;
   }
 
   return null;

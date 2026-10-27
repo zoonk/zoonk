@@ -13,11 +13,11 @@ import {
   SuggestionActions,
   SuggestionContent,
   SuggestionDescription,
-  SuggestionError,
   SuggestionHeader,
   SuggestionLine,
   SuggestionOpen,
   SuggestionResult,
+  SuggestionSaveError,
   SuggestionSummary,
 } from "../_components/suggestion";
 import { useLearnAnalytics } from "../learn-context";
@@ -299,7 +299,7 @@ function PlanChangeNotice({
           <ChangeActions change={change} disabled={isPending} onAnswer={answer} />
         )}
 
-        {failed && <SuggestionError>{t("We couldn't save that. Try again.")}</SuggestionError>}
+        {failed && <SuggestionSaveError />}
       </SuggestionContent>
     </Suggestion>
   );

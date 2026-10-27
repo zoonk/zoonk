@@ -11,12 +11,12 @@ import {
   SuggestionAction,
   SuggestionActions,
   SuggestionContent,
-  SuggestionError,
   SuggestionHeader,
   SuggestionLine,
   SuggestionLinkAction,
   SuggestionOpen,
   SuggestionResult,
+  SuggestionSaveError,
   SuggestionSummary,
 } from "../_components/suggestion";
 import { useFormatShare } from "../_utils/percent";
@@ -247,9 +247,7 @@ export function FallingBehindNotice({
           <BehindChoices behind={behind} isPending={isPending || superseded} keep={keep} />
         )}
 
-        {answer && "failed" in answer && (
-          <SuggestionError>{t("We couldn't save that. Try again.")}</SuggestionError>
-        )}
+        {answer && "failed" in answer && <SuggestionSaveError />}
       </SuggestionContent>
     </Suggestion>
   );

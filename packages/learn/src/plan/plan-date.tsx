@@ -5,10 +5,10 @@ import { Button } from "@zoonk/ui/components/button";
 import { Input } from "@zoonk/ui/components/input";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
+import { ChangeSaveError } from "../_components/save-error";
 import { useFormatGoalDate } from "../_utils/iso-date";
 import { UseDateButton, useNoticeDayText } from "./notice-day";
 import { usePlanScreen } from "./plan-context";
-import { PlanFailedMessage } from "./plan-failed-message";
 import { useFullCourse } from "./plan-full-course";
 import { StudyEverything } from "./study-everything";
 import { usePlanChange } from "./use-plan-change";
@@ -155,7 +155,7 @@ export function PlanDate() {
 
       {course && !course.isExam && <StudyEverything course={course} />}
 
-      {failed && <PlanFailedMessage />}
+      {failed && <ChangeSaveError />}
     </div>
   );
 }

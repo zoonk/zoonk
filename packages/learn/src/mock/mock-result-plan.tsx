@@ -10,6 +10,7 @@ import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
 import { type DiffLine, DiffLines } from "../_components/diff-lines";
 import { Meter, MeterFill } from "../_components/meter";
+import { useChangeSaveErrorMessage } from "../_components/save-error";
 import { StepCard, StepDetail, StepEyebrow, StepHeader, StepTitle } from "../_components/step-card";
 import { useFormatShare } from "../_utils/percent";
 import { type MockPlanOffer, type MockPlanOfferOutcome, useMockScreen } from "./mock-context";
@@ -85,6 +86,7 @@ export type PlanChange = ReturnType<typeof usePlanChange>;
 
 function useAnswerLine() {
   const t = useExtracted();
+  const saveError = useChangeSaveErrorMessage();
 
   return ({ answer, offer }: { answer: Answer; offer: MockPlanOffer }): string => {
     if ("declined" in answer) {
@@ -92,7 +94,7 @@ function useAnswerLine() {
     }
 
     if ("failed" in answer) {
-      return t("That didn't go through. Try again.");
+      return saveError;
     }
 
     const { outcome } = answer;

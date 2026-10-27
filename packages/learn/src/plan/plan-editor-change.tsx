@@ -5,9 +5,9 @@ import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { SlidersHorizontalIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { ChangeSaveError } from "../_components/save-error";
 import { PlanChangeSummary } from "./plan-change-applied";
 import { useEditorChange } from "./plan-editor-change-context";
-import { PlanFailedMessage } from "./plan-failed-message";
 import { useUndoChange } from "./use-undo-change";
 
 function EditorChangeNote({ change }: { change: PlanChangeView }) {
@@ -29,7 +29,7 @@ function EditorChangeNote({ change }: { change: PlanChangeView }) {
           {t("Undo")}
         </Button>
       )}
-      {failed && <PlanFailedMessage />}
+      {failed && <ChangeSaveError />}
     </>
   );
 }

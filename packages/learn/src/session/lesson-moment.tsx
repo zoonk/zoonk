@@ -5,11 +5,12 @@ import { useExtracted, useFormatter } from "next-intl";
 import { type ReactNode } from "react";
 import { EnterButton } from "../_components/enter-button";
 import { MomentReadouts } from "../_components/moment-readouts";
+import { AnswersSaveError } from "../_components/save-error";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
 import { type TestOutStart } from "../_components/test-out-start-link";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { DayMoment } from "./day-moment";
-import { MomentHeader, MomentSaveFailed } from "./moment-header";
+import { MomentHeader } from "./moment-header";
 import { PendingMoment } from "./pending-moment";
 import { SessionHeader } from "./session-header";
 import { type StudyMomentView, type StudySession } from "./session-types";
@@ -200,7 +201,7 @@ export function LessonMoment({
     return (
       <TaskBody>
         <MomentHeader title={title}>
-          <MomentSaveFailed onRetry={onRetry} />
+          <AnswersSaveError onRetry={onRetry} />
         </MomentHeader>
       </TaskBody>
     );

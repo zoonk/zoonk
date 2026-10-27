@@ -4,11 +4,11 @@ import { Button } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { ChangeSaveError } from "../_components/save-error";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { usePlanScreen } from "./plan-context";
 import { getEditorSectionId } from "./plan-editor-sections";
-import { PlanFailedMessage } from "./plan-failed-message";
 import { usePlanChange } from "./use-plan-change";
 import { useTimeToCover, useTimeToCoverTexts } from "./use-time-to-cover";
 
@@ -231,7 +231,7 @@ export function MoveDateFailure({
   const texts = useTimeToCoverTexts();
 
   if (move.failed) {
-    return <PlanFailedMessage />;
+    return <ChangeSaveError />;
   }
 
   if (move.outcome === "building" || move.outcome === "noDate") {

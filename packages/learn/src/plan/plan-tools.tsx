@@ -12,8 +12,8 @@ import {
 } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
+import { ChangeSaveError } from "../_components/save-error";
 import { usePlanScreen } from "./plan-context";
-import { PlanFailedMessage } from "./plan-failed-message";
 import { PlanToolSheet } from "./plan-tool-sheet";
 import { useSystemName } from "./use-system-name";
 import { useToolChoice } from "./use-tool-choice";
@@ -149,7 +149,7 @@ function NoToolsPath({ tools }: { tools: PlanToolView[] }) {
           >
             {t("No tools? You can do it all with examples.")}
           </Button>
-          {failed && <PlanFailedMessage />}
+          {failed && <ChangeSaveError />}
         </>
       )}
     </div>

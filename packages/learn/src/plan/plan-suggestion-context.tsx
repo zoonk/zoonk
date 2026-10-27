@@ -15,11 +15,11 @@ import {
   SuggestionAction,
   SuggestionActions,
   SuggestionContent,
-  SuggestionError,
   SuggestionHeader,
   SuggestionLine,
   SuggestionOpen,
   SuggestionResult,
+  SuggestionSaveError,
   SuggestionSummary,
 } from "../_components/suggestion";
 import { type GoalStatusControl } from "../journey/goal-actions";
@@ -169,7 +169,7 @@ export function SlotUndo({ item }: { item: SlotItem }) {
       <SuggestionAction disabled={isPending} onClick={undo} variant="outline">
         {t("Undo")}
       </SuggestionAction>
-      {failed && <SuggestionError>{t("That didn't work. Try again in a moment.")}</SuggestionError>}
+      {failed && <SuggestionSaveError />}
     </>
   );
 }
@@ -226,9 +226,7 @@ export function PlanChangeSuggestion({
         ) : (
           <>
             {children}
-            {failed && (
-              <SuggestionError>{t("That didn't work. Try again in a moment.")}</SuggestionError>
-            )}
+            {failed && <SuggestionSaveError />}
           </>
         )}
       </SlotContent>

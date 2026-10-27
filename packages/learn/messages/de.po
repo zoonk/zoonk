@@ -349,7 +349,7 @@ msgid "{done, number} of {total, number}"
 msgstr "{done, number} von {total, number}"
 
 #: src/_components/lesson-not-written-notice.tsx
-#: src/checkpoints/checkpoint-frame.tsx
+#: src/_components/save-error.tsx
 #: src/explain/explain-waiting.tsx
 #: src/generation/generation-wait.tsx
 #: src/language/conversation/call-problem.tsx
@@ -363,10 +363,7 @@ msgstr "{done, number} von {total, number}"
 #: src/plan/plan-offer-preview.tsx
 #: src/plan/plan-past-date-suggestion.tsx
 #: src/plan/use-time-to-cover.ts
-#: src/session/moment-header.tsx
 #: src/session/open-next-step.tsx
-#: src/session/question-block/question-block-status.tsx
-#: src/shell/task-frame.tsx
 #: src/speech/speech-parts.tsx
 #: src/topic-outline/far-topic-sheet.tsx
 msgctxt "FazwRl"
@@ -426,17 +423,19 @@ msgstr "Mit Plus verfügbar"
 
 #: src/_components/practice-outcome-message.tsx
 #: src/_components/test-out-start-link.tsx
-#: src/journey/study-next.tsx
-#: src/onboarding/entry/goal-outcomes.tsx
-#: src/plan/notice-day.tsx
-#: src/plan/plan-exam-choices.tsx
-#: src/plan/plan-failed-message.tsx
-#: src/plan/plan-suggestion-context.tsx
-#: src/syllabus/subject-not-planned.tsx
-#: src/today/today-exam-choice.tsx
 msgctxt "kaDIbJ"
 msgid "That didn't work. Try again in a moment."
 msgstr "Das hat nicht geklappt. Versuch es gleich noch einmal."
+
+#: src/_components/save-error.tsx
+msgctxt "7i_b3c"
+msgid "That didn't go through. Your answers are kept."
+msgstr "Das hat nicht geklappt. Deine Antworten bleiben erhalten."
+
+#: src/_components/save-error.tsx
+msgctxt "DxPDlc"
+msgid "That didn't save. Try again."
+msgstr "Das wurde nicht gespeichert. Versuch es noch mal."
 
 #: src/_components/skill-list.tsx
 #: src/session/summary/summary-parts.tsx
@@ -683,13 +682,6 @@ msgctxt "y1Z3or"
 msgid "Language"
 msgstr "Sprache"
 
-#: src/appearance/appearance-screen.tsx
-#: src/language/units/alphabet-row.tsx
-#: src/memory/memory-screen.tsx
-msgctxt "DxPDlc"
-msgid "That didn't save. Try again."
-msgstr "Das wurde nicht gespeichert. Versuch es noch mal."
-
 #: src/appearance/buddy-settings.tsx
 #: src/buddies/buddy-day.tsx
 #: src/buddies/buddy-glasses-picker.tsx
@@ -846,12 +838,6 @@ msgstr "{current} von {target} Wiederholungen"
 msgctxt "O7-3Od"
 msgid "Pick a pair you've earned to wear it."
 msgstr "Wähle eine Brille aus, die du dir verdient hast."
-
-#: src/buddies/buddy-glasses-sheet.tsx
-#: src/buddies/buddy-screen.tsx
-msgctxt "5xaqRM"
-msgid "That didn't save. Try again in a moment."
-msgstr "Das hat nicht geklappt. Versuch es gleich noch einmal."
 
 #: src/buddies/buddy-goal-start.tsx
 #: src/onboarding/entry/goal-examples.tsx
@@ -1281,13 +1267,9 @@ msgid "In your next session"
 msgstr "In deiner nächsten Lerneinheit"
 
 #: src/challenge/challenge-footer.tsx
-#: src/challenge/challenge-move-failed.tsx
 #: src/essay/essay-feedback.tsx
-#: src/essay/essay-screen.tsx
-#: src/exam/exam-result-section.tsx
 #: src/mock/mock-frame.tsx
 #: src/mock/mock-result-essays.tsx
-#: src/questions/undo-button.tsx
 msgctxt "fEu6ab"
 msgid "That didn't go through. Try again in a moment."
 msgstr "Das hat nicht geklappt. Versuch es gleich noch einmal."
@@ -1785,11 +1767,6 @@ msgstr "Die Fragen wurden entfernt"
 msgctxt "CFBdFp"
 msgid "You hadn't answered any yet, so this challenge isn't scored. Nothing is lost."
 msgstr "Du hattest noch keine Fragen beantwortet, deshalb wird diese Herausforderung nicht bewertet. Es geht nichts verloren."
-
-#: src/checkpoints/checkpoint-frame.tsx
-msgctxt "x4c0ci"
-msgid "That didn't go through. Your answers are saved."
-msgstr "Das hat nicht geklappt. Deine Antworten sind gespeichert."
 
 #: src/checkpoints/checkpoint-labels.tsx
 msgctxt "0LvMLZ"
@@ -3583,11 +3560,6 @@ msgid "The free plan follows one goal at a time. Pause your other goal to resume
 msgstr "Mit dem kostenlosen Tarif kannst du immer nur ein Ziel verfolgen. Pausiere dein anderes Ziel, um dieses wieder aufzunehmen, oder hol dir Plus für mehr."
 
 #: src/journey/goal-actions.tsx
-msgctxt "i5jfUY"
-msgid "We couldn't change this goal. Try again."
-msgstr "Dieses Ziel konnte nicht geändert werden. Versuch es noch einmal."
-
-#: src/journey/goal-actions.tsx
 msgctxt "iTK9B7"
 msgid "Pause this goal"
 msgstr "Dieses Ziel pausieren"
@@ -5217,12 +5189,6 @@ msgid "I didn't understand the audio"
 msgstr "Ich habe die Aufnahme nicht verstanden"
 
 #: src/language/level-test/level-test-questions.tsx
-#: src/onboarding/steps/placement-step.tsx
-msgctxt "EQVEqT"
-msgid "We couldn't save your answer. Try again."
-msgstr "Deine Antwort konnte nicht gespeichert werden. Versuch es noch einmal."
-
-#: src/language/level-test/level-test-questions.tsx
 msgctxt "9Da2rt"
 msgid "Say it out loud"
 msgstr "Sprich es laut aus"
@@ -5523,7 +5489,6 @@ msgid "We couldn't hear the word. Try again a little closer."
 msgstr "Wir konnten das Wort nicht hören. Versuch es noch einmal etwas näher am Mikrofon."
 
 #: src/language/pronunciation/pronunciation-word-card.tsx
-#: src/mock/mock-result-plan.tsx
 msgctxt "75OFKI"
 msgid "That didn't go through. Try again."
 msgstr "Das hat nicht geklappt. Versuch es noch einmal."
@@ -6562,12 +6527,6 @@ msgstr "Zurück zum Fehlerheft"
 msgctxt "2LmYn_"
 msgid "End practice. What you answered counts."
 msgstr "Übung beenden. Deine Antworten zählen."
-
-#: src/mistakes/mistake-practice-run.tsx
-#: src/session/question-block/question-block-status.tsx
-msgctxt "wheSfB"
-msgid "We couldn't save that answer. Check it again."
-msgstr "Die Antwort konnte nicht gespeichert werden. Versuch es noch einmal."
 
 #: src/mistakes/mistake-practice-run.tsx
 #: src/mistakes/mistakes-notebook.tsx
@@ -8416,12 +8375,6 @@ msgstr "Von vorn beginnen?"
 msgctxt "s2KyHA"
 msgid "Your answers for this goal are cleared, and you type a goal again."
 msgstr "Deine Antworten für dieses Ziel werden gelöscht und du gibst danach erneut ein Ziel ein."
-
-#: src/onboarding/steps-flow.tsx
-#: src/onboarding/understood/understood-row.tsx
-msgctxt "z1dtun"
-msgid "We couldn't save that. Try again in a moment."
-msgstr "Wir konnten das nicht speichern. Versuch es gleich noch einmal."
 
 #: src/onboarding/steps/advice-sentence.tsx
 msgctxt "7CNAnx"
@@ -11313,26 +11266,11 @@ msgctxt "n1aLEA"
 msgid "Sending it to be read…"
 msgstr "Wird gerade eingelesen…"
 
-#: src/research/upload-request-card.tsx
-#: src/today/today-falling-behind.tsx
-#: src/today/today-insight.tsx
-#: src/today/today-plan-change.tsx
-#: src/today/today-suggested-goal.tsx
-msgctxt "8ArJq7"
-msgid "We couldn't save that. Try again."
-msgstr "Das konnten wir nicht speichern. Versuch es noch einmal."
-
 #: src/session/extra-time-button.tsx
 #: src/today/today-extra-time.tsx
 msgctxt "a8JHBW"
 msgid "Study {minutes} more minutes"
 msgstr "Lerne noch {minutes} Minuten"
-
-#: src/session/extra-time-button.tsx
-#: src/today/today-extra-time.tsx
-msgctxt "jpSIcf"
-msgid "We couldn't add more time. Try again."
-msgstr "Wir konnten keine zusätzliche Zeit hinzufügen. Versuch es noch einmal."
 
 #: src/session/lesson-moment.tsx
 #: src/session/study-moment.tsx
@@ -11353,11 +11291,6 @@ msgstr "Der nächste Schritt konnte nicht geöffnet werden. Versuch es noch einm
 msgctxt "uPG65F"
 msgid "Saving your progress…"
 msgstr "Dein Fortschritt wird gespeichert…"
-
-#: src/session/moment-header.tsx
-msgctxt "ocFozp"
-msgid "We couldn't save your progress yet."
-msgstr "Dein Fortschritt konnte noch nicht gespeichert werden."
 
 #: src/session/next-stop-wait.tsx
 msgctxt "m3SPlD"
@@ -11473,11 +11406,6 @@ msgstr "Schließen. Deine Antworten sind gespeichert."
 msgctxt "iMYxZV"
 msgid "You already answered this question."
 msgstr "Du hast diese Frage bereits beantwortet."
-
-#: src/session/question-block/question-block-status.tsx
-msgctxt "zOi8iy"
-msgid "We couldn't save this block yet."
-msgstr "Dieser Abschnitt konnte noch nicht gespeichert werden."
 
 #: src/session/question-block/question-feedback.tsx
 msgctxt "ZnZgUJ"
@@ -11878,11 +11806,6 @@ msgstr "{done, plural, =0 {Heute: # von {total} Missionen erledigt} one {Heute: 
 msgctxt "Uzc7nh"
 msgid "Learning tabs"
 msgstr "Lernnavigation"
-
-#: src/shell/task-frame.tsx
-msgctxt "7i_b3c"
-msgid "That didn't go through. Your answers are kept."
-msgstr "Das hat nicht geklappt. Deine Antworten bleiben erhalten."
 
 #: src/speech/record-button.tsx
 msgctxt "q_uwLT"
@@ -12329,11 +12252,6 @@ msgstr "{lessons, plural, one {Morgen ist zuerst noch # Lektion nachzuholen.} ot
 msgctxt "HK8HHp"
 msgid "Catch up today · +{time}"
 msgstr "Heute nachholen · +{time}"
-
-#: src/today/today-catch-up.tsx
-msgctxt "KpQVdb"
-msgid "We couldn't add them. Try again."
-msgstr "Wir konnten sie nicht hinzufügen. Versuch es noch einmal."
 
 #: src/today/today-change-notice.tsx
 msgctxt "ZoDO4s"

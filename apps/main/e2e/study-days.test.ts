@@ -69,7 +69,7 @@ test.describe("Study days", () => {
       await expect(monday).toBeDisabled();
 
       held[0]?.();
-      await expect(failed).toHaveText("That didn't work. Try again in a moment.");
+      await expect(failed).toHaveText("That didn't save. Try again.");
       await expect(sunday).toHaveAttribute("aria-pressed", "true");
       await expect(monday).toBeEnabled();
 

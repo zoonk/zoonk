@@ -105,6 +105,7 @@
     "./roadmap-styles": "./src/journey/roadmap-styles.ts",
     "./provider": "./src/learn-provider.tsx",
     "./trickster-art": "./src/checkpoints/trickster-art.tsx",
+    "./save-error": "./src/_components/save-error.tsx",
     "./session/block": "./src/session/question-block/question-block.tsx",
     "./session/day-moment": "./src/session/day-moment.tsx",
     "./session/lesson-celebration": "./src/session/lesson-celebration.ts",

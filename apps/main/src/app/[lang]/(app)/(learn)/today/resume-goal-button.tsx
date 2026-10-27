@@ -2,6 +2,7 @@
 
 import { setGoalStatusAction } from "@/app/[lang]/(app)/(learn)/_components/goal-status-action";
 import { type GoalStatusOutcome } from "@zoonk/learn/journey";
+import { ChangeSaveError } from "@zoonk/learn/save-error";
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
@@ -14,13 +15,15 @@ function ResumeError({ outcome }: { outcome: GoalStatusOutcome | null }) {
     return null;
   }
 
+  if (outcome !== "limitReached") {
+    return <ChangeSaveError />;
+  }
+
   return (
     <p className="text-destructive-text text-sm text-balance" role="alert">
-      {outcome === "limitReached"
-        ? t(
-            "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more.",
-          )
-        : t("We couldn't change this goal. Try again.")}
+      {t(
+        "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more.",
+      )}
     </p>
   );
 }

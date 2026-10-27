@@ -20,12 +20,13 @@ import { BookOpenIcon, EllipsisIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useState } from "react";
 import { DrawerCloseButton } from "../../_components/details-drawer";
+import { AnswersSaveError } from "../../_components/save-error";
 import { TASK_HEADER_ICON_CLASS, TaskHeaderTitle } from "../../_components/task-header";
 import { TaskActions } from "../../_components/task-layout";
 import { useFormatDuration } from "../../_utils/time-format";
 import { type LearnBuddy } from "../../buddies/use-buddy-name";
 import { MomentAfterCeremony, type MomentCeremony } from "../../session/moment-ceremony";
-import { TaskFrame, TaskMainButton, TaskMainLink, TaskSaveError } from "../../shell/task-frame";
+import { TaskFrame, TaskMainButton, TaskMainLink } from "../../shell/task-frame";
 import { PatternDrillQuestion, PatternDrillResult } from "./pattern-drill";
 import { PatternIntro, PatternRule, PatternSlip, TyposNote } from "./pattern-intro";
 import {
@@ -229,7 +230,7 @@ export function LanguagePatternScreen({
       exitToApp
       footer={
         <>
-          {drill.failed && <TaskSaveError onRetry={drill.retry} />}
+          {drill.failed && <AnswersSaveError onRetry={drill.retry} />}
           <TaskActions>
             {checked ? (
               <TaskMainButton busy={drill.isSaving} onClick={drill.next}>

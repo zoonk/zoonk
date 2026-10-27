@@ -16,6 +16,7 @@ import { showErrorToast } from "@zoonk/ui/components/toast";
 import { ArchiveIcon, PauseIcon, PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useTransition } from "react";
+import { useChangeSaveErrorMessage } from "../_components/save-error";
 import {
   Suggestion,
   SuggestionAction,
@@ -53,6 +54,7 @@ export type GoalStatusControl = {
 /** What went wrong changing a goal, said once in a toast: the menu has closed by then. */
 function useStatusError() {
   const t = useExtracted();
+  const saveError = useChangeSaveErrorMessage();
 
   return (outcome: GoalStatusOutcome) => {
     showErrorToast(
@@ -60,7 +62,7 @@ function useStatusError() {
         ? t(
             "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more.",
           )
-        : t("We couldn't change this goal. Try again."),
+        : saveError,
     );
   };
 }

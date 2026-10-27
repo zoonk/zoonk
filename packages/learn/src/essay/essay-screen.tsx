@@ -9,6 +9,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { settleWithin } from "@zoonk/utils/timeout";
 import { useExtracted } from "next-intl";
 import { useId, useRef, useState, useSyncExternalStore } from "react";
+import { AnswersSaveError } from "../_components/save-error";
 import { TaskHeaderTitle } from "../_components/task-header";
 import { TASK_MAIN_ACTION_CLASS, TaskActions } from "../_components/task-layout";
 import { isLongText } from "../questions/long-text";
@@ -216,10 +217,8 @@ function EssayWriteFooter({ writer }: { writer: EssayWriter }) {
   return (
     <>
       <StatusLine gradesLeft={writer.gradesLeft} status={writer.status} />
-      {finishing.failed && (
-        <p className="text-destructive-text text-sm" role="alert">
-          {t("That didn't go through. Try again in a moment.")}
-        </p>
+      {finishing.failed && !finishing.pending && (
+        <AnswersSaveError onRetry={() => void finishing.finish()} />
       )}
       <TaskActions>
         {drafts.length > 0 && (

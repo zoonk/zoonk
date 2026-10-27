@@ -8,10 +8,10 @@ import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
 import { useId, useRef, useState, useTransition } from "react";
 import { CHIP_CLASS } from "../_components/chip";
+import { ChangeSaveError } from "../_components/save-error";
 import { SURFACE_CLASS } from "../_components/surface";
 import { useLearnAnalytics } from "../learn-context";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
-import { PlanFailedMessage } from "../plan/plan-failed-message";
 import {
   useAddedTopicsStartText,
   useAreaEndTexts,
@@ -292,7 +292,7 @@ export function TutorPlanChange({
         status={change.status}
       />
 
-      {failed && <PlanFailedMessage />}
+      {failed && <ChangeSaveError />}
     </section>
   );
 }

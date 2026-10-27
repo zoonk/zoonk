@@ -6,8 +6,8 @@ import {
 } from "@zoonk/core/language/activities";
 import { Toggle } from "@zoonk/ui/components/toggle";
 import { useExtracted } from "next-intl";
+import { ChangeSaveError } from "../_components/save-error";
 import { usePlanScreen } from "./plan-context";
-import { PlanFailedMessage } from "./plan-failed-message";
 import { usePlanChange } from "./use-plan-change";
 import { useTappedChoice } from "./use-tapped-choice";
 
@@ -72,7 +72,7 @@ export function PlanActivities() {
         })}
       </div>
 
-      {failed && <PlanFailedMessage />}
+      {failed && <ChangeSaveError />}
     </fieldset>
   );
 }

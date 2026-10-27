@@ -4,6 +4,7 @@ import { getWeekShape, isWeekend } from "@zoonk/core/plans/week-shape";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { ChangeSaveError } from "../_components/save-error";
 import { WeekdayToggle } from "../_components/weekday-toggle";
 import { WeekendTime } from "../_components/weekend-time";
 import { useFormatGoalDate } from "../_utils/iso-date";
@@ -19,7 +20,6 @@ import {
   useTimeEnough,
 } from "./plan-coverage";
 import { getEditorSectionId } from "./plan-editor-sections";
-import { PlanFailedMessage } from "./plan-failed-message";
 import {
   FIND_ACTIONS_ID,
   FindLine,
@@ -362,7 +362,7 @@ export function PlanSchedule() {
         onCheckedChange={setWeekendChoice}
         planChange={schedule}
       />
-      {planChange.failed && <PlanFailedMessage />}
+      {planChange.failed && <ChangeSaveError />}
     </>
   );
 }

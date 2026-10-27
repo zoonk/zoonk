@@ -2,6 +2,7 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
+import { ChangeSaveError } from "../_components/save-error";
 
 /**
  * Undoes the plan change a result just made (lessons a test-out skipped, the focus a test set),
@@ -21,11 +22,7 @@ export function UndoButton({
 
   return (
     <>
-      {failed && (
-        <p className="text-destructive-text text-sm" role="alert">
-          {t("That didn't go through. Try again in a moment.")}
-        </p>
-      )}
+      {failed && <ChangeSaveError />}
       <Button className="self-start" disabled={pending} onClick={onUndo} variant="link">
         {t("Undo")}
       </Button>

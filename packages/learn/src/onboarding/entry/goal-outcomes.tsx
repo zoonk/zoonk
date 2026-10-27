@@ -10,6 +10,7 @@ import {
   MusicIcon,
 } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { ChangeSaveError } from "../../_components/save-error";
 import { type GoalError } from "../goal-errors";
 import { type WaitlistOutcome } from "../onboarding-actions";
 import {
@@ -238,11 +239,7 @@ function WaitlistNote({
     );
   }
 
-  return outcome === "failed" ? (
-    <p className="text-destructive-text text-sm" role="alert">
-      {t("That didn't work. Try again in a moment.")}
-    </p>
-  ) : null;
+  return outcome === "failed" ? <ChangeSaveError /> : null;
 }
 
 /**

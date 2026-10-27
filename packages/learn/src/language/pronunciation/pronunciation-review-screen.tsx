@@ -17,13 +17,14 @@ import { EllipsisIcon, RotateCcwIcon, SkipForwardIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { FeedbackVerdict } from "../../_components/feedback-panel";
 import { MomentReadouts } from "../../_components/moment-readouts";
+import { AnswersSaveError } from "../../_components/save-error";
 import { TASK_HEADER_ICON_CLASS, TaskHeaderTitle } from "../../_components/task-header";
 import { TaskActions } from "../../_components/task-layout";
 import { type LearnBuddy } from "../../buddies/use-buddy-name";
 import { DayMoment } from "../../session/day-moment";
 import { MomentAfterCeremony, type MomentCeremony } from "../../session/moment-ceremony";
 import { MomentHeader } from "../../session/moment-header";
-import { TaskFrame, TaskMainButton, TaskMainLink, TaskSaveError } from "../../shell/task-frame";
+import { TaskFrame, TaskMainButton, TaskMainLink } from "../../shell/task-frame";
 import { RecordButton } from "../../speech/record-button";
 import { PronunciationWord, RecorderStatus, useWordRecorder } from "./pronunciation-word-card";
 import { type PronunciationRoundActions, usePronunciationRound } from "./use-pronunciation-round";
@@ -209,7 +210,7 @@ export function PronunciationReviewScreen({
       exitToApp
       footer={
         <>
-          {round.failed && <TaskSaveError onRetry={round.retryFinish} />}
+          {round.failed && <AnswersSaveError onRetry={round.retryFinish} />}
           <WordActions
             available={mic.available}
             graded={graded}

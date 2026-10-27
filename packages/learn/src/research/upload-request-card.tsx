@@ -7,6 +7,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { FileSearchIcon, UploadIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
+import { ChangeSaveError } from "../_components/save-error";
 import { AttachControls } from "../onboarding/entry/attach-panel";
 import { type GoalAttachActions } from "../onboarding/onboarding-actions";
 
@@ -184,11 +185,7 @@ export function UploadRequestCard({
         </p>
       )}
 
-      {failed && (
-        <p className="text-destructive-text text-sm" role="alert">
-          {t("We couldn't save that. Try again.")}
-        </p>
-      )}
+      {failed && <ChangeSaveError />}
     </section>
   );
 }

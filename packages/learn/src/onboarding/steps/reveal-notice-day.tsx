@@ -3,10 +3,10 @@
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { Fragment } from "react";
+import { ChangeSaveError } from "../../_components/save-error";
 import { useFormatIsoDate } from "../../_utils/iso-date";
 import { useNoticeDayText } from "../../plan/notice-day";
 import { usePlanScreen } from "../../plan/plan-context";
-import { PlanFailedMessage } from "../../plan/plan-failed-message";
 import { usePlanChange } from "../../plan/use-plan-change";
 
 /**
@@ -59,7 +59,7 @@ export function RevealNoticeDay() {
         )}
       </p>
 
-      {failed && <PlanFailedMessage />}
+      {failed && <ChangeSaveError />}
     </div>
   );
 }

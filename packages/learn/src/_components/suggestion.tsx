@@ -14,6 +14,7 @@ import { useExtracted } from "next-intl";
 import { createContext, use, useRef, useState } from "react";
 import { type LearnLinkComponentProps } from "../learn-context";
 import { LearnLink } from "../learn-link";
+import { ChangeSaveError } from "./save-error";
 import { type Answered, useFocusOnAnswer, useFocusOnRemovedControl } from "./suggestion-focus";
 import { SURFACE_CLASS } from "./surface";
 
@@ -325,16 +326,9 @@ export function SuggestionResult({ className, ...props }: React.ComponentProps<"
   );
 }
 
-/** Why an answer didn't save, under the answers. */
-export function SuggestionError({ className, ...props }: React.ComponentProps<"p">) {
-  return (
-    <p
-      className={cn("text-destructive-text text-[0.8125rem] leading-snug", className)}
-      data-slot="suggestion-error"
-      role="alert"
-      {...props}
-    />
-  );
+/** An answer that didn't save, under the answers, at the suggestion's size. */
+export function SuggestionSaveError() {
+  return <ChangeSaveError className="text-[0.8125rem] leading-snug" />;
 }
 
 const ACTIONS_CLASS: Readonly<Record<Presentation, string>> = {

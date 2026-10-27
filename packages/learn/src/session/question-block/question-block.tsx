@@ -285,7 +285,8 @@ export function QuestionBlock({
         <TaskActionBar>
           <QuestionBlockStatus
             onContinue={actions.refresh}
-            onRetry={run.retryFinish}
+            onRetryAnswer={() => draft.answer && void run.submit(draft.answer)}
+            onRetryFinish={run.retryFinish}
             phase={phase}
           />
 

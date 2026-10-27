@@ -16,12 +16,12 @@ import { useExtracted, useFormatter } from "next-intl";
 import { createContext, use, useId, useState } from "react";
 import { DrawerCloseButton } from "../_components/details-drawer";
 import { KindDot } from "../_components/kind-tile";
+import { ChangeSaveError } from "../_components/save-error";
 import { LearnLink } from "../learn-link";
 import { CHOICE_CARD_PICKED_CLASS } from "../onboarding/choice-styles";
 import { PlanBases } from "./plan-bases";
 import { PlanChangeApplied } from "./plan-change-applied";
 import { type PlanChangeOutcome, usePlanScreen } from "./plan-context";
-import { PlanFailedMessage } from "./plan-failed-message";
 import { usePlanChange } from "./use-plan-change";
 
 const AREA_ROW_CLASS = cn(
@@ -226,7 +226,7 @@ function FocusChoices({ onSaved }: { onSaved: () => void }) {
           {isPending ? t("Saving…") : t("Focus on these")}
         </Button>
 
-        {failed && <PlanFailedMessage />}
+        {failed && <ChangeSaveError />}
       </div>
     </>
   );

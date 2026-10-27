@@ -6,6 +6,7 @@ import {
   useUsernameAvailability,
 } from "@zoonk/core/auth/hooks/username-availability";
 import { ListGroup } from "@zoonk/learn/list";
+import { ChangeSaveError } from "@zoonk/learn/save-error";
 import { SettingRow } from "@zoonk/learn/setting-rows";
 import { Button } from "@zoonk/ui/components/button";
 import { FieldDynamicDescription } from "@zoonk/ui/components/field";
@@ -73,11 +74,7 @@ function SaveError({ state }: { state: typeof initialState }) {
   const t = useExtracted();
 
   if (state.status === "error") {
-    return (
-      <p className="text-destructive-text text-sm" role="alert">
-        {t("We couldn't save your profile. Try again.")}
-      </p>
-    );
+    return <ChangeSaveError />;
   }
 
   if (state.status === "usernameTaken") {

@@ -5,16 +5,17 @@ import { Button } from "@zoonk/ui/components/button";
 import { CompassIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
+import { ChangeSaveError } from "../_components/save-error";
 import {
   Suggestion,
   SuggestionAction,
   SuggestionActions,
   SuggestionContent,
   SuggestionDescription,
-  SuggestionError,
   SuggestionHeader,
   SuggestionLine,
   SuggestionOpen,
+  SuggestionSaveError,
   SuggestionSummary,
 } from "../_components/suggestion";
 import { useTodayScreen } from "./today-context";
@@ -81,7 +82,7 @@ function SuggestedGoalCard({
           </SuggestionAction>
         </SuggestionActions>
 
-        {failed && <SuggestionError>{t("We couldn't save that. Try again.")}</SuggestionError>}
+        {failed && <SuggestionSaveError />}
       </SuggestionContent>
     </Suggestion>
   );
@@ -132,11 +133,7 @@ export function SuggestedGoalOffer({
         </Button>
       </div>
 
-      {failed && (
-        <p className="text-destructive-text text-sm" role="alert">
-          {t("We couldn't save that. Try again.")}
-        </p>
-      )}
+      {failed && <ChangeSaveError />}
     </section>
   );
 }

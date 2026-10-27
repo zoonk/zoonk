@@ -1,6 +1,7 @@
 "use client";
 
 import { useExtracted } from "next-intl";
+import { ChangeSaveError } from "../_components/save-error";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { useChallengeScreen } from "./challenge-context";
@@ -51,9 +52,5 @@ export function MoveFailed() {
     return null;
   }
 
-  return (
-    <p className="text-destructive-text text-sm" role="alert">
-      {t("That didn't go through. Try again in a moment.")}
-    </p>
-  );
+  return <ChangeSaveError />;
 }

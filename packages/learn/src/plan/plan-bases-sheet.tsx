@@ -15,6 +15,7 @@ import { LayersIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { DrawerCloseButton } from "../_components/details-drawer";
+import { ChangeSaveError } from "../_components/save-error";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import { BasesAdvice, useBasesAdvice } from "./plan-bases-advice";
 import {
@@ -26,7 +27,6 @@ import {
 import { useBasesFootnote } from "./plan-bases-effect";
 import { PlanChangeApplied } from "./plan-change-applied";
 import { type PlanChangeOutcome, usePlanScreen } from "./plan-context";
-import { PlanFailedMessage } from "./plan-failed-message";
 import { type PlanPreviewState, currentPlanPreview } from "./plan-preview-state";
 import { useKnownText, usePrerequisitesDescription } from "./use-bases-texts";
 import { usePlanChange } from "./use-plan-change";
@@ -145,7 +145,7 @@ function BasesFooter({
         {t("Save choices")}
       </Button>
 
-      {failed && <PlanFailedMessage />}
+      {failed && <ChangeSaveError />}
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { Input } from "@zoonk/ui/components/input";
 import { ArrowUpRightIcon, PencilIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
+import { ChangeSaveError } from "../../_components/save-error";
 import { toLocalIsoDate, useFormatIsoDate } from "../../_utils/iso-date";
 import { UseDateButton } from "../../plan/notice-day";
 import { type UnderstoodRow as Row } from "./use-understood-rows";
@@ -95,11 +96,7 @@ function RowEditor({
         value={value}
         {...getInputLimits(type)}
       />
-      {failed && (
-        <p className="text-destructive-text text-sm" role="alert">
-          {t("We couldn't save that. Try again in a moment.")}
-        </p>
-      )}
+      {failed && <ChangeSaveError />}
       <div className="flex gap-2">
         <Button disabled={isSaving} size="sm" type="submit">
           {isSaving ? t("Saving…") : t("Save")}
@@ -120,23 +117,18 @@ function SuggestedDate({
   date: string;
   onSave: (value: string) => Promise<boolean>;
 }) {
-  const t = useExtracted();
   const [failed, setFailed] = useState(false);
 
   return (
-    <span className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
+    <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
       <UseDateButton
         onUse={async () => {
           setFailed(false);
           setFailed(!(await onSave(date)));
         }}
       />
-      {failed && (
-        <span className="text-destructive-text text-sm" role="alert">
-          {t("We couldn't save that. Try again in a moment.")}
-        </span>
-      )}
-    </span>
+      {failed && <ChangeSaveError />}
+    </div>
   );
 }
 
@@ -148,13 +140,12 @@ function ChoiceDates({
   dates: string[];
   onSave: (value: string) => Promise<boolean>;
 }) {
-  const t = useExtracted();
   const formatDate = useFormatIsoDate();
   const [failed, setFailed] = useState(false);
   const [isSaving, startSaving] = useTransition();
 
   return (
-    <span className="mt-1.5 flex flex-wrap items-center gap-2">
+    <div className="mt-1.5 flex flex-wrap items-center gap-2">
       {dates.map((date) => (
         <Button
           disabled={isSaving}
@@ -173,12 +164,8 @@ function ChoiceDates({
           {formatDate(date, "short")}
         </Button>
       ))}
-      {failed && (
-        <span className="text-destructive-text text-sm" role="alert">
-          {t("We couldn't save that. Try again in a moment.")}
-        </span>
-      )}
-    </span>
+      {failed && <ChangeSaveError />}
+    </div>
   );
 }
 

@@ -3,8 +3,8 @@
 import { type WrittenPractice } from "@zoonk/core/plans/written-practice-contract";
 import { RadioGroup, RadioGroupItem, RadioGroupOption } from "@zoonk/ui/components/radio-group";
 import { useExtracted, useFormatter } from "next-intl";
+import { ChangeSaveError } from "../_components/save-error";
 import { usePlanScreen } from "./plan-context";
-import { PlanFailedMessage } from "./plan-failed-message";
 import { PLAN_OPTION_CLASS } from "./plan-option-styles";
 import { usePlanChange } from "./use-plan-change";
 import { useTappedChoice } from "./use-tapped-choice";
@@ -106,7 +106,7 @@ export function WrittenCadenceChoice({
         {words.effect(choice.shown)}
       </p>
 
-      {failed && <PlanFailedMessage />}
+      {failed && <ChangeSaveError />}
     </fieldset>
   );
 }

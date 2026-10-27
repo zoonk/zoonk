@@ -7,6 +7,7 @@ import { CelebrationScope } from "@zoonk/ui/hooks/celebration";
 import { BookOpenIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useMemo, useState, useTransition } from "react";
+import { AnswersSaveError } from "../_components/save-error";
 import {
   StepCard,
   StepDetail,
@@ -20,7 +21,7 @@ import { TaskMeta } from "../_components/task-meta";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { DayMoment, StepWithDayMoment } from "../session/day-moment";
 import { type MomentCeremony, getCeremonyMoment } from "../session/moment-ceremony";
-import { type TaskFrameAside, TaskMainLink, TaskSaveError } from "../shell/task-frame";
+import { type TaskFrameAside, TaskMainLink } from "../shell/task-frame";
 import { clearAnswerDraft, keepDraftRequestId } from "./_utils/answer-draft";
 import { type ChoiceQuestionView } from "./choice-question";
 import { type ChoiceQuestionAnswer, ChoiceQuestionsRun } from "./choice-questions-run";
@@ -362,7 +363,7 @@ export function TestOutRun({
         chapterTitle={chapterTitle}
         closeHref={closeHref}
         draftKey={draftKey}
-        error={unsent && !isPending && <TaskSaveError onRetry={() => submit(unsent)} />}
+        error={unsent && !isPending && <AnswersSaveError onRetry={() => submit(unsent)} />}
         lessonsLeft={lessonsLeft}
         onFinish={submit}
         pending={isPending}

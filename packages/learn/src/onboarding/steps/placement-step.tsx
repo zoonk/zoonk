@@ -1,7 +1,6 @@
 "use client";
 
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
-import { useExtracted } from "next-intl";
 import { useRef, useState, useTransition } from "react";
 import { usePoll } from "../../_utils/use-poll";
 import { type GenerationRun } from "../../generation/generation-run";
@@ -210,7 +209,6 @@ export function PlacementStep({
   run: GenerationRun | null;
   subject: string;
 }) {
-  const t = useExtracted();
   const analytics = useLearnAnalytics();
 
   const { countAnswer, mockOffer, phase, setPhase, showReady } = useResumedPlacement({
@@ -327,7 +325,7 @@ export function PlacementStep({
     case "question":
       return (
         <PlacementQuestionScreen
-          error={answerFailed ? t("We couldn't save your answer. Try again.") : null}
+          failed={answerFailed}
           key={phase.question.itemId}
           number={phase.answered + 1}
           onAnswer={answer(phase.question, phase.answered)}

@@ -10,11 +10,11 @@ import {
   SuggestionActions,
   SuggestionContent,
   SuggestionDescription,
-  SuggestionError,
   SuggestionHeader,
   SuggestionLine,
   SuggestionOpen,
   SuggestionResult,
+  SuggestionSaveError,
   SuggestionSummary,
 } from "../_components/suggestion";
 import { useLearnAnalytics } from "../learn-context";
@@ -197,9 +197,7 @@ function InsightNotice({ insight }: { insight: MemoryInsightView }) {
           <InsightActions insight={insight} isPending={isPending} onAnswer={answer} />
         )}
 
-        {state && "failed" in state && (
-          <SuggestionError>{t("We couldn't save that. Try again.")}</SuggestionError>
-        )}
+        {state && "failed" in state && <SuggestionSaveError />}
       </SuggestionContent>
     </Suggestion>
   );

@@ -10,6 +10,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { CircleCheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
+import { ChangeSaveError } from "../_components/save-error";
 import { CHOICE_CARD_PICKED_CLASS } from "../onboarding/choice-styles";
 import { useExamScreen } from "./exam-context";
 
@@ -195,11 +196,7 @@ export function ExamResultSection() {
           </RadioGroup>
         </fieldset>
 
-        {status === "error" && (
-          <p className="text-destructive-text text-sm" role="alert">
-            {t("That didn't go through. Try again in a moment.")}
-          </p>
-        )}
+        {status === "error" && <ChangeSaveError />}
 
         <Button disabled={!canSave || status === "pending"} type="submit">
           {t("Save my result")}

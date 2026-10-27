@@ -5,9 +5,9 @@ import { Button } from "@zoonk/ui/components/button";
 import { DrawerContent } from "@zoonk/ui/components/drawer";
 import { type LucideIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { ChangeSaveError } from "../_components/save-error";
 import { PhaseEndMoves } from "./phase-end-moves";
 import { usePlanScreen } from "./plan-context";
-import { PlanFailedMessage } from "./plan-failed-message";
 import { useAppliedLine, useChangeSentence } from "./use-change-sentence";
 import { useAppliedEffectText } from "./use-effect-text";
 import { useUndoChange } from "./use-undo-change";
@@ -81,7 +81,7 @@ export function PlanChangeApplied({
             {t("Undo")}
           </Button>
         )}
-        {failed && <PlanFailedMessage />}
+        {failed && <ChangeSaveError />}
       </div>
     </>
   );

@@ -1,14 +1,10 @@
 "use client";
 
 import { MomentReadouts } from "@zoonk/learn/moment-readouts";
+import { AnswersSaveError } from "@zoonk/learn/save-error";
 import { DayMoment } from "@zoonk/learn/session/day-moment";
 import { getLessonCelebration } from "@zoonk/learn/session/lesson-celebration";
-import {
-  MomentHeader,
-  MomentSaveFailed,
-  MomentSaving,
-  PendingMainAction,
-} from "@zoonk/learn/session/moment-header";
+import { MomentHeader, MomentSaving, PendingMainAction } from "@zoonk/learn/session/moment-header";
 import {
   TASK_MAIN_ACTION_CLASS,
   TaskActionBar,
@@ -139,7 +135,7 @@ export function LessonCompletionMoment(props: LessonCompletionSlotProps) {
             />
           )}
 
-          {completion.status === "failed" && <MomentSaveFailed onRetry={onRetry} />}
+          {completion.status === "failed" && <AnswersSaveError onRetry={onRetry} />}
         </MomentHeader>
 
         {isSaved && celebration && (

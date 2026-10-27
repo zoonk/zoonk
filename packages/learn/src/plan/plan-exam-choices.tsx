@@ -7,22 +7,22 @@ import { safeAsync } from "@zoonk/utils/error";
 import { SignpostIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
+import { ChangeSaveError } from "../_components/save-error";
 import {
   Suggestion,
   SuggestionAction,
   SuggestionActions,
   SuggestionDescription,
-  SuggestionError,
   SuggestionHeader,
   SuggestionLine,
   SuggestionOpen,
   SuggestionResult,
+  SuggestionSaveError,
   SuggestionSummary,
 } from "../_components/suggestion";
 import { useLearnAnalytics } from "../learn-context";
 import { usePlanScreen } from "./plan-context";
 import { useReportEditorChange } from "./plan-editor-change-context";
-import { PlanFailedMessage } from "./plan-failed-message";
 import { PLAN_OPTION_CLASS } from "./plan-option-styles";
 import {
   SlotContent,
@@ -113,7 +113,7 @@ function ExamChoice({ choice }: { choice: ExamChoiceView }) {
         </p>
       )}
 
-      {failed && <PlanFailedMessage />}
+      {failed && <ChangeSaveError />}
     </fieldset>
   );
 }
@@ -188,9 +188,7 @@ export function ExamChoiceSuggestion({ item }: { item: Extract<SlotItem, { kind:
                 </SuggestionAction>
               ))}
             </SuggestionActions>
-            {failed && (
-              <SuggestionError>{t("That didn't work. Try again in a moment.")}</SuggestionError>
-            )}
+            {failed && <SuggestionSaveError />}
           </>
         )}
       </SlotContent>
