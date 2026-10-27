@@ -163,6 +163,7 @@ export async function StopBuddy() {
     <Stop
       aria-labelledby={STOP_TITLE_ID}
       band
+      rail
       className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,40rem)] lg:items-start lg:gap-16"
     >
       <StopHeader>

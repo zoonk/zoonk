@@ -67,9 +67,8 @@ export default async function HomePage() {
           <StopEveryDay />
           <StopPractice />
           <StopBuddy />
+          <FinalCall startPath={startPath} />
         </div>
-
-        <FinalCall startPath={startPath} />
       </main>
 
       <PublicFooter pathname="/" />

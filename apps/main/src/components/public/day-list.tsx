@@ -46,11 +46,13 @@ function DayRow({ minutesText, step }: { minutesText: string; step: DayListStep 
       </ListRowLeading>
 
       <ListRowContent>
-        <ListRowTitle className={cn(done && "text-muted-foreground")}>{step.title}</ListRowTitle>
+        {/* The row's number sits after its name, as a footnote's mark, away from the minutes. */}
+        <span className="flex items-center gap-2">
+          <ListRowTitle className={cn(done && "text-muted-foreground")}>{step.title}</ListRowTitle>
+          {step.annotation}
+        </span>
         {!done && step.detail && <ListRowDescription>{step.detail}</ListRowDescription>}
       </ListRowContent>
-
-      {step.annotation && <span className="flex items-center self-center">{step.annotation}</span>}
 
       <ListRowTrailing>{minutesText}</ListRowTrailing>
     </ListRow>

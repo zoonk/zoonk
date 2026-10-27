@@ -255,7 +255,7 @@ export async function StopEveryDay() {
   const tYesterday = await getExtracted("yesterdaySwitch");
 
   return (
-    <Stop aria-labelledby={STOP_TITLE_ID} band>
+    <Stop aria-labelledby={STOP_TITLE_ID} band rail>
       <StopHeader>
         <StopEyebrow>
           <StopMark>

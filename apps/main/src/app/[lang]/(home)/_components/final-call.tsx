@@ -1,5 +1,4 @@
-import { EYEBROW_CLASS, PUBLIC_CONTAINER_CLASS } from "@/components/public/landing-styles";
-import { cn } from "@zoonk/ui/lib/utils";
+import { Stop, StopEyebrow, StopHeader, StopMark, StopTitle } from "@/components/public/stop";
 import { FlagIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import { FINAL_GOAL_ID } from "./home-ids";
@@ -8,35 +7,29 @@ import { LandingGoalBox } from "./landing-goal-box";
 const CLOSE_TITLE_ID = "landing-close-title";
 
 /**
- * The page ends where every plan ends, the big day, and where it started: the goal box, its
- * example still the goal the visitor picked, with nothing else to decide.
+ * The page ends where every plan ends, the big day, the last stop of its story, where the rail
+ * arrives: the goal box again, its example still the goal the visitor picked, with nothing else to
+ * decide.
  */
 export async function FinalCall({ startPath }: { startPath: string }) {
   const t = await getExtracted();
 
   return (
-    <section
-      aria-labelledby={CLOSE_TITLE_ID}
-      className={cn(
-        PUBLIC_CONTAINER_CLASS,
-        "flex flex-col items-center pt-20 pb-24 text-center sm:pt-28 lg:pt-32 lg:pb-36",
-      )}
-    >
-      <p className={cn(EYEBROW_CLASS, "flex items-center gap-2.5")}>
-        <FlagIcon aria-hidden="true" className="text-foreground size-3.5" />
-        {t("The big day")}
-      </p>
+    <Stop aria-labelledby={CLOSE_TITLE_ID} className="pb-20 sm:pb-28 lg:pb-32" rail>
+      <StopHeader>
+        <StopEyebrow>
+          <StopMark>
+            <FlagIcon className="size-3.5" />
+          </StopMark>
+          {t("The big day")}
+        </StopEyebrow>
 
-      <h2
-        className="mt-4 max-w-[14em] text-[32px] leading-[1.08] font-semibold tracking-[-0.04em] text-balance lg:text-5xl"
-        id={CLOSE_TITLE_ID}
-      >
-        {t("What's your big day?")}
-      </h2>
+        <StopTitle id={CLOSE_TITLE_ID}>{t("What's your big day?")}</StopTitle>
+      </StopHeader>
 
-      <div className="max-w-column mt-7 w-full text-left">
+      <div className="max-w-column mt-7 w-full lg:mt-8">
         <LandingGoalBox action={startPath} id={FINAL_GOAL_ID} />
       </div>
-    </section>
+    </Stop>
   );
 }

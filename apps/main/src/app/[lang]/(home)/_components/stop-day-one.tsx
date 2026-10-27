@@ -120,7 +120,7 @@ export async function StopDayOne() {
   const t = await getExtracted();
 
   return (
-    <Stop aria-labelledby={STOP_TITLE_ID}>
+    <Stop aria-labelledby={STOP_TITLE_ID} rail>
       <StopHeader>
         <StopEyebrow>
           <StopMark>
