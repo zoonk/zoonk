@@ -1,4 +1,5 @@
 import { trueFalseLabelsSchema } from "@zoonk/core/library/exams/true-false-labels";
+import { progressCelebrationShape } from "@zoonk/core/sessions/progress-celebration";
 import { z } from "zod";
 import { bankQuestionSchema } from "./learner";
 
@@ -57,6 +58,7 @@ export const focusTestGenerationSchema = z
 
 export const focusTestResultSchema = z
   .object({
+    ...progressCelebrationShape,
     areas: z
       .array(
         z.object({

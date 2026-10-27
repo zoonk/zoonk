@@ -4,6 +4,7 @@ import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getUserProgressCacheTag } from "../../cache/tags";
 import { getLearnerTimeZone } from "../../learner/_utils/goal-time-zone";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
+import { celebrateProgress } from "../../milestones/celebrate-progress";
 import { applySessionProgress } from "../../sessions/_utils/session-progress";
 import { getAnswersEnergyDelta, scoreAnswers } from "../../sessions/brain-power";
 import { withActivityMissionMoment } from "../../sessions/missions/activity-mission-result";
@@ -90,12 +91,12 @@ export async function practiceMistakePattern({
     });
 
     if (earlier) {
-      return unchanged({ event: earlier, retry: true });
+      return unchanged({ event: earlier, progress: null, retry: true });
     }
 
     const energyDelta = getAnswersEnergyDelta({ correct, incorrect });
 
-    await applySessionProgress(tx, {
+    const progress = await applySessionProgress(tx, {
       completion: true,
       delta: {
         brainPower,
@@ -130,12 +131,17 @@ export async function practiceMistakePattern({
       where: { id: row.id },
     });
 
-    return { event: recorded, retry: false };
+    return { event: recorded, progress, retry: false };
   });
 
   const { event } = counted;
   const source = { id: event.id, kind: "patternDrill" };
-  await settleLearnerMissions({ source, timeZone, userId });
+
+  const celebration = await celebrateProgress({
+    progress: counted.progress,
+    settleDay: () => settleLearnerMissions({ source, timeZone, userId }),
+    userId,
+  });
 
   revalidateCacheTags([getUserProgressCacheTag(userId)]);
 
@@ -152,6 +158,7 @@ export async function practiceMistakePattern({
   return {
     result: await withActivityMissionMoment({
       result: {
+        ...celebration,
         brainPower: event.brainPower,
         correct: event.correctAnswers,
         total: event.correctAnswers + event.incorrectAnswers,

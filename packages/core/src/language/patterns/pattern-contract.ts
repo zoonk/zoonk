@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { answerTimeZoneSchema } from "../../learner/contract";
 import { activityBrainPowerSchema, missionMomentSchema } from "../../sessions/completion-contract";
+import { progressCelebrationShape } from "../../sessions/progress-celebration";
 
 const MAX_DRILL_QUESTIONS = 10;
 const MAX_DRILL_ANSWER_LENGTH = 200;
@@ -58,6 +59,7 @@ export type MistakePatternPracticeInput = z.infer<typeof mistakePatternPracticeI
 
 export const mistakePatternPracticeResultSchema = z
   .object({
+    ...progressCelebrationShape,
     brainPower: activityBrainPowerSchema,
     correct: z.int().min(0),
     missionMoment: missionMomentSchema.nullable(),

@@ -216,6 +216,44 @@ describe(finishMistakePractice, () => {
     ]);
   });
 
+  it("says what each answer's count reached, for the run's end to celebrate with its own", async () => {
+    const { mistake, original, user } = await setup();
+
+    // Just short of the yellow belt and of 80% Energy.
+    await prisma.userProgress.create({
+      data: {
+        currentEnergy: 79.95,
+        lastActiveAt: new Date(),
+        totalBrainPower: 2499n,
+        userId: user.id,
+      },
+    });
+
+    const answered = await answerMistakePractice({
+      input: {
+        answer: RIGHT,
+        durationMs: 20_000,
+        itemId: original.id,
+        run: { answerIds: [] },
+        timeZone: "UTC",
+      },
+      mistakeId: mistake.id,
+    });
+
+    expect(answered).toMatchObject({
+      feedback: { reached: { energy: 80, level: { color: "yellow", level: 1 } } },
+    });
+
+    const answerId = answered.status === "ready" ? answered.feedback.answerId : "";
+
+    // The end counts nothing new, so it reaches nothing itself; the belt's moment is still to show.
+    await expect(
+      finishMistakePractice({ answerIds: [answerId], ended: true, timeZone: "UTC" }),
+    ).resolves.toMatchObject({
+      result: { ceremony: { key: "yellow", kind: "belt" }, reached: { energy: null, level: null } },
+    });
+  });
+
   it("records and counts an answer sent again with its id once", async () => {
     freezeClock();
 

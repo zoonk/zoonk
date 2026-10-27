@@ -9,7 +9,6 @@ import {
   loadLessonReviewSkillIds,
 } from "../learner/_utils/lesson-plan-skills";
 import { clampEnergy } from "../progress/energy";
-import { type ProgressChange } from "../sessions/_utils/session-progress";
 import { scoreLessonAnswers } from "../sessions/score-lesson-answers";
 import { getCompletionEnergyContext } from "../stats/completion-energy";
 import { upsertDailyProgress } from "../stats/daily-progress";
@@ -19,7 +18,11 @@ import { loadCompletionSteps, recordSkippedWritingSteps } from "./_utils/complet
 import { trackLessonCompleted } from "./_utils/lesson-events";
 import { isOwnExplanation } from "./_utils/lesson-rows";
 import { findLessonRun, hasFinishedLessonBefore, toSittings } from "./_utils/lesson-runs";
-import { type RunCompletion, withStudyBlock } from "./_utils/lesson-study-block";
+import {
+  type LessonProgress,
+  type RunCompletion,
+  withStudyBlock,
+} from "./_utils/lesson-study-block";
 import { loadPlayedLesson } from "./_utils/load-played-lesson";
 import {
   getNextReviewAt,
@@ -188,8 +191,14 @@ async function finishRun({
         seconds,
         totalBrainPower: Number(progress.totalBrainPower),
       },
-      energy: { after: clampedEnergy, before: currentEnergy },
       modelChanged: changed,
+      progress: {
+        brainPower: {
+          after: Number(progress.totalBrainPower),
+          before: Number(progress.totalBrainPower) - score.brainPower,
+        },
+        energy: { after: clampedEnergy, before: currentEnergy },
+      },
     };
   });
 }
@@ -270,8 +279,8 @@ export async function completeLibraryLesson({
     getLearnerTimeZone({ timeZone: input.timeZone, userId }),
   ]);
 
-  const settle = (completion: RunCompletion, energy?: ProgressChange) =>
-    withStudyBlock({ completion, energy, lessonId, runId: run.id, timeZone, userId });
+  const settle = (completion: RunCompletion, progress?: LessonProgress) =>
+    withStudyBlock({ completion, lessonId, progress, runId: run.id, timeZone, userId });
 
   if (run.endedAt) {
     return {
@@ -339,5 +348,5 @@ export async function completeLibraryLesson({
     seconds: finished.completion.seconds,
   });
 
-  return { completion: await settle(finished.completion, finished.energy), status: "completed" };
+  return { completion: await settle(finished.completion, finished.progress), status: "completed" };
 }

@@ -356,6 +356,28 @@ describe(completeLibraryLesson, () => {
     expect(day.lessonsCompleted).toBe(1);
   });
 
+  it("celebrates the belt and the tenth of Energy a lesson on its own reaches", async () => {
+    const { lesson, runId, user } = await playLesson();
+
+    // Just short of the yellow belt and of 80% Energy.
+    const progress = { currentEnergy: 79.95, lastActiveAt: new Date(), totalBrainPower: 2499n };
+
+    await prisma.userProgress.upsert({
+      create: { ...progress, userId: user.id },
+      update: progress,
+      where: { userId: user.id },
+    });
+
+    await expect(complete({ lessonId: lesson.id, runId })).resolves.toMatchObject({
+      completion: {
+        ceremony: { key: "yellow", kind: "belt" },
+        reached: { energy: 80, level: { color: "yellow", level: 1 } },
+        studyBlock: null,
+      },
+      status: "completed",
+    });
+  });
+
   it("records a replay as a review that doesn't add a lesson to the day", async () => {
     const { lesson, runId, steps, user } = await playLesson();
     await complete({ lessonId: lesson.id, runId });

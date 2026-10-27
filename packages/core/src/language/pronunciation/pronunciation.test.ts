@@ -370,6 +370,41 @@ describe(finishPronunciationRound, () => {
     );
   });
 
+  it("celebrates the belt and the tenth of Energy a round reaches", async () => {
+    const { goal, user, word } = await learnerWithWord();
+    const review = await pronunciationReviewFixture({ userId: user.id, wordId: word.id });
+    const roundId = crypto.randomUUID();
+
+    // Just short of the yellow belt and of 80% Energy.
+    await prisma.userProgress.upsert({
+      create: {
+        currentEnergy: 79.95,
+        lastActiveAt: new Date(),
+        totalBrainPower: 2499n,
+        userId: user.id,
+      },
+      update: { currentEnergy: 79.95, lastActiveAt: new Date(), totalBrainPower: 2499n },
+      where: { userId: user.id },
+    });
+
+    mockHeard({ heard: word.word, word: word.word });
+
+    await answerPronunciationReview({
+      audio: AUDIO,
+      fields: { durationMs: 1500, roundId, timeZone: TIME_ZONE },
+      reviewId: review.id,
+    });
+
+    await expect(
+      finishPronunciationRound({ input: { goalId: goal.id, timeZone: TIME_ZONE }, roundId }),
+    ).resolves.toMatchObject({
+      result: {
+        ceremony: { key: "yellow", kind: "belt" },
+        reached: { energy: 80, level: { color: "yellow", level: 1 } },
+      },
+    });
+  });
+
   it("refuses a round with no answers and another learner's goal", async () => {
     const { goal } = await learnerWithWord();
     const other = await userFixture();

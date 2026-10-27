@@ -463,6 +463,8 @@ describe(answerMistakePractice, () => {
         fixedMistakeIds: [mistake.id],
         isCorrect: true,
         mistakeStatus: "fixed",
+        // Answered outside a run, it counts no run, so it reaches nothing.
+        reached: { energy: null, level: null },
         trap: null,
       },
       status: "ready",

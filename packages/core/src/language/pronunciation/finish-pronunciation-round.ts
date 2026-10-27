@@ -5,6 +5,7 @@ import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getUserProgressCacheTag } from "../../cache/tags";
 import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
+import { celebrateProgress } from "../../milestones/celebrate-progress";
 import { applySessionProgress } from "../../sessions/_utils/session-progress";
 import { getAnswersEnergyDelta, scoreAnswers } from "../../sessions/brain-power";
 import { withActivityMissionMoment } from "../../sessions/missions/activity-mission-result";
@@ -42,7 +43,7 @@ function getRoundSeconds(answers: readonly RoundAnswer[]): number {
 
 function toRoundResult(
   event: Pick<LearningEvent, "brainPower" | "correctAnswers" | "incorrectAnswers">,
-): Omit<PronunciationRoundResult, "missionMoment"> {
+): Omit<PronunciationRoundResult, "ceremony" | "missionMoment" | "reached"> {
   return {
     brainPower: event.brainPower,
     correct: event.correctAnswers,
@@ -104,7 +105,7 @@ export async function finishPronunciationRound({
 
   const timeZone = getAnswerTimeZone({ goal: owned.goal, timeZone: input.timeZone });
 
-  const event = await writeLearnerChange({ userId }, async (tx) => {
+  const settled = await writeLearnerChange({ userId }, async (tx) => {
     const lock = await getCompletionEnergyContext({ timeZone, transaction: tx, userId });
 
     // The progress lock serializes a double submit: the second one finds the first's row, and
@@ -114,12 +115,12 @@ export async function finishPronunciationRound({
     });
 
     if (counted) {
-      return unchanged(counted);
+      return unchanged({ event: counted, progress: null });
     }
 
     const energyDelta = getAnswersEnergyDelta({ correct, incorrect });
 
-    await applySessionProgress(tx, {
+    const progress = await applySessionProgress(tx, {
       completion: true,
       delta: {
         brainPower,
@@ -132,7 +133,7 @@ export async function finishPronunciationRound({
       userId,
     });
 
-    return recordLearningEvent(tx, {
+    const recorded = await recordLearningEvent(tx, {
       brainPower,
       contentIds: { pronunciationRoundId: roundId },
       correctAnswers: correct,
@@ -148,16 +149,23 @@ export async function finishPronunciationRound({
       titleSnapshot: null,
       userId,
     });
+
+    return { event: recorded, progress };
   });
 
   const source = { id: roundId, kind: "pronunciationRound" };
-  await settleLearnerMissions({ source, timeZone, userId });
+
+  const celebration = await celebrateProgress({
+    progress: settled.progress,
+    settleDay: () => settleLearnerMissions({ source, timeZone, userId }),
+    userId,
+  });
 
   revalidateCacheTags([getUserProgressCacheTag(userId)]);
 
   return {
     result: await withActivityMissionMoment({
-      result: toRoundResult(event),
+      result: { ...toRoundResult(settled.event), ...celebration },
       source,
       timeZone,
       userId,

@@ -10,6 +10,7 @@ import { getUserProgressCacheTag } from "../../cache/tags";
 import { settleCallTime } from "../../entitlements/settle-call-time";
 import { getLearnerTimeZone } from "../../learner/_utils/goal-time-zone";
 import { type MissionMomentView } from "../../sessions/completion-contract";
+import { type ProgressCelebration } from "../../sessions/progress-celebration";
 import { getSession } from "../../users/get-session";
 import { getExamTaskEvidence } from "../exam-speaking/speaking-evidence";
 import { recordLanguageSkillEvidence } from "../levels/record-language-evidence";
@@ -34,11 +35,11 @@ const OVERTIME_SECONDS = 60;
 const SECONDS_PER_MINUTE = 60;
 
 export type CompleteLanguageConversationResult =
-  | {
+  | (ProgressCelebration & {
       conversation: LanguageConversationView;
       missionMoment: MissionMomentView | null;
       status: "completed";
-    }
+    })
   | {
       status:
         | "invalid"
@@ -347,7 +348,7 @@ export async function completeLanguageConversation({
           );
         }
 
-        return finishConversationDay({ conversationId, input, userId });
+        return finishConversationDay({ conversationId, input, progress: settled, userId });
       },
       userId,
     });

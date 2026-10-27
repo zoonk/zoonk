@@ -4,6 +4,8 @@ import { after } from "next/server";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLearnerModelCacheTag, getUserProgressCacheTag } from "../../cache/tags";
+import { celebrateProgress } from "../../milestones/celebrate-progress";
+import { type ProgressCelebration } from "../../sessions/progress-celebration";
 import { recordAnsweredActivity } from "../../stats/record-answered-activity";
 import { gradeChoiceAnswer, parseChoiceItem } from "../_utils/choice-items";
 import { loadTestOutPlan } from "../_utils/goal-skill-graph";
@@ -18,14 +20,15 @@ import { type TestOutScore, scoreTestOut } from "./test-out-rules";
 
 const PERCENT = 100;
 
-type ChapterTestOutOutcome = TestOutScore & {
-  answers: { isCorrect: boolean; itemId: string }[];
-  /** The plan change that skipped the lessons, so the result can offer its undo right there. */
-  changeId: string | null;
-  /** The lessons it skipped, as the plan change and the Plan count them. */
-  lessonsSkipped: number;
-  testedOutPlanItemIds: string[];
-};
+type ChapterTestOutOutcome = ProgressCelebration &
+  TestOutScore & {
+    answers: { isCorrect: boolean; itemId: string }[];
+    /** The plan change that skipped the lessons, so the result can offer its undo right there. */
+    changeId: string | null;
+    /** The lessons it skipped, as the plan change and the Plan count them. */
+    lessonsSkipped: number;
+    testedOutPlanItemIds: string[];
+  };
 
 export type SubmitChapterTestOutResult =
   | { outcome: ChapterTestOutOutcome; status: "ready" }
@@ -131,7 +134,7 @@ export async function submitChapterTestOut({
     })),
   });
 
-  await recordAnsweredActivity({
+  const progress = await recordAnsweredActivity({
     answers: graded.map(({ answer, result }) => ({
       durationMs: answer.durationMs,
       isCorrect: result?.isCorrect ?? false,
@@ -152,6 +155,8 @@ export async function submitChapterTestOut({
         timeZone,
       })
     : { changeId: null, lessonsSkipped: 0, planItemIds: [] };
+
+  const celebration = await celebrateProgress({ progress, userId: owned.userId });
 
   revalidateCacheTags([
     getLearnerModelCacheTag(owned.userId),
@@ -178,6 +183,7 @@ export async function submitChapterTestOut({
   return {
     outcome: {
       ...score,
+      ...celebration,
       answers: graded.map(({ answer, result }) => ({
         isCorrect: result?.isCorrect ?? false,
         itemId: answer.itemId,

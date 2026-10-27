@@ -569,6 +569,34 @@ describe("language conversations", () => {
     expect(speaking).toMatchObject({ windowCorrect: 2, windowTotal: 3 });
   });
 
+  it("celebrates the belt and the tenth of Energy a call reaches, once", async () => {
+    const { renting, user } = await languageGoalFixture();
+    mockSession(user.id);
+    const conversationId = await connectPractice(renting.id);
+
+    // Its 20 Brain Power cross into the yellow belt; its two goals met and one missed, 80% Energy.
+    const progress = { currentEnergy: 79.95, lastActiveAt: new Date(), totalBrainPower: 2490n };
+
+    await prisma.userProgress.upsert({
+      create: { ...progress, userId: user.id },
+      update: progress,
+      where: { userId: user.id },
+    });
+
+    const input = testCallCompletionInput(conversationId, COMPLETION);
+
+    await expect(completeLanguageConversation({ conversationId, input })).resolves.toMatchObject({
+      ceremony: { key: "yellow", kind: "belt" },
+      reached: { energy: 80, level: { color: "yellow", level: 1 } },
+      status: "completed",
+    });
+
+    // Completing it again reaches nothing new.
+    await expect(completeLanguageConversation({ conversationId, input })).resolves.toMatchObject({
+      reached: { energy: null, level: null },
+    });
+  });
+
   it("counts the goals marked during the call with the ones the full transcript shows", async () => {
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);

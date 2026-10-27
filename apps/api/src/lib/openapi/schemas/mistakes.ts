@@ -6,6 +6,8 @@ import {
   activityBrainPowerSchema,
   missionMomentSchema,
 } from "@zoonk/core/sessions/completion-contract";
+import { progressCelebrationShape } from "@zoonk/core/sessions/progress-celebration";
+import { reachedSchema } from "@zoonk/core/sessions/reached";
 import { MistakeCause, MistakeStatus } from "@zoonk/db";
 import { z } from "zod";
 import { paginationSchema } from "./common";
@@ -178,6 +180,10 @@ export const mistakePracticeFeedbackSchema = z
     mistakeStatus: mistakeStatusSchema.meta({
       description: "Fixed once answered right on a later day",
     }),
+    reached: reachedSchema.meta({
+      description:
+        "What counting the run with this answer reached (a belt level, a tenth of Energy), when the answer came with its run: the run counts as it goes, so its end celebrates what each answer's count reached together with the completion's own",
+    }),
     trap: z
       .string()
       .nullable()
@@ -190,6 +196,7 @@ export const mistakePracticeFeedbackSchema = z
 
 export const mistakePracticeCompletionSchema = z
   .object({
+    ...progressCelebrationShape,
     brainPower: activityBrainPowerSchema,
     correct: z.number().int().min(0),
     missionMoment: missionMomentSchema.nullable(),

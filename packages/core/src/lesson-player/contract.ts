@@ -8,6 +8,7 @@ import { type StepContentByKind } from "../library/steps/contract/step-contract"
 import { selectedAnswerSchema } from "../player/contracts/_utils/selected-answer-schema";
 import { type SerializedStep } from "../player/contracts/prepare-lesson-data";
 import { studyBlockCompletionSchema } from "../sessions/completion-contract";
+import { progressCelebrationShape } from "../sessions/progress-celebration";
 import { lessonRunIdSchema } from "./_utils/lesson-run-id";
 
 /** Typed and spoken answers are a few sentences; the grader and the shared explanations share it. */
@@ -331,6 +332,9 @@ export type LessonStepCheckResult = z.infer<typeof lessonStepCheckResultSchema>;
 
 export const libraryLessonCompletionSchema = z
   .object({
+    // A lesson played on its own celebrates on its completion; one of today's blocks celebrates in
+    // its moment (`studyBlock`), so these reach nothing then.
+    ...progressCelebrationShape,
     brainPower: z.int(),
     correctCount: z.int().min(0),
     energyDelta: z.number(),

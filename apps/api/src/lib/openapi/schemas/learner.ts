@@ -1,6 +1,7 @@
 import { skillStateCountsSchema } from "@zoonk/core/learner/contract";
 import { placementStatusSchema } from "@zoonk/core/learner/placement/contract";
 import { trueFalseLabelsSchema } from "@zoonk/core/library/exams/true-false-labels";
+import { progressCelebrationShape } from "@zoonk/core/sessions/progress-celebration";
 import { MasteryState } from "@zoonk/db";
 import { z } from "zod";
 import { questionImageSchema, questionSelectSchema, questionVisualSchema } from "./common";
@@ -266,6 +267,7 @@ export const testOutGenerationSchema = z
 
 export const chapterTestOutResultSchema = z
   .object({
+    ...progressCelebrationShape,
     answers: z.array(z.object({ isCorrect: z.boolean(), itemId: z.uuid() })),
     changeId: z
       .uuid()

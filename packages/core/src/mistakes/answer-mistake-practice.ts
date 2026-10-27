@@ -19,6 +19,7 @@ import { loadSkillSurvivors } from "../learner/_utils/update-learner-skill";
 import { type LearnerAnswer } from "../learner/record-learner-answer";
 import { ITEM_IMAGE_INCLUDE } from "../library/items/item-image";
 import { ITEM_SET_INCLUDE } from "../library/items/item-sets";
+import { NOTHING_REACHED, type Reached } from "../sessions/reached";
 import { getSession } from "../users/get-session";
 import { readFixedMistakeIds } from "./_utils/practice-runs";
 import { type MistakePracticeAnswerInput } from "./contract";
@@ -29,7 +30,8 @@ import { scheduleMistakeCause } from "./resolve-mistake-cause";
 
 /**
  * Feedback for one practice answer: the right answer, why, where the notebook entry stands, the
- * trap a trap drill names, and the answer's id, which finishing the run counts.
+ * trap a trap drill names, the answer's id, which finishing the run counts, and what counting the
+ * run with it reached (a level, a tenth of Energy), for the run's end to celebrate.
  */
 type MistakePracticeFeedback = {
   answerId: string;
@@ -41,6 +43,7 @@ type MistakePracticeFeedback = {
   fixedMistakeIds: string[];
   isCorrect: boolean;
   mistakeStatus: MistakeStatus;
+  reached: Reached;
   trap: string | null;
 };
 
@@ -165,9 +168,9 @@ async function recordPracticeAnswer({
 }
 
 /**
- * Counts the run with this answer toward today, as `finishMistakePractice` does. The answer is
- * saved either way: a count that fails is made by the run's next answer or its finish, which count
- * every answer no count has yet.
+ * Counts the run with this answer toward today, as `finishMistakePractice` does, and says what the
+ * count reached. The answer is saved either way: a count that fails is made by the run's next
+ * answer or its finish, which count every answer no count has yet.
  */
 async function countRunSoFar({
   answerId,
@@ -175,14 +178,14 @@ async function countRunSoFar({
 }: {
   answerId: string;
   input: MistakePracticeAnswerInput;
-}): Promise<void> {
+}): Promise<Reached> {
   const { run, timeZone } = input;
 
   if (!run) {
-    return;
+    return NOTHING_REACHED;
   }
 
-  const { error } = await safeAsync(() =>
+  const { data, error } = await safeAsync(() =>
     finishMistakePractice({
       answerIds: [...run.answerIds, answerId],
       goalId: run.goalId,
@@ -193,6 +196,9 @@ async function countRunSoFar({
   if (error) {
     logError("[answerMistakePractice] Failed to count the run:", error);
   }
+
+  // A count that failed is made by the run's next answer or its finish, which says what it reached.
+  return data?.status === "ready" ? data.result.reached : NOTHING_REACHED;
 }
 
 /**
@@ -269,7 +275,7 @@ export async function answerMistakePractice({
         mistake,
       });
 
-  await countRunSoFar({ answerId: saved.answerId, input });
+  const reached = await countRunSoFar({ answerId: saved.answerId, input });
 
   const fixed = saved.fixedMistakeIds.includes(mistake.id);
 
@@ -282,6 +288,7 @@ export async function answerMistakePractice({
       fixedMistakeIds: saved.fixedMistakeIds,
       isCorrect: saved.isCorrect,
       mistakeStatus: fixed ? "fixed" : saved.mistakeStatus,
+      reached,
       trap: drilled.trap,
     },
     status: "ready",

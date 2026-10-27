@@ -101,6 +101,28 @@ function mockPatternFound() {
   });
 }
 
+/** A "since e for" pattern found for the learner, with its two-question drill. */
+function createDrillPattern({ goalId, userId }: { goalId: string; userId: string }) {
+  return prisma.mistakePattern.create({
+    data: {
+      content: {
+        contrast: PATTERN_OUTPUT.contrast,
+        drill: DRILL,
+        examples: [],
+        rule: PATTERN_OUTPUT.rule,
+      },
+      goalId,
+      kind: "pattern",
+      language: "en",
+      model: "test",
+      promptVersion: "test",
+      runId: "test",
+      title: "since e for",
+      userId,
+    },
+  });
+}
+
 describe("mistake patterns", () => {
   it("checks every third new mistake and saves the pattern it finds", async () => {
     const { goal, user } = await languageMistakes(3);
@@ -183,24 +205,7 @@ describe("mistake patterns", () => {
     const { goal, user } = await languageGoalFixture();
     mockSession(user.id);
 
-    const pattern = await prisma.mistakePattern.create({
-      data: {
-        content: {
-          contrast: PATTERN_OUTPUT.contrast,
-          drill: DRILL,
-          examples: [],
-          rule: PATTERN_OUTPUT.rule,
-        },
-        goalId: goal.id,
-        kind: "pattern",
-        language: "en",
-        model: "test",
-        promptVersion: "test",
-        runId: "test",
-        title: "since e for",
-        userId: user.id,
-      },
-    });
+    const pattern = await createDrillPattern({ goalId: goal.id, userId: user.id });
 
     await expect(getMistakePattern(pattern.id)).resolves.toMatchObject({
       pattern: { drill: DRILL, practiced: false, title: "since e for" },
@@ -236,6 +241,42 @@ describe("mistake patterns", () => {
 
     await expect(getMistakePattern(pattern.id)).resolves.toMatchObject({
       pattern: { practiced: true },
+    });
+  });
+
+  it("celebrates the belt and the tenth of Energy a drill reaches, once", async () => {
+    const { goal, user } = await languageGoalFixture();
+    mockSession(user.id);
+    const pattern = await createDrillPattern({ goalId: goal.id, userId: user.id });
+
+    // Just short of the yellow belt and of 80% Energy.
+    await prisma.userProgress.upsert({
+      create: {
+        currentEnergy: 79.95,
+        lastActiveAt: new Date(),
+        totalBrainPower: 2499n,
+        userId: user.id,
+      },
+      update: { currentEnergy: 79.95, lastActiveAt: new Date(), totalBrainPower: 2499n },
+      where: { userId: user.id },
+    });
+
+    const input = {
+      answers: ["since", "since"],
+      requestId: crypto.randomUUID(),
+      timeZone: "America/Sao_Paulo",
+    };
+
+    await expect(practiceMistakePattern({ input, patternId: pattern.id })).resolves.toMatchObject({
+      result: {
+        ceremony: { key: "yellow", kind: "belt" },
+        reached: { energy: 80, level: { color: "yellow", level: 1 } },
+      },
+    });
+
+    // Sent again, it reaches nothing new; the belt's moment waits until it's shown.
+    await expect(practiceMistakePattern({ input, patternId: pattern.id })).resolves.toMatchObject({
+      result: { ceremony: { key: "yellow" }, reached: { energy: null, level: null } },
     });
   });
 

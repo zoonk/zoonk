@@ -336,6 +336,32 @@ describe(submitFocusTest, () => {
     ).resolves.toMatchObject({ kind: "questions", lessonKind: "focusTest", seconds: 64 });
   });
 
+  it("celebrates the tenth of Energy its answers reach", async () => {
+    const { goal, user } = await setup();
+    const questions = await readQuestions(goal.id);
+
+    // Its four right and four wrong answers add 0.4.
+    await prisma.userProgress.create({
+      data: { currentEnergy: 79.8, lastActiveAt: new Date(), userId: user.id },
+    });
+
+    const result = await submitFocusTest({
+      goalId: goal.id,
+      input: {
+        answers: questions.map((question) => ({
+          answer: question.area === "Law" ? RIGHT : WRONG,
+          durationMs: 8000,
+          itemId: question.itemId,
+        })),
+      },
+    });
+
+    expect(result).toMatchObject({
+      outcome: { ceremony: null, reached: { energy: 80, level: null } },
+      status: "ready",
+    });
+  });
+
   it("refuses a question that isn't on the test's areas", async () => {
     const { goal } = await setup();
     const outsider = await skillFixture({ name: "Elsewhere" });

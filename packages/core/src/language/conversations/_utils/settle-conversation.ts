@@ -5,7 +5,10 @@ import { CHECKPOINT_LEDGER_KINDS } from "../../../checkpoints/_utils/checkpoint-
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { getBlockElapsedMs, pausedBlockTiming } from "../../../sessions/_utils/block-timing";
 import { completePlanItem } from "../../../sessions/_utils/plan-items";
-import { applySessionProgress } from "../../../sessions/_utils/session-progress";
+import {
+  type ProgressChange,
+  applySessionProgress,
+} from "../../../sessions/_utils/session-progress";
 import { readBlockPayload } from "../../../sessions/block-payload";
 import { getAnswersEnergyDelta } from "../../../sessions/brain-power";
 import { getCompletionEnergyContext } from "../../../stats/completion-energy";
@@ -79,9 +82,12 @@ function readPlanItemId(payload: unknown): string | null {
  * Writes a finished call once: its feedback (the transcript itself isn't kept), Brain Power and
  * Energy with today's totals, the ledger row and, for a checkpoint call, its session block and
  * plan item. A won checkpoint checks the unit's checkpoint off; a lost one costs nothing. Returns
- * false when the call was already finished, so a second tab never counts it twice.
+ * the Brain Power and Energy before and after it, or null when the call was already finished, so
+ * a second tab never counts it twice.
  */
-export async function settleConversation(input: ConversationSettlement): Promise<boolean> {
+export async function settleConversation(
+  input: ConversationSettlement,
+): Promise<{ brainPower: ProgressChange; energy: ProgressChange } | null> {
   const { bossKind, feedback, objectivesMet, row, spokenSeconds, timeZone, userId } = input;
 
   const checkpoint = getCheckpointOutcome({
@@ -119,10 +125,10 @@ export async function settleConversation(input: ConversationSettlement): Promise
     });
 
     if (count === 0) {
-      return unchanged(false);
+      return unchanged(null);
     }
 
-    await applySessionProgress(tx, {
+    const progress = await applySessionProgress(tx, {
       completion: true,
       delta: {
         brainPower,
@@ -177,6 +183,6 @@ export async function settleConversation(input: ConversationSettlement): Promise
       await completePlanItem(tx, { now: lock.completedAt, planItemId, userId });
     }
 
-    return true;
+    return progress;
   });
 }

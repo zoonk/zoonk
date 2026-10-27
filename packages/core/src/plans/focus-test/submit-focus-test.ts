@@ -10,6 +10,8 @@ import {
 import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { type ItemAnswerInput } from "../../learner/contract";
 import { recordLearnerAnswer } from "../../learner/record-learner-answer";
+import { celebrateProgress } from "../../milestones/celebrate-progress";
+import { type ProgressCelebration } from "../../sessions/progress-celebration";
 import { recordAnsweredActivity } from "../../stats/record-answered-activity";
 import { changeGoalPlan } from "../change-goal-plan";
 import { loadFocusTestShape } from "./_utils/load-focus-test";
@@ -17,7 +19,7 @@ import { type FocusTestInput } from "./focus-test-contract";
 import { type FocusTestArea, chooseFocusAreas, scoreFocusTest } from "./focus-test-rules";
 
 /** What the focus test found and chose, in the learner's terms. */
-type FocusTestOutcome = {
+type FocusTestOutcome = ProgressCelebration & {
   /** Each area asked about, in the plan's order: its answers right or not, and if it got the focus. */
   areas: {
     answers: boolean[];
@@ -158,7 +160,7 @@ export async function submitFocusTest({
   const timeZone = getAnswerTimeZone({ goal: owned.goal, timeZone: input.timeZone });
   await recordAnswers({ graded, timeZone, userId: owned.userId });
 
-  await recordAnsweredActivity({
+  const progress = await recordAnsweredActivity({
     answers: graded.map((entry) => ({
       durationMs: entry.answer.durationMs,
       isCorrect: entry.isCorrect,
@@ -195,8 +197,11 @@ export async function submitFocusTest({
         })
       : null;
 
+  const celebration = await celebrateProgress({ progress, userId: owned.userId });
+
   return {
     outcome: {
+      ...celebration,
       areas: results.map((result) => ({
         answers: result.answers,
         chosen: focusAreas.includes(result.name),

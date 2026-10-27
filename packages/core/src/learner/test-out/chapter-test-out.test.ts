@@ -294,6 +294,29 @@ describe(submitChapterTestOut, () => {
     ).resolves.toMatchObject({ status: "todo" });
   });
 
+  it("celebrates the tenth of Energy its answers reach", async () => {
+    const { chapters, goal, items, user } = await setup();
+
+    await prisma.userProgress.create({
+      data: { currentEnergy: 79.5, lastActiveAt: new Date(), userId: user.id },
+    });
+
+    const result = await submitChapterTestOut({
+      chapterId: chapters[0]?.id ?? "",
+      goalId: goal.id,
+      input: {
+        answers: items
+          .slice(0, 4)
+          .map((item) => ({ answer: RIGHT, durationMs: 8000, itemId: item.id })),
+      },
+    });
+
+    expect(result).toMatchObject({
+      outcome: { ceremony: null, reached: { energy: 80, level: null } },
+      status: "ready",
+    });
+  });
+
   it("doesn't skip a chapter on a question about one of its skills", async () => {
     const { chapters, goal, items, planItems, skills, user } = await setup();
     const [asked] = items;

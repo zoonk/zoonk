@@ -1,5 +1,9 @@
 import { type TransactionClient } from "@zoonk/db";
-import { type ProgressLock, applySessionProgress } from "../../sessions/_utils/session-progress";
+import {
+  type ProgressChange,
+  type ProgressLock,
+  applySessionProgress,
+} from "../../sessions/_utils/session-progress";
 import { getAnswersEnergyDelta } from "../../sessions/brain-power";
 import { recordLearningEvent } from "../record-learning-event";
 
@@ -17,7 +21,10 @@ export type AnsweredActivity = {
   userId: string;
 };
 
-/** Records answers under the owner's progress lock, in the caller's settlement transaction. */
+/**
+ * Records answers under the owner's progress lock, in the caller's settlement transaction, and
+ * returns the Brain Power and Energy before and after them.
+ */
 export async function settleAnsweredActivity(
   transaction: TransactionClient,
   {
@@ -29,7 +36,7 @@ export async function settleAnsweredActivity(
     timeZone,
     userId,
   }: AnsweredActivity & { lock: ProgressLock },
-): Promise<void> {
+): Promise<{ brainPower: ProgressChange; energy: ProgressChange }> {
   const correct = answers.filter((answer) => answer.isCorrect).length;
   const incorrect = answers.length - correct;
 
@@ -42,7 +49,7 @@ export async function settleAnsweredActivity(
 
   const energyDelta = getAnswersEnergyDelta({ correct, incorrect });
 
-  await applySessionProgress(transaction, {
+  const progress = await applySessionProgress(transaction, {
     completion: true,
     delta: {
       brainPower: 0,
@@ -71,4 +78,6 @@ export async function settleAnsweredActivity(
     titleSnapshot: null,
     userId,
   });
+
+  return progress;
 }

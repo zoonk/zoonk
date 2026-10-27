@@ -6,11 +6,17 @@ import { getUserProgressCacheTag } from "../cache/tags";
 import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
 import { findOwnedGoal, getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
-import { type ProgressLock, applySessionProgress } from "../sessions/_utils/session-progress";
+import { celebrateProgress } from "../milestones/celebrate-progress";
+import {
+  type ProgressChange,
+  type ProgressLock,
+  applySessionProgress,
+} from "../sessions/_utils/session-progress";
 import { getAnswersEnergyDelta, scoreAnswers } from "../sessions/brain-power";
 import { type MissionMomentView } from "../sessions/completion-contract";
 import { withActivityMissionMoment } from "../sessions/missions/activity-mission-result";
 import { settleLearnerMissions } from "../sessions/missions/settle-learner-missions";
+import { type ProgressCelebration } from "../sessions/progress-celebration";
 import { getCompletionEnergyContext } from "../stats/completion-energy";
 import { recordLearningEvent } from "../stats/record-learning-event";
 import { getSession } from "../users/get-session";
@@ -25,8 +31,11 @@ import {
 } from "./_utils/practice-runs";
 import { type MistakePracticeFinishInput } from "./contract";
 
-/** What a run earned so far, as the "Practice done" screen shows it. */
-type MistakePracticeSummary = {
+/**
+ * What a run earned so far, as the "Practice done" screen shows it, with what this finish reached:
+ * a run counts as it goes, so the screen adds up what each answer's count reached.
+ */
+type MistakePracticeSummary = ProgressCelebration & {
   brainPower: number;
   correct: number;
   /** The missions the run completed, for the end of its screen; null when it completed none. */
@@ -35,8 +44,8 @@ type MistakePracticeSummary = {
   total: number;
 };
 
-/** The run's own totals, before the missions it completed are known. */
-type PracticeRunTotals = Omit<MistakePracticeSummary, "missionMoment">;
+/** The run's own totals, before the missions it completed and what it reached are known. */
+type PracticeRunTotals = Omit<MistakePracticeSummary, "ceremony" | "missionMoment" | "reached">;
 
 export type FinishMistakePracticeResult =
   | { result: MistakePracticeSummary; status: "ready" }
@@ -97,7 +106,11 @@ type WriteRunInput = Omit<SettleInput, "answers"> & {
 async function writeRun(
   tx: TransactionClient,
   { fresh, goalId, lock, run, runAnswers, timeZone, userId }: WriteRunInput,
-): Promise<{ result: PracticeRunTotals; runId: string }> {
+): Promise<{
+  progress: { brainPower: ProgressChange; energy: ProgressChange };
+  result: PracticeRunTotals;
+  runId: string;
+}> {
   const totals = getRunTotals({ answers: runAnswers, endedAt: lock.completedAt });
   const correct = fresh.filter((answer) => answer.isCorrect).length;
   const incorrect = fresh.length - correct;
@@ -105,7 +118,7 @@ async function writeRun(
   const brainPower = Math.max(0, totals.brainPower - (run?.brainPower ?? 0));
   const seconds = Math.max(0, totals.seconds - (run?.seconds ?? 0));
 
-  await applySessionProgress(tx, {
+  const progress = await applySessionProgress(tx, {
     completion: run === null,
     delta: {
       brainPower,
@@ -143,7 +156,7 @@ async function writeRun(
       where: { id: run.id },
     });
 
-    return { result, runId: run.id };
+    return { progress, result, runId: run.id };
   }
 
   const event = await recordLearningEvent(tx, {
@@ -159,7 +172,7 @@ async function writeRun(
     userId,
   });
 
-  return { result, runId: event.id };
+  return { progress, result, runId: event.id };
 }
 
 /**
@@ -186,6 +199,7 @@ function settlePracticeRun({ answers, ...input }: SettleInput) {
     if (fresh.length === 0) {
       return unchanged({
         counted: false,
+        progress: null,
         result: {
           brainPower: run?.brainPower ?? 0,
           correct: run?.correctAnswers ?? 0,
@@ -234,7 +248,7 @@ export async function finishMistakePractice(
     ? getAnswerTimeZone({ goal, timeZone: input.timeZone })
     : await getLearnerTimeZone({ timeZone: input.timeZone, userId });
 
-  const { counted, result, runId } = await settlePracticeRun({
+  const { counted, progress, result, runId } = await settlePracticeRun({
     answers,
     goalId: goal?.id ?? null,
     timeZone,
@@ -243,9 +257,11 @@ export async function finishMistakePractice(
 
   const source = runId ? { id: runId, kind: "mistakePractice" } : null;
 
-  if (source) {
-    await settleLearnerMissions({ source, timeZone, userId });
-  }
+  const celebration = await celebrateProgress({
+    progress,
+    settleDay: source ? () => settleLearnerMissions({ source, timeZone, userId }) : undefined,
+    userId,
+  });
 
   if (counted) {
     revalidateCacheTags([getUserProgressCacheTag(userId)]);
@@ -265,7 +281,12 @@ export async function finishMistakePractice(
   }
 
   return {
-    result: await withActivityMissionMoment({ result, source, timeZone, userId }),
+    result: await withActivityMissionMoment({
+      result: { ...result, ...celebration },
+      source,
+      timeZone,
+      userId,
+    }),
     status: "ready",
   };
 }

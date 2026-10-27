@@ -41,7 +41,12 @@ async function completeConversation(
     return languageError(result.status, "Conversation not found");
   }
 
-  return NextResponse.json({ ...result.conversation, missionMoment: result.missionMoment });
+  return NextResponse.json({
+    ...result.conversation,
+    ceremony: result.ceremony,
+    missionMoment: result.missionMoment,
+    reached: result.reached,
+  });
 }
 
 export const POST = withApiErrorBoundary(completeConversation);

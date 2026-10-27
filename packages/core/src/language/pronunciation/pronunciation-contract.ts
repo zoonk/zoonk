@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { answerTimeZoneSchema } from "../../learner/contract";
 import { activityBrainPowerSchema, missionMomentSchema } from "../../sessions/completion-contract";
+import { progressCelebrationShape } from "../../sessions/progress-celebration";
 
 /** A spoken word is a second or two; a longer recording is a microphone left on. */
 const MAX_WORD_RECORDING_MS = 30_000;
@@ -73,6 +74,7 @@ export type PronunciationRoundInput = z.infer<typeof pronunciationRoundInputSche
 
 export const pronunciationRoundResultSchema = z
   .object({
+    ...progressCelebrationShape,
     brainPower: activityBrainPowerSchema,
     correct: z.int().min(0),
     missionMoment: missionMomentSchema.nullable(),

@@ -18435,7 +18435,7 @@
     },
     "/me/mistakes/{mistakeId}/answers": {
       "post": {
-        "description": "Answers the mistake's question or another question on its skill, by the rules of its drill. Right on a later day than the mistake, it fixes the entry. The run counts toward today when it's finished (POST /me/mistake-practice/completions).",
+        "description": "Answers the mistake's question or another question on its skill, by the rules of its drill. Right on a later day than the mistake, it fixes the entry. Sent with its run, saving it counts the run so far toward today and says what that count reached (`reached`); finishing the run (POST /me/mistake-practice/completions) counts it once more.",
         "operationId": "createMistakePracticeAnswer",
         "security": [
           {
@@ -36654,6 +36654,65 @@
       "MistakePatternPracticeResult": {
         "type": "object",
         "properties": {
+          "ceremony": {
+            "nullable": true,
+            "description": "The one milestone the learner hasn't been shown yet (a belt this work crossed, new glasses): show it as a full-screen moment before the result, then mark it shown; null when there's none",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Milestone"
+              }
+            ]
+          },
+          "reached": {
+            "type": "object",
+            "properties": {
+              "energy": {
+                "nullable": true,
+                "description": "The tenth of Energy its answers reached going up (60, 80, 100)",
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "level": {
+                "nullable": true,
+                "description": "The belt level its Brain Power reached, the day's bonus included",
+                "type": "object",
+                "properties": {
+                  "color": {
+                    "type": "string",
+                    "enum": [
+                      "white",
+                      "yellow",
+                      "orange",
+                      "green",
+                      "blue",
+                      "purple",
+                      "brown",
+                      "red",
+                      "gray",
+                      "black"
+                    ]
+                  },
+                  "level": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "color",
+                  "level"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "energy",
+              "level"
+            ],
+            "additionalProperties": false,
+            "description": "The belt level and the tenth of Energy this work took the learner to, to celebrate on its result; nothing on a repeat, which celebrates none of it again"
+          },
           "brainPower": {
             "type": "integer",
             "minimum": 0,
@@ -36680,10 +36739,53 @@
           }
         },
         "required": [
+          "ceremony",
+          "reached",
           "brainPower",
           "correct",
           "missionMoment",
           "total"
+        ],
+        "additionalProperties": false
+      },
+      "Milestone": {
+        "type": "object",
+        "properties": {
+          "earnedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "key": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "badge",
+              "belt",
+              "glasses",
+              "buddyStage"
+            ]
+          },
+          "shownAt": {
+            "nullable": true,
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          }
+        },
+        "required": [
+          "earnedAt",
+          "id",
+          "key",
+          "kind",
+          "shownAt"
         ],
         "additionalProperties": false
       },
@@ -38202,6 +38304,65 @@
             ],
             "additionalProperties": false
           },
+          "ceremony": {
+            "nullable": true,
+            "description": "The one milestone the learner hasn't been shown yet (a belt this work crossed, new glasses): show it as a full-screen moment before the result, then mark it shown; null when there's none",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Milestone"
+              }
+            ]
+          },
+          "reached": {
+            "type": "object",
+            "properties": {
+              "energy": {
+                "nullable": true,
+                "description": "The tenth of Energy its answers reached going up (60, 80, 100)",
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "level": {
+                "nullable": true,
+                "description": "The belt level its Brain Power reached, the day's bonus included",
+                "type": "object",
+                "properties": {
+                  "color": {
+                    "type": "string",
+                    "enum": [
+                      "white",
+                      "yellow",
+                      "orange",
+                      "green",
+                      "blue",
+                      "purple",
+                      "brown",
+                      "red",
+                      "gray",
+                      "black"
+                    ]
+                  },
+                  "level": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "color",
+                  "level"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "energy",
+              "level"
+            ],
+            "additionalProperties": false,
+            "description": "The belt level and the tenth of Energy this work took the learner to, to celebrate on its result; nothing on a repeat, which celebrates none of it again"
+          },
           "missionMoment": {
             "default": null,
             "nullable": true,
@@ -38232,6 +38393,8 @@
           "targetLanguage",
           "title",
           "unit",
+          "ceremony",
+          "reached",
           "missionMoment"
         ],
         "additionalProperties": false
@@ -38653,6 +38816,65 @@
       "PronunciationRoundResult": {
         "type": "object",
         "properties": {
+          "ceremony": {
+            "nullable": true,
+            "description": "The one milestone the learner hasn't been shown yet (a belt this work crossed, new glasses): show it as a full-screen moment before the result, then mark it shown; null when there's none",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Milestone"
+              }
+            ]
+          },
+          "reached": {
+            "type": "object",
+            "properties": {
+              "energy": {
+                "nullable": true,
+                "description": "The tenth of Energy its answers reached going up (60, 80, 100)",
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "level": {
+                "nullable": true,
+                "description": "The belt level its Brain Power reached, the day's bonus included",
+                "type": "object",
+                "properties": {
+                  "color": {
+                    "type": "string",
+                    "enum": [
+                      "white",
+                      "yellow",
+                      "orange",
+                      "green",
+                      "blue",
+                      "purple",
+                      "brown",
+                      "red",
+                      "gray",
+                      "black"
+                    ]
+                  },
+                  "level": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "color",
+                  "level"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "energy",
+              "level"
+            ],
+            "additionalProperties": false,
+            "description": "The belt level and the tenth of Energy this work took the learner to, to celebrate on its result; nothing on a repeat, which celebrates none of it again"
+          },
           "brainPower": {
             "type": "integer",
             "minimum": 0,
@@ -38679,6 +38901,8 @@
           }
         },
         "required": [
+          "ceremony",
+          "reached",
           "brainPower",
           "correct",
           "missionMoment",
@@ -63779,6 +64003,65 @@
       "LibraryLessonCompletion": {
         "type": "object",
         "properties": {
+          "ceremony": {
+            "nullable": true,
+            "description": "The one milestone the learner hasn't been shown yet (a belt this work crossed, new glasses): show it as a full-screen moment before the result, then mark it shown; null when there's none",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Milestone"
+              }
+            ]
+          },
+          "reached": {
+            "type": "object",
+            "properties": {
+              "energy": {
+                "nullable": true,
+                "description": "The tenth of Energy its answers reached going up (60, 80, 100)",
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "level": {
+                "nullable": true,
+                "description": "The belt level its Brain Power reached, the day's bonus included",
+                "type": "object",
+                "properties": {
+                  "color": {
+                    "type": "string",
+                    "enum": [
+                      "white",
+                      "yellow",
+                      "orange",
+                      "green",
+                      "blue",
+                      "purple",
+                      "brown",
+                      "red",
+                      "gray",
+                      "black"
+                    ]
+                  },
+                  "level": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "color",
+                  "level"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "energy",
+              "level"
+            ],
+            "additionalProperties": false,
+            "description": "The belt level and the tenth of Energy this work took the learner to, to celebrate on its result; nothing on a repeat, which celebrates none of it again"
+          },
           "brainPower": {
             "type": "integer",
             "minimum": -9007199254740991,
@@ -63827,6 +64110,8 @@
           }
         },
         "required": [
+          "ceremony",
+          "reached",
           "brainPower",
           "correctCount",
           "energyDelta",
@@ -64163,47 +64448,6 @@
           "testOutOffer",
           "topHyperdrive",
           "total"
-        ],
-        "additionalProperties": false
-      },
-      "Milestone": {
-        "type": "object",
-        "properties": {
-          "earnedAt": {
-            "type": "string",
-            "format": "date-time",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-          },
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-          },
-          "key": {
-            "type": "string"
-          },
-          "kind": {
-            "type": "string",
-            "enum": [
-              "badge",
-              "belt",
-              "glasses",
-              "buddyStage"
-            ]
-          },
-          "shownAt": {
-            "nullable": true,
-            "type": "string",
-            "format": "date-time",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-          }
-        },
-        "required": [
-          "earnedAt",
-          "id",
-          "key",
-          "kind",
-          "shownAt"
         ],
         "additionalProperties": false
       },
@@ -68317,6 +68561,65 @@
       "ChapterTestOutResult": {
         "type": "object",
         "properties": {
+          "ceremony": {
+            "nullable": true,
+            "description": "The one milestone the learner hasn't been shown yet (a belt this work crossed, new glasses): show it as a full-screen moment before the result, then mark it shown; null when there's none",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Milestone"
+              }
+            ]
+          },
+          "reached": {
+            "type": "object",
+            "properties": {
+              "energy": {
+                "nullable": true,
+                "description": "The tenth of Energy its answers reached going up (60, 80, 100)",
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "level": {
+                "nullable": true,
+                "description": "The belt level its Brain Power reached, the day's bonus included",
+                "type": "object",
+                "properties": {
+                  "color": {
+                    "type": "string",
+                    "enum": [
+                      "white",
+                      "yellow",
+                      "orange",
+                      "green",
+                      "blue",
+                      "purple",
+                      "brown",
+                      "red",
+                      "gray",
+                      "black"
+                    ]
+                  },
+                  "level": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "color",
+                  "level"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "energy",
+              "level"
+            ],
+            "additionalProperties": false,
+            "description": "The belt level and the tenth of Energy this work took the learner to, to celebrate on its result; nothing on a repeat, which celebrates none of it again"
+          },
           "answers": {
             "type": "array",
             "items": {
@@ -68393,6 +68696,8 @@
           }
         },
         "required": [
+          "ceremony",
+          "reached",
           "answers",
           "changeId",
           "correct",
@@ -71862,6 +72167,65 @@
       "FocusTestResult": {
         "type": "object",
         "properties": {
+          "ceremony": {
+            "nullable": true,
+            "description": "The one milestone the learner hasn't been shown yet (a belt this work crossed, new glasses): show it as a full-screen moment before the result, then mark it shown; null when there's none",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Milestone"
+              }
+            ]
+          },
+          "reached": {
+            "type": "object",
+            "properties": {
+              "energy": {
+                "nullable": true,
+                "description": "The tenth of Energy its answers reached going up (60, 80, 100)",
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "level": {
+                "nullable": true,
+                "description": "The belt level its Brain Power reached, the day's bonus included",
+                "type": "object",
+                "properties": {
+                  "color": {
+                    "type": "string",
+                    "enum": [
+                      "white",
+                      "yellow",
+                      "orange",
+                      "green",
+                      "blue",
+                      "purple",
+                      "brown",
+                      "red",
+                      "gray",
+                      "black"
+                    ]
+                  },
+                  "level": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "color",
+                  "level"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "energy",
+              "level"
+            ],
+            "additionalProperties": false,
+            "description": "The belt level and the tenth of Energy this work took the learner to, to celebrate on its result; nothing on a repeat, which celebrates none of it again"
+          },
           "areas": {
             "type": "array",
             "items": {
@@ -71925,6 +72289,8 @@
           }
         },
         "required": [
+          "ceremony",
+          "reached",
           "areas",
           "changeId",
           "focusAreas"
@@ -74109,6 +74475,65 @@
       "MistakePracticeCompletion": {
         "type": "object",
         "properties": {
+          "ceremony": {
+            "nullable": true,
+            "description": "The one milestone the learner hasn't been shown yet (a belt this work crossed, new glasses): show it as a full-screen moment before the result, then mark it shown; null when there's none",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Milestone"
+              }
+            ]
+          },
+          "reached": {
+            "type": "object",
+            "properties": {
+              "energy": {
+                "nullable": true,
+                "description": "The tenth of Energy its answers reached going up (60, 80, 100)",
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "level": {
+                "nullable": true,
+                "description": "The belt level its Brain Power reached, the day's bonus included",
+                "type": "object",
+                "properties": {
+                  "color": {
+                    "type": "string",
+                    "enum": [
+                      "white",
+                      "yellow",
+                      "orange",
+                      "green",
+                      "blue",
+                      "purple",
+                      "brown",
+                      "red",
+                      "gray",
+                      "black"
+                    ]
+                  },
+                  "level": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "color",
+                  "level"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "energy",
+              "level"
+            ],
+            "additionalProperties": false,
+            "description": "The belt level and the tenth of Energy this work took the learner to, to celebrate on its result; nothing on a repeat, which celebrates none of it again"
+          },
           "brainPower": {
             "type": "integer",
             "minimum": 0,
@@ -74142,6 +74567,8 @@
           }
         },
         "required": [
+          "ceremony",
+          "reached",
           "brainPower",
           "correct",
           "missionMoment",
@@ -74462,6 +74889,56 @@
               }
             ]
           },
+          "reached": {
+            "type": "object",
+            "properties": {
+              "energy": {
+                "nullable": true,
+                "description": "The tenth of Energy its answers reached going up (60, 80, 100)",
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "level": {
+                "nullable": true,
+                "description": "The belt level its Brain Power reached, the day's bonus included",
+                "type": "object",
+                "properties": {
+                  "color": {
+                    "type": "string",
+                    "enum": [
+                      "white",
+                      "yellow",
+                      "orange",
+                      "green",
+                      "blue",
+                      "purple",
+                      "brown",
+                      "red",
+                      "gray",
+                      "black"
+                    ]
+                  },
+                  "level": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "color",
+                  "level"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "energy",
+              "level"
+            ],
+            "additionalProperties": false,
+            "description": "What counting the run with this answer reached (a belt level, a tenth of Energy), when the answer came with its run: the run counts as it goes, so its end celebrates what each answer's count reached together with the completion's own"
+          },
           "trap": {
             "nullable": true,
             "description": "In a trap drill, the misconception matching the wrong answer; null for correct, unknown, or unmatched answers",
@@ -74476,6 +74953,7 @@
           "fixedMistakeIds",
           "isCorrect",
           "mistakeStatus",
+          "reached",
           "trap"
         ],
         "additionalProperties": false

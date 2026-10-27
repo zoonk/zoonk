@@ -290,9 +290,9 @@ describe("server-owned live-call reservation and cleanup", () => {
       userId: user.id,
     };
 
-    await expect(settleConversation(input)).resolves.toBe(true);
+    await expect(settleConversation(input)).resolves.not.toBeNull();
     expect.soft(await readLearnerRevision(user.id)).toBe(before + 2n);
-    await expect(settleConversation(input)).resolves.toBe(false);
+    await expect(settleConversation(input)).resolves.toBeNull();
     expect.soft(await readLearnerRevision(user.id)).toBe(before + 2n);
   });
 
@@ -336,8 +336,9 @@ describe("server-owned live-call reservation and cleanup", () => {
       await holder.done;
     }
 
+    // One settles the call; the other finds it settled and adds nothing.
     const results = await settling;
-    expect(results.toSorted()).toStrictEqual([false, true]);
+    expect(results.filter((settled) => settled !== null)).toHaveLength(1);
     await expect(readLearnerRevision(user.id)).resolves.toBe(before + 2n);
 
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({

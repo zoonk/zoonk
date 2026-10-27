@@ -129,7 +129,7 @@ describe("conversation settlement during queue changes", () => {
         usedHelp: false,
         userId: user.id,
       }),
-    ).resolves.toBe(true);
+    ).resolves.not.toBeNull();
 
     const [event, daily, savedCall, finished, unchanged] = await Promise.all([
       prisma.learningEvent.findFirstOrThrow({ where: { userId: user.id } }),
@@ -210,7 +210,7 @@ describe("conversation settlement during queue changes", () => {
         await holder;
       }
 
-      await expect(settlement).resolves.toBe(true);
+      await expect(settlement).resolves.not.toBeNull();
 
       const [event, savedOldItem, savedCurrentItem] = await Promise.all([
         prisma.learningEvent.findFirstOrThrow({ where: { userId: user.id } }),

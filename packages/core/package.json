@@ -513,6 +513,7 @@
     "./sessions/open": "./src/sessions/open-study-day.ts",
     "./sessions/open-day-contract": "./src/sessions/open-day-contract.ts",
     "./sessions/page": "./src/sessions/get-session-page-view.ts",
+    "./sessions/progress-celebration": "./src/sessions/progress-celebration.ts",
     "./sessions/reached": "./src/sessions/reached.ts",
     "./sessions/refresh-practice": "./src/sessions/add-refresh-practice-block.ts",
     "./sessions/start-block": "./src/sessions/start-study-block.ts",

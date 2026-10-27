@@ -87,7 +87,7 @@ export const mistakePaths = {
   "/me/mistakes/{mistakeId}/answers": {
     post: {
       description:
-        "Answers the mistake's question or another question on its skill, by the rules of its drill. Right on a later day than the mistake, it fixes the entry. The run counts toward today when it's finished (POST /me/mistake-practice/completions).",
+        "Answers the mistake's question or another question on its skill, by the rules of its drill. Right on a later day than the mistake, it fixes the entry. Sent with its run, saving it counts the run so far toward today and says what that count reached (`reached`); finishing the run (POST /me/mistake-practice/completions) counts it once more.",
       operationId: "createMistakePracticeAnswer",
       requestBody: {
         content: { "application/json": { schema: mistakePracticeAnswerInputSchema } },

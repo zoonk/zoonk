@@ -7,6 +7,7 @@ import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { z } from "zod";
 import { answerTimeZoneSchema } from "../../learner/contract";
 import { activityBrainPowerSchema, missionMomentSchema } from "../../sessions/completion-contract";
+import { progressCelebrationShape } from "../../sessions/progress-celebration";
 import {
   examSpeakingFeedbackSchema,
   examTaskSnapshotSchema,
@@ -270,11 +271,15 @@ export const languageConversationViewSchema = z
 export type LanguageConversationView = z.infer<typeof languageConversationViewSchema>;
 
 /**
- * A call just finished: the call with its result, and what it did to the day's missions (a call
- * can be one of them), so its end can say so. Older servers send no moment.
+ * A call just finished: the call with its result, what it did to the day's missions (a call can be
+ * one of them) and what it reached (`ProgressCelebration`), so its end can say so. Older servers
+ * send no moment.
  */
 export const completedLanguageConversationSchema = languageConversationViewSchema
-  .extend({ missionMoment: missionMomentSchema.nullable().default(null) })
+  .extend({
+    ...progressCelebrationShape,
+    missionMoment: missionMomentSchema.nullable().default(null),
+  })
   .meta({ id: "CompletedLanguageConversation" });
 
 export type CompletedLanguageConversation = z.infer<typeof completedLanguageConversationSchema>;
