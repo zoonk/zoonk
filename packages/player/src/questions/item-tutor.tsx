@@ -73,7 +73,7 @@ function ItemBuddy({
  * composer waits in the aside, it's read ahead, as a lesson's screen's is; only what the learner
  * sends is answered. Between questions (`item` null) nothing asks.
  */
-export function ItemTutor({
+function ItemTutor({
   children,
   item,
   tutor,

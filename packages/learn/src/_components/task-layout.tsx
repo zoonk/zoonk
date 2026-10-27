@@ -151,7 +151,8 @@ export const TASK_ASIDE_PLACE_CLASS = "lg:fixed lg:right-0 lg:w-[calc(var(--task
 
 /**
  * The aside's header row, at its top, level with the task's header row: its label on the left in
- * the section-label face, a quiet mono fact on the right ("18 min left").
+ * the section-label face, a quiet mono fact on the right ("18 min left"), left out when it draws
+ * nothing (the buddy's way back before anything was asked, on a task with no fact of its own).
  */
 export function TaskAsideHeader({
   className,
@@ -172,7 +173,7 @@ export function TaskAsideHeader({
     >
       {title && <h2 className="text-label min-w-0 truncate">{title}</h2>}
       {meta && (
-        <p className="text-muted-foreground ml-auto shrink-0 font-mono text-xs tabular-nums">
+        <p className="text-muted-foreground ml-auto shrink-0 font-mono text-xs tabular-nums empty:hidden">
           {meta}
         </p>
       )}
