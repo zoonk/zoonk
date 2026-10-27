@@ -33,7 +33,8 @@ export async function LessonMore({
 
   return (
     // From 72rem the chapter is beside the lesson, so without ideas nothing is left to take room.
-    <div className={cn("mt-16 sm:mt-20", ideas.length === 0 && "min-[72rem]:hidden")}>
+    // Hairlines above and below make the folds read as rows to open, alone or two.
+    <div className={cn("mt-16 border-y sm:mt-20", ideas.length === 0 && "min-[72rem]:hidden")}>
       {ideas.length > 0 && (
         <PublicDisclosure
           aside={t("{count, plural, one {# idea} other {# ideas}}", { count: ideas.length })}

@@ -57,7 +57,7 @@ function getDaySteps({
 /**
  * Under the lesson, what it is in a plan: one day of the course's plan with this lesson in it, as
  * Today lists it, flat on the page, between its chapter's lessons before and after it (an example,
- * said so under it), then a quieter "Build my plan" than the first screen above, which stays the
+ * said so over it and under it), then a quieter "Build my plan" than the first screen above, which stays the
  * page's main action. The plan starts at this lesson's chapter, as the end of the lesson does,
  * unless it's the course's first.
  */
@@ -87,7 +87,7 @@ export async function LessonPlanDay({
 
       <div className="flex flex-col gap-2">
         <p className="flex items-baseline justify-between gap-3">
-          <span className="text-[0.9375rem] font-semibold">{t("Today")}</span>
+          <span className="text-[0.9375rem] font-semibold">{t("Example plan")}</span>
           <span className={cn(NUMERIC_CLASS, "text-muted-foreground text-xs")}>
             {t("{count, plural, one {# lesson} other {# lessons}}", { count: steps.length })}
             {" · "}
