@@ -62,7 +62,8 @@ export async function PlanWorkload({
       minutes: workload.practiceMinutes,
     },
     {
-      fill: kindFillClass(exam ? "mock" : "challenge"),
+      // One color for the part on every course: the challenge's, the kind both plans hold.
+      fill: kindFillClass("challenge"),
       id: "checkpoints",
       kinds: exam ? ["challenge", "mock"] : ["challenge"],
       label: exam ? t("Challenges and mock exams") : t("Challenges"),

@@ -79,9 +79,10 @@ const STATIONS = {
   page: "size-4 rounded-full border-[3px] border-foreground sm:size-[1.125rem]",
   /** A stop of the course itself (a chapter, a lesson), at the subject's full, soft strength. */
   stop: "size-3.5 rounded-full border-[2.5px] border-subject",
-  /** Several stops folded into one (a level not opened yet). */
-  zone: "h-7 w-3.5 rounded-full border-[2.5px] border-subject",
 } as const;
+
+/** Several stops folded into one (a level not opened yet), as tall as the lines that name them. */
+const ZONE_STATION_CLASS = "w-3.5 rounded-full border-[2.5px] border-subject";
 
 export type RouteStation = keyof typeof STATIONS;
 
@@ -187,7 +188,14 @@ export function RouteZone({
     >
       {/* The aside and the chevron stay on the summary's first line when it wraps. */}
       <summary className="hover:text-foreground focus-visible:ring-ring/50 relative flex cursor-pointer list-none gap-4 rounded-md py-4 text-[0.9375rem] leading-snug font-semibold outline-none select-none focus-visible:ring-[3px] sm:text-base [&::-webkit-details-marker]:hidden">
-        <RouteMark className="top-1/2 group-open/zone:hidden" station="zone" />
+        {/* Folded, a capsule as tall as the summary's lines stands for the zone's stops. */}
+        <span
+          aria-hidden="true"
+          className={cn(
+            "pointer-events-none absolute inset-y-4 left-[calc(var(--route-x)-var(--route-inset))] z-1 -translate-x-1/2 bg-(--route-fill) group-open/zone:hidden",
+            ZONE_STATION_CLASS,
+          )}
+        />
 
         <span className="flex min-w-0 flex-1 flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
           <span className="text-pretty">{summary}</span>
