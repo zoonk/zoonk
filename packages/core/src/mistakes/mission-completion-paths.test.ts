@@ -21,6 +21,7 @@ import {
   setupTestCalls,
   testCallCompletionInput,
 } from "../_test-utils/connect-test-call";
+import { reviewRunsInline } from "../_test-utils/review-runs";
 import { completeLanguageConversation } from "../language/conversations/complete-language-conversation";
 import { getLanguageConversation } from "../language/conversations/get-language-conversation";
 import { practiceMistakePattern } from "../language/patterns/practice-mistake-pattern";
@@ -521,7 +522,11 @@ describe("missions completed outside a study block", () => {
         usedHelp: false,
       });
 
-      const completed = await completeLanguageConversation({ conversationId: row.id, input });
+      const completed = await completeLanguageConversation({
+        conversationId: row.id,
+        input,
+        runs: reviewRunsInline,
+      });
 
       expect(completed).toMatchObject({
         missionMoment: { completed: ["challenge"], fullMeal: { bonus: 50, paid: last } },
@@ -529,7 +534,7 @@ describe("missions completed outside a study block", () => {
       });
 
       await expect(
-        completeLanguageConversation({ conversationId: row.id, input }),
+        completeLanguageConversation({ conversationId: row.id, input, runs: reviewRunsInline }),
       ).resolves.toStrictEqual(completed);
     },
   );
@@ -590,7 +595,8 @@ describe("missions completed outside a study block", () => {
 
       await interruptMissionPayout({
         dayId: day.id,
-        finish: () => completeLanguageConversation({ conversationId: row.id, input }),
+        finish: () =>
+          completeLanguageConversation({ conversationId: row.id, input, runs: reviewRunsInline }),
         missionsOnly: true,
       });
 
@@ -605,7 +611,11 @@ describe("missions completed outside a study block", () => {
         userId: user.id,
       });
 
-      const completed = await completeLanguageConversation({ conversationId: row.id, input });
+      const completed = await completeLanguageConversation({
+        conversationId: row.id,
+        input,
+        runs: reviewRunsInline,
+      });
 
       expect(completed).toMatchObject({
         missionMoment: { completed: ["challenge"], fullMeal: { bonus: 50, paid: last } },
@@ -613,7 +623,7 @@ describe("missions completed outside a study block", () => {
       });
 
       await expect(
-        completeLanguageConversation({ conversationId: row.id, input }),
+        completeLanguageConversation({ conversationId: row.id, input, runs: reviewRunsInline }),
       ).resolves.toStrictEqual(completed);
 
       const after = await prisma.userProgress.findUniqueOrThrow({ where: { userId: user.id } });
@@ -685,7 +695,7 @@ describe("missions completed outside a study block", () => {
     });
 
     await expect(
-      completeLanguageConversation({ conversationId: row.id, input }),
+      completeLanguageConversation({ conversationId: row.id, input, runs: reviewRunsInline }),
     ).resolves.toMatchObject({ missionMoment: null, status: "completed" });
 
     await expect(
@@ -737,7 +747,8 @@ describe("missions completed outside a study block", () => {
 
     await interruptMissionPayout({
       dayId: day.id,
-      finish: () => completeLanguageConversation({ conversationId: row.id, input }),
+      finish: () =>
+        completeLanguageConversation({ conversationId: row.id, input, runs: reviewRunsInline }),
     });
 
     await expect(
@@ -752,7 +763,11 @@ describe("missions completed outside a study block", () => {
       prisma.studySession.findUniqueOrThrow({ where: { id: day.id } }),
     ).resolves.toMatchObject({ fullMealAt: null });
 
-    const completed = await completeLanguageConversation({ conversationId: row.id, input });
+    const completed = await completeLanguageConversation({
+      conversationId: row.id,
+      input,
+      runs: reviewRunsInline,
+    });
 
     // The call's end says it was the day's last mission, and that it paid the +50.
     expect(completed).toMatchObject({
@@ -769,7 +784,7 @@ describe("missions completed outside a study block", () => {
     await expectMissionPaid({ dayId: day.id, userId: user.id });
 
     await expect(
-      completeLanguageConversation({ conversationId: row.id, input }),
+      completeLanguageConversation({ conversationId: row.id, input, runs: reviewRunsInline }),
     ).resolves.toStrictEqual(completed);
 
     await expect(
@@ -950,6 +965,7 @@ describe("missions completed outside a study block", () => {
         turns: [],
         usedHelp: false,
       }),
+      runs: reviewRunsInline,
     });
 
     expect(completed).toMatchObject({

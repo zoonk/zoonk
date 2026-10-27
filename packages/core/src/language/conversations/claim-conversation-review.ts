@@ -1,10 +1,10 @@
-import { lockUsageForViewer } from "../../../entitlements/_utils/usage-lock";
-import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
+import { lockUsageForViewer } from "../../entitlements/_utils/usage-lock";
+import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 
 export type ReviewClaim =
   | { status: "owner" }
   | { runId: string; status: "joined" }
-  | { status: "completed" }
+  | { status: "settled" }
   | { status: "conversationEnded" | "notFound" | "takenOver" };
 
 /**
@@ -13,7 +13,7 @@ export type ReviewClaim =
  * one means another tab took the call over), and it must not have ended by a takeover. The claim
  * moves `reviewRunId` from none, or from the failed run it `replaces`, to this run; once set, the
  * call takes no new connections. Run again with the same id (a replayed step), it's still this
- * run's; another run's claim is joined instead.
+ * run's; another run's claim is joined instead, and a call already completed is `settled`.
  */
 export async function claimConversationReview({
   connectionId,
@@ -44,7 +44,7 @@ export async function claimConversationReview({
     }
 
     if (conversation.status === "completed") {
-      return unchanged({ status: "completed" as const });
+      return unchanged({ status: "settled" as const });
     }
 
     if (conversation.reviewRunId === runId) {

@@ -107,7 +107,7 @@ export const languageConversationPaths = {
     post: {
       ...common,
       description:
-        "Requires the originating connectionId. Claims the call's review, so it takes no new connections, hangs that connection up, then finishes the call with its transcript, help used and time spoken. The goals met are those marked during the call plus any the full transcript shows; a separate model writes feedback; a won checkpoint closes the unit. The response also says what the call did to the day's missions (`missionMoment`, null when it completed none). Repeating it returns the same result. A takeover cannot award feedback to the old call (CALL_TAKEN_OVER). Completion from a superseded connection returns CONVERSATION_ENDED and cannot end the current connection or write feedback.",
+        "Requires the originating connectionId. A durable run claims the call's review, so it takes no new connections, hangs that connection up, then finishes the call with its transcript, help used and time spoken. The goals met are those marked during the call plus any the full transcript shows; a separate model writes feedback, kept on the call before it settles so a retry never grades it again; a review that keeps failing completes the call with result.feedback null; a won checkpoint closes the unit. A run that fails anyway returns CALL_RETRYABLE (503): send the same completion again. The response also says what the call did to the day's missions (`missionMoment`, null when it completed none). Repeating it returns the same result. A takeover cannot award feedback to the old call (CALL_TAKEN_OVER). Completion from a superseded connection returns CONVERSATION_ENDED and cannot end the current connection or write feedback.",
       operationId: "completeLanguageConversation",
       requestBody: {
         content: { "application/json": { schema: languageConversationCompletionInputSchema } },
@@ -117,6 +117,7 @@ export const languageConversationPaths = {
       responses: {
         "200": jsonResponse(completedLanguageConversationSchema, "The finished conversation"),
         "409": connectionConflictResponse,
+        "503": callUnavailableResponse,
         ...readErrors,
       },
       summary: "Finish a live conversation",

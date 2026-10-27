@@ -14,6 +14,7 @@ import {
 import { runDeferredWork } from "../../_test-utils/deferred-work";
 import { freezeClock } from "../../_test-utils/frozen-clock";
 import { mockSession } from "../../_test-utils/mock-session";
+import { reviewRunsInline } from "../../_test-utils/review-runs";
 import { completeLanguageConversation } from "./complete-language-conversation";
 import { getLanguageConversation } from "./get-language-conversation";
 import { prepareSpeakingMock } from "./prepare-language-calls";
@@ -227,11 +228,13 @@ describe("speaking mocks", () => {
     const first = await completeLanguageConversation({
       conversationId,
       input: testCallCompletionInput(conversationId, COMPLETION),
+      runs: reviewRunsInline,
     });
 
     const again = await completeLanguageConversation({
       conversationId,
       input: testCallCompletionInput(conversationId, COMPLETION),
+      runs: reviewRunsInline,
     });
 
     expect(scoreSpeaking).toHaveBeenCalledExactlyOnceWith(
@@ -276,6 +279,7 @@ describe("speaking mocks", () => {
     const result = await completeLanguageConversation({
       conversationId,
       input: testCallCompletionInput(conversationId, COMPLETION),
+      runs: reviewRunsInline,
     });
 
     expect(order).toStrictEqual(["score started", "goals checked"]);
@@ -318,6 +322,7 @@ describe("speaking mocks", () => {
     await completeLanguageConversation({
       conversationId,
       input: testCallCompletionInput(conversationId, COMPLETION),
+      runs: reviewRunsInline,
     });
 
     await waitForDeferredWork();
@@ -336,6 +341,7 @@ describe("speaking mocks", () => {
     await completeLanguageConversation({
       conversationId: first,
       input: testCallCompletionInput(first, COMPLETION),
+      runs: reviewRunsInline,
     });
 
     await waitForDeferredWork();

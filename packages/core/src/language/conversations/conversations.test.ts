@@ -29,6 +29,7 @@ import {
   waitForBlockedStatement,
 } from "../../_test-utils/learner-lock";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
+import { reviewRunsInline } from "../../_test-utils/review-runs";
 import { loadSessionBosses } from "../../checkpoints/_utils/load-boss";
 import { checkLanguageConversationObjectives } from "./check-language-conversation-objectives";
 import { completeLanguageConversation } from "./complete-language-conversation";
@@ -338,6 +339,7 @@ describe("language conversations", () => {
     await completeLanguageConversation({
       conversationId,
       input: testCallCompletionInput(conversationId, COMPLETION),
+      runs: reviewRunsInline,
     });
 
     const connection = await prisma.liveCallConnection.findFirstOrThrow({
@@ -507,6 +509,7 @@ describe("language conversations", () => {
       completeLanguageConversation({
         conversationId,
         input: testCallCompletionInput(conversationId, COMPLETION),
+        runs: reviewRunsInline,
       }),
     ).resolves.toMatchObject({
       conversation: { result: { brainPower: 0, feedback: null, spokenSeconds: 0 } },
@@ -525,11 +528,13 @@ describe("language conversations", () => {
     const first = await completeLanguageConversation({
       conversationId,
       input: testCallCompletionInput(conversationId, COMPLETION),
+      runs: reviewRunsInline,
     });
 
     const again = await completeLanguageConversation({
       conversationId,
       input: testCallCompletionInput(conversationId, COMPLETION),
+      runs: reviewRunsInline,
     });
 
     expect(first).toMatchObject({
@@ -584,16 +589,18 @@ describe("language conversations", () => {
 
     const input = testCallCompletionInput(conversationId, COMPLETION);
 
-    await expect(completeLanguageConversation({ conversationId, input })).resolves.toMatchObject({
+    await expect(
+      completeLanguageConversation({ conversationId, input, runs: reviewRunsInline }),
+    ).resolves.toMatchObject({
       ceremony: { key: "yellow", kind: "belt" },
       reached: { energy: 80, level: { color: "yellow", level: 1 } },
       status: "completed",
     });
 
     // Completing it again reaches nothing new.
-    await expect(completeLanguageConversation({ conversationId, input })).resolves.toMatchObject({
-      reached: { energy: null, level: null },
-    });
+    await expect(
+      completeLanguageConversation({ conversationId, input, runs: reviewRunsInline }),
+    ).resolves.toMatchObject({ reached: { energy: null, level: null } });
   });
 
   it("counts the goals marked during the call with the ones the full transcript shows", async () => {
@@ -614,6 +621,7 @@ describe("language conversations", () => {
     const result = await completeLanguageConversation({
       conversationId,
       input: testCallCompletionInput(conversationId, COMPLETION),
+      runs: reviewRunsInline,
     });
 
     expect(result).toMatchObject({
@@ -634,6 +642,7 @@ describe("language conversations", () => {
     const result = await completeLanguageConversation({
       conversationId,
       input: testCallCompletionInput(conversationId, COMPLETION),
+      runs: reviewRunsInline,
     });
 
     expect(result).toMatchObject({
@@ -687,6 +696,7 @@ describe("language conversations", () => {
     const result = await completeLanguageConversation({
       conversationId,
       input: testCallCompletionInput(conversationId, COMPLETION),
+      runs: reviewRunsInline,
     });
 
     expect(result).toMatchObject({

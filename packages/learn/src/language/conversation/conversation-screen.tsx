@@ -26,12 +26,11 @@ export type { TappedCallAudio } from "./use-call-microphone";
 
 /**
  * Saving a finished call: it with its result and what it did to the day's missions, or why it
- * wasn't saved: it ended or another call took it over (nothing is reviewed), the server is still
- * closing it, or saving failed.
+ * wasn't saved: it ended or another call took it over (nothing is reviewed), or saving failed.
  */
 type ConversationCompletion =
   | { conversation: CompletedLanguageConversation; status: "completed" }
-  | { status: "ended" | "failed" | "previousConnectionClosing" | "takenOver" };
+  | { status: "ended" | "failed" | "takenOver" };
 
 export type ConversationActions = LiveCallActions & {
   /** Saves the finished call, under the connection it ran on. */
@@ -103,7 +102,7 @@ function LiveCallRun({
       return;
     }
 
-    setSaving(completion.status === "previousConnectionClosing" ? "closing" : completion.status);
+    setSaving(completion.status);
   }, [actions, finish, onSaved, usedHelp]);
 
   // Hanging up, or the call reaching its length, saves it once.

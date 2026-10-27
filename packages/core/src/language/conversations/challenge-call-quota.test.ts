@@ -18,6 +18,7 @@ import {
 } from "../../_test-utils/connect-test-call";
 import { freezeClock } from "../../_test-utils/frozen-clock";
 import { mockSession } from "../../_test-utils/mock-session";
+import { reviewRunsInline } from "../../_test-utils/review-runs";
 import { getChallenge } from "../../checkpoints/get-challenge";
 import { getAllowance } from "../../entitlements/get-allowance";
 import { completeLanguageConversation } from "./complete-language-conversation";
@@ -142,6 +143,7 @@ describe("Plus challenge call quota", () => {
         turns: [],
         usedHelp: false,
       }),
+      runs: reviewRunsInline,
     });
 
     await expect(getLanguageConversation(conversationId)).resolves.toMatchObject({
@@ -167,6 +169,7 @@ describe("Plus challenge call quota", () => {
           turns: [],
           usedHelp: false,
         }),
+        runs: reviewRunsInline,
       }),
     ).resolves.toMatchObject({
       conversation: { locked: true, result: expect.any(Object), status: "completed" },
@@ -209,6 +212,7 @@ describe("Plus challenge call quota", () => {
           turns: [],
           usedHelp: false,
         }),
+        runs: reviewRunsInline,
       }),
     ).resolves.toMatchObject({
       conversation: { locked: true, result: { passed: false }, status: "completed" },

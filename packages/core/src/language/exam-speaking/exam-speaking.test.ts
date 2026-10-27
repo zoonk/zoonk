@@ -18,6 +18,7 @@ import {
 } from "../../_test-utils/connect-test-call";
 import { freezeClock } from "../../_test-utils/frozen-clock";
 import { mockSession } from "../../_test-utils/mock-session";
+import { reviewRunsInline } from "../../_test-utils/review-runs";
 import { completeLanguageConversation } from "../conversations/complete-language-conversation";
 import { getLanguageConversation } from "../conversations/get-language-conversation";
 import { startLanguageConversation } from "../conversations/start-language-conversation";
@@ -334,6 +335,7 @@ describe("exam speaking tasks", () => {
     const completed = await completeLanguageConversation({
       conversationId,
       input: testCallCompletionInput(conversationId, COMPLETION),
+      runs: reviewRunsInline,
     });
 
     expect(completed.status).toBe("completed");
@@ -387,6 +389,7 @@ describe("exam speaking tasks", () => {
     await completeLanguageConversation({
       conversationId: first,
       input: testCallCompletionInput(first, COMPLETION),
+      runs: reviewRunsInline,
     });
 
     // The first try ended earlier; the second one, below the level on every criterion, is the last.
@@ -402,6 +405,7 @@ describe("exam speaking tasks", () => {
     await completeLanguageConversation({
       conversationId: second,
       input: testCallCompletionInput(second, COMPLETION),
+      runs: reviewRunsInline,
     });
 
     const paper = await loadSpeakingPaper({ access: "open", goal });
@@ -467,6 +471,7 @@ describe("exam speaking tasks", () => {
     await completeLanguageConversation({
       conversationId,
       input: testCallCompletionInput(conversationId, COMPLETION),
+      runs: reviewRunsInline,
     });
 
     await expect(
@@ -509,6 +514,7 @@ describe("exam speaking tasks", () => {
       await completeLanguageConversation({
         conversationId: task.conversationId,
         input: testCallCompletionInput(task.conversationId, COMPLETION),
+        runs: reviewRunsInline,
       });
     }
 
@@ -564,6 +570,7 @@ describe("exam speaking tasks", () => {
       await completeLanguageConversation({
         conversationId: task.conversationId,
         input: testCallCompletionInput(task.conversationId, { ...COMPLETION, spokenSeconds: 0 }),
+        runs: reviewRunsInline,
       });
     }
 

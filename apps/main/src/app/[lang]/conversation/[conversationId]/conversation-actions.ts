@@ -105,7 +105,7 @@ export async function completeConversationAction(
   input: unknown,
 ): Promise<
   | { conversation: CompletedLanguageConversation; status: "completed" }
-  | { status: "ended" | "failed" | "previousConnectionClosing" | "takenOver" }
+  | { status: "ended" | "failed" | "takenOver" }
 > {
   const parsed = languageConversationCompletionInputSchema.safeParse(input);
 
@@ -130,9 +130,7 @@ export async function completeConversationAction(
       return { status: "ended" };
     }
 
-    return {
-      status: code === "PREVIOUS_CONNECTION_CLOSING" ? "previousConnectionClosing" : "failed",
-    };
+    return { status: "failed" };
   }
 
   const result = completedLanguageConversationSchema.safeParse(response.json);

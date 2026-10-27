@@ -3,7 +3,6 @@ import { writeConversationFeedback } from "@zoonk/ai/tasks/v2/language/conversat
 import { scoreSpeaking } from "@zoonk/ai/tasks/v2/language/speaking-score";
 import { type LanguageConversation } from "@zoonk/db";
 import { type CefrLevel } from "@zoonk/utils/cefr";
-import { logError } from "@zoonk/utils/logger";
 import { toProvenanceData } from "../../../library/_utils/library-rows";
 import { type ExamTaskSnapshot } from "../../exam-speaking/speaking-contract";
 import {
@@ -116,8 +115,8 @@ async function writeCallFeedback(
 }
 
 /**
- * A call where the learner said nothing gets no feedback, since there's nothing to comment on, and
- * a failed model call leaves it empty rather than losing the call.
+ * A call where the learner said nothing gets no feedback, since there's nothing to comment on. A
+ * failed model call throws, so the review is tried again.
  */
 async function writeFeedback({
   turns,
@@ -130,12 +129,7 @@ async function writeFeedback({
     return null;
   }
 
-  try {
-    return await write();
-  } catch (error) {
-    logError("Conversation feedback failed", error);
-    return null;
-  }
+  return write();
 }
 
 /** The goals marked during the call plus any the full transcript shows. */
