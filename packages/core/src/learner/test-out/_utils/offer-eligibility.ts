@@ -4,27 +4,9 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { CAPSULE_LEDGER_KIND } from "../../../milestones/award-milestones";
 import { getStartOfLocalDay } from "../../_utils/local-time";
-import { TEST_OUT_MIN_QUESTIONS, TEST_OUT_PASS_MARK } from "../test-out-rules";
 
-/** Failed tests written before the outcome snapshot use their recorded score. */
-function failedTest(event: {
-  contentIds: unknown;
-  correctAnswers: number;
-  incorrectAnswers: number;
-}) {
-  const content = isJsonObject(event.contentIds) ? event.contentIds : {};
-
-  if (content.testOutPassed === "false") {
-    return true;
-  }
-
-  if (content.testOutPassed === "true") {
-    return false;
-  }
-
-  const total = event.correctAnswers + event.incorrectAnswers;
-
-  return total < TEST_OUT_MIN_QUESTIONS || event.correctAnswers / total < TEST_OUT_PASS_MARK;
+function failedTest(event: { contentIds: unknown }) {
+  return isJsonObject(event.contentIds) && event.contentIds.testOutPassed === "false";
 }
 
 /**

@@ -13,13 +13,13 @@ const rewardSchema = z.enum(["solid", "mastered"]);
 
 /**
  * Where the learner stands at one moment: Brain Power, Energy, preparation, a goal measured in
- * lessons' progress (null for an exam, and in states saved before it was kept) and skill states.
+ * lessons' progress (null for an exam) and skill states.
  */
 const sessionStateSchema = z.object({
   brainPower: z.number(),
   energy: z.number(),
   preparation: z.number().nullable(),
-  progress: z.number().nullable().default(null),
+  progress: z.number().nullable(),
   skillStates: z.record(z.string(), z.enum(MasteryState)),
 });
 

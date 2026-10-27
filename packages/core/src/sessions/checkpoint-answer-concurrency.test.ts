@@ -130,6 +130,7 @@ describe("checkpoint answer recording", () => {
           brainPower: 0,
           energy: 100,
           preparation: null,
+          progress: null,
           skillStates: { [skill.id]: "solid" },
         },
       },

@@ -68,7 +68,7 @@ describe("test-out offers after a failed test", () => {
     });
 
     await learningEventFixture({
-      contentIds: { chapterId: fixture.chapterId },
+      contentIds: { chapterId: fixture.chapterId, testOutPassed: "false" },
       correctAnswers: 1,
       goalId: fixture.goal.id,
       incorrectAnswers: 7,
@@ -94,7 +94,7 @@ describe("test-out offers after a failed test", () => {
     const fixture = await setup();
 
     await learningEventFixture({
-      contentIds: { chapterId: fixture.chapterId },
+      contentIds: { chapterId: fixture.chapterId, testOutPassed: "false" },
       correctAnswers: 1,
       goalId: fixture.goal.id,
       incorrectAnswers: 7,
@@ -135,7 +135,7 @@ describe("test-out offers after a failed test", () => {
     const fixture = await setup();
 
     await learningEventFixture({
-      contentIds: { chapterId: fixture.chapterId },
+      contentIds: { chapterId: fixture.chapterId, testOutPassed: "false" },
       correctAnswers: 1,
       endedAt: new Date(),
       goalId: fixture.goal.id,
@@ -177,7 +177,7 @@ describe("test-out offers after a failed test", () => {
     const fixture = await setup();
 
     await learningEventFixture({
-      contentIds: { chapterId: fixture.chapterId },
+      contentIds: { chapterId: fixture.chapterId, testOutPassed: "false" },
       correctAnswers: 0,
       endedAt: new Date("2026-10-13T02:30:00Z"),
       goalId: fixture.goal.id,
@@ -235,7 +235,7 @@ describe("test-out offers after a failed test", () => {
     const other = await userFixture();
 
     await learningEventFixture({
-      contentIds: { chapterId: fixture.chapterId },
+      contentIds: { chapterId: fixture.chapterId, testOutPassed: "false" },
       correctAnswers: 0,
       goalId: fixture.goal.id,
       incorrectAnswers: 4,

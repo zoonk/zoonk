@@ -72,7 +72,7 @@ type StudySessionSummary = {
   preparation: Change<number | null>;
   /**
    * A goal measured in lessons (not an exam): the share of its plan's lessons studied or known,
-   * as the Plan reads it. Null for an exam, and `before` for a session started before it was kept.
+   * as the Plan reads it. Null for an exam.
    */
   progress: Change<number | null>;
   questions: number;
