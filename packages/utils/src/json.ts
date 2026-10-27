@@ -39,40 +39,12 @@ export function getNumber(body: unknown, key: string): number | null {
 
   const value = body[key];
 
-  return parseJsonNumber(value);
-}
-
-/**
- * Accepts both real JSON numbers and stringified numbers because third-party
- * libraries sometimes expose response metadata as strings even when callers
- * need to compare it as a number.
- */
-function parseJsonNumber(value: unknown): number | null {
-  const parsed = getJsonNumberCandidate(value);
-
-  return parsed !== null && Number.isFinite(parsed) ? parsed : null;
-}
-
-/**
- * Converts the supported JSON value shapes into a number candidate first, so
- * validation stays in one place and each input type only handles normalization.
- */
-function getJsonNumberCandidate(value: unknown): number | null {
-  if (typeof value === "number") {
-    return value;
-  }
-
-  if (typeof value !== "string") {
+  if (typeof value !== "number" && (typeof value !== "string" || !value.trim())) {
     return null;
   }
 
-  const normalized = value.trim();
-
-  if (!normalized) {
-    return null;
-  }
-
-  return Number(normalized);
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
 }
 
 /**
