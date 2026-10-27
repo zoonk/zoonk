@@ -18,7 +18,7 @@ import {
   loadPlanPhaseFacts,
 } from "../../goals/_utils/plan-phase-facts";
 import { hasSpeakingPaper } from "../../language/exam-speaking/_utils/exam-speaking-setup";
-import { countReadyMistakesByDay } from "../../mistakes/mistake-availability";
+import { countReadyMistakes } from "../../mistakes/mistake-availability";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { getSession } from "../../users/get-session";
 import { getAnswerTimeZone } from "../_utils/owned-goal";
@@ -228,28 +228,24 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
   const current = listed.find((goal) => goal.isActive) ?? null;
   const phaseChallengesRequired = activeGoal?.kind !== "language" || subscription !== null;
 
-  // One read of the goal's eligible mistakes: today's ready count, and a legacy day's own.
-  const readyMistakesOn = activeGoal
-    ? countReadyMistakesByDay({
-        goal: activeGoal,
-        goalId: activeGoal.id,
-        timeZone,
-        today: localDate,
-        userId,
-      })
-    : undefined;
-
   const [goalDay, ready] = await Promise.all([
     loadActiveGoalDay({
       goal: activeGoal,
       localDate,
       now,
       phaseChallengesRequired,
-      readyMistakesOn,
       sessions,
       timeZone,
     }),
-    readyMistakesOn?.(localDate) ?? 0,
+    activeGoal
+      ? countReadyMistakes({
+          goal: activeGoal,
+          goalId: activeGoal.id,
+          timeZone,
+          today: localDate,
+          userId,
+        })
+      : 0,
   ]);
 
   return {

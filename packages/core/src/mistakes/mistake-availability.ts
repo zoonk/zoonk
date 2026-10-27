@@ -157,41 +157,27 @@ export async function loadMistakePracticeAvailability(
 }
 
 /**
- * The notebook's ready count (`availability.ready`) on the learner's `today` and on earlier days
- * (a day carried over from the night before), from one read of the eligible mistakes. While no
- * open mistake was made before the start of `today` (one indexed check), none can be ready on any
- * of those days, so nothing else is read.
+ * The notebook's ready count (`availability.ready`) on the learner's `today`. While no open mistake
+ * was made before its start (one indexed check), none can be ready, so nothing else is read.
  */
-export function countReadyMistakesByDay({
+export async function countReadyMistakes({
   timeZone,
   today,
   ...scope
-}: MistakeScopeInput & { timeZone: string; today: Date }): (localDate: Date) => Promise<number> {
-  let eligible: Promise<readonly EligibleMistake[]> | undefined;
+}: MistakeScopeInput & { timeZone: string; today: Date }): Promise<number> {
+  const candidate = await prisma.mistake.findFirst({
+    select: { id: true },
+    where: {
+      createdAt: { lt: getMistakePracticeBefore({ localDate: today, timeZone }) },
+      status: "open",
+      userId: scope.userId,
+    },
+  });
 
-  async function loadEligible() {
-    const candidate = await prisma.mistake.findFirst({
-      select: { id: true },
-      where: {
-        createdAt: { lt: getMistakePracticeBefore({ localDate: today, timeZone }) },
-        status: "open",
-        userId: scope.userId,
-      },
-    });
-
-    return candidate ? loadPracticeEligibleMistakes(scope) : [];
+  if (!candidate) {
+    return 0;
   }
 
-  return async (localDate) => {
-    eligible ??= loadEligible();
-    return findReadyIds({ eligible: await eligible, localDate, timeZone }).size;
-  };
-}
-
-/** The same actionable notebook mistakes feed the fix mission, with or without scheduled drills. */
-export async function loadMistakeAvailability(
-  input: AvailabilityInput,
-): Promise<MistakeAvailability> {
-  const result = await loadMistakePracticeAvailability(input);
-  return result.availability;
+  const eligible = await loadPracticeEligibleMistakes(scope);
+  return findReadyIds({ eligible, localDate: today, timeZone }).size;
 }

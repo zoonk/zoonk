@@ -47,15 +47,6 @@ const QUIET_SUMMARY_STATEMENT_BUDGET = 10;
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-/**
- * A day saved before missions were stored reads its fix mission's availability through the
- * canonical legacy reader (the goal's plan graph and the mistakes' practice material). Days built
- * since always store their missions, so only days from before then pay it, until none of them can
- * be current. The perf coordinator approved this exception: at most 16 on this small fixture, and
- * measured at 29 on full persona plans (dev, 2026-10-14); every other day stays within 10.
- */
-const LEGACY_DAY_STATEMENT_BUDGET = 16;
-
 type User = Awaited<ReturnType<typeof userFixture>>;
 
 function signIn(user: User, { isAnonymous = false }: { isAnonymous?: boolean } = {}) {
@@ -338,26 +329,6 @@ describe(getLearnerSummary, () => {
     });
   });
 
-  it("rings a day saved before missions were stored with the legacy missions", async () => {
-    const { goal, user } = await learnerWithGoal();
-    const day = await studySessionFixture({ goalId: goal.id, localDate: TODAY, userId: user.id });
-
-    await Promise.all([
-      studySessionBlockFixture({
-        kind: "learn",
-        position: 0,
-        sessionId: day.id,
-        status: "completed",
-      }),
-      studySessionBlockFixture({ kind: "review", position: 1, sessionId: day.id }),
-    ]);
-
-    const counts = await countDatabaseStatements(() => getLearnerSummary());
-
-    expect(counts.result?.missions).toStrictEqual({ done: 1, total: 2 });
-    assertReadBudget(counts, LEGACY_DAY_STATEMENT_BUDGET);
-  });
-
   it("keeps the day before's session while the learner is still in it", async () => {
     const { goal, user } = await learnerWithGoal();
 
@@ -590,25 +561,6 @@ async function notebookReady(goalId: string) {
   return notebook.status === "ready" ? notebook.availability.ready : null;
 }
 
-/** Yesterday's session, saved before missions were stored, that the learner is still in. */
-async function carriedLegacyDay({ goalId, userId }: { goalId: string; userId: string }) {
-  const day = await studySessionFixture({
-    goalId,
-    localDate: YESTERDAY,
-    startedAt: new Date(NOW.getTime() - 40 * MINUTE_MS),
-    userId,
-  });
-
-  await studySessionBlockFixture({
-    kind: "learn",
-    sessionId: day.id,
-    startedAt: new Date(NOW.getTime() - 10 * MINUTE_MS),
-    status: "active",
-  });
-
-  return day;
-}
-
 describe("the summary's ready mistakes", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
@@ -688,69 +640,6 @@ describe("the summary's ready mistakes", () => {
 
     await expect(getLearnerSummary()).resolves.toMatchObject({ places: { readyMistakes: 1 } });
     await expect(notebookReady(goal.id)).resolves.toBe(1);
-  });
-
-  it("shares the count with the fix mission of a day saved before missions were stored", async () => {
-    const { goal, skills, user } = await learnerWithPlannedGoal();
-    const day = await studySessionFixture({ goalId: goal.id, localDate: TODAY, userId: user.id });
-
-    await Promise.all([
-      studySessionBlockFixture({ kind: "learn", position: 0, sessionId: day.id }),
-      mistakeFixture({ createdAt: YESTERDAY, skillId: skills[0]?.id, userId: user.id }),
-    ]);
-
-    const counts = await countDatabaseStatements(() => getLearnerSummary());
-
-    // The legacy missions read the same count: one learn block and the fix mission.
-    expect(counts.result?.places.readyMistakes).toBe(1);
-    expect(counts.result?.missions).toStrictEqual({ done: 0, total: 2 });
-    assertReadBudget(counts, SUMMARY_STATEMENT_BUDGET);
-  });
-
-  it("rings a carried legacy day on its own day's boundary, from the same read", async () => {
-    const { goal, skills, user } = await learnerWithPlannedGoal();
-    const day = await carriedLegacyDay({ goalId: goal.id, userId: user.id });
-
-    // Made yesterday afternoon: ready today, not by the start of the carried day.
-    await mistakeFixture({
-      createdAt: new Date("2026-03-09T15:00:00.000Z"),
-      skillId: skills[0]?.id,
-      userId: user.id,
-    });
-
-    const counts = await countDatabaseStatements(() => getLearnerSummary());
-
-    expect(counts.result?.today?.next?.sessionId).toBe(day.id);
-    expect(counts.result?.places.readyMistakes).toBe(1);
-    await expect(notebookReady(goal.id)).resolves.toBe(1);
-    // Its learn block, and no fix mission: nothing was ready when that day started.
-    expect(counts.result?.missions).toStrictEqual({ done: 0, total: 1 });
-    assertReadBudget(counts, SUMMARY_STATEMENT_BUDGET);
-  });
-
-  it("gives a carried legacy day its fix mission when a mistake was ready by its start", async () => {
-    const { goal, skills, user } = await learnerWithPlannedGoal();
-    await carriedLegacyDay({ goalId: goal.id, userId: user.id });
-
-    await Promise.all([
-      mistakeFixture({
-        createdAt: new Date("2026-03-08T15:00:00.000Z"),
-        skillId: skills[0]?.id,
-        userId: user.id,
-      }),
-      mistakeFixture({
-        createdAt: new Date("2026-03-09T15:00:00.000Z"),
-        skillId: skills[1]?.id,
-        userId: user.id,
-      }),
-    ]);
-
-    const counts = await countDatabaseStatements(() => getLearnerSummary());
-
-    expect(counts.result?.places.readyMistakes).toBe(2);
-    await expect(notebookReady(goal.id)).resolves.toBe(2);
-    expect(counts.result?.missions).toStrictEqual({ done: 0, total: 2 });
-    assertReadBudget(counts, SUMMARY_STATEMENT_BUDGET);
   });
 });
 

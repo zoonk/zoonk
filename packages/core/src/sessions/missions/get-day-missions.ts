@@ -4,9 +4,7 @@ import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getLearnerTimeZone } from "../../learner/_utils/goal-time-zone";
 import { getStartOfLocalDay } from "../../learner/_utils/local-time";
-import { loadMistakeAvailability } from "../../mistakes/mistake-availability";
 import { withLessonDisplayMinutes } from "../_utils/lesson-display-minutes";
-import { countMistakesFixedToday, getSessionMissions } from "../_utils/session-missions";
 import { type StudySessionRow } from "../_utils/study-session-access";
 import { type Mission } from "../missions";
 import { readMissionDocument } from "./catalog";
@@ -16,7 +14,6 @@ import { asSavedMission, loadMissionDayViews } from "./mission-day-views";
 export async function getDayMissions({
   session: storedSession,
   displayBlocks,
-  readyMistakesOn,
   timeZone,
   client = prisma,
   through,
@@ -24,11 +21,6 @@ export async function getDayMissions({
   session: StudySessionRow;
   /** Today shares its resolved durations so missions and queue use the same content snapshot. */
   displayBlocks?: StudySessionBlock[];
-  /**
-   * The goal's mistakes ready to practice on a given day, when the caller reads them anyway (the
-   * learner summary), so a day saved without missions doesn't read them twice.
-   */
-  readyMistakesOn?: (localDate: Date) => Promise<number>;
   timeZone: string;
   client?: TransactionClient;
   through?: Date;
@@ -36,27 +28,7 @@ export async function getDayMissions({
   const document = readMissionDocument(storedSession.missions);
 
   if (!document) {
-    if (storedSession.missions !== null) {
-      return [];
-    }
-    // No backfill: pre-deployment sessions retain their original three-kind read contract.
-    const [fixedToday, availableMistakes, blocks] = await Promise.all([
-      countMistakesFixedToday({
-        localDate: storedSession.localDate,
-        timeZone,
-        userId: storedSession.userId,
-      }),
-      readyMistakesOn?.(storedSession.localDate) ??
-        loadMistakeAvailability({
-          goalId: storedSession.goalId,
-          localDate: storedSession.localDate,
-          timeZone,
-          userId: storedSession.userId,
-        }).then((availability) => availability.ready),
-      displayBlocks ?? withLessonDisplayMinutes({ blocks: storedSession.blocks, client }),
-    ]);
-
-    return getSessionMissions({ availableMistakes, blocks, fixedToday });
+    return [];
   }
 
   const blocks =

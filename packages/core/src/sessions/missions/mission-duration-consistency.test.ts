@@ -18,7 +18,7 @@ vi.unmock("../../users/get-session");
 vi.mock("@zoonk/auth", () => import("../../../../auth/src/testing"));
 
 describe("lesson minutes across saved missions and session display", () => {
-  it.each(["somethingNew", "finishChapter", "legacy"] as const)(
+  it.each(["somethingNew", "finishChapter"] as const)(
     "refreshes a %s mission after lesson writing without rewriting the planned budget",
     async (kind) => {
       const [user, lesson] = await Promise.all([
@@ -30,9 +30,7 @@ describe("lesson minutes across saved missions and session display", () => {
 
       const day = await studySessionFixture({
         goalId: goal.id,
-        ...(kind !== "legacy" && {
-          missions: { picks: [{ anchor: { lessonIds: [lesson.id] }, kind, total: 1 }], version: 1 },
-        }),
+        missions: { picks: [{ anchor: { lessonIds: [lesson.id] }, kind, total: 1 }], version: 1 },
         plannedMinutes: 3,
         userId: user.id,
       });

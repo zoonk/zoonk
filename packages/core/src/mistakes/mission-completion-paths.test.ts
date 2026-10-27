@@ -150,9 +150,17 @@ describe("missions completed outside a study block", () => {
     const item = await itemFixture({ content: choiceItemContent(), skillId: skill.id });
     const secondGoal = await goalFixture({ timezone: TIME_ZONE, userId: user.id });
 
+    const missions = {
+      picks: [
+        { anchor: { blockKind: "review" }, kind: "review", total: 1 },
+        { anchor: {}, kind: "fixMistake", total: 1 },
+      ],
+      version: 1,
+    };
+
     const [day, otherDay, mistake] = await Promise.all([
-      studySessionFixture({ goalId: goal.id, localDate: TODAY, userId: user.id }),
-      studySessionFixture({ goalId: secondGoal.id, localDate: TODAY, userId: user.id }),
+      studySessionFixture({ goalId: goal.id, localDate: TODAY, missions, userId: user.id }),
+      studySessionFixture({ goalId: secondGoal.id, localDate: TODAY, missions, userId: user.id }),
       mistakeFixture({
         cause: "misread",
         createdAt: new Date("2026-10-11T18:00:00.000Z"),
@@ -181,7 +189,6 @@ describe("missions completed outside a study block", () => {
     const input = { answerIds: [answered.feedback.answerId], ended: true, timeZone: "UTC" };
     const result = await finishMistakePractice(input);
 
-    // A day built before picks were stored still remembers the mission the run completed.
     expect(result).toMatchObject({
       result: {
         brainPower: 2,

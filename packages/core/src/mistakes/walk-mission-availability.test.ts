@@ -3,12 +3,10 @@ import { planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { listeningGoalFixture, listeningSetFixture } from "@zoonk/testing/fixtures/listening";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
-import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
-import { getStudySession } from "../sessions/get-study-session";
 import { mistakeListInputSchema } from "./contract";
 import { getMistakePractice } from "./get-mistake-practice";
 import { listCurrentUserMistakes } from "./list-current-user-mistakes";
@@ -145,34 +143,5 @@ describe("mistake mission and notebook availability", () => {
     await expect(
       listCurrentUserMistakes(mistakeListInputSchema.parse({ goalId: goal.id })),
     ).resolves.toMatchObject({ availability: { ready: 2, tomorrow: 0 } });
-  });
-
-  it("offers the fix mission for notebook mistakes even without a scheduled drill", async () => {
-    vi.useFakeTimers({ toFake: ["Date"] });
-    vi.setSystemTime(new Date("2026-10-13T12:00:00Z"));
-    const user = await userFixture();
-    const { goal, skills } = await learnerGoalFixture({ phases: [1], userId: user.id });
-    mockSession(user.id);
-    const session = await studySessionFixture({ goalId: goal.id, userId: user.id });
-
-    await mistakeFixture({
-      createdAt: new Date("2026-10-12T12:00:00Z"),
-      skillId: skills[0]?.id,
-      userId: user.id,
-    });
-
-    const result = await getStudySession({ input: {}, sessionId: session.id });
-
-    expect(
-      result.status === "ready" &&
-        result.session.missions.find((mission) => mission.kind === "fixMistake"),
-    ).toStrictEqual({
-      done: 0,
-      kind: "fixMistake",
-      minutes: 2,
-      opens: { kind: "mistakesPractice" },
-      status: "todo",
-      total: 1,
-    });
   });
 });

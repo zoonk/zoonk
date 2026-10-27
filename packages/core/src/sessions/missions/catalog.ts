@@ -94,7 +94,7 @@ export type MissionOpens = z.infer<typeof missionOpensSchema>;
 export type MissionPick = z.infer<typeof missionPickSchema>;
 export type MissionDocument = z.infer<typeof missionDocumentSchema>;
 
-/** Null identifies sessions built before mission persistence; corrupt or future documents fail closed. */
+/** Corrupt or future documents fail closed. */
 export function readMissionDocument(value: unknown): MissionDocument | null {
   return missionDocumentSchema.safeParse(value).data ?? null;
 }

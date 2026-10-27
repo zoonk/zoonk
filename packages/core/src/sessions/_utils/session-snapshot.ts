@@ -1,7 +1,6 @@
 import { MasteryState } from "@zoonk/db";
 import { z } from "zod";
 import { brainPowerRewardSchema } from "../../milestones/milestone-reward";
-import { MISSION_KINDS } from "../missions/catalog";
 
 const MASTERY_RANK: Readonly<Record<MasteryState, number>> = {
   learning: 1,
@@ -11,20 +10,6 @@ const MASTERY_RANK: Readonly<Record<MasteryState, number>> = {
 };
 
 const rewardSchema = z.enum(["solid", "mastered"]);
-
-const legacyMissionCompletionsSchema = z.object({
-  legacyMissionCompletions: z.array(
-    z.object({
-      completedBy: z.object({ id: z.string(), kind: z.string() }),
-      kind: z.enum(MISSION_KINDS),
-    }),
-  ),
-});
-
-/** Attribution for pre-persistence sessions without changing their original mission selection. */
-export function readLegacyMissionCompletions(value: unknown) {
-  return legacyMissionCompletionsSchema.safeParse(value).data?.legacyMissionCompletions ?? [];
-}
 
 /**
  * Where the learner stands at one moment: Brain Power, Energy, preparation, a goal measured in
@@ -49,12 +34,10 @@ export type SessionState = z.infer<typeof sessionStateSchema>;
 const sessionSnapshotSchema = sessionStateSchema.extend({
   fullMealReward: brainPowerRewardSchema.optional(),
   fullMealSource: z.object({ id: z.string(), kind: z.string() }).optional(),
-  legacyMissionCompletions:
-    legacyMissionCompletionsSchema.shape.legacyMissionCompletions.optional(),
   masteryRewards: z.record(z.string(), rewardSchema).default({}),
 });
 
-/** A full meal's crossing remains readable even when an older session has no start state. */
+/** A full meal paid before the session's first block started leaves only its reward here. */
 const fullMealSnapshotSchema = z.object({ fullMealReward: brainPowerRewardSchema });
 
 export function readFullMealReward(value: unknown) {

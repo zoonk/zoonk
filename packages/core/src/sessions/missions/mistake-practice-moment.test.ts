@@ -27,153 +27,137 @@ describe("notebook practice mission moments", () => {
 
   afterEach(() => vi.useRealTimers());
 
-  it.each([false, true])(
-    "announces a fixed mistake before the other missions are done (stored picks: %s)",
-    async (stored) => {
-      const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
-      const goal = await goalFixture({ timezone: "UTC", userId: user.id });
+  it("announces a fixed mistake before the other missions are done", async () => {
+    const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
+    const goal = await goalFixture({ timezone: "UTC", userId: user.id });
 
-      const [item, extra] = await Promise.all([
-        itemFixture({ content: choiceItemContent(), skillId: skill.id }),
-        itemFixture({ content: choiceItemContent(), skillId: skill.id }),
-      ]);
+    const [item, extra] = await Promise.all([
+      itemFixture({ content: choiceItemContent(), skillId: skill.id }),
+      itemFixture({ content: choiceItemContent(), skillId: skill.id }),
+    ]);
 
-      const session = await studySessionFixture({
-        goalId: goal.id,
-        localDate: TODAY,
-        ...(stored && {
-          missions: {
-            picks: [
-              { anchor: { blockKind: "review" }, kind: "review", total: 1 },
-              { anchor: {}, kind: "fixMistake", total: 1 },
-            ],
-            version: 1,
-          },
-        }),
-        userId: user.id,
-      });
+    const session = await studySessionFixture({
+      goalId: goal.id,
+      localDate: TODAY,
+      missions: {
+        picks: [
+          { anchor: { blockKind: "review" }, kind: "review", total: 1 },
+          { anchor: {}, kind: "fixMistake", total: 1 },
+        ],
+        version: 1,
+      },
+      userId: user.id,
+    });
 
-      const [, mistake] = await Promise.all([
-        studySessionBlockFixture({ kind: "review", sessionId: session.id }),
-        mistakeFixture({
-          cause: "misread",
-          createdAt: new Date("2026-10-07"),
-          itemId: item.id,
-          skillId: skill.id,
-          userId: user.id,
-        }),
-      ]);
-
-      mockSession(user.id);
-
-      const answered = await answerMistakePractice({
-        input: {
-          answer: { selectedIndex: 0 },
-          durationMs: 5000,
-          itemId: extra.id,
-          timeZone: "UTC",
-        },
-        mistakeId: mistake.id,
-      });
-
-      expect(answered).toMatchObject({ feedback: { fixed: true }, status: "ready" });
-
-      if (answered.status !== "ready") {
-        throw new Error(`Practice answer failed: ${answered.status}`);
-      }
-
-      const input = { answerIds: [answered.feedback.answerId], ended: true, timeZone: "UTC" };
-
-      const [result, concurrentRetry] = await Promise.all([
-        finishMistakePractice(input),
-        finishMistakePractice(input),
-      ]);
-
-      expect(concurrentRetry).toStrictEqual(result);
-
-      expect(result).toMatchObject({
-        result: {
-          missionMoment: {
-            completed: ["fixMistake"],
-            fullMeal: { paid: false },
-            missions: [
-              { kind: "review", status: "todo" },
-              { kind: "fixMistake", status: "done" },
-            ],
-          },
-        },
-        status: "ready",
-      });
-
-      await expect(finishMistakePractice(input)).resolves.toStrictEqual(result);
-
-      const saved = await prisma.studySession.findUniqueOrThrow({
-        include: STUDY_SESSION_INCLUDE,
-        where: { id: session.id },
-      });
-
-      expect(saved.fullMealAt).toBeNull();
-      expect(saved.missions === null).toBe(!stored);
-
-      await expect(getDayMissions({ session: saved, timeZone: "UTC" })).resolves.toMatchObject([
-        { kind: "review", status: "todo" },
-        { kind: "fixMistake", status: "done" },
-      ]);
-
-      // The session's first block captures a start state after the off-session mission completed.
-      await expect(
-        startStudyBlock({
-          blockId: saved.blocks[0]!.id,
-          input: { timeZone: "UTC" },
-          sessionId: saved.id,
-        }),
-      ).resolves.toMatchObject({ status: "ready" });
-
-      await expect(finishMistakePractice(input)).resolves.toStrictEqual(result);
-
-      vi.setSystemTime(new Date(NOW.getTime() + 1000));
-
-      const laterMistake = await mistakeFixture({
+    const [, mistake] = await Promise.all([
+      studySessionBlockFixture({ kind: "review", sessionId: session.id }),
+      mistakeFixture({
         cause: "misread",
         createdAt: new Date("2026-10-07"),
         itemId: item.id,
         skillId: skill.id,
         userId: user.id,
-      });
+      }),
+    ]);
 
-      const later = await answerMistakePractice({
-        input: { answer: { selectedIndex: 0 }, durationMs: 5000, itemId: item.id, timeZone: "UTC" },
-        mistakeId: laterMistake.id,
-      });
+    mockSession(user.id);
 
-      expect(later).toMatchObject({ feedback: { fixed: true }, status: "ready" });
+    const answered = await answerMistakePractice({
+      input: { answer: { selectedIndex: 0 }, durationMs: 5000, itemId: extra.id, timeZone: "UTC" },
+      mistakeId: mistake.id,
+    });
 
-      if (later.status !== "ready") {
-        throw new Error(`Practice answer failed: ${later.status}`);
-      }
+    expect(answered).toMatchObject({ feedback: { fixed: true }, status: "ready" });
 
-      await expect(
-        finishMistakePractice({ ...input, answerIds: [later.feedback.answerId] }),
-      ).resolves.toMatchObject({ result: { missionMoment: null }, status: "ready" });
+    if (answered.status !== "ready") {
+      throw new Error(`Practice answer failed: ${answered.status}`);
+    }
 
-      await expect(finishMistakePractice(input)).resolves.toStrictEqual(result);
-    },
-  );
+    const input = { answerIds: [answered.feedback.answerId], ended: true, timeZone: "UTC" };
+
+    const [result, concurrentRetry] = await Promise.all([
+      finishMistakePractice(input),
+      finishMistakePractice(input),
+    ]);
+
+    expect(concurrentRetry).toStrictEqual(result);
+
+    expect(result).toMatchObject({
+      result: {
+        missionMoment: {
+          completed: ["fixMistake"],
+          fullMeal: { paid: false },
+          missions: [
+            { kind: "review", status: "todo" },
+            { kind: "fixMistake", status: "done" },
+          ],
+        },
+      },
+      status: "ready",
+    });
+
+    await expect(finishMistakePractice(input)).resolves.toStrictEqual(result);
+
+    const saved = await prisma.studySession.findUniqueOrThrow({
+      include: STUDY_SESSION_INCLUDE,
+      where: { id: session.id },
+    });
+
+    expect(saved.fullMealAt).toBeNull();
+
+    await expect(getDayMissions({ session: saved, timeZone: "UTC" })).resolves.toMatchObject([
+      { kind: "review", status: "todo" },
+      { kind: "fixMistake", status: "done" },
+    ]);
+
+    // The session's first block captures a start state after the off-session mission completed.
+    await expect(
+      startStudyBlock({
+        blockId: saved.blocks[0]!.id,
+        input: { timeZone: "UTC" },
+        sessionId: saved.id,
+      }),
+    ).resolves.toMatchObject({ status: "ready" });
+
+    await expect(finishMistakePractice(input)).resolves.toStrictEqual(result);
+
+    vi.setSystemTime(new Date(NOW.getTime() + 1000));
+
+    const laterMistake = await mistakeFixture({
+      cause: "misread",
+      createdAt: new Date("2026-10-07"),
+      itemId: item.id,
+      skillId: skill.id,
+      userId: user.id,
+    });
+
+    const later = await answerMistakePractice({
+      input: { answer: { selectedIndex: 0 }, durationMs: 5000, itemId: item.id, timeZone: "UTC" },
+      mistakeId: laterMistake.id,
+    });
+
+    expect(later).toMatchObject({ feedback: { fixed: true }, status: "ready" });
+
+    if (later.status !== "ready") {
+      throw new Error(`Practice answer failed: ${later.status}`);
+    }
+
+    await expect(
+      finishMistakePractice({ ...input, answerIds: [later.feedback.answerId] }),
+    ).resolves.toMatchObject({ result: { missionMoment: null }, status: "ready" });
+
+    await expect(finishMistakePractice(input)).resolves.toStrictEqual(result);
+  });
 
   it.each([
-    [false, false, false, false, false],
-    [false, true, false, false, false],
-    [true, false, false, false, false],
-    [true, true, false, false, false],
-    [false, true, true, false, false],
-    [true, true, true, false, false],
-    [false, true, false, true, false],
-    [true, true, false, true, false],
-    [false, true, true, false, true],
-    [true, true, true, false, true],
+    [false, false, false, false],
+    [true, false, false, false],
+    [true, true, false, false],
+    [true, false, true, false],
+    [true, true, false, true],
   ])(
-    "does not claim an ordinary session's correction (stored: %s, unknown: %s, reopened: %s, review done: %s, refixed elsewhere: %s)",
-    async (stored, dontKnow, reopened, reviewDone, refixed) => {
+    "does not claim an ordinary session's correction (unknown: %s, reopened: %s, review done: %s, refixed elsewhere: %s)",
+    async (dontKnow, reopened, reviewDone, refixed) => {
       const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
       const goal = await goalFixture({ timezone: "UTC", userId: user.id });
 
@@ -185,15 +169,13 @@ describe("notebook practice mission moments", () => {
       const session = await studySessionFixture({
         goalId: goal.id,
         localDate: TODAY,
-        ...(stored && {
-          missions: {
-            picks: [
-              { anchor: { blockKind: "review" }, kind: "review", total: 1 },
-              { anchor: {}, kind: "fixMistake", total: 1 },
-            ],
-            version: 1,
-          },
-        }),
+        missions: {
+          picks: [
+            { anchor: { blockKind: "review" }, kind: "review", total: 1 },
+            { anchor: {}, kind: "fixMistake", total: 1 },
+          ],
+          version: 1,
+        },
         userId: user.id,
       });
 
@@ -324,7 +306,7 @@ describe("notebook practice mission moments", () => {
 
       expect(saved.fullMealAt !== null).toBe(reviewDone);
       expect(JSON.stringify(saved.startSnapshot)).not.toContain("fullMealSource");
-      expect(JSON.stringify(saved.missions ?? saved.startSnapshot)).not.toContain("completedBy");
+      expect(JSON.stringify(saved.missions)).not.toContain("completedBy");
     },
   );
 });

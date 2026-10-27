@@ -175,31 +175,4 @@ describe("what a mission still asks", () => {
       await expect(readMissions(session.id)).resolves.toMatchObject([{ kind, minutes }]);
     },
   );
-
-  it("gives a session built before stored missions the same minutes and next title", async () => {
-    const user = await userFixture();
-    const goal = await goalFixture({ userId: user.id });
-    const session = await studySessionFixture({ goalId: goal.id, userId: user.id });
-
-    await studySessionBlockFixture({
-      estimatedMinutes: 2,
-      kind: "review",
-      payload: toBlockPayload({ title: "Revisão rápida" }),
-      position: 0,
-      sessionId: session.id,
-    });
-
-    await studySessionBlockFixture({
-      estimatedMinutes: 5,
-      kind: "learn",
-      payload: toBlockPayload({ title: "Juros simples" }),
-      position: 1,
-      sessionId: session.id,
-    });
-
-    await expect(readMissions(session.id)).resolves.toMatchObject([
-      { kind: "review", minutes: 2 },
-      { detail: { title: "Juros simples" }, kind: "somethingNew", minutes: 5 },
-    ]);
-  });
 });

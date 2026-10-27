@@ -17,19 +17,35 @@ import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "../_utils/study-ses
 import { BRAIN_POWER_BONUS } from "../brain-power";
 import { type Mission, isFullMeal } from "../missions";
 import { type BlockMissionResult, keepBlockMissionResult } from "./block-mission-result";
-import { type MissionDocument, type MissionPick, readMissionDocument } from "./catalog";
+import {
+  type MissionDocument,
+  type MissionKind,
+  type MissionPick,
+  readMissionDocument,
+} from "./catalog";
 import { getDayMissions, hasDayMissionBonus } from "./get-day-missions";
-import { isCompletedBy, settleLegacyMissions } from "./legacy-mission-completions";
 import { isLinkedBlockMission, isLinkedCallMission } from "./linked-call-mission";
 
 export type MissionCompletionSource = NonNullable<SessionSnapshot["fullMealSource"]>;
+
+/** The mission each activity outside the day's blocks does: the only one it can take credit for. */
+const ACTIVITY_MISSIONS: Readonly<Record<string, MissionKind>> = {
+  buddyQuestion: "askBuddy",
+  conversation: "call",
+  mistakePractice: "fixMistake",
+  patternDrill: "pattern",
+  pronunciationRound: "pronunciation",
+};
+
+function isCompletedBy({ kind, source }: { kind: MissionKind; source: MissionCompletionSource }) {
+  return ACTIVITY_MISSIONS[source.kind] === kind;
+}
 
 type MissionSettlement = {
   /** What the finished block did to the missions (kept by its first finish); null without one. */
   blockResult: BlockMissionResult | null;
   fullMealPaid: boolean;
   fullMealReward: ReturnType<typeof readFullMealReward>;
-  legacyClaimed: Mission[];
   missions: Mission[];
   newlyClaimed: MissionPick[];
   newlyDone: MissionPick[];
@@ -109,17 +125,20 @@ async function payFullMeal(
   {
     lock,
     session,
-    snapshot,
     source,
     userId,
   }: {
     lock: Awaited<ReturnType<typeof getCompletionEnergyContext>>;
     session: StudySessionRow;
-    snapshot: Awaited<ReturnType<typeof settleLegacyMissions>>["snapshot"];
     source: MissionCompletionSource | undefined;
     userId: string;
   },
 ) {
+  const saved = session.startSnapshot;
+
+  const snapshot =
+    saved !== null && typeof saved === "object" && !Array.isArray(saved) ? saved : {};
+
   const { brainPower: reward } = await applySessionProgress(tx, {
     completion: false,
     delta: {
@@ -199,13 +218,6 @@ export async function settleMissions({
         tx,
       });
 
-      const { claimed: legacyClaimed, snapshot } = await settleLegacyMissions({
-        missions,
-        session,
-        source: completingSource,
-        tx,
-      });
-
       const linkedCall =
         source?.kind === "conversation"
           ? await tx.languageConversation.findFirst({
@@ -269,7 +281,6 @@ export async function settleMissions({
           fullMealPaid: fullMealDue,
           newlyDone,
         }),
-        legacyClaimed,
         missions,
         newlyClaimed: claimed,
         newlyDone,
@@ -283,20 +294,14 @@ export async function settleMissions({
           fullMealReward: readFullMealReward(session.startSnapshot),
         };
 
-        if (newlyDone.length === 0 && claimed.length === 0 && legacyClaimed.length === 0) {
+        if (newlyDone.length === 0 && claimed.length === 0) {
           throw new MissionsUnchangedError(result);
         }
 
         return result;
       }
 
-      const reward = await payFullMeal(tx, {
-        lock,
-        session,
-        snapshot,
-        source: completingSource,
-        userId,
-      });
+      const reward = await payFullMeal(tx, { lock, session, source: completingSource, userId });
 
       return { ...settled, fullMealPaid: true, fullMealReward: reward };
     }),
@@ -319,10 +324,7 @@ export async function settleMissions({
 
   if (
     revalidation === "now" &&
-    (settled.newlyDone.length > 0 ||
-      settled.newlyClaimed.length > 0 ||
-      settled.legacyClaimed.length > 0 ||
-      settled.fullMealPaid)
+    (settled.newlyDone.length > 0 || settled.newlyClaimed.length > 0 || settled.fullMealPaid)
   ) {
     revalidateCacheTags([getUserProgressCacheTag(userId)]);
   }

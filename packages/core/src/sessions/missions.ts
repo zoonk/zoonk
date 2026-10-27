@@ -39,42 +39,6 @@ export type DayMission = Omit<Mission, "opens"> & {
   opens?: Exclude<Mission["opens"], { kind: "block" }> | { kind: "block"; ref: DayBlockRef };
 };
 
-export type MissionInput = {
-  /** Mistakes from earlier days the learner could fix today, and how many they fixed today. */
-  fix: { available: boolean; fixedToday: number };
-  /** New lessons in today's session and how many were finished. */
-  learn: { completed: number; lessons: number };
-  /** Review blocks in today's session and how many were finished. */
-  review: { blocks: number; completed: number };
-};
-
-function toMission({
-  done,
-  kind,
-  total,
-}: {
-  done: number;
-  kind: MissionKind;
-  total: number;
-}): Mission | null {
-  if (total === 0) {
-    return null;
-  }
-
-  return { done: Math.min(done, total), kind, status: done >= total ? "done" : "todo", total };
-}
-
-export function getMissions({ fix, learn, review }: MissionInput): Mission[] {
-  const fixTotal = fix.available || fix.fixedToday > 0 ? 1 : 0;
-
-  return [
-    toMission({ done: review.completed, kind: "review", total: review.blocks }),
-    // Finishing one new lesson feeds the mission; later lessons are more of the same meal.
-    toMission({ done: learn.completed, kind: "somethingNew", total: Math.min(1, learn.lessons) }),
-    toMission({ done: fix.fixedToday, kind: "fixMistake", total: fixTotal }),
-  ].filter((mission) => mission !== null);
-}
-
 /** Fewer possible missions never reduce the completion bonus; no missions means no bonus. */
 export function getMissionBonus(missions: readonly Pick<Mission, "status">[]): number {
   return missions.length > 0 ? BRAIN_POWER_BONUS.fullMeal : 0;

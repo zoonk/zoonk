@@ -363,7 +363,14 @@ describe(getBuddyStatus, () => {
     expect(before.status === "ready" && before.buddy.today).toBeNull();
     await expect(prisma.studySession.count({ where: { userId: user.id } })).resolves.toBe(0);
 
-    const session = await studySessionFixture({ goalId: goal.id, userId: user.id });
+    const session = await studySessionFixture({
+      goalId: goal.id,
+      missions: {
+        picks: [{ anchor: { blockKind: "learn" }, kind: "somethingNew", total: 1 }],
+        version: 1,
+      },
+      userId: user.id,
+    });
 
     await studySessionBlockFixture({
       kind: "learn",

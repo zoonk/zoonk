@@ -29,7 +29,18 @@ async function readyToFinish(userId: string, kind: "boss" | "weekly" = "weekly")
   const planItemId = crypto.randomUUID();
 
   const [session, item] = await Promise.all([
-    studySessionFixture({ status: "active", userId }),
+    studySessionFixture({
+      missions: {
+        picks: [
+          { anchor: { blockKind: "review" }, kind: "review", total: 1 },
+          { anchor: { blockKind: "learn" }, kind: "somethingNew", total: 1 },
+          { anchor: {}, kind: "fixMistake", total: 1 },
+        ],
+        version: 1,
+      },
+      status: "active",
+      userId,
+    }),
     itemFixture({ content: choiceItemContent(), skillId: skill.id }),
   ]);
 

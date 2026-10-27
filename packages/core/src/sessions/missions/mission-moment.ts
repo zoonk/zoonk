@@ -2,7 +2,6 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { hasStartedDay, isCurrentSession } from "../_utils/current-session";
-import { readLegacyMissionCompletions } from "../_utils/session-snapshot";
 import { STUDY_SESSION_INCLUDE } from "../_utils/study-session-access";
 import { type MissionMomentView } from "../completion-contract";
 import { getMissionBonus } from "../missions";
@@ -37,8 +36,7 @@ export async function loadMissionMoment({
   userId: string;
 }): Promise<MissionMomentView | null> {
   // The session the activity paid the day's bonus in, when it did; otherwise the latest one whose
-  // missions it completed. Legacy sessions keep attribution in the snapshot, retaining their
-  // original mission selection instead of backfilling picks from a newer catalog.
+  // missions it completed.
   const paying = await prisma.studySession.findFirst({
     include: STUDY_SESSION_INCLUDE,
     orderBy: [{ localDate: "desc" }, { createdAt: "desc" }],
@@ -54,18 +52,7 @@ export async function loadMissionMoment({
     (await prisma.studySession.findFirst({
       include: STUDY_SESSION_INCLUDE,
       orderBy: [{ localDate: "desc" }, { createdAt: "desc" }],
-      where: {
-        OR: [
-          { missions: { array_contains: [{ completedBy: source }], path: ["picks"] } },
-          {
-            startSnapshot: {
-              array_contains: [{ completedBy: source }],
-              path: ["legacyMissionCompletions"],
-            },
-          },
-        ],
-        userId,
-      },
+      where: { missions: { array_contains: [{ completedBy: source }], path: ["picks"] }, userId },
     }));
 
   const zone = session?.goal?.timezone ?? timeZone;
@@ -89,7 +76,7 @@ export async function loadMissionMoment({
   const missions = await getDayMissions({ session, timeZone: zone });
 
   return {
-    completed: (document?.picks ?? readLegacyMissionCompletions(session.startSnapshot))
+    completed: (document?.picks ?? [])
       .filter((pick) => isSource(pick.completedBy, source))
       .map((pick) => pick.kind),
     fullMeal: { bonus: getMissionBonus(missions), paid: paying !== null },

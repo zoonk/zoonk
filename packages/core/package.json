@@ -509,7 +509,6 @@
     "./sessions/extra-block": "./src/sessions/add-extra-study-block.ts",
     "./sessions/finish-block": "./src/sessions/finish-study-block.ts",
     "./sessions/get": "./src/sessions/get-study-session.ts",
-    "./sessions/mission-block": "./src/sessions/mission-block.ts",
     "./sessions/missions": "./src/sessions/missions.ts",
     "./sessions/open": "./src/sessions/open-study-day.ts",
     "./sessions/open-day-contract": "./src/sessions/open-day-contract.ts",
