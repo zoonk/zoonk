@@ -306,26 +306,24 @@ export async function completeLanguageConversation({
           spokenSeconds,
         });
 
-        if (settled) {
-          await Promise.all([
-            evidence &&
-              recordLanguageSkillEvidence({
-                evidence,
-                language: owned.row.targetLanguage,
-                skill: "speaking",
-                userId,
-              }),
-            settleCallTime({ conversationId: owned.row.id, now: endedAt, userId }),
-            trackCall({
-              objectives: scenario.objectives.length,
-              objectivesMet: objectivesMet.length,
-              owned,
-              spokenSeconds,
+        await Promise.all([
+          evidence &&
+            recordLanguageSkillEvidence({
+              evidence,
+              language: owned.row.targetLanguage,
+              skill: "speaking",
               userId,
-              won,
             }),
-          ]);
-        }
+          settleCallTime({ conversationId: owned.row.id, now: endedAt, userId }),
+          trackCall({
+            objectives: scenario.objectives.length,
+            objectivesMet: objectivesMet.length,
+            owned,
+            spokenSeconds,
+            userId,
+            won,
+          }),
+        ]);
 
         revalidateCacheTags([getUserProgressCacheTag(userId)]);
 
@@ -333,11 +331,11 @@ export async function completeLanguageConversation({
 
         // After the speaking evidence, so the next mock is written at the level it leaves.
         // Only a mock that was really taken gets the next one written (a model call).
-        if (settled && connected && goalId && owned.row.kind === "speakingMock") {
+        if (connected && goalId && owned.row.kind === "speakingMock") {
           after(() => prepareSpeakingMock({ goalId, userId }));
         }
 
-        if (settled && won && owned.row.kind === "checkpoint") {
+        if (won && owned.row.kind === "checkpoint") {
           after(() =>
             trackCallCanDos({
               chapterId: owned.row.chapterId,
