@@ -493,7 +493,8 @@ describe("an activity on a day that offers no missions", () => {
       const user = await userFixture();
       const { goal, plan, skills } = await sessionGoalFixture({ userId: user.id });
       // SESSION_NOW is a Wednesday, the fourth of the week's minutes.
-      const weekdayMinutes = day === "a rest day" ? [45, 45, 45, 0, 45, 45, 45] : Array(7).fill(45);
+      const weekdayMinutes =
+        day === "a rest day" ? [45, 45, 45, 0, 45, 45, 45] : [45, 45, 45, 45, 45, 45, 45];
 
       // With its skill graph, the plan would be selected afresh (`computePlan`) to open the day.
       await prisma.plan.update({
