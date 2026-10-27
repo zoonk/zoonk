@@ -101,7 +101,7 @@ test("keeps the learner's time when saving it fails, and saves it on the next tr
 
   await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
-  await expect(page.getByRole("alert").filter({ hasText: "We couldn't save that." })).toBeVisible();
+  await expect(page.getByRole("alert").filter({ hasText: "That didn't save." })).toBeVisible();
   await expect(page.getByRole("radio", { name: "45 min" })).toBeChecked();
 
   await page.getByRole("button", { exact: true, name: "Continue" }).click();
