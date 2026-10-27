@@ -153,7 +153,8 @@ function BeltDetail({ belt }: { belt: NonNullable<StudySessionSummary["belt"]> }
  * goes to review and when it comes back, and the Brain Power earned toward the belt. Each only
  * when it means something for this goal: a language goal says its level elsewhere. From `lg` the
  * aside celebrates the Brain Power (`EarnedToday`), so its tile leaves the row rather than say it
- * twice. The icons stay quiet; the lines under the numbers carry the color.
+ * twice. The icons stay quiet; the lines under the numbers carry the color, and Brain Power's
+ * number its violet, as every Brain Power amount.
  */
 function SessionNumbers() {
   const t = useExtracted();
