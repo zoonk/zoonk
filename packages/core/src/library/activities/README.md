@@ -38,7 +38,7 @@ Programs never run in the server's own process. Each batch goes to a separate No
 
 ## Engines with modes
 
-A template is a generic engine, never one topic: the formula model covers calculators, physics simulations and what-if scenarios; lines and their crossing covers supply and demand, break-even and two equations; the combination grid covers Punnett squares, dice and times tables. When an engine's modes differ, its rules can depend on a screen's fields: `checksFor` narrows the check kinds, and `needsData` and `choicesNeedValues` take a function of the fields. Templates merged into an engine are listed in `RETIRED_TEMPLATES` (`activity-templates.ts`), so lesson plans saved before a merge name the engine; stored screens of a retired template no longer parse, so the player leaves them out and an explanation drops its explored template.
+A template is a generic engine, never one topic: the formula model covers calculators, physics simulations and what-if scenarios; lines and their crossing covers supply and demand, break-even and two equations; the combination grid covers Punnett squares, dice and times tables. When an engine's modes differ, its rules can depend on a screen's fields: `checksFor` narrows the check kinds, and `needsData` and `choicesNeedValues` take a function of the fields.
 
 ## Adding a template
 

@@ -7,7 +7,6 @@ import { describe, expect, it } from "vitest";
 import {
   type ActivityTemplateId,
   activityTemplates,
-  currentTemplateId,
   exploreActivitySchema,
 } from "./activity-templates";
 import { validateActivity, validateExploreActivity } from "./validate-activity";
@@ -543,15 +542,5 @@ describe(validateExploreActivity, () => {
     const result = validateExploreActivity({ ...explored("processOrder"), data: exampleData });
 
     expect(result.ok && result.content.data).toBeUndefined();
-  });
-});
-
-describe(currentTemplateId, () => {
-  it("names the engine a retired template merged into, and none for a removed one", () => {
-    expect(currentTemplateId("sliderGraph")).toBe("formulaModel");
-    expect(currentTemplateId("supplyDemand")).toBe("lineCrossing");
-    expect(currentTemplateId("earTrainer")).toBe("keyboardFretboard");
-    expect(currentTemplateId("sentenceBuilder")).toBeNull();
-    expect(currentTemplateId("timeline")).toBe("timeline");
   });
 });

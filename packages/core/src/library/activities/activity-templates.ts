@@ -201,31 +201,6 @@ export function getActivityTemplate(id: string): ActivityTemplate | null {
 }
 
 /**
- * Templates merged into a generic engine or removed on 8 Oct 2026, by the engine that took each
- * one over (null when none did). Lesson plans saved before then still name the old ids.
- */
-const RETIRED_TEMPLATES: Readonly<Record<string, ActivityTemplateId | null>> = {
-  earTrainer: "keyboardFretboard",
-  estimateReveal: "guessReveal",
-  listeningSpeed: null,
-  parameterSimulation: "formulaModel",
-  predictReveal: "guessReveal",
-  predictSimulate: "randomSimulation",
-  punnettSquare: "combinationGrid",
-  samplingSimulator: "randomSimulation",
-  scenarioSimulator: "formulaModel",
-  sentenceBuilder: null,
-  sliderCalculator: "formulaModel",
-  sliderGraph: "formulaModel",
-  supplyDemand: "lineCrossing",
-};
-
-/** The template a saved plan means today: a retired id becomes its engine, or none. */
-export function currentTemplateId(id: string): string | null {
-  return Object.hasOwn(RETIRED_TEMPLATES, id) ? (RETIRED_TEMPLATES[id] ?? null) : id;
-}
-
-/**
  * Whether an activity shows data (a chart, a simulation's numbers), whose source it cites or which
  * it labels as an example. A sorting or matching activity shows none, so a data note on it would
  * say something false; an engine with modes decides from its fields.
