@@ -28,7 +28,6 @@ export function useGrowthLine(status: BuddyStatusView): string {
   const stages: Record<typeof next.stage, string> = {
     adult: t("Grows to Adult at {belt}", { belt }),
     baby: t("Grows to Young at {belt}", { belt }),
-    wise: t("Grows to Wise at {belt}", { belt }),
     young: t("Grows to Young at {belt}", { belt }),
   };
 

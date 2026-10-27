@@ -42,9 +42,14 @@ describe(getNextBuddyStage, () => {
     expect(getNextBuddyStage("white")).toStrictEqual({ belt: "orange", stage: "young" });
     expect(getNextBuddyStage("yellow")).toStrictEqual({ belt: "orange", stage: "young" });
     expect(getNextBuddyStage("green")).toStrictEqual({ belt: "blue", stage: "adult" });
-    expect(getNextBuddyStage("brown")).toStrictEqual({ belt: "red", stage: "wise" });
-    expect(getNextBuddyStage("black")).toBeNull();
   });
+
+  it.each(["blue", "purple", "brown", "red", "gray", "black"] as const)(
+    "is fully grown at %s belt",
+    (belt) => {
+      expect(getNextBuddyStage(belt)).toBeNull();
+    },
+  );
 });
 
 describe(getBuddyGlow, () => {

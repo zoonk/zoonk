@@ -17,7 +17,7 @@ export type CeremonyMilestone = {
 
 type CeremonyCopy = { action: string; detail: string; title: string };
 
-const BUDDY_STAGES: BuddyStage[] = ["baby", "young", "adult", "wise"];
+const BUDDY_STAGES: BuddyStage[] = ["baby", "young", "adult"];
 
 export function toBuddyGlasses(key: string): BuddyGlasses | null {
   return BUDDY_GLASSES.find((glasses) => glasses === key) ?? null;
@@ -58,13 +58,7 @@ function useStageLine({ buddyName, key }: { buddyName: string; key: string }): s
 
   switch (stage) {
     case "adult":
-      return t("{buddy} is an Adult now, and keeps growing with your Brain Power.", {
-        buddy: buddyName,
-      });
-    case "wise":
-      return t("{buddy} is Wise now, the last stage. It grew with your Brain Power.", {
-        buddy: buddyName,
-      });
+      return t("{buddy} is an Adult now, fully grown with your Brain Power.", { buddy: buddyName });
     case "baby":
     case "young":
       return t("{buddy} is Young now, and keeps growing with your Brain Power.", {

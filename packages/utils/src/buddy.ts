@@ -13,21 +13,21 @@ export type BuddyKind = "zu" | "noodle" | "beep" | "otto";
  */
 export type BuddyGlasses = "round" | "star" | "aviator" | "catEye" | "retro" | "monocle";
 
-export type BuddyStage = "baby" | "young" | "adult" | "wise";
+export type BuddyStage = "baby" | "young" | "adult";
 
 /**
  * Brain Power only goes up, so belts never regress and neither does the buddy:
  * each group of belts maps to one stage.
  */
 const BUDDY_STAGE_BY_BELT: Record<BeltColor, BuddyStage> = {
-  black: "wise",
+  black: "adult",
   blue: "adult",
   brown: "adult",
-  gray: "wise",
+  gray: "adult",
   green: "young",
   orange: "young",
   purple: "adult",
-  red: "wise",
+  red: "adult",
   white: "baby",
   yellow: "baby",
 };
@@ -67,7 +67,7 @@ export function getBuddyEnergyState(
 }
 
 /**
- * The buddy's next stage and the belt that brings it, or null for a Wise buddy, which has grown up.
+ * The buddy's next stage and the belt that brings it, or null for an Adult buddy, which is fully grown.
  * Brain Power only goes up, so the next stage is always ahead.
  */
 export function getNextBuddyStage(

@@ -50,8 +50,6 @@ export function BuddyStageName({ stage }: { stage: BuddyStage }) {
       return t("Young");
     case "adult":
       return t("Adult");
-    case "wise":
-      return t("Wise");
     case "baby":
       return t("Baby");
     default:

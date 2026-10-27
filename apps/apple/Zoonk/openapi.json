@@ -73399,8 +73399,7 @@
                 "enum": [
                   "baby",
                   "young",
-                  "adult",
-                  "wise"
+                  "adult"
                 ]
               }
             },
@@ -73416,8 +73415,7 @@
             "enum": [
               "baby",
               "young",
-              "adult",
-              "wise"
+              "adult"
             ]
           },
           "thisWeek": {

@@ -48,6 +48,10 @@ describe(getCrossedMilestones, () => {
     ]);
 
     expect(getCrossedMilestones({ after: 7600, before: 7500 })).toStrictEqual([]);
+
+    expect(getCrossedMilestones({ after: 767_500, before: 767_499 })).toStrictEqual([
+      { key: "red", kind: "belt" },
+    ]);
   });
 });
 

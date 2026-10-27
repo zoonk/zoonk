@@ -142,10 +142,10 @@ export const buddyStatusResponseSchema = z
       .object({
         belt: z.string(),
         brainPowerToGo: countSchema,
-        stage: z.enum(["baby", "young", "adult", "wise"]),
+        stage: z.enum(["baby", "young", "adult"]),
       })
       .nullable(),
-    stage: z.enum(["baby", "young", "adult", "wise"]),
+    stage: z.enum(["baby", "young", "adult"]),
     thisWeek: buddyDietSchema,
     today: z
       .object({

@@ -786,11 +786,6 @@ msgid "Grows to Young at {belt}"
 msgstr "Al alcanzar {belt}, se convierte en joven"
 
 #: src/buddies/buddy-day-parts.tsx
-msgctxt "Mm2Nc9"
-msgid "Grows to Wise at {belt}"
-msgstr "Al alcanzar {belt}, se convierte en sabio"
-
-#: src/buddies/buddy-day-parts.tsx
 msgctxt "j9234g"
 msgid "{buddy} took a nap. Anything you learn wakes it up."
 msgstr "{buddy} se ha echado una siesta. Cualquier cosa que aprendas lo despertará."
@@ -949,11 +944,6 @@ msgstr "Joven"
 msgctxt "zHPqOq"
 msgid "Adult"
 msgstr "Adulto"
-
-#: src/buddies/buddy-labels.tsx
-msgctxt "cSAdoG"
-msgid "Wise"
-msgstr "Sabio"
 
 #: src/buddies/buddy-labels.tsx
 msgctxt "GpLsPj"
@@ -1190,14 +1180,9 @@ msgid "New glasses!"
 msgstr "¡Gafas nuevas!"
 
 #: src/ceremonies/use-ceremony-copy.ts
-msgctxt "00L7sY"
-msgid "{buddy} is an Adult now, and keeps growing with your Brain Power."
-msgstr "{buddy} ya es adulto y seguirá creciendo con tu Poder Mental."
-
-#: src/ceremonies/use-ceremony-copy.ts
-msgctxt "tKNNRJ"
-msgid "{buddy} is Wise now, the last stage. It grew with your Brain Power."
-msgstr "{buddy} ya es sabio, su última etapa. Ha crecido con tu Poder Mental."
+msgctxt "qvLefN"
+msgid "{buddy} is an Adult now, fully grown with your Brain Power."
+msgstr "¡{buddy} ya es adulto y ha crecido del todo gracias a tu Poder Mental!"
 
 #: src/ceremonies/use-ceremony-copy.ts
 msgctxt "AJ-zuW"

@@ -22,8 +22,8 @@ import { Part } from "./_character/part";
 
 export type { BuddyExpression } from "./_buddy/buddy-face";
 
-/** Buddies grow with the belts: 70% as a baby, 85% young, full size as an adult or wise. */
-const STAGE_SCALE: Record<BuddyStage, number> = { adult: 1, baby: 0.7, wise: 1, young: 0.85 };
+/** Buddies grow with the belts: 70% as a baby, 85% young, full size as an adult. */
+const STAGE_SCALE: Record<BuddyStage, number> = { adult: 1, baby: 0.7, young: 0.85 };
 
 /** Growth scales around the feet so a buddy always stands on the same ground line. */
 const GROUND_X = 60;
