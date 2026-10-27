@@ -9,9 +9,7 @@ metadata:
 
 # Zoonk testing
 
-Choose a test boundary capable of exercising the behavior under investigation. Choose the overall set of checks from the affected behavior and consumers. A small regression test may demonstrate one property while broader existing coverage remains necessary for the change. Follow the root verification policy for scope, completion, and reruns.
-
-For behavior changes, prefer a failing regression test before implementation when practical, at the cheapest boundary that reproduces it; a regression that only E2E reproduces gets an E2E test only when it clears [the E2E bar](#the-e2e-bar). Confirm it fails for the expected reason. If it already passes, investigate whether the defect is reproduced and whether the assertion distinguishes the intended outcome; do not weaken assertions or manufacture a failure.
+Choose the cheapest boundary that exercises the behavior under investigation. Scope, failing-first regressions, completion, and reruns follow the [root verification policy](../../../AGENTS.md#verification).
 
 ## Choose coverage
 
@@ -45,10 +43,8 @@ Do not write React component unit tests or add tests for `admin`, `evals`, or `b
 
 ## Running tests
 
-Use the owning package's scripts and configured test database; do not substitute a development or production database. Each Vitest run tests on its own fresh copy of that database: earlier runs' rows never reach it, while the run's test files still share it. See the [development guide](../../guides/development.md) for the template it copies. Confirm any setup/reset command targets the intended disposable database before running it. Relevant local test runs and repairs are part of the authorized implementation work.
-
-Run the affected tests, then broaden only for affected consumers or unresolved risks. Investigate intermittent failures rather than hiding them with retries, forced interactions, weaker assertions, or larger timeouts. Repeat focused coverage for timing, concurrency, fixture isolation, or a reproduced flaky failure; an arbitrary five-run loop is not a completion requirement.
+Use the owning package's scripts and isolated database from the [development guide](../../guides/development.md). Vitest files in one run still share rows; a fresh run does not replace test-owned fixtures. Confirm setup/reset commands target the intended disposable database.
 
 Keep each E2E test well under 20 seconds locally: CI splits work by test, so one long test sets its shard's time. Test only what the assertion needs (a database simulation names its asserted `rules`; use fake timers, not real waits).
 
-For Vitest, a package-scoped command is `mise x -- pnpm --filter <workspace> test <test-file>`. E2E build and launch details are in the E2E reference. Report checks accurately, including failures and anything not exercised.
+E2E-specific launch and waiting rules are in the [E2E reference](references/e2e.md).
