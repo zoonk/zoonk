@@ -9,7 +9,8 @@ import { readSelectedItemFacts } from "./selected-item-contract";
 /**
  * Summarize the unchanged layout the learner actually keeps, never the candidate's shifted
  * lesson intervals. Its fixed calendar/settings are unchanged; its stored item facts own the
- * raw portions, dates and minutes. A legacy layout without those facts stays explicitly stale.
+ * raw portions, dates and minutes. A layout with items no build wrote (a test-out's stand-in) has
+ * no such facts and stays explicitly stale.
  */
 function retainPlanAllocation({
   built,

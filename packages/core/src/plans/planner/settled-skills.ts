@@ -24,7 +24,7 @@ function getTestedOutSkillIds({
  * for them later stay out of the plan, as the first ones did, so every re-plan keeps what the first
  * build skipped. Undoing the test-out brings its items back to do, and the skills with them, and
  * so does a miss in practice since (`missedSkillIds`): read as settled by the lessons still tested
- * out, the skill's lessons that came back left the plan again (career seed 2049).
+ * out, the skill's lessons that came back left the plan again.
  */
 export function getSettledSkillIds({
   items,

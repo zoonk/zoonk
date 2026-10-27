@@ -104,8 +104,8 @@ export function matchSavedMocks({
 
   const findSaved = (date: string) => saved.find((entry) => entry.date === date);
 
-  // The mock the learner moved continues as itself. A plan saved before a second move to the same
-  // day was refused still has the mocks it held there: each is set aside, its credits with it.
+  // The mock the learner moved continues as itself. Another move to the same day loses it (see
+  // `findMoveTo`), so the mock it held is set aside, its credits with it.
   const setAside = (date: string) => {
     const entry = findSaved(date);
 

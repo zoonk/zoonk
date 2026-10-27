@@ -10,8 +10,8 @@ function isMovable(event: FixedEvent): boolean {
 }
 
 /**
- * The move that brings a day its week's event: a day holds one, so of moves a plan saved to the
- * same day before a second was refused, the one from the earliest day, the others' events dropped.
+ * The move that brings a day its week's event: a day holds one, so of moves to the same day (one
+ * change can make two), the one from the earliest day, the others' events dropped.
  */
 export function findMoveTo({
   date,

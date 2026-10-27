@@ -152,7 +152,7 @@ function splitOnce({
  * A part's lessons, less the ones that wait for a later part (`waiting`): from the first lesson of
  * a subject whose skill builds on a skill whose core only a later part starts (`startsIn`), or on
  * a skill that waits itself, the rest of that subject, in order. Taken in this part, nothing could
- * go before it, so it went in anyway, before its base started (R16, Câmara seed 1101: "past
+ * go before it, so it went in anyway, before its base started (R16, Câmara: "past
  * basics" on the discursive test brought its essays ahead of the political science they build
  * on). The queue may put a skill before its base in another subject, so the split repeats until
  * the skills that wait settle.

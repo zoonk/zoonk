@@ -4,7 +4,7 @@ import { type SelectedItemFacts } from "../planner/selected-item-facts";
 
 const minutesSchema = z.number().nonnegative();
 
-/** Stored facts of the actual selected item; legacy or unknown versions require a fresh build. */
+/** Stored facts of the actual selected item; an item no build wrote has none and needs a fresh build. */
 export const selectedItemFactsSchema = z
   .object({
     boss: z

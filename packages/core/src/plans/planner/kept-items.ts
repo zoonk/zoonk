@@ -144,9 +144,9 @@ export function toKeptItem({
  * days (`lessons`): a stand-in counts the lessons it plans. What's left of a skill counts them
  * toward its core (see `putCoresFirst`). A gap's tested-out lessons don't: practice missed what
  * the test-out claimed, and counted, the lessons that came back were depth a plan short on time
- * cut (career seed 2049). Nor do lessons set aside for time: they're out of the plan, and counted,
+ * cut. Nor do lessons set aside for time: they're out of the plan, and counted,
  * an ENEM plan took punctuation and syntax's topic as taught and let standard Portuguese, asked
- * most, leave with its only other skill (ENEM seed 2083).
+ * most, leave with its only other skill.
  */
 export function countKeptLessons({
   gaps = new Set(),

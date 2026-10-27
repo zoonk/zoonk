@@ -253,10 +253,10 @@ export async function loadGoalPlannerLessons({
     skill.courseIds?.includes(goal.primaryCourseId ?? ""),
   );
 
-  const legacyOutline =
+  const outlinedPrimaryCourse =
     originalSkills.length > 0 && originalSkills.every((skill) => skill.outlined);
 
-  if (!source && ((!start && !courseChapters) || !legacyOutline)) {
+  if (!source && ((!start && !courseChapters) || !outlinedPrimaryCourse)) {
     return lessons;
   }
 

@@ -237,7 +237,7 @@ export function moveStrainedEnds({
  * How moving the phase dates is planned: as the run that kept them (`mode`), except that an
  * automatic run keeps this week as the learner saw it, its challenges too, so a move of an end
  * this week is planned from today, as the learner's own change is. Kept with the week, a challenge
- * stayed before the lessons it tests (language seed 1).
+ * stayed before the lessons it tests.
  */
 export function getPhaseDatesMoveMode({
   kept,

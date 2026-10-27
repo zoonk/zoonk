@@ -88,7 +88,7 @@ export function getPlanNumbers({
           }
 
           // A joined stand-in starts before the exam but can teach after it. Its actual day
-          // portions split that time; events and legacy rows without portions keep their dates.
+          // portions split that time; events and rows without portions keep their dates.
           const portions = built.lessonDayMinutes.get(item.key);
 
           if (portions) {

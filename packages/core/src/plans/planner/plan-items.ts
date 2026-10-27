@@ -119,8 +119,7 @@ function fromEvent(event: ScheduledEvent): PlannedItem {
 /**
  * Events of learn plans belong to the phase of the lessons before them, never one after the phase
  * the work still to do after them studies: a lesson of a later phase done ahead dated that phase's
- * weekly challenge, which then read as running before the phases still to study (R39, language
- * seed 1049).
+ * weekly challenge, which then read as running before the phases still to study (R39).
  */
 function fillEventPhases(items: readonly PlannedItem[]): PlannedItem[] {
   const firstPhase = items.find((item) => item.phase >= 0)?.phase ?? 0;

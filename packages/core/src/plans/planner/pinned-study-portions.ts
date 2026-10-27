@@ -235,7 +235,7 @@ function hasTeachingShift({
   const previous = dayTotals(before);
   const next = dayTotals(after);
 
-  // A whole authored row still identifies a lesson when a legacy fallback knows no raw minutes.
+  // A whole authored row still identifies a lesson when its facts know no raw minutes.
   if (before.length === 1 && before.every((part) => part.lessonMinutes <= EPSILON)) {
     return previous.size !== next.size || [...previous.keys()].some((date) => !next.has(date));
   }

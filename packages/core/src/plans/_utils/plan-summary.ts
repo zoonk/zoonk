@@ -42,7 +42,8 @@ export type PlanSummary = z.infer<typeof planSummarySchema>;
 /**
  * The stored plan's summary when it describes that plan: the version it was posted with is the
  * plan's, for its owner. It describes the plan whatever happened since (studying, a new day), never
- * a reason to build again. Null for a legacy or unrecognized value, which reads as pending, never as a plan with no work.
+ * a reason to build again. Null for any other value (a session's restamp included, see
+ * `savedPlanSummarySchema`), which reads as pending, never as a plan with no work.
  */
 export function readPlanSummary({
   plan,
@@ -215,7 +216,11 @@ export function reduceRestoredSummary({
   return reduction.kind === "reduced" ? reduction.summary : restored;
 }
 
-const legacyBasisSchema = z
+/**
+ * The basis a session's metadata write stamps on the selected facts it keeps: the input version and
+ * study day it read them fresh at (see `prepareSelectedPlanSave`).
+ */
+const sessionBasisSchema = z
   .object({
     inputVersion: z.int().nonnegative(),
     planId: z.string(),
@@ -230,7 +235,7 @@ const legacyBasisSchema = z
 export const savedPlanSummarySchema = z.union([
   z
     .object({
-      basis: legacyBasisSchema,
+      basis: sessionBasisSchema,
       schemaVersion: z.literal(1),
       selected: selectedSummarySchema,
     })

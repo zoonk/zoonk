@@ -231,7 +231,8 @@ function keepSelectedEvents({
 
 /** Each move reads the previous layout: a second move starts where the first put its event. */
 function replayMoves({ moves, ...options }: Parameters<typeof withMovedEvents>[0]) {
-  // Legacy moves sharing a destination keep their canonical winner and remove every source.
+  // Moves sharing a destination (one change can make two) keep the winner `findMoveTo` picks and
+  // remove every source.
   return [...Map.groupBy(moves, (move) => move.to).values()].reduce(
     (describeDay, group) => withMovedEvents({ ...options, describeDay, moves: group }),
     options.describeDay,
