@@ -6,20 +6,22 @@ import { TaskMeta } from "./task-meta";
 
 /**
  * A readout's number inside its words, such as a score in a result's heading: large, tabular, in
- * the text face (the app's 40px readout). The words around it stay small and muted.
+ * the text face (the app's 40px readout). The words around it stay small and muted. Its own
+ * element (`data-slot="readout-number"`), so a moment's motion can move the number alone.
  */
-export function ReadoutNumber({ children, className }: React.ComponentProps<"span">) {
-  return <span className={cn("text-readout text-[2.5rem]", className)}>{children}</span>;
+export function ReadoutNumber({ className, ...props }: React.ComponentProps<"span">) {
+  return (
+    <span
+      className={cn("text-readout inline-block text-[2.5rem]", className)}
+      data-slot="readout-number"
+      {...props}
+    />
+  );
 }
 
 /** A score's number as a readout, in the text color. */
 function scoreNumber(chunks: React.ReactNode) {
   return <ReadoutNumber className="text-foreground">{chunks}</ReadoutNumber>;
-}
-
-/** An amount of Brain Power as a readout, in its violet. */
-function brainPowerNumber(chunks: React.ReactNode) {
-  return <ReadoutNumber className="text-brain-text">{chunks}</ReadoutNumber>;
 }
 
 /** A readout's words, small and muted beside its number, whatever heading they sit in. */
@@ -30,15 +32,27 @@ function readoutWords(chunks: React.ReactNode) {
 }
 
 /**
- * Brain Power earned, the one way every task's end draws it: "+27" as a readout in its violet and
- * "Brain Power" small beside it. It reads as words, so it goes inside a heading or a line.
+ * Brain Power earned, the one way every celebration draws it (a task's end, the day's missions
+ * bonus, the session's rewards): "+27" as a readout in its violet and "Brain Power" small beside
+ * it. It reads as words, so it goes inside a heading or a line. `numberRef` reaches the number for
+ * a moment that counts it up or pops it.
  */
-export function BrainPowerReadout({ points }: { points: number }) {
+export function BrainPowerReadout({
+  numberRef,
+  points,
+}: {
+  numberRef?: React.Ref<HTMLSpanElement>;
+  points: number;
+}) {
   const t = useExtracted();
   const format = useFormatter();
 
   return t.rich("<number>+{points}</number> <words>Brain Power</words>", {
-    number: brainPowerNumber,
+    number: (chunks) => (
+      <ReadoutNumber className="text-brain-text" ref={numberRef}>
+        {chunks}
+      </ReadoutNumber>
+    ),
     points: format.number(points),
     words: readoutWords,
   });

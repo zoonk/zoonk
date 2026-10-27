@@ -6,6 +6,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useFormatter } from "next-intl";
 import { useId, useRef, useState } from "react";
 import { ListGroup } from "../_components/list-group";
+import { BrainPowerReadout } from "../_components/moment-readouts";
 import { DoneMark } from "../_components/status-mark";
 import { type LearnBuddy, resolveLearnBuddy } from "../buddies/use-buddy-name";
 import { MissionStepLine, useMissionName, useMissionStateLabel } from "./mission-copy";
@@ -60,7 +61,7 @@ function StampedMark({ order }: { order: number }) {
   }, true);
 
   return (
-    <span className="flex" ref={mark}>
+    <span className="flex" data-slot="mission-stamp" ref={mark}>
       <DoneMark className="size-3.5" />
     </span>
   );
@@ -86,7 +87,7 @@ function MomentBuddy({ buddy, whole }: { buddy: LearnBuddy | null; whole: boolea
   }, true);
 
   return (
-    <span className="flex shrink-0" ref={art}>
+    <span className="flex shrink-0" data-slot="moment-buddy" ref={art}>
       <Buddy
         beltColor={resolved.beltColor}
         className={whole ? "size-24" : "size-12"}
@@ -102,12 +103,11 @@ function MomentBuddy({ buddy, whole }: { buddy: LearnBuddy | null; whole: boolea
 }
 
 /**
- * The day's bonus this work paid, big in Brain Power's violet: "+50" counts up as it lands, pops
- * and bursts into sparks. Screen readers hear it once, in the moment's status.
+ * The day's bonus this work paid, as every Brain Power earned reads (`BrainPowerReadout`): "+50" a
+ * violet readout with "Brain Power" beside it. It counts up as it lands, pops and bursts into
+ * sparks. Screen readers hear it once, in the moment's status.
  */
 function PaidBonus({ points }: { points: number }) {
-  const t = useExtracted();
-  const format = useFormatter();
   const value = useRef<HTMLSpanElement>(null);
   const [shown, setShown] = useState(points);
 
@@ -140,14 +140,12 @@ function PaidBonus({ points }: { points: number }) {
   }, true);
 
   return (
-    <span aria-hidden="true" className="relative flex flex-col items-start gap-1">
-      <span
-        className="text-brain-text origin-left font-mono text-4xl leading-none font-semibold tabular-nums"
-        ref={value}
-      >
-        {`+${format.number(shown)}`}
-      </span>
-      <span className="text-muted-foreground text-xs">{t("Brain Power")}</span>
+    <span
+      aria-hidden="true"
+      className="relative block *:data-[slot=readout-number]:origin-left"
+      data-slot="missions-bonus"
+    >
+      <BrainPowerReadout numberRef={value} points={shown} />
       <SparkBurst className="top-4 left-8" delay={LANDED_MS} sparks={BONUS_SPARKS} />
     </span>
   );
