@@ -77,9 +77,21 @@ export function buildPropertyKeyframes({
   }));
 }
 
-/** The properties a track moves. */
-export function getTrackProperties(track: ActTrack): PoseProperty[] {
-  return PROPERTIES.filter((property) => track.keys.some((key) => key[property] !== undefined));
+/**
+ * The properties a track moves: the ones its keys set, and the ones its part's pose changes in
+ * between the expression it starts from and the one it lands in (`from`, `to`), so the part eases
+ * there over the act on `settle`'s curve instead of jumping as it lands.
+ */
+export function getTrackProperties(
+  track: ActTrack,
+  from: PartPose = {},
+  to: PartPose = {},
+): PoseProperty[] {
+  return PROPERTIES.filter(
+    (property) =>
+      track.keys.some((key) => key[property] !== undefined) ||
+      formatValue(property, from) !== formatValue(property, to),
+  );
 }
 
 /** A face swap: the old face shown until the swap frame, the new one from it. */

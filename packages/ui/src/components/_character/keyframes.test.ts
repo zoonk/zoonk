@@ -104,6 +104,14 @@ describe(getTrackProperties, () => {
       }),
     ).toStrictEqual(["rotate", "scale", "translate"]);
   });
+
+  it("adds what the part's pose changes in between start and landing, so it eases there", () => {
+    const crown = { keys: [], part: "crown" } as const;
+
+    expect(getTrackProperties(crown, { rotate: -7 }, {})).toStrictEqual(["rotate"]);
+    expect(getTrackProperties(crown, { rotate: -7 }, { rotate: -7 })).toStrictEqual([]);
+    expect(getTrackProperties(crown, {}, { rotate: 0, scale: 1 })).toStrictEqual([]);
+  });
 });
 
 describe(buildSwapKeyframes, () => {

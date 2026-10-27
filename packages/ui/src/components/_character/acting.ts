@@ -48,17 +48,20 @@ function resolveEase(root: Element): EaseResolver {
  * Plays an act on a character drawn in `root`, from the expression it shows (`from`), on the
  * browser's animation clock: every part moves on its own (`rotate`, `scale`, `translate`,
  * `opacity`), held at its last frame until the caller draws the landing expression and cancels
- * them. With reduced motion (the frame token is 0) nothing moves: the caller draws the landing
- * expression at once.
+ * them. `delay` holds the drawing still for that many milliseconds first, on the same clock, so a
+ * slowed page slows the wait too. With reduced motion (the frame token is 0) nothing moves and
+ * nothing waits: the caller draws the landing expression at once.
  */
 export function playAct<Expression extends string>({
   act,
+  delay = 0,
   from,
   playbackRate = 1,
   poses = {},
   root,
 }: {
   act: Act<Expression>;
+  delay?: number;
   from: Expression;
   playbackRate?: number;
   poses?: PosesByExpression<Expression>;
@@ -72,7 +75,7 @@ export function playAct<Expression extends string>({
 
   const duration = act.frames * frameMs;
   const ease = resolveEase(root);
-  const options: KeyframeAnimationOptions = { duration, fill: "forwards" };
+  const options: KeyframeAnimationOptions = { delay, duration, fill: "forwards" };
   const to = act.to ?? from;
 
   const partAnimations = act.tracks.flatMap((track) => {
@@ -80,7 +83,7 @@ export function playAct<Expression extends string>({
     const toPose = { ...track.rest, ...poses[to]?.[track.part] };
     const elements = [...root.querySelectorAll(`[data-part="${track.part}"]`)];
 
-    return getTrackProperties(track).flatMap((property) => {
+    return getTrackProperties(track, fromPose, toPose).flatMap((property) => {
       const keyframes = buildPropertyKeyframes({
         ease,
         frames: act.frames,

@@ -359,6 +359,18 @@ const PROUD: Act<BuddyExpression> = {
   ],
 };
 
+/**
+ * The faces whose eyes are open, the only ones a blink can close: a reaction landing in one blinks
+ * once a while later. Cheering, proud and sleepy eyes are already shut.
+ */
+export const BUDDY_OPEN_EYES: ReadonlySet<BuddyExpression> = new Set([
+  "happy",
+  "kind",
+  "neutral",
+  "think",
+  "wow",
+]);
+
 export const BUDDY_ACTS: Record<BuddyActName, Act<BuddyExpression>> = {
   blink: BLINK,
   cheer: CHEER,

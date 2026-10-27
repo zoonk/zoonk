@@ -52,6 +52,14 @@ const EXPRESSION_BY_ENERGY: Record<BuddyEnergyState, BuddyExpression> = {
   napping: "sleepy",
 };
 
+/** The buddy's everyday face, from its Energy: sleepy while it naps, beaming once it glows. */
+export function getBuddyEnergyExpression({
+  energy,
+  studiedToday = false,
+}: Pick<BuddyProps, "energy" | "studiedToday">): BuddyExpression {
+  return EXPRESSION_BY_ENERGY[getBuddyEnergyState(energy, { studiedToday })];
+}
+
 function BuddyBody({ kind, ...props }: BuddyBodyProps & { kind: BuddyKind }) {
   switch (kind) {
     case "beep":

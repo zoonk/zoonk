@@ -3,7 +3,7 @@ import { type ActTrack } from "../_character/keyframes";
 import { type TricksterExpression } from "../trickster";
 
 /** The Trickster's acts, timed in frames at 24 a second. */
-export type TricksterActName = "blink" | "defeat" | "smug";
+export type TricksterActName = "blink" | "defeat" | "sly" | "smug";
 
 /** Both eyes shutting together: under his mask a blink is a squash to a sliver. */
 function eyes(keys: ActTrack["keys"], settle?: ActTrack["settle"]): ActTrack[] {
@@ -13,12 +13,28 @@ function eyes(keys: ActTrack["keys"], settle?: ActTrack["settle"]): ActTrack[] {
   ];
 }
 
-const BLINK: Act<TricksterExpression> = {
-  frames: 6,
-  tracks: eyes([
-    { at: 2, ease: "accelerate", scale: [1, 0.1] },
-    { at: 3, scale: [1, 0.1] },
-  ]),
+/** His eyes shut in 2 frames, stay shut for 1 and open in 3 (on the track's ease-out). */
+const BLINK_KEYS: ActTrack["keys"] = [
+  { at: 2, ease: "accelerate", scale: [1, 0.1] },
+  { at: 3, scale: [1, 0.1] },
+];
+
+const BLINK: Act<TricksterExpression> = { frames: 6, tracks: eyes(BLINK_KEYS) };
+
+/**
+ * Back to sly, when the learner gets one past him: a blink, his face swapping while his eyes are
+ * shut (the grin drops, the lids lift), and the crown and the tail easing back after it on their
+ * loose spring. From sly it's only a blink.
+ */
+const SLY: Act<TricksterExpression> = {
+  frames: 12,
+  swapAt: 2,
+  to: "sly",
+  tracks: [
+    ...eyes([...BLINK_KEYS, { at: 6, ease: "out", scale: [1, 1] }]),
+    { keys: [], part: "crown", settle: "follow" },
+    { keys: [], part: "tail", settle: "follow" },
+  ],
 };
 
 /**
@@ -206,5 +222,13 @@ const DEFEAT: Act<TricksterExpression> = {
 export const TRICKSTER_ACTS: Record<TricksterActName, Act<TricksterExpression>> = {
   blink: BLINK,
   defeat: DEFEAT,
+  sly: SLY,
   smug: SMUG,
 };
+
+/** Every face of his shows his eyes open under the mask, so each can blink. */
+export const TRICKSTER_OPEN_EYES: ReadonlySet<TricksterExpression> = new Set([
+  "defeated",
+  "sly",
+  "smug",
+]);
