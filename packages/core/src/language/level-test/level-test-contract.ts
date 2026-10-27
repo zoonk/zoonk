@@ -52,8 +52,7 @@ export const levelTestProgressSchema = z.object({
    * Placing the result the test last set on the plan (see `placeLevelTestResult`): whether it's
    * placed, and what placing tested out that the plan hasn't announced yet, with the listening
    * areas the announcement starts past their basics. A finish that stopped partway leaves the rest
-   * to the next one. Absent before the test ends, and on tests ended before results were placed
-   * this way, which have nothing left to place.
+   * to the next one. Absent before the test ends.
    */
   placement: z
     .object({

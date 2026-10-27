@@ -356,53 +356,6 @@ describe("language level test", () => {
     ).resolves.toBe(1);
   });
 
-  // A test ended before tests kept their start lost it to the level that finish set: finishing it
-  // again scored it from that level, moved it, and wiped what lessons had shown since.
-  it("keeps a test that ended before tests kept their start as it ended", async () => {
-    await saveBank();
-    const { goal, user } = await languageGoalFixture();
-    mockSession(user.id);
-
-    await Promise.all([
-      prisma.goal.update({
-        data: {
-          details: {
-            ...(goal.details as object),
-            level: "B1",
-            levelTest: { answers: TESTED_UP_TO_B2.answers.slice(0, 2), counted: 2, speaking: null },
-            skillLevels: { listening: "A2+", reading: "B1+" },
-          },
-        },
-        where: { id: goal.id },
-      }),
-      prisma.languageSkillLevel.create({
-        data: {
-          language: "en",
-          score: 2,
-          skill: "reading",
-          startScore: 2.5,
-          userId: user.id,
-          windowCeiling: 1.5,
-          windowCorrect: 2,
-          windowTotal: 3,
-        },
-      }),
-    ]);
-
-    const owner = { goalId: goal.id, userId: user.id };
-    const before = await readFinishState(owner);
-
-    await expect(finishLanguageLevelTest(goal.id)).resolves.toStrictEqual({
-      levels: [
-        { label: "B1+", score: 2.5, skill: "reading" },
-        { label: "A2+", score: 1.5, skill: "listening" },
-      ],
-      status: "ready",
-    });
-
-    await expect(readFinishState(owner)).resolves.toStrictEqual(before);
-  });
-
   it("settles two finishes that raced once, with the same levels for both", async () => {
     await saveBank();
     const { goal, user } = await languageGoalFixture();

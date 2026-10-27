@@ -16,8 +16,8 @@ import { readLevelTestProgress } from "./level-test-state";
 type ResultPlacement = NonNullable<LevelTestProgress["placement"]>;
 
 /**
- * Where a finish left placing the result, and whether it placed it; null on a test ended before
- * results were placed this way. `changed`: the goal changed while placement read it.
+ * Where a finish left placing the result, and whether it placed it; null once the goal is gone.
+ * `changed`: the goal changed while placement read it.
  */
 type PlaceOutcome = { placedNow: boolean; placement: ResultPlacement } | null | "changed";
 

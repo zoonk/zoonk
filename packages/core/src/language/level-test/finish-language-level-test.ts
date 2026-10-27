@@ -12,11 +12,7 @@ import { settleAnsweredActivity } from "../../stats/_utils/settle-answered-activ
 import { getCompletionEnergyContext } from "../../stats/completion-energy";
 import { readGoalDetails } from "../_utils/language-goal";
 import { announceLevelTestPlacement, placeLevelTestResult } from "./_utils/level-test-placement";
-import {
-  loadLevelTestContext,
-  readLevelTestProgress,
-  readLevelsEndedBeforeStart,
-} from "./_utils/level-test-state";
+import { loadLevelTestContext, readLevelTestProgress } from "./_utils/level-test-state";
 import { type LevelTestBank, type LevelTestProgress } from "./level-test-contract";
 import {
   type LevelTestScores,
@@ -162,11 +158,6 @@ export async function finishLanguageLevelTest(
 
       const currentProgress = readLevelTestProgress(current);
       const settled = currentProgress.counted >= currentProgress.answers.length;
-      const endedBeforeStart = settled ? readLevelsEndedBeforeStart(current) : null;
-
-      if (endedBeforeStart) {
-        return unchanged({ newResult: false, progress: currentProgress, scores: endedBeforeStart });
-      }
 
       const currentScores = getLevelTestScores({
         bank,
