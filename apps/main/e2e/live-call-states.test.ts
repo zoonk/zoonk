@@ -147,12 +147,10 @@ async function closeBehavior({
   request,
   sessionId,
   mode,
-  rejectCloses = 0,
 }: {
   request: APIRequestContext;
   sessionId: string | null;
   mode: "confirm" | "hold" | "reject";
-  rejectCloses?: number;
 }) {
   const bridge = process.env.LIVE_CALL_TEST_PROVIDER_URL;
 
@@ -161,7 +159,7 @@ async function closeBehavior({
   }
 
   const response = await request.post(`${bridge}/control/sessions/${sessionId}/behavior`, {
-    data: { closeMode: mode, rejectCloses },
+    data: { closeMode: mode },
     timeout: 5000,
   });
 
