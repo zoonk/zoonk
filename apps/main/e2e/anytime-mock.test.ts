@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { WRITTEN_ESSAY } from "./anytime-mock-exams";
 import { answerMockQuestions, createAnytimeMockLearner } from "./anytime-mock-fixtures";
 import { expect, test } from "./fixtures";
+import { REPLAN_TIMEOUT_MS } from "./plan-timeouts";
 import { continueToStep } from "./result-steps";
 import { openAs } from "./study-day";
 
@@ -182,7 +183,11 @@ test.describe("Mocks whenever the learner wants", () => {
     await expect(page).toHaveURL(new RegExp(`/start/${goal.id}$`, "u"));
     await expect(page.getByRole("heading", { name: "Your mock exam is waiting" })).toBeVisible();
     await page.getByRole("button", { name: "Stop and see my plan" }).click();
-    await expect(page.getByRole("heading", { name: "Your mock exam is waiting" })).toBeHidden();
+
+    // Stopping places the learner from what was answered and plans again.
+    await expect(page.getByRole("heading", { name: "Your mock exam is waiting" })).toBeHidden({
+      timeout: REPLAN_TIMEOUT_MS,
+    });
 
     const mock = await prisma.mockExam.findFirstOrThrow({ where: { goalId: goal.id } });
 
