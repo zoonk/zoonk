@@ -3,7 +3,8 @@
 import { BRAIN_POWER_BONUS } from "@zoonk/core/sessions/brain-power";
 import { isFullMeal } from "@zoonk/core/sessions/missions";
 import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
-import { Buddy } from "@zoonk/ui/components/buddy";
+import { BuddyActor } from "@zoonk/ui/components/buddy-actor";
+import { BEAT_MS } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronsUpIcon, ListChecksIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
@@ -42,9 +43,9 @@ export function hasRewardsBeyondBrainPower(summary: StudySessionSummary): boolea
 }
 
 /**
- * The resolved buddy, glad about the day, including before a choice is saved. It holds still,
- * cheering from the first frame, as the day's Brain Power counts up under it: a character never
- * moves as one block (the `zoonk-motion` skill).
+ * The resolved buddy, glad about the day, including before a choice is saved: proud of the
+ * session, a beat after the day's Brain Power starts counting up under it, its eyes closing content
+ * as its chin lifts and its chest fills (the `zoonk-motion` skill). A revisit draws it still, proud.
  */
 function RewardsArt() {
   const t = useExtracted();
@@ -53,14 +54,15 @@ function RewardsArt() {
   const name = useBuddyName(buddy);
 
   return (
-    <Buddy
+    <BuddyActor
       beltColor={buddy.beltColor}
       className="size-24"
       energy={buddy.energy}
-      expression="cheer"
+      expression="happy"
       glasses={buddy.glasses}
       kind={buddy.kind}
       label={t("{buddy}, happy with today", { buddy: name })}
+      reaction={{ act: "proud", delay: BEAT_MS }}
       studiedToday
     />
   );

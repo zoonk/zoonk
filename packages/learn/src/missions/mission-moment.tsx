@@ -1,7 +1,7 @@
 "use client";
 
 import { type Mission } from "@zoonk/core/sessions/missions";
-import { Buddy } from "@zoonk/ui/components/buddy";
+import { BuddyActor } from "@zoonk/ui/components/buddy-actor";
 import { Burst } from "@zoonk/ui/components/burst";
 import { useCelebration } from "@zoonk/ui/hooks/celebration";
 import { BEAT_MS, STAGGER_MS } from "@zoonk/ui/lib/motion";
@@ -72,23 +72,25 @@ function StampedMark({ celebrate, order }: { celebrate: boolean; order: number }
 }
 
 /**
- * The learner's buddy, glad about the missions: its face beside a mission done, and the whole
- * buddy when the day's missions are all done. It holds still, cheering from the first frame: a
- * character never moves as one block (the `zoonk-motion` skill). Decorative.
+ * The learner's buddy, glad about the missions. Beside a mission done, its face smiles as the
+ * mission's check lands. When the day's missions are all done, the whole buddy cheers as the bonus
+ * lands, its body stretching up as the burst flies. Acting with its parts, never as one block (the
+ * `zoonk-motion` skill); a revisit draws it still, smiling or cheering. Decorative.
  */
 function MomentBuddy({ buddy, whole }: { buddy: LearnBuddy | null; whole: boolean }) {
   const resolved = resolveLearnBuddy(buddy);
 
   return (
     <span className="flex shrink-0" data-slot="moment-buddy">
-      <Buddy
+      <BuddyActor
         beltColor={resolved.beltColor}
         className={whole ? "size-24" : "size-12"}
         crop={whole ? undefined : "face"}
         energy={resolved.energy}
-        expression="cheer"
+        expression={whole ? "happy" : "neutral"}
         glasses={resolved.glasses}
         kind={resolved.kind}
+        reaction={whole ? { act: "cheer", delay: 2 * BEAT_MS } : { act: "smile", delay: BEAT_MS }}
         studiedToday
       />
     </span>

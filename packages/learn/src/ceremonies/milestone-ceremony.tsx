@@ -1,7 +1,7 @@
 "use client";
 
 import { beltColorClasses } from "@zoonk/ui/components/belt-indicator";
-import { Buddy } from "@zoonk/ui/components/buddy";
+import { BuddyActor } from "@zoonk/ui/components/buddy-actor";
 import { Burst, type Spark } from "@zoonk/ui/components/burst";
 import { Button } from "@zoonk/ui/components/button";
 import {
@@ -103,10 +103,11 @@ const STAGE_SPARKS: readonly Spark[] = [
 
 /**
  * The picture: the buddy in its new belt, at its new stage or in its new glasses, large on its
- * stage, a disc in the new belt's color (`data-slot="ceremony-stage"`). The buddy stands there
- * still, cheering from the first frame, since a character never moves as one block (the
- * `zoonk-motion` skill); as it opens, for a belt or a stage (both grown from Brain Power), violet
- * sparks burst from behind it. New glasses come from other achievements, so they get no burst.
+ * stage, a disc in the new belt's color (`data-slot="ceremony-stage"`). As it opens, for a belt or
+ * a stage (both grown from Brain Power), violet sparks burst from behind it and the buddy cheers
+ * with its whole body: a dip, then a stretch with its arms up, its antennae swinging last. New
+ * glasses come from other achievements, so they get no burst: the buddy shows them off, proud, its
+ * chin up. It acts with its parts, never as one block (the `zoonk-motion` skill).
  */
 function CeremonyArt({
   buddy: learnerBuddy,
@@ -132,14 +133,15 @@ function CeremonyArt({
       {milestone.kind !== "glasses" && (
         <Burst className="text-brain top-1/2 left-1/2" delay={BEAT_MS} sparks={STAGE_SPARKS} />
       )}
-      <Buddy
+      <BuddyActor
         beltColor={milestone.kind === "belt" && belt ? belt : buddy.beltColor}
         className="relative size-40 sm:size-48"
         energy={buddy.energy}
-        expression="cheer"
+        expression="happy"
         glasses={milestone.kind === "glasses" && glasses ? glasses : buddy.glasses}
         kind={buddy.kind}
         label={buddyName}
+        reaction={{ act: milestone.kind === "glasses" ? "proud" : "cheer", delay: BEAT_MS }}
       />
     </span>
   );
