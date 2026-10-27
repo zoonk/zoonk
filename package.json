@@ -48,6 +48,7 @@
     "test:deploy": "vitest run",
     "test:watch": "turbo test:watch",
     "typecheck": "turbo typecheck && tsc --project scripts/tsconfig.json",
+    "verify:pages": "node scripts/verify/pages.mts",
     "worktree:setup": "node scripts/worktree/setup.mts"
   },
   "devDependencies": {
