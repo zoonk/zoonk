@@ -507,6 +507,7 @@
     "./sessions/progress-celebration": "./src/sessions/progress-celebration.ts",
     "./sessions/reached": "./src/sessions/reached.ts",
     "./sessions/refresh-practice": "./src/sessions/add-refresh-practice-block.ts",
+    "./sessions/save-for-mission": "./src/sessions/save-day-for-mission.ts",
     "./sessions/start-block": "./src/sessions/start-study-block.ts",
     "./sessions/stop": "./src/sessions/stop-study-session.ts",
     "./sessions/summary": "./src/sessions/get-study-session-summary.ts",

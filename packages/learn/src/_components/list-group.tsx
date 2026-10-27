@@ -1,5 +1,6 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronRightIcon } from "lucide-react";
+import { type LearnLinkComponentProps } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { SURFACE_CLASS } from "./surface";
 
@@ -98,12 +99,15 @@ export function ListRowLink({
   className,
   href,
   lessonWritten,
+  onClick,
   prefetch,
 }: {
   children: React.ReactNode;
   className?: string;
   href: string;
   lessonWritten?: boolean;
+  /** As `LearnLink`'s: runs before the host navigates. */
+  onClick?: LearnLinkComponentProps["onClick"];
   /** As `LearnLink`'s: `"auto"` for a destination that writes itself when opened. */
   prefetch?: boolean | "auto";
 }) {
@@ -112,6 +116,7 @@ export function ListRowLink({
       className={cn(LIST_ROW_INTERACTIVE_CLASS, className)}
       href={href}
       lessonWritten={lessonWritten}
+      onClick={onClick}
       prefetch={prefetch}
     >
       {children}

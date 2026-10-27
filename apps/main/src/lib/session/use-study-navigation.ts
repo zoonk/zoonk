@@ -23,6 +23,7 @@ import {
   openNextStudyBlockAction,
   openStudyBlockAction,
   openWrittenLessonAction,
+  saveMissionDayAction,
   stopStudySessionAction,
 } from "./study-session-actions";
 
@@ -289,8 +290,9 @@ function useOpenDestination({ refresh }: { refresh?: () => void } = {}) {
  * Where today's missions and a new learner's first steps open, from their chips on Today and their
  * rows in the buddy's day: one of the day's blocks, started like any block the learner picks, or
  * the page where the rest is done. A call opens its unit's page and a question the buddy's tab,
- * where the learner starts it. A host showing a day not opened yet opens its steps (`openStep`),
- * and reads its own view again (`refresh`) when a chip's block didn't open.
+ * where the learner starts it, the tap saving the day meanwhile (`openPage`). A host showing a day
+ * not opened yet opens its steps (`openStep`), and reads its own view again (`refresh`) when a
+ * chip's block didn't open.
  */
 export function useMissionLinks(
   goalId: string,
@@ -329,6 +331,10 @@ export function useMissionLinks(
         }
 
         return opened;
+      },
+      // Fired with the tap, never awaited: the page opens at once (see `saveMissionDayAction`).
+      openPage: () => {
+        saveMissionDayAction({ goalId, timeZone: getLocalTimeZone() }).catch(() => null);
       },
       openStep,
     }),

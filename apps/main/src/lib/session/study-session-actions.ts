@@ -8,6 +8,7 @@ import { addExtraStudyBlock } from "@zoonk/core/sessions/extra-block";
 import { finishStudyBlock } from "@zoonk/core/sessions/finish-block";
 import { openStudySession } from "@zoonk/core/sessions/open";
 import { getSessionPageView } from "@zoonk/core/sessions/page";
+import { saveDayForMission } from "@zoonk/core/sessions/save-for-mission";
 import { startStudyBlock } from "@zoonk/core/sessions/start-block";
 import { stopStudySession } from "@zoonk/core/sessions/stop";
 import { type StudyBlock, type StudyFinishOutcome } from "@zoonk/learn/session/types";
@@ -30,6 +31,11 @@ const nextInputSchema = sessionInputSchema.extend({ expectedBlockId: z.uuid().op
 
 const missionInputSchema = z.object({
   blockId: z.uuid(),
+  timeZone: z.string().refine(isValidTimeZone),
+});
+
+const missionDayInputSchema = z.object({
+  goalId: z.uuid(),
   timeZone: z.string().refine(isValidTimeZone),
 });
 
@@ -136,6 +142,30 @@ export async function openStudyBlockAction(input: BlockInput): Promise<StudyDest
   }
 
   return result;
+}
+
+/**
+ * Saves the day of a mission whose page the learner's tap opens (a drill, a round, a call), while
+ * the page opens: the same core capability the activity runs before it records anything, so its
+ * first answer doesn't wait for the day. The tap never waits for it either: a navigation takes
+ * over from a Server Action still on its way, whose request still runs, and the activity saves the
+ * day itself when this didn't get through. The public API's day open
+ * (`POST /v1/goals/{goalId}/study-sessions`) saves the same day.
+ */
+export async function saveMissionDayAction(
+  input: z.infer<typeof missionDayInputSchema>,
+): Promise<void> {
+  const parsed = missionDayInputSchema.safeParse(input);
+
+  if (!parsed.success) {
+    return;
+  }
+
+  const { error } = await safeAsync(() => saveDayForMission(parsed.data));
+
+  if (error) {
+    logError("[saveMissionDayAction] Failed to save the mission's day:", error);
+  }
 }
 
 /**

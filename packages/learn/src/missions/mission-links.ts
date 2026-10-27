@@ -35,16 +35,23 @@ export type MissionLinks = {
     pronunciation: string;
   };
   openBlock: (blockId: string) => Promise<boolean>;
+  /**
+   * Runs as the learner's tap opens a mission's page (never on a render, hover or prefetch): the
+   * host saves the day the mission is in, so the activity there doesn't wait for it.
+   */
+  openPage?: () => void;
   /** Opens the day a mission's step is in, then the step; only a host showing that day has it. */
   openStep?: (ref: DayBlockRef) => Promise<boolean>;
 };
 
 /**
  * How a target opens: a page (`href`), prefetched unless opening it picks something (the
- * notebook's practice picks a fresh set), or an action (`open`), busy until it's on its way so a
- * second tap waits.
+ * notebook's practice picks a fresh set), with what its tap runs too (`onOpen`), or an action
+ * (`open`), busy until it's on its way so a second tap waits.
  */
-type MissionOpen = { href: string; prefetch: boolean } | { open: () => void; pending: boolean };
+type MissionOpen =
+  | { href: string; onOpen?: () => void; prefetch: boolean }
+  | { open: () => void; pending: boolean };
 
 /** Opens one of the day's blocks: by its id once the day is saved, by its work before that. */
 function getBlockOpen({
@@ -72,6 +79,7 @@ export function useMissionOpen({
 }): MissionOpen | null {
   const [pending, startTransition] = useTransition();
   const { askBuddy, hrefs } = links;
+  const page = (href: string, prefetch = true) => ({ href, onOpen: links.openPage, prefetch });
 
   if (!opens) {
     return null;
@@ -92,19 +100,19 @@ export function useMissionOpen({
         : null;
     }
     case "buddy":
-      return askBuddy ? { open: askBuddy, pending: false } : { href: hrefs.buddy, prefetch: true };
+      return askBuddy ? { open: askBuddy, pending: false } : page(hrefs.buddy);
     case "areaPractice":
-      return { href: hrefs.areaPractice(opens.areaId), prefetch: true };
+      return page(hrefs.areaPractice(opens.areaId));
     case "call":
-      return { href: hrefs.call(opens.chapterId), prefetch: true };
+      return page(hrefs.call(opens.chapterId));
     case "mistakesPractice":
-      return { href: hrefs.mistakesPractice, prefetch: false };
+      return page(hrefs.mistakesPractice, false);
     case "mockChooser":
-      return { href: hrefs.mockChooser, prefetch: true };
+      return page(hrefs.mockChooser);
     case "pattern":
-      return { href: hrefs.pattern(opens.patternId), prefetch: true };
+      return page(hrefs.pattern(opens.patternId));
     case "pronunciation":
-      return { href: hrefs.pronunciation, prefetch: true };
+      return page(hrefs.pronunciation);
     default:
       return opens satisfies never;
   }

@@ -34,6 +34,7 @@ import { getTodayView } from "../../view-models/today/get-today-view";
 import { SESSION_NOW, SESSION_TODAY, sessionGoalFixture } from "../_test-utils/session-goal";
 import { saveDayBeforeActivity } from "../ensure-study-session";
 import { openStudyDay } from "../open-study-day";
+import { saveDayForMission } from "../save-day-for-mission";
 import { readMissionDocument } from "./catalog";
 
 const TIME_ZONE = "UTC";
@@ -535,4 +536,43 @@ describe("an activity on a day that offers no missions", () => {
       planner.mockRestore();
     },
   );
+});
+
+describe("a tap on one of Today's missions", () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ now: SESSION_NOW, toFake: ["Date"] });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("saves the learner's day of the goal once, and nobody else's", async () => {
+    const [{ goal, user }, other] = await Promise.all([
+      languageGoalFixture(),
+      languageGoalFixture(),
+    ]);
+
+    mockSession(user.id);
+    const shown = await readShownMissions(goal.id);
+
+    await saveDayForMission({ goalId: other.goal.id, timeZone: TIME_ZONE });
+    mockSession(null);
+    await saveDayForMission({ goalId: goal.id, timeZone: TIME_ZONE });
+
+    await expect(
+      Promise.all([readSavedMissions(goal.id), readSavedMissions(other.goal.id)]),
+    ).resolves.toStrictEqual([[], []]);
+
+    mockSession(user.id);
+    await saveDayForMission({ goalId: goal.id, timeZone: TIME_ZONE });
+
+    // Another mission tapped on the saved day doesn't plan it again.
+    const planner = vi.spyOn(planning, "computePlan");
+    await saveDayForMission({ goalId: goal.id, timeZone: TIME_ZONE });
+
+    expect(planner).not.toHaveBeenCalled();
+    await expect(readSavedMissions(goal.id)).resolves.toStrictEqual([shown]);
+    planner.mockRestore();
+  });
 });
