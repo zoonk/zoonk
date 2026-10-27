@@ -64,6 +64,7 @@ export const thereIsThereAreLesson: SeedLesson = {
     { content: {}, kind: "vocabulary", skill: "apartment-rooms", word: "bathroom" },
     {
       content: {
+        basis: null,
         options: [
           option(
             "is",
@@ -143,6 +144,7 @@ export const thereIsThereAreLesson: SeedLesson = {
     },
     {
       content: {
+        basis: null,
         keyPoints: [
           pt("Usa there is para uma coisa só"),
           pt("Usa there are para mais de uma"),

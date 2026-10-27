@@ -54,11 +54,16 @@ MAJOR-ERROR CAPS:
 
 /** Rafaela's civil service exam: a published notice, two hours on weekdays, four on Saturdays, Sundays off. */
 const CONCURSO_PLAN = {
+  catchUp: null,
+  challenges: [],
   course: null,
   estimate: { endDate: "2027-01-10", remainingHours: 320 },
+  exam: null,
   goal: {
+    cutoff: null,
     dailyMinutes: 120,
     kind: "exam",
+    target: null,
     targetDate: "2027-01-17",
     title: "Concurso da Câmara dos Deputados: Analista Legislativo, Registro e Redação",
   },
@@ -79,6 +84,7 @@ const CONCURSO_PLAN = {
         { kind: "lesson", title: "Concordância verbal" },
         { kind: "lesson", title: "Poder Legislativo: composição da Câmara" },
       ],
+      moreItems: 0,
     },
   ],
   phase: {
@@ -86,6 +92,8 @@ const CONCURSO_PLAN = {
       { lessonsDone: 2, lessonsTotal: 6, state: "current", title: "Atos administrativos" },
       { lessonsDone: 0, lessonsTotal: 5, state: "upcoming", title: "Concordância" },
     ],
+    chaptersDone: 0,
+    chaptersLater: 0,
     endDate: "2026-11-01",
     index: 0,
     kind: "foundations",
@@ -94,24 +102,63 @@ const CONCURSO_PLAN = {
   scope: { kind: "plan" },
   setup: {
     areas: [
-      { focused: false, name: "Língua Portuguesa", skipped: false },
-      { focused: false, name: "Direito Administrativo", skipped: false },
       {
+        focusPart: null,
         focused: false,
-        name: "Noções de Direito Constitucional e de Regimento Interno da Câmara dos Deputados",
+        name: "Língua Portuguesa",
+        pastBasics: false,
+        reduced: false,
         skipped: false,
       },
-      { focused: false, name: "Língua Inglesa", skipped: false },
-      { focused: false, name: "Reconhecimento de Fala e Transcrição", skipped: false },
+      {
+        focusPart: null,
+        focused: false,
+        name: "Direito Administrativo",
+        pastBasics: false,
+        reduced: false,
+        skipped: false,
+      },
+      {
+        focusPart: null,
+        focused: false,
+        name: "Noções de Direito Constitucional e de Regimento Interno da Câmara dos Deputados",
+        pastBasics: false,
+        reduced: false,
+        skipped: false,
+      },
+      {
+        focusPart: null,
+        focused: false,
+        name: "Língua Inglesa",
+        pastBasics: false,
+        reduced: false,
+        skipped: false,
+      },
+      {
+        focusPart: null,
+        focused: false,
+        name: "Reconhecimento de Fala e Transcrição",
+        pastBasics: false,
+        reduced: false,
+        skipped: false,
+      },
     ],
-    coverage: { coveredShare: 1, fits: true, measure: "exam" },
+    coverage: { coreFits: true, coveredShare: 1, fits: true, measure: "exam" },
     difficultyBias: "standard",
     lightWeeks: [],
     ownLevel: "intermediate",
     practiceBias: "balanced",
     weekdayMinutes: [0, 120, 120, 120, 120, 120, 240],
+    writtenCadence: null,
   },
-  status: { days: null, extraMinutesPerDay: null, kind: "onTrack", options: [] },
+  status: {
+    challenges: null,
+    days: null,
+    extraMinutesPerDay: null,
+    kind: "onTrack",
+    lessons: null,
+    options: [],
+  },
   today: {
     date: "2026-10-06",
     items: [
@@ -139,11 +186,16 @@ const CONCURSO_PLAN = {
 
 /** Carla, a teacher moving into UX design in six months, an hour a day. */
 const UX_PLAN = {
+  catchUp: null,
+  challenges: [],
   course: null,
   estimate: { endDate: "2027-03-30", remainingHours: 150 },
+  exam: null,
   goal: {
+    cutoff: null,
     dailyMinutes: 60,
     kind: "learn",
+    target: null,
     targetDate: "2027-04-05",
     title: "Trabalhar como UX designer",
   },
@@ -154,6 +206,8 @@ const UX_PLAN = {
     chapters: [
       { lessonsDone: 1, lessonsTotal: 4, state: "current", title: "Pesquisa com usuários" },
     ],
+    chaptersDone: 0,
+    chaptersLater: 0,
     endDate: "2026-11-15",
     index: 0,
     kind: "learn",
@@ -162,19 +216,55 @@ const UX_PLAN = {
   scope: { kind: "plan" },
   setup: {
     areas: [
-      { focused: false, name: "Pesquisa com usuários", skipped: false },
-      { focused: false, name: "Arquitetura da informação", skipped: false },
-      { focused: false, name: "Prototipação no Figma", skipped: false },
-      { focused: false, name: "Portfólio", skipped: false },
+      {
+        focusPart: null,
+        focused: false,
+        name: "Pesquisa com usuários",
+        pastBasics: false,
+        reduced: false,
+        skipped: false,
+      },
+      {
+        focusPart: null,
+        focused: false,
+        name: "Arquitetura da informação",
+        pastBasics: false,
+        reduced: false,
+        skipped: false,
+      },
+      {
+        focusPart: null,
+        focused: false,
+        name: "Prototipação no Figma",
+        pastBasics: false,
+        reduced: false,
+        skipped: false,
+      },
+      {
+        focusPart: null,
+        focused: false,
+        name: "Portfólio",
+        pastBasics: false,
+        reduced: false,
+        skipped: false,
+      },
     ],
-    coverage: { coveredShare: 1, fits: true, measure: "goal" },
+    coverage: { coreFits: true, coveredShare: 1, fits: true, measure: "goal" },
     difficultyBias: "standard",
     lightWeeks: [],
     ownLevel: "none",
     practiceBias: "balanced",
     weekdayMinutes: [60, 60, 60, 60, 60, 60, 60],
+    writtenCadence: null,
   },
-  status: { days: null, extraMinutesPerDay: null, kind: "onTrack", options: [] },
+  status: {
+    challenges: null,
+    days: null,
+    extraMinutesPerDay: null,
+    kind: "onTrack",
+    lessons: null,
+    options: [],
+  },
   today: {
     date: "2026-10-06",
     items: [
@@ -194,11 +284,16 @@ const UX_PLAN = {
 
 /** Marcos: English for a job interview in Toronto, 45 minutes on weekdays. */
 const INTERVIEW_PLAN = {
+  catchUp: null,
+  challenges: [],
   course: null,
   estimate: { endDate: "2026-12-20", remainingHours: 40 },
+  exam: null,
   goal: {
+    cutoff: null,
     dailyMinutes: 45,
     kind: "language",
+    target: null,
     targetDate: "2027-01-05",
     title: "English for a job interview",
   },
@@ -209,6 +304,8 @@ const INTERVIEW_PLAN = {
     chapters: [
       { lessonsDone: 2, lessonsTotal: 5, state: "current", title: "Talking about your projects" },
     ],
+    chaptersDone: 0,
+    chaptersLater: 0,
     endDate: "2026-11-01",
     index: 0,
     kind: "learn",
@@ -223,8 +320,16 @@ const INTERVIEW_PLAN = {
     ownLevel: "intermediate",
     practiceBias: "balanced",
     weekdayMinutes: [0, 45, 45, 45, 45, 45, 0],
+    writtenCadence: null,
   },
-  status: { days: 2, extraMinutesPerDay: 10, kind: "behind", options: [] },
+  status: {
+    challenges: null,
+    days: 2,
+    extraMinutesPerDay: 10,
+    kind: "behind",
+    lessons: null,
+    options: [],
+  },
   today: {
     date: "2026-10-06",
     items: [
@@ -269,11 +374,46 @@ const ENEM_WITH_SETUP = {
   ...ENEM_PLAN,
   setup: {
     areas: [
-      { focused: false, name: "Matemática", skipped: false },
-      { focused: false, name: "Linguagens", skipped: false },
-      { focused: false, name: "Ciências da Natureza", skipped: false },
-      { focused: false, name: "Ciências Humanas", skipped: false },
-      { focused: false, name: "Redação", skipped: false },
+      {
+        focusPart: null,
+        focused: false,
+        name: "Matemática",
+        pastBasics: false,
+        reduced: false,
+        skipped: false,
+      },
+      {
+        focusPart: null,
+        focused: false,
+        name: "Linguagens",
+        pastBasics: false,
+        reduced: false,
+        skipped: false,
+      },
+      {
+        focusPart: null,
+        focused: false,
+        name: "Ciências da Natureza",
+        pastBasics: false,
+        reduced: false,
+        skipped: false,
+      },
+      {
+        focusPart: null,
+        focused: false,
+        name: "Ciências Humanas",
+        pastBasics: false,
+        reduced: false,
+        skipped: false,
+      },
+      {
+        focusPart: null,
+        focused: false,
+        name: "Redação",
+        pastBasics: false,
+        reduced: false,
+        skipped: false,
+      },
     ],
     coverage: { coreFits: true, coveredShare: 0.7, fits: false, measure: "exam" },
     difficultyBias: "standard",
@@ -281,11 +421,14 @@ const ENEM_WITH_SETUP = {
     ownLevel: "basic",
     practiceBias: "balanced",
     weekdayMinutes: [60, 60, 60, 60, 60, 60, 60],
+    writtenCadence: null,
   },
 } satisfies PlanScopeContext;
 
 /** Sofia's OAB first phase: she said March, the published notice sets 10 January. */
 const OAB_PLAN = {
+  catchUp: null,
+  challenges: [],
   course: null,
   estimate: { endDate: "2027-01-09", remainingHours: 190 },
   exam: {
@@ -302,6 +445,7 @@ const OAB_PLAN = {
       { date: "2027-02-28", label: "Realização da 2ª fase (prova prático-profissional)" },
     ],
     questionCount: 80,
+    questionsSource: null,
     rules: [
       "O examinando é aprovado na 1ª fase ao obter o mínimo de 50% de acertos, correspondente a 40,00 pontos ou mais.",
       "A prova objetiva é realizada sem consulta.",
@@ -316,6 +460,7 @@ const OAB_PLAN = {
     ],
   },
   goal: {
+    cutoff: null,
     dailyMinutes: 120,
     kind: "exam",
     target: null,
@@ -329,9 +474,30 @@ const OAB_PLAN = {
   scope: { kind: "plan" },
   setup: {
     areas: [
-      { focused: false, name: "Ética Profissional", skipped: false },
-      { focused: false, name: "Direito Constitucional", skipped: false },
-      { focused: false, name: "Direito Civil", skipped: false },
+      {
+        focusPart: null,
+        focused: false,
+        name: "Ética Profissional",
+        pastBasics: false,
+        reduced: false,
+        skipped: false,
+      },
+      {
+        focusPart: null,
+        focused: false,
+        name: "Direito Constitucional",
+        pastBasics: false,
+        reduced: false,
+        skipped: false,
+      },
+      {
+        focusPart: null,
+        focused: false,
+        name: "Direito Civil",
+        pastBasics: false,
+        reduced: false,
+        skipped: false,
+      },
     ],
     coverage: { coreFits: true, coveredShare: 0.52, fits: false, measure: "exam" },
     difficultyBias: "standard",
@@ -339,8 +505,16 @@ const OAB_PLAN = {
     ownLevel: "intermediate",
     practiceBias: "balanced",
     weekdayMinutes: [120, 120, 120, 120, 120, 120, 120],
+    writtenCadence: null,
   },
-  status: { days: null, extraMinutesPerDay: null, kind: "onTrack", options: [] },
+  status: {
+    challenges: null,
+    days: null,
+    extraMinutesPerDay: null,
+    kind: "onTrack",
+    lessons: null,
+    options: [],
+  },
   today: null,
   version: 1,
 } satisfies PlanScopeContext;
@@ -357,6 +531,7 @@ const CLASS_TEST_PLAN = {
     official: false,
     otherDates: [],
     questionCount: null,
+    questionsSource: null,
     rules: ["Não cai divisão celular (mitose fica para o próximo bimestre)."],
     scoring: null,
     source: null,
@@ -367,6 +542,7 @@ const CLASS_TEST_PLAN = {
     ],
   },
   goal: {
+    cutoff: null,
     dailyMinutes: 45,
     kind: "exam",
     target: null,
@@ -375,7 +551,16 @@ const CLASS_TEST_PLAN = {
   },
   setup: {
     ...OAB_PLAN.setup,
-    areas: [{ focused: false, name: "Biologia", skipped: false }],
+    areas: [
+      {
+        focusPart: null,
+        focused: false,
+        name: "Biologia",
+        pastBasics: false,
+        reduced: false,
+        skipped: false,
+      },
+    ],
     coverage: null,
     weekdayMinutes: [45, 45, 45, 45, 45, 45, 45],
   },
@@ -440,6 +625,7 @@ const ENEM_NOTICE = {
     official: true,
     otherDates: [],
     questionCount: 180,
+    questionsSource: null,
     rules: [],
     scoring: "Teoria de Resposta ao Item (TRI)",
     source: "https://www.gov.br/inep/edital-enem-2026.pdf",
@@ -468,8 +654,22 @@ const OAB_PHILOSOPHY_DAY = {
     ...OAB_PLAN.setup,
     areas: [
       ...OAB_PLAN.setup.areas,
-      { focused: false, name: "Filosofia do Direito", skipped: false },
-      { focused: false, name: "Direito Processual Civil", skipped: false },
+      {
+        focusPart: null,
+        focused: false,
+        name: "Filosofia do Direito",
+        pastBasics: false,
+        reduced: false,
+        skipped: false,
+      },
+      {
+        focusPart: null,
+        focused: false,
+        name: "Direito Processual Civil",
+        pastBasics: false,
+        reduced: false,
+        skipped: false,
+      },
     ],
   },
   today: {
@@ -587,6 +787,7 @@ const CONCURSO_NOTICE = {
     official: true,
     otherDates: [],
     questionCount: 120,
+    questionsSource: null,
     rules: [],
     scoring: "Nota líquida: cada item errado anula um certo.",
     source: "https://www.cebraspe.org.br/concursos/camara_25/edital.pdf",
@@ -675,7 +876,15 @@ const PHYSICS_BEHIND = {
   ],
   course: null,
   estimate: { endDate: "2027-02-10", remainingHours: 48 },
-  goal: { dailyMinutes: 20, kind: "learn", targetDate: null, title: "Entender física moderna" },
+  exam: null,
+  goal: {
+    cutoff: null,
+    dailyMinutes: 20,
+    kind: "learn",
+    target: null,
+    targetDate: null,
+    title: "Entender física moderna",
+  },
   language: "pt",
   mistakes: [],
   next: [
@@ -685,6 +894,7 @@ const PHYSICS_BEHIND = {
         { kind: "lesson", title: "O espectro do hidrogênio" },
         { kind: "review", title: "Níveis de energia do átomo" },
       ],
+      moreItems: 0,
     },
   ],
   phase: {
@@ -692,6 +902,8 @@ const PHYSICS_BEHIND = {
       { lessonsDone: 2, lessonsTotal: 6, state: "current", title: "O átomo de Bohr" },
       { lessonsDone: 0, lessonsTotal: 5, state: "upcoming", title: "Dualidade onda-partícula" },
     ],
+    chaptersDone: 0,
+    chaptersLater: 0,
     endDate: "2026-10-20",
     index: 1,
     kind: "foundations",
@@ -699,7 +911,15 @@ const PHYSICS_BEHIND = {
   },
   scope: { kind: "plan" },
   selectedGoal: true,
-  status: { days: 1, extraMinutesPerDay: 10, kind: "behind", lessons: 1, options: [] },
+  setup: null,
+  status: {
+    challenges: null,
+    days: 1,
+    extraMinutesPerDay: 10,
+    kind: "behind",
+    lessons: 1,
+    options: [],
+  },
   today: {
     date: "2026-10-14",
     items: [
@@ -741,7 +961,14 @@ const PHYSICS_BEHIND = {
 const PHYSICS_ON_TRACK = {
   ...PHYSICS_BEHIND,
   catchUp: null,
-  status: { days: null, extraMinutesPerDay: null, kind: "onTrack", options: [] },
+  status: {
+    challenges: null,
+    days: null,
+    extraMinutesPerDay: null,
+    kind: "onTrack",
+    lessons: null,
+    options: [],
+  },
   today: { ...PHYSICS_BEHIND.today, items: PHYSICS_BEHIND.today.items.slice(1) },
 } satisfies PlanScopeContext;
 
@@ -774,9 +1001,12 @@ const ANALYTICS_BEHIND = {
   challenges: [],
   course: null,
   estimate: { endDate: "2027-01-05", remainingHours: 30 },
+  exam: null,
   goal: {
+    cutoff: null,
     dailyMinutes: 30,
     kind: "learn",
+    target: null,
     targetDate: null,
     title: "Product analytics for my PM job",
   },
@@ -786,7 +1016,15 @@ const ANALYTICS_BEHIND = {
   phase: null,
   scope: { kind: "plan" },
   selectedGoal: true,
-  status: { days: 2, extraMinutesPerDay: 15, kind: "behind", lessons: 3, options: [] },
+  setup: null,
+  status: {
+    challenges: null,
+    days: 2,
+    extraMinutesPerDay: 15,
+    kind: "behind",
+    lessons: 3,
+    options: [],
+  },
   today: {
     date: "2026-10-14",
     items: [
@@ -963,6 +1201,7 @@ export const TEST_CASES: GoalTutorCase[] = [
         ...ENEM_TARGET.goal,
         cutoff: {
           edition: "Sisu/UFMG 1ª edição de 2026",
+          maxScore: 100,
           quota: "ampla concorrência",
           score: 818.5,
           source: "https://www.ufmg.br/sisu/wp-content/uploads/2026/02/Notas-maximas-e-minimas.pdf",
@@ -1290,7 +1529,14 @@ export const TEST_CASES: GoalTutorCase[] = [
   goalCase({
     context: {
       ...CONCURSO_PLAN,
-      status: { days: 2, extraMinutesPerDay: 20, kind: "behind", lessons: 9, options: [] },
+      status: {
+        challenges: null,
+        days: 2,
+        extraMinutesPerDay: 20,
+        kind: "behind",
+        lessons: 9,
+        options: [],
+      },
     },
     expectations:
       "She asks if she's on track, with 9 lessons from earlier days not caught up (status.lessons). The answer never says she's on track or on pace; it says plainly that 9 lessons from earlier days are waiting and that catching up first (a little more time today or this week, e.g. 20 more minutes a day) keeps the plan as it is. Kind, no guilt. proposedChange is null unless she asks for a change. Saying she's on track is a major error (cap 5.0).",
@@ -1796,7 +2042,14 @@ export const TEST_CASES: GoalTutorCase[] = [
         offeredToday: false,
         total: 7,
       },
-      status: { days: 3, extraMinutesPerDay: 15, kind: "behind", lessons: 7, options: [] },
+      status: {
+        challenges: null,
+        days: 3,
+        extraMinutesPerDay: 15,
+        kind: "behind",
+        lessons: 7,
+        options: [],
+      },
     },
     expectations: `${PLAN_STATUS_EXPECTATIONS} ${LOOKUP_EXPECTATIONS} Lívia asks for every lesson she's behind on; the context names 5 of 7. lookUps has catchUp, and the answer lists all 7 by title (the 5 plus "Quantização da energia" and "O efeito fotoelétrico"), says they're from earlier days and that doing them first keeps the plan, links the one in today's session to its block (/session?block=${BLOCK_CATCH_UP}) and the rest to Today (/today), which offers adding them to today. Listing only 5, or inventing lessons, is a major error (cap 5.0).`,
     id: "pt-lookup-catchup-all",

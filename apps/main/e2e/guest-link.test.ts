@@ -75,6 +75,7 @@ async function createPublicLesson() {
     }),
     libraryStepFixture({
       content: {
+        basis: null,
         options: [
           { id: "a", isCorrect: true, reason: "Right.", text: "A cloud" },
           { id: "b", isCorrect: false, reason: "A planet would spiral in.", text: "A planet" },

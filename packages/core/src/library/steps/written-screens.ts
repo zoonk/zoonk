@@ -151,6 +151,7 @@ function toTeachingContent(
     case "check":
       return {
         content: {
+          basis: null,
           ...optional("context", screen.context),
           ...imageField(screen, allowImage),
           options: shuffleAnswerOptions(screen.options).map((option, index) => ({
@@ -174,6 +175,7 @@ function toTeachingContent(
 
       return {
         content: {
+          basis: null,
           ...(acceptedAnswers.length > 0 ? { acceptedAnswers } : {}),
           ...optional("context", screen.context),
           keyPoints: screen.keyPoints.map((point) => point.trim()),

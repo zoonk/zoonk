@@ -176,7 +176,7 @@ function numberedOptionsIssue(content: {
  */
 export const checkContentSchema = z
   .object({
-    basis: questionBasisSchema.optional(),
+    basis: questionBasisSchema.nullable(),
     context: richTextSchema.optional(),
     image: stepImageRequestSchema.optional(),
     options: choiceOptionsSchema(checkOptionSchema),
@@ -199,7 +199,7 @@ export const checkContentSchema = z
 export const typedAnswerContentSchema = z
   .object({
     acceptedAnswers: z.array(optionTextSchema).max(MAX_KEY_POINTS).optional(),
-    basis: questionBasisSchema.optional(),
+    basis: questionBasisSchema.nullable(),
     context: richTextSchema.optional(),
     keyPoints: z.array(explanationSchema).min(1).max(MAX_KEY_POINTS),
     question: promptSchema,

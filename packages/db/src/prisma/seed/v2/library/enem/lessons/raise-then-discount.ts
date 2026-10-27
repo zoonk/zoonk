@@ -51,6 +51,7 @@ export const raiseThenDiscountLesson: SeedLesson = {
     },
     {
       content: {
+        basis: null,
         options: [
           option(
             "increase",
@@ -174,6 +175,7 @@ export const raiseThenDiscountLesson: SeedLesson = {
     },
     {
       content: {
+        basis: null,
         context: t(
           "In January, the price of gasoline at a station rose 20%. In February, it fell 20%.",
           "Em janeiro, o preço da gasolina num posto subiu 20%. Em fevereiro, caiu 20%.",
@@ -243,6 +245,7 @@ export const raiseThenDiscountLesson: SeedLesson = {
     },
     {
       content: {
+        basis: null,
         context: t(
           "An R$ 2,000 salary was cut by 20% and later raised by 20%. The worker says it's “back to normal”.",
           "Um salário de R$ 2.000 teve um corte de 20% e depois um aumento de 20%. O trabalhador diz que “voltou ao normal”.",

@@ -10,6 +10,7 @@ const OAB_EXAM = {
   official: true,
   otherDates: [],
   questionCount: 80,
+  questionsSource: null,
   rules: [],
   scoring: null,
   source: "https://oab.fgv.br/edital.pdf",
@@ -21,6 +22,8 @@ const OAB_EXAM = {
  * far behind she is and a mistake she made.
  */
 const SOFIA_PLAN = {
+  catchUp: null,
+  challenges: [],
   course: {
     description: null,
     levels: [
@@ -36,6 +39,7 @@ const SOFIA_PLAN = {
   estimate: { endDate: "2027-01-09", remainingHours: 190 },
   exam: OAB_EXAM,
   goal: {
+    cutoff: null,
     dailyMinutes: 120,
     kind: "exam",
     target: "Jurídico da Petrobras",
@@ -52,12 +56,24 @@ const SOFIA_PLAN = {
     },
   ],
   next: [
-    { date: "2026-11-03", items: [{ kind: "lesson", title: "Justiça do Trabalho na prática" }] },
+    {
+      date: "2026-11-03",
+      items: [{ kind: "lesson", title: "Justiça do Trabalho na prática" }],
+      moreItems: 0,
+    },
   ],
   phase: null,
   privateContent: false,
   scope: { kind: "plan" },
-  status: { days: 3, extraMinutesPerDay: 20, kind: "behind", options: [] },
+  setup: null,
+  status: {
+    challenges: null,
+    days: 3,
+    extraMinutesPerDay: 20,
+    kind: "behind",
+    lessons: null,
+    options: [],
+  },
   today: {
     date: "2026-10-14",
     items: [

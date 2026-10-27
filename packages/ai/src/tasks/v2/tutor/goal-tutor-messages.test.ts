@@ -4,11 +4,29 @@ import { TEST_TUTOR_LINKS } from "../_test-utils/tutor-links";
 import { createGoalTutorMessages, serializeGoalTutorMessages } from "./goal-tutor-messages";
 
 const CONTEXT = {
-  goal: { dailyMinutes: 30, kind: "exam", target: null, targetDate: "2026-11-08", title: "ENEM" },
+  catchUp: null,
+  challenges: [],
+  course: null,
+  estimate: { endDate: null, remainingHours: 0 },
+  exam: null,
+  goal: {
+    cutoff: null,
+    dailyMinutes: 30,
+    kind: "exam",
+    target: null,
+    targetDate: "2026-11-08",
+    title: "ENEM",
+  },
   language: "pt",
+  mistakes: [],
+  next: [],
+  phase: null,
   scope: { kind: "plan" },
+  setup: null,
+  status: null,
+  today: null,
   version: 1,
-} as PlanScopeContext;
+} satisfies PlanScopeContext;
 
 const FIRST = "o que é quórum de maioria absoluta?";
 const SECOND = "e maioria simples?";

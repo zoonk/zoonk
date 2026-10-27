@@ -223,6 +223,8 @@ async function buildPlanBuildingSnapshot(goal: Goal): Promise<PlanScopeContext> 
   const [exam, cutoff] = await Promise.all([loadExamNoticeFacts(goal), loadGoalCutoff(goal)]);
 
   return {
+    catchUp: null,
+    challenges: [],
     course: null,
     estimate: { endDate: null, remainingHours: 0 },
     exam,
@@ -232,6 +234,7 @@ async function buildPlanBuildingSnapshot(goal: Goal): Promise<PlanScopeContext> 
     next: [],
     phase: null,
     scope: { kind: "plan" },
+    setup: null,
     status: null,
     today: null,
     version: 1,

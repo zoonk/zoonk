@@ -28,6 +28,7 @@ async function createQuestionLesson() {
     steps: [
       {
         content: {
+          basis: null,
           options: [
             { id: `right-${uniqueId}`, isCorrect: true, reason: "Right.", text: correctOption },
             {

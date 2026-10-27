@@ -54,6 +54,7 @@ export const scientificNotationLesson: SeedLesson = {
     },
     {
       content: {
+        basis: null,
         options: [
           option(
             "right",
@@ -198,6 +199,7 @@ export const scientificNotationLesson: SeedLesson = {
     },
     {
       content: {
+        basis: null,
         options: [
           option(
             "bigger",
@@ -232,6 +234,7 @@ export const scientificNotationLesson: SeedLesson = {
     },
     {
       content: {
+        basis: null,
         options: [
           option(
             "right",

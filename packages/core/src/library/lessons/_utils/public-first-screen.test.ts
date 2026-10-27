@@ -12,6 +12,7 @@ const guessHook = {
 };
 
 const check = {
+  basis: null,
   context: "An atom is **mostly empty** space.",
   options: [
     { id: "a", isCorrect: true, reason: "Right: the nucleus is tiny.", text: "Empty space" },

@@ -36,6 +36,7 @@ async function writeAnswer({
     steps: [
       {
         content: {
+          basis: null,
           keyPoints: ["Use there is and there are to describe your home"],
           question: "Describe where you live using there is and there are.",
           sampleAnswer: SAMPLE,

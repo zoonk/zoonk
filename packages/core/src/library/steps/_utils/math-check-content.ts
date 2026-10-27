@@ -121,7 +121,7 @@ export function toMathCheckContent({
   | { ok: false; problems: string[] }
   | {
       ok: true;
-      content: { context?: string; options: object[]; question: string };
+      content: { basis: null; context?: string; options: object[]; question: string };
       item: Omit<MathCheckInput, "correctReason">;
     } {
   const input = repairCalculation({ input: written, language });
@@ -173,6 +173,7 @@ export function toMathCheckContent({
 
   return {
     content: {
+      basis: null,
       ...(filledContext ? { context: filledContext } : {}),
       options,
       question: fillMathText({ language, text: question, values }).trim(),

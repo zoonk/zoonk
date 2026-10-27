@@ -89,6 +89,7 @@ export const ownAShareLesson: SeedLesson = {
     },
     {
       content: {
+        basis: null,
         options: [
           option(
             "lost",
@@ -243,6 +244,7 @@ export const ownAShareLesson: SeedLesson = {
     },
     {
       content: {
+        basis: null,
         options: [
           option(
             "first",
@@ -283,6 +285,7 @@ export const ownAShareLesson: SeedLesson = {
     },
     {
       content: {
+        basis: null,
         context: t(
           "A friend thinks buying a share is like putting money in a savings account.",
           "Um amigo acha que comprar uma ação é como colocar dinheiro na poupança.",

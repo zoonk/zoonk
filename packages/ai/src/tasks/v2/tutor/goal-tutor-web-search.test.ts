@@ -17,13 +17,25 @@ vi.mock("ai", async (importOriginal) => {
 });
 
 const PLAN = {
+  catchUp: null,
+  challenges: [],
   course: null,
   estimate: { endDate: "2027-01-09", remainingHours: 190 },
-  goal: { dailyMinutes: 120, kind: "exam", targetDate: "2027-01-10", title: "OAB da Sofia" },
+  exam: null,
+  goal: {
+    cutoff: null,
+    dailyMinutes: 120,
+    kind: "exam",
+    target: null,
+    targetDate: "2027-01-10",
+    title: "OAB da Sofia",
+  },
   language: "pt",
+  mistakes: [],
   next: [],
   phase: null,
   scope: { kind: "plan" },
+  setup: null,
   status: null,
   today: null,
   version: 1,

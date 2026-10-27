@@ -57,6 +57,7 @@ export const wherePriceComesFromLesson: SeedLesson = {
     },
     {
       content: {
+        basis: null,
         options: [
           option(
             "ask",
@@ -201,6 +202,7 @@ export const wherePriceComesFromLesson: SeedLesson = {
     },
     {
       content: {
+        basis: null,
         options: [
           option(
             "expected",
@@ -245,6 +247,7 @@ export const wherePriceComesFromLesson: SeedLesson = {
     },
     {
       content: {
+        basis: null,
         context: t(
           "A company's share price dropped this morning, but nothing at the company changed: same sales, same plans, no news from it.",
           "O preço da ação de uma empresa caiu hoje de manhã, mas nada mudou na empresa: mesmas vendas, mesmos planos, nenhuma notícia dela.",

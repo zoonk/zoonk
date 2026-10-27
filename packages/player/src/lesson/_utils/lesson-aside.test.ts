@@ -54,7 +54,7 @@ describe(getLessonOutline, () => {
 
 /** A question that rests on the sentence `basis` quotes, when given. */
 function question(basis?: { position: number; quote: string }) {
-  const content = { ...playableStepContent.check, ...(basis ? { basis } : {}) };
+  const content = { ...playableStepContent.check, basis: basis ?? null };
   return { ...contentStep("check", { content }), position: 3 };
 }
 

@@ -30,7 +30,12 @@ const contents: StepContentByKind = {
     symbol: "ا",
   },
   challenge: challengeCaseFixture(),
-  check: { context: "A $60 jacket is 25% off.", options, question: "What do you pay?" },
+  check: {
+    basis: null,
+    context: "A $60 jacket is 25% off.",
+    options,
+    question: "What do you pay?",
+  },
   explanation: {
     exampleLineSlot: { idea: "A discount on something the learner buys." },
     image: { alt: "A price tag with 25% crossed out", prompt: "A price tag, 25% off" },
@@ -66,6 +71,7 @@ const contents: StepContentByKind = {
   translation: {},
   typedAnswer: {
     acceptedAnswers: ["45", "$45"],
+    basis: null,
     keyPoints: ["Takes 25% of 60", "Subtracts it from 60"],
     question: "Explain how you got the price.",
     sampleAnswer: "25% of 60 is 15, so 60 − 15 = 45.",
@@ -113,6 +119,7 @@ describe("step contract", () => {
 
   it("keeps a question whose options are pictures, every one of them, with no other picture", () => {
     const doorways = {
+      basis: null,
       options: [
         {
           id: "a",

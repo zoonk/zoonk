@@ -64,6 +64,7 @@ export const foodChainEnergyLesson: SeedLesson = {
     },
     {
       content: {
+        basis: null,
         options: [
           option(
             "ten",
@@ -194,6 +195,7 @@ export const foodChainEnergyLesson: SeedLesson = {
     },
     {
       content: {
+        basis: null,
         context: t(
           "A student claims that a diet based on plants needs less farmland than one based on beef.",
           "Um estudante afirma que uma alimentação baseada em vegetais precisa de menos área de plantio do que uma baseada em carne bovina.",

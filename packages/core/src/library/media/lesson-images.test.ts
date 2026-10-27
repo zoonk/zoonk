@@ -110,7 +110,7 @@ describe(listLessonImageSteps, () => {
       variant: "guess",
     };
 
-    const check = { image, options, question: "Which caption fits the picture?" };
+    const check = { basis: null, image, options, question: "Which caption fits the picture?" };
 
     const steps = await Promise.all([
       libraryStepFixture({ content: guess, kind: "hook", lessonId: lesson.id, position: 0 }),

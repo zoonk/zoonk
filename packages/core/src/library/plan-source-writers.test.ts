@@ -695,6 +695,7 @@ const SCOPE = { generalGoal: null, language: "en", ownerId: null, targetLanguage
 function checkScreen(skillId: string): LessonScreenToSave {
   return {
     content: {
+      basis: null,
       options: [
         { id: "right", isCorrect: true, reason: "Two halves make a whole.", text: "2" },
         { id: "wrong", isCorrect: false, reason: "A whole contains two halves.", text: "3" },

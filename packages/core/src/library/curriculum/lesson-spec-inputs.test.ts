@@ -65,7 +65,7 @@ describe(loadLessonSpecInputs, () => {
         position: 0,
       }),
       libraryStepFixture({
-        content: { context: "It's −12 °C in Chicago.", question: "Is −15 °C colder?" },
+        content: { basis: null, context: "It's −12 °C in Chicago.", question: "Is −15 °C colder?" },
         kind: "check",
         lessonId: written.id,
         position: 1,

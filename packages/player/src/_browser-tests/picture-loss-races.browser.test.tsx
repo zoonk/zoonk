@@ -41,6 +41,7 @@ function openPictures(overrides: Partial<LessonPlayerAdapters> = {}, ageMs = 0) 
   const current = contentStep("typedAnswer", {
     content: {
       acceptedAnswers: [ANSWER],
+      basis: null,
       keyPoints: ["Sunlight becomes stored energy"],
       question: "What does a plant do with sunlight?",
       sampleAnswer: ANSWER,

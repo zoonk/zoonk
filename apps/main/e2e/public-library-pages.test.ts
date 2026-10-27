@@ -86,6 +86,7 @@ async function createLibraryCourse() {
     }),
     libraryStepFixture({
       content: {
+        basis: null,
         options: [
           { id: "a", isCorrect: true, reason: "Right.", text: "A cloud" },
           {

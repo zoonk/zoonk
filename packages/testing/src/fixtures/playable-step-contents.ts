@@ -30,6 +30,7 @@ export const playableStepContent = {
   },
   challenge: challengeCaseFixture(),
   check: {
+    basis: null,
     options: [
       {
         id: "path",
@@ -102,6 +103,7 @@ export const playableStepContent = {
   },
   typedAnswer: {
     acceptedAnswers: ["It shows where the electron is likely to be"],
+    basis: null,
     keyPoints: [
       "We can't know the electron's exact position or path",
       "The cloud shows where it's likely to be found",
@@ -130,6 +132,7 @@ export type PlayableStepKind = keyof typeof playableStepContent;
  * option asks for its own picture, described without naming it.
  */
 export const pictureCheckContent = {
+  basis: null,
   options: [
     {
       id: "gothic",
@@ -170,6 +173,7 @@ export const pictureCheckContent = {
  * order of `image.parts`, so the right option (the ovary's number) comes from that list.
  */
 export const numberedCheckContent = {
+  basis: null,
   image: {
     alt: "A flower cut in half lengthwise, with three numbered parts",
     parts: ["petal", "stigma", "ovary"],

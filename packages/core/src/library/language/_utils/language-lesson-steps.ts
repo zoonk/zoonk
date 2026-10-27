@@ -111,6 +111,7 @@ function getWritingStep(writing: LanguageLessonContent["writing"]) {
   return [
     step("typedAnswer", {
       acceptedAnswers: writing.answers,
+      basis: null,
       keyPoints: writing.keyPoints,
       question: writing.prompt,
       sampleAnswer,

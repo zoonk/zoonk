@@ -201,7 +201,7 @@ describe(writeLessonContent, () => {
     }
   });
 
-  it("stores the sentence each question rests on when its quote is on that screen, and leaves out one that isn't", async () => {
+  it("stores the sentence each question rests on when its quote is on that screen, and stores null for one that is not", async () => {
     const { lesson, workflowRunId } = await createClaimedLesson();
     const written = writtenTemperatureLesson();
     const application = written.screens[7];
@@ -229,7 +229,7 @@ describe(writeLessonContent, () => {
       undefined,
       undefined,
       { position: 4, quote: "Count the degrees to zero, then the degrees after it." },
-      undefined,
+      null,
     ]);
   });
 

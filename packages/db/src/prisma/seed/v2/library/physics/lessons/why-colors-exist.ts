@@ -54,6 +54,7 @@ export const whyColorsExistLesson: SeedLesson = {
     },
     {
       content: {
+        basis: null,
         options: [
           option(
             "red",
@@ -182,6 +183,7 @@ export const whyColorsExistLesson: SeedLesson = {
     },
     {
       content: {
+        basis: null,
         options: [
           option(
             "drops",
@@ -233,6 +235,7 @@ export const whyColorsExistLesson: SeedLesson = {
     },
     {
       content: {
+        basis: null,
         context: t(
           "Your little cousin asks why fireworks come in different colors.",
           "Sua prima pequena pergunta por que os fogos de artifício têm cores diferentes.",

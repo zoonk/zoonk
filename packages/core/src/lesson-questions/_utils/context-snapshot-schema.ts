@@ -40,43 +40,36 @@ const tutorLinkSchema = z
     z.object({ kind: z.literal("page"), page: z.enum(GOAL_TUTOR_PAGES) }),
     z.object({ key: z.string(), kind: z.literal("subject") }),
   ])
-  .nullable()
-  .optional();
+  .nullable();
 
 const planNextItemSchema = z.object({
   kind: z.string(),
-  link: tutorLinkSchema,
+  link: tutorLinkSchema.optional(),
   plusRequired: plusMarkSchema,
   title: z.string(),
 });
 
 const planScopeSnapshotSchema = z.object({
-  // Plan questions asked before the buddy saw what earlier days left have none.
   catchUp: z
     .object({
       lessons: z.array(
-        z.object({ inToday: z.boolean(), link: tutorLinkSchema.default(null), title: z.string() }),
+        z.object({ inToday: z.boolean(), link: tutorLinkSchema, title: z.string() }),
       ),
       offeredToday: z.boolean(),
       total: z.number().int(),
     })
-    .nullable()
-    .optional(),
-  // Plan questions asked before the buddy saw the challenges ahead have none.
-  challenges: z
-    .array(
-      z.object({
-        date: z.string().nullable(),
-        kind: z.enum(["challenge", "mock", "weekly"]),
-        link: tutorLinkSchema.default(null),
-        locked: z.boolean(),
-        when: z.enum(["date", "nextSession", "queued"]),
-      }),
-    )
-    .optional(),
+    .nullable(),
+  challenges: z.array(
+    z.object({
+      date: z.string().nullable(),
+      kind: z.enum(["challenge", "mock", "weekly"]),
+      link: tutorLinkSchema,
+      locked: z.boolean(),
+      when: z.enum(["date", "nextSession", "queued"]),
+    }),
+  ),
   course: courseOutlineSchema.nullable(),
   estimate: z.object({ endDate: z.string().nullable(), remainingHours: z.number() }),
-  // Plan questions asked before the buddy read the exam's notice have no exam facts.
   exam: z
     .object({
       days: z.array(z.object({ date: z.string(), label: z.string().nullable() })),
@@ -86,11 +79,9 @@ const planScopeSnapshotSchema = z.object({
       official: z.boolean(),
       otherDates: z.array(z.object({ date: z.string(), label: z.string() })),
       questionCount: z.number().nullable(),
-      // Snapshots saved before the counts came from the latest edition when the notice gives none.
       questionsSource: z
         .object({ edition: z.string().nullable(), title: z.string().nullable(), url: z.string() })
-        .nullable()
-        .optional(),
+        .nullable(),
       rules: z.array(z.string()),
       scoring: z.string().nullable(),
       source: z.string().nullable(),
@@ -103,46 +94,35 @@ const planScopeSnapshotSchema = z.object({
         }),
       ),
     })
-    .nullable()
-    .optional(),
+    .nullable(),
   goal: z.object({
-    // Plan questions asked before the buddy knew the target's last cut-off have none, and those
-    // asked before it knew the cut-off's scale have no `maxScore`.
     cutoff: z
       .object({
         edition: z.string().nullable(),
-        maxScore: z.number().optional(),
+        maxScore: z.number(),
         quota: z.string().nullable(),
         score: z.number(),
         source: z.string(),
         target: z.string(),
       })
-      .nullable()
-      .optional(),
+      .nullable(),
     dailyMinutes: z.number(),
     kind: z.string(),
-    target: z.string().nullable().optional(),
+    target: z.string().nullable(),
     targetDate: z.string().nullable(),
     title: z.string(),
   }),
   language: z.string(),
-  // Plan questions asked before the buddy became the goal's tutor have no mistakes or setup.
-  mistakes: z
-    .array(
-      z.object({
-        answer: z.string().nullable(),
-        correctAnswer: z.string().nullable(),
-        question: z.string(),
-        skill: z.string().nullable(),
-      }),
-    )
-    .optional(),
-  next: z.array(
+  mistakes: z.array(
     z.object({
-      date: z.string(),
-      items: z.array(planNextItemSchema),
-      moreItems: z.number().int().optional(),
+      answer: z.string().nullable(),
+      correctAnswer: z.string().nullable(),
+      question: z.string(),
+      skill: z.string().nullable(),
     }),
+  ),
+  next: z.array(
+    z.object({ date: z.string(), items: z.array(planNextItemSchema), moreItems: z.number().int() }),
   ),
   phase: z
     .object({
@@ -154,9 +134,8 @@ const planScopeSnapshotSchema = z.object({
           title: z.string(),
         }),
       ),
-      // Snapshots saved before the phase listed only the chapters ahead listed all of them.
-      chaptersDone: z.number().int().optional(),
-      chaptersLater: z.number().int().optional(),
+      chaptersDone: z.number().int(),
+      chaptersLater: z.number().int(),
       endDate: z.string().nullable(),
       index: z.number(),
       kind: z.string(),
@@ -168,27 +147,23 @@ const planScopeSnapshotSchema = z.object({
   scope: z.object({ kind: z.literal("plan") }),
   // Questions to the buddy from its own conversation have no screen.
   screen: screenSnapshotSchema.optional(),
-  // Questions asked from a screen, or before the buddy linked the open goal, have none.
+  // Questions asked from a screen have none.
   selectedGoal: z.literal(true).optional(),
   setup: z
     .object({
       areas: z.array(
         z.object({
-          // Snapshots saved before a focus could name part of an area.
-          focusPart: z.string().nullable().default(null),
+          focusPart: z.string().nullable(),
           focused: z.boolean(),
           name: z.string(),
-          // Snapshots saved before areas could start past their basics.
-          pastBasics: z.boolean().default(false),
-          // Snapshots saved before the learner could ask for less of an area.
-          reduced: z.boolean().default(false),
+          pastBasics: z.boolean(),
+          reduced: z.boolean(),
           skipped: z.boolean(),
         }),
       ),
       coverage: z
         .object({
-          // Snapshots saved before plans kept every topic in counted whole skills.
-          coreFits: z.boolean().default(true),
+          coreFits: z.boolean(),
           coveredShare: z.number(),
           fits: z.boolean(),
           measure: z.enum(["exam", "goal"]),
@@ -199,14 +174,12 @@ const planScopeSnapshotSchema = z.object({
       ownLevel: z.string().nullable(),
       practiceBias: z.string(),
       weekdayMinutes: z.array(z.number()),
-      // Plans saved before the exam's written tests had a cadence have none.
-      writtenCadence: z.string().nullable().optional(),
+      writtenCadence: z.string().nullable(),
     })
-    .optional(),
+    .nullable(),
   status: z
     .object({
-      // Snapshots saved before challenges counted toward a finished plan have none.
-      challenges: z.number().nullable().optional(),
+      challenges: z.number().nullable(),
       days: z.number().nullable(),
       extraMinutesPerDay: z.number().nullable(),
       kind: z.enum([
@@ -218,7 +191,7 @@ const planScopeSnapshotSchema = z.object({
         "onTrack",
         "pastDate",
       ]),
-      lessons: z.number().nullable().optional(),
+      lessons: z.number().nullable(),
       options: z.array(z.string()),
     })
     .nullable(),
@@ -230,7 +203,7 @@ const planScopeSnapshotSchema = z.object({
           canDo: z.string().nullable(),
           catchUp: z.literal(true).optional(),
           kind: z.string(),
-          link: tutorLinkSchema,
+          link: tutorLinkSchema.optional(),
           minutes: z.number().nullable(),
           plusRequired: plusMarkSchema,
           reason: z.enum(PLAN_ITEM_REASONS),

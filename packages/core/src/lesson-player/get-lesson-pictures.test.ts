@@ -17,6 +17,7 @@ import { getPlayableLibraryLesson } from "./get-playable-library-lesson";
 const picture = { alt: "Otávio stands next to a blue bike.", prompt: "Otávio next to a bike" };
 
 const check = {
+  basis: null,
   image: picture,
   options: [
     {

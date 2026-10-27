@@ -74,6 +74,7 @@ export const electronCloudLesson: SeedLesson = {
     },
     {
       content: {
+        basis: null,
         options: [
           option(
             "path",
@@ -133,6 +134,7 @@ export const electronCloudLesson: SeedLesson = {
     },
     {
       content: {
+        basis: null,
         options: [
           option(
             "push",
@@ -287,6 +289,7 @@ export const electronCloudLesson: SeedLesson = {
     },
     {
       content: {
+        basis: null,
         context: t(
           "A friend says: “The electron would fall into the nucleus if it stopped moving.”",
           "Um amigo diz: “O elétron cairia no núcleo se parasse de se mexer.”",

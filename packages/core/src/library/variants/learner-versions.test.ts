@@ -23,6 +23,7 @@ const toolExplanation = {
 
 /** A check whose right answer differs from the shared one, so grading shows which was used. */
 const toolCheck = {
+  basis: null,
   options: [
     { id: "sum", isCorrect: false, reason: "SUM adds them up.", text: "=SUM(B2:B9)" },
     { id: "average", isCorrect: true, reason: "AVERAGE gives the mean.", text: "=AVERAGE(B2:B9)" },

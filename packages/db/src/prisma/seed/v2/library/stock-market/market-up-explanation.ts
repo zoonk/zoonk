@@ -73,6 +73,7 @@ export const marketUpExplanation: SeedLesson = {
     },
     {
       content: {
+        basis: null,
         options: [
           option(
             "basket",

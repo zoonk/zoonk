@@ -39,13 +39,18 @@ function instructions(goal: string[], screen?: string) {
 
 function planContext(kind: string): PlanScopeContext {
   return {
+    catchUp: null,
+    challenges: [],
     course: null,
     estimate: { endDate: null, remainingHours: 10 },
-    goal: { dailyMinutes: 30, kind, targetDate: null, title: "Goal" },
+    exam: null,
+    goal: { cutoff: null, dailyMinutes: 30, kind, target: null, targetDate: null, title: "Goal" },
     language: "en",
+    mistakes: [],
     next: [],
     phase: null,
     scope: { kind: "plan" },
+    setup: null,
     status: null,
     today: null,
     version: 1,

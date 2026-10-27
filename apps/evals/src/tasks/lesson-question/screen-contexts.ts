@@ -82,6 +82,8 @@ export const COMPOUND_INTEREST_CHAPTER = {
 } satisfies ChapterScopeContext;
 
 export const QUANTUM_PLAN = {
+  catchUp: null,
+  challenges: [],
   course: {
     description: "Quantum physics from the math it needs to entanglement and quantum computing.",
     levels: [
@@ -110,16 +112,28 @@ export const QUANTUM_PLAN = {
     title: "Quantum physics from scratch",
   },
   estimate: { endDate: "2027-03-14", remainingHours: 62 },
+  exam: null,
   goal: {
+    cutoff: null,
     dailyMinutes: 20,
     kind: "learn",
+    target: null,
     targetDate: null,
     title: "Understand quantum physics from scratch",
   },
   language: "en",
+  mistakes: [],
   next: [
-    { date: "2026-09-28", items: [{ kind: "lesson", title: "Computing in scientific notation" }] },
-    { date: "2026-09-29", items: [{ kind: "review", title: "Review: scientific notation" }] },
+    {
+      date: "2026-09-28",
+      items: [{ kind: "lesson", title: "Computing in scientific notation" }],
+      moreItems: 0,
+    },
+    {
+      date: "2026-09-29",
+      items: [{ kind: "review", title: "Review: scientific notation" }],
+      moreItems: 0,
+    },
   ],
   phase: {
     chapters: [
@@ -132,13 +146,23 @@ export const QUANTUM_PLAN = {
       },
       { lessonsDone: 0, lessonsTotal: 4, state: "upcoming", title: "Functions and graphs" },
     ],
+    chaptersDone: 0,
+    chaptersLater: 0,
     endDate: "2026-10-25",
     index: 0,
     kind: "foundations",
     name: "Math you'll need",
   },
   scope: { kind: "plan" },
-  status: { days: 2, extraMinutesPerDay: 10, kind: "behind", options: [] },
+  setup: null,
+  status: {
+    challenges: null,
+    days: 2,
+    extraMinutesPerDay: 10,
+    kind: "behind",
+    lessons: null,
+    options: [],
+  },
   today: {
     date: "2026-09-27",
     items: [
@@ -173,10 +197,21 @@ export const QUANTUM_PLAN = {
 } satisfies PlanScopeContext;
 
 export const ENEM_PLAN = {
+  catchUp: null,
+  challenges: [],
   course: null,
   estimate: { endDate: "2026-11-08", remainingHours: 41 },
-  goal: { dailyMinutes: 60, kind: "exam", targetDate: "2026-11-08", title: "ENEM 2026" },
+  exam: null,
+  goal: {
+    cutoff: null,
+    dailyMinutes: 60,
+    kind: "exam",
+    target: null,
+    targetDate: "2026-11-08",
+    title: "ENEM 2026",
+  },
   language: "pt",
+  mistakes: [],
   next: [
     {
       date: "2026-09-28",
@@ -184,21 +219,32 @@ export const ENEM_PLAN = {
         { kind: "lesson", title: "Funções do 1º grau" },
         { kind: "review", title: "Revisão: porcentagem" },
       ],
+      moreItems: 0,
     },
-    { date: "2026-09-29", items: [{ kind: "lesson", title: "Leitura de gráficos" }] },
+    { date: "2026-09-29", items: [{ kind: "lesson", title: "Leitura de gráficos" }], moreItems: 0 },
   ],
   phase: {
     chapters: [
       { lessonsDone: 4, lessonsTotal: 4, state: "done", title: "Porcentagem e razão" },
       { lessonsDone: 1, lessonsTotal: 5, state: "current", title: "Funções" },
     ],
+    chaptersDone: 0,
+    chaptersLater: 0,
     endDate: "2026-10-11",
     index: 1,
     kind: "core",
     name: "Matemática que mais cai",
   },
   scope: { kind: "plan" },
-  status: { days: null, extraMinutesPerDay: null, kind: "onTrack", options: [] },
+  setup: null,
+  status: {
+    challenges: null,
+    days: null,
+    extraMinutesPerDay: null,
+    kind: "onTrack",
+    lessons: null,
+    options: [],
+  },
   today: {
     date: "2026-09-27",
     items: [
@@ -226,6 +272,8 @@ export const ENEM_PLAN = {
 
 /** A plan built from a course, in Portuguese: the plan's "Ask" answers about the course too. */
 export const ACCOUNTING_PLAN = {
+  catchUp: null,
+  challenges: [],
   course: {
     description: "Contabilidade do zero para quem tem ou quer abrir um pequeno negócio.",
     levels: [
@@ -244,14 +292,24 @@ export const ACCOUNTING_PLAN = {
     title: "Contabilidade",
   },
   estimate: { endDate: "2026-12-06", remainingHours: 18 },
+  exam: null,
   goal: {
+    cutoff: null,
     dailyMinutes: 15,
     kind: "learn",
+    target: null,
     targetDate: null,
     title: "Entender a contabilidade da minha loja",
   },
   language: "pt",
-  next: [{ date: "2026-09-28", items: [{ kind: "lesson", title: "Competência na prática" }] }],
+  mistakes: [],
+  next: [
+    {
+      date: "2026-09-28",
+      items: [{ kind: "lesson", title: "Competência na prática" }],
+      moreItems: 0,
+    },
+  ],
   phase: {
     chapters: [
       { lessonsDone: 3, lessonsTotal: 3, state: "done", title: "Para que serve a contabilidade" },
@@ -262,13 +320,23 @@ export const ACCOUNTING_PLAN = {
         title: "Regimes de caixa e competência",
       },
     ],
+    chaptersDone: 0,
+    chaptersLater: 0,
     endDate: "2026-10-18",
     index: 0,
     kind: "foundations",
     name: "O básico",
   },
   scope: { kind: "plan" },
-  status: { days: null, extraMinutesPerDay: null, kind: "onTrack", options: [] },
+  setup: null,
+  status: {
+    challenges: null,
+    days: null,
+    extraMinutesPerDay: null,
+    kind: "onTrack",
+    lessons: null,
+    options: [],
+  },
   today: {
     date: "2026-09-27",
     items: [

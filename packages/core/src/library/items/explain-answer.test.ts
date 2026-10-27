@@ -36,6 +36,7 @@ async function createTypedItem() {
 
 const typedAnswerStep = {
   acceptedAnswers: ["45", "R$ 45"],
+  basis: null,
   keyPoints: ["Takes 25% of 60", "Subtracts it from 60"],
   question: "A R$ 60 shirt is 25% off. How much do you pay?",
   sampleAnswer: "25% of 60 is 15, so you pay R$ 45.",

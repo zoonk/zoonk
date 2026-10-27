@@ -31,6 +31,7 @@ function toSteps(explanation: QuickExplanation): ExplanationStep[] {
     })),
     {
       content: {
+        basis: null,
         options: shuffleAnswerOptions(explanation.check.options).map((option, index) =>
           toCheckOption(option, index),
         ),

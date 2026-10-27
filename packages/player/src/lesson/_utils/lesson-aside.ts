@@ -115,7 +115,7 @@ export function getLessonRecap(
 /**
  * The sentence "From the lesson" marks after a wrong answer: the one the question rests on (its
  * `basis`, which code found on that screen when the lesson was written), when the recap shows that
- * screen. Lessons written before bases, and questions whose basis is another screen, mark nothing.
+ * screen. Questions with no basis or whose basis is another screen mark nothing.
  */
 export function getRecapMark({
   recap,

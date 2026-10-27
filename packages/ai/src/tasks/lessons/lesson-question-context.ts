@@ -130,9 +130,9 @@ export type ExamFactsContext = {
   scoring: string | null;
   /**
    * Where the subjects' counts marked `fromLatestEdition` come from: the exam's latest edition, as
-   * one source counted it. Absent when the notice counts its subjects itself.
+   * one source counted it. Null when the notice counts its subjects itself.
    */
-  questionsSource?: { edition: string | null; title: string | null; url: string } | null;
+  questionsSource: { edition: string | null; title: string | null; url: string } | null;
   /** Where the facts come from: the notice's address. */
   source: string | null;
   /**
@@ -159,10 +159,9 @@ export type PlanScopeContext = {
    * `inToday` when today's session already holds it (the session opens with it), with where it
    * opens (none when nothing opens it yet), and `total` for all of them. `offeredToday`: Today
    * offers adding the ones today doesn't hold to today with one tap; otherwise the next days open
-   * with them. Which day each one came from isn't kept. Null or absent when nothing is left from
-   * earlier days.
+   * with them. Which day each one came from isn't kept. Null when nothing is left from earlier days.
    */
-  catchUp?: {
+  catchUp: {
     lessons: { inToday: boolean; link: TutorLink | null; title: string }[];
     offeredToday: boolean;
     total: number;
@@ -174,7 +173,7 @@ export type PlanScopeContext = {
    * its day; `nextSession`: the learner's next session duels it; `queued`: after the challenge
    * before it), whether starting it needs Plus (`locked`) and where it opens.
    */
-  challenges?: {
+  challenges: {
     date: string | null;
     kind: "challenge" | "mock" | "weekly";
     link: TutorLink | null;
@@ -184,24 +183,23 @@ export type PlanScopeContext = {
   /** Null when the plan isn't built from a course. */
   course: CourseOutline | null;
   estimate: { endDate: string | null; remainingHours: number };
-  /** The exam's facts from its stored notice; absent for other goals and exams without one. */
-  exam?: ExamFactsContext | null;
+  /** The exam's facts from its stored notice; null for other goals and exams without one. */
+  exam: ExamFactsContext | null;
   goal: {
     dailyMinutes: number;
     kind: string;
     /** What the learner said they're aiming for (a score, a course, a position); null without it. */
-    target?: string | null;
+    target: string | null;
     /**
      * The last published cut-off of that target, with what it's for and its source: where the bar
-     * was, never a promise. Absent when no source published one.
+     * was, never a promise. Null when no source published one.
      */
-    cutoff?: {
+    cutoff: {
       edition: string | null;
       /**
        * The top of the scale `score` is on: 7 out of 10 reads differently from 7 out of 100.
-       * Absent from questions asked before the buddy knew it.
        */
-      maxScore?: number;
+      maxScore: number;
       quota: string | null;
       score: number;
       source: string;
@@ -212,7 +210,7 @@ export type PlanScopeContext = {
   };
   language: string;
   /** The learner's latest open mistakes in this goal, newest first, for "explain my mistake". */
-  mistakes?: {
+  mistakes: {
     answer: string | null;
     correctAnswer: string | null;
     question: string;
@@ -223,7 +221,7 @@ export type PlanScopeContext = {
     date: string;
     /** `link` for a challenge or a mock, whose page opens it before its day. */
     items: { kind: string; link?: TutorLink | null; plusRequired?: true; title: string }[];
-    moreItems?: number;
+    moreItems: number;
   }[];
   /**
    * The current phase: its chapters still ahead (the current one, then the next few), how many
@@ -231,8 +229,8 @@ export type PlanScopeContext = {
    */
   phase: {
     chapters: { lessonsDone: number; lessonsTotal: number; state: string; title: string }[];
-    chaptersDone?: number;
-    chaptersLater?: number;
+    chaptersDone: number;
+    chaptersLater: number;
     endDate: string | null;
     index: number;
     kind: string;
@@ -262,23 +260,22 @@ export type PlanScopeContext = {
    * How the learner shaped the plan, so the buddy can say what a change would touch: the plan's
    * areas (focused, given less time, started past their basics or left out), minutes per weekday
    * (Sunday first, 0 for rest days), light weeks, how lessons feel, the level the learner gave and
-   * whether their time covers the goal. Missing from plan questions asked before the buddy became
-   * the goal's tutor.
+   * whether their time covers the goal. Null while the plan is being built.
    */
-  setup?: {
+  setup: {
     areas: {
       focused: boolean;
-      /** The part of a focused area the learner named ("Biology and Chemistry"); absent when whole. */
-      focusPart?: string | null;
+      /** The part of a focused area the learner named ("Biology and Chemistry"); null when whole. */
+      focusPart: string | null;
       name: string;
-      pastBasics?: boolean;
+      pastBasics: boolean;
       /** The learner wants less of it: it keeps its core, and its depth goes to other areas first. */
-      reduced?: boolean;
+      reduced: boolean;
       skipped: boolean;
     }[];
     coverage: {
       /** Every topic is in the plan (each skill's core); false only when even the cores don't fit. */
-      coreFits?: boolean;
+      coreFits: boolean;
       /** The share of everything, in depth, the learner's time covers. */
       coveredShare: number;
       fits: boolean;
@@ -291,8 +288,8 @@ export type PlanScopeContext = {
     practiceBias: string;
     weekdayMinutes: number[];
     /** When the exam's written tests are practiced: weekly, biweekly or finalWeeks. */
-    writtenCadence?: string | null;
-  };
+    writtenCadence: string | null;
+  } | null;
   /**
    * Ahead or behind by days, with the fix, past its date with lessons left (the plan doesn't end:
    * it waits for the learner to adjust it), every lesson done with `challenges` phases' challenges
@@ -301,7 +298,7 @@ export type PlanScopeContext = {
    * first), when that's why, or the lessons left once the date came.
    */
   status: {
-    challenges?: number | null;
+    challenges: number | null;
     days: number | null;
     extraMinutesPerDay: number | null;
     kind:
@@ -312,7 +309,7 @@ export type PlanScopeContext = {
       | "needsAdjusting"
       | "onTrack"
       | "pastDate";
-    lessons?: number | null;
+    lessons: number | null;
     options: string[];
   } | null;
   /** From today's session once it's built, otherwise from the plan's items for today. */

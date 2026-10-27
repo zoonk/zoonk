@@ -41,6 +41,7 @@ export function workedExampleStep(id: string): PlayableTeachingStep {
 
 export function checkStep(id: string): PlayableTeachingStep {
   return teachingStep("check", id, {
+    basis: null,
     options: [
       { id: "right", isCorrect: true, reason: "Because it is.", text: "Right" },
       { id: "wrong", isCorrect: false, reason: "That's the trap.", text: "Wrong" },
@@ -63,6 +64,7 @@ export function hookGuessStep(id: string): PlayableTeachingStep {
 
 export function typedAnswerStep(id: string): PlayableTeachingStep {
   return teachingStep("typedAnswer", id, {
+    basis: null,
     keyPoints: ["Names the cloud"],
     question: "Why a cloud?",
     sampleAnswer: "Because it maps chances.",
@@ -73,6 +75,7 @@ export function typedAnswerStep(id: string): PlayableTeachingStep {
 export function numberAnswerStep(id: string): PlayableTeachingStep {
   return teachingStep("typedAnswer", id, {
     acceptedAnswers: ["20"],
+    basis: null,
     keyPoints: ["Finds 20"],
     question: "What is 25% of 80?",
     sampleAnswer: "20",

@@ -160,14 +160,14 @@ describe(addQuestionBases, () => {
       basis: { position: 3, quote: "Count the degrees to zero, then the degrees after it." },
     });
 
-    expect(contentAt(withBases, APPLICATION)).not.toHaveProperty("basis");
+    expect(contentAt(withBases, APPLICATION)).toHaveProperty("basis", null);
   });
 
   it("leaves a question without a basis when its reading screen isn't stored", () => {
     const positions = screens.map((_, index) => (index === 1 ? null : index));
     const withBases = addQuestionBases({ lesson, positions, screens });
 
-    expect(contentAt(withBases, CALCULATION)).not.toHaveProperty("basis");
+    expect(contentAt(withBases, CALCULATION)).toHaveProperty("basis", null);
     expect(contentAt(withBases, WHY_CHECK)).toHaveProperty("basis.position", 4);
   });
 });

@@ -61,7 +61,7 @@ function toSubject({
 /** Where the latest edition's counts come from, when a subject's count is one. */
 function toQuestionsSource(structure: Structure): Pick<ExamFactsContext, "questionsSource"> {
   const source = getPastQuestionsSource(structure);
-  return source ? { questionsSource: source } : {};
+  return { questionsSource: source };
 }
 
 function toFacts({

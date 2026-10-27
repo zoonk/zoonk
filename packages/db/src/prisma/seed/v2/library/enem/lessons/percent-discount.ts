@@ -70,6 +70,7 @@ export const percentDiscountLesson: SeedLesson = {
     },
     {
       content: {
+        basis: null,
         options: [
           option(
             "discount",
@@ -194,6 +195,7 @@ export const percentDiscountLesson: SeedLesson = {
     },
     {
       content: {
+        basis: null,
         context: t(
           "A store advertises: **“Buy 3, pay for 2.”**",
           "Uma loja anuncia: **“Leve 3, pague 2.”**",
@@ -249,6 +251,7 @@ export const percentDiscountLesson: SeedLesson = {
     },
     {
       content: {
+        basis: null,
         context: t(
           "A store sells T-shirts for R$ 60 each and advertises “buy 3, pay for 2”. A friend says that's a 50% discount.",
           "Uma loja vende camisetas a R$ 60 cada e anuncia “leve 3, pague 2”. Um amigo diz que isso é 50% de desconto.",

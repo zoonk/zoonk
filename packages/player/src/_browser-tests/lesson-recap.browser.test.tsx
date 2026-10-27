@@ -9,7 +9,7 @@ import { contentStep, explanationStep } from "../preview/preview-steps";
 /**
  * "From the lesson" beside a question on a wide screen (folded under it on a phone), and the
  * sentence it marks there after a wrong answer: the one the question rests on, when the recap shows
- * that screen. Lessons written before questions had a basis show the recap as they always did.
+ * that screen. Questions with no quoted basis still show the recap.
  */
 
 const RIGHT_OPTION = "Where the electron is most likely to be found";
@@ -35,9 +35,7 @@ function phoneRecapTitle(): string | null {
 
 /** A question on the electron cloud, resting on a sentence of the screen at `position`. */
 function question(basis?: { position: number; quote: string }) {
-  return contentStep("check", {
-    content: { ...playableStepContent.check, ...(basis ? { basis } : {}) },
-  });
+  return contentStep("check", { content: { ...playableStepContent.check, basis: basis ?? null } });
 }
 
 async function answer(option: string, verdict: string) {
@@ -90,7 +88,7 @@ describe("lesson recap", () => {
     renderLessonPlayer({ lesson });
     await page.getByRole("button", { name: /^Next/u }).click();
 
-    // A lesson written before questions had a basis: the recap as it always was.
+    // A question with no quoted basis still shows the recap.
     await answer(WRONG_OPTION, "Not quite");
     await expect.element(aside().getByText("A cloud, not a little ball")).toBeVisible();
     expect(markedText()).toBeNull();
