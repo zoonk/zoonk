@@ -240,7 +240,7 @@ function SkillRises() {
       <StepRows>
         {rises.map((move) => (
           <StepRow className="justify-between" key={move.skillId}>
-            <span className="min-w-0 truncate font-medium">{move.name}</span>
+            <span className="min-w-0 font-medium text-pretty">{move.name}</span>
             <span className="text-muted-foreground shrink-0 font-mono text-xs">
               {t.rich("{from} → <strong>{to}</strong>", {
                 from: stateLabel({ state: move.from }),
@@ -272,7 +272,7 @@ function TomorrowRow() {
       <StepRows>
         <StepRow>
           <BookOpenIcon aria-hidden="true" />
-          <span className="min-w-0 flex-1 truncate font-medium">{summary.tomorrow.title}</span>
+          <span className="min-w-0 flex-1 font-medium text-pretty">{summary.tomorrow.title}</span>
         </StepRow>
       </StepRows>
     </section>
