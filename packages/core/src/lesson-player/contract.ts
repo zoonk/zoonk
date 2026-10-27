@@ -375,9 +375,7 @@ export const answerExplanationInputSchema = z
 export const answerExplanationSchema = z
   .object({
     explanation: z.string(),
-    explanationId: z
-      .uuid()
-      .meta({ description: "Vote on it at /me/content-votes/answerExplanation/{explanationId}" }),
+    explanationId: z.uuid().meta({ description: "The answer explanation this feedback is about" }),
     reused: z
       .boolean()
       .meta({ description: "Another learner gave the same answer before, so no model ran" }),

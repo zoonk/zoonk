@@ -55,18 +55,6 @@ function loadLearnerModel(userId: string) {
   ]);
 }
 
-/** Votes and messages the learner sent about content and the app. */
-function loadFeedback(userId: string) {
-  return Promise.all([
-    prisma.contentFeedback.findMany({
-      omit: { model: true, promptVersion: true, runId: true },
-      orderBy: byCreation,
-      where: { userId },
-    }),
-    prisma.feedback.findMany({ omit: { status: true }, orderBy: byCreation, where: { userId } }),
-  ]);
-}
-
 /**
  * Everything Zoonk keeps about the signed-in learner, as one download: the account, the learning
  * profile, goals and plans, the progress ledger, study sessions and mocks, answers, skills,
@@ -91,7 +79,7 @@ export async function exportCurrentUserData() {
     attempts,
     [skills, mistakes, milestones],
     memory,
-    [contentVotes, feedbackMessages],
+    feedbackMessages,
     buddy,
     study,
     language,
@@ -108,7 +96,7 @@ export async function exportCurrentUserData() {
     prisma.attempt.findMany({ orderBy: byAnswer, where: { userId } }),
     loadLearnerModel(userId),
     loadMemoryExport(userId),
-    loadFeedback(userId),
+    prisma.feedback.findMany({ omit: { status: true }, orderBy: byCreation, where: { userId } }),
     loadBuddyExport(userId),
     loadStudyExport(userId),
     loadLanguageExport(userId),
@@ -121,7 +109,7 @@ export async function exportCurrentUserData() {
     answers: { attempts },
     buddy,
     exportedAt: await getRequestInstant(),
-    feedback: { contentVotes, messages: feedbackMessages },
+    feedback: { messages: feedbackMessages },
     goals,
     language,
     learnerModel: { milestones, mistakes, skills },

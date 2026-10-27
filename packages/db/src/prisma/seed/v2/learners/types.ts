@@ -1,8 +1,6 @@
 import {
   type BuddyGlasses,
   type BuddyKind,
-  type ContentFeedbackReason,
-  type FeedbackContentKind,
   type GoalKind,
   type GoalStatus,
   type LanguageSkill,
@@ -14,7 +12,6 @@ import {
   type PlanItemKind,
   type PlanItemStatus,
   type Prisma,
-  type VoteValue,
 } from "../../../../generated/prisma/client";
 import { type Localized, type SeedLanguage } from "../_utils/localize";
 import { type SeedCourse } from "../library/types";
@@ -202,12 +199,4 @@ export type SeedLearner = {
   milestones: { kind: MilestoneKind; key: string; day: Day; shown: boolean; bossDay?: Day }[];
   /** Language goals only: levels, words, calls and a noticed pattern. */
   languageHistory?: SeedLanguageHistory;
-  feedback: {
-    kind: FeedbackContentKind;
-    lesson?: string;
-    item?: string;
-    vote: VoteValue;
-    reasons?: ContentFeedbackReason[];
-    comment?: string;
-  }[];
 };

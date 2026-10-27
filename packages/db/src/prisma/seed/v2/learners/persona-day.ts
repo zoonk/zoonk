@@ -186,19 +186,6 @@ function rewindSkills(
   return learner.skills.filter(({ skill }) => evidenced.has(skill) || !everEvidenced.has(skill));
 }
 
-/** Votes on questions and lessons the learner hadn't seen by the new today go too. */
-function rewindFeedback(
-  learner: SeedLearner,
-  { attempts, items }: Pick<SeedLearner, "attempts"> & { items: readonly SeedPlanItem[] },
-) {
-  return learner.feedback.filter((vote) =>
-    vote.item
-      ? attempts.some((attempt) => attempt.item === vote.item)
-      : items.some((item) => item.lesson === vote.lesson && item.status === "done") ||
-        attempts.some((attempt) => attempt.step?.lesson === vote.lesson),
-  );
-}
-
 function rewindLanguageHistory(
   rewind: Rewind,
   { history, ratio }: { history: SeedLanguageHistory; ratio: number },
@@ -257,7 +244,6 @@ function rewindPersona(learner: SeedLearner, days: number): SeedLearner {
     attempts,
     brainPower: scaleBy(learner.brainPower, ratio),
     buddy: learner.buddy && !keepsGlasses ? { ...learner.buddy, glasses: "round" } : learner.buddy,
-    feedback: rewindFeedback(learner, { attempts, items }),
     goal: {
       ...goal,
       createdDay: shift(goal.createdDay),

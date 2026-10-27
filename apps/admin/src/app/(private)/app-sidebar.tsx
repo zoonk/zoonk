@@ -38,7 +38,7 @@ const menuGroups = [
     items: [
       { icon: HomeIcon, label: "Home", url: "/" },
       { icon: BarChart3Icon, label: "Stats", url: "/stats" },
-      { icon: ThumbsUpIcon, label: "Feedback", url: "/feedback" },
+      { icon: ThumbsUpIcon, label: "Feedback", url: "/feedback/messages" },
       { icon: CpuIcon, label: "AI", url: "/ai" },
       { icon: PhoneIcon, label: "Live calls", url: "/live-calls" },
     ],

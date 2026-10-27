@@ -17,7 +17,6 @@ const insightDays = { seeded: 0 };
 const TABLES = [
   "learner_skills",
   "milestones",
-  "content_feedback",
   "usage_records",
   "learner_sources",
   "memory_insights",
@@ -61,26 +60,6 @@ async function seedSharedRows({ table, userIds }: { table: KeyedTable; userIds: 
         userIds.map((userId) =>
           prisma.milestone.create({
             data: { earnedAt: OLDER, key, kind: "glasses", shownAt: OLDER, userId },
-          }),
-        ),
-      );
-    case "content_feedback":
-      return Promise.all(
-        userIds.map((userId) =>
-          prisma.contentFeedback.create({
-            data: {
-              comment: "Keep this snapshot",
-              contentId: key,
-              contentKind: "lesson",
-              createdAt: OLDER,
-              language: "en",
-              model: "test-model",
-              promptVersion: "test",
-              runId: key,
-              updatedAt: OLDER,
-              userId,
-              vote: "up",
-            },
           }),
         ),
       );
@@ -221,8 +200,6 @@ function readRows({ table, userId }: { table: KeyedTable; userId: string }) {
       return prisma.learnerSkill.findMany({ where });
     case "milestones":
       return prisma.milestone.findMany({ where });
-    case "content_feedback":
-      return prisma.contentFeedback.findMany({ where });
     case "usage_records":
       return prisma.usageRecord.findMany({ where });
     case "learner_sources":

@@ -25,7 +25,7 @@ export const accountDataExportSchema = z
       }),
     exportedAt: z.iso.datetime(),
     feedback: z
-      .object({ contentVotes: rowsSchema, messages: rowsSchema })
+      .object({ messages: rowsSchema })
       .meta({ description: "Votes on content and messages sent to the team" }),
     goals: rowsSchema.meta({ description: "Goals with their plans, plan items and plan changes" }),
     language: z

@@ -9,7 +9,6 @@ import {
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { Suspense } from "react";
-import { FeedbackViewsNav } from "../feedback-views-nav";
 import { MessageList, MessageListSkeleton, MessageStatusFilter } from "./message-list";
 
 export const metadata: Metadata = { title: "Feedback Messages" };
@@ -27,8 +26,6 @@ export default function FeedbackMessagesPage({ searchParams }: PageProps<"/feedb
       </ContainerHeader>
 
       <ContainerBody>
-        <FeedbackViewsNav current="/feedback/messages" />
-
         <Suspense fallback={<Skeleton className="h-7 w-64" />}>
           <MessageStatusFilter searchParams={searchParams} />
         </Suspense>

@@ -81,7 +81,7 @@ function toParentLessonHref(lessonId: string | undefined): string | null {
   return lessonId ? `/lessons/${lessonId}` : null;
 }
 
-/** Chapters, plans and plan changes have no admin page, so their votes don't link anywhere. */
+/** Chapters, plans and plan changes have no admin page, so their reports do not link anywhere. */
 const hrefBuilders: Record<FeedbackContentKind, HrefBuilder> = {
   answerExplanation: (contentId, parents) => parents.answerExplanationHrefs.get(contentId) ?? null,
   chapter: () => null,
@@ -98,8 +98,8 @@ const hrefBuilders: Record<FeedbackContentKind, HrefBuilder> = {
 };
 
 /**
- * The admin page for each voted piece of content, keyed by `contentKind:contentId`. Content that was
- * regenerated or deleted since the vote has no entry.
+ * The admin page for each reported piece of content, keyed by `contentKind:contentId`. Content that was
+ * regenerated or deleted since the report has no entry.
  */
 export async function findContentFeedbackHrefs(refs: ContentRef[]): Promise<Map<string, string>> {
   const parents = await findContentParents(refs);

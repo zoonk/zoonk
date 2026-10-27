@@ -60,7 +60,7 @@ export async function createLesson() {
 
 /**
  * Gives a learner one row of everything a guest can create: a goal with its plan, a typed goal
- * not confirmed yet, a skill, an answer, a memory, votes, a milestone, a day of stats, usage, an AI
+ * not confirmed yet, a skill, an answer, a memory, a milestone, a day of stats, usage, an AI
  * call and its evaluation, a practice conversation, a mistake pattern, a mock and an exam result,
  * and a profile.
  */
@@ -95,9 +95,6 @@ export async function seedLearnerData({
       data: { brainPower, kind: "lesson", startedAt: STUDY_DAY, userId, ...studyTime },
     }),
     prisma.feedback.create({ data: { message: "Loved it", userId } }),
-    prisma.contentFeedback.create({
-      data: { contentId, contentKind: "lesson", userId, vote: brainPower > 1 ? "up" : "down" },
-    }),
     prisma.milestone.create({ data: { key: "star", kind: "glasses", userId } }),
     prisma.dailyProgress.create({
       data: { brainPowerEarned: brainPower, date: STUDY_DAY, dayOfWeek: STUDY_WEEKDAY, userId },
@@ -185,7 +182,6 @@ export async function countLearnerRows(userId: string) {
     prisma.memoryFact.count(byUser),
     prisma.learningEvent.count(byUser),
     prisma.feedback.count(byUser),
-    prisma.contentFeedback.count(byUser),
     prisma.milestone.count(byUser),
     prisma.dailyProgress.count(byUser),
     prisma.usageRecord.count(byUser),
@@ -205,7 +201,6 @@ export async function countLearnerRows(userId: string) {
     memory,
     events,
     feedback,
-    votes,
     milestones,
     days,
     usage,
@@ -234,6 +229,5 @@ export async function countLearnerRows(userId: string) {
     patterns,
     skills,
     usage,
-    votes,
   };
 }

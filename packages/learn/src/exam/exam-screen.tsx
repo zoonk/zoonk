@@ -16,7 +16,7 @@ import { PageEyebrow } from "../_components/page";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { toLabelCase } from "../_utils/label-case";
 import { useFormatTimeOfDay } from "../_utils/time-format";
-import { ReportProblemMenu } from "../feedback/content-vote-menu";
+import { ReportProblemMenu } from "../feedback/content-feedback-menu";
 import { SpeakingPaperSection } from "../language/exam-speaking/speaking-paper-section";
 import { SpeakingMockCard } from "../language/progress/speaking-mock-card";
 import { NoticeDatesCard } from "../plan/notice-day";

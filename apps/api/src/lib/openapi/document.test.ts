@@ -52,11 +52,6 @@ const CANONICAL_OPERATIONS = [
   { method: "get", operationId: "getChapter", path: "/chapters/{chapterId}" },
   { method: "get", operationId: "listChapterLessons", path: "/chapters/{chapterId}/lessons" },
   { method: "get", operationId: "listCurrentUserCourses", path: "/me/courses" },
-  {
-    method: "put",
-    operationId: "voteOnContent",
-    path: "/me/content-votes/{contentKind}/{contentId}",
-  },
   { method: "get", operationId: "getCurrentUserProgress", path: "/me/progress" },
   { method: "get", operationId: "getCurrentUserActivity", path: "/me/progress/activity" },
   { method: "get", operationId: "getCurrentUserEnergy", path: "/me/progress/energy" },

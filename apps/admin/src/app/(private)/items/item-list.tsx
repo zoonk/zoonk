@@ -4,7 +4,6 @@ import {
   AdminTableColumnsSkeleton,
 } from "@/components/admin-table-columns";
 import { AdminPagination } from "@/components/pagination";
-import { getVoteTotals, readVoteTotals } from "@/data/feedback/get-vote-totals";
 import { getItemAnswerStats, readItemAnswerStats } from "@/data/items/get-item-answer-stats";
 import { listItems } from "@/data/items/list-items";
 import { parseSearchParams } from "@/lib/parse-search-params";
@@ -21,7 +20,6 @@ const ITEM_COLUMNS: AdminTableColumn[] = [
   { label: "Exam" },
   { align: "right", label: "Attempts" },
   { align: "right", label: "Accuracy" },
-  { label: "Votes" },
   { label: "Provenance" },
   { label: "Created" },
 ];
@@ -64,10 +62,7 @@ async function CachedItemList({
   const { items, total } = await listItems({ format, language, limit, offset, search });
   const itemIds = items.map((item) => item.id);
 
-  const [answerStats, voteTotals] = await Promise.all([
-    getItemAnswerStats(itemIds),
-    getVoteTotals({ contentIds: itemIds, contentKind: "item" }),
-  ]);
+  const answerStats = await getItemAnswerStats(itemIds);
 
   return (
     <>
@@ -81,7 +76,6 @@ async function CachedItemList({
             answerStats={readItemAnswerStats(answerStats, item.id)}
             item={item}
             key={item.id}
-            votes={readVoteTotals(voteTotals, item.id)}
           />
         ))}
       </AdminTableColumns>

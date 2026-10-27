@@ -1,9 +1,4 @@
-import {
-  type ContentFeedbackReason,
-  type FeedbackContentKind,
-  type FeedbackStatus,
-  type VoteValue,
-} from "@zoonk/db";
+import { type FeedbackContentKind, type FeedbackStatus } from "@zoonk/db";
 
 export const feedbackContentKindLabels: Record<FeedbackContentKind, string> = {
   answerExplanation: "Answer explanation",
@@ -18,24 +13,6 @@ export const feedbackContentKindLabels: Record<FeedbackContentKind, string> = {
   step: "Step",
   stepVariant: "Step variant",
 };
-
-export const feedbackReasonLabels: Record<ContentFeedbackReason, string> = {
-  hardToFollow: "Hard to follow",
-  notWhatINeeded: "Not what I needed",
-  somethingElse: "Something else",
-  tooEasy: "Too easy",
-  tooHard: "Too hard",
-  wrongOrOutdated: "Wrong or outdated",
-};
-
-/** Reasons as one readable line, or a dash for a vote without any. */
-export function formatFeedbackReasons(reasons: ContentFeedbackReason[]): string {
-  return reasons.length > 0
-    ? reasons.map((reason) => feedbackReasonLabels[reason]).join(", ")
-    : "—";
-}
-
-export const voteLabels: Record<VoteValue, string> = { down: "Not helpful", up: "Helpful" };
 
 export const feedbackStatusLabels: Record<FeedbackStatus, string> = {
   new: "New",

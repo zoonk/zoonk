@@ -57,29 +57,6 @@ async function writeMilestones(scope: LearnerScope) {
   );
 }
 
-/** Thumbs on lessons and questions, with the provenance of what was voted on. */
-async function writeFeedback({ learner, lookup, prisma, userId }: LearnerScope) {
-  await Promise.all(
-    learner.feedback.map((vote) => {
-      const contentId = vote.lesson ? lookup.lesson(vote.lesson).id : lookup.item(vote.item ?? "");
-
-      const data = {
-        comment: vote.comment ?? null,
-        language: learner.language,
-        reasons: vote.reasons ?? [],
-        vote: vote.vote,
-        ...SEED_PROVENANCE,
-      };
-
-      return prisma.contentFeedback.upsert({
-        create: { ...data, contentId, contentKind: vote.kind, userId },
-        update: data,
-        where: { userContent: { contentId, contentKind: vote.kind, userId } },
-      });
-    }),
-  );
-}
-
 export async function writeLearnerExtras(scope: LearnerScope): Promise<void> {
-  await Promise.all([writeMemory(scope), writeMilestones(scope), writeFeedback(scope)]);
+  await Promise.all([writeMemory(scope), writeMilestones(scope)]);
 }

@@ -30,7 +30,7 @@ import { getIsoDayFormatter, getLevelLabels } from "@/lib/public/public-labels";
 import { breadcrumbJsonLd, courseJsonLd } from "@/lib/public/structured-data";
 import { parseCourseLandingPageContent } from "@zoonk/core/courses/landing-page";
 import { listPublishedCourseEditions } from "@zoonk/core/courses/published-editions";
-import { ContentVoteMenu } from "@zoonk/learn/feedback/vote-menu";
+import { ContentFeedbackMenu } from "@zoonk/learn/feedback/content-menu";
 import { Page } from "@zoonk/learn/page";
 import { Route, RouteMark, RouteStop, RouteTitle } from "@zoonk/learn/route-line";
 import { type Subject, getSubject } from "@zoonk/learn/subject-label";
@@ -281,7 +281,7 @@ export async function LibraryCoursePage({
         <CatalogPageBar
           back={{ href: "/courses", label: t("Explore courses") }}
           options={
-            <ContentVoteMenu
+            <ContentFeedbackMenu
               label={t("Course options")}
               screen="course"
               size="icon-bar"

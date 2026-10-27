@@ -1,7 +1,5 @@
 import { AdminSection } from "@/components/admin-section";
 import { DetailField } from "@/components/detail-field";
-import { VoteTotalsLabel } from "@/components/vote-totals";
-import { getVoteTotals, readVoteTotals } from "@/data/feedback/get-vote-totals";
 import { countItemMistakes } from "@/data/items/get-item";
 import {
   getItemAccuracy,
@@ -10,14 +8,13 @@ import {
 } from "@/data/items/get-item-answer-stats";
 import { formatPercent } from "@/lib/format";
 
-/** How learners answer the item, the mistakes it caused and how they voted on it. */
+/** How learners answer the item, the mistakes it caused. */
 export async function ItemAnswers({ itemId }: { itemId: string }) {
   "use cache: private";
 
-  const [answerStats, mistakes, voteTotals] = await Promise.all([
+  const [answerStats, mistakes] = await Promise.all([
     getItemAnswerStats([itemId]),
     countItemMistakes(itemId),
-    getVoteTotals({ contentIds: [itemId], contentKind: "item" }),
   ]);
 
   const stats = readItemAnswerStats(answerStats, itemId);
@@ -37,9 +34,6 @@ export async function ItemAnswers({ itemId }: { itemId: string }) {
         </DetailField>
         <DetailField label="Fixed mistakes">
           <span className="tabular-nums">{mistakes.fixed}</span>
-        </DetailField>
-        <DetailField label="Votes">
-          <VoteTotalsLabel totals={readVoteTotals(voteTotals, itemId)} />
         </DetailField>
       </dl>
     </AdminSection>

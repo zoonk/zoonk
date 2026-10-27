@@ -14,7 +14,7 @@ import {
   getTaskAsideRootProps,
 } from "../_components/task-layout";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
-import { ContentVoteMenu } from "../feedback/content-vote-menu";
+import { ContentFeedbackMenu } from "../feedback/content-feedback-menu";
 import { LearnLink } from "../learn-link";
 import { type QuestionTutor } from "../questions/question-tutor";
 import { usePreloadMath } from "../rich-text/use-preload-math";
@@ -99,7 +99,7 @@ function QuestionMenu({ run }: { run: Run }) {
   }
 
   return (
-    <ContentVoteMenu
+    <ContentFeedbackMenu
       label={t("Question options")}
       screen="mistake-practice"
       size="task"

@@ -2,8 +2,6 @@ import { AdminJson } from "@/components/admin-json";
 import { AdminSection } from "@/components/admin-section";
 import { DetailField } from "@/components/detail-field";
 import { ProvenanceFields } from "@/components/provenance";
-import { VoteTotalsLabel } from "@/components/vote-totals";
-import { type VoteTotals, readVoteTotals } from "@/data/feedback/get-vote-totals";
 import { type LibraryLessonDetail } from "@/data/lessons/get-library-lesson";
 import { formatDateTime } from "@/lib/format";
 import { libraryLessonStatusLabels } from "@/lib/library-lesson-filters";
@@ -38,13 +36,7 @@ function LessonChapters({ lesson }: { lesson: Lesson }) {
  * The lesson's identity and state: writing status, where it's used, the skills it teaches, the
  * outline's provenance, and the spec and summary it was written from.
  */
-export function LessonSummary({
-  lesson,
-  votes,
-}: {
-  lesson: Lesson;
-  votes: Map<string, VoteTotals>;
-}) {
+export function LessonSummary({ lesson }: { lesson: Lesson }) {
   return (
     <AdminSection description={lesson.description} title={lesson.title}>
       <dl>
@@ -83,9 +75,6 @@ export function LessonSummary({
         <DetailField label="In plans">
           {lesson._count.planItems} plan items · {lesson._count.studyBlocks} session blocks ·{" "}
           {lesson._count.questionThreads} question threads
-        </DetailField>
-        <DetailField label="Votes">
-          <VoteTotalsLabel totals={readVoteTotals(votes, lesson.id)} />
         </DetailField>
         <DetailField label="Updated">{formatDateTime(lesson.updatedAt)}</DetailField>
       </dl>

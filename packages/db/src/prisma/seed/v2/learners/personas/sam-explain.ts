@@ -20,7 +20,6 @@ export const samExplain: SeedLearner = {
   ],
   brainPower: 60,
   email: "v2-explain@zoonk.test",
-  feedback: [{ kind: "lesson", lesson: "market-up-two-percent", vote: "up" }],
   goal: {
     course: stockMarketCourse,
     createdDay: 0,

@@ -38,7 +38,6 @@ export const pedroStocks: SeedLearner = {
   brainPower: 420,
   dailyLimitMinutes: 60,
   email: "v2-stocks@zoonk.test",
-  feedback: [{ kind: "lesson", lesson: "own-a-share", vote: "up" }],
   goal: {
     course: stockMarketCourse,
     createdDay: -6,

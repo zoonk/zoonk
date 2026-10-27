@@ -186,16 +186,6 @@ const anaProfile: Omit<SeedLearner, "goal"> = {
   attempts: anaAttempts,
   brainPower: 4340,
   email: "v2-exam@zoonk.test",
-  feedback: [
-    { item: "clt-era", kind: "item", vote: "up" },
-    {
-      comment: "Fácil demais para o nível do ENEM.",
-      item: "beach-sign",
-      kind: "item",
-      reasons: ["tooEasy"],
-      vote: "down",
-    },
-  ],
   history: { accuracy: 0.72, days: 14, energy: 72, minutesPerDay: 45, skipChance: 0.1 },
   key: "ana",
   language: "pt",

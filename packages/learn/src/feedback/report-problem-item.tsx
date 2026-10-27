@@ -1,6 +1,6 @@
 "use client";
 
-import { type ContentVoteTarget } from "@zoonk/core/feedback/contract";
+import { type FeedbackTarget } from "@zoonk/core/feedback/contract";
 import { DropdownMenuItem } from "@zoonk/ui/components/dropdown-menu";
 import { FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -11,13 +11,7 @@ import { useContentFeedback } from "./feedback-context";
  * one. Place it inside a `DropdownMenuContent`; `screen` names where the menu is, such as
  * "lesson-step", for the message's context. Nothing for hosts without feedback.
  */
-export function ReportProblemItem({
-  screen,
-  target,
-}: {
-  screen: string;
-  target?: ContentVoteTarget;
-}) {
+export function ReportProblemItem({ screen, target }: { screen: string; target?: FeedbackTarget }) {
   const t = useExtracted("feedback");
   const feedback = useContentFeedback();
 

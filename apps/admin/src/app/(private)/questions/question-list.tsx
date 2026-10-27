@@ -4,7 +4,6 @@ import {
   AdminTableColumnsSkeleton,
 } from "@/components/admin-table-columns";
 import { AdminPagination } from "@/components/pagination";
-import { getVoteTotals, readVoteTotals } from "@/data/feedback/get-vote-totals";
 import { listLessonQuestions } from "@/data/questions/list-lesson-questions";
 import { parseSearchParams } from "@/lib/parse-search-params";
 import { QuestionRow } from "./question-row";
@@ -14,7 +13,6 @@ const QUESTION_COLUMNS: AdminTableColumn[] = [
   { label: "Answer" },
   { label: "User" },
   { label: "Course / lesson" },
-  { label: "Votes" },
   { label: "Status / asked" },
 ];
 
@@ -45,11 +43,6 @@ async function CachedQuestionList({
   const { questions, total } = await listLessonQuestions({ limit, offset, search });
   const totalPages = Math.ceil(total / limit);
 
-  const votes = await getVoteTotals({
-    contentIds: questions.map((question) => question.id),
-    contentKind: "lessonQuestion",
-  });
-
   return (
     <>
       <AdminTableColumns
@@ -58,11 +51,7 @@ async function CachedQuestionList({
         isEmpty={questions.length === 0}
       >
         {questions.map((question) => (
-          <QuestionRow
-            key={question.id}
-            question={question}
-            votes={readVoteTotals(votes, question.id)}
-          />
+          <QuestionRow key={question.id} question={question} />
         ))}
       </AdminTableColumns>
 

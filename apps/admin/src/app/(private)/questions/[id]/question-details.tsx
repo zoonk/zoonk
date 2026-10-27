@@ -1,6 +1,4 @@
-import { VoteTotalsLabel } from "@/components/vote-totals";
 import { getRunAiUsage } from "@/data/ai/get-run-ai-usage";
-import { getVoteTotals, readVoteTotals } from "@/data/feedback/get-vote-totals";
 import { type getLessonQuestion } from "@/data/questions/get-lesson-question";
 import { formatUsd } from "@/lib/ai-format";
 import {
@@ -39,14 +37,11 @@ function QuestionLessonFields({ context }: { context: AdminQuestionLessonContext
   );
 }
 
-/** Who asked, where, what the tutor model did, and how learners voted on the answer. */
+/** Who asked, where, and what the tutor model did. */
 export async function QuestionDetails({ question }: { question: LessonQuestionDetail }) {
   const { user } = question.thread;
 
-  const [votes, usage] = await Promise.all([
-    getVoteTotals({ contentIds: [question.id], contentKind: "lessonQuestion" }),
-    question.runId ? getRunAiUsage(question.runId) : null,
-  ]);
+  const usage = question.runId ? await getRunAiUsage(question.runId) : null;
 
   return (
     <dl className="divide-y">
@@ -62,9 +57,6 @@ export async function QuestionDetails({ question }: { question: LessonQuestionDe
           contextKind: question.contextKind,
           stepNumber: question.stepNumber,
         })}
-      </QuestionDetailField>
-      <QuestionDetailField label="Votes">
-        <VoteTotalsLabel totals={readVoteTotals(votes, question.id)} />
       </QuestionDetailField>
       <QuestionDetailField label="Model">
         {question.model ?? question.requestedModel ?? "—"}

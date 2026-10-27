@@ -2,8 +2,6 @@ import { AdminJson } from "@/components/admin-json";
 import { AdminSection } from "@/components/admin-section";
 import { DetailField } from "@/components/detail-field";
 import { ProvenanceFields } from "@/components/provenance";
-import { VoteTotalsLabel } from "@/components/vote-totals";
-import { getVoteTotals, readVoteTotals } from "@/data/feedback/get-vote-totals";
 import { getMedia } from "@/data/media/get-media";
 import { formatDateTime } from "@/lib/format";
 import Link from "next/link";
@@ -11,14 +9,11 @@ import { notFound } from "next/navigation";
 import { formatMediaSize } from "../_utils/media-format";
 import { MediaPreview } from "../media-preview";
 
-/** The asset itself, how it was made (prompt, scene, palette, style) and how learners voted. */
+/** The asset itself, how it was made (prompt, scene, palette, style). */
 export async function MediaOverview({ mediaAssetId }: { mediaAssetId: string }) {
   "use cache: private";
 
-  const [asset, voteTotals] = await Promise.all([
-    getMedia(mediaAssetId),
-    getVoteTotals({ contentIds: [mediaAssetId], contentKind: "mediaAsset" }),
-  ]);
+  const asset = await getMedia(mediaAssetId);
 
   if (!asset) {
     notFound();
@@ -64,9 +59,6 @@ export async function MediaOverview({ mediaAssetId }: { mediaAssetId: string }) 
             ) : (
               "—"
             )}
-          </DetailField>
-          <DetailField label="Votes">
-            <VoteTotalsLabel totals={readVoteTotals(voteTotals, asset.id)} />
           </DetailField>
           <DetailField label="Created">{formatDateTime(asset.createdAt)}</DetailField>
         </dl>

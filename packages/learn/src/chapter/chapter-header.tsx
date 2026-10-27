@@ -12,7 +12,7 @@ import {
 } from "../_components/detail-page";
 import { PageEyebrow } from "../_components/page";
 import { useFormatDuration } from "../_utils/time-format";
-import { ContentVoteMenu } from "../feedback/content-vote-menu";
+import { ContentFeedbackMenu } from "../feedback/content-feedback-menu";
 import { LearnPageBar } from "../shell/learn-bar";
 import { useChapterScreen } from "./chapter-context";
 
@@ -77,7 +77,7 @@ export function ChapterHeader() {
             started={done > 0}
           />
         )}
-        <ContentVoteMenu
+        <ContentFeedbackMenu
           label={t("Chapter options")}
           screen="chapter"
           size="detail"

@@ -22,7 +22,7 @@ const FORMAT_OPTIONS = Object.entries(ITEM_FORMAT_LABELS).map(([value, label]) =
   value,
 }));
 
-/** Practice and exam questions, with how learners answer them and how they vote. */
+/** Practice and exam questions, with how learners answer them. */
 export default function ItemsPage({ searchParams }: PageProps<"/items">) {
   return (
     <Container>
@@ -30,7 +30,7 @@ export default function ItemsPage({ searchParams }: PageProps<"/items">) {
         <ContainerHeaderGroup>
           <ContainerTitle>Items</ContainerTitle>
           <ContainerDescription>
-            Review practice questions with their accuracy, votes and provenance.
+            Review practice questions with their accuracy and provenance.
           </ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>

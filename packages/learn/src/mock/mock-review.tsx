@@ -6,7 +6,7 @@ import { useExtracted } from "next-intl";
 import { AnswerOption, AnswerOptionGroup } from "../_components/answer-option";
 import { DetailsDrawer } from "../_components/details-drawer";
 import { ItemCitationNote } from "../_components/item-citation";
-import { ContentVoteMenu } from "../feedback/content-vote-menu";
+import { ContentFeedbackMenu } from "../feedback/content-feedback-menu";
 import { ItemSetStimulus } from "../questions/item-set-stimulus";
 import { ItemLine, ItemStem, ItemText } from "../questions/item-text";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
@@ -104,7 +104,7 @@ function ReviewEntry({
             ? t("Question {number} · {area}", { area: entry.area, number: String(entry.number) })
             : t("Question {number}", { number: String(entry.number) })}
         </p>
-        <ContentVoteMenu
+        <ContentFeedbackMenu
           label={t("Question options")}
           screen="mock-review"
           target={{ contentId: entry.itemId, contentKind: "item" }}

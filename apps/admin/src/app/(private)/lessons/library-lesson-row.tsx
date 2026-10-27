@@ -1,6 +1,4 @@
 import { ProvenanceLine } from "@/components/provenance";
-import { VoteTotalsLabel } from "@/components/vote-totals";
-import { type VoteTotals } from "@/data/feedback/get-vote-totals";
 import { type ListedLibraryLesson } from "@/data/lessons/list-library-lessons";
 import { formatDate } from "@/lib/format";
 import { libraryLessonStatusLabels } from "@/lib/library-lesson-filters";
@@ -19,15 +17,9 @@ function getStatusVariant(status: GenerationStatus) {
 
 /**
  * One Library lesson: where it lives, how far its writing got, the model and prompt version that
- * wrote its screens, and how learners voted on it.
+ * wrote its screens, on it.
  */
-export function LibraryLessonRow({
-  lesson,
-  votes,
-}: {
-  lesson: ListedLibraryLesson;
-  votes: VoteTotals;
-}) {
+export function LibraryLessonRow({ lesson }: { lesson: ListedLibraryLesson }) {
   const [firstStep] = lesson.steps;
 
   return (
@@ -56,9 +48,6 @@ export function LibraryLessonRow({
       <TableCell className="text-right tabular-nums">{lesson._count.steps}</TableCell>
       <TableCell>
         <ProvenanceLine provenance={firstStep ?? { model: null, promptVersion: null }} />
-      </TableCell>
-      <TableCell>
-        <VoteTotalsLabel totals={votes} />
       </TableCell>
       <TableCell className="text-muted-foreground">{formatDate(lesson.updatedAt)}</TableCell>
     </TableRow>

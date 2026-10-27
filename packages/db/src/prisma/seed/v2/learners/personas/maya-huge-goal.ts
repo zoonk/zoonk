@@ -53,7 +53,6 @@ export const mayaHugeGoal: SeedLearner = {
   ],
   brainPower: 3340,
   email: "v2-learn@zoonk.test",
-  feedback: [{ item: "thirty-percent", kind: "item", vote: "up" }],
   goal: {
     course: physicsCourse,
     createdDay: -24,

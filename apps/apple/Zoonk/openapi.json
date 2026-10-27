@@ -11053,239 +11053,6 @@
         }
       }
     },
-    "/me/content-votes/{contentKind}/{contentId}": {
-      "get": {
-        "description": "The signed-in learner's own vote on one piece of content, so a menu or thumbs can show what they picked. 404 when they haven't voted on it.",
-        "operationId": "getContentVote",
-        "security": [
-          {
-            "bearerAuth": []
-          },
-          {
-            "cookieAuth": []
-          }
-        ],
-        "summary": "Get the learner's vote on AI content",
-        "tags": [
-          "Feedback"
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "contentId",
-            "schema": {
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-            },
-            "required": true
-          },
-          {
-            "in": "path",
-            "name": "contentKind",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "answerExplanation",
-                "chapter",
-                "course",
-                "item",
-                "lesson",
-                "lessonQuestion",
-                "mediaAsset",
-                "plan",
-                "planChange",
-                "step",
-                "stepVariant"
-              ]
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The stored vote",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ContentVote"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Authentication required",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Resource not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "description": "Stores the signed-in learner's vote on a course, chapter, lesson, screen, variant, item, image, answer explanation, tutor answer, plan or plan change. There is one vote per learner and content: voting again replaces it. The vote keeps a snapshot of the model and prompt version behind the content.",
-        "operationId": "voteOnContent",
-        "security": [
-          {
-            "bearerAuth": []
-          },
-          {
-            "cookieAuth": []
-          }
-        ],
-        "summary": "Vote on AI content",
-        "tags": [
-          "Feedback"
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "contentId",
-            "schema": {
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-            },
-            "required": true
-          },
-          {
-            "in": "path",
-            "name": "contentKind",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "answerExplanation",
-                "chapter",
-                "course",
-                "item",
-                "lesson",
-                "lessonQuestion",
-                "mediaAsset",
-                "plan",
-                "planChange",
-                "step",
-                "stepVariant"
-              ]
-            },
-            "required": true
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ContentVoteRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "The stored vote",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ContentVote"
-                }
-              }
-            },
-            "headers": {
-              "Learner-Revision": {
-                "description": "The authenticated learner's committed revision, sampled after this request's writes. Present when the learner still exists. A decimal string; compare as an integer. It can exceed the revision of this write when another write committed meanwhile.",
-                "schema": {
-                  "pattern": "^[0-9]+$",
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Authentication required",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Request forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Resource not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/files/{folder}/{ownerId}/{name}": {
       "get": {
         "description": "One of the signed-in learner's own private files: a picture on one of their private lessons' screens (its image URL points here) or an upload. Another learner's file answers 404. Responses are `Cache-Control: private, no-cache` with an `ETag`: send it back as `If-None-Match` to get a 304 while the file is unchanged.",
@@ -26118,49 +25885,6 @@
         ],
         "description": "A feedback or contact message. `context` says where it was written: the screen, page, content, platform and app version."
       },
-      "ContentVoteRequest": {
-        "type": "object",
-        "properties": {
-          "comment": {
-            "nullable": true,
-            "type": "string",
-            "maxLength": 1000
-          },
-          "language": {
-            "nullable": true,
-            "type": "string",
-            "minLength": 2,
-            "maxLength": 10
-          },
-          "reasons": {
-            "maxItems": 6,
-            "type": "array",
-            "items": {
-              "type": "string",
-              "enum": [
-                "hardToFollow",
-                "notWhatINeeded",
-                "somethingElse",
-                "tooEasy",
-                "tooHard",
-                "wrongOrOutdated"
-              ]
-            }
-          },
-          "vote": {
-            "type": "string",
-            "enum": [
-              "down",
-              "up"
-            ]
-          }
-        },
-        "required": [
-          "vote"
-        ],
-        "additionalProperties": false,
-        "description": "The learner's vote. Reasons explain a downvote (an upvote has none), and `language` is the interface language the content was read in."
-      },
       "EmailSignInCodeRequest": {
         "type": "object",
         "properties": {
@@ -29076,13 +28800,6 @@
           "feedback": {
             "type": "object",
             "properties": {
-              "contentVotes": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "additionalProperties": {}
-                }
-              },
               "messages": {
                 "type": "array",
                 "items": {
@@ -29092,7 +28809,6 @@
               }
             },
             "required": [
-              "contentVotes",
               "messages"
             ],
             "additionalProperties": false,
@@ -64925,7 +64641,7 @@
             "type": "string",
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-            "description": "Vote on it at /me/content-votes/answerExplanation/{explanationId}"
+            "description": "The answer explanation this feedback is about"
           },
           "reused": {
             "type": "boolean",
@@ -66811,72 +66527,6 @@
           "message"
         ],
         "additionalProperties": false
-      },
-      "ContentVote": {
-        "type": "object",
-        "properties": {
-          "comment": {
-            "nullable": true,
-            "type": "string"
-          },
-          "contentId": {
-            "type": "string",
-            "format": "uuid",
-            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-          },
-          "contentKind": {
-            "type": "string",
-            "enum": [
-              "answerExplanation",
-              "chapter",
-              "course",
-              "item",
-              "lesson",
-              "lessonQuestion",
-              "mediaAsset",
-              "plan",
-              "planChange",
-              "step",
-              "stepVariant"
-            ]
-          },
-          "reasons": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "enum": [
-                "hardToFollow",
-                "notWhatINeeded",
-                "somethingElse",
-                "tooEasy",
-                "tooHard",
-                "wrongOrOutdated"
-              ]
-            }
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time",
-            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-          },
-          "vote": {
-            "type": "string",
-            "enum": [
-              "down",
-              "up"
-            ]
-          }
-        },
-        "required": [
-          "comment",
-          "contentId",
-          "contentKind",
-          "reasons",
-          "updatedAt",
-          "vote"
-        ],
-        "additionalProperties": false,
-        "description": "The signed-in learner's vote on one piece of content"
       },
       "NextLessonResponse": {
         "oneOf": [

@@ -55,7 +55,6 @@ export const lucasBuddy: SeedLearner = {
   brainPower: 310,
   buddy: { glasses: "star", kind: "otto", name: "Otto" },
   email: "v2-buddy@zoonk.test",
-  feedback: [],
   goal: {
     course: physicsCourse,
     createdDay: -18,

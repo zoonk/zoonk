@@ -96,7 +96,6 @@ describe("guest accounts", () => {
       patterns: 1,
       skills: 1,
       usage: 1,
-      votes: 1,
     });
 
     await expect(
@@ -182,19 +181,16 @@ describe("guest accounts", () => {
       patterns: 2,
       skills: 1,
       usage: 2,
-      votes: 1,
     });
 
-    const [learnerSkill, vote, day, progress, profile] = await Promise.all([
+    const [learnerSkill, day, progress, profile] = await Promise.all([
       prisma.learnerSkill.findFirstOrThrow({ where: { userId: account.userId } }),
-      prisma.contentFeedback.findFirstOrThrow({ where: { userId: account.userId } }),
       prisma.dailyProgress.findFirstOrThrow({ where: { userId: account.userId } }),
       prisma.userProgress.findUniqueOrThrow({ where: { userId: account.userId } }),
       prisma.userLearningProfile.findUniqueOrThrow({ where: { userId: account.userId } }),
     ]);
 
     expect(learnerSkill.reps).toBe(10);
-    expect(vote.vote).toBe("up");
     expect(day.brainPowerEarned).toBe(11);
     expect(progress.totalBrainPower).toBe(11n);
     expect(profile.activeGoalId).toBe(goal.id);

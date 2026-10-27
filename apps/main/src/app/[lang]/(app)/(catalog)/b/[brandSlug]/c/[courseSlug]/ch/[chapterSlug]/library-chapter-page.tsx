@@ -23,7 +23,7 @@ import { getLocalizedUrl } from "@/lib/metadata/localized-url";
 import { getChapterUrls } from "@/lib/public/public-canonical";
 import { getChapterHref, getLessonHref } from "@/lib/public/public-hrefs";
 import { breadcrumbJsonLd, lessonListJsonLd } from "@/lib/public/structured-data";
-import { ContentVoteMenu } from "@zoonk/learn/feedback/vote-menu";
+import { ContentFeedbackMenu } from "@zoonk/learn/feedback/content-menu";
 import { Page, PageSection } from "@zoonk/learn/page";
 import { SubjectGlyph, getSubject } from "@zoonk/learn/subject-label";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
@@ -197,7 +197,7 @@ export async function LibraryChapterPage({
       <CatalogPageBar
         back={{ href: getCourseHref(params), label: course.title }}
         options={
-          <ContentVoteMenu
+          <ContentFeedbackMenu
             label={t("Chapter options")}
             screen="chapter"
             size="icon-bar"

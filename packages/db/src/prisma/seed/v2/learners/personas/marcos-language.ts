@@ -68,7 +68,6 @@ const marcos: SeedLearner = {
   ],
   brainPower: 2180,
   email: "v2-language@zoonk.test",
-  feedback: [{ kind: "lesson", lesson: "how-much-is-the-rent", vote: "up" }],
   goal: {
     course: englishCourse,
     createdDay: -28,

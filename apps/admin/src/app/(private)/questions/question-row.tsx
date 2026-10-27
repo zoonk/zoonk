@@ -1,5 +1,3 @@
-import { VoteTotalsLabel } from "@/components/vote-totals";
-import { type VoteTotals } from "@/data/feedback/get-vote-totals";
 import { type ListedLessonQuestion } from "@/data/questions/list-lesson-questions";
 import {
   getAdminQuestionLessonContext,
@@ -26,13 +24,7 @@ function QuestionLessonCell({ question }: { question: ListedLessonQuestion }) {
   );
 }
 
-export function QuestionRow({
-  question,
-  votes,
-}: {
-  question: ListedLessonQuestion;
-  votes: VoteTotals;
-}) {
+export function QuestionRow({ question }: { question: ListedLessonQuestion }) {
   const { user } = question.thread;
 
   return (
@@ -57,9 +49,6 @@ export function QuestionRow({
       </TableCell>
       <TableCell className="max-w-56 min-w-48 whitespace-normal">
         <QuestionLessonCell question={question} />
-      </TableCell>
-      <TableCell>
-        <VoteTotalsLabel totals={votes} />
       </TableCell>
       <TableCell>
         <div className="flex flex-col items-start gap-1">

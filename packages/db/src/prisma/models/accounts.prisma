@@ -49,7 +49,6 @@ model User {
   pronunciationReviews  PronunciationReview[]
   milestones            Milestone[]
   stepExampleLines      StepExampleLine[]
-  contentFeedback       ContentFeedback[]
   feedback              Feedback[]
   learningEvents        LearningEvent[]
   usageRecords          UsageRecord[]

@@ -7,7 +7,7 @@ import { useExtracted } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { TaskHeaderTitle } from "../_components/task-header";
 import { TaskActions } from "../_components/task-layout";
-import { ContentVoteMenu } from "../feedback/content-vote-menu";
+import { ContentFeedbackMenu } from "../feedback/content-feedback-menu";
 import { usePreloadMath } from "../rich-text/use-preload-math";
 import { TaskFrame, type TaskFrameAside, TaskMainButton } from "../shell/task-frame";
 import { getResumableAnswers, readAnswerDraft, writeAnswerDraft } from "./_utils/answer-draft";
@@ -244,7 +244,7 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
       }
       headerEnd={
         itemId && (
-          <ContentVoteMenu
+          <ContentFeedbackMenu
             label={t("Question options")}
             screen={header.screen}
             size="task"

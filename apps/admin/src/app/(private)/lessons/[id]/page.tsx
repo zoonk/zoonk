@@ -1,7 +1,6 @@
 import { AdminBreadcrumb } from "@/components/admin-breadcrumb";
 import { AdminSectionSkeleton } from "@/components/admin-section";
 import { ReviewFlagNotice } from "@/components/review-flag-notice";
-import { getVoteTotals } from "@/data/feedback/get-vote-totals";
 import { getLibraryLesson } from "@/data/lessons/get-library-lesson";
 import {
   Container,
@@ -23,7 +22,7 @@ export const metadata: Metadata = { title: "Lesson" };
 
 /**
  * One Library lesson as admins review it: where it lives, its screens with every version and
- * who wrote each, and how learners answered and voted.
+ * who wrote each, and how learners answered.
  */
 export default function LibraryLessonPage({ params }: PageProps<"/lessons/[id]">) {
   return (
@@ -58,26 +57,13 @@ async function LessonContent({ params }: Pick<PageProps<"/lessons/[id]">, "param
   }
 
   const { lesson } = detail;
-  const stepIds = lesson.steps.map((step) => step.id);
-  const variantIds = lesson.steps.flatMap((step) => step.variants.map((variant) => variant.id));
-
-  const [lessonVotes, stepVotes, variantVotes] = await Promise.all([
-    getVoteTotals({ contentIds: [lesson.id], contentKind: "lesson" }),
-    getVoteTotals({ contentIds: stepIds, contentKind: "step" }),
-    getVoteTotals({ contentIds: variantIds, contentKind: "stepVariant" }),
-  ]);
 
   return (
     <>
       <ReviewFlagNotice target={{ lessonId: lesson.id }} />
-      <LessonSummary lesson={lesson} votes={lessonVotes} />
+      <LessonSummary lesson={lesson} />
       <LessonVersions steps={lesson.steps} />
-      <LessonScreens
-        answers={detail.answers}
-        steps={lesson.steps}
-        stepVotes={stepVotes}
-        variantVotes={variantVotes}
-      />
+      <LessonScreens answers={detail.answers} steps={lesson.steps} />
       <LessonLanguageResources sentences={lesson.sentences} words={lesson.words} />
     </>
   );

@@ -1,6 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { contentFeedbackFixture, feedbackFixture } from "@zoonk/testing/fixtures/feedback";
+import { feedbackFixture } from "@zoonk/testing/fixtures/feedback";
 import {
   goalFixture,
   planChangeFixture,
@@ -115,7 +115,6 @@ async function createLearnerRows({ library, userId }: { library: Library; userId
     }),
     planChangeFixture({ planId: plan.id }),
     studySessionBlockFixture({ lessonId: library.lesson.id, sessionId: session.id }),
-    contentFeedbackFixture({ contentId: library.step.id, userId }),
     learningEventFixture({ contentIds: { lessonId: library.lesson.id }, userId }),
     memoryFactFixture({ userId }),
     milestoneFixture({ userId }),
@@ -155,7 +154,6 @@ function countLearnerRows(userId: string) {
     prisma.studySessionBlock.count({ where: { session: { userId } } }),
     prisma.memoryFact.count({ where: { userId } }),
     prisma.milestone.count({ where: { userId } }),
-    prisma.contentFeedback.count({ where: { userId } }),
     prisma.learningEvent.count({ where: { userId } }),
     prisma.userLearningProfile.count({ where: { userId } }),
   ]);
@@ -169,7 +167,7 @@ describe("learner rows and Library content", () => {
     await deleteLibraryContent(library);
 
     await expect(countLearnerRows(user.id)).resolves.toStrictEqual(
-      Array.from({ length: 14 }, () => 1),
+      Array.from({ length: 13 }, () => 1),
     );
 
     const [attempt, mistake, planItem, block, updatedGoal] = await Promise.all([
@@ -206,7 +204,7 @@ describe("learner rows and Library content", () => {
     await prisma.user.delete({ where: { id: user.id } });
 
     await expect(countLearnerRows(user.id)).resolves.toStrictEqual(
-      Array.from({ length: 14 }, () => 0),
+      Array.from({ length: 13 }, () => 0),
     );
 
     await expect(prisma.feedback.findUnique({ where: { id: message.id } })).resolves.toMatchObject({

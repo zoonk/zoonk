@@ -21,7 +21,7 @@ import {
   PageSectionHeader,
   PageSectionTitle,
 } from "../_components/page";
-import { ReportProblemMenu } from "../feedback/content-vote-menu";
+import { ReportProblemMenu } from "../feedback/content-feedback-menu";
 import { LearnPageBar } from "../shell/learn-bar";
 import { SubjectAside, SubjectCoverage } from "./subject-aside";
 import { SubjectChapters } from "./subject-chapters";

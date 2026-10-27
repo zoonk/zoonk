@@ -37,21 +37,6 @@ async function moveMilestones({ guestUserId, transaction, userId }: GuestLinkCon
   `;
 }
 
-async function moveContentFeedback({ guestUserId, transaction, userId }: GuestLinkContext) {
-  await transaction.$executeRaw`
-    WITH guest_rows AS (
-      DELETE FROM content_feedback
-      WHERE user_id = ${guestUserId}::uuid
-      RETURNING *
-    )
-    INSERT INTO content_feedback (id, user_id, content_kind, content_id, vote, reasons, comment, language, model, prompt_version, run_id, created_at, updated_at)
-    SELECT id, ${userId}::uuid, content_kind, content_id, vote, reasons, comment, language, model, prompt_version, run_id, created_at, updated_at
-    FROM guest_rows
-    ORDER BY content_kind, content_id
-    ON CONFLICT (user_id, content_kind, content_id) DO NOTHING
-  `;
-}
-
 async function moveUsageRecords({ guestUserId, transaction, userId }: GuestLinkContext) {
   await transaction.$executeRaw`
     WITH guest_rows AS (
@@ -163,7 +148,6 @@ async function moveStepExampleLines({ guestUserId, transaction, userId }: GuestL
 export async function moveKeyedRows(context: GuestLinkContext) {
   await moveLearnerSkills(context);
   await moveMilestones(context);
-  await moveContentFeedback(context);
   await moveUsageRecords(context);
   await moveLearnerSources(context);
   await moveLearnerWords(context);

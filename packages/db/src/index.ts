@@ -26,7 +26,6 @@ export type {
   ChapterLesson,
   ChapterMindMap,
   ChapterSkill,
-  ContentFeedback,
   Course,
   CourseCategory,
   CourseChapter,
@@ -90,7 +89,6 @@ export type {
 export {
   BuddyGlasses,
   BuddyKind,
-  ContentFeedbackReason,
   CourseFormat,
   CourseLevel,
   FeedbackContentKind,
@@ -128,7 +126,6 @@ export {
   StudySessionStatus,
   SuggestedGoalStatus,
   UsageKind,
-  VoteValue,
 } from "./generated/prisma/client";
 
 export type { AiCallCreateManyInput } from "./generated/prisma/models/AiCall";

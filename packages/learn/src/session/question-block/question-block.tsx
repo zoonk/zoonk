@@ -4,7 +4,7 @@ import { useExtracted } from "next-intl";
 import { type TaskSegment } from "../../_components/task-header";
 import { TaskActionBar } from "../../_components/task-layout";
 import { type LearnBuddy } from "../../buddies/use-buddy-name";
-import { ContentVoteMenu } from "../../feedback/content-vote-menu";
+import { ContentFeedbackMenu } from "../../feedback/content-feedback-menu";
 import { type LessonHref } from "../../mistakes/drill/drill-types";
 import { type QuestionTutor } from "../../questions/question-tutor";
 import { usePreloadMath } from "../../rich-text/use-preload-math";
@@ -148,7 +148,7 @@ function BlockMenu({ target }: { target: ReturnType<typeof getVoteTarget> }) {
   }
 
   return (
-    <ContentVoteMenu
+    <ContentFeedbackMenu
       label={t("Question options")}
       screen="question-block"
       size="task"

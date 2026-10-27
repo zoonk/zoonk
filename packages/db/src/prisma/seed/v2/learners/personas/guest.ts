@@ -43,7 +43,6 @@ export const guest: SeedLearner = {
   ],
   brainPower: 60,
   email: "v2-guest@zoonk.test",
-  feedback: [],
   goal: {
     course: physicsCourse,
     createdDay: 0,

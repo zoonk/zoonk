@@ -1,7 +1,5 @@
 import { AdminJson } from "@/components/admin-json";
 import { ProvenanceLine } from "@/components/provenance";
-import { VoteTotalsLabel } from "@/components/vote-totals";
-import { type VoteTotals, readVoteTotals } from "@/data/feedback/get-vote-totals";
 import { type LibraryLessonStep } from "@/data/lessons/get-library-lesson";
 import { formatPercent } from "@/lib/format";
 import { Badge } from "@zoonk/ui/components/badge";
@@ -58,17 +56,13 @@ function StepLinks({ step }: { step: LibraryLessonStep }) {
   );
 }
 
-/** One screen: its kind and contract version, who wrote it, answers, votes and its versions. */
+/** One screen: its kind and contract version, who wrote it, answers and its versions. */
 export function LessonScreen({
   answers,
   step,
-  stepVotes,
-  variantVotes,
 }: {
   answers?: StepAnswers;
   step: LibraryLessonStep;
-  stepVotes: Map<string, VoteTotals>;
-  variantVotes: Map<string, VoteTotals>;
 }) {
   const template = getActivityTemplate(step);
 
@@ -87,7 +81,6 @@ export function LessonScreen({
 
         <div className="flex items-start gap-4 text-xs">
           <AnswersLabel answers={answers} />
-          <VoteTotalsLabel totals={readVoteTotals(stepVotes, step.id)} />
           <ProvenanceLine provenance={step} />
         </div>
       </div>
@@ -105,7 +98,6 @@ export function LessonScreen({
                   <span className="text-muted-foreground"> · v{variant.contractVersion}</span>
                 </span>
                 <span className="flex items-center gap-4">
-                  <VoteTotalsLabel totals={readVoteTotals(variantVotes, variant.id)} />
                   <ProvenanceLine provenance={variant} />
                 </span>
               </div>

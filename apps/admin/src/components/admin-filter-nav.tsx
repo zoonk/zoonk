@@ -4,7 +4,7 @@ import Link from "next/link";
 export type AdminFilterOption = { href: string; isActive: boolean; label: string };
 
 /**
- * Admin lists switch between a few fixed filter values (status, kind, vote)
+ * Admin lists switch between a few fixed filter values (status, kind)
  * with links, so filtered views stay server-rendered and shareable.
  */
 export function AdminFilterNav({

@@ -1,6 +1,6 @@
 "use client";
 
-import { type ContentVoteTarget } from "@zoonk/core/feedback/contract";
+import { type FeedbackTarget } from "@zoonk/core/feedback/contract";
 import { Button } from "@zoonk/ui/components/button";
 import {
   DropdownMenu,
@@ -12,8 +12,8 @@ import { EllipsisIcon } from "lucide-react";
 import { useEffect, useId } from "react";
 import { DETAIL_MENU_TRIGGER_CLASS, DetailMenu } from "../_components/detail-page";
 import { TASK_HEADER_ICON_CLASS } from "../_components/task-header";
-import { ReportProblemItem } from "./content-vote-menu-items";
 import { useContentFeedback } from "./feedback-context";
+import { ReportProblemItem } from "./report-problem-item";
 
 /**
  * A page's "…" menu for the AI content it shows, such as a course, a chapter or a question: "Report
@@ -24,7 +24,7 @@ import { useContentFeedback } from "./feedback-context";
  * (`size="detail"`); in a task's header its glyph sits on the column's edge (`size="task"`). Hosts
  * without feedback get no menu.
  */
-export function ContentVoteMenu({
+export function ContentFeedbackMenu({
   label,
   screen,
   size = "icon",
@@ -33,7 +33,7 @@ export function ContentVoteMenu({
   label: string;
   screen: string;
   size?: "detail" | "icon" | "icon-bar" | "task";
-  target: ContentVoteTarget;
+  target: FeedbackTarget;
 }) {
   const feedback = useContentFeedback();
   const menuId = useId();

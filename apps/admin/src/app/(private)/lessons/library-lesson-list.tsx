@@ -4,7 +4,6 @@ import {
   AdminTableColumnsSkeleton,
 } from "@/components/admin-table-columns";
 import { AdminPagination } from "@/components/pagination";
-import { getVoteTotals, readVoteTotals } from "@/data/feedback/get-vote-totals";
 import { listLibraryLessons } from "@/data/lessons/list-library-lessons";
 import { type LibraryLessonStatus } from "@/lib/library-lesson-filters";
 import { LibraryLessonRow } from "./library-lesson-row";
@@ -15,7 +14,6 @@ const LIBRARY_LESSON_COLUMNS: AdminTableColumn[] = [
   { label: "Status" },
   { align: "right", label: "Screens" },
   { label: "Written by" },
-  { label: "Votes" },
   { label: "Updated" },
 ];
 
@@ -51,11 +49,6 @@ export async function LibraryLessonList({
     status,
   });
 
-  const votes = await getVoteTotals({
-    contentIds: lessons.map((lesson) => lesson.id),
-    contentKind: "lesson",
-  });
-
   return (
     <>
       <AdminTableColumns
@@ -64,11 +57,7 @@ export async function LibraryLessonList({
         isEmpty={lessons.length === 0}
       >
         {lessons.map((lesson) => (
-          <LibraryLessonRow
-            key={lesson.id}
-            lesson={lesson}
-            votes={readVoteTotals(votes, lesson.id)}
-          />
+          <LibraryLessonRow key={lesson.id} lesson={lesson} />
         ))}
       </AdminTableColumns>
 

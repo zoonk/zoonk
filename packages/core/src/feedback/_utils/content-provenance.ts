@@ -104,7 +104,7 @@ const provenanceLookups: Record<FeedbackContentKind, ProvenanceLookup> = {
 };
 
 /**
- * Snapshots the provenance of the content a vote or a feedback message is about, so feedback can be
+ * Snapshots the provenance of the content a feedback message is about, so feedback can be
  * read per model and prompt version even after the content is regenerated. Null means the content
  * doesn't exist or the reader can't see it.
  */

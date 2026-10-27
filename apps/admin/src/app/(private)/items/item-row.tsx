@@ -1,6 +1,4 @@
 import { ProvenanceLine } from "@/components/provenance";
-import { VoteTotalsLabel } from "@/components/vote-totals";
-import { type VoteTotals } from "@/data/feedback/get-vote-totals";
 import { type ItemAnswerStats, getItemAccuracy } from "@/data/items/get-item-answer-stats";
 import { type ListedItem } from "@/data/items/list-items";
 import { formatDate, formatPercent } from "@/lib/format";
@@ -8,15 +6,7 @@ import { ITEM_FORMAT_LABELS, getItemLabel } from "@/lib/item-label";
 import { TableCell, TableRow } from "@zoonk/ui/components/table";
 import Link from "next/link";
 
-export function ItemRow({
-  answerStats,
-  item,
-  votes,
-}: {
-  answerStats: ItemAnswerStats;
-  item: ListedItem;
-  votes: VoteTotals;
-}) {
+export function ItemRow({ answerStats, item }: { answerStats: ItemAnswerStats; item: ListedItem }) {
   return (
     <TableRow>
       <TableCell className="max-w-80 min-w-64 whitespace-normal">
@@ -56,9 +46,6 @@ export function ItemRow({
       <TableCell className="text-right tabular-nums">{answerStats.attempts}</TableCell>
       <TableCell className="text-right tabular-nums">
         {formatPercent(getItemAccuracy(answerStats))}
-      </TableCell>
-      <TableCell>
-        <VoteTotalsLabel totals={votes} />
       </TableCell>
       <TableCell>
         <ProvenanceLine provenance={item} />

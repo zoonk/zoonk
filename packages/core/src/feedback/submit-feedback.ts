@@ -8,7 +8,7 @@ import { sendFeedbackMessage } from "./send-feedback-message";
 
 /**
  * Adds the model, prompt version and run behind the content the message is about, when the sender
- * can see it, so messages can be read per model and prompt version like votes.
+ * can see it, so messages can be read per model and prompt version.
  */
 async function getStoredContext({
   context,

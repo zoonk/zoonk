@@ -10,7 +10,7 @@ import { useId } from "react";
 import { AnswerOption, AnswerOptionGroup } from "../_components/answer-option";
 import { DetailsDrawer } from "../_components/details-drawer";
 import { PageSectionTitle } from "../_components/page";
-import { ContentVoteMenu } from "../feedback/content-vote-menu";
+import { ContentFeedbackMenu } from "../feedback/content-feedback-menu";
 import { ItemSetStimulus } from "../questions/item-set-stimulus";
 import { ItemLine, ItemStem, ItemText } from "../questions/item-text";
 import { useTrueFalseLabels } from "../questions/use-true-false-labels";
@@ -115,7 +115,7 @@ function ReviewItem({
         </div>
 
         {/* The duel has no hints or menus; its questions are voted on here, once it's over. */}
-        <ContentVoteMenu
+        <ContentFeedbackMenu
           label={t("Question options")}
           screen="checkpoint-review"
           target={{ contentId: answer.itemId, contentKind: "item" }}
