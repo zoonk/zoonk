@@ -140,7 +140,13 @@ function InsightActions({
 
   return (
     <SuggestionActions>
-      <SuggestionAction disabled={isPending} onClick={() => onAnswer("accepted")}>
+      {/* A tip's only answer acknowledges it: outline, so Today's own action stays the screen's
+          one filled button. A choice (add it, move my study time) keeps its filled accept. */}
+      <SuggestionAction
+        disabled={isPending}
+        onClick={() => onAnswer("accepted")}
+        variant={choices.dismiss ? "default" : "outline"}
+      >
         {choices.accept}
       </SuggestionAction>
 
