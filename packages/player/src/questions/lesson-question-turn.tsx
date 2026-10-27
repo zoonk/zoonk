@@ -14,6 +14,7 @@ import {
   MessageContent,
   MessageHeader,
 } from "@zoonk/ui/components/message";
+import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
 import { RotateCcwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -22,6 +23,8 @@ import { type LessonQuestionApiError } from "./lesson-question-api";
 import { QuestionErrorAction, RequestErrorMessage, toHelpLimit } from "./lesson-question-errors";
 import { LessonQuestionMarkdown } from "./lesson-question-markdown";
 import { useLessonQuestionNavigation } from "./lesson-question-navigation";
+import { useLessonQuestionController } from "./lesson-question-provider";
+import { isLessonQuestionAnswerInProgress } from "./lesson-question-status";
 import { type TutorAnswerLinks } from "./tutor-markdown";
 import { type LessonQuestionController } from "./use-lesson-questions";
 
@@ -212,33 +215,55 @@ function MemoryUpdate({ changes }: { changes: LessonQuestionMemoryChange[] | und
   return renderMemoryUpdate(changes);
 }
 
+/**
+ * The way to the conversation's earlier turns, while it has more, saying so when they couldn't be
+ * read. A page (the buddy tab) calls them messages.
+ */
+export function EarlierTurns({ page = false }: { page?: boolean }) {
+  const t = useExtracted();
+  const { loadEarlier, state } = useLessonQuestionController();
+
+  if (!state.hasMore) {
+    return null;
+  }
+
+  return (
+    <div className="flex flex-col items-center gap-2">
+      {state.earlierLoadFailed && (
+        <p className="text-destructive-text text-center text-sm" role="alert">
+          {page
+            ? t("Couldn't load earlier messages. Try again.")
+            : t("Couldn't load earlier questions. Try again.")}
+        </p>
+      )}
+      <Button
+        disabled={state.isLoadingEarlier}
+        onClick={() => void loadEarlier()}
+        size="sm"
+        type="button"
+        variant="outline"
+      >
+        {state.isLoadingEarlier && <Spinner aria-hidden="true" />}
+        {page ? t("Load earlier messages") : t("Load earlier questions")}
+      </Button>
+    </div>
+  );
+}
+
+/**
+ * One question and the buddy's answer, from the tutor's state: its answer's text links the app
+ * only as the server saved it (read from the server, or its saved text arrived after it streamed
+ * here, see `streamedAnswerIds`).
+ */
 export function QuestionTurn({
-  activeQuestionId,
-  answerInProgressCount,
-  answerError,
   identity,
-  linksVerified,
-  memoryChanges,
-  onCheckAgain,
-  onRetry,
   page = false,
   planChange,
   question,
   toolOffer,
 }: {
-  activeQuestionId: string | null;
-  answerInProgressCount: number;
-  answerError: LessonQuestionController["state"]["answerError"];
   /** The buddy who answers: its face and name beside every answer. */
   identity: TutorIdentity;
-  /**
-   * The answer's text is as the server saved it: read from the server, or its saved text arrived
-   * after it streamed here (see `streamedAnswerIds`). Only then does a buddy answer link the app.
-   */
-  linksVerified: boolean;
-  memoryChanges: LessonQuestionMemoryChange[] | undefined;
-  onCheckAgain: (questionId: string) => void;
-  onRetry: (questionId: string) => void;
   /**
    * The conversation is a page of its own (the buddy tab): messages read at body size and leave
    * out what each question is about, since it's always the goal.
@@ -251,6 +276,9 @@ export function QuestionTurn({
   toolOffer?: React.ReactNode;
 }) {
   const t = useExtracted();
+  const { checkAnswer, retryAnswer, state } = useLessonQuestionController();
+  const { activeQuestionId, answerError } = state;
+  const answering = state.questions.filter(isLessonQuestionAnswerInProgress).length;
 
   return (
     <article
@@ -273,13 +301,13 @@ export function QuestionTurn({
           <BubbleContent className={cn(page && "text-[0.9375rem] leading-[1.55]")}>
             <QuestionAnswer
               answer={question.answer}
-              checkAgainDisabled={activeQuestionId !== null || answerInProgressCount > 1}
-              disabled={activeQuestionId !== null || answerInProgressCount > 0}
+              checkAgainDisabled={activeQuestionId !== null || answering > 1}
+              disabled={activeQuestionId !== null || answering > 0}
               error={answerError?.questionId === question.id ? answerError.reason : null}
               isLocallyStreaming={activeQuestionId === question.id}
-              linksVerified={linksVerified}
-              onCheckAgain={() => onCheckAgain(question.id)}
-              onRetry={() => onRetry(question.id)}
+              linksVerified={!state.streamedAnswerIds.includes(question.id)}
+              onCheckAgain={() => void checkAnswer(question.id)}
+              onRetry={() => void retryAnswer(question.id)}
               status={question.status}
             />
           </BubbleContent>
@@ -291,7 +319,7 @@ export function QuestionTurn({
             {toolOffer}
           </>
         )}
-        <MemoryUpdate changes={memoryChanges} />
+        <MemoryUpdate changes={state.memoryChanges[question.id]} />
       </TutorMessage>
     </article>
   );

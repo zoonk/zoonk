@@ -159,7 +159,6 @@ function DockSuggestions({ buddy }: { buddy: TutorBuddy }) {
  */
 function DockedConversation({ buddy }: { buddy: TutorBuddy }) {
   const t = useExtracted();
-  const controller = useLessonQuestionController();
 
   const back = () => {
     buddy.close();
@@ -198,11 +197,7 @@ function DockedConversation({ buddy }: { buddy: TutorBuddy }) {
       </div>
 
       <div className="min-h-0 flex-1">
-        <QuestionThread
-          controller={controller}
-          identity={buddy.identity}
-          isAuthenticated={controller.canAskQuestions}
-        />
+        <QuestionThread identity={buddy.identity} />
       </div>
     </section>
   );

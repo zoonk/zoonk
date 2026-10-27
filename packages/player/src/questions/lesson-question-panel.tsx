@@ -139,11 +139,7 @@ export function LessonQuestionDrawer({
           {quote}
 
           <DrawerContent className="min-h-0 flex-1 overflow-hidden px-0 pb-0">
-            <QuestionThread
-              controller={controller}
-              identity={identity}
-              isAuthenticated={canAskQuestions}
-            />
+            <QuestionThread identity={identity} />
           </DrawerContent>
 
           {canAskQuestions && (

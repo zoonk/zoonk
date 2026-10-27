@@ -3,8 +3,7 @@
 import { type MissionMomentView } from "@zoonk/core/sessions/completion-contract";
 import { type TutorCards } from "@zoonk/learn/tutor-cards";
 import { type TutorIdentity, TutorMessage } from "@zoonk/learn/tutor-identity";
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
-import { Spinner } from "@zoonk/ui/components/spinner";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useEffect, useMemo, useRef } from "react";
@@ -26,7 +25,7 @@ import {
   useLessonQuestionController,
 } from "./lesson-question-provider";
 import { isLessonQuestionAnswerInProgress } from "./lesson-question-status";
-import { QuestionTurn } from "./lesson-question-turn";
+import { EarlierTurns, QuestionTurn } from "./lesson-question-turn";
 import {
   ConversationSkeleton,
   FirstDay,
@@ -153,37 +152,14 @@ function ConversationTurns({
   renderPlanChange,
   renderToolOffer,
 }: Pick<TutorConversationProps, "identity" | "renderPlanChange" | "renderToolOffer">) {
-  const t = useExtracted();
   const controller = useLessonQuestionController();
   const { state } = controller;
   const latestId = state.questions.at(-1)?.id ?? null;
   const trackTurn = useFollowLatest({ latestId, ready: state.loadStatus === "ready" });
 
-  const answering = state.questions.filter((question) =>
-    isLessonQuestionAnswerInProgress(question),
-  ).length;
-
   return (
     <>
-      {state.hasMore && (
-        <div className="flex flex-col items-center gap-2">
-          {state.earlierLoadFailed && (
-            <p className="text-destructive-text text-center text-sm" role="alert">
-              {t("Couldn't load earlier messages. Try again.")}
-            </p>
-          )}
-          <Button
-            disabled={state.isLoadingEarlier}
-            onClick={() => void controller.loadEarlier()}
-            size="sm"
-            type="button"
-            variant="outline"
-          >
-            {state.isLoadingEarlier && <Spinner aria-hidden="true" />}
-            {t("Load earlier messages")}
-          </Button>
-        </div>
-      )}
+      <EarlierTurns page />
 
       {state.questions.map((question, index) => (
         <div
@@ -196,14 +172,7 @@ function ConversationTurns({
             previous={index > 0 ? new Date(state.questions[index - 1]?.createdAt ?? 0) : null}
           />
           <QuestionTurn
-            activeQuestionId={state.activeQuestionId}
-            answerError={state.answerError}
-            answerInProgressCount={answering}
             identity={identity}
-            linksVerified={!state.streamedAnswerIds.includes(question.id)}
-            memoryChanges={state.memoryChanges[question.id]}
-            onCheckAgain={(questionId) => void controller.checkAnswer(questionId)}
-            onRetry={(questionId) => void controller.retryAnswer(questionId)}
             page
             planChange={
               question.planChange &&

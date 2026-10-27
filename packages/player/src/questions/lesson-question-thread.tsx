@@ -12,7 +12,6 @@ import {
   EmptyTitle,
 } from "@zoonk/ui/components/empty";
 import { MessageScrollerContent, MessageScrollerItem } from "@zoonk/ui/components/message-scroller";
-import { Spinner } from "@zoonk/ui/components/spinner";
 import { OnDemandWaitContext } from "@zoonk/ui/lib/on-demand";
 import { MessageSquareTextIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -24,10 +23,11 @@ import {
   getQuestionLimit,
 } from "./lesson-question-errors";
 import { useLessonQuestionNavigation } from "./lesson-question-navigation";
+import { useLessonQuestionController } from "./lesson-question-provider";
 import { type OfferedSuggestion } from "./lesson-question-state";
 import { isLessonQuestionAnswerInProgress } from "./lesson-question-status";
 import { ThreadViewport, ThreadViewportSkeleton } from "./lesson-question-thread-viewport";
-import { QuestionTurn } from "./lesson-question-turn";
+import { EarlierTurns, QuestionTurn } from "./lesson-question-turn";
 import { type LessonQuestionController } from "./use-lesson-questions";
 import { useTutorSuggestions } from "./use-tutor-suggestions";
 
@@ -177,49 +177,20 @@ function WaitForFirstShow({
 }
 
 /** The thread's questions and answers, with the way to earlier ones. */
-function ThreadTurns({
-  controller,
-  identity,
-}: {
-  controller: LessonQuestionController;
-  identity: TutorIdentity;
-}) {
-  const t = useExtracted();
+function ThreadTurns({ identity }: { identity: TutorIdentity }) {
   const { renderPlanChange, renderToolOffer } = useLessonQuestionNavigation();
-  const { state } = controller;
+  const { answerPlanChange, state } = useLessonQuestionController();
   const threadLabel = useThreadLabel(state.context.kind);
-
-  const answerInProgressCount = state.questions.filter((question) =>
-    isLessonQuestionAnswerInProgress(question),
-  ).length;
 
   return (
     <ThreadViewport
-      aria-busy={answerInProgressCount > 0}
+      aria-busy={state.questions.some(isLessonQuestionAnswerInProgress)}
       aria-label={threadLabel}
       revealedQuestionId={state.revealedQuestionId}
       role="log"
     >
       <MessageScrollerContent role="presentation">
-        {state.hasMore && (
-          <div className="flex flex-col items-center gap-2">
-            {state.earlierLoadFailed && (
-              <p className="text-destructive-text text-center text-sm" role="alert">
-                {t("Couldn't load earlier questions. Try again.")}
-              </p>
-            )}
-            <Button
-              disabled={state.isLoadingEarlier}
-              onClick={() => void controller.loadEarlier()}
-              size="sm"
-              type="button"
-              variant="outline"
-            >
-              {state.isLoadingEarlier && <Spinner aria-hidden="true" />}
-              {t("Load earlier questions")}
-            </Button>
-          </div>
-        )}
+        <EarlierTurns />
         {/* Real message heights keep bottom-following stable as streamed content grows. */}
         {state.questions.map((question) => (
           <MessageScrollerItem
@@ -228,20 +199,10 @@ function ThreadTurns({
             messageId={question.id}
           >
             <QuestionTurn
-              activeQuestionId={state.activeQuestionId}
-              answerError={state.answerError}
-              answerInProgressCount={answerInProgressCount}
               identity={identity}
-              linksVerified={!state.streamedAnswerIds.includes(question.id)}
-              memoryChanges={state.memoryChanges[question.id]}
-              onCheckAgain={(questionId) => void controller.checkAnswer(questionId)}
-              onRetry={(questionId) => void controller.retryAnswer(questionId)}
               planChange={
                 question.planChange &&
-                renderPlanChange?.({
-                  change: question.planChange,
-                  onAnswered: controller.answerPlanChange,
-                })
+                renderPlanChange?.({ change: question.planChange, onAnswered: answerPlanChange })
               }
               question={question}
               toolOffer={question.toolOffer && renderToolOffer?.(question.toolOffer)}
@@ -253,19 +214,12 @@ function ThreadTurns({
   );
 }
 
-export function QuestionThread({
-  controller,
-  identity,
-  isAuthenticated,
-}: {
-  controller: LessonQuestionController;
-  /** The buddy who answers, by face and name. */
-  identity: TutorIdentity;
-  isAuthenticated: boolean;
-}) {
+/** The tutor's conversation, by `identity`, the buddy who answers, by face and name. */
+export function QuestionThread({ identity }: { identity: TutorIdentity }) {
+  const controller = useLessonQuestionController();
   const { state } = controller;
 
-  if (!isAuthenticated) {
+  if (!controller.canAskQuestions) {
     return (
       <ThreadViewport>
         <GuestThread />
@@ -302,7 +256,7 @@ export function QuestionThread({
   return (
     <Suspense fallback={<ThreadViewportSkeleton />}>
       <WaitForFirstShow questions={state.questions}>
-        <ThreadTurns controller={controller} identity={identity} />
+        <ThreadTurns identity={identity} />
       </WaitForFirstShow>
     </Suspense>
   );
