@@ -22,7 +22,7 @@ const PRESSABLE_SELECTOR = [
 ].join(", ");
 
 /** Typing belongs to the field: inputs, text areas, selects and editable content. */
-export function isEditableTarget(target: EventTarget | null): boolean {
+function isEditableTarget(target: EventTarget | null): boolean {
   if (
     target instanceof HTMLInputElement ||
     target instanceof HTMLTextAreaElement ||

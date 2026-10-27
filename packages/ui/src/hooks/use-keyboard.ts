@@ -1,6 +1,6 @@
 import { use, useEffectEvent, useLayoutEffect, useRef } from "react";
 import { PopupShortcutLayer } from "./_utils/popup-shortcut-layer";
-import { getNumberKeyIndex, isEditableTarget, isScreenShortcut } from "./_utils/screen-shortcut";
+import { getNumberKeyIndex, isScreenShortcut } from "./_utils/screen-shortcut";
 
 type KeyboardModifiers = {
   altKey?: boolean;
@@ -100,10 +100,6 @@ export function useKeyboardCallback(
   callback: (event: KeyboardEvent) => ShortcutResult,
   options: {
     /**
-     * Skip the callback when the event target is an input, textarea, select, or contenteditable element.
-     */
-    ignoreEditable?: boolean;
-    /**
      * How to match modifiers:
      * - "all": ALL specified modifiers must be pressed (AND) — default
      * - "any": ANY specified modifier triggers (OR)
@@ -122,7 +118,7 @@ export function useKeyboardCallback(
     screen?: boolean;
   } = {},
 ) {
-  const { ignoreEditable = false, mode = "all", modifiers, screen = false } = options;
+  const { mode = "all", modifiers, screen = false } = options;
   const inPopup = use(PopupShortcutLayer);
   const { altKey, ctrlKey, metaKey, shiftKey } = modifiers ?? {};
 
@@ -141,10 +137,6 @@ export function useKeyboardCallback(
         return;
       }
 
-      if (ignoreEditable && isEditableTarget(event.target)) {
-        return;
-      }
-
       if (screen && !isScreenShortcut(event, { inPopup })) {
         return;
       }
@@ -158,7 +150,7 @@ export function useKeyboardCallback(
 
     globalThis.addEventListener("keydown", handleKeyDown);
     return () => globalThis.removeEventListener("keydown", handleKeyDown);
-  }, [key, mode, ignoreEditable, screen, inPopup, altKey, ctrlKey, metaKey, shiftKey]);
+  }, [key, mode, screen, inPopup, altKey, ctrlKey, metaKey, shiftKey]);
 }
 
 /**

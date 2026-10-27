@@ -2,13 +2,11 @@
  * The Zoonk brain with its bolt, drawn in the current text color. The bolt is
  * cut out in the page background, so the mark works on light and dark pages.
  */
-export function ZoonkLogo({ className, label }: { className?: string; label?: string }) {
+export function ZoonkLogo({ className }: { className?: string }) {
   return (
     <svg
-      aria-hidden={label ? undefined : true}
-      aria-label={label}
+      aria-hidden="true"
       className={className}
-      role={label ? "img" : undefined}
       viewBox="0 0 1024 1024"
       xmlns="http://www.w3.org/2000/svg"
     >
