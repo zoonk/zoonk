@@ -15,7 +15,6 @@ import { deleteUserDependenciesBeforeAuthDelete } from "./account-deletion";
 import {
   AUTH_ADVANCED_OPTIONS,
   AUTH_MEMBERSHIP_LIMIT,
-  AUTH_ORGANIZATION_LIMIT,
   BETTER_AUTH_BASE_PATH,
   COOKIE_CACHE_MINUTES,
   IS_COOKIE_CACHE_ENABLED,
@@ -39,12 +38,7 @@ import { stripePlugin } from "./stripe/plugin";
 import { USERNAME_MAX_LENGTH, USERNAME_MIN_LENGTH, normalizeUsername } from "./username-rules";
 import { isUsernameAllowed } from "./username-validator";
 
-/**
- * Base auth config shared between production and E2E.
- * Does NOT include rateLimit or emailAndPassword - those differ per environment.
- */
 export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
-  account: { accountLinking: { enabled: true } },
   advanced: AUTH_ADVANCED_OPTIONS,
   appName: "Zoonk",
   basePath: BETTER_AUTH_BASE_PATH,
@@ -92,11 +86,8 @@ export const baseAuthPlugins = [
   }),
   organization({
     ac,
-    // Temporarily disable organization creation
-    // We'll support this in the future
     allowUserToCreateOrganization: false,
     membershipLimit: AUTH_MEMBERSHIP_LIMIT,
-    organizationLimit: AUTH_ORGANIZATION_LIMIT,
     roles: { admin, member, owner },
     schema: {
       organization: {

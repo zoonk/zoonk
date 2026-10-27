@@ -6,7 +6,6 @@ import {
   anonymousClient,
   emailOTPClient,
   inferOrgAdditionalFields,
-  oneTimeTokenClient,
   organizationClient,
   usernameClient,
 } from "better-auth/client/plugins";
@@ -39,7 +38,6 @@ export const authClient = createAuthClient({
     adminClient(),
     anonymousClient(),
     emailOTPClient(),
-    oneTimeTokenClient(),
     organizationClient({
       ac,
       roles: { admin, member, owner },
