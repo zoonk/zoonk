@@ -1,7 +1,9 @@
 /**
- * Where the code runs. A production build counts as a deployment unless `pnpm start` marks it as
- * served on this machine (`ZOONK_LOCAL_PRODUCTION`), so a deployment missing Vercel's variables
- * still fails closed while a local production build keeps local sign-in, mail and origins.
+ * Where the code runs, which `NODE_ENV` doesn't say: Next.js builds for production wherever the
+ * build runs. Vercel names the environment in `VERCEL_ENV`: production, preview (custom
+ * environments too) or development, its name for a run on a developer's machine, which `pnpm dev`
+ * and `pnpm start` set. Without it, a production build fails closed as a preview, so a deployment
+ * missing Vercel's variables never gets local sign-in.
  */
 export function getEnvironment(): "development" | "e2e" | "preview" | "production" {
   if (process.env.E2E_TESTING === "true") {
@@ -12,11 +14,11 @@ export function getEnvironment(): "development" | "e2e" | "preview" | "productio
     return "production";
   }
 
-  // Vercel custom environments report "preview" too.
-  if (
-    process.env.VERCEL_ENV === "preview" ||
-    (process.env.NODE_ENV === "production" && process.env.ZOONK_LOCAL_PRODUCTION !== "true")
-  ) {
+  if (process.env.VERCEL_ENV === "development") {
+    return "development";
+  }
+
+  if (process.env.VERCEL_ENV === "preview" || process.env.NODE_ENV === "production") {
     return "preview";
   }
 

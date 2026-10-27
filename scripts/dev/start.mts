@@ -76,9 +76,9 @@ async function startPortlessDevelopment(): Promise<CommandResult> {
       MAILBOX_URL: getMailboxCaptureUrl(mailboxUrl),
       MAIN_APP_URL: mainUrl,
       NEXT_PUBLIC_API_URL: apiUrl,
+      // Vercel's name for a run on this machine (as in `vercel dev`), so production builds keep local sign-in and mail.
+      VERCEL_ENV: "development",
       ZOONK_DEV_PROJECT: projectName,
-      // Without it, a production build outside Vercel counts as a preview deployment.
-      ...(productionMode ? { ZOONK_LOCAL_PRODUCTION: "true" } : {}),
     },
   });
 }
