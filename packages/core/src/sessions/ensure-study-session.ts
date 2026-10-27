@@ -6,6 +6,8 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { findActiveGoalId } from "../goals/_utils/goal-view";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { PlanConflictError } from "../plans/plan-conflict";
+import { loadDailyTimeLimitStatus } from "./_utils/daily-time-limit";
+import { getGoalDayMinutes } from "./_utils/day-minutes";
 import { openPlannedDay } from "./_utils/open-planned-day";
 import { findSavedDaySession } from "./_utils/saved-day-session";
 import { type StudySessionRow } from "./_utils/study-session-access";
@@ -62,7 +64,8 @@ async function findActivityGoal({
  * day to be credited to, and take the mission it did off Today. Saving the day of the goal whose
  * Today offers it (`findActivityGoal`) first, with the same writer as the explicit open, keeps the
  * missions Today showed. It writes no AI work, as a bare open doesn't. Best effort: no such goal,
- * a rest day, a plan not ready yet or a failure (logged) leave the activity as it was.
+ * a rest day, a used-up daily limit, a plan not ready yet or a failure (logged) leave the
+ * activity as it was.
  */
 export async function saveDayBeforeActivity({
   goalId,
@@ -92,13 +95,23 @@ export async function saveDayBeforeActivity({
       return;
     }
 
-    await openPlannedDay({
-      goal,
-      localDate: getDateInTimeZone({ date: now, timeZone: zone }),
-      now,
-      timeZone: zone,
-      userId,
-    });
+    const localDate = getDateInTimeZone({ date: now, timeZone: zone });
+
+    const [plan, limit] = await Promise.all([
+      prisma.plan.findUnique({ select: { settings: true }, where: { goalId: goal.id } }),
+      loadDailyTimeLimitStatus({ date: localDate, userId }),
+    ]);
+
+    // A rest day, or one whose study time is used up, offers no missions and opens empty: each of
+    // the activity's requests (every answer of a round) would plan it again only to save nothing.
+    if (
+      limit.reached ||
+      getGoalDayMinutes({ date: localDate, goal, planSettings: plan?.settings }) === 0
+    ) {
+      return;
+    }
+
+    await openPlannedDay({ goal, localDate, now, timeZone: zone, userId });
   });
 
   if (error) {

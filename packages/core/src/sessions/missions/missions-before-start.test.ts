@@ -7,6 +7,7 @@ import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
+import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
 import { pronunciationReviewFixture } from "@zoonk/testing/fixtures/pronunciation-reviews";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
@@ -27,9 +28,11 @@ import { startLibraryLesson } from "../../lesson-player/start-library-lesson";
 import { createLessonQuestion } from "../../lesson-questions/create-lesson-question";
 import { answerMistakePractice } from "../../mistakes/answer-mistake-practice";
 import { finishMistakePractice } from "../../mistakes/finish-mistake-practice";
+import * as planning from "../../plans/_utils/replan";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { getTodayView } from "../../view-models/today/get-today-view";
 import { SESSION_NOW, SESSION_TODAY, sessionGoalFixture } from "../_test-utils/session-goal";
+import { saveDayBeforeActivity } from "../ensure-study-session";
 import { openStudyDay } from "../open-study-day";
 import { readMissionDocument } from "./catalog";
 
@@ -472,4 +475,63 @@ describe("an activity done from Today before the learner starts the day", () => 
 
     await expect(prisma.studySession.count({ where: { userId: user.id } })).resolves.toBe(0);
   });
+});
+
+describe("an activity on a day that offers no missions", () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ now: SESSION_NOW, toFake: ["Date"] });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  // Each answer of a round or a notebook practice asks again: none of them may re-plan the day.
+  it.each(["a rest day", "a used-up daily limit"] as const)(
+    "saves nothing and never runs the planner on %s",
+    async (day) => {
+      const user = await userFixture();
+      const { goal, plan, skills } = await sessionGoalFixture({ userId: user.id });
+      // SESSION_NOW is a Wednesday, the fourth of the week's minutes.
+      const weekdayMinutes = day === "a rest day" ? [45, 45, 45, 0, 45, 45, 45] : Array(7).fill(45);
+
+      // With its skill graph, the plan would be selected afresh (`computePlan`) to open the day.
+      await prisma.plan.update({
+        data: {
+          graph: {
+            phases: [{ milestone: "Basics", name: "Basics" }],
+            skills: skills.map((skill) => ({
+              area: null,
+              lessons: 1,
+              name: skill.name,
+              phase: 0,
+              skillId: skill.id,
+              weight: null,
+            })),
+          },
+          settings: { startDate: "2026-09-29", weekdayMinutes },
+        },
+        where: { id: plan.id },
+      });
+
+      if (day === "a used-up daily limit") {
+        await Promise.all([
+          learningProfileFixture({ dailyLimitMinutes: 15, userId: user.id }),
+          dailyProgressFixtureMany([
+            { date: SESSION_TODAY, timeSpentSeconds: 15 * 60, userId: user.id },
+          ]),
+        ]);
+      }
+
+      const planner = vi.spyOn(planning, "computePlan");
+      const activity = { goalId: goal.id, timeZone: TIME_ZONE, userId: user.id };
+
+      await saveDayBeforeActivity(activity);
+      await saveDayBeforeActivity(activity);
+
+      expect(planner).not.toHaveBeenCalled();
+      await expect(prisma.studySession.count({ where: { userId: user.id } })).resolves.toBe(0);
+      planner.mockRestore();
+    },
+  );
 });
