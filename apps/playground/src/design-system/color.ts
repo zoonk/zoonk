@@ -172,7 +172,7 @@ export const COLOR_GROUPS: readonly ColorGroup[] = [
         meaning:
           "Progress made (done, right, studied, reached, a day of activity) and where the learner is now, the edge of their progress.",
         name: "success",
-        use: "Done: `DoneMark`, filled segments and cells, the week's rings, a right answer's ring and tint, activity squares, good news in a plan change. The place: a ring (the day's block in progress, the current phase) or a dot with a halo (`StatusMark` next).",
+        use: "Done: `DoneMark`, filled segments and cells, the week's rings, a right answer's ring and tint, activity squares, good news in a plan change, a call's stars (progress, not a prize, so never gold). The place: a ring (the day's block in progress, the current phase) or a dot with a halo (`StatusMark` next).",
       },
       {
         meaning: "Progress in words.",

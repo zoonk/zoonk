@@ -5,14 +5,14 @@ Zoonk is neutral by default and colored on purpose, softly. Neutral tone steps (
 ## One meaning per hue
 
 - **The text color** is the action and the learner's pick: the main action (inverted), focus, and a pick before it's judged (`selected`: a 2px ring on `selected-tint`). Picks were blue; with progress blue a picked answer looked right before it was checked, so a pick takes the text color and checking always changes it.
-- **Blue** (`success`, words in `success-text`) is progress made, up to where the learner is: done (a fill or a check), a right answer, studied, reached, a day of activity, good news in a plan change, and the learner's place at the edge of their progress (a ring, or a dot with a halo).
+- **Blue** (`success`, words in `success-text`) is progress made, up to where the learner is: done (a fill or a check), a right answer, studied, reached, a day of activity, good news in a plan change, a call's stars (progress, not a prize, so never gold), and the learner's place at the edge of their progress (a ring, or a dot with a halo).
 - **Pink-red** (`destructive`, `destructive-text`) is wrong or removed: a wrong answer, bad news in a plan change, a destructive action, a one-line inline error.
 - **Amber** (`warning`, `warning-text`) is look here: a flag, a suggestion, the one thing to improve. Icons and chips only, never a dot: an amber dot is review and practice.
 - **Violet** (`brain`, `brain-text`) is Brain Power and nothing else: every reward amount, the missions' track and reward, the bar to the next level.
 - **A kind's hue** (`kind-*`) says what a thing is, only through `KIND_MARKS` (`KindMark`, `KindDot`, `KindIcon`, `kindFillClass`, `kindTextClass`), where kinds sit side by side in one list. Kinds that do the same job share a hue and differ by icon: going back over what was learned (review, practice, mistakes) is amber, testing what the learner knows (a mock, a challenge) orange. A lesson, the default, is neutral; no kind is green.
 - **A subject's hue** comes from one table in `globals.css` through `data-subject` (`getSubject`): `SubjectLabel` (its name on a soft tint) and `SubjectGlyph`, and its line on a course page (`bg-subject`). Never a surface wash, a button, a pick or progress.
 - **Activity visuals** (`viz-*`) are three hues for data inside an interactive activity's canvas, never blue or violet.
-- **Identity**: Energy is amber, a belt wears its color once reached, the buddy and the Trickster keep their faces.
+- **Identity**: Energy is amber, a belt wears its full colors once reached (the one identity color that stays strong; documented with the tokens), the buddy and the Trickster keep their faces.
 
 Everything else is neutral: titles, body and labels, panels and rows, tabs, navigation and its icons (the sidebar included), a goal's letter mark, and data that is none of the above (minutes, counts, dates, a subject's share of an exam, a timer).
 
