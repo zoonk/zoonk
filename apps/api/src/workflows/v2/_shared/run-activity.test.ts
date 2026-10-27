@@ -36,7 +36,6 @@ describe("run activity", () => {
 
   it("sees a dev server's run from before its restart as stalled, so it starts again", async () => {
     vi.stubEnv("NODE_ENV", "development");
-    vi.stubEnv("WORKFLOW_TARGET_WORLD", "local");
     serverStartedAgo(MINUTE_MS);
 
     await expect(isRunActive("run-1")).resolves.toBe(false);
@@ -45,16 +44,13 @@ describe("run activity", () => {
 
   it("keeps following a dev server's run that recorded something since it started", async () => {
     vi.stubEnv("NODE_ENV", "development");
-    vi.stubEnv("WORKFLOW_TARGET_WORLD", "local");
     serverStartedAgo(10 * MINUTE_MS);
 
     await expect(isRunActive("run-1")).resolves.toBe(true);
   });
 
-  it("waits the whole stall time where a restart resumes runs", async () => {
+  it("waits the whole stall time outside a dev server", async () => {
     vi.stubEnv("NODE_ENV", "production");
-    vi.stubEnv("VERCEL_DEPLOYMENT_ID", "dpl_test");
-    vi.stubEnv("WORKFLOW_TARGET_WORLD", "");
     serverStartedAgo(MINUTE_MS);
 
     await expect(isRunActive("run-1")).resolves.toBe(true);

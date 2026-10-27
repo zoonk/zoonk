@@ -24,7 +24,6 @@
       "SENTRY_AUTH_TOKEN",
       "STRIPE_*",
       "VERCEL_*",
-      "WORKFLOW_TARGET_WORLD",
       "PORTLESS_*",
       "PRIVATE_BLOB_*",
       "ZOONK_DEV_PROJECT"

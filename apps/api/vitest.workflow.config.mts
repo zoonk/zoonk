@@ -15,8 +15,6 @@ export default defineConfig({
       AI_GATEWAY_API_KEY: "",
       NEXT_PUBLIC_APP_DOMAIN: "localhost:9002",
       OPENAI_LIVE_API_KEY: "",
-      WORKFLOW_LOCAL_RECOVER_ACTIVE_RUNS: "false",
-      WORKFLOW_TARGET_WORLD: "local",
     },
     environment: "node",
     execArgv: ["--conditions=react-server"],

@@ -13,19 +13,14 @@ const STALLED_AFTER_MS = 30 * 60 * 1000;
 
 const ACTIVE_STATUSES = new Set(["pending", "running"]);
 
-const LOCAL_WORLDS = new Set(["local", "@workflow/world-local"]);
-
 /**
- * When this server started, on a development server running the local world: its queue lives in
- * memory and nothing starts the world to re-enqueue runs, so a run that recorded nothing since the
- * server started was killed by a restart and never moves again. Null elsewhere: the Vercel world's
- * queue survives restarts, so a run quiet that long is only waiting.
+ * When this server started, on a development server: its local world's queue lives in memory and
+ * nothing starts the world to re-enqueue runs, so a run that recorded nothing since the server
+ * started was killed by a restart and never moves again. Null elsewhere: the Vercel world's queue
+ * survives restarts, so a run quiet that long is only waiting.
  */
 function getDevServerStart(): number | null {
-  const world =
-    process.env.WORKFLOW_TARGET_WORLD || (process.env.VERCEL_DEPLOYMENT_ID ? "vercel" : "local");
-
-  if (process.env.NODE_ENV !== "development" || !LOCAL_WORLDS.has(world)) {
+  if (process.env.NODE_ENV !== "development") {
     return null;
   }
 
