@@ -9,11 +9,14 @@ import {
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { Stage, stageRate, useStageSwitches } from "./stage";
 
-type Take = "blink" | "defeat" | "smug" | "smugThenDefeat";
+type Take = "blink" | "defeat" | "sly" | "smug" | "smugWithSign" | "smugThenDefeat";
 
-const ACTS: readonly { label: string; name: Take; start: TricksterExpression }[] = [
+/** Each take, the face it starts from, and whether he holds his sign, as at a challenge's intro. */
+const ACTS: readonly { label: string; name: Take; sign?: boolean; start: TricksterExpression }[] = [
   { label: "Blink", name: "blink", start: "sly" },
   { label: "Smug", name: "smug", start: "sly" },
+  { label: "Smug, with his sign", name: "smugWithSign", sign: true, start: "sly" },
+  { label: "Back to sly", name: "sly", start: "smug" },
   { label: "Defeated", name: "defeat", start: "smug" },
   { label: "Smug, then defeated", name: "smugThenDefeat", start: "sly" },
 ];
@@ -28,22 +31,22 @@ function wait(ms: number) {
 }
 
 async function perform(actor: ActorHandle<TricksterActName>, take: Take, rate: number) {
-  if (take !== "smugThenDefeat") {
-    await actor.play(take, { playbackRate: rate });
+  if (take === "smugThenDefeat") {
+    await actor.play("smug", { playbackRate: rate });
+    await wait(BEAT_BETWEEN_MS / rate);
+    await actor.play("defeat", { playbackRate: rate });
     return;
   }
 
-  await actor.play("smug", { playbackRate: rate });
-  await wait(BEAT_BETWEEN_MS / rate);
-  await actor.play("defeat", { playbackRate: rate });
+  await actor.play(take === "smugWithSign" ? "smug" : take, { playbackRate: rate });
 }
 
-/** The Trickster on his stage: smug, defeated, or one after the other. */
+/** The Trickster on his stage: smug (with his sign too), back to sly, defeated, or smug then defeated. */
 export function TricksterStage() {
   const actor = useRef<ActorHandle<TricksterActName>>(null);
   const switches = useStageSwitches();
   const [take, setTake] = useState<{ act: Take; id: number } | null>(null);
-  const start = ACTS.find((act) => act.name === take?.act)?.start ?? "sly";
+  const shown = ACTS.find((act) => act.name === take?.act);
   const rate = stageRate(switches.slow);
 
   // Only a new take plays, at the speed the switch shows when it starts.
@@ -67,7 +70,13 @@ export function TricksterStage() {
       onPlay={(act) => setTake((previous) => ({ act, id: (previous?.id ?? 0) + 1 }))}
       switches={switches}
     >
-      <TricksterActor className="size-52" expression={start} key={take?.id ?? 0} ref={actor} />
+      <TricksterActor
+        className="size-52"
+        expression={shown?.start ?? "sly"}
+        key={take?.id ?? 0}
+        pose={shown?.sign ? "hero" : "sly"}
+        ref={actor}
+      />
     </Stage>
   );
 }

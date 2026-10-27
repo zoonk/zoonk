@@ -15,7 +15,7 @@ export const MOMENTS: readonly Moment[] = [
   {
     id: "mission",
     summary:
-      "The work that completed a mission: the buddy's face beside \"Mission done!\" and what's left for the day's bonus, the violet track filling, and the mission's check stamping in (\"Just done\").",
+      "The work that completed a mission: the buddy's face beside \"Mission done!\", smiling as the mission's check stamps in (\"Just done\"), what's left for the day's bonus and the violet track filling.",
     title: "A mission done",
     where:
       "`MissionMoment` on its violet-tinted panel (in `DayMoment`), `MissionTrack`, `MissionsRing`'s moment.",
@@ -23,7 +23,7 @@ export const MOMENTS: readonly Moment[] = [
   {
     id: "missions",
     summary:
-      "The day's last mission: the whole buddy, \"Today's missions done!\" and the bonus as Brain Power's violet readout. On Today the reward lights up as a solid violet chip and the buddy's ring closes in violet.",
+      "The day's last mission: the whole buddy cheering, \"Today's missions done!\" and the bonus as Brain Power's violet readout. On Today the reward lights up as a solid violet chip and the buddy's ring closes in violet.",
     title: "Today's missions done",
     where:
       "`MissionMoment` with the bonus paid, `BrainPowerReward` earned, `MissionsRing` complete.",
@@ -38,7 +38,7 @@ export const MOMENTS: readonly Moment[] = [
   {
     id: "ceremony",
     summary:
-      "A new belt, the buddy's next stage or new glasses: the loudest moment, full screen and before the result it crowned, wherever the work earned it (a block, a lesson on its own, a mock, a duel, a practice, a drill, a round, a call, a test). The buddy big, wearing what changed, a title, one line and one action (new glasses add \"Not now\"). As it closes, the result is drawn under it and its moment plays, so the ceremony fades out over the result, never over an empty screen; once it's gone, the result's title takes the focus. A badge has no ceremony: the challenge's result shows it, and the result shows at once.",
+      "A new belt, the buddy's next stage or new glasses: the loudest moment, full screen and before the result it crowned, wherever the work earned it (a block, a lesson on its own, a mock, a duel, a practice, a drill, a round, a call, a test). The buddy big, wearing what changed and cheering (proud for new glasses), a title, one line and one action (new glasses add \"Not now\"). As it closes, the result is drawn under it and its moment plays, so the ceremony fades out over the result, never over an empty screen; once it's gone, the result's title takes the focus. A badge has no ceremony: the challenge's result shows it, and the result shows at once.",
     title: "A milestone's ceremony",
     where:
       "`MilestoneCeremony`, put first by `MomentAfterCeremony` or a step's `moment` (`getCeremonyMoment`); the result's title carries `MOMENT_TITLE_PROPS`.",
@@ -46,7 +46,7 @@ export const MOMENTS: readonly Moment[] = [
   {
     id: "challenge",
     summary:
-      "The Trickster beaten or not, the title, the score as a readout, then the day's moment (missions, a level or Energy reached) and what the duel earned as rows, with what comes next.",
+      "The Trickster acting out the result (his defeat when the learner won, smug when he did), the title, the score as a readout, then the day's moment (missions, a level or Energy reached) and what the duel earned as rows, with what comes next.",
     title: "A challenge's end",
     where: "`CheckpointResultView` (`MomentReadouts`, `DayMoment`).",
   },
@@ -61,7 +61,7 @@ export const MOMENTS: readonly Moment[] = [
   {
     id: "summary",
     summary:
-      "The session's end: the day's numbers as tiles and the skills that rose, then what it earned: the buddy glad, Brain Power as its violet readout, and the bonus, a belt's new stripes and the best streak as rows. On a wide screen what it earned is the aside, so the tiles leave Brain Power to it.",
+      "The session's end: the day's numbers as tiles and the skills that rose, then what it earned: the buddy proud of the day, Brain Power as its violet readout, and the bonus, a belt's new stripes and the best streak as rows. On a wide screen what it earned is the aside, so the tiles leave Brain Power to it.",
     title: "The session's end",
     where: "`SessionSummary`, `RewardsStep` and `EarnedToday` (`BrainPowerReadout`, `BeltTicks`).",
   },
@@ -76,7 +76,7 @@ export const MOMENT_RULES: readonly string[] = [
   "Warmer than everyday screens, never busy: the buddy or the Trickster where it's the subject, a big readout for what was earned, and nothing to read twice.",
   "Color only by meaning: violet for Brain Power and missions, a belt in its own colors, Energy amber, done blue. Louder means a solid fill or a tint whose color is the reward (the lit chip, the missions panel) and a short motion, never a new color.",
   "Each fires once, when it's earned: never on load, never as decoration, and never in the way of the next step.",
-  "Every motion has a calm reduced-motion version. Each part that may move is its own element with a `data-slot`: `readout-number`, `missions-bonus`, `mission-stamp`, `mission-track`, `level-badge`, `belt-ticks`, `energy-mark`, and a ceremony's `ceremony-stage` and `ceremony-text`. The buddy (`moment-buddy`) and the Trickster hold still: a character never moves as one block.",
+  "Every motion has a calm reduced-motion version. Each part that may move is its own element with a `data-slot`: `readout-number`, `missions-bonus`, `mission-stamp`, `mission-track`, `level-badge`, `belt-ticks`, `energy-mark`, and a ceremony's `ceremony-stage` and `ceremony-text`. The buddy (`moment-buddy`) and the Trickster react with their parts, once (`reaction`), never as one block: `/design/characters` maps each moment to its act.",
 ];
 
 /** The system in a few lines, for the overview. */

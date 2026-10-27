@@ -2,6 +2,7 @@ import {
   BUDDY_EXPRESSIONS,
   CHARACTER_IDLE_RULES,
   CHARACTER_LIGHT_RULES,
+  CHARACTER_MOMENTS,
   CHARACTER_PARTS,
   CHARACTER_RULES,
   CHARACTER_TIMING_RULES,
@@ -110,6 +111,44 @@ function EnergyGrid() {
   );
 }
 
+const MOMENT_COLUMNS = "lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_8rem_minmax(0,1.2fr)]";
+const MOMENT_ROW = "grid gap-x-6 gap-y-1 border-t py-3 text-sm leading-6";
+
+/** Where each character reacts in the product, with the act and its beat. */
+function MomentsTable() {
+  return (
+    <div className="flex flex-col" role="table">
+      <div
+        className={cn("text-faint hidden gap-x-6 pb-2 text-xs lg:grid", MOMENT_COLUMNS)}
+        role="row"
+      >
+        <span role="columnheader">Moment</span>
+        <span role="columnheader">Who</span>
+        <span role="columnheader">Act</span>
+        <span role="columnheader">When in the moment</span>
+      </div>
+      {CHARACTER_MOMENTS.map((moment) => (
+        <div
+          className={cn(MOMENT_ROW, MOMENT_COLUMNS)}
+          key={`${moment.moment}-${moment.act}`}
+          role="row"
+        >
+          <span className="font-medium" role="rowheader">
+            {moment.moment}
+          </span>
+          <span className="text-muted-foreground" role="cell">
+            {moment.character}
+          </span>
+          <span role="cell">{moment.act}</span>
+          <span className="text-muted-foreground" role="cell">
+            {moment.beat}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 const DEFINITION =
   "grid gap-x-6 gap-y-1 border-t py-3 text-sm leading-6 lg:grid-cols-[18rem_minmax(0,1fr)]";
 
@@ -130,10 +169,10 @@ export default function CharactersPage() {
   return (
     <>
       <DocHeader title="Characters">
-        A lab for how the buddy and the Trickster act: their parts move (eyes first, then the mouth,
-        the head and the limbs, loose parts last), never the whole drawing at once. The rig is part
-        of the real components; nothing here plays in the product yet, where characters hold still
-        until the owner approves an act for a moment.
+        How the buddy and the Trickster act: their parts move (eyes first, then the mouth, the head
+        and the limbs, loose parts last), never the whole drawing at once. The rig is part of the
+        real components, and every act here plays in the product, once, where something happened
+        (Moments, below); everywhere else the characters hold still.
       </DocHeader>
 
       <DocSection
@@ -152,7 +191,14 @@ export default function CharactersPage() {
       </DocSection>
 
       <DocSection
-        intro="Each act, its length at 24 frames a second, and where it would play once approved."
+        intro="Where a character reacts in the product, and when in the moment its act starts. A revisit draws the act's landing still."
+        title="Moments"
+      >
+        <MomentsTable />
+      </DocSection>
+
+      <DocSection
+        intro="Each act, its length at 24 frames a second, and where it plays."
         title="Acts"
       >
         <ActsTable />

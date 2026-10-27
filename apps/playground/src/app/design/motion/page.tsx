@@ -149,8 +149,8 @@ export default function MotionPage() {
         Zoonk stays still, so the few things that move mean something. Everyday screens never
         animate their content in; feedback answers an action in a moment and never overshoots; only
         what&apos;s earned celebrates, once, with a spring, a number counting up or a burst. The
-        buddy and the Trickster hold still until they can act. How to apply it: the `zoonk-motion`
-        skill.
+        buddy and the Trickster react with their parts where something happened, and hold still
+        everywhere else. How to apply it: the `zoonk-motion` skill.
       </DocHeader>
 
       <MotionPreview>

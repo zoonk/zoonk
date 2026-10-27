@@ -34,7 +34,7 @@ export const MOTION_TIERS: readonly MotionTier[] = [
     id: "celebration",
     rules: [
       "Only when something is earned, from the action that earned it, once: a reload, a revisit or the way back shows the end state, still.",
-      "The only place for the spring, a number counting up, a meter filling from where it was and a burst. Characters hold still (Characters, below).",
+      "The only place for the spring, a number counting up, a meter filling from where it was and a burst, and where the buddy or the Trickster reacts, acting with its parts (`/design/characters`).",
       "Louder as it's rarer, and never in the learner's way: Continue works from the first frame.",
     ],
     summary:
@@ -228,12 +228,12 @@ export const CELEBRATION_LADDER: readonly CelebrationStep[] = [
     often: "Several a day",
   },
   {
-    how: "Its check lands; its part of the missions' track fills.",
+    how: "Its check lands as the buddy's face beside it smiles; its part of the missions' track fills.",
     moment: "A mission done",
     often: "Up to three a day",
   },
   {
-    how: "The day's Brain Power counts up under the buddy, who cheers, still; what was celebrated where it was earned (the bonus, a belt's new levels) holds still. Once per day's result: opened again, it's still.",
+    how: "The day's Brain Power counts up under the buddy, proud of the day a beat later; what was celebrated where it was earned (the bonus, a belt's new levels) holds still. Once per day's result: opened again, it's still.",
     moment: "The session's summary",
     often: "Once a day",
   },
@@ -243,26 +243,26 @@ export const CELEBRATION_LADDER: readonly CelebrationStep[] = [
     often: "A few a week",
   },
   {
-    how: "The Trickster shows his beaten pose, still; the day's missions and level as above.",
+    how: "The Trickster acts out his defeat a beat in; the day's missions and level as above.",
     moment: "A challenge won",
     often: "A few a month",
   },
   {
-    how: "+50 lands and counts up beside the whole buddy, cheering, still, then one burst from it.",
+    how: "+50 lands and counts up as the whole buddy cheers beside it, stretching up as one burst flies from it.",
     moment: "Today's missions all done",
     often: "Once a day at most",
   },
   {
-    how: "The buddy stands on its stage in its new look, cheering, still, as one burst flies from behind it (new glasses get none: violet is Brain Power's).",
+    how: "The buddy cheers on its stage in its new look as one burst flies from behind it; new glasses get no burst (violet is Brain Power's), and the buddy shows them off, proud.",
     moment: "A milestone's ceremony: a new belt, the buddy's next stage, new glasses",
     often: "Weeks apart",
   },
 ];
 
 export const CHOREOGRAPHY_RULES: readonly string[] = [
-  "One thing moves at a time, in the order the learner reads: the number with its meter, then what it earned lands; a burst goes with the last beat.",
+  "One thing moves at a time, in the order the learner reads: the number with its meter, then what it earned lands, and the character reacts to it; a burst goes with the last beat.",
   "Each beat starts as the one before lands, about 250ms apart; things of one kind follow each other 100ms apart, three at most.",
-  "The last beat starts by 750ms, and everything is still within 1.5s of the screen showing.",
+  "The last beat starts by 750ms, and everything is still within 1.5s of the screen showing, except a character's act, which lands within 2s.",
   "Nothing waits for an animation: Continue works from the first frame, and leaving mid-moment just leaves.",
 ];
 
