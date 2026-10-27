@@ -313,9 +313,7 @@ test.describe("Exams API", () => {
     const [hidden, full] = await Promise.all([
       other.api.get(mocksPath),
       readBody({
-        response: await api.post(mocksPath, {
-          data: { shape: { ...half, kind: "full" }, timeZone: "UTC" },
-        }),
+        response: await api.post(mocksPath, { data: { shape: { ...half, kind: "full" } } }),
         schema: anytimeMockResponseSchema,
       }),
     ]);
@@ -324,7 +322,7 @@ test.describe("Exams API", () => {
     expect(full).toStrictEqual({ id: null, status: "needsQuestions" });
 
     const started = await readBody({
-      response: await api.post(mocksPath, { data: { shape: half, timeZone: "UTC" } }),
+      response: await api.post(mocksPath, { data: { shape: half } }),
       schema: anytimeMockResponseSchema,
       status: 201,
     });
@@ -396,9 +394,7 @@ test.describe("Exams API", () => {
     const full = { area: null, day: null, kind: "full" } as const;
 
     const started = await readBody({
-      response: await api.post(`/v1/goals/${goal.id}/mocks`, {
-        data: { shape: full, timeZone: "UTC" },
-      }),
+      response: await api.post(`/v1/goals/${goal.id}/mocks`, { data: { shape: full } }),
       schema: anytimeMockResponseSchema,
       status: 201,
     });
@@ -456,7 +452,7 @@ test.describe("Exams API", () => {
 
     const started = await readBody({
       response: await api.post(`/v1/goals/${goal.id}/mocks`, {
-        data: { shape: { area: null, day: null, kind: "full" }, timeZone: "UTC" },
+        data: { shape: { area: null, day: null, kind: "full" } },
       }),
       schema: anytimeMockResponseSchema,
       status: 201,
