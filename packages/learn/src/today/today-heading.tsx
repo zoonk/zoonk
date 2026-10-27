@@ -2,7 +2,13 @@
 
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { PageEyebrow, PageHeader, PageHeaderContent, PageTitle } from "../_components/page";
+import {
+  PageEyebrow,
+  PageHeader,
+  PageHeaderContent,
+  PageSubtitle,
+  PageTitle,
+} from "../_components/page";
 import { PlusMark } from "../_components/plus-lock";
 import { useFormatIsoDate } from "../_utils/iso-date";
 import { usePlanStatusText } from "../plan/plan-status-label";
@@ -147,12 +153,13 @@ function ExamDayPart() {
 
 /**
  * Why a study day is lighter than the learner's time: it sets some aside for a mock exam longer
- * than their day, which the Plan shows at its real length on its date. A return after a break
- * already says its day is lighter (see `useFreshStartText`), so it only names the mock. Every plan
- * saves that time; a mock the learner's plan doesn't include wears the Plus mark beside its words,
- * so the line never reads as a mock they can take.
+ * than their day, which the Plan shows at its real length on its date. A sentence, so it's the
+ * title's supporting line rather than a part of the quiet uppercase line over it. A return after a
+ * break already says its day is lighter (see `useFreshStartText`), so it only names the mock. Every
+ * plan saves that time; a mock the learner's plan doesn't include wears the Plus mark beside its
+ * words, so the line never reads as a mock they can take.
  */
-function MockFundingPart() {
+function MockFundingLine() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
   const { today } = useTodayScreen();
@@ -164,16 +171,14 @@ function MockFundingPart() {
   const date = formatDate(today.mockFunding.mockDate);
 
   return (
-    <TodayEyebrowPart>
+    <PageSubtitle className="gap-x-2">
       <span>
         {isWelcomeBackDay(today.session)
           ? t("Saving time for {date}'s mock exam", { date })
           : t("Lighter day: saving time for {date}'s mock exam", { date })}
       </span>
-      {!today.session.examAccess.includesMockExams && (
-        <PlusMark className="ml-2 align-middle font-sans normal-case" />
-      )}
-    </TodayEyebrowPart>
+      {!today.session.examAccess.includesMockExams && <PlusMark />}
+    </PageSubtitle>
   );
 }
 
@@ -181,7 +186,8 @@ function MockFundingPart() {
  * The tab's name under one quiet line (the date, the days left, where the plan stands, every day:
  * a finished or rest day says so under the title, and where the learner stands still matters),
  * and on a phone the day's time beside it as a readout ("44 min left"); from `sm` that time moves
- * under the day's segments and the day's action takes its place beside the title.
+ * under the day's segments and the day's action takes its place beside the title. A day lighter
+ * for a mock says why under the title.
  */
 export function TodayHeading({ className }: { className?: string }) {
   const t = useExtracted();
@@ -198,7 +204,6 @@ export function TodayHeading({ className }: { className?: string }) {
           <DaysLeft />
           <ShortPlanPart />
           <ExamDayPart />
-          {!endsDay && <MockFundingPart />}
           <TodayPace />
         </TodayEyebrow>
 
@@ -206,6 +211,8 @@ export function TodayHeading({ className }: { className?: string }) {
           <PageTitle>{t("Today")}</PageTitle>
           <DayTime className="shrink-0 text-2xl sm:hidden" />
         </div>
+
+        {!endsDay && <MockFundingLine />}
       </PageHeaderContent>
     </PageHeader>
   );
