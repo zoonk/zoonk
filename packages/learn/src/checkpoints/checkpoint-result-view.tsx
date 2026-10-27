@@ -1,6 +1,5 @@
 "use client";
 
-import { useCelebration } from "@zoonk/ui/hooks/celebration";
 import { useExtracted } from "next-intl";
 import { MomentReadouts } from "../_components/moment-readouts";
 import { StepCard, StepHeader, StepTitle } from "../_components/step-card";
@@ -68,21 +67,19 @@ function ScoreLine() {
 }
 
 /**
- * The Trickster, beaten or not; the week's challenge has no art, its title says it all. Beaten in
- * the duel just played, he tips back into his pose on the spring; a result opened again later
- * shows him leaning back already.
+ * The Trickster, beaten or not; the week's challenge has no art, its title says it all. Beaten, he
+ * leans back from the first frame, still: a character never moves as one block (the
+ * `zoonk-motion` skill).
  */
 function ResultArt() {
-  const { checkpoint, duel } = useCheckpointScreen();
+  const { checkpoint } = useCheckpointScreen();
   const won = useIsWon();
-  const celebrate = useCelebration();
-  const tips = won && celebrate && duel.state.completion !== null;
 
   if (checkpoint.kind === "weekly") {
     return null;
   }
 
-  return <TricksterArt beaten={won} className={tips ? "animate-tip" : undefined} />;
+  return <TricksterArt beaten={won} />;
 }
 
 /**

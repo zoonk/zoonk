@@ -4,8 +4,6 @@ import { BRAIN_POWER_BONUS } from "@zoonk/core/sessions/brain-power";
 import { isFullMeal } from "@zoonk/core/sessions/missions";
 import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
 import { Buddy } from "@zoonk/ui/components/buddy";
-import { useCelebration } from "@zoonk/ui/hooks/celebration";
-import { BEAT_MS } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronsUpIcon, ListChecksIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
@@ -44,27 +42,26 @@ export function hasRewardsBeyondBrainPower(summary: StudySessionSummary): boolea
 }
 
 /**
- * The resolved buddy, glad about the day, including before a choice is saved: it hops once as the
- * day's Brain Power counts up.
+ * The resolved buddy, glad about the day, including before a choice is saved. It holds still,
+ * cheering from the first frame, as the day's Brain Power counts up under it: a character never
+ * moves as one block (the `zoonk-motion` skill).
  */
 function RewardsArt() {
   const t = useExtracted();
   const { buddy: learnerBuddy } = useSessionSummary();
   const buddy = resolveLearnBuddy(learnerBuddy);
   const name = useBuddyName(buddy);
-  const celebrate = useCelebration();
 
   return (
     <Buddy
       beltColor={buddy.beltColor}
-      className={cn("size-24", celebrate && "animate-hop")}
+      className="size-24"
       energy={buddy.energy}
       expression="cheer"
       glasses={buddy.glasses}
       kind={buddy.kind}
       label={t("{buddy}, happy with today", { buddy: name })}
       studiedToday
-      style={celebrate ? { animationDelay: `${BEAT_MS}ms` } : undefined}
     />
   );
 }

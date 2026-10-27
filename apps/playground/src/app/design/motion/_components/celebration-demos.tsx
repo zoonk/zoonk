@@ -1,6 +1,5 @@
 "use client";
 
-import { Buddy } from "@zoonk/ui/components/buddy";
 import { Burst } from "@zoonk/ui/components/burst";
 import { CountUp } from "@zoonk/ui/components/count-up";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -10,9 +9,6 @@ import { BeltTicks, LevelBadge, MissionsTrack, plus } from "./demo-parts";
 const EARNED = 27;
 const TILE_EARNED = 12;
 const BONUS = 50;
-
-/** Enough Energy for a glad buddy, short of its glow. */
-const BUDDY_ENERGY = 70;
 
 /** A readout's number, as a task's end draws it. */
 const READOUT_CLASS = "text-readout text-[2.5rem]";
@@ -34,10 +30,7 @@ export function CountDemo() {
   );
 }
 
-/**
- * A new level's badge, a mission's check, a call's star and a ceremony's buddy, each landing on
- * the spring.
- */
+/** A new level's badge, a mission's check and a call's star, each landing on the spring. */
 export function SettleDemo() {
   return (
     <div className="flex flex-wrap items-center gap-10">
@@ -50,15 +43,6 @@ export function SettleDemo() {
       />
 
       <StarIcon aria-hidden="true" className="fill-success text-success animate-settle size-5" />
-
-      <Buddy
-        beltColor="orange"
-        className="animate-settle size-24 [--settle-from:0.85]"
-        energy={BUDDY_ENERGY}
-        expression="cheer"
-        kind="zu"
-        studiedToday
-      />
     </div>
   );
 }
@@ -70,22 +54,6 @@ export function FillDemo() {
       <BeltTicks />
       <MissionsTrack />
     </div>
-  );
-}
-
-/** The buddy, glad, hopping once. */
-export function BuddyDemo() {
-  return (
-    <span className="animate-hop flex w-fit">
-      <Buddy
-        beltColor="orange"
-        className="size-24"
-        energy={BUDDY_ENERGY}
-        expression="cheer"
-        kind="zu"
-        studiedToday
-      />
-    </span>
   );
 }
 

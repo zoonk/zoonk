@@ -48,7 +48,7 @@ function isPayoff({ fullMeal, missions }: MissionMomentFacts): boolean {
 /**
  * When what the work reached after its missions (a level, Energy) starts moving: the beat after
  * the missions' last one, so one thing moves at a time. The missions' checks land on the first
- * beat; the day's payoff adds the bonus and the buddy on the second and its burst on the third.
+ * beat; the day's payoff adds the bonus on the second and its burst on the third.
  */
 export function getAfterMissionsDelay(facts: MissionMomentFacts | null): number {
   if (!facts || !hasMissionMoment(facts)) {
@@ -72,27 +72,15 @@ function StampedMark({ celebrate, order }: { celebrate: boolean; order: number }
 }
 
 /**
- * The learner's buddy, glad about the missions: its face beside a mission done, still, and the
- * whole buddy when the day's missions are all done, hopping once with the bonus. Decorative.
+ * The learner's buddy, glad about the missions: its face beside a mission done, and the whole
+ * buddy when the day's missions are all done. It holds still, cheering from the first frame: a
+ * character never moves as one block (the `zoonk-motion` skill). Decorative.
  */
-function MomentBuddy({
-  buddy,
-  celebrate,
-  whole,
-}: {
-  buddy: LearnBuddy | null;
-  celebrate: boolean;
-  whole: boolean;
-}) {
+function MomentBuddy({ buddy, whole }: { buddy: LearnBuddy | null; whole: boolean }) {
   const resolved = resolveLearnBuddy(buddy);
-  const hops = celebrate && whole;
 
   return (
-    <span
-      className={cn("flex shrink-0", hops && "animate-hop")}
-      data-slot="moment-buddy"
-      style={hops ? { animationDelay: `${2 * BEAT_MS}ms` } : undefined}
-    >
+    <span className="flex shrink-0" data-slot="moment-buddy">
       <Buddy
         beltColor={resolved.beltColor}
         className={whole ? "size-24" : "size-12"}
@@ -109,9 +97,9 @@ function MomentBuddy({
 
 /**
  * The day's bonus this work paid, as every Brain Power earned reads (`BrainPowerReadout`): "+50" a
- * violet readout with "Brain Power" beside it. It lands whole on its beat with the buddy's hop
- * (its words never wait alone for their number) and counts up, then one burst of violet sparks
- * flies from it, the day's rarest beat. Screen readers hear it once, in the moment's status.
+ * violet readout with "Brain Power" beside it. It lands whole on its beat (its words never wait
+ * alone for their number) and counts up, then one burst of violet sparks flies from it, the day's
+ * rarest beat. Screen readers hear it once, in the moment's status.
  */
 function PaidBonus({ celebrate, points }: { celebrate: boolean; points: number }) {
   return (
@@ -137,8 +125,8 @@ function PaidBonus({ celebrate, points }: { celebrate: boolean; points: number }
  * what's left for the bonus ("1 more for +50 Brain Power"), then the day's missions by name, the
  * ones this work completed landing their checks ("Just done") as their part of the track fills,
  * and the rest saying where they're done. When it was the last one and the work paid the bonus,
- * the moment is the day's: "Today's missions done!", the whole buddy hopping as "+50" counts up in
- * violet, then one burst. Nothing when the work completed none.
+ * the moment is the day's: "Today's missions done!", the whole buddy cheering as "+50" counts up
+ * in violet, then one burst. Nothing when the work completed none.
  */
 export function MissionMoment({
   buddy,
@@ -212,7 +200,7 @@ export function MissionMoment({
       data-slot="mission-moment"
     >
       <div className={cn("flex items-center", payoff ? "gap-4" : "gap-3")}>
-        {buddy !== undefined && <MomentBuddy buddy={buddy} celebrate={celebrate} whole={payoff} />}
+        {buddy !== undefined && <MomentBuddy buddy={buddy} whole={payoff} />}
 
         <div className={cn("flex min-w-0 flex-1 flex-col", payoff ? "gap-3" : "gap-0.5")}>
           <div className="flex flex-col gap-0.5" role="status">

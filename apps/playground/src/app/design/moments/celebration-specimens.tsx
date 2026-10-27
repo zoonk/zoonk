@@ -302,14 +302,14 @@ export function MockEndSpecimen() {
 }
 
 /**
- * A challenge won, as its result opens right after the duel: the Trickster tips back into his
- * beaten pose (`CheckpointResultView` does so only then), the score, then the day's moment.
+ * A challenge won, as its result opens right after the duel: the Trickster in his beaten pose,
+ * still, the score, then the day's moment.
  */
 export function ChallengeWonSpecimen() {
   return (
     <LearnProvider adapters={ADAPTERS}>
       <div className="max-w-column flex flex-col items-start gap-6">
-        <TricksterArt beaten className="animate-tip" />
+        <TricksterArt beaten />
         <div className="flex flex-col items-start gap-3">
           <p className="text-title">You beat the Trickster!</p>
           <MomentReadouts brainPower={0} score={{ answered: 6, correct: 5 }} />

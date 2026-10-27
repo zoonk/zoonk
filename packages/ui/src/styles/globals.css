@@ -127,7 +127,7 @@
   --transition-duration-quick: 150ms;
   /* An overlay opening, a disclosure, the lesson's screen turn. */
   --transition-duration-base: 200ms;
-  /* Something already there swells once (`animate-pop`), the buddy's hop. */
+  /* Something already there swells once (`animate-pop`). */
   --transition-duration-pop: 300ms;
   /* Something earned lands on the spring (`animate-settle`). */
   --transition-duration-settle: 650ms;
@@ -171,10 +171,8 @@
   --default-transition-timing-function: var(--ease-out);
   --animate-settle: settle var(--transition-duration-settle) var(--ease-spring) both;
   --animate-pop: pop var(--transition-duration-pop) var(--ease-out);
-  --animate-hop: hop var(--transition-duration-pop) var(--ease-out);
   --animate-fill: fill var(--transition-duration-fill) var(--ease-out) both;
   --animate-spark: spark var(--transition-duration-burst) var(--ease-out) forwards;
-  --animate-tip: tip var(--transition-duration-settle) var(--ease-spring) both;
 }
 
 /*
@@ -605,10 +603,8 @@
     --transition-duration-burst: 0ms;
     --animate-settle: none;
     --animate-pop: none;
-    --animate-hop: none;
     --animate-fill: none;
     --animate-spark: none;
-    --animate-tip: none;
     --press-scale: 1;
   }
 
@@ -685,20 +681,6 @@
 @keyframes pop {
   40% {
     scale: 1.12;
-  }
-}
-
-/* Something beaten tips back into the pose it rests in (its `rotate`), on the spring. */
-@keyframes tip {
-  from {
-    rotate: 0deg;
-  }
-}
-
-/* The buddy's hop: up by 8% of its height and down. */
-@keyframes hop {
-  40% {
-    translate: 0 -8%;
   }
 }
 

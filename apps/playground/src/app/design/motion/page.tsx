@@ -1,5 +1,6 @@
 import {
   CELEBRATION_LADDER,
+  CHARACTER_RULES,
   CHOREOGRAPHY_RULES,
   MOTION_DURATIONS,
   MOTION_EASINGS,
@@ -15,13 +16,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { type Metadata } from "next";
 import { DocHeader, DocRules, DocSection, renderCode } from "../_components/doc";
 import { MotionSpecimen } from "../_components/motion-specimen";
-import {
-  BuddyDemo,
-  BurstDemo,
-  CountDemo,
-  FillDemo,
-  SettleDemo,
-} from "./_components/celebration-demos";
+import { BurstDemo, CountDemo, FillDemo, SettleDemo } from "./_components/celebration-demos";
 import { EasingCurve } from "./_components/easing-curve";
 import { PressDemo, StateDemo } from "./_components/feedback-demos";
 import { MomentDemo } from "./_components/moment-demo";
@@ -31,7 +26,6 @@ import { TokenValue } from "./_components/token-value";
 export const metadata: Metadata = { title: "Motion" };
 
 const DEMOS: Record<string, () => React.ReactNode> = {
-  buddy: BuddyDemo,
   burst: BurstDemo,
   count: CountDemo,
   fill: FillDemo,
@@ -151,8 +145,9 @@ export default function MotionPage() {
       <DocHeader title="Motion">
         Zoonk stays still, so the few things that move mean something. Everyday screens never
         animate their content in; feedback answers an action in a moment and never overshoots; only
-        what&apos;s earned celebrates, once, with a spring, a number counting up or the buddy&apos;s
-        hop. How to apply it: the `zoonk-motion` skill.
+        what&apos;s earned celebrates, once, with a spring, a number counting up or a burst. The
+        buddy and the Trickster hold still until they can act. How to apply it: the `zoonk-motion`
+        skill.
       </DocHeader>
 
       <MotionPreview>
@@ -229,6 +224,13 @@ export default function MotionPage() {
             <MomentDemo />
           </MotionSpecimen>
           <DocRules rules={CHOREOGRAPHY_RULES} />
+        </DocSection>
+
+        <DocSection
+          intro="The buddy and the Trickster are characters, not objects: they show a feeling with their face and body, never by moving as one block."
+          title="Characters"
+        >
+          <DocRules rules={CHARACTER_RULES} />
         </DocSection>
 
         <DocSection title="Never">

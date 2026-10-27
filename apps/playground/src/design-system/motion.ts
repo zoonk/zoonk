@@ -33,7 +33,7 @@ export const MOTION_TIERS: readonly MotionTier[] = [
     id: "celebration",
     rules: [
       "Only when something is earned, from the action that earned it, once: a reload, a revisit or the way back shows the end state, still.",
-      "The only place for the spring, a number counting up, a meter filling from where it was, the buddy's hop and a burst.",
+      "The only place for the spring, a number counting up, a meter filling from where it was and a burst. Characters hold still (Characters, below).",
       "Louder as it's rarer, and never in the learner's way: Continue works from the first frame.",
     ],
     summary:
@@ -71,8 +71,8 @@ export const MOTION_DURATIONS: readonly MotionToken[] = [
   {
     cssVariable: "--transition-duration-pop",
     name: "Pop",
-    reduced: "0: no swell, no hop.",
-    use: "Something already there swells once (`animate-pop`); the buddy's hop (`animate-hop`).",
+    reduced: "0: no swell.",
+    use: "Something already there swells once (`animate-pop`), such as Energy's bolt.",
     utility: "duration-pop",
   },
   {
@@ -160,13 +160,12 @@ export const MOTION_PATTERNS: readonly MotionPattern[] = [
   },
   {
     communicates: "Something new is mine.",
-    how: "`animate-settle`: it grows in from `--settle-from` (0.5; large art 0.85) and lands on the spring. Something beaten tips back into its pose instead (`animate-tip`).",
+    how: "`animate-settle`: it grows in from `--settle-from` (0.5) and lands on the spring.",
     id: "settle",
     reduced: "In place from the first frame.",
     tier: "celebration",
     title: "Something earned lands",
-    where:
-      "A new level's badge, a mission's check, a call's star, the buddy on a ceremony's stage; the beaten Trickster tips back.",
+    where: "A new level's badge, a mission's check, a call's star. Never a character.",
   },
   {
     communicates: "How far it moved, from where it was.",
@@ -177,15 +176,6 @@ export const MOTION_PATTERNS: readonly MotionPattern[] = [
     title: "A meter filling",
     where:
       "A belt's new tick, the missions' track: only where the moment knows where it was, never from a guessed start.",
-  },
-  {
-    communicates: "Someone is glad with me.",
-    how: 'The buddy cheers (`expression="cheer"`) and hops once (`animate-hop`) after the numbers land.',
-    id: "buddy",
-    reduced: "Cheering, still.",
-    tier: "celebration",
-    title: "The buddy's reaction",
-    where: "Today's missions all done, the session's summary.",
   },
   {
     communicates: "This one is rare.",
@@ -214,7 +204,7 @@ export const CELEBRATION_LADDER: readonly CelebrationStep[] = [
     often: "Up to three a day",
   },
   {
-    how: "The day's Brain Power counts up and the buddy hops; what was celebrated where it was earned (the bonus, a belt's new levels) holds still. Once per day's result: opened again, it's still.",
+    how: "The day's Brain Power counts up under the buddy, who cheers, still; what was celebrated where it was earned (the bonus, a belt's new levels) holds still. Once per day's result: opened again, it's still.",
     moment: "The session's summary",
     often: "Once a day",
   },
@@ -224,30 +214,43 @@ export const CELEBRATION_LADDER: readonly CelebrationStep[] = [
     often: "A few a week",
   },
   {
-    how: "The beaten Trickster tips back on the spring; the day's missions and level as above.",
+    how: "The Trickster shows his beaten pose, still; the day's missions and level as above.",
     moment: "A challenge won",
     often: "A few a month",
   },
   {
-    how: "+50 counts up as the whole buddy hops, then one burst from it.",
+    how: "+50 lands and counts up beside the whole buddy, cheering, still, then one burst from it.",
     moment: "Today's missions all done",
     often: "Once a day at most",
   },
   {
-    how: "The buddy lands on its stage on the spring, then one burst (new glasses get none: violet is Brain Power's).",
+    how: "The buddy stands on its stage in its new look, cheering, still, as one burst flies from behind it (new glasses get none: violet is Brain Power's).",
     moment: "A milestone's ceremony: a new belt, the buddy's next stage, new glasses",
     often: "Weeks apart",
   },
 ];
 
 export const CHOREOGRAPHY_RULES: readonly string[] = [
-  "One thing moves at a time, in the order the learner reads: the number with its meter, then what it earned lands, then the buddy reacts; a burst goes with the last beat.",
+  "One thing moves at a time, in the order the learner reads: the number with its meter, then what it earned lands; a burst goes with the last beat.",
   "Each beat starts as the one before lands, about 250ms apart; things of one kind follow each other 100ms apart, three at most.",
   "The last beat starts by 750ms, and everything is still within 1.5s of the screen showing.",
   "Nothing waits for an animation: Continue works from the first frame, and leaving mid-moment just leaves.",
 ];
 
+/**
+ * The buddy and the Trickster are characters, not objects: a person shows a feeling with their face
+ * and body, so moving the whole drawing (a hop, a pop, a landing, a tip) reads as a sticker, worse
+ * than holding still.
+ */
+export const CHARACTER_RULES: readonly string[] = [
+  "A character never moves as a single unit: no hop, pop, landing, tip, slide or fade of the whole buddy or the whole Trickster, its face in the navigation included.",
+  "Until a character has its own rig and acting (its eyes, mouth and limbs moving as parts), it holds still, drawn from the first frame in the expression the moment calls for: the buddy cheering at today's missions, the Trickster leaning back, beaten.",
+  "What moves around it keeps moving: the number counting up, the check and the badge landing, the meter filling, the burst.",
+  "Reduced motion changes nothing here: the expression is the message, there from the first frame.",
+];
+
 export const NEVER_RULES: readonly string[] = [
+  "Move a character as one block (a hop, a pop, a landing, a tip): until it can act, it holds still.",
   "Animate navigation or page loads: no route transitions, nothing fading or sliding in.",
   "Animate list rows or grids in, or stagger them.",
   "Loop anything on an everyday screen, except a wait while it waits.",

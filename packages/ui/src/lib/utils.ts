@@ -8,7 +8,7 @@ import { createCn } from "cn/config";
  * color; `rounded-option` is a radius and the measures (`max-w-column`, `max-w-form`,
  * `max-w-wide`) are widths, so another one replaces them. The motion tokens are their kind's too:
  * `duration-quick` to `duration-burst` are durations, `ease-spring` an easing and `animate-settle`,
- * `animate-pop`, `animate-hop`, `animate-fill`, `animate-spark` and `animate-tip` animations.
+ * `animate-pop`, `animate-fill` and `animate-spark` animations.
  */
 export const cn = createCn({
   extend: {
@@ -18,7 +18,7 @@ export const cn = createCn({
       readout: [{ text: ["readout"] }],
     },
     theme: {
-      animate: ["settle", "pop", "hop", "fill", "spark", "tip"],
+      animate: ["settle", "pop", "fill", "spark"],
       container: ["column", "form", "wide"],
       ease: ["spring"],
       radius: ["option"],

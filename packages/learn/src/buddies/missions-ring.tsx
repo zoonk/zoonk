@@ -28,35 +28,20 @@ function writeSeen(done: number) {
   }
 }
 
-/** The face's pop, after its arcs have filled: a data attribute the face's classes play. */
-function popFace(face: HTMLElement) {
-  face.dataset.popping = "";
-
-  const end = (event: AnimationEvent) => {
-    if (event.target === face) {
-      delete face.dataset.popping;
-      face.removeEventListener("animationend", end);
-    }
-  };
-
-  face.addEventListener("animationend", end);
-}
-
 /**
- * Fills in the arcs of the missions done since the learner last saw the ring, in the fill's time,
- * then pops the face once: before the browser paints a new count (after hydration on a first
- * load), and not at all when the device asks for less motion, whose fill time is 0. A new day,
- * with fewer done, just starts over.
+ * Fills in the arcs of the missions done since the learner last saw the ring, in the fill's time:
+ * before the browser paints a new count (after hydration on a first load), and not at all when
+ * the device asks for less motion, whose fill time is 0. The face inside holds still, since a
+ * character never moves as one block (the `zoonk-motion` skill). A new day, with fewer done, just
+ * starts over.
  */
 function useMissionMoment({
   done,
   enabled,
-  face,
   ring,
 }: {
   done: number;
   enabled: boolean;
-  face: React.RefObject<HTMLSpanElement | null>;
   ring: React.RefObject<SVGSVGElement | null>;
 }) {
   useLayoutEffect(() => {
@@ -80,11 +65,7 @@ function useMissionMoment({
         fill: "backwards",
       });
     }
-
-    if (face.current) {
-      popFace(face.current);
-    }
-  }, [done, enabled, face, ring]);
+  }, [done, enabled, ring]);
 }
 
 /**
@@ -122,10 +103,9 @@ export function MissionsRing({
   strokeWidth?: number;
 }) {
   const ring = useRef<SVGSVGElement>(null);
-  const face = useRef<HTMLSpanElement>(null);
   const complete = missions.total > 0 && missions.done >= missions.total;
 
-  useMissionMoment({ done: missions.done, enabled: moment, face, ring });
+  useMissionMoment({ done: missions.done, enabled: moment, ring });
 
   return (
     <span
@@ -152,12 +132,7 @@ export function MissionsRing({
           />
         ))}
       </svg>
-      <span
-        className="data-popping:animate-pop relative flex items-center justify-center data-popping:[animation-delay:var(--transition-duration-fill)]"
-        ref={face}
-      >
-        {children}
-      </span>
+      <span className="relative flex items-center justify-center">{children}</span>
     </span>
   );
 }

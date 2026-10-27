@@ -12,7 +12,6 @@ import {
   DialogTitle,
 } from "@zoonk/ui/components/dialog";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { useCelebration } from "@zoonk/ui/hooks/celebration";
 import { BEAT_MS } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type BeltColor } from "@zoonk/utils/belt-level";
@@ -104,9 +103,10 @@ const STAGE_SPARKS: readonly Spark[] = [
 
 /**
  * The picture: the buddy in its new belt, at its new stage or in its new glasses, large on its
- * stage, a disc in the new belt's color (`data-slot="ceremony-stage"`). As it opens, the buddy
- * lands on the disc and, for a belt or a stage (both grown from Brain Power), violet sparks burst
- * from behind it; new glasses come from other achievements, so they get no Brain Power burst.
+ * stage, a disc in the new belt's color (`data-slot="ceremony-stage"`). The buddy stands there
+ * still, cheering from the first frame, since a character never moves as one block (the
+ * `zoonk-motion` skill); as it opens, for a belt or a stage (both grown from Brain Power), violet
+ * sparks burst from behind it. New glasses come from other achievements, so they get no burst.
  */
 function CeremonyArt({
   buddy: learnerBuddy,
@@ -114,7 +114,6 @@ function CeremonyArt({
 }: Pick<CeremonyProps, "buddy" | "milestone">) {
   const buddy = resolveLearnBuddy(learnerBuddy);
   const buddyName = useBuddyName(buddy);
-  const celebrate = useCelebration();
   const belt = toBeltColor(milestone.key);
   const glasses = toBuddyGlasses(milestone.key);
 
@@ -135,10 +134,7 @@ function CeremonyArt({
       )}
       <Buddy
         beltColor={milestone.kind === "belt" && belt ? belt : buddy.beltColor}
-        className={cn(
-          "relative size-40 sm:size-48",
-          celebrate && "animate-settle [--settle-from:0.85]",
-        )}
+        className="relative size-40 sm:size-48"
         energy={buddy.energy}
         expression="cheer"
         glasses={milestone.kind === "glasses" && glasses ? glasses : buddy.glasses}

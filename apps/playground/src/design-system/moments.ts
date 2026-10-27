@@ -76,7 +76,7 @@ export const MOMENT_RULES: readonly string[] = [
   "Warmer than everyday screens, never busy: the buddy or the Trickster where it's the subject, a big readout for what was earned, and nothing to read twice.",
   "Color only by meaning: violet for Brain Power and missions, a belt in its own colors, Energy amber, done blue. Louder means a solid fill or a tint whose color is the reward (the lit chip, the missions panel) and a short motion, never a new color.",
   "Each fires once, when it's earned: never on load, never as decoration, and never in the way of the next step.",
-  "Every motion has a calm reduced-motion version. Each part that may move is its own element with a `data-slot`: `readout-number`, `missions-bonus`, `moment-buddy`, `mission-stamp`, `mission-track`, `level-badge`, `belt-ticks`, `energy-mark`, and a ceremony's `ceremony-stage` and `ceremony-text`.",
+  "Every motion has a calm reduced-motion version. Each part that may move is its own element with a `data-slot`: `readout-number`, `missions-bonus`, `mission-stamp`, `mission-track`, `level-badge`, `belt-ticks`, `energy-mark`, and a ceremony's `ceremony-stage` and `ceremony-text`. The buddy (`moment-buddy`) and the Trickster hold still: a character never moves as one block.",
 ];
 
 /** The system in a few lines, for the overview. */
