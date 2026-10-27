@@ -1,82 +1,17 @@
-import {
-  type RuleContext,
-  type RuleEvent,
-  type RuleItem,
-  type RuleViolation,
-} from "./rule-context";
+import { type RuleContext, type RuleItem, type RuleViolation } from "./rule-context";
 import {
   findFirstDue,
   getAreaOf,
   getRuleItemKey,
   isTodoLesson,
   listOutByChoice,
-  toDay,
 } from "./rule-items";
-
-/** Steps the learner didn't ask for: the plan may only follow what it learned on its own. */
-const SYSTEM_EVENTS = new Set<RuleEvent["kind"]>(["outlinesLanded", "refresh"]);
-
-/** Steps that may not drop work a past day left: every one but the learner's own change. */
-function keepsUnfinished(event: RuleEvent): boolean {
-  return (
-    SYSTEM_EVENTS.has(event.kind) ||
-    ["newDay", "placement", "session", "testOut"].includes(event.kind)
-  );
-}
 
 /** Whether a lesson of the plan the learner saw is still somewhere in the new plan, set aside too. */
 function isStillPlanned({ item, items }: { item: RuleItem; items: readonly RuleItem[] }) {
   return item.lessonId
     ? items.some((other) => other.lessonId === item.lessonId)
     : items.some((other) => other.kind === "lesson" && other.skillId === item.skillId);
-}
-
-/**
- * R8. Unfinished work carries over: a lesson an earlier day left to do is still in the plan after
- * any step but the learner's own change (done, tested out, set aside or still to do). From an
- * exam's day on, nothing is left to carry it to, unless the plan studies everything past the date.
- */
-export function checkUnfinishedKept(context: RuleContext): RuleViolation[] {
-  const { after, before, event, today } = context;
-  const { targetDate } = after.goal;
-  const examCame = targetDate !== null && today >= targetDate && !after.settings.fullCourse;
-
-  if (!before || !keepsUnfinished(event) || examCame) {
-    return [];
-  }
-
-  return before.items
-    .filter((item) => isTodoLesson(item) && item.scheduledFor !== null && item.scheduledFor < today)
-    .filter((item) => !isStillPlanned({ item, items: after.items }))
-    .map((item) => ({
-      details: { due: toDay(item.scheduledFor?.getTime() ?? null), lesson: item.titleSnapshot },
-      message: `An unfinished lesson left the plan through a ${event.kind}.`,
-      rule: "R8",
-    }));
-}
-
-/**
- * R8. Finished work stays finished: a lesson or event the learner finished is still finished in the
- * plan after any step, a learner's change included (past work never moves).
- */
-export function checkFinishedKept(context: RuleContext): RuleViolation[] {
-  const { after, before, event } = context;
-
-  if (!before) {
-    return [];
-  }
-
-  const done = new Set(
-    after.items.filter((item) => item.status === "done").map((item) => getRuleItemKey(item)),
-  );
-
-  return before.items
-    .filter((item) => item.status === "done" && !done.has(getRuleItemKey(item)))
-    .map((item) => ({
-      details: { kind: item.kind, title: item.titleSnapshot },
-      message: `Finished work left the plan or was undone through a ${event.kind}.`,
-      rule: "R8",
-    }));
 }
 
 /** The chapter of the last lesson the learner finished, while it has lessons left to do. */

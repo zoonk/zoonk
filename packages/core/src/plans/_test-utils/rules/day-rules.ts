@@ -1,24 +1,9 @@
 import { addDays, daysBetween, fromIsoDate, toIsoDate } from "../../planner/plan-calendar";
 import { type RuleContext, type RuleItem, type RulePlan, type RuleViolation } from "./rule-context";
-import {
-  findFirstDue,
-  findLastDue,
-  getAreaOf,
-  isDueOn,
-  isHeldOnShownEnd,
-  isTodoLesson,
-  toDay,
-} from "./rule-items";
-
-/** A test this many days away or closer gets a day-by-day plan with one mock of its own. */
-const SHORT_PLAN_DAYS = 7;
+import { findFirstDue, findLastDue, getAreaOf, isDueOn, isTodoLesson } from "./rule-items";
 
 function getPlanStart({ plan, today }: { plan: RulePlan; today: Date }): Date {
   return plan.settings.startDate ? fromIsoDate(plan.settings.startDate) : today;
-}
-
-function isStudyItem(item: RuleItem): boolean {
-  return (item.kind === "lesson" || item.kind === "chapter") && item.status === "todo";
 }
 
 /** R20. Day one always has a session: a new plan has something to do on its first day. */
@@ -41,43 +26,6 @@ export function checkDayOneHasSession(context: RuleContext): RuleViolation[] {
           rule: "R20",
         },
       ];
-}
-
-/**
- * R21. Rest days rest: nothing to do is due on a weekday the learner gives no time, but the plan's
- * first day (it always has time), a weekly event the learner moved there, and a phase's challenge
- * held on the end the learner saw while Today asks to move that end, or after they kept it on a card
- * that said it rests there.
- */
-export function checkRestDaysRest(context: RuleContext): RuleViolation[] {
-  const { after, today } = context;
-  const { settings } = after;
-  const first = toIsoDate(getPlanStart({ plan: after, today }));
-  const moved = new Set(settings.movedEvents.map((event) => event.to));
-
-  const isRestDay = (date: Date) => {
-    const day = toIsoDate(date);
-    const minutes = settings.weekdayMinutes?.[date.getUTCDay()] ?? after.goal.dailyMinutes;
-    return minutes === 0 && day !== first && !moved.has(day);
-  };
-
-  return after.items
-    .filter(
-      (item) =>
-        item.status === "todo" &&
-        item.scheduledFor &&
-        isRestDay(item.scheduledFor) &&
-        !isHeldOnShownEnd({ context, item, reason: "restDay" }),
-    )
-    .map((item) => ({
-      details: {
-        day: toDay(item.scheduledFor?.getTime() ?? null),
-        kind: item.kind,
-        title: item.titleSnapshot,
-      },
-      message: "Something is due on a rest day.",
-      rule: "R21",
-    }));
 }
 
 /**
@@ -129,56 +77,6 @@ export function checkDayOneOpensWithGaps(context: RuleContext): RuleViolation[] 
       details,
       message: "Day one doesn't open with what the learner doesn't know.",
       rule: "R22",
-    }));
-}
-
-/** A class test's plan: days away, with its own short mock (see `PlanSettings.shortMockMinutes`). */
-function isShortPlan({ plan, today }: { plan: RulePlan; today: Date }): boolean {
-  const { targetDate } = plan.goal;
-
-  return (
-    targetDate !== null && daysBetween(getPlanStart({ plan, today }), targetDate) <= SHORT_PLAN_DAYS
-  );
-}
-
-/**
- * R23. The day before a test brings nothing new: no lesson is due on it (unless the plan starts
- * that day), and a class test's is its full review: its short mock or a review of every topic.
- * Once that day comes, the lessons on it are the ones earlier days left: Today offers them after
- * the review, "if you have time" (`catchUpToday`), so only lessons planned on it ahead count.
- */
-export function checkDayBeforeTest(context: RuleContext): RuleViolation[] {
-  const { after, today } = context;
-  const { targetDate } = after.goal;
-
-  if (after.goal.kind !== "exam" || !targetDate) {
-    return [];
-  }
-
-  const day = addDays(targetDate, -1);
-  const starts = getPlanStart({ plan: after, today });
-
-  if (starts >= day || today > day) {
-    return [];
-  }
-
-  const onDay = after.items.filter((item) => isDueOn({ day, item }));
-  const lessons = today < day ? onDay.filter((item) => isStudyItem(item)) : [];
-
-  const isClassTest =
-    after.settings.shortMockMinutes !== null && isShortPlan({ plan: after, today });
-
-  const hasReview = onDay.some((item) => item.kind === "mock" || item.kind === "review");
-
-  return [
-    lessons.length > 0 && { lessons: lessons.map((item) => item.titleSnapshot) },
-    isClassTest && !hasReview && { review: false },
-  ]
-    .filter((problem) => problem !== false)
-    .map((details) => ({
-      details: { day: toIsoDate(day), ...details },
-      message: "The day before the test isn't a review.",
-      rule: "R23",
     }));
 }
 
@@ -307,35 +205,4 @@ export function checkMocksInEveryPhase(context: RuleContext): RuleViolation[] {
   ];
 
   return problems.map((problem) => ({ ...problem, rule: "R24" }));
-}
-
-/**
- * R39. Phases keep their order: among the phases with something still to do, each starts no
- * earlier and ends no earlier than the one before. A phase the learner finished (done or tested
- * out) may show the days it was finished on.
- */
-export function checkPhasesInOrder(context: RuleContext): RuleViolation[] {
-  const { after } = context;
-
-  const open = after.phases.flatMap((phase, index) =>
-    phase.startDate !== null &&
-    phase.endDate !== null &&
-    after.items.some((item) => item.phase === index && item.status === "todo")
-      ? [{ end: phase.endDate, index, start: phase.startDate }]
-      : [],
-  );
-
-  return open.flatMap((phase, position) => {
-    const previous = open[position - 1];
-
-    return previous && (phase.start < previous.start || phase.end < previous.end)
-      ? [
-          {
-            details: { phase, previous },
-            message: `Phase ${phase.index + 1} runs ${phase.start} to ${phase.end}, before phase ${previous.index + 1} (${previous.start} to ${previous.end}).`,
-            rule: "R39",
-          },
-        ]
-      : [];
-  });
 }

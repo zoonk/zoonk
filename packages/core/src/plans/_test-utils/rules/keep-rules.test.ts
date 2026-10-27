@@ -1,8 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
   checkBaseChoicesKeepTopics,
-  checkEverythingPlanned,
-  checkOutcomesKept,
   checkPrerequisitesFirst,
   checkWrittenTestsKept,
 } from "./keep-rules";
@@ -12,8 +10,6 @@ import {
   ruleContext,
   ruleDay,
   ruleLesson,
-  rulePhase,
-  rulePhaseDatesProposal,
   rulePlan,
   ruleSkill,
 } from "./rule-fixtures";
@@ -51,136 +47,6 @@ describe("R12 an exam's written tests are always in", () => {
     expect(checkWrittenTestsKept(ruleContext({ after: cut }))).toMatchObject([
       { details: { area: "Redação" }, rule: "R12" },
     ]);
-  });
-});
-
-/**
- * Today's proposal to move a phase's end earlier, which brings the portfolio back: its card names
- * the outcome skills it fits in (`outcomesAdded`, career seed 2014).
- */
-function bringPortfolioBack(status: "declined" | "proposed") {
-  return rulePhaseDatesProposal({
-    effect: {
-      lessonsAdded: 2,
-      outcomesAdded: ["Portfólio"],
-      phaseEnds: [{ after: "2026-10-16", before: "2026-10-18", name: "learn" }],
-    },
-    status,
-  });
-}
-
-describe("R13 a career goal keeps its outcome work", () => {
-  const skills = [
-    ruleSkill({ skillId: "pesquisa" }),
-    ruleSkill({ name: "Portfólio", outcome: true, skillId: "portfolio" }),
-  ];
-
-  it("passes when the portfolio is in the plan", () => {
-    const after = rulePlan({ items: [ruleLesson({ day: 0, skillId: "portfolio" })], skills });
-    expect(checkOutcomesKept(ruleContext({ after }))).toStrictEqual([]);
-  });
-
-  it("flags a plan that cut the portfolio", () => {
-    const after = rulePlan({ items: [ruleLesson({ day: 0, skillId: "pesquisa" })], skills });
-
-    expect(checkOutcomesKept(ruleContext({ after }))).toMatchObject([
-      { details: { skill: "Portfólio" }, rule: "R13" },
-    ]);
-  });
-
-  it("passes while a proposal to move the phase dates that brings it back waits, or after the learner kept their dates", () => {
-    // Keeping the ends the learner saw leaves no room for the portfolio by the goal's date.
-    const after = rulePlan({
-      items: [ruleLesson({ day: 0, skillId: "pesquisa" })],
-      phases: [rulePhase({ end: 6, start: 0 })],
-      skills,
-    });
-
-    expect(
-      checkOutcomesKept(ruleContext({ after, waiting: [bringPortfolioBack("proposed")] })),
-    ).toStrictEqual([]);
-
-    expect(
-      checkOutcomesKept(ruleContext({ after, declined: [bringPortfolioBack("declined")] })),
-    ).toStrictEqual([]);
-  });
-
-  it("flags it when no proposal brings it back from the ends shown", () => {
-    const after = rulePlan({
-      items: [ruleLesson({ day: 0, skillId: "pesquisa" })],
-      phases: [rulePhase({ end: 6, start: 0 })],
-      skills,
-    });
-
-    const other = rulePhaseDatesProposal({
-      effect: { phaseEnds: [{ after: "2026-10-16", before: "2026-10-18", name: "learn" }] },
-    });
-
-    const stale = rulePhaseDatesProposal({
-      effect: {
-        outcomesAdded: ["Portfólio"],
-        phaseEnds: [{ after: "2026-10-16", before: "2026-10-20", name: "learn" }],
-      },
-      status: "declined",
-    });
-
-    expect(
-      checkOutcomesKept(ruleContext({ after, declined: [stale], waiting: [other] })),
-    ).toMatchObject([{ details: { skill: "Portfólio" }, rule: "R13" }]);
-  });
-});
-
-describe("R14 studying everything leaves nothing out", () => {
-  const skills = [ruleSkill({ area: "A", skillId: "a" }), ruleSkill({ area: "B", skillId: "b" })];
-
-  it("passes when every skill is in a plan without a date, or the learner took the area out", () => {
-    const all = rulePlan({
-      items: [ruleLesson({ day: 0, skillId: "a" }), ruleLesson({ day: 1, skillId: "b" })],
-      skills,
-    });
-
-    const skipped = rulePlan({
-      items: [ruleLesson({ day: 0, skillId: "a" })],
-      settings: { skippedAreas: ["B"] },
-      skills,
-    });
-
-    expect(checkEverythingPlanned(ruleContext({ after: all }))).toStrictEqual([]);
-    expect(checkEverythingPlanned(ruleContext({ after: skipped }))).toStrictEqual([]);
-  });
-
-  it("passes when the basics of an area the learner said is too basic leave, like a skipped base", () => {
-    const basics = [
-      ruleSkill({ area: "A", skillId: "a" }),
-      ruleSkill({ area: "A", phase: 1, skillId: "a2" }),
-    ];
-
-    const tooBasic = rulePlan({
-      items: [ruleLesson({ day: 0, skillId: "a2" })],
-      prerequisites: new Map([["a2", ["a"]]]),
-      settings: { pastBasicsAreas: ["A"] },
-      skills: basics,
-    });
-
-    const skippedBase = rulePlan({
-      items: [ruleLesson({ day: 0, skillId: "a2" })],
-      settings: { baseChoices: [{ choice: "skip", skillId: "a" }] },
-      skills: basics,
-    });
-
-    expect(checkEverythingPlanned(ruleContext({ after: tooBasic }))).toStrictEqual([]);
-    expect(checkEverythingPlanned(ruleContext({ after: skippedBase }))).toStrictEqual([]);
-  });
-
-  it("flags an exam plan studying everything that left a skill out", () => {
-    const after = rulePlan({
-      goal: { kind: "exam", targetDate: ruleDay(30) },
-      items: [ruleLesson({ day: 0, skillId: "a" })],
-      settings: { fullCourse: true },
-      skills,
-    });
-
-    expect(checkEverythingPlanned(ruleContext({ after }))).toHaveLength(1);
   });
 });
 

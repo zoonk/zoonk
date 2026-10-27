@@ -1,7 +1,5 @@
 import { type PlanOperation } from "../../plan-contract";
-import { type PlanChangeView } from "../../plan-view-contract";
 import { addDays } from "../../planner/plan-calendar";
-import { type PlanEffect } from "../../planner/plan-effect";
 import {
   type PlanGraphSkill,
   type PlanPhase,
@@ -123,56 +121,4 @@ export function ruleContext({
   ...context
 }: Partial<RuleContext> & { after: RulePlan; event?: RuleEvent }): RuleContext {
   return { before: null, event, today, ...context };
-}
-
-/** A change the learner applied, with its card's effect. */
-export function ruleChange({
-  effect,
-  ...change
-}: Omit<Partial<PlanChangeView>, "effect"> & { effect: Partial<PlanEffect> }): PlanChangeView {
-  return {
-    behind: null,
-    canUndo: true,
-    createdAt: ruleDay(0).toISOString(),
-    days: null,
-    effect: {
-      endDateAfter: null,
-      endDateBefore: null,
-      lessonsAdded: 0,
-      lessonsRemoved: 0,
-      ...effect,
-    },
-    examDocument: "notice",
-    id: "change",
-    kind: "edited",
-    lessonsSkipped: 0,
-    officialDate: null,
-    operations: [],
-    reason: null,
-    seen: false,
-    source: "learner",
-    status: "applied",
-    todaySession: null,
-    ...change,
-  };
-}
-
-/**
- * Today's proposal to move the phase dates (`fitPhaseDates`), waiting for the learner or declined
- * ("Keep mine"), with what moving them does.
- */
-export function rulePhaseDatesProposal({
-  effect,
-  status = "proposed",
-}: {
-  effect: Partial<PlanEffect>;
-  status?: PlanChangeView["status"];
-}): PlanChangeView {
-  return ruleChange({
-    effect,
-    id: "phase-dates",
-    operations: [{ kind: "fitPhaseDates" }],
-    source: "phaseDates",
-    status,
-  });
 }

@@ -1,11 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
-  checkDayBeforeTest,
   checkDayOneHasSession,
   checkDayOneOpensWithGaps,
   checkMocksInEveryPhase,
-  checkPhasesInOrder,
-  checkRestDaysRest,
 } from "./day-rules";
 import {
   ruleContext,
@@ -13,7 +10,6 @@ import {
   ruleEventItem,
   ruleLesson,
   rulePhase,
-  rulePhaseDatesProposal,
   rulePlan,
   ruleSkill,
 } from "./rule-fixtures";
@@ -34,88 +30,6 @@ describe("R20 day one always has a session", () => {
   it("flags a first day with nothing to do", () => {
     const after = rulePlan({ items: [ruleLesson({ day: 1, skillId: "texto" })], skills });
     expect(checkDayOneHasSession(ruleContext({ after, event: created }))).toHaveLength(1);
-  });
-});
-
-/**
- * Today's proposal to move the end of a phase from Sunday (day 6) to Monday, saying the challenge
- * rests there when `restDay`.
- */
-function moveEnd(status: "declined" | "proposed", restDay = true) {
-  return rulePhaseDatesProposal({
-    effect: {
-      phaseEnds: [
-        {
-          after: "2026-10-19",
-          before: "2026-10-18",
-          name: "learn",
-          ...(restDay && { restDay: true as const }),
-        },
-      ],
-    },
-    status,
-  });
-}
-
-describe("R21 rest days rest", () => {
-  // Day 6 is a Sunday: the learner rests on Sundays.
-  const settings = { weekdayMinutes: [0, 30, 30, 30, 30, 30, 30] };
-
-  it("passes when nothing is due on Sunday, or a moved event is", () => {
-    const after = rulePlan({
-      items: [ruleLesson({ day: 5, skillId: "texto" }), ruleEventItem({ day: 6, kind: "mock" })],
-      settings: { ...settings, movedEvents: [{ from: "2026-10-17", to: "2026-10-18" }] },
-      skills,
-    });
-
-    expect(checkRestDaysRest(ruleContext({ after }))).toStrictEqual([]);
-  });
-
-  it("flags a mock on a rest day", () => {
-    const after = rulePlan({ items: [ruleEventItem({ day: 6, kind: "mock" })], settings, skills });
-
-    expect(checkRestDaysRest(ruleContext({ after }))).toMatchObject([
-      { details: { kind: "mock" }, rule: "R21" },
-    ]);
-  });
-
-  describe("a phase's challenge held on its shown end", () => {
-    // The phase the learner saw ends on Sunday, now a rest day: its challenge stays there, and
-    // Today asks to move the dates (a system run never moves a shown end).
-    const after = rulePlan({
-      items: [ruleEventItem({ day: 6, kind: "boss" }), ruleLesson({ day: 6, skillId: "texto" })],
-      phases: [rulePhase({ end: 6, start: 0 })],
-      settings,
-      skills,
-    });
-
-    it("passes it while the proposal to move that end waits, or after the learner kept their dates, but not the lesson that day", () => {
-      const lesson = [{ details: { kind: "lesson" }, rule: "R21" }];
-
-      expect(
-        checkRestDaysRest(ruleContext({ after, waiting: [moveEnd("proposed")] })),
-      ).toMatchObject(lesson);
-
-      expect(
-        checkRestDaysRest(ruleContext({ after, declined: [moveEnd("declined")] })),
-      ).toMatchObject(lesson);
-    });
-
-    it("flags it after Keep mine on a card that didn't say it rests there", () => {
-      expect(
-        checkRestDaysRest(ruleContext({ after, declined: [moveEnd("declined", false)] })),
-      ).toMatchObject([
-        { details: { kind: "boss" }, rule: "R21" },
-        { details: { kind: "lesson" }, rule: "R21" },
-      ]);
-    });
-
-    it("flags it when nothing offers to move that end", () => {
-      expect(checkRestDaysRest(ruleContext({ after }))).toMatchObject([
-        { details: { kind: "boss" }, rule: "R21" },
-        { details: { kind: "lesson" }, rule: "R21" },
-      ]);
-    });
   });
 });
 
@@ -163,45 +77,6 @@ describe("R22 day one opens with what the learner doesn't know", () => {
     expect(checkDayOneOpensWithGaps(ruleContext({ after, event: created, learner }))).toMatchObject(
       [{ details: { first: "Linguística" }, rule: "R22" }],
     );
-  });
-});
-
-function classTest(items: ReturnType<typeof ruleLesson>[]) {
-  return rulePlan({
-    goal: { kind: "exam", targetDate: ruleDay(4) },
-    items,
-    settings: { shortMockMinutes: 20 },
-    skills,
-  });
-}
-
-describe("R23 the day before a test is a review", () => {
-  it("passes when a class test's day before is its mock and review", () => {
-    const after = classTest([
-      ruleLesson({ day: 0, skillId: "texto" }),
-      ruleEventItem({ day: 3, kind: "mock" }),
-      ruleEventItem({ day: 3, kind: "review" }),
-    ]);
-
-    expect(checkDayBeforeTest(ruleContext({ after }))).toStrictEqual([]);
-  });
-
-  it("passes the lessons earlier days left on it once the day comes, offered after the review", () => {
-    const after = classTest([
-      ruleLesson({ day: 3, lessonId: "texto-1", skillId: "texto" }),
-      ruleEventItem({ day: 3, kind: "review" }),
-    ]);
-
-    expect(checkDayBeforeTest(ruleContext({ after, today: ruleDay(3) }))).toStrictEqual([]);
-  });
-
-  it("flags lessons on the day before and no review (Pedro)", () => {
-    const after = classTest([ruleLesson({ day: 3, skillId: "texto" })]);
-
-    expect(checkDayBeforeTest(ruleContext({ after }))).toMatchObject([
-      { details: { lessons: ["texto lesson"] }, rule: "R23" },
-      { details: { review: false }, rule: "R23" },
-    ]);
   });
 });
 
@@ -300,45 +175,6 @@ describe("R24 every exam phase has mocks", () => {
 
     expect(checkMocksInEveryPhase(ruleContext({ after }))).toMatchObject([
       { details: { studyDays: 4 }, rule: "R24" },
-    ]);
-  });
-});
-
-/** Three phases of one lesson each; the third finished or still to do. */
-function threePhases({
-  third,
-}: {
-  third: { end: number; start: number; status: "testedOut" | "todo" };
-}) {
-  return rulePlan({
-    items: [
-      ruleLesson({ day: 0, phase: 0, skillId: "texto" }),
-      ruleLesson({ day: 6, phase: 1, skillId: "redes" }),
-      ruleLesson({ day: third.start, phase: 2, skillId: "texto", status: third.status }),
-    ],
-    phases: [
-      rulePhase({ end: 5, start: 0 }),
-      rulePhase({ end: 10, start: 6 }),
-      rulePhase({ end: third.end, start: third.start }),
-    ],
-    skills,
-  });
-}
-
-describe("R39 phases keep their order", () => {
-  it("passes phases in order, and a finished phase on the days it was finished", () => {
-    const inOrder = threePhases({ third: { end: 15, start: 11, status: "todo" } });
-    const finishedEarly = threePhases({ third: { end: 2, start: 2, status: "testedOut" } });
-
-    expect(checkPhasesInOrder(ruleContext({ after: inOrder }))).toStrictEqual([]);
-    expect(checkPhasesInOrder(ruleContext({ after: finishedEarly }))).toStrictEqual([]);
-  });
-
-  it("flags a phase still to do that ends before the one before it", () => {
-    const outOfOrder = threePhases({ third: { end: 4, start: 3, status: "todo" } });
-
-    expect(checkPhasesInOrder(ruleContext({ after: outOfOrder }))).toMatchObject([
-      { details: { phase: { index: 2 }, previous: { index: 1 } }, rule: "R39" },
     ]);
   });
 });

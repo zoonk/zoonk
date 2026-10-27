@@ -1,12 +1,11 @@
 import { isDeepStrictEqual } from "node:util";
 import { toTopicKey } from "../../../library/exams/topic-key";
 import { countItemLessons } from "../../_utils/stand-in-lessons";
-import { type PlanChangeView } from "../../plan-view-contract";
 import { getFoundationSkillIds, getSkillArea } from "../../planner/graph-areas";
 import { toIsoDate } from "../../planner/plan-calendar";
 import { type PlanGraph, type PlanGraphSkill } from "../../planner/plan-state";
 import { getBossKey } from "../../planner/plan-units";
-import { type RuleContext, type RuleItem, type RulePlan } from "./rule-context";
+import { type RuleItem, type RulePlan } from "./rule-context";
 
 /** Each item of a plan as one line: its key, its day and its status. */
 function describeItems(plan: RulePlan): string[] {
@@ -39,13 +38,6 @@ export function isTodoLesson(item: RuleItem): boolean {
 /** How many lessons an item is: one, or a stand-in's saved size (see `countItemLessons`). */
 function countLessons(item: RuleItem): number {
   return countItemLessons(item);
-}
-
-/** The lessons still to do among these items. */
-export function sumTodoLessons(items: readonly RuleItem[]): number {
-  return items
-    .filter((item) => isTodoLesson(item))
-    .reduce((sum, item) => sum + countLessons(item), 0);
 }
 
 /** Each skill's lessons still to do. */
@@ -121,15 +113,6 @@ export function listPlannedTopics(plan: Pick<RulePlan, "graph" | "items">): Map<
         const area = getSkillArea({ graph: plan.graph, skill });
         return topicsOf(skill).map((topic) => [toAreaTopicKey({ area, topic }), topic]);
       }),
-  );
-}
-
-/** The skills a plan has lessons for, done, tested out or still to do; set aside ones are out. */
-export function listPlannedSkills(items: readonly RuleItem[]): Set<string> {
-  return new Set(
-    items.flatMap((item) =>
-      item.kind === "lesson" && item.skillId && item.status !== "skipped" ? [item.skillId] : [],
-    ),
   );
 }
 
@@ -217,25 +200,6 @@ function listTakenOut(plan: RulePlan): Set<string> {
 }
 
 /**
- * Today's proposals to move the phase dates (`fitPhaseDates`) that start from the ends the learner
- * sees: waiting after the step, or declined ("Keep mine", which the planner honors while those are
- * the ends shown). A system run never moves a shown end, so while one waits, what moving them would
- * fix may stay as the card says; "Keep mine" is the learner's informed choice, like one out by
- * choice.
- */
-export function listPhaseDatesProposals(context: RuleContext): PlanChangeView[] {
-  const { after, declined = [], waiting = [] } = context;
-
-  return [...waiting, ...declined].filter(
-    (change) =>
-      change.operations.some((operation) => operation.kind === "fitPhaseDates") &&
-      (change.effect?.phaseEnds ?? []).every((move) =>
-        after.phases.some((phase) => phase.name === move.name && phase.endDate === move.before),
-      ),
-  );
-}
-
-/**
  * Each skill's lessons as the plan's last build counted them (`plannedLessons`, written by the
  * planner, `withPlannedLessons`), which size its core for the plan, its challenges and the checks
  * alike (`listCoreLessonItems` reads them the same way); the graph's estimate for a plan saved
@@ -245,37 +209,5 @@ export function listPhaseDatesProposals(context: RuleContext): PlanChangeView[] 
 export function listSkillSizes(plan: RulePlan): Map<string, number> {
   return new Map(
     plan.graph.skills.map((skill) => [skill.skillId, skill.plannedLessons ?? skill.lessons]),
-  );
-}
-
-/**
- * Whether an item is a phase's challenge held on the end the learner saw while a proposal to move
- * that end waits, or after the learner kept their dates on a card that told them why it moves
- * (`reason`: a challenge resting there, or lessons it tests coming after it), as the planner reads
- * "Keep mine" (`isKeptOver`). See `listPhaseDatesProposals`.
- */
-export function isHeldOnShownEnd({
-  context,
-  item,
-  reason,
-}: {
-  context: RuleContext;
-  item: RuleItem;
-  reason: "lessonsFirst" | "restDay";
-}): boolean {
-  const end = context.after.phases[item.phase ?? -1]?.endDate;
-  const waiting = new Set(context.waiting);
-
-  return (
-    item.kind === "boss" &&
-    end !== undefined &&
-    end !== null &&
-    item.scheduledFor !== null &&
-    toIsoDate(item.scheduledFor) === end &&
-    listPhaseDatesProposals(context).some((change) =>
-      (change.effect?.phaseEnds ?? []).some(
-        (move) => move.before === end && (waiting.has(change) || move[reason] === true),
-      ),
-    )
   );
 }

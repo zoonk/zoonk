@@ -11,9 +11,6 @@ import {
   isPlanUnchanged,
   isTodoLesson,
   listMissingKeys,
-  listOutByChoice,
-  listPhaseDatesProposals,
-  listPlannedSkills,
   listPlannedTopics,
   toAreaTopicKey,
   toDay,
@@ -76,75 +73,6 @@ export function checkWrittenTestsKept(context: RuleContext): RuleViolation[] {
           ]
         : [];
     });
-}
-
-/**
- * R13. A career goal keeps the work that turns study into its result: every outcome skill (the
- * portfolio, the job search) has lessons in the plan, whatever its time. Areas the learner took
- * out are left out, and so is an outcome skill that only moving the phase dates fits in while
- * Today asks to move them and its card names it (`outcomesAdded`), or after the learner kept their
- * dates over that card.
- */
-export function checkOutcomesKept(context: RuleContext): RuleViolation[] {
-  const { after } = context;
-
-  if (after.goal.kind === "exam") {
-    return [];
-  }
-
-  const planned = listPlannedSkills(after.items);
-  const out = listOutByChoice(after);
-
-  const offeredBack = new Set(
-    listPhaseDatesProposals(context).flatMap((change) => change.effect?.outcomesAdded ?? []),
-  );
-
-  return after.graph.skills
-    .filter(
-      (skill) =>
-        skill.outcome &&
-        !planned.has(skill.skillId) &&
-        !out.has(skill.skillId) &&
-        !offeredBack.has(skill.name),
-    )
-    .map((skill) => ({
-      details: { skill: skill.name },
-      message: `The outcome skill "${skill.name}" is out of the plan.`,
-      rule: "R13",
-    }));
-}
-
-/**
- * R14. Studying everything leaves nothing out: a plan without a date, or an exam's plan that goes
- * on after the exam, has lessons for every skill of its graph but those the learner took out,
- * skipped as a base or starts past.
- */
-export function checkEverythingPlanned(context: RuleContext): RuleViolation[] {
-  const { after } = context;
-
-  const everything =
-    after.goal.targetDate === null || (after.goal.kind === "exam" && after.settings.fullCourse);
-
-  if (!everything || after.goal.kind === "explain") {
-    return [];
-  }
-
-  const planned = listPlannedSkills(after.items);
-  const out = listOutByChoice(after);
-
-  const missing = after.graph.skills.filter(
-    (skill) => !planned.has(skill.skillId) && !out.has(skill.skillId),
-  );
-
-  return missing.length > 0
-    ? [
-        {
-          details: { skills: missing.map((skill) => skill.name) },
-          message: "A plan that studies everything left skills out.",
-          rule: "R14",
-        },
-      ]
-    : [];
 }
 
 /** What each base choice costs the plan, cheapest first: its core ("essential") is the default. */

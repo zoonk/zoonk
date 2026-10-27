@@ -40,14 +40,12 @@ Words used below: a lesson "still to do" is a `todo` lesson item; a stand-in cou
 - **Owner's words:** none direct; in the round 13 brief, and the round 12 FIXES 2 reading the orchestrator accepted: "'More X' means more lessons when time is short, and X done sooner when every lesson fits."
 - **Check:** after a change made only of `focusAreas`/`reduceAreas`, each focused area (or the part the change or the plan names) has at least as many lessons still to do as before, and with as many, its last one is due no later. When the change adds areas to the focus (areas not in `before.settings.focusAreas`), an area focused before that it keeps focused may share with them when the card says what it gives: fewer lessons through an `areaLessons` line, a lesson of it in `lessonsLeftOut` or its topics in `topicsLeftOut` (an end date alone doesn't say it has fewer lessons), or as many done later through an `areaEnds` line (from the lead's fresh-eyes walk, 10 Oct: Ana's "math and natural sciences" was refused with "Nothing changed" because math would give some depth, though natural sciences gained 10 lessons). The added areas, and every focused area when the change adds none, are held as before. Left out when a test is 7 days away or less (a focus orders that review instead).
 - **Reads:** `event.operations`, `before.items`, `before.settings.focusAreas`, `after.items`, `after.graph`, `after.settings.focusParts`, `changes` (the applied card).
-- **Code:** `checkFocusKeepsArea` (steering-rules.ts).
 
 ### R2. Less of an area takes from that area
 
 - **Owner's words:** round 13 brief ("reduce takes from the named area"), FIXES 2 ("'Less Y' means fewer lessons when short, and Y done later when it fits"); D5 (10 Oct): "Unnamed areas may shift only by rounding, at most 2 lessons each, and the card names only X and Y. Any larger move to an unnamed area must appear on the card." The lead (10 Oct): "A 'reduce X' that can't take anything because everything fits is allowed when the card says X keeps all its lessons and its end date because everything fits. The stored reduce applies once time gets short. An inert reduce the card doesn't mention is still a violation."
 - **Check:** after a steering-only change that reduces areas: each reduced area has fewer lessons still to do, or as many due later, or the card of the applied change says it keeps all its lessons and its end date because everything fits (an `areaEnds` entry whose day doesn't move; the stored "less" applies once time gets short). An inert "less" the card doesn't mention is a violation, unless the area has no lesson left to do (done or tested out): it has nothing to give. Each area the change doesn't name moves by at most 2 lessons still to do (with "less" alone, it may also gain the time freed), unless the card of the applied change names it: in `areaLessons` (D5's line, "44 lessons to go instead of 40"), `areaEnds`, `areaStarts`, `topicsAdded`/`topicsLeftOut`, or by a lesson of it in `lessonsLeftOut`.
 - **Reads:** as R1.
-- **Code:** `checkReduceTakesFromArea`.
 
 ### R3. A card says what the change did to the saved plan
 
@@ -60,7 +58,7 @@ Words used below: a lesson "still to do" is a `todo` lesson item; a stand-in cou
 - **Owner's words:** D6 (10 Oct): "after a focus change, today keeps its lessons in order, and focused lessons come after them" (pass 10 problem 2, Sofia's day reopened with Processo Penal).
 - **Check:** after a steering-only change while today's session was shown: today's lessons still to do stay, in their order, but those of reduced areas (which may leave); every lesson that comes into today is a focused one, after the ones that stayed. With "less" alone (no focus), the time it frees today may go to the lessons next in the plan, after the ones that stayed, as R2 lets unnamed areas gain the time freed; a lesson of a reduced area never comes in (OAB seed 1006).
 - **Reads:** `todayShown`, `today`, `before.items`, `after.items`, `event.operations`.
-- **Code:** `checkSteeringKeepsToday`.
+- **Code:** `checkSteeringKeepsToday` (steering-rules.ts).
 
 ## B. The plan doesn't change behind the learner's back
 
@@ -88,7 +86,6 @@ Words used below: a lesson "still to do" is a `todo` lesson item; a stand-in cou
 - **Owner's words:** "Unfinished work from a past day carries into the next session (no gaps)" and plans "never drop unfinished lessons" (7 Oct); every change "re-plans from today: past work never moves" (the change contract).
 - **Check:** after any step but the learner's own change, every lesson an earlier day left to do is still in the plan (still to do, done, tested out or set aside: when missed days leave no time for it, it's set aside as `skipped` and the change names its topic, D11, never deleted); from an exam's day on nothing is left to carry it to, unless the plan studies everything past the date (`fullCourse`). After any step at all, everything the learner finished is still there, finished. Items are matched as the planner's `getItemKey` does: a boss by its phase, a chapter by its chapter, so a finished boss dated to another day isn't lost work.
 - **Reads:** `before.items`, `after.items`, `today`, `event`.
-- **Code:** `checkUnfinishedKept`, `checkFinishedKept` (work-rules.ts).
 
 ### R9. A studied day isn't a missed day
 
@@ -141,14 +138,12 @@ Words used below: a lesson "still to do" is a `todo` lesson item; a stand-in cou
 - **Owner's words:** decided on the owner's behalf (6 Oct): "career goals always include portfolio and job search (never trimmed first)"; owner (7 Oct): "Career plans weave the portfolio in from the start when the goal calls for it."
 - **Check:** in a goal that isn't an exam, every outcome skill not out by choice has a lesson in the plan. A system run never moves a phase end the learner saw (the lead, 10 Oct), so when the job search doesn't fit with the ends kept, an outcome skill may be out while Today's proposal to move the phase dates (`fitPhaseDates`, starting from the ends shown) waits and its card names it (`effect.outcomesAdded`, the outcome skills moving the dates fits in, by name; career seed 2014), or after the learner declined that card ("Keep mine", starting from the ends they saw): the learner's informed choice over what it named, like one out by choice (the lead, 10 Oct). An outcome skill the declined card didn't name isn't covered: Today asks again (`isKeptOver`). Judged at the step: the run that leaves job-search work out writes that proposal itself, so the learner never sees outcome work cut without a card saying why (the lead, 10 Oct).
 - **Reads:** `after.graph`, `after.items`, `after.settings`, `after.phases`, `waiting`, `declined`.
-- **Code:** `checkOutcomesKept`.
 
 ### R14. Studying everything leaves nothing out
 
 - **Owner's words:** "an option where users don't set a deadline and instead they choose to do the full course. so, this would be open-ended without deadlines" (9 Oct).
 - **Check:** a plan without a date, or an exam plan with `fullCourse`, has a lesson for every graph skill not out by choice. A skill whose Library lessons the plan holds under another skill that shares them (the planner files a shared lesson under one skill, `assignLessonSkills`) is planned: its lessons are in the plan, to do, done or tested out, and no card should call it left out (career seed 2042). The check can't see that filing yet (the step carries no lesson-to-skills map), so it still flags such a skill: a known edge, rare (a landing whose lessons are all another skill's).
 - **Reads:** `after.goal`, `after.settings`, `after.graph`, `after.items`.
-- **Code:** `checkEverythingPlanned`.
 
 For a dated exam, turning `fullCourse` on keeps the schedule on or before the exam identical, including lesson portions, phase challenges and mocks, whether everything fits by then or not. Each pre-exam challenge asks the same skills and takes the same minutes: its skill cores read only items dated on or before the exam (undated items still count), so after-exam teaching cannot remove a skill it would ask with the switch off. Required core lessons between the challenge and the exam still keep that skill for a later challenge (R40). Only the work that does not fit continues after the exam. A joined stand-in's later portions must not postpone a pre-exam challenge. "Find the time that covers everything" returns the same daily time with the switch on or off. Covered by `full-course-exam-parity.test.ts` (including every pre-exam challenge's skill set and minutes), the shared checkpoint rule and session regressions, and the planner's "studying everything" regression.
 
@@ -211,7 +206,6 @@ For a dated exam, turning `fullCourse` on keeps the schedule on or before the ex
 - **Owner's words:** a weekday at 0 minutes "makes a rest day"; "mocks respect rest days" (orchestrator, round 8).
 - **Check:** nothing still to do is due on a weekday with 0 minutes, except the plan's first day (it always has time), a weekly event the learner moved there, and a phase's challenge held on the end the learner saw: a system run never moves a shown end (the lead, 10 Oct), so while Today's proposal to move that end (`fitPhaseDates`, its `effect.phaseEnds` starting from it) waits, or after the learner declined it ("Keep mine", starting from the ends they saw: their informed choice, the lead, 10 Oct), the challenge may stay on a day they now rest. "Keep mine" counts only on a card whose move of that end said the challenge falls on a rest day (`restDay`), as the planner reads it (`isKeptOver`). Lessons on that day are still flagged.
 - **Reads:** `after.settings.weekdayMinutes`, `movedEvents`, `startDate`, `after.items`, `after.phases`, `waiting`, `declined`.
-- **Code:** `checkRestDaysRest`.
 
 ### R22. Day one opens with what the learner doesn't know
 
@@ -225,7 +219,6 @@ For a dated exam, turning `fullCourse` on keeps the schedule on or before the ex
 - **Owner's words:** "class test's last day is a full review" (round 13 brief); "free class-test last day = real review session" (round 8 decision).
 - **Check:** for an exam with a date (when the plan starts before that day and it isn't past): no lesson still to do is planned ahead on the day before (once that day comes, the lessons on it are the ones earlier days left, which Today offers after the review, "if you have time"); a class test (`shortMockMinutes` set, 7 days away or less) has its mock or a review that day.
 - **Reads:** `after.goal`, `after.settings`, `after.items`, `today`.
-- **Code:** `checkDayBeforeTest`.
 
 ### R24. Every exam plan has mocks
 
@@ -239,7 +232,6 @@ For a dated exam, turning `fullCourse` on keeps the schedule on or before the ex
 - **Owner's words:** "never claim something about the plan that isn't true" (round 11); the Journey shows the phases as a path, each ending with its challenge. Found by the learner simulator (10 Oct): a career plan dated its sixth phase before the second, and an undo left a language plan's fourth phase ending before its second.
 - **Check:** among the phases with dates and something still to do (an item of the phase still `todo`), each starts no earlier and ends no earlier than the one before. A phase the learner finished (every item done or tested out) may show the days it was finished on, wherever they fall.
 - **Reads:** `after.phases`, `after.items`.
-- **Code:** `checkPhasesInOrder` (day-rules.ts).
 
 ### R40. A phase's challenge comes after its own lessons
 

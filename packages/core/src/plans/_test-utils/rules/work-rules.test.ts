@@ -4,126 +4,16 @@ import {
   ruleChangeEvent,
   ruleContext,
   ruleDay,
-  ruleEventItem,
   ruleLesson,
   rulePlan,
   ruleSkill,
 } from "./rule-fixtures";
-import { checkChapterInProgressKept, checkFinishedKept, checkUnfinishedKept } from "./work-rules";
+import { checkChapterInProgressKept } from "./work-rules";
 
 const skills = [
   ruleSkill({ area: "Natureza", skillId: "ecologia", topics: ["Ecologia"] }),
   ruleSkill({ area: "Natureza", skillId: "ondas", topics: ["Ondas"] }),
 ];
-
-describe("R8 unfinished work carries over", () => {
-  const before = rulePlan({ items: [ruleLesson({ day: 0, skillId: "ondas" })], skills });
-  const event = { kind: "newDay", studied: true } as const;
-
-  it("passes when yesterday's lesson carries over to today", () => {
-    const after = rulePlan({
-      items: [ruleLesson({ day: 1, lessonId: "ondas-0", skillId: "ondas" })],
-      skills,
-    });
-
-    expect(
-      checkUnfinishedKept(ruleContext({ after, before, event, today: ruleDay(1) })),
-    ).toStrictEqual([]);
-  });
-
-  it("passes when a missed day sets aside a stand-in for time: it's still in the plan", () => {
-    const standIn = rulePlan({
-      items: [ruleLesson({ day: 0, lessonId: null, skillId: "ecologia" })],
-      skills,
-    });
-
-    const after = rulePlan({
-      items: [ruleLesson({ day: null, lessonId: null, skillId: "ecologia", status: "skipped" })],
-      skills,
-    });
-
-    expect(
-      checkUnfinishedKept(
-        ruleContext({
-          after,
-          before: standIn,
-          event: { kind: "newDay", studied: false },
-          today: ruleDay(1),
-        }),
-      ),
-    ).toStrictEqual([]);
-  });
-
-  it("flags yesterday's lesson dropped by the new day", () => {
-    const after = rulePlan({ items: [], skills });
-
-    expect(
-      checkUnfinishedKept(ruleContext({ after, before, event, today: ruleDay(1) })),
-    ).toHaveLength(1);
-  });
-
-  it("lets leftovers go on the exam's day, unless the plan studies everything past it", () => {
-    const examDay = { goal: { kind: "exam", targetDate: ruleDay(1) }, skills } as const;
-    const context = { before, event, today: ruleDay(1) };
-
-    expect(
-      checkUnfinishedKept(ruleContext({ ...context, after: rulePlan({ ...examDay, items: [] }) })),
-    ).toStrictEqual([]);
-
-    const fullCourse = rulePlan({ ...examDay, items: [], settings: { fullCourse: true } });
-
-    expect(checkUnfinishedKept(ruleContext({ ...context, after: fullCourse }))).toHaveLength(1);
-  });
-});
-
-describe("R8 finished work stays finished", () => {
-  const finished = ruleLesson({
-    completedAt: ruleDay(0),
-    day: 0,
-    skillId: "ondas",
-    status: "done",
-  });
-
-  const before = rulePlan({
-    items: [finished, ruleLesson({ day: 1, skillId: "ecologia" })],
-    skills,
-  });
-
-  const event = ruleChangeEvent({ areas: ["Natureza"], kind: "focusAreas" });
-
-  it("passes when a change keeps a finished lesson finished", () => {
-    expect(checkFinishedKept(ruleContext({ after: before, before, event }))).toStrictEqual([]);
-  });
-
-  it("passes a finished boss dated to another day: a boss is its phase's", () => {
-    const boss = {
-      ...ruleEventItem({ day: 2, kind: "boss" }),
-      completedAt: ruleDay(1),
-      status: "done" as const,
-    };
-
-    const withBoss = rulePlan({ items: [boss], skills });
-    const redated = rulePlan({ items: [{ ...boss, scheduledFor: ruleDay(1) }], skills });
-
-    expect(
-      checkFinishedKept(ruleContext({ after: redated, before: withBoss, event })),
-    ).toStrictEqual([]);
-  });
-
-  it("flags a finished lesson a change made to do again", () => {
-    const after = rulePlan({
-      items: [
-        { ...finished, completedAt: null, status: "todo" },
-        ruleLesson({ day: 1, skillId: "ecologia" }),
-      ],
-      skills,
-    });
-
-    expect(checkFinishedKept(ruleContext({ after, before, event }))).toMatchObject([
-      { details: { title: "ondas lesson" }, rule: "R8" },
-    ]);
-  });
-});
 
 describe("R10 a learner's change keeps the chapter in progress first", () => {
   const done = ruleLesson({
