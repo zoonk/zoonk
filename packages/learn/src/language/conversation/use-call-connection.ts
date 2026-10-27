@@ -45,12 +45,14 @@ const FAILED = { status: "failed" } as const;
  * connection is still closing, once more (`reconnecting` meanwhile). A
  * reservation that arrives after its start was cancelled (`isCurrent`) is ended at once. `end`
  * asks the server to close the connection, one request at a time: true once the server confirmed,
- * which stays true, and false while it hasn't, so asking again sends a new request.
+ * which stays true, and false while it hasn't, so asking again sends a new request. A tab that
+ * closes with the connection open ends it on its way out.
  */
 export function useCallConnection(actions: CallConnectionActions) {
   const [reconnecting, setReconnecting] = useState(false);
   const actionsRef = useRef(actions);
   const connectionId = useRef<string | null>(null);
+  const sessionUrl = useRef<string | null>(null);
   const confirmed = useRef(false);
   const ending = useRef<Promise<boolean> | null>(null);
 
@@ -114,10 +116,24 @@ export function useCallConnection(actions: CallConnectionActions) {
       }
 
       connectionId.current = answer.setup.connectionId;
+      sessionUrl.current = answer.setup.sessionUrl;
       return answer;
     },
     [],
   );
+
+  // A closing tab can't wait for a Server Action: a keepalive request to the call's own route ends
+  // it, so the learner is charged only what it ran and the session stops at once.
+  useEffect(() => {
+    const endOnPageHide = () => {
+      if (sessionUrl.current && !confirmed.current) {
+        void fetch(sessionUrl.current, { keepalive: true, method: "DELETE" }).catch(() => null);
+      }
+    };
+
+    window.addEventListener("pagehide", endOnPageHide);
+    return () => window.removeEventListener("pagehide", endOnPageHide);
+  }, []);
 
   const getConnectionId = useCallback(() => connectionId.current, []);
 

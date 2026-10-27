@@ -558,4 +558,24 @@ test.describe("Live call server states", () => {
       await owned.cleanup();
     }
   });
+
+  test("closing the tab mid-call ends its connection at once", async ({
+    stateCallResources: owned,
+  }) => {
+    const learner = await createLanguageLearner({ withSubscription: true });
+    const call = await createCall({ learner });
+    const page = await owned.open(learner);
+
+    await answerLiveCalls(page, "answers");
+    await page.goto(`/conversation/${call.id}`);
+    await page.getByRole("button", { name: "Start the call" }).click();
+    await expectLive(page);
+    const connection = await connectionFor(call.id);
+
+    await page.close({ runBeforeUnload: true });
+
+    await expect
+      .poll(() => prisma.liveCallConnection.findUnique({ where: { id: connection.id } }))
+      .toMatchObject({ endReason: "learner", state: "ended" });
+  });
 });
