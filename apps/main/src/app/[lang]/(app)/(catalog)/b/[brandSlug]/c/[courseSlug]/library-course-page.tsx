@@ -191,7 +191,7 @@ async function CourseClosing({ courseId, pace }: { courseId: string; pace: numbe
 
   return (
     <RouteStop aria-labelledby={titleId} className="flex flex-col gap-1.5">
-      <RouteTitle id={titleId} station="end" up>
+      <RouteTitle id={titleId} station="end">
         <CourseGoalSwitch
           continueLink={t("Your plan follows this course")}
           startLinks={t("Start today, at your level")}

@@ -22,12 +22,12 @@ import { type ReactNode } from "react";
  *   </RouteStop>
  *
  *   <RouteStop>
- *     <RouteTitle down up>Course outline</RouteTitle>
+ *     <RouteTitle down>Course outline</RouteTitle>
  *     <RouteZone summary="Overview">…rows, each with <RouteMark station="stop" />…</RouteZone>
  *   </RouteStop>
  *
  *   <RouteStop>
- *     <RouteTitle station="end" up>Start today, at your level</RouteTitle>
+ *     <RouteTitle station="end">Start today, at your level</RouteTitle>
  *   </RouteStop>
  * </Route>
  * ```
@@ -138,19 +138,18 @@ export function RouteMark({
 
 /**
  * A stop's name: a public page's part as a real title (`text-section`), its station on the line
- * beside it. `up` and `down` carry the line through the stop.
+ * beside it. `down` carries the line on to the next stop.
  */
 export function RouteTitle({
   children,
   className,
   down = false,
   station = "page",
-  up = false,
   ...props
-}: React.ComponentProps<"h2"> & { down?: boolean; station?: RouteStation; up?: boolean }) {
+}: React.ComponentProps<"h2"> & { down?: boolean; station?: RouteStation }) {
   return (
     <h2 className={cn("text-section relative", className)} {...props}>
-      <RouteMark down={down} station={station} up={up} />
+      <RouteMark down={down} station={station} up />
       {children}
     </h2>
   );

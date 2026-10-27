@@ -310,7 +310,7 @@ export async function CoursePlanWindow({
       data-slot="course-plan"
     >
       {onRoute ? (
-        <RouteTitle down id={titleId} up>
+        <RouteTitle down id={titleId}>
           {t("Example plan")}
         </RouteTitle>
       ) : (

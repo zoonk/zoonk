@@ -96,7 +96,7 @@ export async function LibraryCourseOutline({
     <RouteStop aria-labelledby={titleId} className={cn("flex flex-col gap-8", className)}>
       <div className="max-w-column flex flex-col gap-3">
         <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-          <RouteTitle down id={titleId} up>
+          <RouteTitle down id={titleId}>
             {t("Course outline")}
           </RouteTitle>
 

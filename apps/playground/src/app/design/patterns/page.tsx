@@ -230,9 +230,7 @@ function RouteSpecimen() {
       </RouteStop>
 
       <RouteStop className="flex flex-col gap-4 pb-10">
-        <RouteTitle down up>
-          Course outline
-        </RouteTitle>
+        <RouteTitle down>Course outline</RouteTitle>
 
         <div className="flex flex-col gap-2">
           <RouteZone aside="2 chapters" open summary="Overview">
@@ -246,9 +244,7 @@ function RouteSpecimen() {
       </RouteStop>
 
       <RouteStop>
-        <RouteTitle station="end" up>
-          Start today, at your level
-        </RouteTitle>
+        <RouteTitle station="end">Start today, at your level</RouteTitle>
       </RouteStop>
     </Route>
   );

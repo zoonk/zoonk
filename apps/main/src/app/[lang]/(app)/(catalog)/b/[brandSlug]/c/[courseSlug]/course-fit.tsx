@@ -56,7 +56,7 @@ export async function CourseFit({
   if (audience.length === 0) {
     return (
       <RouteStop aria-labelledby={outcomesId} className={cn("flex flex-col gap-5", className)}>
-        <RouteTitle down id={outcomesId} up>
+        <RouteTitle down id={outcomesId}>
           {t("What you'll be able to do")}
         </RouteTitle>
         <div className="max-w-column">
@@ -75,7 +75,7 @@ export async function CourseFit({
         className,
       )}
     >
-      <RouteTitle down id={audienceId} up>
+      <RouteTitle down id={audienceId}>
         {t("Who it's for")}
       </RouteTitle>
 

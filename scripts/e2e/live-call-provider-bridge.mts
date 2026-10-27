@@ -19,19 +19,13 @@ type Session = {
   answer: ServerResponse | null;
   closes: Set<ServerResponse>;
   closeMode: "confirm" | "hold" | "reject";
-  rejectCloses: number;
 };
 
 type Sessions = Map<string, Session>;
 
 async function bodyOf(
   request: IncomingMessage,
-): Promise<{
-  closeMode: Session["closeMode"] | null;
-  rejectCloses: number | null;
-  sdp: string | null;
-  seconds: number | null;
-}> {
+): Promise<{ closeMode: Session["closeMode"] | null; sdp: string | null; seconds: number | null }> {
   const body: unknown = JSON.parse(await text(request));
 
   if (!body || typeof body !== "object") {
@@ -43,13 +37,6 @@ async function bodyOf(
       "closeMode" in body &&
       (body.closeMode === "confirm" || body.closeMode === "hold" || body.closeMode === "reject")
         ? body.closeMode
-        : null,
-    rejectCloses:
-      "rejectCloses" in body &&
-      typeof body.rejectCloses === "number" &&
-      Number.isSafeInteger(body.rejectCloses) &&
-      body.rejectCloses >= 0
-        ? body.rejectCloses
         : null,
     sdp: "sdp" in body && typeof body.sdp === "string" ? body.sdp : null,
     seconds:
@@ -99,7 +86,6 @@ async function createSession({
     createdAt: Date.now(),
     id,
     realPeer,
-    rejectCloses: 0,
     sdp: body.sdp,
   };
 
@@ -118,8 +104,7 @@ function closeSession(session: Session, response: ServerResponse) {
     return;
   }
 
-  if (session.closeMode === "reject" || session.rejectCloses > 0) {
-    session.rejectCloses = Math.max(0, session.rejectCloses - 1);
+  if (session.closeMode === "reject") {
     json(response, { error: "The fake provider could not confirm termination" }, HTTP_UNAVAILABLE);
     return;
   }
@@ -157,7 +142,6 @@ async function controlSession({
     session.closedSeconds === null
   ) {
     session.closeMode = body.closeMode;
-    session.rejectCloses = body.rejectCloses ?? 0;
 
     if (body.closeMode !== "hold") {
       for (const close of session.closes) {

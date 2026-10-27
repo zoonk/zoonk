@@ -105,31 +105,15 @@ export async function seedV2(): Promise<void> {
  * `seedV2PersonaCopy` in core).
  */
 export async function seedV2PersonaCopy({
-  away,
   copyKey,
-  day,
   email,
   persona,
-  timeZone,
 }: {
-  /** Days the copy has been away without studying (see `writeSeedV2PersonaCopy`). */
-  away?: number;
   copyKey: string;
-  /** The day of its plan the copy is on (see `writeSeedV2PersonaCopy`); its own when absent. */
-  day?: number;
   email: string;
   persona: SeedPersonaName;
-  /** The zone the copy lives in, its days and its goal's; the persona's own when absent. */
-  timeZone?: string;
 }): Promise<{ goalId: string; userId: string }> {
-  const copy = await requestCopy({
-    away: away === undefined ? undefined : String(away),
-    copyKey,
-    day: day === undefined ? undefined : String(day),
-    email,
-    persona,
-    timeZone,
-  });
+  const copy = await requestCopy({ copyKey, email, persona });
 
   if (!isJsonObject(copy) || typeof copy.goalId !== "string" || typeof copy.userId !== "string") {
     throw new Error(`The seed command wrote no copy of ${persona}: ${JSON.stringify(copy)}`);
