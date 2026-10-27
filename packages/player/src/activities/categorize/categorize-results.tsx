@@ -1,7 +1,7 @@
 "use client";
 
 import { useExtracted } from "next-intl";
-import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
+import { ActivityReason, ActivityReasons } from "../_components/activity-reasons";
 import { type Placements, misplacedItems } from "./categorize-placements";
 
 type Item = { groupId: string; id: string; text: string; why: string };
@@ -38,25 +38,16 @@ export function CategorizeResults({
       </p>
 
       {misplaced.length > 0 && (
-        <ul className="flex flex-col gap-2">
+        <ActivityReasons>
           {misplaced.map((item) => (
-            <li
-              className="bg-background rounded-xl border px-3 py-2.5 text-sm leading-snug"
-              key={item.id}
-            >
-              <p>
-                {t("{item} belongs in {group}.", {
-                  group: groupLabel(pairs[item.id]),
-                  item: item.text,
-                })}
-              </p>
-
-              <p className="text-muted-foreground mt-0.5">
-                <LessonRichText text={item.why} />
-              </p>
-            </li>
+            <ActivityReason key={item.id} why={item.why}>
+              {t("{item} belongs in {group}.", {
+                group: groupLabel(pairs[item.id]),
+                item: item.text,
+              })}
+            </ActivityReason>
           ))}
-        </ul>
+        </ActivityReasons>
       )}
     </div>
   );

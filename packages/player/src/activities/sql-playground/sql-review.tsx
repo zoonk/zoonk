@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { ActivityCanvasLabel } from "../_components/activity-canvas";
 import { ActivityCodeListing } from "../_components/activity-code";
+import { ActivityReason, ActivityReasons } from "../_components/activity-reasons";
 import { type QueryResult, runQuery } from "../_sandbox/run-query";
 import { compareRows } from "./sql-rows";
 import { SqlRowsTable } from "./sql-table";
@@ -88,21 +89,15 @@ export function SqlReview({
       )}
 
       {!isCorrect && content.fields.mistakes.length > 0 && (
-        <ul className="flex flex-col gap-2">
+        <ActivityReasons>
           {content.fields.mistakes.map((item) => (
-            <li
-              className="bg-background rounded-xl border px-3 py-2.5 text-sm leading-snug"
-              key={item.mistake}
-            >
-              <p className="font-medium">
+            <ActivityReason key={item.mistake} why={item.feedback}>
+              <span className="font-medium">
                 <LessonRichText text={item.mistake} />
-              </p>
-              <p className="text-muted-foreground mt-0.5">
-                <LessonRichText text={item.feedback} />
-              </p>
-            </li>
+              </span>
+            </ActivityReason>
           ))}
-        </ul>
+        </ActivityReasons>
       )}
 
       {solution && (

@@ -1,24 +1,11 @@
 "use client";
 
 import { useExtracted } from "next-intl";
-import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
+import { ActivityReason, ActivityReasons } from "../_components/activity-reasons";
 import { type MatchCard } from "./match-pairs-columns";
 
 function textOf(side: readonly MatchCard[], id: string | undefined): string {
   return side.find((card) => card.id === id)?.text ?? "";
-}
-
-function ResultRow({ children, why }: { children: React.ReactNode; why: string | null }) {
-  return (
-    <li className="bg-background rounded-xl border px-3 py-2.5 text-sm leading-snug">
-      <p>{children}</p>
-      {why && (
-        <p className="text-muted-foreground mt-0.5">
-          <LessonRichText text={why} />
-        </p>
-      )}
-    </li>
-  );
 }
 
 /**
@@ -51,30 +38,30 @@ export function MatchPairsResults({
       {missed.length > 0 && (
         <section className="flex flex-col gap-2">
           <h3 className="text-sm font-semibold">{t("Missed on the first try")}</h3>
-          <ul className="flex flex-col gap-2">
+          <ActivityReasons>
             {missed.map((card) => (
-              <ResultRow key={card.id} why={card.why}>
+              <ActivityReason key={card.id} why={card.why}>
                 {t("{left} goes with {right}, not {guess}.", {
                   guess: textOf(cards.right, firstTries[card.id]),
                   left: card.text,
                   right: textOf(cards.right, expected[card.id]),
                 })}
-              </ResultRow>
+              </ActivityReason>
             ))}
-          </ul>
+          </ActivityReasons>
         </section>
       )}
 
       {traps.length > 0 && (
         <section className="flex flex-col gap-2">
           <h3 className="text-sm font-semibold">{t("Look-alikes with no match")}</h3>
-          <ul className="flex flex-col gap-2">
+          <ActivityReasons>
             {traps.map((card) => (
-              <ResultRow key={card.id} why={card.why}>
+              <ActivityReason key={card.id} why={card.why}>
                 {card.text}
-              </ResultRow>
+              </ActivityReason>
             ))}
-          </ul>
+          </ActivityReasons>
         </section>
       )}
     </div>

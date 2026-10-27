@@ -56,23 +56,31 @@ function StepMarks({
   );
 }
 
-/** One step in the true order after the check: why it comes here, and where the learner had it. */
-function CheckedStep({ result, step }: { result: StepResult; step: ProcessStep }) {
+/**
+ * One step in the true order, with why it comes here: after the check, marked right or wrong,
+ * with where the learner had a misplaced one; explored on an explanation screen, unmarked.
+ */
+function OrderedStep({
+  position,
+  result,
+  step,
+}: {
+  position: number;
+  result?: StepResult;
+  step: ProcessStep;
+}) {
   const t = useExtracted();
-  const isRight = result.learnerPosition === result.position;
+  const state = result && (result.learnerPosition === result.position ? "correct" : "incorrect");
 
   return (
     <li
       className={cn(
         "flex gap-3 rounded-xl border px-3 py-2.5",
-        isRight ? "border-success/50 bg-success/5" : "border-destructive/50 bg-destructive/5",
+        state === "correct" && "border-success/50 bg-success/5",
+        state === "incorrect" && "border-destructive/50 bg-destructive/5",
       )}
     >
-      <StepMarks
-        icon={step.icon}
-        position={result.position}
-        state={isRight ? "correct" : "incorrect"}
-      />
+      <StepMarks icon={step.icon} position={position} state={state ?? null} />
 
       <div className="flex min-w-0 flex-1 flex-col gap-1 pt-1.5">
         <p className="text-sm leading-snug font-medium">
@@ -81,28 +89,11 @@ function CheckedStep({ result, step }: { result: StepResult; step: ProcessStep }
 
         {step.why && <p className="text-muted-foreground text-sm leading-snug">{step.why}</p>}
 
-        {!isRight && result.learnerPosition !== null && (
+        {state === "incorrect" && result?.learnerPosition && (
           <p className="text-destructive-text text-xs font-medium">
             {t("You had it at {position}", { position: String(result.learnerPosition) })}
           </p>
         )}
-      </div>
-    </li>
-  );
-}
-
-/** One step of the process explored on an explanation screen, with why it comes here. */
-function ExploredStep({ position, step }: { position: number; step: ProcessStep }) {
-  return (
-    <li className="flex gap-3 rounded-xl border px-3 py-2.5">
-      <StepMarks icon={step.icon} position={position} state={null} />
-
-      <div className="flex min-w-0 flex-1 flex-col gap-1 pt-1.5">
-        <p className="text-sm leading-snug font-medium">
-          <LessonRichText text={step.text} />
-        </p>
-
-        {step.why && <p className="text-muted-foreground text-sm leading-snug">{step.why}</p>}
       </div>
     </li>
   );
@@ -141,30 +132,22 @@ export function ProcessOrderActivity({
     onAnswerChange({ ids, kind: "order" });
   }
 
-  if (phase === "explore") {
+  // Explored or checked, the steps show in their true order; checked, each marked with the
+  // learner's place for it (`stepResults` keeps that order).
+  if (phase !== "answering") {
+    const results =
+      phase === "checked" ? stepResults({ expected: steps.map((step) => step.id), order }) : [];
+
     return (
       <ActivityCanvas className="gap-2" labelId={labelId}>
+        {phase === "checked" && (
+          <p className="text-muted-foreground text-xs font-medium">{t("The right order")}</p>
+        )}
+
         <ol className="flex flex-col gap-2">
           {steps.map((step, index) => (
-            <ExploredStep key={step.id} position={index + 1} step={step} />
+            <OrderedStep key={step.id} position={index + 1} result={results[index]} step={step} />
           ))}
-        </ol>
-      </ActivityCanvas>
-    );
-  }
-
-  if (phase === "checked") {
-    const results = stepResults({ expected: steps.map((step) => step.id), order });
-
-    return (
-      <ActivityCanvas className="gap-2" labelId={labelId}>
-        <p className="text-muted-foreground text-xs font-medium">{t("The right order")}</p>
-
-        <ol className="flex flex-col gap-2">
-          {results.map((result) => {
-            const step = byId.get(result.id);
-            return step ? <CheckedStep key={result.id} result={result} step={step} /> : null;
-          })}
         </ol>
       </ActivityCanvas>
     );
