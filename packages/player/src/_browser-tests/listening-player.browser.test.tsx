@@ -5,6 +5,7 @@ import { useState } from "react";
 import { renderToString } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
+import { wavClip } from "../_test-utils/speech-clips";
 
 /**
  * A listening exam's recording plays the way the exam plays it: once or twice, from start to end
@@ -12,48 +13,22 @@ import { page } from "vitest/browser";
  * fails to load costs nothing. In review, the recording plays and pauses freely.
  */
 
-const SAMPLE_RATE = 8000;
-const WAV_HEADER_BYTES = 44;
-const TONE_HZ = 440;
-const AMPLITUDE = 8000;
-
 /** Long enough for a recording to play to its end. */
 const PLAY_TIMEOUT = 5000;
 
-/** A short tone as a WAV data URL: a real recording the browser plays to its end. */
+/** A real recording the browser plays to its end. */
 function toneUrl(seconds: number): string {
-  const samples = Math.round(SAMPLE_RATE * seconds);
-  const bytes = new Uint8Array(WAV_HEADER_BYTES + samples * 2);
-  const view = new DataView(bytes.buffer);
-  const write = (offset: number, text: string) => bytes.set(new TextEncoder().encode(text), offset);
-
-  write(0, "RIFF");
-  view.setUint32(4, bytes.byteLength - 8, true);
-  write(8, "WAVEfmt ");
-  view.setUint32(16, 16, true);
-  view.setUint16(20, 1, true);
-  view.setUint16(22, 1, true);
-  view.setUint32(24, SAMPLE_RATE, true);
-  view.setUint32(28, SAMPLE_RATE * 2, true);
-  view.setUint16(32, 2, true);
-  view.setUint16(34, 16, true);
-  write(36, "data");
-  view.setUint32(40, samples * 2, true);
-
-  for (let index = 0; index < samples; index += 1) {
-    const value = Math.sin((2 * Math.PI * TONE_HZ * index) / SAMPLE_RATE) * AMPLITUDE;
-    view.setInt16(WAV_HEADER_BYTES + index * 2, Math.round(value), true);
-  }
-
-  return `data:audio/wav;base64,${btoa(String.fromCodePoint(...bytes))}`;
+  return URL.createObjectURL(wavClip(seconds));
 }
+
+const RECORDING_URL = toneUrl(0.4);
 
 /** The player as a mock or practice holds it: the parent keeps how many plays were used. */
 function Recording({
   onPlayed,
   played: initial = 0,
   plays,
-  url = toneUrl(0.4),
+  url = RECORDING_URL,
 }: {
   onPlayed: () => void;
   played?: number;

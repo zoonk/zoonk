@@ -9,13 +9,13 @@ import { type SelectedAnswer, type StepResult } from "../step-answer";
 import { useWordAudio } from "../use-word-audio";
 import {
   PlayerChoiceScene,
-  PlayerChoiceSceneEyebrow,
   PlayerChoiceSceneOptionText,
   PlayerChoiceSceneOptions,
   PlayerChoiceScenePrompt,
   PlayerChoiceSceneQuestion,
 } from "./player-choice-scene";
 import { RomanizationText } from "./romanization-text";
+import { ScreenChip } from "./screen-chip";
 
 function getSelectedOptionId(selectedAnswer?: SelectedAnswer): string | null {
   if (selectedAnswer?.kind !== "translation") {
@@ -80,9 +80,7 @@ export function TranslationStep({
       <PlayerChoiceScenePrompt>
         {/* A word carries its article ("as colunas") and a chunk is several words ("Thanks for
         having me"): the prompt names neither, so it never calls one the other. */}
-        <PlayerChoiceSceneEyebrow>
-          {definesWords ? t("Which one means this?") : t("Translate")}
-        </PlayerChoiceSceneEyebrow>
+        <ScreenChip>{definesWords ? t("Which one means this?") : t("Translate")}</ScreenChip>
         <PlayerChoiceSceneQuestion>{correctWord.translation}</PlayerChoiceSceneQuestion>
       </PlayerChoiceScenePrompt>
 

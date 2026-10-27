@@ -1,8 +1,7 @@
-import { snapToStep } from "../_utils/snap-value";
+import { isMultiple, snapToStep } from "../_utils/snap-value";
 
 /* oxlint-disable-next-line no-magic-numbers -- These are the round split steps themselves. */
 const DECIMAL_STEPS = [1, 0.5, 0.25, 0.1, 0.05, 0.01] as const;
-const FLOAT_SLACK = 1e-9;
 
 /** Where the split lines sit: the running total of every part but the last. */
 export function partsToCuts(parts: readonly number[]): number[] {
@@ -17,11 +16,6 @@ export function cutsToParts(cuts: readonly number[], total: number): number[] {
   const edges = [0, ...cuts, total];
 
   return edges.slice(1).map((edge, index) => Number((edge - (edges[index] ?? 0)).toPrecision(12)));
-}
-
-function isMultiple(value: number, step: number): boolean {
-  const ratio = value / step;
-  return Math.abs(ratio - Math.round(ratio)) < FLOAT_SLACK;
 }
 
 /**

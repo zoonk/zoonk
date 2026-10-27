@@ -9,7 +9,7 @@ const TONE = 40;
 const TONE_PERIOD = 20;
 
 /** A short, quiet 8-bit WAV the browser really plays and ends, so clips follow each other. */
-function wavClip(seconds: number): Blob {
+export function wavClip(seconds: number): Blob {
   const samples = Math.round(SAMPLE_RATE * seconds);
   const bytes = new Uint8Array(WAV_HEADER_BYTES + samples);
   const view = new DataView(bytes.buffer);

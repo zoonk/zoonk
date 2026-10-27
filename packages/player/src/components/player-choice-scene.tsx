@@ -9,7 +9,6 @@ import { usePlayerInteractionState } from "../player-context";
 import { getNumberKeyShortcut } from "../player-shortcuts";
 import { PlayerRichText } from "./player-rich-text";
 import { ContextText, QuestionText } from "./question-text";
-import { ScreenChip } from "./screen-chip";
 import { InteractiveStepLayout } from "./step-layouts";
 
 type PlayerChoiceSceneOption = { content: React.ReactNode; isCorrect: boolean; key: string };
@@ -67,11 +66,6 @@ export function PlayerChoiceScenePrompt({ children }: { children: React.ReactNod
       {children}
     </div>
   );
-}
-
-/** The screen chip over the question, for choice scenes that name what they ask. */
-export function PlayerChoiceSceneEyebrow({ children }: { children: React.ReactNode }) {
-  return <ScreenChip>{children}</ScreenChip>;
 }
 
 /** The situation before a choice question, when it has one. */
