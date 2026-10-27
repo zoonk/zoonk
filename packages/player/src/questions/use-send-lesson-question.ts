@@ -77,9 +77,8 @@ export function useSendLessonQuestion({
   streamAnswer: (input: { context: LessonQuestionContext; questionId: string }) => Promise<void>;
 }) {
   const createRequestsInFlight = useRef(new Set<string>());
-  const pendingCreateRequests = useRef(new Map<string, PendingQuestionCreateRequest>());
-  /** The ref gates requests immediately; render reads an immutable state snapshot. */
-  const [pendingRequestSnapshot, setPendingRequestSnapshot] = useState(
+  /** A question whose answer never came back, sent again with its request id to resolve it. */
+  const [pendingRequests, setPendingRequests] = useState(
     new Map<string, PendingQuestionCreateRequest>(),
   );
 
@@ -100,7 +99,7 @@ export function useSendLessonQuestion({
       const dispatch = (action: LessonQuestionSessionAction["action"]) =>
         dispatchToContext({ action, context });
 
-      const pendingRequest = pendingCreateRequests.current.get(scope) ?? null;
+      const pendingRequest = pendingRequests.get(scope) ?? null;
       const blocksNewQuestion = currentState.questions.some(doesLessonQuestionBlockNewQuestion);
 
       if (
@@ -128,17 +127,15 @@ export function useSendLessonQuestion({
       });
 
       const input = { ...request.input, requestId: request.requestId };
-      pendingCreateRequests.current.set(scope, request);
-      setPendingRequestSnapshot(new Map(pendingCreateRequests.current));
+      setPendingRequests((current) => new Map(current).set(scope, request));
       const result = await createLessonQuestionRequest({ connection, input, target });
       createRequestsInFlight.current.delete(scope);
 
-      if (result.status === "error") {
-        if (result.error.kind !== "unknown") {
-          pendingCreateRequests.current.delete(scope);
-          setPendingRequestSnapshot(new Map(pendingCreateRequests.current));
-        }
+      if (result.status !== "error" || result.error.kind !== "unknown") {
+        setPendingRequests((current) => new Map([...current].filter(([key]) => key !== scope)));
+      }
 
+      if (result.status === "error") {
         if (result.error.kind === "conflict" && (await reconcileThread(context))) {
           return;
         }
@@ -147,8 +144,6 @@ export function useSendLessonQuestion({
         return;
       }
 
-      pendingCreateRequests.current.delete(scope);
-      setPendingRequestSnapshot(new Map(pendingCreateRequests.current));
       dispatch({ question: result.data, type: "questionCreated" });
 
       onMissionMoment?.(result.data.missionMoment);
@@ -165,6 +160,7 @@ export function useSendLessonQuestion({
       target,
       lessonStepIds,
       onMissionMoment,
+      pendingRequests,
       reconcileThread,
       streamAnswer,
     ],
@@ -189,7 +185,7 @@ export function useSendLessonQuestion({
 
   const unresolvedQuestion = state.isCreating
     ? null
-    : (pendingRequestSnapshot.get(getLessonQuestionScope(state.context))?.input.question ?? null);
+    : (pendingRequests.get(getLessonQuestionScope(state.context))?.input.question ?? null);
 
   return { ask: submitQuestion, send, sendSuggestion, unresolvedQuestion };
 }
