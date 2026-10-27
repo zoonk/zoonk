@@ -93,8 +93,7 @@ export function installProbe() {
 
   document.addEventListener("click", () => state.clicks.push(performance.now()), true);
 
-  function watchFrame() {
-    const now = performance.now();
+  function readFrame(now: number) {
     const skeletons = [...document.querySelectorAll('[data-slot="skeleton"]')];
 
     if (
@@ -107,7 +106,16 @@ export function installProbe() {
     if (state.urls.at(-1)?.href !== location.href) {
       state.urls.push({ at: now, href: location.href });
     }
+  }
 
+  /**
+   * Reads each frame as it painted: the page's own animation-frame callbacks run after this one
+   * (React reveals streamed content in one), so a skeleton they replace in the same frame was
+   * never on screen.
+   */
+  function watchFrame() {
+    const now = performance.now();
+    setTimeout(() => readFrame(now), 0);
     requestAnimationFrame(watchFrame);
   }
 
