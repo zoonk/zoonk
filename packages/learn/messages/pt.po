@@ -11473,6 +11473,12 @@ msgid "Lesson complete"
 msgstr "Aula concluída"
 
 #: src/session/lesson-moment.tsx
+#: src/session/study-moment.tsx
+msgctxt "GgV_JT"
+msgid "Review on {date}"
+msgstr "Revisão em {date}"
+
+#: src/session/lesson-moment.tsx
 #: src/session/open-next-step.tsx
 #: src/session/study-moment.tsx
 #: src/session/summary/summary-actions.tsx
@@ -11767,11 +11773,6 @@ msgstr "{completed, plural, =0 {# de {total} concluídos} one {# de {total} conc
 msgctxt "hnntJl"
 msgid "Today's session"
 msgstr "Sessão de hoje"
-
-#: src/session/study-moment.tsx
-msgctxt "GgV_JT"
-msgid "Review on {date}"
-msgstr "Revisão em {date}"
 
 #: src/session/study-moment.tsx
 msgctxt "s53FnF"
