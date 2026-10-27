@@ -28,10 +28,7 @@ const ENERGY_FORMATTER = new Intl.NumberFormat("en", {
 export async function UserLesson({ userId }: { userId: string }) {
   "use cache: private";
 
-  const [user, learningStats] = await Promise.all([
-    getUser(userId),
-    getUserLearningStats({ userId }),
-  ]);
+  const [user, learningStats] = await Promise.all([getUser(userId), getUserLearningStats(userId)]);
 
   if (!user) {
     return null;
@@ -122,10 +119,6 @@ function LessonKindBreakdown({ rows }: { rows: UserLearningKindStat[] }) {
   );
 }
 
-/**
- * Formatting happens in the row so the table structure stays focused on
- * semantics and each duration column handles missing historical telemetry.
- */
 function LessonKindBreakdownRow({ row }: { row: UserLearningKindStat }) {
   return (
     <TableRow>
@@ -143,10 +136,7 @@ function LessonKindBreakdownRow({ row }: { row: UserLearningKindStat }) {
   );
 }
 
-/**
- * Null averages mean the learner completed that kind before duration data was
- * available, so an em dash is more honest than a zero-second lesson.
- */
+/** No timed sittings means there is no duration sample to average. */
 function formatOptionalDuration(durationSeconds: number | null) {
   return durationSeconds === null ? "—" : formatDuration(durationSeconds);
 }

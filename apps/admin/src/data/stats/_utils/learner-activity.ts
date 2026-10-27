@@ -6,9 +6,8 @@ export const utcTodaySql = sql`(NOW() AT TIME ZONE 'UTC')::date`;
 
 /**
  * Learner-local days with a finished learning activity, as distinct `user_id` and `activity_date`
- * rows: a closed ledger row, or a daily row with answers, time or a finished lesson (legacy days
- * the learning v2 migration recovered only have the last). It reads learner-owned rows only;
- * callers join `users` to leave out learners who turned analytics off.
+ * rows: a closed ledger row, or a daily row with answers, time or a finished lesson.
+ * Callers join `users` to leave out learners who turned analytics off.
  */
 export function getLearnerActivityDaysSql({ end, start }: { end: Date; start: Date }): Sql {
   return sql`

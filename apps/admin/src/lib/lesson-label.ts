@@ -1,29 +1,4 @@
-/**
- * Kinds of the lessons learners finished before the Library, which the ledger keeps as text on
- * their historical rows (the learning v2 migration copied them).
- */
-const historicalLessonKindLabels: Record<string, string> = {
-  alphabet: "Alphabet",
-  custom: "Custom lesson",
-  explanation: "Explanation",
-  grammar: "Grammar",
-  listening: "Listening",
-  practice: "Practice",
-  quiz: "Quiz",
-  reading: "Reading",
-  review: "Review",
-  translation: "Translation",
-  tutorial: "Tutorial",
-  vocabulary: "Vocabulary",
-};
-
-/**
- * Kinds the v2 learning ledger writes as text: Library lessons, session practice (`practice`, shared
- * with the historical kinds) and capsule reviews, checkpoints (see `CHECKPOINT_LEDGER_KINDS` and
- * `CAPSULE_LEDGER_KIND` in core), "Practice mistakes" runs, and language pattern drills and
- * speaking mocks.
- */
-const ledgerLessonKindLabels: Record<string, string> = {
+const lessonKindLabelsByText: Partial<Record<string, string>> = {
   boss: "Boss",
   capsule: "Capsule review",
   examSpeaking: "Exam speaking task",
@@ -32,13 +7,9 @@ const ledgerLessonKindLabels: Record<string, string> = {
   library: "Library lesson",
   mistakePractice: "Mistake practice",
   patternDrill: "Pattern drill",
+  practice: "Practice",
   speakingMock: "Speaking mock",
   weeklyChallenge: "Weekly challenge",
-};
-
-const lessonKindLabelsByText: Partial<Record<string, string>> = {
-  ...historicalLessonKindLabels,
-  ...ledgerLessonKindLabels,
 };
 
 /**

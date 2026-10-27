@@ -5,8 +5,7 @@ import { timedLessonSql } from "@/data/stats/_utils/timed-lesson";
 import { prisma } from "@zoonk/db";
 
 /**
- * Lesson kinds come from the ledger's text snapshot, so legacy and new kinds stay readable after
- * their lessons are deleted.
+ * The ledger keeps lesson-kind snapshots after their lessons are deleted.
  */
 export const getAvgTimeByLessonKind = cacheAdminData(async (start: Date, end: Date) => {
   const results = await prisma.$queryRaw<

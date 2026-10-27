@@ -1,9 +1,6 @@
 import { sql } from "@zoonk/db";
 
-/**
- * Finished lessons with recorded time. Backfilled legacy completions that never recorded a duration
- * store zero seconds, which would pull lesson-time averages down.
- */
+/** Finished lessons with recorded time; zero-second sittings don't contribute to averages. */
 export const timedLessonWhere = {
   endedAt: { not: null },
   kind: "lesson",

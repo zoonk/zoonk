@@ -3,10 +3,6 @@ import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { trackedAnalyticsUserRelationWhere } from "@/data/stats/_utils/analytics-user-filter";
 import { prisma } from "@zoonk/db";
 
-/**
- * Lesson rows in the learning ledger are the started lessons: finished ones have an end time, and
- * backfilled legacy lessons that were never finished keep it empty.
- */
 export const getCompletionRate = cacheAdminData(async () => {
   const where = { ...trackedAnalyticsUserRelationWhere, kind: "lesson" } as const;
 
