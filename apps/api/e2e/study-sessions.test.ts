@@ -517,8 +517,14 @@ test.describe("Study sessions API", () => {
     await expect(writing.json()).resolves.toMatchObject(plusRequired);
 
     // A chapter's test-out takes the learner past lessons only Plus opens: nothing is written,
-    // graded or skipped.
-    const chapter = await libraryChapterFixture();
+    // graded or skipped, even with a right answer to a planned lesson's question.
+    const [chapter, skill] = await Promise.all([libraryChapterFixture(), skillFixture()]);
+
+    const [lesson, question] = await Promise.all([
+      planItemFixture({ chapterId: chapter.id, planId: plan.id, position: 1, skillId: skill.id }),
+      itemFixture({ content: choiceItemContent(), skillId: skill.id }),
+    ]);
+
     const testOutPath = `/v1/goals/${goal.id}/chapters/${chapter.id}/test-out`;
 
     const testOutResponses = await Promise.all([
@@ -526,7 +532,7 @@ test.describe("Study sessions API", () => {
       api.post(`${testOutPath}/generations`),
       api.post(testOutPath, {
         data: {
-          answers: [{ answer: { selectedIndex: 0 }, durationMs: 4000, itemId: randomUUID() }],
+          answers: [{ answer: { selectedIndex: 0 }, durationMs: 4000, itemId: question.id }],
           requestId: randomUUID(),
         },
       }),
@@ -538,6 +544,10 @@ test.describe("Study sessions API", () => {
         await expect(response.json()).resolves.toMatchObject(plusRequired);
       }),
     );
+
+    await expect(
+      prisma.planItem.findUniqueOrThrow({ where: { id: lesson.id } }),
+    ).resolves.toMatchObject({ status: "todo" });
 
     // Nothing is written ahead for it: no lessons, outlines or questions.
     const preparation = await api.post(`${sessionPath}/preparations`);
