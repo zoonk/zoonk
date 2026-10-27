@@ -35,7 +35,7 @@ test.describe("A checkpoint from today's session", () => {
     // the duel, and Enter puts them on.
     const ceremony = page.getByRole("dialog", { name: "Star glasses!" });
     await expect(ceremony.getByRole("button", { name: "Wear them" })).toBeFocused();
-    await pressUntil(() => page.keyboard.press("Enter"), ceremony, { state: "hidden" });
+    await pressUntil(() => page.keyboard.press("Enter"), ceremony, { visible: false });
 
     // Then the duel's result shows, and takes the focus.
     await expect(

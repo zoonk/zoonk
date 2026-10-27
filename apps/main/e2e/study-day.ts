@@ -269,20 +269,20 @@ const ARRIVED_TIMEOUT_MS = 2000;
 
 /**
  * Presses on a screen that ignores a press in its first half second, as meant for the screen
- * before it (a block's moment, a milestone's ceremony), until the press shows `arrived` (or hides
- * it: `state: "hidden"`).
+ * before it (a block's moment, a milestone's ceremony), until `arrived` shows (or hides:
+ * `visible: false`), pressing again only while it hasn't: a slow press lands after the wait.
  */
 export async function pressUntil(
   press: () => Promise<void>,
   arrived: Locator,
-  { state = "visible" }: { state?: "hidden" | "visible" } = {},
+  { visible = true } = {},
 ) {
   await expect(async () => {
-    await press();
+    if ((await arrived.isVisible()) !== visible) {
+      await press();
+    }
 
-    await (state === "visible"
-      ? expect(arrived).toBeVisible({ timeout: ARRIVED_TIMEOUT_MS })
-      : expect(arrived).toBeHidden({ timeout: ARRIVED_TIMEOUT_MS }));
+    await expect(arrived).toBeVisible({ timeout: ARRIVED_TIMEOUT_MS, visible });
   }).toPass({ timeout: 10_000 });
 }
 
