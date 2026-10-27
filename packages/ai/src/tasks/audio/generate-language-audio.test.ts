@@ -44,7 +44,6 @@ function heardAs(pronunciation: "english" | "native" | "unclear") {
 const FLASH = "google/gemini-3.8-flash-tts";
 const FLASH_LITE = "google/gemini-3.8-flash-lite-tts";
 const MAI_VOICE = "microsoft/mai-voice-2.1-flash";
-const OPENAI_REALTIME = "openai/gpt-realtime-2.1-mini";
 
 const wavAudio = new Uint8Array([1, 2, 3]);
 const mp3Audio = new Uint8Array([4, 5, 6]);
@@ -236,39 +235,22 @@ describe(generateLanguageAudio, () => {
     );
   });
 
-  it("falls back to Flash Lite, then MAI-Voice, then OpenAI's realtime voice for a sentence", async () => {
+  it("falls back to Flash Lite, then MAI-Voice for a language MAI-Voice speaks", async () => {
     generateSpeechWithProviderMock
       .mockRejectedValueOnce(new Error("Flash unavailable"))
       .mockRejectedValueOnce(new Error("Flash Lite unavailable"))
-      .mockRejectedValueOnce(new Error("MAI-Voice unavailable"))
       .mockResolvedValueOnce(voiced());
 
     const result = await generateLanguageAudio({ language: "es", text: "Hola, ¿qué tal?" });
 
-    expect(requestedModels()).toStrictEqual([FLASH, FLASH_LITE, MAI_VOICE, OPENAI_REALTIME]);
+    expect(requestedModels()).toStrictEqual([FLASH, FLASH_LITE, MAI_VOICE]);
 
     expect(result.data?.provenance).toStrictEqual(
-      expect.objectContaining({ model: OPENAI_REALTIME, requestedModel: FLASH }),
+      expect.objectContaining({ model: MAI_VOICE, requestedModel: FLASH }),
     );
   });
 
-  it("skips MAI-Voice for a language only OpenAI speaks", async () => {
-    generateSpeechWithProviderMock.mockRejectedValue(new Error("unavailable"));
-
-    await generateLanguageAudio({ language: "ja", text: "駅までどのくらいかかりますか？" });
-
-    expect(requestedModels()).toStrictEqual([FLASH, FLASH_LITE, OPENAI_REALTIME]);
-  });
-
-  it("never gives a single word to OpenAI's realtime voice, which drops its first sound", async () => {
-    generateSpeechWithProviderMock.mockRejectedValue(new Error("unavailable"));
-
-    await generateLanguageAudio({ language: "es", text: "ferrocarril" });
-
-    expect(requestedModels()).toStrictEqual([FLASH, FLASH_LITE, MAI_VOICE]);
-  });
-
-  it("keeps a language neither speaks on Gemini", async () => {
+  it("keeps a language MAI-Voice doesn't speak on Gemini", async () => {
     generateSpeechWithProviderMock.mockRejectedValue(new Error("Gemini unavailable"));
 
     const result = await generateLanguageAudio({ language: "am", text: "ሰላም ነው።" });

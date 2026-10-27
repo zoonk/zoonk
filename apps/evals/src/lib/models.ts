@@ -91,7 +91,6 @@ const SPEECH_MODELS: { id: string; name: string }[] = [
   { id: "google/gemini-3.8-flash-tts", name: "gemini-3.8-flash-tts" },
   { id: "google/gemini-3.8-flash-lite-tts", name: "gemini-3.8-flash-lite-tts" },
   { id: "microsoft/mai-voice-2.1-flash", name: "mai-voice-2.1-flash" },
-  { id: "openai/gpt-realtime-2.1-mini", name: "gpt-realtime-2.1-mini" },
 ];
 
 /**

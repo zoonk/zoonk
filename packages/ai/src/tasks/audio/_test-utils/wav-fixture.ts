@@ -1,4 +1,4 @@
-import { pcmToWav } from "../pcm-wav";
+import { pcmToWav } from "./pcm-wav";
 
 /** Speech models speak 16-bit mono PCM at 24 kHz. */
 const SPEECH_SAMPLE_RATE = 24_000;

@@ -5,7 +5,6 @@ import {
   type TTSVoice,
   getBaseLanguage,
   getMaiVoiceLocale,
-  isOpenAITTSSupportedLanguage,
   usesNonLatinScript,
 } from "@zoonk/utils/languages";
 import { logError } from "@zoonk/utils/logger";
@@ -67,8 +66,7 @@ type LookAlike = { [Key in keyof WordIpa]: NonNullable<WordIpa[Key]> };
 
 /**
  * The automatic order (see `speechModels`): Gemini Flash, then Gemini Flash Lite, then MAI-Voice
- * for the languages it speaks, then OpenAI's realtime voice for the languages OpenAI speaks when
- * the text is longer than one word. Each model is tried once: the next one is the retry. An
+ * for the languages it speaks. Each model is tried once: the next one is the retry. An
  * explicit model, from the audio test tool, gets a second attempt instead, because transport
  * retries can't see silent or malformed audio.
  *
@@ -83,12 +81,10 @@ function getSpeechModels({
   lookAlike,
   language,
   model,
-  text,
 }: {
   lookAlike: LookAlike | null;
   language: string;
   model?: SpeechModelName;
-  text: string;
 }): readonly SpeechModelName[] {
   if (model) {
     return [model, model];
@@ -100,13 +96,11 @@ function getSpeechModels({
 
   const baseLanguage = getBaseLanguage(language);
   const speaksMaiVoice = getMaiVoiceLocale(baseLanguage) !== null;
-  const speaksOpenAI = isOpenAITTSSupportedLanguage(baseLanguage) && segmentWords(text).length > 1;
 
   return [
     speechModels.geminiFlash,
     speechModels.geminiFlashLite,
     ...(speaksMaiVoice ? [speechModels.maiVoiceFlash] : []),
-    ...(speaksOpenAI ? [speechModels.openaiRealtimeMini] : []),
   ];
 }
 
@@ -307,7 +301,7 @@ export async function generateLanguageAudio({
     voice,
   });
 
-  const models = getSpeechModels({ language, lookAlike, ...(model ? { model } : {}), text });
+  const models = getSpeechModels({ language, lookAlike, ...(model ? { model } : {}) });
   const [requestedModel = speechModels.geminiFlash] = models;
   const runId = randomUUID();
   const startedAt = performance.now();

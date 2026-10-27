@@ -19,7 +19,7 @@ describe(assertAudibleAudioSignal, () => {
       assertAudibleAudioSignal({
         audio: createDecodedAudio([speech]),
         maxSeconds: 18,
-        model: "openai/gpt-realtime-2.1-mini",
+        model: "microsoft/mai-voice-2.1-flash",
       }),
     ).not.toThrow();
   });
@@ -31,7 +31,7 @@ describe(assertAudibleAudioSignal, () => {
       assertAudibleAudioSignal({
         audio: createDecodedAudio([silence]),
         maxSeconds: 18,
-        model: "openai/gpt-realtime-2.1-mini",
+        model: "microsoft/mai-voice-2.1-flash",
       }),
     ).toThrow("returned silent audio");
   });
@@ -44,7 +44,7 @@ describe(assertAudibleAudioSignal, () => {
       assertAudibleAudioSignal({
         audio: createDecodedAudio([click]),
         maxSeconds: 18,
-        model: "openai/gpt-realtime-2.1-mini",
+        model: "microsoft/mai-voice-2.1-flash",
       }),
     ).toThrow("returned silent audio");
   });
@@ -68,7 +68,7 @@ describe(assertAudibleAudioSignal, () => {
       assertAudibleAudioSignal({
         audio: createDecodedAudio([nearSilence]),
         maxSeconds: 18,
-        model: "openai/gpt-realtime-2.1-mini",
+        model: "microsoft/mai-voice-2.1-flash",
       }),
     ).toThrow("returned silent audio");
   });
@@ -80,7 +80,7 @@ describe(assertAudibleAudioSignal, () => {
       assertAudibleAudioSignal({
         audio: createDecodedAudio([quietSpeech]),
         maxSeconds: 18,
-        model: "openai/gpt-realtime-2.1-mini",
+        model: "microsoft/mai-voice-2.1-flash",
       }),
     ).not.toThrow();
   });
