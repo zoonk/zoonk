@@ -12,4 +12,4 @@ The retained oracles live in `_test-utils/rules/`: day, keep, steering, work and
 
 The composition in `sim-planner`, `sim-change`, `sim-refresh`, `sim-undo`, `sim-phase-dates`, `sim-create` and `sim-listening-starts` models what capabilities do around their reads. A change in the real composition does not automatically change this model. Confirm a finding through the real capability and keep its regression test at the smallest boundary that reproduces the defect.
 
-`sim/fixtures/*.json` hold shared Library content for ENEM, OAB, Câmara, a UX career, an English goal, a class test and IELTS with listening. They contain no learner data. The read-only fixture exporter is `pnpm --filter @zoonk/db sim:export-fixtures`; ordinary test runs consume the checked-in fixtures.
+`sim/fixtures/class-test.json` holds a cell-biology class test's Library content, rebuilt from a persona's notes. It contains no learner data.

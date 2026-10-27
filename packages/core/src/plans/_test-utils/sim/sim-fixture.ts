@@ -4,20 +4,10 @@ import { z } from "zod";
 import { planGraphSchema } from "../../planner/plan-state";
 
 /**
- * The simulator's libraries: shared Library content behind real goals (IELTS for an exam with
- * listening), exported from the local development database by `packages/db/src/scripts/export-sim-fixtures.ts` (the class test is
- * rebuilt from persona Pedro's notes, whose private content left with him). Ids are short (`s1`
+ * The simulator's library: a class test rebuilt from persona Pedro's notes. Ids are short (`s1`
  * skills, `k1` courses, `c1` chapters, `l1` lessons); `seedSimLibrary` turns them into rows.
  */
-const SIM_FIXTURES = [
-  "enem",
-  "oab",
-  "camara",
-  "class-test",
-  "career",
-  "language",
-  "ielts",
-] as const;
+const SIM_FIXTURES = ["class-test"] as const;
 
 export type SimFixtureName = (typeof SIM_FIXTURES)[number];
 
