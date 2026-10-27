@@ -15,9 +15,10 @@ export async function waitForBlockedStatement(
   statement: RegExp,
   count = 1,
 ): Promise<void> {
-  await vi.waitFor(async () => {
-    // A second contender for the same row waits behind the first one, not the holder itself.
-    const blocked = await prisma.$queryRaw<{ query: string }[]>`
+  await vi.waitFor(
+    async () => {
+      // A second contender for the same row waits behind the first one, not the holder itself.
+      const blocked = await prisma.$queryRaw<{ query: string }[]>`
       WITH RECURSIVE waiting(pid) AS (
         SELECT pid FROM pg_stat_activity WHERE ${holderPID}::int = ANY(pg_blocking_pids(pid))
         UNION
@@ -27,10 +28,12 @@ export async function waitForBlockedStatement(
       SELECT query FROM pg_stat_activity WHERE pid IN (SELECT pid FROM waiting)
     `;
 
-    expect(blocked.filter(({ query }) => statement.test(query)).length).toBeGreaterThanOrEqual(
-      count,
-    );
-  });
+      expect(blocked.filter(({ query }) => statement.test(query)).length).toBeGreaterThanOrEqual(
+        count,
+      );
+    },
+    { timeout: 10_000 },
+  );
 }
 
 /**

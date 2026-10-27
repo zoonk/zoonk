@@ -584,12 +584,6 @@ const SHARE_LOCKS = {
 
 type SourceRoot = { id: string; table: keyof typeof SHARE_LOCKS };
 
-/**
- * A writer reads before it locks (its claim, the rows it changes, a mocked model's answer), which
- * can take longer than one `waitForBlockedStatement` poll on a loaded machine. The wait ends before
- * the test's own timeout, so a writer that never locks fails on it, and the reader's transaction
- * outlives it.
- */
 const WRITER_WAIT = { timeout: 10_000 };
 const READER_TIMEOUT_MS = 20_000;
 
@@ -637,7 +631,7 @@ async function writeWhileRead({ beforeRelease, expectWritten, plan, root, write 
   const sourceLock = new RegExp(String.raw`FROM ${root.table}\b[\s\S]*FOR NO KEY UPDATE`, "u");
 
   try {
-    await vi.waitFor(() => waitForBlockedStatement(readerPid, sourceLock), WRITER_WAIT);
+    await waitForBlockedStatement(readerPid, sourceLock);
     await beforeRelease?.();
   } finally {
     reader.release();
@@ -1808,10 +1802,7 @@ describe("a publisher that loses its claim while it waits for a plan", () => {
 
     try {
       // Past its claim check, the publisher waits to mark the plan; meanwhile its claim ends.
-      await vi.waitFor(
-        () => waitForBlockedStatement(holderPid, /FOR UPDATE OF plan/u),
-        WRITER_WAIT,
-      );
+      await waitForBlockedStatement(holderPid, /FOR UPDATE OF plan/u);
 
       await prisma.lesson.update({ data: { contentStatus: "failed" }, where: { id: root.id } });
     } finally {
