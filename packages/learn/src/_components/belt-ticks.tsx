@@ -1,6 +1,7 @@
 import { beltColorClasses } from "@zoonk/ui/components/belt-indicator";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type BeltColor } from "@zoonk/utils/belt-level";
+import { MeterPart, MeterParts } from "./meter";
 
 /** A belt has ten levels, each a tick. */
 const LEVELS_PER_BELT = 10;
@@ -11,8 +12,9 @@ function tickClass(color: BeltColor): string {
 }
 
 /**
- * A belt's ten levels as ticks, lit in its color up to the level reached; the ones just `gained`
- * charge in, so the learner sees which are new. Decorative: the words beside it name the level.
+ * A belt's ten levels as a meter of parts (6px, 2px apart, as every meter), lit in its color up to
+ * the level reached; the ones just `gained` charge in, so the learner sees which are new.
+ * Decorative: the words beside it name the level.
  */
 export function BeltTicks({
   className,
@@ -26,12 +28,12 @@ export function BeltTicks({
   level: number;
 }) {
   return (
-    <span aria-hidden="true" className={cn("flex h-1 gap-[3px]", className)}>
+    <MeterParts as="span" className={className} data-slot="belt-ticks">
       {Array.from({ length: LEVELS_PER_BELT }, (_, index) => (
-        <span
+        <MeterPart
+          as="span"
           className={cn(
-            "flex-1 rounded-xs",
-            index < level ? tickClass(color) : "bg-surface-3",
+            index < level && tickClass(color),
             index >= level - gained &&
               index < level &&
               "motion-safe:animate-energy-charge origin-left",
@@ -40,6 +42,6 @@ export function BeltTicks({
           key={index}
         />
       ))}
-    </span>
+    </MeterParts>
   );
 }

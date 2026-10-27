@@ -52,7 +52,7 @@ function ReachedRow({
       <span className="flex items-center gap-3">
         {mark}
         <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-          <span className="font-medium text-balance">{title}</span>
+          <span className="font-semibold text-balance">{title}</span>
           <span className="text-muted-foreground text-xs text-pretty">{detail}</span>
         </span>
       </span>
@@ -67,12 +67,13 @@ function LevelBadge({ color, level }: { color: BeltColor; level: number }) {
     <span
       aria-hidden="true"
       className={cn(
-        "flex size-8 shrink-0 items-center justify-center rounded-full font-mono text-sm font-semibold tabular-nums",
+        "flex size-10 shrink-0 items-center justify-center rounded-full text-base font-semibold tabular-nums",
         "motion-safe:animate-pulse-scale ring-1 ring-black/10 ring-inset dark:ring-white/10",
         LEVEL_DELAY_CLASS,
         beltColorClasses[color],
         LIGHT_BELTS.has(color) ? "text-black/80" : "text-white",
       )}
+      data-slot="level-badge"
     >
       {level}
     </span>
@@ -134,13 +135,17 @@ function EnergyReached({ buddy, energy }: { buddy?: LearnBuddy | null; energy: n
   return (
     <ReachedRow
       bar={
-        <Meter className="bg-surface-3 h-1 rounded-[2px]">
-          <MeterFill className="bg-energy rounded-[2px]" share={energy / PERCENT} />
+        <Meter>
+          <MeterFill className="bg-energy" share={energy / PERCENT} />
         </Meter>
       }
       detail={detail()}
       mark={
-        <span aria-hidden="true" className="flex size-8 shrink-0 items-center justify-center">
+        <span
+          aria-hidden="true"
+          className="flex size-10 shrink-0 items-center justify-center"
+          data-slot="energy-mark"
+        >
           <ZapIcon
             className={cn("text-energy motion-safe:animate-pulse-scale size-5", ENERGY_DELAY_CLASS)}
           />
