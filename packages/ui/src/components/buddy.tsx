@@ -14,7 +14,7 @@ import { useId } from "react";
 import { BeepBody } from "./_buddy/beep";
 import { type BuddyExpression, BuddyFace, SLEEPY_EYES_OFFSET } from "./_buddy/buddy-face";
 import { BuddyGlassesFrame } from "./_buddy/buddy-glasses";
-import { type BuddyBodyProps, Spark, buddyDefId, buddyDefUrl } from "./_buddy/buddy-parts";
+import { type BuddyBodyProps } from "./_buddy/buddy-parts";
 import { NoodleBody } from "./_buddy/noodle";
 import { OttoBody } from "./_buddy/otto";
 import { ZuBody } from "./_buddy/zu";
@@ -75,28 +75,6 @@ function BuddyBody({ kind, ...props }: BuddyBodyProps & { kind: BuddyKind }) {
   }
 }
 
-/** Wise buddies (red, gray and black belts) wear a soft golden glow. */
-function WiseAura({ uid }: { uid: string }) {
-  return (
-    <g>
-      <defs>
-        <radialGradient id={buddyDefId(uid, "wise-aura")}>
-          <stop offset="0" stopColor="#ffd36e" stopOpacity=".38" />
-          <stop offset=".6" stopColor="#ffd36e" stopOpacity=".12" />
-          <stop offset="1" stopColor="#ffd36e" stopOpacity="0" />
-        </radialGradient>
-        <filter height="160%" id={buddyDefId(uid, "wise-glow")} width="160%" x="-30%" y="-30%">
-          <feDropShadow dx="0" dy="0" floodColor="#ffd36e" floodOpacity=".45" stdDeviation="5" />
-        </filter>
-      </defs>
-      <circle cx="60" cy="64" fill={buddyDefUrl(uid, "wise-aura")} r="62" />
-      <Spark fill="#ffd36e" size={10} x={2} y={30} />
-      <Spark fill="#ffd36e" size={7} x={106} y={16} />
-      <Spark fill="#fff1c9" size={5} x={104} y={66} />
-    </g>
-  );
-}
-
 export type BuddyProps = Omit<React.ComponentProps<"svg">, "children" | "viewBox"> & {
   beltColor: BeltColor;
   crop?: "face";
@@ -155,10 +133,7 @@ export function BuddyFigure({
       viewBox={crop === "face" ? getFaceViewBox(scale) : "0 0 120 120"}
       {...props}
     >
-      {stage === "wise" && <WiseAura uid={uid} />}
-
       <g
-        filter={stage === "wise" ? buddyDefUrl(uid, "wise-glow") : undefined}
         transform={`translate(${GROUND_X} ${GROUND_Y}) scale(${scale}) translate(${-GROUND_X} ${-GROUND_Y})`}
       >
         <BuddyBody
