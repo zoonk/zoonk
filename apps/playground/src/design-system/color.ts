@@ -220,24 +220,19 @@ export const COLOR_GROUPS: readonly ColorGroup[] = [
   {
     id: "kinds",
     intro:
-      "What a thing is, by one hue and one icon from `KIND_MARKS` (`@zoonk/learn/kind-tile`), shown where kinds sit side by side in one list. A lesson, the default, is neutral; a list of one kind marks state instead.",
+      "What a thing is, by its icon in its job's hue from `KIND_MARKS` (`@zoonk/learn/kind-tile`), shown where kinds sit side by side in one list. Kinds doing the same job share a hue and differ by icon. A lesson, the default, is neutral; a list of one kind marks state instead.",
     title: "Kinds",
     tokens: [
       {
-        meaning: "Review and practice: going back over what was learned.",
+        meaning:
+          "Going back over what was learned: a review, practice, and the mistakes notebook and its practice.",
         name: "kind-review",
-        use: "`KindMark` review and practice, their part of a meter.",
-      },
-      { meaning: "A mock exam.", name: "kind-mock", use: "`KindMark` mock, a mock's line." },
-      {
-        meaning: "Mistakes: the notebook and its practice.",
-        name: "kind-mistakes",
-        use: "`KindMark` mistakes.",
+        use: "`KindMark` review, practice and mistakes, each with its own icon; their part of a meter.",
       },
       {
-        meaning: "A challenge: the Trickster's duel.",
-        name: "kind-challenge",
-        use: "`KindMark` challenge, its part of a meter.",
+        meaning: "Testing what the learner knows: a mock exam or the Trickster's challenge.",
+        name: "kind-mock",
+        use: "`KindMark` mock and challenge, each with its own icon; a mock's line, their part of a meter.",
       },
       {
         meaning: "Making something yourself: a conversation or an essay.",

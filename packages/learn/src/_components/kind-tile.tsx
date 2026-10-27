@@ -44,13 +44,15 @@ type KindMarks = {
  * kind through `KindDot`, `KindIcon`, `kindFillClass` or `kindTextClass`, never with its own
  * classes, so a kind can't look different from one screen to the next. A kind added without its
  * marks fails the type check. The hues are `@zoonk/ui`'s `kind-*` tokens (soft, deeper with more
- * contrast), and none already means something else: blue is progress made, violet Brain Power.
- * Review and practice share amber, going back over what was learned; amber's other meanings (a
- * flag, Energy) are never dots.
+ * contrast), and none already means something else: blue is progress made, violet Brain Power,
+ * pink-red wrong. Kinds that do the same job share a hue and differ by their icon: review,
+ * practice and mistakes go back over what was learned (amber; amber's other meanings, a flag and
+ * Energy, are never dots), a mock and a challenge test what the learner knows (orange).
  */
 const KIND_MARKS = {
-  // Lime, not violet: violet is Brain Power's alone.
-  challenge: { fill: "bg-kind-challenge", icon: SwordsIcon, text: "text-kind-challenge" },
+  // The mock's orange: both test what the learner knows. Lime read as green, and violet is Brain
+  // Power's alone.
+  challenge: { fill: "bg-kind-mock", icon: SwordsIcon, text: "text-kind-mock" },
   conversation: {
     fill: "bg-kind-conversation",
     icon: MessagesSquareIcon,
@@ -62,7 +64,9 @@ const KIND_MARKS = {
   // Neutral: the default kind, and no blue to mistake for progress.
   lesson: { fill: "bg-faint", icon: BookOpenIcon, text: "text-muted-foreground" },
   mindMap: { fill: "bg-kind-mind-map", icon: NetworkIcon, text: "text-kind-mind-map" },
-  mistakes: { fill: "bg-kind-mistakes", icon: NotebookPenIcon, text: "text-kind-mistakes" },
+  // Review's amber: redoing what went wrong is going back over it. Rose sat beside wrong's pink-red,
+  // so a notebook block looked like a wrong answer.
+  mistakes: { fill: "bg-kind-review", icon: NotebookPenIcon, text: "text-kind-review" },
   mock: { fill: "bg-kind-mock", icon: TimerIcon, text: "text-kind-mock" },
   // Review's amber: going back over what was learned.
   practice: { fill: "bg-kind-review", icon: DumbbellIcon, text: "text-kind-review" },

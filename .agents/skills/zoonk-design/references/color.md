@@ -9,7 +9,7 @@ Zoonk is neutral by default and colored on purpose, softly. Neutral tone steps (
 - **Pink-red** (`destructive`, `destructive-text`) is wrong or removed: a wrong answer, bad news in a plan change, a destructive action, a one-line inline error.
 - **Amber** (`warning`, `warning-text`) is look here: a flag, a suggestion, the one thing to improve. Icons and chips only, never a dot: an amber dot is review and practice.
 - **Violet** (`brain`, `brain-text`) is Brain Power and nothing else: every reward amount, the missions' track and reward, the bar to the next level.
-- **A kind's hue** (`kind-*`) says what a thing is, only through `KIND_MARKS` (`KindMark`, `KindDot`, `KindIcon`, `kindFillClass`, `kindTextClass`), where kinds sit side by side in one list. A lesson, the default, is neutral.
+- **A kind's hue** (`kind-*`) says what a thing is, only through `KIND_MARKS` (`KindMark`, `KindDot`, `KindIcon`, `kindFillClass`, `kindTextClass`), where kinds sit side by side in one list. Kinds that do the same job share a hue and differ by icon: going back over what was learned (review, practice, mistakes) is amber, testing what the learner knows (a mock, a challenge) orange. A lesson, the default, is neutral; no kind is green.
 - **A subject's hue** comes from one table in `globals.css` through `data-subject` (`getSubject`): `SubjectLabel` (its name on a soft tint) and `SubjectGlyph`, and its line on a course page (`bg-subject`). Never a surface wash, a button, a pick or progress.
 - **Activity visuals** (`viz-*`) are three hues for data inside an interactive activity's canvas, never blue or violet.
 - **Identity**: Energy is amber, a belt wears its color once reached, the buddy and the Trickster keep their faces.

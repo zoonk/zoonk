@@ -91,8 +91,6 @@
   --color-score: var(--score);
   --color-kind-review: var(--kind-review);
   --color-kind-mock: var(--kind-mock);
-  --color-kind-mistakes: var(--kind-mistakes);
-  --color-kind-challenge: var(--kind-challenge);
   --color-kind-conversation: var(--kind-conversation);
   --color-kind-mind-map: var(--kind-mind-map);
   --color-subject: var(--subject);
@@ -212,14 +210,14 @@
   --score: var(--success);
   /*
    * The kinds of things a learner meets, each one hue for its icon and its dot (`KIND_MARKS` in
-   * `@zoonk/learn/kind-tile` maps every kind to one of these): review and practice amber, a mock
-   * orange, mistakes rose, a challenge lime, a conversation and an essay teal, a mind map fuchsia.
-   * A lesson, the default, is neutral.
+   * `@zoonk/learn/kind-tile` maps every kind to one of these): going back over what was learned
+   * (review, practice, mistakes) amber, testing what the learner knows (a mock, a challenge)
+   * orange, making something (a conversation, an essay) teal, a mind map fuchsia. A lesson, the
+   * default, is neutral. No kind is green or rose: green isn't Zoonk's, and rose sat beside wrong's
+   * pink-red.
    */
   --kind-review: oklch(0.7 0.13 68);
   --kind-mock: oklch(0.68 0.15 45);
-  --kind-mistakes: oklch(0.66 0.18 10);
-  --kind-challenge: oklch(0.68 0.15 130);
   --kind-conversation: oklch(0.66 0.1 185);
   --kind-mind-map: oklch(0.65 0.2 325);
   /*
@@ -290,8 +288,6 @@
     --score: var(--success);
     --kind-review: var(--color-amber-800);
     --kind-mock: var(--color-orange-800);
-    --kind-mistakes: var(--color-rose-800);
-    --kind-challenge: var(--color-lime-800);
     --kind-conversation: var(--color-teal-800);
     --kind-mind-map: var(--color-fuchsia-800);
     --viz-accent: var(--color-teal-800);
@@ -345,8 +341,6 @@
     --score: var(--success);
     --kind-review: oklch(0.83 0.11 80);
     --kind-mock: oklch(0.8 0.11 55);
-    --kind-mistakes: oklch(0.79 0.12 10);
-    --kind-challenge: oklch(0.86 0.14 128);
     --kind-conversation: oklch(0.83 0.09 182);
     --kind-mind-map: oklch(0.8 0.13 325);
     --viz-accent: oklch(0.85 0.11 182);
@@ -410,8 +404,6 @@
       --score: var(--success);
       --kind-review: var(--color-amber-300);
       --kind-mock: var(--color-orange-300);
-      --kind-mistakes: var(--color-rose-300);
-      --kind-challenge: var(--color-lime-300);
       --kind-conversation: var(--color-teal-300);
       --kind-mind-map: var(--color-fuchsia-300);
       --viz-accent: var(--color-teal-200);
