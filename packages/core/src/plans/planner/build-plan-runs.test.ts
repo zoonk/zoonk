@@ -7,8 +7,8 @@ import { type PlanGraphSkill, parsePlanSettings } from "./plan-state";
 import { type PlannerLesson } from "./plan-units";
 
 /*
- * A run on the plan an earlier run saved: what it keeps, carries and brings back. Each case is a
- * bug the learner simulator found, reproduced on a plan of a few skills.
+ * A run on the plan an earlier run saved: what it keeps, carries and brings back, on a plan of a few
+ * skills.
  */
 
 /** A Monday. */

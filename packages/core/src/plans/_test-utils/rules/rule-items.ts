@@ -1,23 +1,8 @@
-import { isDeepStrictEqual } from "node:util";
-import { toTopicKey } from "../../../library/exams/topic-key";
-import { countItemLessons } from "../../_utils/stand-in-lessons";
 import { getFoundationSkillIds, getSkillArea } from "../../planner/graph-areas";
 import { toIsoDate } from "../../planner/plan-calendar";
-import { type PlanGraph, type PlanGraphSkill } from "../../planner/plan-state";
+import { type PlanGraph } from "../../planner/plan-state";
 import { getBossKey } from "../../planner/plan-units";
 import { type RuleItem, type RulePlan } from "./rule-context";
-
-/** Each item of a plan as one line: its key, its day and its status. */
-function describeItems(plan: RulePlan): string[] {
-  return plan.items
-    .map((item) => `${getRuleItemKey(item)}|${item.scheduledFor?.getTime()}|${item.status}`)
-    .toSorted();
-}
-
-/** Whether a step left every item as it was, on its day and with its status: nothing ran. */
-export function isPlanUnchanged({ after, before }: { after: RulePlan; before: RulePlan }): boolean {
-  return isDeepStrictEqual(describeItems(after), describeItems(before));
-}
 
 /** Each skill's area, as plan changes name areas (see `getSkillArea`). */
 export function getAreaOf(graph: PlanGraph): (skillId: string | null) => string | null {
@@ -33,20 +18,6 @@ export function getAreaOf(graph: PlanGraph): (skillId: string | null) => string 
 /** A lesson the learner still has to study. */
 export function isTodoLesson(item: RuleItem): boolean {
   return item.kind === "lesson" && item.status === "todo";
-}
-
-/** Each skill's lessons still to do. */
-export function countSkillLessons(items: readonly RuleItem[]): Map<string, number> {
-  return items
-    .filter((item) => isTodoLesson(item) && item.skillId !== null)
-    .reduce(
-      (skills, item) =>
-        skills.set(
-          item.skillId ?? "",
-          (skills.get(item.skillId ?? "") ?? 0) + countItemLessons(item),
-        ),
-      new Map<string, number>(),
-    );
 }
 
 /** The day an item is due, as a time; null without one. */
@@ -74,55 +45,6 @@ export function toDay(time: number | null): string | null {
 /** Whether an item is due on a given day. */
 export function isDueOn({ day, item }: { day: Date; item: RuleItem }): boolean {
   return item.scheduledFor?.getTime() === day.getTime();
-}
-
-/** A notice topic of one area: the key two plans compare it by. */
-export function toAreaTopicKey({ area, topic }: { area: string; topic: string }): string {
-  return `${area}|${toTopicKey(topic)}`;
-}
-
-/**
- * The topics a skill teaches as plan changes name them: its notice topics, or its own name when
- * the graph maps no topics at all (a career's, a language's), as the planner's `listPlannedTopics`
- * reads it.
- */
-export function getSkillTopics(graph: PlanGraph): (skill: PlanGraphSkill) => readonly string[] {
-  const mapsTopics = graph.skills.some((skill) => (skill.topics ?? []).length > 0);
-  return (skill) => (mapsTopics ? (skill.topics ?? []) : [skill.name]);
-}
-
-/**
- * The topics a plan teaches, by area: a topic is in while any skill that teaches it has an item in
- * the plan that isn't set aside for time (`skipped`), done and tested out included (as the
- * planner's `listPlannedTopics` reads it). A graph without notice topics names its skills (see
- * `getSkillTopics`).
- */
-export function listPlannedTopics(plan: Pick<RulePlan, "graph" | "items">): Map<string, string> {
-  const planned = new Set(
-    plan.items.flatMap((item) => (item.status === "skipped" ? [] : (item.skillId ?? []))),
-  );
-
-  const topicsOf = getSkillTopics(plan.graph);
-
-  return new Map(
-    plan.graph.skills
-      .filter((skill) => planned.has(skill.skillId))
-      .flatMap((skill) => {
-        const area = getSkillArea({ graph: plan.graph, skill });
-        return topicsOf(skill).map((topic) => [toAreaTopicKey({ area, topic }), topic]);
-      }),
-  );
-}
-
-/** The keys in `from` that `to` doesn't have. */
-export function listMissingKeys<T>({
-  from,
-  to,
-}: {
-  from: ReadonlyMap<string, T>;
-  to: ReadonlyMap<string, T>;
-}): string[] {
-  return [...from.keys()].filter((key) => !to.has(key));
 }
 
 /**
@@ -194,18 +116,5 @@ function listTakenOut(plan: RulePlan): Set<string> {
     plan.graph.skills
       .map((skill) => skill.skillId)
       .filter((skillId) => plan.settings.skippedAreas.includes(areaOf(skillId) ?? "")),
-  );
-}
-
-/**
- * Each skill's lessons as the plan's last build counted them (`plannedLessons`, written by the
- * planner, `withPlannedLessons`), which size its core for the plan, its challenges and the checks
- * alike (`listCoreLessonItems` reads them the same way); the graph's estimate for a plan saved
- * before builds counted them (career seed 2050: the graph guessed 7 for a skill
- * whose chapter has 6).
- */
-export function listSkillSizes(plan: RulePlan): Map<string, number> {
-  return new Map(
-    plan.graph.skills.map((skill) => [skill.skillId, skill.plannedLessons ?? skill.lessons]),
   );
 }

@@ -1,5 +1,5 @@
 import { vi } from "vitest";
-import { loadPaceSamples } from "../../_utils/pace-samples";
+import { loadPaceSamples } from "../_utils/pace-samples";
 
 /**
  * Everyone's pace and others' pace on the plan's lessons are the learner's own. The real read takes
@@ -12,7 +12,7 @@ export async function keepPaceOwn() {
   }
 
   const load = loadPaceSamples;
-  const paceSamples = await import("../../_utils/pace-samples");
+  const paceSamples = await import("../_utils/pace-samples");
 
   vi.spyOn(paceSamples, "loadPaceSamples").mockImplementation(async (input) => {
     const { own } = await load(input);

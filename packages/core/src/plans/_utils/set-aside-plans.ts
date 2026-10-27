@@ -1,10 +1,14 @@
 import { type PlanOperation } from "../plan-contract";
 import { getTopicChanges } from "../planner/plan-effect";
 import { type ExistingPlanItem } from "../planner/plan-items";
-import { type ComputedPlan } from "./replan";
+import { type PlanGraph } from "../planner/plan-state";
+
+type TopicItem = Pick<ExistingPlanItem, "skillId" | "status">;
 
 /** A change planned next to the plan re-planned the same way without it (see `planWithAndWithout`). */
-type PlannedChange = { baseline: ComputedPlan; computed: ComputedPlan };
+type PlannedChange = {
+  computed: { built: { items: readonly TopicItem[] }; state: { graph: PlanGraph } };
+};
 
 /**
  * Whether a change is planned both bringing back work set aside for time and leaving it out: one
@@ -29,8 +33,8 @@ function listLostTopics({
   plan,
   shown,
 }: {
-  plan: ComputedPlan;
-  shown: readonly ExistingPlanItem[];
+  plan: PlannedChange["computed"];
+  shown: readonly TopicItem[];
 }): Set<string> {
   const { topicsLeftOut } = getTopicChanges({
     after: plan.built.items,
@@ -52,15 +56,15 @@ function listLostTopics({
  * costs a topic too, the work comes back, as on every other learner change (see
  * `getChangePlanning`): left out to keep logic's lesson, a Câmara plan lost four other topics.
  */
-export function pickSetAsidePlans({
+export function pickSetAsidePlans<Planned extends PlannedChange>({
   brought,
   kept,
   shown,
 }: {
-  brought: PlannedChange;
-  kept: PlannedChange;
-  shown: readonly ExistingPlanItem[];
-}): PlannedChange & { bringsBackSetAside: boolean } {
+  brought: Planned;
+  kept: Planned;
+  shown: readonly TopicItem[];
+}): Planned & { bringsBackSetAside: boolean } {
   const lostBrought = listLostTopics({ plan: brought.computed, shown });
   const lostKept = listLostTopics({ plan: kept.computed, shown });
 

@@ -5,12 +5,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../_test-utils/plan-library";
-import { computeSimChange } from "../_test-utils/sim/sim-change";
-import { loadSimInputs } from "../_test-utils/sim/sim-inputs";
-import { commitSimPlan, computeSimPlan } from "../_test-utils/sim/sim-planner";
-import { startRunner } from "../_test-utils/sim/sim-runner";
 import { hasMissingWeeklyMove } from "../_utils/missing-weekly-move";
-import { readSelectedItemFacts } from "../_utils/selected-item-contract";
 import { getChangePlanning } from "../_utils/steered-areas";
 import { changeGoalPlan } from "../change-goal-plan";
 import { createGoalPlan } from "../create-goal-plan";
@@ -195,64 +190,6 @@ describe("a mock-only move keeps the selected plan", () => {
       expect(afterExamAllocations(next)).toStrictEqual(afterExamAllocations(built));
     },
   );
-
-  it("commits the simulator's actual bank and item facts before moving a saved mock", async () => {
-    const inputs = await loadSimInputs("class-test");
-
-    const runner = await startRunner({
-      check: () => [],
-      inputs,
-      life: {
-        dailyMinutes: 45,
-        fixture: "class-test",
-        knownAreas: [],
-        pending: [],
-        seed: 1,
-        speed: 1,
-        start: "2020-09-28",
-        steps: [],
-        subscribed: true,
-        targetInDays: 40,
-      },
-    });
-
-    const computed = computeSimPlan({ mode: "forced", world: runner.world });
-    const plan = commitSimPlan({ computed, world: runner.world });
-    expect(computed.built.mockFunding).not.toHaveLength(0);
-    expect.soft(plan.state.settings.mockFunding).toStrictEqual(computed.built.mockFunding);
-
-    expect
-      .soft(plan.items.map((item) => readSelectedItemFacts(item.facts)))
-      .toStrictEqual(
-        plan.items.map((item) => ({
-          ...computed.itemFacts.get(getItemKey(item)),
-          schemaVersion: 1,
-        })),
-      );
-
-    const source = plan.items.find((item) => item.kind === "mock" && item.status === "todo");
-
-    if (!source?.scheduledFor) {
-      throw new Error("Expected a saved weekly mock from the actual simulator creation build");
-    }
-
-    const operations: PlanOperation[] = [
-      {
-        from: toIsoDate(source.scheduledFor),
-        kind: "moveWeeklyEvent",
-        to: toIsoDate(addDays(source.scheduledFor, 1)),
-      },
-    ];
-
-    const moved = computeSimChange({ operations, world: { ...runner.world, plan } });
-    expect(moved.status).toBe("computed");
-
-    if (moved.status !== "computed") {
-      throw new Error("Expected the simulator to compute the valid weekly move");
-    }
-
-    expect(hasMissingWeeklyMove({ items: moved.computed.built.items, operations })).toBe(false);
-  });
 
   it.each([
     {

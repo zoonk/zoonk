@@ -36,7 +36,7 @@ Object.entries(boundaries).forEach(([path, mocks]) => {
 });
 
 // Test files share workers: each starts as a fresh one would, and leaves no fake clock, stubbed
-// global or spy (the simulator's database tier spies on core's reads) behind for the next.
+// global or spy (`keepPaceOwn` spies on core's reads) behind for the next.
 beforeAll(async () => {
   await resetBoundaries();
 });
