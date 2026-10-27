@@ -338,7 +338,7 @@ describe("mock writes under the learner's lock", () => {
     ).resolves.toMatchObject([{ contentIds: { mockExamId: mock.id }, lessonKind: "anytimeMock" }]);
   });
 
-  it("marks hand-in, progress and final result separately, then retries without a bump", async () => {
+  it("marks hand-in, progress and final result separately, then retries unchanged", async () => {
     const { mock, user } = await sittingFixture();
     const held = holdLearnerLock({ userId: user.id });
     const pid = await held.pid;

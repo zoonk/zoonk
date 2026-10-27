@@ -44,7 +44,7 @@ describe("stop and lesson writes", () => {
     await stopStudySession({ input: {}, sessionId: session.id });
   });
 
-  it("raises it once when a finished lesson checks off its plan items, and not again", async () => {
+  it("checks off a finished lesson's plan items once, and not again", async () => {
     const { user } = await today();
     const elsewhere = await sessionGoalFixture({ lessons: 1, userId: user.id });
     const lessonId = elsewhere.lessons[0]?.id ?? "";

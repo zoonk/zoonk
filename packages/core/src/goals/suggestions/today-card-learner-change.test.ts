@@ -13,7 +13,7 @@ import { respondToMemoryInsight } from "../../memory/insights/respond-to-memory-
 import { respondToSuggestedGoal } from "./respond-to-suggested-goal";
 
 describe("Today card writes", () => {
-  it("marks a suggestion answer once, with no bumps on retries or another learner's suggestion", async () => {
+  it("marks a suggestion answer once, leaving retries and another learner's suggestion unchanged", async () => {
     const [user, other] = await Promise.all([userFixture(), userFixture()]);
     const suggestion = await suggestedGoalFixture({ userId: user.id });
     mockSession(user.id);

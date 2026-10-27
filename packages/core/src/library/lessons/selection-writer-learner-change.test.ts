@@ -195,7 +195,7 @@ async function lessonState(scope: Scope) {
 
 describe("D5 sibling writer admission", () => {
   it.each(WRITERS)(
-    "%s marks every dependent plan and each owner once, with no replay bump",
+    "%s marks every dependent plan and each owner once, and not again on a replay",
     async (writer) => {
       const scope = await selectionScope();
       const write = await prepareWriter(scope, writer);

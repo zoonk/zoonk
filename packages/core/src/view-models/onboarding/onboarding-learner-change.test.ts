@@ -58,7 +58,7 @@ describe("onboarding writes", () => {
     });
   });
 
-  it("marks a failed draft reset, with no bump when preparing an already ready draft", async () => {
+  it("marks a failed draft reset, and nothing when preparing an already ready draft", async () => {
     const { user } = await setup();
 
     const draft = await onboardingDraftFixture({

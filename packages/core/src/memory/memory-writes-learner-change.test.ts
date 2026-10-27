@@ -53,7 +53,7 @@ function write({
 }
 
 describe("memory writes under the learner's lock", () => {
-  it.each(WRITERS)("%s bumps once without invalidating plan inputs", async (writer) => {
+  it.each(WRITERS)("%s writes once without invalidating plan inputs", async (writer) => {
     const user = await userFixture();
     const goal = await goalFixture({ userId: user.id });
 
@@ -111,7 +111,7 @@ describe("memory writes under the learner's lock", () => {
   );
 
   it.each(["replace", "remove"] as const)(
-    "%s rejects missing, foreign and inactive facts without a bump",
+    "%s rejects missing, foreign and inactive facts, changing nothing",
     async (writer) => {
       const [learner, other] = await Promise.all([userFixture(), userFixture()]);
 
