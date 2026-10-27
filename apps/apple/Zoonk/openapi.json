@@ -13397,6 +13397,114 @@
         }
       }
     },
+    "/goals/{goalId}/chapters/{chapterId}/test-out/results/{requestId}": {
+      "get": {
+        "description": "A test-out the learner sent, as it was recorded: its score, the lessons it skipped, and whether that skip can still be undone or was undone. Show it again (after a reload, or from a link) instead of a new test, celebrating nothing. Nothing is written. 404 for a test never sent, another chapter's or another learner's.",
+        "operationId": "getChapterTestOutResult",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Get a sent chapter test-out's result",
+        "tags": [
+          "Learner"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "goalId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Goal ID"
+            },
+            "required": true,
+            "description": "Goal ID"
+          },
+          {
+            "in": "path",
+            "name": "chapterId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Library chapter ID in the goal's plan"
+            },
+            "required": true,
+            "description": "Library chapter ID in the goal's plan"
+          },
+          {
+            "in": "path",
+            "name": "requestId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The test-out's own id, the `requestId` its answers were sent with"
+            },
+            "required": true,
+            "description": "The test-out's own id, the `requestId` its answers were sent with"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The test-out's recorded result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChapterTestOutRecord"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/goals/{goalId}/placement": {
       "get": {
         "description": "Each phase's and each area's starting point, and what to do next (`status`). Placement asks the plan's areas in turns, starts each where the learner's own level points, asks harder questions after right answers and easier ones after wrong ones, and stops when every area of every phase has a confident starting point, not after a set number of questions. Before the goal's skill map exists, `status` is `preparing` and `complete` is false.",
@@ -68728,6 +68836,55 @@
         "required": [
           "generationId",
           "status"
+        ],
+        "additionalProperties": false
+      },
+      "ChapterTestOutRecord": {
+        "type": "object",
+        "properties": {
+          "canUndo": {
+            "type": "boolean",
+            "description": "Whether its plan change can still be undone through the goal's plan changes: the plan is exactly as the skip left it"
+          },
+          "changeId": {
+            "nullable": true,
+            "description": "The plan change that skipped its lessons; null when it skipped none",
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "correct": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "lessonsSkipped": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "The lessons its result said were off the plan"
+          },
+          "passed": {
+            "type": "boolean"
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "undone": {
+            "type": "boolean",
+            "description": "The learner undid the skip: its lessons are back in the plan"
+          }
+        },
+        "required": [
+          "canUndo",
+          "changeId",
+          "correct",
+          "lessonsSkipped",
+          "passed",
+          "total",
+          "undone"
         ],
         "additionalProperties": false
       },

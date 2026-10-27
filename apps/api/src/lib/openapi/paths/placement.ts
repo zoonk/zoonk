@@ -7,6 +7,7 @@ import { chapterTestOutInputSchema } from "@zoonk/core/learner/test-out/contract
 import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes";
 import { z } from "zod";
 import {
+  chapterTestOutRecordSchema,
   chapterTestOutResponseSchema,
   chapterTestOutResultSchema,
   placementAnswerResponseSchema,
@@ -14,7 +15,11 @@ import {
   placementResponseSchema,
   testOutGenerationSchema,
 } from "../schemas/learner";
-import { goalChapterPathParamsSchema, goalPathParamsSchema } from "../schemas/paths";
+import {
+  goalChapterPathParamsSchema,
+  goalChapterTestOutResultPathParamsSchema,
+  goalPathParamsSchema,
+} from "../schemas/paths";
 import {
   guestRefusalResponse,
   notFoundResponse,
@@ -110,6 +115,24 @@ export const placementPaths = {
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Write a chapter test-out's questions",
+      tags: ["Learner"],
+    },
+  },
+  "/goals/{goalId}/chapters/{chapterId}/test-out/results/{requestId}": {
+    get: {
+      description:
+        "A test-out the learner sent, as it was recorded: its score, the lessons it skipped, and whether that skip can still be undone or was undone. Show it again (after a reload, or from a link) instead of a new test, celebrating nothing. Nothing is written. 404 for a test never sent, another chapter's or another learner's.",
+      operationId: "getChapterTestOutResult",
+      requestParams: { path: goalChapterTestOutResultPathParamsSchema },
+      responses: {
+        ...learnerErrors,
+        "200": {
+          content: { "application/json": { schema: chapterTestOutRecordSchema } },
+          description: "The test-out's recorded result",
+        },
+      },
+      security: AUTHENTICATED_SECURITY,
+      summary: "Get a sent chapter test-out's result",
       tags: ["Learner"],
     },
   },

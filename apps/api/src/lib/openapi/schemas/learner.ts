@@ -265,6 +265,31 @@ export const testOutGenerationSchema = z
   })
   .meta({ id: "TestOutGeneration" });
 
+export const chapterTestOutRecordSchema = z
+  .object({
+    canUndo: z
+      .boolean()
+      .meta({
+        description:
+          "Whether its plan change can still be undone through the goal's plan changes: the plan is exactly as the skip left it",
+      }),
+    changeId: z
+      .uuid()
+      .nullable()
+      .meta({ description: "The plan change that skipped its lessons; null when it skipped none" }),
+    correct: z.int().min(0),
+    lessonsSkipped: z
+      .int()
+      .min(0)
+      .meta({ description: "The lessons its result said were off the plan" }),
+    passed: z.boolean(),
+    total: z.int().min(0),
+    undone: z
+      .boolean()
+      .meta({ description: "The learner undid the skip: its lessons are back in the plan" }),
+  })
+  .meta({ id: "ChapterTestOutRecord" });
+
 export const chapterTestOutResultSchema = z
   .object({
     ...progressCelebrationShape,

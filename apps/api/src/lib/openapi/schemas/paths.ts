@@ -37,6 +37,14 @@ export const goalChapterPathParamsSchema = goalPathParamsSchema
   .extend({ chapterId: z.uuid().meta({ description: "Library chapter ID in the goal's plan" }) })
   .meta({ id: "GoalChapterPathParams" });
 
+export const goalChapterTestOutResultPathParamsSchema = goalChapterPathParamsSchema
+  .extend({
+    requestId: z
+      .uuid()
+      .meta({ description: "The test-out's own id, the `requestId` its answers were sent with" }),
+  })
+  .meta({ id: "GoalChapterTestOutResultPathParams" });
+
 export const itemPathParamsSchema = z
   .object({
     itemId: z

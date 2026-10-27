@@ -4,8 +4,13 @@ import { TaskNotFound } from "@/components/learn/task-not-found";
 import { redirect } from "@/i18n/navigation";
 import { getCurrentGoal } from "@/lib/learn/current-goal";
 import { getLearnerBuddy } from "@/lib/learn/learner-buddy";
-import { TEST_OUT_FROM_SESSION_PARAM, TEST_OUT_RUN_PARAM } from "@/lib/test-out/test-out-params";
+import {
+  TEST_OUT_FROM_SESSION_PARAM,
+  TEST_OUT_RESULT_PARAM,
+  TEST_OUT_RUN_PARAM,
+} from "@/lib/test-out/test-out-params";
 import { getChapterTestOut } from "@zoonk/core/learner/test-out/get";
+import { getRecordedTestOut } from "@zoonk/core/learner/test-out/recorded";
 import { getGoalPlan } from "@zoonk/core/plans/get";
 import { TaskSkeleton } from "@zoonk/learn/task-layout";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -35,6 +40,30 @@ async function loadPlanChapter({ chapterId, goalId }: { chapterId: string; goalI
   return findPlanChapter({ chapterId, phases: result.plan.phases });
 }
 
+/**
+ * The result the address names (`?result=`) when the learner sent that test, so a reload, Back or
+ * its link shows it again; otherwise the chapter's test.
+ */
+async function loadTestOut({
+  chapterId,
+  goalId,
+  resultId,
+}: {
+  chapterId: string;
+  goalId: string;
+  resultId: string | null;
+}) {
+  const recorded = resultId
+    ? await getRecordedTestOut({ chapterId, goalId, requestId: resultId })
+    : null;
+
+  if (recorded?.status === "ready") {
+    return { recorded: recorded.result, status: "recorded" as const };
+  }
+
+  return getChapterTestOut({ chapterId, goalId });
+}
+
 async function TestOutBody({ params, searchParams }: Props) {
   const t = await getExtracted();
 
@@ -49,13 +78,23 @@ async function TestOutBody({ params, searchParams }: Props) {
     return null;
   }
 
+  const resultId = query[TEST_OUT_RESULT_PARAM];
+
   const [result, chapter, buddy] = await Promise.all([
-    getChapterTestOut({ chapterId, goalId: goal.id }),
+    loadTestOut({
+      chapterId,
+      goalId: goal.id,
+      resultId: typeof resultId === "string" ? resultId : null,
+    }),
     loadPlanChapter({ chapterId, goalId: goal.id }),
     getLearnerBuddy(),
   ]);
 
-  if (result.status !== "ready" && result.status !== "plusRequired") {
+  if (
+    result.status !== "ready" &&
+    result.status !== "plusRequired" &&
+    result.status !== "recorded"
+  ) {
     return (
       <NotFoundPage>
         <TaskNotFound />
@@ -69,6 +108,28 @@ async function TestOutBody({ params, searchParams }: Props) {
     closeHref: query[TEST_OUT_FROM_SESSION_PARAM] ? "/today" : `/content/chapters/${chapterId}`,
     goalId: goal.id,
   };
+
+  // A test sent before shows its result as it was recorded, its undo while the skip can be undone.
+  if (result.status === "recorded") {
+    const { recorded } = result;
+
+    return (
+      <TestOutClient
+        buddy={buddy}
+        lessonsLeft={chapter?.lessonsLeft ?? null}
+        page={page}
+        recorded={{
+          changeId: recorded.canUndo ? recorded.changeId : null,
+          correct: recorded.correct,
+          passed: recorded.passed,
+          skippedLessons: recorded.lessonsSkipped,
+          total: recorded.total,
+          undone: recorded.undone,
+        }}
+        test={null}
+      />
+    );
+  }
 
   // Past a free exam plan's first week the test comes with Plus: it says so instead of starting.
   if (result.status === "plusRequired") {
@@ -90,9 +151,12 @@ async function TestOutBody({ params, searchParams }: Props) {
       buddy={buddy}
       lessonsLeft={chapter?.lessonsLeft ?? null}
       page={page}
-      passMark={result.testOut.passMark}
-      questions={result.testOut.questions}
-      trueFalseLabels={result.testOut.trueFalseLabels}
+      recorded={null}
+      test={{
+        passMark: result.testOut.passMark,
+        questions: result.testOut.questions,
+        trueFalseLabels: result.testOut.trueFalseLabels,
+      }}
     />
   );
 }

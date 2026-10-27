@@ -4,12 +4,12 @@ import { decidePlanChangeAction } from "@/app/[lang]/(app)/(learn)/plan/journey-
 import { SessionCeremony } from "@/components/learn/session-ceremony";
 import { useRouter } from "@/i18n/navigation";
 import { type QuestionWriting } from "@/lib/questions/question-writing";
+import { TEST_OUT_RESULT_PARAM, TEST_OUT_RUN_PARAM } from "@/lib/test-out/test-out-params";
 import { requestTestOutWriting } from "@/lib/test-out/test-out-writing";
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
-import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import { type LearnBuddy } from "@zoonk/learn/buddy-name";
 import { type GenerationRun } from "@zoonk/learn/generation/run";
-import { type ChoiceQuestionView, TestOutRun } from "@zoonk/learn/test-out";
+import { type TestOutRecord, TestOutRun, type TestOutTest } from "@zoonk/learn/test-out";
 import { TestOutPreparing } from "@zoonk/learn/test-out/preparing";
 import { useState, useTransition } from "react";
 import { submitTestOutAction } from "./test-out-actions";
@@ -21,24 +21,38 @@ function notStartedRun(retry: () => void): GenerationRun {
   return { failure: "notStarted", retry, status: "failed", steps: {} };
 }
 
-/** The test, graded through core when the learner finishes, with a milestone as its moment. */
+/**
+ * Names the sent test in the address (`?result=`) once its result shows, in place: a reload, Back
+ * or the link opened later shows that result instead of a new test.
+ */
+function showResultInAddress(requestId: string) {
+  const query = new URLSearchParams(globalThis.location.search);
+  query.delete(TEST_OUT_RUN_PARAM);
+  query.set(TEST_OUT_RESULT_PARAM, requestId);
+  globalThis.history.replaceState(null, "", `?${query.toString()}`);
+}
+
+/**
+ * The test, graded through core when the learner finishes, with a milestone as its moment; or a
+ * test sent before (`recorded`), shown as it was recorded.
+ */
 export function TestOutClient({
   buddy,
   lessonsLeft,
   page,
-  passMark,
-  questions,
-  trueFalseLabels,
+  recorded,
+  test,
 }: {
   /** The learner's buddy (`getLearnerBuddy`), for the result's Energy and ceremony. */
   buddy: LearnBuddy;
   /** The chapter's lessons still on the plan, which a pass skips; null when the plan doesn't say. */
   lessonsLeft: number | null;
   page: TestOutPage;
-  passMark: number;
-  questions: ChoiceQuestionView[];
-  trueFalseLabels: TrueFalseLabels;
+  recorded: TestOutRecord | null;
+  test: TestOutTest | null;
 }) {
+  const target = { chapterId: page.chapterId, goalId: page.goalId };
+
   return (
     <TestOutRun
       buddy={buddy}
@@ -46,14 +60,21 @@ export function TestOutClient({
       closeHref={page.closeHref}
       draftKey={`test-out:${page.goalId}:${page.chapterId}`}
       lessonsLeft={lessonsLeft}
-      onSubmit={submitTestOutAction.bind(null, { chapterId: page.chapterId, goalId: page.goalId })}
+      onSubmit={async (input) => {
+        const outcome = await submitTestOutAction(target, input);
+
+        if (outcome) {
+          showResultInAddress(input.requestId);
+        }
+
+        return outcome;
+      }}
       onUndo={(changeId) => decidePlanChangeAction(page.goalId, { changeId, status: "undone" })}
-      passMark={passMark}
-      questions={questions}
+      recorded={recorded}
       renderCeremony={(milestone, onClose) => (
         <SessionCeremony buddy={buddy} milestone={milestone} onClose={onClose} />
       )}
-      trueFalseLabels={trueFalseLabels}
+      test={test}
     />
   );
 }

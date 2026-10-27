@@ -2,6 +2,8 @@
 
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import { type ProgressCelebration } from "@zoonk/core/sessions/progress-celebration";
+import { NOTHING_REACHED } from "@zoonk/core/sessions/reached";
+import { CelebrationScope } from "@zoonk/ui/hooks/celebration";
 import { BookOpenIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useMemo, useState, useTransition } from "react";
@@ -24,8 +26,6 @@ import { type ChoiceQuestionView } from "./choice-question";
 import { type ChoiceQuestionAnswer, ChoiceQuestionsRun } from "./choice-questions-run";
 import { UndoButton } from "./undo-button";
 
-export type { ChoiceQuestionView } from "./choice-question";
-
 const PERCENT = 100;
 
 /**
@@ -45,13 +45,24 @@ export type TestOutOutcome =
 
 type GradedTestOut = NonNullable<TestOutOutcome>;
 
+/**
+ * A test the learner sent before, as it was recorded: what it decided, with its undo while the
+ * skip can still be undone (`changeId`) and whether it was undone. It celebrates nothing again.
+ */
+export type TestOutRecord = Omit<GradedTestOut, keyof ProgressCelebration> & { undone: boolean };
+
+/** The test's questions, its pass mark, and the words its true-or-false questions are answered with. */
+export type TestOutTest = {
+  passMark: number;
+  questions: ChoiceQuestionView[];
+  trueFalseLabels: TrueFalseLabels;
+};
+
 function useResultDetail({ outcome, undone }: { outcome: GradedTestOut; undone: boolean }) {
   const t = useExtracted();
 
   if (!outcome.passed) {
-    return t(
-      "The chapter stays in your plan, and today's answers help it start at the right level.",
-    );
+    return t("The chapter stays in your plan, and your answers help it start at the right level.");
   }
 
   if (undone) {
@@ -119,15 +130,18 @@ function TestOutResult({
   onUndo,
   outcome,
   renderCeremony,
+  undone = false,
 }: {
   buddy?: LearnBuddy | null;
   closeHref: string;
   onUndo: (changeId: string) => Promise<boolean>;
   outcome: GradedTestOut;
   renderCeremony?: MomentCeremony;
+  /** A recorded result whose skip was undone already. */
+  undone?: boolean;
 }) {
   const t = useExtracted();
-  const [undo, setUndo] = useState<"done" | "failed" | null>(null);
+  const [undo, setUndo] = useState<"done" | "failed" | null>(undone ? "done" : null);
   const [isPending, startTransition] = useTransition();
   const { changeId } = outcome;
 
@@ -212,13 +226,58 @@ function useTestOutAside({
   };
 }
 
+/** The test's questions, one per screen, with its rule above each on a phone and beside them from `lg`. */
+function TestOutQuestions({
+  chapterTitle,
+  closeHref,
+  draftKey,
+  error,
+  lessonsLeft,
+  onFinish,
+  pending,
+  test,
+}: {
+  chapterTitle: string;
+  closeHref: string;
+  draftKey?: string;
+  error: React.ReactNode;
+  lessonsLeft: number | null;
+  onFinish: (answers: ChoiceQuestionAnswer[]) => void;
+  pending: boolean;
+  test: TestOutTest;
+}) {
+  const t = useExtracted();
+  const rule = useTestOutRule(test.passMark);
+  const aside = useTestOutAside({ chapterTitle, lessonsLeft, rule });
+
+  return (
+    <ChoiceQuestionsRun
+      aside={aside}
+      draftKey={draftKey}
+      error={error}
+      header={{
+        closeHref,
+        screen: "test-out",
+        title: t("Test out: {chapter}", { chapter: chapterTitle }),
+      }}
+      hint={() => rule}
+      onFinish={onFinish}
+      pending={pending}
+      questions={test.questions}
+      trueFalseLabels={test.trueFalseLabels}
+    />
+  );
+}
+
 /**
  * A chapter test-out, full screen like every task: one question per screen, no feedback until the
  * end, and "I don't know yet" always allowed; each answer is kept on the device as it's given
  * (`draftKey`). Its rule sits above each question on a phone, and beside them from `lg` with what a
  * pass skips (`lessonsLeft`). Passing takes the chapter's lessons off the plan, with an undo on its
  * result. Answers that couldn't be graded keep the last question on screen with Try again: a
- * failure is never shown as a result. Closing goes back to the chapter.
+ * failure is never shown as a result. A test sent before (`recorded`: a reload, Back, its link)
+ * shows its result as it was, still, in the same place, so the result just reached stays on screen
+ * whatever the page reads again. Closing goes back to the chapter.
  */
 export function TestOutRun({
   buddy,
@@ -228,10 +287,9 @@ export function TestOutRun({
   lessonsLeft = null,
   onSubmit,
   onUndo,
-  passMark,
-  questions,
+  recorded = null,
   renderCeremony,
-  trueFalseLabels,
+  test,
 }: {
   /** The learner's buddy, glad about the Energy the answers reach. */
   buddy?: LearnBuddy | null;
@@ -251,16 +309,13 @@ export function TestOutRun({
   }) => Promise<TestOutOutcome>;
   /** Puts the lessons a passed test-out skipped back in the plan; false when it didn't work. */
   onUndo: (changeId: string) => Promise<boolean>;
-  passMark: number;
-  questions: ChoiceQuestionView[];
+  /** A test the learner sent before, shown as it was recorded instead of the questions. */
+  recorded?: TestOutRecord | null;
   /** The full-screen moment for a milestone not shown yet (new glasses, a belt from earlier). */
   renderCeremony?: MomentCeremony;
-  /** The words the goal's true-or-false questions are answered with, by its exam. */
-  trueFalseLabels: TrueFalseLabels;
+  /** The questions to answer; null when only a recorded result shows. */
+  test: TestOutTest | null;
 }) {
-  const t = useExtracted();
-  const rule = useTestOutRule(passMark);
-  const aside = useTestOutAside({ chapterTitle, lessonsLeft, rule });
   const [outcome, setOutcome] = useState<GradedTestOut | null>(null);
   // The answers whose grading didn't go through, to send again.
   const [unsent, setUnsent] = useState<ChoiceQuestionAnswer[] | null>(null);
@@ -281,33 +336,36 @@ export function TestOutRun({
       setOutcome(graded);
     });
 
-  if (outcome) {
+  const shown = outcome ?? (recorded && { ...recorded, ceremony: null, reached: NOTHING_REACHED });
+
+  if (shown) {
     return (
-      <TestOutResult
-        buddy={buddy}
-        closeHref={closeHref}
-        onUndo={onUndo}
-        outcome={outcome}
-        renderCeremony={renderCeremony}
-      />
+      // A recorded result was celebrated when it was sent: opened again, it shows its end state.
+      <CelebrationScope play={outcome !== null}>
+        <TestOutResult
+          buddy={buddy}
+          closeHref={closeHref}
+          onUndo={onUndo}
+          outcome={shown}
+          renderCeremony={renderCeremony}
+          undone={!outcome && recorded?.undone}
+        />
+      </CelebrationScope>
     );
   }
 
   return (
-    <ChoiceQuestionsRun
-      aside={aside}
-      draftKey={draftKey}
-      error={unsent && !isPending && <TaskSaveError onRetry={() => submit(unsent)} />}
-      header={{
-        closeHref,
-        screen: "test-out",
-        title: t("Test out: {chapter}", { chapter: chapterTitle }),
-      }}
-      hint={() => rule}
-      onFinish={submit}
-      pending={isPending}
-      questions={questions}
-      trueFalseLabels={trueFalseLabels}
-    />
+    test && (
+      <TestOutQuestions
+        chapterTitle={chapterTitle}
+        closeHref={closeHref}
+        draftKey={draftKey}
+        error={unsent && !isPending && <TaskSaveError onRetry={() => submit(unsent)} />}
+        lessonsLeft={lessonsLeft}
+        onFinish={submit}
+        pending={isPending}
+        test={test}
+      />
+    )
   );
 }

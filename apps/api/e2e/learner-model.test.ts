@@ -13,6 +13,7 @@ import {
 } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import {
+  chapterTestOutRecordSchema,
   chapterTestOutResponseSchema,
   chapterTestOutResultSchema,
   placementAnswerResponseSchema,
@@ -227,6 +228,8 @@ test.describe("Learner model API", () => {
 
     expect(testOut.questions).toHaveLength(SKILLS);
 
+    const requestId = randomUUID();
+
     const result = await readBody({
       response: await apiContext.post(path, {
         data: {
@@ -235,18 +238,22 @@ test.describe("Learner model API", () => {
             durationMs: 6000,
             itemId: question.itemId,
           })),
-          requestId: randomUUID(),
+          requestId,
         },
       }),
       schema: chapterTestOutResultSchema,
     });
 
-    expect(result).toMatchObject({
-      correct: SKILLS,
-      lessonsSkipped: SKILLS,
-      passed: true,
-      total: SKILLS,
-    });
+    const said = { correct: SKILLS, lessonsSkipped: SKILLS, passed: true, total: SKILLS };
+    expect(result).toMatchObject(said);
+
+    // Its result reads back as it was recorded, for a reload or a link.
+    await expect(
+      readBody({
+        response: await apiContext.get(`${path}/results/${requestId}`),
+        schema: chapterTestOutRecordSchema,
+      }),
+    ).resolves.toMatchObject({ ...said, changeId: result.changeId, undone: false });
 
     await apiContext.dispose();
   });

@@ -7,7 +7,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../../plans/create-goal-plan";
+import { decidePlanChange } from "../../plans/decide-plan-change";
 import { getChapterTestOut } from "./get-chapter-test-out";
+import { getRecordedTestOut } from "./get-recorded-test-out";
 import { submitChapterTestOut } from "./submit-chapter-test-out";
 
 const NOW = new Date("2026-09-30T12:00:00Z");
@@ -70,7 +72,7 @@ async function countRecorded(userId: string) {
   return { attempts, correctAnswers: day?.correctAnswers, events };
 }
 
-describe("a chapter test-out sent twice", () => {
+describe("a chapter test-out sent and read back", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(NOW);
@@ -118,5 +120,88 @@ describe("a chapter test-out sent twice", () => {
     expect(second.status === "ready" && second.outcome.changeId).toBe(firstChange);
 
     await expect(countRecorded(user.id)).resolves.toMatchObject({ correctAnswers: 4, events: 1 });
+  });
+
+  it("reads a pass back as it was recorded, with its undo while the plan stands", async () => {
+    const { chapterId, goal, send } = await setup();
+    const requestId = randomUUID();
+    const sent = await send({ requestId });
+    const changeId = sent.status === "ready" ? sent.outcome.changeId : null;
+    const lessonsSkipped = sent.status === "ready" ? sent.outcome.lessonsSkipped : 0;
+
+    expect(changeId).toBeTruthy();
+    expect(lessonsSkipped).toBeGreaterThan(0);
+
+    await expect(
+      getRecordedTestOut({ chapterId, goalId: goal.id, requestId }),
+    ).resolves.toStrictEqual({
+      result: {
+        canUndo: true,
+        changeId,
+        correct: 4,
+        lessonsSkipped,
+        passed: true,
+        total: 4,
+        undone: false,
+      },
+      status: "ready",
+    });
+
+    await decidePlanChange({
+      changeId: changeId ?? "",
+      goalId: goal.id,
+      input: { status: "undone" },
+    });
+
+    await expect(
+      getRecordedTestOut({ chapterId, goalId: goal.id, requestId }),
+    ).resolves.toMatchObject({
+      result: { canUndo: false, changeId, lessonsSkipped, passed: true, undone: true },
+      status: "ready",
+    });
+  });
+
+  it("reads a fail back without a plan change", async () => {
+    const { chapterId, goal, send } = await setup();
+    const requestId = randomUUID();
+
+    await send({ requestId, wrong: 2 });
+
+    await expect(
+      getRecordedTestOut({ chapterId, goalId: goal.id, requestId }),
+    ).resolves.toStrictEqual({
+      result: {
+        canUndo: false,
+        changeId: null,
+        correct: 2,
+        lessonsSkipped: 0,
+        passed: false,
+        total: 4,
+        undone: false,
+      },
+      status: "ready",
+    });
+  });
+
+  it("finds no result for a test never sent, another chapter's or another learner's", async () => {
+    const { chapterId, goal, send } = await setup();
+    const requestId = randomUUID();
+
+    await send({ requestId });
+
+    await expect(
+      getRecordedTestOut({ chapterId, goalId: goal.id, requestId: randomUUID() }),
+    ).resolves.toStrictEqual({ status: "notFound" });
+
+    await expect(
+      getRecordedTestOut({ chapterId: randomUUID(), goalId: goal.id, requestId }),
+    ).resolves.toStrictEqual({ status: "notFound" });
+
+    const other = await userFixture();
+    mockSession(other.id);
+
+    await expect(
+      getRecordedTestOut({ chapterId, goalId: goal.id, requestId }),
+    ).resolves.toStrictEqual({ status: "notFound" });
   });
 });

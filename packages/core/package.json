@@ -193,6 +193,7 @@
     "./learner/summary/contract": "./src/learner/summary/learner-summary-contract.ts",
     "./learner/test-out/contract": "./src/learner/test-out/test-out-contract.ts",
     "./learner/test-out/get": "./src/learner/test-out/get-chapter-test-out.ts",
+    "./learner/test-out/recorded": "./src/learner/test-out/get-recorded-test-out.ts",
     "./learner/test-out/request-questions": "./src/learner/test-out/request-test-out-questions.ts",
     "./learner/test-out/submit": "./src/learner/test-out/submit-chapter-test-out.ts",
     "./lesson-player/check": "./src/lesson-player/check-lesson-step.ts",

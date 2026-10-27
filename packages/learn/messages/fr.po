@@ -11331,9 +11331,9 @@ msgid "We're writing a few questions on this chapter. The test opens here when t
 msgstr "On prépare quelques questions sur ce chapitre. Le test s’ouvrira ici dès qu’elles seront prêtes."
 
 #: src/questions/test-out-run.tsx
-msgctxt "AoLt9k"
-msgid "The chapter stays in your plan, and today's answers help it start at the right level."
-msgstr "Le chapitre reste dans ton plan, et tes réponses d’aujourd’hui aideront à commencer au bon niveau."
+msgctxt "1ovpGI"
+msgid "The chapter stays in your plan, and your answers help it start at the right level."
+msgstr "Le chapitre reste dans ton plan, et tes réponses l’aident à démarrer au bon niveau."
 
 #: src/questions/test-out-run.tsx
 msgctxt "aBn-KM"

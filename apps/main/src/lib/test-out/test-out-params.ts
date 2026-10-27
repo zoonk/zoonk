@@ -6,3 +6,9 @@ export const TEST_OUT_RUN_PARAM = "run";
  * leaving it goes back to Today, where the session goes on, instead of the chapter's page.
  */
 export const TEST_OUT_FROM_SESSION_PARAM = "session";
+
+/**
+ * The test the learner sent (its `requestId`), set in place once its result shows: a reload, Back
+ * or the link opened later shows that result as it was recorded instead of a new test.
+ */
+export const TEST_OUT_RESULT_PARAM = "result";
