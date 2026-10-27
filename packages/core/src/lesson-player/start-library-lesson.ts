@@ -1,12 +1,11 @@
 import "server-only";
 import { type LearningEvent, prisma } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
 import { isUuid } from "@zoonk/utils/uuid";
 import { claimUsage } from "../entitlements/claim-usage";
 import { type UsageDecision } from "../entitlements/contract";
 import { findActiveGoalId } from "../goals/_utils/goal-view";
 import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
-import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
+import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { isLessonPlusOnly } from "../sessions/_utils/plus-only-lessons";
 import { saveDayBeforeActivity } from "../sessions/ensure-study-session";
 import { startLearningEvent } from "../stats/record-learning-event";
@@ -47,17 +46,6 @@ type RunSource = {
   userId: string;
 };
 
-/** A competing start won; roll back this transaction's revision before resuming its run. */
-class ResumableLessonRunError extends Error {
-  readonly run: LearningEvent;
-
-  constructor(run: LearningEvent) {
-    super("The lesson already has an open run");
-    this.name = "ResumableLessonRunError";
-    this.run = run;
-  }
-}
-
 /**
  * Opens the run in the ledger with `endedAt` null, so a lesson started and never finished still
  * counts against the completion rate. The goal is the one the tabs show, and a lesson played as a
@@ -73,57 +61,38 @@ async function openLessonRun({ lesson, studySessionId, timeZone, userId }: RunSo
     return { isNew: false, run: existing };
   }
 
-  const claimed = await safeAsync(() =>
-    prisma.$transaction(async (tx) => {
-      await markLearnerChanged(tx, { planInputs: true, userId });
+  return writeLearnerChange({ planInputs: true, userId }, async (tx) => {
+    const now = new Date();
+    const resumable = await findResumableRun(tx, { lessonId: lesson.id, now, userId });
 
-      const now = new Date();
-      const resumable = await findResumableRun(tx, { lessonId: lesson.id, now, userId });
+    if (resumable) {
+      return unchanged({ isNew: false, run: resumable });
+    }
 
-      if (resumable) {
-        throw new ResumableLessonRunError(resumable);
-      }
+    const [first] = await loadProgressRuns({ client: tx, lessonId: lesson.id, until: now, userId });
 
-      const [first] = await loadProgressRuns({
-        client: tx,
+    const support =
+      (first && getRunLessonSupport(first)) ??
+      (await loadLessonSupport({ client: tx, lessonId: lesson.id, userId }));
+
+    const run = await startLearningEvent(tx, {
+      contentIds: {
         lessonId: lesson.id,
-        until: now,
-        userId,
-      });
+        ...(support && { support }),
+        ...(lesson.homeChapterId && { chapterId: lesson.homeChapterId }),
+        ...(studySessionId && { studySessionId }),
+      },
+      goalId,
+      kind: "lesson",
+      lessonKind: LIBRARY_LESSON_KIND,
+      startedAt: now,
+      timeZone,
+      titleSnapshot: lesson.title,
+      userId,
+    });
 
-      const support =
-        (first && getRunLessonSupport(first)) ??
-        (await loadLessonSupport({ client: tx, lessonId: lesson.id, userId }));
-
-      const run = await startLearningEvent(tx, {
-        contentIds: {
-          lessonId: lesson.id,
-          ...(support && { support }),
-          ...(lesson.homeChapterId && { chapterId: lesson.homeChapterId }),
-          ...(studySessionId && { studySessionId }),
-        },
-        goalId,
-        kind: "lesson",
-        lessonKind: LIBRARY_LESSON_KIND,
-        startedAt: now,
-        timeZone,
-        titleSnapshot: lesson.title,
-        userId,
-      });
-
-      return { isNew: true, run };
-    }),
-  );
-
-  if (claimed.error instanceof ResumableLessonRunError) {
-    return { isNew: false, run: claimed.error.run };
-  }
-
-  if (claimed.error) {
-    throw claimed.error;
-  }
-
-  return claimed.data;
+    return { isNew: true, run };
+  });
 }
 
 /** The lesson's answers this run continues from: its own and its unfinished earlier sittings'. */

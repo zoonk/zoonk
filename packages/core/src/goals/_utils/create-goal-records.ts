@@ -1,10 +1,7 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { type AllowanceLimit } from "../../entitlements/contract";
 import { getCertificateLanguage } from "../../exams/language-exam";
-import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { fromIsoDate, toIsoDate } from "../../plans/planner/plan-calendar";
@@ -96,11 +93,6 @@ export async function createGoal({
   });
 }
 
-/** A retained active goal publishes no second change after an explanation is created. */
-class ActiveGoalUnchangedError extends Error {
-  override name = "ActiveGoalUnchangedError";
-}
-
 /** The goal creator owns this profile transition; it does not delegate acting identity to an app. */
 export async function selectCreatedGoal({
   activeGoalId,
@@ -109,24 +101,17 @@ export async function selectCreatedGoal({
   activeGoalId: string;
   userId: string;
 }): Promise<void> {
-  const { error } = await safeAsync(() =>
-    prisma.$transaction(async (tx) => {
-      await markLearnerChanged(tx, { planInputs: true, userId });
-      const current = await tx.userLearningProfile.findUnique({ where: { userId } });
+  await writeLearnerChange({ planInputs: true, userId }, async (tx) => {
+    const current = await tx.userLearningProfile.findUnique({ where: { userId } });
 
-      if (current?.activeGoalId === activeGoalId) {
-        throw new ActiveGoalUnchangedError("The active goal did not change");
-      }
+    if (current?.activeGoalId === activeGoalId) {
+      return unchanged(null);
+    }
 
-      await tx.userLearningProfile.upsert({
-        create: { activeGoalId, userId },
-        update: { activeGoalId },
-        where: { userId },
-      });
-    }),
-  );
-
-  if (error && !(error instanceof ActiveGoalUnchangedError)) {
-    throw error;
-  }
+    await tx.userLearningProfile.upsert({
+      create: { activeGoalId, userId },
+      update: { activeGoalId },
+      where: { userId },
+    });
+  });
 }

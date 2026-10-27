@@ -1,6 +1,6 @@
 import "server-only";
 import { isDeepStrictEqual } from "node:util";
-import { type Goal, prisma } from "@zoonk/db";
+import { type Goal } from "@zoonk/db";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import {
   getGoalsCacheTag,
@@ -8,8 +8,8 @@ import {
   getLearningProfileCacheTag,
 } from "../cache/tags";
 import { type AllowanceLimit } from "../entitlements/contract";
-import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 import { findOwnedGoal } from "../learner/_utils/owned-goal";
+import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { applyChangeNow, isPlanReady } from "../plans/_utils/apply-plan-change";
 import { loadPlanChangeView } from "../plans/_utils/owned-plan";
 import { toPlanChangePayload } from "../plans/_utils/plan-change-payload";
@@ -37,17 +37,6 @@ export type GoalUpdateResult =
 const SETTINGS_NOTE = "Changed by the learner in the goal's settings.";
 const RESUMED_NOTE = "The goal started again after a pause.";
 
-/** A duplicate writer must roll back the marker it acquired before reading the locked state. */
-class GoalMetadataUnchangedError extends Error {
-  override name = "GoalMetadataUnchangedError";
-  readonly goal: Goal;
-
-  constructor(goal: Goal) {
-    super("The goal metadata is unchanged");
-    this.goal = goal;
-  }
-}
-
 function goalMetadata(input: GoalUpdateInput) {
   return {
     details: input.details,
@@ -73,14 +62,13 @@ async function saveMetadata({
   input: GoalUpdateInput;
   userId: string;
 }) {
-  try {
-    return await prisma.$transaction(async (tx) => {
-      await markLearnerChanged(tx, {
-        planInputs:
-          input.details !== undefined || input.status !== undefined || input.timeZone !== undefined,
-        userId,
-      });
-
+  return writeLearnerChange(
+    {
+      planInputs:
+        input.details !== undefined || input.status !== undefined || input.timeZone !== undefined,
+      userId,
+    },
+    async (tx) => {
       const current = await tx.goal.findFirstOrThrow({ where: { id: goal.id, userId } });
       const changed = changesMetadata(current, input);
 
@@ -93,21 +81,15 @@ async function saveMetadata({
         : 0;
 
       if (!changed && moved === 0) {
-        throw new GoalMetadataUnchangedError(current);
+        return unchanged({ completed: false, goal: current });
       }
 
       return {
         completed: current.status !== "completed" && updated.status === "completed",
         goal: updated,
       };
-    });
-  } catch (error) {
-    if (error instanceof GoalMetadataUnchangedError) {
-      return { completed: false, goal: error.goal };
-    }
-
-    throw error;
-  }
+    },
+  );
 }
 
 /**
