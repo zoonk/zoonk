@@ -109,7 +109,7 @@ function EssayAnswer({ question }: { question: MockQuestion }) {
         {writingName(runner.view.essayRubric ?? "custom")}
       </label>
       <Textarea
-        className="min-h-72 font-serif text-base leading-relaxed"
+        className="min-h-72 text-base leading-relaxed"
         id={textId}
         maxLength={MAX_ESSAY_CHARACTERS}
         onChange={(event) => runner.write({ text: event.target.value })}

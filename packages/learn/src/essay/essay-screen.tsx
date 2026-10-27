@@ -168,7 +168,7 @@ function useEssayWriter(onGraded: (draft: EssayDraft) => void) {
 type EssayWriter = ReturnType<typeof useEssayWriter>;
 
 /**
- * The box to write in, in a book's face at 16px on every screen, filling the column down to the
+ * The box to write in, in the text face at 16px on every screen, filling the column down to the
  * action bar, with its word count in the mono face. From `lg` it keeps that size and scrolls inside
  * as the text grows, so the instruction over it stays in view while writing, and a short window
  * takes its room from the box first, down to about four lines.
@@ -185,7 +185,7 @@ function EssayBox({ writer }: { writer: EssayWriter }) {
         {drafts.length > 0 ? t("Rewrite what needs work") : writingName(essay.rubric)}
       </label>
       <Textarea
-        className="min-h-72 flex-1 font-serif text-base leading-relaxed md:text-base lg:field-sizing-fixed lg:min-h-36"
+        className="min-h-72 flex-1 text-base leading-relaxed md:text-base lg:field-sizing-fixed lg:min-h-36"
         id={textId}
         onChange={(event) => writer.write(event.target.value)}
         value={writer.text}

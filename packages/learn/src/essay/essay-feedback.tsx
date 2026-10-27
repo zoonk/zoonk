@@ -189,9 +189,7 @@ export function NextStepComment({ grade }: { grade: Grade }) {
       </StepHeader>
 
       {criterion?.quote && (
-        <blockquote className="border-warning border-l-2 pl-3 font-serif italic">
-          {criterion.quote}
-        </blockquote>
+        <blockquote className="border-warning border-l-2 pl-3 italic">{criterion.quote}</blockquote>
       )}
       <p>{nextStep.text}</p>
       {criterion?.example && (
