@@ -102,6 +102,7 @@
     "./rich-table": "./src/_components/rich-table.tsx",
     "./roadmap-styles": "./src/journey/roadmap-styles.ts",
     "./provider": "./src/learn-provider.tsx",
+    "./reached-moment": "./src/session/reached-moment.tsx",
     "./session/block": "./src/session/question-block/question-block.tsx",
     "./session/day-moment": "./src/session/day-moment.tsx",
     "./session/lesson-celebration": "./src/session/lesson-celebration.ts",
