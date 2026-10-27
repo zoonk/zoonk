@@ -27,7 +27,8 @@
       "WORKFLOW_TARGET_WORLD",
       "PORTLESS_*",
       "PRIVATE_BLOB_*",
-      "ZOONK_DEV_PROJECT"
+      "ZOONK_DEV_PROJECT",
+      "ZOONK_LOCAL_PRODUCTION"
     ],
     "ui": "tui",
     "passThroughEnv": ["CODEX_SANDBOX"],

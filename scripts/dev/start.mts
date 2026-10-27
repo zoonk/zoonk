@@ -77,6 +77,8 @@ async function startPortlessDevelopment(): Promise<CommandResult> {
       MAIN_APP_URL: mainUrl,
       NEXT_PUBLIC_API_URL: apiUrl,
       ZOONK_DEV_PROJECT: projectName,
+      // Without it, a production build outside Vercel counts as a preview deployment.
+      ...(productionMode ? { ZOONK_LOCAL_PRODUCTION: "true" } : {}),
     },
   });
 }

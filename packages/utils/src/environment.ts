@@ -1,6 +1,7 @@
 /**
- * Where the code runs, not how it was built: only Vercel deployments are preview or production, so
- * a production build served on this machine (`pnpm start`) keeps local sign-in, mail and origins.
+ * Where the code runs. A production build counts as a deployment unless `pnpm start` marks it as
+ * served on this machine (`ZOONK_LOCAL_PRODUCTION`), so a deployment missing Vercel's variables
+ * still fails closed while a local production build keeps local sign-in, mail and origins.
  */
 export function getEnvironment(): "development" | "e2e" | "preview" | "production" {
   if (process.env.E2E_TESTING === "true") {
@@ -12,7 +13,10 @@ export function getEnvironment(): "development" | "e2e" | "preview" | "productio
   }
 
   // Vercel custom environments report "preview" too.
-  if (process.env.VERCEL_ENV === "preview") {
+  if (
+    process.env.VERCEL_ENV === "preview" ||
+    (process.env.NODE_ENV === "production" && process.env.ZOONK_LOCAL_PRODUCTION !== "true")
+  ) {
     return "preview";
   }
 

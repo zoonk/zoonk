@@ -27,7 +27,7 @@ Run commands from the repository root using `mise x -- pnpm ...` in this environ
 - In a new linked worktree, run `pnpm worktree:setup` before database-dependent work; worktrees that Codex, Claude Code, or T3 Code with the imported `t3.json` Setup action create already ran it. Keep the generated local database overrides so migrations, integration tests, and E2E tests stay isolated. Rerun setup to restore expired databases.
 
 - `pnpm dev` starts the apps and mailbox through clone- and worktree-scoped Portless routes. Use the URLs it prints. Use `pnpm dev:lan` for another device, `pnpm dev:direct` for direct ports, and `pnpm dev:prune` for orphaned servers. Stop active stacks from their original terminals.
-- `pnpm start` builds every app for those same routes and serves the production builds, so sign-in and the mailbox work as in `pnpm dev`. Stop the checkout's `pnpm dev` first: both register the same routes. Each app's `start:app` is the bare `next start`, which E2E servers run on their own ports.
+- `pnpm start` builds every app for those same routes and serves the production builds, so sign-in and the mailbox work as in `pnpm dev`. Stop the checkout's `pnpm dev` first: both register the same routes. Each app's `start:app` is the bare `next start`, which E2E servers run on their own ports; outside `pnpm start` and E2E, a production build counts as a deployment, so local sign-in refuses it.
 - For local sign-in, use an account from `packages/db/src/prisma/seed/users.ts`, such as `owner@zoonk.test`, or a new `@zoonk.test` address. Request an OTP and read the newest message for that address in the local mailbox.
 
 ## Persona passes

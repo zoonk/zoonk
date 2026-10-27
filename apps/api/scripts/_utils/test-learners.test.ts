@@ -45,7 +45,7 @@ describe(getTestLearnerRefusal, () => {
   });
 
   it.each([
-    ["VERCEL_ENV", "preview"],
+    ["NODE_ENV", "production"],
     ["VERCEL_ENV", "production"],
     ["E2E_TESTING", "true"],
   ])("refuses outside development (%s=%s), even on the local database", (name, value) => {
