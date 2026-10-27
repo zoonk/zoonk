@@ -67,9 +67,8 @@ function ScoreLine() {
 }
 
 /**
- * The Trickster, beaten or not; the week's challenge has no art, its title says it all. Beaten, he
- * leans back from the first frame, still: a character never moves as one block (the
- * `zoonk-motion` skill).
+ * The Trickster, beaten or not; the week's challenge has no art, its title says it all. As the
+ * result comes in he acts it out: his defeat when the learner won, smug when he did.
  */
 function ResultArt() {
   const { checkpoint } = useCheckpointScreen();
@@ -79,7 +78,7 @@ function ResultArt() {
     return null;
   }
 
-  return <TricksterArt beaten={won} />;
+  return <TricksterArt beaten={won} reacts />;
 }
 
 /**

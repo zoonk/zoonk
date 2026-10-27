@@ -58,7 +58,7 @@ function TricksterIntro() {
 
   return (
     <StepCard>
-      <TricksterArt />
+      <TricksterArt reacts />
       <IntroHeading detail={detail} eyebrow={eyebrow} title={t("The Trickster")} />
 
       <TaskMeta

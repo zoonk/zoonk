@@ -1,8 +1,10 @@
 "use client";
 
 import { type CheckpointQuestion } from "@zoonk/core/checkpoints/contract";
+import { type ActorHandle, type TricksterActName } from "@zoonk/ui/components/trickster-actor";
 import { BrainIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
+import { useEffect, useRef } from "react";
 import { StepRow, StepRows } from "../_components/step-card";
 import { TaskHeaderSegments, TaskHeaderTitle, type TaskSegment } from "../_components/task-header";
 import { TaskActions } from "../_components/task-layout";
@@ -220,21 +222,41 @@ function PrizeRow() {
 }
 
 /**
- * The opponent beside the question on wide screens: his face, his shield as plates with where it
- * stands ("2 broken · 3 to go · 3 questions left", just "7 broken" once the duel is decided, since
- * nothing more is asked), the duel's one rule and what winning pays, until it can't be won.
+ * The Trickster reacting to each verdict as it comes in: smug when the learner misses one, and when
+ * they get one past him a blink that drops his grin, back to sly. A reload draws him sly.
+ */
+function useVerdictReactions() {
+  const { duel } = useCheckpointScreen();
+  const trickster = useRef<ActorHandle<TricksterActName>>(null);
+  const { feedback } = duel.state;
+
+  useEffect(() => {
+    if (feedback) {
+      void trickster.current?.play(feedback.isCorrect ? "sly" : "smug");
+    }
+  }, [feedback]);
+
+  return trickster;
+}
+
+/**
+ * The opponent beside the question on wide screens: his face, reacting to each answer, his shield
+ * as plates with where it stands ("2 broken · 3 to go · 3 questions left", just "7 broken" once the
+ * duel is decided, since nothing more is asked), the duel's one rule and what winning pays, until it
+ * can't be won.
  */
 function TricksterPanel() {
   const t = useExtracted();
   const { checkpoint } = useCheckpointScreen();
   const { score, total } = useDuelNumbers();
+  const trickster = useVerdictReactions();
   const broken = Math.min(score.correct, checkpoint.passMark);
   const toGo = checkpoint.passMark - broken;
 
   return (
     <>
       <div className="flex flex-col gap-4">
-        <TricksterArt className="size-26 sm:size-26" />
+        <TricksterArt className="size-26 sm:size-26" ref={trickster} />
 
         <section className="flex flex-col gap-3">
           <h3 className="text-[0.9375rem] font-[560]">{t("The Trickster's shield")}</h3>
