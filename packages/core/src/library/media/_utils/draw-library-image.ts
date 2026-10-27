@@ -3,6 +3,9 @@ import { type ImageSceneParams, generateImageScene } from "@zoonk/ai/tasks/v2/im
 import { type ImageScene, describeImageScene } from "@zoonk/ai/tasks/v2/images/scene-schema";
 import { getImagePalette } from "@zoonk/ai/tasks/v2/images/style";
 import { resolveLibraryIdentity } from "../../identity/resolve-library-identity";
+import { drawImage } from "./draw-checked-image";
+import { canStorePicture } from "./picture-store";
+import { saveImageAsset } from "./save-image-asset";
 
 export type ImageAnalytics = ImageSceneParams["analytics"];
 
@@ -28,25 +31,8 @@ export type LibraryImageRequest = {
   analytics?: ImageAnalytics;
 };
 
-/**
- * What to draw when no existing image fits. It is plain data, so a workflow
- * can plan in one step and draw in another.
- */
-export type ImagePlan = {
-  reuseKey: string;
-  scene: ImageScene;
-  /** The scene as one line, stored as the asset's prompt. */
-  prompt: string;
-  palette: string;
-  language: string;
-  /** The labels' language, or null for an image without text. */
-  labelLanguage: string | null;
-  ownerId: string | null;
-};
-
-export type PlannedLibraryImage =
-  | { kind: "existing"; assetId: string }
-  | { kind: "generate"; plan: ImagePlan };
+/** A Library picture: the asset, and whether it was drawn now (its model check is still to run). */
+export type LibraryPicture = { assetId: string; drawn: boolean };
 
 /** One number on each part, in order: "1" on the first. */
 function numberLabels(parts: readonly string[]): ImageScene["labels"] {
@@ -57,11 +43,14 @@ function numberLabels(parts: readonly string[]): ImageScene["labels"] {
 }
 
 /**
- * Plans one Library image: a structured scene first, then the same agentic
- * identity flow as lessons (exact key, model search terms, text search and a
- * "same scene?" decision), so each scene is drawn once and reused.
+ * One Library picture: a structured scene first, then the same agentic identity flow as lessons
+ * (exact key, model search terms, text search and a "same scene?" decision), so each scene is
+ * drawn once and reused. A new image is saved to show at once: only the code check runs here, and
+ * the caller starts its model check in the background (`checkImageAsset`), which replaces a
+ * picture it rejects. Null when the picture can't be stored (`canStorePicture`) or every drawing
+ * came out blank.
  */
-export async function planLibraryImage({
+export async function drawLibraryImage({
   analytics,
   category,
   context,
@@ -71,7 +60,11 @@ export async function planLibraryImage({
   request,
   screenText,
   textAllowed,
-}: LibraryImageRequest): Promise<PlannedLibraryImage> {
+}: LibraryImageRequest): Promise<LibraryPicture | null> {
+  if (!canStorePicture(ownerId)) {
+    return null;
+  }
+
   const parts = numberedParts ?? [];
 
   const { data: planned } = await generateImageScene({
@@ -97,19 +90,26 @@ export async function planLibraryImage({
   });
 
   if (resolution.kind === "existing") {
-    return { assetId: resolution.id, kind: "existing" };
+    return { assetId: resolution.id, drawn: false };
   }
 
-  return {
-    kind: "generate",
-    plan: {
-      labelLanguage: hasLabels ? language : null,
-      language,
-      ownerId,
-      palette: getImagePalette(category).key,
-      prompt,
-      reuseKey: resolution.identityKey,
-      scene,
-    },
-  };
+  const palette = getImagePalette(category);
+  const drawn = await drawImage({ analytics, language, palette, scene });
+
+  if (!drawn) {
+    return null;
+  }
+
+  const asset = await saveImageAsset({
+    image: drawn.image,
+    language: hasLabels ? language : null,
+    ownerId,
+    palette: palette.key,
+    prompt,
+    provenance: drawn.provenance,
+    reuseKey: resolution.identityKey,
+    scene,
+  });
+
+  return { assetId: asset.id, drawn: true };
 }

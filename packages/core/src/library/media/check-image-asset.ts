@@ -10,7 +10,7 @@ import { readStoredImage } from "../../images/read-stored-image";
 import { toProvenanceData } from "../_utils/library-rows";
 import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { type DrawnImage, drawCheckedImage, reviewImage } from "./_utils/draw-checked-image";
-import { type ImageAnalytics } from "./_utils/plan-library-image";
+import { type ImageAnalytics } from "./_utils/draw-library-image";
 import { uploadImageFile } from "./_utils/save-image-asset";
 
 /**

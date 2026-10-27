@@ -2,7 +2,7 @@ import { type GeneratedItem, type ItemFormat } from "@zoonk/ai/tasks/v2/items/sc
 import { type Item } from "@zoonk/db";
 import { type LibraryProvenance, toProvenanceData } from "../_utils/library-rows";
 import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
-import { type ImageAnalytics } from "../media/_utils/plan-library-image";
+import { type ImageAnalytics } from "../media/_utils/draw-library-image";
 import { drawItemImage, getItemImageRequest, loadItemImageScope } from "../media/item-images";
 import { checkItem } from "./item-checks";
 import { type ItemAnswerFormat, toStoredItem } from "./item-content";

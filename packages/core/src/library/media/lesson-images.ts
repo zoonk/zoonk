@@ -3,9 +3,11 @@ import { prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLibraryLessonCacheTag } from "../../cache/tags";
 import { CURRENT_STEPS } from "../lessons/lesson-versions";
-import { drawPlannedImage } from "./_utils/draw-planned-image";
-import { canStorePicture } from "./_utils/picture-store";
-import { type ImageAnalytics, planLibraryImage } from "./_utils/plan-library-image";
+import {
+  type ImageAnalytics,
+  type LibraryPicture,
+  drawLibraryImage,
+} from "./_utils/draw-library-image";
 import { getOptionPictureRequests, getStepImageRequest } from "./_utils/step-image-request";
 
 /**
@@ -50,14 +52,20 @@ function findStepForImage(stepId: string) {
 
 type StepForImage = NonNullable<Awaited<ReturnType<typeof findStepForImage>>>;
 
-function getLessonContext(lesson: StepForImage["lesson"]): string {
+/** Where a lesson's picture sits; a private lesson's pictures are its owner's, a shared one's shared. */
+function getLessonPictureScope(lesson: StepForImage["lesson"]) {
   const chapter = lesson.homeChapter;
-  return [chapter?.homeCourse?.title, chapter?.title, lesson.title].filter(Boolean).join(" › ");
+
+  return {
+    category: chapter?.homeCourse?.categories[0]?.category ?? null,
+    context: [chapter?.homeCourse?.title, chapter?.title, lesson.title].filter(Boolean).join(" › "),
+    language: lesson.language,
+    ownerId: lesson.visibility === "private" ? lesson.ownerId : null,
+  };
 }
 
-/** A private lesson's pictures are its owner's; a shared lesson's are shared. */
-function getPictureOwner(lesson: StepForImage["lesson"]): string | null {
-  return lesson.visibility === "private" ? lesson.ownerId : null;
+function toOutcome(picture: LibraryPicture): StepImageOutcome {
+  return { mediaAssetId: picture.assetId, status: picture.drawn ? "generated" : "reused" };
 }
 
 /**
@@ -123,36 +131,23 @@ export async function createStepImage({
   }
 
   const { lesson } = step;
-  const ownerId = getPictureOwner(lesson);
 
-  if (!canStorePicture(ownerId)) {
-    return { status: "failed" };
-  }
-
-  const planned = await planLibraryImage({
+  const picture = await drawLibraryImage({
+    ...getLessonPictureScope(lesson),
     analytics,
-    category: lesson.homeChapter?.homeCourse?.categories[0]?.category ?? null,
-    context: getLessonContext(lesson),
-    language: lesson.language,
     numberedParts: request.parts,
-    ownerId,
     request: request.prompt,
     screenText: request.screenText,
     textAllowed: lesson.targetLanguage === null,
   });
 
-  const asset =
-    planned.kind === "existing"
-      ? { id: planned.assetId }
-      : await drawPlannedImage({ analytics, plan: planned.plan });
-
-  if (!asset) {
+  if (!picture) {
     return { status: "failed" };
   }
 
-  await linkStepImage({ lessonId: lesson.id, mediaAssetId: asset.id, stepId });
+  await linkStepImage({ lessonId: lesson.id, mediaAssetId: picture.assetId, stepId });
 
-  return { mediaAssetId: asset.id, status: planned.kind === "existing" ? "reused" : "generated" };
+  return toOutcome(picture);
 }
 
 /** One option of one question, whose picture isn't drawn yet. */
@@ -224,38 +219,25 @@ export async function createStepOptionPicture({
   }
 
   const { lesson } = step;
-  const ownerId = getPictureOwner(lesson);
 
-  if (!canStorePicture(ownerId)) {
-    return { status: "failed" };
-  }
-
-  const planned = await planLibraryImage({
+  const picture = await drawLibraryImage({
+    ...getLessonPictureScope(lesson),
     analytics,
-    category: lesson.homeChapter?.homeCourse?.categories[0]?.category ?? null,
-    context: getLessonContext(lesson),
-    language: lesson.language,
-    ownerId,
     request: request.prompt,
     screenText: request.screenText,
     textAllowed: false,
   });
 
-  const asset =
-    planned.kind === "existing"
-      ? { id: planned.assetId }
-      : await drawPlannedImage({ analytics, plan: planned.plan });
-
-  if (!asset) {
+  if (!picture) {
     return { status: "failed" };
   }
 
   await prisma.stepOptionPicture.createMany({
-    data: { mediaAssetId: asset.id, optionId, stepId },
+    data: { mediaAssetId: picture.assetId, optionId, stepId },
     skipDuplicates: true,
   });
 
   revalidateCacheTags([getLibraryLessonCacheTag(lesson.id)]);
 
-  return { mediaAssetId: asset.id, status: planned.kind === "existing" ? "reused" : "generated" };
+  return toOutcome(picture);
 }

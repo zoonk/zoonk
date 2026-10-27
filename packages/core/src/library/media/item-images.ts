@@ -1,9 +1,11 @@
 import "server-only";
 import { type GeneratedItem } from "@zoonk/ai/tasks/v2/items/schemas";
 import { prisma } from "@zoonk/db";
-import { drawPlannedImage } from "./_utils/draw-planned-image";
-import { canStorePicture } from "./_utils/picture-store";
-import { type ImageAnalytics, planLibraryImage } from "./_utils/plan-library-image";
+import {
+  type ImageAnalytics,
+  type LibraryPicture,
+  drawLibraryImage,
+} from "./_utils/draw-library-image";
 
 type ImageRequest = NonNullable<Extract<GeneratedItem, { image: unknown }>["image"]>;
 
@@ -76,9 +78,6 @@ export async function loadItemImageScope(skillId: string): Promise<ItemImageScop
   };
 }
 
-/** A question's picture: the asset, and whether it was drawn now (its model check is still to run). */
-export type ItemPicture = { assetId: string; drawn: boolean };
-
 /**
  * Draws the picture one question asks for, the way lesson pictures are drawn: a structured scene,
  * an existing image of the same scene when there is one, or a new image. A new image is used at
@@ -98,28 +97,18 @@ export async function drawItemImage({
   item: GeneratedItem;
   language: string;
   scope: ItemImageScope;
-}): Promise<ItemPicture | null> {
+}): Promise<LibraryPicture | null> {
   const request = getItemImageRequest(item);
 
-  if (!request || !canStorePicture(scope.ownerId)) {
+  if (!request) {
     return null;
   }
 
-  const planned = await planLibraryImage({
+  return drawLibraryImage({
+    ...scope,
     analytics,
-    category: scope.category,
-    context: scope.context,
     language,
-    ownerId: scope.ownerId,
     request: request.prompt,
     screenText: getQuestionText(item),
-    textAllowed: scope.textAllowed,
   });
-
-  if (planned.kind === "existing") {
-    return { assetId: planned.assetId, drawn: false };
-  }
-
-  const asset = await drawPlannedImage({ analytics, plan: planned.plan });
-  return asset ? { assetId: asset.id, drawn: true } : null;
 }
