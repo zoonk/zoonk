@@ -1,7 +1,6 @@
 import { MOMENTS, MOMENT_RULES } from "@/design-system/moments";
 import { BrainPowerReward } from "@zoonk/learn/brain-power-reward";
 import { MissionsRing } from "@zoonk/learn/missions-ring";
-import { MomentReadouts } from "@zoonk/learn/moment-readouts";
 import { Buddy } from "@zoonk/ui/components/buddy";
 import { type Metadata } from "next";
 import { PreviewIntlProvider } from "../../preview/preview-intl-provider";
@@ -21,6 +20,7 @@ import {
   MissionsCompleteSpecimen,
   MockEndSpecimen,
   ReachedSpecimen,
+  TaskEndSpecimen,
 } from "./celebration-specimens";
 
 export const metadata: Metadata = { title: "Special moments" };
@@ -78,21 +78,6 @@ function MissionsChips() {
   );
 }
 
-function RewardSpecimen() {
-  return (
-    <DevOnlySpecimen>
-      <div className="flex flex-col gap-6">
-        <p className="text-title">Lesson complete</p>
-        <MomentReadouts
-          brainPower={18}
-          facts={["Review on Oct 28"]}
-          score={{ answered: 4, correct: 3 }}
-        />
-      </div>
-    </DevOnlySpecimen>
-  );
-}
-
 /** A specimen that only renders under `pnpm dev`, like every one using next-intl's extraction. */
 function devOnly(Example: () => React.ReactNode) {
   return function DevOnlyExample() {
@@ -112,7 +97,7 @@ const SPECIMENS: Record<string, { Example: () => React.ReactNode; replays: boole
   missions: { Example: MissionsSpecimen, replays: true },
   mock: { Example: devOnly(MockEndSpecimen), replays: true },
   reached: { Example: devOnly(ReachedSpecimen), replays: true },
-  "task-end": { Example: RewardSpecimen, replays: true },
+  "task-end": { Example: devOnly(TaskEndSpecimen), replays: true },
 };
 
 function MomentSpecimen({ id }: { id: string }) {

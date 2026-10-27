@@ -37,7 +37,7 @@ export const MOTION_TIERS: readonly MotionTier[] = [
       "Louder as it's rarer, and never in the learner's way: Continue works from the first frame.",
     ],
     summary:
-      "The rare moments something is earned: a level, Energy, missions, a challenge won, a lesson's end, a milestone.",
+      "The rare moments something is earned: a level, Energy, missions, a challenge won, a task's end, a milestone.",
     title: "Celebration",
   },
 ];
@@ -204,8 +204,8 @@ export type CelebrationStep = { how: string; moment: string; often: string };
 
 export const CELEBRATION_LADDER: readonly CelebrationStep[] = [
   {
-    how: "Its Brain Power counts up; the score and the rest hold still.",
-    moment: "A lesson's or a block's end",
+    how: "Its Brain Power counts up (its readout or tile); the score and the rest hold still. The day's moment under it follows, beat by beat.",
+    moment: "A task's end: a lesson, a block, a practice, a drill, a call, a test",
     often: "Several a day",
   },
   {
