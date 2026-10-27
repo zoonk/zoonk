@@ -4,15 +4,9 @@ import { GOAL_TUTOR_PAGES } from "@zoonk/ai/tasks/v2/tutor/goal-tutor-pages";
 import { z } from "zod";
 import { screenSnapshotSchema, standaloneScreenSnapshotSchema } from "./screen-snapshot-schema";
 
-/** Snapshots saved before the outline kept only titles listed each chapter's lessons too. */
-const courseChapterTitleSchema = z.union([
-  z.string(),
-  z.object({ title: z.string() }).transform(({ title }) => title),
-]);
-
 const courseLevelSchema = z.object({
-  chapters: z.array(courseChapterTitleSchema),
-  inPlan: z.boolean().default(false),
+  chapters: z.array(z.string()),
+  inPlan: z.boolean(),
   level: z.string(),
 });
 
@@ -80,19 +74,17 @@ const planScopeSnapshotSchema = z.object({
       }),
     )
     .optional(),
-  // Plan questions asked before the plan's context carried its course have none.
-  course: courseOutlineSchema.nullable().default(null),
+  course: courseOutlineSchema.nullable(),
   estimate: z.object({ endDate: z.string().nullable(), remainingHours: z.number() }),
   // Plan questions asked before the buddy read the exam's notice have no exam facts.
   exam: z
     .object({
       days: z.array(z.object({ date: z.string(), label: z.string().nullable() })),
       formats: z.array(z.string()),
-      // Snapshots saved before a class test's material was told apart from a notice were notices.
-      fromMaterial: z.boolean().default(false),
+      fromMaterial: z.boolean(),
       name: z.string(),
       official: z.boolean(),
-      otherDates: z.array(z.object({ date: z.string(), label: z.string() })).default([]),
+      otherDates: z.array(z.object({ date: z.string(), label: z.string() })),
       questionCount: z.number().nullable(),
       // Snapshots saved before the counts came from the latest edition when the notice gives none.
       questionsSource: z
@@ -199,9 +191,7 @@ const planScopeSnapshotSchema = z.object({
           coreFits: z.boolean().default(true),
           coveredShare: z.number(),
           fits: z.boolean(),
-          // Snapshots saved before coverage counted the exam's points measured the goal; ones saved
-          // before the buddy looked up the time that covers everything also kept it here (dropped).
-          measure: z.enum(["exam", "goal"]).default("goal"),
+          measure: z.enum(["exam", "goal"]),
         })
         .nullable(),
       difficultyBias: z.string(),
