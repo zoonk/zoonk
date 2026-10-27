@@ -1,13 +1,24 @@
 "use client";
 
+import { SessionCeremony } from "@/components/learn/session-ceremony";
+import { type LearnerBuddy } from "@/lib/learn/learner-buddy";
 import { type MistakePatternView } from "@zoonk/core/language/patterns/contract";
 import { LanguagePatternScreen } from "@zoonk/learn/language/pattern";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useMemo } from "react";
 import { dismissPatternAction, practicePatternAction } from "./pattern-actions";
 
-/** The pattern drill, saved in the learner's timezone so it counts toward their day. */
-export function PatternClient({ pattern }: { pattern: MistakePatternView }) {
+/**
+ * The pattern drill, saved in the learner's timezone so it counts toward their day, with a
+ * milestone it earned as its full-screen moment.
+ */
+export function PatternClient({
+  buddy,
+  pattern,
+}: {
+  buddy: LearnerBuddy;
+  pattern: MistakePatternView;
+}) {
   const actions = useMemo(
     () => ({
       dismiss: () => dismissPatternAction(pattern.id),
@@ -17,5 +28,15 @@ export function PatternClient({ pattern }: { pattern: MistakePatternView }) {
     [pattern.id],
   );
 
-  return <LanguagePatternScreen actions={actions} exitHref="/today" pattern={pattern} />;
+  return (
+    <LanguagePatternScreen
+      actions={actions}
+      buddy={buddy}
+      exitHref="/today"
+      pattern={pattern}
+      renderCeremony={(milestone, onClose) => (
+        <SessionCeremony buddy={buddy} milestone={milestone} onClose={onClose} />
+      )}
+    />
+  );
 }

@@ -1,11 +1,13 @@
 "use client";
 
 import { decidePlanChangeAction } from "@/app/[lang]/(app)/(learn)/plan/journey-actions";
+import { SessionCeremony } from "@/components/learn/session-ceremony";
 import { useRouter } from "@/i18n/navigation";
 import { type QuestionWriting } from "@/lib/questions/question-writing";
 import { requestTestOutWriting } from "@/lib/test-out/test-out-writing";
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
+import { type LearnBuddy } from "@zoonk/learn/buddy-name";
 import { type GenerationRun } from "@zoonk/learn/generation/run";
 import { type ChoiceQuestionView, TestOutRun } from "@zoonk/learn/test-out";
 import { TestOutPreparing } from "@zoonk/learn/test-out/preparing";
@@ -19,14 +21,17 @@ function notStartedRun(retry: () => void): GenerationRun {
   return { failure: "notStarted", retry, status: "failed", steps: {} };
 }
 
-/** The test, graded through core when the learner finishes. */
+/** The test, graded through core when the learner finishes, with a milestone as its moment. */
 export function TestOutClient({
+  buddy,
   lessonsLeft,
   page,
   passMark,
   questions,
   trueFalseLabels,
 }: {
+  /** The learner's buddy (`getLearnerBuddy`), for the result's Energy and ceremony. */
+  buddy: LearnBuddy;
   /** The chapter's lessons still on the plan, which a pass skips; null when the plan doesn't say. */
   lessonsLeft: number | null;
   page: TestOutPage;
@@ -36,6 +41,7 @@ export function TestOutClient({
 }) {
   return (
     <TestOutRun
+      buddy={buddy}
       chapterTitle={page.chapterTitle}
       closeHref={page.closeHref}
       draftKey={`test-out:${page.goalId}:${page.chapterId}`}
@@ -44,6 +50,9 @@ export function TestOutClient({
       onUndo={(changeId) => decidePlanChangeAction(page.goalId, { changeId, status: "undone" })}
       passMark={passMark}
       questions={questions}
+      renderCeremony={(milestone, onClose) => (
+        <SessionCeremony buddy={buddy} milestone={milestone} onClose={onClose} />
+      )}
       trueFalseLabels={trueFalseLabels}
     />
   );

@@ -24,7 +24,13 @@ import { useExtracted, useFormatter } from "next-intl";
 import { FactChip, FactChips } from "../../_components/fact-chips";
 import { TASK_HEADER_ICON_CLASS } from "../../_components/task-header";
 import { TaskActions } from "../../_components/task-layout";
-import { MissionMoment } from "../../missions/mission-moment";
+import { type LearnBuddy } from "../../buddies/use-buddy-name";
+import { DayMoment } from "../../session/day-moment";
+import {
+  MOMENT_TITLE_PROPS,
+  MomentAfterCeremony,
+  type MomentCeremony,
+} from "../../session/moment-ceremony";
 import { TaskFrame, TaskMainButton, TaskMainLink, TaskSaveError } from "../../shell/task-frame";
 import { RecordButton } from "../../speech/record-button";
 import { PronunciationWord, RecorderStatus, useWordRecorder } from "./pronunciation-word-card";
@@ -90,13 +96,20 @@ function RoundScore({ result }: { result: PronunciationRoundResult }) {
   );
 }
 
-function RoundResult({ result }: { result: PronunciationRoundResult | null }) {
+/** How the round went, the Brain Power it paid and what it did to the day. */
+function RoundResult({
+  buddy,
+  result,
+}: {
+  buddy?: LearnBuddy | null;
+  result: PronunciationRoundResult | null;
+}) {
   const t = useExtracted();
   const format = useFormatter();
 
   return (
     <div aria-live="polite" className="flex flex-col items-start gap-3 py-6" role="status">
-      <h1 className="text-title text-balance">
+      <h1 className="text-title text-balance outline-none" {...MOMENT_TITLE_PROPS}>
         {result ? <RoundScore result={result} /> : t("Nothing said this time")}
       </h1>
 
@@ -113,11 +126,12 @@ function RoundResult({ result }: { result: PronunciationRoundResult | null }) {
         {t("An accent never blocks you. Words that still sound different come back tomorrow.")}
       </p>
 
-      {result?.missionMoment && (
-        <MissionMoment
-          completed={result.missionMoment.completed}
-          fullMeal={result.missionMoment.fullMeal}
-          missions={result.missionMoment.missions}
+      {result && (
+        <DayMoment
+          buddy={buddy}
+          ceremony={result.ceremony}
+          missionMoment={result.missionMoment}
+          reached={result.reached}
         />
       )}
     </div>
@@ -157,8 +171,8 @@ function WordMenu({ disabled, onSkip }: { disabled: boolean; onSkip: () => void 
  * with its native sound, a slow version, the respelling and the tip; they record it, see what we
  * heard, and try again or go on, and the round counts toward their day at the end. A word they
  * can't say right now is skipped from the "…" menu (or from the action bar, when there's no
- * microphone). Nothing due shows a short note. Leaving goes back where the round was opened
- * (Today, a unit).
+ * microphone). A milestone the round earned opens before its result, on its own. Nothing due
+ * shows a short note. Leaving goes back where the round was opened (Today, a unit).
  *
  * ```tsx
  * <PronunciationReviewScreen actions={actions} exitHref="/today" reviews={reviews} />
@@ -166,11 +180,17 @@ function WordMenu({ disabled, onSkip }: { disabled: boolean; onSkip: () => void 
  */
 export function PronunciationReviewScreen({
   actions,
+  buddy,
   exitHref,
+  renderCeremony,
   reviews,
 }: {
   actions: PronunciationRoundActions;
+  /** The learner's buddy, glad about the missions the round completes. */
+  buddy?: LearnBuddy | null;
   exitHref: string;
+  /** The full-screen moment for a milestone the round earned (a new belt, new glasses). */
+  renderCeremony?: MomentCeremony;
   reviews: PronunciationReviewsView;
 }) {
   const t = useExtracted();
@@ -180,27 +200,31 @@ export function PronunciationReviewScreen({
   const total = round.segments.length;
 
   if (step.kind === "result" || !current) {
+    const result = step.kind === "result" ? step.result : null;
+
     return (
-      <TaskFrame
-        exitHref={exitHref}
-        exitToApp
-        footer={
-          <TaskActions>
-            <TaskMainLink href={exitHref} toApp>
-              {t("Done")}
-            </TaskMainLink>
-          </TaskActions>
-        }
-        headerTitle={t("Say it again")}
-      >
-        {total === 0 ? (
-          <p className="text-title py-6 text-balance" role="status">
-            {t("No words to say again today.")}
-          </p>
-        ) : (
-          <RoundResult result={step.kind === "result" ? step.result : null} />
-        )}
-      </TaskFrame>
+      <MomentAfterCeremony milestone={result?.ceremony ?? null} render={renderCeremony}>
+        <TaskFrame
+          exitHref={exitHref}
+          exitToApp
+          footer={
+            <TaskActions>
+              <TaskMainLink href={exitHref} toApp>
+                {t("Done")}
+              </TaskMainLink>
+            </TaskActions>
+          }
+          headerTitle={t("Say it again")}
+        >
+          {total === 0 ? (
+            <p className="text-title py-6 text-balance" role="status">
+              {t("No words to say again today.")}
+            </p>
+          ) : (
+            <RoundResult buddy={buddy} result={result} />
+          )}
+        </TaskFrame>
+      </MomentAfterCeremony>
     );
   }
 

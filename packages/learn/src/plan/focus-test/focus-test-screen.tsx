@@ -11,6 +11,7 @@ import { type HelpLimit, HelpLimitNotice } from "../../_components/help-limit-no
 import { StepCard, StepDetail, StepHeader, StepTitle } from "../../_components/step-card";
 import { TaskMeta } from "../../_components/task-meta";
 import { useFormatDuration } from "../../_utils/time-format";
+import { type LearnBuddy } from "../../buddies/use-buddy-name";
 import { type GenerationRun } from "../../generation/generation-run";
 import { GenerationWait } from "../../generation/generation-wait";
 import { useLearnRoutes } from "../../learn-context";
@@ -20,6 +21,7 @@ import {
   type ChoiceQuestionAnswer,
   ChoiceQuestionsRun,
 } from "../../questions/choice-questions-run";
+import { type MomentCeremony } from "../../session/moment-ceremony";
 import { TaskFrame, TaskMainButton, TaskSaveError } from "../../shell/task-frame";
 import { type FocusTestOutcome, FocusTestResult } from "./focus-test-result";
 
@@ -176,17 +178,21 @@ function FocusTestWaiting({ run }: { run: GenerationRun }) {
  * writing the rest (`writing`) goes on, the ones that exist are asked first.
  */
 function FocusTestRun({
+  buddy,
   closeHref,
   doneHref,
   onSubmit,
   onUndo,
+  renderCeremony,
   test,
   writing,
 }: {
+  buddy?: LearnBuddy | null;
   closeHref: string;
   doneHref: string;
   onSubmit: (answers: ChoiceQuestionAnswer[]) => Promise<FocusTestOutcome | null>;
   onUndo: (changeId: string) => Promise<boolean>;
+  renderCeremony?: MomentCeremony;
   test: FocusTestView;
   writing: GenerationRun | null;
 }) {
@@ -214,10 +220,12 @@ function FocusTestRun({
   if (outcome) {
     return (
       <FocusTestResult
+        buddy={buddy}
         closeHref={closeHref}
         doneHref={doneHref}
         onUndo={onUndo}
         outcome={outcome}
+        renderCeremony={renderCeremony}
       />
     );
   }
@@ -249,18 +257,23 @@ function FocusTestRun({
  * what it is and its one action; questions the bank doesn't have yet are written on that tap (the
  * host follows the run and reads the page again as it ends) while the ones that exist are asked,
  * one per screen, area by area, the written ones after them. Only a test without any question
- * waits for the run first. The result says how each area went and the focus it set, with an undo.
- * `started` skips the opening once the learner already started it.
+ * waits for the run first. The result says how each area went and the focus it set, with an undo,
+ * and celebrates the Energy its answers reached as every result does. `started` skips the opening
+ * once the learner already started it.
  */
 export function FocusTestScreen({
+  buddy,
   closeHref,
   doneHref,
   onSubmit,
   onUndo,
   preparing,
+  renderCeremony,
   started,
   test,
 }: {
+  /** The learner's buddy, glad about the Energy the answers reach. */
+  buddy?: LearnBuddy | null;
   closeHref: string;
   /** Where "See your plan" leads. */
   doneHref: string;
@@ -269,6 +282,8 @@ export function FocusTestScreen({
   onUndo: (changeId: string) => Promise<boolean>;
   /** Null when every question exists. */
   preparing: FocusTestPreparing | null;
+  /** The full-screen moment for a milestone not shown yet (new glasses, a belt from earlier). */
+  renderCeremony?: MomentCeremony;
   started: boolean;
   test: FocusTestView;
 }) {
@@ -289,10 +304,12 @@ export function FocusTestScreen({
   if (running || (ready && (started || tapped))) {
     return (
       <FocusTestRun
+        buddy={buddy}
         closeHref={closeHref}
         doneHref={doneHref}
         onSubmit={onSubmit}
         onUndo={onUndo}
+        renderCeremony={renderCeremony}
         test={test}
         writing={preparing?.run ?? null}
       />

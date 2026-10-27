@@ -6,6 +6,7 @@ import { getLearnerGeneration } from "@/lib/learner/learner-store";
 import { runWhenIdle } from "@/lib/run-when-idle";
 import { type LanguageConversationView } from "@zoonk/core/language/conversations/contract";
 import { type LanguageConversationIntro } from "@zoonk/core/language/conversations/start";
+import { type LearnBuddy } from "@zoonk/learn/buddy-name";
 import { CheckpointCallPreparing } from "@zoonk/learn/language/checkpoint-call";
 import { type TappedCallAudio } from "@zoonk/learn/language/conversation";
 import { CheckpointCallIntro } from "@zoonk/learn/language/conversation-intro";
@@ -30,10 +31,13 @@ function loadConversationClient() {
  */
 export function CheckpointCallPreviewClient({
   blockId,
+  buddy,
   dailyLimitReached,
   intro,
 }: {
   blockId: string;
+  /** The learner's buddy, for the call's result once it's over. */
+  buddy: LearnBuddy;
   dailyLimitReached: boolean;
   intro: LanguageConversationIntro;
 }) {
@@ -72,6 +76,7 @@ export function CheckpointCallPreviewClient({
   if (call) {
     return (
       <call.Client
+        buddy={buddy}
         callAudio={call.audio}
         conversation={call.conversation}
         fromExam={false}

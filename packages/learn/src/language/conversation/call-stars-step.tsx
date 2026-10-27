@@ -4,7 +4,6 @@ import {
   type CallFeedback,
   type LanguageConversationView,
 } from "@zoonk/core/language/conversations/contract";
-import { type MissionMomentView } from "@zoonk/core/sessions/completion-contract";
 import { cn } from "@zoonk/ui/lib/utils";
 import { BrainIcon, StarIcon, TargetIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
@@ -17,7 +16,6 @@ import {
   StepTitle,
 } from "../../_components/step-card";
 import { ChallengeCallPlusNotice } from "../../challenge/challenge-plus-lock";
-import { MissionMoment } from "../../missions/mission-moment";
 import { useConversationTitle } from "./conversation-labels";
 
 type Result = NonNullable<LanguageConversationView["result"]>;
@@ -119,19 +117,20 @@ function CallFacts({
 
 /**
  * The stars, the call's verdict or name, what it came to as tiles under them, how to earn the
- * missing stars in one quiet line, and last, the day's missions the call completed. A lost
+ * missing stars in one quiet line, and last, what the call did to the day. A lost
  * checkpoint says it comes back to try again, or, once the learner's plan leaves it to Plus
  * (`locked`: Plus lapsed), says so as its challenge does, with "See Plus" beside Continue.
  */
 export function StarsStep({
   conversation,
+  dayMoment,
   feedback,
-  missionMoment,
   result,
 }: {
   conversation: LanguageConversationView;
+  /** What the call just did to the day (`DayMoment`). */
+  dayMoment: React.ReactNode;
   feedback: CallFeedback | null;
-  missionMoment: MissionMomentView | null;
   result: Result;
 }) {
   const t = useExtracted();
@@ -168,13 +167,7 @@ export function StarsStep({
         </p>
       )}
 
-      {missionMoment && (
-        <MissionMoment
-          completed={missionMoment.completed}
-          fullMeal={missionMoment.fullMeal}
-          missions={missionMoment.missions}
-        />
-      )}
+      {dayMoment}
     </>
   );
 }

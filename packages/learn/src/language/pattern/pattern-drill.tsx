@@ -4,12 +4,14 @@ import { type MistakePatternView } from "@zoonk/core/language/patterns/contract"
 import { BrainIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { FactChip, FactChips } from "../../_components/fact-chips";
-import { MissionMoment } from "../../missions/mission-moment";
+import { type LearnBuddy } from "../../buddies/use-buddy-name";
 import {
   type ChoiceFeedback,
   ChoiceQuestion,
   type ChoiceQuestionView,
 } from "../../questions/choice-question";
+import { DayMoment } from "../../session/day-moment";
+import { MOMENT_TITLE_PROPS } from "../../session/moment-ceremony";
 import { type PatternPracticeResult } from "./use-pattern-drill";
 
 type DrillQuestion = MistakePatternView["drill"][number];
@@ -102,9 +104,15 @@ function monoScore(chunks: React.ReactNode) {
 
 /**
  * The drill's result: right answers of the total ("5/6 right", screen readers hear "5 of 6
- * right"), and the Brain Power it paid as a chip.
+ * right"), the Brain Power it paid as a chip, and what it did to the day.
  */
-export function PatternDrillResult({ result }: { result: PatternPracticeResult }) {
+export function PatternDrillResult({
+  buddy,
+  result,
+}: {
+  buddy?: LearnBuddy | null;
+  result: PatternPracticeResult;
+}) {
   const t = useExtracted();
   const format = useFormatter();
   const allRight = result.correct === result.total;
@@ -112,7 +120,7 @@ export function PatternDrillResult({ result }: { result: PatternPracticeResult }
 
   return (
     <div aria-live="polite" className="flex flex-col items-start gap-3 py-6" role="status">
-      <h1 className="text-title text-balance">
+      <h1 className="text-title text-balance outline-none" {...MOMENT_TITLE_PROPS}>
         <span aria-hidden="true">
           {t.rich("<score>{correct, number}/{total, number}</score> right", {
             ...counts,
@@ -135,13 +143,12 @@ export function PatternDrillResult({ result }: { result: PatternPracticeResult }
           : t("Knowing the rule is the first step. It gets easier each time you use it.")}
       </p>
 
-      {result.missionMoment && (
-        <MissionMoment
-          completed={result.missionMoment.completed}
-          fullMeal={result.missionMoment.fullMeal}
-          missions={result.missionMoment.missions}
-        />
-      )}
+      <DayMoment
+        buddy={buddy}
+        ceremony={result.ceremony}
+        missionMoment={result.missionMoment ?? null}
+        reached={result.reached}
+      />
     </div>
   );
 }

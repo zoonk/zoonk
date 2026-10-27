@@ -2,6 +2,7 @@ import { AuthGateScreen } from "@/components/auth-gate";
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { TaskNotFound } from "@/components/learn/task-not-found";
+import { getLearnerBuddy } from "@/lib/learn/learner-buddy";
 import { withQuery } from "@/lib/with-query";
 import { getPronunciationReviews } from "@zoonk/core/language/pronunciation/get";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -39,7 +40,10 @@ async function PronunciationContent({ searchParams }: Pick<Props, "searchParams"
   const { goal } = query;
   const goalId = typeof goal === "string" && isUuid(goal) ? goal : undefined;
 
-  const result = await getPronunciationReviews({ goalId });
+  const [result, buddy] = await Promise.all([
+    getPronunciationReviews({ goalId }),
+    getLearnerBuddy(),
+  ]);
 
   if (result.status === "unauthorized") {
     return <AuthGateScreen next={withQuery("/pronunciation", query)} />;
@@ -55,7 +59,7 @@ async function PronunciationContent({ searchParams }: Pick<Props, "searchParams"
 
   return (
     <MainLearnProvider>
-      <PronunciationClient reviews={result.reviews} />
+      <PronunciationClient buddy={buddy} reviews={result.reviews} />
     </MainLearnProvider>
   );
 }

@@ -14,11 +14,10 @@ import { isFocusLost } from "../_utils/is-focus-lost";
 import { useFormatDuration } from "../_utils/time-format";
 import { SCREEN_STEADY_MS } from "../_utils/use-steady";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
-import { MissionMoment } from "../missions/mission-moment";
 import { getOwnBrainPower } from "./block-brain-power";
 import { getBlockKind } from "./block-kind";
+import { DayMoment } from "./day-moment";
 import { MomentAfterCeremony, type MomentCeremony } from "./moment-ceremony";
-import { ReachedMoment } from "./reached-moment";
 import { SessionFrame } from "./session-frame";
 import { SessionHeader } from "./session-header";
 import { SessionQueueAsideContent, useSessionQueueAside } from "./session-queue";
@@ -248,14 +247,16 @@ export function StudyMoment({
           <MomentFacts moment={moment} />
         </div>
 
-        <MissionMoment
+        <DayMoment
           buddy={buddy}
-          completed={moment.completedMissions}
-          fullMeal={moment.fullMeal}
-          missions={moment.missions}
+          ceremony={moment.ceremony}
+          missionMoment={{
+            completed: moment.completedMissions,
+            fullMeal: moment.fullMeal,
+            missions: moment.missions,
+          }}
+          reached={moment.reached}
         />
-
-        <ReachedMoment buddy={buddy} ceremony={moment.ceremony} reached={moment.reached} />
 
         {nextBlock && (
           <NextBlock block={nextBlock} subject={Boolean(nextChapterId && onStartTestOut)} />

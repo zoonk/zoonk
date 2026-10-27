@@ -2,11 +2,15 @@
 
 import { type MistakePatternView } from "@zoonk/core/language/patterns/contract";
 import { type MissionMomentView } from "@zoonk/core/sessions/completion-contract";
+import { type ProgressCelebration } from "@zoonk/core/sessions/progress-celebration";
 import { useMemo, useState, useTransition } from "react";
 import { type TaskSegment } from "../../_components/task-header";
 
-/** What the drill earned, from core: right answers of the total and the Brain Power paid. */
-export type PatternPracticeResult = {
+/**
+ * What the drill earned, from core: right answers of the total, the Brain Power paid, and the
+ * level, tenth of Energy and milestone it's celebrated with.
+ */
+export type PatternPracticeResult = ProgressCelebration & {
   brainPower: number;
   correct: number;
   /** The day's missions the drill completed; null when it completed none. */

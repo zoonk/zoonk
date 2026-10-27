@@ -1,8 +1,10 @@
 "use client";
 
+import { SessionCeremony } from "@/components/learn/session-ceremony";
 import { useRouter } from "@/i18n/navigation";
 import { useRefreshAfterAppWrites } from "@/lib/http/app-writes";
 import { postToApp } from "@/lib/http/post-to-app";
+import { type LearnerBuddy } from "@/lib/learn/learner-buddy";
 import { type PronunciationReviewsView } from "@zoonk/core/language/pronunciation/contract";
 import {
   type PronunciationAnswerOutcome,
@@ -12,8 +14,17 @@ import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useMemo } from "react";
 import { finishPronunciationRoundAction } from "./pronunciation-actions";
 
-/** The review round, saved in the learner's timezone so it counts toward their day. */
-export function PronunciationClient({ reviews }: { reviews: PronunciationReviewsView }) {
+/**
+ * The review round, saved in the learner's timezone so it counts toward their day, with a
+ * milestone it earned as its full-screen moment.
+ */
+export function PronunciationClient({
+  buddy,
+  reviews,
+}: {
+  buddy: LearnerBuddy;
+  reviews: PronunciationReviewsView;
+}) {
   const { bfcacheId } = useRouter();
   useRefreshAfterAppWrites();
 
@@ -54,8 +65,12 @@ export function PronunciationClient({ reviews }: { reviews: PronunciationReviews
     /** Fresh link entries start a new round; answer refreshes and history keep the active cohort. */
     <PronunciationReviewScreen
       actions={actions}
+      buddy={buddy}
       exitHref="/today"
       key={`${bfcacheId}:${reviews.goalId}`}
+      renderCeremony={(milestone, onClose) => (
+        <SessionCeremony buddy={buddy} milestone={milestone} onClose={onClose} />
+      )}
       reviews={reviews}
     />
   );

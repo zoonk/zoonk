@@ -1,5 +1,6 @@
 import { type PlayableLibraryLesson } from "@zoonk/core/lesson-player/contract";
 import { gradeStepAnswer } from "@zoonk/core/lesson-player/grade";
+import { NOTHING_REACHED } from "@zoonk/core/sessions/reached";
 import { type LessonPlayerAdapters, type LessonStartOutcome } from "../lesson/lesson-player-types";
 
 /** A new run, started the moment the screen opens. */
@@ -70,11 +71,13 @@ export function localAdapters(lesson: PlayableLibraryLesson): LessonPlayerAdapte
       Promise.resolve({
         completion: {
           brainPower: 10,
+          ceremony: null,
           correctCount: 1,
           energyDelta: 1,
           incorrectCount: 0,
           isFirstCompletion: true,
           nextReviewAt: null,
+          reached: NOTHING_REACHED,
           seconds: 60,
           studyBlock: null,
           totalBrainPower: 10,

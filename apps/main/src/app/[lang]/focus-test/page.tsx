@@ -1,6 +1,7 @@
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { redirect } from "@/i18n/navigation";
 import { getCurrentGoal } from "@/lib/learn/current-goal";
+import { getLearnerBuddy } from "@/lib/learn/learner-buddy";
 import { getFocusTest } from "@zoonk/core/plans/focus-test/get";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { isUuid } from "@zoonk/utils/uuid";
@@ -36,7 +37,7 @@ async function FocusTestBody({ searchParams }: Props) {
     return null;
   }
 
-  const result = await getFocusTest({ goalId });
+  const [result, buddy] = await Promise.all([getFocusTest({ goalId }), getLearnerBuddy()]);
 
   // No focus to choose (a plan of one area) or not the learner's goal: the Plan holds the plan.
   if (result.status !== "ready") {
@@ -46,6 +47,7 @@ async function FocusTestBody({ searchParams }: Props) {
 
   return (
     <FocusTestClient
+      buddy={buddy}
       generationId={readParam(query[FOCUS_TEST_RUN_PARAM])}
       page={{
         closeHref: goalParam ? `/start/${goalId}` : "/plan",

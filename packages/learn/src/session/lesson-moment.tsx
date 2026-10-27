@@ -1,5 +1,6 @@
 "use client";
 
+import { type ProgressCelebration } from "@zoonk/core/sessions/progress-celebration";
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
@@ -7,7 +8,8 @@ import { EnterButton } from "../_components/enter-button";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
 import { type TestOutStart } from "../_components/test-out-start-link";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
-import { type MomentCeremony } from "./moment-ceremony";
+import { DayMoment } from "./day-moment";
+import { MOMENT_TITLE_PROPS, type MomentCeremony } from "./moment-ceremony";
 import { PendingMoment } from "./pending-moment";
 import { SessionHeader } from "./session-header";
 import { getSessionQueue } from "./session-queue-rows";
@@ -16,9 +18,12 @@ import { StudyMoment } from "./study-moment";
 import { useMomentEvents } from "./use-moment-events";
 import { useSessionAction } from "./use-session-action";
 
-/** The lesson player's completion as this moment reads it. */
+/**
+ * The lesson player's completion as this moment reads it: a lesson that's no longer one of the
+ * day's blocks celebrates what it reached itself.
+ */
 type LessonMomentCompletion = {
-  result: { studyBlock: StudyMomentView | null } | null;
+  result: (ProgressCelebration & { studyBlock: StudyMomentView | null }) | null;
   status: "failed" | "saved" | "saving";
   testedOut: boolean;
 };
@@ -68,18 +73,37 @@ function SavedMoment({
 
 /**
  * The lesson was saved but isn't one of the day's blocks anymore (a replay, or a session left the
- * day before): Continue goes on with the day, and says so when it couldn't.
+ * day before): the belt level and the tenth of Energy it reached, as every result says them (its
+ * milestone opened before, from the lesson player's `ceremony`), and Continue goes on with the day,
+ * saying so when it couldn't.
  */
-function OutsideSession({ onContinue }: { onContinue: () => Promise<boolean> }) {
+function OutsideSession({
+  buddy,
+  celebration,
+  onContinue,
+}: {
+  buddy?: LearnBuddy | null;
+  celebration: ProgressCelebration | null;
+  onContinue: () => Promise<boolean>;
+}) {
   const t = useExtracted();
   const { failed, isPending, run } = useSessionAction({ action: onContinue, enterKey: true });
 
   return (
     <>
       <TaskBody>
-        <h2 className="text-title" role="status">
+        <h2 className="text-title outline-none" role="status" {...MOMENT_TITLE_PROPS}>
           {t("Lesson complete")}
         </h2>
+
+        {celebration && (
+          <DayMoment
+            buddy={buddy}
+            ceremony={celebration.ceremony}
+            missionMoment={null}
+            reached={celebration.reached}
+          />
+        )}
       </TaskBody>
 
       <TaskActionBar>
@@ -176,7 +200,7 @@ export function LessonMoment({
   }
 
   if (!moment && completion.status === "saved") {
-    return <OutsideSession onContinue={onContinue} />;
+    return <OutsideSession buddy={buddy} celebration={completion.result} onContinue={onContinue} />;
   }
 
   if (!moment) {

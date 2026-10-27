@@ -6,8 +6,8 @@ import { Steps } from "../_components/steps";
 import { useTaskAsideShown } from "../_components/task-header";
 import { TaskMeta } from "../_components/task-meta";
 import { SCREEN_STEADY_MS } from "../_utils/use-steady";
-import { MissionMoment } from "../missions/mission-moment";
-import { ReachedMoment } from "../session/reached-moment";
+import { DayMoment } from "../session/day-moment";
+import { getCeremonyMoment } from "../session/moment-ceremony";
 import { TaskMainLink } from "../shell/task-frame";
 import { useCheckpointScreen } from "./checkpoint-context";
 import { NoVerdictStep } from "./checkpoint-empty";
@@ -84,7 +84,7 @@ function ResultArt() {
  * missions it completed by name (the day's bonus when it was the last), then the belt level and
  * the tenth of Energy it reached.
  */
-function DayMoment() {
+function DuelDayMoment() {
   const { buddy, duel } = useCheckpointScreen();
   const completion = duel.state.completion;
 
@@ -93,15 +93,16 @@ function DayMoment() {
   }
 
   return (
-    <>
-      <MissionMoment
-        buddy={buddy}
-        completed={completion.completedMissions}
-        fullMeal={completion.fullMeal}
-        missions={completion.missions}
-      />
-      <ReachedMoment buddy={buddy} ceremony={completion.ceremony} reached={completion.reached} />
-    </>
+    <DayMoment
+      buddy={buddy}
+      ceremony={completion.ceremony}
+      missionMoment={{
+        completed: completion.completedMissions,
+        fullMeal: completion.fullMeal,
+        missions: completion.missions,
+      }}
+      reached={completion.reached}
+    />
   );
 }
 
@@ -122,7 +123,7 @@ function OutcomeStep({ showsReview }: { showsReview: boolean }) {
         <ScoreLine />
       </StepHeader>
 
-      <DayMoment />
+      <DuelDayMoment />
 
       <div className="flex w-full flex-col gap-6 lg:hidden">
         <CheckpointResultDetails />
@@ -168,8 +169,7 @@ export function CheckpointResultView() {
           content: outcome ? <OutcomeStep showsReview={hasReview && docked} /> : <NoVerdictStep />,
           id: "outcome",
           // A milestone the duel earned (the Star glasses) opens right over its result.
-          moment:
-            ceremony && renderCeremony ? (close) => renderCeremony(ceremony, close) : undefined,
+          moment: getCeremonyMoment({ milestone: ceremony, render: renderCeremony }),
         },
       ]}
     />

@@ -1,5 +1,6 @@
 "use client";
 
+import { MomentAfterCeremony } from "@zoonk/learn/session/moment-ceremony";
 import { getTaskAsideRootProps } from "@zoonk/learn/task-layout";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
@@ -39,6 +40,10 @@ function isPlayingScreen(state: LessonPlayerState): boolean {
   return state.phase !== "completed" && state.run.status !== "refused";
 }
 
+/**
+ * The lesson's completion moment, the host's or the player's, after the full-screen moment for a
+ * milestone the lesson earned, which opens first, on its own.
+ */
 function LessonCompletion() {
   const { slots } = useLessonPlayerConfig();
   const { actions, state } = useLessonPlayer();
@@ -52,7 +57,14 @@ function LessonCompletion() {
     return null;
   }
 
-  return slots.completion ? slots.completion(props) : <LessonCompletionMoment {...props} />;
+  return (
+    <MomentAfterCeremony
+      milestone={props.completion.result?.ceremony ?? null}
+      render={slots.ceremony}
+    >
+      {slots.completion ? slots.completion(props) : <LessonCompletionMoment {...props} />}
+    </MomentAfterCeremony>
+  );
 }
 
 /**

@@ -2,6 +2,8 @@
 
 import { type TrackEvent } from "@zoonk/core/analytics/events";
 import { type ChallengeTeam } from "@zoonk/core/library/challenges/team";
+import { type LearnBuddy } from "@zoonk/learn/buddy-name";
+import { type MomentCeremony } from "@zoonk/learn/session/moment-ceremony";
 import { type ReactNode, createContext, use } from "react";
 import { type PlayerLinkComponent } from "../player-context";
 import { type LessonScreen } from "./lesson-player-screen";
@@ -46,6 +48,12 @@ type LessonReportTarget = { contentId: string; contentKind: "step" };
 
 /** Parts the host can replace, such as a session block's completion moment. */
 export type LessonPlayerSlots = {
+  /**
+   * The full-screen moment for a milestone a lesson played on its own earned (a new belt, new
+   * glasses), shown before its completion moment, whichever draws it; a session block's moment
+   * opens its own.
+   */
+  ceremony?: MomentCeremony;
   completion?: (props: LessonCompletionSlotProps) => ReactNode;
   /**
    * The header over the completion moment, in place of the lesson's, such as the day's session
@@ -65,6 +73,8 @@ export type LessonPlayerSlots = {
 
 type LessonPlayerConfig = {
   adapters: LessonPlayerAdapters;
+  /** The learner's buddy, from the tutor, for what the completion says about its Energy. */
+  buddy?: LearnBuddy | null;
   /** Who plays the colleagues in a challenge; without it they go by role. */
   challengeTeam: ChallengeTeam | null;
   /** The lesson's personal examples being written in the background; null until it starts. */

@@ -5,7 +5,11 @@ import {
   type LanguageConversationCompletionInput,
   type LanguageConversationView,
 } from "@zoonk/core/language/conversations/contract";
+import { NOTHING_REACHED } from "@zoonk/core/sessions/reached";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { type LearnBuddy } from "../../buddies/use-buddy-name";
+import { DayMoment } from "../../session/day-moment";
+import { type MomentCeremony, getCeremonyMoment } from "../../session/moment-ceremony";
 import { TaskFrame } from "../../shell/task-frame";
 import { ExamSpeakingResult } from "../exam-speaking/exam-speaking-result";
 import { CallProblem, SavingCall } from "./call-problem";
@@ -195,15 +199,21 @@ function LiveCallRun({
  * A live conversation from its intro to its result: a unit's practice call, a language goal's
  * checkpoint, an IELTS or TOEFL speaking mock, or a task of a DELE, DELF, Goethe or Cambridge
  * speaking paper. The host supplies the view model, how to save the call and where to go after.
+ * Every kind of result says what the call did to the day under its first step, and a milestone it
+ * earned opens before that step, on its own.
  */
 export function ConversationScreen({
   actions,
+  buddy,
   callAudio,
   conversation,
   hrefs,
   onSaved,
+  renderCeremony,
 }: {
   actions: ConversationActions;
+  /** The learner's buddy, glad about the missions the call completes. */
+  buddy?: LearnBuddy | null;
   /**
    * Continues a Start tap that first had to create the checkpoint's conversation: the call starts
    * at once, with the microphone that tap opened.
@@ -217,11 +227,16 @@ export function ConversationScreen({
    * calls did to the day's missions: see `MockView.missionMoment`).
    */
   onSaved?: () => void;
+  /** The full-screen moment for a milestone the call earned (a new belt, new glasses). */
+  renderCeremony?: MomentCeremony;
 }) {
-  // The call as it was last saved here: once it ends, with what it did to the day's missions.
+  // The call as it was last saved here: once it ends, with what it did to the day. A call opened
+  // after it ended was celebrated then.
   const [view, setView] = useState<CompletedLanguageConversation>({
     ...conversation,
+    ceremony: null,
     missionMoment: null,
+    reached: NOTHING_REACHED,
   });
 
   const [run, setRun] = useState<{ attempt: number; startWith: RunStart }>({
@@ -230,14 +245,25 @@ export function ConversationScreen({
   });
 
   const { result } = view;
+  const ceremony = getCeremonyMoment({ milestone: view.ceremony, render: renderCeremony });
+
+  const dayMoment = (
+    <DayMoment
+      buddy={buddy}
+      ceremony={view.ceremony}
+      missionMoment={view.missionMoment}
+      reached={view.reached}
+    />
+  );
 
   if (result && view.kind === "speakingMock") {
     return (
       <SpeakingMockResult
+        ceremony={ceremony}
         conversation={view}
+        dayMoment={dayMoment}
         exitHref={hrefs.exit}
         feedback={result.feedback?.kind === "speakingMock" ? result.feedback : null}
-        missionMoment={view.missionMoment}
         nextHref={hrefs.next}
         onTryAgain={actions.startAgain ?? null}
       />
@@ -247,11 +273,12 @@ export function ConversationScreen({
   if (result && view.examTask) {
     return (
       <ExamSpeakingResult
+        ceremony={ceremony}
         conversation={view}
+        dayMoment={dayMoment}
         examTask={view.examTask}
         exitHref={hrefs.exit}
         feedback={result.feedback?.kind === "examSpeaking" ? result.feedback : null}
-        missionMoment={view.missionMoment}
         nextHref={hrefs.next}
         nextTaskHref={
           view.examTask.nextTask && hrefs.nextTask ? hrefs.nextTask(view.examTask.nextTask) : null
@@ -264,9 +291,10 @@ export function ConversationScreen({
   if (result) {
     return (
       <ConversationResult
+        ceremony={ceremony}
         conversation={view}
+        dayMoment={dayMoment}
         exitHref={hrefs.exit}
-        missionMoment={view.missionMoment}
         nextHref={hrefs.next}
         result={result}
       />

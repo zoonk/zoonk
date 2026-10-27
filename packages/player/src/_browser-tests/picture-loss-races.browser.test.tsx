@@ -1,4 +1,5 @@
 import { act } from "@testing-library/react";
+import { NOTHING_REACHED } from "@zoonk/core/sessions/reached";
 import { useEffect } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { page } from "vitest/browser";
@@ -304,11 +305,13 @@ describe("picture loss during a lesson", () => {
       .mockResolvedValue({
         completion: {
           brainPower: 10,
+          ceremony: null,
           correctCount: 1,
           energyDelta: 1,
           incorrectCount: 0,
           isFirstCompletion: true,
           nextReviewAt: null,
+          reached: NOTHING_REACHED,
           seconds: 60,
           studyBlock: null,
           totalBrainPower: 10,

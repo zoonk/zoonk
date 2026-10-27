@@ -23,6 +23,8 @@ import { useEffect, useState } from "react";
 import { TASK_HEADER_ICON_CLASS } from "../../_components/task-header";
 import { TaskActions } from "../../_components/task-layout";
 import { useFormatDuration } from "../../_utils/time-format";
+import { type LearnBuddy } from "../../buddies/use-buddy-name";
+import { MomentAfterCeremony, type MomentCeremony } from "../../session/moment-ceremony";
 import { TaskFrame, TaskMainButton, TaskMainLink, TaskSaveError } from "../../shell/task-frame";
 import { PatternDrillQuestion, PatternDrillResult } from "./pattern-drill";
 import { PatternIntro, PatternRule, PatternSlip, TyposNote } from "./pattern-intro";
@@ -140,9 +142,9 @@ function RuleMenu({ pattern }: { pattern: MistakePatternView }) {
  * A mistake pattern, full screen: the rule ("We noticed a pattern") led by one of the learner's
  * own mistakes, a three-minute fill-in-the-blank drill one sentence at a time (pick, then Check,
  * as a lesson asks), and the result. While drilling, the rule and the learner's slip sit beside
- * the question on a wide screen and a tap away in the "…" on smaller ones. A pattern that was
- * only typos gets the kind note and Done. Leaving goes back where the pattern was opened (Today,
- * a unit).
+ * the question on a wide screen and a tap away in the "…" on smaller ones. A milestone the drill
+ * earned opens before its result, on its own. A pattern that was only typos gets the kind note and
+ * Done. Leaving goes back where the pattern was opened (Today, a unit).
  *
  * ```tsx
  * <LanguagePatternScreen actions={actions} exitHref="/today" pattern={pattern} />
@@ -150,12 +152,18 @@ function RuleMenu({ pattern }: { pattern: MistakePatternView }) {
  */
 export function LanguagePatternScreen({
   actions,
+  buddy,
   exitHref,
   pattern,
+  renderCeremony,
 }: {
   actions: LanguagePatternActions;
+  /** The learner's buddy, glad about the missions the drill completes. */
+  buddy?: LearnBuddy | null;
   exitHref: string;
   pattern: MistakePatternView;
+  /** The full-screen moment for a milestone the drill earned (a new belt, new glasses). */
+  renderCeremony?: MomentCeremony;
 }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
@@ -168,14 +176,16 @@ export function LanguagePatternScreen({
 
   if (step.kind === "result") {
     return (
-      <TaskFrame
-        exitHref={exitHref}
-        exitToApp
-        footer={<DoneAction exitHref={exitHref} />}
-        headerTitle={pattern.title}
-      >
-        <PatternDrillResult result={step.result} />
-      </TaskFrame>
+      <MomentAfterCeremony milestone={step.result.ceremony} render={renderCeremony}>
+        <TaskFrame
+          exitHref={exitHref}
+          exitToApp
+          footer={<DoneAction exitHref={exitHref} />}
+          headerTitle={pattern.title}
+        >
+          <PatternDrillResult buddy={buddy} result={step.result} />
+        </TaskFrame>
+      </MomentAfterCeremony>
     );
   }
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
+import { type ProgressCelebration } from "@zoonk/core/sessions/progress-celebration";
 import { BookOpenIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
@@ -14,6 +15,9 @@ import {
 } from "../_components/step-card";
 import { Steps } from "../_components/steps";
 import { TaskMeta } from "../_components/task-meta";
+import { type LearnBuddy } from "../buddies/use-buddy-name";
+import { DayMoment } from "../session/day-moment";
+import { type MomentCeremony, getCeremonyMoment } from "../session/moment-ceremony";
 import { type TaskFrameAside, TaskMainLink, TaskSaveError } from "../shell/task-frame";
 import { clearAnswerDraft } from "./_utils/answer-draft";
 import { type ChoiceQuestionView } from "./choice-question";
@@ -24,15 +28,20 @@ export type { ChoiceQuestionView } from "./choice-question";
 
 const PERCENT = 100;
 
-/** What the test-out decided, in the learner's terms; null when it couldn't be graded. */
-export type TestOutOutcome = {
-  /** The plan change that skipped the lessons, for its undo; null when nothing was skipped. */
-  changeId: string | null;
-  correct: number;
-  passed: boolean;
-  skippedLessons: number;
-  total: number;
-} | null;
+/**
+ * What the test-out decided, in the learner's terms, with the tenth of Energy its answers reached
+ * and the milestone it's celebrated with; null when it couldn't be graded.
+ */
+export type TestOutOutcome =
+  | (ProgressCelebration & {
+      /** The plan change that skipped the lessons, for its undo; null when nothing was skipped. */
+      changeId: string | null;
+      correct: number;
+      passed: boolean;
+      skippedLessons: number;
+      total: number;
+    })
+  | null;
 
 type GradedTestOut = NonNullable<TestOutOutcome>;
 
@@ -55,7 +64,15 @@ function useResultDetail({ outcome, undone }: { outcome: GradedTestOut; undone: 
   );
 }
 
-function ResultStep({ outcome, undone }: { outcome: GradedTestOut; undone: boolean }) {
+function ResultStep({
+  buddy,
+  outcome,
+  undone,
+}: {
+  buddy?: LearnBuddy | null;
+  outcome: GradedTestOut;
+  undone: boolean;
+}) {
   const t = useExtracted();
   const detail = useResultDetail({ outcome, undone });
 
@@ -76,22 +93,34 @@ function ResultStep({ outcome, undone }: { outcome: GradedTestOut; undone: boole
           }),
         ]}
       />
+
+      <DayMoment
+        buddy={buddy}
+        ceremony={outcome.ceremony}
+        missionMoment={null}
+        reached={outcome.reached}
+      />
     </StepCard>
   );
 }
 
 /**
  * What the test-out decided, as one step, then back to the chapter. Lessons it took off the plan
- * come back with one tap here, as on the plan change it made.
+ * come back with one tap here, as on the plan change it made. A milestone it earned opens first,
+ * on its own.
  */
 function TestOutResult({
+  buddy,
   closeHref,
   onUndo,
   outcome,
+  renderCeremony,
 }: {
+  buddy?: LearnBuddy | null;
   closeHref: string;
   onUndo: (changeId: string) => Promise<boolean>;
   outcome: GradedTestOut;
+  renderCeremony?: MomentCeremony;
 }) {
   const t = useExtracted();
   const [undo, setUndo] = useState<"done" | "failed" | null>(null);
@@ -118,7 +147,13 @@ function TestOutResult({
           <UndoButton failed={undo === "failed"} onUndo={runUndo} pending={isPending} />
         ) : null
       }
-      items={[{ content: <ResultStep outcome={outcome} undone={undo === "done"} />, id: "result" }]}
+      items={[
+        {
+          content: <ResultStep buddy={buddy} outcome={outcome} undone={undo === "done"} />,
+          id: "result",
+          moment: getCeremonyMoment({ milestone: outcome.ceremony, render: renderCeremony }),
+        },
+      ]}
     />
   );
 }
@@ -182,6 +217,7 @@ function useTestOutAside({
  * failure is never shown as a result. Closing goes back to the chapter.
  */
 export function TestOutRun({
+  buddy,
   chapterTitle,
   closeHref,
   draftKey,
@@ -190,8 +226,11 @@ export function TestOutRun({
   onUndo,
   passMark,
   questions,
+  renderCeremony,
   trueFalseLabels,
 }: {
+  /** The learner's buddy, glad about the Energy the answers reach. */
+  buddy?: LearnBuddy | null;
   chapterTitle: string;
   closeHref: string;
   /** Where the answers are kept on the device as they're given, so a reload goes on from there. */
@@ -203,6 +242,8 @@ export function TestOutRun({
   onUndo: (changeId: string) => Promise<boolean>;
   passMark: number;
   questions: ChoiceQuestionView[];
+  /** The full-screen moment for a milestone not shown yet (new glasses, a belt from earlier). */
+  renderCeremony?: MomentCeremony;
   /** The words the goal's true-or-false questions are answered with, by its exam. */
   trueFalseLabels: TrueFalseLabels;
 }) {
@@ -229,7 +270,15 @@ export function TestOutRun({
     });
 
   if (outcome) {
-    return <TestOutResult closeHref={closeHref} onUndo={onUndo} outcome={outcome} />;
+    return (
+      <TestOutResult
+        buddy={buddy}
+        closeHref={closeHref}
+        onUndo={onUndo}
+        outcome={outcome}
+        renderCeremony={renderCeremony}
+      />
+    );
   }
 
   return (

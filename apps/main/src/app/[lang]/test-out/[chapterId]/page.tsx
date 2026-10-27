@@ -3,6 +3,7 @@ import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { TaskNotFound } from "@/components/learn/task-not-found";
 import { redirect } from "@/i18n/navigation";
 import { getCurrentGoal } from "@/lib/learn/current-goal";
+import { getLearnerBuddy } from "@/lib/learn/learner-buddy";
 import { TEST_OUT_FROM_SESSION_PARAM, TEST_OUT_RUN_PARAM } from "@/lib/test-out/test-out-params";
 import { getChapterTestOut } from "@zoonk/core/learner/test-out/get";
 import { getGoalPlan } from "@zoonk/core/plans/get";
@@ -48,9 +49,10 @@ async function TestOutBody({ params, searchParams }: Props) {
     return null;
   }
 
-  const [result, chapter] = await Promise.all([
+  const [result, chapter, buddy] = await Promise.all([
     getChapterTestOut({ chapterId, goalId: goal.id }),
     loadPlanChapter({ chapterId, goalId: goal.id }),
+    getLearnerBuddy(),
   ]);
 
   if (result.status !== "ready" && result.status !== "plusRequired") {
@@ -85,6 +87,7 @@ async function TestOutBody({ params, searchParams }: Props) {
 
   return (
     <TestOutClient
+      buddy={buddy}
       lessonsLeft={chapter?.lessonsLeft ?? null}
       page={page}
       passMark={result.testOut.passMark}

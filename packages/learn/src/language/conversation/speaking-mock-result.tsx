@@ -5,7 +5,6 @@ import {
   type SpeakingMockExam,
   type SpeakingMockFeedback,
 } from "@zoonk/core/language/conversations/contract";
-import { type MissionMomentView } from "@zoonk/core/sessions/completion-contract";
 import { Badge } from "@zoonk/ui/components/badge";
 import { Button } from "@zoonk/ui/components/button";
 import { LightbulbIcon } from "lucide-react";
@@ -22,7 +21,6 @@ import {
   StepTitleNumber,
 } from "../../_components/step-card";
 import { Steps, type StepsItem } from "../../_components/steps";
-import { MissionMoment } from "../../missions/mission-moment";
 import { TaskMainLink } from "../../shell/task-frame";
 import { CallNote } from "./call-note";
 import { useConversationTitle, useCriterionName } from "./conversation-labels";
@@ -189,24 +187,27 @@ function TryAgainButton({ onTryAgain }: { onTryAgain: () => Promise<void> }) {
 
 /**
  * After a speaking mock, one thing at a time: the estimated band on its exam's scale (IELTS 0 to
- * 9, TOEFL 1 to 6) with what the call did to the day's missions, each criterion's band, then the
- * one to work on first with what was heard and a concrete tip. Every criterion's comments wait
- * behind a link, and another try is one tap away. It's an estimate from a short mock, never an
- * official score, and says so.
+ * 9, TOEFL 1 to 6) with what the call did to the day, each criterion's band, then the one to work
+ * on first with what was heard and a concrete tip. A milestone the call earned opens before the
+ * band. Every criterion's comments wait behind a link, and another try is one tap away. It's an
+ * estimate from a short mock, never an official score, and says so.
  */
 export function SpeakingMockResult({
+  ceremony,
   conversation,
+  dayMoment,
   exitHref,
   feedback,
-  missionMoment,
   nextHref,
   onTryAgain,
 }: {
+  /** The full-screen moment for a milestone the call earned, before the band. */
+  ceremony?: StepsItem["moment"];
   conversation: LanguageConversationView;
+  /** What the call just did to the day (`DayMoment`), last on the first step. */
+  dayMoment: React.ReactNode;
   exitHref: string;
   feedback: SpeakingMockFeedback | null;
-  /** What the call just did to the day's missions; null when it did nothing or was opened later. */
-  missionMoment: MissionMomentView | null;
   nextHref: string;
   onTryAgain: (() => Promise<void>) | null;
 }) {
@@ -214,24 +215,17 @@ export function SpeakingMockResult({
   const focus = feedback?.criteria.find((criterion) => criterion.criterion === feedback.focus);
 
   // Last on the first step, as a call's result has it under its stars.
-  const moment = missionMoment && (
-    <MissionMoment
-      completed={missionMoment.completed}
-      fullMeal={missionMoment.fullMeal}
-      missions={missionMoment.missions}
-    />
-  );
-
   const items: StepsItem[] = feedback
     ? [
         {
           content: (
             <>
               <BandStep conversation={conversation} feedback={feedback} />
-              {moment}
+              {dayMoment}
             </>
           ),
           id: "band",
+          moment: ceremony,
         },
         feedback.criteria.length > 0 && {
           content: <CriteriaStep feedback={feedback} />,
@@ -244,10 +238,11 @@ export function SpeakingMockResult({
           content: (
             <>
               <NoScoreStep />
-              {moment}
+              {dayMoment}
             </>
           ),
           id: "noScore",
+          moment: ceremony,
         },
       ];
 

@@ -24,9 +24,11 @@ export async function submitTestOutAction(
   const { outcome } = result;
 
   return {
+    ceremony: outcome.ceremony,
     changeId: outcome.changeId,
     correct: outcome.correct,
     passed: outcome.passed,
+    reached: outcome.reached,
     skippedLessons: outcome.lessonsSkipped,
     total: outcome.total,
   };

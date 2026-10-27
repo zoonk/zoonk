@@ -1,5 +1,7 @@
+import { NOTHING_REACHED } from "@zoonk/core/sessions/reached";
 import { describe, expect, it } from "vitest";
 import {
+  type MistakePracticeSummary,
   type PracticeEntry,
   createPracticeState,
   getPracticeSegments,
@@ -43,9 +45,21 @@ function graded(answerId: string, fixed = false) {
     fixedMistakeIds: [],
     isCorrect: true,
     mistakeStatus: fixed ? ("fixed" as const) : ("open" as const),
+    reached: NOTHING_REACHED,
     trap: null,
   };
 }
+
+/** The run's end as core counts it, reaching nothing new by itself. */
+const SUMMARY: MistakePracticeSummary = {
+  brainPower: 20,
+  ceremony: null,
+  correct: 2,
+  missionMoment: null,
+  reached: NOTHING_REACHED,
+  seconds: 60,
+  total: 2,
+};
 
 describe(createPracticeState, () => {
   it("opens a content gap on its idea, before its first question", () => {
@@ -177,6 +191,38 @@ describe(practiceReducer, () => {
 
     expect(unknown.fixedIds).toStrictEqual([]);
     expect(unknown.answerIds).toStrictEqual(["a1", "a2"]);
+  });
+
+  it("celebrates at its end what every count of the run reached, not only the last", () => {
+    const answer = { selectedIndex: 0 };
+
+    const played = [
+      { answer, timedOut: false, type: "check" },
+      {
+        feedback: { ...graded("a1"), reached: { energy: 60, level: null } },
+        mistakeId: "first",
+        type: "answered",
+      },
+      { type: "next" },
+      { answer, timedOut: false, type: "check" },
+      {
+        feedback: {
+          ...graded("a2"),
+          reached: { energy: null, level: { color: "yellow", level: 1 } },
+        },
+        mistakeId: "first",
+        type: "answered",
+      },
+      { type: "end" },
+      { summary: SUMMARY, type: "ended" },
+    ] as const;
+
+    const state = played.reduce(
+      (current, action) => practiceReducer(current, action),
+      createPracticeState([entry("first")]),
+    );
+
+    expect(state.reached).toStrictEqual({ energy: 60, level: { color: "yellow", level: 1 } });
   });
 
   it("keeps the answer to check again when grading fails", () => {

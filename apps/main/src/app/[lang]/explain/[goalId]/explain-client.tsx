@@ -83,7 +83,13 @@ function DeeperStart({ explanation }: { explanation: ExplanationView }) {
  * The explanation's own ending replaces the lesson's completion moment, with the same "I want to
  * learn this in depth" as before it, so turning it into a goal is one tap at the end too.
  */
-function createExplainEnding(explanation: ExplanationView): EndingSlots {
+function createExplainEnding({
+  buddy,
+  explanation,
+}: {
+  buddy: TutorViewer["buddy"];
+  explanation: ExplanationView;
+}): EndingSlots {
   const { course } = explanation.goFurther;
 
   return {
@@ -91,6 +97,7 @@ function createExplainEnding(explanation: ExplanationView): EndingSlots {
       <>
         {!course && <GoFurtherRefresh />}
         <ExplainEnding
+          buddy={buddy}
           deeper={<DeeperStart explanation={explanation} />}
           doneHref={getHomeHref(explanation)}
           explanation={explanation}
@@ -98,6 +105,7 @@ function createExplainEnding(explanation: ExplanationView): EndingSlots {
           result={{
             answered: slot.correctCount + slot.incorrectCount,
             brainPower: slot.completion.result?.brainPower ?? null,
+            celebration: slot.completion.result,
             correct: slot.correctCount,
           }}
           saving={slot.completion.status === "saving"}
@@ -154,7 +162,11 @@ export function ExplainClient({
   tutorSuggestions: readonly LessonTutorSuggestion[];
 }) {
   const router = useRouter();
-  const endingSlots = useMemo(() => createExplainEnding(explanation), [explanation]);
+
+  const endingSlots = useMemo(
+    () => createExplainEnding({ buddy: tutor.buddy, explanation }),
+    [explanation, tutor.buddy],
+  );
 
   const routing = useMemo(
     () => ({ exit: getHomeHref(explanation), exitTo: null, nextLesson: null }),

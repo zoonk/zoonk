@@ -1,5 +1,6 @@
 "use client";
 
+import { type Reached } from "@zoonk/core/sessions/reached";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
 import { BrainIcon, CheckCheckIcon, TargetIcon } from "lucide-react";
@@ -8,7 +9,12 @@ import { StatTile, StatTiles } from "../_components/stat-tile";
 import { StepCard, StepDetail, StepHeader } from "../_components/step-card";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
-import { MissionMoment } from "../missions/mission-moment";
+import { DayMoment } from "../session/day-moment";
+import {
+  MOMENT_TITLE_PROPS,
+  MomentAfterCeremony,
+  type MomentCeremony,
+} from "../session/moment-ceremony";
 import { TaskMainLink } from "../shell/task-frame";
 import { type MistakePracticeSummary } from "./mistake-practice-state";
 
@@ -106,42 +112,50 @@ export function NothingToPractice({ backHref }: { backHref: string }) {
 /**
  * The end of a run, at the last question or stopped early, straight on the page under the run's
  * header (its title a step under the header's): what it did as numbers on their tiles (mistakes
- * fixed, right answers, Brain Power), and back to the notebook from the pinned bar.
+ * fixed, right answers, Brain Power), what it did to the day (its missions, the level and the tenth
+ * of Energy the whole run reached), and back to the notebook from the pinned bar. A milestone it
+ * earned opens first, on its own.
  */
 export function PracticeDone({
   backHref,
   buddy,
   fixed,
+  reached,
+  renderCeremony,
   summary,
 }: {
   backHref: string;
   /** The learner's buddy, who cheers when the run completes one of the day's missions. */
   buddy?: LearnBuddy | null;
   fixed: number;
+  /** What every count of the run reached, its end's included. */
+  reached: Reached;
+  renderCeremony?: MomentCeremony;
   summary: MistakePracticeSummary | null;
 }) {
   const t = useExtracted();
+  const ceremony = summary?.ceremony ?? null;
 
   return (
-    <>
+    <MomentAfterCeremony milestone={ceremony} render={renderCeremony}>
       <TaskBody>
         <StepCard aria-live="polite" role="status">
-          <h2 className="text-title">{t("Practice done")}</h2>
+          <h2 className="text-title outline-none" {...MOMENT_TITLE_PROPS}>
+            {t("Practice done")}
+          </h2>
           <PracticeStats fixed={fixed} summary={summary} />
 
-          {summary?.missionMoment && (
-            <MissionMoment
-              buddy={buddy}
-              completed={summary.missionMoment.completed}
-              fullMeal={summary.missionMoment.fullMeal}
-              missions={summary.missionMoment.missions}
-            />
-          )}
+          <DayMoment
+            buddy={buddy}
+            ceremony={ceremony}
+            missionMoment={summary?.missionMoment ?? null}
+            reached={reached}
+          />
         </StepCard>
       </TaskBody>
 
       <BackBar backHref={backHref} />
-    </>
+    </MomentAfterCeremony>
   );
 }
 

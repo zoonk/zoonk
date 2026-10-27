@@ -3,6 +3,8 @@
 import { LESSON_FEEDBACK_SLOTS } from "@/components/feedback/lesson-feedback-slots";
 import { LearningLink } from "@/components/learn/learning-link";
 import { type TutorViewer } from "@/components/learn/main-ask-tutor";
+import { MainLearnProvider } from "@/components/learn/main-learn-provider";
+import { SessionCeremony } from "@/components/learn/session-ceremony";
 import { useLessonSessionSlots } from "@/components/session/use-lesson-session-slots";
 import { redirect, useRouter } from "@/i18n/navigation";
 import { forgetAppWrites } from "@/lib/http/app-write-ledger";
@@ -37,11 +39,27 @@ import { startLibraryLesson } from "./start-library-lesson";
 
 const ROUTES = { signUp: "/login", upgrade: "/subscription" };
 
+type LessonPlayerSlots = NonNullable<LessonPlayerProviderProps["slots"]>;
+
 /** Where a lesson closes to: back where it was opened from, and the next lesson there, if any. */
 export type LessonRouting = Pick<LessonPlayerRoutes, "exit" | "exitTo" | "nextLesson">;
 
 /** A lesson opened from nowhere in particular (a public page, a quick explanation). */
 const DEFAULT_ROUTING: LessonRouting = { exit: "/", exitTo: null, nextLesson: null };
+
+/**
+ * The full-screen moment for a milestone a lesson played on its own earned, with the learner's
+ * buddy. The player sits outside the learning tabs, so the ceremony brings main's adapters along.
+ */
+function createCeremonySlot(buddy: TutorViewer["buddy"]): Pick<LessonPlayerSlots, "ceremony"> {
+  return {
+    ceremony: (milestone, onClose) => (
+      <MainLearnProvider>
+        <SessionCeremony buddy={buddy} milestone={milestone} onClose={onClose} />
+      </MainLearnProvider>
+    ),
+  };
+}
 
 /** A lesson played as a session block sends its session with the start and spoken answers. */
 function createAdapters({
@@ -163,8 +181,13 @@ export function LessonPlayerClient({
   const sessionSlots = useLessonSessionSlots({ buddy, session: sessionContext });
 
   const slots = useMemo(
-    () => ({ ...LESSON_FEEDBACK_SLOTS, ...sessionSlots, ...endingSlots }),
-    [endingSlots, sessionSlots],
+    () => ({
+      ...LESSON_FEEDBACK_SLOTS,
+      ...createCeremonySlot(buddy),
+      ...sessionSlots,
+      ...endingSlots,
+    }),
+    [buddy, endingSlots, sessionSlots],
   );
 
   const routes = useMemo(() => ({ ...ROUTES, ...routing }), [routing]);

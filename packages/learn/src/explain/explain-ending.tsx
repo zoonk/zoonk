@@ -1,5 +1,6 @@
 "use client";
 
+import { type ProgressCelebration } from "@zoonk/core/sessions/progress-celebration";
 import { type ExplanationView } from "@zoonk/core/view-models/explain/contract";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
@@ -26,11 +27,22 @@ import {
   TaskAsideContent,
   TaskBody,
 } from "../_components/task-layout";
+import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { LearnLink } from "../learn-link";
+import { DayMoment } from "../session/day-moment";
+import { MOMENT_TITLE_PROPS } from "../session/moment-ceremony";
 import { useQuickExplanationLabel } from "./quick-explanation-label";
 
-/** What the check earned, once the explanation is saved. */
-type ExplainResult = { answered: number; brainPower: number | null; correct: number };
+/**
+ * What the check earned, once the explanation is saved, with the belt level and the tenth of
+ * Energy it reached (`celebration`, null until it's saved).
+ */
+type ExplainResult = {
+  answered: number;
+  brainPower: number | null;
+  celebration: ProgressCelebration | null;
+  correct: number;
+};
 
 const DONE_CLASS = cn(buttonVariants({ size: "xl" }), TASK_MAIN_ACTION_CLASS);
 
@@ -153,14 +165,16 @@ function ExplainRecap({ recap }: { recap: ExplanationView["recap"] }) {
 }
 
 /**
- * The end of a quick explanation: "✓ Now you know" over its title, what the one question earned,
- * the recap in three numbered sentences, and "Want to go further?": learning the subject in depth
- * as a plan of its own (the host's `deeper` control) or another quick question. "Done" finishes,
- * in the action bar at the bottom. From `lg` the recap sits in the aside, where the outline and
+ * The end of a quick explanation: "✓ Now you know" over its title, what the one question earned
+ * and the belt level and the tenth of Energy it reached (its milestone opened before, from the
+ * lesson player's `ceremony`), the recap in three numbered sentences, and "Want to go further?":
+ * learning the subject in depth as a plan of its own (the host's `deeper` control) or another
+ * quick question. "Done" finishes, in the action bar at the bottom. From `lg` the recap sits in the aside, where the outline and
  * "From the lesson" were, as a lesson's summary does at its end, so the aside is never left empty
  * and the column keeps the result and the way on.
  */
 export function ExplainEnding({
+  buddy,
   deeper,
   doneHref,
   explanation,
@@ -168,6 +182,8 @@ export function ExplainEnding({
   result,
   saving = false,
 }: {
+  /** The learner's buddy, for what the ending says about its Energy. */
+  buddy?: LearnBuddy | null;
   /** "I want to learn this in depth": the host's `ExplainDeeperLink`. */
   deeper: React.ReactNode;
   doneHref: string;
@@ -186,9 +202,20 @@ export function ExplainEnding({
       <TaskBody className="gap-7" data-slot="explain-ending">
         <div className="flex flex-col gap-2" role="status">
           <SuccessEyebrow>{t("Now you know")}</SuccessEyebrow>
-          <h2 className="text-title">{explanation.title}</h2>
+          <h2 className="text-title outline-none" {...MOMENT_TITLE_PROPS}>
+            {explanation.title}
+          </h2>
           <ResultTiles result={result} />
         </div>
+
+        {result.celebration && (
+          <DayMoment
+            buddy={buddy}
+            ceremony={result.celebration.ceremony}
+            missionMoment={null}
+            reached={result.celebration.reached}
+          />
+        )}
 
         <ExplainRecap recap={explanation.recap} />
 

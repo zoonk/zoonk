@@ -1,6 +1,8 @@
 import { type MistakePracticeResult } from "@zoonk/core/mistakes/practice";
 import { type FinishMistakePracticeResult } from "@zoonk/core/mistakes/practice-finish";
+import { NOTHING_REACHED, type Reached } from "@zoonk/core/sessions/reached";
 import { type TaskSegment } from "../_components/task-header";
+import { mergeReached } from "../_utils/merge-reached";
 import { type ChoiceAnswer, type ChoiceFeedback } from "../questions/choice-question";
 import { isIdeaFirst, isReadFirst } from "./drill/drill-types";
 
@@ -21,13 +23,17 @@ export type MistakePracticeAnswer = {
   runAnswerIds: string[];
 };
 
-/** The grade of one answer, the trap a trap drill names, and the answer's id the run counts. */
+/**
+ * The grade of one answer, the trap a trap drill names, the answer's id the run counts, and what
+ * counting the run with it reached (a level, a tenth of Energy), for the run's end to celebrate.
+ */
 export type MistakePracticeFeedback =
   | (ChoiceFeedback & {
       answerId: string;
       fixed: boolean;
       fixedMistakeIds: string[];
       mistakeStatus: "open" | "fixed";
+      reached: Reached;
       trap: string | null;
     })
   | null;
@@ -65,13 +71,16 @@ type PracticePhase =
 /**
  * The run keeps the questions it started with: grading or counting an answer refreshes the page,
  * and a fixed mistake leaves the server's practice, but not the run in progress. `verdicts` holds
- * each answered question's grade, in order, for the header's segments.
+ * each answered question's grade, in order, for the header's segments. `reached` adds up what each
+ * count of the run reached (every answer counts the run so far, and its end once more), so its end
+ * celebrates the whole run, not only its last count.
  */
 type PracticeState = {
   answerIds: string[];
   fixedIds: string[];
   index: number;
   phase: PracticePhase;
+  reached: Reached;
   steps: PracticeStep[];
   verdicts: PracticeVerdict[];
 };
@@ -119,6 +128,7 @@ export function createPracticeState(practice: readonly PracticeEntry[]): Practic
     fixedIds: [],
     index: 0,
     phase: steps.length === 0 ? { kind: "ended", summary: null } : getOpeningPhase(steps[0]),
+    reached: NOTHING_REACHED,
     steps,
     verdicts: [],
   };
@@ -171,6 +181,7 @@ function answered(state: PracticeState, action: Extract<PracticeAction, { type: 
     answerIds: [...state.answerIds, action.feedback.answerId],
     fixedIds: getFixedIds(state, action),
     phase: { ...phase, feedback: action.feedback, kind: "feedback" as const },
+    reached: mergeReached(state.reached, action.feedback.reached),
     verdicts: [
       ...state.verdicts,
       getPracticeVerdict({ ...phase, isCorrect: action.feedback.isCorrect }),
@@ -207,7 +218,13 @@ export function practiceReducer(state: PracticeState, action: PracticeAction): P
     case "end":
       return { ...state, phase: { kind: "ending" } };
     case "ended":
-      return { ...state, phase: { kind: "ended", summary: action.summary } };
+      return {
+        ...state,
+        phase: { kind: "ended", summary: action.summary },
+        reached: action.summary
+          ? mergeReached(state.reached, action.summary.reached)
+          : state.reached,
+      };
     default:
       return state;
   }

@@ -1,5 +1,7 @@
 "use client";
 
+import { DayMoment } from "@zoonk/learn/session/day-moment";
+import { MOMENT_TITLE_PROPS } from "@zoonk/learn/session/moment-ceremony";
 import {
   TASK_MAIN_ACTION_CLASS,
   TaskActionBar,
@@ -106,14 +108,14 @@ function CompletionLinks() {
 /**
  * The quick moment at the end of a lesson, at the top of the task's column like any other screen,
  * the same as a session block's: the title and one mono line with the score, what it earned and
- * when the idea comes back, then the way on in the action bar at the bottom. A host's own next
- * steps (a guest's) sit under the line. The session's bigger summary waits for the end of the
- * session.
+ * when the idea comes back, the belt level and the tenth of Energy it reached, then the way on in
+ * the action bar at the bottom. A host's own next steps (a guest's) sit under them. The session's
+ * bigger summary waits for the end of the session.
  */
 export function LessonCompletionMoment(props: LessonCompletionSlotProps) {
   const { completion, correctCount, incorrectCount, onRetry } = props;
   const t = useExtracted();
-  const { slots } = useLessonPlayerConfig();
+  const { buddy, slots } = useLessonPlayerConfig();
   const { result } = completion;
   const brainPower = result ? (result.studyBlock?.brainPower ?? result.brainPower) : 0;
   const isSaved = completion.status === "saved";
@@ -122,7 +124,7 @@ export function LessonCompletionMoment(props: LessonCompletionSlotProps) {
     <>
       <TaskBody data-slot="lesson-completion">
         <div className="flex flex-col items-start gap-2" role="status">
-          <h2 className="text-title">
+          <h2 className="text-title outline-none" {...MOMENT_TITLE_PROPS}>
             {completion.testedOut ? t("You already knew this") : t("Lesson complete")}
           </h2>
 
@@ -137,6 +139,15 @@ export function LessonCompletionMoment(props: LessonCompletionSlotProps) {
             />
           )}
         </div>
+
+        {isSaved && result && (
+          <DayMoment
+            buddy={buddy}
+            ceremony={result.ceremony}
+            missionMoment={null}
+            reached={result.reached}
+          />
+        )}
 
         {completion.status === "failed" && (
           <div className="flex flex-col items-start gap-2" role="alert">

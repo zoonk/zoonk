@@ -4,7 +4,6 @@ import {
   type CallFeedback,
   type LanguageConversationView,
 } from "@zoonk/core/language/conversations/contract";
-import { type MissionMomentView } from "@zoonk/core/sessions/completion-contract";
 import { useExtracted } from "next-intl";
 import { DiffLines } from "../../_components/diff-lines";
 import { StepCard, StepTitle } from "../../_components/step-card";
@@ -167,21 +166,25 @@ function ImproveStep({
 
 /**
  * After a call, one thing at a time: the stars (and whether a checkpoint was passed) with what the
- * call came to and what it did to the day's missions, what went well (the goals got across, the phrases said well), then what to
- * improve: one better way to say something, with its sound, the goals still missing and words to
- * practice. A lost checkpoint costs nothing and shows whether another try needs Plus.
+ * call came to and what it did to the day, what went well (the goals got across, the phrases said
+ * well), then what to improve: one better way to say something, with its sound, the goals still
+ * missing and words to practice. A milestone the call earned opens before the stars. A lost
+ * checkpoint costs nothing and shows whether another try needs Plus.
  */
 export function ConversationResult({
+  ceremony,
   conversation,
+  dayMoment,
   exitHref,
-  missionMoment,
   nextHref,
   result,
 }: {
+  /** The full-screen moment for a milestone the call earned, before the stars. */
+  ceremony?: StepsItem["moment"];
   conversation: LanguageConversationView;
+  /** What the call just did to the day (`DayMoment`), under the stars. */
+  dayMoment: React.ReactNode;
   exitHref: string;
-  /** What the call just did to the day's missions; null when it did nothing or was opened later. */
-  missionMoment: MissionMomentView | null;
   nextHref: string;
   result: Result;
 }) {
@@ -200,12 +203,13 @@ export function ConversationResult({
       content: (
         <StarsStep
           conversation={conversation}
+          dayMoment={dayMoment}
           feedback={feedback}
-          missionMoment={missionMoment}
           result={result}
         />
       ),
       id: "stars",
+      moment: ceremony,
     },
     wentWell && {
       content: <WentWellStep feedback={feedback} language={language} met={met} />,

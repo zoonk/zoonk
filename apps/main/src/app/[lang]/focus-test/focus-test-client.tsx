@@ -1,9 +1,11 @@
 "use client";
 
 import { decidePlanChangeAction } from "@/app/[lang]/(app)/(learn)/plan/journey-actions";
+import { SessionCeremony } from "@/components/learn/session-ceremony";
 import { useRouter } from "@/i18n/navigation";
 import { type QuestionWriting, requestQuestionWriting } from "@/lib/questions/question-writing";
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
+import { type LearnBuddy } from "@zoonk/learn/buddy-name";
 import { FocusTestScreen, type FocusTestView, isFocusTestComplete } from "@zoonk/learn/focus-test";
 import { type GenerationRun } from "@zoonk/learn/generation/run";
 import { useState, useTransition } from "react";
@@ -48,10 +50,12 @@ function notStartedRun(retry: () => void): GenerationRun {
  * they're written.
  */
 function WritingFocusTest({
+  buddy,
   generationId,
   page,
   test,
 }: {
+  buddy: LearnBuddy;
   generationId: string;
   page: FocusTestPage;
   test: FocusTestView;
@@ -79,11 +83,15 @@ function WritingFocusTest({
 
   return (
     <FocusTestScreen
+      buddy={buddy}
       closeHref={page.closeHref}
       doneHref={page.doneHref}
       onSubmit={submitFocusTestAction.bind(null, page.goalId)}
       onUndo={(changeId) => decidePlanChangeAction(page.goalId, { changeId, status: "undone" })}
       preparing={{ limit: null, onStart: () => run.retry?.(), run: shown, starting: false }}
+      renderCeremony={(milestone, onClose) => (
+        <SessionCeremony buddy={buddy} milestone={milestone} onClose={onClose} />
+      )}
       started
       test={test}
     />
@@ -96,11 +104,14 @@ function WritingFocusTest({
  * run writing them while it asks the ones that exist, or, without any, opens once they're written.
  */
 export function FocusTestClient({
+  buddy,
   generationId,
   page,
   started,
   test,
 }: {
+  /** The learner's buddy (`getLearnerBuddy`), for the result's Energy and ceremony. */
+  buddy: LearnBuddy;
   generationId: string | null;
   page: FocusTestPage;
   started: boolean;
@@ -129,15 +140,19 @@ export function FocusTestClient({
   // Once started with a run, the page keeps this tree while the run's questions arrive, so the
   // answers given meanwhile stay.
   if (runId) {
-    return <WritingFocusTest generationId={runId} page={page} test={test} />;
+    return <WritingFocusTest buddy={buddy} generationId={runId} page={page} test={test} />;
   }
 
   return (
     <FocusTestScreen
+      buddy={buddy}
       closeHref={page.closeHref}
       doneHref={page.doneHref}
       onSubmit={submitFocusTestAction.bind(null, page.goalId)}
       onUndo={(changeId) => decidePlanChangeAction(page.goalId, { changeId, status: "undone" })}
+      renderCeremony={(milestone, onClose) => (
+        <SessionCeremony buddy={buddy} milestone={milestone} onClose={onClose} />
+      )}
       preparing={
         isFocusTestComplete(test)
           ? null

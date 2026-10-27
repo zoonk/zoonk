@@ -59,7 +59,7 @@ async function CheckpointContent({ params, searchParams }: Props) {
   // A language goal's checkpoint is the unit's conversation, played on its own screen. Opening
   // the page never writes the call: a session's preparation writes it ahead, else the learner's
   // tap does. Its read is cached for the learner's browser, so a link's prefetch draws the call.
-  const call = await openLanguageCheckpointCall(blockId);
+  const [call, buddy] = await Promise.all([openLanguageCheckpointCall(blockId), getLearnerBuddy()]);
 
   if (call.status === "earlierFirst") {
     redirect({ href: "/today", locale: lang });
@@ -74,6 +74,7 @@ async function CheckpointContent({ params, searchParams }: Props) {
       <MainLearnProvider>
         <CheckpointCallPreviewClient
           blockId={blockId}
+          buddy={buddy}
           dailyLimitReached={call.dailyLimitReached}
           intro={call.intro}
         />
@@ -91,7 +92,7 @@ async function CheckpointContent({ params, searchParams }: Props) {
 
   // A duel or the week's challenge is the learner's own and reads as of today: render per request.
   await connection();
-  const [result, buddy] = await Promise.all([getCheckpoint(blockId), getLearnerBuddy()]);
+  const result = await getCheckpoint(blockId);
 
   if (result.status === "unauthorized") {
     return <AuthGateScreen next={withQuery(`/checkpoint/${blockId}`, query)} />;

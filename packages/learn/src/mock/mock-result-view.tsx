@@ -15,8 +15,8 @@ import { Steps, type StepsItem } from "../_components/steps";
 import { TaskAsideSection } from "../_components/task-layout";
 import { hasShareMoved } from "../_utils/share-moved";
 import { usePassMarksNote } from "../_utils/use-pass-marks-note";
-import { MissionMoment } from "../missions/mission-moment";
-import { ReachedMoment } from "../session/reached-moment";
+import { DayMoment } from "../session/day-moment";
+import { getCeremonyMoment } from "../session/moment-ceremony";
 import { type TaskFrameAside } from "../shell/task-frame";
 import { useMockScreen } from "./mock-context";
 import { useMockTitle } from "./mock-labels";
@@ -134,20 +134,10 @@ function PassMarks() {
  */
 function MockDayMoment() {
   const { buddy, runner } = useMockScreen();
-  const { ceremony, missionMoment: moment, reached } = runner.view;
+  const { ceremony, missionMoment, reached } = runner.view;
 
   return (
-    <>
-      {moment && (
-        <MissionMoment
-          buddy={buddy}
-          completed={moment.completed}
-          fullMeal={moment.fullMeal}
-          missions={moment.missions}
-        />
-      )}
-      <ReachedMoment buddy={buddy} ceremony={ceremony} reached={reached} />
-    </>
+    <DayMoment buddy={buddy} ceremony={ceremony} missionMoment={missionMoment} reached={reached} />
   );
 }
 
@@ -332,10 +322,7 @@ function useResultSteps(result: MockResult) {
         <MockDayMoment />
       </>
     ),
-    moment:
-      ceremony && renderCeremony
-        ? (close: () => void) => renderCeremony(ceremony, close)
-        : undefined,
+    moment: getCeremonyMoment({ milestone: ceremony, render: renderCeremony }),
   };
 
   return { aside, items: opening ? [opening, ...rest] : [] };

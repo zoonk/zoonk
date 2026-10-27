@@ -6,7 +6,6 @@ import {
   type ExamTaskView,
   type SpeakingCriterionView,
 } from "@zoonk/core/language/exam-speaking/contract";
-import { type MissionMomentView } from "@zoonk/core/sessions/completion-contract";
 import { Badge } from "@zoonk/ui/components/badge";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -21,7 +20,6 @@ import {
   StepTitle,
 } from "../../_components/step-card";
 import { Steps, type StepsItem } from "../../_components/steps";
-import { MissionMoment } from "../../missions/mission-moment";
 import { TaskMainLink } from "../../shell/task-frame";
 import { CallNote } from "../conversation/call-note";
 import { EstimateNote, ResultRow, ResultRows } from "../conversation/result-rows";
@@ -251,26 +249,30 @@ function TryAgainButton({ onTryAgain }: { onTryAgain: () => Promise<void> }) {
  * After an exam's speaking task, one thing at a time: each official criterion the task is rated on
  * with its estimate on the exam's own scale (DELE's 0 to 3, Goethe's A to E, Cambridge's 0 to 5 in
  * half bands, DELF's points) and the ones at the exam's level marked, with what the call did to
- * the day's missions, then the one to work on first with what was heard and a tip. One task gives
- * no total: the paper's points come from all its tasks. It's an estimate, never an official score,
- * and pronunciation counts how easy the learner is to understand, never their accent.
+ * the day, then the one to work on first with what was heard and a tip. A milestone the call earned
+ * opens before them. One task gives no total: the paper's points come from all its tasks. It's an
+ * estimate, never an official score, and pronunciation counts how easy the learner is to
+ * understand, never their accent.
  */
 export function ExamSpeakingResult({
+  ceremony,
   conversation,
+  dayMoment,
   examTask,
   exitHref,
   feedback,
-  missionMoment,
   nextHref,
   nextTaskHref,
   onTryAgain,
 }: {
+  /** The full-screen moment for a milestone the call earned, before the first step. */
+  ceremony?: StepsItem["moment"];
   conversation: LanguageConversationView;
+  /** What the call just did to the day (`DayMoment`), last on the first step. */
+  dayMoment: React.ReactNode;
   examTask: ExamTaskView;
   exitHref: string;
   feedback: ExamSpeakingFeedback | null;
-  /** What the call just did to the day's missions; null when it did nothing or was opened later. */
-  missionMoment: MissionMomentView | null;
   nextHref: string;
   /** The paper's next task, opened in its list; null after the last one. */
   nextTaskHref: string | null;
@@ -283,14 +285,6 @@ export function ExamSpeakingResult({
   const focus = graded.find(({ criterion }) => criterion.key === feedback?.focus);
 
   // Last on the first step, as a call's result has it under its stars.
-  const moment = missionMoment && (
-    <MissionMoment
-      completed={missionMoment.completed}
-      fullMeal={missionMoment.fullMeal}
-      missions={missionMoment.missions}
-    />
-  );
-
   const items: StepsItem[] =
     feedback && graded.length > 0
       ? [
@@ -298,10 +292,11 @@ export function ExamSpeakingResult({
             content: (
               <>
                 <CriteriaStep conversation={conversation} examTask={examTask} feedback={feedback} />
-                {moment}
+                {dayMoment}
               </>
             ),
             id: "criteria",
+            moment: ceremony,
           },
           focus && { content: <FocusStep focus={focus} language={language} />, id: "focus" },
         ].filter((item) => item !== undefined)
@@ -310,10 +305,11 @@ export function ExamSpeakingResult({
             content: (
               <>
                 <NoGradeStep />
-                {moment}
+                {dayMoment}
               </>
             ),
             id: "noGrade",
+            moment: ceremony,
           },
         ];
 

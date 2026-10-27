@@ -12,7 +12,7 @@ import {
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { type BuddyGlasses } from "@zoonk/utils/buddy";
 import { useExtracted } from "next-intl";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 import {
   TASK_MAIN_ACTION_CLASS,
   TaskActionBar,
@@ -211,12 +211,21 @@ function CeremonyMoment({
 /**
  * The session's one milestone, if it has one, as a full-screen moment over the end-of-session
  * summary; it marks itself as shown, so it never repeats. A badge is already on the checkpoint's
- * result and in the logbook, so it gets no second moment.
+ * result and in the logbook, so it gets no second moment: it closes as it's marked, and what waits
+ * for it shows at once.
  */
 export function MilestoneCeremony({ onShown, ...props }: CeremonyProps) {
   useMarkShown({ milestone: props.milestone, onShown });
+  const isBadge = props.milestone.kind === "badge";
+  const close = useEffectEvent(() => props.onClose?.());
 
-  if (props.milestone.kind === "badge") {
+  useEffect(() => {
+    if (isBadge) {
+      close();
+    }
+  }, [isBadge]);
+
+  if (isBadge) {
     return null;
   }
 

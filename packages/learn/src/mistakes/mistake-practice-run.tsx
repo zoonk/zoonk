@@ -18,6 +18,7 @@ import { ContentVoteMenu } from "../feedback/content-vote-menu";
 import { LearnLink } from "../learn-link";
 import { type QuestionTutor } from "../questions/question-tutor";
 import { usePreloadMath } from "../rich-text/use-preload-math";
+import { type MomentCeremony } from "../session/moment-ceremony";
 import { QuestionActionsRow } from "../session/question-block/question-actions";
 import { QuestionBlockHeader } from "../session/question-block/question-block-header";
 import { type LessonHref } from "./drill/drill-types";
@@ -125,6 +126,7 @@ function PracticeBody({
   backHref,
   buddy,
   lessonHref,
+  renderCeremony,
   run,
   trueFalseLabels,
 }: {
@@ -133,6 +135,7 @@ function PracticeBody({
   backHref: string;
   buddy?: LearnBuddy | null;
   lessonHref: LessonHref | null;
+  renderCeremony?: MomentCeremony;
   run: Run;
   trueFalseLabels: TrueFalseLabels;
 }) {
@@ -152,6 +155,8 @@ function PracticeBody({
         backHref={backHref}
         buddy={buddy}
         fixed={run.state.fixedIds.length}
+        reached={run.state.reached}
+        renderCeremony={renderCeremony}
         summary={phase.kind === "ended" ? phase.summary : null}
       />
     );
@@ -196,6 +201,7 @@ export function MistakePracticeRun({
   buddy,
   lessonHref,
   practice,
+  renderCeremony,
   trueFalseLabels,
   tutor = null,
 }: {
@@ -206,6 +212,8 @@ export function MistakePracticeRun({
   /** Where a content gap's lesson opens; without it the drill shows only the lesson's summary. */
   lessonHref: LessonHref | null;
   practice: PracticeEntry[];
+  /** The full-screen moment for a milestone the run earned (a new belt, new glasses). */
+  renderCeremony?: MomentCeremony;
   /** The words the goal's true-or-false questions are answered with, by its exam. */
   trueFalseLabels: TrueFalseLabels;
   /** The learner's buddy for the question in view, from the host; none plays without it. */
@@ -240,6 +248,7 @@ export function MistakePracticeRun({
         backHref={backHref}
         buddy={buddy}
         lessonHref={lessonHref}
+        renderCeremony={renderCeremony}
         run={run}
         trueFalseLabels={trueFalseLabels}
       />

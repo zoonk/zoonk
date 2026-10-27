@@ -1,8 +1,10 @@
 "use client";
 
+import { SessionCeremony } from "@/components/learn/session-ceremony";
 import { useRouter } from "@/i18n/navigation";
 import { useStartLanguageConversation } from "@/lib/language/use-start-language-conversation";
 import { type LanguageConversationView } from "@zoonk/core/language/conversations/contract";
+import { type LearnBuddy } from "@zoonk/learn/buddy-name";
 import {
   type ConversationActions,
   type ConversationHrefs,
@@ -60,16 +62,20 @@ function getHrefs({
 }
 
 /**
- * Wires the call screen to the app: opening the call, its goals, saving it, and another try: a new
- * speaking mock, or the same exam task with a new card. A mock's task goes straight back to the
- * mock once saved: the mock shows no feedback until it's over.
+ * Wires the call screen to the app: opening the call, its goals, saving it, another try (a new
+ * speaking mock, or the same exam task with a new card), and a milestone the call earned as its
+ * full-screen moment. A mock's task goes straight back to the mock once saved: the mock shows no
+ * feedback until it's over.
  */
 export function ConversationClient({
+  buddy,
   callAudio,
   conversation,
   fromExam,
   fromMock,
 }: {
+  /** The learner's buddy (`getLearnerBuddy`), for the result's missions and ceremony. */
+  buddy: LearnBuddy;
   /** A checkpoint's Start tap that created the call: it starts at once, with the tap's microphone. */
   callAudio?: TappedCallAudio;
   conversation: LanguageConversationView;
@@ -112,10 +118,14 @@ export function ConversationClient({
   return (
     <ConversationScreen
       actions={actions}
+      buddy={buddy}
       callAudio={callAudio}
       conversation={conversation}
       hrefs={getHrefs({ conversation, fromExam, fromMock })}
       onSaved={fromMock ? () => router.replace(`/mock/${fromMock}`) : undefined}
+      renderCeremony={(milestone, onClose) => (
+        <SessionCeremony buddy={buddy} milestone={milestone} onClose={onClose} />
+      )}
     />
   );
 }

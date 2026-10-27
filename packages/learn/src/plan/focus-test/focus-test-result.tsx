@@ -1,5 +1,6 @@
 "use client";
 
+import { type ProgressCelebration } from "@zoonk/core/sessions/progress-celebration";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useFormatter } from "next-intl";
 import { useState, useTransition } from "react";
@@ -13,11 +14,17 @@ import {
   StepTitle,
 } from "../../_components/step-card";
 import { Steps } from "../../_components/steps";
+import { type LearnBuddy } from "../../buddies/use-buddy-name";
 import { UndoButton } from "../../questions/undo-button";
+import { DayMoment } from "../../session/day-moment";
+import { type MomentCeremony, getCeremonyMoment } from "../../session/moment-ceremony";
 import { TaskMainLink } from "../../shell/task-frame";
 
-/** What the focus test found and chose, in the learner's terms; null when it couldn't be saved. */
-export type FocusTestOutcome = {
+/**
+ * What the focus test found and chose, in the learner's terms, with the tenth of Energy its
+ * answers reached and the milestone it's celebrated with; null when it couldn't be saved.
+ */
+export type FocusTestOutcome = ProgressCelebration & {
   /** Each area asked about, named as learners call it, and whether it got the focus. */
   areas: { answers: boolean[]; chosen: boolean; label: string }[];
   /** The plan change that set the focus, for its undo; null when the focus was already this. */
@@ -56,8 +63,8 @@ function AnswerSegments({ answers }: { answers: readonly boolean[] }) {
   );
 }
 
-/** Each area asked about, with its answers as segments. */
-function AreasStep({ outcome }: { outcome: FocusTestOutcome }) {
+/** Each area asked about, with its answers as segments, then what the test did to the day. */
+function AreasStep({ buddy, outcome }: { buddy?: LearnBuddy | null; outcome: FocusTestOutcome }) {
   const t = useExtracted();
 
   return (
@@ -73,6 +80,12 @@ function AreasStep({ outcome }: { outcome: FocusTestOutcome }) {
           </StepRow>
         ))}
       </StepRows>
+      <DayMoment
+        buddy={buddy}
+        ceremony={outcome.ceremony}
+        missionMoment={null}
+        reached={outcome.reached}
+      />
     </StepCard>
   );
 }
@@ -111,18 +124,23 @@ function FocusStep({ outcome, undone }: { outcome: FocusTestOutcome; undone: boo
 
 /**
  * The focus test's result, one thing at a time: how each area went, then the focus it set and
- * why, with the plan as the way on and an undo for the focus.
+ * why, with the plan as the way on and an undo for the focus. A milestone it earned opens first,
+ * on its own.
  */
 export function FocusTestResult({
+  buddy,
   closeHref,
   doneHref,
   onUndo,
   outcome,
+  renderCeremony,
 }: {
+  buddy?: LearnBuddy | null;
   closeHref: string;
   doneHref: string;
   onUndo: (changeId: string) => Promise<boolean>;
   outcome: FocusTestOutcome;
+  renderCeremony?: MomentCeremony;
 }) {
   const t = useExtracted();
   const [undo, setUndo] = useState<"done" | "failed" | null>(null);
@@ -141,7 +159,11 @@ export function FocusTestResult({
   };
 
   const items = [
-    { content: <AreasStep outcome={outcome} />, id: "areas" },
+    {
+      content: <AreasStep buddy={buddy} outcome={outcome} />,
+      id: "areas",
+      moment: getCeremonyMoment({ milestone: outcome.ceremony, render: renderCeremony }),
+    },
     outcome.areas.some((area) => area.chosen) && {
       content: <FocusStep outcome={outcome} undone={undo === "done"} />,
       id: "focus",

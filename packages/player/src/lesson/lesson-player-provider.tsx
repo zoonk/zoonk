@@ -214,9 +214,12 @@ export function LessonPlayerProvider({
     onOpen();
   }, []);
 
+  const buddy = tutor?.buddy;
+
   const config = useMemo(
     () => ({
       adapters,
+      buddy,
       challengeTeam,
       exampleLinesWriting: exampleLines.writing,
       lesson: {
@@ -237,6 +240,7 @@ export function LessonPlayerProvider({
     }),
     [
       adapters,
+      buddy,
       challengeTeam,
       exampleLines.writing,
       lesson,

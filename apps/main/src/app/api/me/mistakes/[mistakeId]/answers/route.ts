@@ -36,6 +36,7 @@ export const POST = appPostRoute<{ mistakeId: string }>(
       fixedMistakeIds: feedback.fixedMistakeIds,
       isCorrect: feedback.isCorrect,
       mistakeStatus: feedback.mistakeStatus,
+      reached: feedback.reached,
       trap: feedback.trap,
     };
   },

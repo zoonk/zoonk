@@ -11,6 +11,7 @@ import { StepRow, StepRows } from "../_components/step-card";
 import { useFormatShare } from "../_utils/percent";
 import { useBeltName } from "../_utils/use-belt-name";
 import { type LearnBuddy, resolveLearnBuddy, useBuddyName } from "../buddies/use-buddy-name";
+import { type CeremonyMilestone } from "../ceremonies/use-ceremony-copy";
 import { type StudyMomentView } from "./session-types";
 
 type Reached = StudyMomentView["reached"];
@@ -167,7 +168,7 @@ export function ReachedMoment({
 }: {
   buddy?: LearnBuddy | null;
   /** The block's full-screen ceremony: a new belt already celebrates its level. */
-  ceremony: StudyMomentView["ceremony"];
+  ceremony: Pick<CeremonyMilestone, "kind"> | null;
   reached: Reached;
 }) {
   const level = ceremony?.kind === "belt" ? null : reached.level;
