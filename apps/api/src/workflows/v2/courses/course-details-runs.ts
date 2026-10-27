@@ -1,21 +1,7 @@
-import { hydrateResourceIO, observabilityRevivers } from "workflow/observability";
 import { getWorld } from "workflow/runtime";
-
-const COURSE_ID_ATTRIBUTE = "courseId";
 
 const WORKFLOW_NAME =
   "workflow//./src/workflows/v2/courses/course-details-workflow//courseDetailsWorkflow";
-
-function readCourseId(input: unknown): string | null {
-  const first: unknown = Array.isArray(input) ? input[0] : null;
-
-  return typeof first === "object" &&
-    first !== null &&
-    "courseId" in first &&
-    typeof first.courseId === "string"
-    ? first.courseId
-    : null;
-}
 
 /** Operational storage is used rather than eventually consistent analytics for recovery safety. */
 async function listActiveStatus(status: "pending" | "running", cursor?: string): Promise<string[]> {
@@ -23,19 +9,13 @@ async function listActiveStatus(status: "pending" | "running", cursor?: string):
 
   const page = await world.runs.list({
     pagination: { cursor },
-    resolveData: "all",
+    resolveData: "none",
     status,
     workflowName: WORKFLOW_NAME,
   });
 
   const ids = page.data.map((run) => {
-    const attribute = run.attributes[COURSE_ID_ATTRIBUTE];
-
-    if (attribute) {
-      return attribute;
-    }
-    /** Runs from before creation-time metadata can still be identified from their stored input. */
-    const courseId = readCourseId(hydrateResourceIO(run, observabilityRevivers).input);
+    const courseId = run.attributes.courseId;
 
     if (!courseId) {
       throw new Error("Cannot identify an active course-details run; refusing copy recovery");

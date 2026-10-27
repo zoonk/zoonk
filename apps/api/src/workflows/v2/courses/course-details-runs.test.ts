@@ -13,7 +13,7 @@ function mockRunList(list: ReturnType<typeof vi.fn>) {
 }
 
 describe(listInFlightCourseDetails, () => {
-  it("includes queued and running runs across pages, including legacy serialized inputs", async () => {
+  it("includes queued and running runs across pages", async () => {
     const list = vi.fn().mockImplementation(({ status, pagination }) => {
       if (status === "pending" && !pagination.cursor) {
         return Promise.resolve({
@@ -25,7 +25,7 @@ describe(listInFlightCourseDetails, () => {
 
       if (status === "pending") {
         return Promise.resolve({
-          data: [{ attributes: {}, input: [[1], { courseId: 2 }, "legacy-course"] }],
+          data: [{ attributes: { courseId: "next-course" } }],
           hasMore: false,
         });
       }
@@ -39,7 +39,7 @@ describe(listInFlightCourseDetails, () => {
     mockRunList(list);
 
     await expect(listInFlightCourseDetails()).resolves.toStrictEqual(
-      new Set(["queued-course", "legacy-course", "running-course"]),
+      new Set(["queued-course", "next-course", "running-course"]),
     );
 
     expect(list).toHaveBeenCalledTimes(3);
@@ -47,15 +47,8 @@ describe(listInFlightCourseDetails, () => {
     expect(list).toHaveBeenCalledWith(expect.objectContaining({ status: "running" }));
   });
 
-  it("fails closed when an active legacy run cannot be identified", async () => {
-    mockRunList(
-      vi
-        .fn()
-        .mockResolvedValue({
-          data: [{ attributes: {}, input: new Uint8Array([101, 110, 99, 114]) }],
-          hasMore: false,
-        }),
-    );
+  it("refuses recovery when an active run has no course metadata", async () => {
+    mockRunList(vi.fn().mockResolvedValue({ data: [{ attributes: {} }], hasMore: false }));
 
     await expect(listInFlightCourseDetails()).rejects.toThrow(
       "Cannot identify an active course-details run",
