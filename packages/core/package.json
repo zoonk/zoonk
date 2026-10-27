@@ -564,7 +564,6 @@
     "./workflows/steps": "./src/workflows/steps.ts"
   },
   "scripts": {
-    "backfill:lesson-mistakes": "tsx --conditions=react-server scripts/backfill-lesson-mistakes.ts",
     "seed:v2": "NEXT_PUBLIC_APP_DOMAIN=localhost:3000 tsx --conditions=react-server scripts/seed.ts",
     "test": "vitest run",
     "test:watch": "vitest",

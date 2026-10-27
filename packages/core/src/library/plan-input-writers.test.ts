@@ -11,7 +11,6 @@ import { followGoalTimeZone } from "../learner/follow-goal-time-zone";
 import { getSession } from "../users/get-session";
 import { buildExamIdentityKey } from "./exams/exam-identity";
 import { readBlueprintContent, saveExamBlueprint } from "./exams/save-exam-blueprint";
-import { lockSkillAttribution } from "./skills/_utils/lock-skill-attribution";
 import { setSkillPrerequisites } from "./skills/create-skill";
 import { mergeSkillForAdmin } from "./skills/merge-skill";
 
@@ -222,43 +221,5 @@ describe("plan input writers", () => {
     await expect(inputVersions(context.plans.map(({ id }) => id))).resolves.toStrictEqual(
       context.plans.map(() => ({ inputVersion: 1 })),
     );
-  });
-
-  it("does not hold learner-facing locks while recovery owns skill attribution", async () => {
-    const context = await fixture("merge");
-    const before = await context.read();
-    const held = Promise.withResolvers<null>();
-    const resume = Promise.withResolvers<null>();
-
-    const holder = prisma.$transaction(async (tx) => {
-      await lockSkillAttribution({ mode: "recovery", tx });
-      held.resolve(null);
-      await resume.promise;
-    });
-
-    await held.promise;
-    const writing = context.write();
-    const outcome: { value: string | null } = { value: null };
-
-    void writing.then(
-      () => {
-        outcome.value = "merged";
-      },
-      () => {
-        outcome.value = "busy";
-      },
-    );
-
-    try {
-      await vi.waitFor(() => expect(outcome.value).toBe("busy"));
-      await expect(context.read()).resolves.toStrictEqual(before);
-
-      await expect(inputVersions(context.plans.map(({ id }) => id))).resolves.toStrictEqual(
-        context.plans.map(() => ({ inputVersion: 0 })),
-      );
-    } finally {
-      resume.resolve(null);
-      await Promise.allSettled([holder, writing]);
-    }
   });
 });

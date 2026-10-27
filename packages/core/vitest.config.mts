@@ -40,24 +40,11 @@ const MISSION_COMPLETION_TEST = "src/mistakes/mission-completion-paths.test.ts";
 const REQUEST_INSTANT_TEST = "src/learner/facts/request-instant.test.ts";
 const OPEN_GOAL_INPUT_RACE_TEST = "src/sessions/open-goal-input-race.test.ts";
 const ORDERED_CALL_TESTS = [LIVE_CALL_POLICY_TEST, MISSION_COMPLETION_TEST];
-/** Recovery holds one database-wide advisory lock; unrelated merges intentionally refuse it. */
-const SKILL_RECOVERY_TESTS = [
-  "src/library/plan-input-writers.test.ts",
-  "src/mistakes/backfill-lesson-mistakes-merge.test.ts",
-  "src/mistakes/backfill-lesson-mistakes.test.ts",
-];
-
-const ORDERED_TESTS = [
-  ...ORDERED_CALL_TESTS,
-  REQUEST_INSTANT_TEST,
-  OPEN_GOAL_INPUT_RACE_TEST,
-  ...SKILL_RECOVERY_TESTS,
-];
+const ORDERED_TESTS = [...ORDERED_CALL_TESTS, REQUEST_INSTANT_TEST, OPEN_GOAL_INPUT_RACE_TEST];
 
 const ISOLATED_MOCK_TESTS = OWN_MOCKS.filter((file) => !ORDERED_TESTS.includes(file));
 const MISSION_TEST_GROUP = 1;
 const LIVE_CALL_POLICY_TEST_GROUP = 2;
-const SKILL_RECOVERY_TEST_GROUP = 3;
 
 export default defineConfig({
   plugins: [markdownAsText],
@@ -97,15 +84,6 @@ export default defineConfig({
           include: [LIVE_CALL_POLICY_TEST],
           name: "live-call-policy",
           sequence: { groupOrder: LIVE_CALL_POLICY_TEST_GROUP },
-        },
-      },
-      {
-        extends: true,
-        test: {
-          fileParallelism: false,
-          include: SKILL_RECOVERY_TESTS,
-          name: "skill-recovery",
-          sequence: { groupOrder: SKILL_RECOVERY_TEST_GROUP },
         },
       },
     ],

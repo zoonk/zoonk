@@ -2,7 +2,6 @@ import "server-only";
 import { type TransactionClient } from "@zoonk/db";
 import { resolvePlanInputDependents } from "../../../plans/_utils/plan-input-dependencies";
 import { PlanInputWriteConflictError, lockPlanInputWrite } from "../../_utils/plan-input-write";
-import { lockSkillAttribution } from "./lock-skill-attribution";
 
 type SkillInputs = {
   masterySkillId?: string;
@@ -65,12 +64,6 @@ async function lockSources({
   lockIds: string[];
   tx: TransactionClient;
 }) {
-  if (input.masterySkillId && !(await lockSkillAttribution({ mode: "merge", tx }))) {
-    throw new PlanInputWriteConflictError(
-      "Skill attribution recovery is running; try the merge again.",
-    );
-  }
-
   await tx.$queryRaw`
     SELECT id FROM skills WHERE id = ANY(${lockIds}::uuid[])
     ORDER BY id FOR UPDATE
