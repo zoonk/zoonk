@@ -42,6 +42,7 @@ We recommend using [mise](https://mise.jdx.dev/) to manage your Node.js and pnpm
 - `pnpm dev:direct` to bypass Portless and use the original fixed localhost ports
 - `pnpm dev:prune` to let Portless remove orphaned servers left by crashed sessions. Stop active development stacks from the terminal where they are running
 - `pnpm build` to create a production build
+- `pnpm start` to build every app and serve the production builds at the same Portless URLs as `pnpm dev`, with local sign-in and the mailbox working the same way. Stop the checkout's `pnpm dev` first, since both use the same routes
 - `pnpm lint` to run linting
 - `pnpm typecheck` to run TypeScript type checking
 - `pnpm knip --production` to check for unused code

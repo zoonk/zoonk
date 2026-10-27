@@ -92,7 +92,7 @@
     },
     "i18n:lint": {},
     "i18n": { "cache": false },
-    "start": { "cache": false, "dependsOn": ["^start"], "persistent": true },
+    "start": { "cache": false, "dependsOn": ["build", "^start"], "persistent": true },
     "test": {
       "dependsOn": ["db:generate", "^db:setup:test", "transit"],
       "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/packages/db/.env.test.local"]

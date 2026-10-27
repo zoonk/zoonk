@@ -5,14 +5,15 @@
   "scripts": {
     "analyze": "next experimental-analyze",
     "build": "next build",
-    "build-and-start": "pnpm build && pnpm start",
+    "build-and-start": "pnpm build && pnpm start:app -p 3201",
     "dev": "node ../../scripts/dev/run-service.mts evals",
     "dev:app": "next dev",
     "dev:direct": "next dev -p 3201",
     "eval:languages": "tsx --conditions=react-server --import ./scripts/register-markdown.mts scripts/check-language-coverage.ts",
     "eval:run": "tsx --conditions=react-server --env-file=.env --import ./scripts/register-markdown.mts scripts/run-eval.ts",
     "sample:production": "tsx scripts/sample-production-inputs.ts",
-    "start": "next start -p 3201",
+    "start": "node ../../scripts/dev/run-service.mts evals start:app",
+    "start:app": "next start",
     "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {

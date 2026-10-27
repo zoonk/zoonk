@@ -17,6 +17,8 @@ import { writeAppleDevelopmentConfiguration } from "./write-apple-configuration.
 const currentDirectory = process.cwd();
 const directMode = process.argv.includes("--direct");
 const lanMode = process.argv.includes("--lan");
+/** `pnpm start` builds every app for these URLs and serves the production builds instead of development servers. */
+const productionMode = process.argv.includes("--production");
 const pnpmCommand = getPnpmCommand(process.env);
 
 /** Runs Turbo in the foreground so its normal terminal shutdown owns the complete development stack. */
@@ -51,7 +53,7 @@ async function startDirectDevelopment(): Promise<CommandResult> {
   return runDevelopmentCommand({ args: ["exec", "turbo", "dev:direct"], environment: process.env });
 }
 
-/** Resolves shared service URLs once before Next.js captures public environment variables at startup. */
+/** Resolves shared service URLs once before Next.js captures public environment variables at startup or build. */
 async function startPortlessDevelopment(): Promise<CommandResult> {
   const projectName = getProjectName({ currentDirectory });
   const portlessEnvironment = getPortlessEnvironment({ homeDirectory: homedir(), lanMode });
@@ -68,7 +70,7 @@ async function startPortlessDevelopment(): Promise<CommandResult> {
   process.stdout.write(`Main: ${mainUrl}\nAPI: ${apiUrl}\nMailbox: ${mailboxUrl}\n`);
 
   return runDevelopmentCommand({
-    args: ["exec", "turbo", "dev"],
+    args: ["exec", "turbo", productionMode ? "start" : "dev"],
     environment: {
       ...environment,
       MAILBOX_URL: getMailboxCaptureUrl(mailboxUrl),
@@ -80,7 +82,7 @@ async function startPortlessDevelopment(): Promise<CommandResult> {
 }
 
 const result =
-  directMode || process.env.PORTLESS === "0"
+  !productionMode && (directMode || process.env.PORTLESS === "0")
     ? await startDirectDevelopment()
     : await startPortlessDevelopment();
 

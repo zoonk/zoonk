@@ -2,7 +2,10 @@ import { homedir } from "node:os";
 import { getPortlessEnvironment, getProjectName, getServiceName } from "./config.mts";
 import { applyCommandExit, getPnpmCommand, runForegroundCommand } from "./process.mts";
 
-const [serviceName] = process.argv.slice(2);
+/** The app script Portless serves: its development server by default, or `start:app` for `pnpm start`. */
+const [serviceName, appScript = "dev:app"] = process.argv
+  .slice(2)
+  .filter((argument) => !argument.startsWith("--"));
 
 if (!serviceName) {
   throw new Error("A development service name is required.");
@@ -32,7 +35,7 @@ const result = await runForegroundCommand({
     pnpmCommand.command,
     ...pnpmCommand.args,
     "run",
-    "dev:app",
+    appScript,
   ],
   command: pnpmCommand.command,
   currentDirectory,

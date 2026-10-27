@@ -14,7 +14,8 @@
     "e2e:ui": "node ../../scripts/run-test-env.mts e2e playwright test --ui",
     "i18n:lint": "eloqnt lint --strict",
     "i18n": "eloqnt translate",
-    "start": "next start",
+    "start": "node ../../scripts/dev/run-service.mts main start:app",
+    "start:app": "next start",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "next typegen && tsc --noEmit"
