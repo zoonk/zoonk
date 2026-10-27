@@ -43,11 +43,13 @@ test.describe("Exam blueprints API", () => {
 
     const response = await anonymous.get(`/v1/exam-blueprints/${blueprint.id}`);
     const body = await readBody({ response, schema: examBlueprintResourceSchema });
+    // The reading's check is research's own record, never part of the public resource.
+    const { check: _check, ...publicEdition } = edition;
 
     expect(body).toMatchObject({
       board: "Cebraspe",
       country: "BR",
-      edition,
+      edition: publicEdition,
       id: blueprint.id,
       name: "Concurso TCDF",
       source: {
