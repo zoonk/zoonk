@@ -36,8 +36,9 @@ jobs:
       # the build caches.
       matrix:
         include:
-          - { suite: chromium 1/2, args: --project=chromium --shard=1/2 }
-          - { suite: chromium 2/2, args: --project=chromium --shard=2/2 }
+          - { suite: chromium 1/3, args: --project=chromium --shard=1/3 }
+          - { suite: chromium 2/3, args: --project=chromium --shard=2/3 }
+          - { suite: chromium 3/3, args: --project=chromium --shard=3/3 }
           - { suite: live-call-states, args: --project=live-call-states --no-deps, gates: true }
     env:
       BETTER_AUTH_SECRET: test-secret-for-ci
