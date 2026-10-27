@@ -47,7 +47,13 @@ function edition(date = EXAM_DATE) {
   return {
     citations: [],
     dates: [
-      { citation: { passage: "Exam day", sourceId: "notice" }, date, kind: "exam", label: "Exam" },
+      {
+        citation: { passage: "Exam day", sourceId: "notice" },
+        date,
+        kind: "exam",
+        label: "Exam",
+        startTime: null,
+      },
     ],
     noticeUrl: null,
     questionCount: null,

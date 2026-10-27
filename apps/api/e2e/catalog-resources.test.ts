@@ -65,6 +65,7 @@ function examEdition(dates: string[], timeZone = "America/Sao_Paulo") {
       date: value,
       kind: "exam",
       label: "Exam",
+      startTime: null,
     })),
     noticeUrl: null,
     questionCount: null,

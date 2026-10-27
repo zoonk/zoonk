@@ -36,17 +36,14 @@ async function practiceQuestion() {
 
 function ask({
   context,
-  include,
   itemId,
   question = "Can you give me a hint?",
 }: {
   context: LessonQuestionContextInput;
-  include?: "answered";
   itemId: string;
   question?: string;
 }) {
   return createLessonQuestion({
-    include,
     input: { context, question, requestId: randomUUID() },
     target: { itemId, kind: "item" },
   });
@@ -210,17 +207,11 @@ describe("asking the buddy about a session's or practice's question", () => {
     ]);
   });
 
-  // Clients read a turn's context strictly, so only those that ask learn which turns were about
-  // the learner's checked answer: those that don't keep reading `{ kind: "item" }`.
-  it("says which turns were asked about the learner's checked answer to clients that ask", async () => {
+  it("says which turns were asked about the learner's checked answer", async () => {
     const { item, user } = await practiceQuestion();
     const target = { itemId: item.id, kind: "item" } as const;
 
-    const hint = await ask({
-      context: { answered: false, kind: "item" },
-      include: "answered",
-      itemId: item.id,
-    });
+    const hint = await ask({ context: { answered: false, kind: "item" }, itemId: item.id });
 
     await prisma.lessonQuestion.updateMany({
       data: { answer: "Even numbers end in 0, 2, 4, 6 or 8.", status: "completed" },
@@ -231,7 +222,6 @@ describe("asking the buddy about a session's or practice's question", () => {
 
     const why = await ask({
       context: { answered: true, kind: "item" },
-      include: "answered",
       itemId: item.id,
       question: "Why was I wrong?",
     });
@@ -239,7 +229,7 @@ describe("asking the buddy about a session's or practice's question", () => {
     expect(hint).toMatchObject({ question: { context: { answered: false, kind: "item" } } });
     expect(why).toMatchObject({ question: { context: { answered: true, kind: "item" } } });
 
-    await expect(getLessonQuestionThread({ include: "answered", target })).resolves.toMatchObject({
+    await expect(getLessonQuestionThread({ target })).resolves.toMatchObject({
       thread: {
         questions: [
           { context: { answered: false, kind: "item" } },
@@ -248,9 +238,9 @@ describe("asking the buddy about a session's or practice's question", () => {
       },
     });
 
-    await expect(
-      getLessonQuestion({ include: "answered", questionId: askedId(why) }),
-    ).resolves.toMatchObject({ question: { context: { answered: true, kind: "item" } } });
+    await expect(getLessonQuestion({ questionId: askedId(why) })).resolves.toMatchObject({
+      question: { context: { answered: true, kind: "item" } },
+    });
 
     const thread = await getLessonQuestionThread({ target });
     const question = await getLessonQuestion({ questionId: askedId(why) });
@@ -272,7 +262,12 @@ describe("asking the buddy about a session's or practice's question", () => {
         question.status === "ready" ? question.question : null,
         again.status === "created" ? again.question : null,
       ].map((turn) => turn?.context),
-    ).toStrictEqual([{ kind: "item" }, { kind: "item" }, { kind: "item" }, { kind: "item" }]);
+    ).toStrictEqual([
+      { answered: false, kind: "item" },
+      { answered: true, kind: "item" },
+      { answered: true, kind: "item" },
+      { answered: true, kind: "item" },
+    ]);
   });
 
   it("keeps a question on a mock the learner is sitting, and a block that isn't theirs, out", async () => {
@@ -286,11 +281,27 @@ describe("asking the buddy about a session's or practice's question", () => {
       data: {
         conditions: {
           day: null,
+          examQuestions: null,
           fullLength: true,
+          partialCredit: "allOrNothing",
+          purpose: "planned",
+          reused: 0,
           scoring: "raw",
-          sections: [{ itemIds: [item.id], minutes: 60, name: null, questions: 1, routing: null }],
+          sections: [
+            {
+              essays: [],
+              itemIds: [item.id],
+              minutes: 60,
+              name: null,
+              questions: 1,
+              routing: null,
+            },
+          ],
+          shape: null,
           startTime: null,
           timeZone: null,
+          timedOutSections: [],
+          wrongPenalty: 1,
         },
         sectionStartedAt: new Date(),
         userId: user.id,

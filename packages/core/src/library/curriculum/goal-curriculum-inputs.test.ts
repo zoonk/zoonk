@@ -38,6 +38,7 @@ describe(loadGoalCurriculumInputs, () => {
         structure,
         topicFrequency: [
           {
+            appearances: null,
             basis: "2019-2024 papers",
             citation,
             level: "high",

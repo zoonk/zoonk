@@ -76,6 +76,7 @@ function irtMock({ goalId, theta, userId }: { goalId: string; theta: number; use
         preparation: null,
         previous: null,
         scoring: "irt",
+        topics: [],
         total: 45,
         unansweredAtTimeout: 0,
       },

@@ -71,19 +71,10 @@ export async function getApiError(response: Response): Promise<LessonQuestionApi
   return { kind: "unknown" };
 }
 
-/**
- * An item thread's turns say which were about the learner's checked answer, to hold them back
- * until the question is checked again; other threads have none to say it of.
- */
-function getThreadInclude(target: TutorTarget) {
-  return target.kind === "item" ? ("answered" as const) : undefined;
-}
-
 function questionsUrl({
   connection,
   contextKind,
   cursor,
-  include,
   stepId,
   target,
 }: { connection: LessonQuestionConnection; target: TutorTarget } & GetLessonQuestionThreadInput) {
@@ -99,10 +90,6 @@ function questionsUrl({
 
   if (contextKind) {
     url.searchParams.set("contextKind", contextKind);
-  }
-
-  if (include) {
-    url.searchParams.set("include", include);
   }
 
   return url.toString();
@@ -134,10 +121,8 @@ export async function getLessonQuestionThreadRequest({
 } & GetLessonQuestionThreadInput): Promise<
   LessonQuestionApiResult<LessonQuestionThreadResource | null>
 > {
-  const include = getThreadInclude(target);
-
   const { data: response, error } = await safeAsync(async () =>
-    fetch(questionsUrl({ connection, contextKind, cursor, include, stepId, target }), {
+    fetch(questionsUrl({ connection, contextKind, cursor, stepId, target }), {
       cache: "no-store",
       headers: await connection.getHeaders(),
     }),
@@ -171,7 +156,7 @@ export async function createLessonQuestionRequest({
   target: TutorTarget;
 }): Promise<LessonQuestionApiResult<CreatedLessonQuestion>> {
   const { data: response, error } = await safeAsync(async () =>
-    fetch(questionsUrl({ connection, include: getThreadInclude(target), target }), {
+    fetch(questionsUrl({ connection, target }), {
       body: JSON.stringify(input),
       cache: "no-store",
       headers: await getJsonHeaders(connection),
@@ -209,7 +194,6 @@ export async function getLessonQuestionRequest({
   const url = questionUrl({ connection, questionId });
 
   // A polled item turn keeps saying whether it was about the learner's checked answer.
-  url.searchParams.set("include", "answered");
 
   const { data: response, error } = await safeAsync(async () =>
     fetch(url, { cache: "no-store", headers: await connection.getHeaders(), signal }),

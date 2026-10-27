@@ -36,52 +36,50 @@ describe("the learner opens a study day", () => {
     await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(0);
   });
 
-  it.each([null, { day: 1, fullLength: false }])(
-    "never selects an unannounced next mock with identity %j",
-    async (mockIdentity) => {
-      const user = await userFixture();
-      const { goal, items } = await sessionGoalFixture({ userId: user.id });
-      const session = await studySessionFixture({ goalId: goal.id, userId: user.id });
+  it("never selects an unannounced next mock", async () => {
+    const mockIdentity = { day: 1, fullLength: false };
+    const user = await userFixture();
+    const { goal, items } = await sessionGoalFixture({ userId: user.id });
+    const session = await studySessionFixture({ goalId: goal.id, userId: user.id });
 
-      const mock = await studySessionBlockFixture({
-        estimatedMinutes: 165,
-        kind: "checkpoint",
-        payload: {
-          checkpoint: {
-            kind: "weekly",
-            mock: true,
-            mockIdentity,
-            passMark: 6,
-            phase: null,
-            rematch: false,
-            timeLimitMinutes: 165,
-          },
-          itemIds: items.map((item) => item.id),
+    const mock = await studySessionBlockFixture({
+      estimatedMinutes: 165,
+      kind: "checkpoint",
+      payload: {
+        checkpoint: {
+          kind: "weekly",
+          mock: true,
+          mockIdentity,
+          passMark: 6,
+          phase: null,
+          rematch: false,
+          timeLimitMinutes: 165,
         },
-        sessionId: session.id,
-      });
+        itemIds: items.map((item) => item.id),
+      },
+      sessionId: session.id,
+    });
 
-      mockSession(user.id);
+    mockSession(user.id);
 
-      const result = await openStudyDay({
-        goalId: goal.id,
-        shownDate: "2026-09-30",
-        target: { kind: "next", shown: null },
-        timeZone: "UTC",
-      });
+    const result = await openStudyDay({
+      goalId: goal.id,
+      shownDate: "2026-09-30",
+      target: { kind: "next", shown: null },
+      timeZone: "UTC",
+    });
 
-      expect(result).toMatchObject({
-        sessionId: session.id,
-        status: "opened",
-        target: null,
-        targetStatus: "changed",
-      });
+    expect(result).toMatchObject({
+      sessionId: session.id,
+      status: "opened",
+      target: null,
+      targetStatus: "changed",
+    });
 
-      await expect(
-        prisma.studySessionBlock.findUniqueOrThrow({ where: { id: mock.id } }),
-      ).resolves.toMatchObject({ startedAt: null, status: "pending" });
-    },
-  );
+    await expect(
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: mock.id } }),
+    ).resolves.toMatchObject({ startedAt: null, status: "pending" });
+  });
 
   it("creates one real queue on POST and reuses its IDs on a repeated action and read", async () => {
     const user = await userFixture();

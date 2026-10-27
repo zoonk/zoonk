@@ -18,8 +18,8 @@ const TWO_SECTIONS: ExamStructure = {
     order: null,
     scoring: { description: "", method: "raw" },
     sections: [
-      { day: null, minutes: 12, name: "Mathematics", questions: 8 },
-      { day: null, minutes: 12, name: "Languages and Codes", questions: 8 },
+      { day: null, kind: "objective", minutes: 12, name: "Mathematics", questions: 8 },
+      { day: null, kind: "objective", minutes: 12, name: "Languages and Codes", questions: 8 },
     ],
     timeLimitMinutes: 24,
     totalQuestions: 16,

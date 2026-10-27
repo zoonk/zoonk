@@ -1,4 +1,3 @@
-/** The exams the anytime mock tests copy: one day of two subjects, or one with a written part. */
 export const AREAS = ["Mathematics", "Languages"] as const;
 const CITATION = { passage: "From the notice.", sourceId: "notice" };
 
@@ -10,7 +9,13 @@ const STRUCTURE = {
     citations: [],
     order: null,
     scoring: { description: "", method: "raw" },
-    sections: AREAS.map((name) => ({ day: null, minutes: 12, name, questions: 8 })),
+    sections: AREAS.map((name) => ({
+      day: null,
+      kind: "objective",
+      minutes: 12,
+      name,
+      questions: 8,
+    })),
     timeLimitMinutes: 24,
     totalQuestions: 16,
   },

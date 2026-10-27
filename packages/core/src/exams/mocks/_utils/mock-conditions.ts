@@ -5,7 +5,6 @@ import { getMockScoring, getPartialCredit, getWrongPenalty } from "../../scoring
 import { type MockConditions } from "../mock-contract";
 import { type OwnedMock } from "./owned-mock";
 import { planWeeklyMock } from "./plan-weekly-mock";
-import { loadScheduledMock } from "./scheduled-mock";
 
 /**
  * When the real exam starts on the day a mock copies: the start time of that exam day, or of the
@@ -37,13 +36,11 @@ export async function buildMockConditions(
   const edition = blueprint ? readBlueprintContent(blueprint).edition : null;
 
   // The mock sits the exam day and length its plan saved for it (see `MockIdentity`).
-  const identity =
-    payload.checkpoint?.mockIdentity ??
-    (await loadScheduledMock({
-      date: sessionDate,
-      goalId: goal?.id ?? null,
-      planItemId: payload.planItemId,
-    }));
+  const identity = payload.checkpoint?.mockIdentity;
+
+  if (!identity) {
+    throw new Error("A scheduled mock is missing its saved exam day and length");
+  }
 
   const plan = await planWeeklyMock({
     goal: {

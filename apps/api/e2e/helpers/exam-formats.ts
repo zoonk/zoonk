@@ -104,7 +104,15 @@ export async function createFormatsExamGoal(userId: string) {
           citations: [],
           order: null,
           scoring: { description: "", method: "raw" },
-          sections: [{ day: null, minutes: 12, name: "Paper 1", questions: FORMATS_QUESTIONS }],
+          sections: [
+            {
+              day: null,
+              kind: "objective",
+              minutes: 12,
+              name: "Paper 1",
+              questions: FORMATS_QUESTIONS,
+            },
+          ],
           timeLimitMinutes: 12,
           totalQuestions: FORMATS_QUESTIONS,
         },

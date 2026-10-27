@@ -959,12 +959,19 @@ describe("plan changes the buddy proposes", () => {
         edition: {
           citations: [],
           dates: [
-            { citation, date: "2020-10-05", kind: "registrationEnd", label: "Registration ends" },
-            { citation, date: "2021-01-10", kind: "exam", label: "First phase" },
+            {
+              citation,
+              date: "2020-10-05",
+              kind: "registrationEnd",
+              label: "Registration ends",
+              startTime: null,
+            },
+            { citation, date: "2021-01-10", kind: "exam", label: "First phase", startTime: null },
           ],
           noticeUrl: "https://exam.test/notice.pdf",
           questionCount: 80,
           sourceHash: null,
+          timeZone: null,
           year: 2020,
         },
         name: "Bar exam",
@@ -1064,10 +1071,13 @@ describe("plan changes the buddy proposes", () => {
       examBlueprintFixture({
         edition: {
           citations: [],
-          dates: [{ citation, date: "2020-10-02", kind: "exam", label: "Biology test" }],
+          dates: [
+            { citation, date: "2020-10-02", kind: "exam", label: "Biology test", startTime: null },
+          ],
           noticeUrl: null,
           questionCount: null,
           sourceHash: null,
+          timeZone: null,
           year: 2020,
         },
         name: "Biology test",

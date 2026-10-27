@@ -33,7 +33,13 @@ const STRUCTURE = {
     citations: [],
     order: null,
     scoring: { description: "", method: "raw" },
-    sections: AREAS.map((name) => ({ day: null, minutes: 12, name, questions: 8 })),
+    sections: AREAS.map((name) => ({
+      day: null,
+      kind: "objective",
+      minutes: 12,
+      name,
+      questions: 8,
+    })),
     timeLimitMinutes: 24,
     totalQuestions: 16,
   },
@@ -681,7 +687,9 @@ describe("repeating mocks", () => {
       ...STRUCTURE,
       mock: {
         ...STRUCTURE.mock,
-        sections: [{ day: null, minutes: 24, name: "Objective test", questions: 16 }],
+        sections: [
+          { day: null, kind: "objective", minutes: 24, name: "Objective test", questions: 16 },
+        ],
       },
       subjects: STRUCTURE.subjects.map((subject) => ({
         ...subject,

@@ -10,8 +10,14 @@ const ENEM: ExamStructure = {
     order: null,
     scoring: { description: "", method: "itemResponseTheory" },
     sections: [
-      { day: 1, minutes: 330, name: "Languages, Humanities and essay", questions: 90 },
-      { day: 2, minutes: 300, name: "Natural Sciences and Math", questions: 90 },
+      {
+        day: 1,
+        kind: "objective",
+        minutes: 330,
+        name: "Languages, Humanities and essay",
+        questions: 90,
+      },
+      { day: 2, kind: "objective", minutes: 300, name: "Natural Sciences and Math", questions: 90 },
     ],
     timeLimitMinutes: null,
     totalQuestions: 180,
@@ -77,7 +83,7 @@ const LISTENING_EXAM: ExamStructure = {
     order: null,
     scoring: { description: "", method: "raw" },
     sections: [
-      { day: 1, minutes: 60, name: "Reading", questions: 40 },
+      { day: 1, kind: "objective", minutes: 60, name: "Reading", questions: 40 },
       { day: 1, kind: "listening", minutes: 30, name: "Listening", questions: 40 },
     ],
     timeLimitMinutes: null,
@@ -153,8 +159,8 @@ const TWO_SECTIONS: ExamStructure = {
     order: null,
     scoring: { description: "", method: "raw" },
     sections: [
-      { day: 1, minutes: 60, name: "Mathematics", questions: 40 },
-      { day: 1, minutes: 60, name: "Sciences", questions: 40 },
+      { day: 1, kind: "objective", minutes: 60, name: "Mathematics", questions: 40 },
+      { day: 1, kind: "objective", minutes: 60, name: "Sciences", questions: 40 },
       { day: 1, kind: "written", minutes: 60, name: "Essay", questions: null },
     ],
     timeLimitMinutes: null,

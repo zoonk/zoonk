@@ -70,6 +70,7 @@ describe("public catalog render read budgets", () => {
               date: "2026-12-18",
               kind: "exam",
               label: "Exam",
+              startTime: null,
             },
           ],
           noticeUrl: null,

@@ -139,7 +139,13 @@ function edition(date: string) {
   return {
     citations: [],
     dates: [
-      { citation: { passage: "Exam day", sourceId: "notice" }, date, kind: "exam", label: "Exam" },
+      {
+        citation: { passage: "Exam day", sourceId: "notice" },
+        date,
+        kind: "exam",
+        label: "Exam",
+        startTime: null,
+      },
     ],
     noticeUrl: null,
     questionCount: null,
@@ -289,7 +295,7 @@ describe("the course page's example plan cache", () => {
             citations: [],
             order: null,
             scoring: { description: "", method: "raw" },
-            sections: [{ day: null, minutes: 90, name: "Paper", questions: 30 }],
+            sections: [{ day: null, kind: "objective", minutes: 90, name: "Paper", questions: 30 }],
             timeLimitMinutes: 90,
             totalQuestions: 30,
           },

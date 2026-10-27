@@ -93,6 +93,7 @@ export function checkpointItemFixture({
 export const NET_SCORED_EXAM_STRUCTURE = {
   formats: [],
   mock: {
+    adaptive: false,
     citations: [{ passage: "Each wrong answer cancels a right one.", sourceId: "source" }],
     order: null,
     scoring: { description: "Wrong answers cancel right ones", method: "wrongCancelsRight" },

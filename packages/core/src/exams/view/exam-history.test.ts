@@ -371,14 +371,21 @@ function subjectResult(rightBySubject: Record<string, number>, perSubject = 16):
 }
 
 /** What a mock fixed when it started, as the history reads it. */
-function sat(attrs: Pick<MockConditions, "purpose" | "shape"> & { reused?: number }) {
+function sat(
+  attrs: Pick<MockConditions, "purpose" | "shape"> & { reused?: number },
+): MockConditions {
   return {
     day: null,
+    examQuestions: null,
     fullLength: false,
+    partialCredit: "allOrNothing",
+    reused: 0,
     scoring: "raw",
     sections: [],
     startTime: null,
     timeZone: null,
+    timedOutSections: [],
+    wrongPenalty: 1,
     ...attrs,
   };
 }

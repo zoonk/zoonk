@@ -3070,8 +3070,8 @@ msgctxt "fjrJL6"
 msgid "Quick explanation · {time}"
 msgstr "Explication rapide · {time}"
 
-#: src/feedback/content-vote-menu-items.tsx
 #: src/feedback/feedback-form-dialog.tsx
+#: src/feedback/report-problem-item.tsx
 #: src/journey/journey-menu.tsx
 msgctxt "feedback.Hf_X9X"
 msgid "Report a problem"

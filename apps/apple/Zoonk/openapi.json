@@ -8610,18 +8610,6 @@
           },
           {
             "in": "query",
-            "name": "include",
-            "schema": {
-              "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked",
-              "type": "string",
-              "enum": [
-                "answered"
-              ]
-            },
-            "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked"
-          },
-          {
-            "in": "query",
             "name": "contextKind",
             "schema": {
               "description": "Filter by context kind; use lesson for the completion conversation",
@@ -8747,18 +8735,6 @@
             },
             "required": true,
             "description": "Chapter ID"
-          },
-          {
-            "in": "query",
-            "name": "include",
-            "schema": {
-              "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked",
-              "type": "string",
-              "enum": [
-                "answered"
-              ]
-            },
-            "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked"
           }
         ],
         "requestBody": {
@@ -8895,18 +8871,6 @@
           },
           {
             "in": "query",
-            "name": "include",
-            "schema": {
-              "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked",
-              "type": "string",
-              "enum": [
-                "answered"
-              ]
-            },
-            "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked"
-          },
-          {
-            "in": "query",
             "name": "contextKind",
             "schema": {
               "description": "Filter by context kind; use lesson for the completion conversation",
@@ -9032,18 +8996,6 @@
             },
             "required": true,
             "description": "Goal ID"
-          },
-          {
-            "in": "query",
-            "name": "include",
-            "schema": {
-              "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked",
-              "type": "string",
-              "enum": [
-                "answered"
-              ]
-            },
-            "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked"
           }
         ],
         "requestBody": {
@@ -9192,18 +9144,6 @@
           },
           {
             "in": "query",
-            "name": "include",
-            "schema": {
-              "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked",
-              "type": "string",
-              "enum": [
-                "answered"
-              ]
-            },
-            "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked"
-          },
-          {
-            "in": "query",
             "name": "contextKind",
             "schema": {
               "description": "Filter by context kind; use lesson for the completion conversation",
@@ -9341,18 +9281,6 @@
             },
             "required": true,
             "description": "A subject's `key` in the goal's syllabus (`GET /v1/goals/{goalId}/syllabus`)"
-          },
-          {
-            "in": "query",
-            "name": "include",
-            "schema": {
-              "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked",
-              "type": "string",
-              "enum": [
-                "answered"
-              ]
-            },
-            "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked"
           }
         ],
         "requestBody": {
@@ -9489,18 +9417,6 @@
           },
           {
             "in": "query",
-            "name": "include",
-            "schema": {
-              "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked",
-              "type": "string",
-              "enum": [
-                "answered"
-              ]
-            },
-            "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked"
-          },
-          {
-            "in": "query",
             "name": "contextKind",
             "schema": {
               "description": "Filter by context kind; use lesson for the completion conversation",
@@ -9626,18 +9542,6 @@
             },
             "required": true,
             "description": "A question of the item bank, as a study session's block or mistakes practice asks it (`itemId`)"
-          },
-          {
-            "in": "query",
-            "name": "include",
-            "schema": {
-              "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked",
-              "type": "string",
-              "enum": [
-                "answered"
-              ]
-            },
-            "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked"
           }
         ],
         "requestBody": {
@@ -9774,18 +9678,6 @@
           },
           {
             "in": "query",
-            "name": "include",
-            "schema": {
-              "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked",
-              "type": "string",
-              "enum": [
-                "answered"
-              ]
-            },
-            "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked"
-          },
-          {
-            "in": "query",
             "name": "contextKind",
             "schema": {
               "description": "Filter by context kind; use lesson for the completion conversation",
@@ -9911,18 +9803,6 @@
             },
             "required": true,
             "description": "Lesson ID"
-          },
-          {
-            "in": "query",
-            "name": "include",
-            "schema": {
-              "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked",
-              "type": "string",
-              "enum": [
-                "answered"
-              ]
-            },
-            "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked"
           }
         ],
         "requestBody": {
@@ -10132,18 +10012,6 @@
           },
           {
             "in": "query",
-            "name": "include",
-            "schema": {
-              "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked",
-              "type": "string",
-              "enum": [
-                "answered"
-              ]
-            },
-            "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked"
-          },
-          {
-            "in": "query",
             "name": "contextKind",
             "schema": {
               "description": "Filter by context kind; use lesson for the completion conversation",
@@ -10269,18 +10137,6 @@
             },
             "required": true,
             "description": "The id the mock opens by: its study session block's for a mock the plan scheduled, its own for one taken any time"
-          },
-          {
-            "in": "query",
-            "name": "include",
-            "schema": {
-              "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked",
-              "type": "string",
-              "enum": [
-                "answered"
-              ]
-            },
-            "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked"
           }
         ],
         "requestBody": {
@@ -10413,18 +10269,6 @@
             },
             "required": true,
             "description": "Lesson question ID"
-          },
-          {
-            "in": "query",
-            "name": "include",
-            "schema": {
-              "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked",
-              "type": "string",
-              "enum": [
-                "answered"
-              ]
-            },
-            "description": "`answered`: each turn about a session's or practice's question (`context.kind: item`) also says whether it was asked once the learner had checked it, about their answer (`context.answered`). Before a question is checked again, apps leave out the turns about an earlier answer, as they leave out a lesson screen's `answer` turns until it's checked"
           }
         ],
         "responses": {
@@ -22049,58 +21893,100 @@
                               },
                               "checkpoint": {
                                 "nullable": true,
-                                "type": "object",
-                                "properties": {
-                                  "kind": {
-                                    "type": "string",
-                                    "enum": [
-                                      "boss",
-                                      "finalBoss",
-                                      "weekly"
-                                    ]
-                                  },
-                                  "mock": {
-                                    "type": "boolean"
-                                  },
-                                  "mockIdentity": {
-                                    "nullable": true,
+                                "oneOf": [
+                                  {
                                     "type": "object",
                                     "properties": {
-                                      "day": {
+                                      "kind": {
+                                        "type": "string",
+                                        "enum": [
+                                          "boss",
+                                          "finalBoss",
+                                          "weekly"
+                                        ]
+                                      },
+                                      "phase": {
                                         "nullable": true,
                                         "type": "integer",
-                                        "minimum": 0,
-                                        "exclusiveMinimum": true,
+                                        "minimum": -9007199254740991,
                                         "maximum": 9007199254740991
                                       },
-                                      "fullLength": {
+                                      "rematch": {
                                         "type": "boolean"
+                                      },
+                                      "mock": {
+                                        "type": "boolean",
+                                        "enum": [
+                                          true
+                                        ]
+                                      },
+                                      "mockIdentity": {
+                                        "type": "object",
+                                        "properties": {
+                                          "day": {
+                                            "nullable": true,
+                                            "type": "integer",
+                                            "minimum": 0,
+                                            "exclusiveMinimum": true,
+                                            "maximum": 9007199254740991
+                                          },
+                                          "fullLength": {
+                                            "type": "boolean"
+                                          }
+                                        },
+                                        "required": [
+                                          "day",
+                                          "fullLength"
+                                        ],
+                                        "additionalProperties": false
                                       }
                                     },
                                     "required": [
-                                      "day",
-                                      "fullLength"
+                                      "kind",
+                                      "phase",
+                                      "rematch",
+                                      "mock",
+                                      "mockIdentity"
                                     ],
                                     "additionalProperties": false
                                   },
-                                  "phase": {
-                                    "nullable": true,
-                                    "type": "integer",
-                                    "minimum": -9007199254740991,
-                                    "maximum": 9007199254740991
-                                  },
-                                  "rematch": {
-                                    "type": "boolean"
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "kind": {
+                                        "type": "string",
+                                        "enum": [
+                                          "boss",
+                                          "finalBoss",
+                                          "weekly"
+                                        ]
+                                      },
+                                      "phase": {
+                                        "nullable": true,
+                                        "type": "integer",
+                                        "minimum": -9007199254740991,
+                                        "maximum": 9007199254740991
+                                      },
+                                      "rematch": {
+                                        "type": "boolean"
+                                      },
+                                      "mock": {
+                                        "type": "boolean",
+                                        "enum": [
+                                          false
+                                        ]
+                                      }
+                                    },
+                                    "required": [
+                                      "kind",
+                                      "phase",
+                                      "rematch",
+                                      "mock"
+                                    ],
+                                    "additionalProperties": false
                                   }
-                                },
-                                "required": [
-                                  "kind",
-                                  "mock",
-                                  "mockIdentity",
-                                  "phase",
-                                  "rematch"
                                 ],
-                                "additionalProperties": false
+                                "type": "object"
                               },
                               "flags": {
                                 "type": "object",
@@ -22115,7 +22001,6 @@
                                     "type": "boolean"
                                   },
                                   "refresh": {
-                                    "default": false,
                                     "type": "boolean"
                                   },
                                   "reinforcement": {
@@ -22129,6 +22014,7 @@
                                   "extra",
                                   "fullReview",
                                   "mistakesOnly",
+                                  "refresh",
                                   "reinforcement",
                                   "weakest"
                                 ],
@@ -22206,58 +22092,100 @@
                               },
                               "checkpoint": {
                                 "nullable": true,
-                                "type": "object",
-                                "properties": {
-                                  "kind": {
-                                    "type": "string",
-                                    "enum": [
-                                      "boss",
-                                      "finalBoss",
-                                      "weekly"
-                                    ]
-                                  },
-                                  "mock": {
-                                    "type": "boolean"
-                                  },
-                                  "mockIdentity": {
-                                    "nullable": true,
+                                "oneOf": [
+                                  {
                                     "type": "object",
                                     "properties": {
-                                      "day": {
+                                      "kind": {
+                                        "type": "string",
+                                        "enum": [
+                                          "boss",
+                                          "finalBoss",
+                                          "weekly"
+                                        ]
+                                      },
+                                      "phase": {
                                         "nullable": true,
                                         "type": "integer",
-                                        "minimum": 0,
-                                        "exclusiveMinimum": true,
+                                        "minimum": -9007199254740991,
                                         "maximum": 9007199254740991
                                       },
-                                      "fullLength": {
+                                      "rematch": {
                                         "type": "boolean"
+                                      },
+                                      "mock": {
+                                        "type": "boolean",
+                                        "enum": [
+                                          true
+                                        ]
+                                      },
+                                      "mockIdentity": {
+                                        "type": "object",
+                                        "properties": {
+                                          "day": {
+                                            "nullable": true,
+                                            "type": "integer",
+                                            "minimum": 0,
+                                            "exclusiveMinimum": true,
+                                            "maximum": 9007199254740991
+                                          },
+                                          "fullLength": {
+                                            "type": "boolean"
+                                          }
+                                        },
+                                        "required": [
+                                          "day",
+                                          "fullLength"
+                                        ],
+                                        "additionalProperties": false
                                       }
                                     },
                                     "required": [
-                                      "day",
-                                      "fullLength"
+                                      "kind",
+                                      "phase",
+                                      "rematch",
+                                      "mock",
+                                      "mockIdentity"
                                     ],
                                     "additionalProperties": false
                                   },
-                                  "phase": {
-                                    "nullable": true,
-                                    "type": "integer",
-                                    "minimum": -9007199254740991,
-                                    "maximum": 9007199254740991
-                                  },
-                                  "rematch": {
-                                    "type": "boolean"
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "kind": {
+                                        "type": "string",
+                                        "enum": [
+                                          "boss",
+                                          "finalBoss",
+                                          "weekly"
+                                        ]
+                                      },
+                                      "phase": {
+                                        "nullable": true,
+                                        "type": "integer",
+                                        "minimum": -9007199254740991,
+                                        "maximum": 9007199254740991
+                                      },
+                                      "rematch": {
+                                        "type": "boolean"
+                                      },
+                                      "mock": {
+                                        "type": "boolean",
+                                        "enum": [
+                                          false
+                                        ]
+                                      }
+                                    },
+                                    "required": [
+                                      "kind",
+                                      "phase",
+                                      "rematch",
+                                      "mock"
+                                    ],
+                                    "additionalProperties": false
                                   }
-                                },
-                                "required": [
-                                  "kind",
-                                  "mock",
-                                  "mockIdentity",
-                                  "phase",
-                                  "rematch"
                                 ],
-                                "additionalProperties": false
+                                "type": "object"
                               },
                               "flags": {
                                 "type": "object",
@@ -22272,7 +22200,6 @@
                                     "type": "boolean"
                                   },
                                   "refresh": {
-                                    "default": false,
                                     "type": "boolean"
                                   },
                                   "reinforcement": {
@@ -22286,6 +22213,7 @@
                                   "extra",
                                   "fullReview",
                                   "mistakesOnly",
+                                  "refresh",
                                   "reinforcement",
                                   "weakest"
                                 ],
@@ -36858,8 +36786,7 @@
             "type": "string",
             "enum": [
               "todo",
-              "done",
-              "nothingToday"
+              "done"
             ]
           },
           "total": {
@@ -36883,7 +36810,7 @@
           "total"
         ],
         "additionalProperties": false,
-        "description": "An achievable mission picked when the day's session is built and stored with that session. Reads update progress against the saved target; unavailable kinds are omitted, and an unfinished mission whose planned anchor was removed is dropped. Completed missions remain. A session still running after midnight keeps its original missions. Current responses use todo or done; nothingToday is retained for older clients. Optional target and detail fields let clients open and describe each kind without changing the legacy counters."
+        "description": "An achievable mission picked when the day's session is built and stored with that session. Reads update progress against the saved target; unavailable kinds are omitted, and an unfinished mission whose planned anchor was removed is dropped. Completed missions remain. A session still running after midnight keeps its original missions. Optional target and detail fields let clients open and describe each kind alongside the progress counters."
       },
       "StudyMissionDetail": {
         "type": "object",
@@ -38319,7 +38246,6 @@
             "description": "The belt level and the tenth of Energy this work took the learner to, to celebrate on its result; nothing on a repeat, which celebrates none of it again"
           },
           "missionMoment": {
-            "default": null,
             "nullable": true,
             "allOf": [
               {
@@ -55281,6 +55207,7 @@
                 "type": "object",
                 "properties": {
                   "basis": {
+                    "nullable": true,
                     "type": "object",
                     "properties": {
                       "position": {
@@ -55544,6 +55471,7 @@
                   }
                 },
                 "required": [
+                  "basis",
                   "options",
                   "question"
                 ],
@@ -62528,6 +62456,7 @@
                     }
                   },
                   "basis": {
+                    "nullable": true,
                     "type": "object",
                     "properties": {
                       "position": {
@@ -62721,6 +62650,7 @@
                   }
                 },
                 "required": [
+                  "basis",
                   "keyPoints",
                   "question",
                   "sampleAnswer"
@@ -64856,8 +64786,8 @@
                 "type": "object",
                 "properties": {
                   "answered": {
-                    "description": "Asked about their checked answer",
-                    "type": "boolean"
+                    "type": "boolean",
+                    "description": "Asked about their checked answer"
                   },
                   "kind": {
                     "type": "string",
@@ -64867,6 +64797,7 @@
                   }
                 },
                 "required": [
+                  "answered",
                   "kind"
                 ],
                 "additionalProperties": false
@@ -65428,8 +65359,8 @@
                 "type": "object",
                 "properties": {
                   "answered": {
-                    "description": "Asked about their checked answer",
-                    "type": "boolean"
+                    "type": "boolean",
+                    "description": "Asked about their checked answer"
                   },
                   "kind": {
                     "type": "string",
@@ -65439,6 +65370,7 @@
                   }
                 },
                 "required": [
+                  "answered",
                   "kind"
                 ],
                 "additionalProperties": false
@@ -65564,7 +65496,6 @@
             "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
           },
           "missionMoment": {
-            "default": null,
             "nullable": true,
             "allOf": [
               {
@@ -67864,75 +67795,128 @@
         "additionalProperties": false
       },
       "StudyCheckpoint": {
-        "type": "object",
-        "properties": {
-          "kind": {
-            "type": "string",
-            "enum": [
-              "boss",
-              "finalBoss",
-              "weekly"
-            ],
-            "description": "A phase boss, the final boss that closes the plan, or the weekly Big Challenge"
-          },
-          "mock": {
-            "type": "boolean",
-            "description": "An exam's weekly mock, which feeds the estimated score"
-          },
-          "mockIdentity": {
-            "nullable": true,
+        "oneOf": [
+          {
             "type": "object",
             "properties": {
-              "day": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "boss",
+                  "finalBoss",
+                  "weekly"
+                ]
+              },
+              "phase": {
+                "nullable": true,
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "rematch": {
+                "type": "boolean"
+              },
+              "mock": {
+                "type": "boolean",
+                "enum": [
+                  true
+                ]
+              },
+              "mockIdentity": {
+                "type": "object",
+                "properties": {
+                  "day": {
+                    "nullable": true,
+                    "type": "integer",
+                    "minimum": 0,
+                    "exclusiveMinimum": true,
+                    "maximum": 9007199254740991
+                  },
+                  "fullLength": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "day",
+                  "fullLength"
+                ],
+                "additionalProperties": false
+              },
+              "passMark": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "Right answers needed to win"
+              },
+              "timeLimitMinutes": {
                 "nullable": true,
                 "type": "integer",
                 "minimum": 0,
-                "exclusiveMinimum": true,
                 "maximum": 9007199254740991
-              },
-              "fullLength": {
-                "type": "boolean"
               }
             },
             "required": [
-              "day",
-              "fullLength"
+              "kind",
+              "phase",
+              "rematch",
+              "mock",
+              "mockIdentity",
+              "passMark",
+              "timeLimitMinutes"
             ],
             "additionalProperties": false
           },
-          "passMark": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991,
-            "description": "Right answers needed to win: seven of ten"
-          },
-          "phase": {
-            "nullable": true,
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
-          },
-          "rematch": {
-            "type": "boolean",
-            "description": "A boss lost on an earlier day, back again"
-          },
-          "timeLimitMinutes": {
-            "nullable": true,
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
+          {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "boss",
+                  "finalBoss",
+                  "weekly"
+                ]
+              },
+              "phase": {
+                "nullable": true,
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "rematch": {
+                "type": "boolean"
+              },
+              "mock": {
+                "type": "boolean",
+                "enum": [
+                  false
+                ]
+              },
+              "passMark": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "Right answers needed to win"
+              },
+              "timeLimitMinutes": {
+                "nullable": true,
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "kind",
+              "phase",
+              "rematch",
+              "mock",
+              "passMark",
+              "timeLimitMinutes"
+            ],
+            "additionalProperties": false
           }
-        },
-        "required": [
-          "kind",
-          "mock",
-          "mockIdentity",
-          "passMark",
-          "phase",
-          "rematch",
-          "timeLimitMinutes"
         ],
-        "additionalProperties": false
+        "type": "object"
       },
       "GoalContent": {
         "type": "object",
@@ -73126,6 +73110,7 @@
           "belt",
           "buddy",
           "energy",
+          "firstSteps",
           "glasses",
           "nextStage",
           "stage",
@@ -76388,13 +76373,11 @@
                 "type": "number"
               },
               "partial": {
-                "default": 0,
                 "type": "integer",
                 "minimum": -9007199254740991,
                 "maximum": 9007199254740991
               },
               "penalty": {
-                "default": 1,
                 "type": "number"
               },
               "right": {
@@ -76452,7 +76435,6 @@
             ]
           },
           "topics": {
-            "default": [],
             "type": "array",
             "items": {
               "type": "object",
@@ -77877,7 +77859,6 @@
                   "type": "string"
                 },
                 "startTime": {
-                  "default": null,
                   "nullable": true,
                   "type": "string",
                   "pattern": "^(?:[01]\\d|2[0-3]):[0-5]\\d$"
@@ -77908,7 +77889,6 @@
             "type": "string"
           },
           "timeZone": {
-            "default": null,
             "nullable": true,
             "type": "string"
           },
@@ -78079,7 +78059,6 @@
             "type": "object",
             "properties": {
               "adaptive": {
-                "default": false,
                 "type": "boolean"
               },
               "citations": {
@@ -78296,6 +78275,7 @@
                   },
                   "required": [
                     "day",
+                    "kind",
                     "minutes",
                     "name",
                     "questions"
@@ -78705,7 +78685,6 @@
           "type": "object",
           "properties": {
             "appearances": {
-              "default": null,
               "nullable": true,
               "type": "integer",
               "minimum": 0,
@@ -82480,8 +82459,7 @@
                   "type": "string",
                   "enum": [
                     "todo",
-                    "done",
-                    "nothingToday"
+                    "done"
                   ]
                 },
                 "total": {
@@ -82525,58 +82503,100 @@
                             },
                             "checkpoint": {
                               "nullable": true,
-                              "type": "object",
-                              "properties": {
-                                "kind": {
-                                  "type": "string",
-                                  "enum": [
-                                    "boss",
-                                    "finalBoss",
-                                    "weekly"
-                                  ]
-                                },
-                                "mock": {
-                                  "type": "boolean"
-                                },
-                                "mockIdentity": {
-                                  "nullable": true,
+                              "oneOf": [
+                                {
                                   "type": "object",
                                   "properties": {
-                                    "day": {
+                                    "kind": {
+                                      "type": "string",
+                                      "enum": [
+                                        "boss",
+                                        "finalBoss",
+                                        "weekly"
+                                      ]
+                                    },
+                                    "phase": {
                                       "nullable": true,
                                       "type": "integer",
-                                      "minimum": 0,
-                                      "exclusiveMinimum": true,
+                                      "minimum": -9007199254740991,
                                       "maximum": 9007199254740991
                                     },
-                                    "fullLength": {
+                                    "rematch": {
                                       "type": "boolean"
+                                    },
+                                    "mock": {
+                                      "type": "boolean",
+                                      "enum": [
+                                        true
+                                      ]
+                                    },
+                                    "mockIdentity": {
+                                      "type": "object",
+                                      "properties": {
+                                        "day": {
+                                          "nullable": true,
+                                          "type": "integer",
+                                          "minimum": 0,
+                                          "exclusiveMinimum": true,
+                                          "maximum": 9007199254740991
+                                        },
+                                        "fullLength": {
+                                          "type": "boolean"
+                                        }
+                                      },
+                                      "required": [
+                                        "day",
+                                        "fullLength"
+                                      ],
+                                      "additionalProperties": false
                                     }
                                   },
                                   "required": [
-                                    "day",
-                                    "fullLength"
+                                    "kind",
+                                    "phase",
+                                    "rematch",
+                                    "mock",
+                                    "mockIdentity"
                                   ],
                                   "additionalProperties": false
                                 },
-                                "phase": {
-                                  "nullable": true,
-                                  "type": "integer",
-                                  "minimum": -9007199254740991,
-                                  "maximum": 9007199254740991
-                                },
-                                "rematch": {
-                                  "type": "boolean"
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "kind": {
+                                      "type": "string",
+                                      "enum": [
+                                        "boss",
+                                        "finalBoss",
+                                        "weekly"
+                                      ]
+                                    },
+                                    "phase": {
+                                      "nullable": true,
+                                      "type": "integer",
+                                      "minimum": -9007199254740991,
+                                      "maximum": 9007199254740991
+                                    },
+                                    "rematch": {
+                                      "type": "boolean"
+                                    },
+                                    "mock": {
+                                      "type": "boolean",
+                                      "enum": [
+                                        false
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "kind",
+                                    "phase",
+                                    "rematch",
+                                    "mock"
+                                  ],
+                                  "additionalProperties": false
                                 }
-                              },
-                              "required": [
-                                "kind",
-                                "mock",
-                                "mockIdentity",
-                                "phase",
-                                "rematch"
                               ],
-                              "additionalProperties": false
+                              "type": "object"
                             },
                             "flags": {
                               "type": "object",
@@ -82591,7 +82611,6 @@
                                   "type": "boolean"
                                 },
                                 "refresh": {
-                                  "default": false,
                                   "type": "boolean"
                                 },
                                 "reinforcement": {

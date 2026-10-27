@@ -100,7 +100,15 @@ async function examGoal({ name, structure }: { name: string; structure: ExamStru
     }),
     studySessionBlockFixture({
       kind: "checkpoint",
-      payload: { ...asks, checkpoint: { ...BOSS, kind: "weekly", mock: true } },
+      payload: {
+        ...asks,
+        checkpoint: {
+          ...BOSS,
+          kind: "weekly",
+          mock: true,
+          mockIdentity: { day: null, fullLength: false },
+        },
+      },
       position: 2,
       sessionId,
     }),

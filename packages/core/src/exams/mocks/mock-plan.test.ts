@@ -31,8 +31,14 @@ function structure(mock: Partial<NonNullable<ExamStructure["mock"]>>): ExamStruc
 
 const ENEM = structure({
   sections: [
-    { day: 1, minutes: 330, name: "Languages, Humanities and essay", questions: 90 },
-    { day: 2, minutes: 300, name: "Natural Sciences and Math", questions: 90 },
+    {
+      day: 1,
+      kind: "objective",
+      minutes: 330,
+      name: "Languages, Humanities and essay",
+      questions: 90,
+    },
+    { day: 2, kind: "objective", minutes: 300, name: "Natural Sciences and Math", questions: 90 },
   ],
   totalQuestions: 180,
 });
@@ -103,8 +109,20 @@ describe(planMock, () => {
   it("sits one exam day's subjects when its section names part of each one's official name", () => {
     const enem = structure({
       sections: [
-        { day: 1, minutes: 330, name: "Linguagens, Ciências Humanas e redação", questions: 90 },
-        { day: 2, minutes: 300, name: "Ciências da Natureza e Matemática", questions: 90 },
+        {
+          day: 1,
+          kind: "objective",
+          minutes: 330,
+          name: "Linguagens, Ciências Humanas e redação",
+          questions: 90,
+        },
+        {
+          day: 2,
+          kind: "objective",
+          minutes: 300,
+          name: "Ciências da Natureza e Matemática",
+          questions: 90,
+        },
       ],
       totalQuestions: 180,
     });
@@ -236,8 +254,8 @@ describe(planMock, () => {
       structure: structure({
         adaptive: true,
         sections: [
-          { day: null, minutes: 35, name: "Math, module 1", questions: 10 },
-          { day: null, minutes: 35, name: "Math, module 2", questions: 10 },
+          { day: null, kind: "objective", minutes: 35, name: "Math, module 1", questions: 10 },
+          { day: null, kind: "objective", minutes: 35, name: "Math, module 2", questions: 10 },
         ],
       }),
     });
@@ -265,6 +283,7 @@ describe("a mock of an exam with tools and breaks", () => {
         {
           breakAfterMinutes: 10,
           day: null,
+          kind: "objective",
           minutes: 64,
           name: "Reading and Writing",
           questions: 54,
@@ -272,6 +291,7 @@ describe("a mock of an exam with tools and breaks", () => {
         },
         {
           day: null,
+          kind: "objective",
           minutes: 70,
           name: "Math",
           questions: 44,
@@ -339,7 +359,13 @@ describe("a mock of an exam with a written test", () => {
     ...structure({
       scoring: { description: "", method: "wrongCancelsRight" },
       sections: [
-        { day: null, minutes: 300, name: "Provas objetivas (P1 e P2)", questions: 180 },
+        {
+          day: null,
+          kind: "objective",
+          minutes: 300,
+          name: "Provas objetivas (P1 e P2)",
+          questions: 180,
+        },
         {
           day: null,
           kind: "written",
@@ -443,8 +469,20 @@ describe("a mock of an exam with a written test", () => {
       mock: ENEM.mock && {
         ...ENEM.mock,
         sections: [
-          { day: 1, minutes: 330, name: "Linguagens, Ciências Humanas e redação", questions: 90 },
-          { day: 2, minutes: 300, name: "Ciências da Natureza e Matemática", questions: 90 },
+          {
+            day: 1,
+            kind: "objective",
+            minutes: 330,
+            name: "Linguagens, Ciências Humanas e redação",
+            questions: 90,
+          },
+          {
+            day: 2,
+            kind: "objective",
+            minutes: 300,
+            name: "Ciências da Natureza e Matemática",
+            questions: 90,
+          },
         ],
       },
       subjects: [

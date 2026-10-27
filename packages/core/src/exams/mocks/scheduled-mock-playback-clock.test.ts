@@ -32,12 +32,13 @@ const FULL_DAY = MOCK_DAY;
 const TWO_OBJECTIVE = examStructureSchema.parse({
   formats: [],
   mock: {
+    adaptive: false,
     citations: [],
     order: null,
     scoring: { description: "One point per correct answer", method: "raw" },
     sections: [
-      { day: 1, minutes: 60, name: "Math", questions: 40 },
-      { day: 1, minutes: 60, name: "Science", questions: 40 },
+      { day: 1, kind: "objective", minutes: 60, name: "Math", questions: 40 },
+      { day: 1, kind: "objective", minutes: 60, name: "Science", questions: 40 },
     ],
     timeLimitMinutes: 120,
     totalQuestions: 80,
@@ -327,7 +328,7 @@ describe("a scheduled mock's playable sections keep the funded clock", () => {
       mock: {
         ...TWO_OBJECTIVE.mock,
         sections: [
-          { day: 1, minutes: 60, name: "Math", questions: 40 },
+          { day: 1, kind: "objective", minutes: 60, name: "Math", questions: 40 },
           { day: 1, kind: "written", minutes: 30, name: "Writing", questions: null },
         ],
         timeLimitMinutes: 90,

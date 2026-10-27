@@ -29,7 +29,6 @@ import {
 } from "./_utils/tutor-subject";
 import {
   type CreateLessonQuestionInput,
-  type LessonQuestionReadInput,
   type LessonScreenSuggestion,
   type TutorTarget,
 } from "./contract";
@@ -65,16 +64,18 @@ type PersistedQuestionOutcome = ReturnType<typeof getCreateLessonQuestionOutcome
  * a conflicting request, as it is.
  */
 async function finishCreatedQuestion({
-  include,
   outcome,
   userId,
-}: LessonQuestionReadInput & { outcome: PersistedQuestionOutcome; userId: string }) {
+}: {
+  outcome: PersistedQuestionOutcome;
+  userId: string;
+}) {
   if (outcome.status !== "created") {
     return outcome;
   }
 
   const [question, missionMoment] = await Promise.all([
-    markItemTurnAnswered({ include, question: outcome.question }),
+    markItemTurnAnswered({ question: outcome.question }),
     settleAskedQuestion({ questionId: outcome.question.id, userId }),
   ]);
 
@@ -222,11 +223,10 @@ async function toAskedQuestion({
  * the client sent, or the chapter, plan or finished mock as a whole.
  */
 export async function createLessonQuestion({
-  include,
   input,
   target,
   wordSuggestion,
-}: LessonQuestionReadInput & {
+}: {
   input: CreateLessonQuestionInput;
   target: TutorTarget;
   /** Words a tapped suggestion; without it, a suggestion is asked as the learner's own words. */
@@ -256,7 +256,6 @@ export async function createLessonQuestion({
 
   if (existingQuestion) {
     return finishCreatedQuestion({
-      include,
       outcome: getCreateLessonQuestionOutcome({ question: existingQuestion, requestFingerprint }),
       userId,
     });
@@ -286,5 +285,5 @@ export async function createLessonQuestion({
     userId,
   });
 
-  return finishCreatedQuestion({ include, outcome, userId });
+  return finishCreatedQuestion({ outcome, userId });
 }

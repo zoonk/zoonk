@@ -316,10 +316,11 @@ function inDays(days: number): string {
 function examDayEdition(date: string) {
   return {
     citations: [],
-    dates: [{ citation, date, kind: "exam", label: "Exam day" }],
+    dates: [{ citation, date, kind: "exam", label: "Exam day", startTime: null }],
     noticeUrl: null,
     questionCount: null,
     sourceHash: null,
+    timeZone: null,
     year: Number(date.slice(0, 4)),
   };
 }
@@ -1594,10 +1595,11 @@ describe(goalContentWorkflow, () => {
       const blueprint = await examBlueprintFixture({
         edition: {
           citations: [],
-          dates: [{ citation, date: examDay, kind: "exam", label: "Exam day" }],
+          dates: [{ citation, date: examDay, kind: "exam", label: "Exam day", startTime: null }],
           noticeUrl: null,
           questionCount: null,
           sourceHash: null,
+          timeZone: null,
           year: Number(examDay.slice(0, 4)),
         },
         name: "Immunology board exam",
@@ -1816,10 +1818,11 @@ describe(goalContentWorkflow, () => {
       const blueprint = await examBlueprintFixture({
         edition: {
           citations: [],
-          dates: [{ citation, date: examDay, kind: "exam", label: "Exam day" }],
+          dates: [{ citation, date: examDay, kind: "exam", label: "Exam day", startTime: null }],
           noticeUrl: null,
           questionCount: null,
           sourceHash: null,
+          timeZone: null,
           year: Number(examDay.slice(0, 4)),
         },
         name: "Late board exam",
@@ -1979,10 +1982,11 @@ describe(goalContentWorkflow, () => {
       const blueprint = await examBlueprintFixture({
         edition: {
           citations: [],
-          dates: [{ citation, date: examDay, kind: "exam", label: "Exam day" }],
+          dates: [{ citation, date: examDay, kind: "exam", label: "Exam day", startTime: null }],
           noticeUrl: null,
           questionCount: null,
           sourceHash: null,
+          timeZone: null,
           year: Number(examDay.slice(0, 4)),
         },
         name: "Slow board exam",
@@ -2343,10 +2347,11 @@ describe(goalContentWorkflow, () => {
       const blueprint = await examBlueprintFixture({
         edition: {
           citations: [],
-          dates: [{ citation, date: examDay, kind: "exam", label: "Exam day" }],
+          dates: [{ citation, date: examDay, kind: "exam", label: "Exam day", startTime: null }],
           noticeUrl: null,
           questionCount: null,
           sourceHash: null,
+          timeZone: null,
           year: Number(examDay.slice(0, 4)),
         },
         name: "Slow board exam",

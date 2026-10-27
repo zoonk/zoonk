@@ -27,8 +27,11 @@ async function writtenSitting({ expired }: { expired: boolean }) {
       answers: { create: { answer: { text: ESSAY_TEXT }, durationMs: 60_000, itemId: essay.id } },
       conditions: {
         day: null,
+        examQuestions: null,
         fullLength: true,
+        partialCredit: "allOrNothing",
         purpose: "practice",
+        reused: 0,
         scoring: "raw",
         sections: [
           {
@@ -57,6 +60,8 @@ async function writtenSitting({ expired }: { expired: boolean }) {
         shape: { area: null, day: null, kind: "full" },
         startTime: null,
         timeZone: null,
+        timedOutSections: [],
+        wrongPenalty: 1,
       },
       goalId: goal.id,
       sectionIndex: 1,

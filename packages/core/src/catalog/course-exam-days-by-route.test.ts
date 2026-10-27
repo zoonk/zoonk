@@ -16,6 +16,7 @@ const EDITION = {
     date,
     kind: "exam",
     label: "Exam",
+    startTime: null,
   })),
   noticeUrl: null,
   questionCount: null,

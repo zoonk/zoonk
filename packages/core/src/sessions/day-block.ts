@@ -9,33 +9,37 @@ const MAX_AREA_ID_LENGTH = 100;
 /** An area of the goal's map: a chapter's id, or `phase:N` for skills not in a chapter yet. */
 export const areaIdSchema = z.string().min(1).max(MAX_AREA_ID_LENGTH);
 
-/** Known nullable exam days differ from legacy blocks that never recorded an identity. */
+/** A scheduled mock fixes its exam day and length when the day is built. */
 export const mockIdentitySchema: z.ZodType<MockIdentity> = z
   .object({ day: z.int().positive().nullable(), fullLength: z.boolean() })
   .strict();
+
+const checkpointRefShape = {
+  kind: z.enum(["boss", "finalBoss", "weekly"]),
+  phase: z.int().nullable(),
+  rematch: z.boolean(),
+};
+
+/** Only a mock has an exam day and length; every mock records both when it is selected. */
+export const checkpointRefSchema = z.discriminatedUnion("mock", [
+  z
+    .object({ ...checkpointRefShape, mock: z.literal(true), mockIdentity: mockIdentitySchema })
+    .strict(),
+  z.object({ ...checkpointRefShape, mock: z.literal(false) }).strict(),
+]);
 
 /** A position is a delivery hint; matching uses the work's identity and flags. */
 export const dayBlockRefSchema = z
   .object({
     areaId: areaIdSchema.nullable(),
     chapterId: z.uuid().nullable(),
-    checkpoint: z
-      .object({
-        kind: z.enum(["boss", "finalBoss", "weekly"]),
-        mock: z.boolean(),
-        mockIdentity: mockIdentitySchema.nullable(),
-        phase: z.int().nullable(),
-        rematch: z.boolean(),
-      })
-      .strict()
-      .nullable(),
+    checkpoint: checkpointRefSchema.nullable(),
     flags: z
       .object({
         extra: z.boolean(),
         fullReview: z.boolean(),
         mistakesOnly: z.boolean(),
-        /** Optional in a tap, so a client that doesn't send it yet keeps opening its work. */
-        refresh: z.boolean().default(false),
+        refresh: z.boolean(),
         reinforcement: z.boolean(),
         weakest: z.boolean(),
       })
@@ -51,8 +55,9 @@ export type DayBlockRef = z.infer<typeof dayBlockRefSchema>;
 export type DayWork = Omit<DayBlockRef, "flags" | "checkpoint"> &
   DayBlockRef["flags"] & {
     checkpoint:
-      | (Omit<NonNullable<DayBlockRef["checkpoint"]>, "mockIdentity"> & {
-          mockIdentity?: MockIdentity | null;
+      | (Omit<NonNullable<DayBlockRef["checkpoint"]>, "mockIdentity" | "mock"> & {
+          mock: boolean;
+          mockIdentity?: MockIdentity;
         })
       | null;
   };
@@ -82,13 +87,13 @@ export function toDayBlockRef(block: DayWork): DayBlockRef {
     areaId: block.areaId,
     chapterId: block.chapterId,
     checkpoint: block.checkpoint
-      ? {
+      ? checkpointRefSchema.parse({
           kind: block.checkpoint.kind,
           mock: block.checkpoint.mock,
-          mockIdentity: block.checkpoint.mockIdentity ?? null,
+          ...(block.checkpoint.mock && { mockIdentity: block.checkpoint.mockIdentity }),
           phase: block.checkpoint.phase,
           rematch: block.checkpoint.rematch,
-        }
+        })
       : null,
     flags: {
       extra: block.extra,
@@ -110,17 +115,15 @@ function hasSameCheckpoint(first: DayBlockRef["checkpoint"], second: DayBlockRef
     return first === second;
   }
 
-  if (first.mock && (!first.mockIdentity || !second.mockIdentity)) {
-    return false;
-  }
-
   return (
     first.kind === second.kind &&
     first.mock === second.mock &&
     first.phase === second.phase &&
     first.rematch === second.rematch &&
-    first.mockIdentity?.day === second.mockIdentity?.day &&
-    first.mockIdentity?.fullLength === second.mockIdentity?.fullLength
+    (!first.mock ||
+      (second.mock &&
+        first.mockIdentity.day === second.mockIdentity.day &&
+        first.mockIdentity.fullLength === second.mockIdentity.fullLength))
   );
 }
 

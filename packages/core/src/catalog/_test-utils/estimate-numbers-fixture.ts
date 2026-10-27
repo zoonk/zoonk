@@ -36,6 +36,7 @@ export async function estimateNumbersFixture({
       structure: {
         formats: [],
         mock: {
+          adaptive: false,
           citations: [],
           order: null,
           scoring: { description: "Raw points", method: "raw" },

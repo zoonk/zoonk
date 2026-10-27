@@ -105,10 +105,11 @@ async function setup() {
       structure: examStructureSchema.parse({
         formats: [],
         mock: {
+          adaptive: false,
           citations: [],
           order: null,
           scoring: { description: "One point per correct answer", method: "raw" },
-          sections: [{ day: 1, minutes: 360, name: "Exam", questions: 120 }],
+          sections: [{ day: 1, kind: "objective", minutes: 360, name: "Exam", questions: 120 }],
           timeLimitMinutes: 360,
           totalQuestions: 120,
         },

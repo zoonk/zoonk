@@ -6,7 +6,6 @@ import {
   earlierQuestionsQuerySchema,
   earlierQuestionsResponseSchema,
   lessonQuestionAnswerStreamSchema,
-  lessonQuestionReadQuerySchema,
   lessonQuestionResponseSchema,
   lessonQuestionThreadQuerySchema,
   lessonQuestionThreadResponseSchema,
@@ -76,7 +75,7 @@ function tutorQuestionPaths<TPath extends z.ZodObject>({
         content: { "application/json": { schema: createLessonQuestionRequestSchema } },
         required: true,
       },
-      requestParams: { path: pathSchema, query: lessonQuestionReadQuerySchema },
+      requestParams: { path: pathSchema },
       responses: {
         "201": {
           content: { "application/json": { schema: createdLessonQuestionResponseSchema } },
@@ -168,7 +167,7 @@ export const lessonQuestionPaths = {
   "/questions/{questionId}": {
     get: {
       operationId: "getLessonQuestion",
-      requestParams: { path: lessonQuestionPathParamsSchema, query: lessonQuestionReadQuerySchema },
+      requestParams: { path: lessonQuestionPathParamsSchema },
       responses: {
         "200": {
           content: { "application/json": { schema: lessonQuestionResponseSchema } },

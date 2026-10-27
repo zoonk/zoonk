@@ -8,13 +8,9 @@ import {
   toLessonQuestionResource,
 } from "./_utils/question-resource";
 import { findThreadSubject } from "./_utils/tutor-subject";
-import { type LessonQuestionReadInput } from "./contract";
 
 /** Returns one current learner-owned question without loading its large immutable AI snapshot. */
-export async function getLessonQuestion({
-  include,
-  questionId,
-}: LessonQuestionReadInput & { questionId: string }) {
+export async function getLessonQuestion({ questionId }: { questionId: string }) {
   const session = await getSession();
 
   if (!session) {
@@ -42,7 +38,7 @@ export async function getLessonQuestion({
   }
 
   return {
-    question: await markItemTurnAnswered({ include, question: toLessonQuestionResource(question) }),
+    question: await markItemTurnAnswered({ question: toLessonQuestionResource(question) }),
     status: "ready" as const,
   };
 }

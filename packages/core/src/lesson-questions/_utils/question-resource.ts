@@ -3,7 +3,6 @@ import { type LessonQuestionGetPayload, type LessonQuestionThreadGetPayload } fr
 import { changeGoalSelect, toPlanChangeView } from "../../plans/_utils/plan-change-view";
 import {
   type LessonQuestionContextSummary,
-  type LessonQuestionReadInput,
   type LessonQuestionResource,
   type LessonQuestionThreadResource,
   type TutorToolOffer,
@@ -40,7 +39,7 @@ function getContextSummary(question: LessonQuestionResourceSource): LessonQuesti
   const kind = question.contextKind;
 
   if (kind !== "step" && kind !== "answer") {
-    return { kind };
+    return kind === "item" ? { answered: false, kind } : { kind };
   }
 
   if (!question.stepNumber) {
@@ -98,18 +97,12 @@ export function toLessonQuestionThreadResource({
   };
 }
 
-/**
- * For clients that ask (`include: "answered"`), says on each turn about a session's or practice's
- * question whether it was asked about the learner's checked answer; the rest read it as before.
- */
+/** Marks each item turn asked about the learner's checked answer. */
 export async function markItemTurnsAnswered<Question extends LessonQuestionResource>({
-  include,
   questions,
-}: LessonQuestionReadInput & { questions: Question[] }): Promise<Question[]> {
-  if (include !== "answered") {
-    return questions;
-  }
-
+}: {
+  questions: Question[];
+}): Promise<Question[]> {
   const aboutAnswer = await findAboutCheckedAnswer({
     questionIds: questions
       .filter((question) => question.context.kind === "item")
@@ -125,9 +118,10 @@ export async function markItemTurnsAnswered<Question extends LessonQuestionResou
 
 /** One question, as `markItemTurnsAnswered` reads it. */
 export async function markItemTurnAnswered<Question extends LessonQuestionResource>({
-  include,
   question,
-}: LessonQuestionReadInput & { question: Question }): Promise<Question> {
-  const [marked] = await markItemTurnsAnswered({ include, questions: [question] });
+}: {
+  question: Question;
+}): Promise<Question> {
+  const [marked] = await markItemTurnsAnswered({ questions: [question] });
   return marked ?? question;
 }

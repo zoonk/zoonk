@@ -6,7 +6,7 @@ import {
   createLessonQuestionInputSchema,
 } from "@zoonk/core/lesson-questions/contract";
 import { onTestFinished, vi } from "vitest";
-import { asRequested, getContextSummary, getThreadPage } from "./tutor-api-requests";
+import { getContextSummary, getThreadPage } from "./tutor-api-requests";
 
 /** What a question carries before an answer proposes or offers anything. */
 const UNANSWERED = { planChange: null, toolOffer: null } as const;
@@ -262,7 +262,6 @@ export function stubTutorApi({
 
   /** Like the API, a create is idempotent by its request id: a replay gets the same question. */
   async function serveCreate(request: Request) {
-    const url = new URL(request.url);
     const input = createLessonQuestionInputSchema.parse(await request.json());
     api.inputs = [...api.inputs, input];
     const created = createdByRequestId.get(input.requestId);
@@ -272,7 +271,7 @@ export function stubTutorApi({
       const isSameRequest = created.input === JSON.stringify(input);
 
       return isSameRequest && question
-        ? Response.json(asRequested({ question, url }), { status: 201 })
+        ? Response.json({ ...question, missionMoment: null }, { status: 201 })
         : errorResponse(HTTP_STATUS_CONFLICT);
     }
 
@@ -284,15 +283,13 @@ export function stubTutorApi({
     });
 
     api.questions = [...api.questions, question];
-    return Response.json(asRequested({ question, url }), { status: 201 });
+    return Response.json({ ...question, missionMoment: null }, { status: 201 });
   }
 
-  function serveQuestion({ questionId, request }: { questionId: string; request: Request }) {
+  function serveQuestion({ questionId }: { questionId: string; request: Request }) {
     const question = api.questions.find((candidate) => candidate.id === questionId);
 
-    return question
-      ? Response.json(asRequested({ question, url: new URL(request.url) }))
-      : errorResponse(HTTP_STATUS_NOT_FOUND);
+    return question ? Response.json(question) : errorResponse(HTTP_STATUS_NOT_FOUND);
   }
 
   function serveAnswer(questionId: string) {

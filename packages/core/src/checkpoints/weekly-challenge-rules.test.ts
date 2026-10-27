@@ -11,7 +11,9 @@ const structure: ExamStructure = {
     citations: [citation],
     order: null,
     scoring: { description: "Wrong answers cancel right ones", method: "wrongCancelsRight" },
-    sections: [{ day: 2, minutes: 150, name: "Science and Math", questions: 45 }],
+    sections: [
+      { day: 2, kind: "objective", minutes: 150, name: "Science and Math", questions: 45 },
+    ],
     timeLimitMinutes: 150,
     totalQuestions: 45,
   },

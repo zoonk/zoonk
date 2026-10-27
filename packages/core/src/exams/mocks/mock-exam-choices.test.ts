@@ -33,7 +33,9 @@ function enemDay(optionQuestions: number | null): ExamStructure {
       citations: [],
       order: null,
       scoring: { description: "", method: "raw" },
-      sections: [{ day: 1, minutes: 30, name: "Languages and Humanities", questions: 10 }],
+      sections: [
+        { day: 1, kind: "objective", minutes: 30, name: "Languages and Humanities", questions: 10 },
+      ],
       timeLimitMinutes: 30,
       totalQuestions: 10,
     },

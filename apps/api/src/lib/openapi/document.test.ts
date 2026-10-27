@@ -31,6 +31,7 @@ const BUDDY_RESPONSE = {
   },
   buddy: { glasses: "round", kind: "zu", name: null, picked: false },
   energy: { current: null, state: "napping", studiedToday: false },
+  firstSteps: null,
   glasses: [],
   nextStage: null,
   stage: "baby",
@@ -716,8 +717,8 @@ describe("OpenAPI document", () => {
 });
 
 describe("OpenAPI response schemas", () => {
-  it("keeps minimal mission responses compatible with older clients", () => {
-    const mission = { done: 0, kind: "review", status: "nothingToday", total: 0 };
+  it("accepts the mission statuses returned by Core", () => {
+    const mission = { done: 0, kind: "review", status: "todo", total: 1 };
 
     expect(missionSchema.parse(mission)).toStrictEqual(mission);
   });
@@ -753,7 +754,7 @@ describe("OpenAPI response schemas", () => {
     expect(missionSchema.parse(mission)).toStrictEqual(mission);
   });
 
-  it("keeps buddy responses compatible when first steps are absent or retired", () => {
+  it("requires first steps in buddy responses, including when retired", () => {
     expect(buddyStatusResponseSchema.parse(BUDDY_RESPONSE)).toStrictEqual(BUDDY_RESPONSE);
 
     const retired = { ...BUDDY_RESPONSE, firstSteps: null };

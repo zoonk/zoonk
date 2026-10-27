@@ -83,7 +83,13 @@ export function twoChoiceBlueprintFixture() {
         order: null,
         scoring: { description: "", method: "raw" },
         sections: [
-          { day: 1, minutes: PAU_DAY_MINUTES, name: "Primer día", questions: PAU_DAY_QUESTIONS },
+          {
+            day: 1,
+            kind: "objective",
+            minutes: PAU_DAY_MINUTES,
+            name: "Primer día",
+            questions: PAU_DAY_QUESTIONS,
+          },
         ],
         timeLimitMinutes: PAU_DAY_MINUTES,
         totalQuestions: PAU_DAY_QUESTIONS,

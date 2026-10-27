@@ -160,13 +160,13 @@ export const missionSchema = z
           "About how many minutes a mission still to do asks: the planned minutes of its unfinished blocks (a waiting challenge's included), or an estimate for work outside the day's blocks. Absent once done.",
       }),
     opens: missionOpensSchema.optional(),
-    status: z.enum(["todo", "done", "nothingToday"]),
+    status: z.enum(["todo", "done"]),
     total: countSchema,
     waitReason: missionWaitReasonSchema.optional(),
   })
   .meta({
     description:
-      "An achievable mission picked when the day's session is built and stored with that session. Reads update progress against the saved target; unavailable kinds are omitted, and an unfinished mission whose planned anchor was removed is dropped. Completed missions remain. A session still running after midnight keeps its original missions. Current responses use todo or done; nothingToday is retained for older clients. Optional target and detail fields let clients open and describe each kind without changing the legacy counters.",
+      "An achievable mission picked when the day's session is built and stored with that session. Reads update progress against the saved target; unavailable kinds are omitted, and an unfinished mission whose planned anchor was removed is dropped. Completed missions remain. A session still running after midnight keeps its original missions. Optional target and detail fields let clients open and describe each kind alongside the progress counters.",
     id: "StudyMission",
   });
 

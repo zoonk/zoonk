@@ -94,7 +94,13 @@ describe(pickFreeResponseSkills, () => {
             order: null,
             scoring: { description: "", method: "wrongCancelsRight" },
             sections: [
-              { day: null, minutes: 300, name: "Provas objetivas", questions: 180 },
+              {
+                day: null,
+                kind: "objective",
+                minutes: 300,
+                name: "Provas objetivas",
+                questions: 180,
+              },
               {
                 day: null,
                 kind: "written",

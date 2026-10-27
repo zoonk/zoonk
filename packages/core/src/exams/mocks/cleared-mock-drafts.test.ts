@@ -38,8 +38,11 @@ async function textSitting(format: "typed" | "essay") {
     data: {
       conditions: {
         day: null,
+        examQuestions: null,
         fullLength: true,
+        partialCredit: "allOrNothing",
         purpose: "practice",
+        reused: 0,
         scoring: "raw",
         sections: [
           {
@@ -51,8 +54,11 @@ async function textSitting(format: "typed" | "essay") {
             routing: null,
           },
         ],
+        shape: null,
         startTime: null,
         timeZone: null,
+        timedOutSections: [],
+        wrongPenalty: 1,
       },
       sectionStartedAt: NOW,
       startedAt: NOW,

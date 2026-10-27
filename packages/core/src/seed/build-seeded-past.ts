@@ -304,8 +304,15 @@ async function fillMock({
     userId: goal.userId,
   });
 
+  const identity = { day: planned.day, fullLength: planned.fullLength };
+  const currentPayload = readBlockPayload(block);
+
   const payload = toBlockPayload({
-    ...readBlockPayload(block),
+    ...currentPayload,
+    checkpoint: currentPayload.checkpoint && {
+      ...currentPayload.checkpoint,
+      mockIdentity: identity,
+    },
     itemIds: getPlannedItemIds(planned),
     skillIds,
   });

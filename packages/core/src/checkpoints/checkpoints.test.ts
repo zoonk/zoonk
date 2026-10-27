@@ -741,7 +741,9 @@ describe(getWeeklyChallenge, () => {
           citations: [citation],
           order: null,
           scoring: { description: "Um ponto por questão", method: "raw" },
-          sections: [{ day: null, minutes: 300, name: "Prova objetiva", questions: 80 }],
+          sections: [
+            { day: null, kind: "objective", minutes: 300, name: "Prova objetiva", questions: 80 },
+          ],
           timeLimitMinutes: 300,
           totalQuestions: 80,
         },

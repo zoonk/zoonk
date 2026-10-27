@@ -39,17 +39,8 @@ export const lessonTutorSuggestionSchema = z
   .strict()
   .meta({ id: "LessonTutorSuggestion" });
 
-/**
- * Clients read a question strictly, so a turn about a session's or practice's question says
- * whether it was asked about the learner's checked answer (`answered`) only to those that ask for
- * it: older clients keep reading it as before.
- */
-export const lessonQuestionReadInputSchema = z
-  .object({ include: z.enum(["answered"]).optional() })
-  .strict();
-
-export const getLessonQuestionThreadInputSchema = lessonQuestionReadInputSchema
-  .extend({
+export const getLessonQuestionThreadInputSchema = z
+  .object({
     contextKind: z.enum(["lesson", "step", "answer", "item", ...SCREEN_CONTEXT_KINDS]).optional(),
     cursor: lessonQuestionThreadCursorSchema.optional(),
     stepId: z.uuid().optional(),
@@ -280,10 +271,9 @@ export type TutorToolOffer = z.infer<typeof tutorToolOfferSchema>;
 
 const lessonQuestionContextSummarySchema = z.discriminatedUnion("kind", [
   z.object({ kind: z.literal("lesson") }).strict(),
-  // Only to clients that ask for it (see `lessonQuestionReadInputSchema`).
   z
     .object({
-      answered: z.boolean().optional().meta({ description: "Asked about their checked answer" }),
+      answered: z.boolean().meta({ description: "Asked about their checked answer" }),
       kind: z.literal("item"),
     })
     .strict(),
@@ -337,7 +327,6 @@ export const lessonQuestionThreadResponseSchema = lessonQuestionThreadResourceSc
 
 export type CreateLessonQuestionInput = z.infer<typeof createLessonQuestionInputSchema>;
 export type GetLessonQuestionThreadInput = z.infer<typeof getLessonQuestionThreadInputSchema>;
-export type LessonQuestionReadInput = z.infer<typeof lessonQuestionReadInputSchema>;
 export type LessonQuestionContextInput = z.infer<typeof lessonQuestionContextInputSchema>;
 /** A question about a lesson: all of it, one screen, or an answer given on a screen. */
 export type LessonScopeContextInput = Extract<
@@ -366,10 +355,10 @@ export type TutorTarget =
   | { kind: "lesson"; lessonId: string };
 /**
  * A question just asked: the question, and what asking did to the day's missions (a question to
- * the buddy can be one of them), so the conversation can say so. Older servers send no moment.
+ * the buddy can be one of them), so the conversation can say so.
  */
 export const createdLessonQuestionSchema = lessonQuestionResourceSchema.extend({
-  missionMoment: missionMomentSchema.nullable().default(null),
+  missionMoment: missionMomentSchema.nullable(),
 });
 
 export type LessonQuestionResource = z.infer<typeof lessonQuestionResourceSchema>;

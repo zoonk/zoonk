@@ -987,10 +987,13 @@ describe("real saved local-move commitments", () => {
             structure: {
               formats: [],
               mock: {
+                adaptive: false,
                 citations: [],
                 order: null,
                 scoring: { description: "One point per correct answer", method: "raw" },
-                sections: [{ day: 1, minutes: 330, name: "Math", questions: 60 }],
+                sections: [
+                  { day: 1, kind: "objective", minutes: 330, name: "Math", questions: 60 },
+                ],
                 timeLimitMinutes: 330,
                 totalQuestions: 60,
               },

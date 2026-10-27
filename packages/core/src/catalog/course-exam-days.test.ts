@@ -28,6 +28,7 @@ function edition(
       date,
       kind: "exam",
       label: "Exam",
+      startTime: null,
     })),
     noticeUrl: null,
     questionCount: null,
@@ -311,12 +312,14 @@ describe(getCourseExamDays, () => {
         date: "2020-09-20",
         kind: "registrationEnd",
         label: "First registration",
+        startTime: null,
       },
       {
         citation: { passage: "Open", sourceId: "notice" },
         date: "2020-11-20",
         kind: "registrationEnd",
         label: "Second registration",
+        startTime: null,
       },
     );
 
@@ -363,6 +366,7 @@ describe(getCourseExamDays, () => {
       date: "2020-09-28",
       kind: "registrationEnd",
       label: "First registration",
+      startTime: null,
     });
 
     const [{ course }, user] = await Promise.all([examCourse({ storedEdition }), userFixture()]);

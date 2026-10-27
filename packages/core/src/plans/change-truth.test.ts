@@ -62,6 +62,7 @@ async function setup({
         mockMinutes === null
           ? null
           : {
+              adaptive: false,
               citations: [citation],
               order: null,
               scoring: { description: "Correct answers", method: "raw" },

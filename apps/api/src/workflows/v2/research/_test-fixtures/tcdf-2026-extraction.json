@@ -106,7 +106,8 @@
         "navigation": null,
         "passages": [],
         "questions": 35,
-        "tasks": []
+        "tasks": [],
+        "kind": "objective"
       },
       {
         "day": 1,
@@ -115,7 +116,8 @@
         "navigation": null,
         "passages": [],
         "questions": 45,
-        "tasks": []
+        "tasks": [],
+        "kind": "objective"
       },
       {
         "day": 1,
@@ -124,7 +126,8 @@
         "navigation": null,
         "passages": [],
         "questions": 70,
-        "tasks": []
+        "tasks": [],
+        "kind": "objective"
       },
       {
         "day": 1,
@@ -133,7 +136,8 @@
         "navigation": null,
         "passages": [],
         "questions": null,
-        "tasks": []
+        "tasks": [],
+        "kind": "written"
       }
     ],
     "timeLimitMinutes": null,

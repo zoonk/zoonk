@@ -22,7 +22,7 @@ const feedbackContentKinds = {
   stepVariant: "stepVariant",
 } as const satisfies { [Kind in FeedbackContentKind]: Kind };
 
-export const feedbackContentKindSchema = z.enum(feedbackContentKinds);
+const feedbackContentKindSchema = z.enum(feedbackContentKinds);
 const feedbackPlatformSchema = z.enum(["android", "ios", "web"]);
 
 /**

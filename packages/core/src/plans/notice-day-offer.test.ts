@@ -72,8 +72,8 @@ async function plannedExam({
           order: null,
           scoring: { description: "", method: "raw" },
           sections: [
-            { day: 1, minutes: 300, name: "Objective test", questions: 80 },
-            { day: 2, minutes: 240, name: "Written test", questions: 4 },
+            { day: 1, kind: "objective", minutes: 300, name: "Objective test", questions: 80 },
+            { day: 2, kind: "objective", minutes: 240, name: "Written test", questions: 4 },
           ],
           timeLimitMinutes: null,
           totalQuestions: 84,

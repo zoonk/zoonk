@@ -272,14 +272,10 @@ export type LanguageConversationView = z.infer<typeof languageConversationViewSc
 
 /**
  * A call just finished: the call with its result, what it did to the day's missions (a call can be
- * one of them) and what it reached (`ProgressCelebration`), so its end can say so. Older servers
- * send no moment.
+ * one of them) and what it reached (`ProgressCelebration`), so its end can say so.
  */
 export const completedLanguageConversationSchema = languageConversationViewSchema
-  .extend({
-    ...progressCelebrationShape,
-    missionMoment: missionMomentSchema.nullable().default(null),
-  })
+  .extend({ ...progressCelebrationShape, missionMoment: missionMomentSchema.nullable() })
   .meta({ id: "CompletedLanguageConversation" });
 
 export type CompletedLanguageConversation = z.infer<typeof completedLanguageConversationSchema>;

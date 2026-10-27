@@ -96,6 +96,7 @@ export async function addTodayMock({ goalId, userId }: { goalId: string; userId:
       checkpoint: {
         kind: "weekly",
         mock: true,
+        mockIdentity: { day: 2, fullLength: false },
         passMark: PASS_MARK,
         phase: 0,
         rematch: false,

@@ -92,7 +92,7 @@ function content({
           description: "Um item errado anula um item certo.",
           method: "wrongCancelsRight",
         },
-        sections: [{ day: 1, minutes: 240, name: "Prova objetiva", questions }],
+        sections: [{ day: 1, kind: "objective", minutes: 240, name: "Prova objetiva", questions }],
         timeLimitMinutes: 240,
         totalQuestions: questions,
       },

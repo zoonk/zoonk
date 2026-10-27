@@ -18,10 +18,11 @@ function examBlueprint({ days, year }: { days: string[]; year: number }) {
   return examBlueprintFixture({
     edition: {
       citations: [],
-      dates: days.map((date) => ({ citation, date, kind: "exam", label: "Exam" })),
+      dates: days.map((date) => ({ citation, date, kind: "exam", label: "Exam", startTime: null })),
       noticeUrl: null,
       questionCount: null,
       sourceHash: null,
+      timeZone: null,
       year,
     },
   });

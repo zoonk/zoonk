@@ -165,13 +165,20 @@ describe(startGoalUnderstanding, () => {
       edition: {
         citations: [],
         dates: [
-          { citation, date: "2099-11-15", kind: "exam", label: "Day 2" },
-          { citation, date: "2099-11-08", kind: "exam", label: "Day 1" },
-          { citation, date: "2099-06-01", kind: "registrationEnd", label: "Registration ends" },
+          { citation, date: "2099-11-15", kind: "exam", label: "Day 2", startTime: null },
+          { citation, date: "2099-11-08", kind: "exam", label: "Day 1", startTime: null },
+          {
+            citation,
+            date: "2099-06-01",
+            kind: "registrationEnd",
+            label: "Registration ends",
+            startTime: null,
+          },
         ],
         noticeUrl: null,
         questionCount: null,
         sourceHash: null,
+        timeZone: null,
         year: 2099,
       },
       identityKey: buildExamIdentityKey({ name: examName, ownerId: null, role: null }),
@@ -227,10 +234,11 @@ describe(startGoalUnderstanding, () => {
     await examBlueprintFixture({
       edition: {
         citations: [],
-        dates: [{ citation, date: "2099-11-08", kind: "exam", label: "Exam" }],
+        dates: [{ citation, date: "2099-11-08", kind: "exam", label: "Exam", startTime: null }],
         noticeUrl: null,
         questionCount: null,
         sourceHash: null,
+        timeZone: null,
         year: 2099,
       },
       identityKey: buildExamIdentityKey({ name: examName, ownerId: null, role: null }),

@@ -92,7 +92,7 @@ describe("day work selected before a session exists", () => {
     ).toStrictEqual({ block: review, status: "resolved" });
   });
 
-  it("reads a tap without `refresh` as work other than Content's review", () => {
+  it("requires the tap to identify Content's review", () => {
     const ref = toDayBlockRef(lesson());
 
     const sent = {
@@ -106,7 +106,7 @@ describe("day work selected before a session exists", () => {
       },
     };
 
-    expect(dayBlockRefSchema.parse(sent)).toStrictEqual(ref);
+    expect(dayBlockRefSchema.safeParse(sent).success).toBe(false);
   });
 
   it("refuses ambiguous repeated work instead of choosing the first row", () => {
@@ -136,8 +136,9 @@ describe("day work selected before a session exists", () => {
     });
 
     expect(
-      resolveDayBlock({ blocks: [mock({ ...checkpoint, mockIdentity: null })], ref }),
-    ).toStrictEqual({ status: "gone" });
+      dayBlockRefSchema.safeParse({ ...ref, checkpoint: { ...checkpoint, mockIdentity: null } })
+        .success,
+    ).toBe(false);
 
     expect(
       resolveDayBlock({

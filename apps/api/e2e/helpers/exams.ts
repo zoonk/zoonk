@@ -52,7 +52,7 @@ export async function createExamGoal(userId: string) {
             description: "A wrong answer cancels a right one.",
             method: "wrongCancelsRight",
           },
-          sections: [{ day: null, minutes: 24, name: "Law", questions: 12 }],
+          sections: [{ day: null, kind: "objective", minutes: 24, name: "Law", questions: 12 }],
           timeLimitMinutes: 24,
           totalQuestions: 12,
         },
@@ -134,6 +134,7 @@ export async function createBreakExamGoal(
           sections: BREAK_AREAS.map((name, index) => ({
             breakAfterMinutes: index === 0 ? 10 : null,
             day: null,
+            kind: "objective",
             minutes: 12,
             name,
             navigation: index === 0 ? navigation : null,

@@ -79,10 +79,10 @@ export type MockShape = z.infer<typeof mockShapeSchema>;
 const routingSchema = z.object({ easier: z.array(z.string()), harder: z.array(z.string()) });
 
 const mockSectionSchema = z.object({
-  /** The break after it, before the next section's clock starts; none for older mocks. */
+  /** The break after it, before the next section's clock starts. */
   breakAfterMinutes: z.int().min(1).nullable().optional(),
-  /** The essays a full mock's written part asks on the section's clock; none for older mocks. */
-  essays: z.array(z.string()).default([]),
+  /** The essays a full mock's written part asks on the section's clock. */
+  essays: z.array(z.string()),
   itemIds: z.array(z.string()),
   /**
    * `listening`: its questions are on recordings it plays; `speaking`: the speaking paper, its
@@ -91,7 +91,7 @@ const mockSectionSchema = z.object({
   kind: z.enum(["listening", "speaking"]).optional(),
   minutes: z.int().min(1),
   name: z.string().nullable(),
-  /** How candidates move through it, as the notice says; none moves freely (older mocks too). */
+  /** How candidates move through it, as the notice says; none moves freely. */
   navigation: sectionNavigationSchema.nullable().optional(),
   questions: z.int().min(0),
   routing: routingSchema.nullable(),
@@ -100,7 +100,7 @@ const mockSectionSchema = z.object({
    * (`startMockSpeaking`): one per mock, kept so a reload never writes another.
    */
   speakingSectionId: z.uuid().nullable().optional(),
-  /** What may be used or is given in it, in the notice's words; none for older mocks. */
+  /** What may be used or is given in it, in the notice's words. */
   tools: z.string().nullable().optional(),
 });
 
@@ -113,31 +113,31 @@ export const mockConditionsSchema = z.object({
   /**
    * The questions of the exam (or of the part of it) a mock taken any time sits, when it asks
    * fewer: the bank had too few new ones, and a full mock never repeats answered ones to make up
-   * for them. Null when it asks them all, and for the plan's own mocks and older ones.
+   * for them. Null when it asks them all, and for the plan's own mocks.
    */
-  examQuestions: z.int().min(0).nullable().default(null),
+  examQuestions: z.int().min(0).nullable(),
   fullLength: z.boolean(),
   /**
    * How a question with several picks scores when partly right, as the notice says (see
-   * `getPickCredit`); only every right option earns it for older mocks and notices that don't say.
+   * `getPickCredit`); only every right option earns it when the notice does not say.
    */
-  partialCredit: z.enum(PARTIAL_CREDIT_RULES).default("allOrNothing"),
-  purpose: z.enum(MOCK_PURPOSES).default("planned"),
+  partialCredit: z.enum(PARTIAL_CREDIT_RULES),
+  purpose: z.enum(MOCK_PURPOSES),
   /**
    * Questions it asks that the learner answered before, which a mock asks only once the bank has
    * no new ones left for them (the missed ones first).
    */
-  reused: z.int().min(0).default(0),
+  reused: z.int().min(0),
   scoring: z.enum(MOCK_SCORINGS),
   sections: z.array(mockSectionSchema),
   /** What a mock taken any time sits; null for the plan's own and a placement one. */
-  shape: mockShapeSchema.nullable().default(null),
+  shape: mockShapeSchema.nullable(),
   startTime: z.string().nullable(),
   timeZone: z.string().nullable(),
   /** Sections that ended because their time ran out, not because the learner submitted them. */
-  timedOutSections: z.array(z.int()).default([]),
-  /** For `net`, the share of a right answer each wrong one takes away (1 for older mocks). */
-  wrongPenalty: z.number().min(0).max(1).default(1),
+  timedOutSections: z.array(z.int()),
+  /** For `net`, the share of a right answer each wrong one takes away. */
+  wrongPenalty: z.number().min(0).max(1),
 });
 
 export type MockConditions = z.infer<typeof mockConditionsSchema>;
@@ -216,10 +216,10 @@ export const mockResultSchema = z
         blank: z.int(),
         max: z.int(),
         net: z.number(),
-        /** Answers partly right, each earning its share of a point; none for older mocks. */
-        partial: z.int().default(0),
-        /** The share of a right answer each wrong one took away (1 for older mocks). */
-        penalty: z.number().default(1),
+        /** Answers partly right, each earning its share of a point. */
+        partial: z.int(),
+        /** The share of a right answer each wrong one took away. */
+        penalty: z.number(),
         right: z.int(),
         wrong: z.int(),
       })
@@ -229,8 +229,8 @@ export const mockResultSchema = z
     /** The same measure on the goal's previous mock, for "+16 since the last one". */
     previous: z.number().nullable(),
     scoring: z.enum(MOCK_SCORINGS),
-    /** Each topic it asked, in the order it first came up; empty for mocks graded before topics. */
-    topics: z.array(topicResultSchema).default([]),
+    /** Each topic it asked, in the order it first came up; empty when it asked no topics. */
+    topics: z.array(topicResultSchema),
     total: z.int(),
     /** Questions still unanswered when a section's time ran out. */
     unansweredAtTimeout: z.int(),

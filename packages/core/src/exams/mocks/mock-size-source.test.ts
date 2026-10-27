@@ -15,7 +15,9 @@ const MOCK = {
   citations: [],
   order: null,
   scoring: { description: "", method: "raw" as const },
-  sections: [{ day: null, minutes: 300, name: "Prova objetiva", questions: 80 }],
+  sections: [
+    { day: null, kind: "objective" as const, minutes: 300, name: "Prova objetiva", questions: 80 },
+  ],
   timeLimitMinutes: 300,
   totalQuestions: 80,
 };

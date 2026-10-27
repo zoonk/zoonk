@@ -26,10 +26,11 @@ const FINAL_MOCK = "2020-10-12";
 const STRUCTURE = examStructureSchema.parse({
   formats: [],
   mock: {
+    adaptive: false,
     citations: [],
     order: null,
     scoring: { description: "Each correct answer earns one point", method: "raw" },
-    sections: [{ day: 1, minutes: 330, name: "Math", questions: 60 }],
+    sections: [{ day: 1, kind: "objective", minutes: 330, name: "Math", questions: 60 }],
     timeLimitMinutes: 330,
     totalQuestions: 60,
   },
@@ -42,8 +43,8 @@ const TWO_DAY_STRUCTURE = examStructureSchema.parse({
   mock: {
     ...STRUCTURE.mock,
     sections: [
-      { day: 1, minutes: 330, name: "Languages", questions: 60 },
-      { day: 2, minutes: 300, name: "Math", questions: 60 },
+      { day: 1, kind: "objective", minutes: 330, name: "Languages", questions: 60 },
+      { day: 2, kind: "objective", minutes: 300, name: "Math", questions: 60 },
     ],
     timeLimitMinutes: 630,
     totalQuestions: 120,
@@ -496,11 +497,15 @@ describe("mock funding through exported calendar and challenge moves", () => {
         data: {
           conditions: mockConditionsSchema.parse({
             day: 2,
+            examQuestions: null,
             fullLength: false,
+            partialCredit: "allOrNothing",
             purpose: "practice",
+            reused: 0,
             scoring: "raw",
             sections: [
               {
+                essays: [],
                 itemIds: bank.map((item) => item.id),
                 minutes: 150,
                 name: "Math",
@@ -508,8 +513,11 @@ describe("mock funding through exported calendar and challenge moves", () => {
                 routing: null,
               },
             ],
+            shape: null,
             startTime: null,
             timeZone: "UTC",
+            timedOutSections: [],
+            wrongPenalty: 1,
           }),
           examBlueprintId: blueprint.id,
           finishedAt: new Date(),

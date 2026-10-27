@@ -1,4 +1,4 @@
-import { mockIdentitySchema } from "@zoonk/core/sessions/day-block";
+import { checkpointRefSchema } from "@zoonk/core/sessions/day-block";
 import { z } from "zod";
 
 export const checkpointAnsweredQuestionsSchema = z
@@ -13,27 +13,16 @@ export const checkpointEndedWithoutQuestionsSchema = z
   .optional()
   .meta({ description: "Ended without a verdict because no remaining question could be asked" });
 
+const checkpointDetails = {
+  passMark: z.int().min(0).meta({ description: "Right answers needed to win" }),
+  timeLimitMinutes: z.int().min(0).nullable(),
+};
+
 export const studyCheckpointSchema = z
-  .object({
-    kind: z
-      .enum(["boss", "finalBoss", "weekly"])
-      .meta({
-        description:
-          "A phase boss, the final boss that closes the plan, or the weekly Big Challenge",
-      }),
-    mock: z
-      .boolean()
-      .meta({ description: "An exam's weekly mock, which feeds the estimated score" }),
-    mockIdentity: mockIdentitySchema.nullable(),
-    passMark: z
-      .number()
-      .int()
-      .min(0)
-      .meta({ description: "Right answers needed to win: seven of ten" }),
-    phase: z.number().int().min(0).nullable(),
-    rematch: z.boolean().meta({ description: "A boss lost on an earlier day, back again" }),
-    timeLimitMinutes: z.number().int().min(0).nullable(),
-  })
+  .discriminatedUnion("mock", [
+    checkpointRefSchema.options[0].extend(checkpointDetails),
+    checkpointRefSchema.options[1].extend(checkpointDetails),
+  ])
   .meta({ id: "StudyCheckpoint" });
 
 export const checkpointPhaseSchema = z

@@ -26,15 +26,27 @@ async function runningMockFixture() {
 
   const conditions = mockConditionsSchema.parse({
     day: null,
+    examQuestions: null,
     fullLength: true,
+    partialCredit: "allOrNothing",
     purpose: "practice",
+    reused: 0,
     scoring: "raw",
     sections: [
-      { itemIds: ["first", "second"], minutes: 30, name: null, questions: 2, routing: null },
+      {
+        essays: [],
+        itemIds: ["first", "second"],
+        minutes: 30,
+        name: null,
+        questions: 2,
+        routing: null,
+      },
     ],
     shape: { area: null, day: null, kind: "full" },
     startTime: null,
     timeZone: "UTC",
+    timedOutSections: [],
+    wrongPenalty: 1,
   });
 
   const mock = await prisma.mockExam.create({

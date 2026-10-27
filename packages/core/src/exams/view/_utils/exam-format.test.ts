@@ -31,8 +31,20 @@ describe(getExamFormat, () => {
     const format = getExamFormat({
       days,
       structure: structureWith([
-        { day: 2, minutes: 300, name: "Ciências da Natureza e Matemática", questions: 90 },
-        { day: 1, minutes: 330, name: "Linguagens, Ciências Humanas e redação", questions: 90 },
+        {
+          day: 2,
+          kind: "objective",
+          minutes: 300,
+          name: "Ciências da Natureza e Matemática",
+          questions: 90,
+        },
+        {
+          day: 1,
+          kind: "objective",
+          minutes: 330,
+          name: "Linguagens, Ciências Humanas e redação",
+          questions: 90,
+        },
       ]),
     });
 

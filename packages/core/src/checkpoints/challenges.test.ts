@@ -862,7 +862,7 @@ const EXAM_STRUCTURE = {
     citations: [],
     order: null,
     scoring: { description: "Right answers", method: "raw" },
-    sections: [{ day: null, minutes: 30, name: "Math", questions: 18 }],
+    sections: [{ day: null, kind: "objective", minutes: 30, name: "Math", questions: 18 }],
     timeLimitMinutes: 30,
     totalQuestions: 18,
   },

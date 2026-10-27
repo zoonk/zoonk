@@ -132,10 +132,15 @@ test("admin controls use API credentials, require the admin role and disable adm
 
     const conditions = mockConditionsSchema.parse({
       day: null,
+      examQuestions: null,
       fullLength: true,
+      partialCredit: "allOrNothing",
+      purpose: "planned",
+      reused: 0,
       scoring: "raw",
       sections: [
         {
+          essays: [],
           itemIds: [],
           kind: "speaking",
           minutes: 20,
@@ -144,8 +149,11 @@ test("admin controls use API credentials, require the admin role and disable adm
           routing: null,
         },
       ],
+      shape: null,
       startTime: null,
       timeZone: "UTC",
+      timedOutSections: [],
+      wrongPenalty: 1,
     });
 
     const activeMock = await prisma.mockExam.create({

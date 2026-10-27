@@ -8,11 +8,7 @@ import { type MissionDetail, type MissionKind, type MissionOpens } from "./missi
  * whether one, two or three were possible; an empty day offers no bonus.
  */
 
-/**
- * `nothingToday` remains in the transport type for older clients; current mission selection never
- * returns it. Unavailable kinds are omitted rather than presented as work the learner cannot do.
- */
-type MissionStatus = "done" | "nothingToday" | "todo";
+type MissionStatus = "done" | "todo";
 
 export type Mission = {
   done: number;

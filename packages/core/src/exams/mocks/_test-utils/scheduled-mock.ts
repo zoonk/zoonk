@@ -25,7 +25,7 @@ function mockStructure(
       citations: [],
       order: null,
       scoring: { description: "How it's scored", method },
-      sections: [{ day: null, minutes, name: "Math", questions: 18 }],
+      sections: [{ day: null, kind: "objective", minutes, name: "Math", questions: 18 }],
       timeLimitMinutes: minutes,
       totalQuestions: 18,
     },

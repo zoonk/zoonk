@@ -136,7 +136,7 @@ export const buddyStatusResponseSchema = z
       state: z.enum(["napping", "awake", "glowing"]),
       studiedToday: z.boolean(),
     }),
-    firstSteps: firstStepsSchema.nullable().optional(),
+    firstSteps: firstStepsSchema.nullable(),
     glasses: z.array(glassesProgressSchema),
     nextStage: z
       .object({

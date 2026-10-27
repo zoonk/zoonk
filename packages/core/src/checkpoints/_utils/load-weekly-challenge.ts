@@ -70,7 +70,7 @@ async function loadMockItems({
   return {
     itemIds: getPlannedItemIds(plan),
     minutes: plan.minutes,
-    mockIdentity: identity,
+    mockIdentity: { day: plan.day, fullLength: plan.fullLength },
     timeLimitMinutes: plan.minutes,
   };
 }

@@ -21,12 +21,13 @@ async function createExam() {
     edition: {
       citations: [],
       dates: [
-        { citation, date: "2099-11-08", kind: "exam", label: "Day 1" },
-        { citation, date: "2099-11-15", kind: "exam", label: "Day 2" },
+        { citation, date: "2099-11-08", kind: "exam", label: "Day 1", startTime: null },
+        { citation, date: "2099-11-15", kind: "exam", label: "Day 2", startTime: null },
       ],
       noticeUrl: null,
       questionCount: null,
       sourceHash: null,
+      timeZone: null,
       year: 2099,
     },
     identityKey: buildExamIdentityKey({ name: examName, ownerId: null, role: null }),

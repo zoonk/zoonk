@@ -252,8 +252,11 @@ describe("a mock's mission moment", () => {
       data: {
         conditions: {
           day: null,
+          examQuestions: null,
           fullLength: true,
+          partialCredit: "allOrNothing",
           purpose: "practice",
+          reused: 0,
           scoring: "raw",
           sections: [
             {
@@ -270,6 +273,8 @@ describe("a mock's mission moment", () => {
           shape: { area: null, day: null, kind: "full" },
           startTime: null,
           timeZone: null,
+          timedOutSections: [],
+          wrongPenalty: 1,
         },
         finishedAt: SESSION_NOW,
         goalId: goal.id,

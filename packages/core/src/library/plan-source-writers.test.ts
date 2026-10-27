@@ -1688,10 +1688,11 @@ const UNSTATED_OPTIONS = examStructureSchema.parse({
     { citation: CITATION, description: "Múltipla escolha", kind: "multipleChoice", options: null },
   ],
   mock: {
+    adaptive: false,
     citations: [],
     order: null,
     scoring: { description: "Each correct answer earns one point", method: "raw" },
-    sections: [{ day: 1, minutes: 120, name: MATH_SUBJECT, questions: 45 }],
+    sections: [{ day: 1, kind: "objective", minutes: 120, name: MATH_SUBJECT, questions: 45 }],
     timeLimitMinutes: 120,
     totalQuestions: 45,
   },

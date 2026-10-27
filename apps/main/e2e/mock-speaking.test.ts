@@ -91,8 +91,11 @@ async function createSpeakingMock() {
     data: {
       conditions: {
         day: null,
+        examQuestions: null,
         fullLength: true,
+        partialCredit: "allOrNothing",
         purpose: "practice",
+        reused: 0,
         scoring: "raw",
         sections: [
           {
@@ -109,6 +112,8 @@ async function createSpeakingMock() {
         shape: { area: null, day: null, kind: "full" },
         startTime: null,
         timeZone: null,
+        timedOutSections: [],
+        wrongPenalty: 1,
       },
       goalId: goal.id,
       sectionStartedAt: new Date(),

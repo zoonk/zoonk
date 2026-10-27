@@ -21,9 +21,21 @@ const TWO_DAYS: ExamStructure = {
     order: null,
     scoring: { description: "", method: "itemResponseTheory" },
     sections: [
-      { day: 1, minutes: 330, name: "Linguagens, Ciências Humanas e redação", questions: 90 },
+      {
+        day: 1,
+        kind: "objective",
+        minutes: 330,
+        name: "Linguagens, Ciências Humanas e redação",
+        questions: 90,
+      },
       { day: 1, kind: "written", minutes: null, name: "Redação", questions: null },
-      { day: 2, minutes: 300, name: "Ciências da Natureza e Matemática", questions: 90 },
+      {
+        day: 2,
+        kind: "objective",
+        minutes: 300,
+        name: "Ciências da Natureza e Matemática",
+        questions: 90,
+      },
     ],
     timeLimitMinutes: null,
     totalQuestions: 180,
@@ -48,7 +60,9 @@ const OAB: ExamStructure = {
     citations: [],
     order: null,
     scoring: { description: "", method: "raw" },
-    sections: [{ day: null, minutes: 300, name: "Prova objetiva", questions: 80 }],
+    sections: [
+      { day: null, kind: "objective", minutes: 300, name: "Prova objetiva", questions: 80 },
+    ],
     timeLimitMinutes: 300,
     totalQuestions: 80,
   },
@@ -472,7 +486,9 @@ describe(planOptionMock, () => {
       ...OAB,
       mock: OAB.mock && {
         ...OAB.mock,
-        sections: [{ day: null, minutes: 300, name: "Provas objetivas", questions: 30 }],
+        sections: [
+          { day: null, kind: "objective", minutes: 300, name: "Provas objetivas", questions: 30 },
+        ],
         timeLimitMinutes: 300,
         totalQuestions: 30,
       },
@@ -589,7 +605,9 @@ describe(planOptionMock, () => {
       ...OAB,
       mock: OAB.mock && {
         ...OAB.mock,
-        sections: [{ day: null, minutes: 75, name: "Prova objetiva", questions: 20 }],
+        sections: [
+          { day: null, kind: "objective", minutes: 75, name: "Prova objetiva", questions: 20 },
+        ],
         timeLimitMinutes: 75,
         totalQuestions: 20,
       },

@@ -63,6 +63,7 @@ async function signedInExamLearner({ topics }: { topics: boolean }) {
           noticeUrl: "https://example.com/edital.pdf",
           questionCount: null,
           sourceHash: null,
+          timeZone: null,
           year: 2026,
         },
         structure: noticeStructure(),

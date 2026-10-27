@@ -84,7 +84,6 @@ async function getQuestionPage({
 export async function getLessonQuestionThread({
   contextKind,
   cursor,
-  include,
   stepId,
   target,
 }: GetLessonQuestionThreadInput & { target: TutorTarget }) {
@@ -131,7 +130,7 @@ export async function getLessonQuestionThread({
     status: "ready" as const,
     thread: {
       ...resource,
-      questions: await markItemTurnsAnswered({ include, questions: resource.questions }),
+      questions: await markItemTurnsAnswered({ questions: resource.questions }),
     },
   };
 }

@@ -25,10 +25,11 @@ describe("mock move collisions", () => {
     const structure = examStructureSchema.parse({
       formats: [],
       mock: {
+        adaptive: false,
         citations: [],
         order: null,
         scoring: { description: "Each correct answer earns one point", method: "raw" },
-        sections: [{ day: 1, minutes: 330, name: "Math", questions: 60 }],
+        sections: [{ day: 1, kind: "objective", minutes: 330, name: "Math", questions: 60 }],
         timeLimitMinutes: 330,
         totalQuestions: 60,
       },

@@ -22,12 +22,13 @@ const EVENT_DATE = "2020-10-09";
 const STRUCTURE = examStructureSchema.parse({
   formats: [],
   mock: {
+    adaptive: false,
     citations: [],
     order: null,
     scoring: { description: "One point per correct answer", method: "raw" },
     sections: [
-      { day: 1, minutes: 330, name: "Languages", questions: 90 },
-      { day: 2, minutes: 300, name: "Math", questions: 90 },
+      { day: 1, kind: "objective", minutes: 330, name: "Languages", questions: 90 },
+      { day: 2, kind: "objective", minutes: 300, name: "Math", questions: 90 },
     ],
     timeLimitMinutes: 630,
     totalQuestions: 180,

@@ -8,7 +8,7 @@ function checkpoint(mock: boolean): NonNullable<StudyBlock["checkpoint"]> {
   return {
     kind: "weekly",
     mock,
-    mockIdentity: null,
+    ...(mock && { mockIdentity: { day: null, fullLength: false } }),
     passMark: 70,
     phase: null,
     rematch: false,

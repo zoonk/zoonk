@@ -55,6 +55,7 @@ async function examWithLearner({
       noticeUrl: null,
       questionCount: 50,
       sourceHash: source.contentHash,
+      timeZone: null,
       year: 2026,
     },
     examDate,

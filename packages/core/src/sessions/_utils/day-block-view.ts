@@ -43,7 +43,7 @@ function getEstimateOutcome(block: DayBlockInput): { outcome: BlockOutcome; ques
 }
 
 function toViewCheckpoint(checkpoint: BlockCheckpoint | null): DayBlockView["checkpoint"] {
-  return checkpoint ? { ...checkpoint, mockIdentity: checkpoint.mockIdentity ?? null } : null;
+  return checkpoint;
 }
 
 export function toDayBlockView({

@@ -315,12 +315,14 @@ function buildStructure(notice: ReturnType<typeof getNoticePassages>, now: Date)
       sections: [
         {
           day: 1,
+          kind: "objective",
           minutes: DAY_ONE_MINUTES,
           name: t("Languages, Humanities and essay", "Linguagens, Ciências Humanas e redação"),
           questions: 90,
         },
         {
           day: 2,
+          kind: "objective",
           minutes: DAY_TWO_MINUTES,
           name: t("Natural Sciences and Math", "Ciências da Natureza e Matemática"),
           questions: 90,
@@ -370,6 +372,7 @@ const SCIENCES = t("Natural Sciences", "Ciências da Natureza");
 /** How often past papers ask the topics they rate most, on the notice's own topics. */
 const topicFrequency = [
   {
+    appearances: null,
     basis: t(
       "Percentages come up in almost every edition, usually about shopping, interest and price changes.",
       "Porcentagem cai em quase toda edição, em geral em compras, juros e variação de preços.",
@@ -380,6 +383,7 @@ const topicFrequency = [
     topic: MATH_NUMBERS,
   },
   {
+    appearances: null,
     basis: t(
       "Reading charts and tables is one of the most frequent math topics.",
       "Ler gráficos e tabelas é um dos temas mais frequentes de Matemática.",
@@ -390,6 +394,7 @@ const topicFrequency = [
     topic: MATH_STATISTICS,
   },
   {
+    appearances: null,
     basis: t(
       "Functions are asked regularly, tied to everyday situations.",
       "Funções aparecem com regularidade, ligadas a situações do dia a dia.",
@@ -400,6 +405,7 @@ const topicFrequency = [
     topic: MATH_ALGEBRA,
   },
   {
+    appearances: null,
     basis: t(
       "The biology topic asked most in Natural Sciences.",
       "O tema de Biologia mais cobrado em Ciências da Natureza.",
@@ -410,6 +416,7 @@ const topicFrequency = [
     topic: SCIENCE_ECOLOGY,
   },
   {
+    appearances: null,
     basis: t(
       "A constant in physics questions, mostly simple circuits.",
       "Presença constante em Física, principalmente circuitos simples.",
@@ -420,6 +427,7 @@ const topicFrequency = [
     topic: SCIENCE_ELECTRICITY,
   },
   {
+    appearances: null,
     basis: t(
       "The First Republic and the Vargas Era are among the most asked topics in Brazilian history.",
       "A Primeira República e a Era Vargas estão entre os temas mais cobrados de História do Brasil.",
@@ -430,6 +438,7 @@ const topicFrequency = [
     topic: HUMANITIES_STATE,
   },
   {
+    appearances: null,
     basis: t(
       "Most Languages questions start from reading a text.",
       "A maior parte das questões de Linguagens parte da leitura de um texto.",

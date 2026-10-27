@@ -33,6 +33,7 @@ async function sittingFixture() {
 
   const section = {
     breakAfterMinutes: 10,
+    essays: [],
     itemIds: [],
     minutes: 20,
     name: null,
@@ -42,12 +43,18 @@ async function sittingFixture() {
 
   const conditions = mockConditionsSchema.parse({
     day: null,
+    examQuestions: null,
     fullLength: true,
+    partialCredit: "allOrNothing",
     purpose: "practice",
+    reused: 0,
     scoring: "raw",
     sections: [section, section],
+    shape: null,
     startTime: null,
     timeZone: null,
+    timedOutSections: [],
+    wrongPenalty: 1,
   });
 
   const mock = await prisma.mockExam.create({

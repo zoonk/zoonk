@@ -5,8 +5,7 @@ import {
 
 /**
  * How the faked tutor API (`stubTutorApi`) reads a request's query, as the API does: a thread
- * page's scope and cursor, and whether an item turn says it was about the learner's checked answer
- * (`include=answered`).
+ * page's scope and cursor.
  */
 
 function isInScope({ question, url }: { question: LessonQuestionResource; url: URL }) {
@@ -35,19 +34,7 @@ export function getContextSummary(
 }
 
 /**
- * A question as a request reads it: like the API, a turn about a session's or practice's question
- * says whether it was about the learner's checked answer only when the request asks for it.
- */
-export function asRequested({ question, url }: { question: LessonQuestionResource; url: URL }) {
-  if (question.context.kind !== "item" || url.searchParams.get("include") === "answered") {
-    return question;
-  }
-
-  return { ...question, context: { kind: question.context.kind } };
-}
-
-/**
- * A page of the thread as the request reads it (`asRequested`): its scope, latest last, ending
+ * A page of the thread: its scope, latest last, ending
  * before `cursor` (an older page) when there's one.
  */
 export function getThreadPage({
@@ -64,7 +51,7 @@ export function getThreadPage({
   const cursorIndex = cursor ? inScope.findIndex((question) => question.id === cursor) : -1;
   const pageEnd = cursorIndex >= 0 ? cursorIndex : inScope.length;
   const pageStart = pageSize ? Math.max(0, pageEnd - pageSize) : 0;
-  const page = inScope.slice(pageStart, pageEnd).map((question) => asRequested({ question, url }));
+  const page = inScope.slice(pageStart, pageEnd);
   const hasMore = pageStart > 0;
 
   return { hasMore, nextCursor: hasMore ? (page[0]?.id ?? null) : null, questions: page };

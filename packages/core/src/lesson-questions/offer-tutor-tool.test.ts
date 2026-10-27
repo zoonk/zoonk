@@ -96,6 +96,7 @@ const MOCK_STRUCTURE = {
     scoring: { description: "", method: "raw" },
     sections: MOCK_AREAS.map((name) => ({
       day: null,
+      kind: "objective",
       minutes: 12,
       name,
       questions: MOCK_QUESTIONS[name],

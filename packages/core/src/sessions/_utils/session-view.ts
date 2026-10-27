@@ -1,5 +1,4 @@
 import { type StudySessionBlock } from "@zoonk/db";
-import { type MockIdentity } from "../../plans/planner/mock-identity";
 import { type StudyWeek } from "../../progress/_utils/load-study-week";
 import { type BlockCheckpoint } from "../block-payload";
 import { type CapsuleFormat } from "../capsules";
@@ -32,7 +31,7 @@ export type StudyBlockView = Pick<
   canTestOut: boolean;
   capsules: CapsuleView[];
   chapterId: string | null;
-  checkpoint: (BlockCheckpoint & { mockIdentity: MockIdentity | null }) | null;
+  checkpoint: BlockCheckpoint | null;
   estimatedBrainPower: number;
   estimatedMinutes: number;
   extra: boolean;

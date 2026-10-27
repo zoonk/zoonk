@@ -164,7 +164,7 @@ const mockSectionSchema = z.object({
    * (an oral test) and `practical` (stations, a lab, a physical test), which mocks say they leave
    * out until they can run them.
    */
-  kind: z.enum(["objective", "written", "listening", "speaking", "practical"]).optional(),
+  kind: z.enum(["objective", "written", "listening", "speaking", "practical"]),
   minutes: z.number().int().nullable(),
   name: z.string(),
   /**
@@ -203,9 +203,9 @@ const mockSectionSchema = z.object({
 const mockConditionsSchema = z.object({
   /**
    * A later section's questions depend on how the one before it went, like the digital SAT's
-   * modules. Older rows didn't store it, so it reads as false.
+   * modules.
    */
-  adaptive: z.boolean().default(false),
+  adaptive: z.boolean(),
   citations: z.array(citationSchema),
   order: z.string().nullable(),
   scoring: z.object({
@@ -334,9 +334,9 @@ const examDateSchema = z.object({
   label: z.string(),
   /**
    * When the exam starts that day, in the edition's time zone, so mocks can run at the real
-   * exam's time of day. Older rows didn't store it, so it reads as unknown.
+   * exam's time of day.
    */
-  startTime: clockTimeSchema.nullable().default(null),
+  startTime: clockTimeSchema.nullable(),
 });
 
 /**
@@ -392,7 +392,7 @@ export const examEditionSchema = z.object({
   /** The hash of the source this edition was read from, so a check knows it's behind. */
   sourceHash: z.string().nullable(),
   /** The IANA time zone the notice's times are in ("Brasília time" is America/Sao_Paulo). */
-  timeZone: z.string().nullable().default(null),
+  timeZone: z.string().nullable(),
   year: z.number().int().nullable(),
 });
 
@@ -414,7 +414,7 @@ export const topicFrequencySchema = z.array(
      * How many questions asked the topic in the past papers read, such as "4 times" on last
      * year's class exam; null when the basis doesn't give a count.
      */
-    appearances: z.number().int().min(0).nullable().default(null),
+    appearances: z.number().int().min(0).nullable(),
     basis: z.string(),
     citation: citationSchema,
     level: z.enum(TOPIC_FREQUENCY_LEVELS),

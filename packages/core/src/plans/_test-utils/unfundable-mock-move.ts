@@ -17,10 +17,11 @@ const EXAM_DAYS_AFTER_MOCK = 5;
 const STRUCTURE = examStructureSchema.parse({
   formats: [],
   mock: {
+    adaptive: false,
     citations: [],
     order: null,
     scoring: { description: "Each correct answer earns one point", method: "raw" },
-    sections: [{ day: 1, minutes: 330, name: "Math", questions: 60 }],
+    sections: [{ day: 1, kind: "objective", minutes: 330, name: "Math", questions: 60 }],
     timeLimitMinutes: 330,
     totalQuestions: 60,
   },

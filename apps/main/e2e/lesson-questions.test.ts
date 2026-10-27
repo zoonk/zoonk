@@ -63,7 +63,9 @@ function getContextSummary(
   context: CreateLessonQuestionInput["context"],
 ): LessonQuestionContextSummary {
   if (context.kind !== "step" && context.kind !== "answer") {
-    return { kind: context.kind };
+    return context.kind === "item"
+      ? { answered: context.answered, kind: "item" }
+      : { kind: context.kind };
   }
 
   return { kind: context.kind, stepId: context.stepId, stepNumber: context.stepNumber };
@@ -126,7 +128,12 @@ async function mockQuestionApi({ lessonId, page }: { lessonId: string; page: Pag
     };
 
     state.questions = [...state.questions, question];
-    await route.fulfill({ contentType: "application/json", json: question, status: 201 });
+
+    await route.fulfill({
+      contentType: "application/json",
+      json: { ...question, missionMoment: null },
+      status: 201,
+    });
   });
 
   await page.route("**/v1/questions/*", async (route) => {

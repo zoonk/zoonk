@@ -42,17 +42,25 @@ async function storedExam({
     edition: {
       citations: [],
       dates: [
-        { citation, date: `${year}-05-20`, kind: "registrationEnd", label: "Registration ends" },
+        {
+          citation,
+          date: `${year}-05-20`,
+          kind: "registrationEnd",
+          label: "Registration ends",
+          startTime: null,
+        },
         ...days.map((date, index) => ({
           citation,
           date,
           kind: "exam" as const,
           label: `Day ${index + 1}`,
+          startTime: null,
         })),
       ],
       noticeUrl: null,
       questionCount: null,
       sourceHash: null,
+      timeZone: null,
       year,
     },
     identityKey: buildExamIdentityKey({ name, ownerId: null, role }),
