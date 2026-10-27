@@ -70,7 +70,7 @@ function WaitProgress({
 
 /** What the running phase is doing now; the line changes every few seconds. */
 function ActiveDetail({ copy, phase }: { copy: PhaseCopy; phase: string }) {
-  const tick = useTickCount({ active: true, resetKey: phase });
+  const tick = useTickCount({ resetKey: phase });
   const line = getDetailLine({ lines: copy.lines, numbered: copy.numbered, tick });
 
   return line ? (

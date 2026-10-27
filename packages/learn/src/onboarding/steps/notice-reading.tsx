@@ -34,7 +34,7 @@ const PHASE_WEIGHTS = [PLAN_BUILT_PROGRESS, 100 - PLAN_BUILT_PROGRESS];
 /** The reading's line changes every few seconds, so the wait shows what's going on. */
 function ReadingDetail({ document }: { document: ExamDocument }) {
   const t = useExtracted();
-  const tick = useTickCount({ active: true, resetKey: "notice" });
+  const tick = useTickCount({ resetKey: "notice" });
 
   const line = getDetailLine({
     lines: [
