@@ -1,5 +1,5 @@
 import "server-only";
-import { type PlanItem, prisma } from "@zoonk/db";
+import { type PlanItem, type TransactionClient, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { loadListeningSkillIds } from "../../exams/listening/listening-skills";
 import { getFoundationSkillIds, getSkillArea } from "../../plans/planner/graph-areas";
@@ -43,21 +43,23 @@ export type GoalPlan = { items: GoalPlanItem[]; skills: GoalSkillNode[] };
 export async function loadItemSkillRows({
   chapterIds,
   lessonIds,
+  tx = prisma,
 }: {
   chapterIds: readonly string[];
   lessonIds: readonly string[];
+  tx?: TransactionClient;
 }): Promise<ItemSkillRows> {
   const [lessonSkills, chapterLessons] = await Promise.all([
     lessonIds.length === 0
       ? []
-      : prisma.lessonSkill.findMany({
+      : tx.lessonSkill.findMany({
           orderBy: [{ createdAt: "asc" }, { skillId: "asc" }],
           select: { lesson: { select: { homeChapterId: true } }, lessonId: true, skillId: true },
           where: { lessonId: { in: [...lessonIds] } },
         }),
     chapterIds.length === 0
       ? []
-      : prisma.chapterLesson.findMany({
+      : tx.chapterLesson.findMany({
           orderBy: { position: "asc" },
           select: {
             chapterId: true,
@@ -78,12 +80,16 @@ export async function loadItemSkillRows({
 }
 
 /** The rows a saved plan's items need (see `loadItemSkillRows`). */
-function loadItemSkills(items: readonly PlanItemRow[]): Promise<ItemSkillRows> {
+function loadItemSkills(
+  items: readonly PlanItemRow[],
+  tx: TransactionClient = prisma,
+): Promise<ItemSkillRows> {
   return loadItemSkillRows({
     chapterIds: unique(
       items.filter((item) => !item.lessonId && !item.skillId).map((item) => item.chapterId),
     ),
     lessonIds: unique(items.map((item) => item.lessonId)),
+    tx,
   });
 }
 
@@ -112,20 +118,12 @@ function toMemberEntries({
   });
 }
 
-async function toSurvivingMembers(entries: readonly MemberEntry[]): Promise<MemberEntry[]> {
-  const survivorOf = await loadSkillSurvivors(
-    unique(entries.flatMap((entry) => [entry.memberId, entry.skillId])),
-  );
-
-  return entries.map((entry) => ({
-    memberId: survivorOf(entry.memberId),
-    skillId: survivorOf(entry.skillId),
-  }));
-}
-
 /** Plan items may still point at a merged skill; the learner's state lives on the survivor. */
-export async function toSurvivingSkills(entries: readonly SkillEntry[]): Promise<SkillEntry[]> {
-  const survivorOf = await loadSkillSurvivors(unique(entries.map((entry) => entry.skillId)));
+export async function toSurvivingSkills(
+  entries: readonly SkillEntry[],
+  tx: TransactionClient = prisma,
+): Promise<SkillEntry[]> {
+  const survivorOf = await loadSkillSurvivors(unique(entries.map((entry) => entry.skillId)), tx);
   return entries.map((entry) => ({ ...entry, skillId: survivorOf(entry.skillId) }));
 }
 
@@ -133,15 +131,17 @@ async function loadAreaTitles({
   entries,
   items,
   phases,
+  tx = prisma,
 }: {
   entries: readonly SkillEntry[];
   items: readonly PlanItemRow[];
   phases: unknown;
+  tx?: TransactionClient;
 }): Promise<Map<string, string>> {
   // Areas without a chapter are phases ("phase:0"), which aren't ids a chapter query accepts.
   const chapterIds = unique(entries.map((entry) => entry.areaId)).filter((id) => isUuid(id));
 
-  const chapters = await prisma.chapter.findMany({
+  const chapters = await tx.chapter.findMany({
     select: { id: true, title: true },
     where: { id: { in: chapterIds } },
   });
@@ -195,26 +195,25 @@ function toMemberSkillIds(skillId: string, membersOf: ReadonlyMap<string, Member
   return unique([skillId, ...(membersOf.get(skillId) ?? []).map((member) => member.memberId)]);
 }
 
+type PlanRead = {
+  goalId: string;
+  source?: GoalPlanSource;
+  tx?: TransactionClient;
+  withLeftOut: boolean;
+};
+
 /**
  * The raw teaching entries and rows shared by the full skill projection and test-out eligibility.
  * Null without a plan; a plan whose items lost every skill falls back to its skill graph's.
  */
-export async function loadPlanEntryRows({
-  goalId,
-  source,
-  withLeftOut,
-}: {
-  goalId: string;
-  source?: GoalPlanSource;
-  withLeftOut: boolean;
-}) {
-  const plan = source ?? (await loadSavedGoalPlanSource(goalId));
+export async function loadPlanEntryRows({ goalId, source, withLeftOut, tx = prisma }: PlanRead) {
+  const plan = source ?? (await loadSavedGoalPlanSource(goalId, tx));
 
   if (!plan) {
     return null;
   }
 
-  const itemSkills = await loadItemSkills(plan.items);
+  const itemSkills = await loadItemSkills(plan.items, tx);
 
   const itemEntries = plan.items.flatMap((item) => expandItem({ item, skills: itemSkills }));
   const planned = itemEntries.length > 0 ? itemEntries : toGraphEntries(plan.graph);
@@ -226,23 +225,38 @@ export async function loadPlanEntryRows({
   return { allEntries: [...planned, ...leftOut], itemSkills, plan };
 }
 
-async function loadPlanEntries(input: Parameters<typeof loadPlanEntryRows>[0]) {
+async function loadPlanEntries(input: PlanRead) {
   const loaded = await loadPlanEntryRows(input);
 
   if (!loaded) {
     return null;
   }
 
-  const [allEntries, members] = await Promise.all([
-    toSurvivingSkills(loaded.allEntries),
-    toSurvivingMembers(toMemberEntries({ items: loaded.plan.items, skills: loaded.itemSkills })),
-  ]);
+  const members = toMemberEntries({ items: loaded.plan.items, skills: loaded.itemSkills });
+
+  const survivorOf = await loadSkillSurvivors(
+    unique([
+      ...loaded.allEntries.map((entry) => entry.skillId),
+      ...members.flatMap((entry) => [entry.memberId, entry.skillId]),
+    ]),
+    input.tx,
+  );
+
+  const allEntries = loaded.allEntries.map((entry) => ({
+    ...entry,
+    skillId: survivorOf(entry.skillId),
+  }));
+
+  const survivingMembers = members.map((entry) => ({
+    memberId: survivorOf(entry.memberId),
+    skillId: survivorOf(entry.skillId),
+  }));
 
   return {
     ...loaded,
     allEntries,
     entries: firstPerSkill(allEntries),
-    membersOf: Map.groupBy(members, (entry) => entry.skillId),
+    membersOf: Map.groupBy(survivingMembers, (entry) => entry.skillId),
   };
 }
 
@@ -252,16 +266,8 @@ async function loadPlanEntries(input: Parameters<typeof loadPlanEntryRows>[0]) {
  * graph's skills the plan's items leave out follow them (see `loadPlacementPlan`). A goal without
  * a plan has no skills yet; a plan whose items lost every skill falls back to its skill graph's.
  */
-async function loadPlan({
-  goalId,
-  source,
-  withLeftOut,
-}: {
-  goalId: string;
-  source?: GoalPlanSource;
-  withLeftOut: boolean;
-}): Promise<GoalPlan> {
-  const loaded = await loadPlanEntries({ goalId, source, withLeftOut });
+async function loadPlan({ goalId, source, withLeftOut, tx = prisma }: PlanRead): Promise<GoalPlan> {
+  const loaded = await loadPlanEntries({ goalId, source, tx, withLeftOut });
 
   if (!loaded) {
     return { items: [], skills: [] };
@@ -271,12 +277,12 @@ async function loadPlan({
   const skillIds = entries.map((entry) => entry.skillId);
 
   const [titles, edges, bands] = await Promise.all([
-    loadAreaTitles({ entries, items: plan.items, phases: plan.phases }),
-    prisma.skillPrerequisite.findMany({
+    loadAreaTitles({ entries, items: plan.items, phases: plan.phases, tx }),
+    tx.skillPrerequisite.findMany({
       select: { prerequisiteId: true, skillId: true },
       where: { prerequisiteId: { in: skillIds }, skillId: { in: skillIds } },
     }),
-    prisma.skill.findMany({ select: { id: true, level: true }, where: { id: { in: skillIds } } }),
+    tx.skill.findMany({ select: { id: true, level: true }, where: { id: { in: skillIds } } }),
   ]);
 
   const graph = parsePlanGraph(plan.graph);
@@ -374,16 +380,10 @@ export function loadGoalPlan(goalId: string, source?: GoalPlanSource): Promise<G
 }
 
 /** A plan without the skills its exam practices only with recordings (`loadListeningSkillIds`). */
-async function loadTextTestPlan({
-  goalId,
-  withLeftOut,
-}: {
-  goalId: string;
-  withLeftOut: boolean;
-}): Promise<GoalPlan> {
+async function loadTextTestPlan({ goalId, withLeftOut, tx = prisma }: PlanRead): Promise<GoalPlan> {
   const [plan, listening] = await Promise.all([
-    loadPlan({ goalId, withLeftOut }),
-    loadListeningSkillIds(goalId),
+    loadPlan({ goalId, tx, withLeftOut }),
+    loadListeningSkillIds(goalId, tx),
   ]);
 
   return { ...plan, skills: plan.skills.filter((skill) => !listening.has(skill.id)) };
@@ -399,8 +399,11 @@ async function loadTextTestPlan({
  * a text question tests reading, not listening, so placement never asks or skips them, and their
  * lessons stay.
  */
-export function loadPlacementPlan(goalId: string): Promise<GoalPlan> {
-  return loadTextTestPlan({ goalId, withLeftOut: true });
+export function loadPlacementPlan(
+  goalId: string,
+  tx: TransactionClient = prisma,
+): Promise<GoalPlan> {
+  return loadTextTestPlan({ goalId, tx, withLeftOut: true });
 }
 
 /** The ids of every skill a goal's plan covers, in plan order. */

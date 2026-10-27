@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type TransactionClient, prisma } from "@zoonk/db";
 import { toChosenStructure } from "../../../exams/choices/exam-choices";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
 import { readNoticeFormats } from "../../../library/exams/notice-formats";
@@ -27,11 +27,7 @@ import { getTargetDifficulty } from "../placement-difficulty";
 import { type PlacementItemCandidate, pickPlacementItem } from "../placement-item-choice";
 import { listKnownByMeasuredLevel, listKnownSkillIds, readSkillStatuses } from "../placement-known";
 import { isOwnMaterialTest } from "../placement-material";
-import {
-  type PlacementQuickFormat,
-  confirmsInWriting,
-  getPlacementQuickFormat,
-} from "../placement-quick-format";
+import { confirmsInWriting, getPlacementQuickFormat } from "../placement-quick-format";
 import { type SkillStatuses } from "../placement-status";
 import {
   type AreaStart,
@@ -115,29 +111,8 @@ function getChosenAreaShares({
  * The goal's exam, whose questions placement may ask, how placement asks quickly for it, and the
  * words its statements are answered with.
  */
-async function loadGoalExam(goalId: string): Promise<{
-  /** A test from the learner's own material: only answered topics are settled (`answeredOnly`). */
-  answeredOnly: boolean;
-  examBlueprintId: string | null;
-  /** The plan's areas the learner said are weak, which placement asks first. */
-  /** Each of the plan's areas' share of the exam, when the notice says (`getAreaShares`). */
-  areaShares: Map<string, number> | null;
-  focusAreas: string[];
-  /** The skills the learner asked to focus on: their area's, or the part of it they named. */
-  focusedSkillIds: Set<string>;
-  goalCreatedAt: Date | null;
-  /** The level the learner gave for the goal, stored on it. */
-  goalLevel: OwnLevel | null;
-  /** The exam's subjects the learner said they know well. */
-  knownAreas: string[];
-  /** A language level test's measured level, which counts as evidence (see `isLevelMeasured`). */
-  measuredLevel: OwnLevel | null;
-  quickFormat: PlacementQuickFormat;
-  trueFalseLabels: TrueFalseLabels;
-  /** A language goal confirms a right quick answer in writing (`confirmsInWriting`). */
-  typed: boolean;
-}> {
-  const goal = await prisma.goal.findUnique({
+async function loadGoalExam(goalId: string, tx: TransactionClient) {
+  const goal = await tx.goal.findUnique({
     include: { examBlueprint: true, plan: { select: { graph: true, settings: true } } },
     where: { id: goalId },
   });
@@ -165,12 +140,15 @@ async function loadGoalExam(goalId: string): Promise<{
   };
 }
 
-async function loadQuestion(itemId: string | undefined): Promise<PlacementQuestionView | null> {
+async function loadQuestion(
+  itemId: string | undefined,
+  tx: TransactionClient = prisma,
+): Promise<PlacementQuestionView | null> {
   if (!itemId) {
     return null;
   }
 
-  const item = await prisma.item.findUnique({ include: ITEM_IMAGE_INCLUDE, where: { id: itemId } });
+  const item = await tx.item.findUnique({ include: ITEM_IMAGE_INCLUDE, where: { id: itemId } });
   const parsed = item ? parsePlacementItem(item) : null;
 
   return parsed ? toPlacementQuestionView(parsed) : null;
@@ -232,6 +210,7 @@ export async function loadPlacementState({
   plan,
   today = null,
   userId,
+  tx = prisma,
 }: {
   /**
    * A placement question a first-week session just asked, answered: one of placement's own too,
@@ -244,6 +223,7 @@ export async function loadPlacementState({
   plan: GoalPlan;
   today?: Date | null;
   userId: string;
+  tx?: TransactionClient;
 }): Promise<PlacementState> {
   const skills = plan.skills;
   const skillIds = skills.map((skill) => skill.id);
@@ -261,24 +241,30 @@ export async function loadPlacementState({
     quickFormat,
     trueFalseLabels,
     typed,
-  } = await loadGoalExam(goalId);
+  } = await loadGoalExam(goalId, tx);
 
   const ownLevel = requestedLevel ?? goalLevel;
 
   const [{ attempts, evidence, placementAnswers, seenItemIds }, { bankItems, build }] =
     await Promise.all([
-      loadEvidence({ skillIds, userId }),
-      loadPlanBuild({ everySkill: answeredOnly, focusAreas, goalId, knownAreas, ownLevel }).then(
-        async (planBuild) => ({
-          bankItems: await loadPlacementItems({
-            examBlueprintId,
-            skillIds,
-            typed,
-            writingSkillIds: planBuild.preparingSkillIds,
-          }),
-          build: planBuild,
+      loadEvidence({ skillIds, tx, userId }),
+      loadPlanBuild({
+        everySkill: answeredOnly,
+        focusAreas,
+        goalId,
+        knownAreas,
+        ownLevel,
+        tx,
+      }).then(async (planBuild) => ({
+        bankItems: await loadPlacementItems({
+          examBlueprintId,
+          skillIds,
+          tx,
+          typed,
+          writingSkillIds: planBuild.preparingSkillIds,
         }),
-      ),
+        build: planBuild,
+      })),
     ]);
 
   const items: PlacementItemCandidate[] = bankItems.map((item) => ({
@@ -355,7 +341,7 @@ export async function loadPlacementState({
         })
       : null;
 
-  const next = dayBudgetUsed ? null : await loadQuestion(nextItem?.id);
+  const next = dayBudgetUsed ? null : await loadQuestion(nextItem?.id, tx);
   const answered = countPlacementAnswers({ attempts, since: goalCreatedAt });
 
   return {

@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type TransactionClient, prisma } from "@zoonk/db";
 import {
   type ExamChoiceFormat,
   fitsExamChoice,
@@ -10,9 +10,12 @@ import { getItemAudienceFilter } from "../../../library/items/item-field";
 import { PLACEMENT_ITEM_FORMATS, preferExamItems } from "./placement-items";
 
 /** How the goal's exam asks the questions picked by choice; null for a goal without one. */
-async function loadExamChoice(examBlueprintId: string | null): Promise<ExamChoiceFormat | null> {
+async function loadExamChoice(
+  examBlueprintId: string | null,
+  tx: TransactionClient = prisma,
+): Promise<ExamChoiceFormat | null> {
   const blueprint = examBlueprintId
-    ? await prisma.examBlueprint.findUnique({ where: { id: examBlueprintId } })
+    ? await tx.examBlueprint.findUnique({ where: { id: examBlueprintId } })
     : null;
 
   return blueprint ? getExamChoiceFormat(readBlueprintContent(blueprint).structure) : null;
@@ -30,6 +33,7 @@ export async function loadPlacementItems({
   skillIds,
   typed,
   writingSkillIds,
+  tx = prisma,
 }: {
   examBlueprintId: string | null;
   skillIds: string[];
@@ -37,9 +41,10 @@ export async function loadPlacementItems({
   typed: boolean;
   /** Skills whose placement questions the goal's run is still writing. */
   writingSkillIds?: ReadonlySet<string>;
+  tx?: TransactionClient;
 }) {
   const [items, choice] = await Promise.all([
-    prisma.item.findMany({
+    tx.item.findMany({
       orderBy: { id: "asc" },
       select: {
         content: true,
@@ -55,7 +60,7 @@ export async function loadPlacementItems({
         ...getItemAudienceFilter({ examBlueprintId }),
       },
     }),
-    loadExamChoice(examBlueprintId),
+    loadExamChoice(examBlueprintId, tx),
   ]);
 
   const fitting = items

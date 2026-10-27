@@ -1,5 +1,5 @@
 import "server-only";
-import { type PlanItem, prisma } from "@zoonk/db";
+import { type PlanItem, type TransactionClient, prisma } from "@zoonk/db";
 
 export type PlanItemRow = Pick<
   PlanItem,
@@ -15,8 +15,11 @@ export type GoalPlanSource = {
 };
 
 /** The saved plan as its skill projection reads it, with stable item order. */
-export function loadSavedGoalPlanSource(goalId: string): Promise<GoalPlanSource | null> {
-  return prisma.plan.findUnique({
+export function loadSavedGoalPlanSource(
+  goalId: string,
+  tx: TransactionClient = prisma,
+): Promise<GoalPlanSource | null> {
+  return tx.plan.findUnique({
     select: {
       graph: true,
       items: {

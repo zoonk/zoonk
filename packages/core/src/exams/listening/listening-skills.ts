@@ -1,5 +1,5 @@
 import "server-only";
-import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
+import { type ExamBlueprint, type Goal, type TransactionClient, prisma } from "@zoonk/db";
 import { getSkillArea } from "../../plans/planner/graph-areas";
 import {
   type PlanGraph,
@@ -167,11 +167,11 @@ export async function loadGoalListeningSkillIds({
  * `getListeningSkillIds` for a goal by its id, on its plan's graph; empty while it has no plan.
  * Internal: the caller passes a goal it already resolved.
  */
-export async function loadListeningSkillIds(goalId: string): Promise<Set<string>> {
-  const goal = await prisma.goal.findUnique({
-    select: LISTENING_GOAL_SELECT,
-    where: { id: goalId },
-  });
+export async function loadListeningSkillIds(
+  goalId: string,
+  tx: TransactionClient = prisma,
+): Promise<Set<string>> {
+  const goal = await tx.goal.findUnique({ select: LISTENING_GOAL_SELECT, where: { id: goalId } });
 
   if (!goal) {
     return new Set();

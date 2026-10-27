@@ -1,6 +1,11 @@
 import "server-only";
 import { isDeepStrictEqual } from "node:util";
 import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
+import {
+  lockLearner,
+  lockLearnerPlans,
+  markLockedPlanInputsChanged,
+} from "@zoonk/db/learner-writes";
 import { safeAsync } from "@zoonk/utils/error";
 import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import { getLearnerModelCacheTag } from "../../../cache/tags";
@@ -15,14 +20,8 @@ import { readLevelTestProgress } from "./level-test-state";
 /** Where placing the test's result on the plan stands (see `levelTestProgressSchema`). */
 type ResultPlacement = NonNullable<LevelTestProgress["placement"]>;
 
-/**
- * Where a finish left placing the result, and whether it placed it; null once the goal is gone.
- * `changed`: the goal changed while placement read it.
- */
-type PlaceOutcome = { placedNow: boolean; placement: ResultPlacement } | null | "changed";
-
-/** How many times a finish reads the goal again when it changed while placement read it. */
-const MAX_PLACEMENT_ATTEMPTS = 3;
+/** Where a finish left placing the result; null once the goal is gone. */
+type PlaceOutcome = { placedNow: boolean; placement: ResultPlacement } | null;
 
 /** Another finish announced it first: thrown in the announcement's transaction, which rolls back. */
 class PlacementAnnouncedError extends Error {
@@ -51,99 +50,79 @@ async function savePlacement(
   });
 }
 
-/** The goal as placement reads it: all its details but where placing the result stands. */
-function readPlacementInput(goal: Pick<Goal, "details">) {
-  return {
-    ...readGoalDetails(goal),
-    levelTest: { ...readLevelTestProgress(goal), placement: null },
-  };
-}
-
 /**
  * Places the test's result on the plan as `applyPlacement` does, in one transaction: skills it's
  * sure the learner knows become known, and the plan's items teaching only those are tested out,
  * with stand-ins for the ones its time leaves out. Only a finish that finds the result unplaced
  * places it, so no other finish places it again, even one that stalled until the learner undid
- * it. It keeps what the plan must announce, with what an earlier result left unannounced. A goal
- * that changed while placement read it is read again.
+ * it. It reads placement under those same locks and keeps what the plan must announce, with what
+ * an earlier result left unannounced.
  */
-export async function placeLevelTestResult(
-  input: { goalId: string; timeZone: string; userId: string },
-  attempt = 1,
-): Promise<Exclude<PlaceOutcome, "changed">> {
-  const { goalId, timeZone, userId } = input;
-  const read = await prisma.goal.findUnique({ where: { id: goalId } });
-  const found = read ? readLevelTestProgress(read).placement : undefined;
-
-  if (!read || !found || found.placed) {
-    return found ? { placedNow: false, placement: found } : null;
-  }
-
+export async function placeLevelTestResult({
+  goalId,
+  timeZone,
+  userId,
+}: {
+  goalId: string;
+  timeZone: string;
+  userId: string;
+}): Promise<PlaceOutcome> {
   const now = new Date();
-  const { goalPlan, pastBasicsAreas, state } = await loadPlacement({ goalId, userId });
 
-  // Placement changes the plan's inputs only when the learner knows some of its skills.
-  const outcome = await writeLearnerChange<PlaceOutcome>(
-    { planInputs: state.knownSkillIds.length > 0, userId },
-    async (tx) => {
-      const goal = await lockGoal(tx, goalId);
-      const current = goal ? readLevelTestProgress(goal).placement : undefined;
+  const outcome = await prisma.$transaction(async (tx) => {
+    const planIds = await lockLearnerPlans(tx, { userIds: [userId] });
+    await lockLearner(tx, { userId });
+    const goal = await lockGoal(tx, goalId);
+    const current = goal ? readLevelTestProgress(goal).placement : undefined;
 
-      if (!goal || !current || current.placed) {
-        return unchanged(current ? { placedNow: false, placement: current } : null);
-      }
-
-      if (!isDeepStrictEqual(readPlacementInput(goal), readPlacementInput(read))) {
-        return unchanged("changed");
-      }
-
-      await markSkillsKnown({
-        knownAt: now,
-        skillIds: state.knownSkillIds,
-        timeZone,
-        transaction: tx,
-        userId,
-      });
-
-      const { itemIds, standInIds } = await testOutKnownPlanItems(tx, {
-        goalId,
-        items: goalPlan.items,
-        knownSkillIds: new Set(state.knownSkillIds),
-        placedSkills: goalPlan.skills,
-        testedOutAt: now,
-        timeZone,
-      });
-
-      const unannounced = [...new Set([...current.unannounced, ...itemIds, ...standInIds])];
-
-      // The listening areas land with the announcement; with nothing to announce, nothing does.
-      const placement = {
-        pastBasicsAreas:
-          unannounced.length > 0
-            ? [...new Set([...current.pastBasicsAreas, ...pastBasicsAreas])]
-            : [],
-        placed: true,
-        unannounced,
-      };
-
-      await savePlacement(tx, { goal, placement });
-      return { placedNow: true, placement };
-    },
-  );
-
-  if (outcome !== "changed") {
-    if (outcome?.placedNow) {
-      revalidateCacheTags([getLearnerModelCacheTag(userId)]);
+    if (!goal || !current || current.placed) {
+      return current ? { placedNow: false, placement: current } : null;
     }
 
-    return outcome;
+    const { goalPlan, pastBasicsAreas, state } = await loadPlacement({ goalId, tx, userId });
+
+    if (state.knownSkillIds.length > 0) {
+      await markLockedPlanInputsChanged(tx, { planIds });
+    }
+
+    await markSkillsKnown({
+      knownAt: now,
+      skillIds: state.knownSkillIds,
+      timeZone,
+      transaction: tx,
+      userId,
+    });
+
+    const { itemIds, standInIds } = await testOutKnownPlanItems(tx, {
+      goalId,
+      items: goalPlan.items,
+      knownSkillIds: new Set(state.knownSkillIds),
+      placedSkills: goalPlan.skills,
+      testedOutAt: now,
+      timeZone,
+    });
+
+    const unannounced = [...new Set([...current.unannounced, ...itemIds, ...standInIds])];
+
+    // The listening areas land with the announcement; with nothing to announce, nothing does.
+    const placement = {
+      pastBasicsAreas:
+        unannounced.length > 0
+          ? [...new Set([...current.pastBasicsAreas, ...pastBasicsAreas])]
+          : [],
+      placed: true,
+      unannounced,
+    };
+
+    await savePlacement(tx, { goal, placement });
+    return { placedNow: true, placement };
+  });
+
+  if (outcome?.placedNow) {
+    revalidateCacheTags([getLearnerModelCacheTag(userId)]);
   }
 
-  if (attempt >= MAX_PLACEMENT_ATTEMPTS) {
-    throw new Error("The goal kept changing while its level test's result was placed.");
-  }
-
-  return placeLevelTestResult(input, attempt + 1);
+  return outcome;
 }
 
 /**

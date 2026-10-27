@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type TransactionClient, prisma } from "@zoonk/db";
 
 /**
  * The Library's prerequisite edges between these skills: each skill's prerequisites among them.
@@ -7,12 +7,13 @@ import { prisma } from "@zoonk/db";
  */
 export async function loadSkillPrerequisites(
   skillIds: readonly string[],
+  tx: TransactionClient = prisma,
 ): Promise<Map<string, string[]>> {
   if (skillIds.length === 0) {
     return new Map();
   }
 
-  const edges = await prisma.skillPrerequisite.findMany({
+  const edges = await tx.skillPrerequisite.findMany({
     select: { prerequisiteId: true, skillId: true },
     where: { prerequisiteId: { in: [...skillIds] }, skillId: { in: [...skillIds] } },
   });

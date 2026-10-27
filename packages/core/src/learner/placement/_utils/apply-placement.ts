@@ -21,19 +21,22 @@ export async function loadPlacement({
   goalId,
   plan,
   userId,
+  tx = prisma,
 }: {
   answer?: PlacementEvidence | null;
   goalId: string;
   plan?: GoalPlan;
   userId: string;
+  tx?: TransactionClient;
 }): Promise<{ goalPlan: GoalPlan; pastBasicsAreas: string[]; state: PlacementState }> {
-  const goalPlan = plan ?? (await loadPlacementPlan(goalId));
-  const state = await loadPlacementState({ answer, goalId, plan: goalPlan, userId });
+  const goalPlan = plan ?? (await loadPlacementPlan(goalId, tx));
+  const state = await loadPlacementState({ answer, goalId, plan: goalPlan, tx, userId });
 
   const pastBasicsAreas = await listPlacementListeningAreas({
     goalId,
     knownSkillIds: state.knownSkillIds,
     skills: goalPlan.skills,
+    tx,
     userId,
   });
 

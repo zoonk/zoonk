@@ -1,5 +1,5 @@
 import "server-only";
-import { type ItemFormat, prisma } from "@zoonk/db";
+import { type ItemFormat, type TransactionClient, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { type PlacementEvidence } from "../placement-beliefs";
 import { isPlacementAnswer } from "./placement-answers";
@@ -50,8 +50,16 @@ function toEvidenceList(attempts: readonly AttemptRow[]): PlacementEvidence[] {
  * (`evidence`), the ones to placement's own questions (`placementAnswers`, see
  * `isPlacementAnswer`) and the questions already seen.
  */
-export async function loadEvidence({ skillIds, userId }: { skillIds: string[]; userId: string }) {
-  const attempts = await prisma.attempt.findMany({
+export async function loadEvidence({
+  skillIds,
+  tx = prisma,
+  userId,
+}: {
+  skillIds: string[];
+  tx?: TransactionClient;
+  userId: string;
+}) {
+  const attempts = await tx.attempt.findMany({
     orderBy: { answeredAt: "desc" },
     select: {
       answer: true,

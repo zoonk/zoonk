@@ -24,6 +24,7 @@ import * as announcement from "../../plans/announce-tested-out-items";
 import { createGoalPlan } from "../../plans/create-goal-plan";
 import { decidePlanChange } from "../../plans/decide-plan-change";
 import { readGoalDetails } from "../_utils/language-goal";
+import { placeLevelTestResult } from "./_utils/level-test-placement";
 import { answerLanguageLevelTest } from "./answer-language-level-test";
 import { finishLanguageLevelTest } from "./finish-language-level-test";
 import { getLanguageLevelTest } from "./get-language-level-test";
@@ -383,51 +384,76 @@ describe("language level test", () => {
   });
 
   it("never puts back the levels of a result a later finish replaced", async () => {
-    await saveBank();
-    const { goal, user } = await languageGoalFixture();
-    mockSession(user.id);
-    await answerNextQuestion(goal.id);
+    const { goalId, userId } = await plannedLearnerFixture();
 
-    // Finishes save their levels, then fail to place them: neither result is applied yet.
     const placing = vi
       .spyOn(placement, "loadPlacement")
       .mockRejectedValueOnce(new Error("Plan busy"))
       .mockRejectedValueOnce(new Error("Plan busy"));
 
-    const owner = { goalId: goal.id, userId: user.id };
+    await expect(finishLanguageLevelTest(goalId)).rejects.toThrow("Plan busy");
+    const pause = pauseNextFinishAfterSettling();
 
     try {
-      await expect(finishLanguageLevelTest(goal.id)).rejects.toThrow("Plan busy");
-      const pause = pauseNextFinishAfterSettling();
+      const retry = finishLanguageLevelTest(goalId);
+      await pause.settled;
+      await answerNextQuestion(goalId);
+      await expect(finishLanguageLevelTest(goalId)).rejects.toThrow("Plan busy");
+      const [latestGoal, latestSkills] = await readFinishState({ goalId, userId });
+      pause.resume();
+      await retry;
+      const [goalAfter, skillsAfter] = await readFinishState({ goalId, userId });
+      const { level, skillLevels } = readGoalDetails(latestGoal);
+      expect(skillsAfter).toStrictEqual(latestSkills);
 
-      try {
-        const retry = finishLanguageLevelTest(goal.id);
-        await pause.settled;
-
-        // Meanwhile the learner answers one more question and finishes again, with new levels.
-        await answerNextQuestion(goal.id);
-        await expect(finishLanguageLevelTest(goal.id)).rejects.toThrow("Plan busy");
-        const [latestGoal, latestSkills] = await readFinishState(owner);
-
-        pause.resume();
-        await retry;
-
-        // The retry places the newer result, which its own finish left unplaced, at its levels.
-        const [goalAfter, skillsAfter] = await readFinishState(owner);
-        const { level, skillLevels } = readGoalDetails(latestGoal);
-        expect(skillsAfter).toStrictEqual(latestSkills);
-
-        expect(goalAfter.details).toMatchObject({
-          level,
-          levelTest: { placement: { placed: true } },
-          skillLevels,
-        });
-      } finally {
-        pause.resume();
-      }
+      expect(goalAfter.details).toMatchObject({
+        level,
+        levelTest: { placement: { placed: true } },
+        skillLevels,
+      });
     } finally {
+      pause.resume();
       placing.mockRestore();
     }
+  });
+
+  it("places the current goal after a concurrent change without reading placement twice", async () => {
+    const { goalId, readPlacement, userId } = await plannedLearnerFixture();
+
+    const reads = vi
+      .spyOn(placement, "loadPlacement")
+      .mockRejectedValueOnce(new Error("Plan busy"));
+
+    await expect(finishLanguageLevelTest(goalId)).rejects.toThrow("Plan busy");
+    reads.mockClear();
+    const goal = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
+
+    const writer = holdLearnerLock({
+      beforeCommit: (tx) =>
+        tx.goal.update({
+          data: { details: { ...readGoalDetails(goal), level: "A1" } },
+          where: { id: goalId },
+        }),
+      userId,
+    });
+
+    const pid = await writer.pid;
+    const placing = placeLevelTestResult({ goalId, timeZone: "UTC", userId });
+
+    try {
+      await waitForBlockedStatement(pid, LEARNER_LOCK);
+    } finally {
+      writer.release();
+      await Promise.all([writer.done, placing]);
+
+      try {
+        expect(reads).toHaveBeenCalledOnce();
+      } finally {
+        reads.mockRestore();
+      }
+    }
+
+    await expect(readPlacement()).resolves.toMatchObject({ items: ["todo", "todo"], reps: 0 });
   });
 
   it("keeps what lessons showed when a finish that stalled after settling the test goes on", async () => {
@@ -856,37 +882,6 @@ async function plannedLearnerFixture() {
   return { goalId: goal.id, readPlacement, undo, userId: user.id };
 }
 
-/**
- * Holds the next `count` finishes once each has read what placement settles, until all of them
- * have, then until `release`, as slow requests would. Every write stays real.
- */
-function holdPlacementReads(count = 1) {
-  const load = placement.loadPlacement;
-  const reached = Promise.withResolvers<null>();
-  const released = Promise.withResolvers<null>();
-  let waiting = 0;
-
-  const reads = vi.spyOn(placement, "loadPlacement").mockImplementation(async (input) => {
-    const loaded = await load(input);
-    waiting += 1;
-
-    if (waiting === count) {
-      reads.mockRestore();
-      reached.resolve(null);
-    }
-
-    await released.promise;
-    return loaded;
-  });
-
-  const release = () => {
-    released.resolve(null);
-    reads.mockRestore();
-  };
-
-  return { reached: reached.promise, release };
-}
-
 /** Holds the next announcement of what placing a result skipped until `release`; it then runs. */
 function holdNextAnnouncement() {
   const announce = announcement.announceTestedOutItems;
@@ -911,20 +906,20 @@ function holdNextAnnouncement() {
 
 describe("placing a level test's result on the planner's plan", () => {
   it("skips the lessons below the level once, with one undo, when two finishes race", async () => {
-    const { goalId, readPlacement } = await plannedLearnerFixture();
-    const reads = holdPlacementReads(2);
+    const { goalId, readPlacement, userId } = await plannedLearnerFixture();
+    const writer = holdLearnerLock({ userId });
+    const pid = await writer.pid;
+    const both = Promise.all([finishLanguageLevelTest(goalId), finishLanguageLevelTest(goalId)]);
 
     try {
-      // Both read what placement settles before either places it.
-      const both = Promise.all([finishLanguageLevelTest(goalId), finishLanguageLevelTest(goalId)]);
-      await reads.reached;
-      reads.release();
-
-      const [one, other] = await both;
-      expect(one).toStrictEqual(other);
+      await waitForBlockedStatement(pid, /SELECT (?:id FROM users|plan.id FROM plans)/u, 2);
     } finally {
-      reads.release();
+      writer.release();
+      await writer.done;
     }
+
+    const [one, other] = await both;
+    expect(one).toStrictEqual(other);
 
     const placed = await readPlacement();
 
@@ -943,11 +938,11 @@ describe("placing a level test's result on the planner's plan", () => {
   // skipped the lessons again, with a second announcement.
   it("leaves the skip the learner undid to a finish that stalled before placing", async () => {
     const { goalId, readPlacement, undo } = await plannedLearnerFixture();
-    const reads = holdPlacementReads();
+    const pause = pauseNextFinishAfterSettling();
 
     try {
       const stalled = finishLanguageLevelTest(goalId);
-      await reads.reached;
+      await pause.settled;
 
       await finishLanguageLevelTest(goalId);
       const placed = await readPlacement();
@@ -957,12 +952,12 @@ describe("placing a level test's result on the planner's plan", () => {
       const undone = await readPlacement();
       expect(undone).toMatchObject({ items: ["todo", "todo"], reps: 0 });
 
-      reads.release();
+      pause.resume();
       await stalled;
 
       await expect(readPlacement()).resolves.toStrictEqual(undone);
     } finally {
-      reads.release();
+      pause.resume();
     }
   });
 

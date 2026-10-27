@@ -165,8 +165,8 @@ describe("a changed day's queue and missions share its post-commit plan facts", 
         );
 
         expect(sharedFacts.result).toStrictEqual(unsharedFacts.result);
-        // Non-exam listening lookup has two fewer blueprint queries than the real-size exam probes.
-        expect(unsharedFacts.statements - sharedFacts.statements).toBe(18);
+        // Reusing the day also skips the plan's single skill-survivor lookup.
+        expect(unsharedFacts.statements - sharedFacts.statements).toBe(17);
 
         await expect(
           followPlanChangeToday({

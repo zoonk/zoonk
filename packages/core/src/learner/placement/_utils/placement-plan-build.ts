@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type TransactionClient, prisma } from "@zoonk/db";
 import { toListeningExam } from "../../../exams/listening/listening-exam";
 import { getListeningSkillIds } from "../../../exams/listening/listening-skills";
 import { awaitsExamBlueprint } from "../../../library/exams/notice-formats";
@@ -35,6 +35,7 @@ export async function loadPlanBuild({
   goalId,
   knownAreas,
   ownLevel,
+  tx = prisma,
 }: {
   /** A test from the learner's own material, whose every skill gets questions. */
   everySkill: boolean;
@@ -45,8 +46,9 @@ export async function loadPlanBuild({
   knownAreas: readonly string[];
   /** The learner's own level, where placement starts asking in each subject. */
   ownLevel: OwnLevel | null;
+  tx?: TransactionClient;
 }): Promise<PlanBuild> {
-  const plan = await prisma.plan.findUnique({
+  const plan = await tx.plan.findUnique({
     select: {
       buildFailedAt: true,
       createdAt: true,
@@ -83,7 +85,10 @@ export async function loadPlanBuild({
             knownAreas,
             listeningSkillIds: getListeningSkillIds({ exam: toListeningExam(plan.goal), graph }),
             ownLevel,
-            prerequisites: await loadSkillPrerequisites(graph.skills.map((skill) => skill.skillId)),
+            prerequisites: await loadSkillPrerequisites(
+              graph.skills.map((skill) => skill.skillId),
+              tx,
+            ),
           })
         : [],
     ),

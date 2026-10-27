@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal, prisma } from "@zoonk/db";
+import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
 import { loadListeningExam } from "../../exams/listening/listening-exam";
 import { getListeningSkillIds } from "../../exams/listening/listening-skills";
 import { getKnownSubjects, getOwnLevel } from "../../learner/placement/placement-contract";
@@ -15,8 +15,11 @@ import {
 import { parsePlanChangePayload } from "./plan-change-payload";
 
 /** The areas whose start the learner already chose in the plan (`setAreaStart`), either way. */
-async function listChosenStartAreas(planId: string): Promise<Set<string>> {
-  const changes = await prisma.planChange.findMany({
+async function listChosenStartAreas(
+  planId: string,
+  tx: TransactionClient = prisma,
+): Promise<Set<string>> {
+  const changes = await tx.planChange.findMany({
     select: { payload: true },
     where: {
       payload: { array_contains: [{ kind: "setAreaStart" }], path: ["operations"] },
@@ -66,11 +69,13 @@ export async function listListeningPastBasicsAreas({
 async function listMissedSkillIds({
   skillIds,
   userId,
+  tx = prisma,
 }: {
   skillIds: readonly string[];
   userId: string;
+  tx?: TransactionClient;
 }): Promise<Set<string>> {
-  const missed = await prisma.attempt.findMany({
+  const missed = await tx.attempt.findMany({
     distinct: ["skillId"],
     select: { skillId: true },
     where: { isCorrect: false, skillId: { in: [...skillIds] }, userId },
@@ -88,22 +93,21 @@ export async function listPlacementListeningAreas({
   knownSkillIds,
   skills,
   userId,
+  tx = prisma,
 }: {
   goalId: string;
   knownSkillIds: readonly string[];
   skills: readonly Pick<PlacementSkill, "band" | "id">[];
   userId: string;
+  tx?: TransactionClient;
 }): Promise<string[]> {
   if (knownSkillIds.length === 0) {
     return [];
   }
 
   const [plan, exam] = await Promise.all([
-    prisma.plan.findUnique({
-      select: { graph: true, id: true, settings: true },
-      where: { goalId },
-    }),
-    loadListeningExam(goalId),
+    tx.plan.findUnique({ select: { graph: true, id: true, settings: true }, where: { goalId } }),
+    loadListeningExam(goalId, tx),
   ]);
 
   const graph = parsePlanGraph(plan?.graph);
@@ -117,7 +121,11 @@ export async function listPlacementListeningAreas({
 
   const confirmedBand = getPlacementConfirmedBand({
     knownSkillIds: new Set(knownSkillIds),
-    missedSkillIds: await listMissedSkillIds({ skillIds: text.map((skill) => skill.id), userId }),
+    missedSkillIds: await listMissedSkillIds({
+      skillIds: text.map((skill) => skill.id),
+      tx,
+      userId,
+    }),
     skills: text,
   });
 
@@ -126,12 +134,12 @@ export async function listPlacementListeningAreas({
   }
 
   const [prerequisites, bands, chosen] = await Promise.all([
-    loadSkillPrerequisites(graph.skills.map((skill) => skill.skillId)),
-    prisma.skill.findMany({
-      select: { id: true, level: true },
-      where: { id: { in: [...listening] } },
-    }),
-    listChosenStartAreas(plan.id),
+    loadSkillPrerequisites(
+      graph.skills.map((skill) => skill.skillId),
+      tx,
+    ),
+    tx.skill.findMany({ select: { id: true, level: true }, where: { id: { in: [...listening] } } }),
+    listChosenStartAreas(plan.id, tx),
   ]);
 
   const { pastBasicsAreas } = parsePlanSettings(plan.settings);

@@ -19,7 +19,7 @@ export async function markLockedPlanInputsChanged(
  * plans, then learner rows, then their own rows, so two of them wait for each other instead of
  * deadlocking. A writer that reads what it then marks takes them first; marking retakes them.
  */
-async function lockLearnerPlans(
+export async function lockLearnerPlans(
   tx: LearnerWriteTransaction,
   { userIds }: { userIds: readonly string[] },
 ): Promise<string[]> {

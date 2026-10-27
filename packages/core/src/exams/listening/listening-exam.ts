@@ -1,5 +1,5 @@
 import "server-only";
-import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
+import { type ExamBlueprint, type Goal, type TransactionClient, prisma } from "@zoonk/db";
 import { readTestedLanguage } from "../../library/exams/blueprint-language";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import { type ListeningPart, listListeningParts } from "./listening-parts";
@@ -52,8 +52,11 @@ export function toListeningExam(goal: ListeningGoal): ListeningExam | null {
 }
 
 /** `toListeningExam` for a goal by its id. */
-export async function loadListeningExam(goalId: string): Promise<ListeningExam | null> {
-  const goal = await prisma.goal.findUnique({
+export async function loadListeningExam(
+  goalId: string,
+  tx: TransactionClient = prisma,
+): Promise<ListeningExam | null> {
+  const goal = await tx.goal.findUnique({
     select: { examBlueprint: true, kind: true, targetLanguage: true },
     where: { id: goalId },
   });
