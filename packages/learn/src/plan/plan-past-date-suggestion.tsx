@@ -77,8 +77,7 @@ type DateSearch = "building" | "failed" | "finding" | "noDate" | null;
  * moves to the day the learner's time covers what's left, found when they tap Preview (it plans the
  * goal at each candidate date, so never for the page); an exam's plan goes on after the exam,
  * whose date is fixed. Preview shows the change's diff, with the date or the end it moves to, and
- * Apply saves it. Lucas, a day past his date, read "Your plan ended · 13 lessons were left out"
- * and was offered the course's next level. The editor at its date is the other way on.
+ * Apply saves it. The editor at its date is the other way on.
  */
 export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "pastDate" }> }) {
   const t = useExtracted();

@@ -78,9 +78,7 @@ function useTimeItems(): SlotItem[] {
  * yet), the plan's date came with lessons left (the change that keeps it going), the plan is
  * finished, the plan no longer fits, the learner is behind, what their time fits or covers (see
  * `useTimeItems`), a free exam plan's week is over. A finished plan whose time left part of the
- * goal out offers the rest before the next level, as a unit is finished before the next one: Lucas
- * finished the plan his near date fitted and was offered "Continue at Beginner" first, his goal's
- * other topics second.
+ * goal out offers the rest before the next level, as a unit is finished before the next one.
  */
 function usePlanSuggestions(host: PlanSuggestionHost): SlotItem[] {
   const { plan } = usePlanScreen();

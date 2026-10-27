@@ -109,7 +109,7 @@ export function StepsFlow({
   // While it is, every screen waits (Back included: a pick there couldn't save). Once it answers,
   // the transition stays pending until the page's refresh after the save lands, seconds on a cold
   // server, while the next screen already shows: then only the screen that sent it waits, so the
-  // next one answers at once (an ENEM learner's "1" for English did nothing there).
+  // next one answers at once.
   const [sending, setSending] = useState<{ open: boolean; step: OnboardingStep } | null>(null);
 
   const answer = (input: OnboardingAnswerInput) => {

@@ -9,9 +9,8 @@ type AnswerCounts = { blank: number; partial: number; right: number; wrong: numb
 
 /**
  * The answers a score comes from: a net score's right, wrong, partly right and blank ones, and the
- * right, wrong and blank ones an estimated range was worked out from, which the range alone
- * doesn't say (Ana handed a mock in mostly blank and read only "230–390"). A score in right
- * answers already says them.
+ * right, wrong and blank ones an estimated range was worked out from, which the range alone doesn't
+ * say. A score in right answers already says them.
  */
 function getAnswerCounts(result: MockResult): AnswerCounts | null {
   if (result.net) {

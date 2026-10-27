@@ -16,9 +16,8 @@ const NAMED_TOPICS = 2;
  * at their time: "Your time covers everything by Oct 20" when the change it plans brings the rest
  * of the goal in (its own result, so the title and the diff come from one plan),
  * "3 more lessons fit in your time" when it brings in more depth, with the topics that come back
- * and the diff, then Apply or "Not now". Pedro, ahead of his dated plan with every lesson done, was
- * offered "10 min a day covers everything" beside his 15, and a won challenge added 4 lessons
- * behind his back; this is the one place what his time fits comes from.
+ * and the diff, then Apply or "Not now". This is the one place what the learner's time fits comes
+ * from.
  */
 export function FitLessonsSuggestion({ item }: { item: SlotItem }) {
   const t = useExtracted();

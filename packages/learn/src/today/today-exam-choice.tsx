@@ -137,9 +137,8 @@ function ChoicePicked({ change, onUndone }: { change: PlanChangeView; onUndone: 
 
 /**
  * An exam choice the learner left for later ("Decide later" in onboarding), asked on Today, where
- * they study: until they pick, the plan studies none of its options (Ana, 15 days in, had no
- * foreign language, and only the plan's pages said so). The pick then says what it did in place,
- * with Undo, which asks again.
+ * they study: until they pick, the plan studies none of its options. The pick then says what it did
+ * in place, with Undo, which asks again.
  */
 export function TodayExamChoice() {
   const t = useExtracted();

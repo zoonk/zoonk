@@ -189,8 +189,7 @@ const focusTestQuestions = {
 
 /**
  * A mock's questions, written when the learner starts a mock the shared bank is short of: one call
- * per few skills, all at once. About two minutes for ENEM's whole exam (190 questions, measured on
- * the dev server on 2026-10-07).
+ * per few skills, all at once. About two minutes for ENEM's whole exam (190 questions).
  */
 const mockQuestions = {
   phases: [{ id: "questions", seconds: 100 }],

@@ -225,10 +225,10 @@ export function hasEstimate({
  * changes, right away (the answer about the old week can take seconds, and is dropped when it
  * comes: the pick waits for this week's instead of moving to a week no longer shown). The plan may
  * still be being built when the question shows, so it asks until it's ready, for as long as any
- * onboarding wait does (Carla's took over four minutes, while five other learners started theirs):
- * it never gives up quietly, so asking that kept failing or ran too long says so, and `restart`
- * asks again. While the run building the plan is stopped (`stopped`), it waits for that run's "Try
- * again". Each time a day picked is asked about, unless what it covers is already known.
+ * onboarding wait does: it never gives up quietly, so asking that kept failing or ran too long says
+ * so, and `restart` asks again. While the run building the plan is stopped (`stopped`), it waits
+ * for that run's "Try again". Each time a day picked is asked about, unless what it covers is
+ * already known.
  */
 export function useTimeAdvice({
   answer,

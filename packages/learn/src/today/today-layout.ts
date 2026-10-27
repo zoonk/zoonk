@@ -21,9 +21,9 @@ export const TODAY_ASIDE_CLASS =
 /**
  * The day's action. From `sm` it sits beside the title. On a phone it follows the queue in the
  * day's order but docks above the tab bar while the queue runs past the screen, so it's in thumb
- * reach on the first screen however long the day is (Maya's 12 blocks put it two screens down),
- * and settles under the queue once the learner scrolls there. Its band covers the rows passing
- * under it, fading in above the button so they don't end on a hard edge.
+ * reach on the first screen however long the day is, and settles under the queue once the learner
+ * scrolls there. Its band covers the rows passing under it, fading in above the button so they
+ * don't end on a hard edge.
  */
 export const TODAY_ACTION_CLASS = cn(
   "mt-1 [grid-area:action] sm:mt-0 sm:self-end",

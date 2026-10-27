@@ -33,10 +33,10 @@ function getShown({
  * A chapter's map as one tap makes it: the tap asks for it (once at a time), then its status is
  * read again every few seconds while it's being made, and the page is read again once it's ready
  * or failed, so it shows without a reload. A map the server has made but the page doesn't show yet
- * is still on its way: the page is read again every few seconds until it shows it (a read that
- * came back before the map, or failed, left Sofia's panel offering to make it again). A map the
- * page already shows ready stays ready. A cap of the learner's plan the page already knows is
- * reached (`cap`) is the limit before any tap.
+ * is still on its way: the page is read again every few seconds until it shows it (a read that came
+ * back before the map, or failed, would offer to make it again). A map the page already shows ready
+ * stays ready. A cap of the learner's plan the page already knows is reached (`cap`) is the limit
+ * before any tap.
  */
 export function useMindMapRequest({
   actions,

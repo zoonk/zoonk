@@ -121,8 +121,8 @@ function MissionsLine({ children, className }: { children: React.ReactNode; clas
  * stake. A day without missions shows nothing; before today's session exists the buddy's day says
  * when they start. `rowsInQueue`: where the card follows Today's queue (under 72rem) and every
  * mission only opens one of its blocks, it keeps its header and track and leaves the rows to the
- * queue, whose violet marks name those blocks: Ana's phone listed her two blocks twice. `blockOf`:
- * on Today, the day's block a mission opens, which its row then marks and names as the queue does.
+ * queue, whose violet marks name those blocks, so no block is listed twice. `blockOf`: on Today,
+ * the day's block a mission opens, which its row then marks and names as the queue does.
  */
 export function MissionsCard({
   blockOf,

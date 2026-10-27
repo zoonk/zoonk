@@ -97,7 +97,7 @@ export function KeepGoingFailed({ keepGoing }: { keepGoing: ReturnType<typeof us
  * more minutes" of practice once every lesson is done), while there's something left to study
  * (never past the learner's daily limit), as a quiet text button; and a guest's soft ask to save
  * their plan. A phone offers it beside Finish only (`lastStep`): under "Continue" to the rewards,
- * "Continuar" over "Continuar estudando" left Lucas guessing which one kept him studying.
+ * two "Continue" buttons would leave the learner guessing which one keeps them studying.
  */
 export function SummaryOptions({ lastStep }: { lastStep: boolean }) {
   const t = useExtracted();

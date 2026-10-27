@@ -50,7 +50,7 @@ function renderNumber(chunks: React.ReactNode) {
 /**
  * A criterion's score as its row says it, out of its maximum: an official rubric's own points
  * (ENEM's 200, OAB's sections), and a custom rubric's equal share on the total's scale, so a
- * 10-point answer's three criteria read "10 of 10", never Pedro's "3.34 · 3.33 · 3.33".
+ * 10-point answer's three criteria read "10 of 10", never "3.34 · 3.33 · 3.33".
  */
 function toShownScore({
   criterion,

@@ -114,8 +114,7 @@ export function useBlockDetail() {
 
   return (block: BlockCopyInput & Pick<StudyBlock, "canDo">): string | null => {
     // In plain words: how many questions and on what, never "capsules". The first week's
-    // placement questions in it are on what the learner already knows, not on the capsules' topics:
-    // Lucas's "6 questions" named one topic while three were about others.
+    // placement questions in it are on what the learner already knows, not on the capsules' topics.
     // Nothing was due, so the day reviews what the learner knows least: never called due.
     if (hasCapsules(block) && block.weakest) {
       return t(

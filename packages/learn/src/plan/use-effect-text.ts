@@ -90,11 +90,10 @@ function removesDate(operations: readonly PlanOperation[]): boolean {
 
 /**
  * How a change the learner made moves the end, said as the plan on screen now says it: a plan with
- * a date ends at it, so nothing; a plan the change took the date off finishes around a month,
- * since "instead of" the day the last lesson fell on misread as their deadline (Maya's March 1
- * deadline read "instead of February 28"); an exam that goes on after its date, by month, as the
- * Plan writes that end; a plan without a date before and after, as the Plan writes its end ("Nov
- * 1"), so a time that brings it six days closer says so.
+ * a date ends at it, so nothing; a plan the change took the date off finishes around a month, since
+ * "instead of" the day the last lesson fell on misread as their deadline; an exam that goes on
+ * after its date, by month, as the Plan writes that end; a plan without a date before and after, as
+ * the Plan writes its end ("Nov 1"), so a time that brings it six days closer says so.
  */
 function useAppliedEndText() {
   const t = useExtracted();

@@ -117,10 +117,9 @@ function useFewerLessonsText(): LessonTexts {
  * out 21."), with the ones it leaves out whole by name ("Leaves out 3 lessons: Cromatina, Golgi
  * and Lisossomos."), so the card says what the buddy says and nothing leaves the plan unsaid.
  * When the names aren't one per lesson (a topic's lessons not written yet go by its name, and
- * lessons a change only shortens have none), a few of them are examples: "Leaves out 304 lessons,
- * such as A, B and C." Ana read "Leaves out 304 lessons, among them: A, B, C and 182 more", a count
- * of names beside a count of lessons. Lessons not written yet are the plan's estimate: "Adds about
- * 8 lessons." (Pedro's card said 8 for a topic the Library wrote 5 for.)
+ * lessons a change only shortens have none), a few of them are examples, never a count of names
+ * beside a count of lessons: "Leaves out 304 lessons, such as A, B and C." Lessons not written yet
+ * are the plan's estimate: "Adds about 8 lessons."
  */
 export function useLessonsEffectText() {
   const t = useExtracted();

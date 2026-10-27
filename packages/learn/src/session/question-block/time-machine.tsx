@@ -22,8 +22,7 @@ function trimEndPeriod(text: string): string {
 /**
  * What the line says. Before the answer: only when the learner saw the question, since their
  * earlier answer could give today's away. After it: the earlier answer, quoted, when it was wrong,
- * and, when it was right and today's isn't, why the question came back (Ana read only "you got
- * this one right" under a wrong answer).
+ * and, when it was right and today's isn't, why the question came back.
  * A statement's past answer is saved as "true" or "false" and reads in the exam's words.
  */
 function useTimeMachineText({

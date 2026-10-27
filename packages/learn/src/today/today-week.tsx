@@ -170,7 +170,7 @@ function useDayStatus() {
     }
 
     // Plans don't end: past its date a plan with lessons left goes on once the learner moves it,
-    // so the day is said by the date. Lucas's week read "after your plan" over 13 lessons left.
+    // so the day is said by the date.
     if (day.kind === "afterEnd") {
       return t("after your date");
     }

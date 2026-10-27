@@ -131,9 +131,8 @@ export function PlanExamChoices() {
 
 /**
  * One of the exam's choices the learner hasn't picked yet, in the Plan's slot until they do, since
- * the plan studies none of a choice's options before (Ana, 15 days in, had no foreign language,
- * and only the editor said so): one tap per option. The pick then says what it did in its place,
- * with Undo while it's the plan's latest change.
+ * the plan studies none of a choice's options before: one tap per option. The pick then says what
+ * it did in its place, with Undo while it's the plan's latest change.
  */
 export function ExamChoiceSuggestion({ item }: { item: Extract<SlotItem, { kind: "choice" }> }) {
   const t = useExtracted();

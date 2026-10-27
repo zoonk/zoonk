@@ -175,8 +175,7 @@ function SessionNumbers() {
         />
       )}
 
-      {/* A number that went down says so quietly: Maya's "4% → 2%" came in blue beside a rising
-          arrow. */}
+      {/* A number that went down says so quietly, never in the color of progress. */}
       {goalNumber && (
         <StatTile
           detail={

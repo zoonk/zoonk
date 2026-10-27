@@ -32,8 +32,7 @@ function countDaysUntil({ isoDate, today }: { isoDate: string; today: Date }): n
 }
 
 /**
- * The date is behind the browser's `today`: a goal's date that passed has no days left to count
- * ("The day is here" read every day after Lucas's).
+ * The date is behind the browser's `today`: a goal's date that passed has no days left to count.
  */
 export function hasIsoDatePassed({ isoDate, today }: { isoDate: string; today: Date }): boolean {
   return countDaysUntil({ isoDate, today }) < 0;

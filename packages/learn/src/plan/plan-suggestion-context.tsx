@@ -140,9 +140,8 @@ export function SlotContent({ children }: { children: React.ReactNode }) {
 
 /**
  * Undo for an answer's change while it's the plan's latest. It puts the plan back as it was, the
- * suggestion included, as Gmail's and Linear's undo do: Lucas undid the change that kept his plan
- * going past its date and read "Undone" with no way back to the offer until he reloaded. The
- * suggestion takes the keyboard when the Undo button leaves (see `Suggestion`).
+ * suggestion included, as Gmail's and Linear's undo do. The suggestion takes the keyboard when the
+ * Undo button leaves (see `Suggestion`).
  */
 export function SlotUndo({ item }: { item: SlotItem }) {
   const t = useExtracted();

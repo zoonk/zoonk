@@ -139,10 +139,9 @@ function ChangeActions({
 
 /**
  * Answers the change in place; the suggestion then says what the answer did. An answer that didn't
- * save keeps the last one on screen (an applied change whose Undo failed stays applied). Undoing
- * an applied suggestion gives the suggestion back (`change`), waiting for an answer as before
- * Apply, even when Today opened on it already applied: Ana undid resting on Saturdays and read
- * "Undone" with no way back to it until she reloaded. The change stays on screen from the answer
+ * save keeps the last one on screen (an applied change whose Undo failed stays applied). Undoing an
+ * applied suggestion gives the suggestion back (`change`), waiting for an answer as before Apply,
+ * even when Today opened on it already applied. The change stays on screen from the answer
  * (`onHold`) unless nothing was saved. One out of date stays busy until what replaces it shows.
  */
 function useAnswer(opened: Change, onHold: (held: boolean) => void) {

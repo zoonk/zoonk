@@ -46,13 +46,10 @@ export function useAreaStartTexts() {
  * Dec 4 instead of Feb 2." With every lesson in the plan, that's what more or less of it changes.
  * Short on time, more of an area brings more of its lessons in, which can end it later, and the
  * card says why, in the same sentence: "Linguagens gets about 82 more lessons, so you finish it
- * around Oct 29 instead of Aug 10." (Ana read only that she'd finish it two and a half months
- * later, two weeks before her exam: its added depth comes at the plan's end.) It's "about" while
- * some of the lessons the change adds aren't written (`estimated`). Less of an area that keeps all
- * of it, since everything fits, says so: "less natural sciences" never reads as doing something it
- * didn't.
- * Said as an estimate: lessons not written yet are sized by the plan's guess, and the dates settle
- * as they're written (Sofia's "November 19" became the 12th minutes later).
+ * around Oct 29 instead of Aug 10." It's "about" while some of the lessons the change adds aren't
+ * written (`estimated`): they're sized by the plan's guess, and the dates settle as they're
+ * written. Less of an area that keeps all of it, since everything fits, says so: "less natural
+ * sciences" never reads as doing something it didn't.
  */
 export function useAreaEndTexts() {
   const t = useExtracted();
@@ -113,9 +110,8 @@ export function useAreaLessonTexts() {
 
 /**
  * When the topics the learner asked to add start with the change ("The new lessons start on Oct
- * 9."), so a card never leaves them guessing: Carla asked to start her school's project soon,
- * and nothing said it came seven weeks later. Topics asked for now that come ahead of the plan's
- * first phase say so. Null when the change adds none.
+ * 9."), so a card never leaves them guessing when what they asked for comes. Topics asked for now
+ * that come ahead of the plan's first phase say so. Null when the change adds none.
  */
 export function useAddedTopicsStartText() {
   const t = useExtracted();
