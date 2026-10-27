@@ -1,6 +1,7 @@
 "use client";
 
 import { useCelebration } from "@zoonk/ui/hooks/celebration";
+import { readDuration } from "@zoonk/ui/lib/motion";
 import { useCallback, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { type Act, type PosesByExpression, playAct } from "./acting";
@@ -34,8 +35,8 @@ export type AfterBlink<Expression extends string, ActName extends string> = {
   faces: ReadonlySet<Expression>;
 };
 
-/** How long a character holds the pose a reaction landed in before it blinks once. */
-const BLINK_AFTER_MS = 2000;
+/** How long a character holds the pose a reaction landed in before it blinks once: about 2 s. */
+const BLINK_AFTER_FRAMES = 48;
 
 /** The keys that move a screen on (Continue's ⏎, Esc): pressing one lands an act at once. */
 const LANDING_KEYS: ReadonlySet<string> = new Set(["Enter", "Escape"]);
@@ -208,11 +209,13 @@ export function useActor<Expression extends string, ActName extends string>({
     reacted.current = true;
 
     void play(reaction.act, { delay: reaction.delay }).then((didLand) => {
-      if (didLand && afterBlink?.faces.has(current.current)) {
-        void play(afterBlink.act, { delay: BLINK_AFTER_MS });
+      const root = svg.current;
+
+      if (didLand && root && afterBlink?.faces.has(current.current)) {
+        void play(afterBlink.act, { delay: BLINK_AFTER_FRAMES * readDuration(root, "frame") });
       }
     });
-  }, [afterBlink, celebrate, play, reaction]);
+  }, [afterBlink, celebrate, play, reaction, svg]);
 
   return { expression: shown, swapFaces: stage.swapFaces };
 }
