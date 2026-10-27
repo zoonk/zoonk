@@ -47,14 +47,6 @@ enum CourseFormat {
   question
 }
 
-enum CoursePromptIntent {
-  ambiguous
-  exam
-  learn
-  question
-  unsafe
-}
-
 enum SubscriptionProvider {
   stripe
   google

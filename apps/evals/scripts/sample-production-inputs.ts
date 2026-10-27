@@ -156,13 +156,6 @@ function anonymizeRow({
  */
 const SECTIONS = [
   {
-    name: "coursePrompts",
-    prefix: "prompt",
-    sql: `select id, language, prompt, intent::text as "recordedIntent" from course_prompts`,
-    strata: `"recordedIntent", language`,
-    table: "course_prompts",
-  },
-  {
     name: "goals",
     prefix: "goal",
     sql: `

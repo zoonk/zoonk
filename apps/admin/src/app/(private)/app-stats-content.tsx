@@ -1,14 +1,13 @@
 import { Stats } from "@/components/stats";
 import { StatsSection } from "@/components/stats-section";
-import { countCoursePrompts } from "@/data/course-prompts/list-course-prompts";
 import { countLibraryContent } from "@/data/stats/count-library-content";
-import { BookOpenIcon, LayersIcon, MessageSquareTextIcon, SparklesIcon } from "lucide-react";
+import { BookOpenIcon, LayersIcon, SparklesIcon } from "lucide-react";
 
-/** The Library inventory and the course prompts learners submitted before goals replaced them. */
+/** The Library inventory. */
 export async function ContentStats() {
   "use cache: private";
 
-  const [content, promptCount] = await Promise.all([countLibraryContent(), countCoursePrompts()]);
+  const content = await countLibraryContent();
 
   return (
     <StatsSection subtitle="Library catalog and review pipeline" title="Content & Operations">
@@ -49,14 +48,6 @@ export async function ContentStats() {
         icon={<SparklesIcon />}
         title="Skills"
         value={content.skills.toLocaleString()}
-      />
-
-      <Stats
-        help="Course prompts submitted by learners"
-        href="/course-prompts"
-        icon={<MessageSquareTextIcon />}
-        title="Course Prompts"
-        value={promptCount.toLocaleString()}
       />
     </StatsSection>
   );

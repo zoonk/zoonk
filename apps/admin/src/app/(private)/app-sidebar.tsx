@@ -23,7 +23,6 @@ import {
   ImageIcon,
   LayersIcon,
   ListChecksIcon,
-  MessageSquareTextIcon,
   MessagesSquareIcon,
   PhoneIcon,
   ThumbsUpIcon,
@@ -57,7 +56,6 @@ const menuGroups = [
   {
     items: [
       { icon: BookOpen, label: "Courses", url: "/courses" },
-      { icon: MessageSquareTextIcon, label: "Course Prompts", url: "/course-prompts" },
       { icon: LayersIcon, label: "Lessons", url: "/lessons" },
       { icon: MessagesSquareIcon, label: "Questions", url: "/questions" },
     ],

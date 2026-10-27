@@ -30,7 +30,6 @@ export type {
   Course,
   CourseCategory,
   CourseChapter,
-  CoursePrompt,
   DailyProgress,
   EvaluationRun,
   ExamBlueprint,
@@ -94,7 +93,6 @@ export {
   ContentFeedbackReason,
   CourseFormat,
   CourseLevel,
-  CoursePromptIntent,
   FeedbackContentKind,
   FeedbackStatus,
   GoalKind,
@@ -134,10 +132,6 @@ export {
 } from "./generated/prisma/client";
 
 export type { AiCallCreateManyInput } from "./generated/prisma/models/AiCall";
-export type {
-  CoursePromptGetPayload,
-  CoursePromptWhereInput,
-} from "./generated/prisma/models/CoursePrompt";
 export type { CourseGetPayload } from "./generated/prisma/models/Course";
 export type { LessonUncheckedCreateInput } from "./generated/prisma/models/Lesson";
 export type {

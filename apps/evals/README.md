@@ -158,7 +158,6 @@ Each section is sampled equally across what production recorded (and language), 
 
 | Section              | From                                                                   | Recorded label and provenance                                                    |
 | -------------------- | ---------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| `coursePrompts`      | Goals typed before v2                                                  | The intent production gave them                                                  |
 | `goals`              | Goals typed in onboarding                                              | The goal kind                                                                    |
 | `goalUnderstandings` | What onboarding understood from a typed goal                           | The route and result, with model and prompt version                              |
 | `tutorQuestions`     | Tutor questions and answers                                            | The screen or answer they were about, with model and prompt version              |
