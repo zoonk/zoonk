@@ -2,9 +2,13 @@
 
 import { type DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
+import {
+  buildAcceptedArrangeWordSequences,
+  getAcceptedArrangeWordLengths,
+} from "@zoonk/core/player/contracts/arrange-words-answers";
 import { type WordBankOption } from "@zoonk/core/player/contracts/prepare-lesson-data";
 import { useExtracted } from "next-intl";
-import { useCallback, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useWebHaptics } from "web-haptics/react";
 import { type SelectedAnswer, type StepResult } from "../step-answer";
 import { useWordAudio } from "../use-word-audio";
@@ -107,26 +111,31 @@ function WordBank({
   );
 }
 
+/**
+ * A sentence built from the word bank (reading, listening): `answer` is the sentence to build, and
+ * any of its accepted wordings counts.
+ */
 export function ArrangeWordsInteraction({
-  acceptedWordLengths,
+  answer,
   answerKind,
   children,
-  correctWords,
   onSelectAnswer,
   result,
   selectedAnswer,
   wordBankOptions,
 }: {
-  acceptedWordLengths: number[];
+  answer: string;
   answerKind: "reading" | "listening";
   children: React.ReactNode;
-  correctWords: string[];
   onSelectAnswer: (answer: SelectedAnswer | null) => void;
   result?: StepResult;
   selectedAnswer?: SelectedAnswer;
   wordBankOptions: WordBankOption[];
 }) {
   const { trigger } = useWebHaptics();
+  const acceptedWordSequences = buildAcceptedArrangeWordSequences(answer);
+  const correctWords = acceptedWordSequences[0] ?? [];
+  const acceptedWordLengths = getAcceptedArrangeWordLengths(acceptedWordSequences);
 
   const [placedWords, setPlacedWords] = useState<PlacedWordWithBankIndex[]>(() => {
     if (result?.answer?.kind === answerKind && "arrangedWords" in result.answer) {
@@ -149,80 +158,62 @@ export function ArrangeWordsInteraction({
 
   const maxAnswerLength = Math.max(...acceptedWordLengths, correctWords.length);
 
-  const syncSelectedAnswer = useCallback(
-    (next: PlacedWordWithBankIndex[]) => {
-      const arrangedWords = next.map((placedWord) => placedWord.word);
+  const syncSelectedAnswer = (next: PlacedWordWithBankIndex[]) => {
+    const arrangedWords = next.map((placedWord) => placedWord.word);
 
-      if (acceptedWordLengths.includes(next.length)) {
-        onSelectAnswer({ arrangedWords, kind: answerKind });
-        return;
-      }
+    if (acceptedWordLengths.includes(next.length)) {
+      onSelectAnswer({ arrangedWords, kind: answerKind });
+      return;
+    }
 
-      if (selectedAnswer) {
-        onSelectAnswer(null);
-      }
-    },
-    [acceptedWordLengths, answerKind, onSelectAnswer, selectedAnswer],
-  );
+    if (selectedAnswer) {
+      onSelectAnswer(null);
+    }
+  };
 
-  const handlePlace = useCallback(
-    (tile: WordBankTile) => {
-      if (result || placedWords.length >= maxAnswerLength) {
-        return;
-      }
+  const handlePlace = (tile: WordBankTile) => {
+    if (result || placedWords.length >= maxAnswerLength) {
+      return;
+    }
 
-      void play(tile.option.audioUrl);
+    void play(tile.option.audioUrl);
 
-      const placed: PlacedWordWithBankIndex = {
-        ...tile.option,
-        id: String(idCounter.current),
-        wordBankIndex: tile.index,
-      };
+    const placed: PlacedWordWithBankIndex = {
+      ...tile.option,
+      id: String(idCounter.current),
+      wordBankIndex: tile.index,
+    };
 
-      idCounter.current += 1;
-      const next = [...placedWords, placed];
-      setPlacedWords(next);
+    idCounter.current += 1;
+    const next = [...placedWords, placed];
+    setPlacedWords(next);
+    syncSelectedAnswer(next);
+  };
 
-      syncSelectedAnswer(next);
-    },
-    [maxAnswerLength, placedWords, play, result, syncSelectedAnswer],
-  );
+  const handleRemove = (index: number) => {
+    const next = placedWords.filter((_, idx) => idx !== index);
+    setPlacedWords(next);
+    syncSelectedAnswer(next);
+  };
 
-  const handleRemove = useCallback(
-    (index: number) => {
-      const next = placedWords.filter((_, idx) => idx !== index);
-      setPlacedWords(next);
-      syncSelectedAnswer(next);
-    },
-    [placedWords, syncSelectedAnswer],
-  );
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
 
-  const handleDragStart = useCallback(() => {
-    void trigger("selection");
-  }, [trigger]);
+    if (!over || active.id === over.id) {
+      return;
+    }
 
-  const handleDragEnd = useCallback(
-    (event: DragEndEvent) => {
-      const { active, over } = event;
+    const oldIndex = placedWords.findIndex((pw) => pw.id === String(active.id));
+    const newIndex = placedWords.findIndex((pw) => pw.id === String(over.id));
 
-      if (!over || active.id === over.id) {
-        return;
-      }
+    if (oldIndex === -1 || newIndex === -1) {
+      return;
+    }
 
-      const oldIndex = placedWords.findIndex((pw) => pw.id === String(active.id));
-      const newIndex = placedWords.findIndex((pw) => pw.id === String(over.id));
-
-      if (oldIndex === -1 || newIndex === -1) {
-        return;
-      }
-
-      const reordered = arrayMove(placedWords, oldIndex, newIndex);
-      setPlacedWords(reordered);
-
-      syncSelectedAnswer(reordered);
-    },
-    [placedWords, syncSelectedAnswer],
-  );
+    const reordered = arrayMove(placedWords, oldIndex, newIndex);
+    setPlacedWords(reordered);
+    syncSelectedAnswer(reordered);
+  };
 
   return (
     <InteractiveStepLayout>
@@ -231,7 +222,7 @@ export function ArrangeWordsInteraction({
       <ArrangeWordsAnswerArea
         correctWords={correctWords}
         onDragEnd={handleDragEnd}
-        onDragStart={handleDragStart}
+        onDragStart={() => void trigger("selection")}
         onRemove={handleRemove}
         placedWords={placedWords}
         result={result}

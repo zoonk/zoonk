@@ -1,10 +1,6 @@
 "use client";
 
 import {
-  buildAcceptedArrangeWordSequences,
-  getAcceptedArrangeWordLengths,
-} from "@zoonk/core/player/contracts/arrange-words-answers";
-import {
   type SerializedStep,
   type WordBankOption,
 } from "@zoonk/core/player/contracts/prepare-lesson-data";
@@ -118,15 +114,10 @@ export function ReadingStep({
     return null;
   }
 
-  const acceptedWordSequences = buildAcceptedArrangeWordSequences(step.sentence.sentence);
-  const correctWords = acceptedWordSequences[0] ?? [];
-  const acceptedWordLengths = getAcceptedArrangeWordLengths(acceptedWordSequences);
-
   return (
     <ArrangeWordsInteraction
-      acceptedWordLengths={acceptedWordLengths}
+      answer={step.sentence.sentence}
       answerKind="reading"
-      correctWords={correctWords}
       onSelectAnswer={onSelectAnswer}
       result={result}
       selectedAnswer={selectedAnswer}
