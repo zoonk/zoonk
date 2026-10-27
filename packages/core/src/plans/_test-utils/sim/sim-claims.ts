@@ -52,29 +52,6 @@ function listPlanEvents(world: Pick<SimWorld, "inputs" | "pendingSkills" | "plan
 const NOON_MS = 43_200_000;
 
 /**
- * The test-outs the learner undid, from the moment of each (`loadUndoneTestOuts`): the day's noon,
- * when the simulator's placement tests out. The skills' earlier answers no longer show they know
- * them.
- */
-function listUndoneEvents(world: Pick<SimWorld, "changes" | "inputs" | "plan">): ClaimEvent[] {
-  const items = new Map(world.plan.items.map((item) => [item.id, item]));
-
-  return world.changes.flatMap((change) =>
-    change.kind === "testedOut" && change.status === "undone"
-      ? (change.planItemIds ?? []).flatMap((itemId) => {
-          const item = items.get(itemId);
-          const taught = item?.lessonId ? (world.inputs.taughtBy.get(item.lessonId) ?? []) : [];
-          const at = new Date(Date.parse(change.day) + NOON_MS);
-
-          return [...new Set([...(item?.skillId ? [item.skillId] : []), ...taught])].map(
-            (skillId): ClaimEvent => ({ at, kind: "undone", skillId }),
-          );
-        })
-      : [],
-  );
-}
-
-/**
  * The skills the learner passed over by choice (`loadPassedOverClaims`), each a claim from the
  * applied change that made the choice, or from the plan's first day for one made while setting it
  * up: before anything else that day.
@@ -101,8 +78,8 @@ function listPassedOverEvents(world: Pick<SimWorld, "changes" | "inputs" | "plan
 
 /**
  * Everything the learner model reads of the plan's skills (`loadClaimEvents`). The pure tier dates
- * a day's test-outs, their undo, the learner's changes and the lessons they finished at its noon,
- * so they're listed in the order a day's steps come, and claims read them in that order.
+ * a day's test-outs, the learner's changes and the lessons they finished at its noon, so they're
+ * listed in the order a day's steps come, and claims read them in that order.
  */
 function listSimClaimEvents(
   world: Pick<SimWorld, "changes" | "inputs" | "learner" | "pendingSkills" | "plan">,
@@ -111,7 +88,6 @@ function listSimClaimEvents(
 
   return [
     ...planEvents.filter((event) => event.kind !== "studied"),
-    ...listUndoneEvents(world),
     ...listPassedOverEvents(world),
     ...planEvents.filter((event) => event.kind === "studied"),
     ...world.learner.testAnswers,

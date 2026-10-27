@@ -1,9 +1,4 @@
-import {
-  getListeningPastBasicsEffect,
-  withPastBasicsAreas,
-} from "../../_utils/level-listening-starts";
-import { getSeenEffect, withSeenTopics } from "../../_utils/seen-effect";
-import { toIsoDate } from "../../planner/plan-calendar";
+import { withPastBasicsAreas } from "../../_utils/level-listening-starts";
 import { type RuleAnswer, type RuleEvent } from "../rules/rule-context";
 import { getPlacementAnswerTime } from "./sim-claims";
 import { toRuleFormat, toSimItemFormat } from "./sim-items";
@@ -12,8 +7,7 @@ import { listSimPlacementListeningAreas } from "./sim-listening-starts";
 import { commitSimPlan, computeSimPlan } from "./sim-planner";
 import { type Runner, record, skillAt } from "./sim-runner";
 import { place } from "./sim-session";
-import { undoSimChange } from "./sim-undo";
-import { type SimChange, type SimPlan, atNoon } from "./sim-world";
+import { type SimPlan, atNoon } from "./sim-world";
 
 /**
  * The pure tier's placement: the copy of what placement's end does with its answers
@@ -25,7 +19,7 @@ import { type SimChange, type SimPlan, atNoon } from "./sim-world";
 /**
  * `replanAfterPlacement`'s copy: answers that skipped nothing plan again from today when they
  * changed what the plan is planned from (what the learner missed or showed they know, the listening
- * areas they start past the basics of), and the change names the topics it moves.
+ * areas they start past the basics of).
  */
 function replanAfterPlacement(
   runner: Runner,
@@ -55,28 +49,9 @@ function replanAfterPlacement(
     return;
   }
 
-  const seen = getSeenEffect({ computed, shown: world.plan.items });
-
-  const change: SimChange | null =
-    seen.topicsAdded || seen.topicsLeftOut
-      ? {
-          day: toIsoDate(world.today),
-          effect: {
-            ...computed.effect,
-            ...seen,
-            fromPlacement: true,
-            ...getListeningPastBasicsEffect({ areas: pastBasicsAreas, state }),
-          },
-          kind: "coverageChanged",
-          operations: [],
-          source: "system",
-          status: "applied",
-        }
-      : null;
-
   record(runner, {
     before,
-    change,
+    change: null,
     event,
     label: "placement",
     plan: commitSimPlan({ computed, world }),
@@ -139,7 +114,7 @@ export function runPlacement(
     plan: { ...world.plan, items },
   };
 
-  const event = { answers, kind: "placement" as const };
+  const event = { kind: "placement" as const };
   const pastBasicsAreas = listSimPlacementListeningAreas({ known, world: runner.world });
 
   // `announceTestedOutItems` re-plans and says so when placement skipped something.
@@ -156,32 +131,12 @@ export function runPlacement(
     world: runner.world,
   });
 
-  const change: SimChange = {
-    day: toIsoDate(world.today),
-    effect: {
-      ...withSeenTopics({ computed, shown: runner.world.plan.items }),
-      ...getListeningPastBasicsEffect({ areas: pastBasicsAreas, state }),
-    },
-    kind: "testedOut",
-    operations: [],
-    planItemIds: items.flatMap((item, position) =>
-      item === world.plan.items[position] ? [] : [item.id],
-    ),
-    snapshot: runner.world.plan,
-    source: "system",
-    status: "applied",
-  };
-
   record(runner, {
     before,
-    change,
+    change: null,
     event,
     label: "placement",
     plan: commitSimPlan({ computed, world: runner.world }),
     step: index,
   });
-
-  if (step.undo) {
-    undoSimChange(runner, { change, restores: before, step: index });
-  }
 }

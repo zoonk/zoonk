@@ -214,7 +214,6 @@ describe("a mock-only move keeps the selected plan", () => {
         subscribed: true,
         targetInDays: 40,
       },
-      trace: false,
     });
 
     const computed = computeSimPlan({ mode: "forced", world: runner.world });

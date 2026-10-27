@@ -25,14 +25,10 @@ describe("a base choice never pushes out a topic", () => {
           start: "2026-10-12",
           steps: [
             { finish: 0.25, kind: "study", misses: [] },
-            {
-              kind: "change",
-              spec: { base: 0, choice: "essential", kind: "bases" },
-              via: "editor",
-            },
+            { kind: "change", spec: { base: 0, choice: "essential", kind: "bases" } },
             { days: 2, kind: "miss" },
             { finish: 0.5, kind: "study", misses: [5] },
-            { kind: "change", spec: { base: 0, choice: "deep", kind: "bases" }, via: "editor" },
+            { kind: "change", spec: { base: 0, choice: "deep", kind: "bases" } },
           ],
           subscribed: false,
           targetInDays: 6,

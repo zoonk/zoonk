@@ -420,7 +420,7 @@ describe("R11 the most asked topics keep their core first", () => {
       { at: ruleDay(0), correct: false, format: "other", skillId: "ecologia", source: "placement" },
     ];
 
-    const undo = { change: "testedOut", kind: "undo", restores: after } as const;
+    const undo = { kind: "undo" } as const;
 
     expect(checkMostAskedKept(ruleContext({ after, answers }))).toHaveLength(1);
     expect(checkMostAskedKept(ruleContext({ after, answers, event: undo }))).toStrictEqual([]);
@@ -452,7 +452,7 @@ describe("R11 the most asked topics keep their core first", () => {
   it("reads a later step that leaves the plan as it was as the session's run left it", () => {
     // Class test seed 2148: the next morning had nothing to settle, so no run planned the week.
     const thisWeek = plan(["cts", "brasil"]);
-    const newDay = { kind: "newDay", studied: true } as const;
+    const newDay = { kind: "newDay" } as const;
 
     expect(
       checkMostAskedKept(ruleContext({ after: thisWeek, before: thisWeek, event: newDay })),

@@ -74,10 +74,10 @@ export function findSessionDuels({ start, world }: { start: Date; world: SimWorl
 
 /** Each lesson's minutes, the default for one without an estimate (as `loadPlanLessons` gives it). */
 function listLessonMinutes(world: SimWorld): Map<string, number> {
-  const { inputs, landedLessons } = world;
+  const { inputs } = world;
 
   return new Map(
-    [...inputs.lessons, ...inputs.quickLessons.values(), ...landedLessons].map((lesson) => [
+    [...inputs.lessons, ...inputs.quickLessons.values()].map((lesson) => [
       lesson.lessonId,
       lesson.minutes || DEFAULT_LESSON_MINUTES,
     ]),
@@ -355,7 +355,7 @@ export function listStandInSkills({
   until,
 }: {
   items: SimPlan["items"];
-  until: Date | null;
+  until: Date;
 }): string[] {
   const waiting = items.flatMap((item) =>
     item.status === "todo" &&
@@ -363,7 +363,8 @@ export function listStandInSkills({
     !item.lessonId &&
     !item.chapterId &&
     item.skillId &&
-    (until === null || (item.scheduledFor !== null && item.scheduledFor <= until))
+    item.scheduledFor !== null &&
+    item.scheduledFor <= until
       ? [item.skillId]
       : [],
   );

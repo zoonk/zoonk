@@ -1,16 +1,11 @@
 import { isDeepStrictEqual } from "node:util";
 import { getEstimateChange } from "../../_utils/estimate-change";
-import { getFallingBehind } from "../../_utils/falling-behind";
-import { parsePlanChangePayload } from "../../_utils/plan-change-payload";
 import { isPlanUnchanged } from "../../_utils/plan-unchanged";
 import { type ComputedPlan } from "../../_utils/replan";
-import { withSeenTopics } from "../../_utils/seen-effect";
 import { listCarriedItemIds } from "../../planner/carried-items";
 import { carriesGiven } from "../../planner/carry-over";
-import { listPhaseEndMoves } from "../../planner/phase-dates-move";
 import { addDays, toIsoDate } from "../../planner/plan-calendar";
 import { readSimEvidence } from "./sim-claims";
-import { updateSimPhaseDates, withdrawUnneededSimProposal } from "./sim-phase-dates";
 import { commitSimPlan, computeSimPlan } from "./sim-planner";
 import {
   LEARN_KINDS,
@@ -85,29 +80,10 @@ function computeSettledPlan({
   return settle(new Set());
 }
 
-/** A refresh's plan and change, and what it wrote about the phase dates (see `sim-phase-dates.ts`). */
-export type SimRefresh = { change: SimChange | null; plan: SimPlan; proposals: SimChange[] };
+/** A refresh's plan and the change it recorded. */
+type SimRefresh = { change: SimChange | null; plan: SimPlan };
 
-function systemChange({
-  computed,
-  day,
-  kind,
-}: {
-  computed: Pick<ComputedPlan, "effect">;
-  day: string;
-  kind: SimChange["kind"];
-}): SimChange {
-  return {
-    day,
-    effect: computed.effect,
-    kind,
-    operations: [],
-    source: "system",
-    status: "applied",
-  };
-}
-
-/** Use the real seen-count threshold and payload for automatic estimate notices. */
+/** Use the real seen-count threshold for automatic estimate notices. */
 function getAutomaticChange({
   computed,
   day,
@@ -118,21 +94,17 @@ function getAutomaticChange({
   world: SimWorld;
 }): SimChange | null {
   const change = getEstimateChange({ computed, context: toSimContext(world) });
-
-  return change
-    ? {
-        day,
-        effect: parsePlanChangePayload(change.payload).effect,
-        kind: change.kind,
-        operations: [],
-        source: "system",
-        status: "applied",
-      }
-    : null;
+  return change ? { day, kind: change.kind, operations: [], status: "applied" } : null;
 }
 
 /** `computeRefreshedPlan`'s copy: after a session whose new pace lays this week past it, from tomorrow. */
-function computeRefreshedSimPlan({ pace, world }: { pace: "sampled" | "saved"; world: SimWorld }) {
+function computeRefreshedSimPlan({
+  pace,
+  world,
+}: {
+  pace: "sampled" | "saved";
+  world: SimWorld;
+}): ComputedPlan | null {
   const automatic = computeSimPlan({ mode: "automatic", pace, skipUnchangedInputs: true, world });
 
   if (!automatic) {
@@ -142,13 +114,11 @@ function computeRefreshedSimPlan({ pace, world }: { pace: "sampled" | "saved"; w
   const newPace = !isDeepStrictEqual(automatic.pace, world.plan.state.settings.pace);
 
   if (pace === "saved" || !newPace || automatic.built.spill <= 0) {
-    return { computed: automatic, mode: "automatic" as const, planned: world };
+    return automatic;
   }
 
   const planned = { ...world, today: addDays(world.today, 1) };
-  const computed = computeSimPlan({ keepPhaseDates: true, mode: "forced", pace, world: planned });
-
-  return { computed, mode: "forced" as const, planned };
+  return computeSimPlan({ keepPhaseDates: true, mode: "forced", pace, world: planned });
 }
 
 /** `refreshGoalPlan` on the simulator's world. */
@@ -163,7 +133,6 @@ export function refreshSimPlan({
   world: SimWorld;
 }): SimRefresh {
   const day = toIsoDate(world.today);
-  const context = toSimContext(world);
 
   const settledToday = world.changes.some(
     (change) => change.kind === "missedDays" && change.day === day,
@@ -173,49 +142,30 @@ export function refreshSimPlan({
 
   if (left.length > 0) {
     const computed = computeSettledPlan({ missed: !wasLastDayStudied(world), pace, world });
-    const phaseEnds = listPhaseEndMoves({ after: computed.built.phases, shown: world.plan.phases });
 
     return {
       change: {
-        ...systemChange({ computed, day, kind: "missedDays" }),
-        behind: getFallingBehind({ computed, context }),
         carriedItemIds: listCarriedItemIds({ items: computed.built.items, left }),
-        effect: {
-          ...withSeenTopics({ computed, shown: world.plan.items }),
-          ...(phaseEnds.length > 0 && { phaseEnds }),
-        },
+        day,
+        kind: "missedDays",
+        operations: [],
+        status: "applied",
       },
       plan: commitSimPlan({ computed, world }),
-      proposals: updateSimPhaseDates({ computed, mode: "forced", pace, world }),
     };
   }
 
-  if (settleOnly) {
-    return { change: null, plan: world.plan, proposals: [] };
-  }
+  const computed = settleOnly ? null : computeRefreshedSimPlan({ pace, world });
 
-  const refreshed = computeRefreshedSimPlan({ pace, world });
-
-  if (!refreshed) {
-    return { change: null, plan: world.plan, proposals: withdrawUnneededSimProposal({ world }) };
-  }
-
-  const { computed, mode, planned } = refreshed;
-
-  if (computed.inputsKey === world.plan.inputsKey) {
-    return {
-      change: null,
-      plan: world.plan,
-      proposals: withdrawUnneededSimProposal({ computed, world }),
-    };
+  if (!computed || computed.inputsKey === world.plan.inputsKey) {
+    return { change: null, plan: world.plan };
   }
 
   const change = getAutomaticChange({ computed, day, world });
-  const proposals = updateSimPhaseDates({ computed, mode, pace, planned, world });
 
   // An unchanged plan isn't saved, but the run read what the learner knows now, and keeps the key
   // of what it planned from with the lessons it counted for each skill (`savePlanInputsKey`).
-  if (!change && isPlanUnchanged({ computed, context })) {
+  if (!change && isPlanUnchanged({ computed, context: toSimContext(world) })) {
     return {
       change: null,
       plan: {
@@ -226,9 +176,8 @@ export function refreshSimPlan({
         ],
         state: { ...world.plan.state, graph: computed.state.graph },
       },
-      proposals,
     };
   }
 
-  return { change, plan: commitSimPlan({ computed, world }), proposals };
+  return { change, plan: commitSimPlan({ computed, world }) };
 }

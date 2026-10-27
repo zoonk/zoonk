@@ -1,13 +1,10 @@
 import { type Goal, type PlanChangeStatus } from "@zoonk/db";
 import { type ClaimEvent } from "../../../learner/_utils/skill-claims";
-import { type OwnLevel } from "../../../learner/placement/placement-steps";
-import { type getFallingBehind } from "../../_utils/falling-behind";
 import { type PlanContext } from "../../_utils/plan-context";
 import { getTodayExceptAreas } from "../../_utils/steered-areas";
 import { type PlanOperation } from "../../plan-contract";
 import { type CarryOver } from "../../planner/carry-over";
 import { fromIsoDate, toIsoDate } from "../../planner/plan-calendar";
-import { type PlanEffect } from "../../planner/plan-effect";
 import { type ExistingPlanItem } from "../../planner/plan-items";
 import { type PaceSample } from "../../planner/plan-pace";
 import { type PlanPhase, type PlanState, parsePlanSettings } from "../../planner/plan-state";
@@ -41,22 +38,14 @@ export type SimPlan = {
   version: number;
 };
 
-/** A change the plan recorded for the learner to see. */
+/** A change the plan recorded: what later planning runs read of it. */
 export type SimChange = {
-  /** For settling earlier days' work: the drop in what the plan covers that Today says. */
-  behind?: ReturnType<typeof getFallingBehind>;
   /** For settling earlier days' work: the items it carried (the payload's `carriedItemIds`). */
   carriedItemIds?: string[];
   day: string;
-  effect: PlanEffect | null;
   /** A `PlanChangeKind`, as plan changes store it. */
   kind: string;
   operations: PlanOperation[];
-  /** For a test-out: the items it skipped, which its undo puts back (the payload's `planItemIds`). */
-  planItemIds?: string[];
-  /** For a change the learner can undo: the plan right before it, which the undo puts back. */
-  snapshot?: SimPlan;
-  source: string;
   status: PlanChangeStatus;
 };
 
@@ -66,8 +55,6 @@ type SimLearnerModel = {
   knownSubjects: string[];
   /** The learner's own pace against lesson estimates, once they finished lessons. */
   own: PaceSample | null;
-  /** The level they stated in onboarding (`details.level`), if they did. */
-  ownLevel: OwnLevel | null;
   /** Each tested skill's memory on the exam day. */
   readiness: Map<string, SkillReadiness>;
   /** Plus learners take mocks; for others a mock day is the full review. */
@@ -81,8 +68,6 @@ export type SimWorld = {
   /** Changes recorded so far, oldest first. */
   changes: SimChange[];
   inputs: SimInputs;
-  /** Lessons the Library outlined after the fixture's: each landed skill's new lessons. */
-  landedLessons: PlannerLesson[];
   learner: SimLearnerModel;
   /** The fixture's lessons as the planner loads them now (see `SimInputs.loadLessons`). */
   lessons: PlannerLesson[];
@@ -105,11 +90,7 @@ export function getSimGoal(world: Pick<SimWorld, "inputs" | "learner" | "plan">)
   return {
     createdAt: new Date(0),
     dailyMinutes: plan.state.goal.dailyMinutes,
-    details: {
-      ...inputs.goal.details,
-      knownSubjects: learner.knownSubjects,
-      ...(learner.ownLevel && { level: learner.ownLevel }),
-    },
+    details: { ...inputs.goal.details, knownSubjects: learner.knownSubjects },
     examBlueprintId: inputs.goal.examBlueprintId,
     generationRunId: null,
     id: "sim-goal",

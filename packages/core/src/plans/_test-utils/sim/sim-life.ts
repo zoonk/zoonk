@@ -1,25 +1,17 @@
 import { addDays, toIsoDate } from "../../planner/plan-calendar";
 import { computeSavedSimChange } from "./sim-change";
+import { type SimViolation } from "./sim-context";
 import { createSimPlan } from "./sim-create";
 import { loadSimInputs } from "./sim-inputs";
 import { type SimLife, type SimLifeStep } from "./sim-life-plan";
 import { toOperations } from "./sim-operations";
-import { askSimPhaseDatesAfterChange } from "./sim-phase-dates";
 import { runPlacement } from "./sim-placement";
 import { commitSimPlan, computeSimPlan } from "./sim-planner";
 import { refreshSimPlan } from "./sim-refresh";
-import {
-  type Runner,
-  type SimCheck,
-  type SimResult,
-  record,
-  refresh,
-  startRunner,
-} from "./sim-runner";
-import { buildSimSession, findSessionDuels, listStandInSkills } from "./sim-session";
-import { land, openToday } from "./sim-today";
-import { setBackSimChange, undoSimChange } from "./sim-undo";
-import { type SimChange, atNoon } from "./sim-world";
+import { type Runner, type SimCheck, record, refresh, startRunner } from "./sim-runner";
+import { buildSimSession, findSessionDuels } from "./sim-session";
+import { openToday } from "./sim-today";
+import { atNoon } from "./sim-world";
 
 async function runStudy(
   runner: Runner,
@@ -47,7 +39,6 @@ async function runStudy(
 
   // The learner's pace counts the lessons they played (`loadOwnSample`), not a boss's duel.
   runner.own.count += lessons.length;
-  runner.progressed ||= finished.size > 0;
 
   runner.world = {
     ...world,
@@ -77,7 +68,6 @@ async function runStudy(
     event: { kind: "session" },
     label: "session",
     plan: settled?.plan ?? runner.world.plan,
-    proposals: settled?.proposals,
     step: index,
   });
 
@@ -96,24 +86,15 @@ async function runChange(
   const { world } = runner;
 
   const operations = toOperations({
-    areas: runner.areas,
-    goalKind: runner.inputs.goal.kind,
     listBases: () => computeSimPlan({ mode: "forced", world }).bases.bases,
     spec: step.spec,
-    state: world.plan.state,
-    today: world.today,
   });
 
   if (!operations) {
     return;
   }
 
-  // The editor takes a change that sets back what the latest edit changed as its Undo.
-  if (step.via === "editor" && setBackSimChange(runner, { operations, step: index })) {
-    return;
-  }
-
-  const result = computeSavedSimChange({ operations, via: step.via, world });
+  const result = computeSavedSimChange({ operations, world });
 
   if (!result) {
     return;
@@ -128,52 +109,18 @@ async function runChange(
     return;
   }
 
-  const change: SimChange = {
-    day: toIsoDate(world.today),
-    effect: result.effect,
-    kind: "edited",
-    operations,
-    snapshot: world.plan,
-    source: step.via === "buddy" ? "planEdit" : "learner",
-    status: "applied",
-  };
-
   record(runner, {
-    baseline: commitSimPlan({ computed: result.baseline, world }),
     before: world.plan,
-    change,
+    change: { day: toIsoDate(world.today), kind: "edited", operations, status: "applied" },
     event: { kind: "learnerChange", operations },
     label: "change",
     plan: commitSimPlan({ computed: result.computed, world }),
-    proposals: askSimPhaseDatesAfterChange({
-      bringBackSetAside: result.bringsBackSetAside,
-      change,
-      computed: result.computed,
-      world,
-    }),
     step: index,
   });
 
   // Today's session follows a change the learner made (`followPlanToday`).
   const session = buildSimSession({ start: runner.start, world: runner.world });
   runner.world.sessions.set(toIsoDate(world.today), session);
-
-  if (step.undo) {
-    undoSimChange(runner, { change, restores: world.plan, step: index });
-  }
-}
-
-async function runLand(
-  runner: Runner,
-  step: Extract<SimLifeStep, { kind: "land" }>,
-  index: number,
-) {
-  const waiting = listStandInSkills({ items: runner.world.plan.items, until: null });
-  const landing = waiting.slice(0, step.count);
-
-  if (landing.length > 0) {
-    await land(runner, { skillIds: landing, step: index });
-  }
 }
 
 async function runStep(runner: Runner, step: SimLifeStep, index: number): Promise<void> {
@@ -193,8 +140,6 @@ async function runStep(runner: Runner, step: SimLifeStep, index: number): Promis
       refresh(runner, { event: { kind: "refresh" }, label: "refresh", pace: "saved", step: index });
 
       return;
-    case "land":
-      return runLand(runner, step, index);
     case "change":
       return runChange(runner, step, index);
     default:
@@ -208,10 +153,10 @@ async function runStep(runner: Runner, step: SimLifeStep, index: number): Promis
  */
 export async function runSimLife(
   life: SimLife,
-  { check, trace = false }: { check: SimCheck; trace?: boolean },
-): Promise<SimResult> {
+  { check }: { check: SimCheck },
+): Promise<{ violations: SimViolation[] }> {
   const inputs = await loadSimInputs(life.fixture);
-  const runner = await startRunner({ check, inputs, life, trace });
+  const runner = await startRunner({ check, inputs, life });
 
   record(runner, {
     before: null,
@@ -228,10 +173,5 @@ export async function runSimLife(
     Promise.resolve(),
   );
 
-  return {
-    events: runner.events,
-    library: inputs.library,
-    plans: runner.plans,
-    violations: runner.violations,
-  };
+  return { violations: runner.violations };
 }

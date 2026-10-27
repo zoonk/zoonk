@@ -116,7 +116,6 @@ function steer({
   return checkSteeringKeepsToday({
     after: { ...plan, items: buildPlan(changed).items, phases: [] },
     before: { ...plan, items: shown, phases: [] },
-    changes: [],
     event: { kind: "learnerChange", operations },
     today: TODAY,
     todayShown: true,

@@ -55,11 +55,6 @@ export type SimPlanRequest = Pick<BuildPlanInput, "bringBackSetAside" | "keepSel
   world: SimWorld;
 };
 
-/** The Library's current lessons, including those that landed during this life. */
-function listLessons(world: SimWorld): PlannerLesson[] {
-  return [...world.lessons, ...world.landedLessons];
-}
-
 /**
  * The Library lessons a planning run plans from (`computePlan`'s `inputs.lessons`): the graph's,
  * but the basic bands of an area the learner said they're past, unless they missed a question
@@ -79,7 +74,7 @@ function listPlannedLessons({
   return keepPastBasicsBands({
     graph,
     keepSkillIds: listGapSkillIds(world),
-    lessons: listLessons(world).filter((lesson) => lesson.skillIds.some((id) => skillIds.has(id))),
+    lessons: world.lessons.filter((lesson) => lesson.skillIds.some((id) => skillIds.has(id))),
     pastBasicsAreas: settings.pastBasicsAreas,
   });
 }
@@ -109,7 +104,7 @@ function toPlannerInput({
   const goal = getSimGoal({ ...world, plan: { ...plan, state } });
   const graphSkills = new Set(state.graph.skills.map((skill) => skill.skillId));
 
-  const loaded = listLessons(world).filter((lesson) =>
+  const loaded = world.lessons.filter((lesson) =>
     lesson.skillIds.some((skillId) => graphSkills.has(skillId)),
   );
 

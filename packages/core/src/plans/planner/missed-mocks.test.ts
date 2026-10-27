@@ -142,7 +142,7 @@ function checkMocks({
       settings: plan.input.settings,
     },
     before: null,
-    event: { kind: "newDay", studied: false },
+    event: { kind: "newDay" },
     today,
   });
 }

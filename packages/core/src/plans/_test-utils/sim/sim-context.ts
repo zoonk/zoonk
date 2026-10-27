@@ -1,6 +1,4 @@
-import { type Goal, type GoalKind } from "@zoonk/db";
-import { getExamDocument } from "../../../exams/exam-document";
-import { type PlanChangeView } from "../../plan-view-contract";
+import { type GoalKind } from "@zoonk/db";
 import { findAnnouncedSkillIds } from "../../planner/announced-lessons";
 import { getSkillArea } from "../../planner/graph-areas";
 import { fromIsoDate } from "../../planner/plan-calendar";
@@ -12,46 +10,28 @@ import {
   type RuleViolation,
 } from "../rules/rule-context";
 import { type SimInputs } from "./sim-inputs";
-import { type SimChange, type SimPlan } from "./sim-world";
+import { type SimPlan } from "./sim-world";
 
 /**
  * What the simulator calls each step, for reports: `open` is the day's first look at Today (a
  * `newDay` to the checks: later looks the same day change nothing), `refresh` a system re-plan
  * with nothing new, `session` a study session (with the re-plan a completed one runs), `land`
- * lessons the Library wrote landing, `answer` the learner applying Today's proposal or a finished
- * mock's offer, `mock` the session up to a finished mock whose offer the learner then answers,
- * `undo` the learner taking back the change or test-outs just made.
+ * lessons the Library outlined landing.
  */
 export type SimStepLabel =
-  | "answer"
   | "change"
   | "create"
   | "land"
-  | "mock"
   | "open"
   | "placement"
   | "refresh"
-  | "session"
-  | "testOut"
-  | "undo";
-
-/**
- * The changes a learner made or applied so far, on their day: the applied ones with operations
- * that the system didn't make on its own.
- */
-export function listLearnerChanges(changes: readonly SimChange[]) {
-  return changes.flatMap((change) =>
-    change.status === "applied" && change.source !== "system" && change.operations.length > 0
-      ? [{ day: fromIsoDate(change.day), operations: change.operations }]
-      : [],
-  );
-}
+  | "session";
 
 /** A violation, where it happened in the life, and what the simulator called the step. */
 export type SimViolation = RuleViolation & { label: SimStepLabel; step: number; today: string };
 
 /** What a step records about the learner for the checks: their answers and what they said. */
-export type SimLearnerFacts = {
+type SimLearnerFacts = {
   /** The skills a class test's material announces questions on (`findAnnouncedSkillIds`). */
   announcedSkillIds: string[];
   answers: RuleAnswer[];
@@ -59,12 +39,9 @@ export type SimLearnerFacts = {
   knownAreas: string[];
   /** The skills the learner showed they know, as the planner reads them (`listKnownSkills`). */
   knownSkillIds: readonly string[];
-  /** The skills the exam practices only with its recordings (`getListeningSkillIds`). */
-  listeningSkillIds: readonly string[];
-  plus: boolean;
 };
 
-export function toRulePlan({
+function toRulePlan({
   inputs,
   kind,
   plan,
@@ -86,36 +63,6 @@ export function toRulePlan({
     settings: plan.state.settings,
     taughtBy: inputs.taughtBy,
     topicLevels: inputs.topicLevels,
-  };
-}
-
-/** A change the simulator recorded, as clients read it. */
-export function toSimChangeView({
-  change,
-  goal,
-  index,
-}: {
-  change: SimChange;
-  goal: Pick<Goal, "kind" | "targetLanguage">;
-  index: number;
-}): PlanChangeView {
-  return {
-    behind: change.behind ?? null,
-    canUndo: false,
-    createdAt: `${change.day}T12:00:00.000Z`,
-    days: null,
-    effect: change.effect,
-    examDocument: getExamDocument(goal),
-    id: `sim-change-${index}`,
-    kind: change.kind,
-    lessonsSkipped: 0,
-    officialDate: null,
-    operations: change.operations,
-    reason: null,
-    seen: false,
-    source: change.source,
-    status: change.status,
-    todaySession: null,
   };
 }
 
@@ -153,50 +100,34 @@ export function listGapAreas({
 export function toRuleContext({
   after,
   before,
-  changes,
-  declined,
   event,
   inputs,
   kind,
   learner,
-  learnerChanges,
   today,
   todayShown,
-  waiting,
 }: {
   after: SimPlan;
   before: SimPlan | null;
-  changes: readonly PlanChangeView[];
-  /** The proposals the learner declined so far, as clients read them. */
-  declined: readonly PlanChangeView[];
   event: RuleEvent;
   inputs: Pick<SimInputs, "prerequisites" | "taughtBy" | "topicLevels">;
   kind: GoalKind;
   learner: SimLearnerFacts;
-  learnerChanges: ReturnType<typeof listLearnerChanges>;
   today: Date;
   todayShown: boolean;
-  /** The proposals still waiting for the learner's answer after the step, as clients read them. */
-  waiting: readonly PlanChangeView[];
 }): RuleContext {
   return {
     after: toRulePlan({ inputs, kind, plan: after }),
     answers: learner.answers,
     before: before ? toRulePlan({ inputs, kind, plan: before }) : null,
-    changes,
-    declined,
     event,
     learner: {
       announcedSkillIds: learner.announcedSkillIds,
       gapAreas: learner.gapAreas,
       knownAreas: learner.knownAreas,
       knownSkillIds: learner.knownSkillIds,
-      listeningSkillIds: learner.listeningSkillIds,
-      plus: learner.plus,
     },
-    learnerChanges,
     today,
     todayShown,
-    waiting,
   };
 }

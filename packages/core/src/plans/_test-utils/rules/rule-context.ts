@@ -1,7 +1,6 @@
 import { type GoalKind } from "@zoonk/db";
 import { type TopicLevel } from "../../../library/exams/topic-frequency";
 import { type PlanOperation } from "../../plan-contract";
-import { type PlanChangeView } from "../../plan-view-contract";
 import { type ExistingPlanItem } from "../../planner/plan-items";
 import { type PlanGraph, type PlanPhase, type PlanSettings } from "../../planner/plan-state";
 
@@ -60,15 +59,11 @@ export type RuleAnswer = {
 
 /**
  * What happened in a step. `learnerChange` is a learner's action (they made or applied a change);
- * `undo` takes back an applied change (an edit, or a test-out's skipped lessons), and `restores`
- * is the plan right before that change: pass it only when nothing but lessons the learner finished
- * happened in between. `placement`, `session`, `testOut` and `newDay` are progress (a missed day
- * counts: it moves dates); `outlinesLanded` and `refresh` are the system's own runs, which may not
- * change what the learner sees on their own. `answers` are the ones given in the step itself.
+ * `undo` takes back an applied change. `placement`, `session` and `newDay` are progress (a missed
+ * day counts: it moves dates); `outlinesLanded` and `refresh` are the system's own runs, which may
+ * not change what the learner sees on their own.
  */
 export type RuleEvent =
-  | { kind: "accountDeleted" }
-  | { kind: "examPassed" }
   | {
       kind: "learnerChange";
       operations: readonly PlanOperation[];
@@ -78,25 +73,15 @@ export type RuleEvent =
        */
       setBack?: boolean;
     }
-  /** A new day settled what earlier days left: `studied` when the last study day had progress. */
-  | { kind: "newDay"; studied: boolean }
-  /**
-   * Research read a new edition of the exam's notice: `changesPlan` when following it would change
-   * the plan, so the learner is asked again even after declining an earlier edition's change.
-   */
-  | { changesPlan: boolean; kind: "noticeEdition" }
+  /** A new day settled what earlier days left. */
+  | { kind: "newDay" }
   | { kind: "outlinesLanded" }
-  | { answers?: readonly RuleAnswer[]; kind: "placement" }
+  | { kind: "placement" }
   | { kind: "planCreated" }
-  | { kind: "promptChanged" }
-  /**
-   * The app opened again the same day. `progressed`: the learner finished something since the plan
-   * was last planned (a partial session plans nothing), so this run is the first to adapt to it.
-   */
-  | { kind: "refresh"; progressed?: boolean }
-  | { answers?: readonly RuleAnswer[]; kind: "session" }
-  | { answers?: readonly RuleAnswer[]; kind: "testOut" }
-  | { change: "edited" | "testedOut"; kind: "undo"; restores: RulePlan };
+  /** The app opened again the same day. */
+  | { kind: "refresh" }
+  | { kind: "session" }
+  | { kind: "undo" };
 
 /** What the learner showed they know or said about their knowledge. */
 type RuleLearner = {
@@ -114,13 +99,7 @@ type RuleLearner = {
    * later answer of its own.
    */
   knownSkillIds?: readonly string[];
-  /** Skills the goal's exam practices only with recordings (`getListeningSkillIds`). */
-  listeningSkillIds?: readonly string[];
-  plus?: boolean;
 };
-
-/** A change the learner made or applied, on the learner-local day they did. */
-type RuleLearnerChange = { day: Date; operations: readonly PlanOperation[] };
 
 /**
  * One step of a learner's life as the checks read it: the plan before and after it, what happened,
@@ -132,27 +111,12 @@ export type RuleContext = {
   /** Every answer the learner gave so far, oldest first. */
   answers?: readonly RuleAnswer[];
   before: RulePlan | null;
-  /** Plan changes the step wrote or answered, as clients read them. */
-  changes?: readonly PlanChangeView[];
-  /**
-   * Proposals the learner declined on this plan before the step, as clients read them; a notice
-   * day the understanding card offered and the learner kept their date over counts as a declined
-   * `setNoticeDate`.
-   */
-  declined?: readonly PlanChangeView[];
   event: RuleEvent;
   learner?: RuleLearner;
-  /**
-   * Every change the learner made or applied on this plan so far, oldest first, with its day: when
-   * they passed over basics by choice (R18).
-   */
-  learnerChanges?: readonly RuleLearnerChange[];
   /** The learner-local day of the step, at UTC midnight. */
   today: Date;
   /** Today's session was built before the step, so the learner saw today's lessons. */
   todayShown?: boolean;
-  /** Proposals still waiting for the learner's answer after the step, as clients read them. */
-  waiting?: readonly PlanChangeView[];
 };
 
 /** A rule a step broke: which one, and what the check saw. */
