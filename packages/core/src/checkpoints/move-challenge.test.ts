@@ -157,8 +157,9 @@ describe(moveChallenge, () => {
       where: { id: weekly.id },
     });
 
+    // Rows come back in no particular order: both reads order them, to compare the same plan.
     const before = await prisma.plan.findUniqueOrThrow({
-      include: { items: true },
+      include: { items: { orderBy: { id: "asc" } } },
       where: { id: plan.id },
     });
 
@@ -167,7 +168,10 @@ describe(moveChallenge, () => {
     ).resolves.toStrictEqual({ error: "badMove", status: "invalid" });
 
     await expect(
-      prisma.plan.findUniqueOrThrow({ include: { items: true }, where: { id: plan.id } }),
+      prisma.plan.findUniqueOrThrow({
+        include: { items: { orderBy: { id: "asc" } } },
+        where: { id: plan.id },
+      }),
     ).resolves.toStrictEqual(before);
   });
 });
