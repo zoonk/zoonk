@@ -16,8 +16,9 @@ const PERCENT = 100;
 /** Belts light enough for dark stitching; the darker ones get light stitching. */
 const LIGHT_BELTS = new Set<BeltColor>(["white", "yellow", "orange", "green"]);
 
-function renderMono(chunks: React.ReactNode) {
-  return <span className="text-foreground font-mono font-medium tabular-nums">{chunks}</span>;
+/** A number inside the belt's sentences ("Level 2 of 10", "at 7,500 Brain Power"), firmer. */
+function renderNumber(chunks: React.ReactNode) {
+  return <span className="text-foreground font-medium tabular-nums">{chunks}</span>;
 }
 
 /** The belt's two rows of stitching, dashed across one piece of it. */
@@ -161,7 +162,7 @@ async function NextBelt({
         <span>
           {t.rich("{belt} at <mono>{points}</mono> Brain Power", {
             belt: nextBelt.label,
-            mono: renderMono,
+            mono: renderNumber,
             points: formatWholeNumber({ format, value: level.nextBelt.startBrainPower }),
           })}
         </span>
@@ -169,7 +170,7 @@ async function NextBelt({
 
       <p className="text-muted-foreground text-xs">
         {t.rich("{points, plural, one {<mono>#</mono> to go} other {<mono>#</mono> to go}}", {
-          mono: renderMono,
+          mono: renderNumber,
           points: level.nextBelt.brainPowerToGo,
         })}
       </p>
@@ -216,7 +217,7 @@ export async function LevelProgression({ currentBelt }: { currentBelt: BeltLevel
               {t.rich("Level <mono>{level}</mono> of {count}", {
                 count: String(LEVELS_PER_COLOR),
                 level: String(currentBelt.level),
-                mono: renderMono,
+                mono: renderNumber,
               })}
             </p>
           </div>

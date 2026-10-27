@@ -4,7 +4,7 @@ import { useExtracted } from "next-intl";
 import { type FirstStep } from "../buddies/buddy-status-view";
 import { type LearnBuddy, useBuddyName } from "../buddies/use-buddy-name";
 import { useFormatPlanDate } from "../plan/plan-date-text";
-import { WaitLine, renderMono } from "./mission-copy";
+import { WaitLine, renderSentenceNumber } from "./mission-copy";
 
 /**
  * "Finish your first lesson": a first step by its name, each the first real use of something the
@@ -50,7 +50,7 @@ function FirstStepWhen({ when }: { when: NonNullable<FirstStep["when"]> }) {
       return when.date
         ? t.rich("With your first challenge, <mono>{date}</mono>", {
             date: formatPlanDate(when.date),
-            mono: renderMono,
+            mono: renderSentenceNumber,
           })
         : t("With your first challenge");
     case "essay":

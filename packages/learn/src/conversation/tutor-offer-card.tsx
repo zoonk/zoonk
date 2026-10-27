@@ -75,7 +75,7 @@ export function OfferTile({
   className,
 }: {
   children: React.ReactNode;
-  /** A tint, for a feature whose rows elsewhere have one (pronunciation's). */
+  /** The icon's color, for a feature whose rows elsewhere have one (pronunciation's amber). */
   className?: string;
 }) {
   return (

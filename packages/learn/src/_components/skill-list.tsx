@@ -44,7 +44,7 @@ export function SkillList({ skills }: { skills: readonly ListedSkill[] }) {
           <span className="min-w-0 flex-1">{card.name}</span>
           <span className="text-muted-foreground shrink-0 text-xs leading-5">
             {card.dueToday || card.fading ? (
-              <span className="text-warning">{t("To review")}</span>
+              <span className="text-warning-text">{t("To review")}</span>
             ) : (
               stateLabel(card)
             )}

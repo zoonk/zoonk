@@ -277,7 +277,7 @@ export function PlanProperties({
 
           return (
             <PropertyRow key={choice.group} label={choice.group} onOpen={() => onOpen("choices")}>
-              <span className={cn(!picked && "text-warning font-medium")}>
+              <span className={cn(!picked && "text-warning-text font-medium")}>
                 {picked ? (picked.shortName ?? picked.name) : t("Choose")}
               </span>
             </PropertyRow>

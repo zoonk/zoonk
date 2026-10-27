@@ -166,7 +166,7 @@ export function PronunciationOffer({
     <OfferCard
       description={format.list(offer.words, { type: "conjunction" })}
       tile={
-        <OfferTile className="bg-warning/10 text-warning">
+        <OfferTile className="text-warning">
           <MicIcon />
         </OfferTile>
       }

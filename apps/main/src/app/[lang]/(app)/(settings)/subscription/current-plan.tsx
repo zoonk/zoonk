@@ -14,9 +14,9 @@ import { getExtracted, getFormatter } from "next-intl/server";
 import { CancelPlusButton } from "./cancel-plus-button";
 import { ManagedSubscription } from "./managed-subscription";
 
-/** The date in a sentence, in the mono face as every date reads. */
+/** The date in a sentence, in the sentence's face as every number in a sentence reads. */
 function renderDate(chunks: React.ReactNode) {
-  return <span className="font-mono tabular-nums">{chunks}</span>;
+  return <span className="tabular-nums">{chunks}</span>;
 }
 
 /**

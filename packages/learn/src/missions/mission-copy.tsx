@@ -158,9 +158,13 @@ export function useMissionStateLabel(buddy: LearnBuddy | null) {
   };
 }
 
-/** A number in a line of words in the mono face. */
-export function renderMono(chunks: React.ReactNode) {
-  return <span className="font-mono tabular-nums">{chunks}</span>;
+/**
+ * A number or a date inside a sentence ("With your first challenge, Oct 19", "You have 3,340"): in
+ * the sentence's face with tabular figures, as every number in a sentence reads. Messages still
+ * mark it `<mono>`.
+ */
+export function renderSentenceNumber(chunks: React.ReactNode) {
+  return <span className="tabular-nums">{chunks}</span>;
 }
 
 type WaitReason = NonNullable<Mission["waitReason"]>;

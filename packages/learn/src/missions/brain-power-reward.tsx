@@ -11,7 +11,7 @@ import {
 import { cn } from "@zoonk/ui/lib/utils";
 import { BrainIcon, CheckIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
-import { renderMono } from "./mission-copy";
+import { renderSentenceNumber } from "./mission-copy";
 
 /**
  * The day's reward, "+50 Brain Power", in its own violet: what the missions are for. It lights up
@@ -70,7 +70,7 @@ export function BrainPowerReward({
           <p className="flex items-center gap-1.5 text-sm">
             <BrainIcon aria-hidden="true" className="text-brain size-4" />
             {t.rich("You have <mono>{points}</mono>", {
-              mono: renderMono,
+              mono: renderSentenceNumber,
               points: format.number(brainPower),
             })}
           </p>
