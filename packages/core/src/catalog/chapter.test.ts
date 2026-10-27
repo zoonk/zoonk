@@ -4,7 +4,10 @@ import {
   courseChapterFixture,
   libraryChapterFixture,
 } from "@zoonk/testing/fixtures/library-chapters";
-import { catalogCourseFixture } from "@zoonk/testing/fixtures/library-courses";
+import {
+  catalogCourseFixture,
+  privateCourseFixture,
+} from "@zoonk/testing/fixtures/library-courses";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
@@ -82,19 +85,9 @@ describe(getCatalogChapter, () => {
   });
 
   it("shows a private chapter only to its owner", async () => {
-    const [owner, viewer, { course }] = await Promise.all([
-      userFixture(),
-      userFixture(),
-      catalogCourseFixture({ lessonCounts: [] }),
-    ]);
-
-    const chapter = await libraryChapterFixture({
-      homeCourseId: course.id,
-      ownerId: owner.id,
-      visibility: "private",
-    });
-
-    await courseChapterFixture({ chapterId: chapter.id, courseId: course.id });
+    const [owner, viewer] = await Promise.all([userFixture(), userFixture()]);
+    const { chapters, course } = await privateCourseFixture({ ownerId: owner.id });
+    const chapter = chapters[0]!;
 
     mockSession(viewer.id);
     await expect(getCatalogChapter({ chapterId: chapter.id })).resolves.toBeNull();

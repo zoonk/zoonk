@@ -87,6 +87,19 @@ describe(createLibraryChapter, () => {
       ),
     ).resolves.toMatchObject({ chapter: { ownerId: owner.id, visibility: "private" } });
   });
+
+  it("never writes a private chapter under a public home course", async () => {
+    const [owner, course] = await Promise.all([userFixture(), courseFixture()]);
+    const identityKey = scopeIdentityKey({ key: randomUUID(), ownerId: owner.id });
+
+    await expect(
+      createLibraryChapter(
+        chapterInput({ homeCourseId: course.id, identityKey, ownerId: owner.id }),
+      ),
+    ).rejects.toThrow("same visibility");
+
+    await expect(prisma.chapter.count({ where: { homeCourseId: course.id } })).resolves.toBe(0);
+  });
 });
 
 describe(attachChapterToCourse, () => {
@@ -135,6 +148,10 @@ describe(attachChapterToCourse, () => {
     await expect(
       attachChapterToCourse({ ...placement, courseId: otherPrivateCourse.id }),
     ).rejects.toThrow("Private content");
+
+    await expect(
+      prisma.courseChapter.count({ where: { chapterId: privateChapter.id } }),
+    ).resolves.toBe(0);
 
     await expect(
       attachChapterToCourse({ ...placement, courseId: ownPrivateCourse.id }),

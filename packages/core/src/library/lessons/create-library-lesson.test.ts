@@ -116,6 +116,10 @@ describe(createLibraryLesson, () => {
       ),
     ).rejects.toThrow("same visibility");
 
+    await expect(prisma.lesson.count({ where: { homeChapterId: publicChapter.id } })).resolves.toBe(
+      0,
+    );
+
     const { lesson } = await createLibraryLesson(
       await lessonInput({
         homeChapterId: privateChapter.id,
@@ -129,6 +133,20 @@ describe(createLibraryLesson, () => {
 });
 
 describe(createHomeChapterLessons, () => {
+  it("rejects a private batch in a public chapter before writing any lessons", async () => {
+    const [owner, chapter] = await Promise.all([userFixture(), libraryChapterFixture()]);
+
+    const input = await lessonInput({
+      identityKey: scopeIdentityKey({ key: randomUUID(), ownerId: owner.id }),
+    });
+
+    await expect(
+      createHomeChapterLessons({ homeChapterId: chapter.id, lessons: [input], ownerId: owner.id }),
+    ).rejects.toThrow("same visibility");
+
+    await expect(prisma.lesson.count({ where: { homeChapterId: chapter.id } })).resolves.toBe(0);
+  });
+
   it("creates each lesson with its details and a slug free in the chapter and the batch", async () => {
     const chapter = await libraryChapterFixture();
     const title = `Tax ${randomUUID()}`;

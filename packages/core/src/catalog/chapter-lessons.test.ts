@@ -4,7 +4,6 @@ import {
   chapterLessonFixture,
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
-import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { listCatalogChapterLessons } from "./chapter-lessons";
@@ -15,22 +14,13 @@ describe(listCatalogChapterLessons, () => {
   });
 
   it("lists the chapter's visible lessons in order with their content state", async () => {
-    const [owner, { chapters, course, lessons }] = await Promise.all([
-      userFixture(),
-      catalogCourseFixture({ lessonCounts: [2] }),
-    ]);
+    const { chapters, course, lessons } = await catalogCourseFixture({ lessonCounts: [2] });
 
     const chapter = chapters[0]!;
 
-    const [pending, privateLesson] = await Promise.all([
-      libraryLessonFixture({ contentStatus: "running" }),
-      libraryLessonFixture({ ownerId: owner.id, visibility: "private" }),
-    ]);
+    const pending = await libraryLessonFixture({ contentStatus: "running" });
 
-    await Promise.all([
-      chapterLessonFixture({ chapterId: chapter.id, lessonId: privateLesson.id, position: 2 }),
-      chapterLessonFixture({ chapterId: chapter.id, lessonId: pending.id, position: 3 }),
-    ]);
+    await chapterLessonFixture({ chapterId: chapter.id, lessonId: pending.id, position: 2 });
 
     const result = await listCatalogChapterLessons({ chapterId: chapter.id });
 

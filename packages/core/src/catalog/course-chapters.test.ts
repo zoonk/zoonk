@@ -64,28 +64,6 @@ describe(listCatalogCourseChapters, () => {
     ]);
   });
 
-  it("hides private chapters and lessons from other learners", async () => {
-    const [owner, viewer] = await Promise.all([userFixture(), userFixture()]);
-    const { chapters, course } = await catalogCourseFixture({ lessonCounts: [1] });
-
-    const [privateChapter, privateLesson] = await Promise.all([
-      libraryChapterFixture({ ownerId: owner.id, visibility: "private" }),
-      libraryLessonFixture({ ownerId: owner.id, visibility: "private" }),
-    ]);
-
-    await Promise.all([
-      courseChapterFixture({ chapterId: privateChapter.id, courseId: course.id, position: 1 }),
-      chapterLessonFixture({ chapterId: chapters[0]!.id, lessonId: privateLesson.id, position: 1 }),
-    ]);
-
-    mockSession(viewer.id);
-
-    const result = await listCatalogCourseChapters({ courseId: course.id });
-
-    expect(result?.map((item) => item.chapter.id)).toStrictEqual([chapters[0]!.id]);
-    expect(result?.[0]?.chapter.lessons).toHaveLength(1);
-  });
-
   it("returns null outside the published brand catalog and for others' private courses", async () => {
     const [viewer, owner, brand, school] = await Promise.all([
       userFixture(),

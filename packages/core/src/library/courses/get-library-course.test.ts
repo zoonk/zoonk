@@ -4,6 +4,7 @@ import {
   courseChapterFixture,
   libraryChapterFixture,
 } from "@zoonk/testing/fixtures/library-chapters";
+import { catalogCourseFixture } from "@zoonk/testing/fixtures/library-courses";
 import {
   chapterLessonFixture,
   libraryLessonFixture,
@@ -11,13 +12,27 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { cacheTag } from "next/cache";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
+import { mockGuestSession, mockSession, mockSessionFailure } from "../../_test-utils/mock-session";
 import { getCourseCurriculumCacheTag, getLibraryChapterCacheTag } from "../../cache/tags";
+import { getSession } from "../../users/get-session";
 import { getLibraryCourse } from "./get-library-course";
 
 describe(getLibraryCourse, () => {
   beforeEach(() => {
     mockSession(null);
+  });
+
+  it("reads a public outline without a session, as catalog prerendering does", async () => {
+    const { chapters, course, lessons } = await catalogCourseFixture();
+
+    // Vitest has no Next.js request context; fail this boundary if the public read tries to use one.
+    mockSessionFailure(new Error("Prerendering has no active request."));
+
+    await expect(getLibraryCourse({ courseId: course.id })).resolves.toMatchObject({
+      levels: [{ chapters: [{ id: chapters[0]!.id, lessons: [{ id: lessons[0]![0]!.id }] }] }],
+    });
+
+    expect(getSession).not.toHaveBeenCalled();
   });
 
   it("returns the outline in level bands, chapters and lessons in order", async () => {
@@ -103,20 +118,6 @@ describe(getLibraryCourse, () => {
     expect(result?.levels[0]?.chapters[1]?.lessons.map((item) => item.id)).toStrictEqual([
       privateLesson.id,
     ]);
-  });
-
-  it("hides a private chapter placed in a shared course from other learners", async () => {
-    const [owner, viewer] = await Promise.all([userFixture(), userFixture()]);
-
-    const [course, privateChapter] = await Promise.all([
-      courseFixture(),
-      libraryChapterFixture({ ownerId: owner.id, visibility: "private" }),
-    ]);
-
-    await courseChapterFixture({ chapterId: privateChapter.id, courseId: course.id });
-    mockSession(viewer.id);
-
-    await expect(getLibraryCourse({ courseId: course.id })).resolves.toMatchObject({ levels: [] });
   });
 
   it("returns null for unknown or malformed ids", async () => {

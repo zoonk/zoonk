@@ -2,10 +2,9 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
 import {
-  courseChapterFixture,
-  libraryChapterFixture,
-} from "@zoonk/testing/fixtures/library-chapters";
-import { catalogCourseFixture } from "@zoonk/testing/fixtures/library-courses";
+  catalogCourseFixture,
+  privateCourseFixture,
+} from "@zoonk/testing/fixtures/library-courses";
 import {
   chapterLessonFixture,
   libraryLessonFixture,
@@ -268,23 +267,13 @@ describe(listCourses, () => {
       userFixture(),
     ]);
 
-    const [longLesson, privateLesson, privateChapter] = await Promise.all([
+    const [longLesson, emptyCourse] = await Promise.all([
       libraryLessonFixture({ estimatedMinutes: 12, language }),
-      libraryLessonFixture({ language, ownerId: owner.id, visibility: "private" }),
-      libraryChapterFixture({ language, ownerId: owner.id, visibility: "private" }),
-    ]);
-
-    const [privateChapterLesson, emptyCourse] = await Promise.all([
-      libraryLessonFixture({ language }),
       courseFixture({ isPublished: true, language, organizationId: organization.id }),
-      chapterLessonFixture({ chapterId: chapters[0]!.id, lessonId: longLesson.id }),
-      courseChapterFixture({ chapterId: privateChapter.id, courseId: course.id, position: 2 }),
+      privateCourseFixture({ language, lessonCounts: [2], ownerId: owner.id }),
     ]);
 
-    await Promise.all([
-      chapterLessonFixture({ chapterId: chapters[1]!.id, lessonId: privateLesson.id }),
-      chapterLessonFixture({ chapterId: privateChapter.id, lessonId: privateChapterLesson.id }),
-    ]);
+    await chapterLessonFixture({ chapterId: chapters[0]!.id, lessonId: longLesson.id });
 
     const [list, page] = await Promise.all([
       listCourses({ language, limit: 100 }),
