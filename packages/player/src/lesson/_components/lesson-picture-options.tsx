@@ -91,22 +91,12 @@ export function LessonPictureOptions({
   selectedId: string | null;
   step: PlayableLibraryStep;
 }) {
-  function handleSelect(index: number) {
-    const option = options[index];
-
-    if (!option || isLocked) {
-      return;
-    }
-
-    onSelect(option.id === selectedId ? null : option.id);
-  }
-
   return (
     <PlayerChoiceSceneOptions
       isChecked={isChecked}
       isLocked={isLocked}
       layout="grid"
-      onSelect={handleSelect}
+      onSelect={(id) => onSelect(id === selectedId ? null : id)}
       options={options.map((option) => ({
         content: <PictureOptionContent isChecked={isChecked} option={option} step={step} />,
         isCorrect: option.isCorrect,

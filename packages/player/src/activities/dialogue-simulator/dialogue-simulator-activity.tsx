@@ -102,16 +102,6 @@ export function DialogueSimulatorActivity({
 
   const expectedIds = expectedInteraction(expected, "selection")?.ids ?? [];
 
-  function handleSelect(index: number) {
-    const reply = fields.replies[index];
-
-    if (isChecked || !reply) {
-      return;
-    }
-
-    onAnswerChange(reply.id === selectedId ? null : { ids: [reply.id], kind: "selection" });
-  }
-
   return (
     <ActivityCanvas className="gap-4" labelId={labelId}>
       <div className="flex flex-col gap-3">
@@ -140,7 +130,9 @@ export function DialogueSimulatorActivity({
         ariaLabel={t("Your reply")}
         isChecked={isChecked}
         keepsEveryOption
-        onSelect={handleSelect}
+        onSelect={(id) =>
+          onAnswerChange(id === selectedId ? null : { ids: [id], kind: "selection" })
+        }
         options={fields.replies.map((reply) => ({
           content: <ReplyContent isChecked={isChecked} reply={reply} />,
           isCorrect: expectedIds.includes(reply.id),

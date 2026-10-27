@@ -29,16 +29,6 @@ export function ActivityChoiceCheck({
   const selectedId = answer?.kind === "choice" ? answer.optionId : null;
   const isChecked = phase === "checked";
 
-  function handleSelect(index: number) {
-    const option = check.options[index];
-
-    if (isChecked || !option) {
-      return;
-    }
-
-    onAnswerChange(option.id === selectedId ? null : { kind: "choice", optionId: option.id });
-  }
-
   return (
     <div className="flex flex-col gap-3" data-slot="activity-choice-check">
       <ActivityCheckQuestion>{check.question}</ActivityCheckQuestion>
@@ -46,7 +36,9 @@ export function ActivityChoiceCheck({
       <PlayerChoiceSceneOptions
         ariaLabel={check.question}
         isChecked={isChecked}
-        onSelect={handleSelect}
+        onSelect={(id) =>
+          onAnswerChange(id === selectedId ? null : { kind: "choice", optionId: id })
+        }
         options={check.options.map((option) => ({
           content: <PlayerChoiceSceneOptionText>{option.text}</PlayerChoiceSceneOptionText>,
           isCorrect: option.isCorrect,

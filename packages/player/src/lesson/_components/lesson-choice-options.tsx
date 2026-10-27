@@ -28,22 +28,12 @@ export function LessonChoiceOptions({
   options: readonly ChoiceOption[];
   selectedId: string | null;
 }) {
-  function handleSelect(index: number) {
-    const option = options[index];
-
-    if (!option || isLocked) {
-      return;
-    }
-
-    onSelect(option.id === selectedId ? null : option.id);
-  }
-
   return (
     <PlayerChoiceSceneOptions
       isChecked={isChecked}
       isGuess={isGuess}
       isLocked={isLocked}
-      onSelect={handleSelect}
+      onSelect={(id) => onSelect(id === selectedId ? null : id)}
       options={options.map((option) => ({
         content: (
           <PlayerChoiceSceneOptionText>

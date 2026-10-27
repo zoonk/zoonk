@@ -87,13 +87,7 @@ function ChallengeDecision({
       <PlayerChoiceSceneOptions
         ariaLabel={t("Your options")}
         isLocked={isLocked}
-        onSelect={(index) => {
-          const choice = node.choices[index];
-
-          if (choice && !isLocked) {
-            onPick(choice.id === progress.pendingChoiceId ? null : choice.id);
-          }
-        }}
+        onSelect={(id) => onPick(id === progress.pendingChoiceId ? null : id)}
         options={node.choices.map((choice) => ({
           content: (
             <PlayerChoiceSceneOptionText>

@@ -47,16 +47,6 @@ export function ChoiceStepLayout({
   question?: string | null;
   selectedKey: string | null;
 }) {
-  const handleSelect = (index: number) => {
-    const option = options[index];
-
-    if (!option || isChecked) {
-      return;
-    }
-
-    onSelect(option.key);
-  };
-
   return (
     <PlayerChoiceScene>
       {(image || context) && (
@@ -74,7 +64,7 @@ export function ChoiceStepLayout({
 
       <PlayerChoiceSceneOptions
         isChecked={isChecked}
-        onSelect={handleSelect}
+        onSelect={onSelect}
         options={options.map((option) => ({
           content: <PlayerChoiceSceneOptionText>{option.text}</PlayerChoiceSceneOptionText>,
           isCorrect: option.isCorrect,

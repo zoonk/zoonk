@@ -60,15 +60,9 @@ export function TranslationStep({
 
   const { play } = useWordAudio({ preloadUrls: options.map((word) => word.audioUrl) });
 
-  const handleSelect = (index: number) => {
-    const word = options[index];
-
-    if (!word || isChecked) {
-      return;
-    }
-
-    void play(word.audioUrl);
-    onSelectAnswer({ kind: "translation", selectedOptionId: word.id });
+  const handleSelect = (id: string) => {
+    void play(options.find((word) => word.id === id)?.audioUrl ?? null);
+    onSelectAnswer({ kind: "translation", selectedOptionId: id });
   };
 
   if (!correctWord) {

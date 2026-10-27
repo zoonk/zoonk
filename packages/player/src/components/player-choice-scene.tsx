@@ -130,7 +130,8 @@ export function PlayerChoiceSceneOptions({
   keepsEveryOption?: boolean;
   /** `grid` lays picture options out side by side, two to a row. */
   layout?: "grid" | "list";
-  onSelect: (index: number) => void;
+  /** The option pressed or picked by its number key, by its key. */
+  onSelect: (key: string) => void;
   options: readonly PlayerChoiceSceneOption[];
   selectedKey: string | null;
 }) {
@@ -141,7 +142,13 @@ export function PlayerChoiceSceneOptions({
   useNumberKeys({
     count: options.length,
     enabled: !isDisabled && interactionState !== "paused",
-    onPick: onSelect,
+    onPick: (index) => {
+      const option = options[index];
+
+      if (option) {
+        onSelect(option.key);
+      }
+    },
   });
 
   return (
@@ -171,7 +178,7 @@ export function PlayerChoiceSceneOptions({
             key={option.key}
             layout={layout === "grid" ? "stacked" : "row"}
             marker={index + 1}
-            onClick={() => onSelect(index)}
+            onClick={() => onSelect(option.key)}
             picked={isPicked}
             result={result}
           >
