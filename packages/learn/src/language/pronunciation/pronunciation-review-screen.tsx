@@ -62,8 +62,9 @@ function GradeNote({ grade }: { grade: PronunciationAnswerGrade }) {
 
 /**
  * The round's end, as every task's end reads, at the top of the task's column: "Practice done"
- * with what an accent means under it, the words said right and the Brain Power it paid as
- * readouts, then what it did to the day 24px under them; with nothing said, its own title.
+ * with what an accent means under it, the tries that sounded right ("2 of 3 sounded right", as
+ * each try's verdict says it) and the Brain Power it paid as readouts, then what it did to the day
+ * 24px under them; with nothing said, its own title.
  */
 function RoundResult({
   buddy,
@@ -85,7 +86,7 @@ function RoundResult({
         {result && (
           <MomentReadouts
             brainPower={result.brainPower}
-            score={{ answered: result.total, correct: result.correct }}
+            score={{ answered: result.total, correct: result.correct, spoken: true }}
           />
         )}
       </MomentHeader>

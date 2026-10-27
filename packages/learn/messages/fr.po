@@ -405,6 +405,11 @@ msgid "<number>+{points}</number> <words>Brain Power</words>"
 msgstr "<number>+{points}</number> <words>Puissance Mentale</words>"
 
 #: src/_components/moment-readouts.tsx
+msgctxt "S3xeZI"
+msgid "<number>{correct}</number> of {answered} sounded right"
+msgstr "<number>{correct}</number> fois sur {answered}, c’était bien prononcé"
+
+#: src/_components/moment-readouts.tsx
 msgctxt "oKgF3Y"
 msgid "<number>{correct}</number> of {answered} right"
 msgstr "<number>{correct}</number> bonnes réponses sur {answered}"

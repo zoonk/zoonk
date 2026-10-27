@@ -110,7 +110,7 @@ test.describe("Pronunciation reviews", () => {
 
       const end = page.getByRole("status").filter({ hasText: "Practice done" });
       await expect(end.getByRole("heading", { level: 2, name: "Practice done" })).toBeVisible();
-      await expect(end).toContainText("2 of 2 right");
+      await expect(end).toContainText("2 of 2 sounded right");
 
       const event = await prisma.learningEvent.findFirstOrThrow({
         orderBy: { createdAt: "desc" },
