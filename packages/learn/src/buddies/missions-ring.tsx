@@ -3,6 +3,7 @@
 import { readDuration, readEasing } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useLayoutEffect, useRef } from "react";
+import { deviceStorage } from "../_utils/device-storage";
 import { RING_VIEW_BOX, getArcPath } from "./missions-ring-arc";
 
 /** Today's missions as the buddy's tab counts them: how many are done of how many. */
@@ -10,23 +11,6 @@ export type MissionsCount = { done: number; total: number };
 
 /** Remembers the count the learner last saw, so a mission done since then fills with a moment. */
 const SEEN_KEY = "zoonk:missions-seen";
-
-function readSeen(): number | null {
-  try {
-    const value = globalThis.localStorage.getItem(SEEN_KEY);
-    return value === null ? null : Number(value);
-  } catch {
-    return null;
-  }
-}
-
-function writeSeen(done: number) {
-  try {
-    globalThis.localStorage.setItem(SEEN_KEY, String(done));
-  } catch {
-    // Without storage, every mission simply shows done, without its moment.
-  }
-}
 
 /**
  * Fills in the arcs of the missions done since the learner last saw the ring, in the fill's time:
@@ -49,16 +33,16 @@ function useMissionMoment({
       return;
     }
 
-    const seen = readSeen();
-    writeSeen(done);
+    const seen = deviceStorage.get(SEEN_KEY);
+    deviceStorage.set(SEEN_KEY, String(done));
     const svg = ring.current;
     const duration = svg ? readDuration(svg, "fill") : 0;
 
-    if (!svg || seen === null || done <= seen || duration === 0) {
+    if (!svg || seen === null || done <= Number(seen) || duration === 0) {
       return;
     }
 
-    for (const arc of [...svg.querySelectorAll("path")].slice(seen, done)) {
+    for (const arc of [...svg.querySelectorAll("path")].slice(Number(seen), done)) {
       arc.animate([{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], {
         duration,
         easing: readEasing(svg, "out"),

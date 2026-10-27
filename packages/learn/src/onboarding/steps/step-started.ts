@@ -1,3 +1,5 @@
+import { tabStorage } from "../../_utils/device-storage";
+
 /**
  * Whether the learner tapped to begin placement or the level test for this goal in this tab, so a
  * refresh while waiting for its first questions comes back to the wait instead of its start.
@@ -12,17 +14,9 @@ function getKey({ goalId, step }: { goalId: string; step: StartedStep }): string
 }
 
 export function rememberStepStart(input: { goalId: string; step: StartedStep }) {
-  try {
-    sessionStorage.setItem(getKey(input), "1");
-  } catch {
-    // Nothing to keep: the step's start shows again after a refresh.
-  }
+  tabStorage.set(getKey(input), "1");
 }
 
 export function wasStepStarted(input: { goalId: string; step: StartedStep }): boolean {
-  try {
-    return sessionStorage.getItem(getKey(input)) === "1";
-  } catch {
-    return false;
-  }
+  return tabStorage.get(getKey(input)) === "1";
 }

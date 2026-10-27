@@ -1,3 +1,5 @@
+import { deviceStorage } from "../../_utils/device-storage";
+
 /** A run's answers so far, kept on the device until the run is finished and graded. */
 type AnswerDraft<TAnswer extends { itemId: string }> = { answers: TAnswer[] };
 
@@ -13,13 +15,8 @@ function isDraft<TAnswer extends { itemId: string }>(
 }
 
 export function readAnswerDraft<TAnswer extends { itemId: string }>(key: string): TAnswer[] {
-  try {
-    const raw = globalThis.localStorage.getItem(key);
-    const parsed: unknown = raw ? JSON.parse(raw) : null;
-    return isDraft<TAnswer>(parsed) ? parsed.answers : [];
-  } catch {
-    return [];
-  }
+  const draft = deviceStorage.getJson(key);
+  return isDraft<TAnswer>(draft) ? draft.answers : [];
 }
 
 export function writeAnswerDraft<TAnswer extends { itemId: string }>({
@@ -29,11 +26,7 @@ export function writeAnswerDraft<TAnswer extends { itemId: string }>({
   answers: TAnswer[];
   key: string;
 }) {
-  try {
-    globalThis.localStorage.setItem(key, JSON.stringify({ answers }));
-  } catch {
-    // Without storage the run still works; a reload just starts it over.
-  }
+  deviceStorage.set(key, JSON.stringify({ answers }));
 }
 
 /** Where a run's own id is kept beside its answers (`keepDraftRequestId`). */
@@ -47,28 +40,19 @@ function getRequestIdKey(key: string): string {
  * `fallback` is the id when none is kept yet, and the one used without storage.
  */
 export function keepDraftRequestId({ fallback, key }: { fallback: string; key: string }): string {
-  try {
-    const kept = globalThis.localStorage.getItem(getRequestIdKey(key));
+  const kept = deviceStorage.get(getRequestIdKey(key));
 
-    if (kept) {
-      return kept;
-    }
-
-    globalThis.localStorage.setItem(getRequestIdKey(key), fallback);
-  } catch {
-    // Without storage the id lasts as long as the page.
+  if (kept) {
+    return kept;
   }
 
+  deviceStorage.set(getRequestIdKey(key), fallback);
   return fallback;
 }
 
 export function clearAnswerDraft(key: string) {
-  try {
-    globalThis.localStorage.removeItem(key);
-    globalThis.localStorage.removeItem(getRequestIdKey(key));
-  } catch {
-    // Nothing to clear without storage.
-  }
+  deviceStorage.remove(key);
+  deviceStorage.remove(getRequestIdKey(key));
 }
 
 /**

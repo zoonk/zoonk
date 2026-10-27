@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useSyncExternalStore } from "react";
+import { tabStorage } from "../_utils/device-storage";
 
 const STORAGE_PREFIX = "zoonk:listening-played:";
 
@@ -27,15 +28,8 @@ function isPlaysState(value: unknown): value is PlaysState {
 }
 
 function readStored(playsKey: string): PlaysState {
-  try {
-    const stored: unknown = JSON.parse(
-      sessionStorage.getItem(`${STORAGE_PREFIX}${playsKey}`) ?? "",
-    );
-
-    return isPlaysState(stored) ? stored : NO_PLAYS;
-  } catch {
-    return NO_PLAYS;
-  }
+  const stored = tabStorage.getJson(`${STORAGE_PREFIX}${playsKey}`);
+  return isPlaysState(stored) ? stored : NO_PLAYS;
 }
 
 function readState(playsKey: string): PlaysState {
@@ -54,11 +48,7 @@ function update(playsKey: string, change: (state: PlaysState) => PlaysState) {
 
   states.set(playsKey, next);
 
-  try {
-    sessionStorage.setItem(`${STORAGE_PREFIX}${playsKey}`, JSON.stringify(next));
-  } catch {
-    // Storage blocked: the plays live in this tab until it reloads.
-  }
+  tabStorage.set(`${STORAGE_PREFIX}${playsKey}`, JSON.stringify(next));
 
   for (const listener of listeners) {
     listener();

@@ -1,24 +1,9 @@
 import { useEffect, useState } from "react";
+import { deviceStorage } from "../../_utils/device-storage";
 import { type StudySessionSummary } from "../session-types";
 
 /** The summary the learner last saw celebrate: its session and the Brain Power it showed. */
 const CELEBRATED_KEY = "zoonk:summary-celebrated";
-
-function readCelebrated(): string | null {
-  try {
-    return globalThis.localStorage.getItem(CELEBRATED_KEY);
-  } catch {
-    return null;
-  }
-}
-
-function writeCelebrated(key: string) {
-  try {
-    globalThis.localStorage.setItem(CELEBRATED_KEY, key);
-  } catch {
-    // Without storage, a revisit celebrates again, as it did before this was kept.
-  }
-}
 
 /**
  * Whether the learner sees this summary for the first time, so what it earned counts up once:
@@ -30,10 +15,10 @@ export function useFirstSummaryVisit({
 }: Pick<StudySessionSummary, "brainPower" | "sessionId">): boolean {
   const key = `${sessionId}:${brainPower}`;
   // oxlint-disable-next-line react/hook-use-state -- Read once as the summary opens, never updated.
-  const [first] = useState(() => readCelebrated() !== key);
+  const [first] = useState(() => deviceStorage.get(CELEBRATED_KEY) !== key);
 
   useEffect(() => {
-    writeCelebrated(key);
+    deviceStorage.set(CELEBRATED_KEY, key);
   }, [key]);
 
   return first;

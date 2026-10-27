@@ -1,3 +1,5 @@
+import { deviceStorage } from "../_utils/device-storage";
+
 /**
  * The essay being written, kept on the device as it's typed until it's graded: closing the tab or
  * the screen never loses it, and opening the essay again brings it back. Without storage the
@@ -9,25 +11,13 @@ function getUnsentKey(blockId: string): string {
 }
 
 export function readUnsentText(blockId: string): string | null {
-  try {
-    return globalThis.localStorage.getItem(getUnsentKey(blockId));
-  } catch {
-    return null;
-  }
+  return deviceStorage.get(getUnsentKey(blockId));
 }
 
 export function keepUnsentText({ blockId, text }: { blockId: string; text: string }) {
-  try {
-    globalThis.localStorage.setItem(getUnsentKey(blockId), text);
-  } catch {
-    // Without storage the text stays on screen only.
-  }
+  deviceStorage.set(getUnsentKey(blockId), text);
 }
 
 export function clearUnsentText(blockId: string) {
-  try {
-    globalThis.localStorage.removeItem(getUnsentKey(blockId));
-  } catch {
-    // Nothing to clear without storage.
-  }
+  deviceStorage.remove(getUnsentKey(blockId));
 }
