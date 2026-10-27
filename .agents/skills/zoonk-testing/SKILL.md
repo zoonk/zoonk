@@ -51,12 +51,4 @@ Run the affected tests, then broaden only for affected consumers or unresolved r
 
 Keep each E2E test well under 20 seconds locally: CI splits work by test, so one long test sets its shard's time. Test only what the assertion needs (a database simulation names its asserted `rules`; use fake timers, not real waits).
 
-## Production read-shape ratchets
-
-Database integration tests verify a fact's shape and authorization, but Vitest has no Next.js request `workStore` and cannot prove private-cache dedupe. Ratchet (a) measures exact-repeat physical SQL per production request: normalize the statement and hash its complete bound parameter array without logging values. Keep timestamp-varied groups separate; they can be intentional windows rather than duplicates.
-
-Measure a production build (`build:e2e`, then `next start` on a high port) of the change's isolated worktree against its own E2E database, never a shared one. Reuse the same personas and routes for the baseline and each fact's cut on Today API, Plan, Buddy, Chapter and Mind maps. Record the source SHA and dirty patch, warm up once, then measure three repetitions. Compare each fact's SQL/parameter families with the baseline's; do not infer savings from static call-site counts or a zero-repeat total alone.
-
-Pair repeat budgets with process CPU, returned rows, response bytes and process memory. For large facts, measure the internal Flight encoding and decoding cost and bytes separately; process RSS is not allocation attributable to one fact. Report clock, fixture, wrong-kind/not-found and unrun-path limits. Fresh write/workflow checks and private-source visibility guards remain part of acceptance. Ratchet (b), plan-build entries per GET, belongs to plan-compute; ratchet (c), action-induced requests and SQL, belongs to D6.
-
 For Vitest, a package-scoped command is `mise x -- pnpm --filter <workspace> test <test-file>`. E2E build and launch details are in the E2E reference. Report checks accurately, including failures and anything not exercised.
