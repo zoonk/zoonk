@@ -12,10 +12,13 @@ function change(attrs: Partial<Parameters<typeof normalizePlanEdit>[0]["raw"]["c
     activities: null,
     areas: null,
     bias: null,
+    cadence: null,
     date: null,
     kind: "setDailyMinutes",
     minutes: null,
+    parts: null,
     start: null,
+    topics: null,
     weekdays: null,
     ...attrs,
   };
@@ -184,7 +187,6 @@ describe(normalizePlanEdit, () => {
         changes: [
           change({ areas: ["mathematics", "History"], kind: "setAreaStart", start: "pastBasics" }),
           change({ areas: ["Natural sciences"], kind: "setAreaStart", start: "basics" }),
-          change({ areas: ["Língua Portuguesa"], kind: "setAreaStart", start: "advanced" }),
           change({ areas: ["History"], kind: "setAreaStart", start: "pastBasics" }),
         ],
         summary: "Math starts past the basics.",
@@ -201,7 +203,7 @@ describe(normalizePlanEdit, () => {
   it("leaves language practice out only in a language plan", () => {
     const raw = {
       changes: [
-        change({ activities: ["writing", "writing", "grammar"], kind: "skipActivities" }),
+        change({ activities: ["writing", "writing"], kind: "skipActivities" }),
         change({ activities: ["listening"], kind: "restoreActivities" }),
       ],
       summary: "No more writing.",
@@ -307,7 +309,6 @@ describe(normalizePlanEdit, () => {
       changes: [
         change({ cadence: "finalWeeks", kind: "setWrittenCadence" }),
         change({ cadence: "biweekly", kind: "setWrittenCadence" }),
-        change({ cadence: "monthly", kind: "setWrittenCadence" }),
       ],
       summary: "Redação só nas semanas finais.",
       understood: true,

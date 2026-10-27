@@ -50,20 +50,16 @@ const MAX_LEFT_OUT_LENGTH = 120;
 type RawPart = { area: string; name: string; skills: string[] };
 
 type RawChange = {
-  activities: string[] | null;
+  activities: (typeof LANGUAGE_ACTIVITIES)[number][] | null;
   areas: string[] | null;
-  /** Older outputs and other kinds have none. */
-  cadence?: string | null;
-  /** Older outputs and other kinds have none. */
-  parts?: RawPart[] | null;
+  cadence: (typeof WRITTEN_CADENCES)[number] | null;
+  parts: RawPart[] | null;
   bias: string | null;
   date: string | null;
   kind: string;
   minutes: number | null;
-  /** Older outputs and other kinds have none. */
-  start?: string | null;
-  /** Older outputs and other kinds have none. */
-  topics?: readonly PlanEditTopic[] | null;
+  start: (typeof AREA_STARTS)[number] | null;
+  topics: readonly PlanEditTopic[] | null;
   weekdays: number[] | null;
 };
 
@@ -173,11 +169,9 @@ function toAreaStartOperation({
   context: Context;
 }): PlanEditOperation | null {
   const areas = toAreas({ context, values: change.areas });
-  const start = change.start ?? null;
+  const { start } = change;
 
-  return areas.length > 0 && includes(AREA_STARTS, start)
-    ? { areas, kind: "setAreaStart", start }
-    : null;
+  return areas.length > 0 && start ? { areas, kind: "setAreaStart", start } : null;
 }
 
 /** Only a language plan has kinds of practice to leave out or bring back. */
@@ -190,9 +184,7 @@ function toActivityOperation({
   context: Context;
   kind: ActivityKind;
 }): PlanEditOperation | null {
-  const activities = [
-    ...new Set((change.activities ?? []).filter((value) => includes(LANGUAGE_ACTIVITIES, value))),
-  ];
+  const activities = [...new Set(change.activities)];
 
   return context.goalKind === "language" && activities.length > 0 ? { activities, kind } : null;
 }
@@ -208,10 +200,10 @@ function toCadenceOperation({
   change: RawChange;
   context: Context;
 }): PlanEditOperation | null {
-  const cadence = change.cadence ?? null;
+  const { cadence } = change;
   const hasWritten = (context.writtenParts ?? []).length > 0;
 
-  if (!hasWritten || !includes(WRITTEN_CADENCES, cadence)) {
+  if (!hasWritten || !cadence) {
     return null;
   }
 
