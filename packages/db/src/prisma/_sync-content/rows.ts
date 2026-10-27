@@ -7,6 +7,11 @@ export type DatabaseRow = Record<string, string | null>;
 
 export type TableRows = { columns: string[]; rows: DatabaseRow[] };
 
+/** An unambiguous natural key, including null values and separators inside text. */
+export function getRowKey(row: DatabaseRow, columns: readonly string[]): string {
+  return JSON.stringify(columns.map((column) => row[column]));
+}
+
 /**
  * Keeps every value as the text Postgres printed, so a row is written back exactly as it was read:
  * JSON `null` stays apart from SQL NULL and timestamps never pass through the local time zone.
@@ -122,49 +127,6 @@ function getRowBatches(rows: DatabaseRow[]): DatabaseRow[][] {
   });
 }
 
-async function insertBatches({
-  batchIndex = 0,
-  batches,
-  columns,
-  destination,
-  inserted = [],
-  suffix,
-  table,
-}: {
-  batchIndex?: number;
-  batches: DatabaseRow[][];
-  columns: string[];
-  destination: Client;
-  inserted?: DatabaseRow[];
-  suffix: string;
-  table: string;
-}): Promise<DatabaseRow[]> {
-  const batch = batches[batchIndex];
-
-  if (!batch) {
-    return inserted;
-  }
-
-  const query = buildInsertQuery({ columns, rowCount: batch.length, suffix, table });
-  const values = batch.flatMap((row) => columns.map((column) => row[column]));
-
-  const result = await destination.query<DatabaseRow>({
-    text: query,
-    types: RAW_TEXT_TYPES,
-    values,
-  });
-
-  return insertBatches({
-    batchIndex: batchIndex + 1,
-    batches,
-    columns,
-    destination,
-    inserted: [...inserted, ...result.rows],
-    suffix,
-    table,
-  });
-}
-
 /**
  * Inserts rows in batches. `suffix` adds an `ON CONFLICT` or `RETURNING` clause; the returned rows
  * are what `RETURNING` gave back.
@@ -180,13 +142,20 @@ export async function insertRows({
   suffix?: string;
   table: string;
 }): Promise<DatabaseRow[]> {
-  return insertBatches({
-    batches: getRowBatches(data.rows),
-    columns: data.columns,
-    destination,
-    suffix,
-    table,
-  });
+  const inserted: DatabaseRow[] = [];
+
+  for (const batch of getRowBatches(data.rows)) {
+    // oxlint-disable-next-line no-await-in-loop -- One client writes each batch in order and stops on failure.
+    const result = await destination.query<DatabaseRow>({
+      text: buildInsertQuery({ columns: data.columns, rowCount: batch.length, suffix, table }),
+      types: RAW_TEXT_TYPES,
+      values: batch.flatMap((row) => data.columns.map((column) => row[column])),
+    });
+
+    inserted.push(...result.rows);
+  }
+
+  return inserted;
 }
 
 /**

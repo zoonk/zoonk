@@ -1,7 +1,7 @@
 import { logInfo } from "@zoonk/utils/logger";
 import { type Client } from "pg";
 import { type ContentTable, SEEDED_ROWS } from "./metadata";
-import { type TableRows, mapColumn, readRows } from "./rows";
+import { type TableRows, getRowKey, mapColumn, readRows } from "./rows";
 import { type SourceCatalog } from "./source";
 
 const KEYED_TABLES = [
@@ -53,10 +53,6 @@ const REQUIRED_PARENTS = [
 
 type LeftOut = Partial<Record<ContentTable, ReadonlySet<string>>>;
 
-function getKey(row: TableRows["rows"][number], columns: readonly string[]): string {
-  return JSON.stringify(columns.map((column) => row[column]));
-}
-
 async function readKeys({
   destination,
   params = [],
@@ -76,7 +72,7 @@ async function readKeys({
     query: `SELECT ${columns.join(", ")} FROM ${table} WHERE ${query}`,
   });
 
-  return new Set(data.rows.map((row) => getKey(row, columns)));
+  return new Set(data.rows.map((row) => getRowKey(row, columns)));
 }
 
 /** Library rows `markRemovedContent` didn't list: seeded and private content, and what they use. */
@@ -154,7 +150,7 @@ function leaveOutKeptKeys({ catalog, keys }: { catalog: SourceCatalog; keys: Kep
     (current, table) => {
       const { data, left } = withoutRows({
         data: current.catalog[table],
-        drop: (row) => keys[table].has(getKey(row, NATURAL_KEYS[table])),
+        drop: (row) => keys[table].has(getRowKey(row, NATURAL_KEYS[table])),
       });
 
       return {

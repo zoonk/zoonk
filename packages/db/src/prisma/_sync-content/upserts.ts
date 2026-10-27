@@ -1,13 +1,9 @@
 import { type Client } from "pg";
-import { type DatabaseRow, type TableRows, getUpsertClause, insertRows, mapColumn } from "./rows";
+import { type TableRows, getRowKey, getUpsertClause, insertRows, mapColumn } from "./rows";
 import { type SourceCatalog } from "./source";
 
 /** Source id to destination id, for rows the destination already had under the same natural key. */
 export type IdMap = ReadonlyMap<string, string>;
-
-function getKey(row: DatabaseRow, columns: readonly string[]): string {
-  return JSON.stringify(columns.map((column) => row[column]));
-}
 
 /**
  * Inserts rows or updates the destination's row with the same natural key, and maps each source id
@@ -38,11 +34,11 @@ async function upsertRows({
     table,
   });
 
-  const destinationIds = new Map(returned.map((row) => [getKey(row, conflict), row.id]));
+  const destinationIds = new Map(returned.map((row) => [getRowKey(row, conflict), row.id]));
 
   return new Map(
     data.rows.flatMap((row) => {
-      const destinationId = destinationIds.get(getKey(row, conflict));
+      const destinationId = destinationIds.get(getRowKey(row, conflict));
       return row.id && destinationId ? [[row.id, destinationId] as const] : [];
     }),
   );
