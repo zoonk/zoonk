@@ -33,19 +33,10 @@ export async function createMappedGoal(userId: string) {
 }
 
 /**
- * Writes an existing goal's skill map as the goal workflow does: its plan, skills and, unless
- * `items` is false, two placement questions per skill. With `placementPrepared`, the run recorded
- * that placement's questions were written, so none still coming means none could be.
+ * Writes an existing goal's skill map as the goal workflow does: its plan, skills and two placement
+ * questions per skill.
  */
-export async function mapGoalSkills({
-  goalId,
-  items = true,
-  placementPrepared = false,
-}: {
-  goalId: string;
-  items?: boolean;
-  placementPrepared?: boolean;
-}) {
+export async function mapGoalSkills({ goalId }: { goalId: string }) {
   const id = randomUUID().slice(0, SHORT_ID_LENGTH);
 
   const plan = await planFixture({
@@ -54,7 +45,6 @@ export async function mapGoalSkills({
       name: `Stage ${index + 1} ${id}`,
       summary: "Test",
     })),
-    placementPreparedAt: placementPrepared ? new Date() : null,
   });
 
   const total = SKILLS_PER_PHASE.reduce((sum, count) => sum + count, 0);
@@ -83,15 +73,13 @@ export async function mapGoalSkills({
         titleSnapshot: `Lesson ${position + 1}`,
       }),
     ),
-    ...(items
-      ? skills.flatMap((skill, index) =>
-          [1, 2].map((copy) =>
-            itemFixture({
-              content: choiceItemContent(`Question ${index + 1}.${copy} ${id}?`),
-              skillId: skill.id,
-            }),
-          ),
-        )
-      : []),
+    ...skills.flatMap((skill, index) =>
+      [1, 2].map((copy) =>
+        itemFixture({
+          content: choiceItemContent(`Question ${index + 1}.${copy} ${id}?`),
+          skillId: skill.id,
+        }),
+      ),
+    ),
   ]);
 }

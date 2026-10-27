@@ -40,11 +40,7 @@ export async function nextStep(page: Page, { keyboard = false }: { keyboard?: bo
  * Continues until the step titled `name` shows. A result says only what happened, so a test that
  * doesn't control every step (how preparation moved, an insight) reaches the one it checks by name.
  */
-export async function continueToStep(
-  page: Page,
-  name: RegExp | string,
-  { keyboard = false }: { keyboard?: boolean } = {},
-) {
+export async function continueToStep(page: Page, name: RegExp | string) {
   const heading = page.getByRole("heading", { level: 1, name });
   const { current, total } = await readStep(page);
 
@@ -55,7 +51,7 @@ export async function continueToStep(
     }
 
     // oxlint-disable-next-line no-await-in-loop -- One step at a time.
-    await nextStep(page, { keyboard });
+    await nextStep(page);
   }
 
   await expect(heading).toBeVisible();

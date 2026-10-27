@@ -1,7 +1,4 @@
-/**
- * The exams the anytime mock tests copy: one day of two subjects, the same day with sections that
- * set how candidates move, or with a written part.
- */
+/** The exams the anytime mock tests copy: one day of two subjects, or one with a written part. */
 export const AREAS = ["Mathematics", "Languages"] as const;
 const CITATION = { passage: "From the notice.", sourceId: "notice" };
 
@@ -25,34 +22,6 @@ const STRUCTURE = {
     topics: [],
     weight: null,
   })),
-};
-
-/**
- * An exam day like a computer-based one that sets how candidates move: Mathematics one question
- * after another, each answered before the next, with a review at its end that may change one
- * answer (like the GMAT's), then Languages with a clock of three seconds per question.
- */
-const NAVIGATION_STRUCTURE = {
-  ...STRUCTURE,
-  mock: {
-    ...STRUCTURE.mock,
-    sections: [
-      {
-        day: null,
-        minutes: 12,
-        name: "Mathematics",
-        navigation: { answerChanges: 1, forwardOnly: true, itemSeconds: null, mustAnswer: true },
-        questions: 8,
-      },
-      {
-        day: null,
-        minutes: 12,
-        name: "Languages",
-        navigation: { answerChanges: null, forwardOnly: false, itemSeconds: 3, mustAnswer: false },
-        questions: 8,
-      },
-    ],
-  },
 };
 
 /** What the notice says it takes to pass, in its own words. */
@@ -102,10 +71,6 @@ export const WRITTEN_ESSAY = {
   sampleOutline: "Thesis, two arguments, conclusion.",
 };
 
-export function getStructure({ navigation, written }: { navigation: boolean; written: boolean }) {
-  if (written) {
-    return WRITTEN_STRUCTURE;
-  }
-
-  return navigation ? NAVIGATION_STRUCTURE : STRUCTURE;
+export function getStructure({ written }: { written: boolean }) {
+  return written ? WRITTEN_STRUCTURE : STRUCTURE;
 }

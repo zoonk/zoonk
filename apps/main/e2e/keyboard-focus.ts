@@ -21,21 +21,6 @@ async function expectVisibleFocus(target: Locator) {
             return false;
           }
 
-          /**
-           * The shared goal textarea draws its ring on its GoalField form, whose line is a 1px
-           * shadow it always has: only a wider ring around it shows focus.
-           */
-          const goalField =
-            element instanceof HTMLTextAreaElement
-              ? element.closest('[data-slot="goal-field"]')
-              : null;
-
-          if (goalField) {
-            const { boxShadow } = getComputedStyle(goalField);
-            const spreads = [...boxShadow.matchAll(/(?<spread>\d+(?:\.\d+)?)px(?=,|$)/gu)];
-            return spreads.some((match) => Number(match.groups?.spread) >= 2);
-          }
-
           return [null, "::before", "::after"].some((pseudo) => {
             const style = getComputedStyle(element, pseudo);
 

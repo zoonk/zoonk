@@ -1,9 +1,4 @@
-import {
-  CHECKPOINT_PASS_MARK,
-  CHECKPOINT_QUESTIONS,
-  createCheckpointLearner,
-  playDuel,
-} from "./checkpoint-fixtures";
+import { CHECKPOINT_QUESTIONS, createCheckpointLearner, playDuel } from "./checkpoint-fixtures";
 import { expect, test } from "./fixtures";
 import { openAs, pressUntil } from "./study-day";
 
@@ -34,7 +29,7 @@ test.describe("A checkpoint from today's session", () => {
 
     await expect(page).toHaveURL(new RegExp(`/checkpoint/${block.id}\\?session=`, "u"));
 
-    await playDuel(page, { keyboard: true, passMark: CHECKPOINT_PASS_MARK });
+    await playDuel(page);
 
     // Winning the first checkpoint earned the Star glasses: their moment opens first, right after
     // the duel, and Enter puts them on.

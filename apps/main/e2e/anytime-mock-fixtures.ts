@@ -29,13 +29,10 @@ function areaOf(index: number): string {
  * every earlier question answered. Returns each question's right and wrong answer by its text.
  */
 export async function createAnytimeMockLearner({
-  navigation = false,
   onboarding = false,
   plus,
   written = false,
 }: {
-  /** Its sections set how candidates move through them (`NAVIGATION_STRUCTURE`). */
-  navigation?: boolean;
   onboarding?: boolean;
   plus: boolean;
   /** The exam day ends with a discursive test, which its full mock asks (`WRITTEN_STRUCTURE`). */
@@ -53,7 +50,7 @@ export async function createAnytimeMockLearner({
     examBlueprintFixture({
       language: "en",
       name: `Mock Exam ${id}`,
-      structure: getStructure({ navigation, written }),
+      structure: getStructure({ written }),
     }),
     Promise.all(
       AREAS.flatMap((area) =>

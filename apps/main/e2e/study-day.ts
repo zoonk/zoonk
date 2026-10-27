@@ -79,9 +79,6 @@ async function createContent({ writtenLesson }: { writtenLesson: boolean }) {
 }
 
 type StudyDayOptions = {
-  /** Zu, the default buddy, picked in onboarding. */
-  buddy?: boolean;
-  freshStart?: "newWeek" | "welcomeBack" | null;
   /** The capsules already played, so the session opens on its lesson. */
   reviewDone?: boolean;
   /** False for a lesson not written yet: the session asks for it when the learner starts it. */
@@ -94,8 +91,6 @@ type StudyDayOptions = {
  * short lesson with one check, then mixed practice. The right option is always the first.
  */
 export async function createStudyDay({
-  buddy = false,
-  freshStart = null,
   reviewDone = false,
   writtenLesson = true,
 }: StudyDayOptions = {}) {
@@ -125,12 +120,8 @@ export async function createStudyDay({
       position: 0,
       titleSnapshot: lesson.title,
     }),
-    studySessionFixture({ freshStart, goalId: goal.id, plannedMinutes: 7, userId: user.id }),
-    learningProfileFixture({
-      activeGoalId: goal.id,
-      userId: user.id,
-      ...(buddy ? { buddyGlasses: "round" as const, buddyKind: "zu" as const } : {}),
-    }),
+    studySessionFixture({ goalId: goal.id, plannedMinutes: 7, userId: user.id }),
+    learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
     attemptFixture({
       answer: { selectedIndex: 1 },
       answeredAt: new Date(Date.now() - TIME_MACHINE_DAYS_AGO * MS_PER_DAY),

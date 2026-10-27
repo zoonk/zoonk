@@ -44,7 +44,7 @@ function pagePrefetched(page: Page, path: string) {
 test("Today's call link and the call's page write nothing until the learner starts the call", async ({
   browser,
 }) => {
-  const { block, user } = await createLanguageChallenge({ final: false, plus: true });
+  const { block, user } = await createLanguageChallenge({ plus: true });
   const href = `/checkpoint/${block.id}?session=${block.sessionId}`;
   const before = await readLearnerState(user.id);
   const page = await openAs(browser, user);

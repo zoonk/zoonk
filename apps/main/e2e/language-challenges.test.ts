@@ -27,7 +27,6 @@ test("a Free learner can open the next lesson while the earlier call challenge s
   browser,
 }) => {
   const { block, nextBlock, nextLesson, user } = await createLanguageChallenge({
-    final: false,
     nextLessonTodo: true,
   });
 
@@ -60,7 +59,7 @@ test("a Free learner can open the next lesson while the earlier call challenge s
 });
 
 test("a Plus learner's written challenge creates its call only on Start", async ({ browser }) => {
-  const { block, boss, user } = await createLanguageChallenge({ final: false, plus: true });
+  const { block, boss, user } = await createLanguageChallenge({ plus: true });
   const page = await openAs(browser, user);
   await answerLiveCalls(page, "answers");
 
@@ -102,7 +101,7 @@ test("a Plus learner's written challenge creates its call only on Start", async 
 });
 
 test("leaving cancels a checkpoint Start resolved after returning", async ({ browser }) => {
-  const { block, user } = await createLanguageChallenge({ final: false, plus: true });
+  const { block, user } = await createLanguageChallenge({ plus: true });
   const page = await openAs(browser, user);
   await answerLiveCalls(page, "answers");
   await watchMicrophone(page);
