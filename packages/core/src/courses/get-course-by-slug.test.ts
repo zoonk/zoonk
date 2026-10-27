@@ -9,7 +9,6 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { cacheTag, revalidateTag } from "next/cache";
 import { loadBindings, transform } from "next/dist/build/swc";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
-import { appCacheTagsSchema } from "../cache/app-cache-contract";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import * as courseTags from "../cache/tags";
 import { getCourseCacheTag, getCourseRouteCacheTag } from "../cache/tags";
@@ -257,7 +256,7 @@ describe("the complete course route cache", () => {
   });
 
   it.each(["legacy slug % value", "x".repeat(300)])(
-    "uses a hook-compatible tag for a legacy route and expires the cached address on rename: %s",
+    "expires a legacy route's cached address on rename: %s",
     async (legacySlug) => {
       const platform = courseCachePlatform(compiled.code);
 
@@ -279,7 +278,6 @@ describe("the complete course route cache", () => {
 
       const params = { brandSlug: organization.slug, courseSlug: course.slug };
       const tag = getCourseRouteCacheTag(params);
-      expect(appCacheTagsSchema.safeParse({ tags: [tag] }).success).toBe(true);
       await expect(platform.getCourse(params)).resolves.toMatchObject({ id: course.id });
       expect(cacheTag).toHaveBeenCalledWith(tag);
 

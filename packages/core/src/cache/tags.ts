@@ -1,47 +1,22 @@
 import { createHash } from "node:crypto";
-import { appCacheTagSchema } from "./app-cache-contract";
 
 export const COURSE_LIST_CACHE_TAG = "catalog-courses";
-
-const SHARED_CONTENT_PREFIXES = [
-  "course:",
-  "course-route:",
-  "course-route-hash:",
-  "course-curriculum:",
-  "library-chapter:",
-  "library-lesson:",
-  "skill:",
-  "media-asset:",
-  "exam-blueprint:",
-];
-
-/** Only shared content crosses app caches; a learner's private tags stay in the writing app. */
-export function isSharedContentTag(tag: string): boolean {
-  return (
-    tag === COURSE_LIST_CACHE_TAG ||
-    SHARED_CONTENT_PREFIXES.some((prefix) => tag.startsWith(prefix) && tag.length > prefix.length)
-  );
-}
 
 /** Identifies every cached view of one course without coupling callers to tag formatting. */
 export function getCourseCacheTag(courseId: string): string {
   return `course:${courseId}`;
 }
 
-/** Identifies a course lookup even when the route does not resolve to a row yet. */
+/**
+ * Identifies a course lookup even when the route does not resolve to a row yet. Hashed, so any
+ * slug, however long or odd, makes a tag within Next's 256 characters.
+ */
 export function getCourseRouteCacheTag(input: { brandSlug: string; courseSlug: string }): string {
-  const tag = `course-route:${input.brandSlug}:${input.courseSlug}`;
-
-  if (appCacheTagSchema.safeParse(tag).success) {
-    return tag;
-  }
-
-  /** Legacy slugs stay byte for byte; hash the pair into a distinct, bounded tag namespace. */
   const hash = createHash("sha256")
     .update(JSON.stringify([input.brandSlug, input.courseSlug]))
     .digest("hex");
 
-  return `course-route-hash:${hash}`;
+  return `course-route:${hash}`;
 }
 
 /** Identifies cached chapter navigation and outlines owned by one course. */

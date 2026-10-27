@@ -30,7 +30,6 @@
     "./auth/purge-verifications": "./src/auth/purge-expired-verifications.ts",
     "./auth/subscription": "./src/auth/subscription.ts",
     "./cache-tags": "./src/cache/tags.ts",
-    "./cache/app-cache-contract": "./src/cache/app-cache-contract.ts",
     "./catalog/chapter": "./src/catalog/chapter.ts",
     "./catalog/chapter-lessons": "./src/catalog/chapter-lessons.ts",
     "./catalog/course-chapters": "./src/catalog/course-chapters.ts",

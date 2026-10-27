@@ -1,11 +1,6 @@
 import { createBaseConfig } from "@zoonk/e2e/base.config";
 
-const config = createBaseConfig({
-  globalSetup: "./e2e/global-setup.ts",
-  testDir: "./e2e",
-  // Fixed test fixture only; Main never forwards cache notifications to itself.
-  webServerEnv: { APP_CACHE_SECRET: "e2e-cache-tags-secret", MAIN_CACHE_URL: "" },
-});
+const config = createBaseConfig({ globalSetup: "./e2e/global-setup.ts", testDir: "./e2e" });
 
 /** Admission-changing cases run after all learner calls, including in the full CI suite. */
 const playwrightConfig = {
