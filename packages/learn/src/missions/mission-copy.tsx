@@ -74,7 +74,6 @@ export function useMissionName(buddy: Pick<LearnBuddy, "kind" | "name"> | null) 
 type MissionState = {
   /** On the buddy's own tab, asking it is its composer right there. */
   asks: boolean;
-  detail?: MissionDetail;
   done: boolean;
   kind: MissionKind;
   opens?: MissionOpens;
@@ -92,12 +91,7 @@ function useOpensLabel(buddy: LearnBuddy | null) {
   const ask = (asks: boolean) =>
     asks ? t(", write your question") : t(", go to {buddy}", { buddy: buddyName });
 
-  const area = (detail: MissionDetail) =>
-    detail?.areaTitle
-      ? t(", practice {area}", { area: detail.areaTitle })
-      : t(", go to today's practice");
-
-  return ({ asks, detail, kind, opens }: MissionState): string => {
+  return ({ asks, kind, opens }: MissionState): string => {
     switch (kind) {
       case "review":
         return t(", go to today's review");
@@ -112,7 +106,9 @@ function useOpensLabel(buddy: LearnBuddy | null) {
         return mock(opens);
       case "essay":
         return t(", go to today's essay");
+      // A weak spot is today's practice of its area, which its name already says.
       case "practice":
+      case "weakSpot":
         return t(", go to today's practice");
       case "fixMistake":
         return t(", practice your mistakes");
@@ -124,8 +120,6 @@ function useOpensLabel(buddy: LearnBuddy | null) {
         return t(", choose a call");
       case "askBuddy":
         return ask(asks);
-      case "weakSpot":
-        return area(detail);
       default:
         return kind satisfies never;
     }

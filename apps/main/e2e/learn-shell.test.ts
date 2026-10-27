@@ -37,10 +37,10 @@ test.describe("Learning tabs frame", () => {
 
     await page.goto("/today");
 
-    await page.getByRole("button", { name: /Current goal: Bake sourdough bread/u }).click();
+    await page.getByRole("button", { name: /^Bake sourdough bread.*Switch goal$/u }).click();
     await page.getByRole("menuitemradio", { name: "Learn to cook" }).click();
 
-    await expect(page.getByRole("button", { name: /Current goal: Learn to cook/u })).toBeVisible();
+    await expect(page.getByRole("button", { name: /^Learn to cook.*Switch goal$/u })).toBeVisible();
 
     await expect.poll(() => readActiveGoalId(user.id)).toBe(second.id);
 
@@ -48,7 +48,7 @@ test.describe("Learning tabs frame", () => {
     await page.getByRole("link", { exact: true, name: "Zu" }).click();
     await expect(page).toHaveURL(/\/buddy$/u);
 
-    await expect(page.getByRole("button", { name: /Current goal: Learn to cook/u })).toBeVisible();
+    await expect(page.getByRole("button", { name: /^Learn to cook.*Switch goal$/u })).toBeVisible();
     await page.context().close();
   });
 });

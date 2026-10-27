@@ -2,7 +2,6 @@
 
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useId } from "react";
 import {
   ListRow,
   ListRowButton,
@@ -37,9 +36,9 @@ export function ProgressCount({ done, total }: { done: number; total: number }) 
  * One row of the buddy's lists (today's missions, the first steps): its mark, its name with its
  * state for screen readers, one line under it, an optional count at its end, and the whole row
  * opening where it's done (`target`); a row with nowhere to open only shows. A row that opens is
- * named by its name and state in one run ("Review, go to today's review") and described by its
- * line and count: from its words, a browser reads the hidden state as a block of its own and
- * named the row "Review , go to today's review".
+ * named by its words, as every list row is ("Review, go to today's review, Quick review · 1 min"):
+ * a label of its own would leave out the words on screen, which voice control users say to press
+ * it.
  */
 export function MissionListRow({
   detail,
@@ -59,10 +58,6 @@ export function MissionListRow({
   /** A multi-step mission's count ("1/3"), before the row's chevron. */
   trailing?: React.ReactNode;
 }) {
-  const detailId = useId();
-  const trailingId = useId();
-  const described = [detail && detailId, trailing && trailingId].filter(Boolean).join(" ");
-
   const content = (
     <>
       <ListRowLeading className="w-3 justify-center">{mark}</ListRowLeading>
@@ -71,13 +66,9 @@ export function MissionListRow({
           {name}
           {stateLabel && <span className="sr-only">{stateLabel}</span>}
         </ListRowTitle>
-        {detail && (
-          <ListRowDescription className="empty:hidden" id={detailId}>
-            {detail}
-          </ListRowDescription>
-        )}
+        {detail && <ListRowDescription className="empty:hidden">{detail}</ListRowDescription>}
       </ListRowContent>
-      {trailing && <ListRowTrailing id={trailingId}>{trailing}</ListRowTrailing>}
+      {trailing && <ListRowTrailing>{trailing}</ListRowTrailing>}
     </>
   );
 
@@ -85,14 +76,9 @@ export function MissionListRow({
     return <ListRow>{content}</ListRow>;
   }
 
-  const naming = {
-    "aria-describedby": described || undefined,
-    "aria-label": stateLabel ? `${name}${stateLabel}` : undefined,
-  };
-
   if ("href" in target) {
     return (
-      <ListRowLink href={target.href} prefetch={target.prefetch} {...naming}>
+      <ListRowLink href={target.href} prefetch={target.prefetch}>
         {content}
       </ListRowLink>
     );
@@ -100,7 +86,6 @@ export function MissionListRow({
 
   return (
     <ListRowButton
-      {...naming}
       aria-busy={target.pending || undefined}
       className="aria-busy:opacity-60"
       disabled={target.pending}

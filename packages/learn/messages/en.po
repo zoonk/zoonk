@@ -6350,16 +6350,6 @@ msgid ", go to {buddy}"
 msgstr ", go to {buddy}"
 
 #: src/missions/mission-copy.tsx
-msgctxt "qBj4ry"
-msgid ", practice {area}"
-msgstr ", practice {area}"
-
-#: src/missions/mission-copy.tsx
-msgctxt "GKiQ-V"
-msgid ", go to today's practice"
-msgstr ", go to today's practice"
-
-#: src/missions/mission-copy.tsx
 msgctxt "TXix4Y"
 msgid ", go to today's review"
 msgstr ", go to today's review"
@@ -6383,6 +6373,11 @@ msgstr ", go to the challenge"
 msgctxt "fYIW2r"
 msgid ", go to today's essay"
 msgstr ", go to today's essay"
+
+#: src/missions/mission-copy.tsx
+msgctxt "GKiQ-V"
+msgid ", go to today's practice"
+msgstr ", go to today's practice"
 
 #: src/missions/mission-copy.tsx
 msgctxt "0DwB4q"
@@ -11949,9 +11944,9 @@ msgid "Start a goal"
 msgstr "Start a goal"
 
 #: src/shell/goal-switcher.tsx
-msgctxt "goalSwitcher.GtVyJe"
-msgid "Current goal: {goal}. Switch goal"
-msgstr "Current goal: {goal}. Switch goal"
+msgctxt "goalSwitcher.GuLJJS"
+msgid ", current goal. Switch goal"
+msgstr ", current goal. Switch goal"
 
 #: src/shell/goal-switcher.tsx
 msgctxt "goalSwitcher.OXDyuT"

@@ -242,9 +242,6 @@ export function GoalSwitcher({
     <DropdownMenu>
       <DropdownMenuTrigger
         aria-busy={isPending}
-        aria-label={
-          selected ? t("Current goal: {goal}. Switch goal", { goal: selected.title }) : undefined
-        }
         className={TRIGGER_CLASS[placement]}
         // A long title is cut on phones: hovering shows it whole, and tapping opens the full list.
         title={selected?.title}
@@ -257,6 +254,8 @@ export function GoalSwitcher({
         <span className="min-w-0 flex-1 truncate text-left">
           {selected?.title ?? t("Start a goal")}
         </span>
+        {/* After the title, so the trigger's name starts with the words on screen. */}
+        {selected && <span className="sr-only">{t(", current goal. Switch goal")}</span>}
         <ChevronDownIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
       </DropdownMenuTrigger>
 

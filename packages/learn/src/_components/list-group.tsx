@@ -94,16 +94,12 @@ export function ListRow({ className, ...props }: React.ComponentProps<"div">) {
 
 /** A row opening another page, the whole row being the link. */
 export function ListRowLink({
-  "aria-describedby": describedBy,
-  "aria-label": label,
   children,
   className,
   href,
   lessonWritten,
   prefetch,
 }: {
-  "aria-describedby"?: string;
-  "aria-label"?: string;
   children: React.ReactNode;
   className?: string;
   href: string;
@@ -113,8 +109,6 @@ export function ListRowLink({
 }) {
   return (
     <LearnLink
-      aria-describedby={describedBy}
-      aria-label={label}
       className={cn(LIST_ROW_INTERACTIVE_CLASS, className)}
       href={href}
       lessonWritten={lessonWritten}

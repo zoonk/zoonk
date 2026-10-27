@@ -79,7 +79,6 @@ function MissionRow({
       name={missionName(mission)}
       stateLabel={stateLabel({
         asks: Boolean(links.askBuddy),
-        detail: mission.detail,
         done,
         kind: mission.kind,
         opens,
