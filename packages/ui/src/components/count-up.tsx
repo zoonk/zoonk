@@ -1,5 +1,6 @@
 "use client";
 
+import { useCelebration } from "@zoonk/ui/hooks/celebration";
 import { readDuration, readEasing } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useEffectEvent, useLayoutEffect, useRef } from "react";
@@ -9,9 +10,9 @@ import { useEffectEvent, useLayoutEffect, useRef } from "react";
  * the day earned (a positive number). The value is on the page from the first frame, so screen readers, tests
  * and the layout read it (its width held, the digits tabular); the counting digits draw over it
  * for the fill's time on the ease-out (`duration-fill`), in step with a meter filling beside it,
- * then give way to it. With reduced motion, or where the stylesheet isn't loaded, it shows the
- * value at once. Mount it with the moment the learner's action opened: a server-rendered page
- * paints the value before this runs.
+ * then give way to it. It counts only when the celebration plays (`useCelebration`: never on a
+ * reload, a revisit or the way back); with reduced motion, or where the stylesheet isn't loaded,
+ * it shows the value at once.
  *
  * ```tsx
  * <CountUp format={(points) => `+${format.number(points)}`} value={27} />
@@ -30,6 +31,7 @@ export function CountUp({
   format?: (value: number) => string;
   value: number;
 }) {
+  const plays = useCelebration();
   const root = useRef<HTMLSpanElement>(null);
   const digits = useRef<HTMLSpanElement>(null);
   const write = useEffectEvent((count: number) => format(count));
@@ -39,7 +41,7 @@ export function CountUp({
     const overlay = digits.current;
     const duration = overlay ? readDuration(overlay, "fill") : 0;
 
-    if (!wrapper || !overlay || duration === 0 || value === 0) {
+    if (!plays || !wrapper || !overlay || duration === 0 || value === 0) {
       return;
     }
 
@@ -81,7 +83,7 @@ export function CountUp({
     });
 
     return end;
-  }, [delay, value]);
+  }, [delay, plays, value]);
 
   return (
     <span

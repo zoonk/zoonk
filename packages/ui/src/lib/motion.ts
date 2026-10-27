@@ -13,6 +13,14 @@ export type MotionEasing = "out" | "spring";
 const MS_PER_SECOND = 1000;
 
 /**
+ * A celebration plays one thing at a time, in reading order: each beat starts as the one before it
+ * lands, a beat apart (the number with its meter at 0, what it earned at 1, the buddy or the reward
+ * at 2, a burst at 3), and things of one kind follow each other a stagger apart (three at most).
+ */
+export const BEAT_MS = 250;
+export const STAGGER_MS = 100;
+
+/**
  * A duration token in milliseconds as `element` resolves it: 0 with reduced motion for the
  * celebrations' tokens, and 0 where no stylesheet sets it, so a script never animates blind.
  */

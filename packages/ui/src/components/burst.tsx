@@ -1,3 +1,6 @@
+"use client";
+
+import { useCelebration } from "@zoonk/ui/hooks/celebration";
 import { type CSSPropertiesWithVariables } from "@zoonk/ui/lib/css-variables";
 import { cn } from "@zoonk/ui/lib/utils";
 
@@ -20,7 +23,8 @@ const SPARKS: readonly Spark[] = [
  * The rarest moments' burst: a few sparks fly out of one point once and fade (`animate-spark`, in
  * the burst's time), in the text color, which is the moment's own (`text-brain` for Brain Power).
  * `className` places the point inside a positioned parent; `delay` puts it on the moment's last
- * beat. Decorative, and gone with reduced motion.
+ * beat. Decorative: only when the celebration plays (`useCelebration`), and gone with reduced
+ * motion.
  *
  * ```tsx
  * <Burst className="text-brain top-4 left-8" delay={600} />
@@ -36,6 +40,12 @@ export function Burst({
   delay?: number;
   sparks?: readonly Spark[];
 }) {
+  const plays = useCelebration();
+
+  if (!plays) {
+    return null;
+  }
+
   return (
     <span
       aria-hidden="true"

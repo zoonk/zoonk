@@ -7,6 +7,7 @@
     "./components/*": "./src/components/*.tsx",
     "./globals.css": "./src/styles/globals.css",
     "./hooks/animated-progress": "./src/hooks/use-animated-progress.ts",
+    "./hooks/celebration": "./src/hooks/use-celebration.tsx",
     "./hooks/clipboard": "./src/hooks/use-clipboard.ts",
     "./hooks/command-palette-search": "./src/hooks/use-command-palette-search.ts",
     "./hooks/debounce": "./src/hooks/use-debounce.ts",
