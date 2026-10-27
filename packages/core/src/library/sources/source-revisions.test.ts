@@ -4,13 +4,14 @@ import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   holdLearnerRevision,
   readLearnerRevision,
   waitForBlockedStatement,
 } from "../../_test-utils/learner-revision";
 import { mockSession } from "../../_test-utils/mock-session";
+import { claimUsage } from "../../entitlements/claim-usage";
 import { createOnboardingGoals } from "../../view-models/onboarding/create-onboarding-goals";
 import {
   answerGoalUploadRequest,
@@ -19,6 +20,14 @@ import {
 } from "./goal-upload-request";
 import { hashDocument } from "./parse-document";
 import { registerSourceUpload } from "./register-upload";
+import type * as ClaimUsage from "../../entitlements/claim-usage";
+
+// Which of two writers waiting on the learner's lock takes it first is Postgres's to decide, so a
+// test pauses an upload right after its usage claim commits to queue a writer behind it.
+vi.mock("../../entitlements/claim-usage", async (importOriginal) => {
+  const actual = await importOriginal<typeof ClaimUsage>();
+  return { ...actual, claimUsage: vi.fn(actual.claimUsage) };
+});
 
 async function setup() {
   const user = await userFixture();
@@ -164,32 +173,40 @@ describe("source revisions", () => {
       }
 
       const before = await readLearnerRevision(user.id);
-      const first = holdLearnerRevision({ userId: user.id });
-      const firstPid = await first.pid;
+      const actual = await vi.importActual<typeof ClaimUsage>("../../entitlements/claim-usage");
+      const claimed = Promise.withResolvers<null>();
+      const resume = Promise.withResolvers<null>();
+
+      vi.mocked(claimUsage).mockImplementationOnce(async (input) => {
+        const decision = await actual.claimUsage(input);
+        claimed.resolve(null);
+        await resume.promise;
+        return decision;
+      });
+
       const upload = registerSourceUpload({ kind: "text", language: "en", text });
-      // Queue another marked writer after usage, so the source transaction has to wait on its own marker.
-      const queued = { holder: null as ReturnType<typeof holdLearnerRevision> | null };
+      await claimed.promise;
+
+      // Another marked writer takes the lock once usage is committed, so the source write has to
+      // wait on its own marker.
+      const holder = holdLearnerRevision({ userId: user.id });
 
       try {
-        await waitForBlockedStatement(firstPid, /UPDATE users SET learner_revision/u);
-        const second = holdLearnerRevision({ userId: user.id });
-        queued.holder = second;
-        await waitForBlockedStatement(firstPid, /UPDATE users SET learner_revision/u, 2);
-        first.release();
-        const secondPid = await second.pid;
-        await waitForBlockedStatement(secondPid, /UPDATE users SET learner_revision/u);
+        const pid = await holder.pid;
+        resume.resolve(null);
+        await waitForBlockedStatement(pid, /UPDATE users SET learner_revision/u);
         await expect(prisma.source.count({ where: { ownerId: user.id } })).resolves.toBe(0);
         await expect(prisma.learnerSource.count({ where: { userId: user.id } })).resolves.toBe(0);
       } finally {
-        first.release();
-        queued.holder?.release();
-        await Promise.all([first.done, queued.holder?.done, upload]);
+        resume.resolve(null);
+        holder.release();
+        await Promise.all([holder.done, upload]);
       }
 
       await expect(upload).resolves.toMatchObject({ status: "ready" });
 
       await expect(readLearnerRevision(user.id)).resolves.toBe(
-        before + (kind === "private" ? 5n : 4n),
+        before + (kind === "private" ? 4n : 3n),
       );
     },
   );
