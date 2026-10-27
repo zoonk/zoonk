@@ -2,27 +2,16 @@
 
 import { type PlanOffer } from "@zoonk/core/plans/view-contract";
 import { useExtracted } from "next-intl";
-import { DoneMark } from "../_components/status-mark";
 import {
-  Suggestion,
   SuggestionAction,
   SuggestionActions,
   SuggestionDescription,
-  SuggestionError,
-  SuggestionHeader,
-  SuggestionLine,
-  SuggestionOpen,
-  SuggestionResult,
-  SuggestionSummary,
 } from "../_components/suggestion";
 import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import {
-  SlotContent,
+  PlanChangeSuggestion,
   type SlotItem,
-  SlotUndo,
   usePlanSuggestionSlot,
-  useSlotAnswer,
-  useSlotAnswered,
 } from "./plan-suggestion-context";
 import { useChangeSentence } from "./use-change-sentence";
 import { usePlanChange } from "./use-plan-change";
@@ -51,8 +40,6 @@ export function PlanOfferSuggestion({
   const sentence = useChangeSentence();
   const { change, failed, isPending } = usePlanChange();
   const { setResult } = usePlanSuggestionSlot();
-  const answer = useSlotAnswer(item);
-  const answered = useSlotAnswered(item);
 
   const apply = () => {
     if (!offer) {
@@ -70,58 +57,21 @@ export function PlanOfferSuggestion({
     });
   };
 
-  const undo = answer && <SlotUndo item={item} />;
-
   return (
-    <Suggestion
-      answered={answered}
-      label={t("Plan suggestion")}
-      mark={answer ? <DoneMark /> : undefined}
-    >
-      <SuggestionLine>
-        {answer ? (
-          <>
-            <SuggestionResult>{answer.text}</SuggestionResult>
-            {undo}
-          </>
-        ) : (
-          <>
-            <SuggestionSummary>{title}</SuggestionSummary>
-            <SuggestionOpen />
-          </>
+    <PlanChangeSuggestion failed={failed} item={item} title={title}>
+      {description.map((line) => (
+        <SuggestionDescription key={line}>{line}</SuggestionDescription>
+      ))}
+      {offer && <PlanEffectDiff effect={offer.effect} />}
+
+      <SuggestionActions>
+        {offer && (
+          <SuggestionAction disabled={isPending} onClick={apply}>
+            {t("Apply")}
+          </SuggestionAction>
         )}
-      </SuggestionLine>
-
-      <SlotContent>
-        <SuggestionHeader>{answer ? t("Plan updated") : title}</SuggestionHeader>
-
-        {answer ? (
-          <>
-            <SuggestionResult>{answer.text}</SuggestionResult>
-            <SuggestionActions>{undo}</SuggestionActions>
-          </>
-        ) : (
-          <>
-            {description.map((line) => (
-              <SuggestionDescription key={line}>{line}</SuggestionDescription>
-            ))}
-            {offer && <PlanEffectDiff effect={offer.effect} />}
-
-            <SuggestionActions>
-              {offer && (
-                <SuggestionAction disabled={isPending} onClick={apply}>
-                  {t("Apply")}
-                </SuggestionAction>
-              )}
-              {actions}
-            </SuggestionActions>
-
-            {failed && (
-              <SuggestionError>{t("That didn't work. Try again in a moment.")}</SuggestionError>
-            )}
-          </>
-        )}
-      </SlotContent>
-    </Suggestion>
+        {actions}
+      </SuggestionActions>
+    </PlanChangeSuggestion>
   );
 }

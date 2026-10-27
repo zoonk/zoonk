@@ -3,18 +3,10 @@
 import { type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
-import { DoneMark } from "../_components/status-mark";
 import {
-  Suggestion,
   SuggestionAction,
   SuggestionActions,
   SuggestionDescription,
-  SuggestionError,
-  SuggestionHeader,
-  SuggestionLine,
-  SuggestionOpen,
-  SuggestionResult,
-  SuggestionSummary,
 } from "../_components/suggestion";
 import { usePlanScreen } from "./plan-context";
 import { type FindStatus, PendingLabel, useCoveredText, usePlanCoverage } from "./plan-coverage";
@@ -32,13 +24,10 @@ import {
 } from "./plan-offer-preview";
 import { currentPlanPreview } from "./plan-preview-state";
 import {
-  SlotContent,
+  PlanChangeSuggestion,
   type SlotItem,
   type SlotPreview,
-  SlotUndo,
   usePlanSuggestionSlot,
-  useSlotAnswer,
-  useSlotAnswered,
 } from "./plan-suggestion-context";
 import { useStudyEverythingFromSuggestion } from "./study-everything";
 import { readTimeToCover, useTimeToCover, useTimeToCoverTexts } from "./use-time-to-cover";
@@ -231,7 +220,6 @@ function CoverageBody({
  * it, leads instead, in its sheet. An exam studying everything is offered the exam's end again.
  */
 export function CoverageSuggestion({ coverage }: { coverage: Coverage | null }) {
-  const t = useExtracted();
   const texts = useTimeToCoverTexts();
   const coveredText = useCoveredText();
   const courseOffer = useCourseOffer();
@@ -247,8 +235,6 @@ export function CoverageSuggestion({ coverage }: { coverage: Coverage | null }) 
   const answered = found && coverage ? answerOffer({ covered, intent, time: found }) : null;
   const offer = courseOffer ?? answered;
   const item: SlotItem = { key: "coverage", kind: "coverage" };
-  const answer = useSlotAnswer(item);
-  const done = useSlotAnswered(item);
   const { apply, failed, isPending } = useApplyPreview(item);
   const title = offer?.title ?? covered;
 
@@ -291,65 +277,32 @@ export function CoverageSuggestion({ coverage }: { coverage: Coverage | null }) 
     setIntent("time");
   };
 
-  const undo = answer && <SlotUndo item={item} />;
-
   return (
-    <Suggestion answered={done} label={t("Plan suggestion")} mark={answer && <DoneMark />}>
-      <SuggestionLine>
-        {answer ? (
-          <>
-            <SuggestionResult>{answer.text}</SuggestionResult>
-            {undo}
-          </>
-        ) : (
-          <>
-            <SuggestionSummary>{title}</SuggestionSummary>
-            <SuggestionOpen />
-          </>
-        )}
-      </SuggestionLine>
+    <PlanChangeSuggestion failed={failed} item={item} title={title}>
+      {lines.description.map((line) => (
+        <SuggestionDescription key={line}>{line}</SuggestionDescription>
+      ))}
 
-      <SlotContent>
-        <SuggestionHeader>{answer ? t("Plan updated") : title}</SuggestionHeader>
+      {/* Seen here, heard from the live line under it: said once. */}
+      {lines.status && (
+        <SuggestionDescription aria-hidden="true">{lines.status}</SuggestionDescription>
+      )}
 
-        {answer ? (
-          <>
-            <SuggestionResult>{answer.text}</SuggestionResult>
-            <SuggestionActions>{undo}</SuggestionActions>
-          </>
-        ) : (
-          <>
-            {lines.description.map((line) => (
-              <SuggestionDescription key={line}>{line}</SuggestionDescription>
-            ))}
+      {/* Always there, so that the search runs, and what it couldn't find, is announced. */}
+      <p aria-live="polite" className="sr-only">
+        {flags.pending ? texts.finding : lines.status}
+      </p>
 
-            {/* Seen here, heard from the live line under it: said once. */}
-            {lines.status && (
-              <SuggestionDescription aria-hidden="true">{lines.status}</SuggestionDescription>
-            )}
-
-            {/* Always there, so that the search runs, and what it couldn't find, is announced. */}
-            <p aria-live="polite" className="sr-only">
-              {flags.pending ? texts.finding : lines.status}
-            </p>
-
-            <CoverageBody
-              applying={isPending}
-              ask={(next) => void ask(next)}
-              flags={flags}
-              intent={intent}
-              offer={offer}
-              onApply={() => apply(preview)}
-              onStop={stopAsking}
-              preview={preview}
-            />
-
-            {failed && (
-              <SuggestionError>{t("That didn't work. Try again in a moment.")}</SuggestionError>
-            )}
-          </>
-        )}
-      </SlotContent>
-    </Suggestion>
+      <CoverageBody
+        applying={isPending}
+        ask={(next) => void ask(next)}
+        flags={flags}
+        intent={intent}
+        offer={offer}
+        onApply={() => apply(preview)}
+        onStop={stopAsking}
+        preview={preview}
+      />
+    </PlanChangeSuggestion>
   );
 }

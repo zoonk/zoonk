@@ -9,7 +9,19 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { createContext, use } from "react";
-import { SuggestionAction, SuggestionContent, SuggestionError } from "../_components/suggestion";
+import { DoneMark } from "../_components/status-mark";
+import {
+  Suggestion,
+  SuggestionAction,
+  SuggestionActions,
+  SuggestionContent,
+  SuggestionError,
+  SuggestionHeader,
+  SuggestionLine,
+  SuggestionOpen,
+  SuggestionResult,
+  SuggestionSummary,
+} from "../_components/suggestion";
 import { type GoalStatusControl } from "../journey/goal-actions";
 import { type PlanEditorSection } from "./plan-editor-sections";
 import { type PlanPreviewState } from "./plan-preview-state";
@@ -83,11 +95,6 @@ export function usePlanSuggestionSlot(): SlotValue {
 export function useSlotAnswer(item: Pick<SlotItem, "key">): SlotResult | null {
   const { result } = usePlanSuggestionSlot();
   return result?.item.key === item.key ? result : null;
-}
-
-/** The slot's answer to `item`, for `Suggestion`'s `answered`. */
-export function useSlotAnswered(item: Pick<SlotItem, "key">): boolean {
-  return useSlotAnswer(item) !== null;
 }
 
 /**
@@ -164,5 +171,67 @@ export function SlotUndo({ item }: { item: SlotItem }) {
       </SuggestionAction>
       {failed && <SuggestionError>{t("That didn't work. Try again in a moment.")}</SuggestionError>}
     </>
+  );
+}
+
+/**
+ * A change the slot suggests: its title and what it says (`children`, with its actions) until the
+ * learner answers, then "Plan updated" with what the answer did and its Undo, in the same place.
+ */
+export function PlanChangeSuggestion({
+  children,
+  failed,
+  item,
+  mark,
+  title,
+}: {
+  children: React.ReactNode;
+  failed: boolean;
+  item: SlotItem;
+  mark?: React.ReactNode;
+  title: string;
+}) {
+  const t = useExtracted();
+  const answer = useSlotAnswer(item);
+  const undo = answer && <SlotUndo item={item} />;
+
+  return (
+    <Suggestion
+      answered={answer !== null}
+      label={t("Plan suggestion")}
+      mark={answer ? <DoneMark /> : mark}
+    >
+      <SuggestionLine>
+        {answer ? (
+          <>
+            <SuggestionResult>{answer.text}</SuggestionResult>
+            {undo}
+          </>
+        ) : (
+          <>
+            <SuggestionSummary>{title}</SuggestionSummary>
+            <SuggestionOpen />
+          </>
+        )}
+      </SuggestionLine>
+
+      <SlotContent>
+        <SuggestionHeader>{answer ? t("Plan updated") : title}</SuggestionHeader>
+
+        {answer ? (
+          <>
+            <SuggestionResult>{answer.text}</SuggestionResult>
+            <SuggestionActions>{undo}</SuggestionActions>
+          </>
+        ) : (
+          <>
+            {children}
+            {failed && (
+              <SuggestionError>{t("That didn't work. Try again in a moment.")}</SuggestionError>
+            )}
+          </>
+        )}
+      </SlotContent>
+    </Suggestion>
   );
 }

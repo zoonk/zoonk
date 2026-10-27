@@ -429,11 +429,8 @@ msgstr "Mit Plus verfügbar"
 #: src/journey/study-next.tsx
 #: src/onboarding/entry/goal-outcomes.tsx
 #: src/plan/notice-day.tsx
-#: src/plan/plan-coverage-suggestion.tsx
 #: src/plan/plan-exam-choices.tsx
 #: src/plan/plan-failed-message.tsx
-#: src/plan/plan-offer-suggestion.tsx
-#: src/plan/plan-past-date-suggestion.tsx
 #: src/plan/plan-suggestion-context.tsx
 #: src/syllabus/subject-not-planned.tsx
 #: src/today/today-exam-choice.tsx
@@ -9739,22 +9736,6 @@ msgctxt "TJo5E6"
 msgid "Preview"
 msgstr "Vorschau"
 
-#: src/plan/plan-coverage-suggestion.tsx
-#: src/plan/plan-offer-suggestion.tsx
-#: src/plan/plan-past-date-suggestion.tsx
-#: src/plan/plan-suggestion.tsx
-#: src/today/today-plan-change.tsx
-msgctxt "O6zpGA"
-msgid "Plan suggestion"
-msgstr "Planvorschlag"
-
-#: src/plan/plan-coverage-suggestion.tsx
-#: src/plan/plan-offer-suggestion.tsx
-#: src/plan/plan-past-date-suggestion.tsx
-msgctxt "cTvbeT"
-msgid "Plan updated"
-msgstr "Plan aktualisiert"
-
 #: src/plan/plan-coverage.tsx
 msgctxt "qCWuYX"
 msgid "{time} a day isn't enough time to cover your goal."
@@ -10157,6 +10138,18 @@ msgstr "Wie läuft es?"
 msgctxt "JJNc3c"
 msgid "Previous"
 msgstr "Zurück"
+
+#: src/plan/plan-suggestion-context.tsx
+#: src/plan/plan-suggestion.tsx
+#: src/today/today-plan-change.tsx
+msgctxt "O6zpGA"
+msgid "Plan suggestion"
+msgstr "Planvorschlag"
+
+#: src/plan/plan-suggestion-context.tsx
+msgctxt "cTvbeT"
+msgid "Plan updated"
+msgstr "Plan aktualisiert"
 
 #: src/plan/plan-suggestion.tsx
 msgctxt "-r70tt"

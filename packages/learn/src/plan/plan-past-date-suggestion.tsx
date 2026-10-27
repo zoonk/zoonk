@@ -10,18 +10,10 @@ import {
 import { CalendarClockIcon, ChevronDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useRef, useState } from "react";
-import { DoneMark } from "../_components/status-mark";
 import {
-  Suggestion,
   SuggestionAction,
   SuggestionActions,
   SuggestionDescription,
-  SuggestionError,
-  SuggestionHeader,
-  SuggestionLine,
-  SuggestionOpen,
-  SuggestionResult,
-  SuggestionSummary,
 } from "../_components/suggestion";
 import { usePlanScreen } from "./plan-context";
 import {
@@ -33,12 +25,9 @@ import {
 import { currentPlanPreview } from "./plan-preview-state";
 import { usePastDateText } from "./plan-status-label";
 import {
-  SlotContent,
+  PlanChangeSuggestion,
   type SlotItem,
-  SlotUndo,
   usePlanSuggestionSlot,
-  useSlotAnswer,
-  useSlotAnswered,
 } from "./plan-suggestion-context";
 import { useTimeToCover, useTimeToCoverTexts } from "./use-time-to-cover";
 
@@ -93,8 +82,6 @@ export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "
   // earlier tap started, shows nothing.
   const waiting = useRef(0);
   const asked = useRef(0);
-  const answer = useSlotAnswer(item);
-  const answered = useSlotAnswered(item);
   const isExam = goal.kind === "exam";
   const { title } = pastDateText({ isExam, lessons: item.lessons });
   const preview = currentPlanPreview({ operations: operations ?? [], plan, state: storedPreview });
@@ -144,7 +131,6 @@ export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "
     setSearch(null);
   };
 
-  const undo = answer && <SlotUndo item={item} />;
   const retry = search === "failed" || search === "building";
 
   const body = () => {
@@ -202,43 +188,8 @@ export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "
   };
 
   return (
-    <Suggestion
-      answered={answered}
-      label={t("Plan suggestion")}
-      mark={answer ? <DoneMark /> : <CalendarClockIcon />}
-    >
-      <SuggestionLine>
-        {answer ? (
-          <>
-            <SuggestionResult>{answer.text}</SuggestionResult>
-            {undo}
-          </>
-        ) : (
-          <>
-            <SuggestionSummary>{title}</SuggestionSummary>
-            <SuggestionOpen />
-          </>
-        )}
-      </SuggestionLine>
-
-      <SlotContent>
-        <SuggestionHeader>{answer ? t("Plan updated") : title}</SuggestionHeader>
-
-        {answer ? (
-          <>
-            <SuggestionResult>{answer.text}</SuggestionResult>
-            <SuggestionActions>{undo}</SuggestionActions>
-          </>
-        ) : (
-          <>
-            {body()}
-
-            {failed && (
-              <SuggestionError>{t("That didn't work. Try again in a moment.")}</SuggestionError>
-            )}
-          </>
-        )}
-      </SlotContent>
-    </Suggestion>
+    <PlanChangeSuggestion failed={failed} item={item} mark={<CalendarClockIcon />} title={title}>
+      {body()}
+    </PlanChangeSuggestion>
   );
 }

@@ -30,7 +30,6 @@ import {
   SlotUndo,
   usePlanSuggestionSlot,
   useSlotAnswer,
-  useSlotAnswered,
 } from "./plan-suggestion-context";
 import { useChangeSentence } from "./use-change-sentence";
 import { useTappedChoice } from "./use-tapped-choice";
@@ -139,7 +138,6 @@ export function ExamChoiceSuggestion({ item }: { item: Extract<SlotItem, { kind:
   const sentence = useChangeSentence();
   const { setResult } = usePlanSuggestionSlot();
   const answer = useSlotAnswer(item);
-  const answered = useSlotAnswered(item);
   const { choice } = item;
   const title = t("{group}: which one will you take?", { group: choice.group });
 
@@ -150,7 +148,7 @@ export function ExamChoiceSuggestion({ item }: { item: Extract<SlotItem, { kind:
   const undo = answer && <SlotUndo item={item} />;
 
   return (
-    <Suggestion answered={answered} label={title} mark={<SignpostIcon />}>
+    <Suggestion answered={answer !== null} label={title} mark={<SignpostIcon />}>
       <SuggestionLine>
         {answer ? (
           <>
