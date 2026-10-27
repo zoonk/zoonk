@@ -16,6 +16,7 @@ import {
   ListRowLink,
   ListRowTitle,
 } from "../_components/list-group";
+import { PageSectionTitle } from "../_components/page";
 import { SectionLabel } from "../_components/section-label";
 import { StatTile, StatTiles } from "../_components/stat-tile";
 import { SuccessEyebrow } from "../_components/success-eyebrow";
@@ -215,7 +216,7 @@ export function ExplainEnding({
         <ExplainRecap recap={explanation.recap} />
 
         <section aria-labelledby="explain-go-further" className="flex flex-col gap-1">
-          <SectionLabel id="explain-go-further">{t("Want to go further?")}</SectionLabel>
+          <PageSectionTitle id="explain-go-further">{t("Want to go further?")}</PageSectionTitle>
 
           {deeper}
 
