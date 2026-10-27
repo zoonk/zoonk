@@ -24,18 +24,19 @@ import {
   toTestOutContentIds,
 } from "./_utils/test-out-receipt";
 import { type ChapterTestOutInput } from "./test-out-contract";
-import { type TestOutScore, scoreTestOut } from "./test-out-rules";
+import { scoreTestOut } from "./test-out-rules";
 
 const PERCENT = 100;
 
-type ChapterTestOutOutcome = ProgressCelebration &
-  TestOutScore & {
-    answers: { isCorrect: boolean; itemId: string }[];
-    /** The plan change that skipped the lessons, so the result can offer its undo right there. */
-    changeId: string | null;
-    /** The lessons it skipped, as the plan change and the Plan count them. */
-    lessonsSkipped: number;
-  };
+type ChapterTestOutOutcome = ProgressCelebration & {
+  /** The plan change that skipped the lessons, so the result can offer its undo right there. */
+  changeId: string | null;
+  correct: number;
+  /** The lessons it skipped, as the plan change and the Plan count them. */
+  lessonsSkipped: number;
+  passed: boolean;
+  total: number;
+};
 
 export type SubmitChapterTestOutResult =
   | { outcome: ChapterTestOutOutcome; status: "ready" }
@@ -45,9 +46,6 @@ export type SubmitChapterTestOutResult =
   | { status: "unauthorized" };
 
 type GradedAnswer = { answer: ItemAnswerInput; isCorrect: boolean; item: ChoiceItem };
-
-/** What the result says, as the ledger row keeps it (`TestOutReceipt`). */
-type TestOutSaid = Omit<TestOutReceipt, "chapterId" | "goalId">;
 
 function firstAnswerPerItem(answers: readonly ItemAnswerInput[]): ItemAnswerInput[] {
   return answers.filter(
@@ -121,8 +119,8 @@ async function recordAnswers({
 /**
  * Adds the test to the learner's day (its time, its answers and the Energy they give) with a
  * ledger row that keeps what its result says, once: under the progress lock a double submit finds
- * the first one's row and gets what it said instead. Statistics and the day's totals show it, so
- * it's a learner change.
+ * the first one's row and gets what it said instead (both may have recorded the answers before
+ * it). Statistics and the day's totals show it, so it's a learner change.
  */
 function countTestOut({
   chapterId,
@@ -137,16 +135,16 @@ function countTestOut({
   goalId: string;
   graded: readonly GradedAnswer[];
   requestId: string;
-  said: TestOutSaid;
+  said: TestOutReceipt;
   timeZone: string;
   userId: string;
 }): Promise<{
   progress: { brainPower: ProgressChange; energy: ProgressChange } | null;
-  said: TestOutSaid;
+  said: TestOutReceipt;
 }> {
   return writeLearnerChange({ userId }, async (tx) => {
     const lock = await getCompletionEnergyContext({ timeZone, transaction: tx, userId });
-    const earlier = await findTestOutReceipt({ client: tx, requestId, userId });
+    const earlier = await findTestOutReceipt({ chapterId, client: tx, goalId, requestId, userId });
 
     if (earlier) {
       return unchanged({ progress: null, said: earlier });
@@ -169,23 +167,17 @@ function countTestOut({
   });
 }
 
-/** The result: the answers graded, and the score and plan change as the test recorded them. */
+/** The result: the score and plan change as the test recorded them. */
 function toReadyResult({
   celebration,
-  graded,
   said,
-  score,
 }: {
   celebration: ProgressCelebration;
-  graded: readonly GradedAnswer[];
-  said: TestOutSaid;
-  score: TestOutScore;
+  said: TestOutReceipt;
 }): SubmitChapterTestOutResult {
   return {
     outcome: {
-      ...score,
       ...celebration,
-      answers: graded.map(({ isCorrect, item }) => ({ isCorrect, itemId: item.id })),
       changeId: said.changeId,
       correct: said.correct,
       lessonsSkipped: said.lessonsSkipped,
@@ -203,7 +195,8 @@ function toReadyResult({
  * out the plan items that teach only skills answered right, so the plan skips them. Every answered
  * question must belong to the chapter. Past a free exam plan's first week it comes with Plus. The
  * same test sent again (`requestId`, a retry after a lost response) returns what it recorded,
- * without recording, counting or celebrating anything again.
+ * whatever changed since (a trial that ended, its questions rewritten), without recording, counting
+ * or celebrating anything again.
  */
 export async function submitChapterTestOut({
   chapterId,
@@ -218,6 +211,17 @@ export async function submitChapterTestOut({
 
   if (owned.status !== "ready") {
     return owned;
+  }
+
+  const { userId } = owned;
+  const { requestId } = input;
+
+  // Before any check or grade that could say otherwise now: a retry says what was recorded.
+  const sent = await findTestOutReceipt({ chapterId, goalId, requestId, userId });
+
+  if (sent) {
+    const celebration = await celebrateProgress({ progress: null, userId });
+    return toReadyResult({ celebration, said: sent });
   }
 
   if (await isTestOutPlusOnly(owned.goal)) {
@@ -245,14 +249,6 @@ export async function submitChapterTestOut({
     results: graded.map(({ isCorrect, item }) => ({ isCorrect, skillId: item.skillId })),
   });
 
-  const { userId } = owned;
-  const sent = await findTestOutReceipt({ requestId: input.requestId, userId });
-
-  if (sent) {
-    const celebration = await celebrateProgress({ progress: null, userId });
-    return toReadyResult({ celebration, graded, said: sent, score });
-  }
-
   const answeredAt = new Date();
   const timeZone = getAnswerTimeZone({ goal: owned.goal, timeZone: input.timeZone });
   await recordAnswers({ answeredAt, graded, timeZone, userId });
@@ -272,7 +268,7 @@ export async function submitChapterTestOut({
     chapterId,
     goalId,
     graded,
-    requestId: input.requestId,
+    requestId,
     said: {
       changeId: testedOut.changeId,
       correct: score.correct,
@@ -306,5 +302,5 @@ export async function submitChapterTestOut({
     );
   }
 
-  return toReadyResult({ celebration, graded, said: counted.said, score });
+  return toReadyResult({ celebration, said: counted.said });
 }

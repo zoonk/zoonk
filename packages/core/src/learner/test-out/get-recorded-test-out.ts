@@ -44,9 +44,9 @@ export async function getRecordedTestOut({
     return owned;
   }
 
-  const receipt = await findTestOutReceipt({ requestId, userId: owned.userId });
+  const receipt = await findTestOutReceipt({ chapterId, goalId, requestId, userId: owned.userId });
 
-  if (!receipt || receipt.chapterId !== chapterId || receipt.goalId !== goalId) {
+  if (!receipt) {
     return { status: "notFound" };
   }
 

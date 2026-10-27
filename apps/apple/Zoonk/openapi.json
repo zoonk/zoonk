@@ -68735,27 +68735,6 @@
             "additionalProperties": false,
             "description": "The belt level and the tenth of Energy this work took the learner to, to celebrate on its result; nothing on a repeat, which celebrates none of it again"
           },
-          "answers": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "isCorrect": {
-                  "type": "boolean"
-                },
-                "itemId": {
-                  "type": "string",
-                  "format": "uuid",
-                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                }
-              },
-              "required": [
-                "isCorrect",
-                "itemId"
-              ],
-              "additionalProperties": false
-            }
-          },
           "changeId": {
             "nullable": true,
             "description": "The plan change that skipped the lessons; undo it through the goal's plan changes. Null when nothing was skipped or the plan isn't built yet.",
@@ -68768,30 +68747,11 @@
             "minimum": 0,
             "maximum": 9007199254740991
           },
-          "knownSkillIds": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-              "description": "Skill ID"
-            },
-            "description": "Skills answered right; skills missed or not asked stay in the plan"
-          },
           "lessonsSkipped": {
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991,
             "description": "The lessons it skipped, the count its plan change says: a topic still being written counts the lessons the plan teaches in its place"
-          },
-          "missedSkillIds": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-              "description": "Skill ID"
-            }
           },
           "passed": {
             "type": "boolean"
@@ -68805,12 +68765,9 @@
         "required": [
           "ceremony",
           "reached",
-          "answers",
           "changeId",
           "correct",
-          "knownSkillIds",
           "lessonsSkipped",
-          "missedSkillIds",
           "passed",
           "total"
         ],

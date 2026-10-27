@@ -220,8 +220,11 @@ describe(submitChapterTestOut, () => {
     // 3 of 4 is 75%, below the pass mark.
     expect(result.status === "ready" && result.outcome.passed).toBe(false);
 
-    expect(result.status === "ready" && result.outcome.knownSkillIds).toStrictEqual(
-      skills.slice(0, 3).map((skill) => skill.id),
+    const right = await prisma.attempt.findMany({ where: { isCorrect: true, userId: user.id } });
+
+    // What was right is kept as evidence for its skills.
+    expect(new Set(right.map((attempt) => attempt.skillId))).toStrictEqual(
+      new Set(skills.slice(0, 3).map((skill) => skill.id)),
     );
 
     await expect(
@@ -279,7 +282,6 @@ describe(submitChapterTestOut, () => {
     expect(result.status === "ready" && result.outcome).toMatchObject({
       correct: 4,
       lessonsSkipped: 4,
-      missedSkillIds: [],
       passed: true,
       total: 4,
     });
@@ -351,7 +353,6 @@ describe(submitChapterTestOut, () => {
 
     expect(result.status === "ready" && result.outcome).toMatchObject({
       changeId: null,
-      knownSkillIds: [skills[0]?.id],
       lessonsSkipped: 0,
       passed: false,
     });
@@ -400,10 +401,6 @@ describe(submitChapterTestOut, () => {
     });
 
     expect(result.status === "ready" && result.outcome.passed).toBe(true);
-
-    expect(result.status === "ready" && result.outcome.knownSkillIds).toStrictEqual(
-      questions.map((question) => question.skillId),
-    );
 
     const stillToDo = await prisma.planItem.findMany({
       where: { id: { in: planItems.slice(0, 10).map((item) => item.id) }, status: "todo" },

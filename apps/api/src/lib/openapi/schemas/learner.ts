@@ -293,7 +293,6 @@ export const chapterTestOutRecordSchema = z
 export const chapterTestOutResultSchema = z
   .object({
     ...progressCelebrationShape,
-    answers: z.array(z.object({ isCorrect: z.boolean(), itemId: z.uuid() })),
     changeId: z
       .uuid()
       .nullable()
@@ -302,9 +301,6 @@ export const chapterTestOutResultSchema = z
           "The plan change that skipped the lessons; undo it through the goal's plan changes. Null when nothing was skipped or the plan isn't built yet.",
       }),
     correct: z.number().int().min(0),
-    knownSkillIds: z
-      .array(skillIdSchema)
-      .meta({ description: "Skills answered right; skills missed or not asked stay in the plan" }),
     lessonsSkipped: z
       .int()
       .min(0)
@@ -312,7 +308,6 @@ export const chapterTestOutResultSchema = z
         description:
           "The lessons it skipped, the count its plan change says: a topic still being written counts the lessons the plan teaches in its place",
       }),
-    missedSkillIds: z.array(skillIdSchema),
     passed: z.boolean(),
     total: z.number().int().min(0),
   })
