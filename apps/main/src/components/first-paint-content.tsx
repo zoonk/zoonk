@@ -12,6 +12,8 @@ const MAX_WAIT_MS = 1000;
  * Suspense fallback on screen for 300 ms once it painted, and on a slow phone the shell paints
  * while the parser is still reading the page's inline data, so content parsed a few milliseconds
  * later waited behind its skeleton. Browsers without `rel="expect"` paint the fallback first.
+ * After `MAX_WAIT_MS` the link stops blocking but stays: React owns it (hoisted into the head) and
+ * removes it itself when the page leaves or hides, which throws for a link already removed.
  */
 export function HoldFirstPaint({ id }: { id: string }) {
   const href = `#${id}`;
@@ -23,7 +25,7 @@ export function HoldFirstPaint({ id }: { id: string }) {
       <script
         // oxlint-disable-next-line react/no-danger -- A fixed script that must run as the shell is parsed.
         dangerouslySetInnerHTML={{
-          __html: `setTimeout(function(){var l=document.querySelector(${JSON.stringify(`link[rel="expect"][href="${href}"]`)});l&&l.remove()},${MAX_WAIT_MS})`,
+          __html: `setTimeout(function(){var l=document.querySelector(${JSON.stringify(`link[rel="expect"][href="${href}"]`)});l&&l.removeAttribute("blocking")},${MAX_WAIT_MS})`,
         }}
       />
     </>
