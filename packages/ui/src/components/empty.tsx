@@ -4,50 +4,25 @@ import { type VariantProps, cva } from "class-variance-authority";
 /**
  * A place with nothing in it yet, said plainly on the page: a quiet glyph, a short title, one line
  * and the one thing to do, aligned to the column's edge like the content it stands in for. No
- * card, no tile. `align="center"` centers it where the space has no edge to align to (a sheet's
- * empty body).
+ * card, no tile.
  */
-const emptyVariants = cva("group/empty flex w-full min-w-0 flex-1 flex-col gap-4 text-balance", {
-  defaultVariants: { align: "start" },
-  variants: {
-    align: { center: "items-center justify-center text-center", start: "items-start text-left" },
-  },
-});
-
-function Empty({
-  align,
-  className,
-  ...props
-}: React.ComponentProps<"div"> & VariantProps<typeof emptyVariants>) {
+function Empty({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn(emptyVariants({ align }), className)}
-      data-align={align ?? "start"}
+      className={cn(
+        "flex w-full min-w-0 flex-1 flex-col items-start gap-4 text-left text-balance",
+        className,
+      )}
       data-slot="empty"
       {...props}
     />
   );
 }
 
-const emptyHeaderVariants = cva("flex max-w-sm flex-col gap-1", {
-  defaultVariants: { align: "inherit" },
-  variants: {
-    align: {
-      center: "items-center text-center",
-      inherit: "group-data-[align=center]/empty:items-center",
-      start: "items-start text-left",
-    },
-  },
-});
-
-function EmptyHeader({
-  align,
-  className,
-  ...props
-}: React.ComponentProps<"div"> & VariantProps<typeof emptyHeaderVariants>) {
+function EmptyHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={emptyHeaderVariants({ align, className })}
+      className={cn("flex max-w-sm flex-col gap-1", className)}
       data-slot="empty-header"
       {...props}
     />
@@ -101,25 +76,10 @@ function EmptyDescription({ className, ...props }: React.ComponentProps<"p">) {
   );
 }
 
-const emptyContentVariants = cva("flex w-full max-w-sm min-w-0 flex-col gap-3 text-sm", {
-  defaultVariants: { align: "inherit" },
-  variants: {
-    align: {
-      center: "items-center",
-      inherit: "items-start group-data-[align=center]/empty:items-center",
-      stretch: "items-stretch",
-    },
-  },
-});
-
-function EmptyContent({
-  align,
-  className,
-  ...props
-}: React.ComponentProps<"div"> & VariantProps<typeof emptyContentVariants>) {
+function EmptyContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={emptyContentVariants({ align, className })}
+      className={cn("flex w-full max-w-sm min-w-0 flex-col items-start gap-3 text-sm", className)}
       data-slot="empty-content"
       {...props}
     />
