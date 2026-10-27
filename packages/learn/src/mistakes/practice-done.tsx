@@ -1,21 +1,15 @@
 "use client";
 
 import { type Reached } from "@zoonk/core/sessions/reached";
-import { CountUp } from "@zoonk/ui/components/count-up";
-import { Spinner } from "@zoonk/ui/components/spinner";
-import { cn } from "@zoonk/ui/lib/utils";
-import { BrainIcon, CheckCheckIcon, TargetIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { StatTile, StatTiles } from "../_components/stat-tile";
+import { MomentReadouts } from "../_components/moment-readouts";
 import { StepCard, StepDetail, StepHeader } from "../_components/step-card";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { DayMoment } from "../session/day-moment";
-import {
-  MOMENT_TITLE_PROPS,
-  MomentAfterCeremony,
-  type MomentCeremony,
-} from "../session/moment-ceremony";
+import { MomentAfterCeremony, type MomentCeremony } from "../session/moment-ceremony";
+import { MomentHeader } from "../session/moment-header";
+import { PendingMoment } from "../session/pending-moment";
 import { TaskMainLink } from "../shell/task-frame";
 import { type MistakePracticeSummary } from "./mistake-practice-state";
 
@@ -36,11 +30,10 @@ function BackBar({ backHref }: { backHref: string }) {
 }
 
 /**
- * What the run did, as numbers on their tiles: mistakes fixed, right answers (blue once one is
- * right), Brain Power (never "+0"). A run that fixed nothing and counted nothing says the rest come
- * back, and so does a run with a miss, so a hard day reads as "not yet".
+ * What the run did, as every task's end says it: its right answers and the Brain Power it earned
+ * as readouts (never "+0"), and the mistakes it fixed on the quiet line under them.
  */
-function PracticeStats({
+function PracticeEarned({
   fixed,
   summary,
 }: {
@@ -48,49 +41,16 @@ function PracticeStats({
   summary: MistakePracticeSummary | null;
 }) {
   const t = useExtracted();
-  const brainPower = summary?.brainPower ?? 0;
-
-  if (fixed === 0 && !summary) {
-    return <StepDetail>{t("The rest come back another day, when they stick better.")}</StepDetail>;
-  }
-
-  const tiles = [fixed > 0, summary !== null, brainPower > 0].filter(Boolean).length;
-  const missed = summary !== null && summary.correct < summary.total;
 
   return (
-    <div className="flex w-full flex-col items-start gap-3">
-      <StatTiles
-        className={cn(
-          // Three share one row from `sm`, the last one no wider than the others.
-          tiles === 3 && "sm:grid-cols-3 sm:[&>li:last-child:nth-child(odd)]:col-span-1",
-          tiles === 1 && "grid-cols-1",
-        )}
-      >
-        {fixed > 0 && (
-          <StatTile icon={<CheckCheckIcon />} label={t("Mistakes fixed")} value={fixed} />
-        )}
-        {summary && (
-          <StatTile
-            icon={<TargetIcon />}
-            label={t("Right answers")}
-            tone={summary.correct > 0 ? "success" : "neutral"}
-            value={`${summary.correct}/${summary.total}`}
-          />
-        )}
-        {brainPower > 0 && (
-          <StatTile
-            icon={<BrainIcon />}
-            label={t("Brain Power")}
-            tone="brain"
-            value={<CountUp format={(points) => `+${points}`} value={brainPower} />}
-          />
-        )}
-      </StatTiles>
-
-      {missed && (
-        <StepDetail>{t("The rest come back another day, when they stick better.")}</StepDetail>
-      )}
-    </div>
+    <MomentReadouts
+      brainPower={summary?.brainPower ?? 0}
+      facts={[
+        fixed > 0 &&
+          t("{count, plural, one {# mistake fixed} other {# mistakes fixed}}", { count: fixed }),
+      ]}
+      score={summary && { answered: summary.total, correct: summary.correct }}
+    />
   );
 }
 
@@ -118,10 +78,11 @@ export function NothingToPractice({ backHref }: { backHref: string }) {
 
 /**
  * The end of a run, at the last question or stopped early, straight on the page under the run's
- * header (its title a step under the header's), each part 24px from the next as every task's end
- * has them: what it did as numbers on their tiles (mistakes fixed, right answers, Brain Power),
- * what it did to the day (its missions, the level and the tenth of Energy the whole run reached),
- * and back to the notebook from the pinned bar. A milestone it earned opens first, on its own.
+ * header, as every task's end reads: "Practice done", what it earned (right answers, Brain Power,
+ * the mistakes it fixed), what it did to the day (its missions, the level and the tenth of Energy
+ * the whole run reached), each part 24px from the next, and back to the notebook from the pinned
+ * bar. A run with a miss, or one that counted nothing, says the rest come back, so a hard day
+ * reads as "not yet". A milestone it earned opens first, on its own.
  */
 export function PracticeDone({
   backHref,
@@ -142,16 +103,17 @@ export function PracticeDone({
 }) {
   const t = useExtracted();
   const ceremony = summary?.ceremony ?? null;
+  const comesBack = summary ? summary.correct < summary.total : fixed === 0;
 
   return (
     <MomentAfterCeremony milestone={ceremony} render={renderCeremony}>
       <TaskBody>
-        <StepCard aria-live="polite" className="gap-6" role="status">
-          <h2 className="text-title outline-none" {...MOMENT_TITLE_PROPS}>
-            {t("Practice done")}
-          </h2>
-          <PracticeStats fixed={fixed} summary={summary} />
-        </StepCard>
+        <MomentHeader
+          detail={comesBack && t("The rest come back another day, when they stick better.")}
+          title={t("Practice done")}
+        >
+          <PracticeEarned fixed={fixed} summary={summary} />
+        </MomentHeader>
 
         <DayMoment
           buddy={buddy}
@@ -166,16 +128,9 @@ export function PracticeDone({
   );
 }
 
-/** The run's answers being counted toward today. */
+/** The run's answers being counted toward today: its end, already titled, waiting for them. */
 export function PracticeSaving() {
   const t = useExtracted();
 
-  return (
-    <TaskBody>
-      <p className="text-muted-foreground flex items-center gap-2 text-sm" role="status">
-        <Spinner />
-        {t("Saving your practice…")}
-      </p>
-    </TaskBody>
-  );
+  return <PendingMoment action={t("Back")} title={t("Practice done")} />;
 }

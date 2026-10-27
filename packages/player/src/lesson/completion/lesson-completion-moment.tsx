@@ -3,16 +3,20 @@
 import { MomentReadouts } from "@zoonk/learn/moment-readouts";
 import { DayMoment } from "@zoonk/learn/session/day-moment";
 import { getLessonCelebration } from "@zoonk/learn/session/lesson-celebration";
-import { MOMENT_TITLE_PROPS } from "@zoonk/learn/session/moment-ceremony";
+import {
+  MomentHeader,
+  MomentSaveFailed,
+  MomentSaving,
+  PendingMainAction,
+} from "@zoonk/learn/session/moment-header";
 import {
   TASK_MAIN_ACTION_CLASS,
   TaskActionBar,
   TaskActions,
   TaskBody,
 } from "@zoonk/learn/task-layout";
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useFormatter } from "next-intl";
@@ -56,14 +60,20 @@ function BackLabel({ exitTo }: { exitTo: "chapter" | "unit" | null }) {
   return exitTo === "unit" ? t("Back to unit") : t("Back to chapter");
 }
 
+function NextLabel({ nextLesson }: { nextLesson: boolean }) {
+  const t = useExtracted();
+  return nextLesson ? t("Next lesson") : t("Continue");
+}
+
 /**
  * Next lesson in the chapter as the main action, with the way back to it beside it, or one
- * Continue to where the lesson was opened, in the task's action bar.
+ * Continue to where the lesson was opened, in the task's action bar. While the lesson saves
+ * (`pending`), the main action is already in its place, waiting.
  */
-function CompletionLinks() {
-  const t = useExtracted();
+function CompletionLinks({ pending }: { pending: boolean }) {
   const { linkComponent: LinkComponent, routes } = useLessonPlayerConfig();
   const primaryRef = useEnterClick<HTMLAnchorElement>();
+  const nextLesson = Boolean(routes.nextLesson);
 
   return (
     <TaskActionBar>
@@ -77,15 +87,21 @@ function CompletionLinks() {
           </LinkComponent>
         )}
 
-        <LinkComponent
-          aria-keyshortcuts="Enter"
-          className={cn(buttonVariants({ size: "xl" }), TASK_MAIN_ACTION_CLASS)}
-          href={routes.nextLesson ?? routes.exit}
-          ref={primaryRef}
-        >
-          {routes.nextLesson ? t("Next lesson") : t("Continue")}
-          <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
-        </LinkComponent>
+        {pending ? (
+          <PendingMainAction>
+            <NextLabel nextLesson={nextLesson} />
+          </PendingMainAction>
+        ) : (
+          <LinkComponent
+            aria-keyshortcuts="Enter"
+            className={cn(buttonVariants({ size: "xl" }), TASK_MAIN_ACTION_CLASS)}
+            href={routes.nextLesson ?? routes.exit}
+            ref={primaryRef}
+          >
+            <NextLabel nextLesson={nextLesson} />
+            <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
+          </LinkComponent>
+        )}
       </TaskActions>
     </TaskActionBar>
   );
@@ -109,12 +125,10 @@ export function LessonCompletionMoment(props: LessonCompletionSlotProps) {
   return (
     <>
       <TaskBody data-slot="lesson-completion">
-        <div className="flex flex-col items-start gap-6" role="status">
-          <h2 className="text-title outline-none" {...MOMENT_TITLE_PROPS}>
-            {completion.testedOut ? t("You already knew this") : t("Lesson complete")}
-          </h2>
-
-          {completion.status === "saving" && <Skeleton className="h-10 w-64" />}
+        <MomentHeader
+          title={completion.testedOut ? t("You already knew this") : t("Lesson complete")}
+        >
+          {completion.status === "saving" && <MomentSaving />}
 
           {isSaved && (
             <CompletionReadouts
@@ -124,7 +138,9 @@ export function LessonCompletionMoment(props: LessonCompletionSlotProps) {
               reviewAt={result?.nextReviewAt ?? null}
             />
           )}
-        </div>
+
+          {completion.status === "failed" && <MomentSaveFailed onRetry={onRetry} />}
+        </MomentHeader>
 
         {isSaved && celebration && (
           <DayMoment
@@ -135,19 +151,12 @@ export function LessonCompletionMoment(props: LessonCompletionSlotProps) {
           />
         )}
 
-        {completion.status === "failed" && (
-          <div className="flex flex-col items-start gap-2" role="alert">
-            <p className="text-sm">{t("We couldn't save your progress yet.")}</p>
-            <Button onClick={onRetry} size="lg" variant="outline">
-              {t("Try again")}
-            </Button>
-          </div>
-        )}
-
         {isSaved && slots.completionActions?.(props)}
       </TaskBody>
 
-      {isSaved && !slots.completionActions && <CompletionLinks />}
+      {completion.status !== "failed" && !slots.completionActions && (
+        <CompletionLinks pending={!isSaved} />
+      )}
     </>
   );
 }

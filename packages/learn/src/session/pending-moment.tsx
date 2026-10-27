@@ -1,42 +1,27 @@
 "use client";
 
-import { Spinner } from "@zoonk/ui/components/spinner";
-import { useExtracted } from "next-intl";
-import { EnterButton } from "../_components/enter-button";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
-import { type MomentKind, useMomentTitle } from "./use-moment-title";
+import { MomentHeader, MomentSaving, PendingMainAction } from "./moment-header";
 
 /**
- * The block's moment while its work is being saved: its title already in place ("Lesson complete"),
- * where the moment puts it, a quiet shimmering line in the readouts' place, as far under the title
- * as they land, and Continue already in the bar, busy until the moment is ready. The screen reads
- * as done from the first frame, never as an empty page, and the title never moves.
+ * A task's end while its work is being saved (a block, a lesson in the session, a notebook
+ * practice): its title already in place ("Lesson complete"), where the end puts it, a quiet
+ * shimmering line in the readouts' place, and its main action (`action`) already in the bar,
+ * waiting until the end is ready. The screen reads as done from the first frame, never as an
+ * empty page, and the title never moves.
  */
-export function PendingMoment({
-  kind,
-  testedOut = false,
-}: {
-  kind: MomentKind;
-  testedOut?: boolean;
-}) {
-  const t = useExtracted();
-  const title = useMomentTitle({ kind, testedOut });
-
+export function PendingMoment({ action, title }: { action: string; title: string }) {
   return (
     <>
       <TaskBody data-slot="pending-moment">
-        <div className="flex flex-col items-start gap-6" role="status">
-          <h2 className="text-title">{title}</h2>
-          <p className="text-muted-foreground shimmer text-sm">{t("Saving your progress…")}</p>
-        </div>
+        <MomentHeader title={title}>
+          <MomentSaving />
+        </MomentHeader>
       </TaskBody>
 
       <TaskActionBar>
         <TaskActions>
-          <EnterButton disabled>
-            <Spinner aria-hidden="true" />
-            {t("Continue")}
-          </EnterButton>
+          <PendingMainAction>{action}</PendingMainAction>
         </TaskActions>
       </TaskActionBar>
     </>

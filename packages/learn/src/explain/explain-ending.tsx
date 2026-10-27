@@ -1,12 +1,11 @@
 "use client";
 
 import { type ExplanationView } from "@zoonk/core/view-models/explain/contract";
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
-import { CountUp } from "@zoonk/ui/components/count-up";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
-import { BrainIcon, CircleHelpIcon, TargetIcon } from "lucide-react";
+import { CircleHelpIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
   ListGroup,
@@ -17,9 +16,9 @@ import {
   ListRowLink,
   ListRowTitle,
 } from "../_components/list-group";
+import { MomentReadouts } from "../_components/moment-readouts";
 import { PageSectionTitle } from "../_components/page";
 import { SectionLabel } from "../_components/section-label";
-import { StatTile, StatTiles } from "../_components/stat-tile";
 import { SuccessEyebrow } from "../_components/success-eyebrow";
 import {
   TASK_MAIN_ACTION_CLASS,
@@ -32,7 +31,7 @@ import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { LearnLink } from "../learn-link";
 import { DayMoment } from "../session/day-moment";
 import { type LessonCelebration } from "../session/lesson-celebration";
-import { MOMENT_TITLE_PROPS } from "../session/moment-ceremony";
+import { MomentHeader, MomentSaving, PendingMainAction } from "../session/moment-header";
 import { useQuickExplanationLabel } from "./quick-explanation-label";
 
 /**
@@ -41,62 +40,29 @@ import { useQuickExplanationLabel } from "./quick-explanation-label";
  */
 type ExplainResult = { answered: number; celebration: LessonCelebration | null; correct: number };
 
-const DONE_CLASS = cn(buttonVariants({ size: "xl" }), TASK_MAIN_ACTION_CLASS);
-
 /**
- * "Done" leaves the explanation, read to the end, once its reading is saved (`saving` until then):
- * that save is what finishes the explanation, so it leaves the goal switcher. It's the task's main
- * action, in the action bar every task screen shares.
+ * "Done" leaves the explanation, read to the end, once its reading is saved (`saving` until then,
+ * waiting in its place): that save is what finishes the explanation, so it leaves the goal
+ * switcher. It's the task's main action, in the action bar every task screen shares.
  */
 function DoneLink({ href, saving }: { href: string; saving: boolean }) {
   const t = useExtracted();
   const doneRef = useEnterClick<HTMLAnchorElement>();
 
   if (saving) {
-    return (
-      <Button aria-busy className={DONE_CLASS} disabled focusableWhenDisabled>
-        {t("Done")}
-      </Button>
-    );
+    return <PendingMainAction>{t("Done")}</PendingMainAction>;
   }
 
   return (
-    <LearnLink aria-keyshortcuts="Enter" className={DONE_CLASS} href={href} ref={doneRef}>
+    <LearnLink
+      aria-keyshortcuts="Enter"
+      className={cn(buttonVariants({ size: "xl" }), TASK_MAIN_ACTION_CLASS)}
+      href={href}
+      ref={doneRef}
+    >
       {t("Done")}
       <ShortcutKbd tone="inverse">⏎</ShortcutKbd>
     </LearnLink>
-  );
-}
-
-/** What the one question earned, as numbers on their tiles; read again, it earns nothing new. */
-function ResultTiles({ result }: { result: ExplainResult }) {
-  const t = useExtracted();
-  // "+0" would only read as a loss.
-  const brainPower = result.celebration?.brainPower ?? 0;
-
-  if (result.answered === 0 && brainPower === 0) {
-    return null;
-  }
-
-  return (
-    <StatTiles className={cn((result.answered === 0 || brainPower === 0) && "grid-cols-1")}>
-      {result.answered > 0 && (
-        <StatTile
-          icon={<TargetIcon />}
-          label={t("Right answers")}
-          tone="success"
-          value={`${result.correct}/${result.answered}`}
-        />
-      )}
-      {brainPower > 0 && (
-        <StatTile
-          icon={<BrainIcon />}
-          label={t("Brain Power")}
-          tone="brain"
-          value={<CountUp format={(points) => `+${points}`} value={brainPower} />}
-        />
-      )}
-    </StatTiles>
   );
 }
 
@@ -169,15 +135,16 @@ function ExplainRecap({
 
 /**
  * The end of a quick explanation: "✓ Now you know" over its title, what the one question earned
- * and what it did to the day (its missions, the belt level and the tenth of Energy it reached; its
- * milestone opened before, from the lesson player's `ceremony`), 24px apart as on every task's end,
- * the recap in three numbered sentences, and "Want to go further?":
- * learning the subject in depth as a plan of its own (the host's `deeper` control) or another
- * quick question. "Done" finishes, in the action bar at the bottom. From `lg` the recap sits in the aside, where the outline and
- * "From the lesson" were, as a lesson's summary does at its end, so the aside is never left empty
- * and the column keeps the result and the way on. While the reading saves, its title holds the
- * place, as every task's end does, and the column under it comes once it's saved, all at once, so
- * nothing moves under the learner as the day's moment lands.
+ * as readouts (right answers, Brain Power) and what it did to the day (its missions, the belt level
+ * and the tenth of Energy it reached; its milestone opened before, from the lesson player's
+ * `ceremony`), 24px apart as on every task's end, the recap in three numbered sentences, and "Want
+ * to go further?": learning the subject in depth as a plan of its own (the host's `deeper`
+ * control) or another quick question. "Done" finishes, in the action bar at the bottom. From `lg`
+ * the recap sits in the aside, where the outline and "From the lesson" were, as a lesson's summary
+ * does at its end, so the aside is never left empty and the column keeps the result and the way
+ * on. While the reading saves, its title holds the place and the saving line sits where the
+ * readouts land, as on every task's end, and the column under it comes once it's saved, all at
+ * once, so nothing moves under the learner as the day's moment lands.
  */
 export function ExplainEnding({
   buddy,
@@ -207,15 +174,20 @@ export function ExplainEnding({
     <>
       <TaskBody className="gap-7" data-slot="explain-ending">
         <div className="flex flex-col gap-6">
-          <div className="flex flex-col gap-6" role="status">
-            <div className="flex flex-col gap-2">
-              <SuccessEyebrow>{t("Now you know")}</SuccessEyebrow>
-              <h2 className="text-title outline-none" {...MOMENT_TITLE_PROPS}>
-                {explanation.title}
-              </h2>
-            </div>
-            {!saving && <ResultTiles result={result} />}
-          </div>
+          <MomentHeader
+            eyebrow={<SuccessEyebrow>{t("Now you know")}</SuccessEyebrow>}
+            title={explanation.title}
+          >
+            {/* Read again, it earns nothing new; with nothing answered, no score shows. */}
+            {saving ? (
+              <MomentSaving />
+            ) : (
+              <MomentReadouts
+                brainPower={result.celebration?.brainPower ?? 0}
+                score={{ answered: result.answered, correct: result.correct }}
+              />
+            )}
+          </MomentHeader>
 
           {result.celebration && (
             <DayMoment

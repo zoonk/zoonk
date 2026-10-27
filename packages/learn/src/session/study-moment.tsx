@@ -4,14 +4,12 @@ import { Button } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useFormatter } from "next-intl";
-import { useEffect, useRef } from "react";
 import { EnterButton } from "../_components/enter-button";
 import { KindMark } from "../_components/kind-tile";
 import { MomentReadouts } from "../_components/moment-readouts";
 import { PageSectionLabel } from "../_components/page";
 import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout";
 import { type TestOutStart, TestOutStartLink } from "../_components/test-out-start-link";
-import { isFocusLost } from "../_utils/is-focus-lost";
 import { useFormatDuration } from "../_utils/time-format";
 import { SCREEN_STEADY_MS } from "../_utils/use-steady";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
@@ -19,6 +17,7 @@ import { getOwnBrainPower } from "./block-brain-power";
 import { getBlockKind } from "./block-kind";
 import { DayMoment } from "./day-moment";
 import { MomentAfterCeremony, type MomentCeremony } from "./moment-ceremony";
+import { MomentHeader } from "./moment-header";
 import { SessionFrame } from "./session-frame";
 import { SessionHeader } from "./session-header";
 import { SessionQueueAsideContent, useSessionQueueAside } from "./session-queue";
@@ -143,26 +142,6 @@ function MomentActions({
 }
 
 /**
- * The moment's title, which takes the focus when the screen before it left none (the last answer's
- * Continue went with it), so a screen reader starts here and reads on.
- */
-function MomentTitle({ title }: { title: string }) {
-  const heading = useRef<HTMLHeadingElement>(null);
-
-  useEffect(() => {
-    if (isFocusLost(document.activeElement)) {
-      heading.current?.focus({ preventScroll: true });
-    }
-  }, []);
-
-  return (
-    <h2 className="text-title outline-none" ref={heading} tabIndex={-1}>
-      {title}
-    </h2>
-  );
-}
-
-/**
  * The quick moment between the session's blocks, with the same chrome as every task: the day's
  * session bar in the header, then on the page what the block was ("Review done"), what it earned
  * in one mono line, and what comes next as the highlighted next row. The action bar holds "Stop
@@ -234,10 +213,9 @@ export function StudyMoment({
   const content = (
     <MomentAfterCeremony milestone={moment.ceremony} render={renderCeremony}>
       <TaskBody data-slot="study-moment">
-        <div className="flex flex-col items-start gap-6">
-          <MomentTitle title={title} />
+        <MomentHeader title={title}>
           <MomentEarned moment={moment} />
-        </div>
+        </MomentHeader>
 
         <DayMoment
           buddy={buddy}

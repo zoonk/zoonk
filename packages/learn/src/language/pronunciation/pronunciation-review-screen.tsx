@@ -16,16 +16,13 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { EllipsisIcon, RotateCcwIcon, SkipForwardIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { FeedbackVerdict } from "../../_components/feedback-panel";
-import { BrainPowerReadout, ReadoutNumber } from "../../_components/moment-readouts";
-import { TASK_HEADER_ICON_CLASS } from "../../_components/task-header";
+import { MomentReadouts } from "../../_components/moment-readouts";
+import { TASK_HEADER_ICON_CLASS, TaskHeaderTitle } from "../../_components/task-header";
 import { TaskActions } from "../../_components/task-layout";
 import { type LearnBuddy } from "../../buddies/use-buddy-name";
 import { DayMoment } from "../../session/day-moment";
-import {
-  MOMENT_TITLE_PROPS,
-  MomentAfterCeremony,
-  type MomentCeremony,
-} from "../../session/moment-ceremony";
+import { MomentAfterCeremony, type MomentCeremony } from "../../session/moment-ceremony";
+import { MomentHeader } from "../../session/moment-header";
 import { TaskFrame, TaskMainButton, TaskMainLink, TaskSaveError } from "../../shell/task-frame";
 import { RecordButton } from "../../speech/record-button";
 import { PronunciationWord, RecorderStatus, useWordRecorder } from "./pronunciation-word-card";
@@ -63,35 +60,10 @@ function GradeNote({ grade }: { grade: PronunciationAnswerGrade }) {
   );
 }
 
-/** The round's count as a readout ("2/3"), its words small beside it. */
-function readoutScore(chunks: React.ReactNode) {
-  return <ReadoutNumber className="text-foreground">{chunks}</ReadoutNumber>;
-}
-
-/** "2/3 sounded right", as a pattern's drill counts its result; screen readers hear "2 of 3". */
-function RoundScore({ result }: { result: PronunciationRoundResult }) {
-  const t = useExtracted();
-  const counts = { correct: result.correct, total: result.total };
-
-  return (
-    <>
-      <span aria-hidden="true">
-        {t.rich("<score>{correct, number}/{total, number}</score> sounded right", {
-          ...counts,
-          score: readoutScore,
-        })}
-      </span>
-      <span className="sr-only">
-        {t("{correct, number} of {total, number} sounded right", counts)}
-      </span>
-    </>
-  );
-}
-
 /**
- * The round's end, as every task's end reads, at the top of the task's column: the count as a
- * readout and the Brain Power it paid in its violet, then what it did to the day 24px under them;
- * with nothing said, a plain title.
+ * The round's end, as every task's end reads, at the top of the task's column: "Practice done"
+ * with what an accent means under it, the words said right and the Brain Power it paid as
+ * readouts, then what it did to the day 24px under them; with nothing said, its own title.
  */
 function RoundResult({
   buddy,
@@ -104,29 +76,19 @@ function RoundResult({
 
   return (
     <>
-      <div aria-live="polite" className="flex flex-col items-start gap-3" role="status">
-        {result ? (
-          <div className="flex flex-wrap items-baseline gap-x-8 gap-y-2">
-            <h1
-              className="text-muted-foreground text-sm font-medium outline-none"
-              {...MOMENT_TITLE_PROPS}
-            >
-              <RoundScore result={result} />
-            </h1>
-            {result.brainPower > 0 && (
-              <p>
-                <BrainPowerReadout points={result.brainPower} />
-              </p>
-            )}
-          </div>
-        ) : (
-          <h1 className="text-title text-balance">{t("Nothing said this time")}</h1>
+      <MomentHeader
+        detail={t(
+          "An accent never blocks you. Words that still sound different come back tomorrow.",
         )}
-
-        <p className="text-muted-foreground text-pretty">
-          {t("An accent never blocks you. Words that still sound different come back tomorrow.")}
-        </p>
-      </div>
+        title={result ? t("Practice done") : t("Nothing said this time")}
+      >
+        {result && (
+          <MomentReadouts
+            brainPower={result.brainPower}
+            score={{ answered: result.total, correct: result.correct }}
+          />
+        )}
+      </MomentHeader>
 
       {result && (
         <DayMoment
@@ -216,7 +178,7 @@ export function PronunciationReviewScreen({
               </TaskMainLink>
             </TaskActions>
           }
-          headerTitle={t("Say it again")}
+          headerTitle={<TaskHeaderTitle title={t("Say it again")} />}
         >
           {total === 0 ? (
             <p className="text-title py-6 text-balance" role="status">
@@ -260,7 +222,7 @@ export function PronunciationReviewScreen({
         !graded &&
         mic.available && <WordMenu disabled={round.isPending || recording} onSkip={round.next} />
       }
-      headerTitle={t("Say it again")}
+      headerTitle={<TaskHeaderTitle title={t("Say it again")} />}
       progress={{
         label: position,
         segments: round.segments,
@@ -311,7 +273,7 @@ function WordActions({
             {t("Try again")}
           </Button>
         )}
-        <TaskMainButton disabled={round.isPending} onClick={round.next}>
+        <TaskMainButton busy={round.isPending} onClick={round.next}>
           {isLast ? t("See how it went") : t("Continue")}
         </TaskMainButton>
       </TaskActions>
@@ -321,7 +283,7 @@ function WordActions({
   if (!available) {
     return (
       <TaskActions>
-        <TaskMainButton disabled={round.isPending} onClick={round.next}>
+        <TaskMainButton busy={round.isPending} onClick={round.next}>
           {t("Skip this word")}
         </TaskMainButton>
       </TaskActions>

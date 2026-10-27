@@ -1,8 +1,10 @@
 "use client";
 
+import { useExtracted } from "next-intl";
 import { TaskBody } from "../../_components/task-layout";
 import { PendingMoment } from "../pending-moment";
 import { type StudyBlockDetail } from "../session-types";
+import { useMomentTitle } from "../use-moment-title";
 import { type QuestionBlockPhase } from "./question-block-state";
 
 /** The block's question in view, or its moment drawing in while the block is saved. */
@@ -15,8 +17,11 @@ export function BlockBody({
   kind: StudyBlockDetail["block"]["kind"];
   phase: QuestionBlockPhase;
 }) {
+  const t = useExtracted();
+  const title = useMomentTitle({ kind, testedOut: false });
+
   if (phase.kind === "finishing") {
-    return <PendingMoment kind={kind} />;
+    return <PendingMoment action={t("Continue")} title={title} />;
   }
 
   return <TaskBody data-slot="question-block">{children}</TaskBody>;

@@ -108,9 +108,9 @@ test.describe("Pronunciation reviews", () => {
 
       await page.getByRole("button", { name: "See how it went" }).click();
 
-      await expect(
-        page.getByRole("heading", { level: 1, name: "2 of 2 sounded right" }),
-      ).toBeVisible();
+      const end = page.getByRole("status").filter({ hasText: "Practice done" });
+      await expect(end.getByRole("heading", { level: 2, name: "Practice done" })).toBeVisible();
+      await expect(end).toContainText("2 of 2 right");
 
       const event = await prisma.learningEvent.findFirstOrThrow({
         orderBy: { createdAt: "desc" },

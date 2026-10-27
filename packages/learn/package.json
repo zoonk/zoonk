@@ -108,6 +108,7 @@
     "./session/lesson-celebration": "./src/session/lesson-celebration.ts",
     "./session/lesson-moment": "./src/session/lesson-moment.tsx",
     "./session/moment-ceremony": "./src/session/moment-ceremony.tsx",
+    "./session/moment-header": "./src/session/moment-header.tsx",
     "./session/next-stop": "./src/session/next-stop.tsx",
     "./session/shell": "./src/session/session-shell.tsx",
     "./session/summary": "./src/session/summary/session-summary.tsx",

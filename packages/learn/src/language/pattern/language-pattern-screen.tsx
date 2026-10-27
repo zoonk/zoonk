@@ -20,7 +20,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { BookOpenIcon, EllipsisIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useState } from "react";
-import { TASK_HEADER_ICON_CLASS } from "../../_components/task-header";
+import { TASK_HEADER_ICON_CLASS, TaskHeaderTitle } from "../../_components/task-header";
 import { TaskActions } from "../../_components/task-layout";
 import { useFormatDuration } from "../../_utils/time-format";
 import { type LearnBuddy } from "../../buddies/use-buddy-name";
@@ -80,7 +80,7 @@ function TyposPattern({
       exitHref={exitHref}
       exitToApp
       footer={<DoneAction exitHref={exitHref} />}
-      headerTitle={t("Mistake pattern")}
+      headerTitle={<TaskHeaderTitle title={t("Mistake pattern")} />}
     >
       <TyposNote pattern={pattern} />
     </TaskFrame>
@@ -181,7 +181,7 @@ export function LanguagePatternScreen({
           exitHref={exitHref}
           exitToApp
           footer={<DoneAction exitHref={exitHref} />}
-          headerTitle={pattern.title}
+          headerTitle={<TaskHeaderTitle title={pattern.title} />}
         >
           <PatternDrillResult buddy={buddy} result={step.result} />
         </TaskFrame>
@@ -201,7 +201,7 @@ export function LanguagePatternScreen({
             </TaskMainButton>
           </TaskActions>
         }
-        headerTitle={t("Mistake pattern")}
+        headerTitle={<TaskHeaderTitle title={t("Mistake pattern")} />}
       >
         <PatternIntro pattern={pattern} />
       </TaskFrame>
@@ -247,7 +247,7 @@ export function LanguagePatternScreen({
         </>
       }
       headerEnd={<RuleMenu pattern={pattern} />}
-      headerTitle={pattern.title}
+      headerTitle={<TaskHeaderTitle title={pattern.title} />}
       progress={{
         label: position,
         segments: drill.segments,

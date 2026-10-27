@@ -2,7 +2,7 @@
 
 import { type MistakePatternView } from "@zoonk/core/language/patterns/contract";
 import { useExtracted } from "next-intl";
-import { BrainPowerReadout, ReadoutNumber } from "../../_components/moment-readouts";
+import { MomentReadouts } from "../../_components/moment-readouts";
 import { type LearnBuddy } from "../../buddies/use-buddy-name";
 import {
   type ChoiceFeedback,
@@ -10,7 +10,7 @@ import {
   type ChoiceQuestionView,
 } from "../../questions/choice-question";
 import { DayMoment } from "../../session/day-moment";
-import { MOMENT_TITLE_PROPS } from "../../session/moment-ceremony";
+import { MomentHeader } from "../../session/moment-header";
 import { type PatternPracticeResult } from "./use-pattern-drill";
 
 type DrillQuestion = MistakePatternView["drill"][number];
@@ -96,15 +96,10 @@ export function PatternDrillQuestion({
   );
 }
 
-/** The drill's score as a readout ("5/6"), its words small beside it. */
-function readoutScore(chunks: React.ReactNode) {
-  return <ReadoutNumber className="text-foreground">{chunks}</ReadoutNumber>;
-}
-
 /**
- * The drill's result, as every task's end reads, at the top of the task's column: right answers of
- * the total as a readout ("5/6 right", screen readers hear "5 of 6 right") and the Brain Power it
- * paid in its violet, then what it did to the day 24px under them.
+ * The drill's end, as every task's end reads, at the top of the task's column: "Practice done"
+ * with what the drill showed under it, right answers and the Brain Power it paid as readouts, then
+ * what it did to the day 24px under them.
  */
 export function PatternDrillResult({
   buddy,
@@ -115,38 +110,22 @@ export function PatternDrillResult({
 }) {
   const t = useExtracted();
   const allRight = result.correct === result.total;
-  const counts = { correct: result.correct, total: result.total };
 
   return (
     <>
-      <div aria-live="polite" className="flex flex-col items-start gap-3" role="status">
-        <div className="flex flex-wrap items-baseline gap-x-8 gap-y-2">
-          <h1
-            className="text-muted-foreground text-sm font-medium outline-none"
-            {...MOMENT_TITLE_PROPS}
-          >
-            <span aria-hidden="true">
-              {t.rich("<score>{correct, number}/{total, number}</score> right", {
-                ...counts,
-                score: readoutScore,
-              })}
-            </span>
-            <span className="sr-only">
-              {t("{correct, number} of {total, number} right", counts)}
-            </span>
-          </h1>
-          {result.brainPower > 0 && (
-            <p>
-              <BrainPowerReadout points={result.brainPower} />
-            </p>
-          )}
-        </div>
-        <p className="text-muted-foreground text-pretty">
-          {allRight
+      <MomentHeader
+        detail={
+          allRight
             ? t("You've got this rule.")
-            : t("Knowing the rule is the first step. It gets easier each time you use it.")}
-        </p>
-      </div>
+            : t("Knowing the rule is the first step. It gets easier each time you use it.")
+        }
+        title={t("Practice done")}
+      >
+        <MomentReadouts
+          brainPower={result.brainPower}
+          score={{ answered: result.total, correct: result.correct }}
+        />
+      </MomentHeader>
 
       <DayMoment
         buddy={buddy}

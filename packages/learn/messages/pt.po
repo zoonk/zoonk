@@ -134,7 +134,7 @@ msgstr "Crie uma conta grátis"
 #: src/questions/test-out-run.tsx
 #: src/session/lesson-moment.tsx
 #: src/session/next-stop.tsx
-#: src/session/pending-moment.tsx
+#: src/session/question-block/block-body.tsx
 #: src/session/question-block/question-actions.tsx
 #: src/session/study-moment.tsx
 #: src/session/summary/summary-steps.tsx
@@ -374,7 +374,7 @@ msgstr "{done, number} de {total, number}"
 #: src/plan/plan-offer-preview.tsx
 #: src/plan/plan-past-date-suggestion.tsx
 #: src/plan/use-time-to-cover.ts
-#: src/session/lesson-moment.tsx
+#: src/session/moment-header.tsx
 #: src/session/open-next-step.tsx
 #: src/session/question-block/question-block-status.tsx
 #: src/shell/task-frame.tsx
@@ -1830,10 +1830,8 @@ msgid "Phase challenge"
 msgstr "Desafio da fase"
 
 #: src/checkpoints/checkpoint-result-details.tsx
-#: src/explain/explain-ending.tsx
 #: src/language/conversation/call-stars-step.tsx
 #: src/missions/brain-power-reward.tsx
-#: src/mistakes/practice-done.tsx
 #: src/session/summary/summary-parts.tsx
 msgctxt "LEuDU7"
 msgid "Brain Power"
@@ -3030,13 +3028,6 @@ msgstr "Última nota de corte: {score}"
 msgctxt "gemtGt"
 msgid "Your goal: {target}"
 msgstr "Sua meta: {target}"
-
-#: src/explain/explain-ending.tsx
-#: src/mistakes/practice-done.tsx
-#: src/mock/mock-result-view.tsx
-msgctxt "yQlMuI"
-msgid "Right answers"
-msgstr "Respostas certas"
 
 #: src/explain/explain-ending.tsx
 msgctxt "D1mqTL"
@@ -5411,18 +5402,6 @@ msgid "Check"
 msgstr "Conferir"
 
 #: src/language/pattern/pattern-drill.tsx
-msgctxt "qu52RC"
-msgid "<score>{correct, number}/{total, number}</score> right"
-msgstr "<score>{correct, number}/{total, number}</score> corretas"
-
-#: src/language/pattern/pattern-drill.tsx
-#: src/plan/focus-test/focus-test-result.tsx
-#: src/questions/test-out-run.tsx
-msgctxt "uHGKRX"
-msgid "{correct, number} of {total, number} right"
-msgstr "{correct, number} de {total, number} certas"
-
-#: src/language/pattern/pattern-drill.tsx
 msgctxt "27c7dl"
 msgid "You've got this rule."
 msgstr "Você já pegou essa regra."
@@ -5431,6 +5410,14 @@ msgstr "Você já pegou essa regra."
 msgctxt "AlkvFa"
 msgid "Knowing the rule is the first step. It gets easier each time you use it."
 msgstr "Saber a regra é o primeiro passo. Fica mais fácil cada vez que você usa."
+
+#: src/language/pattern/pattern-drill.tsx
+#: src/language/pronunciation/pronunciation-review-screen.tsx
+#: src/mistakes/practice-done.tsx
+#: src/session/use-moment-title.ts
+msgctxt "TvGh65"
+msgid "Practice done"
+msgstr "Prática concluída"
 
 #: src/language/pattern/pattern-intro.tsx
 msgctxt "3kIIo-"
@@ -5571,24 +5558,14 @@ msgid "You've got this one. It won't come back."
 msgstr "Você já domina essa. Ela não vai voltar."
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "QdGi5_"
-msgid "<score>{correct, number}/{total, number}</score> sounded right"
-msgstr "<score>{correct, number}/{total, number}</score> pronunciadas corretamente"
-
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "B7vvOq"
-msgid "{correct, number} of {total, number} sounded right"
-msgstr "Você pronunciou {correct, number} de {total, number} palavras corretamente"
+msgctxt "JDo5F5"
+msgid "An accent never blocks you. Words that still sound different come back tomorrow."
+msgstr "Seu sotaque nunca é um obstáculo. As palavras que ainda soarem diferentes voltam amanhã."
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 msgctxt "XYrbkk"
 msgid "Nothing said this time"
 msgstr "Você não falou nada desta vez"
-
-#: src/language/pronunciation/pronunciation-review-screen.tsx
-msgctxt "JDo5F5"
-msgid "An accent never blocks you. Words that still sound different come back tomorrow."
-msgstr "Seu sotaque nunca é um obstáculo. As palavras que ainda soarem diferentes voltam amanhã."
 
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 msgctxt "6ie6AS"
@@ -6783,14 +6760,9 @@ msgid "{count, plural, =0 {# fixed} one {# fixed} other {# fixed}}"
 msgstr "{count, plural, =0 {# corrigidos} one {# corrigido} other {# corrigidos}}"
 
 #: src/mistakes/practice-done.tsx
-msgctxt "h5HRXn"
-msgid "The rest come back another day, when they stick better."
-msgstr "O restante volta outro dia, quando ficar mais fácil lembrar."
-
-#: src/mistakes/practice-done.tsx
-msgctxt "mioNGq"
-msgid "Mistakes fixed"
-msgstr "Erros corrigidos"
+msgctxt "_GkpAM"
+msgid "{count, plural, one {# mistake fixed} other {# mistakes fixed}}"
+msgstr "{count, plural, one {# erro corrigido} many {# erros corrigidos} other {# erros corrigidos}}"
 
 #: src/mistakes/practice-done.tsx
 msgctxt "ith1Nx"
@@ -6798,15 +6770,9 @@ msgid "Nothing to practice yet"
 msgstr "Ainda não há nada para praticar"
 
 #: src/mistakes/practice-done.tsx
-#: src/session/use-moment-title.ts
-msgctxt "TvGh65"
-msgid "Practice done"
-msgstr "Prática concluída"
-
-#: src/mistakes/practice-done.tsx
-msgctxt "qk_QRH"
-msgid "Saving your practice…"
-msgstr "Salvando sua prática…"
+msgctxt "h5HRXn"
+msgid "The rest come back another day, when they stick better."
+msgstr "O restante volta outro dia, quando ficar mais fácil lembrar."
 
 #: src/mistakes/practice-step.tsx
 #: src/onboarding/steps/placement-question.tsx
@@ -7690,6 +7656,11 @@ msgstr "Você digitou em pelo menos uma tarefa, então a estimativa não conside
 msgctxt "OVBe_v"
 msgid "Net score out of {max}"
 msgstr "Pontuação líquida de {max}"
+
+#: src/mock/mock-result-view.tsx
+msgctxt "yQlMuI"
+msgid "Right answers"
+msgstr "Respostas certas"
 
 #: src/mock/mock-result-view.tsx
 msgctxt "uLf3MG"
@@ -9575,6 +9546,12 @@ msgstr "Dia dos desafios semanais: {weekday}"
 msgctxt "j46Zxi"
 msgid "After the change"
 msgstr "Depois da mudança"
+
+#: src/plan/focus-test/focus-test-result.tsx
+#: src/questions/test-out-run.tsx
+msgctxt "uHGKRX"
+msgid "{correct, number} of {total, number} right"
+msgstr "{correct, number} de {total, number} certas"
 
 #: src/plan/focus-test/focus-test-result.tsx
 msgctxt "J3M17v"
@@ -11467,12 +11444,6 @@ msgid "We couldn't add more time. Try again."
 msgstr "Não foi possível adicionar mais tempo. Tente de novo."
 
 #: src/session/lesson-moment.tsx
-#: src/session/use-moment-title.ts
-msgctxt "_DUim9"
-msgid "Lesson complete"
-msgstr "Aula concluída"
-
-#: src/session/lesson-moment.tsx
 #: src/session/study-moment.tsx
 msgctxt "GgV_JT"
 msgid "Review on {date}"
@@ -11487,7 +11458,12 @@ msgctxt "yQ15dh"
 msgid "We couldn't open the next step. Try again."
 msgstr "Não deu para abrir o próximo passo. Tente de novo."
 
-#: src/session/lesson-moment.tsx
+#: src/session/moment-header.tsx
+msgctxt "uPG65F"
+msgid "Saving your progress…"
+msgstr "Salvando seu progresso…"
+
+#: src/session/moment-header.tsx
 msgctxt "ocFozp"
 msgid "We couldn't save your progress yet."
 msgstr "A gente ainda não conseguiu salvar seu progresso."
@@ -11531,11 +11507,6 @@ msgstr "Parar por hoje"
 msgctxt "d562ST"
 msgid "Often tested"
 msgstr "Cai com frequência"
-
-#: src/session/pending-moment.tsx
-msgctxt "uPG65F"
-msgid "Saving your progress…"
-msgstr "Salvando seu progresso…"
 
 #: src/session/question-block/block-aside.tsx
 msgctxt "KpN3WY"
@@ -11931,6 +11902,11 @@ msgstr "{count, plural, one {# pergunta} other {# perguntas}} de todos os tópic
 msgctxt "XHHt5U"
 msgid "You already knew this"
 msgstr "Você já sabia disso"
+
+#: src/session/use-moment-title.ts
+msgctxt "_DUim9"
+msgid "Lesson complete"
+msgstr "Aula concluída"
 
 #: src/session/use-moment-title.ts
 msgctxt "ql88uE"

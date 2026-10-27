@@ -353,7 +353,6 @@ msgstr "Não foi possível carregar {runtime}. Confira sua conexão e tente de n
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 #: src/lesson/access/lesson-access-screen.tsx
-#: src/lesson/completion/lesson-completion-moment.tsx
 #: src/questions/lesson-question-errors.tsx
 msgctxt "FazwRl"
 msgid "Try again"
@@ -3176,11 +3175,6 @@ msgstr "Você já sabia disso"
 msgctxt "_DUim9"
 msgid "Lesson complete"
 msgstr "Aula concluída"
-
-#: src/lesson/completion/lesson-completion-moment.tsx
-msgctxt "ocFozp"
-msgid "We couldn't save your progress yet."
-msgstr "A gente ainda não conseguiu salvar seu progresso."
 
 #: src/lesson/completion/lesson-completion-ready.tsx
 msgctxt "2O2sfp"

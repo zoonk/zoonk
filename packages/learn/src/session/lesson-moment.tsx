@@ -1,7 +1,6 @@
 "use client";
 
 import { type ProgressCelebration } from "@zoonk/core/sessions/progress-celebration";
-import { Button } from "@zoonk/ui/components/button";
 import { useExtracted, useFormatter } from "next-intl";
 import { type ReactNode } from "react";
 import { EnterButton } from "../_components/enter-button";
@@ -10,13 +9,14 @@ import { TaskActionBar, TaskActions, TaskBody } from "../_components/task-layout
 import { type TestOutStart } from "../_components/test-out-start-link";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { DayMoment } from "./day-moment";
-import { MOMENT_TITLE_PROPS } from "./moment-ceremony";
+import { MomentHeader, MomentSaveFailed } from "./moment-header";
 import { PendingMoment } from "./pending-moment";
 import { SessionHeader } from "./session-header";
 import { getSessionQueue } from "./session-queue-rows";
 import { type StudyBlock, type StudyMomentView, type StudySession } from "./session-types";
 import { StudyMoment } from "./study-moment";
 import { useMomentEvents } from "./use-moment-events";
+import { useMomentTitle } from "./use-moment-title";
 import { useSessionAction } from "./use-session-action";
 
 /**
@@ -87,10 +87,12 @@ function OutsideSession({
   buddy,
   onContinue,
   result,
+  title,
 }: {
   buddy?: LearnBuddy | null;
   onContinue: () => Promise<boolean>;
   result: OutsideSessionResult | null;
+  title: string;
 }) {
   const t = useExtracted();
   const format = useFormatter();
@@ -99,11 +101,7 @@ function OutsideSession({
   return (
     <>
       <TaskBody>
-        <div className="flex flex-col items-start gap-6" role="status">
-          <h2 className="text-title outline-none" {...MOMENT_TITLE_PROPS}>
-            {t("Lesson complete")}
-          </h2>
-
+        <MomentHeader title={title}>
           {result && (
             <MomentReadouts
               brainPower={result.brainPower}
@@ -118,7 +116,7 @@ function OutsideSession({
               ]}
             />
           )}
-        </div>
+        </MomentHeader>
 
         {result && (
           <DayMoment
@@ -205,27 +203,32 @@ export function LessonMoment({
   session: LessonMomentSession;
 }) {
   const t = useExtracted();
+  const title = useMomentTitle({ kind: "learn", testedOut: completion.testedOut });
   const moment = completion.result?.studyBlock ?? null;
 
   if (completion.status === "failed") {
     return (
-      <TaskBody className="items-start" role="alert">
-        <p className="text-[0.9375rem] font-medium text-balance">
-          {t("We couldn't save your progress yet.")}
-        </p>
-        <Button onClick={onRetry} size="lg" variant="outline">
-          {t("Try again")}
-        </Button>
+      <TaskBody>
+        <MomentHeader title={title}>
+          <MomentSaveFailed onRetry={onRetry} />
+        </MomentHeader>
       </TaskBody>
     );
   }
 
   if (!moment && completion.status === "saved") {
-    return <OutsideSession buddy={buddy} onContinue={onContinue} result={completion.result} />;
+    return (
+      <OutsideSession
+        buddy={buddy}
+        onContinue={onContinue}
+        result={completion.result}
+        title={title}
+      />
+    );
   }
 
   if (!moment) {
-    return <PendingMoment kind="learn" testedOut={completion.testedOut} />;
+    return <PendingMoment action={t("Continue")} title={title} />;
   }
 
   return (

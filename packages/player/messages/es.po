@@ -353,7 +353,6 @@ msgstr "No se ha podido cargar {runtime}. Comprueba tu conexión y vuelve a inte
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 #: src/lesson/access/lesson-access-screen.tsx
-#: src/lesson/completion/lesson-completion-moment.tsx
 #: src/questions/lesson-question-errors.tsx
 msgctxt "FazwRl"
 msgid "Try again"
@@ -3176,11 +3175,6 @@ msgstr "Esto ya lo sabías"
 msgctxt "_DUim9"
 msgid "Lesson complete"
 msgstr "Lección completada"
-
-#: src/lesson/completion/lesson-completion-moment.tsx
-msgctxt "ocFozp"
-msgid "We couldn't save your progress yet."
-msgstr "Aún no hemos podido guardar tu progreso."
 
 #: src/lesson/completion/lesson-completion-ready.tsx
 msgctxt "2O2sfp"
