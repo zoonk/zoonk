@@ -3,6 +3,8 @@ import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
+import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
+import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { pronunciationReviewFixture } from "@zoonk/testing/fixtures/pronunciation-reviews";
@@ -14,6 +16,7 @@ import { mockSession } from "../../_test-utils/mock-session";
 import { startLanguageConversation } from "../../language/conversations/start-language-conversation";
 import { practiceMistakePattern } from "../../language/patterns/practice-mistake-pattern";
 import { answerPronunciationReview } from "../../language/pronunciation/answer-pronunciation-review";
+import { finishPronunciationRound } from "../../language/pronunciation/finish-pronunciation-round";
 import {
   setupPlayableLesson,
   stepOfKind,
@@ -82,6 +85,43 @@ function patternFixture({ goalId, userId }: { goalId: string; userId: string }) 
 
 function drillInput() {
   return { answers: ["for"], requestId: crypto.randomUUID(), timeZone: TIME_ZONE };
+}
+
+/** A word due for review, which the grader then hears said right once. */
+async function dueWordFixture(userId: string) {
+  const organization = await aiOrganizationFixture();
+
+  const word = await wordFixture({
+    organizationId: organization.id,
+    targetLanguage: "en",
+    word: `rent${crypto.randomUUID().slice(0, 8)}`,
+  });
+
+  vi.mocked(assessPronunciation).mockResolvedValueOnce({
+    data: {
+      transcript: word.word,
+      words: [{ heard: null, issue: null, status: "correct", text: word.word }],
+    },
+  } as Awaited<ReturnType<typeof assessPronunciation>>);
+
+  return pronunciationReviewFixture({ userId, wordId: word.id });
+}
+
+/** A pronunciation round's answer, for the goal it names. */
+function answerWord({
+  goalId,
+  reviewId,
+  roundId = crypto.randomUUID(),
+}: {
+  goalId: string;
+  reviewId: string;
+  roundId?: string;
+}) {
+  return answerPronunciationReview({
+    audio: { bytes: new Uint8Array([1, 2, 3]), mediaType: "audio/webm;codecs=opus" },
+    fields: { durationMs: 1200, goalId, roundId, timeZone: TIME_ZONE },
+    reviewId,
+  });
 }
 
 describe("an activity done from Today before the learner starts the day", () => {
@@ -286,38 +326,121 @@ describe("an activity done from Today before the learner starts the day", () => 
   });
 
   it("saves a language goal's day at a pronunciation round's first answer", async () => {
-    const [{ goal, user }, organization] = await Promise.all([
-      languageGoalFixture(),
-      aiOrganizationFixture(),
-    ]);
-
-    const word = await wordFixture({
-      organizationId: organization.id,
-      targetLanguage: "en",
-      word: `rent${crypto.randomUUID().slice(0, 8)}`,
-    });
-
-    const review = await pronunciationReviewFixture({ userId: user.id, wordId: word.id });
+    const { goal, user } = await languageGoalFixture();
+    const review = await dueWordFixture(user.id);
     mockSession(user.id);
 
     const shown = await readShownMissions(goal.id);
 
-    vi.mocked(assessPronunciation).mockResolvedValueOnce({
-      data: {
-        transcript: word.word,
-        words: [{ heard: null, issue: null, status: "correct", text: word.word }],
-      },
-    } as Awaited<ReturnType<typeof assessPronunciation>>);
-
-    await expect(
-      answerPronunciationReview({
-        audio: { bytes: new Uint8Array([1, 2, 3]), mediaType: "audio/webm;codecs=opus" },
-        fields: { durationMs: 1200, roundId: crypto.randomUUID(), timeZone: TIME_ZONE },
-        reviewId: review.id,
-      }),
-    ).resolves.toMatchObject({ status: "graded" });
+    await expect(answerWord({ goalId: goal.id, reviewId: review.id })).resolves.toMatchObject({
+      status: "graded",
+    });
 
     await expect(readSavedMissions(goal.id)).resolves.toStrictEqual([shown]);
+  });
+
+  // Today offers a pattern on any goal learning its language, whichever goal noticed it.
+  it.each(["paused", "removed"] as const)(
+    "credits a drill to the goal whose Today offered it when the goal that noticed it is %s",
+    async (noticedGoal) => {
+      const noticed = await languageGoalFixture();
+      const { goal, user } = await languageGoalFixture({ userId: noticed.user.id });
+
+      const [pattern] = await Promise.all([
+        patternFixture({ goalId: noticed.goal.id, userId: user.id }),
+        learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
+      ]);
+
+      await (noticedGoal === "paused"
+        ? prisma.goal.update({ data: { status: "paused" }, where: { id: noticed.goal.id } })
+        : prisma.goal.delete({ where: { id: noticed.goal.id } }));
+
+      mockSession(user.id);
+
+      const shown = await readShownMissions(goal.id);
+      expect(shown).toContain("pattern");
+
+      await expect(
+        practiceMistakePattern({ input: drillInput(), patternId: pattern.id }),
+      ).resolves.toMatchObject({
+        result: { missionMoment: { completed: ["pattern"] } },
+        status: "ready",
+      });
+
+      await expect(readSavedMissions(goal.id)).resolves.toStrictEqual([shown]);
+    },
+  );
+
+  it("saves the day of the goal a pronunciation round is for, not another goal of its language", async () => {
+    const round = await languageGoalFixture();
+    const { user } = round;
+    const newer = await languageGoalFixture({ userId: user.id });
+
+    // The round's goal is the one the learner picked; another goal of the language changed later.
+    await Promise.all([
+      prisma.goal.update({
+        data: { timezone: TIME_ZONE, updatedAt: new Date(SESSION_NOW.getTime() - 1000) },
+        where: { id: round.goal.id },
+      }),
+      prisma.goal.update({
+        data: { timezone: TIME_ZONE, updatedAt: SESSION_NOW },
+        where: { id: newer.goal.id },
+      }),
+      learningProfileFixture({ activeGoalId: round.goal.id, userId: user.id }),
+      learningEventFixture({
+        endedAt: new Date(SESSION_NOW.getTime() - MS_PER_DAY),
+        goalId: round.goal.id,
+        userId: user.id,
+      }),
+    ]);
+
+    const review = await dueWordFixture(user.id);
+    mockSession(user.id);
+
+    const shown = await readShownMissions(round.goal.id);
+    expect(shown).toContain("pronunciation");
+
+    const roundId = crypto.randomUUID();
+
+    await expect(
+      answerWord({ goalId: round.goal.id, reviewId: review.id, roundId }),
+    ).resolves.toMatchObject({ status: "graded" });
+
+    await expect(
+      finishPronunciationRound({ input: { goalId: round.goal.id, timeZone: TIME_ZONE }, roundId }),
+    ).resolves.toMatchObject({
+      result: { missionMoment: { completed: ["pronunciation"] } },
+      status: "ready",
+    });
+
+    await expect(
+      Promise.all([readSavedMissions(round.goal.id), readSavedMissions(newer.goal.id)]),
+    ).resolves.toStrictEqual([[shown], []]);
+  });
+
+  it("saves no day for a round naming another learner's goal or one not learning the word's language", async () => {
+    const [{ user }, other] = await Promise.all([languageGoalFixture(), languageGoalFixture()]);
+
+    const spanish = await goalFixture({
+      kind: "language",
+      targetLanguage: "es",
+      timezone: TIME_ZONE,
+      userId: user.id,
+    });
+
+    const reviews = [await dueWordFixture(user.id), await dueWordFixture(user.id)];
+    mockSession(user.id);
+
+    await expect(
+      Promise.all([
+        answerWord({ goalId: other.goal.id, reviewId: reviews[0]?.id ?? "" }),
+        answerWord({ goalId: spanish.id, reviewId: reviews[1]?.id ?? "" }),
+      ]),
+    ).resolves.toMatchObject([{ status: "graded" }, { status: "graded" }]);
+
+    await expect(
+      prisma.studySession.count({ where: { userId: { in: [user.id, other.user.id] } } }),
+    ).resolves.toBe(0);
   });
 
   it("saves nothing for a paused goal or one whose day can't open, and the drill still counts", async () => {

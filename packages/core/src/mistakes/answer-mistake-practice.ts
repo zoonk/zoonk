@@ -2,7 +2,6 @@ import "server-only";
 import { type Attempt, type Mistake, type MistakeStatus, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
-import { findActiveGoalId } from "../goals/_utils/goal-view";
 import {
   findSavedAttempt,
   getAnswerAttemptId,
@@ -238,11 +237,7 @@ export async function answerMistakePractice({
   }
 
   // A fixed mistake leaves what the day offers: today's day is saved before the first answer.
-  await saveDayBeforeActivity({
-    goalId: input.run?.goalId ?? (await findActiveGoalId(userId)),
-    timeZone: input.timeZone,
-    userId,
-  });
+  await saveDayBeforeActivity({ goalId: input.run?.goalId, timeZone: input.timeZone, userId });
 
   const graded = gradeChoiceAnswer({ answer: input.answer, item });
   const kind = getDrillKind(mistake.cause);

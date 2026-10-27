@@ -44,6 +44,7 @@ export function PronunciationClient({
         const form = new FormData();
         form.set("audio", audio);
         form.set("durationMs", String(durationMs));
+        form.set("goalId", reviews.goalId);
         form.set("roundId", roundId);
         form.set("timeZone", getLocalTimeZone());
 

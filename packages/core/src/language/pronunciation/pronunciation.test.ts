@@ -187,7 +187,7 @@ describe(getPronunciationReviews, () => {
 
 describe(answerPronunciationReview, () => {
   it("asks a guest who used today's help to sign up before calling any model", async () => {
-    const { user, word } = await learnerWithWord();
+    const { goal, user, word } = await learnerWithWord();
     const review = await pronunciationReviewFixture({ userId: user.id, wordId: word.id });
 
     await usageRecordsFixture({
@@ -202,7 +202,12 @@ describe(answerPronunciationReview, () => {
     await expect(
       answerPronunciationReview({
         audio: AUDIO,
-        fields: { durationMs: 1200, roundId: crypto.randomUUID(), timeZone: TIME_ZONE },
+        fields: {
+          durationMs: 1200,
+          goalId: goal.id,
+          roundId: crypto.randomUUID(),
+          timeZone: TIME_ZONE,
+        },
         reviewId: review.id,
       }),
     ).resolves.toStrictEqual(GUEST_OUT_OF_HELP);
@@ -213,7 +218,7 @@ describe(answerPronunciationReview, () => {
   });
 
   it("climbs a rung when the word is said right and records it as time spoken", async () => {
-    const { user, word } = await learnerWithWord();
+    const { goal, user, word } = await learnerWithWord();
     const review = await pronunciationReviewFixture({ userId: user.id, wordId: word.id });
     const roundId = crypto.randomUUID();
 
@@ -221,7 +226,7 @@ describe(answerPronunciationReview, () => {
 
     const result = await answerPronunciationReview({
       audio: AUDIO,
-      fields: { durationMs: 1200, roundId, timeZone: TIME_ZONE },
+      fields: { durationMs: 1200, goalId: goal.id, roundId, timeZone: TIME_ZONE },
       reviewId: review.id,
     });
 
@@ -251,14 +256,19 @@ describe(answerPronunciationReview, () => {
   });
 
   it("starts the word over when it still sounds different", async () => {
-    const { user, word } = await learnerWithWord();
+    const { goal, user, word } = await learnerWithWord();
     const review = await pronunciationReviewFixture({ stage: 2, userId: user.id, wordId: word.id });
 
     mockHeard({ heard: "hent", word: word.word });
 
     const result = await answerPronunciationReview({
       audio: AUDIO,
-      fields: { durationMs: 900, roundId: crypto.randomUUID(), timeZone: TIME_ZONE },
+      fields: {
+        durationMs: 900,
+        goalId: goal.id,
+        roundId: crypto.randomUUID(),
+        timeZone: TIME_ZONE,
+      },
       reviewId: review.id,
     });
 
@@ -273,7 +283,7 @@ describe(answerPronunciationReview, () => {
   });
 
   it("transcribes with the default model when the audio model fails", async () => {
-    const { user, word } = await learnerWithWord();
+    const { goal, user, word } = await learnerWithWord();
     const review = await pronunciationReviewFixture({ userId: user.id, wordId: word.id });
 
     vi.mocked(assessPronunciation).mockRejectedValueOnce(new Error("provider down"));
@@ -284,7 +294,12 @@ describe(answerPronunciationReview, () => {
 
     const result = await answerPronunciationReview({
       audio: AUDIO,
-      fields: { durationMs: 900, roundId: crypto.randomUUID(), timeZone: TIME_ZONE },
+      fields: {
+        durationMs: 900,
+        goalId: goal.id,
+        roundId: crypto.randomUUID(),
+        timeZone: TIME_ZONE,
+      },
       reviewId: review.id,
     });
 
@@ -298,10 +313,16 @@ describe(answerPronunciationReview, () => {
   });
 
   it("hides another learner's review and rejects audio it can't grade", async () => {
-    const { word } = await learnerWithWord();
+    const { goal, word } = await learnerWithWord();
     const owner = await userFixture();
     const review = await pronunciationReviewFixture({ userId: owner.id, wordId: word.id });
-    const fields = { durationMs: 900, roundId: crypto.randomUUID(), timeZone: TIME_ZONE };
+
+    const fields = {
+      durationMs: 900,
+      goalId: goal.id,
+      roundId: crypto.randomUUID(),
+      timeZone: TIME_ZONE,
+    };
 
     await expect(
       answerPronunciationReview({ audio: AUDIO, fields, reviewId: review.id }),
@@ -330,7 +351,7 @@ describe(finishPronunciationRound, () => {
     ]);
 
     const roundId = crypto.randomUUID();
-    const fields = { durationMs: 1500, roundId, timeZone: TIME_ZONE };
+    const fields = { durationMs: 1500, goalId: goal.id, roundId, timeZone: TIME_ZONE };
 
     mockHeard({ heard: word.word, word: word.word });
     await answerPronunciationReview({ audio: AUDIO, fields, reviewId: first.id });
@@ -393,7 +414,7 @@ describe(finishPronunciationRound, () => {
 
     await answerPronunciationReview({
       audio: AUDIO,
-      fields: { durationMs: 1500, roundId, timeZone: TIME_ZONE },
+      fields: { durationMs: 1500, goalId: goal.id, roundId, timeZone: TIME_ZONE },
       reviewId: review.id,
     });
 

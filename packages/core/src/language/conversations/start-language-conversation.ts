@@ -99,9 +99,11 @@ async function startPractice({
     return { status: "notLanguage" };
   }
 
-  const goal = await findLearnerLanguageGoal({ goalId: input.goalId, targetLanguage, userId });
-  await saveDayBeforeActivity({ goalId: goal?.id ?? null, userId });
+  // Every finished call counts for the day's call mission, which a day planned after it no longer
+  // offers: today's day is saved before the call starts.
+  await saveDayBeforeActivity({ goalId: input.goalId, language: targetLanguage, userId });
 
+  const goal = await findLearnerLanguageGoal({ goalId: input.goalId, targetLanguage, userId });
   const level = await getSpeakingLevel({ goal, targetLanguage, userId });
   const scenario = await getUnitScenario({ level, unit: { ...chapter, targetLanguage }, userId });
 
@@ -293,6 +295,9 @@ async function startSpeakingMock({
     return { status: "notLanguage" };
   }
 
+  // A finished mock counts for the day's call mission too (see `startPractice`).
+  await saveDayBeforeActivity({ goalId, language: setup.goal.targetLanguage, userId });
+
   if ((await readLiveCallAdmission({ transaction: prisma, userId })) === null) {
     return { status: "callsPaused" };
   }
@@ -328,19 +333,15 @@ export async function startLanguageConversation(
       : started;
   }
 
-  if (input.kind === "practice") {
-    return startPractice({ input, userId });
-  }
-
-  // Every finished call counts for the day's call mission, which a day planned after it no longer
-  // offers: today's day is saved before the call starts.
-  await saveDayBeforeActivity({ goalId: input.goalId, userId });
-
   if (input.kind === "speakingMock") {
     return startSpeakingMock({ goalId: input.goalId, userId });
   }
 
-  return startExamTask({ goalId: input.goalId, task: input.task, userId });
+  if (input.kind === "examSpeaking") {
+    return startExamTask({ goalId: input.goalId, task: input.task, userId });
+  }
+
+  return startPractice({ input, userId });
 }
 
 /**

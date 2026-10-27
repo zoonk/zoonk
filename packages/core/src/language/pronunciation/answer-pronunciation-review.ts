@@ -13,7 +13,6 @@ import {
 } from "../../library/language/_utils/hear-spoken-sentence";
 import { saveDayBeforeActivity } from "../../sessions/ensure-study-session";
 import { getSession } from "../../users/get-session";
-import { findLearnerLanguageGoal } from "../_utils/language-goal";
 import {
   type PronunciationAnswerFields,
   type PronunciationAnswerGrade,
@@ -68,10 +67,14 @@ export async function answerPronunciationReview({
     return { status: "notFound" };
   }
 
-  // The help each answer uses and the word's next rung change what the day offers: today's day is
-  // saved before the round's first answer records either.
-  const goal = await findLearnerLanguageGoal({ targetLanguage: review.language, userId });
-  await saveDayBeforeActivity({ goalId: goal?.id ?? null, timeZone: fields.timeZone, userId });
+  // The help each answer uses and the word's next rung change what the day offers: the round's
+  // day is saved before its first answer records either.
+  await saveDayBeforeActivity({
+    goalId: fields.goalId,
+    language: review.language,
+    timeZone: fields.timeZone,
+    userId,
+  });
 
   const usage = await claimAssist();
 

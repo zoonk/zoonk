@@ -2,6 +2,7 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { type AllowanceLimit } from "../../../entitlements/contract";
+import { saveDayBeforeActivity } from "../../../sessions/ensure-study-session";
 import { readLiveCallAdmission } from "../../conversations/_utils/live-call-policy";
 import { type SpeakingFormat, type SpeakingTaskFormat } from "../speaking-format";
 import { getSpeakingTask } from "../speaking-formats";
@@ -84,6 +85,9 @@ export async function startExamTask({
   if (!setup) {
     return { status: "notLanguage" };
   }
+
+  // A finished task counts for the day's call mission too, as any finished call does.
+  await saveDayBeforeActivity({ goalId, language: setup.goal.targetLanguage, userId });
 
   const taskFormat = getSpeakingTask({ format: setup.format, task });
 

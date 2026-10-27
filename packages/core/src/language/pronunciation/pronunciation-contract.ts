@@ -44,6 +44,7 @@ export const pronunciationAnswerFieldsSchema = z
       .min(0)
       .max(MAX_WORD_RECORDING_MS)
       .meta({ description: "How long the learner spoke, in milliseconds" }),
+    goalId: z.uuid().meta({ description: "The goal the round is for, as its completion names it" }),
     roundId: z.uuid().meta({ description: "Groups the answers of one round, for its completion" }),
     timeZone: answerTimeZoneSchema,
   })

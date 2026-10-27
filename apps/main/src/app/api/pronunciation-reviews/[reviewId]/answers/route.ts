@@ -10,8 +10,8 @@ function readField(form: FormData | null, name: string) {
 
 /**
  * Grades one recorded review word through the same core capability as
- * `POST /v1/pronunciation-reviews/{reviewId}/answers`: the `audio` recording with `roundId`,
- * `durationMs` and `timeZone` fields, as multipart. A route rather than a Server Action, so the
+ * `POST /v1/pronunciation-reviews/{reviewId}/answers`: the `audio` recording with `goalId`,
+ * `roundId`, `durationMs` and `timeZone` fields, as multipart. A route rather than a Server Action, so the
  * upload and its grade hold up nothing else on the screen and don't re-render it, and a recording
  * up to the grader's own size limit fits (a Server Action takes 1 MB).
  */
@@ -23,6 +23,7 @@ export const POST = appPostRoute<{ reviewId: string }>(
 
     const fields = pronunciationAnswerFieldsSchema.safeParse({
       durationMs: readField(form, "durationMs"),
+      goalId: readField(form, "goalId"),
       roundId: readField(form, "roundId"),
       timeZone: readField(form, "timeZone"),
     });

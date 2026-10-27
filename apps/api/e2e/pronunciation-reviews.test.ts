@@ -59,7 +59,12 @@ test.describe("Pronunciation reviews API", () => {
     const responses = await Promise.all([
       apiContext.get(`/v1/goals/${randomUUID()}/pronunciation-reviews`),
       apiContext.post(`/v1/pronunciation-reviews/${randomUUID()}/answers`, {
-        multipart: { audio: RECORDING, durationMs: "900", roundId: randomUUID() },
+        multipart: {
+          audio: RECORDING,
+          durationMs: "900",
+          goalId: randomUUID(),
+          roundId: randomUUID(),
+        },
       }),
       apiContext.post(`/v1/pronunciation-rounds/${randomUUID()}/completions`, {
         data: { goalId: randomUUID() },
@@ -77,7 +82,7 @@ test.describe("Pronunciation reviews API", () => {
       createAuthenticatedApiContext({ baseURL, prefix: "pronunciation-owner" }),
     ]);
 
-    const [{ review }, { review: foreign }] = await Promise.all([
+    const [{ goal, review }, { review: foreign }] = await Promise.all([
       learnerWithReviews(user.id),
       learnerWithReviews(owner.user.id),
     ]);
@@ -86,17 +91,18 @@ test.describe("Pronunciation reviews API", () => {
 
     const [noAudio, badFormat, notMine] = await Promise.all([
       apiContext.post(`/v1/pronunciation-reviews/${review.id}/answers`, {
-        multipart: { durationMs: "900", roundId },
+        multipart: { durationMs: "900", goalId: goal.id, roundId },
       }),
       apiContext.post(`/v1/pronunciation-reviews/${review.id}/answers`, {
         multipart: {
           audio: { ...RECORDING, mimeType: "video/mp4", name: "word.mp4" },
           durationMs: "900",
+          goalId: goal.id,
           roundId,
         },
       }),
       apiContext.post(`/v1/pronunciation-reviews/${foreign.id}/answers`, {
-        multipart: { audio: RECORDING, durationMs: "900", roundId },
+        multipart: { audio: RECORDING, durationMs: "900", goalId: goal.id, roundId },
       }),
     ]);
 

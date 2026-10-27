@@ -41,8 +41,6 @@ export type LibraryLessonStartOutcome =
   | { status: "plusRequired" };
 
 type RunSource = {
-  /** The goal the tabs show. */
-  goalId: string | null;
   lesson: { homeChapterId: string | null; id: string; title: string };
   studySessionId: string | null;
   timeZone: string;
@@ -65,8 +63,11 @@ class ResumableLessonRunError extends Error {
  * counts against the completion rate. The goal is the one the tabs show, and a lesson played as a
  * session block keeps the session, so its answers count toward it.
  */
-async function openLessonRun({ goalId, lesson, studySessionId, timeZone, userId }: RunSource) {
-  const existing = await findResumableRun(prisma, { lessonId: lesson.id, now: new Date(), userId });
+async function openLessonRun({ lesson, studySessionId, timeZone, userId }: RunSource) {
+  const [goalId, existing] = await Promise.all([
+    findActiveGoalId(userId),
+    findResumableRun(prisma, { lessonId: lesson.id, now: new Date(), userId }),
+  ]);
 
   if (existing) {
     return { isNew: false, run: existing };
@@ -225,8 +226,7 @@ export async function startLibraryLesson({
 
   // A lesson played from its chapter finishes the day's block for it only in a saved day, and once
   // played, a day planned after it no longer holds it: today's day is saved before it starts.
-  const goalId = await findActiveGoalId(userId);
-  await saveDayBeforeActivity({ goalId, timeZone: input.timeZone, userId });
+  await saveDayBeforeActivity({ timeZone: input.timeZone, userId });
 
   /**
    * A quick explanation is the front door: asking for it already claimed its own fair-use
@@ -252,7 +252,6 @@ export async function startLibraryLesson({
   });
 
   const { isNew, run } = await openLessonRun({
-    goalId,
     lesson,
     studySessionId,
     timeZone: await getLearnerTimeZone({ timeZone: input.timeZone, userId }),

@@ -74,7 +74,7 @@ export async function practiceMistakePattern({
   });
 
   // Once the drill counts, a day planned after it no longer offers it: today's is saved first.
-  await saveDayBeforeActivity({ goalId: row.goalId, timeZone: input.timeZone, userId });
+  await saveDayBeforeActivity({ language: row.language, timeZone: input.timeZone, userId });
 
   const timeZone = await getLearnerTimeZone({ timeZone: input.timeZone, userId });
   const incorrect = verdicts.length - correct;
