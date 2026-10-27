@@ -122,7 +122,7 @@ function SourceCard({
         </div>
       </header>
 
-      <blockquote className="font-serif text-[15px] leading-8">
+      <blockquote className="text-[15px] leading-8">
         {splitExcerpt(source.excerpt, source.passages).map((segment, segmentIndex) => {
           const passage = source.passages.find((item) => item.id === segment.passageId);
 

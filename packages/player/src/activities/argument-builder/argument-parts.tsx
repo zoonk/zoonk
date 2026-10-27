@@ -20,7 +20,7 @@ export function ArgumentText({ citation, text }: { citation?: string; text: stri
 
   return (
     <span className="flex flex-col gap-1">
-      <q className="font-serif text-[15px] leading-snug sm:text-base">
+      <q className="text-[15px] leading-snug sm:text-base">
         <LessonRichText text={text} />
       </q>
       <span className="text-muted-foreground text-xs">{citation}</span>
