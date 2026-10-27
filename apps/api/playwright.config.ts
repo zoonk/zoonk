@@ -1,6 +1,6 @@
 import { createBaseConfig } from "@zoonk/e2e/base.config";
 
-const config = createBaseConfig({
+export default createBaseConfig({
   globalSetup: "./e2e/global-setup.ts",
   testDir: "./e2e",
   webServerEnv: {
@@ -14,22 +14,3 @@ const config = createBaseConfig({
     MAIN_APP_URL: "http://localhost:49153",
   },
 });
-
-/** Global admission/close-all tests run after learner requests, so their switch cannot leak. */
-const playwrightConfig = {
-  ...config,
-  projects: [
-    ...(config.projects ?? []).map((project) => ({
-      ...project,
-      testIgnore: "**/live-call-admin.test.ts",
-    })),
-    {
-      dependencies: ["chromium"],
-      name: "live-call-admin",
-      testMatch: "**/live-call-admin.test.ts",
-      use: config.projects?.[0]?.use,
-    },
-  ],
-};
-
-export default playwrightConfig;
