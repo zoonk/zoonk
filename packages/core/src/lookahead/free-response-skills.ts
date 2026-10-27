@@ -2,7 +2,6 @@ import "server-only";
 import { type ExamBlueprint, prisma } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
 import { namesMatch } from "../exams/_utils/name-match";
-import { isWrittenSection } from "../exams/mocks/written-subject";
 import { getExamScale } from "../exams/scoring/exam-scales";
 import { readBlueprintContent } from "../library/exams/save-exam-blueprint";
 import { getSkillArea } from "../plans/planner/graph-areas";
@@ -52,9 +51,7 @@ function findWrittenSkills({
     return graph.skills.filter((skill) => skill.phase === firstPhase);
   }
 
-  const written = (structure.mock?.sections ?? []).filter((section) =>
-    isWrittenSection({ section, structure }),
-  );
+  const written = (structure.mock?.sections ?? []).filter((section) => section.kind === "written");
 
   const hasWriting =
     written.length > 0 || structure.formats.some((format) => format.kind === "essay");

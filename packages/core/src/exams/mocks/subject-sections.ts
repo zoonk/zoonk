@@ -29,7 +29,7 @@ export function findSubjectSections({
 /** The names of the exam's objective sections, every day's: what a subject's section is told by. */
 export function getObjectiveSectionNames(structure: ExamStructure | null): string[] {
   return (structure?.mock?.sections ?? [])
-    .filter((section) => isObjectiveSection({ section, structure }) && section.name.trim())
+    .filter((section) => isObjectiveSection(section) && section.name.trim())
     .map((section) => section.name);
 }
 
@@ -45,7 +45,7 @@ export function getSubjectPace({
   structure: ExamStructure;
 }): number {
   const objective = (structure.mock?.sections ?? []).filter(
-    (section) => isObjectiveSection({ section, structure }) && section.minutes && section.questions,
+    (section) => isObjectiveSection(section) && section.minutes && section.questions,
   );
 
   const [ownName] = findSubjectSections({ sections: getObjectiveSectionNames(structure), subject });

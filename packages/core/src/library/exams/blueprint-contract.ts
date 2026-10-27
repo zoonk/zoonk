@@ -162,7 +162,7 @@ const mockSectionSchema = z.object({
    * `written`: answered in writing (a discursive test, an essay, a legal brief), so a mock never
    * fills it with objective questions; `listening` (answered after hearing recordings), `speaking`
    * (an oral test) and `practical` (stations, a lab, a physical test), which mocks say they leave
-   * out until they can run them; absent on rows read before kinds were (see `isWrittenSection`).
+   * out until they can run them.
    */
   kind: z.enum(["objective", "written", "listening", "speaking", "practical"]).optional(),
   minutes: z.number().int().nullable(),

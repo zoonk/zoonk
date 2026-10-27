@@ -487,22 +487,4 @@ describe("a mock of an exam with a written test", () => {
       { asked: false, name: "Redação" },
     ]);
   });
-
-  it("reads a written test in an older reading by its name and the notice's essay format", () => {
-    const older: ExamStructure = {
-      ...camara,
-      mock: camara.mock && {
-        ...camara.mock,
-        sections: camara.mock.sections.map(({ kind: _kind, tasks: _tasks, ...section }) => section),
-      },
-    };
-
-    const outline = outlineMock({ fullLength: true, structure: older });
-
-    expect(countPlannedQuestions(outline)).toBe(180);
-
-    expect(outline.written.map((part) => part.tasks)).toStrictEqual([
-      [{ count: null, description: essay.description }],
-    ]);
-  });
 });

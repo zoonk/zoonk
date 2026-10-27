@@ -1,7 +1,7 @@
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { namesMatch } from "../_utils/name-match";
 import { type MockSectionPlan } from "./mock-plan";
-import { isWrittenSection, isWrittenSubject } from "./written-subject";
+import { isWrittenSubject } from "./written-subject";
 
 /** What a written part asks, as the notice states it; `count` is null when it's in the words. */
 type MockWrittenTask = { count: number | null; description: string };
@@ -64,7 +64,7 @@ export function getDayWrittenParts({
   structure: ExamStructure | null;
 }): MockWrittenPart[] {
   const sections = (structure?.mock?.sections ?? []).filter((section) => section.day === day);
-  const written = sections.filter((section) => isWrittenSection({ section, structure }));
+  const written = sections.filter((section) => section.kind === "written");
 
   if (written.length > 0) {
     return written.map((section) => toWrittenPart({ section, structure }));

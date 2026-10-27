@@ -4,7 +4,6 @@ import { namesMatch } from "../../../exams/_utils/name-match";
 import { toChosenStructure } from "../../../exams/choices/exam-choices";
 import { loadExamChoices } from "../../../exams/choices/load-exam-choices";
 import { getSubjectShare } from "../../../exams/map/exam-map";
-import { isWrittenSection } from "../../../exams/mocks/written-subject";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
 import { getPassMarks } from "../../../library/exams/pass-marks";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
@@ -49,8 +48,7 @@ function getWrittenTasks({
   return (structure.mock?.sections ?? [])
     .filter(
       (section) =>
-        isWrittenSection({ section, structure }) &&
-        names.some((name) => namesMatch(section.name, name)),
+        section.kind === "written" && names.some((name) => namesMatch(section.name, name)),
     )
     .flatMap((section) => (section.tasks ?? []).map((task) => task.description));
 }

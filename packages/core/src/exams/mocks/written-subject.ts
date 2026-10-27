@@ -3,43 +3,9 @@ import { type ExamStructure } from "../../library/exams/blueprint-contract";
 
 type StructureSection = NonNullable<ExamStructure["mock"]>["sections"][number];
 
-/** How a written test is named, for readings from before sections had kinds. */
-const WRITTEN_SECTION_NAME =
-  /discursiv|reda[cç][aã]o|pe[cç]a t[eé]cnica|essay|written|free.?response|escrit/iu;
-
-/**
- * Whether a section is answered in writing: as its reading says, or, for a reading from before
- * sections had kinds, a section without a question count, named like a written test, in an exam
- * with an essay format.
- */
-export function isWrittenSection({
-  section,
-  structure,
-}: {
-  section: StructureSection;
-  structure: ExamStructure | null;
-}): boolean {
-  if (section.kind) {
-    return section.kind === "written";
-  }
-
-  const hasEssay = structure?.formats.some((format) => format.kind === "essay") ?? false;
-  return section.questions === null && hasEssay && WRITTEN_SECTION_NAME.test(section.name);
-}
-
-/**
- * Whether a section asks objective questions a mock fills from the bank: as its reading says, or,
- * for a reading from before sections had kinds, any section that isn't written. Listening,
- * speaking and practical sections never take bank questions in their place.
- */
-export function isObjectiveSection({
-  section,
-  structure,
-}: {
-  section: StructureSection;
-  structure: ExamStructure | null;
-}): boolean {
-  return section.kind ? section.kind === "objective" : !isWrittenSection({ section, structure });
+/** Whether a section asks objective questions a mock fills from the bank. */
+export function isObjectiveSection(section: StructureSection): boolean {
+  return section.kind === undefined || section.kind === "objective";
 }
 
 const WRITTEN_TEST = String.raw`(?:prova\s+)?(?:discursiva|reda[cç][aã]o|essay|pe[cç]a t[eé]cnica)`;
@@ -65,8 +31,7 @@ export function isWrittenSubject({
   const names = new Set([subject.name, subject.group ?? ""].map((name) => normalizeString(name)));
 
   const isWrittenSectionName = (structure.mock?.sections ?? []).some(
-    (section) =>
-      isWrittenSection({ section, structure }) && names.has(normalizeString(section.name)),
+    (section) => section.kind === "written" && names.has(normalizeString(section.name)),
   );
 
   return (

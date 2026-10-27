@@ -150,7 +150,7 @@ function getDayObjectiveSections({
   structure: ExamStructure | null;
 }) {
   return (structure?.mock?.sections ?? []).filter(
-    (section) => section.day === day && isObjectiveSection({ section, structure }),
+    (section) => section.day === day && isObjectiveSection(section),
   );
 }
 
@@ -267,7 +267,7 @@ function getEvenSubjectQuestions(structure: ExamStructure): number | null {
   );
 
   const sections = (structure.mock?.sections ?? [])
-    .filter((section) => isObjectiveSection({ section, structure }))
+    .filter((section) => isObjectiveSection(section))
     .reduce((sum, section) => sum + (section.questions ?? 0), 0);
 
   const total = sections || structure.mock?.totalQuestions;

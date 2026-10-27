@@ -28,9 +28,7 @@ export function toSectionRules(section: BlueprintSection) {
 
 /** The objective sections of the exam: the ones a mock fills with questions. */
 export function getObjectiveSections(structure: ExamStructure | null): StructureSection[] {
-  return (structure?.mock?.sections ?? []).filter((section) =>
-    isObjectiveSection({ section, structure }),
-  );
+  return (structure?.mock?.sections ?? []).filter((section) => isObjectiveSection(section));
 }
 
 /**
@@ -57,7 +55,7 @@ export function getDaySections({
     return sections
       .filter(
         (section) =>
-          isObjectiveSection({ section, structure }) ||
+          isObjectiveSection(section) ||
           (section.kind === "listening" && listening.has(section.name)) ||
           (section.kind === "speaking" && speaking),
       )

@@ -1,5 +1,4 @@
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
-import { isWrittenSection } from "../../mocks/written-subject";
 import { type ExamDay, type ExamFormatDay } from "../exam-view-contract";
 
 /**
@@ -38,7 +37,7 @@ export function getExamFormat({
       parts: daySections.map((section) => ({
         name: section.name,
         questions: section.questions,
-        written: isWrittenSection({ section, structure }),
+        written: section.kind === "written",
       })),
     };
   });

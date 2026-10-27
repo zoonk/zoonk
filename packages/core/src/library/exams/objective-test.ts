@@ -9,7 +9,7 @@ function statesObjectiveQuestions({ edition, structure }: BlueprintContent): boo
   return (
     edition.questionCount !== null ||
     (structure.mock?.totalQuestions ?? null) !== null ||
-    sections.some((section) => section.questions && isObjectiveSection({ section, structure })) ||
+    sections.some((section) => section.questions && isObjectiveSection(section)) ||
     structure.formats.some((format) => isObjectiveFormat(format.kind))
   );
 }
