@@ -10,7 +10,6 @@ import {
 } from "@playwright/test";
 import {
   describeViolations,
-  readMissingHuesAsZero,
   resumeAnimations,
   settleAnimations,
   stillAnimations,
@@ -202,7 +201,6 @@ async function scanAccessibility(page: Page, where: string) {
 
   if (!(await page.evaluate("Boolean(globalThis.axe)"))) {
     await page.evaluate(axeScript);
-    await page.evaluate(`(${readMissingHuesAsZero.toString()})(window.axe)`);
   }
 
   // Neutral text meets WCAG AA in the regular look too; colored marks there are soft by design.

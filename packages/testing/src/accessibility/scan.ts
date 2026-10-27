@@ -51,24 +51,6 @@ export function describeViolations(violations: Result[], where: string) {
   };
 }
 
-type AxeColor = { prototype: { parseString: (this: unknown, color: string) => unknown } };
-
-/**
- * Chrome writes a gray's hue as `none` (`oklch(0.145 0 none)`, which is every neutral token), and
- * axe-core 4.13 can't parse it, so it leaves those contrast checks incomplete instead of measuring
- * them. Until it can, a missing hue reads as 0, the same gray. Pass the loaded axe-core; it reads
- * nothing outside itself, so Playwright can send it into a page that loaded axe as `window.axe`.
- */
-export function readMissingHuesAsZero(axe: { commons: unknown }) {
-  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- axe's color tools aren't typed.
-  const { Color } = (axe.commons as { color: { Color: AxeColor } }).color;
-  const parse = Color.prototype.parseString;
-
-  Color.prototype.parseString = function parseString(color) {
-    return parse.call(this, color.replaceAll(" none", " 0"));
-  };
-}
-
 /**
  * Ends every CSS animation and transition the moment it starts while a scan reads the screen, as
  * Playwright's screenshots do, so an element that fades in again every few seconds (a waiting

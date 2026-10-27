@@ -1,6 +1,5 @@
 import {
   describeViolations,
-  readMissingHuesAsZero,
   resumeAnimations,
   settleAnimations,
   stillAnimations,
@@ -36,8 +35,6 @@ const HOST_DOCUMENT_RULES = {
   "document-title": { enabled: false },
   "html-has-lang": { enabled: false },
 };
-
-readMissingHuesAsZero(axe);
 
 /**
  * Lets entrance animations and theme transitions end, so contrast is read on the screen people
