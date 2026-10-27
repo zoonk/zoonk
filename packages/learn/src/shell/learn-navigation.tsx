@@ -68,10 +68,10 @@ function MissionsLabel({ missions }: { missions: MissionsCount }) {
 
   return (
     <span className="sr-only">
-      {t("{done} of {total} missions today", {
-        done: String(missions.done),
-        total: String(missions.total),
-      })}
+      {t(
+        "{done, plural, =0 {# of {total} missions today} one {# of {total} missions today} other {# of {total} missions today}}",
+        { done: missions.done, total: String(missions.total) },
+      )}
     </span>
   );
 }

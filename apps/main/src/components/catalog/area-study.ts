@@ -39,10 +39,10 @@ export async function getAreaStudyText(): Promise<
       studied && area.fitting === 0
         ? throughText(area)
         : [
-            t("{fitting, number} of {total, number} lessons fit", {
-              fitting: area.fitting,
-              total: area.total,
-            }),
+            t(
+              "{fitting, plural, =0 {# of {total, number} lessons fit} one {# of {total, number} lessons fit} other {# of {total, number} lessons fit}}",
+              { fitting: area.fitting, total: area.total },
+            ),
             area.quickLessons > 0 &&
               t("{count, plural, one {+ # quick lesson} other {+ # quick lessons}}", {
                 count: area.quickLessons,

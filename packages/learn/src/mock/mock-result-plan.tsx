@@ -6,7 +6,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CircleCheckIcon } from "lucide-react";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useId, useState, useTransition } from "react";
 import { type DiffLine, DiffLines } from "../_components/diff-lines";
 import { Meter, MeterFill } from "../_components/meter";
@@ -162,7 +162,6 @@ function PlanChangeStatus({ change }: { change: PlanChange }) {
  */
 function usePlanChangeLines(adapt: MockAdaptView): DiffLine[] {
   const t = useExtracted();
-  const format = useFormatter();
   const { focus, skip } = adapt;
   const named = skip?.topics.slice(0, TOPICS_NAMED) ?? [];
   const more = (skip?.topics.length ?? 0) - named.length;
@@ -182,11 +181,15 @@ function usePlanChangeLines(adapt: MockAdaptView): DiffLine[] {
     },
     focus && {
       kind: "added" as const,
-      text: t("More time for {area} ({correct} of {total} right)", {
-        area: focus.area,
-        correct: format.number(focus.correct, { maximumFractionDigits: 2 }),
-        total: String(focus.total),
-      }),
+      text: t(
+        "More time for {area} ({correct, plural, =0 {# of {total} right} one {# of {total} right} other {# of {total} right}})",
+        {
+          area: focus.area,
+          // `#` shows up to three decimals; partial credit reads to the hundredth.
+          correct: Math.round(focus.correct * 100) / 100,
+          total: String(focus.total),
+        },
+      ),
       tone: "neutral" as const,
     },
   ];

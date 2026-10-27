@@ -57,7 +57,10 @@ function AnswerSegments({ answers }: { answers: readonly boolean[] }) {
         {`${correct}/${answers.length}`}
       </span>
       <span className="sr-only">
-        {t("{correct, number} of {total, number} right", { correct, total: answers.length })}
+        {t(
+          "{correct, plural, =0 {# of {total, number} right} one {# of {total, number} right} other {# of {total, number} right}}",
+          { correct, total: answers.length },
+        )}
       </span>
     </span>
   );

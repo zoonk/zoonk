@@ -21,7 +21,7 @@ function formatPluralBlocks({
   values: Record<string, number | string>;
 }) {
   return value.replaceAll(
-    /\{(?<key>\w+),\s*plural,\s*(?<exact>(?:=\d+\s*\{[^{}]*\}\s*)*)one\s*\{(?<one>[^{}]*(?:\{\w+\}[^{}]*)*)\}\s*other\s*\{(?<other>[^{}]*(?:\{\w+\}[^{}]*)*)\}\}/gu,
+    /\{(?<key>\w+),\s*plural,\s*(?<exact>(?:=\d+\s*\{[^{}]*(?:\{\w+\}[^{}]*)*\}\s*)*)one\s*\{(?<one>[^{}]*(?:\{\w+\}[^{}]*)*)\}\s*other\s*\{(?<other>[^{}]*(?:\{\w+\}[^{}]*)*)\}\}/gu,
     (token, key: string, exact: string, one: string, other: string) => {
       const count = Number(values[key]);
 
@@ -30,9 +30,9 @@ function formatPluralBlocks({
       }
 
       /* An exact case such as `=0 {…}` wins over the plural category, as in ICU. */
-      const exactMatch = [...exact.matchAll(/[=](?<number>\d+)\s*\{(?<label>[^{}]*)\}/gu)].find(
-        (match) => Number(match.groups?.number) === count,
-      );
+      const exactMatch = [
+        ...exact.matchAll(/[=](?<number>\d+)\s*\{(?<label>[^{}]*(?:\{\w+\}[^{}]*)*)\}/gu),
+      ].find((match) => Number(match.groups?.number) === count);
 
       return (exactMatch?.groups?.label ?? (count === 1 ? one : other)).replaceAll(
         "#",

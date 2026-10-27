@@ -99,10 +99,10 @@ export function RegexSampleList({
                 : "text-destructive-text font-medium",
             )}
           >
-            {t("{passing} of {total} pass", {
-              passing: String(passing),
-              total: String(samples.length),
-            })}
+            {t(
+              "{passing, plural, =0 {# of {total} pass} one {# of {total} pass} other {# of {total} pass}}",
+              { passing, total: String(samples.length) },
+            )}
           </p>
         )}
       </div>

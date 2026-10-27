@@ -70,13 +70,19 @@ function ScoreWords({ score }: { score: MomentScore }) {
 
   const values = {
     answered: format.number(score.answered),
-    correct: format.number(score.correct),
+    correct: score.correct,
     number: scoreNumber,
   };
 
   return score.spoken
-    ? t.rich("<number>{correct}</number> of {answered} sounded right", values)
-    : t.rich("<number>{correct}</number> of {answered} right", values);
+    ? t.rich(
+        "{correct, plural, =0 {<number>#</number> of {answered} sounded right} one {<number>#</number> of {answered} sounded right} other {<number>#</number> of {answered} sounded right}}",
+        values,
+      )
+    : t.rich(
+        "{correct, plural, =0 {<number>#</number> of {answered} right} one {<number>#</number> of {answered} right} other {<number>#</number> of {answered} right}}",
+        values,
+      );
 }
 
 /** A task's end with no facts beside its readouts. */

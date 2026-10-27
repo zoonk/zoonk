@@ -110,10 +110,10 @@ async function AreaChapters({
       row.lessonsInPlan === 0
         ? workText(row)
         : row.lessonsInPlan < chapter.lessons.length &&
-          t("{count, number} of {total, number} lessons", {
-            count: row.lessonsInPlan,
-            total: chapter.lessons.length,
-          });
+          t(
+            "{count, plural, =0 {# of {total, number} lessons} one {# of {total, number} lessons} other {# of {total, number} lessons}}",
+            { count: row.lessonsInPlan, total: chapter.lessons.length },
+          );
 
     return detail ? `${span}${OUTLINE_SEPARATOR}${detail}` : span;
   };

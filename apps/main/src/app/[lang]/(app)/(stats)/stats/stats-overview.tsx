@@ -163,11 +163,14 @@ async function ScoreTile({ progress }: { progress: CurrentUserProgress }) {
       detail={
         score
           ? // "128/183 right", as the Score page's tile counts them.
-            t.rich("<mono>{correct}/{total}</mono> right", {
-              correct: formatWholeNumber({ format, value: score.correctAnswers }),
-              mono: renderCount,
-              total: formatWholeNumber({ format, value: score.totalAnswers }),
-            })
+            t.rich(
+              "{correct, plural, =0 {<mono>#/{total}</mono> right} one {<mono>#/{total}</mono> right} other {<mono>#/{total}</mono> right}}",
+              {
+                correct: score.correctAnswers,
+                mono: renderCount,
+                total: formatWholeNumber({ format, value: score.totalAnswers }),
+              },
+            )
           : t("Right answers in the last 90 days")
       }
       icon={<TargetIcon />}

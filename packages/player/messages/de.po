@@ -2291,9 +2291,9 @@ msgid "Symbols"
 msgstr "Symbole"
 
 #: src/activities/pattern-tester/pattern-tester-activity.tsx
-msgctxt "9zCIkT"
-msgid "{passing} of {total} examples pass."
-msgstr "{passing} von {total} Beispielen passen."
+msgctxt "naQh_0"
+msgid "{passing, plural, =0 {# of {total} examples pass.} one {# of {total} examples pass.} other {# of {total} examples pass.}}"
+msgstr "{passing, plural, =0 {# von {total} Beispielen passen.} one {# von {total} Beispielen passen.} other {# von {total} Beispielen passen.}}"
 
 #: src/activities/pattern-tester/pattern-tester-activity.tsx
 msgctxt "5XbPTb"
@@ -2341,9 +2341,9 @@ msgid "matched"
 msgstr "Treffer"
 
 #: src/activities/pattern-tester/regex-samples.tsx
-msgctxt "JiJxIE"
-msgid "{passing} of {total} pass"
-msgstr "{passing} von {total} passen"
+msgctxt "w8hCjj"
+msgid "{passing, plural, =0 {# of {total} pass} one {# of {total} pass} other {# of {total} pass}}"
+msgstr "{passing, plural, =0 {# von {total} passen} one {# von {total} passen} other {# von {total} passen}}"
 
 #: src/activities/process-order/process-order-activity.tsx
 msgctxt "NI6DvQ"

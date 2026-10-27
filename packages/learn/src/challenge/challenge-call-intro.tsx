@@ -93,10 +93,10 @@ export function WonCallIntro() {
         <TaskMeta
           className="text-sm leading-6"
           facts={[
-            t("{correct} of {total} goals", {
-              correct: String(result.correct),
-              total: String(result.total),
-            }),
+            t(
+              "{correct, plural, =0 {# of {total} goals} one {# of {total} goals} other {# of {total} goals}}",
+              { correct: result.correct, total: String(result.total) },
+            ),
           ]}
         />
       )}

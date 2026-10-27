@@ -34,12 +34,12 @@ function Calibration() {
     <>
       <ListRowDescription className="text-foreground pt-1">
         {t(
-          "In your mock exams: sure, {sureRight} of {sureAnswered} right. Unsure, {unsureRight} of {unsureAnswered} right.",
+          "In your mock exams: sure, {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}}. Unsure, {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}}.",
           {
             sureAnswered: String(calibration.sure.answered),
-            sureRight: String(calibration.sure.right),
+            sureRight: calibration.sure.right,
             unsureAnswered: String(calibration.unsure.answered),
-            unsureRight: String(calibration.unsure.right),
+            unsureRight: calibration.unsure.right,
           },
         )}
       </ListRowDescription>

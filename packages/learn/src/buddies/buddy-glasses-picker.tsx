@@ -43,11 +43,13 @@ function CountLine({
   target: number;
 }) {
   const t = useExtracted();
-  const counts = { current: String(current), target: String(target) };
 
   return glasses === "catEye"
-    ? t("{current} of {target} days with every mission done", counts)
-    : t("{current} of {target} reviews", counts);
+    ? t(
+        "{current, plural, =0 {# of {target} days with every mission done} one {# of {target} days with every mission done} other {# of {target} days with every mission done}}",
+        { current, target: String(target) },
+      )
+    : t("{current} of {target} reviews", { current: String(current), target: String(target) });
 }
 
 /** A locked pair says how it's earned, and a counted one how far along the learner is. */

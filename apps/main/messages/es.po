@@ -607,9 +607,9 @@ msgstr "Omitido"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-areas.tsx
 #: src/app/[lang]/(home)/_components/goal-measure.tsx
-msgctxt "DOR8eI"
-msgid "{count, number} of {total, number} lessons"
-msgstr "{count, number} de {total, number} lecciones"
+msgctxt "ArogzQ"
+msgid "{count, plural, =0 {# of {total, number} lessons} one {# of {total, number} lessons} other {# of {total, number} lessons}}"
+msgstr "{count, plural, =0 {# de {total, number} lecciones} one {# de {total, number} lecciones} other {# de {total, number} lecciones}}"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/outline-chapter-row.tsx
 msgctxt "OGR3YM"
@@ -1863,9 +1863,9 @@ msgid "{lessons, plural, =0 {# lessons} one {# lesson} other {# lessons}} · {ti
 msgstr "{lessons, plural, =0 {# lecciones} one {# lección} other {# lecciones}} · {time}"
 
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
-msgctxt "XZ6lD1"
-msgid "<mono>{correct}/{total}</mono> right"
-msgstr "<mono>{correct}/{total}</mono> correctas"
+msgctxt "_qHKLY"
+msgid "{correct, plural, =0 {<mono>#/{total}</mono> right} one {<mono>#/{total}</mono> right} other {<mono>#/{total}</mono> right}}"
+msgstr "{correct, plural, =0 {<mono>#/{total}</mono> correctas} one {<mono>#/{total}</mono> correctas} other {<mono>#/{total}</mono> correctas}}"
 
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
 msgctxt "Y_aK5B"
@@ -3403,9 +3403,9 @@ msgid "{count, plural, one {# quick lesson} other {# quick lessons}}"
 msgstr "{count, plural, one {# lección rápida} other {# lecciones rápidas}}"
 
 #: src/components/catalog/area-study.ts
-msgctxt "h1B4p2"
-msgid "{fitting, number} of {total, number} lessons fit"
-msgstr "Encajan {fitting, number} de {total, number} lecciones"
+msgctxt "T9NkkS"
+msgid "{fitting, plural, =0 {# of {total, number} lessons fit} one {# of {total, number} lessons fit} other {# of {total, number} lessons fit}}"
+msgstr "{fitting, plural, =0 {Encajan # de {total, number} lecciones} one {Encajan # de {total, number} lecciones} other {Encajan # de {total, number} lecciones}}"
 
 #: src/components/catalog/area-study.ts
 msgctxt "XP3dEr"

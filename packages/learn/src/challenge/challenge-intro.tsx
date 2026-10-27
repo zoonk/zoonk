@@ -64,8 +64,11 @@ function TricksterIntro() {
       <TaskMeta
         facts={[
           challenge.questions !== null && challenge.questions > 0 && questions(challenge.questions),
-          (challenge.passMark ?? 0) > 0 &&
-            t("{count} right to win", { count: String(challenge.passMark) }),
+          challenge.passMark !== null &&
+            challenge.passMark > 0 &&
+            t("{count, plural, one {# right to win} other {# right to win}}", {
+              count: challenge.passMark,
+            }),
         ]}
         reward={prize}
       />
@@ -98,10 +101,10 @@ function WonIntro() {
         <TaskMeta
           className="text-sm leading-6"
           facts={[
-            t("{correct} of {total} right", {
-              correct: String(result.correct),
-              total: String(result.total),
-            }),
+            t(
+              "{correct, plural, =0 {# of {total} right} one {# of {total} right} other {# of {total} right}}",
+              { correct: result.correct, total: String(result.total) },
+            ),
           ]}
         />
       )}

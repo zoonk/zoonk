@@ -296,7 +296,11 @@ function useDuelAside(): TaskFrameAside {
   return {
     children: isBoss ? <TricksterPanel /> : <WeeklyPanel />,
     label: name,
-    meta: isBoss ? t("{count} right to win", { count: String(checkpoint.passMark) }) : null,
+    meta: isBoss
+      ? t("{count, plural, one {# right to win} other {# right to win}}", {
+          count: checkpoint.passMark,
+        })
+      : null,
     title: name,
   };
 }

@@ -72,10 +72,10 @@ export async function GoalMeasure({ day, goal }: { day: DayState; goal: ExampleG
           total={JOB_PROGRESS.total}
         />
         <p className="text-muted-foreground text-[0.8125rem]">
-          {t("{count, number} of {total, number} lessons", {
-            count: done,
-            total: JOB_PROGRESS.total,
-          })}
+          {t(
+            "{count, plural, =0 {# of {total, number} lessons} one {# of {total, number} lessons} other {# of {total, number} lessons}}",
+            { count: done, total: JOB_PROGRESS.total },
+          )}
         </p>
       </>
     );

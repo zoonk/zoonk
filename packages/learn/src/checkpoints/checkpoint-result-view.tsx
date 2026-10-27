@@ -56,8 +56,8 @@ function ScoreLine() {
       facts={[
         !won &&
           duel.state.completion?.checkpoint &&
-          t("{count} of {total} right to win", {
-            count: String(duel.state.completion.checkpoint.passMark),
+          t("{count, plural, one {# of {total} right to win} other {# of {total} right to win}}", {
+            count: duel.state.completion.checkpoint.passMark,
             total: String(checkpoint.questions.length),
           }),
       ]}

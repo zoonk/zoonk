@@ -30,10 +30,14 @@ function useMeasureText() {
       });
     }
 
-    return t("{correct} of {total} right", {
-      correct: points(mock.correct),
-      total: String(mock.total),
-    });
+    return t(
+      "{correct, plural, =0 {# of {total} right} one {# of {total} right} other {# of {total} right}}",
+      {
+        // `#` shows up to three decimals; partial credit reads to the hundredth, as `points` does.
+        correct: Math.round(mock.correct * 100) / 100,
+        total: String(mock.total),
+      },
+    );
   };
 }
 

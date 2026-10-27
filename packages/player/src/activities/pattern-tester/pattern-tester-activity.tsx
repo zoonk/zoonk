@@ -184,10 +184,10 @@ export function PatternTesterActivity({
 
       <p aria-live="polite" className="sr-only">
         {summary &&
-          t("{passing} of {total} examples pass.", {
-            passing: String(summary.passing),
-            total: String(summary.total),
-          })}
+          t(
+            "{passing, plural, =0 {# of {total} examples pass.} one {# of {total} examples pass.} other {# of {total} examples pass.}}",
+            { passing: summary.passing, total: String(summary.total) },
+          )}
       </p>
 
       {!isExploring && <PatternHints hints={fields.hints} isChecked={isChecked} />}

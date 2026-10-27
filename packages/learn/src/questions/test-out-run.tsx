@@ -108,10 +108,10 @@ function ResultStep({
 
         <TaskMeta
           facts={[
-            t("{correct, number} of {total, number} right", {
-              correct: outcome.correct,
-              total: outcome.total,
-            }),
+            t(
+              "{correct, plural, =0 {# of {total, number} right} one {# of {total, number} right} other {# of {total, number} right}}",
+              { correct: outcome.correct, total: outcome.total },
+            ),
           ]}
         />
       </StepCard>

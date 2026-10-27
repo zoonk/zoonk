@@ -132,10 +132,10 @@ function useMissionsLabel(status: BuddyStatusView): string {
 
   const done = countDoneMissions(today.missions);
 
-  return t("{done} of {total} missions", {
-    done: String(done),
-    total: String(today.missions.length),
-  });
+  return t(
+    "{done, plural, =0 {# of {total} missions} one {# of {total} missions} other {# of {total} missions}}",
+    { done, total: String(today.missions.length) },
+  );
 }
 
 /** A value the status doesn't have yet: a quiet dash, "Not yet" for screen readers. */

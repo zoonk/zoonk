@@ -405,14 +405,14 @@ msgid "<number>+{points}</number> <words>Brain Power</words>"
 msgstr "<number>+{points}</number> <words>Puissance Mentale</words>"
 
 #: src/_components/moment-readouts.tsx
-msgctxt "S3xeZI"
-msgid "<number>{correct}</number> of {answered} sounded right"
-msgstr "<number>{correct}</number> fois sur {answered}, c’était bien prononcé"
+msgctxt "b73TgX"
+msgid "{correct, plural, =0 {<number>#</number> of {answered} sounded right} one {<number>#</number> of {answered} sounded right} other {<number>#</number> of {answered} sounded right}}"
+msgstr "{correct, plural, =0 {<number>#</number> fois sur {answered}, c’était bien prononcé} one {<number>#</number> fois sur {answered}, c’était bien prononcé} other {<number>#</number> fois sur {answered}, c’était bien prononcé}}"
 
 #: src/_components/moment-readouts.tsx
-msgctxt "oKgF3Y"
-msgid "<number>{correct}</number> of {answered} right"
-msgstr "<number>{correct}</number> bonnes réponses sur {answered}"
+msgctxt "mA2Wor"
+msgid "{correct, plural, =0 {<number>#</number> of {answered} right} one {<number>#</number> of {answered} right} other {<number>#</number> of {answered} right}}"
+msgstr "{correct, plural, =0 {<number>#</number> bonne réponse sur {answered}} one {<number>#</number> bonne réponse sur {answered}} other {<number>#</number> bonnes réponses sur {answered}}}"
 
 #: src/_components/opening-wait-line.tsx
 msgctxt "bSuhQp"
@@ -842,9 +842,9 @@ msgid "Today's missions"
 msgstr "Missions du jour"
 
 #: src/buddies/buddy-glasses-picker.tsx
-msgctxt "NlHzjq"
-msgid "{current} of {target} days with every mission done"
-msgstr "{current} jours où toutes les missions ont été accomplies sur {target}"
+msgctxt "JZBlWy"
+msgid "{current, plural, =0 {# of {target} days with every mission done} one {# of {target} days with every mission done} other {# of {target} days with every mission done}}"
+msgstr "{current, plural, =0 {# jour sur {target} avec toutes les missions accomplies} one {# jour sur {target} avec toutes les missions accomplies} other {# jours sur {target} avec toutes les missions accomplies}}"
 
 #: src/buddies/buddy-glasses-picker.tsx
 msgctxt "0YvqkI"
@@ -1083,9 +1083,9 @@ msgid "Missions"
 msgstr "Missions"
 
 #: src/buddies/buddy-today.tsx
-msgctxt "C10Ck-"
-msgid "{done} of {total} missions"
-msgstr "{done} missions sur {total}"
+msgctxt "xlYYsb"
+msgid "{done, plural, =0 {# of {total} missions} one {# of {total} missions} other {# of {total} missions}}"
+msgstr "{done, plural, =0 {# mission sur {total}} one {# mission sur {total}} other {# missions sur {total}}}"
 
 #: src/buddies/buddy-today.tsx
 #: src/exam/exam-result-section.tsx
@@ -1274,9 +1274,9 @@ msgid "Challenge passed"
 msgstr "Défi réussi"
 
 #: src/challenge/challenge-call-intro.tsx
-msgctxt "rOhbC2"
-msgid "{correct} of {total} goals"
-msgstr "{correct} objectifs sur {total}"
+msgctxt "V2Yax2"
+msgid "{correct, plural, =0 {# of {total} goals} one {# of {total} goals} other {# of {total} goals}}"
+msgstr "{correct, plural, =0 {# objectif sur {total}} one {# objectif sur {total}} other {# objectifs sur {total}}}"
 
 #: src/challenge/challenge-footer.tsx
 msgctxt "O274f-"
@@ -1416,9 +1416,9 @@ msgstr "Le Farceur"
 
 #: src/challenge/challenge-intro.tsx
 #: src/checkpoints/checkpoint-duel-view.tsx
-msgctxt "jL31sa"
-msgid "{count} right to win"
-msgstr "{count} bonnes réponses pour gagner"
+msgctxt "qqqXC2"
+msgid "{count, plural, one {# right to win} other {# right to win}}"
+msgstr "{count, plural, one {# bonne réponse pour gagner} other {# bonnes réponses pour gagner}}"
 
 #: src/challenge/challenge-intro.tsx
 msgctxt "Aw7qrt"
@@ -1433,9 +1433,9 @@ msgstr "Tu as vaincu le Farceur !"
 
 #: src/challenge/challenge-intro.tsx
 #: src/mock/mock-summary-row.tsx
-msgctxt "62a7NR"
-msgid "{correct} of {total} right"
-msgstr "{correct} bonnes réponses sur {total}"
+msgctxt "wlkxOQ"
+msgid "{correct, plural, =0 {# of {total} right} one {# of {total} right} other {# of {total} right}}"
+msgstr "{correct, plural, =0 {# bonne réponse sur {total}} one {# bonne réponse sur {total}} other {# bonnes réponses sur {total}}}"
 
 #: src/challenge/challenge-intro.tsx
 msgctxt "kU0Yw9"
@@ -1895,9 +1895,9 @@ msgid "Not this time"
 msgstr "Pas cette fois"
 
 #: src/checkpoints/checkpoint-result-view.tsx
-msgctxt "3NlFSk"
-msgid "{count} of {total} right to win"
-msgstr "{count} bonnes réponses sur {total} pour gagner"
+msgctxt "4YXH09"
+msgid "{count, plural, one {# of {total} right to win} other {# of {total} right to win}}"
+msgstr "{count, plural, one {# bonne réponse sur {total} pour gagner} other {# bonnes réponses sur {total} pour gagner}}"
 
 #: src/checkpoints/checkpoint-review.tsx
 msgctxt "hmBFza"
@@ -2871,7 +2871,7 @@ msgstr "Le temps est écoulé"
 #: src/today/today-day-progress.tsx
 msgctxt "HmaKic"
 msgid "{time} left"
-msgstr "{time} restantes"
+msgstr "Il reste {time}"
 
 #: src/exam/exam-running-mock.tsx
 msgctxt "H9K5g4"
@@ -2879,9 +2879,9 @@ msgid "{answered, number} of {questions, number} answered"
 msgstr "Réponses : {answered, number} sur {questions, number}"
 
 #: src/exam/exam-scoring-section.tsx
-msgctxt "UL-f33"
-msgid "In your mock exams: sure, {sureRight} of {sureAnswered} right. Unsure, {unsureRight} of {unsureAnswered} right."
-msgstr "Dans tes examens blancs : quand tu étais sûr de ta réponse, {sureRight} réponses étaient justes sur {sureAnswered}. Quand tu hésitais, {unsureRight} réponses étaient justes sur {unsureAnswered}."
+msgctxt "y6LdtC"
+msgid "In your mock exams: sure, {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}}. Unsure, {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}}."
+msgstr "Dans tes examens blancs : quand tu étais sûr de ta réponse, {sureRight, plural, =0 {# bonne réponse sur {sureAnswered}} one {# bonne réponse sur {sureAnswered}} other {# bonnes réponses sur {sureAnswered}}}. Quand tu hésitais, {unsureRight, plural, =0 {# bonne réponse sur {unsureAnswered}} one {# bonne réponse sur {unsureAnswered}} other {# bonnes réponses sur {unsureAnswered}}}."
 
 #: src/exam/exam-scoring-section.tsx
 msgctxt "4YDliw"
@@ -4559,9 +4559,9 @@ msgid "We couldn't save the call."
 msgstr "Impossible d’enregistrer l’appel."
 
 #: src/language/conversation/call-stars-step.tsx
-msgctxt "TVMHWX"
-msgid "{stars, number} of 3 stars"
-msgstr "{stars, number} étoiles sur 3"
+msgctxt "T1FmHH"
+msgid "{stars, plural, =0 {# of 3 stars} one {# of 3 stars} other {# of 3 stars}}"
+msgstr "{stars, plural, =0 {# étoile sur 3} one {# étoile sur 3} other {# étoiles sur 3}}"
 
 #: src/language/conversation/call-stars-step.tsx
 #: src/memory/memory-labels.tsx
@@ -7413,9 +7413,9 @@ msgid "When to leave it blank"
 msgstr "Quand laisser une réponse vide"
 
 #: src/mock/mock-result-insights.tsx
-msgctxt "RLfrWY"
-msgid "Sure: {sureRight} of {sureAnswered} right. Flagged as unsure: {unsureRight} of {unsureAnswered} right."
-msgstr "Quand tu étais sûr : {sureRight} bonnes réponses sur {sureAnswered}. Quand tu as indiqué un doute : {unsureRight} bonnes réponses sur {unsureAnswered}."
+msgctxt "8aymU7"
+msgid "Sure: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}}. Flagged as unsure: {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}}."
+msgstr "Quand tu étais sûr : {sureRight, plural, =0 {# bonne réponse sur {sureAnswered}} one {# bonne réponse sur {sureAnswered}} other {# bonnes réponses sur {sureAnswered}}}. Quand tu as indiqué un doute : {unsureRight, plural, =0 {# bonne réponse sur {unsureAnswered}} one {# bonne réponse sur {unsureAnswered}} other {# bonnes réponses sur {unsureAnswered}}}."
 
 #: src/mock/mock-result-insights.tsx
 msgctxt "Bx-tmo"
@@ -7470,9 +7470,9 @@ msgid "{count, plural, one {# lesson less} other {# lessons less}}"
 msgstr "{count, plural, one {# leçon en moins} other {# leçons en moins}}"
 
 #: src/mock/mock-result-plan.tsx
-msgctxt "HeN5pl"
-msgid "More time for {area} ({correct} of {total} right)"
-msgstr "Plus de temps pour {area} ({correct} bonnes réponses sur {total})"
+msgctxt "0GsB_G"
+msgid "More time for {area} ({correct, plural, =0 {# of {total} right} one {# of {total} right} other {# of {total} right}})"
+msgstr "Plus de temps pour {area} ({correct, plural, =0 {# bonne réponse sur {total}} one {# bonne réponse sur {total}} other {# bonnes réponses sur {total}}})"
 
 #: src/mock/mock-result-plan.tsx
 msgctxt "S7MdOa"
@@ -9473,9 +9473,9 @@ msgstr "Après la modification"
 
 #: src/plan/focus-test/focus-test-result.tsx
 #: src/questions/test-out-run.tsx
-msgctxt "uHGKRX"
-msgid "{correct, number} of {total, number} right"
-msgstr "{correct, number} bonnes réponses sur {total, number}"
+msgctxt "sgSz4r"
+msgid "{correct, plural, =0 {# of {total, number} right} one {# of {total, number} right} other {# of {total, number} right}}"
+msgstr "{correct, plural, =0 {# bonne réponse sur {total, number}} one {# bonne réponse sur {total, number}} other {# bonnes réponses sur {total, number}}}"
 
 #: src/plan/focus-test/focus-test-result.tsx
 msgctxt "J3M17v"
@@ -10672,34 +10672,34 @@ msgid "Your placement answers changed what fits by your date."
 msgstr "Tes réponses au test de niveau ont changé ce qui peut tenir dans ton plan d’ici la date choisie."
 
 #: src/plan/use-effect-counts.ts
-msgctxt "zN9-pA"
-msgid "About {added, plural, one {# more lesson} other {# more lessons}} and {removed, number} fewer, such as {names}."
-msgstr "Environ {added, plural, one {# leçon supplémentaire} other {# leçons supplémentaires}} et {removed, number} leçons en moins, par exemple {names}."
+msgctxt "_K4MVL"
+msgid "About {added, plural, one {# more lesson} other {# more lessons}} and {removed, plural, one {# fewer} other {# fewer}}, such as {names}."
+msgstr "Environ {added, plural, one {# leçon supplémentaire} other {# leçons supplémentaires}} et {removed, plural, one {# leçon en moins} other {# leçons en moins}}, par exemple {names}."
 
 #: src/plan/use-effect-counts.ts
-msgctxt "cO2xB5"
-msgid "{added, plural, one {# more lesson} other {# more lessons}} and {removed, number} fewer, such as {names}."
-msgstr "{added, plural, one {# leçon supplémentaire} other {# leçons supplémentaires}} et {removed, number} leçons en moins, par exemple {names}."
+msgctxt "YSiG5s"
+msgid "{added, plural, one {# more lesson} other {# more lessons}} and {removed, plural, one {# fewer} other {# fewer}}, such as {names}."
+msgstr "{added, plural, one {# leçon supplémentaire} other {# leçons supplémentaires}} et {removed, plural, one {# leçon en moins} other {# leçons en moins}}, par exemple {names}."
 
 #: src/plan/use-effect-counts.ts
-msgctxt "OTy9ct"
-msgid "About {added, plural, one {# more lesson} other {# more lessons}} and {removed, number} fewer: {names}."
-msgstr "Environ {added, plural, one {# leçon supplémentaire} other {# leçons supplémentaires}} et {removed, number} leçons en moins : {names}."
+msgctxt "Y-R1d7"
+msgid "About {added, plural, one {# more lesson} other {# more lessons}} and {removed, plural, one {# fewer} other {# fewer}}: {names}."
+msgstr "Environ {added, plural, one {# leçon supplémentaire} other {# leçons supplémentaires}} et {removed, plural, one {# leçon en moins} other {# leçons en moins}} : {names}."
 
 #: src/plan/use-effect-counts.ts
-msgctxt "YTag65"
-msgid "{added, plural, one {# more lesson} other {# more lessons}} and {removed, number} fewer: {names}."
-msgstr "{added, plural, one {# leçon supplémentaire} other {# leçons supplémentaires}} et {removed, number} leçons en moins : {names}."
+msgctxt "jpBrVZ"
+msgid "{added, plural, one {# more lesson} other {# more lessons}} and {removed, plural, one {# fewer} other {# fewer}}: {names}."
+msgstr "{added, plural, one {# leçon supplémentaire} other {# leçons supplémentaires}} et {removed, plural, one {# leçon en moins} other {# leçons en moins}} : {names}."
 
 #: src/plan/use-effect-counts.ts
-msgctxt "E94Vkj"
-msgid "About {added, plural, one {# more lesson} other {# more lessons}} and {removed, number} fewer."
-msgstr "Environ {added, plural, one {# leçon supplémentaire} other {# leçons supplémentaires}} et {removed, number} leçons en moins."
+msgctxt "rBHYoU"
+msgid "About {added, plural, one {# more lesson} other {# more lessons}} and {removed, plural, one {# fewer} other {# fewer}}."
+msgstr "Environ {added, plural, one {# leçon supplémentaire} other {# leçons supplémentaires}} et {removed, plural, one {# leçon en moins} other {# leçons en moins}}."
 
 #: src/plan/use-effect-counts.ts
-msgctxt "FlbQ7_"
-msgid "{added, plural, one {# more lesson} other {# more lessons}} and {removed, number} fewer."
-msgstr "{added, plural, one {# leçon supplémentaire} other {# leçons supplémentaires}} et {removed, number} leçons en moins."
+msgctxt "YHbjhT"
+msgid "{added, plural, one {# more lesson} other {# more lessons}} and {removed, plural, one {# fewer} other {# fewer}}."
+msgstr "{added, plural, one {# leçon supplémentaire} other {# leçons supplémentaires}} et {removed, plural, one {# leçon en moins} other {# leçons en moins}}."
 
 #: src/plan/use-effect-counts.ts
 msgctxt "cktzJe"
@@ -11903,9 +11903,9 @@ msgid "Back to {page}"
 msgstr "Retour à {page}"
 
 #: src/shell/learn-navigation.tsx
-msgctxt "Nt_nMj"
-msgid "{done} of {total} missions today"
-msgstr "{done} missions sur {total} aujourd’hui"
+msgctxt "lgkU1s"
+msgid "{done, plural, =0 {# of {total} missions today} one {# of {total} missions today} other {# of {total} missions today}}"
+msgstr "{done, plural, =0 {# mission sur {total} aujourd’hui} one {# mission sur {total} aujourd’hui} other {# missions sur {total} aujourd’hui}}"
 
 #: src/shell/learn-navigation.tsx
 msgctxt "Uzc7nh"
@@ -12381,7 +12381,7 @@ msgstr "{done, plural, =0 {# sur {total, number} terminé} one {# sur {total, nu
 #: src/today/today-day-progress.tsx
 msgctxt "RQRGjK"
 msgid "{time} studied"
-msgstr "{time} étudiées"
+msgstr "{time} d’étude"
 
 #: src/today/today-day-status.tsx
 msgctxt "XMRh7X"
@@ -12672,9 +12672,9 @@ msgid "{count, plural, one {# done} other {# done}}"
 msgstr "{count, plural, one {# terminé} other {# terminés}}"
 
 #: src/today/today-session-card.tsx
-msgctxt "o5paQR"
-msgid "+{count, number} more"
-msgstr "+{count, number} autres"
+msgctxt "zdB-3c"
+msgid "{count, plural, one {+# more} other {+# more}}"
+msgstr "{count, plural, one {+# autre} other {+# autres}}"
 
 #: src/today/today-suggested-goal.tsx
 msgctxt "wF_58q"
@@ -12759,7 +12759,7 @@ msgstr "{day} : {name}, {status}"
 #: src/today/today-week.tsx
 msgctxt "sq7Fxi"
 msgid "{studied} of {planned} studied this week"
-msgstr "{studied} étudiées sur {planned} cette semaine"
+msgstr "{studied} d’étude sur {planned} cette semaine"
 
 #: src/today/today-week.tsx
 msgctxt "AmPZix"
@@ -12909,7 +12909,7 @@ msgstr "La plus forte progression"
 #: src/week/logbook-sections.tsx
 msgctxt "ZS3MVu"
 msgid "{from} → {to} right answers"
-msgstr "{from} → {to} bonnes réponses"
+msgstr "{from} → {to} de bonnes réponses"
 
 #: src/week/logbook-sections.tsx
 msgctxt "z0xsAO"

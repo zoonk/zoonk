@@ -139,7 +139,7 @@ function SessionQueue({ next }: { next: DayStep }) {
         <FoldRow
           className="sm:hidden"
           done={false}
-          label={t("+{count, number} more", { count: phoneMore })}
+          label={t("{count, plural, one {+# more} other {+# more}}", { count: phoneMore })}
           minutes={sumMinutes(after.slice(rows.phone))}
           onToggle={() => setMoreOpen((open) => !open)}
           open={moreOpen}
@@ -150,7 +150,7 @@ function SessionQueue({ next }: { next: DayStep }) {
         <FoldRow
           className="max-sm:hidden"
           done={false}
-          label={t("+{count, number} more", { count: wideMore })}
+          label={t("{count, plural, one {+# more} other {+# more}}", { count: wideMore })}
           minutes={sumMinutes(after.slice(rows.wide))}
           onToggle={() => setMoreOpen((open) => !open)}
           open={moreOpen}

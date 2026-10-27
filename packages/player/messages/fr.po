@@ -2291,9 +2291,9 @@ msgid "Symbols"
 msgstr "Symboles"
 
 #: src/activities/pattern-tester/pattern-tester-activity.tsx
-msgctxt "9zCIkT"
-msgid "{passing} of {total} examples pass."
-msgstr "{passing} exemples sur {total} correspondent."
+msgctxt "naQh_0"
+msgid "{passing, plural, =0 {# of {total} examples pass.} one {# of {total} examples pass.} other {# of {total} examples pass.}}"
+msgstr "{passing, plural, =0 {# exemple sur {total} correspond.} one {# exemple sur {total} correspond.} other {# exemples sur {total} correspondent.}}"
 
 #: src/activities/pattern-tester/pattern-tester-activity.tsx
 msgctxt "5XbPTb"
@@ -2341,9 +2341,9 @@ msgid "matched"
 msgstr "Correspondance trouvée"
 
 #: src/activities/pattern-tester/regex-samples.tsx
-msgctxt "JiJxIE"
-msgid "{passing} of {total} pass"
-msgstr "{passing} sur {total} correspondent"
+msgctxt "w8hCjj"
+msgid "{passing, plural, =0 {# of {total} pass} one {# of {total} pass} other {# of {total} pass}}"
+msgstr "{passing, plural, =0 {# sur {total} correspond} one {# sur {total} correspond} other {# sur {total} correspondent}}"
 
 #: src/activities/process-order/process-order-activity.tsx
 msgctxt "NI6DvQ"

@@ -36,7 +36,9 @@ function Stars({ lost, stars }: { lost: boolean; stars: number }) {
 
   return (
     <p
-      aria-label={t("{stars, number} of 3 stars", { stars })}
+      aria-label={t("{stars, plural, =0 {# of 3 stars} one {# of 3 stars} other {# of 3 stars}}", {
+        stars,
+      })}
       className="text-readout flex items-center gap-1.5 text-2xl"
       role="img"
     >

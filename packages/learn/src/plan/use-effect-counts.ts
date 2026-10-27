@@ -52,11 +52,11 @@ function useFewerLessonsText(): LessonTexts {
     if (names && someOf) {
       return about
         ? t(
-            "About {added, plural, one {# more lesson} other {# more lessons}} and {removed, number} fewer, such as {names}.",
+            "About {added, plural, one {# more lesson} other {# more lessons}} and {removed, plural, one {# fewer} other {# fewer}}, such as {names}.",
             { added, names, removed },
           )
         : t(
-            "{added, plural, one {# more lesson} other {# more lessons}} and {removed, number} fewer, such as {names}.",
+            "{added, plural, one {# more lesson} other {# more lessons}} and {removed, plural, one {# fewer} other {# fewer}}, such as {names}.",
             { added, names, removed },
           );
     }
@@ -64,22 +64,22 @@ function useFewerLessonsText(): LessonTexts {
     if (names) {
       return about
         ? t(
-            "About {added, plural, one {# more lesson} other {# more lessons}} and {removed, number} fewer: {names}.",
+            "About {added, plural, one {# more lesson} other {# more lessons}} and {removed, plural, one {# fewer} other {# fewer}}: {names}.",
             { added, names, removed },
           )
         : t(
-            "{added, plural, one {# more lesson} other {# more lessons}} and {removed, number} fewer: {names}.",
+            "{added, plural, one {# more lesson} other {# more lessons}} and {removed, plural, one {# fewer} other {# fewer}}: {names}.",
             { added, names, removed },
           );
     }
 
     return about
       ? t(
-          "About {added, plural, one {# more lesson} other {# more lessons}} and {removed, number} fewer.",
+          "About {added, plural, one {# more lesson} other {# more lessons}} and {removed, plural, one {# fewer} other {# fewer}}.",
           { added, removed },
         )
       : t(
-          "{added, plural, one {# more lesson} other {# more lessons}} and {removed, number} fewer.",
+          "{added, plural, one {# more lesson} other {# more lessons}} and {removed, plural, one {# fewer} other {# fewer}}.",
           { added, removed },
         );
   };
