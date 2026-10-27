@@ -18,7 +18,7 @@
   },
   "scripts": {
     "db:backfill:enem-areas": "tsx --env-file=.env src/scripts/backfill-enem-chapter-areas.ts",
-    "db:deploy": "tsx src/scripts/deploy-migrations.ts",
+    "db:deploy": "prisma migrate deploy",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:reset": "prisma migrate reset",
