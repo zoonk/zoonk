@@ -1,6 +1,5 @@
 import "server-only";
 import { type Milestone, prisma } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getUserProgressCacheTag } from "../cache/tags";
 import { CHECKPOINT_LEDGER_KINDS } from "../checkpoints/_utils/checkpoint-results";
@@ -17,11 +16,6 @@ import {
 
 /** The ledger's count of opened capsules: one `review` row per capsule, marked as such. */
 export const CAPSULE_LEDGER_KIND = "capsule";
-
-/** A competing award owns the new rows; this transaction's redundant marks must roll back. */
-class MilestoneAwardUnchangedError extends Error {
-  override name = "MilestoneAwardUnchangedError";
-}
 
 /** Counts toward glasses targets, saturated at each target, from rows that outlive content. */
 export async function loadMilestoneCounts(userId: string): Promise<MilestoneCounts> {
@@ -108,26 +102,19 @@ export async function awardMilestones({
     return [];
   }
 
-  const { error } = await safeAsync(() =>
-    prisma.$transaction(async (tx) => {
-      await markLearnerChanged(tx, { userId });
+  const inserted = await prisma.$transaction(async (tx) => {
+    await markLearnerChanged(tx, { userId });
 
-      const { count } = await tx.milestone.createMany({
-        data: missing.map((award) => ({ ...award, userId })),
-        skipDuplicates: true,
-      });
+    const { count } = await tx.milestone.createMany({
+      data: missing.map((award) => ({ ...award, userId })),
+      skipDuplicates: true,
+    });
 
-      if (count === 0) {
-        throw new MilestoneAwardUnchangedError("The milestones were already awarded");
-      }
-    }),
-  );
+    return count;
+  });
 
-  if (error && !(error instanceof MilestoneAwardUnchangedError)) {
-    throw error;
-  }
-
-  if (!error) {
+  // None when a competing award inserted them first.
+  if (inserted > 0) {
     revalidateCacheTags([getUserProgressCacheTag(userId)]);
   }
 

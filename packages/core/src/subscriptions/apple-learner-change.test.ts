@@ -100,6 +100,7 @@ describe("Apple entitlement writes", () => {
   it("marks before inserting the subscription", async () => {
     const { plan, user } = await learner();
     const state = verified(user.id);
+    const before = await versions({ planId: plan.id, userId: user.id });
     const holder = holdLearnerLock({ userId: user.id });
     const pid = await holder.pid;
 
@@ -123,7 +124,9 @@ describe("Apple entitlement writes", () => {
       await writing;
     }
 
-    await expect(versions({ planId: plan.id, userId: user.id })).resolves.toMatchObject({});
+    await expect(versions({ planId: plan.id, userId: user.id })).resolves.toStrictEqual({
+      inputs: before.inputs + 1,
+    });
   });
 
   it("rolls back the refused owner's mark when a subscription belongs to another account", async () => {
