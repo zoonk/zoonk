@@ -315,6 +315,7 @@ function inDays(days: number): string {
 /** A notice's edition with one exam day. */
 function examDayEdition(date: string) {
   return {
+    check: null,
     citations: [],
     dates: [{ citation, date, kind: "exam", label: "Exam day", startTime: null }],
     noticeUrl: null,
@@ -1594,6 +1595,7 @@ describe(goalContentWorkflow, () => {
 
       const blueprint = await examBlueprintFixture({
         edition: {
+          check: null,
           citations: [],
           dates: [{ citation, date: examDay, kind: "exam", label: "Exam day", startTime: null }],
           noticeUrl: null,
@@ -1817,6 +1819,7 @@ describe(goalContentWorkflow, () => {
 
       const blueprint = await examBlueprintFixture({
         edition: {
+          check: null,
           citations: [],
           dates: [{ citation, date: examDay, kind: "exam", label: "Exam day", startTime: null }],
           noticeUrl: null,
@@ -1981,6 +1984,7 @@ describe(goalContentWorkflow, () => {
 
       const blueprint = await examBlueprintFixture({
         edition: {
+          check: null,
           citations: [],
           dates: [{ citation, date: examDay, kind: "exam", label: "Exam day", startTime: null }],
           noticeUrl: null,
@@ -2346,6 +2350,7 @@ describe(goalContentWorkflow, () => {
 
       const blueprint = await examBlueprintFixture({
         edition: {
+          check: null,
           citations: [],
           dates: [{ citation, date: examDay, kind: "exam", label: "Exam day", startTime: null }],
           noticeUrl: null,

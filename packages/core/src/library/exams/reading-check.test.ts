@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { type BlueprintContent, type ReadingProblem } from "./blueprint-contract";
-import { findReadingProblems, pickBetterReading } from "./reading-check";
+import { type BlueprintContent } from "./blueprint-contract";
+import { findReadingProblems } from "./reading-check";
 
 const NOTICE = [
   "| Área de conhecimento | Conteúdos de formação geral, Direitos Humanos, Direito do Consumidor, Filosofia do Direito, bem como Estatuto da Advocacia e da OAB, seu Regulamento Geral e Código de Ética e Disciplina da OAB. |",
@@ -25,6 +25,7 @@ function noticeSubject(name: string, questions: number | null, extra: object = {
 function reading(subjects: { name: string; questions?: number | null }[]): BlueprintContent {
   return {
     edition: {
+      check: null,
       citations: [],
       dates: [],
       noticeUrl: null,
@@ -233,23 +234,5 @@ describe(findReadingProblems, () => {
     };
 
     expect(findProblems(kept)).toStrictEqual([]);
-  });
-});
-
-describe(pickBetterReading, () => {
-  const missing = { kind: "countsOffTotal" as const, sum: 79, total: 80 };
-
-  it("keeps the reading with fewer problems, the later one on a tie, never an unchecked one", () => {
-    type Reading = { id: string; problems: ReadingProblem[] | null };
-
-    const first: Reading = { id: "first", problems: [missing] };
-    const fixed: Reading = { id: "second", problems: [] };
-    const worse: Reading = { id: "second", problems: [missing, missing] };
-    const unchecked: Reading = { id: "second", problems: null };
-
-    expect(pickBetterReading({ first, second: fixed }).id).toBe("second");
-    expect(pickBetterReading({ first, second: { ...first, id: "second" } }).id).toBe("second");
-    expect(pickBetterReading({ first, second: worse }).id).toBe("first");
-    expect(pickBetterReading({ first, second: unchecked }).id).toBe("first");
   });
 });

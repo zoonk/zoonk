@@ -17,6 +17,7 @@ const citation = { passage: "", sourceId: "notice" };
 function examBlueprint({ days, year }: { days: string[]; year: number }) {
   return examBlueprintFixture({
     edition: {
+      check: null,
       citations: [],
       dates: days.map((date) => ({ citation, date, kind: "exam", label: "Exam", startTime: null })),
       noticeUrl: null,

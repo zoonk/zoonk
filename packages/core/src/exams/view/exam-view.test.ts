@@ -38,6 +38,7 @@ async function examSetup({
   const blueprint = await examBlueprintFixture({
     ...(language ? { language } : {}),
     edition: {
+      check: null,
       citations: [],
       dates: [{ citation, date: examDay, kind: "exam", label: "Day 1", startTime: "13:30" }],
       noticeUrl: null,

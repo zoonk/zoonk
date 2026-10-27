@@ -58,6 +58,7 @@ async function signedInExamLearner({ topics }: { topics: boolean }) {
     await Promise.all([
       examBlueprintFixture({
         edition: {
+          check: null,
           citations: [],
           dates: [],
           noticeUrl: "https://example.com/edital.pdf",

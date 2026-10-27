@@ -40,6 +40,7 @@ async function storedExam({
 
   const blueprint = await examBlueprintFixture({
     edition: {
+      check: null,
       citations: [],
       dates: [
         {

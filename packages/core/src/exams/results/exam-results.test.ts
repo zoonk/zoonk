@@ -14,6 +14,7 @@ const EXAM_DAY = "2026-11-08";
 const citation = { passage: "", sourceId: "notice" };
 
 const edition = {
+  check: null,
   citations: [],
   dates: [{ citation, date: EXAM_DAY, kind: "exam", label: "Day 1", startTime: "13:30" }],
   noticeUrl: null,

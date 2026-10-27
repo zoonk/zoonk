@@ -8,6 +8,7 @@ const NEW_CITATION = { passage: "A prova terá 60 questões.", sourceId: "source
 function content(overrides: Partial<BlueprintContent> = {}): BlueprintContent {
   return {
     edition: {
+      check: null,
       citations: [],
       dates: [
         {

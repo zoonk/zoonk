@@ -658,6 +658,7 @@ describe("after an exam that the learner studies everything for", () => {
     const { goal, plan } = await setup({
       days: 30,
       edition: {
+        check: null,
         citations: [],
         dates: [{ citation, date: examDay, kind: "exam", label: "Prova", startTime: null }],
         noticeUrl: null,

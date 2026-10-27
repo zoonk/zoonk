@@ -15,13 +15,13 @@ import { createSourceChangeNotice } from "../sources/content-review-flags";
 import {
   type BlueprintContent,
   type ExamDate,
+  type ReadingProblem,
   examEditionSchema,
   examStructureSchema,
   topicFrequencySchema,
 } from "./blueprint-contract";
 import { type BlueprintChange, mergeBlueprintContent, movesExamDays } from "./blueprint-diff";
 import { type ExamIdentity, buildExamIdentityKey, findExamBlueprintByKey } from "./exam-identity";
-import { getReadingStatus } from "./reading-check";
 
 export type BlueprintNotice = { message: string; provenance: LibraryProvenance };
 
@@ -35,8 +35,13 @@ export type SaveExamBlueprintInput = {
   notice?: BlueprintNotice | null;
 };
 
-/** How a stored blueprint stands with a document research found for it (`findNoticeReading`). */
-export type NoticeReading = { status: "unread" } | ReturnType<typeof getReadingStatus>;
+/**
+ * What the exam's stored blueprint knows of a document research found for it (`findNoticeReading`):
+ * whether it was read from that very document, and what that reading's check found it left out.
+ */
+export type NoticeReading = { problems: ReadingProblem[]; read: boolean };
+
+const UNREAD: NoticeReading = { problems: [], read: false };
 
 export type SavedExamBlueprint = {
   blueprint: ExamBlueprint;
@@ -50,6 +55,7 @@ export type SavedExamBlueprint = {
 
 const EMPTY_CONTENT: BlueprintContent = {
   edition: {
+    check: null,
     citations: [],
     dates: [],
     noticeUrl: null,
@@ -205,11 +211,11 @@ async function updateBlueprint({
 }
 
 /**
- * How the exam's stored blueprint stands with this document: `unread` when it wasn't read from
- * this very document (a new edition, a corrected notice, or no blueprint yet), which research
- * reads; otherwise how its reading stands (`getReadingStatus`). Newer reading instructions never
- * read a notice again, since every learner of the exam shares the one reading: only a reading
- * whose check found problems is read again.
+ * How the exam's stored blueprint stands with this document: unread when it wasn't read from this
+ * very document (a new edition, a corrected notice, or no blueprint yet), which research reads;
+ * otherwise read, with what its check found. Research never reads a notice it was read from again,
+ * since every learner of the exam shares the one reading: only an admin does, told what the check
+ * found.
  */
 export async function findNoticeReading({
   identity,
@@ -226,13 +232,13 @@ export async function findNoticeReading({
     prisma.source.findUnique({ select: { contentHash: true }, where: { id: sourceId } }),
   ]);
 
-  if (!blueprint || !source) {
-    return { status: "unread" };
+  const edition = blueprint ? examEditionSchema.safeParse(blueprint.edition).data : undefined;
+
+  if (!edition || !source || edition.sourceHash !== source.contentHash) {
+    return UNREAD;
   }
 
-  return examEditionSchema.safeParse(blueprint.edition).data?.sourceHash === source.contentHash
-    ? getReadingStatus(blueprint)
-    : { status: "unread" };
+  return { problems: edition.check?.problems ?? [], read: true };
 }
 
 /**

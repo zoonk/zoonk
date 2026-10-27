@@ -115,6 +115,7 @@ async function examInAnotherMonth() {
     userFixture(),
     examBlueprintFixture({
       edition: {
+        check: null,
         citations: [],
         dates: [
           {

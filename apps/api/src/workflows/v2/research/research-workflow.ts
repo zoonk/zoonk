@@ -12,7 +12,7 @@ import { type ResearchContext, findAndStoreSources, researchSources } from "./re
 import { detectResearchTopic } from "./research-topic";
 import { lookUpChoiceOptionsStep } from "./steps/choice-options-step";
 import { lookUpCourseWeightsStep } from "./steps/course-weights-step";
-import { type ExamBlueprintLookup, findExamBlueprintStep } from "./steps/find-exam-blueprint-step";
+import { findExamBlueprintStep } from "./steps/find-exam-blueprint-step";
 import { hasPrivateUploadsStep } from "./steps/inspect-uploads-step";
 import { linkGoalToBlueprintStep, unlinkGoalFromSharedExamStep } from "./steps/link-goal-step";
 import { type ResearchGoal, loadResearchGoalStep } from "./steps/load-research-goal-step";
@@ -102,43 +102,6 @@ async function joinRunningResearch({
   });
 }
 
-/**
- * A stored notice whose reading's check found what it left out is read
- * again by the research that reuses it, before the goal is linked, so the goal (and every learner
- * of the exam after it) gets the corrected reading. Another learner's research holding the exam
- * is reading it already, so this one goes on with the stored reading.
- */
-async function readStoredNoticeAgain({
-  analytics,
-  goalId,
-  lookup,
-}: {
-  analytics: ResearchAnalytics;
-  goalId: string;
-  lookup: ExamBlueprintLookup;
-}): Promise<void> {
-  const { identity, identityKey, readAgainNoticeId } = lookup;
-
-  if (!readAgainNoticeId) {
-    return;
-  }
-
-  const { conflict } = await claimRunToken(`research:${identity.language}:${identityKey}`);
-
-  if (conflict) {
-    return;
-  }
-
-  await readExamBlueprint({
-    analytics,
-    background: false,
-    exceptGoalId: goalId,
-    identity,
-    isNew: false,
-    sourceIds: [readAgainNoticeId],
-  });
-}
-
 async function researchExam(context: ResearchContext<ExamResearchPlan>): Promise<ResearchResult> {
   const { analytics, goal, plan, uploads } = context;
 
@@ -170,7 +133,6 @@ async function researchExam(context: ResearchContext<ExamResearchPlan>): Promise
   const isShared = !identity.ownerId;
 
   if (blueprintId && lookup.isCurrent && uploads.length === 0) {
-    await readStoredNoticeAgain({ analytics, goalId: goal.id, lookup });
     return finishExam({ analytics, examBlueprintId: blueprintId, goal, isShared });
   }
 

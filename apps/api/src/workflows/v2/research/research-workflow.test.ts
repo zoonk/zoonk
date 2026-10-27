@@ -807,31 +807,25 @@ describe(researchWorkflow, () => {
     expect(extractExamBlueprint).not.toHaveBeenCalled();
   });
 
-  it("checks a notice's reading for a subject it left out and reads it again, told what it left out", async () => {
-    const { goal } = await examGoal();
+  it("reads a notice once, stores what its check found left out, and never reads it again for the next learner", async () => {
+    const [first, second] = await Promise.all([examGoal(), examGoal()]);
     const { extraction, plan } = await replayTcdfResearch();
-    const contracts = extraction.subjects.at(-1);
-    const passage = contracts?.passages[0]?.passage ?? "";
+    const passage = extraction.subjects.at(-1)?.passages[0]?.passage ?? "";
     const leftOut = { ...extraction, subjects: extraction.subjects.slice(0, -1) };
 
-    // The first reading leaves contract management out; read again, told so, it lists it.
-    vi.mocked(extractExamBlueprint).mockImplementation(async ({ corrections }) => ({
-      ...READING_RESULT,
-      data: corrections?.length ? extraction : leftOut,
-    }));
+    vi.mocked(extractExamBlueprint).mockResolvedValue({ ...READING_RESULT, data: leftOut });
 
-    vi.mocked(checkExamReading).mockImplementation(async ({ subjects }) => ({
+    vi.mocked(checkExamReading).mockResolvedValue({
       ...TASK_RESULT,
       data: {
-        missingSubjects: subjects.some((subject) => subject.name === contracts?.name)
-          ? []
-          : [{ document: 1, name: "Gestão de Contratos", passage }],
+        missingSubjects: [{ document: 1, name: "Gestão de Contratos", passage }],
         statedCounts: [],
       },
-    }));
+    });
 
-    const result = await researchWorkflow({ goalId: goal.id });
-    expect(result).toMatchObject({ status: "ready" });
+    await expect(researchWorkflow({ goalId: first.goal.id })).resolves.toMatchObject({
+      status: "ready",
+    });
 
     // The check reads beside the citation checks, at the reading's tier.
     expect(vi.mocked(checkExamReading).mock.calls[0]?.[0]).toMatchObject({
@@ -839,81 +833,26 @@ describe(researchWorkflow, () => {
       total: extraction.mock?.totalQuestions ?? extraction.edition.questionCount,
     });
 
-    expect(
-      vi.mocked(extractExamBlueprint).mock.calls.map(([input]) => input.corrections),
-    ).toStrictEqual([
-      [],
-      [{ document: 1, kind: "missingSubject", name: "Gestão de Contratos", passage }],
-    ]);
-
-    const blueprint = await prisma.examBlueprint.findUniqueOrThrow({
-      where: {
-        languageIdentity: {
-          identityKey: buildExamIdentityKey({ name: plan.name, ownerId: null, role: plan.role }),
-          language: "pt",
-        },
-      },
-    });
-
-    expect(examStructureSchema.parse(blueprint.structure).subjects.at(-1)?.name).toBe(
-      contracts?.name,
+    expect(extractExamBlueprint).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ corrections: [] }),
     );
 
-    expect(examEditionSchema.parse(blueprint.edition).check).toMatchObject({
-      problems: [],
-      readings: 2,
-    });
-  });
-
-  it("never stores a reading whose check keeps finding a subject it left out as valid: the next research reads it again, a few times at most", async () => {
-    const [first, second, third] = await Promise.all([examGoal(), examGoal(), examGoal()]);
-    const { extraction, plan } = await replayTcdfResearch();
-    const passage = extraction.subjects.at(-1)?.passages[0]?.passage ?? "";
-    const leftOut = { ...extraction, subjects: extraction.subjects.slice(0, -1) };
-    const missing = { document: 1, name: "Gestão de Contratos", passage };
-
-    vi.mocked(extractExamBlueprint).mockResolvedValue({ ...READING_RESULT, data: leftOut });
-
-    vi.mocked(checkExamReading).mockResolvedValue({
-      ...TASK_RESULT,
-      data: { missingSubjects: [missing], statedCounts: [] },
-    });
-
-    await researchWorkflow({ goalId: first.goal.id });
-
     const identityKey = buildExamIdentityKey({ name: plan.name, ownerId: null, role: plan.role });
-    const where = { languageIdentity: { identityKey, language: "pt" } };
-    const stored = await prisma.examBlueprint.findUniqueOrThrow({ where });
+
+    const stored = await prisma.examBlueprint.findUniqueOrThrow({
+      where: { languageIdentity: { identityKey, language: "pt" } },
+    });
 
     expect(examEditionSchema.parse(stored.edition).check).toMatchObject({
       problems: [{ kind: "missingSubject", name: "Gestão de Contratos" }],
-      readings: 2,
     });
 
-    // The next learner's research reads the stored notice again, told what it left out, without
-    // searching for it.
     await expect(researchWorkflow({ goalId: second.goal.id })).resolves.toMatchObject({
       examBlueprintId: stored.id,
       status: "ready",
     });
 
-    expect(findOfficialSources).toHaveBeenCalledOnce();
-    expect(extractExamBlueprint).toHaveBeenCalledTimes(4);
-
-    expect(vi.mocked(extractExamBlueprint).mock.calls[2]?.[0].corrections).toStrictEqual([
-      { ...missing, kind: "missingSubject" },
-    ]);
-
-    // Read as many times as it may be, it waits for the notice itself to change.
-    await researchWorkflow({ goalId: third.goal.id });
-    expect(extractExamBlueprint).toHaveBeenCalledTimes(4);
-
-    const repaired = await prisma.examBlueprint.findUniqueOrThrow({ where });
-    expect(examEditionSchema.parse(repaired.edition).check).toMatchObject({ readings: 4 });
-
-    await expect(
-      prisma.goal.findUniqueOrThrow({ where: { id: third.goal.id } }),
-    ).resolves.toMatchObject({ examBlueprintId: stored.id });
+    expect(extractExamBlueprint).toHaveBeenCalledOnce();
   });
 
   it("looks up the position's last cut-off once a year for everyone aiming at it", async () => {

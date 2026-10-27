@@ -29,6 +29,7 @@ const citation = { passage: "", sourceId: "notice" };
 function noticeFixture(day: string) {
   return examBlueprintFixture({
     edition: {
+      check: null,
       citations: [],
       dates: [{ citation, date: day, kind: "exam", label: "Exam", startTime: null }],
       noticeUrl: null,

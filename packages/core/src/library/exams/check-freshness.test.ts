@@ -50,6 +50,7 @@ async function examWithLearner({
 
   const blueprint = await examBlueprintFixture({
     edition: {
+      check: null,
       citations: [],
       dates: [],
       noticeUrl: null,

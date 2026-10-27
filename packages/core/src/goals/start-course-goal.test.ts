@@ -599,6 +599,7 @@ describe(startCourseGoal, () => {
       userFixture(),
       examBlueprintFixture({
         edition: {
+          check: null,
           citations: [],
           dates: [
             {

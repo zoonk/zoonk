@@ -57,7 +57,7 @@ function toReadSubjects(extraction: BlueprintExtraction) {
 /**
  * The check of a shared exam's reading (`checkExamReading`), beside the citation checks, so it
  * never adds to the reading's wait. A check that fails leaves the reading unchecked (null): it's
- * used as it is, never read again for a check that couldn't run.
+ * used as it is.
  */
 async function checkReading({
   analytics,
@@ -132,7 +132,7 @@ async function translateReadPassMarks({
  * each detail on its own (a subject stays when its question count doesn't).
  * A shared exam's reading is also checked for what it left out, at the same
  * time (`problems`), and its pass marks are translated into the app's
- * languages; `corrections` tells a reading again what an earlier one left out.
+ * languages; `corrections` tells an admin's reading again what the stored one left out.
  * The first document is the notice whose hash the blueprint records.
  */
 export async function extractBlueprintStep({

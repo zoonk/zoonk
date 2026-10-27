@@ -45,6 +45,7 @@ async function courseLibrary() {
 
 function edition(date = EXAM_DATE) {
   return {
+    check: null,
     citations: [],
     dates: [
       {

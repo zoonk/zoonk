@@ -56,6 +56,7 @@ ${PEDRO_ANNOUNCEMENT}`;
 function content(topics: string[]): BlueprintContent {
   return {
     edition: {
+      check: null,
       citations: [],
       dates: [],
       noticeUrl: null,

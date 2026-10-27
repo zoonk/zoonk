@@ -59,6 +59,7 @@ function examDateAfter(days: number) {
 
 function examEdition(dates: string[], timeZone = "America/Sao_Paulo") {
   return {
+    check: null,
     citations: [],
     dates: dates.map((value) => ({
       citation: { passage: "Exam day", sourceId: "notice" },

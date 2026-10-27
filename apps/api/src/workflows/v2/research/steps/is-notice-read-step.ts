@@ -3,8 +3,7 @@ import { type NoticeReading, findNoticeReading } from "@zoonk/core/library/exams
 
 /**
  * How the exam's blueprint stands with this document (`findNoticeReading`): the PF's 2025 notice,
- * found again while its next one isn't out, isn't read again for minutes, unless its check found
- * what it left out.
+ * found again while its next one isn't out, isn't read again for minutes.
  */
 export async function findNoticeReadingStep({
   identity,

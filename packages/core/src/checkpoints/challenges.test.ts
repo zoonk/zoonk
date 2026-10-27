@@ -871,6 +871,7 @@ const EXAM_STRUCTURE = {
 };
 
 const EDITION = {
+  check: null,
   citations: [],
   dates: [
     {

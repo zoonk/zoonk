@@ -41,6 +41,7 @@ async function plannedExam({
     userFixture(),
     examBlueprintFixture({
       edition: {
+        check: null,
         citations: [],
         dates: [
           ...days.map((date) => ({

@@ -957,6 +957,7 @@ describe("plan changes the buddy proposes", () => {
     const [blueprint, library] = await Promise.all([
       examBlueprintFixture({
         edition: {
+          check: null,
           citations: [],
           dates: [
             {
@@ -1070,6 +1071,7 @@ describe("plan changes the buddy proposes", () => {
     const [material, library] = await Promise.all([
       examBlueprintFixture({
         edition: {
+          check: null,
           citations: [],
           dates: [
             { citation, date: "2020-10-02", kind: "exam", label: "Biology test", startTime: null },

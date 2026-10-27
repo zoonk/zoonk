@@ -26,6 +26,7 @@ export type CheckReadingEvalOutput = ExamReadingFindings & { problems: ReadingPr
 function toContent({ subjects, total }: CheckReadingEvalInput): BlueprintContent {
   return {
     edition: {
+      check: null,
       citations: [],
       dates: [],
       noticeUrl: null,

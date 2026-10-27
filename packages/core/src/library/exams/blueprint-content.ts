@@ -237,6 +237,7 @@ export function toBlueprintContent({
 
   return {
     edition: {
+      check: null,
       citations:
         kept.get("edition.year") ??
         kept.get("edition.questionCount") ??

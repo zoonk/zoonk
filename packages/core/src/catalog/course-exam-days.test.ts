@@ -22,6 +22,7 @@ function edition(
   timeZone: string | null = "UTC",
 ) {
   return {
+    check: null,
     citations: [],
     dates: dates.map((date) => ({
       citation: { passage: "Exam day", sourceId: "notice" },

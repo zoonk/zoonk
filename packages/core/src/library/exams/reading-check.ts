@@ -1,23 +1,11 @@
 import { type ExamReadingFindings } from "@zoonk/ai/tasks/v2/research/check-exam-reading";
 import { type ReadingCorrection } from "@zoonk/ai/tasks/v2/research/extract-exam-blueprint";
-import { type ExamBlueprint } from "@zoonk/db";
 import { nameOverlap, namesMatch } from "../../exams/_utils/name-match";
 import { listCountedSubjects } from "../../exams/choices/exam-choices";
 import { isWrittenSubject } from "../../exams/mocks/written-subject";
-import {
-  type BlueprintContent,
-  type ReadingProblem,
-  examEditionSchema,
-} from "./blueprint-contract";
+import { type BlueprintContent, type ReadingProblem } from "./blueprint-contract";
 import { type ExtractionDocument } from "./blueprint-passages";
 import { isPassageInDocument } from "./passage-check";
-
-/**
- * How many times one document is read while its reading keeps problems: research reads it at most
- * twice per request (a reading, then one told what the check found), so a notice whose problems
- * stay is read again on one more request, never on every one, until the notice itself changes.
- */
-const MAX_READINGS = 4;
 
 /** Below this share of shared words, two names are different subjects that share a word. */
 const MIN_OVERLAP = 0.5;
@@ -241,49 +229,4 @@ export function toReadingCorrections({
           subject: problem.subject,
         },
       ];
-}
-
-/** A reading's problems; a reading its check couldn't check (null) counts as worse than any. */
-function countProblems(problems: readonly ReadingProblem[] | null): number {
-  return problems?.length ?? Number.POSITIVE_INFINITY;
-}
-
-/**
- * Of two readings of the same documents, the one whose check found fewer problems; the later one
- * on a tie, since it was told what the first one left out.
- */
-export function pickBetterReading<T extends { problems: readonly ReadingProblem[] | null }>({
-  first,
-  second,
-}: {
-  first: T;
-  second: T;
-}): T {
-  return countProblems(second.problems) <= countProblems(first.problems) ? second : first;
-}
-
-/** Whether a document read `readings` times may be read again while its reading has problems. */
-export function canReadAgain(readings: number): boolean {
-  return readings < MAX_READINGS;
-}
-
-/**
- * How a stored reading stands: `readAgain` with what its check found, while that check found
- * problems and the document may still be read again; `settled` otherwise (a learner's own
- * material, which isn't checked, a check that found no problem, a document read as many times as
- * it may be, or a reading with no check at all, stored before readings were checked or whose check
- * failed): a reading is never read again for a code or prompt change, only for problems found.
- */
-export function getReadingStatus(
-  blueprint: Pick<ExamBlueprint, "edition" | "ownerId" | "sourceId">,
-): { status: "settled" } | { problems: ReadingProblem[]; readings: number; status: "readAgain" } {
-  if (blueprint.ownerId || !blueprint.sourceId) {
-    return { status: "settled" };
-  }
-
-  const check = examEditionSchema.safeParse(blueprint.edition).data?.check;
-
-  return check && check.problems.length > 0 && canReadAgain(check.readings)
-    ? { problems: check.problems, readings: check.readings, status: "readAgain" }
-    : { status: "settled" };
 }

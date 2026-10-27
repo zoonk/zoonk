@@ -15,6 +15,7 @@ const TODAY = "2026-10-08";
 function notice({ days, year }: { days: string[]; year: number }) {
   return {
     edition: {
+      check: null,
       citations: [],
       dates: days.map((date) => ({ citation, date, kind: "exam", label: "Exam", startTime: null })),
       noticeUrl: null,

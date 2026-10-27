@@ -163,6 +163,7 @@ describe(startGoalUnderstanding, () => {
 
     const blueprint = await examBlueprintFixture({
       edition: {
+        check: null,
         citations: [],
         dates: [
           { citation, date: "2099-11-15", kind: "exam", label: "Day 2", startTime: null },
@@ -233,6 +234,7 @@ describe(startGoalUnderstanding, () => {
 
     await examBlueprintFixture({
       edition: {
+        check: null,
         citations: [],
         dates: [{ citation, date: "2099-11-08", kind: "exam", label: "Exam", startTime: null }],
         noticeUrl: null,

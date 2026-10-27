@@ -32,6 +32,7 @@ async function builtExam({ days, year }: { days: string[]; year: number }) {
     userFixture(),
     examBlueprintFixture({
       edition: {
+        check: null,
         citations: [],
         dates: days.map((date) => ({
           citation,

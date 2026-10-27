@@ -23,6 +23,7 @@ export function isoDayFromToday(days: number): string {
 /** A Cebraspe-style edition: one exam day, a wrong answer cancelling a right one. */
 export function examEdition(examDay: string) {
   return {
+    check: null,
     citations: [],
     dates: [{ citation, date: examDay, kind: "exam", label: "Day 1", startTime: "08:00" }],
     noticeUrl: null,

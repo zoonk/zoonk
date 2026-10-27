@@ -12,6 +12,7 @@ import { findOfficialSources } from "@zoonk/ai/tasks/v2/research/find-official-s
 import { type ExamResearchPlan, generateExamResearchPlan } from "@zoonk/ai/tasks/v2/research/plan";
 import { generateSourceChangeNotice } from "@zoonk/ai/tasks/v2/research/source-change-notice";
 import { toBlueprintContent } from "@zoonk/core/library/exams/blueprint-content";
+import { examEditionSchema } from "@zoonk/core/library/exams/blueprint-contract";
 import { listBlueprintFacts } from "@zoonk/core/library/exams/blueprint-facts";
 import { saveExamBlueprint } from "@zoonk/core/library/exams/save";
 import { storeWebSource } from "@zoonk/core/library/sources/web";
@@ -145,7 +146,7 @@ async function examWithLearner({ erratum }: { erratum?: string } = {}) {
   });
 
   // Research stores a shared reading with its check, which found nothing left out.
-  const check = { checkedAt: new Date().toISOString(), problems: [], readings: 1 };
+  const check = { checkedAt: new Date().toISOString(), problems: [] };
 
   const saved = await saveExamBlueprint({
     content: { ...read, edition: { ...read.edition, check } },
@@ -528,11 +529,27 @@ describe(freshnessWorkflow, () => {
 
     expect(extractExamBlueprint).not.toHaveBeenCalled();
 
+    // The reading again is told what the stored reading's check found it left out.
+    const leftOut = { kind: "countsOffTotal" as const, sum: 79, total: 80 };
+    const edition = examEditionSchema.parse(checked.edition);
+
+    await prisma.examBlueprint.update({
+      data: {
+        edition: {
+          ...edition,
+          check: { checkedAt: new Date().toISOString(), problems: [leftOut] },
+        },
+      },
+      where: { id: blueprint.id },
+    });
+
     await expect(readNoticeAgainWorkflow({ examBlueprintId: blueprint.id })).resolves.toStrictEqual(
       { status: "read" },
     );
 
-    expect(extractExamBlueprint).toHaveBeenCalledOnce();
+    expect(extractExamBlueprint).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ corrections: [leftOut] }),
+    );
 
     await expect(
       prisma.examBlueprint.findUniqueOrThrow({ where: { id: blueprint.id } }),

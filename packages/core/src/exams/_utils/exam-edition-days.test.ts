@@ -12,6 +12,7 @@ function edition({
   year: number | null;
 }): ExamEdition {
   return {
+    check: null,
     citations: [],
     dates: [
       {

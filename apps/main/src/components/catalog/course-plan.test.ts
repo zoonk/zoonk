@@ -125,6 +125,7 @@ function dayIn(days: number): string {
 /** A notice edition with one exam day, in UTC. */
 function edition(date: string) {
   return {
+    check: null,
     citations: [],
     dates: [
       {

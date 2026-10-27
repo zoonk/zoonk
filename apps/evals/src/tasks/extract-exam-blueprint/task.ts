@@ -390,9 +390,7 @@ const scoreExtraction: TaskScorer<ExtractionExpected> = ({ output, testCase }) =
   const conclusion = [
     `Facts kept ${facts.length - dropped.length}/${facts.length} (read ${facts.length - unread.length})`,
     `passages found ${found}/${total}`,
-    parsed.reading
-      ? `readings ${parsed.reading.readings}, problems left ${parsed.reading.problems.length}`
-      : "",
+    parsed.reading ? `problems left ${parsed.reading.problems.length}` : "",
     dropped.length > 0 ? `missing: ${dropped.map((fact) => describeFact(fact)).join("; ")}` : "",
     usableWrong
       ? `research would ${isUsable ? "store" : "not store"} it as the exam's blueprint`

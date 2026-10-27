@@ -22,6 +22,7 @@ function examBlueprint({
     country: "BR",
     createdAt: generatedAt,
     edition: {
+      check: null,
       citations: [],
       dates: days.map((date, index) => ({
         citation,

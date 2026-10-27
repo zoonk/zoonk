@@ -29,6 +29,7 @@ const WAIT_RAN_OUT_MS = 10 * 60 * 1000;
 function examBlueprint({ days, year }: { days: string[]; year: number }) {
   return examBlueprintFixture({
     edition: {
+      check: null,
       citations: [],
       dates: days.map((date) => ({ citation, date, kind: "exam", label: "Exam", startTime: null })),
       noticeUrl: null,
@@ -178,6 +179,7 @@ describe(proposeNoticeChange, () => {
     await prisma.examBlueprint.update({
       data: {
         edition: {
+          check: null,
           citations: [],
           dates: [],
           noticeUrl: null,
@@ -226,6 +228,7 @@ describe(proposeNoticeChange, () => {
     await prisma.examBlueprint.update({
       data: {
         edition: {
+          check: null,
           citations: [],
           dates: [{ citation, date: "2019-11-10", kind: "exam", label: "Exam", startTime: null }],
           noticeUrl: null,
@@ -263,6 +266,7 @@ describe(proposeNoticeChange, () => {
     await prisma.examBlueprint.update({
       data: {
         edition: {
+          check: null,
           citations: [],
           dates: [{ citation, date: "2020-11-15", kind: "exam", label: "Exam", startTime: null }],
           noticeUrl: null,
@@ -294,6 +298,7 @@ describe(proposeNoticeChange, () => {
     await prisma.examBlueprint.update({
       data: {
         edition: {
+          check: null,
           citations: [],
           dates: [{ citation, date: "2020-11-15", kind: "exam", label: "Exam", startTime: null }],
           noticeUrl: null,
@@ -351,6 +356,7 @@ describe(proposeNoticeChange, () => {
     await prisma.examBlueprint.update({
       data: {
         edition: {
+          check: null,
           citations: [],
           dates: [{ citation, date: "2020-11-08", kind: "exam", label: "Exam", startTime: null }],
           noticeUrl: null,
@@ -410,6 +416,7 @@ describe(proposeNoticeChange, () => {
     await prisma.examBlueprint.update({
       data: {
         edition: {
+          check: null,
           citations: [],
           dates: [{ citation, date: "2020-11-15", kind: "exam", label: "Exam", startTime: null }],
           noticeUrl: null,
@@ -437,6 +444,7 @@ describe(proposeNoticeChange, () => {
     await prisma.examBlueprint.update({
       data: {
         edition: {
+          check: null,
           citations: [],
           dates: [{ citation, date: "2020-11-15", kind: "exam", label: "Exam", startTime: null }],
           noticeUrl: null,
@@ -583,6 +591,7 @@ describe(proposeNoticeChange, () => {
     await prisma.examBlueprint.update({
       data: {
         edition: {
+          check: null,
           citations: [],
           dates: [{ citation, date: "2020-11-15", kind: "exam", label: "Exam", startTime: null }],
           noticeUrl: null,

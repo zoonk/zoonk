@@ -19,11 +19,7 @@ import {
 } from "@zoonk/core/library/exams/blueprint-facts";
 import { listExtractionPassages } from "@zoonk/core/library/exams/blueprint-passages";
 import { isPassageInDocument } from "@zoonk/core/library/exams/passage-check";
-import {
-  findReadingProblems,
-  pickBetterReading,
-  toReadingCorrections,
-} from "@zoonk/core/library/exams/reading-check";
+import { findReadingProblems, toReadingCorrections } from "@zoonk/core/library/exams/reading-check";
 import { fetchDocument } from "@zoonk/core/library/sources/fetch";
 import { parseDocument } from "@zoonk/core/library/sources/parse-document";
 
@@ -36,13 +32,13 @@ export type EvalDocument = { title: string; url: string } | { text: string; titl
 export type ExtractionEvalInput = {
   exam: string;
   documents: EvalDocument[];
-  /** What a check found an earlier reading of the documents left out, for a reading again. */
+  /** What a check found an earlier reading of the documents left out, for an admin's reading again. */
   leftOut?: ReadingProblem[];
 };
 
 export type ExtractionEvalOutput = BlueprintExtraction & {
-  /** What the check found the kept reading left out, and how many readings research made. */
-  reading: { problems: ReadingProblem[]; readings: number };
+  /** What the check found the reading left out. */
+  reading: { problems: ReadingProblem[] };
   /** How many quoted passages code found in their document, the first half of the citation check. */
   passageCheck: { found: number; total: number };
   /** What research stores after both checks: the facts learners plan with. */
@@ -215,29 +211,19 @@ async function readChecked({
 }
 
 /**
- * Research's reading of a shared exam's documents: read and checked, then read once more, told
- * what the check found, when it found something, keeping the reading with fewer problems. The
- * kept reading's extraction is what the eval measures; every other call, its checks and a reading
- * set aside included, counts in what it spent (`extraCalls`).
+ * Research's reading of a shared exam's documents: read once and checked. The reading's extraction
+ * is what the eval measures; its checks count in what it spent (`extraCalls`).
  */
 export async function generateExtraction(
   input: ExtractionEvalInput & { model: string; reasoning?: Reasoning; useFallback?: boolean },
 ) {
   const documents = await Promise.all(input.documents.map((document) => loadDocument(document)));
-  const first = await readChecked({ corrections: input.leftOut ?? [], documents, input });
 
-  const second =
-    first.problems.length > 0
-      ? await readChecked({ corrections: first.problems, documents, input })
-      : null;
-
-  const reading = second ? pickBetterReading({ first, second }) : first;
-  const setAside = second && (reading === first ? second : first);
-  const { calls, check, kept, problems, result } = reading;
-
-  const setAsideCalls = setAside
-    ? [toModelCall(setAside.result.provenance), ...setAside.calls]
-    : [];
+  const { calls, check, kept, problems, result } = await readChecked({
+    corrections: input.leftOut ?? [],
+    documents,
+    input,
+  });
 
   return {
     ...result,
@@ -246,8 +232,8 @@ export async function generateExtraction(
       check,
       kept,
       passageCheck: checkPassages({ documents, extraction: result.data }),
-      reading: { problems, readings: reading === first ? 1 : 2 },
+      reading: { problems },
     },
-    extraCalls: [...calls, ...setAsideCalls],
+    extraCalls: calls,
   };
 }

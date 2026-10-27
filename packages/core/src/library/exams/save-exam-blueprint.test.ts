@@ -65,6 +65,7 @@ function content({
 
   return {
     edition: {
+      check: null,
       citations: [],
       dates: [
         {
@@ -357,7 +358,7 @@ describe(saveExamBlueprint, () => {
 describe(findNoticeReading, () => {
   const checkedAt = "2026-10-09T00:00:00.000Z";
 
-  it("reads a checked notice once, whatever instructions read it, and again only for a changed or newer document", async () => {
+  it("reads a notice once, whatever instructions read it, and again only for a changed or newer document", async () => {
     const [source, next] = await Promise.all([
       sourceFixture({ language: "pt" }),
       sourceFixture({ language: "pt" }),
@@ -368,10 +369,7 @@ describe(findNoticeReading, () => {
 
     // Read by reading instructions older than today's, and its check found nothing left out.
     await saveExamBlueprint({
-      content: {
-        ...read,
-        edition: { ...read.edition, check: { checkedAt, problems: [], readings: 1 } },
-      },
+      content: { ...read, edition: { ...read.edition, check: { checkedAt, problems: [] } } },
       identity: examIdentity,
       provenance: { ...PROVENANCE, promptVersion: "older-instructions" },
       sourceId: source.id,
@@ -379,12 +377,12 @@ describe(findNoticeReading, () => {
 
     await expect(
       findNoticeReading({ identity: examIdentity, sourceId: source.id }),
-    ).resolves.toStrictEqual({ status: "settled" });
+    ).resolves.toStrictEqual({ problems: [], read: true });
 
     // The board published a newer notice for the same exam.
     await expect(
       findNoticeReading({ identity: examIdentity, sourceId: next.id }),
-    ).resolves.toStrictEqual({ status: "unread" });
+    ).resolves.toStrictEqual({ problems: [], read: false });
 
     // The same address now serves a corrected document.
     await prisma.source.update({
@@ -394,10 +392,10 @@ describe(findNoticeReading, () => {
 
     await expect(
       findNoticeReading({ identity: examIdentity, sourceId: source.id }),
-    ).resolves.toStrictEqual({ status: "unread" });
+    ).resolves.toStrictEqual({ problems: [], read: false });
   });
 
-  it("reads a notice again while its check found something left out, a few times at most", async () => {
+  it("keeps a read notice read when its check found something left out, with what it found", async () => {
     const source = await sourceFixture({ language: "pt" });
     const examIdentity = identity();
     const read = content({ questions: 80, sourceHash: source.contentHash, sourceId: source.id });
@@ -410,11 +408,8 @@ describe(findNoticeReading, () => {
       },
     ];
 
-    const saved = await saveExamBlueprint({
-      content: {
-        ...read,
-        edition: { ...read.edition, check: { checkedAt, problems, readings: 2 } },
-      },
+    await saveExamBlueprint({
+      content: { ...read, edition: { ...read.edition, check: { checkedAt, problems } } },
       identity: examIdentity,
       provenance: PROVENANCE,
       sourceId: source.id,
@@ -422,31 +417,10 @@ describe(findNoticeReading, () => {
 
     await expect(
       findNoticeReading({ identity: examIdentity, sourceId: source.id }),
-    ).resolves.toStrictEqual({ problems, readings: 2, status: "readAgain" });
-
-    // Read as many times as it may be: it waits for the notice to change.
-    await prisma.examBlueprint.update({
-      data: { edition: { ...read.edition, check: { checkedAt, problems, readings: 4 } } },
-      where: { id: saved.blueprint.id },
-    });
-
-    await expect(
-      findNoticeReading({ identity: examIdentity, sourceId: source.id }),
-    ).resolves.toStrictEqual({ status: "settled" });
-
-    // A reading with no check (stored before readings were checked, or its check failed) is
-    // used as it is: only a check that found problems reads a notice again, never a code change.
-    await prisma.examBlueprint.update({
-      data: { edition: read.edition },
-      where: { id: saved.blueprint.id },
-    });
-
-    await expect(
-      findNoticeReading({ identity: examIdentity, sourceId: source.id }),
-    ).resolves.toStrictEqual({ status: "settled" });
+    ).resolves.toStrictEqual({ problems, read: true });
   });
 
-  it("never reads a learner's own material again for a check", async () => {
+  it("never reads a learner's own material again", async () => {
     const [user, source] = await Promise.all([userFixture(), sourceFixture({ language: "pt" })]);
     const examIdentity = identity({ ownerId: user.id });
 
@@ -459,7 +433,7 @@ describe(findNoticeReading, () => {
 
     await expect(
       findNoticeReading({ identity: examIdentity, sourceId: source.id }),
-    ).resolves.toStrictEqual({ status: "settled" });
+    ).resolves.toStrictEqual({ problems: [], read: true });
   });
 });
 

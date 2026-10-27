@@ -49,7 +49,7 @@ async function writeNotice({
   return { message: data.message, provenance };
 }
 
-/** What the check of the stored reading found, and how many times its document was read. */
+/** What the check of the stored reading found. */
 type ReadingCheckInput = Omit<ReadingCheck, "checkedAt">;
 
 /** The reading with its check on its edition, when it was checked. */
@@ -76,7 +76,7 @@ function withCheck({
  * Stores the blueprint, or updates only what changed on the existing one. A
  * change also gets its one-line notice for the exam's learners, written only
  * when something actually changed. A shared exam's reading is stored with its
- * check (`check`), so one with problems is read again by the next research.
+ * check (`check`), which an admin's reading again is told.
  */
 export async function saveBlueprintStep({
   analytics,

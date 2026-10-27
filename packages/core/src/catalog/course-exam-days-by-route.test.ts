@@ -10,6 +10,7 @@ import { getCourseExamDaysByRoute } from "./course-exam-days-by-route";
 const NOW = new Date("2020-09-28T12:00:00Z");
 
 const EDITION = {
+  check: null,
   citations: [],
   dates: ["2020-10-11", "2020-10-18"].map((date) => ({
     citation: { passage: "Exam day", sourceId: "notice" },

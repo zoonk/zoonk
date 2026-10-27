@@ -364,14 +364,12 @@ const readingProblemSchema = z.discriminatedUnion("kind", [
 
 /**
  * The check of the stored reading (`findReadingProblems`): valid when it found no problem. The
- * notice is read once and shared, so a reading with problems is read again by the next research
- * that needs it, a few times at most (`readings`) until the notice changes.
+ * notice is read once per research and shared; what the check found is what an admin's reading
+ * again is told (`readNoticeAgainWorkflow`).
  */
 const readingCheckSchema = z.object({
   checkedAt: z.iso.datetime(),
   problems: z.array(readingProblemSchema),
-  /** How many times this very document was read, the first reading included. */
-  readings: z.number().int().min(0),
 });
 
 export type ReadingProblem = z.infer<typeof readingProblemSchema>;
@@ -380,10 +378,10 @@ export type ReadingCheck = z.infer<typeof readingCheckSchema>;
 /** The current edition: what a new notice changes every year. */
 export const examEditionSchema = z.object({
   /**
-   * The check of the reading this edition was stored from; absent on readings stored before
-   * readings were checked, and on a learner's own material, which isn't.
+   * The check of the reading this edition was stored from; null for a learner's own material,
+   * which isn't checked, and when the check itself failed.
    */
-  check: readingCheckSchema.optional(),
+  check: readingCheckSchema.nullable(),
   /** Where the year and the question count were read. */
   citations: z.array(citationSchema),
   dates: z.array(examDateSchema),

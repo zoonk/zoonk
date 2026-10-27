@@ -141,11 +141,9 @@ function mergeEdition({
   const hasNewCount =
     changedFields.has("edition.year") || changedFields.has("edition.questionCount");
 
-  // The check is of the reading that's stored now: the new one's, once a new reading was checked.
-  const check = next.check ?? current.check;
-
   return {
-    ...(check ? { check } : {}),
+    // The check is of the reading that's stored now: the new one.
+    check: next.check,
     citations: hasNewCount ? next.citations : current.citations,
     dates: pick({
       changed: changedFields.has("edition.dates"),

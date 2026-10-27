@@ -63,6 +63,7 @@ describe("public catalog render read budgets", () => {
 
       const blueprint = await examBlueprintFixture({
         edition: {
+          check: null,
           citations: [],
           dates: [
             {

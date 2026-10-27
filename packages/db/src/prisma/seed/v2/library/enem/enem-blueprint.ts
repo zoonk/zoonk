@@ -460,7 +460,7 @@ function buildEdition(
 
   return {
     // Written by hand from the notice: research has no reading of it to check again.
-    check: { checkedAt: now.toISOString(), problems: [], readings: 1 },
+    check: { checkedAt: now.toISOString(), problems: [] },
     citations: [cite(NOTICE, notice.title), cite(NOTICE, notice.areas)],
     dates: [
       {

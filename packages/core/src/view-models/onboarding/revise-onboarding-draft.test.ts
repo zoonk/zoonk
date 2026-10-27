@@ -19,6 +19,7 @@ async function createExam() {
 
   const blueprint = await examBlueprintFixture({
     edition: {
+      check: null,
       citations: [],
       dates: [
         { citation, date: "2099-11-08", kind: "exam", label: "Day 1", startTime: null },
