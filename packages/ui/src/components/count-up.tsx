@@ -5,8 +5,8 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useEffectEvent, useLayoutEffect, useRef } from "react";
 
 /**
- * A number counting up from 0 to what was reached, once, when it's earned: the Brain Power a
- * task or the day earned. The value is on the page from the first frame, so screen readers, tests
+ * A number counting up to what was reached, once, when it's earned: the Brain Power a task or
+ * the day earned (a positive number). The value is on the page from the first frame, so screen readers, tests
  * and the layout read it (its width held, the digits tabular); the counting digits draw over it
  * for the fill's time on the ease-out (`duration-fill`), in step with a meter filling beside it,
  * then give way to it. With reduced motion, or where the stylesheet isn't loaded, it shows the
@@ -54,10 +54,10 @@ export function CountUp({
     let frame = 0;
     let ended = false;
 
+    // Blank until it starts, then never "+0", which reads as a loss: it rounds up from the start.
     const draw = () => {
-      const progress = clock.effect?.getComputedTiming().progress ?? 1;
-      const share = Math.min(1, Math.max(0, progress));
-      overlay.dataset.value = write(Math.round(value * share));
+      const progress = Math.min(1, clock.effect?.getComputedTiming().progress ?? 1);
+      overlay.dataset.value = progress > 0 ? write(Math.ceil(value * progress)) : "";
 
       if (clock.playState === "running") {
         frame = requestAnimationFrame(draw);
@@ -68,6 +68,7 @@ export function CountUp({
       if (!ended) {
         ended = true;
         cancelAnimationFrame(frame);
+        clock.cancel();
         delete wrapper.dataset.counting;
       }
     };
@@ -76,13 +77,10 @@ export function CountUp({
     draw();
 
     clock.finished.then(end, () => {
-      // Canceled: the cleanup below already ended it.
+      // Canceled: `end` did it, and has nothing left to do.
     });
 
-    return () => {
-      clock.cancel();
-      end();
-    };
+    return end;
   }, [delay, value]);
 
   return (
