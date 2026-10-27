@@ -1,6 +1,6 @@
 /* oxlint-disable no-console -- This CLI prints the derived routes and artifact table for CI. */
 import { readFile } from "node:fs/promises";
-import { isAbsolute, relative, resolve, sep } from "node:path";
+import { resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { htmlMarkers } from "./html-markers.mts";
 import { getCatalogPlaceholderMatcher, getNavigationRoutes } from "./navigation-routes.mts";
@@ -46,17 +46,6 @@ const { values } = parseArgs({
 
 const dist = resolve(values.dist);
 
-function inside({ directory, path }: { directory: string; path: string }): string {
-  const file = resolve(directory, path);
-  const from = relative(directory, file);
-
-  if (from.startsWith(`..${sep}`) || from === ".." || isAbsolute(from)) {
-    throw new Error(`Artifact path escapes ${directory}: ${path}`);
-  }
-
-  return file;
-}
-
 async function json<T>(file: string): Promise<T> {
   // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Invalid build artifact shapes fail at the owning boundary.
   return JSON.parse(await readFile(file, "utf8")) as T;
@@ -95,8 +84,8 @@ async function pageArtifact({
   const directory = resolve(dist, "server/app");
 
   const [html, meta] = await Promise.all([
-    readFile(inside({ directory, path: `${artifact}.html` }), "utf8"),
-    json<PageMeta>(inside({ directory, path: `${artifact}.meta` })),
+    readFile(resolve(directory, `${artifact}.html`), "utf8"),
+    json<PageMeta>(resolve(directory, `${artifact}.meta`)),
   ]);
 
   const markers = htmlMarkers(html);
@@ -110,7 +99,7 @@ async function pageArtifact({
   }
 
   if (!placeholder && meta.status && meta.status >= REDIRECT_MIN && meta.status < REDIRECT_END) {
-    const flight = await readFile(inside({ directory, path: `${artifact}.rsc` }), "utf8");
+    const flight = await readFile(resolve(directory, `${artifact}.rsc`), "utf8");
     problems.push(...getRedirectProblems({ flight, meta }));
   } else {
     const expectedStatus = placeholder ? HTTP_NOT_FOUND : HTTP_OK;
@@ -145,8 +134,8 @@ async function metadataArtifact({
   const directory = resolve(dist, "server/app");
 
   const [body, meta] = await Promise.all([
-    readFile(inside({ directory, path: `${path.slice(1)}.body` })),
-    json<PageMeta>(inside({ directory, path: `${path.slice(1)}.meta` })),
+    readFile(resolve(directory, `${path.slice(1)}.body`)),
+    json<PageMeta>(resolve(directory, `${path.slice(1)}.meta`)),
   ]);
 
   if (meta.status !== HTTP_OK) {

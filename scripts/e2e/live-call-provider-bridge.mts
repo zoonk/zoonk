@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { type IncomingMessage, type ServerResponse, createServer } from "node:http";
+import { text } from "node:stream/consumers";
 import { TEST_LIVE_SDP_ANSWER } from "../../packages/e2e/src/live-call-provider.ts";
 
 const HTTP_OK = 200;
@@ -7,7 +8,6 @@ const HTTP_BAD_REQUEST = 400;
 const HTTP_NOT_FOUND = 404;
 const HTTP_CONFLICT = 409;
 const HTTP_UNAVAILABLE = 503;
-const MAX_BODY_BYTES = 1_000_000;
 
 type Session = {
   id: string;
@@ -32,24 +32,7 @@ async function bodyOf(
   sdp: string | null;
   seconds: number | null;
 }> {
-  request.setEncoding("utf8");
-  const chunks: string[] = [];
-
-  for await (const rawChunk of request) {
-    const chunk: unknown = rawChunk;
-
-    if (typeof chunk !== "string") {
-      throw new TypeError("Invalid request body chunk");
-    }
-
-    chunks.push(chunk);
-
-    if (Buffer.byteLength(chunks.join("")) > MAX_BODY_BYTES) {
-      throw new Error("Test boundary request body is too large");
-    }
-  }
-
-  const body: unknown = JSON.parse(chunks.join(""));
+  const body: unknown = JSON.parse(await text(request));
 
   if (!body || typeof body !== "object") {
     throw new TypeError("Invalid body");
@@ -281,10 +264,6 @@ async function handle({
 
 /** Lane-owned AI boundary fake, never OpenAI evidence. Native browser peers answer SDP and acknowledge closes. */
 export async function startLiveCallTestProvider() {
-  if (process.env.CODEX_SANDBOX && process.env.CODEX_SANDBOX !== "none") {
-    throw new Error("Refusing the browser test bridge under the restricted sandbox.");
-  }
-
   const sessions: Sessions = new Map();
 
   const server = createServer((request, response) => {

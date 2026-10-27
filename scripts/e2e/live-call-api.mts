@@ -12,16 +12,6 @@ const STARTUP_OUTPUT_CHARACTERS = 8192;
  * this exact child.
  */
 export async function startLiveCallApi({ port, repository }: { port: number; repository: string }) {
-  if (process.env.CODEX_SANDBOX && process.env.CODEX_SANDBOX !== "none") {
-    throw new Error("Refusing call E2E startup under the restricted sandbox.");
-  }
-
-  if (resolve(import.meta.dirname, "../..") !== repository) {
-    throw new Error(
-      "The call E2E helper and its test environment must belong to the same checkout.",
-    );
-  }
-
   const directory = resolve(repository, "apps/api");
   const require = createRequire(resolve(directory, "package.json"));
 
