@@ -214,7 +214,7 @@ export const COLOR_GROUPS: readonly ColorGroup[] = [
         meaning: "Brain Power in words.",
         name: "brain-text",
         text: true,
-        use: "+50, +18 Brain Power, and Brain Power's number on a result's tile.",
+        use: "+50, +18 Brain Power, and Brain Power's number on a tile: a result's, and the level page's total.",
       },
       { meaning: "The buddy's Energy.", name: "energy", use: "Its meter, its bolt, its calendar." },
     ],
