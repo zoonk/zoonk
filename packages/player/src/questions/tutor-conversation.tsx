@@ -4,7 +4,6 @@ import { type MissionMomentView } from "@zoonk/core/sessions/completion-contract
 import { type TutorCards } from "@zoonk/learn/tutor-cards";
 import { type TutorIdentity, TutorMessage } from "@zoonk/learn/tutor-identity";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
@@ -28,10 +27,17 @@ import {
 } from "./lesson-question-provider";
 import { isLessonQuestionAnswerInProgress } from "./lesson-question-status";
 import { QuestionTurn } from "./lesson-question-turn";
-import { FirstDay, Suggestions, TurnDay, type TutorSuggestion } from "./tutor-conversation-parts";
+import {
+  ConversationSkeleton,
+  FirstDay,
+  Suggestions,
+  TurnDay,
+  type TutorSuggestion,
+} from "./tutor-conversation-parts";
 import { ConversationMissionMoment, useConversationMissionMoment } from "./tutor-mission-moment";
 import { type LessonQuestionThreadPage } from "./use-lesson-question-sessions";
 import { type LessonQuestionHost } from "./use-lesson-questions";
+import { useTurnSignals } from "./use-turn-signals";
 
 /**
  * The conversation draws the cards under the buddy's answers as the host says (`getTutorCards`):
@@ -50,6 +56,10 @@ type TutorConversationProps = TutorCards & {
   /** One action under the hello, such as picking a buddy before there's one. */
   greetingAction?: React.ReactNode;
   identity: TutorIdentity;
+  /** An answer the learner waited for came in, so the host's buddy can react to it. */
+  onAnswered?: () => void;
+  /** The learner asked something, so the host's buddy can react to it. */
+  onAsked?: () => void;
   placeholder: string;
   /** Up to three questions the learner can send with one tap before the first message. */
   suggestions: readonly TutorSuggestion[];
@@ -81,26 +91,6 @@ function LoadError() {
         <RequestErrorMessage error={error} />
       </p>
       <QuestionErrorAction error={error} onRetry={() => void controller.load()} />
-    </div>
-  );
-}
-
-function ConversationSkeleton() {
-  const t = useExtracted();
-
-  return (
-    <div className="flex flex-col gap-6">
-      <p className="sr-only" role="status">
-        {t("Loading the conversation…")}
-      </p>
-      <div aria-hidden="true" className="flex flex-col items-end gap-2">
-        <Skeleton className="h-12 w-3/5 rounded-xl" />
-      </div>
-      <div aria-hidden="true" className="flex flex-col gap-2">
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-5/6" />
-        <Skeleton className="h-4 w-2/3" />
-      </div>
     </div>
   );
 }
@@ -252,6 +242,8 @@ function ConversationBody({
   greeting,
   greetingAction,
   identity,
+  onAnswered,
+  onAsked,
   placeholder,
   renderPlanChange,
   missionMoment,
@@ -267,6 +259,7 @@ function ConversationBody({
   const answering = state.questions.some((question) => isLessonQuestionAnswerInProgress(question));
 
   useBroughtQuestion({ changeDraft: controller.changeDraft, draft });
+  useTurnSignals({ onAnswered, onAsked });
 
   return (
     <section

@@ -1,5 +1,6 @@
 "use client";
 
+import { type ActorHandle, type BuddyActName } from "@zoonk/ui/components/buddy-actor";
 import { useExtracted } from "next-intl";
 import { BuddyArt } from "./buddy-art";
 import { BuddyStageName } from "./buddy-labels";
@@ -28,22 +29,25 @@ function BuddyLine({ stage }: { stage: BuddyStatusView["stage"] }) {
 
 /**
  * The buddy on one compact row at the top of its tab: its face, its name (the page's heading) and
- * what it is, with the row's controls at its end (`children`).
+ * what it is, with the row's controls at its end (`children`). `faceRef` makes the buddy act, as
+ * when its answer comes in.
  */
 export function BuddyHeader({
   buddy,
   children,
+  faceRef,
   name,
   stage,
 }: {
   buddy: LearnBuddy;
   children?: React.ReactNode;
+  faceRef?: React.Ref<ActorHandle<BuddyActName>>;
   name: string;
   stage: BuddyStatusView["stage"];
 }) {
   return (
     <header className="flex items-center gap-2.5">
-      <BuddyArt buddy={buddy} className="size-8" />
+      <BuddyArt buddy={buddy} className="size-8" ref={faceRef} />
       <div className="flex min-w-0 flex-1 flex-col">
         <h1 className="truncate text-sm leading-snug font-semibold">{name}</h1>
         <p className="text-muted-foreground truncate text-xs leading-snug">

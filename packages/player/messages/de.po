@@ -4082,7 +4082,7 @@ msgctxt "6dIxDP"
 msgid "Yesterday"
 msgstr "Gestern"
 
-#: src/questions/tutor-conversation.tsx
+#: src/questions/tutor-conversation-parts.tsx
 msgctxt "0JKnFv"
 msgid "Loading the conversation…"
 msgstr "Unterhaltung wird geladen…"

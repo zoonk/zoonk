@@ -1,6 +1,7 @@
 "use client";
 
 import { type ResolvedBuddy } from "@zoonk/core/profile/default-buddy";
+import { type ActorHandle, type BuddyActName } from "@zoonk/ui/components/buddy-actor";
 import { Button } from "@zoonk/ui/components/button";
 import {
   DropdownMenu,
@@ -9,6 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
+import { getBuddyEnergyState } from "@zoonk/utils/buddy";
 import { safeAsync } from "@zoonk/utils/error";
 import {
   CalendarDaysIcon,
@@ -44,6 +46,7 @@ import { BuddyGlassesSheet } from "./buddy-glasses-sheet";
 import { BUDDY_COLUMN_CLASS, BuddyHeader } from "./buddy-header";
 import { type BuddyStatusView, toLearnBuddy } from "./buddy-status-view";
 import { BuddyToday } from "./buddy-today";
+import { type LearnBuddy } from "./use-buddy-name";
 
 export { BuddyDaySkeleton } from "./buddy-day";
 export { BUDDY_COLUMN_CLASS } from "./buddy-header";
@@ -219,6 +222,24 @@ function PickBuddyButton({ onPick }: { onPick: () => void }) {
   );
 }
 
+/**
+ * The buddy's face at the top of its tab, reacting to the conversation: it glances at what the
+ * learner sends and smiles when its answer comes in. Only while it's awake: asleep it naps on, and
+ * glowing it's already beaming, with its eyes shut, so a smile would swap its face away.
+ */
+function useChatFace(buddy: LearnBuddy) {
+  const face = useRef<ActorHandle<BuddyActName>>(null);
+  const awake = getBuddyEnergyState(buddy.energy, { studiedToday: buddy.studiedToday }) === "awake";
+
+  const react = (act: BuddyActName) => {
+    if (awake) {
+      void face.current?.play(act);
+    }
+  };
+
+  return { face, onAnswered: () => react("smile"), onAsked: () => react("glance") };
+}
+
 function useGlassesCount(status: BuddyStatusView): string {
   const t = useExtracted();
   const earned = status.glasses.filter((item) => item.earned).length;
@@ -261,6 +282,7 @@ export function BuddyScreen({
   });
 
   const buddy = toLearnBuddy({ buddy: current, status });
+  const chatFace = useChatFace(buddy);
 
   const content = useTutorConversationContent({
     buddy,
@@ -278,9 +300,14 @@ export function BuddyScreen({
     askBuddy: () => columnRef.current?.querySelector("textarea")?.focus(),
   };
 
-  const tutorContent: TutorConversationContent = current.picked
-    ? content
-    : { ...content, greetingAction: <PickBuddyButton onPick={() => setEditing(true)} /> };
+  const tutorContent: TutorConversationContent = {
+    ...content,
+    greetingAction: current.picked ? undefined : (
+      <PickBuddyButton onPick={() => setEditing(true)} />
+    ),
+    onAnswered: chatFace.onAnswered,
+    onAsked: chatFace.onAsked,
+  };
 
   return (
     <PageWithAside
@@ -301,7 +328,7 @@ export function BuddyScreen({
       className="flex-1"
     >
       <div className={BUDDY_COLUMN_CLASS} data-slot="buddy-screen" ref={columnRef}>
-        <BuddyHeader buddy={buddy} name={name} stage={status.stage}>
+        <BuddyHeader buddy={buddy} faceRef={chatFace.face} name={name} stage={status.stage}>
           <BuddyToday
             buddy={buddy}
             className="min-[72rem]:hidden"

@@ -1,5 +1,6 @@
 "use client";
 
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { useExtracted, useFormatter } from "next-intl";
 import { useLessonQuestionController } from "./lesson-question-provider";
@@ -99,4 +100,25 @@ export function FirstDay() {
   }
 
   return <DayLabel>{dayLabel(new Date(first.createdAt))}</DayLabel>;
+}
+
+/** The conversation's place while its messages load: a question, then an answer's lines. */
+export function ConversationSkeleton() {
+  const t = useExtracted();
+
+  return (
+    <div className="flex flex-col gap-6">
+      <p className="sr-only" role="status">
+        {t("Loading the conversation…")}
+      </p>
+      <div aria-hidden="true" className="flex flex-col items-end gap-2">
+        <Skeleton className="h-12 w-3/5 rounded-xl" />
+      </div>
+      <div aria-hidden="true" className="flex flex-col gap-2">
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-5/6" />
+        <Skeleton className="h-4 w-2/3" />
+      </div>
+    </div>
+  );
 }

@@ -18,6 +18,10 @@ export type TutorConversationContent = TutorCards & {
   /** One action under the hello, such as customizing the learner's default buddy. */
   greetingAction?: React.ReactNode;
   identity: { avatar: React.ReactNode; name: string };
+  /** An answer the learner waited for came in: the buddy's face reacts to it. */
+  onAnswered?: () => void;
+  /** The learner asked something: the buddy's face reacts to it. */
+  onAsked?: () => void;
   placeholder: string;
   suggestions: { id: string; label: string }[];
 };

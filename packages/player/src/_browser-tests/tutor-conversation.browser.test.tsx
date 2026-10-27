@@ -14,11 +14,13 @@ import { buildTutor } from "../_test-utils/tutor-config";
 import { buildLesson } from "../preview/preview-lesson";
 import { teachingStep } from "../preview/preview-steps";
 import { TutorConversation } from "../questions/tutor-conversation";
+import { type LessonQuestionThreadPage } from "../questions/use-lesson-question-sessions";
 
 /**
  * The buddy's conversation as a page of its own: an answer that proposes a plan change or offers
- * one of the app's tools shows its card with the words that say it, and an answer whose stream
- * this page lost is followed until it's done, without a reload.
+ * one of the app's tools shows its card with the words that say it, an answer whose stream this
+ * page lost is followed until it's done, without a reload, and the host hears when an answer the
+ * learner waited for comes in, so the buddy's face can react.
  */
 
 /** The first poll for an answer still being written comes within 1.2 s (1 s, give or take 20%). */
@@ -63,8 +65,17 @@ const OFFERED_CALL: TutorToolOffer = {
 
 function renderConversation({
   draft,
+  initialThread,
+  onAnswered,
+  onAsked,
   openBlock,
-}: { draft?: string; openBlock?: (blockId: string) => void } = {}) {
+}: {
+  draft?: string;
+  initialThread?: LessonQuestionThreadPage;
+  onAnswered?: () => void;
+  onAsked?: () => void;
+  openBlock?: (blockId: string) => void;
+} = {}) {
   render(
     <TutorConversation
       composerLabel="Message Zu"
@@ -72,6 +83,9 @@ function renderConversation({
       goalId="01a11014-0000-7000-8000-00000000000a"
       greeting="Hi! I'm Zu."
       identity={{ avatar: null, name: "Zu" }}
+      initialThread={initialThread}
+      onAnswered={onAnswered}
+      onAsked={onAsked}
       placeholder="Message Zu"
       renderPlanChange={({ change }) => <p data-status={change.status}>Card: {change.reason}</p>}
       renderToolOffer={(offer) => <p>Tool: {offer.kind}</p>}
@@ -177,6 +191,41 @@ describe("the buddy's conversation", () => {
       .toHaveAttribute("data-status", "proposed");
 
     await expect.element(saturdays).toHaveAttribute("data-status", "replaced");
+  });
+
+  it("tells the host when the learner asks and when that answer comes in, never for earlier ones", async () => {
+    const api = stubTutorApi({ lesson: buildLesson([teachingStep("check")]) });
+
+    api.questions = [
+      api.question({ answer: "Orbits are falling.", question: "Orbits?", status: "completed" }),
+    ];
+
+    const stream = tutorAnswerStream();
+    api.next("answer", () => Promise.resolve(stream.response));
+    const onAnswered = vi.fn();
+    const onAsked = vi.fn();
+
+    renderConversation({
+      initialThread: { hasMore: false, nextCursor: null, questions: api.questions },
+      onAnswered,
+      onAsked,
+    });
+
+    await expect.element(page.getByText("Orbits are falling.")).toBeVisible();
+    expect(onAsked).not.toHaveBeenCalled();
+
+    await ask("Why doesn't the Moon fall?");
+    await expect.poll(() => onAsked.mock.calls.length).toBe(1);
+
+    stream.write("It does: it keeps missing the Earth.");
+    await expect.element(page.getByText("It does: it keeps missing the Earth.")).toBeVisible();
+    expect(onAnswered).not.toHaveBeenCalled();
+
+    stream.finish();
+    stream.close();
+    await expect.element(page.getByText("Thinking…")).not.toBeInTheDocument();
+    await expect.poll(() => onAnswered.mock.calls.length).toBe(1);
+    expect(onAsked).toHaveBeenCalledOnce();
   });
 
   it("shows an app tool the answer offered under its words", async () => {
