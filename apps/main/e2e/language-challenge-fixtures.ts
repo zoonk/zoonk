@@ -6,6 +6,7 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { createLanguageLearner } from "./language-learner";
+import { saveMissions } from "./study-day";
 
 /** A written unit call stays visible on both plans, while only Plus can play it. */
 export async function createLanguageChallenge({
@@ -72,6 +73,12 @@ export async function createLanguageChallenge({
         sessionId: session.id,
       })
     : null;
+
+  if (nextBlock) {
+    await saveMissions(session.id, [
+      { anchor: { blockKind: "learn" }, kind: "somethingNew", total: 1 },
+    ]);
+  }
 
   return { ...learner, block, boss, nextBlock, nextLesson: next.lesson };
 }
