@@ -8,6 +8,7 @@ import { ChevronLeftIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { getStepMoves } from "../_utils/step-moves";
+import { CeremonyClosingContext } from "../ceremonies/ceremony-closing";
 import { TaskFrame, type TaskFrameAside, TaskMainButton } from "../shell/task-frame";
 import { STEP_TITLE_SLOT } from "./step-card";
 import { StepDots } from "./step-dots";
@@ -33,8 +34,9 @@ export type StepsItem = {
   option?: React.ReactNode;
   /**
    * A full-screen moment for this step (a ceremony), shown once as the learner reaches it, before
-   * the step itself, so the step's own motion doesn't play hidden behind it. It calls `close` when
-   * it's over, and the step takes the focus.
+   * the step itself, so the step's own motion doesn't play hidden behind it: the step is drawn
+   * under it once it begins to close, so it fades out over the step. It calls `close` once it's
+   * gone, and the step takes the focus.
    */
   moment?: (close: () => void) => React.ReactNode;
 };
@@ -67,6 +69,32 @@ export function StepsBackButton({ onClick }: { onClick: () => void }) {
 /** What only wide screens show (`when`), the last step's actions there; otherwise as it is. */
 function WideOnly({ children, when }: { children: React.ReactNode; when: boolean }) {
   return when ? <div className="contents max-lg:hidden">{children}</div> : children;
+}
+
+/**
+ * A step's full-screen moment (`StepsItem.moment`), shown once as the learner reaches it: drawn on
+ * its own until it begins to close, then over the step (`showsStep`) as it fades, and gone once
+ * it's closed. `shown` lists the steps whose moment closed, so the step takes the focus then.
+ */
+function useStepMoment(item: StepsItem | undefined) {
+  const [shown, setShown] = useState<string[]>([]);
+  const [closing, setClosing] = useState<string | null>(null);
+
+  if (!item?.moment || shown.includes(item.id)) {
+    return { moment: null, shown, showsStep: true };
+  }
+
+  const { id } = item;
+
+  return {
+    moment: (
+      <CeremonyClosingContext value={() => setClosing(id)}>
+        {item.moment(() => setShown((ids) => [...ids, id]))}
+      </CeremonyClosingContext>
+    ),
+    shown,
+    showsStep: closing === id,
+  };
 }
 
 /**
@@ -103,7 +131,6 @@ export function Steps({
   const t = useExtracted();
   const asideShown = useTaskAsideShown();
   const [index, setIndex] = useState(0);
-  const [momentsShown, setMomentsShown] = useState<string[]>([]);
   const [stepsLeft, setStepsLeft] = useState<string[]>([]);
   const stepRef = useRef<HTMLDivElement>(null);
   const focusedIndex = useRef(0);
@@ -119,6 +146,7 @@ export function Steps({
       : reached;
 
   const item = items[current];
+  const { moment, showsStep, shown: momentsShown } = useStepMoment(item);
   const phone = getStepMoves({ current, steps: items, wide: false });
   const wide = getStepMoves({ current, steps: items, wide: true });
   // Some step sits beside the others from `lg`: each arrangement's dots and last-step actions are
@@ -167,17 +195,13 @@ export function Steps({
     return null;
   }
 
-  const moment = item.moment && !momentsShown.includes(item.id) ? item.moment : null;
-
-  const closeMoment = () => setMomentsShown((shown) => [...shown, item.id]);
-
   return (
     <TaskFrame
       aside={aside}
       closeOnEscape
       exitHref={exitHref}
       footer={
-        moment ? null : (
+        showsStep ? (
           <>
             <TaskActions>
               {phone.back !== -1 && <StepsBackButton onClick={back} />}
@@ -196,7 +220,7 @@ export function Steps({
             {item.option}
             {isLastWide && <WideOnly when={!isLastHere}>{finalOptions}</WideOnly>}
           </>
-        )
+        ) : null
       }
       headerTitle={
         phone.total > 1 ? (
@@ -215,13 +239,12 @@ export function Steps({
         ) : null
       }
     >
-      {moment ? (
-        moment(closeMoment)
-      ) : (
+      {showsStep && (
         <div className="flex flex-col gap-4" data-slot="steps-step" key={item.id} ref={stepRef}>
           <CelebrationScope play={!stepsLeft.includes(item.id)}>{item.content}</CelebrationScope>
         </div>
       )}
+      {moment}
     </TaskFrame>
   );
 }

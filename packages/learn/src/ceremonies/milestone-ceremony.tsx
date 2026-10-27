@@ -29,6 +29,7 @@ import { toBeltColor } from "../_utils/use-belt-name";
 import { SCREEN_STEADY_MS, useSteady } from "../_utils/use-steady";
 import { type LearnBuddy, resolveLearnBuddy, useBuddyName } from "../buddies/use-buddy-name";
 import { useLearnAnalytics } from "../learn-context";
+import { useCeremonyClosing } from "./ceremony-closing";
 import { type CeremonyMilestone, toBuddyGlasses, useCeremonyCopy } from "./use-ceremony-copy";
 
 export type { CeremonyMilestone } from "./use-ceremony-copy";
@@ -218,6 +219,13 @@ function CeremonyMoment({
   const canWear = Boolean(glasses && onWearGlasses);
   const copy = useCeremonyCopy({ buddy, canWear, milestone });
   const isSteady = useSteady(SCREEN_STEADY_MS);
+  const onClosing = useCeremonyClosing();
+
+  // What it crowned is drawn under it as it begins to fade, so the fade ends on the result.
+  function close() {
+    setOpen(false);
+    onClosing();
+  }
 
   async function confirm() {
     if (!isSteady()) {
@@ -228,18 +236,22 @@ function CeremonyMoment({
       await onWearGlasses(glasses);
     }
 
-    setOpen(false);
+    close();
   }
 
   function decline() {
     if (isSteady()) {
-      setOpen(false);
+      close();
     }
   }
 
   return (
     <Dialog
-      onOpenChange={setOpen}
+      onOpenChange={(isOpen) => {
+        if (!isOpen) {
+          close();
+        }
+      }}
       onOpenChangeComplete={(isOpen) => {
         if (!isOpen) {
           onClose?.();

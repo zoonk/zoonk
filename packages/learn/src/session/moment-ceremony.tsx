@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { STEP_TITLE_SLOT } from "../_components/step-card";
 import { focusStepTitle } from "../_components/steps";
+import { CeremonyClosingContext } from "../ceremonies/ceremony-closing";
 import { type CeremonyMilestone } from "../ceremonies/use-ceremony-copy";
 
 /** The host's full-screen ceremony for a milestone the block earned, closed with `onClose`. */
@@ -29,15 +30,18 @@ export function getCeremonyMoment({
 }
 
 /**
- * What the ceremony leaves behind once it closes: the moment, whose title (`MOMENT_TITLE_PROPS`)
- * takes the focus the ceremony's dialog took with it, so a screen reader reads on from there.
+ * What the ceremony leaves behind: the moment, drawn under the ceremony as it fades out, whose
+ * title (`MOMENT_TITLE_PROPS`) takes the focus the ceremony's dialog took with it once it's gone
+ * (`closed`), so a screen reader reads on from there.
  */
-function AfterCeremony({ children }: { children: React.ReactNode }) {
+function AfterCeremony({ children, closed }: { children: React.ReactNode; closed: boolean }) {
   const moment = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    focusStepTitle(moment.current);
-  }, []);
+    if (closed) {
+      focusStepTitle(moment.current);
+    }
+  }, [closed]);
 
   return (
     <div className="contents" ref={moment}>
@@ -48,8 +52,9 @@ function AfterCeremony({ children }: { children: React.ReactNode }) {
 
 /**
  * A block's moment after its milestone's ceremony: the ceremony comes first, on its own, and the
- * moment (its missions stamping in, its bars filling) shows once it closes, so nothing plays
- * hidden behind it.
+ * moment (its missions stamping in, its bars filling) is drawn under it once it begins to close,
+ * so nothing plays hidden behind it and the ceremony fades out over the moment, never over an
+ * empty screen.
  */
 export function MomentAfterCeremony({
   children,
@@ -60,15 +65,20 @@ export function MomentAfterCeremony({
   milestone: CeremonyMilestone | null;
   render?: MomentCeremony;
 }) {
-  const [closed, setClosed] = useState(false);
+  const [stage, setStage] = useState<"closed" | "closing" | "open">("open");
 
   if (!render || !milestone) {
     return children;
   }
 
-  if (closed) {
-    return <AfterCeremony>{children}</AfterCeremony>;
-  }
-
-  return render(milestone, () => setClosed(true));
+  return (
+    <>
+      {stage !== "open" && <AfterCeremony closed={stage === "closed"}>{children}</AfterCeremony>}
+      {stage !== "closed" && (
+        <CeremonyClosingContext value={() => setStage("closing")}>
+          {render(milestone, () => setStage("closed"))}
+        </CeremonyClosingContext>
+      )}
+    </>
+  );
 }
