@@ -3,7 +3,6 @@ import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
-import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
@@ -391,11 +390,14 @@ describe("an activity done from Today before the learner starts the day", () => 
         where: { id: newer.goal.id },
       }),
       learningProfileFixture({ activeGoalId: round.goal.id, userId: user.id }),
-      learningEventFixture({
-        endedAt: new Date(SESSION_NOW.getTime() - MS_PER_DAY),
-        goalId: round.goal.id,
-        userId: user.id,
-      }),
+      // Two weeks of study retire the first steps, so Today offers the day's own missions.
+      dailyProgressFixtureMany(
+        Array.from({ length: 14 }, (_, index) => ({
+          date: new Date(SESSION_TODAY.getTime() - (index + 1) * MS_PER_DAY),
+          timeSpentSeconds: 600,
+          userId: user.id,
+        })),
+      ),
     ]);
 
     const review = await dueWordFixture(user.id);
