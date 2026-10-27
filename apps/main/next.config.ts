@@ -43,22 +43,14 @@ const oldStartRedirects = localePrefixes.flatMap((prefix) => [
 ]);
 
 /**
- * Pages folded into others: the language setting lives in Appearance, "My courses" gave way to
- * Today, where a learner's goals and their courses are, and the Plan holds what the Progress and
- * Content tabs and the subject map had. The Plan was called the Journey for a while, so its old
- * addresses (a subject's page too) lead to the same page. Chapter and unit pages keep their URLs.
- * Help lives at `/support`, and `/help` is the address people guess.
+ * Pages folded into others: the language setting lives in Appearance, and "My courses" gave way to
+ * Today, where a learner's goals and their courses are. Help lives at `/support`, and `/help` is
+ * the address people guess.
  */
 const movedPageRedirects = localePrefixes.flatMap((prefix) => [
   { destination: `${prefix}/settings/appearance`, permanent: true, source: `${prefix}/language` },
   { destination: `${prefix}/today`, permanent: true, source: `${prefix}/my` },
   { destination: `${prefix}/support`, permanent: true, source: `${prefix}/help` },
-  { destination: `${prefix}/plan/:rest*`, permanent: true, source: `${prefix}/journey/:rest*` },
-  ...["/progress", "/content", "/content/map"].map((path) => ({
-    destination: `${prefix}/plan`,
-    permanent: true,
-    source: `${prefix}${path}`,
-  })),
 ]);
 
 const nextConfig: NextConfig = {
