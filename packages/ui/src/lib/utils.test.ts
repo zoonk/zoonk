@@ -25,4 +25,12 @@ describe(cn, () => {
     expect(cn("max-w-column", "max-w-none")).toBe("max-w-none");
     expect(cn("max-w-150", "lg:max-w-page")).toBe("max-w-150 lg:max-w-page");
   });
+
+  it("treats the motion tokens as their kind's values", () => {
+    expect(cn("duration-quick", "duration-fill")).toBe("duration-fill");
+    expect(cn("duration-150", "duration-base")).toBe("duration-base");
+    expect(cn("ease-out", "ease-spring")).toBe("ease-spring");
+    expect(cn("animate-settle", "animate-none")).toBe("animate-none");
+    expect(cn("animate-spin", "animate-pop")).toBe("animate-pop");
+  });
 });

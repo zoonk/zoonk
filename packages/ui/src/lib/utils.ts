@@ -6,14 +6,22 @@ import { createCn } from "cn/config";
  * (`text-lead` and `text-label` bring their quiet color as a default), so a color beside them stays
  * and another size replaces them; `text-readout` is a number's face, kept beside a size and a
  * color; `rounded-option` is a radius and the measures (`max-w-column`, `max-w-form`,
- * `max-w-wide`) are widths, so another one replaces them.
+ * `max-w-wide`) are widths, so another one replaces them. The motion tokens are their kind's too:
+ * `duration-quick` to `duration-burst` are durations, `ease-spring` an easing and `animate-settle`,
+ * `animate-pop`, `animate-hop`, `animate-fill` and `animate-spark` animations.
  */
 export const cn = createCn({
   extend: {
     classGroups: {
+      duration: [{ duration: ["quick", "base", "pop", "settle", "fill", "burst"] }],
       "font-size": [{ text: ["display", "headline", "title", "section", "lead", "label"] }],
       readout: [{ text: ["readout"] }],
     },
-    theme: { container: ["column", "form", "wide"], radius: ["option"] },
+    theme: {
+      animate: ["settle", "pop", "hop", "fill", "spark"],
+      container: ["column", "form", "wide"],
+      ease: ["spring"],
+      radius: ["option"],
+    },
   },
 });
