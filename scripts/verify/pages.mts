@@ -193,7 +193,7 @@ const report = renderReport({
     ...header,
     ...(learner
       ? [
-          `Exposure: each path opened signed out${intruder ? ` and as ${values.intruder}` : ""} must not carry ${learner.email}'s email or name`,
+          `Exposure: each path opened signed out${intruder ? ` and as ${values.intruder}` : ""} must not carry ${learner.email}'s email, account id or full name`,
         ]
       : []),
     ...(baseline ? [`Baseline: ${values.baseline}`] : []),

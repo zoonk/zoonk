@@ -59,6 +59,19 @@ export function classifyRequest(
   return DATA_TYPES.has(request.resourceType) ? "data" : "asset";
 }
 
+/**
+ * A path as reports and file names show it: query values replaced by "…", since a callback's or a
+ * signed URL's query can carry a credential.
+ */
+export function redactQuery(path: string): string {
+  const url = new URL(path, "http://redacted.invalid");
+  const names = [...url.searchParams.keys()];
+
+  return names.length === 0
+    ? url.pathname
+    : `${url.pathname}?${names.map((name) => `${name}=…`).join("&")}`;
+}
+
 /** Where a request or link goes, as a page's own links write it: path and query, without Next.js's `_rsc`. */
 export function pathOf(url: string | URL): string {
   const parsed = new URL(url);

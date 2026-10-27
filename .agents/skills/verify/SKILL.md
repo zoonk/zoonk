@@ -50,7 +50,7 @@ Passing checks don't show the change working. Run the app and do what the change
 
 - On `pnpm dev`, it judges correctness and layout. Speed, skeletons, late changes, prefetching, memory and regressions are judged only on a production build: run it again on `pnpm start` with `--throttle` and, for pages a learner moves between, `--nav`.
 - Before you change a page, save a run of it; afterwards pass that run's folder as `--baseline` to see what got slower or heavier, and before and after side by side in the contact sheets.
-- `--email` also opens every path signed out, and `--intruder <another learner>` as someone else: neither may receive the learner's name or email. `--soak 10` walks the paths ten times and compares memory after the first lap and the last.
+- `--email` also opens every path signed out, and `--intruder <another learner>` as someone else: neither may receive the learner's email, account id or full name. `--soak 10` walks the paths ten times and compares memory after the first lap and the last.
 - Narrow the run while you fix (`--viewports phone,laptop`), then run every screen once at the end.
 - Look at each page's contact sheets first (`screens.png`: every screen in each scheme; `paints.png`: every paint of each load), then open a full screenshot or frame where something looks off. A change to speed or server cost reports the numbers before and after on the same setup.
 

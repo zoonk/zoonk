@@ -5,6 +5,7 @@ import { type ChangedFile, auditDiff, parseDiff, renderAudit } from "./diff-audi
 /** Built at runtime, so this file never holds a credential or a focused test the audit would flag. */
 const LIVE_KEY = ["sk", "live", "4eC39HqLyjWDarjtT1zdp7dc"].join("_");
 const FOCUSED = ["it", "only"].join(".");
+const FOCUSED_EACH = ["it", "only", "each"].join(".");
 
 function file(path: string, lines: string[], created = false): ChangedFile {
   return { added: lines.map((text, index) => ({ line: index + 1, text })), created, path };
@@ -71,6 +72,7 @@ describe("questioning a diff", () => {
       [
         file("apps/main/src/config.ts", [`const key = "${LIVE_KEY}";`]),
         file("apps/main/src/x.test.ts", [`${FOCUSED}("works", () => {});`]),
+        file("apps/main/src/y.test.ts", [`${FOCUSED_EACH}([1, 2])("works with %i", () => {});`]),
         file("apps/main/src/app/api/x/route.ts", ["export async function POST() {}"], true),
       ],
       () => false,
@@ -78,7 +80,7 @@ describe("questioning a diff", () => {
 
     assert.deepEqual(
       flags.map((flag) => `${flag.rule.name}${flag.rule.blocks ? " (blocks)" : ""}`),
-      ["Secret (blocks)", "Focused test (blocks)", "Route handler"],
+      ["Secret (blocks)", "Focused test (blocks)", "Focused test (blocks)", "Route handler"],
     );
 
     assert.match(

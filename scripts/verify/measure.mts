@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { join } from "node:path";
 import { type Browser, type BrowserContextOptions, type Page } from "@playwright/test";
 import {
@@ -19,7 +20,7 @@ import {
   transferredBytes,
   visibleLinks,
 } from "./probe.mts";
-import { classifyRequest, pathOf } from "./requests.mts";
+import { classifyRequest, pathOf, redactQuery } from "./requests.mts";
 import { readCpuMs } from "./server-process.mts";
 import { LOAD_TIMEOUT_MS, tapTo } from "./tap.mts";
 import { type Scheme, type ViewportName } from "./viewports.mts";
@@ -59,8 +60,19 @@ export type NavigationReport = NavigationMeasurement & {
   viewport: ViewportName;
 };
 
+const QUERY_HASH_LENGTH = 8;
+
+/** A file name for a path: its redacted form, plus a hash of its query so two queries don't collide. */
 function slug(path: string): string {
-  return path.replaceAll(/[^a-z0-9]+/giu, "-").replaceAll(/^-|-$/gu, "") || "home";
+  const { search } = new URL(path, "http://slug.invalid");
+
+  const name =
+    redactQuery(path)
+      .replaceAll(/[^a-z0-9]+/giu, "-")
+      .replaceAll(/^-|-$/gu, "") || "home";
+
+  const hash = createHash("sha256").update(search).digest("hex").slice(0, QUERY_HASH_LENGTH);
+  return search ? `${name}-${hash}` : name;
 }
 
 /**
@@ -103,7 +115,9 @@ async function readLoadedPage(page: Page, traffic: Traffic) {
     skeletonSeenMs: probe?.skeletonFrames[0] ?? null,
     timeOrigin: await page.evaluate(() => performance.timeOrigin),
     truncated: await page.evaluate(findTruncated),
-    unprefetchedLinks: links.filter((link) => !prefetched.has(link)),
+    unprefetchedLinks: links
+      .filter((link) => !prefetched.has(link))
+      .map((link) => redactQuery(link)),
   };
 }
 
@@ -172,7 +186,7 @@ export async function measureLoad(
       findings: judgeLoad(measurement),
       frames: paints,
       framesDirectory: `${name}-frames`,
-      path,
+      path: redactQuery(path),
       screenshots: appearances.screenshots,
       viewport,
     };
@@ -269,9 +283,9 @@ async function measureTap(
       timeOrigin: tapAt,
     }),
     framesDirectory,
-    from,
+    from: redactQuery(from),
     settleMs: timed?.settleMs ?? null,
-    to,
+    to: redactQuery(to),
     viewport,
   };
 }

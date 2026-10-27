@@ -7,13 +7,14 @@ import {
   totalBlockingTime,
 } from "./checks.mts";
 import { type NavigationMeasurement, judgeNavigation } from "./navigation-checks.mts";
-import { type RequestRecord, classifyRequest, pathOf } from "./requests.mts";
+import { type RequestRecord, classifyRequest, pathOf, redactQuery } from "./requests.mts";
 import { parseCpuTime } from "./server-process.mts";
 
 const PAGE = "http://localhost:3000";
 const STEADY_GAP_MS = 800;
 const FIRST_PAINT_MS = 800;
 const BLOCKED_MS = 70;
+const STRADDLE_BLOCKED_MS = 150;
 
 function requestTo(path: string, overrides: Partial<RequestRecord> = {}): RequestRecord {
   return { headers: {}, method: "GET", resourceType: "fetch", url: `${PAGE}${path}`, ...overrides };
@@ -189,6 +190,13 @@ describe("main-thread blocking and cut-off text", () => {
 
     // The first task ran before the first paint; the third blocked nothing.
     assert.equal(totalBlockingTime(tasks, FIRST_PAINT_MS), BLOCKED_MS);
+
+    // A task that straddles the first paint counts for its part after it.
+    assert.equal(
+      totalBlockingTime([{ at: 700, duration: 300 }], FIRST_PAINT_MS),
+      STRADDLE_BLOCKED_MS,
+    );
+
     assert.deepEqual(checks(load({ blockingMs: 700 })), ["fail blocking time"]);
   });
 
@@ -260,6 +268,17 @@ describe("where a link or request goes", () => {
   it("keeps the query, which tells pages apart, and drops Next.js's cache key", () => {
     assert.equal(pathOf(`${PAGE}/buddy/earlier?cursor=b&_rsc=x1`), "/buddy/earlier?cursor=b");
     assert.equal(pathOf(`${PAGE}/plan?_rsc=x1`), "/plan");
+  });
+});
+
+describe("paths in reports", () => {
+  it("keeps a query's names and drops its values, which can carry a credential", () => {
+    assert.equal(
+      redactQuery("/auth/callback?token=secret&next=%2Ftoday"),
+      "/auth/callback?token=…&next=…",
+    );
+
+    assert.equal(redactQuery("/plan"), "/plan");
   });
 });
 

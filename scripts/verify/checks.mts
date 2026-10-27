@@ -79,14 +79,20 @@ const SESSION_LIMIT_MS = 5000;
 /** A long task's share that blocks input: everything past 50 ms. */
 const BLOCKING_AFTER_MS = 50;
 
-/** Total Blocking Time as Lighthouse scores it: long tasks' time past 50 ms, from the first paint. */
+/**
+ * Total Blocking Time as Lighthouse scores it: each long task clipped to start no earlier than the
+ * first contentful paint, and its time past 50 ms counted, so a task that straddles the paint
+ * still counts for its part after it.
+ */
 export function totalBlockingTime(
   longTasks: { at: number; duration: number }[],
   fcpMs: number | null,
 ): number {
-  return longTasks
-    .filter((task) => fcpMs === null || task.at >= fcpMs)
-    .reduce((total, task) => total + Math.max(0, task.duration - BLOCKING_AFTER_MS), 0);
+  return longTasks.reduce((total, task) => {
+    const start = Math.max(task.at, fcpMs ?? task.at);
+    const duration = task.at + task.duration - start;
+    return total + Math.max(0, duration - BLOCKING_AFTER_MS);
+  }, 0);
 }
 
 /** CLS as Core Web Vitals scores it: the largest session window's total, not every shift's. */

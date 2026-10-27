@@ -3,6 +3,7 @@ import { openPage, waitForQuiet } from "./browser.mts";
 import { type Finding } from "./checks.mts";
 import { type Target } from "./measure.mts";
 import { isNextDev } from "./probe.mts";
+import { redactQuery } from "./requests.mts";
 import { readRssMb } from "./server-process.mts";
 import { LOAD_TIMEOUT_MS, tapTo } from "./tap.mts";
 
@@ -24,6 +25,8 @@ export type SoakReport = {
   paths: string[];
   /** Memory is judged only on a production build: dev tooling and on-demand compiling grow it. */
   production: boolean;
+  /** The tab kept one document through every lap; a reload resets the browser's memory. */
+  sameDocument: boolean;
 };
 
 /**
@@ -66,13 +69,14 @@ export async function measureSoak(
   const [start = "/"] = paths;
   const lap = [...paths.slice(1), start];
   const samples: MemorySample[] = [];
-  const state = { production: false };
+  const state = { production: false, sameDocument: false, startedAt: 0 };
 
   try {
     await cdp.send("Performance.enable");
     await page.goto(new URL(start, target.baseUrl).toString(), { timeout: LOAD_TIMEOUT_MS });
     await waitForQuiet(page, traffic);
     state.production = !(await page.evaluate(isNextDev));
+    state.startedAt = await page.evaluate(() => performance.timeOrigin);
 
     for (let round = 1; round <= laps; round += 1) {
       for (const to of paths.length > 1 ? lap : []) {
@@ -94,6 +98,8 @@ export async function measureSoak(
         samples.push(await sample(cdp, target.serverPid));
       }
     }
+    // A path with no link to the next one is loaded instead, which replaces the document.
+    state.sameDocument = (await page.evaluate(() => performance.timeOrigin)) === state.startedAt;
   } finally {
     await context.close();
   }
@@ -104,11 +110,21 @@ export async function measureSoak(
     throw new Error("The soak took no memory samples.");
   }
 
-  return { first, laps, last, paths, production: state.production };
+  return {
+    first,
+    laps,
+    last,
+    paths: paths.map((path) => redactQuery(path)),
+    production: state.production,
+    sameDocument: paths.length > 1 && state.sameDocument,
+  };
 }
 
-/** Memory that keeps growing lap after lap; one path reloads, so only the server's counts there. */
-export function judgeSoak({ first, laps, last, paths, production }: SoakReport): Finding[] {
+/**
+ * Memory that keeps growing lap after lap. The browser's counts only when the tab kept one
+ * document (one path reloads itself, and a missing link loads the next page), the server's always.
+ */
+export function judgeSoak({ first, laps, last, production, sameDocument }: SoakReport): Finding[] {
   if (laps < 2 || !production) {
     return [];
   }
@@ -123,7 +139,7 @@ export function judgeSoak({ first, laps, last, paths, production }: SoakReport):
       value: perLap(first.serverRssMb, last.serverRssMb),
       what: "server memory (RSS)",
     },
-    ...(paths.length > 1
+    ...(sameDocument
       ? [
           {
             limit: LEAK_PER_LAP.heapMb,
@@ -163,7 +179,7 @@ function format(value: number | null, digits: number): string {
 }
 
 /** The soak's samples as a report table: after the first lap, after the last, and per lap. */
-export function soakRows({ first, laps, last, paths }: SoakReport): string[] {
+export function soakRows({ first, laps, last, paths, sameDocument }: SoakReport): string[] {
   const rows: [string, keyof MemorySample, number][] = [
     ["Browser JS heap (MB)", "heapMb", 1],
     ["DOM nodes", "nodes", 0],
@@ -175,7 +191,9 @@ export function soakRows({ first, laps, last, paths }: SoakReport): string[] {
   return [
     `## Memory over ${laps} laps of ${paths.join(" → ")}`,
     "",
-    "Sampled after a forced garbage collection, after the first lap (caches warm) and after the last.",
+    sameDocument
+      ? "Sampled after a forced garbage collection, after the first lap (caches warm) and after the last."
+      : "The tab reloaded during the laps (one path, or no link to the next), so only the server's memory is judged.",
     "",
     "| | After lap 1 | After the last lap | Per lap |",
     "| --- | --- | --- | --- |",

@@ -133,7 +133,7 @@ export const ENGINEERING_RULES: Rule[] = [
   {
     blocks: true,
     files: TESTS,
-    line: /\.only\(/u,
+    line: /\.only(?:\.each)?\s*[(`]/u,
     name: "Focused test",
     question: "`.only` skips every other test in CI: remove it.",
     role: "engineering",

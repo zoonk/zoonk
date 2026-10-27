@@ -5,13 +5,13 @@ Start from what the change opens: new input, a new entry point, new data shown o
 ## Entry points
 
 - Every Server Action export and route handler is a public endpoint anyone can POST to. Each one authenticates, authorizes through a core capability (the [core contract](../../../../packages/core/AGENTS.md): the acting learner comes from the session, never from the request), validates its input at the boundary, and returns only what that caller may see.
-- Ownership: an id in a URL, form or body (a goal, session, lesson, essay, upload) is checked against the signed-in learner on every read and write (`packages/core/src/learner/_utils/owned-goal.ts` is the pattern). Core's real-database tests cover each capability as its owner, another learner and signed out; HTTP tests only cover the transport. `--intruder` loads the pages as another learner after the learner warmed them, and fails if they carry the learner's name or email.
+- Ownership: an id in a URL, form or body (a goal, session, lesson, essay, upload) is checked against the signed-in learner on every read and write (`packages/core/src/learner/_utils/owned-goal.ts` is the pattern). Core's real-database tests cover each capability as its owner, another learner and signed out; HTTP tests only cover the transport. `--intruder` loads the pages as another learner after the learner warmed them, and fails if they carry the learner's email, account id or full name.
 - Better Auth's endpoints and defaults stay as they are (root `AGENTS.md`).
 
 ## Data exposure
 
 - `"use cache"` without `private` shares its result across learners: nothing inside may depend on the session, cookies or headers unless they are arguments, and access is still checked on every delivery (a learner id in the key isn't authorization). Also sign out and in as someone else in one tab: nothing of the first learner may remain.
-- Public render paths (metadata, OG images, sitemaps, prerendered pages, the signed-out shell) never read a learner's data. `verify:pages` opens every path signed out and fails if the learner's name or email arrives.
+- Public render paths (metadata, OG images, sitemaps, prerendered pages, the signed-out shell) never read a learner's data. `verify:pages` opens every path signed out and fails if the learner's email, account id or full name arrives.
 - Client bundles carry only `NEXT_PUBLIC_` values; logs, analytics events and error reports carry ids, not learner text or emails.
 
 ## Injection

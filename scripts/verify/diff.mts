@@ -41,19 +41,20 @@ const untracked: ChangedFile[] = git(["ls-files", "--others", "--exclude-standar
   }));
 
 const files = [
-  ...parseDiff(git(["diff", "--unified=0", "--no-color", "--no-ext-diff", values.base, "--"])),
+  // A rename counts as a new file, so `.env.example` renamed to `.env` meets the same checks.
+  ...parseDiff(
+    git(["diff", "--unified=0", "--no-color", "--no-ext-diff", "--no-renames", values.base, "--"]),
+  ),
   ...untracked,
 ];
 
 const flags = auditDiff(files, (path) => /^\s*["']use client["']/mu.test(read(path)));
-const lockfile = files.find((file) => file.path === "pnpm-lock.yaml");
+// What production installs changes only through the lockfile or the workspace's overrides.
+const installsChanged = files.some((file) =>
+  ["pnpm-lock.yaml", "pnpm-workspace.yaml"].includes(file.path),
+);
 
-const dependencies = lockfile
-  ? auditDependencies(
-      repository,
-      lockfile.added.map((added) => added.text),
-    )
-  : [];
+const dependencies = installsChanged ? auditDependencies(repository, values.base) : [];
 
 const blocking =
   flags.filter((flag) => flag.rule.blocks).length + Number(addsVulnerability(dependencies));
