@@ -80,38 +80,16 @@ export async function resolvePlanInputDependents(
   }
 
   const sources = await loadPlanInputSources(tx, roots);
-  const dependentSkills = sources.skillIds;
-  const taggedSkill = { skillId: { in: dependentSkills } };
-  const taughtLesson = { skills: { some: taggedSkill } };
-
-  const taughtChapter = {
-    OR: [{ goalSkills: { some: taggedSkill } }, { lessons: { some: { lesson: taughtLesson } } }],
-  };
 
   const plans = await tx.plan.findMany({
     orderBy: { id: "asc" },
     select: { id: true },
     where: {
       OR: [
-        { sourceSkillIds: { hasSome: dependentSkills } },
+        { sourceSkillIds: { hasSome: sources.skillIds } },
         { goal: { examBlueprintId: { in: [...blueprintIds] } } },
         { goal: { primaryCourseId: { in: [...courseIds] } } },
         { items: { some: { lessonId: { in: sources.lessonIds } } } },
-        {
-          // Legacy plans have not saved their pre-cut dependencies yet; retain their source links.
-          OR: [
-            ...dependentSkills.map((skillId) => ({
-              graph: { array_contains: [{ skillId }], path: ["skills"] },
-            })),
-            {
-              items: {
-                some: { OR: [taggedSkill, { lesson: taughtLesson }, { chapter: taughtChapter }] },
-              },
-            },
-            { goal: { primaryCourse: { courseChapters: { some: { chapter: taughtChapter } } } } },
-          ],
-          sourceSkillIds: { isEmpty: true },
-        },
       ],
     },
   });

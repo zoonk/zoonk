@@ -655,41 +655,6 @@ describe("phase dates through system refreshes", () => {
     ).resolves.toMatchObject({ status: "replaced" });
   });
 
-  // A proposal an earlier version of the planner made stays while nothing the plan reads changes:
-  // the refresh that finds the plan as it was skipped the proposal too, and an on-track learner
-  // kept seeing "some lessons came out longer than planned" (walk, Lucas).
-  it("withdraws a waiting proposal the plan no longer needs, though nothing changed since", async () => {
-    const { goal, plan } = await setup({ targetDate: FAR });
-
-    await refreshGoalPlan({ goalId: goal.id });
-
-    const stale = await prisma.planChange.create({
-      data: {
-        kind: "edited",
-        payload: {
-          effect: {
-            phaseEnds: [
-              { after: "2020-10-10", before: "2020-10-09", lessonsFirst: true, name: "Basics" },
-            ],
-          },
-          operations: [{ kind: "fitPhaseDates" }],
-          source: "phaseDates",
-        },
-        planId: plan.id,
-        reason: "",
-        status: "proposed",
-      },
-    });
-
-    await expect(refreshGoalPlan({ goalId: goal.id })).resolves.toMatchObject({
-      status: "unchanged",
-    });
-
-    await expect(prisma.planChange.findUnique({ where: { id: stale.id } })).resolves.toMatchObject({
-      status: "replaced",
-    });
-  });
-
   it("moves the dates when the learner applies the proposal, and everything fits by the goal's date", async () => {
     const { goal, outline, plan } = await setup({ targetDate: TIGHT });
     const [firstEnd] = await readPhaseEnds(plan.id);

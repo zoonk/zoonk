@@ -128,7 +128,7 @@ describe(saveExplanationLesson, () => {
           planFixture({
             goalId: goal.id,
             graph: { skills: index < 3 ? [{ skillId: graphSkill.id }] : [] },
-            sourceSkillIds: [],
+            sourceSkillIds: index < 3 ? [graphSkill.id] : [],
           }),
         ),
       );
@@ -204,7 +204,12 @@ describe(saveExplanationLesson, () => {
     const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
     const saved = await saveMarketExplanation({ ownerId: null, skillId: skill.id });
     const goal = await goalFixture({ userId: user.id });
-    const plan = await planFixture({ goalId: goal.id, graph: { skills: [{ skillId: skill.id }] } });
+
+    const plan = await planFixture({
+      goalId: goal.id,
+      graph: { skills: [{ skillId: skill.id }] },
+      sourceSkillIds: [skill.id],
+    });
 
     await prisma.lesson.update({
       data: { contentStatus: "failed" },

@@ -19,7 +19,7 @@ export type PlanWrite = {
   /** The lessons each skill's stand-in teaches (see `savePlanItems`). */
   standInLessons: ReadonlyMap<string, number>;
   state: PlanState;
-  sourceSkillIds?: readonly string[];
+  sourceSkillIds: readonly string[];
   summary?: PlanSummary | null;
 };
 
@@ -101,7 +101,7 @@ export async function writePlan({
       settings = ${toJsonb(plan.state.settings)}::jsonb,
       source_skill_ids = ARRAY(
         SELECT DISTINCT source FROM unnest(
-          ${[...(plan.sourceSkillIds ?? [])]}::uuid[] || ARRAY(
+          ${[...plan.sourceSkillIds]}::uuid[] || ARRAY(
             SELECT quoted.source::uuid
             FROM plan_changes AS change,
               jsonb_array_elements_text(

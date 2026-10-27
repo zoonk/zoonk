@@ -136,9 +136,8 @@ async function loadPhaseDatesChanges(planId: string) {
 /**
  * Withdraws Today's proposal to move the phase dates when the plan a refresh finds unchanged no
  * longer needs it (see `mayCostToKeepPhaseDates`): that refresh doesn't weigh the proposal again,
- * so one an earlier version of the planner made stayed while nothing the plan reads changed, and
- * an on-track learner kept reading that lessons came out longer than planned (walk, Lucas).
- * Without a build, only invalid legacy effects and quotes starting at obsolete saved dates retire.
+ * so an on-track learner kept reading that lessons came out longer than planned (walk, Lucas).
+ * Without a build, only quotes that no longer start at the saved dates retire.
  */
 export async function withdrawUnneededPhaseDatesProposal({
   computed,
@@ -159,9 +158,7 @@ export async function withdrawUnneededPhaseDatesProposal({
   const waiting = earlier.filter(
     (change) =>
       change.status === "proposed" &&
-      (computed ||
-        !change.effect ||
-        !startsFromEnds({ effect: change.effect, phases: context.phases })),
+      (computed || !startsFromEnds({ effect: change.effect, phases: context.phases })),
   );
 
   if (waiting.length === 0) {

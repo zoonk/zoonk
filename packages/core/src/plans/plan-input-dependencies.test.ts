@@ -1,13 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { type Goal, prisma } from "@zoonk/db";
-import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
-import {
-  chapterSkillFixture,
-  courseChapterFixture,
-  libraryChapterFixture,
-} from "@zoonk/testing/fixtures/library-chapters";
-import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -21,10 +14,10 @@ import { createItems } from "../library/items/create-items";
 async function makePlan({
   goal = {},
   skillIds = [],
-  sourceSkillIds = [],
+  sourceSkillIds = skillIds,
   userId,
 }: {
-  goal?: Partial<Pick<Goal, "examBlueprintId" | "primaryCourseId">>;
+  goal?: Partial<Pick<Goal, "examBlueprintId">>;
   skillIds?: string[];
   sourceSkillIds?: string[];
   userId: string;
@@ -38,52 +31,28 @@ async function makePlan({
   });
 }
 
-/** Both initialized pre-cut dependencies and the references retained by older plans. */
+/** Plans whose builds read the skill, a skill merged into it or its exam, and one that didn't. */
 async function contentScope() {
-  const [skill, unrelatedSkill, first, second, untouched, course, exam, lesson] = await Promise.all(
-    [
-      skillFixture(),
-      skillFixture(),
-      userFixture(),
-      userFixture(),
-      userFixture(),
-      courseFixture(),
-      examBlueprintFixture(),
-      libraryLessonFixture(),
-    ],
-  );
-
-  const [alias, chapter] = await Promise.all([
-    skillFixture({ mergedIntoId: skill.id }),
-    libraryChapterFixture({ homeCourseId: course.id }),
+  const [skill, unrelatedSkill, first, second, untouched, exam] = await Promise.all([
+    skillFixture(),
+    skillFixture(),
+    userFixture(),
+    userFixture(),
+    userFixture(),
+    examBlueprintFixture(),
   ]);
 
-  await Promise.all([
-    lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id }),
-    chapterSkillFixture({ chapterId: chapter.id, skillId: skill.id }),
-    courseChapterFixture({ chapterId: chapter.id, courseId: course.id, position: 0 }),
-  ]);
+  const alias = await skillFixture({ mergedIntoId: skill.id });
 
   const affected = await Promise.all([
     // A cut skill remains a dependency even when neither the selected graph nor items include it.
     makePlan({ skillIds: [unrelatedSkill.id], sourceSkillIds: [skill.id], userId: first.id }),
     makePlan({ skillIds: [skill.id], userId: first.id }),
     makePlan({ skillIds: [alias.id], userId: second.id }),
-    makePlan({ userId: second.id }),
-    makePlan({ goal: { primaryCourseId: course.id }, userId: second.id }),
     makePlan({ goal: { examBlueprintId: exam.id }, userId: second.id }),
   ]);
 
-  await Promise.all([
-    planItemFixture({ planId: affected[1]!.id, skillId: skill.id }),
-    planItemFixture({ lessonId: lesson.id, planId: affected[3]!.id }),
-  ]);
-
-  const unaffected = await makePlan({
-    skillIds: [unrelatedSkill.id],
-    sourceSkillIds: [unrelatedSkill.id],
-    userId: untouched.id,
-  });
+  const unaffected = await makePlan({ skillIds: [unrelatedSkill.id], userId: untouched.id });
 
   return {
     affected,
@@ -120,7 +89,7 @@ async function readVersions(scope: Awaited<ReturnType<typeof contentScope>>) {
 }
 
 describe("question-bank plan invalidation", () => {
-  it("invalidates every dependent plan and each owner once, including legacy references", async () => {
+  it("invalidates every dependent plan and each owner once", async () => {
     const scope = await contentScope();
     const before = await readVersions(scope);
     const result = await createItems(scope.input);

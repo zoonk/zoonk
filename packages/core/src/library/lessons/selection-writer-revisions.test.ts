@@ -65,12 +65,15 @@ async function selectionScope() {
     goalFixture({ userId: untouched.id }),
   ]);
 
+  // The skills each plan's build read, as it saves them: its graph's, its items' and its lessons'.
+  const sources = [[skill.id], [alias.id], [skill.id], [skill.id], [skill.id], [skill.id], []];
+
   const plans = await Promise.all(
     goals.map((goal, index) =>
       planFixture({
         goalId: goal.id,
         graph: { skills: index === 1 ? [{ skillId: alias.id }] : [] },
-        sourceSkillIds: index === 0 ? [skill.id] : [],
+        sourceSkillIds: sources[index],
       }),
     ),
   );
