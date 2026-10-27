@@ -73,7 +73,7 @@ export const contentVoteBodySchema = z
   .strict()
   .refine(hasReasonsOnlyOnDownvote, REASONS_ON_UPVOTE_ISSUE);
 
-export const contentVoteInputSchema = z
+const contentVoteInputSchema = z
   .object({ ...contentVoteTargetSchema.shape, ...contentVoteBodyShape })
   .strict()
   .refine(hasReasonsOnlyOnDownvote, REASONS_ON_UPVOTE_ISSUE);
