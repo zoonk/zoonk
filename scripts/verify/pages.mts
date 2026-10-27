@@ -1,16 +1,11 @@
 /* oxlint-disable no-console, no-await-in-loop -- This CLI measures one page load at a time, in order, and prints its report. */
 import { mkdir, writeFile } from "node:fs/promises";
-import { availableParallelism, homedir, loadavg } from "node:os";
+import { availableParallelism, loadavg } from "node:os";
 import { join, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { chromium } from "@playwright/test";
 import { assertBrowserLaunchAllowed } from "../../packages/testing/src/browser-preflight.ts";
-import {
-  getMailboxCaptureUrl,
-  getPortlessEnvironment,
-  getProjectName,
-  getServiceUrl,
-} from "../dev/config.mts";
+import { getMailboxCaptureUrl, getServiceUrl } from "../dev/config.mts";
 import { readActionNames } from "./actions.mts";
 import { compareWithBaseline, comparisonRows, readBaseline } from "./baseline.mts";
 import { type Finding, markBusy } from "./checks.mts";
@@ -64,19 +59,6 @@ const { positionals, values } = parseArgs({
   },
 });
 
-/** This checkout's `pnpm dev` URL for a service, as the persona command finds it. */
-function devServiceUrl(serviceName: string): string {
-  return getServiceUrl({
-    currentDirectory: repository,
-    environment: {
-      ...process.env,
-      ...getPortlessEnvironment({ homeDirectory: homedir(), lanMode: false }),
-    },
-    projectName: getProjectName({ currentDirectory: repository }),
-    serviceName,
-  });
-}
-
 function pick<T extends string>(list: string, allowed: readonly T[], name: string): T[] {
   return list.split(",").map((item) => {
     const match = allowed.find((candidate) => candidate === item.trim());
@@ -89,7 +71,7 @@ function pick<T extends string>(list: string, allowed: readonly T[], name: strin
   });
 }
 
-const baseUrl = values.url ?? devServiceUrl("main");
+const baseUrl = values.url ?? getServiceUrl({ currentDirectory: repository, serviceName: "main" });
 const paths = positionals.length > 0 ? positionals : ["/"];
 const viewports = pick(values.viewports, VIEWPORT_NAMES, "viewport");
 const schemes = pick(values.schemes, SCHEMES, "scheme");
@@ -100,7 +82,9 @@ const serverPid = findServerPid(new URL(baseUrl));
 assertBrowserLaunchAllowed();
 
 const mailboxUrl =
-  values.email || values.intruder ? getMailboxCaptureUrl(devServiceUrl("mailbox")) : "";
+  values.email || values.intruder
+    ? getMailboxCaptureUrl(getServiceUrl({ currentDirectory: repository, serviceName: "mailbox" }))
+    : "";
 
 const storageState = values.email
   ? await signIn({ baseUrl, email: values.email, mailboxUrl })

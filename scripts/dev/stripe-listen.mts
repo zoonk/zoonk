@@ -1,6 +1,6 @@
 import { execFileSync } from "node:child_process";
 import { homedir } from "node:os";
-import { getPortlessEnvironment, getProjectName, getServiceName } from "./config.mts";
+import { getPortlessEnvironment, getServiceUrl } from "./config.mts";
 import { applyCommandExit, getPnpmCommand, runForegroundCommand } from "./process.mts";
 
 const currentDirectory = process.cwd();
@@ -13,9 +13,6 @@ function getApiUrl(): string {
     return "http://localhost:4000";
   }
 
-  const projectName = getProjectName({ currentDirectory });
-  const name = getServiceName({ projectName, serviceName: "api" });
-
   const environment = {
     ...process.env,
     ...getPortlessEnvironment({ homeDirectory: homedir(), lanMode }),
@@ -27,11 +24,7 @@ function getApiUrl(): string {
     stdio: "inherit",
   });
 
-  return execFileSync(pnpmCommand.command, [...pnpmCommand.args, "exec", "portless", "get", name], {
-    cwd: currentDirectory,
-    encoding: "utf8",
-    env: environment,
-  }).trim();
+  return getServiceUrl({ currentDirectory, environment, serviceName: "api" });
 }
 
 const apiUrl = getApiUrl();
