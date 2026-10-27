@@ -60,7 +60,7 @@ function joinGraphs({ computed, fallback }: { computed: ComputedPlan; fallback: 
  * lessons it adds and leaves out, skill by skill, the ones it leaves out whole by name, and the
  * notice topics it brings in or leaves out. Read against a plan planned again instead, a topic an
  * earlier run had already left out was said to "leave" (Lucas's "Origin and evolution", out of his
- * plan before his change). `fallback` sizes the stand-ins a plan saved before it stored their size.
+ * plan before his change). `fallback` sizes the stand-ins saved without a size.
  */
 export function getSeenEffect({
   computed,

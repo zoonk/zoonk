@@ -25,7 +25,7 @@ function takeCore<TItem extends CoreItem>({
 /**
  * Each skill's core lesson items in a plan (`items` in plan order): its first lessons, until they
  * hold the first third (`getCoreLessons`) of the lessons the plan's last build counted for it
- * (`plannedLessons`; the graph's estimate on a plan saved before it counted them), a stand-in
+ * (`plannedLessons`; the graph's estimate before a build counted them), a stand-in
  * counted as the lessons it plans. A phase's challenge waits for them (`getBossSkillIds`), and the
  * plan's checks read them the same way.
  */

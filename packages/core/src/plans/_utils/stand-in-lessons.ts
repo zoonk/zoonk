@@ -15,8 +15,8 @@ export function isStandIn(item: Omit<EstimatedItem, "lessons">): boolean {
 /**
  * How many lessons a plan item is: one for a lesson, and for a stand-in, the lessons of its skill
  * the plan teaches in its place, after cuts and base choices, as the plan saved them (at least
- * one; one item when a plan saved before it stored them). A stand-in once said its skill's whole
- * size: "about 25 lessons" for a topic the plan, short on time, teaches three lessons of.
+ * one; one without a saved size, as a test-out's stand-in has). A stand-in once said its skill's
+ * whole size: "about 25 lessons" for a topic the plan, short on time, teaches three lessons of.
  */
 export function countItemLessons(item: EstimatedItem): number {
   return isStandIn(item) ? Math.max(1, item.lessons ?? 1) : 1;
@@ -29,8 +29,8 @@ export function countLessons(items: readonly EstimatedItem[]): number {
 
 /**
  * The lessons the plan teaches a row's stand-ins, as it saved them. Null when one of them has no
- * saved size (a plan saved before it stored them, until its next change), so the row says no
- * count rather than a false one, and for a row without stand-ins.
+ * saved size (a test-out's stand-in), so the row says no count rather than a false one, and for a
+ * row without stand-ins.
  */
 export function sumPlannedLessons(items: readonly EstimatedItem[]): number | null {
   const sizes = items.filter((item) => isStandIn(item)).map((item) => item.lessons ?? null);

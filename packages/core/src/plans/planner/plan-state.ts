@@ -89,7 +89,8 @@ const graphSkillSchema = z.object({
   skillId: z.string(),
   /**
    * The exact texts of the source's topics this skill teaches (for an exam, its notice's
-   * `structure.subjects[].topics`), so the syllabus can tick each topic. Absent on older graphs.
+   * `structure.subjects[].topics`), so the syllabus can tick each topic. Absent when the source's
+   * topics aren't known.
    */
   topics: z.array(z.string()).optional(),
   weight: z.number().nullable().default(null),

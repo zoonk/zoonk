@@ -138,8 +138,7 @@ export type PlanChapterView = {
   nextDate: string | null;
   /**
    * A `writing` row's lessons the plan teaches, after its cuts and base choices. Null for every
-   * other row, and for one of a plan saved before it stored them (until its next change): say no
-   * count then.
+   * other row, and for one with a stand-in of no saved size: say no count then.
    */
   plannedLessons: number | null;
   /**
