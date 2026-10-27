@@ -12,10 +12,9 @@ import { type Reasoning } from "@zoonk/ai/provider-options";
  * language-model decision adapter. `image` models draw through `generate`
  * and only run tasks whose output is an image; `speech` models likewise only
  * run tasks whose output is audio, `transcription` models only tasks whose
- * output is a transcript, and `realtime` models only the live conversation,
- * which talks to them over a realtime session.
+ * output is a transcript.
  */
-type ModelKind = "generation" | "evaluation" | "image" | "realtime" | "speech" | "transcription";
+type ModelKind = "generation" | "evaluation" | "image" | "speech" | "transcription";
 
 export type ModelConfig = {
   /** Unique id for saved outputs, results and URLs. */
@@ -107,15 +106,6 @@ const TRANSCRIPTION_MODELS: { id: string; name: string }[] = [
   { id: "spacexai/grok-stt", name: "grok-stt" },
 ];
 
-/**
- * Voice models for live conversations, driven with text-to-speech learners: GPT-Live (see
- * live-conversation-models) and Gemini Live to compare.
- */
-const REALTIME_MODELS: { id: string; name: string }[] = [
-  { id: "openai/gpt-live-1", name: "gpt-live-1" },
-  { id: "google/gemini-3.8-live", name: "gemini-3.8-live" },
-];
-
 export const EVAL_MODELS: ModelConfig[] = [
   ...GENERATION_MODELS.map((model) => ({
     ...model,
@@ -139,11 +129,6 @@ export const EVAL_MODELS: ModelConfig[] = [
     ...model,
     gatewayModelId: model.id,
     kind: "transcription" as const,
-  })),
-  ...REALTIME_MODELS.map((model) => ({
-    ...model,
-    gatewayModelId: model.id,
-    kind: "realtime" as const,
   })),
 ];
 

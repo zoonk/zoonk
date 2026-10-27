@@ -49,14 +49,13 @@ export async function getModelStatus(taskId: string, modelId: string): Promise<M
 
 /**
  * Evaluation models can only run tasks that define an evaluation route, and
- * image, transcription and realtime models only run tasks with that output,
+ * image, speech and transcription models only run tasks with that output,
  * which nothing else can run.
  */
 function supportsModel(task: RegisteredTask, model: ModelConfig): boolean {
   if (
     task.output ||
     model.kind === "image" ||
-    model.kind === "realtime" ||
     model.kind === "speech" ||
     model.kind === "transcription"
   ) {

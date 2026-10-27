@@ -114,7 +114,6 @@ pnpm --filter evals eval:run --task course-intent --model typesafe-ai/jev --mode
 - `--case` keeps only cases whose id contains one of the given texts, such as `--case :parallel` for the production search tool in `find-official-sources`.
 - `--fresh` regenerates the sampled cases even if saved outputs exist, so every model's latency is measured the same way. Without it, only cases with no saved output are generated.
 - `--saved` prints the same table from saved results without calling any model.
-- `live-conversation` runs on `openai/gpt-live-1`, and on `google/gemini-3.8-live` to compare: it plays scripted learner turns, spoken by Gemini 3.8 Flash TTS at real-time pace, against the production instructions over GPT-Live's native Live WebSocket (Gemini over AI Gateway's realtime route, with cues as notes in the conversation), with the production objective check after each answer. GPT-Live bills $0.05 per minute of session, so the six cases cost about $0.50 of voice plus the judge; Gemini bills tokens, every turn re-reading the whole session. Each output saves the call's `usage` (session seconds and voice cost); the table's "Spent" only shows the judge.
 
 Generation runs at most four calls at a time so a model's own requests don't slow each other down. "Spent" is what the sampled cases' saved outputs and judge calls cost, including ones generated in earlier runs. Search tool fees (`find-official-sources`) are billed per search and aren't included.
 

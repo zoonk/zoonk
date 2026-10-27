@@ -81,7 +81,6 @@
     "./tasks/v2/language/live-call-session": "./src/tasks/v2/language/live-call-session.ts",
     "./tasks/v2/language/live-conversation-instructions": "./src/tasks/v2/language/live-conversation-instructions.ts",
     "./tasks/v2/language/live-conversation-models": "./src/tasks/v2/language/live-conversation-models.ts",
-    "./tasks/v2/language/live-conversation-token": "./src/tasks/v2/language/live-conversation-token.ts",
     "./tasks/v2/language/live-conversation-usage": "./src/tasks/v2/language/live-conversation-usage.ts",
     "./tasks/v2/language/mistake-pattern": "./src/tasks/v2/language/mistake-pattern.ts",
     "./tasks/v2/language/mistake-pattern-rules": "./src/tasks/v2/language/mistake-pattern-rules.ts",

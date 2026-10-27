@@ -49,7 +49,6 @@ import { lessonWriterTask } from "./lesson-writer/task";
 import { levelTestBankTask } from "./level-test-bank/task";
 import { libraryIdentityDecisionTask } from "./library-identity-decision/task";
 import { librarySearchTermsTask } from "./library-search-terms/task";
-import { liveConversationTask } from "./live-conversation/task";
 import { memoryExtractionTask } from "./memory-extraction/task";
 import { memoryGateTask } from "./memory-gate/task";
 import { memoryInsightTask } from "./memory-insight/task";
@@ -166,7 +165,6 @@ export const TASKS: readonly RegisteredTask[] = [
   examSpeakingCardTask,
   conversationFeedbackTask,
   conversationObjectivesTask,
-  liveConversationTask,
   speakingMockScoreTask,
   examSpeakingScoreTask,
   mistakePatternTask,

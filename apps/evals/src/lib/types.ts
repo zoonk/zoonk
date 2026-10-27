@@ -194,10 +194,10 @@ export type Task<TInput = never, TOutput = unknown, TExpected = unknown> = {
   scoreCategories?: ScoreCategory[];
   latencyBudget?: LatencyBudget;
   /**
-   * Tasks that draw images, speak, transcribe audio or talk over a realtime session run on those
+   * Tasks that draw images, speak or transcribe audio run on those
    * models only, and text tasks never do.
    */
-  output?: "image" | "realtime" | "speech" | "transcription";
+  output?: "image" | "speech" | "transcription";
 };
 
 /**
