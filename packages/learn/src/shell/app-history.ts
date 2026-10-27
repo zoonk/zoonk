@@ -1,11 +1,37 @@
+import { tabStorage } from "../_utils/device-storage";
+
 /**
  * "Back" uses the browser's own history (the Navigation API), so it returns where the learner
  * came from with the page as they left it, instead of adding another entry. Browsers without the
  * API follow the back link's address instead.
  */
 
-/** Marks a history entry as one of the app's pages (a tab or a page pushed from one). */
-const APP_ENTRY_STATE = { zoonkAppPage: true } as const;
+/** Tab-scoped marks survive the router's history.replaceState and a reload. */
+const APP_ENTRIES_KEY = "zoonk-app-entries";
+
+function getMarks(): Record<string, unknown> {
+  const marks = tabStorage.getJson(APP_ENTRIES_KEY);
+
+  return typeof marks === "object" && marks !== null
+    ? Object.fromEntries(Object.entries(marks))
+    : {};
+}
+
+function getAppMark(entry: NavigationHistoryEntry | null) {
+  const mark = entry ? getMarks()[entry.key] : null;
+
+  if (
+    !entry?.url ||
+    typeof mark !== "object" ||
+    mark === null ||
+    !("path" in mark) ||
+    mark.path !== getPathname(entry.url)
+  ) {
+    return null;
+  }
+
+  return mark;
+}
 
 function getNavigation(): Navigation | null {
   const { navigation } = globalThis as Partial<Pick<Window, "navigation">>;
@@ -13,8 +39,7 @@ function getNavigation(): Navigation | null {
 }
 
 function isAppEntry(entry: NavigationHistoryEntry): boolean {
-  const state: unknown = entry.getState();
-  return typeof state === "object" && state !== null && "zoonkAppPage" in state;
+  return getAppMark(entry) !== null;
 }
 
 function getPathAndSearch(url: string): string {
@@ -27,13 +52,8 @@ function getPathname(url: string): string {
 }
 
 function getAppSection(entry: NavigationHistoryEntry | null): string | undefined {
-  const state: unknown = entry?.getState();
-
-  if (typeof state !== "object" || state === null || !("zoonkAppSection" in state)) {
-    return undefined;
-  }
-
-  return typeof state.zoonkAppSection === "string" ? state.zoonkAppSection : undefined;
+  const mark = getAppMark(entry);
+  return mark && "section" in mark && typeof mark.section === "string" ? mark.section : undefined;
 }
 
 /** One of the app's pages outside this section or page, whose own views (tabs) don't count. */
@@ -54,35 +74,6 @@ function isOtherAppPage({
   );
 }
 
-type AppEntryMark = { path: string; state: typeof APP_ENTRY_STATE & { zoonkAppSection?: string } };
-
-/**
- * The host's marks by history entry. The router writes each render of a page (a refresh, a Server
- * Action's answer) into its entry with `history.replaceState`, which clears the entry's Navigation
- * API state: a Plan that read itself again on the way back was no longer a page to go back to. An
- * entry keeps its key through those writes, so its mark goes back on as each write happens, before
- * anything reads it, while the entry is still at the page it marked.
- */
-const marks = new Map<string, AppEntryMark>();
-let keepingMarks = false;
-
-function keepMarks(navigation: Navigation): void {
-  if (keepingMarks) {
-    return;
-  }
-
-  keepingMarks = true;
-
-  navigation.addEventListener("currententrychange", () => {
-    const entry = navigation.currentEntry;
-    const mark = entry ? marks.get(entry.key) : undefined;
-
-    if (entry?.url && mark && !isAppEntry(entry) && getPathname(entry.url) === mark.path) {
-      navigation.updateCurrentEntry({ state: mark.state });
-    }
-  });
-}
-
 /** Called by the host on each app page; the host groups pages that belong to one section. */
 export function markAppEntry(section?: string): void {
   const navigation = getNavigation();
@@ -92,19 +83,13 @@ export function markAppEntry(section?: string): void {
     return;
   }
 
-  const state = { ...APP_ENTRY_STATE, ...(section !== undefined && { zoonkAppSection: section }) };
   const kept = new Set(navigation.entries().map((item) => item.key));
+  const marks = Object.fromEntries(Object.entries(getMarks()).filter(([key]) => kept.has(key)));
 
-  // A new page drops the entries ahead of it from the history, so their marks go too.
-  for (const key of marks.keys()) {
-    if (!kept.has(key)) {
-      marks.delete(key);
-    }
-  }
-
-  marks.set(entry.key, { path: getPathname(entry.url), state });
-  keepMarks(navigation);
-  navigation.updateCurrentEntry({ state });
+  tabStorage.set(
+    APP_ENTRIES_KEY,
+    JSON.stringify({ ...marks, [entry.key]: { path: getPathname(entry.url), section } }),
+  );
 }
 
 /**
