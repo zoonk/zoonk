@@ -372,7 +372,12 @@ test.describe("Language goal API", () => {
 
     expect(shortened.status()).toBe(201);
     const setup = languageConversationSetupSchema.parse(await shortened.json());
-    expect(setup).toMatchObject({ endsAtLimit: "day", seconds: 90 });
+    expect(setup.endsAtLimit).toBe("day");
+
+    // `seconds` counts down from the held minute and a half while the request runs.
+    await expect(
+      prisma.liveCallConnection.findUniqueOrThrow({ where: { id: setup.connectionId } }),
+    ).resolves.toMatchObject({ heldSeconds: 90 });
 
     const occupied = await apiContext.post(`/v1/language-conversations/${nextCall}/connections`);
     expect(occupied.status()).toBe(409);
