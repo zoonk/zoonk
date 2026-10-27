@@ -606,6 +606,16 @@ msgctxt "belts.E1okmE"
 msgid "White belt"
 msgstr "White belt"
 
+#: src/_utils/use-citation-label.ts
+msgctxt "VjK2d_"
+msgid "{title}, slide {page}"
+msgstr "{title}, slide {page}"
+
+#: src/_utils/use-citation-label.ts
+msgctxt "hAInJW"
+msgid "{title}, page {page}"
+msgstr "{title}, page {page}"
+
 #: src/_utils/use-format-number.ts
 msgctxt "SryZKb"
 msgid "{count, plural, =0 {seconds} one {second} other {seconds}}"
@@ -5018,6 +5028,11 @@ msgid "Speak your answers: typed ones aren't rated on how you sound. The microph
 msgstr "Speak your answers: typed ones aren't rated on how you sound. The microphone is used only during the call."
 
 #: src/language/exam-speaking/prep-timer.tsx
+msgctxt "9dFvSs"
+msgid "Preparation time is over. Start the call when you're ready."
+msgstr "Preparation time is over. Start the call when you're ready."
+
+#: src/language/exam-speaking/prep-timer.tsx
 msgctxt "vKagbo"
 msgid "The exam gives {total} to prepare tasks {tasks} together, about {time} for this one."
 msgstr "The exam gives {total} to prepare tasks {tasks} together, about {time} for this one."
@@ -5031,11 +5046,6 @@ msgstr "The exam gives {time} to prepare with the card."
 msgctxt "rDyxKu"
 msgid "Start preparing"
 msgstr "Start preparing"
-
-#: src/language/exam-speaking/prep-timer.tsx
-msgctxt "9dFvSs"
-msgid "Preparation time is over. Start the call when you're ready."
-msgstr "Preparation time is over. Start the call when you're ready."
 
 #: src/language/exam-speaking/prep-timer.tsx
 msgctxt "JgLxsC"
@@ -8118,16 +8128,6 @@ msgstr "What do you want to do?"
 msgctxt "AkPJMI"
 msgid "What you want to do with your material"
 msgstr "What you want to do with your material"
-
-#: src/onboarding/entry/material-questions.tsx
-msgctxt "VjK2d_"
-msgid "{title}, slide {page}"
-msgstr "{title}, slide {page}"
-
-#: src/onboarding/entry/material-questions.tsx
-msgctxt "hAInJW"
-msgid "{title}, page {page}"
-msgstr "{title}, page {page}"
 
 #: src/onboarding/entry/material-questions.tsx
 msgctxt "aS4jzc"

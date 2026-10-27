@@ -606,6 +606,16 @@ msgctxt "belts.E1okmE"
 msgid "White belt"
 msgstr "Cinturón blanco"
 
+#: src/_utils/use-citation-label.ts
+msgctxt "VjK2d_"
+msgid "{title}, slide {page}"
+msgstr "{title}, diapositiva {page}"
+
+#: src/_utils/use-citation-label.ts
+msgctxt "hAInJW"
+msgid "{title}, page {page}"
+msgstr "{title}, página {page}"
+
 #: src/_utils/use-format-number.ts
 msgctxt "SryZKb"
 msgid "{count, plural, =0 {seconds} one {second} other {seconds}}"
@@ -5018,6 +5028,11 @@ msgid "Speak your answers: typed ones aren't rated on how you sound. The microph
 msgstr "Responde en voz alta: las respuestas escritas no sirven para valorar cómo suenas. El micrófono solo se usa durante la llamada."
 
 #: src/language/exam-speaking/prep-timer.tsx
+msgctxt "9dFvSs"
+msgid "Preparation time is over. Start the call when you're ready."
+msgstr "Se ha acabado el tiempo de preparación. Empieza la llamada cuando quieras."
+
+#: src/language/exam-speaking/prep-timer.tsx
 msgctxt "vKagbo"
 msgid "The exam gives {total} to prepare tasks {tasks} together, about {time} for this one."
 msgstr "El examen te da {total} para preparar las tareas {tasks} a la vez, unos {time} para esta tarea."
@@ -5031,11 +5046,6 @@ msgstr "El examen te da {time} para prepararte con la tarjeta."
 msgctxt "rDyxKu"
 msgid "Start preparing"
 msgstr "Empezar a prepararte"
-
-#: src/language/exam-speaking/prep-timer.tsx
-msgctxt "9dFvSs"
-msgid "Preparation time is over. Start the call when you're ready."
-msgstr "Se ha acabado el tiempo de preparación. Empieza la llamada cuando quieras."
 
 #: src/language/exam-speaking/prep-timer.tsx
 msgctxt "JgLxsC"
@@ -8118,16 +8128,6 @@ msgstr "¿Qué quieres hacer?"
 msgctxt "AkPJMI"
 msgid "What you want to do with your material"
 msgstr "Qué quieres hacer con tu material"
-
-#: src/onboarding/entry/material-questions.tsx
-msgctxt "VjK2d_"
-msgid "{title}, slide {page}"
-msgstr "{title}, diapositiva {page}"
-
-#: src/onboarding/entry/material-questions.tsx
-msgctxt "hAInJW"
-msgid "{title}, page {page}"
-msgstr "{title}, página {page}"
 
 #: src/onboarding/entry/material-questions.tsx
 msgctxt "aS4jzc"

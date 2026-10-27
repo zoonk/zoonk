@@ -3017,16 +3017,6 @@ msgid "Vocabulary"
 msgstr "Vocabulary"
 
 #: src/lesson/_components/lesson-citation.tsx
-msgctxt "VjK2d_"
-msgid "{title}, slide {page}"
-msgstr "{title}, slide {page}"
-
-#: src/lesson/_components/lesson-citation.tsx
-msgctxt "hAInJW"
-msgid "{title}, page {page}"
-msgstr "{title}, page {page}"
-
-#: src/lesson/_components/lesson-citation.tsx
 msgctxt "ZpW6Fg"
 msgid "From your material: {source}"
 msgstr "From your material: {source}"

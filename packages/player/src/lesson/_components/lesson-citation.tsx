@@ -1,28 +1,13 @@
 "use client";
 
 import { type LessonStepCitation } from "@zoonk/core/lesson-player/contract";
+import { useCitationLabel } from "@zoonk/learn/citation-label";
 import { SourcesChip } from "@zoonk/learn/sources-chip";
 import { FileQuestionIcon, FileTextIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { PlayerContentFrame } from "../../components/step-layouts";
 
 type MaterialStepCitation = Extract<LessonStepCitation, { kind: "material" }>;
-
-function useCitationLabel() {
-  const t = useExtracted();
-
-  return (citation: MaterialStepCitation): string => {
-    const { page, title } = citation;
-
-    if (page === null) {
-      return title;
-    }
-
-    return citation.unit === "slide"
-      ? t("{title}, slide {page}", { page: String(page), title })
-      : t("{title}, page {page}", { page: String(page), title });
-  };
-}
 
 /** "Class 5, slide 4": the page of the learner's own material, so they can open it there. */
 function MaterialCitation({ citation }: { citation: MaterialStepCitation }) {

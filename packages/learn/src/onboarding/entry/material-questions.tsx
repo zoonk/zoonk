@@ -1,6 +1,5 @@
 "use client";
 
-import { type MaterialCitation } from "@zoonk/core/library/sources/material-question-contract";
 import { Button } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { Textarea } from "@zoonk/ui/components/textarea";
@@ -8,6 +7,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowUpIcon, FileTextIcon } from "lucide-react";
 import { useExtracted, useLocale } from "next-intl";
 import { useId, useState, useTransition } from "react";
+import { useCitationLabel } from "../../_utils/use-citation-label";
 import {
   type LearnBuddy,
   type TutorIdentity,
@@ -32,21 +32,6 @@ const MAX_QUESTION_LENGTH = 500;
 
 type Turn = { id: string; outcome: MaterialQuestionOutcome; question: string };
 
-function useCitationLabel() {
-  const t = useExtracted();
-
-  return ({ page, title, unit }: MaterialCitation): string => {
-    if (page === null) {
-      return title;
-    }
-
-    return unit === "slide"
-      ? t("{title}, slide {page}", { page: String(page), title })
-      : t("{title}, page {page}", { page: String(page), title });
-  };
-}
-
-/** The buddy's answer to one question, with the pages it came from, or why there's no answer. */
 /** The plan's cap on questions: the day's or the month's, with Plus for a free learner. */
 function useQuestionLimitMessage() {
   const t = useExtracted();
@@ -66,6 +51,7 @@ function useQuestionLimitMessage() {
   };
 }
 
+/** The buddy's answer to one question, with the pages it came from, or why there's no answer. */
 function TurnAnswer({
   identity,
   outcome,

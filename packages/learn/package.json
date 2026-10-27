@@ -23,6 +23,7 @@
     "./chapter": "./src/chapter/chapter-screen.tsx",
     "./checkpoint": "./src/checkpoints/checkpoint-screen.tsx",
     "./chip": "./src/_components/chip.ts",
+    "./citation-label": "./src/_utils/use-citation-label.ts",
     "./choice-styles": "./src/onboarding/choice-styles.ts",
     "./essay": "./src/essay/essay-screen.tsx",
     "./exam": "./src/exam/exam-screen.tsx",

@@ -606,6 +606,16 @@ msgctxt "belts.E1okmE"
 msgid "White belt"
 msgstr "Weißer Gürtel"
 
+#: src/_utils/use-citation-label.ts
+msgctxt "VjK2d_"
+msgid "{title}, slide {page}"
+msgstr "{title}, Folie {page}"
+
+#: src/_utils/use-citation-label.ts
+msgctxt "hAInJW"
+msgid "{title}, page {page}"
+msgstr "{title}, Seite {page}"
+
 #: src/_utils/use-format-number.ts
 msgctxt "SryZKb"
 msgid "{count, plural, =0 {seconds} one {second} other {seconds}}"
@@ -5018,6 +5028,11 @@ msgid "Speak your answers: typed ones aren't rated on how you sound. The microph
 msgstr "Sprich deine Antworten: Bei getippten Antworten wird nicht bewertet, wie du klingst. Das Mikrofon wird nur während des Gesprächs verwendet."
 
 #: src/language/exam-speaking/prep-timer.tsx
+msgctxt "9dFvSs"
+msgid "Preparation time is over. Start the call when you're ready."
+msgstr "Die Vorbereitungszeit ist vorbei. Starte den Anruf, wenn du bereit bist."
+
+#: src/language/exam-speaking/prep-timer.tsx
 msgctxt "vKagbo"
 msgid "The exam gives {total} to prepare tasks {tasks} together, about {time} for this one."
 msgstr "Die Prüfung gibt dir insgesamt {total} zur Vorbereitung auf die Aufgaben {tasks}, etwa {time} für diese Aufgabe."
@@ -5031,11 +5046,6 @@ msgstr "In der Prüfung hast du mit der Karte {time} Vorbereitungszeit."
 msgctxt "rDyxKu"
 msgid "Start preparing"
 msgstr "Vorbereitung starten"
-
-#: src/language/exam-speaking/prep-timer.tsx
-msgctxt "9dFvSs"
-msgid "Preparation time is over. Start the call when you're ready."
-msgstr "Die Vorbereitungszeit ist vorbei. Starte den Anruf, wenn du bereit bist."
 
 #: src/language/exam-speaking/prep-timer.tsx
 msgctxt "JgLxsC"
@@ -8118,16 +8128,6 @@ msgstr "Was möchtest du tun?"
 msgctxt "AkPJMI"
 msgid "What you want to do with your material"
 msgstr "Was du mit deinen Materialien machen möchtest"
-
-#: src/onboarding/entry/material-questions.tsx
-msgctxt "VjK2d_"
-msgid "{title}, slide {page}"
-msgstr "{title}, Folie {page}"
-
-#: src/onboarding/entry/material-questions.tsx
-msgctxt "hAInJW"
-msgid "{title}, page {page}"
-msgstr "{title}, Seite {page}"
 
 #: src/onboarding/entry/material-questions.tsx
 msgctxt "aS4jzc"
