@@ -5,7 +5,10 @@ import { MissionMoment } from "@zoonk/learn/mission-moment";
 import { MomentReadouts } from "@zoonk/learn/moment-readouts";
 import { LearnProvider } from "@zoonk/learn/provider";
 import { ReachedMoment } from "@zoonk/learn/reached-moment";
+import { StatTile, StatTiles } from "@zoonk/learn/stat-tile";
+import { StepDetail, StepTitleLabel, StepTitleNumber } from "@zoonk/learn/step-card";
 import { Button } from "@zoonk/ui/components/button";
+import { CheckIcon, MinusIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 
 type MissionMomentProps = React.ComponentProps<typeof MissionMoment>;
@@ -48,6 +51,12 @@ const ALL_DONE: MissionMomentProps["missions"] = [
   { done: 1, kind: "review", status: "done", total: 1 },
   { done: 1, kind: "somethingNew", status: "done", total: 1 },
   { done: 1, kind: "practice", status: "done", total: 1 },
+];
+
+/** A mock's day: a review done earlier, then the mock itself, the day's last mission. */
+const MOCK_DAY: MissionMomentProps["missions"] = [
+  { done: 1, kind: "review", status: "done", total: 1 },
+  { done: 1, kind: "mock", status: "done", total: 1 },
 ];
 
 /** A block's end, as the session shows it: its title and readouts, then the day's moment. */
@@ -113,6 +122,44 @@ export function ReachedSpecimen() {
           <p className="text-muted-foreground text-xs">At the most Energy goes</p>
           <ReachedMoment buddy={BUDDY} ceremony={null} reached={{ energy: 100, level: null }} />
         </div>
+      </div>
+    </LearnProvider>
+  );
+}
+
+/**
+ * A mock's end, a graded result: its score leads, named small above it, the answers it comes from
+ * as tiles, then the day's moment as under a block's readouts. The title is a paragraph here, so the
+ * docs keep one heading for the page.
+ */
+export function MockEndSpecimen() {
+  return (
+    <LearnProvider adapters={ADAPTERS}>
+      <div className="max-w-column flex flex-col items-start gap-6">
+        <div className="flex flex-col items-start gap-1.5">
+          <p className="text-title flex flex-col items-start gap-1.5">
+            <StepTitleLabel>Mock exam 2 done</StepTitleLabel>
+            <StepTitleNumber>610–690</StepTitleNumber>
+          </p>
+          <StepDetail className="text-sm">Estimated score · ENEM · Natural Sciences</StepDetail>
+        </div>
+        {/* Side by side while their words fit, as `MockResultAnswers` lays them out. */}
+        <StatTiles className="flex flex-wrap [&>li]:min-w-max [&>li]:flex-1">
+          <StatTile icon={<CheckIcon />} label="Right" tone="success" value="30" />
+          <StatTile icon={<XIcon />} label="Wrong" tone="danger" value="13" />
+          <StatTile icon={<MinusIcon />} label="Blank" value="2" />
+        </StatTiles>
+        <MissionMoment
+          buddy={BUDDY}
+          completed={["mock"]}
+          fullMeal={{ bonus: BONUS, paid: true }}
+          missions={MOCK_DAY}
+        />
+        <ReachedMoment
+          buddy={BUDDY}
+          ceremony={null}
+          reached={{ energy: 90, level: { color: "yellow", level: 4 } }}
+        />
       </div>
     </LearnProvider>
   );

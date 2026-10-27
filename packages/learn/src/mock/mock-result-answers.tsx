@@ -39,7 +39,7 @@ const ANSWER_TILES_CLASS = "flex flex-wrap [&>li]:min-w-max [&>li]:flex-1";
 
 /**
  * The answers behind the score (`getAnswerCounts`): each its own tile, its mark in its color
- * (right blue, wrong red) and the count big in the mono face.
+ * (right blue, wrong pink-red) and the count as the tile's readout.
  */
 export function MockResultAnswers({ result }: { result: MockResult }) {
   const t = useExtracted();

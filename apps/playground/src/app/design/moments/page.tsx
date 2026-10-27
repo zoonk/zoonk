@@ -17,6 +17,7 @@ import {
   CeremonySpecimen,
   MissionDoneSpecimen,
   MissionsCompleteSpecimen,
+  MockEndSpecimen,
   ReachedSpecimen,
 } from "./celebration-specimens";
 
@@ -105,6 +106,7 @@ const SPECIMENS: Record<string, () => React.ReactNode> = {
   ceremony: devOnly(CeremonySpecimen),
   mission: devOnly(MissionDoneSpecimen),
   missions: MissionsSpecimen,
+  mock: devOnly(MockEndSpecimen),
   reached: devOnly(ReachedSpecimen),
   "task-end": RewardSpecimen,
 };

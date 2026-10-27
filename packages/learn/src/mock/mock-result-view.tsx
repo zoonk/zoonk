@@ -168,7 +168,7 @@ function ScoreStep({ result }: { result: MockResult }) {
 
   return (
     <StepCard className="gap-8">
-      <div className="flex w-full flex-col items-start gap-5">
+      <div className="flex w-full flex-col items-start gap-6">
         <StepHeader>
           <StepTitle className="flex flex-col items-start gap-1.5">
             <StepTitleLabel>{t("{mock} done", { mock: title(runner.view) })}</StepTitleLabel>

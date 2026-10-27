@@ -49,6 +49,14 @@ export const MOMENTS: readonly Moment[] = [
     where: "`CheckpointResultView` (`MomentReadouts`, `MissionMoment`, `ReachedMoment`).",
   },
   {
+    id: "mock",
+    summary:
+      "A mock done: a graded result, so its score leads, the words naming it small above the number, with the answers it comes from as tiles; then the day's moment as every block's end has it (missions, a level or Energy reached), how each area went and what's next. A milestone it crowned opens first, full screen.",
+    title: "A mock's end",
+    where:
+      "`MockResultView`'s score step (`StepTitleLabel`, `StepTitleNumber`, `MockResultAnswers`), then `MissionMoment` and `ReachedMoment`; `MilestoneCeremony` before it.",
+  },
+  {
     id: "summary",
     summary:
       "The session's end: the day's numbers as tiles and the skills that rose, then what it earned: the buddy glad, Brain Power as its violet readout, and the bonus, a belt's new stripes and the best streak as rows.",
@@ -62,7 +70,7 @@ export const MOMENTS: readonly Moment[] = [
  * say what moves, never how.
  */
 export const MOMENT_RULES: readonly string[] = [
-  "One family, one order: a celebration sits where a task's result sits (top of the column, under the header) and reads the title, what was earned as readouts, the day's moment (missions, then a level or Energy reached), then what's next. Its one action is pinned in the bar and Enter presses it.",
+  "One family, one order: a celebration sits where a task's result sits (top of the column, under the header) and reads the title, what was earned as readouts, the day's moment (missions, then a level or Energy reached), then what's next, each part 24px from the next. A graded result (a mock's score) leads with its number, the words naming it small above. Its one action is pinned in the bar and Enter presses it.",
   "Warmer than everyday screens, never busy: the buddy or the Trickster where it's the subject, a big readout for what was earned, and nothing to read twice.",
   "Color only by meaning: violet for Brain Power and missions, a belt in its own colors, Energy amber, done blue. Louder means a solid fill or a tint whose color is the reward (the lit chip, the missions panel) and a short motion, never a new color.",
   "Each fires once, when it's earned: never on load, never as decoration, and never in the way of the next step.",

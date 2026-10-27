@@ -118,6 +118,7 @@
     "./speech": "./src/speech/use-spoken-audio.ts",
     "./speech/parts": "./src/speech/speech-parts.tsx",
     "./stat-tile": "./src/_components/stat-tile.tsx",
+    "./step-card": "./src/_components/step-card.tsx",
     "./status-mark": "./src/_components/status-mark.tsx",
     "./speech/provider": "./src/speech/speech-player-provider.tsx",
     "./subject": "./src/syllabus/subject-screen.tsx",
