@@ -35,18 +35,16 @@ export function isTodoLesson(item: RuleItem): boolean {
   return item.kind === "lesson" && item.status === "todo";
 }
 
-/** How many lessons an item is: one, or a stand-in's saved size (see `countItemLessons`). */
-function countLessons(item: RuleItem): number {
-  return countItemLessons(item);
-}
-
 /** Each skill's lessons still to do. */
 export function countSkillLessons(items: readonly RuleItem[]): Map<string, number> {
   return items
     .filter((item) => isTodoLesson(item) && item.skillId !== null)
     .reduce(
       (skills, item) =>
-        skills.set(item.skillId ?? "", (skills.get(item.skillId ?? "") ?? 0) + countLessons(item)),
+        skills.set(
+          item.skillId ?? "",
+          (skills.get(item.skillId ?? "") ?? 0) + countItemLessons(item),
+        ),
       new Map<string, number>(),
     );
 }
