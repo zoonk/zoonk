@@ -1,6 +1,7 @@
 "use client";
 
 import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
+import { CountUp } from "@zoonk/ui/components/count-up";
 import { cn } from "@zoonk/ui/lib/utils";
 import {
   BookOpenIcon,
@@ -211,7 +212,12 @@ function SessionNumbers() {
         icon={<BrainIcon />}
         label={t("Brain Power")}
         tone="brain"
-        value={t("+{points}", { points: format.number(summary.brainPower) })}
+        value={
+          <CountUp
+            format={(points) => t("+{points}", { points: format.number(points) })}
+            value={summary.brainPower}
+          />
+        }
       />
     </StatTiles>
   );

@@ -4,16 +4,16 @@ import { type MissionMomentView } from "@zoonk/core/sessions/completion-contract
 import { type Reached } from "@zoonk/core/sessions/reached";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { type CeremonyMilestone } from "../ceremonies/use-ceremony-copy";
-import { MissionMoment } from "../missions/mission-moment";
+import { MissionMoment, getAfterMissionsDelay } from "../missions/mission-moment";
 import { ReachedMoment } from "./reached-moment";
 
 /**
  * What a learner's work did to their day, the same on every result that earns Brain Power or
  * Energy (a block, a mock, a duel, a notebook practice, a drill, a round, a call, a test, a lesson
  * on its own): the day's missions it completed, with the bonus when it did the last, then the belt
- * level and the tenth of Energy it reached. Nothing when it did none of that. Its milestone's
- * ceremony (`ceremony`) shows before the result; here it only keeps a new belt's level from being
- * said twice.
+ * level and the tenth of Energy it reached, on the beat after the missions' last one. Nothing when
+ * it did none of that. Its milestone's ceremony (`ceremony`) shows before the result; here it only
+ * keeps a new belt's level from being said twice.
  */
 export function DayMoment({
   buddy,
@@ -38,7 +38,12 @@ export function DayMoment({
           missions={missionMoment.missions}
         />
       )}
-      <ReachedMoment buddy={buddy} ceremony={ceremony} reached={reached} />
+      <ReachedMoment
+        buddy={buddy}
+        ceremony={ceremony}
+        delay={getAfterMissionsDelay(missionMoment)}
+        reached={reached}
+      />
     </>
   );
 }

@@ -2,6 +2,7 @@
 
 import { type ExplanationView } from "@zoonk/core/view-models/explain/contract";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { CountUp } from "@zoonk/ui/components/count-up";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -92,7 +93,7 @@ function ResultTiles({ result }: { result: ExplainResult }) {
           icon={<BrainIcon />}
           label={t("Brain Power")}
           tone="brain"
-          value={`+${brainPower}`}
+          value={<CountUp format={(points) => `+${points}`} value={brainPower} />}
         />
       )}
     </StatTiles>

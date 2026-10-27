@@ -2,9 +2,12 @@
 
 import { type Mission } from "@zoonk/core/sessions/missions";
 import { Buddy } from "@zoonk/ui/components/buddy";
+import { Burst } from "@zoonk/ui/components/burst";
+import { useCelebration } from "@zoonk/ui/hooks/celebration";
+import { BEAT_MS, STAGGER_MS } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useFormatter } from "next-intl";
-import { useId, useRef, useState } from "react";
+import { useId } from "react";
 import { ListGroup } from "../_components/list-group";
 import { BrainPowerReadout } from "../_components/moment-readouts";
 import { DoneMark } from "../_components/status-mark";
@@ -13,81 +16,83 @@ import { MissionStepLine, useMissionName, useMissionStateLabel } from "./mission
 import { MissionListRow } from "./mission-list";
 import { MissionMark } from "./mission-mark";
 import { MissionTrack } from "./mission-track";
-import { type Spark, SparkBurst, useCelebration } from "./spark-burst";
+
+/** What the work did to the day's missions, as its end shows it. */
+type MissionMomentFacts = {
+  /** The missions the work completed. */
+  completed: readonly Mission["kind"][];
+  fullMeal: { bonus: number; paid: boolean };
+  missions: readonly Mission[];
+};
+
+/** The missions this work completed, as they're listed. */
+function getJustDone({
+  completed,
+  missions,
+}: Pick<MissionMomentFacts, "completed" | "missions">): readonly Mission[] {
+  return missions.filter(
+    (mission) => mission.status === "done" && completed.includes(mission.kind),
+  );
+}
+
+/** It completed one of the day's missions, or paid the day's bonus: the work's end says so. */
+function hasMissionMoment(facts: MissionMomentFacts): boolean {
+  return getJustDone(facts).length > 0 || facts.fullMeal.paid;
+}
+
+/** The day's last mission, with the bonus paid: the day's payoff, the loudest version. */
+function isPayoff({ fullMeal, missions }: MissionMomentFacts): boolean {
+  return fullMeal.paid && missions.every((mission) => mission.status === "done");
+}
 
 /**
- * The moment's motion, in order: the checks of the missions just done stamp in one after another
- * while their segments of the track fill and, when this work paid the day's bonus, "+50" appears
- * counting up; then the buddy hops and the bonus pops into sparks.
+ * When what the work reached after its missions (a level, Energy) starts moving: the beat after
+ * the missions' last one, so one thing moves at a time. The missions' checks land on the first
+ * beat; the day's payoff adds the bonus and the buddy on the second and its burst on the third.
  */
-const STAMP_MS = 350;
-const STAMP_STAGGER_MS = 120;
-const COUNT_FROM_MS = 250;
-const COUNT_MS = 450;
-const LANDED_MS = COUNT_FROM_MS + COUNT_MS;
-const HOP_MS = 320;
-const POP_MS = 260;
+export function getAfterMissionsDelay(facts: MissionMomentFacts | null): number {
+  if (!facts || !hasMissionMoment(facts)) {
+    return BEAT_MS;
+  }
 
-/** Where the bonus's sparks fly as it lands, in px from its middle. */
-const BONUS_SPARKS: readonly Spark[] = [
-  { size: 9, x: -38, y: -14 },
-  { size: 7, x: -18, y: -32 },
-  { size: 10, x: 8, y: -36 },
-  { size: 7, x: 32, y: -24 },
-  { size: 9, x: 44, y: 2 },
-  { size: 6, x: 30, y: 24 },
-  { size: 8, x: -6, y: 30 },
-  { size: 6, x: -34, y: 18 },
-];
+  return isPayoff(facts) ? 3 * BEAT_MS : 2 * BEAT_MS;
+}
 
-/** A mission's check stamping in, the moment it turns done. */
-function StampedMark({ order }: { order: number }) {
-  const mark = useRef<HTMLSpanElement>(null);
-
-  useCelebration(() => {
-    mark.current?.animate(
-      [
-        { opacity: 0, transform: "scale(0.3)" },
-        { offset: 0.6, opacity: 1, transform: "scale(1.3)" },
-        { opacity: 1, transform: "scale(1)" },
-      ],
-      {
-        delay: order * STAMP_STAGGER_MS,
-        duration: STAMP_MS,
-        easing: "ease-out",
-        fill: "backwards",
-      },
-    );
-  }, true);
-
+/** A mission's check landing, the moment it turns done; the next ones a stagger apart. */
+function StampedMark({ celebrate, order }: { celebrate: boolean; order: number }) {
   return (
-    <span className="flex" data-slot="mission-stamp" ref={mark}>
+    <span
+      className={cn("flex", celebrate && "animate-settle")}
+      data-slot="mission-stamp"
+      style={celebrate ? { animationDelay: `${BEAT_MS + order * STAGGER_MS}ms` } : undefined}
+    >
       <DoneMark className="size-3.5" />
     </span>
   );
 }
 
 /**
- * The learner's buddy, glad about the missions, hopping once as their track fills: its face beside
- * a mission done, the whole buddy when the day's missions are all done. Decorative.
+ * The learner's buddy, glad about the missions: its face beside a mission done, still, and the
+ * whole buddy when the day's missions are all done, hopping once with the bonus. Decorative.
  */
-function MomentBuddy({ buddy, whole }: { buddy: LearnBuddy | null; whole: boolean }) {
-  const art = useRef<HTMLSpanElement>(null);
+function MomentBuddy({
+  buddy,
+  celebrate,
+  whole,
+}: {
+  buddy: LearnBuddy | null;
+  celebrate: boolean;
+  whole: boolean;
+}) {
   const resolved = resolveLearnBuddy(buddy);
-
-  useCelebration(() => {
-    art.current?.animate(
-      [
-        { transform: "translateY(0)" },
-        { offset: 0.4, transform: "translateY(-6px)" },
-        { transform: "translateY(0)" },
-      ],
-      { delay: LANDED_MS, duration: HOP_MS, easing: "ease-out" },
-    );
-  }, true);
+  const hops = celebrate && whole;
 
   return (
-    <span className="flex shrink-0" data-slot="moment-buddy" ref={art}>
+    <span
+      className={cn("flex shrink-0", hops && "animate-hop")}
+      data-slot="moment-buddy"
+      style={hops ? { animationDelay: `${2 * BEAT_MS}ms` } : undefined}
+    >
       <Buddy
         beltColor={resolved.beltColor}
         className={whole ? "size-24" : "size-12"}
@@ -104,49 +109,23 @@ function MomentBuddy({ buddy, whole }: { buddy: LearnBuddy | null; whole: boolea
 
 /**
  * The day's bonus this work paid, as every Brain Power earned reads (`BrainPowerReadout`): "+50" a
- * violet readout with "Brain Power" beside it. It counts up as it lands, pops and bursts into
- * sparks. Screen readers hear it once, in the moment's status.
+ * violet readout with "Brain Power" beside it. It lands whole on its beat with the buddy's hop
+ * (its words never wait alone for their number) and counts up, then one burst of violet sparks
+ * flies from it, the day's rarest beat. Screen readers hear it once, in the moment's status.
  */
-function PaidBonus({ points }: { points: number }) {
-  const value = useRef<HTMLSpanElement>(null);
-  const [shown, setShown] = useState(points);
-
-  useCelebration(() => {
-    const start = performance.now() + COUNT_FROM_MS;
-    setShown(0);
-
-    const tick = (now: number) => {
-      const progress = Math.min(1, Math.max(0, (now - start) / COUNT_MS));
-      setShown(Math.round(points * (1 - (1 - progress) ** 2)));
-
-      if (progress < 1) {
-        requestAnimationFrame(tick);
-      }
-    };
-
-    requestAnimationFrame(tick);
-
-    // Hidden until it starts counting, so it never reads "+0".
-    value.current?.animate([{ opacity: 0 }, { opacity: 1 }], {
-      delay: COUNT_FROM_MS,
-      duration: 120,
-      fill: "backwards",
-    });
-
-    value.current?.animate(
-      [{ transform: "scale(1)" }, { transform: "scale(1.15)" }, { transform: "scale(1)" }],
-      { delay: LANDED_MS, duration: POP_MS, easing: "ease-out" },
-    );
-  }, true);
-
+function PaidBonus({ celebrate, points }: { celebrate: boolean; points: number }) {
   return (
     <span
       aria-hidden="true"
-      className="relative block *:data-[slot=readout-number]:origin-left"
+      className={cn(
+        "relative block",
+        celebrate && "animate-settle origin-left [--settle-from:0.9]",
+      )}
       data-slot="missions-bonus"
+      style={celebrate ? { animationDelay: `${2 * BEAT_MS}ms` } : undefined}
     >
-      <BrainPowerReadout numberRef={value} points={shown} />
-      <SparkBurst className="top-4 left-8" delay={LANDED_MS} sparks={BONUS_SPARKS} />
+      <BrainPowerReadout delay={2 * BEAT_MS} points={points} />
+      <Burst className="text-brain top-5 left-9" delay={3 * BEAT_MS} />
     </span>
   );
 }
@@ -156,10 +135,10 @@ function PaidBonus({ points }: { points: number }) {
  * practice, a pattern drill, a pronunciation round, a call, a question to the buddy), as its own
  * moment, on the same violet track Today shows: "Mission done!" with the buddy glad beside it and
  * what's left for the bonus ("1 more for +50 Brain Power"), then the day's missions by name, the
- * ones this work completed stamping their checks ("Just done") and the rest saying where they're
- * done. When it was the last one and the work paid the bonus, the moment is the day's: "Today's
- * missions done!", the whole buddy hopping and "+50" counting up in violet. Nothing when the work
- * completed none.
+ * ones this work completed landing their checks ("Just done") as their part of the track fills,
+ * and the rest saying where they're done. When it was the last one and the work paid the bonus,
+ * the moment is the day's: "Today's missions done!", the whole buddy hopping as "+50" counts up in
+ * violet, then one burst. Nothing when the work completed none.
  */
 export function MissionMoment({
   buddy,
@@ -167,7 +146,7 @@ export function MissionMoment({
   completed,
   fullMeal,
   missions,
-}: {
+}: MissionMomentFacts & {
   /** The learner's buddy, where the screen knows it: it's glad about the missions with them. */
   buddy?: LearnBuddy | null;
   /**
@@ -175,32 +154,26 @@ export function MissionMoment({
    * beside its words), so a question to it is named.
    */
   buddyName?: string;
-  /** The missions the work completed. */
-  completed: readonly Mission["kind"][];
-  fullMeal: { bonus: number; paid: boolean };
-  missions: readonly Mission[];
 }) {
   const t = useExtracted();
   const format = useFormatter();
   const titleId = useId();
+  const celebrate = useCelebration();
 
   const named =
     buddy === undefined && buddyName ? { ...resolveLearnBuddy(null), name: buddyName } : buddy;
 
   const missionName = useMissionName(named ?? null);
   const stateLabel = useMissionStateLabel(named ?? null);
+  const justDone = getJustDone({ completed, missions });
 
-  const justDone = missions.filter(
-    (mission) => mission.status === "done" && completed.includes(mission.kind),
-  );
-
-  if (justDone.length === 0 && !fullMeal.paid) {
+  if (!hasMissionMoment({ completed, fullMeal, missions })) {
     return null;
   }
 
   const left = missions.filter((mission) => mission.status !== "done").length;
   const points = format.number(fullMeal.bonus);
-  const payoff = left === 0 && fullMeal.paid;
+  const payoff = isPayoff({ completed, fullMeal, missions });
 
   // The track fills each mission this work completed from the step before it.
   const from = missions.map((mission) =>
@@ -239,7 +212,7 @@ export function MissionMoment({
       data-slot="mission-moment"
     >
       <div className={cn("flex items-center", payoff ? "gap-4" : "gap-3")}>
-        {buddy !== undefined && <MomentBuddy buddy={buddy} whole={payoff} />}
+        {buddy !== undefined && <MomentBuddy buddy={buddy} celebrate={celebrate} whole={payoff} />}
 
         <div className={cn("flex min-w-0 flex-1 flex-col", payoff ? "gap-3" : "gap-0.5")}>
           <div className="flex flex-col gap-0.5" role="status">
@@ -255,11 +228,16 @@ export function MissionMoment({
             <p className={cn("text-muted-foreground text-xs", payoff && "sr-only")}>{status()}</p>
           </div>
 
-          {payoff && <PaidBonus points={fullMeal.bonus} />}
+          {payoff && <PaidBonus celebrate={celebrate} points={fullMeal.bonus} />}
         </div>
       </div>
 
-      <MissionTrack className="mt-4" from={from} missions={missions} />
+      <MissionTrack
+        className="mt-4"
+        delay={BEAT_MS}
+        from={celebrate ? from : undefined}
+        missions={missions}
+      />
 
       <ListGroup className="mt-1.5">
         <ul>
@@ -274,7 +252,7 @@ export function MissionMoment({
                   detail={done ? null : <MissionStepLine mission={mission} />}
                   mark={
                     now ? (
-                      <StampedMark order={order} />
+                      <StampedMark celebrate={celebrate} order={order} />
                     ) : (
                       <MissionMark buddy={named ?? null} done={done} kind={mission.kind} />
                     )

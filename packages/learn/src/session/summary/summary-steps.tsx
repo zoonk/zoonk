@@ -1,5 +1,6 @@
 "use client";
 
+import { CelebrationScope } from "@zoonk/ui/hooks/celebration";
 import { useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
@@ -22,23 +23,30 @@ import {
 import { useIsStopped, useSessionSummary } from "./summary-context";
 import { DoneStep } from "./summary-parts";
 import { EarnedToday, RewardsStep, hasRewardsBeyondBrainPower } from "./summary-rewards";
+import { useFirstSummaryVisit } from "./use-first-summary-visit";
+
+/** The summary's steps the learner has moved on from: shown again, they keep their end state. */
+const NO_STEP_LEFT = { done: false, rewards: false };
 
 /**
  * The phone's second step, what the day earned, when it earned more than its Brain Power: Continue
  * opens it, Back (or ←) returns. Wide screens show it in the aside instead, so their main action
- * is Finish from the first screen.
+ * is Finish from the first screen. A step shown again (`revisited`) keeps its end state.
  */
 function useRewardsStep(stepRef: React.RefObject<HTMLElement | null>) {
   const stopped = useIsStopped();
   const { summary } = useSessionSummary();
   const [open, setOpen] = useState(false);
+  const [left, setLeft] = useState(NO_STEP_LEFT);
   const opened = useRef(false);
   const exists = !stopped && hasRewardsBeyondBrainPower(summary);
 
-  useKeyboardCallback("ArrowLeft", () => (open ? setOpen(false) : false), {
-    mode: "none",
-    screen: true,
-  });
+  const close = () => {
+    setLeft((steps) => ({ ...steps, rewards: true }));
+    setOpen(false);
+  };
+
+  useKeyboardCallback("ArrowLeft", () => (open ? close() : false), { mode: "none", screen: true });
 
   // A step the learner moves to takes the focus, but the first one keeps it where the browser put it.
   useEffect(() => {
@@ -48,7 +56,18 @@ function useRewardsStep(stepRef: React.RefObject<HTMLElement | null>) {
     }
   }, [open, stepRef]);
 
-  return { close: () => setOpen(false), exists, open: exists && open, show: () => setOpen(true) };
+  const show = () => {
+    setLeft((steps) => ({ ...steps, done: true }));
+    setOpen(true);
+  };
+
+  return {
+    close,
+    exists,
+    open: exists && open,
+    revisited: exists && open ? left.rewards : left.done,
+    show,
+  };
 }
 
 /**
@@ -110,6 +129,7 @@ export function SummarySteps() {
   const rewards = useRewardsStep(stepRef);
   const keepGoing = useKeepGoing();
   const [momentShown, setMomentShown] = useState(false);
+  const firstVisit = useFirstSummaryVisit(summary);
 
   // Once the milestone's moment is gone, the summary's title takes the focus, so the summary reads
   // on from there.
@@ -142,10 +162,20 @@ export function SummarySteps() {
 
   const milestone = summary.ceremony;
   const continuesToRewards = rewards.exists && !rewards.open;
+  // What the day earned celebrates once, after the milestone's ceremony when there is one.
+  const celebrates = firstVisit && (!milestone || momentShown);
 
   return (
     <TaskFrame
-      aside={{ children: <EarnedToday />, label: t("Earned today"), title: t("Earned today") }}
+      aside={{
+        children: (
+          <CelebrationScope play={celebrates}>
+            <EarnedToday />
+          </CelebrationScope>
+        ),
+        label: t("Earned today"),
+        title: t("Earned today"),
+      }}
       closeOnEscape
       exitHref={exitHref}
       footer={
@@ -173,7 +203,9 @@ export function SummarySteps() {
         key={rewards.open ? "rewards" : "done"}
         ref={stepRef}
       >
-        {rewards.open ? <RewardsStep /> : <DoneStep />}
+        <CelebrationScope play={celebrates && !rewards.revisited}>
+          {rewards.open ? <RewardsStep /> : <DoneStep />}
+        </CelebrationScope>
       </div>
 
       {ceremony && milestone && !momentShown && ceremony(milestone, () => setMomentShown(true))}

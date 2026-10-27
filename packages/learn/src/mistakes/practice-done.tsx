@@ -1,6 +1,7 @@
 "use client";
 
 import { type Reached } from "@zoonk/core/sessions/reached";
+import { CountUp } from "@zoonk/ui/components/count-up";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
 import { BrainIcon, CheckCheckIcon, TargetIcon } from "lucide-react";
@@ -75,7 +76,7 @@ function PracticeStats({
             icon={<BrainIcon />}
             label={t("Brain Power")}
             tone="brain"
-            value={`+${brainPower}`}
+            value={<CountUp format={(points) => `+${points}`} value={brainPower} />}
           />
         )}
       </StatTiles>

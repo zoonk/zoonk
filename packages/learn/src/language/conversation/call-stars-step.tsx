@@ -4,6 +4,8 @@ import {
   type CallFeedback,
   type LanguageConversationView,
 } from "@zoonk/core/language/conversations/contract";
+import { CountUp } from "@zoonk/ui/components/count-up";
+import { useCelebration } from "@zoonk/ui/hooks/celebration";
 import { cn } from "@zoonk/ui/lib/utils";
 import { BrainIcon, StarIcon, TargetIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
@@ -24,10 +26,12 @@ const MAX_STARS = 3;
 
 /**
  * The call's stars, from what the learner did and never at random, as a readout ("2/3") after one
- * small star in progress's blue (what the call reached): the result's anchor.
+ * small star in progress's blue (what the call reached): the result's anchor. Its star lands as
+ * the result shows, unless the call lost its challenge.
  */
-function Stars({ stars }: { stars: number }) {
+function Stars({ lost, stars }: { lost: boolean; stars: number }) {
   const t = useExtracted();
+  const celebrate = useCelebration();
 
   return (
     <p
@@ -35,7 +39,13 @@ function Stars({ stars }: { stars: number }) {
       className="text-readout flex items-center gap-1.5 text-2xl"
       role="img"
     >
-      <StarIcon aria-hidden="true" className="fill-success text-success size-5" />
+      <StarIcon
+        aria-hidden="true"
+        className={cn(
+          "fill-success text-success size-5",
+          celebrate && !lost && stars > 0 && "animate-settle",
+        )}
+      />
       <span aria-hidden="true">
         {stars}
         <span className="text-muted-foreground">{`/${MAX_STARS}`}</span>
@@ -108,7 +118,12 @@ function CallFacts({
           icon={<BrainIcon />}
           label={t("Brain Power")}
           tone="brain"
-          value={format.number(result.brainPower, { signDisplay: "always" })}
+          value={
+            <CountUp
+              format={(points) => format.number(points, { signDisplay: "always" })}
+              value={result.brainPower}
+            />
+          }
         />
       )}
     </StatTiles>
@@ -141,7 +156,7 @@ export function StarsStep({
   return (
     <>
       <StepCard>
-        <Stars stars={result.stars} />
+        <Stars lost={lost} stars={result.stars} />
         <StepHeader>
           <StepEyebrow>
             {conversation.kind === "checkpoint" ? conversation.title : title}

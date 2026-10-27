@@ -2,6 +2,7 @@
 
 import { beltColorClasses } from "@zoonk/ui/components/belt-indicator";
 import { Buddy } from "@zoonk/ui/components/buddy";
+import { Burst, type Spark } from "@zoonk/ui/components/burst";
 import { Button } from "@zoonk/ui/components/button";
 import {
   Dialog,
@@ -11,6 +12,8 @@ import {
   DialogTitle,
 } from "@zoonk/ui/components/dialog";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
+import { useCelebration } from "@zoonk/ui/hooks/celebration";
+import { BEAT_MS } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type BeltColor } from "@zoonk/utils/belt-level";
 import { type BuddyGlasses } from "@zoonk/utils/buddy";
@@ -84,8 +87,25 @@ function stageClass(belt: BeltColor | null): string {
 }
 
 /**
+ * The burst behind the buddy as it lands: sparks fly out from behind it, past the disc's edge, so
+ * they show around it on every screen (in px from the stage's middle).
+ */
+const STAGE_SPARKS: readonly Spark[] = [
+  { size: 13, x: -128, y: -50 },
+  { size: 10, x: -68, y: -118 },
+  { size: 14, x: 18, y: -136 },
+  { size: 10, x: 98, y: -96 },
+  { size: 13, x: 136, y: -8 },
+  { size: 10, x: 104, y: 82 },
+  { size: 12, x: -12, y: 132 },
+  { size: 10, x: -108, y: 84 },
+];
+
+/**
  * The picture: the buddy in its new belt, at its new stage or in its new glasses, large on its
- * stage, a disc in the new belt's color (`data-slot="ceremony-stage"`).
+ * stage, a disc in the new belt's color (`data-slot="ceremony-stage"`). As it opens, the buddy
+ * lands on the disc and, for a belt or a stage (both grown from Brain Power), violet sparks burst
+ * from behind it; new glasses come from other achievements, so they get no Brain Power burst.
  */
 function CeremonyArt({
   buddy: learnerBuddy,
@@ -93,6 +113,7 @@ function CeremonyArt({
 }: Pick<CeremonyProps, "buddy" | "milestone">) {
   const buddy = resolveLearnBuddy(learnerBuddy);
   const buddyName = useBuddyName(buddy);
+  const celebrate = useCelebration();
   const belt = toBeltColor(milestone.key);
   const glasses = toBuddyGlasses(milestone.key);
 
@@ -108,10 +129,15 @@ function CeremonyArt({
           stageClass(milestone.kind === "belt" ? belt : null),
         )}
       />
+      {milestone.kind !== "glasses" && (
+        <Burst className="text-brain top-1/2 left-1/2" delay={BEAT_MS} sparks={STAGE_SPARKS} />
+      )}
       <Buddy
         beltColor={milestone.kind === "belt" && belt ? belt : buddy.beltColor}
-        // One pulse once it's in, for what just changed on it.
-        className="motion-safe:animate-pulse-scale relative size-40 [animation-delay:200ms] sm:size-48"
+        className={cn(
+          "relative size-40 sm:size-48",
+          celebrate && "animate-settle [--settle-from:0.85]",
+        )}
         energy={buddy.energy}
         expression="cheer"
         glasses={milestone.kind === "glasses" && glasses ? glasses : buddy.glasses}
@@ -223,7 +249,7 @@ function CeremonyMoment({
     >
       <DialogPortal>
         <DialogPopup
-          className="data-open:animate-in data-open:fade-in data-closed:animate-out data-closed:fade-out fixed inset-0 z-50 flex flex-col overflow-y-auto duration-200"
+          className="data-open:animate-in data-open:fade-in data-closed:animate-out data-closed:fade-out duration-base fixed inset-0 z-50 flex flex-col overflow-y-auto"
           data-slot="milestone-ceremony"
         >
           {/* A stage, centered a little above the middle: the one screen that isn't a column. */}

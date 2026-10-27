@@ -1,8 +1,10 @@
 "use client";
 
 import { type MockView } from "@zoonk/core/exams/mocks/contract";
+import { CelebrationScope } from "@zoonk/ui/hooks/celebration";
 import { TimerOffIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { useState } from "react";
 import { StepCard, StepDetail, StepHeader, StepTitle } from "../_components/step-card";
 import { TaskActions } from "../_components/task-layout";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
@@ -150,10 +152,15 @@ export function MockScreen({
   renderCeremony?: MomentCeremony;
 }) {
   const runner = useMockRunner({ actions, initial: mock });
+  // A result opened again later is a record, not a celebration: only one finished here moves.
+  // oxlint-disable-next-line react/hook-use-state -- Read once as the screen opens, never updated.
+  const [openedFinished] = useState(mock.status === "finished");
 
   return (
     <MockProvider value={{ actions, ask, buddy, hrefs, renderCeremony, runner }}>
-      <MockStage />
+      <CelebrationScope play={!openedFinished}>
+        <MockStage />
+      </CelebrationScope>
     </MockProvider>
   );
 }

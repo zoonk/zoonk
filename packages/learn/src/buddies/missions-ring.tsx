@@ -1,18 +1,12 @@
 "use client";
 
-import { getScrollBehavior } from "@zoonk/ui/lib/scroll-behavior";
+import { readDuration, readEasing } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useLayoutEffect, useRef } from "react";
 import { RING_VIEW_BOX, getArcPath } from "./missions-ring-arc";
 
 /** Today's missions as the buddy's tab counts them: how many are done of how many. */
 export type MissionsCount = { done: number; total: number };
-
-/** An arc fills in, then the face inside gives a small bounce. */
-const FILL_MS = 900;
-const POP_MS = 300;
-const POP_SCALE = 1.15;
-const EASE_OUT = "cubic-bezier(0.22, 1, 0.36, 1)";
 
 /** Remembers the count the learner last saw, so a mission done since then fills with a moment. */
 const SEEN_KEY = "zoonk:missions-seen";
@@ -34,10 +28,25 @@ function writeSeen(done: number) {
   }
 }
 
+/** The face's pop, after its arcs have filled: a data attribute the face's classes play. */
+function popFace(face: HTMLElement) {
+  face.dataset.popping = "";
+
+  const end = (event: AnimationEvent) => {
+    if (event.target === face) {
+      delete face.dataset.popping;
+      face.removeEventListener("animationend", end);
+    }
+  };
+
+  face.addEventListener("animationend", end);
+}
+
 /**
- * Fills in the arcs of the missions done since the learner last saw the ring, then bounces the
- * face: before the browser paints a new count (after hydration on a first load), and not at all
- * when the device asks for less motion. A new day, with fewer done, just starts over.
+ * Fills in the arcs of the missions done since the learner last saw the ring, in the fill's time,
+ * then pops the face once: before the browser paints a new count (after hydration on a first
+ * load), and not at all when the device asks for less motion, whose fill time is 0. A new day,
+ * with fewer done, just starts over.
  */
 function useMissionMoment({
   done,
@@ -57,25 +66,24 @@ function useMissionMoment({
 
     const seen = readSeen();
     writeSeen(done);
+    const svg = ring.current;
+    const duration = svg ? readDuration(svg, "fill") : 0;
 
-    if (seen === null || done <= seen || getScrollBehavior() === "auto") {
+    if (!svg || seen === null || done <= seen || duration === 0) {
       return;
     }
 
-    const arcs = [...(ring.current?.querySelectorAll("path") ?? [])].slice(seen, done);
-
-    for (const arc of arcs) {
+    for (const arc of [...svg.querySelectorAll("path")].slice(seen, done)) {
       arc.animate([{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], {
-        duration: FILL_MS,
-        easing: EASE_OUT,
+        duration,
+        easing: readEasing(svg, "out"),
         fill: "backwards",
       });
     }
 
-    face.current?.animate(
-      [{ transform: "scale(1)" }, { transform: `scale(${POP_SCALE})` }, { transform: "scale(1)" }],
-      { delay: FILL_MS, duration: POP_MS, easing: "ease-out" },
-    );
+    if (face.current) {
+      popFace(face.current);
+    }
   }, [done, enabled, face, ring]);
 }
 
@@ -144,7 +152,10 @@ export function MissionsRing({
           />
         ))}
       </svg>
-      <span className="relative flex items-center justify-center" ref={face}>
+      <span
+        className="data-popping:animate-pop relative flex items-center justify-center data-popping:[animation-delay:var(--transition-duration-fill)]"
+        ref={face}
+      >
         {children}
       </span>
     </span>

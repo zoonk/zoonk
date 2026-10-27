@@ -6,6 +6,7 @@ import {
   type LanguageConversationView,
 } from "@zoonk/core/language/conversations/contract";
 import { NOTHING_REACHED } from "@zoonk/core/sessions/reached";
+import { CelebrationScope } from "@zoonk/ui/hooks/celebration";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { type LearnBuddy } from "../../buddies/use-buddy-name";
 import { DayMoment } from "../../session/day-moment";
@@ -244,6 +245,9 @@ export function ConversationScreen({
     startWith: callAudio ? "call" : "intro",
   });
 
+  // A result opened again later is a record: only a call that ended here celebrates its stars.
+  // oxlint-disable-next-line react/hook-use-state -- Read once as the screen opens, never updated.
+  const [openedWithResult] = useState(Boolean(conversation.result));
   const { result } = view;
   const ceremony = getCeremonyMoment({ milestone: view.ceremony, render: renderCeremony });
 
@@ -290,14 +294,16 @@ export function ConversationScreen({
 
   if (result) {
     return (
-      <ConversationResult
-        ceremony={ceremony}
-        conversation={view}
-        dayMoment={dayMoment}
-        exitHref={hrefs.exit}
-        nextHref={hrefs.next}
-        result={result}
-      />
+      <CelebrationScope play={!openedWithResult}>
+        <ConversationResult
+          ceremony={ceremony}
+          conversation={view}
+          dayMoment={dayMoment}
+          exitHref={hrefs.exit}
+          nextHref={hrefs.next}
+          result={result}
+        />
+      </CelebrationScope>
     );
   }
 

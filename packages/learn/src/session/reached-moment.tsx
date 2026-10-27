@@ -1,6 +1,8 @@
 "use client";
 
 import { beltColorClasses } from "@zoonk/ui/components/belt-indicator";
+import { useCelebration } from "@zoonk/ui/hooks/celebration";
+import { BEAT_MS } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type BeltColor } from "@zoonk/utils/belt-level";
 import { ZapIcon } from "lucide-react";
@@ -25,13 +27,13 @@ const LIGHT_BELTS: ReadonlySet<BeltColor> = new Set(["white", "yellow", "orange"
 const GLOWING_ENERGY = 80;
 const MAX_ENERGY = 100;
 
-/**
- * When each row's one motion plays: after the missions above have stamped in and their bonus has
- * landed, the level first and then Energy, so they read in order instead of all at once.
- */
-const LEVEL_DELAY_CLASS = "[animation-delay:700ms]";
-const LEVEL_TICKS_DELAY_CLASS = "*:[animation-delay:700ms]";
-const ENERGY_DELAY_CLASS = "[animation-delay:950ms]";
+/** A row's one motion where the moment celebrates: none, or on its beat. */
+type RowMotion = { delay: number } | null;
+
+/** The motion's beat, as the element's own animation delay. */
+function beatStyle(motion: RowMotion): React.CSSProperties | undefined {
+  return motion ? { animationDelay: `${motion.delay}ms` } : undefined;
+}
 
 /** One thing the block took the learner to, as a row: its mark, what it is, one line, a bar. */
 function ReachedRow({
@@ -61,27 +63,42 @@ function ReachedRow({
   );
 }
 
-/** The new level's number on its belt's color, with a firm edge, pulsing once as it's reached. */
-function LevelBadge({ color, level }: { color: BeltColor; level: number }) {
+/** The new level's number on its belt's color, with a firm edge, landing as it's reached. */
+function LevelBadge({
+  color,
+  level,
+  motion,
+}: {
+  color: BeltColor;
+  level: number;
+  motion: RowMotion;
+}) {
   return (
     <span
       aria-hidden="true"
       className={cn(
         "flex size-10 shrink-0 items-center justify-center rounded-full text-base font-semibold tabular-nums",
-        "motion-safe:animate-pulse-scale ring-1 ring-black/10 ring-inset dark:ring-white/10",
-        LEVEL_DELAY_CLASS,
+        "ring-1 ring-black/10 ring-inset dark:ring-white/10",
+        motion && "animate-settle",
         beltColorClasses[color],
         LIGHT_BELTS.has(color) ? "text-black/80" : "text-white",
       )}
       data-slot="level-badge"
+      style={beatStyle(motion)}
     >
       {level}
     </span>
   );
 }
 
-/** A new belt level: "Level up!", the belt and level, and its ten ticks with the new one charging. */
-function LevelReached({ level }: { level: NonNullable<Reached["level"]> }) {
+/** A new belt level: "Level up!", the belt and level, and its ten ticks, the new one filling. */
+function LevelReached({
+  level,
+  motion,
+}: {
+  level: NonNullable<Reached["level"]>;
+  motion: RowMotion;
+}) {
   const t = useExtracted();
   const beltName = useBeltName();
 
@@ -89,9 +106,9 @@ function LevelReached({ level }: { level: NonNullable<Reached["level"]> }) {
     <ReachedRow
       bar={
         <BeltTicks
-          className={LEVEL_TICKS_DELAY_CLASS}
           color={level.color}
-          gained={1}
+          delay={motion?.delay}
+          filling={motion ? 1 : 0}
           level={level.level}
         />
       }
@@ -99,7 +116,7 @@ function LevelReached({ level }: { level: NonNullable<Reached["level"]> }) {
         belt: beltName(level.color),
         level: String(level.level),
       })}
-      mark={<LevelBadge color={level.color} level={level.level} />}
+      mark={<LevelBadge color={level.color} level={level.level} motion={motion} />}
       slot="reached-level"
       title={t("Level up!")}
     />
@@ -109,9 +126,18 @@ function LevelReached({ level }: { level: NonNullable<Reached["level"]> }) {
 /**
  * A new tenth of Energy, said as its number ("Energy at 60%"), with what it means: the buddy
  * glowing from 80%, or the most it goes at 100%. Its bar shows where Energy is now, never filling
- * from empty, since a block moves it only a little; its bolt pulses once for the step.
+ * from empty, since a block moves it only a little and the moment doesn't know from where; its
+ * bolt pops once for the step.
  */
-function EnergyReached({ buddy, energy }: { buddy?: LearnBuddy | null; energy: number }) {
+function EnergyReached({
+  buddy,
+  energy,
+  motion,
+}: {
+  buddy?: LearnBuddy | null;
+  energy: number;
+  motion: RowMotion;
+}) {
   const t = useExtracted();
   const formatShare = useFormatShare();
   const name = useBuddyName(resolveLearnBuddy(buddy ?? null));
@@ -147,7 +173,8 @@ function EnergyReached({ buddy, energy }: { buddy?: LearnBuddy | null; energy: n
           data-slot="energy-mark"
         >
           <ZapIcon
-            className={cn("text-energy motion-safe:animate-pulse-scale size-5", ENERGY_DELAY_CLASS)}
+            className={cn("text-energy size-5", motion && "animate-pop")}
+            style={beatStyle(motion)}
           />
         </span>
       }
@@ -164,28 +191,42 @@ function EnergyReached({ buddy, energy }: { buddy?: LearnBuddy | null; energy: n
 /**
  * What the block took the learner to, as flat rows under its missions: a new belt level and a new
  * tenth of Energy. A new belt color gets its full-screen ceremony instead, so its level isn't said
- * twice. Nothing when the block reached neither.
+ * twice. Where the moment celebrates, the level lands after `delay` (the missions' moment above
+ * has its beats first) as its tick fills, and Energy's bolt pops a beat later. Nothing when the
+ * block reached neither.
  */
 export function ReachedMoment({
   buddy,
   ceremony,
+  delay,
   reached,
 }: {
   buddy?: LearnBuddy | null;
   /** The block's full-screen ceremony: a new belt already celebrates its level. */
   ceremony: Pick<CeremonyMilestone, "kind"> | null;
+  /** When its first row moves: after the missions' moment (`getAfterMissionsDelay`). */
+  delay: number;
   reached: Reached;
 }) {
+  const celebrate = useCelebration();
   const level = ceremony?.kind === "belt" ? null : reached.level;
 
   if (!level && reached.energy === null) {
     return null;
   }
 
+  const energyDelay = level ? delay + BEAT_MS : delay;
+
   return (
     <StepRows data-slot="reached-moment">
-      {level && <LevelReached level={level} />}
-      {reached.energy !== null && <EnergyReached buddy={buddy} energy={reached.energy} />}
+      {level && <LevelReached level={level} motion={celebrate ? { delay } : null} />}
+      {reached.energy !== null && (
+        <EnergyReached
+          buddy={buddy}
+          energy={reached.energy}
+          motion={celebrate ? { delay: energyDelay } : null}
+        />
+      )}
     </StepRows>
   );
 }

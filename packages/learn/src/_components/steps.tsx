@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
+import { CelebrationScope } from "@zoonk/ui/hooks/celebration";
 import { useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronLeftIcon } from "lucide-react";
@@ -75,7 +76,8 @@ function WideOnly({ children, when }: { children: React.ReactNode; when: boolean
  * actions instead of Continue. From `lg` an `aside` can hold what the steps after the first tell
  * on a phone (what the day earned, the steps `beside` it), so a wide screen says it all at once.
  * The learner's buddy (`ask`) sits where it does on every task: after the main action on a phone,
- * at the aside's foot from `lg`.
+ * at the aside's foot from `lg`. A step's celebration plays the first time it shows; going back to
+ * it shows its end state.
  */
 export function Steps({
   aside,
@@ -102,6 +104,7 @@ export function Steps({
   const asideShown = useTaskAsideShown();
   const [index, setIndex] = useState(0);
   const [momentsShown, setMomentsShown] = useState<string[]>([]);
+  const [stepsLeft, setStepsLeft] = useState<string[]>([]);
   const stepRef = useRef<HTMLDivElement>(null);
   const focusedIndex = useRef(0);
   const reached = Math.min(index, items.length - 1);
@@ -130,6 +133,10 @@ export function Steps({
 
     if (target === -1) {
       return false;
+    }
+
+    if (item && !stepsLeft.includes(item.id)) {
+      setStepsLeft([...stepsLeft, item.id]);
     }
 
     setIndex(target);
@@ -212,7 +219,7 @@ export function Steps({
         moment(closeMoment)
       ) : (
         <div className="flex flex-col gap-4" data-slot="steps-step" key={item.id} ref={stepRef}>
-          {item.content}
+          <CelebrationScope play={!stepsLeft.includes(item.id)}>{item.content}</CelebrationScope>
         </div>
       )}
     </TaskFrame>

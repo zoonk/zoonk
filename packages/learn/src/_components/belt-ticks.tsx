@@ -13,35 +13,47 @@ function tickClass(color: BeltColor): string {
 
 /**
  * A belt's ten levels as a meter of parts (6px, 2px apart, as every meter), lit in its color up to
- * the level reached; the ones just `gained` charge in, so the learner sees which are new.
- * Decorative: the words beside it name the level.
+ * the level reached. The last `filling` of them (the level just reached) fill in over their track
+ * after `delay`, where a celebration plays; otherwise every tick is simply lit. Decorative: the
+ * words beside it name the level.
  */
 export function BeltTicks({
   className,
   color,
-  gained,
+  delay = 0,
+  filling = 0,
   level,
 }: {
   className?: string;
   color: BeltColor;
-  gained: number;
+  delay?: number;
+  filling?: number;
   level: number;
 }) {
   return (
     <MeterParts as="span" className={className} data-slot="belt-ticks">
-      {Array.from({ length: LEVELS_PER_BELT }, (_, index) => (
-        <MeterPart
-          as="span"
-          className={cn(
-            index < level && tickClass(color),
-            index >= level - gained &&
-              index < level &&
-              "motion-safe:animate-energy-charge origin-left",
-          )}
-          // oxlint-disable-next-line react/no-array-index-key -- Ticks are the belt's levels, not items.
-          key={index}
-        />
-      ))}
+      {Array.from({ length: LEVELS_PER_BELT }, (_, index) => {
+        const fills = index >= level - filling && index < level;
+
+        return (
+          <MeterPart
+            as="span"
+            className={cn(
+              index < level && !fills && tickClass(color),
+              fills && "relative overflow-hidden",
+            )}
+            // oxlint-disable-next-line react/no-array-index-key -- Ticks are the belt's levels, not items.
+            key={index}
+          >
+            {fills && (
+              <span
+                className={cn("animate-fill absolute inset-0 origin-left", tickClass(color))}
+                style={{ animationDelay: `${delay}ms` }}
+              />
+            )}
+          </MeterPart>
+        );
+      })}
     </MeterParts>
   );
 }

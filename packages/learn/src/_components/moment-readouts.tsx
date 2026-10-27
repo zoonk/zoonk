@@ -1,5 +1,6 @@
 "use client";
 
+import { CountUp } from "@zoonk/ui/components/count-up";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useFormatter } from "next-intl";
 import { TaskMeta } from "./task-meta";
@@ -34,23 +35,17 @@ function readoutWords(chunks: React.ReactNode) {
 /**
  * Brain Power earned, the one way every celebration draws it (a task's end, the day's missions
  * bonus, the session's rewards): "+27" as a readout in its violet and "Brain Power" small beside
- * it. It reads as words, so it goes inside a heading or a line. `numberRef` reaches the number for
- * a moment that counts it up or pops it.
+ * it, the number counting up when the celebration plays, on its beat (`delay`). It reads as words,
+ * so it goes inside a heading or a line.
  */
-export function BrainPowerReadout({
-  numberRef,
-  points,
-}: {
-  numberRef?: React.Ref<HTMLSpanElement>;
-  points: number;
-}) {
+export function BrainPowerReadout({ delay, points }: { delay?: number; points: number }) {
   const t = useExtracted();
   const format = useFormatter();
 
   return t.rich("<number>+{points}</number> <words>Brain Power</words>", {
-    number: (chunks) => (
-      <ReadoutNumber className="text-brain-text" ref={numberRef}>
-        {chunks}
+    number: () => (
+      <ReadoutNumber className="text-brain-text">
+        <CountUp delay={delay} format={(value) => `+${format.number(value)}`} value={points} />
       </ReadoutNumber>
     ),
     points: format.number(points),
@@ -65,8 +60,8 @@ const NO_FACTS: readonly (string | false | null | undefined)[] = [];
  * What a task earned at its end (a lesson, a block of the session), as readouts: the score ("3 of 5
  * right") and the Brain Power earned in its violet, each number large beside its words, then the
  * other facts as one quiet mono line ("Review on Oct 14"). Brain Power earned is one of the few
- * louder moments. A replay earns nothing new, so "+0" never shows; with nothing to say it draws
- * nothing.
+ * louder moments: it counts up, the moment's first beat, while the score and the facts hold still.
+ * A replay earns nothing new, so "+0" never shows; with nothing to say it draws nothing.
  *
  * ```tsx
  * <MomentReadouts brainPower={22} facts={["Review on Oct 14"]} score={{ answered: 5, correct: 3 }} />

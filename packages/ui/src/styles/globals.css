@@ -114,8 +114,6 @@
   --color-belt-black: var(--belt-black);
   --animate-breathe: breathe 2s ease-in-out infinite;
   --animate-glow: glow 2.4s ease-in-out infinite;
-  --animate-energy-charge: energy-charge 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
-  --animate-pulse-scale: pulse-scale 300ms ease-out;
   --animate-ring-fill: ring-fill 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
 }
 
@@ -178,6 +176,7 @@
   --animate-hop: hop var(--transition-duration-pop) var(--ease-out);
   --animate-fill: fill var(--transition-duration-fill) var(--ease-out) both;
   --animate-spark: spark var(--transition-duration-burst) var(--ease-out) forwards;
+  --animate-tip: tip var(--transition-duration-settle) var(--ease-spring) both;
 }
 
 /*
@@ -611,6 +610,7 @@
     --animate-hop: none;
     --animate-fill: none;
     --animate-spark: none;
+    --animate-tip: none;
     --press-scale: 1;
   }
 
@@ -670,15 +670,6 @@
   }
 }
 
-@keyframes energy-charge {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
-}
-
 @keyframes shake {
   0%,
   100% {
@@ -705,18 +696,6 @@
   }
 }
 
-@keyframes pulse-scale {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.15);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
 /* Something earned lands: it grows in from smaller (`--settle-from`) and settles on the spring. */
 @keyframes settle {
   from {
@@ -729,6 +708,13 @@
 @keyframes pop {
   40% {
     scale: 1.12;
+  }
+}
+
+/* Something beaten tips back into the pose it rests in (its `rotate`), on the spring. */
+@keyframes tip {
+  from {
+    rotate: 0deg;
   }
 }
 
