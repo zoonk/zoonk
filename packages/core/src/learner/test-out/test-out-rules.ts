@@ -5,7 +5,7 @@ export const TEST_OUT_PASS_MARK = 0.8;
 export const TEST_OUT_MAX_QUESTIONS = 8;
 
 /** Never fewer: one lucky answer, or two, never skips a chapter. */
-export const TEST_OUT_MIN_QUESTIONS = 4;
+const TEST_OUT_MIN_QUESTIONS = 4;
 
 /** One more question for every this many lessons a pass would skip. */
 const LESSONS_PER_QUESTION = 2;
