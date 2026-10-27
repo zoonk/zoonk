@@ -5,6 +5,7 @@ import {
   type SpeakingMockExam,
   type SpeakingMockFeedback,
 } from "@zoonk/core/language/conversations/contract";
+import { SPEAKING_MOCK_CRITERIA } from "@zoonk/core/language/conversations/speaking-mock";
 import { Button } from "@zoonk/ui/components/button";
 import { LightbulbIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
@@ -86,27 +87,47 @@ function BandStep({
   );
 }
 
-/** Each criterion with its band; the one to work on first is marked. */
+/**
+ * Each of the exam's criteria with its band; the one to work on first is marked. A mock answered
+ * only by typing has no band for how the learner sounds (pronunciation, TOEFL's delivery): that
+ * row says it isn't rated, as a certificate task's does, and the step says why.
+ */
 function CriteriaStep({ feedback }: { feedback: SpeakingMockFeedback }) {
   const t = useExtracted();
   const criterionName = useCriterionName();
   const range = useBandRange();
 
+  const rows = SPEAKING_MOCK_CRITERIA[feedback.exam].map((key) => ({
+    graded: feedback.criteria.find((criterion) => criterion.criterion === key),
+    key,
+  }));
+
+  const typed = rows.some((row) => !row.graded);
+
   return (
     <StepCard>
-      <StepTitle>{t("By criterion")}</StepTitle>
+      <StepHeader>
+        <StepTitle>{t("By criterion")}</StepTitle>
+        {typed && (
+          <StepDetail>
+            {t("You typed your replies, so this estimate leaves out how you sound.")}
+          </StepDetail>
+        )}
+      </StepHeader>
       <ResultRows>
-        {feedback.criteria.map((criterion) => (
-          <ResultRow key={criterion.criterion}>
+        {rows.map(({ graded, key }) => (
+          <ResultRow key={key}>
             <span className="flex min-w-0 items-center gap-2 font-medium">
-              {criterionName(criterion.criterion)}
-              {criterion.criterion === feedback.focus && (
-                <span className={CHIP_CLASS}>{t("Focus")}</span>
-              )}
+              {criterionName(key)}
+              {key === feedback.focus && <span className={CHIP_CLASS}>{t("Focus")}</span>}
             </span>
-            <span className="shrink-0 font-mono font-medium whitespace-nowrap tabular-nums">
-              {range(criterion)}
-            </span>
+            {graded ? (
+              <span className="shrink-0 font-mono font-medium whitespace-nowrap tabular-nums">
+                {range(graded)}
+              </span>
+            ) : (
+              <span className="text-muted-foreground shrink-0 text-sm">{t("Not rated")}</span>
+            )}
           </ResultRow>
         ))}
       </ResultRows>

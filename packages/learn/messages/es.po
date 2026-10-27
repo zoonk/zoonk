@@ -4753,9 +4753,21 @@ msgstr "Por criterios"
 
 #: src/language/conversation/speaking-mock-result.tsx
 #: src/language/exam-speaking/exam-speaking-result.tsx
+msgctxt "F4DXOt"
+msgid "You typed your replies, so this estimate leaves out how you sound."
+msgstr "Has escrito tus respuestas, así que esta estimación no tiene en cuenta cómo suenas."
+
+#: src/language/conversation/speaking-mock-result.tsx
+#: src/language/exam-speaking/exam-speaking-result.tsx
 msgctxt "hsJlm7"
 msgid "Focus"
 msgstr "Enfoque"
+
+#: src/language/conversation/speaking-mock-result.tsx
+#: src/language/exam-speaking/exam-speaking-result.tsx
+msgctxt "X2wFAX"
+msgid "Not rated"
+msgstr "Sin evaluar"
 
 #: src/language/conversation/speaking-mock-result.tsx
 #: src/language/exam-speaking/exam-speaking-result.tsx
@@ -4900,19 +4912,9 @@ msgid "On these scales, {band} is the {level} level."
 msgstr "En estas escalas, {band} es el nivel {level}."
 
 #: src/language/exam-speaking/exam-speaking-result.tsx
-msgctxt "F4DXOt"
-msgid "You typed your replies, so this estimate leaves out how you sound."
-msgstr "Has escrito tus respuestas, así que esta estimación no tiene en cuenta cómo suenas."
-
-#: src/language/exam-speaking/exam-speaking-result.tsx
 msgctxt "9aFaty"
 msgid "You said little in this task, so there wasn't much to judge. A longer try gives a closer estimate."
 msgstr "Has dicho poco en esta tarea, así que hay poco que evaluar. Si lo intentas durante más tiempo, la estimación será más precisa."
-
-#: src/language/exam-speaking/exam-speaking-result.tsx
-msgctxt "X2wFAX"
-msgid "Not rated"
-msgstr "Sin evaluar"
 
 #: src/language/exam-speaking/exam-speaking-result.tsx
 msgctxt "1wB910"
