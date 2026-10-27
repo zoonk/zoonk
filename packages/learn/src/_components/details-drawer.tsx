@@ -12,14 +12,14 @@ import {
 } from "@zoonk/ui/components/drawer";
 import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { TASK_OPTION_CLASS } from "./task-layout";
 
 /**
- * How the drawer opens: a quiet text link, a secondary action in the task's `TaskActions` row, or
- * a quiet option on its own row under it.
+ * How the drawer opens: a quiet option on its own row under the task's `TaskActions` row, or a
+ * secondary action in it.
  */
-const TRIGGER: Record<"link" | "option" | "secondary", React.ReactElement> = {
-  link: <Button className="self-start" variant="link" />,
-  option: <Button className="w-full" size="xl" variant="ghost" />,
+const TRIGGER: Record<"option" | "secondary", React.ReactElement> = {
+  option: <Button className={TASK_OPTION_CLASS} size="xl" variant="ghost" />,
   secondary: <Button className="shrink-0" size="xl" variant="outline" />,
 };
 
@@ -37,21 +37,20 @@ export function DrawerCloseButton() {
 
 /**
  * Detail that can wait (the questions with their answers, every criterion's comment) behind a
- * quiet text link, a secondary action beside the main one (`trigger="secondary"`) or a quiet
- * option under it (`trigger="option"`), in a sheet from the bottom, so the screen keeps to its one
- * thing.
+ * quiet option under the task's main action, or a secondary action beside it
+ * (`trigger="secondary"`), in a sheet from the bottom, so the screen keeps to its one thing.
  */
 export function DetailsDrawer({
   children,
   label,
   title,
-  trigger = "link",
+  trigger = "option",
 }: {
   children: React.ReactNode;
   /** The trigger's words, "See the questions". */
   label: string;
   title: string;
-  trigger?: "link" | "option" | "secondary";
+  trigger?: "option" | "secondary";
 }) {
   return (
     <Drawer>

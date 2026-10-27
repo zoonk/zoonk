@@ -185,7 +185,6 @@ export function MockReviewDrawer() {
         count: review.length,
       })}
       title={t("Questions to review")}
-      trigger="option"
     >
       <MockReviewList />
     </DetailsDrawer>

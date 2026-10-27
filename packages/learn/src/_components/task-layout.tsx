@@ -102,6 +102,13 @@ export function TaskActions({ className, ...props }: React.ComponentProps<"div">
 export const TASK_MAIN_ACTION_CLASS =
   "w-full min-w-0 shrink grow lg:w-auto lg:min-w-40 lg:shrink-0 lg:grow-0";
 
+/**
+ * A quiet option on its own row under the bar's actions (another try, the details, Undo), drawn as
+ * a ghost button: the row's width on a phone, like the main action above it, and its label's width
+ * from `lg`, at the bar's right edge under the main action it's about.
+ */
+export const TASK_OPTION_CLASS = "w-full lg:w-auto";
+
 /** Back, the 44px square on the row's left, which keeps the bar's left edge from `lg`. */
 export const TASK_BACK_ACTION_CLASS = "size-11 shrink-0 lg:mr-auto";
 

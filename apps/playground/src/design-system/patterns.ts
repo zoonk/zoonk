@@ -18,7 +18,7 @@ export const PATTERNS: readonly Pattern[] = [
     ],
     follow: [
       "One main action per area, inverted (`Button`); secondary actions outline, tertiary ghost.",
-      "An action inside a sentence, or a quiet one on its own line (Try again, Undo), is a word (the `link` variant): the text color, underlined, at the size of the text around it.",
+      "An action inside a sentence (Take the test, Try again, Undo after a memory change) is a word (the `link` variant): the text color, underlined, at the size of the text around it. A quiet option under a task's main action (another try, the details, Undo after a result) is a ghost button on its own row (`TASK_OPTION_CLASS`), never an underlined word.",
       "The main action shows its key as a keycap on pointer devices (`ShortcutKbd`).",
     ],
     id: "actions",

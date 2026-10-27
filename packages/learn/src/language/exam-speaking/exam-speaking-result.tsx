@@ -20,6 +20,7 @@ import {
   StepTitle,
 } from "../../_components/step-card";
 import { Steps, type StepsItem } from "../../_components/steps";
+import { TASK_OPTION_CLASS } from "../../_components/task-layout";
 import { StepWithDayMoment } from "../../session/day-moment";
 import { TaskMainLink } from "../../shell/task-frame";
 import { CallNote } from "../conversation/call-note";
@@ -235,10 +236,10 @@ function TryAgainButton({ onTryAgain }: { onTryAgain: () => Promise<void> }) {
 
   return (
     <Button
-      className="w-full"
+      className={TASK_OPTION_CLASS}
       disabled={isPending}
       onClick={() => startTransition(onTryAgain)}
-      size="lg"
+      size="xl"
       variant="ghost"
     >
       {t("Try this task with a new card")}
