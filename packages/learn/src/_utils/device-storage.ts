@@ -20,18 +20,22 @@ function createDeviceStorage(name: "localStorage" | "sessionStorage") {
         return null;
       }
     },
-    remove(key: string) {
+    /** Whether the browser removed it. */
+    remove(key: string): boolean {
       try {
         globalThis[name].removeItem(key);
+        return true;
       } catch {
-        // Nothing to remove without storage.
+        return false;
       }
     },
-    set(key: string, value: string) {
+    /** Whether the browser kept it: a full storage can refuse a write it would read. */
+    set(key: string, value: string): boolean {
       try {
         globalThis[name].setItem(key, value);
+        return true;
       } catch {
-        // Nothing is kept without storage.
+        return false;
       }
     },
   };
