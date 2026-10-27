@@ -112,8 +112,8 @@ export function fillRest({
 }
 
 /**
- * When no subject can go on (a prerequisite cycle the graph normalizer missed), the most due
- * subject's next lesson goes anyway, and the day keeps filling around it instead of ending: a
+ * When no subject can go on (each one's next lesson waits for a lesson another subject queues
+ * later), the most due subject's next lesson goes anyway, and the day keeps filling around it instead of ending: a
  * cycle must not stall the plan, nor leave its days nearly empty. On a day nothing else went on,
  * that lesson goes even when it's longer than what's left of the day.
  */
@@ -200,7 +200,7 @@ export function appendRest({
       isUnitReady({ context, left: state.left, unit: lane.units[0] }),
     );
 
-    // A prerequisite cycle the graph normalizer missed must not stall the plan.
+    // Subjects whose next lessons wait on each other must not stall the plan.
     (ready.length > 0 ? ready : open.slice(0, 1)).forEach((lane) => take(lane));
     open = open.filter((lane) => lane.units.length > 0);
   }
