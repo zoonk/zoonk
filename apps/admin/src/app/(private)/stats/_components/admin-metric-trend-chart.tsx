@@ -179,9 +179,8 @@ function AdminMetricTrendTooltip({
 }
 
 /**
- * One large chart replaces the old wall of metric cards. The compact peak and
- * low callouts make notable moments explicit while axes remain quiet enough to
- * preserve the selected concept's open canvas.
+ * The compact peak and low callouts make notable moments explicit while axes
+ * remain quiet enough to preserve the selected concept's open canvas.
  */
 export function AdminMetricTrendChart({
   dataPoints,

@@ -34,9 +34,8 @@ function buildAnalysisHref({
 }
 
 /**
- * The picker turns the old three-page dashboard into one focused explorer:
- * only one metric is visible, while every existing analysis remains one click
- * away in a grouped, keyboard-accessible menu.
+ * Only one metric is visible, while every analysis remains one click away in a
+ * grouped, keyboard-accessible menu.
  */
 export function StatsAnalysisPicker({
   periodQuery,
