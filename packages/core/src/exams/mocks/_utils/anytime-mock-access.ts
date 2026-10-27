@@ -10,12 +10,7 @@ export type AnytimeMockAccess = "open" | "plusRequired";
  * placement. Free learners and guests see them with what it takes, and place with the quick
  * questions.
  */
-export async function getAnytimeMockAccess({
-  goal,
-}: {
-  goal: Goal;
-  timeZone: string;
-}): Promise<AnytimeMockAccess> {
+export async function getAnytimeMockAccess(goal: Pick<Goal, "kind">): Promise<AnytimeMockAccess> {
   const allowance = await getAllowance();
 
   return goal.kind === "exam" && allowance?.examPrep.includesMockExams === false

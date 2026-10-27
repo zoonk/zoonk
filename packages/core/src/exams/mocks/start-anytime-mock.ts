@@ -1,7 +1,7 @@
 import "server-only";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLearnerModelCacheTag } from "../../cache/tags";
-import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { findOwnedGoal } from "../../learner/_utils/owned-goal";
 import { getAnytimeMockAccess } from "./_utils/anytime-mock-access";
 import { loadAnytimeMockSetup, resolveAnytimeOption } from "./_utils/anytime-mock-setup";
 import { type CreateAnytimeMockResult, createAnytimeMock } from "./_utils/create-anytime-mock";
@@ -56,10 +56,8 @@ export async function startAnytimeMock({
     return { status: "goalNotActive" };
   }
 
-  const timeZone = getAnswerTimeZone({ goal, timeZone: input.timeZone });
-
   const [access, setup, writesCap] = await Promise.all([
-    getAnytimeMockAccess({ goal, timeZone }),
+    getAnytimeMockAccess(goal),
     loadAnytimeMockSetup(goal),
     findMockQuestionsCap(),
   ]);

@@ -197,7 +197,7 @@ async function offerMockExam(goal: Goal): Promise<TutorToolResult> {
 
   const [setup, access, running] = await Promise.all([
     loadAnytimeMockSetup(goal),
-    getAnytimeMockAccess({ goal, timeZone: getAnswerTimeZone({ goal }) }),
+    getAnytimeMockAccess(goal),
     findRunningAnytimeMock({ goalId: goal.id, userId: goal.userId }),
   ]);
 

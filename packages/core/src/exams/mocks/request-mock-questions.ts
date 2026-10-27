@@ -4,7 +4,7 @@ import { getRequestPlatform } from "../../analytics/request-platform";
 import { type AnalyticsPlatform } from "../../analytics/shared-properties";
 import { claimAssist, claimUsage } from "../../entitlements/claim-usage";
 import { type RefusedUsage, type UsageDecision } from "../../entitlements/contract";
-import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { findOwnedGoal } from "../../learner/_utils/owned-goal";
 import {
   type PlacementQuickFormat,
   getPlacementQuickFormat,
@@ -84,7 +84,7 @@ export async function requestMockQuestions({
   }
 
   const [access, setup] = await Promise.all([
-    getAnytimeMockAccess({ goal, timeZone: getAnswerTimeZone({ goal }) }),
+    getAnytimeMockAccess(goal),
     loadAnytimeMockSetup(goal),
   ]);
 

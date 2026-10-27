@@ -74,9 +74,7 @@ describe("GET request instant", () => {
 
     mockSession(tier === "visitor" ? null : user.id);
 
-    const reads = await countDatabaseStatements(() =>
-      getAnytimeMockAccess({ goal, timeZone: "Pacific/Kiritimati" }),
-    );
+    const reads = await countDatabaseStatements(() => getAnytimeMockAccess(goal));
 
     expect(reads.result).toBe(access);
     expect(reads.writes).toBe(0);
