@@ -313,9 +313,11 @@ function MissionMinutes({ kind, minutes }: { kind?: MissionKind; minutes: number
 /**
  * What a mission still asks, under its name: how far a multi-step one is ("1/3"), the block it
  * opens (a chapter's next lesson, and how many after it) or where it's done, and about how long it
- * takes. A challenge that has to wait says what for. The minutes stay with the line's last word,
- * so a narrow column never leaves them alone on a line. On Today, the block it opens (`block`) is
- * named as the day's queue names it: "Practice mistakes" there was a bare "Practice" here.
+ * takes. A challenge that has to wait says what for. One line: in a narrow column (the missions
+ * card in the aside) the block's name gives way to an ellipsis, so the count and the minutes stay
+ * in sight and a row never runs to five lines; the queue beside it names the block in full. On
+ * Today, the block it opens (`block`) is named as the day's queue names it: "Practice mistakes"
+ * there was a bare "Practice" here.
  */
 export function MissionStepLine({ block, mission }: { block?: DayStep; mission: MissionView }) {
   const step = useMissionStep()(mission, block);
@@ -323,16 +325,16 @@ export function MissionStepLine({ block, mission }: { block?: DayStep; mission: 
   const count = mission.total > 1 && <ProgressCount done={mission.done} total={mission.total} />;
 
   return (
-    <>
-      {count && <span className="font-mono tabular-nums">{count}</span>}
+    <span className="flex min-w-0 whitespace-pre">
+      {count && <span className="shrink-0 font-mono tabular-nums">{count}</span>}
       {count && step && " · "}
-      {step}
+      {step && <span className="truncate">{step}</span>}
       {minutes > 0 && (
-        <span className="whitespace-nowrap">
-          {step || count ? "\u00A0· " : ""}
+        <span className="shrink-0">
+          {step || count ? " · " : ""}
           <MissionMinutes kind={mission.kind} minutes={minutes} />
         </span>
       )}
-    </>
+    </span>
   );
 }
