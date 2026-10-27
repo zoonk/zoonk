@@ -1,6 +1,6 @@
+import { CHARACTER_RULES } from "@/design-system/characters";
 import {
   CELEBRATION_LADDER,
-  CHARACTER_RULES,
   CHOREOGRAPHY_RULES,
   MOTION_DURATIONS,
   MOTION_EASINGS,
@@ -36,8 +36,11 @@ const DEMOS: Record<string, () => React.ReactNode> = {
 
 /** Each easing beside the duration it usually runs in. */
 const EASING_DURATION: Record<string, { duration: MotionDuration; easing: MotionEasing }> = {
+  "--ease-accelerate": { duration: "pop", easing: "accelerate" },
+  "--ease-follow": { duration: "fill", easing: "follow" },
   "--ease-out": { duration: "fill", easing: "out" },
   "--ease-spring": { duration: "settle", easing: "spring" },
+  "--ease-swing": { duration: "settle", easing: "swing" },
 };
 
 const TABLE_ROW_BASE = "grid gap-x-6 gap-y-1 border-t py-3 text-sm leading-6";
@@ -227,7 +230,7 @@ export default function MotionPage() {
         </DocSection>
 
         <DocSection
-          intro="The buddy and the Trickster are characters, not objects: they show a feeling with their face and body, never by moving as one block."
+          intro="The buddy and the Trickster are characters, not objects: they show a feeling with their face and body, never by moving as one block. Their parts, expressions, acts and timing, acting live: `/design/characters`."
           title="Characters"
         >
           <DocRules rules={CHARACTER_RULES} />

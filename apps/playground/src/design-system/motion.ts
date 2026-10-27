@@ -2,7 +2,8 @@
  * Motion: when things move, how, and which kinds. The values (durations, easings, the spring, the
  * keyframes and `press`) live in `packages/ui/src/styles/globals.css`, scripts read them through
  * `@zoonk/ui/lib/motion`, and the playground's `/design/motion` page moves every pattern live
- * beside these words. How to apply them: the `zoonk-motion` skill.
+ * beside these words. How to apply them: the `zoonk-motion` skill. How characters act (their parts,
+ * expressions, acts and timing): `characters.ts`, acting live at `/design/characters`.
  */
 
 /** How much something moves follows how often the learner meets it. */
@@ -96,6 +97,13 @@ export const MOTION_DURATIONS: readonly MotionToken[] = [
     use: "A burst's sparks (`Burst`), out and gone.",
     utility: "duration-burst",
   },
+  {
+    cssVariable: "--transition-duration-frame",
+    name: "Frame",
+    reduced: "0: an act draws its expression at once, and nothing moves.",
+    use: "One frame of a character's act, 24 a second: acts are timed in frames, as animators time them (a blink is 6).",
+    utility: "duration-frame",
+  },
 ];
 
 export const MOTION_EASINGS: readonly MotionToken[] = [
@@ -112,6 +120,27 @@ export const MOTION_EASINGS: readonly MotionToken[] = [
     reduced: "Its animations are gone.",
     use: "Apple's bouncy spring (`Spring(duration: 0.5, bounce: 0.3)`), for something earned landing. Never data, color or opacity.",
     utility: "ease-spring",
+  },
+  {
+    cssVariable: "--ease-accelerate",
+    name: "Accelerate",
+    reduced: "Its acts don't move.",
+    use: "A character moving into a pose, speeding up: the dip before a cheer, a lid closing.",
+    utility: "ease-accelerate",
+  },
+  {
+    cssVariable: "--ease-swing",
+    name: "Swing",
+    reduced: "Its acts don't move.",
+    use: "Slow out of one pose and into the next: a head turning, weight shifting, a slump.",
+    utility: "ease-swing",
+  },
+  {
+    cssVariable: "--ease-follow",
+    name: "Follow",
+    reduced: "Its acts don't move.",
+    use: "A character's loose part (an antenna, a tail, a crown) lagging and swinging past its stop before it settles. Never a whole character, never data.",
+    utility: "ease-follow",
   },
 ];
 
@@ -237,20 +266,8 @@ export const CHOREOGRAPHY_RULES: readonly string[] = [
   "Nothing waits for an animation: Continue works from the first frame, and leaving mid-moment just leaves.",
 ];
 
-/**
- * The buddy and the Trickster are characters, not objects: a person shows a feeling with their face
- * and body, so moving the whole drawing (a hop, a pop, a landing, a tip) reads as a sticker, worse
- * than holding still.
- */
-export const CHARACTER_RULES: readonly string[] = [
-  "A character never moves as a single unit: no hop, pop, landing, tip, slide or fade of the whole buddy or the whole Trickster, its face in the navigation included.",
-  "Until a character has its own rig and acting (its eyes, mouth and limbs moving as parts), it holds still, drawn from the first frame in the expression the moment calls for: the buddy cheering at today's missions, the Trickster leaning back, beaten.",
-  "What moves around it keeps moving: the number counting up, the check and the badge landing, the meter filling, the burst.",
-  "Reduced motion changes nothing here: the expression is the message, there from the first frame.",
-];
-
 export const NEVER_RULES: readonly string[] = [
-  "Move a character as one block (a hop, a pop, a landing, a tip): until it can act, it holds still.",
+  "Move a character as one block (a hop, a pop, a landing, a tip): it acts with its parts, or holds still.",
   "Animate navigation or page loads: no route transitions, nothing fading or sliding in.",
   "Animate list rows or grids in, or stagger them.",
   "Loop anything on an everyday screen, except a wait while it waits.",
