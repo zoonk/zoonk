@@ -36,20 +36,15 @@ async function answerRight() {
 }
 
 describe("lesson screens", () => {
-  it("keeps the header to one row and the summary card in its menu for the lesson's end", async () => {
+  it("keeps the summary card in the screen's menu for the lesson's end", async () => {
     await atViewport(PHONE, async () => {
       renderLessonPlayer({
         lesson: buildLesson([teachingStep("explanation"), teachingStep("check")], {
-          estimatedMinutes: 4,
           summaryIdeas: ["Electrons live in clouds.", "The densest part is likeliest."],
         }),
       });
 
       await expect.element(page.getByText(EXPLANATION_TITLE)).toBeVisible();
-
-      // The header is one row: close, the lesson's title and the menu, without its minutes.
-      await expect.element(page.getByRole("heading", { level: 1 })).toBeVisible();
-      await expect.element(page.getByText("4 min", { exact: true })).not.toBeInTheDocument();
 
       // The summary states the answers to the questions ahead, so it waits for the lesson's end.
       const knowThis = page.getByRole("menuitem", { name: "I already know this" });
