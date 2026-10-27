@@ -44,6 +44,7 @@ export async function withStudyBlock({
     blockId,
     energy: progress?.energy,
     lessonId,
+    runStartedAt: run.startedAt,
     timeZone,
     userId,
   });

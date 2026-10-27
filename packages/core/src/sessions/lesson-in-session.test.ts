@@ -59,7 +59,28 @@ async function playLessonBlock({ energy }: { energy?: number } = {}) {
   const complete = () =>
     completeLibraryLesson({ input: { runId, timeZone: TIME_ZONE }, lessonId: lesson.id });
 
-  return { block, complete, planItem };
+  /** The same lesson played again from the start once its block is done, its check answered. */
+  const replay = async () => {
+    const again = await startLibraryLesson({ input: { timeZone: TIME_ZONE }, lessonId: lesson.id });
+    const replayRunId = again.status === "started" ? again.run.runId : "";
+
+    await checkLessonStep({
+      input: {
+        answer: { kind: "check", optionId: "likely" },
+        durationMs: 4000,
+        runId: replayRunId,
+        timeZone: TIME_ZONE,
+      },
+      stepId: stepOfKind(steps, "check").id,
+    });
+
+    return completeLibraryLesson({
+      input: { runId: replayRunId, timeZone: TIME_ZONE },
+      lessonId: lesson.id,
+    });
+  };
+
+  return { block, complete, planItem, replay };
 }
 
 describe("a lesson played as a session block", () => {
@@ -98,6 +119,16 @@ describe("a lesson played as a session block", () => {
 
     await expect(complete()).resolves.toMatchObject({
       completion: { studyBlock: { reached: { energy: null, level: null } } },
+    });
+  });
+
+  it("celebrates a later replay as its own lesson, not as the block it already finished", async () => {
+    const { complete, replay } = await playLessonBlock();
+    await complete();
+
+    await expect(replay()).resolves.toMatchObject({
+      completion: { isFirstCompletion: false, studyBlock: null },
+      status: "completed",
     });
   });
 

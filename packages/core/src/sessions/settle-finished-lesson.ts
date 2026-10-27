@@ -14,7 +14,8 @@ import { finishLessonBlock } from "./finish-study-block";
  * and when it is one of the day's session blocks (today's, or the session the learner is still in
  * from before midnight) the block is done, the day is settled (missions, the full meal, the
  * session's end, milestones) and the block's completion moment comes back, so the player shows it
- * without another request. Null for a lesson played outside the day's session.
+ * without another request. Null for a lesson played outside the day's session, or replayed after
+ * its block was done.
  *
  * Internal: the lesson player's completion derives `userId` from the session first.
  */
@@ -22,6 +23,7 @@ export async function settleFinishedLesson({
   blockId,
   energy,
   lessonId,
+  runStartedAt,
   timeZone,
   userId,
 }: {
@@ -29,6 +31,7 @@ export async function settleFinishedLesson({
   /** Energy before and after the lesson, when its completion just added it (not on a replay). */
   energy?: ProgressChange | null;
   lessonId: string;
+  runStartedAt?: Date;
   timeZone: string;
   userId: string;
 }): Promise<StudyBlockCompletion | null> {
@@ -52,7 +55,7 @@ export async function settleFinishedLesson({
   scheduleLessonCanDos({ goals: languageGoals, lessonId, userId });
 
   const [found] = await Promise.all([
-    findDayLessonBlock({ blockId, lessonId, timeZone, userId }),
+    findDayLessonBlock({ blockId, lessonId, runStartedAt, timeZone, userId }),
     finishExplanations({ lessonId, userId }),
   ]);
 

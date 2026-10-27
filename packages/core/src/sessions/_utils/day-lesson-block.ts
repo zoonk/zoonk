@@ -14,6 +14,7 @@ export async function findDayLessonBlock({
   client = prisma,
   lessonId,
   now = new Date(),
+  runStartedAt,
   timeZone,
   userId,
 }: {
@@ -21,6 +22,8 @@ export async function findDayLessonBlock({
   client?: Pick<TransactionClient, "studySessionBlock">;
   lessonId: string;
   now?: Date;
+  /** A block done before this run began was an earlier run's: a replay doesn't finish it again. */
+  runStartedAt?: Date;
   timeZone: string;
   userId: string;
 }) {
@@ -38,6 +41,7 @@ export async function findDayLessonBlock({
         userId,
       },
       status: { in: ["active", "pending", "completed"] },
+      ...(runStartedAt && { OR: [{ completedAt: null }, { completedAt: { gte: runStartedAt } }] }),
     },
   });
 
