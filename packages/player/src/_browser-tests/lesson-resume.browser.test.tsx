@@ -245,6 +245,7 @@ describe("coming back to a lesson", () => {
     renderLessonPlayer({ adapters: buildAdapters(lesson, { completeLesson }), lesson });
 
     await page.getByRole("button", { name: /^Continue/u }).click();
+
     await expect
       .element(page.getByText("That didn't go through. Your answers are kept."))
       .toBeVisible();
