@@ -14,7 +14,7 @@ export function SiteNav({ current }: { current: (typeof LINKS)[number]["id"] }) 
         <Link
           aria-current={link.id === current ? "page" : undefined}
           className={cn(
-            "text-muted-foreground hover:text-foreground rounded-md px-2.5 py-1.5 text-sm font-medium transition-colors",
+            "text-muted-foreground hover:text-foreground hit-area relative rounded-md px-2.5 py-1.5 text-sm font-medium transition-colors",
             link.id === current && "bg-muted text-foreground",
           )}
           href={link.href}

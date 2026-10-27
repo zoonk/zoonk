@@ -101,7 +101,7 @@ export function EasingCurve({
           <span className="bg-foreground absolute top-0 left-0 size-2 rounded-full" ref={dot} />
         </span>
         <button
-          className="text-muted-foreground hover:text-foreground text-xs font-medium underline-offset-2 hover:underline"
+          className="text-muted-foreground hover:text-foreground hit-area relative text-xs font-medium underline-offset-2 hover:underline"
           onClick={play}
           type="button"
         >

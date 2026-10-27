@@ -5,7 +5,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { DESIGN_PAGES } from "./pages";
 
-/** The design system's pages, the current one marked. */
+/**
+ * The design system's pages, the current one marked: 32px rows as the app's sidebar has them,
+ * `hit-area` keeping each one 44px to tap.
+ */
 export function DesignNav() {
   const pathname = usePathname();
 
@@ -18,7 +21,7 @@ export function DesignNav() {
         <Link
           aria-current={pathname === page.href ? "page" : undefined}
           className={cn(
-            "text-muted-foreground hover:text-foreground rounded-md px-2.5 py-1.5 text-sm transition-colors",
+            "text-muted-foreground hover:text-foreground hit-area relative rounded-md px-2.5 py-1.5 text-sm transition-colors",
             pathname === page.href && "bg-muted text-foreground font-medium",
           )}
           href={page.href}
