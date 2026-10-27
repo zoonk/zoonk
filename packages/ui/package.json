@@ -10,7 +10,6 @@
     "./hooks/celebration": "./src/hooks/use-celebration.tsx",
     "./hooks/clipboard": "./src/hooks/use-clipboard.ts",
     "./hooks/command-palette-search": "./src/hooks/use-command-palette-search.ts",
-    "./hooks/debounce": "./src/hooks/use-debounce.ts",
     "./hooks/infinite-list": "./src/hooks/use-infinite-list.ts",
     "./hooks/is-mounted": "./src/hooks/use-is-mounted.ts",
     "./hooks/hide-element": "./src/hooks/use-hide-element.ts",
@@ -24,7 +23,6 @@
     "./hooks/voice-recorder": "./src/hooks/use-voice-recorder.ts",
     "./lib/*": "./src/lib/*.ts",
     "./patterns/buttons/submit": "./src/patterns/buttons/submit-button.tsx",
-    "./patterns/error": "./src/patterns/error-view.tsx",
     "./postcss.config": "./postcss.config.mjs"
   },
   "scripts": {
