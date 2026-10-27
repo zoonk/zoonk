@@ -1,6 +1,7 @@
 "use client";
 
 import { type PlanTimeAdvice } from "@zoonk/core/plans/time-advice-contract";
+import { Button } from "@zoonk/ui/components/button";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useFormatter } from "next-intl";
@@ -67,9 +68,9 @@ function EstimateFailure({ minutes, onRetry }: { minutes: number; onRetry: () =>
   return (
     <p className="text-foreground text-sm text-pretty">
       {t("We couldn't work out what {time} a day covers.", { time: formatDuration(minutes) })}{" "}
-      <button className="font-medium underline underline-offset-4" onClick={onRetry} type="button">
+      <Button onClick={onRetry} variant="link">
         {t("Try again")}
-      </button>
+      </Button>
     </p>
   );
 }

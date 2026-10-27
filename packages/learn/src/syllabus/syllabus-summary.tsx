@@ -1,6 +1,7 @@
 "use client";
 
 import { type SyllabusSubject, type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
+import { Button } from "@zoonk/ui/components/button";
 import {
   Collapsible,
   CollapsibleContent,
@@ -244,22 +245,13 @@ function SummaryGroup({
  * covers: every subject, what it weighs and its topics in the notice's own words, the ones left
  * out marked, so the learner sees it's all there before starting.
  */
-export function SyllabusTopicsSheet({
-  className,
-  syllabus,
-}: {
-  /** The trigger's look: a word inside the sentence. */
-  className?: string;
-  syllabus: SyllabusView;
-}) {
+export function SyllabusTopicsSheet({ syllabus }: { syllabus: SyllabusView }) {
   const t = useExtracted();
   const groups = groupSubjects(syllabus.subjects, { modules: syllabus.kind === "modules" });
 
   return (
     <Drawer>
-      <DrawerTrigger className={className} data-slot="syllabus-summary">
-        {t("See topics")}
-      </DrawerTrigger>
+      <DrawerTrigger render={<Button variant="link" />}>{t("See topics")}</DrawerTrigger>
 
       <DrawerPopup>
         <DrawerHeader className="flex-row items-center justify-between gap-3">

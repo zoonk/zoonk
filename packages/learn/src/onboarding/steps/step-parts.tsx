@@ -5,13 +5,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { OnboardingColumn } from "../onboarding-frame";
 
 /**
- * An action inside a sentence of a step (the plan's reveal: "Use 1h 40 a day", "Use this date"): a
- * word of it, underlined, as tall as its line.
- */
-export const INLINE_ACTION_CLASS =
-  "text-foreground decoration-foreground/30 hover:decoration-foreground focus-visible:ring-ring/50 rounded-sm font-medium underline underline-offset-4 outline-none focus-visible:ring-[3px] disabled:opacity-50";
-
-/**
  * The icon that opens a finished or changed moment, such as placement being done: a bare glyph
  * over the title, no tile; `success` colors it as done.
  */

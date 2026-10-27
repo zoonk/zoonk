@@ -18,13 +18,7 @@ import { useExtracted } from "next-intl";
  * a quiet option on its own row under it.
  */
 const TRIGGER: Record<"link" | "option" | "secondary", React.ReactElement> = {
-  link: (
-    <Button
-      className="text-muted-foreground hover:text-foreground self-start px-0 underline-offset-4 hover:bg-transparent hover:underline dark:hover:bg-transparent"
-      size="lg"
-      variant="ghost"
-    />
-  ),
+  link: <Button className="self-start" variant="link" />,
   option: <Button className="w-full" size="xl" variant="ghost" />,
   secondary: <Button className="shrink-0" size="xl" variant="outline" />,
 };

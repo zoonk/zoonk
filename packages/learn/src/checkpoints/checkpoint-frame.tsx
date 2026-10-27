@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { TaskFrame } from "../shell/task-frame";
 import { useCheckpointScreen } from "./checkpoint-context";
@@ -22,13 +23,9 @@ export function CheckpointError() {
   return (
     <p className="text-destructive-text text-sm" role="alert">
       {t("That didn't go through. Your answers are saved.")}{" "}
-      <button
-        className="text-foreground font-semibold"
-        onClick={() => void duel.retry()}
-        type="button"
-      >
+      <Button onClick={() => void duel.retry()} variant="link">
         {t("Try again")}
-      </button>
+      </Button>
     </p>
   );
 }

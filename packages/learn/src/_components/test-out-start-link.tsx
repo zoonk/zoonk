@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useEffect, useState, useTransition } from "react";
@@ -98,14 +99,9 @@ export function TestOutStartLink({
     <div className="flex flex-col items-start gap-2">
       <p className={cn("text-muted-foreground text-sm", className)}>
         {t("Already know this?")}{" "}
-        <button
-          className="text-foreground focus-visible:ring-ring/50 -my-2 inline-flex min-h-11 items-center rounded font-medium underline-offset-4 outline-none hover:underline focus-visible:ring-[3px] disabled:opacity-60"
-          disabled={opening}
-          onClick={start}
-          type="button"
-        >
+        <Button disabled={opening} onClick={start} variant="link">
           {opening ? t("Opening the test…") : t("Take the test")}
-        </button>
+        </Button>
       </p>
 
       <TestOutStartStatus isPending={isPending} result={result} />

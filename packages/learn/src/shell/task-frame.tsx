@@ -265,19 +265,16 @@ export function TaskFrame({
   );
 }
 
-/**
- * A save that didn't go through, with a retry; what the learner answered stays on screen. The retry
- * stands out in the sentence by its weight, in the text color, as a link inside a sentence does.
- */
+/** A save that didn't go through, with a retry; what the learner answered stays on screen. */
 export function TaskSaveError({ onRetry }: { onRetry: () => void }) {
   const t = useExtracted();
 
   return (
     <p className="text-destructive-text text-sm" role="alert">
       {t("That didn't go through. Your answers are kept.")}{" "}
-      <button className="text-foreground font-semibold" onClick={onRetry} type="button">
+      <Button onClick={onRetry} variant="link">
         {t("Try again")}
-      </button>
+      </Button>
     </p>
   );
 }

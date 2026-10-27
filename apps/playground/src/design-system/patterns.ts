@@ -11,9 +11,14 @@ export type Pattern = {
 
 export const PATTERNS: readonly Pattern[] = [
   {
-    avoid: ["A colored button.", "Two primaries in one area.", "An underlined link as a button."],
+    avoid: [
+      "A colored button.",
+      "Two primaries in one area.",
+      "An underlined word for a screen's main or secondary action.",
+    ],
     follow: [
       "One main action per area, inverted (`Button`); secondary actions outline, tertiary ghost.",
+      "An action inside a sentence, or a quiet one on its own line (Try again, Undo), is a word (the `link` variant): the text color, underlined, at the size of the text around it.",
       "The main action shows its key as a keycap on pointer devices (`ShortcutKbd`).",
     ],
     id: "actions",

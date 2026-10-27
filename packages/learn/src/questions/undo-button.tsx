@@ -26,13 +26,7 @@ export function UndoButton({
           {t("That didn't go through. Try again in a moment.")}
         </p>
       )}
-      <Button
-        className="text-muted-foreground hover:text-foreground self-start px-0 underline-offset-4 hover:bg-transparent hover:underline dark:hover:bg-transparent"
-        disabled={pending}
-        onClick={onUndo}
-        size="lg"
-        variant="ghost"
-      >
+      <Button className="self-start" disabled={pending} onClick={onUndo} variant="link">
         {t("Undo")}
       </Button>
     </>

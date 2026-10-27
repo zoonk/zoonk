@@ -1,6 +1,7 @@
 "use client";
 
 import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
+import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { FreeWeekOverNotice } from "../../_components/free-week-over";
@@ -18,7 +19,6 @@ import { useFullCourse, useFullCourseText } from "../../plan/plan-full-course";
 import { PassMarks } from "../../syllabus/syllabus-notes";
 import { hasSyllabusSection } from "../../syllabus/syllabus-section";
 import { SyllabusTopicsSheet, useSyllabusSummaryText } from "../../syllabus/syllabus-summary";
-import { INLINE_ACTION_CLASS } from "./step-parts";
 
 type Coverage = NonNullable<ReturnType<typeof usePlanCoverage>>;
 
@@ -97,24 +97,24 @@ export function RevealCoverage({ syllabus }: { syllabus: SyllabusView | null }) 
         {canMoveDate && (
           <>
             {" "}
-            {/* aria-disabled, not disabled: the action keeps focus through a search of seconds. */}
-            <button
+            {/* Focusable while disabled: the action keeps focus through a search of seconds. */}
+            <Button
               aria-busy={move.pending || undefined}
-              aria-disabled={move.pending || undefined}
-              className={INLINE_ACTION_CLASS}
+              disabled={move.pending}
+              focusableWhenDisabled
               onClick={() => void move.move()}
-              type="button"
+              variant="link"
             >
               <PendingLabel pending={move.pending}>
                 <MoveDateLabel move={move} />
               </PendingLabel>
-            </button>
+            </Button>
           </>
         )}
         {shown && (
           <>
             <span aria-hidden="true">{" · "}</span>
-            <SyllabusTopicsSheet className={INLINE_ACTION_CLASS} syllabus={shown} />
+            <SyllabusTopicsSheet syllabus={shown} />
           </>
         )}
       </p>

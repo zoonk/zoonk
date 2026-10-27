@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { Fragment } from "react";
 import { useFormatIsoDate } from "../../_utils/iso-date";
@@ -7,7 +8,6 @@ import { useNoticeDayText } from "../../plan/notice-day";
 import { usePlanScreen } from "../../plan/plan-context";
 import { PlanFailedMessage } from "../../plan/plan-failed-message";
 import { usePlanChange } from "../../plan/use-plan-change";
-import { INLINE_ACTION_CLASS } from "./step-parts";
 
 /**
  * The notice's exam day when the plan counts down to another (the month the learner said, or a
@@ -36,14 +36,9 @@ export function RevealNoticeDay() {
         {noticeDay ? (
           <>
             <span>{noticeDayText({ ...noticeDay, document: plan.examDocument })}</span>{" "}
-            <button
-              className={INLINE_ACTION_CLASS}
-              disabled={isPending}
-              onClick={() => use(noticeDay.date)}
-              type="button"
-            >
+            <Button disabled={isPending} onClick={() => use(noticeDay.date)} variant="link">
               {t("Use this date")}
-            </button>
+            </Button>
           </>
         ) : (
           noSitting && (
@@ -54,14 +49,9 @@ export function RevealNoticeDay() {
               {noSitting.closest.map((date) => (
                 <Fragment key={date}>
                   <span aria-hidden="true">{" · "}</span>
-                  <button
-                    className={INLINE_ACTION_CLASS}
-                    disabled={isPending}
-                    onClick={() => use(date)}
-                    type="button"
-                  >
+                  <Button disabled={isPending} onClick={() => use(date)} variant="link">
                     {t("Use {date}", { date: formatDate(date, "long") })}
-                  </button>
+                  </Button>
                 </Fragment>
               ))}
             </>

@@ -5,6 +5,7 @@ import {
   type MemoryChangeReference,
   type MemoryFactView,
 } from "@zoonk/core/memory/contract";
+import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { BrainIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -100,14 +101,9 @@ export function MemoryUpdated({
           <>
             <ChangeText change={first} extra={changes.length - 1} />
             <span aria-hidden="true">{" · "}</span>
-            <button
-              className="text-foreground hit-area focus-visible:ring-ring/50 relative rounded-sm font-medium underline-offset-2 outline-none hover:underline focus-visible:ring-[3px] disabled:opacity-50"
-              disabled={isPending}
-              onClick={undo}
-              type="button"
-            >
+            <Button disabled={isPending} onClick={undo} variant="link">
               {t("Undo")}
-            </button>
+            </Button>
           </>
         ) : (
           <UndoResult status={status} />

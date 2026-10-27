@@ -39,6 +39,9 @@ function ActionsSpecimen() {
       <Button size="lg" variant="ghost">
         Not now
       </Button>
+      <p className="text-muted-foreground text-sm">
+        Already know this? <Button variant="link">Take the test</Button>
+      </p>
     </div>
   );
 }

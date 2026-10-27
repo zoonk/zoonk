@@ -136,7 +136,7 @@ function NoToolsPath({ tools }: { tools: PlanToolView[] }) {
       ) : (
         <>
           <Button
-            className="text-muted-foreground h-auto min-h-11 justify-start px-0 text-left text-sm font-normal whitespace-normal underline underline-offset-4 hover:bg-transparent"
+            className="self-start"
             disabled={isPending}
             focusableWhenDisabled
             onClick={() => {
@@ -145,7 +145,7 @@ function NoToolsPath({ tools }: { tools: PlanToolView[] }) {
               choose({ choice: "none", system: null, tools: tools.map((tool) => tool.name) });
             }}
             ref={buttonRef}
-            variant="ghost"
+            variant="link"
           >
             {t("No tools? You can do it all with examples.")}
           </Button>
