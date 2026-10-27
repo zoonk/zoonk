@@ -181,6 +181,8 @@ export function useActor<Expression extends string, ActName extends string>({
       stopActing(running);
       next.resolve(true);
     });
+
+    return () => stopActing(running);
   }, [poses, stage, svg]);
 
   const play = useCallback(
