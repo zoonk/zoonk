@@ -8,7 +8,6 @@ const nextConfig: NextConfig = {
   pageExtensions: ["ts", "tsx"],
   partialPrefetching: true,
   reactCompiler: true,
-  typedRoutes: false,
   typescript: { ignoreBuildErrors: true },
 };
 
