@@ -4087,6 +4087,11 @@ msgid "Questions to {name}"
 msgstr "Perguntas para {name}"
 
 #: src/questions/tutor-dock.tsx
+msgctxt "IcW6Yo"
+msgid "{count, plural, one {# question to {name}} other {# questions to {name}}}"
+msgstr "{count, plural, one {# pergunta para {name}} other {# perguntas para {name}}}"
+
+#: src/questions/tutor-dock.tsx
 msgctxt "UIUcbm"
 msgid "{count, plural, one {# question} other {# questions}}"
 msgstr "{count, plural, one {# pergunta} other {# perguntas}}"

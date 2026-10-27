@@ -250,10 +250,20 @@ function ConversationLink({ buddy, fallback }: { buddy: TutorBuddy; fallback: Re
 
   return (
     <button
+      aria-label={t("{count, plural, one {# question to {name}} other {# questions to {name}}}", {
+        count,
+        name: buddy.identity.name,
+      })}
       className="text-muted-foreground hover:text-foreground focus-visible:outline-ring hit-area relative -mr-1 inline-flex items-center gap-0.5 rounded-md px-1 font-sans text-xs font-medium transition-colors outline-none focus-visible:outline-2 focus-visible:outline-solid"
       onClick={() => buddy.open()}
       type="button"
     >
+      <span
+        aria-hidden="true"
+        className="mr-1.5 flex size-5 shrink-0 items-center justify-center *:size-5!"
+      >
+        {buddy.identity.avatar}
+      </span>
       {t("{count, plural, one {# question} other {# questions}}", { count })}
       <ChevronRightIcon aria-hidden="true" className="size-3.5" />
     </button>
@@ -262,9 +272,10 @@ function ConversationLink({ buddy, fallback }: { buddy: TutorBuddy; fallback: Re
 
 /**
  * The way back to the conversation about where the learner is (a lesson's screen, a run's
- * question), on the task aside's header once they have asked about it: how many questions it
- * holds. Until then, and without a buddy, the header's own quiet fact (`fallback`: the screen's
- * number, the minutes left) shows there.
+ * question), on the task aside's header once they have asked about it: the buddy's face, as the
+ * open conversation shows it in the same corner, and how many questions it holds, so beside
+ * "Today" it never reads as questions left in the day. Until then, and without a buddy, the
+ * header's own quiet fact (`fallback`: the screen's number, the minutes left) shows there.
  */
 export function TutorConversationLink({ fallback }: { fallback: React.ReactNode }) {
   const buddy = useTutorBuddy();
