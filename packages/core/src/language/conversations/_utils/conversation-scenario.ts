@@ -47,11 +47,10 @@ export async function getUnitScenario({
   unit: ScenarioUnit;
   userId: string;
 }): Promise<ConversationScenario> {
-  const saved = await findSavedScenario({ chapterId: unit.id, level });
-  const parsed = conversationScenarioSchema.safeParse(saved?.content);
+  const saved = await findUnitScenario({ chapterId: unit.id, level });
 
-  if (parsed.success) {
-    return parsed.data;
+  if (saved) {
+    return saved;
   }
 
   const { data, provenance } = await generateConversationScenario({
@@ -64,24 +63,19 @@ export async function getUnitScenario({
     unitTitle: unit.title,
   });
 
-  const row = { content: data, ...toProvenanceData(provenance) };
-  const where = { chapterLevel: { chapterId: unit.id, level } };
-
-  if (saved) {
-    await prisma.conversationScenario.update({ data: row, where });
-    return conversationScenarioSchema.parse(data);
-  }
-
   try {
-    await prisma.conversationScenario.create({ data: { ...row, chapterId: unit.id, level } });
+    await prisma.conversationScenario.create({
+      data: { content: data, ...toProvenanceData(provenance), chapterId: unit.id, level },
+    });
+
     return conversationScenarioSchema.parse(data);
   } catch (error) {
     if (!isPrismaUniqueConstraintError(error)) {
       throw error;
     }
 
-    const winner = await prisma.conversationScenario.findUniqueOrThrow({ where });
-    return conversationScenarioSchema.parse(winner.content);
+    const winner = await findSavedScenario({ chapterId: unit.id, level });
+    return conversationScenarioSchema.parse(winner?.content);
   }
 }
 
