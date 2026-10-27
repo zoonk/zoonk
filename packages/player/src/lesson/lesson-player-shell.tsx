@@ -19,13 +19,10 @@ import { LessonAside } from "./lesson-aside";
 import { LessonLeaveProvider } from "./lesson-leave";
 import { useLessonPlayer, useLessonPlayerConfig } from "./lesson-player-context";
 import { LessonPlayerHeader } from "./lesson-player-header";
-import { type LessonPlayerState } from "./lesson-player-state";
 import { type PlayableLibraryStep } from "./lesson-player-types";
 import { LessonScreenMenu } from "./lesson-screen-menu";
 import { LessonSounds } from "./lesson-sounds";
 import { LessonStage } from "./lesson-stage";
-import { DockedConversation } from "./tutor/lesson-dock";
-import { useLessonBuddy } from "./tutor/lesson-tutor";
 import { useLessonKeyboard } from "./use-lesson-keyboard";
 import { useRevealFeedback } from "./use-reveal-feedback";
 import { useScreenTurn, useScreenTurns } from "./use-screen-turns";
@@ -34,11 +31,6 @@ import { useSwipeNavigation } from "./use-swipe-navigation";
 /** The prompt audio of a language screen (a word, a letter, a sentence to hear), if it has one. */
 function getPromptAudioUrl(step: PlayableLibraryStep | null): string | null {
   return step && isLanguageStep(step) ? getPlayerStepAudioUrl(step.exercise) : null;
-}
-
-/** A screen of the lesson is in play: the buddy's composer docks in the aside beside it. */
-function isPlayingScreen(state: LessonPlayerState): boolean {
-  return state.phase !== "completed" && state.run.status !== "refused";
 }
 
 /**
@@ -134,9 +126,7 @@ export function LessonPlayerShell() {
 function LessonPlayerFrame() {
   const t = useExtracted();
   const { state } = useLessonPlayer();
-  const buddy = useLessonBuddy();
   const mainRef = useRef<HTMLElement>(null);
-  const hasDock = Boolean(buddy) && isPlayingScreen(state);
   const asideRoot = getTaskAsideRootProps();
 
   const turns = useScreenTurns();
@@ -175,7 +165,6 @@ function LessonPlayerFrame() {
       </main>
 
       <LessonAside />
-      {hasDock && buddy?.docked && <DockedConversation />}
     </div>
   );
 }

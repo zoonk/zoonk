@@ -1,66 +1,21 @@
 "use client";
 
-import { type LessonScreenSuggestion } from "@zoonk/core/lesson-questions/contract";
-import { useTaskAsideShown } from "@zoonk/learn/task-header";
 import { type TutorIdentity, useTutorIdentity } from "@zoonk/learn/tutor-identity";
-import { createContext, use, useMemo } from "react";
+import { useMemo } from "react";
 import { type LessonQuestionContext } from "../../questions/lesson-question-context";
 import { type LessonQuestionNavigation } from "../../questions/lesson-question-navigation";
-import { LessonQuestionDrawer } from "../../questions/lesson-question-panel";
 import {
   LessonQuestionHostProvider,
   useLessonQuestionController,
 } from "../../questions/lesson-question-provider";
-import { type OfferedSuggestion } from "../../questions/lesson-question-state";
-import { isSameDraftContext } from "../../questions/lesson-question-state-helpers";
-import { useShownConversation } from "../../questions/use-shown-conversation";
+import { TutorBuddyProvider } from "../../questions/tutor-buddy";
+import { isLanguageStep, isReadStep } from "../_utils/lesson-steps";
 import { useLessonPlayer, useLessonPlayerConfig } from "../lesson-player-context";
 import { LessonInteractionProvider } from "../lesson-player-interaction";
+import { type PlayableLibraryStep } from "../lesson-player-types";
 import { type LessonTutorConfig } from "./lesson-tutor-context";
 import { TutorQuote } from "./tutor-quote";
-
-/**
- * The screen in view by its place in the lesson, so a question coming back at the end is another
- * visit; back on a screen, the aside's header (Ask below `lg`) opens its conversation again.
- */
-function useScreenVisit() {
-  const { screen, state } = useLessonPlayer();
-  return `${state.position}:${screen.step?.id ?? ""}`;
-}
-
-/** The learner's buddy in the lesson: who it is, and a way to ask it about where they are. */
-type LessonBuddyTutor = {
-  /**
-   * Sends a question about where the learner is from the lesson's aside (its composer or a
-   * suggestion), and shows the conversation there.
-   */
-  ask: (question: OfferedSuggestion) => void;
-  /** Back to the lesson from the conversation docked in the aside. */
-  close: () => void;
-  /**
-   * The learner has turned to the buddy about the screen in view: opened its conversation on this
-   * visit, or asked about this screen before.
-   */
-  consulted: boolean;
-  /** Where the learner is, as the tutor sees it: the screen in view, or the answer just checked. */
-  context: LessonQuestionContext;
-  /**
-   * The conversation shows in the aside, beside the lesson, whose keys keep working; a drawer over
-   * the lesson pauses them instead.
-   */
-  docked: boolean;
-  identity: TutorIdentity;
-  /** The host's links (a sign-up, plans), for the conversation wherever it shows. */
-  navigation: LessonQuestionNavigation;
-  /**
-   * Opens the conversation about where the learner is, docked in the aside on a wide screen and in
-   * a drawer otherwise, with one of the lesson's `suggestions` ready to send, in the words its chip
-   * reads.
-   */
-  open: (suggestion?: LessonScreenSuggestion) => void;
-};
-
-const LessonTutorContext = createContext<LessonBuddyTutor | null>(null);
+import { useShowsMiss } from "./use-shows-miss";
 
 /**
  * Where the learner is, as the tutor sees it: the lesson once it's done, the answer they just
@@ -85,7 +40,18 @@ function useTutorContext(): LessonQuestionContext {
   }, [answer, showsResult, state.position, step]);
 }
 
-function TutorInteraction({
+/** A screen that teaches by reading (an explanation, a worked example, a hook's fact). */
+function isTeachingRead(step: PlayableLibraryStep | null): boolean {
+  return step !== null && !isLanguageStep(step) && isReadStep(step) && step.kind !== "summary";
+}
+
+/**
+ * The buddy about the screen in view, by its place in the lesson, so a question coming back at the
+ * end is another visit. The aside offers two questions over its composer after a wrong answer,
+ * about it, and on a reading screen nothing was asked about yet, the lesson's own (simpler,
+ * deeper).
+ */
+function LessonBuddy({
   children,
   identity,
   navigation,
@@ -94,71 +60,23 @@ function TutorInteraction({
   identity: TutorIdentity;
   navigation: LessonQuestionNavigation;
 }) {
-  const controller = useLessonQuestionController();
-  const activeContext = useTutorContext();
-  const asideShown = useTaskAsideShown();
-  const { presentation, show } = useShownConversation(useScreenVisit());
-  const { chooseSuggestion, close, open, state, suggestions } = controller;
-  const askAbout = controller.ask;
-  const docked = state.isOpen && presentation === "dock";
-  const inDrawer = state.isOpen && presentation === "drawer";
-  const consulted = presentation !== null || state.questions.length > 0;
-
-  const buddy = useMemo<LessonBuddyTutor>(
-    () => ({
-      ask: ({ question, suggestion }) => {
-        // The conversation shows in the aside, about the screen in view; a draft in the aside's
-        // composer is the learner's, so it stays until it's sent.
-        if (!docked || !isSameDraftContext({ current: state.context, next: activeContext })) {
-          show("dock");
-          open(activeContext, { keepDraft: true });
-        }
-
-        void askAbout({ context: activeContext, question, suggestion });
-      },
-      close,
-      consulted,
-      context: activeContext,
-      docked,
-      identity,
-      navigation,
-      open: (suggestion) => {
-        show(asideShown ? "dock" : "drawer");
-        open(activeContext, { keepDraft: asideShown });
-        const offered = suggestions.find(({ id }) => id === suggestion);
-
-        if (offered) {
-          chooseSuggestion({ question: offered.label, suggestion: offered.id });
-        }
-      },
-    }),
-    [
-      activeContext,
-      askAbout,
-      asideShown,
-      chooseSuggestion,
-      close,
-      consulted,
-      docked,
-      identity,
-      navigation,
-      open,
-      show,
-      state.context,
-      suggestions,
-    ],
-  );
+  const { screen, state } = useLessonPlayer();
+  const { questions } = useLessonQuestionController().state;
+  const context = useTutorContext();
+  const missed = useShowsMiss();
 
   return (
-    <LessonTutorContext value={buddy}>
-      <LessonInteractionProvider tutorOpen={inDrawer}>{children}</LessonInteractionProvider>
-      <LessonQuestionDrawer
-        identity={identity}
-        navigation={navigation}
-        open={inDrawer}
-        quote={<TutorQuote />}
-      />
-    </LessonTutorContext>
+    <TutorBuddyProvider
+      context={context}
+      identity={identity}
+      missed={missed}
+      navigation={navigation}
+      quote={<TutorQuote />}
+      suggests={missed || (isTeachingRead(screen.step) && questions.length === 0)}
+      visit={`${state.position}:${screen.step?.id ?? ""}`}
+    >
+      {children}
+    </TutorBuddyProvider>
   );
 }
 
@@ -189,9 +107,9 @@ function LessonTutorHost({
       }}
       target={target}
     >
-      <TutorInteraction identity={identity} navigation={tutor.navigation}>
+      <LessonBuddy identity={identity} navigation={tutor.navigation}>
         {children}
-      </TutorInteraction>
+      </LessonBuddy>
     </LessonQuestionHostProvider>
   );
 }
@@ -208,17 +126,6 @@ export function LessonTutor({
   children: React.ReactNode;
   tutor: LessonTutorConfig | undefined;
 }) {
-  if (!tutor) {
-    return <LessonInteractionProvider>{children}</LessonInteractionProvider>;
-  }
-
-  return <LessonTutorHost tutor={tutor}>{children}</LessonTutorHost>;
-}
-
-/**
- * The learner's buddy in the lesson, to ask about where they are; null when the lesson has no
- * tutor.
- */
-export function useLessonBuddy(): LessonBuddyTutor | null {
-  return use(LessonTutorContext);
+  const lesson = <LessonInteractionProvider>{children}</LessonInteractionProvider>;
+  return tutor ? <LessonTutorHost tutor={tutor}>{lesson}</LessonTutorHost> : lesson;
 }

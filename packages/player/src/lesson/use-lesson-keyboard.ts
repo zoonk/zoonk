@@ -1,10 +1,10 @@
 "use client";
 
 import { useEnterKey, useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
+import { useTutorBuddy } from "../questions/tutor-buddy";
 import { useLeaveLesson } from "./lesson-leave";
 import { useLessonPlayer } from "./lesson-player-context";
 import { useLessonInteraction } from "./lesson-player-interaction";
-import { useLessonBuddy } from "./tutor/lesson-tutor";
 import { useScreenTurns } from "./use-screen-turns";
 
 /** Screen shortcuts leave keys to the control in focus: a field, a sheet, a focused button. */
@@ -21,7 +21,7 @@ export function useLessonKeyboard() {
   const { actions, screen, state } = useLessonPlayer();
   const leave = useLeaveLesson();
   const { isPaused } = useLessonInteraction();
-  const buddy = useLessonBuddy();
+  const buddy = useTutorBuddy();
   const turns = useScreenTurns();
 
   useEnterKey(() => {

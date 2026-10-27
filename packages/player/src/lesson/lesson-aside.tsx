@@ -15,9 +15,12 @@ import { RichInlineSegments } from "@zoonk/learn/rich-text/inline";
 import { TaskAside, TaskAsideContent } from "@zoonk/learn/task-layout";
 import { LessonVisual } from "@zoonk/learn/visual";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CheckIcon, CircleHelpIcon, TextQuoteIcon } from "lucide-react";
+import { CheckIcon, ChevronRightIcon, CircleHelpIcon, TextQuoteIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { PlayerContentFrame } from "../components/step-layouts";
+import { useLessonQuestionController } from "../questions/lesson-question-provider";
+import { type TutorBuddy, useTutorBuddy } from "../questions/tutor-buddy";
+import { TutorDock } from "../questions/tutor-dock";
 import { LessonRichText } from "./_components/lesson-rich-text";
 import {
   type RecapStep,
@@ -28,8 +31,6 @@ import {
 import { getExplanationsAfter, isLanguageStep, isReadStep } from "./_utils/lesson-steps";
 import { useLessonPlayer, useLessonPlayerConfig } from "./lesson-player-context";
 import { type PlayableLibraryStep } from "./lesson-player-types";
-import { ConversationToggle, LessonDock } from "./tutor/lesson-dock";
-import { useLessonBuddy } from "./tutor/lesson-tutor";
 import { useShowsMiss } from "./tutor/use-shows-miss";
 
 /** The reading text in the aside, at the aside's quieter size and a calm line height. */
@@ -233,6 +234,30 @@ function useShowsOutline(step: PlayableLibraryStep): boolean {
 }
 
 /**
+ * The way back to the conversation about the screen in view, on the aside's header, once the
+ * learner has asked about it: how many questions it holds.
+ */
+function ConversationToggle({ buddy, fallback }: { buddy: TutorBuddy; fallback: React.ReactNode }) {
+  const t = useExtracted();
+  const count = useLessonQuestionController().state.questions.length;
+
+  if (count === 0) {
+    return fallback;
+  }
+
+  return (
+    <button
+      className="text-muted-foreground hover:text-foreground focus-visible:outline-ring hit-area relative -mr-1 inline-flex items-center gap-0.5 rounded-md px-1 font-sans text-xs font-medium transition-colors outline-none focus-visible:outline-2 focus-visible:outline-solid"
+      onClick={() => buddy.open()}
+      type="button"
+    >
+      {t("{count, plural, one {# question} other {# questions}}", { count })}
+      <ChevronRightIcon aria-hidden="true" className="size-3.5" />
+    </button>
+  );
+}
+
+/**
  * The aside beside a screen from `lg`, with what helps with it (what the screen shows itself, its
  * situation, picture or chart, stays with it in the column): beside a question, the last reading
  * screen ("From the lesson", with its place in the lesson); beside a reading screen, the lesson's
@@ -241,7 +266,7 @@ function useShowsOutline(step: PlayableLibraryStep): boolean {
  */
 function ScreenAside({ step }: { step: PlayableLibraryStep }) {
   const t = useExtracted();
-  const buddy = useLessonBuddy();
+  const buddy = useTutorBuddy();
   const { mark, recap } = useScreenRecap();
   const showsOutline = useShowsOutline(step);
 
@@ -252,12 +277,12 @@ function ScreenAside({ step }: { step: PlayableLibraryStep }) {
   return (
     <TaskAside
       label={t("Help with this screen")}
-      meta={buddy ? <ConversationToggle fallback={screenNumber} /> : screenNumber}
+      meta={buddy ? <ConversationToggle buddy={buddy} fallback={screenNumber} /> : screenNumber}
       title={(recap && t("From the lesson")) || (showsOutline && t("Outline")) || undefined}
     >
       {recap && <LessonRecap mark={mark} step={recap.step} />}
       {showsOutline && <LessonOutline />}
-      {buddy && <LessonDock />}
+      <TutorDock />
     </TaskAside>
   );
 }

@@ -7,8 +7,8 @@ import { page } from "vitest/browser";
 import { press } from "../_test-utils/activity-player";
 import { TUTOR_ANSWER, stubTutorApi } from "../_test-utils/tutor-api";
 import { buildTutor } from "../_test-utils/tutor-config";
-import { ItemAskButton, ItemTutor } from "../questions/item-tutor";
-import { ItemTutorAside } from "../questions/item-tutor-aside";
+import { ItemTutor } from "../questions/item-tutor";
+import { TutorAskButton, TutorDock } from "../questions/tutor-dock";
 
 /**
  * The buddy in a run of questions (a session's block, mistakes practice), docked at the foot of
@@ -61,10 +61,10 @@ function QuestionRun({ material, questions }: { material?: string; questions: Ru
           </button>
         )}
 
-        <ItemAskButton />
+        <TutorAskButton />
 
         <TaskAside label="About this question">
-          <ItemTutorAside />
+          <TutorDock />
         </TaskAside>
       </div>
     </ItemTutor>

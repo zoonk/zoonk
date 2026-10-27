@@ -97,11 +97,7 @@ function EmptyThread({
 }) {
   const t = useExtracted();
 
-  const offered = useTutorSuggestions({
-    answered: context.kind === "item" && context.answered,
-    contextKind: context.kind,
-    lessonSuggestions: lessonSuggestions ?? [],
-  });
+  const offered = useTutorSuggestions({ context, lessonSuggestions: lessonSuggestions ?? [] });
 
   const suggestions = lessonSuggestions ? offered : [];
 

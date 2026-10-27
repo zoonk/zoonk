@@ -14,8 +14,8 @@
     "./tutor": "./src/questions/ask-tutor.tsx",
     "./tutor/app-links": "./src/questions/tutor-app-links.ts",
     "./tutor/conversation": "./src/questions/tutor-conversation.tsx",
+    "./tutor/dock": "./src/questions/tutor-dock.tsx",
     "./tutor/item": "./src/questions/item-tutor.tsx",
-    "./tutor/item-aside": "./src/questions/item-tutor-aside.tsx",
     "./tutor/markdown": "./src/questions/lesson-question-markdown.tsx",
     "./tutor/suggestion-words": "./src/questions/tutor-suggestion-words.ts",
     "./usage-refusal": "./src/questions/lesson-question-usage.ts"

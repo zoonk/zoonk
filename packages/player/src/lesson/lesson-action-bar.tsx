@@ -14,12 +14,11 @@ import { ChevronLeftIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { PlayAudioButton } from "../components/play-audio-button";
 import { usePromptAudioUrl } from "../player-audio-context";
+import { TutorAskButton } from "../questions/tutor-dock";
 import { LESSON_PRIMARY_ID } from "./_utils/lesson-focus";
 import { isReadStep } from "./_utils/lesson-steps";
 import { useLessonPlayer } from "./lesson-player-context";
 import { type LessonPrimaryLabel } from "./lesson-player-screen";
-import { AskTutorButton } from "./tutor/ask-tutor-button";
-import { useShowsMiss } from "./tutor/use-shows-miss";
 
 function PrimaryLabel({ label }: { label: LessonPrimaryLabel }) {
   const t = useExtracted();
@@ -66,7 +65,6 @@ export function LessonActionBar() {
   const t = useExtracted();
   const { actions, screen } = useLessonPlayer();
   const { primary } = screen;
-  const showsMiss = useShowsMiss() && !screen.struggleOffer;
 
   if (!primary) {
     return null;
@@ -105,7 +103,7 @@ export function LessonActionBar() {
           {!primary.busy && <ShortcutKbd tone="inverse">⏎</ShortcutKbd>}
         </Button>
 
-        <AskTutorButton labeled={showsMiss} />
+        <TutorAskButton quiet={Boolean(screen.struggleOffer)} />
       </TaskActions>
     </TaskActionBar>
   );

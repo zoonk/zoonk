@@ -3,9 +3,9 @@
 import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { useTutorBuddy } from "../../questions/tutor-buddy";
 import { type ExplainingStep } from "../_utils/lesson-struggle";
 import { useLessonPlayer } from "../lesson-player-context";
-import { useLessonBuddy } from "../tutor/lesson-tutor";
 import { useStrugglePause } from "./use-struggle-pause";
 
 /**
@@ -17,7 +17,7 @@ import { useStrugglePause } from "./use-struggle-pause";
  */
 export function AskBuddyOffer({ reason }: { reason: "misses" | "pause" }) {
   const t = useExtracted();
-  const buddy = useLessonBuddy();
+  const buddy = useTutorBuddy();
   const [dismissed, setDismissed] = useState(false);
 
   if (!buddy || buddy.consulted || dismissed) {

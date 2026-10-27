@@ -66,7 +66,7 @@ export function useFocusCheckWhenComplete({
 
 /**
  * A question's actions in the pinned bar with the learner's buddy after them, where the lesson
- * places it: an icon, saying its name after a miss, when asking helps most (`ItemAskButton`). From
+ * places it: an icon, saying its name after a miss, when asking helps most (`TutorAskButton`). From
  * `lg` the buddy is in the aside instead.
  */
 export function QuestionActionsRow({

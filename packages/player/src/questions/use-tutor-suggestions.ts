@@ -17,18 +17,15 @@ function toOffered(suggestions: readonly LessonTutorSuggestion[]): OfferedSugges
  * thread offers them, and so does the lesson's aside after a wrong answer.
  */
 export function useTutorSuggestions({
-  answered = false,
-  contextKind,
+  context,
   lessonSuggestions,
 }: {
-  /** A question outside a lesson whose answer is checked: asked about the answer, not for a hint. */
-  answered?: boolean;
-  contextKind: LessonQuestionContext["kind"];
+  context: LessonQuestionContext;
   lessonSuggestions: readonly LessonTutorSuggestion[];
 }): OfferedSuggestion[] {
   const t = useExtracted();
 
-  switch (contextKind) {
+  switch (context.kind) {
     case "answer":
       return [
         { question: t("Walk me through this answer") },
@@ -55,13 +52,14 @@ export function useTutorSuggestions({
         { question: t("Does my plan cover all of it?") },
       ];
     case "item":
+      // A question checked: asked about the answer, not for a hint.
       return [
-        answered
+        context.answered
           ? { question: t("Walk me through this answer") }
           : { question: t("What is this question asking?") },
         { question: t("What idea is this question about?") },
       ];
     default:
-      return contextKind satisfies never;
+      return context satisfies never;
   }
 }
