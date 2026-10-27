@@ -27,7 +27,6 @@ vi.mock("next/cache", () => ({
   io: async () => null,
   revalidatePath: vi.fn(),
   revalidateTag: vi.fn(),
-  unstable_cache: vi.fn(),
   updateTag: vi.fn(),
 }));
 

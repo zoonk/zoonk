@@ -79,16 +79,16 @@ export async function settle() {
 }
 
 /**
- * A browser on a page whose render streams a seed, or not, holding the session hint `hint` (`1`,
- * `0`, or none); the learner can move to a seeded page later (`page.seeded = true`), and the hint
- * can change as an auth response leaves it (`setHint`).
+ * A browser on a page whose render streams a seed, or not, holding the signed-in session hint; the
+ * learner can move to a seeded page later (`page.seeded = true`), and the hint can change as an
+ * auth response leaves it (`setHint`: `1`, `0`, or none).
  */
-export function stubPage({ hint = "1", seeded }: { hint?: string | null; seeded: boolean }) {
+export function stubPage({ seeded }: { seeded: boolean }) {
   const page = { seeded };
 
   const browser = {
     addEventListener: vi.fn(),
-    cookie: hint === null ? "" : `zoonk-signed-in=${hint}`,
+    cookie: "zoonk-signed-in=1",
     querySelector: () => (page.seeded ? {} : null),
     visibilityState: "visible",
   };
