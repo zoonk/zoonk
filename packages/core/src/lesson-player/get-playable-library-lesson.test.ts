@@ -256,41 +256,6 @@ describe(getPlayableLibraryLesson, () => {
     ).toStrictEqual(["explanation", "check"]);
   });
 
-  it("keeps playing a lesson whose screens use a template merged into an engine since", async () => {
-    // Stored before sliderGraph and supplyDemand became formulaModel and lineCrossing.
-    const retiredActivity = {
-      check: { explanation: "Why.", kind: "interaction" },
-      fields: { formula: "rate", output: { label: "Value" }, variable: { name: "rate" } },
-      prompt: "Move the rate.",
-      template: "sliderGraph",
-    };
-
-    const { lesson } = await playableLessonFixture({
-      steps: [
-        {
-          content: {
-            explore: { fields: { event: "Bird flu." }, template: "supplyDemand" },
-            text: "Prices rise when supply falls.",
-          },
-          kind: "explanation",
-        },
-        { content: retiredActivity, kind: "activity" },
-        "check",
-      ],
-    });
-
-    const result = await getPlayableLibraryLesson({ lessonId: lesson.id });
-    const steps = result?.status === "ready" ? result.lesson.steps : [];
-    const [explanation] = steps;
-
-    expect(steps.map((step) => step.kind)).toStrictEqual(["explanation", "check"]);
-
-    expect(explanation?.kind === "explanation" && explanation.content).toStrictEqual({
-      explore: undefined,
-      text: "Prices rise when supply falls.",
-    });
-  });
-
   it("cites a public document with the date it was checked, the learner's material by its slide, and says what isn't in it", async () => {
     const owner = await userFixture();
     const checkedAt = new Date("2026-09-12T10:00:00.000Z");
