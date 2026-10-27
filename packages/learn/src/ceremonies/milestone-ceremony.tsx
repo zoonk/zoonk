@@ -1,5 +1,6 @@
 "use client";
 
+import { beltColorClasses } from "@zoonk/ui/components/belt-indicator";
 import { Buddy } from "@zoonk/ui/components/buddy";
 import { Button } from "@zoonk/ui/components/button";
 import {
@@ -10,6 +11,8 @@ import {
   DialogTitle,
 } from "@zoonk/ui/components/dialog";
 import { ShortcutKbd } from "@zoonk/ui/components/kbd";
+import { cn } from "@zoonk/ui/lib/utils";
+import { type BeltColor } from "@zoonk/utils/belt-level";
 import { type BuddyGlasses } from "@zoonk/utils/buddy";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
@@ -67,7 +70,23 @@ function useMarkShown({ milestone, onShown }: Pick<CeremonyProps, "milestone" | 
   }, [analytics, milestone.id, milestone.kind, onShown]);
 }
 
-/** The picture: the buddy in its new belt, at its new stage or in its new glasses. */
+/**
+ * The stage's disc, in the milestone's own color when it is one (a new belt's, soft behind the
+ * buddy wearing it; White and Black would vanish, so they take the quiet fill), the quiet fill for
+ * a stage or glasses. Decorative.
+ */
+function stageClass(belt: BeltColor | null): string {
+  if (!belt || belt === "white" || belt === "black") {
+    return "bg-muted";
+  }
+
+  return cn(beltColorClasses[belt], "opacity-20 dark:opacity-25");
+}
+
+/**
+ * The picture: the buddy in its new belt, at its new stage or in its new glasses, large on its
+ * stage, a disc in the new belt's color (`data-slot="ceremony-stage"`).
+ */
 function CeremonyArt({
   buddy: learnerBuddy,
   milestone,
@@ -78,24 +97,39 @@ function CeremonyArt({
   const glasses = toBuddyGlasses(milestone.key);
 
   return (
-    <Buddy
-      beltColor={milestone.kind === "belt" && belt ? belt : buddy.beltColor}
-      // One pulse once it's in, for what just changed on it.
-      className="motion-safe:animate-pulse-scale size-40 [animation-delay:200ms] sm:size-48"
-      energy={buddy.energy}
-      expression="cheer"
-      glasses={milestone.kind === "glasses" && glasses ? glasses : buddy.glasses}
-      kind={buddy.kind}
-      label={buddyName}
-    />
+    <span
+      className="relative flex size-56 shrink-0 items-center justify-center sm:size-64"
+      data-slot="ceremony-stage"
+    >
+      <span
+        aria-hidden="true"
+        className={cn(
+          "absolute inset-0 rounded-full",
+          stageClass(milestone.kind === "belt" ? belt : null),
+        )}
+      />
+      <Buddy
+        beltColor={milestone.kind === "belt" && belt ? belt : buddy.beltColor}
+        // One pulse once it's in, for what just changed on it.
+        className="motion-safe:animate-pulse-scale relative size-40 [animation-delay:200ms] sm:size-48"
+        energy={buddy.energy}
+        expression="cheer"
+        glasses={milestone.kind === "glasses" && glasses ? glasses : buddy.glasses}
+        kind={buddy.kind}
+        label={buddyName}
+      />
+    </span>
   );
 }
 
+/** What was earned, at a public page's headline size: the loudest title the app has. */
 function CeremonyText({ detail, title }: { detail: string; title: string }) {
   return (
-    <div className="flex flex-col items-start gap-1.5">
-      <DialogTitle className="text-title text-balance">{title}</DialogTitle>
-      <DialogDescription className="text-muted-foreground text-balance">{detail}</DialogDescription>
+    <div className="flex max-w-sm flex-col items-center gap-2" data-slot="ceremony-text">
+      <DialogTitle className="text-headline">{title}</DialogTitle>
+      <DialogDescription className="text-muted-foreground text-base text-balance">
+        {detail}
+      </DialogDescription>
     </div>
   );
 }
@@ -142,9 +176,10 @@ function CeremonyBar({
 
 /**
  * One full-screen moment for a new belt, the buddy's next stage or new glasses, right after the
- * block that earned it or over the summary, laid out like a task's result: the picture, a title
- * and one line from the top of the column, and one button in the pinned action bar (focused, so
- * Enter presses it; a press still meant for the screen before it is ignored). Escape closes it too.
+ * block that earned it or over the summary: the app's loudest moment, so a stage rather than a
+ * column. The buddy large on its disc, the title at headline size and one line, centered a little
+ * above the middle, and one button in the pinned action bar (focused, so Enter presses it; a press
+ * still meant for the screen before it is ignored). Escape closes it too.
  */
 function CeremonyMoment({
   buddy,
@@ -191,8 +226,8 @@ function CeremonyMoment({
           className="data-open:animate-in data-open:fade-in data-closed:animate-out data-closed:fade-out fixed inset-0 z-50 flex flex-col overflow-y-auto duration-200"
           data-slot="milestone-ceremony"
         >
-          {/* As far down as a task's result sits under its header. */}
-          <TaskBody className="items-start pt-16 xl:pt-18">
+          {/* A stage, centered a little above the middle: the one screen that isn't a column. */}
+          <TaskBody className="items-center justify-center gap-8 pt-12 pb-20 text-center">
             <CeremonyArt buddy={buddy} milestone={milestone} />
             <CeremonyText detail={copy.detail} title={copy.title} />
           </TaskBody>
