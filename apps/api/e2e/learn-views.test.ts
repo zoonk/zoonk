@@ -3,55 +3,41 @@ import { request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
-import {
-  attemptFixture,
-  learnerSkillFixture,
-  mistakeFixture,
-} from "@zoonk/testing/fixtures/learner";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
-import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import {
+  chapterLessonFixture,
+  lessonSkillFixture,
+  libraryLessonFixture,
+} from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { areaPracticeResponseSchema } from "../src/lib/openapi/schemas/learn-views";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 
-/**
- * A goal with one chapter of three skills (one of them mastered, with the answer that shows it), a
- * finished lesson and a mistake.
- */
+/** A goal with one outlined lesson in a chapter, ready for that area's extra practice. */
 async function createGoal(userId: string) {
-  const [goal, chapter, lesson, skills] = await Promise.all([
+  const [goal, chapter, skill] = await Promise.all([
     goalFixture({ title: "Percentages for the exam", userId }),
     libraryChapterFixture({ title: "Percentages" }),
-    libraryLessonFixture(),
-    Promise.all([1, 2, 3].map((index) => skillFixture({ name: `Skill ${index}` }))),
+    skillFixture({ name: "Percentages" }),
   ]);
 
-  const plan = await planFixture({ goalId: goal.id });
+  const [plan, lesson] = await Promise.all([
+    planFixture({ goalId: goal.id }),
+    libraryLessonFixture({ homeChapterId: chapter.id }),
+  ]);
 
   await Promise.all([
-    ...skills.map((skill, position) =>
-      planItemFixture({ chapterId: chapter.id, planId: plan.id, position, skillId: skill.id }),
-    ),
+    chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id, position: 0 }),
+    lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id }),
     planItemFixture({
-      completedAt: new Date(),
+      chapterId: chapter.id,
       lessonId: lesson.id,
       planId: plan.id,
-      position: 3,
-      status: "done",
+      position: 0,
+      skillId: skill.id,
+      titleSnapshot: lesson.title,
     }),
-    learnerSkillFixture({
-      lastReviewedAt: new Date(),
-      recallDays: 3,
-      reps: 4,
-      skillId: skills[0]?.id ?? "",
-      stability: 60,
-      state: "mastered",
-      userId,
-    }),
-    // Preparation counts a skill from the learner's first answer on it, never from state alone.
-    attemptFixture({ skillId: skills[0]?.id ?? "", userId }),
-    mistakeFixture({ skillId: skills[1]?.id ?? null, userId }),
   ]);
 
   return { chapter, goal };
