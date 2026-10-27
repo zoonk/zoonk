@@ -18,9 +18,6 @@ import { createAuthenticatedApiContext } from "./helpers/auth";
 const OFFER = { sdp: LIVE_CALL_SDP_OFFER };
 
 const LEVELS = ["A1", "A2", "B1", "B2", "C1"] as const;
-/** A call from yesterday, in seconds. */
-const OLD_CALL_SECONDS = 120;
-
 /** The free plan's call time a day, in seconds. */
 const FREE_CALL_SECONDS = 120;
 const DAY_MS = 86_400_000;
@@ -326,7 +323,7 @@ test.describe("Language goal API", () => {
     await Promise.all([apiContext.dispose(), stranger.dispose()]);
   });
 
-  test("won't reopen a call from an earlier day and stops at the free plan's daily call time", async () => {
+  test("connects again a call from an earlier day against today's time, and stops at the free plan's daily call time", async () => {
     const { apiContext, user } = await createAuthenticatedApiContext({
       baseURL,
       prefix: "language-call-limit",
@@ -345,20 +342,18 @@ test.describe("Language goal API", () => {
 
     const oldCall = await start();
 
-    await prisma.usageRecord.create({
-      data: {
-        createdAt: new Date(Date.now() - DAY_MS),
-        kind: "conversation",
-        seconds: OLD_CALL_SECONDS,
-        targetId: oldCall,
-        userId: user.id,
-      },
+    await prisma.languageConversation.update({
+      data: { createdAt: new Date(Date.now() - DAY_MS) },
+      where: { id: oldCall },
     });
 
     const reopened = await apiContext.post(`/v1/language-conversations/${oldCall}/connections`);
+    expect(reopened.status()).toBe(201);
+    const reopenedSetup = languageConversationSetupSchema.parse(await reopened.json());
 
-    expect(reopened.status()).toBe(409);
-    await expect(reopened.json()).resolves.toMatchObject({ error: { code: "CONVERSATION_ENDED" } });
+    // A reservation that never connected gives today's time back when it ends.
+    const released = await apiContext.post(reopenedSetup.sessionUrl.replace(/\/sdp$/u, "/end"));
+    expect(released.status()).toBe(200);
 
     // Half a minute of today's two is used: a new two-minute call runs the minute and a half left,
     // and says it ends at the day's limit.
@@ -379,13 +374,15 @@ test.describe("Language goal API", () => {
       prisma.liveCallConnection.findUniqueOrThrow({ where: { id: setup.connectionId } }),
     ).resolves.toMatchObject({ heldSeconds: 90 });
 
-    const occupied = await apiContext.post(`/v1/language-conversations/${nextCall}/connections`);
-    expect(occupied.status()).toBe(409);
-    await expect(occupied.json()).resolves.toMatchObject({ error: { code: "CALL_IN_PROGRESS" } });
+    // A reservation that never connected doesn't block another call: starting one ends it.
+    const replacing = await apiContext.post(`/v1/language-conversations/${nextCall}/connections`);
+    expect(replacing.status()).toBe(201);
 
-    // An unredeemed hold spends nothing. End it, then fill the allowance with settled history.
-    const ended = await apiContext.post(setup.sessionUrl.replace(/\/sdp$/u, "/end"));
-    expect(ended.status()).toBe(200);
+    await expect(
+      prisma.liveCallConnection.findUniqueOrThrow({ where: { id: setup.connectionId } }),
+    ).resolves.toMatchObject({ costMicros: 0, state: "ended" });
+
+    // Fill the allowance with settled history: the next start ends its own unused hold first.
     await usageRecordsFixture({ count: 1, kind: "conversation", seconds: 90, userId: user.id });
     const limited = await apiContext.post(`/v1/language-conversations/${nextCall}/connections`);
 

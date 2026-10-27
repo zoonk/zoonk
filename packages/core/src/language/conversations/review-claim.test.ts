@@ -233,6 +233,7 @@ describe("a completed call's review", () => {
     });
 
     expect(saved).toMatchObject({ feedback: null, status: "completed" });
+
     expect(saved.objectivesMet).toStrictEqual(
       RENTING_SCENARIO.objectives.map((objective) => objective.label),
     );
