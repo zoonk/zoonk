@@ -40,7 +40,13 @@ function completeWithBelt(lesson: ReturnType<typeof buildLesson>) {
           ...outcome,
           completion: {
             ...outcome.completion,
-            ceremony: { id: "belt-orange", key: "orange", kind: "belt" as const },
+            ceremony: {
+              earnedAt: new Date().toISOString(),
+              id: "belt-orange",
+              key: "orange",
+              kind: "belt" as const,
+              shownAt: null,
+            },
           },
         }
       : outcome;
