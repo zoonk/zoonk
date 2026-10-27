@@ -57,7 +57,7 @@ describe("app write ledger", () => {
     vi.stubGlobal("location", new URL(PAGE));
     heldWrite().save();
 
-    await expect(takeSettledAppWrites("/en/learn/lesson-1")).resolves.toBe(true);
+    await expect(takeSettledAppWrites({ from: "/en/learn/lesson-1" })).resolves.toBe(true);
     await expect(takeSettledAppWrites()).resolves.toBe(false);
   });
 
@@ -67,9 +67,9 @@ describe("app write ledger", () => {
     vi.stubGlobal("location", new URL(PAGE));
     heldWrite().save();
 
-    await expect(takeSettledAppWrites("/en/learn/lesson-1")).resolves.toBe(true);
+    await expect(takeSettledAppWrites({ from: "/en/learn/lesson-1" })).resolves.toBe(true);
 
-    const today = takeSettledAppWrites("/en/today");
+    const today = takeSettledAppWrites({ from: "/en/today" });
     stillSending.save();
     await expect(today).resolves.toBe(true);
   });
@@ -103,6 +103,68 @@ describe("app write ledger", () => {
       );
 
       await expect(takeSettledAppWrites()).resolves.toBe(true);
+    });
+
+    it("uses the destination's server read after writes instead of refreshing it again", async () => {
+      heldWrite().save();
+      await Promise.resolve();
+      await fetch("/en/today?_rsc=next", { headers: { RSC: "1" } });
+
+      await expect(takeSettledAppWrites({ to: "/en/today" })).resolves.toBe(false);
+      // A different page kept before the write still needs a refresh.
+      await expect(takeSettledAppWrites({ to: "/en/plan" })).resolves.toBe(true);
+      await expect(takeSettledAppWrites()).resolves.toBe(false);
+    });
+
+    it("waits for the navigation's existing read when its shell commits before the response", async () => {
+      const response = Promise.withResolvers<Response>();
+
+      vi.stubGlobal(
+        "fetch",
+        vi.fn(() => response.promise),
+      );
+
+      noteAppWritesSent();
+      heldWrite().save();
+      await Promise.resolve();
+      void fetch("/en/today", { headers: { RSC: "1" } });
+      const refresh = takeSettledAppWrites({ to: "/en/today" });
+      await Promise.resolve();
+      response.resolve(new Response(null));
+
+      await expect(refresh).resolves.toBe(false);
+    });
+
+    it("refreshes when a destination read started before the last write settled", async () => {
+      const write = heldWrite();
+      await fetch("/en/today", { headers: { RSC: "1" } });
+      write.save();
+
+      await expect(takeSettledAppWrites({ to: "/en/today" })).resolves.toBe(true);
+    });
+
+    it("does not count Next's metadata-only request as reading the page's data", async () => {
+      heldWrite().save();
+      await Promise.resolve();
+
+      await fetch("/en/today", {
+        headers: {
+          "Next-Router-State-Tree": encodeURIComponent(
+            JSON.stringify(["", {}, null, "metadata-only"]),
+          ),
+          RSC: "1",
+        },
+      });
+
+      await expect(takeSettledAppWrites({ to: "/en/today" })).resolves.toBe(true);
+    });
+
+    it("does not mistake a prefetch for the navigation's fresh read", async () => {
+      heldWrite().save();
+      await Promise.resolve();
+      await fetch("/en/today", { headers: { "Next-Router-Prefetch": "1", RSC: "1" } });
+
+      await expect(takeSettledAppWrites({ to: "/en/today" })).resolves.toBe(true);
     });
 
     it("leaves reads, Server Actions and other sites' requests alone", async () => {

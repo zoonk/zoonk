@@ -25,9 +25,10 @@ export function noteRouterTransition(navigationType: RouterTransitionType): void
 /**
  * Reads the pages again when what the browser keeps of them may be out of date, so the next one
  * shown is current. Leaving a task screen (a lesson, a session…) does once the writes sent from it
- * settle (`noteAppWrite`), and so does showing a frame page after any write; leaving the frame for
- * a task screen doesn't, since the screen a tap opens reads its own answer. A frame page shown
- * again, by Back or Forward (which Next.js restores at any age) or by coming back to the tab,
+ * settle (`noteAppWrite`), unless the navigation already read their result. Showing a frame page
+ * after any write does too; leaving the frame for a task screen doesn't, since that screen reads
+ * its own answer. A frame page shown again, by Back or Forward (which Next.js restores at any
+ * age) or by coming back to the tab,
  * reads again once the pages were last read five minutes ago or more (the day may have changed, or
  * they studied on another device), or after another tab wrote. A task screen on screen is never
  * read again under the learner. Draws nothing.
@@ -41,7 +42,7 @@ export function RefreshStalePages() {
   const otherTabWrote = useRef(false);
 
   const refresh = useEffectEvent(({ from, stale }: { from?: string; stale: boolean }) => {
-    void takeSettledAppWrites(from).then((wrote) => {
+    void takeSettledAppWrites({ from, to: stale ? undefined : pathname }).then((wrote) => {
       if (wrote || stale) {
         readAt.current = Date.now();
         otherTabWrote.current = false;
