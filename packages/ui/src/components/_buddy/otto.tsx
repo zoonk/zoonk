@@ -14,7 +14,7 @@ const SPOTS = [
 ] as const;
 
 /** Otto, a know-it-all octopus whose spots glow with Energy and dim while it naps. */
-export function OttoBody({ glow, isGlowing, isNapping, uid }: BuddyBodyProps) {
+export function OttoBody({ glow, isNapping, uid }: BuddyBodyProps) {
   return (
     <>
       <defs>
@@ -94,14 +94,7 @@ export function OttoBody({ glow, isGlowing, isNapping, uid }: BuddyBodyProps) {
       {SPOTS.map((spot) => (
         <g key={`${spot.cx}-${spot.cy}`}>
           {!isNapping && (
-            <BuddyHalo
-              cx={spot.cx}
-              cy={spot.cy}
-              glow={glow}
-              isGlowing={isGlowing}
-              radius={spot.halo}
-              uid={uid}
-            />
+            <BuddyHalo cx={spot.cx} cy={spot.cy} glow={glow} radius={spot.halo} uid={uid} />
           )}
           <circle
             cx={spot.cx}

@@ -8,7 +8,7 @@ import {
 } from "./buddy-parts";
 
 /** Beep, a tidy robot whose antenna bulb glows with Energy. */
-export function BeepBody({ glow, isGlowing, isNapping, uid }: BuddyBodyProps) {
+export function BeepBody({ glow, isNapping, uid }: BuddyBodyProps) {
   const metal = buddyDefUrl(uid, "beep-metal");
 
   return (
@@ -39,7 +39,7 @@ export function BeepBody({ glow, isGlowing, isNapping, uid }: BuddyBodyProps) {
       ) : (
         <g>
           <path d="M60 26 V15" stroke="#7c86c4" strokeLinecap="round" strokeWidth="3.6" />
-          <BuddyHalo cx={60} cy={10} glow={glow} isGlowing={isGlowing} radius={10} uid={uid} />
+          <BuddyHalo cx={60} cy={10} glow={glow} radius={10} uid={uid} />
           <circle cx="60" cy="10" fill="#ff8a3d" r="5.2" />
           <circle cx="58.4" cy="8.4" fill="#fff" opacity=".85" r="1.7" />
         </g>

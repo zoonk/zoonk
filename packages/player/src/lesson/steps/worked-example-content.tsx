@@ -6,20 +6,31 @@ import { SURFACE_CLASS } from "@zoonk/learn/surface";
 import { getScrollBehavior } from "@zoonk/ui/lib/scroll-behavior";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { type StepOf } from "./lesson-step-view-props";
 
 type WorkedExampleContentData = StepOf<"workedExample">["content"];
 
+/**
+ * One move of the solution. One the learner just asked for (`entering`, "Show the next step")
+ * fades up into place, so they see where it went; the ones there when the screen opens are still.
+ */
 function WorkedExampleLine({
+  entering,
   number,
   step,
 }: {
+  entering: boolean;
   number: number;
   step: WorkedExampleContentData["steps"][number];
 }) {
   return (
-    <li className="motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-1 flex gap-3">
+    <li
+      className={cn(
+        "flex gap-3",
+        entering && "animate-in fade-in slide-in-from-bottom-1 duration-base ease-out",
+      )}
+    >
       {/* A step's number in the mono face, as the recap beside a question numbers it. */}
       <span
         aria-hidden="true"
@@ -75,6 +86,9 @@ export function WorkedExampleContent({
   const t = useExtracted();
   const isDone = revealed >= content.steps.length;
   const endRef = useNewestStepInView(revealed);
+  // The steps there when the screen opened stay still; only the ones asked for after it move in.
+  // oxlint-disable-next-line react/hook-use-state -- Read once as the screen opens, never updated.
+  const [openedWith] = useState(revealed);
 
   return (
     <div className="flex w-full flex-col gap-5 lg:max-w-xl" data-slot="worked-example">
@@ -88,7 +102,14 @@ export function WorkedExampleContent({
         {content.steps.slice(0, revealed).map((step, index) => {
           const key = `step-${index}`;
 
-          return <WorkedExampleLine key={key} number={index + 1} step={step} />;
+          return (
+            <WorkedExampleLine
+              entering={index >= openedWith}
+              key={key}
+              number={index + 1}
+              step={step}
+            />
+          );
         })}
       </ol>
 

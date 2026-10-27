@@ -191,7 +191,7 @@ function PageBarStart({
       {title && titleAway && (
         <span
           aria-hidden="true"
-          className="motion-safe:animate-in motion-safe:fade-in line-clamp-2 min-w-0 text-sm leading-tight font-semibold text-pretty duration-200 lg:hidden"
+          className="motion-safe:animate-in motion-safe:fade-in duration-base line-clamp-2 min-w-0 text-sm leading-tight font-semibold text-pretty lg:hidden"
         >
           {title}
         </span>

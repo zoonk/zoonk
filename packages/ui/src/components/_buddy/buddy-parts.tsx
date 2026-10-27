@@ -1,5 +1,3 @@
-import { cn } from "@zoonk/ui/lib/utils";
-
 /**
  * Ids inside an inline SVG are document-global. Each buddy prefixes its gradients
  * and clip paths with a per-instance id so several buddies can share a page, even
@@ -17,7 +15,7 @@ export function buddyDefUrl(uid: string, name: string): string {
 export const BELT_FILL = { fill: "var(--buddy-belt)" } as const;
 
 /** What every body needs to draw its Energy glow and its napping pose. */
-export type BuddyBodyProps = { glow: number; isGlowing: boolean; isNapping: boolean; uid: string };
+export type BuddyBodyProps = { glow: number; isNapping: boolean; uid: string };
 
 const SPARK_PATH = "M12 0 C13 8 16 11 24 12 C16 13 13 16 12 24 C11 16 8 13 0 12 C8 11 11 8 12 0Z";
 const SPARK_BOX = 24;
@@ -59,33 +57,29 @@ export function BuddyHaloGradient({ uid }: { uid: string }) {
 const HALO_GROWTH = 1.5;
 
 /**
- * The Energy glow: brighter and wider as Energy rises and, at full Energy, a
- * gentle pulse that stops when the learner prefers reduced motion.
+ * The Energy glow: brighter and wider as Energy rises. It holds still: the buddy shows on everyday
+ * screens (the navigation, Today), where nothing loops.
  */
 export function BuddyHalo({
   cx,
   cy,
   glow,
-  isGlowing,
   radius,
   uid,
 }: {
   cx: number;
   cy: number;
   glow: number;
-  isGlowing: boolean;
   radius: number;
   uid: string;
 }) {
   return (
     <g opacity={glow}>
       <circle
-        className={cn(isGlowing && "motion-safe:animate-glow")}
         cx={cx}
         cy={cy}
         fill={buddyDefUrl(uid, "halo")}
         r={radius * (1 + HALO_GROWTH * glow)}
-        style={{ transformBox: "fill-box", transformOrigin: "center" }}
       />
     </g>
   );

@@ -11,11 +11,11 @@ import {
 /** The faint third spark never fully disappears while Noodle is awake. */
 const FAINT_SPARK_MIN_OPACITY = 0.25;
 
-function NoodleSparks({ glow, isGlowing, uid }: Omit<BuddyBodyProps, "isNapping">) {
+function NoodleSparks({ glow, uid }: Omit<BuddyBodyProps, "isNapping">) {
   return (
     <g>
-      <BuddyHalo cx={15} cy={21} glow={glow} isGlowing={isGlowing} radius={10} uid={uid} />
-      <BuddyHalo cx={104} cy={19} glow={glow} isGlowing={isGlowing} radius={11} uid={uid} />
+      <BuddyHalo cx={15} cy={21} glow={glow} radius={10} uid={uid} />
+      <BuddyHalo cx={104} cy={19} glow={glow} radius={11} uid={uid} />
       <Spark fill="#ff8a3d" size={12} x={9} y={15} />
       <Spark fill="#ff8a3d" size={14} x={97} y={12} />
       <Spark
@@ -30,7 +30,7 @@ function NoodleSparks({ glow, isGlowing, uid }: Omit<BuddyBodyProps, "isNapping"
 }
 
 /** Noodle, a brain with legs whose sparks glow with Energy. Sparks rest while it naps. */
-export function NoodleBody({ glow, isGlowing, isNapping, uid }: BuddyBodyProps) {
+export function NoodleBody({ glow, isNapping, uid }: BuddyBodyProps) {
   return (
     <>
       <defs>
@@ -108,7 +108,7 @@ export function NoodleBody({ glow, isGlowing, isNapping, uid }: BuddyBodyProps) 
         y="84"
       />
 
-      {!isNapping && <NoodleSparks glow={glow} isGlowing={isGlowing} uid={uid} />}
+      {!isNapping && <NoodleSparks glow={glow} uid={uid} />}
     </>
   );
 }

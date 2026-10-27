@@ -60,7 +60,7 @@ export const CHOICE_ROW_CLASS = cn(
  * the keyboard's focus is an outline, so a picked preset still shows it.
  */
 const CHIP_CLASS = cn(
-  "ring-input flex cursor-pointer items-center rounded-lg ring-1 transition-colors ring-inset motion-reduce:transition-none",
+  "ring-input press flex cursor-pointer items-center rounded-lg ring-1 [--press-scale:0.99] ring-inset",
   "hover:bg-muted has-data-checked:bg-selected-tint has-data-checked:ring-selected has-focus-visible:outline-ring has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-data-checked:ring-2",
 );
 

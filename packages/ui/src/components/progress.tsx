@@ -44,7 +44,7 @@ function ProgressTrack({ className, ...props }: ProgressPrimitive.Track.Props) {
 function ProgressIndicator({ className, ...props }: ProgressPrimitive.Indicator.Props) {
   return (
     <ProgressPrimitive.Indicator
-      className={cn("bg-success h-full transition-all", className)}
+      className={cn("bg-success h-full transition-[width]", className)}
       data-slot="progress-indicator"
       {...props}
     />

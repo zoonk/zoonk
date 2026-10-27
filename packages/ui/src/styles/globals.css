@@ -113,8 +113,6 @@
   --color-belt-gray: var(--belt-gray);
   --color-belt-black: var(--belt-black);
   --animate-breathe: breathe 2s ease-in-out infinite;
-  --animate-glow: glow 2.4s ease-in-out infinite;
-  --animate-ring-fill: ring-fill 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
 }
 
 /*
@@ -656,20 +654,6 @@
   }
 }
 
-/* A soft, slow pulse for something that shines, like a buddy on a high-Energy day. */
-@keyframes glow {
-  0%,
-  100% {
-    opacity: 0.75;
-    transform: scale(1);
-  }
-
-  50% {
-    opacity: 1;
-    transform: scale(1.12);
-  }
-}
-
 @keyframes shake {
   0%,
   100% {
@@ -686,13 +670,6 @@
   }
   80% {
     transform: translateX(3px);
-  }
-}
-
-/* A progress ring fills from empty to its share; the element sets `--ring-length`. */
-@keyframes ring-fill {
-  from {
-    stroke-dashoffset: var(--ring-length);
   }
 }
 

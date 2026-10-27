@@ -40,7 +40,7 @@ export function FirstScreenChoices({
             <button
               className={cn(
                 ANSWER_OPTION_CLASS,
-                "hover:bg-muted focus-visible:ring-ring/50 transition-[background-color,scale] outline-none focus-visible:ring-[3px] active:scale-[0.99] motion-reduce:transition-none",
+                "hover:bg-muted focus-visible:ring-ring/50 press outline-none [--press-scale:0.99] focus-visible:ring-[3px]",
               )}
               name={FIRST_ANSWER_PARAM}
               type="submit"

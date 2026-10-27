@@ -217,7 +217,7 @@ function ImageUploadTrigger({
     <div
       aria-disabled={pending}
       className={cn(
-        "group bg-muted focus-visible:ring-ring relative flex shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-xl transition-all focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none",
+        "group bg-muted focus-visible:ring-ring relative flex shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-xl transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none",
         pending && "pointer-events-none",
         className,
       )}

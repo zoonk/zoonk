@@ -246,7 +246,7 @@ function FieldDynamicDescription({
       <div
         aria-hidden={showSuccess}
         className={cn(
-          "col-start-1 row-start-1 transition-all duration-300 ease-in-out",
+          "duration-base col-start-1 row-start-1 transition-[opacity,translate]",
           showSuccess ? "translate-y-2 opacity-0" : "translate-y-0 opacity-100",
         )}
       >
@@ -257,7 +257,7 @@ function FieldDynamicDescription({
         aria-hidden={!showSuccess}
         aria-live="polite"
         className={cn(
-          "col-start-1 row-start-1 transition-all duration-300 ease-in-out",
+          "duration-base col-start-1 row-start-1 transition-[opacity,translate]",
           showSuccess ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0",
         )}
       >

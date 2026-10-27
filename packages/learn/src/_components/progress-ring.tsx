@@ -6,7 +6,7 @@ const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 /**
  * A share drawn as a ring: the visual anchor beside a big number (a goal's preparation). It sits
  * next to that number, so it's hidden from screen readers; put an icon or a short value inside it
- * as `children`. The fill grows in once, and stays still with reduced motion.
+ * as `children`. It's drawn still: it shows in list rows and on pages that load many times a day.
  */
 export function ProgressRing({
   children,
@@ -36,7 +36,7 @@ export function ProgressRing({
           strokeWidth="9"
         />
         <circle
-          className="stroke-success motion-safe:animate-ring-fill [--ring-length:264]"
+          className="stroke-success"
           cx="50"
           cy="50"
           fill="none"

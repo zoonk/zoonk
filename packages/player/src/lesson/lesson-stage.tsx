@@ -134,9 +134,9 @@ const PICTURES_AHEAD = 2;
  * column. Reduced motion shows it in place.
  */
 const TURN_CLASS: Record<ScreenTurn, string> = {
-  back: "motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-left-8 motion-safe:duration-200 motion-safe:ease-out",
+  back: "motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-left-8 motion-safe:duration-base motion-safe:ease-out",
   forward:
-    "motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-right-8 motion-safe:duration-200 motion-safe:ease-out",
+    "motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-right-8 motion-safe:duration-base motion-safe:ease-out",
 };
 
 /**

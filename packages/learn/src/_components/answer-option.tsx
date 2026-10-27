@@ -86,7 +86,7 @@ export function AnswerOption({
       aria-checked={picked}
       className={cn(
         ANSWER_OPTION_CLASS,
-        "focus-visible:outline-ring enabled:hover:bg-muted/60 transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid disabled:cursor-default",
+        "focus-visible:outline-ring enabled:hover:bg-muted/60 press outline-none [--press-scale:0.99] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid disabled:cursor-default",
         ANSWER_TONE.idle,
         layout === "stacked" && "flex-col items-stretch p-2",
         picked && !result && cn(ANSWER_TONE.picked, "enabled:hover:bg-selected-tint"),

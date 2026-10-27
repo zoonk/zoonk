@@ -8,7 +8,7 @@ import {
 } from "./buddy-parts";
 
 /** Zu, a curious alien whose antenna tips glow with Energy. */
-export function ZuBody({ glow, isGlowing, isNapping, uid }: BuddyBodyProps) {
+export function ZuBody({ glow, isNapping, uid }: BuddyBodyProps) {
   return (
     <>
       <defs>
@@ -58,8 +58,8 @@ export function ZuBody({ glow, isGlowing, isNapping, uid }: BuddyBodyProps) {
             strokeLinecap="round"
             strokeWidth="3.6"
           />
-          <BuddyHalo cx={36} cy={11} glow={glow} isGlowing={isGlowing} radius={11} uid={uid} />
-          <BuddyHalo cx={84} cy={11} glow={glow} isGlowing={isGlowing} radius={11} uid={uid} />
+          <BuddyHalo cx={36} cy={11} glow={glow} radius={11} uid={uid} />
+          <BuddyHalo cx={84} cy={11} glow={glow} radius={11} uid={uid} />
           <circle cx="36" cy="11" fill="#ff8a3d" r="5.2" />
           <circle cx="84" cy="11" fill="#ff8a3d" r="5.2" />
           <circle cx="34.4" cy="9.4" fill="#fff" opacity=".85" r="1.7" />

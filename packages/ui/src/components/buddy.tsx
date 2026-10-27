@@ -150,13 +150,7 @@ function Buddy({
         filter={stage === "wise" ? buddyDefUrl(uid, "wise-glow") : undefined}
         transform={`translate(${GROUND_X} ${GROUND_Y}) scale(${scale}) translate(${-GROUND_X} ${-GROUND_Y})`}
       >
-        <BuddyBody
-          glow={getBuddyGlow(energy)}
-          isGlowing={energyState === "glowing"}
-          isNapping={isNapping}
-          kind={kind}
-          uid={uid}
-        />
+        <BuddyBody glow={getBuddyGlow(energy)} isNapping={isNapping} kind={kind} uid={uid} />
         <BuddyFace expression={face} />
         <g transform={isNapping ? `translate(0 ${SLEEPY_EYES_OFFSET})` : undefined}>
           <BuddyGlassesFrame glasses={glasses} uid={uid} />
