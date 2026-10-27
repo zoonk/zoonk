@@ -1,5 +1,6 @@
 import { CommandPaletteScope } from "@/app/[lang]/app-command-palette";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
+import { LearnerSeedChannel } from "@/components/learner/learner-seed-provider";
 import { VisitorBarLinks } from "@/components/login-bar-link";
 import { TabMissionsProvider } from "@/lib/learn/tab-missions-provider";
 import {
@@ -55,27 +56,32 @@ function LearnTopBar() {
  * own, or the page's or section's), the page and the tab bar at the bottom. Cmd/Ctrl+K opens the
  * command palette everywhere (the root layout's; a visitor's in the frame only).
  *
- * The frame is the same for everyone: what it shows about the learner (their goals, buddy, day,
- * places and account) comes from the learner summary in the browser, so no page's render reads it.
+ * What it shows about the learner (their goals, buddy, day, places and account) comes from the
+ * learner summary: a private section reads it with the page as the learner enters it
+ * (`LearnerSummarySeed`), so a hard load paints it with the page, and the browser keeps it current.
+ * The static shell, every prefetch and the catalog, which stays static, draw the frame's neutral
+ * look until the browser has it.
  */
 export function LearnFrame({ children }: { children: React.ReactNode }) {
   return (
-    <MainLearnProvider>
-      <TabMissionsProvider>
-        <LearnShell className="overflow-x-clip">
-          <SkipToContent />
-          <LearnAppSidebar tabs={<LearnSideTabs />} />
+    <LearnerSeedChannel>
+      <MainLearnProvider>
+        <TabMissionsProvider>
+          <LearnShell className="overflow-x-clip">
+            <SkipToContent />
+            <LearnAppSidebar tabs={<LearnSideTabs />} />
 
-          <LearnShellContent>
-            <LearnTopBar />
-            <LearnFrameMain>{children}</LearnFrameMain>
-            <LearnBottomTabs />
-          </LearnShellContent>
+            <LearnShellContent>
+              <LearnTopBar />
+              <LearnFrameMain>{children}</LearnFrameMain>
+              <LearnBottomTabs />
+            </LearnShellContent>
 
-          <AppPageHistory />
-          <CommandPaletteScope />
-        </LearnShell>
-      </TabMissionsProvider>
-    </MainLearnProvider>
+            <AppPageHistory />
+            <CommandPaletteScope />
+          </LearnShell>
+        </TabMissionsProvider>
+      </MainLearnProvider>
+    </LearnerSeedChannel>
   );
 }

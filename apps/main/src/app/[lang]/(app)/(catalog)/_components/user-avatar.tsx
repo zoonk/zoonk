@@ -1,6 +1,6 @@
 "use client";
 
-import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
+import { useFrameLearner } from "@/components/learner/learner-seed-provider";
 import { Avatar, AvatarFallback, AvatarImage } from "@zoonk/ui/components/avatar";
 import { cn } from "@zoonk/ui/lib/utils";
 import { User } from "lucide-react";
@@ -36,9 +36,12 @@ export function PendingAccountAvatar({ className }: { className?: string }) {
   );
 }
 
-/** The signed-in learner's (or guest's) avatar, from the learner summary. */
+/**
+ * The signed-in learner's (or guest's) avatar, from the learner summary: drawn where the learner is
+ * already read, so it never waits.
+ */
 export function LearnerAvatar() {
-  const learner = useLearnerSummary();
+  const learner = useFrameLearner();
 
   if (learner.status !== "ready") {
     return <UserAvatar />;

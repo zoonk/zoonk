@@ -5,7 +5,7 @@ import { logError } from "@zoonk/utils/logger";
 import { navigation } from "next/cache";
 import { unstable_rethrow } from "next/navigation";
 import { Suspense } from "react";
-import { LearnerSummarySeedMerge } from "./learner-summary-seed-merge";
+import { ProvideLearnerSeed } from "./learner-seed-provider";
 
 /** A summary that can't be read leaves the frame's neutral look, not the page. */
 async function readSeed(): Promise<LearnerSummarySeedValue> {
@@ -20,23 +20,26 @@ async function readSeed(): Promise<LearnerSummarySeedValue> {
   }
 }
 
-async function SeedRead() {
+/** Read as the learner opens one of the section's pages: never for a prefetch or the static shell. */
+async function readSeedOnNavigation(): Promise<LearnerSummarySeedValue> {
   await navigation();
-  return <LearnerSummarySeedMerge seed={await readSeed()} />;
+  return readSeed();
 }
 
 /**
  * Streams the learner summary in with a private section's pages (the tabs, settings, statistics,
- * onboarding), once as the learner enters it: never in a prefetch or the static shell. The meta
- * tells the browser the summary is on its way, so it doesn't read it again (`ensureLearnerSummary`).
- * The app's frame and every other page share the same summary in the browser.
+ * onboarding), once as the learner enters it: never in a prefetch or the static shell. The app's
+ * frame draws the learner's goal, level, tabs, places and account from it in the server's HTML,
+ * with the page, instead of once the page's code has loaded (`useFrameLearner`). The meta tells
+ * the browser the summary is on its way, so it doesn't read it again (`ensureLearnerSummary`);
+ * the frame and every other page share it in the browser.
  */
 export function LearnerSummarySeed() {
   return (
     <>
       <meta content="" name={LEARNER_SEED_META} />
       <Suspense fallback={null}>
-        <SeedRead />
+        <ProvideLearnerSeed seed={readSeedOnNavigation()} />
       </Suspense>
     </>
   );

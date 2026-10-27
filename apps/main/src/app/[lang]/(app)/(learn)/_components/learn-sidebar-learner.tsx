@@ -5,24 +5,21 @@ import {
   PendingAccountAvatar,
 } from "@/app/[lang]/(app)/(catalog)/_components/user-avatar";
 import { UserDropdownMenu } from "@/app/[lang]/(app)/(catalog)/_components/user-dropdown-menu";
+import { useFrameLearner } from "@/components/learner/learner-seed-provider";
 import { VisitorLook } from "@/components/learner/visitor-look";
 import { useBeltLabel } from "@/lib/belt-label";
-import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
-import { type LearnerSummary } from "@zoonk/core/learner/summary/contract";
+import {
+  type LearnerSummary,
+  type LearnerSummaryPlaces,
+} from "@zoonk/core/learner/summary/contract";
 import { DropdownMenu, DropdownMenuTrigger } from "@zoonk/ui/components/dropdown-menu";
 import { useExtracted } from "next-intl";
+import { Suspense } from "react";
 import { BeltLevel } from "./learn-bar-end";
 import { LearnSidebarLink } from "./learn-sidebar-links";
 
-/**
- * The goal's places in its order: the mistakes notebook with how many are ready to practice, an
- * exam's page, a language goal's speaking paper and the mind maps when there are some, then the
- * learner's statistics. Until the learner is read (and for a visitor), the two every learner has.
- */
-export function StudyLinks() {
+function StudyLinksView({ places }: { places: LearnerSummaryPlaces | null }) {
   const t = useExtracted();
-  const learner = useLearnerSummary();
-  const places = learner.status === "ready" ? learner.summary.places : null;
 
   return (
     <>
@@ -36,6 +33,24 @@ export function StudyLinks() {
       {places?.mindMaps && <LearnSidebarLink label={t("Mind maps")} menu="mindMaps" />}
       <LearnSidebarLink label={t("Statistics")} menu="stats" />
     </>
+  );
+}
+
+function FrameStudyLinks() {
+  const learner = useFrameLearner();
+  return <StudyLinksView places={learner.status === "ready" ? learner.summary.places : null} />;
+}
+
+/**
+ * The goal's places in its order: the mistakes notebook with how many are ready to practice, an
+ * exam's page, a language goal's speaking paper and the mind maps when there are some, then the
+ * learner's statistics. Until the learner is read (and for a visitor), the two every learner has.
+ */
+export function StudyLinks() {
+  return (
+    <Suspense fallback={<StudyLinksView places={null} />}>
+      <FrameStudyLinks />
+    </Suspense>
   );
 }
 
@@ -132,14 +147,8 @@ function AccountRow({ summary }: { summary: LearnerSummary }) {
   );
 }
 
-/**
- * The sidebar's end: one row that opens the account's menu, with whose it is (the 24px avatar and
- * the learner's name, or "Guest" for someone studying without an account yet) and their belt and
- * level, which Statistics above it opens. Its name says all three, the visible name first. A
- * visitor's Pricing and way in instead (`visitor`).
- */
-export function SidebarAccount({ visitor }: { visitor: React.ReactNode }) {
-  const learner = useLearnerSummary();
+function FrameAccount({ visitor }: { visitor: React.ReactNode }) {
+  const learner = useFrameLearner();
 
   if (learner.status === "visitor") {
     return visitor;
@@ -150,4 +159,18 @@ export function SidebarAccount({ visitor }: { visitor: React.ReactNode }) {
   }
 
   return <AccountRow summary={learner.summary} />;
+}
+
+/**
+ * The sidebar's end: one row that opens the account's menu, with whose it is (the 24px avatar and
+ * the learner's name, or "Guest" for someone studying without an account yet) and their belt and
+ * level, which Statistics above it opens. Its name says all three, the visible name first. A
+ * visitor's Pricing and way in instead (`visitor`).
+ */
+export function SidebarAccount({ visitor }: { visitor: React.ReactNode }) {
+  return (
+    <Suspense fallback={<PendingSidebarAccount visitor={visitor} />}>
+      <FrameAccount visitor={visitor} />
+    </Suspense>
+  );
 }

@@ -1,11 +1,12 @@
 "use client";
 
+import { useFrameLearner } from "@/components/learner/learner-seed-provider";
 import { VisitorLook } from "@/components/learner/visitor-look";
 import { PublicHomeLink } from "@/components/public/public-top-bar";
-import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
 import { type LearnerSummaryGoal } from "@zoonk/core/learner/summary/contract";
 import { GoalSwitcher } from "@zoonk/learn/goal-switcher";
 import { cn } from "@zoonk/ui/lib/utils";
+import { Suspense } from "react";
 import { switchGoal } from "./switch-goal";
 
 type Placement = "bar" | "sidebar";
@@ -37,19 +38,8 @@ function PendingGoalMenu({ placement = "bar" }: { placement?: Placement }) {
   );
 }
 
-/**
- * The goal switcher on the left of the top bar (or at the top of the sidebar), with the goals the
- * learner hasn't archived and the quick explanations not read to the end (a learner with only
- * those gets the menu too). One read to the end leaves it: search finds it again. A visitor has
- * no goals to switch, so the logo takes its place and goes home, as on the public pages.
- */
-export function LearnGoalMenu({
-  placement,
-}: {
-  /** The top bar under `lg` (the default), or the sidebar from `lg`. */
-  placement?: Placement;
-}) {
-  const learner = useLearnerSummary();
+function GoalMenu({ placement }: { placement?: Placement }) {
+  const learner = useFrameLearner();
 
   if (learner.status === "visitor") {
     return <PublicHomeLink />;
@@ -69,5 +59,24 @@ export function LearnGoalMenu({
       onSelect={switchGoal}
       placement={placement}
     />
+  );
+}
+
+/**
+ * The goal switcher on the left of the top bar (or at the top of the sidebar), with the goals the
+ * learner hasn't archived and the quick explanations not read to the end (a learner with only
+ * those gets the menu too). One read to the end leaves it: search finds it again. A visitor has
+ * no goals to switch, so the logo takes its place and goes home, as on the public pages.
+ */
+export function LearnGoalMenu({
+  placement,
+}: {
+  /** The top bar under `lg` (the default), or the sidebar from `lg`. */
+  placement?: Placement;
+}) {
+  return (
+    <Suspense fallback={<PendingGoalMenu placement={placement} />}>
+      <GoalMenu placement={placement} />
+    </Suspense>
   );
 }

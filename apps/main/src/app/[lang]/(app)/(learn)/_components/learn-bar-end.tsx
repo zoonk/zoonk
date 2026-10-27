@@ -2,15 +2,16 @@
 
 import { PendingAccountAvatar } from "@/app/[lang]/(app)/(catalog)/_components/user-avatar";
 import { UserAvatarMenu } from "@/app/[lang]/(app)/(catalog)/_components/user-avatar-menu";
+import { useFrameLearner } from "@/components/learner/learner-seed-provider";
 import { VisitorLook } from "@/components/learner/visitor-look";
 import { Link } from "@/i18n/navigation";
 import { useBeltLabel } from "@/lib/belt-label";
-import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
 import { getMenu } from "@/lib/menu";
 import { LearnShellEnd } from "@zoonk/learn/shell";
 import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
 import { type BeltColor } from "@zoonk/utils/belt-level";
 import { useExtracted } from "next-intl";
+import { Suspense } from "react";
 
 /**
  * The learner's belt as a dot and their level in mono, as the top bar's level link and the
@@ -70,15 +71,8 @@ function PendingBarEnd({ visitor }: { visitor: React.ReactNode }) {
   );
 }
 
-/**
- * The right of the learner's top bar: their belt and level opening Statistics, and the account
- * avatar. A visitor has no account to open, so Pricing and the way in (`visitor`) stand there, as
- * in the sidebar and the catalog's bar; the search field's palette holds what the menu would.
- * Nothing of a level before the learner has one. Energy lives on the buddy's tab, and search opens
- * with Cmd/Ctrl+K or from the field under the bar.
- */
-export function LearnBarEnd({ visitor }: { visitor: React.ReactNode }) {
-  const learner = useLearnerSummary();
+function BarEnd({ visitor }: { visitor: React.ReactNode }) {
+  const learner = useFrameLearner();
 
   if (learner.status === "visitor") {
     return <LearnShellEnd>{visitor}</LearnShellEnd>;
@@ -95,5 +89,20 @@ export function LearnBarEnd({ visitor }: { visitor: React.ReactNode }) {
       {level && <LevelLink level={level} />}
       <UserAvatarMenu />
     </LearnShellEnd>
+  );
+}
+
+/**
+ * The right of the learner's top bar: their belt and level opening Statistics, and the account
+ * avatar. A visitor has no account to open, so Pricing and the way in (`visitor`) stand there, as
+ * in the sidebar and the catalog's bar; the search field's palette holds what the menu would.
+ * Nothing of a level before the learner has one. Energy lives on the buddy's tab, and search opens
+ * with Cmd/Ctrl+K or from the field under the bar.
+ */
+export function LearnBarEnd({ visitor }: { visitor: React.ReactNode }) {
+  return (
+    <Suspense fallback={<PendingBarEnd visitor={visitor} />}>
+      <BarEnd visitor={visitor} />
+    </Suspense>
   );
 }

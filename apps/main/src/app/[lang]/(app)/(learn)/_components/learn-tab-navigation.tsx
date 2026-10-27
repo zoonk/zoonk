@@ -1,9 +1,9 @@
 "use client";
 
+import { useFrameLearner } from "@/components/learner/learner-seed-provider";
 import { usePathname } from "@/i18n/navigation";
 import { useTabMissions } from "@/lib/learn/tab-missions-provider";
 import { type LearnerSummaryState } from "@/lib/learner/learner-snapshot";
-import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
 import { markAppEntry } from "@zoonk/learn/bar";
 import { type LearnBuddy } from "@zoonk/learn/buddy-name";
 import { useGoalSwitchPending } from "@zoonk/learn/goal-switcher";
@@ -89,15 +89,17 @@ function getSummaryTabs(learner: LearnerSummaryState) {
   return {};
 }
 
-function useFrameTabs(): TabsProps {
-  const { buddy, ...read } = getSummaryTabs(useLearnerSummary());
+function useFrameTabs(learner: LearnerSummaryState): TabsProps {
+  const { buddy, ...read } = getSummaryTabs(learner);
   return { buddy, missions: useTabMissions(read) };
 }
 
+/** The learner as unread, for the tabs' look until the frame's learner arrives. */
+const UNREAD: LearnerSummaryState = { status: "not-loaded" };
+
 /** What's left of today's session, in mono at the end of the sidebar's Today; nothing once done. */
-function TodayCount() {
+function TodayCount({ learner }: { learner: LearnerSummaryState }) {
   const t = useExtracted();
-  const learner = useLearnerSummary();
   const blocksLeft = learner.status === "ready" ? (learner.summary.today?.blocksLeft ?? 0) : 0;
 
   if (!blocksLeft) {
@@ -151,13 +153,12 @@ const ONBOARDING_FIRST_PAINT_CLASS =
   "contents [[data-slot=learn-shell-content]:has([data-onboarding-bar])_&]:hidden";
 
 /**
- * The tabs in the sidebar from `lg` up, with the current page's tab marked. The path of a page
- * with its own id (a subject, a chapter) is only known once the page is open, so until then the
- * tabs are drawn without the mark, in the same place.
+ * The path of a page with its own id (a subject, a chapter) is only known once the page is open,
+ * so until then the tabs are drawn without the mark, in the same place.
  */
-export function LearnSideTabs() {
-  const { buddy, missions } = useFrameTabs();
-  const todayCount = <TodayCount />;
+function SideTabs({ learner }: { learner: LearnerSummaryState }) {
+  const { buddy, missions } = useFrameTabs(learner);
+  const todayCount = <TodayCount learner={learner} />;
 
   return (
     <Suspense
@@ -175,12 +176,21 @@ export function LearnSideTabs() {
   );
 }
 
-/**
- * The tab bar at the bottom of the screen under `lg`, with the current page's tab marked; none on
- * onboarding's screens.
- */
-export function LearnBottomTabs() {
-  const { buddy, missions } = useFrameTabs();
+function FrameSideTabs() {
+  return <SideTabs learner={useFrameLearner()} />;
+}
+
+/** The tabs in the sidebar from `lg` up, with the current page's tab marked. */
+export function LearnSideTabs() {
+  return (
+    <Suspense fallback={<SideTabs learner={UNREAD} />}>
+      <FrameSideTabs />
+    </Suspense>
+  );
+}
+
+function BottomTabs({ learner }: { learner: LearnerSummaryState }) {
+  const { buddy, missions } = useFrameTabs(learner);
 
   return (
     <Suspense
@@ -191,6 +201,22 @@ export function LearnBottomTabs() {
       }
     >
       <CurrentBottomTabs buddy={buddy} missions={missions} />
+    </Suspense>
+  );
+}
+
+function FrameBottomTabs() {
+  return <BottomTabs learner={useFrameLearner()} />;
+}
+
+/**
+ * The tab bar at the bottom of the screen under `lg`, with the current page's tab marked; none on
+ * onboarding's screens.
+ */
+export function LearnBottomTabs() {
+  return (
+    <Suspense fallback={<BottomTabs learner={UNREAD} />}>
+      <FrameBottomTabs />
     </Suspense>
   );
 }
