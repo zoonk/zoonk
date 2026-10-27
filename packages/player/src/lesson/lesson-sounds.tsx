@@ -19,7 +19,7 @@ export function LessonSounds() {
     const phaseChanged = previousPhase.current !== state.phase;
     previousPhase.current = state.phase;
 
-    if (!soundsEnabled || !phaseChanged) {
+    if (!soundsEnabled || !phaseChanged || state.reviewing) {
       return;
     }
 
@@ -28,7 +28,7 @@ export function LessonSounds() {
     } else if (state.phase === "feedback" && isCorrect) {
       playLessonSound("correct");
     }
-  }, [isCorrect, soundsEnabled, state.phase]);
+  }, [isCorrect, soundsEnabled, state.phase, state.reviewing]);
 
   return null;
 }
