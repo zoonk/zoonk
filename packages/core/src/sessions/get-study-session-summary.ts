@@ -185,7 +185,7 @@ export async function getStudySessionSummary({
       loadSealedCapsules({ session, timeZone, userId }),
       loadBuddyMeal({ answers, newIdeas: newSkillIds.length, session, userId }),
       loadCeremony(userId),
-      loadTomorrow({ session, userId }),
+      loadTomorrow({ session }),
       withExtraStudyCheck({ extraTime: view.extraTime, session, userId }),
       netScoredItemIds.length > 0
         ? getNetScore({ itemIds: netScoredItemIds, sessionId, userId })

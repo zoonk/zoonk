@@ -225,7 +225,7 @@ export async function loadSessionBuildInput(
     weekly,
     produce,
   ] = await Promise.all([
-    loadUpcomingLessons({ dayMinutes, items: learnItems, keptLessonIds, userId }),
+    loadUpcomingLessons({ dayMinutes, items: learnItems, keptLessonIds }),
     loadAlphabetIntro({ goal, userId }),
     loadReviewsAndClaims({
       claims: { goal, graph: plan.graph, now, skillIds: testSkillIds, today: localDate, userId },

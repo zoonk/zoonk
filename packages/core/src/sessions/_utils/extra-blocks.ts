@@ -141,13 +141,11 @@ export async function buildExtraLessons({
   minutes = 0,
   planItemIds,
   session,
-  userId,
 }: {
   areaId?: string | null;
   minutes?: number;
   planItemIds?: readonly string[];
   session: ExtraDay;
-  userId: string;
 }): Promise<PlannedBlock[]> {
   if (await isFreeWeekOver(session)) {
     return [];
@@ -168,7 +166,6 @@ export async function buildExtraLessons({
 
   const lessons = await loadPlanLessons({
     items: items.filter((item) => !item.lessonId || !done.has(item.lessonId)),
-    userId,
   });
 
   const unique = lessons.filter(
@@ -217,7 +214,7 @@ export async function planExtraBlocks({
   skillIds: string[];
   userId: string;
 }): Promise<{ blocks: ExtraBlocks } | { reason: "dailyCap" | "nothingToStudy" }> {
-  const [lesson, ...lessons] = await buildExtraLessons({ minutes, session, userId });
+  const [lesson, ...lessons] = await buildExtraLessons({ minutes, session });
 
   if (lesson) {
     return { blocks: [lesson, ...lessons] };

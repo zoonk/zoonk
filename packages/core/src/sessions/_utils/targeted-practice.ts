@@ -130,9 +130,7 @@ async function addToLockedSession({
   });
 
   const lessons =
-    practice || !planItemIds
-      ? []
-      : await buildExtraLessons({ areaId, planItemIds, session, userId });
+    practice || !planItemIds ? [] : await buildExtraLessons({ areaId, planItemIds, session });
 
   const planned = practice ?? lessons[0];
 

@@ -242,7 +242,6 @@ export async function loadStudySessionView({
       freshStart: session.freshStart,
       goalId: session.goalId,
       trialEnded: examAccess.trialEnded,
-      userId,
     }),
   ]);
 

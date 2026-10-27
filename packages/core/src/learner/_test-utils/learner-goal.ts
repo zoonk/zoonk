@@ -2,6 +2,11 @@ import { type Item, type Skill } from "@zoonk/db";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import {
+  chapterLessonFixture,
+  lessonSkillFixture,
+  libraryLessonFixture,
+} from "@zoonk/testing/fixtures/library-lessons";
+import {
   choiceItemContent,
   itemFixture,
   skillFixture,
@@ -9,7 +14,7 @@ import {
 } from "@zoonk/testing/fixtures/skills";
 
 /**
- * A goal whose plan has one chapter per phase and one plan item per skill, each skill building on
+ * A goal whose plan has one chapter per phase and one lesson per skill, each skill building on
  * the one before, and `itemsPerSkill` multiple-choice questions per skill.
  */
 export async function learnerGoalFixture({
@@ -52,15 +57,24 @@ export async function learnerGoalFixture({
   );
 
   const planItems = await Promise.all(
-    skills.map((skill, position) => {
+    skills.map(async (skill, position) => {
       const phase = phaseOf[position] ?? 0;
+      const chapterId = chapters[phase]?.id ?? "";
+      const lesson = await libraryLessonFixture({ homeChapterId: chapterId, title: skill.name });
+
+      await Promise.all([
+        chapterLessonFixture({ chapterId, lessonId: lesson.id, position }),
+        lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id }),
+      ]);
 
       return planItemFixture({
-        chapterId: chapters[phase]?.id ?? null,
+        chapterId,
+        lessonId: lesson.id,
         phase,
         planId: plan.id,
         position,
         skillId: skill.id,
+        titleSnapshot: lesson.title,
       });
     }),
   );

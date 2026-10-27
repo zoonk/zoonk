@@ -136,7 +136,6 @@ export async function loadUnstartedDayView({
       goalId: goal.id,
       selectedItems,
       trialEnded: fields.examAccess.trialEnded,
-      userId,
     }),
     withExtraStudyCheck({
       extraTime: fields.extraTime,

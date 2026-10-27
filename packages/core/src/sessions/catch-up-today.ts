@@ -50,7 +50,6 @@ export async function catchUpToday({
       const { lessons } = await loadLaterCatchUp({
         blocks: session.blocks,
         goalId: session.goalId,
-        userId,
       });
 
       if (lessons.length === 0) {

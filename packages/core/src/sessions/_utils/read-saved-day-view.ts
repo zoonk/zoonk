@@ -57,7 +57,6 @@ export async function readSavedDayView({
       freshStart: session.freshStart,
       goalId: session.goalId,
       trialEnded: view.examAccess.trialEnded,
-      userId,
     }),
   ]);
 

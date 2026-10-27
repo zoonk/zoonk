@@ -1256,7 +1256,13 @@ describe(finishGoalPlacement, () => {
   });
 
   it("starts every phase at its beginning from scratch and changes nothing", async () => {
-    const { goal, skills, user } = await setup();
+    const { goal, plan, planItems, skills, user } = await setup();
+
+    await prisma.lesson.deleteMany({
+      where: { id: { in: planItems.flatMap((item) => item.lessonId ?? []) } },
+    });
+
+    await prisma.planItem.updateMany({ data: { chapterId: null }, where: { planId: plan.id } });
 
     const result = await finishGoalPlacement({ goalId: goal.id, input: { fromScratch: true } });
 

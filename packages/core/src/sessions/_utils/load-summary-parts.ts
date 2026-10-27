@@ -123,16 +123,14 @@ export async function loadBuddyMeal({
 
 /**
  * "Tomorrow: Linear functions": the next lesson the plan has for the goal, by the title Today and
- * the session show for it (a chapter's next lesson, not the chapter's outline title). None the day
+ * the session show for it from its lesson row. None the day
  * before the goal's exam: tomorrow is the exam. None either when tomorrow is past a free exam
  * plan's first week, whose new lessons come with Plus.
  */
 export async function loadTomorrow({
   session,
-  userId,
 }: {
   session: Pick<StudySessionRow, "goal" | "goalId" | "localDate">;
-  userId: string;
 }): Promise<{ title: string } | null> {
   const { goalId } = session;
 
@@ -157,6 +155,6 @@ export async function loadTomorrow({
     return null;
   }
 
-  const [lesson] = await loadPlanLessons({ items: [next], userId });
+  const [lesson] = await loadPlanLessons({ items: [next] });
   return { title: lesson?.title ?? next.titleSnapshot };
 }

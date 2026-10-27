@@ -83,11 +83,9 @@ export function isCatchingUp({
 export async function loadLaterCatchUp({
   blocks,
   goalId,
-  userId,
 }: {
   blocks: readonly DayBlockInput[];
   goalId: string | null;
-  userId: string;
 }): Promise<{ items: PlanItem[]; lessons: PlannedLesson[] }> {
   const items = await loadCatchUpItems(goalId);
 
@@ -97,10 +95,7 @@ export async function loadLaterCatchUp({
 
   const later = items.filter((item) => !inDay.has(item));
 
-  return {
-    items,
-    lessons: later.length > 0 ? await loadPlanLessons({ items: later, userId }) : [],
-  };
+  return { items, lessons: later.length > 0 ? await loadPlanLessons({ items: later }) : [] };
 }
 
 /** Whether adding what's left to catch up to today takes about one more day's time at most. */
@@ -135,7 +130,6 @@ export async function loadCatchUpView({
   goalId,
   selectedItems,
   trialEnded,
-  userId,
 }: {
   blocks: readonly DayBlockInput[];
   /** The learner's daily time for the goal: what "about one more day" measures. */
@@ -145,15 +139,14 @@ export async function loadCatchUpView({
   goalId: string | null;
   selectedItems?: readonly SessionPlanItem[];
   trialEnded: boolean;
-  userId: string;
 }): Promise<CatchUpView | null> {
   if (isQuietDay({ examTomorrow, freshStart, trialEnded })) {
     return null;
   }
 
   const { items, lessons } = selectedItems
-    ? await loadSelectedCatchUp({ blocks, items: selectedItems, userId })
-    : await loadLaterCatchUp({ blocks, goalId, userId });
+    ? await loadSelectedCatchUp({ blocks, items: selectedItems })
+    : await loadLaterCatchUp({ blocks, goalId });
 
   if (items.length === 0) {
     return null;
@@ -177,18 +170,13 @@ export async function loadCatchUpView({
 async function loadSelectedCatchUp({
   blocks,
   items,
-  userId,
 }: {
   blocks: readonly DayBlockInput[];
   items: readonly SessionPlanItem[];
-  userId: string;
 }) {
   const later = items.filter(
     (item) => !blocks.some((block) => isCatchingUp({ block, items: [item] })),
   );
 
-  return {
-    items,
-    lessons: later.length > 0 ? await loadPlanLessons({ items: later, userId }) : [],
-  };
+  return { items, lessons: later.length > 0 ? await loadPlanLessons({ items: later }) : [] };
 }

@@ -185,7 +185,7 @@ export async function getWeeklyRecap(input: WeeklyRecapInput): Promise<WeeklyRec
     }),
     loadBuddyDiet({ from, to, userId }),
     goal ? loadPhasesFinished({ from, goalId: goal.id, to }) : [],
-    loadTomorrow({ session: { goal, goalId: goal?.id ?? null, localDate: today }, userId }),
+    loadTomorrow({ session: { goal, goalId: goal?.id ?? null, localDate: today } }),
   ]);
 
   return {

@@ -1,7 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
-import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../../_test-utils/frozen-clock";
 import { loadLessonsForSkills, loadUpcomingLessons } from "./load-plan-lessons";
@@ -53,8 +52,6 @@ describe(loadUpcomingLessons, () => {
   // A day of many short lessons filled the lessons it looks ahead to with the ones it already held,
   // so the lessons that landed for it found no place and the day stayed short.
   it("looks ahead past the lessons the day keeps", async () => {
-    const user = await userFixture();
-
     const lessons = await Promise.all(
       Array.from({ length: 10 }, (_, index) =>
         libraryLessonFixture({ title: `Short lesson ${index + 1}` }),
@@ -77,7 +74,6 @@ describe(loadUpcomingLessons, () => {
       dayMinutes: 30,
       items,
       keptLessonIds: new Set(lessons.slice(0, 8).map((lesson) => lesson.id)),
-      userId: user.id,
     });
 
     expect(upcoming.map((lesson) => lesson.lessonId)).toStrictEqual(
