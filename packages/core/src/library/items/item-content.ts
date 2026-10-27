@@ -52,8 +52,6 @@ const ITEM_CONTENT_SCHEMAS = {
       ...storedVisualFields,
       /** Questions stored before fixed orders were shuffled when stored. */
       fixedOrder: z.boolean().default(false),
-      /** Rows stored before letters were dropped at write time read without them too. */
-      options: GENERATED_ITEM_SCHEMAS.multipleChoice.shape.options.transform(stripOptionLabels),
       /** How many options the learner picks; questions stored before picks had one right option. */
       select: optionSelectSchema.default(1),
     }),
