@@ -7,6 +7,7 @@ import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learne
 import { celebrateProgress } from "../../milestones/celebrate-progress";
 import { applySessionProgress } from "../../sessions/_utils/session-progress";
 import { getAnswersEnergyDelta, scoreAnswers } from "../../sessions/brain-power";
+import { saveDayBeforeActivity } from "../../sessions/ensure-study-session";
 import { withActivityMissionMoment } from "../../sessions/missions/activity-mission-result";
 import { settleLearnerMissions } from "../../sessions/missions/settle-learner-missions";
 import { getCompletionEnergyContext } from "../../stats/completion-energy";
@@ -71,6 +72,9 @@ export async function practiceMistakePattern({
       priorRightAnswers: repeated ? 1 : 0,
     })),
   });
+
+  // Once the drill counts, a day planned after it no longer offers it: today's is saved first.
+  await saveDayBeforeActivity({ goalId: row.goalId, timeZone: input.timeZone, userId });
 
   const timeZone = await getLearnerTimeZone({ timeZone: input.timeZone, userId });
   const incorrect = verdicts.length - correct;

@@ -2,6 +2,7 @@ import "server-only";
 import { type Attempt, type Mistake, type MistakeStatus, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
+import { findActiveGoalId } from "../goals/_utils/goal-view";
 import {
   findSavedAttempt,
   getAnswerAttemptId,
@@ -19,6 +20,7 @@ import { loadSkillSurvivors } from "../learner/_utils/update-learner-skill";
 import { type LearnerAnswer } from "../learner/record-learner-answer";
 import { ITEM_IMAGE_INCLUDE } from "../library/items/item-image";
 import { ITEM_SET_INCLUDE } from "../library/items/item-sets";
+import { saveDayBeforeActivity } from "../sessions/ensure-study-session";
 import { NOTHING_REACHED, type Reached } from "../sessions/reached";
 import { getSession } from "../users/get-session";
 import { readFixedMistakeIds } from "./_utils/practice-runs";
@@ -234,6 +236,13 @@ export async function answerMistakePractice({
   if (!item) {
     return { status: "invalidItem" };
   }
+
+  // A fixed mistake leaves what the day offers: today's day is saved before the first answer.
+  await saveDayBeforeActivity({
+    goalId: input.run?.goalId ?? (await findActiveGoalId(userId)),
+    timeZone: input.timeZone,
+    userId,
+  });
 
   const graded = gradeChoiceAnswer({ answer: input.answer, item });
   const kind = getDrillKind(mistake.cause);

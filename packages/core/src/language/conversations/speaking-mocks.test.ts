@@ -141,13 +141,14 @@ describe("speaking mocks", () => {
     const started = await startLanguageConversation({ goalId: goal.id, kind: "speakingMock" });
 
     expect(started.status).toBe("ready");
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 1n);
+    // Starting it saved today's day first, then marked the new mock.
+    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 2n);
 
     await expect(
       startLanguageConversation({ goalId: goal.id, kind: "speakingMock" }),
     ).resolves.toStrictEqual(started);
 
-    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 1n);
+    await expect(readLearnerRevision(user.id)).resolves.toBe(before + 2n);
   });
 
   it("starts an IELTS mock with its own examiner and topic for a goal preparing for IELTS", async () => {

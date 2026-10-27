@@ -208,7 +208,8 @@ describe(answerPronunciationReview, () => {
     ).resolves.toStrictEqual(GUEST_OUT_OF_HELP);
 
     expect(assessPronunciation).not.toHaveBeenCalled();
-    await expect(readLearnerRevision(user.id)).resolves.toBe(0n);
+    // Only today's day was saved, before the help was asked for: the refused answer records nothing.
+    await expect(readLearnerRevision(user.id)).resolves.toBe(1n);
   });
 
   it("climbs a rung when the word is said right and records it as time spoken", async () => {
@@ -244,8 +245,9 @@ describe(answerPronunciationReview, () => {
       isCorrect: true,
       targetLanguage: "en",
     });
-    // The help it used, the answer and the word's new rung each commit one change.
-    await expect(readLearnerRevision(user.id)).resolves.toBe(3n);
+    // Today's day saved first, the help it used, the answer and the word's new rung each commit
+    // one change.
+    await expect(readLearnerRevision(user.id)).resolves.toBe(4n);
   });
 
   it("starts the word over when it still sounds different", async () => {

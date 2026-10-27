@@ -109,6 +109,15 @@ async function answering({ goalId, userId }: { goalId: string; userId: string })
   return { questionId: created.question.id, revision: claimed.claim.revision };
 }
 
+/** The learn block of today's day for each lesson it holds: asking the buddy saves the day first. */
+async function readTodayBlocks(goalId: string) {
+  const blocks = await prisma.studySessionBlock.findMany({
+    where: { kind: "learn", session: { goalId } },
+  });
+
+  return new Map(blocks.map((block) => [block.lessonId, block.id]));
+}
+
 /** What the buddy finds while it writes that answer. */
 function lookUp(
   asked: { questionId: string; revision: number },
@@ -129,7 +138,7 @@ describe("the plan the buddy looks up", () => {
   });
 
   describe("catchUp", () => {
-    it("lists every lesson earlier days left in the plan's order, unlinked while nothing opens them yet, and only the learner's own", async () => {
+    it("lists every lesson earlier days left in the plan's order, linked where today opens them, and only the learner's own", async () => {
       const [learner, other] = await Promise.all([
         plannedLearner({ behind: 3 }),
         plannedLearner({ behind: 3 }),
@@ -140,15 +149,21 @@ describe("the plan the buddy looks up", () => {
         { what: "catchUp" },
       );
 
+      const blocks = await readTodayBlocks(learner.goal.id);
+
       expect(found).toStrictEqual({
-        // No day is built to hold them, and Today doesn't offer them: the next study days open with them.
-        lessons: learner.carried.map((item) => ({
-          inToday: false,
-          link: null,
-          title: item.titleSnapshot,
-        })),
+        // Asking saved today's day, which holds the first two; Today offers catching up on the rest.
+        lessons: learner.carried.map((item, index) =>
+          index < 2
+            ? {
+                inToday: true,
+                link: { blockId: blocks.get(item.lessonId), kind: "block" },
+                title: item.titleSnapshot,
+              }
+            : { inToday: false, link: TODAY_LINK, title: item.titleSnapshot },
+        ),
         more: 0,
-        offeredToday: false,
+        offeredToday: true,
         status: "found",
         total: 3,
         what: "catchUp",
@@ -203,10 +218,21 @@ describe("the plan the buddy looks up", () => {
 
       expect(found).toMatchObject({ more: 2, status: "found", total: 32 });
 
+      const blocks = await readTodayBlocks(goal.id);
+
+      // Today's day, saved by asking, holds the first two; the next days open with the rest.
       expect(found.status === "found" && found.what === "catchUp" && found.lessons).toStrictEqual(
         carried
           .slice(0, 30)
-          .map((item) => ({ inToday: false, link: null, title: item.titleSnapshot })),
+          .map((item, index) =>
+            index < 2
+              ? {
+                  inToday: true,
+                  link: { blockId: blocks.get(item.lessonId), kind: "block" },
+                  title: item.titleSnapshot,
+                }
+              : { inToday: false, link: null, title: item.titleSnapshot },
+          ),
       );
     });
 

@@ -71,6 +71,15 @@ async function askAboutPlan({ goalId, userId }: { goalId: string; userId: string
   return { raw: JSON.stringify(stored.contextSnapshot), snapshot: stored.contextSnapshot };
 }
 
+/** The learn block of today's day for each lesson it holds: asking the buddy saves the day first. */
+async function readTodayBlocks(goalId: string) {
+  const blocks = await prisma.studySessionBlock.findMany({
+    where: { kind: "learn", session: { goalId } },
+  });
+
+  return new Map(blocks.map((block) => [block.lessonId, block.id]));
+}
+
 /** The stored snapshot as the plan's, which only a question about the plan has. */
 function readPlanSnapshot(value: unknown) {
   const snapshot = parseLessonQuestionContextSnapshot(value);
@@ -99,12 +108,13 @@ describe("the plan the buddy reads", () => {
 
     expect(plan.selectedGoal).toBe(true);
 
-    // No day holds them and Today doesn't offer them: the next study days open with them, and
-    // nothing opens them before (the Plan doesn't list them either).
+    const blocks = await readTodayBlocks(learner.goal.id);
+
+    // Asking saved today's day, which holds them: each opens its block.
     expect(plan.catchUp).toStrictEqual({
       lessons: learner.carried.map((item) => ({
-        inToday: false,
-        link: null,
+        inToday: true,
+        link: { blockId: blocks.get(item.lessonId), kind: "block" },
         title: item.titleSnapshot,
       })),
       offeredToday: false,

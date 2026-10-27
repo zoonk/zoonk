@@ -7,6 +7,7 @@ import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { getRequestProgressDateContext } from "../../progress/get-request-date-context";
 import { readDailyTimeLimitReached } from "../../sessions/_utils/daily-time-limit";
 import { getStoredBlockWait } from "../../sessions/block-wait";
+import { saveDayBeforeActivity } from "../../sessions/ensure-study-session";
 import { type StartStudyBlockResult, startStudyBlock } from "../../sessions/start-study-block";
 import { getSession } from "../../users/get-session";
 import { findLearnerLanguageGoal } from "../_utils/language-goal";
@@ -99,6 +100,8 @@ async function startPractice({
   }
 
   const goal = await findLearnerLanguageGoal({ goalId: input.goalId, targetLanguage, userId });
+  await saveDayBeforeActivity({ goalId: goal?.id ?? null, userId });
+
   const level = await getSpeakingLevel({ goal, targetLanguage, userId });
   const scenario = await getUnitScenario({ level, unit: { ...chapter, targetLanguage }, userId });
 
@@ -325,15 +328,19 @@ export async function startLanguageConversation(
       : started;
   }
 
+  if (input.kind === "practice") {
+    return startPractice({ input, userId });
+  }
+
+  // Every finished call counts for the day's call mission, which a day planned after it no longer
+  // offers: today's day is saved before the call starts.
+  await saveDayBeforeActivity({ goalId: input.goalId, userId });
+
   if (input.kind === "speakingMock") {
     return startSpeakingMock({ goalId: input.goalId, userId });
   }
 
-  if (input.kind === "examSpeaking") {
-    return startExamTask({ goalId: input.goalId, task: input.task, userId });
-  }
-
-  return startPractice({ input, userId });
+  return startExamTask({ goalId: input.goalId, task: input.task, userId });
 }
 
 /**

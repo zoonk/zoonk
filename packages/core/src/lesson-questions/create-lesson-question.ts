@@ -3,9 +3,11 @@ import { type LessonQuestionContextSnapshot } from "@zoonk/ai/tasks/lessons/ques
 import { prisma } from "@zoonk/db";
 import { after } from "next/server";
 import { trackLearnerEvents } from "../analytics/track-learner-event";
+import { findActiveGoalId } from "../goals/_utils/goal-view";
 import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { type MissionMomentView } from "../sessions/completion-contract";
+import { saveDayBeforeActivity } from "../sessions/ensure-study-session";
 import { loadMissionMoment } from "../sessions/missions/mission-moment";
 import { settleLearnerMissions } from "../sessions/missions/settle-learner-missions";
 import { getSession } from "../users/get-session";
@@ -260,6 +262,9 @@ export async function createLessonQuestion({
       userId,
     });
   }
+
+  // A first question leaves what Today offers: the day Today shows is saved before it's asked.
+  await saveDayBeforeActivity({ goalId: await findActiveGoalId(userId), userId });
 
   const [context, asked] = await Promise.all([
     buildTutorContextSnapshot({ context: input.context, subject, userId }),

@@ -3,6 +3,7 @@ import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtur
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { describe, expect, it, vi } from "vitest";
 import * as skillUpdates from "../../learner/_utils/update-learner-skill";
+import { BRAIN_POWER_BONUS } from "../../sessions/brain-power";
 import { setupPlayableLesson } from "../_test-utils/playable-lesson-setup";
 import { checkLessonStep } from "../check-lesson-step";
 import { completeLibraryLesson } from "../complete-library-lesson";
@@ -125,7 +126,8 @@ describe("atomic plan-skill reviews on lesson completion", () => {
     ]);
 
     expect(run.endedAt).not.toBeNull();
-    expect(Number(progress.totalBrainPower)).toBe(run.brainPower);
+    // The lesson finished today's only block, saved when it started: the day's bonus pays once too.
+    expect(Number(progress.totalBrainPower)).toBe(run.brainPower + BRAIN_POWER_BONUS.fullMeal);
     expect(day.lessonsCompleted).toBe(1);
   });
 

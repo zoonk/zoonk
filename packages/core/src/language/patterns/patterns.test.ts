@@ -229,15 +229,16 @@ describe("mistake patterns", () => {
     expect(result).toMatchObject({ result: { correct: 1, total: 2 }, status: "ready" });
     expect(result.status === "ready" && result.result.brainPower).toBeGreaterThan(0);
 
-    // The drill counts once; sending it again changes nothing.
-    await expect(readLearnerRevision(user.id)).resolves.toBe(1n);
+    // Today's day saved first, the drill and the mission it completed each commit one change;
+    // sending the drill again changes nothing.
+    await expect(readLearnerRevision(user.id)).resolves.toBe(3n);
 
     await practiceMistakePattern({
       input: { answers: ["since", "since"], requestId, timeZone: "America/Sao_Paulo" },
       patternId: pattern.id,
     });
 
-    await expect(readLearnerRevision(user.id)).resolves.toBe(1n);
+    await expect(readLearnerRevision(user.id)).resolves.toBe(3n);
 
     await expect(getMistakePattern(pattern.id)).resolves.toMatchObject({
       pattern: { practiced: true },
