@@ -148,6 +148,7 @@ export function useActor<Expression extends string, ActName extends string>({
     }
 
     queued.current = null;
+    const landing = next.act.to ?? current.current;
 
     const playback = playAct({
       act: next.act,
@@ -170,7 +171,6 @@ export function useActor<Expression extends string, ActName extends string>({
         return;
       }
 
-      const landing = next.act.to ?? current.current;
       current.current = landing;
 
       flushSync(() => {
@@ -182,7 +182,13 @@ export function useActor<Expression extends string, ActName extends string>({
       next.resolve(true);
     });
 
-    return () => stopActing(running);
+    return () => {
+      if (running.current.run === next.run) {
+        // A page hidden by the router keeps its state: Back must show the act's final pose.
+        setLanded(landing);
+        stopActing(running);
+      }
+    };
   }, [poses, stage, svg]);
 
   const play = useCallback(
