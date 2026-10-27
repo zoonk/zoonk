@@ -195,7 +195,7 @@ describe("app tools the buddy offers", () => {
     const { goal, library, user } = await setup();
 
     await learningEventFixture({
-      contentIds: { chapterId: library.chapters[0]?.id },
+      contentIds: { chapterId: library.chapters[0]?.id, testOutPassed: "false" },
       correctAnswers: 1,
       goalId: goal.id,
       incorrectAnswers: 7,

@@ -50,7 +50,7 @@ describe("a language unit's page", () => {
 
     // It failed just now: a minute earlier is yesterday when the test runs just after midnight.
     await learningEventFixture({
-      contentIds: { chapterId: renting.id },
+      contentIds: { chapterId: renting.id, testOutPassed: "false" },
       correctAnswers: 1,
       endedAt: new Date(),
       goalId: goal.id,
