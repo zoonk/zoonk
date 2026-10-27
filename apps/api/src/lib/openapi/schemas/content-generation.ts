@@ -66,6 +66,17 @@ export const goalGenerationSchema = z
   })
   .meta({ id: "GoalGeneration" });
 
+export const goalGenerationRunSchema = z
+  .object({
+    generationId: generationIdSchema
+      .nullable()
+      .meta({
+        description:
+          "The run writing the goal's curriculum or explanation: stream GET /generations/{generationId}/events. Null until a run is saved on the goal (none started, or its start failed): POST /goals/{goalId}/generations starts one",
+      }),
+  })
+  .meta({ id: "GoalGenerationRun" });
+
 /** A curriculum started with its goal's research waits for it, as `POST /goals` does. */
 export const goalGenerationQuerySchema = z
   .object({

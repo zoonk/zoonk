@@ -149,12 +149,32 @@ test.describe("Mocks whenever the learner wants", () => {
 
     const page = await openAs(browser, user);
 
+    // On a slow connection the mock's page arrives after onboarding's wait asked for its run again
+    // (every 2 s). That ask must stay with onboarding: the mock's page can't answer it.
+    const unanswered: string[] = [];
+    const mockPage = Promise.withResolvers<null>();
+
+    page.on("response", (response) => {
+      if (response.headers()["x-nextjs-action-not-found"]) {
+        unanswered.push(response.url());
+      }
+    });
+
+    await page.route(new RegExp(`/mock/placement/${goal.id}(?:\\?|$)`, "u"), async (route) => {
+      await mockPage.promise;
+      await route.continue();
+    });
+
+    await page.clock.install();
     await page.goto(`/start/${goal.id}`);
     await page.getByRole("link", { name: /^Or take a mock exam/u }).click();
+    await page.clock.runFor(2000);
+    mockPage.resolve(null);
     await expect(page).toHaveURL(new RegExp(`/mock/placement/${goal.id}$`, "u"));
     await page.getByRole("button", { name: "Start the mock exam" }).click();
 
     await expect(page.getByRole("timer", { name: "Time left" })).toBeVisible();
+    expect(unanswered).toStrictEqual([]);
     await answerMockQuestions({ answers, count: 2, knows: () => true, page });
 
     // Leaving keeps it running; onboarding offers to go on or stop with what was answered.

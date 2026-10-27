@@ -1,14 +1,12 @@
 "use client";
 
 import { setGoalStatusAction } from "@/app/[lang]/(app)/(learn)/_components/goal-status-action";
-import {
-  getGenerationIdAction,
-  retryGenerationAction,
-} from "@/app/[lang]/(app)/(onboarding)/start/onboarding-actions";
+import { retryGenerationAction } from "@/app/[lang]/(app)/(onboarding)/start/onboarding-actions";
 import { getCourseHref } from "@/data/courses/course-href";
 import { useRouter } from "@/i18n/navigation";
 import { getGoalBasesAdvice } from "@/lib/goals/goal-bases-advice";
 import { findGoalTimeToCover } from "@/lib/goals/goal-time-advice";
+import { readGoalGenerationId } from "@/lib/goals/read-goal-generation-id";
 import { useStartLanguageConversation } from "@/lib/language/use-start-language-conversation";
 import { useRefreshOnPlanChange } from "@/lib/learn/use-refresh-on-plan-change";
 import { useRefreshWhenOld } from "@/lib/learn/use-refresh-when-old";
@@ -44,7 +42,7 @@ export function JourneyBuildingClient({
     generationId: null,
     kind: "curriculum",
     onReady: () => router.refresh(),
-    readGenerationId: () => getGenerationIdAction(goalId),
+    readGenerationId: () => readGoalGenerationId(goalId),
     restart: () => retryGenerationAction(goalId),
   });
 

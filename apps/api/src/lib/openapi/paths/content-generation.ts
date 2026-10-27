@@ -3,6 +3,7 @@ import { generationWaitInputSchema } from "@zoonk/core/lookahead/contract";
 import { z } from "zod";
 import {
   goalGenerationQuerySchema,
+  goalGenerationRunSchema,
   goalGenerationSchema,
   lessonGenerationSchema,
   lessonReadinessSchema,
@@ -34,6 +35,24 @@ const location = z.object({
 
 export const contentGenerationPaths = {
   "/goals/{goalId}/generations": {
+    get: {
+      description:
+        "The run writing a goal's curriculum or, for an explain question, its explanation, for a wait that opened without it (its start failed, or its answer was lost): ask again every few seconds until `generationId` is there, then stream it. Only reads: it never starts a run. Uncached.",
+      operationId: "getGoalGeneration",
+      requestParams: { path: goalPathParamsSchema },
+      responses: {
+        "200": {
+          content: { "application/json": { schema: goalGenerationRunSchema } },
+          description: "The goal's run, if one was saved",
+        },
+        "400": validationErrorResponse,
+        "401": unauthorizedResponse,
+        "404": notFoundResponse,
+      },
+      security: AUTHENTICATED_SECURITY,
+      summary: "Get the run writing a goal's curriculum or explanation",
+      tags: [TAG],
+    },
     post: {
       description:
         "Starts a goal's curriculum (skill graph, plan and course outlines) or, for an explain question, its quick explanation again, such as after a start failed. A run already going is joined, and only what is missing is written. POST /goals starts it the first time. Stream GET /generations/{generationId}/events for live steps: a curriculum reports `understandGoal`, `readExamNotice` (only while research reads a class test's own material before its skill graph), `buildSkillGraph`, `saveSkills`, `preparePlacement` (placement's questions start being written, by a run of their own that this stream doesn't follow: GET /goals/{goalId}/placement asks each once it's written), `createPlan`, `outlineCourses`, `prepareFirstLessons`, then `goalReady`, or `workflowError` when the plan couldn't be built; an explanation `classifyQuestion`, `findExplanation`, `writeExplanation` (completed once the explanation can be read), then `explanationReady` once its course to go further is linked. A run that finds another run already writing the goal reports `joinRunningGoal` or `joinRunningExplanation` with that run's id as `entityId`: follow that run's events instead. Starting a goal whose plan is already built again with a newer `researchId` reconciles the plan with that research, which counts as small AI help: a refusal is `SLOW_DOWN` or `USAGE_LIMIT_REACHED` (403 asks a guest to sign up, 402 a free learner to upgrade or come back, 429 Plus to slow down).",

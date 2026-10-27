@@ -4,12 +4,10 @@ import {
   changePlanAction,
   chooseExamOptionAction,
 } from "@/app/[lang]/(app)/(learn)/plan/journey-actions";
-import {
-  getGenerationIdAction,
-  retryGenerationAction,
-} from "@/app/[lang]/(app)/(onboarding)/start/onboarding-actions";
+import { retryGenerationAction } from "@/app/[lang]/(app)/(onboarding)/start/onboarding-actions";
 import { UploadRequestClient } from "@/components/learn/upload-request-client";
 import { useRouter } from "@/i18n/navigation";
+import { readGoalGenerationId } from "@/lib/goals/read-goal-generation-id";
 import { useAnswerSuggestedGoal } from "@/lib/goals/use-answer-suggested-goal";
 import { useFollowTimeZone } from "@/lib/goals/use-follow-time-zone";
 import { toStudyDayDate } from "@/lib/learn/tab-missions";
@@ -308,7 +306,7 @@ export function TodayPreparingClient({ goalId, goalTitle }: { goalId: string; go
     generationId: null,
     kind: "firstLesson",
     onReady: () => router.refresh(),
-    readGenerationId: () => getGenerationIdAction(goalId),
+    readGenerationId: () => readGoalGenerationId(goalId),
     restart: () => retryGenerationAction(goalId),
   });
 

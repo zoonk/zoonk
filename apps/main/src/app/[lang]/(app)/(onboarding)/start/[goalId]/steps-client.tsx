@@ -2,12 +2,13 @@
 
 import { getGoalBasesAdvice } from "@/lib/goals/goal-bases-advice";
 import { findGoalTimeToCover } from "@/lib/goals/goal-time-advice";
+import { readGoalGenerationId } from "@/lib/goals/read-goal-generation-id";
 import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
 import { type OnboardingView } from "@zoonk/core/view-models/onboarding/contract";
 import { type PlanActions } from "@zoonk/learn/journey";
 import { type RevealedPlan } from "@zoonk/learn/onboarding/actions";
 import { StepsFlow } from "@zoonk/learn/onboarding/steps";
-import { getGenerationIdAction, retryGenerationAction } from "../onboarding-actions";
+import { retryGenerationAction } from "../onboarding-actions";
 import { WEB_ONBOARDING_ACTIONS, WEB_ONBOARDING_ROUTES } from "../onboarding-client-actions";
 import { useOnboardingNavigation } from "../use-onboarding-navigation";
 
@@ -25,7 +26,7 @@ export function StepsClient(props: {
   const generation = useWorkflowRun({
     generationId: props.onboarding.generationId,
     kind: "placement",
-    readGenerationId: () => getGenerationIdAction(goalId),
+    readGenerationId: () => readGoalGenerationId(goalId),
     restart: () => retryGenerationAction(goalId),
   });
 

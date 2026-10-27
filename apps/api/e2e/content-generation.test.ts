@@ -12,6 +12,7 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import {
+  goalGenerationRunSchema,
   goalGenerationSchema,
   lessonGenerationSchema,
   sessionPreparationSchema,
@@ -40,10 +41,11 @@ test.describe("Content generation API", () => {
         data: { contentKind: "lesson", milliseconds: 1200 },
       }),
       anonymous.post(`/v1/goals/${randomUUID()}/generations`),
+      anonymous.get(`/v1/goals/${randomUUID()}/generations`),
     ]);
 
     expect(responses.map((response) => response.status())).toStrictEqual([
-      401, 401, 401, 401, 401, 401,
+      401, 401, 401, 401, 401, 401, 401,
     ]);
 
     await anonymous.dispose();
@@ -249,16 +251,30 @@ test.describe("Content generation API", () => {
     ]);
 
     const goal = await goalFixture({ userId });
+    const goalRun = `/v1/goals/${goal.id}/generations`;
 
-    const response = await api.post(`/v1/goals/${goal.id}/generations`);
+    // A wait that opened without the run asks for it until one is saved on the goal.
+    await expect(
+      readBody({ response: await api.get(goalRun), schema: goalGenerationRunSchema }),
+    ).resolves.toStrictEqual({ generationId: null });
+
+    const response = await api.post(goalRun);
     const generation = await readBody({ response, schema: goalGenerationSchema, status: 202 });
     const path = `/v1/generations/${encodeURIComponent(generation.generationId)}`;
 
     expect(generation).toMatchObject({ goalId: goal.id, kind: "curriculum" });
     expect(response.headers().location).toBe(`/v1/generations/${generation.generationId}`);
 
-    const hidden = await other.api.post(`/v1/goals/${goal.id}/generations`);
-    expect(hidden.status()).toBe(404);
+    await expect(
+      readBody({ response: await api.get(goalRun), schema: goalGenerationRunSchema }),
+    ).resolves.toStrictEqual({ generationId: generation.generationId });
+
+    const [hidden, hiddenRun] = await Promise.all([
+      other.api.post(goalRun),
+      other.api.get(goalRun),
+    ]);
+
+    expect([hidden.status(), hiddenRun.status()]).toStrictEqual([404, 404]);
 
     const anonymous = await request.newContext({ baseURL });
 

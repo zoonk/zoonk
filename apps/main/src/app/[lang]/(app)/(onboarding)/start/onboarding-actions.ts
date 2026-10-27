@@ -7,7 +7,6 @@ import { mockTimeZoneInputSchema } from "@zoonk/core/exams/mocks/contract";
 import { finishMock } from "@zoonk/core/exams/mocks/finish";
 import { getMockOptions } from "@zoonk/core/exams/mocks/options";
 import { goalCreateInputSchema } from "@zoonk/core/goals/contract";
-import { getGoalGenerationId } from "@zoonk/core/goals/generation-id";
 import { updateGoal } from "@zoonk/core/goals/update";
 import { instrumentWaitlistJoinSchema } from "@zoonk/core/instrument-waitlist/contract";
 import { joinInstrumentWaitlist } from "@zoonk/core/instrument-waitlist/join";
@@ -258,15 +257,6 @@ export async function startOverAction(goalIds: unknown): Promise<void> {
     : [];
 
   await Promise.all(ids.map((goalId) => updateGoal({ goalId, input: { status: "archived" } })));
-}
-
-/**
- * The run writing the goal's curriculum, for a waiting screen that opened before the goal had one
- * (its start failed, or its answer was lost): starting a run saves it on the goal first.
- */
-export async function getGenerationIdAction(goalId: string): Promise<string | null> {
-  const result = await getGoalGenerationId({ goalId });
-  return result.status === "ready" ? result.generationId : null;
 }
 
 /**
