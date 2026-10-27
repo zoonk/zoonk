@@ -1865,7 +1865,7 @@ msgstr "{lessons, plural, =0 {# aulas} one {# aula} other {# aulas}} · {time}"
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
 msgctxt "_qHKLY"
 msgid "{correct, plural, =0 {<mono>#/{total}</mono> right} one {<mono>#/{total}</mono> right} other {<mono>#/{total}</mono> right}}"
-msgstr "{correct, plural, =0 {<mono>#/{total}</mono> certas} one {<mono>#/{total}</mono> certas} other {<mono>#/{total}</mono> certas}}"
+msgstr "{correct, plural, =0 {<mono>#/{total}</mono> certas} one {<mono>#/{total}</mono> certa} other {<mono>#/{total}</mono> certas}}"
 
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
 msgctxt "Y_aK5B"
@@ -3405,7 +3405,7 @@ msgstr "{count, plural, one {# aula rápida} other {# aulas rápidas}}"
 #: src/components/catalog/area-study.ts
 msgctxt "T9NkkS"
 msgid "{fitting, plural, =0 {# of {total, number} lessons fit} one {# of {total, number} lessons fit} other {# of {total, number} lessons fit}}"
-msgstr "{fitting, plural, =0 {Cabem # de {total, number} aulas} one {Cabem # de {total, number} aulas} other {Cabem # de {total, number} aulas}}"
+msgstr "{fitting, plural, =0 {Cabem # de {total, number} aulas} one {Cabe # de {total, number} aulas} other {Cabem # de {total, number} aulas}}"
 
 #: src/components/catalog/area-study.ts
 msgctxt "XP3dEr"

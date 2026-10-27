@@ -407,7 +407,7 @@ msgstr "<number>+{points}</number> <words>Brain Power</words>"
 #: src/_components/moment-readouts.tsx
 msgctxt "b73TgX"
 msgid "{correct, plural, =0 {<number>#</number> of {answered} sounded right} one {<number>#</number> of {answered} sounded right} other {<number>#</number> of {answered} sounded right}}"
-msgstr "{correct, plural, =0 {<number>#</number> von {answered} klangen richtig} one {<number>#</number> von {answered} klangen richtig} other {<number>#</number> von {answered} klangen richtig}}"
+msgstr "{correct, plural, =0 {<number>#</number> von {answered} klangen richtig} one {<number>#</number> von {answered} klang richtig} other {<number>#</number> von {answered} klangen richtig}}"
 
 #: src/_components/moment-readouts.tsx
 msgctxt "mA2Wor"
@@ -1418,7 +1418,7 @@ msgstr "Der Trickser"
 #: src/checkpoints/checkpoint-duel-view.tsx
 msgctxt "qqqXC2"
 msgid "{count, plural, one {# right to win} other {# right to win}}"
-msgstr "{count, plural, one {# richtige Antworten für den Sieg} other {# richtige Antworten für den Sieg}}"
+msgstr "{count, plural, one {# richtige Antwort für den Sieg} other {# richtige Antworten für den Sieg}}"
 
 #: src/challenge/challenge-intro.tsx
 msgctxt "Aw7qrt"

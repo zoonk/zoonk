@@ -407,12 +407,12 @@ msgstr "<number>+{points}</number> <words>Poder Mental</words>"
 #: src/_components/moment-readouts.tsx
 msgctxt "b73TgX"
 msgid "{correct, plural, =0 {<number>#</number> of {answered} sounded right} one {<number>#</number> of {answered} sounded right} other {<number>#</number> of {answered} sounded right}}"
-msgstr "{correct, plural, =0 {<number>#</number> de {answered} han sonado bien} one {<number>#</number> de {answered} han sonado bien} other {<number>#</number> de {answered} han sonado bien}}"
+msgstr "{correct, plural, =0 {<number>#</number> de {answered} han sonado bien} one {<number>#</number> de {answered} ha sonado bien} other {<number>#</number> de {answered} han sonado bien}}"
 
 #: src/_components/moment-readouts.tsx
 msgctxt "mA2Wor"
 msgid "{correct, plural, =0 {<number>#</number> of {answered} right} one {<number>#</number> of {answered} right} other {<number>#</number> of {answered} right}}"
-msgstr "{correct, plural, =0 {<number>#</number> de {answered} correctas} one {<number>#</number> de {answered} correctas} other {<number>#</number> de {answered} correctas}}"
+msgstr "{correct, plural, =0 {<number>#</number> de {answered} correctas} one {<number>#</number> de {answered} correcta} other {<number>#</number> de {answered} correctas}}"
 
 #: src/_components/opening-wait-line.tsx
 msgctxt "bSuhQp"
@@ -1418,7 +1418,7 @@ msgstr "El Tramposo"
 #: src/checkpoints/checkpoint-duel-view.tsx
 msgctxt "qqqXC2"
 msgid "{count, plural, one {# right to win} other {# right to win}}"
-msgstr "{count, plural, one {# aciertos para ganar} other {# aciertos para ganar}}"
+msgstr "{count, plural, one {# acierto para ganar} other {# aciertos para ganar}}"
 
 #: src/challenge/challenge-intro.tsx
 msgctxt "Aw7qrt"
@@ -2871,7 +2871,7 @@ msgstr "Se acabó el tiempo"
 #: src/today/today-day-progress.tsx
 msgctxt "HmaKic"
 msgid "{time} left"
-msgstr "Quedan {time}"
+msgstr "{time} por delante"
 
 #: src/exam/exam-running-mock.tsx
 msgctxt "H9K5g4"
@@ -7415,7 +7415,7 @@ msgstr "Cuándo dejar una pregunta en blanco"
 #: src/mock/mock-result-insights.tsx
 msgctxt "8aymU7"
 msgid "Sure: {sureRight, plural, =0 {# of {sureAnswered} right} one {# of {sureAnswered} right} other {# of {sureAnswered} right}}. Flagged as unsure: {unsureRight, plural, =0 {# of {unsureAnswered} right} one {# of {unsureAnswered} right} other {# of {unsureAnswered} right}}."
-msgstr "Respuestas que dabas por seguras: {sureRight, plural, =0 {# de {sureAnswered} correctas} one {# de {sureAnswered} correctas} other {# de {sureAnswered} correctas}}. Marcadas como dudosas: {unsureRight, plural, =0 {# de {unsureAnswered} correctas} one {# de {unsureAnswered} correctas} other {# de {unsureAnswered} correctas}}."
+msgstr "Respuestas que dabas por seguras: {sureRight, plural, =0 {# de {sureAnswered} correctas} one {# de {sureAnswered} correcta} other {# de {sureAnswered} correctas}}. Marcadas como dudosas: {unsureRight, plural, =0 {# de {unsureAnswered} correctas} one {# de {unsureAnswered} correcta} other {# de {unsureAnswered} correctas}}."
 
 #: src/mock/mock-result-insights.tsx
 msgctxt "Bx-tmo"
@@ -7472,7 +7472,7 @@ msgstr "{count, plural, one {# lección menos} other {# lecciones menos}}"
 #: src/mock/mock-result-plan.tsx
 msgctxt "0GsB_G"
 msgid "More time for {area} ({correct, plural, =0 {# of {total} right} one {# of {total} right} other {# of {total} right}})"
-msgstr "Más tiempo para {area} ({correct, plural, =0 {# de {total} correctas} one {# de {total} correctas} other {# de {total} correctas}})"
+msgstr "Más tiempo para {area} ({correct, plural, =0 {# de {total} correctas} one {# de {total} correcta} other {# de {total} correctas}})"
 
 #: src/mock/mock-result-plan.tsx
 msgctxt "S7MdOa"

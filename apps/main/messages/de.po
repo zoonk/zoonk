@@ -3405,7 +3405,7 @@ msgstr "{count, plural, one {# kurze Lektion} other {# kurze Lektionen}}"
 #: src/components/catalog/area-study.ts
 msgctxt "T9NkkS"
 msgid "{fitting, plural, =0 {# of {total, number} lessons fit} one {# of {total, number} lessons fit} other {# of {total, number} lessons fit}}"
-msgstr "{fitting, plural, =0 {# von {total, number} Lektionen passen hinein} one {# von {total, number} Lektionen passen hinein} other {# von {total, number} Lektionen passen hinein}}"
+msgstr "{fitting, plural, =0 {# von {total, number} Lektionen passen hinein} one {# von {total, number} Lektionen passt hinein} other {# von {total, number} Lektionen passen hinein}}"
 
 #: src/components/catalog/area-study.ts
 msgctxt "XP3dEr"
