@@ -1,10 +1,11 @@
 import { buildSkillIdentityKey } from "@zoonk/utils/identity-key";
+import { isJsonObject } from "@zoonk/utils/json";
 import { normalizeString } from "@zoonk/utils/string";
-import { type PrismaClient } from "../../../../generated/prisma/client";
+import { type Prisma, type PrismaClient } from "../../../../generated/prisma/client";
 import { type SeedLanguage, localizeObject } from "../_utils/localize";
 import { SEED_PROVENANCE } from "../_utils/provenance";
 import { libraryIds } from "./library-ids";
-import { type SeedCourse, type SeedSkill } from "./types";
+import { type SeedCourse, type SeedItem, type SeedSkill } from "./types";
 
 type CourseLanguage = { course: SeedCourse; language: SeedLanguage; prisma: PrismaClient };
 
@@ -118,6 +119,34 @@ export async function writeSkills(context: CourseLanguage): Promise<SkillIds> {
   return skillIds;
 }
 
+/** Completes abbreviated seed declarations after their text is localized. */
+function itemContent(item: SeedItem, language: SeedLanguage): Prisma.InputJsonObject {
+  const content = localizeObject(item.content, language);
+
+  if (item.format === "multipleChoice") {
+    return { fixedOrder: false, image: null, select: 1, visual: null, ...content };
+  }
+
+  if (item.format === "trueFalse" || item.format === "typed") {
+    return { image: null, visual: null, ...content };
+  }
+
+  if (item.format === "numeric") {
+    return { entry: { kind: "number", places: null }, otherSolutions: [], ...content };
+  }
+
+  if (item.format === "essay" && Array.isArray(content.rubric)) {
+    return {
+      ...content,
+      rubric: content.rubric.map((row: Prisma.InputJsonValue | null) =>
+        isJsonObject(row) ? { points: null, ...row } : row,
+      ),
+    };
+  }
+
+  return content;
+}
+
 /** Bank questions per skill; math items keep their solution as data inside `content`. */
 export async function writeItems({
   course,
@@ -130,7 +159,7 @@ export async function writeItems({
       const id = libraryIds.item(course.key, item.key, language);
 
       const data = {
-        content: localizeObject(item.content, language),
+        content: itemContent(item, language),
         difficulty: item.difficulty,
         examBlueprintId: item.exam ? libraryIds.blueprint(item.exam, language) : null,
         format: item.format,

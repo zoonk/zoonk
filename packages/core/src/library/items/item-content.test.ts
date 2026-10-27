@@ -118,27 +118,24 @@ describe(toStoredItem, () => {
   });
 });
 
-describe("stored questions written before picks, fixed orders and entry rules", () => {
-  it("read as one pick, shuffled options and any number", () => {
-    const choice = parseItemContent({
-      content: {
-        context: null,
-        options: [storedOption("A", true), storedOption("B")],
-        question: "Q?",
-      },
-      format: "multipleChoice",
-    });
+describe(parseItemContent, () => {
+  it("rejects incomplete stored content instead of inventing answer rules", () => {
+    expect(() =>
+      parseItemContent({
+        content: {
+          context: null,
+          options: [storedOption("A", true), storedOption("B")],
+          question: "Q?",
+        },
+        format: "multipleChoice",
+      }),
+    ).toThrow();
 
-    const numeric = parseItemContent({
-      content: { context: null, math: discountMath, question: "{price} {discount}" },
-      format: "numeric",
-    });
-
-    expect(choice.content).toMatchObject({ fixedOrder: false, select: 1 });
-
-    expect(numeric.content).toMatchObject({
-      entry: { kind: "number", places: null },
-      otherSolutions: [],
-    });
+    expect(() =>
+      parseItemContent({
+        content: { context: null, math: discountMath, question: "{price} {discount}" },
+        format: "numeric",
+      }),
+    ).toThrow();
   });
 });

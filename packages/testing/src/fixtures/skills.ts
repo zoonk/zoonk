@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { type Item, type ItemSet, type Skill, type SkillPrerequisite, prisma } from "@zoonk/db";
+import { isJsonObject } from "@zoonk/utils/json";
 import { normalizeString } from "@zoonk/utils/string";
 import { type FixtureAttrs, fixtureProvenance } from "./_utils/fixture-attrs";
 
@@ -47,6 +48,8 @@ export async function skillPrerequisiteFixture(
 export function choiceItemContent(question = `Test question ${randomUUID()}?`) {
   return {
     context: null,
+    fixedOrder: false,
+    image: null,
     options: [
       {
         isCorrect: true,
@@ -62,24 +65,50 @@ export function choiceItemContent(question = `Test question ${randomUUID()}?`) {
       },
     ],
     question,
+    select: 1,
+    visual: null,
   };
 }
 
-/** Creates a multiple-choice item for a skill. */
+/** Completes abbreviated test items before they reach the strict stored-content parser. */
+function itemContent(content: object, format: Item["format"]): object {
+  if (!isJsonObject(content)) {
+    return content;
+  }
+
+  if (format === "multipleChoice") {
+    return { fixedOrder: false, image: null, select: 1, visual: null, ...content };
+  }
+
+  if (format === "trueFalse" || format === "typed") {
+    return { image: null, visual: null, ...content };
+  }
+
+  if (format === "numeric") {
+    return { entry: { kind: "number", places: null }, otherSolutions: [], ...content };
+  }
+
+  if (format === "essay" && Array.isArray(content.rubric)) {
+    return {
+      ...content,
+      rubric: content.rubric.map((row) => (isJsonObject(row) ? { points: null, ...row } : row)),
+    };
+  }
+
+  return content;
+}
+
+/** Creates an item for a skill, multiple-choice unless another format is given. */
 export async function itemFixture(attrs: FixtureAttrs<Item, "content"> & Pick<Item, "skillId">) {
+  const { content = choiceItemContent("Test question?"), format = "multipleChoice" } = attrs;
+
   return prisma.item.create({
     data: {
-      content: {
-        options: [
-          { isCorrect: true, text: "Right answer" },
-          { isCorrect: false, reason: "Test misconception", text: "Wrong answer" },
-        ],
-        question: "Test question?",
-      },
-      format: "multipleChoice",
       language: "en",
       ...fixtureProvenance(),
       ...attrs,
+      content: itemContent(content, format),
+      format,
     },
   });
 }

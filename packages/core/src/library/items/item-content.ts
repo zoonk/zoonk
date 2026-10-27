@@ -4,11 +4,9 @@ import {
   type ItemFormat,
   type NumericEntry,
   type OptionSelect,
-  essayRubricRowSchema,
   numericEntrySchema,
   optionSelectSchema,
 } from "@zoonk/ai/tasks/v2/items/schemas";
-import { lessonVisualSchema } from "@zoonk/ai/tasks/v2/visuals/schema";
 import { isJsonObject, mapJsonStrings } from "@zoonk/utils/json";
 import { replaceEmDashes } from "@zoonk/utils/string";
 import { z } from "zod";
@@ -22,52 +20,25 @@ import { ANY_NUMBER } from "./_utils/numeric-entry";
 const quotedField = { quoted: z.literal(true).optional() };
 
 /**
- * Items stored before questions could show a chart, a timeline or a picture read as having none.
- * A picture is only asked for here; the drawn file is linked through `Item.mediaAssetId`.
- */
-const storedVisualFields = {
-  image: GENERATED_ITEM_SCHEMAS.typed.shape.image.default(null),
-  visual: lessonVisualSchema.nullable().default(null),
-};
-
-/** Essays stored before rubric rows had points read as rows without points of their own. */
-const storedRubricSchema = z
-  .array(essayRubricRowSchema.extend({ points: essayRubricRowSchema.shape.points.default(null) }))
-  .min(2);
-
-/**
  * `Item.content` for each format. It is the generated item without the fields
  * that live in their own columns (`format`, and `difficulty`, which real
  * answers recalibrate), so generation and storage share one shape.
  */
 const ITEM_CONTENT_SCHEMAS = {
-  essay: GENERATED_ITEM_SCHEMAS.essay
-    .omit({ difficulty: true, format: true })
-    .extend({ rubric: storedRubricSchema }),
+  essay: GENERATED_ITEM_SCHEMAS.essay.omit({ difficulty: true, format: true }),
   matchPairs: GENERATED_ITEM_SCHEMAS.matchPairs.omit({ difficulty: true, format: true }),
   multipleChoice: GENERATED_ITEM_SCHEMAS.multipleChoice
     .omit({ difficulty: true, format: true })
-    .extend({
-      ...quotedField,
-      ...storedVisualFields,
-      /** Questions stored before fixed orders were shuffled when stored. */
-      fixedOrder: z.boolean().default(false),
-      /** How many options the learner picks; questions stored before picks had one right option. */
-      select: optionSelectSchema.default(1),
-    }),
-  numeric: GENERATED_ITEM_SCHEMAS.numeric.omit({ difficulty: true, format: true }).extend({
-    /** How the answer is typed; math stored before entry rules takes any number. */
-    entry: numericEntrySchema.default(ANY_NUMBER),
-    otherSolutions: GENERATED_ITEM_SCHEMAS.numeric.shape.otherSolutions.default([]),
-  }),
+    .extend({ ...quotedField, select: optionSelectSchema }),
+  numeric: GENERATED_ITEM_SCHEMAS.numeric
+    .omit({ difficulty: true, format: true })
+    .extend({ entry: numericEntrySchema }),
   order: GENERATED_ITEM_SCHEMAS.order.omit({ difficulty: true, format: true }),
   spoken: GENERATED_ITEM_SCHEMAS.spoken.omit({ difficulty: true, format: true }),
   trueFalse: GENERATED_ITEM_SCHEMAS.trueFalse
     .omit({ difficulty: true, format: true })
-    .extend({ ...quotedField, ...storedVisualFields }),
-  typed: GENERATED_ITEM_SCHEMAS.typed
-    .omit({ difficulty: true, format: true })
-    .extend(storedVisualFields),
+    .extend(quotedField),
+  typed: GENERATED_ITEM_SCHEMAS.typed.omit({ difficulty: true, format: true }),
 } as const satisfies Record<ItemFormat, z.ZodType>;
 
 type ItemContentByFormat = {

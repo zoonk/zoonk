@@ -18,9 +18,11 @@ const KEY_POINTS = ["Names the shared denominator", "Adds the numerators"];
 const TYPED_CONTENT = {
   acceptedAnswers: ["5/6"],
   context: null,
+  image: null,
   keyPoints: KEY_POINTS,
   question: "How do you add 1/2 and 1/3?",
   sampleAnswer: "Use sixths: 3/6 + 2/6 = 5/6.",
+  visual: null,
 };
 
 /**

@@ -58,7 +58,9 @@ function stimulusQuestion(format: SnapshotFormat) {
   if (format === "numeric") {
     return {
       context: "The pizza has {slices} equal slices.",
+      entry: { kind: "number", places: null },
       math: thirdsMath,
+      otherSolutions: [],
       question: thirdsQuestion,
     };
   }

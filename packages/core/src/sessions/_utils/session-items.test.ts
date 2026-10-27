@@ -83,7 +83,13 @@ describe(gradeSessionAnswer, () => {
 });
 
 const mathItem = {
-  content: { context: null, math: discountMath, question: discountQuestion },
+  content: {
+    context: null,
+    entry: { kind: "number", places: null },
+    math: discountMath,
+    otherSolutions: [],
+    question: discountQuestion,
+  },
   format: "numeric" as const,
   id: "0199a0b1-0000-7000-8000-000000000002",
   language: "en",

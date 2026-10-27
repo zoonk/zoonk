@@ -33,7 +33,7 @@ const MAX_RUBRIC_ROW_POINTS = 6;
  * each row its own whole points (AP free-response: thesis 1, evidence and commentary 4), and null
  * when the exam's rubric doesn't.
  */
-export const essayRubricRowSchema = z.object({
+const essayRubricRowSchema = z.object({
   criterion: z.string(),
   description: z.string(),
   points: z.number().int().min(1).max(MAX_RUBRIC_ROW_POINTS).nullable(),
