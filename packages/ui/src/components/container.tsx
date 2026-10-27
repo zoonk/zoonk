@@ -20,7 +20,7 @@ const containerVariants = cva("flex w-full flex-col gap-4 antialiased", {
   },
 });
 
-export type ContainerProps = React.ComponentProps<"main"> & VariantProps<typeof containerVariants>;
+type ContainerProps = React.ComponentProps<"main"> & VariantProps<typeof containerVariants>;
 
 export function Container({ children, className, variant }: ContainerProps) {
   return (
@@ -35,7 +35,7 @@ const containerHeaderVariants = cva("flex items-center justify-between gap-2 px-
   variants: { variant: { page: "pt-0", sidebar: "pt-4" } },
 });
 
-export type ContainerHeaderProps = React.ComponentProps<"header"> &
+type ContainerHeaderProps = React.ComponentProps<"header"> &
   VariantProps<typeof containerHeaderVariants>;
 
 export function ContainerHeader({ children, className, variant }: ContainerHeaderProps) {
@@ -49,7 +49,7 @@ export function ContainerHeader({ children, className, variant }: ContainerHeade
   );
 }
 
-export type ContainerHeaderGroupProps = React.ComponentProps<"div">;
+type ContainerHeaderGroupProps = React.ComponentProps<"div">;
 
 export function ContainerHeaderGroup({ children, className }: ContainerHeaderGroupProps) {
   return (
@@ -59,7 +59,7 @@ export function ContainerHeaderGroup({ children, className }: ContainerHeaderGro
   );
 }
 
-export type ContainerTitleProps = React.ComponentProps<"h1">;
+type ContainerTitleProps = React.ComponentProps<"h1">;
 
 export function ContainerTitle({ children, className }: ContainerTitleProps) {
   return (
@@ -75,7 +75,7 @@ export function ContainerTitle({ children, className }: ContainerTitleProps) {
   );
 }
 
-export type ContainerDescriptionProps = React.ComponentProps<"h2">;
+type ContainerDescriptionProps = React.ComponentProps<"h2">;
 
 export function ContainerDescription({ children, className }: ContainerDescriptionProps) {
   return (
@@ -88,13 +88,13 @@ export function ContainerDescription({ children, className }: ContainerDescripti
   );
 }
 
-export type ContainerActionsProps = React.ComponentProps<"div">;
+type ContainerActionsProps = React.ComponentProps<"div">;
 
 export function ContainerActions({ children, className }: ContainerActionsProps) {
   return <div className={cn("flex items-center gap-2", className)}>{children}</div>;
 }
 
-export type ContainerActionProps = useRender.ComponentProps<"a"> & { icon: LucideIcon };
+type ContainerActionProps = useRender.ComponentProps<"a"> & { icon: LucideIcon };
 
 export function ContainerAction({
   icon: Icon,
@@ -122,7 +122,7 @@ export function ContainerAction({
   });
 }
 
-export type ContainerBodyProps = React.ComponentProps<"div">;
+type ContainerBodyProps = React.ComponentProps<"div">;
 
 export function ContainerBody({ children, className }: ContainerBodyProps) {
   return (
@@ -134,7 +134,7 @@ export function ContainerBody({ children, className }: ContainerBodyProps) {
   );
 }
 
-export type ContainerHeaderSkeletonProps = { className?: string };
+type ContainerHeaderSkeletonProps = { className?: string };
 
 /**
  * Mirrors the real header primitives so streamed titles replace the fallback

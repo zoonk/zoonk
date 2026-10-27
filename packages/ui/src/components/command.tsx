@@ -3,7 +3,6 @@
 import {
   Autocomplete,
   type AutocompleteCollectionProps,
-  type AutocompleteEmptyProps,
   type AutocompleteGroupLabelProps,
   type AutocompleteGroupProps,
   type AutocompleteInputProps,
@@ -161,20 +160,6 @@ function CommandList({ children, className, ...props }: Omit<AutocompleteListPro
 }
 
 /**
- * CommandEmpty must stay mounted for Base UI's live-region announcements, so
- * the default styles remove it from layout when Base UI renders no children.
- */
-function CommandEmpty({ className, ...props }: AutocompleteEmptyProps) {
-  return (
-    <Autocomplete.Empty
-      className={cn("py-6 text-center text-sm empty:sr-only empty:p-0", className)}
-      data-slot="command-empty"
-      {...props}
-    />
-  );
-}
-
-/**
  * CommandGroup scopes a set of related command items and passes the group's
  * items to Base UI's collection renderer for keyboard navigation order.
  */
@@ -234,20 +219,6 @@ function CommandItem({ className, ...props }: AutocompleteItemProps) {
 }
 
 /**
- * CommandShortcut gives command rows a consistent trailing shortcut treatment
- * when an app wants to show keyboard accelerators.
- */
-function CommandShortcut({ className, ...props }: React.ComponentProps<"span">) {
-  return (
-    <span
-      className={cn("text-muted-foreground ml-auto text-xs tracking-widest", className)}
-      data-slot="command-shortcut"
-      {...props}
-    />
-  );
-}
-
-/**
  * The keys the palette answers to, under its list where there's a keyboard: the caller lays out
  * its translated hints ("↑ ↓ move · ⏎ open · Esc close") with `Kbd`.
  */
@@ -271,12 +242,10 @@ export {
   CommandDialog,
   CommandDialogDescription,
   CommandDialogTitle,
-  CommandEmpty,
   CommandFooter,
   CommandGroup,
   CommandGroupLabel,
   CommandInput,
   CommandItem,
   CommandList,
-  CommandShortcut,
 };

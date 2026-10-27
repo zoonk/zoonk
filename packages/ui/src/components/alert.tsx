@@ -55,14 +55,4 @@ function AlertDescription({ className, ...props }: React.ComponentProps<"div">) 
   );
 }
 
-function AlertAction({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      className={cn("absolute top-2.5 right-3", className)}
-      data-slot="alert-action"
-      {...props}
-    />
-  );
-}
-
-export { Alert, AlertTitle, AlertDescription, AlertAction, type AlertProps };
+export { Alert, AlertTitle, AlertDescription };

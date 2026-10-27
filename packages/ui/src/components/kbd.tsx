@@ -16,8 +16,6 @@ type ShortcutKbdProps = { children: React.ReactNode; className?: string } & Vari
   typeof shortcutKbdVariants
 >;
 
-type ShortcutKbdTone = NonNullable<ShortcutKbdProps["tone"]>;
-
 function Kbd({ className, ...props }: React.ComponentProps<"kbd">) {
   return (
     <kbd
@@ -48,14 +46,4 @@ function ShortcutKbd({ children, className, tone }: ShortcutKbdProps) {
   );
 }
 
-function KbdGroup({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <kbd
-      className={cn("inline-flex items-center gap-1", className)}
-      data-slot="kbd-group"
-      {...props}
-    />
-  );
-}
-
-export { Kbd, KbdGroup, ShortcutKbd, type ShortcutKbdTone };
+export { Kbd, ShortcutKbd };

@@ -7,7 +7,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, CircleAlertIcon } from "lucide-react";
 import { getSegmentFills } from "./_utils/segment-fills";
 
-export type GenerationTimelineStepStatus = "active" | "completed" | "failed" | "pending";
+type GenerationTimelineStepStatus = "active" | "completed" | "failed" | "pending";
 
 /**
  * A wait for generated content: a header with the progress bar, then one flat row per phase. It

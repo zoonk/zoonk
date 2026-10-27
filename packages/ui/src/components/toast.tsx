@@ -267,23 +267,4 @@ function Toaster(props: Omit<ToastPrimitive.Provider.Props, "children" | "toastM
   );
 }
 
-const createToastManager = ToastPrimitive.createToastManager;
-const useToastManager = ToastPrimitive.useToastManager;
-
-export {
-  Toaster,
-  Toast,
-  ToastAction,
-  ToastClose,
-  ToastContent,
-  ToastDescription,
-  ToastPortal,
-  ToastProvider,
-  ToastTitle,
-  ToastViewport,
-  createToastManager,
-  showErrorToast,
-  showSuccessToast,
-  toast,
-  useToastManager,
-};
+export { Toaster, showErrorToast, showSuccessToast };

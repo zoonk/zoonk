@@ -151,26 +151,6 @@ export function ContributionCalendarTitle({ children, className, ...props }: Com
 }
 
 /**
- * Presents caller-owned context such as the visible date range without making
- * the shared calendar depend on one product's vocabulary.
- */
-export function ContributionCalendarDescription({
-  children,
-  className,
-  ...props
-}: ComponentProps<"p">) {
-  return (
-    <p
-      className={cn("text-muted-foreground text-sm", className)}
-      data-slot="contribution-calendar-description"
-      {...props}
-    >
-      {children}
-    </p>
-  );
-}
-
-/**
  * Starts overflowing calendars at their newest edge while remaining a normal
  * left-aligned viewport when the complete grid fits. On a touch screen, where
  * it scrolls, the viewport rounds down to a whole number of week columns, so

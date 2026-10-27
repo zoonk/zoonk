@@ -139,13 +139,11 @@ function DrawerDescription({ className, ...props }: DrawerPrimitive.Description.
 
 export {
   Drawer,
-  DrawerBackdrop,
   DrawerClose,
   DrawerContent,
   DrawerDescription,
   DrawerHeader,
   DrawerPopup,
-  DrawerPortal,
   DrawerTitle,
   DrawerTrigger,
 };

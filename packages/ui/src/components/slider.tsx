@@ -28,16 +28,6 @@ function SliderLabel({ className, ...props }: SliderPrimitive.Label.Props) {
   );
 }
 
-function SliderValue({ className, ...props }: SliderPrimitive.Value.Props) {
-  return (
-    <SliderPrimitive.Value
-      className={cn("text-sm font-semibold tabular-nums", className)}
-      data-slot="slider-value"
-      {...props}
-    />
-  );
-}
-
 /** The control is 44px tall so the whole row is an easy touch target, not just the thumb. */
 function SliderControl({ className, ...props }: SliderPrimitive.Control.Props) {
   return (
@@ -86,12 +76,4 @@ function SliderThumb({ className, ...props }: SliderPrimitive.Thumb.Props) {
   );
 }
 
-export {
-  Slider,
-  SliderControl,
-  SliderIndicator,
-  SliderLabel,
-  SliderThumb,
-  SliderTrack,
-  SliderValue,
-};
+export { Slider, SliderControl, SliderIndicator, SliderLabel, SliderThumb, SliderTrack };

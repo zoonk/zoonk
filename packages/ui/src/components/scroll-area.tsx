@@ -48,10 +48,7 @@ function ScrollAreaContent({ className, ...props }: ScrollAreaPrimitive.Content.
   );
 }
 
-/**
- * ScrollAreaThumb is exported for layouts that need to place the scrollbar and
- * thumb manually instead of using the bundled ScrollBar convenience component.
- */
+/** The scrollbar's thumb, inside `ScrollAreaScrollbar`. */
 function ScrollAreaThumb({ className, ...props }: ScrollAreaPrimitive.Thumb.Props) {
   return (
     <ScrollAreaPrimitive.Thumb
@@ -85,46 +82,10 @@ function ScrollAreaScrollbar({
   );
 }
 
-/**
- * ScrollAreaCorner fills the gap created when both scrollbars are visible.
- */
-function ScrollAreaCorner({ ...props }: ScrollAreaPrimitive.Corner.Props) {
-  return <ScrollAreaPrimitive.Corner data-slot="scroll-area-corner" {...props} />;
-}
-
-/**
- * ScrollArea keeps the original convenience API for regular scroll regions and
- * now uses the same explicit viewport/content structure as the composable parts.
- */
-function ScrollArea({ children, ...props }: ScrollAreaPrimitive.Root.Props) {
-  return (
-    <ScrollAreaRoot {...props}>
-      <ScrollAreaViewport>
-        <ScrollAreaContent>{children}</ScrollAreaContent>
-      </ScrollAreaViewport>
-      <ScrollAreaCorner />
-    </ScrollAreaRoot>
-  );
-}
-
-/**
- * ScrollBar remains the shorthand for a complete scrollbar with a thumb.
- */
-function ScrollBar(props: ScrollAreaPrimitive.Scrollbar.Props) {
-  return (
-    <ScrollAreaScrollbar {...props}>
-      <ScrollAreaThumb />
-    </ScrollAreaScrollbar>
-  );
-}
-
 export {
-  ScrollArea,
   ScrollAreaContent,
-  ScrollAreaCorner,
   ScrollAreaRoot,
   ScrollAreaScrollbar,
   ScrollAreaThumb,
   ScrollAreaViewport,
-  ScrollBar,
 };

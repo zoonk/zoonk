@@ -1,4 +1,4 @@
-export type BrandIconProps = Omit<React.ComponentProps<"svg">, "stroke"> & {
+type BrandIconProps = Omit<React.ComponentProps<"svg">, "stroke"> & {
   size?: number | string;
   title?: string;
 };

@@ -2,7 +2,6 @@
 
 import { cn } from "@zoonk/ui/lib/utils";
 import { OTPInput, OTPInputContext } from "input-otp";
-import { MinusIcon } from "lucide-react";
 import { useContext } from "react";
 
 type InputOTPProps = React.ComponentProps<typeof OTPInput> & { containerClassName?: string };
@@ -60,17 +59,4 @@ function InputOTPSlot({
   );
 }
 
-function InputOTPSeparator({ ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      aria-hidden="true"
-      className="flex shrink-0 items-center [&_svg:not([class*='size-'])]:size-4"
-      data-slot="input-otp-separator"
-      {...props}
-    >
-      <MinusIcon />
-    </div>
-  );
-}
-
-export { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot, type InputOTPProps };
+export { InputOTP, InputOTPGroup, InputOTPSlot, type InputOTPProps };

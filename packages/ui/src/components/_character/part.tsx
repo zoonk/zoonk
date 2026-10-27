@@ -16,7 +16,7 @@ export type PartPose = {
 };
 
 /** The point a part turns and stretches around, in the character's drawing units. */
-export type Pivot = readonly [x: number, y: number];
+type Pivot = readonly [x: number, y: number];
 
 function formatScale(scale: NonNullable<PartPose["scale"]>): string {
   return typeof scale === "number" ? String(scale) : `${scale[0]} ${scale[1]}`;
@@ -28,7 +28,7 @@ function formatScale(scale: NonNullable<PartPose["scale"]>): string {
  * it draws exactly as before. Never put an SVG `transform` attribute on the same element: the two
  * don't compose.
  */
-export function partStyle(pivot: Pivot, pose?: PartPose): React.CSSProperties {
+function partStyle(pivot: Pivot, pose?: PartPose): React.CSSProperties {
   return {
     opacity: pose?.opacity,
     rotate: pose?.rotate === undefined ? undefined : `${pose.rotate}deg`,

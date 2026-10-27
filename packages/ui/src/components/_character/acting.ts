@@ -27,7 +27,7 @@ export type PosesByExpression<Expression extends string> = Partial<
 >;
 
 /** An act under way: its animations, and a promise that settles once it landed or stopped. */
-export type ActPlayback = { animations: Animation[]; finished: Promise<unknown> };
+type ActPlayback = { animations: Animation[]; finished: Promise<unknown> };
 
 /**
  * The token's curve, or the ease-out where the browser can't run it: `element.animate()` throws on
