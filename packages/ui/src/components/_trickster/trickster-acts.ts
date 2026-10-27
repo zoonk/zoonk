@@ -191,7 +191,6 @@ const DEFEAT: Act<TricksterExpression> = {
       part: "crown",
       settle: "follow",
     },
-    { keys: [{ at: 18, ease: "swing", opacity: 0.6 }], part: "sparkles", settle: "swing" },
     {
       keys: [
         { at: 0, opacity: 0, translate: [0, -4] },

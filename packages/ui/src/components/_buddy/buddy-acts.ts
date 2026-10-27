@@ -145,7 +145,6 @@ const SMILE: Act<BuddyExpression> = {
     { keys: [{ at: 7, ease: "out", rotate: -3 }], part: "antenna-left", settle: "follow" },
     { keys: [{ at: 8, ease: "out", rotate: 2.5 }], part: "antenna-right", settle: "follow" },
     { keys: [{ at: 7, ease: "out", rotate: -3 }], part: "antenna", settle: "follow" },
-    { keys: [{ at: 7, ease: "out", translate: [0, -1.5] }], part: "sparks", settle: "follow" },
   ],
 };
 
@@ -247,14 +246,6 @@ const CHEER: Act<BuddyExpression> = {
       part: "antenna",
       settle: "follow",
     },
-    {
-      keys: [
-        { at: 4, ease: "accelerate", translate: [0, 2] },
-        { at: 9, ease: "out", translate: [0, -4] },
-      ],
-      part: "sparks",
-      settle: "follow",
-    },
   ],
 };
 
@@ -300,7 +291,6 @@ const SURPRISE: Act<BuddyExpression> = {
     { keys: [{ at: 5, ease: "out", rotate: -14 }], part: "antenna-left", settle: "follow" },
     { keys: [{ at: 6, ease: "out", rotate: 13 }], part: "antenna-right", settle: "follow" },
     { keys: [{ at: 5, ease: "out", rotate: -12 }], part: "antenna", settle: "follow" },
-    { keys: [{ at: 5, ease: "out", translate: [0, -4] }], part: "sparks", settle: "follow" },
   ],
 };
 

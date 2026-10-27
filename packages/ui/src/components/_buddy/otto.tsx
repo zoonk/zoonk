@@ -1,18 +1,14 @@
 import { Part } from "../_character/part";
-import {
-  BELT_FILL,
-  type BuddyBodyProps,
-  BuddyHalo,
-  BuddyHaloGradient,
-  buddyDefId,
-  buddyDefUrl,
-} from "./buddy-parts";
+import { BELT_FILL, type BuddyBodyProps, buddyDefId, buddyDefUrl } from "./buddy-parts";
 
+/** The spots on Otto's head: its skin, a shade deeper than it, never a light. */
 const SPOTS = [
-  { cx: 62, cy: 25, halo: 9, radius: 3.6 },
-  { cx: 81, cy: 31, halo: 7.5, radius: 3 },
-  { cx: 90, cy: 45, halo: 6, radius: 2.4 },
+  { cx: 62, cy: 25, radius: 3.6 },
+  { cx: 81, cy: 31, radius: 3 },
+  { cx: 90, cy: 45, radius: 2.4 },
 ] as const;
+
+const SPOT_FILL = "#b69cf2";
 
 const TENTACLE = {
   fill: "none",
@@ -23,8 +19,11 @@ const TENTACLE = {
 
 const TENTACLE_TIP = { fill: "#efe6ff", opacity: 0.9 } as const;
 
-/** Otto, a know-it-all octopus whose spots glow with Energy and dim while it naps. */
-export function OttoBody({ face, glow, isNapping, uid }: BuddyBodyProps) {
+/**
+ * Otto, a know-it-all octopus. It wears no light: its Energy shows in its face (sleepy while it
+ * naps, beaming from 80%) and as a number wherever Energy is shown.
+ */
+export function OttoBody({ face, uid }: BuddyBodyProps) {
   return (
     <>
       <defs>
@@ -33,7 +32,6 @@ export function OttoBody({ face, glow, isNapping, uid }: BuddyBodyProps) {
           <stop offset=".5" stopColor="#c6adff" />
           <stop offset="1" stopColor="#8c69f0" />
         </radialGradient>
-        <BuddyHaloGradient uid={uid} />
       </defs>
 
       <Part name="shadow" pivot={[60, 116]}>
@@ -109,17 +107,13 @@ export function OttoBody({ face, glow, isNapping, uid }: BuddyBodyProps) {
           />
 
           {SPOTS.map((spot) => (
-            <g key={`${spot.cx}-${spot.cy}`}>
-              {!isNapping && (
-                <BuddyHalo cx={spot.cx} cy={spot.cy} glow={glow} radius={spot.halo} uid={uid} />
-              )}
-              <circle
-                cx={spot.cx}
-                cy={spot.cy}
-                fill={isNapping ? "#b69cf2" : "#ff8a3d"}
-                r={spot.radius}
-              />
-            </g>
+            <circle
+              cx={spot.cx}
+              cy={spot.cy}
+              fill={SPOT_FILL}
+              key={`${spot.cx}-${spot.cy}`}
+              r={spot.radius}
+            />
           ))}
           {face}
         </Part>

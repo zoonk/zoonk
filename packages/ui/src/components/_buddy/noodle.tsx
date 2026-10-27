@@ -1,37 +1,11 @@
 import { Part } from "../_character/part";
-import {
-  BELT_FILL,
-  type BuddyBodyProps,
-  BuddyHalo,
-  BuddyHaloGradient,
-  Spark,
-  buddyDefId,
-  buddyDefUrl,
-} from "./buddy-parts";
+import { BELT_FILL, type BuddyBodyProps, buddyDefId, buddyDefUrl } from "./buddy-parts";
 
-/** The faint third spark never fully disappears while Noodle is awake. */
-const FAINT_SPARK_MIN_OPACITY = 0.25;
-
-function NoodleSparks({ glow, uid }: Pick<BuddyBodyProps, "glow" | "uid">) {
-  return (
-    <Part name="sparks" pivot={[60, 40]}>
-      <BuddyHalo cx={15} cy={21} glow={glow} radius={10} uid={uid} />
-      <BuddyHalo cx={104} cy={19} glow={glow} radius={11} uid={uid} />
-      <Spark fill="#ff8a3d" size={12} x={9} y={15} />
-      <Spark fill="#ff8a3d" size={14} x={97} y={12} />
-      <Spark
-        fill="#ffb35c"
-        opacity={FAINT_SPARK_MIN_OPACITY + glow * (1 - FAINT_SPARK_MIN_OPACITY)}
-        size={8}
-        x={88}
-        y={1}
-      />
-    </Part>
-  );
-}
-
-/** Noodle, a brain with legs whose sparks glow with Energy. Sparks rest while it naps. */
-export function NoodleBody({ face, glow, isNapping, uid }: BuddyBodyProps) {
+/**
+ * Noodle, a brain with legs. It wears no light: its Energy shows in its face (sleepy while it
+ * naps, beaming from 80%) and as a number wherever Energy is shown.
+ */
+export function NoodleBody({ face, uid }: BuddyBodyProps) {
   return (
     <>
       <defs>
@@ -39,7 +13,6 @@ export function NoodleBody({ face, glow, isNapping, uid }: BuddyBodyProps) {
           <stop offset="0" stopColor="#ffb3cb" />
           <stop offset="1" stopColor="#ff7aa6" />
         </radialGradient>
-        <BuddyHaloGradient uid={uid} />
         <clipPath id={buddyDefId(uid, "noodle-clip")}>
           <circle cx="40" cy="46" r="22" />
           <circle cx="60" cy="37" r="25" />
@@ -119,7 +92,6 @@ export function NoodleBody({ face, glow, isNapping, uid }: BuddyBodyProps) {
             y="84"
           />
 
-          {!isNapping && <NoodleSparks glow={glow} uid={uid} />}
           {face}
         </Part>
       </Part>

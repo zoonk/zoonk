@@ -51,7 +51,7 @@ export function Spark({
   );
 }
 
-/** Orange Energy halo shared by every buddy; each buddy places it on its own glowing part. */
+/** The Energy halo of Zu's and Beep's antenna lights: only those two buddies wear a light. */
 export function BuddyHaloGradient({ uid }: { uid: string }) {
   return (
     <radialGradient id={buddyDefId(uid, "halo")}>

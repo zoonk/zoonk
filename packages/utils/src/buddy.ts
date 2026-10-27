@@ -82,7 +82,10 @@ export function getNextBuddyStage(
   return belt ? { belt, stage: getBuddyStage(belt) } : null;
 }
 
-/** Energy (0–100) as the 0–1 opacity of the buddy's orange glow; none before any Energy. */
+/**
+ * Energy (0–100) as the 0–1 opacity of the orange glow on Zu's and Beep's antenna lights; none
+ * before any Energy. The other buddies wear no light.
+ */
 export function getBuddyGlow(energy: number | null): number {
   return energy === null ? 0 : Math.min(1, Math.max(0, energy / MAX_BUDDY_ENERGY));
 }

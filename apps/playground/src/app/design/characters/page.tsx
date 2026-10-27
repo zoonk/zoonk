@@ -1,10 +1,10 @@
 import {
   BUDDY_EXPRESSIONS,
   CHARACTER_IDLE_RULES,
+  CHARACTER_LIGHT_RULES,
   CHARACTER_PARTS,
   CHARACTER_RULES,
   CHARACTER_TIMING_RULES,
-  type CharacterExpression,
   TRICKSTER_EXPRESSIONS,
 } from "@/design-system/characters";
 import { Buddy } from "@zoonk/ui/components/buddy";
@@ -29,17 +29,18 @@ const KINDS: readonly { kind: BuddyKind; name: string }[] = [
 /** Enough Energy for a glad buddy, short of its glow. */
 const ENERGY = 70;
 
-function ExpressionCell({
-  children,
-  expression,
-}: {
-  children: React.ReactNode;
-  expression: CharacterExpression<string>;
-}) {
+/** Energy's three faces: napping on a day without study, awake, and glowing from 80%. */
+const ENERGY_STATES = [
+  { energy: 12, label: "Napping, 12%", studiedToday: false },
+  { energy: 55, label: "Awake, 55%", studiedToday: true },
+  { energy: 95, label: "Glowing, 95%", studiedToday: true },
+] as const;
+
+function Cell({ children, label }: { children: React.ReactNode; label: string }) {
   return (
     <figure className="flex flex-col items-center gap-1 text-center">
       {children}
-      <figcaption className="text-xs font-medium">{expression.label}</figcaption>
+      <figcaption className="text-xs font-medium">{label}</figcaption>
     </figure>
   );
 }
@@ -54,7 +55,7 @@ function ExpressionGrid() {
           <p className="text-muted-foreground text-xs font-medium">{name}</p>
           <div className={GRID}>
             {BUDDY_EXPRESSIONS.map((expression) => (
-              <ExpressionCell expression={expression} key={expression.name}>
+              <Cell key={expression.name} label={expression.label}>
                 <Buddy
                   beltColor="orange"
                   className="size-20"
@@ -63,7 +64,7 @@ function ExpressionGrid() {
                   kind={kind}
                   studiedToday
                 />
-              </ExpressionCell>
+              </Cell>
             ))}
           </div>
         </div>
@@ -73,12 +74,38 @@ function ExpressionGrid() {
         <p className="text-muted-foreground text-xs font-medium">The Trickster</p>
         <div className={GRID}>
           {TRICKSTER_EXPRESSIONS.map((expression) => (
-            <ExpressionCell expression={expression} key={expression.name}>
+            <Cell key={expression.name} label={expression.label}>
               <Trickster className="size-20" expression={expression.name} />
-            </ExpressionCell>
+            </Cell>
           ))}
         </div>
       </div>
+    </div>
+  );
+}
+
+/** Each buddy at Energy's three faces: only Zu and Beep wear a light, which Energy brightens. */
+function EnergyGrid() {
+  return (
+    <div className="grid w-fit grid-cols-2 gap-x-12 gap-y-6 sm:grid-cols-4">
+      {KINDS.map(({ kind, name }) => (
+        <div className="flex flex-col gap-2" key={kind}>
+          <p className="text-muted-foreground text-center text-xs font-medium">{name}</p>
+          <div className="flex flex-col gap-3">
+            {ENERGY_STATES.map((state) => (
+              <Cell key={state.energy} label={state.label}>
+                <Buddy
+                  beltColor="orange"
+                  className="size-20"
+                  energy={state.energy}
+                  kind={kind}
+                  studiedToday={state.studiedToday}
+                />
+              </Cell>
+            ))}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
@@ -142,6 +169,14 @@ export default function CharactersPage() {
             text: expression.says,
           }))}
         />
+      </DocSection>
+
+      <DocSection
+        intro="How each buddy looks at Energy's three faces, as the server draws it."
+        title="Lights and Energy"
+      >
+        <DocRules rules={CHARACTER_LIGHT_RULES} />
+        <EnergyGrid />
       </DocSection>
 
       <DocSection

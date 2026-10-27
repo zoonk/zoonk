@@ -1,6 +1,6 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { useId } from "react";
-import { Spark, buddyDefId, buddyDefUrl } from "./_buddy/buddy-parts";
+import { buddyDefId, buddyDefUrl } from "./_buddy/buddy-parts";
 import { Part, type PartPose } from "./_character/part";
 
 const INK = "#2a1260";
@@ -10,12 +10,12 @@ const PUPIL = "#16123a";
 export type TricksterExpression = "sly" | "smug" | "defeated";
 
 /** The parts an expression poses beyond his face, by their `data-part`. */
-export type TricksterPart = "arm-left" | "arm-right" | "body" | "crown" | "sparkles" | "tail";
+export type TricksterPart = "arm-left" | "arm-right" | "body" | "crown" | "tail";
 
 /**
  * Each expression's pose, one source for the still drawing and for the acts that reach it. Sly is
  * his rest. Smug cocks his crown and curls his tail. Defeated slumps: shorter and wider, leaning
- * back, the crown slipping over his brow, the tail wilting, the arms hanging and his sparkle gone.
+ * back, the crown slipping over his brow, the tail wilting and the arms hanging.
  */
 export const TRICKSTER_POSES: Record<
   TricksterExpression,
@@ -26,7 +26,6 @@ export const TRICKSTER_POSES: Record<
     "arm-right": { rotate: 22 },
     body: { rotate: 5, scale: [1.03, 0.95] },
     crown: { rotate: -18, translate: [-3, 8] },
-    sparkles: { opacity: 0.3 },
     tail: { rotate: 16 },
   },
   sly: {},
@@ -119,17 +118,6 @@ function Tail({ uid }: { uid: string }) {
         strokeLinecap="round"
         strokeWidth="2.2"
       />
-    </>
-  );
-}
-
-function Sparkles() {
-  return (
-    <>
-      <circle cx="131" cy="30" fill="#fff" opacity=".8" r="1.8" />
-      <circle cx="126" cy="58" fill="#ffd1ec" opacity=".8" r="1.3" />
-      <circle cx="64" cy="20" fill="#7cf5ff" opacity=".85" r="1.4" />
-      <Spark fill="#ffd36e" size={11} x={118} y={0} />
     </>
   );
 }
@@ -449,9 +437,6 @@ export function TricksterFigure({
         <Part name="head" pivot={[72, 140]}>
           <Part name="tail" pivot={[86, 88]} pose={parts.tail}>
             <Tail uid={uid} />
-          </Part>
-          <Part name="sparkles" pivot={[110, 30]} pose={parts.sparkles}>
-            <Sparkles />
           </Part>
           <circle cx="72" cy="106" fill={buddyDefUrl(uid, "skin")} r="36" />
           <ellipse

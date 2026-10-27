@@ -51,9 +51,15 @@ export const CHARACTER_PARTS: readonly CharacterPart[] = [
   },
   {
     moves: "Loose parts: they lag behind what drives them and follow through on `ease-follow`.",
-    parts:
-      "`antenna-left`, `antenna-right`, `antenna`, `sparks`; the Trickster's `tail`, `crown`, `sparkles`",
+    parts: "`antenna-left`, `antenna-right`, `antenna`; the Trickster's `tail`, `crown`",
   },
+];
+
+/** Which characters wear a light, and how Energy reads on the ones that don't. */
+export const CHARACTER_LIGHT_RULES: readonly string[] = [
+  "Only Zu's antenna tips and Beep's antenna bulb light up, in orange, brighter and wider as Energy rises, and dark while the buddy naps.",
+  "Noodle, Otto and the Trickster wear no light: a bright spot on them pulled the eye away from the screen. Otto's spots are its skin, a shade deeper than it.",
+  "Every buddy's Energy shows in its face, the same for all four: sleepy while it naps (under 30% on a day without study), happy when awake, beaming from 80%. The number is where Energy is shown: the buddy's tab and a result's Energy row.",
 ];
 
 /** An expression as the server draws it, still: what it says and where it belongs. */
