@@ -1,6 +1,7 @@
 "use client";
 
 import { MainAskTutor, type TutorViewer } from "@/components/learn/main-ask-tutor";
+import { SessionCeremony } from "@/components/learn/session-ceremony";
 import { useRouter } from "@/i18n/navigation";
 import { type MockView } from "@zoonk/core/exams/mocks/contract";
 import { type MockActions, MockScreen } from "@zoonk/learn/mock";
@@ -81,6 +82,9 @@ export function MockClient({
       hrefs={hrefs}
       key={`${bfcacheId}:${mock.status === "expired"}`}
       mock={mock}
+      renderCeremony={(milestone, onClose) => (
+        <SessionCeremony buddy={tutor.buddy} milestone={milestone} onClose={onClose} />
+      )}
     />
   );
 }

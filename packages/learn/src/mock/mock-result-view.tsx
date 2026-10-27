@@ -16,6 +16,7 @@ import { TaskAsideSection } from "../_components/task-layout";
 import { hasShareMoved } from "../_utils/share-moved";
 import { usePassMarksNote } from "../_utils/use-pass-marks-note";
 import { MissionMoment } from "../missions/mission-moment";
+import { ReachedMoment } from "../session/reached-moment";
 import { type TaskFrameAside } from "../shell/task-frame";
 import { useMockScreen } from "./mock-context";
 import { useMockTitle } from "./mock-labels";
@@ -127,21 +128,27 @@ function PassMarks() {
 }
 
 /**
- * What the mock did to the day's missions, its own and its speaking paper's calls', with the bonus
- * when one of them did the last; nothing when it did none.
+ * What the mock did to the learner's day, as every block's moment says it: the day's missions,
+ * its own and its speaking paper's calls', with the bonus when one of them did the last; then the
+ * belt level and the tenth of Energy it reached. Nothing when it did none of that.
  */
-function MockMissionMoment() {
+function MockDayMoment() {
   const { buddy, runner } = useMockScreen();
-  const moment = runner.view.missionMoment;
+  const { ceremony, missionMoment: moment, reached } = runner.view;
 
-  return moment ? (
-    <MissionMoment
-      buddy={buddy}
-      completed={moment.completed}
-      fullMeal={moment.fullMeal}
-      missions={moment.missions}
-    />
-  ) : null;
+  return (
+    <>
+      {moment && (
+        <MissionMoment
+          buddy={buddy}
+          completed={moment.completed}
+          fullMeal={moment.fullMeal}
+          missions={moment.missions}
+        />
+      )}
+      <ReachedMoment buddy={buddy} ceremony={ceremony} reached={reached} />
+    </>
+  );
 }
 
 /** Up to this many areas, the score's line names them; past it, it counts them. */
@@ -184,7 +191,7 @@ function ScoreStep({ result }: { result: MockResult }) {
         <MockResultAnswers result={result} />
         <PassMarks />
         <MockScoreNote notes={runner.view.scoreNotes} />
-        <MockMissionMoment />
+        <MockDayMoment />
       </div>
 
       {hasBreakdown(result) && <MockResultBreakdown result={result} />}
@@ -267,7 +274,8 @@ function useResultAside({
  * starts, so it offers no change and has no mistakes to review.
  */
 function useResultSteps(result: MockResult) {
-  const { runner } = useMockScreen();
+  const { renderCeremony, runner } = useMockScreen();
+  const { ceremony } = runner.view;
   const mistakes = useMistakeCount();
   const essays = useEssayItems();
   const speaking = useSpeakingItems();
@@ -312,20 +320,23 @@ function useResultSteps(result: MockResult) {
     parts[step.part].map((item) => ({ ...item, beside: step.beside })),
   );
 
-  // The score says what the mock did to the day's missions under it; a day of only essays or
-  // speaking says it last on its first step.
-  const opening =
-    first && !has.score
-      ? {
-          ...first,
-          content: (
-            <>
-              {first.content}
-              <MockMissionMoment />
-            </>
-          ),
-        }
-      : first;
+  // The score says what the mock did to the day under it; a day of only essays or speaking says it
+  // last on its first step. A milestone it earned opens before that first step.
+  const opening = first && {
+    ...first,
+    content: has.score ? (
+      first.content
+    ) : (
+      <>
+        {first.content}
+        <MockDayMoment />
+      </>
+    ),
+    moment:
+      ceremony && renderCeremony
+        ? (close: () => void) => renderCeremony(ceremony, close)
+        : undefined,
+  };
 
   return { aside, items: opening ? [opening, ...rest] : [] };
 }

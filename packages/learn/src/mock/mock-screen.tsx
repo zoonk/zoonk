@@ -6,6 +6,7 @@ import { useExtracted } from "next-intl";
 import { StepCard, StepDetail, StepHeader, StepTitle } from "../_components/step-card";
 import { TaskActions } from "../_components/task-layout";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
+import { type MomentCeremony } from "../session/moment-ceremony";
 import { TaskMainButton } from "../shell/task-frame";
 import { MockBreak } from "./mock-break";
 import { useRefreshPastMockDeadline } from "./mock-clock";
@@ -136,6 +137,7 @@ export function MockScreen({
   buddy,
   hrefs,
   mock,
+  renderCeremony,
 }: {
   actions: MockActions;
   /** "Ask" about the result, such as the player's `AskTutor`; it shows once the mock is over. */
@@ -144,11 +146,13 @@ export function MockScreen({
   buddy?: LearnBuddy | null;
   hrefs: MockHrefs;
   mock: MockView;
+  /** The full-screen moment for a milestone the mock earned (a new belt), before its result. */
+  renderCeremony?: MomentCeremony;
 }) {
   const runner = useMockRunner({ actions, initial: mock });
 
   return (
-    <MockProvider value={{ actions, ask, buddy, hrefs, runner }}>
+    <MockProvider value={{ actions, ask, buddy, hrefs, renderCeremony, runner }}>
       <MockStage />
     </MockProvider>
   );

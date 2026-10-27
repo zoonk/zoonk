@@ -5,6 +5,7 @@ import { type MockView } from "@zoonk/core/exams/mocks/contract";
 import { type MockDraft } from "@zoonk/core/exams/mocks/view-contract";
 import { createContext, use } from "react";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
+import { type MomentCeremony } from "../session/moment-ceremony";
 import { type DraftSaveStatus } from "./draft-save-queue";
 import { type SectionMoves } from "./section-moves";
 
@@ -130,6 +131,8 @@ type MockScreenValue = {
   /** The learner's buddy, who cheers when the mock completes one of the day's missions. */
   buddy?: LearnBuddy | null;
   hrefs: MockHrefs;
+  /** The full-screen moment for a milestone the mock earned (a new belt), before its result. */
+  renderCeremony?: MomentCeremony;
   runner: MockRunner;
 };
 
