@@ -29,11 +29,12 @@ function groupByArea(chapters: OutlineChapter[], areas: Map<string, string>): St
 }
 
 /**
- * The course as a map of its route: each level (an exam course's area) a zone at its true share of
- * the course, each chapter a station on the pale line through them, this one an ink ring (a
- * visitor's place on a course they haven't started), each zone named with its count under it, or
- * as a key under the map on a phone, where the zones are too narrow for names. Decorative for
- * screen readers, who hear its name instead.
+ * The course as a map of its route: each level (an exam course's area) a zone at its share of the
+ * course, each chapter a station on the pale line through them, this one an ink ring (a visitor's
+ * place on a course they haven't started), each zone named with its count under it. On a phone the
+ * zones are too narrow for names and their chapters for stations, so only this chapter's ring
+ * shows and one line under the map says where it is. Decorative for screen readers, who hear that
+ * line as its name.
  */
 function CourseMap({
   chapterId,
@@ -46,27 +47,12 @@ function CourseMap({
   here: StripGroup | undefined;
   label: string;
 }) {
-  /** A zone's name and count, the zone the chapter is in stronger. */
-  const groupName = (group: StripGroup, className?: string) => (
-    <span
-      className={cn(
-        "min-w-0 text-xs leading-4",
-        group === here ? "text-foreground font-semibold" : "text-muted-foreground",
-        className,
-      )}
-      key={group.key}
-    >
-      {group.label}{" "}
-      <span className="font-mono font-normal tabular-nums">{group.chapters.length}</span>
-    </span>
-  );
-
   return (
     <div aria-label={label} className="flex flex-col gap-2.5" role="img">
       <div className="flex gap-1 sm:gap-1.5">
-        {groups.map((group) => (
+        {groups.map((group, index) => (
           <div
-            className="flex min-w-0 basis-0 flex-col gap-2"
+            className="flex min-w-0 basis-0 flex-col gap-2 sm:min-w-14"
             key={group.key}
             style={{ flexGrow: group.chapters.length }}
           >
@@ -78,20 +64,36 @@ function CourseMap({
                   {chapter.id === chapterId ? (
                     <span className="border-foreground absolute top-1/2 size-3.5 -translate-y-1/2 rounded-full border-[3px] bg-(--route-fill) sm:size-4" />
                   ) : (
-                    <span className="border-subject aspect-square size-1.5 max-w-full rounded-full border-[1.5px] bg-(--route-fill) sm:size-2" />
+                    <span className="border-subject hidden size-2 rounded-full border-[1.5px] bg-(--route-fill) sm:block" />
                   )}
                 </span>
               ))}
             </span>
 
-            {groupName(group, "hidden truncate sm:block")}
+            {/* Its name over its count, so a short zone keeps both; the last one ends at the map's edge. */}
+            <span
+              className={cn(
+                "hidden min-w-0 flex-col text-xs leading-4 sm:flex",
+                index === groups.length - 1 && index > 0 && "items-end text-right",
+              )}
+            >
+              <span
+                className={cn(
+                  "max-w-full truncate",
+                  group === here ? "text-foreground font-semibold" : "text-muted-foreground",
+                )}
+              >
+                {group.label}
+              </span>
+              <span className="text-muted-foreground font-mono tabular-nums">
+                {group.chapters.length}
+              </span>
+            </span>
           </div>
         ))}
       </div>
 
-      <p className="flex flex-wrap gap-x-3 gap-y-1 sm:hidden">
-        {groups.map((group) => groupName(group))}
-      </p>
+      <p className="text-muted-foreground text-xs leading-4 sm:hidden">{label}</p>
     </div>
   );
 }
@@ -168,7 +170,7 @@ export async function ChapterStrip({
             return (
               <li
                 aria-current={isHere ? "page" : undefined}
-                className="relative flex gap-3 pb-5 pl-7 last:pb-0 sm:flex-col sm:gap-1 sm:pt-7 sm:pr-4 sm:pb-0 sm:pl-0"
+                className="relative flex flex-col gap-0.5 pb-5 pl-7 last:pb-0 sm:gap-1 sm:pt-7 sm:pr-4 sm:pb-0 sm:pl-0"
                 key={item.id}
               >
                 {/* The line on to the next station, down on a phone and across from `sm`; past the last one it fades, the course going on. */}
@@ -190,7 +192,8 @@ export async function ChapterStrip({
                   )}
                 />
 
-                <span className="text-muted-foreground min-h-4 text-xs leading-4 max-sm:hidden">
+                {/* Across, every station keeps the label's row, so the names line up. */}
+                <span className="text-muted-foreground min-h-4 text-xs leading-4 empty:max-sm:hidden">
                   {isHere && t("This chapter")}
                   {offset === 1 && t("After this chapter")}
                 </span>
@@ -201,7 +204,7 @@ export async function ChapterStrip({
                   </span>
                 ) : (
                   <Link
-                    className="hover:text-foreground focus-visible:ring-ring/50 -my-2.5 inline-flex min-h-11 items-center self-start rounded-md text-[0.9375rem] leading-snug font-medium text-pretty outline-none hover:underline hover:underline-offset-4 focus-visible:ring-[3px] sm:-my-3"
+                    className="hover:text-foreground focus-visible:ring-ring/50 hit-area relative self-start rounded-md text-[0.9375rem] leading-snug font-medium text-pretty outline-none hover:underline hover:underline-offset-4 focus-visible:ring-[3px]"
                     href={getChapterHref({ ...params, chapterSlug: item.slug })}
                     prefetch
                   >

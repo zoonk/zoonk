@@ -1,4 +1,10 @@
-import { COURSE_TITLE_CLASS, HERO_LEAD_CLASS, PlanLine } from "@/components/catalog/catalog-hero";
+import {
+  COURSE_HERO_CLASS,
+  COURSE_HERO_PAIR_CLASS,
+  COURSE_TITLE_CLASS,
+  HERO_LEAD_CLASS,
+  PlanLine,
+} from "@/components/catalog/catalog-hero";
 import { CatalogPageBar } from "@/components/catalog/catalog-page-bar";
 import { ChapterStrip } from "@/components/catalog/chapter-strip";
 import { getExamChapterAreas } from "@/components/catalog/course-plan";
@@ -62,7 +68,7 @@ async function ChapterStart({
   );
 }
 
-/** What the chapter teaches, under its title beside its lessons. */
+/** What the chapter teaches, under its own title beside its lessons. */
 async function ChapterObjectives({
   chapterId,
   objectives,
@@ -80,7 +86,7 @@ async function ChapterObjectives({
 
   return (
     <section aria-labelledby={titleId} className="flex flex-col gap-4">
-      <h2 className="text-[0.9375rem] leading-snug font-semibold" id={titleId}>
+      <h2 className="text-section" id={titleId}>
         {t("What you'll learn")}
       </h2>
 
@@ -142,9 +148,10 @@ async function ChapterClosing({
 /**
  * A Library chapter's page in the catalog, inside the app's frame like its course's, for a visitor
  * from a search on its topic: the bar back to the course, then the course it belongs to, what the
- * chapter teaches, what Zoonk does with it in one line and the one way to start; where it sits in
- * the course and the chapters after it; its lessons, one tap each, beside a question from one of
- * them to try and what it teaches; and the plan it starts, with the way in again. "Build my plan"
+ * chapter teaches, what Zoonk does with it in one line and the one way to start, beside a question
+ * from one of its lessons to try (from `xl`, as on the course's page; under it before); where it
+ * sits in the course and the chapters after it; its lessons, one tap each, beside what it teaches;
+ * and the plan it starts, with the way in again. "Build my plan"
  * opens the course's start page with the plan from this chapter on, except for the course's first
  * chapter, which asks the visitor's level like the course's own page, and a chapter whose lessons
  * aren't written yet, which starts the course.
@@ -180,7 +187,7 @@ export async function LibraryChapterPage({
     }),
   ]);
 
-  const hasAside = tryLesson !== null || chapter.objectives.length > 0;
+  const hasObjectives = chapter.objectives.length > 0;
   const area = areas?.get(chapter.id) ?? null;
   const titleId = `chapter-title-${chapter.id}`;
   const subject = getSubject(course.categories);
@@ -228,56 +235,54 @@ export async function LibraryChapterPage({
           ]}
         />
 
-        <section aria-labelledby={titleId} className="max-w-column flex flex-col">
-          <p className="text-muted-foreground flex flex-wrap items-center gap-x-2 text-sm sm:text-[15px]">
-            <SubjectGlyph subject={subject} />
-            <PublicEyebrowLink href={getCourseHref(params)}>{course.title}</PublicEyebrowLink>
-            {area && <span>{`· ${area}`}</span>}
-          </p>
+        <div className={cn(COURSE_HERO_CLASS, tryLesson && COURSE_HERO_PAIR_CLASS)}>
+          <section aria-labelledby={titleId} className="max-w-column flex min-w-0 flex-col">
+            <p className="text-muted-foreground flex flex-wrap items-center gap-x-2 text-sm sm:text-[15px]">
+              <SubjectGlyph subject={subject} />
+              <PublicEyebrowLink href={getCourseHref(params)}>{course.title}</PublicEyebrowLink>
+              {area && <span>{`· ${area}`}</span>}
+            </p>
 
-          <h1 className={cn(COURSE_TITLE_CLASS, "mt-2")} id={titleId}>
-            {chapter.title}
-          </h1>
+            <h1 className={cn(COURSE_TITLE_CLASS, "mt-2")} id={titleId}>
+              {chapter.title}
+            </h1>
 
-          <p className={HERO_LEAD_CLASS}>{chapter.description}</p>
+            <p className={HERO_LEAD_CLASS}>{chapter.description}</p>
 
-          <PlanLine startsHere={Boolean(startChapterId)} />
+            <PlanLine startsHere={Boolean(startChapterId)} />
 
-          <ChapterStart
-            courseId={course.id}
-            hasLesson={hasLesson}
-            startChapterId={startChapterId}
-          />
-        </section>
+            <ChapterStart
+              courseId={course.id}
+              hasLesson={hasLesson}
+              startChapterId={startChapterId}
+            />
+          </section>
+
+          {tryLesson && (
+            <CourseProgressScope courseId={course.id} lessonId={tryLesson.lessonId}>
+              <TryLesson
+                id={getTryLessonId(chapter.id)}
+                locale={locale}
+                origin={getChapterHref({ ...params, chapterSlug: chapter.slug })}
+                pick={tryLesson}
+              />
+            </CourseProgressScope>
+          )}
+        </div>
 
         <ChapterStrip areas={areas} chapterId={chapter.id} outline={outline} params={params} />
 
-        {(hasLesson || hasAside) && (
+        {(hasLesson || hasObjectives) && (
           <div
             className={cn(
               "grid grid-cols-1 gap-12",
               hasLesson &&
-                hasAside &&
-                "lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-start lg:gap-12 2xl:grid-cols-[minmax(0,1fr)_minmax(0,40rem)]",
+                hasObjectives &&
+                "lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-start lg:gap-16",
             )}
           >
             {hasLesson && <ChapterLessons params={params} route={route} />}
-
-            {hasAside && (
-              <div className="flex min-w-0 flex-col gap-10">
-                {tryLesson && (
-                  <CourseProgressScope courseId={course.id} lessonId={tryLesson.lessonId}>
-                    <TryLesson
-                      id={getTryLessonId(chapter.id)}
-                      locale={locale}
-                      origin={getChapterHref({ ...params, chapterSlug: chapter.slug })}
-                      pick={tryLesson}
-                    />
-                  </CourseProgressScope>
-                )}
-                <ChapterObjectives chapterId={chapter.id} objectives={chapter.objectives} />
-              </div>
-            )}
+            <ChapterObjectives chapterId={chapter.id} objectives={chapter.objectives} />
           </div>
         )}
 
