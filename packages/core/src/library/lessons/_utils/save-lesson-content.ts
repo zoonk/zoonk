@@ -210,6 +210,32 @@ async function writeScreens(
   return version;
 }
 
+/**
+ * Runs a version's write: null when its claim or version was lost meanwhile (the write throws
+ * `LessonPublicationLostError`, which rolls it back), else the version saved, whose lesson's
+ * cached copy expires.
+ */
+async function publishVersion(
+  lessonId: string,
+  write: (tx: TransactionClient) => Promise<number | null>,
+): Promise<number | null> {
+  const { data: version, error } = await safeAsync(() => writePlanInputs(write));
+
+  if (error instanceof LessonPublicationLostError) {
+    return null;
+  }
+
+  if (error) {
+    throw error;
+  }
+
+  if (version !== null) {
+    revalidateCacheTags([getLibraryLessonCacheTag(lessonId)]);
+  }
+
+  return version;
+}
+
 function toSummary(summary: string[]) {
   return { ideas: summary.map((text) => ({ text })) };
 }
@@ -234,45 +260,29 @@ export async function saveLessonContent({
   summary: string[];
   workflowRunId: string;
 }): Promise<number | null> {
-  const { data: version, error } = await safeAsync(() =>
-    writePlanInputs(async (tx) => {
-      const lesson = await tx.lesson.findFirst({
-        select: { id: true },
-        where: { contentRunId: workflowRunId, contentStatus: "running", id: lessonId },
-      });
+  return publishVersion(lessonId, async (tx) => {
+    const lesson = await tx.lesson.findFirst({
+      select: { id: true },
+      where: { contentRunId: workflowRunId, contentStatus: "running", id: lessonId },
+    });
 
-      if (!lesson) {
-        return null;
-      }
+    if (!lesson) {
+      return null;
+    }
 
-      const prepared = await lockPreparedScreens(tx, { lessonId, screens });
+    const prepared = await lockPreparedScreens(tx, { lessonId, screens });
 
-      const claimed = await tx.lesson.updateMany({
-        data: { contentStatus: "completed", heldBackDrafts: [], summary: toSummary(summary) },
-        where: { contentRunId: workflowRunId, contentStatus: "running", id: lessonId },
-      });
+    const claimed = await tx.lesson.updateMany({
+      data: { contentStatus: "completed", heldBackDrafts: [], summary: toSummary(summary) },
+      where: { contentRunId: workflowRunId, contentStatus: "running", id: lessonId },
+    });
 
-      if (claimed.count === 0) {
-        throw new LessonPublicationLostError();
-      }
+    if (claimed.count === 0) {
+      throw new LessonPublicationLostError();
+    }
 
-      return writeScreens(tx, { language, lessonId, screens: prepared });
-    }),
-  );
-
-  if (error instanceof LessonPublicationLostError) {
-    return null;
-  }
-
-  if (error) {
-    throw error;
-  }
-
-  if (version !== null) {
-    revalidateCacheTags([getLibraryLessonCacheTag(lessonId)]);
-  }
-
-  return version;
+    return writeScreens(tx, { language, lessonId, screens: prepared });
+  });
 }
 
 /**
@@ -295,42 +305,26 @@ export async function saveLessonVersion({
   screens: LessonScreenToSave[];
   summary: string[];
 }): Promise<number | null> {
-  const { data: version, error } = await safeAsync(() =>
-    writePlanInputs(async (tx) => {
-      const existing = await tx.step.findFirst({
-        select: { version: true },
-        where: { lesson: { contentStatus: "completed" }, lessonId, retiredAt: null },
-      });
+  return publishVersion(lessonId, async (tx) => {
+    const existing = await tx.step.findFirst({
+      select: { version: true },
+      where: { lesson: { contentStatus: "completed" }, lessonId, retiredAt: null },
+    });
 
-      if (existing?.version !== replaces) {
-        return null;
-      }
+    if (existing?.version !== replaces) {
+      return null;
+    }
 
-      const prepared = await lockPreparedScreens(tx, { lessonId, screens });
+    const prepared = await lockPreparedScreens(tx, { lessonId, screens });
 
-      /** The plain precondition read may change while admission waits; lock the lesson last. */
-      const current = await lockCurrentLessonVersion(tx, lessonId);
+    /** The plain precondition read may change while admission waits; lock the lesson last. */
+    const current = await lockCurrentLessonVersion(tx, lessonId);
 
-      if (current !== replaces) {
-        throw new LessonPublicationLostError();
-      }
+    if (current !== replaces) {
+      throw new LessonPublicationLostError();
+    }
 
-      await tx.lesson.update({ data: { summary: toSummary(summary) }, where: { id: lessonId } });
-      return writeScreens(tx, { language, lessonId, screens: prepared });
-    }),
-  );
-
-  if (error instanceof LessonPublicationLostError) {
-    return null;
-  }
-
-  if (error) {
-    throw error;
-  }
-
-  if (version !== null) {
-    revalidateCacheTags([getLibraryLessonCacheTag(lessonId)]);
-  }
-
-  return version;
+    await tx.lesson.update({ data: { summary: toSummary(summary) }, where: { id: lessonId } });
+    return writeScreens(tx, { language, lessonId, screens: prepared });
+  });
 }
