@@ -1,4 +1,4 @@
-import { createStepStream } from "@/workflows/_shared/stream-status";
+import { createStepStream, progressStep } from "@/workflows/_shared/stream-status";
 import { type GoalUnderstandingStepName } from "@zoonk/core/library/generation/steps";
 import {
   type UnderstandingRunDraft,
@@ -8,7 +8,7 @@ import {
   readGoalWords,
   recordUnderstandingRun,
 } from "@zoonk/core/view-models/onboarding/understanding-run";
-import { type StepStreamMessage, type WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
+import { type WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
 import { withAiRetry } from "../../_shared/ai-retry";
 
 type UnderstandingStreamStep = GoalUnderstandingStepName | typeof WORKFLOW_ERROR_STEP;
@@ -16,14 +16,7 @@ type UnderstandingStreamStep = GoalUnderstandingStepName | typeof WORKFLOW_ERROR
 type ReadWords = Awaited<ReturnType<typeof readGoalWords>>;
 
 /** Writes one progress event of a draft's run to its stream. */
-export async function understandingProgressStep(
-  message: StepStreamMessage<UnderstandingStreamStep>,
-): Promise<void> {
-  "use step";
-
-  await using stream = createStepStream<UnderstandingStreamStep>();
-  await stream.status(message);
-}
+export const understandingProgressStep = progressStep<UnderstandingStreamStep>;
 
 /** Keeps this run on its draft, so a refresh follows it, and reads what the learner typed. */
 export async function recordUnderstandingRunStep(input: {

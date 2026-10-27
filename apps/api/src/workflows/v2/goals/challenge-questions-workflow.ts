@@ -1,11 +1,12 @@
 import { type ChallengeQuestionWrite } from "@zoonk/core/checkpoints/rules";
-import { CHALLENGE_QUESTIONS_READY_STEP } from "@zoonk/core/library/generation/steps";
-import { WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
+import {
+  CHALLENGE_QUESTIONS_READY_STEP,
+  type ChallengeQuestionsStepName,
+} from "@zoonk/core/library/generation/steps";
 import { getWorkflowMetadata } from "workflow";
 import { type ContentAnalytics } from "../_shared/content-analytics";
-import { claimRunToken } from "../_shared/run-token";
 import { type PlacementItemsWritten, preparePlacementItems } from "./placement-items";
-import { challengeQuestionsProgressStep } from "./steps/challenge-questions-progress-step";
+import { type QuestionWritingResult, runQuestionWriting } from "./question-writing-run";
 
 export type ChallengeQuestionsInput = {
   analytics?: ContentAnalytics;
@@ -18,16 +19,6 @@ export type ChallengeQuestionsInput = {
   quickFormat: "multipleChoice" | "trueFalse";
   writes: ChallengeQuestionWrite[];
 };
-
-export type ChallengeQuestionsResult = { status: "failed" | "joined" | "written" };
-
-async function reportFailure(): Promise<void> {
-  await challengeQuestionsProgressStep({
-    reason: "aiGenerationFailed",
-    status: "error",
-    step: WORKFLOW_ERROR_STEP,
-  });
-}
 
 function sumWritten(results: readonly PlacementItemsWritten[]): PlacementItemsWritten {
   return results.reduce(
@@ -50,56 +41,38 @@ function sumWritten(results: readonly PlacementItemsWritten[]): PlacementItemsWr
  */
 export async function challengeQuestionsWorkflow(
   input: ChallengeQuestionsInput,
-): Promise<ChallengeQuestionsResult> {
+): Promise<QuestionWritingResult> {
   "use workflow";
 
   const { analytics, goalId, later, quickFormat, writes } = input;
   const { workflowRunId } = getWorkflowMetadata();
-  using claim = await claimRunToken(`challenge-questions:${input.key}`);
 
-  if (claim.conflict) {
-    await challengeQuestionsProgressStep({
-      entityId: claim.conflict.runId,
-      status: "started",
-      step: "joinChallengeQuestions",
-    });
+  return runQuestionWriting<ChallengeQuestionsStepName>({
+    steps: {
+      join: "joinChallengeQuestions",
+      ready: CHALLENGE_QUESTIONS_READY_STEP,
+      write: "writeChallengeQuestions",
+    },
+    token: `challenge-questions:${input.key}`,
+    write: async () => {
+      const results = await Promise.all(
+        writes.map((write) =>
+          preparePlacementItems({
+            analytics,
+            formats: [quickFormat],
+            goalId,
+            later,
+            quickCount: write.questionsPerSkill,
+            quickNeeded: write.target,
+            skillIds: write.skillIds,
+            workflowRunId,
+          }),
+        ),
+      );
 
-    return { status: "joined" };
-  }
+      const { failed, written } = sumWritten(results);
 
-  await challengeQuestionsProgressStep({ status: "started", step: "writeChallengeQuestions" });
-
-  try {
-    const results = await Promise.all(
-      writes.map((write) =>
-        preparePlacementItems({
-          analytics,
-          formats: [quickFormat],
-          goalId,
-          later,
-          quickCount: write.questionsPerSkill,
-          quickNeeded: write.target,
-          skillIds: write.skillIds,
-          workflowRunId,
-        }),
-      ),
-    );
-
-    const { failed, written } = sumWritten(results);
-
-    if (written === 0 && failed > 0) {
-      await reportFailure();
-      return { status: "failed" };
-    }
-
-    await challengeQuestionsProgressStep({
-      status: "completed",
-      step: CHALLENGE_QUESTIONS_READY_STEP,
-    });
-
-    return { status: "written" };
-  } catch (error) {
-    await reportFailure();
-    throw error;
-  }
+      return written === 0 && failed > 0 ? "failed" : "written";
+    },
+  });
 }

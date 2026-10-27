@@ -1,7 +1,7 @@
-import { createStepStream } from "@/workflows/_shared/stream-status";
+import { progressStep } from "@/workflows/_shared/stream-status";
 import { writeLevelTestBank } from "@zoonk/core/language/level-test/write-bank";
 import { type LevelTestBankStepName } from "@zoonk/core/library/generation/steps";
-import { type StepStreamMessage, type WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
+import { type WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
 import { withAiRetry } from "../../_shared/ai-retry";
 import { type ContentAnalytics } from "../../_shared/content-analytics";
 
@@ -12,14 +12,7 @@ export type LanguagePair = { language: string; targetLanguage: string };
 type WriteStatus = Awaited<ReturnType<typeof writeLevelTestBank>>["status"];
 
 /** Writes one progress event of a level test bank run to its stream. */
-export async function levelTestBankProgressStep(
-  message: StepStreamMessage<LevelTestBankStreamStep>,
-): Promise<void> {
-  "use step";
-
-  await using stream = createStepStream<LevelTestBankStreamStep>();
-  await stream.status(message);
-}
+export const levelTestBankProgressStep = progressStep<LevelTestBankStreamStep>;
 
 /**
  * Writes the pair's level test when nobody has (each level in its own call, a minute or two in

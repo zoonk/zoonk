@@ -1,10 +1,12 @@
 import { type MockQuestionWrites } from "@zoonk/core/exams/mocks/prep";
-import { MOCK_QUESTIONS_READY_STEP } from "@zoonk/core/library/generation/steps";
-import { WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
-import { createHook, getWorkflowMetadata } from "workflow";
+import {
+  MOCK_QUESTIONS_READY_STEP,
+  type MockQuestionsStepName,
+} from "@zoonk/core/library/generation/steps";
+import { getWorkflowMetadata } from "workflow";
 import { type ContentAnalytics } from "../_shared/content-analytics";
 import { prepareMockRecordings, writeMockQuestions } from "./mock-question-writes";
-import { mockQuestionsProgressStep } from "./steps/mock-questions-progress-step";
+import { type QuestionWritingResult, runQuestionWriting } from "./question-writing-run";
 
 /**
  * Each of the exam's formats the mock is short of, for the skills short of their share, and
@@ -15,16 +17,6 @@ export type MockQuestionsInput = MockQuestionWrites & {
   goalId: string;
   listening?: boolean;
 };
-
-export type MockQuestionsResult = { status: "failed" | "joined" | "written" };
-
-async function reportFailure(): Promise<void> {
-  await mockQuestionsProgressStep({
-    reason: "aiGenerationFailed",
-    status: "error",
-    step: WORKFLOW_ERROR_STEP,
-  });
-}
 
 /**
  * Writes the questions a mock taken any time still needs, when the learner starts it: questions in
@@ -37,42 +29,26 @@ async function reportFailure(): Promise<void> {
  */
 export async function mockQuestionsWorkflow(
   input: MockQuestionsInput,
-): Promise<MockQuestionsResult> {
+): Promise<QuestionWritingResult> {
   "use workflow";
 
   const { analytics, goalId, listening = false, quickFormat, writes } = input;
   const { workflowRunId } = getWorkflowMetadata();
-  const hook = createHook({ token: `mock-questions:${goalId}` });
-  const conflict = await hook.getConflict();
 
-  if (conflict) {
-    await mockQuestionsProgressStep({
-      entityId: conflict.runId,
-      status: "started",
-      step: "joinMockQuestions",
-    });
+  return runQuestionWriting<MockQuestionsStepName>({
+    steps: {
+      join: "joinMockQuestions",
+      ready: MOCK_QUESTIONS_READY_STEP,
+      write: "writeMockQuestions",
+    },
+    token: `mock-questions:${goalId}`,
+    write: async () => {
+      const [{ failed, written }, voiced] = await Promise.all([
+        writeMockQuestions({ analytics, goalId, later: false, quickFormat, workflowRunId, writes }),
+        listening ? prepareMockRecordings({ analytics, goalId, workflowRunId }) : 0,
+      ]);
 
-    return { status: "joined" };
-  }
-
-  await mockQuestionsProgressStep({ status: "started", step: "writeMockQuestions" });
-
-  try {
-    const [{ failed, written }, voiced] = await Promise.all([
-      writeMockQuestions({ analytics, goalId, later: false, quickFormat, workflowRunId, writes }),
-      listening ? prepareMockRecordings({ analytics, goalId, workflowRunId }) : 0,
-    ]);
-
-    if (written === 0 && voiced === 0 && (failed > 0 || listening)) {
-      await reportFailure();
-      return { status: "failed" };
-    }
-
-    await mockQuestionsProgressStep({ status: "completed", step: MOCK_QUESTIONS_READY_STEP });
-
-    return { status: "written" };
-  } catch (error) {
-    await reportFailure();
-    throw error;
-  }
+      return written === 0 && voiced === 0 && (failed > 0 || listening) ? "failed" : "written";
+    },
+  });
 }

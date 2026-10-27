@@ -1,9 +1,11 @@
-import { FOCUS_TEST_QUESTIONS_READY_STEP } from "@zoonk/core/library/generation/steps";
-import { WORKFLOW_ERROR_STEP } from "@zoonk/core/workflows/steps";
-import { createHook, getWorkflowMetadata } from "workflow";
+import {
+  FOCUS_TEST_QUESTIONS_READY_STEP,
+  type FocusTestQuestionsStepName,
+} from "@zoonk/core/library/generation/steps";
+import { getWorkflowMetadata } from "workflow";
 import { type ContentAnalytics } from "../_shared/content-analytics";
 import { preparePlacementItems } from "./placement-items";
-import { focusTestQuestionsProgressStep } from "./steps/focus-test-questions-progress-step";
+import { type QuestionWritingResult, runQuestionWriting } from "./question-writing-run";
 
 export type FocusTestQuestionsInput = {
   analytics?: ContentAnalytics;
@@ -16,16 +18,6 @@ export type FocusTestQuestionsInput = {
   skillIds: string[];
 };
 
-export type FocusTestQuestionsResult = { status: "failed" | "joined" | "written" };
-
-async function reportFailure(): Promise<void> {
-  await focusTestQuestionsProgressStep({
-    reason: "aiGenerationFailed",
-    status: "error",
-    step: WORKFLOW_ERROR_STEP,
-  });
-}
-
 /**
  * Writes the questions a goal's focus test still needs, when the learner starts it, while the test
  * asks the ones that exist: questions in the exam's quick format for every skill it asks about
@@ -35,51 +27,32 @@ async function reportFailure(): Promise<void> {
  */
 export async function focusTestQuestionsWorkflow(
   input: FocusTestQuestionsInput,
-): Promise<FocusTestQuestionsResult> {
+): Promise<QuestionWritingResult> {
   "use workflow";
 
   const { analytics, format, goalId, questionsPerSkill, skillIds } = input;
   const { workflowRunId } = getWorkflowMetadata();
-  const hook = createHook({ token: `focus-test-questions:${goalId}` });
-  const conflict = await hook.getConflict();
 
-  if (conflict) {
-    await focusTestQuestionsProgressStep({
-      entityId: conflict.runId,
-      status: "started",
-      step: "joinFocusTestQuestions",
-    });
+  return runQuestionWriting<FocusTestQuestionsStepName>({
+    steps: {
+      join: "joinFocusTestQuestions",
+      ready: FOCUS_TEST_QUESTIONS_READY_STEP,
+      write: "writeFocusTestQuestions",
+    },
+    token: `focus-test-questions:${goalId}`,
+    write: async () => {
+      const { failed, written } = await preparePlacementItems({
+        analytics,
+        exceptAnswered: true,
+        formats: [format],
+        goalId,
+        quickCount: questionsPerSkill,
+        quickNeeded: questionsPerSkill,
+        skillIds,
+        workflowRunId,
+      });
 
-    return { status: "joined" };
-  }
-
-  await focusTestQuestionsProgressStep({ status: "started", step: "writeFocusTestQuestions" });
-
-  try {
-    const { failed, written } = await preparePlacementItems({
-      analytics,
-      exceptAnswered: true,
-      formats: [format],
-      goalId,
-      quickCount: questionsPerSkill,
-      quickNeeded: questionsPerSkill,
-      skillIds,
-      workflowRunId,
-    });
-
-    if (written === 0 && failed > 0) {
-      await reportFailure();
-      return { status: "failed" };
-    }
-
-    await focusTestQuestionsProgressStep({
-      status: "completed",
-      step: FOCUS_TEST_QUESTIONS_READY_STEP,
-    });
-
-    return { status: "written" };
-  } catch (error) {
-    await reportFailure();
-    throw error;
-  }
+      return written === 0 && failed > 0 ? "failed" : "written";
+    },
+  });
 }

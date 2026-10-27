@@ -46,3 +46,15 @@ export function createStepStream<T extends string>(): StepStream<T> {
     },
   };
 }
+
+/**
+ * Writes one progress event to the run's stream. Workflow code can't touch streams, so events the
+ * workflow itself decides on (joined, ready, failed) go through this step; a workflow names its
+ * steps with `progressStep<TheirNames>`.
+ */
+export async function progressStep<T extends string>(message: StepStreamMessage<T>): Promise<void> {
+  "use step";
+
+  await using stream = createStepStream<T>();
+  await stream.status(message);
+}
