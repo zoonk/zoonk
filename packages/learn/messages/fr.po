@@ -1842,7 +1842,6 @@ msgstr "Défi de la phase"
 #: src/explain/explain-ending.tsx
 #: src/language/conversation/call-stars-step.tsx
 #: src/missions/brain-power-reward.tsx
-#: src/missions/mission-moment.tsx
 #: src/mistakes/practice-done.tsx
 #: src/session/summary/summary-parts.tsx
 msgctxt "LEuDU7"
