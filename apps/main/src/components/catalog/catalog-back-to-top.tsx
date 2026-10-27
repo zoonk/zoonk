@@ -1,8 +1,9 @@
 "use client";
 
-import { GridBackToTop } from "@zoonk/ui/components/grid";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import { getScrollBehavior } from "@zoonk/ui/lib/scroll-behavior";
 import { cn } from "@zoonk/ui/lib/utils";
+import { ArrowUpIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type MouseEvent, useEffect, useState } from "react";
 import { CATALOG_TOP_TARGET_ID } from "./catalog-top-target";
@@ -51,9 +52,11 @@ export function CatalogBackToTop() {
   }, []);
 
   return (
-    <GridBackToTop
+    <a
       aria-label={label}
       className={cn(
+        buttonVariants({ size: "sm", variant: "ghost" }),
+        "text-muted-foreground hover:text-foreground px-2 text-xs",
         "bg-background/85 border-border/40 fixed right-4 bottom-[calc(env(safe-area-inset-bottom)+5rem)] z-30 border shadow-[0_8px_24px_rgb(0_0_0/0.08)] backdrop-blur-md transition-[opacity,translate] md:right-6 lg:bottom-6",
         isVisible
           ? "pointer-events-auto translate-y-0 opacity-100"
@@ -63,7 +66,8 @@ export function CatalogBackToTop() {
       onClick={scrollToCatalogTop}
       title={label}
     >
+      <ArrowUpIcon aria-hidden="true" className="size-3.5" />
       <span className="hidden sm:inline">{label}</span>
-    </GridBackToTop>
+    </a>
   );
 }
