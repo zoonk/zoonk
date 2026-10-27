@@ -1427,7 +1427,6 @@ msgid "You beat the Trickster!"
 msgstr "¡Has vencido al Tramposo!"
 
 #: src/challenge/challenge-intro.tsx
-#: src/checkpoints/checkpoint-result-view.tsx
 #: src/mock/mock-summary-row.tsx
 msgctxt "62a7NR"
 msgid "{correct} of {total} right"
@@ -1739,9 +1738,9 @@ msgid "Confirm"
 msgstr "Confirmar"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
-msgctxt "0JQIRW"
-msgid "+{points} · phase {phase} done"
-msgstr "+{points} · fase {phase} completada"
+msgctxt "v5U-vD"
+msgid "<reward>+{points}</reward> · phase {phase} done"
+msgstr "<reward>+{points}</reward> · fase {phase} completada"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
 #: src/checkpoints/checkpoint-result-details.tsx

@@ -1,10 +1,10 @@
 "use client";
 
 import { useExtracted } from "next-intl";
+import { MomentReadouts } from "../_components/moment-readouts";
 import { StepCard, StepHeader, StepTitle } from "../_components/step-card";
 import { Steps } from "../_components/steps";
 import { useTaskAsideShown } from "../_components/task-header";
-import { TaskMeta } from "../_components/task-meta";
 import { SCREEN_STEADY_MS } from "../_utils/use-steady";
 import { DayMoment } from "../session/day-moment";
 import { getCeremonyMoment } from "../session/moment-ceremony";
@@ -34,9 +34,10 @@ function useHeadline(): string {
 }
 
 /**
- * "5 of 6 right"; a duel not won also says what winning took, of all its questions ("7 of 10
- * right to win"), since it ends as soon as it can't be won: "2 of 6 right" alone would read as
- * if 7 were never in reach.
+ * "5 of 6 right" as a readout, as every task's end draws its score; a duel not won also says what
+ * winning took, of all its questions ("7 of 10 right to win"), since it ends as soon as it can't be
+ * won: "2 of 6 right" alone would read as if 7 were never in reach. Its Brain Power is the rewards'
+ * row, so the readouts leave it out.
  */
 function ScoreLine() {
   const t = useExtracted();
@@ -49,13 +50,10 @@ function ScoreLine() {
   }
 
   return (
-    <TaskMeta
-      className="text-sm leading-6"
+    <MomentReadouts
+      brainPower={0}
+      className="pt-3"
       facts={[
-        t("{correct} of {total} right", {
-          correct: String(outcome.correct),
-          total: String(outcome.total),
-        }),
         !won &&
           duel.state.completion?.checkpoint &&
           t("{count} of {total} right to win", {
@@ -63,6 +61,7 @@ function ScoreLine() {
             total: String(checkpoint.questions.length),
           }),
       ]}
+      score={{ answered: outcome.total, correct: outcome.correct }}
     />
   );
 }

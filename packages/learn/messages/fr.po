@@ -1427,7 +1427,6 @@ msgid "You beat the Trickster!"
 msgstr "Tu as vaincu le Farceur !"
 
 #: src/challenge/challenge-intro.tsx
-#: src/checkpoints/checkpoint-result-view.tsx
 #: src/mock/mock-summary-row.tsx
 msgctxt "62a7NR"
 msgid "{correct} of {total} right"
@@ -1739,9 +1738,9 @@ msgid "Confirm"
 msgstr "Confirmer"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
-msgctxt "0JQIRW"
-msgid "+{points} · phase {phase} done"
-msgstr "+{points} · phase {phase} terminée"
+msgctxt "v5U-vD"
+msgid "<reward>+{points}</reward> · phase {phase} done"
+msgstr "<reward>+{points}</reward> · phase {phase} terminée"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
 #: src/checkpoints/checkpoint-result-details.tsx
