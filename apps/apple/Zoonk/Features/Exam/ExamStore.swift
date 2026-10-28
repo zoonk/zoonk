@@ -105,9 +105,7 @@ final class ExamStore {
     goalId: String, choice: MockChoice, acceptFewer: Bool,
     onWriting: @escaping @MainActor () -> Void
   ) async -> MutationResult<MockStartOutcome> {
-    let clients = api.clients
-
-    return await write(invalidating: [.learnerModel]) { api, token in
+    await write(invalidating: [.learnerModel]) { api, token in
       let first = try await api.startMock(
         token: token, goalId: goalId, choice: choice, acceptFewer: acceptFewer)
 
@@ -126,12 +124,7 @@ final class ExamStore {
       switch writing {
       case .writing(let generationId):
         await onWriting()
-
-        for try await _ in clients.generationEvents(id: generationId, token: token) {}
-
-        guard try await !api.generationIsRunning(token: token, generationId: generationId) else {
-          throw APIError.unavailable
-        }
+        try await api.waitForQuestions(token: token, generationId: generationId)
       case .refused(let limit):
         return .refused(limit)
       case .ready, .preparing:

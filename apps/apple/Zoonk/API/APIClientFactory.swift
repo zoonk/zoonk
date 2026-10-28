@@ -49,9 +49,9 @@ struct APIClientFactory {
   }
 
   /// A client for long-lived responses such as Server-Sent Events, or a write the server takes
-  /// longer than a request's usual wait to answer (starting a mock exam picks its questions).
-  func makeStreamingClient(token: String? = nil, sendingNull keys: [String] = []) -> Client {
-    makeClient(token: token, transport: streamingTransport, sendingNull: keys)
+  /// longer than a request's usual wait to answer (grading an essay is a model call).
+  func makeStreamingClient(token: String? = nil) -> Client {
+    makeClient(token: token, transport: streamingTransport)
   }
 
   private func makeClient(

@@ -127,7 +127,7 @@ struct ExamAPI {
     let body: Components.Schemas.AnytimeMockInput = try PracticeJSON.recode(
       MockStartRequest(choice: choice, acceptFewer: acceptFewer))
 
-    return try await performLong(token: token, sendingNull: Self.shapeNulls) { client in
+    return try await clients.perform(token: token, sendingNull: Self.shapeNulls) { client in
       let started: AnytimeMockResponse
 
       switch try await client.startAnytimeMock(path: .init(goalId: goalId), body: .json(body)) {
@@ -193,13 +193,13 @@ struct ExamAPI {
     }
   }
 
-  /// A write the server answers after a request's usual wait: starting a mock picks its
-  /// questions, handing it in grades it, and an essay's grade is a model call.
+  /// A write the server answers after a request's usual wait: grading essays is a model call
+  /// each (10 to 25 seconds), which main waits up to 90 seconds for (120 for a mock's few).
   private func performLong<Output: Sendable>(
-    token: String, sendingNull keys: [String] = [], operation: (Client) async throws -> Output
+    token: String, operation: (Client) async throws -> Output
   ) async throws -> Output {
     do {
-      return try await operation(clients.makeStreamingClient(token: token, sendingNull: keys))
+      return try await operation(clients.makeStreamingClient(token: token))
     } catch {
       throw apiError(from: error)
     }
@@ -211,17 +211,15 @@ struct ExamAPI {
     return .refused(limit)
   }
 
-  /// Whether the run writing questions is still at it; a failed run throws.
-  func generationIsRunning(token: String, generationId: String) async throws -> Bool {
-    try await clients.perform(token: token) { client in
-      switch try await client.getGeneration(path: .init(generationId: generationId)) {
-      case .ok(let response):
-        let status = try response.body.json.status
-        if status == .failed || status == .cancelled { throw APIError.unavailable }
-        return status == .pending || status == .running
-      default: throw APIError.unavailable
-      }
+  /// Follows the run writing the mock's questions (started by the learner's tap) until they're
+  /// ready; a step that errors, or a stream that ends without it, fails the wait.
+  func waitForQuestions(token: String, generationId: String) async throws {
+    for try await event in clients.generationEvents(id: generationId, token: token) {
+      if event.step == "mockQuestionsReady", event.status == "completed" { return }
+      if event.status == "error" { throw APIError.unavailable }
     }
+
+    throw APIError.unavailable
   }
 
   // MARK: A mock
@@ -254,7 +252,7 @@ struct ExamAPI {
 
   func submitSection(token: String, blockId: String, section: Int) async throws -> MockStepOutcome?
   {
-    try await performLong(token: token) { client in
+    try await clients.perform(token: token) { client in
       switch try await client.submitMockSection(
         path: .init(blockId: blockId, section: section), body: .json(.init(timeZone: timeZone)))
       {
@@ -270,7 +268,7 @@ struct ExamAPI {
   }
 
   func finish(token: String, blockId: String) async throws -> MockStepOutcome? {
-    try await performLong(token: token) { client in
+    try await clients.perform(token: token) { client in
       switch try await client.finishMock(
         path: .init(blockId: blockId), body: .json(.init(timeZone: timeZone)))
       {
