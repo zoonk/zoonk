@@ -430,7 +430,7 @@ final class ZoonkUITests: XCTestCase {
       app.primaryNavigationItem("Today").tap()
       openStatistics(in: app)
       XCTAssertTrue(
-        app.staticTexts["Study days"].waitForExistence(timeout: 5),
+        app.navigationBars["Statistics"].waitForExistence(timeout: 5),
         "Expected the level button to push Statistics")
       app.navigationBars.buttons.firstMatch.tap()
     }
