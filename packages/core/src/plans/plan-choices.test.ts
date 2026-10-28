@@ -1,5 +1,5 @@
 import { type Skill, prisma } from "@zoonk/db";
-import { goalFixture, planChangeFixture, planFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { skillPrerequisiteFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -18,6 +18,7 @@ import { getPlanBasesAdvice } from "./get-bases-advice";
 import { getGoalPlan } from "./get-goal-plan";
 import { type PlanOperation } from "./plan-contract";
 import { previewPlanChange } from "./preview-plan-change";
+import { refreshGoalPlan } from "./refresh-goal-plan";
 
 /** Lucas's ENEM goal with its plan built (see `enemBiologyGoal`). */
 async function setup(options: Parameters<typeof enemBiologyGoal>[0]) {
@@ -247,7 +248,10 @@ describe("bases a learner chooses how to study", () => {
     expect(learned.length).toBeGreaterThan(1);
   });
 
-  it("leaves the plan as it is when the learner chooses for a base whose core they studied", async () => {
+  // Class test seed 1255: a quick lesson for a base whose core the learner had studied re-planned
+  // the plan, and cell theory left it. Such a base shows as studied, open only to deep study, and a
+  // quick lesson for it is refused before anything is planned (R15).
+  it("offers a base whose core the learner studied only deep study, and refuses a quick lesson for it", async () => {
     const { goal, living, plan } = await setup({ days: 30, size: 3 });
     const learnFirst = [{ choice: "essential" as const, skillId: living.id }];
     const quickChoice = [{ choice: "quick" as const, skillId: living.id }];
@@ -261,39 +265,34 @@ describe("bases a learner chooses how to study", () => {
       where: { id: { in: core.map((item) => item.id) } },
     });
 
+    // The session that finished them saves what the learner studied.
+    await refreshGoalPlan({ goalId: goal.id });
+
+    const view = await readPlan(goal.id);
+
+    expect(view.bases?.items.find((item) => item.skillId === living.id)).toMatchObject({
+      choices: ["deep"],
+      studied: true,
+    });
+
     const before = await prisma.plan.findUniqueOrThrow({
       include: { items: { orderBy: { position: "asc" } } },
       where: { id: plan.id },
     });
 
-    const preview = await previewPlanChange({
-      goalId: goal.id,
-      input: { operations: [{ choices: quickChoice, kind: "setBaseChoices" }], timeZone: "UTC" },
-    });
-
-    expect(preview).toMatchObject({ preview: { ready: true, unchanged: true }, status: "ready" });
-
-    const [phaseAdvice, baseAdvice] = await Promise.all([
-      planChangeFixture({
-        kind: "edited",
-        payload: { operations: [{ kind: "fitPhaseDates" }], source: "phaseDates" },
-        planId: plan.id,
-        status: "proposed",
-      }),
-      planChangeFixture({
-        kind: "edited",
-        payload: {
-          operations: [{ choices: quickChoice, kind: "setBaseChoices" }],
-          source: "planEdit",
-        },
-        planId: plan.id,
-        status: "proposed",
-      }),
-    ]);
+    const operations: PlanOperation[] = [{ choices: quickChoice, kind: "setBaseChoices" }];
 
     await expect(
-      change(goal.id, [{ choices: quickChoice, kind: "setBaseChoices" }]),
-    ).resolves.toStrictEqual({ change: null, status: "applied" });
+      previewPlanChange({
+        goalId: goal.id,
+        input: { operations: operations as never, timeZone: "UTC" },
+      }),
+    ).resolves.toStrictEqual({ error: "baseChoiceClosed", status: "invalid" });
+
+    await expect(change(goal.id, operations)).resolves.toStrictEqual({
+      error: "baseChoiceClosed",
+      status: "invalid",
+    });
 
     const after = await prisma.plan.findUniqueOrThrow({
       include: { items: { orderBy: { position: "asc" } } },
@@ -301,17 +300,7 @@ describe("bases a learner chooses how to study", () => {
     });
 
     expect(core.length).toBeGreaterThan(0);
-    expect(after.version).toBe(before.version);
-    expect(after.items).toStrictEqual(before.items);
-    expect(after.settings).toMatchObject({ baseChoices: quickChoice });
-
-    await expect(
-      prisma.planChange.findUniqueOrThrow({ where: { id: baseAdvice.id } }),
-    ).resolves.toMatchObject({ status: "replaced" });
-
-    await expect(
-      prisma.planChange.findUniqueOrThrow({ where: { id: phaseAdvice.id } }),
-    ).resolves.toMatchObject({ status: "proposed" });
+    expect(after).toStrictEqual(before);
   });
 
   // Lucas switched a base from its quick lesson to deep study and back, then to its core and back.

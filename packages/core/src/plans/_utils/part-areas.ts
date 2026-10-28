@@ -7,6 +7,7 @@ import { type PlanOperationError, applyPlanOperations } from "../planner/plan-op
 import { type PlanGraph, type PlanState } from "../planner/plan-state";
 import { hasWeeklyEventCollision } from "./missing-weekly-move";
 import { type PlanContext } from "./plan-context";
+import { readPlanSummary } from "./plan-summary";
 
 /** The plan's areas that are part of another for learners (see `findPartAreas`), by its graph. */
 export function loadGraphPartAreas({
@@ -76,7 +77,7 @@ export async function applyChangeOperations({
   noticeGraph = null,
   operations,
 }: {
-  context: Pick<PlanContext, "goal" | "items" | "state" | "today">;
+  context: Pick<PlanContext, "goal" | "items" | "plan" | "state" | "today">;
   /** The graph a `followNotice` operation follows (see `applyPlanOperations`). */
   noticeGraph?: PlanGraph | null;
   operations: readonly PlanOperation[];
@@ -94,6 +95,10 @@ export async function applyChangeOperations({
     return { error: "mockCollision" };
   }
 
+  if (hasClosedBaseChoice({ context, operations })) {
+    return { error: "baseChoiceClosed" };
+  }
+
   const result = applyPlanOperations({
     goalKind: context.goal.kind,
     noticeGraph,
@@ -103,4 +108,34 @@ export async function applyChangeOperations({
   });
 
   return "error" in result ? result : { operations: withParts, state: result.state };
+}
+
+/**
+ * Whether a change chooses a way to study a base the saved plan's bases list doesn't open for it
+ * (see `getOpenChoices`): a quick lesson for a base whose core the learner studied changes nothing.
+ * The list is the saved summary's, the one the bases sheet and the API show.
+ */
+function hasClosedBaseChoice({
+  context,
+  operations,
+}: {
+  context: Pick<PlanContext, "goal" | "plan">;
+  operations: readonly PlanOperation[];
+}): boolean {
+  const summary = readPlanSummary({
+    plan: { ...context.plan, userId: context.goal.userId },
+    value: context.plan.summary,
+  });
+
+  const open = new Map(
+    (summary?.selected.bases?.bases ?? []).map((base) => [base.skillId, base.choices]),
+  );
+
+  return operations.some(
+    (operation) =>
+      operation.kind === "setBaseChoices" &&
+      operation.choices.some(
+        (entry) => open.has(entry.skillId) && !open.get(entry.skillId)?.includes(entry.choice),
+      ),
+  );
 }

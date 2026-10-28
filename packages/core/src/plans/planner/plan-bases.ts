@@ -17,6 +17,7 @@ import { DEFAULT_LESSON_MINUTES, type PlannerLesson, assignLessonSkills } from "
 import { getSettledSkillIds } from "./settled-skills";
 import { keepTeachingOrder } from "./skill-order";
 import { countStandInLessons } from "./stand-in-size";
+import { listStudiedCores } from "./studied-cores";
 
 /**
  * A goal this close (in days) whose time doesn't cover everything in depth gets a quick lesson for
@@ -32,16 +33,49 @@ const CLOSE_TO_DATE_DAYS = 60;
  * (the first third, at least one), or its quick lesson. `neededFor` are what's built on it and worth
  * more (an exam's notice topics, or a goal's outcome skills), the most valuable first. `known`
  * when placement or a test-out found the learner knows it: it's out of the plan already, with
- * nothing to choose.
+ * nothing to choose. `studied` when the learner studied its core, none of its lessons still to do
+ * (see `listStudiedCores`): only deep study, when it has depth, can change anything for it.
+ * `choices` are the ways it can still be studied (see `getOpenChoices`), the one place that
+ * decides it for the planner, the bases sheet and the API.
  */
 export type PlanBase = {
   area: string;
+  choices: BaseChoice[];
   known: boolean;
   minutes: { deep: number; essential: number; quick: number };
   name: string;
   neededFor: string[];
   skillId: string;
+  studied: boolean;
 };
+
+const ALL_CHOICES: BaseChoice[] = ["deep", "essential", "quick", "skip"];
+
+/**
+ * The ways a base can still be studied: none for one the learner knows, only in depth for one
+ * whose core they studied and that has more than its core (any other choice keeps no more than the
+ * studied core, so it changes nothing: a quick lesson for prokaryotes' studied core let cell theory
+ * go), and every way otherwise. A quick lesson done is no studied core, so its choices stay open.
+ */
+function getOpenChoices({
+  depth,
+  known,
+  studied,
+}: {
+  depth: boolean;
+  known: boolean;
+  studied: boolean;
+}): BaseChoice[] {
+  if (known) {
+    return [];
+  }
+
+  if (studied) {
+    return depth ? ["deep"] : [];
+  }
+
+  return ALL_CHOICES;
+}
 
 type BaseInput = {
   /** The Library band of each skill, which tells a goal that isn't an exam its foundations. */
@@ -193,6 +227,7 @@ export function findPlanBases(input: BaseInput): PlanBase[] {
   });
 
   const kept = studied.filter((skill) => !finished.has(skill.skillId));
+  const studiedCores = listStudiedCores(input);
 
   const skillIds = graph.skills.map((skill) => skill.skillId);
   const keptIds = kept.map((skill) => skill.skillId);
@@ -225,14 +260,18 @@ export function findPlanBases(input: BaseInput): PlanBase[] {
     }
 
     const minutes = listLessonMinutes({ lessons: input.lessons, skill, teaching });
+    const core = getCoreLessons(minutes.length);
+    const known = settled.has(skill.skillId);
+    const done = studiedCores.has(skill.skillId);
 
     return [
       {
         area: getSkillArea({ graph, skill }),
-        known: settled.has(skill.skillId),
+        choices: getOpenChoices({ depth: minutes.length > core, known, studied: done }),
+        known,
         minutes: {
           deep: sum(minutes) * input.paceFactor,
-          essential: sum(minutes.slice(0, getCoreLessons(minutes.length))) * input.paceFactor,
+          essential: sum(minutes.slice(0, core)) * input.paceFactor,
           quick:
             (input.quickLessons?.get(skill.skillId)?.minutes ?? QUICK_LESSON_MINUTES) *
             input.paceFactor,
@@ -247,23 +286,33 @@ export function findPlanBases(input: BaseInput): PlanBase[] {
           ),
         ].filter(Boolean),
         skillId: skill.skillId,
+        studied: done,
       },
     ];
   });
 }
 
-/** The learner's choice for each base still to choose for; a base without one is studied for its core. */
+/**
+ * The learner's choice for each base still to choose for, while that choice is open (see
+ * `getOpenChoices`); a base without one is studied for its core.
+ */
 export function getBaseChoices({
   bases,
   choices,
 }: {
-  bases: readonly PlanBase[];
+  bases: readonly Pick<PlanBase, "choices" | "known" | "skillId">[];
   choices: readonly StoredBaseChoice[];
 }): Map<string, BaseChoice> {
-  const open = new Set(bases.filter((base) => !base.known).map((base) => base.skillId));
   const stored = new Map(choices.map((entry) => [entry.skillId, entry.choice]));
 
-  return new Map([...open].map((skillId) => [skillId, stored.get(skillId) ?? "essential"]));
+  return new Map(
+    bases
+      .filter((base) => !base.known)
+      .map((base) => {
+        const choice = stored.get(base.skillId);
+        return [base.skillId, choice && base.choices.includes(choice) ? choice : "essential"];
+      }),
+  );
 }
 
 /** The plan's bases with what the app recommends for them. */

@@ -33,12 +33,40 @@ function useChoiceName() {
   return (choice: BaseChoice) => names[choice];
 }
 
-/** The minutes prerequisites take each as the learner chose; none for the ones skipped. */
+/**
+ * The minutes a prerequisite still takes as `choice` studies it: one whose core the learner
+ * studied takes only its depth, in depth, and nothing otherwise; a skipped one takes none.
+ */
+function minutesFor(item: PlanBaseView, choice: BaseChoice): number {
+  if (item.studied) {
+    return choice === "deep" ? Math.max(0, item.minutes.deep - item.minutes.essential) : 0;
+  }
+
+  return choice === "skip" ? 0 : item.minutes[choice];
+}
+
+/** The minutes prerequisites take each as the learner chose. */
 function minutesOf(items: readonly PlanBaseView[], choiceOf: (base: PlanBaseView) => BaseChoice) {
-  return items.reduce((sum, item) => {
-    const choice = choiceOf(item);
-    return choice === "skip" ? sum : sum + item.minutes[choice];
-  }, 0);
+  return items.reduce((sum, item) => sum + minutesFor(item, choiceOf(item)), 0);
+}
+
+/**
+ * What one choice for many prerequisites does to each: the ones open to it take it, and the others
+ * keep theirs (one whose core the learner studied stays studied unless it's in depth).
+ */
+export function chooseFor(item: PlanBaseView, choice: BaseChoice, current: BaseChoice): BaseChoice {
+  return item.choices.includes(choice) ? choice : current;
+}
+
+/** The ways any of these prerequisites can still be studied, in `BASE_CHOICES`' order. */
+function listOpenChoices(items: readonly PlanBaseView[]): BaseChoice[] {
+  return BASE_CHOICES.filter((choice) => items.some((item) => item.choices.includes(choice)));
+}
+
+/** The prerequisites a choice for all of them can change: the ones not studied yet. */
+export function listOpen(items: readonly PlanBaseView[]): readonly PlanBaseView[] {
+  const open = items.filter((item) => !item.studied);
+  return open.length > 0 ? open : items;
 }
 
 /** The one way the prerequisites are all studied; null while they're studied in different ways. */
@@ -81,11 +109,14 @@ export function AllBasesChoice({
     skip: t("Leave them out of your plan"),
   };
 
-  const choices = BASE_CHOICES.map((choice) => ({
+  const choices = listOpenChoices(items).map((choice) => ({
     description: descriptions[choice],
     label: choiceName(choice),
     mark: choice === recommended ? t("Recommended") : undefined,
-    trailing: choice === "skip" ? undefined : formatDuration(minutesOf(items, () => choice)),
+    trailing:
+      choice === "skip"
+        ? undefined
+        : formatDuration(minutesOf(items, (item) => chooseFor(item, choice, item.choice))),
     value: choice,
   }));
 
@@ -128,13 +159,17 @@ function SubjectChoice({
   const formatDuration = useFormatDuration();
   const selectId = useId();
   const descriptionId = useId();
-  const value = getSharedChoice(items, choiceOf);
+  const value = getSharedChoice(listOpen(items), choiceOf);
   const minutes = minutesOf(items, choiceOf);
+  const studied = items.every((item) => item.studied);
 
   const names = format.list(
-    items.map((item) => item.name),
+    items.map((item) => (item.studied ? t("{name} (studied)", { name: item.name }) : item.name)),
     { type: "conjunction" },
   );
+
+  const options = listOpenChoices(items);
+  const shown = value && !options.includes(value) ? [value, ...options] : options;
 
   return (
     <SettingRow
@@ -169,9 +204,9 @@ function SubjectChoice({
           </NativeSelectOption>
         )}
 
-        {BASE_CHOICES.map((choice) => (
+        {shown.map((choice) => (
           <NativeSelectOption key={choice} value={choice}>
-            {choiceName(choice)}
+            {studied && choice === "essential" ? t("Studied") : choiceName(choice)}
           </NativeSelectOption>
         ))}
       </NativeSelect>

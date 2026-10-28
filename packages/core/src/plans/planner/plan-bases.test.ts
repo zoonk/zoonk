@@ -92,6 +92,7 @@ describe(findPlanBases, () => {
     expect(findBases()).toStrictEqual([
       {
         area: AREA,
+        choices: ["deep", "essential", "quick", "skip"],
         known: false,
         // Three lessons outlined and six still to write: its core is the first three, and a quick
         // lesson takes one lesson's time.
@@ -99,7 +100,18 @@ describe(findPlanBases, () => {
         name: "Skill living",
         neededFor: ["Ecologia"],
         skillId: "living",
+        studied: false,
       },
+    ]);
+  });
+
+  // A quick lesson or a skip keeps no more than a studied core: only deep study changes anything,
+  // so it's the one way left (R15, class test seed 1255).
+  it("opens a base whose core the learner studied to deep study only", () => {
+    const items = ["living-1", "living-2", "living-3"].map((lessonId) => doneLesson(lessonId));
+
+    expect(findBases({ items })).toMatchObject([
+      { choices: ["deep"], skillId: "living", studied: true },
     ]);
   });
 

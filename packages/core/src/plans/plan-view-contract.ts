@@ -289,10 +289,17 @@ export type PlanToolView = {
 export type PlanBaseView = {
   area: string;
   choice: BaseChoice;
+  /**
+   * The ways it can still be studied: only in depth once its core is studied (`studied`), when
+   * it has more than its core; every way otherwise. A choice it isn't open to is refused.
+   */
+  choices: BaseChoice[];
   minutes: { deep: number; essential: number; quick: number };
   name: string;
   neededFor: string[];
   skillId: string;
+  /** The learner studied its core, none of its lessons still to do: it shows as studied. */
+  studied: boolean;
 };
 
 /**

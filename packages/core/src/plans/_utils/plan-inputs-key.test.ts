@@ -25,11 +25,13 @@ const input: Required<BuildPlanInput> = {
   bases: [
     {
       area: "Math",
+      choices: ["deep", "essential", "quick", "skip"],
       known: false,
       minutes: { deep: 20, essential: 10, quick: 5 },
       name: "Fractions",
       neededFor: ["ratios"],
       skillId: "fractions",
+      studied: false,
     },
   ],
   bossDays: new Map([["boss:0", { beside: false, date: "2026-10-16" }]]),
@@ -109,7 +111,7 @@ describe(getPlanInputsKey, () => {
   // top of their days (their settings kept the mocks runs moved off them) plan once more.
   it("keeps the bytes of the keys plans were saved with", () => {
     expect(getPlanInputsKey({ input, items: [{ ...item, status: "done" }] })).toBe(
-      "73541100b6c938f450c7a826186798436b06a14578e9f3f77048401b9b0a64e6",
+      "ccad572fad22d3bfc9f48361e60bf8b813f9f9356e52166ca7a942a0b03b0b5b",
     );
   });
 

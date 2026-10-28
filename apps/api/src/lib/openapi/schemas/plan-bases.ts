@@ -24,6 +24,12 @@ export const planBasesSchema = z
               description:
                 "deep: every lesson of it, core and depth; essential: its core, the first third of its lessons, before what builds on it (the default); quick: one short lesson that sums it up with a worked example; skip: none of it",
             }),
+          choices: z
+            .array(z.enum(["deep", "essential", "quick", "skip"]))
+            .meta({
+              description:
+                "The choices it is open to, the only ones setBaseChoices accepts for it (others are refused with baseChoiceClosed): only deep once its core is studied (studied), and only when it has more than its core; every choice otherwise. Offer only these",
+            }),
           minutes: z
             .object({ deep: minutesSchema, essential: minutesSchema, quick: minutesSchema })
             .meta({ description: "What each way of studying it takes at the learner's pace" }),
@@ -35,6 +41,12 @@ export const planBasesSchema = z
                 "What's built on it and worth more: an exam's notice topics, in the notice's own words, or a goal's outcome skills (its portfolio, its job search), the most valuable first",
             }),
           skillId: z.uuid(),
+          studied: z
+            .boolean()
+            .meta({
+              description:
+                'The learner studied its core, none of its lessons still to do: say "Studied", and offer only deep study when choices has it',
+            }),
         })
         .meta({ id: "PlanBase" }),
     ),

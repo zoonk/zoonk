@@ -11,7 +11,7 @@ const planChangeInvalidErrorSchema = errorSchema
         reason: z
           .string()
           .describe(
-            "Why the change was refused. mockCollision means two weekly events would share a day: the requested day already holds a weekly challenge or mock, another move in the plan or the request takes an event there, or the event already moved once. Preserve the prior plan and pick another day. Preserve unknown reasons.",
+            "Why the change was refused. mockCollision means two weekly events would share a day: the requested day already holds a weekly challenge or mock, another move in the plan or the request takes an event there, or the event already moved once. Preserve the prior plan and pick another day. baseChoiceClosed means a setBaseChoices choice isn't in that base's choices (a studied base is open only to deep study): offer only its choices. Preserve unknown reasons.",
           ),
         unfundedMove: unfundedMoveSchema
           .optional()

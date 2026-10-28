@@ -159,11 +159,13 @@ describe("an automatic run on a plan that studies a base with its quick lesson",
       bases: [
         {
           area: "A",
+          choices: ["deep", "essential", "quick", "skip"],
           known: false,
           minutes: { deep: 18, essential: 6, quick: 3 },
           name: "b",
           neededFor: ["t"],
           skillId: "b",
+          studied: false,
         },
       ],
       goal: { dailyMinutes: 12, kind: "learn", targetDate: fromIsoDate("2026-10-30") },

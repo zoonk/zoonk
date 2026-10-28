@@ -10,6 +10,7 @@ import { applyStudyOperation, isStudyOperation } from "./study-operations";
 
 export type PlanOperationError =
   | "badMove"
+  | "baseChoiceClosed"
   | "mockCollision"
   | "noStudyDays"
   | "notExam"

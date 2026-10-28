@@ -89,6 +89,7 @@ msgid "New"
 msgstr "Nouveau"
 
 #: src/_components/coverage-bar.tsx
+#: src/plan/plan-bases-choices.tsx
 #: src/syllabus/subject-aside.tsx
 msgctxt "cMaydB"
 msgid "Studied"
@@ -9595,6 +9596,11 @@ msgid "All prerequisites"
 msgstr "Tous les prérequis"
 
 #: src/plan/plan-bases-choices.tsx
+msgctxt "vtSOPA"
+msgid "{name} (studied)"
+msgstr "{name} (étudié)"
+
+#: src/plan/plan-bases-choices.tsx
 msgctxt "Mz9DHY"
 msgid "{names} · {time}"
 msgstr "{names} · {time}"
@@ -9669,6 +9675,11 @@ msgstr "Enregistrer les choix"
 msgctxt "Ey0ZIg"
 msgid "Your prerequisites have different choices. Picking one above applies it to all."
 msgstr "Tes prérequis n’ont pas tous la même option. Choisis-en une ci-dessus pour l’appliquer à tous."
+
+#: src/plan/plan-bases-sheet.tsx
+msgctxt "QpxGG7"
+msgid "Prerequisites you've studied stay studied."
+msgstr "Les prérequis que tu as déjà étudiés restent étudiés."
 
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-bases.tsx

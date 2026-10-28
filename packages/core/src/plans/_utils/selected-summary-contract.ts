@@ -27,9 +27,12 @@ const shortLessonSchema = z
  * One of the plan's bases as the layout studied it: what it is (its area, name and the skills it's
  * needed for, see `PlanBase`), whether the learner knows it, each way's minutes and the choice.
  */
+const baseChoiceSchema = z.enum(["deep", "essential", "quick", "skip"]);
+
 const baseSchema = z.object({
   area: z.string(),
-  choice: z.enum(["deep", "essential", "quick", "skip"]),
+  choice: baseChoiceSchema,
+  choices: z.array(baseChoiceSchema),
   known: z.boolean(),
   minutes: z.object({
     deep: minutesSchema,
@@ -39,6 +42,7 @@ const baseSchema = z.object({
   name: z.string(),
   neededFor: z.array(z.string()),
   skillId: z.string(),
+  studied: z.boolean(),
 });
 
 /** What the selected plan covers of the chosen requirement by the deadline (see `getCoverage`). */

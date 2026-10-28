@@ -8,7 +8,7 @@ import {
   type StoredBaseChoice,
 } from "./plan-state";
 import { type PlannerLesson, assignLessonSkills, getStandInLessons } from "./plan-units";
-import { countCoreLessons, listStudiedCores } from "./studied-cores";
+import { countCoreLessons } from "./studied-cores";
 
 type ChoiceInput = Pick<
   BuildPlanInput,
@@ -17,19 +17,16 @@ type ChoiceInput = Pick<
 
 /**
  * The learner's base choices but a skip of a base they then missed a question on: it comes back
- * to its core, as a base without a choice. A choice of no more than a base's core for one whose
- * core they studied changes nothing, so it isn't one (see `listStudiedCores`).
+ * to its core, as a base without a choice (R19). Which choices a base still takes is the bases
+ * list's to say (see `getBaseChoices`).
  */
 export function getKeptBaseChoices(
-  input: Pick<ChoiceInput, "graph" | "items" | "lessons" | "missedSkillIds" | "settings">,
+  input: Pick<ChoiceInput, "missedSkillIds" | "settings">,
 ): StoredBaseChoice[] {
   const missed = input.missedSkillIds ?? new Set<string>();
-  const studied = listStudiedCores(input);
 
   return input.settings.baseChoices.filter(
-    (entry) =>
-      (entry.choice !== "skip" || !missed.has(entry.skillId)) &&
-      (entry.choice === "deep" || !studied.has(entry.skillId)),
+    (entry) => entry.choice !== "skip" || !missed.has(entry.skillId),
   );
 }
 

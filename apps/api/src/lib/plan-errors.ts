@@ -17,6 +17,8 @@ export const planErrorCodes = {
 
 const OPERATION_MESSAGES = {
   badMove: "A weekly challenge can move to a later day within a week",
+  baseChoiceClosed:
+    "That prerequisite isn't open to that choice: one whose core the learner studied can only be studied in depth",
   mockCollision: "That day already has a weekly challenge or mock exam. Pick another day.",
   noStudyDays: "A plan needs at least one study day",
   notExam: "Only an exam's plan goes on after its date: other goals study everything without one",

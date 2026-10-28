@@ -69,6 +69,7 @@ function summarizeBases(input: BuildPlanInput): SelectedSummary["bases"] {
     bases: bases.map((base) => ({
       area: base.area,
       choice: choices.get(base.skillId) ?? "essential",
+      choices: base.choices,
       known: base.known,
       minutes: {
         deep: base.minutes.deep,
@@ -78,6 +79,7 @@ function summarizeBases(input: BuildPlanInput): SelectedSummary["bases"] {
       name: base.name,
       neededFor: base.neededFor,
       skillId: base.skillId,
+      studied: base.studied,
     })),
     daysLeft,
     defaultChoice: getDefaultBaseChoice(daysLeft),

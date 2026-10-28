@@ -29,6 +29,7 @@ export function toPlanBasesView({
             {
               area: base.area,
               choice: choices.get(base.skillId) ?? "essential",
+              choices: base.choices,
               minutes: {
                 deep: Math.max(1, Math.round(base.minutes.deep)),
                 essential: Math.max(1, Math.round(base.minutes.essential)),
@@ -37,6 +38,7 @@ export function toPlanBasesView({
               name: base.name,
               neededFor: base.neededFor,
               skillId: base.skillId,
+              studied: base.studied,
             },
           ],
     ),

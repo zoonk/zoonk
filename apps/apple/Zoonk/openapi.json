@@ -29252,7 +29252,7 @@
                 "properties": {
                   "reason": {
                     "type": "string",
-                    "description": "Why the change was refused. mockCollision means two weekly events would share a day: the requested day already holds a weekly challenge or mock, another move in the plan or the request takes an event there, or the event already moved once. Preserve the prior plan and pick another day. Preserve unknown reasons."
+                    "description": "Why the change was refused. mockCollision means two weekly events would share a day: the requested day already holds a weekly challenge or mock, another move in the plan or the request takes an event there, or the event already moved once. Preserve the prior plan and pick another day. baseChoiceClosed means a setBaseChoices choice isn't in that base's choices (a studied base is open only to deep study): offer only its choices. Preserve unknown reasons."
                   },
                   "unfundedMove": {
                     "description": "Present for reason unfundedMove: the requested calendar day and the mock's real duration. The prior plan is preserved. Ask the learner to pick a later day.",
@@ -70015,6 +70015,19 @@
             ],
             "description": "deep: every lesson of it, core and depth; essential: its core, the first third of its lessons, before what builds on it (the default); quick: one short lesson that sums it up with a worked example; skip: none of it"
           },
+          "choices": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "deep",
+                "essential",
+                "quick",
+                "skip"
+              ]
+            },
+            "description": "The choices it is open to, the only ones setBaseChoices accepts for it (others are refused with baseChoiceClosed): only deep once its core is studied (studied), and only when it has more than its core; every choice otherwise. Offer only these"
+          },
           "minutes": {
             "type": "object",
             "properties": {
@@ -70056,15 +70069,21 @@
             "type": "string",
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "studied": {
+            "type": "boolean",
+            "description": "The learner studied its core, none of its lessons still to do: say \"Studied\", and offer only deep study when choices has it"
           }
         },
         "required": [
           "area",
           "choice",
+          "choices",
           "minutes",
           "name",
           "neededFor",
-          "skillId"
+          "skillId",
+          "studied"
         ],
         "additionalProperties": false
       },

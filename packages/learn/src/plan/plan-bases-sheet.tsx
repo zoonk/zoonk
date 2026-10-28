@@ -22,7 +22,9 @@ import {
   AllBasesChoice,
   type BaseChoice,
   BasesBySubject,
+  chooseFor,
   getSharedChoice,
+  listOpen,
 } from "./plan-bases-choices";
 import { useBasesFootnote } from "./plan-bases-effect";
 import { PlanChangeApplied } from "./plan-change-applied";
@@ -176,7 +178,8 @@ function BasesChoices({ bases, onDone }: { bases: PlanBasesView; onDone: () => v
   }
 
   const areas = [...Map.groupBy(bases.items, (item) => item.area)];
-  const shared = getSharedChoice(bases.items, choiceOf);
+  const shared = getSharedChoice(listOpen(bases.items), choiceOf);
+  const someStudied = bases.items.some((item) => item.studied);
 
   const save = () => {
     if (isPending || preview.status !== "ready" || changed.length === 0) {
@@ -193,8 +196,16 @@ function BasesChoices({ bases, onDone }: { bases: PlanBasesView; onDone: () => v
     });
   };
 
+  // One choice for many acts on the ones open to it: a studied prerequisite stays studied.
   const choose = (skillIds: string[], choice: BaseChoice) =>
-    setDraft(new Map([...draft, ...skillIds.map((skillId) => [skillId, choice] as const)]));
+    setDraft(
+      new Map([
+        ...draft,
+        ...bases.items
+          .filter((item) => skillIds.includes(item.skillId))
+          .map((item) => [item.skillId, chooseFor(item, choice, choiceOf(item))] as const),
+      ]),
+    );
 
   return (
     <>
@@ -219,6 +230,12 @@ function BasesChoices({ bases, onDone }: { bases: PlanBasesView; onDone: () => v
             </p>
           )}
 
+          {someStudied && (
+            <p className="text-muted-foreground text-sm text-pretty">
+              {t("Prerequisites you've studied stay studied.")}
+            </p>
+          )}
+
           <BasesAdvice
             ask={() => void advice.ask()}
             followed={changed.length === 0 && shared !== null && shared === advice.recommended}
@@ -230,7 +247,7 @@ function BasesChoices({ bases, onDone }: { bases: PlanBasesView; onDone: () => v
           <BasesBySubject
             areas={areas}
             choiceOf={choiceOf}
-            defaultOpen={getSharedChoice(bases.items, (item) => item.choice) === null}
+            defaultOpen={getSharedChoice(listOpen(bases.items), (item) => item.choice) === null}
             onChoose={choose}
             readOnly={isPending}
           />
