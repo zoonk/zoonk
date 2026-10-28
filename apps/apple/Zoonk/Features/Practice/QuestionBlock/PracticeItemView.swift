@@ -38,6 +38,8 @@ struct PracticeItemView: View {
   var allowsBlank = false
   var result: PracticeItemResult?
   var isLocked = false
+  /// A spread shows a statement's card on its other page.
+  var showsStatement = true
   @Binding var draft: PracticeAnswer?
   var onSubmit: (PracticeAnswer) -> Void = { _ in }
 
@@ -51,8 +53,8 @@ struct PracticeItemView: View {
         draft: $draft)
     case .trueFalse:
       TrueFalseItemView(
-        statement: question.question, labels: labels, allowsBlank: allowsBlank, result: result,
-        isLocked: locked, draft: $draft)
+        statement: question.question, labels: labels, allowsBlank: allowsBlank,
+        showsStatement: showsStatement, result: result, isLocked: locked, draft: $draft)
     case .matchPairs:
       MatchPairsItemView(
         left: question.left, right: question.right, isLocked: locked, draft: $draft)
@@ -153,18 +155,15 @@ struct PickRule: View {
 
 /// A statement on a card the learner can swipe (left false, right true), with the answers under it
 /// in the goal's exam's words. Net-scored practice adds "Leave blank". A swipe or a tap picks; the
-/// host's Check sends it.
+/// host's Check sends it. A spread shows the card on its other page (`showsStatement`).
 struct TrueFalseItemView: View {
   let statement: String
   let labels: PracticeTrueFalseLabels
   let allowsBlank: Bool
+  var showsStatement = true
   let result: PracticeItemResult?
   let isLocked: Bool
   @Binding var draft: PracticeAnswer?
-  @State private var offset: CGFloat = 0
-  @Environment(\.accessibilityReduceMotion) private var reduceMotion
-
-  private static let swipeThreshold: CGFloat = 90
 
   var body: some View {
     let shownPick = result?.answer ?? draft
@@ -173,22 +172,10 @@ struct TrueFalseItemView: View {
       ? [.trueFalse(false), .dontKnow, .trueFalse(true)] : [.trueFalse(false), .trueFalse(true)]
 
     VStack(alignment: .leading, spacing: 16) {
-      ItemText(statement)
-        .font(.title3.weight(.semibold))
-        .foregroundStyle(result == nil ? .primary : .secondary)
-        .padding(20)
-        .frame(maxWidth: .infinity, minHeight: 120, alignment: .topLeading)
-        .background(
-          Color(.secondarySystemGroupedBackground),
-          in: RoundedRectangle(cornerRadius: 16, style: .continuous)
-        )
-        .overlay(
-          RoundedRectangle(cornerRadius: 16, style: .continuous).strokeBorder(Color(.separator))
-        )
-        .offset(x: offset)
-        .rotationEffect(.degrees(reduceMotion ? 0 : Double(offset) * 0.06))
-        .gesture(swipe, isEnabled: !isLocked && !statement.contains("|"))
-        .accessibilityAddTraits(.isHeader)
+      if showsStatement {
+        TrueFalseStatementCard(
+          statement: statement, result: result, isLocked: isLocked, draft: $draft)
+      }
 
       VStack(spacing: 10) {
         ForEach(Array(answers.enumerated()), id: \.offset) { index, answer in
@@ -198,12 +185,52 @@ struct TrueFalseItemView: View {
               isPicked: shownPick == answer,
               result: optionResult(answer),
               isLocked: isLocked,
-              action: { pick(answer, toggles: true) },
+              action: { draft = draft == answer ? nil : answer },
               label: { Text(TrueFalseWords.label(for: answer, labels: labels)) })
           }
         }
       }
     }
+  }
+
+  /// The right answer when the grade says it; the learner's wrong pick. A blank is neither right
+  /// nor wrong: it stays picked, never marked.
+  private func optionResult(_ answer: PracticeAnswer) -> AnswerOptionResult? {
+    guard let result, case .trueFalse = answer else { return nil }
+    return result.optionMark(
+      isRightAnswer: result.correctAnswer == answer, isPicked: result.answer == answer)
+  }
+}
+
+/// A true-or-false statement's card: swiped right it's true, left false, and that side stays
+/// picked. A statement with a table doesn't swipe, so the table can scroll.
+struct TrueFalseStatementCard: View {
+  let statement: String
+  let result: PracticeItemResult?
+  let isLocked: Bool
+  @Binding var draft: PracticeAnswer?
+  @State private var offset: CGFloat = 0
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+  private static let swipeThreshold: CGFloat = 90
+
+  var body: some View {
+    ItemText(statement)
+      .font(.title3.weight(.semibold))
+      .foregroundStyle(result == nil ? .primary : .secondary)
+      .padding(20)
+      .frame(maxWidth: .infinity, minHeight: 120, alignment: .topLeading)
+      .background(
+        Color(.secondarySystemGroupedBackground),
+        in: RoundedRectangle(cornerRadius: 16, style: .continuous)
+      )
+      .overlay(
+        RoundedRectangle(cornerRadius: 16, style: .continuous).strokeBorder(Color(.separator))
+      )
+      .offset(x: offset)
+      .rotationEffect(.degrees(reduceMotion ? 0 : Double(offset) * 0.06))
+      .gesture(swipe, isEnabled: !isLocked && !statement.contains("|"))
+      .accessibilityAddTraits(.isHeader)
   }
 
   private var swipe: some Gesture {
@@ -214,22 +241,9 @@ struct TrueFalseItemView: View {
         withAnimation(.snappy(duration: 0.2)) { offset = 0 }
 
         if abs(distance) >= Self.swipeThreshold {
-          pick(.trueFalse(distance > 0), toggles: false)
+          draft = .trueFalse(distance > 0)
         }
       }
-  }
-
-  /// The right answer when the grade says it; the learner's wrong pick. A blank is neither.
-  /// A blank is neither right nor wrong: it stays picked, never marked.
-  private func optionResult(_ answer: PracticeAnswer) -> AnswerOptionResult? {
-    guard let result, case .trueFalse = answer else { return nil }
-    return result.optionMark(
-      isRightAnswer: result.correctAnswer == answer, isPicked: result.answer == answer)
-  }
-
-  /// A tap toggles its pick; a swipe keeps its side picked.
-  private func pick(_ answer: PracticeAnswer, toggles: Bool) {
-    draft = toggles && draft == answer ? nil : answer
   }
 }
 

@@ -2,8 +2,10 @@ import SwiftUI
 
 /// The running section, like the exam room: the clock in the toolbar, one question at a time with
 /// no feedback, Flag and Next at the thumb, and the answer sheet (an inspector beside the question
-/// on a wide screen, a sheet on a phone) to jump around and hand in. When the clock runs out,
-/// answers close and handing in waits for the learner.
+/// on a wide screen, a sheet on a phone) to jump around and hand in. Where two pages fit, the
+/// question is a spread: its text or recording and the question on the leading page, the answers,
+/// Flag and Next on the trailing one. When the clock runs out, answers close and handing in waits
+/// for the learner.
 struct MockRunnerView: View {
   @Environment(\.horizontalSizeClass) private var sizeClass
   @State private var showsSheet = false
@@ -15,16 +17,22 @@ struct MockRunnerView: View {
   var body: some View {
     Group {
       if let question = run.question {
-        ScrollView {
-          VStack(alignment: .leading, spacing: 16) {
-            MockQuestionMeta(run: run, view: view, question: question)
-            MockQuestionCard(run: run, view: view, question: question)
-            MovesNote(moves: run.moves)
+        QuestionSpread(readableWidth: 720, spacing: 16) {
+          EmptyView()
+        } stimulus: {
+          MockQuestionMeta(run: run, view: view, question: question)
+          MockQuestionCard(run: run, view: view, question: question, part: .stimulus)
+        } response: {
+          MockQuestionCard(run: run, view: view, question: question, part: .response)
+          MovesNote(moves: run.moves)
+        } actions: {
+          MockActionBar(run: run) {
+            FlagButton(run: run)
+            nextButton
           }
-          .frame(maxWidth: 720, alignment: .leading)
-          .frame(maxWidth: .infinity)
-          .scenePadding()
         }
+        // Outside the pages, which folding or unfolding draws again: the question's time and its
+        // own clock count once per question.
         .id(question.id)
         .onAppear { run.show(question.itemId) }
         .itemClock(run: run, question: question)
@@ -58,12 +66,6 @@ struct MockRunnerView: View {
         }
       }
       .presentationDetents([.medium, .large])
-    }
-    .safeAreaBar(edge: .bottom) {
-      MockActionBar(run: run) {
-        FlagButton(run: run)
-        nextButton
-      }
     }
     .alert(handInTitle, isPresented: $confirmsHandIn) {
       Button(role: .cancel) {
@@ -174,25 +176,40 @@ private struct MockQuestionMeta: View {
   }
 }
 
-/// One question of the running section: its set's text or recording, the question and how it's
-/// answered (picks, a number, a word), or an essay's prompt and the box to write it in.
+/// One question of the running section in the part a spread's page shows: what it's read with (its
+/// set's text or recording and the question, or an essay's prompt) or how it's answered (picks, a
+/// number, a word, or the box to write the essay in).
 private struct MockQuestionCard: View {
+  enum Part {
+    case stimulus
+    case response
+  }
+
   let run: MockRun
   let view: MockView
   let question: MockQuestion
+  let part: Part
 
   var body: some View {
     let isLocked = run.timeUp || run.pending || !run.moves.canChange(run.position)
 
     if let practice = question.practice {
-      PracticeQuestionView(
+      let asked = PracticeQuestionView(
         question: practice, labels: view.trueFalseLabels,
         allowsBlank: view.scoring == .net && question.format == .trueFalse, result: nil,
         isLocked: isLocked, continuesSet: previous?.set?.id == question.set?.id,
         askedIn: view.blockId, recordingQuestions: recordingQuestions, served: served,
         draft: run.answerBinding(for: question))
+
+      switch part {
+      case .stimulus: asked.stimulus
+      case .response: asked.response
+      }
     } else {
-      MockEssayBox(run: run, view: view, question: question, isLocked: isLocked)
+      switch part {
+      case .stimulus: MockEssayPrompt(question: question)
+      case .response: MockEssayBox(run: run, view: view, question: question, isLocked: isLocked)
+      }
     }
   }
 
@@ -216,6 +233,22 @@ private struct MockQuestionCard: View {
   }
 }
 
+/// What an essay of a full mock's written part is about: its set's text, its context and the prompt.
+private struct MockEssayPrompt: View {
+  let question: MockQuestion
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      if let set = question.set {
+        ItemSetStimulusView(set: set)
+      }
+
+      ItemSupportView(context: question.context, image: nil, visual: nil)
+      QuestionTitle(text: question.question)
+    }
+  }
+}
+
 /// An essay of a full mock's written part, written on the section's clock: kept as the learner
 /// types, saved once they pause, with its word count.
 private struct MockEssayBox: View {
@@ -226,13 +259,6 @@ private struct MockEssayBox: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
-      if let set = question.set {
-        ItemSetStimulusView(set: set)
-      }
-
-      ItemSupportView(context: question.context, image: nil, visual: nil)
-      QuestionTitle(text: question.question)
-
       Text((view.essayRubric ?? .custom).writingName)
         .font(.subheadline.weight(.medium))
 

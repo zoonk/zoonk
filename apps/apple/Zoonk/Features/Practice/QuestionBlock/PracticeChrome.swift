@@ -48,46 +48,164 @@ enum PracticeLayout {
   static let readableWidth: CGFloat = 680
 }
 
-/// A full-screen practice task: its content scrolls in a readable column, its progress stays at
-/// the top, and its actions stay pinned at the bottom.
-struct PracticeTaskLayout<Content: View, Actions: View>: View {
+/// A full-screen practice task: its progress stays at the top and its actions stay pinned at the
+/// bottom. A question task is a spread where two pages fit (the open iPhone Duo, iPad, iPhone in
+/// landscape): what it's read with on the leading page, under the progress, and the learner's turn
+/// on the trailing page, with the actions at its bottom. Elsewhere, and for a task that's all one
+/// part (an intro, a result), it scrolls in one readable column.
+struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
   @Environment(\.practiceActionsHidden) private var actionsHidden
-  var segments: [PracticeSegment]?
-  var index = 0
+  private let segments: [PracticeSegment]?
+  private let index: Int
+  private let spreads: Bool
+  private let stimulus: () -> Stimulus
+  private let response: () -> Response
+  private let actions: () -> Actions
+
+  /// A question: what it's read with (its set, the question) and the learner's turn (the answer
+  /// control, the grade), for the two pages of a spread.
+  init(
+    segments: [PracticeSegment]? = nil, index: Int = 0,
+    @ViewBuilder stimulus: @escaping () -> Stimulus,
+    @ViewBuilder response: @escaping () -> Response,
+    @ViewBuilder actions: @escaping () -> Actions
+  ) {
+    self.segments = segments
+    self.index = index
+    spreads = true
+    self.stimulus = stimulus
+    self.response = response
+    self.actions = actions
+  }
+
+  var body: some View {
+    Group {
+      if spreads {
+        QuestionSpread(readableWidth: PracticeLayout.readableWidth, spacing: 20) {
+          segmentsBar
+        } stimulus: {
+          stimulus()
+        } response: {
+          response()
+        } actions: {
+          actionsBar
+        }
+      } else {
+        QuestionColumn(readableWidth: PracticeLayout.readableWidth, spacing: 20) {
+          segmentsBar
+        } content: {
+          stimulus()
+        } actions: {
+          actionsBar
+        }
+      }
+    }
+    .background(Color(.systemGroupedBackground))
+  }
+
+  @ViewBuilder private var segmentsBar: some View {
+    if let segments, !segments.isEmpty {
+      PracticeSegmentsBar(segments: segments, index: index)
+        .frame(maxWidth: PracticeLayout.readableWidth)
+        .padding(.horizontal)
+        .padding(.vertical, 8)
+        .frame(maxWidth: .infinity)
+    }
+  }
+
+  @ViewBuilder private var actionsBar: some View {
+    if !actionsHidden {
+      VStack(spacing: 10) {
+        actions()
+      }
+      .frame(maxWidth: PracticeLayout.readableWidth)
+      .padding(.horizontal)
+      .padding(.vertical, 12)
+      .frame(maxWidth: .infinity)
+    }
+  }
+}
+
+extension PracticeTaskLayout where Response == EmptyView {
+  /// A task that's all one part, such as an intro or a result: one column on every screen.
+  init(
+    segments: [PracticeSegment]? = nil, index: Int = 0,
+    @ViewBuilder content: @escaping () -> Stimulus,
+    @ViewBuilder actions: @escaping () -> Actions
+  ) {
+    self.segments = segments
+    self.index = index
+    spreads = false
+    stimulus = content
+    response = { EmptyView() }
+    self.actions = actions
+  }
+}
+
+/// A question as a spread where each page gets a phone-width column: what it's read with on the
+/// leading page under its header, the learner's turn on the trailing page with the actions pinned
+/// at its bottom, so they never move between questions. One column everywhere else, as a phone
+/// shows it. Switching recreates the pages, so the answer lives above the spread.
+struct QuestionSpread<Header: View, Stimulus: View, Response: View, Actions: View>: View {
+  let readableWidth: CGFloat
+  let spacing: CGFloat
+  @ViewBuilder let header: () -> Header
+  @ViewBuilder let stimulus: () -> Stimulus
+  @ViewBuilder let response: () -> Response
+  @ViewBuilder let actions: () -> Actions
+
+  var body: some View {
+    PaneSplit {
+      ScrollingPage(readableWidth: readableWidth, spacing: spacing, content: stimulus)
+        .safeAreaBar(edge: .top, content: header)
+    } secondary: {
+      ScrollingPage(readableWidth: readableWidth, spacing: spacing, content: response)
+        .safeAreaBar(edge: .bottom, content: actions)
+    } single: {
+      QuestionColumn(readableWidth: readableWidth, spacing: spacing, header: header) {
+        stimulus()
+        response()
+      } actions: {
+        actions()
+      }
+    }
+  }
+}
+
+/// One scrolling column with its header pinned on top and its actions pinned at the bottom, moved
+/// off the fold while iPhone Duo is partially folded.
+struct QuestionColumn<Header: View, Content: View, Actions: View>: View {
+  let readableWidth: CGFloat
+  let spacing: CGFloat
+  @ViewBuilder let header: () -> Header
   @ViewBuilder let content: () -> Content
   @ViewBuilder let actions: () -> Actions
 
   var body: some View {
+    ScrollingPage(readableWidth: readableWidth, spacing: spacing, content: content)
+      .safeAreaBar(edge: .top, content: header)
+      .safeAreaBar(edge: .bottom) {
+        actions().keepsOffFold()
+      }
+  }
+}
+
+/// A page's content, scrolling in a readable column.
+private struct ScrollingPage<Content: View>: View {
+  let readableWidth: CGFloat
+  let spacing: CGFloat
+  @ViewBuilder let content: () -> Content
+
+  var body: some View {
     ScrollView {
-      VStack(alignment: .leading, spacing: 20) {
+      VStack(alignment: .leading, spacing: spacing) {
         content()
       }
-      .frame(maxWidth: PracticeLayout.readableWidth, alignment: .leading)
+      .frame(maxWidth: readableWidth, alignment: .leading)
       .frame(maxWidth: .infinity)
       .scenePadding()
     }
     .scrollDismissesKeyboard(.interactively)
-    .background(Color(.systemGroupedBackground))
-    .safeAreaBar(edge: .top) {
-      if let segments, !segments.isEmpty {
-        PracticeSegmentsBar(segments: segments, index: index)
-          .frame(maxWidth: PracticeLayout.readableWidth)
-          .padding(.horizontal)
-          .padding(.vertical, 8)
-          .frame(maxWidth: .infinity)
-      }
-    }
-    .safeAreaBar(edge: .bottom) {
-      if !actionsHidden {
-        VStack(spacing: 10) {
-          actions()
-        }
-        .frame(maxWidth: PracticeLayout.readableWidth)
-        .padding(.horizontal)
-        .padding(.vertical, 12)
-        .frame(maxWidth: .infinity)
-      }
-    }
   }
 }
 

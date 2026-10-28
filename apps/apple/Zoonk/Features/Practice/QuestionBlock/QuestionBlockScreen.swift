@@ -120,7 +120,9 @@ struct QuestionBlockView: View {
         BlockFinishedView(kind: run.detail.block.kind, completion: completion) { dismiss() }
       } else {
         PracticeTaskLayout(segments: run.state.segments, index: run.state.index) {
-          content(phase: phase)
+          stimulus(phase: phase)
+        } response: {
+          response(phase: phase)
         } actions: {
           actions(phase: phase)
         }
@@ -139,8 +141,10 @@ struct QuestionBlockView: View {
 
   // MARK: Content
 
+  /// What the learner reads before answering: the block's state, a drill's idea or rule, and the
+  /// question up to its answers.
   @ViewBuilder
-  private func content(phase: QuestionBlockPhase) -> some View {
+  private func stimulus(phase: QuestionBlockPhase) -> some View {
     if phase == .finishReady {
       VStack(alignment: .leading, spacing: 8) {
         Text(
@@ -164,40 +168,60 @@ struct QuestionBlockView: View {
       if let drill = run.drill, run.drillStage == .idea, let lesson = drill.lesson {
         DrillIdeaView(drill: drill, lesson: lesson)
       } else {
-        questionContent(question, phase: phase)
+        let graded = graded(phase)
+
+        if let machine = question.timeMachine, graded == nil {
+          PracticeCallout(systemImage: "clock.arrow.circlepath") {
+            Text(
+              TimeMachineText.line(
+                machine, result: nil, format: question.format, labels: run.detail.trueFalseLabels))
+          }
+        }
+
+        if let drill = run.drill, !drill.isIdeaFirst, run.isFirstOfDrill || drill.isReadFirst {
+          DrillNoteView(drill: drill, isAnswered: graded != nil)
+        }
+
+        if let seconds = run.drill?.timeLimitSeconds, phase == .answering {
+          DrillCountdownView(seconds: seconds) { Task { await run.timeUp() } }
+            .id("clock-\(question.id)")
+        }
+
+        asked(question, phase: phase).stimulus
       }
     }
   }
 
+  /// The learner's turn: the question's answers, then its grade.
   @ViewBuilder
-  private func questionContent(_ question: PracticeQuestion, phase: QuestionBlockPhase) -> some View
+  private func response(phase: QuestionBlockPhase) -> some View {
+    if phase != .finishReady, phase != .finishing, let question = run.question,
+      run.drillStage != .idea || run.drill?.lesson == nil
+    {
+      asked(question, phase: phase).response
+
+      if let graded = graded(phase) {
+        feedback(graded.feedback, answer: graded.answer, question: question)
+      }
+    }
+  }
+
+  private func graded(_ phase: QuestionBlockPhase) -> (
+    answer: PracticeAnswer, feedback: PracticeFeedback
+  )? {
+    if case .feedback(let answer, let feedback) = phase { (answer, feedback) } else { nil }
+  }
+
+  private func asked(_ question: PracticeQuestion, phase: QuestionBlockPhase)
+    -> PracticeQuestionView
   {
-    let graded: (answer: PracticeAnswer, feedback: PracticeFeedback)? =
-      if case .feedback(let answer, let feedback) = phase { (answer, feedback) } else { nil }
-    let result = graded.map {
+    let result = graded(phase).map {
       PracticeItemResult(
         answer: $0.answer, correctAnswer: $0.feedback.correctAnswer,
         isCorrect: $0.feedback.isCorrect)
     }
 
-    if let machine = question.timeMachine, graded == nil {
-      PracticeCallout(systemImage: "clock.arrow.circlepath") {
-        Text(
-          TimeMachineText.line(
-            machine, result: nil, format: question.format, labels: run.detail.trueFalseLabels))
-      }
-    }
-
-    if let drill = run.drill, !drill.isIdeaFirst, run.isFirstOfDrill || drill.isReadFirst {
-      DrillNoteView(drill: drill, isAnswered: graded != nil)
-    }
-
-    if let seconds = run.drill?.timeLimitSeconds, phase == .answering {
-      DrillCountdownView(seconds: seconds) { Task { await run.timeUp() } }
-        .id("clock-\(question.id)")
-    }
-
-    PracticeQuestionView(
+    return PracticeQuestionView(
       question: question,
       labels: run.detail.trueFalseLabels,
       allowsBlank: run.detail.isNetScored(question),
@@ -207,13 +231,9 @@ struct QuestionBlockView: View {
       hidesAnswers: run.drillStage == .reading,
       askedIn: run.detail.block.id,
       recordingQuestions: run.detail.recordingQuestions(for: question),
-      transcript: graded?.feedback.transcript,
+      transcript: graded(phase)?.feedback.transcript,
       draft: $run.draft,
       onSubmit: { answer in Task { await run.submit(answer) } })
-
-    if let graded {
-      feedback(graded.feedback, answer: graded.answer, question: question)
-    }
   }
 
   private func feedback(

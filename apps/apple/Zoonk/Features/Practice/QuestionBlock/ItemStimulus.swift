@@ -5,7 +5,8 @@ import SwiftUI
 
 /// The text, case, chart or recording a set's questions share, above each of them. A text shows
 /// whole, except a long one right after another question on it (`continued`): the learner just
-/// read it, so it shows its start with a way to read it all again.
+/// read it, so it shows its start with a way to read it all again. On a spread's page of its own
+/// it always shows whole, beside the answers.
 struct ItemSetStimulusView: View {
   let set: PracticeItemSet
   var continued = false
@@ -71,12 +72,13 @@ private struct SetTextView: View {
   let set: PracticeItemSet
   let continued: Bool
   @State private var isExpanded: Bool?
+  @Environment(\.isPaneSplit) private var isPaneSplit
 
   /// Shorter texts fit in the folded height anyway, so they never fold.
   private static let foldMinCharacters = 400
 
   var body: some View {
-    let folds = continued && (set.text?.count ?? 0) >= Self.foldMinCharacters
+    let folds = continued && !isPaneSplit && (set.text?.count ?? 0) >= Self.foldMinCharacters
     let expanded = isExpanded ?? !folds
 
     VStack(alignment: .leading, spacing: 12) {

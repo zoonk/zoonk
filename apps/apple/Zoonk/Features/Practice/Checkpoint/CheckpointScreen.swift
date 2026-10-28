@@ -118,6 +118,17 @@ struct CheckpointScreen: View {
   private func duel(_ loaded: CheckpointLoad, state: CheckpointDuelState) -> some View {
     let question = state.currentQuestion
     let feedback = state.feedback
+    let asked = question.map { question in
+      PracticeQuestionView(
+        question: question, labels: loaded.trueFalseLabels,
+        result: feedback.map {
+          PracticeItemResult(answer: $0.answer, correctAnswer: nil, isCorrect: $0.isCorrect)
+        },
+        isLocked: state.isPending || feedback != nil,
+        askedIn: blockId,
+        transcript: question.set.flatMap { state.transcripts[$0.id] },
+        draft: $draft)
+    }
 
     return PracticeTaskLayout(segments: state.segments, index: state.verdicts.count) {
       if state.kind != .weekly {
@@ -137,16 +148,18 @@ struct CheckpointScreen: View {
         }
       }
 
-      if let question {
-        PracticeQuestionView(
-          question: question, labels: loaded.trueFalseLabels,
-          result: feedback.map {
-            PracticeItemResult(answer: $0.answer, correctAnswer: nil, isCorrect: $0.isCorrect)
-          },
-          isLocked: state.isPending || feedback != nil,
-          askedIn: blockId,
-          transcript: question.set.flatMap { state.transcripts[$0.id] },
-          draft: $draft)
+      if let asked {
+        asked.stimulus
+      } else {
+        Text(
+          "Every question is answered.", tableName: "Practice",
+          comment: "A checkpoint with every answer in."
+        )
+        .font(.title3.weight(.semibold))
+      }
+    } response: {
+      if let asked {
+        asked.response
 
         if let feedback {
           PracticeFeedbackPanel(verdict: PracticeVerdict(isCorrect: feedback.isCorrect)) {
@@ -157,12 +170,6 @@ struct CheckpointScreen: View {
             .foregroundStyle(.secondary)
           }
         }
-      } else {
-        Text(
-          "Every question is answered.", tableName: "Practice",
-          comment: "A checkpoint with every answer in."
-        )
-        .font(.title3.weight(.semibold))
       }
     } actions: {
       if state.failure != nil {

@@ -42,8 +42,7 @@ struct GradedAtEndRun: View {
           .foregroundStyle(.secondary)
         }
 
-        PracticeQuestionView(
-          question: question, labels: labels, isLocked: isPending || failed, draft: $draft)
+        asked(question).stimulus
       } else if GradedRunStage(answered: index, asked: questions.count, total: total)
         == .readyToSubmit
       {
@@ -88,6 +87,10 @@ struct GradedAtEndRun: View {
               comment: "A test waits for the questions still being written.")
           }
         }
+      }
+    } response: {
+      if let question {
+        asked(question).response
       }
     } actions: {
       if failed {
@@ -135,6 +138,11 @@ struct GradedAtEndRun: View {
       }
     }
     .onAppear(perform: resume)
+  }
+
+  private func asked(_ question: PracticeQuestion) -> PracticeQuestionView {
+    PracticeQuestionView(
+      question: question, labels: labels, isLocked: isPending || failed, draft: $draft)
   }
 
   private func segments(total: Int, index: Int) -> [PracticeSegment] {

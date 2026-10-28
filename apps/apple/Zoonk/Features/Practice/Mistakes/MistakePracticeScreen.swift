@@ -75,7 +75,9 @@ struct MistakePracticeScreen: View {
     default:
       if let step = state.step {
         PracticeTaskLayout(segments: state.segments, index: state.index) {
-          stepContent(step)
+          stepStimulus(step)
+        } response: {
+          stepResponse(step)
         } actions: {
           stepActions(step)
         }
@@ -84,12 +86,8 @@ struct MistakePracticeScreen: View {
   }
 
   @ViewBuilder
-  private func stepContent(_ step: MistakePracticeStep) -> some View {
+  private func stepStimulus(_ step: MistakePracticeStep) -> some View {
     let drill = step.entry.drill
-    let graded: (answer: PracticeAnswer, grade: MistakePracticeGrade, timedOut: Bool)? =
-      if case .feedback(let answer, let grade, let timedOut) = state.phase {
-        (answer, grade, timedOut)
-      } else { nil }
 
     if state.phase == .idea, let lesson = drill.lesson {
       DrillIdeaView(drill: drill, lesson: lesson)
@@ -107,17 +105,16 @@ struct MistakePracticeScreen: View {
           .id("clock-\(state.index)")
       }
 
-      PracticeQuestionView(
-        question: step.question,
-        labels: labels,
-        result: graded.map {
-          PracticeItemResult(
-            answer: $0.answer, correctAnswer: $0.grade.correctAnswer, isCorrect: $0.grade.isCorrect)
-        },
-        isLocked: !state.acceptsAnswer,
-        hidesAnswers: state.phase == .reading,
-        askedIn: "mistake:\(step.entry.mistakeId)",
-        draft: $draft)
+      asked(step).stimulus
+    }
+  }
+
+  @ViewBuilder
+  private func stepResponse(_ step: MistakePracticeStep) -> some View {
+    let drill = step.entry.drill
+
+    if state.phase != .idea || drill.lesson == nil {
+      asked(step).response
 
       if let graded {
         PracticeFeedbackPanel(
@@ -132,6 +129,28 @@ struct MistakePracticeScreen: View {
         }
       }
     }
+  }
+
+  private var graded: (answer: PracticeAnswer, grade: MistakePracticeGrade, timedOut: Bool)? {
+    if case .feedback(let answer, let grade, let timedOut) = state.phase {
+      (answer, grade, timedOut)
+    } else {
+      nil
+    }
+  }
+
+  private func asked(_ step: MistakePracticeStep) -> PracticeQuestionView {
+    PracticeQuestionView(
+      question: step.question,
+      labels: labels,
+      result: graded.map {
+        PracticeItemResult(
+          answer: $0.answer, correctAnswer: $0.grade.correctAnswer, isCorrect: $0.grade.isCorrect)
+      },
+      isLocked: !state.acceptsAnswer,
+      hidesAnswers: state.phase == .reading,
+      askedIn: "mistake:\(step.entry.mistakeId)",
+      draft: $draft)
   }
 
   @ViewBuilder

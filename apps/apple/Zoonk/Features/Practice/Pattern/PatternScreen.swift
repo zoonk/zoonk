@@ -148,8 +148,13 @@ struct PatternScreen: View {
           == item.answer.trimmingCharacters(in: .whitespaces))
     }
 
+    let asked = PracticeQuestionView(
+      question: question, labels: .trueFalse, result: result, draft: $draft)
+
     return PracticeTaskLayout(segments: segments(pattern, index: index), index: index) {
-      PracticeQuestionView(question: question, labels: .trueFalse, result: result, draft: $draft)
+      asked.stimulus
+    } response: {
+      asked.response
 
       if let result {
         PracticeFeedbackPanel(

@@ -4,62 +4,156 @@ import SwiftUI
 /// exam's source), what it's read with (its set's text, case, chart or recording, then its own
 /// context, picture or chart), the question itself, and its answer control. A statement is the
 /// card its true-or-false control draws, so it has no title of its own.
+///
+/// A spread draws it in two parts: `stimulus`, everything up to the question, on the leading page,
+/// and `response`, the answer control, on the trailing page. There a statement's card moves to the
+/// leading page too, and its answers stay on the trailing one.
 struct PracticeQuestionView: View {
+  enum Part {
+    case whole
+    case stimulus
+    case response
+  }
+
   let question: PracticeQuestion
   let labels: PracticeTrueFalseLabels
-  var allowsBlank = false
-  var result: PracticeItemResult?
-  var isLocked = false
+  let allowsBlank: Bool
+  let result: PracticeItemResult?
+  let isLocked: Bool
   /// The question before it shared its text, so a long one folds.
-  var continuesSet = false
+  let continuesSet: Bool
   /// A misread's drill shows the question before its answers.
-  var hidesAnswers = false
-  var askedIn: String?
-  var recordingQuestions: (prompts: [String], current: Int)?
-  var transcript: [PracticeTranscriptLine]?
-  var served: ServedPlays?
+  let hidesAnswers: Bool
+  let askedIn: String?
+  let recordingQuestions: (prompts: [String], current: Int)?
+  let transcript: [PracticeTranscriptLine]?
+  let served: ServedPlays?
   @Binding var draft: PracticeAnswer?
-  var onSubmit: (PracticeAnswer) -> Void = { _ in }
+  let onSubmit: (PracticeAnswer) -> Void
+  private var part = Part.whole
+
+  @Environment(\.isPaneSplit) private var isPaneSplit
+
+  init(
+    question: PracticeQuestion, labels: PracticeTrueFalseLabels, allowsBlank: Bool = false,
+    result: PracticeItemResult? = nil, isLocked: Bool = false, continuesSet: Bool = false,
+    hidesAnswers: Bool = false, askedIn: String? = nil,
+    recordingQuestions: (prompts: [String], current: Int)? = nil,
+    transcript: [PracticeTranscriptLine]? = nil, served: ServedPlays? = nil,
+    draft: Binding<PracticeAnswer?>, onSubmit: @escaping (PracticeAnswer) -> Void = { _ in }
+  ) {
+    self.question = question
+    self.labels = labels
+    self.allowsBlank = allowsBlank
+    self.result = result
+    self.isLocked = isLocked
+    self.continuesSet = continuesSet
+    self.hidesAnswers = hidesAnswers
+    self.askedIn = askedIn
+    self.recordingQuestions = recordingQuestions
+    self.transcript = transcript
+    self.served = served
+    _draft = draft
+    self.onSubmit = onSubmit
+  }
+
+  /// What the question is read with, up to the question itself: a spread's leading page.
+  var stimulus: Self { drawing(.stimulus) }
+
+  /// The answer control: a spread's trailing page.
+  var response: Self { drawing(.response) }
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 16) {
-      if question.placement {
-        QuestionNote(systemImage: "safari") {
-          Text(
-            "Fine-tuning your plan. A miss here is never saved as a mistake.",
-            tableName: "Practice",
-            comment: "Note above a placement question in the first week's sessions.")
+    switch part {
+    case .whole:
+      VStack(alignment: .leading, spacing: 16) {
+        stimulusContent
+        responseContent
+      }
+    case .stimulus:
+      // Wrapped only when there's something to read, so an empty part takes no spacing.
+      if hasStimulus {
+        VStack(alignment: .leading, spacing: 16) {
+          stimulusContent
         }
       }
+    case .response:
+      responseContent
+    }
+  }
 
-      if question.quoted, let citation = question.citation {
-        QuestionNote(systemImage: "scroll") {
-          Text(
-            "Past exam question · \(citation.text)", tableName: "Practice",
-            comment: "Source of a real past exam question shown with it.")
-        }
-      }
+  private var showsTitle: Bool {
+    question.format != .trueFalse || hidesAnswers
+  }
 
-      if let set = question.set {
-        ItemSetStimulusView(
-          set: set, continued: continuesSet, askedIn: askedIn,
-          recordingQuestions: recordingQuestions, transcript: transcript, served: served)
-      }
+  /// A spread reads a statement on its leading page, beside its answers.
+  private var statementLeads: Bool {
+    part != .whole && isPaneSplit && question.format == .trueFalse && !hidesAnswers
+  }
 
-      ItemSupportView(context: question.context, image: question.image, visual: question.visual)
+  private var showsStatementCard: Bool {
+    part == .stimulus && statementLeads
+  }
 
-      if question.format != .trueFalse || hidesAnswers {
-        QuestionTitle(text: question.question, isMuted: result != nil)
-      }
+  private var hasStimulus: Bool {
+    question.placement || (question.quoted && question.citation != nil) || question.set != nil
+      || question.context != nil || question.image != nil || question.visual != nil || showsTitle
+      || showsStatementCard
+  }
 
-      if !hidesAnswers {
-        PracticeItemView(
-          question: question, labels: labels, allowsBlank: allowsBlank, result: result,
-          isLocked: isLocked, draft: $draft, onSubmit: onSubmit
-        )
-        .id(question.id)
+  @ViewBuilder private var stimulusContent: some View {
+    if question.placement {
+      QuestionNote(systemImage: "safari") {
+        Text(
+          "Fine-tuning your plan. A miss here is never saved as a mistake.",
+          tableName: "Practice",
+          comment: "Note above a placement question in the first week's sessions.")
       }
     }
+
+    if question.quoted, let citation = question.citation {
+      QuestionNote(systemImage: "scroll") {
+        Text(
+          "Past exam question · \(citation.text)", tableName: "Practice",
+          comment: "Source of a real past exam question shown with it.")
+      }
+    }
+
+    if let set = question.set {
+      ItemSetStimulusView(
+        set: set, continued: continuesSet, askedIn: askedIn,
+        recordingQuestions: recordingQuestions, transcript: transcript, served: served)
+    }
+
+    ItemSupportView(context: question.context, image: question.image, visual: question.visual)
+
+    if showsTitle {
+      QuestionTitle(text: question.question, isMuted: result != nil)
+    }
+
+    if showsStatementCard {
+      TrueFalseStatementCard(
+        statement: question.question, result: result, isLocked: isLocked || result != nil,
+        draft: $draft
+      )
+      .id(question.id)
+    }
+  }
+
+  @ViewBuilder private var responseContent: some View {
+    if !hidesAnswers {
+      PracticeItemView(
+        question: question, labels: labels, allowsBlank: allowsBlank, result: result,
+        isLocked: isLocked, showsStatement: !statementLeads, draft: $draft, onSubmit: onSubmit
+      )
+      .id(question.id)
+    }
+  }
+
+  private func drawing(_ part: Part) -> Self {
+    var copy = self
+    copy.part = part
+    return copy
   }
 }
 
