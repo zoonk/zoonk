@@ -53,7 +53,7 @@ private struct GuestGoalGate: View {
         tableName: "Onboarding", comment: "Why a guest needs an account to start another goal")
     } actions: {
       Button {
-        router.present(.account)
+        router.present(.signIn)
       } label: {
         Text(
           "Create a free account", tableName: "Onboarding",

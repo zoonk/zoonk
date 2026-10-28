@@ -133,7 +133,7 @@ struct CallProblemView: View {
       Group {
         if limit.tier == .guest {
           Button {
-            router.present(.account)
+            router.present(.signIn)
           } label: {
             Text(
               "Create a free account", tableName: "Voice",

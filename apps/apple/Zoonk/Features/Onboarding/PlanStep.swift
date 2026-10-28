@@ -75,7 +75,7 @@ private struct PlanCreated: View {
               "Save your plan so it's here next time.", tableName: "Onboarding",
               comment: "A guest's plan isn't saved to an account yet")
             Button {
-              router.present(.account)
+              router.present(.signIn)
             } label: {
               Text(
                 "Create an account", tableName: "Onboarding", comment: "Opens sign-up from the plan"

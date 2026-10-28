@@ -28,7 +28,7 @@ struct ShellToolbar: ViewModifier {
     case .signedOut:
       ToolbarItem(placement: .topBarTrailing) {
         Button {
-          router.present(.account)
+          router.present(.signIn)
         } label: {
           Text("Log in", tableName: "Navigation", comment: "Opens sign-in")
         }

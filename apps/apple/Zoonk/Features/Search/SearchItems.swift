@@ -330,7 +330,7 @@ private var visitorPages: SearchGroup {
         id: "login",
         title: String(localized: "Log in", table: "Search", comment: "Search row to log in"),
         systemImage: "person.crop.circle",
-        action: .present(.account)),
+        action: .present(.signIn)),
     ])
 }
 

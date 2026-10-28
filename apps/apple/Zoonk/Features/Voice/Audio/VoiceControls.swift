@@ -80,7 +80,7 @@ struct HelpLimitNotice: View {
 
       if limit.needsAccount {
         Button {
-          router.present(.account)
+          router.present(.signIn)
         } label: {
           Text(
             "Create a free account", tableName: "Voice",

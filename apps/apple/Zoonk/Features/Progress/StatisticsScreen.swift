@@ -6,7 +6,7 @@ struct StatisticsScreen: View {
 
   var body: some View {
     ProgressOverviewView {
-      router.present(.account)
+      router.present(.signIn)
     }
     .navigationTitle(Text(AppTab.statistics.title))
   }

@@ -45,7 +45,9 @@ extension TutorPlaces {
   static func routed(by router: AppRouter) -> TutorPlaces {
     TutorPlaces { place in
       switch place {
-      case .account, .memory:
+      case .account:
+        router.present(.signIn)
+      case .memory:
         router.present(.account)
       case .subscription:
         router.present(.subscription)
@@ -100,7 +102,7 @@ extension LessonPlayerRoutes {
   /// learner was; a guest's "Build my plan" opens the course or goal start with its subject.
   static func routed(by router: AppRouter) -> LessonPlayerRoutes {
     LessonPlayerRoutes(
-      signIn: { router.present(.account) },
+      signIn: { router.present(.signIn) },
       startCourse: { courseId, chapterId in
         router.open(.courseStart(courseId: courseId, chapterId: chapterId))
       },

@@ -16,6 +16,10 @@ private struct AccountDeletionDestination: Hashable {
 }
 
 struct AccountSheet: View {
+  /// Opened to log in or create an account (`.signIn`): a guest gets sign-in instead of the hub,
+  /// and the sheet closes once they're signed in, after the profile an account needs.
+  var signsIn = false
+
   @Environment(\.dismiss) private var dismiss
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(SessionStore.self) private var session
@@ -86,6 +90,20 @@ struct AccountSheet: View {
     .task {
       await session.reconcileSynchronizedCredential()
     }
+    .onChange(of: isSignedInForGood) {
+      if signsIn, isSignedInForGood {
+        dismiss()
+      }
+    }
+  }
+
+  /// Signed in to an account whose profile is set up: what sign-in mode waits for.
+  private var isSignedInForGood: Bool {
+    guard case .signedIn(let account) = session.state else {
+      return false
+    }
+
+    return !isGuest && !account.needsProfileSetup
   }
 
   private var closeButton: some View {
@@ -115,6 +133,8 @@ struct AccountSheet: View {
       ProgressView()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     case .signedOut:
+      LoginView()
+    case .signedIn where signsIn && isGuest:
       LoginView()
     case .signedIn(let account):
       // A guest's anonymous account has no name to set up: the hub offers "Create an account".

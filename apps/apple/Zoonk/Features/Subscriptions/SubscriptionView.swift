@@ -24,7 +24,7 @@ struct SubscriptionScreen: View {
           }
           .safeAreaBar(edge: .bottom) {
             Button {
-              router.present(.account)
+              router.present(.signIn)
             } label: {
               if isGuest {
                 Text(

@@ -8,6 +8,8 @@ struct AppTabView: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(SessionStore.self) private var session
   @State private var tabBarPlacement: TabBarPlacement?
+  /// The guest signed in now, whose session may become an account without leaving their place.
+  @State private var guestID: String?
 
   var body: some View {
     @Bindable var router = router
@@ -69,9 +71,14 @@ struct AppTabView: View {
     .onChange(of: session.account?.user.id) { previous, current in
       // A learner's pages and tasks end with their session (signed out, expired or another
       // account), so nothing is left loading for someone who can't read it. Signing in keeps
-      // the visitor's place.
-      if previous != nil, previous != current {
+      // the visitor's place, and a guest's: their plan and progress move to the account.
+      if previous != nil, previous != current, previous != guestID {
         router.popToRoots()
+      }
+    }
+    .onChange(of: learner.summary.value?.identity, initial: true) { _, identity in
+      if let identity {
+        guestID = identity.isAnonymous ? identity.userID : nil
       }
     }
     .onChange(of: isStudyShown) {
@@ -149,6 +156,8 @@ struct AppSheetView: View {
     switch sheet {
     case .account:
       AccountSheet()
+    case .signIn:
+      AccountSheet(signsIn: true)
     case .subscription:
       SubscriptionScreen()
     }

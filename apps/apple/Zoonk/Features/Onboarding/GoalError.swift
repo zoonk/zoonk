@@ -168,7 +168,7 @@ struct CreateAccountButton: View {
 
   var body: some View {
     Button {
-      router.present(.account)
+      router.present(.signIn)
     } label: {
       Text(
         "Create a free account", tableName: "Onboarding",

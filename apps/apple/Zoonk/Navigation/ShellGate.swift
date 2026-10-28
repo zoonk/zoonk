@@ -70,7 +70,7 @@ struct ShellGate<Content: View>: View {
         comment: "Explains the two ways on from a page that needs an account")
     } actions: {
       Button {
-        router.present(.account)
+        router.present(.signIn)
       } label: {
         Text("Log in", tableName: "Navigation", comment: "Opens sign-in")
       }

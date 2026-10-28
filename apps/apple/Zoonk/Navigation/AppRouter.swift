@@ -1,9 +1,12 @@
 import Observation
 import SwiftUI
 
-/// App-wide sheets: the account (sign in, settings hub) and the Plus subscription a lock opens.
+/// App-wide sheets: the account (sign in, settings hub), sign-in on its own (where a visitor or a
+/// guest is asked to log in or create an account; it closes once they have), and the Plus
+/// subscription a lock opens.
 enum AppSheet: Hashable, Identifiable {
   case account
+  case signIn
   case subscription
 
   var id: Self { self }
