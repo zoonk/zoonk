@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "richtext_math_cubed": "2ef8f1e6979f274f6977475d18f301ccedbeae123f4e2214c8470b329193fa3c",
+  "richtext_math_fraction": "95070c596ce96e4b0dadfc5274303a4c80aa53ce09b8e5a7f2f48d2ddfab23ba",
+  "richtext_math_power": "9cbc42438bce6688f5ae1ad82289066147272f58cb00d1bab6a0bd58edcda7f4",
+  "richtext_math_root": "b254ca918cc3a33f7ad3e59b44848b4ec574822ce1a7f1ba48dc56afe0bc8942",
+  "richtext_math_squared": "5262c3260a35cf4eb682e177cd3825479d94283a29f236d00f010fd67a00c32a",
+  "richtext_math_subscript": "a6293c9f589ab748cdfa7e4c9894ce4e4db853d0fb4f1e09b55bffb67492092c"
+}
+-->
+<resources>
+    <!-- Screen reader words for a formula, said after its base: "x squared". -->
+    <string name="richtext_math_squared">hoch zwei</string>
+    <!-- Screen reader words for a formula, said after its base: "x cubed". -->
+    <string name="richtext_math_cubed">hoch drei</string>
+    <!-- Screen reader words for an exponent, said after its base: "2 to the power of 10". -->
+    <string name="richtext_math_power">hoch %1$s</string>
+    <!-- Screen reader words for an index, said after its base: "x sub 1". -->
+    <string name="richtext_math_subscript">tief %1$s</string>
+    <!-- Screen reader words for a fraction: "1 over 4". -->
+    <string name="richtext_math_fraction">%1$s geteilt durch %2$s</string>
+    <!-- Screen reader words for a square root: "square root of 2". -->
+    <string name="richtext_math_root">Quadratwurzel aus %1$s</string>
+</resources>

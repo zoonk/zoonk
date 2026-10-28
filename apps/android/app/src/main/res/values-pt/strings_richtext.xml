@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "richtext_math_cubed": "91d0c38f67946b4bb3fe7f8b58bcd374d4d0d3a5915907146c052b5a801a9a39",
+  "richtext_math_fraction": "892cb366f2038c56fb5e78708f0117a1e90a4531e38bd928987c143765707fbd",
+  "richtext_math_power": "0301ca78df8bd567d0d9d513ddcb768643705760c848e883c331507fc3cc4abb",
+  "richtext_math_root": "98bae59d1aeb74de8e009ab93b8384d82be36dc91aaa8a19148ded32a81f9feb",
+  "richtext_math_squared": "b799f11ffb5cf1440eeb4d15e915bb4511801158e116b1ddf21ff5ce4dde8e02",
+  "richtext_math_subscript": "021de1e7c23e070022a8fe250808e3668bccb81dec94078bd073ff56bd21a8c0"
+}
+-->
+<resources>
+    <!-- Screen reader words for a formula, said after its base: "x squared". -->
+    <string name="richtext_math_squared">ao quadrado</string>
+    <!-- Screen reader words for a formula, said after its base: "x cubed". -->
+    <string name="richtext_math_cubed">ao cubo</string>
+    <!-- Screen reader words for an exponent, said after its base: "2 to the power of 10". -->
+    <string name="richtext_math_power">elevado a %1$s</string>
+    <!-- Screen reader words for an index, said after its base: "x sub 1". -->
+    <string name="richtext_math_subscript">subscrito %1$s</string>
+    <!-- Screen reader words for a fraction: "1 over 4". -->
+    <string name="richtext_math_fraction">%1$s sobre %2$s</string>
+    <!-- Screen reader words for a square root: "square root of 2". -->
+    <string name="richtext_math_root">raiz quadrada de %1$s</string>
+</resources>
