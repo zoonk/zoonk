@@ -116,11 +116,9 @@ struct AccountSheet: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     case .signedOut:
       LoginView()
-    case .signedIn where isGuest:
-      // A guest creates an account here; signing in moves their plan and progress to it.
-      LoginView()
     case .signedIn(let account):
-      if account.needsProfileSetup {
+      // A guest's anonymous account has no name to set up: the hub offers "Create an account".
+      if account.needsProfileSetup, !isGuest {
         ProfileEditorView(account: account, isRequiredSetup: true)
           .id(account.user.id)
       } else {
