@@ -1,9 +1,5 @@
 import SwiftUI
 
-/// Choosing the buddy (Zu, Noodle, Beep or Otto), its name and the glasses it wears, as main's
-/// "Your buddy": earned pairs can be picked and the rest say how they're earned. An empty name
-/// keeps the buddy's own name in each language. The Buddy tab and Preferences share it; each saves
-/// the choice its own way.
 struct BuddyEditor: View {
   @Environment(\.dismiss) private var dismiss
 
@@ -97,8 +93,9 @@ struct BuddyEditor: View {
   }
 }
 
-/// Which buddy and its name, as main's `BuddyPicker`: onboarding's buddy step and the buddy editor
-/// share it. An empty name keeps the buddy's own name in each language.
+private let buddyNameMaxLength = 24
+
+/// An empty name keeps the buddy's own name in each language.
 struct BuddyPickerSections: View {
   @Binding var kind: BuddyKind
   @Binding var name: String
@@ -134,9 +131,8 @@ struct BuddyPickerSections: View {
       .textInputAutocapitalization(.words)
       .autocorrectionDisabled()
       .onChange(of: name) { _, newName in
-        // Custom names stay short so they fit wherever the buddy is named.
-        if newName.count > 24 {
-          name = String(newName.prefix(24))
+        if newName.count > buddyNameMaxLength {
+          name = String(newName.prefix(buddyNameMaxLength))
         }
       }
     } header: {
@@ -145,8 +141,8 @@ struct BuddyPickerSections: View {
   }
 }
 
-/// Every pair of glasses: the earned ones go on with one tap, the rest say how they're earned and
-/// how far along the learner is. Nothing is random and nothing is sold.
+/// Nothing is random and nothing is sold: the earned pairs go on with one tap, the rest say how
+/// they're earned.
 struct BuddyGlassesPicker: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(BuddyStore.self) private var store
@@ -229,7 +225,6 @@ struct BuddyGlassesPicker: View {
     .presentationDetents([.medium, .large])
   }
 
-  /// A locked pair says how it's earned, and a counted one how far along the learner is.
   @ViewBuilder
   private func lockedDetail(_ option: Components.Schemas.GlassesProgress) -> some View {
     let counted = option.glasses == .catEye || option.glasses == .retro

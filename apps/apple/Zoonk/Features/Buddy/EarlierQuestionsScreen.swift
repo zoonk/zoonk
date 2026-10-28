@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// The questions a learner asked about lessons from an earlier version of their courses, reached
-/// from the buddy's menu: kept, so a rewrite never reads as their history deleted. The lessons are
-/// gone, so nothing links anywhere: it's history to read.
+/// The lessons are gone, so nothing links anywhere: it's history to read.
 struct EarlierQuestionsScreen: View {
   @Environment(BuddyStore.self) private var store
 

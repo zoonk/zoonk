@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// The Buddy tab before there's a goal to tutor: instead of a dead end, the buddy says what it does
-/// with one and takes it right here, then opens the goal start with the same words, so the
-/// learner never types them twice. An example fills the field for the learner to edit first.
+/// An example fills the field for the learner to edit first.
 struct BuddyGoalStart: View {
   @Environment(BuddyStore.self) private var store
   @Environment(\.tutorPlaces) private var places
@@ -97,8 +95,6 @@ struct BuddyGoalStart: View {
     places.open(.startGoal(goal: trimmedGoal))
   }
 
-  /// Goals to start with one tap, in the interface language: the same examples onboarding shows,
-  /// with a local exam and a language that isn't the interface's own.
   private var examples: [String] {
     let language =
       Locale(identifier: Bundle.main.preferredLocalizations.first ?? "en")

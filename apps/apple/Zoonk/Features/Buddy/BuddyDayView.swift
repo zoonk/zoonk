@@ -1,15 +1,11 @@
 import SwiftUI
 
-/// The buddy's day, beside the conversation on a wide screen and in a sheet on a phone: Energy,
-/// today's missions, then the buddy (how it grows, what it remembers, its glasses, the week's
-/// summary).
 struct BuddyDayView: View {
   @Environment(\.tutorPlaces) private var places
 
   let status: BuddyStatus
   let name: String
   let onGlasses: () -> Void
-  /// Beside the conversation the day names itself; in its sheet the navigation bar does.
   var showsTitle = false
 
   var body: some View {
@@ -77,20 +73,16 @@ struct BuddyDayView: View {
     }
   }
 
-  /// "Otto today".
   var title: Text {
     Text(
       "\(name) today", tableName: "Buddy",
       comment: "Title of the buddy's day; the argument is its name")
   }
 
-  /// "Baby · Grows to Young at Orange Belt".
   var subtitle: Text {
     Text("\(status.stage.name) · \(status.growthLine)")
   }
 
-  /// "Today's missions", how many and about how long, and the Brain Power every mission done
-  /// adds.
   private func missionsHeader(_ today: BuddyStatus.TodayPayload) -> some View {
     let minutes = Int(today.missions.compactMap(\.minutes).reduce(0, +).rounded())
 

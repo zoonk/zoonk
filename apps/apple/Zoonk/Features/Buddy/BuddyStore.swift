@@ -1,18 +1,14 @@
 import Foundation
 import Observation
 
-/// The buddy's day (Energy, missions, stage, glasses) and the learner's earlier questions, kept
-/// for the app's lifetime. Picking a buddy shows at once and saves in the background.
 @MainActor
 @Observable
 final class BuddyStore {
   let status: Resource<BuddyStatus>
   let earlierQuestions: Resource<EarlierQuestionsPage>
 
-  /// A question brought from search ("Ask the buddy about it"): the Buddy tab puts it in its
-  /// composer, where it waits for the learner's own send.
+  /// Waits in the Buddy tab's composer for the learner's own send.
   var broughtQuestion: String?
-  /// The latest buddy picked didn't save, so the buddy kept the one before.
   private(set) var saveFailed = false
   private(set) var isLoadingOlder = false
   private(set) var olderFailed = false
@@ -25,8 +21,6 @@ final class BuddyStore {
     self.api = api
     self.cache = cache
 
-    // Missions follow the day's session, Energy and the stage follow progress, and the buddy
-    // itself the learning profile.
     status = cache.resource(
       audience: .signedIn, domains: [.goals, .learningProfile, .userProgress, .userSession]
     ) { session in
@@ -38,7 +32,6 @@ final class BuddyStore {
         timeZone: TimeZone.current.identifier, token: session.bearerToken)
     }
 
-    // Earlier questions are history: they never change.
     earlierQuestions = cache.resource(
       audience: .signedIn,
       maxAge: .seconds(60 * 60 * 24),
@@ -52,9 +45,7 @@ final class BuddyStore {
       })
   }
 
-  /// Picks a buddy, its name or its glasses. The buddy changes at once; a failed save puts the
-  /// one before back, and only the latest save can report a failure. A save whose session ended
-  /// changes nothing on screen: another learner's buddy may be there now.
+  /// A failed save puts the buddy before back, and only the latest save can report a failure.
   func save(_ choice: BuddyChoice) async {
     latestSave += 1
     let request = latestSave
@@ -117,8 +108,6 @@ final class BuddyStore {
     }
   }
 
-  /// Answers an insight from recent sessions. Accepting a plan change or a schedule idea changes
-  /// the plan, so Today and the plan read it again.
   func answer(_ insight: MemoryInsight, accepted: Bool) async -> MutationResult<Void> {
     await cache.mutate(invalidating: [.goals, .learnerModel, .memory, .userSession]) { identity in
       try await api.answer(insightId: insight.id, accepted: accepted, token: identity.bearerToken)

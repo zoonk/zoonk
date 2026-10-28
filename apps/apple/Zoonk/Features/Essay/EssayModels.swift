@@ -1,7 +1,5 @@
 import Foundation
 
-/// The rubric an essay is graded with: ENEM's five competencies, OAB's brief section by section,
-/// AP's scoring guidelines, or the item's own criteria.
 enum EssayRubric: String, Decodable, Sendable {
   case ap
   case custom
@@ -9,8 +7,6 @@ enum EssayRubric: String, Decodable, Sendable {
   case oab
 }
 
-/// A graded draft: every criterion with a comment on the learner's own words, an estimated range
-/// and the one next step.
 struct EssayGrade: Hashable, Decodable, Sendable {
   struct Criterion: Hashable, Decodable, Sendable, Identifiable {
     var comment: String
@@ -22,7 +18,6 @@ struct EssayGrade: Hashable, Decodable, Sendable {
     var score: Double
   }
 
-  /// ENEM's five intervention proposal elements: present or missing.
   struct InterventionElements: Hashable, Decodable, Sendable {
     var action: Bool
     var agent: Bool
@@ -59,14 +54,12 @@ struct EssayGrade: Hashable, Decodable, Sendable {
   var total: Total
   var zeroReason: ZeroReason?
 
-  /// The criterion the next step is about.
   var nextStepCriterion: Criterion? {
     criteria.first { $0.id == nextStep?.criterionId }
   }
 }
 
-/// A writing block of the learner's session: the prompt, its rubric and the graded drafts so far,
-/// latest first, with how many grades are left today.
+/// Drafts are latest first.
 struct EssayView: Hashable, Decodable, Sendable {
   struct Draft: Hashable, Decodable, Sendable {
     var grade: EssayGrade

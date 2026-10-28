@@ -1,14 +1,12 @@
 import Foundation
 
 extension EssayRubric {
-  /// What the learner writes: an essay for ENEM, an answer for every other exam.
   var writingName: String {
     self == .enem
       ? String(localized: "Your essay", table: "Essay", comment: "The box for an ENEM essay")
       : String(localized: "Your answer", table: "Essay", comment: "The box for a written answer")
   }
 
-  /// The writing task's name, by its rubric.
   var promptLabel: String {
     switch self {
     case .ap:
@@ -22,7 +20,6 @@ extension EssayRubric {
     }
   }
 
-  /// What the texts to read before writing are, in the exam's own words where it has some.
   var textsLabel: String {
     switch self {
     case .ap, .custom:
@@ -36,7 +33,6 @@ extension EssayRubric {
 }
 
 extension EssayGrade.InterventionElements {
-  /// ENEM's five elements of the intervention proposal, in order, each present or not.
   var named: [(name: String, present: Bool)] {
     [
       (String(localized: "Who acts", table: "Essay", comment: "ENEM proposal element"), agent),

@@ -1,10 +1,5 @@
 import SwiftUI
 
-/// The Buddy tab: the learner's conversation with their buddy, their tutor for the goal (doubts,
-/// the plan, and changes to it by talking), with the buddy's day (Energy and missions) a tap away
-/// in a sheet on a phone and beside the conversation on a wide screen. Before there's a goal, the
-/// buddy takes one. The shell shows visitors its sign-in gate; a guest sees the buddy but is asked
-/// to create an account to talk.
 struct BuddyScreen: View {
   @Environment(BuddyStore.self) private var store
   @Environment(LearnerSummaryStore.self) private var summary
@@ -17,8 +12,8 @@ struct BuddyScreen: View {
       case .failed:
         failure { await store.status.refresh() }
       case .loaded where summary.summary.value == nil:
-        // Which goal the buddy tutors comes with the summary: wait for it rather than show the
-        // goal start for a moment, and offer to read it again if it couldn't be read.
+        // Which goal the buddy tutors comes with the summary: wait for it rather than flash the
+        // goal start.
         if case .failed = summary.summary.state {
           failure { await summary.summary.refresh() }
         } else {
@@ -35,7 +30,6 @@ struct BuddyScreen: View {
     .loads(store.status, store.earlierQuestions, refreshable: false)
   }
 
-  /// While the buddy's day loads or can't be read, the bar still names the buddy, as its tab does.
   private var loading: some View {
     ProgressView()
       .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -64,7 +58,6 @@ struct BuddyScreen: View {
     .navigationTitle(Text(summary.buddyDisplayName))
   }
 
-  /// The selected goal the buddy tutors, unless it's archived or a quick explanation.
   private var tutoredGoalId: String? {
     guard let learner = summary.summary.value, let id = learner.activeGoalID,
       let goal = learner.goals.first(where: { $0.id == id }),
@@ -85,16 +78,13 @@ private struct BuddyContent: View {
 
   let status: BuddyStatus
   let goalId: String?
-  /// The learner has mistakes to fix, so the buddy offers to explain the last one.
   let hasMistake: Bool
 
-  /// The day's sheet where it isn't beside the conversation, opened from the day's line.
   @State private var isDayShown = false
   @State private var isEditing = false
   @State private var isWearing = false
   @State private var goalDraft = ""
   @State private var faceCue: ActCue<BuddyAct>?
-  /// Where the phone's day sheet sends the learner, opened once the sheet is gone.
   @State private var placeAfterDay: TutorPlace?
 
   private var name: String {
@@ -108,18 +98,16 @@ private struct BuddyContent: View {
       studiedToday: status.energy.studiedToday)
   }
 
-  /// The buddy's face reacts to the conversation (main's `useChatFace`): it glances at what the
-  /// learner sends and smiles when its answer comes in. Only while it's awake: asleep it naps on,
-  /// and glowing it's already beaming with its eyes shut, so a smile would swap its face away.
+  /// Only while it's awake: asleep it naps on, and glowing it's already beaming with its eyes shut,
+  /// so a smile would swap its face away.
   private func react(_ act: BuddyAct) {
     guard look.energyState == .awake else { return }
     faceCue = ActCue(id: (faceCue?.id ?? 0) + 1, act: act)
   }
 
   var body: some View {
-    // Where there's room, the day stays in sight beside the conversation (main's aside); a phone
-    // opens it in a sheet from the day's line. A pane rather than an inspector: a hidden tab's
-    // inspector turns into a sheet over the shown tab when the width turns compact.
+    // A pane rather than an inspector: a hidden tab's inspector turns into a sheet over the shown
+    // tab when the width turns compact.
     PaneSplit(primaryShare: 0.55) {
       thread(opensDay: false)
     } secondary: {
@@ -155,7 +143,6 @@ private struct BuddyContent: View {
         }
       }
     }
-    // The day's sheet has its title in the sheet's bar.
     .sheet(isPresented: $isDayShown, onDismiss: openPlaceAfterDay) {
       let day = dayView(showsTitle: false)
 
@@ -241,8 +228,6 @@ private struct BuddyContent: View {
     }
   }
 
-  /// The conversation with the day's line over it, as main's line beside the buddy's name: Energy
-  /// and today's missions stay in sight while the conversation scrolls under them.
   private func thread(opensDay: Bool) -> some View {
     conversation
       .safeAreaBar(edge: .top) {
@@ -270,8 +255,7 @@ private struct BuddyContent: View {
     }
   }
 
-  /// The hello says the buddy is an AI, since it opens every conversation (EU AI Act art. 50;
-  /// Decreto 12.880/2026 art. 11 for minors).
+  /// The hello says the buddy is an AI (EU AI Act art. 50; Decreto 12.880/2026 art. 11 for minors).
   private var greeting: some View {
     VStack(alignment: .leading, spacing: 12) {
       Text(
@@ -306,7 +290,6 @@ private struct BuddyContent: View {
     .accessibilityElement(children: .contain)
   }
 
-  /// Three ways to start, from the learner's day: why today's lessons, a lighter week, a doubt.
   private var suggestions: [TutorSuggestion] {
     [
       status.today != nil
@@ -341,8 +324,6 @@ private struct BuddyContent: View {
     ]
   }
 
-  /// The buddy's day as one quiet line: Energy and today's missions. Where the day isn't beside the
-  /// conversation, it opens the whole day.
   @ViewBuilder
   private func dayLine(opensDay: Bool) -> some View {
     if opensDay {
@@ -367,11 +348,9 @@ private struct BuddyContent: View {
 
   private func dayLineLabel(opensDay: Bool) -> some View {
     HStack(spacing: 16) {
-      // Its face, so a glance or a smile reads at this size whatever its stage.
       BuddyCharacter(look: look, crop: .face, cue: faceCue)
         .frame(width: 32, height: 32)
 
-      // At accessibility sizes the two values stack, so neither breaks across lines.
       let values =
         typeSize.isAccessibilitySize
         ? AnyLayout(VStackLayout(alignment: .leading, spacing: 4))

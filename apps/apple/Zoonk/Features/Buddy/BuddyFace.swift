@@ -1,9 +1,5 @@
 import SwiftUI
 
-/// The buddy's face wherever the app shows it beside words (Ask buttons, pickers): main's buddy
-/// cropped to its face, grown by the learner's belt, happy, at the size of the text beside it, so it
-/// follows Dynamic Type and sits on the text's line like the symbol a `Label` would show. It holds
-/// still and is decorative.
 struct BuddyFace: View {
   @Environment(LearnerSummaryStore.self) private var learner
 

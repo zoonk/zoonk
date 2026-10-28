@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// A quick explanation (`/explain/[goalId]`): the wait while it's written, with each step live and the outline taking shape, then "See explanation" plays its screens and check in the lesson player. Back from it, "Now you know" sums it up, with ways to go further.
 struct ExplainScreen: View {
   let goalId: String
 
@@ -47,8 +46,8 @@ private struct ExplanationView: View {
   @State private var hasPlayed = false
   @State private var isRetrying = false
   @State private var retryFailed = false
-  /// A learner who waited sees the finished outline first; one opening a written explanation
-  /// reads it at once, as on main.
+  /// A learner who waited sees the finished outline first; one opening a written explanation reads
+  /// it at once.
   @State private var readsAtOnce: Bool
 
   init(explanation: Explanation, reload: @escaping () async -> Void) {
@@ -152,7 +151,6 @@ private struct ExplanationView: View {
     }
   }
 
-  /// The run writing it, live; one that stopped or takes long has its own way to start again.
   @ViewBuilder
   private var waiting: some View {
     if let generationID = explanation.generationId {
@@ -182,7 +180,6 @@ private struct ExplanationView: View {
     }
   }
 
-  /// "Now you know": the summary, one idea per line.
   private var recap: some View {
     Section {
       ForEach(Array(explanation.recap.enumerated()), id: \.offset) { index, line in
@@ -206,7 +203,6 @@ private struct ExplanationView: View {
     }
   }
 
-  /// Learning the subject in depth as a plan of its own, or another quick question.
   private var goFurther: some View {
     Section {
       Button {
@@ -260,7 +256,6 @@ private struct ExplanationView: View {
     }
   }
 
-  /// The explanation's title inside a sentence: "how inflation works", an acronym ("GDP") as it is.
   private var topic: String {
     let trimmed = explanation.title.trimmingCharacters(in: .whitespaces)
       .trimmingCharacters(in: CharacterSet(charactersIn: "?!."))
@@ -268,13 +263,12 @@ private struct ExplanationView: View {
     return isAcronym ? trimmed : trimmed.prefix(1).lowercased() + trimmed.dropFirst()
   }
 
-  /// Onboarding with the words filled in, as main's links to `/start?goal=`; reading them waits for the learner's tap.
+  /// Only fills the words in: reading them waits for the learner's tap.
   private func startGoal(_ words: String) {
     router.dismissTask()
     router.open(.startGoal(goal: words))
   }
 
-  /// Back to the plan's day, or, with only explanations, to asking the next question.
   private func done() {
     if explanation.hasStudyGoal {
       router.showRoot(of: .today)
@@ -293,14 +287,13 @@ private struct ExplanationView: View {
       _ = try await onboarding.writeGoal(goalID: explanation.goalId)
       await reload()
     } catch is CancellationError {
-      // The write is obsolete: the learner who asked is gone, so nothing shows.
+      // The learner who asked is gone, so nothing shows.
     } catch {
       retryFailed = true
     }
   }
 }
 
-/// The run writing an explanation, step by step; once it can be read, the screen reads it again.
 private struct ExplanationWait: View {
   let generationID: String
   let reload: () async -> Void
@@ -335,7 +328,6 @@ private struct ExplanationWait: View {
         for try await event in onboarding.events(generationID: generationID) {
           wait.apply(event)
 
-          // The outline arrives as the run writes it.
           await reload()
 
           if wait.isDone {

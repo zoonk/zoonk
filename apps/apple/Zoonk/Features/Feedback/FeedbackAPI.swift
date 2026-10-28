@@ -7,7 +7,6 @@ enum FeedbackContentKind: String, Equatable, Sendable {
   case plan
 }
 
-/// The content a message is about, so the team can see the course or chapter the learner was on.
 struct FeedbackContext: Equatable, Sendable {
   let contentID: String
   let contentKind: FeedbackContentKind
@@ -32,7 +31,6 @@ enum FeedbackFailure: Error, Equatable, Sendable {
 }
 
 protocol FeedbackAPIClient: Sendable {
-  /// Sends the message, linked to the signed-in learner's account when a token is given.
   func submit(_ submission: FeedbackSubmission, token: String?) async throws
 }
 
@@ -73,7 +71,6 @@ struct FeedbackAPI: FeedbackAPIClient, @unchecked Sendable {
     }
   }
 
-  /// Keeps generated transport failures behind stable form recovery states while preserving task cancellation.
   private func perform<Output: Sendable>(
     token: String?,
     operation: @Sendable (Client) async throws -> Output
@@ -97,7 +94,6 @@ struct FeedbackAPI: FeedbackAPIClient, @unchecked Sendable {
     }
   }
 
-  /// Tells the team the message came from this app and version, plus the content it's about.
   private func makeContextPayload(
     _ context: FeedbackContext?
   ) -> Components.Schemas.FeedbackSubmission.ContextPayload {
@@ -148,7 +144,6 @@ struct FeedbackAPI: FeedbackAPIClient, @unchecked Sendable {
   }
 }
 
-/// The marketing version and build, as shown in the App Store and TestFlight.
 func currentAppVersion() -> String? {
   let info = Bundle.main.infoDictionary
   let version = info?["CFBundleShortVersionString"] as? String

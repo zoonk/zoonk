@@ -1,9 +1,5 @@
 import SwiftUI
 
-/// Writing practice for an exam's essay, a block of the learner's session: the texts and the
-/// instruction, the learner's text sent for grading (a tap; grading takes 10 to 30 seconds), then
-/// the grade (the estimated range by the official rubric, the one next step, the comments on every
-/// criterion). Rewriting grades a new draft; skipping the rewrite goes on with the session.
 struct EssayScreen: View {
   @Environment(ExamStore.self) private var store
   @Environment(\.dismiss) private var dismiss
@@ -58,7 +54,6 @@ struct EssayScreen: View {
   }
 }
 
-/// Where sending a draft stands.
 private enum EssaySendStatus: Equatable {
   case idle
   case grading
@@ -75,7 +70,6 @@ private struct EssayContent: View {
   @State private var status = EssaySendStatus.idle
   @State private var slow = false
   @State private var startedAt: Date?
-  /// The last text sent that wasn't graded, with the id it goes again under.
   @State private var ungraded: (attemptId: String, text: String)?
   @State private var finishing = false
   @State private var finishFailed = false
@@ -84,15 +78,12 @@ private struct EssayContent: View {
   let resource: Resource<EssayView>
   let essay: EssayView
 
-  /// Grading takes 10 to 30 seconds: past 20 the screen says it's still at it, past 90 it stops
-  /// waiting and lets the learner send it again, with the text kept.
   private static let slowAfter = Duration.seconds(20)
   private static let timeout = Duration.seconds(90)
 
   private var isWriting: Bool { writing ?? essay.drafts.isEmpty }
   private var graded: String { essay.drafts.first?.text ?? "" }
 
-  /// What the learner typed; until then, the text kept on this device, else the last graded one.
   private var text: String {
     if let typed { return typed }
     if let kept = UnsentEssay.read(essay.blockId),
@@ -314,8 +305,8 @@ private struct EssayContent: View {
     .frame(maxWidth: .infinity, alignment: .leading)
   }
 
-  /// Sends the text for grading, under the same id when it didn't change since a send that
-  /// failed, so the server grades it once.
+  /// Reuses the id when the text didn't change since a send that failed, so the server grades it
+  /// once.
   private func send() async {
     let text = text
     let attemptId = ungraded?.text == text ? ungraded!.attemptId : UUID().uuidString.lowercased()
@@ -362,7 +353,6 @@ private struct EssayContent: View {
     }
   }
 
-  /// Finishes the block and goes back to the session it's a block of.
   private func finish() async {
     finishing = true
     finishFailed = false
@@ -377,7 +367,6 @@ private struct EssayContent: View {
       })
     {
     case .done:
-      // The session under it (or Today) goes on with the next block.
       dismiss()
     case .failed:
       finishFailed = true
@@ -387,8 +376,6 @@ private struct EssayContent: View {
   }
 }
 
-/// The text typed on this device and not graded yet, kept until it's graded, so opening the
-/// essay again brings it back.
 private enum UnsentEssay {
   private static func key(_ blockId: String) -> String { "essay.unsent.\(blockId)" }
 

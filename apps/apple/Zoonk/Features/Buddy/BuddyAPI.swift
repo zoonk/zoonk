@@ -3,15 +3,12 @@ import Foundation
 typealias BuddyStatus = Components.Schemas.BuddyStatus
 typealias MemoryInsight = Components.Schemas.MemoryInsight
 
-/// The buddy the learner picked, as Preferences and the Buddy tab save it.
 struct BuddyChoice: Equatable, Sendable {
   var kind: BuddyKind
-  /// A custom name, or nil for the buddy's own.
   var name: String?
   var glasses: BuddyGlasses
 }
 
-/// A page of the questions the learner asked in an earlier version of their courses.
 struct EarlierQuestionsPage: Equatable, Sendable {
   var questions: [Components.Schemas.EarlierQuestion]
   var nextCursor: String?

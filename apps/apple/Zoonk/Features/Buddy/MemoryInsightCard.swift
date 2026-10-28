@@ -1,13 +1,7 @@
 import SwiftUI
 
-/// At most one insight from recent sessions, for Today (`getToday`'s `insight`): a tip, a plan
-/// change with its reason (one lesson already in the plan to keep or undo; a bigger gap added only
-/// after an OK), or a schedule idea. Answering it refreshes Today, which no longer carries it; the
-/// card keeps saying what the answer did until the learner leaves.
-///
-/// ```swift
-/// if let insight = today.insight?.value1 { MemoryInsightCard(insight: insight) }
-/// ```
+/// Answering it refreshes Today, which no longer carries it; the card keeps saying what the answer
+/// did until the learner leaves.
 struct MemoryInsightCard: View {
   @Environment(BuddyStore.self) private var store
 
@@ -49,7 +43,6 @@ struct MemoryInsightCard: View {
     }
   }
 
-  /// A lightbulb for a tip, the list's mark for a lesson already added, a sparkle otherwise.
   private var mark: String {
     if insight.kind == .tip {
       return "lightbulb"
@@ -165,7 +158,6 @@ struct MemoryInsightCard: View {
       case .failed:
         failed = true
       case .obsolete:
-        // The learner who answered is gone: nothing of theirs shows anymore.
         break
       }
     }

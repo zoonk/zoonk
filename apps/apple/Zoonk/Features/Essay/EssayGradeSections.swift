@@ -1,8 +1,5 @@
 import SwiftUI
 
-/// A graded draft as list sections: the estimated range big with each criterion's score, the one
-/// next step, ENEM's proposal elements, and the comments on every criterion. Shared by the essay
-/// block and a full mock's essays.
 struct EssayGradeSections: View {
   let grade: EssayGrade
 

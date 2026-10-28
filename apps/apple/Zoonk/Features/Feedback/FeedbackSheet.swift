@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// The message form, from Help and from a screen's menu. Only someone the app doesn't know (a
-/// visitor, or a guest, whose account has no real email) types an email to be answered at, as on
-/// main; a signed-in learner's reply goes to their account's.
+/// Only a visitor or a guest, whose account has no real email, types an email to be answered at.
 struct FeedbackSheet: View {
   @Environment(SessionStore.self) private var session
   @Environment(LearnerSummaryStore.self) private var learner

@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Every buddy in the order learners meet them.
+/// In the order learners meet them.
 let buddyKinds: [BuddyKind] = [.zu, .noodle, .beep, .otto]
 
 extension BuddyKind {
@@ -51,7 +51,6 @@ extension Components.Schemas.GlassesProgress.GlassesPayload {
     }
   }
 
-  /// Every pair says upfront how it's earned: nothing is random and nothing is sold.
   var howToEarn: Text {
     switch self {
     case .round:
@@ -81,12 +80,10 @@ extension Components.Schemas.GlassesProgress.GlassesPayload {
 }
 
 extension BuddyStatus {
-  /// The buddy as the editor and Preferences know it.
   var choice: BuddyChoice {
     BuddyChoice(kind: buddy.kind, name: buddy.name, glasses: buddy.glasses)
   }
 
-  /// "Grows to Young at Orange Belt": the next stage and the belt that brings it.
   var growthLine: Text {
     guard let next = nextStage, let belt = ProgressBelt(rawValue: next.belt) else {
       return Text("Fully grown", tableName: "Buddy", comment: "The buddy reached its last stage")
@@ -106,7 +103,6 @@ extension BuddyStatus {
     }
   }
 
-  /// How Energy moves today: napping, studied already, or not yet.
   func energyLine(name: String) -> Text {
     if energy.state == .napping {
       return Text(
@@ -129,15 +125,13 @@ extension BuddyStatus {
 }
 
 extension BuddyChoice {
-  /// The learner's own name for the buddy, else the buddy's name in the app's language (each
-  /// language has its own playful one, kept in the style guides' glossaries).
+  /// Each language has its own playful buddy names, kept in the style guides' glossaries.
   var displayName: String {
     buddyName(kind: kind, name: name)
   }
 }
 
 extension BuddyGlasses {
-  /// The pair's name, as the picker lists it.
   var name: Text {
     switch self {
     case .round: Text("Round", tableName: "Settings", comment: "Buddy glasses: round frames")
@@ -149,8 +143,6 @@ extension BuddyGlasses {
     }
   }
 
-  /// What the buddy wears, as a phrase that stands on its own after its stage ("Baby · Round
-  /// glasses").
   var worn: Text {
     switch self {
     case .round:
@@ -168,7 +160,6 @@ extension BuddyGlasses {
     }
   }
 
-  /// Every pair says upfront how it's earned: nothing is random and nothing is sold.
   var howToEarn: Text {
     switch self {
     case .round:
@@ -206,7 +197,6 @@ extension BuddyStage {
   }
 }
 
-/// The learner's chosen name, or the buddy's localized name.
 func buddyName(kind: BuddyKind, name: String?) -> String {
   if let name, !name.isEmpty {
     return name
