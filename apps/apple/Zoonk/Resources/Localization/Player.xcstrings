@@ -912,6 +912,35 @@
         }
       }
     },
+    "It usually takes a minute or two. The lesson opens here as soon as it's ready." : {
+      "comment" : "While a lesson is written",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das dauert meistens ein bis zwei Minuten. Die Lektion öffnet sich hier, sobald sie fertig ist."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suele tardar uno o dos minutos. La lección se abrirá aquí en cuanto esté lista."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ça prend généralement une ou deux minutes. La leçon s’ouvre ici dès qu’elle est prête."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Normalmente, leva um ou dois minutos. A aula abre aqui assim que estiver pronta."
+          }
+        }
+      }
+    },
     "Keep writing" : {
       "comment" : "Stays in the lesson to finish an answer",
       "localizations" : {
@@ -1992,7 +2021,7 @@
       }
     },
     "Start this lesson" : {
-      "comment" : "A visitor starts a public lesson as a guest",
+      "comment" : "A visitor starts a public lesson as a guest\nStarts a lesson that isn't written yet: it's written, then opens",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2335,35 +2364,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Esta aula ainda não foi criada."
-          }
-        }
-      }
-    },
-    "This lesson isn't written yet. It takes about a minute." : {
-      "comment" : "A lesson not written yet",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diese Lektion wurde noch nicht erstellt. Das dauert etwa eine Minute."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esta lección aún no está preparada. Tardará alrededor de un minuto."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cette leçon n’a pas encore été préparée. Ça prend environ une minute."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esta aula ainda não foi criada. Isso leva cerca de um minuto."
           }
         }
       }
@@ -2861,35 +2861,6 @@
         }
       }
     },
-    "Write this lesson" : {
-      "comment" : "Starts writing a lesson that isn't written yet",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diese Lektion erstellen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Preparar esta lección"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Préparer cette leçon"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Criar esta aula"
-          }
-        }
-      }
-    },
     "Write your answer" : {
       "comment" : "Placeholder of a written answer",
       "localizations" : {
@@ -2915,35 +2886,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Escreva sua resposta"
-          }
-        }
-      }
-    },
-    "Writing your lesson. It opens as soon as it's ready." : {
-      "comment" : "While a lesson is written",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine Lektion wird erstellt. Sie öffnet sich, sobald sie fertig ist."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Preparando tu lección. Se abrirá en cuanto esté lista."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Préparation de ta leçon. Elle s’ouvre dès qu’elle est prête."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Criando sua aula. Ela abre assim que ficar pronta."
           }
         }
       }
@@ -3239,7 +3181,7 @@
       }
     },
     "Your answer" : {
-      "comment" : "Placeholder of a number answer",
+      "comment" : "Placeholder of a number answer\nVoiceOver value of the option the learner picked, which was wrong",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3408,6 +3350,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sua equipe"
+          }
+        }
+      }
+    },
+    "Zoonk writes it when you start. It takes a minute or two." : {
+      "comment" : "A lesson not written yet",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk erstellt sie, wenn du startest. Das dauert ein bis zwei Minuten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk la prepara cuando empiezas. Tarda uno o dos minutos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk la prépare quand tu commences. Ça prend une ou deux minutes."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O Zoonk cria a aula quando você começa. Leva um ou dois minutos."
           }
         }
       }

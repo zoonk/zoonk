@@ -352,8 +352,8 @@ struct LessonWaitingView: View {
       case .notStarted, .failed:
         Button(action: write) {
           Text(
-            "Write this lesson", tableName: "Player",
-            comment: "Starts writing a lesson that isn't written yet")
+            "Start this lesson", tableName: "Player",
+            comment: "Starts a lesson that isn't written yet: it's written, then opens")
         }
         .buttonStyle(.mainAction)
       case .writing:
@@ -378,11 +378,12 @@ struct LessonWaitingView: View {
     switch writing {
     case .notStarted:
       LocalizedStringResource(
-        "This lesson isn't written yet. It takes about a minute.", table: "Player",
+        "Zoonk writes it when you start. It takes a minute or two.", table: "Player",
         comment: "A lesson not written yet")
     case .writing:
       LocalizedStringResource(
-        "Writing your lesson. It opens as soon as it's ready.", table: "Player",
+        "It usually takes a minute or two. The lesson opens here as soon as it's ready.",
+        table: "Player",
         comment: "While a lesson is written")
     case .failed:
       LocalizedStringResource(

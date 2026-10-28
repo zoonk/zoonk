@@ -50,7 +50,22 @@ struct LessonOptionList: View {
         .disabled(isLocked)
         .modifier(NumberShortcut(index: index))
         .accessibilityAddTraits(option.id == selectedId ? .isSelected : [])
+        .accessibilityValue(verdictValue(option))
       }
+    }
+  }
+
+  /// After the check, VoiceOver says which option was right and which one the learner picked.
+  private func verdictValue(_ option: LessonOption) -> Text {
+    switch mark(option) {
+    case .right:
+      Text("Correct answer", tableName: "Player", comment: "Before the right answer after a miss")
+    case .wrong:
+      Text(
+        "Your answer", tableName: "Player",
+        comment: "VoiceOver value of the option the learner picked, which was wrong")
+    default:
+      Text(verbatim: "")
     }
   }
 
