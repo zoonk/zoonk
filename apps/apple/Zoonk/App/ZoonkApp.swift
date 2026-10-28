@@ -22,7 +22,7 @@ struct ZoonkApp: App {
   @State private var tutor: TutorStore
   @State private var voice: VoiceServices
   private let cache: AppCache
-  private let lessonPlayerAPI: LessonPlayerAPI
+  private let lessonPlayer: LessonPlayerDependencies
   private let lessonPlayerRoutes: LessonPlayerRoutes
   private let practiceHooks: PracticeHooks
   private let tutorPlaces: TutorPlaces
@@ -45,7 +45,7 @@ struct ZoonkApp: App {
     _explain = State(initialValue: dependencies.explainStore)
     _goalContent = State(initialValue: dependencies.goalContentStore)
     _learnerSummary = State(initialValue: dependencies.learnerSummaryStore)
-    lessonPlayerAPI = dependencies.lessonPlayerAPI
+    lessonPlayer = dependencies.lessonPlayer
     _mindMaps = State(initialValue: dependencies.mindMapsStore)
     _plan = State(initialValue: dependencies.planStore)
     _onboarding = State(initialValue: dependencies.onboardingStore)
@@ -103,8 +103,7 @@ struct ZoonkApp: App {
         .environment(\.privateImageLoader, privateImages)
         .environment(\.lessonTutor, .buddy)
         .environment(\.tutorPlaces, tutorPlaces)
-        .environment(\.lessonPlayerAPI, lessonPlayerAPI)
-        .environment(\.lessonCompletionHook, .invalidating(cache))
+        .environment(\.lessonPlayer, lessonPlayer)
         .environment(\.lessonAudio, .voice(voice))
         .environment(\.spokenAnswerRecording, .voice)
         .environment(\.activityRenderers, .app)

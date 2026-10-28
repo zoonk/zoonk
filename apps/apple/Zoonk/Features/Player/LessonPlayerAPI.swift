@@ -61,8 +61,6 @@ enum LessonCheckOutcome: Hashable, Sendable {
   case checked(LessonStepResult)
   /// Worth sending again (the connection, the server).
   case failed
-  /// The session ended: sending again with it never works.
-  case unauthorized
   /// Never worth sending again: the run finished, or the answer doesn't fit the screen.
   case refused
 }
@@ -71,8 +69,6 @@ enum LessonCompletionOutcome: Hashable, Sendable {
   case completed(LessonCompletionSummary)
   /// An answer the screens show never reached the server.
   case incomplete
-  /// The session ended: sending again with it never works.
-  case unauthorized
   case failed
 }
 
@@ -137,22 +133,18 @@ struct LessonPlayerAPI: Sendable {
   }
 
   /// Starts a run, or resumes the open one (within half an hour) with its answers.
-  func startLesson(id: String, studySessionId: String?, token: String) async -> Result<
+  func startLesson(id: String, studySessionId: String?, token: String) async throws -> Result<
     LessonRunStart, LessonRunRefusal
   > {
     let body = Components.Schemas.LibraryLessonStartInput(
       studySessionId: studySessionId, timeZone: TimeZone.current.identifier)
 
-    guard
-      let output = try? await clients.perform(
-        token: token,
-        operation: {
-          try await $0.createLibraryLessonStart(
-            path: .init(lessonId: id), body: .json(body))
-        })
-    else {
-      return .failure(.failed)
-    }
+    let output = try await clients.perform(
+      token: token,
+      operation: {
+        try await $0.createLibraryLessonStart(
+          path: .init(lessonId: id), body: .json(body))
+      })
 
     switch output {
     case .created(let response):
@@ -174,7 +166,7 @@ struct LessonPlayerAPI: Sendable {
             LessonPlayerState.LessonSupport(rawValue: $0.value1.rawValue)
           }))
     case .unauthorized:
-      return .failure(.unauthorized)
+      throw APIError.unauthorized
     case .notFound:
       return .failure(.notFound)
     case .code402(let response):
@@ -196,21 +188,17 @@ struct LessonPlayerAPI: Sendable {
     runId: String,
     usedHelp: Bool,
     token: String
-  ) async -> LessonCheckOutcome {
+  ) async throws -> LessonCheckOutcome {
     let body = Components.Schemas.LessonStepCheckInput(
       answer: answer, attemptId: attemptId, durationMs: min(durationMs, 3_600_000), runId: runId,
       timeZone: TimeZone.current.identifier, usedHelp: usedHelp)
 
-    guard
-      let output = try? await clients.perform(
-        token: token,
-        operation: {
-          try await $0.createStepCheck(
-            path: .init(stepId: stepId), body: .json(body))
-        })
-    else {
-      return .failed
-    }
+    let output = try await clients.perform(
+      token: token,
+      operation: {
+        try await $0.createStepCheck(
+          path: .init(stepId: stepId), body: .json(body))
+      })
 
     switch output {
     case .ok(let response):
@@ -232,7 +220,7 @@ struct LessonPlayerAPI: Sendable {
     case .conflict, .unprocessableContent, .badRequest, .notFound:
       return .refused
     case .unauthorized:
-      return .unauthorized
+      throw APIError.unauthorized
     case .internalServerError, .undocumented:
       return .failed
     }
@@ -240,22 +228,18 @@ struct LessonPlayerAPI: Sendable {
 
   func completeLesson(
     id: String, runId: String, skippedWritingStepIds: [String], token: String
-  ) async -> LessonCompletionOutcome {
+  ) async throws -> LessonCompletionOutcome {
     let body = Components.Schemas.LibraryLessonCompletionInput(
       runId: runId,
       skippedWritingStepIds: skippedWritingStepIds.isEmpty ? nil : skippedWritingStepIds,
       timeZone: TimeZone.current.identifier)
 
-    guard
-      let output = try? await clients.perform(
-        token: token,
-        operation: {
-          try await $0.createLibraryLessonCompletion(
-            path: .init(lessonId: id), body: .json(body))
-        })
-    else {
-      return .failed
-    }
+    let output = try await clients.perform(
+      token: token,
+      operation: {
+        try await $0.createLibraryLessonCompletion(
+          path: .init(lessonId: id), body: .json(body))
+      })
 
     switch output {
     case .ok(let response):
@@ -274,7 +258,7 @@ struct LessonPlayerAPI: Sendable {
     case .unprocessableContent:
       return .incomplete
     case .unauthorized:
-      return .unauthorized
+      throw APIError.unauthorized
     case .badRequest, .notFound, .internalServerError, .undocumented:
       return .failed
     }
@@ -302,17 +286,13 @@ struct LessonPlayerAPI: Sendable {
   }
 
   /// Writes the lesson now. Only on the learner's tap: it runs AI.
-  func writeLesson(id: String, token: String) async -> LessonWritingOutcome {
-    guard
-      let output = try? await clients.perform(
-        token: token,
-        operation: {
-          try await $0.createLibraryLessonGeneration(
-            path: .init(lessonId: id))
-        })
-    else {
-      return .failed
-    }
+  func writeLesson(id: String, token: String) async throws -> LessonWritingOutcome {
+    let output = try await clients.perform(
+      token: token,
+      operation: {
+        try await $0.createLibraryLessonGeneration(
+          path: .init(lessonId: id))
+      })
 
     switch output {
     case .ok(let response):
@@ -328,7 +308,7 @@ struct LessonPlayerAPI: Sendable {
     case .tooManyRequests(let response):
       return .refused(Self.refusal(try? response.body.json, status: 429))
     case .unauthorized:
-      return .refused(.unauthorized)
+      throw APIError.unauthorized
     case .notFound:
       return .refused(.notFound)
     case .badRequest, .internalServerError, .undocumented:
@@ -337,19 +317,15 @@ struct LessonPlayerAPI: Sendable {
   }
 
   /// "Explain my answer" on a wrong typed answer. Only on the learner's tap: it may run AI.
-  func explainAnswer(stepId: String, answer: String, token: String) async
+  func explainAnswer(stepId: String, answer: String, token: String) async throws
     -> AnswerExplanationOutcome
   {
-    guard
-      let output = try? await clients.perform(
-        token: token,
-        operation: {
-          try await $0.createStepAnswerExplanation(
-            path: .init(stepId: stepId), body: .json(.init(answer: answer)))
-        })
-    else {
-      return .failed
-    }
+    let output = try await clients.perform(
+      token: token,
+      operation: {
+        try await $0.createStepAnswerExplanation(
+          path: .init(stepId: stepId), body: .json(.init(answer: answer)))
+      })
 
     switch output {
     case .ok(let response):
@@ -361,7 +337,7 @@ struct LessonPlayerAPI: Sendable {
     case .tooManyRequests(let response):
       return .refused(Self.refusal(try? response.body.json, status: 429))
     case .unauthorized:
-      return .refused(.unauthorized)
+      throw APIError.unauthorized
     case .badRequest, .notFound, .unprocessableContent, .internalServerError, .undocumented:
       return .failed
     }
@@ -402,8 +378,8 @@ struct LessonPlayerAPI: Sendable {
 
   /// Writes the lesson's personal example lines (every screen's, in one call). Only after the
   /// learner's first action in a lesson: it may run AI.
-  func requestExampleLines(stepId: String, token: String) async {
-    _ = try? await clients.perform(token: token) {
+  func requestExampleLines(stepId: String, token: String) async throws {
+    _ = try await clients.perform(token: token) {
       try await $0.requestCurrentUserStepExampleLine(path: .init(stepId: stepId))
     }
   }

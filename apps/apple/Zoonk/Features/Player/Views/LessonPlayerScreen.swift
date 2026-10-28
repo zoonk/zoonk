@@ -1,33 +1,39 @@
 import SwiftUI
 
+/// What the player needs from the app: its API and the app's cache, whose shared write rule
+/// keeps every answer and completion with the session that made it.
+struct LessonPlayerDependencies {
+  let api: LessonPlayerAPI
+  let cache: AppCache
+}
+
 extension EnvironmentValues {
-  /// The player's API, made once for the app; the composition root may replace it.
-  @Entry var lessonPlayerAPI = LessonPlayerAPI(
-    clients: .live(baseURL: AppConfiguration.current.apiBaseURL))
+  /// Set once at the app root from `AppDependencies`.
+  @Entry var lessonPlayer: LessonPlayerDependencies?
 }
 
 /// A Library lesson, full screen: its screens one at a time, the check and its verdict, and the
 /// lesson's end. Presented as a task (`AppRoute.lesson`), with its own close button.
 struct LessonPlayerScreen: View {
-  @Environment(\.lessonPlayerAPI) private var api
-  @Environment(SessionStore.self) private var session
+  @Environment(\.lessonPlayer) private var player
 
   let lessonId: String
   var sessionId: String?
 
   var body: some View {
-    LessonPlayerContent(
-      store: LessonPlayerStore(
-        lessonId: lessonId, studySessionId: sessionId, api: api, session: session)
-    )
-    .id(lessonId)
+    if let player {
+      LessonPlayerContent(
+        store: LessonPlayerStore(
+          lessonId: lessonId, studySessionId: sessionId, api: player.api, cache: player.cache)
+      )
+      .id(lessonId)
+    }
   }
 }
 
 private struct LessonPlayerContent: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(\.activityRenderers) private var activityRenderers
-  @Environment(\.lessonCompletionHook) private var completionHook
   @Environment(\.lessonTutor) private var tutor
   @Environment(SessionStore.self) private var session
   @Environment(LearnerSummaryStore.self) private var learnerSummary: LearnerSummaryStore?
@@ -104,7 +110,6 @@ private struct LessonPlayerContent: View {
 
         return activityRenderers.renderer(for: content.template) == nil
       }
-      store.onCompleted = { [completionHook] event in completionHook.lessonCompleted(event) }
       store.isGuest = learnerSummary?.summary.value?.identity.isAnonymous == true
       await store.load()
       await store.followLatePictures()

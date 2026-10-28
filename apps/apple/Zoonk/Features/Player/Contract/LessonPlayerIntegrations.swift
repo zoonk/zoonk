@@ -100,33 +100,9 @@ struct LessonGuestStart: Sendable {
   static let unavailable = LessonGuestStart(start: nil)
 }
 
-// MARK: - After a lesson (data layer)
-
-/// What finished: the app's cached learner facts (summary, Today, progress, the chapter) are out
-/// of date.
-struct LessonCompletionEvent: Hashable, Sendable {
-  let lessonId: String
-  let studySessionId: String?
-  let isFirstCompletion: Bool
-}
-
-/// Called once a lesson's completion is saved, to refresh what it changed.
-struct LessonCompletionHook: Sendable {
-  let lessonCompleted: @MainActor @Sendable (LessonCompletionEvent) -> Void
-
-  static let none = LessonCompletionHook(lessonCompleted: { _ in })
-
-  /// Refreshes what a finished lesson changed, as main revalidates after `completeLibraryLesson`:
-  /// the learner's progress (the summary, Today, statistics, chapters) and their learner model.
-  static func invalidating(_ cache: AppCache) -> LessonCompletionHook {
-    LessonCompletionHook { _ in cache.invalidate([.userProgress, .learnerModel]) }
-  }
-}
-
 extension EnvironmentValues {
   @Entry var lessonAudio: LessonAudio = .system
   @Entry var spokenAnswerRecording: SpokenAnswerRecording = .typed
   @Entry var lessonTutor: LessonTutor = .unavailable
   @Entry var lessonGuestStart: LessonGuestStart = .unavailable
-  @Entry var lessonCompletionHook: LessonCompletionHook = .none
 }

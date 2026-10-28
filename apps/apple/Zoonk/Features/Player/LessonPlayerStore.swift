@@ -61,7 +61,8 @@ final class LessonPlayerStore {
   private(set) var askingSuggestionId: String?
 
   private let api: LessonPlayerAPI
-  private let session: SessionStore
+  private let cache: AppCache
+  private var session: SessionStore { cache.session }
   private let choices: LessonTodayChoices
   private var identity: AuthenticatedSession?
   private(set) var openedAt = Date.now
@@ -71,15 +72,32 @@ final class LessonPlayerStore {
   private var saving: [String: Task<Void, Never>] = [:]
 
   init(
-    lessonId: String, studySessionId: String?, api: LessonPlayerAPI, session: SessionStore,
+    lessonId: String, studySessionId: String?, api: LessonPlayerAPI, cache: AppCache,
     choices: LessonTodayChoices = .standard
   ) {
     self.lessonId = lessonId
     self.studySessionId = studySessionId
     self.api = api
-    self.session = session
+    self.cache = cache
     self.choices = choices
     cantTalkToday = choices.isChosenToday(.cantTalk)
+  }
+
+  /// A write for the session that opened the lesson, through the app's shared write rule: a 401
+  /// signs that session out (the lesson then reloads for whoever is signed in), and a result for a
+  /// session that ended meanwhile comes back `.obsolete`, never published.
+  private func write<Value: Sendable>(
+    invalidating domains: Set<DataDomain> = [], _ operation: (String) async throws -> Value
+  ) async -> MutationResult<Value> {
+    let expected = identity
+
+    return await cache.mutate(invalidating: domains) { identity in
+      guard identity == expected else {
+        throw CancellationError()
+      }
+
+      return try await operation(identity.bearerToken)
+    }
   }
 
   /// Opens the Ask panel, with a suggestion ready to send when it came from an offer.
@@ -125,14 +143,27 @@ final class LessonPlayerStore {
       return
     }
 
-    async let started = api.startLesson(id: lesson.id, studySessionId: studySessionId, token: token)
+    let api = api
+    let studySessionId = studySessionId
     async let sounds = api.getSoundsEnabled(token: token)
     async let team =
       lesson.steps.contains { $0.kind == .challenge }
       ? api.getChallengeTeam(lessonId: lesson.id, token: token) : []
 
-    let (run, soundsEnabled, challengeTeam) = await (started, sounds, team)
+    let started = await write { token in
+      try await api.startLesson(id: lesson.id, studySessionId: studySessionId, token: token)
+    }
+
+    let (soundsEnabled, challengeTeam) = await (sounds, team)
     guard isCurrent(identity) else { return }
+
+    let run: Result<LessonRunStart, LessonRunRefusal>
+
+    switch started {
+    case .done(let result): run = result
+    case .failed: run = .failure(.failed)
+    case .obsolete: return
+    }
 
     var state = LessonPlayerState(lessonId: lesson.id, steps: lesson.steps)
 
@@ -195,14 +226,15 @@ final class LessonPlayerStore {
   /// The learner's first action in the lesson writes its personal example lines in the
   /// background (one call for every screen with a slot), never its opening.
   private func writeExampleLinesOnce() {
-    guard exampleLinesWriting == nil, let token = identity?.bearerToken,
-      let first = lesson?.steps.first(where: \.hasExampleLineSlot)
+    guard exampleLinesWriting == nil, let first = lesson?.steps.first(where: \.hasExampleLineSlot)
     else {
       return
     }
 
     let api = api
-    exampleLinesWriting = Task { await api.requestExampleLines(stepId: first.id, token: token) }
+    exampleLinesWriting = Task {
+      _ = await write { token in try await api.requestExampleLines(stepId: first.id, token: token) }
+    }
   }
 
   /// Reads the screen's line once the lesson's write (if one started) settled.
@@ -230,7 +262,7 @@ final class LessonPlayerStore {
       return
     }
 
-    let status = try? await api.getReadiness(id: outline.id, token: identity.bearerToken)
+    let status = await readiness(outline.id, identity: identity)
     guard isCurrent(identity) else { return }
 
     switch status {
@@ -251,11 +283,18 @@ final class LessonPlayerStore {
       return
     }
 
-    let token = identity.bearerToken
-
     screen = .waiting(outline, .writing)
-    let outcome = await api.writeLesson(id: outline.id, token: token)
+    let api = api
+    let written = await write { token in try await api.writeLesson(id: outline.id, token: token) }
     guard isCurrent(identity) else { return }
+
+    let outcome: LessonWritingOutcome
+
+    switch written {
+    case .done(let result): outcome = result
+    case .failed: outcome = .failed
+    case .obsolete: return
+    }
 
     switch outcome {
     case .ready: await load()
@@ -270,7 +309,7 @@ final class LessonPlayerStore {
   private func followWriting(_ outline: LessonOutline, identity: AuthenticatedSession) async {
     while !Task.isCancelled, isCurrent(identity), case .waiting(_, .writing) = screen {
       try? await Task.sleep(for: .seconds(3))
-      let status = try? await api.getReadiness(id: outline.id, token: identity.bearerToken)
+      let status = await readiness(outline.id, identity: identity)
       guard isCurrent(identity), case .waiting(_, .writing) = screen else { return }
 
       switch status {
@@ -282,6 +321,20 @@ final class LessonPlayerStore {
       default:
         continue
       }
+    }
+  }
+
+  /// Whether the lesson is written yet. A 401 signs that identity out, so the screen reloads.
+  private func readiness(_ lessonId: String, identity: AuthenticatedSession) async
+    -> Components.Schemas.LessonReadiness.StatusPayload?
+  {
+    do {
+      return try await api.getReadiness(id: lessonId, token: identity.bearerToken)
+    } catch APIError.unauthorized {
+      await session.expire(identity)
+      return nil
+    } catch {
+      return nil
     }
   }
 
@@ -368,27 +421,28 @@ final class LessonPlayerStore {
     }
 
     self.state?.startChecking()
-    let identity = identity
 
-    guard let runId = state.runId, let token = identity?.bearerToken else {
+    guard let runId = state.runId else {
       self.state?.failChecking()
       return
     }
 
-    let outcome = await api.checkStep(
-      stepId: step.id, answer: answer, attemptId: attemptId, durationMs: durationMs, runId: runId,
-      usedHelp: state.helped.contains(step.id), token: token)
-    guard isCurrent(identity) else { return }
+    let api = api
+    let usedHelp = state.helped.contains(step.id)
+    let checked = await write { token in
+      try await api.checkStep(
+        stepId: step.id, answer: answer, attemptId: attemptId, durationMs: durationMs, runId: runId,
+        usedHelp: usedHelp, token: token)
+    }
 
-    switch outcome {
-    case .checked(var result):
+    switch checked {
+    case .done(.checked(var result)):
       result.answerText = answer.text
       self.state?.resolve(step.id, result: result)
-    case .failed, .refused:
+    case .done(.failed), .done(.refused), .failed:
       self.state?.failChecking()
-    case .unauthorized:
-      self.state?.failChecking()
-      self.state?.refuseRun(.unauthorized)
+    case .obsolete:
+      break
     }
   }
 
@@ -423,49 +477,48 @@ final class LessonPlayerStore {
   /// One answer to the server. Accepted (or refused for good, such as a finished run), it stops
   /// holding the lesson back; a failed send stays unsaved and goes again with the same attempt id.
   private func record(_ stepId: String, _ unsaved: LessonPlayerState.UnsavedAnswer) async {
-    let identity = identity
-
-    guard let runId = state?.runId, let token = identity?.bearerToken else {
+    guard let runId = state?.runId else {
       return
     }
 
-    let outcome = await api.checkStep(
-      stepId: stepId, answer: unsaved.answer, attemptId: unsaved.attemptId,
-      durationMs: unsaved.durationMs, runId: runId, usedHelp: unsaved.usedHelp, token: token)
-    guard isCurrent(identity) else { return }
+    let api = api
+    let recorded = await write { token in
+      try await api.checkStep(
+        stepId: stepId, answer: unsaved.answer, attemptId: unsaved.attemptId,
+        durationMs: unsaved.durationMs, runId: runId, usedHelp: unsaved.usedHelp, token: token)
+    }
 
-    switch outcome {
-    case .checked(let result):
+    switch recorded {
+    case .done(.checked(let result)):
       state?.confirm(
         stepId, attemptId: unsaved.attemptId, nextReviewAt: result.nextReviewAt,
         savedMistake: result.savedMistake)
-    case .refused:
+    case .done(.refused):
       state?.answerSaved(stepId, attemptId: unsaved.attemptId)
-    case .unauthorized:
-      state?.refuseRun(.unauthorized)
-    case .failed:
+    case .done(.failed), .failed, .obsolete:
+      // Stays unsaved: finishing sends it again under the same attempt id.
       break
     }
   }
 
   /// "Explain my answer" on a wrong typed answer: the learner asked, so it may run AI.
   func explainAnswer() async {
-    let identity = identity
-
-    guard let step = state?.currentStep, case .typedAnswer(let text) = state?.answers[step.id],
-      let token = identity?.bearerToken
+    guard let step = state?.currentStep, case .typedAnswer(let text) = state?.answers[step.id]
     else {
       return
     }
 
     explanations[step.id] = .loading
-    let outcome = await api.explainAnswer(stepId: step.id, answer: text, token: token)
-    guard isCurrent(identity) else { return }
+    let api = api
+    let explained = await write { token in
+      try await api.explainAnswer(stepId: step.id, answer: text, token: token)
+    }
 
-    switch outcome {
-    case .explained(let explanation): explanations[step.id] = .explained(explanation)
-    case .refused(let refusal): explanations[step.id] = .refused(refusal)
-    case .failed: explanations[step.id] = .failed
+    switch explained {
+    case .done(.explained(let explanation)): explanations[step.id] = .explained(explanation)
+    case .done(.refused(let refusal)): explanations[step.id] = .refused(refusal)
+    case .done(.failed), .failed: explanations[step.id] = .failed
+    case .obsolete: explanations[step.id] = nil
     }
   }
 
@@ -482,8 +535,6 @@ final class LessonPlayerStore {
     state?.completionSaving()
     await saveCompletion()
   }
-
-  var onCompleted: (LessonCompletionEvent) -> Void = { _ in }
 
   private func saveCompletion() async {
     let identity = identity
@@ -510,37 +561,42 @@ final class LessonPlayerStore {
       return
     }
 
-    let outcome = await api.completeLesson(
-      id: lessonId, runId: runId, skippedWritingStepIds: state?.skippedWritingStepIds ?? [],
-      token: token)
-    guard isCurrent(identity) else { return }
+    let api = api
+    let lessonId = lessonId
+    let studySessionId = studySessionId
+    let skippedWritingStepIds = state?.skippedWritingStepIds ?? []
 
-    switch outcome {
-    case .completed(let summary):
+    // A finished lesson changes the learner's progress and learner model, as main revalidates
+    // after `completeLibraryLesson`: the summary, Today, statistics and chapters follow.
+    let completed = await write(invalidating: [.userProgress, .learnerModel]) { token in
+      try await api.completeLesson(
+        id: lessonId, runId: runId, skippedWritingStepIds: skippedWritingStepIds, token: token)
+    }
+
+    switch completed {
+    case .done(.completed(let summary)):
       state?.completionSaved(summary)
-      onCompleted(
-        LessonCompletionEvent(
-          lessonId: lessonId, studySessionId: studySessionId,
-          isFirstCompletion: summary.isFirstCompletion))
 
       if isGuest, studySessionId == nil {
         fit = await api.getLessonFit(id: lessonId, token: token)
       }
-    case .unauthorized:
-      state?.refuseRun(.unauthorized)
-    case .incomplete:
+    case .done(.incomplete):
       // The run is missing an answer: the server's answers say which screen to go back to.
-      let restarted = await api.startLesson(
-        id: lessonId, studySessionId: studySessionId, token: token)
-      guard isCurrent(identity) else { return }
+      let restarted = await write { token in
+        try await api.startLesson(id: lessonId, studySessionId: studySessionId, token: token)
+      }
 
-      if case .success(let run) = restarted, run.runId == runId {
+      if case .done(.success(let run)) = restarted, run.runId == runId {
         state?.resync(answers: run.answers, optionalStepIds: run.optionalStepIds)
+      } else if case .obsolete = restarted {
+        return
       } else {
         state?.completionFailed()
       }
-    case .failed:
+    case .done(.failed), .failed:
       state?.completionFailed()
+    case .obsolete:
+      break
     }
   }
 

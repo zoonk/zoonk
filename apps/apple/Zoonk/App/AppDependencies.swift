@@ -7,7 +7,7 @@ struct AppDependencies {
   let explainStore: ExplainStore
   let goalContentStore: GoalContentStore
   let learnerSummaryStore: LearnerSummaryStore
-  let lessonPlayerAPI: LessonPlayerAPI
+  let lessonPlayer: LessonPlayerDependencies
   let mindMapsStore: MindMapsStore
   let onboardingStore: OnboardingStore
   let planStore: PlanStore
@@ -62,7 +62,7 @@ struct AppDependencies {
     learnerSummaryStore = LearnerSummaryStore(
       api: learnerSummaryAPI ?? LearnerSummaryAPI(clients: clients),
       cache: cache)
-    lessonPlayerAPI = LessonPlayerAPI(clients: clients)
+    lessonPlayer = LessonPlayerDependencies(api: LessonPlayerAPI(clients: clients), cache: cache)
     goalContentStore = GoalContentStore(api: GoalContentAPI(clients: clients), cache: cache)
     mindMapsStore = MindMapsStore(api: MindMapsAPI(clients: clients), cache: cache)
     onboardingStore = OnboardingStore(clients: clients, cache: cache, session: session)
