@@ -13,6 +13,9 @@ struct ConversationScreen: View {
   @State private var day: DayResult?
 
   let conversationId: String
+  /// A running mock's speaking task goes back to the mock once its call is saved, without the
+  /// call's own result: the mock's result reads it.
+  var onSaved: (() -> Void)? = nil
 
   var body: some View {
     NavigationStack {
@@ -84,6 +87,11 @@ struct ConversationScreen: View {
           .navigationTitle(ConversationTitle(conversation: value).text)
       } else {
         LiveCallRun(conversation: value, isInCall: $isInCall) { saved in
+          if let onSaved {
+            onSaved()
+            return
+          }
+
           // The saved call's result, with its feedback, replaces the run.
           day = saved
           await resource.refresh()

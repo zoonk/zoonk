@@ -3,6 +3,7 @@ struct AppDependencies {
   let buddyStore: BuddyStore
   let cache: AppCache
   let courseCatalogStore: CourseCatalogStore
+  let examStore: ExamStore
   let explainStore: ExplainStore
   let goalContentStore: GoalContentStore
   let learnerSummaryStore: LearnerSummaryStore
@@ -56,6 +57,7 @@ struct AppDependencies {
       api: courseCatalogAPI ?? CourseCatalogAPI(clients: clients),
       language: currentCourseCatalogLanguage(),
       cache: cache)
+    examStore = ExamStore(api: ExamAPI(clients: clients), cache: cache)
     explainStore = ExplainStore(clients: clients, cache: cache)
     learnerSummaryStore = LearnerSummaryStore(
       api: learnerSummaryAPI ?? LearnerSummaryAPI(clients: clients),
