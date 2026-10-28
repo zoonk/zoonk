@@ -5,7 +5,9 @@ CONFIGURATION ?= Release
 TEST_DESTINATION ?= platform=iOS Simulator,name=iPhone 17,OS=latest
 TEST_ARGUMENTS ?=
 XCODEBUILD_ARGUMENTS ?=
-XCODEBUILD := xcodebuild -quiet -skipPackagePluginValidation $(XCODEBUILD_ARGUMENTS) -project "$(PROJECT)"
+# The WebRTC package is a binary download; with the default Keychain credential lookup, xcodebuild
+# can wait forever on a Keychain prompt in non-interactive shells. Public downloads need no login.
+XCODEBUILD := xcodebuild -quiet -skipPackagePluginValidation -packageAuthorizationProvider netrc $(XCODEBUILD_ARGUMENTS) -project "$(PROJECT)"
 BUILD_FLAGS := -configuration "$(CONFIGURATION)" CODE_SIGNING_ALLOWED=NO
 
 .PHONY: build build-ios test format format-check check

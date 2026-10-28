@@ -8,7 +8,8 @@ How to measure requests, memory, leaks, CPU and hangs for the iPhone and iPad ap
 
   ```sh
   UDID=<your simulator>
-  xcodebuild -quiet -skipPackagePluginValidation -project apps/apple/Zoonk.xcodeproj -scheme Zoonk \
+  xcodebuild -quiet -skipPackagePluginValidation -packageAuthorizationProvider netrc \
+    -project apps/apple/Zoonk.xcodeproj -scheme Zoonk \
     -configuration Debug -destination "id=$UDID" -derivedDataPath apps/apple/DerivedData/Simulator build
   xcrun simctl install $UDID apps/apple/DerivedData/Simulator/Build/Products/Debug-iphonesimulator/Zoonk.app
   xcrun simctl launch --terminate-running-process $UDID com.zoonk.dev

@@ -22,6 +22,12 @@
       },
     }, {
       "kind": "remote",
+      "repository": "https://github.com/stasel/WebRTC",
+      "version": {
+        "up-to-next-major-version": "156.0.0",
+      },
+    }, {
+      "kind": "remote",
       "repository": "https://github.com/apple/swift-openapi-generator",
       "version": {
         "up-to-next-major-version": "1.14.0",
@@ -118,6 +124,10 @@
         }, {
           "package": "swift-openapi-urlsession",
           "product-name": "OpenAPIURLSession",
+          "build-phase": { "build-phase": "frameworks" },
+        }, {
+          "package": "WebRTC",
+          "product-name": "WebRTC",
           "build-phase": { "build-phase": "frameworks" },
         },
       ],

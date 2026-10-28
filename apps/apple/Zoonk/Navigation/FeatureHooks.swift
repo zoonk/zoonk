@@ -31,6 +31,7 @@ extension PracticeHooks {
               itemId: target.itemId, blockId: nil, answered: target.missed, missed: target.missed),
             quote: target.question))
       },
+      challengeCall: { planItemId in AnyView(ChallengeCallView(planItemId: planItemId)) },
       ceremony: { milestone, onClose in
         AnyView(MilestoneCeremony(milestone: Milestone(milestone), onClose: onClose))
       })
