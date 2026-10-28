@@ -162,7 +162,9 @@ enum ChanceModel {
     }
 
     var counts: [Int: Int] = [:]
-    outcomes.forEach { counts[$0, default: 0] += 1 }
+    for outcome in outcomes {
+      counts[outcome, default: 0] += 1
+    }
 
     return (low...high).map { ($0, counts[$0] ?? 0) }
   }

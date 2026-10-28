@@ -16,10 +16,11 @@ enum ChartsActivities {
       showsCheckFirst: { content in
         if case .chance = try? content.fields(as: RandomSimulationFields.self) { return true }
         return false
+      },
+      canvas: { context in
+        ChartsFields(context: context) { RandomSimulationCanvas(context: context, fields: $0) }
       }
-    ) { context in
-      ChartsFields(context: context) { RandomSimulationCanvas(context: context, fields: $0) }
-    },
+    ),
     ActivityRenderer(template: "numberLine") { context in
       ChartsFields(context: context) { NumberLineCanvas(context: context, fields: $0) }
     },
@@ -29,10 +30,11 @@ enum ChartsActivities {
         (try? content.fields(as: LineCrossingFields.self)).map {
           LineCrossingModel.grade($0, answer)
         } ?? false
+      },
+      canvas: { context in
+        ChartsFields(context: context) { LineCrossingCanvas(context: context, fields: $0) }
       }
-    ) { context in
-      ChartsFields(context: context) { LineCrossingCanvas(context: context, fields: $0) }
-    },
+    ),
     ActivityRenderer(template: "formulaModel") { context in
       ChartsFields(context: context) { FormulaModelCanvas(context: context, fields: $0) }
     },
@@ -40,18 +42,20 @@ enum ChartsActivities {
       template: "patternTable",
       grade: { content, answer in
         (try? content.fields(as: PatternTableFields.self))?.grade(answer) ?? false
+      },
+      canvas: { context in
+        ChartsFields(context: context) { PatternTableCanvas(context: context, fields: $0) }
       }
-    ) { context in
-      ChartsFields(context: context) { PatternTableCanvas(context: context, fields: $0) }
-    },
+    ),
     ActivityRenderer(
       template: "patternTester",
       grade: { content, answer in
         (try? content.fields(as: PatternTesterFields.self))?.grade(answer) ?? false
+      },
+      canvas: { context in
+        ChartsFields(context: context) { PatternTesterCanvas(context: context, fields: $0) }
       }
-    ) { context in
-      ChartsFields(context: context) { PatternTesterCanvas(context: context, fields: $0) }
-    },
+    ),
     ActivityRenderer(template: "areaModel") { context in
       ChartsFields(context: context) { AreaModelCanvas(context: context, fields: $0) }
     },
@@ -75,10 +79,11 @@ enum ChartsActivities {
         }
 
         return MoleculeModel.isComplete(build, target)
+      },
+      canvas: { context in
+        ChartsFields(context: context) { MoleculeBuilderCanvas(context: context, fields: $0) }
       }
-    ) { context in
-      ChartsFields(context: context) { MoleculeBuilderCanvas(context: context, fields: $0) }
-    },
+    ),
   ]
 }
 

@@ -79,7 +79,9 @@ enum MoleculeModel {
   static func isComplete(_ build: MoleculeBuild, _ counts: [(element: String, count: Int)]) -> Bool
   {
     var built: [String: Int] = [:]
-    build.atoms.forEach { built[$0.element, default: 0] += 1 }
+    for atom in build.atoms {
+      built[atom.element, default: 0] += 1
+    }
 
     let sameAtoms =
       built.count == counts.count && counts.allSatisfy { built[$0.element] == $0.count }
