@@ -68,9 +68,8 @@ struct Course: Codable, Equatable, Identifiable, Sendable {
   /// Oldest first: the first is the course's subject.
   let categories: [CourseCategory]
   let description: String?
-  /// An exam course's sittings, estimated from past editions when the next one's notice isn't
-  /// stored; nil for any other course.
-  let exam: CourseExamDays?
+  /// The page's example plan; nil for a learner's private course.
+  let examplePlan: CoursePlanExample?
   let generationStatus: CatalogGenerationStatus
   let id: String
   let imageURL: URL?
@@ -92,13 +91,6 @@ struct CourseLandingPage: Codable, Equatable, Sendable {
   let audience: [String]
   let outcomes: [String]
   let valueProposition: String
-}
-
-/// An exam's sitting days (ISO dates) in the exam's own time zone.
-struct CourseExamDays: Codable, Equatable, Sendable {
-  let days: [String]
-  let estimated: Bool
-  let timeZone: String
 }
 
 /// A chapter as one course places it. Chapters can be shared by several courses, so `courseID`,

@@ -10,6 +10,8 @@ struct CatalogStartActions: View {
   let courseID: String
   /// The chapter a chapter page starts the plan from; nil for the whole course.
   var chapterID: String?
+  /// A goal of the learner's follows the course: "Continue your plan" leads back to Today.
+  var continues = false
   let tryLessonID: String?
   /// What starting takes, under the buttons; nil for the visitor's "Start free, no account
   /// needed.", which nobody with a session reads.
@@ -49,14 +51,25 @@ struct CatalogStartActions: View {
 
   @ViewBuilder
   private var startButtons: some View {
-    Button {
-      router.open(.courseStart(courseId: courseID, chapterId: chapterID))
-    } label: {
-      Text(
-        "Build my plan", tableName: "Courses",
-        comment: "Opens the start screen that builds the learner's plan from this course")
+    if continues {
+      Button {
+        router.showRoot(of: .today)
+      } label: {
+        Text(
+          "Continue your plan", tableName: "Courses",
+          comment: "Takes a learner whose goal follows this course back to Today")
+      }
+      .buttonStyle(.mainAction)
+    } else {
+      Button {
+        router.open(.courseStart(courseId: courseID, chapterId: chapterID))
+      } label: {
+        Text(
+          "Build my plan", tableName: "Courses",
+          comment: "Opens the start screen that builds the learner's plan from this course")
+      }
+      .buttonStyle(.mainAction)
     }
-    .buttonStyle(.mainAction)
 
     if let tryLessonID {
       Button {

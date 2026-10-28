@@ -80,138 +80,6 @@ final class CourseCatalogAPITests: XCTestCase {
     XCTAssertEqual(counts, CourseCategoryCounts(counts: [.science: 2, .math: 0], total: 2))
   }
 
-  func testEstimateMapsAPlanToTheCoursesEnd() async throws {
-    let api = makeCourseCatalogAPI(
-      transport: CourseCatalogResponseTransport(
-        expectedOperationID: "estimateCoursePlan",
-        expectedPath: "/courses/00000000-0000-7000-8000-000000000002/estimate",
-        expectedQuery: ["dailyMinutes": "15.0", "studyDays": "1,2,3,4,5"],
-        responseBody:
-          #"""
-          {
-            "chapters": [
-              {
-                "chapterId": "00000000-0000-7000-8000-000000000004",
-                "endWeek": 2,
-                "week": 1,
-                "workKinds": ["original"]
-              }
-            ],
-            "endDate": "2027-02-01",
-            "firstDay": [
-              {
-                "chapterId": "00000000-0000-7000-8000-000000000004",
-                "dayMinutes": 12.5,
-                "estimatedMinutes": 6,
-                "lessonId": "00000000-0000-7000-8000-000000000005",
-                "title": "The Sun"
-              }
-            ],
-            "numbers": \#(planNumbersJSON),
-            "publishedContent": { "lessons": 3, "minutes": 45 },
-            "weeks": 14,
-            "workload": {
-              "checkpointMinutes": 20,
-              "lessonMinutes": 45,
-              "practiceMinutes": 30,
-              "unwrittenLessonMinutes": 0
-            }
-          }
-          """#,
-        status: .ok))
-
-    let estimate = try await api.estimateCoursePlan(
-      CoursePlanExampleQuery(course: .testFixture, exam: nil)!)
-
-    XCTAssertEqual(
-      estimate?.reach,
-      .toEnd(
-        weeks: 14, endDate: "2027-02-01",
-        firstDay: [
-          CoursePlanEstimate.FirstDayLesson(
-            chapterID: "00000000-0000-7000-8000-000000000004", dayMinutes: 12.5,
-            id: "00000000-0000-7000-8000-000000000005", title: "The Sun")
-        ]))
-    XCTAssertEqual(estimate?.chapters.first?.week, 1)
-    XCTAssertEqual(estimate?.scheduledMinutes, 95)
-    XCTAssertEqual(estimate?.workload.practiceMinutes, 30)
-    XCTAssertEqual(estimate?.fromDate, "2026-11-09")
-  }
-
-  func testEstimateMapsAnExamPlanByItsAreas() async throws {
-    let api = makeCourseCatalogAPI(
-      transport: CourseCatalogResponseTransport(
-        expectedOperationID: "estimateCoursePlan",
-        expectedPath: "/courses/00000000-0000-7000-8000-000000000002/estimate",
-        expectedQuery: ["dailyMinutes": "15.0", "studyDays": "1,2,3,4,5"],
-        responseBody:
-          #"""
-          {
-            "areas": [
-              {
-                "area": "Math",
-                "fitting": 2,
-                "plannedMinutes": 40,
-                "quickLessons": 1,
-                "total": 3,
-                "unwrittenMinutes": 0
-              }
-            ],
-            "chapters": [
-              {
-                "area": "Math",
-                "chapterId": "00000000-0000-7000-8000-000000000004",
-                "endWeek": null,
-                "lessonsInPlan": 2,
-                "studyOrder": 1,
-                "week": 1,
-                "workKinds": ["original", "quick"]
-              }
-            ],
-            "fittingLessons": 2,
-            "numbers": \#(planNumbersJSON),
-            "publishedContent": { "lessons": 3, "minutes": 45 },
-            "workload": {
-              "checkpointMinutes": 20,
-              "lessonMinutes": 45,
-              "practiceMinutes": 30,
-              "unwrittenLessonMinutes": 0
-            }
-          }
-          """#,
-        status: .ok))
-
-    let estimate = try await api.estimateCoursePlan(
-      CoursePlanExampleQuery(course: .testFixture, exam: nil)!)
-
-    XCTAssertEqual(
-      estimate?.reach,
-      .byDate(
-        fittingLessons: 2, publishedLessons: 3,
-        areas: [
-          CoursePlanEstimate.Area(
-            fitting: 2, name: "Math", plannedMinutes: 40, quickLessons: 1, total: 3,
-            unwrittenMinutes: 0)
-        ]))
-    XCTAssertEqual(estimate?.chapters.first?.workKinds, [.original, .quick])
-    XCTAssertEqual(estimate?.chapters.first?.studyOrder, 1)
-  }
-
-  func testNoEstimateMapsToNil() async throws {
-    let api = makeCourseCatalogAPI(
-      transport: CourseCatalogResponseTransport(
-        expectedOperationID: "estimateCoursePlan",
-        expectedPath: "/courses/00000000-0000-7000-8000-000000000002/estimate",
-        expectedQuery: ["dailyMinutes": "15.0", "studyDays": "1,2,3,4,5"],
-        responseBody: "null",
-        status: .ok))
-
-    let estimate = try await api.estimateCoursePlan(
-      CoursePlanExampleQuery(course: .testFixture, exam: nil)!)
-
-    XCTAssertNil(estimate)
-  }
-
   func testGetCourseMapsPublicCourseMetadata() async throws {
     let api = makeCourseCatalogAPI(
       transport: CourseCatalogResponseTransport(
@@ -223,6 +91,42 @@ final class CourseCatalogAPITests: XCTestCase {
           {
             "categories": ["science"],
             "description": "Understand the night sky.",
+            "exam": null,
+            "examplePlan": {
+              "exam": null,
+              "pace": {
+                "estimate": {
+                  "chapters": [
+                    {
+                      "chapterId": "00000000-0000-7000-8000-000000000004",
+                      "endWeek": 2,
+                      "week": 1,
+                      "workKinds": ["original"]
+                    }
+                  ],
+                  "endDate": "2027-02-01",
+                  "firstDay": [
+                    {
+                      "chapterId": "00000000-0000-7000-8000-000000000004",
+                      "dayMinutes": 12.5,
+                      "estimatedMinutes": 6,
+                      "lessonId": "00000000-0000-7000-8000-000000000005",
+                      "title": "The Sun"
+                    }
+                  ],
+                  "numbers": \#(planNumbersJSON),
+                  "publishedContent": { "lessons": 3, "minutes": 45 },
+                  "weeks": 14,
+                  "workload": {
+                    "checkpointMinutes": 20,
+                    "lessonMinutes": 45,
+                    "practiceMinutes": 30,
+                    "unwrittenLessonMinutes": 0
+                  }
+                },
+                "minutes": 15
+              }
+            },
             "format": "core",
             "generationId": null,
             "generationStatus": "completed",
@@ -251,6 +155,95 @@ final class CourseCatalogAPITests: XCTestCase {
     let course = try await api.getCourse(id: Course.testFixture.id)
 
     XCTAssertEqual(course, .testFixture)
+  }
+
+  func testGetCourseMapsAnExamCoursesPlanByItsAreas() async throws {
+    let api = makeCourseCatalogAPI(
+      transport: CourseCatalogResponseTransport(
+        expectedOperationID: "getCourse",
+        expectedPath: "/courses/00000000-0000-7000-8000-000000000002",
+        expectedQuery: [:],
+        responseBody:
+          #"""
+          {
+            "categories": ["exams"],
+            "description": null,
+            "exam": null,
+            "examplePlan": {
+              "exam": {
+                "days": ["2026-11-08", "2026-11-15"],
+                "daysLeft": 11,
+                "estimated": true,
+                "timeZone": "America/Sao_Paulo"
+              },
+              "pace": {
+                "estimate": {
+                  "areas": [
+                    {
+                      "area": "Math",
+                      "fitting": 2,
+                      "plannedMinutes": 40,
+                      "quickLessons": 1,
+                      "total": 3,
+                      "unwrittenMinutes": 0
+                    }
+                  ],
+                  "chapters": [
+                    {
+                      "area": "Math",
+                      "chapterId": "00000000-0000-7000-8000-000000000004",
+                      "endWeek": null,
+                      "lessonsInPlan": 2,
+                      "studyOrder": 1,
+                      "week": 1,
+                      "workKinds": ["original", "quick"]
+                    }
+                  ],
+                  "fittingLessons": 2,
+                  "numbers": \#(planNumbersJSON),
+                  "publishedContent": { "lessons": 3, "minutes": 45 },
+                  "workload": {
+                    "checkpointMinutes": 20,
+                    "lessonMinutes": 45,
+                    "practiceMinutes": 30,
+                    "unwrittenLessonMinutes": 0
+                  }
+                },
+                "minutes": 30
+              }
+            },
+            "format": "exam",
+            "generationId": null,
+            "generationStatus": "completed",
+            "id": "00000000-0000-7000-8000-000000000002",
+            "imageUrl": null,
+            "landingPage": null,
+            "language": "pt",
+            "languageFlag": null,
+            "organization": null,
+            "slug": "enem",
+            "targetLanguage": null,
+            "title": "ENEM"
+          }
+          """#,
+        status: .ok))
+
+    let example = try await api.getCourse(id: Course.testFixture.id).examplePlan
+
+    XCTAssertEqual(
+      example?.exam,
+      CoursePlanExample.Exam(days: ["2026-11-08", "2026-11-15"], daysLeft: 11, estimated: true))
+    XCTAssertEqual(example?.pace?.minutes, 30)
+    XCTAssertEqual(
+      example?.pace?.estimate.reach,
+      .byDate(
+        fittingLessons: 2, publishedLessons: 3,
+        areas: [
+          CoursePlanEstimate.Area(
+            fitting: 2, name: "Math", plannedMinutes: 40, quickLessons: 1, total: 3,
+            unwrittenMinutes: 0)
+        ]))
+    XCTAssertEqual(example?.pace?.estimate.chapters.first?.workKinds, [.original, .quick])
   }
 
   func testGetChapterMapsCanonicalChapterMetadata() async throws {

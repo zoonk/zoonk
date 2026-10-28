@@ -659,6 +659,9 @@
         }
       }
     },
+    "Continue your plan" : {
+      "comment" : "Takes a learner whose goal follows this course back to Today"
+    },
     "Couldn't load more courses." : {
       "comment" : "Message when another course page cannot be loaded.",
       "localizations" : {
@@ -2008,6 +2011,9 @@
           }
         }
       }
+    },
+    "Your plan follows this course" : {
+      "comment" : "A course page's last call for a learner whose goal follows the course"
     },
     "Your plan from this chapter" : {
       "comment" : "A chapter page's last call, when the plan starts there"

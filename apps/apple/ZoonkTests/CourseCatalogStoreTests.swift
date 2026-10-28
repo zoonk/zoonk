@@ -430,10 +430,6 @@ private actor CourseCatalogAPIStub: CourseCatalogAPIClient {
     throw APIError.unavailable
   }
 
-  func estimateCoursePlan(_ query: CoursePlanExampleQuery) async throws -> CoursePlanEstimate? {
-    nil
-  }
-
   func listCourses(query: CourseCatalogQuery) async throws -> CourseCatalogPage {
     courseQueries.append(query)
     return try takeFirstResult(from: &coursePageResults).get()
@@ -524,10 +520,6 @@ private actor SuspendedCourseCatalogAPI: CourseCatalogAPIClient {
     throw APIError.unavailable
   }
 
-  func estimateCoursePlan(_ query: CoursePlanExampleQuery) async throws -> CoursePlanEstimate? {
-    nil
-  }
-
   func listCourses(query: CourseCatalogQuery) async throws -> CourseCatalogPage {
     try await withCheckedThrowingContinuation { continuation in
       requests.append(CourseRequest(continuation: continuation))
@@ -587,10 +579,6 @@ private actor SuspendedCourseDetailAPI: CourseCatalogAPIClient {
 
   func countCourses(language: String) async throws -> CourseCategoryCounts {
     throw APIError.unavailable
-  }
-
-  func estimateCoursePlan(_ query: CoursePlanExampleQuery) async throws -> CoursePlanEstimate? {
-    nil
   }
 
   func listCourses(query: CourseCatalogQuery) async throws -> CourseCatalogPage {

@@ -46,43 +46,30 @@ struct CourseView: View {
 }
 
 private struct CourseLandingList: View {
-  @Environment(CourseCatalogStore.self) private var catalog
+  @Environment(LearnerSummaryStore.self) private var learner
 
   let detail: CourseDetail
 
   var body: some View {
-    let exam = UpcomingExam(course: detail.course)
-    let query = CoursePlanExampleQuery(course: detail.course, exam: exam)
+    let example = detail.course.examplePlan
+    let follows = learner.summary.value?.followsCourse(detail.course.id) ?? false
 
-    if let query {
-      let plan = catalog.examplePlan(query)
+    List {
+      CourseHeroSection(detail: detail, exam: example?.exam, follows: follows)
 
-      list(exam: exam, estimate: plan.value, minutes: query.dailyMinutes)
-        .loads(plan, refreshable: false)
-    } else {
-      list(exam: exam, estimate: nil, minutes: nil)
-    }
-  }
-
-  private func list(exam: UpcomingExam?, estimate: CoursePlanEstimate?, minutes: Int?) -> some View
-  {
-    let estimate = estimate?.hasStudyToShow == true ? estimate : nil
-
-    return List {
-      CourseHeroSection(detail: detail, exam: exam)
-
-      if let estimate, let minutes {
+      if let pace = example?.pace {
         CoursePlanSections(
-          chapters: detail.chapters, estimate: estimate, exam: exam, isExam: detail.course.isExam,
-          minutes: minutes)
+          chapters: detail.chapters, estimate: pace.estimate, exam: example?.exam,
+          isExam: detail.course.isExam, minutes: pace.minutes)
       }
 
       CourseFitSections(landingPage: detail.course.landingPage)
 
       CourseOutlineSections(
-        detail: detail, estimate: estimate, exam: exam, lead: outlineLead, minutes: minutes)
+        detail: detail, estimate: example?.pace?.estimate, exam: example?.exam,
+        lead: outlineLead, minutes: example?.pace?.minutes)
 
-      CourseClosingSection(courseID: detail.course.id)
+      CourseClosingSection(courseID: detail.course.id, follows: follows)
     }
     .catalogReadableWidth()
   }
@@ -93,11 +80,22 @@ private struct CourseLandingList: View {
   }
 }
 
+extension LearnerSummary {
+  /// Whether one of the learner's goals follows the course: its page offers "Continue your plan"
+  /// then, since starting it again would only lead back to that goal.
+  func followsCourse(_ courseID: String) -> Bool {
+    goals.contains { goal in
+      goal.courseID == courseID && goal.status == .active && goal.kind != .explain
+    }
+  }
+}
+
 /// The course: its mark, its subject (and an exam course's next sitting) over its name, what it
 /// makes someone able to do, what Zoonk does with it in one line and the ways in.
 private struct CourseHeroSection: View {
   let detail: CourseDetail
-  let exam: UpcomingExam?
+  let exam: CoursePlanExample.Exam?
+  let follows: Bool
 
   var body: some View {
     Section {
@@ -128,8 +126,10 @@ private struct CourseHeroSection: View {
 
         PlanLine(startsHere: false)
 
-        CatalogStartActions(courseID: detail.course.id, tryLessonID: detail.tryLessonID)
-          .padding(.top, 4)
+        CatalogStartActions(
+          courseID: detail.course.id, continues: follows, tryLessonID: detail.tryLessonID
+        )
+        .padding(.top, 4)
       }
       .listRowBackground(Color.clear)
     }
@@ -145,7 +145,7 @@ private struct CourseHeroSection: View {
 /// An exam course's next sitting, "Exam on Nov 8 and Nov 15 · 26 days left"; "Exam around…" while
 /// its days are estimated from past editions.
 private struct CourseExamEyebrow: View {
-  let exam: UpcomingExam
+  let exam: CoursePlanExample.Exam
 
   var body: some View {
     Group {
@@ -265,26 +265,38 @@ struct CheckLine: View {
   }
 }
 
-/// The page's last word: the one way in again.
+/// The page's last word: the one way in again. A learner whose goal follows the course is past
+/// the start, so it says so above "Continue your plan" instead of promising the first questions.
 private struct CourseClosingSection: View {
   let courseID: String
+  let follows: Bool
 
   var body: some View {
     Section {
       VStack(alignment: .leading, spacing: 8) {
-        Text(
-          "Start today, at your level", tableName: "Courses", comment: "A course page's last call"
-        )
+        Group {
+          if follows {
+            Text(
+              "Your plan follows this course", tableName: "Courses",
+              comment: "A course page's last call for a learner whose goal follows the course")
+          } else {
+            Text(
+              "Start today, at your level", tableName: "Courses",
+              comment: "A course page's last call")
+          }
+        }
         .font(.title2.weight(.semibold))
         .accessibilityAddTraits(.isHeader)
 
-        Text(
-          "A few quick questions, then your plan and your first lesson.", tableName: "Courses",
-          comment: "Under a course page's last call"
-        )
-        .foregroundStyle(.secondary)
+        if !follows {
+          Text(
+            "A few quick questions, then your plan and your first lesson.", tableName: "Courses",
+            comment: "Under a course page's last call"
+          )
+          .foregroundStyle(.secondary)
+        }
 
-        CatalogStartActions(courseID: courseID, tryLessonID: nil)
+        CatalogStartActions(courseID: courseID, continues: follows, tryLessonID: nil)
           .padding(.top, 8)
       }
       .listRowBackground(Color.clear)

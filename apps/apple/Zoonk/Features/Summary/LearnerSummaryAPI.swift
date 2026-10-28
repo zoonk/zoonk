@@ -25,6 +25,8 @@ struct LearnerSummary: Equatable, Sendable {
 }
 
 struct LearnerGoal: Equatable, Identifiable, Sendable {
+  /// The Library course the goal follows; nil for any other goal.
+  var courseID: String? = nil
   let dailyMinutes: Int
   let id: String
   let kind: Kind
@@ -123,6 +125,7 @@ func makeLearnerSummary(_ summary: Components.Schemas.LearnerSummary) -> Learner
     buddyName: summary.buddy.name,
     goals: summary.goals.map { goal in
       LearnerGoal(
+        courseID: goal.courseId,
         dailyMinutes: goal.dailyMinutes,
         id: goal.id,
         kind: LearnerGoal.Kind(rawValue: goal.kind.rawValue) ?? .learn,

@@ -86,7 +86,28 @@ extension Course {
   static let testFixture = Course(
     categories: [.science],
     description: "Understand the night sky.",
-    exam: nil,
+    examplePlan: CoursePlanExample(
+      exam: nil,
+      pace: CoursePlanExample.Pace(
+        estimate: CoursePlanEstimate(
+          reach: .toEnd(
+            weeks: 14, endDate: "2027-02-01",
+            firstDay: [
+              CoursePlanEstimate.FirstDayLesson(
+                chapterID: "00000000-0000-7000-8000-000000000004", dayMinutes: 12.5,
+                id: "00000000-0000-7000-8000-000000000005", title: "The Sun")
+            ]),
+          chapters: [
+            CoursePlanEstimate.ChapterPlace(
+              area: nil, chapterID: "00000000-0000-7000-8000-000000000004", endWeek: 2,
+              lessonsInPlan: nil, studyOrder: nil, week: 1, workKinds: [.original])
+          ],
+          afterDeadlineMinutes: nil, beforeDeadlineMinutes: nil, coverage: nil,
+          fromDate: "2026-11-09", scheduledMinutes: 95, unwrittenLessonMinutes: 0,
+          workload: CoursePlanEstimate.Workload(
+            checkpointMinutes: 20, lessonMinutes: 45, practiceMinutes: 30,
+            unwrittenLessonMinutes: 0)),
+        minutes: 15)),
     generationStatus: .completed,
     id: CourseSummary.testFixture.id,
     imageURL: CourseSummary.testFixture.imageURL,

@@ -18,9 +18,6 @@ final class CourseCatalogStore {
   @ObservationIgnored private let language: String
   @ObservationIgnored private var chapters: [CatalogChapterKey: Resource<ChapterDetail>] = [:]
   @ObservationIgnored private var courseDetails: [String: Resource<CourseDetail>] = [:]
-  @ObservationIgnored private var examplePlans:
-    [CoursePlanExampleQuery: Resource<CoursePlanEstimate>] =
-      [:]
   @ObservationIgnored private var pages: [CourseCategory?: Resource<CourseCatalogPage>] = [:]
 
   /// How many courses the catalog has in all and in each category, so it lists only the
@@ -120,22 +117,6 @@ final class CourseCatalogStore {
       return CourseDetail(course: course, chapters: chapters, tryLessonID: tryLessonID ?? nil)
     }
     courseDetails[id] = resource
-    return resource
-  }
-
-  /// A course page's example plan (`CoursePlanExampleQuery`). A plan with nothing to show is
-  /// empty, and the page leaves it out.
-  func examplePlan(_ query: CoursePlanExampleQuery) -> Resource<CoursePlanEstimate> {
-    if let resource = examplePlans[query] {
-      return resource
-    }
-
-    let resource: Resource<CoursePlanEstimate> = cache.resource(
-      audience: .everyone,
-      maxAge: Self.catalogMaxAge,
-      isEmpty: { !$0.hasStudyToShow },
-      fetch: { [api] _ in try await api.estimateCoursePlan(query) })
-    examplePlans[query] = resource
     return resource
   }
 

@@ -6,7 +6,7 @@ import SwiftUI
 struct CoursePlanSections: View {
   let chapters: [CourseChapter]
   let estimate: CoursePlanEstimate
-  let exam: UpcomingExam?
+  let exam: CoursePlanExample.Exam?
   let isExam: Bool
   let minutes: Int
 

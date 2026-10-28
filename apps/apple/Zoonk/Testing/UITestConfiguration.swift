@@ -170,10 +170,6 @@
         total: courses.count)
     }
 
-    func estimateCoursePlan(_ query: CoursePlanExampleQuery) async throws -> CoursePlanEstimate? {
-      nil
-    }
-
     func listCourses(query: CourseCatalogQuery) async throws -> CourseCatalogPage {
       let matchingCourses = publicCourses.filter { course in
         course.language == query.language

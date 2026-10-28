@@ -5,7 +5,6 @@ protocol CourseCatalogAPIClient: Sendable {
   func countCourses(language: String) async throws -> CourseCategoryCounts
   func listCourses(query: CourseCatalogQuery) async throws -> CourseCatalogPage
   func getCourse(id: String) async throws -> Course
-  func estimateCoursePlan(_ query: CoursePlanExampleQuery) async throws -> CoursePlanEstimate?
   func getChapter(_ key: CatalogChapterKey) async throws -> CourseChapter
   func listCourseChapters(courseID: String) async throws -> [CourseChapter]
   func listChapterLessons(_ key: CatalogChapterKey) async throws -> [CourseLesson]
@@ -69,25 +68,6 @@ struct CourseCatalogAPI: CourseCatalogAPIClient, @unchecked Sendable {
         return makeCourse(try response.body.json)
       case .notFound:
         throw APIError.notFound
-      case .badRequest, .internalServerError, .undocumented:
-        throw APIError.unavailable
-      }
-    }
-  }
-
-  func estimateCoursePlan(_ query: CoursePlanExampleQuery) async throws -> CoursePlanEstimate? {
-    try await clients.perform(token: nil) { client in
-      let output = try await client.estimateCoursePlan(
-        .init(
-          path: .init(courseId: query.courseID),
-          query: .init(
-            dailyMinutes: Double(query.dailyMinutes),
-            studyDays: CoursePlanExampleQuery.studyDays.map(String.init).joined(separator: ","),
-            targetDate: query.targetDate)))
-
-      switch output {
-      case .ok(let response):
-        return try response.body.json.flatMap { makeCoursePlanEstimate($0.value1) }
       case .badRequest, .internalServerError, .undocumented:
         throw APIError.unavailable
       }
@@ -215,10 +195,7 @@ private func makeCourse(
   Course(
     categories: payload.categories.map(makeCourseCategory),
     description: payload.description,
-    exam: payload.exam.map {
-      CourseExamDays(
-        days: $0.value1.days, estimated: $0.value1.estimated, timeZone: $0.value1.timeZone)
-    },
+    examplePlan: payload.examplePlan.map { makeCoursePlanExample($0.value1) },
     generationStatus: makeCatalogGenerationStatus(payload.generationStatus),
     id: payload.id,
     imageURL: payload.imageUrl.flatMap(URL.init(string:)),
@@ -375,6 +352,20 @@ private func makeCatalogCourseSearchResult(
     organizationSlug: payload.organizationSlug,
     slug: payload.slug,
     title: payload.title)
+}
+
+private func makeCoursePlanExample(
+  _ payload: Components.Schemas.CoursePlanExample
+) -> CoursePlanExample {
+  CoursePlanExample(
+    exam: payload.exam.map {
+      CoursePlanExample.Exam(days: $0.days, daysLeft: $0.daysLeft, estimated: $0.estimated)
+    },
+    pace: payload.pace.flatMap { pace in
+      makeCoursePlanEstimate(pace.estimate).map {
+        CoursePlanExample.Pace(estimate: $0, minutes: pace.minutes)
+      }
+    })
 }
 
 /// The estimate's two shapes: to the course's end, or against a date by the exam's areas.

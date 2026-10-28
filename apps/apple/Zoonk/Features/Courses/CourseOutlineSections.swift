@@ -9,7 +9,7 @@ import SwiftUI
 struct CourseOutlineSections: View {
   let detail: CourseDetail
   let estimate: CoursePlanEstimate?
-  let exam: UpcomingExam?
+  let exam: CoursePlanExample.Exam?
   let lead: String?
   let minutes: Int?
 
