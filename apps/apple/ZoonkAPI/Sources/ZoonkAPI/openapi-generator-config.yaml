@@ -185,7 +185,6 @@ filter:
     - listPronunciationReviews
     - listSourceChangeNotices
     - moveChallenge
-    - moveLanguageGoalToExam
     - moveWeeklyChallenge
     - openStudyDay
     - practiceMistakePattern
