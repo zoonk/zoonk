@@ -633,6 +633,29 @@
         }
       }
     },
+    "%lld more chapters" : {
+      "comment" : "Under a new plan's first chapters: how many more it holds",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld more chapter"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld more chapters"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "A couple of details make your plan fit better." : {
       "comment" : "Under the follow-up questions",
       "localizations" : {
@@ -1533,35 +1556,6 @@
         }
       }
     },
-    "Beep" : {
-      "comment" : "A buddy's own name: the robot",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Piep"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bip"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bip"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bip"
-          }
-        }
-      }
-    },
     "Build my plan" : {
       "comment" : "Ends the level test to build the plan\nSends the typed goal to start building a plan\nStarts a course as the learner's goal",
       "localizations" : {
@@ -1706,6 +1700,9 @@
           }
         }
       }
+    },
+    "Chapters" : {
+      "comment" : "Header over a new plan's chapters"
     },
     "Checking if someone asked it before" : {
       "comment" : "A step of the wait while a quick explanation is written",
@@ -4259,6 +4256,9 @@
         }
       }
     },
+    "More lessons" : {
+      "comment" : "A new plan's chapter whose lessons are still being written"
+    },
     "Music" : {
       "comment" : "The kind of an example goal",
       "localizations" : {
@@ -4342,35 +4342,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Musicalidade para %@: reconheça acordes, leia melodias curtas e mantenha o ritmo. Não precisa de microfone."
-          }
-        }
-      }
-    },
-    "Name" : {
-      "comment" : "Box for the buddy's own name",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Name"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nombre"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nom"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nome"
           }
         }
       }
@@ -4520,35 +4491,6 @@
         }
       }
     },
-    "Noodle" : {
-      "comment" : "A buddy's own name: the brain",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Grips"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Coco"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Caboche"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cuca"
-          }
-        }
-      }
-    },
     "Not sure, give me a quick test" : {
       "comment" : "Level choice",
       "localizations" : {
@@ -4694,35 +4636,6 @@
         }
       }
     },
-    "Optional" : {
-      "comment" : "Says the buddy's name can be left empty",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Optional"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Opcional"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Facultatif"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Opcional"
-          }
-        }
-      }
-    },
     "Other time a day" : {
       "comment" : "Picks any time a day the presets don't have",
       "localizations" : {
@@ -4748,35 +4661,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Outro tempo por dia"
-          }
-        }
-      }
-    },
-    "Otto" : {
-      "comment" : "A buddy's own name",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Otto"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Oto"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Octave"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Oto"
           }
         }
       }
@@ -6317,6 +6201,9 @@
           }
         }
       }
+    },
+    "Start free, no account needed." : {
+      "comment" : "Under a course's Build my plan for a visitor"
     },
     "Start musicianship" : {
       "comment" : "Starts a musicianship goal",
@@ -10676,35 +10563,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "O Zoonk não ensina nada que possa machucar você ou outras pessoas, nem sobre jogos de azar ou formas de trapacear. Tem outra coisa que você gostaria de aprender?"
-          }
-        }
-      }
-    },
-    "Zu" : {
-      "comment" : "A buddy's own name",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zu"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zu"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zu"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zu"
           }
         }
       }

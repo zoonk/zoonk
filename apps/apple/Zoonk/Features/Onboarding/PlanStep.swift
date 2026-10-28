@@ -223,7 +223,12 @@ private struct PlanReveal: View {
         }
       }
 
-      PlanRoadmapSection(context: context, structure: structure)
+      // A plan of one phase has nothing to draw in time: its chapters say its shape instead.
+      if plan.roadPhases.count > 1 {
+        PlanRoadmapSection(context: context, structure: structure)
+      } else {
+        RevealChapters(plan: plan)
+      }
 
       if plan.notice == .usual {
         Section {
@@ -239,7 +244,7 @@ private struct PlanReveal: View {
 
       if let structure {
         PlanSyllabusSection(goalKind: goal.kind, syllabus: structure)
-      } else {
+      } else if plan.roadPhases.count > 1 {
         PlanPathSection(context: context)
       }
     }
@@ -311,5 +316,45 @@ private struct PlanReveal: View {
       ? numbers.scheduledMinutes : (numbers.beforeDeadlineMinutes ?? 0)
 
     return minutes >= 120 ? (minutes / 60).rounded() * 60 : (minutes / 5).rounded() * 5
+  }
+}
+
+/// A one-phase plan's chapters in order, the first few with a count of the rest, so the learner sees what the plan holds before starting (main's `PlanChapterList`). Lessons still being written ahead aren't chapters yet.
+private struct RevealChapters: View {
+  let plan: GoalPlan
+
+  /// How many rows the reveal shows; the Plan has the rest.
+  private static let shown = 5
+
+  var body: some View {
+    let chapters = plan.roadPhases.flatMap(\.chapters).filter { !($0.writing && !$0.far) }
+    let rest = chapters.count - Self.shown
+
+    if !chapters.isEmpty {
+      Section {
+        ForEach(Array(chapters.prefix(Self.shown).enumerated()), id: \.element.id) {
+          index, chapter in
+          Label {
+            chapter.title.isEmpty
+              ? Text(
+                "More lessons", tableName: "Onboarding",
+                comment: "A new plan's chapter whose lessons are still being written")
+              : Text(chapter.title)
+          } icon: {
+            Text(index + 1, format: .number)
+              .monospacedDigit()
+              .foregroundStyle(.secondary)
+          }
+        }
+      } header: {
+        Text("Chapters", tableName: "Onboarding", comment: "Header over a new plan's chapters")
+      } footer: {
+        if rest > 0 {
+          Text(
+            "\(rest) more chapters", tableName: "Onboarding",
+            comment: "Under a new plan's first chapters: how many more it holds")
+        }
+      }
+    }
   }
 }
