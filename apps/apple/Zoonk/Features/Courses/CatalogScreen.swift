@@ -17,9 +17,8 @@ struct CatalogScreen: View {
       )
       .navigationTitle(
         Text(
-          "Courses",
-          tableName: "Navigation",
-          comment: "Navigation title for browsing the public course catalog.")
+          "Explore courses", tableName: "Courses",
+          comment: "Title of the public course catalog, as the goal switcher's Explore opens it.")
       )
       .catalogDestinations()
   }
