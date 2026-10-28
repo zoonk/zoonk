@@ -9,7 +9,6 @@ import { getLessonShare } from "./use-roadmap";
 
 const PERCENT = 100;
 
-/** The band's face: the phase's name (a check before a done one's), and the current one's fill. */
 export function BandFace({ phase }: { phase: PlanPhaseView }) {
   const t = useExtracted();
   const phaseName = usePhaseName();

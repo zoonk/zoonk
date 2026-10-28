@@ -14,10 +14,6 @@ import { LearnLink } from "../../learn-link";
 import { type Lessons, type Preparation, usePreparationParts } from "./use-preparation-parts";
 import { type StillNeededItem, useStillNeeded } from "./use-still-needed";
 
-/**
- * After mock exams that don't hold enough of the exam yet for an estimate (too few questions, or
- * one subject at a time), one line says what it waits for, where the estimate will show.
- */
 function EstimateWaits({ preparation }: { preparation: Preparation }) {
   const t = useExtracted();
   const { mocks } = preparation.components;
@@ -37,10 +33,7 @@ function EstimateWaits({ preparation }: { preparation: Preparation }) {
   );
 }
 
-/**
- * The estimated score exists only once recent mock exams hold enough of the exam, always as a
- * range and always labeled "Estimated", so it never reads as a promise.
- */
+/** Always a range labeled "Estimated", so it never reads as a promise. */
 function EstimatedScore({ preparation }: { preparation: Preparation }) {
   const t = useExtracted();
   const scoreRange = useScoreRange();
@@ -66,12 +59,6 @@ function EstimatedScore({ preparation }: { preparation: Preparation }) {
   );
 }
 
-/**
- * How the number is made: an exam's preparation, its subjects by their share of the exam, each
- * held under 75% until the test it waits for (the one the learner's plan has), so the whole can
- * pass 75% while a subject waits; another goal's progress, its plan's lessons, beside how well
- * they're known.
- */
 function MeasureNote({
   forExam,
   testKind,
@@ -96,10 +83,6 @@ function MeasureNote({
       );
 }
 
-/**
- * The four parts of preparation as four small rings side by side, each with its share inside (a
- * dash until there's evidence), its name and its evidence in a few words.
- */
 function PreparationParts({
   forExam,
   lessons,
@@ -168,7 +151,6 @@ function StillNeededRow({ examHref, item }: { examHref: string | null; item: Sti
     </>
   );
 
-  // A mock exam is taken from the exam's page.
   if (item.key === "test" && item.kind === "mock" && examHref) {
     return (
       <LearnLink
@@ -184,7 +166,6 @@ function StillNeededRow({ examHref, item }: { examHref: string | null; item: Sti
   return <div className="flex min-h-12 items-center gap-3 py-1.5">{content}</div>;
 }
 
-/** The one or two things still to do to reach the goal, as rows to act on. */
 function StillNeeded({
   examHref,
   preparation,
@@ -215,11 +196,6 @@ function StillNeeded({
   );
 }
 
-/**
- * What's behind the number, at a glance: the estimated score after a mock, the four parts as small
- * rings, and the one or two things still to do. A goal that isn't an exam calls the number
- * progress, never preparation, and its first ring is that number: its plan's lessons.
- */
 export function PreparationDetails({
   examHref,
   forExam,
@@ -227,10 +203,8 @@ export function PreparationDetails({
   preparation,
   stillNeeded,
 }: {
-  /** The exam's page, where mock exams are taken; null for goals without one. */
   examHref: string | null;
   forExam: boolean;
-  /** Another goal's lessons studied or known, its progress; ignored for an exam. */
   lessons: Lessons | null;
   preparation: Preparation;
   stillNeeded: ProgressView["stillNeeded"];

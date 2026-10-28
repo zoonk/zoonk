@@ -17,17 +17,11 @@ import { getChapterWindow } from "./chapter-window";
 import { type JourneyPathLinks } from "./journey-links";
 import { CheckpointRow, PATH_ROW_CLASS, PATH_ROW_LEADING_CLASS } from "./journey-phase-events";
 
-/** Rows without a chapter (lessons being written, or settled) differ by their kind and name. */
 export function getChapterKey(chapter: PlanChapterView): string {
   return chapter.chapterId ?? `${chapter.writing ? "writing" : "settled"}:${chapter.title}`;
 }
 
-/**
- * A chapter's name: a settled row of skills says how many the learner already knows, not its
- * course, and never runs on as a list of their names. Lessons still being written go by their
- * course, and are just "More lessons" when that's the goal's own course (core leaves the title
- * empty then).
- */
+/** Core leaves the title empty for lessons being written in the goal's own course. */
 export function useChapterTitle() {
   const t = useExtracted();
 
@@ -43,23 +37,14 @@ export function useChapterTitle() {
   };
 }
 
-/** Done without studying it: placement settled its skills, or a test took all its lessons off. */
 function isSkipped(chapter: PlanChapterView): boolean {
   return chapter.skills.length > 0 || chapter.testedOut;
 }
 
-/**
- * Lessons still being written ahead of the learner, without a page yet: said in one quiet line
- * under the phase's rows instead of a row of their own.
- */
 export function isWritingAhead(chapter: PlanChapterView): boolean {
   return chapter.writing && !chapter.far && chapter.skills.length === 0;
 }
 
-/**
- * "3 / 8" at a chapter's end: its lessons done of its lessons, heard as words. Nothing for one
- * without lessons yet.
- */
 function ChapterLessons({ chapter }: { chapter: PlanChapterView }) {
   const t = useExtracted();
 
@@ -85,14 +70,6 @@ function ChapterLessons({ chapter }: { chapter: PlanChapterView }) {
   );
 }
 
-/**
- * One chapter of the path: done, the next one (highlighted with its dot: the page's obvious
- * target, labeled "Up next") or ahead, with its lessons done at its end. Its page opens on tap. Topics
- * after the weeks the plan writes ahead say what the plan knows ("About 12 lessons · from March")
- * and, unless chapters already teach them, open a sheet that can write their lessons now. A
- * chapter an earlier phase started says it goes deeper, so a later phase never reads as listing
- * it twice.
- */
 function ChapterRow({
   chapter,
   isNext,
@@ -169,11 +146,6 @@ function ChapterRow({
   );
 }
 
-/**
- * Lessons of the phase still being written, as one quiet line under its rows: the goal's own
- * course's ("More lessons for this phase are being written.", or "this unit" under a phase that is
- * one language unit, `unit`) or another course's, by its name.
- */
 export function WritingAheadLine({
   chapters,
   unit = false,
@@ -202,10 +174,6 @@ export function WritingAheadLine({
   );
 }
 
-/**
- * An open phase: its chapters with the next one in sight (the rest one tap away, "14 more
- * chapters", which shows them in place) and the checkpoint that closes it.
- */
 export function JourneyChapters({
   chapters,
   checkpoint,

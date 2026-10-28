@@ -29,14 +29,12 @@ import { useRoadmapFinish } from "./use-roadmap";
 
 const TITLE_ID = "next-on-path-title";
 
-/** The chapter holding the plan's next lesson, wherever it is on the path. */
 function findNextChapter(phases: readonly PlanPhaseView[]): PlanChapterView | null {
   return (
     phases.flatMap((phase) => phase.chapters).find((chapter) => chapter.state === "current") ?? null
   );
 }
 
-/** The first mock exam still to take, and the first challenge still to win, on the way. */
 function findNextEvents(phases: readonly PlanPhaseView[]): {
   checkpoint: PlanPhaseCheckpointView | null;
   mockDate: string | null;
@@ -55,7 +53,6 @@ function findNextEvents(phases: readonly PlanPhaseView[]): {
   };
 }
 
-/** The next chapter as a row: its mark, its name and its lessons done, opening its page. */
 function NextChapterRow({
   chapter,
   links,
@@ -93,10 +90,6 @@ function NextChapterRow({
   );
 }
 
-/**
- * The road's end: the goal and its date (an exam without one says its day is to be confirmed: the
- * plan's end isn't the exam's day); an exam's opens the exam's page.
- */
 function FinishRow({ examHref }: { examHref: string | null }) {
   const t = useExtracted();
   const { goal } = usePlanScreen();
@@ -107,8 +100,6 @@ function FinishRow({ examHref }: { examHref: string | null }) {
       <span className={PATH_ROW_LEADING_CLASS}>
         <FlagIcon aria-hidden="true" className="size-4" />
       </span>
-      {/* Its date under its name, as the rows past the exam have theirs: a long date ("~14 de
-          nov. de 2027") beside it left the aside's narrow row too little room for the name. */}
       <span className="flex min-w-0 flex-1 flex-col">
         <span className="truncate font-medium">{goal.title}</span>
         {finish && (
@@ -138,10 +129,6 @@ function FinishRow({ examHref }: { examHref: string | null }) {
   );
 }
 
-/**
- * Past the exam, when the plan goes on to study everything: what follows it, its mocks there for
- * the next sitting (marked Plus without it), and about when it ends.
- */
 function AfterExamRow({ phase }: { phase: PlanPhaseView }) {
   const phaseName = usePhaseName();
   const mocksLine = usePhaseMocksLine();
@@ -177,13 +164,6 @@ function AfterExamRow({ phase }: { phase: PlanPhaseView }) {
   );
 }
 
-/**
- * What comes next on the way to the goal, three rows the learner can act on: an exam's next mock
- * (any other goal's next chapter), the next challenge that closes a phase, and the goal itself
- * with its date; then, when an exam's plan goes on to study everything, what follows the exam.
- * The roadmap draws the rest of the road. Once nothing is left on the way to a goal that isn't an
- * exam, nothing: the goal alone would only repeat the path's last row (an exam's day still comes).
- */
 export function NextOnPath({ className, links }: { className?: string; links: JourneyPathLinks }) {
   const t = useExtracted();
   const { goal, plan } = usePlanScreen();

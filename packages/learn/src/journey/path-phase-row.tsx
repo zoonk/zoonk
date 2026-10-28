@@ -13,14 +13,9 @@ import { useShortDays } from "../plan/use-short-plan";
 import { CurrentPhaseMark } from "./current-phase-mark";
 import { useRoadmapFinish } from "./use-roadmap";
 
-/** A row's lessons or date at its end, in the mono face. */
 const TRAILING_CLASS =
   "text-muted-foreground shrink-0 text-right font-mono text-xs whitespace-nowrap tabular-nums";
 
-/**
- * "1 / 4": a phase's lessons done of its lessons, heard as words, in a column wide enough for most
- * counts so the phases' dates line up, growing for a long one.
- */
 export function PhaseLessons({ phase }: { phase: PlanPhaseView }) {
   const t = useExtracted();
 
@@ -46,11 +41,6 @@ export function PhaseLessons({ phase }: { phase: PlanPhaseView }) {
   );
 }
 
-/**
- * When a phase ends, at its row's end: "until Dec 25", an estimate ahead "until ~Jan" (heard as
- * "until about Jan"), a short plan's days. Nothing for a done phase, nor for the last one, whose
- * end the finish says.
- */
 export function PhaseUntil({ isLast, phase }: { isLast: boolean; phase: PlanPhaseView }) {
   const t = useExtracted();
   const shortDays = useShortDays();
@@ -92,10 +82,6 @@ export function PhaseUntil({ isLast, phase }: { isLast: boolean; phase: PlanPhas
   );
 }
 
-/**
- * A phase's mark: a check once done, a dark dot for the current phase, a faint dot ahead,
- * whatever the path opens. Work set aside never gets a check.
- */
 export function PhaseMark({ phase }: { phase: PlanPhaseView }) {
   if (phase.state === "done") {
     return <StatusMark status="done" />;
@@ -112,13 +98,6 @@ export function PhaseMark({ phase }: { phase: PlanPhaseView }) {
   return <StatusMark status="todo" />;
 }
 
-/**
- * Under a phase's name, why it reads as it does: the current one, closed while the next chapter is
- * in a later phase, says when its lessons continue, whether they're still being written, or when
- * its challenge comes once its lessons are done; one moved past with work set aside, how many of its
- * lessons were left out (its lessons done are at the row's end), as the plan's end says it; one
- * the plan holds nothing of, that it isn't in the plan.
- */
 function PhaseResume({ phase }: { phase: PlanPhaseView }) {
   const t = useExtracted();
   const formatPlanDate = useFormatPlanDate();
@@ -160,7 +139,6 @@ function PhaseMeta({ open, phase }: { open: boolean; phase: PlanPhaseView }) {
   if (phase.state === "unfinished") {
     const leftOut = phase.lessonsTotal - phase.lessonsDone;
 
-    // Its lessons all done, only its challenge was set aside.
     return (
       <span className="text-muted-foreground text-xs">
         {leftOut > 0
@@ -172,7 +150,6 @@ function PhaseMeta({ open, phase }: { open: boolean; phase: PlanPhaseView }) {
     );
   }
 
-  // The path opens at the next chapter, while this phase says when its remaining lessons resume.
   const lessonsLeft = phase.lessonsDone < phase.lessonsTotal;
 
   if (phase.state !== "current" || open) {
@@ -198,10 +175,6 @@ function PhaseMeta({ open, phase }: { open: boolean; phase: PlanPhaseView }) {
   );
 }
 
-/**
- * What screen readers hear after a phase's name: ", you are here", ", done", or ", up next" for the
- * phase holding the next chapter (`isNext`) when it isn't the current one.
- */
 function usePhaseState() {
   const t = useExtracted();
 
@@ -218,11 +191,7 @@ function usePhaseState() {
   };
 }
 
-/**
- * A phase's name and state in one run ("Phase 3, you are here"), to name the band it's on, as a
- * mission's row is named: from its words, a browser reads the hidden state as a block of its own
- * and named the band "Phase 3 , you are here".
- */
+/** One run of words: a browser reads hidden text as its own block, so a band named from its parts read "Phase 3 , you are here". */
 export function usePhaseLabel() {
   const phaseName = usePhaseName();
   const phaseState = usePhaseState();
@@ -232,12 +201,6 @@ export function usePhaseLabel() {
     `${phaseName(phase, { mocksRequirePlus: plan.access.mocksRequirePlus })}${phaseState(phase)}`;
 }
 
-/**
- * A phase's name, with what screen readers need to hear about its state, and what it waits for
- * under it. Open over chapters one of which has its name (`byPlace`, see `isNamedLikeAChapter`),
- * it goes by its place while its chapters show, so that chapter carries the name; closed, it
- * keeps it.
- */
 export function PhaseName({
   byPlace = false,
   isNext = false,

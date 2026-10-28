@@ -21,10 +21,6 @@ const PERCENT = 100;
 
 const ROADMAP_TITLE_ID = "plan-roadmap-title";
 
-/**
- * The bands are one row of buttons: Tab reaches the current one (`tabIndex`), the arrow keys move
- * between them.
- */
 function moveBetweenBands(event: React.KeyboardEvent<HTMLOListElement>) {
   if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") {
     return;
@@ -47,10 +43,6 @@ function moveBetweenBands(event: React.KeyboardEvent<HTMLOListElement>) {
   }
 }
 
-/**
- * A band that opens what its phase holds (see `PhaseDetails`), named by its phase's name and state
- * in one run.
- */
 function PhaseBand({
   focusable,
   links,
@@ -94,13 +86,6 @@ function PhaseBand({
   );
 }
 
-/**
- * One phase on the roadmap, as wide as its days: its band, its lane of events and its axis label
- * (today in the current one, the first day of the ones ahead, the road's end in the last). A
- * label that wouldn't fit beside its neighbors is left out (`@container/phase`); the band's
- * details still say it. A change the learner applies re-plans in place: the phases ease to their
- * new lengths, so the change shows where it lands.
- */
 function PhaseColumn({
   focusable,
   isLast,
@@ -111,7 +96,6 @@ function PhaseColumn({
 }: {
   focusable: boolean;
   isLast: boolean;
-  /** Says its first day under it: a phase ahead of the current one. */
   labelled: boolean;
   links: JourneyPathLinks;
   phase: PlanPhaseView;
@@ -145,7 +129,6 @@ function PhaseColumn({
   );
 }
 
-/** What the lane's marks mean, at the right of the roadmap's first line. */
 function RoadmapLegend() {
   const t = useExtracted();
   const { goal } = usePlanScreen();
@@ -181,7 +164,6 @@ function RoadmapLegend() {
   );
 }
 
-/** Where the learner is, over the bands: "Foundations · day 1 of 104 · phase 1 of 4". */
 function RoadmapPosition() {
   const position = useRoadmapPosition();
 
@@ -199,13 +181,6 @@ function RoadmapPosition() {
   );
 }
 
-/**
- * The plan's phases in time, as wide screens draw them: each phase a band as long as its days, the
- * current one raised with today on it and its lessons filling a blue line under it, done ones
- * blue; under the bands its next mock exams, the challenges that close the phases and the goal's
- * flag; under those, today, when each phase ahead starts and the goal's date. Each band opens what
- * its phase holds.
- */
 export function RoadmapFull({ className, links }: { className?: string; links: JourneyPathLinks }) {
   const t = useExtracted();
   const { currentIndex, phases, today } = useRoadmapPhases();
@@ -225,7 +200,6 @@ export function RoadmapFull({ className, links }: { className?: string; links: J
         <RoadmapLegend />
       </div>
 
-      {/* The bands are a row of buttons; their order is the plan's, so they stay a list. */}
       {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- The arrow keys move between the buttons inside. */}
       <ol className="flex gap-[3px]" onKeyDown={moveBetweenBands}>
         {phases.map((phase, position) => {

@@ -6,12 +6,10 @@ import { type LearnKind } from "../../_components/kind-tile";
 import { useFormatDuration } from "../../_utils/time-format";
 import { type Preparation } from "./use-preparation-parts";
 
-/** The most a learner is shown at once: one or two things to do, never a checklist. */
 const MAX_SHOWN = 2;
 
 const MINUTES_PER_HOUR = 60;
 
-/** From this long, an estimate reads in whole hours: "about 232 hr", never "231 hr 37 min". */
 const WHOLE_HOURS_FROM_MINUTES = 2 * MINUTES_PER_HOUR;
 
 function roundEstimate(minutes: number): number {
@@ -26,15 +24,10 @@ export type StillNeededItem = {
   key: "memory" | "skills" | "test";
   kind: LearnKind;
   label: string;
-  /** Something the learner's plan doesn't include: the row carries the Plus mark. */
   plusRequired: boolean;
 };
 
-/**
- * Skills still below their bar, with the plan's time for them. No count: Coverage already counts
- * the skills studied, and a second count of another kind ("29 to go" beside "3 of 35") read as a
- * contradiction.
- */
+/** No count: beside Coverage's "3 of 35", a "29 to go" read as a contradiction. */
 function useSkillsItem(stillNeeded: ProgressView["stillNeeded"]): StillNeededItem {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
@@ -56,7 +49,6 @@ function useSkillsItem(stillNeeded: ProgressView["stillNeeded"]): StillNeededIte
   };
 }
 
-/** Nothing fading: reviews keep what was studied. */
 function useMemoryItem(preparation: Preparation): StillNeededItem {
   const t = useExtracted();
   const { fading } = preparation.skills;
@@ -77,7 +69,6 @@ function useMemoryItem(preparation: Preparation): StillNeededItem {
   };
 }
 
-/** What the test is called, and the tile it shows with. */
 function useTestLabel() {
   const t = useExtracted();
 
@@ -95,10 +86,6 @@ function useTestLabel() {
   };
 }
 
-/**
- * The real test under real conditions: an exam's mock exam (or, when the learner's plan has none,
- * a full review in the exam's format), or another goal's weekly challenge.
- */
 function useTestItem(preparation: Preparation): StillNeededItem {
   const testLabel = useTestLabel();
   const { mocks } = preparation.components;
@@ -112,10 +99,6 @@ function useTestItem(preparation: Preparation): StillNeededItem {
   };
 }
 
-/**
- * The one or two things between the learner and the goal that aren't done yet, most important
- * first. Never a promise: each is something to do, not a result.
- */
 export function useStillNeeded({
   preparation,
   stillNeeded,

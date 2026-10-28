@@ -29,7 +29,6 @@ import { SlotContent } from "../plan/plan-suggestion-context";
 
 type CourseLink = StudyNextView["related"][number];
 
-/** "Continue at Beginner": one tap starts the next level; the host opens the new plan. */
 function ContinueAtNextLevel({
   next,
   onContinue,
@@ -91,18 +90,11 @@ function RelatedCourses({
   );
 }
 
-/**
- * Once every lesson of the plan is studied or tested out, the Plan's slot celebrates it and says
- * what to study next: the next level of the same course in one tap, and the other courses the plan
- * drew from, a row each. A plan whose date came with lessons left isn't over (see
- * `PastDateSuggestion`).
- */
 export function StudyNextSuggestion({
   courseHref,
   next: { onContinue, view: next },
 }: {
   courseHref: (course: CourseLink) => string;
-  /** What to study next, and the host's "Continue at the next level". */
   next: { onContinue: () => Promise<boolean>; view: StudyNextView };
 }) {
   const t = useExtracted();

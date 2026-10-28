@@ -24,7 +24,6 @@ import { type PlanTutor, usePlanScreen } from "../plan/plan-context";
 import { useSharePlan } from "../plan/use-share-plan";
 import { type GoalStatusChange, type GoalStatusControl, GoalStatusItems } from "./goal-actions";
 
-/** "Report a problem" with the plan attached, in the feedback form's own words. */
 function ReportItem() {
   const t = useExtracted("feedback");
   const feedback = useContentFeedback();
@@ -55,7 +54,6 @@ function TalkToBuddy({ buddy }: { buddy: PlanTutor["buddy"] }) {
   return t("Talk to {name}", { name });
 }
 
-/** "Talk to Zu": the buddy's conversation, where questions about the plan go. */
 function AskTutorItem({ tutor }: { tutor: PlanTutor }) {
   return (
     <DropdownMenuItem render={<LearnLink href={tutor.href} />}>
@@ -65,14 +63,12 @@ function AskTutorItem({ tutor }: { tutor: PlanTutor }) {
   );
 }
 
-/** Pausing, resuming and archiving the goal, which the host may leave out. */
 type JourneyMenuGoal = {
   control: GoalStatusControl;
   onArchive: () => void;
   onSetStatus: (status: GoalStatusChange) => void;
 };
 
-/** "Adjust plan" beside the Plan's title, small, with the "…" after it. */
 export function AdjustPlanButton({ onAdjust }: { onAdjust: () => void }) {
   const t = useExtracted();
 
@@ -83,18 +79,11 @@ export function AdjustPlanButton({ onAdjust }: { onAdjust: () => void }) {
   );
 }
 
-/**
- * The Plan's "…", beside "Adjust plan": what the learner does now and then. The exam's page
- * (exam goals), the course the plan is built from, sharing, talking to the buddy and reporting;
- * last, what acts on the goal itself (pause or resume, archive), here on its own page so it's
- * clear which goal changes.
- */
 export function JourneyMenu({
   courseHref,
   examHref,
   goal,
 }: {
-  /** The Library course the plan takes part of, when it has a public page. */
   courseHref: string | null;
   examHref: string | null;
   goal: JourneyMenuGoal | null;

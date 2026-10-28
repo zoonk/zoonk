@@ -17,12 +17,10 @@ type PlanDay = PlanView["week"]["days"][number];
 
 const WEEK_TITLE_ID = "pace-week-title";
 
-/** A plan item the learner is through: studied, or skipped because they showed they know it. */
 function isDone(item: PlanDay["items"][number]): boolean {
   return item.status === "done" || item.status === "testedOut";
 }
 
-/** How much of a day's plan is done, as its ring's arc. */
 function getDayShare(day: PlanDay): number {
   if (day.state === "done") {
     return 1;
@@ -33,7 +31,6 @@ function getDayShare(day: PlanDay): number {
     : 0;
 }
 
-/** A day's track: today darker, a study day missed dashed (never red), a rest day faint. */
 const DAY_TRACK: Record<PlanDay["state"], GoalRingTrack> = {
   done: "default",
   missed: "missed",
@@ -42,7 +39,6 @@ const DAY_TRACK: Record<PlanDay["state"], GoalRingTrack> = {
   upcoming: "default",
 };
 
-/** What a day of the week is, for screen readers: a day ahead is never "not studied". */
 function useDayStatus() {
   const t = useExtracted();
 
@@ -64,7 +60,6 @@ function useDayStatus() {
   };
 }
 
-/** Actual time studied this week against the same shared budget Today shows. */
 function useWeekTime(): string | null {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
@@ -80,7 +75,6 @@ function useWeekTime(): string | null {
   });
 }
 
-/** The plan's week as a row of rings, each filled by how much of its day's plan is done. */
 function PlanWeek() {
   const t = useExtracted();
   const format = useFormatter();
@@ -127,14 +121,6 @@ function PlanWeek() {
   );
 }
 
-/**
- * The pace as the Plan's number shows it: a word or two, its count under it ("Behind", "3 lessons to
- * catch up"). A paused goal has no pace to keep; a plan with every lesson and challenge done is
- * "Finished", never "13 days ahead" beside "You finished your plan"; one whose date came with
- * lessons left is "Past date" with what's left; one whose lessons are all done is "Challenges"
- * with how many are left, beside its 100%, never "Finished" beside "0 of 4 phases done". A pause
- * changes none of those.
- */
 export function usePaceNumber({ paused, status }: { paused: boolean; status: PlanStatus }) {
   const t = useExtracted();
   const statusText = usePlanStatusText();
@@ -181,20 +167,12 @@ export function usePaceNumber({ paused, status }: { paused: boolean; status: Pla
   }
 }
 
-/**
- * "Your pace": how the learner keeps up with their plan. Their pace in a few words, this week's
- * days as rings with the time of what's done, the small fix when they're behind (or adjusting the
- * plan, when it no longer fits, or that the date came with lessons left), and last week's recap.
- * A paused goal has no pace to keep, as its number says: nothing to catch up on until it's resumed.
- * A finished plan still says so.
- */
 export function PaceDetails({
   logbookHref,
   onAdjust,
   paused = false,
   status,
 }: {
-  /** The week's recap; null on a host without it. */
   logbookHref: string | null;
   onAdjust: () => void;
   paused?: boolean;

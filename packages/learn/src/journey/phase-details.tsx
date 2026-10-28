@@ -12,7 +12,6 @@ import { type JourneyPathLinks } from "./journey-links";
 import { CheckpointRow, MockRow, usePhaseMocksLine } from "./journey-phase-events";
 import { isNamedLikeAChapter } from "./path-phases";
 
-/** "Oct 12 – Jan 24": a phase's days; estimated ones ahead (a learn plan's) by their month. */
 function usePhaseRange() {
   const t = useExtracted();
   const formatPlanDate = useFormatPlanDate();
@@ -31,7 +30,6 @@ function usePhaseRange() {
   };
 }
 
-/** "1 of 92 lessons", that the phase is done, or that the plan holds nothing of it. */
 function usePhaseLessons() {
   const t = useExtracted();
 
@@ -49,10 +47,6 @@ function usePhaseLessons() {
   };
 }
 
-/**
- * An exam's phase: its next mock (or how many it holds) and the challenge that closes it. Without
- * Plus its mocks show all the same, marked Plus.
- */
 function ExamPhaseEvents({ links, phase }: { links: JourneyPathLinks; phase: PlanPhaseView }) {
   const { plan } = usePlanScreen();
   const mocksLine = usePhaseMocksLine();
@@ -91,12 +85,6 @@ function ExamPhaseEvents({ links, phase }: { links: JourneyPathLinks; phase: Pla
   );
 }
 
-/**
- * What a phase of the roadmap holds, opened from its band: its name, its days and lessons, then an
- * exam's phase's next mock and closing challenge, or a learn or language phase's chapters, each
- * opening its page. Over chapters one of which has its name, it goes by its place
- * (`isNamedLikeAChapter`).
- */
 export function PhaseDetails({ links, phase }: { links: JourneyPathLinks; phase: PlanPhaseView }) {
   const phaseName = usePhaseName();
   const phaseRange = usePhaseRange();

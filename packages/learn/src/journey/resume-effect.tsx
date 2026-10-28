@@ -2,7 +2,6 @@
 
 import { useExtracted } from "next-intl";
 
-/** Resuming starts with lessons planned for the paused days; the POST computes the actual move. */
 export function useResumeEffectText() {
   const t = useExtracted();
 

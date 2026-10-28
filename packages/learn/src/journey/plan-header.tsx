@@ -5,16 +5,11 @@ import { PageEyebrow, PageHeader, PageHeaderContent, PageTitle } from "../_compo
 import { daysBetween } from "../_utils/iso-date";
 import { PLAN_TITLE_ID, usePlanScreen } from "../plan/plan-context";
 
-/**
- * "ENEM 2026 · 27 days left": the goal, and how far its date is when it has one. A day the plan
- * only estimates reads "~398 days left" and is heard as "About 398 days left".
- */
 function JourneyEyebrow() {
   const t = useExtracted();
   const { goal, plan, today } = usePlanScreen();
   const { targetDate, targetDateEstimated } = plan.schedule;
 
-  // A date that passed has nothing to count down to: the pace says where the plan stands.
   if (!targetDate || targetDate < today) {
     return <PageEyebrow>{goal.title}</PageEyebrow>;
   }
@@ -43,10 +38,6 @@ function JourneyEyebrow() {
   );
 }
 
-/**
- * The Plan's header: the goal and its days left over the title, and beside the title the page's
- * actions (`children`: "Adjust plan" and the "…").
- */
 export function PlanHeader({ children }: { children: React.ReactNode }) {
   const t = useExtracted();
 

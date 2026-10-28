@@ -29,27 +29,18 @@ import {
 import { SlotContent } from "../plan/plan-suggestion-context";
 import { useResumeEffectText } from "./resume-effect";
 
-/** What a goal's page can do to it: pause it, resume it, or archive it. */
 export type GoalStatusChange = "active" | "archived" | "paused";
 
-/** What changing a goal's status came to; resuming can hit the free plan's one active goal. */
 export type GoalStatusOutcome = "failed" | "limitReached" | "saved";
 
-/**
- * The goal's status and how its page changes it, already bound to the goal by the host. The host
- * reads the page again once a change is saved (and leaves it once the goal is archived).
- */
+/** The host reads the page again once a change is saved, and leaves it once the goal is archived. */
 export type GoalStatusControl = {
   onSetStatus: (status: GoalStatusChange) => Promise<GoalStatusOutcome>;
-  /**
-   * What resuming the paused goal would do to its plan (see `getGoalResumePreview`), shown before
-   * the learner resumes it; null for a goal that isn't paused.
-   */
   resume: boolean;
   status: "active" | "completed" | "paused";
 };
 
-/** What went wrong changing a goal, said once in a toast: the menu has closed by then. */
+/** Said in a toast: the menu has closed by then. */
 function useStatusError() {
   const t = useExtracted();
   const saveError = useChangeSaveErrorMessage();
@@ -65,7 +56,6 @@ function useStatusError() {
   };
 }
 
-/** Changes the goal's status, saying in a toast when it didn't go through. */
 export function useSetGoalStatus(onSetStatus: GoalStatusControl["onSetStatus"] | null) {
   const showError = useStatusError();
   const [isPending, startTransition] = useTransition();
@@ -87,10 +77,6 @@ export function useSetGoalStatus(onSetStatus: GoalStatusControl["onSetStatus"] |
   return { isPending, setStatus };
 }
 
-/**
- * Pause or resume, and archive, at the end of the goal's "…": they act on the goal whose page
- * this is, so it's clear which one changes. Archiving asks first.
- */
 export function GoalStatusItems({
   control,
   onArchive,
@@ -126,10 +112,6 @@ export function GoalStatusItems({
   );
 }
 
-/**
- * Resuming from the "…" a goal whose plan it changes asks first, with what it changes (see
- * `ResumeEffect`), as Apply waits for a change's effect: the menu has no room to show it.
- */
 export function ResumeGoalDialog({
   goalTitle,
   onOpenChange,
@@ -161,7 +143,6 @@ export function ResumeGoalDialog({
   );
 }
 
-/** Archiving takes a goal out of the list, so it asks first. */
 export function ArchiveGoalDialog({
   goalTitle,
   onArchive,
@@ -194,12 +175,6 @@ export function ArchiveGoalDialog({
   );
 }
 
-/**
- * A paused goal says so in the Plan's slot, first, with the way back: nothing is planned for it
- * until the learner resumes it. When resuming changes the plan (the pause left lessons behind),
- * the slot says what it changes before Resume, as a proposal waits for its effect, and the line
- * on a phone opens it with "View" instead of resuming on its own.
- */
 export function GoalPausedSuggestion({
   control,
   goalTitle,

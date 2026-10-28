@@ -30,21 +30,10 @@ import { PreparationDetails } from "./preparation/preparation-details";
 
 const PERCENT = 100;
 
-/**
- * Where the learner stands, as the Plan shows it: preparation for exam and learn goals, the level
- * across skills for a language goal (with its exam's speaking paper or speaking mock, when the goal
- * prepares for one).
- */
 export type JourneyStanding =
   | {
-      /**
-       * An exam's number reads as preparation for it; any other goal's as how far along the way
-       * the learner is, in its plan's lessons, so a goal learned for its own sake never reads like
-       * exam prep and finishing every lesson reads 100%.
-       */
       forExam: boolean;
       kind: "preparation";
-      /** The plan's lessons studied or known (the syllabus's `lessons`); null for an exam. */
       lessons: SyllabusView["lessons"] | null;
       preparation: NonNullable<ProgressView["preparation"]>;
       stillNeeded: ProgressView["stillNeeded"];
@@ -52,15 +41,10 @@ export type JourneyStanding =
   | {
       kind: "language";
       language: LanguageProgressView;
-      /** The goal's exam-style speaking tasks, on their own page. */
       speakingHref: string;
       startSpeakingMock: () => Promise<boolean>;
     };
 
-/**
- * "+4 this week": what the number gained since the learner's week began, blue when it rose; a
- * week without a whole point either way says so, so both numbers keep their three lines.
- */
 function WeekGain({ gain }: { gain: number }) {
   const t = useExtracted();
   const points = Math.round(gain * PERCENT);
@@ -78,10 +62,6 @@ function WeekGain({ gain }: { gain: number }) {
   );
 }
 
-/**
- * "Speaking leads": the skill ahead of the others, under the level, or that they're even. Nothing
- * before the first levels.
- */
 function useLeadingSkill() {
   const t = useExtracted();
   const skillName = useSkillName();
@@ -103,11 +83,6 @@ function useLeadingSkill() {
   };
 }
 
-/**
- * The first number, in the goal's one measure: an exam's preparation as a share with its gain this
- * week, another goal's progress as its plan's lessons ("35.29%", "6 of 17 lessons"), or a language
- * goal's level with its target ("A2+ → B1+") and what leads.
- */
 function useStandingNumber(standing: JourneyStanding): PlanNumber {
   const t = useExtracted();
   const formatShare = useFormatShare();
@@ -201,7 +176,6 @@ function StandingBody({
   );
 }
 
-/** A number's details in a sheet, with its title and a way to close it. */
 function NumberSheet({
   children,
   onOpenChange,
@@ -226,13 +200,6 @@ function NumberSheet({
   );
 }
 
-/**
- * The two numbers that answer "will I make it?": preparation with its gain this week (a language
- * goal's level, "A2+ → B1+") and the pace against the plan, each a button opening what's behind
- * it: "Your preparation" (or "Your progress", "Your level") and "Your pace". In the page's column
- * they're two hairline tiles (`tiles`); in the aside two plain blocks side by side (`stats`).
- * Without a pace to keep (a free exam plan past its first week), the first one takes the row.
- */
 export function PlanNumbers({
   className,
   examHref,
@@ -244,12 +211,9 @@ export function PlanNumbers({
   variant,
 }: {
   className?: string;
-  /** The exam's page, where the sheet's "Take your first mock exam" leads; null without one. */
   examHref: string | null;
-  /** Last week's recap, from "Your pace"; null on a host without it. */
   logbookHref: string | null;
   onAdjust: () => void;
-  /** The goal is paused: its pace says so. */
   paused?: boolean;
   standing: JourneyStanding;
   status: PlanView["status"];

@@ -30,13 +30,8 @@ import { JourneyPath } from "./journey-path";
 import { JourneyPathList } from "./journey-path-list";
 import { useRoadmapPhases } from "./use-roadmap";
 
-/** Where the Plan's More section leads: the exam's page and the mind maps, when the goal has them. */
 type MoreLinks = Pick<JourneyPathLinks, "exam"> & { mindMaps: string | null };
 
-/**
- * "1 of 6 phases done": the phases behind the learner, of the ones the plan holds, as the roadmap
- * counts them (a language's phase holds several units, so it's counted as a phase too).
- */
 function PathDetail() {
   const t = useExtracted();
   const { phases } = useRoadmapPhases();
@@ -56,7 +51,6 @@ function PathDetail() {
   );
 }
 
-/** A goal without subjects of its own (a language's units, one course's plan): its path. */
 export function PathSection({
   alphabet,
   links,
@@ -80,10 +74,6 @@ export function PathSection({
   );
 }
 
-/**
- * Where the Plan leads that the sidebar lists from `lg` (the exam's page, the mind maps): under
- * `lg`, without a sidebar, they close the page.
- */
 export function MoreSection({ links }: { links: MoreLinks }) {
   const t = useExtracted();
 
@@ -128,7 +118,6 @@ export function MoreSection({ links }: { links: MoreLinks }) {
   );
 }
 
-/** On a phone, the band opens every phase with its mocks and challenges, the path as a timeline. */
 export function PhasesSheet({
   links,
   onOpenChange,

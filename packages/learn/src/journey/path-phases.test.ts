@@ -73,7 +73,6 @@ describe(isNamedLikeAChapter, () => {
   });
 
   it("finds the chapter's name in other case, accents or spacing", () => {
-    // Plans written before phases were named for their stage (Marcos's, Oct 2026).
     const chapters = [chapter("Banco e Celular"), chapter("Dentro do átomo")];
 
     expect(isNamedLikeAChapter({ name: "Banco e celular", phase: { chapters } })).toBe(true);

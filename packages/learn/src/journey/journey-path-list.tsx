@@ -21,13 +21,8 @@ import { PhaseLessons, PhaseMark, PhaseName, PhaseUntil } from "./path-phase-row
 import { findOpenPhase, findOwnChapter, isNamedLikeAChapter } from "./path-phases";
 import { useRoadmapFinish } from "./use-roadmap";
 
-/** A phase row's columns: its mark, its name, its lessons, when it ends, its chevron. */
 const PHASE_ROW_CLASS = cn(PATH_ROW_CLASS, "min-h-12");
 
-/**
- * A phase row's columns: its mark, its name, its lessons and when it ends. A row that opens
- * something is named by all of them, in the order they show.
- */
 function PhaseColumns({
   byPlace = false,
   isLast,
@@ -53,13 +48,8 @@ function PhaseColumns({
   );
 }
 
-/** The rows under the open phase start where its name starts. */
 const NESTED_CLASS = "flex flex-col pl-7";
 
-/**
- * Under the open phase that is one chapter: the challenge that closes it, and lessons still being
- * written for it (a language's unit says "this unit").
- */
 function OpenPhaseEvents({ links, phase }: { links: JourneyPathLinks; phase: PlanPhaseView }) {
   const { goal } = usePlanScreen();
 
@@ -71,11 +61,6 @@ function OpenPhaseEvents({ links, phase }: { links: JourneyPathLinks; phase: Pla
   );
 }
 
-/**
- * A phase that is one chapter (a language's unit): one row opening its page, highlighted while
- * it's the next one, with the challenge and lessons on the way under it while the path is open
- * there.
- */
 function ChapterPhase({
   chapter,
   isLast,
@@ -111,10 +96,6 @@ function ChapterPhase({
   );
 }
 
-/**
- * A phase of several chapters: it opens in place to them and its challenge. One named like one of
- * them goes by its place while open (`byPlace`).
- */
 function ChaptersPhase({
   byPlace,
   isLast,
@@ -145,8 +126,7 @@ function ChaptersPhase({
 
   return (
     <li aria-current={phase.state === "current" ? "step" : undefined} data-state={phase.state}>
-      {/* Opened or shut by hand, a phase keeps it until the plan goes on elsewhere: a change, a
-          finished phase or another goal's plan opens the phase the plan goes on in. */}
+      {/* The key remounts the phase when the plan goes on elsewhere, so one opened or shut by hand keeps it until then. */}
       <Collapsible defaultOpen={open} key={open ? "open" : "shut"}>
         <CollapsibleTrigger className={cn(PHASE_ROW_CLASS, "hover:bg-muted/70 group/phase")}>
           {header}
@@ -200,7 +180,6 @@ function PhaseItem({
   );
 }
 
-/** The end of the path: the goal and its date. */
 function FinishItem() {
   const { goal } = usePlanScreen();
   const finish = useRoadmapFinish();
@@ -226,13 +205,6 @@ function FinishItem() {
   );
 }
 
-/**
- * The way to a goal without subjects of its own (a language's units, a plan from one course), as
- * one list: a row per phase with its mark, its lessons done and when it ends, the goal last. A
- * phase that is one chapter (a language's unit) opens its page; one of several chapters opens in
- * place to them. The phase holding the next chapter is open: its next row highlighted, the
- * challenge that closes it and lessons still on the way under it.
- */
 export function JourneyPathList({ links }: { links: JourneyPathLinks }) {
   const t = useExtracted();
   const { plan } = usePlanScreen();

@@ -23,12 +23,6 @@ import {
 
 const PERCENT = 100;
 
-/**
- * The phases on a phone: a meter of parts in time (each filling blue with its lessons done, the
- * current one ringed over its fill, as Today's block in progress is), and where the learner is
- * under it. With `onOpen` it's one button opening every phase (the Plan's "Phases" sheet); without,
- * it's only there to read, as when the path below names every phase.
- */
 function RoadmapCompact({
   className,
   onOpen,
@@ -81,8 +75,6 @@ function RoadmapCompact({
         </span>
       )}
 
-      {/* Once nothing is left no phase is the learner's: the button counts the ones done instead
-          (a path below already says it when there's no button). */}
       {!position && onOpen && (
         <span className="text-muted-foreground flex w-full items-center justify-between gap-3 text-xs">
           <span className="min-w-0 truncate">
@@ -121,7 +113,6 @@ function RoadmapCompact({
   );
 }
 
-/** Each phase's mark in the reveal's list: done, where the learner is, or ahead. */
 const PHASE_MARK = {
   current: "next",
   done: "done",
@@ -130,11 +121,6 @@ const PHASE_MARK = {
   upcoming: "todo",
 } as const;
 
-/**
- * The reveal's phases on a phone, where a band per phase would cut every name ("Fundame…",
- * "Reta…"): the thin bar in time, then each phase on its own row with where it stands and the day
- * it starts ("Today" for the learner's own).
- */
 function RoadmapRevealList() {
   const t = useExtracted();
   const phaseName = usePhaseName();
@@ -171,12 +157,6 @@ function RoadmapRevealList() {
   );
 }
 
-/**
- * The plan's phases, the reveal's way: a band each, as long as its days, and under them the Plan
- * roadmap's one line of days (`PhaseAxis`): today, the day each phase ahead starts and the goal's
- * date at the end. Nothing opens; screen readers hear the phases as a list with their dates. A
- * phone lists them instead (`RoadmapRevealList`).
- */
 function RoadmapReveal() {
   const t = useExtracted();
   const { currentIndex, phases, today } = useRoadmapPhases();
@@ -231,14 +211,6 @@ function RoadmapReveal() {
   );
 }
 
-/**
- * The plan's phases in time, one drawing for every place that shows them, each phase as long as
- * its days (`getPhaseWeight`):
- * - `full`: the Plan from a tablet up (see `RoadmapFull`), each band opening its phase;
- * - `compact`: the Plan on a phone, a thin bar opening the Phases sheet (`onOpen`);
- * - `reveal`: the plan's reveal in onboarding, bands with their dates (a list on a phone).
- * Nothing for a plan of one phase: there's no road to draw.
- */
 export function PlanRoadmap({
   className,
   density,

@@ -5,11 +5,7 @@ import { BigQuantity } from "../_components/big-quantity";
 import { Meter, MeterFill } from "../_components/meter";
 import { PAGE_SECTION_TITLE_CLASS } from "../_components/page";
 
-/**
- * A number as the Plan shows it: what it is, its value and one line under it. A share or a level
- * (`numeric`) is a readout, its unit small; a value in words ("On pace", "Ended", "Not yet") stays
- * a word. A share (`share`, 0 to 1) draws its meter under it, filled in progress's blue.
- */
+/** `share` is 0 to 1. */
 export type PlanNumber = {
   detail: React.ReactNode;
   label: string;
@@ -18,10 +14,6 @@ export type PlanNumber = {
   value: React.ReactNode;
 };
 
-/**
- * How a number looks: a hairline tile (in the page's column) or a plain block (in the aside). A
- * button is as wide as its words unless told otherwise, so each fills its half of the row.
- */
 const NUMBER_CLASS = {
   stats:
     "-m-2 w-[calc(100%+1rem)] rounded-lg p-2 hover:bg-muted/70 focus-visible:ring-ring/50 flex min-w-0 flex-col gap-1.5 text-left outline-none transition-colors focus-visible:ring-[3px]",
@@ -29,19 +21,13 @@ const NUMBER_CLASS = {
     "ring-border rounded-option hover:bg-muted/50 focus-visible:ring-ring/50 flex h-full w-full min-w-0 flex-col gap-1.5 p-3 text-left ring-1 outline-none transition-colors ring-inset focus-visible:ring-[3px]",
 } as const;
 
-/** Where the Plan draws its numbers: tiles in the page's column, plain blocks in the aside. */
 export type PlanNumberVariant = keyof typeof NUMBER_CLASS;
 
-/**
- * A number's name: inside a tile, the tile's quiet label (as a `StatTile`'s); in the aside, a
- * real title in sentence case, as every block of the aside is named.
- */
 const NUMBER_LABEL_CLASS = {
   stats: cn(PAGE_SECTION_TITLE_CLASS, "truncate"),
   tiles: "text-label truncate",
 } as const;
 
-/** One number as a button opening its details in a sheet. */
 export function NumberButton({
   number,
   onOpen,

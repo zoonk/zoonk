@@ -1,4 +1,3 @@
-/** The current phase's quiet dot; the next chapter carries the learner's blue. */
 export function CurrentPhaseMark() {
   return (
     <span
