@@ -1,7 +1,6 @@
 import Foundation
 
-/// How a question is answered. Question blocks, checkpoints, mistake practice, test-outs and focus
-/// tests all serve their questions in these formats; graded on the server, never with the answer.
+/// Graded on the server; questions never come with the answer.
 enum PracticeItemFormat: String, Decodable, Sendable {
   case matchPairs
   case multipleChoice
@@ -18,7 +17,6 @@ enum PracticeTrueFalseLabels: String, Decodable, Sendable {
   case trueFalse
 }
 
-/// How many options a multiple-choice question asks for: one, an exact number, or all that apply.
 enum PracticeSelect: Hashable, Sendable, Decodable {
   case all
   case count(Int)
@@ -46,7 +44,6 @@ enum PracticeSelect: Hashable, Sendable, Decodable {
   }
 }
 
-/// A learner's answer, in the shape the API grades.
 enum PracticeAnswer: Hashable, Sendable, Codable {
   case choice(Int)
   case choices([Int])
@@ -63,7 +60,6 @@ enum PracticeAnswer: Hashable, Sendable, Codable {
 
   var isDontKnow: Bool { self == .dontKnow }
 
-  /// The options it picks: one, several, or none for another shape.
   var picks: [Int] {
     switch self {
     case .choice(let index): [index]
@@ -117,7 +113,6 @@ struct PracticeImage: Hashable, Sendable, Decodable {
   let width: Int?
 }
 
-/// A chart or a timeline drawn with a question, its set or a mistake.
 enum PracticeVisual: Hashable, Sendable, Decodable {
   case chart(PracticeChart)
   case timeline(PracticeTimeline)
@@ -162,13 +157,11 @@ struct PracticeTimeline: Hashable, Sendable, Decodable {
   let title: String
 }
 
-/// Who said what in a recording.
 struct PracticeTranscriptLine: Hashable, Sendable, Decodable {
   let speaker: String
   let text: String
 }
 
-/// The passage, case, chart or recording a set's questions share, asked back to back.
 struct PracticeItemSet: Hashable, Sendable, Decodable {
   enum Kind: String, Decodable, Sendable { case audio, `case`, chart, text }
 
@@ -198,7 +191,6 @@ struct PracticeItemSet: Hashable, Sendable, Decodable {
   let visual: PracticeVisual?
 }
 
-/// The passage a question quotes, such as an article of law, with its dated source.
 struct PracticeCitation: Hashable, Sendable, Decodable {
   let checkedAt: Date?
   let publisher: String?
@@ -207,7 +199,6 @@ struct PracticeCitation: Hashable, Sendable, Decodable {
   let url: String?
 }
 
-/// How a saved mistake's drill plays, by its cause.
 struct PracticeDrill: Hashable, Sendable, Decodable {
   enum Kind: String, Decodable, Sendable {
     case noGuessing, readCarefully, reteach, retry, spotTheTrap, timed
@@ -243,7 +234,6 @@ struct PracticeAnsweredMark: Hashable, Sendable, Decodable {
   let isCorrect: Bool
 }
 
-/// A math problem's answer box.
 struct PracticeNumericEntry: Hashable, Sendable, Decodable {
   enum Kind: String, Decodable, Sendable { case decimals, fraction, integer, number }
 
@@ -258,11 +248,9 @@ struct PracticeNumericUnit: Hashable, Sendable, Decodable {
   let symbol: String
 }
 
-/// One question as every practice screen draws it: a question block's, a checkpoint's, a mistake
-/// drill's, a test-out's or a focus test's. Formats only fill the fields they use.
+/// Formats only fill the fields they use.
 struct PracticeQuestion: Identifiable, Hashable, Sendable, Decodable {
   var answered: PracticeAnsweredMark?
-  /// A focus test's area, as learners call it.
   var area: String?
   var capsuleKey: String?
   var citation: PracticeCitation?
@@ -339,7 +327,6 @@ struct PracticeQuestion: Identifiable, Hashable, Sendable, Decodable {
   }
 }
 
-/// The server's grade of a session or checkpoint answer.
 struct PracticeFeedback: Hashable, Sendable, Decodable {
   struct Hyperdrive: Hashable, Sendable, Decodable {
     let level: Int
@@ -362,7 +349,7 @@ struct PracticeFeedback: Hashable, Sendable, Decodable {
   var workedSteps: [String]
 }
 
-/// A question block's capsule, for its format: a swipe capsule scores net.
+/// A swipe capsule scores net.
 struct PracticeCapsule: Hashable, Sendable, Decodable {
   enum Format: String, Decodable, Sendable { case matchPairs, rapidFire, swipe }
 
@@ -370,7 +357,6 @@ struct PracticeCapsule: Hashable, Sendable, Decodable {
   let key: String
 }
 
-/// A checkpoint block's kind, for its title.
 struct PracticeBlockCheckpoint: Hashable, Sendable, Decodable {
   enum Kind: String, Decodable, Sendable { case boss, finalBoss, weekly }
 
@@ -380,7 +366,6 @@ struct PracticeBlockCheckpoint: Hashable, Sendable, Decodable {
   let rematch: Bool
 }
 
-/// The study block a question block plays, with what its title and scoring need.
 struct PracticeBlock: Hashable, Sendable, Decodable {
   enum Kind: String, Decodable, Sendable { case checkpoint, learn, practice, produce, review }
 
@@ -399,7 +384,7 @@ struct PracticeBlock: Hashable, Sendable, Decodable {
   enum Status: String, Decodable, Sendable { case active, completed, pending, skipped }
 }
 
-/// A question block with its questions (never their answers) and what was answered already.
+/// Questions never come with their answers.
 struct QuestionBlockDetail: Hashable, Sendable, Decodable {
   var block: PracticeBlock
   /// False in checkpoints: a duel without hints.
@@ -408,7 +393,6 @@ struct QuestionBlockDetail: Hashable, Sendable, Decodable {
   var trueFalseLabels: PracticeTrueFalseLabels
 }
 
-/// What finishing earned: a belt level and a tenth of Energy reached, and its milestone.
 struct PracticeReached: Hashable, Sendable, Decodable {
   struct Level: Hashable, Sendable, Decodable {
     let color: String

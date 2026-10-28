@@ -1,9 +1,6 @@
 import SwiftUI
 
-/// One question block of a study session (reviews, practice or a mistake drill), full screen,
-/// played one question at a time and ending with its completion moment. The session lane embeds
-/// it with `onFinished` (it shows the moment) and `onStop`; opened on its own, it shows a short
-/// result and closes.
+/// Opened on its own, without `onFinished`, it shows a short result and closes.
 struct QuestionBlockScreen: View {
   let sessionId: String
   let blockId: String
@@ -45,8 +42,6 @@ struct QuestionBlockScreen: View {
       }
       .navigationBarTitleDisplayMode(.inline)
     }
-    // Loads once the session (and the active goal) is known, and again if it changes: a screen
-    // opened at launch can appear before the session is restored.
     .task(id: session.authenticatedSession) { await read() }
   }
 
@@ -95,7 +90,6 @@ struct QuestionBlockScreen: View {
   }
 }
 
-/// A loaded block: its question, the grade, and the pinned actions.
 struct QuestionBlockView: View {
   @Bindable var run: QuestionBlockRun
   let sessionId: String
@@ -137,10 +131,6 @@ struct QuestionBlockView: View {
     }
   }
 
-  // MARK: Content
-
-  /// What the learner reads before answering: the block's state, a drill's idea or rule, and the
-  /// question up to its answers.
   @ViewBuilder
   private func stimulus(phase: QuestionBlockPhase) -> some View {
     if phase == .finishReady {
@@ -190,7 +180,6 @@ struct QuestionBlockView: View {
     }
   }
 
-  /// The learner's turn: the question's answers, then its grade.
   @ViewBuilder
   private func response(phase: QuestionBlockPhase) -> some View {
     if phase != .finishReady, phase != .finishing, let question = run.question,
@@ -273,8 +262,6 @@ struct QuestionBlockView: View {
       }
     }
   }
-
-  // MARK: Actions
 
   @ViewBuilder
   private func actions(phase: QuestionBlockPhase) -> some View {
@@ -402,7 +389,6 @@ struct QuestionBlockView: View {
   }
 }
 
-/// "3 right · 1 wrong · net 2", live, for a net-scored block, with why blank is there.
 private struct NetScoreLine: View {
   let tally: NetTally
 
@@ -444,7 +430,6 @@ private struct NetScoreLine: View {
   }
 }
 
-/// The panel's last line when a mistake moved: fixed, or saved to come back tomorrow.
 private struct MistakeMovedNote: View {
   let feedback: PracticeFeedback
 
@@ -465,8 +450,7 @@ private struct MistakeMovedNote: View {
   }
 }
 
-/// A few misses in a row: a short break usually helps more than pushing on. Stopping keeps
-/// everything done so far; keeping going is just Continue.
+/// A short break usually helps more than pushing on. Stopping keeps everything done so far.
 private struct PauseSuggestionView: View {
   let isStopping: Bool
   let failed: Bool
@@ -500,7 +484,6 @@ private struct PauseSuggestionView: View {
   }
 }
 
-/// A block's short end when no session hosts it: how it went, then back.
 private struct BlockFinishedView: View {
   let kind: PracticeBlock.Kind
   let completion: Components.Schemas.StudyBlockCompletion
@@ -534,8 +517,6 @@ private struct BlockFinishedView: View {
   }
 }
 
-/// A block's name: what it's for ("Quick review", "Mixed practice", "Practice mistakes", a
-/// checkpoint's kind), or the lesson's title.
 enum PracticeBlockTitle {
   static func title(for block: PracticeBlock) -> LocalizedStringResource {
     if let checkpoint = block.checkpoint {

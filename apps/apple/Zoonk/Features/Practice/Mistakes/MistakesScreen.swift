@@ -1,9 +1,5 @@
 import SwiftUI
 
-/// The mistakes notebook for the active goal: how many are ready to practice, available tomorrow
-/// and fixed, one "Practice mistakes" button that drills them by cause, then the two lists ("To
-/// fix", "Fixed") grouped by skill, each entry with the question, what the learner answered
-/// against the right answer, and why. Works as a sidebar tab root and as a pushed page.
 struct MistakesScreen: View {
   @Environment(SessionStore.self) private var session
   @Environment(PracticeStore.self) private var practice
@@ -106,7 +102,6 @@ struct MistakesScreen: View {
       }
     }
     .listStyle(.insetGrouped)
-    // On a wide screen the lists keep the reading column of the practice they open.
     .safeAreaPadding(.horizontal, max(0, (width - PracticeLayout.readableWidth) / 2))
     .onGeometryChange(for: CGFloat.self) {
       $0.size.width
@@ -137,7 +132,7 @@ struct MistakesScreen: View {
     let mistakes: [Components.Schemas.Mistake]
   }
 
-  /// The mistakes by skill, in the order the list gives them; questions without a skill last.
+  /// Questions without a skill last.
   private func groups(_ mistakes: [Components.Schemas.Mistake]) -> [SkillGroup] {
     var order: [String] = []
     var bySkill: [String: [Components.Schemas.Mistake]] = [:]
@@ -186,7 +181,6 @@ struct MistakesScreen: View {
   }
 }
 
-/// The notebook at a glance: its counts and the one thing to do about them, practicing them.
 private struct NotebookHeader: View {
   let list: Components.Schemas.MistakeList?
   let practice: () -> Void
@@ -227,8 +221,7 @@ private struct NotebookHeader: View {
     .frame(maxWidth: .infinity, alignment: .leading)
   }
 
-  /// "3 ready to practice · 3 available tomorrow · 1 fixed": tomorrow's only when there are some. A
-  /// count of 0 has its own string, since Portuguese's "one" case covers 0.
+  /// A count of 0 has its own string, since Portuguese's "one" case covers 0.
   private func countsLine(ready: Int, tomorrow: Int, fixed: Int) -> String {
     var parts: [String] = []
 
@@ -263,8 +256,6 @@ private struct NotebookHeader: View {
   }
 }
 
-/// One notebook entry: why it happened and when, the question (with its stimulus), what the
-/// learner answered against the right answer, why, and what to do about it.
 private struct MistakeEntryView: View {
   let mistake: Components.Schemas.Mistake
   let labels: PracticeTrueFalseLabels
@@ -410,8 +401,6 @@ private struct MistakeEntryView: View {
   }
 }
 
-/// One answer as the player draws it once checked: the learner's in soft pink ("Your answer"),
-/// the right one in soft blue ("Correct").
 private struct MistakeAnswerRow: View {
   let text: String
   let isRight: Bool
@@ -445,7 +434,6 @@ private struct MistakeAnswerRow: View {
   }
 }
 
-/// The notebook's pattern row loads with the list, for a goal that has one to offer.
 private struct LoadsPattern: ViewModifier {
   let pattern: Resource<NoticedPattern>?
 
@@ -458,7 +446,6 @@ private struct LoadsPattern: ViewModifier {
   }
 }
 
-/// A language goal's pattern noticed in these mistakes, one tap away, as main's notebook shows it.
 private struct PatternRow: View {
   let pattern: NoticedPattern
   let open: () -> Void

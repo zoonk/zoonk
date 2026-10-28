@@ -1,6 +1,5 @@
 import Foundation
 
-/// One question of a mistake practice run, with the mistake it drills.
 struct MistakePracticeStep: Equatable {
   let entry: MistakePracticeEntry
   let isFirstOfEntry: Bool
@@ -19,8 +18,6 @@ struct MistakePracticeStep: Equatable {
   }
 }
 
-/// Where the run is: a gap's idea before its questions, a misread's question before its answers,
-/// answering, waiting for the grade, reading it, counting the run, or done.
 enum MistakePracticePhase: Equatable {
   case answerFailed(answer: PracticeAnswer, timedOut: Bool)
   case answering
@@ -32,10 +29,8 @@ enum MistakePracticePhase: Equatable {
   case reading
 }
 
-/// "Practice mistakes": each mistake's drill question by question. The run keeps the questions it
-/// started with (a fixed mistake leaves the server's practice, not the run in progress), every
-/// answer's id for counting the run, the mistakes it fixed, each question's verdict for the
-/// header, and what every count reached, so its end celebrates the whole run.
+/// The run keeps the questions it started with: a fixed mistake leaves the server's practice, not the
+/// run in progress.
 struct MistakePracticeState: Equatable {
   private(set) var answerIds: [String] = []
   private(set) var fixedIds: [String] = []
@@ -56,7 +51,7 @@ struct MistakePracticeState: Equatable {
 
   var step: MistakePracticeStep? { steps.indices.contains(index) ? steps[index] : nil }
 
-  /// The question's answer can be sent: answering, or again after a save that didn't go through.
+  /// Again after a save that didn't go through too.
   var acceptsAnswer: Bool {
     switch phase {
     case .answering, .answerFailed: true
@@ -136,8 +131,6 @@ struct MistakePracticeState: Equatable {
     phase = .ended(summary)
   }
 
-  /// Each question as a header segment: answered right or wrong, neutral for "not sure", the one
-  /// in view, then the ones ahead.
   var segments: [PracticeSegment] {
     steps.indices.map { position in
       if verdicts.indices.contains(position) { return verdicts[position] }

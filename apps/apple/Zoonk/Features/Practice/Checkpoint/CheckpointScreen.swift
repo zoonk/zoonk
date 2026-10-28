@@ -1,8 +1,5 @@
 import SwiftUI
 
-/// A started checkpoint: the phase challenge's duel with the Trickster (his shield breaks with
-/// each right answer), or the weekly challenge. No hints: right or wrong after each answer, why at
-/// the end. A finished one opens on its result with a review of the answers.
 struct CheckpointScreen: View {
   let blockId: String
   var sessionId: String?
@@ -56,8 +53,6 @@ struct CheckpointScreen: View {
         PracticeCloseButton { dismiss() }
       }
     }
-    // Loads once the session (and the active goal) is known, and again if it changes: a screen
-    // opened at launch can appear before the session is restored.
     .task(id: session.authenticatedSession) { await read() }
   }
 
@@ -70,8 +65,6 @@ struct CheckpointScreen: View {
     return CheckpointCopy.title(loaded.checkpoint)
   }
 
-  /// The voice lane's call for a language checkpoint, opened straight from the session; until it's
-  /// wired, the checkpoint says it isn't ready here.
   @ViewBuilder
   private var call: some View {
     if let checkpointCall = hooks.checkpointCall {
@@ -111,8 +104,6 @@ struct CheckpointScreen: View {
     }
   }
 
-  // MARK: Duel
-
   private func duel(_ loaded: CheckpointLoad, state: CheckpointDuelState) -> some View {
     let question = state.currentQuestion
     let feedback = state.feedback
@@ -131,8 +122,6 @@ struct CheckpointScreen: View {
     return PracticeTaskLayout(segments: state.segments, index: state.verdicts.count) {
       if state.kind != .weekly {
         HStack(spacing: 16) {
-          // Beside the question on wide screens he reacts to each verdict: smug at a miss, back
-          // to sly at one the learner got past him.
           if sizeClass == .regular {
             TricksterCharacter(
               cue: feedback.map {
@@ -200,8 +189,6 @@ struct CheckpointScreen: View {
       }
     }
   }
-
-  // MARK: Requests
 
   private func read() async {
     guard let identity = session.authenticatedSession else { return }
@@ -292,7 +279,6 @@ struct CheckpointScreen: View {
   }
 }
 
-/// The Trickster's shield as a gauge: each right answer breaks a piece, the pass mark breaks it.
 private struct ShieldGauge: View {
   let correct: Int
   let passMark: Int
@@ -318,8 +304,6 @@ private struct ShieldGauge: View {
   }
 }
 
-/// A checkpoint's result: won or not, its score, what comes next, its rewards, and its answers
-/// reviewed with why.
 private struct CheckpointResultView: View {
   let load: CheckpointLoad
   let state: CheckpointDuelState
@@ -351,8 +335,7 @@ private struct CheckpointResultView: View {
               table: "Practice",
               comment: "Why a checkpoint without questions isn't scored."))
         } else {
-          // He acts out a result that just came in (his defeat, or smug when he won); a result
-          // opened again draws him still. The week's challenge has no art: its title says it.
+          // A result opened again draws him still.
           if checkpoint.kind != .weekly {
             TricksterCharacter(beaten: passed, reacts: state.completion != nil)
               .frame(width: 112, height: 112)
@@ -406,8 +389,6 @@ private struct CheckpointResultView: View {
   }
 }
 
-/// What a won checkpoint earned (its Brain Power, the phase it checks off, the "Trap hunter"
-/// badge), then the phase that comes next, by its name, as main lists them.
 private struct CheckpointRewards: View {
   let checkpoint: Components.Schemas.Checkpoint
   let brainPower: Int
@@ -474,7 +455,6 @@ private struct CheckpointRewards: View {
   }
 }
 
-/// Each question with its right answer and why, as the feedback after a question shows them.
 private struct CheckpointReview: View {
   let load: CheckpointLoad
   let answers: [Components.Schemas.StudyBlockCompletion.CheckpointPayload.AnswersPayloadPayload]

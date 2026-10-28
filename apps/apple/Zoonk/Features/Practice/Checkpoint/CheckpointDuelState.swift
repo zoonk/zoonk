@@ -1,14 +1,11 @@
 import Foundation
 
-/// How a boss's duel was decided: his shield broke, or it can't break anymore.
 enum DuelDecision: Equatable {
   case lost
   case won
 
-  /// A boss's duel is over once decided and the questions left are never asked: won once its
-  /// right answers reach the pass mark, lost once its misses leave too few questions to reach it.
-  /// A weekly challenge asks every question; a pass mark of 0 (a language call) is never decided.
-  /// Core's `getDuelDecision` is the same rule.
+  /// Mirrors core's `getDuelDecision`. A weekly challenge asks every question; a pass mark of 0 (a
+  /// language call) is never decided.
   static func decide(
     answered: Int, correct: Int, kind: Components.Schemas.Checkpoint.KindPayload, passMark: Int,
     questions: Int
@@ -20,8 +17,7 @@ enum DuelDecision: Equatable {
   }
 }
 
-/// A started checkpoint on screen: the duel one question at a time (right or wrong shows, never
-/// the answer or why), then the result, which is when the answers and traps are explained.
+/// Right or wrong shows after each answer, never the answer or why; the result explains them.
 struct CheckpointDuelState: Equatable {
   enum Failure: Equatable { case answer, finish }
 
@@ -33,16 +29,13 @@ struct CheckpointDuelState: Equatable {
 
   private(set) var completion: Components.Schemas.StudyBlockCompletion?
   private(set) var failure: Failure?
-  /// The last answer and its verdict, shown until the learner moves on.
   private(set) var feedback: Feedback?
   /// The answers given in this visit, so the review marks the learner's own pick.
   private(set) var given: [String: PracticeAnswer] = [:]
   private(set) var isPending = false
   private(set) var isResult: Bool
   private(set) var reinforcementLessons: Int
-  /// A recording's transcript by its set, from the answer that finished its questions.
   private(set) var transcripts: [String: [PracticeTranscriptLine]] = [:]
-  /// Each answered question's verdict, by item.
   private(set) var verdicts: [String: Bool]
   let kind: Components.Schemas.Checkpoint.KindPayload
   let passMark: Int
@@ -65,8 +58,6 @@ struct CheckpointDuelState: Equatable {
     reinforcementLessons = checkpoint.reinforcementLessons
     isResult = checkpoint.status == .completed || checkpoint.endedWithoutQuestions == true
   }
-
-  // MARK: Transitions
 
   mutating func confirm() {
     failure = nil
@@ -109,8 +100,6 @@ struct CheckpointDuelState: Equatable {
     isResult = true
   }
 
-  // MARK: Derived
-
   var questionCount: Int { Set(questions.map(\.itemId)).union(verdicts.keys).count }
 
   var correct: Int { verdicts.values.filter(\.self).count }
@@ -121,7 +110,6 @@ struct CheckpointDuelState: Equatable {
       questions: questionCount)
   }
 
-  /// Decided, or every question has its verdict.
   var isDone: Bool { decision != nil || verdicts.count == questionCount }
 
   /// The question whose verdict shows, else the first without one; none once the duel is decided.

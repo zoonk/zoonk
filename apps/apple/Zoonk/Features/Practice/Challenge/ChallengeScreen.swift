@@ -1,9 +1,7 @@
 import SwiftUI
 
-/// A challenge's intro: the phase challenge (the Trickster), the final one, or the week's Big
-/// Challenge. It says what it asks and what it's worth, starts on its day (writing its questions
-/// first when the bank holds too few, on the learner's tap), moves the weekly one to Monday with
-/// an undo, and keeps Plus-only challenges visible with a lock and a way to Plus.
+/// Writes its questions first when the bank holds too few, only on the learner's tap. Plus-only
+/// challenges stay visible with a lock.
 struct ChallengeScreen: View {
   let planItemId: String
   var sessionId: String?
@@ -48,13 +46,9 @@ struct ChallengeScreen: View {
         PracticeCloseButton { dismiss() }
       }
     }
-    // Loads once the session (and the active goal) is known, and again if it changes: a screen
-    // opened at launch can appear before the session is restored.
     .task(id: session.authenticatedSession) { await read() }
     .onDisappear { action?.cancel() }
   }
-
-  // MARK: Intro
 
   private func intro(_ challenge: Components.Schemas.Challenge) -> some View {
     // Once beaten, the Trickster's checkpoint says how it went, never the rules of a duel already
@@ -62,8 +56,6 @@ struct ChallengeScreen: View {
     let won = isCheckpoint(challenge) && challenge.status == .done
 
     return PracticeTaskLayout {
-      // A phase's challenge is the Trickster's, smug with his sign until he's beaten. A mock, a
-      // call or the week's challenge has no art.
       if isTrickster(challenge) {
         TricksterCharacter(beaten: won, reacts: !won)
           .frame(width: 112, height: 112)
@@ -304,20 +296,14 @@ struct ChallengeScreen: View {
       || ([.done, .tried].contains(challenge.status) && challenge.blockId != nil)
   }
 
-  // MARK: Copy
-
-  /// A phase's or the final checkpoint: a duel with the Trickster, or a language goal's call.
   private func isCheckpoint(_ challenge: Components.Schemas.Challenge) -> Bool {
     challenge.kind != .weekly && !challenge.mock
   }
 
-  /// A checkpoint played as a duel, not a call.
   private func isTrickster(_ challenge: Components.Schemas.Challenge) -> Bool {
     isCheckpoint(challenge) && challenge.call == nil
   }
 
-  /// Which checkpoint it is, over the Trickster's title: "Phase 2 challenge", "Final challenge",
-  /// with "New try" on a rematch. Other challenges name themselves in their title.
   private func eyebrow(_ challenge: Components.Schemas.Challenge) -> String? {
     let phase = challenge.phase.map { $0.value1.index + 1 }
 
@@ -351,7 +337,6 @@ struct ChallengeScreen: View {
       : name
   }
 
-  /// The title, or an open challenge call's own, written for its unit.
   private func titleText(_ challenge: Components.Schemas.Challenge) -> Text {
     if let title = challenge.call?.title, challenge.status != .done, isCheckpoint(challenge) {
       Text(title)
@@ -474,7 +459,6 @@ struct ChallengeScreen: View {
       comment: "A mock exam challenge is Plus-only.")
   }
 
-  /// "Today", "Tomorrow", or the weekday and date, for a learner-local day ("2026-11-02").
   private func dayLabel(_ day: String, today: String) -> String {
     var calendar = Calendar(identifier: .gregorian)
     calendar.timeZone = .gmt
@@ -498,8 +482,6 @@ struct ChallengeScreen: View {
     return date.formatted(style)
   }
 
-  // MARK: Requests
-
   private func run(_ work: @escaping @MainActor () async -> Void) {
     action?.cancel()
     action = Task { await work() }
@@ -521,8 +503,6 @@ struct ChallengeScreen: View {
     }
   }
 
-  /// Start plans today's session if needed and starts the block, then opens where it's played.
-  /// Too few questions in the bank writes them first (the learner's tap), then starts with them.
   /// A learner who left (the screen closed, signed out) gets nothing opened or started behind them.
   private func start(afterWriting: Bool) async {
     isStarting = true
@@ -558,8 +538,8 @@ struct ChallengeScreen: View {
     }
   }
 
-  /// Writes the questions (the learner's tap), follows the run until it ends whether every call
-  /// succeeded or not, then starts with what was written.
+  /// Follows the run until it ends whether every call succeeded or not, then starts with what was
+  /// written.
   private func writeThenStart() async {
     isWriting = true
     defer { isWriting = false }
@@ -589,8 +569,6 @@ struct ChallengeScreen: View {
     }
   }
 
-  /// "Move to Monday": the challenge moves through the plan and this screen follows it to its
-  /// new plan item, with the move's undo.
   private func move() async {
     isMoving = true
     moveProblem = nil

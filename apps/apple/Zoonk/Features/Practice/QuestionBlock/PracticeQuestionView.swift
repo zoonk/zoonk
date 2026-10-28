@@ -1,14 +1,7 @@
 import SwiftUI
 
-/// One question as every practice screen asks it: what it's for (a placement question, a past
-/// exam's source), what it's read with (its set's text, case, chart or recording, then its own
-/// context, picture or chart), the question itself, and its answer control. A statement is the
-/// card its true-or-false control draws, so it has no title of its own.
-///
-/// A spread draws it in two parts: `stimulus`, everything up to the question, on the leading page,
-/// and `response`, the answer control, on the trailing page. There a statement's card moves to the
-/// leading page too, and its answers stay on the trailing one. In one column `stimulus` draws the
-/// question whole and `response` draws nothing, so it's spaced as a phone has always shown it.
+/// A spread draws it in two parts: `stimulus` on the leading page and `response` on the trailing
+/// one. In one column `stimulus` draws the question whole and `response` draws nothing.
 struct PracticeQuestionView: View {
   enum Part {
     case whole
@@ -58,10 +51,8 @@ struct PracticeQuestionView: View {
     self.onSubmit = onSubmit
   }
 
-  /// What the question is read with, up to the question itself: a spread's leading page.
   var stimulus: Self { drawing(.stimulus) }
 
-  /// The answer control: a spread's trailing page.
   var response: Self { drawing(.response) }
 
   var body: some View {
@@ -85,7 +76,6 @@ struct PracticeQuestionView: View {
     }
   }
 
-  /// The part this place draws: both parts are one whole question outside a spread.
   private var drawn: Part? {
     switch part {
     case .whole: .whole
@@ -98,7 +88,6 @@ struct PracticeQuestionView: View {
     question.format != .trueFalse || hidesAnswers
   }
 
-  /// A spread reads a statement on its leading page, beside its answers.
   private var statementLeads: Bool {
     drawn != .whole && question.format == .trueFalse && !hidesAnswers
   }
@@ -169,7 +158,6 @@ struct PracticeQuestionView: View {
   }
 }
 
-/// The question itself, the loudest line while the learner answers; once graded it steps back.
 struct QuestionTitle: View {
   let text: String
   var isMuted = false
@@ -182,7 +170,6 @@ struct QuestionTitle: View {
   }
 }
 
-/// A quiet line with its mark, above or under a question.
 struct QuestionNote<Content: View>: View {
   let systemImage: String
   @ViewBuilder let content: () -> Content
@@ -198,7 +185,6 @@ struct QuestionNote<Content: View>: View {
   }
 }
 
-/// A soft box with its mark: the time machine's line, a drill's rule, a pause suggestion.
 struct PracticeCallout<Content: View>: View {
   let systemImage: String
   @ViewBuilder let content: () -> Content
@@ -221,10 +207,8 @@ struct PracticeCallout<Content: View>: View {
   }
 }
 
-// MARK: - Feedback
-
-/// The verdict's words and tone: right, wrong, left blank where a wrong answer costs a point
-/// (neither, never pink), or the learner's own "I don't know yet", never called "Not quite".
+/// A blank where a wrong answer costs a point is neither, never pink; the learner's own "I don't know
+/// yet" is never called "Not quite".
 enum PracticeVerdict: Equatable {
   case blank
   case notSure
@@ -279,9 +263,6 @@ enum PracticeVerdict: Equatable {
   }
 }
 
-/// The grade after an answer on a quiet panel: the verdict (with the streak from three right in a
-/// row), the right answer where the question doesn't mark it, why, how to solve it, the passage it
-/// quotes, the host's notes (a drill's, the time machine's), and last whether a mistake moved.
 struct PracticeFeedbackPanel<Notes: View>: View {
   let verdict: PracticeVerdict
   var streak = 0
@@ -363,7 +344,6 @@ extension PracticeFeedbackPanel where Notes == EmptyView {
   }
 }
 
-/// How to solve a math problem with the numbers the learner saw, the result last and strongest.
 struct WorkedStepsView: View {
   let steps: [String]
 
@@ -384,7 +364,6 @@ struct WorkedStepsView: View {
   }
 }
 
-/// The passage a question quotes with its dated source, linked when it's online.
 struct CitationNote: View {
   let citation: PracticeCitation
 
@@ -410,9 +389,7 @@ struct CitationNote: View {
   }
 }
 
-/// The right answer in words, from the grade's answer shape: a math answer with its unit, a
-/// statement's in the goal's exam's words. Choice and true-or-false questions mark the right option
-/// instead, so they need no line.
+/// Choice and true-or-false questions mark the right option instead, so they need no line.
 enum PracticeAnswerText {
   static func correctLine(
     feedbackIsCorrect: Bool, correctAnswer: PracticeAnswer?, question: PracticeQuestion,

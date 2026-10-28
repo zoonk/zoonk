@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// A graded answer, for the item to mark: what the learner sent, the right answer when the grade
-/// says it (a checkpoint keeps it until the duel ends), and whether it was right.
+/// A checkpoint keeps the right answer until the duel ends.
 struct PracticeItemResult: Equatable {
   let answer: PracticeAnswer
   let correctAnswer: PracticeAnswer?
@@ -25,12 +24,9 @@ struct PracticeItemResult: Equatable {
   }
 }
 
-/// The answer control for a question's format. It hands the host the answer as it's made
-/// (`draft`, nil until complete) for the host's Check, and a typed answer straight away when
-/// Return sends it (`onSubmit`). It shows the answer the draft holds, so the control drawn again
-/// (folding or unfolding iPhone Duo, going back to a question) keeps it; only work that isn't an
-/// answer yet, like a pair half matched, stays with the control. Give it `.id(question.id)` so
-/// every question starts fresh.
+/// It shows the answer the draft holds, so the control drawn again (folding or unfolding iPhone Duo,
+/// going back to a question) keeps it; only work that isn't an answer yet, like a pair half matched,
+/// stays with the control. Give it `.id(question.id)` so every question starts fresh.
 struct PracticeItemView: View {
   let question: PracticeQuestion
   let labels: PracticeTrueFalseLabels
@@ -38,7 +34,6 @@ struct PracticeItemView: View {
   var allowsBlank = false
   var result: PracticeItemResult?
   var isLocked = false
-  /// A spread shows a statement's card on its other page.
   var showsStatement = true
   @Binding var draft: PracticeAnswer?
   var onSubmit: (PracticeAnswer) -> Void = { _ in }
@@ -70,11 +65,8 @@ struct PracticeItemView: View {
   }
 }
 
-// MARK: - Multiple choice
-
-/// One option under the other with its number. A tap picks and tapping again clears; one that asks
-/// for several toggles them. Once graded, only the picks and the right answers stay, so the
-/// feedback fits under them; a grade that doesn't say the right option keeps them all.
+/// Once graded, only the picks and the right answers stay, so the feedback fits under them; a grade
+/// that doesn't say the right option keeps them all.
 struct ChoiceItemView: View {
   let options: [String]
   let select: PracticeSelect
@@ -129,7 +121,6 @@ struct ChoiceItemView: View {
   }
 }
 
-/// The rule above a question that asks for several options, as exams word it.
 struct PickRule: View {
   let select: PracticeSelect
 
@@ -151,11 +142,6 @@ struct PickRule: View {
   }
 }
 
-// MARK: - True or false
-
-/// A statement on a card the learner can swipe (left false, right true), with the answers under it
-/// in the goal's exam's words. Net-scored practice adds "Leave blank". A swipe or a tap picks; the
-/// host's Check sends it. A spread shows the card on its other page (`showsStatement`).
 struct TrueFalseItemView: View {
   let statement: String
   let labels: PracticeTrueFalseLabels
@@ -193,8 +179,7 @@ struct TrueFalseItemView: View {
     }
   }
 
-  /// The right answer when the grade says it; the learner's wrong pick. A blank is neither right
-  /// nor wrong: it stays picked, never marked.
+  /// A blank is neither right nor wrong: it stays picked, never marked.
   private func optionResult(_ answer: PracticeAnswer) -> AnswerOptionResult? {
     guard let result, case .trueFalse = answer else { return nil }
     return result.optionMark(
@@ -202,8 +187,7 @@ struct TrueFalseItemView: View {
   }
 }
 
-/// A true-or-false statement's card: swiped right it's true, left false, and that side stays
-/// picked. A statement with a table doesn't swipe, so the table can scroll.
+/// A statement with a table doesn't swipe, so the table can scroll.
 struct TrueFalseStatementCard: View {
   let statement: String
   let result: PracticeItemResult?
@@ -278,7 +262,6 @@ enum TrueFalseWords {
     }
   }
 
-  /// A saved answer to a statement ("true" or "false") in these words; other answers as saved.
   static func savedAnswer(_ answer: String?, labels: PracticeTrueFalseLabels) -> String? {
     guard let answer else { return nil }
 
@@ -290,10 +273,6 @@ enum TrueFalseWords {
   }
 }
 
-// MARK: - Match pairs
-
-/// Pick an entry on the left, then its match on the right; tapping a matched entry undoes it. The
-/// host gets the pairs once all are matched.
 struct MatchPairsItemView: View {
   let left: [String]
   let right: [String]
@@ -348,7 +327,6 @@ struct MatchPairsItemView: View {
       comment: "VoiceOver value of a right-column entry already matched with a left entry.")
   }
 
-  /// Each left entry's match: the draft's once every one is matched.
   private var matches: [Int?] {
     if let incomplete, incomplete.count == left.count { return incomplete }
     if case .matches(let matched) = draft, matched.count == left.count { return matched }
@@ -389,7 +367,6 @@ struct MatchPairsItemView: View {
   }
 }
 
-/// The number a matched pair or a placed step wears.
 private struct PairBadge: View {
   let number: Int
 
@@ -403,10 +380,6 @@ private struct PairBadge: View {
   }
 }
 
-// MARK: - Order
-
-/// Tap the steps in the order they go; each shows its place. Tapping a placed step takes it out.
-/// Once graded, each step's outline says whether its place was right.
 struct OrderItemView: View {
   let steps: [String]
   let result: PracticeItemResult?
@@ -470,11 +443,7 @@ struct OrderItemView: View {
   }
 }
 
-// MARK: - Numeric and typed
-
-/// A math problem's field: a number with a decimal comma or point (either works in any language)
-/// next to its unit; Return sends it. A box that takes less than any number says so under it. What
-/// the learner typed shows as typed; drawn again, the field shows the draft's number.
+/// What the learner typed shows as typed; drawn again, the field shows the draft's number.
 struct NumericItemView: View {
   let entry: PracticeNumericEntry?
   let unit: PracticeNumericUnit?
@@ -536,7 +505,6 @@ struct NumericItemView: View {
     draft = NumericEntryParser.parse(text, entry: entry).map(PracticeAnswer.number)
   }
 
-  /// Sends the draft's number, which is what the field reads.
   private func submit() {
     guard case .number(let value) = draft else {
       isInvalid = true
@@ -585,8 +553,7 @@ struct NumericItemView: View {
   }
 }
 
-/// A short typed answer (a word, a number, a term); Return sends it. What the learner typed shows
-/// as typed; drawn again, the field shows the draft's text.
+/// What the learner typed shows as typed; drawn again, the field shows the draft's text.
 struct TypedItemView: View {
   let mark: AnswerOptionResult?
   let isLocked: Bool

@@ -1,9 +1,6 @@
 import SwiftUI
 
-/// A quick test that skips a chapter the learner already knows: one question per screen, no
-/// feedback until the end, "I don't know yet" always allowed. Passing takes the chapter's lessons
-/// off the plan, with an undo on its result. Its questions are written on the learner's tap, never
-/// when the screen opens.
+/// Its questions are written on the learner's tap, never when the screen opens.
 struct TestOutScreen: View {
   let chapterId: String
 
@@ -20,7 +17,6 @@ struct TestOutScreen: View {
   @State private var result: Components.Schemas.ChapterTestOutResult?
   @State private var undo: UndoState = .idle
 
-  /// The active goal scopes the notebook, its practice and test-outs.
   private var goalId: String? { summary.summary.value?.activeGoalID }
 
   private enum UndoState: Equatable { case done, failed, idle, pending }
@@ -72,8 +68,6 @@ struct TestOutScreen: View {
         PracticeCloseButton { dismiss() }
       }
     }
-    // Loads once the session (and the active goal) is known, and again if it changes: a screen
-    // opened at launch can appear before the session is restored.
     .task(id: "\(session.authenticatedSession?.accountID ?? ""):\(goalId ?? "")") { await read() }
   }
 
@@ -93,7 +87,6 @@ struct TestOutScreen: View {
     ) { Task { await write() } }
   }
 
-  /// "80% right skips the chapter. No feedback until the end.", the test's one rule.
   private func rule(_ passMark: Double) -> String {
     String(
       localized:
@@ -175,8 +168,6 @@ struct TestOutScreen: View {
         "\(result.lessonsSkipped) lessons are off your plan.", table: "Practice",
         comment: "How many lessons a passed test-out skipped.")
   }
-
-  // MARK: Requests
 
   private func read() async {
     guard let identity = session.authenticatedSession, let goalId else { return }

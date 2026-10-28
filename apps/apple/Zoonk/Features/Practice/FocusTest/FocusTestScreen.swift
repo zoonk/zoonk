@@ -1,8 +1,7 @@
 import SwiftUI
 
-/// A plan's focus test: a few questions on each subject worth the most, no feedback until the end;
-/// the weakest of them get the plan's focus, with an undo on the result. Questions still missing
-/// are written on the learner's Start, and the test asks the ones it has while the rest arrive.
+/// Questions still missing are written on the learner's Start, and the test asks the ones it has
+/// while the rest arrive.
 struct FocusTestScreen: View {
   let goalId: String
 
@@ -58,8 +57,6 @@ struct FocusTestScreen: View {
         PracticeCloseButton { dismiss() }
       }
     }
-    // Loads once the session (and the active goal) is known, and again if it changes: a screen
-    // opened at launch can appear before the session is restored.
     .task(id: session.authenticatedSession) { await read() }
   }
 
@@ -174,8 +171,6 @@ struct FocusTestScreen: View {
     }
   }
 
-  // MARK: Requests
-
   private func read() async {
     guard let identity = session.authenticatedSession else { return }
 
@@ -194,7 +189,7 @@ struct FocusTestScreen: View {
     }
   }
 
-  /// Start asks for missing questions (the learner's tap) and asks the ones it has meanwhile.
+  /// Only on the learner's tap.
   private func start(_ test: FocusTestQuestions) async {
     guard !test.needsItems.isEmpty else {
       started = true

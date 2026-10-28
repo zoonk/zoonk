@@ -1,13 +1,10 @@
 import SwiftUI
 
-/// An answer's mark once graded: the right one in soft blue, the learner's wrong pick in soft pink.
 enum AnswerOptionResult: Equatable {
   case right
   case wrong
 }
 
-/// One answer option, as every practice question draws it: its words on a rounded card with a
-/// hairline, a firm outline while picked, and once graded "Correct" or "Your answer" at its end.
 /// The first nine answer to their number key on a hardware keyboard, as on the web.
 struct AnswerOption<Label: View>: View {
   var marker: Int?
@@ -63,8 +60,7 @@ struct AnswerOption<Label: View>: View {
   }
 }
 
-/// The card behind an option: a hairline at rest, a firm outline while picked, soft blue or pink
-/// once graded. Disabled options keep their colors, so a graded question stays readable.
+/// Disabled options keep their colors, so a graded question stays readable.
 struct AnswerOptionStyle: ButtonStyle {
   var isPicked: Bool
   var result: AnswerOptionResult?
@@ -100,7 +96,6 @@ struct AnswerOptionStyle: ButtonStyle {
   }
 }
 
-/// The number keys 1 to 9 pick the options in order on a hardware keyboard.
 private struct NumberKeyShortcut: ViewModifier {
   let number: Int?
   let isEnabled: Bool

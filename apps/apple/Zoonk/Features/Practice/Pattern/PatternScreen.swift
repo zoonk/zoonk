@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// A mistake pattern a language goal's recent answers show, full screen: the rule led by one of
-/// the learner's own slips, then a three-minute drill of fill-in sentences, checked as they go and
-/// counted once at the end. Mistakes that were only typos get a kind note and nothing to practice.
+/// Counted once at the end. Mistakes that were only typos get a kind note and nothing to practice.
 struct PatternScreen: View {
   let patternId: String
 
@@ -45,8 +43,6 @@ struct PatternScreen: View {
         PracticeCloseButton { dismiss() }
       }
     }
-    // Loads once the session (and the active goal) is known, and again if it changes: a screen
-    // opened at launch can appear before the session is restored.
     .task(id: session.authenticatedSession) { await read() }
   }
 
@@ -240,8 +236,6 @@ struct PatternScreen: View {
     }
   }
 
-  // MARK: Requests
-
   private func read() async {
     guard let identity = session.authenticatedSession else { return }
 
@@ -287,8 +281,6 @@ struct PatternScreen: View {
 
 }
 
-/// "We noticed a pattern", with the pattern as its title: how often it came up, the rule with one
-/// of the learner's own slips, the contrast rows, and the other answers it came up in.
 private struct PatternIntroView: View {
   let pattern: Components.Schemas.MistakePattern
 
@@ -326,8 +318,6 @@ private struct PatternIntroView: View {
   }
 }
 
-/// The rule, led by the learner's own slip as a change ("You said" → "Correct version"), then the
-/// contrast rows.
 private struct PatternRuleView: View {
   let pattern: Components.Schemas.MistakePattern
 

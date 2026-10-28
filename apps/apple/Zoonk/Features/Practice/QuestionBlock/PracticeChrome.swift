@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// Each question's place in the header's segments.
 enum PracticeSegment: Equatable {
   case ahead
   case current
@@ -10,8 +9,6 @@ enum PracticeSegment: Equatable {
   case wrong
 }
 
-/// One segment per question under a run's title: soft blue or pink once answered, quiet for a
-/// question not graded right or wrong, firm for the one in view, faint for the rest.
 struct PracticeSegmentsBar: View {
   let segments: [PracticeSegment]
   let index: Int
@@ -44,15 +41,9 @@ struct PracticeSegmentsBar: View {
 }
 
 enum PracticeLayout {
-  /// The column practice keeps its reading in on a wide screen.
   static let readableWidth: CGFloat = 680
 }
 
-/// A full-screen practice task: its progress stays at the top and its actions stay pinned at the
-/// bottom. A question task is a spread where two pages fit (the open iPhone Duo, iPad, iPhone in
-/// landscape): what it's read with on the leading page, under the progress, and the learner's turn
-/// on the trailing page, with the actions at its bottom. Elsewhere, and for a task that's all one
-/// part (an intro, a result), it scrolls in one readable column.
 struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
   @Environment(\.practiceActionsHidden) private var actionsHidden
   private let segments: [PracticeSegment]?
@@ -62,8 +53,6 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
   private let response: () -> Response
   private let actions: () -> Actions
 
-  /// A question: what it's read with (its set, the question) and the learner's turn (the answer
-  /// control, the grade), for the two pages of a spread.
   init(
     segments: [PracticeSegment]? = nil, index: Int = 0,
     @ViewBuilder stimulus: @escaping () -> Stimulus,
@@ -127,7 +116,6 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
 }
 
 extension PracticeTaskLayout where Response == EmptyView {
-  /// A task that's all one part, such as an intro or a result: one column on every screen.
   init(
     segments: [PracticeSegment]? = nil, index: Int = 0,
     @ViewBuilder content: @escaping () -> Stimulus,
@@ -142,10 +130,8 @@ extension PracticeTaskLayout where Response == EmptyView {
   }
 }
 
-/// A question as a spread where each page gets a phone-width column: what it's read with on the
-/// leading page under its header, the learner's turn on the trailing page with the actions pinned
-/// at its bottom, so they never move between questions. One column everywhere else, as a phone
-/// shows it. Switching recreates the pages, so the answer lives above the spread.
+/// Switching between a spread and one column recreates the pages, so the answer lives above the
+/// spread.
 struct QuestionSpread<Header: View, Stimulus: View, Response: View, Actions: View>: View {
   let readableWidth: CGFloat
   let spacing: CGFloat
@@ -174,8 +160,6 @@ struct QuestionSpread<Header: View, Stimulus: View, Response: View, Actions: Vie
   }
 }
 
-/// One scrolling column with its header pinned on top and its actions pinned at the bottom, moved
-/// off the fold while iPhone Duo is partially folded.
 struct QuestionColumn<Header: View, Content: View, Actions: View>: View {
   let readableWidth: CGFloat
   let spacing: CGFloat
@@ -193,8 +177,8 @@ struct QuestionColumn<Header: View, Content: View, Actions: View>: View {
 }
 
 extension View {
-  /// Pins a page's header above it. A page without one gets no bar: a top bar around an empty
-  /// view takes the page's free height and pushes its content down out of sight.
+  /// A page without a header gets no bar: a top bar around an empty view takes the page's free
+  /// height and pushes its content down out of sight.
   @ViewBuilder
   fileprivate func pageHeader<Header: View>(_ header: () -> Header) -> some View {
     if Header.self == EmptyView.self {
@@ -205,7 +189,6 @@ extension View {
   }
 }
 
-/// A page's content, scrolling in a readable column.
 private struct ScrollingPage<Content: View>: View {
   let readableWidth: CGFloat
   let spacing: CGFloat
@@ -229,13 +212,11 @@ extension EnvironmentValues {
 }
 
 extension View {
-  /// Hides a practice task's pinned action bar when the screen has nothing to do yet.
   func practiceActionsHidden(_ hidden: Bool) -> some View {
     environment(\.practiceActionsHidden, hidden)
   }
 }
 
-/// The main action of a task's pinned bar: full width, prominent, Return presses it.
 struct PracticeMainButton: View {
   let title: LocalizedStringResource
   var isBusy = false
@@ -259,9 +240,6 @@ struct PracticeMainButton: View {
   }
 }
 
-/// A pinned bar's actions in one row: the secondary ones at their own width and the main one taking
-/// the rest, so a label like "I don't know yet" stays on one line; stacked at full width when they
-/// don't fit side by side (a narrow window, a large text size, a long translation).
 struct PracticeActionRow<Content: View>: View {
   @ViewBuilder let content: Content
 
@@ -283,7 +261,6 @@ extension EnvironmentValues {
   @Entry var practiceActionsSideBySide = false
 }
 
-/// A secondary action beside the main one ("I don't know yet", "I'm not sure").
 struct PracticeSecondaryButton: View {
   @Environment(\.practiceActionsSideBySide) private var sideBySide
 
@@ -316,7 +293,6 @@ struct PracticeSecondaryButton: View {
   }
 }
 
-/// The answers couldn't be saved: says so over the actions, with a way to send them again.
 struct PracticeSaveError: View {
   let retry: () -> Void
 
@@ -339,8 +315,7 @@ struct PracticeSaveError: View {
   }
 }
 
-/// The close of a task's toolbar: answers are saved as they go, so it just leaves. The bar shows
-/// its mark; its title is what VoiceOver says.
+/// Answers are saved as they go, so it just leaves.
 struct PracticeCloseButton: View {
   var label: LocalizedStringResource = LocalizedStringResource(
     "Close. Your answers are saved.", table: "Practice",
@@ -359,8 +334,7 @@ struct PracticeCloseButton: View {
   }
 }
 
-/// The end of a run, as every task's end says it: its title, a quiet line under it, its numbers
-/// as readouts (never "+0"), and what it reached.
+/// Readouts never say "+0".
 struct PracticeResultHeader: View {
   let title: LocalizedStringResource
   var detail: LocalizedStringResource?
@@ -440,14 +414,13 @@ private struct Readout: View {
   }
 }
 
-/// A run's screens load once per opening; failures say so with a retry, never as stuck.
+/// Failures say so with a retry, never as stuck.
 enum PracticeLoad<Value> {
   case failed(APIError)
   case loaded(Value)
   case loading
 }
 
-/// The loading and failure states every practice task shares.
 struct PracticeLoadFailureView: View {
   let error: APIError
   let retry: () -> Void

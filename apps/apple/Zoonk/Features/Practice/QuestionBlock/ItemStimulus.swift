@@ -3,17 +3,14 @@ import Charts
 import Combine
 import SwiftUI
 
-/// The text, case, chart or recording a set's questions share, above each of them. A text shows
-/// whole, except a long one right after another question on it (`continued`): the learner just
-/// read it, so it shows its start with a way to read it all again. On a spread's page of its own
-/// it always shows whole, beside the answers.
+/// A long text right after another question on it (`continued`) shows its start with a way to read
+/// it all again: the learner just read it.
 struct ItemSetStimulusView: View {
   let set: PracticeItemSet
   var continued = false
   /// Where a recording's plays count (the block or mock it's asked in), so asking it again
   /// elsewhere starts with every play.
   var askedIn: String?
-  /// The questions of a recording, to read before it plays; the one on screen is `current`.
   var recordingQuestions: (prompts: [String], current: Int)?
   var transcript: [PracticeTranscriptLine]?
   /// A mock counts a recording's plays on the server, the same on any device (`ServedPlays`).
@@ -36,7 +33,6 @@ struct ItemSetStimulusView: View {
   }
 }
 
-/// "Question 2 of 4 on this text": where the question sits among the ones sharing the stimulus.
 private struct SetPlace: View {
   let set: PracticeItemSet
 
@@ -130,7 +126,6 @@ private struct SetTextView: View {
   }
 }
 
-/// A question's own context, picture or chart, right above it.
 struct ItemSupportView: View {
   let context: String?
   let image: PracticeImage?
@@ -161,7 +156,6 @@ struct ItemSupportView: View {
   }
 }
 
-/// A chart with Swift Charts, or a timeline as a list of dated events.
 struct PracticeVisualView: View {
   let visual: PracticeVisual
 
@@ -220,16 +214,11 @@ struct PracticeVisualView: View {
   }
 }
 
-// MARK: - Recording
-
-/// Each set recording as the learner left it, by where it's asked (`playsKey`), kept apart from
-/// the view that shows it: folding or unfolding iPhone Duo draws that view again, and nothing the
-/// learner did with the recording may change for that. A play that doesn't pause keeps playing,
-/// and stops once no view shows the recording anymore, as when the learner leaves its questions.
+/// Kept apart from the view that shows it: folding or unfolding iPhone Duo draws that view again, and
+/// nothing the learner did with the recording may change for that.
 @MainActor
 @Observable
 private final class SetRecordings {
-  /// The panels the learner opened or folded beside a recording.
   struct Panels {
     /// Open before the first play until the learner folds it, folded after it.
     var questions: Bool?
@@ -242,9 +231,7 @@ private final class SetRecordings {
   /// exam's play limit.
   var used: [String: Int] = [:]
   var panels: [String: Panels] = [:]
-  /// Recordings whose last play didn't load.
   var failed: Set<String> = []
-  /// The recording playing.
   private(set) var playing: String?
   @ObservationIgnored private var player: AVPlayer?
   @ObservationIgnored private var shown: [String: Int] = [:]
@@ -284,16 +271,13 @@ private final class SetRecordings {
   }
 }
 
-/// A recording's plays as a mock counts them on the server: the ones used, and counting one more
-/// as it starts, false when none were left (another device used the last one), so it stops.
+/// Counting a play returns false when none were left (another device used the last one).
 struct ServedPlays {
   let played: Int
   let record: @MainActor () async -> Bool
 }
 
-/// The recording a set's questions are about: the exam's play limit kept across the set's
-/// questions, its questions to read before it plays, and, once they're answered, free replays and
-/// the transcript on request. A play doesn't pause, as in the exam.
+/// A play doesn't pause, as in the exam.
 private struct ListeningPlayerView: View {
   let listening: PracticeItemSet.Listening
   let playsKey: String

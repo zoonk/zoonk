@@ -1,18 +1,12 @@
 import SwiftUI
 
-/// What a practice write changed, for the app's shared data to read again (`PracticeStore.write`).
 enum PracticeChange: Equatable, Sendable {
-  /// An answer was saved: the mistakes count and the day's progress may have moved.
   case answered
-  /// A block, run or test finished: the day, missions, level and Energy may have moved.
   case finished
-  /// The plan changed (a test-out's skip or its undo, a focus test, a challenge's move).
   case planChanged
-  /// A noticed pattern was practiced or dismissed: it leaves the notebook and Today.
   case patternDone
 }
 
-/// Where a practice screen goes next. The shell's router opens these; see PRACTICE-CONTRACT.md.
 enum PracticeDestination: Equatable, Sendable {
   case checkpoint(blockId: String, sessionId: String?)
   case challenge(planItemId: String, sessionId: String?)
@@ -23,33 +17,27 @@ enum PracticeDestination: Equatable, Sendable {
   case subscription
 }
 
-/// The question in view, for the buddy lane's Ask panel.
 struct PracticeAskTarget: Equatable, Sendable {
   let itemId: String
   let question: String
   /// The study block it's asked in; nil in mistake practice, which isn't a block.
   let blockId: String?
-  /// The answer was checked: the buddy may now talk about the answer, not only the question.
+  /// The buddy may now talk about the answer, not only the question.
   let answered: Bool
-  /// The answer was graded wrong: Ask says the buddy's name, when asking helps most.
+  /// Ask says the buddy's name, when asking helps most.
   let missed: Bool
 }
 
-/// What other lanes plug into the practice screens, each a no-op until wired. The shell creates
-/// one and keeps it (a reference, so views never re-render for it); see PRACTICE-CONTRACT.md.
+/// Each hook is a no-op until set. A reference, so views never re-render for it.
 final class PracticeHooks: Sendable {
-  /// Opens a destination outside the practice screen: the shell's router.
   let navigate: @MainActor @Sendable (PracticeDestination) -> Void
-  /// The buddy lane's Ask button for the question in view; nil hides Ask.
+  /// Nil hides Ask.
   let askButton: (@MainActor @Sendable (PracticeAskTarget) -> AnyView)?
-  /// The voice lane's live call a language phase or final challenge plays instead of questions;
-  /// nil shows the call's intro with its start unavailable.
+  /// Nil shows the call's intro with its start unavailable.
   let challengeCall: (@MainActor @Sendable (_ planItemId: String) -> AnyView)?
-  /// The voice lane's call for a language checkpoint opened straight from the session (it asks no
-  /// questions); nil says the challenge isn't ready here.
+  /// Nil says the challenge isn't ready here.
   let checkpointCall: (@MainActor @Sendable (_ blockId: String, _ sessionId: String?) -> AnyView)?
-  /// The milestones lane's full-screen moment for a milestone a run earned, before its result;
-  /// nil shows the result alone.
+  /// Nil shows the result alone.
   let ceremony:
     (
       @MainActor @Sendable (

@@ -1,19 +1,14 @@
 import Foundation
 import Observation
 
-/// How a question block reaches the server: grading one answer, and finishing the block.
 protocol QuestionBlockClient: Sendable {
   func answer(itemId: String, answer: PracticeAnswer, durationMs: Int) async throws
     -> StudyAnswerOutcome
   func finish() async throws -> Components.Schemas.StudyBlockCompletion
 }
 
-/// A write whose learner or screen is gone (signed out, another account, closed): the run shows
-/// nothing for it.
 struct QuestionBlockWriteObsolete: Error {}
 
-/// The live client for one block of one session. Its writes go through the app's shared
-/// mutation, which signs out on a 401 and drops results for a learner who's gone.
 struct LiveQuestionBlockClient: QuestionBlockClient {
   let practice: PracticeStore
   let sessionId: String
@@ -50,10 +45,7 @@ struct LiveQuestionBlockClient: QuestionBlockClient {
   }
 }
 
-/// Runs a question block: one question at a time, graded on the server, resuming where the
-/// learner left it, played the way a saved mistake's drill calls for, and finished with its
-/// completion moment once every question is answered. Failures read as failed with a retry,
-/// never as stuck.
+/// Failures read as failed with a retry, never as stuck.
 @MainActor
 @Observable
 final class QuestionBlockRun {
@@ -88,10 +80,8 @@ final class QuestionBlockRun {
 
   var question: PracticeQuestion? { state.question }
 
-  /// The question's saved mistake drill, when it belongs to one.
   var drill: PracticeDrill? { question?.drill }
 
-  /// The first question of its drill: a gap's idea and the drill's rule show above it.
   var isFirstOfDrill: Bool {
     guard let question, question.drill != nil else { return false }
     let previous =
@@ -124,7 +114,6 @@ final class QuestionBlockRun {
     }
   }
 
-  /// Sends the answer on screen again, as Check does, after a save that didn't go through.
   func retryAnswer() async {
     guard let draft else { return }
     await submit(draft)
@@ -142,7 +131,6 @@ final class QuestionBlockRun {
     }
   }
 
-  /// Finishes the block: after the last answer, or on Finish for a block opened fully answered.
   func finish() async {
     state.finish()
 
@@ -155,9 +143,6 @@ final class QuestionBlockRun {
     }
   }
 
-  // MARK: Drills
-
-  /// A gap's idea screen's Start.
   func startDrill() {
     shownAt = now()
     drillStage = DrillStage.afterIdea(drill: drill)

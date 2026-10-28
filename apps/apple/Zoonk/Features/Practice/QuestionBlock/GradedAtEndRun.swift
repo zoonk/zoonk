@@ -1,15 +1,11 @@
 import SwiftUI
 
-/// Questions asked one per screen with no feedback until the end (a test-out, a focus test): "I
-/// don't know yet" always allowed beside Next, Finish on the last one. Each answer is kept on the
-/// device as it's given (`draftKey`), so leaving and coming back goes on from the next question
-/// until the host clears it once the answers are graded. Questions can still be arriving
-/// (`upcomingTotal`): the run waits for them after the last one it has.
+/// Each answer is kept on the device as it's given (`draftKey`), so leaving and coming back goes on
+/// from the next question until the host clears it once the answers are graded.
 struct GradedAtEndRun: View {
   let questions: [PracticeQuestion]
   let labels: PracticeTrueFalseLabels
   let draftKey: String
-  /// The line above each question: the test's rule, or the question's area.
   var hint: (PracticeQuestion) -> String = { _ in "" }
   /// How many questions the run asks in all, the ones still being written included.
   var upcomingTotal: Int?
@@ -169,7 +165,7 @@ struct GradedAtEndRun: View {
     }
   }
 
-  /// Goes on from the device's draft: only answers to questions this test still asks, in order.
+  /// Only answers to questions this test still asks, in order.
   private func resume() {
     guard !resumed else { return }
     resumed = true
@@ -183,9 +179,6 @@ struct GradedAtEndRun: View {
   }
 }
 
-/// Where a run graded at its end is: asking a question, waiting for questions still being written,
-/// or holding every answer, ready to be sent (after a send that didn't go through, or reopened
-/// with the device's full draft).
 enum GradedRunStage: Equatable {
   case asking
   case readyToSubmit
@@ -202,8 +195,8 @@ enum GradedRunStage: Equatable {
   }
 }
 
-/// A run's answers kept on the device until graded, with the run's own request id, so a retry
-/// after leaving sends the same test and it's counted once.
+/// Kept with the run's own request id, so a retry after leaving sends the same test and it's counted
+/// once.
 enum PracticeAnswerDraft {
   static func read(key: String) -> [PracticeChoiceAnswer] {
     guard let data = UserDefaults.standard.data(forKey: "practice.draft.\(key)") else { return [] }
@@ -214,7 +207,6 @@ enum PracticeAnswerDraft {
     UserDefaults.standard.set(try? JSONEncoder().encode(answers), forKey: "practice.draft.\(key)")
   }
 
-  /// The saved answers that still match the questions the test asks, in order.
   static func resumable(_ saved: [PracticeChoiceAnswer], questionIds: [String])
     -> [PracticeChoiceAnswer]
   {
@@ -239,8 +231,7 @@ enum PracticeAnswerDraft {
   }
 }
 
-/// A test with no questions yet: one tap asks for them (AI work only ever starts here), then the
-/// screen follows the run until the test opens.
+/// One tap asks for the questions: AI work only ever starts here.
 struct PracticeQuestionsPreparingView: View {
   let title: LocalizedStringResource
   let detail: LocalizedStringResource

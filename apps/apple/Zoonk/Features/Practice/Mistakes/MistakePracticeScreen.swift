@@ -1,9 +1,7 @@
 import SwiftUI
 
-/// "Practice mistakes": a short run over a few open mistakes (or one skill's), each drilled the way
-/// its cause calls for, with the answer and why after every question. It plays like a session
-/// block; a mistake answered right on a later day is fixed, and the run counts toward today as it
-/// goes, stopped early included.
+/// A mistake answered right on a later day is fixed, and the run counts toward today as it goes,
+/// stopped early included.
 struct MistakePracticeScreen: View {
   var skillId: String?
 
@@ -19,7 +17,6 @@ struct MistakePracticeScreen: View {
   @State private var shownAt = Date.now
   @State private var attempt: (id: String, index: Int)?
 
-  /// The active goal scopes the notebook, its practice and test-outs.
   private var goalId: String? { summary.summary.value?.activeGoalID }
 
   init(skillId: String? = nil) {
@@ -48,9 +45,6 @@ struct MistakePracticeScreen: View {
       .navigationBarTitleDisplayMode(.inline)
       .taskClose { closeButton }
     }
-    // Practice picks a fresh set of mistakes when it opens.
-    // Loads once the session (and the active goal) is known, and again if it changes: a screen
-    // opened at launch can appear before the session is restored.
     .task(
       id:
         "\(session.authenticatedSession?.accountID ?? ""):\(summary.summary.value != nil):\(goalId ?? "")"
@@ -58,8 +52,6 @@ struct MistakePracticeScreen: View {
       await read()
     }
   }
-
-  // MARK: Run
 
   @ViewBuilder
   private var run: some View {
@@ -226,8 +218,7 @@ struct MistakePracticeScreen: View {
     }
   }
 
-  /// Ends the run early: what was answered counts. Before any answer, and once it's over,
-  /// there's nothing to count, so it just leaves.
+  /// Before any answer, and once it's over, there's nothing to count, so it just leaves.
   @ViewBuilder
   private var closeButton: some View {
     if state.answerIds.isEmpty || state.isOver {
@@ -268,8 +259,6 @@ struct MistakePracticeScreen: View {
       .buttonStyle(.bordered)
     }
   }
-
-  // MARK: Requests
 
   private func read() async {
     // Practice is scoped to the active goal, so it waits for the summary that names it.
@@ -342,8 +331,6 @@ struct MistakePracticeScreen: View {
     await finish()
   }
 
-  /// Counts the whole run once more at its end; a count that didn't get through still ends it,
-  /// since each answer was counted as it came.
   private func finish() async {
     guard !state.answerIds.isEmpty else {
       state.ended(nil)
@@ -369,9 +356,7 @@ struct MistakePracticeScreen: View {
 
 }
 
-/// The end of a run: "Practice done", its right answers and Brain Power, the mistakes it fixed,
-/// what the whole run reached, and back to the notebook. A run with a miss says the rest come
-/// back, so a hard day reads as "not yet".
+/// A run with a miss says the rest come back, so a hard day reads as "not yet".
 private struct PracticeDoneView: View {
   let summary: Components.Schemas.MistakePracticeCompletion?
   let fixed: Int

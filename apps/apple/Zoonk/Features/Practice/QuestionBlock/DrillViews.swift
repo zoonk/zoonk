@@ -15,7 +15,6 @@ extension PracticeDrill.Kind {
 }
 
 extension PracticeDrill {
-  /// Each cause gets its own practice, said in one line before its questions.
   var line: LocalizedStringResource {
     switch kind {
     case .reteach:
@@ -49,8 +48,6 @@ extension PracticeDrill {
   }
 }
 
-/// How a mistake's drill works, as a note above its question: its rule with its mark, and the
-/// learner's last answer when the host has it. A content gap without ideas links its lesson.
 /// Once graded only the last answer and the lesson stay.
 struct DrillNoteView: View {
   let drill: PracticeDrill
@@ -106,8 +103,6 @@ struct LessonLinkButton: View {
   }
 }
 
-/// A content gap's idea before its questions, on a screen of its own: the lesson's name, what the
-/// drill is for, its ideas as one numbered list, and the lesson a tap away.
 struct DrillIdeaView: View {
   let drill: PracticeDrill
   let lesson: PracticeDrill.Lesson
@@ -138,9 +133,8 @@ struct DrillIdeaView: View {
   }
 }
 
-/// A timed drill's clock for one question: the seconds left and a bar that empties. Its task
-/// ends the question when the time runs out; key it by the question. It counts from when the
-/// question was shown (`start`, the host's), so drawing it again never adds time.
+/// Its task ends the question when the time runs out; key it by the question. It counts from
+/// `start`, so drawing it again never adds time.
 struct DrillCountdownView: View {
   let seconds: Int
   let start: Date
@@ -172,7 +166,6 @@ struct DrillCountdownView: View {
   }
 }
 
-/// What a drill adds after an answer: time running out, an honest "not sure", the trap it set.
 struct DrillAnswerNotes: View {
   let drill: PracticeDrill?
   let notSure: Bool

@@ -1,6 +1,5 @@
 import Foundation
 
-/// Where a question block is: answering, waiting for the grade, reading it, or finished.
 enum QuestionBlockPhase: Equatable {
   case alreadyAnswered
   case answerFailed
@@ -14,14 +13,12 @@ enum QuestionBlockPhase: Equatable {
   case finishReady
   case finishing
 
-  /// Before the grade: answering, checking, or answering again after a failed save.
   var isAnswering: Bool { self == .answering || self == .checking || self == .answerFailed }
 
-  /// The answer can be sent: answering, or again after a save that didn't go through.
   var acceptsAnswer: Bool { self == .answering || self == .answerFailed }
 }
 
-/// Right, wrong and blank so far, for a net-scored block's score: a wrong answer cancels a right one.
+/// A wrong answer cancels a right one.
 struct NetTally: Equatable {
   var blank: Int
   var right: Int
@@ -30,9 +27,8 @@ struct NetTally: Equatable {
   var net: Int { right - wrong }
 }
 
-/// A question block played one question at a time, graded on the server, resuming at the first
-/// unanswered question. `answers` holds this visit's grades; the block's own `answered` marks the
-/// ones saved before it, so a reload still counts a blank as neither right nor wrong.
+/// `answers` holds this visit's grades; the block's own `answered` marks the ones saved before it,
+/// so a reload still counts a blank as neither right nor wrong.
 struct QuestionBlockState: Equatable {
   private(set) var answers: [String: PracticeAnsweredMark] = [:]
   private(set) var hyperdrive = 1
@@ -53,8 +49,6 @@ struct QuestionBlockState: Equatable {
 
   var total: Int { questions.count }
 
-  // MARK: Transitions
-
   mutating func check() {
     phase = .checking
   }
@@ -73,7 +67,6 @@ struct QuestionBlockState: Equatable {
     phase = .alreadyAnswered
   }
 
-  /// On to the next question, or to finishing after the last one.
   mutating func next() {
     index += 1
     phase = index >= questions.count ? .finishing : .answering
@@ -91,10 +84,6 @@ struct QuestionBlockState: Equatable {
     phase = .finished(completion)
   }
 
-  // MARK: Derived
-
-  /// Each question's segment: right or wrong once answered (this visit's or saved before), read
-  /// for a placement question or a blank, the one in view, and the rest ahead.
   var segments: [PracticeSegment] {
     questions.enumerated().map { position, question in
       guard let mark = answers[question.itemId] ?? question.answered else {
@@ -118,8 +107,7 @@ struct QuestionBlockState: Equatable {
 }
 
 extension QuestionBlockDetail {
-  /// Scored net (Cebraspe), where a wrong answer cancels a right one: a swipe capsule's question,
-  /// or a net-scored practice block's.
+  /// Cebraspe's net scoring, where a wrong answer cancels a right one.
   func isNetScored(_ question: PracticeQuestion?) -> Bool {
     if let capsule = block.capsules.first(where: { $0.key == question?.capsuleKey }) {
       return capsule.format == .swipe
@@ -128,7 +116,6 @@ extension QuestionBlockDetail {
     return block.netScored
   }
 
-  /// Whether the question before this one was on the same text, case or recording.
   func continuesSet(at index: Int) -> Bool {
     guard index > 0, questions.indices.contains(index), let set = questions[index].set else {
       return false
@@ -137,7 +124,6 @@ extension QuestionBlockDetail {
     return questions[index - 1].set?.id == set.id
   }
 
-  /// The questions on the current one's recording, in order, to read before it plays.
   func recordingQuestions(for question: PracticeQuestion) -> (prompts: [String], current: Int)? {
     guard let setId = question.set?.id, question.set?.listening != nil else { return nil }
 
@@ -148,8 +134,6 @@ extension QuestionBlockDetail {
   }
 }
 
-/// Where a saved mistake's drill stands before its question opens: a content gap's idea first,
-/// a misread's question before its answers, then open.
 enum DrillStage: Equatable {
   case idea
   case open
