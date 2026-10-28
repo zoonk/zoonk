@@ -5,7 +5,8 @@ import { logError } from "@zoonk/utils/logger";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { findActiveGoalId } from "../goals/_utils/goal-view";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
-import { PlanConflictError } from "../plans/plan-conflict";
+import { loadPlanAtToken } from "../plans/_utils/plan-token";
+import { PlanConflictError, withPlanRetry } from "../plans/plan-conflict";
 import { loadDailyTimeLimitStatus } from "./_utils/daily-time-limit";
 import { getGoalDayMinutes } from "./_utils/day-minutes";
 import { openPlannedDay } from "./_utils/open-planned-day";
@@ -19,17 +20,33 @@ export async function ensureStudySession(day: {
   timeZone: string;
   userId: string;
 }): Promise<StudySessionRow> {
-  const result = await openPlannedDay({ ...day, keepEmpty: true, now: new Date() });
+  return withPlanRetry(async () => {
+    const now = new Date();
+    const context = await loadPlanAtToken(day.goal.id, { now, timeZone: day.timeZone });
 
-  if (result.status === "opened") {
-    return result.session;
-  }
+    if (!context || context.goal.userId !== day.userId) {
+      throw new Error(`The plan of goal ${day.goal.id} is not ready to open.`);
+    }
 
-  if (result.status === "stale") {
-    throw new PlanConflictError();
-  }
+    const result = await openPlannedDay({
+      ...day,
+      goal: context.goal,
+      keepEmpty: true,
+      localDate: context.today,
+      now,
+      timeZone: context.timeZone,
+    });
 
-  throw new Error(`The plan of goal ${day.goal.id} is not ready to open.`);
+    if (result.status === "opened") {
+      return result.session;
+    }
+
+    if (result.status === "stale") {
+      throw new PlanConflictError();
+    }
+
+    throw new Error(`The plan of goal ${day.goal.id} is not ready to open.`);
+  });
 }
 
 /**

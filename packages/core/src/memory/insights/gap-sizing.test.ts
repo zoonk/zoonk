@@ -152,8 +152,16 @@ async function loadPlanLessonIds(goalId: string) {
   return items.flatMap((item) => item.lessonId ?? []);
 }
 
-function loadInsight(userId: string) {
-  return prisma.memoryInsight.findFirstOrThrow({ where: { userId } });
+async function loadInsight(userId: string) {
+  const insight = await prisma.memoryInsight.findFirstOrThrow({ where: { userId } });
+  expect(insight.payload).not.toHaveProperty("effect");
+  const changeId = readInsightPayload(insight.payload).planChangeId;
+
+  const change = changeId
+    ? await prisma.planChange.findUniqueOrThrow({ where: { id: changeId } })
+    : null;
+
+  return { ...insight, change };
 }
 
 describe("gap sizing for plan-change insights", () => {
@@ -184,11 +192,12 @@ describe("gap sizing for plan-change insights", () => {
 
     const insight = await loadInsight(user.id);
 
-    expect(insight.payload).toMatchObject({
-      effect: { lessonsAdded: 3, lessonsRemoved: 0 },
-      planChangeStatus: "proposed",
-      skillId: asPercentages?.id,
+    expect(insight.change).toMatchObject({
+      payload: { effect: { lessonsAdded: 3, lessonsRemoved: 0 } },
+      status: "proposed",
     });
+
+    expect(insight.payload).toMatchObject({ skillId: asPercentages?.id });
 
     // Nothing bigger than a lesson changes the plan before the learner's OK.
     await expect(loadPlanSkillIds(goal.id)).resolves.not.toContain(asPercentages?.id);
@@ -272,9 +281,9 @@ describe("gap sizing for plan-change insights", () => {
 
     const insight = await loadInsight(user.id);
 
-    expect(insight.payload).toMatchObject({
-      effect: { lessonsAdded: 1 },
-      planChangeStatus: "applied",
+    expect(insight.change).toMatchObject({
+      payload: { effect: { lessonsAdded: 1 } },
+      status: "applied",
     });
 
     const skillIds = await loadPlanSkillIds(goal.id);
@@ -344,7 +353,7 @@ describe("gap sizing for plan-change insights", () => {
     );
 
     await expect(loadInsight(user.id)).resolves.toMatchObject({
-      payload: { effect: { lessonsAdded: 5 }, planChangeStatus: "proposed" },
+      change: { payload: { effect: { lessonsAdded: 5 } }, status: "proposed" },
     });
   });
 
@@ -394,9 +403,9 @@ describe("gap sizing for plan-change insights", () => {
 
     const insight = await loadInsight(user.id);
 
-    expect(insight.payload).toMatchObject({
-      effect: { lessonsAdded: 3 },
-      planChangeStatus: "proposed",
+    expect(insight.change).toMatchObject({
+      payload: { effect: { lessonsAdded: 3 } },
+      status: "proposed",
     });
 
     mockSession(user.id);

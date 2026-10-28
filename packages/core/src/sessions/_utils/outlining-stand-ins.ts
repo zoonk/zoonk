@@ -99,16 +99,20 @@ async function loadDayStandInSkills({
 export async function isDayAwaitingOutlines({
   client = prisma,
   goal,
+  graph,
   localDate,
 }: {
   client?: TransactionClient;
+  graph?: unknown;
   goal: Pick<Goal, "id" | "kind" | "primaryCourseId" | "targetDate">;
   /** The learner-local date of the day, as a UTC-midnight label. */
   localDate: Date;
 }): Promise<boolean> {
   const [skillIds, plan] = await Promise.all([
     loadDayStandInSkills({ client, goal, localDate }),
-    client.plan.findUnique({ select: { graph: true }, where: { goalId: goal.id } }),
+    graph === undefined
+      ? client.plan.findUnique({ select: { graph: true }, where: { goalId: goal.id } })
+      : { graph },
   ]);
 
   if (!plan || skillIds.length === 0) {

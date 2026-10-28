@@ -125,7 +125,7 @@ async function acknowledgeComputed({
     return { status: "retryable" };
   }
 
-  const prepared = prepareSelectedPlanSave({ selection, shown: true });
+  const prepared = await prepareSelectedPlanSave({ selection, shown: true });
 
   if (
     !getSelectedPlanNotice({

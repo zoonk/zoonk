@@ -1,5 +1,5 @@
-import "server-only";
 import { type TransactionClient } from "@zoonk/db";
+import "server-only";
 import {
   type OfficialExamDate,
   findOfficialDateConflict,
@@ -11,18 +11,20 @@ import { toIsoDate } from "../planner/plan-calendar";
 import { needsApproval } from "../planner/plan-effect";
 import { type PlanChangeRefusal } from "../planner/plan-operations";
 import { type PlanGraph, type PlanState } from "../planner/plan-state";
-import { type ComputedChange, computeChange } from "./compute-change";
+import { commitPlan } from "./commit-plan";
+import { computeChange } from "./compute-change";
 import { followPlanToday } from "./follow-plan-today";
+import { markPlanWrite } from "./mark-plan-write";
 import { findUnfundedMove, hasMissingWeeklyMove } from "./missing-weekly-move";
 import { applyChangeOperations } from "./part-areas";
-import { askPhaseDatesAfterChange } from "./phase-dates-proposal";
 import { type PlanChangeSource, toPlanChangePayload } from "./plan-change-payload";
 import { type PlanContext, getStateTargetDate } from "./plan-context";
 import { writePlanMetadata } from "./plan-metadata-write";
+import { getPlanPreviewBasis } from "./plan-preview-basis";
 import { ensureQuickBaseLessons } from "./quick-bases";
 import { replaceWaitingProposals } from "./replace-waiting-proposals";
-import { type PlanChangeRecord, commitPlan, revalidatePlanTags } from "./replan";
-import { getAskedAreas } from "./steered-areas";
+import { type ComputedChange, type PlanChangeRecord, revalidatePlanTags } from "./replan";
+import { getAskedAreas, getChangePlanning } from "./steered-areas";
 
 type Provenance = NonNullable<PlanChangeRecord["provenance"]>;
 
@@ -114,18 +116,20 @@ async function commitEdit({
         tx,
       });
     },
+    phaseDates: {
+      ...getChangePlanning(operations),
+      pace: "saved",
+      planning: {
+        ...getChangePlanning(operations),
+        bringBackSetAside: bringsBackSetAside,
+        state: computed.state,
+      },
+    },
   });
 
   if (followToday) {
     await followPlanToday({ changeId, context });
   }
-
-  await askPhaseDatesAfterChange({
-    bringBackSetAside: bringsBackSetAside,
-    computed,
-    context,
-    operations,
-  });
 
   return { changeId: changeId ?? "", replaced, status: "applied" };
 }
@@ -138,8 +142,10 @@ async function savePlanState({
   state,
 }: Pick<ChangeRequest, "context" | "operations" | "source"> & { state: PlanState }) {
   await writePlanMetadata({
-    plan: context.plan,
+    context,
     write: async (tx) => {
+      await markPlanWrite(tx, context.plan);
+
       await tx.goal.update({
         data: { dailyMinutes: state.goal.dailyMinutes, targetDate: getStateTargetDate(state) },
         where: { id: context.goal.id },
@@ -344,7 +350,7 @@ export async function proposeChange({
   }
 
   const proposal = await writePlanMetadata({
-    plan: context.plan,
+    context,
     write: async (tx) => {
       const created = await tx.planChange.create({
         data: {
@@ -356,6 +362,7 @@ export async function proposeChange({
             noticeId: notice?.noticeId ?? null,
             officialDate,
             operations: [...operations],
+            previewBasis: getPlanPreviewBasis(context),
             source,
           }),
           planId: context.plan.id,

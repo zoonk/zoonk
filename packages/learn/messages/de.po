@@ -12381,6 +12381,16 @@ msgctxt "vzcvDF"
 msgid "You've done every lesson in your plan, or already know it."
 msgstr "Du hast alle Lektionen in deinem Plan abgeschlossen oder kennst sie schon."
 
+#: src/today/today-earlier-work.tsx
+msgctxt "ylqDtY"
+msgid "Earlier unfinished work · {count}"
+msgstr "Frühere offene Aufgaben · {count}"
+
+#: src/today/today-earlier-work.tsx
+msgctxt "Dzg6Ne"
+msgid "Start with these. Starting your session fits the plan to today's time."
+msgstr "Beginne damit. Wenn du deine Lerneinheit startest, wird der Plan an deine heutige Lernzeit angepasst."
+
 #: src/today/today-exam-access.tsx
 msgctxt "6cgB9d"
 msgid "Exam prep on the free plan"

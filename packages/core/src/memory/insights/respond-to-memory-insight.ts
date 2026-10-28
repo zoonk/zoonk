@@ -157,7 +157,7 @@ export async function respondToMemoryInsight({
     revalidateCacheTags([getGoalsCacheTag(userId)]);
   }
 
-  const view = toMemoryInsightView(updated);
+  const view = await toMemoryInsightView(updated);
 
   return view ? { insight: view, status: "updated" } : { status: "notFound" };
 }

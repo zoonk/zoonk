@@ -115,7 +115,7 @@ describe("completion reduces posted coverage without planning", () => {
     }
 
     const selection = await selectDayPlanFromContext({ context, now });
-    const prepared = prepareSelectedPlanSave({ selection, shown: true });
+    const prepared = await prepareSelectedPlanSave({ selection, shown: true });
     expect(prepared.kind).toBe("metadata");
 
     await prisma.$transaction(async (tx) => {

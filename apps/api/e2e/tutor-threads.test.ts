@@ -228,7 +228,17 @@ test.describe("Tutor threads beyond lessons", () => {
 
     const change = await planChangeFixture({
       kind: "edited",
-      payload: { operations: [{ kind: "setDailyMinutes", minutes: 20 }], source: "planEdit" },
+      payload: {
+        effect: { endDateAfter: null, endDateBefore: null, lessonsAdded: 0, lessonsRemoved: 0 },
+        operations: [{ kind: "setDailyMinutes", minutes: 20 }],
+        previewBasis: {
+          inputVersion: plan.inputVersion,
+          planVersion: plan.version,
+          studyDay: new Date().toISOString().slice(0, 10),
+          timeZone: "UTC",
+        },
+        source: "planEdit",
+      },
       planId: plan.id,
       reason: "Twenty minutes a day.",
       status: "proposed",

@@ -5,10 +5,8 @@ import { type ExamChoiceView } from "../../exams/choices/exam-choice-contract";
 import { loadExamChoiceViews, loadExamChoices } from "../../exams/choices/load-exam-choices";
 import { type ExamMomentView } from "../../exams/view/exam-view-contract";
 import { loadExamMoment } from "../../exams/view/load-exam-moment";
-import { findActiveGoalId } from "../../goals/_utils/goal-view";
 import { getCurrentSuggestedGoal } from "../../goals/suggestions/get-current-suggested-goal";
 import { type SuggestedGoalView } from "../../goals/suggestions/suggested-goal-contract";
-import { followGoalTimeZone } from "../../learner/follow-goal-time-zone";
 import {
   type LessonGenerationState,
   getLessonGenerationStates,
@@ -24,14 +22,8 @@ import { daysBetween } from "../../plans/planner/plan-calendar";
 import { type NoticeBasis } from "../../plans/today-change-contract";
 import { type PlanStatus } from "../../preparation/plan-status";
 import { type ReadStudyDay, readStudyDay } from "../../sessions/_utils/read-study-day";
-import {
-  getSelectedPlanChange,
-  replacesPhaseDates,
-} from "../../sessions/_utils/save-selected-plan";
-import { getSelectedPlanNotice } from "../../sessions/_utils/selected-plan-notice";
 import { type TodayStudySessionInput } from "../../sessions/contract";
 import { type DayView } from "../../sessions/day-view";
-import { getSession } from "../../users/get-session";
 import { loadNoticedPattern, selectDayPattern } from "../language/_utils/today-pattern";
 import { type NoticedPattern } from "../language/language-view-contract";
 import { getLessonShare } from "../syllabus/lesson-share";
@@ -40,6 +32,7 @@ import { countLessonsLeftToday } from "./_utils/count-lessons-left-today";
 import { loadAroundSession } from "./_utils/load-around-session";
 import { loadDayMockFunding } from "./_utils/load-mock-funding";
 import { hasStudiedOn } from "./_utils/studied-on-day";
+import { loadEarlierWork } from "./earlier-work";
 
 type TodayGoal = {
   /** The date is the likely day of an exam edition whose notice isn't out yet. */
@@ -88,6 +81,8 @@ type TodayWeeklyChallenge = {
  * and the plan change to answer. The apps and the public API read this.
  */
 export type TodayView = {
+  /** Earlier unfinished teaching, in saved order, without a promise that it fits one session. */
+  earlierWork?: { id: string | null; title: string }[];
   /** An exam goal's final stretch, day before, exam day or "How did it go?"; null otherwise. */
   exam: ExamMomentView | null;
   /**
@@ -237,30 +232,6 @@ async function loadOpenExamChoice(goal: Goal): Promise<ExamChoiceView | null> {
   return choices.find((choice) => !choice.subject) ?? null;
 }
 
-/**
- * The plan change Today carries: the notice the day's Open saves when it asks the learner
- * something (see `getSelectedPlanNotice`), else the change waiting on the saved plan, without a
- * proposal to move the phase dates that Open replaces because its settling moves them itself.
- */
-async function loadDayPlanChange({
-  day,
-  goal,
-  timeZone,
-}: {
-  day: ReadStudyDay;
-  goal: Goal;
-  timeZone?: string;
-}): Promise<TodayPlanChangeView | null> {
-  const now = new Date();
-  const settling = day.selection ? getSelectedPlanChange(day.selection) : null;
-  const notice = getSelectedPlanNotice({ change: settling, now, selection: day.selection });
-
-  return (
-    notice ??
-    loadTodayPlanChange({ goal, now, skipPhaseDates: replacesPhaseDates(settling), timeZone })
-  );
-}
-
 /** The day Today shows for an admitted goal, with the read-only cards around it. */
 async function readAdmittedToday({
   admission: { owned },
@@ -285,16 +256,25 @@ async function readAdmittedToday({
     selectedSettings: day.selection?.state.settings,
   });
 
-  const [sessionDay, around, suggestedGoal, planChange, dateKind, examChoice, noticedPattern] =
-    await Promise.all([
-      loadSessionDay({ day, goal: owned.goal, userId }),
-      loadAroundSession({ owned, selection: day.selection, session: day.session, timeZone }),
-      getCurrentSuggestedGoal(),
-      loadDayPlanChange({ day, goal: owned.goal, timeZone }),
-      loadGoalDateKind(owned.goal, day.blueprint),
-      loadOpenExamChoice(owned.goal),
-      loadNoticedPattern({ goal: owned.goal, userId }),
-    ]);
+  const [
+    sessionDay,
+    around,
+    suggestedGoal,
+    planChange,
+    dateKind,
+    examChoice,
+    noticedPattern,
+    earlierWork,
+  ] = await Promise.all([
+    loadSessionDay({ day, goal: owned.goal, userId }),
+    loadAroundSession({ owned, selection: day.selection, session: day.session, timeZone }),
+    getCurrentSuggestedGoal(),
+    loadTodayPlanChange({ goal: owned.goal, now: new Date(), timeZone }),
+    loadGoalDateKind(owned.goal, day.blueprint),
+    loadOpenExamChoice(owned.goal),
+    loadNoticedPattern({ goal: owned.goal, userId }),
+    loadEarlierWork({ day, goalId: id }),
+  ]);
 
   const { exam, lessonStates, shortPlan, studied, studySession } = sessionDay;
   const proposalsOpen = !studySession.examAccess.trialEnded;
@@ -305,11 +285,11 @@ async function readAdmittedToday({
     : 0;
 
   const shownChange = !proposalsOpen && planChange?.status === "proposed" ? null : planChange;
-  const plan = shownChange?.id === null ? day.selection?.context.plan : undefined;
 
   return {
     status: "ready",
     today: {
+      earlierWork,
       exam,
       examChoice,
       goal: {
@@ -325,7 +305,7 @@ async function readAdmittedToday({
         [...lessonStates].map(([lessonId, state]) => [lessonId, state.status]),
       ),
       mockFunding,
-      noticeBasis: plan ? { inputVersion: plan.inputVersion, version: plan.version } : null,
+      noticeBasis: null,
       pattern: selectDayPattern({ day: studySession, pattern: noticedPattern }),
       planChange: shownChange,
       progress: toTodayProgress({ ...around, lessonsToday }),
@@ -351,27 +331,4 @@ export async function getTodayView(input: TodayStudySessionInput): Promise<Today
   return admission.status === "admitted"
     ? readAdmittedToday({ admission, timeZone: input.timeZone })
     : admission;
-}
-
-/**
- * Today as an app on the learner's device reads it (the API's `GET /v1/today`): with `timeZone`,
- * the goal Today reads (the requested one, else the active one) follows the device first
- * (`followGoalTimeZone`: a goal without a zone stores it, one whose learner moved takes it while
- * nothing was done yet in its day), then Today is read.
- */
-export async function getTodayViewFollowingDevice(
-  input: TodayStudySessionInput,
-): Promise<TodayViewResult> {
-  const { timeZone } = input;
-
-  if (timeZone) {
-    const session = await getSession();
-    const goalId = input.goalId ?? (session ? await findActiveGoalId(session.user.id) : null);
-
-    if (goalId) {
-      await followGoalTimeZone({ goalId, timeZone });
-    }
-  }
-
-  return getTodayView(input);
 }

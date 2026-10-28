@@ -1,22 +1,26 @@
 import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
+import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
 import { PlanConflictError } from "../plan-conflict";
-import { markPlanWrite } from "./mark-plan-write";
 import { type PlanContext } from "./plan-context";
 
-/** A proposal belongs to the version it described; a winning plan write makes it obsolete. */
+/** Proposal bookkeeping locks its basis without claiming that planning inputs changed. */
 export async function writePlanMetadata<T>({
-  plan,
+  context,
   write,
 }: {
-  plan: PlanContext["plan"];
+  context: PlanContext;
   write: (tx: TransactionClient) => Promise<T>;
 }): Promise<T> {
   return prisma.$transaction(async (tx) => {
-    const marked = await markPlanWrite(tx, plan);
+    await markLearnerChanged(tx, { lockPlanIds: [context.plan.id], userId: context.goal.userId });
 
     const current = await tx.plan.count({
-      where: { id: marked.id, inputVersion: marked.inputVersion, version: marked.version },
+      where: {
+        id: context.plan.id,
+        inputVersion: context.plan.inputVersion,
+        version: context.plan.version,
+      },
     });
 
     if (current !== 1) {

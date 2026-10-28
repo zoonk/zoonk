@@ -1,7 +1,8 @@
 import { type PlanView } from "../plan-view-contract";
-import { endsAfterExam, getFullCourseEnd } from "../planner/after-exam";
+import { getFullCourseEnd } from "../planner/after-exam";
 import { toIsoDate } from "../planner/plan-calendar";
 import { type PlanReadContext } from "./plan-read-projection";
+import { readPlanSummary } from "./plan-summary";
 import { type ComputedPlan } from "./replan";
 
 export const MINUTES_PER_HOUR = 60;
@@ -58,13 +59,21 @@ export function buildEstimateView({
 
   const { items } = context;
   const totalHours = context.plan.estimateHours ?? 0;
-  const todo = items.filter((item) => item.status === "todo").length;
+
+  const remainingMinutes = items
+    .filter((item) => item.status === "todo")
+    .reduce((sum, item) => sum + (item.minutes ?? 0), 0);
 
   return {
     endDate,
-    fullCourseEndDate: fullCourse && endsAfterExam({ end: endDate, targetDate }) ? endDate : null,
+    fullCourseEndDate: fullCourse
+      ? (readPlanSummary({
+          plan: { ...context.plan, userId: context.goal.userId },
+          value: context.plan.summary,
+        })?.advice?.fullCourseEndDate ?? null)
+      : null,
     pace,
-    remainingHours: items.length > 0 ? Math.round((totalHours * todo * 10) / items.length) / 10 : 0,
+    remainingHours: toHours(remainingMinutes),
     totalHours: Math.round(totalHours * 10) / 10,
   };
 }

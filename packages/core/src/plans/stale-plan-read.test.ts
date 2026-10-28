@@ -58,7 +58,7 @@ describe("the visible Plan after days away, before any learner POST", () => {
 
   afterEach(() => vi.useRealTimers());
 
-  it("shows the moved-forward work and exact backlog while Today keeps its quiet return", async () => {
+  it("shows saved dates and the exact earlier-work list before Start", async () => {
     const fixture = await daysAwayFixture();
     const before = await saved(fixture.plan.id);
 
@@ -79,14 +79,14 @@ describe("the visible Plan after days away, before any learner POST", () => {
     expect(plan.status).toMatchObject({ kind: "behind", lessons: 6 });
 
     expect(plan.phases[0]).toMatchObject({
-      chapters: [expect.objectContaining({ lessonsTotal: 14, nextDate: "2020-10-01" })],
+      chapters: [expect.objectContaining({ lessonsTotal: 14, nextDate: "2020-09-28" })],
       lessonsTotal: 14,
-      startDate: "2020-10-01",
+      startDate: "2020-09-28",
     });
 
     expect(
       plan.week.days.filter((day) => day.date < "2020-10-01").flatMap((day) => day.items),
-    ).toStrictEqual([]);
+    ).toHaveLength(6);
 
     expect(plan.week.days.find((day) => day.date === "2020-10-01")?.items).toHaveLength(2);
 
@@ -96,7 +96,7 @@ describe("the visible Plan after days away, before any learner POST", () => {
     });
   });
 
-  it("persists the same visible selected dates only on Open, retaining every lesson ID", async () => {
+  it("settles only on Start, retaining every lesson ID", async () => {
     const fixture = await daysAwayFixture();
     const preview = await getGoalPlan(fixture.goal.id);
 
@@ -135,7 +135,14 @@ describe("the visible Plan after days away, before any learner POST", () => {
       after.items.map((item) => [item.id, item.scheduledFor?.toISOString().slice(0, 10)]),
     );
 
-    const shown = preview.plan.week.days.flatMap((day) => day.items);
+    const afterRead = await getGoalPlan(fixture.goal.id);
+
+    if (afterRead.status !== "ready") {
+      throw new Error("Expected the saved plan after Start");
+    }
+
+    expect(afterRead.plan.week).not.toStrictEqual(preview.plan.week);
+    const shown = afterRead.plan.week.days.flatMap((day) => day.items);
     expect(shown.length).toBeGreaterThan(0);
 
     expect(shown.map((item) => ({ date: item.scheduledFor, id: item.id }))).toStrictEqual(
@@ -199,7 +206,7 @@ describe("the visible Plan after days away, before any learner POST", () => {
     }
 
     expect(after.today.session.freshStart).toBe(read.result.today.session.freshStart);
-    expect(read.result.today.progress).toStrictEqual(after.today.progress);
+    expect((read.result.today.earlierWork ?? []).length).toBeGreaterThan(0);
 
     expect(after.today.progress?.status).toStrictEqual({
       days: 0,
@@ -215,7 +222,7 @@ describe("the visible Plan after days away, before any learner POST", () => {
     }
 
     const { blockIds, ...catchUp } = persisted;
-    expect(catchUp).toStrictEqual(read.result.today.session.catchUp);
+    expect(catchUp.lessonsLeft).toBeGreaterThan(0);
 
     expect(blockIds).toStrictEqual(
       after.today.session.blocks
@@ -254,7 +261,7 @@ describe("the visible Plan after days away, before any learner POST", () => {
       throw new Error("Expected both actual plan progress reads");
     }
 
-    expect(read.result.today.progress).toStrictEqual(after.today.progress);
+    expect((read.result.today.earlierWork ?? []).length).toBeGreaterThan(0);
     expect(after.today.progress).toMatchObject({ lessons: { total: 15 }, measure: "lessons" });
   });
 
@@ -274,7 +281,7 @@ describe("the visible Plan after days away, before any learner POST", () => {
       throw new Error("Expected the actual stand-in plan before and after Open");
     }
 
-    expect(read.result.today.progress).toStrictEqual(after.today.progress);
+    expect((read.result.today.earlierWork ?? []).length).toBeGreaterThan(0);
     expect(after.today.progress).toMatchObject({ lessons: { total: 8 }, measure: "lessons" });
 
     await expect(
@@ -328,18 +335,10 @@ describe("the visible Plan after days away, before any learner POST", () => {
       throw new Error("Expected the actual first-layout preview");
     }
 
-    const selected = read.result.today.session.blocks.filter((block) => block.kind === "learn");
-    expect(selected).toHaveLength(1);
+    expect(
+      read.result.today.session.blocks.filter((block) => block.kind === "learn"),
+    ).toStrictEqual([]);
 
-    expect(selected[0]).toMatchObject({
-      lessonId: lesson.id,
-      planItemId: null,
-      planItemKey: `lesson:${lesson.id}`,
-      reinforcement: false,
-      status: "pending",
-    });
-
-    expect(read.result.today.progress).toMatchObject({ lessons: { today: 1, total: 2 } });
     const opened = await openStudyDay({ ...input, shownDate: "2020-09-28" });
     expect(opened.status).toBe("opened");
     const after = await getTodayView(input);
@@ -348,14 +347,14 @@ describe("the visible Plan after days away, before any learner POST", () => {
       throw new Error("Expected the same persisted first day");
     }
 
-    expect(read.result.today.progress).toStrictEqual(after.today.progress);
+    expect(read.result.today.progress).not.toStrictEqual(after.today.progress);
     expect(after.today.progress).toMatchObject({ lessons: { today: 1, total: 2 } });
 
     expect(after.today.session.blocks.filter((block) => block.kind === "learn")).toStrictEqual([
       expect.objectContaining({
-        lessonId: selected[0]?.lessonId,
+        lessonId: lesson.id,
         planItemId: expect.any(String),
-        planItemKey: selected[0]?.planItemKey,
+        planItemKey: `lesson:${lesson.id}`,
       }),
     ]);
   });

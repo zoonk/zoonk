@@ -3,6 +3,7 @@ import { type PlanChange, type TransactionClient, prisma } from "@zoonk/db";
 import { forgetAssumedSkills, loadPlanItemSkillIds } from "../../learner/_utils/known-skills";
 import { lockDaySession, restoreDaySession } from "../../sessions/_utils/day-session-snapshot";
 import { settleSessionDay } from "../../sessions/_utils/settle-session-day";
+import { refreshSavedGoalPlanAdvice } from "../refresh-goal-plan";
 import { getChangeLevers, replacesProposal } from "./change-levers";
 import { followPlanToday } from "./follow-plan-today";
 import { markPlanWrite } from "./mark-plan-write";
@@ -133,6 +134,7 @@ export async function undoChange({
       : null;
   });
 
+  await refreshSavedGoalPlanAdvice(context.goal.id);
   revalidatePlanTags(context.goal.userId);
 
   if (!restored) {

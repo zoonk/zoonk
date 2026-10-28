@@ -21,7 +21,6 @@ type MoveRequest = {
   context: PlanContext;
   mode: PlanningMode;
   pace: "sampled" | "saved";
-  reuseReadBuild?: boolean;
   state?: PlanState;
   todayExceptAreas?: readonly string[] | null;
 };

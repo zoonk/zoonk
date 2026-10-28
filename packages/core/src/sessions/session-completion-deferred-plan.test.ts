@@ -5,16 +5,14 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import * as logger from "@zoonk/utils/logger";
 import { after } from "next/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
+import * as replan from "../plans/_utils/replan";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { getGoalPlan } from "../plans/get-goal-plan";
-import * as preparation from "../preparation/rebalance-plan";
-import * as planRefresh from "./_utils/refresh-plan";
 import { answerStudyQuestion } from "./answer-study-question";
 import { toBlockPayload } from "./block-payload";
 import { finishStudyBlock } from "./finish-study-block";
@@ -111,90 +109,33 @@ async function plannedPractice() {
   return { ...practice, goal, plan, user };
 }
 
-/** A real settings writer holds the canonical plan/user locks while the background reads its old version. */
-async function holdCalendarWrite({ goalId, userId }: { goalId: string; userId: string }) {
-  const release = Promise.withResolvers<null>();
-  const ready = Promise.withResolvers<number>();
-
-  const held = prisma.$transaction(
-    async (tx) => {
-      await markLearnerChanged(tx, { planInputs: true, userId });
-      await tx.goal.update({ data: { dailyMinutes: 20 }, where: { id: goalId } });
-      const [connection] = await tx.$queryRaw<{ pid: number }[]>`SELECT pg_backend_pid() AS pid`;
-      ready.resolve(connection?.pid ?? 0);
-      await release.promise;
-    },
-    { timeout: 12_000 },
-  );
-
-  const settled = Promise.allSettled([held]);
-  void held.catch(ready.reject);
-  return { pid: await ready.promise, release: release.resolve, settled };
-}
-
-async function waitForPlanWriter(holderPid: number) {
-  await expect
-    .poll(
-      () => prisma.$queryRaw<{ pid: number }[]>`
-        SELECT pid FROM pg_stat_activity
-        WHERE datname = current_database() AND ${holderPid} = ANY(pg_blocking_pids(pid))
-          AND query ~* 'plans.*FOR UPDATE'
-      `,
-      { interval: 10, timeout: 4000 },
-    )
-    .not.toHaveLength(0);
-}
-
-describe("the completion moment precedes replanning", () => {
+describe("session completion awaits its saved plan", () => {
   afterEach(() => {
     vi.restoreAllMocks();
     vi.mocked(after).mockReset();
     vi.useRealTimers();
   });
 
-  it("commits completion and its ledger before running the deferred plan work", async () => {
+  it("closes a goalless session and its ledger before returning", async () => {
     const deferred = holdDeferredWork();
-    const refresh = vi.spyOn(planRefresh, "refreshPlanAroundSession");
     const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
     const item = await itemFixture({ content: choiceItemContent(), skillId: skill.id });
-    const session = await studySessionFixture({ plannedMinutes: 3, userId: user.id });
-
-    const block = await studySessionBlockFixture({
-      estimatedMinutes: 3,
-      kind: "practice",
-      payload: toBlockPayload({ itemIds: [item.id], skillIds: [skill.id] }),
-      sessionId: session.id,
-    });
-
     mockSession(user.id);
 
-    await expect(
-      startStudyBlock({ blockId: block.id, input: { timeZone: "UTC" }, sessionId: session.id }),
-    ).resolves.toMatchObject({ status: "ready" });
-
-    await expect(
-      answerStudyQuestion({
-        blockId: block.id,
-        input: { answer: { selectedIndex: 0 }, durationMs: 1000, itemId: item.id, timeZone: "UTC" },
-        sessionId: session.id,
-      }),
-    ).resolves.toMatchObject({ status: "ready" });
-
-    deferred.clear();
-    refresh.mockClear();
-
-    const result = await finishStudyBlock({
-      blockId: block.id,
-      input: { timeZone: "UTC" },
-      sessionId: session.id,
+    const { block, session } = await finishPractice({
+      itemId: item.id,
+      skillId: skill.id,
+      userId: user.id,
     });
 
-    expect(result).toMatchObject({ completion: { sessionCompleted: true }, status: "ready" });
-    expect(refresh).not.toHaveBeenCalled();
+    deferred.clear();
+
+    await expect(
+      finishStudyBlock({ blockId: block.id, input: { timeZone: "UTC" }, sessionId: session.id }),
+    ).resolves.toMatchObject({ completion: { sessionCompleted: true }, status: "ready" });
 
     const saved = await prisma.studySession.findUniqueOrThrow({ where: { id: session.id } });
     expect(saved.status).toBe("completed");
-    expect(saved.endedAt).not.toBeNull();
     expect(saved.endSnapshot).not.toBeNull();
 
     const ledger = await prisma.learningEvent.findFirstOrThrow({
@@ -206,60 +147,35 @@ describe("the completion moment precedes replanning", () => {
     });
 
     expect(ledger.endedAt).toStrictEqual(saved.endedAt);
-
-    await deferred.run();
-
-    expect(refresh).toHaveBeenCalledExactlyOnceWith({
-      goalId: null,
-      pace: "sampled",
-      retryOnConflict: false,
-      revalidation: "skip",
-    });
   });
 
-  it("a later read observes the real plan committed by deferred settling", async () => {
+  it("returns only after items, summary and proposals have been saved", async () => {
     const deferred = holdDeferredWork();
-    const refresh = vi.spyOn(planRefresh, "refreshPlanAroundSession");
     const { block, goal, plan, session } = await plannedPractice();
-
     const before = await readPlan(plan.id);
-
-    expect(
-      before.items.some(
-        (entry) =>
-          entry.status === "todo" &&
-          entry.scheduledFor &&
-          entry.scheduledFor < new Date("2026-09-30"),
-      ),
-    ).toBe(true);
-
     deferred.clear();
-    refresh.mockClear();
 
     await expect(
       finishStudyBlock({ blockId: block.id, input: { timeZone: "UTC" }, sessionId: session.id }),
     ).resolves.toMatchObject({ completion: { sessionCompleted: true }, status: "ready" });
 
-    expect(refresh).not.toHaveBeenCalled();
-
-    await expect(readPlan(plan.id)).resolves.toStrictEqual({
-      ...before,
-      // Block completion and session completion each mark their own transaction.
-      inputVersion: before.inputVersion + 2,
-    });
-
-    await deferred.run();
-
-    expect(refresh).toHaveBeenCalledExactlyOnceWith({
-      goalId: goal.id,
-      pace: "sampled",
-      retryOnConflict: false,
-      revalidation: "skip",
-    });
-
     const saved = await readPlan(plan.id);
     expect(saved.version).toBeGreaterThan(before.version);
-    expect(saved.inputVersion).toBeGreaterThan(before.inputVersion);
+
+    expect(saved.summary).toMatchObject({
+      advice: expect.any(Object),
+      basis: { layoutInputVersion: saved.inputVersion, planVersion: saved.version },
+    });
+
+    for (const proposal of saved.changes.filter((change) => change.status === "proposed")) {
+      expect(proposal.payload).toMatchObject({
+        previewBasis: {
+          inputVersion: saved.inputVersion,
+          planVersion: saved.version,
+          studyDay: "2026-09-30",
+        },
+      });
+    }
 
     const change = saved.changes.findLast(
       (entry) => entry.kind === "missedDays" && entry.status === "applied",
@@ -268,53 +184,38 @@ describe("the completion moment precedes replanning", () => {
     expect(change).toBeDefined();
     const read = await getGoalPlan(goal.id);
 
-    if (read.status !== "ready") {
-      throw new Error("Expected the actual refreshed owned plan");
-    }
+    expect(read.status === "ready" && read.plan.changes.map((entry) => entry.id)).toContain(
+      change?.id,
+    );
 
-    expect(read.plan.changes.map((entry) => entry.id)).toContain(change?.id);
     await expect(readPlan(plan.id)).resolves.toStrictEqual(saved);
   });
 
-  it("logs one lost CAS and leaves the winning calendar and plan untouched", async () => {
-    const deferred = holdDeferredWork();
-    const refresh = vi.spyOn(planRefresh, "refreshPlanAroundSession");
-    const rebalance = vi.spyOn(preparation, "rebalancePlanAfterSession");
-    const error = vi.spyOn(logger, "logError");
+  it("retries a concurrent calendar change before reporting completion", async () => {
+    holdDeferredWork();
     const { block, goal, plan, session, user } = await plannedPractice();
-    deferred.clear();
-    refresh.mockClear();
+    const compute = replan.computePlan;
+    // Only pause the real computation's return; both competing writes use the real database.
+    vi.spyOn(replan, "computePlan").mockImplementationOnce((async (input) => {
+      const computed = await compute(input);
+
+      await prisma.$transaction(async (tx) => {
+        await markLearnerChanged(tx, { planInputs: true, userId: user.id });
+        await tx.goal.update({ data: { dailyMinutes: 20 }, where: { id: goal.id } });
+      });
+
+      return computed;
+    }) as typeof compute);
 
     await expect(
       finishStudyBlock({ blockId: block.id, input: { timeZone: "UTC" }, sessionId: session.id }),
     ).resolves.toMatchObject({ completion: { sessionCompleted: true }, status: "ready" });
 
-    const before = await readPlan(plan.id);
-    const winner = await holdCalendarWrite({ goalId: goal.id, userId: user.id });
-    const background = deferred.run();
-
-    try {
-      await waitForPlanWriter(winner.pid);
-    } finally {
-      winner.release(null);
-    }
-
-    await expect(winner.settled).resolves.toMatchObject([{ status: "fulfilled" }]);
-    await background;
-
-    expect(refresh).toHaveBeenCalledOnce();
-    expect(rebalance).not.toHaveBeenCalled();
-
-    expect(error).toHaveBeenCalledExactlyOnceWith(
-      `Could not refresh the plan of goal ${goal.id}.`,
-      expect.objectContaining({ name: "PlanConflictError" }),
-    );
-
     const saved = await readPlan(plan.id);
-    expect(saved).toStrictEqual({ ...before, inputVersion: before.inputVersion + 1 });
+    expect(saved.summary).toMatchObject({ basis: { layoutInputVersion: saved.inputVersion } });
 
-    const read = await getGoalPlan(goal.id);
-    expect(read).toMatchObject({ plan: { schedule: { dailyMinutes: 20 } }, status: "ready" });
-    await expect(readPlan(plan.id)).resolves.toStrictEqual(saved);
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
+      dailyMinutes: 20,
+    });
   });
 });

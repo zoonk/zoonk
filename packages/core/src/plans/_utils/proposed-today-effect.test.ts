@@ -2,10 +2,12 @@ import { prisma } from "@zoonk/db";
 import { planChangeFixture } from "@zoonk/testing/fixtures/goals";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { mockSession } from "../../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../_test-utils/plan-library";
 import { createGoalPlan } from "../create-goal-plan";
 import { addDays, toIsoDate } from "../planner/plan-calendar";
 import { parsePlanPhases, parsePlanSettings } from "../planner/plan-state";
+import { previewPlanChange } from "../preview-plan-change";
 import { refreshGoalPlan } from "../refresh-goal-plan";
 import { parsePlanChangePayload } from "./plan-change-payload";
 import { loadTodayPlanChange } from "./today-plan-change";
@@ -42,6 +44,18 @@ describe("proposal effects on Today", () => {
       status: "proposed",
     });
 
+    mockSession(user.id);
+
+    await previewPlanChange({
+      goalId: goal.id,
+      input: {
+        operations: [{ kind: "setWeekdayMinutes", minutes: 0, weekdays: [6] }],
+        timeZone: "UTC",
+      },
+    });
+
+    const savedProposal = await prisma.planChange.findUniqueOrThrow({ where: { id: proposal.id } });
+
     const before = await prisma.plan.findUniqueOrThrow({
       include: { items: true },
       where: { id: plan.id },
@@ -60,7 +74,7 @@ describe("proposal effects on Today", () => {
 
     await expect(
       prisma.planChange.findUniqueOrThrow({ where: { id: proposal.id } }),
-    ).resolves.toStrictEqual(proposal);
+    ).resolves.toStrictEqual(savedProposal);
   });
 
   it("previews the held phase end a rest day moves without applying or saving it", async () => {

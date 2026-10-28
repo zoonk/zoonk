@@ -2,7 +2,6 @@ import "server-only";
 import { type GoalKind } from "@zoonk/db";
 import { type OwnedGoal } from "../../../learner/_utils/owned-goal";
 import { getCurrentMemoryInsight } from "../../../memory/insights/get-current-memory-insight";
-import { projectPlanForRead } from "../../../plans/_utils/plan-read-projection";
 import { loadOwnedGoalPreparation } from "../../../preparation/_utils/load-goal-preparation";
 import { getGoalPreparation } from "../../../preparation/get-goal-preparation";
 import { getRequestProgressDateContext } from "../../../progress/get-request-date-context";
@@ -30,8 +29,8 @@ async function loadLessons({
     return null;
   }
 
-  if (selection?.computed) {
-    const lessons = await loadGoalLessons(goalId, projectPlanForRead(selection));
+  if (selection) {
+    const lessons = await loadGoalLessons(goalId, selection.context);
     return lessons ? { done: lessons.done, total: lessons.total } : null;
   }
 
@@ -60,13 +59,13 @@ export async function loadAroundSession({
   const { id: goalId, kind } = owned.goal;
 
   const [preparation, lessons, insight, challenge] = await Promise.all([
-    selection?.computed
+    selection
       ? getRequestProgressDateContext().then((dateContext) =>
           loadOwnedGoalPreparation({
             dateContext,
             owned,
             selectedPlan: {
-              ...projectPlanForRead(selection),
+              ...selection.context,
               ...(selection.left.length > 0 && {
                 catchUp: getSelectedCatchUpItems(selection).length,
               }),

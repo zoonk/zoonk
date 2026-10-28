@@ -3,12 +3,13 @@ import { type PlanChange, type TransactionClient, prisma } from "@zoonk/db";
 import { type JsonObject, isJsonObject } from "@zoonk/utils/json";
 import { skipTestedOutBlocks } from "../sessions/_utils/skip-tested-out-blocks";
 import { isPlanReady } from "./_utils/apply-plan-change";
+import { commitPlan } from "./_utils/commit-plan";
 import { followPlanToday } from "./_utils/follow-plan-today";
 import { getListeningPastBasicsEffect, withPastBasicsAreas } from "./_utils/level-listening-starts";
 import { parsePlanChangePayload, toPlanChangePayload } from "./_utils/plan-change-payload";
 import { type PlanContext } from "./_utils/plan-context";
 import { loadPlanAtToken } from "./_utils/plan-token";
-import { commitPlan, computePlan } from "./_utils/replan";
+import { computePlan } from "./_utils/replan";
 import { withSeenTopics } from "./_utils/seen-effect";
 import { countLessons } from "./_utils/stand-in-lessons";
 import { RECENT_CHANGE_MS } from "./_utils/today-plan-change";
@@ -218,6 +219,24 @@ export async function announceTestedOutItems({
 
     const lessonsSkipped = countLessons(context.items.filter((item) => skipped.has(item.id)));
 
+    const unseen = await findUnseenSkip({ context, now });
+    const recorded = unseen && parsePlanChangePayload(unseen.payload);
+
+    if (
+      recorded &&
+      !extraWrites &&
+      !pastBasicsAreas?.length &&
+      planItemIds.every((id) => recorded.planItemIds.includes(id))
+    ) {
+      await skipTestedOutBlocks({ goalId, notStarted: !followToday, planItemIds });
+
+      if (followToday) {
+        await followPlanToday({ changeId: unseen.change.id, context });
+      }
+
+      return { changeId: unseen.change.id, lessonsSkipped, planVersion: context.plan.version };
+    }
+
     const computed = await computePlan({
       context,
       mode: "forced",
@@ -229,8 +248,6 @@ export async function announceTestedOutItems({
       ...withSeenTopics({ computed, shown: context.items }),
       ...getListeningPastBasicsEffect({ areas: pastBasicsAreas, state: context.state }),
     };
-
-    const unseen = await findUnseenSkip({ context, now });
 
     // The unseen skip takes this one in. Writing the plan drops earlier changes' snapshots, so its
     // snapshot from before its first skip is kept again for the Undo.

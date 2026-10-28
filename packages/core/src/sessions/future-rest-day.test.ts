@@ -108,7 +108,7 @@ describe("an unstarted day after a plan change", () => {
     vi.useRealTimers();
   });
 
-  it("keeps today's blocks and writes no today-session update for a future rest day", async () => {
+  it("keeps today's blocks and says no session change for a future rest day", async () => {
     const { before, goal, plan, timeZone } = await openPlannedSunday();
 
     const { changed, proposal } = await applyFutureRestDay({
@@ -122,7 +122,8 @@ describe("an unstarted day after a plan change", () => {
       where: { id: before.id },
     });
 
-    expect.soft(after).toStrictEqual(before);
+    const savedPlan = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    expect.soft(after).toStrictEqual({ ...before, planVersion: savedPlan.version });
     expect.soft(changed).toMatchObject({ change: { todaySession: null }, status: "updated" });
 
     const context = await loadPlanContext({ goal, now: NOW, timeZone });
@@ -165,7 +166,7 @@ describe("an unstarted day after a plan change", () => {
   });
 
   it("keeps a started day intact and says the change starts on the next study day", async () => {
-    const { before, goal, timeZone } = await openPlannedSunday("buddy");
+    const { before, goal, plan, timeZone } = await openPlannedSunday("buddy");
     const first = before.blocks[0];
 
     expect(before.blocks).toHaveLength(1);
@@ -192,7 +193,8 @@ describe("an unstarted day after a plan change", () => {
       where: { id: before.id },
     });
 
-    expect(after).toStrictEqual(started);
+    const savedPlan = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    expect(after).toStrictEqual({ ...started, planVersion: savedPlan.version });
     expect(changed).toMatchObject({ change: { todaySession: "unchanged" }, status: "applied" });
   });
 });
@@ -232,7 +234,8 @@ describe("a started day after a plan change", () => {
       where: { id: before.id },
     });
 
-    expect.soft(after).toStrictEqual(started);
+    const savedPlan = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+    expect.soft(after).toStrictEqual({ ...started, planVersion: savedPlan.version });
     expect.soft(changed).toMatchObject({ change: { todaySession: null }, status: "updated" });
   });
 });

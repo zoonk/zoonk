@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { type ExistingPlanItem } from "../planner/plan-items";
+import { type PlanReadItem } from "./plan-read-projection";
 import { buildWeekView } from "./plan-week-view";
 
 /** Wednesday, Sep 23, 2026: Monday and Tuesday are behind, the rest of the week ahead. */
@@ -27,7 +28,7 @@ function buildWeek({
   startDate = MONDAY,
   studiedDates = [],
 }: {
-  items?: ExistingPlanItem[];
+  items?: PlanReadItem[];
   startDate?: Date;
   studiedDates?: string[];
 }) {
@@ -46,6 +47,27 @@ function buildWeek({
 }
 
 describe(buildWeekView, () => {
+  it("projects a saved multi-day allocation onto each shown day", () => {
+    const item = {
+      ...lesson("2026-09-23", "todo"),
+      facts: {
+        days: [
+          ["2026-09-23", 10, 8],
+          ["2026-09-24", 20, 12],
+        ],
+        minutes: 30,
+        parts: { checkpoint: 0, practice: 10, unwritten: 0, written: 20 },
+        schemaVersion: 1,
+        skillIds: [],
+      },
+      minutes: 30,
+    };
+
+    const { days } = buildWeek({ items: [item] });
+    expect(days[2]?.items).toMatchObject([{ id: item.id, minutes: 10 }]);
+    expect(days[3]?.items).toMatchObject([{ id: item.id, minutes: 20 }]);
+  });
+
   it("counts a past day with nothing scheduled as done only when the learner studied", () => {
     const { days } = buildWeek({ studiedDates: ["2026-09-21"] });
 

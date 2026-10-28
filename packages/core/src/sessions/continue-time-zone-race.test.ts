@@ -4,8 +4,8 @@ import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { revalidateTag } from "next/cache";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { mockAccountSession } from "../_test-utils/mock-session";
-import { followGoalTimeZone } from "../learner/follow-goal-time-zone";
 import { seedV2PersonaCopy } from "../seed/seed-v2";
+import { getTodayView } from "../view-models/today/get-today-view";
 import { getStudySession } from "./get-study-session";
 import { openStudySession } from "./open-study-day";
 import { startStudyBlock } from "./start-study-block";
@@ -13,10 +13,10 @@ import { startStudyBlock } from "./start-study-block";
 const NOW = new Date("2026-10-15T12:00:00Z");
 const DEVICE_ZONE = "Pacific/Kiritimati";
 
-describe("Continue on an already studied day while the device follows another zone", () => {
+describe("Continue on an already studied day while another device reads it", () => {
   afterEach(() => vi.useRealTimers());
 
-  it("keeps Ana's saved day and opens the same next free block while follow refuses the move", async () => {
+  it("keeps Ana's saved day and opens the same next free block beside a device read", async () => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(NOW);
     const copyKey = randomUUID();
@@ -48,13 +48,13 @@ describe("Continue on an already studied day while the device follows another zo
     const expirations = vi.mocked(revalidateTag).mock.calls.length;
 
     const [followed, opened] = await Promise.all([
-      followGoalTimeZone({ goalId: goal.id, timeZone: DEVICE_ZONE }),
+      getTodayView({ goalId: goal.id, timeZone: DEVICE_ZONE }),
       countDatabaseStatements(() =>
         openStudySession({ input: { timeZone: DEVICE_ZONE }, sessionId: saved.id }),
       ),
     ]);
 
-    expect(followed).toMatchObject({ moved: false, status: "ready" });
+    expect(followed).toMatchObject({ status: "ready" });
     expect(opened.result.status).toBe("ready");
 
     if (opened.result.status !== "ready") {

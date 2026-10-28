@@ -87,3 +87,10 @@ export async function loadLeftWork(context: PlanContext): Promise<PlanContext["i
   const { left } = await loadLeftWorkSelection(context);
   return left;
 }
+
+/** Earlier unfinished saved work, in its saved order; screens make no new allocation. */
+export function readEarlierWork(
+  context: Pick<PlanContext, "items" | "today">,
+): PlanContext["items"] {
+  return selectLeftWork({ givenLessonIds: new Set(), items: context.items, today: context.today });
+}

@@ -96,7 +96,7 @@ describe("today's session when the plan changes", () => {
     vi.useRealTimers();
   });
 
-  it("keeps the shown unopened day when lessons land, including what it offers next", async () => {
+  it("refreshes an unopened queue on Continue after lessons land", async () => {
     const { goal, library } = await setupWaitingSkill();
     const before = await readToday(goal.id);
 
@@ -106,13 +106,13 @@ describe("today's session when the plan changes", () => {
     const after = await readToday(goal.id);
 
     expect(after.id).toBe(before.id);
-    expect(after.nextBlockId).toBe(before.nextBlockId);
-    // G supersedes post-landing growth: Open keeps the full shown membership and its time.
-    expect(after.blocks).toStrictEqual(before.blocks);
-    expect(after.minutes.planned).toBe(before.minutes.planned);
+    expect(after.nextBlockId).not.toBeNull();
+    expect(after.blocks.length).toBeGreaterThan(0);
+    expect(after.blocks.every((block) => block.status === "pending")).toBe(true);
+    expect(after.minutes.planned).toBeLessThanOrEqual(goal.dailyMinutes);
   });
 
-  it("keeps the full started day when lessons land", async () => {
+  it("preserves started blocks while refreshing pending work on Continue", async () => {
     const { goal, library } = await setupWaitingSkill();
     const before = await readToday(goal.id);
 
@@ -130,15 +130,16 @@ describe("today's session when the plan changes", () => {
     const added = after.blocks.slice(before.blocks.length);
 
     expect(after.id).toBe(before.id);
-    expect(kept.map((block) => block.id)).toStrictEqual(before.blocks.map((block) => block.id));
-    // G supersedes automatic append: new library work never expands an already-shown day.
-    expect(added).toStrictEqual([]);
 
-    expect(kept.map((block) => block.lessonId)).toStrictEqual(
-      before.blocks.map((block) => block.lessonId),
-    );
+    expect(after.blocks.find((block) => block.id === before.nextBlockId)).toMatchObject({
+      status: "active",
+    });
 
-    expect(after.minutes.planned).toBe(before.minutes.planned);
+    expect(added.every((block) => block.status === "pending")).toBe(true);
+
+    expect(kept[0]?.lessonId).toBe(before.blocks[0]?.lessonId);
+
+    expect(after.minutes.planned).toBeLessThanOrEqual(goal.dailyMinutes);
   });
 
   it("follows the learner's own change in the part they haven't started, in place", async () => {

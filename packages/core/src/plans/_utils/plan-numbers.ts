@@ -8,7 +8,7 @@ function roundPlanMinutes(minutes: number): number {
   return Math.round(Math.max(0, minutes) * 10) / 10;
 }
 
-type ScheduledWork = Pick<BuiltPlan, "items" | "skillMinutes">;
+type ScheduledWork = Pick<BuiltPlan, "items" | "lessonRawMinutes">;
 
 /** One workload decomposition for public estimates and the learner's actual/prospective build. */
 export function getPlanWorkload({
@@ -29,21 +29,27 @@ export function getPlanWorkload({
       (!fromDate || item.scheduledFor >= fromDate),
   );
 
-  const written = items.reduce(
-    (sum, item) =>
-      sum +
-      (item.kind === "lesson" && item.lessonId
-        ? (lessonMinutes.get(item.lessonId) ?? 0) * paceFactor
-        : 0),
-    0,
-  );
+  const teaching = items.filter((item) => item.kind === "lesson" || item.kind === "chapter");
 
-  const unwritten = built.skillMinutes.reduce(
-    (sum, skill) => sum + (skill.standIn?.covered ?? 0),
-    0,
-  );
+  const rawMinutes = (item: (typeof items)[number]) => {
+    const portions = built.lessonRawMinutes.get(item.key);
 
-  const lessons = items.reduce((sum, item) => sum + (item.kind === "lesson" ? item.minutes : 0), 0);
+    const raw = portions
+      ? [...portions.values()].reduce((sum, minutes) => sum + minutes, 0)
+      : (lessonMinutes.get(item.lessonId ?? "") ?? 0) * paceFactor;
+
+    return Math.min(item.minutes, raw);
+  };
+
+  const written = teaching
+    .filter((item) => item.lessonId !== null || item.kind === "chapter")
+    .reduce((sum, item) => sum + rawMinutes(item), 0);
+
+  const unwritten = teaching
+    .filter((item) => item.lessonId === null && item.kind !== "chapter")
+    .reduce((sum, item) => sum + rawMinutes(item), 0);
+
+  const lessons = teaching.reduce((sum, item) => sum + item.minutes, 0);
   const reviews = items.reduce((sum, item) => sum + (item.kind === "review" ? item.minutes : 0), 0);
 
   const checkpoints = items.reduce(

@@ -134,7 +134,7 @@ describe("only the session completion transition changes plan inputs", () => {
         },
       }),
     ).resolves.toBe(1);
-    // One completion telemetry callback, one memory callback and one deferred plan write.
-    expect(scheduled).toHaveBeenCalledTimes(3);
+    // Only telemetry and memory remain deferred.
+    expect(scheduled).toHaveBeenCalledTimes(2);
   });
 });

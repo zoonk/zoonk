@@ -137,7 +137,7 @@ export async function persistEntitlementLapseRefill({
 
   try {
     await withSessionAppendLock({
-      planId: refill.basis.id,
+      plan: { id: refill.basis.id, write: true },
       run: async ({ session: locked, transaction }) => {
         if (
           locked.goal?.status !== "active" ||

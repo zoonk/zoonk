@@ -9,9 +9,10 @@ import {
 } from "../library/items/_test-utils/generated-items";
 import { createItems } from "../library/items/create-items";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { commitPlan } from "./_utils/commit-plan";
 import { loadPlanContext } from "./_utils/plan-context";
 import { readFreshPlanSummary } from "./_utils/plan-summary";
-import { commitPlan, computePlan } from "./_utils/replan";
+import { computePlan } from "./_utils/replan";
 import { readSelectedItemFacts } from "./_utils/selected-item-contract";
 import { createGoalPlan } from "./create-goal-plan";
 import { PlanConflictError } from "./plan-conflict";

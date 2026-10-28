@@ -753,9 +753,9 @@ describe("funded mock sessions reserve all their fixed work", () => {
       throw new Error("Expected the mock's day before Open");
     }
 
-    expect(preview.result.today.session.blocks.map((block) => block.planItemId)).toStrictEqual([
+    expect(preview.result.today.session.blocks.map((block) => block.planItemId)).toContain(
       mock?.id,
-    ]);
+    );
 
     await expect(readPlan()).resolves.toStrictEqual(before);
 

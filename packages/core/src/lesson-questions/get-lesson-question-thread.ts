@@ -120,7 +120,7 @@ export async function getLessonQuestionThread({
     return { status: "ready" as const, thread: null };
   }
 
-  const resource = toLessonQuestionThreadResource({
+  const resource = await toLessonQuestionThreadResource({
     hasMore: page.hasMore,
     nextCursor: page.nextCursor,
     thread: { ...found, questions: page.questions },

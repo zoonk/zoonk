@@ -3,6 +3,7 @@ import { type TransactionClient, prisma } from "@zoonk/db";
 import { PlanConflictError } from "../plan-conflict";
 import { type PlanPhase, type PlanState } from "../planner/plan-state";
 import { markPlanWrite } from "./mark-plan-write";
+import { type StoredPlanChangePayload } from "./plan-change-payload";
 import { type PlanContext } from "./plan-context";
 import { type PlanSummary, reduceCompletedSummary } from "./plan-summary";
 import { getGoalUpdate } from "./plan-unchanged";
@@ -16,6 +17,7 @@ export type PlanWrite = {
   inputsKey: string | null;
   items: readonly SavedPlanItem[];
   phases: PlanPhase[];
+  previews?: { id: string; payload: StoredPlanChangePayload }[];
   /** The lessons each skill's stand-in teaches (see `savePlanItems`). */
   standInLessons: ReadonlyMap<string, number>;
   state: PlanState;
@@ -144,6 +146,15 @@ export async function writePlan({
   });
 
   await creditFinishedNewLessons({ context, plan, tx });
+
+  await Promise.all(
+    (plan.previews ?? []).map((preview) =>
+      tx.planChange.updateMany({
+        data: { payload: preview.payload },
+        where: { id: preview.id, status: "proposed" },
+      }),
+    ),
+  );
 }
 
 /**
@@ -159,11 +170,15 @@ export async function savePlanInputsKey({
   graph,
   inputsKey,
   summary,
+  previews = [],
+  extraWrites,
 }: {
   context: Pick<PlanContext, "plan">;
   graph: PlanState["graph"];
   inputsKey: string;
-  summary?: PlanSummary;
+  summary?: PlanSummary | null;
+  previews?: PlanWrite["previews"];
+  extraWrites?: (tx: TransactionClient) => Promise<void>;
 }): Promise<void> {
   await prisma.$transaction(async (tx) => {
     const plan = await markPlanWrite(tx, context.plan);
@@ -180,5 +195,16 @@ export async function savePlanInputsKey({
     if (count === 0) {
       throw new PlanConflictError();
     }
+
+    await Promise.all(
+      previews.map((preview) =>
+        tx.planChange.updateMany({
+          data: { payload: preview.payload },
+          where: { id: preview.id, status: "proposed" },
+        }),
+      ),
+    );
+
+    await extraWrites?.(tx);
   });
 }

@@ -140,19 +140,19 @@ describe("the explicit day open follows the device zone", () => {
     await expect(held).resolves.toMatchObject([{ status: "fulfilled" }]);
 
     await expect(opening).resolves.toMatchObject([
-      { status: "fulfilled", value: { goalId: fixture.goal.id, status: "retryable" } },
+      { status: "fulfilled", value: { goalId: fixture.goal.id, status: "opened" } },
     ]);
 
     await expect(prisma.studySession.count({ where: { goalId: fixture.goal.id } })).resolves.toBe(
-      0,
+      1,
     );
 
     await expect(
       prisma.goal.findUniqueOrThrow({ where: { id: fixture.goal.id } }),
-    ).resolves.toMatchObject({ timezone: "Asia/Tokyo" });
+    ).resolves.toMatchObject({ timezone: "Pacific/Kiritimati" });
 
     await expect(versions(fixture)).resolves.toStrictEqual({
-      inputVersion: before.inputVersion + 1,
+      inputVersion: before.inputVersion + 3,
     });
   });
 });

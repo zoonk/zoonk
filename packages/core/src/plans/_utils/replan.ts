@@ -1,6 +1,7 @@
 import "server-only";
-import { type PlanChangeStatus, type TransactionClient, prisma } from "@zoonk/db";
+import { type PlanChangeStatus } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
+import { once } from "@zoonk/utils/once";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getLearnerModelCacheTag } from "../../cache/tags";
 import { readCourseStart } from "../../goals/course-start-details";
@@ -17,7 +18,7 @@ import { sizeLanguageGraph } from "../planner/language-size";
 import { getSelectionOptions } from "../planner/pinned-study-portions";
 import { type PlanBases } from "../planner/plan-bases";
 import { type PlanEffect } from "../planner/plan-effect";
-import { type PlanFeasibility } from "../planner/plan-feasibility";
+import { type PlanFeasibility, getPlanFeasibility } from "../planner/plan-feasibility";
 import { type Pace } from "../planner/plan-pace";
 import { toExamWindows } from "../planner/plan-phases";
 import { type PlanState } from "../planner/plan-state";
@@ -28,27 +29,17 @@ import { getSettledSkillIds } from "../planner/settled-skills";
 import { loadRunBossFacts } from "./boss-plan-facts";
 import { type PlanCarrySnapshot, isTodayShown, loadPlanCarryOver } from "./carried-lessons";
 import { choosePlanSettings } from "./choose-plan-pace";
-import { toComputedPlanWrite } from "./computed-plan-write";
 import { chooseExamOptionSkills } from "./exam-option-skills";
 import { listFinishedDays } from "./finished-days";
 import { keepPastBasicsBands } from "./level-bands";
-import { markPlanWrite } from "./mark-plan-write";
 import { listRequestedMoveDates } from "./missing-weekly-move";
-import {
-  type PlanChangeKind,
-  type StoredPlanChangePayload,
-  isUndoableChange,
-} from "./plan-change-payload";
+import { type PlanChangeKind, type StoredPlanChangePayload } from "./plan-change-payload";
 import { type PlanContext, getStateTargetDate } from "./plan-context";
 import { getPlanInputsKey, readLanding, shouldSkipPlanBuild } from "./plan-inputs-key";
-import { loadPlanReadAdvice } from "./plan-read-advice";
-import { savePlanSnapshot } from "./plan-snapshot";
 import { loadPlannerInputs, resolveMergedSkills } from "./planner-inputs";
 import { loadQuickBaseLessons } from "./quick-bases";
-import { readBuiltPlan } from "./read-built-plan";
 import { summarizeRetainedPlan } from "./retained-plan-allocation";
 import { type SelectedSummary } from "./selected-summary-contract";
-import { writePlan } from "./write-plan";
 
 export type ComputedPlan = {
   /** The plan's bases with what the app recommends for them (see `findPlanBases`). */
@@ -73,6 +64,27 @@ export type ComputedPlan = {
   summarizeRetained: () => SelectedSummary | null;
 };
 
+export type ComputedChange = {
+  baseline: ComputedPlan;
+  /**
+   * The plan brings work set aside for time back to compete (see `pickSetAsidePlans`): moving the
+   * phase dates right after the change is planned the same way (see `askPhaseDatesAfterChange`).
+   */
+  bringsBackSetAside: boolean;
+  computed: ComputedPlan;
+  /**
+   * More or less of some areas would do the opposite of what it asks in the plan the learner sees
+   * (see `contradictsSteering`): neither offered nor applied when the learner asks for it.
+   */
+  contradicts: boolean;
+  effect: PlanEffect;
+  /**
+   * The plan would stay as it is (see `hasNoEffect`), or the change `contradicts`: nothing to offer
+   * or apply.
+   */
+  unchanged: boolean;
+};
+
 /** What a planning run records for the learner to see; system runs may record nothing. */
 export type PlanChangeRecord = {
   kind: PlanChangeKind;
@@ -82,13 +94,7 @@ export type PlanChangeRecord = {
   status: PlanChangeStatus;
 };
 
-/**
- * Whether a commit clears the plan's caches: right away from actions, route handlers and
- * workflows (`now`), or not at all when it happens while a page renders (`skip`: building today's
- * session from the Today screen or its prefetch). Next.js throws when a render clears caches,
- * even from `after()`. Pure read caches key their full freshly loaded input, so render-time
- * writes remain fresh without eviction; only a Server Action clears the browser's copies.
- */
+/** Whether a writer expires screen data immediately or lets its caller do it. */
 export type PlanTagRevalidation = "now" | "skip";
 
 type ComputePlanRequest = {
@@ -114,10 +120,6 @@ type ComputePlanRequest = {
   pace?: "sampled" | "saved";
   /** Phases whose shown end isn't kept: a missed day's settling lets it go (see `computeSettledPlan`). */
   releasedPhases?: ReadonlySet<number>;
-  /** Read-only consumers can share the same pure build; mutation preconditions stay fresh. */
-  reuseReadBuild?: boolean;
-  /** Only the Plan read requests advice; Today, Progress and effects keep their local lazy analysis. */
-  readAnalysis?: boolean;
   /**
    * A new day's settling: work earlier days left that no longer fits is set aside, never deleted
    * (see `setAsideLeftWork`).
@@ -157,7 +159,6 @@ export async function computePlan({
   movedEnds,
   pace: paceSource = "saved",
   releasedPhases,
-  reuseReadBuild = false,
   setAsideLeftWork = false,
   skipUnchangedInputs,
   state = context.state,
@@ -279,22 +280,18 @@ export async function computePlan({
 
   const builtInput = { ...input, ...landing };
 
-  const built = reuseReadBuild
-    ? await readBuiltPlan({ input: builtInput, userId })
-    : buildPlan(builtInput);
+  const built = buildPlan(builtInput);
 
-  // Measuring what other times would fit builds the plan again at each: Progress never asks.
-  const { bases, feasibility } = await loadPlanReadAdvice({
-    advise,
-    examSubjects,
-    input,
-    landing,
-    planned: built,
-    readAnalysis: options.readAnalysis,
-    reuseReadBuild,
-    studyScheduleAt: options.studyScheduleAt,
-    userId,
-  });
+  const bases = once(advise);
+
+  const feasibility = once(() =>
+    getPlanFeasibility({
+      examSubjects,
+      input,
+      planned: built,
+      studyScheduleAt: options.studyScheduleAt,
+    }),
+  );
 
   const standInLessons = getChosenStandInLessons(builtInput);
 
@@ -333,63 +330,6 @@ export async function computePlan({
  * started yet the next time the learner opens it. A change the learner can undo keeps the plan as
  * it was before it (see `PlanSnapshot`), which the undo puts back.
  */
-export async function commitPlan({
-  change,
-  computed,
-  context,
-  extraWrites,
-  restorable = null,
-  revalidation = "now",
-}: {
-  change: PlanChangeRecord | null;
-  computed: ComputedPlan;
-  context: PlanContext;
-  /** Other writes that must land with the plan, such as marking a change applied or undone. */
-  extraWrites?: (tx: TransactionClient) => Promise<unknown>;
-  /** A change already recorded that this commit applies and the learner can undo: an accepted proposal. */
-  restorable?: string | null;
-  revalidation?: PlanTagRevalidation;
-}): Promise<string | null> {
-  const changeId = await prisma.$transaction(async (tx) => {
-    const writeContext = { ...context, plan: await markPlanWrite(tx, context.plan) };
-
-    await writePlan({
-      context: writeContext,
-      plan: toComputedPlanWrite({ computed, context: writeContext }),
-      tx,
-    });
-
-    await extraWrites?.(tx);
-
-    const created = change
-      ? await tx.planChange.create({
-          data: {
-            kind: change.kind,
-            payload: { ...change.payload, versionAfter: context.plan.version + 1 },
-            planId: context.plan.id,
-            reason: change.reason,
-            status: change.status,
-            ...change.provenance,
-          },
-        })
-      : null;
-
-    const undoable = created && isUndoableChange(created) ? created.id : restorable;
-
-    if (undoable) {
-      await savePlanSnapshot({ changeId: undoable, context, tx });
-    }
-
-    return created?.id ?? null;
-  });
-
-  if (revalidation === "now") {
-    revalidatePlanTags(context.goal.userId);
-  }
-
-  return changeId;
-}
-
 /** Plans and goals read these tags; preparation and placement read the learner model's. */
 export function revalidatePlanTags(userId: string) {
   revalidateCacheTags([getGoalsCacheTag(userId), getLearnerModelCacheTag(userId)]);

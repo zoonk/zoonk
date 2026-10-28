@@ -2,13 +2,18 @@ import "server-only";
 import { type Goal } from "@zoonk/db";
 import { type GoalPlanSource } from "../../learner/_utils/goal-skill-graph";
 import { getEstimateChange } from "../../plans/_utils/estimate-change";
-import { hasOverduePlanWork, loadLeftWorkSelection } from "../../plans/_utils/left-work";
+import { loadLeftWorkSelection, readEarlierWork } from "../../plans/_utils/left-work";
 import { type PlanContext, loadPlanContext } from "../../plans/_utils/plan-context";
 import {
   addsLessonsAfterLessonsDone,
   isPlanLaidOut,
 } from "../../plans/_utils/plan-refresh-admission";
-import { planSummarySchema, readFreshPlanSummary } from "../../plans/_utils/plan-summary";
+import {
+  planSummarySchema,
+  readFreshPlanSummary,
+  readPlanSummary,
+} from "../../plans/_utils/plan-summary";
+import { loadPlanAtToken } from "../../plans/_utils/plan-token";
 import { isPlanUnchanged } from "../../plans/_utils/plan-unchanged";
 import { type ComputedPlan, computePlan } from "../../plans/_utils/replan";
 import { type SelectedSummary } from "../../plans/_utils/selected-summary-contract";
@@ -17,17 +22,17 @@ import { getItemKey } from "../../plans/planner/plan-items";
 import { type PlanPhase, type PlanState } from "../../plans/planner/plan-state";
 import { type SessionPlanItem, getSessionItemIdentity } from "./session-plan-item";
 
-/** A request selects once. Readers and the learner's POST consume this same value. */
+/** A request selects once; the writer saves this allocation with its session. */
 export type SelectedDayPlan = {
-  /** Existing advice is not authority to add unaccepted teaching on a read or Open. */
-  advice?: ComputedPlan;
   computed: ComputedPlan | null;
+  retained?: ComputedPlan;
   context: PlanContext;
   /** A recount can update its input fingerprint without rewriting the learner's shown layout. */
   inputKeyUpdate?: {
     graph: PlanState["graph"];
     inputsKey: string;
     summary: SelectedSummary | null;
+    computed: ComputedPlan;
   };
   items: SessionPlanItem[];
   left: PlanContext["items"];
@@ -130,41 +135,34 @@ function keepsShownLayout(context: PlanContext): boolean {
   return hasShownLayout && sameInputs && !needsCheckpointReconciliation(context);
 }
 
-/** Current saved summaries skip the producer. Stale reads build in memory and never save. */
+/** Start and Continue select from fresh inputs before saving their queue. */
 export async function selectDayPlan({
   goal,
   now,
-  reuseReadBuild = false,
   timeZone,
 }: {
   goal: Goal;
   now: Date;
-  /** Only GET delivery opts in; Open and other writers retain the fresh default. */
-  reuseReadBuild?: boolean;
   timeZone: string;
 }): Promise<SelectedDayPlan | null> {
-  const context = await loadPlanContext({ goal, now, timeZone });
+  const context = await loadPlanAtToken(goal.id, { now, timeZone });
 
-  if (!context || context.items.length === 0) {
+  if (!context || (context.items.length === 0 && context.state.graph.skills.length === 0)) {
     return null;
   }
 
-  return selectDayPlanFromContext({ context, now, reuseReadBuild });
+  return selectDayPlanFromContext({ context, now });
 }
 
-/** Plan and Today select from one authorized context, without reloading it or building twice. */
+/** Queue writers select from one authorized context without loading it twice. */
 export async function selectDayPlanFromContext({
   context,
   now,
-  readAnalysis,
-  reuseReadBuild,
+  useFreshSaved = false,
 }: {
   context: PlanContext;
   now: Date;
-  /** Plan retains its existing advisory response until the separately agreed R7 cutover. */
-  readAnalysis?: boolean;
-  /** Only GET delivery opts in; Open and other writers retain the fresh default. */
-  reuseReadBuild?: boolean;
+  useFreshSaved?: boolean;
 }): Promise<SelectedDayPlan> {
   const { goal, timeZone } = context;
 
@@ -180,11 +178,12 @@ export async function selectDayPlanFromContext({
     value: context.plan.summary,
   });
 
+  if (useFreshSaved && fresh?.advice) {
+    return savedSelection({ context, summary: fresh.selected });
+  }
+
   // A legacy item-only goal has no graph to rebuild; its real saved work remains playable.
-  if (
-    (fresh && !readAnalysis && !hasOverduePlanWork(context)) ||
-    context.state.graph.skills.length === 0
-  ) {
+  if (context.state.graph.skills.length === 0) {
     return savedSelection({ context, summary: fresh?.selected ?? null });
   }
 
@@ -196,8 +195,6 @@ export async function selectDayPlanFromContext({
     keepPhaseDates: true,
     mode: left.length > 0 ? "forced" : "automatic",
     now,
-    readAnalysis,
-    reuseReadBuild,
     setAsideLeftWork: left.length > 0,
     todayShown: true,
   });
@@ -214,19 +211,7 @@ export async function selectDayPlanFromContext({
     unchanged ||
     (left.length === 0 && keepsShownLayout(context))
   ) {
-    const retained = unchanged ? computed.summarizeRetained() : null;
-
-    return {
-      ...savedSelection({ context, summary: retained ?? fresh?.selected ?? null }),
-      ...(readAnalysis && { advice: computed }),
-      ...(unchanged && {
-        inputKeyUpdate: {
-          graph: computed.state.graph,
-          inputsKey: computed.inputsKey,
-          summary: retained,
-        },
-      }),
-    };
+    return retainSelection({ computed, context, fresh, unchanged });
   }
 
   const items = computed.built.items.map((item, position) => ({
@@ -253,6 +238,39 @@ export async function selectDayPlanFromContext({
   };
 }
 
+function retainSelection({
+  computed,
+  context,
+  fresh,
+  unchanged,
+}: {
+  computed: ComputedPlan;
+  context: PlanContext;
+  fresh: ReturnType<typeof readFreshPlanSummary>;
+  unchanged: boolean;
+}): SelectedDayPlan {
+  const summary = unchanged ? computed.summarizeRetained() : null;
+
+  const selection = {
+    ...savedSelection({ context, summary: summary ?? fresh?.selected ?? null }),
+    retained: computed,
+  };
+
+  if (!unchanged || (computed.inputsKey === context.plan.inputsKey && fresh?.advice)) {
+    return selection;
+  }
+
+  return {
+    ...selection,
+    inputKeyUpdate: {
+      computed,
+      graph: computed.state.graph,
+      inputsKey: computed.inputsKey,
+      summary,
+    },
+  };
+}
+
 /** Actual lessons the selected settling carried; the Plan never applies Today's quiet-day rule. */
 export function getSelectedCatchUpItems({
   items,
@@ -267,4 +285,31 @@ export function getSelectedCatchUpItems({
       (item.lessonId !== null || item.chapterId !== null) &&
       leftKeys.has(item.key ?? getItemKey(item)),
   );
+}
+
+/** Screens replay the saved allocation, including earlier unfinished work, whatever its freshness. */
+export async function readSavedDayPlan({
+  goal,
+  now,
+  timeZone,
+}: {
+  goal: Goal;
+  now: Date;
+  timeZone: string;
+}): Promise<SelectedDayPlan | null> {
+  const context = await loadPlanContext({ goal, now, timeZone });
+
+  if (!context || context.items.length === 0) {
+    return null;
+  }
+
+  const summary = readPlanSummary({
+    plan: { ...context.plan, userId: goal.userId },
+    value: context.plan.summary,
+  });
+
+  return {
+    ...savedSelection({ context, summary: summary?.selected ?? null }),
+    left: readEarlierWork(context),
+  };
 }

@@ -6,6 +6,7 @@ import { applyChangeOperations } from "./part-areas";
 import { type PlanContext } from "./plan-context";
 import { areLessonsFinished, hasPlanDeadline } from "./plan-end";
 import { type ShownFeasibility } from "./plan-feasibility-view";
+import { type ComputedPlan } from "./replan";
 
 const FIT_OPERATIONS: LearnerPlanOperation[] = [{ kind: "fitLessons" }];
 
@@ -47,11 +48,13 @@ function mayFitMore({
  * own). Null when the change adds no lesson, and for a plan its date has no room for.
  */
 export async function loadFitOffer({
+  baseline,
   context,
   feasibility,
 }: {
   context: PlanContext;
   feasibility: Pick<ShownFeasibility, "fits" | "timeCovers">;
+  baseline?: ComputedPlan;
 }): Promise<PlanOffer | null> {
   if (!mayFitMore({ context, feasibility })) {
     return null;
@@ -64,9 +67,9 @@ export async function loadFitOffer({
   }
 
   const change = await computeChange({
+    baseline,
     context,
     operations: applied.operations,
-    reuseReadBuild: true,
     state: applied.state,
   });
 

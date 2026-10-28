@@ -3,9 +3,10 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockAccountSession } from "../_test-utils/mock-session";
 import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
+import { commitPlan } from "../plans/_utils/commit-plan";
 import { findOwnedPlan } from "../plans/_utils/owned-plan";
 import { loadPlanAtToken } from "../plans/_utils/plan-token";
-import { commitPlan, computePlan } from "../plans/_utils/replan";
+import { computePlan } from "../plans/_utils/replan";
 import { withPlanRetry } from "../plans/plan-conflict";
 import { lapsedDayFixture, readLapsedDayState } from "./_test-utils/entitlement-lapse";
 import { SESSION_NOW, sessionGoalFixture } from "./_test-utils/session-goal";
@@ -128,16 +129,21 @@ describe("Open binds the goal snapshot to the later plan basis", () => {
   });
 
   it.each(["first day", "entitlement refill"])(
-    "rolls back stale %s admission when minutes change before the basis read",
+    "retries stale %s admission when minutes change before the basis read",
     async (kind) => {
       const day = kind === "first day" ? await unopenedDayFixture() : await lapsedDayFixture();
       await prisma.goal.update({ data: { dailyMinutes: 30 }, where: { id: day.goal.id } });
       const before = await readLapsedDayState(day.user.id);
       const opening = await changeBeforeBasis({ goalId: day.goal.id, userId: day.user.id });
-      expect(opening).toMatchObject([{ status: "fulfilled", value: { status: "retryable" } }]);
+      expect(opening).toMatchObject([{ status: "fulfilled", value: { status: "opened" } }]);
       const after = await readLapsedDayState(day.user.id);
-      expect(after.sessions).toStrictEqual(before.sessions);
-      expect(after.plans[0]?.inputVersion).toBe(before.plans[0]!.inputVersion + 1);
+      expect(after.sessions).toHaveLength(1);
+
+      expect(
+        (after.sessions[0]?.plannedMinutes ?? 0) - (before.sessions[0]?.plannedMinutes ?? 0),
+      ).toBeLessThanOrEqual(5);
+
+      expect(after.plans[0]?.inputVersion).toBe(before.plans[0]!.inputVersion + 2);
 
       await expect(
         prisma.goal.findUniqueOrThrow({ where: { id: day.goal.id } }),

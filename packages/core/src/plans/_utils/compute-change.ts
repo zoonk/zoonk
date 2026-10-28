@@ -17,7 +17,7 @@ import { isShortExam } from "../planner/short-exam-plan";
 import { planPhaseDatesMove } from "./moved-phase-dates";
 import { type PlanContext, getStateTargetDate } from "./plan-context";
 import { getGoalUpdate, hasSameItems } from "./plan-unchanged";
-import { type ComputedPlan, computePlan } from "./replan";
+import { type ComputedChange, type ComputedPlan, computePlan } from "./replan";
 import { getSeenEffect } from "./seen-effect";
 import { pickSetAsidePlans, plansSetAsideBothWays } from "./set-aside-plans";
 import {
@@ -217,27 +217,6 @@ function getChangeEffect({
   };
 }
 
-/** A change to the plan, planned, with what it does and whether it does anything at all. */
-export type ComputedChange = {
-  /**
-   * The plan brings work set aside for time back to compete (see `pickSetAsidePlans`): moving the
-   * phase dates right after the change is planned the same way (see `askPhaseDatesAfterChange`).
-   */
-  bringsBackSetAside: boolean;
-  computed: ComputedPlan;
-  /**
-   * More or less of some areas would do the opposite of what it asks in the plan the learner sees
-   * (see `contradictsSteering`): neither offered nor applied when the learner asks for it.
-   */
-  contradicts: boolean;
-  effect: PlanEffect;
-  /**
-   * The plan would stay as it is (see `hasNoEffect`), or the change `contradicts`: nothing to offer
-   * or apply.
-   */
-  unchanged: boolean;
-};
-
 /**
  * The first day ahead that gives its time to practice on every topic, which puts the plan's focus
  * first, for a test days away (a class test): a review day, or a mock's day when the learner's
@@ -291,26 +270,24 @@ async function findReviewAhead({
  */
 async function planWithAndWithout({
   context,
+  baseline: suppliedBaseline,
   operations,
-  reuseReadBuild,
   state,
-}: {
-  context: PlanContext;
-  operations: readonly PlanOperation[];
-  reuseReadBuild: boolean;
-  state: PlanState;
-}): Promise<{ baseline: ComputedPlan; bringsBackSetAside: boolean; computed: ComputedPlan }> {
+}: Parameters<typeof computeChange>[0]): Promise<{
+  baseline: ComputedPlan;
+  bringsBackSetAside: boolean;
+  computed: ComputedPlan;
+}> {
   // Planned as the system run that proposed it (this week as the learner sees it), so the dates
   // it moves to are the ones the proposal said.
   if (operations.some((operation) => operation.kind === "fitPhaseDates")) {
-    const baseline = await computePlan({ context, mode: "automatic", reuseReadBuild });
+    const baseline = suppliedBaseline ?? (await computePlan({ context, mode: "automatic" }));
 
     const computed = await planPhaseDatesMove({
       context,
       kept: baseline.built,
       mode: "automatic",
       pace: "saved",
-      reuseReadBuild,
       state,
     });
 
@@ -325,8 +302,8 @@ async function planWithAndWithout({
     const planning = getChangePlanning(operations);
 
     const [baseline, computed] = await Promise.all([
-      computePlan({ context, mode: "automatic", reuseReadBuild }),
-      computePlan({ ...planning, context, reuseReadBuild, state }),
+      suppliedBaseline ?? computePlan({ context, mode: "automatic" }),
+      computePlan({ ...planning, context, state }),
     ]);
 
     return { baseline, bringsBackSetAside: planning.bringBackSetAside, computed };
@@ -334,11 +311,11 @@ async function planWithAndWithout({
 
   // Both bring back work set aside for time where it fits (or both leave it out), so the change's
   // effect is its own.
-  const request = { ...getChangePlanning(operations), context, reuseReadBuild };
+  const request = { ...getChangePlanning(operations), context };
 
   const plan = async (planning: typeof request) => {
     const [baseline, computed] = await Promise.all([
-      computePlan(planning),
+      suppliedBaseline ?? computePlan(planning),
       computePlan({ ...planning, state }),
     ]);
 
@@ -363,42 +340,41 @@ async function planWithAndWithout({
  * the Library outlined or days that passed since the plan was saved (see `planWithAndWithout`).
  */
 export async function computeChange({
+  baseline,
   context,
   operations,
-  reuseReadBuild = false,
   state,
 }: {
   context: PlanContext;
   operations: readonly PlanOperation[];
-  /** Only read previews share a build; Apply always recomputes its fresh preconditions. */
-  reuseReadBuild?: boolean;
+  /** The writer's saved allocation, reused when quoting its waiting proposals. */
+  baseline?: ComputedPlan;
   state: PlanState;
 }): Promise<ComputedChange> {
-  const { baseline, bringsBackSetAside, computed } = await planWithAndWithout({
-    context,
-    operations,
-    reuseReadBuild,
-    state,
-  });
+  const {
+    baseline: compared,
+    bringsBackSetAside,
+    computed,
+  } = await planWithAndWithout({ baseline, context, operations, state });
 
   const reviewDate = await findReviewAhead({ computed, context });
-  const reviewsAhead = reviewDate !== null;
 
   const contradicts = contradictsSteering({
-    baseline,
+    baseline: compared,
     computed,
     operations,
-    reviewsAhead,
+    reviewsAhead: reviewDate !== null,
     shown: context.items,
   });
 
   return {
+    baseline: compared,
     bringsBackSetAside,
     computed,
     contradicts,
     effect: {
       ...getChangeEffect({
-        baseline,
+        baseline: compared,
         computed,
         operations,
         reviewDate,
@@ -410,13 +386,20 @@ export async function computeChange({
       ...(operations.some((operation) => operation.kind === "fitPhaseDates") &&
         getPhaseDatesEffect({
           graph: computed.state.graph,
-          kept: baseline.built,
+          kept: compared.built,
           moved: computed.built,
           shown: context.phases,
         })),
     },
     unchanged:
       contradicts ||
-      hasNoEffect({ baseline, computed, context, operations, requested: state, reviewsAhead }),
+      hasNoEffect({
+        baseline: compared,
+        computed,
+        context,
+        operations,
+        requested: state,
+        reviewsAhead: reviewDate !== null,
+      }),
   };
 }

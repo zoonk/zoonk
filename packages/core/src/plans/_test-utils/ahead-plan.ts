@@ -7,6 +7,7 @@ import { loadPaceSamples } from "../_utils/pace-samples";
 import { createGoalPlan } from "../create-goal-plan";
 import { choosePace } from "../planner/plan-pace";
 import { parsePlanSettings } from "../planner/plan-state";
+import { refreshGoalPlan } from "../refresh-goal-plan";
 import { planLibraryFixture, unplannedGoalFixture } from "./plan-library";
 
 /** A Tuesday in 2020, before the learning events other tests write, which estimates read. */
@@ -118,6 +119,8 @@ export async function aheadPlanFixture({
     data: { completedAt: AHEAD_START, status: "done" },
     where: { kind: { in: ["chapter", "lesson"] }, planId: plan.id, status: "todo" },
   });
+
+  await refreshGoalPlan({ goalId: goal.id });
 
   return { goal, library, plan, user };
 }

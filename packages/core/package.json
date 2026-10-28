@@ -171,7 +171,6 @@
     "./language/pronunciation/finish": "./src/language/pronunciation/finish-pronunciation-round.ts",
     "./language/pronunciation/get": "./src/language/pronunciation/get-pronunciation-reviews.ts",
     "./learner/contract": "./src/learner/contract.ts",
-    "./learner/follow-time-zone": "./src/learner/follow-goal-time-zone.ts",
     "./learner/list-current-user-skills": "./src/learner/list-current-user-skills.ts",
     "./learner/placement/answer": "./src/learner/placement/answer-placement-question.ts",
     "./learner/placement/contract": "./src/learner/placement/placement-contract.ts",

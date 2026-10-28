@@ -33,7 +33,12 @@ export function CatchUpLater() {
   const later = today.session.catchUp?.later;
   const { examTomorrow } = today.session;
 
-  if (!later || later.lessons === 0 || (examTomorrow && !later.offered)) {
+  if (
+    (today.earlierWork?.length ?? 0) > 0 ||
+    !later ||
+    later.lessons === 0 ||
+    (examTomorrow && !later.offered)
+  ) {
     return null;
   }
 

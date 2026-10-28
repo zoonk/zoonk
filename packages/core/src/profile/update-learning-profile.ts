@@ -1,9 +1,8 @@
 import "server-only";
-import { type BuddyGlasses, type UserLearningProfile, prisma } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
+import { type BuddyGlasses, prisma } from "@zoonk/db";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getLearningProfileCacheTag } from "../cache/tags";
-import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
+import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { getSession } from "../users/get-session";
 import { findLearningProfileView, listAvailableGlasses } from "./_utils/learning-profile-view";
 import { DEFAULT_BUDDY } from "./default-buddy";
@@ -15,20 +14,6 @@ import {
 export type LearningProfileUpdateResult =
   | { profile: LearningProfileView; status: "updated" }
   | { status: "glassesNotEarned" | "goalNotFound" | "unauthorized" };
-
-/** Roll back provisional marks when admission discovers a no-op or needs different plan locks. */
-class ProfileAdmissionError extends Error {
-  override name = "ProfileAdmissionError";
-
-  readonly reason: "unchanged" | "retry";
-
-  constructor(reason: "unchanged" | "retry") {
-    super(`Profile admission requires ${reason === "unchanged" ? "no write" : "another attempt"}`);
-    this.reason = reason;
-  }
-}
-
-const MAX_PROFILE_ATTEMPTS = 3;
 
 /** A buddy is set as a whole: its kind, an optional name and glasses (round unless earned ones). */
 function getBuddyData(buddy: LearningProfileUpdateInput["buddy"]) {
@@ -68,51 +53,17 @@ const UNSAVED_PROFILE = {
   soundsEnabled: true,
 } satisfies Required<ProfileData>;
 
-function getProfileChange({
-  data,
-  profile,
-}: {
-  data: ProfileData;
-  profile: UserLearningProfile | null;
-}) {
-  const current = profile ?? UNSAVED_PROFILE;
+async function writeProfile({ data, userId }: { data: ProfileData; userId: string }) {
+  return writeLearnerChange({ userId }, async (tx) => {
+    const current =
+      (await tx.userLearningProfile.findUnique({ where: { userId } })) ?? UNSAVED_PROFILE;
 
-  const planInputs =
-    (data.activeGoalId !== undefined && data.activeGoalId !== current.activeGoalId) ||
-    (data.dailyLimitMinutes !== undefined && data.dailyLimitMinutes !== current.dailyLimitMinutes);
+    const changed = Object.entries(data).some(([key, value]) =>
+      Object.entries(current).some(([field, saved]) => field === key && value !== saved),
+    );
 
-  return {
-    changed:
-      planInputs ||
-      (data.soundsEnabled !== undefined && data.soundsEnabled !== current.soundsEnabled) ||
-      (data.buddyKind !== undefined && data.buddyKind !== current.buddyKind) ||
-      (data.buddyName !== undefined && data.buddyName !== current.buddyName) ||
-      (data.buddyGlasses !== undefined && data.buddyGlasses !== current.buddyGlasses),
-    planInputs,
-  };
-}
-
-async function writeProfileAttempt({ data, userId }: { data: ProfileData; userId: string }) {
-  return prisma.$transaction(async (tx) => {
-    const existing = await tx.userLearningProfile.findUnique({ where: { userId } });
-    const initial = getProfileChange({ data, profile: existing });
-
-    if (!initial.changed) {
-      return false;
-    }
-
-    await markLearnerChanged(tx, { planInputs: initial.planInputs, userId });
-
-    const admitted = await tx.userLearningProfile.findUnique({ where: { userId } });
-    const current = getProfileChange({ data, profile: admitted });
-
-    if (!current.changed) {
-      throw new ProfileAdmissionError("unchanged");
-    }
-
-    if (initial.planInputs !== current.planInputs) {
-      /** Never acquire plan locks after the learner row or retain unnecessary plan bumps. */
-      throw new ProfileAdmissionError("retry");
+    if (!changed) {
+      return unchanged(false);
     }
 
     await tx.userLearningProfile.upsert({
@@ -123,32 +74,6 @@ async function writeProfileAttempt({ data, userId }: { data: ProfileData; userId
 
     return true;
   });
-}
-
-async function writeProfile({
-  attempt = 1,
-  data,
-  userId,
-}: {
-  attempt?: number;
-  data: ProfileData;
-  userId: string;
-}): Promise<boolean> {
-  const { data: changed, error } = await safeAsync(() => writeProfileAttempt({ data, userId }));
-
-  if (error instanceof ProfileAdmissionError && error.reason === "unchanged") {
-    return false;
-  }
-
-  if (error instanceof ProfileAdmissionError && attempt < MAX_PROFILE_ATTEMPTS) {
-    return writeProfile({ attempt: attempt + 1, data, userId });
-  }
-
-  if (error) {
-    throw error;
-  }
-
-  return changed;
 }
 
 async function hasEarnedGlasses({ glasses, userId }: { glasses: BuddyGlasses; userId: string }) {

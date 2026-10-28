@@ -9,7 +9,7 @@ import {
   unauthorizedResponse,
   validationErrorResponse,
 } from "../schemas/responses";
-import { planTimeAdviceQuerySchema, planTimeToCoverInputSchema } from "../schemas/time-advice";
+import { planTimeAdviceInputSchema, planTimeToCoverInputSchema } from "../schemas/time-advice";
 import { AUTHENTICATED_SECURITY } from "../security";
 
 const planErrors = {
@@ -43,11 +43,15 @@ export const planAdvicePaths = {
     },
   },
   "/goals/{goalId}/plan/time-advice": {
-    get: {
+    post: {
       description:
         "What a daily time covers by the goal's date, in the week asked about (its study days, and the weekend's own time, which a new daily time leaves as it is): the plan that time plans, as the plan shows it once the learner chooses it. For an exam asked about with `fullCourse=true`, the plan that studies everything, going on after the exam, and the day it ends. Only that time: the time that covers everything is asked for with `POST /goals/{goalId}/plan/time-to-cover`. `ready` is false while the plan is being built: ask again in a few seconds.",
       operationId: "getPlanTimeAdvice",
-      requestParams: { path: goalPathParamsSchema, query: planTimeAdviceQuerySchema },
+      requestBody: {
+        content: { "application/json": { schema: planTimeAdviceInputSchema } },
+        required: true,
+      },
+      requestParams: { path: goalPathParamsSchema },
       responses: {
         ...planErrors,
         "200": {

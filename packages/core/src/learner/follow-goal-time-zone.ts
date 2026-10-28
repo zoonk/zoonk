@@ -1,21 +1,9 @@
 import "server-only";
-import { type TransactionClient, prisma } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
+import { type TransactionClient } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
-import { getGoalsCacheTag, getLearnerModelCacheTag } from "../cache/tags";
-import { refreshGoalPlan } from "../plans/refresh-goal-plan";
 import { canMoveGoalTimeZone } from "./_utils/goal-time-zone";
 import { markLearnerChanged } from "./_utils/mark-learner-changed";
-import { findOwnedGoal, getAnswerTimeZone } from "./_utils/owned-goal";
-
-/** A follow that lost a race tries once more from a fresh read; a second loss says no move. */
-const MAX_FOLLOW_ATTEMPTS = 2;
-
-export type FollowGoalTimeZoneResult =
-  | { moved: boolean; status: "ready" }
-  | { status: "notFound" }
-  | { status: "unauthorized" };
+import { getAnswerTimeZone } from "./_utils/owned-goal";
 
 /**
  * A goal's zone move once written, or `unchanged` when the goal can't move (the learner studied
@@ -138,66 +126,4 @@ export async function moveGoalTimeZoneInTransaction(
   }
 
   return { kind: "moved", planInputsChanged: true };
-}
-
-/**
- * Follows the learner to their device's zone when a screen of the goal opens: a goal without a
- * zone stores it, and a learner who moved takes it while nothing was done yet in the goal's day
- * (see `moveGoalTimeZoneInTransaction`). A move that lost a race to another writer, or to
- * midnight, tries once more from a fresh read of the goal. Says whether the goal moved, so the
- * screen can read itself again when it did.
- */
-export async function followGoalTimeZone({
-  attempt = 1,
-  goalId,
-  timeZone,
-}: {
-  attempt?: number;
-  goalId: string;
-  timeZone: string;
-}): Promise<FollowGoalTimeZoneResult> {
-  const owned = await findOwnedGoal(goalId);
-
-  if (owned.status !== "ready") {
-    return owned;
-  }
-
-  const { goal, userId } = owned;
-
-  // Already the goal's zone: nothing can move, so no transaction is opened for it.
-  if (timeZone === goal.timezone) {
-    return { moved: false, status: "ready" };
-  }
-
-  const { data: move, error } = await safeAsync(() =>
-    prisma.$transaction((tx) =>
-      moveGoalTimeZoneInTransaction(tx, {
-        fromZone: goal.timezone,
-        goalId: goal.id,
-        toZone: timeZone,
-        userId,
-      }),
-    ),
-  );
-
-  if (error) {
-    if (!isTimeZoneUnchanged(error)) {
-      throw error;
-    }
-
-    if (error.reason !== "studied" && attempt < MAX_FOLLOW_ATTEMPTS) {
-      return followGoalTimeZone({ attempt: attempt + 1, goalId: goal.id, timeZone });
-    }
-
-    return { moved: false, status: "ready" };
-  }
-
-  if (move.kind !== "moved") {
-    return { moved: false, status: "ready" };
-  }
-
-  await refreshGoalPlan({ goalId });
-
-  revalidateCacheTags([getGoalsCacheTag(userId), getLearnerModelCacheTag(userId)]);
-  return { moved: true, status: "ready" };
 }

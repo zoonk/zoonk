@@ -9,7 +9,6 @@ import { getExamDocument } from "../../exams/exam-document";
 import { getOwnLevel } from "../../learner/placement/placement-contract";
 import { listTaughtStandInSkills } from "../../lookahead/plan-outline-needs";
 import { getMinutesPerItem, getPlanStatus } from "../../preparation/plan-status";
-import { loadCatchUpItems } from "../../sessions/_utils/catch-up";
 import { getExamPrepAccess, getFreeWeekEnd } from "../../sessions/_utils/exam-access";
 import { loadTodayLearnBlocks } from "../../view-models/_utils/today-lesson-order";
 import { getNoticeWaitState } from "../notice-wait";
@@ -17,29 +16,24 @@ import { type PlanView } from "../plan-view-contract";
 import { getSkillArea } from "../planner/graph-areas";
 import { addDays, getPlanCalendar, getStartOfWeek, toIsoDate } from "../planner/plan-calendar";
 import { DAYS_PER_WEEK, type PlanGraph, type PlanSettings } from "../planner/plan-state";
-import { loadFitOffer } from "./fit-offer";
 import { foldChangeAreas } from "./fold-part-areas";
 import { loadPlanReadProjection } from "./load-plan-read";
 import { loadGraphPartAreas } from "./part-areas";
 import { findPlanPhase } from "./phase-states";
-import { toPlanBasesView } from "./plan-bases-view";
 import { loadPlanChangeViews } from "./plan-change-view";
 import { type PlanContext } from "./plan-context";
 import { loadPlanCourse } from "./plan-course";
 import { isPlanFinished } from "./plan-end";
 import { MINUTES_PER_HOUR, buildEstimateView } from "./plan-estimate-view";
-import {
-  type ShownFeasibility,
-  readShownFeasibility,
-  toFeasibilityView,
-} from "./plan-feasibility-view";
-import { buildPlanNumbersView } from "./plan-numbers-view";
+import { buildSavedPlanNumbersView } from "./plan-numbers-view";
 import { buildPlanPath } from "./plan-path-view";
 import { getSkillAreas } from "./plan-phase-views";
 import { type PlanReadContext } from "./plan-read-projection";
 import { buildScheduleView } from "./plan-schedule-view";
+import { readFreshPlanSummary } from "./plan-summary";
 import { buildPlanTimingView } from "./plan-timing-view";
 import { loadPlanTools, toPlanToolViews } from "./plan-tools";
+import { readSavedBases, readSavedFeasibility } from "./saved-plan-advice";
 import { getShortPlanShape, toShortPlanView } from "./short-plan-view";
 import { getWrittenPracticeView } from "./written-practice-view";
 
@@ -159,45 +153,17 @@ function readPlanStatus({
  */
 type PlanViewInput = { context: PlanContext; now: Date };
 
-/**
- * The lessons the learner's own time fits that the plan doesn't hold, worked out before the
- * learner sees them: one change at their own time and date. None while the plan isn't planned, or
- * once its date came with lessons left, whose way on (another date, or an exam's plan going on
- * after it) the learner previews when they ask.
- */
-async function loadPlanFitOffer({
-  context,
-  feasibility,
-  status,
-}: {
-  context: PlanContext;
-  feasibility: ShownFeasibility | null;
-  status: PlanView["status"];
-}): Promise<PlanView["fitOffer"]> {
-  if (!feasibility || status?.kind === "pastDate") {
-    return null;
-  }
-
-  return loadFitOffer({ context, feasibility });
-}
-
 export async function buildPlanView({
   context: savedContext,
   now,
 }: PlanViewInput): Promise<PlanView> {
-  const ready = savedContext.phases.length > 0;
-
   const {
     catchUp: selectedCatchUp,
-    computed,
     context,
-    coverage,
+    summary,
   } = await loadPlanReadProjection({ context: savedContext, now });
 
-  // What fits reads the plan the Plan shows, so a change and the read after it say the same.
-  const feasibility = computed
-    ? readShownFeasibility({ coverage, feasibility: computed.feasibility })
-    : null;
+  const feasibility = readSavedFeasibility(summary);
 
   const { goal, items, phases, state } = context;
   const shortPlan = getShortPlanShape({ goal, settings: state.settings });
@@ -233,7 +199,13 @@ export async function buildPlanView({
     partAreas,
     taughtSkillIds,
   ] = await Promise.all([
-    loadPlanChangeViews({ goal, now, planId: context.plan.id, planVersion: context.plan.version }),
+    loadPlanChangeViews({
+      context: savedContext,
+      goal,
+      now,
+      planId: context.plan.id,
+      planVersion: context.plan.version,
+    }),
     getAccess(context),
     loadChapterTitles(chapterIds),
     loadPlanCourse({ goal, items }),
@@ -246,7 +218,7 @@ export async function buildPlanView({
       noticeDate: state.settings.noticeDate,
       today: toIsoDate(context.today),
     }),
-    selectedCatchUp ?? loadCatchUpItems(goal.id),
+    Promise.resolve(selectedCatchUp),
     loadExamChoiceViews({
       choices: state.settings.examChoices,
       examBlueprintId: goal.examBlueprintId,
@@ -256,9 +228,7 @@ export async function buildPlanView({
     listTaughtStandInSkills({ goal, graph: state.graph, items }),
   ]);
 
-  const minutes = new Map(
-    computed ? computed.built.items.map((item) => [item.key, item.minutes]) : null,
-  );
+  const minutes = new Map<string, number>();
 
   const skillAreas = getSkillAreas({
     courseTitle: course?.title ?? null,
@@ -276,12 +246,24 @@ export async function buildPlanView({
     studiesPastTarget: fullCourse,
   });
 
-  const fitOffer = await loadPlanFitOffer({ context: savedContext, feasibility, status });
+  const fresh = readFreshPlanSummary({
+    basis: {
+      layoutInputVersion: context.plan.inputVersion,
+      layoutStudyDay: toIsoDate(context.today),
+      planId: context.plan.id,
+      planVersion: context.plan.version,
+      timeZone: context.timeZone,
+      userId: goal.userId,
+    },
+    value: context.plan.summary,
+  });
+
+  const fitOffer = status?.kind === "pastDate" ? null : (fresh?.advice?.fitOffer ?? null);
 
   return {
     access,
     areas: buildAreas({ ...state, partAreas }),
-    bases: computed ? toPlanBasesView({ bases: computed.bases, settings: state.settings }) : null,
+    bases: readSavedBases({ context, settings: state.settings, summary }),
     changes: changes.map((change) => foldChangeAreas({ change, partAreas })),
     course,
     currentPhase,
@@ -295,26 +277,22 @@ export async function buildPlanView({
     })
       ? { kind: "finished" }
       : null,
-    estimate: buildEstimateView({ computed, context }),
+    estimate: buildEstimateView({ computed: null, context }),
     examChoices,
     examDocument: getExamDocument(goal),
-    feasibility: feasibility && toFeasibilityView(feasibility),
+    feasibility,
     fitOffer: fitOffer && foldChangeAreas({ change: fitOffer, partAreas }),
     goalId: goal.id,
     notice: getNoticeWaitState({ noticeWaitUntil: context.plan.noticeWaitUntil, now }),
-    numbers:
-      computed && feasibility
-        ? await buildPlanNumbersView({ computed, context, coverage: feasibility, saved: true })
-        : null,
+    numbers: summary ? buildSavedPlanNumbersView(context) : null,
     ownLevel: getOwnLevel({ goal }),
     phases: buildPlanPath({
       challengesOpen: phaseChallengesRequired && !access.freeWeekOver,
       chapterTitles,
       context,
       currentPhase,
-      estimateMinutes: computed
-        ? computed.built.estimate.totalMinutes
-        : (context.plan.estimateHours ?? 0) * MINUTES_PER_HOUR,
+      estimateMinutes:
+        summary?.selected.totalMinutes ?? (context.plan.estimateHours ?? 0) * MINUTES_PER_HOUR,
       phaseChallengesRequired,
       shortPlan,
       skillAreas,
@@ -322,7 +300,7 @@ export async function buildPlanView({
       todayBlocks,
     }),
     planId: context.plan.id,
-    ready,
+    ready: savedContext.phases.length > 0,
     schedule: buildScheduleView({ calendar, context, dateKind, fullCourse, noticeDates }),
     shortPlan: toShortPlanView({ items, shape: shortPlan }),
     status,

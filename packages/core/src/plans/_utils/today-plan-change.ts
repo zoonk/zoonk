@@ -4,24 +4,20 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { PHASE_DATES_SOURCE } from "../plan-change-contract";
 import { type PlanChangeView } from "../plan-view-contract";
-import { showsPhaseDatesMove } from "../planner/phase-dates-move";
 import { parsePlanGraph, parsePlanSettings } from "../planner/plan-state";
-import { isPlanReady } from "./apply-plan-change";
 import { asksAboutAutomaticChange } from "./automatic-plan-change";
-import { computeChange } from "./compute-change";
 import { foldChangeAreas } from "./fold-part-areas";
-import { applyChangeOperations, loadGraphPartAreas } from "./part-areas";
+import { loadGraphPartAreas } from "./part-areas";
 import { parsePlanChangePayload } from "./plan-change-payload";
 import { changeGoalSelect, toPlanChangeView } from "./plan-change-view";
-import { loadPlanContext } from "./plan-context";
 import { isDateReached } from "./plan-end";
+import { isCurrentPlanPreview } from "./plan-preview-basis";
 
 /** An automatic change is news for a day; after that it's simply how the plan is. */
 export const RECENT_CHANGE_MS = 24 * 60 * 60 * 1000;
 
 /**
- * The newest proposals Today weighs, one after another, for one that still changes something:
- * each preview plans the plan twice, and more than a couple waiting is rare.
+ * The newest saved proposals Today considers for a current, actionable quote.
  */
 const MAX_PROPOSALS = 3;
 
@@ -81,61 +77,16 @@ async function findTodayChanges({
 }
 
 /**
- * A proposal weighed against the plan as it is now, with the same dry run as accepting it: its
- * effect, null when the plan isn't ready or its operations can't apply, or `unchanged` when
- * applying it now would change nothing the learner can see. Pedro's Today offered to move his
- * phase dates, "a challenge falls on a day without room", with Apply and no diff: planned from
- * another day, the move no longer did anything (see `showsPhaseDatesMove`).
- */
-async function previewProposal({
-  change,
-  goal,
-  now,
-  timeZone,
-}: {
-  change: PlanChange;
-  goal: Goal;
-  now: Date;
-  timeZone?: string | null;
-}): Promise<PlanChangeView["effect"] | "unchanged"> {
-  const payload = parsePlanChangePayload(change.payload);
-  const context = await loadPlanContext({ goal, now, timeZone });
-
-  if (!context || !isPlanReady(context)) {
-    return null;
-  }
-
-  const result = await applyChangeOperations({
-    context,
-    noticeGraph: payload.noticeGraph,
-    operations: payload.operations,
-  });
-
-  if ("error" in result) {
-    return null;
-  }
-
-  const { effect, unchanged } = await computeChange({
-    context,
-    operations: result.operations,
-    reuseReadBuild: true,
-    state: result.state,
-  });
-
-  const shows = payload.source !== PHASE_DATES_SOURCE || showsPhaseDatesMove(effect);
-
-  return unchanged || !shows ? "unchanged" : effect;
-}
-
-/**
  * The change Today carries, with its effect: the newest proposal that still changes something (see
- * `previewProposal`), else the newest unseen automatic change of the last day.
+ * `isCurrentPlanPreview`), else the newest unseen automatic change of the last day.
  */
 async function pickTodayChange({
   dateReached,
   goal,
   now,
   planId,
+  inputVersion,
+  planVersion,
   skipPhaseDates,
   timeZone,
 }: {
@@ -143,6 +94,8 @@ async function pickTodayChange({
   goal: Goal;
   now: Date;
   planId: string;
+  inputVersion: number;
+  planVersion: number;
   skipPhaseDates: boolean;
   timeZone?: string | null;
 }): Promise<{ change: PlanChange; effect: PlanChangeView["effect"] } | null> {
@@ -154,11 +107,21 @@ async function pickTodayChange({
   });
 
   for (const proposal of proposals) {
-    // oxlint-disable-next-line no-await-in-loop -- the newest proposal still worth offering wins, so each waits for the one before it.
-    const effect = await previewProposal({ change: proposal, goal, now, timeZone });
+    const payload = parsePlanChangePayload(proposal.payload);
+    const zone = getAnswerTimeZone({ goal, timeZone });
 
-    if (effect !== "unchanged") {
-      return { change: proposal, effect };
+    if (
+      payload.effect &&
+      isCurrentPlanPreview({
+        basis: payload.previewBasis,
+        context: {
+          plan: { inputVersion, version: planVersion },
+          timeZone: zone,
+          today: getDateInTimeZone({ date: now, timeZone: zone }),
+        },
+      })
+    ) {
+      return { change: proposal, effect: payload.effect };
     }
   }
 
@@ -191,6 +154,7 @@ export async function loadTodayPlanChange({
       goal: { select: { ...changeGoalSelect, examBlueprintId: true } },
       graph: true,
       id: true,
+      inputVersion: true,
       settings: true,
       version: true,
     },
@@ -206,7 +170,16 @@ export async function loadTodayPlanChange({
     });
 
   const picked = plan
-    ? await pickTodayChange({ dateReached, goal, now, planId: plan.id, skipPhaseDates, timeZone })
+    ? await pickTodayChange({
+        dateReached,
+        goal,
+        inputVersion: plan.inputVersion,
+        now,
+        planId: plan.id,
+        planVersion: plan.version,
+        skipPhaseDates,
+        timeZone,
+      })
     : null;
 
   if (!plan || !picked) {

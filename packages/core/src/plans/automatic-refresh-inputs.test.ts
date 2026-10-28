@@ -206,7 +206,7 @@ describe("automatic refresh admits fresh inputs before running the producer", ()
       const after = await readPlan();
       expect(after.items).toStrictEqual(before.items);
       expect(after.version).toBe(before.version);
-      expect(after.inputVersion).toBe(before.inputVersion + 1);
+      expect(after.inputVersion).toBe(before.inputVersion);
 
       const replay = await countDatabaseStatements(() => refreshGoalPlan({ goalId: goal.id }));
       expect(replay.result).toStrictEqual({ status: "unchanged" });
@@ -244,7 +244,8 @@ describe("automatic refresh admits fresh inputs before running the producer", ()
       const builds = vi.spyOn(producer, "buildPlan");
       vi.setSystemTime(new Date("2026-10-25T12:00:00Z"));
       await refreshGoalPlan({ goalId: goal.id });
-      expect(builds).not.toHaveBeenCalled();
+      await expect(readItems()).resolves.toStrictEqual(before);
+      builds.mockClear();
       vi.setSystemTime(new Date("2026-10-26T12:00:00Z"));
       await refreshGoalPlan({ goalId: goal.id });
       expect(builds).toHaveBeenCalledWith(expect.objectContaining({ goalId: goal.id }));

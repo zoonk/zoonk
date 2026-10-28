@@ -1,9 +1,10 @@
 import "server-only";
 import { type Goal, type PlanItem, prisma } from "@zoonk/db";
+import { commitPlan } from "../plans/_utils/commit-plan";
 import { parsePlanChangePayload, toPlanChangePayload } from "../plans/_utils/plan-change-payload";
 import { loadPlanContext } from "../plans/_utils/plan-context";
 import { loadGoalPlannerLessons } from "../plans/_utils/planner-lessons";
-import { commitPlan, computePlan } from "../plans/_utils/replan";
+import { computePlan } from "../plans/_utils/replan";
 import { countLessons } from "../plans/_utils/stand-in-lessons";
 import { type PlanGraph, parsePlanGraph } from "../plans/planner/plan-state";
 import {

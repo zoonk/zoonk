@@ -40,10 +40,10 @@ describe("POST /v1/today/plan-change/acknowledgments", () => {
       throw new Error("Expected the mandatory notice preview");
     }
 
-    expect(read.today.planChange?.id).toBeNull();
+    expect(read.today.planChange).toBeNull();
 
     const input = {
-      basis: read.today.noticeBasis,
+      basis: { inputVersion: fixture.plan.inputVersion, version: fixture.plan.version },
       goalId: fixture.goal.id,
       kind: "computed",
       shownDate: "2026-10-14",

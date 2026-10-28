@@ -4,7 +4,11 @@ import { computeChange } from "./_utils/compute-change";
 import { foldChangeAreas } from "./_utils/fold-part-areas";
 import { findOwnedPlan } from "./_utils/owned-plan";
 import { applyChangeOperations, loadGraphPartAreas } from "./_utils/part-areas";
+import { writePlanMetadata } from "./_utils/plan-metadata-write";
 import { assertPlanTargetDates } from "./_utils/plan-target-dates";
+import { prepareProposalPreviews } from "./_utils/prepare-plan-write";
+import { revalidatePlanTags } from "./_utils/replan";
+import { withPlanRetry } from "./plan-conflict";
 import { type PlanChangeInput } from "./plan-contract";
 import { type PlanChangePreview } from "./plan-preview-contract";
 import { type PlanOperationError } from "./planner/plan-operations";
@@ -34,47 +38,72 @@ export async function previewPlanChange({
   goalId: string;
   input: PlanChangeInput;
 }): Promise<PlanChangePreviewResult> {
-  const owned = await findOwnedPlan({ goalId, timeZone: input.timeZone });
+  return withPlanRetry(async () => {
+    const owned = await findOwnedPlan({ goalId, timeZone: input.timeZone });
 
-  if (owned.status !== "ready") {
-    return owned;
-  }
+    if (owned.status !== "ready") {
+      return owned;
+    }
 
-  const { context } = owned;
-  assertPlanTargetDates({ context, operations: input.operations });
+    const { context } = owned;
+    assertPlanTargetDates({ context, operations: input.operations });
 
-  const [result, partAreas] = await Promise.all([
-    applyChangeOperations({ context, operations: input.operations }),
-    loadGraphPartAreas({
-      examBlueprintId: context.goal.examBlueprintId,
-      graph: context.state.graph,
-    }),
-  ]);
+    const [result, partAreas] = await Promise.all([
+      applyChangeOperations({ context, operations: input.operations }),
+      loadGraphPartAreas({
+        examBlueprintId: context.goal.examBlueprintId,
+        graph: context.state.graph,
+      }),
+    ]);
 
-  if ("error" in result) {
-    return { error: result.error, status: "invalid" };
-  }
+    if ("error" in result) {
+      return { error: result.error, status: "invalid" };
+    }
 
-  if (!isPlanReady(context)) {
-    return { preview: BUILDING, status: "ready" };
-  }
+    if (!isPlanReady(context)) {
+      return { preview: BUILDING, status: "ready" };
+    }
 
-  const { computed, effect, unchanged } = await computeChange({
-    context,
-    operations: result.operations,
-    reuseReadBuild: true,
-    state: result.state,
+    const { baseline, computed, effect, unchanged } = await computeChange({
+      context,
+      operations: result.operations,
+      state: result.state,
+    });
+
+    const previews = await prepareProposalPreviews({ baseline, context });
+
+    if (previews.length > 0) {
+      await writePlanMetadata({
+        context,
+        write: (tx) =>
+          Promise.all(
+            previews.map((preview) =>
+              tx.planChange.updateMany({
+                data: { payload: preview.payload },
+                where: { id: preview.id, status: "proposed" },
+              }),
+            ),
+          ),
+      });
+
+      revalidatePlanTags(context.goal.userId);
+    }
+
+    const { coreFits, coveredShare, fits, measure } = computed.feasibility;
+
+    return {
+      preview: {
+        effect: foldChangeAreas({ change: { effect, operations: [] }, partAreas }).effect,
+        feasibility: {
+          coreFits,
+          coveredShare: Math.round(coveredShare * 100) / 100,
+          fits,
+          measure,
+        },
+        ready: true,
+        unchanged,
+      },
+      status: "ready",
+    };
   });
-
-  const { coreFits, coveredShare, fits, measure } = computed.feasibility;
-
-  return {
-    preview: {
-      effect: foldChangeAreas({ change: { effect, operations: [] }, partAreas }).effect,
-      feasibility: { coreFits, coveredShare: Math.round(coveredShare * 100) / 100, fits, measure },
-      ready: true,
-      unchanged,
-    },
-    status: "ready",
-  };
 }

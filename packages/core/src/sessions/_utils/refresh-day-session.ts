@@ -1,5 +1,8 @@
 import "server-only";
 import { type Goal, type StudySessionBlock, prisma } from "@zoonk/db";
+import { loadPlanAtToken } from "../../plans/_utils/plan-token";
+import { PlanConflictError, withPlanRetry } from "../../plans/plan-conflict";
+import { getItemKey } from "../../plans/planner/plan-items";
 import { getBlockItemIds, readBlockPayload } from "../block-payload";
 import { loadRebuildMissionFacts, rebuildMissions } from "../missions/rebuild-missions";
 import { type PlannedBlock, type SessionBuildInput, buildSessionBlocks } from "../session-builder";
@@ -9,7 +12,9 @@ import { AWAITING_OUTLINES_VERSION, loadDayPlanVersion } from "./day-plan-versio
 import { withSessionAppendLock } from "./extra-blocks";
 import { loadSessionBuildInput } from "./load-build-inputs";
 import { planStudyDay } from "./plan-study-day";
-import { type SelectedDayPlan, selectDayPlan } from "./selected-day-plan";
+import { prepareSelectedPlanSave, saveSelectedPlan } from "./save-selected-plan";
+import { type SelectedDayPlan, selectDayPlan, selectDayPlanFromContext } from "./selected-day-plan";
+import { isSelectedPlanCurrent } from "./selected-plan-current";
 import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-access";
 
 /**
@@ -26,7 +31,7 @@ type DaySession = { goal: Goal; session: StudySessionRow; timeZone: string };
 
 /** The blocks a learner's change keeps: those they started or finished. */
 function getKeptBlocks(blocks: readonly StudySessionBlock[]): StudySessionBlock[] {
-  return blocks.filter((block) => block.status !== "pending");
+  return blocks.filter((block) => block.status !== "pending" || readBlockPayload(block).extra);
 }
 
 function sumMinutes(blocks: readonly Pick<PlannedBlock, "estimatedMinutes">[]): number {
@@ -182,12 +187,17 @@ export function hasSameBlocks({
  * append lock marks the plan before it reads the queue and commits that mark even when the content
  * is unchanged.
  */
-async function replaceNotStartedBlocks({ day }: { day: DaySession }): Promise<DaySessionRefresh> {
+export async function replaceNotStartedBlocks({
+  day,
+  selection: selected,
+}: {
+  day: DaySession;
+  selection?: SelectedDayPlan;
+}): Promise<DaySessionRefresh> {
   const { session } = day;
   const kept = getKeptBlocks(session.blocks);
   const keptIds = new Set(kept.map((block) => block.id));
   const replaced = session.blocks.filter((block) => !keptIds.has(block.id));
-  const planVersion = await loadDayPlanVersion({ goal: day.goal, localDate: session.localDate });
 
   const context = {
     goal: day.goal,
@@ -200,7 +210,16 @@ async function replaceNotStartedBlocks({ day }: { day: DaySession }): Promise<Da
   // The day follows the same selected allocation as Open: an unstarted one is built again whole,
   // and a started one's rest takes what the plan gives today. Filled with the plan's next lessons,
   // Maya's started Saturday took five lessons from November to January for a rest day on Tuesdays.
-  const selection = (await selectDayPlan(context)) ?? undefined;
+  const selection = selected ?? (await selectDayPlan(context)) ?? undefined;
+
+  const planVersion = await loadDayPlanVersion({
+    goal: day.goal,
+    localDate: session.localDate,
+    plan: selection
+      ? { graph: selection.state.graph, version: selection.context.plan.version }
+      : undefined,
+  });
+
   const unstarted = session.status === "planned" && session.startedAt === null && kept.length === 0;
 
   const { blocks: planned, plan } =
@@ -209,6 +228,19 @@ async function replaceNotStartedBlocks({ day }: { day: DaySession }): Promise<Da
       : await planRestOfDayWithPlan({ day, kept, selection });
 
   const unchanged = hasSameContent({ anyOrder: kept.length > 0, planned, replaced });
+
+  const persistsPlan =
+    selection !== undefined &&
+    (selection.computed !== null || selection.inputKeyUpdate !== undefined);
+
+  const prepared = selection
+    ? await prepareSelectedPlanSave({ selection, shown: persistsPlan })
+    : null;
+
+  const savedVersion =
+    planVersion === AWAITING_OUTLINES_VERSION || !selection
+      ? planVersion
+      : selection.context.plan.version + Number(prepared?.kind === "computed");
 
   const facts = await loadRebuildMissionFacts({
     blocks: planned,
@@ -221,14 +253,48 @@ async function replaceNotStartedBlocks({ day }: { day: DaySession }): Promise<Da
   });
 
   return withSessionAppendLock({
+    plan: selection && { id: selection.context.plan.id, write: persistsPlan },
     run: async ({ session: locked, transaction }) => {
+      if (
+        selection &&
+        !(await isSelectedPlanCurrent({
+          increment: Number(persistsPlan),
+          selection,
+          tx: transaction,
+        }))
+      ) {
+        throw new PlanConflictError();
+      }
+
       if (!hasSameBlocks({ locked: locked.blocks, read: session.blocks })) {
         return "kept";
       }
 
+      if (selection && prepared) {
+        await saveSelectedPlan({ context: selection.context, prepared, tx: transaction });
+      }
+
       if (unchanged) {
+        // Ended days keep their binding; the outline append owns clearing its waiting marker.
+        if (
+          locked.status !== "completed" &&
+          locked.planVersion !== AWAITING_OUTLINES_VERSION &&
+          locked.planVersion !== savedVersion
+        ) {
+          await transaction.studySession.update({
+            data: { planVersion: savedVersion },
+            where: { id: session.id },
+          });
+        }
+
         return replaced.length > 0 ? "same" : "kept";
       }
+
+      const rows = selection?.computed
+        ? await transaction.planItem.findMany({ where: { planId: selection.context.plan.id } })
+        : (selection?.context.items ?? []);
+
+      const ids = new Map(rows.map((item) => [getItemKey(item), item.id]));
 
       const firstPosition = Math.max(-1, ...kept.map((block) => block.position)) + 1;
 
@@ -246,6 +312,12 @@ async function replaceNotStartedBlocks({ day }: { day: DaySession }): Promise<Da
       await transaction.studySessionBlock.createMany({
         data: planned.map((block, index) => ({
           ...block,
+          payload: {
+            ...block.payload,
+            planItemId: block.payload.planItemKey
+              ? (ids.get(block.payload.planItemKey) ?? block.payload.planItemId)
+              : block.payload.planItemId,
+          },
           position: firstPosition + index,
           sessionId: session.id,
         })),
@@ -256,7 +328,7 @@ async function replaceNotStartedBlocks({ day }: { day: DaySession }): Promise<Da
 
       await transaction.studySession.update({
         data: {
-          planVersion,
+          planVersion: savedVersion,
           plannedMinutes: getKeptMinutes(kept) + sumMinutes(planned),
           ...(missions && { missions }),
           ...(reopens && { status: "active" }),
@@ -288,81 +360,30 @@ export async function followPlanChangeToday({
   timeZone: string;
   userId: string;
 }): Promise<DaySessionRefresh> {
-  const session = await prisma.studySession.findUnique({
-    include: STUDY_SESSION_INCLUDE,
-    where: { userGoalDate: { goalId, localDate, userId } },
-  });
+  return withPlanRetry(async () => {
+    const session = await prisma.studySession.findUnique({
+      include: STUDY_SESSION_INCLUDE,
+      where: { userGoalDate: { goalId, localDate, userId } },
+    });
 
-  if (!session) {
-    return "notBuilt";
-  }
+    if (!session) {
+      return "notBuilt";
+    }
 
-  if (!session.goal) {
-    return "kept";
-  }
+    if (!session.goal) {
+      return "kept";
+    }
 
-  return replaceNotStartedBlocks({ day: { goal: session.goal, session, timeZone } });
-}
+    const now = new Date();
+    const context = await loadPlanAtToken(goalId, { now, timeZone });
 
-/**
- * A day opened while it held time for lessons still being outlined (its plan version says so, see
- * `loadDayPlanVersion`): once they land, or nobody is writing them anymore, the learner's next Open
- * or Continue adds the new lessons to its end, up to the day's time, without moving anything they
- * were shown, as Today's "more as you go" said. A finished day stays as it is. Returns the day as
- * it is now.
- */
-export async function appendLandedLessons({
-  goal,
-  session,
-  timeZone,
-}: DaySession): Promise<StudySessionRow> {
-  if (session.planVersion !== AWAITING_OUTLINES_VERSION || session.status === "completed") {
-    return session;
-  }
+    const selection = context
+      ? await selectDayPlanFromContext({ context, now, useFreshSaved: true })
+      : undefined;
 
-  const planVersion = await loadDayPlanVersion({ goal, localDate: session.localDate });
-
-  if (planVersion === AWAITING_OUTLINES_VERSION) {
-    return session;
-  }
-
-  const planned = await planRestOfDay({ day: { goal, session, timeZone }, kept: session.blocks });
-  const lessons = planned.filter((block) => block.kind === "learn");
-
-  if (lessons.length === 0) {
-    await prisma.studySession.update({ data: { planVersion }, where: { id: session.id } });
-    return { ...session, planVersion };
-  }
-
-  await withSessionAppendLock({
-    run: async ({ session: locked, transaction }) => {
-      if (
-        locked.status === "completed" ||
-        !hasSameBlocks({ locked: locked.blocks, read: session.blocks })
-      ) {
-        return;
-      }
-
-      const firstPosition = Math.max(-1, ...session.blocks.map((block) => block.position)) + 1;
-
-      await transaction.studySessionBlock.createMany({
-        data: lessons.map((block, index) => ({
-          ...block,
-          position: firstPosition + index,
-          sessionId: session.id,
-        })),
-      });
-
-      await transaction.studySession.update({
-        data: { planVersion, plannedMinutes: getKeptMinutes(session.blocks) + sumMinutes(lessons) },
-        where: { id: session.id },
-      });
-    },
-    session,
-  });
-
-  return prisma.studySession.findUniqueOrThrow({
-    include: STUDY_SESSION_INCLUDE,
-    where: { id: session.id },
+    return replaceNotStartedBlocks({
+      day: { goal: context?.goal ?? session.goal, session, timeZone },
+      selection,
+    });
   });
 }

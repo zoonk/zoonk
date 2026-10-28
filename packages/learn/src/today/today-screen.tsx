@@ -19,6 +19,7 @@ import {
   TodayScreenProvider,
 } from "./today-context";
 import { getSessionState } from "./today-day-state";
+import { TodayEarlierWork } from "./today-earlier-work";
 import { TodayHeading } from "./today-heading";
 import { TODAY_ACTION_CLASS, TODAY_ASIDE_CLASS, TODAY_MAIN_CLASS } from "./today-layout";
 import { TodayMissions } from "./today-missions";
@@ -78,6 +79,15 @@ function isWaitingForLessons(today: TodayView): boolean {
  * <TodayScreen actions={actions} buddy={buddy} notices={notices} today={today} />
  * ```
  */
+function TodaySessionWithEarlierWork() {
+  return (
+    <div className="mt-5 [grid-area:session]">
+      <TodayEarlierWork />
+      <TodaySession />
+    </div>
+  );
+}
+
 export function TodayScreen({
   actions,
   brainPower = null,
@@ -157,7 +167,7 @@ export function TodayScreen({
             <TodayContinueProvider>
               <TodayHeading className="[grid-area:head]" />
               <TodayAction className={TODAY_ACTION_CLASS} />
-              <TodaySession className="mt-5 [grid-area:session]" />
+              <TodaySessionWithEarlierWork />
               <TodayMore className="mt-4 [grid-area:more]" />
             </TodayContinueProvider>
           </section>

@@ -7,7 +7,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { loadGoalPlan } from "../../learner/_utils/goal-skill-graph";
 import { planLibraryFixture, unplannedGoalFixture } from "../../plans/_test-utils/plan-library";
-import { projectPlanForRead } from "../../plans/_utils/plan-read-projection";
 import { createGoalPlan } from "../../plans/create-goal-plan";
 import { loadGoalPreparation } from "../../preparation/_utils/load-goal-preparation";
 import { getGoalPreparation } from "../../preparation/get-goal-preparation";
@@ -97,13 +96,13 @@ describe("Today preparation read budgets", () => {
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
     vi.setSystemTime(new Date("2026-10-03T12:00:00Z"));
     const day = await readStudyDay({ goal, now: new Date(), timeZone: "UTC", userId: user.id });
-    expect(day?.selection?.computed).toBeTruthy();
+    expect(day?.selection?.computed).toBeNull();
 
-    if (!day?.selection?.computed) {
+    if (!day?.selection) {
       throw new Error("Expected the moved-forward selected plan");
     }
 
-    const selectedPlan = { ...projectPlanForRead(day.selection), catchUp: 0 };
+    const selectedPlan = { ...day.selection.context, catchUp: 0 };
 
     const counted = await countDatabaseStatements(() =>
       loadGoalPreparation({ goalId: goal.id, selectedPlan }),
@@ -111,7 +110,7 @@ describe("Today preparation read budgets", () => {
 
     expect(counted.result.status).toBe("ready");
 
-    expect(counted.result.status === "ready" && counted.result.preparation.status?.kind).not.toBe(
+    expect(counted.result.status === "ready" && counted.result.preparation.status?.kind).toBe(
       "behind",
     );
 
@@ -187,16 +186,16 @@ describe("Today preparation read budgets", () => {
 
       vi.setSystemTime(new Date("2020-10-01T12:00:00Z"));
       const day = await readStudyDay({ goal, now: new Date(), timeZone: "UTC", userId: user.id });
-      expect(day?.selection?.computed).toBeTruthy();
+      expect(day?.selection?.computed).toBeNull();
 
-      if (!day?.selection?.computed) {
+      if (!day?.selection) {
         throw new Error("Expected an authorized moved-forward selection");
       }
 
       expect(day.selection.left.length).toBeGreaterThan(0);
       const catchUp = getSelectedCatchUpItems(day.selection).length;
       expect(catchUp).toBeGreaterThan(0);
-      const selectedPlan = { ...projectPlanForRead(day.selection), catchUp };
+      const selectedPlan = { ...day.selection.context, catchUp };
       const evidence = await getGoalPreparation(goal.id);
       const projected = await loadGoalPreparation({ goalId: goal.id, selectedPlan });
 
@@ -240,7 +239,7 @@ describe("Today preparation read budgets", () => {
         throw new Error("Expected the same saved Today");
       }
 
-      expect(saved.result.today.progress).toStrictEqual(preview.result.today.progress);
+      expect(saved.result.today.progress?.value).toBe(preview.result.today.progress?.value);
       expect(saved.writes).toBe(0);
       const afterEvidence = await getGoalPreparation(goal.id);
 

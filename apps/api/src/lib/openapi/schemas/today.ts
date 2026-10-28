@@ -15,6 +15,11 @@ import { suggestedGoalSchema } from "./suggested-goals";
 
 export const todayResponseSchema = z
   .object({
+    earlierWork: z
+      .array(z.object({ id: z.uuid().nullable(), title: z.string() }))
+      .describe(
+        "Earlier unfinished saved teaching, in plan order. Start settles it into the current plan; this list does not promise it all fits one session.",
+      ),
     exam: examMomentSchema
       .nullable()
       .meta({

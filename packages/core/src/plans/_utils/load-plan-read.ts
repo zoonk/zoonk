@@ -1,35 +1,21 @@
 import "server-only";
-import {
-  getSelectedCatchUpItems,
-  selectDayPlanFromContext,
-} from "../../sessions/_utils/selected-day-plan";
+import { loadCatchUpItems } from "../../sessions/_utils/catch-up";
+import { readEarlierWork } from "./left-work";
 import { type PlanContext } from "./plan-context";
-import { projectPlanForRead } from "./plan-read-projection";
+import { readPlanSummary } from "./plan-summary";
 
-/** Replaces Plan's existing compute and reuses Today's selected work from the loaded context. */
-export async function loadPlanReadProjection({
-  context,
-  now,
-}: {
-  context: PlanContext;
-  now: Date;
-}) {
-  if (context.phases.length === 0) {
-    return { catchUp: null, computed: null, context, coverage: null };
-  }
-
-  const selection = await selectDayPlanFromContext({
-    context,
-    now,
-    readAnalysis: true,
-    reuseReadBuild: true,
-  });
+/** Saved items and their summary are the only authority for a screen or prefetch. */
+export async function loadPlanReadProjection({ context }: { context: PlanContext; now: Date }) {
+  const catchUp = await loadCatchUpItems(context.goal.id);
 
   return {
-    catchUp: selection.left.length > 0 ? getSelectedCatchUpItems(selection) : null,
-    computed: selection.advice ?? selection.computed,
-    context: projectPlanForRead(selection),
-    // What the plan it shows covers: its saved allocation's when the read keeps it.
-    coverage: selection.summary?.coverage ?? null,
+    catchUp: [
+      ...new Map([...readEarlierWork(context), ...catchUp].map((item) => [item.id, item])).values(),
+    ],
+    context,
+    summary: readPlanSummary({
+      plan: { ...context.plan, userId: context.goal.userId },
+      value: context.plan.summary,
+    }),
   };
 }

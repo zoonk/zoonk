@@ -5,6 +5,8 @@ import { OWN_LEVEL_SOURCE } from "../own-level-contract";
 import { type PlanChangeView } from "../plan-view-contract";
 import { addDays } from "../planner/plan-calendar";
 import { isUndoableChange, parsePlanChangePayload } from "./plan-change-payload";
+import { type PlanContext } from "./plan-context";
+import { isCurrentPlanPreview } from "./plan-preview-basis";
 
 /** Changes stay on the plan for two weeks; proposals stay until the learner answers. */
 const RECENT_CHANGE_DAYS = 14;
@@ -78,6 +80,7 @@ export function toPlanChangeView({
 
 /** Proposals waiting for the learner's OK, then the changes of the last two weeks, newest first. */
 export async function loadPlanChangeViews({
+  context,
   goal,
   now,
   planId,
@@ -87,6 +90,7 @@ export async function loadPlanChangeViews({
   now: Date;
   planId: string;
   planVersion: number;
+  context: PlanContext;
 }): Promise<PlanChangeView[]> {
   const changes = await prisma.planChange.findMany({
     orderBy: [{ createdAt: "desc" }, { id: "desc" }],
@@ -98,6 +102,15 @@ export async function loadPlanChangeViews({
   });
 
   return changes
+    .filter(
+      (change) =>
+        change.status !== "proposed" ||
+        (parsePlanChangePayload(change.payload).effect !== null &&
+          isCurrentPlanPreview({
+            basis: parsePlanChangePayload(change.payload).previewBasis,
+            context,
+          })),
+    )
     .toSorted((a, b) => Number(b.status === "proposed") - Number(a.status === "proposed"))
     .map((change) => toPlanChangeView({ change, goal, planVersion }));
 }

@@ -51,7 +51,7 @@ describe(getGoalResumePreview, () => {
 
   // Back after days with lessons on them, the plan starts again from today: the learner sees what
   // that moves before they resume, and resuming then does what they saw.
-  it("shows what resuming moves before the learner resumes, as resuming then does it", async () => {
+  it("reads a generic resume preview and saves the exact move on resume", async () => {
     const { goal, plan } = await pausedGoal();
     const shown = await readPlan(plan.id);
     setNow(THURSDAY);
@@ -60,17 +60,18 @@ describe(getGoalResumePreview, () => {
     const preview = result.status === "ready" ? result.preview : null;
 
     // The kept end of the first phase moves back to its lessons: the preview names it.
-    expect(preview).toMatchObject({
-      effect: { phaseEnds: [expect.objectContaining({ name: "Basics" })] },
-      ready: true,
-      unchanged: false,
-    });
+    expect(preview).toMatchObject({ effect: null, ready: true, unchanged: false });
 
     await expect(readPlan(plan.id)).resolves.toStrictEqual(shown);
 
     const resumed = await updateGoal({ goalId: goal.id, input: { status: "active" } });
 
-    expect(resumed).toMatchObject({ change: { effect: preview?.effect, kind: "resumed" } });
+    expect(resumed).toMatchObject({
+      change: {
+        effect: { phaseEnds: [expect.objectContaining({ name: "Basics" })] },
+        kind: "resumed",
+      },
+    });
   });
 
   it("keeps another learner's goal hidden, and needs a signed-in learner", async () => {

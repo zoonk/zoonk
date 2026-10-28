@@ -1,9 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { readGoalPlan } from "../../learner/_utils/read-goal-plan";
-import { isPlanReady } from "../../plans/_utils/apply-plan-change";
 import { loadPlanContext } from "../../plans/_utils/plan-context";
-import { computePlan } from "../../plans/_utils/replan";
 import { getMinutesPerItem } from "../plan-status";
 
 /**
@@ -27,23 +25,15 @@ export async function loadStillNeededWork({
     return { weights: new Map<string, number | null>(), work: [] };
   }
 
-  const [plan, computed] = await Promise.all([
-    readGoalPlan(context.goal.id),
-    isPlanReady(context)
-      ? computePlan({ context, mode: "automatic", now, pace: "saved", reuseReadBuild: true })
-      : null,
-  ]);
-
-  const planned = new Map(
-    (computed?.built.items ?? []).flatMap((item) => (item.id ? [[item.id, item.minutes]] : [])),
-  );
+  const plan = await readGoalPlan(context.goal.id);
+  const planned = new Map(context.items.map((item) => [item.id, item.minutes]));
 
   const averageMinutes = getMinutesPerItem({
     estimateHours: context.plan.estimateHours,
     itemCount: context.items.length,
   });
 
-  const graph = computed?.state.graph ?? context.state.graph;
+  const graph = context.state.graph;
 
   return {
     weights: new Map(graph.skills.map((skill) => [skill.skillId, skill.weight])),

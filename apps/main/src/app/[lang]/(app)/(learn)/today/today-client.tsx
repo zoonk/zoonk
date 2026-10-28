@@ -9,7 +9,6 @@ import { UploadRequestClient } from "@/components/learn/upload-request-client";
 import { useRouter } from "@/i18n/navigation";
 import { readGoalGenerationId } from "@/lib/goals/read-goal-generation-id";
 import { useAnswerSuggestedGoal } from "@/lib/goals/use-answer-suggested-goal";
-import { useFollowTimeZone } from "@/lib/goals/use-follow-time-zone";
 import { toStudyDayDate } from "@/lib/learn/tab-missions";
 import { useReportTabMissions } from "@/lib/learn/tab-missions-provider";
 import { useRefreshOnPlanChange } from "@/lib/learn/use-refresh-on-plan-change";
@@ -162,7 +161,6 @@ export function TodayClient({
   const sessionHref = getSessionHref({ goalId, limit: null });
   const call = findNextCall({ goalKind: today.goal.kind, session: today.session });
 
-  useFollowTimeZone(today.goal.id);
   const decidePlanChange = useDecidePlanChange(today);
 
   useReportTabMissions({

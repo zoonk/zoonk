@@ -15,10 +15,8 @@ export function roundShare(share: number): number {
 }
 
 /**
- * What fits in the plan the Plan shows: what its summary covers (its saved allocation when the read
- * keeps it, see `selectDayPlanFromContext`), so the change that saved the plan and the read after
- * it say the same, where the read's own rebuild can lay its days out another way; the rest from
- * the read's feasibility. A plan that covers everything as it shows, the learner's time covers too.
+ * The selected allocation's coverage and the build's remaining feasibility facts, saved together
+ * so the change and subsequent reads agree. A plan that covers everything as it shows has enough time.
  */
 export function readShownFeasibility({
   coverage,
@@ -47,7 +45,9 @@ export function readShownFeasibility({
  * from their plan. What other daily times or dates would do is never worked out for a read: the
  * learner asks for it (see `findPlanTimeToCover`).
  */
-export function toFeasibilityView(feasibility: ShownFeasibility): PlanView["feasibility"] {
+export function toFeasibilityView(
+  feasibility: ShownFeasibility,
+): NonNullable<PlanView["feasibility"]> {
   return {
     coreFits: feasibility.coreFits,
     coveredShare: roundShare(feasibility.coveredShare),

@@ -4,12 +4,13 @@ import { prisma } from "@zoonk/db";
 import { withPlanRetry } from "../plan-conflict";
 import { toRecommendedBaseChoices } from "../planner/recommended-base-choices";
 import { isPlanReady } from "./apply-plan-change";
+import { commitPlan } from "./commit-plan";
 import { withPastBasicsAreas } from "./level-listening-starts";
 import { listListeningPastBasicsAreas } from "./load-listening-starts";
 import { type PlanContext } from "./plan-context";
 import { loadPlanAtToken } from "./plan-token";
 import { ensureQuickBaseLessons } from "./quick-bases";
-import { type ComputedPlan, commitPlan, computePlan } from "./replan";
+import { type ComputedPlan, computePlan } from "./replan";
 
 /**
  * A plan the learner hasn't seen yet starts on the app's recommendation for its bases: every lesson

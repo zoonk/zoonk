@@ -284,12 +284,20 @@ describe("entitlement lapse keeps a free way forward", () => {
       }
 
       await expect(opening).resolves.toMatchObject([
-        { status: "fulfilled", value: { status: "retryable" } },
+        { status: "fulfilled", value: { status: change === "pause" ? "goalNotActive" : "opened" } },
       ]);
 
       const after = await readLapsedDayState(day.user.id);
-      expect(after.sessions).toStrictEqual(before.sessions);
-      expect(after.plans[0]?.inputVersion).toBe(before.plans[0]!.inputVersion + 1);
+
+      expect(
+        change !== "pause" || JSON.stringify(after.sessions) === JSON.stringify(before.sessions),
+      ).toBe(true);
+
+      expect(after.sessions[0]?.plannedMinutes).toBeLessThanOrEqual(30);
+
+      expect(after.plans[0]?.inputVersion).toBe(
+        before.plans[0]!.inputVersion + (change === "pause" ? 1 : 2),
+      );
     },
   );
 

@@ -1,10 +1,11 @@
 import "server-only";
 import { isPlanReady } from "./_utils/apply-plan-change";
+import { commitPlan } from "./_utils/commit-plan";
 import { getCoverageChange } from "./_utils/coverage-change";
 import { followPlanToday } from "./_utils/follow-plan-today";
 import { getListeningPastBasicsEffect, withPastBasicsAreas } from "./_utils/level-listening-starts";
 import { loadPlanAtToken } from "./_utils/plan-token";
-import { commitPlan, computePlan } from "./_utils/replan";
+import { computePlan } from "./_utils/replan";
 import { withPlanRetry } from "./plan-conflict";
 
 /**

@@ -143,12 +143,7 @@ describe("opening a real-size selected plan", () => {
     const today = await countDatabaseStatements(() => getTodayView(input));
     expect(today.writes).toBe(0);
 
-    if (today.result.status !== "ready" || !today.result.today.planChange) {
-      throw new Error("Expected the exact computed mandatory notice before Open");
-    }
-
-    const notice = today.result.today.planChange;
-    expect(notice.id).toBeNull();
+    expect(today.result).toMatchObject({ status: "ready", today: { planChange: null } });
     const observed = observeTransactionBuilds();
     const opened = await openStudyDay(input);
 
@@ -156,8 +151,14 @@ describe("opening a real-size selected plan", () => {
       throw new Error(`Expected a persisted selected day, received ${opened.status}`);
     }
 
+    const shown = await getSessionPageView(input);
+
+    if (shown.status !== "ready") {
+      throw new Error("Expected the persisted day");
+    }
+
     expect(opened.session.blocks.map(toDayBlockRef)).toStrictEqual(
-      preview.result.day.blocks.map(toDayBlockRef),
+      shown.session.blocks.map(toDayBlockRef),
     );
 
     expect(observed.insideBuilds).toHaveLength(0);
@@ -170,9 +171,13 @@ describe("opening a real-size selected plan", () => {
     });
 
     const payload = parsePlanChangePayload(savedChange.payload);
-    expect(savedChange).toMatchObject({ kind: notice.kind, status: notice.status });
-    expect(payload.effect).toStrictEqual(notice.effect);
-    expect(payload.behind).toStrictEqual(notice.behind);
+    expect(savedChange).toMatchObject({ kind: "missedDays", status: "applied" });
+    const afterToday = await getTodayView(input);
+
+    expect(afterToday).toMatchObject({
+      status: "ready",
+      today: { planChange: { behind: payload.behind, effect: payload.effect, id: savedChange.id } },
+    });
 
     const before = await prisma.plan.findUniqueOrThrow({ where: { id: fixture.plan.id } });
     const replay = await openStudyDay(input);
@@ -190,12 +195,12 @@ describe("opening a real-size selected plan", () => {
     const fixture = await setup();
     const input = { goalId: fixture.goal.id, shownDate: "2026-12-20", timeZone: "UTC" };
     const today = await getTodayView(input);
-    const notice = today.status === "ready" ? today.today.planChange : null;
-
-    expect.soft(notice).toMatchObject({ behind: { coveredBefore: 1 }, kind: "missedDays" });
-    expect.soft(notice?.behind?.coveredAfter ?? 1).toBeLessThan(1);
-
+    expect(today).toMatchObject({ status: "ready", today: { planChange: null } });
     await expect(openStudyDay(input)).resolves.toMatchObject({ status: "opened" });
+    const afterToday = await getTodayView(input);
+    const notice = afterToday.status === "ready" ? afterToday.today.planChange : null;
+    expect(notice).toMatchObject({ behind: { coveredBefore: 1 }, kind: "missedDays" });
+    expect(notice?.behind?.coveredAfter ?? 1).toBeLessThan(1);
 
     const saved = await prisma.plan.findUniqueOrThrow({ where: { id: fixture.plan.id } });
     expect.soft(saved.coveredShare ?? 1).toBeLessThan(1);

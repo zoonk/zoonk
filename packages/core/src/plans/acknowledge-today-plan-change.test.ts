@@ -5,6 +5,9 @@ import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { markLearnerChanged, markPlansChanged } from "../learner/_utils/mark-learner-changed";
+import { prepareSelectedPlanSave } from "../sessions/_utils/save-selected-plan";
+import { selectDayPlan } from "../sessions/_utils/selected-day-plan";
+import { getSelectedPlanNotice } from "../sessions/_utils/selected-plan-notice";
 import { openStudyDay } from "../sessions/open-study-day";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { mandatoryPhasePlanFixture } from "./_test-utils/mandatory-phase-plan";
@@ -26,26 +29,39 @@ async function computedNoticeFixture() {
   expect(read.writes).toBe(0);
   expect(read.result.status).toBe("ready");
 
-  if (
-    read.result.status !== "ready" ||
-    !read.result.today.planChange ||
-    !read.result.today.noticeBasis
-  ) {
-    throw new Error("Expected the actual computed mandatory notice");
+  expect(read.result.status === "ready" && read.result.today.planChange).toBeNull();
+  // Exercise an already issued computed acknowledgment; new GETs never issue one.
+  const selection = await selectDayPlan({ goal: fixture.goal, now: NEXT_DAY, timeZone: "UTC" });
+
+  if (!selection) {
+    throw new Error("Expected the writer selection");
   }
 
-  expect(read.result.today.planChange.id).toBeNull();
+  const prepared = await prepareSelectedPlanSave({ selection, shown: true });
+
+  const notice = getSelectedPlanNotice({
+    change: prepared.kind === "computed" ? prepared.change : null,
+    now: NEXT_DAY,
+    selection,
+  });
+
+  if (!notice) {
+    throw new Error("Expected the actual mandatory writer notice");
+  }
 
   return {
     ...fixture,
     input: {
-      basis: read.result.today.noticeBasis,
+      basis: {
+        inputVersion: selection.context.plan.inputVersion,
+        version: selection.context.plan.version,
+      },
       goalId: fixture.goal.id,
       kind: "computed" as const,
       shownDate: "2026-10-14",
       timeZone: "UTC",
     },
-    notice: read.result.today.planChange,
+    notice,
   };
 }
 

@@ -28,7 +28,7 @@ async function selectedCheckpointFixture() {
   }
 
   const checkpoint = result.plan.phases[0]?.checkpoint;
-  expect(checkpoint).toMatchObject({ date: expect.any(String), planItemId: null });
+  expect(checkpoint).toBeNull();
   return { ...fixture, checkpoint, view: result.plan };
 }
 
@@ -55,11 +55,7 @@ describe("Buddy reads selected items that the next POST has not saved yet", () =
 
     expect(read.writes).toBe(0);
 
-    expect(read.result).toMatchObject({
-      challenges: [{ date: fixture.checkpoint?.date, kind: "challenge", link: null }],
-      status: "found",
-      what: "challenges",
-    });
+    expect(read.result).toMatchObject({ status: "notFound", what: "challenges" });
   });
 
   it("keeps the day context's content and challenge date without an unsaved link", async () => {
@@ -71,9 +67,7 @@ describe("Buddy reads selected items that the next POST has not saved yet", () =
 
     expect(read.writes).toBe(0);
 
-    expect(read.result.challenges).toContainEqual(
-      expect.objectContaining({ date: fixture.checkpoint?.date, kind: "challenge", link: null }),
-    );
+    expect(read.result.challenges).toStrictEqual([]);
 
     expect(read.result.today?.items).toContainEqual(
       expect.objectContaining({

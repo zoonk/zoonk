@@ -1,26 +1,8 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
-import { parsePlanChangePayload } from "../../../plans/_utils/plan-change-payload";
-import { type PlanEffect } from "../../../plans/planner/plan-effect";
 import { proposePlanChange } from "../../../plans/propose-plan-change";
 import { type PrerequisiteGap } from "./prerequisite-gaps";
 
-export type InsightPlanChange = {
-  /** What the change does to the plan: lessons added and how the end date moves. */
-  effect: PlanEffect | null;
-  planChangeId: string;
-  planChangeStatus: "applied" | "proposed";
-};
-
-/** The effect the planner computed for the change, as the plan screen shows it. */
-async function loadEffect(changeId: string): Promise<PlanEffect | null> {
-  const change = await prisma.planChange.findUnique({
-    select: { payload: true },
-    where: { id: changeId },
-  });
-
-  return change ? parsePlanChangePayload(change.payload).effect : null;
-}
+export type InsightPlanChange = { planChangeId: string; planChangeStatus: "applied" | "proposed" };
 
 /**
  * Adds what a plan-change insight's gap needs (its prerequisites in teaching order, right before
@@ -63,9 +45,5 @@ export async function proposeInsightGap({
     return null;
   }
 
-  return {
-    effect: await loadEffect(result.changeId),
-    planChangeId: result.changeId,
-    planChangeStatus: result.status,
-  };
+  return { planChangeId: result.changeId, planChangeStatus: result.status };
 }

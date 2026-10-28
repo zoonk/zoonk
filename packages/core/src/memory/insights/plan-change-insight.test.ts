@@ -141,7 +141,7 @@ describe("plan-change insights", () => {
     });
 
     expect(answer).toMatchObject({
-      insight: { planChange: { id: change.id, status: "applied" }, status: "dismissed" },
+      insight: { planChange: null, status: "dismissed" },
       status: "updated",
     });
 

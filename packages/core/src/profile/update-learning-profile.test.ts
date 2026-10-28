@@ -78,7 +78,7 @@ async function saveDuringConcurrentLimitChange({
   const resume = Promise.withResolvers<null>();
 
   const first = prisma.$transaction(async (tx) => {
-    await markLearnerChanged(tx, { planInputs: true, userId });
+    await markLearnerChanged(tx, { userId });
     await tx.userLearningProfile.update({ data: { dailyLimitMinutes: 60 }, where: { userId } });
     const [backend] = await tx.$queryRaw<{ pid: number }[]>`SELECT pg_backend_pid() AS pid`;
 
@@ -135,7 +135,7 @@ describe(updateLearningProfile, () => {
         }),
       ).resolves.toMatchObject({ status: "updated" });
 
-      await expect(planInputs(user.id)).resolves.toStrictEqual([1, 1]);
+      await expect(planInputs(user.id)).resolves.toStrictEqual([0, 0]);
 
       expect(revalidateTag).toHaveBeenCalledWith(getLearningProfileCacheTag(user.id), {
         expire: 0,
@@ -191,7 +191,7 @@ describe(updateLearningProfile, () => {
     expect(revalidateTag).not.toHaveBeenCalled();
   });
 
-  it("marks clearing the active goal and daily limit as plan-input changes", async () => {
+  it("keeps clearing the active goal and daily limit out of plan inputs", async () => {
     const { goals, user } = await plannedLearner();
     const goal = goals[0];
 
@@ -201,7 +201,7 @@ describe(updateLearningProfile, () => {
 
     await learningProfileFixture({ activeGoalId: goal.id, dailyLimitMinutes: 30, userId: user.id });
     await updateLearningProfile({ activeGoalId: null, dailyLimitMinutes: null });
-    await expect(planInputs(user.id)).resolves.toStrictEqual([1, 1]);
+    await expect(planInputs(user.id)).resolves.toStrictEqual([0, 0]);
   });
 
   it("rolls back the plan marks when PostgreSQL rejects the profile write", async () => {
@@ -222,10 +222,10 @@ describe(updateLearningProfile, () => {
   });
 
   it.each([
-    { dailyLimitMinutes: 30, expectedPlanVersion: 2 },
-    { dailyLimitMinutes: 60, expectedPlanVersion: 1 },
+    { dailyLimitMinutes: 30, expectedPlanVersion: 0 },
+    { dailyLimitMinutes: 60, expectedPlanVersion: 0 },
   ])(
-    "rechecks changed plan inputs after admission: $dailyLimitMinutes",
+    "rechecks profile inputs after admission: $dailyLimitMinutes",
     async ({ dailyLimitMinutes, expectedPlanVersion }) => {
       const { user } = await plannedLearner();
       await learningProfileFixture({ dailyLimitMinutes: 30, userId: user.id });
@@ -254,11 +254,11 @@ describe(updateLearningProfile, () => {
 
     await saveDuringConcurrentLimitChange({ input: { dailyLimitMinutes: 60 }, userId: user.id });
 
-    await expect(planInputs(user.id)).resolves.toStrictEqual([1, 1]);
+    await expect(planInputs(user.id)).resolves.toStrictEqual([0, 0]);
     expect(revalidateTag).not.toHaveBeenCalled();
   });
 
-  it("commits only one plan-input bump for concurrent identical saves", async () => {
+  it("serializes concurrent identical profile saves without changing plans", async () => {
     const { user } = await plannedLearner();
     await learningProfileFixture({ dailyLimitMinutes: 30, userId: user.id });
 
@@ -267,7 +267,7 @@ describe(updateLearningProfile, () => {
       updateLearningProfile({ dailyLimitMinutes: 60 }),
     ]);
 
-    await expect(planInputs(user.id)).resolves.toStrictEqual([1, 1]);
+    await expect(planInputs(user.id)).resolves.toStrictEqual([0, 0]);
     expect(revalidateTag).toHaveBeenCalledOnce();
   });
 

@@ -153,7 +153,17 @@ describe(getTodayView, () => {
     mockSession(user.id);
 
     const proposal = await planChangeFixture({
-      payload: { operations: [{ kind: "setDailyMinutes", minutes: 20 }], source: "memory" },
+      payload: {
+        effect: { endDateAfter: null, endDateBefore: null, lessonsAdded: 0, lessonsRemoved: 3 },
+        operations: [{ kind: "setDailyMinutes", minutes: 20 }],
+        previewBasis: {
+          inputVersion: plan.inputVersion,
+          planVersion: plan.version,
+          studyDay: "2026-09-30",
+          timeZone: "UTC",
+        },
+        source: "memory",
+      },
       planId: plan.id,
       reason: "Make room for your Saturday class.",
       status: "proposed",

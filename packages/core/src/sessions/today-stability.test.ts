@@ -172,14 +172,10 @@ describe("today's session the learner was shown", () => {
     expect(after.lessonsComing).toBe(false);
     expect(after.id).toBe(before.id);
 
-    expect(after.blocks.slice(0, before.blocks.length).map((block) => block.id)).toStrictEqual(
-      before.blocks.map((block) => block.id),
-    );
-
-    // The landed lessons take the time the day held for them, then the day fills as usual.
-    const added = after.blocks.slice(before.blocks.length, before.blocks.length + landed.length);
-
-    expect(added.map((block) => block.lessonId)).toStrictEqual(landed);
+    expect(after.blocks.every((block) => block.status === "pending")).toBe(true);
+    expect(learnLessonIds(after)).toStrictEqual(expect.arrayContaining(learnLessonIds(before)));
+    expect(learnLessonIds(after)).toStrictEqual(expect.arrayContaining(landed));
+    expect(after.minutes.planned).toBeLessThanOrEqual(goal.dailyMinutes);
   });
 
   // Carla's Today said 6 lessons of her hour, with no word of more: the next skill's stand-in

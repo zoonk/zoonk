@@ -44,7 +44,7 @@ export type AfterExam = {
  * Whether a plan's end (`end`) comes after its exam (`targetDate`): a plan studying everything
  * whose time fits it all before the exam ends with the exam, with no finish after it to say.
  */
-export function endsAfterExam({
+function endsAfterExam({
   end,
   targetDate,
 }: {

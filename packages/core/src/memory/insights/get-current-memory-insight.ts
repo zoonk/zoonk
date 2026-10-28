@@ -53,7 +53,7 @@ export async function getCurrentMemoryInsight(
   });
 
   return {
-    insight: insight?.status === "pending" ? toMemoryInsightView(insight) : null,
+    insight: insight?.status === "pending" ? await toMemoryInsightView(insight) : null,
     status: "ready",
   };
 }

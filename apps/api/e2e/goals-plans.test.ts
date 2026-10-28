@@ -152,7 +152,7 @@ test.describe("Goals and plans API", () => {
       apiContext.get(`/v1/goals/${goalId}`),
       apiContext.patch(`/v1/goals/${goalId}`, { data: { title: "x" } }),
       apiContext.get(`/v1/goals/${goalId}/plan`),
-      apiContext.get(`/v1/goals/${goalId}/plan/time-advice`),
+      apiContext.post(`/v1/goals/${goalId}/plan/time-advice`, { data: {} }),
       apiContext.get(`/v1/goals/${goalId}/plan/resume-preview`),
       apiContext.get(`/v1/goals/${goalId}/plan/changed-since?since=${new Date().toISOString()}`),
       apiContext.post(`/v1/goals/${goalId}/plan/changes`, {
@@ -265,7 +265,8 @@ test.describe("Goals and plans API", () => {
     });
 
     expect(before).toMatchObject({ ready: true, schedule: { dailyMinutes: 12 } });
-    expect(before.feasibility?.fits).toBe(true);
+    // This legacy fixture has no saved advice; a read never computes it.
+    expect(before.feasibility).toBeNull();
 
     const changed = await readBody({
       response: await apiContext.post(`/v1/goals/${goal.id}/plan/changes`, {
@@ -288,6 +289,8 @@ test.describe("Goals and plans API", () => {
       studyDays: 5,
       weekdayMinutes: [0, 12, 12, 12, 12, 12, 0],
     });
+
+    expect(after.feasibility?.fits).toBe(true);
 
     expect(after.changes[0]).toMatchObject({ id: changed.change?.id, seen: false });
 
@@ -376,15 +379,19 @@ test.describe("Goals and plans API", () => {
 
     const [everyDay, weekdays, weekend, plan, invalid, tooLong, hidden, everything, badEverything] =
       await Promise.all([
-        apiContext.get(`/v1/goals/${goal.id}/plan/time-advice`),
-        apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?studyDays=1,2,3,4,5`),
-        apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?weekendMinutes=120`),
+        apiContext.post(`/v1/goals/${goal.id}/plan/time-advice`, { data: {} }),
+        apiContext.post(`/v1/goals/${goal.id}/plan/time-advice`, {
+          data: { studyDays: [1, 2, 3, 4, 5] },
+        }),
+        apiContext.post(`/v1/goals/${goal.id}/plan/time-advice`, { data: { weekendMinutes: 120 } }),
         apiContext.get(`/v1/goals/${goal.id}/plan`),
-        apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?studyDays=7`),
-        apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?weekendMinutes=1441`),
-        apiContext.get(`/v1/goals/${other.goal.id}/plan/time-advice`),
-        apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?fullCourse=true`),
-        apiContext.get(`/v1/goals/${goal.id}/plan/time-advice?fullCourse=yes`),
+        apiContext.post(`/v1/goals/${goal.id}/plan/time-advice`, { data: { studyDays: [7] } }),
+        apiContext.post(`/v1/goals/${goal.id}/plan/time-advice`, {
+          data: { weekendMinutes: 1441 },
+        }),
+        apiContext.post(`/v1/goals/${other.goal.id}/plan/time-advice`, { data: {} }),
+        apiContext.post(`/v1/goals/${goal.id}/plan/time-advice`, { data: { fullCourse: true } }),
+        apiContext.post(`/v1/goals/${goal.id}/plan/time-advice`, { data: { fullCourse: "yes" } }),
       ]);
 
     const advice = await readBody({ response: everyDay, schema: planTimeAdviceSchema });
@@ -457,7 +464,7 @@ test.describe("Goals and plans API", () => {
     // Finding the time changes nothing: the goal keeps its own time until the learner picks one.
     await expect(
       readBody({
-        response: await apiContext.get(`/v1/goals/${goal.id}/plan/time-advice`),
+        response: await apiContext.post(`/v1/goals/${goal.id}/plan/time-advice`, { data: {} }),
         schema: planTimeAdviceSchema,
       }),
     ).resolves.toMatchObject({ coveredShare: advice.coveredShare });

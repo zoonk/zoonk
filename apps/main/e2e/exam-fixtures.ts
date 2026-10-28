@@ -102,6 +102,8 @@ export async function addTodayMock({ goalId, userId }: { goalId: string; userId:
         rematch: false,
         timeLimitMinutes: 20,
       },
+      // This injected mock is extra work; Start keeps it when refreshing the scheduled queue.
+      extra: true,
       itemIds: items.map((item) => item.id),
       planItemId: planItem.id,
       skillIds: [...new Set(items.map((item) => item.skillId))],

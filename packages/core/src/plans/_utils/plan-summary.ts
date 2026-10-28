@@ -1,6 +1,8 @@
 import { z } from "zod";
+import { planChangeInputSchema } from "../plan-contract";
 import { toIsoDate } from "../planner/plan-calendar";
 import { getSkillValue } from "../planner/selected-coverage";
+import { planEffectSchema } from "./plan-change-payload";
 import { type PlanContext } from "./plan-context";
 import {
   type SelectedCoverage,
@@ -31,6 +33,28 @@ const planSummaryBasisSchema = z
 /** The facts of the one selected build a layout posts with the plan it saves (see `readPlanSummary`). */
 export const planSummarySchema = z
   .object({
+    advice: z
+      .object({
+        feasibility: z.object({
+          coreFits: z.boolean(),
+          coveredShare: z.number(),
+          deadline: z.iso.date().nullable(),
+          deepensMostAsked: z.boolean(),
+          fits: z.boolean(),
+          measure: z.enum(["exam", "goal"]),
+          timeCovers: z.boolean(),
+        }),
+        fitOffer: z
+          .object({
+            effect: planEffectSchema,
+            fits: z.boolean(),
+            operations: planChangeInputSchema.shape.operations,
+          })
+          .nullable(),
+        fullCourseEndDate: z.iso.date().nullable(),
+      })
+      .nullable()
+      .optional(),
     basis: planSummaryBasisSchema,
     schemaVersion: z.literal(PLAN_SUMMARY_SCHEMA_VERSION),
     selected: selectedSummarySchema,

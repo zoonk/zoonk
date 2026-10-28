@@ -109,7 +109,7 @@ function RoadmapCompact({
     <button
       aria-haspopup="dialog"
       className={cn(
-        "focus-visible:ring-ring/50 hover:bg-muted/70 -mx-2.5 flex flex-col gap-2 rounded-[0.625rem] px-2.5 py-1.5 text-left transition-colors outline-none focus-visible:ring-[3px]",
+        "focus-visible:ring-ring/50 hover:bg-muted/70 -mx-2.5 flex min-h-11 flex-col gap-2 rounded-[0.625rem] px-2.5 py-1.5 text-left transition-colors outline-none focus-visible:ring-[3px]",
         className,
       )}
       data-slot="plan-roadmap"

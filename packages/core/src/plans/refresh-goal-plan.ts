@@ -2,28 +2,25 @@ import "server-only";
 import { isDeepStrictEqual } from "node:util";
 import { isPlanReady } from "./_utils/apply-plan-change";
 import { wasLastDayStudied } from "./_utils/carried-lessons";
+import { commitPlan } from "./_utils/commit-plan";
 import { getEstimateChange } from "./_utils/estimate-change";
 import { loadLeftWork } from "./_utils/left-work";
 import {
-  updatePhaseDatesProposal,
+  preparePhaseDatesProposal,
   withdrawUnneededPhaseDatesProposal,
 } from "./_utils/phase-dates-proposal";
 import { type PlanContext } from "./_utils/plan-context";
 import { addsLessonsAfterLessonsDone, isPlanLaidOut } from "./_utils/plan-refresh-admission";
-import { toPlanSummary } from "./_utils/plan-summary";
+import { readFreshPlanSummary } from "./_utils/plan-summary";
 import { loadPlanAtToken } from "./_utils/plan-token";
 import { isPlanUnchanged } from "./_utils/plan-unchanged";
-import {
-  type ComputedPlan,
-  type PlanTagRevalidation,
-  commitPlan,
-  computePlan,
-} from "./_utils/replan";
+import { prepareRetainedPlanWrite } from "./_utils/prepare-plan-write";
+import { type ComputedPlan, type PlanTagRevalidation, computePlan } from "./_utils/replan";
 import { getSettledPlanChange } from "./_utils/settled-change";
 import { computeSettledPlan } from "./_utils/settled-plan";
 import { savePlanInputsKey } from "./_utils/write-plan";
 import { isPlanConflictError, withPlanRetry } from "./plan-conflict";
-import { addDays } from "./planner/plan-calendar";
+import { addDays, toIsoDate } from "./planner/plan-calendar";
 
 type PlanRefreshResult = { status: "notFound" | "notReady" | "paused" | "refreshed" | "unchanged" };
 
@@ -95,6 +92,7 @@ async function settleLeftWork({
       change: getSettledPlanChange({ computed, context, left }),
       computed,
       context,
+      phaseDates: { mode: "forced", pace },
       revalidation,
     }),
   );
@@ -102,21 +100,6 @@ async function settleLeftWork({
   if (!saved) {
     return { plan: computed, status: "refreshed" };
   }
-
-  await saveOrLetGo(lostSave, () =>
-    updatePhaseDatesProposal({
-      computed,
-      context,
-      mode: "forced",
-      pace,
-      revalidation,
-      writeVersion: {
-        ...context.plan,
-        inputVersion: context.plan.inputVersion + 1,
-        version: context.plan.version + 1,
-      },
-    }),
-  );
 
   return { plan: computed, status: "refreshed" };
 }
@@ -136,12 +119,23 @@ async function computeRefreshedPlan({
   context: PlanContext;
   pace: "sampled" | "saved";
 }): Promise<{ computed: ComputedPlan; mode: "automatic" | "forced"; planned: PlanContext } | null> {
-  const automatic = await computePlan({
-    context,
-    mode: "automatic",
-    pace,
-    skipUnchangedInputs: true,
+  const fresh = readFreshPlanSummary({
+    basis: {
+      layoutInputVersion: context.plan.inputVersion,
+      layoutStudyDay: toIsoDate(context.today),
+      planId: context.plan.id,
+      planVersion: context.plan.version,
+      timeZone: context.timeZone,
+      userId: context.goal.userId,
+    },
+    value: context.plan.summary,
   });
+
+  const request = { context, mode: "automatic" as const, pace };
+
+  const automatic = fresh?.advice
+    ? await computePlan({ ...request, skipUnchangedInputs: true })
+    : await computePlan(request);
 
   if (!automatic) {
     return null;
@@ -175,11 +169,11 @@ async function computeRefreshedPlan({
  * past the shared threshold (see `getEstimateChange`), including closer pace data, drift within
  * its source, and written lessons replacing estimates. Its diff keeps the topics and lesson names.
  * All of them keep the phase end dates the learner saw, and Today asks before moving them when
- * keeping them leaves lessons out by the goal's date (see `updatePhaseDatesProposal`), except when
+ * keeping them leaves lessons out by the goal's date (see `preparePhaseDatesProposal`), except when
  * lessons a phase's challenge tests slip past its day: the challenge comes the first study day
  * after them, and the change names the end that moved (see `getEstimateChange`). Once every lesson is done, a run that would add lessons
  * changes nothing: the Plan offers them (see `addsLessonsAfterLessonsDone`).
- * Opening a screen reads the saved pace (`saved`), so a day that only begins changes nothing. Writes
+ * A refresh outside session completion uses the saved pace (`saved`). Writes
  * nothing when the run plans from what the saved plan was planned from (see `getPlanInputsKey`):
  * laid out another way than the run that saved it, an OAB plan a focus re-planned that morning
  * moved 600 items with nothing new. Writes nothing either when the work and its time stayed the
@@ -217,7 +211,7 @@ type RefreshInput = {
   goalId: string;
   /** `sampled` after the learner's progress (a session ended); `saved` otherwise. */
   pace?: "sampled" | "saved";
-  /** Building a day while a page renders can't clear caches, and has none to clear. */
+  /** Session completion keeps its result visible until the learner closes it. */
   revalidation?: PlanTagRevalidation;
   /**
    * Building a day only settles what earlier days left: opening the app with nothing new changes
@@ -270,9 +264,38 @@ async function refreshPlanned({
     return { plan: null, status: "unchanged" };
   }
 
+  return saveRefreshedPlan({ context, lostSave, pace, refreshed, revalidation });
+}
+
+async function saveRefreshedPlan({
+  context,
+  refreshed,
+  lostSave,
+  pace,
+  revalidation,
+}: {
+  context: PlanContext;
+  refreshed: NonNullable<Awaited<ReturnType<typeof computeRefreshedPlan>>>;
+  lostSave: LostSave;
+  pace: "sampled" | "saved";
+  revalidation: PlanTagRevalidation;
+}): Promise<PlannedRefresh> {
   const { computed, mode, planned } = refreshed;
 
-  if (computed.inputsKey === context.plan.inputsKey) {
+  if (
+    computed.inputsKey === context.plan.inputsKey &&
+    readFreshPlanSummary({
+      basis: {
+        layoutInputVersion: context.plan.inputVersion,
+        layoutStudyDay: toIsoDate(context.today),
+        planId: context.plan.id,
+        planVersion: context.plan.version,
+        timeZone: context.timeZone,
+        userId: context.goal.userId,
+      },
+      value: context.plan.summary,
+    })?.advice
+  ) {
     await saveOrLetGo(lostSave, () =>
       withdrawUnneededPhaseDatesProposal({ computed, context, revalidation }),
     );
@@ -283,6 +306,23 @@ async function refreshPlanned({
 
   // The lessons it would add wait for the learner's OK: the plan stays as it was saved.
   if (addsLessonsAfterLessonsDone({ computed, context })) {
+    const quoted =
+      pace === "sampled"
+        ? await computePlan({ context, mode: "automatic", pace: "saved" })
+        : computed;
+
+    const retained = await prepareRetainedPlanWrite({ computed: quoted, context });
+
+    await saveOrLetGo(lostSave, () =>
+      savePlanInputsKey({
+        context,
+        graph: context.state.graph,
+        inputsKey: quoted.inputsKey,
+        previews: retained.previews,
+        summary: retained.summary,
+      }),
+    );
+
     return { plan: null, status: "unchanged" };
   }
 
@@ -290,49 +330,59 @@ async function refreshPlanned({
 
   const unchanged = !change && isPlanUnchanged({ computed, context });
 
+  const retained = unchanged ? await prepareRetainedPlanWrite({ computed, context }) : null;
+
+  const phaseWrite = unchanged
+    ? await preparePhaseDatesProposal({
+        computed,
+        context: {
+          ...planned,
+          plan: { ...context.plan, inputVersion: context.plan.inputVersion + 1 },
+        },
+        mode,
+        pace,
+      })
+    : null;
+
   const saved = await saveOrLetGo(lostSave, () =>
-    unchanged
+    retained
       ? savePlanInputsKey({
           context,
+          extraWrites: phaseWrite ?? undefined,
           graph: computed.state.graph,
           inputsKey: computed.inputsKey,
-          summary: toPlanSummary({
-            context: {
-              ...context,
-              plan: {
-                ...context.plan,
-                inputVersion: context.plan.inputVersion + 1,
-                version: context.plan.version - 1,
-              },
-            },
-            selected: computed.summarizeRetained() ?? computed.selected,
-          }),
+          previews: retained.previews,
+          summary: retained.summary,
         })
-      : commitPlan({ change, computed, context, revalidation }),
+      : commitPlan({ change, computed, context, phaseDates: { mode, pace }, revalidation }),
   );
 
   if (!saved) {
     return { plan: computed, status: "refreshed" };
   }
 
-  // Moving the dates is planned from the day the run planned from, to compare: from today, whose
-  // time was still open, a career plan's lessons fit before their challenges, and Today asked
-  // nothing while the plan held them after (career 2131).
-  await saveOrLetGo(lostSave, () =>
-    updatePhaseDatesProposal({
-      computed,
-      context: planned,
-      mode,
-      pace,
-      revalidation,
-      writeVersion: {
-        ...context.plan,
-        inputVersion: context.plan.inputVersion + 1,
-        version: context.plan.version + (unchanged ? 0 : 1),
-      },
-    }),
-  );
-
   // An unchanged plan keeps the layout it was saved with; only its inputs' key was saved.
   return { plan: unchanged ? null : computed, status: unchanged ? "unchanged" : "refreshed" };
+}
+
+/** Undo keeps its exact allocation; only current advice and waiting quotes are recomputed. */
+export async function refreshSavedGoalPlanAdvice(goalId: string): Promise<void> {
+  await withPlanRetry(async () => {
+    const context = await loadPlanAtToken(goalId);
+
+    if (!context || !isPlanReady(context)) {
+      return;
+    }
+
+    const computed = await computePlan({ context, mode: "automatic", pace: "saved" });
+    const retained = await prepareRetainedPlanWrite({ computed, context });
+
+    await savePlanInputsKey({
+      context,
+      graph: context.state.graph,
+      inputsKey: computed.inputsKey,
+      previews: retained.previews,
+      summary: retained.summary,
+    });
+  });
 }

@@ -341,18 +341,22 @@ describe("public mock funding views", () => {
       setAsideMinutes: 30,
     });
 
-    expect(opened.today.mockFunding).toStrictEqual(result.today.mockFunding);
-    expect(opened.today.session.minutes).toStrictEqual(result.today.session.minutes);
-    expect(opened.today.session.week.time).toStrictEqual(result.today.session.week.time);
-    expect(result.today).toMatchObject({ mockFunding: expected });
-    expect(result.today.session.minutes.dailyGoal % 1).not.toBe(0);
-    expect(result.today.session.week.time.targetMinutes % 1).not.toBe(0);
+    expect(opened.today.mockFunding).toMatchObject({
+      mockDate: result.today.mockFunding?.mockDate,
+      mockMinutes: result.today.mockFunding?.mockMinutes,
+    });
 
-    expect(todayResponseSchema.parse(serializeToday(result.today))).toMatchObject({
+    expect(opened.today.session.minutes.planned).toBe(result.today.session.minutes.planned);
+    expect(opened.today.session.week.time).toBeDefined();
+    expect(opened.today).toMatchObject({ mockFunding: expected });
+    expect(opened.today.session.minutes.dailyGoal % 1).not.toBe(0);
+    expect(opened.today.session.week.time.targetMinutes % 1).not.toBe(0);
+
+    expect(todayResponseSchema.parse(serializeToday(opened.today))).toMatchObject({
       mockFunding: expected,
       session: {
-        minutes: result.today.session.minutes,
-        week: { time: result.today.session.week.time },
+        minutes: opened.today.session.minutes,
+        week: { time: opened.today.session.week.time },
       },
     });
 

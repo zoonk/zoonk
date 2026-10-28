@@ -4,18 +4,14 @@ import { studySessionError } from "@/lib/study-session-errors";
 import { serializeToday } from "@/lib/study-session-serializers";
 import { noGoalError, planNotReadyError } from "@/lib/today-errors";
 import { todayStudySessionInputSchema } from "@zoonk/core/sessions/contract";
-import { getTodayViewFollowingDevice } from "@zoonk/core/view-models/today/get";
+import { getTodayView } from "@zoonk/core/view-models/today/get";
 import { NextResponse } from "next/server";
 
-/**
- * Reads a saved day or its ID-free preview. With `timeZone`, the goal follows the device first, as
- * Main's Today does with its own request. No study session is created or changed: the learner opens
- * the day with POST /v1/goals/{goalId}/study-sessions.
- */
+/** Reads the saved goal and allocation. The learner's Start POST follows their device zone. */
 async function getToday(request: Request) {
   const query = readQueryParams(request, todayStudySessionInputSchema);
 
-  const result = await getTodayViewFollowingDevice(query);
+  const result = await getTodayView(query);
 
   if (result.status === "noGoal") {
     return noGoalError(result.suggestedGoal);

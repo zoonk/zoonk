@@ -37,7 +37,7 @@ export async function persistStudyDay({
     selection.computed !== null ||
     selection.inputKeyUpdate !== undefined;
 
-  const prepared = prepareSelectedPlanSave({ selection, shown: persistsPlan });
+  const prepared = await prepareSelectedPlanSave({ selection, shown: persistsPlan });
 
   try {
     return await prisma.$transaction(async (tx) => {

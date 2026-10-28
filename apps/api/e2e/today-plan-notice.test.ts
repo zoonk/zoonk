@@ -23,14 +23,8 @@ test.describe("Today's mandatory notice acknowledgment API", () => {
     expect(response.status(), await response.text()).toBe(200);
     const today = todayResponseSchema.parse(await response.json());
 
-    expect(today.planChange).toMatchObject({
-      behind: { coveredBefore: 1 },
-      canUndo: false,
-      id: null,
-      kind: "missedDays",
-      source: "system",
-      status: "applied",
-    });
+    expect(today.planChange).toBeNull();
+    expect(today.earlierWork.length).toBeGreaterThan(0);
 
     await expect(
       prisma.plan.findUniqueOrThrow({ where: { id: fixture.plan.id } }),
@@ -40,7 +34,7 @@ test.describe("Today's mandatory notice acknowledgment API", () => {
     await expect(prisma.studySession.count({ where: { userId } })).resolves.toBe(0);
 
     const input = {
-      basis: today.noticeBasis,
+      basis: { inputVersion: before.inputVersion, version: before.version },
       goalId: fixture.goal.id,
       kind: "computed",
       shownDate: localDate.toISOString().slice(0, 10),

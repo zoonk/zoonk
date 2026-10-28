@@ -18,7 +18,6 @@ import { withSeenTopics } from "./seen-effect";
  */
 export async function computeResumedPlan(
   context: PlanContext,
-  { reuseReadBuild = false }: { reuseReadBuild?: boolean } = {},
 ): Promise<{ carriedItemIds: string[]; computed: ComputedPlan; effect: PlanEffect } | null> {
   const left = await loadLeftWork(context);
 
@@ -26,7 +25,7 @@ export async function computeResumedPlan(
     return null;
   }
 
-  const computed = await computePlan({ context, mode: "forced", reuseReadBuild });
+  const computed = await computePlan({ context, mode: "forced" });
   const phaseEnds = listPhaseEndMoves({ after: computed.built.phases, shown: context.phases });
 
   return {

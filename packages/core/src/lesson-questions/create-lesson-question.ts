@@ -57,7 +57,7 @@ async function settleAskedQuestion({
   return loadMissionMoment({ source, timeZone, userId });
 }
 
-type PersistedQuestionOutcome = ReturnType<typeof getCreateLessonQuestionOutcome>;
+type PersistedQuestionOutcome = Awaited<ReturnType<typeof getCreateLessonQuestionOutcome>>;
 
 /**
  * A question just asked, as the client asked to read it, with what asking did to today's missions;
@@ -82,7 +82,7 @@ async function finishCreatedQuestion({
   return { missionMoment, question, status: outcome.status };
 }
 
-function getCreateLessonQuestionOutcome({
+async function getCreateLessonQuestionOutcome({
   question,
   requestFingerprint,
 }: {
@@ -93,7 +93,7 @@ function getCreateLessonQuestionOutcome({
     return { status: "conflict" as const };
   }
 
-  return { question: toLessonQuestionResource(question), status: "created" as const };
+  return { question: await toLessonQuestionResource(question), status: "created" as const };
 }
 
 function findExistingLessonQuestion({
@@ -153,7 +153,7 @@ async function persistLessonQuestion({
 
     if (existingQuestion) {
       return unchanged(
-        getCreateLessonQuestionOutcome({ question: existingQuestion, requestFingerprint }),
+        await getCreateLessonQuestionOutcome({ question: existingQuestion, requestFingerprint }),
       );
     }
 
@@ -256,7 +256,10 @@ export async function createLessonQuestion({
 
   if (existingQuestion) {
     return finishCreatedQuestion({
-      outcome: getCreateLessonQuestionOutcome({ question: existingQuestion, requestFingerprint }),
+      outcome: await getCreateLessonQuestionOutcome({
+        question: existingQuestion,
+        requestFingerprint,
+      }),
       userId,
     });
   }

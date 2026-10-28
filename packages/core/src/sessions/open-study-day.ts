@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { getSession } from "../users/get-session";
+import { appendLandedLessons } from "./_utils/append-landed-lessons";
 import { isCurrentSession } from "./_utils/current-session";
 import { persistEntitlementLapseRefill } from "./_utils/entitlement-lapse-refill";
 import { loadStudySessionView } from "./_utils/load-session-view";
@@ -10,7 +11,7 @@ import { findOpenDayTarget } from "./_utils/open-day-target";
 import { loadOpenedDayView } from "./_utils/open-day-view";
 import { followOpenDayZone } from "./_utils/open-day-zone";
 import { openPlannedDay } from "./_utils/open-planned-day";
-import { appendLandedLessons } from "./_utils/refresh-day-session";
+import { refreshStudyDaySelection } from "./_utils/refresh-study-day-selection";
 import { findOwnedStudySession } from "./_utils/study-session-access";
 import { type StudySessionTimeZoneInput } from "./contract";
 import { type StudySessionResult } from "./get-study-session";
@@ -18,6 +19,10 @@ import { type OpenStudyDayInput, type OpenStudyDayResult } from "./open-day-cont
 
 /** The explicit learner POST owns persistence; renders and prefetches only select in memory. */
 export async function openStudyDay(input: OpenStudyDayInput): Promise<OpenStudyDayResult> {
+  return openDay(input, 0);
+}
+
+async function openDay(input: OpenStudyDayInput, attempt: number): Promise<OpenStudyDayResult> {
   const actor = await getSession();
 
   if (!actor) {
@@ -57,6 +62,10 @@ export async function openStudyDay(input: OpenStudyDayInput): Promise<OpenStudyD
           timeZone,
           userId,
         });
+
+  if (opened.status === "stale" && attempt === 0) {
+    return openDay(input, 1);
+  }
 
   const session =
     opened.status === "opened"
@@ -118,7 +127,8 @@ export async function openStudySession({
     return { status: "retryable" };
   }
 
-  const current = await appendLandedLessons({ goal: session.goal, session: refilled, timeZone });
+  const selected = await refreshStudyDaySelection({ session: refilled, timeZone });
+  const current = await appendLandedLessons({ goal: session.goal, session: selected, timeZone });
 
   return {
     session: await loadOpenedDayView({ session: current, timeZone, userId }),

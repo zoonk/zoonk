@@ -280,20 +280,23 @@ export async function withExtraStudyCheck({
  * blocks read under the lock.
  */
 export async function withSessionAppendLock<TResult>({
-  planId,
+  plan,
   run,
   session,
 }: {
   /** A queue-only edit changes its own plan, never the learner model of their other goals. */
-  planId?: string;
+  plan?: { id: string; write: boolean };
   run: (locked: { session: StudySessionRow; transaction: TransactionClient }) => Promise<TResult>;
   session: StudySessionRow;
 }): Promise<TResult> {
   return prisma.$transaction(async (transaction) => {
-    if (planId) {
-      await markPlansChanged(transaction, { planIds: [planId] });
+    if (plan?.write) {
+      await markPlansChanged(transaction, { planIds: [plan.id] });
     } else {
-      await markLearnerChanged(transaction, { userId: session.userId });
+      await markLearnerChanged(transaction, {
+        lockPlanIds: plan ? [plan.id] : [],
+        userId: session.userId,
+      });
     }
 
     const locked = await lockSessionQueue({ sessionId: session.id, tx: transaction });

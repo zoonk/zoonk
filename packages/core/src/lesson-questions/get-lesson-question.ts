@@ -38,7 +38,7 @@ export async function getLessonQuestion({ questionId }: { questionId: string }) 
   }
 
   return {
-    question: await markItemTurnAnswered({ question: toLessonQuestionResource(question) }),
+    question: await markItemTurnAnswered({ question: await toLessonQuestionResource(question) }),
     status: "ready" as const,
   };
 }

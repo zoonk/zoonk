@@ -7,7 +7,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { waitForBlockedStatement } from "../_test-utils/learner-lock";
 import { mockSession } from "../_test-utils/mock-session";
-import { followGoalTimeZone } from "../learner/follow-goal-time-zone";
+import { moveGoalTimeZoneInTransaction } from "../learner/follow-goal-time-zone";
 import { getSession } from "../users/get-session";
 import { buildExamIdentityKey } from "./exams/exam-identity";
 import { readBlueprintContent, saveExamBlueprint } from "./exams/save-exam-blueprint";
@@ -45,7 +45,14 @@ async function fixture(writer: Writer) {
       plans: [first.plan, second.plan],
       read: () => prisma.goal.findUniqueOrThrow({ where: { id: first.goal.id } }),
       write: () =>
-        followGoalTimeZone({ goalId: first.goal.id, timeZone: "America/Argentina/Buenos_Aires" }),
+        prisma.$transaction((tx) =>
+          moveGoalTimeZoneInTransaction(tx, {
+            fromZone: "America/Sao_Paulo",
+            goalId: first.goal.id,
+            toZone: "America/Argentina/Buenos_Aires",
+            userId: first.user.id,
+          }),
+        ),
     };
   }
 

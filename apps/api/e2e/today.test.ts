@@ -350,7 +350,7 @@ test.describe("Today API", () => {
     );
 
     expect(kept?.session.localDate).toBe(toIsoDay(localDay(SAO_PAULO)));
-    expect(moved?.session.localDate).toBe(toIsoDay(localDay(device)));
+    expect(moved?.session.localDate).toBe(toIsoDay(localDay(SAO_PAULO)));
 
     const zones = await prisma.goal.findMany({
       orderBy: { userId: "asc" },
@@ -359,7 +359,7 @@ test.describe("Today API", () => {
     });
 
     expect(Object.fromEntries(zones.map((goal) => [goal.userId, goal.timezone]))).toStrictEqual({
-      [fresh.userId]: device,
+      [fresh.userId]: SAO_PAULO,
       [studied.userId]: SAO_PAULO,
     });
 

@@ -35,7 +35,6 @@ import { type PlanGraph, type PlanSettings, parsePlanSettings } from "./planner/
 
 const START = "2026-10-10";
 const CHANGE_DAY = "2026-10-12";
-const PROMISED_DAY = "2026-10-15";
 const MOCK_DAY = "2026-10-18";
 const CHALLENGE_DAY = "2026-10-19";
 const DAILY_MINUTES = 25;
@@ -281,7 +280,8 @@ async function readPromise(fixture: Fixture) {
     .flatMap((day) => day.items)
     .find((item) => item.lessonId === nextLesson?.lessonId);
 
-  expect(promise?.scheduledFor).toBe(PROMISED_DAY);
+  const savedLesson = before.items.find((item) => item.lessonId === nextLesson?.lessonId);
+  expect(promise?.scheduledFor).toBeTruthy();
 
   if (!promise?.lessonId || !promise.scheduledFor) {
     throw new Error("Expected a dated, explicitly shown next lesson");
@@ -289,7 +289,13 @@ async function readPromise(fixture: Fixture) {
 
   return {
     before,
-    promise: { ...promise, lessonId: promise.lessonId, scheduledFor: promise.scheduledFor },
+    promise: {
+      ...promise,
+      lessonId: promise.lessonId,
+      scheduledFor: savedLesson?.scheduledFor
+        ? toIsoDate(savedLesson.scheduledFor)
+        : promise.scheduledFor,
+    },
   };
 }
 

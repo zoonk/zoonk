@@ -4,6 +4,10 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { loadPlanAtToken } from "./_utils/plan-token";
+import { prepareRetainedPlanWrite } from "./_utils/prepare-plan-write";
+import { computePlan } from "./_utils/replan";
+import { savePlanInputsKey } from "./_utils/write-plan";
 import { createGoalPlan } from "./create-goal-plan";
 import { getGoalPlan } from "./get-goal-plan";
 import { addDays } from "./planner/plan-calendar";
@@ -49,7 +53,14 @@ describe("what the plan view says it covers", () => {
         .map((lesson, index) =>
           planItemFixture({
             chapterId: library.chapters[0]?.id ?? null,
+            facts: {
+              minutes: 6,
+              parts: { checkpoint: 0, practice: 3, unwritten: 0, written: 3 },
+              schemaVersion: 1,
+              skillIds: first ? [first.id] : [],
+            },
             lessonId: lesson.id,
+            minutes: 6,
             planId: plan.id,
             position: index,
             scheduledFor: addDays(MONDAY, Math.floor(index / 2)),
@@ -58,6 +69,16 @@ describe("what the plan view says it covers", () => {
           }),
         ),
     );
+
+    const context = await loadPlanAtToken(goal.id);
+
+    if (!context) {
+      throw new Error("Expected the writer context");
+    }
+
+    const computed = await computePlan({ context, mode: "automatic", pace: "saved" });
+    const retained = await prepareRetainedPlanWrite({ computed, context });
+    await savePlanInputsKey({ context, ...retained });
 
     await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
       plan: { feasibility: { coreFits: false } },

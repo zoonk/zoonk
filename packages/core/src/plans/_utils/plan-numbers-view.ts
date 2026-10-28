@@ -7,37 +7,24 @@ import { getItemKey } from "../planner/plan-items";
 import { type ShownFeasibility } from "./plan-feasibility-view";
 import { getPlanNumbers, getPlanWorkload } from "./plan-numbers";
 import { type PlanReadContext } from "./plan-read-projection";
+import { readPlanSummary } from "./plan-summary";
 import { type ComputedPlan } from "./replan";
+import { readSelectedItemFacts } from "./selected-item-contract";
 
 /** The actual pure build's numbers, also reused for a prospective onboarding schedule. */
 export async function buildPlanNumbersView({
   computed,
   context,
   coverage = computed.feasibility,
-  saved = false,
 }: {
   computed: ComputedPlan;
   context: PlanReadContext;
   /** What the plan covers: the Plan's is what the plan it shows covers (see `readShownFeasibility`). */
   coverage?: Pick<ShownFeasibility, "coveredShare" | "measure">;
-  saved?: boolean;
 }): Promise<PlanNumbers> {
   const { pace, state } = computed;
-  const settings = saved ? context.state.settings : state.settings;
-  const byKey = new Map(computed.built.items.map((item) => [item.key, item]));
-  /** Plan renders its saved dates and items; only advice describes a prospective schedule. */
-  const built = saved
-    ? {
-        ...computed.built,
-        items: context.items.flatMap((item) => {
-          const planned = byKey.get(getItemKey(item));
-
-          return planned
-            ? [{ ...planned, scheduledFor: item.scheduledFor, status: item.status }]
-            : [];
-        }),
-      }
-    : computed.built;
+  const settings = state.settings;
+  const built = computed.built;
 
   const lessons = await prisma.lesson.findMany({
     select: { estimatedMinutes: true, id: true },
@@ -75,5 +62,67 @@ export async function buildPlanNumbersView({
     isExam: context.goal.kind === "exam",
     settings,
     workload,
+  });
+}
+
+/** Recount saved portions for the current day; no Library reads and no producer. */
+export function buildSavedPlanNumbersView(context: PlanReadContext): PlanNumbers {
+  const { state, goal, today } = context;
+
+  const items = context.items.map((item) => ({
+    ...item,
+    key: getItemKey(item),
+    minutes: item.minutes ?? 0,
+  }));
+
+  const facts = items
+    .filter((item) => item.status === "todo")
+    .map((item) => readSelectedItemFacts(item.facts));
+
+  const sum = (part: "checkpoint" | "practice" | "unwritten" | "written") =>
+    Math.round(facts.reduce((total, fact) => total + (fact?.parts[part] ?? 0), 0) * 10) / 10;
+
+  const summary = readPlanSummary({
+    plan: { ...context.plan, userId: goal.userId },
+    value: context.plan.summary,
+  });
+
+  return getPlanNumbers({
+    built: {
+      items,
+      lessonDayMinutes: new Map(
+        items.flatMap((item) => {
+          const days = readSelectedItemFacts(item.facts)?.days;
+
+          return days
+            ? [[item.key, new Map(days.map(([date, minutes]) => [date, minutes]))] as const]
+            : [];
+        }),
+      ),
+    },
+    context: {
+      dailyMinutes: state.goal.dailyMinutes,
+      fromDate: toIsoDate(today),
+      fullCourse: goal.kind === "exam" && state.settings.fullCourse,
+      ownLevel: getOwnLevel({ goal }),
+      paceFactor: state.settings.pace?.factor ?? 1,
+      targetDate: state.goal.targetDate,
+      weekdayMinutes:
+        state.settings.weekdayMinutes ?? Array.from({ length: 7 }, () => state.goal.dailyMinutes),
+    },
+    coverage: summary?.selected.coverage
+      ? {
+          coveredShare: summary.selected.coverage.coveredShare ?? 1,
+          measure: summary.selected.coverage.measure,
+        }
+      : null,
+    isExam: goal.kind === "exam",
+    settings: state.settings,
+    workload: {
+      checkpointMinutes: sum("checkpoint"),
+      lessonMinutes: sum("written"),
+      practiceMinutes: sum("practice"),
+      unwrittenLessonMinutes: sum("unwritten"),
+    },
   });
 }

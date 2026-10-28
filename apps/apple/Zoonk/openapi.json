@@ -14860,7 +14860,7 @@
       }
     },
     "/goals/{goalId}/plan/time-advice": {
-      "get": {
+      "post": {
         "description": "What a daily time covers by the goal's date, in the week asked about (its study days, and the weekend's own time, which a new daily time leaves as it is): the plan that time plans, as the plan shows it once the learner chooses it. For an exam asked about with `fullCourse=true`, the plan that studies everything, going on after the exam, and the day it ends. Only that time: the time that covers everything is asked for with `POST /goals/{goalId}/plan/time-to-cover`. `ready` is false while the plan is being built: ask again in a few seconds.",
         "operationId": "getPlanTimeAdvice",
         "security": [
@@ -14887,49 +14887,18 @@
             },
             "required": true,
             "description": "Goal ID"
-          },
-          {
-            "in": "query",
-            "name": "dailyMinutes",
-            "schema": {
-              "description": "The weekdays' time a day the learner is looking at: the answer's coveredShare says what it covers by the goal's date. The goal's own time when absent",
-              "type": "number"
-            },
-            "description": "The weekdays' time a day the learner is looking at: the answer's coveredShare says what it covers by the goal's date. The goal's own time when absent"
-          },
-          {
-            "in": "query",
-            "name": "fullCourse",
-            "schema": {
-              "description": "Exams only: true plans the time asked about studying everything, going on after the exam for what doesn't fit before it (the plan change `setFullCourse`), and says when that ends (fullCourseEndDate). Other goals ignore it",
-              "type": "string",
-              "enum": [
-                "true",
-                "false"
-              ]
-            },
-            "description": "Exams only: true plans the time asked about studying everything, going on after the exam for what doesn't fit before it (the plan change `setFullCourse`), and says when that ends (fullCourseEndDate). Other goals ignore it"
-          },
-          {
-            "in": "query",
-            "name": "studyDays",
-            "schema": {
-              "description": "The weekdays the learner would study, Sunday first, such as 1,2,3,4,5 for Monday to Friday; the plan's own days when absent",
-              "type": "string",
-              "pattern": "^[0-6](?:,[0-6]){0,6}$"
-            },
-            "description": "The weekdays the learner would study, Sunday first, such as 1,2,3,4,5 for Monday to Friday; the plan's own days when absent"
-          },
-          {
-            "in": "query",
-            "name": "weekendMinutes",
-            "schema": {
-              "description": "The weekend's own time, when Saturday and Sunday get a time apart from the weekdays'. A new daily time leaves it as it is",
-              "type": "number"
-            },
-            "description": "The weekend's own time, when Saturday and Sunday get a time apart from the weekdays'. A new daily time leaves it as it is"
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlanTimeAdviceInput"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "What the daily time asked about covers",
@@ -22355,7 +22324,7 @@
     },
     "/today": {
       "get": {
-        "description": "Today, the screen learners open every day, for a goal (the active goal by default): the goal and its countdown, the status line (plan status and preparation), the saved day or an unopened preview without persisted IDs (status unstarted), the week, the week's checkpoint, at most one insight and, for a language goal, the pattern noticed in recent mistakes that it offers beside the day. With `timeZone`, the goal follows the device first, as the apps' Today does: a goal without a zone stores it, and a learner who moved takes it while nothing was done yet in the goal's day. No study session is created or changed: the learner opens the day through POST /v1/goals/{goalId}/study-sessions.",
+        "description": "Today, the screen learners open every day, for a goal (the active goal by default): the goal and its countdown, the status line (plan status and preparation), the saved day or an unopened preview without persisted IDs (status unstarted), the week, the week's checkpoint, at most one insight and, for a language goal, the pattern noticed in recent mistakes that it offers beside the day. With `timeZone`, the read uses the device's local day without changing the goal or planning. Start follows the device zone and settles the plan. No study session is created or changed: the learner opens the day through POST /v1/goals/{goalId}/study-sessions.",
         "operationId": "getToday",
         "security": [
           {
@@ -25709,6 +25678,37 @@
           "dailyMinutes"
         ],
         "additionalProperties": false
+      },
+      "PlanTimeAdviceInput": {
+        "type": "object",
+        "properties": {
+          "studyDays": {
+            "description": "The weekdays the learner would study, Sunday first (0), such as [1, 2, 3, 4, 5] for Monday to Friday; the plan's own days when absent",
+            "minItems": 1,
+            "maxItems": 7,
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 6
+            }
+          },
+          "weekendMinutes": {
+            "description": "The weekend's own time, when Saturday and Sunday get a time apart from the weekdays'. The time found is the weekdays' time with it",
+            "type": "integer",
+            "minimum": 5,
+            "maximum": 1440
+          },
+          "dailyMinutes": {
+            "type": "integer",
+            "minimum": 5,
+            "maximum": 1440,
+            "description": "Minutes a day for this goal"
+          },
+          "fullCourse": {
+            "type": "boolean"
+          }
+        }
       },
       "PlanTimeToCoverInput": {
         "type": "object",
@@ -79558,6 +79558,29 @@
       "Today": {
         "type": "object",
         "properties": {
+          "earlierWork": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "nullable": true,
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "title": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "title"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Earlier unfinished saved teaching, in plan order. Start settles it into the current plan; this list does not promise it all fits one session."
+          },
           "exam": {
             "nullable": true,
             "description": "An exam goal's final stretch, day before, exam day or \"How did it go?\"; null otherwise",
@@ -80296,6 +80319,7 @@
           }
         },
         "required": [
+          "earlierWork",
           "exam",
           "examChoice",
           "goal",

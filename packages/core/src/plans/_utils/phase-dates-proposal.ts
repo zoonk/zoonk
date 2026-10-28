@@ -1,10 +1,7 @@
 import "server-only";
 import { isDeepStrictEqual } from "node:util";
-import { prisma } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
+import { type TransactionClient, prisma } from "@zoonk/db";
 import { PHASE_DATES_SOURCE } from "../plan-change-contract";
-import { isPlanConflictError } from "../plan-conflict";
-import { type PlanOperation } from "../plan-contract";
 import { type PlanningMode } from "../planner/build-plan";
 import {
   getPhaseDatesEffect,
@@ -19,8 +16,8 @@ import { planPhaseDatesMove } from "./moved-phase-dates";
 import { parsePlanChangePayload, toPlanChangePayload } from "./plan-change-payload";
 import { type PlanContext } from "./plan-context";
 import { writePlanMetadata } from "./plan-metadata-write";
+import { getPlanPreviewBasis } from "./plan-preview-basis";
 import { type ComputedPlan, type PlanTagRevalidation, revalidatePlanTags } from "./replan";
-import { getChangePlanning } from "./steered-areas";
 
 /**
  * How a learner's change planned the plan it saved (see `getChangePlanning`), from its own state:
@@ -116,8 +113,12 @@ function startsFromEnds({
   );
 }
 
-async function loadPhaseDatesChanges(planId: string) {
-  const changes = await prisma.planChange.findMany({
+async function loadPhaseDatesChanges(
+  planId: string,
+  client: Pick<TransactionClient, "planChange"> = prisma,
+) {
+  const changes = await client.planChange.findMany({
+    orderBy: { id: "asc" },
     select: { id: true, payload: true, status: true },
     where: {
       payload: { equals: PHASE_DATES_SOURCE, path: ["source"] },
@@ -166,7 +167,7 @@ export async function withdrawUnneededPhaseDatesProposal({
   }
 
   const { count } = await writePlanMetadata({
-    plan: context.plan,
+    context,
     write: (tx) =>
       tx.planChange.updateMany({
         data: { status: "replaced" },
@@ -189,14 +190,12 @@ export async function withdrawUnneededPhaseDatesProposal({
  * costs what the card they answered didn't name (see `isKeptOver`). A learner's change asks again
  * right away (see `askPhaseDatesAfterChange`).
  */
-export async function updatePhaseDatesProposal({
+export async function preparePhaseDatesProposal({
   computed,
   context,
   mode,
   pace,
   planning,
-  revalidation,
-  writeVersion = context.plan,
 }: {
   computed: ComputedPlan;
   context: PlanContext;
@@ -205,117 +204,47 @@ export async function updatePhaseDatesProposal({
   pace: "sampled" | "saved";
   /** How a learner's change planned `computed`, right after it (see `askPhaseDatesAfterChange`). */
   planning?: ChangePlanning;
-  revalidation: PlanTagRevalidation;
-  /** The committed plan's version when the proposal was computed from its preceding context. */
-  writeVersion?: PlanContext["plan"];
-}): Promise<void> {
-  const [moved, earlier] = await Promise.all([
-    findMovedPhaseDates({ computed, context, mode, pace, planning }),
-    loadPhaseDatesChanges(context.plan.id),
-  ]);
-
+}): Promise<((tx: TransactionClient) => Promise<void>) | null> {
+  const moved = await findMovedPhaseDates({ computed, context, mode, pace, planning });
   const found = moved ? getMovedDatesEffect({ computed, moved }) : null;
   const effect = found && showsPhaseDatesMove(found) ? found : null;
-  const waiting = earlier.filter((change) => change.status === "proposed");
-  const current = waiting.find((change) => effect && isDeepStrictEqual(change.effect, effect));
 
-  const kept =
-    effect !== null &&
-    earlier.some(
-      (change) =>
-        change.status === "declined" &&
-        startsFromEnds({ effect: change.effect, phases: computed.built.phases }) &&
-        isKeptOver({ declined: change.effect, effect }),
-    );
+  return async (tx) => {
+    const earlier = await loadPhaseDatesChanges(context.plan.id, tx);
+    const waiting = earlier.filter((change) => change.status === "proposed");
+    const current = waiting.find((change) => effect && isDeepStrictEqual(change.effect, effect));
 
-  const proposes = effect !== null && !kept && !current;
-  const stale = waiting.filter((change) => change.id !== current?.id).map((change) => change.id);
+    const kept =
+      effect !== null &&
+      earlier.some(
+        (change) =>
+          change.status === "declined" &&
+          startsFromEnds({ effect: change.effect, phases: computed.built.phases }) &&
+          isKeptOver({ declined: change.effect, effect }),
+      );
 
-  if (!proposes && stale.length === 0) {
-    return;
-  }
+    const stale = waiting.filter((change) => change.id !== current?.id).map((change) => change.id);
 
-  const { error } = await safeAsync(() =>
-    writePlanMetadata({
-      plan: writeVersion,
-      write: async (tx) => {
-        await tx.planChange.updateMany({
-          data: { status: "replaced" },
-          where: { id: { in: stale }, status: "proposed" },
-        });
+    await tx.planChange.updateMany({
+      data: { status: "replaced" },
+      where: { id: { in: stale }, status: "proposed" },
+    });
 
-        if (proposes) {
-          await tx.planChange.create({
-            data: {
-              kind: "edited",
-              payload: toPlanChangePayload({
-                effect,
-                operations: [{ kind: "fitPhaseDates" }],
-                source: PHASE_DATES_SOURCE,
-              }),
-              planId: context.plan.id,
-              reason: "",
-              status: "proposed",
-            },
-          });
-        }
-      },
-    }),
-  );
-
-  if (error) {
-    // Every caller asks after its own plan write committed, and a write since then makes this
-    // proposal obsolete: the next run asks from the plan as it is. Thrown, the conflict would make
-    // the caller's retry run its committed write again.
-    if (isPlanConflictError(error)) {
-      return;
+    if (effect && !kept && !current) {
+      await tx.planChange.create({
+        data: {
+          kind: "edited",
+          payload: toPlanChangePayload({
+            effect,
+            operations: [{ kind: "fitPhaseDates" }],
+            previewBasis: getPlanPreviewBasis(context),
+            source: PHASE_DATES_SOURCE,
+          }),
+          planId: context.plan.id,
+          reason: "",
+          status: "proposed",
+        },
+      });
     }
-
-    throw error;
-  }
-
-  if (revalidation === "now") {
-    revalidatePlanTags(context.goal.userId);
-  }
-}
-
-/**
- * Today asks again right after a learner's change when the plan it saved still needs the phase
- * dates moved: the change replaced the proposal waiting (see `APPLIED_LEVERS`), but a change of
- * focus keeps the dates, so the challenges the card was about still came before their lessons,
- * with no card until the next session's run (career 1230, 2107). The change's plan is planned from
- * the context before it with its own state and planning (see `getChangePlanning`), so moving the
- * dates is planned the same way. Applying Today's own proposal moved every end it needed to.
- */
-export async function askPhaseDatesAfterChange({
-  bringBackSetAside,
-  computed,
-  context,
-  operations,
-}: {
-  /** The change's plan brought work set aside for time back (see `ComputedChange`). */
-  bringBackSetAside: boolean;
-  computed: ComputedPlan;
-  context: PlanContext;
-  operations: readonly PlanOperation[];
-}): Promise<void> {
-  if (operations.some((operation) => operation.kind === "fitPhaseDates")) {
-    return;
-  }
-
-  const { mode, todayExceptAreas } = getChangePlanning(operations);
-
-  await updatePhaseDatesProposal({
-    computed,
-    context,
-    mode,
-    pace: "saved",
-    planning: { bringBackSetAside, state: computed.state, todayExceptAreas },
-    revalidation: "now",
-    writeVersion: {
-      ...context.plan,
-      inputVersion: context.plan.inputVersion + 1,
-      version: context.plan.version + 1,
-    },
-  });
+  };
 }

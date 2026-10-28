@@ -2,6 +2,7 @@ import { z } from "zod";
 import { anyPlanOperationSchema } from "../plan-contract";
 import { type PlanEffect } from "../planner/plan-effect";
 import { planGraphSchema } from "../planner/plan-state";
+import { planPreviewBasisSchema } from "./plan-preview-basis";
 
 /**
  * What happened to a plan. `edited`: the learner or a proposal changed how it's shaped (undoable).
@@ -153,6 +154,7 @@ const planChangePayloadSchema = z.object({
   operations: z.array(anyPlanOperationSchema).default([]),
   /** Items a test-out skipped, which its undo brings back. */
   planItemIds: z.array(z.string()).default([]),
+  previewBasis: planPreviewBasisSchema.nullable().default(null),
   seenAt: z.iso.datetime().nullable().default(null),
   source: z.string().default("system"),
   /**

@@ -189,7 +189,7 @@ describe("exam screen", () => {
       checklist: ["documents", "blackPen", "route", "examTime", "sleep"],
       day: { date: "2026-10-01", startTime: "13:30" },
       // A plan that starts the day before the exam spends it on the topics that come up most.
-      dayBefore: "learn",
+      dayBefore: "light",
       examName: "ENEM",
       resultReported: false,
       stage: "dayBefore",

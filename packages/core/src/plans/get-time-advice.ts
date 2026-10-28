@@ -135,12 +135,7 @@ async function planAtDate(context: PlanContext, targetDate: Date | null) {
     return null;
   }
 
-  return computePlan({
-    ...getChangePlanning(result.operations),
-    context,
-    reuseReadBuild: true,
-    state: result.state,
-  });
+  return computePlan({ ...getChangePlanning(result.operations), context, state: result.state });
 }
 
 /**

@@ -15,7 +15,7 @@ import { refreshGoalPlan } from "../../plans/refresh-goal-plan";
  * `PlanTagRevalidation`). A failed refresh is logged and the session goes on with the plan as it
  * is, since the learner's day matters more.
  */
-export async function refreshPlanAroundSession({
+async function refreshPlanAroundSession({
   goalId,
   pace,
   revalidation = "now",

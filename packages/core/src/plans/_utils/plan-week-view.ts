@@ -12,6 +12,7 @@ import { getItemKey } from "../planner/plan-items";
 import { DAYS_PER_WEEK, type PlanSettings } from "../planner/plan-state";
 import { type SkillAreas, getWritingTitle, isWritingItem } from "./plan-phase-views";
 import { type PlanReadItem } from "./plan-read-projection";
+import { projectSavedAllocationOn } from "./saved-allocation";
 import { isWorkFinished } from "./work-progress";
 
 type ItemAccess = { freeUntil: string | null; mocksRequirePlus: boolean };
@@ -132,7 +133,7 @@ export function buildWeekView({
     const day = toIsoDate(date);
 
     const dayItems = items
-      .filter((item) => item.scheduledFor && toIsoDate(item.scheduledFor) === day)
+      .flatMap((item) => projectSavedAllocationOn({ date, item }) ?? [])
       .map((item) => toPlanItemView({ access, item, minutes, skillAreas }));
 
     const dayMinutes =

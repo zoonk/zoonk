@@ -8,7 +8,7 @@ import { loadUnstartedDayView } from "./load-unstarted-day";
 import { planStudyDay } from "./plan-study-day";
 import { readSavedDayView } from "./read-saved-day-view";
 import { findSavedDaySession } from "./saved-day-session";
-import { type SelectedDayPlan, selectDayPlan } from "./selected-day-plan";
+import { type SelectedDayPlan, readSavedDayPlan } from "./selected-day-plan";
 
 export type ReadStudyDay = {
   /** The goal's exam blueprint, read once for the day and whatever else the request shows. */
@@ -53,7 +53,7 @@ export async function readStudyDay({
     };
   }
 
-  const selection = await selectDayPlan({ goal, now, reuseReadBuild: true, timeZone });
+  const selection = await readSavedDayPlan({ goal, now, timeZone });
 
   if (!selection) {
     return null;

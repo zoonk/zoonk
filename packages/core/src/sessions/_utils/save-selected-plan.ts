@@ -1,10 +1,11 @@
 import "server-only";
 import { type TransactionClient } from "@zoonk/db";
-import { toComputedPlanWrite } from "../../plans/_utils/computed-plan-write";
 import { getEstimateChange } from "../../plans/_utils/estimate-change";
+import { preparePhaseDatesProposal } from "../../plans/_utils/phase-dates-proposal";
 import { parsePlanChangePayload } from "../../plans/_utils/plan-change-payload";
 import { type PlanContext } from "../../plans/_utils/plan-context";
 import { type PlanSummary, readFreshPlanSummary } from "../../plans/_utils/plan-summary";
+import { preparePlanWrite, prepareRetainedPlanWrite } from "../../plans/_utils/prepare-plan-write";
 import { type PlanChangeRecord } from "../../plans/_utils/replan";
 import { getSettledPlanChange } from "../../plans/_utils/settled-change";
 import { type PlanWrite, writePlan } from "../../plans/_utils/write-plan";
@@ -34,14 +35,22 @@ type SelectedPlanMetadata = {
 };
 
 /** Only materialized data enters the transaction; lazy advice cannot extend its lock lifetime. */
+type ProposalWrite = (tx: TransactionClient) => Promise<void>;
+
 export type PreparedSelectedPlanSave =
   | { kind: "skip" }
-  | { data: SelectedPlanMetadata | null; kind: "metadata" }
+  | {
+      data: SelectedPlanMetadata | null;
+      kind: "metadata";
+      previews?: PlanWrite["previews"];
+      proposals?: ProposalWrite | null;
+    }
   | {
       change: PlanChangeRecord | null;
       kind: "computed";
       replacesPhaseDates: boolean;
       write: PlanWrite;
+      proposals?: ProposalWrite | null;
     };
 
 function prepareMetadata(selection: SelectedDayPlan): SelectedPlanMetadata | null {
@@ -78,6 +87,7 @@ function prepareMetadata(selection: SelectedDayPlan): SelectedPlanMetadata | nul
           timeZone: context.timeZone,
           userId: context.goal.userId,
         },
+        ...(summary?.advice && { advice: summary.advice }),
         schemaVersion: 2,
         selected,
       },
@@ -86,21 +96,56 @@ function prepareMetadata(selection: SelectedDayPlan): SelectedPlanMetadata | nul
 }
 
 /** The same selected plan's exact write and notice are prepared before taking any row locks. */
-export function prepareSelectedPlanSave({
+export async function prepareSelectedPlanSave({
   selection,
   shown,
 }: {
   selection: SelectedDayPlan;
   shown: boolean;
-}): PreparedSelectedPlanSave {
+}): Promise<PreparedSelectedPlanSave> {
   const { computed, context } = selection;
 
   if (!shown) {
     return { kind: "skip" };
   }
 
+  const candidate = computed ?? selection.retained;
+
+  const proposals = candidate
+    ? await preparePhaseDatesProposal({
+        computed: candidate,
+        context: {
+          ...context,
+          plan: {
+            ...context.plan,
+            inputVersion: context.plan.inputVersion + 1,
+            version: context.plan.version + Number(computed !== null),
+          },
+        },
+        mode: selection.left.length > 0 ? "forced" : "automatic",
+        pace: "saved",
+      })
+    : null;
+
   if (!computed) {
-    return { data: prepareMetadata(selection), kind: "metadata" };
+    const retained = candidate
+      ? await prepareRetainedPlanWrite({ computed: candidate, context })
+      : null;
+
+    const metadata = prepareMetadata(selection);
+
+    return {
+      data: retained
+        ? {
+            graph: retained.graph,
+            inputsKey: retained.inputsKey ?? undefined,
+            summary: retained.summary ?? undefined,
+          }
+        : metadata,
+      kind: "metadata",
+      previews: retained?.previews,
+      proposals,
+    };
   }
 
   const change = getSelectedPlanChange(selection);
@@ -108,8 +153,9 @@ export function prepareSelectedPlanSave({
   return {
     change,
     kind: "computed",
+    proposals,
     replacesPhaseDates: replacesPhaseDates(change),
-    write: toComputedPlanWrite({
+    write: await preparePlanWrite({
       computed,
       context: {
         ...context,
@@ -139,6 +185,16 @@ export async function saveSelectedPlan({
       await tx.plan.update({ data: prepared.data, where: { id: context.plan.id } });
     }
 
+    await Promise.all(
+      (prepared.previews ?? []).map((preview) =>
+        tx.planChange.updateMany({
+          data: { payload: preview.payload },
+          where: { id: preview.id, status: "proposed" },
+        }),
+      ),
+    );
+
+    await prepared.proposals?.(tx);
     return context.plan.version;
   }
 
@@ -147,6 +203,8 @@ export async function saveSelectedPlan({
     plan: prepared.write,
     tx,
   });
+
+  await prepared.proposals?.(tx);
 
   const { change } = prepared;
 
@@ -178,11 +236,13 @@ export async function saveSelectedPlan({
   }
 
   return context.plan.version + 1;
-} /**
+}
+
+/**
  * Whether a change the selected plan saves moves the phase dates itself: a waiting proposal to
  * move them no longer describes the plan, so saving it replaces that proposal.
  */
-export function replacesPhaseDates(change: PlanChangeRecord | null): boolean {
+function replacesPhaseDates(change: PlanChangeRecord | null): boolean {
   return (
     change !== null && (parsePlanChangePayload(change.payload).effect?.phaseEnds?.length ?? 0) > 0
   );

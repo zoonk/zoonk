@@ -102,14 +102,18 @@ export async function pickExamOptions({
   goal: Goal;
   timeZone?: string | null;
 }): Promise<ExamChoiceResult> {
-  const offered = await findOfferedChoices({ choices, goal });
-
-  if (!offered) {
-    return { error: "unknownOption", status: "invalid" };
-  }
-
   return withPlanRetry(async () => {
     const context = await loadPlanAtToken(goal.id, { timeZone });
+
+    if (!context) {
+      return { status: "notFound" };
+    }
+
+    const offered = await findOfferedChoices({ choices, goal: context.goal });
+
+    if (!offered) {
+      return { error: "unknownOption", status: "invalid" };
+    }
 
     return context
       ? applyChoices({ choices: offered, context, followToday })

@@ -12,7 +12,7 @@ import { readSelectedItemFacts } from "./selected-item-contract";
  * raw portions, dates and minutes. A layout with items no build wrote (a test-out's stand-in) has
  * no such facts and stays explicitly stale.
  */
-function retainPlanAllocation({
+export function retainPlanAllocation({
   built,
   context,
 }: {

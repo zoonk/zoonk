@@ -1,8 +1,10 @@
 import "server-only";
+import { appendLandedLessons } from "./append-landed-lessons";
 import { persistEntitlementLapseRefill } from "./entitlement-lapse-refill";
+import { hasSameGoalInputs } from "./goal-input-snapshot";
 import { persistStudyDay } from "./persist-study-day";
 import { type PlannedStudyDay, planStudyDay } from "./plan-study-day";
-import { appendLandedLessons } from "./refresh-day-session";
+import { refreshStudyDaySelection } from "./refresh-study-day-selection";
 import { findSavedDaySession } from "./saved-day-session";
 import { selectDayPlan } from "./selected-day-plan";
 import { type SessionDayContext } from "./session-placement";
@@ -26,7 +28,8 @@ export async function openPlannedDay(
       return { status: "stale" };
     }
 
-    const session = await appendLandedLessons({ goal, session: refilled, timeZone });
+    const selected = await refreshStudyDaySelection({ session: refilled, timeZone });
+    const session = await appendLandedLessons({ goal, session: selected ?? refilled, timeZone });
     return { created: false, session, status: "opened" };
   }
 
@@ -36,9 +39,18 @@ export async function openPlannedDay(
     return { status: "preparing" };
   }
 
+  if (!hasSameGoalInputs({ current: selection.context.goal, planned: goal })) {
+    return { status: "stale" };
+  }
+
   const planned = await planStudyDay({ ...context, selection });
 
-  if (planned.blocks.length === 0 && !context.keepEmpty) {
+  if (
+    planned.blocks.length === 0 &&
+    !context.keepEmpty &&
+    !selection.computed &&
+    !selection.inputKeyUpdate
+  ) {
     return { status: "empty" };
   }
 

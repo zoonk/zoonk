@@ -13,7 +13,7 @@ function hoursAgo(hours: number): Date {
 
 async function setup() {
   const user = await userFixture();
-  const goal = await goalFixture({ userId: user.id });
+  const goal = await goalFixture({ timezone: "UTC", userId: user.id });
   const plan = await planFixture({ goalId: goal.id });
 
   return { goal, plan };
@@ -39,7 +39,17 @@ describe(loadTodayPlanChange, () => {
       planChangeFixture({
         createdAt: hoursAgo(3),
         kind: "edited",
-        payload: { operations: [{ kind: "setDailyMinutes", minutes: 20 }], source: "planEdit" },
+        payload: {
+          effect: { endDateAfter: null, endDateBefore: null, lessonsAdded: 0, lessonsRemoved: 3 },
+          operations: [{ kind: "setDailyMinutes", minutes: 20 }],
+          previewBasis: {
+            inputVersion: plan.inputVersion,
+            planVersion: plan.version,
+            studyDay: "2026-10-05",
+            timeZone: "UTC",
+          },
+          source: "planEdit",
+        },
         planId: plan.id,
         reason: "Twenty minutes a day keeps you on track.",
         status: "proposed",

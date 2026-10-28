@@ -1,8 +1,8 @@
 import { accessError } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
-import { planTimeAdviceQuerySchema } from "@/lib/openapi/schemas/time-advice";
-import { readPathParams, readQueryParams } from "@/lib/request-input";
+import { planTimeAdviceInputSchema } from "@/lib/openapi/schemas/time-advice";
+import { readBody, readPathParams } from "@/lib/request-input";
 import { getPlanTimeAdvice } from "@zoonk/core/plans/time-advice";
 import { NextResponse } from "next/server";
 
@@ -17,19 +17,11 @@ async function readTimeAdvice(
 ) {
   const path = await readPathParams(context, goalPathParamsSchema);
 
-  const query = readQueryParams(request, planTimeAdviceQuerySchema);
+  const body = await readBody(request, planTimeAdviceInputSchema);
 
-  const result = await getPlanTimeAdvice({
-    goalId: path.goalId,
-    input: {
-      dailyMinutes: query.dailyMinutes,
-      fullCourse: query.fullCourse === "true",
-      studyDays: query.studyDays?.split(",").map(Number),
-      weekendMinutes: query.weekendMinutes,
-    },
-  });
+  const result = await getPlanTimeAdvice({ goalId: path.goalId, input: body });
 
   return result.status === "ready" ? NextResponse.json(result.advice) : accessError(result.status);
 }
 
-export const GET = withApiErrorBoundary(readTimeAdvice);
+export const POST = withApiErrorBoundary(readTimeAdvice);

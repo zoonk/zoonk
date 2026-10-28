@@ -1,11 +1,11 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { isPlanReady } from "./_utils/apply-plan-change";
-import { updatePhaseDatesProposal } from "./_utils/phase-dates-proposal";
+import { commitPlan } from "./_utils/commit-plan";
 import { toPlanChangePayload } from "./_utils/plan-change-payload";
 import { type PlanContext } from "./_utils/plan-context";
 import { loadPlanAtToken } from "./_utils/plan-token";
-import { type ComputedPlan, commitPlan, computePlan } from "./_utils/replan";
+import { type ComputedPlan, computePlan } from "./_utils/replan";
 import { withSeenTopics } from "./_utils/seen-effect";
 import { withPlanRetry } from "./plan-conflict";
 import { getSkillArea } from "./planner/graph-areas";
@@ -209,19 +209,7 @@ export async function bringBackMissedLessons({
           data: { completedAt: null, status: "todo" },
           where: { id: { in: [...restoredIds] }, planId: context.plan.id, status: "testedOut" },
         }),
-    });
-
-    await updatePhaseDatesProposal({
-      computed,
-      context: restored,
-      mode: "forced",
-      pace: "saved",
-      revalidation: "now",
-      writeVersion: {
-        ...context.plan,
-        inputVersion: context.plan.inputVersion + 1,
-        version: context.plan.version + 1,
-      },
+      phaseDates: { mode: "forced", pace: "saved" },
     });
   });
 }

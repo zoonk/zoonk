@@ -136,13 +136,6 @@ export async function choosePlanTools({
   }
 
   const { goal } = owned.context;
-  const tools = await findChosenTools({ context: owned.context, names: input.tools });
-
-  if (!tools) {
-    return { error: "unknownTool", status: "invalid" };
-  }
-
-  const chosen = await prepareSetups({ goal, input, tools });
 
   return withPlanRetry(async () => {
     const context = await loadPlanAtToken(goal.id, { timeZone: input.timeZone });
@@ -150,6 +143,14 @@ export async function choosePlanTools({
     if (!context) {
       return { status: "notFound" as const };
     }
+
+    const tools = await findChosenTools({ context, names: input.tools });
+
+    if (!tools) {
+      return { error: "unknownTool" as const, status: "invalid" as const };
+    }
+
+    const chosen = await prepareSetups({ goal: context.goal, input, tools });
 
     const result = await applyChangeNow({
       context,

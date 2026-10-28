@@ -1,6 +1,11 @@
 import "server-only";
 import { type LessonQuestionGetPayload, type LessonQuestionThreadGetPayload } from "@zoonk/db";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { getRequestInstant } from "../../learner/facts/request-instant";
+import { parsePlanChangePayload } from "../../plans/_utils/plan-change-payload";
 import { changeGoalSelect, toPlanChangeView } from "../../plans/_utils/plan-change-view";
+import { isCurrentPlanPreview } from "../../plans/_utils/plan-preview-basis";
 import {
   type LessonQuestionContextSummary,
   type LessonQuestionResource,
@@ -19,7 +24,15 @@ export const lessonQuestionResourceOmit = { contextSnapshot: true } as const;
 export const lessonQuestionResourceQuery = {
   include: {
     planChange: {
-      include: { plan: { select: { goal: { select: changeGoalSelect }, version: true } } },
+      include: {
+        plan: {
+          select: {
+            goal: { select: { ...changeGoalSelect, timezone: true } },
+            inputVersion: true,
+            version: true,
+          },
+        },
+      },
     },
   },
   omit: lessonQuestionResourceOmit,
@@ -55,23 +68,38 @@ function readToolOffer(value: unknown): TutorToolOffer | null {
   return parsed.success ? parsed.data : null;
 }
 
-export function toLessonQuestionResource(
+export async function toLessonQuestionResource(
   question: LessonQuestionResourceSource,
-): LessonQuestionResource {
+): Promise<LessonQuestionResource> {
   const { planChange } = question;
+  const payload = planChange && parsePlanChangePayload(planChange.payload);
+  const timeZone = getAnswerTimeZone({ goal: planChange?.plan.goal ?? null });
+
+  const current =
+    planChange?.status !== "proposed" ||
+    (payload?.effect &&
+      isCurrentPlanPreview({
+        basis: payload.previewBasis,
+        context: {
+          plan: planChange.plan,
+          timeZone,
+          today: getDateInTimeZone({ date: await getRequestInstant(), timeZone }),
+        },
+      }));
 
   return {
     answer: question.answer,
     context: getContextSummary(question),
     createdAt: question.createdAt.toISOString(),
     id: question.id,
-    planChange: planChange
-      ? toPlanChangeView({
-          change: planChange,
-          goal: planChange.plan.goal,
-          planVersion: planChange.plan.version,
-        })
-      : null,
+    planChange:
+      planChange && current
+        ? toPlanChangeView({
+            change: planChange,
+            goal: planChange.plan.goal,
+            planVersion: planChange.plan.version,
+          })
+        : null,
     question: question.question,
     status: question.status,
     toolOffer: readToolOffer(question.toolOffer),
@@ -79,7 +107,7 @@ export function toLessonQuestionResource(
   };
 }
 
-export function toLessonQuestionThreadResource({
+export async function toLessonQuestionThreadResource({
   hasMore,
   nextCursor,
   thread,
@@ -87,13 +115,15 @@ export function toLessonQuestionThreadResource({
   hasMore: boolean;
   nextCursor: string | null;
   thread: ThreadWithQuestions;
-}): LessonQuestionThreadResource {
+}): Promise<LessonQuestionThreadResource> {
   return {
     hasMore,
     id: thread.id,
     lessonId: thread.libraryLessonId,
     nextCursor,
-    questions: thread.questions.map((question) => toLessonQuestionResource(question)),
+    questions: await Promise.all(
+      thread.questions.map((question) => toLessonQuestionResource(question)),
+    ),
   };
 }
 

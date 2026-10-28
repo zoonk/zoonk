@@ -8,15 +8,15 @@ import {
   planTimeAdviceSchema,
   planTimeToCoverSchema,
 } from "@zoonk/core/plans/time-advice-contract";
-import { getFromBrowser, postFromBrowser } from "../api/browser-api";
+import { postFromBrowser } from "../api/browser-api";
 
 /**
  * What the time a day picked covers by the goal's date, in the week onboarding's time question
  * shows (its study days, and the weekend's own time when it has one), studying everything when an
  * exam's learner asks about that (`fullCourse`): that time's plan only (the time that covers
- * everything is Find's, see `findGoalTimeToCover`). Read from the API in the
+ * everything is Find's, see `findGoalTimeToCover`). Requested from the API in the
  * browser: the question asks again until the plan is built, and a Server Action would keep its
- * Continue busy while each read waits. Null when it couldn't be read.
+ * Continue busy while each preview waits. Null when it couldn't be read.
  */
 export async function getGoalTimeAdvice({
   dailyMinutes,
@@ -25,14 +25,10 @@ export async function getGoalTimeAdvice({
   studyDays,
   weekendMinutes,
 }: PlanTimeAdviceInput & { goalId: string; studyDays: number[] }): Promise<PlanTimeAdvice | null> {
-  const query = new URLSearchParams({
-    studyDays: studyDays.join(","),
-    ...(dailyMinutes === undefined ? {} : { dailyMinutes: String(dailyMinutes) }),
-    ...(fullCourse ? { fullCourse: "true" } : {}),
-    ...(weekendMinutes === undefined ? {} : { weekendMinutes: String(weekendMinutes) }),
+  const response = await postFromBrowser({
+    body: { dailyMinutes, fullCourse, studyDays, weekendMinutes },
+    path: `/v1/goals/${goalId}/plan/time-advice`,
   });
-
-  const response = await getFromBrowser(`/v1/goals/${goalId}/plan/time-advice?${query}`);
 
   if (!response?.ok) {
     return null;
