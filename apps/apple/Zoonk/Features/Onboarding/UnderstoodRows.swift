@@ -39,6 +39,10 @@ struct UnderstoodRow: Identifiable, Equatable {
   var field: UnderstoodField?
   /// What the editor starts from: the fact's own value, or a default such as the exam's first day.
   var editValue: String?
+  /// The exam's official day when the row's date is another, one tap to take ("Use this date").
+  var suggestedDate: String?
+  /// The dates the row's date is picked from (an exam's next sittings), each one tap away.
+  var choiceDates: [String] = []
 }
 
 struct UnderstoodSource: Equatable {
@@ -323,71 +327,197 @@ enum UnderstoodRows {
       source: URL(string: cutoff.source.url).map { UnderstoodSource(title: nil, url: $0) })
   }
 
-  /// The goal's one date row: the day the learner or their words gave (with its official source when a search found it), else the exam's days (official or estimated), else, for an exam whose day isn't out, that it's to be confirmed.
+  /// The goal's one date row (main's `useDateRow`): the day the learner or their words gave (with its official source when a search found it, or the notice's day one tap away when it's another), else the month they named when the plan keeps it, else the sitting to pick for an exam held several times a year, else the exam's days (official or estimated), else, for an exam whose day isn't out, that it's to be confirmed.
   private static func dateRow(
     facts: UnderstoodFacts,
     examDates: [Components.Schemas.OnboardingExamDate],
     today: Date
   ) -> UnderstoodRow? {
-    let isExam = facts.kind == "exam"
-    let examDateLabel = LocalizedStringResource(
-      "Exam date", table: "Onboarding", comment: "Row with an exam's date")
+    let from = isoDay(today)
+    let month = facts.details?.examMonth
+    let year = facts.details?.examYear
+    // A language certificate's dates come from its official guide, any other exam's from its notice.
+    let isGuide = facts.kind == "exam" && facts.targetLanguage != nil
 
     if let targetDate = facts.targetDate, let date = day(targetDate) {
       let official = examDates.first {
         $0.source != nil && !$0.estimated && $0.date == targetDate
       }
+      let suggested =
+        official == nil
+        ? ExamSittings.meantDay(
+          days: examDates, month: month, year: year, from: from, goalDate: targetDate
+        )
+        .flatMap { day in
+          day.estimated || examDates.contains { $0.date == targetDate } ? nil : day
+        }
+        : nil
 
       return UnderstoodRow(
         id: "targetDate",
-        label: isExam
+        label: facts.kind == "exam"
           ? examDateLabel
           : LocalizedStringResource(
             "Deadline", table: "Onboarding", comment: "Row with the date a goal aims for"),
         value: date.formatted(.dateTime.day().month(.wide).year()),
-        note: official.map { _ in daysLeft(until: date, today: today) },
-        source: official?.source.flatMap(source),
-        field: .targetDate, editValue: targetDate)
+        note: official.flatMap { day($0.date) }.map { daysLeft(until: $0, today: today) }
+          ?? suggested.map { noticeDayText($0.date, isGuide: isGuide) },
+        source: (official ?? suggested)?.source.flatMap(source),
+        field: .targetDate, editValue: targetDate, suggestedDate: suggested?.date)
     }
 
-    guard isExam else {
+    guard facts.kind == "exam" else {
       return nil
     }
 
-    let upcoming = examDates.filter { day($0.date).map { $0 >= today.startOfDay } ?? false }
-
-    guard let first = upcoming.first, let firstDay = day(first.date) else {
+    guard let first = examDates.first else {
       return UnderstoodRow(
         id: "targetDate", label: examDateLabel,
-        value: toBeConfirmed(month: facts.details?.examMonth, year: facts.details?.examYear),
-        note: String(
-          localized: LocalizedStringResource(
-            "The official date comes out on the exam's official calendar. Know it already? Set it here.",
-            table: "Onboarding", comment: "Under an exam date that isn't out yet")),
+        value: toBeConfirmed(month: month, year: year),
+        note: isGuide
+          ? String(
+            localized: LocalizedStringResource(
+              "The official date comes out on the exam's official calendar. Know it already? Set it here.",
+              table: "Onboarding", comment: "Under an exam date that isn't out yet"))
+          : String(
+            localized: LocalizedStringResource(
+              "The official date comes out in the exam's notice. Know it already? Set it here.",
+              table: "Onboarding", comment: "Under an exam date that isn't out yet, from its notice"
+            )),
         field: .targetDate, editValue: "")
     }
 
-    let estimated = upcoming.contains(where: \.estimated)
-    let days = upcoming.compactMap { day($0.date) }
+    let estimated = examDates.contains(where: \.estimated)
+
+    if !estimated,
+      let kept = keptMonthRow(
+        examDates: examDates, month: month, year: year, from: from, isGuide: isGuide)
+        ?? sittingChoiceRow(examDates: examDates, month: month, from: from)
+    {
+      return kept
+    }
+
+    let sitting =
+      estimated
+      ? examDates
+      : ExamSittings.learnerSitting(
+        days: examDates, from: from,
+        goalDate: ExamSittings.namedMonthStart(month: month, year: year, from: from))
+        ?? examDates
+    let shown = sitting.first ?? first
 
     return UnderstoodRow(
       id: "examDates",
-      label: days.count == 1
+      label: sitting.count == 1
         ? examDateLabel
         : LocalizedStringResource(
           "Exam dates", table: "Onboarding", comment: "Row with an exam's dates over several days"),
-      value: days.map { $0.formatted(.dateTime.day().month(.wide).year()) }
-        .formatted(.list(type: .and)),
+      value: examDaysText(sitting),
       note: estimated
         ? String(
           localized: LocalizedStringResource(
             "From its usual dates. We'll tell you when the official ones are out.",
             table: "Onboarding", comment: "Under exam dates estimated from past years"))
-        : daysLeft(until: firstDay, today: today),
-      source: estimated ? nil : first.source.flatMap(source),
-      field: .targetDate, editValue: first.date)
+        : day(shown.date).map { daysLeft(until: $0, today: today) },
+      source: estimated ? nil : shown.source.flatMap(source),
+      field: .targetDate, editValue: shown.date)
   }
 
+  private static let examDateLabel = LocalizedStringResource(
+    "Exam date", table: "Onboarding", comment: "Row with an exam's date")
+
+  /// The month the learner named when the plan keeps it: over the notice's day in another month, which the row offers one tap away, or, for an exam held several times a year, with no sitting in their month to offer.
+  private static func keptMonthRow(
+    examDates: [Components.Schemas.OnboardingExamDate],
+    month: Int?,
+    year: Int?,
+    from: String,
+    isGuide: Bool
+  ) -> UnderstoodRow? {
+    let noticeDay = ExamSittings.meantDay(
+      days: examDates, month: month, year: year, from: from, goalDate: nil)
+    let kept =
+      noticeDay.map {
+        ExamSittings.keptMonthStart(month: month, year: year, noticeDay: $0.date, today: from)
+      }
+      ?? ExamSittings.namedMonthStart(month: month, year: year, from: from)
+
+    guard let kept, let start = day(kept) else {
+      return nil
+    }
+
+    return UnderstoodRow(
+      id: "targetDate", label: examDateLabel,
+      value: start.formatted(.dateTime.month(.wide).year()).localizedCapitalized,
+      note: noticeDay.map { noticeDayText($0.date, isGuide: isGuide) },
+      source: noticeDay?.source.flatMap(source),
+      field: .targetDate, editValue: kept, suggestedDate: noticeDay?.date)
+  }
+
+  /// An exam held several times a year when the learner gave no date or month: which sitting they'll take, from the next ones open for registration, each one tap away. Until they pick, the plan counts down to the first.
+  private static func sittingChoiceRow(
+    examDates: [Components.Schemas.OnboardingExamDate],
+    month: Int?,
+    from: String
+  ) -> UnderstoodRow? {
+    let open = ExamSittings.openSittings(count: 3, days: examDates, from: from)
+
+    guard month == nil, ExamSittings.hasSeveral(examDates), let first = open.first,
+      open.count >= 2
+    else {
+      return nil
+    }
+
+    return UnderstoodRow(
+      id: "examDates", label: examDateLabel,
+      value: String(
+        localized: LocalizedStringResource(
+          "Pick your date", table: "Onboarding",
+          comment: "An exam held several times a year whose sitting isn't picked yet")),
+      note: String(
+        localized: LocalizedStringResource(
+          "This exam is held several times a year. Until you pick one, your plan uses the first.",
+          table: "Onboarding", comment: "Under the sittings of an exam held several times a year")),
+      source: first.source.flatMap(source),
+      field: .targetDate, editValue: first.date, choiceDates: open.map(\.date))
+  }
+
+  /// What the exam's notice (or a certificate's official calendar) says its day is.
+  private static func noticeDayText(_ isoDate: String, isGuide: Bool) -> String {
+    let date = day(isoDate)?.formatted(.dateTime.day().month(.wide).year()) ?? isoDate
+
+    return isGuide
+      ? String(
+        localized: LocalizedStringResource(
+          "The exam's official calendar says \(date).", table: "Onboarding",
+          comment: "The day a language certificate's official calendar gives"))
+      : String(
+        localized: LocalizedStringResource(
+          "The exam notice says \(date).", table: "Onboarding",
+          comment: "The day an exam's notice gives"))
+  }
+
+  /// The exam's days in one line, the year said once at the end when they share it: "November 8 and November 15, 2026".
+  private static func examDaysText(_ days: [Components.Schemas.OnboardingExamDate]) -> String {
+    let sameYear = Set(days.map { yearOf($0.date) }).count == 1
+
+    return days.indices.compactMap { index -> String? in
+      guard let date = day(days[index].date) else {
+        return nil
+      }
+
+      return sameYear && index < days.count - 1
+        ? date.formatted(.dateTime.day().month(.wide))
+        : date.formatted(.dateTime.day().month(.wide).year())
+    }
+    .formatted(.list(type: .and))
+  }
+
+  private static func yearOf(_ isoDate: String) -> Int {
+    Int(isoDate.prefix(4)) ?? 0
+  }
+
+  /// An exam without its official day, as far as the learner's words go: "March 2027, to be confirmed" when they named the month, else the year, else just to be confirmed.
   private static func toBeConfirmed(month: Int?, year: Int?) -> String {
     guard let year else {
       return String(
@@ -408,6 +538,12 @@ enum UnderstoodRows {
       localized: LocalizedStringResource(
         "\(date.formatted(.dateTime.month(.wide).year())), to be confirmed", table: "Onboarding",
         comment: "An exam date that isn't out yet, with the month the learner named"))
+  }
+
+  /// The learner's today as an ISO date.
+  private static func isoDay(_ date: Date) -> String {
+    let parts = Calendar.current.dateComponents([.year, .month, .day], from: date)
+    return String(format: "%04d-%02d-%02d", parts.year ?? 0, parts.month ?? 0, parts.day ?? 0)
   }
 
   private static func daysLeft(until date: Date, today: Date) -> String {

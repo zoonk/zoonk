@@ -53,6 +53,69 @@ final class UnderstoodRowsTests: XCTestCase {
     XCTAssertEqual(date.source?.name, "gov.br")
   }
 
+  func testAMonthTheLearnerNamedStaysOverTheNoticesDayInAnotherMonth() throws {
+    let goal = try understoodGoal(
+      draft: [
+        "kind": "exam", "language": "en", "prompt": "pass the bar in March 2027",
+        "title": "Pass the bar", "details": ["examMonth": 3, "examYear": 2027],
+      ],
+      examDates: [examDay("2027-04-10")])
+
+    let date = try XCTUnwrap(
+      UnderstoodRows.rows(for: goal, today: today).first { $0.id == "targetDate" })
+
+    XCTAssertEqual(date.editValue, "2027-03-01", "The plan counts down to the month's start")
+    XCTAssertEqual(date.suggestedDate, "2027-04-10")
+    XCTAssertNotNil(date.note)
+  }
+
+  func testAnExamHeldSeveralTimesAYearOffersItsNextOpenSittings() throws {
+    let goal = try understoodGoal(
+      draft: ["kind": "exam", "language": "en", "prompt": "take the SAT", "title": "Take the SAT"],
+      examDates: [
+        examDay("2026-11-07", closed: true), examDay("2026-12-05"), examDay("2027-03-13"),
+        examDay("2027-05-08"), examDay("2027-06-05"),
+      ])
+
+    let date = try XCTUnwrap(
+      UnderstoodRows.rows(for: goal, today: today).first { $0.id == "examDates" })
+
+    XCTAssertEqual(date.value, "Pick your date")
+    XCTAssertEqual(date.choiceDates, ["2026-12-05", "2027-03-13", "2027-05-08"])
+    XCTAssertEqual(date.editValue, "2026-12-05")
+  }
+
+  func testAnOwnDateOffTheNoticesDaysOffersTheNoticesDay() throws {
+    let goal = try understoodGoal(
+      draft: [
+        "kind": "exam", "language": "en", "prompt": "pass the ENEM", "title": "Pass the ENEM",
+        "targetDate": "2026-11-20",
+      ],
+      examDates: [examDay("2026-11-08"), examDay("2026-11-15")])
+
+    let date = try XCTUnwrap(
+      UnderstoodRows.rows(for: goal, today: today).first { $0.id == "targetDate" })
+
+    XCTAssertEqual(date.editValue, "2026-11-20")
+    XCTAssertEqual(date.suggestedDate, "2026-11-08")
+    XCTAssertEqual(date.source?.name, "gov.br")
+  }
+
+  func testOneExamOverTwoSundaysListsItsDaysWithTheYearOnce() throws {
+    let goal = try understoodGoal(
+      draft: [
+        "kind": "exam", "language": "en", "prompt": "pass the ENEM", "title": "Pass the ENEM",
+      ],
+      examDates: [examDay("2026-11-08"), examDay("2026-11-15")])
+
+    let date = try XCTUnwrap(
+      UnderstoodRows.rows(for: goal, today: today).first { $0.id == "examDates" })
+
+    XCTAssertEqual(date.value.components(separatedBy: "2026").count, 2, "The year is said once")
+    XCTAssertEqual(date.editValue, "2026-11-08")
+    XCTAssertTrue(date.choiceDates.isEmpty)
+  }
+
   func testTheCardShowsTheMinutesOnlyWhenTheWordsSaidThem() throws {
     let said = try understanding(answered: ["schedule"])
     let unsaid = try understanding(answered: [])
@@ -69,6 +132,13 @@ final class UnderstoodRowsTests: XCTestCase {
     XCTAssertTrue(GoalLimitReason.oneActiveGoal.isPlusLimit)
     XCTAssertTrue(GoalError.creating(OnboardingError.goalLimit(guest)).needsAccount)
     XCTAssertTrue(GoalError.starting(OnboardingError.limit(guest)).needsAccount)
+  }
+
+  private func examDay(_ date: String, closed: Bool = false) -> [String: Any] {
+    [
+      "date": date, "estimated": false, "label": "", "registrationClosed": closed,
+      "source": ["title": NSNull(), "url": "https://www.gov.br/inep/enem"],
+    ]
   }
 
   private func understoodGoal(

@@ -277,10 +277,70 @@ private struct UnderstoodRowView: View {
   let onEdit: (Bool) -> Void
   let onSave: (String) async -> Bool
 
+  @State private var isSaving = false
+  @State private var failed = false
+
   var body: some View {
     if isEditing, let field = row.field {
       RowEditor(row: row, field: field, onCancel: { onEdit(false) }, onSave: onSave)
     } else {
+      VStack(alignment: .leading, spacing: 10) {
+        fact
+
+        if row.suggestedDate != nil || !row.choiceDates.isEmpty {
+          dateChoices
+        }
+      }
+    }
+  }
+
+  /// The notice's day ("Use this date") or the sittings to pick from, each saved with one tap.
+  private var dateChoices: some View {
+    VStack(alignment: .leading, spacing: 6) {
+      HStack {
+        if let suggested = row.suggestedDate {
+          Button {
+            use(suggested)
+          } label: {
+            Text("Use this date", tableName: "Onboarding", comment: "Takes the exam notice's day")
+          }
+        }
+
+        ForEach(row.choiceDates, id: \.self) { date in
+          Button {
+            use(date)
+          } label: {
+            Text(UnderstoodRows.day(date)?.formatted(.dateTime.day().month(.abbreviated)) ?? date)
+          }
+        }
+      }
+      .buttonStyle(.bordered)
+      .controlSize(.small)
+      .disabled(isSaving)
+
+      if failed {
+        Text(
+          "That didn't save. Try again.", tableName: "Onboarding",
+          comment: "A change couldn't be saved"
+        )
+        .font(.footnote)
+        .foregroundStyle(.destructive)
+      }
+    }
+  }
+
+  private func use(_ date: String) {
+    isSaving = true
+    failed = false
+
+    Task {
+      failed = !(await onSave(date))
+      isSaving = false
+    }
+  }
+
+  private var fact: some View {
+    Group {
       HStack(alignment: .firstTextBaseline) {
         VStack(alignment: .leading, spacing: 4) {
           Text(row.label)
