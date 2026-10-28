@@ -87,6 +87,7 @@ struct ConversationIntro: View {
         }
       }
       .scenePadding()
+      .keepsOffFold()
     }
   }
 }

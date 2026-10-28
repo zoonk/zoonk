@@ -39,6 +39,7 @@ struct SubscriptionScreen: View {
             .buttonStyle(.mainAction)
             .controlSize(.large)
             .scenePadding()
+            .keepsOffFold()
           }
         }
       }

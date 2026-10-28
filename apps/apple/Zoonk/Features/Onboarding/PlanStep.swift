@@ -204,6 +204,7 @@ private struct PlanReveal: View {
           .buttonStyle(.bordered)
         }
         .controlSize(.large)
+        .keepsOffFold()
         .listRowInsets(EdgeInsets())
         .listRowBackground(Color.clear)
       } footer: {

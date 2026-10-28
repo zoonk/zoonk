@@ -454,6 +454,7 @@ struct MaterialQuestionsView: View {
         .disabled(trimmed.isEmpty || isAsking)
       }
       .padding()
+      .keepsOffFold()
       .background(.bar)
     }
     .onAppear { isFocused = true }

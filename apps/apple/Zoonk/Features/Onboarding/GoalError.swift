@@ -178,6 +178,7 @@ struct CreateAccountButton: View {
     }
     .buttonStyle(.mainAction)
     .controlSize(.large)
+    .keepsOffFold()
     .listRowInsets(EdgeInsets())
     .listRowBackground(Color.clear)
   }

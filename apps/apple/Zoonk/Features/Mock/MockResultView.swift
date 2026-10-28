@@ -58,6 +58,7 @@ struct MockResultView: View {
       }
       .scenePadding(.horizontal)
       .padding(.vertical, 10)
+      .keepsOffFold()
     }
   }
 

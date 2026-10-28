@@ -49,6 +49,7 @@ struct ConversationResultView: View {
       .controlSize(.large)
       .keyboardShortcut(.defaultAction)
       .scenePadding()
+      .keepsOffFold()
     }
   }
 

@@ -151,6 +151,7 @@ private struct PronunciationRoundView: View {
           .controlSize(.large)
           .keyboardShortcut(.defaultAction)
           .scenePadding()
+          .keepsOffFold()
         }
     case .word(_, let state):
       if let word = round.current {
@@ -175,6 +176,7 @@ private struct PronunciationRoundView: View {
             wordActions(round, state: state)
           }
           .scenePadding()
+          .keepsOffFold()
         }
         .toolbar {
           if case .ready = state, !recorder.isDenied {

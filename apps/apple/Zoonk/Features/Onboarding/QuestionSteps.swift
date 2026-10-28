@@ -140,6 +140,7 @@ struct StepButtons: View {
         }
       }
       .controlSize(.large)
+      .keepsOffFold()
       .listRowInsets(EdgeInsets())
       .listRowBackground(Color.clear)
     } footer: {

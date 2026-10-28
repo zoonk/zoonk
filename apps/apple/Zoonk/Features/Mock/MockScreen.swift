@@ -255,6 +255,7 @@ private struct MockTimeUpView: View {
         .disabled(run.pending)
         .keyboardShortcut(.defaultAction)
       }
+      .keepsOffFold()
     }
   }
 }
@@ -284,6 +285,7 @@ private struct MockGradingView: View {
         .disabled(run.pending)
         .keyboardShortcut(.defaultAction)
       }
+      .keepsOffFold()
     }
   }
 }
@@ -318,6 +320,7 @@ private struct MockExpiredView: View {
       .controlSize(.large)
       .scenePadding(.horizontal)
       .padding(.vertical, 10)
+      .keepsOffFold()
     }
   }
 }
@@ -384,6 +387,7 @@ private struct MockBreakView: View {
         .controlSize(.large)
         .disabled(run.pending)
       }
+      .keepsOffFold()
     }
   }
 }
@@ -466,6 +470,7 @@ private struct MockSpeakingView: View {
           .disabled(run.pending)
         }
       }
+      .keepsOffFold()
     }
     .alert(handInTitle, isPresented: $confirmsHandIn) {
       Button(role: .cancel) {

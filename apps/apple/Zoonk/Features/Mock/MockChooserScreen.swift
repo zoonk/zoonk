@@ -299,6 +299,7 @@ private struct MockChooser: View {
       .controlSize(.large)
       .scenePadding(.horizontal)
       .padding(.vertical, 10)
+      .keepsOffFold()
     }
   }
 
