@@ -54,15 +54,7 @@ final class PlanEditor {
     failed = false
     defer { isSaving = false }
 
-    let outcome = await store.write(request) { outcome in
-      if case .applied = outcome {
-        return true
-      }
-
-      return false
-    }
-
-    switch outcome {
+    switch await store.change(request) {
     case .done(.applied(let change)):
       latest = .applied(change, sentence: sentence)
       return true

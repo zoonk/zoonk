@@ -53,6 +53,24 @@ struct ExplicitNullMiddleware: ClientMiddleware {
     let (request, newBody) = request.sending(try JSONSerialization.data(withJSONObject: object))
     return try await next(request, newBody, baseURL)
   }
+
+  private static func settingNull(at path: [String], in object: [String: Any]) -> [String: Any] {
+    guard let key = path.first else {
+      return object
+    }
+
+    var object = object
+
+    if path.count == 1 {
+      if object[key] == nil {
+        object[key] = NSNull()
+      }
+    } else if let nested = object[key] as? [String: Any] {
+      object[key] = settingNull(at: Array(path.dropFirst()), in: nested)
+    }
+
+    return object
+  }
 }
 
 /// Sends `body` as the request's JSON instead of the generated client's encoding, for a body the
@@ -80,23 +98,5 @@ extension HTTPRequest {
     var request = self
     request.headerFields[.contentLength] = String(body.count)
     return (request, HTTPBody(body))
-  }
-
-  private static func settingNull(at path: [String], in object: [String: Any]) -> [String: Any] {
-    guard let key = path.first else {
-      return object
-    }
-
-    var object = object
-
-    if path.count == 1 {
-      if object[key] == nil {
-        object[key] = NSNull()
-      }
-    } else if let nested = object[key] as? [String: Any] {
-      object[key] = settingNull(at: Array(path.dropFirst()), in: nested)
-    }
-
-    return object
   }
 }

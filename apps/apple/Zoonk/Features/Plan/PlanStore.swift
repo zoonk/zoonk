@@ -136,6 +136,27 @@ final class PlanStore {
     }
   }
 
+  /// Saves edits to the goal's plan, as the exam page's "Use this date" does. `PlanEditor` says
+  /// what a change did and undoes it; this only saves it.
+  func change(goalId: String, edits: [PlanEdit]) async -> MutationResult<PlanChangeOutcome> {
+    await change { api, token in
+      try await api.change(token: token, goalId: goalId, edits: edits)
+    }
+  }
+
+  /// Saves a change, or a choice that answers like one: the goal revalidates once it's applied.
+  func change(
+    _ request: (any PlanAPIClient, String) async throws -> PlanChangeOutcome
+  ) async -> MutationResult<PlanChangeOutcome> {
+    await write(request) { outcome in
+      if case .applied = outcome {
+        return true
+      }
+
+      return false
+    }
+  }
+
   /// Runs one of the Plan's writes for the session that asked for it (see `AppCache.mutate`).
   /// When `changed` says it changed the plan, everything reading the goal revalidates, as main
   /// revalidates its goal tags. So does a write that failed, since one that timed out may have
