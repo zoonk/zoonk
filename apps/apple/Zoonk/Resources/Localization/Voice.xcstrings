@@ -671,6 +671,35 @@
         }
       }
     },
+    "Call time" : {
+      "comment" : "VoiceOver: the call's clock",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gesprächsdauer"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duración de la llamada"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Durée de l’appel"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duração da conversa"
+          }
+        }
+      }
+    },
     "Calling…" : {
       "comment" : "The call is ringing",
       "localizations" : {

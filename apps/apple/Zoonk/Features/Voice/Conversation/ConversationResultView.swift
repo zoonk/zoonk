@@ -98,6 +98,7 @@ struct ConversationResultView: View {
         } icon: {
           Image(systemName: "brain.head.profile")
             .foregroundStyle(.brain)
+            .accessibilityHidden(true)
         }
       }
     } footer: {

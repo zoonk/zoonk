@@ -152,7 +152,7 @@ private struct PronunciationRoundView: View {
           .keyboardShortcut(.defaultAction)
           .scenePadding()
         }
-    case .word(let index, let state):
+    case .word(_, let state):
       if let word = round.current {
         ScrollView {
           VStack(alignment: .leading, spacing: 24) {
@@ -207,11 +207,6 @@ private struct PronunciationRoundView: View {
 
           return grade.isCorrect ? .success : .error
         }
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel(
-          Text(
-            "Word \(index + 1) of \(round.words.count)", tableName: "Voice",
-            comment: "Where the learner is in the round"))
       }
     }
   }
@@ -483,6 +478,7 @@ private struct PronunciationResultView: View {
               } icon: {
                 Image(systemName: "brain.head.profile")
                   .foregroundStyle(.brain)
+                  .accessibilityHidden(true)
               }
             }
           }

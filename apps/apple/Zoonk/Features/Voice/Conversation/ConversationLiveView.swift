@@ -240,6 +240,15 @@ private struct CallGoals: View {
           .font(.subheadline.monospacedDigit())
           .foregroundStyle(.secondary)
       }
+      .accessibilityElement(children: .ignore)
+      .accessibilityAddTraits(.isHeader)
+      .accessibilityLabel(
+        Text("Goals of the call", tableName: "Voice", comment: "The call's goals while talking")
+      )
+      .accessibilityValue(
+        Text(
+          "\(met.count) of \(conversation.objectives.count)", tableName: "Voice",
+          comment: "Goals met out of all"))
 
       ForEach(conversation.objectives, id: \.label) { objective in
         let isMet = met.contains(objective.label)
@@ -266,18 +275,23 @@ private struct CallClock: View {
     TimelineView(.periodic(from: .now, by: 1)) { context in
       let elapsed = call.liveSince.map { max(0, context.date.timeIntervalSince($0)) } ?? 0
 
+      let time = Text(
+        "\(clock(elapsed)) / \(clock(TimeInterval(call.limitSeconds)))", tableName: "Voice",
+        comment: "The call's elapsed time over its length")
+
       HStack(spacing: 6) {
         Circle()
           .fill(call.phase == .live ? AnyShapeStyle(.success) : AnyShapeStyle(.tertiary))
           .frame(width: 8, height: 8)
 
-        Text(
-          "\(clock(elapsed)) / \(clock(TimeInterval(call.limitSeconds)))", tableName: "Voice",
-          comment: "The call's elapsed time over its length"
-        )
-        .font(.subheadline.monospacedDigit())
+        time
+          .font(.subheadline.monospacedDigit())
       }
-      .accessibilityElement(children: .combine)
+      .accessibilityElement(children: .ignore)
+      .accessibilityLabel(
+        Text("Call time", tableName: "Voice", comment: "VoiceOver: the call's clock")
+      )
+      .accessibilityValue(time)
     }
   }
 
