@@ -86,7 +86,8 @@ enum LessonGrading {
         return nil
       }
 
-      let isCorrect = isWithin(value, of: expected, tolerance: tolerance)
+      let isCorrect = isNumericAnswerRight(
+        value, expected: expected, tolerance: tolerance, template: content.template)
 
       return LocalGrade(
         isCorrect: isCorrect,
@@ -104,14 +105,75 @@ enum LessonGrading {
     }
   }
 
-  static func isWithin(_ value: Double, of expected: Double, tolerance: ActivityCheck.Tolerance)
-    -> Bool
-  {
-    let allowed =
-      tolerance.kind == .absolute ? tolerance.value : abs(expected) * tolerance.value
+  // MARK: - Numbers (core's `checkActivityAnswer`)
 
-    // A tiny epsilon keeps 0.1 + 0.2 from missing 0.3.
-    return abs(value - expected) <= allowed + 1e-9
+  /// How far a number may always be from the right one when the check's own tolerance is tighter,
+  /// by template (core's `minTolerance`): a guess on `guessReveal`'s log slider can't land closer
+  /// than its positions, about 11% apart.
+  private static let minTolerances: [String: ActivityCheck.Tolerance] = [
+    "guessReveal": .init(kind: .relative, value: 0.1)
+  ]
+
+  /// A typed number is right within the check's tolerance, the template's minimum, or rounded to
+  /// the places the learner typed ("12" for 11.88%), since a check stores no precision to hold the
+  /// learner to.
+  static func isNumericAnswerRight(
+    _ value: Double, expected: Double, tolerance: ActivityCheck.Tolerance, template: String
+  ) -> Bool {
+    let tolerances = [tolerance] + [minTolerances[template]].compactMap { $0 }
+
+    return tolerances.contains { isWithin(value, of: expected, tolerance: $0) }
+      || isRoundedAnswer(value, expected: expected)
+  }
+
+  /// Core's `withinTolerance`: relative slack takes rounded boundaries without overwhelming a
+  /// small unit's tolerance.
+  private static func isWithin(
+    _ value: Double, of expected: Double, tolerance: ActivityCheck.Tolerance
+  ) -> Bool {
+    let allowed =
+      tolerance.kind == .absolute ? tolerance.value : tolerance.value * abs(expected)
+    let distance = abs(value - expected)
+    let slack = 1e-9 * max(abs(expected), abs(value), allowed)
+
+    return distance <= allowed + slack || distance <= 1e-9 * max(1, abs(expected))
+  }
+
+  /// `@zoonk/utils`' `isRoundedAnswer`: the expected answer rounded to the places typed, keeping
+  /// two significant digits at least, so "0" for 0.4 or "10" for 11.88 isn't right.
+  static func isRoundedAnswer(_ value: Double, expected: Double) -> Bool {
+    guard countSignificantDigits(value) >= 2 else {
+      return false
+    }
+
+    let halfPlace = 0.5 * pow(10, -Double(countDecimalPlaces(value)))
+    return abs(value - expected) <= halfPlace * (1 + 1e-9)
+  }
+
+  /// Decimal places a number has as typed: 0.667 has 3, 2 has none, 1e-7 has 7.
+  static func countDecimalPlaces(_ value: Double) -> Int {
+    let parts = numberText(abs(value)).split(separator: "e-", omittingEmptySubsequences: false)
+    let places = parts[0].split(separator: ".").dropFirst().first?.count ?? 0
+    return places + (parts.count > 1 ? Int(parts[1]) ?? 0 : 0)
+  }
+
+  /// Significant digits as typed: 12 and 0.38 have 2, 0.4 and 10 have 1, 0 has none.
+  private static func countSignificantDigits(_ value: Double) -> Int {
+    let mantissa = numberText(abs(value)).split(separator: "e").first.map(String.init) ?? ""
+    let digits = mantissa.replacingOccurrences(of: ".", with: "").drop { $0 == "0" }
+    let significant =
+      mantissa.contains(".")
+      ? Substring(digits)
+      : digits.dropLast(
+        digits.reversed().prefix { $0 == "0" }.count)
+    return significant.count
+  }
+
+  /// A number written as JavaScript's `String(number)` writes it, which core counts places in:
+  /// "12", not Swift's "12.0".
+  private static func numberText(_ value: Double) -> String {
+    let text = "\(value)"
+    return text.hasSuffix(".0") ? String(text.dropLast(2)) : text
   }
 
   private static func formatNumber(_ value: Double, unit: String?) -> String {

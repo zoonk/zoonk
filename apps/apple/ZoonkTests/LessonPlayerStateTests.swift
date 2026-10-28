@@ -276,6 +276,71 @@ final class LessonGradingTests: XCTestCase {
       "an answer that doesn't fit the check isn't graded")
   }
 
+  // Mirrors core's `activity-answers.test.ts` and `@zoonk/utils` `rounded-answer.test.ts`.
+  func testANumberRoundedToThePlacesTypedIsRightWithTwoSignificantDigits() {
+    let rise = { (typed: Double) in
+      LessonGrading.isNumericAnswerRight(
+        typed, expected: 11.88, tolerance: .init(kind: .absolute, value: 0.1),
+        template: "numberLine")
+    }
+    let share = { (typed: Double) in
+      LessonGrading.isNumericAnswerRight(
+        typed, expected: 0.38, tolerance: .init(kind: .absolute, value: 0.001),
+        template: "numberLine")
+    }
+
+    XCTAssertEqual([12, 11.9, 11.88].map(rise), [true, true, true])
+    XCTAssertEqual([11, 13, 10].map(rise), [false, false, false])
+    XCTAssertEqual([0.38, 0.4, 0].map(share), [true, false, false])
+
+    XCTAssertTrue(LessonGrading.isRoundedAnswer(-12, expected: -11.88))
+    XCTAssertTrue(LessonGrading.isRoundedAnswer(2.35, expected: 2.345))
+    XCTAssertFalse(LessonGrading.isRoundedAnswer(11.8, expected: 11.88))
+    XCTAssertFalse(LessonGrading.isRoundedAnswer(11.87, expected: 11.88))
+    XCTAssertFalse(LessonGrading.isRoundedAnswer(11.88, expected: 12))
+    XCTAssertFalse(LessonGrading.isRoundedAnswer(0.4, expected: 0.38))
+    XCTAssertFalse(LessonGrading.isRoundedAnswer(1200, expected: 1234))
+    XCTAssertEqual(
+      [2, 0.667, 11.9, -3.25, 1e-7].map(LessonGrading.countDecimalPlaces), [0, 3, 1, 2, 7])
+  }
+
+  func testAGuessOnTheScaleCountsWithinATenthOrTheChecksWiderTolerance() {
+    let guess = { (typed: Double, tolerance: Double) in
+      LessonGrading.isNumericAnswerRight(
+        typed, expected: 700_000, tolerance: .init(kind: .relative, value: tolerance),
+        template: "guessReveal")
+    }
+
+    XCTAssertTrue(guess(710_000, 0.01))
+    XCTAssertTrue(guess(660_000, 0.01))
+    XCTAssertFalse(guess(790_000, 0.01))
+    XCTAssertTrue(guess(790_000, 0.25))
+    XCTAssertFalse(
+      LessonGrading.isNumericAnswerRight(
+        710_000, expected: 700_000, tolerance: .init(kind: .relative, value: 0.01),
+        template: "numberLine"),
+      "only the scale's template has the minimum")
+  }
+
+  func testAGuessExactlyATenthAwayCountsDespiteFloatingPoint() {
+    let guess = { (typed: Double, expected: Double) in
+      LessonGrading.isNumericAnswerRight(
+        typed, expected: expected, tolerance: .init(kind: .relative, value: 0.01),
+        template: "guessReveal")
+    }
+
+    XCTAssertTrue(guess(1.1, 1))
+    XCTAssertTrue(guess(0.9, 1))
+    XCTAssertFalse(guess(1.1001, 1))
+
+    for expected in [1e-8, 1e-7] {
+      XCTAssertTrue(guess(expected * 1.1, expected))
+      XCTAssertTrue(guess(expected * 0.9, expected))
+      XCTAssertFalse(guess(expected * 1.2, expected))
+      XCTAssertFalse(guess(expected * 0.8, expected))
+    }
+  }
+
   func testInteractionActivityIsGradedByItsRendererOrTheServer() throws {
     let step = try step(interactionActivity)
     let answer = LessonAnswer.activity(
