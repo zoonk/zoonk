@@ -66,6 +66,8 @@ private struct ExamContent: View {
 private struct ExamList: View {
   let exam: ExamView
   let options: MockOptions?
+  /// Above the split: folding iPhone Duo recreates its panes, and the result form is in one.
+  @State private var result = ExamResultForm()
 
   var body: some View {
     PaneSplit(primaryShare: 0.55) {
@@ -99,7 +101,7 @@ private struct ExamList: View {
     ExamMomentSection(exam: exam)
 
     if exam.takesResult {
-      ExamResultSection(exam: exam)
+      ExamResultSection(exam: exam, form: $result)
     }
   }
 
@@ -496,38 +498,27 @@ private struct ExamMomentSection: View {
 
 /// The score is optional and so is knowing whether they passed; either is enough.
 private struct ExamResultSection: View {
-  private enum Passed: Hashable {
-    case yes
-    case no
-    case unknown
-  }
-
   @Environment(ExamStore.self) private var store
-  @State private var score = ""
-  @State private var maxScore = ""
-  @State private var passed = Passed.unknown
-  @State private var saving = false
-  @State private var saved = false
-  @State private var failed = false
   let exam: ExamView
+  @Binding var form: ExamResultForm
 
   private var scale: String {
     exam.scoring.scale?.rawValue ?? (exam.scoring.method == .irt ? "irt" : "points")
   }
 
   private var parsedScore: Double? {
-    Double(score.replacingOccurrences(of: ",", with: "."))
+    Double(form.score.replacingOccurrences(of: ",", with: "."))
   }
 
   var body: some View {
     Section {
-      if saved || exam.result != nil {
+      if form.saved || exam.result != nil {
         Label {
-          if let value = exam.result?.score, !saved || parsedScore == nil {
+          if let value = exam.result?.score, !form.saved || parsedScore == nil {
             Text(
               "Result saved: \(MockLabels.number(value)). Thank you for telling us.",
               tableName: "Exam", comment: "A reported result")
-          } else if saved, let parsedScore {
+          } else if form.saved, let parsedScore {
             Text(
               "Result saved: \(MockLabels.number(parsedScore)). Thank you for telling us.",
               tableName: "Exam", comment: "A reported result")
@@ -541,27 +532,28 @@ private struct ExamResultSection: View {
         }
       }
 
-      TextField(text: $score) {
+      TextField(text: $form.score) {
         scoreLabel
       }
       .keyboardType(.decimalPad)
 
       if scale == "points" {
-        TextField(text: $maxScore) {
+        TextField(text: $form.maxScore) {
           Text("out of", tableName: "Exam", comment: "The score's maximum")
         }
         .keyboardType(.decimalPad)
       }
 
-      Picker(selection: $passed) {
-        Text("Yes", tableName: "Exam", comment: "Passed").tag(Passed.yes)
-        Text("No", tableName: "Exam", comment: "Didn't pass").tag(Passed.no)
-        Text("Not yet", tableName: "Exam", comment: "Doesn't know yet").tag(Passed.unknown)
+      Picker(selection: $form.passed) {
+        Text("Yes", tableName: "Exam", comment: "Passed").tag(ExamResultForm.Passed.yes)
+        Text("No", tableName: "Exam", comment: "Didn't pass").tag(ExamResultForm.Passed.no)
+        Text("Not yet", tableName: "Exam", comment: "Doesn't know yet")
+          .tag(ExamResultForm.Passed.unknown)
       } label: {
         Text("Did you pass?", tableName: "Exam", comment: "Asks whether the learner passed")
       }
 
-      if failed {
+      if form.failed {
         Text(
           "That didn't go through. Try again in a moment.", tableName: "Exam",
           comment: "Saving the result failed"
@@ -574,7 +566,7 @@ private struct ExamResultSection: View {
       } label: {
         Text("Save my result", tableName: "Exam", comment: "Saves the official result")
       }
-      .disabled(saving || (parsedScore == nil && passed == .unknown))
+      .disabled(form.saving || (parsedScore == nil && form.passed == .unknown))
     } header: {
       Text("How did it go?", tableName: "Exam", comment: "Asks for the official result")
     } footer: {
@@ -598,13 +590,14 @@ private struct ExamResultSection: View {
   }
 
   private func save() async {
-    saving = true
-    failed = false
-    defer { saving = false }
+    form.saving = true
+    form.failed = false
+    defer { form.saving = false }
 
     let input = ExamResultInput(
-      maxScore: scale == "points" ? Double(maxScore.replacingOccurrences(of: ",", with: ".")) : nil,
-      passed: passed == .unknown ? nil : passed == .yes,
+      maxScore: scale == "points"
+        ? Double(form.maxScore.replacingOccurrences(of: ",", with: ".")) : nil,
+      passed: form.passed == .unknown ? nil : form.passed == .yes,
       scale: parsedScore == nil ? nil : scale,
       score: parsedScore)
     let goalId = exam.goalId
@@ -615,11 +608,26 @@ private struct ExamResultSection: View {
         try await api.reportResult(token: token, goalId: goalId, input: input)
       })
     {
-    case .done(true): saved = true
-    case .done(false), .failed: failed = true
+    case .done(true): form.saved = true
+    case .done(false), .failed: form.failed = true
     case .obsolete: break
     }
   }
+}
+
+private struct ExamResultForm {
+  enum Passed: Hashable {
+    case yes
+    case no
+    case unknown
+  }
+
+  var score = ""
+  var maxScore = ""
+  var passed = Passed.unknown
+  var saving = false
+  var saved = false
+  var failed = false
 }
 
 private struct ExamMocksSection: View {
