@@ -5,13 +5,7 @@ import { type ImageGenerationQuality, buildImageProviderOptions } from "../../..
 import { generateImageWithSafetyRetry } from "../../_utils/generate-image-with-safety-retry";
 import promptTemplate from "./course-icon.prompt.md";
 
-/**
- * Course icons keep the style courses had before the Library: one matte 3D
- * object on white, like an app icon, drawn by the lesson images' model at low
- * quality. In the course-icon eval (3 courses, Opus 5.5 vision judge, 27 Sep
- * 2026) it scored 8.27 at about $0.007 an icon; the judge's only complaint
- * was the prompt's old habit of pairing a second small object with the main one.
- */
+/** It scored 8.27 on the course-icon eval at about $0.007 an icon (27 Sep 2026). */
 const defaultModel = "openai/gpt-image-2.5-flare";
 const DEFAULT_QUALITY: ImageGenerationQuality = "low";
 const ICON_SIZE = "1024x1024";
@@ -20,10 +14,7 @@ function buildCourseIconPrompt({ input }: { input: string }): string {
   return promptTemplate.replace("{{INPUT}}", () => input);
 }
 
-/**
- * The course is the only caller-owned part of the prompt, so a safety retry
- * rewrites just this and the art direction stays the same.
- */
+/** The only caller-owned part of the prompt, so a safety retry rewrites just this. */
 function formatCourseIconInput({
   description,
   title,
@@ -47,10 +38,6 @@ export type CourseIconParams = {
   useFallback?: boolean;
 };
 
-/**
- * Draws a course's icon: a single object that stands for the subject. Storing
- * and linking it happen in core.
- */
 export async function generateCourseIcon({
   analytics,
   description,

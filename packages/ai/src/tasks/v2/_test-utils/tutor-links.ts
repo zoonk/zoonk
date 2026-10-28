@@ -1,6 +1,5 @@
 import { type GoalTutorLinks } from "../tutor/goal-tutor-pages";
 
-/** A host that links each page by its name and everything else by its kind and id. */
 export const TEST_TUTOR_LINKS: GoalTutorLinks = {
   pages: {
     activity: "/activity",

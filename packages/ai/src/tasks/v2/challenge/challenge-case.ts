@@ -10,13 +10,8 @@ import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import systemPrompt from "./challenge-case.prompt.md";
 
 /**
- * From the challenge-case eval (4 cases in English and Portuguese, code checks on the decision
- * graph then the judge, 27 Sep 2026): Sol 7.76, Luna 7.71 and Gemini 3.8 Flash 6.44, at $51,
- * $3.40 and $25 per 1,000 runs; every model's graphs were valid, and Flash broke length limits
- * most. After the prompt fixes the judge asked for (choices of similar length, the AI assistant
- * in every work case, consequences that carry forward, no harm on safety paths), Sol scored 8.29
- * on the two cases it reran. A challenge is written once per chapter and shared, so quality
- * outweighs cost.
+ * Sol scored highest on the challenge-case eval (27 Sep 2026). A challenge is written once per
+ * chapter and shared, so quality outweighs cost.
  */
 const defaultModel = "openai/gpt-6-sol";
 const fallbackModels = ["anthropic/claude-opus-5.5", "google/gemini-3.8-flash"] as const;
@@ -85,7 +80,6 @@ const schema = z.object({
 
 export type WrittenChallengeCase = z.infer<typeof schema>;
 
-/** A skill the case trains, from the chapter it closes. */
 type ChallengeSkillInput = { name: string; description?: string | null };
 
 export type ChallengeCaseParams = {
@@ -96,17 +90,13 @@ export type ChallengeCaseParams = {
   chapterTitle: string;
   chapterDescription?: string | null;
   skills: ChallengeSkillInput[];
-  /**
-   * The field a work or career-change learner's case happens in ("nursing"), shared by every
-   * learner in it. Null for the general case.
-   */
+  /** Null for the general case. */
   field?: string | null;
-  /** What code found wrong with an earlier attempt, so this one avoids it. */
+  /** What code found wrong with an earlier attempt. */
   problems?: string[];
   model?: string;
   useFallback?: boolean;
   reasoning?: Reasoning;
-  /** The gateway tier it answers at (see `ServiceTier`); the standard one when unset. */
   serviceTier?: ServiceTier;
   analytics?: AiGenerationContext;
 };
@@ -134,13 +124,7 @@ ${formatLocalContext(params.language)}
   `;
 }
 
-/**
- * Writes the challenge that closes a chapter: a case solved like at work (a situation in the
- * course's field, a team of colleagues by role with at most one AI assistant, 2 to 4 decisions
- * whose choices change meters and jump ahead in time, endings and a debrief tagged by skill), or,
- * for overview courses, a light "What if" scenario with fewer decisions and no jargon. Code checks
- * the decision graph afterwards; `problems` sends what failed back for one more try.
- */
+/** Code checks the decision graph afterwards; `problems` sends failures back for one more try. */
 export async function generateChallengeCase(params: ChallengeCaseParams) {
   const { analytics, model = defaultModel, reasoning, serviceTier, useFallback = true } = params;
   const userPrompt = buildUserPrompt(params);

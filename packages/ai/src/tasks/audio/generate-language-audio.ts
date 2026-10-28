@@ -26,14 +26,11 @@ import { generateSpeechWithProvider } from "./speech-provider";
 const TASK = "language-audio";
 const MS_PER_SECOND = 1000;
 
-/** A look-alike word's check usually takes about 3s; one took 43s in its eval (11 Oct 2026). */
+/** A check usually takes about 3s; one took 43s in its eval (11 Oct 2026). */
 const PRONUNCIATION_CHECK_TIMEOUT_MS = 15_000;
 const PRONUNCIATION_LISTENS = 2;
 
-/**
- * The text-to-speech run that voiced a clip, stored with the audio like every generated row's
- * provenance. `promptVersion` covers the voice and the instructions it was read with.
- */
+/** `promptVersion` covers the voice and the instructions it was read with. */
 export type SpeechProvenance = Pick<
   TaskProvenance,
   "generatedAt" | "model" | "promptVersion" | "runId"
@@ -49,7 +46,6 @@ type VoicedAudio = {
 
 export type AudioResult = {
   audio: Uint8Array;
-  /** How long the clip plays. */
   durationMs: number;
   format: "mp3";
   provenance: TaskProvenance;
@@ -62,21 +58,13 @@ const usagePrompts = { alphabetSymbol: alphabetSymbolPrompt } satisfies Record<
   string
 >;
 
-/** A word alone that English spells the same: how it sounds in its language and in English. */
 type LookAlike = { [Key in keyof WordIpa]: NonNullable<WordIpa[Key]> };
 
 /**
- * The automatic order (see `speechModels`): Gemini Flash, then Gemini Flash Lite, then MAI-Voice
- * for the languages it speaks. Each model is tried once: the next one is the retry. An
- * explicit model, from the audio test tool, gets a second attempt instead, because transport
- * retries can't see silent or malformed audio.
- *
- * A word English spells the same only goes to Gemini Flash, up to three times. Without help,
- * Flash read 19 of 24 of them with the language's sounds (8 such words, 3 tries each); with the
- * word's IPA and two listens, 27 of 27 (11 Oct 2026). Flash Lite follows the IPA less (16 of 24),
- * and its half-English readings sometimes passed a listen. MAI-Voice can't take the IPA, and read
- * "Name" in German and "pain" in French the English way. A word read the English way is worse
- * than one voiced later.
+ * Each automatic model is tried once: the next one is the retry. An explicit model gets a second
+ * attempt, since transport retries can't see silent or malformed audio. A word English spells the
+ * same only goes to Gemini Flash, which read 27 of 27 with its IPA and two listens (11 Oct 2026);
+ * Flash Lite follows the IPA less, and MAI-Voice can't take it.
  */
 function getSpeechModels({
   lookAlike,
@@ -106,11 +94,8 @@ function getSpeechModels({
 }
 
 /**
- * A word alone that English spells the same ("Name" in German, "time" in Brazilian Portuguese),
- * which voices otherwise read the English way, with both readings in IPA; null for any other text,
- * or when the IPA couldn't be written, so the clip is still voiced. Only a Latin-script language
- * other than English can share a spelling with English, and only a word alone gets read that way:
- * in a sentence the other words give the language away.
+ * Only a word alone gets read the English way: in a sentence the other words give the language
+ * away. Null when the IPA couldn't be written, so the clip is still voiced.
  */
 async function findLookAlike({
   analytics,
@@ -145,11 +130,8 @@ async function findLookAlike({
 }
 
 /**
- * Listens to a look-alike word's clip twice, at once, and fails it unless neither listen heard
- * English, so the next model voices it again. One listen let a half-English "time" (ˈtaɪmi, in
- * Brazilian Portuguese) through that another caught, in 2 of 7 tries of that word (11 Oct 2026).
- * A listen that can't run, or doesn't answer in time, doesn't count: with no answer at all the
- * clip is kept, since the IPA already steers it and a lesson without the word's audio is worse.
+ * Two listens, since one let a half-English "time" through that another caught (11 Oct 2026). With
+ * no answer at all the clip is kept: the IPA already steers it, and no audio is worse.
  */
 async function assertNativeReading({
   analytics,
@@ -208,10 +190,8 @@ type VoiceInput = {
 };
 
 /**
- * Generates WAV and converts it to the one upload format inside the retry boundary, then checks a
- * look-alike word's sounds. Malformed, silent or overlong audio, or a word read the English way,
- * therefore follows the same fallback path as transport and API failures, whichever provider
- * produced it.
+ * Inside the retry boundary, so malformed, silent or overlong audio, or a word read the English
+ * way, falls back like a transport failure.
  */
 async function generateWithModel({
   analytics,
@@ -243,10 +223,7 @@ async function generateWithModel({
   return { audio, durationSeconds, format: "mp3", model, providerMetadata };
 }
 
-/**
- * Tries provider-qualified models in order. Each adapter owns transient request retries; this
- * layer owns cross-model and post-decode quality retries.
- */
+/** Each adapter owns transient request retries; this layer owns cross-model and quality retries. */
 async function generateWithFallback({
   models,
   ...input
@@ -274,14 +251,7 @@ async function generateWithFallback({
   }
 }
 
-/**
- * Voices a word, sentence or passage in its language, Gemini first (see `speechModels`). Every
- * request names the language in its instructions, English included, and a word English spells
- * the same also gets its IPA and a listen afterwards (`findLookAlike`, `assertNativeReading`). An
- * explicit model bypasses the automatic order.
- * The result names the model that actually voiced it, after any fallback, and how long the clip
- * plays.
- */
+/** The result names the model that actually voiced it, after any fallback. */
 export async function generateLanguageAudio({
   analytics,
   language,

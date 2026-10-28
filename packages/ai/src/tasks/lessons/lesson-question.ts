@@ -25,13 +25,8 @@ const LESSON_QUESTION_TASK = "lesson-question";
 
 export type LessonQuestionPriorTurn = { answer: string; question: string };
 
-/** What the lesson tutor answers about: a goal's plan goes to the buddy, the goal's tutor. */
 type LessonTutorContextSnapshot = Exclude<LessonQuestionContextSnapshot, PlanScopeContext>;
 
-/**
- * Each scope's own rules come after the ones every question shares: a lesson, a screen or an
- * answer gets the rules for those, and a chapter or a finished mock what its context describes.
- */
 const SCOPE_PROMPTS = {
   answer: lessonPrompt,
   chapter: `${beyondLessonPrompt}\n${chapterPrompt}`,
@@ -44,7 +39,6 @@ function getSystemPrompt(contextSnapshot: LessonTutorContextSnapshot): string {
   return `${systemPrompt}\n${SCOPE_PROMPTS[contextSnapshot.scope.kind]}`;
 }
 
-/** A finished answer with the run that wrote it, as the tutor stores it. */
 export type LessonQuestionAnswerCompletion = {
   answer: string;
   finishReason: string;
@@ -52,14 +46,13 @@ export type LessonQuestionAnswerCompletion = {
   model: string;
   promptVersion: string;
   provider: string;
-  /** The call's run, whose tokens and cost are in the AI call log. */
   runId: string;
 };
 
 type StreamLessonQuestionAnswerParams = {
   analytics?: AiGenerationContext;
   contextSnapshot: LessonTutorContextSnapshot;
-  /** Facts the learner shared before (their goals, how they learn), when memory is on. */
+  /** Only when memory is on. */
   learnerMemory?: readonly string[];
   priorTurns: readonly LessonQuestionPriorTurn[];
   question: string;
@@ -175,10 +168,6 @@ function suppressLessonQuestionProviderError() {
   return Promise.resolve();
 }
 
-/**
- * Runs the same grounded tutor task without streaming so the eval app can choose
- * a model and persist the complete prompt, output, and usage for comparison.
- */
 export async function generateLessonQuestionAnswer({
   analytics,
   contextSnapshot,
@@ -220,10 +209,8 @@ export async function generateLessonQuestionAnswer({
 }
 
 /**
- * Keeps the model and fallback policy in the task while delivery adapters choose how to stream
- * and persist the answer. `provenance` resolves once the answer ends (and sends the run's
- * `$ai_generation` event); it rejects when the stream fails, which the adapter reads from the
- * stream itself.
+ * `provenance` resolves once the answer ends; it rejects when the stream fails, which the adapter
+ * reads from the stream itself.
  */
 export function streamLessonQuestionAnswer({
   analytics,

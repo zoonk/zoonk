@@ -8,13 +8,9 @@ const SPEAKER_TEMPLATE =
 const PROMPT_VERSION_TEXT = SPEAKER_TEMPLATE;
 
 /**
- * The instructions one speaker's lines are voiced with: the language by its plain name, since the
- * accent names its variety ("British English", "Mexican Spanish"), and a pace like the exam's own
- * recordings, not the slower one lesson clips use. Flash Lite reads ordinary speech fast: asked
- * for "the natural pace of a real exam recording" or for 150 words a minute, it read up to 207
- * words a minute; "calm, unhurried, a little slower than everyday conversation" read between 150
- * and 185 depending on the text (10 Oct 2026), the range of real exam recordings. Stronger words
- * ("slowly") didn't slow long parts further.
+ * Asked for an exam recording's natural pace, Flash Lite read up to 207 words a minute; "calm,
+ * unhurried, a little slower than everyday conversation" read 150 to 185, real exams' range (10
+ * Oct 2026).
  */
 export function getListeningVoiceInstructions({
   accent,
@@ -34,7 +30,6 @@ export function getListeningVoiceInstructions({
   );
 }
 
-/** The version stored with a voiced recording: it changes when the instructions do. */
 export function getListeningVoicePromptVersion(): string {
   return getPromptVersion({ systemPrompt: PROMPT_VERSION_TEXT });
 }

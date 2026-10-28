@@ -1,6 +1,5 @@
 import { type generateText } from "ai";
 
-/** The parts of a `generateText` result a task reads: the output, the final step and usage. */
 export function createGenerateTextResult(output: unknown, modelId = "openai/gpt-6-sol") {
   const usage = {
     inputTokenDetails: {},

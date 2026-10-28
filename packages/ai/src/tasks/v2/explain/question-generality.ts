@@ -12,10 +12,6 @@ const fallbackModel = "openai/gpt-6-luna";
  */
 const GENERAL_AT = 0.6;
 
-/**
- * The generality question for any evaluation model: Jev natively, other models
- * through the evaluation adapter, so the eval and production ask the same thing.
- */
 export const questionGeneralityClassifier = {
   question: {
     criteria: {
@@ -29,18 +25,8 @@ export const questionGeneralityClassifier = {
   toInput: ({ question }: { question: string }) => ({ QUESTION: question }),
 };
 
-type QuestionGenerality = EvaluationRunDetails & {
-  /** True only when the model is confident; uncertain questions stay private. */
-  isGeneral: boolean;
-  /** P(general) from the model, kept for threshold tuning. */
-  probability: number;
-};
+type QuestionGenerality = EvaluationRunDetails & { isGeneral: boolean; probability: number };
 
-/**
- * Decides whether a quick-explanation question is general, so its explanation
- * can be found by identity search and reused by everyone asking the same thing
- * in other words, or personal, so it is made only for the asker.
- */
 export async function classifyQuestionGenerality({
   analytics,
   question,

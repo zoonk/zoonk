@@ -4,17 +4,12 @@ import { readGatewayMetadata } from "../../provenance/gateway-metadata";
 import { type TaskProvenance } from "../../provenance/task-provenance";
 import { type SpeechModelName } from "./speech-models";
 
-/**
- * The text a speech model reads (its instructions and the clip's words), in tokens: the SDK
- * doesn't report them, and at about four characters a token they're a small part of the price.
- */
+/** The SDK doesn't report a speech call's text tokens, a small part of its price. */
 const CHARACTERS_PER_TEXT_TOKEN = 4;
 
 /**
- * Speech is billed by the second of audio it returns and the text it reads (its instructions and
- * the clip's words), or by the characters of the clip's words alone (MAI-Voice), so the clip's
- * length and its words price it. AI Gateway's routing names the provider that served a gateway
- * clip and its own estimate is kept as a cross-check.
+ * Speech is billed by the second of audio and the text read, or by the characters of the clip's
+ * words alone (MAI-Voice).
  */
 export function buildSpeechProvenance({
   instructions,
@@ -30,7 +25,6 @@ export function buildSpeechProvenance({
   promptVersion: string;
   requestedModel: SpeechModelName;
   runId: string;
-  /** The clip's words. */
   text: string;
   voiced: {
     durationSeconds: number;

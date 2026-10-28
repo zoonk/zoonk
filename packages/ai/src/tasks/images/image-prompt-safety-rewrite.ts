@@ -23,12 +23,6 @@ export type ImageInputSafetyRewriteParams = {
   analytics?: AiGenerationContext;
 };
 
-/**
- * Generates one safer replacement for the caller-owned image input after an
- * image model rejects the assembled prompt. Production retry code and evals
- * both use this task so the rewrite contract stays aligned as we tune
- * protected-character or sensitive-topic behavior.
- */
 export async function rewriteImageInputForSafetyRetry({
   analytics,
   errorContext,
@@ -60,11 +54,6 @@ export async function rewriteImageInputForSafetyRetry({
   return { data: result.output, provenance, systemPrompt, usage: result.usage, userPrompt };
 }
 
-/**
- * Gives the rewrite model enough rejection context to identify the blocked
- * class of content, while keeping the rewrite target limited to the dynamic
- * input that production callers will place back into their stable prompt.
- */
 function getImageInputSafetyRewriteUserPrompt({
   errorContext,
   input,
@@ -83,11 +72,7 @@ function getImageInputSafetyRewriteUserPrompt({
   `;
 }
 
-/**
- * Prevents very large provider payloads from crowding out the original prompt
- * in the rewrite request. The safety wording appears at the start of current
- * Gateway errors, so a short prefix is enough for classification context.
- */
+/** The safety wording opens Gateway's errors, so a short prefix is enough context. */
 function truncateErrorContext({ errorContext }: { errorContext: string }): string {
   if (errorContext.length <= MAX_ERROR_CONTEXT_LENGTH) {
     return errorContext;

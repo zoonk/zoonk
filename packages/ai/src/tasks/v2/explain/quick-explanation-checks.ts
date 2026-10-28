@@ -8,12 +8,7 @@ function hasDuplicates(values: readonly string[]): boolean {
   return new Set(values.map((value) => normalizeString(value))).size !== values.length;
 }
 
-/**
- * The rules a quick explanation must meet before it is shown or shared, which
- * a schema can't express: one right answer in the check, options a learner can
- * tell apart, and a story of 4 to 6 distinct screens. Returns one line per
- * problem, so an empty list means the explanation passes.
- */
+/** One line per problem: an empty list means the explanation passes. */
 export function checkQuickExplanation(explanation: QuickExplanation): string[] {
   const { check, recap, screens } = explanation;
   const correctOptions = check.options.filter((option) => option.isCorrect).length;

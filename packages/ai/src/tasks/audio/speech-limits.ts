@@ -11,18 +11,13 @@ const MIN_MAX_SECONDS = 18;
 const MIN_CHARACTERS_PER_SECOND = 8;
 
 /**
- * How long the clip may play. A model that reads its instructions aloud, or keeps talking,
- * returns far more audio than the text needs, so longer audio falls through to the next model.
+ * A model that reads its instructions aloud, or keeps talking, returns far more audio than the text
+ * needs, so longer audio falls through to the next model.
  */
 export function getMaxSeconds(text: string): number {
   return Math.max(MIN_MAX_SECONDS, Math.ceil(text.length / MIN_CHARACTERS_PER_SECOND));
 }
 
-/**
- * Rejects suspiciously large audio from every provider before decoding it. Keeping one
- * task-level limit prevents a provider-specific implementation from bypassing the prompt-leak
- * safeguard.
- */
 export function assertExpectedAudioSize({
   audio,
   maxSeconds,

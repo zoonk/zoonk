@@ -18,14 +18,9 @@ function getMaiVoice(language: string): string {
 }
 
 /**
- * Generates WAV with one model. Every provider returns WAV, which adds only a small header to the
- * PCM samples, so the task applies one validation and encoding pipeline without codec-specific
- * branches. Gemini and MAI-Voice both go through AI Gateway. The instructions name the passage's
- * language, which Gemini follows; MAI-Voice takes none (only SSML styles, so the gateway warns and
- * drops them), and its voice names the language instead. None reads the AI
- * SDK's `language` option (it only logged a warning for every clip; checked 8 Oct 2026), so it
- * isn't sent. The provider metadata carries AI Gateway's routing and cost. A service tier goes to
- * Gemini (`chooseServiceTier`); MAI-Voice has none.
+ * MAI-Voice takes no instructions (only SSML styles, which the gateway drops), so its voice names
+ * the language. No provider reads the AI SDK's `language` option (8 Oct 2026), so it isn't sent.
+ * MAI-Voice has no service tier.
  */
 export async function generateSpeechWithProvider({
   instructions,
@@ -36,7 +31,7 @@ export async function generateSpeechWithProvider({
   voice,
 }: {
   instructions: string;
-  /** The passage's language, such as "pt": MAI-Voice picks its voice by it. */
+  /** MAI-Voice picks its voice by it. */
   language: string;
   model: SpeechModelName;
   serviceTier?: ServiceTier;

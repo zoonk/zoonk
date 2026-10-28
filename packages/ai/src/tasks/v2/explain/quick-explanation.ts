@@ -14,10 +14,8 @@ import {
 import systemPrompt from "./quick-explanation.prompt.md";
 
 /**
- * The first screen should show in about 20 seconds. In the eval (6 cases,
- * Sep 2026) Luna scored 8.73 at 8.6s p50, Sol 9.12 but at 21s p50, and
- * Gemini 3.8 Flash 7.88 with accuracy problems on every case. On 4 cases (7 Oct 2026) Claude
- * Haiku 5.5 with thinking off scored 7.97 against Luna's 8.53.
+ * The first screen should show in about 20 seconds: Luna scored 8.73 at 8.6s p50, Sol 9.12 at 21s
+ * (Sep 2026).
  */
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["openai/gpt-6-sol", "google/gemini-3.8-flash"] as const;
@@ -60,12 +58,6 @@ export type QuickExplanationParams = {
   analytics?: AiGenerationContext;
 };
 
-/**
- * Answers a "how does it work" or "what is" question as a quick explanation:
- * 4 to 6 short screens with one idea each, a practical example, one check and
- * the "Now you know" recap with a "Want to go further?" hint into the subject's
- * overview course. Learners wait for it, so it runs on a fast model.
- */
 export async function generateQuickExplanation({
   analytics,
   language,

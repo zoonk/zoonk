@@ -1,20 +1,12 @@
 import { type EncodableAudio } from "./convert-wav-to-mp3";
 
-/**
- * The longest text one speech call reads: about half a minute of speech, short enough that a voice
- * stays steady and a failed call costs little to redo.
- */
+/** About half a minute of speech: a voice stays steady and a failed call costs little to redo. */
 const MAX_PART_CHARACTERS = 500;
 
-/** The pause between two speakers' turns, and between the parts of one long turn. */
 const TURN_PAUSE_SECONDS = 0.6;
 const PART_PAUSE_SECONDS = 0.25;
 
-/**
- * Splits a turn into parts of whole sentences, each at most `MAX_PART_CHARACTERS` long; a single
- * sentence longer than that stays whole. Sentence breaks follow the language (`Intl.Segmenter`),
- * so languages written without spaces split too.
- */
+/** A single sentence longer than `MAX_PART_CHARACTERS` stays whole. */
 export function splitSpokenText({ locale, text }: { locale: string; text: string }): string[] {
   const sentences = Array.from(
     new Intl.Segmenter(locale, { granularity: "sentence" }).segment(text.trim()),
@@ -36,15 +28,11 @@ export function splitSpokenText({ locale, text }: { locale: string; text: string
   return parts.map((part) => part.trim()).filter(Boolean);
 }
 
-/** The first channel of a part: speech is mono, and a stereo part's left side carries it too. */
+/** Speech is mono, and a stereo part's left side carries it too. */
 function getSamples(audio: EncodableAudio): Float32Array {
   return audio.channelData[0]?.subarray(0, audio.samplesDecoded) ?? new Float32Array();
 }
 
-/**
- * Joins voiced parts in order into one mono recording, with a longer pause where the speaker
- * changes (`turn`) than between the parts of one turn. Every part must share one sample rate.
- */
 export function joinSpeech(
   parts: readonly { audio: EncodableAudio; turn: number }[],
 ): EncodableAudio {

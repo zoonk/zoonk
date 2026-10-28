@@ -12,17 +12,14 @@ import systemPrompt from "./find-exam-date.prompt.md";
 export type { ExamDateFinding } from "./exam-date-finding";
 
 /**
- * The pair `find-official-sources` measured best at finding a current notice (Gemini 3.8 Flash with
- * Parallel). On the `find-exam-date` eval (5 real exams, 6 Oct 2026) it read every published day
- * from an official page and gave none for a notice not out yet or a test learners book (10.0);
- * low reasoning brought the published notices from 33–38s to 15–20s at the same score, about $0.02
- * a lookup.
+ * With Parallel, it scored 10.0 on the `find-exam-date` eval (6 Oct 2026); low reasoning halved
+ * the time at the same score.
  */
 const defaultModel = "google/gemini-3.8-flash";
 const defaultSearchTool: ResearchSearchTool = "parallel";
 const defaultReasoning: Reasoning = "low";
 
-/** A few searches and the answer: the learner is waiting on the card. */
+/** The learner is waiting on the card. */
 const MAX_STEPS = 5;
 
 const schema = z.object({
@@ -35,12 +32,10 @@ const schema = z.object({
 type FindExamDateInput = {
   exam: string;
   institution: string | null;
-  /** The learner's language, for the dates' labels. */
   language: string;
   role: string | null;
-  /** The learner-local date, YYYY-MM-DD: only an edition ahead of it counts. */
+  /** Only an edition ahead of it counts. */
   today: string;
-  /** What the learner typed, for the edition they mean ("the first phase in March"). */
   words: string | null;
   year: number | null;
 };
@@ -67,13 +62,7 @@ ${formatUntrustedInput({
   `;
 }
 
-/**
- * Looks up the official day of the next edition of an exam a learner just named, with the page it
- * was read from, while they read what onboarding understood. Only an official, current source
- * counts: a date that's past, unsourced or on a site no search returned is dropped, and the exam
- * reads as not known yet instead of guessed. Research still reads the whole notice once the goal
- * exists. Fallback models aren't used: the search tool is tied to the model it's measured with.
- */
+/** No fallback models: the search tool is tied to the model it's measured with. */
 export async function findExamDate({
   analytics,
   model = defaultModel,

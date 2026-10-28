@@ -17,13 +17,10 @@ type UnderstoodGoalKind = "exam" | "language" | "learn";
 type UnderstoodOwnLevel = "advanced" | "basic" | "intermediate" | "none";
 type UnderstoodPurpose = "careerChange" | "deep" | "other" | "overview" | "refresh" | "work";
 
-/**
- * What an exam's learner aims for beyond passing: a course or school (`admission`), a score
- * (`score`), or a position (`position`). Exams that are only passed or failed have none.
- */
+/** Exams that are only passed or failed have none. */
 type UnderstoodExamTarget = "admission" | "position" | "score";
 
-/** One goal as the model returned it: every field present, null when the text didn't say. */
+/** Every field present, null when the text didn't say. */
 type RawUnderstoodGoal = {
   examMonth: number | null;
   examName: string | null;
@@ -58,9 +55,9 @@ export type RawGoalUnderstanding = {
   studyTimeNote: string | null;
 };
 
-/** A goal onboarding can create: fields the text didn't give are undefined, never null. */
+/** Fields the text didn't give are undefined, never null. */
 export type UnderstoodGoal = {
-  /** The month the learner named for an exam without its day ("in March"), 1 to 12. */
+  /** 1 to 12, for an exam named without its day ("in March"). */
   examMonth?: number;
   examName?: string;
   examTarget?: UnderstoodExamTarget;
@@ -101,10 +98,7 @@ function cleanText(value: string | null): string | undefined {
   return text || undefined;
 }
 
-/**
- * A course's name opens with a capital, as written on its own: a model that copied the learner's
- * "medicina" made a plan line read "medicina na UFMG…" (Oct 2026).
- */
+/** A copied "medicina" made a plan line read "medicina na UFMG…" (Oct 2026). */
 function cleanCourseName(value: string | null): string | undefined {
   const text = cleanText(value);
   return text && `${text.charAt(0).toLocaleUpperCase()}${text.slice(1)}`;
@@ -130,7 +124,6 @@ function cleanStudyDays(days: number[] | null): number[] | undefined {
   return valid.length > 0 ? valid : undefined;
 }
 
-/** Only real dates after today: a deadline in the past can't be planned for. */
 function cleanTargetDate({ date, today }: { date: string | null; today: string }) {
   if (!date || !ISO_DATE_PATTERN.test(date) || Number.isNaN(Date.parse(date))) {
     return;
@@ -221,10 +214,8 @@ function normalizeGoals(raw: RawGoalUnderstanding, today: string): GoalUnderstan
 }
 
 /**
- * Keeps only what onboarding can use: goals with a title (and a language for language goals),
- * real future dates, minutes the planner accepts and valid weekdays. A route that lost what it
- * needs (an explain without its question, goals without one usable goal) becomes `unclear`, so
- * the learner is asked to say more instead of getting a broken plan.
+ * A route that lost what it needs becomes `unclear`, so the learner is asked to say more instead of
+ * getting a broken plan.
  */
 export function normalizeGoalUnderstanding({
   raw,

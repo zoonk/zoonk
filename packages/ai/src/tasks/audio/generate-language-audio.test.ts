@@ -53,7 +53,6 @@ function voiced() {
   return { audio: wavAudio, providerMetadata: {} };
 }
 
-/** The first request sent to a speech model. */
 function firstRequest() {
   const [input] = generateSpeechWithProviderMock.mock.calls[0] ?? [];
 
@@ -64,7 +63,6 @@ function firstRequest() {
   return input;
 }
 
-/** The models asked for, in order. */
 function requestedModels() {
   return generateSpeechWithProviderMock.mock.calls.map(([input]) => input.model);
 }

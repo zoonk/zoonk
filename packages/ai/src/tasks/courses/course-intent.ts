@@ -7,11 +7,8 @@ import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../pr
 import systemPrompt from "./course-intent.prompt.md";
 
 /**
- * From the course-intent eval (175 cases, code-scored): Gemini 3.5 Flash Lite got every intent
- * right (1.7s p50, 2.0s p95), Luna 174 of 175 (1.6s, 2.7s p95); Flash Lite runs on a provider we
- * hold credits for, and onboarding waits on the slower of this and the goal's understanding.
- * Claude Haiku 5.5 with thinking off got 39 of 40 sampled cases at the same speed and $0.10 per
- * 1,000 runs against $0.74 (7 Oct 2026); Flash Lite got all 40, so it stays.
+ * Flash Lite got all 175 course-intent cases right (1.7s p50); Luna and Claude Haiku 5.5 each
+ * missed one (7 Oct 2026).
  */
 const defaultModel = "google/gemini-3.5-flash-lite";
 const fallbackModels = ["openai/gpt-6-luna"] as const;
@@ -28,16 +25,10 @@ export type CourseIntentParams = {
   model?: string;
   useFallback?: boolean;
   reasoning?: Reasoning;
-  /** The gateway tier it answers at (see `chooseServiceTier`); the standard one when unset. */
   serviceTier?: ServiceTier;
   analytics?: AiGenerationContext;
 };
 
-/**
- * Classifies the learner's product intent. Onboarding runs it beside the goal
- * understanding so a goal it marks unsafe is declined whatever route the
- * understanding picked.
- */
 export async function classifyCourseIntent({
   analytics,
   model = defaultModel,
@@ -70,10 +61,7 @@ export async function classifyCourseIntent({
   return { data: result.output, provenance, systemPrompt, usage: result.usage, userPrompt };
 }
 
-/**
- * The same rules as an evaluation question, so the eval can compare Jev and other evaluation
- * models with the generation model on the same labels.
- */
+/** So the eval can compare evaluation models with the generation model on the same labels. */
 export const courseIntentClassifier = {
   instructions: systemPrompt,
   labels: {

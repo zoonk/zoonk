@@ -15,13 +15,8 @@ import systemPrompt from "./understand-goal.prompt.md";
 export type { GoalUnderstanding, UnderstoodGoal } from "./normalize-goal-understanding";
 
 /**
- * From the understand-goal eval (37 cases in English and Portuguese, code scoring, 7 Oct 2026):
- * Gemini 3.5 Flash Lite and Luna got every route and fact right; Flash Lite answers in 1.6s (p50,
- * 2.0s p95) against Luna's 3.8s (6.3s p95), the first wait a new learner sees, at $1.21 per 1,000
- * runs against $0.17 on a provider we hold credits for. Gemini 3.8 Flash split "music theory and
- * ear training" into two goals, Haiku called "write my essay" unsafe, and Jev picks the route
- * perfectly but can't fill the facts. Claude Haiku 5.5 with thinking off got 33 of 37 fully right
- * at p50 2.3s and $0.41 (7 Oct 2026), slower and less exact than Flash Lite.
+ * Flash Lite and Luna got every route and fact right on the understand-goal eval (7 Oct 2026);
+ * Flash Lite answers in 1.6s p50 against Luna's 3.8s, the first wait a new learner sees.
  */
 const defaultModel = "google/gemini-3.5-flash-lite";
 const fallbackModels = ["openai/gpt-6-luna", "anthropic/claude-haiku-5.5"] as const;
@@ -62,11 +57,9 @@ const schema = z.object({
 }) satisfies z.ZodType<RawGoalUnderstanding>;
 
 export type UnderstandGoalInput = {
-  /** What the learner typed. */
   goal: string;
-  /** The learner's language, for titles and notes. */
   language: string;
-  /** The learner-local date, YYYY-MM-DD, for relative dates. */
+  /** For relative dates. */
   today: string;
 };
 
@@ -74,7 +67,6 @@ export type UnderstandGoalParams = UnderstandGoalInput & {
   analytics?: AiGenerationContext;
   model?: string;
   reasoning?: Reasoning;
-  /** The gateway tier it answers at (see `chooseServiceTier`); the standard one when unset. */
   serviceTier?: ServiceTier;
   useFallback?: boolean;
 };
@@ -88,12 +80,7 @@ ${formatUntrustedInput({ GOAL: input.goal })}
   `;
 }
 
-/**
- * Reads a goal typed in the learner's own words: what kind of request it is (goals to plan, a
- * quick explanation, an instrument, something unsafe or unclear) and every onboarding answer the
- * text already gives (exam, dates, target, level, reason, purpose, role and when they study), so
- * onboarding only asks what's missing. Targets are the learner's own; nothing here is a promise.
- */
+/** Targets are the learner's own; nothing here is a promise. */
 export async function understandGoal(params: UnderstandGoalParams) {
   const { analytics, model = defaultModel, reasoning, serviceTier, useFallback = true } = params;
   const userPrompt = buildUserPrompt(params);
@@ -119,15 +106,11 @@ export async function understandGoal(params: UnderstandGoalParams) {
   return { data, provenance, systemPrompt, usage: result.usage, userPrompt };
 }
 
-/** The request as an evaluation-model state, so evals can compare Jev on the route alone. */
 function toClassifierInput(input: UnderstandGoalInput): Record<string, string> {
   return { GOAL: input.goal };
 }
 
-/**
- * Only the route, as an evaluation question: evaluation models can pick a route but can't fill
- * goals, dates or titles.
- */
+/** Only the route: evaluation models can pick one but can't fill goals, dates or titles. */
 export const goalRouteClassifier = {
   instructions: systemPrompt,
   labels: {

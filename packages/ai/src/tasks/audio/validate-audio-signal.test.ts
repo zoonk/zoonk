@@ -3,10 +3,6 @@ import { assertAudibleAudioSignal } from "./validate-audio-signal";
 
 const SAMPLE_RATE = 48_000;
 
-/**
- * Builds normalized decoded audio so each test can describe the signal rule it
- * exercises without coupling the rule to a particular source codec.
- */
 function createDecodedAudio(channelData: Float32Array[]) {
   return { channelData, sampleRate: SAMPLE_RATE, samplesDecoded: channelData[0]?.length ?? 0 };
 }

@@ -8,12 +8,6 @@ const MP3_SAMPLE_RATE = 24_000;
 
 export type EncodableAudio = DecodedAudio & { channelCount: 1 | 2 };
 
-/**
- * Rejects empty or unsupported provider WAV shapes before they reach the
- * encoder. TTS responses should be mono, but accepting stereo keeps this
- * boundary safe if a provider changes its channel layout without changing the
- * WAV contract.
- */
 function getChannelCount({
   channelData,
   model,
@@ -30,11 +24,6 @@ function getChannelCount({
   throw new Error(`${model} returned invalid WAV audio`);
 }
 
-/**
- * Decodes provider WAV into normalized samples and verifies that every channel
- * represents the same non-empty timeline. Wrapping parser errors here gives
- * the retry layer one stable provider failure regardless of the malformed WAV.
- */
 function decodeWavAudio({
   audio,
   model,
@@ -61,11 +50,7 @@ function decodeWavAudio({
   }
 }
 
-/**
- * Copies encoder-owned chunks into one stable upload buffer. The encoder reuses
- * its WASM memory between encode and finalize, so the caller copies each chunk
- * before invoking the next encoder operation.
- */
+/** The encoder reuses its WASM memory between encode and finalize, so chunks are copied first. */
 function combineMp3Chunks({
   finalChunk,
   firstChunk,
@@ -79,10 +64,6 @@ function combineMp3Chunks({
   return audio;
 }
 
-/**
- * Decodes provider WAV and checks it is speech of a plausible length (`assertAudibleAudioSignal`):
- * the samples a clip, or one line of a longer recording, is made of.
- */
 export function decodeSpeechWav({
   audio,
   maxSeconds,
@@ -97,11 +78,6 @@ export function decodeSpeechWav({
   return decodedAudio;
 }
 
-/**
- * Encodes decoded speech as a compact 48 kbps MP3, with how long it plays. Keeping one final codec
- * avoids shipping separate decoder paths and gives storage and playback a consistent media
- * contract.
- */
 export async function encodeMp3(
   decodedAudio: EncodableAudio,
 ): Promise<{ audio: Uint8Array; durationSeconds: number }> {
@@ -123,7 +99,6 @@ export async function encodeMp3(
   };
 }
 
-/** Validates provider WAV and encodes it as MP3 (`decodeSpeechWav`, then `encodeMp3`). */
 export async function convertWavToMp3(input: {
   audio: Uint8Array;
   maxSeconds: number;

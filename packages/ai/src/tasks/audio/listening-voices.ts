@@ -1,11 +1,7 @@
 import { type TTSVoice } from "@zoonk/utils/languages";
 import { seededShuffle } from "@zoonk/utils/seeded-random";
 
-/**
- * Gemini's prebuilt voices that sound like a woman or a man, the clearest of each (Google's voice
- * list, checked 10 Oct 2026). Speakers in one recording get different voices, so a listener tells
- * them apart.
- */
+/** The clearest of Gemini's prebuilt voices of each gender (Google's voice list, 10 Oct 2026). */
 const VOICES_BY_GENDER = {
   female: ["Kore", "Aoede", "Leda", "Despina", "Erinome", "Sulafat", "Autonoe", "Gacrux"],
   male: ["Puck", "Charon", "Orus", "Iapetus", "Achird", "Algieba", "Schedar", "Sadaltager"],
@@ -14,9 +10,8 @@ const VOICES_BY_GENDER = {
 type VoiceGender = keyof typeof VOICES_BY_GENDER;
 
 /**
- * Picks each speaker's voice by gender, different for every speaker of the recording, in an order
- * `seed` (the recording) fixes: the same script always gets the same voices, and two recordings
- * don't all start with the same two.
+ * Every speaker gets a different voice, so a listener tells them apart. The same `seed` always gets
+ * the same voices, and two recordings don't all start with the same two.
  */
 export function assignListeningVoices<Speaker extends { gender: VoiceGender; name: string }>({
   seed,

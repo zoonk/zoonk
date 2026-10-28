@@ -9,11 +9,7 @@ export type DecodedAudio = {
   samplesDecoded: number;
 };
 
-/**
- * Checks one decoded sample frame across every channel. Using the strongest
- * channel avoids rejecting valid stereo audio when speech is intentionally
- * present on only one side.
- */
+/** The strongest channel counts, so stereo with speech on one side passes. */
 function isSampleFrameAudible({
   channelData,
   sampleIndex,
@@ -27,9 +23,8 @@ function isSampleFrameAudible({
 }
 
 /**
- * Requires at least 40 ms of meaningful signal so isolated clicks or decoder
- * noise do not count as speech. The amplitude floor sits inside the large gap
- * measured between near-silent and spoken files in the production audio corpus.
+ * Clicks and decoder noise don't count as speech. The amplitude floor sits inside the gap measured
+ * between near-silent and spoken files in the production audio corpus.
  */
 function hasSustainedAudibleSignal({
   channelData,
@@ -53,18 +48,12 @@ function hasSustainedAudibleSignal({
   return audibleSampleFrames >= minimumAudibleSampleFrames;
 }
 
-/**
- * Applies the provider-independent quality rules after a codec-specific parser
- * has produced normalized PCM samples. This gives every speech provider one
- * audibility and prompt-leak contract regardless of its transport details.
- */
 export function assertAudibleAudioSignal({
   audio,
   maxSeconds,
   model,
 }: {
   audio: DecodedAudio;
-  /** Longer than the text could take to read, which means the model read something else. */
   maxSeconds: number;
   model: SpeechModelName;
 }): void {

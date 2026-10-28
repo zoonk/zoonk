@@ -4,7 +4,6 @@ const MAX_TITLE_LENGTH = 200;
 
 type RawExamDate = { date: string; label: string };
 
-/** The lookup's answer as the model gave it. */
 export type RawExamDateFinding = {
   dates: RawExamDate[];
   sourceTitle: string | null;
@@ -22,7 +21,6 @@ function isRealDate(date: string): boolean {
   return ISO_DATE_PATTERN.test(date) && !Number.isNaN(Date.parse(date));
 }
 
-/** The exam's days still ahead, each once and in order, with a short label. */
 function cleanDates({ dates, today }: { dates: RawExamDate[]; today: string }): RawExamDate[] {
   const ahead = dates
     .filter((day) => isRealDate(day.date) && day.date >= today)
@@ -34,16 +32,13 @@ function cleanDates({ dates, today }: { dates: RawExamDate[]; today: string }): 
   );
 }
 
-/**
- * Keeps only an answer the learner can trust: an official day still ahead, read from a page a
- * search actually returned. Anything else reads as not known yet, never as a guess.
- */
+/** Anything but an official day ahead, from a page a search returned, reads as not known yet. */
 export function toExamDateFinding({
   isSearched,
   raw,
   today,
 }: {
-  /** Whether an address is on a site the search returned; anything else was invented. */
+  /** An address on a site the search didn't return was invented. */
   isSearched: (url: string) => boolean;
   raw: RawExamDateFinding;
   today: string;

@@ -23,21 +23,14 @@ const TASK = "listening-audio";
 const MS_PER_SECOND = 1000;
 
 /**
- * Flash Lite first, Flash when a line fails. On the same two-speaker booking call (10 Oct 2026),
- * both were equally intelligible (gpt-transcribe heard every word of both; only number formats
- * differed) and a Gemini 3.8 Flash judge rated Flash Lite's naturalness 4.5 of 5 against Flash's 5,
- * at $0.0095 a minute against $0.014. Neither follows an accent instruction reliably (a blind judge
- * heard the asked accent in 2 of 4 lines on each), so accents are asked for but not promised. Both
- * have the same voices, so a line Flash Lite fails keeps its speaker's voice on Flash. OpenAI isn't
- * a fallback: its voices differ, and a recording whose speaker changes voice halfway is worse than
- * one voiced again later.
+ * Flash Lite was as intelligible as Flash and nearly as natural at two thirds the price (10 Oct
+ * 2026). Both share voices, so a failed line keeps its speaker's voice; OpenAI's voices differ.
  */
 const LISTENING_SPEECH_MODELS: readonly SpeechModelName[] = [
   speechModels.geminiFlashLite,
   speechModels.geminiFlash,
 ];
 
-/** One turn of a script as it's voiced: the speaker's voice and accent and what they say. */
 export type ListeningLine = { accent: string; text: string; voice: TTSVoice };
 
 type VoicedPart = { audio: EncodableAudio; provenance: TaskProvenance };
@@ -46,7 +39,6 @@ type PartInput = {
   analytics?: AiGenerationContext;
   instructions: string;
   language: string;
-  /** The first model of the order, which provenance names as the one asked for. */
   requestedModel: SpeechModelName;
   serviceTier?: ServiceTier;
   text: string;
@@ -106,13 +98,7 @@ async function voicePart(
   }
 }
 
-/**
- * Voices a listening exam's recording: each turn in its speaker's voice and accent, long turns in
- * a few parts so every call stays short, all at once, then joined in order with a pause between
- * turns and encoded as one MP3. A part that fails on every model fails the recording, which is
- * voiced again later rather than played with a gap. Each call sends its own event; the result
- * carries one provenance for the stored recording, with every call's audio and cost.
- */
+/** A part that fails on every model fails the recording: voiced again later, not with a gap. */
 export async function voiceListeningScript({
   analytics,
   language,
@@ -121,7 +107,6 @@ export async function voiceListeningScript({
   serviceTier,
 }: {
   analytics?: AiGenerationContext;
-  /** The recording's language, such as "en". */
   language: string;
   lines: readonly ListeningLine[];
   /** One model for every line, with a second try each, instead of the automatic order (evals). */

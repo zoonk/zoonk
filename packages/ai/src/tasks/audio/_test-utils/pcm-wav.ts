@@ -26,10 +26,6 @@ const FMT_CHUNK_BYTES = 16;
 /** The RIFF size counts everything after its own 8 bytes ("RIFF" and the size). */
 const RIFF_PREAMBLE_BYTES = 8;
 
-/**
- * Wraps 16-bit mono 24 kHz PCM samples in a WAV header, the one format the speech pipeline
- * validates and encodes.
- */
 export function pcmToWav(pcm: Uint8Array): Uint8Array {
   const audio = new Uint8Array(HEADER_BYTES + pcm.byteLength);
   const dataView = new DataView(audio.buffer);

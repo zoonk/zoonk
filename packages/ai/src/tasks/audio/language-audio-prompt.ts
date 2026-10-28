@@ -19,15 +19,9 @@ function fillLanguage(template: string, languageName: string): string {
 }
 
 /**
- * The instructions a clip is read with, which name its language for every language, English
- * included: text-to-speech otherwise guesses the language from the text, and a short or
- * borrowed-word sentence can come out with another language's sounds. Other languages also get
- * the reminder that look-alike words keep their own sounds. A usage prompt, such as an alphabet
- * card's, goes between the two. A word English spells the same comes with its own pronunciation
- * in IPA (`ipa`), which voices follow where the reminder alone isn't enough.
- *
- * It lives apart from the task, without its Markdown prompts, so tests can replace it on its own
- * (the speech clip key test shows a new prompt version never changes a clip's key).
+ * Names the language even for English: text-to-speech otherwise guesses it, and a short or
+ * borrowed-word sentence can come out with another language's sounds. Kept apart from the task's
+ * Markdown prompts so tests can replace it alone.
  */
 export function getLanguageAudioPrompt({
   ipa,
@@ -35,7 +29,7 @@ export function getLanguageAudioPrompt({
   usagePrompt = "",
   voice = DEFAULT_LANGUAGE_AUDIO_VOICE,
 }: {
-  /** How the word sounds in its language, for a single word English spells the same. */
+  /** For a single word English spells the same. */
   ipa?: string;
   language: string;
   usagePrompt?: string;
