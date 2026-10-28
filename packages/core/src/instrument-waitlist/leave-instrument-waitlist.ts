@@ -10,7 +10,6 @@ export type InstrumentWaitlistLeaveResult =
   | { status: "notFound" }
   | { status: "unauthorized" };
 
-/** Takes one instrument off the learner's waitlist. */
 export async function leaveInstrumentWaitlist(
   entryId: string,
 ): Promise<InstrumentWaitlistLeaveResult> {

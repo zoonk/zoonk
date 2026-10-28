@@ -15,11 +15,7 @@ export type InstrumentWaitlistJoinResult =
   | { status: "signInRequired" }
   | { status: "unauthorized" };
 
-/**
- * Adds an instrument to the learner's waitlist for lessons that teach them to play it. Joining
- * twice keeps the first entry. Guests sign in first, since the waitlist exists to reach them when
- * those lessons are ready.
- */
+/** Requires a non-guest session; duplicate joins preserve the first entry. */
 export async function joinInstrumentWaitlist(
   input: InstrumentWaitlistJoinInput,
 ): Promise<InstrumentWaitlistJoinResult> {

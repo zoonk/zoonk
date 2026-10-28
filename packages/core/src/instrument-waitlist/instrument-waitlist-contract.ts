@@ -26,7 +26,6 @@ export const instrumentWaitlistJoinSchema = z
 
 export type InstrumentWaitlistJoinInput = z.infer<typeof instrumentWaitlistJoinSchema>;
 
-/** One instrument the learner is waiting to learn to play. */
 export type InstrumentWaitlistEntryView = {
   id: string;
   instrument: string;
