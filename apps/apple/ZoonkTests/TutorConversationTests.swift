@@ -1,3 +1,4 @@
+import SwiftUI
 import XCTest
 
 @testable import Zoonk
@@ -171,6 +172,30 @@ final class TutorConversationTests: XCTestCase {
       return XCTFail("Expected a network failure, got \(result)")
     }
     XCTAssertEqual(conversation.turns.first?.planChange?.status, .proposed)
+  }
+
+  func testKeyboardReturnSendsAndShiftReturnStartsANewLine() {
+    XCTAssertTrue(TutorComposerKeys.returnSends(modifiers: []))
+    XCTAssertTrue(TutorComposerKeys.returnSends(modifiers: .command))
+    XCTAssertFalse(TutorComposerKeys.returnSends(modifiers: .shift))
+    XCTAssertFalse(TutorComposerKeys.returnSends(modifiers: [.shift, .command]))
+  }
+
+  func testOnlyADraftWithWordsCanBeSentWhileAQuestionCanBeAsked() async {
+    let api = TutorAPIStub(answers: [[]])
+    let conversation = makeConversation(api: api)
+    await conversation.thread.load()
+
+    conversation.draft = "  \n "
+    XCTAssertFalse(conversation.canSendDraft)
+
+    conversation.draft = "Why?"
+    XCTAssertTrue(conversation.canSendDraft)
+
+    // The answer fails, so the next question waits until it's retried.
+    await conversation.send()
+    conversation.draft = "And then?"
+    XCTAssertFalse(conversation.canSendDraft)
   }
 
   func testLoadingEarlierMessagesPutsThemFirst() async {

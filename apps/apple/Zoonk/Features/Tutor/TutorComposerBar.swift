@@ -50,8 +50,7 @@ struct TutorComposerBar: View {
       .lineLimit(1...6)
       .focused($isFocused)
       .onKeyPress(.return, phases: .down) { press in
-        // A keyboard's Return sends, as on main; Shift-Return starts a new line.
-        guard !press.modifiers.contains(.shift) else {
+        guard TutorComposerKeys.returnSends(modifiers: press.modifiers) else {
           return .ignored
         }
 
@@ -73,7 +72,7 @@ struct TutorComposerBar: View {
       .buttonStyle(.mainAction)
       .buttonBorderShape(.circle)
       .keyboardShortcut(.return, modifiers: .command)
-      .disabled(!canSend)
+      .disabled(!conversation.canSendDraft)
       .padding(6)
     }
     .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 24, style: .continuous))
@@ -114,17 +113,20 @@ struct TutorComposerBar: View {
     .frame(maxWidth: .infinity, alignment: .leading)
   }
 
-  private var canSend: Bool {
-    conversation.canAsk
-      && !conversation.draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-  }
-
   private func send() {
-    guard canSend else {
+    guard conversation.canSendDraft else {
       return
     }
 
     Task { await conversation.send() }
+  }
+}
+
+/// What a hardware keyboard's keys do in the composer.
+enum TutorComposerKeys {
+  /// Return sends, as on main, and so does Command-Return; Shift-Return starts a new line.
+  static func returnSends(modifiers: EventModifiers) -> Bool {
+    !modifiers.contains(.shift)
   }
 }
 

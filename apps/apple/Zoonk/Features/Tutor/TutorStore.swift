@@ -101,6 +101,11 @@ final class TutorConversation {
       && !turns.contains { $0.status != .completed }
   }
 
+  /// Whether what the learner typed can go now: it has words, and a question can be asked.
+  var canSendDraft: Bool {
+    canAsk && !draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+  }
+
   /// Sends what the learner typed.
   func send() async {
     let question = draft.trimmingCharacters(in: .whitespacesAndNewlines)
