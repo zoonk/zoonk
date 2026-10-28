@@ -63,17 +63,16 @@ struct PracticeTaskLayout<Content: View, Actions: View>: View {
     }
     .scrollDismissesKeyboard(.interactively)
     .background(Color(.systemGroupedBackground))
-    .safeAreaInset(edge: .top, spacing: 0) {
+    .safeAreaBar(edge: .top) {
       if let segments, !segments.isEmpty {
         PracticeSegmentsBar(segments: segments, index: index)
           .frame(maxWidth: 680)
           .padding(.horizontal)
           .padding(.vertical, 8)
           .frame(maxWidth: .infinity)
-          .background(.bar)
       }
     }
-    .safeAreaInset(edge: .bottom, spacing: 0) {
+    .safeAreaBar(edge: .bottom) {
       if !actionsHidden {
         VStack(spacing: 10) {
           actions()
@@ -82,7 +81,6 @@ struct PracticeTaskLayout<Content: View, Actions: View>: View {
         .padding(.horizontal)
         .padding(.vertical, 12)
         .frame(maxWidth: .infinity)
-        .background(.bar)
       }
     }
   }
