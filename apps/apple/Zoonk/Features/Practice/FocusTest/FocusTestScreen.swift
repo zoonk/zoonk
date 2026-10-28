@@ -54,10 +54,8 @@ struct FocusTestScreen: View {
         Text("Focus test", tableName: "Practice", comment: "Title of a plan's focus test.")
       )
       .navigationBarTitleDisplayMode(.inline)
-      .toolbar {
-        ToolbarItem(placement: .cancellationAction) {
-          PracticeCloseButton { dismiss() }
-        }.keepsVisibleInBar()
+      .taskClose {
+        PracticeCloseButton { dismiss() }
       }
     }
     // Loads once the session (and the active goal) is known, and again if it changes: a screen

@@ -93,10 +93,8 @@ struct PlacementMockScreen: View {
                 comment: "Placement mock title")
             )
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-              ToolbarItem(placement: .cancellationAction) {
-                Button(role: .close) { dismiss() }
-              }.keepsVisibleInBar()
+            .taskClose {
+              Button(role: .close) { dismiss() }
             }
         }
         .loads(options, refreshable: false)

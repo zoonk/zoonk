@@ -44,10 +44,8 @@ struct ChallengeScreen: View {
         }
       }
       .navigationBarTitleDisplayMode(.inline)
-      .toolbar {
-        ToolbarItem(placement: .cancellationAction) {
-          PracticeCloseButton { dismiss() }
-        }.keepsVisibleInBar()
+      .taskClose {
+        PracticeCloseButton { dismiss() }
       }
     }
     // Loads once the session (and the active goal) is known, and again if it changes: a screen

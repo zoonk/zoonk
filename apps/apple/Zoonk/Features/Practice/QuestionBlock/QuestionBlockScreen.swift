@@ -40,10 +40,8 @@ struct QuestionBlockScreen: View {
             onRefresh: { Task { await read() } })
         }
       }
-      .toolbar {
-        ToolbarItem(placement: .cancellationAction) {
-          PracticeCloseButton { dismiss() }
-        }.keepsVisibleInBar()
+      .taskClose {
+        PracticeCloseButton { dismiss() }
       }
       .navigationBarTitleDisplayMode(.inline)
     }

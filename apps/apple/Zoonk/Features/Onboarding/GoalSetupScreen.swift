@@ -123,6 +123,12 @@ private struct GoalSteps: View {
     )
     .id(step)
     .navigationBarBackButtonHidden()
+    .taskOptions(
+      isShown: step != .plan,
+      label: Text("More", tableName: "Onboarding", comment: "Opens onboarding's menu")
+    ) {
+      moreActions
+    }
     .toolbar {
       if !history.isEmpty, step != .plan {
         ToolbarItem(placement: .navigation) {
@@ -146,25 +152,6 @@ private struct GoalSteps: View {
           .font(.subheadline)
           .foregroundStyle(.secondary)
           .monospacedDigit()
-        }
-      }
-
-      if step != .plan {
-        // The system's overflow menu on iOS 27, which also takes what a short bar can't fit.
-        if #available(iOS 27, *) {
-          ToolbarOverflowMenu { moreActions }
-        } else {
-          ToolbarItem(placement: .primaryAction) {
-            Menu {
-              moreActions
-            } label: {
-              Label {
-                Text("More", tableName: "Onboarding", comment: "Opens onboarding's menu")
-              } icon: {
-                Image(systemName: "ellipsis")
-              }
-            }
-          }
         }
       }
 

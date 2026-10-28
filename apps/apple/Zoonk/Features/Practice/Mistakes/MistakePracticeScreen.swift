@@ -46,9 +46,7 @@ struct MistakePracticeScreen: View {
         )
       )
       .navigationBarTitleDisplayMode(.inline)
-      .toolbar {
-        ToolbarItem(placement: .cancellationAction) { closeButton }.keepsVisibleInBar()
-      }
+      .taskClose { closeButton }
     }
     // Practice picks a fresh set of mistakes when it opens.
     // Loads once the session (and the active goal) is known, and again if it changes: a screen

@@ -339,15 +339,70 @@ struct PracticeCloseButton: View {
   }
 }
 
-extension ToolbarContent {
-  /// Keeps a task's close in its toolbar when the bar runs out of room, as iPhone Duo's short
-  /// vertical bar can, so leaving never hides in the overflow menu.
-  @ToolbarContentBuilder
-  func keepsVisibleInBar() -> some ToolbarContent {
+extension View {
+  /// A task's close in its toolbar, the item the bar keeps when it runs out of room (iPhone Duo's
+  /// short vertical bar can), so leaving never hides in the overflow menu.
+  func taskClose<Close: View>(@ViewBuilder _ close: () -> Close) -> some View {
+    modifier(TaskCloseToolbar(close: close()))
+  }
+
+  /// A task's own options in the toolbar's "…" menu: the system's overflow menu on iOS 27, which
+  /// also takes what a short bar can't fit, and a menu of its own before it.
+  func taskOptions<Actions: View>(
+    isShown: Bool = true, label: Text, @ViewBuilder _ actions: () -> Actions
+  ) -> some View {
+    modifier(TaskOptionsToolbar(isShown: isShown, label: label, actions: actions()))
+  }
+}
+
+// Both pick their toolbar by system version outside it: an `if #available` inside a toolbar's
+// builder loses its item once iPhone Duo unfolds.
+
+private struct TaskCloseToolbar<Close: View>: ViewModifier {
+  let close: Close
+
+  func body(content: Content) -> some View {
     if #available(iOS 27, *) {
-      visibilityPriority(.high)
+      content.toolbar {
+        ToolbarItem(placement: .cancellationAction) { close }
+          .visibilityPriority(.high)
+      }
     } else {
-      self
+      content.toolbar {
+        ToolbarItem(placement: .cancellationAction) { close }
+      }
+    }
+  }
+}
+
+private struct TaskOptionsToolbar<Actions: View>: ViewModifier {
+  let isShown: Bool
+  let label: Text
+  let actions: Actions
+
+  func body(content: Content) -> some View {
+    if #available(iOS 27, *) {
+      content.toolbar {
+        if isShown {
+          ToolbarOverflowMenu { actions }
+        }
+      }
+    } else {
+      content.toolbar {
+        if isShown {
+          ToolbarItem(placement: .primaryAction) {
+            Menu {
+              actions
+            } label: {
+              Label {
+                label
+              } icon: {
+                Image(systemName: "ellipsis")
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

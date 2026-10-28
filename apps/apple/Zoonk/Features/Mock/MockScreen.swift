@@ -35,16 +35,14 @@ private struct MockStage: View {
   var body: some View {
     content
       .navigationBarTitleDisplayMode(.inline)
-      .toolbar {
-        ToolbarItem(placement: .cancellationAction) {
-          Button(role: .close) {
-            Task {
-              await run.prepareToLeave()
-              dismiss()
-            }
+      .taskClose {
+        Button(role: .close) {
+          Task {
+            await run.prepareToLeave()
+            dismiss()
           }
-          .disabled(run.pending)
-        }.keepsVisibleInBar()
+        }
+        .disabled(run.pending)
       }
       .onChange(of: run.view, initial: true) {
         if let view = run.view {

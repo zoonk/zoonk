@@ -178,25 +178,11 @@ private struct PronunciationRoundView: View {
           .scenePadding()
           .keepsOffFold()
         }
-        .toolbar {
-          if case .ready = state, !recorder.isDenied {
-            // The system's overflow menu on iOS 27, which also takes what a short bar can't fit.
-            if #available(iOS 27, *) {
-              ToolbarOverflowMenu { skipButton(round) }
-            } else {
-              ToolbarItem(placement: .primaryAction) {
-                Menu {
-                  skipButton(round)
-                } label: {
-                  Label {
-                    Text("Screen options", tableName: "Voice", comment: "The round's options menu")
-                  } icon: {
-                    Image(systemName: "ellipsis")
-                  }
-                }
-              }
-            }
-          }
+        .taskOptions(
+          isShown: showsOptions(state),
+          label: Text("Screen options", tableName: "Voice", comment: "The round's options menu")
+        ) {
+          skipButton(round)
         }
         .sensoryFeedback(trigger: state) { _, new in
           guard case .graded(let grade) = new else {
@@ -207,6 +193,12 @@ private struct PronunciationRoundView: View {
         }
       }
     }
+  }
+
+  /// Skipping a word is offered while it waits to be said and the microphone is on.
+  private func showsOptions(_ state: PronunciationRound.WordState) -> Bool {
+    if case .ready = state { return !recorder.isDenied }
+    return false
   }
 
   private func skipButton(_ round: PronunciationRound) -> some View {
