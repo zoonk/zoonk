@@ -34,6 +34,7 @@ enum CodeSQLRunner {
       }, deadline)
     sqlite3_limit(database, SQLITE_LIMIT_LENGTH, 1_000_000)
     sqlite3_limit(database, SQLITE_LIMIT_SQL_LENGTH, 100_000)
+    sqlite3_limit(database, SQLITE_LIMIT_COLUMN, 1000)
     sqlite3_set_authorizer(
       database,
       { _, action, _, _, _, _ in
@@ -79,6 +80,8 @@ enum CodeSQLRunner {
         defer { sqlite3_finalize(statement) }
         let count = sqlite3_column_count(statement)
         let columns = (0..<count).map { String(cString: sqlite3_column_name(statement, $0)) }
+        var textBytes = columns.reduce(0) { $0 + $1.utf8.count }
+        guard textBytes <= 100_000 else { throw oversizedResult() }
         var rows: [[JSONValue]] = []
         var status = sqlite3_step(statement)
         while status == SQLITE_ROW {
@@ -88,13 +91,18 @@ enum CodeSQLRunner {
                 localized: "Too many result rows", table: "ActivitiesCode",
                 comment: "The query exceeded the result row limit"))
           }
+          guard (rows.count + 1) * Int(count) <= 1000 else { throw oversizedResult() }
           rows.append(
-            (0..<count).map { index in
+            try (0..<count).map { index -> JSONValue in
               switch sqlite3_column_type(statement, index) {
-              case SQLITE_NULL: .null
-              case SQLITE_INTEGER, SQLITE_FLOAT: .number(sqlite3_column_double(statement, index))
-              case SQLITE_BLOB: .string("[blob]")
-              default: .string(String(cString: sqlite3_column_text(statement, index)))
+              case SQLITE_NULL: return .null
+              case SQLITE_INTEGER, SQLITE_FLOAT:
+                return .number(sqlite3_column_double(statement, index))
+              case SQLITE_BLOB: return .string("[blob]")
+              default:
+                textBytes += Int(sqlite3_column_bytes(statement, index))
+                guard textBytes <= 100_000 else { throw oversizedResult() }
+                return .string(String(cString: sqlite3_column_text(statement, index)))
               }
             })
           status = sqlite3_step(statement)
@@ -108,5 +116,13 @@ enum CodeSQLRunner {
 
   private static func failure(_ database: OpaquePointer) -> Failure {
     Failure(message: String(cString: sqlite3_errmsg(database)))
+  }
+
+  private static func oversizedResult() -> Failure {
+    Failure(
+      message: String(
+        localized: "The query returned too much data. Add a filter or LIMIT and try again.",
+        table: "ActivitiesCode",
+        comment: "SQLite output exceeded the display budget; LIMIT is a SQL keyword"))
   }
 }

@@ -27,11 +27,12 @@ struct CodeActivityRunnerTests {
     #expect(next.output == "42\n")
   }
 
-  @Test @MainActor func javascriptHasNoNetwork() async {
+  @Test @MainActor func javascriptCannotReachHostAPIs() async {
     let result = await CodeProgramRunner().run(
-      code: "console.log(typeof fetch, typeof XMLHttpRequest, typeof WebSocket)",
+      code:
+        "console.log(typeof fetch, typeof XMLHttpRequest, typeof WebSocket, typeof postMessage, typeof post)",
       language: "javascript")
-    #expect(result.output == "undefined undefined undefined\n")
+    #expect(result.output == "undefined undefined undefined undefined undefined\n")
   }
 
   @Test func pythonBridgeParsing() {
@@ -65,6 +66,13 @@ struct CodeActivityRunnerTests {
   }
 
   @Test func sqlErrorsAndTimeout() {
+    #expect(throws: CodeSQLRunner.Failure.self) {
+      try CodeSQLRunner.run(
+        query:
+          "WITH RECURSIVE n(x) AS (VALUES(1) UNION ALL SELECT x+1 FROM n WHERE x<20) SELECT printf('%010000d', x) AS value FROM n",
+        tables: [])
+    }
+
     #expect(throws: CodeSQLRunner.Failure.self) {
       try CodeSQLRunner.run(query: "SELECT * FROM missing", tables: [])
     }

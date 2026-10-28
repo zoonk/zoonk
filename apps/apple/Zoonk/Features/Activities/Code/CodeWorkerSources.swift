@@ -1,12 +1,13 @@
 import Foundation
 
-// Worker behavior and console formatting mirror packages/player activities/_sandbox.
+// Worker behavior and console formatting follow packages/player activities/_sandbox.
+// Module workers keep their captured control channel private from learner programs.
 enum CodeWorkerSources {
   static let javascript = #"""
     "use strict";
 
     function lockDown() {
-      for (const name of ["BroadcastChannel","EventSource","SharedWorker","WebSocket","WebSocketStream","WebTransport","Worker","XMLHttpRequest","caches","fetch","importScripts","indexedDB"]) {
+      for (const name of ["BroadcastChannel","EventSource","SharedWorker","WebSocket","WebSocketStream","WebTransport","Worker","XMLHttpRequest","caches","fetch","importScripts","indexedDB","postMessage"]) {
         for (let target = self; target; target = Object.getPrototypeOf(target)) {
           if (Object.prototype.hasOwnProperty.call(target, name)) {
             try {
@@ -270,7 +271,7 @@ enum CodeWorkerSources {
 
 
     function lockDown() {
-      for (const name of ["BroadcastChannel","EventSource","SharedWorker","WebSocket","WebSocketStream","WebTransport","Worker","XMLHttpRequest","caches","fetch","importScripts","indexedDB"]) {
+      for (const name of ["BroadcastChannel","EventSource","SharedWorker","WebSocket","WebSocketStream","WebTransport","Worker","XMLHttpRequest","caches","fetch","importScripts","indexedDB","postMessage"]) {
         for (let target = self; target; target = Object.getPrototypeOf(target)) {
           if (Object.prototype.hasOwnProperty.call(target, name)) {
             try {
@@ -282,7 +283,7 @@ enum CodeWorkerSources {
     }
 
     const INDEX_URL = "https://cdn.jsdelivr.net/pyodide/v314.0.7/full/";
-    const post = (message) => self.postMessage(message);
+    const post = self.postMessage.bind(self);
     const state = { decoders: {}, id: null };
 
     function writer(stream) {

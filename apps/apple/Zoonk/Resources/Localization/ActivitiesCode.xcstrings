@@ -471,6 +471,35 @@
         }
       }
     },
+    "The query returned too much data. Add a filter or LIMIT and try again." : {
+      "comment" : "SQLite output exceeded the display budget; LIMIT is a SQL keyword",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Abfrage hat zu viele Daten zurückgegeben. Füge einen Filter oder LIMIT hinzu und versuche es erneut."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La consulta ha devuelto demasiados datos. Añade un filtro o LIMIT y vuelve a intentarlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La requête a renvoyé trop de données. Ajoute un filtre ou une clause LIMIT, puis réessaie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A consulta retornou dados demais. Adicione um filtro ou LIMIT e tente novamente."
+          }
+        }
+      }
+    },
     "The runtime didn't load. Check your connection and try again." : {
       "comment" : "Runtime loading failed",
       "localizations" : {
