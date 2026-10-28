@@ -245,7 +245,7 @@ private struct PlanReveal: View {
     }
     .loads(syllabus, refreshable: false)
     .sheet(item: $adjusting) { section in
-      AdjustPlanSheet(goal: goal, plan: plan, section: section)
+      AdjustPlanSheet(goal: goal, plan: plan, section: section, store: plans)
     }
   }
 
