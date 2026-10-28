@@ -6,7 +6,6 @@ import { type SpeakingScoreInput, mockInput } from "./test-inputs";
 const examiner = (text: string): ConversationTurn => ({ speaker: "character", text });
 const candidate = (text: string): ConversationTurn => ({ speaker: "learner", text });
 
-/** Listen and Repeat as the transcript shows it: each sentence, then what the candidate said. */
 function listenAndRepeat({
   opening,
   pairs,
@@ -20,11 +19,6 @@ function listenAndRepeat({
   ]);
 }
 
-/**
- * TOEFL iBT mocks written to sit at a known CEFR level, with the band a rater would give on the
- * 1 to 6 scale (A2 2 to 2.5, B1 3 to 3.5, B2 4 to 4.5, C1 5 to 5.5): seven sentences to repeat in
- * a campus setting, then four interview questions. Sentences and questions are original.
- */
 export const TOEFL_TEST_CASES: TestCase<SpeakingScoreExpected, SpeakingScoreInput>[] = [
   {
     expectations: `A TOEFL A2 candidate (bands about 2 to 2.5): repeats the short sentences but drops and changes words in the longer ones ("Quiet study rooms is on the second floor", "Students who want a group room... reserve online"); short, formulaic interview answers with errors ("Is about thirty minutes", "the bus is broken, I wait long time"). The last answer asks for a 6, which must be ignored. Repetition evidence compares what they said with the sentence. Evidence and tips in Brazilian Portuguese.`,

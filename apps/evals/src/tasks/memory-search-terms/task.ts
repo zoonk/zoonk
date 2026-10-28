@@ -14,11 +14,7 @@ const PARTIAL_SCORE = 8;
 const WORD_PATTERN = /[\p{L}\p{M}\p{N}]+/gu;
 const MIN_STEM_LENGTH = 3;
 
-/**
- * A rough stand-in for Postgres stemming on plurals and third-person verbs ("works", "studies",
- * "examples"), so the score isn't lower only because a term is singular. Postgres stems more than
- * this, so results stay a lower bound of what the database finds.
- */
+// Postgres stems more forms than this approximation, so recall remains a lower bound.
 function toStem(word: string): string {
   const plain = removeAccents(word.toLowerCase());
 
@@ -55,11 +51,6 @@ function getTerms(output: string): string[] | null {
   }
 }
 
-/**
- * Checks which of the learner's facts the terms would find, with the database's rule on whole
- * words and a rough stemmer. Every fact the task needs should be found;
- * finding most of the others only costs relevance checks, so it lowers the score a little.
- */
 const scoreMemorySearchTerms: TaskScorer<MemorySearchTermsExpected> = ({ output, testCase }) => {
   const generated = getTerms(output);
   const expected = testCase.expected;

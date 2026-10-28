@@ -5,10 +5,6 @@ import { type ExpectedChange, type PlanEditExpected } from "./scorer";
 
 const DAYS_PER_WEEK = 7;
 
-/**
- * A request a seed learner might type on their own plan: its areas, time and date as the planner
- * would pass them, on the dataset's fixed Monday (so "next week" starts on 2026-10-05).
- */
 function personaCase({
   changes,
   id,
@@ -18,7 +14,6 @@ function personaCase({
 }: {
   changes: ExpectedChange[];
   id: string;
-  /** Part of the request is something no change does. */
   leftOut?: boolean;
   learnerKey: string;
   request: string;
@@ -41,7 +36,6 @@ function personaCase({
   };
 }
 
-/** Plan edits on the seed learners' own plans (shared eval dataset), in English and Portuguese. */
 export const PERSONA_TEST_CASES: TestCase<PlanEditExpected, PlanEditInput>[] = [
   personaCase({
     changes: [{ date: "2026-10-05", kind: "addLightWeek" }],

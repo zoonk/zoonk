@@ -3,10 +3,6 @@ import { Accordion } from "@zoonk/ui/components/accordion";
 import { ContainerDescription, ContainerTitle } from "@zoonk/ui/components/container";
 import { OutputTestCase } from "./test-case";
 
-/**
- * Shows saved model outputs before they are scored so generation quality can be
- * inspected without running the eval judge.
- */
 export function GeneratedOutputs({ outputs }: { outputs: TaskModelOutputResults }) {
   if (outputs.outputs.length === 0) {
     return null;

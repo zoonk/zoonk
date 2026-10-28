@@ -4,10 +4,6 @@ import { type MemoryFactText } from "@zoonk/ai/tasks/v2/memory/facts";
 import { type MemoryReconcileInput } from "@zoonk/ai/tasks/v2/memory/reconcile";
 import { type MemoryReconcileExpected } from "./test-cases";
 
-/**
- * A new fact reconciled against everything a seed learner's memory holds, in its seed order, so
- * labels like "replace_2" point at the seed's second fact.
- */
 function personaCase({
   actions,
   id,
@@ -30,7 +26,6 @@ function personaCase({
   };
 }
 
-/** New facts about the seed learners (shared eval dataset), in English and Portuguese. */
 export const PERSONA_TEST_CASES: TestCase<MemoryReconcileExpected, MemoryReconcileInput>[] = [
   personaCase({
     actions: ["replace_2"],

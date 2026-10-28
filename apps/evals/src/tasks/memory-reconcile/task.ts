@@ -15,15 +15,10 @@ import { type MemoryReconcileExpected, TEST_CASES } from "./test-cases";
 
 type MemoryReconcileOutput = { action: string };
 
-/** Actions as labels again ("replace_1"), so results compare with the labeled answers. */
 function toLabel(action: MemoryReconcileAction): string {
   return "index" in action ? `${action.action}_${action.index + 1}` : action.action;
 }
 
-/**
- * Runs the production question with the requested model and no fallback, and applies the
- * production rule on top, so a replace the model isn't sure about becomes an add here too.
- */
 async function reconcileFact({ model, ...input }: MemoryReconcileInput & { model: string }) {
   const result = await classify({
     fallbackModel: model,
@@ -63,11 +58,6 @@ function toKind(label: string | null): string | null {
   return label?.split("_")[0] ?? null;
 }
 
-/**
- * Replacing or removing the wrong fact loses something true without the learner watching, so it
- * scores lowest; a missed update (a duplicate) scores in between. Labels report the kind of
- * action, so the confusion matrix stays readable across different numbers of facts.
- */
 const scoreMemoryReconcile: TaskScorer<MemoryReconcileExpected> = ({ output, testCase }) => {
   const action = getAction(output);
   const accepted = testCase.expected?.actions ?? [];
@@ -87,7 +77,6 @@ const scoreMemoryReconcile: TaskScorer<MemoryReconcileExpected> = ({ output, tes
   return { ...createFixedScore({ conclusion, score: destructive ? 6 : 7 }), classification };
 };
 
-/** Reconciling only runs as an evaluation question (Jev in production), so both routes ask it. */
 export const memoryReconcileTask: Task<
   MemoryReconcileInput,
   MemoryReconcileOutput,

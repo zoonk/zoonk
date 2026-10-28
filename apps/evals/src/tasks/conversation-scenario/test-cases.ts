@@ -6,10 +6,6 @@ type ConversationScenarioInput = Omit<
   "analytics" | "model" | "reasoning" | "useFallback"
 >;
 
-/**
- * Units from the language courses the plan names, across levels and pairs. Exam speaking mocks
- * are their own task (`speaking-mock-scenario`).
- */
 export const TEST_CASES: TestCase<unknown, ConversationScenarioInput>[] = [
   {
     expectations: `Brazilian learner of US English at A2, renting an apartment. A call to a landlord or agent to ask about a flat and book a viewing, with objectives like asking the rent, asking what's included and booking a day. US name and dollars. Opening line and hints short and simple (A2). Title, situation and descriptions in Brazilian Portuguese.`,

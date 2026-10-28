@@ -3,12 +3,6 @@ import { type WrittenLesson } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
 import { LESSON_SPECS } from "../lesson-writer/lesson-specs";
 import { VISUAL_LESSON_SPECS } from "../lesson-writer/visual-lesson-specs";
 
-/**
- * Lessons the reviewer reads. The Portuguese ones are Sol's drafts from the
- * lesson-writer eval (26 Sep 2026), with the calculation steps repaired so
- * they pass the code checks; the English one is hand-written. Test cases plant
- * one defect in a copy of a lesson, and clean copies must pass.
- */
 type BaseLesson = {
   chapterTitle: string;
   courseTitle: string;
@@ -16,15 +10,10 @@ type BaseLesson = {
   lesson: WrittenLesson;
   level: "overview" | "beginner" | "intermediate" | "advanced";
   spec: LessonSpec;
-  /** A lesson with a typed answer is one whose learners' exams ask short written answers. */
   shortAnswers?: boolean;
 };
 
 export const BASE_LESSONS = {
-  /**
-   * The writer's doorways lesson (8 Oct 2026), with its hook no longer naming a style before it's
-   * explained: a question whose options are pictures, each named only once the learner answers.
-   */
   doorways: {
     chapterTitle: "Reading buildings",
     courseTitle: "Art history",

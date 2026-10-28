@@ -10,9 +10,7 @@ import {
 import { TEST_CASES } from "./test-cases";
 
 export type CheckReadingExpected = {
-  /** Counts the reading lost, each on its subject as the reading named it: each must be found. */
   counts: { questions: number; subject: string }[];
-  /** Subjects the reading left out, each as the words any of its names contains. */
   missing: string[][];
 };
 
@@ -42,7 +40,6 @@ function describe(problem: ReadingProblem): string {
     : `${problem.sum} of ${problem.total}`;
 }
 
-/** Expected findings the kept problems lack, and kept problems no expected finding explains. */
 function compare({
   expected,
   problems,
@@ -90,11 +87,6 @@ function compare({
   return { missed, wrong };
 }
 
-/**
- * Scored on the problems research keeps (findings whose passage code found): 10 when they are
- * exactly what the reading left out; 8 when they add one that isn't, which only costs a needless
- * reading; 6 when one the reading left out is missed, which leaves a plan without a subject.
- */
 const scoreReadingCheck: TaskScorer<CheckReadingExpected> = ({ output, testCase }) => {
   const parsed = parseOutput(output);
   const expected = testCase.expected;

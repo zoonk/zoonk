@@ -38,7 +38,6 @@ type BattleRankingResult =
 
 type BattleRankingGeneration = { result: BattleRankingResult; usage: TokenUsage };
 
-/** Retried attempts are billed too, so judge cost adds every attempt's usage. */
 function addUsage(first: TokenUsage, second: TokenUsage): TokenUsage {
   return {
     cacheReadTokens: (first.cacheReadTokens ?? 0) + (second.cacheReadTokens ?? 0),
@@ -49,10 +48,6 @@ function addUsage(first: TokenUsage, second: TokenUsage): TokenUsage {
   };
 }
 
-/**
- * Rejects labels that cannot be connected to an anonymized output instead of
- * persisting the judge's label as though it were a configured model ID.
- */
 function getModelMapping({
   anonymousId,
   judgeId,
@@ -75,11 +70,6 @@ function getModelMapping({
   return modelMapping;
 }
 
-/**
- * Adds the provider completion details that AI SDK's default output getter
- * omits. These fields distinguish truncation, filtering, and Gateway responses
- * that forgot to include a finish reason without logging the generated text.
- */
 function createNoBattleRankingError({
   attempt,
   finishReason,
@@ -98,11 +88,6 @@ function createNoBattleRankingError({
   });
 }
 
-/**
- * Retries only the successful provider calls that ended without a complete
- * structured output. AI SDK retries transport/provider exceptions itself, but
- * it does not retry this post-generation state because the request completed.
- */
 async function generateBattleRankingResult({
   attempt = 1,
   judgeId,
@@ -166,10 +151,6 @@ async function generateBattleRankingResult({
   return { result: retry.result, usage: addUsage(usage, retry.usage) };
 }
 
-/**
- * Asks one judge to score every anonymized contestant and maps the judge's
- * labels back to the model IDs used by the persisted battle leaderboard.
- */
 export async function generateBattleRankings(params: {
   judgeId: string;
   expectations: string;

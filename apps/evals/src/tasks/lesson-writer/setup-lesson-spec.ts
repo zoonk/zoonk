@@ -1,10 +1,5 @@
 import { type LessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
 
-/**
- * A setup lesson as the plan's "I'll set it up" adds it: written by hand in the shape the spec
- * task makes, so the writer is judged on the setup rules (steps for the device, the date the
- * steps were written, checks on what comes next).
- */
 export const SETUP_LESSON_SPEC: LessonSpec = {
   canDo: "Run a line of Python in the Windows terminal",
   description:

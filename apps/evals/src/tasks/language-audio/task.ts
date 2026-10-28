@@ -7,11 +7,6 @@ import { type LanguageAudioInput, TEST_CASES } from "./test-cases";
 
 const TASK_ID = "language-audio";
 
-/**
- * Voices the text through the app's own speech task with one model (a second try on failure, as
- * the audio test page does), so the clip passes the same size, silence and encoding checks a
- * lesson's would, and saves the MP3 to listen to.
- */
 async function voiceText({
   caseId,
   language,

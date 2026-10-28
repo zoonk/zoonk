@@ -7,10 +7,6 @@ import {
 import { type TopicSkillNamesExpected, scoreTopicSkillNames } from "./scorer";
 import { TEST_CASES } from "./test-cases";
 
-/**
- * Scored by what reaches the shared Library: no detail of the learner's (their teacher, school,
- * company, test or dates) in any skill, and each skill still naming what it teaches.
- */
 export const topicSkillNamesTask: Task<
   TopicSkillNamesInput,
   (TopicSkillName | null)[],

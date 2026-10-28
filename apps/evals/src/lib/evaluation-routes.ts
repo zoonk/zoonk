@@ -9,14 +9,8 @@ type BooleanQuestion = Extract<Experimental_DecisionQuestion, { type: "boolean" 
 /** Evals score every case at even odds; product code picks its own thresholds from these results. */
 const EVAL_BOOLEAN_THRESHOLD = 0.5;
 
-/** Evaluation runs name their task for logs; the evals app registers no sink, so none are sent. */
 const EVAL_TASK = "evals";
 
-/**
- * Builds a task's `evaluate` route for a choice classifier. The model's label
- * is mapped back into the task's own output shape so the task's scorer grades
- * evaluation models and generation models the same way.
- */
 export function createChoiceEvaluation<TInput, LABEL extends string, TOutput>({
   classifier,
   toOutput,
@@ -47,7 +41,6 @@ export function createChoiceEvaluation<TInput, LABEL extends string, TOutput>({
   };
 }
 
-/** Builds a task's `evaluate` route for a yes-or-no classifier. */
 export function createBooleanEvaluation<TInput, TOutput>({
   classifier,
   toOutput,

@@ -4,10 +4,6 @@ import { type MistakeCauseExpected } from "./scorer";
 
 type MistakeCauseTestCase = TestCase<MistakeCauseExpected, MistakeCauseParams>;
 
-/**
- * Only ambiguous mistakes reach the classifier (code already names time and guesses), so every
- * case has a learner with mixed results on the skill. Labels follow the drill that would help.
- */
 function causeCase({
   cause,
   id,

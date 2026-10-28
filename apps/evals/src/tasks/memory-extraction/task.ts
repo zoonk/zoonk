@@ -54,7 +54,6 @@ function describeExpected(expected: ExpectedFact): string {
   return `${expected.intent ?? "remember"} ${expected.categories.join("/")} fact with ${expected.keywords.join("/")}`;
 }
 
-/** Each expected fact, the ban on forbidden words and the fact count are one check each. */
 function checkFacts({
   expected,
   facts,
@@ -66,7 +65,6 @@ function checkFacts({
     (fact) => !facts.some((item) => matchesExpected(item, fact)),
   );
 
-  // A fact to forget names what to forget, so only facts to remember can break the ban.
   const forbidden = facts.filter(
     (fact) => fact.intent === "remember" && containsAny(fact.statement, expected.forbidden ?? []),
   );
@@ -85,11 +83,6 @@ function checkFacts({
   return { passed, problems, total };
 }
 
-/**
- * Code-checked: every lasting fact the input shows must come out in the right category, with the
- * right intent and end date, and passing states, other categories and injected instructions must
- * not. Wording is free as long as the key words are there.
- */
 const scoreMemoryExtraction: TaskScorer<MemoryExtractionExpected> = ({ output, testCase }) => {
   const facts = getFacts(output);
   const expected = testCase.expected;

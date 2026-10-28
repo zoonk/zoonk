@@ -204,8 +204,6 @@ export const TEST_CASES: TestCase<CoverageCheckExpected, CoverageCheckParams>[] 
     },
   },
   {
-    // A plan built before research read the notice: algebra, a heavy and frequent area, was
-    // weighted as a prerequisite, and nothing teaches the expression of ideas.
     expected: {
       examWeights: [{ key: "linear-equations", max: 5, min: 4 }],
       gapWeights: [{ max: 4, min: 2 }],
@@ -256,8 +254,6 @@ export const TEST_CASES: TestCase<CoverageCheckExpected, CoverageCheckParams>[] 
     },
   },
   {
-    // A public-service notice with numbered topics: crase and agreement are taught by skills that
-    // don't list them yet, and electoral systems by none.
     expected: {
       gaps: ["5 Sistemas eleitorais"],
       placements: [

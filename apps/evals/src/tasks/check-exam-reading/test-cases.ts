@@ -9,11 +9,6 @@ const OAB_NOTICE = {
 
 const OAB_EXAM = "OAB Exame de Ordem Unificado, 1ª fase";
 
-/**
- * The 48th OAB exam's first phase as a live reading listed it on 8 Oct 2026: 19 subjects, without the
- * Statute of the Legal Profession and the Code of Ethics, which the notice's own table cell ("…, as well as
- * the Statute of the Legal Profession and of the OAB…") and rule 3.4.1.1 name.
- */
 const OAB_READ_WITHOUT_ETHICS = [
   "Direito Administrativo",
   "Direito Civil",
@@ -40,7 +35,6 @@ function uncounted(names: readonly string[]) {
   return names.map((name) => ({ name, questions: null }));
 }
 
-/** Readings of real notices (8 Oct 2026), some with what a live reading left out. */
 export const TEST_CASES: TestCase<CheckReadingExpected, CheckReadingEvalInput>[] = [
   {
     expected: { counts: [], missing: [["etica", "estatuto da advocacia"]] },
@@ -66,7 +60,6 @@ export const TEST_CASES: TestCase<CheckReadingExpected, CheckReadingEvalInput>[]
     },
   },
   {
-    // The notice gives every objective test 45 questions; this reading lost mathematics'.
     expected: {
       counts: [{ questions: 45, subject: "Matemática e suas Tecnologias" }],
       missing: [],
@@ -91,7 +84,6 @@ export const TEST_CASES: TestCase<CheckReadingExpected, CheckReadingEvalInput>[]
     },
   },
   {
-    // Counts are stated per test (P1, P2), never per subject: nothing is missing.
     expected: { counts: [], missing: [] },
     id: "pt-camara-2026-complete",
     userInput: {

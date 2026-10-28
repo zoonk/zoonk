@@ -17,10 +17,6 @@ function AppBreadcrumb({ children, className, ...props }: React.ComponentProps<"
   );
 }
 
-/**
- * Preserves the breadcrumb's height and hierarchy while a URL-dependent
- * breadcrumb item resolves inside its own Suspense boundary.
- */
 function AppBreadcrumbItemSkeleton({ className }: { className?: string }) {
   return (
     <BreadcrumbItem aria-hidden="true">

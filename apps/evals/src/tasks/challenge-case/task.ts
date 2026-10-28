@@ -9,11 +9,6 @@ import { checkWrittenChallenge } from "@zoonk/core/library/challenges/case-conte
 import { CHALLENGE_CASE_SCORE_CATEGORIES } from "./score-categories";
 import { TEST_CASES } from "./test-cases";
 
-/**
- * A case ships whole or not at all: code checks it against the challenge step contract (every id
- * it points at, 2 to 4 decisions on every path, no loops, a strong choice and another at every
- * decision, each skill trained), exactly as publishing does.
- */
 function checkOutput(output: string, variant: ChallengeCaseParams["variant"]): CodeCheckResult {
   const written = JSON.parse(output) as WrittenChallengeCase;
   const { problems } = checkWrittenChallenge({ variant, written });

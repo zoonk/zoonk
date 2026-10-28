@@ -22,27 +22,13 @@ const BAD_SCORE = 8;
 const GOOD_SCORE = 9.2;
 const SCORE_STEP_KINDS = ["majorErrors", "minorErrors", "potentialImprovements"] as const;
 
-/**
- * Builds deterministic score steps for extractor-style tasks where one exact
- * pass/fail score should apply to the whole output. This avoids judge-model
- * drift where the same classification error receives different scores in the
- * major, minor, and improvement buckets.
- */
 export function createFixedScore({ conclusion, score }: { conclusion: string; score: number }) {
   const steps: ScoreStep[] = SCORE_STEP_KINDS.map((kind) => ({ conclusion, kind, score }));
 
   return { score, steps };
 }
 
-/**
- * This function analyzes the output of a given task and run against the
- * test-case expectations plus the concrete input values. The production
- * system prompt is intentionally excluded so a bad prompt cannot become part
- * of the grading rubric.
- *
- * It returns a list of steps with conclusions and scores, an overall score
- * which is the average of all step scores, and the judge's usage for cost.
- */
+/** The production system prompt is excluded so a bad prompt cannot become part of the grading rubric. */
 export async function generateScore(params: {
   expectations: string;
   prompt: string;

@@ -18,10 +18,6 @@ function getOutputsFilePath(taskId: string, modelId: string): string {
   return path.join(OUTPUTS_DIR, taskId, `${modelPath}.json`);
 }
 
-/**
- * Saved output files intentionally avoid duplicating test case data, so display
- * and scoring paths need one shared way to attach current task metadata.
- */
 export function findTestCaseForOutput({
   task,
   testCaseId,
@@ -33,10 +29,6 @@ export function findTestCaseForOutput({
   return task.testCases.find((testCase) => testCase.id === baseId) ?? null;
 }
 
-/**
- * The model page needs UI-ready outputs before evals have been scored, while
- * stale saved outputs for removed test cases should stay hidden.
- */
 export function combineOutputsWithTestCases({
   modelOutputs,
   task,
@@ -72,10 +64,6 @@ export async function saveModelOutputs(
   await fs.writeFile(filePath, JSON.stringify(outputs, null, 2));
 }
 
-/**
- * Removes every generated output for one task and model so a future run starts
- * from a clean output file instead of preserving partial or stale generations.
- */
 export async function deleteModelOutputs({
   modelId,
   taskId,
@@ -86,10 +74,6 @@ export async function deleteModelOutputs({
   await fs.rm(getOutputsFilePath(taskId, modelId), { force: true });
 }
 
-/**
- * Drops selected runs from one model's saved outputs so they are generated
- * again, while every other saved run for that model stays untouched.
- */
 export async function removeModelOutputRuns({
   modelId,
   runIds,
@@ -131,11 +115,6 @@ export type OutputProgress = {
   totalOutputs: number;
 };
 
-/**
- * Reports progress against the runs required by the current task registry.
- * Saved files can contain additional runs or removed test cases, so their raw
- * array length cannot determine whether generation is complete.
- */
 export async function getOutputStatus({
   modelId,
   runsPerTestCase,
@@ -184,17 +163,12 @@ export async function getAllOutputsForTask(taskId: string): Promise<Map<string, 
       outputsMap.set(outputs.modelId, outputs);
     }
   } catch {
-    // Directory doesn't exist or is empty
+    // A task has no output directory until its first saved run.
   }
 
   return outputsMap;
 }
 
-/**
- * Returns one model id only when it has every run required for the current
- * operation. Callers choose the run count because generation uses the
- * configured count, while battle mode intentionally compares only run one.
- */
 function getCompleteModelId({
   modelId,
   outputs,
@@ -215,11 +189,6 @@ function getCompleteModelId({
   return totalRuns > 0 && completedRuns === totalRuns ? [modelId] : [];
 }
 
-/**
- * Checks exact required run ids for every model before enabling comparisons.
- * Battle mode currently compares run one, while generation progress can use a
- * different run count without changing this completeness rule.
- */
 export async function getModelsWithCompleteOutputs({
   runsPerTestCase,
   task,

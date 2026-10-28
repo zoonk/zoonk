@@ -1,7 +1,6 @@
 import { type TestCase } from "@/lib/types";
 import { type MemorySearchTermsParams } from "@zoonk/ai/tasks/v2/memory/search-terms";
 
-/** The learner's facts for one case: the ones the task needs and the ones it doesn't. */
 export type MemorySearchTermsExpected = { irrelevant: string[]; relevant: string[] };
 
 type SearchCase = TestCase<MemorySearchTermsExpected, MemorySearchTermsParams>;

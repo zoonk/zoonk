@@ -3,7 +3,6 @@ import { type TestCase } from "@/lib/types";
 import { type MemoryRelevanceInput } from "@zoonk/ai/tasks/v2/memory/relevance";
 import { type MemoryRelevanceExpected } from "./test-cases";
 
-/** How the tutor asks for memory in production, with the learner's question at the end. */
 function tutorNeed(question: string): string {
   return `A tutor answering the learner's question about a lesson: ${question}`;
 }
@@ -11,7 +10,6 @@ function tutorNeed(question: string): string {
 const PLAN_WEEK = "Plan this learner's study schedule for the week";
 const PT_PLAN_WEEK = "Planejar a semana de estudos do aluno";
 
-/** One of a seed learner's own memory facts, asked about for a task that learner would run. */
 function personaCase({
   fact,
   id,
@@ -34,7 +32,6 @@ function personaCase({
   };
 }
 
-/** The seed learners' memory (shared eval dataset), in English and Portuguese. */
 export const PERSONA_TEST_CASES: TestCase<MemoryRelevanceExpected, MemoryRelevanceInput>[] = [
   personaCase({
     fact: "worked example",

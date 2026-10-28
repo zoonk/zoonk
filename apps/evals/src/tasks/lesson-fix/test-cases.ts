@@ -11,7 +11,6 @@ type LessonFixInput = Omit<
   "analytics" | "model" | "reasoning" | "useFallback"
 >;
 
-/** The screens (0-based) the problems name, which the fix must change. */
 export type LessonFixExpected = { screens: number[] };
 
 function withScreens(base: BaseLesson, replacements: Record<number, WrittenScreen>): WrittenLesson {
@@ -86,7 +85,6 @@ export const TEST_CASES: TestCase<LessonFixExpected, LessonFixInput>[] = [
     ),
   },
   {
-    // The filler goes from the sentence the calculation quotes, so its quote follows the new words.
     expected: { screens: [1, 3] },
     id: "en-temperature-basis-follows",
     userInput: toInput(
@@ -160,7 +158,6 @@ export const TEST_CASES: TestCase<LessonFixExpected, LessonFixInput>[] = [
     ),
   },
   {
-    // A numbered picture's question keeps its parts, so its numbers still mark the same marks.
     expected: { screens: [7] },
     id: "en-temperature-numbered-reason",
     userInput: toInput(

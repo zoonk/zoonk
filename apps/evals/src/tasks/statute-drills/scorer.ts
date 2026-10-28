@@ -16,21 +16,18 @@ type StatuteDrillsCase = Pick<
   "count" | "fillInTheBlank" | "language" | "style"
 >;
 
-/** The generic mix's formats: fill-in-the-blank only for an exam that asks short written answers. */
 function getGenericFormats(input: StatuteDrillsCase): StatuteDrill["format"][] {
   return input.fillInTheBlank
     ? ["trueFalse", "typed", "multipleChoice"]
     : ["trueFalse", "multipleChoice"];
 }
 
-/** The set-level checks below: the count and the format mix. */
 const SET_CHECKS = 2;
 
 function checkCount(total: number, count: number): string | false {
   return total !== count && `Wrote ${total} drills instead of ${count}.`;
 }
 
-/** Schemas already limit Cebraspe and FGV to their format, so only the generic mix can miss one. */
 function checkMix(drills: StatuteDrill[], input: StatuteDrillsCase): string | false {
   const formats = new Set(drills.map((drill) => drill.format));
   const generic = getGenericFormats(input);
@@ -48,11 +45,6 @@ function formatProblem(drill: StatuteDrill, problem: string): string {
   return `${drill.reference} (${drill.format}): ${problem}`;
 }
 
-/**
- * The task already dropped drills that failed the statute checks; production
- * also runs the item checks before storing, so both count here and the judge
- * sees only drills that pass every check.
- */
 function checkStatuteDrillsOutput(output: string, input: StatuteDrillsCase): CodeCheckResult {
   const { drills, dropped } = JSON.parse(output) as StatuteDrillsOutput;
 
@@ -75,7 +67,6 @@ function checkStatuteDrillsOutput(output: string, input: StatuteDrillsCase): Cod
 
   return {
     judgedOutput: JSON.stringify({ drills: passing.map((entry) => entry.drill) }, null, 2),
-    /** With no drill left there is nothing to judge, whatever the set checks say. */
     passed: passing.length === 0 ? 0 : passing.length + SET_CHECKS - setProblems.length,
     problems: [
       ...all.flatMap((entry) =>

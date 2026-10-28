@@ -17,15 +17,10 @@ type SeedStep = NonNullable<SeedLesson["steps"]>[number];
 type SeedAttempt = SeedLearner["attempts"][number];
 type SeedLanguage = SeedLearner["language"];
 
-/** An explanation screen of a lesson the learner studies, where a personal example line can go. */
 type EvalLearnerScreen = { text: string; title: string };
 
 type EvalLearnerLesson = { key: string; screens: EvalLearnerScreen[]; title: string };
 
-/**
- * A notebook entry as the mistake-cause classifier sees it. The seed's own cause isn't carried:
- * cases label the cause by the classifier's rules.
- */
 type EvalLearnerMistake = {
   correctAnswer: string;
   key: string;
@@ -36,7 +31,6 @@ type EvalLearnerMistake = {
 };
 
 type EvalLearnerGoal = {
-  /** The plan's areas as plan edits name them: the chapters' exam areas, else the phases. */
   areas: string[];
   dailyMinutes: number;
   kind: SeedGoal["kind"];
@@ -45,12 +39,6 @@ type EvalLearnerGoal = {
   title: string;
 };
 
-/**
- * One seed learner as the AI tasks that take learner context see them: the goal as typed and
- * planned, what memory holds, the lessons of the goal's course with their teaching screens in the
- * learner's language, and the notebook's mistakes. Maya, Sam and the guest are English speakers;
- * Ana, Lucas, Pedro and Marcos Brazilian Portuguese speakers.
- */
 type EvalLearner = {
   facts: MemoryFactText[];
   goal: EvalLearnerGoal;
@@ -109,7 +97,6 @@ function toLesson({
   return [{ key: lesson.key, screens, title: lesson.title.in(language) }];
 }
 
-/** Written lessons of the course, and its quick explanations, in the learner's language. */
 function getLessons({ goal, language }: { goal: SeedGoal; language: SeedLanguage }) {
   const { course } = goal;
 
@@ -125,7 +112,6 @@ function getLessons({ goal, language }: { goal: SeedGoal; language: SeedLanguage
   return lessons.flatMap((lesson) => toLesson({ language, lesson }));
 }
 
-/** The learner's answers on the skill, in the words production sends the classifier. */
 function getRecentAccuracy({ attempts, skill }: { attempts: SeedAttempt[]; skill: string }) {
   const onSkill = attempts.filter((attempt) => attempt.skill === skill);
   const correct = onSkill.filter((attempt) => attempt.isCorrect).length;
@@ -178,10 +164,7 @@ const SEED_LEARNERS: readonly EvalLearner[] = listSeedPersonas({
   now: new Date(`${SEED_LEARNERS_TODAY}T12:00:00Z`),
 }).map((learner) => toEvalLearner(learner));
 
-/**
- * A seed learner by key ("maya", "ana"). Cases are written against the seed, so a missing
- * learner, lesson or fact means the seed changed and the case must change with it.
- */
+/** Throws when a seed learner is missing; update the dependent eval cases when the seed changes. */
 export function getSeedLearner(key: string): EvalLearner {
   const learner = SEED_LEARNERS.find((candidate) => candidate.key === key);
 
@@ -192,7 +175,6 @@ export function getSeedLearner(key: string): EvalLearner {
   return learner;
 }
 
-/** An explanation screen of one of the learner's lessons, by lesson key and screen title. */
 export function getSeedScreen({
   learner,
   lessonKey,
@@ -212,7 +194,6 @@ export function getSeedScreen({
   return screen;
 }
 
-/** One of the learner's memory facts by the words it contains, so cases can point at it. */
 export function getSeedFact({
   includes,
   learner,

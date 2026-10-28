@@ -8,13 +8,10 @@ import {
   MARKET_NOTES,
 } from "./material-fixtures";
 
-/** For each screen, the references that are right; an empty list means no page supports it. */
 export type CiteMaterialExpected = { refs: string[][] };
 
 export const TEST_CASES: TestCase<CiteMaterialExpected, CiteMaterialInput>[] = [
   {
-    // Official documents: a screen cites a page only when the page states its fact. The rent
-    // comparison's point (paying taxes late costs money) is on the penalties page, or on none.
     expected: { refs: [["S1:1", "none"], ["S1:1"], ["S2:1"], ["S1:1"], ["S2:1", "none"]] },
     id: "en-tax-deadlines-official",
     userInput: {
@@ -45,7 +42,6 @@ export const TEST_CASES: TestCase<CiteMaterialExpected, CiteMaterialInput>[] = [
     },
   },
   {
-    // The opening guess asks about the net yield, so the yield slides support it too.
     expected: {
       refs: [
         ["S1:6", "S1:10", "none"],
@@ -100,8 +96,6 @@ export const TEST_CASES: TestCase<CiteMaterialExpected, CiteMaterialInput>[] = [
     },
   },
   {
-    // Pedro's lesson marked its tonicity screen "not in your material", although his notes say it
-    // in their own words ("from the hypotonic (less concentrated) medium to the hypertonic").
     expected: {
       refs: [
         ["S1:1", "none"],

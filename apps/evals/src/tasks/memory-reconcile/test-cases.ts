@@ -2,7 +2,6 @@ import { type TestCase } from "@/lib/types";
 import { type MemoryFactText } from "@zoonk/ai/tasks/v2/memory/facts";
 import { type MemoryReconcileInput } from "@zoonk/ai/tasks/v2/memory/reconcile";
 
-/** Every action that would leave memory right, as labels ("add", "ignore", "replace_1", "remove_2"). */
 export type MemoryReconcileExpected = { actions: string[] };
 
 type ReconcileCase = TestCase<MemoryReconcileExpected, MemoryReconcileInput>;
@@ -117,7 +116,6 @@ export const TEST_CASES: ReconcileCase[] = [
     id: "pt-ignore-already-known",
     newFact: fact("routine", "Estuda depois das 20h"),
   }),
-  // Persona pass 9: a goal replaced by its own paraphrase, so "Memory updated" showed both.
   reconcileCase({
     actions: ["ignore"],
     existing: [fact("goals", "Quer criar portfólio com caso de matrícula online")],

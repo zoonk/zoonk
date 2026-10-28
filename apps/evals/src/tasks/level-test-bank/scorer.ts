@@ -63,12 +63,6 @@ function getSpeakingProblems(bank: GenerateLevelTestBankSchema): string[] {
   ).map((level) => `${level} doesn't have exactly one sentence to say.`);
 }
 
-/**
- * Eleven parts: each level and skill has exactly two questions with four
- * distinct options, a valid answer index and a text no longer than its level
- * allows (the task's own limits, so the test still takes a few minutes), and
- * each level has one sentence to say.
- */
 function checkLevelTestBank(output: string): CodeCheckResult {
   const bank = JSON.parse(output) as GenerateLevelTestBankSchema;
 

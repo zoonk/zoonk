@@ -1,19 +1,3 @@
-/**
- * Runs tasks for several models from the command line and prints one
- * comparison table per task. Outputs and scores are saved in eval-results
- * exactly like runs started from the dashboard.
- *
- *   pnpm eval:run --task course-intent --model typesafe-ai/jev \
- *     --model openai/gpt-6-luna --limit 30 --fresh
- *
- * --limit samples that many cases per task, spread evenly across expected
- * labels and languages. --fresh regenerates the sampled cases even when saved
- * outputs exist, so latency is measured the same way for every model in the
- * table. Each table shows English and Portuguese apart, and whether each model
- * meets the task's latency budget. --language keeps only cases in those
- * languages, and --case only cases whose id contains one of the given texts.
- * --saved prints the same table from saved results without calling any model.
- */
 import { parseArgs } from "node:util";
 import {
   type LanguageSummary,
@@ -43,7 +27,6 @@ import { zoonkDefaultProvider } from "@zoonk/ai/gateway";
 import { GATEWAY_PRICES } from "@zoonk/ai/pricing/call-cost";
 import { type GatewayPrices } from "@zoonk/ai/pricing/gateway-prices";
 
-/** `scored` below `sampled` means calls failed or timed out; accuracy only covers scored cases. */
 type ReportRow = {
   averageScore: number;
   languages: LanguageSummary[];
@@ -97,11 +80,6 @@ function parseCliArgs() {
   };
 }
 
-/**
- * Interleaves cases by expected value and language so a small sample still
- * covers every label in English and Portuguese instead of the first cases in
- * file order.
- */
 type CaseFilters = { caseIds: string[]; languages: string[] };
 
 function matchesFilters({ caseIds, languages }: CaseFilters, testCase: TestCase): boolean {
@@ -269,10 +247,6 @@ function formatReport({ rows, task }: { rows: ReportRow[]; task: RegisteredTask 
   ].join("\n");
 }
 
-/**
- * Models run one after another so each model's latency is measured without
- * another model's requests competing for the same connections.
- */
 async function runTask({
   filters,
   fresh,
@@ -307,7 +281,6 @@ async function runTask({
 }
 
 async function main() {
-  // The same provider the apps register, so task runs and judges cache their system prompts too.
   globalThis.AI_SDK_DEFAULT_PROVIDER = zoonkDefaultProvider;
   const { caseIds, fresh, languages, limit, modelIds, saved, tasks } = parseCliArgs();
   const filters = { caseIds, languages };

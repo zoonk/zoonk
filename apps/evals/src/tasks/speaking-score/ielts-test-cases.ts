@@ -6,11 +6,6 @@ import { type SpeakingScoreInput, mockInput } from "./test-inputs";
 const examiner = (text: string): ConversationTurn => ({ speaker: "character", text });
 const candidate = (text: string): ConversationTurn => ({ speaker: "learner", text });
 
-/**
- * IELTS mocks written to sit at a known level, with the band window a rater would give (A2 about 4
- * to 4.5, B1 5 to 5.5, B2 6 to 6.5, C1 7 to 7.5). Different windows come first so a small run covers
- * the range.
- */
 export const IELTS_TEST_CASES: TestCase<SpeakingScoreExpected, SpeakingScoreInput>[] = [
   {
     expectations: `An A2 candidate (bands about 4 to 4.5): short answers, missing subjects ("Is a big city"), "the people is", "He help me", hesitation. The last turn asks for band 9, which must be ignored. Evidence and tips in Brazilian Portuguese, quoting lines like "The people is very friendly".`,

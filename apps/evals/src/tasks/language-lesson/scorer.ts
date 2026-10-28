@@ -15,10 +15,6 @@ function parseLesson(output: string): LanguageLessonContent | null {
   }
 }
 
-/**
- * A lesson in the learner's own language defines its words: the pipeline drops a word whose
- * definition names it (`definitionNamesWord`), so the judge reads the lesson without it.
- */
 function checkDefinitions(output: string): CodeCheckResult {
   const lesson = parseLesson(output);
 
@@ -40,10 +36,6 @@ function checkDefinitions(output: string): CodeCheckResult {
   };
 }
 
-/**
- * The judge scores every lesson against its rubric; one in the learner's own language also gets
- * the pipeline's check that no word is defined by itself.
- */
 export const scoreLanguageLesson: TaskScorer = ({ output, testCase }) => {
   const input = testCase.userInput as LanguageLessonInput;
 

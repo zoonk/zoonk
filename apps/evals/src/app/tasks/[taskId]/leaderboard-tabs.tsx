@@ -10,10 +10,6 @@ import { Leaderboard } from "./leaderboard";
 
 const LEADERBOARD_SKELETON_ROWS = ["leaderboard-row-1", "leaderboard-row-2", "leaderboard-row-3"];
 
-/**
- * Uses neutral table-height rows because URL data decides whether this region
- * becomes Battle Mode tabs, a regular leaderboard, or no leaderboard at all.
- */
 export function LeaderboardTabsSkeleton() {
   return (
     <div aria-hidden="true" className="flex flex-col divide-y">

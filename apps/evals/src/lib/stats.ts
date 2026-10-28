@@ -11,13 +11,9 @@ export type TaskStats = {
   averageOutputTokens: number;
   latencyP50: number;
   latencyP95: number;
-  /** What 1,000 runs would cost at this model's average usage. */
   costPer1000Runs: number;
-  /** What generating these outputs actually cost. */
   runCost: number;
-  /** What scoring these outputs actually cost. Zero for code-scored tasks. */
   judgeCost: number;
-  /** What the generations' other model calls cost, such as a pipeline's checks (`extraCalls`). */
   extraCost: number;
   classification: ClassificationSummary | null;
 };
@@ -28,16 +24,10 @@ function getCallsCost({ calls, prices }: { calls: ModelCall[]; prices: GatewayPr
   );
 }
 
-/** Everything a run spent: the evaluated model's answers, the judge and every other call. */
 export function getSpent(stats: Pick<TaskStats, "extraCost" | "judgeCost" | "runCost">): number {
   return stats.runCost + stats.judgeCost + stats.extraCost;
 }
 
-/**
- * Summarizes one model's scored results with gateway prices: cached input and
- * reasoning tokens use the rates the gateway bills, and latency is reported
- * as p50 and p95 because learners wait on the tail, not the average.
- */
 export function getStatsFromResults({
   evalResults,
   prices,

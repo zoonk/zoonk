@@ -4,13 +4,11 @@ import { type FindMistakePatternSchema } from "@zoonk/ai/tasks/v2/language/mista
 import { isWellFormedDrillQuestion } from "@zoonk/ai/tasks/v2/language/mistake-pattern-rules";
 import { MISTAKE_PATTERN_SCORE_CATEGORIES } from "./score-categories";
 
-/** The labeled kind and the mistakes that show it (for typos, the slips). */
 export type MistakePatternExpected = Pick<FindMistakePatternSchema, "kind" | "mistakeNumbers">;
 
 const DRILL_QUESTIONS = 5;
 const MIN_PATTERN_MISTAKES = 2;
 
-/** A pattern may pull in one borderline mistake the label left out, but no more. */
 const MAX_UNLABELED_MISTAKES = 1;
 
 function checkMistakeNumbers({
@@ -49,11 +47,6 @@ function checkDrill({
   );
 }
 
-/**
- * Three parts: the kind matches the label, the mistake numbers point at the
- * labeled mistakes, and the drill is five well-formed questions for a pattern
- * (none otherwise). A wrong kind usually fails all three, which skips the judge.
- */
 function checkMistakePattern({
   expected,
   output,

@@ -10,10 +10,6 @@ import { logError } from "@zoonk/utils/logger";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-/**
- * Clears both filesystem stores for the selected model and returns to the task
- * page, where the model becomes available for a completely fresh evaluation.
- */
 export async function deleteModelDataAction(formData: FormData) {
   const taskId = parseFormField(formData, "taskId");
   const modelId = parseFormField(formData, "modelId");
@@ -76,7 +72,6 @@ export async function generateOutputsAction(formData: FormData) {
     throw new Error("Reasoning level is required");
   }
 
-  // Evaluation adapters and image models run without reasoning, so they have no reasoning variants.
   const variantId = getModelVariantId({
     modelId,
     reasoning: model.kind === "generation" ? reasoning : DEFAULT_REASONING,

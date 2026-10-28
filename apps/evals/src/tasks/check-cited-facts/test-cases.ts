@@ -2,12 +2,9 @@ import { type TestCase } from "@/lib/types";
 import { type CheckCitedFactsParams } from "@zoonk/ai/tasks/v2/research/check-cited-facts";
 import { type CheckCitedFactsExpected } from "./task";
 
-/** Passages from real notices, with true facts and planted ones that say more or contradict. */
-/** A teacher's note in a learner's class notes: both formats it announces, nothing more. */
 const CLASS_TEST_NOTE =
   "A prof disse: vai ter questão de completar a tabela das organelas e uma dissertativa sobre osmose!";
 
-/** pte-academic-highlight-incorrect-words: the lines its claims quote, joined as research shows them to the check. */
 const PTE_LINES = [
   "Task … After listening to a recording, answer a multiple-choice question by selecting one response.",
   "Task … After listening to a recording, select the missing word that completes the recording from a list of options.",
@@ -17,7 +14,6 @@ const PTE_LINES = [
   "A single 2-hour test with results typically in two days … PTE Academic scores your English proficiency on a 10–90 scale, using the Global Scale of English.",
 ] as const;
 
-/** jee-advanced-matching-sets-count: the lines its claims quote, joined as research shows them to the check. */
 const JEE_LINES = [
   "• The answer to each question is a NUMERICAL VALUE. … • This section contains FOUR (04) questions.",
   "• FOUR options are given in each Multiple Choice Question based on List-I and List-II and ONLY ONE of these four options satisfies the condition asked in the Multiple Choice Question.",
@@ -29,7 +25,6 @@ const JEE_LINES = [
   "Full Marks : +4 If ONLY the correct numerical value is entered in the designated place; Zero Marks : 0 In all other cases.",
 ] as const;
 
-/** ielts-academic-sections-named: the lines its claims quote, joined as research shows them to the check. */
 const IELTS_NAMED_LINES = [
   "The Speaking test is a face-to-face interview between the test taker and an examiner. The Speaking test is recorded.",
   "The test time is 2 hours and 45 minutes, and the format is the same wherever it is taken. … In IELTS, there are four sections: Listening, Reading, Writing and Speaking.",
@@ -37,7 +32,6 @@ const IELTS_NAMED_LINES = [
   "The Listening test has four parts, with 10 questions in each part. … There is a conversation between two speakers in Part 1, for example, a conversation about travel arrangements. … Test takers hear the recordings once only. … Summary … - Time allowed: Approximately 30 minutes … Summary … - Number of questions: 40 … The test time is 2 hours and 45 minutes, and the format is the same wherever it is taken. … In IELTS, there are four sections: Listening, Reading, Writing and Speaking. … The IELTS Academic test is made up of four sections: Listening, Reading, Writing, and Speaking.",
 ] as const;
 
-/** ielts-academic-sections-unnamed: the lines its claims quote, joined as research shows them to the check. */
 const IELTS_UNNAMED_LINES = [
   "The Listening test has four parts, with 10 questions in each part. … There is only one main speaker in Part 2, for example, a speech about local facilities. … Test takers hear the recordings once only. … Summary … - Time allowed: Approximately 30 minutes … Summary … - Number of questions: 40 … The test time is 2 hours and 45 minutes, and the format is the same wherever it is taken. … In IELTS, there are four sections: Listening, Reading, Writing and Speaking. … The IELTS Academic test is made up of four sections: Listening, Reading, Writing, and Speaking.",
   "The Listening test has four parts, with 10 questions in each part. … In Part 3 there is a conversation between two main speakers, for example, two university students in discussion, perhaps guided by a tutor. … Test takers hear the recordings once only. … Summary … - Time allowed: Approximately 30 minutes … Summary … - Number of questions: 40 … The test time is 2 hours and 45 minutes, and the format is the same wherever it is taken. … In IELTS, there are four sections: Listening, Reading, Writing and Speaking. … The IELTS Academic test is made up of four sections: Listening, Reading, Writing, and Speaking.",
@@ -47,7 +41,6 @@ const IELTS_UNNAMED_LINES = [
 
 export const TEST_CASES: TestCase<CheckCitedFactsExpected, CheckCitedFactsParams>[] = [
   {
-    // A table to fill in is a short written answer; the note gives no option count.
     expected: {
       supportedIds: ["formats.0", "formats.0.description", "formats.1", "formats.1.description"],
     },
@@ -86,8 +79,6 @@ export const TEST_CASES: TestCase<CheckCitedFactsExpected, CheckCitedFactsParams
     },
   },
   {
-    // The passage gives every objective test 45 questions, mathematics' among them; the essay isn't
-    // one of them, and nothing gives it a weight. (The check dropped ENEM's counts, Oct 2026.)
     expected: { supportedIds: ["subjects.0.questions", "dates.0", "mock"] },
     id: "enem-2026",
     language: "pt",
@@ -204,9 +195,6 @@ export const TEST_CASES: TestCase<CheckCitedFactsExpected, CheckCitedFactsParams
     },
   },
   {
-    // PTE Academic's listening page, as research read it on 10 Oct 2026, in the batch the check gets.
-    // Every claim is stated; the check dropped Highlight incorrect words as a multiple-choice format,
-    // and its +1/-1 marking with it, and a dictated sentence as a short answer.
     expected: {
       supportedIds: [
         "formats.4.description",
@@ -300,9 +288,6 @@ export const TEST_CASES: TestCase<CheckCitedFactsExpected, CheckCitedFactsParams
     },
   },
   {
-    // JEE Advanced 2026 Paper 1, as research read it on 10 Oct 2026. Four matching list sets are four
-    // questions only with the line that each set has one question, which the reading didn't quote; the
-    // numeric section's own lines state its four questions.
     expected: {
       supportedIds: [
         "formats.2.count",
@@ -376,8 +361,6 @@ export const TEST_CASES: TestCase<CheckCitedFactsExpected, CheckCitedFactsParams
     },
   },
   {
-    // IELTS Academic's format page, as research read it on 10 Oct 2026, with the Listening section's
-    // "Summary" lines quoted under the heading that names them: its time and count are stated.
     expected: {
       supportedIds: [
         "formats.10",
@@ -472,8 +455,6 @@ export const TEST_CASES: TestCase<CheckCitedFactsExpected, CheckCitedFactsParams
     },
   },
   {
-    // The same page's Reading lines quoted without their heading: "Summary … Time allowed: 60 minutes"
-    // is also Writing's, so nothing states which section takes 60 minutes and 40 questions.
     expected: {
       supportedIds: [
         "mock.sections.0.tasks.1",

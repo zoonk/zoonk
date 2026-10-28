@@ -2,7 +2,6 @@ import { type TestCase } from "@/lib/types";
 import { type SetupLessonOutlineParams } from "@zoonk/ai/tasks/v2/curriculum/setup-lesson-outline";
 import { type SetupLessonOutlineExpected } from "./scorer";
 
-/** Tools as course outlines name them, on each kind of device, in the languages learners use. */
 export const TEST_CASES: TestCase<SetupLessonOutlineExpected, SetupLessonOutlineParams>[] = [
   {
     expected: { device: "windows", tool: "python" },

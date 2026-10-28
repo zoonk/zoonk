@@ -24,7 +24,6 @@ export const uploadVisibilityTask: Task<
     field: "visibility",
     generatedLabel: "Generated visibility",
     getAcceptedValues: (expected) => (expected ? [expected.visibility] : []),
-    // The title and publisher feed the search that confirms a public upload; only the verdict is scored.
     otherOutputFields: ["documentKind", "language", "publisher", "title"],
   }),
   testCases: TEST_CASES,

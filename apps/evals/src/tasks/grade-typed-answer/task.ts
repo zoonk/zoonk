@@ -18,7 +18,6 @@ export const gradeTypedAnswerTask: Task<
   description:
     "Grade typed and spoken answers key point by key point after a code pre-check; code-scored against a teacher's verdicts (typed-answer equivalence)",
   evaluate: evaluateTypedAnswerKeyPoints,
-  // Answers settled by the code pre-check report no usage because no model ran.
   generate: async (input) => {
     const result = await gradeTypedAnswer(input);
     return { ...result, usage: result.usage ?? NO_USAGE };

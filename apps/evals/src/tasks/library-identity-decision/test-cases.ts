@@ -422,8 +422,6 @@ const PAIR_CASES: LibraryIdentityDecisionTestCase[] = [
       language: "pt",
     },
   }),
-  // Research looks up what it already stored for a law, a product or a subject before searching
-  // again: the request is the document research would fetch, named by its research plan.
   pairCase({
     candidate: {
       publisher: "Presidência da República",
@@ -782,8 +780,6 @@ const PAIR_CASES: LibraryIdentityDecisionTestCase[] = [
       language: "en",
     },
   }),
-  // Twins inside one new graph (`mergeGraphSkillTwins`): the Câmara's graph wrote this skill twice
-  // in one area (Oct 2026), and both became Library skills.
   pairCase({
     candidate: {
       courses: ["Língua Portuguesa"],
@@ -822,8 +818,6 @@ const PAIR_CASES: LibraryIdentityDecisionTestCase[] = [
       language: "pt",
     },
   }),
-  // Siblings whose names share what they act on but are different skills: the twin check asks
-  // about them too, and both must stay.
   pairCase({
     candidate: {
       courses: ["Matemática e suas Tecnologias"],
@@ -845,13 +839,8 @@ const PAIR_CASES: LibraryIdentityDecisionTestCase[] = [
   }),
 ];
 
-/** Production judges up to five candidates of one search together: the labeled one and four more. */
 const OTHER_CANDIDATES = 4;
 
-/**
- * The candidates of other cases with the same kind and language: items a search could plausibly
- * return beside the labeled one, which the verdict on it must not depend on.
- */
 function findOtherCandidates(testCase: LibraryIdentityDecisionTestCase) {
   const { subject } = testCase.userInput;
 
@@ -865,10 +854,6 @@ function findOtherCandidates(testCase: LibraryIdentityDecisionTestCase) {
     .slice(0, OTHER_CANDIDATES);
 }
 
-/**
- * Every pair judged the way production judges it: among other candidates, at a position that
- * varies from case to case, so a verdict that leans on the first or last candidate shows.
- */
 export const TEST_CASES: LibraryIdentityDecisionTestCase[] = PAIR_CASES.map((testCase, index) => {
   const others = findOtherCandidates(testCase);
 

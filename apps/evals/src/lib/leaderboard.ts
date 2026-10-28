@@ -7,10 +7,6 @@ import { getStatsFromResults } from "@/lib/stats";
 import { type CategoryScoreSummary, type RegisteredTask, type TaskEvalResults } from "@/lib/types";
 import { type GatewayPrices } from "@zoonk/ai/pricing/gateway-prices";
 
-/**
- * Calculates the average score for a task's eval results.
- * Computes the weighted score for each result and returns the mean.
- */
 export function calculateAverageScore(results: TaskEvalResults): number {
   if (results.results.length === 0) {
     return 0;
@@ -31,11 +27,9 @@ export type LeaderboardEntry = {
   provider: string;
   reasoning: string;
   averageScore: number;
-  /** Share of cases with the expected label, for classifiers only. */
   accuracy: number | null;
   latencyP50: number;
   latencyP95: number;
-  /** Null when the task has no latency budget. */
   meetsLatencyBudget: boolean | null;
   costPer1000Runs: number;
   judgeCost: number;
@@ -43,10 +37,6 @@ export type LeaderboardEntry = {
   languages: LanguageSummary[];
 };
 
-/**
- * Build leaderboard entries from raw task evaluation results.
- * Filters out results whose model cannot be resolved.
- */
 export function getLeaderboardEntries({
   prices,
   results,
@@ -84,7 +74,6 @@ export function getLeaderboardEntries({
         modelId: result.modelId,
         modelName: model.name,
         provider: getModelFamily(model),
-        // Evaluation adapters and image models run without reasoning.
         reasoning: model.kind === "generation" ? getReasoningLabel(model.reasoning) : "—",
       } satisfies LeaderboardEntry,
     ];

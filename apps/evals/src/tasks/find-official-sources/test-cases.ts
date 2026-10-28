@@ -5,13 +5,11 @@ import { type FindOfficialSourcesExpected } from "./task";
 
 type Exam = {
   id: string;
-  /** The language of the exam's official documents. */
   language: string;
   plan: FindOfficialSourcesParams["plan"];
   expected: FindOfficialSourcesExpected;
 };
 
-/** Real exams with a current edition on 26 Sep 2026, as the research plan would name them. */
 const EXAMS: Exam[] = [
   {
     expected: {
@@ -116,9 +114,6 @@ const EXAMS: Exam[] = [
     },
   },
   {
-    // A learner's research on 10 Oct 2026 found the test page, both band descriptors and the
-    // Writing and Reading format pages: no Listening or Speaking page, so the plan never knew
-    // Listening's 40 questions in four parts.
     expected: {
       noticeHints: ["academic"],
       officialDomains: ["ielts.org"],
@@ -183,10 +178,6 @@ const EXAMS: Exam[] = [
   },
 ];
 
-/**
- * Reference syllabi for big learn goals, as the research plan names them (its `research-plan`
- * eval): a university course page or PDF listing the subject's topics counts as found.
- */
 const SYLLABI: Exam[] = [
   {
     expected: {
@@ -230,14 +221,8 @@ const SYLLABI: Exam[] = [
   },
 ];
 
-/**
- * Searches for copies of an exam's documents whose site refused the download, with the production
- * tool, as research runs them when it couldn't read the notice.
- */
 const COPIES: (Exam & { unreadable: string[] })[] = [
   {
-    // TJ-SP's research (10 Oct 2026): every vunesp.com.br address answered 403, and the court's news
-    // page names none of the objective test's subjects.
     expected: {
       copies: {
         contentHints: ["Língua Portuguesa", "Raciocínio Lógico", "Informática", "Escrevente"],
@@ -270,11 +255,6 @@ const COPIES: (Exam & { unreadable: string[] })[] = [
   },
 ];
 
-/**
- * Every exam with every search tool. The model's own search comes first in each
- * exam, so `--limit 5` samples it for models compared on built-in search. Syllabi
- * run with the production tool only.
- */
 export const TEST_CASES: TestCase<FindOfficialSourcesExpected, FindOfficialSourcesParams>[] = [
   ...EXAMS.flatMap((exam) =>
     ["native", ...RESEARCH_SEARCH_TOOLS.filter((tool) => tool !== "native")].map((searchTool) => ({

@@ -10,11 +10,6 @@ const PT_EN_EXPECTATIONS = `A bank of US English passages and sentences for Braz
 
 const EN_PT_EXPECTATIONS = `A bank of Brazilian Portuguese passages and sentences (Brazilian words and forms, "você", not European Portuguese) for US English speakers: questions, options and translations in US English. Levels A1 to C1 clearly increase in difficulty.`;
 
-/**
- * One bank per language pair the courses start with. A bank's only input is its pair, so English
- * and Portuguese, the languages the quality floor reads, have two cases each way: one bank's luck
- * (a single question at the wrong level caps a bank) then moves the average less.
- */
 export const TEST_CASES: TestCase<unknown, LevelTestBankInput>[] = [
   {
     expectations: PT_EN_EXPECTATIONS,

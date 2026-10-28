@@ -3,19 +3,12 @@ import { type StatuteDrillParams } from "@zoonk/ai/tasks/v2/items/statute-drills
 
 type StatuteDrillsInput = Omit<StatuteDrillParams, "model" | "useFallback" | "reasoning">;
 
-/**
- * Article texts are copied from the official sources in each case's `law.url`
- * (Sep 2026), without the site's editorial notes such as "(Wording given by
- * Constitutional Amendment No. 19 of 1998)". congress.gov blocks scripted reads,
- * so the Fifth Amendment comes from the National Archives transcript.
- */
 const CF88 = {
   shortName: "CF/88",
   title: "Constituição da República Federativa do Brasil de 1988",
   url: "https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm",
 };
 
-/** Cases run in this order, so a small `--limit` still covers Cebraspe and the generic mix. */
 export const TEST_CASES: TestCase<unknown, StatuteDrillsInput>[] = [
   {
     expectations: `Cebraspe-style right/wrong statements in Brazilian Portuguese on article 5 of the Brazilian Constitution (caput and items II, III, XI and XLII). True statements repeat or faithfully paraphrase the given text; false ones change exactly one element, as Cebraspe does (for example "todos" to "quase todos", "durante o dia" to "a qualquer hora", "determinação judicial" to "determinação policial", "inafiançável" to "afiançável"), and their misconception names that trap. Check every statement against the given text, not memory, and that roughly half are false.`,
@@ -68,7 +61,6 @@ export const TEST_CASES: TestCase<unknown, StatuteDrillsInput>[] = [
         },
       ],
       count: 6,
-      // An exam that asks short written answers gets fill-in-the-blank drills.
       fillInTheBlank: true,
       language: "en",
       law: {

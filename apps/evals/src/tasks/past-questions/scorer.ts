@@ -8,7 +8,6 @@ import { checkItem } from "@zoonk/core/library/items/checks";
 import { checkPastQuestion } from "@zoonk/core/library/items/past-question-checks";
 import { PAST_QUESTIONS_SCORE_CATEGORIES } from "./score-categories";
 
-/** The checks production runs before storing a quoted question: the item's own and the quote's. */
 function checkQuestions(output: string, input: ExtractPastQuestionsParams): CodeCheckResult {
   const { questions } = JSON.parse(output) as { questions: PastQuestion[] };
 

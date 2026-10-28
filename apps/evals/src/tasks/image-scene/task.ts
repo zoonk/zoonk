@@ -92,11 +92,6 @@ function checkScene(testCase: TestCase<ImageSceneExpected>) {
 const scoreImageScene: TaskScorer<ImageSceneExpected> = ({ output, testCase }) =>
   scoreWithCodeChecks({ check: checkScene(testCase), output, scoreCategories, testCase });
 
-/**
- * Turns a writer's image request into a structured scene. Code checks catch
- * text where none belongs and numbers that don't match the screen; the judge
- * reads whether the scene teaches, stays simple and labels well.
- */
 export const imageSceneTask: Task<ImageSceneInput, ImageSceneOutput, ImageSceneExpected> = {
   description: "Plan one lesson picture as a structured scene",
   generate: generateImageScene,

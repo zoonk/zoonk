@@ -5,20 +5,10 @@ import { normalizeString } from "@zoonk/utils/string";
 
 type WeightRange = { max: number; min: number };
 
-/** Syllabus lines the graph misses. Every other reference line must not be flagged. */
 export type CoverageCheckExpected = {
   gaps: string[];
-  /**
-   * For an exam: the skills whose weight must change, with the weights accepted. A change to any
-   * other skill is a false alarm.
-   */
   examWeights?: (WeightRange & { key: string })[];
-  /** For an exam: the weights accepted for the skill each planted gap adds, in `gaps` order. */
   gapWeights?: WeightRange[];
-  /**
-   * For an exam with a notice: skills that must gain these notice topics (they already teach them
-   * under another name). Any topic placed on a skill not listed here counts against it.
-   */
   placements?: { key: string; topics: string[] }[];
 };
 
@@ -121,7 +111,6 @@ function round(value: number): number {
   return Math.round(value * 100) / 100;
 }
 
-/** F1 of `hits` among `found` against `total` expected; nothing expected and nothing found is 1. */
 function toF1({ hits, found, total }: { found: number; hits: number; total: number }) {
   if (total === 0 && found === 0) {
     return 1;
@@ -136,7 +125,6 @@ function isInRange({ range, weight }: { range: WeightRange | undefined; weight: 
   return range !== undefined && weight !== null && weight >= range.min && weight <= range.max;
 }
 
-/** Gap finding: a flagged line matching a planted gap is a hit, anything else a false alarm. */
 function scoreGaps({ expected, flagged }: { expected: CoverageCheckExpected; flagged: Flagged[] }) {
   const quotes = flagged.map((skill) => skill.syllabusLine);
   const hits = quotes.filter((quote) => expected.gaps.some((line) => matchesLine({ line, quote })));
@@ -161,7 +149,6 @@ function scoreGaps({ expected, flagged }: { expected: CoverageCheckExpected; fla
   };
 }
 
-/** Weight corrections: an expected skill moved into its range is a hit, any other change a miss. */
 function scoreWeightChanges({
   expected,
   weightChanges,
@@ -195,7 +182,6 @@ function scoreWeightChanges({
   };
 }
 
-/** The share of found gaps whose new skill got a weight in its accepted range. */
 function scoreGapWeights({
   expected,
   flagged,
@@ -218,10 +204,6 @@ function scoreGapWeights({
   };
 }
 
-/**
- * Topics placed on existing skills: an expected topic on its skill is a hit, a topic placed on a
- * skill that doesn't teach it is a false alarm.
- */
 function scorePlacements({
   expected,
   placements,
@@ -249,7 +231,6 @@ function scorePlacements({
       ),
   );
 
-  // A skill keeps the topics it already had, so only new topics on unexpected skills are wrong.
   const unexpected = placements.filter((item) => !expected.some((other) => other.key === item.key));
 
   const details = [
@@ -265,14 +246,6 @@ function scorePlacements({
   };
 }
 
-/**
- * Scores gap finding by F1 over the planted gaps: a flagged line matching a
- * planted gap is a hit, anything else is a false alarm. A case with no gaps
- * loses a point per false alarm, since inventing gaps is the failure there.
- * An exam case also scores its weights: the F1 of the weight corrections (a
- * change to a skill whose weight was right counts against it) and the share
- * of found gaps weighed within range, averaged with the gap F1.
- */
 export const scoreCoverageCheck: TaskScorer<CoverageCheckExpected> = ({ output, testCase }) => {
   const expected = getExpected(testCase.expected);
   const parsed = parseOutput(output);

@@ -36,7 +36,6 @@ function PerLabelAccuracy({ summary }: { summary: ClassificationSummary }) {
   );
 }
 
-/** Rows are the expected label and columns the predicted one; the diagonal is correct. */
 function ConfusionMatrix({ summary }: { summary: ClassificationSummary }) {
   return (
     <Table>

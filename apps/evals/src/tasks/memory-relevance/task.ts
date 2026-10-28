@@ -33,10 +33,6 @@ function getRelevant(output: string): boolean | null {
   }
 }
 
-/**
- * Missing a fact the task needed costs personalization; passing an irrelevant one costs a few
- * tokens and some noise. Both score the same, and per-label accuracy shows which a model does.
- */
 const scoreMemoryRelevance: TaskScorer<MemoryRelevanceExpected> = ({ output, testCase }) => {
   const relevant = getRelevant(output);
   const expected = testCase.expected?.relevant ?? false;
@@ -51,7 +47,6 @@ const scoreMemoryRelevance: TaskScorer<MemoryRelevanceExpected> = ({ output, tes
   };
 };
 
-/** Relevance only runs as an evaluation question (Jev in production), so both routes ask it. */
 export const memoryRelevanceTask: Task<
   MemoryRelevanceInput,
   MemoryRelevanceOutput,

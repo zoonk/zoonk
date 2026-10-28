@@ -1,16 +1,13 @@
 export type CourseIconInput = {
-  /** Names the saved image file. */
   caseId: string;
   title: string;
   description: string;
-  /** The course's language, for reporting; icons carry no text. */
   language: string;
 };
 
 const ICON_RULES =
   "One single object, centered, with a strong clean silhouette, in smooth matte 3D with soft lighting and a subtle shadow, 2 to 4 colors, isolated on a plain white background, like an app icon. No scene, no second object, no background props and no text, letters or numbers.";
 
-/** Courses whose titles alone could mislead, so the description has to pick the right object. */
 export const TEST_CASES = [
   {
     expectations: `An object that clearly stands for immunology and the body's defenses, such as a shield with a cell or an antibody, not a generic medical cross or pill bottle. ${ICON_RULES}`,

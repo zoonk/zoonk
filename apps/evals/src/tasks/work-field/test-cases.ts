@@ -18,11 +18,6 @@ function fieldCase({
   return { expected: { alsoAccepted, field }, id, language, userInput };
 }
 
-/**
- * Roles as learners type them on the role screen, in English and Portuguese: job titles with
- * typos and abbreviations, ambiguous titles settled by the tasks, career changes judged by the
- * target role, and answers that name no job.
- */
 export const TEST_CASES: WorkFieldTestCase[] = [
   fieldCase({
     field: "nursing",

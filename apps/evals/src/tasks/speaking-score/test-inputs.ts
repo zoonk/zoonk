@@ -19,12 +19,10 @@ export type SpeakingScoreInput = Omit<
 
 type CallFields = { learnerLanguage: string; spokenSeconds: number; turns: ConversationTurn[] };
 
-/** A mock's input as core passes it: the whole test on its exam's criteria. */
 export function mockInput({ exam, ...rest }: CallFields & { exam: SpeakingMockExam }) {
   return { ...rest, ...getSpeakingMockRating(exam), exam };
 }
 
-/** A task's input as core passes it: the paper's title, the task and its criteria from the format table. */
 export function examTask({
   exam,
   level,

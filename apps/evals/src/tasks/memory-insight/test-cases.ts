@@ -3,19 +3,12 @@ import { type MemoryInsightParams } from "@zoonk/ai/tasks/v2/memory/insight";
 import { type MemoryInsightOutput } from "@zoonk/ai/tasks/v2/memory/insight-rules";
 
 export type MemoryInsightExpected = {
-  /** The kinds the signals call for, the best first. */
   kinds: MemoryInsightOutput["kind"][];
-  /** Words the message should use for what the signals point at. */
   mentions?: string[];
-  /** Words that show the message is in the learner's language. */
   languageWords?: string[];
-  /** For a schedule idea, the hours (24-hour clock) a suggested time may start in. */
   studyHours?: [number, number];
-  /** For a plan change, the 1-based skill it must pick. */
   skill?: number;
-  /** For a plan change, words that say its real size: "lesson", "a few lessons", "chapter". */
   sizeWords?: string[];
-  /** For a plan change, words that would make it sound smaller or bigger than it is. */
   wrongSizeWords?: string[];
 };
 
@@ -154,11 +147,9 @@ const PT_PERCENT_WEAK_SKILL = [
   "Studied on 5 of the last 7 days, 28 minutes a day on average; the plan asks for 30.",
 ].join("\n");
 
-/** Words that say a gap of several lessons, in the two eval languages. */
 const EN_FEW_WORDS = ["few", "3 short lessons", "three", "3 lessons"];
 const PT_FEW_WORDS = ["algumas", "3 aulas", "tres", "3 licoes", "poucas"];
 
-/** Saying one lesson for a bigger gap, or a bigger gap for one lesson, understates or overstates it. */
 const EN_ONE_LESSON_WORDS = ["a lesson", "one lesson", "a short lesson", "a 3-minute lesson"];
 const PT_ONE_LESSON_WORDS = ["uma aula", "uma licao", "uma so aula"];
 const EN_BIGGER_WORDS = ["few", "chapter"];
@@ -186,7 +177,6 @@ function insightCase({
     userInput: {
       facts,
       goal,
-      // As the app does: a plan change is allowed only on a day with a gap to fill.
       kinds: kinds ?? (skills.length > 0 ? ALL_KINDS : NO_PLAN_CHANGE),
       language,
       recentInsights,

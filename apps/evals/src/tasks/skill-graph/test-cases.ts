@@ -246,11 +246,6 @@ const POLICIA_FEDERAL_BLUEPRINT: ExamOutline = {
   ],
 };
 
-/**
- * The 48th OAB exam's first phase as research read its notice (9 Oct 2026): 20 subjects with no
- * syllabus of their own, each counted by the 42nd exam's paper since the notice gives no counts,
- * and the notice's format, scoring and rules.
- */
 const OAB_BLUEPRINT: ExamOutline = {
   name: "OAB Exame de Ordem Unificado",
   notes: [
@@ -296,11 +291,6 @@ const OAB_BLUEPRINT: ExamOutline = {
   topicFrequency: [],
 };
 
-/**
- * Part of the Rio Branco diplomat exam's second phase (CACD 2025, Edital nº 1 of 14 May 2025 by
- * Cebraspe, read 10 Oct 2026): every candidate writes in English, and each picks one additional
- * language, Spanish or French, at registration (item 4.1.1). Topics are the annex's own.
- */
 const CACD_LANGUAGES_BLUEPRINT: ExamOutline = {
   name: "Concurso de Admissão à Carreira de Diplomata (CACD), Segunda Fase",
   notes: ["Format: Provas escritas discursivas da Segunda Fase."],
@@ -367,8 +357,6 @@ export const TEST_CASES: TestCase<never, SkillGraphParams>[] = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "pt-enem-2026",
-    // A shared exam graph reads the exam alone (`toScopedGraphPrompt`): never a learner's words,
-    // target or level.
     userInput: { examBlueprint: ENEM_BLUEPRINT, goal: "ENEM", goalKind: "exam", language: "pt" },
   },
   {
@@ -402,8 +390,6 @@ export const TEST_CASES: TestCase<never, SkillGraphParams>[] = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "pt-cebraspe-policia-federal",
-    // A shared exam graph reads the exam alone (`toScopedGraphPrompt`): never a learner's words,
-    // target or level.
     userInput: {
       examBlueprint: POLICIA_FEDERAL_BLUEPRINT,
       goal: "Concurso da Polícia Federal, Agente de Polícia Federal",
@@ -433,8 +419,6 @@ export const TEST_CASES: TestCase<never, SkillGraphParams>[] = [
     },
   },
   {
-    // Câmara, Oct 2026 (persona pass 9): IT opened on a 26-lesson records-formats skill written
-    // for the role, with no notice topic, while the notice's own IT topics got a lesson or two.
     expectations: `
       - MUST be in Brazilian Portuguese
       - Two subjects of the Câmara notice: every numbered item of both is taught by some skill, named as the notice names it
@@ -460,8 +444,6 @@ export const TEST_CASES: TestCase<never, SkillGraphParams>[] = [
     },
   },
   {
-    // OAB, Oct 2026 (persona pass 10): tax law's skills came chained one after another
-    // in a manual's order (6 of 7).
     expectations: `
       - MUST be in Brazilian Portuguese
       - Bar exam whose notice lists 20 subjects with no syllabus of their own: every subject is an area, named as the notice names it or by its short name, with weights that follow its questions. Ética Profissional (the Estatuto da Advocacia e da OAB, its Regulamento Geral and the Código de Ética e Disciplina, 8 questions) is present and weighs the most; the 2-question subjects weigh the least
@@ -472,7 +454,6 @@ export const TEST_CASES: TestCase<never, SkillGraphParams>[] = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "pt-oab-1a-fase",
-    // A shared exam graph reads the exam alone (`toScopedGraphPrompt`), named by its notice.
     userInput: {
       examBlueprint: OAB_BLUEPRINT,
       goal: "OAB Exame de Ordem Unificado, 1ª fase",
@@ -481,8 +462,6 @@ export const TEST_CASES: TestCase<never, SkillGraphParams>[] = [
     },
   },
   {
-    // Owner, 10 Oct 2026: a choice of subjects (a language, an elective) works for any exam, so a
-    // new exam's graph teaches every option from the start and the learner's pick decides.
     expectations: `
       - MUST be in Brazilian Portuguese
       - Língua Espanhola and Língua Francesa are options of one choice (each candidate takes one): each is an area named exactly as the notice names it, with skills that teach both of its topics (a summary in the language, a version from Portuguese). Teaching both is right: the graph has no field for the choice, its area is how the plan knows each option, and the plan studies only the one the learner picks. Don't expect the graph to mark the choice, and judge the size of the path one option at a time
@@ -566,8 +545,6 @@ export const TEST_CASES: TestCase<never, SkillGraphParams>[] = [
     },
   },
   {
-    // Marcos, Oct 2026: his plan's phases were named like the situations they teach ("Alugando um
-    // apartamento"), so an open phase showed its name again over the unit of that name.
     expectations: `
       - MUST be in Brazilian Portuguese
       - Language goal for a move abroad with a partner: skills are real situations with can-dos for the move and the first months there, such as immigration and arrival, renting a home, opening a bank account and getting a phone plan, the doctor and the pharmacy, work, neighbors and making friends

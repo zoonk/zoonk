@@ -34,20 +34,12 @@ import { ModelCard, ModelCardSkeleton } from "./model-card";
 
 type TaskRouteProps = { params: TaskRouteParams };
 
-/**
- * Replaces only the task-dependent breadcrumb item while the shared Home link
- * remains part of the prefetched App Shell.
- */
 async function TaskBreadcrumb({ params }: TaskRouteProps) {
   const { task } = await getTaskRouteFromParams(params);
 
   return <TaskPageBreadcrumb taskName={task.name} />;
 }
 
-/**
- * Keeps both task actions in place while output files are checked to decide
- * whether Battle Mode is ready to run.
- */
 function TaskHeaderActionsSkeleton() {
   return (
     <div aria-hidden="true" className="flex items-center gap-2">
@@ -63,10 +55,6 @@ function TaskHeaderActionsSkeleton() {
   );
 }
 
-/**
- * Loads Battle Mode readiness separately from the task title so filesystem
- * work cannot delay the rest of the header.
- */
 async function TaskHeaderActions({ params }: TaskRouteProps) {
   const { task, taskId } = await getTaskRouteFromParams(params);
   const modelsReadyForBattle = await getModelsWithCompleteOutputs({ runsPerTestCase: 1, task });
@@ -89,10 +77,6 @@ async function TaskHeaderActions({ params }: TaskRouteProps) {
   );
 }
 
-/**
- * Resolves URL-dependent task metadata first, then lets optional action state
- * stream through its own boundary instead of holding back the title.
- */
 async function TaskHeader({ params }: TaskRouteProps) {
   const { task } = await getTaskRouteFromParams(params);
 
@@ -118,10 +102,6 @@ async function TaskHeader({ params }: TaskRouteProps) {
   );
 }
 
-/**
- * Reads regular and Battle Mode result files in parallel while the task header
- * and model grid remain independently interactive.
- */
 async function TaskLeaderboard({ params }: TaskRouteProps) {
   const { task, taskId } = await getTaskRouteFromParams(params);
   const judgeModeSupported = supportsJudgeMode(task);
@@ -143,10 +123,6 @@ async function TaskLeaderboard({ params }: TaskRouteProps) {
   );
 }
 
-/**
- * Loads model ordering and status separately because those values come from
- * mutable eval files and should not be frozen into the shared App Shell.
- */
 async function TaskModelGrid({ params }: TaskRouteProps) {
   const { task, taskId } = await getTaskRouteFromParams(params);
   const sortedModels = await getSortedModels(task);
@@ -165,11 +141,6 @@ async function TaskModelGrid({ params }: TaskRouteProps) {
   );
 }
 
-/**
- * Uses one exact-size placeholder per configured model. Completed models are
- * the only cards the resolved grid can remove, so this preserves the grid's
- * normal row count without maintaining a second model-count constant.
- */
 function TaskModelGridSkeleton() {
   return (
     <section aria-hidden="true" className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -180,10 +151,6 @@ function TaskModelGridSkeleton() {
   );
 }
 
-/**
- * Keeps stable page structure in the shared App Shell and scopes each runtime
- * read to the smallest region with a useful loading state.
- */
 export default function TaskPage({ params }: TaskRouteProps) {
   return (
     <main className="flex flex-col gap-4">

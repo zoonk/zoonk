@@ -25,11 +25,6 @@ function toTranscriptionModel(model: string): TranscriptionModelId | undefined {
   return TRANSCRIPTION_MODELS.find((candidate) => candidate === model);
 }
 
-/**
- * Today's path, as the baseline: transcribe the clip, then compare the
- * transcript with the expected sentence word by word. It can't name a sound
- * or stress issue, so every issue stays null.
- */
 async function transcribeAndMatch({
   audio,
   input,

@@ -19,15 +19,9 @@ type GenerateItemsCase = {
   language: string;
 };
 
-/**
- * Runs the same checks production runs before storing items, and finds the em dashes storing them
- * takes out of our own wording, then keeps only passing items.
- */
 function checkGeneratedItems(output: string, input: GenerateItemsCase): CodeCheckResult {
   const { items } = JSON.parse(output) as { items: GeneratedItem[] };
 
-  // No items is the writer's answer for a skill the format doesn't fit (a number for a reading
-  // skill): code has nothing to check, and the judge says whether none was right.
   if (items.length === 0) {
     return { judgedOutput: output, passed: 1, problems: [], total: 1 };
   }

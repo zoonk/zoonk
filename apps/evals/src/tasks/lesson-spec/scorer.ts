@@ -7,10 +7,6 @@ import { type LessonSpecExpected } from "./visual-test-cases";
 
 type LessonLevel = Parameters<typeof getLessonSpecIssues>[0]["level"];
 
-/**
- * Saved outputs can be edited or come from an older shape, so the scorer
- * checks the fields the size and shape rules read before trusting them.
- */
 function isLessonSpec(value: unknown): value is LessonSpec {
   return (
     isJsonObject(value) &&
@@ -43,10 +39,6 @@ function getLevel(userInput: Record<string, unknown>): LessonLevel {
   return level as LessonLevel;
 }
 
-/**
- * A case about pictures counts as one more part: a lesson whose ideas need seeing plans at least
- * one picture, and one whose words are clear on their own plans none.
- */
 function getPictureProblem({
   expected,
   lessons,
@@ -67,7 +59,6 @@ function getPictureProblem({
   return null;
 }
 
-/** A case about activities counts as one more part: no lesson plans a template it must avoid. */
 function getTemplateProblem({
   expected,
   lessons,
@@ -87,12 +78,6 @@ function getTemplateProblem({
     : null;
 }
 
-/**
- * Each lesson is one part: it passes when it meets the size and shape rules
- * (1 to 3 skills, 5 to 12 screens, 2 to 5 minutes, a hook first, a check
- * every 2 or 3 screens, one application last, worked examples for hard
- * skills). Only passing lessons reach the judge.
- */
 function checkLessonSpecs({
   expected,
   level,

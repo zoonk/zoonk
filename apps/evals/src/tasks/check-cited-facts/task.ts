@@ -20,7 +20,6 @@ function parseSupported(output: string): Set<string> | null {
   }
 }
 
-/** Share of facts judged right, with the wrongly accepted ones named, since those reach learners. */
 const scoreCheck: TaskScorer<CheckCitedFactsExpected> = ({ output, testCase }) => {
   const supported = parseSupported(output);
   const facts = (testCase.userInput as unknown as CheckCitedFactsParams).facts;

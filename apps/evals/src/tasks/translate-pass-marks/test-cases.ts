@@ -12,7 +12,6 @@ const SHARED_EXPECTATIONS = `
 
 export const TEST_CASES: TestCase<unknown, TranslatePassMarksParams>[] = [
   {
-    // A DELE B2 candidate learning in Portuguese saw this in Spanish on their exam page.
     expectations: `${SHARED_EXPECTATIONS}
 - \`language\` is "es"; translations for en, pt, fr and de.
 - Each says a minimum of 30 points in Group 1 and 30 points in Group 2 ("Grupo 1" becomes that language's word for group), and keeps the official grade "Apto" in quotation marks after its translation (Portuguese "Aprovado", English "Pass").`,

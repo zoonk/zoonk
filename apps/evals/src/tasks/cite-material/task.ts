@@ -20,10 +20,6 @@ function parseOutput(output: string): CiteMaterialOutput | null {
   }
 }
 
-/**
- * Code scoring, screen by screen: the citation must be one of the right pages, or none when no
- * page supports the screen. A wrong page is the worst mistake: it sends the learner elsewhere.
- */
 const scoreCiteMaterial: TaskScorer<CiteMaterialExpected> = ({ output, testCase }) => {
   const parsed = parseOutput(output);
   const expected = testCase.expected?.refs ?? [];
@@ -34,7 +30,7 @@ const scoreCiteMaterial: TaskScorer<CiteMaterialExpected> = ({ output, testCase 
 
   const misses = expected.flatMap((allowed, index) => {
     const ref = parsed.citations.find((citation) => citation.screen === index + 1)?.ref ?? null;
-    // "none" among the right pages means leaving the screen without a citation is fine too.
+
     const isRight =
       ref === null ? allowed.length === 0 || allowed.includes("none") : allowed.includes(ref);
 

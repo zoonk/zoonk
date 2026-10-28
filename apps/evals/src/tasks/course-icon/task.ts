@@ -75,11 +75,6 @@ async function generate({
   };
 }
 
-/**
- * Draws course icons in the style courses always had (one matte 3D object on
- * white) and has a vision judge from another family check the object, the
- * style and that there's no text.
- */
 export const courseIconTask: Task<CourseIconInput, CourseIconOutput> = {
   description: "Draw a course's icon: one matte 3D object on white that stands for the subject",
   generate,

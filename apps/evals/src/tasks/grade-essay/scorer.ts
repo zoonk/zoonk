@@ -9,13 +9,8 @@ import { type GradeEssayExpected } from "./test-cases";
 const MIN_SCORE = 6;
 const SCORE_RANGE = 4;
 
-/** Most criteria should point at a passage; a missing quote here and there is fine. */
 const MIN_QUOTED_SHARE = 0.6;
 
-/**
- * Function words that only one of the two languages uses, enough to tell
- * Portuguese feedback from English feedback without a model.
- */
 const LANGUAGE_WORDS = {
   en: new Set([
     "the",
@@ -69,7 +64,6 @@ const LANGUAGE_WORDS = {
 
 type Check = { name: string; passed: boolean; detail: string };
 
-/** Quoted essay text inside feedback is in the essay's language, so it doesn't count. */
 function detectLanguage(text: string): "en" | "pt" | null {
   const tokens = text
     .replaceAll(/["“][^"”]*["”]/gu, " ")
@@ -112,10 +106,6 @@ function checkElements({
   });
 }
 
-/**
- * A grade with every point scored has nothing to work on, so no next step is right only then;
- * whether full marks were deserved is the band check's call.
- */
 function checkNextStep({
   expected,
   grade,
@@ -138,7 +128,6 @@ function checkNextStep({
   };
 }
 
-/** A too-short text never reaches a model, so there is no feedback to check. */
 function checkFeedback({
   essay,
   expected,
@@ -211,13 +200,6 @@ function getChecks({
   ];
 }
 
-/**
- * Code-only scoring, so every candidate model is compared on the same checks
- * and the eval stays cheap: the total inside the band a trained examiner
- * would give, the right annulment, the next step on a weak criterion, the ENEM
- * proposal elements, feedback in the learner's language and quotes that
- * exist in the essay. The band check is reported as the classification.
- */
 export const scoreEssayGrade: TaskScorer<GradeEssayExpected> = ({ output, testCase }) => {
   if (!testCase.expected) {
     throw new Error(`Test case ${testCase.id} has no expected grade.`);

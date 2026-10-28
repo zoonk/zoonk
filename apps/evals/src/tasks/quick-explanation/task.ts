@@ -9,13 +9,8 @@ import { checkQuickExplanation } from "@zoonk/ai/tasks/v2/explain/quick-explanat
 import { QUICK_EXPLANATION_SCORE_CATEGORIES } from "./score-categories";
 import { TEST_CASES } from "./test-cases";
 
-/**
- * The first screen should show in about 20 seconds, and the generality check,
- * the save and the page load come on top of this call.
- */
 const QUICK_EXPLANATION_LATENCY_BUDGET = { p50: 12, p95: 18 };
 
-/** The explanation is one part: it ships whole or not at all. */
 function checkOutput(output: string): CodeCheckResult {
   const problems = checkQuickExplanation(JSON.parse(output) as QuickExplanation);
 

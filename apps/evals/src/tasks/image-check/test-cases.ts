@@ -1,12 +1,7 @@
 import { type ImageScene } from "@zoonk/ai/tasks/v2/images/scene-schema";
 import { TEST_CASES as IMAGE_CASES } from "../lesson-image/test-cases";
 
-export type ImageCheckCaseInput = {
-  /** A file in `datasets/images/image-check`, drawn by the lesson-image eval or planted. */
-  imageFile: string;
-  scene: ImageScene;
-  language: string;
-};
+export type ImageCheckCaseInput = { imageFile: string; scene: ImageScene; language: string };
 
 export type ImageCheckExpected = { passed: boolean };
 
@@ -34,12 +29,6 @@ function checkCase({
   return { expected: { passed: expected }, id, userInput: { imageFile, ...input } };
 }
 
-/**
- * Numbered pictures, drawn with the parts' numbers as their only labels (8 Oct 2026, drawn-in
- * numbers for labeled diagrams): each number marks its part, on its body, its edge or anything
- * that belongs to it. The check rejected these three good drawings: the cell for a label it
- * miscounted, the flower over how it was cut, and the bicycle's 5 on the front wheel's tire.
- */
 function numberedScene(focalObject: string, parts: readonly string[]): ImageScene {
   return {
     focalObject,
@@ -80,11 +69,6 @@ const numberedBicycle = numberedScene("a bicycle seen from the side", [
   "frame",
 ]);
 
-/**
- * Pictures a question is about (7 Oct 2026, a class test's chapter test-out): the letters are the
- * question's only text, and each one must point at the part its target names, since the answer
- * depends on it. The wall-and-membrane drawing passed its check with B touching the wall.
- */
 const wallAndMembrane: ImageScene = {
   focalObject:
     "a simplified plant cell outline with a thick green outer hexagonal boundary and a thin inner line running just inside it with a small gap in between",
@@ -115,7 +99,6 @@ const animalCellLetters: ImageScene = {
   ],
 };
 
-/** Scenes from a real overview-goal run, where the drawing model named objects nobody asked it to. */
 const electronHook: ImageScene = {
   focalObject: "a small blue dot representing an electron, inside a small dashed boundary",
   labels: [{ target: "above the dashed arrow", text: "?" }],
@@ -149,7 +132,6 @@ const positionRegions: ImageScene = {
   supportingObjects: ["a much narrower fuzzy shaded oval cloud"],
 };
 
-/** A square leaf picture with no text, from when chapters had covers: a clean no-text image. */
 const leaf: { language: string; scene: ImageScene } = {
   language: "en",
   scene: {
@@ -166,14 +148,6 @@ const discount = sceneOf("discount-pt");
 const electronCloud = sceneOf("electron-cloud-en");
 const microwave = sceneOf("microwave-en");
 
-/**
- * Images the lesson-image eval and a real goal run drew, labeled by hand
- * after review (images a reviewer could read either way are left out):
- * allowed labels written in different ways must pass, and names the drawing
- * model added on its own must fail. Plus planted failures: a good image
- * checked against the wrong scene, wrong or foreign labels, text where none
- * is allowed, and two off-style renders.
- */
 export const TEST_CASES = [
   checkCase({
     expected: true,

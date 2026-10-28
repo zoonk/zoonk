@@ -4,25 +4,16 @@ import { type ResearchSearchPlan } from "@zoonk/ai/tasks/v2/research/plan";
 import { normalizeString } from "@zoonk/utils/string";
 
 export type ResearchPlanExpected = {
-  /** Words the canonical name must contain, any of the options. */
   nameIncludes: string[];
   country: string;
-  /** Other countries that fit as well, such as another English-speaking one for a syllabus. */
   otherCountries?: string[];
   language: string;
-  /** At least one of these must be among the official domains; class tests have none. */
   domains: string[];
   roleIncludes?: string;
-  /** A teacher's own test: only the class's material describes it. False when left out. */
   classTest?: boolean;
-  /**
-   * A syllabus for a subject no university course or official curriculum teaches: the plan has no
-   * queries, so nothing is searched. Its country and domains aren't checked.
-   */
   noQueries?: boolean;
 };
 
-/** An exam's plan also says whether it's a teacher's test and which part of the notice it is. */
 type ScoredPlan = ResearchSearchPlan & { classTest?: boolean; role?: string | null };
 
 const MIN_SCORE = 6;
@@ -37,8 +28,6 @@ function parsePlan(output: string): ScoredPlan | null {
 }
 
 function listChecks({ expected, plan }: { expected: ResearchPlanExpected; plan: ScoredPlan }) {
-  // A teacher's test says nothing about its country beyond the learner's language, and a subject
-  // with no syllabus has nowhere to search.
   const searchesNothing = expected.classTest || expected.noQueries;
   const countries = [expected.country, ...(expected.otherCountries ?? [])];
 
@@ -85,7 +74,6 @@ function listChecks({ expected, plan }: { expected: ResearchPlanExpected; plan: 
   ];
 }
 
-/** Code scoring: the identity fields and at least one official domain must be right. */
 export const scoreResearchPlan: TaskScorer<ResearchPlanExpected> = ({ output, testCase }) => {
   const plan = parsePlan(output);
 

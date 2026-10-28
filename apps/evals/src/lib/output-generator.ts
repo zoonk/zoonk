@@ -18,11 +18,6 @@ import {
  */
 const GENERATION_CONCURRENCY = 4;
 
-/**
- * Evaluation models answer through the task's `evaluate` route; everything else
- * runs the task's own prompt. Tasks without an evaluation route can't be run
- * with an evaluation model, so that mismatch fails before any call.
- */
 function getTaskRunner({ model, task }: { model: ModelConfig; task: RegisteredTask }) {
   if (model.kind !== "evaluation") {
     return task.generate;
@@ -35,11 +30,6 @@ function getTaskRunner({ model, task }: { model: ModelConfig; task: RegisteredTa
   return task.evaluate;
 }
 
-/**
- * The eval registry intentionally erases each task's concrete input type so it
- * can list heterogeneous tasks together. This builds the runtime input from
- * the paired test case; the runner call casts it back at the boundary.
- */
 function getTaskRunInput({ model, testCase }: { model: ModelConfig; testCase: TestCase }) {
   return {
     ...testCase.userInput,
@@ -49,11 +39,6 @@ function getTaskRunInput({ model, testCase }: { model: ModelConfig; testCase: Te
   };
 }
 
-/**
- * Runs one model output for one registry test case. The cast is contained here
- * because registry tasks are intentionally type-erased, while each task module
- * still keeps its concrete input type.
- */
 async function generateOutputForTestCase({
   model,
   runNumber,

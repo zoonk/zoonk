@@ -1,12 +1,3 @@
-/**
- * Makes the labeled clips the check-word-pronunciation eval listens to, saved as
- * data/look-alike/<case id>.mp3: each look-alike word voiced by the app in its own language (with
- * its IPA and its check) and voiced as English. Clips that exist are kept, so this only spends on
- * new cases.
- *
- *   pnpm exec tsx --conditions=react-server --env-file=.env \
- *     --import ./scripts/register-markdown.mts scripts/generate-look-alike-clips.ts
- */
 import { existsSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";

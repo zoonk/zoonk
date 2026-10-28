@@ -10,21 +10,9 @@ import { normalizeString } from "@zoonk/utils/string";
 import { TEST_CASES } from "./test-cases";
 
 export type FindOfficialSourcesExpected = {
-  /** Where the organizer publishes. A document on any of them counts as found. */
   officialDomains: string[];
-  /** Words the current notice's address or title contains, such as its year. */
   noticeHints: string[];
-  /**
-   * For an exam whose format is spread over a page per section (IELTS's Listening, Reading,
-   * Writing and Speaking pages): a word each section's page has in its address or title, all of
-   * which the official documents must cover.
-   */
   sectionHints?: string[];
-  /**
-   * For a search for copies of documents that couldn't be downloaded (`unreadable`): the sites
-   * that refused them, and what a copy's text must state (the notice's subjects) to stand in for
-   * the notice. Each copy is downloaded as research would.
-   */
   copies?: { contentHints: string[]; refusingSites: string[] };
 };
 
@@ -47,7 +35,6 @@ function isOnDomain({ domains, url }: { domains: string[]; url: string }): boole
   return domains.some((domain) => hostname === domain || hostname.endsWith(`.${domain}`));
 }
 
-/** The sections no official document's address or title names. */
 function listMissingSections({
   expected,
   official,
@@ -63,7 +50,6 @@ function listMissingSections({
   );
 }
 
-/** The copy's text when the app can download it, or null when its site refuses it too. */
 async function readCopy(url: string): Promise<string | null> {
   try {
     const fetched = await fetchDocument(url);
@@ -74,11 +60,6 @@ async function readCopy(url: string): Promise<string | null> {
   }
 }
 
-/**
- * A search for copies: 10 when one the app can download states every hint (the notice's
- * subjects), 8 when copies download but none states them, 7 when none downloads, 6 when nothing
- * is found. A copy on a site that refused the originals costs a point: research drops it unread.
- */
 async function scoreCopies({
   copies,
   found,
@@ -121,11 +102,6 @@ async function scoreCopies({
   });
 }
 
-/**
- * 10 when an official document of the current edition is found (with a page for every section
- * when the format is spread over them), 8 when only an official page is or a section's page is
- * missing, 7 when only secondary sources are, 6 when nothing is.
- */
 const scoreFoundSources: TaskScorer<FindOfficialSourcesExpected> = ({ output, testCase }) => {
   const found = parseOutput(output);
   const expected = testCase.expected;

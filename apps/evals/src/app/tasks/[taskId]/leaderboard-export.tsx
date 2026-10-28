@@ -13,7 +13,6 @@ import {
 import { downloadFile } from "@zoonk/utils/download";
 import { Download } from "lucide-react";
 
-/** The budget column only shows for tasks that have a latency budget. */
 function getMetricHeaders(showBudget: boolean): string[] {
   return [
     "Accuracy",
@@ -78,7 +77,6 @@ export function LeaderboardExport({
     let markdown = "";
 
     if (anonymous) {
-      // Export with position, average score, duration, and cost only
       markdown = `| Position | Avg Score | ${categoryHeaders ? `${categoryHeaders} | ` : ""}${metricHeaders.join(" | ")} |\n`;
       markdown += `| ${anonymousDivider} |\n`;
 
@@ -87,7 +85,6 @@ export function LeaderboardExport({
         markdown += `| ${index + 1} | ${entry.averageScore.toFixed(2)} | ${categoryScores ? `${categoryScores} | ` : ""}${formatMetrics({ entry, showBudget })} |\n`;
       }
     } else {
-      // Export all data
       markdown = `| Model | Provider | Reasoning | Avg Score | ${categoryHeaders ? `${categoryHeaders} | ` : ""}${metricHeaders.join(" | ")} |\n`;
       markdown += `| ${fullDivider} |\n`;
 

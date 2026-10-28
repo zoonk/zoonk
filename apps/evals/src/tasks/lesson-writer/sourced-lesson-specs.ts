@@ -1,10 +1,5 @@
 import { type LessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
 
-/**
- * Lessons of goals built from official sources: the passages research stored for the goal,
- * formatted as the writer, the fix pass and the reviewer read them. Their facts (a deadline that
- * moves every year, a stability period many learners remember wrong) must come from the source.
- */
 type SourcedLesson = {
   chapterTitle: string;
   courseTitle: string;

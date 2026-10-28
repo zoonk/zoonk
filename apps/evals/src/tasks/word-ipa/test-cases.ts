@@ -1,20 +1,7 @@
 import { type TestCase } from "@/lib/types";
 import { type WordIpaParams } from "@zoonk/ai/tasks/v2/language/word-ipa";
 
-/**
- * Whether English spells the word the same (a word, or a name English speakers know), which decides
- * when the voice gets the word's IPA and a listen. Cases with both pronunciations in IPA also check
- * the sounds: they count when they're close to `native` and closer to it than to `english`. Most
- * look-alikes are words a voice has read, or could read, the English way; the other words include
- * ones that only resemble an English word ("Hund", "fútbol"), so the answer can't come from looks.
- */
-export type WordIpaExpected = {
-  isLookAlike: boolean;
-  /** How the word sounds in its language, when the case checks the sounds. */
-  native?: string;
-  /** How English reads the same spelling, when the case checks the sounds of a look-alike. */
-  english?: string;
-};
+export type WordIpaExpected = { isLookAlike: boolean; native?: string; english?: string };
 
 type WordIpaInput = Pick<WordIpaParams, "language" | "word">;
 

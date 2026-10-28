@@ -94,10 +94,6 @@ export function TaskModelActionsCard({
   );
 }
 
-/**
- * Uses the action card's real header, content rows, badge, and button geometry
- * so filesystem-backed state can stream in without resizing the card.
- */
 export function TaskModelActionsCardSkeleton() {
   return (
     <Card aria-hidden="true">

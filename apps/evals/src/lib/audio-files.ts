@@ -1,10 +1,8 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
-/** Generated audio lives next to the saved outputs, so a run can be scored and listened to later. */
 const AUDIO_DIR = path.join(process.cwd(), "eval-results", "audio");
 
-/** Saves a generated MP3 clip and returns its path relative to the audio folder. */
 export async function saveEvalAudio({
   audio,
   modelId,

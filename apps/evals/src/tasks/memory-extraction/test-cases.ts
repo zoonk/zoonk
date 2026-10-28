@@ -2,27 +2,22 @@ import { type TestCase } from "@/lib/types";
 import { type MemoryExtractionParams } from "@zoonk/ai/tasks/v2/memory/extraction";
 import { type MemoryFactCategory } from "@zoonk/ai/tasks/v2/memory/facts";
 
-/** A fact the output must hold: in one of these categories, with one of these words. */
 export type ExpectedFact = {
   categories: MemoryFactCategory[];
   keywords: string[];
   intent?: "forget" | "remember";
-  /** Accepted end dates, for inputs that name one. */
   expiresOn?: string[];
-  /** Words the evidence must quote, such as the learner's request to remember. */
   evidence?: string[];
 };
 
 export type MemoryExtractionExpected = {
   facts: ExpectedFact[];
-  /** Words no fact to remember may contain: passing states, other categories, injected text. */
   forbidden?: string[];
   maxFacts: number;
 };
 
 type ExtractionCase = TestCase<MemoryExtractionExpected, MemoryExtractionParams>;
 
-/** A Saturday, so "next Friday" is October 2 (or the Friday after, which the scorer also accepts). */
 const TODAY = "2026-09-26";
 
 function extractionCase({
@@ -101,7 +96,6 @@ export const TEST_CASES: ExtractionCase[] = [
     input: "Learner: I'm moving to Italy in June next year, can the examples be about life there?",
     language: "en",
   }),
-  // The date of the exam they study for is their goal's, which its notice can move.
   extractionCase({
     expected: { facts: [], forbidden: ["friday", "exam"], maxFacts: 0 },
     id: "en-chat-exam-date",

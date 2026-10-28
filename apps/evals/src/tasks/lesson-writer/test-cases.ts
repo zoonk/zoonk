@@ -19,7 +19,6 @@ type LessonWriterInput = Omit<
   "analytics" | "model" | "reasoning" | "useFallback"
 >;
 
-/** What the workflow passes: the spec and the templates it picked, with their schemas. */
 function toInput(input: Omit<LessonWriterInput, "activityTemplates">): LessonWriterInput {
   return {
     ...input,
@@ -41,7 +40,6 @@ const SHARED_EXPECTATIONS = `
   - Don't evaluate JSON formatting
 `;
 
-/** The activity cases come first, so a small `--limit` run still checks the activities code runs. */
 export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
   {
     expectations: `
@@ -590,8 +588,6 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
     userInput: toInput(EXAM_PREP_LESSON),
   },
   {
-    // Juliana, TJ-SP (persona pass 12): the explanation after the first check opened by praising
-    // the question she had just missed.
     expectations: `
       - MUST be in Brazilian Portuguese, for candidates of the exam in EXAMS
       - The explanation right after the bicycle check starts from that check's question and its right answer (whose bicycle it is), and never says how the learner answered it: no praise ("você começou pela pergunta certa", "acertou") and no correction, since every learner reads it, including those who picked a wrong option
@@ -605,8 +601,6 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
     userInput: toInput(QUESTION_FIRST_EXAM_LESSON),
   },
   {
-    // Lucas, ENEM (persona pass 9): the guess marked 10 units right after 1.000, 120 and 14, then
-    // the lesson showed shares of 12% and 14% and said not to apply a 10% rule automatically.
     expectations: `
       - MUST be in Brazilian Portuguese, for candidates of the exam in EXAMS, who are finishing secondary school
       - The guess's answer agrees with its own chart and with the later screens: each of 1.000, 120 and 14 units is about 12% of the one before, so the group that eats the fish has about 1 or 2 units. The plan's 10 units (over 70% of 14) is never marked right or called a possible value, and nothing marked right rests on a fixed 10% rule, which a later screen says not to apply automatically
@@ -621,7 +615,6 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
     userInput: toInput(WALK_LESSONS["pt-piramide-energia"]),
   },
   {
-    // Lucas, ENEM (persona pass 8): the guess's table listed sensors A to E and its options A to D.
     expectations: `
       - MUST be in Brazilian Portuguese, for candidates of the exam in EXAMS, who are finishing secondary school
       - The guess shows the sensors' readings as a Markdown table and asks which sensor's readings are grouped and close to 50,0 mm, with sensor A (49,8 to 50,0 mm) right and a reveal that doesn't explain why yet
@@ -636,8 +629,6 @@ export const TEST_CASES: TestCase<never, LessonWriterInput>[] = [
     userInput: toInput(WALK_LESSONS["pt-precisao-sensores"]),
   },
   {
-    // Production lessons (13 Oct 2026) wrote "0,30 \times 0,20" in LaTeX math, which shows as a
-    // list ("0, 30"); code checks every number for the language's format.
     expectations: `
       - MUST be in Brazilian Portuguese, for intermediate learners, explanation first
       - Every number is written the Brazilian way: a decimal comma (3,844), thousands grouped with a dot (384.400; 203.000.000 or 203 milhões), and inside LaTeX math the decimal comma braced (3{,}844 \\times 10^{5}) so it reads as one number

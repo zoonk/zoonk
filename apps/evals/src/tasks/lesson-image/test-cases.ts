@@ -1,11 +1,9 @@
 import { type ImageScene } from "@zoonk/ai/tasks/v2/images/scene-schema";
 
 export type LessonImageInput = {
-  /** Names the saved image file. */
   caseId: string;
   scene: ImageScene;
   language: string;
-  /** The course category that picks the palette. */
   category: string | null;
 };
 
@@ -26,10 +24,6 @@ const TEXT_RULE =
 const NO_TEXT_RULE =
   "The image must contain no text at all: any letters, numbers or captions are a major error.";
 
-/**
- * The mockup board's six examples, a whole with labeled parts and a comparison: fixed scenes, so
- * the comparison isolates the image model and the style block from scene writing.
- */
 export const TEST_CASES = [
   {
     expectations: `One idea: a discount. An old tag with "antes R$ 80" crossed out, a new tag with "você paga R$ 60" and a -25% badge between them. ${TEXT_RULE}`,

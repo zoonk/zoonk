@@ -4,13 +4,8 @@ import { type FindExamDateExpected } from "./task";
 
 type FindExamDateCase = TestCase<FindExamDateExpected, FindExamDateParams>;
 
-/** A Monday in October 2026, the day the owner typed his goal. */
 const TODAY = "2026-10-05";
 
-/**
- * Real exams as learners name them on 5 Oct 2026. Exams with a published notice expect its day
- * and an official source; the rest only expect no day that wasn't read from an official page.
- */
 export const TEST_CASES: FindExamDateCase[] = [
   {
     expected: {

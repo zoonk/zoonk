@@ -12,7 +12,6 @@ const TASK_ID = "mind-map-image";
 
 type MindMapImageOutput = { imagePath: string; language: string; structure: MindMapStructure };
 
-/** The words count as much as the rest together: a misspelled map can't ship, however pretty. */
 const TEXT_WEIGHT = 100;
 const MAX_SCORE = 10;
 const MIN_SCORE = 1;
@@ -42,10 +41,6 @@ const scoreCategories = defineScoreCategories([
   },
 ]);
 
-/**
- * The production text check (every word read back and compared with the structure) as its own
- * category: full marks when it passes, two points off for each word that isn't the map's.
- */
 async function scoreText({
   image,
   language,
@@ -125,11 +120,6 @@ async function generate({
   };
 }
 
-/**
- * Draws real chapters' mind maps from fixed structures and scores them on what matters most, the
- * words (the production check reads every one back), then the layout and style with a vision judge
- * from another family.
- */
 export const mindMapImageTask: Task<MindMapImageInput, MindMapImageOutput> = {
   description: "Draw a chapter's mind map with every word exactly as its structure says",
   generate,

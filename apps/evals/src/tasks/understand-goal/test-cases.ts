@@ -4,7 +4,6 @@ import { type UnderstandGoalExpected } from "./scorer";
 
 type UnderstandGoalCase = TestCase<UnderstandGoalExpected, UnderstandGoalInput>;
 
-/** A Saturday in 2026: "this year" is 2026 and "in 6 months" is late March 2027. */
 const TODAY = "2026-09-26";
 
 function testCase(
@@ -73,7 +72,6 @@ export const TEST_CASES: UnderstandGoalCase[] = [
     goal: "preciso falar inglês numa entrevista de emprego em toronto daqui a 3 meses. sou analista de dados e meu inglês é intermediário",
     language: "pt",
   }),
-  // Persona pass 9: the course came back as "medicina", so a sentence opened "medicina na UFMG…".
   testCase("pt-exam-enem-medicina-ufmg", {
     expected: {
       goals: [
@@ -161,7 +159,6 @@ export const TEST_CASES: UnderstandGoalCase[] = [
     goal: "get band 7 on the IELTS by March",
     language: "en",
   }),
-  // A language certificate's goal needs the language it certifies: its speaking paper is a call in it.
   testCase("pt-exam-dele-b2-language", {
     expected: {
       goals: [{ examName: /dele/iu, kind: "exam", targetLanguage: "es" }],
@@ -332,7 +329,6 @@ export const TEST_CASES: UnderstandGoalCase[] = [
     goal: "music theory and ear training",
     language: "en",
   }),
-  // The music goal example: learning music without naming an instrument is a goal, not the waitlist.
   testCase("pt-learn-music-zero", {
     expected: { goals: [{ kind: "learn", ownLevel: "none" }], route: "goals" },
     goal: "Aprender música do zero",

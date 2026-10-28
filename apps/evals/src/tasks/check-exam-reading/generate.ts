@@ -14,15 +14,12 @@ import { type EvalDocument, loadDocument } from "../extract-exam-blueprint/gener
 export type CheckReadingEvalInput = {
   documents: EvalDocument[];
   exam: string;
-  /** The reading's subjects, as research gives them to the check. */
   subjects: ReadSubject[];
   total: number | null;
 };
 
-/** The model's findings, and the problems research keeps from them once code checked each one. */
 export type CheckReadingEvalOutput = ExamReadingFindings & { problems: ReadingProblem[] };
 
-/** A stored reading with only what the problems are found against: its subjects and total. */
 function toContent({ subjects, total }: CheckReadingEvalInput): BlueprintContent {
   return {
     edition: {

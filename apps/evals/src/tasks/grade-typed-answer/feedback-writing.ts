@@ -1,9 +1,7 @@
 const HTML_ENTITY = /&(?:#\d+|#x[\da-f]+|[a-z]+);/iu;
 
-/** Words quoted from the learner keep their spelling, so they're left out of the check. */
 const QUOTED = /"[^"]*"|“[^”]*”|'[^']*'|‘[^’]*’|«[^»]*»/gu;
 
-/** Portuguese words that are never written without their accent. */
 const ACCENTED_WORDS = new Set([
   "alem",
   "apos",
@@ -22,13 +20,8 @@ const ACCENTED_WORDS = new Set([
   "voces",
 ]);
 
-/** Endings that always carry an accent or cedilla: "-ção", "-ções", "-ência", "-ância". */
 const UNACCENTED_ENDING = /(?:cao|coes|encia|ancia)$/u;
 
-/**
- * Portuguese has no diaeresis since 2009, so "vocë" or "trës" is a botched "ê" (the model wrote
- * U+00EB, one code point off U+00EA).
- */
 const DIAERESIS = /[äëïöü]/iu;
 
 function isMisaccented(word: string): boolean {
@@ -48,11 +41,6 @@ function findMisaccentedWord(text: string): string | null {
   return words.find((word) => isMisaccented(word)) ?? null;
 }
 
-/**
- * What makes the grader's feedback unreadable as written, or null when it's fine: HTML entities
- * in any language, and Portuguese written without its accents or with the wrong ones (the learner
- * sees "nao", "voce", "vocë").
- */
 export function findFeedbackWritingIssue({
   feedback,
   language,
@@ -72,17 +60,9 @@ export function findFeedbackWritingIssue({
   return misaccented ? `"${misaccented}" written without its right accent` : null;
 }
 
-/**
- * Openings that call the whole answer right ("Well done!", "Correct."): feedback that starts so
- * on an answer marked wrong tells the learner the opposite of the verdict.
- */
 const PRAISE_OPENING =
   /^(?:muito bem|correto|certo|exatamente|perfeito|isso mesmo|otimo|excelente|parabens|well done|correct|exactly|perfect|great|excellent)\b/u;
 
-/**
- * Feedback that praises an answer the grade marks wrong, or null when the feedback follows the
- * verdict.
- */
 export function findPraiseMismatch({
   feedback,
   isCorrect,

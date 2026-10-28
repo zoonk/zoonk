@@ -14,7 +14,6 @@ import Link from "next/link";
 
 const TOKENS_PER_MILLION = 1_000_000;
 
-/** Gateway prices are per token; people compare them per million tokens. */
 function formatPricing(pricing?: ModelPricing): string {
   if (!pricing) {
     return "No gateway price";
@@ -60,10 +59,6 @@ export function ModelCard({
   );
 }
 
-/**
- * Keeps the model grid stable while fresh output and result files determine
- * each model's order and status.
- */
 export function ModelCardSkeleton() {
   return (
     <Item aria-hidden="true" variant="outline">

@@ -6,23 +6,13 @@ type WalkLesson = Pick<
   "chapterTitle" | "courseTitle" | "exams" | "language" | "level"
 > & { spec: LessonSpec };
 
-/** The ENEM as its goals' shared lessons read it: the notice's formats and scoring (`toItemExam`). */
 const ENEM_EXAM = {
   name: "ENEM",
   style:
     "multipleChoice (5 options): Múltipla escolha com cinco alternativas, de A a E essay: Redação dissertativo-argumentativa de até 30 linhas Teoria de Resposta ao Item: um acerto vale mais quando o padrão de respostas é coerente.",
 };
 
-/**
- * Shared lessons of Lucas's ENEM goal that persona walks found flawed (Oct 2026), with the plan the
- * writer read: the stored plan when the lesson still exists, else one rebuilt from the screens the
- * walk recorded.
- */
 export const WALK_LESSONS: Record<"pt-piramide-energia" | "pt-precisao-sensores", WalkLesson> = {
-  /**
-   * The stored plan (9 Oct 2026). Its guess reveals 10 units after 1.000, 120 and 14, a 71% share
-   * the lesson's own 12% and 14% contradict, and the writer marked it right.
-   */
   "pt-piramide-energia": {
     chapterTitle: "Relações ecológicas e ciclos da matéria",
     courseTitle: "Ciências da Natureza",
@@ -117,10 +107,6 @@ export const WALK_LESSONS: Record<"pt-piramide-energia" | "pt-precisao-sensores"
       title: "Fluxo de energia e pirâmides tróficas",
     },
   },
-  /**
-   * Rebuilt from the screens the walk recorded (8 Oct 2026; the lesson was deleted since). Its
-   * guess listed sensors A to E in a table and offered A to D, so sensor E couldn't be picked.
-   */
   "pt-precisao-sensores": {
     chapterTitle: "Grandezas e representações físicas",
     courseTitle: "Ciências da Natureza",

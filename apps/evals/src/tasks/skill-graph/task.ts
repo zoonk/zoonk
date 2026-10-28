@@ -7,7 +7,6 @@ import { SKILL_GRAPH_SCORE_CATEGORIES } from "./score-categories";
 import { type SkillGraphOutput, scoreSkillGraph } from "./scorer";
 import { TEST_CASES } from "./test-cases";
 
-/** The graph with what code repaired in it, so the scorer counts those flaws too. */
 async function generate(params: SkillGraphParams) {
   const { repaired, ...result } = await generateSkillGraph(params);
   return { ...result, data: { ...result.data, repaired } };

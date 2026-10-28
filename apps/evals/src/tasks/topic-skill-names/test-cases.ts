@@ -28,11 +28,6 @@ function namesCase({
   };
 }
 
-/**
- * Topics as plan-edit-intent writes them from the learner's words, some with the learner's own
- * details (persona pass 9: Pedro's teacher's table, Carla's school, Marcos's interview), and one
- * already generic, which keeps its subject.
- */
 export const TEST_CASES: TopicSkillNamesTestCase[] = [
   namesCase({
     id: "class-test-teacher",

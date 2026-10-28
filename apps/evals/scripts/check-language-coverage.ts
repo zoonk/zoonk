@@ -1,15 +1,7 @@
-/**
- * Lists every task's cases per language and how many came from production
- * samples, and fails when a task lacks English or Portuguese cases or has a
- * case whose language can't be told. No model is called.
- *
- *   pnpm eval:languages
- */
 import { REQUIRED_LANGUAGES, UNKNOWN_LANGUAGE, getTestCaseLanguage } from "@/lib/case-languages";
 import { type RegisteredTask } from "@/lib/types";
 import { TASKS } from "@/tasks";
 
-/** Enough ids to find the cases without flooding the table. */
 const MAX_LISTED_IDS = 5;
 
 type TaskCoverage = {

@@ -6,12 +6,6 @@ type WriteListeningSetInput = Omit<
   "analytics" | "model" | "reasoning" | "serviceTier" | "useFallback"
 >;
 
-/**
- * Task descriptions follow the exam owners' format pages (ielts.org, ets.org/toefl,
- * examenes.cervantes.es, cambridgeenglish.org, goethe.de; checked 9 Oct 2026), worded the way a
- * notice reading stores a listening section's parts. Cases run in this order, so a small `--limit`
- * covers an English learner, a Portuguese learner, typed answers and a recording played twice.
- */
 export const TEST_CASES: TestCase<unknown, WriteListeningSetInput>[] = [
   {
     expectations: `IELTS Listening Part 1 for an English-speaking learner: a phone or face-to-face conversation between two people in an everyday social context (booking, registering, enquiring), at the real length of about 4 to 5 minutes (600 words or more) even though only 5 of the part's 10 questions are asked, with form or note completion answered in no more than two words and/or a number. The answers are names (spelled out letter by letter), numbers, dates, prices or addresses said in the recording; one or two answers come right after a speaker corrects themselves. Accepted answers include the spelled name and numbers as digits, each within the two-word limit and listed once. Speakers mix the British and Australian accents listed.`,

@@ -52,11 +52,6 @@ function scorePlanted({
   return blocking.length > 0 ? 7 : 6;
 }
 
-/**
- * A reviewer earns full marks when it blocks a planted defect on its screen
- * with a fitting kind and passes clean lessons. Blocking a clean lesson for a
- * made-up error costs the most, since it holds back good lessons.
- */
 export const scoreLessonQualityCheck: TaskScorer<LessonQualityCheckExpected> = ({
   output,
   testCase,

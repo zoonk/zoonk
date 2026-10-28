@@ -12,10 +12,6 @@ const SHARED_EXPECTATIONS = `
   - Don't evaluate JSON formatting
 `;
 
-/**
- * The learner's facts and goal as production hands them over, on a real screen of the lesson they
- * study. `idea` is the example slot the writer leaves on that screen.
- */
 function personaCase({
   expectations,
   id,
@@ -46,7 +42,6 @@ function personaCase({
   };
 }
 
-/** Example lines for the seed learners (shared eval dataset), in English and Portuguese. */
 export const PERSONA_TEST_CASES: TestCase<never, ExampleLinesInput>[] = [
   personaCase({
     expectations: `

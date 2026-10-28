@@ -29,11 +29,6 @@ function sameWords(left: readonly string[], right: readonly string[]): boolean {
   return JSON.stringify(left.toSorted()) === JSON.stringify(right.toSorted());
 }
 
-/**
- * Scores the words a grader flagged in a clip against its labels. Hiding a
- * mistake, or flagging a sentence said right, decides most of the score and
- * the exact flagged words the rest, so every speech eval grades the same way.
- */
 export function scoreFlaggedWords({
   expected,
   flagged,
@@ -53,11 +48,6 @@ export function scoreFlaggedWords({
   };
 }
 
-/**
- * Scores a transcript by what the product does with it: compare it with the
- * expected sentence and flag words. A model that "hears" the right word when
- * the learner said another one hides the mistake.
- */
 export const scoreSpeechTranscript: TaskScorer<SpeechClipExpected> = ({ output, testCase }) => {
   if (!testCase.expected) {
     throw new Error(`Test case ${testCase.id} has no labeled words.`);

@@ -19,7 +19,6 @@ function readPercent(cell: string): number | null {
   return value === undefined ? null : Number(value.replace(",", "."));
 }
 
-/** Each line whose cells are all percentages, as its total. */
 function sumShares(lines: readonly (readonly string[])[]): number[] {
   return lines
     .map((cells) => cells.map((cell) => readPercent(cell)))
@@ -27,7 +26,6 @@ function sumShares(lines: readonly (readonly string[])[]): number[] {
     .map((values) => values.reduce<number>((sum, value) => sum + (value ?? 0), 0));
 }
 
-/** Shares of one question add up to 100, whether the question runs down a column or along a row. */
 function sharesAddUp(table: NonNullable<ExamSpeakingCardOutput["table"]>): boolean {
   const columns = table.columns.map((_, index) => table.rows.map((row) => row[index] ?? ""));
   const sums = [...sumShares(columns), ...sumShares(table.rows)];
@@ -71,7 +69,6 @@ function checkMaterial({
   return sharesAddUp(table) ? null : "The table's shares of one question don't add up to 100.";
 }
 
-/** The card's parts: instructions, prompts, the task's material, and a script with its opening. */
 function checkCard({
   input,
   output,
@@ -98,7 +95,6 @@ function checkCard({
   return { judgedOutput: output, passed: total - problems.length, problems, total };
 }
 
-/** Code checks the card's structure and material; the judge scores it against the exam's sheet. */
 export const scoreExamSpeakingCardOutput: TaskScorer = ({ output, testCase }) =>
   scoreWithCodeChecks({
     check: (value) =>

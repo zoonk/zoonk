@@ -1,8 +1,3 @@
-/**
- * Essays written for this eval, each built to land in a known band: a strong
- * one, a mid one whose proposal lacks the means, a weak one full of norm
- * errors, an off-topic one and one too short to grade.
- */
 export const ENEM_ESSAYS = {
   midFoodWaste: `Atualmente, o desperdício de alimentos é um problema grave no Brasil. Segundo a Organização das Nações Unidas, cerca de um terço da comida produzida no mundo vai para o lixo, e o nosso país está entre os que mais desperdiçam. Esse problema acontece, principalmente, por causa dos hábitos da população e da falta de políticas públicas.
 
@@ -39,7 +34,6 @@ Outro ponto é que na escola os professor manda ler uns livro muito antigo, que 
 Portanto as escolas deve criar clubes de leitura com livros que os jovens escolhe, por meio de encontros toda semana na biblioteca da escola, para que eles comece a ler por prazer e nao so pra prova. Assim o Brasil vai ter mais leitor.`,
 };
 
-/** A Cebraspe discursive answer, an IELTS Task 2 essay and an OAB legal brief. */
 export const OTHER_ESSAYS = {
   cebraspeLai: `A Lei n.º 12.527/2011, conhecida como Lei de Acesso à Informação (LAI), regulamenta o direito constitucional de acesso a informações públicas e consagra a publicidade como regra e o sigilo como exceção.
 
@@ -90,7 +84,6 @@ Belo Horizonte, data.
 Advogado, OAB n.º...`,
 };
 
-/** Answers to original AP-style free-response questions, scored by rows with their own points. */
 export const AP_ANSWERS = {
   biologyEnzymes: `(a) The independent variable is the temperature of the water bath.
 

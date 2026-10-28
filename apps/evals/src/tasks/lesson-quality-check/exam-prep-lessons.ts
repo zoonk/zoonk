@@ -1,11 +1,6 @@
 import { type WrittenLesson } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
 import { EXAM_PREP_LESSON } from "../lesson-writer/exam-prep-lesson-spec";
 
-/**
- * A shared lesson written for an exam's candidates: Sol's draft of "Purposes of the OAB" from the
- * lesson-writer eval with the exam in `EXAMS` (7 Oct 2026). It names the OAB, the Constitution and
- * the Statute without explaining them, as law candidates know them, and cites art. 44.
- */
 const lesson: WrittenLesson = {
   screens: [
     {

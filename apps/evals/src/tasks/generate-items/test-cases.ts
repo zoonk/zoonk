@@ -5,7 +5,6 @@ type GenerateItemsInput = Omit<GenerateItemsParams, "model" | "useFallback" | "r
 
 const ITEMS_PER_CASE = 3;
 
-/** Shared with the placement-items eval, so both tasks see the same exam styles. */
 export const ENEM = {
   name: "ENEM",
   optionCount: 5,
@@ -13,14 +12,12 @@ export const ENEM = {
     "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada.",
 };
 
-/** Shared with the placement-items eval, so both tasks see the same exam styles. */
 export const CEBRASPE = {
   name: "Cebraspe (concurso público)",
   style:
     "Cada item é uma afirmação sobre uma situação hipotética ou um conceito, julgada Certo ou Errado; um erro anula um acerto; as pegadinhas trocam conceitos, invertem exceções ou usam palavras absolutas.",
 };
 
-/** Shared with the placement-items eval, so both tasks see the same exam styles. */
 export const SAT_MATH = {
   name: "Digital SAT Math",
   optionCount: 4,
@@ -28,7 +25,6 @@ export const SAT_MATH = {
     "A short context or equation, one direct question and 4 options (A to D), or a student-produced numeric response; calculator allowed; plain, precise wording with no trick phrasing.",
 };
 
-/** JEE Advanced's sections: one or more correct options, and answers typed as numbers. */
 export const JEE_ADVANCED = {
   name: "JEE Advanced",
   optionCount: 4,
@@ -114,8 +110,6 @@ export const TEST_CASES: TestCase<unknown, GenerateItemsInput>[] = [
     },
   },
   {
-    // ENEM placement, Oct 2026 (persona pass 10): a quoted exchange in italics opened on its first
-    // line and closed on its last, so learners saw "_President: … here._" with its underscores.
     expectations: `ENEM-style Linguagens items in Brazilian Portuguese on linguistic variation in transcribed speech or verse: each item quotes a short exchange or poem of two or more lines in \`context\` and asks about the effect or adequacy of a variety, never judging it as wrong. Quoted lines use plain text or quotation marks, never italics or bold opened on one line and closed on another (the app reads each line on its own, so the marks would show). Every item needs 5 options, and distractors come from treating a variety as an error or ignoring the situation.`,
     id: "pt-enem-linguagens-falas-transcritas",
     userInput: {
@@ -134,8 +128,6 @@ export const TEST_CASES: TestCase<unknown, GenerateItemsInput>[] = [
     },
   },
   {
-    // ENEM's Spanish option, the practice writer's side of the placement case (10 Oct 2026): a
-    // Spanish text a reader of Portuguese understands from look-alike words tests nothing.
     expectations: `ENEM-style foreign language items for a Brazilian learner who chose Spanish: each item's support text is in Spanish (a notice, a chronicle, a website, an ad, a song, a comic strip or another real genre), while the command, the 5 options and the reasons are in Brazilian Portuguese. Never English, never a text-free grammar or translation drill. The answer must depend on words or structures of the Spanish text that a Portuguese reader can't infer from cognates, so a reader who knows only Portuguese can't pick it from the look-alike words or from the options alone, and the command never translates the words that settle it. Distractors come from real misreadings (a false friend, a cognate taken at face value, a detail read in isolation). The three texts differ in genre and situation and turn on different expressions. Check every key against the Spanish text.`,
     id: "pt-enem-espanhol-interpretacao-multiple-choice",
     userInput: {
@@ -248,8 +240,6 @@ export const TEST_CASES: TestCase<unknown, GenerateItemsInput>[] = [
     },
   },
   {
-    // Mocks offer a typed number to every skill of the exam's areas, so the writer tells which
-    // skills have no number to work out (r12-mocks, 10 Oct 2026).
     expectations: `No items: "Words in Context" is a Digital SAT Reading and Writing skill, choosing the most precise word for a passage, so it has no problem whose answer is one number the learner works out. The right output is an empty items list. Any item fails the case, above all one that forces a number onto the skill (counting words or letters, a line number, a year, a share of a passage).`,
     id: "en-sat-words-in-context-numeric-none",
     userInput: {
@@ -288,8 +278,6 @@ export const TEST_CASES: TestCase<unknown, GenerateItemsInput>[] = [
     },
   },
   {
-    // A mock start wrote three of these and stored none (10 Oct 2026): every step's expression
-    // named its variables in braces, and one stated answer didn't match its solution.
     expectations: `JEE Advanced numerical-answer physics items in English on straight-line kinematics whose answer is a non-negative whole number for every combination of the variable ranges, stored as math data. Every expression (the solution, each step's and each common mistake's) names variables bare, the stated answer is the solution's, and no question asks to round. Difficulty matches JEE Advanced's own numerical questions, not a textbook's: each problem needs several steps that combine at least two ideas (two stages of a motion, a relative motion set up and then solved).`,
     id: "en-jee-advanced-kinematics-integer",
     userInput: {
@@ -356,8 +344,6 @@ export const TEST_CASES: TestCase<unknown, GenerateItemsInput>[] = [
     },
   },
   {
-    // A lesson's typed question asked what to add, where to draw it and why at once, and the owner
-    // couldn't tell what to answer (Oct 2026): each question asks one clear thing.
     expectations: `Short written-answer items in Brazilian Portuguese for a 6th-grade science test on the parts of a cell. Each question is one direct instruction that says what to write and how long (for example "Em uma ou duas frases, diga..."), asks one thing or two linked parts at most (a thing and what it does, an effect and its reason), and never stacks several questions ("o que, onde e por quê") or uses a vague "explique com suas palavras": a learner can tell from the question alone what a right answer states. There is one key point (at most three) for each part the question asks for, each a single idea, never a hidden detail, place or term.`,
     id: "pt-school-ciencias-partes-da-celula-typed",
     userInput: {
@@ -378,9 +364,6 @@ export const TEST_CASES: TestCase<unknown, GenerateItemsInput>[] = [
     },
   },
   {
-    // A sound answer to "what check would you recommend?" was graded wrong for not naming a second
-    // technique its key points demanded (an ENEM placement, Oct 2026). Placement now confirms with
-    // quick questions outside languages, so this case keeps "any sound answer" questions covered.
     expectations: `Short-answer items in English for GCSE Combined Science on improving a practical investigation. Each question asks what the learner would do or check (a change that makes results more accurate or repeatable, a check before trusting a reading) as one direct instruction with its length ("In one or two sentences, suggest..."), asking one thing or two linked parts (a change and its reason) without giving the answer away. Many different answers are sound, so each key point states what every sound answer does (for example "names a change that reduces random error in the readings") and never one technique among several ("repeats each measurement three times and takes the mean") that another sound answer could replace; the sample answer is one sound answer among those the key points accept.`,
     id: "en-gcse-science-improve-practical-typed",
     userInput: {

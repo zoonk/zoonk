@@ -6,12 +6,7 @@ import {
 } from "@zoonk/ai/tasks/v2/identity/subject";
 import { isJsonObject } from "@zoonk/utils/json";
 
-/**
- * One labeled pair: the item a plan needs and one existing item the search found. Production
- * judges every candidate of a search in one call, so `others` are the other candidates beside it
- * (unlabeled, from other cases of the same kind and language) and `position` is where the labeled
- * one sits among them.
- */
+/** Candidates in `others` are unlabeled; `position` places the labeled candidate among them. */
 export type LibraryIdentityDecisionInput = {
   subject: LibraryIdentitySubject;
   candidate: LibraryIdentityItem;
@@ -35,10 +30,6 @@ function getGeneratedReuse(output: string): boolean | null {
   }
 }
 
-/**
- * Scores one labeled pair. Reusing the wrong item and generating a duplicate
- * both score 6 here; per-label accuracy shows which mistake a model makes.
- */
 export const scoreLibraryIdentityDecision: TaskScorer<LibraryIdentityDecisionExpected> = ({
   output,
   testCase,

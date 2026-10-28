@@ -20,13 +20,6 @@ function pictureCase({
   return { expected: { teaches: !decorative }, id, userInput: input };
 }
 
-/**
- * Pictures lesson plans asked for (Oct 2026): the lesson-spec eval's plans and the lesson-writer
- * eval's hand-written plans, labeled by hand when the owner asked that every picture teach. The
- * decorative ones repeat what the words say (a scene described in a sentence, numbers as price
- * tags or bars), draw text (a formula, a derivation), show what everyone knows (a camel), repeat
- * the picture before or give a check's answer away.
- */
 export const TEST_CASES: TestCase<PictureNeedExpected, PictureNeedInput>[] = [
   pictureCase({
     decorative: true,

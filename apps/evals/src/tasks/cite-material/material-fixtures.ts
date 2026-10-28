@@ -1,4 +1,3 @@
-/** A teacher's slides on cellular respiration (Portuguese), as lessons built from them read them. */
 export const GLYCOLYSIS_SLIDES = [
   '<page ref="S1:2" of="Aula 5 - Glicolise, slide 2">',
   "Por que as células respiram?",
@@ -31,7 +30,6 @@ export const GLYCOLYSIS_SLIDES = [
   "</page>",
 ].join("\n");
 
-/** A learner's own notes on supply and demand (English), cut into sections. */
 export const MARKET_NOTES = [
   '<page ref="S1:1" of="Econ notes">',
   "Demand: as price goes up, people buy less (law of demand). Shift vs movement: a price change moves along the curve; income or tastes shift the whole curve.",
@@ -44,7 +42,6 @@ export const MARKET_NOTES = [
   "</page>",
 ].join("\n");
 
-/** Official pages a shared lesson on US tax deadlines is written from, as research stores them. */
 export const IRS_PAGES = [
   '<page ref="S1:1" of="IRS, When to file">',
   "Individual taxpayers: the due date for filing your 2025 federal income tax return is April 15, 2026.",
@@ -57,7 +54,6 @@ export const IRS_PAGES = [
   "</page>",
 ].join("\n");
 
-/** Articles of Brazil's Constitution a shared lesson on public servants is written from. */
 export const CONSTITUTION_ARTICLES = [
   '<page ref="S1:1" of="Constituição Federal, Art. 41">',
   "Art. 41. São estáveis após três anos de efetivo exercício os servidores nomeados para cargo de provimento efetivo em virtude de concurso público.",
@@ -68,10 +64,6 @@ export const CONSTITUTION_ARTICLES = [
   "</page>",
 ].join("\n");
 
-/**
- * A student's own notes for a class test on the cell (Portuguese), pasted as one text: shorthand,
- * arrows and other forms of the words a lesson uses (a word's masculine form where the lesson uses its feminine).
- */
 export const CELL_NOTES = [
   '<page ref="S1:1" of="Seu texto">',
   "BIOLOGIA - 1º ANO B - Prof.ª Juliana",

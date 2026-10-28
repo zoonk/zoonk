@@ -8,11 +8,6 @@ import { AP_ANSWERS, ENEM_ESSAYS, OTHER_ESSAYS } from "./essays";
 
 type GradeEssayInput = Omit<GradeEssayParams, "model" | "useFallback" | "reasoning">;
 
-/**
- * What a trained examiner would give, as a band for the estimated total, the
- * criteria a teacher would accept as the one to work on next, and the ENEM
- * proposal elements that must be read correctly.
- */
 export type GradeEssayExpected = {
   totalBand: { min: number; max: number };
   nextStepCriteria: string[];

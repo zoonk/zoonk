@@ -1,17 +1,5 @@
 import { type TestCase } from "@/lib/types";
 
-/**
- * A labeled recording: what the learner was asked to say, what the clip
- * actually says, and the words of the expected sentence a good transcript
- * lets us flag. Speech checks flag what a listener wouldn't understand, not an
- * accent, so a word is labeled only when a native listener would understand
- * another word or form, or couldn't tell which word it was. A wrong form or a
- * missing word is always labeled; a slip the sentence still makes clear isn't
- * ("I sink it's cheap" can only mean "think"). There are no learner
- * recordings yet, so the clips are text-to-speech of `spokenText` (see
- * scripts/generate-speech-clips.ts): they test which slips a model keeps, not
- * how it handles real accents.
- */
 export type SpeechClipInput = { language: string; spokenText: string; targetText: string };
 
 export type SpeechClipExpected = { flaggedWords: string[] };
@@ -27,7 +15,6 @@ export const TEST_CASES: TestCase<SpeechClipExpected, SpeechClipInput>[] = [
     },
   },
   {
-    // "hent" could be "rent", "tent" or "hint": a listener can't tell which.
     expected: { flaggedWords: ["rent?"] },
     id: "en-rent-hent",
     userInput: {
@@ -73,7 +60,6 @@ export const TEST_CASES: TestCase<SpeechClipExpected, SpeechClipInput>[] = [
     },
   },
   {
-    // "th" said as "s" is an accent: "sink" makes no sense here, so a listener hears "think".
     expected: { flaggedWords: [] },
     id: "en-think-sink",
     userInput: {
@@ -92,7 +78,6 @@ export const TEST_CASES: TestCase<SpeechClipExpected, SpeechClipInput>[] = [
     },
   },
   {
-    // Another form of the verb: flagged even though the meaning stays clear.
     expected: { flaggedWords: ["está"] },
     id: "pt-estar",
     userInput: {
@@ -102,7 +87,6 @@ export const TEST_CASES: TestCase<SpeechClipExpected, SpeechClipInput>[] = [
     },
   },
   {
-    // Many Brazilians say "mas" like "mais", and "mas café" has no other meaning.
     expected: { flaggedWords: [] },
     id: "pt-mais-mas",
     userInput: {
@@ -135,7 +119,6 @@ export const TEST_CASES: TestCase<SpeechClipExpected, SpeechClipInput>[] = [
     },
   },
   {
-    // gpt-transcribe may write it in traditional characters (請問，圖書館在哪裡？): still right.
     expected: { flaggedWords: [] },
     id: "zh-library-correct",
     userInput: {
@@ -145,7 +128,6 @@ export const TEST_CASES: TestCase<SpeechClipExpected, SpeechClipInput>[] = [
     },
   },
   {
-    // Written without spaces, the whole sentence is one word to flag.
     expected: { flaggedWords: ["请问，图书馆在哪里？"] },
     id: "zh-library-station",
     userInput: {

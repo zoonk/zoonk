@@ -9,7 +9,6 @@ export type MemoryGateExpected = Pick<MemoryGateVerdict, "decision">;
 
 type GateCase = TestCase<MemoryGateExpected, MemoryGateInput>;
 
-/** Evidence is what extraction quoted: the learner's words or numbers. */
 function gateCase({
   candidate,
   decision,

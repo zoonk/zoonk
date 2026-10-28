@@ -11,10 +11,6 @@ import { PERSONA_TEST_CASES } from "./persona-cases";
 import { type PlanEditExpected, scorePlanEditIntent } from "./scorer";
 import { TEST_CASES } from "./test-cases";
 
-/**
- * Generation models turn the request into the planner's changes; evaluation models (Jev) can only
- * name the first change's kind, so their rows compare that choice alone.
- */
 export const planEditIntentTask: Task<PlanEditParams, unknown, PlanEditExpected> = {
   description: "Turn a learner's plain-words request into the plan changes the planner applies",
   evaluate: createChoiceEvaluation({

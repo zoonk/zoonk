@@ -6,7 +6,6 @@ type FindCourseWeightsCase = TestCase<FindCourseWeightsExpected, FindCourseWeigh
 
 const TODAY = "2026-10-07";
 
-/** ENEM's parts as its notice names them (re-read 7 Oct 2026). */
 const ENEM_PARTS = [
   "Linguagens, Códigos e suas Tecnologias",
   "Ciências Humanas e suas Tecnologias",
@@ -15,13 +14,8 @@ const ENEM_PARTS = [
   "Redação",
 ];
 
-/** A medical course never weighs the humanities above the natural sciences. */
 const MEDICINE_ORDER = [{ part: 3, than: 2 }];
 
-/**
- * Federal universities publish each course's SISU weights, so Medicina at UFMG has them; a made-up
- * institution has none, and then "unknown" is the only right answer.
- */
 export const TEST_CASES: FindCourseWeightsCase[] = [
   {
     expected: { atLeast: MEDICINE_ORDER, status: "found" },

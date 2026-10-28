@@ -4,16 +4,12 @@ import { type CourseOutlineParams } from "@zoonk/ai/tasks/v2/curriculum/course-o
 import { findMixedAreaChapters } from "@zoonk/ai/tasks/v2/curriculum/outline-areas";
 import { COURSE_OUTLINE_SCORE_CATEGORIES } from "./score-categories";
 
-/**
- * Tools the practical chapters of a case must name, as a case-insensitive pattern, such as
- * "python" for a Python course. Cases without it only need well-formed tools.
- */
+/** A case-insensitive pattern matched against practical chapters' tool names. */
 export type CourseOutlineExpected = { tool: string };
 
 type OutlineTool = { essential: boolean; name: string };
 type OutlineChapter = { skillKeys?: string[]; title: string; tools: OutlineTool[] };
 
-/** A tool is a generic name a learner would install or buy, not a sentence. */
 const MAX_TOOL_NAME_LENGTH = 60;
 const MAX_TOOL_NAME_WORDS = 8;
 const MAX_CHAPTER_TOOLS = 4;
@@ -58,7 +54,6 @@ function getToolProblems({
   ].filter((problem) => typeof problem === "string");
 }
 
-/** The pipeline's check (`findMixedAreaChapters`): an exam chapter keeps to one subject. */
 function getAreaProblems({
   chapter,
   params,
@@ -77,12 +72,6 @@ function getAreaProblems({
   );
 }
 
-/**
- * Each chapter is one part: its tools are generic names, at most four, and none in an overview
- * band, and an exam's chapter keeps to one area. A case that expects a tool adds one part that
- * passes when some chapter names it. Neither changes what the judge scores, so it sees the whole
- * outline.
- */
 function checkOutline({
   expected,
   output,

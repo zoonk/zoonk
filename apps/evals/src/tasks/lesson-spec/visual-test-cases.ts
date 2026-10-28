@@ -2,12 +2,6 @@ import { type TestCase } from "@/lib/types";
 import { type LessonSpecParams } from "@zoonk/ai/tasks/v2/lesson-spec";
 import { listPlannerTemplates } from "@zoonk/core/library/activities/writer-templates";
 
-/**
- * Whether a lesson needs pictures (`visual` on some screen), must have none, or may go either way
- * when a native kind (a table, a chart, a timeline or an activity) can show what it needs; and the
- * activity templates its lessons must not plan, where a default one would only decorate (persona
- * passes 8 and 9: "Encontre o erro" in 43 of 61 exam activities, then categorize in 55 of 86).
- */
 export type LessonSpecExpected = {
   avoidTemplates?: readonly string[];
   pictures?: "any" | "none" | "some";
@@ -42,11 +36,6 @@ function visualCase({
   };
 }
 
-/**
- * Lessons whose ideas need seeing (Oct 2026, owner: "we shouldn't require users to imagine a
- * concept"), lessons where the app's own table, chart or timeline is the right visual, and one
- * that needs none. Run them alone with `--case visual-`.
- */
 export const VISUAL_TEST_CASES: VisualCase[] = [
   visualCase({
     chapterTitle: "The nervous system",

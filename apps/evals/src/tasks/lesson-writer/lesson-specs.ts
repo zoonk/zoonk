@@ -1,10 +1,5 @@
 import { type LessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
 
-/**
- * Lesson specs from the lesson-spec eval (26 Sep 2026), so the writer is
- * judged on the plans production makes: Sol's plans, and Opus's where they
- * use an activity the player can draw.
- */
 export const LESSON_SPECS = {
   "en-particle-in-a-box-advanced": {
     canDo: "Derive and use the quantized energy levels of a particle in a box",
@@ -342,11 +337,6 @@ export const LESSON_SPECS = {
     supportMode: "explanationFirst",
     title: "Por que o elétron não cai no núcleo",
   },
-  /**
-   * A hobby course's lesson on a cell's parts (26 Oct 2026): its application, Iara's diagram with
-   * nothing between the membrane and the genetic material, came out as a typed answer, though
-   * its learner takes no exam that asks them to write.
-   */
   "pt-partes-da-celula-hobby": {
     canDo: "Reconhecer a membrana, o citoplasma e o material genético de uma célula",
     description:

@@ -8,12 +8,8 @@ import {
 import { TEST_CASES } from "./test-cases";
 
 export type FindCourseWeightsExpected = {
-  /**
-   * Parts (1-based) a found answer must weigh at least as much as `than`: a medical course never
-   * counts the humanities more than the natural sciences. Empty when nothing is expected.
-   */
+  /** Uses 1-based part numbers; an empty list imposes no relative weight requirements. */
   atLeast: { part: number; than: number }[];
-  /** `found` when the institution publishes the course's weights; `unknown` when none exist. */
   status: "found" | "unknown";
 };
 
@@ -25,7 +21,6 @@ function parseOutput(output: string): CourseWeightsFinding | null {
   }
 }
 
-/** The expected orderings a found answer breaks. */
 function findWrongOrder({
   expected,
   weights,
@@ -43,11 +38,6 @@ function findWrongOrder({
   });
 }
 
-/**
- * 10 for weights in a plausible order with their source (or "unknown" where none exist); 8 for
- * weights it missed, which only leaves the plan weighing parts evenly; 6 for weights that can't be
- * the course's or that were made up for a course with none, which would weigh the plan wrong.
- */
 const scoreCourseWeights: TaskScorer<FindCourseWeightsExpected> = ({ output, testCase }) => {
   const found = parseOutput(output);
   const expected = testCase.expected;

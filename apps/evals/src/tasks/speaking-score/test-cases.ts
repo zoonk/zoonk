@@ -8,12 +8,6 @@ import { TOEFL_TEST_CASES } from "./toefl-test-cases";
 const examiner = (text: string): ConversationTurn => ({ speaker: "character", text });
 const candidate = (text: string): ConversationTurn => ({ speaker: "learner", text });
 
-/**
- * Transcripts written at a known level for one task of each paper, with the window a rater would
- * give on the exam's own scale: DELE and DELF rate 0 to 3 with 2 at the level, Goethe 0 to 4 (E to
- * A), Cambridge 0 to 5 in half bands with 3 at the level. Different exams come first so a small run
- * covers them.
- */
 const PAPER_TEST_CASES: TestCase<SpeakingScoreExpected, SpeakingScoreInput>[] = [
   {
     expectations: `A DELE B2 candidate at the level (band 2 on every criterion, 0 to 3): weighs four of the traffic proposals with connectors ("por un lado", "sin embargo", "en cambio"), gives reasons and answers the examiner's questions, with a few B2 slips ("si tendría más tiempo", "la gente están"). Evidence and tips in Brazilian Portuguese quoting the Spanish. Fluency is about how the speech flows, never accent.`,

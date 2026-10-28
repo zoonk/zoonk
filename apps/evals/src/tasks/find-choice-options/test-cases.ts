@@ -6,11 +6,6 @@ type FindChoiceOptionsCase = TestCase<FindChoiceOptionsExpected, FindChoiceOptio
 
 const TODAY = "2026-10-07";
 
-/**
- * Real exams whose notice or page says the questions are multiple choice without always saying
- * how many options: the Enem (A to E) and the OAB's first phase (A to D) publish every paper, so the
- * number is found in their latest editions.
- */
 export const TEST_CASES: FindChoiceOptionsCase[] = [
   {
     expected: { options: 5 },

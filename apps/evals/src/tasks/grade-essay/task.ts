@@ -12,7 +12,6 @@ const NO_USAGE = { inputTokens: 0, outputTokens: 0 };
 export const gradeEssayTask: Task<GradeEssayParams, EssayGrade, GradeEssayExpected> = {
   description:
     "Grade essays with the ENEM competencies, OAB brief sections or custom criteria, with quotes, examples and one next step; code-scored against expected score bands",
-  // Texts too short to grade are settled in code and report no usage.
   generate: async (input) => {
     const result = await gradeEssay(input);
     return { ...result, usage: result.usage ?? NO_USAGE };

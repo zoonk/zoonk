@@ -1,11 +1,6 @@
 import { type MindMapStructure } from "@zoonk/ai/tasks/v2/mind-maps/schema";
 
-export type MindMapImageInput = {
-  /** Names the saved image file. */
-  caseId: string;
-  language: string;
-  structure: MindMapStructure;
-};
+export type MindMapImageInput = { caseId: string; language: string; structure: MindMapStructure };
 
 const EXPECTATIONS =
   "A square hand-drawn mind map on a plain white background: the title in a central cloud, the central idea near the top, every branch numbered in its own color with its sentence, bullets and a small sketch, the comparison table when there is one and the summary line at the bottom. Every word is lettered exactly as the structure says, legible at full size; sketches carry no words.";
@@ -19,11 +14,6 @@ function branch(
   return { drawing, explanation, points, title };
 }
 
-/**
- * Four real chapters' maps as Haiku 5.5 wrote them from the lessons (7 Oct 2026): fixed structures,
- * so the comparison isolates the image model. Dense Portuguese with accents, math notation (f(x),
- * x², ÷, R$), a three-column comparison and a six-branch English map.
- */
 export const TEST_CASES = [
   {
     expectations: EXPECTATIONS,

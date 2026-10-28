@@ -3,7 +3,6 @@ import { type TestCase } from "@/lib/types";
 import { type UnderstandGoalInput } from "@zoonk/ai/tasks/v2/goals/understand-goal";
 import { type UnderstandGoalExpected } from "./scorer";
 
-/** A seed learner's goal exactly as they typed it in onboarding, on the dataset's fixed day. */
 function personaCase({
   expected,
   learnerKey,
@@ -20,7 +19,6 @@ function personaCase({
   };
 }
 
-/** The goals the seed learners typed (shared eval dataset), in English and Portuguese. */
 export const PERSONA_TEST_CASES: TestCase<UnderstandGoalExpected, UnderstandGoalInput>[] = [
   personaCase({
     expected: { goals: [{ kind: "learn", ownLevel: "none" }], route: "goals" },

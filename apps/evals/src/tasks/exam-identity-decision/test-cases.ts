@@ -1,7 +1,6 @@
 import { type TestCase } from "@/lib/types";
 import { type ExamIdentityExpected, type ExamIdentityInput } from "./task";
 
-/** The language is the one the learner named the exam in. */
 function pair(
   id: string,
   language: string,

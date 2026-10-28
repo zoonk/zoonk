@@ -1,10 +1,5 @@
 import { type LessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
 
-/**
- * A plan whose worked steps write decimals and large numbers in LaTeX math, so the writer is
- * judged on writing them the way Brazilian Portuguese does: lessons written in production showed
- * "0,30 \times 0,20" as a list ("0, 30") where "0{,}30" reads as one number (13 Oct 2026).
- */
 export const SCIENTIFIC_NOTATION_SPEC = {
   canDo: "Escrever, comparar e multiplicar números em notação científica",
   description:

@@ -64,11 +64,6 @@ function averageEach(groups: Record<string, number[]>): Record<string, number> {
   return Object.fromEntries(Object.entries(groups).map(([key, values]) => [key, average(values)]));
 }
 
-/**
- * Flattens every judgment into rankings a judge was allowed to give. Older
- * battle files include judges scoring their own family; those are ignored so
- * historical leaderboards follow the same rule as new battles.
- */
 function getEligibleRankings(matchups: BattleMatchup[]): ScoredRanking[] {
   return matchups.flatMap((matchup) =>
     matchup.judgments.flatMap((judgment) =>
@@ -79,7 +74,6 @@ function getEligibleRankings(matchups: BattleMatchup[]): ScoredRanking[] {
   );
 }
 
-/** Adds one judge's score for one test case to a model's running totals. */
 function addRanking({
   scored: { judgeId, ranking, testCaseId },
   scores,
@@ -174,7 +168,6 @@ function buildLeaderboardEntry({
   };
 }
 
-/** Total spent on battle judges for a task, from the usage saved with each judgment. */
 export async function getBattleJudgeCost(taskId: string): Promise<number> {
   const prices = GATEWAY_PRICES;
   const matchups = await getBattleMatchups(taskId);

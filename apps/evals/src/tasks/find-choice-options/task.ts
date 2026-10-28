@@ -7,10 +7,7 @@ import {
 } from "@zoonk/ai/tasks/v2/research/find-choice-options";
 import { TEST_CASES } from "./test-cases";
 
-export type FindChoiceOptionsExpected = {
-  /** The options every recent edition's questions had. */
-  options: number;
-};
+export type FindChoiceOptionsExpected = { options: number };
 
 function parseOutput(output: string): ChoiceOptionsFinding | null {
   try {
@@ -20,11 +17,6 @@ function parseOutput(output: string): ChoiceOptionsFinding | null {
   }
 }
 
-/**
- * 10 for the options the latest editions had, with their source; 8 for a miss, which only leaves
- * the exam's questions written with the app's default; 4 for a wrong number, which would write
- * and pick every question for the exam with it.
- */
 const scoreChoiceOptions: TaskScorer<FindChoiceOptionsExpected> = ({ output, testCase }) => {
   const found = parseOutput(output);
   const expected = testCase.expected;

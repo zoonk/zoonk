@@ -6,14 +6,8 @@ type AlphabetLessonInput = Omit<
   "analytics" | "model" | "reasoning" | "useFallback"
 >;
 
-/** Whether the script joins its letters, so the letters must carry their positional forms. */
 export type AlphabetLessonExpected = { joined: boolean };
 
-/**
- * One case per kind of script: a syllabary, a featural alphabet that builds blocks, an alphabet
- * with false friends and a connected script with joining forms, for English and Portuguese
- * speakers.
- */
 export const TEST_CASES: TestCase<AlphabetLessonExpected, AlphabetLessonInput>[] = [
   {
     expectations: `The first hiragana for a US English speaker: the five vowels and the K row (か, き, く, け, こ), standard Hepburn romanization, vowels described as short and pure, no forms. The intro says hiragana stands for syllables, read left to right here. In US English.`,

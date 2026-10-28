@@ -7,7 +7,6 @@ function generalityCase(id: string, question: string, isGeneral: boolean) {
   return { expected: { isGeneral }, id, userInput: { question } };
 }
 
-/** Tutor questions sampled from production (`sample:production`) and labeled by hand. */
 function productionCase(id: string, question: string, isGeneral: boolean) {
   return { ...generalityCase(id, question, isGeneral), origin: "production" as const };
 }

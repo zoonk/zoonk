@@ -38,7 +38,6 @@ MAJOR-ERROR CAPS:
 - Answering in the wrong language: 7.0 or lower
 `;
 
-/** Beyond a lesson: a chapter, the learner's plan (with its course) or a finished mock. */
 const SCREEN_EXPECTATIONS = `
 EVALUATION CRITERIA:
 

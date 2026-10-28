@@ -6,13 +6,6 @@ import {
 } from "@zoonk/ai/tasks/v2/grading/grade-typed-answer";
 import { matchTypedAnswer } from "@zoonk/ai/tasks/v2/grading/typed-answer-match";
 
-/**
- * The plan's Jev use for open answers: one boolean question on the verdict and
- * one per key point after the same code pre-check production runs, plus one on
- * form in language practice. It returns the task's own output shape so the
- * typed-grading scorer compares it with generation models; a yes/no answer
- * can't name a correction, so a form mistake only shows in the verdict.
- */
 const INSTRUCTIONS = `Decide whether LEARNER_ANSWER states the key point below as an answer to QUESTION.
 The key point is met when the answer states its idea in any wording, including synonyms, paraphrases, everyday words and examples that clearly show it. It is not met when the answer leaves it out, stays too vague, only repeats the question or contradicts it. Judge meaning, not grammar, and ignore spelling slips.`;
 

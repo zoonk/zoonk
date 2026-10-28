@@ -7,10 +7,6 @@ import { type RegisteredTask, type TaskEvalResults } from "./types";
 
 export type ModelStatus = "completed" | "outputsReady" | "incomplete" | "notStarted";
 
-/**
- * Classifies a model against the task's currently required run ids so saved
- * results from old runs or removed cases cannot hide newly added test cases.
- */
 export async function getModelStatus(taskId: string, modelId: string): Promise<ModelStatus> {
   const task = getTaskById(taskId);
 
@@ -29,17 +25,14 @@ export async function getModelStatus(taskId: string, modelId: string): Promise<M
     testCases: task.testCases,
   });
 
-  // Has eval results
   if (completedRuns === totalRuns && totalRuns > 0) {
     return "completed";
   }
 
-  // Has partial eval results
   if (completedRuns > 0) {
     return "incomplete";
   }
 
-  // Has outputs but no eval results
   if (outputStatus.status === "complete") {
     return "outputsReady";
   }
@@ -47,11 +40,6 @@ export async function getModelStatus(taskId: string, modelId: string): Promise<M
   return "notStarted";
 }
 
-/**
- * Evaluation models can only run tasks that define an evaluation route, and
- * image, speech and transcription models only run tasks with that output,
- * which nothing else can run.
- */
 function supportsModel(task: RegisteredTask, model: ModelConfig): boolean {
   if (
     task.output ||
@@ -65,7 +53,6 @@ function supportsModel(task: RegisteredTask, model: ModelConfig): boolean {
   return model.kind === "generation" || Boolean(task.evaluate);
 }
 
-// Fetch model statuses and sort: notStarted -> outputsReady -> incomplete (filter out completed)
 export async function getSortedModels(task: RegisteredTask) {
   const modelWithStatus = await Promise.all(
     EVAL_MODELS.filter((model) => supportsModel(task, model)).map(async (model) => ({
@@ -93,10 +80,6 @@ export async function getSortedModels(task: RegisteredTask) {
   return sortedModels;
 }
 
-/**
- * Discovers result-bearing evaluation variants from saved outputs rather than
- * only the static model registry so reasoning levels appear as separate rows.
- */
 export async function getModelsWithResults(taskId: string): Promise<TaskEvalResults[]> {
   const allOutputs = await getAllOutputsForTask(taskId);
 

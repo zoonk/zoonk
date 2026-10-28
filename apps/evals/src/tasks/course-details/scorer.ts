@@ -7,17 +7,10 @@ import {
   SUBJECT_CATEGORIES,
 } from "@zoonk/ai/tasks/v2/courses/details";
 
-/**
- * The categories a course may be listed under first: the model passes when one of its
- * categories is one of these. Language and exam courses get theirs from what they are, so their
- * cases leave it out.
- */
 export type CourseDetailsExpected = { categories?: string[] };
 
-/** The page's limits, from the prompt: short enough to read at a glance. */
 const MAX_DESCRIPTION_SENTENCES = 3;
 const MAX_DESCRIPTION_LENGTH = 420;
-/** The promise sits under the course's name: two lines on a wide screen, three on a phone. */
 const MAX_PROMISE_LENGTH = 160;
 const MAX_CATEGORIES = 2;
 
@@ -38,7 +31,6 @@ function countSentences(text: string): number {
   return text.match(SENTENCE_END)?.length ?? 0;
 }
 
-/** A list the page reads at a glance: the prompt's number of items, none over its words. */
 function checkList({ details, field }: { details: CourseDetails; field: ListField }): string[] {
   const { items, words } = PAGE_LISTS[field];
   const list = details.landingPage[field];
@@ -89,11 +81,6 @@ function checkText(details: CourseDetails): string[] {
   ].filter((problem) => typeof problem === "string");
 }
 
-/**
- * The parts the page relies on: the description's length, the promise, each list's
- * size and item length, the categories (valid, one or two, and a primary domain) and no em dashes.
- * The judge sees the whole output; code checks carry their own share of the score.
- */
 function checkCourseDetails({
   expected,
   output,

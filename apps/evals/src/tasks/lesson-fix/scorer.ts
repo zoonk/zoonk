@@ -9,10 +9,6 @@ import { type LessonFixExpected } from "./test-cases";
 
 type FixOutput = { changedScreens: number[]; lesson: WrittenLesson };
 
-/**
- * Screens whose question was asked about its pictures (picture options, or a picture whose
- * numbers mark parts) and lost them in the fix: without them it can't be answered.
- */
 function lostPictures(before: WrittenLesson, after: WrittenLesson): number[] {
   return before.screens.flatMap((screen, index) => {
     if (screen.kind !== "check") {
@@ -37,7 +33,6 @@ function lostPictures(before: WrittenLesson, after: WrittenLesson): number[] {
   });
 }
 
-/** The lesson's screens as production converts them, with the problems its code checks find. */
 function checkLesson(input: FixLessonDraftParams, lesson: WrittenLesson) {
   return checkWrittenLesson({
     allowActivityFallback: true,
@@ -49,10 +44,6 @@ function checkLesson(input: FixLessonDraftParams, lesson: WrittenLesson) {
   });
 }
 
-/**
- * Questions that rested on a sentence of an earlier screen before the fix and no longer do: the
- * fix reworded that sentence, or the question's quote, so the player has nothing to mark.
- */
 function lostBases({
   after,
   input,
@@ -68,13 +59,6 @@ function lostBases({
     .filter((question) => !kept.has(question));
 }
 
-/**
- * A fix passes when the fixed lesson passes every code check production runs
- * after the fix pass (code activities run too), keeps the pictures its
- * questions are about and the sentences they rest on (every basis quoted exactly), and rewrote
- * every screen a problem named. Whether a reviewer's problem is really fixed is judged in
- * production by the second review, not here.
- */
 export const scoreLessonFix: TaskScorer<LessonFixExpected> = async ({ output, testCase }) => {
   const input = testCase.userInput as FixLessonDraftParams;
   const expected = testCase.expected;

@@ -8,10 +8,6 @@ import { type MemoryGateExpected, type MemoryGateInput, TEST_CASES } from "./tes
 
 type MemoryGateOutput = Pick<MemoryGateVerdict, "decision">;
 
-/**
- * Runs the production questions with the requested model and no fallback, so each row measures
- * that model, and turns the probabilities into the production verdict.
- */
 async function gateCandidate({ candidate, model }: MemoryGateInput & { model: string }) {
   const { answers, state, usage } = await evaluateQuestions({
     fallbackModel: model,
@@ -45,10 +41,6 @@ function getDecision(output: string): string | null {
   }
 }
 
-/**
- * Keeping a sensitive fact the learner didn't ask for is the costly mistake, so it scores lowest;
- * dropping a fact worth keeping loses personalization and scores in between.
- */
 const scoreMemoryGate: TaskScorer<MemoryGateExpected> = ({ output, testCase }) => {
   const decision = getDecision(output);
   const expected = testCase.expected?.decision ?? "keep";
@@ -64,7 +56,6 @@ const scoreMemoryGate: TaskScorer<MemoryGateExpected> = ({ output, testCase }) =
   return { ...createFixedScore({ conclusion, score: keptSensitive ? 6 : 7 }), classification };
 };
 
-/** The gate only runs as evaluation questions (Jev in production), so both routes ask them. */
 export const memoryGateTask: Task<MemoryGateInput, MemoryGateOutput, MemoryGateExpected> = {
   description:
     "Decide whether a candidate memory fact is lasting and, when sensitive, whether an adult explicitly asked to keep it",

@@ -12,14 +12,8 @@ import { WRITE_ITEM_SET_SCORE_CATEGORIES } from "./score-categories";
 
 type WriteItemSetCase = Pick<WriteItemSetParams, "examFormat" | "format" | "language" | "skills">;
 
-/** The set-level part of the checks: the stimulus and the number of askable questions. */
 const SET_CHECKS = 1;
 
-/**
- * The pipeline's checks, as production runs them before storing: the set's own (after
- * `repairWrittenItemSet`) and each question's item checks after code repaired what it can. The
- * judge sees the set with only the questions that pass.
- */
 function checkWriteItemSetOutput(output: string, input: WriteItemSetCase): CodeCheckResult {
   const set = repairWrittenItemSet(JSON.parse(output) as WrittenItemSet);
   const check = checkWrittenItemSet({ set, skillCount: input.skills.length });

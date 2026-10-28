@@ -13,7 +13,6 @@ function toLabel(passed: boolean | undefined): string {
   return passed ? "pass" : "fail";
 }
 
-/** Accuracy per label: letting a broken image through and rejecting a good one cost differently. */
 const scoreImageCheck: TaskScorer<ImageCheckExpected> = ({ output, testCase }) => {
   const { passed, problems } = JSON.parse(output) as ImageCheckVerdict;
 
@@ -44,10 +43,6 @@ async function generate({
   return checkLessonImage({ image, language, model, reasoning, scene, useFallback });
 }
 
-/**
- * The vision check every image passes before a lesson uses it. Cases are
- * images from the lesson-image eval labeled by hand, and planted failures.
- */
 export const imageCheckTask: Task<ImageCheckCaseInput, ImageCheckVerdict, ImageCheckExpected> = {
   description:
     "Decide whether a generated lesson image shows its scene, is on style and has correct text",

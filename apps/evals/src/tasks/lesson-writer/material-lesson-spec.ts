@@ -1,6 +1,5 @@
 import { type LessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
 
-/** A private lesson for a school test on Friday, planned from the teacher's slides. */
 export const MATERIAL_LESSON_SPEC: LessonSpec = {
   canDo: "Calcular o saldo de ATP da glicólise",
   description: "Mostra quanto ATP a glicólise gasta e produz, e por que o saldo é 2 por glicose.",

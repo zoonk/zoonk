@@ -16,7 +16,6 @@ const PRONUNCIATION_MODEL = "google/gemini-3.8-flash";
 const MAX_SCORE = 10;
 const MIN_SCORE = 1;
 
-/** Checks a look-alike word's clip the way voicing does, against the case's own IPA. */
 async function judgeLookAlike({
   audio,
   language,
@@ -52,16 +51,6 @@ function addUsage(left: TokenUsage, right?: TokenUsage): TokenUsage {
   };
 }
 
-/**
- * Listens to a clip the way learners' answers are checked, with two models from different
- * providers so neither grades its own family's voice alone: gpt-transcribe writes what it hears
- * and code compares it with the text word by word, and the pronunciation check (Gemini 3.8 Flash)
- * flags words a native listener wouldn't understand as written. A word also spelled as an English
- * word must sound like its own language too, checked the way voicing checks it but against the
- * case's own IPA (`judgeLookAlike`). A clip is read right when every
- * check passes; the score is the share of words both listeners heard right, or the minimum for a
- * look-alike read the English way.
- */
 export const scoreLanguageAudio: TaskScorer = async ({ output, testCase }) => {
   const input = testCase.userInput as LanguageAudioInput;
   const { audioPath } = JSON.parse(output) as LanguageAudioOutput;

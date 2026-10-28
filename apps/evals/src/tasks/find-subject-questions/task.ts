@@ -8,12 +8,8 @@ import {
 import { TEST_CASES } from "./test-cases";
 
 export type FindSubjectQuestionsExpected = {
-  /**
-   * Counts every recent edition kept, by subject number (1-based): a found answer must give
-   * these. Empty when only "unknown" or a self-consistent answer is acceptable.
-   */
+  /** Uses 1-based subject numbers; empty accepts unknown or a self-consistent answer. */
   counts: Record<number, number>;
-  /** `any` when a source may or may not exist: only counts that miss the total are wrong. */
   status: "any" | "found";
 };
 
@@ -25,7 +21,6 @@ function parseOutput(output: string): SubjectQuestionsFinding | null {
   }
 }
 
-/** Subjects whose count isn't the one every recent edition kept. */
 function findWrongCounts({
   expected,
   questions,
@@ -39,11 +34,6 @@ function findWrongCounts({
   });
 }
 
-/**
- * 10 for the counts the latest editions kept, with their source (or "unknown" where none is
- * expected); 8 for a missed distribution, which only leaves the plan weighing subjects evenly; 6
- * for wrong counts, which would weigh the plan wrong.
- */
 const scoreSubjectQuestions: TaskScorer<FindSubjectQuestionsExpected> = ({ output, testCase }) => {
   const found = parseOutput(output);
   const expected = testCase.expected;

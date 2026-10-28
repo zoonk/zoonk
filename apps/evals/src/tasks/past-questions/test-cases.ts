@@ -3,11 +3,6 @@ import { type ExtractPastQuestionsParams } from "@zoonk/ai/tasks/v2/items/past-q
 
 type PastQuestionsInput = Omit<ExtractPastQuestionsParams, "model" | "useFallback" | "reasoning">;
 
-/**
- * Excerpts written for these cases in each board's style (not real past papers), as a PDF
- * extractor writes them, each with an answer key and questions that must be left out: one needs
- * a figure or table the text doesn't carry, one tests a skill that isn't listed.
- */
 const ENEM_STYLE_PAPER = `ENEM 2022 – 2º DIA – CADERNO AZUL (trecho)
 QUESTÃO 141
 Uma loja de eletrodomésticos reajustou o preço de uma geladeira em 10% em janeiro. Em março,

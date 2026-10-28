@@ -25,11 +25,6 @@ export function getDefaultSortDirection(key: SortKey): SortDirection {
   return NUMERIC_SORT_KEYS.has(key) ? "desc" : "asc";
 }
 
-/**
- * Compare two leaderboard entries for a given sort key.
- * Always returns values for ascending order; caller applies direction.
- * For averageScore: implements tie-breaker using p50 latency (faster wins ties).
- */
 function compareEntries(a: LeaderboardEntry, b: LeaderboardEntry, key: SortKey): number {
   if (key === "averageScore") {
     const aRounded = roundScoreToFixed(a.averageScore);
@@ -47,14 +42,9 @@ function compareEntries(a: LeaderboardEntry, b: LeaderboardEntry, key: SortKey):
     return a[key] - b[key];
   }
 
-  // LocaleCompare for string fields
   return a[key].localeCompare(b[key]);
 }
 
-/**
- * Returns a new array sorted according to the provided key and direction. It runs in the browser,
- * so it lives apart from `getLeaderboardEntries`, whose costs read the server's price list.
- */
 export function sortLeaderboardEntries(
   entries: LeaderboardEntry[],
   key: SortKey,

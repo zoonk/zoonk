@@ -1,7 +1,6 @@
 import { createFixedScore } from "@/lib/score";
 import { type TaskScorer } from "@/lib/types";
 
-/** Case-insensitive patterns the title must match: the tool, and the device as people say it. */
 export type SetupLessonOutlineExpected = { device: string; tool: string };
 
 type SetupOutline = {
@@ -32,7 +31,6 @@ function parseOutline(output: string): SetupOutline | null {
   }
 }
 
-/** One problem per rule the outline breaks; the lesson pipeline reads these fields as they are. */
 function getProblems({
   expected,
   outline,
@@ -59,10 +57,6 @@ function getProblems({
 
 const RULE_COUNT = 6;
 
-/**
- * Code checks only: the title names the tool and the device, and every field fits what the
- * lesson pipeline and session tiles expect. The score is the share of rules the outline meets.
- */
 export const scoreSetupLessonOutline: TaskScorer<SetupLessonOutlineExpected> = ({
   output,
   testCase,

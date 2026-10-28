@@ -11,11 +11,6 @@ function screen(
   return { activityTemplate: null, brief, kind, skills: kind === "hook" ? [] : [0], visual };
 }
 
-/**
- * A lesson planned in parallel with the rest of its chapter (stock market overview, 27 Sep 2026):
- * its plan reuses the $20, $21 and $19 prices an earlier lesson of the chapter already used, so
- * the writer has to pick new numbers and build on what the earlier lessons taught.
- */
 export const PRICE_IMPACT_SPEC: LessonSpec = {
   canDo: "Explain why a large order may trade at several prices",
   description:
@@ -70,7 +65,6 @@ export const PRICE_IMPACT_SPEC: LessonSpec = {
   title: "Large orders and price impact",
 };
 
-/** The chapter's other lessons as production passes them, with the examples of their plans. */
 export const PRICE_IMPACT_CHAPTER_LESSONS: ChapterLessons = [
   {
     canDo: "Explain why a stock's next trade may have a different price",

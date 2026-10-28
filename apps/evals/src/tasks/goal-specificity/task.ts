@@ -9,10 +9,6 @@ import {
 import { type GoalSpecificityExpected, scoreGoalSpecificity } from "./scorer";
 import { TEST_CASES } from "./test-cases";
 
-/**
- * Generation models split the goal and decide; evaluation models only answer
- * the private-course question, so their rows compare that decision alone.
- */
 export const goalSpecificityTask: Task<
   GoalSpecificityParams,
   GoalSpecificitySchema | Pick<GoalSpecificitySchema, "privateCourse">,

@@ -5,7 +5,6 @@ import {
 } from "@zoonk/ai/tasks/v2/research/changing-facts";
 import { type ChangingFactsExpected } from "./task";
 
-/** The language is the goal's, since the goal is the only input. */
 function topicCase(
   id: string,
   language: string,

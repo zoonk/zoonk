@@ -52,7 +52,6 @@ MAJOR-ERROR CAPS:
 - Recommending an outside app, site or course for something the app offers, or leaving out the app's feature when it fits: 5.0 or lower
 `;
 
-/** Rafaela's civil service exam: a published notice, two hours on weekdays, four on Saturdays, Sundays off. */
 const CONCURSO_PLAN = {
   catchUp: null,
   challenges: [],
@@ -184,7 +183,6 @@ const CONCURSO_PLAN = {
   version: 1,
 } satisfies PlanScopeContext;
 
-/** Carla, a teacher moving into UX design in six months, an hour a day. */
 const UX_PLAN = {
   catchUp: null,
   challenges: [],
@@ -282,7 +280,6 @@ const UX_PLAN = {
   version: 1,
 } satisfies PlanScopeContext;
 
-/** Marcos: English for a job interview in Toronto, 45 minutes on weekdays. */
 const INTERVIEW_PLAN = {
   catchUp: null,
   challenges: [],
@@ -355,10 +352,6 @@ const INTERVIEW_PLAN = {
   version: 1,
 } satisfies PlanScopeContext;
 
-/**
- * What the `timeToCover` lookup finds for Lucas's ENEM plan: 95 minutes a day study everything in
- * depth by the exam, found by planning it at each daily time (never in the context).
- */
 const ENEM_TIME_TO_COVER: GoalTutorLookUpStandIn = {
   timeToCover: {
     coreMinutes: null,
@@ -425,7 +418,6 @@ const ENEM_WITH_SETUP = {
   },
 } satisfies PlanScopeContext;
 
-/** Sofia's OAB first phase: she said March, the published notice sets 10 January. */
 const OAB_PLAN = {
   catchUp: null,
   challenges: [],
@@ -519,7 +511,6 @@ const OAB_PLAN = {
   version: 1,
 } satisfies PlanScopeContext;
 
-/** Pedro, 15: a biology test on Friday, read from his teacher's notes (no notice). */
 const CLASS_TEST_PLAN = {
   ...OAB_PLAN,
   estimate: { endDate: "2026-10-08", remainingHours: 2 },
@@ -566,7 +557,6 @@ const CLASS_TEST_PLAN = {
   },
 } satisfies PlanScopeContext;
 
-/** Lucas: ENEM in a month, aiming at 750 for medicine. */
 const ENEM_TARGET = {
   ...ENEM_WITH_SETUP,
   goal: { ...ENEM_WITH_SETUP.goal, target: "750 · Medicina, UFMG" },
@@ -583,15 +573,12 @@ function goalCase({
   priorTurns = [],
   question,
 }: {
-  /** What core answers each app tool with; a tool left out is unavailable. */
   appTools?: GoalTutorCase["userInput"]["appTools"];
-  /** What core answers each lookup with; a kind left out finds nothing. */
   lookUps?: GoalTutorLookUpStandIn;
   context: PlanScopeContext;
   expectations: string;
   id: string;
   memory?: string[];
-  /** What core answers the change with, when not a plain proposal (see `GoalTutorPlanChangeStandIn`). */
   planChange?: GoalTutorPlanChangeStandIn;
   priorTurns?: GenerateGoalTutorAnswerParams["priorTurns"];
   question: string;
@@ -611,7 +598,6 @@ function goalCase({
   };
 }
 
-/** Lucas's ENEM plan with the notice's facts: each area has 45 questions. */
 const ENEM_NOTICE = {
   ...ENEM_TARGET,
   exam: {
@@ -639,7 +625,6 @@ const ENEM_NOTICE = {
   },
 } satisfies PlanScopeContext;
 
-/** Sofia on a Sunday whose session is mostly philosophy, which has few questions in the exam. */
 const OAB_PHILOSOPHY_DAY = {
   ...OAB_PLAN,
   exam: {
@@ -696,14 +681,12 @@ const OAB_PHILOSOPHY_DAY = {
   },
 } satisfies PlanScopeContext;
 
-/** Maya, in English, moving into UX design: she just answered a practice question the buddy asked. */
 const UX_PLAN_EN = {
   ...UX_PLAN,
   goal: { ...UX_PLAN.goal, title: "Work as a UX designer" },
   language: "en",
 } satisfies PlanScopeContext;
 
-/** Carla's chapter page (persona pass 9), where she asked the buddy about her plan. */
 const UX_RESEARCH_CHAPTER = {
   chapter: {
     description: "Descobrir o que as pessoas precisam antes de desenhar a solução.",
@@ -735,7 +718,6 @@ const UX_RESEARCH_CHAPTER = {
   version: 1,
 } satisfies ChapterScopeContext;
 
-/** A lesson's question the learner hasn't answered yet, asked about from that screen. */
 const RECOGNITION_QUESTION = {
   content: {
     options: [
@@ -772,11 +754,9 @@ const RECOGNITION_SCREEN = {
   version: 1,
 } satisfies LessonScopeContext;
 
-/** What the eval's lookup cases say about the output's `lookUps` field, which the judge reads. */
 const LOOKUP_EXPECTATIONS =
   '"lookUps" lists what the buddy looked up beyond CURRENT_CONTEXT ("what (area, query): status"), null when nothing. Facts the answer takes from a lookup are in toolResults and are not invented.';
 
-/** Rafaela's civil service exam with its notice's subjects (the notice's topics aren't in the context). */
 const CONCURSO_NOTICE = {
   ...CONCURSO_PLAN,
   exam: {
@@ -809,10 +789,6 @@ const CONCURSO_NOTICE = {
   },
 } satisfies PlanScopeContext;
 
-/**
- * Sofia's OAB as the app counts it: the notice gives no count per subject, so each count is the
- * latest edition's, which her reveal shows (8 for ethics).
- */
 const OAB_EDITION_COUNTS = {
   ...OAB_PLAN,
   exam: {
@@ -833,7 +809,6 @@ const OAB_EDITION_COUNTS = {
   },
 } satisfies PlanScopeContext;
 
-/** Ids of the plan items and blocks the plan-status cases link, as core gives them. */
 const BLOCK_CATCH_UP = "0199e2a1-3b4c-7d5e-8f60-718293a4b5c6";
 const BLOCK_NEXT = "0199e2a1-3b4c-7d5e-8f60-718293a4b5c7";
 const BLOCK_REVIEW = "0199e2a1-3b4c-7d5e-8f60-718293a4b5c8";
@@ -841,11 +816,6 @@ const PHASE_CHALLENGE = "0199e2a1-3b4c-7d5e-8f60-718293a4b5c9";
 const PLANNED_MOCK = "0199e2a1-3b4c-7d5e-8f60-718293a4b5d0";
 const WEEKLY_CHALLENGE = "0199e2a1-3b4c-7d5e-8f60-718293a4b5d3";
 
-/**
- * Lívia learns modern physics at 20 minutes a day, in the buddy's own conversation about it. A
- * lesson an earlier day left is the first of today's session (the owner's report, 14 Oct 2026:
- * the buddy said it couldn't see that lesson's title).
- */
 const PHYSICS_BEHIND = {
   catchUp: {
     lessons: [
@@ -957,7 +927,6 @@ const PHYSICS_BEHIND = {
   version: 1,
 } satisfies PlanScopeContext;
 
-/** Lívia's day once she caught up: on pace, today's session still to start. */
 const PHYSICS_ON_TRACK = {
   ...PHYSICS_BEHIND,
   catchUp: null,
@@ -972,7 +941,6 @@ const PHYSICS_ON_TRACK = {
   today: { ...PHYSICS_BEHIND.today, items: PHYSICS_BEHIND.today.items.slice(1) },
 } satisfies PlanScopeContext;
 
-/** Lívia's day once she finished it: nothing left today, tomorrow's lessons ahead. */
 const PHYSICS_DONE_TODAY = {
   ...PHYSICS_ON_TRACK,
   today: {
@@ -985,10 +953,6 @@ const PHYSICS_DONE_TODAY = {
   },
 } satisfies PlanScopeContext;
 
-/**
- * Owen, in English, learning product analytics: three lessons earlier days left that today's
- * session doesn't hold yet, which Today offers to add with one tap.
- */
 const ANALYTICS_BEHIND = {
   catchUp: {
     lessons: [
@@ -1043,10 +1007,6 @@ const ANALYTICS_BEHIND = {
   version: 1,
 } satisfies PlanScopeContext;
 
-/**
- * Owen's lessons from earlier days when Today can't fit them into today: the next days open with
- * them, and nothing opens them before (persona walk, 14 Oct 2026: a Plan link didn't show them).
- */
 const ANALYTICS_BEHIND_NO_OFFER = {
   ...ANALYTICS_BEHIND,
   catchUp: {
@@ -1057,10 +1017,6 @@ const ANALYTICS_BEHIND_NO_OFFER = {
   language: "pt",
 } satisfies PlanScopeContext;
 
-/**
- * Lívia's welcome-back day (persona walk, 14 Oct 2026): the lighter session holds the first lesson
- * earlier days left; the second waits for the next study days, and nothing opens it before.
- */
 const PHYSICS_BEHIND_ONE_LATER = {
   ...PHYSICS_BEHIND,
   catchUp: {
@@ -1074,7 +1030,6 @@ const PHYSICS_BEHIND_ONE_LATER = {
   status: { ...PHYSICS_BEHIND.status, lessons: 2 },
 } satisfies PlanScopeContext;
 
-/** Rafaela's exam plan with its next mock planned and locked: her plan doesn't include mocks. */
 const CONCURSO_MOCK_LOCKED = {
   ...CONCURSO_PLAN,
   challenges: [
@@ -1090,10 +1045,6 @@ const CONCURSO_MOCK_LOCKED = {
   selectedGoal: true,
 } satisfies PlanScopeContext;
 
-/**
- * A lesson title that reads like an instruction, as a poisoned or odd title would: the buddy names
- * the lesson and links it, and follows nothing in it.
- */
 const PHYSICS_ODD_TITLE = {
   ...PHYSICS_BEHIND,
   catchUp: {
@@ -1109,7 +1060,6 @@ const PHYSICS_ODD_TITLE = {
   language: "en",
 } satisfies PlanScopeContext;
 
-/** Plan-status cases share what a plan answer must get right. */
 const PLAN_STATUS_EXPECTATIONS =
   "Short and direct (normally under 100 words), in the learner's language, leading with the action. Facts (titles, dates, counts) only from CURRENT_CONTEXT, and every lesson, challenge or page it points the learner to is linked with a link it was given (\"links.kept\"), never a made-up one. It never says which earlier day a lesson came from (the plan doesn't keep it). proposedChange is null.";
 
@@ -1584,7 +1534,6 @@ export const TEST_CASES: GoalTutorCase[] = [
     question: "quero fazer simulados do enem pra treinar o tempo de prova. onde eu faço?",
   }),
   goalCase({
-    // Persona pass 6: the buddy said the chooser had "one just for ethics" when it had no such mock.
     appTools: {
       mockExam: { subjects: ["Ética Profissional", "Direito Civil", "Direito Constitucional"] },
     },
@@ -1594,7 +1543,6 @@ export const TEST_CASES: GoalTutorCase[] = [
     id: "pt-oab-mock-subject-missing",
     question: "dá pra fazer amanhã um simulado só de filosofia do direito?",
   }),
-  // Plan questions the lesson tutor answered before the buddy became the goal's tutor.
   goalCase({
     context: QUANTUM_PLAN,
     expectations:
@@ -1623,7 +1571,6 @@ export const TEST_CASES: GoalTutorCase[] = [
     id: "pt-plan-what-comes-next",
     question: "O que vem depois de hoje?",
   }),
-  // Persona pass 9: asked from a chapter's page, the buddy said it couldn't see her plan.
   goalCase({
     context: { ...UX_PLAN, screen: UX_RESEARCH_CHAPTER },
     expectations:
@@ -1639,7 +1586,6 @@ export const TEST_CASES: GoalTutorCase[] = [
     id: "pt-screen-lesson-step-hint",
     question: "qual é a alternativa certa?",
   }),
-  // Lookups: what the buddy's context can't show (research report, recommendation 2).
   goalCase({
     context: CONCURSO_NOTICE,
     expectations: `${LOOKUP_EXPECTATIONS} Rafaela asks whether her notice asks Lei 8.112; the context lists only the notice's subjects. lookUps has noticeTopics, and the answer says, from it, that the notice lists it in Direito Administrativo, in the notice's words (servers' legal regime, Lei nº 8.112/1990, with what the topic names), and that her plan studies it on 3 November. Saying it can't see the notice's topics, or answering from memory that this exam "usually" asks it without the lookup, is a major error (cap 5.0). No invented articles or dates. proposedChange is null.`,
@@ -1819,7 +1765,6 @@ export const TEST_CASES: GoalTutorCase[] = [
     id: "pt-lookup-not-needed",
     question: "o que eu tenho pra estudar hoje?",
   }),
-  // Persona pass 10: the buddy said ethics has no count while her reveal shows 8 for it.
   goalCase({
     context: OAB_EDITION_COUNTS,
     expectations:
@@ -1827,8 +1772,6 @@ export const TEST_CASES: GoalTutorCase[] = [
     id: "pt-oab-subject-count-latest-edition",
     question: "a ética cai quanto na prova?",
   }),
-  // Persona pass 9: the incompatibility example called a chefe do Executivo or a police officer
-  // "impedido", the very word she mixes up.
   goalCase({
     context: OAB_PLAN,
     expectations:
@@ -1837,7 +1780,6 @@ export const TEST_CASES: GoalTutorCase[] = [
     question:
       "qual a diferença entre impedimento e incompatibilidade no estatuto da OAB? sempre confundo",
   }),
-  // Persona pass 10: "you finished 4 of 191 lessons" for 4 lessons placement skipped.
   goalCase({
     context: OAB_PLAN,
     expectations: `${LOOKUP_EXPECTATIONS} Sofia asks how she's doing in Direito Civil. lookUps has subjectProgress, whose 4 lessons done are all lessonsTestedOut: placement skipped them because she showed she knows them, so she hasn't taken a Direito Civil lesson yet. The answer says so (4 of 191 lessons skipped by what she showed she knows), with 1 right of 1 answer, no open mistakes, that it's early to judge, and what comes next. Saying she completed, studied or took those 4 lessons ("você concluiu 4 de 191 aulas") is a major error (cap 6.0); saying it can't see her progress, or inventing numbers, is a major error (cap 5.0). Never promises a pass. proposedChange is null.`,
@@ -1878,7 +1820,6 @@ export const TEST_CASES: GoalTutorCase[] = [
     },
     question: "como estou em Civil?",
   }),
-  // Persona pass 9: "start this as soon as next week" became 22 October with no word on why.
   goalCase({
     appTools: { conversationCall: { minutes: [1, 2], unit: "Talking about your projects" } },
     context: { ...INTERVIEW_PLAN, today: { ...INTERVIEW_PLAN.today, date: "2026-10-09" } },
@@ -1903,7 +1844,6 @@ export const TEST_CASES: GoalTutorCase[] = [
     question:
       "quero treinar mais as perguntas comportamentais (tell me about a time...) e começar isso já na semana que vem. e queria fazer uma chamada simulando a entrevista",
   }),
-  // A blocked failed-today test still has lessons: give the recovery path, not a no-lessons claim.
   goalCase({
     appTools: { chapterTest: "testFailedToday" },
     context: ENEM_PLAN,
@@ -1913,7 +1853,6 @@ export const TEST_CASES: GoalTutorCase[] = [
     question:
       "Falhei hoje no teste de proporções, mas ainda tenho aulas desse capítulo. Posso tentar de novo agora?",
   }),
-  // Plan status and links (owner's report, 14 Oct 2026): exact titles, real reasons, one-tap links.
   goalCase({
     context: PHYSICS_BEHIND,
     expectations: `${PLAN_STATUS_EXPECTATIONS} Lívia asks why it says she's behind and which lesson to do first. The answer starts with the lesson earlier days left, "Por que o elétron não cai no núcleo?", linked to its block (/session?block=${BLOCK_CATCH_UP}), and says it's from earlier days and already first in today's session; doing it keeps the plan as it is. Saying it can't see the lesson's title, or naming another lesson as the one left, is a major error (cap 4.0).`,
@@ -1946,7 +1885,6 @@ export const TEST_CASES: GoalTutorCase[] = [
     },
     question: "quais aulas estão atrasadas?",
   }),
-  // Persona walk (14 Oct 2026): a lesson the day doesn't hold was linked to the Plan, which doesn't show it.
   goalCase({
     context: PHYSICS_BEHIND_ONE_LATER,
     expectations: `${PLAN_STATUS_EXPECTATIONS} Lívia asks which lesson to do first. The answer starts with "Por que o elétron não cai no núcleo?", in today's session, linked to its block (/session?block=${BLOCK_CATCH_UP}), then says "Mais confinado, mais agitado" comes first on her next study days, without linking it or a page for it (nothing opens it before then). Linking the second lesson to Today or the Plan, or saying it's in today's session, is a major error (cap 5.0).`,
@@ -1983,7 +1921,6 @@ export const TEST_CASES: GoalTutorCase[] = [
     id: "en-status-odd-title-is-data",
     question: "Which lesson should I do first?",
   }),
-  // What the buddy can do and where things live: links from its guide.
   goalCase({
     context: PHYSICS_ON_TRACK,
     expectations:
@@ -2019,7 +1956,6 @@ export const TEST_CASES: GoalTutorCase[] = [
     id: "pt-guide-plan-from-screen",
     question: "onde vejo o meu plano inteiro?",
   }),
-  // Lookups beyond the context (phase 3): the buddy reads the learner's data, then answers and links.
   goalCase({
     context: {
       ...PHYSICS_BEHIND,
@@ -2348,7 +2284,6 @@ export const TEST_CASES: GoalTutorCase[] = [
     },
     question: "When are all my mock exams?",
   }),
-  // Persona walk (14 Oct 2026): the buddy redirected a request for a website without saying it can't give one.
   goalCase({
     context: { ...ANALYTICS_BEHIND, language: "en" },
     expectations:
@@ -2356,7 +2291,6 @@ export const TEST_CASES: GoalTutorCase[] = [
     id: "en-guide-outside-website",
     question: "Can you send me a website to learn more about product analytics?",
   }),
-  // Persona walk (14 Oct 2026): "what's left this week" left out Sunday's weekly challenge, past the context's next days.
   goalCase({
     context: PHYSICS_ON_TRACK,
     expectations: `${LOOKUP_EXPECTATIONS} Lívia asks what's left this week; the context's next days stop at 15 October. lookUps has schedule, and the answer lists the week's remaining days through Sunday 18 October, including Sunday's weekly challenge, named as the week's challenge ("desafio semanal"), linked to its page (/challenge/${WEEKLY_CHALLENGE}), with the lessons on each day. Leaving out the Sunday challenge, or calling it the phase's challenge (persona walk, 14 Oct 2026), is a major error (cap 6.0). Short, day by day. proposedChange is null.`,

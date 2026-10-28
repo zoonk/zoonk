@@ -7,7 +7,6 @@ import {
 import { normalizeString } from "@zoonk/utils/string";
 import { CONVERSATION_FEEDBACK_SCORE_CATEGORIES } from "./score-categories";
 
-/** Share of a phrase's words that must appear in one learner turn for a near-verbatim quote. */
 const MIN_WORD_COVERAGE = 0.8;
 const MAX_PRONUNCIATION_WORDS = 2;
 const PUNCTUATION = /[^\p{L}\p{N}'\s]/gu;
@@ -22,11 +21,6 @@ function getWordCoverage({ phrase, turn }: { phrase: string[]; turn: string[] })
   return phrase.filter((word) => turnWords.has(word)).length / Math.max(phrase.length, 1);
 }
 
-/**
- * Speech transcripts differ from the model's quote in fillers and
- * punctuation, so a phrase counts as said when one learner turn contains it
- * or nearly all of its words.
- */
 function wasSaidByLearner({ phrase, turns }: { phrase: string; turns: ConversationTurn[] }) {
   const phraseWords = toWords(phrase);
 
@@ -89,11 +83,6 @@ function getTurns(userInput: Record<string, unknown>): ConversationTurn[] {
   return userInput.turns as ConversationTurn[];
 }
 
-/**
- * Code checks keep the feedback honest (every phrase it quotes and every
- * pronunciation word was really said by the learner, at most two words, no
- * em dashes); the judge scores the fix, the language and the tone.
- */
 export const scoreConversationFeedback: TaskScorer = ({ output, testCase }) => {
   const turns = getTurns(testCase.userInput);
 

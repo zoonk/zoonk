@@ -5,23 +5,12 @@ import {
 } from "@zoonk/ai/evaluate/models";
 import { type Reasoning } from "@zoonk/ai/provider-options";
 
-/**
- * `generation` models run the task's own prompt through `generate`.
- * `evaluation` models answer through the task's `evaluate` route with
- * `experimental_decide`: Jev natively, other models through the AI SDK's
- * language-model decision adapter. `image` models draw through `generate`
- * and only run tasks whose output is an image; `speech` models likewise only
- * run tasks whose output is audio, `transcription` models only tasks whose
- * output is a transcript.
- */
 type ModelKind = "generation" | "evaluation" | "image" | "speech" | "transcription";
 
 export type ModelConfig = {
-  /** Unique id for saved outputs, results and URLs. */
   id: string;
   name: string;
   kind: ModelKind;
-  /** Gateway model id used for calls, prices and model families. */
   gatewayModelId: string;
   reasoning?: Reasoning;
 };
@@ -64,11 +53,6 @@ const GENERATION_MODELS: { id: string; name: string }[] = [
   { id: "openai/gpt-5.4-mini", name: "gpt-5.4-mini" },
 ];
 
-/**
- * Cheap candidates compared with Jev. Language models get an
- * `/evaluation` suffix so their saved results stay apart from the same model
- * running the task's own prompt; native decision models keep their own id.
- */
 const EVALUATION_MODELS: { gatewayModelId: string; name: string }[] = [
   { gatewayModelId: JEV_MODEL_ID, name: "jev" },
   { gatewayModelId: LUNA_DECISIONS_MODEL_ID, name: "gpt-6-luna-decisions" },
@@ -79,24 +63,18 @@ const EVALUATION_MODELS: { gatewayModelId: string; name: string }[] = [
   { gatewayModelId: "anthropic/claude-haiku-4.5", name: "claude-haiku-4.5 (evaluation)" },
 ];
 
-/** Image models compared, all at the low quality setting the tasks use. */
 const IMAGE_MODELS: { id: string; name: string }[] = [
   { id: "openai/gpt-image-2.5-flare", name: "gpt-image-2.5-flare" },
   { id: "openai/gpt-image-2.5-sunburst", name: "gpt-image-2.5-sunburst" },
   { id: "openai/gpt-image-2", name: "gpt-image-2" },
 ];
 
-/** Text-to-speech models for a clip's audio, in the app's fallback order (see `speechModels`). */
 const SPEECH_MODELS: { id: string; name: string }[] = [
   { id: "google/gemini-3.8-flash-tts", name: "gemini-3.8-flash-tts" },
   { id: "google/gemini-3.8-flash-lite-tts", name: "gemini-3.8-flash-lite-tts" },
   { id: "microsoft/mai-voice-2.1-flash", name: "mai-voice-2.1-flash" },
 ];
 
-/**
- * Speech-to-text models compared for spoken answers. gpt-transcribe runs on
- * OpenAI directly (AI Gateway doesn't list it), so it needs OPENAI_API_KEY.
- */
 const TRANSCRIPTION_MODELS: { id: string; name: string }[] = [
   { id: "openai/gpt-transcribe", name: "gpt-transcribe" },
   { id: "google/gemini-3.5-transcribe", name: "gemini-3.5-transcribe" },
@@ -131,15 +109,10 @@ export const EVAL_MODELS: ModelConfig[] = [
   })),
 ];
 
-/** Judges and contestants from the same provider share training and style biases. */
 export function getModelFamily(model: Pick<ModelConfig, "gatewayModelId">): string {
   return model.gatewayModelId.split("/")[0] ?? model.gatewayModelId;
 }
 
-/**
- * Gives each portable AI SDK reasoning value a concise label for selectors,
- * breadcrumbs, and comparison tables.
- */
 export function getReasoningLabel(reasoning: Reasoning = DEFAULT_REASONING): string {
   return REASONING_OPTIONS.find((option) => option.value === reasoning)?.label ?? reasoning;
 }
@@ -152,19 +125,10 @@ export function getModelDisplayName(model: ModelConfig): string {
   return model.name;
 }
 
-/**
- * Accepts only reasoning values supported by AI SDK's portable top-level
- * reasoning option so untrusted form and route values cannot reach generation.
- */
 export function parseReasoning(value: string | null): Reasoning | null {
   return REASONING_OPTIONS.find((option) => option.value === value)?.value ?? null;
 }
 
-/**
- * Separates a saved model id into its configured model and optional reasoning
- * level. Provider-default runs intentionally keep the original unsuffixed id so
- * existing output and result files remain compatible.
- */
 function parseReasoningVariantId(
   modelId: string,
 ): { configuredModelId: string; reasoning?: Reasoning } | null {
@@ -183,12 +147,6 @@ function parseReasoningVariantId(
   return { configuredModelId: modelId.slice(0, separatorIndex), reasoning };
 }
 
-/**
- * Resolves both configured models and their saved reasoning variants. Variants
- * inherit display metadata and prices from the configured model while keeping
- * their unique id for output, score, and leaderboard isolation. Reasoning
- * variants only exist for generation models; evaluation and image models run without it.
- */
 export function getModelById(modelId: string): ModelConfig | null {
   const variant = parseReasoningVariantId(modelId);
   const model = variant && EVAL_MODELS.find((item) => item.id === variant.configuredModelId);
@@ -200,10 +158,6 @@ export function getModelById(modelId: string): ModelConfig | null {
   return variant.reasoning ? { ...model, id: modelId, reasoning: variant.reasoning } : model;
 }
 
-/**
- * Builds the stable id used to isolate generated outputs and scores for one
- * model/reasoning pair. Provider-default reuses the base id for compatibility.
- */
 export function getModelVariantId({
   modelId,
   reasoning,
@@ -215,16 +169,11 @@ export function getModelVariantId({
   return reasoning === DEFAULT_REASONING ? configuredModelId : `${configuredModelId}:${reasoning}`;
 }
 
-/** Resolves a saved id's family, falling back to its provider prefix for retired models. */
 function getFamilyFromId(modelId: string): string {
   const model = getModelById(modelId);
   return model ? getModelFamily(model) : (modelId.split("/")[0] ?? modelId);
 }
 
-/**
- * Battle judges never score a model from their own family: an OpenAI judge
- * skips OpenAI outputs, and the same for Anthropic and Google.
- */
 export function canJudge({ judgeId, modelId }: { judgeId: string; modelId: string }): boolean {
   return getFamilyFromId(judgeId) !== getFamilyFromId(modelId);
 }

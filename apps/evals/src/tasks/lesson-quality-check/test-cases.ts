@@ -10,7 +10,6 @@ import { SOURCED_BASE_LESSONS } from "./sourced-lessons";
 
 type BaseLesson = (typeof BASE_LESSONS)[keyof typeof BASE_LESSONS];
 
-/** A lesson as the reviewer reads it; lessons of goals built from sources add their passages. */
 export type LessonQualityCheckInput = Pick<
   CheckLessonQualityParams,
   | "chapterLessons"
@@ -24,11 +23,6 @@ export type LessonQualityCheckInput = Pick<
   | "shortAnswers"
 > & { lesson: WrittenLesson };
 
-/**
- * A clean lesson must pass (no blocking issue); a planted one must be blocked
- * on the planted screen (1-based, or null for the summary card), ideally with
- * one of the expected kinds.
- */
 export type LessonQualityCheckExpected =
   | { verdict: "pass" }
   | { kinds: LessonQualityIssueKind[]; screen: number | null; verdict: "fail" };
@@ -64,17 +58,14 @@ function screenOf(base: BaseLesson, screen: number): WrittenScreen {
 const { doorways, eletron, regra, temperature } = BASE_LESSONS;
 const { estabilidade, taxDeadlines } = SOURCED_BASE_LESSONS;
 
-/** The sourced cases come first, so a small `--limit` run checks that sources settle facts. */
 export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheckInput>[] = [
   { expected: { verdict: "pass" }, id: "en-tax-deadlines-sourced-clean", userInput: taxDeadlines },
   {
-    // Written for law candidates: the OAB and the Constitution need no explanation for them.
     expected: { verdict: "pass" },
     id: "pt-finalidades-oab-exam-prep-clean",
     userInput: EXAM_PREP_BASE_LESSON,
   },
   {
-    // An option no law candidate would pick, the kind a layperson's lesson had.
     expected: { kinds: ["weakCheck", "level"], screen: 2, verdict: "fail" },
     id: "pt-finalidades-oab-exam-prep-absurd-option",
     userInput: plant(EXAM_PREP_BASE_LESSON, 2, {
@@ -110,7 +101,6 @@ export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheck
   },
   { expected: { verdict: "pass" }, id: "pt-estabilidade-sourced-clean", userInput: estabilidade },
   {
-    // The IRS page says an extension moves filing only; the lesson says it moves paying too.
     expected: { kinds: ["incorrect"], screen: 3, verdict: "fail" },
     id: "en-tax-deadlines-contradicts-source",
     userInput: plant(taxDeadlines, 3, {
@@ -124,7 +114,6 @@ export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheck
     }),
   },
   {
-    // Article 41 says three years; many remember the 24 months of the old statute.
     expected: { kinds: ["incorrect"], screen: 2, verdict: "fail" },
     id: "pt-estabilidade-contradicts-source",
     userInput: plant(estabilidade, 2, {
@@ -142,14 +131,8 @@ export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheck
     id: "en-temperature-clean",
     userInput: { ...temperature, lesson: temperature.lesson },
   },
+  { expected: { verdict: "pass" }, id: "en-doorways-picture-options-clean", userInput: doorways },
   {
-    // Each doorway is a picture; its name shows only once the learner answers.
-    expected: { verdict: "pass" },
-    id: "en-doorways-picture-options-clean",
-    userInput: doorways,
-  },
-  {
-    // The app draws the numbers on the thermometer in `parts` order, so "3" marks 3 °C.
     expected: { verdict: "pass" },
     id: "en-temperature-numbered-picture-clean",
     userInput: plant(temperature, 8, {
@@ -260,7 +243,6 @@ export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheck
     }),
   },
   {
-    // A shared lesson framed around one exam's notice, which learners of other exams also study.
     expected: { kinds: ["scope"], screen: 2, verdict: "fail" },
     id: "pt-regra-framed-around-one-exam",
     userInput: plant(regra, 2, {
@@ -270,7 +252,6 @@ export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheck
     }),
   },
   {
-    // A check about a case no screen showed yet ("Lorena's order" first appears later, if ever).
     expected: { kinds: ["unclear"], screen: 2, verdict: "fail" },
     id: "pt-regra-case-before-shown",
     userInput: plant(regra, 2, {
@@ -279,7 +260,6 @@ export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheck
     }),
   },
   {
-    // A made-up failure pinned on a real company.
     expected: { kinds: ["incorrect", "scope"], screen: 2, verdict: "fail" },
     id: "pt-regra-real-brand-failure",
     userInput: plant(regra, 2, {
@@ -389,7 +369,6 @@ export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheck
     }),
   },
   {
-    // The table lists five stations and the options offer four, as a lesson on sensors did (Oct 2026).
     expected: { kinds: ["unclear", "incorrect"], screen: 8, verdict: "fail" },
     id: "en-temperature-data-disagrees-with-options",
     userInput: plant(temperature, 8, {
@@ -444,8 +423,6 @@ export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheck
     },
   },
   {
-    // A summary that turns "they change together" into a definition of proportion, as a cheaper
-    // writer's did (Oct 2026): ages and heights grow together without being proportional.
     expected: { kinds: ["incorrect"], screen: null, verdict: "fail" },
     id: "pt-regra-over-broad-summary",
     userInput: {
@@ -461,7 +438,6 @@ export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheck
     },
   },
   {
-    // Two options name the same mistake, so the one marked wrong is right too (Oct 2026).
     expected: { kinds: ["incorrect"], screen: 8, verdict: "fail" },
     id: "en-temperature-two-right-options",
     userInput: plant(temperature, 8, {
@@ -497,7 +473,6 @@ export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheck
     }),
   },
   {
-    // The right option with a reason that teaches something false, as a cheaper writer's did (Oct 2026).
     expected: { kinds: ["incorrect"], screen: 4, verdict: "fail" },
     id: "pt-eletron-wrong-reason-on-right-option",
     userInput: plant(eletron, 4, {
@@ -536,7 +511,6 @@ export const TEST_CASES: TestCase<LessonQualityCheckExpected, LessonQualityCheck
     },
   },
   {
-    // An earlier lesson of the chapter already asked this exact Chicago question.
     expected: { kinds: ["scope", "weakCheck"], screen: 8, verdict: "fail" },
     id: "en-temperature-repeats-earlier-lesson",
     userInput: {

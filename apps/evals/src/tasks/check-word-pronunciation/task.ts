@@ -37,7 +37,6 @@ async function checkClip({
   });
 }
 
-/** What voicing does with the verdict: keep the clip only when it sounds native. */
 function toVerdict({ pronunciation, soundsNative }: WordPronunciationCheck): string {
   if (soundsNative) {
     return "native";
@@ -46,7 +45,6 @@ function toVerdict({ pronunciation, soundsNative }: WordPronunciationCheck): str
   return pronunciation === "native" ? "closer to english" : pronunciation;
 }
 
-/** An unclear verdict counts as wrong either way: voicing treats it as a failed clip. */
 const scoreCheck: TaskScorer<LookAlikeClipExpected> = ({ output, testCase }) => {
   if (!testCase.expected) {
     throw new Error(`Test case ${testCase.id} has no label.`);

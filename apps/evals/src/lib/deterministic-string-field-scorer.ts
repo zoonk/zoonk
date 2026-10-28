@@ -7,18 +7,9 @@ type StringFieldScorerConfig<TExpected> = {
   expectedLabel: string;
   generatedLabel: string;
   getAcceptedValues: (expected: TExpected | undefined) => readonly string[];
-  /**
-   * Fields the task's schema returns next to the scored one, such as a title that later code
-   * reads. They aren't extras; any other field still fails the case.
-   */
   otherOutputFields?: readonly string[];
 };
 
-/**
- * Reads one string field from model JSON output and reports extra keys. Several
- * eval tasks use structured object output with a single meaningful field, so a
- * shared parser keeps missing-field and extra-field handling consistent.
- */
 function getGeneratedStringField({
   field,
   otherOutputFields,
@@ -47,10 +38,6 @@ function getGeneratedStringField({
   }
 }
 
-/**
- * Some cases accept several labels. The confusion matrix needs one expected
- * label per case: the accepted label the model chose, or the first accepted one.
- */
 function getClassificationOutcome({
   acceptedValues,
   value,
@@ -64,11 +51,6 @@ function getClassificationOutcome({
   return { expected, predicted: matchIndex === -1 ? value : expected };
 }
 
-/**
- * Builds deterministic scorers for tasks whose output is one JSON string field.
- * The task supplies its accepted values and wording; this helper owns parsing,
- * extra-field rejection and the fixed 10-or-6 score contract.
- */
 export function createDeterministicStringFieldScorer<TExpected>({
   expectedLabel,
   field,

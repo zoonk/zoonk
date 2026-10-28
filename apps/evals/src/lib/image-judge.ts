@@ -15,7 +15,6 @@ import {
  */
 const IMAGE_JUDGE_MODEL_ID = "anthropic/claude-opus-5.5";
 
-/** Scores one generated image against its scene with a vision judge and a weighted rubric. */
 export async function judgeImage({
   expectations,
   image,

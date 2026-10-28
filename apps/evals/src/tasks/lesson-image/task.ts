@@ -80,10 +80,6 @@ async function generate({
   };
 }
 
-/**
- * Draws fixed scenes with the style block and has a vision judge from another
- * family grade the idea, the house style and the text.
- */
 export const lessonImageTask: Task<LessonImageInput, LessonImageOutput> = {
   description: "Draw one lesson picture from a structured scene in the house style",
   generate,

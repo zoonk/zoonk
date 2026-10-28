@@ -1,19 +1,3 @@
-/**
- * Samples anonymized inputs from a local database (the `zoonk` dev database or
- * `zoonk_prod_copy`, the local copy of production) into a JSON dataset, so new
- * test cases start from what learners and the pipeline actually produce
- * instead of invented examples: typed goals, what onboarding understood from
- * them, tutor questions, typed answers and the evaluation-model log (Jev's
- * verdicts with their inputs).
- *
- *   pnpm sample:production --limit 50 --database-url postgresql://localhost:5432/zoonk_prod_copy
- *
- * It only reads from a local host. Emails, links, phone numbers and the names
- * of every user in the database are replaced before anything is written. Each
- * row keeps what production recorded with its provenance (model and prompt
- * version), which is not ground truth: label cases by hand before using them as
- * expected values, and mark them `origin: "production"`.
- */
 import { execFile } from "node:child_process";
 import { createHash } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
@@ -61,7 +45,6 @@ function parseCliArgs() {
   };
 }
 
-/** Sampling copies learner data into files, so it refuses anything but a local database. */
 function getLocalDatabaseUrl(value: string): string {
   const url = new URL(value);
 
@@ -89,10 +72,6 @@ function escapeRegExp(value: string): string {
   return value.replaceAll(/[.*+?^${}()|[\]\\]/gu, String.raw`\$&`);
 }
 
-/**
- * Full names match in any case. Single name parts only match capitalized, so a
- * user called "Will" doesn't erase "free will" from an unrelated prompt.
- */
 function getNamePatterns(users: Row[]): RegExp[] {
   const names = users.flatMap((user) => (user.name ? [user.name.trim()] : []));
 
@@ -121,7 +100,6 @@ function anonymize({ namePatterns, text }: { namePatterns: RegExp[]; text: strin
   );
 }
 
-/** Hashes database ids so dataset ids are stable without exposing row ids. */
 function toDatasetId(prefix: string, id: string | null): string {
   return `${prefix}-${createHash("sha256")
     .update(id ?? "")
@@ -148,12 +126,6 @@ function anonymizeRow({
   return { id: toDatasetId(prefix, row.id ?? null), ...Object.fromEntries(fields) };
 }
 
-/**
- * What each section reads. `strata` are the recorded labels (and language)
- * sampled equally, so rare ones still show up. `table` must exist: older
- * copies of the database lack the newer tables, and those sections are skipped.
- * Provenance read through `to_jsonb(row)` is null where a copy predates it.
- */
 const SECTIONS = [
   {
     name: "goals",
@@ -247,7 +219,6 @@ async function tableExists({ databaseUrl, table }: { databaseUrl: string; table:
   return rows[0]?.present === "true";
 }
 
-/** JSON columns come back as text so they can be anonymized; they go back to JSON after. */
 function parseJsonFields(row: Row): Record<string, unknown> {
   return Object.fromEntries(
     Object.entries(row).map(([key, value]) => {

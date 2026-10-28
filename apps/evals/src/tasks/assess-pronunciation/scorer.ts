@@ -4,12 +4,6 @@ import { type AssessPronunciationSchema } from "@zoonk/ai/tasks/v2/language/asse
 import { scoreFlaggedWords } from "../transcribe-speech/scorer";
 import { type PronunciationClipExpected, type PronunciationClipInput } from "./test-cases";
 
-/**
- * Scores the flagged words exactly like the transcription eval, so today's
- * transcript-and-compare path and a model that listens are on one scale. The
- * conclusion also says whether stress errors were named as stress, which only
- * a listening model can do.
- */
 export const scorePronunciation: TaskScorer<PronunciationClipExpected> = ({ output, testCase }) => {
   if (!testCase.expected) {
     throw new Error(`Test case ${testCase.id} has no labeled words.`);

@@ -14,10 +14,8 @@ import {
 
 type LessonQualityCheckOutput = Awaited<ReturnType<typeof checkLessonQuality>>["data"];
 
-/** Sol writes lessons, so every candidate reviews a lesson from another family's writer. */
 const WRITER_MODEL = "openai/gpt-6-sol";
 
-/** The lesson goes through the same conversion the quality gate uses, so the reviewer sees what learners see. */
 function reviewLesson({
   lesson,
   model,
@@ -42,7 +40,6 @@ function reviewLesson({
     lesson: toReviewedLesson({ lesson, screens }),
     model,
     reasoning,
-    // Each run names its model; a lesson many learners read only sets the default reviewer.
     reuse: "bounded",
     useFallback,
     writerModel: WRITER_MODEL,

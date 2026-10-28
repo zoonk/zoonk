@@ -17,15 +17,8 @@ type WriteListeningSetCase = Pick<
   "count" | "formats" | "language" | "optionCount" | "scriptLanguage" | "skills"
 >;
 
-/** The set-level part of the checks: the script, the count and the evidence of every question. */
 const SET_CHECKS = 1;
 
-/**
- * The pipeline's checks, as production runs them before storing: the set's own problems
- * (`findListeningSetProblems`, the same list the task drafts again on) and each question's item
- * checks after code repaired what it can (`repairItem`). The judge sees the set with only the
- * questions that pass.
- */
 function checkWriteListeningSetOutput(
   output: string,
   input: WriteListeningSetCase,

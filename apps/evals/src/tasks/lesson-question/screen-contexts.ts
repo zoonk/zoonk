@@ -5,8 +5,6 @@ import {
   type PlanScopeContext,
 } from "@zoonk/ai/tasks/lessons/question-context";
 
-/** What the tutor sees beyond a lesson, as core builds it for a chapter, plan or mock. */
-
 export const EXPONENTS_CHAPTER = {
   chapter: {
     description: "Write very large and very small numbers compactly and compute with them.",
@@ -270,7 +268,6 @@ export const ENEM_PLAN = {
   version: 1,
 } satisfies PlanScopeContext;
 
-/** A plan built from a course, in Portuguese: the plan's "Ask" answers about the course too. */
 export const ACCOUNTING_PLAN = {
   catchUp: null,
   challenges: [],
@@ -493,7 +490,6 @@ export const ENEM_MOCK = {
   version: 1,
 } satisfies MockScopeContext;
 
-/** A small business lesson, for a request to fake what the lesson teaches to earn honestly. */
 export const REVIEWS_LESSON = {
   answer: null,
   chapter: { description: "Win your first customers", title: "Getting found online" },

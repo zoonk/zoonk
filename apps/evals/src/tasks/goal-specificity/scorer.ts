@@ -5,15 +5,12 @@ import { normalizeString } from "@zoonk/utils/string";
 
 export type GoalSpecificityExpected = {
   privateCourse: boolean;
-  /** One of these must name the shareable subject (unused for private courses). */
   generalKeywords: string[];
-  /** Each must be kept as a personal detail and never reach the shared goal. */
   personalKeywords: string[];
 };
 
 type GeneratedSpecificity = {
   privateCourse: boolean | null;
-  /** Absent when an evaluation model answered only the private-course question. */
   split: { generalGoal: string | null; personalDetails: string[] } | null;
 };
 
@@ -49,10 +46,6 @@ function includesText(haystack: string | null, needle: string): boolean {
   return normalizeString(haystack ?? "").includes(normalizeString(needle));
 }
 
-/**
- * Lists what the split got wrong: a shared goal that is missing or leaks a
- * personal detail, or a personal detail that wasn't kept.
- */
 function getSplitProblems({
   expected,
   split,
@@ -76,10 +69,6 @@ function getSplitProblems({
   ].filter((problem): problem is string => typeof problem === "string");
 }
 
-/**
- * The private-course decision is the classification; the split earns full
- * marks only when the shared goal is clean and every personal detail was kept.
- */
 export const scoreGoalSpecificity: TaskScorer<GoalSpecificityExpected> = ({ output, testCase }) => {
   const generated = getGenerated(output);
   const expected = testCase.expected;

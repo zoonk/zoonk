@@ -9,7 +9,6 @@ export type ExamSpeakingCardInput = Omit<
   "analytics" | "model" | "reasoning" | "useFallback"
 >;
 
-/** A card's input as core passes it, from the format table: the paper, the task and its timing. */
 function cardInput({
   exam,
   learnerLanguage,
@@ -47,7 +46,6 @@ function cardInput({
   };
 }
 
-/** One task per kind of material and role, across the four exams and the app's languages. */
 export const TEST_CASES: TestCase<unknown, ExamSpeakingCardInput>[] = [
   {
     expectations: `DELE B2 Task 1 for a Brazilian candidate: a problem and five to seven proposals to solve it on the card (the prompts), instructions in Spain Spanish with "usted" saying to weigh at least four for 3 to 4 minutes and then talk with the examiner. No photos, text or table. The examiner's brief listens without interrupting through the monologue, then asks which proposal is best, about the candidate's country and their opinion. Summary and role in Brazilian Portuguese.`,

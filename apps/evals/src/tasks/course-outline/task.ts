@@ -15,7 +15,6 @@ export const courseOutlineTask: Task<
 > = {
   description:
     "Write one level band of a shared course: chapters with objectives and tools, and every lesson's title, description, can-do line, minutes and skills",
-  // A draft written again for mixing an exam's subjects counts in what the outline spent.
   generate: async (params) => {
     const result = await generateCourseOutline(params);
 

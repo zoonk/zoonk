@@ -12,12 +12,6 @@ import {
 } from "./scorer";
 import { TEST_CASES } from "./test-cases";
 
-/**
- * Runs the production question on the labeled candidate among the other candidates of its case,
- * as production judges a search's candidates together, with the requested model and no fallback,
- * so each row measures that model. The verdict uses the production cutoff, and the probability is
- * kept so the cutoff can be recalibrated.
- */
 async function decideIdentityPair({
   candidate,
   model,
@@ -45,10 +39,6 @@ async function decideIdentityPair({
   };
 }
 
-/**
- * The decision is always an evaluation question, so both routes run it: Jev
- * natively, and language models through the evaluation adapter.
- */
 export const libraryIdentityDecisionTask: Task<
   LibraryIdentityDecisionInput,
   LibraryIdentityDecisionOutput,

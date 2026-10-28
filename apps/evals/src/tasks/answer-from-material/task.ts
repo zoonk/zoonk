@@ -43,10 +43,6 @@ function listChecks({
   ];
 }
 
-/**
- * Code scoring: says whether the material covers the question, cites a right page when it does
- * (and none when it doesn't), and keeps the material's own facts in the answer.
- */
 const scoreAnswer: TaskScorer<AnswerFromMaterialExpected> = ({ output, testCase }) => {
   const answer = parseOutput(output);
 

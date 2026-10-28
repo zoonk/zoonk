@@ -7,14 +7,9 @@ type PlanEditTestCase = TestCase<PlanEditExpected, PlanEditInput>;
 
 const DAYS_PER_WEEK = 7;
 
-/** What the planner reads from memory: the learner's goals and routine, nothing else. */
 const PLAN_CATEGORIES = new Set(["goals", "routine"]);
 
-/**
- * A seed learner's plan as the planner passes it, with their goals and routine from memory.
- * `requires` names the fact a case depends on, so a changed seed fails loudly. Fitting a new plan
- * to the routine (`plan-routine-fit`) reads the same plan without a request.
- */
+/** Throws if a required seed memory fact is missing. */
 export function seedInput({
   extraFacts = [],
   learnerKey,
@@ -63,10 +58,6 @@ function memoryCase({
   return { expected: { changes }, id: `${input.language}-memory-${id}`, userInput: input };
 }
 
-/**
- * Plan edits that need what memory holds about the learner's goals and routine: memory fills in
- * what the request leaves open, and the request always wins.
- */
 export const MEMORY_TEST_CASES: PlanEditTestCase[] = [
   memoryCase({
     changes: [{ kind: "setWeekdayMinutes", minutes: 0, weekdays: [6] }],

@@ -1,12 +1,6 @@
 import { type LessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
 import { type WriteLessonDraftParams } from "@zoonk/ai/tasks/v2/lesson-writer";
 
-/**
- * A shared lesson the learners of an exam goal study: the plan the lesson-spec eval wrote for
- * "Purposes of the OAB" with the exam in `EXAMS` (7 Oct 2026), so the writer is checked on writing
- * it for law graduates at that exam's depth, with the statute's articles and exam-like wrong
- * options, without naming the exam.
- */
 export const EXAM_PREP_LESSON: Pick<
   WriteLessonDraftParams,
   "chapterTitle" | "courseTitle" | "exams" | "language" | "level"
@@ -112,12 +106,6 @@ export const EXAM_PREP_LESSON: Pick<
   },
 };
 
-/**
- * A question-first lesson a TJ-SP clerk candidate studied (persona pass 12, 10 Oct 2026): the plan
- * the lesson spec wrote, with a check right after the hook. Its writer opened the explanation after
- * that check by telling the learner they had started with the right question, praise every learner
- * who missed the check read too.
- */
 export const QUESTION_FIRST_EXAM_LESSON: Pick<
   WriteLessonDraftParams,
   "chapterTitle" | "courseTitle" | "exams" | "language" | "level"

@@ -3,10 +3,6 @@ import { type GradeTypedAnswerParams } from "@zoonk/ai/tasks/v2/grading/grade-ty
 
 type GradeTypedAnswerInput = Omit<GradeTypedAnswerParams, "model" | "useFallback" | "reasoning">;
 
-/**
- * The verdict a careful teacher gives, key point by key point, in the order given, and in
- * language practice the corrected form of each mistake (unset when there's none).
- */
 export type GradeTypedAnswerExpected = {
   isCorrect: boolean;
   keyPoints: boolean[] | null;
@@ -25,7 +21,6 @@ const PHOTOSYNTHESIS = {
     "Using energy from light, plants turn carbon dioxide and water into sugar and release oxygen.",
 };
 
-/** A Portuguese speaker practicing English writing (a learner's language lesson, Oct 2026). */
 const INVITATION_REPLY = {
   acceptedAnswers: [
     "Please reply by Thursday to confirm your availability.",
@@ -43,10 +38,6 @@ const INVITATION_REPLY = {
   sampleAnswer: "Please reply by Thursday to confirm your availability.",
 };
 
-/**
- * A Portuguese speaker practicing English for a job interview: the question and key points are in
- * Portuguese, the answer is meant to be in English (a learner's lesson, Oct 2026).
- */
 const RECRUITER_MESSAGE = {
   acceptedAnswers: [
     "Could you tell me who I should contact about registration requirements?",
@@ -78,11 +69,6 @@ const OHMS_LAW = {
     "O resistor: 9 V ÷ 6 Ω = 1,5 A. A resistência da lâmpada muda quando ela esquenta, então o valor medido a frio não serve.",
 };
 
-/**
- * The owner's lesson screen (Oct 2026), with the key points its writer gave it: a question asking
- * three things at once, whose right answers name the cytoplasm and its place in their own words
- * and often skip the "why" their own idea already carries.
- */
 const CELL_DIAGRAM = {
   keyPoints: [
     "Acrescentar o citoplasma.",
@@ -96,10 +82,6 @@ const CELL_DIAGRAM = {
     "Iara precisa mostrar o citoplasma no espaço dentro da membrana, ao redor do fio. Assim, o esquema inclui a região interna onde ficam materiais da célula e acontecem muitas de suas atividades.",
 };
 
-/**
- * Persona walks (Oct 2026) whose right answers showed key points they never wrote as stated: a key
- * point is met only when the answer itself states it, whatever the verdict.
- */
 const VECTOR_RECORD = {
   keyPoints: [
     "Record 3 m/s north for one cart and 3 m/s east for the other.",
@@ -276,8 +258,6 @@ export const TEST_CASES: TestCase<GradeTypedAnswerExpected, GradeTypedAnswerInpu
     },
   },
   {
-    // Its reason for the resistor (a resistance that doesn't change) already says why the lamp
-    // doesn't serve: the missing "it heats up" is a detail for the feedback, not a wrong answer.
     expected: { isCorrect: true, keyPoints: [true, true, false] },
     id: "pt-sem-acentos-lei-de-ohm",
     userInput: {
@@ -286,8 +266,6 @@ export const TEST_CASES: TestCase<GradeTypedAnswerExpected, GradeTypedAnswerInpu
     },
   },
   {
-    // Picking one of two parts and dividing could be a guess: with no reason, the answer doesn't
-    // show why Ohm's law fits the resistor.
     expected: { isCorrect: false, keyPoints: [false, true, false] },
     id: "pt-lei-de-ohm-sem-porque",
     userInput: { ...OHMS_LAW, answer: "o resistor, 1,5 A" },
@@ -356,9 +334,6 @@ export const TEST_CASES: TestCase<GradeTypedAnswerExpected, GradeTypedAnswerInpu
     },
   },
   {
-    // An own-words message whose key point names the phrase the lesson taught, though the
-    // question doesn't ask for it: another correct way to say it meets the point (a persona walk,
-    // Oct 2026, graded it "1 of 2" and saved it as a mistake).
     expected: { isCorrect: true, keyPoints: [true, true] },
     id: "pt-language-own-words-paraphrase-of-taught-phrase",
     userInput: {
@@ -454,11 +429,7 @@ export const TEST_CASES: TestCase<GradeTypedAnswerExpected, GradeTypedAnswerInpu
         "Os juros sobem, o crédito fica mais caro, o consumo e o investimento caem e isso ajuda a segurar a inflação.",
     },
   },
-  // Pedro's class-test placement (Oct 2026): right answers in his own words that the grader marked
-  // wrong for leaving out a term's name, while its feedback praised them.
   {
-    // Right, and "precisa de ATP" says the pump is active transport, but the answer never says the
-    // way out goes against the gradient.
     expected: { isCorrect: true, keyPoints: [true, false, true, true] },
     id: "pt-membrana-sodio-sem-nomes",
     userInput: {
@@ -478,7 +449,6 @@ export const TEST_CASES: TestCase<GradeTypedAnswerExpected, GradeTypedAnswerInpu
     },
   },
   {
-    // Right, but it never says the virus has no ribosomes of its own: that point stays unmet.
     expected: { isCorrect: true, keyPoints: [true, true, false] },
     id: "pt-virus-ribossomos-proprias-palavras",
     userInput: {
@@ -497,8 +467,6 @@ export const TEST_CASES: TestCase<GradeTypedAnswerExpected, GradeTypedAnswerInpu
     },
   },
   {
-    // The postulate the question checks is right; why the microscope mattered, which the question
-    // also asks, is something to add in the feedback.
     expected: { isCorrect: true, keyPoints: [true, false] },
     id: "pt-teoria-celular-meia-resposta",
     userInput: {
@@ -515,8 +483,6 @@ export const TEST_CASES: TestCase<GradeTypedAnswerExpected, GradeTypedAnswerInpu
     },
   },
   {
-    // Helena's placement answer (ENEM strategy, Oct 2026): a sound check said its own way, graded
-    // wrong for not naming elimination, which is the same check from the other side.
     expected: { isCorrect: true, keyPoints: [true, false, true] },
     id: "pt-enem-estrategia-duas-alternativas",
     userInput: {
@@ -535,8 +501,6 @@ export const TEST_CASES: TestCase<GradeTypedAnswerExpected, GradeTypedAnswerInpu
     },
   },
   {
-    // "Why" asks for a reason, and this one is right: the second reason the key points list is
-    // something to add in the feedback, since the question never asks for two.
     expected: { isCorrect: true, keyPoints: [true, false] },
     id: "en-feedback-partial",
     userInput: {
@@ -551,8 +515,6 @@ export const TEST_CASES: TestCase<GradeTypedAnswerExpected, GradeTypedAnswerInpu
         "Because everyone still remembers the details, and the person can change what they do right away.",
     },
   },
-  // The owner found the grader too literal (Oct 2026): an answer that shows the idea is right even
-  // when it skips a reason its own idea carries; a wrong part, a contradiction or an echo isn't.
   {
     expected: { isCorrect: true, keyPoints: [true, true, false] },
     id: "pt-celula-citoplasma-sem-porque",
@@ -605,13 +567,11 @@ export const TEST_CASES: TestCase<GradeTypedAnswerExpected, GradeTypedAnswerInpu
     },
   },
   {
-    // Maya answered the first of two questions: right, with the arrows left for the feedback.
     expected: { isCorrect: true, keyPoints: [true, false, false] },
     id: "en-vector-record-direction-only",
     userInput: { ...VECTOR_RECORD, answer: "the direction too, not just the speed" },
   },
   {
-    // Lucas never mentioned heating: that point stays unmet.
     expected: { isCorrect: true, keyPoints: [true, true, false] },
     id: "pt-eletron-confinado-sem-aquecimento",
     userInput: {
@@ -621,7 +581,6 @@ export const TEST_CASES: TestCase<GradeTypedAnswerExpected, GradeTypedAnswerInpu
     },
   },
   {
-    // The effect with no reason when the question asks to justify it.
     expected: { isCorrect: false, keyPoints: [true, false, false] },
     id: "pt-eletron-confinado-so-efeito",
     userInput: { ...CONFINED_ELECTRON, answer: "A energia minima aumenta." },
@@ -635,7 +594,6 @@ export const TEST_CASES: TestCase<GradeTypedAnswerExpected, GradeTypedAnswerInpu
     },
   },
   {
-    // A right answer with its unit, which code doesn't match; it never says how far the point moves.
     expected: { isCorrect: true, keyPoints: [true, false] },
     id: "en-scientific-notation-with-unit",
     userInput: {

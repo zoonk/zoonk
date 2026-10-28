@@ -7,11 +7,6 @@ function settle<TResult>(promise: Promise<TResult>): Promise<PromiseSettledResul
   );
 }
 
-/**
- * Settles every item like `Promise.allSettled` but keeps at most `concurrency`
- * calls in flight. Latency is only comparable between models when a run does
- * not queue dozens of its own requests behind each other at the provider.
- */
 export async function settleWithConcurrency<TItem, TResult>({
   concurrency,
   items,

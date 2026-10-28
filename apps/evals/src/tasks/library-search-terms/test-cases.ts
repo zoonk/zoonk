@@ -5,13 +5,11 @@ import { type LibrarySearchItem, type LibrarySearchTermsExpected } from "./score
 
 type LibrarySearchTermsTestCase = TestCase<LibrarySearchTermsExpected, SearchTermsParams>;
 
-/** One requested item and its own library: the row to find first, then near misses. */
 type SearchCaseItem = {
   library: [LibrarySearchItem, ...LibrarySearchItem[]];
   subject: LibraryIdentitySubject;
 };
 
-/** A case asking for every item in one call, each scored against its own library. */
 function batchCase({
   id,
   items,
@@ -28,12 +26,6 @@ function batchCase({
   };
 }
 
-/**
- * Each case holds the item a request should find, written in different words
- * than the request, and near misses on sibling topics. The item's text is what
- * the database searches: title, description, objectives or skill names. Single
- * cases ask for one item, as a course, source or image search does.
- */
 function searchCase({
   id,
   library,
@@ -296,7 +288,6 @@ const SINGLE_TEST_CASES: LibrarySearchTermsTestCase[] = [
   }),
 ];
 
-/** The row to find first, worded differently than the request, then near misses on sibling topics. */
 function libraryWith(target: string, ...nearMisses: string[]): SearchCaseItem["library"] {
   return [
     { id: "target", text: target },
@@ -313,7 +304,6 @@ function searchItem(
 
 type Context = { course: string; goal: string | null; language: string };
 
-/** A lesson as a course outline asks for it: its course, level and the skills it teaches. */
 function lesson(
   context: Context,
   { description, skills, title }: { description: string; skills: string[]; title: string },
@@ -352,10 +342,6 @@ const money = {
 
 const genetics = { course: "Biologia", goal: "Passar no ENEM", language: "pt" };
 
-/**
- * Batches shaped like one chapter of a course outline: the chapter, its lessons and their skills,
- * written together as production asks for them. Every item must still find its own target.
- */
 const BATCH_TEST_CASES: LibrarySearchTermsTestCase[] = [
   batchCase({
     id: "pt-batch-chapter-dependents",

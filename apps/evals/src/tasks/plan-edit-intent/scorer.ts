@@ -2,7 +2,6 @@ import { createFixedScore } from "@/lib/score";
 import { type ClassificationOutcome, type TaskScorer } from "@/lib/types";
 import { isJsonObject } from "@zoonk/utils/json";
 
-/** A number the change must use, or a range when the request doesn't name one ("less"). */
 type ExpectedMinutes = number | { max: number; min: number };
 
 export type ExpectedChange = {
@@ -13,24 +12,13 @@ export type ExpectedChange = {
   date?: string | null;
   kind: string;
   minutes?: ExpectedMinutes;
-  /** A focus's parts: each narrowed area with exactly these skills; empty for whole areas. */
   parts?: { area: string; skillIds: string[] }[];
   start?: string;
-  /** Topics to add: the area each one goes under (null for none), in any order. */
   topics?: (string | null)[];
-  /**
-   * Words of the learner's own life no topic's name or description may carry: topics become
-   * lessons other learners share.
-   */
   topicsAvoid?: string[];
   weekdays?: number[];
 };
 
-/**
- * What the request asks for. `alternatives` lists other change sets that are just as right, such
- * as a daily time plus a Saturday instead of five weekdays plus a Saturday. `leftOut`: part of the
- * request is something no change does ("aim for 800"), which must come back in `leftOut`.
- */
 export type PlanEditExpected = {
   alternatives?: ExpectedChange[][];
   changes: ExpectedChange[];
@@ -58,7 +46,6 @@ function parseOutput(output: string): {
     }
 
     if (typeof parsed.kind === "string" && !Array.isArray(parsed.operations)) {
-      /** The classifier names clearing the date apart; the planner sets it to none. */
       const kind = parsed.kind === "clearTargetDate" ? "setTargetDate" : parsed.kind;
       return { kind, leftOut: 0, operations: null, understood: kind !== "none" };
     }
@@ -95,7 +82,6 @@ function matchesMinutes(value: unknown, expected: ExpectedMinutes): boolean {
     : value >= expected.min && value <= expected.max;
 }
 
-/** The same narrowed areas, each with exactly the expected skills. */
 function matchesParts(value: unknown, expected: NonNullable<ExpectedChange["parts"]>): boolean {
   const parts = Array.isArray(value) ? value.filter((part) => isJsonObject(part)) : [];
 
@@ -109,13 +95,11 @@ function matchesParts(value: unknown, expected: NonNullable<ExpectedChange["part
   );
 }
 
-/** No topic's name or description carries any of the learner's own words in `avoid`. */
 function avoidsWords(value: unknown, avoid: readonly string[]): boolean {
   const text = JSON.stringify(value ?? []).toLowerCase();
   return avoid.every((word) => !text.includes(word.toLowerCase()));
 }
 
-/** As many topics as expected, each named, under the expected areas. */
 function matchesTopics(value: unknown, expected: NonNullable<ExpectedChange["topics"]>): boolean {
   const topics = Array.isArray(value) ? value.filter((topic) => isJsonObject(topic)) : [];
   const named = topics.every((topic) => typeof topic.name === "string" && topic.name.length > 0);
@@ -156,7 +140,6 @@ function matches(operation: GeneratedOperation, expected: ExpectedChange): boole
   return checks.every(Boolean);
 }
 
-/** Matches each expected change to one generated operation; returns what's missing and extra. */
 function compare({
   expected,
   operations,
@@ -203,12 +186,6 @@ function scoreComparison({
   return { problems, score };
 }
 
-/**
- * Deterministic: the planner applies exactly these changes, so each one must have the right kind,
- * days, minutes, dates and areas, with nothing extra. A request that isn't a plan change must come
- * back not understood. Evaluation models only pick the first change's kind, so they're scored on
- * that alone.
- */
 export const scorePlanEditIntent: TaskScorer<PlanEditExpected> = ({ output, testCase }) => {
   const expected = testCase.expected;
 

@@ -1,6 +1,5 @@
 import { type ImageSceneInput } from "@zoonk/ai/tasks/v2/images/scene";
 
-/** Whether the case needs labels, must have none, or may go either way. */
 export type ImageSceneExpected = { labels: "any" | "none" | "some" };
 
 type ImageSceneCase = {

@@ -23,27 +23,18 @@ import { findReadingProblems, toReadingCorrections } from "@zoonk/core/library/e
 import { fetchDocument } from "@zoonk/core/library/sources/fetch";
 import { parseDocument } from "@zoonk/core/library/sources/parse-document";
 
-/**
- * A real notice, fetched when the eval runs as research would fetch it, or a learner's material
- * given as its text, as an upload is read.
- */
 export type EvalDocument = { title: string; url: string } | { text: string; title: string };
 
 export type ExtractionEvalInput = {
   exam: string;
   documents: EvalDocument[];
-  /** What a check found an earlier reading of the documents left out, for an admin's reading again. */
   leftOut?: ReadingProblem[];
 };
 
 export type ExtractionEvalOutput = BlueprintExtraction & {
-  /** What the check found the reading left out. */
   reading: { problems: ReadingProblem[] };
-  /** How many quoted passages code found in their document, the first half of the citation check. */
   passageCheck: { found: number; total: number };
-  /** What research stores after both checks: the facts learners plan with. */
   kept: BlueprintContent;
-  /** The model check's claims and cost, which the eval's spend doesn't count. */
   check: { claims: number; inputTokens: number; kept: number; outputTokens: number };
 };
 
@@ -85,7 +76,6 @@ function checkPassages({
 
 type EvalDocumentSource = { sourceId: string; text: string | null };
 
-/** What a call's provenance reports, for pricing it at the model that answered. */
 type CallProvenance = {
   model: string;
   usage: {
@@ -117,7 +107,6 @@ function toSources(documents: ResearchDocument[]): EvalDocumentSource[] {
   }));
 }
 
-/** Both citation checks, as research runs them, with the production check model. */
 async function keepCheckedFacts({
   documents,
   extraction,
@@ -153,10 +142,6 @@ async function keepCheckedFacts({
   };
 }
 
-/**
- * One reading as research makes it: the extraction, then both citation checks beside the check
- * for what it left out (`checkExamReading`, with its production model).
- */
 async function readChecked({
   corrections,
   documents,
@@ -200,7 +185,6 @@ async function readChecked({
     read: checked,
   });
 
-  // Every call besides the reading itself, which is what the eval measures.
   const calls = [
     ...kept.calls,
     toModelCall(findings.provenance),
@@ -210,10 +194,6 @@ async function readChecked({
   return { ...kept, calls, problems, result };
 }
 
-/**
- * Research's reading of a shared exam's documents: read once and checked. The reading's extraction
- * is what the eval measures; its checks count in what it spent (`extraCalls`).
- */
 export async function generateExtraction(
   input: ExtractionEvalInput & { model: string; reasoning?: Reasoning; useFallback?: boolean },
 ) {

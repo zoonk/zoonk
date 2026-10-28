@@ -4,9 +4,9 @@ import { GLYCOLYSIS_SLIDES, MARKET_NOTES } from "../cite-material/material-fixtu
 
 export type AnswerFromMaterialExpected = {
   found: boolean;
-  /** Pages the answer must cite, any of them; empty when the material doesn't cover it. */
+  /** Accepts any listed page; an empty list means the material does not cover the question. */
   refs: string[];
-  /** Words the answer must contain when found, any of them per entry (case and accents ignored). */
+  /** Each entry requires one alternative, ignoring case and accents. */
   mentions: string[][];
 };
 

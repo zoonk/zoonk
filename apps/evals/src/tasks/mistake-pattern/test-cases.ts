@@ -16,12 +16,6 @@ const mistake = (
   correctAnswer: string,
 ): Mistake => ({ answer, correctAnswer, format, question });
 
-/**
- * One case per kind first (a pattern, typos, none) so a small run covers all
- * three, then ser and estar for an English learner of Spanish, much and many
- * with an instruction inside an answer, and "no" and "na" for an English
- * learner of Portuguese.
- */
 export const TEST_CASES: TestCase<MistakePatternExpected, MistakePatternInput>[] = [
   {
     expectations: `A Brazilian learner of English mixes up "since" and "for" (mistakes 1, 3 and 4), from Portuguese "desde" and "há". Mistake 2 (missing article) and 6 (a typo) are unrelated, and 5 may be a recognition slip. The rule should explain "for" with a length of time and "since" with a starting point, and the drill should mix both answers. In Brazilian Portuguese.`,

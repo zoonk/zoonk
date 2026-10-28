@@ -20,12 +20,6 @@ const rentingScenario = {
   title: "Ligar para marcar uma visita",
 };
 
-/**
- * Calls written like speech transcripts: an A2 call with typical Brazilian
- * mistakes, a call where the learner barely spoke, a strong B2 call, a Spain
- * Spanish call and a short A1 call with an instruction inside a learner turn.
- * The first three are the ones a small validation run samples.
- */
 export const TEST_CASES: TestCase<unknown, ConversationFeedbackInput>[] = [
   {
     expectations: `A2 Brazilian learner who reached two objectives with typical mistakes: dropping the subject ("Is available?", "Is include the water"), "in Saturday" for "on Saturday" and "in the internet". The fix should be one of these, most usefully the missing subject or "Does it include...", with a "why" that mentions Portuguese dropping the subject when relevant. "Went well" can quote "How much is the rent?" or "Saturday at two is perfect". Pronunciation words must be ones the learner said whose usual slip for Brazilians can change the word or make it hard to understand, like "rent" (a first "r" that can sound like "h"), presented as often hard for Brazilians; not accent-only sounds like the "th" in "Thank you". In Brazilian Portuguese.`,

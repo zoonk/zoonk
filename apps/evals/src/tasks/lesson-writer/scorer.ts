@@ -9,7 +9,6 @@ import { findNumberFormatFlaws } from "@zoonk/utils/number-format-flaws";
 import { findEmDashes } from "@zoonk/utils/text-flaws";
 import { LESSON_WRITER_SCORE_CATEGORIES } from "./score-categories";
 
-/** What `find` reports on each screen, and on the summary card as the lesson's own. */
 function findInLesson({
   find,
   lesson,
@@ -25,15 +24,6 @@ function findInLesson({
   ];
 }
 
-/**
- * Runs the code half of the quality gate production runs, including running
- * the code in code activities, finds the em dashes production rewrites, numbers
- * written the way the lesson's language doesn't (`findNumberFormatFlaws`) and the
- * question bases whose quote isn't on the screen they name, which production
- * leaves out (`findQuestionBases`): each screen is one part, plus the summary card.
- * The judge sees the whole lesson, since a lesson is only published whole, and
- * the pass rate is scored on its own.
- */
 async function checkLesson(
   output: string,
   input: WriteLessonDraftParams,

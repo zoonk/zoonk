@@ -10,7 +10,6 @@ import {
 import { scoreSpeechTranscript } from "./scorer";
 import { type SpeechClipExpected, type SpeechClipInput, TEST_CASES } from "./test-cases";
 
-/** Clips made by scripts/generate-speech-clips.ts, one per test case id. */
 export const SPEECH_CLIPS_DIR = path.join(process.cwd(), "data", "speech");
 
 type SpeechClipRun = SpeechClipInput & { id?: string; model: string };
@@ -27,10 +26,6 @@ function toTranscriptionModel(model: string): TranscriptionModelId {
 
 type SpeechClipCase = { id: string; userInput: { spokenText: string } };
 
-/**
- * Test inputs don't carry their id, so each clip is found by its spoken text,
- * which is unique across the cases.
- */
 export function findSpeechClipPath({
   spokenText,
   testCases,

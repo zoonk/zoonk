@@ -1,12 +1,5 @@
 import { type LessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
 
-/**
- * Specs written by hand in the shape the spec task makes, so the writer is judged on activities
- * whose content code checks hardest: a code runner whose solution is run before publishing, a
- * labeled diagram whose picture code numbers from its parts, a decision tree whose case comes
- * with a picture, and the engines merged in Oct 2026 (a combination grid and a random simulation,
- * two lines and their crossing, a chord heard by ear).
- */
 export const ACTIVITY_LESSON_SPECS = {
   "en-major-minor-by-ear": {
     canDo: "Hear whether a chord is major or minor",

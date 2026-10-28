@@ -6,13 +6,6 @@ export type LanguageLessonInput = Omit<
   "analytics" | "model" | "reasoning" | "useFallback"
 >;
 
-/**
- * One case per language pair the plan names (learner language to target
- * language), across levels and situations. Evals focus on English and
- * Portuguese; Spanish is checked in its Spain variant. Learners who read the
- * app in the language they're preparing in (an IELTS candidate reading it in
- * English) get lessons in that one language.
- */
 export const TEST_CASES: TestCase<unknown, LanguageLessonInput>[] = [
   {
     expectations: `Brazilian Portuguese speaker learning US English, A2, renting an apartment in Toronto. Words like "the rent", "the deposit", "utilities" or "the lease"; "rent" is "aluguel", and a note should catch that Portuguese "renda" means income. Tips should target sounds Portuguese speakers struggle with (English "r" at the start of a word, "th", final consonants, vowel length). Respellings are readable by a Brazilian (no "rr" for an English "r"). "Deposit" and "utilities" aren't in the known words, but "apartment" is and must not be taught again.`,

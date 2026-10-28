@@ -1,12 +1,3 @@
-/**
- * Makes the labeled clips the transcribe-speech and assess-pronunciation evals
- * listen to: each test case's `spokenText` read aloud by the same
- * text-to-speech the app uses, saved as data/speech/<case id>.mp3. Clips that
- * exist are kept, so this only spends on new cases.
- *
- *   pnpm exec tsx --conditions=react-server --env-file=.env \
- *     --import ./scripts/register-markdown.mts scripts/generate-speech-clips.ts
- */
 import { existsSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";

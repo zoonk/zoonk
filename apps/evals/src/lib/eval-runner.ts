@@ -49,10 +49,6 @@ async function saveScoredResults(taskId: string, modelId: string, results: Score
   await fs.writeFile(filePath, JSON.stringify(taskResults, null, 2));
 }
 
-/**
- * Removes every scored result for one task and model so regenerated outputs
- * cannot be paired with scores from an earlier evaluation.
- */
 export async function deleteModelResults({
   modelId,
   taskId,
@@ -63,7 +59,6 @@ export async function deleteModelResults({
   await fs.rm(getResultsFilePath(taskId, modelId), { force: true });
 }
 
-/** Drops selected runs from one model's saved scores so regenerated outputs get scored again. */
 export async function removeModelResultRuns({
   modelId,
   runIds,
@@ -128,7 +123,6 @@ export async function runEval(task: RegisteredTask, modelId: string): Promise<Ta
 
   logInfo(`\nStarting eval for task: ${task.name}, model: [${safeModelId}]`);
 
-  // Load pre-generated outputs
   const modelOutputs = await loadModelOutputs(task.id, modelId);
 
   if (!modelOutputs || modelOutputs.outputs.length === 0) {
@@ -137,11 +131,9 @@ export async function runEval(task: RegisteredTask, modelId: string): Promise<Ta
 
   logInfo(`Found ${modelOutputs.outputs.length} outputs to score`);
 
-  // Load existing scored results
   const existingResults = await loadExistingScoredResults(task.id, modelId);
   logInfo(`Found ${existingResults.length} existing scored results`);
 
-  // Find outputs that haven't been scored yet
   const outputsToScore = modelOutputs.outputs.filter(
     (output) => !isAlreadyScored(existingResults, output.testCaseId),
   );
@@ -185,7 +177,6 @@ export async function runEval(task: RegisteredTask, modelId: string): Promise<Ta
   return combineOutputsAndResults(task.id, modelId, modelOutputs.outputs, allScoredResults);
 }
 
-/** Pairs each scored result with its saved output; results without an output are stale. */
 function combineOutputsAndResults(
   taskId: string,
   modelId: string,

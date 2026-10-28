@@ -4,19 +4,12 @@ import { CEBRASPE, ENEM, SAT_MATH } from "../generate-items/test-cases";
 
 type PlacementItemsInput = Omit<PlacementItemsParams, "model" | "useFallback" | "reasoning">;
 
-/** What placement writes per skill: one quick question to ask it and a second to confirm a right pick. */
 const PLACEMENT_COUNTS = { quickCount: 2, typedCount: 0 } as const;
 
-/** A guess passes a statement half the time, so two more statements confirm a right one. */
 const TRUE_FALSE_PLACEMENT_COUNTS = { quickCount: 3, typedCount: 0 } as const;
 
-/** A language goal confirms a right pick with a typed answer in the language. */
 const LANGUAGE_PLACEMENT_COUNTS = { quickCount: 1, typedCount: 1 } as const;
 
-/**
- * Each case batches three skills, one more than placement sends per call, including skills the
- * generate-items eval writes one at a time, so batched and single-skill scores can be compared.
- */
 export const TEST_CASES: TestCase<unknown, PlacementItemsInput>[] = [
   {
     expectations: `Questions in Brazilian Portuguese for three constitutional-law skills (two multiple-choice questions each). Each skill lists the situations its questions in the bank already use (USED_SITUATIONS): no new question may use one of those situations again with other names, places or numbers (a meeting in a public square for the right of assembly; a request for one's own records for habeas data), and a skill's two new questions differ from each other too. Check the legal accuracy against the Constitution's article 5 (XVI, LXXII, LXIX).`,
@@ -85,8 +78,6 @@ export const TEST_CASES: TestCase<unknown, PlacementItemsInput>[] = [
     },
   },
   {
-    // Pedro's phase challenge (13 Oct 2026) showed "40000000 ações … 12500": placement writes the
-    // challenge's questions, so code checks every number for the language's format.
     expectations: `Placement questions in Brazilian Portuguese for three ENEM skills about large quantities and decimals, each skill with two ENEM-style multiple-choice questions (short support text, a command, 5 options, distractors from typical mistakes). Every number is written the Brazilian way: thousands grouped with a dot (12.500; 40.000.000 or 40 milhões), a decimal comma (3,5; 0,03%), money as R$ 1.250,00, and never a run of digits such as 40000000 or 12500. Options that are values use the same format as the text. Each question tests only its own skill, and a skill's two questions use different situations and never give away each other's answer.`,
     id: "pt-enem-placement-large-numbers",
     userInput: {
@@ -117,8 +108,6 @@ export const TEST_CASES: TestCase<unknown, PlacementItemsInput>[] = [
     },
   },
   {
-    // Helena's placement (ENEM, Oct 2026): a sound answer to "what check would you recommend?" was
-    // graded wrong for not naming elimination, a second technique its key points demanded.
     expectations: `Placement questions in Brazilian Portuguese for one ENEM test-taking skill: two ENEM-style multiple-choice questions, both set in a situation during the exam, each asking how to handle a question in the exam, with one best option and wrong options that are tempting but worse strategies, never a sound strategy marked wrong because another one is listed as right. The test-taking skill is about scoring well (time, choosing between close options), never the exam day's procedures.`,
     id: "pt-enem-placement-test-taking",
     userInput: {
@@ -137,8 +126,6 @@ export const TEST_CASES: TestCase<unknown, PlacementItemsInput>[] = [
     },
   },
   {
-    // Bia's placement (ENEM, 10 Oct 2026): she picked Spanish of the exam's foreign language
-    // choice, so placement asked its two skills; the questions written then were sound.
     expectations: `Placement questions in Brazilian Portuguese for two skills of ENEM's foreign language test in Spanish, the option the learner picked of the exam's choice. As in ENEM, each question's support text is in Spanish (a notice, a chronicle, a website, an ad, a song or another real genre), while the setup, the command, the options, and the reasons are in Brazilian Portuguese. Never English, never a text-free grammar or translation drill, and never a question a reader of Portuguese could answer without understanding the Spanish (distractors come from real misreadings: false friends such as "apenas", "exquisito" or "embarazada", a detail read in isolation, a cognate taken at face value). Check every key against the Spanish text. Each skill has two ENEM-style multiple-choice questions with 5 options; a skill's two questions use different texts.`,
     id: "pt-enem-placement-spanish-option",
     userInput: {
@@ -193,7 +180,6 @@ export const TEST_CASES: TestCase<unknown, PlacementItemsInput>[] = [
     },
   },
   {
-    // A mock's questions (mock-questions-workflow): one format, several per skill, no typed ones.
     expectations: `Mock exam questions in Brazilian Portuguese for two ENEM skills: exactly two ENEM-style multiple-choice questions per skill (short support text, a command, 5 options, distractors from typical mistakes) and no typed questions. Each skill lists the situations its questions in the bank already use (USED_SITUATIONS): no new question uses one of them again with other names, places or numbers, and a skill's two new questions differ from each other in situation and in what they ask. Each question tests only its own skill and reads like a real ENEM question at its level. The math must be right.`,
     id: "pt-enem-mock-quick-only",
     userInput: {

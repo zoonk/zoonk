@@ -2,10 +2,6 @@ import { type LatencyBudget } from "./types";
 
 const MS_TO_SECONDS = 1000;
 
-/**
- * Nearest-rank percentile: always a latency that was actually measured, which
- * keeps p95 honest on the small case counts evals use.
- */
 function getPercentile(sortedValues: number[], percentile: number): number {
   if (sortedValues.length === 0) {
     return 0;
@@ -15,10 +11,6 @@ function getPercentile(sortedValues: number[], percentile: number): number {
   return sortedValues[Math.max(0, rank - 1)] ?? 0;
 }
 
-/**
- * Summarizes call durations as the median and the slow tail learners notice.
- * Averages hide the tail, and a classifier on the answer path waits on it.
- */
 export function summarizeLatency(durationsMs: number[]): { p50: number; p95: number } {
   const sorted = durationsMs.toSorted((a, b) => a - b);
 
@@ -28,11 +20,6 @@ export function summarizeLatency(durationsMs: number[]): { p50: number; p95: num
   };
 }
 
-/**
- * Whether a model's measured latency fits the task's budget: both the median
- * and the slow tail must, since a fast median can hide waits learners notice.
- * Null when the task has no budget, as for work made ahead of time.
- */
 export function meetsLatencyBudget({
   budget,
   latency,

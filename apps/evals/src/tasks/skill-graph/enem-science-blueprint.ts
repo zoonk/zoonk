@@ -3,11 +3,6 @@ import { type ExamOutline } from "@zoonk/ai/tasks/v2/curriculum/exam-outline";
 const NATUREZA = "Ciências da Natureza e suas Tecnologias";
 const MATEMATICA = "Matemática e suas Tecnologias";
 
-/**
- * Two subjects of the ENEM notice as the curriculum read it (Oct 2026), with the board's topic
- * frequency: its natural sciences topics are the notice's own headings, where a graph once chained
- * ecology behind tissues and the classification of living beings.
- */
 export const ENEM_SCIENCE_BLUEPRINT: ExamOutline = {
   name: "ENEM",
   notes: [

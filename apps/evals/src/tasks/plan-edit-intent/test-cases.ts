@@ -4,7 +4,6 @@ import { type ExpectedChange, type PlanEditExpected } from "./scorer";
 
 type PlanEditTestCase = TestCase<PlanEditExpected, PlanEditInput>;
 
-/** A Monday, so "next week" starts on 2026-10-05. */
 const TODAY = "2026-09-28";
 
 const ENEM_AREAS_EN = ["Mathematics", "Natural sciences", "Human sciences", "Languages", "Essay"];
@@ -63,7 +62,6 @@ function learnInput({
   };
 }
 
-/** Marcos, moving to Toronto: an English plan whose areas are its situations. */
 function languageInput({
   language,
   request,
@@ -93,7 +91,6 @@ function editCase({
   alternatives?: ExpectedChange[][];
   changes: ExpectedChange[];
   id: string;
-  /** Part of the request is something no change does. */
   leftOut?: boolean;
   userInput: PlanEditInput;
 }): PlanEditTestCase {
@@ -106,7 +103,6 @@ const OAB_ETHICS =
 const OAB_PHILOSOPHY = "Filosofia do Direito";
 const OAB_CIVIL_PROCEDURE = "Direito Processual Civil";
 
-/** Sofia's OAB first phase plan: the notice's 20 subjects and test strategy, two hours a day. */
 function oabInput(request: string): PlanEditInput {
   return {
     areas: [
@@ -148,7 +144,6 @@ const LESS_ON_WEEKENDS = {
   weekdays: [0, 6],
 };
 
-/** Marcos again, preparing a data analyst job interview in English. */
 function interviewInput(request: string): PlanEditInput {
   return {
     areas: ["Inglês"],
@@ -162,7 +157,6 @@ function interviewInput(request: string): PlanEditInput {
   };
 }
 
-/** Carla, a teacher moving into UX design, whose plan ends with a portfolio and the job search. */
 function careerInput(request: string): PlanEditInput {
   return {
     areas: [
@@ -197,8 +191,6 @@ export const TEST_CASES: PlanEditTestCase[] = [
       "coloca no plano aquele projeto de estudo de caso na escola que você sugeriu, quero começar o portfólio já",
     ),
   }),
-  // The buddy's words for Carla's first ask (Oct 2026), once read as a focus on the portfolio
-  // area, which already started that day: "I can't move it earlier", and no card.
   editCase({
     changes: [{ date: TODAY, kind: "addTopics", topics: ["Portfólio de UX"] }],
     id: "pt-career-own-project-soon",
@@ -206,7 +198,6 @@ export const TEST_CASES: PlanEditTestCase[] = [
       "Começar o Portfólio logo, usando como projeto algo da escola onde dou aula.",
     ),
   }),
-  // Carla's second ask (Oct 2026): her school's own problem named the shared skill.
   editCase({
     changes: [
       {
@@ -439,7 +430,6 @@ export const TEST_CASES: PlanEditTestCase[] = [
       request: "coloca ciências da natureza e redação primeiro e quero mirar 800 pontos",
     }),
   }),
-  // Sofia's change, as her buddy asked for it: philosophy must get less time, never more.
   editCase({
     changes: [
       { kind: "setWeekdayMinutes", minutes: 60, weekdays: [0] },

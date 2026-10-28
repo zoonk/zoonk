@@ -38,7 +38,6 @@ export const TEST_CASES = [
       - expected behavior 2
     `,
   },
-  // Add more test cases...
 ];
 ```
 

@@ -6,34 +6,23 @@ const FULL = 10;
 const MIN_SCORE = 1;
 const MISS_PENALTY = 2;
 
-/** One expected goal: its kind, and only the fields the words make certain. */
 type ExpectedGoal = {
-  /** The exam's month, 1 to 12, when the words name one without its day ("in January"). */
   examMonth?: number;
   examName?: RegExp;
-  /** What the exam's learner aims for beyond passing; null for an exam only passed or failed. */
   examTarget?: "admission" | "position" | "score" | null;
-  /** The exam's year, when the words name or imply one ("in January next year"). */
   examYear?: number;
   hasTargetDate?: boolean;
-  /** The deadline's month, YYYY-MM, when the words name one. */
   month?: string;
   nativeLanguage?: string;
   ownLevel?: string;
   purpose?: string;
   targetLanguage?: string;
   kind: "exam" | "language" | "learn";
-  /** A target (score, course or position) is filled in. */
   hasTarget?: boolean;
-  /** The target score (`targetScore`): a language goal's level, such as /B2/, or an exam's, /750/. */
   targetScore?: RegExp;
-  /** An entrance exam's course as the app shows it (`targetCourse`), such as /^Medicina$/. */
   targetCourse?: RegExp;
-  /** The school or university aimed for (`institution`), such as /^UFMG$/. */
   institution?: RegExp;
-  /** The learner's current job, when the goal is for that work (`role`), such as /dados/. */
   role?: RegExp;
-  /** Words the title must keep, such as the institution that names an exam. */
   title?: RegExp;
 };
 
@@ -47,7 +36,6 @@ export type UnderstandGoalExpected = {
 
 type Output = Record<string, unknown>;
 
-/** Values as JSON in the conclusion, so objects and nulls read clearly. */
 function show(value: unknown): string {
   return JSON.stringify(value) ?? "undefined";
 }
@@ -61,12 +49,10 @@ function readOutput(output: string): Output | null {
   }
 }
 
-/** Whether a text field matches what the case expects of it; a field the case leaves out passes. */
 function matchesText({ pattern, value }: { pattern: RegExp | undefined; value: unknown }) {
   return !pattern || (typeof value === "string" && pattern.test(value));
 }
 
-/** The exam's own facts: its name, year, month and what its learner aims for. */
 function getExamChecks({
   expected,
   goal,
@@ -88,7 +74,6 @@ function getExamChecks({
       `exam month ${show(goal.examMonth)}`,
     ],
     [
-      // The understanding leaves out what an exam doesn't have, so null reads as absent.
       expected.examTarget === undefined || (goal.examTarget ?? null) === expected.examTarget,
       `exam target ${show(goal.examTarget)}`,
     ],
@@ -144,15 +129,9 @@ function checkGoal({ expected, goal }: { expected: ExpectedGoal; goal: unknown }
   return [...checks.filter(([ok]) => !ok).map(([, problem]) => problem), ...checkTitle(goal)];
 }
 
-/**
- * The details the confirm screen shows as their own rows, which the title shouldn't repeat. A
- * career change's new role is the goal itself ("Become a data analyst"), so only an exam's
- * position counts.
- */
 const ROW_FIELDS = ["examYear", "targetCourse", "targetScore"] as const;
 const EXAM_ROW_FIELDS = [...ROW_FIELDS, "targetPosition"] as const;
 
-/** Titles are headings: longer ones stack the details the rows already show. */
 const MAX_TITLE_WORDS = 8;
 
 function checkTitle(goal: Record<string, unknown>): string[] {
@@ -194,11 +173,6 @@ function checkSchedule({ expected, output }: { expected: UnderstandGoalExpected;
   return checks.filter(([ok]) => !ok).map(([, problem]) => problem);
 }
 
-/**
- * The route decides where the learner goes, so a wrong route scores 1. With the right route,
- * each fact that's wrong or missing costs 2 points. Evaluation models (Jev) only return the
- * route, so their rows score the route alone.
- */
 export const scoreUnderstandGoal: TaskScorer<UnderstandGoalExpected> = ({ output, testCase }) => {
   const expected = testCase.expected;
   const parsed = readOutput(output);

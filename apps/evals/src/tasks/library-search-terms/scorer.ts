@@ -7,13 +7,10 @@ import {
 } from "@zoonk/core/library/identity/text-search-query";
 import { isJsonObject } from "@zoonk/utils/json";
 
-/** One row the database would search: its id and the text the search reads. */
 export type LibrarySearchItem = { id: string; text: string };
 
-/** What the library holds for one item of a case: the row to find and near misses. */
 type LibrarySearchExpectation = { library: LibrarySearchItem[]; targetId: string };
 
-/** One expectation per subject of the case, in the same order. */
 export type LibrarySearchTermsExpected = { items: LibrarySearchExpectation[] };
 
 const MISSED_SCORE = 6;
@@ -22,11 +19,6 @@ const FOUND_SCORE = 10;
 
 type ItemScore = { conclusion: string | null; found: boolean; score: number };
 
-/**
- * Production searches the item's own title and skills together with the
- * model's terms, so the eval does too. Cases are written so those words alone
- * miss the target, which leaves finding it to the model.
- */
 function getBaseTerms(subject: LibraryIdentitySubject): string[] {
   if (subject.kind === "image") {
     return [];
@@ -40,7 +32,6 @@ function toTerms(value: unknown): string[] {
   return terms.filter((term): term is string => typeof term === "string");
 }
 
-/** Each subject's terms, in the order of the case's subjects; null when the output has no list. */
 function getGeneratedTerms(output: string): string[][] | null {
   try {
     const parsed: unknown = JSON.parse(output);
@@ -55,12 +46,6 @@ function getGeneratedTerms(output: string): string[][] | null {
   }
 }
 
-/**
- * Checks whether the right item appears in the results, using the same query
- * rules as the database on whole words. Postgres also stems words, so this is
- * a lower bound of real recall. Matching more than half of the near misses
- * costs points, because each one is a decision call and a chance of a wrong reuse.
- */
 function scoreItem({
   expected,
   generated,
@@ -92,10 +77,6 @@ function scoreItem({
   return { conclusion: null, found, score: FOUND_SCORE };
 }
 
-/**
- * Scores every subject against its own library, as production searches each item on its own. A
- * case scores as its worst item, since one missed item is one duplicate made.
- */
 export const scoreLibrarySearchTerms: TaskScorer<LibrarySearchTermsExpected> = ({
   output,
   testCase,

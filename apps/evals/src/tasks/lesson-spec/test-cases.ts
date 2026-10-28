@@ -4,7 +4,6 @@ import { listPlannerTemplates } from "@zoonk/core/library/activities/writer-temp
 import { SOURCED_LESSONS } from "../lesson-writer/sourced-lesson-specs";
 import { type LessonSpecExpected, VISUAL_TEST_CASES } from "./visual-test-cases";
 
-/** What workflows pass: every template in the catalog. */
 const ACTIVITY_TEMPLATES: LessonSpecParams["activityTemplates"] = listPlannerTemplates();
 
 const SHARED_EXPECTATIONS = `
@@ -17,7 +16,6 @@ const { "en-tax-deadlines": taxDeadlines, "pt-estabilidade": estabilidade } = SO
 
 type ChapterLessons = NonNullable<LessonSpecParams["chapterLessons"]>;
 
-/** The chapter's other lessons known only by their outline titles, before and after this one. */
 function outlined({ after = [], before = [] }: { after?: string[]; before?: string[] }) {
   return [
     ...before.map((title) => ({ order: "before" as const, title })),
@@ -25,7 +23,6 @@ function outlined({ after = [], before = [] }: { after?: string[]; before?: stri
   ] satisfies ChapterLessons;
 }
 
-/** Lessons of goals built from official sources come first, so a small run checks them. */
 export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
   {
     expectations: `
@@ -497,7 +494,6 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
     },
   },
   {
-    // Exam lessons in Oct 2026 nearly all planned "Spot the AI's mistake" and no template to explore.
     expectations: `
       - MUST be in Brazilian Portuguese
       - Written for candidates of the exam in EXAMS, finishing secondary school: checks are planned like that exam's contextualized multiple-choice questions on proteins and enzymes
@@ -610,7 +606,6 @@ export const TEST_CASES: TestCase<LessonSpecExpected, LessonSpecParams>[] = [
     },
   },
   {
-    // A base the learner chose to see as a "Quick lesson" close to the exam (Oct 2026).
     expectations: `
       - MUST be in Brazilian Portuguese
       - Exactly one lesson (never split) of about 3 to 5 minutes and 6 to 8 screens, whose only skill is the one given, with its name kept

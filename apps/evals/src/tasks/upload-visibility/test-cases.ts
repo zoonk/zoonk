@@ -2,7 +2,6 @@ import { type TestCase } from "@/lib/types";
 import { type UploadVisibilityParams } from "@zoonk/ai/tasks/v2/research/upload-visibility";
 import { type UploadVisibilityExpected } from "./task";
 
-/** The language is the document's. */
 function uploadCase({
   fileName,
   id,

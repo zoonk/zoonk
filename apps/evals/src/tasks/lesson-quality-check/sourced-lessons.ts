@@ -1,12 +1,6 @@
 import { type WrittenLesson } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
 import { SOURCED_LESSONS } from "../lesson-writer/sourced-lesson-specs";
 
-/**
- * Hand-written lessons of goals built from official sources, with the passages the reviewer reads
- * as `SOURCES`. Clean copies match the sources; test cases plant a fact the sources contradict,
- * one that many people (and models) remember wrong, so only the source settles it.
- */
-
 const taxDeadlines: WrittenLesson = {
   screens: [
     {

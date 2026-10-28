@@ -6,7 +6,6 @@ export type ConversationObjectivesInput = Omit<
   "analytics" | "model" | "reasoning" | "useFallback"
 >;
 
-/** The open objectives the learner's own words achieved, and no others. */
 export type ConversationObjectivesExpected = { met: string[] };
 
 type Turn = CheckConversationObjectivesParams["turns"][number];
@@ -89,7 +88,6 @@ const TOEFL: Call = {
     "Um simulado curto da seção Speaking do TOEFL iBT: repita frases e depois responda a uma entrevista.",
 };
 
-/** The call's context with only some of its objectives still open. */
 function openOnly(call: Call, labels: string[]): Call {
   return { ...call, objectives: call.objectives.filter((item) => labels.includes(item.label)) };
 }
@@ -142,12 +140,6 @@ function englishSpeaker({
 
 const LANDLORD_OPENING = character("Hi! Are you calling about the apartment?");
 
-/**
- * Transcripts of live calls so far, as the app sends them after a learner turn: the objectives
- * still open and the ones the learner's own words achieved. Mistakes a listener understands count;
- * what the character offers, a request not yet agreed, a sentence in the learner's own language
- * and an instruction to mark everything don't.
- */
 export const TEST_CASES: TestCase<ConversationObjectivesExpected, ConversationObjectivesInput>[] = [
   portugueseSpeaker({
     id: "pt-renting-two-questions",

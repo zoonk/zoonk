@@ -7,17 +7,12 @@ import { type GradeTypedAnswerExpected } from "./test-cases";
 const FULL_MATCH_SCORE = 10;
 const VERDICT_ONLY_SCORE = 8;
 const WRONG_VERDICT_SCORE = 6;
-/** Broken language in the feedback is as bad for the learner as a wrong verdict. */
 const BROKEN_FEEDBACK_SCORE = 6;
 
 function toLabel(isCorrect: boolean): string {
   return isCorrect ? "correct" : "wrong";
 }
 
-/**
- * Each expected corrected form is named by one correction, and nothing else is corrected: a
- * missed mistake leaves the learner guessing, and an extra one marks a right answer wrong.
- */
 function correctionsMatch({
   corrections,
   expected,
@@ -53,15 +48,6 @@ function getScore({
   return keyPointsMatch ? FULL_MATCH_SCORE : VERDICT_ONLY_SCORE;
 }
 
-/**
- * Scores the verdict and each key point against a teacher's labels. The
- * verdict decides the label accuracy; a right verdict with a key point or a
- * language correction marked differently still loses points, since partial
- * credit and what the learner sees use them,
- * and so does feedback the learner can't read as written (HTML entities, or
- * Portuguese without its accents) or that praises an answer the grade marks
- * wrong.
- */
 export const scoreTypedAnswerGrade: TaskScorer<GradeTypedAnswerExpected> = ({
   output,
   testCase,

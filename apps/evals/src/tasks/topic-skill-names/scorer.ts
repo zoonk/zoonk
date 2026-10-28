@@ -3,15 +3,7 @@ import { type TaskScorer } from "@/lib/types";
 import { type TopicSkillName } from "@zoonk/ai/tasks/v2/plans/topic-skill-names";
 import { normalizeString } from "@zoonk/utils/string";
 
-/** What each topic's shared skill must name, and what of the learner it must leave out. */
-export type TopicSkillNamesExpected = {
-  topics: {
-    /** One of these must be in the name: the subject the skill teaches. */
-    general: string[];
-    /** None of these may be in the name or the description: the learner's own details. */
-    personal: string[];
-  }[];
-};
+export type TopicSkillNamesExpected = { topics: { general: string[]; personal: string[] }[] };
 
 const MAX_NAME_LENGTH = 80;
 
@@ -28,7 +20,6 @@ function parseSkills(output: string): (TopicSkillName | null)[] {
   }
 }
 
-/** What one topic's skill got wrong: a missing name, a leaked detail, or a lost subject. */
 function listProblems({
   expected,
   skill,
@@ -55,10 +46,6 @@ function listProblems({
   };
 }
 
-/**
- * A personal detail in a shared skill is the failure that matters (6); a name that loses the
- * subject or runs long is a smaller one (8); every topic clean and on its subject is 10.
- */
 export const scoreTopicSkillNames: TaskScorer<TopicSkillNamesExpected> = ({ output, testCase }) => {
   const expected = testCase.expected;
 

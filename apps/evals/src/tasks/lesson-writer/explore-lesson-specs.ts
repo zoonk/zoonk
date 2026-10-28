@@ -1,11 +1,5 @@
 import { type LessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
 
-/**
- * Explanations that show an activity template to explore, nothing asked (Oct 2026, owner: "we
- * should probably support all artifacts"): a model to move, a process in order, a map and a
- * picture whose parts code numbers. The writer fills the template's fields on the explanation itself, and
- * code validates them like an activity's.
- */
 export const EXPLORE_LESSON_SPECS = {
   "en-compound-growth-explore": {
     canDo: "Explain why a higher rate grows savings much faster over time",

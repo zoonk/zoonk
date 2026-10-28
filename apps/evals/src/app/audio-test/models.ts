@@ -14,19 +14,10 @@ export const AUDIO_MODEL_OPTIONS = [
 
 export type AudioModelValue = (typeof AUDIO_MODEL_OPTIONS)[number]["value"];
 
-/**
- * Confirms that a submitted value matches one of the options rendered by the
- * audio test form. Server actions remain directly callable, so this check must
- * not rely on the client-side select restricting its values.
- */
 export function isAudioModelValue(value: string): value is AudioModelValue {
   return value === DEFAULT_AUDIO_MODEL_VALUE || isSpeechModelName(value);
 }
 
-/**
- * Converts the form's explicit default option into an omitted model so the
- * generation task exercises its automatic order.
- */
 export function getSpeechModel(value: AudioModelValue): SpeechModelName | undefined {
   return value === DEFAULT_AUDIO_MODEL_VALUE ? undefined : value;
 }

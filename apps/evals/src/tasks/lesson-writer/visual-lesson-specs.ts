@@ -1,17 +1,6 @@
 import { type LessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
 
-/**
- * Lessons whose questions are about something to see (6 Oct 2026, after an owner found a
- * Câmara "Images and captions" lesson that described its pictures in words and a check that
- * wrote its table as "7h → 9; 8h → 5"). The writer must show them: a picture on every question
- * about one, the data as a Markdown table, a chart or a timeline drawn from data.
- */
 export const VISUAL_LESSON_SPECS = {
-  /**
-   * Telling separate things apart by how they look (Oct 2026, the owner brought back main's
-   * "which one is a dendrite?" pictures): the check about the three doorways shows one picture per
-   * option, each doorway alone, never one picture with parts numbered.
-   */
   "en-church-doorways-beginner": {
     canDo: "Tell Romanesque, Gothic and Baroque church doorways apart by how they look",
     description: "Spot the shapes that give away when a church doorway was built.",
@@ -64,10 +53,6 @@ export const VISUAL_LESSON_SPECS = {
     supportMode: "explanationFirst",
     title: "Reading a church doorway",
   },
-  /**
-   * A plan that asked for a picture of data (Oct 2026, "native visuals first"): the writer draws a
-   * curve of balances as the app's line chart, never as a generated picture.
-   */
   "en-compound-interest-beginner": {
     canDo: "Work out how a balance grows with compound interest",
     description: "See why interest on interest makes savings grow faster each year.",
@@ -128,10 +113,6 @@ export const VISUAL_LESSON_SPECS = {
     supportMode: "explanationFirst",
     title: "Compound interest",
   },
-  /**
-   * Where a part sits in one whole (Oct 2026, drawn-in numbers): the check shows one flower cut in
-   * half with its parts numbered by code, and asks which number is the ovary.
-   */
   "en-flower-parts-numbered": {
     canDo: "Find the parts of a flower that make seeds",
     description: "Find where a flower makes its seeds, and which parts help.",
@@ -186,11 +167,6 @@ export const VISUAL_LESSON_SPECS = {
     supportMode: "explanationFirst",
     title: "Where seeds come from",
   },
-  /**
-   * A real spec (6 Oct 2026) whose writer labeled options "Desenho 1/2/3" and asked to "observe
-   * os dois desenhos" with no picture: two drawings compared are one picture labeled 1 and 2, and
-   * "which chart fits the data" shows one chart and asks about it.
-   */
   "pt-graficos-de-barras-beginner": {
     canDo: "Criar um gráfico de barras com categorias legíveis",
     description:

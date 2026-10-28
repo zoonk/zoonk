@@ -8,12 +8,7 @@ import {
 import { TEST_CASES } from "./test-cases";
 
 export type FindTargetCutoffExpected = {
-  /** The range a real cut-off of the target falls in; null when none is published. */
   range: { max: number; min: number } | null;
-  /**
-   * The top of the scale the cut-off is on, which the app needs to show it at all ("7 out of 10"):
-   * left out when the case doesn't check it.
-   */
   maxScore?: number;
 };
 
@@ -25,12 +20,6 @@ function parseOutput(output: string): TargetCutoffFinding | null {
   }
 }
 
-/**
- * 10 for a cut-off in its plausible range with its source (or "unknown" where none is published);
- * 8 for one it missed or gave without its scale, which only leaves the learner without the
- * reference (the app hides a number without its scale); 6 for a cut-off out of range, on a wrong
- * scale or made up for a target that has none, which would mislead the learner about the bar.
- */
 const scoreTargetCutoff: TaskScorer<FindTargetCutoffExpected> = ({ output, testCase }) => {
   const found = parseOutput(output);
   const expected = testCase.expected;

@@ -11,7 +11,6 @@ import { TEST_CASES } from "./test-cases";
 export type ExamIdentityInput = { candidate: ExamDescription; request: ExamDescription };
 export type ExamIdentityExpected = { same: "true" | "false" };
 
-/** Evaluation models answer the pair; the verdict uses the production threshold. */
 async function decidePair(input: ExamIdentityInput & { model: string }) {
   const run = await evaluateExamIdentityPair({
     candidate: input.candidate,

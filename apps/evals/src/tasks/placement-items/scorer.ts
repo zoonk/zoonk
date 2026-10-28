@@ -16,11 +16,6 @@ type PlacementItemsCase = Pick<
 
 type RoleCheck = { passing: GeneratedItem[]; problems: string[]; wanted: number };
 
-/**
- * One skill's questions in one role, checked the way production checks them before storing, with
- * the em dashes storing them takes out of our own wording and numbers written the way the
- * language doesn't (`findNumberFormatFlaws`), which phase challenges show as written.
- */
 function checkRole({
   format,
   items,
@@ -55,7 +50,6 @@ function checkRole({
   };
 }
 
-/** Every skill gets exactly the questions asked for, each passing the item checks. */
 function checkPlacementItems(output: string, input: PlacementItemsCase): CodeCheckResult {
   const { skills } = JSON.parse(output) as { skills: PlacementSkillItems[] };
 
@@ -107,7 +101,6 @@ function checkPlacementItems(output: string, input: PlacementItemsCase): CodeChe
   };
 }
 
-/** The generate-items rubric, so batched questions score on the same scale as single-skill ones. */
 export const scorePlacementItems: TaskScorer = ({ output, testCase }) =>
   scoreWithCodeChecks({
     check: (value) => checkPlacementItems(value, testCase.userInput as PlacementItemsCase),

@@ -7,14 +7,7 @@ import {
 } from "@zoonk/ai/tasks/v2/research/find-topic-frequency";
 import { TEST_CASES } from "./test-cases";
 
-export type FindTopicFrequencyExpected = {
-  /** A subject that must be found: well-known analyses of its past papers exist. */
-  found: string[];
-  /** Topics every analysis of the past papers shows asked a lot: never rated `low`. */
-  notLow: string[];
-  /** Topics every analysis shows asked rarely: never rated `high`. */
-  notHigh: string[];
-};
+export type FindTopicFrequencyExpected = { found: string[]; notLow: string[]; notHigh: string[] };
 
 function parseOutput(output: string): TopicFrequencyFinding | null {
   try {
@@ -24,7 +17,6 @@ function parseOutput(output: string): TopicFrequencyFinding | null {
   }
 }
 
-/** Ratings that contradict what every analysis of the exam's past papers says. */
 function findContradictions({
   expected,
   found,
@@ -43,11 +35,6 @@ function findContradictions({
   });
 }
 
-/**
- * 10 for ratings with their sources that agree with what every analysis says (or nothing where no
- * source is expected); 8 for a missed source, which only leaves the plan cutting by the graph's
- * weights; 6 for a rating that contradicts the past papers, which would cut what's asked most.
- */
 const scoreTopicFrequency: TaskScorer<FindTopicFrequencyExpected> = ({ output, testCase }) => {
   const found = parseOutput(output);
   const expected = testCase.expected;
@@ -70,8 +57,6 @@ const scoreTopicFrequency: TaskScorer<FindTopicFrequencyExpected> = ({ output, t
     return createFixedScore({ conclusion: `Missed ${missed.join(", ")}`, score: 8 });
   }
 
-  // A found subject rates the topics every analysis shows asked a lot: leaving one unrated puts
-  // it below the ones the source lists, as a whole discipline left out would.
   const rated = new Set(
     found.subjects.flatMap((subject) => subject.topics.map((item) => item.topic)),
   );

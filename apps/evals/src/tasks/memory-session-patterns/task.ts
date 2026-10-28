@@ -32,11 +32,6 @@ function containsAny(text: string, keywords: readonly string[]): boolean {
   return keywords.some((keyword) => normalized.includes(normalizeString(keyword)));
 }
 
-/**
- * Code-checked like memory extraction: each expected pattern must come out with one of its key
- * words, no statement may hold a forbidden word (study time, a single slip), and the count stays
- * within what the numbers show. Each is one check.
- */
 const scoreSessionPatterns: TaskScorer<SessionPatternsExpected> = ({ output, testCase }) => {
   const patterns = getPatterns(output);
   const expected = testCase.expected;

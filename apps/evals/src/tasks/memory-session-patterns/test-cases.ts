@@ -1,12 +1,10 @@
 import { type TestCase } from "@/lib/types";
 import { type SessionPatternsParams } from "@zoonk/ai/tasks/v2/memory/session-patterns";
 
-/** A pattern the output must hold: its statement has one of these words. */
 type ExpectedPattern = { keywords: string[] };
 
 export type SessionPatternsExpected = {
   patterns: ExpectedPattern[];
-  /** Words no statement may contain: study time, single slips, passing states. */
   forbidden?: string[];
   maxPatterns: number;
 };

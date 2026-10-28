@@ -7,12 +7,10 @@ import {
   getJudgeExpectations,
 } from "./types";
 
-/** What a task's code checks found: how many parts passed and what the judge should see. */
 export type CodeCheckResult = {
   passed: number;
   total: number;
   problems: string[];
-  /** The output with failing parts removed, since those never reach learners. */
   judgedOutput: string;
 };
 
@@ -20,10 +18,6 @@ const CODE_CHECKS_CATEGORY_ID = "codeChecks";
 const MIN_SCORE = 6;
 const MAX_SCORE = 10;
 
-/**
- * Code checks carry a fixed share of the score next to the judge's rubric, so
- * an output that ships broken parts can't rank on polish alone.
- */
 const CODE_CHECKS_WEIGHT = 30;
 
 function getCodeChecksCategory(check: CodeCheckResult) {
@@ -41,12 +35,6 @@ function getCodeChecksCategory(check: CodeCheckResult) {
   };
 }
 
-/**
- * Scores tasks with a structure and a style: code checks run first, an output
- * where nothing passes gets the minimum score without a judge call, and the
- * judge scores only the parts that pass. The pass rate is added as its own
- * weighted category so both halves show on the leaderboard.
- */
 export async function scoreWithCodeChecks({
   check,
   output,

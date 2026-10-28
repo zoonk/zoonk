@@ -12,27 +12,15 @@ import {
 } from "./generate";
 import { TEST_CASES } from "./test-cases";
 
-/** One fact a correct reading of the notice must contain. */
 type ExpectedFact =
   | { kind: "date"; date: string; dateKind?: ExtractionEvalOutput["dates"][number]["kind"] }
   | { kind: "questionCount"; value: number }
   | { kind: "subject"; name: string; questions?: number }
-  /** One item of a subject's syllabus, which must be among its topics, word for word. */
   | { kind: "topic"; subject: string; topic: string }
-  /** The part of the exam the notice puts a subject in. */
   | { kind: "group"; subject: string; group: string }
-  /**
-   * Subjects a candidate takes only one of, each its own subject sharing one `choiceGroup`, and
-   * counted inside `partOf` when given.
-   */
   | { kind: "choice"; options: string[]; partOf?: string }
   | { kind: "section"; minutes?: number; questions?: number }
-  /** A listening section's recordings: how many, each one's questions and how often it's played. */
   | { kind: "listeningParts"; parts: number; plays?: number; questions: number }
-  /**
-   * A format the notice states, with what it says of it when given: how many options it asks to
-   * pick, its answer box, how several picks earn part of the marks and its share of the questions.
-   */
   | {
       kind: "format";
       format: ExtractionEvalOutput["formats"][number]["kind"];
@@ -42,29 +30,15 @@ type ExpectedFact =
       share?: number;
     }
   | { kind: "scoring"; method: NonNullable<ExtractionEvalOutput["mock"]>["scoring"]["method"] }
-  /** The share of a right answer's points each wrong answer takes away. */
   | { kind: "wrongPenalty"; value: number }
-  /** The scale the result is reported on. */
   | { kind: "scale"; max: number; min: number }
-  /** The break the notice gives after a section, in minutes. */
   | { kind: "breakAfter"; minutes: number }
-  /** What a section lets candidates use, mentioning this word. */
   | { kind: "tools"; mentions: string }
-  /** The language the exam certifies or measures (ISO 639-1), or null for an exam of subjects. */
   | { kind: "testedLanguage"; language: string | null }
   | { kind: "timeLimit"; minutes: number };
 
-export type ExtractionExpected = {
-  facts: ExpectedFact[];
-  /**
-   * Whether research may store what both checks kept as the exam's shared blueprint, judged by the
-   * pipeline's own rule (`isUsableBlueprint`): false when the documents are too thin to plan from,
-   * such as a news page that gives the objective test's size but none of its subjects.
-   */
-  usable?: boolean;
-};
+export type ExtractionExpected = { facts: ExpectedFact[]; usable?: boolean };
 
-/** What the expected facts are looked up in: the model's reading, or what both checks kept. */
 type Reading = {
   dates: Pick<ExtractionEvalOutput["dates"][number], "date" | "kind">[];
   formats: (Pick<ExtractionEvalOutput["formats"][number], "kind"> & {
@@ -144,17 +118,11 @@ function hasListeningParts({
   });
 }
 
-/** Parts without a count, such as an essay, don't add questions. */
 function sumQuestions(items: { questions: number | null }[]): number | null {
   const counts = items.map((item) => item.questions).filter((count) => count !== null);
   return counts.length > 0 ? counts.reduce((total, count) => total + count, 0) : null;
 }
 
-/**
- * Notices often state each part's questions and not the total ("four tests of
- * 45 questions each"). The prompt forbids inferring numbers, so a total the
- * parts add up to counts as found.
- */
 function getQuestionTotals(reading: Reading): number[] {
   return [
     reading.questionCount,
@@ -170,7 +138,6 @@ function findSubject({ name, reading }: { name: string; reading: Reading }) {
   );
 }
 
-/** Each option is a subject of its own, all of one choice, inside `partOf` when the fact names it. */
 function hasChoice({
   fact,
   reading,
@@ -194,10 +161,8 @@ function hasChoice({
   return Boolean(group) && groups.size === 1 && options.every((option) => isInside(option));
 }
 
-/** Two shares read from counts can round differently: 12 of 48 is 0.25 either way. */
 const SHARE_TOLERANCE = 0.02;
 
-/** A format of the fact's kind with everything else the fact states about it. */
 function hasFormat({
   fact,
   reading,
@@ -228,14 +193,12 @@ const MOCK_FACT_KINDS = [
   "wrongPenalty",
 ] as const;
 
-/** A fact about how the exam runs: its sections, recordings, breaks, tools, scoring and time. */
 type MockFact = Extract<ExpectedFact, { kind: (typeof MOCK_FACT_KINDS)[number] }>;
 
 function isMockFact(fact: ExpectedFact): fact is MockFact {
   return MOCK_FACT_KINDS.some((kind) => kind === fact.kind);
 }
 
-/** A scoring fact: the method, what a wrong answer takes away, or the scale it's reported on. */
 function isScoringFactFound({
   fact,
   scoring,
@@ -322,7 +285,6 @@ function isFactFound({ fact, reading }: { fact: ExpectedFact; reading: Reading }
   }
 }
 
-/** The reading as research reads it, each format's share worked out from the read counts. */
 function fromExtraction(output: ExtractionEvalOutput): Reading {
   const shares = getFormatShares(
     output.formats.map((format) => ({ count: format.count ?? null, kind: format.kind })),
@@ -359,13 +321,6 @@ function describeFact(fact: ExpectedFact): string {
   return JSON.stringify(fact);
 }
 
-/**
- * Accuracy on the facts that matter for planning and mocks, counted in what
- * research keeps after both citation checks (what learners plan with), plus
- * the share of quoted passages code finds in the documents (invented quotes
- * cost points). The conclusion also says how many the reading itself had, so
- * a fact the checks dropped shows apart from one the model missed.
- */
 const scoreExtraction: TaskScorer<ExtractionExpected> = ({ output, testCase }) => {
   const parsed = parseOutput(output);
 
@@ -379,7 +334,6 @@ const scoreExtraction: TaskScorer<ExtractionExpected> = ({ output, testCase }) =
   const dropped = missing(fromKept(parsed));
   const unread = missing(fromExtraction(parsed));
   const isUsable = isUsableBlueprint({ content: parsed.kept, shared: true });
-  // Whether research would store the reading counts as one more fact when the case says.
   const usableWrong = usable !== undefined && isUsable !== usable;
   const expectedCount = facts.length + (usable === undefined ? 0 : 1);
   const right = expectedCount - dropped.length - (usableWrong ? 1 : 0);

@@ -7,11 +7,6 @@ import { type AlphabetLessonExpected } from "./test-cases";
 const LATIN_LETTER = /\p{Script=Latin}/u;
 const MAX_FORMS = 4;
 
-/**
- * Five parts: every symbol is unique and outside the Latin script, every letter has a
- * romanization in Latin letters and something for the voice to say, and forms appear only in a
- * connected script (at most four per letter) and in every letter of one.
- */
 function checkAlphabetLesson({
   expected,
   output,

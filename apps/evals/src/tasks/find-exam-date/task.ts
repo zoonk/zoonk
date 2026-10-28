@@ -8,13 +8,9 @@ import {
 import { TEST_CASES } from "./test-cases";
 
 export type FindExamDateExpected = {
-  /** The notice's first exam day, when it's published and known. */
   firstDate?: string;
-  /** The month of the first exam day, when only that is certain. */
   month?: string;
-  /** Where the organizer publishes: an official day must come from one of them. */
   officialDomains: string[];
-  /** `any` when the notice may or may not be out: only an unsourced day is wrong. */
   status: "any" | "notOfficial" | "official";
 };
 
@@ -31,7 +27,6 @@ function isOnDomain({ domains, url }: { domains: string[]; url: string }): boole
   return domains.some((domain) => hostname === domain || hostname.endsWith(`.${domain}`));
 }
 
-/** What's wrong with an official answer: its day, or a source off the organizer's sites. */
 function checkOfficial({
   expected,
   found,
@@ -49,11 +44,6 @@ function checkOfficial({
   ].filter((problem) => typeof problem === "string");
 }
 
-/**
- * 10 when the answer is what the notice says (or, without a notice, no day at all); 6 when it
- * gives a wrong or unsourced day, the one mistake that misleads a learner; 8 when it misses a
- * published day, which only leaves the date to be confirmed.
- */
 const scoreExamDate: TaskScorer<FindExamDateExpected> = ({ output, testCase }) => {
   const found = parseOutput(output);
   const expected = testCase.expected;

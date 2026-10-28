@@ -17,10 +17,6 @@ import { Trash2Icon } from "lucide-react";
 import { useFormStatus } from "react-dom";
 import { deleteModelDataAction } from "./actions";
 
-/**
- * Keeps the confirmation controls locked until both filesystem stores are
- * deleted, preventing a second choice while the page redirects.
- */
 function DeleteModelDataFooter() {
   const { pending } = useFormStatus();
 
@@ -35,10 +31,6 @@ function DeleteModelDataFooter() {
   );
 }
 
-/**
- * Explains that deleting model data removes both generated outputs and scored
- * results before submitting the destructive server action.
- */
 export function DeleteModelDataDialog({
   disabled,
   modelId,

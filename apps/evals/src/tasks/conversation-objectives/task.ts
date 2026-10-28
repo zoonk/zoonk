@@ -11,9 +11,7 @@ import {
 } from "./test-cases";
 
 const EXACT_SCORE = 10;
-/** A goal the learner reached shows up after their next turn, so a miss costs less. */
 const MISSED_SCORE = 6;
-/** Ticking a goal the learner didn't reach gives Brain Power and a checkpoint for nothing. */
 const WRONG_MARK_SCORE = 2;
 
 function toLabel(labels: readonly string[]): string {
@@ -28,10 +26,6 @@ function getScore({ missed, wrong }: { missed: number; wrong: number }): number 
   return missed > 0 ? MISSED_SCORE : EXACT_SCORE;
 }
 
-/**
- * Scores the labels against the case's: the same set scores full; marking a goal the learner
- * didn't reach scores lowest, since it pays for nothing; only missing one scores in between.
- */
 const scoreConversationObjectives: TaskScorer<ConversationObjectivesExpected> = ({
   output,
   testCase,

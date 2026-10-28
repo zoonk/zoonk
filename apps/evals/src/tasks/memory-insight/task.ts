@@ -12,7 +12,6 @@ import { type MemoryInsightExpected, TEST_CASES } from "./test-cases";
 const MIN_SCORE = 6;
 const SCORE_RANGE = 4;
 
-/** Promises about results, in the two eval languages: never allowed in learner-facing copy. */
 const PROMISE_WORDS = ["guarantee", "you will pass", "garant", "vai passar", "aprovad"];
 
 function getOutput(output: string): MemoryInsightOutput | null {
@@ -33,7 +32,6 @@ function getHour(time: string | null): number | null {
   return time ? Number(time.slice(0, 2)) : null;
 }
 
-/** A plan change says its size the way the input gave it, never smaller or bigger. */
 function saysSize({
   expected,
   message,
@@ -47,7 +45,6 @@ function saysSize({
   return named && !misstated;
 }
 
-/** The checks that apply once the kind is right: what production would show, and how it reads. */
 function checkMessage({
   expected,
   insight,
@@ -81,11 +78,6 @@ function checkMessage({
   ].filter((problem): problem is string => problem !== null);
 }
 
-/**
- * Code-checked: the kind must be one the signals call for (usually `none`), and a shown insight
- * must pass production's checks, mention what the signals point at, say a plan change's real size
- * (a lesson, a few or a chapter), stay in the learner's language, and never promise a result.
- */
 const scoreMemoryInsight: TaskScorer<MemoryInsightExpected> = ({ output, testCase }) => {
   const parsed = getOutput(output);
   const expected = testCase.expected;

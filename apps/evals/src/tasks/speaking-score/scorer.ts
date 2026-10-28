@@ -10,13 +10,6 @@ import { type SpeakingScoreInput } from "./test-inputs";
 
 type BandWindow = { bandLow: number; bandHigh: number };
 
-/**
- * The band window on the exam's own scale where a transcript written at a known level sits, for
- * every criterion unless `criteria` gives one its own (a candidate who covers every point of the
- * task rates higher on it than on language): DELE's band 2 is its level, Goethe's 2 and 3 are C
- * and B, Cambridge's 3 is its level, IELTS's and TOEFL's follow the candidate's CEFR level. `brief`,
- * when given, is whether there was too little to judge.
- */
 export type SpeakingScoreExpected = BandWindow & {
   brief?: boolean;
   criteria?: Record<string, BandWindow>;
@@ -24,7 +17,6 @@ export type SpeakingScoreExpected = BandWindow & {
 
 type Grade = SpeakingGrade["criteria"][number];
 
-/** Raters disagree by about half a band, so a range within half a band of the window counts. */
 const WINDOW_TOLERANCE = 0.5;
 const MAX_RANGE_WIDTH = 1;
 const HALF = 0.5;
@@ -77,10 +69,6 @@ function getCriterionProblem({
     : `${criterion.key} is ${grade.bandLow} to ${grade.bandHigh}, outside ${window.bandLow} to ${window.bandHigh} (plus or minus ${WINDOW_TOLERANCE}).`;
 }
 
-/**
- * Each criterion the task can be rated on is one part (typed replies leave out what only the voice
- * shows), the focus naming one of them is another, and so is `brief` when the case expects one.
- */
 function checkGrade({
   criteria,
   expected,
@@ -108,10 +96,6 @@ function checkGrade({
   return { judgedOutput: output, passed: total - problems.length, problems, total };
 }
 
-/**
- * Code checks the bands on each exam's own scale against transcripts written at a known level;
- * the judge scores the evidence, the tips and that nothing marks down an accent or promises a pass.
- */
 export const scoreSpeakingOutput: TaskScorer<SpeakingScoreExpected> = ({ output, testCase }) => {
   const { expected } = testCase;
   const input = testCase.userInput as SpeakingScoreInput;

@@ -7,12 +7,6 @@ const OAB_48_NOTICE = {
   url: "https://s.oab.org.br/arquivos/2026/09/fb43fb37-838e-4d33-a863-99fa1f98b921.pdf",
 };
 
-/**
- * Real notices with a current edition on 26 Sep 2026 (OAB, AP, IELTS and TOEFL
- * read on 27 Sep 2026, the SAT dates page on 30 Sep 2026). Facts were read by hand
- * from the same documents. education.gouv.fr refuses automated fetches, so the bac
- * case reads a secondary page that reproduces the official calendar.
- */
 export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
   {
     expected: {
@@ -23,15 +17,12 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
         { date: "2026-06-05", dateKind: "registrationEnd", kind: "date" },
         { kind: "subject", name: "Linguagens", questions: 45 },
         { kind: "subject", name: "Matemática", questions: 45 },
-        // 3.3.2: candidates answer the foreign language they picked at registration, one of
-        // the languages area's components. Read without the choice, plans had neither language.
         { kind: "choice", options: ["Inglês", "Espanhol"], partOf: "Linguagens" },
         { format: "multipleChoice", kind: "format" },
         { format: "essay", kind: "format" },
         { kind: "scoring", method: "itemResponseTheory" },
         { kind: "timeLimit", minutes: 330 },
         { kind: "timeLimit", minutes: 300 },
-        // A foreign language is one subject of many (English or Spanish): ENEM tests no language.
         { kind: "testedLanguage", language: null },
       ],
     },
@@ -73,8 +64,6 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
         },
       ],
     },
-    // The reference matrix's competencies and abilities are what the questions ask; its
-    // "objects of knowledge" are what candidates study, so they're the topics.
     id: "enem-2026-matriz",
     language: "pt",
     userInput: {
@@ -96,7 +85,6 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
         { kind: "section", questions: 70 },
         { format: "trueFalse", kind: "format" },
         { kind: "scoring", method: "wrongCancelsRight" },
-        // A wrong answer takes away as much as a right one earns (+1 and -1 per item).
         { kind: "wrongPenalty", value: 1 },
         { kind: "timeLimit", minutes: 240 },
         { date: "2026-11-22", dateKind: "exam", kind: "date" },
@@ -117,14 +105,11 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
     },
   },
   {
-    // The notice that lists every role's syllabus in the same document: the reading keeps the
-    // role asked for, groups its subjects by test, and lists every numbered item and sub-item.
     expected: {
       facts: [
         { date: "2027-01-17", dateKind: "exam", kind: "date" },
         { format: "trueFalse", kind: "format" },
         { kind: "scoring", method: "wrongCancelsRight" },
-        // P1 and P2 share one time: one section of both tests, 5 hours for 180 items.
         { kind: "section", minutes: 300, questions: 180 },
         { kind: "subject", name: "Língua Portuguesa" },
         { kind: "subject", name: "Linguística" },
@@ -192,10 +177,6 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
     },
   },
   {
-    // The first phase names its disciplines in one table cell (the last ones after "as well as")
-    // while Annex II details the second phase's: a live reading on 8 Oct 2026 listed 19 subjects
-    // without ethics, so the latest edition's counts (ethics 8…) couldn't be looked up for the 80
-    // questions.
     expected: {
       facts: [
         { kind: "subject", name: "Ética" },
@@ -215,7 +196,6 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
     userInput: { documents: [OAB_48_NOTICE], exam: "OAB Exame de Ordem Unificado, 1ª fase" },
   },
   {
-    // Read again told what the check of the 19-subject reading found it left out.
     expected: {
       facts: [
         { kind: "subject", name: "Ética" },
@@ -249,8 +229,6 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
         { kind: "section", minutes: 64, questions: 54 },
         { kind: "section", minutes: 70, questions: 44 },
         { kind: "timeLimit", minutes: 134 },
-        // "there is a 10-minute break between the Reading and Writing section and the Math
-        // section" (structure page, read 10 Oct 2026)
         { kind: "breakAfter", minutes: 10 },
         { format: "multipleChoice", kind: "format" },
         { date: "2027-03-06", dateKind: "exam", kind: "date" },
@@ -266,7 +244,6 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
           url: "https://satsuite.collegeboard.org/sat/whats-on-the-test/structure",
         },
         {
-          // Its dates are table rows: a row alone doesn't say which date is the test's.
           title: "SAT Suite Test Dates and Deadlines",
           url: "https://satsuite.collegeboard.org/sat/dates-deadlines",
         },
@@ -281,8 +258,6 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
         { kind: "section", minutes: 100, questions: 42 },
         { kind: "section", minutes: 90, questions: 6 },
         { kind: "timeLimit", minutes: 190 },
-        // "Part A: 29 questions | Graphing calculator not permitted", "Part B: 13 questions |
-        // Graphing calculator required for some questions" (about the exam page, read 10 Oct 2026)
         { kind: "tools", mentions: "calculator" },
         { format: "multipleChoice", kind: "format" },
         { date: "2027-05-10", dateKind: "exam", kind: "date" },
@@ -307,8 +282,6 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
         { kind: "timeLimit", minutes: 165 },
         { kind: "section", minutes: 30, questions: 40 },
         { kind: "section", minutes: 60, questions: 40 },
-        // "The Listening test has four parts, with 10 questions in each part." "Test takers hear
-        // the recordings once only." (format in detail page, read 10 Oct 2026)
         { kind: "listeningParts", parts: 4, plays: 1, questions: 10 },
         { format: "essay", kind: "format" },
         { format: "oral", kind: "format" },
@@ -334,12 +307,6 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
   {
     expected: {
       facts: [
-        // The readable pages research found for a learner on 10 Oct 2026: the test page, the
-        // Writing and Speaking band descriptors, then the Writing and Reading format pages. "The
-        // test time is 2 hours and 45 minutes" (test page); the Reading page's summary: "Time
-        // allowed: 60 minutes", "Number of questions: 40". Research then read only the first four
-        // in search order, so its stored reading had Reading without a question count and mocks
-        // asked 45; it now reads all of them.
         { kind: "timeLimit", minutes: 165 },
         { kind: "section", minutes: 60, questions: 40 },
         { format: "essay", kind: "format" },
@@ -377,19 +344,9 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
   {
     expected: {
       facts: [
-        // "PTE Academic is a computer-based academic English test for study, migration or work
-        // abroad." (overview page, read 10 Oct 2026). No certificate list names PTE: the goal's
-        // language comes from this reading alone.
         { kind: "testedLanguage", language: "en" },
-        // "scores your English proficiency on a 10–90 scale" (overview page, read 10 Oct 2026)
         { kind: "scale", max: 90, min: 10 },
-        // Multiple choice, multiple answers: "There is more than one correct response", "select
-        // all of the response options that you think are correct" (listening page). Its scoring
-        // note says only that "partial credit scoring applies", which states no rule.
         { format: "multipleChoice", kind: "format", select: "all" },
-        // Highlight incorrect words, picking any number of words in the transcript: "For any wrong
-        // options chosen, one point is deducted, while correct options are given one point"
-        // (listening page, under that question type).
         { format: "multipleChoice", kind: "format", partialCredit: "plusMinus", select: "all" },
       ],
     },
@@ -407,11 +364,6 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
     },
   },
   {
-    // JEE Advanced 2026's own Paper 1, whose instructions state each section's answer format and
-    // marking scheme (jeeadv.ac.in, read 10 Oct 2026). Each subject asks four questions with one
-    // right option, four with one or more ("+4 ONLY if (all) the correct option(s) is(are)
-    // chosen", +3, +2 or +1 for each right one when no wrong one is chosen, -1 in all other
-    // cases), four numerical values rounded to two decimal places, and four list matchings.
     expected: {
       facts: [
         { format: "multipleChoice", kind: "format", select: "all" },
@@ -458,14 +410,9 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
     expected: {
       facts: [
         { kind: "subject", name: "Língua Inglesa" },
-        // 4.1.1: at registration candidates pick the additional language of the second phase's
-        // written tests, Spanish or French (read 10 Oct 2026). English is every candidate's.
         { kind: "choice", options: ["Espanhola", "Francesa"] },
       ],
     },
-    // The notice's own words, quoted from its phases, registration and second-phase items: the
-    // whole notice (cdn.cebraspe.org.br, Ed_1_IRBr_CACD_25_abertura_atualizado_ret_4.html, about
-    // 400 KB) timed out the reading on 10 Oct 2026.
     id: "cacd-2025",
     language: "pt",
     userInput: {
@@ -486,21 +433,12 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
   {
     expected: {
       facts: [
-        // "A objetiva, de caráter eliminatório e classificatório, será composta de 70 questões de
-        // múltipla escolha." The stored reading (10 Oct 2026) kept the format but not the 70, so
-        // mocks were sized at the app's default (half the exam: 23 questions, not 35).
         { kind: "questionCount", value: 70 },
         { format: "multipleChoice", kind: "format" },
         { format: "essay", kind: "format" },
       ],
-      // The page names none of the objective test's subjects: research asks for the notice rather
-      // than store the essay as the whole exam.
       usable: false,
     },
-    // The only document research could read on 10 Oct 2026: every vunesp.com.br address (the
-    // notice, its correction and both exam pages) answered 403. The court's news page names the
-    // objective test's 70 questions but none of its subjects, so the reading kept the essay as the
-    // exam's only subject and the exam page listed nothing else.
     id: "tjsp-escrevente-2025-news-page",
     language: "pt",
     userInput: {
@@ -524,15 +462,11 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
         { kind: "subject", name: "Raciocínio Lógico", questions: 7 },
         { format: "multipleChoice", kind: "format" },
         { format: "essay", kind: "format" },
-        // "A prova objetiva será avaliada na escala de 0 (zero) a 10 (dez) pontos": the scale its
-        // last cut-off (7.0) is on.
         { kind: "scale", max: 10, min: 0 },
         { date: "2025-12-07", kind: "date" },
       ],
       usable: true,
     },
-    // What research reads for TJ-SP once it searches other sites for the notice (11 Oct 2026): the
-    // court's news page first, then the notice's PDF as a course site hosts it.
     id: "tjsp-escrevente-2025-notice-copy",
     language: "pt",
     userInput: {
@@ -553,8 +487,6 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
   {
     expected: {
       facts: [
-        // Article 12.1: students take Spanish History or History of Philosophy, as they choose,
-        // and one foreign language of five, named at registration (read 10 Oct 2026).
         { kind: "choice", options: ["Historia de España", "Filosofía"] },
         { kind: "choice", options: ["alemán", "francés", "inglés", "italiano", "portugués"] },
       ],
@@ -574,11 +506,6 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
   {
     expected: {
       facts: [
-        // DELE is held several times a year and candidates pick a sitting: a learner who aims
-        // for April needs April's day, so the reading keeps every B2 sitting, not just the next
-        // one. B2 "Generales" sittings in 2027 per the calendar's table (read 10 Oct 2026): 2
-        // April, 22 May, 9 July, 15 October and 13 November; February's and September's are A2
-        // only.
         { date: "2027-04-02", dateKind: "exam", kind: "date" },
         { date: "2027-05-22", dateKind: "exam", kind: "date" },
         { date: "2027-07-09", dateKind: "exam", kind: "date" },
@@ -645,8 +572,6 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
         { format: "essay", kind: "format" },
       ],
     },
-    // A teacher's one-page notes for a class test, as a learner uploads them: the formats are only
-    // announced in the last line (persona run, 7 Oct 2026, where one reading dropped both).
     id: "pt-class-notes-biologia-celular",
     language: "pt",
     userInput: {

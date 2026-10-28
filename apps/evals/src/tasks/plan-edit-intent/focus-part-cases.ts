@@ -4,14 +4,12 @@ import { type PlanEditExpected } from "./scorer";
 
 type PlanEditTestCase = TestCase<PlanEditExpected, PlanEditInput>;
 
-/** A Monday, so "next week" starts on 2026-10-05. */
 const TODAY = "2026-09-28";
 
 const NATUREZA = "Ciências da Natureza e suas Tecnologias";
 const HUMANAS = "Ciências Humanas e suas Tecnologias";
 const MATEMATICA = "Matemática e suas Tecnologias";
 
-/** Each discipline's skills of an ENEM plan, as its skill graph names them. */
 const DISCIPLINES = {
   biologia: [
     ["bio-cells", "Relacionar células, tecidos e funções"],
@@ -54,7 +52,6 @@ const AREA_OF: Record<Discipline, string> = {
   quimica: NATUREZA,
 };
 
-/** The skills interleaved across disciplines, as a graph lists them by phase. */
 const SKILLS = (
   ["biologia", "fisica", "quimica", "historia", "geografia", "filosofia", "math"] as const
 )
@@ -85,11 +82,6 @@ function enemInput(request: string): PlanEditInput {
   };
 }
 
-/**
- * Focus on part of an area: ENEM's natural sciences hold biology, chemistry and physics, and
- * its human sciences history, geography, philosophy and sociology. A learner who names some
- * disciplines gets those skills, every one and no other; one who names a whole area gets no part.
- */
 export const FOCUS_PART_TEST_CASES: PlanEditTestCase[] = [
   {
     expected: {
@@ -126,10 +118,8 @@ export const FOCUS_PART_TEST_CASES: PlanEditTestCase[] = [
   },
 ];
 
-/** Pedro's class test on Saturday, read on Thursday: Friday is its full review. */
 const CLASS_TEST_TODAY = "2026-10-08";
 
-/** His notes' skills, as the class test's skill graph names them, all in one area. */
 const CELL_SKILLS = [
   ["theory", "Identificar os postulados da teoria celular"],
   ["prokaryotes", "Diferenciar células procariontes e eucariontes"],
@@ -165,11 +155,6 @@ const OSMOSIS_AND_ORGANELLES = {
   ],
 };
 
-/**
- * A class test days away: "tomorrow only osmosis and organelles" is a focus on part of its one
- * area, which puts those topics first in the next study day and the day before's full review.
- * Pedro asked the buddy this in persona pass 7 and nothing changed (no change was read).
- */
 export const CLASS_TEST_FOCUS_TEST_CASES: PlanEditTestCase[] = [
   {
     expected: { ...OSMOSIS_AND_ORGANELLES, leftOut: true },
@@ -179,7 +164,6 @@ export const CLASS_TEST_FOCUS_TEST_CASES: PlanEditTestCase[] = [
     ),
   },
   {
-    // The buddy's request: one self-contained sentence with every detail the conversation gave.
     expected: { ...OSMOSIS_AND_ORGANELLES, leftOut: true },
     id: "pt-class-test-focus-buddy-sentence",
     userInput: classTestInput(
