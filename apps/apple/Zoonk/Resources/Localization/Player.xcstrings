@@ -518,35 +518,6 @@
         }
       }
     },
-    "Challenge complete" : {
-      "comment" : "Title after a challenge ends",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Herausforderung abgeschlossen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Desafío completado"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Défi terminé"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Desafio concluído"
-          }
-        }
-      }
-    },
     "Challenge · %@" : {
       "comment" : "Above a challenge's title",
       "localizations" : {
@@ -572,6 +543,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Desafio · %@"
+          }
+        }
+      }
+    },
+    "Challenge complete" : {
+      "comment" : "Title after a challenge ends",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Herausforderung abgeschlossen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desafío completado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Défi terminé"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desafio concluído"
           }
         }
       }
@@ -1215,7 +1215,7 @@
       }
     },
     "I can talk now" : {
-      "comment" : "Takes back \"I can't talk now\"",
+      "comment" : "Goes back to answering out loud",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1244,7 +1244,7 @@
       }
     },
     "I can't talk now" : {
-      "comment" : "Answers a spoken screen as a listening exercise",
+      "comment" : "Answers a spoken screen by listening or typing instead",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1881,35 +1881,6 @@
         }
       }
     },
-    "Not quite. Fix it and check again." : {
-      "comment" : "A wrong language answer the learner can fix once",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nicht ganz. Korrigiere deine Antwort und prüfe sie noch einmal."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No del todo. Corrígelo y vuelve a comprobarlo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pas tout à fait. Corrige ta réponse et vérifie-la à nouveau."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não foi bem assim. Corrija e confira de novo."
-          }
-        }
-      }
-    },
     "Not quite. Look again and fix it yourself, then check." : {
       "comment" : "A wrong language answer the learner can fix once",
       "localizations" : {
@@ -2405,35 +2376,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Confira como foi"
-          }
-        }
-      }
-    },
-    "See Plus" : {
-      "comment" : "Opens the Plus subscription",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus ansehen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ver Plus"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Découvrir Plus"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Conheça o Plus"
           }
         }
       }
@@ -4122,35 +4064,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sua resposta"
-          }
-        }
-      }
-    },
-    "Your answer didn't reach us. Answer this screen again to finish." : {
-      "comment" : "The lesson came back to a screen whose answer was never saved",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine Antwort ist nicht bei uns angekommen. Beantworte diese Seite noch einmal, um die Lektion abzuschließen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No hemos recibido tu respuesta. Responde de nuevo en esta pantalla para terminar."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ta réponse ne nous est pas parvenue. Réponds de nouveau à cette question pour terminer."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sua resposta não chegou até a gente. Responda a esta tela de novo para concluir."
           }
         }
       }
