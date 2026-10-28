@@ -11,6 +11,7 @@ struct CheckpointScreen: View {
   @Environment(PracticeStore.self) private var practice
   @Environment(\.practiceHooks) private var hooks
   @Environment(\.dismiss) private var dismiss
+  @Environment(\.horizontalSizeClass) private var sizeClass
   @State private var load: PracticeLoad<CheckpointLoad> = .loading
   @State private var state: CheckpointDuelState?
   @State private var draft: PracticeAnswer?
@@ -120,7 +121,20 @@ struct CheckpointScreen: View {
 
     return PracticeTaskLayout(segments: state.segments, index: state.verdicts.count) {
       if state.kind != .weekly {
-        ShieldGauge(correct: state.correct, passMark: state.passMark)
+        HStack(spacing: 16) {
+          // Beside the question on wide screens he reacts to each verdict: smug at a miss, back
+          // to sly at one the learner got past him.
+          if sizeClass == .regular {
+            TricksterCharacter(
+              cue: feedback.map {
+                ActCue(id: state.verdicts.count, act: $0.isCorrect ? .sly : .smug)
+              }
+            )
+            .frame(width: 104, height: 104)
+          }
+
+          ShieldGauge(correct: state.correct, passMark: state.passMark)
+        }
       }
 
       if let question {
@@ -330,6 +344,13 @@ private struct CheckpointResultView: View {
               table: "Practice",
               comment: "Why a checkpoint without questions isn't scored."))
         } else {
+          // He acts out a result that just came in (his defeat, or smug when he won); a result
+          // opened again draws him still. The week's challenge has no art: its title says it.
+          if checkpoint.kind != .weekly {
+            TricksterCharacter(beaten: passed, reacts: state.completion != nil)
+              .frame(width: 112, height: 112)
+          }
+
           PracticeResultHeader(
             title: CheckpointCopy.resultTitle(kind: checkpoint.kind, passed: passed),
             detail: CheckpointCopy.resultDetail(

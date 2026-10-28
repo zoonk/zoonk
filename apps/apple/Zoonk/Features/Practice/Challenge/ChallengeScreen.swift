@@ -60,6 +60,13 @@ struct ChallengeScreen: View {
 
   private func intro(_ challenge: Components.Schemas.Challenge) -> some View {
     PracticeTaskLayout {
+      // A phase's challenge is the Trickster's, smug with his sign until he's beaten. A mock, a
+      // call or the week's challenge has no art.
+      if challenge.kind != .weekly, !challenge.mock, challenge.call == nil {
+        TricksterCharacter(beaten: challenge.status == .done, reacts: challenge.status != .done)
+          .frame(width: 112, height: 112)
+      }
+
       VStack(alignment: .leading, spacing: 8) {
         if let phase = challenge.phase?.value1, challenge.kind != .weekly {
           Text(

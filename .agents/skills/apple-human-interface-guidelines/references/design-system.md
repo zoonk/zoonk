@@ -107,7 +107,7 @@ The only tokens are where main's structure needs something the system lacks:
 | Segmented choices, menus, dialogs, sheets                   | `Picker` with `.pickerStyle(.segmented)`, `Menu`, `.confirmationDialog`, `.alert`, `.sheet` with detents                          |
 | The task's action bar                                       | `.safeAreaBar(edge: .bottom)` holding a `.mainAction` button, so it gets the scroll edge effect                                   |
 | `ShortcutKbd` (⏎ on the main action)                        | `.keyboardShortcut(.defaultAction)`; Esc is `.keyboardShortcut(.cancelAction)`                                                    |
-| The buddy and the Trickster                                 | Not ported yet: vector artwork with a part rig (see Open work)                                                                    |
+| The buddy and the Trickster                                 | `BuddyCharacter`, `TricksterCharacter`, `BuddyFace` beside words (see Characters)                                                 |
 
 ## Liquid Glass
 
@@ -147,7 +147,12 @@ Reduce Motion: system controls and symbol effects adapt on their own. A celebrat
 - `Text + Text` is deprecated since iOS 26. Interpolate styled texts into one `Text` instead, for example a readout and its unit: `Text("\(Text(minutes, format: .number).font(.largeTitle.weight(.semibold)).monospacedDigit()) \(Text(unit).foregroundStyle(.secondary))")`.
 - A fixed `.frame(height:)` around text breaks at accessibility sizes. Let text set the height, or use `@ScaledMetric`.
 
-## Open work
+## Characters
 
-- **The buddy and the Trickster** are a large SVG part rig (`packages/ui/src/components/_buddy`, about 1,600 lines; `trickster.tsx`, about 480): bodies per kind and stage, faces, glasses and acts. Port them as vector artwork driven by SwiftUI shapes per part, so faces swap and parts act. Moving the whole figure as one block isn't allowed.
-- **Celebrations** (`moments.ts`) need those characters and a burst. Build them with the motion table above when a feature needs them.
+`DesignSystem/Characters` ports main's rig (`packages/ui/src/components/_buddy`, `trickster.tsx`, their acts) point for point: main's SVG path data is read by `Path(svg:)`, each character draws into one `Canvas` as named parts, each posed around its own pivot, and acts are main's `BUDDY_ACTS`/`TRICKSTER_ACTS` as data (frames at 24 a second, main's curve tokens as `ActEase`). One canvas keeps them crisp at any size and cheap; a `TimelineView` runs only while an act plays, so a character on an everyday screen costs nothing.
+
+- `BuddyCharacter(look:expression:crop:reaction:cue:)`: `BuddyLook` (kind, glasses, belt, Energy) from `LearnerSummary.buddy` grows it and picks its everyday face. `TricksterCharacter(beaten:reacts:cue:)`. `BuddyFace` is the face at text size, for labels and pickers.
+- A `reaction` plays once when the view appears, where the learner's work just did something (pass none on a revisit, and the landing expression instead); a `cue` plays on each change of its id (a duel's verdict). Reduce Motion lands the act's expression at once.
+- Their colors are artwork (`Color(art:)`), the same in light and dark as main draws them; the belt takes `ProgressBelt.color`. They're decorative: `accessibilityHidden`, with the moment's words carrying the meaning.
+- `Burst` flies the rarest moments' sparks once (a belt, the buddy's next stage). `MilestoneStage` is a ceremony's picture.
+- See every drawing and act in a Debug build launched with `ZOONK_DEBUG_CHARACTERS=1` (`=ceremony` for a milestone's ceremony), the native side of main's `/design/characters`.
