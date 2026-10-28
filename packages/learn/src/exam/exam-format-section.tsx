@@ -15,7 +15,6 @@ import { useExamDayDate } from "./exam-labels";
 
 const FORMAT_TITLE_ID = "exam-format-title";
 
-/** "The two days", "The exam day": the section's name by how many sittings the exam has. */
 function useFormatTitle(days: number): string {
   const t = useExtracted();
 
@@ -26,10 +25,6 @@ function useFormatTitle(days: number): string {
   return days === 2 ? t("The two days") : t("The {count, number} days", { count: days });
 }
 
-/**
- * "180 questions · Essay": what the whole exam holds, beside the header of an exam of several days.
- * One day's rows already say it, and beside "The exam day" it wrapped the title word by word.
- */
 function useFormatDetail(format: readonly ExamFormatDay[]): string | null {
   const t = useExtracted();
   const parts = format.flatMap((day) => day.parts);
@@ -49,7 +44,6 @@ function useFormatDetail(format: readonly ExamFormatDay[]): string | null {
   return [count, ...written].filter(Boolean).join(" · ") || null;
 }
 
-/** "Linguagens, Ciências Humanas and the essay · 90 questions": what a sitting holds. */
 function useDayParts() {
   const t = useExtracted();
   const format = useFormatter();
@@ -74,10 +68,6 @@ function useDayParts() {
   };
 }
 
-/**
- * One sitting as one row: its number and day with how long it lasts, and what it holds under
- * them.
- */
 function DayRow({ day, numbered }: { day: ExamFormatDay; numbered: boolean }) {
   const t = useExtracted();
   const dayDate = useExamDayDate();
@@ -102,11 +92,6 @@ function DayRow({ day, numbered }: { day: ExamFormatDay; numbered: boolean }) {
   );
 }
 
-/**
- * The exam as its notice sets it out, day by day ("The two days"), in the page's aside: each
- * sitting's day and length over what it holds and its questions. The subjects and their topics
- * live on the Plan.
- */
 export function ExamFormatSection() {
   const { exam } = useExamScreen();
   const title = useFormatTitle(exam.format.length);

@@ -54,10 +54,6 @@ function useDayBeforeBody({ dayBefore, work }: { dayBefore: DayBeforePlan; work:
   }
 }
 
-/**
- * The work behind the day, as it was: the sessions and any mock exams, and "You've prepared for
- * this" only when the learner did what their plan asked.
- */
 function useWorkLine(moment: Moment): string {
   const t = useExtracted();
 
@@ -74,7 +70,6 @@ function useWorkLine(moment: Moment): string {
   return moment.prepared ? `${done} ${t("You've prepared for this.")}` : done;
 }
 
-/** What the moment says: the stage's title and one or two calm lines. */
 function useMomentCopy(moment: Moment): { body: string; title: string } | null {
   const t = useExtracted();
   const work = useWorkLine(moment);
@@ -107,11 +102,6 @@ function useMomentCopy(moment: Moment): { body: string; title: string } | null {
   }
 }
 
-/**
- * The exam's moment: the final stretch, the light day before with what to have ready, the exam
- * day, and after it, "How did it go?" until the official result is in. Calm, flat on the page with
- * a quiet icon, and never a promise.
- */
 export function ExamMomentCard({ href, moment }: { href: string | null; moment: Moment }) {
   const t = useExtracted();
   const dayText = useExamDayText();

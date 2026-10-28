@@ -5,7 +5,6 @@ import { ContentFeedbackContext } from "./feedback-context";
 import { type ContentFeedbackAdapters, type FeedbackFormRequest } from "./feedback-contract";
 import { useScreenKeysPause } from "./use-screen-keys-pause";
 
-/** The form loads the first time someone opens it, so pages where nobody writes don't ship its code. */
 const FeedbackFormDialog = lazy(() =>
   import("./feedback-form-dialog").then((module) => ({ default: module.FeedbackFormDialog })),
 );
@@ -13,7 +12,6 @@ const FeedbackFormDialog = lazy(() =>
 export type { ContentFeedbackAdapters } from "./feedback-contract";
 export { useContentFeedback } from "./feedback-context";
 
-/** True from the first time `isOpen` is true, so a lazy part stays mounted and can animate closed. */
 function useOpenedOnce(isOpen: boolean): boolean {
   const [opened, setOpened] = useState(isOpen);
 
@@ -24,7 +22,6 @@ function useOpenedOnce(isOpen: boolean): boolean {
   return opened || isOpen;
 }
 
-/** Which report menus are open, so the screen under them can pause its keys. */
 function useOpenMenus() {
   const [openMenus, setOpenMenus] = useState<readonly string[]>([]);
 
@@ -38,12 +35,7 @@ function useOpenMenus() {
   return { anyMenuOpen: openMenus.length > 0, setMenuOpen };
 }
 
-/**
- * Makes feedback available to every screen below it: "Report a problem" in screen menus and the
- * message form. The form lives here, outside any menu, so it stays open after the menu that opened
- * it closes. While a report menu or the form is open, the screen's own keys pause. Keep `adapters`
- * stable.
- */
+/** Keep `adapters` stable. The form lives here, outside any menu, so it stays open after the menu that opened it closes. */
 export function ContentFeedbackProvider({
   adapters,
   children,

@@ -18,10 +18,6 @@ const PASSED_VALUES = ["yes", "no", "unknown"] as const;
 
 type Passed = (typeof PASSED_VALUES)[number];
 
-/**
- * Options share the row but never squeeze a label ("Noch nicht") onto two lines; they wrap instead.
- * Picked as every pick is: the line in the text color on its tint.
- */
 const OPTION_CLASS = cn(
   "border-border flex min-h-11 min-w-max flex-1 cursor-pointer items-center gap-2 rounded-lg border px-3 text-sm",
   CHOICE_CARD_PICKED_CLASS,
@@ -35,10 +31,6 @@ function toPassed(value: Passed): boolean | null {
   return value === "yes";
 }
 
-/**
- * The exam's own scale for the score: SAT, AP or TOEFL scores as those exams report them, IRT
- * points for ENEM-style exams, plain points otherwise.
- */
 function useScale(): NonNullable<ExamResultInput["scale"]> {
   const { exam } = useExamScreen();
   return exam.scoring.scale ?? (exam.scoring.method === "irt" ? "irt" : "points");
@@ -46,7 +38,6 @@ function useScale(): NonNullable<ExamResultInput["scale"]> {
 
 type ScoreField = { label: string; max?: number; min: number; step?: number };
 
-/** The score field for the scale: its label and the values the exam can report. */
 function useScoreField(scale: NonNullable<ExamResultInput["scale"]>): ScoreField {
   const t = useExtracted();
   const plain = { label: t("Your score"), min: 0 };
@@ -84,10 +75,6 @@ function ReportedResult() {
   );
 }
 
-/**
- * "How did it go?": the official result, whenever it comes out. The score is optional and so is
- * knowing whether they passed; either is enough. It helps make estimates more accurate for everyone.
- */
 export function ExamResultSection() {
   const t = useExtracted();
   const { actions, exam } = useExamScreen();

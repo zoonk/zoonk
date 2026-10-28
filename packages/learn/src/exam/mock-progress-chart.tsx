@@ -4,18 +4,14 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useState } from "react";
 import { kindTextClass } from "../_components/kind-tile";
 
-/** One mock on the chart: its score, and what its readout says about it. */
 export type ProgressPoint = { detail: string; key: string; label: string; value: number };
 
 const TOP = 100;
 
-/** Below 0 (a net score), the axis steps down by this much, so its ticks stay round. */
 const NEGATIVE_STEP = 50;
 
-/** The mock kind's color, as on its dot, AA on the card in light and in dark. */
 const MOCK_MARK_CLASS = kindTextClass("mock");
 
-/** The axis' lowest value: 0, or a round step below the lowest score when a net score went under. */
 function getChartFloor(values: readonly number[]): number {
   const lowest = Math.min(0, ...values);
   return Math.floor(lowest / NEGATIVE_STEP) * NEGATIVE_STEP;
@@ -25,7 +21,6 @@ function toY({ floor, value }: { floor: number; value: number }): number {
   return ((TOP - value) / (TOP - floor)) * TOP;
 }
 
-/** Points spread evenly by order, from edge to edge; a single one is the latest, at the end. */
 function toX({ count, index }: { count: number; index: number }): number {
   return count > 1 ? (index / (count - 1)) * TOP : TOP;
 }
@@ -37,10 +32,6 @@ function toCoordinates({ floor, values }: { floor: number; values: readonly numb
   }));
 }
 
-/**
- * The line through the points and the faint wash under it, drawn in a 100×100 box stretched to the
- * chart, its strokes kept at their width.
- */
 function ChartLine({
   className,
   floor,
@@ -78,7 +69,6 @@ function ChartLine({
   );
 }
 
-/** Where the readout sits beside its mock: clear of the chart's edges near them. */
 const EDGE = 25;
 const FAR_EDGE = 75;
 
@@ -90,10 +80,6 @@ function readoutAlign(x: number): string {
   return x > FAR_EDGE ? "-translate-x-[calc(100%-0.75rem)]" : "-translate-x-1/2";
 }
 
-/**
- * The mock the pointer is nearest (by its place along the line) or the arrow keys picked: the
- * chart is one target, as wide as it is, never a row of small dots to aim at.
- */
 function useActivePoint(count: number) {
   const [active, setActive] = useState<number | null>(null);
   const clamp = (index: number) => Math.min(count - 1, Math.max(0, index));
@@ -130,7 +116,6 @@ function useActivePoint(count: number) {
   };
 }
 
-/** The picked mock: a hairline down to it, its dot larger, and its score and name above it. */
 function ActiveReadout({ point, x, y }: { point: ProgressPoint; x: number; y: number }) {
   return (
     <>
@@ -159,23 +144,14 @@ function ActiveReadout({ point, x, y }: { point: ProgressPoint; x: number; y: nu
   );
 }
 
-/**
- * Each mock's score over time as one line: hairline guides at the top, middle and bottom of the
- * axis, a dot per mock, and the first and latest mocks named under it. Pointing anywhere on it (or
- * the arrow keys, as a slider over the mocks) picks the nearest mock and says its score and what
- * it was. One series, so its title names it and it has no legend; the list of mocks is its table.
- */
 export function ProgressLineChart({
   first,
   label,
   latest,
   points,
 }: {
-  /** Under the chart's left edge: the first mock. */
   first: string;
-  /** What the chart shows, for screen readers. */
   label: string;
-  /** Under the chart's right edge: the latest mock. */
   latest: string;
   points: readonly ProgressPoint[];
 }) {
@@ -250,10 +226,6 @@ export function ProgressLineChart({
   );
 }
 
-/**
- * A subject's shares across its mocks as a small line in the quiet color, its latest one marked in
- * the mocks' color. It sits beside the numbers that say the same, so it's hidden from screen readers.
- */
 export function Sparkline({ values }: { values: readonly number[] }) {
   const floor = getChartFloor(values);
   const last = toCoordinates({ floor, values }).at(-1);
@@ -274,7 +246,6 @@ export function Sparkline({ values }: { values: readonly number[] }) {
   );
 }
 
-/** A sample of the chart, for a learner whose plan doesn't include it yet: no data, no axis. */
 export function SampleProgressChart({ values }: { values: readonly number[] }) {
   return (
     <div aria-hidden="true" className={cn("relative h-20", MOCK_MARK_CLASS)}>

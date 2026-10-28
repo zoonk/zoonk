@@ -15,15 +15,6 @@ import { TASK_HEADER_ICON_CLASS } from "../_components/task-header";
 import { useContentFeedback } from "./feedback-context";
 import { ReportProblemItem } from "./report-problem-item";
 
-/**
- * A page's "…" menu for the AI content it shows, such as a course, a chapter or a question: "Report
- * a problem" with that content attached. While it's open the screen's keys pause, so a number or
- * Enter can't answer the question under it. `label` names the button for screen readers ("Course
- * options") and `screen` names the page in a report's context. In a page's top bar it takes the
- * bar's size (`size="icon-bar"`); beside a detail page's main action it's that page's outline "…"
- * (`size="detail"`); in a task's header its glyph sits on the column's edge (`size="task"`). Hosts
- * without feedback get no menu.
- */
 export function ContentFeedbackMenu({
   label,
   screen,
@@ -39,7 +30,6 @@ export function ContentFeedbackMenu({
   const menuId = useId();
   const setMenuOpen = feedback?.setMenuOpen;
 
-  // A menu that goes away while open (the question moved on) no longer pauses the screen.
   useEffect(() => () => setMenuOpen?.({ menuId, open: false }), [menuId, setMenuOpen]);
 
   if (!feedback) {
@@ -72,10 +62,6 @@ export function ContentFeedbackMenu({
   );
 }
 
-/**
- * A detail page's "…" for a page that isn't one piece of AI content (a subject, the exam): only
- * "Report a problem" with the screen attached. Hosts without feedback get no menu.
- */
 export function ReportProblemMenu({ label, screen }: { label: string; screen: string }) {
   const feedback = useContentFeedback();
 

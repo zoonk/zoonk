@@ -33,7 +33,6 @@ describe(getPhaseTimes, () => {
   });
 
   it("ends a phase whose finish wasn't reported as the next one begins", () => {
-    // The run reported the skill graph's start, so reading the goal ended then.
     expect(
       timesOf({
         stepTimes: { buildSkillGraph: { started: 9000 }, understandGoal: { started: 1000 } },

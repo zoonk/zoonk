@@ -34,17 +34,8 @@ import { type LessonCelebration } from "../session/lesson-celebration";
 import { MomentHeader, MomentSaving, PendingMainAction } from "../session/moment-header";
 import { useQuickExplanationLabel } from "./quick-explanation-label";
 
-/**
- * What the check earned, once the explanation is saved (`celebration`, null until then): its Brain
- * Power, the day's missions it completed and the belt level and tenth of Energy it reached.
- */
 type ExplainResult = { answered: number; celebration: LessonCelebration | null; correct: number };
 
-/**
- * "Done" leaves the explanation, read to the end, once its reading is saved (`saving` until then,
- * waiting in its place): that save is what finishes the explanation, so it leaves the goal
- * switcher. It's the task's main action, in the action bar every task screen shares.
- */
 function DoneLink({ href, saving }: { href: string; saving: boolean }) {
   const t = useExtracted();
   const doneRef = useEnterClick<HTMLAnchorElement>();
@@ -66,10 +57,6 @@ function DoneLink({ href, saving }: { href: string; saving: boolean }) {
   );
 }
 
-/**
- * A related question, as its own quick explanation. A quick explanation has no kind's color of its
- * own, so its mark is a quiet icon, lined up with the in-depth row's above it.
- */
 function QuestionRow({ href, question }: { href: string; question: string }) {
   const quickExplanation = useQuickExplanationLabel();
 
@@ -88,11 +75,6 @@ function QuestionRow({ href, question }: { href: string; question: string }) {
   );
 }
 
-/**
- * The explanation in its sentences, numbered: in the column under `lg`, and from `lg` in the
- * aside, where the outline and "From the lesson" were, as a lesson's summary is at its end: from
- * the aside's top, its label drawn as the aside's header row.
- */
 function ExplainRecap({
   className,
   recap,
@@ -133,19 +115,6 @@ function ExplainRecap({
   );
 }
 
-/**
- * The end of a quick explanation: "✓ Now you know" over its title, what the one question earned
- * as readouts (right answers, Brain Power) and what it did to the day (its missions, the belt level
- * and the tenth of Energy it reached; its milestone opened before, from the lesson player's
- * `ceremony`), 24px apart as on every task's end, the recap in three numbered sentences, and "Want
- * to go further?": learning the subject in depth as a plan of its own (the host's `deeper`
- * control) or another quick question. "Done" finishes, in the action bar at the bottom. From `lg`
- * the recap sits in the aside, where the outline and "From the lesson" were, as a lesson's summary
- * does at its end, so the aside is never left empty and the column keeps the result and the way
- * on. While the reading saves, its title holds the place and the saving line sits where the
- * readouts land, as on every task's end, and the column under it comes once it's saved, all at
- * once, so nothing moves under the learner as the day's moment lands.
- */
 export function ExplainEnding({
   buddy,
   deeper,
@@ -155,16 +124,12 @@ export function ExplainEnding({
   result,
   saving = false,
 }: {
-  /** The learner's buddy, for what the ending says about its Energy. */
   buddy?: LearnBuddy | null;
-  /** "I want to learn this in depth": the host's `ExplainDeeperLink`. */
   deeper: React.ReactNode;
   doneHref: string;
   explanation: Pick<ExplanationView, "goFurther" | "recap" | "title">;
-  /** Where a related question starts: onboarding with the question filled in. */
   questionHref: (question: string) => string;
   result: ExplainResult;
-  /** While the reading is being saved, "Done" waits for it. */
   saving?: boolean;
 }) {
   const t = useExtracted();
@@ -178,7 +143,6 @@ export function ExplainEnding({
             eyebrow={<SuccessEyebrow>{t("Now you know")}</SuccessEyebrow>}
             title={explanation.title}
           >
-            {/* Read again, it earns nothing new; with nothing answered, no score shows. */}
             {saving ? (
               <MomentSaving />
             ) : (

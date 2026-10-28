@@ -5,10 +5,6 @@ import { useExtracted } from "next-intl";
 import { Checklist } from "../_components/checklist";
 import { useExamChecklistLabel } from "./exam-labels";
 
-/**
- * What to have ready for the real exam day: documents, pen, route, time and sleep, or a class
- * test's short list, then what the notice lets candidates use or gives them (`tools`).
- */
 export function ExamChecklist({
   items,
   tools,

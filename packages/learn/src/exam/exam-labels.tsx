@@ -7,7 +7,6 @@ import { useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatTimeOfDay } from "../_utils/time-format";
 import { useFormatPlanDate } from "../plan/plan-date-text";
 
-/** The real exam day's checklist, in the learner's words. */
 export function useExamChecklistLabel() {
   const t = useExtracted();
 
@@ -31,10 +30,7 @@ export function useExamChecklistLabel() {
   };
 }
 
-/**
- * "Sunday, November 8, 2026 · 1:30 PM": an exam day with its start time when the notice gives one.
- * The year always shows, since the learner may prepare for an edition years ahead.
- */
+/** The year always shows: the learner may prepare for an edition years ahead. */
 export function useExamDayText() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
@@ -51,10 +47,6 @@ export function useExamDayText() {
   };
 }
 
-/**
- * "Sun, Nov 14": an exam day by the Plan's date rule (its year beyond the next twelve months),
- * short enough to share a row with its length or its questions.
- */
 export function useExamDayDate() {
   const formatDate = useFormatIsoDate();
   const formatPlanDate = useFormatPlanDate();

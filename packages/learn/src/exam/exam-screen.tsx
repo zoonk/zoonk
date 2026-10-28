@@ -39,13 +39,6 @@ import { ExamScoringSection } from "./exam-scoring-section";
 
 export type { ExamActions, ExamHrefs } from "./exam-context";
 
-/**
- * The exam's days as one fact ("Nov 8 and Nov 15", by the Plan's date rule, with the year beyond
- * the next twelve months), and its start time once when every day shares it (ENEM's two Sundays
- * both start at 13:30), or on each day when they differ. A single day also names its weekday ("Sun,
- * Nov 8"), as the aside's days do; the month the learner named is said as that month ("March
- * 2027").
- */
 function useExamDays(): string[] {
   const format = useFormatter();
   const { exam } = useExamScreen();
@@ -57,7 +50,6 @@ function useExamDays(): string[] {
   const sharedTime = startTimes.size === 1 ? (exam.days[0]?.startTime ?? null) : null;
   const timePerDay = startTimes.size > 1;
 
-  // The month the learner named stands for that month: no day in it is the exam's yet.
   if (exam.namedMonth) {
     return exam.days.map((day) => toLabelCase(formatDate(day.date, "month")));
   }
@@ -76,10 +68,6 @@ function useExamDays(): string[] {
   return sharedTime ? [...dates, formatTimeOfDay(sharedTime)] : dates;
 }
 
-/**
- * "Exam · 34 days left" over the exam's name; "~34 days left" while the date is an estimate, heard
- * as "About 34 days left". Just "Exam" once the day is past.
- */
 function ExamEyebrow() {
   const t = useExtracted();
   const { exam } = useExamScreen();
@@ -111,20 +99,11 @@ function ExamEyebrow() {
   );
 }
 
-/**
- * Back to the page the learner came from (the Plan without one), from `lg` the sidebar's place;
- * once the hero scrolls away, the bar names the exam.
- */
 function ExamBar() {
   const { exam, hrefs } = useExamScreen();
   return <LearnPageBar back={{ href: hrefs.back }} root title={exam.examName} />;
 }
 
-/**
- * Where the date shown comes from, when it isn't the notice's own day, under the exam's days in
- * the aside: the month the learner named (unless the notice's day is offered by the header), or
- * the days past editions suggest.
- */
 function DateNote() {
   const t = useExtracted();
   const { exam } = useExamScreen();
@@ -134,7 +113,6 @@ function DateNote() {
   }
 
   if (exam.namedMonth) {
-    // A month with no sitting gets no day from the notice: the card by the header says so.
     return exam.noticeDay || exam.noSitting ? null : (
       <p className="text-muted-foreground text-xs text-pretty">
         {t(
@@ -155,10 +133,6 @@ function DateNote() {
   ) : null;
 }
 
-/**
- * The notice's day when the plan counts down to another, with one tap to take it, or, for an exam
- * held several times a year with no sitting in the learner's month, the closest ones.
- */
 function ExamNoticeDay() {
   const { actions, exam } = useExamScreen();
 
@@ -172,11 +146,6 @@ function ExamNoticeDay() {
   );
 }
 
-/**
- * The exam's facts in one mono line ("November 14 and 21, 2027 · 1:30 PM · estimated from past
- * editions"), each fact kept whole, so a narrow line breaks between them, never inside one. The
- * month the learner named is theirs, not an estimate from past editions.
- */
 function ExamFacts() {
   const t = useExtracted();
   const { exam } = useExamScreen();
@@ -202,11 +171,6 @@ function ExamFacts() {
   );
 }
 
-/**
- * The exam at a glance: "Exam · 34 days left" over its name, its days and start time in one mono
- * line, and beside them from `md` the page's main action (a mock exam any time, from the host)
- * with its "…"; then the notice's day when the plan counts down to another.
- */
 function ExamHero({ mockAction }: { mockAction: React.ReactNode }) {
   const t = useExtracted();
   const { exam } = useExamScreen();
@@ -257,10 +221,6 @@ function ExamMoment() {
   );
 }
 
-/**
- * The exam's speaking: DELE, DELF, Goethe and Cambridge goals practice their paper task by task;
- * IELTS and TOEFL goals keep the language goal's speaking mock after moving to the exam goal.
- */
 function ExamSpeaking() {
   const { actions, exam, hrefs, openSpeakingTask } = useExamScreen();
 
@@ -288,15 +248,6 @@ function ExamSpeaking() {
   );
 }
 
-/**
- * The exam's page: its name, when it is and its main action, a mock exam any time; then under
- * their headers the moment it's in (final stretch, day before, exam day), "How did it go?" after
- * it, its mocks (the one running, the next one and the ones taken), how they went, what's on it
- * (when the notice doesn't set it out day by day) and its speaking (its paper task by task, or the
- * IELTS or TOEFL speaking mock). In the aside from 72rem (after them under it): the exam day by
- * day as its notice sets it out, how the score works and where its date comes from. How ready the
- * learner is lives on the Plan, so it isn't repeated.
- */
 export function ExamScreen({
   actions,
   exam,
@@ -307,9 +258,7 @@ export function ExamScreen({
   actions: ExamActions;
   exam: ExamView;
   hrefs: ExamHrefs;
-  /** "Take a mock exam" whenever the learner wants (`MockEntryButton`), beside the title. */
   mockAction?: React.ReactNode;
-  /** The speaking task a link asked to open (a result's "Next"), by its key. */
   openSpeakingTask?: string | null;
 }) {
   const t = useExtracted();

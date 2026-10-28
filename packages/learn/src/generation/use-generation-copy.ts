@@ -10,7 +10,6 @@ import {
 import { type KindCopy, type PhaseCopy } from "./generation-copy-types";
 import { type GenerationKind } from "./generation-kinds";
 
-/** Numbered "Writing question 3…" lines for a wait that writes questions, as many as `count`. */
 function useQuestionLines() {
   const t = useExtracted();
 
@@ -29,7 +28,7 @@ function useGoalPhaseCopy() {
       label: t("Reading your goal"),
       lines: [t("Reading your answers…"), t("Deciding how deep to go…")],
     },
-    // Only a test built from the learner's own material waits to read it (slides, notes).
+    // The `notice` phase only runs for a test built from the learner's own material.
     notice: {
       label: t("Reading your material"),
       lines: [t("Finding the topics it covers…"), t("Putting them in the order it teaches…")],
@@ -276,10 +275,7 @@ function useLessonCopy(): KindCopy<"lesson"> {
   };
 }
 
-/**
- * Each kind's phase names and detail lines. Every hook runs on every render (hooks can't be
- * skipped), and the wait reads the kind it shows.
- */
+/** Hooks can't be skipped, so every kind's copy is built and the wait reads its own. */
 export function useGenerationCopy(kind: GenerationKind): {
   name: string;
   phases: Record<string, PhaseCopy>;

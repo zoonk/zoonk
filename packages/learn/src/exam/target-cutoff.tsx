@@ -13,12 +13,7 @@ import {
 } from "../_components/list-group";
 import { getSourceHost } from "../_utils/source-host";
 
-/**
- * A cut-off as the learner reads it: its score on its scale in their number format ("7 out of
- * 10"), and what it's for in a few words ("Medicine · UFMG · Sisu 2025 · open competition"), each
- * part as the source names it. Names stand side by side, without the prepositions an institution's
- * name decides ("na USP" in Portuguese).
- */
+/** Names stand side by side, since the preposition an institution's name takes ("na USP") varies by name. */
 export function useCutoffWords() {
   const t = useExtracted();
   const format = useFormatter();
@@ -40,7 +35,6 @@ export function useCutoffWords() {
   };
 }
 
-/** What the cut-off is for, then its page as a quiet link named by its site. */
 function CutoffDetail({ cutoff }: { cutoff: TargetCutoff }) {
   const t = useExtracted();
   const words = useCutoffWords();
@@ -64,11 +58,6 @@ function CutoffDetail({ cutoff }: { cutoff: TargetCutoff }) {
   });
 }
 
-/**
- * Where the bar was for the learner's target, as a row of "How the score works": the last published
- * cut-off with what it's for and its source, and the learner's own goal. A reference, never a
- * promise, so it says nothing about their chances. Nothing when no source published one.
- */
 export function TargetCutoffRow({
   cutoff,
   targetScore,

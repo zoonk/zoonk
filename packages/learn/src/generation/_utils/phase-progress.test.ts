@@ -46,7 +46,6 @@ describe(getPhaseProgress, () => {
   it("weighs each phase by how long it usually takes", () => {
     const result = progressOf("curriculum", { steps: { understandGoal: "completed" } });
 
-    // Reading the goal (8 s) is done and mapping skills (60 s) runs, out of 83 s.
     expect(result.progress).toBeCloseTo((8 / 83) * 100);
     expect(result.target).toBeCloseTo((68 / 83) * 100);
     expect(result.activeMs).toBe(60_000);

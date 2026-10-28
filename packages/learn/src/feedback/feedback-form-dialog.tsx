@@ -15,7 +15,6 @@ import { FeedbackForm } from "./feedback-form";
 function FeedbackFormHeader({ isReport }: { isReport: boolean }) {
   const t = useExtracted("feedback");
 
-  // A report needs no explaining: the title, the message and the screen it's about.
   if (isReport) {
     return (
       <DialogHeader>
@@ -36,7 +35,6 @@ function FeedbackFormHeader({ isReport }: { isReport: boolean }) {
   );
 }
 
-/** The message form in a dialog, opened from a screen's menu, the account menu or the palette. */
 export function FeedbackFormDialog({
   onClose,
   request,

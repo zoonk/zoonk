@@ -30,7 +30,6 @@ const SAMPLE_MOCKS = 6;
 const SAMPLE_FIRST = 30;
 const SAMPLE_STEP = 7;
 
-/** A sample of what the chart shows, behind the Plus mark: scores rising mock after mock. */
 const SAMPLE = Array.from(
   { length: SAMPLE_MOCKS },
   (_, index) => SAMPLE_FIRST + index * SAMPLE_STEP,
@@ -43,7 +42,6 @@ function useMockDate() {
     format.dateTime(new Date(mock.finishedAt), { day: "numeric", month: "short" });
 }
 
-/** What the chart's points say: the score, then the mock, its day and what it sat. */
 function usePoints(progress: Progress): ProgressPoint[] {
   const t = useExtracted();
   const date = useMockDate();
@@ -62,10 +60,6 @@ function usePoints(progress: Progress): ProgressPoint[] {
   });
 }
 
-/**
- * One plain line about what improved and what still needs work, that nothing moved much, or what a
- * trend still waits for.
- */
 function useProgressLine(progress: Progress): string {
   const t = useExtracted();
   const format = useFormatter();
@@ -91,13 +85,11 @@ function useProgressLine(progress: Progress): string {
     return t("Still needs work: {needsWork}.", { needsWork: list(needsWork) });
   }
 
-  // A subject's trend needs two mocks with enough new questions of it.
   return progress.subjects.some((trend) => trend.change !== null)
     ? t("No subject has changed much yet.")
     : t("Trends by subject show once your mocks ask enough new questions of each one.");
 }
 
-/** "+12" or "-8" points since the subject's first mock; a dash until a second mock asks it. */
 function formatChange(change: number | null): string {
   if (change === null) {
     return "–";
@@ -106,7 +98,6 @@ function formatChange(change: number | null): string {
   return change > 0 ? `+${change}` : String(change);
 }
 
-/** A subject's change since its first mock, as an arrow and the points. */
 function SubjectChange({ change }: { change: number | null }) {
   const t = useExtracted();
   const Icon = change !== null && change < 0 ? ArrowDownRightIcon : ArrowUpRightIcon;
@@ -124,10 +115,6 @@ function SubjectChange({ change }: { change: number | null }) {
   );
 }
 
-/**
- * A subject's latest share, with its line and its change since the first mock once some subject
- * has them: before that, a one-dot line and a dash on every row would say nothing.
- */
 function SubjectRow({ trend, trends }: { trend: SubjectTrend; trends: boolean }) {
   const latest = trend.percents.at(-1) ?? 0;
 
@@ -149,13 +136,6 @@ function SubjectRow({ trend, trends }: { trend: SubjectTrend; trends: boolean })
   );
 }
 
-/**
- * The progress in two numbers: the latest mock over the exam (all of it, half of it, the plan's own
- * or a starting point) with what it measures (one subject's few questions never stand for the
- * exam; a subject's own mock leads only when there's no other, named with its subject) and its
- * change since the first, and the subject that went best in it. How many mocks were taken is the
- * section's count.
- */
 function ProgressTiles({ progress }: { progress: Progress }) {
   const t = useExtracted();
   const { exam } = useExamScreen();
@@ -218,7 +198,6 @@ function ProgressCard({ progress }: { progress: Progress }) {
   const line = useProgressLine(progress);
   const first = progress.mocks[0];
   const latest = progress.mocks.at(-1);
-  // A subject's change needs two mocks asking enough new questions of it.
   const trends = progress.subjects.some((trend) => trend.change !== null);
 
   return (
@@ -254,10 +233,6 @@ function ProgressCard({ progress }: { progress: Progress }) {
   );
 }
 
-/**
- * Without Plus, the progress shows as it would, a sample line under the Plus mark, so the learner
- * sees what it gives; the section's one notice says how to get it.
- */
 function LockedProgress() {
   const t = useExtracted();
 
@@ -274,12 +249,6 @@ function LockedProgress() {
   );
 }
 
-/**
- * How the learner's mocks went, under its own header: the latest score and the best subject as two
- * numbers, each mock's score as a line once there are two, each subject's score (a bar, or its
- * trend once mocks show one), and under them one plain line about what improved and what still
- * needs work. With Plus only; without it, shown locked. Nothing before the first mock.
- */
 export function ExamMockProgress() {
   const t = useExtracted();
   const { exam } = useExamScreen();

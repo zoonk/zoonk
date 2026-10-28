@@ -27,7 +27,6 @@ import { useExamScreen } from "./exam-context";
 type Subject = NonNullable<ExamView["map"]>["subjects"][number];
 type Topic = Subject["topics"][number];
 
-/** Whether a subject's topics show anything from past exams: a tag or a count. */
 function showsPastExams(topics: readonly Topic[]): boolean {
   return setsApart(topics) || topics.some((topic) => topic.appearances !== null);
 }
@@ -51,7 +50,6 @@ function TopicRow({ showFrequency, topic }: { showFrequency: boolean; topic: Top
   );
 }
 
-/** The subject's weight on the exam in the notice's terms: its questions, or its share. */
 function useSubjectWeight() {
   const t = useExtracted();
   const formatShare = useFormatShare();
@@ -71,7 +69,6 @@ function useSubjectWeight() {
   };
 }
 
-/** A subject in one line, its weight on the right; its topics open in place. */
 function SubjectRow({
   hasFrequency,
   showFrequency,
@@ -128,11 +125,6 @@ function SubjectRow({
 
 const getGroupId = (index: number) => `exam-map-group-${index}`;
 
-/**
- * What's on the exam, as a short list: each of the notice's subjects with its weight, in the
- * notice's groups ("Basic knowledge (P1)") when it has them, and its topics one tap away with
- * how often the board asks them. How ready the learner is in each lives on the Plan.
- */
 export function ExamMapSection() {
   const t = useExtracted();
   const { exam } = useExamScreen();

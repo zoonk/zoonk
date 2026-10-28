@@ -22,11 +22,6 @@ import { type FeedbackFormContext } from "./feedback-contract";
 
 type FormStatus = "error" | "idle" | "success";
 
-/**
- * The signed-in learner's email, which the reply goes to: `undefined` while it's looked up, null
- * for a guest or a visitor, who types one. A form rendered with `defaultEmail` (such as the support
- * page, which reads the session) skips the lookup.
- */
 function useViewerEmail({
   defaultEmail,
   feedback,
@@ -57,7 +52,6 @@ function useViewerEmail({
   return feedback ? viewerEmail : null;
 }
 
-/** Only someone the app doesn't know types an email to be answered at. */
 function EmailField({ onChange, value }: { onChange: (email: string) => void; value: string }) {
   const t = useExtracted("feedback");
   const emailId = useId();
@@ -81,7 +75,6 @@ function EmailField({ onChange, value }: { onChange: (email: string) => void; va
   );
 }
 
-/** Sends the message with where it was written, and counts it as a report when it's about content. */
 async function sendMessage({
   context,
   email,
@@ -124,13 +117,8 @@ async function sendMessage({
   return "success";
 }
 
-/**
- * Where the form sits: on a page (Help), its Send small at the end of the form behind a hairline,
- * like Save on every settings page; in a dialog, in the dialog's own footer layout.
- */
 type FeedbackFormLayout = "dialog" | "page";
 
-/** Send at the end of the page's form, small like a settings page's Save; busy while it's sent. */
 function SendButton({ disabled, pending }: { disabled: boolean; pending: boolean }) {
   const t = useExtracted("feedback");
 
@@ -142,11 +130,6 @@ function SendButton({ disabled, pending }: { disabled: boolean; pending: boolean
   );
 }
 
-/**
- * The feedback form: the message first (it takes focus in a dialog), and an email to reply to only
- * when the app doesn't know the learner's. The page, the content the learner was on, the platform
- * and the app version are attached for them.
- */
 export function FeedbackForm({
   context,
   defaultEmail,
@@ -225,7 +208,6 @@ export function FeedbackForm({
   );
 }
 
-/** Holds the page form's place while the signed-in learner's email loads. */
 export function FeedbackFormSkeleton() {
   return (
     <div className="flex w-full flex-col gap-6">

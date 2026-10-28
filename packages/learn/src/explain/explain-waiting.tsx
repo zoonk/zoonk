@@ -34,12 +34,10 @@ import {
 } from "../onboarding/onboarding-frame";
 import { useQuickExplanationLabel } from "./quick-explanation-label";
 
-/** The first screen usually shows within about 20 seconds; after this, offer to try again. */
+/** The first screen usually shows within about 20 s. */
 const SLOW_MS = 45_000;
-/** About five short screens: the outline's rows, each its own width, before titles are written. */
 const PLACEHOLDER_WIDTHS = ["w-3/5", "w-2/5", "w-1/2", "w-2/3", "w-1/3"];
 
-/** The outline: numbered screens as flat rows (placeholders until written), then the one question. */
 function Outline({ titles }: { titles: string[] }) {
   const t = useExtracted();
 
@@ -72,11 +70,6 @@ function Outline({ titles }: { titles: string[] }) {
   );
 }
 
-/**
- * Where the learner can go instead, as a row of its own with what that builds: the subject's
- * course start page, which asks their level before anything is created, or onboarding with the
- * subject as the goal when there's no course.
- */
 export function ExplainDeeperLink({ description, href }: { description: string; href: string }) {
   const t = useExtracted();
 
@@ -97,27 +90,13 @@ export function ExplainDeeperLink({ description, href }: { description: string; 
   );
 }
 
-/** A host that doesn't follow the run live shows the same wait, on its first step. */
 const UNFOLLOWED_RUN: GenerationRun = { failure: null, status: "waiting", steps: {} };
 
-/**
- * Reads the page again until it shows the explanation, as other generation waits do: rarely while
- * the run is followed (an explanation another run wrote shows too), then soon once the run says it
- * can be read.
- */
 function RefreshUntilShown({ isReady, onCheck }: { isReady: boolean; onCheck: () => void }) {
   useRefreshUntilShown({ isReady, refresh: onCheck });
   return null;
 }
 
-/**
- * A run's wait past the time the first screen usually takes says so, with "Try again". A retry
- * joins the run already writing it, so the wait on screen goes on as it was: the tap says at once
- * that it's still being written, and once the server takes the retry there's nothing more to tap
- * (the focus the button had moves to the line). A retry the server refused or never got goes back
- * to "Try again". A run that stops shows its own way to start again instead, and the run that
- * starts then gets its own time.
- */
 function SlowWait({ onRetry }: { onRetry: () => Promise<boolean> }) {
   const t = useExtracted();
   const isSlow = useTakingLong({ active: true, afterMs: SLOW_MS });
@@ -171,14 +150,6 @@ function SlowWait({ onRetry }: { onRetry: () => Promise<boolean> }) {
   );
 }
 
-/**
- * Before a quick explanation: the question, each step of writing it as it happens, and the
- * outline taking shape (about five screens and one question) until its titles are written. The
- * run's own progress is the wait: the host reads the page once it says the explanation can be read,
- * and the page reads itself again only as a fallback. Then "See explanation" starts it. A slow
- * start can be restarted, and a whole plan for the subject is one tap away (the host's `deeper`
- * control).
- */
 export function ExplainWaiting({
   closeHref,
   deeper,
@@ -189,23 +160,16 @@ export function ExplainWaiting({
   progress,
 }: {
   closeHref: string;
-  /**
-   * "I want to learn this in depth", the host's `ExplainDeeperLink`: to the subject's course start
-   * page, or into onboarding when there's no course.
-   */
   deeper: ReactNode;
   explanation: Pick<ExplanationView, "lesson" | "outline" | "title">;
   onCheck: () => void;
-  /** Asks again for a slow explanation: whether it's being written now (see `SlowWait`). */
   onRetry: () => Promise<boolean>;
   onStart: () => void;
-  /** The run writing it, when the host follows it live. */
   progress: GenerationRun | null;
 }) {
   const t = useExtracted();
   const quickExplanation = useQuickExplanationLabel();
   const ready = Boolean(explanation.lesson);
-  // A run that stopped says so in the wait, with its own way to start again.
   const failed = progress?.status === "failed";
 
   return (

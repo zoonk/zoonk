@@ -1,11 +1,4 @@
-/** Numbered lines for a phase that makes several things: "Writing screen 2…". */
-export type NumberedLines = {
-  /** How many it usually makes, so the numbers never run past what's real. */
-  count: number;
-  line: (number: number) => string;
-  /** Said after every two numbered lines. */
-  review: string;
-};
+export type NumberedLines = { count: number; line: (number: number) => string; review: string };
 
 const REVIEW_EVERY = 2;
 
@@ -15,10 +8,6 @@ function toNumberedLines({ count, line, review }: NumberedLines): string[] {
   );
 }
 
-/**
- * The detail line a running phase shows at its `tick`: its lines in order, then its numbered
- * lines, then its unnumbered lines again for as long as it keeps running.
- */
 export function getDetailLine({
   lines,
   numbered,

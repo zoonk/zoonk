@@ -20,7 +20,6 @@ import { TargetCutoffRow } from "./target-cutoff";
 
 const SCORING_TITLE_ID = "exam-scoring-title";
 
-/** Cebraspe: how often the learner is right when sure and when unsure, across their mocks. */
 function Calibration() {
   const t = useExtracted();
   const { exam } = useExamScreen();
@@ -57,10 +56,6 @@ function Calibration() {
   );
 }
 
-/**
- * How the method scores, as a title, and what to do about it: only when the notice says how the
- * exam is scored, never from the mocks' default (a class test from the learner's material).
- */
 function useScoringRule(): { rule: string; title: string } | null {
   const t = useExtracted();
   const formatShare = useFormatShare();
@@ -98,10 +93,6 @@ function useScoringRule(): { rule: string; title: string } | null {
   }
 }
 
-/**
- * What it takes to pass, as the notice says it (such as at least 40 of the 80 points), saying its
- * language when it isn't the learner's.
- */
 function PassMarksRow() {
   const t = useExtracted();
   const { exam } = useExamScreen();
@@ -132,7 +123,6 @@ function PassMarksRow() {
   );
 }
 
-/** The scale the notice says the exam reports its score on, with the score that passes on it. */
 function NoticeScaleRow() {
   const t = useExtracted();
   const format = useFormatter();
@@ -189,12 +179,6 @@ function ScoringRuleRow({ rule }: { rule: { rule: string; title: string } }) {
   );
 }
 
-/**
- * "How the score works", as one list: the one scoring rule that changes how to answer, with the
- * learner's calibration after their mocks, the scale the notice reports on, what it takes to pass
- * as the notice says it, and where the bar was for the learner's target (its last cut-off).
- * Nothing when none of them applies.
- */
 export function ExamScoringSection() {
   const t = useExtracted();
   const rule = useScoringRule();
@@ -210,7 +194,6 @@ export function ExamScoringSection() {
         <PageSectionTitle id={SCORING_TITLE_ID}>{t("How the score works")}</PageSectionTitle>
       </PageSectionHeader>
 
-      {/* The page's one panel: a self-contained explainer beside the exam's lists. */}
       <ListGroup variant="panel">
         {rule && <ScoringRuleRow rule={rule} />}
         <NoticeScaleRow />

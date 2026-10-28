@@ -20,18 +20,11 @@ import { useExamScreen } from "./exam-context";
 
 const MS_PER_MINUTE = 60_000;
 
-/** The row says whole minutes, so it reads the clock again a few times a minute. */
 const TICK_MS = 15_000;
 
-/**
- * The running mock's clock at its row's end: its time left in whole minutes, "Time's up" once it
- * ran out (it waits to be handed in), and "Handed in" while it waits to be graded. The words take
- * the sans face, as words at a row's end do.
- */
 function RunningMockClock({ deadline }: { deadline: string | null }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
-  // Whole minutes, rounded up so the last minute reads "1 min", never "0 min".
   const minutes = Math.ceil(useTimeLeft({ deadline, tickMs: TICK_MS }) / MS_PER_MINUTE);
 
   if (deadline === null) {
@@ -54,12 +47,6 @@ function RunningMockClock({ deadline }: { deadline: string | null }) {
   );
 }
 
-/**
- * A mock the learner started and left, at the top of the mocks' list: named as the mock names
- * itself ("Mock exam 2"), what it sits and how much is answered under it, and its clock at the
- * row's end. The first one is highlighted as the one to go on with (`current`, the caller marking
- * its item `aria-current`). The whole row opens it where the learner left it.
- */
 export function ExamRunningMock({
   current,
   running,

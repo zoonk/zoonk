@@ -8,19 +8,15 @@ type Definition<TPhase extends string> = GenerationKindDefinition<string, TPhase
 type RunState = Pick<GenerationRun, "failure" | "status" | "steps">;
 
 export type PhaseProgress<TPhase extends string> = {
-  /** How long the running phase usually takes: the bar's pace. Null when nothing runs. */
   activeMs: number | null;
-  /** Each phase with how long it usually takes, the width of its segment on the bar. */
   phases: { id: TPhase; seconds: number; status: PhaseStatus }[];
-  /** The share of work finished, 0 to 100. */
+  /** 0 to 100. */
   progress: number;
-  /** Where `progress` will be once the running phase finishes. */
   target: number;
 };
 
 const PERCENT = 100;
 
-/** The steps the run reports for a phase of the wait. */
 export function getPhaseSteps<TPhase extends string>(
   definition: Definition<TPhase>,
   phase: TPhase,
@@ -34,7 +30,6 @@ function isReported(run: RunState, step: string): boolean {
   return run.steps[step] !== undefined;
 }
 
-/** Optional phases show once the run reports one of their steps. */
 function getVisiblePhases<TPhase extends string>(definition: Definition<TPhase>, run: RunState) {
   return definition.phases.filter(
     (phase) =>
@@ -42,7 +37,6 @@ function getVisiblePhases<TPhase extends string>(definition: Definition<TPhase>,
   );
 }
 
-/** The share of a phase's steps the run finished, 0 to 1. */
 function getFinishedShare<TPhase extends string>({
   definition,
   phase,
@@ -58,11 +52,7 @@ function getFinishedShare<TPhase extends string>({
   return steps.length === 0 ? 0 : finished / steps.length;
 }
 
-/**
- * The phase running now: the furthest one the run reported a step of (a later step means the
- * earlier phases are done, since runs don't report every step), or the next one once all of its
- * steps finished. Before any report, the first phase: the host already started the run.
- */
+/** The furthest phase the run reported a step of, since runs don't report every step. */
 function getActiveIndex<TPhase extends string>({
   definition,
   phases,
@@ -105,7 +95,6 @@ function getStatus({
     return "failed";
   }
 
-  // A run that never started has nothing running.
   return run.failure === "notStarted" ? "pending" : "active";
 }
 
@@ -113,10 +102,6 @@ function toPercent(value: number, total: number): number {
   return total === 0 ? 0 : (value / total) * PERCENT;
 }
 
-/**
- * A run's phases for a wait of this kind, each done, running, stopped or still to come, and the
- * progress bar's position: phases weigh what they usually take, so a long phase moves the bar more.
- */
 export function getPhaseProgress<TPhase extends string>({
   definition,
   run,

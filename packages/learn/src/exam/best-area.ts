@@ -1,11 +1,6 @@
-/** A subject of the exam with its right answers in each mock, as a share in percent. */
 type SubjectTrend = { name: string; percents: readonly number[] };
 
-/**
- * The subject whose latest mock went best, for the exam page's second number. "Best" has to beat
- * the others: with one subject, or the top share tied (Linguagens and Ciências Humanas both 70%),
- * there's no best area to name, and the page says nothing rather than pick one.
- */
+/** None with one subject or a tie at the top: the page says nothing rather than pick one. */
 export function findBestArea(
   subjects: readonly SubjectTrend[],
 ): { name: string; percent: number } | null {

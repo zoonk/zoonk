@@ -68,7 +68,6 @@ function WaitProgress({
   );
 }
 
-/** What the running phase is doing now; the line changes every few seconds. */
 function ActiveDetail({ copy, phase }: { copy: PhaseCopy; phase: string }) {
   const tick = useTickCount({ resetKey: phase });
   const line = getDetailLine({ lines: copy.lines, numbered: copy.numbered, tick });
@@ -80,7 +79,6 @@ function ActiveDetail({ copy, phase }: { copy: PhaseCopy; phase: string }) {
 
 const SECOND_MS = 1000;
 
-/** The running phase's time so far, on the server's clock (`offsetMs`), counted every second. */
 function RunningTime({ offsetMs, startedAt }: { offsetMs: number; startedAt: number }) {
   const [now, setNow] = useState(() => Date.now());
 
@@ -96,10 +94,6 @@ function RunningTime({ offsetMs, startedAt }: { offsetMs: number; startedAt: num
   );
 }
 
-/**
- * How long a phase took, or the running one has taken so far, from the times the run reported:
- * nothing where it didn't say, and nothing running while the wait isn't following the run.
- */
 function PhaseTimeText({
   following,
   offsetMs,
@@ -128,7 +122,6 @@ function PhaseTimeText({
   ) : null;
 }
 
-/** Where each phase stands, for screen readers: the indicator only shows it. */
 function PhaseStatusText({ status }: { status: PhaseStatus }) {
   const t = useExtracted();
 
@@ -150,15 +143,6 @@ function FailureIcon({ failure }: { failure: GenerationFailure }) {
   );
 }
 
-/**
- * Why a wait stopped, with the way out. A lost connection isn't a failed run: the work may still
- * be going on, so the way out follows it again. A failed or never-started run is started again,
- * when the learner asks. `GenerationWait` shows it in place of its bar; a host that only knows
- * the content failed (no run to show phases of) shows it alone. It reads as calmly as every
- * failure the app shows (a page that didn't load, a lesson that didn't open): a muted mark, plain
- * words and the way out as the notice's main answer. Red is for a wrong answer, not for us
- * failing to start something.
- */
 export function GenerationFailureNotice({
   failure,
   retry,
@@ -206,7 +190,6 @@ export function GenerationFailureNotice({
   );
 }
 
-/** Screen readers hear each phase once as it starts, then that it's done. */
 function useAnnouncement({
   copy,
   progress,
@@ -226,20 +209,12 @@ function useAnnouncement({
   return isFollowing(run) && active ? (copy[active.id]?.label ?? "") : "";
 }
 
-/**
- * Every generation wait: the host's title and description, a progress bar that keeps moving at
- * the pace the work usually takes, and the run's phases as they happen, the running one saying
- * what it's doing, each with how long it took when the run reports its times. When it stops, it
- * says why (a lost connection or a failed run) with the way out. The host follows the run (`run`)
- * and moves on by itself once it's ready.
- */
 export function GenerationWait({
   children,
   className,
   kind,
   run,
 }: {
-  /** The host's title and description: what is being made for this learner. */
   children?: React.ReactNode;
   className?: string;
   kind: GenerationKind;

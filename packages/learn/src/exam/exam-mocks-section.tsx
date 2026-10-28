@@ -16,7 +16,6 @@ import { ExamRunningMock } from "./exam-running-mock";
 
 const MOCKS_TITLE_ID = "exam-mocks-section-title";
 
-/** The mocks taken so far, newest last, each a row of the mocks' list opening its result. */
 function ExamMockRows() {
   const { exam, hrefs } = useExamScreen();
 
@@ -27,14 +26,6 @@ function ExamMockRows() {
   ));
 }
 
-/**
- * The exam's mocks under one header with how many were taken: the ones the learner left running,
- * the first highlighted, with what's answered and the time left (the plan's next one is
- * highlighted when none runs), then the ones taken so far, in one list. Without Plus the mocks
- * show all the same, marked Plus, with the one notice of what Plus unlocks under them (taking one
- * any time is the page's main action, marked Plus too). How they went is the next section. The
- * section leaves itself out when it has nothing to show.
- */
 export function ExamMocks({ offered }: { offered: boolean }) {
   const t = useExtracted();
   const { exam } = useExamScreen();

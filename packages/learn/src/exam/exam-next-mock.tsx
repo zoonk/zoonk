@@ -17,14 +17,6 @@ import { useMockDaySizeLabel } from "../mock/mock-labels";
 import { useExamScreen } from "./exam-context";
 import { useExamDayDate } from "./exam-labels";
 
-/**
- * The next weekly mock exam as a row of the mocks' list, one tap from its intro, when one is
- * coming: half an exam day on regular weeks, a full exam day in the final
- * stretch, its questions under it and its day at the row's end, as the taken ones' results are.
- * It's highlighted as the list's next one (`current`, the caller marking its item `aria-current`)
- * unless a mock the learner left running comes first. Without Plus it's there all the same, marked
- * Plus beside its name, and its intro says what Plus unlocks.
- */
 export function ExamNextMock({ current }: { current: boolean }) {
   const t = useExtracted();
   const dayDate = useExamDayDate();
