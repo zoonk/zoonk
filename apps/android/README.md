@@ -37,9 +37,23 @@ Use Android Studio for Compose previews. APKs and test reports are under `app/bu
 
 The Makefile shortcuts require GNU Make and a POSIX shell. On native Windows, use `.\gradlew.bat` from this directory with the tasks listed in the [Makefile](Makefile), for example `.\gradlew.bat :app:assembleRelease`.
 
+## Local API
+
+`pnpm dev` writes the API URL it serves for this checkout to `local-development.properties` (ignored by Git), and the next Debug build calls it; without that file, Debug builds call `http://localhost:4000` (`pnpm dev:direct`). On the emulator, `localhost` names resolve to the Mac at `10.0.2.2` and keep their name, so the local proxy still routes them. Release builds call `https://api.zoonk.com`.
+
+To sign a Debug build in as a persona, get a session token from the local API with the persona's email (`pnpm dev:persona <name>` prints it) and hand it to the app:
+
+```sh
+API=$(sed -n 's/^apiBaseUrl=//p' apps/android/local-development.properties)
+curl -s "$API/v1/email-sign-in-codes" -H 'Content-Type: application/json' -d '{"email":"<email>"}'
+# The code is in the newest message to that address: curl -s <mailbox URL>/api/emails
+curl -s "$API/v1/sessions/email-code" -H 'Content-Type: application/json' -d '{"email":"<email>","code":"<code>"}'
+adb shell am broadcast -a com.zoonk.debug.SIGN_IN -n com.zoonk.debug/com.zoonk.android.app.DebugSignInReceiver --es token <token>
+```
+
 ## Structure
 
-The [app source](app/src/main/kotlin/com/zoonk/android) is organized into `app/` composition, `navigation/`, `feature/<feature>/`, and shared `ui/` packages. Keep one runtime module until concrete ownership or build boundaries justify splitting it. `lint-checks/` is build-time tooling, not part of the APK.
+The [app source](app/src/main/kotlin/com/zoonk/android) is organized into `app/` composition (application, container), `data/` (cache, session, drafts, API runtime), `navigation/`, `feature/<feature>/`, and shared `ui/` packages. [`api/`](api) generates the Kotlin client from `api/openapi.json` on build. `lint-checks/` is build-time tooling, not part of the APK.
 
 Read [AGENTS.md](AGENTS.md) for architecture, platform, and contribution constraints.
 
