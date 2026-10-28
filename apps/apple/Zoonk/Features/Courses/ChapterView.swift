@@ -93,7 +93,6 @@ private struct ChapterLandingList: View {
           .padding(.top, 4)
         }
         .listRowBackground(Color.clear)
-        .listRowInsets(EdgeInsets())
       }
 
       if let course, let index, outline.count > 1 {
@@ -150,7 +149,6 @@ private struct ChapterLandingList: View {
           .padding(.top, 8)
         }
         .listRowBackground(Color.clear)
-        .listRowInsets(EdgeInsets())
       }
     }
     .catalogReadableWidth()

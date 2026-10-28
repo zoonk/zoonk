@@ -132,7 +132,6 @@ private struct CourseHeroSection: View {
           .padding(.top, 4)
       }
       .listRowBackground(Color.clear)
-      .listRowInsets(EdgeInsets())
     }
   }
 
@@ -289,7 +288,6 @@ private struct CourseClosingSection: View {
           .padding(.top, 8)
       }
       .listRowBackground(Color.clear)
-      .listRowInsets(EdgeInsets())
     }
   }
 }
