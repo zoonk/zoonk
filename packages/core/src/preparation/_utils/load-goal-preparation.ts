@@ -12,6 +12,7 @@ import { type SavedPlan, readSavedPlan } from "../../learner/facts/saved-plan";
 import { readActiveSubscription } from "../../learner/facts/subscription";
 import { getOwnedGoal } from "../../learner/get-owned-goal";
 import { countSkillStates } from "../../learner/mastery-state";
+import { readExamBlueprint } from "../../library/exams/read-exam-blueprint";
 import { type PlanReadContext } from "../../plans/_utils/plan-read-projection";
 import { getStartOfWeek } from "../../plans/planner/plan-calendar";
 import { getRequestProgressDateContext } from "../../progress/get-request-date-context";
@@ -93,13 +94,15 @@ export async function loadOwnedGoalPreparation({
   // Areas keep a rolling seven days: rebalancing reads their trend on any day, Mondays included.
   const weekAgo = new Date(now.getTime() - WEEK_DAYS * MS_PER_DAY);
 
-  const [savedPlan, subscription] = await Promise.all([
+  const [savedPlan, subscription, blueprint] = await Promise.all([
     readSavedPlan(userId, goalId),
     readActiveSubscription(userId),
+    goal.examBlueprintId ? readExamBlueprint(goal.examBlueprintId) : null,
   ]);
 
   const [inputs, catchUp, access, phaseChallengesRequired] = await Promise.all([
     loadPreparationInputs({
+      blueprint,
       goal,
       goalId,
       now,
@@ -123,7 +126,7 @@ export async function loadOwnedGoalPreparation({
   const estimatedScore =
     inputs.testKind === "weeklyChallenges"
       ? null
-      : await loadGoalScoreEstimate({ goal, ledgerMocks: inputs.mockResults });
+      : await loadGoalScoreEstimate({ blueprint, goal, ledgerMocks: inputs.mockResults });
 
   return {
     preparation: {

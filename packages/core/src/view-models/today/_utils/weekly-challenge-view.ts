@@ -8,7 +8,7 @@ import {
   getWeeklyChallenge,
   getWeeklyQuestions,
 } from "../../../checkpoints/get-weekly-challenge";
-import { readExamBlueprint } from "../../../learner/facts/exam-blueprint";
+import { readExamBlueprint } from "../../../library/exams/read-exam-blueprint";
 import { type SelectedDayPlan } from "../../../sessions/_utils/selected-day-plan";
 import { type SessionPlanItem } from "../../../sessions/_utils/session-plan-item";
 import { type DayView } from "../../../sessions/day-view";

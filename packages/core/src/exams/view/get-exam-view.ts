@@ -8,12 +8,12 @@ import { readLiveCallAdmission } from "../../language/conversations/_utils/live-
 import { loadSpeakingPaper } from "../../language/exam-speaking/_utils/exam-speaking-setup";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { readGoalPlan } from "../../learner/_utils/read-goal-plan";
-import { readExamBlueprint } from "../../learner/facts/exam-blueprint";
 import { getRequestInstant } from "../../learner/facts/request-instant";
 import { type SavedPlan, readSavedPlan } from "../../learner/facts/saved-plan";
 import { readActiveSubscription } from "../../learner/facts/subscription";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { type PassMarks, getPassMarks } from "../../library/exams/pass-marks";
+import { readExamBlueprint } from "../../library/exams/read-exam-blueprint";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import { getDayBeforePlan, loadShortPlanDay } from "../../plans/_utils/load-short-plan-day";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
@@ -230,6 +230,7 @@ export async function getExamView({
 
   const [inputs, allowance] = await Promise.all([
     loadPreparationInputs({
+      blueprint,
       goalId,
       now,
       readPlan: readGoalPlan,

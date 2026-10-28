@@ -1,6 +1,6 @@
 import "server-only";
-import { readExamBlueprint } from "../../learner/facts/exam-blueprint";
 import { getRequestInstant } from "../../learner/facts/request-instant";
+import { readExamBlueprint } from "../../library/exams/read-exam-blueprint";
 import { resolveViewGoal } from "../../view-models/_utils/resolve-view-goal";
 import { getExamDocument } from "../exam-document";
 import { getAnytimeMockAccess } from "./_utils/anytime-mock-access";

@@ -259,10 +259,13 @@ async function toOutlineNeeds(standIns: StandIns): Promise<PlanOutlineNeed[]> {
  * read back the chapters the plan lists already.
  */
 export async function listTaughtStandInSkills({
+  blueprint,
   goal,
   graph,
   items,
 }: {
+  /** The exam's blueprint a GET already read, so it isn't read again. */
+  blueprint?: Pick<ExamBlueprint, "structure"> | null;
   goal: Pick<Goal, "examBlueprintId" | "kind" | "primaryCourseId">;
   graph: unknown;
   items: readonly Pick<
@@ -290,7 +293,7 @@ export async function listTaughtStandInSkills({
       select: { id: true, userId: true, visibility: true },
       where: { id: { in: courseIds } },
     }),
-    goalUsesTools(goal),
+    goalUsesTools(goal, blueprint),
   ]);
 
   const untaught = await Promise.all(

@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal, prisma } from "@zoonk/db";
+import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import { type ExamChoice, toChosenStructure } from "../../exams/choices/exam-choices";
 import { getWeeklyMockMinutes, listMockClocks } from "../../exams/mocks/mock-plan";
 import { toMockStructure } from "../../exams/mocks/mock-structure";
@@ -38,6 +38,18 @@ type ExamFacts = {
   topicLevels: TopicLevel[];
 };
 
+/** What the planner reads of an exam's blueprint. */
+type NoticeBlueprint = Pick<ExamBlueprint, "edition" | "ownerId" | "structure" | "topicFrequency">;
+
+function readNoticeBlueprint(goal: Pick<Goal, "examBlueprintId">) {
+  return goal.examBlueprintId
+    ? prisma.examBlueprint.findUnique({
+        select: { edition: true, ownerId: true, structure: true, topicFrequency: true },
+        where: { id: goal.examBlueprintId },
+      })
+    : null;
+}
+
 /**
  * What the exam's notice tells the planner. How long its mocks take: the weekly mock, the first
  * exam day's sections at the real pace with half of each on regular weeks and the whole day, its
@@ -50,20 +62,17 @@ type ExamFacts = {
  * announces, whose lessons a plan short on time keeps (see `findAnnouncedLessonIds`).
  */
 async function loadNoticeFacts({
+  blueprint: known,
   choices,
   goal,
   graph,
 }: {
+  blueprint?: NoticeBlueprint | null;
   choices: readonly ExamChoice[];
   goal: Pick<Goal, "examBlueprintId">;
   graph: PlanGraph;
 }): Promise<ExamFacts> {
-  const blueprint = goal.examBlueprintId
-    ? await prisma.examBlueprint.findUnique({
-        select: { edition: true, ownerId: true, structure: true, topicFrequency: true },
-        where: { id: goal.examBlueprintId },
-      })
-    : null;
+  const blueprint = known === undefined ? await readNoticeBlueprint(goal) : known;
 
   const stored = examStructureSchema.safeParse(blueprint?.structure).data;
 
@@ -96,16 +105,19 @@ async function loadNoticeFacts({
  * goal that isn't an exam has none.
  */
 export function loadExamFacts({
+  blueprint,
   choices = [],
   goal,
   graph,
 }: {
+  /** The exam's blueprint a GET already read (`readExamBlueprint`), so it isn't read again. */
+  blueprint?: NoticeBlueprint | null;
   choices?: readonly ExamChoice[];
   goal: Pick<Goal, "examBlueprintId" | "kind">;
   graph: PlanGraph;
 }): Promise<ExamFacts> | ExamFacts {
   if (goal.kind === "exam") {
-    return loadNoticeFacts({ choices, goal, graph });
+    return loadNoticeFacts({ blueprint, choices, goal, graph });
   }
 
   return {

@@ -250,6 +250,8 @@ export async function loadSyllabusInput(
 
   const graph = parsePlanGraph(plan.graph);
   const graphSkillIds = new Set(graph.skills.map((skill) => skill.skillId));
+  // Already read for the notice above, when a GET passed it.
+  const knownBlueprint = blueprint === undefined ? undefined : await blueprint;
 
   const [items, areaCourses, chapterTitles, claimEvents, prerequisites, taughtSkillIds] =
     await Promise.all([
@@ -266,6 +268,7 @@ export async function loadSyllabusInput(
       }),
       loadSkillPrerequisites([...graphSkillIds]),
       listTaughtStandInSkills({
+        blueprint: knownBlueprint,
         goal: { ...goal, primaryCourseId: plan.goal.primaryCourseId },
         graph,
         items: plan.items,

@@ -1,7 +1,7 @@
 import "server-only";
-import { readExamBlueprint } from "../../../learner/facts/exam-blueprint";
 import { readOwnedGoal } from "../../../learner/facts/owned-goal";
 import { readSavedPlan } from "../../../learner/facts/saved-plan";
+import { readExamBlueprint } from "../../../library/exams/read-exam-blueprint";
 import { tagViewGoalReads } from "../../_utils/resolve-view-goal";
 import { loadSyllabusInput } from "./load-syllabus";
 

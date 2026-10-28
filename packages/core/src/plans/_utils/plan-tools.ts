@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal, type PlanItemStatus, prisma } from "@zoonk/db";
+import { type ExamBlueprint, type Goal, type PlanItemStatus, prisma } from "@zoonk/db";
 import { getToolKey, parseChapterTools } from "../../library/chapters/chapter-tools";
 import { examStructureSchema } from "../../library/exams/blueprint-contract";
 import { type PlanToolView } from "../plan-view-contract";
@@ -62,15 +62,20 @@ export function usesTools({
 /** Whether the learner's goal practices with tools of their own (see `usesTools`). */
 export async function goalUsesTools(
   goal: Pick<Goal, "examBlueprintId" | "kind">,
+  /** The exam's blueprint a GET already read (`readExamBlueprint`), so it isn't read again. */
+  known?: Pick<ExamBlueprint, "structure"> | null,
 ): Promise<boolean> {
   if (goal.kind !== "exam" || !goal.examBlueprintId) {
     return usesTools({ examStructure: null, kind: goal.kind });
   }
 
-  const blueprint = await prisma.examBlueprint.findUnique({
-    select: { structure: true },
-    where: { id: goal.examBlueprintId },
-  });
+  const blueprint =
+    known === undefined
+      ? await prisma.examBlueprint.findUnique({
+          select: { structure: true },
+          where: { id: goal.examBlueprintId },
+        })
+      : known;
 
   return usesTools({ examStructure: blueprint?.structure, kind: goal.kind });
 }

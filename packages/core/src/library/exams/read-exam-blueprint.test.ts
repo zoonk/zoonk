@@ -6,11 +6,11 @@ import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { loadExamChoiceViews } from "../../exams/choices/load-exam-choices";
 import { loadTargetCutoff } from "../../exams/cutoffs/load-target-cutoff";
-import { getExamBlueprint } from "../../library/exams/get-exam-blueprint";
 import { loadExamStructure } from "../../sessions/_utils/exam-structure";
-import { readExamBlueprint } from "./exam-blueprint";
+import { getExamBlueprint } from "./get-exam-blueprint";
+import { readExamBlueprint } from "./read-exam-blueprint";
 
-describe("request blueprint facts", () => {
+describe("shared blueprint reads", () => {
   it("keeps the stored edition and structure in one canonical row", async () => {
     const blueprint = await examBlueprintFixture();
 

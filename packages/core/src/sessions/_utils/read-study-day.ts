@@ -2,7 +2,7 @@ import "server-only";
 import { type ExamBlueprint, type Goal } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
-import { readExamBlueprint } from "../../learner/facts/exam-blueprint";
+import { readExamBlueprint } from "../../library/exams/read-exam-blueprint";
 import { type DayView } from "../day-view";
 import { loadUnstartedDayView } from "./load-unstarted-day";
 import { planStudyDay } from "./plan-study-day";

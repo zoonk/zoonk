@@ -1,5 +1,12 @@
 import "server-only";
-import { type Goal, type LearnerSkill, type Plan, type Subscription, prisma } from "@zoonk/db";
+import {
+  type ExamBlueprint,
+  type Goal,
+  type LearnerSkill,
+  type Plan,
+  type Subscription,
+  prisma,
+} from "@zoonk/db";
 import { getDateInTimeZone, isValidTimeZone } from "@zoonk/utils/time-zone";
 import { findActiveSubscription } from "../../auth/subscription";
 import { CHECKPOINT_LEDGER_KINDS } from "../../checkpoints/_utils/checkpoint-results";
@@ -293,6 +300,7 @@ async function loadGoalWithTest({
  * plan items only; content is read just to find which skills the goal has and its lessons teach.
  */
 export async function loadPreparationInputs({
+  blueprint,
   goal,
   goalId,
   now,
@@ -301,6 +309,8 @@ export async function loadPreparationInputs({
   subscription,
   userId,
 }: {
+  /** The exam's blueprint a page already read (`readExamBlueprint`), so it isn't read again. */
+  blueprint?: ExamBlueprint | null;
   /** Reuse a caller's already owned row; this does not authorize the read. */
   goal?: PreparationGoal;
   goalId: string;
@@ -333,7 +343,14 @@ export async function loadPreparationInputs({
     loadFirstAnswers({ skillIds: evidenceIds, userId }),
     loadUnseenAnswers({ owners, skillIds: evidenceIds, userId }),
     loadTests({ goalId, test, userId }),
-    loadSkillImportance({ choices, goal: measuredGoal, graph, skills: measured, survivorOf }),
+    loadSkillImportance({
+      blueprint,
+      choices,
+      goal: measuredGoal,
+      graph,
+      skills: measured,
+      survivorOf,
+    }),
   ]);
 
   const skills = measured.map((skill) =>

@@ -1,7 +1,7 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
-import { readExamBlueprint } from "../../learner/facts/exam-blueprint";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
+import { readExamBlueprint } from "../../library/exams/read-exam-blueprint";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import {
   type ShortPlanToday,

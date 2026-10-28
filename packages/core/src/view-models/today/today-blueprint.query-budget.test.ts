@@ -5,7 +5,7 @@ import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getMockOptions } from "../../exams/mocks/get-mock-options";
-import { readExamBlueprint } from "../../learner/facts/exam-blueprint";
+import { readExamBlueprint } from "../../library/exams/read-exam-blueprint";
 import { getGoalUploadRequest } from "../../library/sources/goal-upload-request";
 import { listGoalChangeNotices } from "../../library/sources/source-change-notices";
 import { listCurrentUserMistakes } from "../../mistakes/list-current-user-mistakes";
@@ -18,10 +18,10 @@ import { openStudyDay } from "../../sessions/open-study-day";
 import { getSyllabusView } from "../syllabus/get-syllabus-view";
 import { getTodayView } from "./get-today-view";
 
-// Only observe the request's blueprint fact; its read is unchanged. Vitest has no Next request,
+// Only observe the shared blueprint read; its read is unchanged. Vitest has no Next request,
 // so the fact's one read per request is the production harness's to prove: here, every other read
 // of the blueprint's full row has to go through it.
-vi.mock("../../learner/facts/exam-blueprint", async (importOriginal) => {
+vi.mock("../../library/exams/read-exam-blueprint", async (importOriginal) => {
   const actual = await importOriginal<{ readExamBlueprint: typeof readExamBlueprint }>();
   return { ...actual, readExamBlueprint: vi.fn(actual.readExamBlueprint) };
 });
