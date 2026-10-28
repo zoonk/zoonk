@@ -443,6 +443,8 @@ private struct MockAnswerSheet: View {
           ForEach(Array(run.questions.enumerated()), id: \.element.id) { index, question in
             row(question, at: index)
           }
+        } header: {
+          Text("Questions", tableName: "Mock", comment: "The answer sheet's questions")
         } footer: {
           Text(
             "No feedback until the end, like on exam day.", tableName: "Mock",

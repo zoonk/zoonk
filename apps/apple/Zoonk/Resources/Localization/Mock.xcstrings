@@ -4718,6 +4718,35 @@
         }
       }
     },
+    "Questions" : {
+      "comment" : "The answer sheet's questions",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fragen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preguntas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questions"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perguntas"
+          }
+        }
+      }
+    },
     "Questions answered in a few words are asked as multiple choice." : {
       "comment" : "Short answers asked as choices",
       "localizations" : {
