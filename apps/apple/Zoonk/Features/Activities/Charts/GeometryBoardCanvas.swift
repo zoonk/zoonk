@@ -311,7 +311,7 @@ struct GeometryBoardCanvas: View {
         let color = partColor(index, reading: reading)
         let path = Path { path in
           path.move(to: at)
-          path.addLines(wedge.points)
+          wedge.points.forEach { path.addLine(to: $0) }
           path.closeSubpath()
         }
         canvas.fill(path, with: .style(color.opacity(0.18)))
@@ -479,12 +479,12 @@ private struct AngleFan: View {
             let sweep = angle * .pi / 180
             let path = Path { path in
               path.move(to: center)
-              path.addLines(
-                (0...24).map { step in
-                  let direction = start + sweep * Double(step) / 24
-                  return CGPoint(
-                    x: center.x + radius * cos(direction), y: center.y + radius * sin(direction))
-                })
+              for step in 0...24 {
+                let direction = start + sweep * Double(step) / 24
+                path.addLine(
+                  to: CGPoint(
+                    x: center.x + radius * cos(direction), y: center.y + radius * sin(direction)))
+              }
               path.closeSubpath()
             }
             let color = colors.indices.contains(index) ? colors[index] : .secondary
