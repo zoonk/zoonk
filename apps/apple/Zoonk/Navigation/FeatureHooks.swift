@@ -100,7 +100,10 @@ extension LessonPlayerRoutes {
   /// stays where the learner was.
   static func routed(by router: AppRouter) -> LessonPlayerRoutes {
     LessonPlayerRoutes(
-      showPlus: { router.present(.subscription) },
-      signIn: { router.present(.account) })
+      signIn: { router.present(.account) },
+      startCourse: { courseId, chapterId in
+        router.open(.courseStart(courseId: courseId, chapterId: chapterId))
+      },
+      startGoal: { _ in router.open(.startGoal) })
   }
 }

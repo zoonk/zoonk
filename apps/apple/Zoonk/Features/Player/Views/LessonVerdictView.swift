@@ -8,6 +8,8 @@ struct LessonVerdictView: View {
   let store: LessonPlayerStore
   /// The question comes back at the end of the lesson.
   let willReturn: Bool
+  /// Hyperdrive's right answers in a row, once three or more.
+  var hyperdriveStreak: Int?
 
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
@@ -64,12 +66,13 @@ struct LessonVerdictView: View {
           .font(.subheadline)
       }
 
-      if case .typedAnswer = step.content, !result.isCorrect, result.checked {
+      if case .typedAnswer = step.content, !result.isCorrect, result.checked, !result.isSampleAnswer
+      {
         LessonExplainAnswerView(step: step, store: store)
       }
 
-      if let note {
-        Text(note)
+      if hyperdriveStreak != nil || note != nil {
+        notes
           .font(.footnote)
           .foregroundStyle(.secondary)
       }
@@ -77,7 +80,23 @@ struct LessonVerdictView: View {
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding()
     .background(verdict.tint.opacity(0.15), in: .rect(cornerRadius: 20))
-    .accessibilityElement(children: .combine)
+    .accessibilityElement(children: .contain)
+  }
+
+  /// The panel's faint last line: Hyperdrive, then what happens next.
+  private var notes: Text {
+    let streak = hyperdriveStreak.map {
+      Text(
+        "\($0) right in a row", tableName: "Player", comment: "Hyperdrive: right answers in a row")
+    }
+    let next = note.map { Text($0) }
+
+    switch (streak, next) {
+    case (let streak?, let next?): return Text("\(streak) · \(next)")
+    case (let streak?, nil): return streak
+    case (nil, let next?): return next
+    case (nil, nil): return Text(verbatim: "")
+    }
   }
 
   private var note: LocalizedStringResource? {
@@ -98,6 +117,12 @@ struct LessonVerdictView: View {
         comment: "A missed question returns at the end of the lesson")
     }
 
+    if let reviewAt = result.nextReviewAt {
+      return LocalizedStringResource(
+        "Review on \(reviewAt.formatted(.dateTime.day().month(.abbreviated)))", table: "Player",
+        comment: "When the lesson's idea comes back for review")
+    }
+
     return nil
   }
 
@@ -109,6 +134,14 @@ struct LessonVerdictView: View {
 
   /// Right reads in soft blue, wrong in soft pink; a hook's guess is never wrong.
   private var verdict: Verdict {
+    if result.isSampleAnswer {
+      return Verdict(
+        title: LocalizedStringResource(
+          "Here's a good answer", table: "Player",
+          comment: "\"I don't know yet\" shows a good answer"),
+        symbol: "text.bubble", tint: .secondary)
+    }
+
     if step.kind == .hook {
       return result.isCorrect
         ? Verdict(

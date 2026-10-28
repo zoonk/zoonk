@@ -7,15 +7,25 @@ struct LessonCompletionView: View {
   let correct: Int
   let answered: Int
   let soundsEnabled: Bool
+  /// A guest's lesson ends with where it fits and "Build my plan".
+  var guestEnding: LessonGuestEnding?
   let finish: () -> Void
   let close: () -> Void
 
   var body: some View {
     ScrollView {
       VStack(alignment: .leading, spacing: 24) {
-        Text("Lesson complete", tableName: "Player", comment: "Title at the end of a lesson")
-          .font(.largeTitle.weight(.bold))
-          .accessibilityAddTraits(.isHeader)
+        Group {
+          if completion.testedOut {
+            Text(
+              "You already knew this", tableName: "Player",
+              comment: "Title after \"I already know this\" passed every check")
+          } else {
+            Text("Lesson complete", tableName: "Player", comment: "Title at the end of a lesson")
+          }
+        }
+        .font(.largeTitle.weight(.bold))
+        .accessibilityAddTraits(.isHeader)
 
         switch completion.status {
         case .ready:
@@ -32,6 +42,10 @@ struct LessonCompletionView: View {
         case .saved:
           if let summary = completion.summary {
             readouts(summary)
+          }
+
+          if let guestEnding {
+            LessonGuestEndingView(ending: guestEnding)
           }
         }
       }
@@ -165,7 +179,8 @@ struct LessonUnavailableView: View {
       }
       .buttonStyle(.bordered)
     case .plusRequired, .limitReached(tier: .free, _):
-      PlusLockButton()
+      SeePlusButton()
+        .buttonStyle(.mainAction)
       backButton
     case .limitReached(tier: .guest, _):
       SignUpButton()
@@ -270,21 +285,131 @@ struct LessonUnavailableView: View {
   }
 }
 
-/// Plus-only: the same screen, locked, with the way to Plus.
-struct PlusLockButton: View {
+/// What a guest's lesson ends with: the lesson's title (onboarding starts from it outside a course)
+/// and where it fits, once read.
+struct LessonGuestEnding: Hashable {
+  let lessonTitle: String
+  let fit: LessonFit?
+}
+
+/// Where a guest's lesson fits, and two ways on: "Build my plan" starts a plan from the lesson's
+/// course without typing it again, and an account keeps the lesson and its review.
+private struct LessonGuestEndingView: View {
   @Environment(\.lessonPlayerRoutes) private var routes
 
+  let ending: LessonGuestEnding
+
   var body: some View {
-    Button {
-      routes.showPlus()
-    } label: {
+    VStack(alignment: .leading, spacing: 20) {
+      if let fit = ending.fit {
+        GroupBox {
+          VStack(alignment: .leading, spacing: 12) {
+            if let course = fit.course {
+              Label {
+                VStack(alignment: .leading, spacing: 2) {
+                  Text(course.title)
+                    .font(.headline)
+                  Text(
+                    "\(course.chapterCount) chapters · about \(Duration.seconds(max(1, (course.minutes + 30) / 60) * 3600).formatted(.units(allowed: [.hours], width: .wide))) at your pace",
+                    tableName: "Player", comment: "A course's size at the end of a guest's lesson"
+                  )
+                  .font(.subheadline)
+                  .foregroundStyle(.secondary)
+                }
+              } icon: {
+                Image(systemName: "book")
+              }
+            }
+
+            VStack(alignment: .leading, spacing: 6) {
+              HStack(alignment: .firstTextBaseline) {
+                Text(fit.chapterTitle)
+                  .font(.caption.weight(.medium))
+                Spacer()
+                Text(
+                  "\(fit.lessonNumber) of \(fit.lessonCount) lessons", tableName: "Player",
+                  comment: "The lesson's place in its chapter"
+                )
+                .font(.caption.monospacedDigit())
+                .foregroundStyle(.secondary)
+              }
+
+              MeterParts(
+                parts: (0..<max(1, fit.lessonCount)).map {
+                  MeterParts.Part(fill: $0 < fit.lessonNumber ? .color(.success) : .track)
+                })
+            }
+          }
+        } label: {
+          Text(
+            "This is part of", tableName: "Player",
+            comment: "Above the course a guest's lesson is in")
+        }
+      }
+
       Label {
-        Text("See Plus", tableName: "Player", comment: "Opens the Plus subscription")
+        Text(
+          "Save your progress and a quick review comes back to help it stick.", tableName: "Player",
+          comment: "At the end of a guest's lesson")
       } icon: {
-        Image(systemName: "lock.fill")
+        Image(systemName: "calendar.badge.clock")
+      }
+      .font(.subheadline)
+      .foregroundStyle(.secondary)
+
+      VStack(spacing: 8) {
+        Button {
+          if let course = ending.fit?.course {
+            routes.startCourse(course.id, course.startChapterId)
+          } else {
+            routes.startGoal(ending.fit?.course?.title ?? ending.lessonTitle)
+          }
+        } label: {
+          Text("Build my plan", tableName: "Player", comment: "Starts a plan from a guest's lesson")
+            .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.mainAction)
+        .controlSize(.large)
+
+        Button {
+          routes.signIn()
+        } label: {
+          Text(
+            "Create an account to save", tableName: "Player",
+            comment: "A guest creates an account at the end of a lesson"
+          ).frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.bordered)
+        .controlSize(.large)
       }
     }
-    .buttonStyle(.mainAction)
+  }
+}
+
+/// The lesson's summary card, one tap away in the menu once the lesson is done.
+struct LessonSummarySheet: View {
+  @Environment(\.dismiss) private var dismiss
+
+  let ideas: [String]
+
+  var body: some View {
+    NavigationStack {
+      List(Array(ideas.enumerated()), id: \.offset) { _, idea in
+        LessonRichText(idea)
+      }
+      .navigationTitle(
+        Text("Lesson summary", tableName: "Player", comment: "Opens the lesson's summary card")
+      )
+      .navigationBarTitleDisplayMode(.inline)
+      .toolbar {
+        ToolbarItem(placement: .confirmationAction) {
+          Button(role: .close) {
+            dismiss()
+          }
+        }
+      }
+    }
+    .presentationDetents([.medium, .large])
   }
 }
 
@@ -320,7 +445,8 @@ struct LessonHelpLimitNote: View {
         Text(
           "You used today's AI help. Plus gives you more.", tableName: "Player",
           comment: "A free learner used the day's AI help")
-        PlusLockButton()
+        SeePlusButton()
+          .buttonStyle(.bordered)
       default:
         Text(
           "You've used today's AI help. It's back tomorrow.", tableName: "Player",
@@ -450,12 +576,15 @@ struct LessonGuestGateView: View {
 
 /// Where the player's links go, supplied by the app's navigation.
 struct LessonPlayerRoutes: Sendable {
-  /// The Plus subscription, for a learner whose free plan locks the lesson.
-  let showPlus: @MainActor @Sendable () -> Void
   /// Sign in or create an account.
   let signIn: @MainActor @Sendable () -> Void
+  /// "Build my plan" after a guest's lesson: the lesson's course as their goal, from its chapter
+  /// when that's where they began (`chapterId`), else from the course's start (`.courseStart`).
+  let startCourse: @MainActor @Sendable (_ courseId: String, _ chapterId: String?) -> Void
+  /// "Build my plan" for a lesson in no public course: onboarding with its subject filled in.
+  let startGoal: @MainActor @Sendable (_ goal: String) -> Void
 
-  static let none = LessonPlayerRoutes(showPlus: {}, signIn: {})
+  static let none = LessonPlayerRoutes(signIn: {}, startCourse: { _, _ in }, startGoal: { _ in })
 }
 
 extension EnvironmentValues {

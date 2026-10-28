@@ -5,8 +5,10 @@ struct LessonOption: Identifiable, Hashable {
   let text: String
   var detail: String?
   var isCorrect: Bool?
-  /// A picture option's description, shown with its text.
+  /// A picture option's description, shown with its text until its picture is drawn.
   var pictureAlt: String?
+  /// A picture option's drawn picture.
+  var picture: LessonStepImage?
 }
 
 /// A question's options, one per row. Number keys pick them on a hardware keyboard, as on main.
@@ -27,22 +29,30 @@ struct LessonOptionList: View {
           select(option.id)
         } label: {
           HStack(alignment: .firstTextBaseline, spacing: 12) {
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 8) {
+              if let picture = option.picture {
+                LessonPictureView(image: picture, description: nil, isPending: false)
+                  .accessibilityHidden(true)
+              }
+
               LessonRichText(option.text)
               if let detail = option.detail {
                 Text(detail)
                   .font(.subheadline)
                   .foregroundStyle(.secondary)
               }
-              if let pictureAlt = option.pictureAlt {
+              if option.picture == nil, let pictureAlt = option.pictureAlt {
                 Text(pictureAlt)
                   .font(.footnote)
                   .foregroundStyle(.secondary)
               }
             }
             Spacer(minLength: 0)
+            // Decorative: the option's value says the verdict. A checkmark inside a button would
+            // also make VoiceOver call the right option "selected".
             if let symbol = mark(option).symbol {
               Image(systemName: symbol)
+                .accessibilityHidden(true)
             }
           }
         }

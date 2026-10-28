@@ -149,6 +149,7 @@ filter:
     - getLessonQuestion
     - getLessonQuestionThread
     - getLibraryLesson
+    - getLibraryLessonFit
     - getLibraryLessonReadiness
     - getMistakePattern
     - getMock

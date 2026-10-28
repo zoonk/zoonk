@@ -1,95 +1,5 @@
 import Foundation
 
-/// The verdict on one screen as the learner sees it.
-struct LessonStepResult: Hashable, Sendable {
-  struct Correction: Hashable, Sendable {
-    let wrong: String
-    let right: String
-  }
-
-  struct KeyPoint: Hashable, Sendable {
-    let text: String
-    let met: Bool
-  }
-
-  var isCorrect: Bool
-  var answerText: String?
-  var correctAnswer: String?
-  var feedback: String?
-  /// False for a typed answer the server recognized without grading it.
-  var checked = true
-  var corrections: [Correction] = []
-  var keyPoints: [KeyPoint]?
-  /// Partial credit from 0 to 1 (typed and spoken answers, challenges).
-  var score: Double?
-  /// A typed answer right apart from a typo: the right spelling.
-  var spelling: String?
-  /// A recording's words to say again.
-  var wordsToPractice: [String] = []
-  /// When the idea comes back, once the server recorded the answer.
-  var nextReviewAt: Date?
-  var savedMistake = false
-  /// The id a device-graded answer is saved under, so a late server reply about an earlier
-  /// answer to the same screen can't change this one.
-  var attemptId: String?
-
-  init(_ grade: LocalGrade, attemptId: String? = nil) {
-    isCorrect = grade.isCorrect
-    answerText = grade.answerText
-    correctAnswer = grade.correctAnswer
-    feedback = grade.feedback
-    self.attemptId = attemptId
-  }
-
-  init(isCorrect: Bool, answerText: String?, correctAnswer: String?, feedback: String?) {
-    self.isCorrect = isCorrect
-    self.answerText = answerText
-    self.correctAnswer = correctAnswer
-    self.feedback = feedback
-  }
-}
-
-/// An answer the server holds for an open run, oldest first.
-struct LessonRunAnswer: Hashable, Sendable {
-  let stepId: String
-  let isCorrect: Bool
-  let answeredAt: Date
-}
-
-/// Why a lesson can't start or continue right now.
-enum LessonRunRefusal: Hashable, Sendable, Error {
-  enum Tier: Hashable, Sendable {
-    case guest, free, plus
-  }
-
-  enum Period: Hashable, Sendable {
-    case day, month, total
-  }
-
-  case failed
-  /// The plan's lessons are used up: a guest signs up, a free learner upgrades, Plus comes back later.
-  case limitReached(tier: Tier, period: Period)
-  case notFound
-  /// A free exam plan past its first week opens this new lesson with Plus only.
-  case plusRequired
-  case slowDown(retryAfterSeconds: Int)
-  case unauthorized
-}
-
-/// What a finished lesson earned, as the server counted it.
-struct LessonCompletionSummary: Hashable, Sendable {
-  let brainPower: Int
-  let totalBrainPower: Double
-  let correctCount: Int
-  let incorrectCount: Int
-  let energyDelta: Double
-  let seconds: Int
-  let isFirstCompletion: Bool
-  let nextReviewAt: Date?
-  /// The belt level this lesson took the learner to, to celebrate.
-  let reachedLevel: Int?
-}
-
 /// The lesson in play. Every screen kind runs through it: the views read this state and report
 /// the learner's actions; network work happens outside and reports back through its methods.
 struct LessonPlayerState: Hashable, Sendable {
@@ -115,6 +25,8 @@ struct LessonPlayerState: Hashable, Sendable {
     case selfCorrect
     /// An answer never reached the server, so the lesson came back to its screen.
     case answerNotSaved
+    /// "Can't write now" left the lesson's writing out; "Write again" puts it back.
+    case writingSkipped
   }
 
   struct Completion: Hashable, Sendable {
@@ -128,10 +40,36 @@ struct LessonPlayerState: Hashable, Sendable {
 
     var status: Status
     var summary: LessonCompletionSummary?
+    /// "I already know this" passed every check and skipped the rest.
+    var testedOut = false
+  }
+
+  /// "I already know this": the checks being asked, and where the lesson resumes if one is missed.
+  struct QuickCheck: Hashable, Sendable {
+    var missed = false
+    let returnPosition: Int
+    let returnQueue: [String]
+  }
+
+  /// An answer missed, in a row since the last right one.
+  struct Miss: Hashable, Sendable {
+    let stepId: String
+    let skillId: String?
+  }
+
+  /// The lesson as it was before "Can't write now", for "Write again".
+  struct WritingRestore: Hashable, Sendable {
+    let position: Int
+    let queue: [String]
+    let skippedWritingStepIds: [String]
+  }
+
+  enum LessonSupport: String, Hashable, Sendable {
+    case explanationFirst, questionFirst
   }
 
   let lessonId: String
-  let steps: [String: LessonStep]
+  private(set) var steps: [String: LessonStep]
   private let lessonOrder: [String]
   private(set) var support: LessonSupport?
   private(set) var queue: [String]
@@ -142,6 +80,8 @@ struct LessonPlayerState: Hashable, Sendable {
   private(set) var results: [String: LessonStepResult] = [:]
   /// The first verdict on each answerable screen, which is what the lesson counts.
   private(set) var firstVerdicts: [String: Bool] = [:]
+  /// The screens with a first verdict, in the order the learner answered them.
+  private(set) var answerOrder: [String] = []
   /// Questions already sent to the end of the lesson once.
   private(set) var retried: Set<String> = []
   /// Language answers that already had their one chance to self-correct.
@@ -150,6 +90,18 @@ struct LessonPlayerState: Hashable, Sendable {
   private(set) var revealed: [String: Int] = [:]
   /// Screens that can't be played after all (a question about a picture that never came).
   private(set) var unavailableStepIds: [String] = []
+  /// Writing left out of this run, without a verdict ("I don't know yet", "Can't write now").
+  private(set) var skippedWritingStepIds: [String] = []
+  private(set) var writingRestore: WritingRestore?
+  /// Questions answered after "Explain first", so memory rates them as helped.
+  private(set) var helped: Set<String> = []
+  /// Answers missed in a row since the last right one, oldest first.
+  private(set) var misses: [Miss] = []
+  private(set) var quickCheck: QuickCheck?
+  /// Where Hyperdrive stood when the run started, and the screens answered in earlier sittings,
+  /// which it leaves out: Hyperdrive never carries over from another day.
+  private(set) var hyperdriveStart = LessonHyperdriveStart.none
+  private(set) var carriedStepIds: Set<String> = []
   private(set) var notice: Notice?
   /// The server couldn't grade the last typed or spoken answer; the learner can try again.
   private(set) var checkFailed = false
@@ -157,10 +109,6 @@ struct LessonPlayerState: Hashable, Sendable {
   private(set) var reviewing = false
   private(set) var completion: Completion?
   private(set) var stepStartedAt: Date
-
-  enum LessonSupport: String, Hashable, Sendable {
-    case explanationFirst, questionFirst
-  }
 
   init(
     lessonId: String, steps lessonSteps: [LessonStep], support: LessonSupport? = nil,
@@ -198,17 +146,17 @@ struct LessonPlayerState: Hashable, Sendable {
     return nil
   }
 
-  /// Previous is on every screen after the first while it's being played.
-  var canGoBack: Bool {
-    guard phase == .playing, position > 0 else {
-      return false
-    }
-
+  private var isRefused: Bool {
     if case .refused = run {
-      return false
+      return true
     }
 
-    return true
+    return false
+  }
+
+  /// Previous is on every screen after the first while it's being played, not during "I know this".
+  var canGoBack: Bool {
+    phase == .playing && position > 0 && quickCheck == nil && !isRefused
   }
 
   /// How far the learner is, from 0 to 1, for the progress bar.
@@ -223,6 +171,89 @@ struct LessonPlayerState: Hashable, Sendable {
 
   var correctCount: Int { firstVerdicts.values.filter { $0 }.count }
   var answeredCount: Int { firstVerdicts.count }
+
+  /// "Quick check · 2 of 4" while "I already know this" asks its checks.
+  var quickCheckProgress: (current: Int, total: Int)? {
+    quickCheck.map { _ in (position + 1, queue.count) }
+  }
+
+  /// "I already know this" on an explanation, while some check isn't answered right yet.
+  var canKnowThis: Bool {
+    phase == .playing && quickCheck == nil && !isRefused && currentStep?.kind == .explanation
+      && !quickCheckQueue.isEmpty
+  }
+
+  /// "Explain first" on a question that comes before its explanation.
+  var canExplainFirst: Bool {
+    guard phase == .playing, quickCheck == nil, !isRefused, let step = currentStep,
+      step.isQuestion, answers[step.id] == nil
+    else {
+      return false
+    }
+
+    return !explanationsAfterCurrent.isEmpty
+  }
+
+  /// Hyperdrive on a screen's result: the right answers in a row its first answer made, once
+  /// there are three or more, by the rule the server scores with. Nil for a wrong answer, a
+  /// repeat, a second try or a shorter streak.
+  func hyperdriveStreak(for stepId: String) -> Int? {
+    guard queue.firstIndex(of: stepId) == position else {
+      return nil
+    }
+
+    var streak = hyperdriveStart.streak
+
+    for id in answerOrder where !carriedStepIds.contains(id) {
+      guard let isCorrect = firstVerdicts[id] else {
+        continue
+      }
+
+      let isRepeat = hyperdriveStart.knownStepIds.contains(id)
+      streak = isCorrect ? streak + (isRepeat ? 0 : 1) : 0
+
+      if id == stepId {
+        return isCorrect && !isRepeat && streak >= 3 ? streak : nil
+      }
+    }
+
+    return nil
+  }
+
+  /// The explanation to offer help with, right after the second answer in a row missed on the
+  /// same idea. Never during "I know this", where a miss already brings the learner back.
+  var struggleOffer: LessonStep? {
+    guard phase == .feedback, quickCheck == nil, misses.count >= 2, let last = misses.last,
+      currentStep?.id == last.stepId
+    else {
+      return nil
+    }
+
+    let first = misses[misses.count - 2]
+
+    guard first.stepId == last.stepId || Self.isSameSkill(first.skillId, last.skillId) else {
+      return nil
+    }
+
+    let ids = queue.reduce(into: [String]()) { ids, id in
+      if !ids.contains(id) {
+        ids.append(id)
+      }
+    }
+
+    let questionIndex = ids.firstIndex(of: last.stepId) ?? 0
+    let explanations = ids.enumerated().compactMap { index, id -> (Int, LessonStep)? in
+      guard let step = steps[id], step.isExplaining, Self.isSameSkill(step.skillId, last.skillId)
+      else {
+        return nil
+      }
+
+      return (index, step)
+    }
+
+    let before = explanations.last { $0.0 < questionIndex }
+    return (before ?? explanations.first { $0.0 > questionIndex })?.1
+  }
 
   // MARK: - The learner's actions
 
@@ -268,6 +299,90 @@ struct LessonPlayerState: Hashable, Sendable {
     stepStartedAt = now
   }
 
+  /// "Explain first": the explanation screens move in front of the question, and its answer
+  /// counts as helped.
+  mutating func explainFirst(now: Date = .now) {
+    guard canExplainFirst, let step = currentStep else {
+      return
+    }
+
+    let ids = explanationsAfterCurrent
+    let rest = queue[position...].filter { !ids.contains($0) }
+    queue = Array(queue[..<position]) + ids + rest
+    answers[step.id] = nil
+    helped.insert(step.id)
+    stepStartedAt = now
+  }
+
+  /// "I already know this": ask every check not yet answered right; passing them all ends the
+  /// lesson, a miss goes back to where the learner was.
+  mutating func knowThis(now: Date = .now) {
+    guard canKnowThis else {
+      return
+    }
+
+    let checks = quickCheckQueue
+    quickCheck = QuickCheck(returnPosition: position, returnQueue: queue)
+    notice = nil
+    queue = checks
+    enter(0, now: now)
+  }
+
+  /// "I don't know yet" on a written screen: its good answer shows, counted neither way, and it
+  /// doesn't come back at the end.
+  mutating func dontKnow(_ stepId: String) {
+    guard phase == .playing, let step = currentStep, step.id == stepId,
+      case .typedAnswer(let content) = step.content
+    else {
+      return
+    }
+
+    checkFailed = false
+    notice = nil
+    phase = .feedback
+    results[stepId] = .sampleAnswer(content.sampleAnswer)
+    addSkippedWriting([stepId])
+  }
+
+  /// "Can't write now": the lesson's writing from here on is left out of this run, number
+  /// questions kept. The screen that takes its place says so and offers "Write again". A lesson
+  /// left with nothing to do as it opens (`opening`) waits for Finish, since only a learner's
+  /// action saves one.
+  mutating func skipWriting(opening: Bool = false, now: Date = .now) {
+    guard phase == .playing else {
+      return
+    }
+
+    let ahead = queue[position...].filter { steps[$0]?.isWriting == true }
+
+    guard !ahead.isEmpty else {
+      return
+    }
+
+    let restore = WritingRestore(
+      position: position, queue: queue, skippedWritingStepIds: skippedWritingStepIds)
+    addSkippedWriting(Array(ahead))
+    leaveOutAhead({ ahead.contains($0) }, completionStatus: opening ? .ready : .saving, now: now)
+
+    if phase == .playing {
+      notice = .writingSkipped
+      writingRestore = restore
+    }
+  }
+
+  /// "Write again" while the screen that says the writing was left out is still in view.
+  mutating func restoreWriting(now: Date = .now) {
+    guard let restore = writingRestore, notice == .writingSkipped, phase == .playing else {
+      return
+    }
+
+    queue = restore.queue
+    skippedWritingStepIds = restore.skippedWritingStepIds
+    writingRestore = nil
+    notice = nil
+    enter(restore.position, now: now)
+  }
+
   // MARK: - Checking
 
   /// A server-graded answer is on its way: the screen waits for the verdict.
@@ -292,7 +407,8 @@ struct LessonPlayerState: Hashable, Sendable {
 
   /// Records a verdict. The first one on a screen is what counts. A missed check or activity comes
   /// back once at the end of the lesson; a missed language answer the learner built gets one chance
-  /// to self-correct first. A hook's guess and the like (`counts: false`) only show their reveal.
+  /// to self-correct first; during "I know this" a miss ends the quick check instead. A hook's
+  /// guess (`counts: false`) only shows its reveal.
   mutating func resolve(
     _ stepId: String, result: LessonStepResult, counts: Bool = true, now: Date = .now
   ) {
@@ -303,9 +419,9 @@ struct LessonPlayerState: Hashable, Sendable {
     let isFirst = counts && firstVerdicts[stepId] == nil
     let isMiss = counts && !result.isCorrect
 
-    if isMiss, step.canSelfCorrect, !selfCorrected.contains(stepId) {
+    if isMiss, step.canSelfCorrect, quickCheck == nil, !selfCorrected.contains(stepId) {
       if isFirst {
-        firstVerdicts[stepId] = false
+        recordFirstVerdict(stepId, isCorrect: false)
       }
 
       checkFailed = false
@@ -316,11 +432,19 @@ struct LessonPlayerState: Hashable, Sendable {
     }
 
     let willRetry =
-      isMiss && step.isRetried && !retried.contains(stepId)
+      isMiss && quickCheck == nil && step.isRetried && !retried.contains(stepId)
       && !unavailableStepIds.contains(stepId)
 
     if isFirst {
-      firstVerdicts[stepId] = result.isCorrect
+      recordFirstVerdict(stepId, isCorrect: result.isCorrect)
+    }
+
+    if counts {
+      misses = result.isCorrect ? [] : misses + [Miss(stepId: stepId, skillId: step.skillId)]
+    }
+
+    if isMiss, quickCheck != nil {
+      quickCheck?.missed = true
     }
 
     checkFailed = false
@@ -361,10 +485,12 @@ struct LessonPlayerState: Hashable, Sendable {
   mutating func startRun(
     runId: String,
     answers runAnswers: [LessonRunAnswer],
+    startedAt: Date = .distantPast,
+    hyperdrive: LessonHyperdriveStart = .none,
     optionalStepIds: [String] = [],
     support: LessonSupport? = nil
   ) {
-    let isUntouched = results.isEmpty
+    let isUntouched = results.isEmpty && quickCheck == nil
 
     if isUntouched, support != self.support {
       self.support = support
@@ -372,6 +498,8 @@ struct LessonPlayerState: Hashable, Sendable {
     }
 
     run = .started(runId: runId)
+    hyperdriveStart = hyperdrive
+    carriedStepIds = Set(runAnswers.filter { $0.answeredAt < startedAt }.map(\.stepId))
     skipSteps(optionalStepIds)
 
     let known = runAnswers.filter { steps[$0.stepId] != nil }
@@ -416,25 +544,30 @@ struct LessonPlayerState: Hashable, Sendable {
     }
 
     unavailableStepIds.append(contentsOf: Set(added))
+    let unavailable = unavailableStepIds
 
-    guard phase != .completed else {
-      return
+    quickCheck = quickCheck.map { check in
+      QuickCheck(
+        missed: check.missed,
+        returnPosition: check.returnQueue.prefix(check.returnPosition).filter {
+          !unavailable.contains($0)
+        }.count,
+        returnQueue: check.returnQueue.filter { !unavailable.contains($0) })
     }
 
-    // A busy current question keeps its verdict; only screens after it are removed.
-    let start = position + (phase == .playing ? 0 : 1)
-    let ahead = queue[min(start, queue.count)...].filter { !unavailableStepIds.contains($0) }
-    let current = position < queue.count ? queue[position] : nil
-    queue = Array(queue.prefix(start)) + ahead
+    // Picture recovery can run as the lesson opens; only a learner's Finish saves a lesson then.
+    leaveOutAhead({ unavailable.contains($0) }, completionStatus: .ready, now: now)
+  }
 
-    if position < queue.count, queue[position] == current {
-      return
-    }
+  /// Pictures drawn after the lesson opened (a fresh read of the lesson): a screen still waiting
+  /// for its picture, or its picture options', takes them.
+  mutating func applyPictures(from fresh: [LessonStep]) {
+    for step in fresh {
+      guard let current = steps[step.id], current.imagePending else {
+        continue
+      }
 
-    if position >= queue.count {
-      complete(status: .ready)
-    } else {
-      enter(position, now: now)
+      steps[step.id] = current.withPictures(from: step)
     }
   }
 
@@ -445,7 +578,8 @@ struct LessonPlayerState: Hashable, Sendable {
   }
 
   mutating func completionSaved(_ summary: LessonCompletionSummary) {
-    completion = Completion(status: .saved, summary: summary)
+    completion = Completion(
+      status: .saved, summary: summary, testedOut: completion?.testedOut ?? false)
   }
 
   mutating func completionFailed() {
@@ -466,12 +600,27 @@ struct LessonPlayerState: Hashable, Sendable {
   }
 
   private mutating func complete(status: Completion.Status) {
-    completion = Completion(status: status)
+    completion = Completion(status: status, testedOut: quickCheck != nil)
     phase = .completed
   }
 
-  /// Moves past the current screen: to the next one, or to the end.
+  private mutating func recordFirstVerdict(_ stepId: String, isCorrect: Bool) {
+    firstVerdicts[stepId] = isCorrect
+    answerOrder.append(stepId)
+  }
+
+  private mutating func addSkippedWriting(_ stepIds: [String]) {
+    skippedWritingStepIds += stepIds.filter { !skippedWritingStepIds.contains($0) }
+  }
+
+  /// Moves past the current screen: to the next one, back to the lesson after a missed quick
+  /// check, or to the end.
   private mutating func advance(now: Date) {
+    if quickCheck?.missed == true {
+      leaveQuickCheck(now: now)
+      return
+    }
+
     queue = queue.enumerated().filter { index, id in
       index <= position || !unavailableStepIds.contains(id)
     }.map(\.element)
@@ -483,6 +632,59 @@ struct LessonPlayerState: Hashable, Sendable {
 
     notice = nil
     enter(position + 1, now: now)
+  }
+
+  /// A missed quick check returns to where the learner was, without the checks they just got
+  /// right, which already count. The missed one comes back at the end of the lesson.
+  private mutating func leaveQuickCheck(now: Date) {
+    guard let check = quickCheck else {
+      return
+    }
+
+    let answered = queue.filter { results[$0] != nil }
+    let passed = Set(answered.filter { results[$0]?.isCorrect == true })
+    let missed = answered.filter { !passed.contains($0) }
+    let rest = check.returnQueue.enumerated().filter { index, id in
+      index <= check.returnPosition || (!passed.contains(id) && !missed.contains(id))
+    }.map(\.element)
+
+    quickCheck = nil
+    notice = nil
+    queue = rest + missed
+    retried.formUnion(missed)
+    enter(check.returnPosition, now: now)
+  }
+
+  /// Leaves out the screens from the one in view on that `isLeftOut` names: the rest goes on from
+  /// where the learner is, and a lesson with nothing left ends.
+  private mutating func leaveOutAhead(
+    _ isLeftOut: (String) -> Bool, completionStatus: Completion.Status, now: Date
+  ) {
+    guard phase != .completed else {
+      return
+    }
+
+    // A busy current question keeps its verdict; only screens after it are removed.
+    let start = min(position + (phase == .playing ? 0 : 1), queue.count)
+    let ahead = queue[start...].filter { !isLeftOut($0) }
+
+    guard ahead.count != queue.count - start else {
+      return
+    }
+
+    let current = position < queue.count ? queue[position] : nil
+    queue = Array(queue.prefix(start)) + ahead
+
+    if position < queue.count, queue[position] == current {
+      return
+    }
+
+    if position >= queue.count {
+      complete(status: completionStatus)
+    } else {
+      notice = nil
+      enter(position, now: now)
+    }
   }
 
   /// Continue on a worked example reveals one part at a time, then moves on.
@@ -525,6 +727,43 @@ struct LessonPlayerState: Hashable, Sendable {
     return []
   }
 
+  /// Every check not answered right yet, in lesson order, once each.
+  private var quickCheckQueue: [String] {
+    queue.reduce(into: [String]()) { checks, id in
+      if steps[id]?.kind == .check, firstVerdicts[id] != true, !checks.contains(id) {
+        checks.append(id)
+      }
+    }
+  }
+
+  /// The explanation screens right after the question in view, up to the next question or the
+  /// first one about another skill: what "Explain first" moves in front of it.
+  private var explanationsAfterCurrent: [String] {
+    guard let question = currentStep, position + 1 < queue.count else {
+      return []
+    }
+
+    let following = queue[(position + 1)...]
+    let firstOther = following.firstIndex { id in
+      guard let step = steps[id] else {
+        return true
+      }
+
+      return !step.isExplaining || Self.isOtherSkill(question, step)
+    }
+
+    return Array(following[..<(firstOther ?? following.endIndex)])
+  }
+
+  /// Screens of two different skills: when either doesn't say, they may be about the same idea.
+  private static func isOtherSkill(_ a: LessonStep, _ b: LessonStep) -> Bool {
+    a.skillId != nil && b.skillId != nil && a.skillId != b.skillId
+  }
+
+  private static func isSameSkill(_ a: String?, _ b: String?) -> Bool {
+    a == nil || b == nil || a == b
+  }
+
   // MARK: - Resuming
 
   private static func verdicts(_ answers: [LessonRunAnswer]) -> [String: Bool] {
@@ -539,17 +778,22 @@ struct LessonPlayerState: Hashable, Sendable {
 
   /// The lesson from the top, before replaying a run's answers on it.
   private mutating func resetForResume() {
+    let leftOut = unavailableStepIds + skippedWritingStepIds
     queue = Self.orderOpening(lessonOrder, steps: steps, support: support).filter {
-      !unavailableStepIds.contains($0)
+      !leftOut.contains($0)
     }
     position = 0
     phase = queue.isEmpty ? .completed : .playing
     answers = [:]
     results = [:]
     firstVerdicts = [:]
+    answerOrder = []
     retried = []
     selfCorrected = []
     revealed = [:]
+    misses = []
+    quickCheck = nil
+    writingRestore = nil
     notice = nil
     completion = nil
     reviewing = false
@@ -574,6 +818,8 @@ struct LessonPlayerState: Hashable, Sendable {
     let lessonLength = queue.count
     queue += missedOnce
     firstVerdicts = Self.verdicts(known)
+    answerOrder = ids.enumerated().filter { index, id in ids.firstIndex(of: id) == index }.map(
+      \.element)
     retried = answeredMoreThanOnce.union(missedOnce)
 
     let answered = Set(ids)
@@ -645,6 +891,21 @@ extension LessonStep {
     kind == .explanation || kind == .workedExample
   }
 
+  /// Questions that may come before their explanation, where "Explain first" helps.
+  var isQuestion: Bool {
+    kind == .activity || kind == .check || kind == .typedAnswer
+  }
+
+  /// A written answer; a number typed into a number field is a calculation's answer instead, and
+  /// can't be left out.
+  var isWriting: Bool {
+    guard case .typedAnswer(let content) = content else {
+      return false
+    }
+
+    return !content.isNumberAnswer
+  }
+
   /// A wrong language answer the learner built gets a prompt to fix it before the answer shows.
   var canSelfCorrect: Bool {
     guard case .language(let exercise, _) = content else {
@@ -660,5 +921,25 @@ extension LessonStep {
     case .typedAnswer, .spokenAnswer: true
     default: false
     }
+  }
+}
+
+extension TypedAnswerContent {
+  /// Every accepted answer is a number, with an optional currency before it ("R$ 18") or a short
+  /// unit after it ("1,5 A", "350 kcal", "20%"): it takes a number field.
+  var isNumberAnswer: Bool {
+    guard let acceptedAnswers, !acceptedAnswers.isEmpty else {
+      return false
+    }
+
+    return acceptedAnswers.allSatisfy { answer in
+      answer.trimmingCharacters(in: .whitespacesAndNewlines).wholeMatch(
+        of: /(?:\p{Lu}{0,3}\p{Sc}\s?)?[+\-−]?\d[\d.,\s]*(?:\s?[\p{L}%°Ωµ\/²³]{1,6})?/) != nil
+    }
+  }
+
+  /// A written explanation in the learner's own words (no accepted wordings, not a number).
+  var isOwnWords: Bool {
+    !isNumberAnswer && (acceptedAnswers ?? []).isEmpty
   }
 }

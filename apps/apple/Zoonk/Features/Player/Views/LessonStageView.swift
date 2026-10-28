@@ -8,38 +8,47 @@ struct LessonStageView: View {
 
   private static let verdictId = "verdict"
 
+  /// A verdict that counts: a hook's guess is never wrong and "I don't know yet" has none.
+  private func countedVerdict(_ step: LessonStep) -> Bool? {
+    guard let result = state.currentResult, step.kind != .hook, !result.isSampleAnswer else {
+      return nil
+    }
+
+    return result.isCorrect
+  }
+
   var body: some View {
     if let step = state.currentStep {
       ScrollViewReader { proxy in
         ScrollView {
           VStack(alignment: .leading, spacing: 24) {
-            if state.notice == .answerNotSaved {
-              Label {
-                Text(
-                  "Your answer didn't reach us. Answer this screen again to finish.",
-                  tableName: "Player",
-                  comment: "The lesson came back to a screen whose answer was never saved")
-              } icon: {
-                Image(systemName: "exclamationmark.arrow.circlepath")
-              }
-              .font(.subheadline)
-              .foregroundStyle(.secondary)
-            }
+            LessonNotice(state: state, store: store)
 
             LessonStepView(step: step, state: state, store: store)
 
             if let result = state.currentResult, state.phase == .feedback, !step.showsOwnResult {
               LessonVerdictView(
                 step: step, result: result, store: store,
-                willReturn: state.queue.lastIndex(of: step.id).map { $0 > state.position } ?? false
+                willReturn: state.queue.lastIndex(of: step.id).map { $0 > state.position } ?? false,
+                hyperdriveStreak: state.hyperdriveStreak(for: step.id)
               )
               .id(Self.verdictId)
+
+              if state.struggleOffer != nil {
+                LessonAskBuddyOffer(reason: .misses, store: store)
+              }
             }
           }
           .frame(maxWidth: 680, alignment: .leading)
           .frame(maxWidth: .infinity)
           .scenePadding()
         }
+        .onScrollPhaseChange { _, phase in
+          if phase != .idle {
+            store.touches += 1
+          }
+        }
+        .simultaneousGesture(TapGesture().onEnded { store.touches += 1 })
         .onChange(of: state.currentResult != nil) { _, hasResult in
           if hasResult {
             proxy.scrollTo(Self.verdictId, anchor: .bottom)
@@ -51,7 +60,7 @@ struct LessonStageView: View {
       .safeAreaBar(edge: .bottom) {
         LessonActionBar(store: store, state: state, step: step)
       }
-      .sensoryFeedback(trigger: state.currentResult?.isCorrect) { _, isCorrect in
+      .sensoryFeedback(trigger: countedVerdict(step)) { _, isCorrect in
         isCorrect.map { $0 ? .success : .error }
       }
       .onChange(of: state.currentResult?.isCorrect) { _, isCorrect in
@@ -77,10 +86,10 @@ struct LessonActionBar: View {
       if state.notice == .selfCorrect {
         Label {
           Text(
-            "Not quite. Fix it and check again.", tableName: "Player",
+            "Not quite. Look again and fix it yourself, then check.", tableName: "Player",
             comment: "A wrong language answer the learner can fix once")
         } icon: {
-          Image(systemName: "arrow.uturn.backward")
+          Image(systemName: "pencil")
         }
         .font(.subheadline.weight(.medium))
         .foregroundStyle(.destructive)
@@ -267,5 +276,65 @@ extension LessonStep {
   /// Screens that show their own verdict: activities, challenges and match columns.
   var showsOwnResult: Bool {
     kind == .challenge || kind == .matchColumns
+  }
+}
+
+/// "I know this" in progress, an answer that didn't save, or writing left out for the rest of the
+/// day, above the screen.
+private struct LessonNotice: View {
+  let state: LessonPlayerState
+  let store: LessonPlayerStore
+
+  var body: some View {
+    if let quickCheck = state.quickCheckProgress {
+      Label {
+        Text(
+          "Quick check · \(quickCheck.current) of \(quickCheck.total)", tableName: "Player",
+          comment: "While \"I already know this\" asks the lesson's checks")
+      } icon: {
+        Image(systemName: "bolt")
+      }
+      .font(.caption.monospaced())
+      .foregroundStyle(.secondary)
+    } else {
+      switch state.notice {
+      case .answerNotSaved:
+        Label {
+          Text(
+            "Your answer here didn't save. Answer it again to finish the lesson.",
+            tableName: "Player",
+            comment: "The lesson came back to a screen whose answer was never saved")
+        } icon: {
+          Image(systemName: "icloud.slash")
+        }
+        .font(.subheadline)
+        .foregroundStyle(.secondary)
+      case .writingSkipped:
+        HStack(alignment: .firstTextBaseline) {
+          Label {
+            Text(
+              "No more writing today.", tableName: "Player",
+              comment: "\"Can't write now\" left the lesson's writing out")
+          } icon: {
+            Image(systemName: "pencil.slash")
+          }
+          .foregroundStyle(.secondary)
+
+          Spacer(minLength: 8)
+
+          if state.writingRestore != nil, state.phase == .playing {
+            Button {
+              store.restoreWriting()
+            } label: {
+              Text("Write again", tableName: "Player", comment: "Takes back \"Can't write now\"")
+            }
+            .buttonStyle(.borderless)
+          }
+        }
+        .font(.subheadline)
+      case .selfCorrect, nil:
+        EmptyView()
+      }
+    }
   }
 }

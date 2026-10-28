@@ -13,15 +13,18 @@ struct LessonStepView: View {
       case .hook(let content):
         HookStepView(step: step, content: content, context: context)
       case .explanation(let content):
-        ExplanationStepView(step: step, content: content)
+        ExplanationStepView(step: step, content: content, store: store)
       case .workedExample(let content):
         WorkedExampleStepView(step: step, content: content, shown: state.revealed[step.id] ?? 1)
       case .check(let content):
         CheckStepView(step: step, content: content, context: context)
+        LessonWaysOut(state: state, store: store, step: step)
       case .typedAnswer(let content):
         TypedAnswerStepView(content: content, context: context)
+        LessonWaysOut(state: state, store: store, step: step)
       case .spokenAnswer(let content, let listening):
-        SpokenAnswerStepView(step: step, content: content, listening: listening, context: context)
+        SpokenAnswerStepView(
+          step: step, content: content, listening: listening, context: context, store: store)
       case .activity(let content):
         ActivityStepView(step: step, content: content, context: context)
       case .summary(let content):
@@ -96,6 +99,7 @@ private struct ExplanationStepView: View {
 
   let step: LessonStep
   let content: ExplanationContent
+  let store: LessonPlayerStore
 
   var body: some View {
     if let title = content.title {
@@ -179,7 +183,9 @@ private struct CheckStepView: View {
     StepMedia(step: step, description: content.image, visual: content.visual)
     LessonOptionList(
       options: content.options.map {
-        LessonOption(id: $0.id, text: $0.text, isCorrect: $0.isCorrect, pictureAlt: $0.picture?.alt)
+        LessonOption(
+          id: $0.id, text: $0.text, isCorrect: $0.isCorrect, pictureAlt: $0.picture?.alt,
+          picture: step.optionPictures[$0.id])
       },
       selectedId: context.answer.flatMap { if case .check(let id) = $0 { id } else { nil } },
       isChecked: context.result != nil,
@@ -199,6 +205,18 @@ private struct TypedAnswerStepView: View {
         .foregroundStyle(.secondary)
     }
 
+    if content.isOwnWords {
+      Label {
+        Text(
+          "In your own words", tableName: "Player",
+          comment: "Above a question answered in a few sentences")
+      } icon: {
+        Image(systemName: "pencil.line")
+      }
+      .font(.caption.monospaced())
+      .foregroundStyle(.secondary)
+    }
+
     LessonQuestionText(text: content.question)
 
     if let visual = content.visual {
@@ -208,6 +226,7 @@ private struct TypedAnswerStepView: View {
     LessonAnswerField(
       text: context.answer?.text ?? "",
       isLocked: context.isLocked,
+      isNumber: content.isNumberAnswer,
       isFocused: $isFocused
     ) { context.select($0.isEmpty ? nil : .typedAnswer(text: $0)) }
     .onAppear { isFocused = !context.isLocked }
@@ -218,6 +237,7 @@ private struct TypedAnswerStepView: View {
 struct LessonAnswerField: View {
   let text: String
   let isLocked: Bool
+  var isNumber = false
   var isFocused: FocusState<Bool>.Binding
   let onChange: (String) -> Void
 
@@ -227,7 +247,8 @@ struct LessonAnswerField: View {
     ) {
       Text("Write your answer", tableName: "Player", comment: "Placeholder of a written answer")
     }
-    .lineLimit(3...8)
+    .lineLimit(isNumber ? 1...1 : 3...8)
+    .keyboardType(isNumber ? .numbersAndPunctuation : .default)
     .focused(isFocused)
     .disabled(isLocked)
     .padding()
@@ -257,8 +278,6 @@ enum SpokenAnswerMode: Equatable {
 
 private struct SpokenAnswerStepView: View {
   @Environment(\.spokenAnswerRecording) private var recording
-  /// "I can't talk now" holds for every spoken screen for the rest of the day, as on main.
-  @AppStorage("player.cantTalkDay") private var cantTalkDay = ""
   @State private var micBlocked = false
   @FocusState private var isFocused: Bool
 
@@ -266,13 +285,11 @@ private struct SpokenAnswerStepView: View {
   let content: SpokenAnswerContent
   let listening: LanguageExercise?
   let context: LessonStepContext
+  let store: LessonPlayerStore
 
-  private var today: String {
-    Date.now.formatted(.iso8601.year().month().day())
-  }
-
+  /// "I can't talk now" holds for every spoken screen for the rest of the day, as on main.
   private var cantTalk: Bool {
-    cantTalkDay == today
+    store.cantTalkToday
   }
 
   private var mode: SpokenAnswerMode {
@@ -339,7 +356,7 @@ private struct SpokenAnswerStepView: View {
     if !context.isLocked, recording.input != nil {
       Button {
         context.select(nil)
-        cantTalkDay = mode == .speak ? today : ""
+        store.cantTalkToday = mode == .speak
         micBlocked = false
       } label: {
         if mode == .speak {

@@ -406,6 +406,176 @@ private let challenge = teaching(
      "endings": [{"id": "end", "outcome": "Shipped."}]}
     """#)
 
+final class LessonPlayerHelpTests: XCTestCase {
+  func testHyperdriveShowsFromThreeNewRightAnswersInARow() throws {
+    var state = LessonPlayerState(
+      lessonId: "lesson", steps: try ["a", "b", "c", "d"].map { try step(check(id: $0)) })
+    state.startRun(
+      runId: "run", answers: [], hyperdrive: LessonHyperdriveStart(knownStepIds: ["c"], streak: 1))
+
+    try answer(&state, right: true)
+    XCTAssertNil(state.hyperdriveStreak(for: "a"), "two in a row isn't shown yet")
+    state.continueLesson()
+    try answer(&state, right: true)
+    XCTAssertEqual(state.hyperdriveStreak(for: "b"), 3, "the session's streak counts: 1 + 2")
+    state.continueLesson()
+    try answer(&state, right: true)
+    XCTAssertNil(state.hyperdriveStreak(for: "c"), "a repeat keeps the streak, never shows it")
+    state.continueLesson()
+    try answer(&state, right: true)
+    XCTAssertEqual(state.hyperdriveStreak(for: "d"), 4)
+  }
+
+  func testIKnowThisPassingEveryCheckEndsTheLessonTestedOut() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try helpLesson())
+    state.continueLesson()
+    XCTAssertTrue(state.canKnowThis)
+
+    state.knowThis()
+    XCTAssertEqual(state.queue, ["check", "second"])
+    XCTAssertEqual(state.quickCheckProgress?.current, 1)
+    XCTAssertFalse(state.canGoBack)
+
+    try answer(&state, right: true)
+    state.continueLesson()
+    try answer(&state, right: true)
+    state.continueLesson()
+
+    XCTAssertEqual(state.phase, .completed)
+    XCTAssertEqual(state.completion?.testedOut, true)
+  }
+
+  func testAMissedQuickCheckGoesBackToTheLessonAndComesBackAtTheEnd() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try helpLesson())
+    state.continueLesson()
+    state.knowThis()
+    try answer(&state, right: true)
+    state.continueLesson()
+    try answer(&state, right: false)
+    XCTAssertEqual(state.queue.count, 2, "no retry during the quick check")
+    state.continueLesson()
+
+    XCTAssertNil(state.quickCheck)
+    XCTAssertEqual(state.currentStep?.id, "explanation", "back where the learner was")
+    XCTAssertEqual(state.queue, ["hook", "explanation", "explanation-2", "summary", "second"])
+  }
+
+  func testExplainFirstBringsTheExplanationsBeforeTheQuestion() throws {
+    var state = LessonPlayerState(
+      lessonId: "lesson",
+      steps: [
+        try step(check(id: "check")), try step(explanation),
+        try step(
+          explanation.replacingOccurrences(
+            of: "\"id\": \"explanation\"", with: "\"id\": \"explanation-2\"")),
+        try step(summary),
+      ])
+
+    XCTAssertTrue(state.canExplainFirst)
+    state.explainFirst()
+
+    XCTAssertEqual(state.queue, ["explanation", "explanation-2", "check", "summary"])
+    XCTAssertEqual(state.helped, ["check"])
+    XCTAssertFalse(state.canExplainFirst)
+  }
+
+  func testTwoMissesInARowOnAnIdeaOfferTheExplanation() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try helpLesson())
+    state.continueLesson()
+    state.continueLesson()
+    state.continueLesson()
+    try answer(&state, right: false)
+    XCTAssertNil(state.struggleOffer, "one miss isn't struggling")
+    state.continueLesson()
+    state.continueLesson()
+    try answer(&state, right: false)
+
+    XCTAssertEqual(state.struggleOffer?.id, "explanation-2", "the last explanation before it")
+  }
+
+  func testCantWriteNowLeavesTheWritingOutUntilWriteAgain() throws {
+    var state = LessonPlayerState(
+      lessonId: "lesson", steps: [try step(typedAnswer), try step(check(id: "check"))])
+
+    state.skipWriting()
+    XCTAssertEqual(state.currentStep?.id, "check")
+    XCTAssertEqual(state.notice, .writingSkipped)
+    XCTAssertEqual(state.skippedWritingStepIds, ["typed"])
+
+    state.restoreWriting()
+    XCTAssertEqual(state.currentStep?.id, "typed")
+    XCTAssertEqual(state.skippedWritingStepIds, [])
+    XCTAssertNil(state.notice)
+  }
+
+  func testCantWriteNowAsALessonOfOnlyWritingOpensWaitsForFinish() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: [try step(typedAnswer)])
+
+    state.skipWriting(opening: true)
+
+    XCTAssertEqual(state.phase, .completed)
+    XCTAssertEqual(state.completion?.status, .ready, "only a learner's Finish saves it")
+  }
+
+  func testIDontKnowYetShowsTheGoodAnswerWithoutAVerdict() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: [try step(typedAnswer)])
+
+    state.dontKnow("typed")
+
+    XCTAssertEqual(state.phase, .feedback)
+    XCTAssertEqual(state.currentResult?.isSampleAnswer, true)
+    XCTAssertEqual(state.currentResult?.correctAnswer, "Because.")
+    XCTAssertEqual(state.firstVerdicts, [:])
+    XCTAssertEqual(state.skippedWritingStepIds, ["typed"])
+  }
+
+  func testANumberQuestionIsNeverLeftOutAsWriting() throws {
+    let numeric = typedAnswer.replacingOccurrences(
+      of: "\"keyPoints\"", with: "\"acceptedAnswers\": [\"R$ 18\", \"18\"], \"keyPoints\"")
+
+    XCTAssertFalse(try step(numeric).isWriting)
+    XCTAssertTrue(try step(typedAnswer).isWriting)
+  }
+
+  func testLatePicturesReachTheScreensStillWaiting() throws {
+    let pending = check(id: "check").replacingOccurrences(
+      of: "\"imagePending\": false", with: "\"imagePending\": true")
+    let drawn = check(id: "check").replacingOccurrences(
+      of: "\"image\": null",
+      with:
+        #""image": {"id": "img", "url": "https://example.com/a.png", "alt": "A", "width": 4, "height": 3}"#
+    )
+    var state = LessonPlayerState(lessonId: "lesson", steps: [try step(pending)])
+
+    XCTAssertTrue(try XCTUnwrap(state.steps["check"]).isWaitingForPicture(openedAt: .now))
+    state.applyPictures(from: [try step(drawn)])
+
+    XCTAssertEqual(state.steps["check"]?.image?.url, "https://example.com/a.png")
+    XCTAssertEqual(state.steps["check"]?.imagePending, false)
+  }
+
+  // MARK: - Helpers
+
+  private func answer(_ state: inout LessonPlayerState, right: Bool) throws {
+    let step = try XCTUnwrap(state.currentStep)
+    let optionId = right ? "right" : "wrong"
+    state.select(.check(optionId: optionId), for: step.id)
+    let grade = try XCTUnwrap(LessonGrading.grade(.check(optionId: optionId), step: step))
+    state.resolve(step.id, result: LessonStepResult(grade))
+  }
+
+  /// hook, explanation, check, explanation-2, second, summary
+  private func helpLesson() throws -> [LessonStep] {
+    [
+      try step(textHook), try step(explanation), try step(check(id: "check")),
+      try step(
+        explanation.replacingOccurrences(
+          of: "\"id\": \"explanation\"", with: "\"id\": \"explanation-2\"")),
+      try step(check(id: "second")), try step(summary),
+    ]
+  }
+}
+
 final class LessonMathTests: XCTestCase {
   func testExponentsRiseAndIndicesDropAsText() {
     let typeset = LessonMath.attributed("x^{2} + a_1")

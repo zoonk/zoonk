@@ -44,10 +44,29 @@ final class LessonPlayerStore {
   private(set) var challengeTeam: [String] = []
   /// "Explain my answer" on a wrong typed answer, by screen.
   private(set) var explanations: [String: Explanation] = [:]
+  /// The learner's personal example under an explanation, by screen, once read.
+  private(set) var exampleLines: [String: String] = [:]
+  /// Where the lesson fits, for the end of a guest's lesson.
+  private(set) var fit: LessonFit?
+  /// A guest outside a study session: the lesson ends with "Build my plan".
+  var isGuest = false
+  /// "I can't talk now" lasts the rest of the learner's day on this device.
+  var cantTalkToday: Bool {
+    didSet { choices.setChosenToday(.cantTalk, cantTalkToday) }
+  }
+  /// Any touch or scroll on the screen: a learner who touches it isn't stuck.
+  var touches = 0
+  /// The Ask panel is open, with the question it opened with ("Explain it more simply").
+  var isAsking = false
+  private(set) var askingSuggestionId: String?
 
   private let api: LessonPlayerAPI
   private let session: SessionStore
+  private let choices: LessonTodayChoices
   private var identity: AuthenticatedSession?
+  private var openedAt = Date.now
+  /// The lesson's example lines are written once, after the learner's first action.
+  private var exampleLinesWriting: Task<Void, Never>?
   /// Answers graded on the device that the server hasn't recorded yet, sent again before finishing.
   private var unsentChecks: [String: UnsentCheck] = [:]
 
@@ -57,11 +76,22 @@ final class LessonPlayerStore {
     let durationMs: Int
   }
 
-  init(lessonId: String, studySessionId: String?, api: LessonPlayerAPI, session: SessionStore) {
+  init(
+    lessonId: String, studySessionId: String?, api: LessonPlayerAPI, session: SessionStore,
+    choices: LessonTodayChoices = .standard
+  ) {
     self.lessonId = lessonId
     self.studySessionId = studySessionId
     self.api = api
     self.session = session
+    self.choices = choices
+    cantTalkToday = choices.isChosenToday(.cantTalk)
+  }
+
+  /// Opens the Ask panel, with a suggestion ready to send when it came from an offer.
+  func ask(suggestionId: String? = nil) {
+    askingSuggestionId = suggestionId
+    isAsking = true
   }
 
   // MARK: - Loading
@@ -115,18 +145,71 @@ final class LessonPlayerStore {
     switch run {
     case .success(let run):
       state.startRun(
-        runId: run.runId, answers: run.answers, optionalStepIds: run.optionalStepIds,
-        support: run.support)
+        runId: run.runId, answers: run.answers, startedAt: run.startedAt,
+        hyperdrive: run.hyperdrive, optionalStepIds: run.optionalStepIds, support: run.support)
     case .failure(let refusal):
       state.refuseRun(refusal)
     }
 
     leaveOutUnplayable(&state)
+
+    // "Can't write now" lasts the rest of the learner's day on this device.
+    if choices.isChosenToday(.cantWrite) {
+      state.skipWriting(opening: true)
+    }
+
     self.lesson = lesson
     self.state = state
     self.soundsEnabled = soundsEnabled
     self.challengeTeam = challengeTeam
+    openedAt = .now
     screen = .playing
+  }
+
+  // MARK: - Late pictures
+
+  /// While a screen still waits for its picture (the lesson was written moments ago), the lesson
+  /// is read again every few seconds, as the API asks, until the pictures come or the wait ends.
+  func followLatePictures() async {
+    while !Task.isCancelled {
+      guard let state, let identity,
+        state.steps.values.contains(where: { $0.isWaitingForPicture(openedAt: openedAt) })
+      else {
+        return
+      }
+
+      try? await Task.sleep(for: .seconds(4))
+      let fresh = try? await api.getLesson(id: lessonId, token: identity.bearerToken)
+      guard isCurrent(identity), case .ready(let lesson) = fresh else { continue }
+      self.state?.applyPictures(from: lesson.steps)
+    }
+  }
+
+  // MARK: - Example lines
+
+  /// The learner's first action in the lesson writes its personal example lines in the
+  /// background (one call for every screen with a slot), never its opening.
+  private func writeExampleLinesOnce() {
+    guard exampleLinesWriting == nil, let token = identity?.bearerToken,
+      let first = lesson?.steps.first(where: \.hasExampleLineSlot)
+    else {
+      return
+    }
+
+    let api = api
+    exampleLinesWriting = Task { await api.requestExampleLines(stepId: first.id, token: token) }
+  }
+
+  /// Reads the screen's line once the lesson's write (if one started) settled.
+  func loadExampleLine(stepId: String) async {
+    guard exampleLines[stepId] == nil, let identity else {
+      return
+    }
+
+    await exampleLinesWriting?.value
+    let line = await api.getExampleLine(stepId: stepId, token: identity.bearerToken)
+    guard isCurrent(identity), let line else { return }
+    exampleLines[stepId] = line
   }
 
   /// Interactions without a renderer can't be answered here, so they're left out of the run.
@@ -205,12 +288,44 @@ final class LessonPlayerStore {
   }
 
   func continueLesson() {
+    writeExampleLinesOnce()
     state?.continueLesson()
     finishIfCompleted()
   }
 
   func goBack() {
     state?.goBack()
+  }
+
+  /// "Explain first": the explanation now, the question right after it.
+  func explainFirst() {
+    writeExampleLinesOnce()
+    state?.explainFirst()
+  }
+
+  /// "I already know this": the lesson's checks, then its end if they're all right.
+  func knowThis() {
+    writeExampleLinesOnce()
+    state?.knowThis()
+  }
+
+  /// "I don't know yet" on a written screen.
+  func dontKnow() {
+    guard let stepId = state?.currentStep?.id else { return }
+    state?.dontKnow(stepId)
+  }
+
+  /// "Can't write now": no writing for the rest of today, in this lesson and the next ones.
+  func skipWriting() {
+    choices.setChosenToday(.cantWrite, true)
+    state?.skipWriting()
+    finishIfCompleted()
+  }
+
+  /// "Write again": takes back "Can't write now" and puts this lesson's writing back.
+  func restoreWriting() {
+    choices.setChosenToday(.cantWrite, false)
+    state?.restoreWriting()
   }
 
   /// Check: device-graded answers show their verdict at once and are recorded in the background;
@@ -222,6 +337,7 @@ final class LessonPlayerStore {
       return
     }
 
+    writeExampleLinesOnce()
     let attemptId = UUID().uuidString.lowercased()
     let durationMs = Int(Date.now.timeIntervalSince(state.stepStartedAt) * 1000)
 
@@ -247,7 +363,7 @@ final class LessonPlayerStore {
 
     let outcome = await api.checkStep(
       stepId: step.id, answer: answer, attemptId: attemptId, durationMs: durationMs, runId: runId,
-      token: token)
+      usedHelp: state.helped.contains(step.id), token: token)
     guard isCurrent(identity) else { return }
 
     switch outcome {
@@ -288,7 +404,7 @@ final class LessonPlayerStore {
 
     let outcome = await api.checkStep(
       stepId: stepId, answer: answer, attemptId: attemptId, durationMs: durationMs, runId: runId,
-      token: token)
+      usedHelp: state?.helped.contains(stepId) == true, token: token)
     guard isCurrent(identity) else { return }
 
     switch outcome {
@@ -355,7 +471,9 @@ final class LessonPlayerStore {
         stepId, answer: unsent.answer, attemptId: unsent.attemptId, durationMs: unsent.durationMs)
     }
 
-    let outcome = await api.completeLesson(id: lessonId, runId: runId, token: token)
+    let outcome = await api.completeLesson(
+      id: lessonId, runId: runId, skippedWritingStepIds: state?.skippedWritingStepIds ?? [],
+      token: token)
     guard isCurrent(identity) else { return }
 
     switch outcome {
@@ -365,6 +483,10 @@ final class LessonPlayerStore {
         LessonCompletionEvent(
           lessonId: lessonId, studySessionId: studySessionId,
           isFirstCompletion: summary.isFirstCompletion))
+
+      if isGuest, studySessionId == nil {
+        fit = await api.getLessonFit(id: lessonId, token: token)
+      }
     case .incomplete:
       // The run is missing an answer: the server's answers say which screen to go back to.
       let restarted = await api.startLesson(

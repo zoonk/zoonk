@@ -9,6 +9,8 @@ struct PlayableLesson: Hashable, Sendable {
   let targetLanguage: String?
   let chapterTitle: String?
   let steps: [LessonStep]
+  /// The summary card, each idea in one sentence, for the menu once the lesson is done.
+  let summaryIdeas: [String]
   let tutorSuggestions: [Components.Schemas.LessonTutorSuggestion]
 }
 
@@ -30,9 +32,29 @@ enum LessonLoad: Hashable, Sendable {
 
 struct LessonRunStart: Hashable, Sendable {
   let runId: String
+  /// When this sitting's run started: earlier answers came from sittings before it.
+  let startedAt: Date
   let answers: [LessonRunAnswer]
+  let hyperdrive: LessonHyperdriveStart
   let optionalStepIds: [String]
   let support: LessonPlayerState.LessonSupport?
+}
+
+/// Where a public lesson fits, for the end of a guest's lesson.
+struct LessonFit: Hashable, Sendable {
+  struct Course: Hashable, Sendable {
+    let id: String
+    let title: String
+    let chapterCount: Int
+    let minutes: Int
+    /// Where "Build my plan" starts the course: this lesson's chapter, or nil for its beginning.
+    let startChapterId: String?
+  }
+
+  let chapterTitle: String
+  let lessonNumber: Int
+  let lessonCount: Int
+  let course: Course?
 }
 
 enum LessonCheckOutcome: Hashable, Sendable {
@@ -88,7 +110,8 @@ struct LessonPlayerAPI: Sendable {
           PlayableLesson(
             id: lesson.id, title: lesson.title, language: lesson.language,
             targetLanguage: lesson.targetLanguage, chapterTitle: lesson.chapter?.title,
-            steps: lesson.steps, tutorSuggestions: ready.tutorSuggestions))
+            steps: lesson.steps, summaryIdeas: lesson.summaryIdeas,
+            tutorSuggestions: ready.tutorSuggestions))
       case .case2(let outline):
         let lesson = outline.lesson
         return .notGenerated(
@@ -136,9 +159,12 @@ struct LessonPlayerAPI: Sendable {
       return .success(
         LessonRunStart(
           runId: run.runId,
+          startedAt: run.startedAt,
           answers: run.answers.map {
             LessonRunAnswer(stepId: $0.stepId, isCorrect: $0.isCorrect, answeredAt: $0.answeredAt)
           },
+          hyperdrive: LessonHyperdriveStart(
+            knownStepIds: Set(run.hyperdrive.knownStepIds), streak: run.hyperdrive.streak),
           optionalStepIds: run.optionalStepIds ?? [],
           support: run.support.flatMap {
             LessonPlayerState.LessonSupport(rawValue: $0.value1.rawValue)
@@ -164,11 +190,12 @@ struct LessonPlayerAPI: Sendable {
     attemptId: String,
     durationMs: Int,
     runId: String,
+    usedHelp: Bool,
     token: String
   ) async -> LessonCheckOutcome {
     let body = Components.Schemas.LessonStepCheckInput(
       answer: answer, attemptId: attemptId, durationMs: min(durationMs, 3_600_000), runId: runId,
-      timeZone: TimeZone.current.identifier)
+      timeZone: TimeZone.current.identifier, usedHelp: usedHelp)
 
     guard
       let output = try? await clients.perform(
@@ -205,9 +232,13 @@ struct LessonPlayerAPI: Sendable {
     }
   }
 
-  func completeLesson(id: String, runId: String, token: String) async -> LessonCompletionOutcome {
+  func completeLesson(
+    id: String, runId: String, skippedWritingStepIds: [String], token: String
+  ) async -> LessonCompletionOutcome {
     let body = Components.Schemas.LibraryLessonCompletionInput(
-      runId: runId, timeZone: TimeZone.current.identifier)
+      runId: runId,
+      skippedWritingStepIds: skippedWritingStepIds.isEmpty ? nil : skippedWritingStepIds,
+      timeZone: TimeZone.current.identifier)
 
     guard
       let output = try? await clients.perform(
@@ -339,6 +370,47 @@ struct LessonPlayerAPI: Sendable {
     }
 
     return team.members.map(\.name)
+  }
+
+  /// Where a public lesson fits, for the end of a guest's lesson; nil outside a public chapter.
+  func getLessonFit(id: String, token: String?) async -> LessonFit? {
+    let output = try? await clients.perform(token: token) {
+      try await $0.getLibraryLessonFit(path: .init(lessonId: id))
+    }
+
+    guard case .ok(let response) = output, let fit = try? response.body.json else {
+      return nil
+    }
+
+    return LessonFit(
+      chapterTitle: fit.chapter.title, lessonNumber: fit.chapter.lessonNumber,
+      lessonCount: fit.chapter.lessonCount,
+      course: fit.course.map {
+        LessonFit.Course(
+          id: $0.id, title: $0.title, chapterCount: $0.chapterCount, minutes: $0.minutes,
+          startChapterId: $0.startChapterId)
+      })
+  }
+
+  /// Writes the lesson's personal example lines (every screen's, in one call). Only after the
+  /// learner's first action in a lesson: it may run AI.
+  func requestExampleLines(stepId: String, token: String) async {
+    _ = try? await clients.perform(token: token) {
+      try await $0.requestCurrentUserStepExampleLine(path: .init(stepId: stepId))
+    }
+  }
+
+  /// A screen's saved example line; reading never writes one.
+  func getExampleLine(stepId: String, token: String) async -> String? {
+    let output = try? await clients.perform(token: token) {
+      try await $0.getCurrentUserStepExampleLine(path: .init(stepId: stepId))
+    }
+
+    guard case .ok(let response) = output, let line = try? response.body.json.line else {
+      return nil
+    }
+
+    return line
   }
 
   /// Lesson sounds stay on until the learner turns them off.

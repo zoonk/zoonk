@@ -14,13 +14,18 @@ struct LessonStep: Codable, Hashable, Sendable, Identifiable {
   let image: LessonStepImage?
   /// The picture is still being drawn.
   let imagePending: Bool
+  /// A question whose options are pictures: each drawn picture by option id.
+  let optionPictures: [String: LessonStepImage]
+  /// When the screen was written, in epoch milliseconds: a missing picture may still arrive for
+  /// five minutes from then.
+  let pictureWaitStartedAt: Int?
   let content: LessonStepContent
 
   var kind: LessonStepKind { content.kind }
 
   private enum CodingKeys: String, CodingKey {
-    case citation, content, exercise, id, image, imagePending, kind, listening, position, skillId
-    case wordHints
+    case citation, content, exercise, id, image, imagePending, kind, listening, optionPictures
+    case pictureWaitStartedAt, position, skillId, wordHints
   }
 
   init(
@@ -30,6 +35,8 @@ struct LessonStep: Codable, Hashable, Sendable, Identifiable {
     citation: LessonCitation? = nil,
     image: LessonStepImage? = nil,
     imagePending: Bool = false,
+    optionPictures: [String: LessonStepImage] = [:],
+    pictureWaitStartedAt: Int? = nil,
     content: LessonStepContent
   ) {
     self.id = id
@@ -38,6 +45,8 @@ struct LessonStep: Codable, Hashable, Sendable, Identifiable {
     self.citation = citation
     self.image = image
     self.imagePending = imagePending
+    self.optionPictures = optionPictures
+    self.pictureWaitStartedAt = pictureWaitStartedAt
     self.content = content
   }
 
@@ -49,6 +58,9 @@ struct LessonStep: Codable, Hashable, Sendable, Identifiable {
     citation = try container.decodeIfPresent(LessonCitation.self, forKey: .citation)
     image = try container.decodeIfPresent(LessonStepImage.self, forKey: .image)
     imagePending = try container.decodeIfPresent(Bool.self, forKey: .imagePending) ?? false
+    optionPictures =
+      try container.decodeIfPresent([String: LessonStepImage].self, forKey: .optionPictures) ?? [:]
+    pictureWaitStartedAt = try container.decodeIfPresent(Int.self, forKey: .pictureWaitStartedAt)
 
     let kind = try container.decode(String.self, forKey: .kind)
 
@@ -96,6 +108,8 @@ struct LessonStep: Codable, Hashable, Sendable, Identifiable {
     try container.encode(citation, forKey: .citation)
     try container.encode(image, forKey: .image)
     try container.encode(imagePending, forKey: .imagePending)
+    try container.encode(optionPictures, forKey: .optionPictures)
+    try container.encodeIfPresent(pictureWaitStartedAt, forKey: .pictureWaitStartedAt)
 
     switch content {
     case .hook(let value): try container.encode(value, forKey: .content)
@@ -111,6 +125,29 @@ struct LessonStep: Codable, Hashable, Sendable, Identifiable {
     case .challenge(let value): try container.encode(value, forKey: .content)
     case .language: break
     }
+  }
+}
+
+extension LessonStep {
+  /// This screen with the pictures a fresh read of the lesson drew since.
+  func withPictures(from fresh: LessonStep) -> LessonStep {
+    LessonStep(
+      id: id, position: position, skillId: skillId, citation: citation,
+      image: fresh.image ?? image, imagePending: fresh.imagePending,
+      optionPictures: optionPictures.merging(fresh.optionPictures) { _, drawn in drawn },
+      pictureWaitStartedAt: pictureWaitStartedAt, content: content)
+  }
+
+  /// A missing picture may still arrive: five minutes from when the screen was written, or from
+  /// when the lesson opened for a screen that doesn't say.
+  func isWaitingForPicture(openedAt: Date, now: Date = .now) -> Bool {
+    guard imagePending else {
+      return false
+    }
+
+    let start =
+      pictureWaitStartedAt.map { Date(timeIntervalSince1970: Double($0) / 1000) } ?? openedAt
+    return now.timeIntervalSince(start) < 5 * 60
   }
 }
 

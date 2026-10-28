@@ -30,9 +30,10 @@ private struct LessonPlayerContent: View {
   @Environment(\.lessonCompletionHook) private var completionHook
   @Environment(\.lessonTutor) private var tutor
   @Environment(SessionStore.self) private var session
+  @Environment(LearnerSummaryStore.self) private var learnerSummary: LearnerSummaryStore?
   @State private var store: LessonPlayerStore
   @State private var isLeaving = false
-  @State private var isAsking = false
+  @State private var isShowingSummary = false
 
   init(store: LessonPlayerStore) {
     _store = State(initialValue: store)
@@ -78,13 +79,16 @@ private struct LessonPlayerContent: View {
         "Your answer hasn't been checked, so it won't be kept.", tableName: "Player",
         comment: "Closing a lesson with a written answer not checked yet")
     }
-    .inspector(isPresented: $isAsking) {
+    .inspector(isPresented: $store.isAsking) {
       if let panel = tutor.panel, let lesson = store.lesson {
         panel(
           LessonTutorScope(
             lessonId: lesson.id, stepId: store.state?.currentStep?.id,
-            suggestions: lesson.tutorSuggestions))
+            suggestions: lesson.tutorSuggestions, startingSuggestionId: store.askingSuggestionId))
       }
+    }
+    .sheet(isPresented: $isShowingSummary) {
+      LessonSummarySheet(ideas: store.lesson?.summaryIdeas ?? [])
     }
     // A lesson opened while the saved session is still being checked waits for it, so it reads once.
     .task(id: session.state == .restoring ? nil : session.authenticatedSession?.bearerToken ?? "") {
@@ -100,7 +104,9 @@ private struct LessonPlayerContent: View {
         return activityRenderers.renderer(for: content.template) == nil
       }
       store.onCompleted = { [completionHook] event in completionHook.lessonCompleted(event) }
+      store.isGuest = learnerSummary?.summary.value?.identity.isAnonymous == true
       await store.load()
+      await store.followLatePictures()
     }
   }
 
@@ -133,7 +139,7 @@ private struct LessonPlayerContent: View {
         } else if state.phase == .completed, let completion = state.completion {
           LessonCompletionView(
             completion: completion, correct: state.correctCount, answered: state.answeredCount,
-            soundsEnabled: store.soundsEnabled
+            soundsEnabled: store.soundsEnabled, guestEnding: guestEnding
           ) {
             Task { await store.finish() }
           } close: {
@@ -172,15 +178,78 @@ private struct LessonPlayerContent: View {
       }
     }
 
+    screenMenu
+
     if tutor.panel != nil, store.screen == .playing, store.state?.phase != .completed {
       ToolbarItem(placement: .primaryAction) {
         Button {
-          isAsking.toggle()
+          store.ask()
         } label: {
           Label {
             Text("Ask", tableName: "Player", comment: "Opens the panel to ask about the lesson")
           } icon: {
             Image(systemName: "bubble.left.and.text.bubble.right")
+          }
+        }
+      }
+    }
+  }
+
+  /// The end of a guest's lesson: where it fits and "Build my plan". Nil for learners.
+  private var guestEnding: LessonGuestEnding? {
+    guard store.isGuest, store.studySessionId == nil, let lesson = store.lesson else {
+      return nil
+    }
+
+    return LessonGuestEnding(lessonTitle: lesson.title, fit: store.fit)
+  }
+
+  @ToolbarContentBuilder
+  private var screenMenu: some ToolbarContent {
+    if store.screen == .playing, let state = store.state {
+      ToolbarItem(placement: .primaryAction) {
+        Menu {
+          Section {
+            Label {
+              Text(
+                "Made with AI. It may contain mistakes.", tableName: "Player",
+                comment: "In the lesson's menu")
+            } icon: {
+              Image(systemName: "sparkles")
+            }
+          }
+
+          if state.canKnowThis {
+            Button {
+              store.knowThis()
+            } label: {
+              Label {
+                Text(
+                  "I already know this", tableName: "Player",
+                  comment: "Asks the lesson's checks to skip it")
+              } icon: {
+                Image(systemName: "bolt")
+              }
+            }
+          }
+
+          if state.phase == .completed, !(store.lesson?.summaryIdeas ?? []).isEmpty {
+            Button {
+              isShowingSummary = true
+            } label: {
+              Label {
+                Text(
+                  "Lesson summary", tableName: "Player", comment: "Opens the lesson's summary card")
+              } icon: {
+                Image(systemName: "list.bullet.rectangle")
+              }
+            }
+          }
+        } label: {
+          Label {
+            Text("Screen options", tableName: "Player", comment: "The lesson's menu")
+          } icon: {
+            Image(systemName: "ellipsis")
           }
         }
       }

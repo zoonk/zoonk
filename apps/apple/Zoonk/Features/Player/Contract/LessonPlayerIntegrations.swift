@@ -76,6 +76,8 @@ struct LessonTutorScope: Hashable, Sendable {
   let stepId: String?
   /// Questions worded in the lesson's language ("Explain it more simply", …).
   let suggestions: [Components.Schemas.LessonTutorSuggestion]
+  /// The suggestion to have ready to send (`simpler` when the learner seems stuck), if any.
+  var startingSuggestionId: String?
 }
 
 struct LessonTutor: Sendable {
