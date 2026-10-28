@@ -160,7 +160,7 @@ struct MistakePracticeScreen: View {
         ) {
           next()
         }
-        ask(step, missed: !grade.isCorrect)
+        ask(step, answered: true, missed: !grade.isCorrect)
       }
     case .answering, .checking, .answerFailed:
       if case .answerFailed(let answer, let timedOut) = state.phase {
@@ -189,7 +189,7 @@ struct MistakePracticeScreen: View {
           if let draft { Task { await check(draft, timedOut: false) } }
         }
 
-        ask(step, missed: false)
+        ask(step, answered: false, missed: false)
       }
     case .ending, .ended:
       EmptyView()
@@ -197,11 +197,12 @@ struct MistakePracticeScreen: View {
   }
 
   @ViewBuilder
-  private func ask(_ step: MistakePracticeStep, missed: Bool) -> some View {
+  private func ask(_ step: MistakePracticeStep, answered: Bool, missed: Bool) -> some View {
     if let askButton = hooks.askButton {
       askButton(
         PracticeAskTarget(
-          itemId: step.question.itemId, question: step.question.question, missed: missed))
+          itemId: step.question.itemId, question: step.question.question, blockId: nil,
+          answered: answered, missed: missed))
     }
   }
 

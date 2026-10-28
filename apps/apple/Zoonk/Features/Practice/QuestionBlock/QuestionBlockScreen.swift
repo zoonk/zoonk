@@ -269,7 +269,7 @@ struct QuestionBlockView: View {
     case .feedback(_, let feedback):
       HStack(spacing: 12) {
         PracticeMainButton(title: continueTitle) { Task { await run.next() } }
-        ask(missed: !feedback.isCorrect)
+        ask(answered: true, missed: !feedback.isCorrect)
       }
     case .answering, .checking, .answerFailed:
       if phase == .answerFailed {
@@ -324,15 +324,17 @@ struct QuestionBlockView: View {
         if let draft = run.draft { Task { await run.submit(draft) } }
       }
 
-      ask(missed: false)
+      ask(answered: false, missed: false)
     }
   }
 
   @ViewBuilder
-  private func ask(missed: Bool) -> some View {
+  private func ask(answered: Bool, missed: Bool) -> some View {
     if let askButton = hooks.askButton, let question = run.question {
       askButton(
-        PracticeAskTarget(itemId: question.itemId, question: question.question, missed: missed))
+        PracticeAskTarget(
+          itemId: question.itemId, question: question.question, blockId: run.detail.block.id,
+          answered: answered, missed: missed))
     }
   }
 

@@ -28,6 +28,10 @@ enum PracticeDestination: Equatable, Sendable {
 struct PracticeAskTarget: Equatable, Sendable {
   let itemId: String
   let question: String
+  /// The study block it's asked in; nil in mistake practice, which isn't a block.
+  let blockId: String?
+  /// The answer was checked: the buddy may now talk about the answer, not only the question.
+  let answered: Bool
   /// The answer was graded wrong: Ask says the buddy's name, when asking helps most.
   let missed: Bool
 }
