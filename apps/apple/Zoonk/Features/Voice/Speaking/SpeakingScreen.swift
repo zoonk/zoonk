@@ -210,6 +210,15 @@ private struct SpeakingPaperView: View {
         .font(.subheadline)
         .foregroundStyle(.secondary)
 
+      if !task.criteria.isEmpty {
+        Text(
+          "Rated on \(task.criteria.map { speakingCriterionName($0.key, officialName: $0.name) }.formatted(.list(type: .and)))",
+          tableName: "Voice", comment: "The official criteria a speaking task is rated on"
+        )
+        .font(.subheadline)
+        .foregroundStyle(.secondary)
+      }
+
       if let lastTry = task.lastTry {
         Text(lastTryText(lastTry, level: paper.level.rawValue))
           .font(.subheadline)

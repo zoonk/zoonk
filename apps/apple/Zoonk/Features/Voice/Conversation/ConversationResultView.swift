@@ -19,8 +19,8 @@ struct ConversationResultView: View {
           CriteriaSection(
             criteria: feedback.criteria.map {
               .init(
-                name: criterionName($0.criterion), bandLow: $0.bandLow, bandHigh: $0.bandHigh,
-                evidence: $0.evidence, tip: $0.tip)
+                name: criterionName($0.criterion), officialName: officialName($0.criterion),
+                bandLow: $0.bandLow, bandHigh: $0.bandHigh, evidence: $0.evidence, tip: $0.tip)
             },
             focus: criterionName(feedback.focus))
         case .speakingMock(let mock):
@@ -138,30 +138,16 @@ struct ConversationResultView: View {
   }
 
   /// A criterion's name: an exam task's official one, or the speaking mocks' as learners read them.
-  private func criterionName(_ key: String) -> String {
-    if let criterion = conversation.speakingTask?.criteria.first(where: { $0.key == key }) {
-      return criterion.name
-    }
-
-    return switch key {
-    case "delivery":
-      String(localized: "Pace and pronunciation", table: "Voice", comment: "A speaking criterion")
-    case "elaboration":
-      String(localized: "Clear, developed answers", table: "Voice", comment: "A speaking criterion")
-    case "fluencyCoherence":
-      String(localized: "Fluency and coherence", table: "Voice", comment: "A speaking criterion")
-    case "grammar":
-      String(localized: "Grammar", table: "Voice", comment: "A speaking criterion")
-    case "lexicalResource", "vocabulary":
-      String(localized: "Vocabulary", table: "Voice", comment: "A speaking criterion")
-    case "pronunciation":
-      String(localized: "Pronunciation", table: "Voice", comment: "A speaking criterion")
-    case "repetition":
-      String(localized: "Repeating sentences", table: "Voice", comment: "A speaking criterion")
-    default:
-      key
-    }
+  /// An exam task's criterion's official name, in the exam's language, shown beside what it rates
+  /// in the learner's words.
+  private func officialName(_ key: String) -> String? {
+    conversation.speakingTask?.criteria.first { $0.key == key }?.name
   }
+
+  private func criterionName(_ key: String) -> String {
+    speakingCriterionName(key, officialName: officialName(key))
+  }
+
 }
 
 /// A practice call's or checkpoint's feedback: what went well, then what to improve.
@@ -261,6 +247,8 @@ private struct CallFeedbackSections: View {
 private struct CriteriaSection: View {
   struct Criterion {
     let name: String
+    /// The official name in the exam's language, when it differs from `name`.
+    var officialName: String?
     let bandLow: Double
     let bandHigh: Double
     let evidence: String
@@ -286,9 +274,14 @@ private struct CriteriaSection: View {
     Section {
       ForEach(criteria, id: \.name) { criterion in
         VStack(alignment: .leading, spacing: 4) {
-          LabeledContent(criterion.name) {
+          LabeledContent {
             Text(band(criterion.bandLow, criterion.bandHigh))
               .monospacedDigit()
+          } label: {
+            Text(criterion.name)
+            if let official = criterion.officialName, official != criterion.name {
+              Text(official)
+            }
           }
           .font(.headline)
 

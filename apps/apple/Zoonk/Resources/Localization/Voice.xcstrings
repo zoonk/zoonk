@@ -410,6 +410,35 @@
         }
       }
     },
+    "Accuracy" : {
+      "comment" : "A speaking criterion",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Genauigkeit"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Precisión"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Précision"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Precisão"
+          }
+        }
+      }
+    },
     "An accent never blocks you. Words that still sound different come back tomorrow." : {
       "comment" : "What a pronunciation round's grade means",
       "localizations" : {
@@ -874,6 +903,35 @@
         }
       }
     },
+    "Coherence" : {
+      "comment" : "A speaking criterion",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zusammenhang"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coherencia"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cohérence"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coerência"
+          }
+        }
+      }
+    },
     "Continue" : {
       "comment" : "Goes on to the next word\nLeaves a call's result",
       "localizations" : {
@@ -957,6 +1015,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Crie sua conta grátis para continuar."
+          }
+        }
+      }
+    },
+    "Doing the task" : {
+      "comment" : "A speaking criterion",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aufgabenbewältigung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Realización de la tarea"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réalisation de la tâche"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Execução da tarefa"
           }
         }
       }
@@ -1135,6 +1222,35 @@
         }
       }
     },
+    "Fluency" : {
+      "comment" : "A speaking criterion",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprachfluss"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fluidez"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aisance"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fluência"
+          }
+        }
+      }
+    },
     "Fluency and coherence" : {
       "comment" : "A speaking criterion",
       "localizations" : {
@@ -1251,6 +1367,35 @@
         }
       }
     },
+    "Grammar and vocabulary" : {
+      "comment" : "A speaking criterion",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grammatik und Wortschatz"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gramática y vocabulario"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grammaire et vocabulaire"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gramática e vocabulário"
+          }
+        }
+      }
+    },
     "Help" : {
       "comment" : "Shows phrases to use in the call",
       "localizations" : {
@@ -1334,6 +1479,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Simulado de conversação do IELTS"
+          }
+        }
+      }
+    },
+    "Interaction" : {
+      "comment" : "A speaking criterion",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Interaktion"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Interacción"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Interaction"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Interação"
           }
         }
       }
@@ -1450,6 +1624,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Isso está acontecendo com todo mundo agora. Tente de novo mais tarde."
+          }
+        }
+      }
+    },
+    "Language" : {
+      "comment" : "A speaking criterion",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprache"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lengua"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Langue"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Idioma"
           }
         }
       }
@@ -2191,6 +2394,35 @@
         }
       }
     },
+    "Organizing what you say" : {
+      "comment" : "A speaking criterion",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aufbau deiner Aussagen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Organización del discurso"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Organisation de tes propos"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Organização da fala"
+          }
+        }
+      }
+    },
     "Overall band" : {
       "comment" : "A speaking mock's overall estimate",
       "localizations" : {
@@ -2216,6 +2448,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Faixa geral"
+          }
+        }
+      }
+    },
+    "Overall impression" : {
+      "comment" : "A speaking criterion",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gesamteindruck"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impresión general"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impression générale"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impressão geral"
           }
         }
       }
@@ -2390,6 +2651,93 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pronúncia"
+          }
+        }
+      }
+    },
+    "Questions and answers" : {
+      "comment" : "A speaking criterion",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fragen und Antworten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preguntas y respuestas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questions et réponses"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perguntas e respostas"
+          }
+        }
+      }
+    },
+    "Range of language" : {
+      "comment" : "A speaking criterion",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprachliche Vielfalt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Variedad lingüística"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Étendue du vocabulaire et des structures"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Variedade de linguagem"
+          }
+        }
+      }
+    },
+    "Rated on %@" : {
+      "comment" : "The official criteria a speaking task is rated on",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bewertet nach %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se evalúa según %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Évalué selon %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avaliado com base em %@"
           }
         }
       }
@@ -3508,6 +3856,35 @@
         }
       }
     },
+    "The examiner's overall rating" : {
+      "comment" : "A speaking criterion",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gesamtbewertung durch die prüfende Person"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Valoración general del examinador"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Évaluation générale de l’examinateur"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avaliação geral do examinador"
+          }
+        }
+      }
+    },
     "The microphone is off" : {
       "comment" : "Title when the learner turned off the microphone for the app",
       "localizations" : {
@@ -3939,6 +4316,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Desafio da unidade"
+          }
+        }
+      }
+    },
+    "Use of language" : {
+      "comment" : "A speaking criterion",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprachverwendung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uso de la lengua"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maîtrise de la langue"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uso do idioma"
           }
         }
       }
