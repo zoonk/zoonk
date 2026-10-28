@@ -1,9 +1,8 @@
 name: Android App
 
 on:
-  # Every branch, so each push writes its branch's Gradle cache and the next push starts warm.
   push:
-    branches: ["**"]
+    branches: [main]
     paths: [apps/android/**, .github/workflows/android.yml]
   pull_request:
     branches: [main]
@@ -20,8 +19,6 @@ permissions:
 jobs:
   gradle:
     name: ${{ matrix.job }}
-    # A pull request from this repository already shows its branch push's checks; forks run here.
-    if: github.event_name == 'push' || github.event.pull_request.head.repo.fork
     runs-on: ubuntu-latest
     timeout-minutes: 10
     # Parallel jobs keep each one under 5 minutes as the app grows; `make check` runs all three.
@@ -54,7 +51,9 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
         with:
           cache-provider: basic
-          cache-read-only: ${{ github.event_name == 'pull_request' }}
+          # Pull requests write their own cache scope too, so each run after a PR's first starts
+          # warm. They read main's scope but never write it.
+          cache-read-only: false
 
       - name: Run Gradle
         env:
