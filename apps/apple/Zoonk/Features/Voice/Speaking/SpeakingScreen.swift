@@ -35,6 +35,8 @@ private struct SpeakingPaperView: View {
   @Environment(AppRouter.self) private var router
   @State private var startingTask: String?
   @State private var startFailure: StartFailure?
+  /// The task shown open, one at a time, as main's list does.
+  @State private var openTask: String?
 
   let goalId: String
   let paper: Resource<Components.Schemas.SpeakingPaper>
@@ -140,36 +142,19 @@ private struct SpeakingPaperView: View {
 
       Section {
         ForEach(Array(paper.tasks.enumerated()), id: \.element.key) { index, task in
-          taskRow(task, index: index, paper: paper)
+          DisclosureGroup(
+            isExpanded: Binding(
+              get: { openTask == task.key }, set: { openTask = $0 ? task.key : nil })
+          ) {
+            taskDetails(task, paper: paper)
+          } label: {
+            taskHeader(task, index: index)
+          }
         }
       } header: {
         Text("Tasks", tableName: "Voice", comment: "The speaking paper's tasks")
       } footer: {
         VStack(alignment: .leading, spacing: 8) {
-          if let startFailure {
-            switch startFailure {
-            case .limit(let limit):
-              Group {
-                if limit.period == .month {
-                  Text(
-                    "Not enough call time this month for this task", tableName: "Voice",
-                    comment: "The call time left this month can't fit this task")
-                } else {
-                  Text(
-                    "Not enough call time today for this task", tableName: "Voice",
-                    comment: "The call time left today can't fit this task")
-                }
-              }
-              .foregroundStyle(.destructive)
-            case .failed:
-              Text(
-                "The task didn't start. Try again in a moment.", tableName: "Voice",
-                comment: "Starting an exam task failed"
-              )
-              .foregroundStyle(.destructive)
-            }
-          }
-
           if paper.tasks.contains(where: { $0.role == .partner }) {
             Text(
               "An AI stands in for the human examiner or the other candidate. Each try has a new card, and after it you get an estimate on the exam's official criteria, not an official score.",
@@ -193,23 +178,32 @@ private struct SpeakingPaperView: View {
     }
   }
 
-  private func taskRow(
-    _ task: Components.Schemas.SpeakingPaperTask, index: Int,
-    paper: Components.Schemas.SpeakingPaper
+  /// A task by its place in the paper and official name, whom the learner talks to and how long.
+  private func taskHeader(_ task: Components.Schemas.SpeakingPaperTask, index: Int) -> some View {
+    HStack(alignment: .firstTextBaseline, spacing: 12) {
+      Text(index + 1, format: .number)
+        .monospacedDigit()
+        .foregroundStyle(.secondary)
+
+      VStack(alignment: .leading, spacing: 2) {
+        Text(task.name)
+          .font(.headline)
+
+        Text(facts(task))
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
+      }
+    }
+    .padding(.vertical, 4)
+  }
+
+  /// An open task: what it's rated on, the last try, and its call.
+  private func taskDetails(
+    _ task: Components.Schemas.SpeakingPaperTask, paper: Components.Schemas.SpeakingPaper
   ) -> some View {
     let locked = paper.access != .open
 
     return VStack(alignment: .leading, spacing: 8) {
-      Text(
-        "Task \(index + 1) · \(task.name)", tableName: "Voice",
-        comment: "A speaking task's number and official name"
-      )
-      .font(.headline)
-
-      Text(facts(task))
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
-
       if !task.criteria.isEmpty {
         Text(
           "Rated on \(task.criteria.map { speakingCriterionName($0.key, officialName: $0.name) }.formatted(.list(type: .and)))",
@@ -250,8 +244,34 @@ private struct SpeakingPaperView: View {
         }
       }
       .padding(.top, 4)
+
+      // Only the open task starts, so a failure is said right under its button.
+      if let startFailure {
+        startFailureText(startFailure)
+          .font(.subheadline)
+          .foregroundStyle(.destructive)
+      }
     }
     .padding(.vertical, 4)
+  }
+
+  @ViewBuilder
+  private func startFailureText(_ failure: StartFailure) -> some View {
+    switch failure {
+    case .limit(let limit) where limit.period == .month:
+      Text(
+        "Not enough call time this month for this task", tableName: "Voice",
+        comment: "The call time left this month can't fit this task")
+    case .limit:
+      Text(
+        "Not enough call time today for this task", tableName: "Voice",
+        comment: "The call time left today can't fit this task")
+    case .failed:
+      Text(
+        "The task didn't start. Try again in a moment.", tableName: "Voice",
+        comment: "Starting an exam task failed"
+      )
+    }
   }
 
   private func facts(_ task: Components.Schemas.SpeakingPaperTask) -> String {
