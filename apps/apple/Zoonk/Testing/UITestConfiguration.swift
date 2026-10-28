@@ -27,6 +27,7 @@
           courseCatalogAPI: courseCatalogAPI(snapshot: catalogSnapshot),
           learnerSummaryAPI: UITestLearnerSummaryAPI(summary: learnerSummary(from: environment)),
           progressAPI: progressAPI(from: environment),
+          studyAPI: studyAPI(from: environment),
           tutorAPI: buddyStatus(from: environment).map { _ in UITestTutorAPI() }),
         initiallyPresentsAccount: arguments.contains("--ui-testing-account-sheet"))
     }
@@ -89,6 +90,25 @@
           snapshot: snapshot)
       } catch {
         preconditionFailure("ZOONK_UI_TEST_PROGRESS must contain a valid progress snapshot")
+      }
+    }
+
+    /// Today and its session's summary as the API returns them, for days no test learner is on (a
+    /// rest day, a milestone's ceremony); without a Today, the app reads the API.
+    private static func studyAPI(from environment: [String: String]) -> (any StudyAPIClient)? {
+      guard let todayJSON = environment["ZOONK_UI_TEST_TODAY"] else {
+        return nil
+      }
+
+      do {
+        return UITestStudyAPI(
+          summary: try environment["ZOONK_UI_TEST_SESSION_SUMMARY"].map {
+            try JSONDecoder().decode(SessionSummary.self, from: Data($0.utf8))
+          },
+          today: try JSONDecoder().decode(TodayView.self, from: Data(todayJSON.utf8)))
+      } catch {
+        preconditionFailure(
+          "ZOONK_UI_TEST_TODAY and ZOONK_UI_TEST_SESSION_SUMMARY must contain valid payloads")
       }
     }
 
@@ -351,6 +371,75 @@
 
     func undoMemoryChanges(_ changes: [TutorMemoryChange], token: String) async throws {
       throw APIError.unavailable
+    }
+  }
+
+  /// A day that doesn't change during a run: Today and its session read as given, a ceremony is
+  /// marked shown, and every other write fails as if offline.
+  private struct UITestStudyAPI: StudyAPIClient {
+    let summary: SessionSummary?
+    let today: TodayView
+
+    func getToday(token: String, timeZone: String) async throws -> TodayContent {
+      .day(today)
+    }
+
+    func getSession(token: String, sessionID: String) async throws -> StudyDay {
+      today.session
+    }
+
+    func getSummary(token: String, sessionID: String) async throws -> SessionSummary {
+      guard let summary else {
+        throw APIError.notFound
+      }
+
+      return summary
+    }
+
+    func markMilestoneShown(token: String, milestoneID: String) async throws {}
+
+    func openDay(
+      token: String, goalID: String, shownDate: String, timeZone: String, target: DayTarget?
+    ) async throws -> OpenedStudyDay {
+      throw APIError.network
+    }
+
+    func startBlock(token: String, sessionID: String, blockID: String, timeZone: String)
+      async throws -> BlockStart
+    {
+      throw APIError.network
+    }
+
+    func addExtraBlock(token: String, sessionID: String) async throws -> StudyBlock {
+      throw APIError.network
+    }
+
+    func catchUp(token: String, sessionID: String, timeZone: String) async throws {
+      throw APIError.network
+    }
+
+    func stop(token: String, sessionID: String, timeZone: String) async throws {
+      throw APIError.network
+    }
+
+    func lessonStatus(token: String, lessonID: String) async throws -> String {
+      throw APIError.network
+    }
+
+    func writeLesson(token: String, lessonID: String) async throws -> LessonWritingOutcome {
+      throw APIError.network
+    }
+
+    func prepareSession(token: String, sessionID: String) async throws {
+      throw APIError.network
+    }
+
+    func answerSuggestedGoal(token: String, suggestionID: String, accepted: Bool) async throws {
+      throw APIError.network
+    }
+
+    func getWeeklyRecap(token: String, goalID: String?) async throws -> WeeklyRecap {
+      throw APIError.network
     }
   }
 
