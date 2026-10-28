@@ -43,7 +43,7 @@ enum LessonMath {
 
         switch character {
         case "\\":
-          result += command(style: style)
+          result += spaced(command(style: style), after: result, style: style)
         case "{":
           index += 1
           result += parse(until: "}", style: style)
@@ -54,11 +54,34 @@ enum LessonMath {
           index += 1
         default:
           index += 1
-          result += run(String(character), style: style, italic: character.isLetter)
+          let text = character == "-" ? "\u{2212}" : String(character)
+          result += spaced(
+            run(text, style: style, italic: character.isLetter), after: result, style: style)
         }
       }
 
       return result
+    }
+
+    /// A relation or operator, set apart by a space as KaTeX spaces `=` and `+` (not in an exponent
+    /// or index). A sign that starts an expression or follows an operator, a bracket or a comma
+    /// stays with its number: `−3`.
+    private func spaced(_ piece: AttributedString, after result: AttributedString, style: Style)
+      -> AttributedString
+    {
+      let text = String(piece.characters)
+      let isBinary = Self.binaryOperators.contains(text)
+
+      guard style == .normal, isBinary || Self.relations.contains(text) else {
+        return piece
+      }
+
+      if isBinary, result.characters.last.map({ "\u{2005}([{,".contains($0) }) ?? true {
+        return piece
+      }
+
+      let space = run("\u{2005}", style: style, italic: false)
+      return space + piece + space
     }
 
     /// The group or single token after `^` or `_`.
@@ -180,6 +203,12 @@ enum LessonMath {
 
       return run
     }
+
+    static let relations: Set<String> = [
+      "=", "<", ">", "≤", "≥", "≠", "≈", "≡", "∼", "∝", "→", "←", "⇒", "⇐", "⇔", "∈", "∉", "⊂",
+      "⊆",
+    ]
+    static let binaryOperators: Set<String> = ["+", "\u{2212}", "×", "÷", "·", "±", "∓", "∪", "∩"]
 
     static let symbols: [String: String] = [
       "times": "×", "cdot": "·", "div": "÷", "pm": "±", "mp": "∓", "leq": "≤", "le": "≤",
