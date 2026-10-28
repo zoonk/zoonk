@@ -83,8 +83,8 @@ extension AppRoute {
       GoalStartScreen()
     case .goalSetup(let goalId):
       GoalSetupScreen(goalId: goalId)
-    case .courseStart(let courseId):
-      CourseStartScreen(courseId: courseId)
+    case .courseStart(let courseId, let chapterId):
+      CourseStartScreen(courseId: courseId, chapterId: chapterId)
     case .explain(let goalId):
       ExplainScreen(goalId: goalId)
     case .planLink(let planId):

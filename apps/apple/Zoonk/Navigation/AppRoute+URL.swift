@@ -74,7 +74,8 @@ enum AppLink: Equatable {
     case (2, "conversation", let conversationId, _):
       return .route(.conversation(conversationId: conversationId))
     case (1, "start", _, _): return .route(.startGoal)
-    case (3, "start", "course", let courseId): return .route(.courseStart(courseId: courseId))
+    case (3, "start", "course", let courseId):
+      return .route(.courseStart(courseId: courseId, chapterId: value("chapter")))
     case (2, "start", let goalId, _): return .route(.goalSetup(goalId: goalId))
     case (2, "explain", let goalId, _): return .route(.explain(goalId: goalId))
     case (2, "plan-link", let planId, _): return .route(.planLink(planId: planId))

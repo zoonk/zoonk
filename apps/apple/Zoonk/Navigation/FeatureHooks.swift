@@ -24,3 +24,13 @@ extension PracticeHooks {
     })
   }
 }
+
+extension LessonPlayerRoutes {
+  /// The player's Plus lock and sign-up refusals open the shell's sheets over the lesson, which
+  /// stays where the learner was.
+  static func routed(by router: AppRouter) -> LessonPlayerRoutes {
+    LessonPlayerRoutes(
+      showPlus: { router.present(.subscription) },
+      signIn: { router.present(.account) })
+  }
+}

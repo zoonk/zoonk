@@ -3,6 +3,12 @@ generate:
   - client
 accessModifier: internal
 namingStrategy: idiomatic
+# The lesson player decodes screens and answers into its own types: the generated unions of every
+# screen kind and activity template are index-named and far larger than what it reads.
+typeOverrides:
+  schemas:
+    LessonStepAnswer: LessonAnswer
+    PlayableLibraryStep: LessonStep
 # Generates only the operations the app calls, and the schemas they reference. Add an operation here
 # when a feature starts using it.
 filter:

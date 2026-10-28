@@ -19,6 +19,7 @@ struct GoalSetupScreen: View {
 
 struct CourseStartScreen: View {
   let courseId: String
+  var chapterId: String? = nil
 
   var body: some View {
     RoutePlaceholder(name: "Course start", systemImage: "plus.rectangle.on.rectangle", isTask: true)

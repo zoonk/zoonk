@@ -12,6 +12,7 @@ struct ZoonkApp: App {
   @State private var subscriptions: AppStoreSubscriptionStore
   private let cache: AppCache
   private let lessonPlayerAPI: LessonPlayerAPI
+  private let lessonPlayerRoutes: LessonPlayerRoutes
   private let practiceHooks: PracticeHooks
   private let privateImages: PrivateImageLoader
 
@@ -35,6 +36,7 @@ struct ZoonkApp: App {
     _progress = State(initialValue: dependencies.progressStore)
     let router = AppRouter(sheet: initiallyPresentsAccount ? .account : nil)
     _router = State(initialValue: router)
+    lessonPlayerRoutes = .routed(by: router)
     practiceHooks = .routed(by: router)
     _session = State(initialValue: dependencies.sessionStore)
     _subscriptions = State(initialValue: dependencies.subscriptionStore)
@@ -56,6 +58,7 @@ struct ZoonkApp: App {
         .environment(practice)
         .environment(progress)
         .environment(router)
+        .environment(\.lessonPlayerRoutes, lessonPlayerRoutes)
         .environment(\.practiceHooks, practiceHooks)
         .environment(session)
         .environment(subscriptions)

@@ -36,7 +36,7 @@ enum AppRoute: Hashable, Identifiable {
   case conversation(conversationId: String)
   case startGoal
   case goalSetup(goalId: String)
-  case courseStart(courseId: String)
+  case courseStart(courseId: String, chapterId: String? = nil)
   case explain(goalId: String)
   case planLink(planId: String)
 
