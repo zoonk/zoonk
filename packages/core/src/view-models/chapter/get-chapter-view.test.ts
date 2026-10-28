@@ -33,7 +33,6 @@ function studied({ skillId, userId }: { skillId: string; userId: string }) {
   });
 }
 
-/** A notice subject with one topic, as an exam's blueprint lists it. */
 function noticeSubject(name: string, topic: string) {
   return {
     citation: { passage: "Conteúdo programático", sourceId: "notice" },
@@ -44,7 +43,6 @@ function noticeSubject(name: string, topic: string) {
   };
 }
 
-/** A skill of the plan's graph, in a subject's area. */
 function graphSkill(skill: { id: string; name: string }, area: string) {
   return { area, lessons: 1, name: skill.name, phase: 0, skillId: skill.id };
 }
@@ -98,7 +96,6 @@ describe(getChapterView, () => {
       title: "Inside the atom",
     });
 
-    // A written lesson says so, so apps load its screens ahead without starting any writing.
     expect(
       view?.lessons.map((lesson) => [
         lesson.lessonId,
@@ -136,7 +133,6 @@ describe(getChapterView, () => {
     ]);
   });
 
-  // Missed days set a lesson of the first chapter aside: it isn't done, and neither is its chapter.
   it("never marks a lesson set aside, or its chapter, as done", async () => {
     const { chapters, lessons } = await signedInCourseGoal({
       statuses: ["done", "skipped", "todo", "todo"],
@@ -147,20 +143,15 @@ describe(getChapterView, () => {
 
     expect(view?.chapter.state).toBe("upcoming");
 
-    // Not done, it's the chapter's lesson to open, as in a chapter the plan hasn't reached.
     expect(view?.lessons.map((lesson) => [lesson.lessonId, lesson.state])).toStrictEqual([
       [lessons[0]?.id, "done"],
       [lessons[1]?.id, "next"],
     ]);
   });
 
-  // Carla's chapter page marked "Enunciado" next while Today opened "Escopo".
-  // A guest's course page listed "Quando o lucro fica na empresa" third while its chapter page
-  // said Chapter 2: a plan that follows one course numbers its chapters as the course does.
   it("numbers a course plan's chapter as the course lists it, whatever order the plan teaches", async () => {
     const { chapters, items } = await signedInCourseGoal();
 
-    // The plan teaches the second chapter first (positions are unique: moved out of the way first).
     await Promise.all(
       items.map((item, index) =>
         prisma.planItem.update({ data: { position: 100 + index }, where: { id: item.id } }),
@@ -191,7 +182,6 @@ describe(getChapterView, () => {
       return view?.lessons.find((lesson) => lesson.state === "next")?.lessonId;
     };
 
-    // The plan teaches the chapter's second lesson first (positions are unique: one at a time).
     await prisma.planItem.update({ data: { position: 10 }, where: { id: items[0]?.id } });
     await prisma.planItem.update({ data: { position: 0 }, where: { id: items[1]?.id } });
 
@@ -260,7 +250,6 @@ describe(getChapterView, () => {
       },
     });
 
-    // The plan alternates subjects: cohesion is its third chapter and Portuguese's second.
     const items = [
       { chapter: spellingChapter, day: "2026-10-06", skill: spelling },
       { chapter: lawChapter, day: "2026-10-07", skill: law },
@@ -292,10 +281,6 @@ describe(getChapterView, () => {
     });
   });
 
-  /*
-   * An exam plan teaches one skill across chapters, so the map files the skill under the chapter
-   * that met it first. The later chapter is still the plan's: its page lists what it teaches.
-   */
   it("opens a chapter whose skills were all met in an earlier chapter", async () => {
     const { plan, skills } = await signedInCourseGoal({
       statuses: ["done", "done", "todo", "todo"],

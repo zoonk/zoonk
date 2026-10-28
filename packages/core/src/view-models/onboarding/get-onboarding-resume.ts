@@ -15,7 +15,7 @@ export type OnboardingResumeResult =
   | { resume: OnboardingResumeView | null; status: "ready" }
   | { status: "unauthorized" };
 
-/** Only the latest few drafts matter: an older one was left for something newer. */
+/** Newer goals supersede abandoned older drafts. */
 const RECENT_DRAFTS = 5;
 
 type ResumeGoal = Pick<
@@ -40,11 +40,7 @@ function readOnboardingId(goal: ResumeGoal): string | null {
   return typeof onboardingId === "string" ? onboardingId : null;
 }
 
-/**
- * A draft is left to continue while its words are read, when they couldn't be, or while its goals
- * wait to be confirmed. Goals created from it, even ones archived since, close it; a question, an
- * instrument or a declined goal already had its answer.
- */
+/** Created goals close a draft even after archival; non-goal routes already have their answer. */
 function findOpenDraft({ drafts, goals }: { drafts: ResumeDraft[]; goals: ResumeGoal[] }) {
   const closed = new Set(goals.map((goal) => readOnboardingId(goal)));
 
@@ -58,10 +54,7 @@ function findOpenDraft({ drafts, goals }: { drafts: ResumeDraft[]; goals: Resume
   );
 }
 
-/**
- * Whether a goal's onboarding still has screens before the plan: the plan's reveal, with its
- * "Start day 1", is where onboarding ends. Questions have no onboarding.
- */
+/** Onboarding ends at the plan reveal; quick explanations have no onboarding. */
 async function isInOnboarding({
   goal,
   goals,
@@ -98,10 +91,7 @@ async function isInOnboarding({
   return steps.some((step) => step !== "plan");
 }
 
-/**
- * A draft only counts when it's newer than every goal: a draft left for a goal created later was
- * set aside. Then the newest goal (questions aside) while its onboarding runs, else the day.
- */
+/** Drafts count only when newer than every goal; otherwise resume the newest unfinished onboarding or the day. */
 async function toResume({
   draft,
   goals,
@@ -127,12 +117,7 @@ async function toResume({
   return activeGoals.length > 0 ? { kind: "today" } : null;
 }
 
-/**
- * What a returning visitor, guest or learner should continue: a goal they typed but haven't
- * confirmed yet, their newest goal while its onboarding hasn't reached the plan, or their day when
- * they have an active goal. Null when there's nothing to continue. Fresh at request time unless
- * the caller caches its complete display view for prefetching; every step changes it.
- */
+/** Resolves the session's continuation fresh at request time; callers may cache the complete display view. */
 export async function getOnboardingResume(): Promise<OnboardingResumeResult> {
   await io();
   const session = await getSession();

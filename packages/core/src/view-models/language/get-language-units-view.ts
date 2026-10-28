@@ -8,11 +8,7 @@ export type LanguageUnitsViewResult =
   | { status: "noGoal" | "notFound" | "notLanguage" | "unauthorized" }
   | { status: "ready"; units: LanguageUnitsView };
 
-/**
- * A language goal's units in teaching order, each a real situation with its own page: how many
- * of its lessons are done and whether the learner can already do it. A script that isn't Latin
- * adds its alphabet lesson first, open as practice anytime.
- */
+/** Requires an owned language goal; units follow teaching order and non-Latin alphabet practice comes first. */
 export async function getLanguageUnitsView(
   input: { goalId?: string } = {},
 ): Promise<LanguageUnitsViewResult> {

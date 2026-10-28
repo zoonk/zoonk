@@ -9,10 +9,6 @@ import {
 } from "./syllabus-chapters";
 import { type SyllabusItem, type SyllabusSkill } from "./syllabus-input";
 
-/**
- * Why something isn't in the plan: taken out, nothing teaches it, the plan starts past it, or it
- * didn't fit in time.
- */
 export function getNotPlannedReason({
   hasItems,
   hasSkills,
@@ -50,11 +46,7 @@ export function getNotPlannedReason({
   return pastBasics ? "pastBasics" : "time";
 }
 
-/**
- * A topic's status from its lessons: known when the plan has none on it but the learner showed
- * they know it, or tested out of every one, since practice is all that's left of it. Lessons set
- * aside are neither studied nor known (`getWorkProgress`).
- */
+/** Set-aside lessons count as neither studied nor known. */
 function getTopicStatus(items: readonly SyllabusItem[]): SyllabusTopic["status"] {
   const done = items.filter((item) => isWorkFinished(item.status)).length;
 
@@ -69,26 +61,17 @@ function getTopicStatus(items: readonly SyllabusItem[]): SyllabusTopic["status"]
   return done > 0 ? "inProgress" : "toStudy";
 }
 
-/**
- * Nothing of the topic is left to do, and some of it was set aside (missed days the plan couldn't
- * fit back by the date): what the plan doesn't teach of it is out for time.
- */
 function isRestSetAside(items: readonly SyllabusItem[]): boolean {
   const progress = new Set(items.map((item) => getWorkProgress(item.status)));
   return progress.has("setAside") && !progress.has("todo");
 }
 
-/** The skills that teach a topic, by the topic's exact words or the same words written otherwise. */
 function findTopicSkills({ skills, topic }: { skills: readonly SyllabusSkill[]; topic: string }) {
   const wanted = toTopicKey(topic);
   return skills.filter((skill) => skill.topics.some((name) => toTopicKey(name) === wanted));
 }
 
-/**
- * Whether the plan's skills name any of a subject's topics as the notice lists them now. A plan
- * built from an earlier reading whose topics were different (ENEM's matrix statements, now its
- * contents) names none: its topics are shown without a status rather than all "not in the plan".
- */
+/** Older notice mappings may name no current topics; display those topics without claiming they are out of plan. */
 export function namesAnyTopic({
   skills,
   topics,
@@ -99,10 +82,7 @@ export function namesAnyTopic({
   return topics.some((topic) => findTopicSkills({ skills, topic }).length > 0);
 }
 
-/**
- * A notice topic with its status from the lessons of the skills that teach it (the subject's own,
- * else any), when the plan says which skills teach which topic; otherwise the topic alone.
- */
+/** Claims status only for mapped topics; prefers the subject's own skills before other subjects. */
 export function buildTopic({
   chapters,
   items,
@@ -115,17 +95,14 @@ export function buildTopic({
   topic,
 }: {
   chapters: readonly KeyedChapter[];
-  /** The subject's lessons, then every lesson for a topic only another subject's skills teach. */
+  /** Fall back to all lessons only when another subject teaches the topic. */
   items: { all: readonly SyllabusItem[]; own: readonly SyllabusItem[] };
-  /** Skills the learner showed they know (see `SyllabusInput`). */
   knownSkillIds: ReadonlySet<string>;
   mapped: boolean;
-  /** Skills the plan starts past (see `SyllabusInput`). */
   pastBasicsSkillIds: ReadonlySet<string>;
-  /** The subject's skills, then every skill when none of them teaches it. */
+  /** Fall back to all skills only when this subject teaches none of the topic. */
   skills: { all: readonly SyllabusSkill[]; own: readonly SyllabusSkill[] };
   skipped: boolean;
-  /** Bases the learner chose to skip (see `SyllabusInput`). */
   skippedBaseIds?: ReadonlySet<string>;
   topic: string;
 }): Omit<SyllabusTopic, "frequency" | "heading"> {
@@ -154,8 +131,7 @@ export function buildTopic({
 
   const studied = taught.filter((item) => isWorkFinished(item.status));
 
-  // A subject the learner took out keeps what they studied of it, with its note: shown as not in
-  // the plan with nothing under it, its lessons done read as never studied (R25, ENEM).
+  // Removing a subject must not erase the lessons already studied within it.
   if (reason === "skipped" && studied.length > 0) {
     return {
       ...topicChapters({ chapters, items: studied }),
@@ -170,13 +146,12 @@ export function buildTopic({
     return { ...empty, notPlannedReason: reason, status: "notPlanned" };
   }
 
-  // One right answer frees a topic from its lessons, never from practice: it's in the plan.
+  // Known topics still require practice even when their lessons are skipped.
   if (taught.length === 0) {
     return { ...empty, notPlannedReason: null, status: "known" };
   }
 
-  // Lessons set aside are out of the plan for time: a topic with nothing else left to do says so
-  // rather than "to study" with nothing planned (R25), and keeps what the learner studied of it.
+  // Set-aside lessons leave the topic out for time while preserving studied progress.
   if (isRestSetAside(taught)) {
     return studied.length > 0
       ? {
@@ -198,7 +173,6 @@ export function buildTopic({
   };
 }
 
-/** The subject's chapters these lessons of a topic are in. */
 function topicChapters({
   chapters,
   items,
@@ -215,7 +189,6 @@ function topicChapters({
   };
 }
 
-/** A syllabus item's own number ("2", "2.1"), which a notice writes before its words. */
 const ITEM_NUMBER = /^\s*(?<number>\d{1,3}(?:\.\d{1,3})*)\.?\s+\S/u;
 
 function getTopicNumber(name: string): string | null {
@@ -224,7 +197,6 @@ function getTopicNumber(name: string): string | null {
 
 type BuiltTopic = ReturnType<typeof buildTopic>;
 
-/** A heading's status from the items numbered under it that the plan has. */
 function getHeadingStatus(children: readonly BuiltTopic[]): SyllabusTopic["status"] {
   const planned = children.filter((child) => child.status !== "notPlanned");
   const isCovered = (child: BuiltTopic) => child.status === "studied" || child.status === "known";
@@ -242,17 +214,11 @@ function getHeadingStatus(children: readonly BuiltTopic[]): SyllabusTopic["statu
     : "toStudy";
 }
 
-/** The earliest date among these topics', or null. */
 function getEarliestDate(topics: readonly BuiltTopic[]): string | null {
   return topics.flatMap((topic) => topic.nextDate ?? []).toSorted()[0] ?? null;
 }
 
-/**
- * A heading of the notice's outline ("2 Ato administrativo" over "2.1", "2.2"…) that no skill
- * names takes its status from the items numbered under it: it's in the plan when any of them is,
- * so the topic sheet never says "out of your plan" over items the plan teaches. A heading none of
- * whose items is in the plan keeps its own status.
- */
+/** Unmapped headings inherit coverage from numbered descendants; headings with none planned retain their own status. */
 export function withHeadingStatuses<TTopic extends BuiltTopic>(
   topics: readonly TTopic[],
 ): TTopic[] {

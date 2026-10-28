@@ -32,7 +32,6 @@ export type OnboardingResult =
   | { onboarding: OnboardingView; status: "ready" }
   | { status: "notFound" | "unauthorized" };
 
-/** Goals typed together ("ENEM and English") share an onboarding id and the day's time. */
 async function findOnboardingGoalIds({
   details,
   goalId,
@@ -57,13 +56,6 @@ async function findOnboardingGoalIds({
   return goals.length > 0 ? goals.map((goal) => goal.id) : [goalId];
 }
 
-/**
- * What the exam's stored notice says that onboarding uses: its choices with the learner's picks,
- * for the `examChoice` question, its subjects as the learner takes them (only the options they
- * picked), for the count before placement, its exam day, for the time question's starting pick
- * when the goal has no date of its own, and whether it's the learner's own material read into a
- * notice (`fromMaterial`, a class test).
- */
 async function findExamNotice({
   examBlueprintId,
   goalId,
@@ -91,7 +83,7 @@ async function findExamNotice({
   const stored = examStructureSchema.safeParse(blueprint?.structure).data;
   const structure = stored && toChosenStructure({ choices, structure: stored });
 
-  // Its written tests (a discursive test, an essay) aren't subjects a learner already knows well.
+  // Written papers are not subjects the learner can declare already known.
   const subjects = structure
     ? structure.subjects.filter((subject) => !isWrittenSubject({ structure, subject }))
     : [];
@@ -107,11 +99,6 @@ async function findExamNotice({
   };
 }
 
-/**
- * The next sitting of the public exam an exam goal's course links to, which the date question
- * leads with: the same source as the start's default date and the days the course's page counts
- * down to.
- */
 async function findCourseExamDays(goal: {
   kind: string;
   primaryCourseId: string | null;
@@ -136,15 +123,9 @@ async function findCourseExamDays(goal: {
 
 const QUESTIONS = new Set<OnboardingStep>(ONBOARDING_QUESTIONS);
 
-/** Goals the Library can already teach: a subject or an exam, not a language pair. */
 const COURSE_KINDS = new Set(["exam", "learn"]);
 
-/**
- * A published Library course that already teaches the goal's subject, in the learner's language:
- * the course whose title is the subject, else the first whose title contains it. It's looked for
- * again once every question is answered, since the answers may have narrowed the subject since the
- * goal was typed.
- */
+/** Match published courses in the learner's language again after answers may have narrowed the subject. */
 async function findLibraryCourse({
   goal,
   steps,
@@ -179,11 +160,7 @@ async function findLibraryCourse({
   };
 }
 
-/**
- * The rest of onboarding for a goal the learner just created: the goal and the screens still ahead
- * (only unanswered questions, then the buddy choice when none was saved, placement and the plan).
- * Uncached: every answer changes it.
- */
+/** Requires ownership; uncached so every answer immediately changes the remaining screens. */
 export async function getOnboarding({ goalId }: { goalId: string }): Promise<OnboardingResult> {
   const owned = await findOwnedGoal(goalId);
 
@@ -225,7 +202,6 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
     getDateInTimeZone({ date: new Date(), timeZone: getAnswerTimeZone({ goal }) }),
   );
 
-  // A goal started from a course's page is already built from that course.
   const courseStart = readCourseStart(details);
 
   const libraryCourse = courseStart

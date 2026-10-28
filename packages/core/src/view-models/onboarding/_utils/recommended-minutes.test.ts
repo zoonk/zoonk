@@ -26,7 +26,6 @@ describe(getRecommendedMinutes, () => {
   });
 
   it("starts a big exam (a public exam, ENEM) at the time it takes, more the sooner it is", () => {
-    // ENEM a month away, a civil service exam three months away, one half a year away, one without a date.
     const dates = ["2026-11-04", "2027-01-03", "2027-03-01", "2027-09-01", null];
 
     expect(dates.map((date) => minutesFor("big", date))).toStrictEqual([180, 120, 90, 60, 60]);
@@ -48,7 +47,7 @@ describe(getGoalSize, () => {
     const career = getGoalSize({ ...exam, kind: "learn", purpose: "careerChange" });
 
     expect(career).toBe("career");
-    // Six months out (Carla), three months out, and with no date.
+
     expect(
       ["2027-04-06", "2026-12-20", null].map((date) => minutesFor(career, date)),
     ).toStrictEqual([60, 120, 60]);
@@ -65,7 +64,6 @@ describe(getGoalSize, () => {
   });
 
   it("starts a class test at a short study time: 45 min in its last week, 30 before or undated", () => {
-    // Friday's test, one ten days away, one in two months, one without a date yet.
     const dates = ["2026-10-09", "2026-10-15", "2026-12-01", null];
 
     expect(dates.map((date) => minutesFor("classTest", date))).toStrictEqual([45, 30, 30, 30]);

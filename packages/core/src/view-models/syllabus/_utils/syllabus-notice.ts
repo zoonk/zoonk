@@ -17,7 +17,6 @@ import { readCourseWeights } from "../../../plans/planner/course-weights";
 import { type SyllabusView } from "../syllabus-contract";
 import { type NoticeSubject, type SyllabusInput } from "./syllabus-input";
 
-/** The course weights a syllabus shows: those research found for the goal's course, if any. */
 function toCourseWeights(details: Goal["details"] | undefined): SyllabusView["courseWeights"] {
   const weights = readCourseWeights(details);
 
@@ -32,10 +31,6 @@ function toCourseWeights(details: Goal["details"] | undefined): SyllabusView["co
     : null;
 }
 
-/**
- * What a subject's written test asks, from the exam's written sections named like it or its group
- * ("Discursive test (P3)": two discursive questions and a legal brief).
- */
 function getWrittenTasks({
   structure,
   subject,
@@ -53,12 +48,7 @@ function getWrittenTasks({
     .flatMap((section) => (section.tasks ?? []).map((task) => task.description));
 }
 
-/**
- * The exam's notice subjects (with their short names), when the goal is an exam with a blueprint:
- * the exam as the learner takes it, with only the options of its choices they picked, and its pass
- * marks in the goal's language when the reading translated them. A GET passes the blueprint and
- * the learner's picks it already read; without them, they're read fresh.
- */
+/** Restricts notice choices to learner picks; GET callers should share the already-read blueprint and choices. */
 export async function loadNotice(
   goal: Pick<Goal, "examBlueprintId" | "id" | "kind"> & Partial<Pick<Goal, "details" | "language">>,
   knownBlueprint?: ExamBlueprint | null | Promise<ExamBlueprint | null>,

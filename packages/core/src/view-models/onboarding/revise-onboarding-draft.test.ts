@@ -11,7 +11,6 @@ import { isInputRangeError } from "../../plans/target-date-range";
 import { type GoalUnderstandingView } from "./onboarding-contract";
 import { reviseOnboardingDraft } from "./revise-onboarding-draft";
 
-/** An exam with the 2099 notice stored: two exam days read from its official source. */
 async function createExam() {
   const examName = `Test Exam ${randomUUID()}`;
   const source = await sourceFixture({ title: "Official notice" });
@@ -38,7 +37,6 @@ async function createExam() {
   return { blueprint, examName, source };
 }
 
-/** "Pass the exam by June 2099, and English": an exam with its own deadline and a learn goal. */
 function examCard({ blueprintId, examName }: { blueprintId: string; examName: string }) {
   return {
     goals: [
@@ -175,7 +173,6 @@ describe(reviseOnboardingDraft, () => {
 
   it("refuses a deadline past what a plan reaches before the card is saved", async () => {
     const { draft } = await setup();
-    // A plan reaches 3,650 days from today: eleven years is past it.
     const value = `${new Date().getUTCFullYear() + 11}-01-01`;
 
     await expect(

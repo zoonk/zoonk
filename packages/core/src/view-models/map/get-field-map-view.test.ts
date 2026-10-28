@@ -10,7 +10,6 @@ import { mockSession } from "../../_test-utils/mock-session";
 import { signedInCourseGoal } from "../_test-utils/course-goal";
 import { getFieldMapView } from "./get-field-map-view";
 
-/** A skill studied long ago with a short memory: its chance of recall is low now. */
 function fadingSkill({ skillId, userId }: { skillId: string; userId: string }) {
   return learnerSkillFixture({
     difficulty: 5,
@@ -175,12 +174,9 @@ describe(getFieldMapView, () => {
       ],
     });
 
-    // A chapter that's also in another course stays with the plan's own course on the map.
     expect(map?.areas.map((area) => area.courseId)).toStrictEqual([course.id, course.id]);
   });
 
-  // Lucas's plan, a day past his date with lessons set aside, offered "Continue at Beginner" over
-  // the lessons he never studied.
   it("suggests nothing next while lessons are left past the plan's date", async () => {
     const { goal } = await signedInCourseGoal({ statuses: ["done", "done", "done", "skipped"] });
 
@@ -194,7 +190,6 @@ describe(getFieldMapView, () => {
     expect(result.status === "ready" && result.map.next).toBeNull();
   });
 
-  // An exam studied past its date has no deadline: what it set aside, the Library couldn't write.
   it("suggests what's next once an exam studied past its date is finished", async () => {
     const { goal, plan } = await signedInCourseGoal({
       statuses: ["done", "done", "done", "skipped"],

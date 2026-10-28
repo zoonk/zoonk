@@ -14,12 +14,7 @@ export type LanguageTodayViewResult =
   | { status: "noGoal" | "notFound" | "notLanguage" | "unauthorized" }
   | { status: "ready"; today: LanguageTodayView };
 
-/**
- * What Today adds for a language goal: the level across skills with the target ("A2+ → B1+"),
- * which stands in for preparation, the words to say again today, and the exam-style speaking tasks
- * to practice any time. The pattern noticed in recent mistakes is Today's own
- * (`TodayView.pattern`): it steps aside for the day's missions, which only Today reads.
- */
+/** Requires an owned language goal; Today composes pattern cards separately against its own missions. */
 export async function getLanguageTodayView(
   input: { goalId?: string } = {},
 ): Promise<LanguageTodayViewResult> {

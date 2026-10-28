@@ -10,7 +10,6 @@ import {
 import { describe, expect, it } from "vitest";
 import { getLessonFit } from "./get-lesson-fit";
 
-/** A published course of two chapters with one lesson each. */
 async function createTwoChapterCourse() {
   const course = await courseFixture({ isPublished: true });
 

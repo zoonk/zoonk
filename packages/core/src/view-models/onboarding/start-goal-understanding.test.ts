@@ -16,7 +16,6 @@ function uniqueGoal(text: string) {
   return `${text} ${randomUUID()}`;
 }
 
-/** Small AI calls the learner claimed: reading new words takes one. */
 function countAssists(userId: string) {
   return prisma.usageRecord.count({ where: { kind: "assist", userId } });
 }
@@ -114,7 +113,6 @@ describe(startGoalUnderstanding, () => {
     const user = await userFixture();
     mockSession(user.id);
     const year = new Date().getUTCFullYear();
-    // A plan reaches 3,650 days: two years ahead fits, eleven doesn't.
     const dates = [`${year + 2}-03-31`, `${year + 11}-03-31`];
 
     const words = dates.map((targetDate) => uniqueGoal(`learn quantum physics by ${targetDate}`));
@@ -223,8 +221,6 @@ describe(startGoalUnderstanding, () => {
     ]);
   });
 
-  // Sofia named "March" while the OAB notice said 10 January: the card offered that day, and her
-  // goal remembers it, so Today doesn't ask her the same thing again after she kept her month.
   it("remembers the notice's day the card offers next to a month the learner named", async () => {
     const user = await userFixture();
     mockSession(user.id);
@@ -328,7 +324,6 @@ describe(startGoalUnderstanding, () => {
       status: "limitReached",
     };
 
-    // Not even words understood today: the card couldn't be confirmed without an account.
     await expect(startGoalUnderstanding({ goal: known, language: "en" })).resolves.toStrictEqual(
       refused,
     );
@@ -374,7 +369,6 @@ describe(startGoalUnderstanding, () => {
 
     await expect(prisma.onboardingDraft.count({ where: { userId: guest.id } })).resolves.toBe(0);
 
-    // Words understood today cost nothing, so the cap doesn't stop them.
     await expect(startGoalUnderstanding({ goal: known, language: "en" })).resolves.toMatchObject({
       status: "understood",
     });

@@ -19,7 +19,6 @@ import { getSyllabusView } from "./get-syllabus-view";
 
 const citation = { passage: "Conteúdo programático", sourceId: "notice" };
 
-/** A notice with two subjects in two groups, as a Câmara notice lists them. */
 function noticeStructure() {
   return {
     formats: [],
@@ -46,11 +45,6 @@ function noticeStructure() {
   };
 }
 
-/**
- * An exam learner whose plan teaches Portuguese (orthography done, cohesion ahead) and
- * constitutional law in two chapters, from courses with icons. `topics` maps skills to the
- * notice's topics, as graphs written from the notice do.
- */
 async function signedInExamLearner({ topics }: { topics: boolean }) {
   const user = await userFixture();
 
@@ -127,7 +121,6 @@ async function signedInExamLearner({ topics }: { topics: boolean }) {
       scheduledFor: new Date("2026-10-06T00:00:00.000Z"),
       skillId: principles.id,
     }),
-    // A lesson saved without its skill still counts for the subject its lesson teaches.
     planItemFixture({
       chapterId: portugueseChapter.id,
       lessonId: lesson.id,
@@ -135,7 +128,6 @@ async function signedInExamLearner({ topics }: { topics: boolean }) {
       position: 2,
       scheduledFor: new Date("2026-10-07T00:00:00.000Z"),
     }),
-    // So does a whole chapter planned as one item: it teaches its chapter's skills.
     planItemFixture({ chapterId: lawChapter.id, kind: "chapter", planId: plan.id, position: 3 }),
     chapterSkillFixture({ chapterId: lawChapter.id, skillId: principles.id }),
     planItemFixture({ kind: "mock", planId: plan.id, position: 4 }),
@@ -153,12 +145,10 @@ async function signedInExamLearner({ topics }: { topics: boolean }) {
   };
 }
 
-/** A skill of a goal without an exam, one lesson long, in one of its modules. */
 function oneLessonSkill(skill: { id: string; name: string }, area: string) {
   return { area, lessons: 1, name: skill.name, phase: 0, skillId: skill.id };
 }
 
-/** What the signed-in learner's syllabus says of one of its topics. */
 async function readTopicStatus(name: string) {
   const result = await getSyllabusView();
   const syllabus = result.status === "ready" ? result.syllabus : null;
@@ -222,7 +212,6 @@ describe(getSyllabusView, () => {
         "https://example.com/pt.webp",
         0.75,
         1,
-        // The lessons the plan holds in it, as its chapters count them, not the graph's full depth.
         2,
       ],
       [
@@ -362,8 +351,6 @@ describe(getSyllabusView, () => {
       },
     });
 
-    // The chapter teaches both skills; its one planned lesson counts for the second, and placement
-    // tested it out.
     await Promise.all([
       chapterSkillFixture({ chapterId: chapter.id, skillId: membrane.id }),
       chapterSkillFixture({ chapterId: chapter.id, skillId: osmosis.id }),
@@ -383,7 +370,6 @@ describe(getSyllabusView, () => {
     const result = await getSyllabusView({ goalId: goal.id });
     const subjects = result.status === "ready" ? result.syllabus.subjects : [];
 
-    // Tested out, not studied: each counts it among the lessons the learner knows.
     expect(
       subjects.map((subject) => [
         subject.name,
@@ -463,8 +449,6 @@ describe(getSyllabusView, () => {
     });
   });
 
-  // One true-or-false answer is right by luck half the time: a Câmara learner's one right answer in
-  // a session read as known, and the plan cut the topic first. Three right ones of its own show it.
   it("says a topic is known only from three right true-or-false answers of its own", async () => {
     const { goal, lawChapter, user } = await signedInExamLearner({ topics: true });
     const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
@@ -473,7 +457,6 @@ describe(getSyllabusView, () => {
       parsePlanGraph(plan.graph).skills.find((entry) => entry.name === "Aplicar os princípios")
         ?.skillId ?? "";
 
-    // The plan has no lessons on the topic: the time left it out, unless the learner knows it.
     await prisma.planItem.deleteMany({ where: { chapterId: lawChapter.id, planId: plan.id } });
 
     const answerRight = async () => {
@@ -489,9 +472,6 @@ describe(getSyllabusView, () => {
     await expect(readTopicStatus("Princípios fundamentais")).resolves.toBe("known");
   });
 
-  // Today's aside listed the preparation's chapters ("Reading comprehension 97%") under the Plan's
-  // link, whose subjects read 0%. Today now reads its goal's subjects the way the Plan reads the
-  // active goal's, so both list the notice's subjects with the same lessons studied.
   it("gives Today's goal the subjects and lessons the Plan lists for the active goal", async () => {
     const { goal } = await signedInExamLearner({ topics: true });
 
@@ -518,8 +498,6 @@ describe(getSyllabusView, () => {
     ]);
   });
 
-  // Ana's Today read "Preparation 12%" over five subjects at "<1%": the bars counted lessons
-  // (1 of 662), the number skills shown, answers, memory and mocks.
   it("gives each exam subject its preparation on the goal's scale, which adds up to the goal's", async () => {
     const { goal, skills, user } = await signedInExamLearner({ topics: false });
     const { orthography } = skills;
@@ -531,7 +509,6 @@ describe(getSyllabusView, () => {
     );
 
     await Promise.all([
-      // A lesson's answer shows the skill; six questions never seen before measure how well.
       attemptFixture({ skillId: orthography.id, userId: user.id }),
       ...items.map((item, index) =>
         attemptFixture({
@@ -564,9 +541,8 @@ describe(getSyllabusView, () => {
 
     expect(portuguese?.preparation).toBeGreaterThan(0);
     expect(law?.preparation).toBe(0);
-    // The subject studied reads ahead of the whole, which also holds a subject not started.
     expect(portuguese?.preparation).toBeGreaterThan(preparation?.value ?? 1);
-    // Each subject counting by its weight, the subjects come to the goal's own number.
+
     expect(
       preparation?.sections.reduce((sum, section) => sum + section.preparation * section.weight, 0),
     ).toBeCloseTo(preparation?.value ?? -1, 6);
@@ -577,9 +553,6 @@ describe(getSyllabusView, () => {
     ]);
   });
 
-  // Both subjects studied whole, three new questions right in each and no mock yet: the goal read
-  // 55% over subjects at 27%. Its six answers counted for the goal; each subject's three, too few,
-  // didn't.
   it("keeps the goal's preparation within its subjects' when each has only a few answers", async ({
     onTestFinished,
   }) => {
@@ -635,11 +608,9 @@ describe(getSyllabusView, () => {
     expect(preparation?.value).toBeGreaterThanOrEqual(Math.min(...shares) - 1e-9);
     expect(preparation?.value).toBeLessThanOrEqual(Math.max(...shares) + 1e-9);
 
-    // No subject has the answers to count mastery yet, so the goal shows none either.
     expect(subjects.map((subject) => subject.mastery)).toStrictEqual([null, null]);
     expect(preparation?.components.mastery.value).toBeNull();
 
-    // Two more in Portuguese count its mastery, and only its: the law subject still needs answers.
     const more = await Promise.all(
       Array.from({ length: 2 }, () =>
         itemFixture({ content: choiceItemContent(), skillId: skills.orthography.id }),
@@ -668,12 +639,6 @@ describe(getSyllabusView, () => {
     expect(valueAfter?.value).toBeLessThanOrEqual(Math.max(...sharesAfter) + 1e-9);
   });
 
-  /*
-   * A date too near for constitutional law left it out of the plan, but the exam still tests it,
-   * so the goal's preparation counts it: the Plan showed "Not in your plan" with no number, and the
-   * goal's sat under every subject it showed one for. Exam-prep apps show every section's score
-   * whatever the study plan; the subject a learner took out isn't counted, so it shows none.
-   */
   it("gives a subject the plan left out its preparation while the goal counts it", async () => {
     const { goal, lawChapter, skills, user } = await signedInExamLearner({ topics: false });
     const { orthography } = skills;
@@ -723,10 +688,8 @@ describe(getSyllabusView, () => {
     expect(law?.preparation).toBe(0);
     expect(law?.mastery).toBeNull();
     expect(portuguese?.preparation).toBeGreaterThan(value ?? 1);
-    // The goal sits within the subjects it shows, the one out of the plan included.
     expect(value).toBeGreaterThanOrEqual(law?.preparation ?? 1);
 
-    // Taken out by the learner, the subject leaves the goal's number, and shows none.
     await prisma.plan.update({
       data: { settings: { skippedAreas: ["Direito Constitucional"] } },
       where: { goalId: goal.id },
@@ -739,7 +702,6 @@ describe(getSyllabusView, () => {
     expect(skipped.value).toBeCloseTo(skipped.subjects[0]?.preparation ?? -1, 6);
   });
 
-  // Pedro finished every lesson and still read "Progress 4%".
   it("measures a goal that isn't an exam in lessons: its modules' bars added up, finished at 100%", async () => {
     const user = await userFixture();
 

@@ -22,7 +22,6 @@ export type ChapterViewResult =
   | { chapter: ChapterView; status: "ready" }
   | { status: "noGoal" | "notFound" | "unauthorized" };
 
-/** The skills the learner has answered at least once, which sessions count as studied. */
 async function loadStudiedSkills({ skillIds, userId }: { skillIds: string[]; userId: string }) {
   const rows = await prisma.learnerSkill.findMany({
     select: { skillId: true },
@@ -32,12 +31,7 @@ async function loadStudiedSkills({ skillIds, userId }: { skillIds: string[]; use
   return new Set(rows.map((row) => row.skillId));
 }
 
-/**
- * A chapter of the learner's plan (the active goal by default): its map of skills with mastery,
- * its lessons with the next one to open (the one Today opens next when it's here), open mistakes on its skills and the summary cards its
- * finished lessons left. Every chapter a plan item points at has one; a chapter outside the goal's
- * plan isn't found.
- */
+/** Requires an owned goal (active by default); returns not-found for chapters outside its plan. */
 export async function getChapterView({
   chapterId,
   goalId,
@@ -134,7 +128,6 @@ export async function getChapterView({
       mistakes: { open: openMistakes },
       skills: area.skills,
       summaries: buildChapterSummaries({ lessons, states: lessonStates }),
-      // The test-out comes with Plus on the same rule (`isTestOutPlusOnly`).
       testOut: {
         available: area.state !== "done" && !blockedTestOutChapters.has(chapterId),
         plusRequired: access.trialEnded,

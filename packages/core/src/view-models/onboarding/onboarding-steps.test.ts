@@ -5,7 +5,6 @@ const NEW_PROFILE = { hasBuddy: false, hasEarlierGoals: false };
 
 const SET_UP_PROFILE = { hasBuddy: false, hasEarlierGoals: true };
 
-/** The steps of an exam goal whose words gave these details. */
 function examSteps(details: Record<string, unknown>) {
   return getOnboardingSteps({
     goal: { details, kind: "exam", targetDate: null },
@@ -122,7 +121,6 @@ describe(getOnboardingSteps, () => {
   });
 
   it("asks only for the target the exam has: a position for a civil service exam, nothing for a pass", () => {
-    // A civil service exam that named its position, one that didn't, and the OAB, which is only passed.
     expect(examSteps({ examTarget: "position", targetPosition: "Agente" })).not.toContain("target");
     expect(examSteps({ examTarget: "position", targetScore: "80 pontos" })[0]).toBe("target");
     expect(examSteps({ examName: "OAB" })).not.toContain("target");
@@ -138,7 +136,6 @@ describe(getOnboardingSteps, () => {
       profile: SET_UP_PROFILE,
     });
 
-    // A class test is only passed: no score, course or job to ask about.
     expect(steps.slice(0, 2)).toStrictEqual(["targetDate", "level"]);
   });
 

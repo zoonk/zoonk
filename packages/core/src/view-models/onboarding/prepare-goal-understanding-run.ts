@@ -15,15 +15,7 @@ export type GoalUnderstandingRunResult =
   | { status: "notFound" | "unauthorized" }
   | { draft: OnboardingDraftView; status: "start" | "understood" };
 
-/**
- * Gets a draft ready for the run that reads its words, when the learner starts it or tries again:
- * `understood` when nothing needs to run (already read, or the learner's same words were understood
- * today),
- * `start` when a run should start. A new draft's first run was already claimed when it was saved;
- * starting one again is another of the learner's small AI calls (`claimAssist`). A guest whose one
- * goal is taken can't confirm it, so nothing is read for them. A failed draft goes back to being
- * read.
- */
+/** Requires draft ownership; understood needs no run, start requires one, and retries claim another small AI allowance. */
 export async function prepareGoalUnderstandingRun({
   draftId,
 }: {

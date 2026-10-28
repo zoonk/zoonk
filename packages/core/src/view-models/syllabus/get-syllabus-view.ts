@@ -15,10 +15,7 @@ import { buildSyllabus } from "./_utils/build-syllabus";
 import { readSyllabusInput } from "./_utils/read-syllabus-input";
 import { type SyllabusView } from "./syllabus-contract";
 
-/**
- * Where a known topic comes back to be confirmed: practice, or the quick review on a free exam
- * plan past its first week, whose practice is Plus (see `loadReviewsAndClaims`).
- */
+/** Free exam reviews must confirm known topics after mixed practice becomes Plus-only. */
 async function getKnownTopicsReturn({
   goal,
   timeZone,
@@ -44,11 +41,6 @@ async function getKnownTopicsReturn({
   return access.trialEnded ? "reviews" : "practice";
 }
 
-/**
- * An exam goal's preparation by section, which gives each subject its own number on the goal's
- * scale. The page's own preparation read, so the Plan and Today measure it once. Other goals are
- * measured in lessons.
- */
 async function loadSections(goal: Pick<Goal, "id" | "kind">) {
   if (goal.kind !== "exam") {
     return null;
@@ -62,12 +54,7 @@ export type SyllabusViewResult =
   | { status: "noGoal" | "notFound" | "unauthorized" }
   | { status: "ready"; syllabus: SyllabusView };
 
-/**
- * The structure of a goal (the active goal by default), so the learner can see all of it and trust
- * it's complete: an exam's notice subjects and topics in its own words, each with progress and when
- * the plan studies it next, or the plan's modules with their chapters. A goal without a plan yet
- * isn't found. The API serves the same view as `GET /v1/goals/{goalId}/syllabus`.
- */
+/** Requires goal ownership; returns not-found without a plan and shares the public syllabus contract. */
 export async function getSyllabusView(
   input: { goalId?: string } = {},
 ): Promise<SyllabusViewResult> {

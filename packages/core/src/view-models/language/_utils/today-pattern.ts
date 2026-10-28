@@ -7,12 +7,7 @@ import { type Mission, isFullMeal } from "../../../sessions/missions";
 import { readMissionDocument } from "../../../sessions/missions/catalog";
 import { getDayMissions, hasDayMissionBonus } from "../../../sessions/missions/get-day-missions";
 
-/**
- * Whether Today keeps its pattern card beside a day whose missions offer the same drill
- * (`covered`): the drill needs one entry, so the card steps aside. Unless the bonus was earned
- * elsewhere and the day isn't a full meal: the missions card then shows an earned-elsewhere line
- * instead of its unfinished rows, and hiding the card would remove the drill's only Today entry.
- */
+/** Keep the drill card when an earned-elsewhere bonus hides unfinished missions; otherwise avoid duplicate drill entries. */
 function keepsTodayPattern({
   covered,
   earned,
@@ -25,11 +20,7 @@ function keepsTodayPattern({
   return !covered || (earned && !isFullMeal(missions));
 }
 
-/**
- * The noticed pattern Today offers beside its day: one of the day's missions may already be its
- * drill, a saved day's or an unopened day's alike, and then the card steps aside unless
- * `keepsTodayPattern` keeps it. It composes the day Today already read, so nothing is read twice.
- */
+/** Composes the already-read day; suppresses duplicate drill entries unless mission rows are hidden. */
 export function selectDayPattern<Pattern extends { id: string }>({
   day,
   pattern,
@@ -50,7 +41,6 @@ export function selectDayPattern<Pattern extends { id: string }>({
     : null;
 }
 
-/** The pattern noticed in a language goal's recent mistakes, for Today to offer; none otherwise. */
 export async function loadNoticedPattern({ goal, userId }: { goal: Goal; userId: string }) {
   if (goal.kind !== "language" || !goal.targetLanguage) {
     return null;
@@ -59,10 +49,7 @@ export async function loadNoticedPattern({ goal, userId }: { goal: Goal; userId:
   return findFreshMistakePattern({ language: goal.targetLanguage, userId });
 }
 
-/**
- * The notebook's pattern prompt beside a SAVED day, which it doesn't build: a drill already offered
- * as one of that day's missions needs one entry (`keepsTodayPattern`).
- */
+/** Read-only; composes the saved day's missions without building it. */
 export async function loadTodayPattern({ goal, userId }: { goal: Goal; userId: string }) {
   const pattern = await findFreshMistakePattern({ language: goal.targetLanguage ?? "", userId });
 

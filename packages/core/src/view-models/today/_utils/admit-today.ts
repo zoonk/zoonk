@@ -8,19 +8,12 @@ import { getSession } from "../../../users/get-session";
 import { isCourseSetupLeft } from "../../onboarding/onboarding-steps";
 import { type TodayViewResult } from "../get-today-view";
 
-/**
- * A goal's plan is built in the background after onboarding. Until it has items there's no day to
- * build, and building one then would fix an empty day in place: the day is built once it's ready.
- */
+/** Do not persist an empty day before the background plan has items. */
 async function isPlanBuilt({ goalId, userId }: { goalId: string; userId: string }) {
   const plan = await readSavedPlan(userId, goalId);
   return (plan?.items.length ?? 0) > 0;
 }
 
-/**
- * The goal Today shows without one asked for: the learner's active goal (`readActiveGoal`), or the
- * one they picked when it's gone, which Today says it can't find.
- */
 async function findTodayGoalId(userId: string): Promise<string | null> {
   const active = await readActiveGoal(userId);
 
@@ -32,16 +25,11 @@ async function findTodayGoalId(userId: string): Promise<string | null> {
   return profile?.activeGoalId ?? null;
 }
 
-/** Today's own refusal, or the learner's goal it shows a day for (`admitted`). */
 export type TodayAdmission =
   | Exclude<TodayViewResult, { status: "ready" }>
   | { owned: Extract<OwnedGoal, { status: "ready" }>; status: "admitted" };
 
-/**
- * Whether Today shows a day for the requested goal (the active one by default): the learner's own
- * active goal once its plan is built and, for a course start, its questions answered. It writes
- * nothing, so a refused goal stays as it was.
- */
+/** Read-only; admits only an owned active goal with a built plan and completed course setup. */
 export async function admitToday(requestedGoalId?: string): Promise<TodayAdmission> {
   const session = await getSession();
 
@@ -63,12 +51,11 @@ export async function admitToday(requestedGoalId?: string): Promise<TodayAdmissi
     return owned;
   }
 
-  // A paused, completed or archived goal has no day to plan: nothing is built for it.
   if (owned.goal.status !== "active") {
     return { status: "goalNotActive", userId };
   }
 
-  // A quick explanation is a one-off: a learner with only explanations has no day to plan.
+  // A quick explanation alone is not a daily study plan.
   if (owned.goal.kind === "explain" && !(await hasStudyGoal(userId))) {
     return { status: "noGoal", suggestedGoal: await getCurrentSuggestedGoal(), userId };
   }

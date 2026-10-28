@@ -16,7 +16,7 @@ describe("complete displayed exam weights", () => {
       kind: "exam",
       userId: user.id,
     });
-    // The exam still asks the essay when this sparse plan has not outlined or scheduled it.
+
     await planFixture({
       goalId: goal.id,
       graph: { ...fixture.graph, skills: fixture.graph.skills.slice(0, 4) },

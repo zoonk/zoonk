@@ -23,8 +23,6 @@ async function readChapter(chapterId: string) {
 }
 
 describe("the lesson up next", () => {
-  // Pedro's Today opened "Where a share's price comes from", of his second phase, while his
-  // Plan and the first phase's chapter page marked the first phase's chapter as up next.
   it("is the lesson Today opens, on the Journey and on the chapters' pages, even in the next phase", async () => {
     freezeClock();
 
@@ -48,8 +46,6 @@ describe("the lesson up next", () => {
       status: "pending",
     });
 
-    // A saved session can already include a later lesson of the current phase, although the
-    // plan dates it tomorrow. Its chapter resumes today, after the next phase's first lesson.
     const tomorrow = new Date(session.localDate.getTime() + MS_PER_DAY);
 
     await Promise.all([

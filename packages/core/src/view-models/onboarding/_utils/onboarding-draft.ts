@@ -22,10 +22,7 @@ export async function findOwnedDraft({
   return prisma.onboardingDraft.findFirst({ where: { id: draftId, userId } });
 }
 
-/**
- * The main goal created from a draft: goals created from it carry its id as
- * `details.onboardingId`. Goals the learner archived by starting over don't count.
- */
+/** Excludes archived goals even when they retain details.onboardingId. */
 export async function findDraftGoalId(
   draft: Pick<OnboardingDraft, "id" | "userId">,
   client: TransactionClient = prisma,
@@ -63,7 +60,7 @@ export function toDraftView({
     goalId,
     id: draft.id,
     prompt: draft.prompt,
-    // One this version can't read anymore is read again, like a failed one.
+    // An unreadable stored understanding must be retried rather than exposed as understood.
     status: draft.status === "understood" && !understanding ? "failed" : draft.status,
     understanding,
   };
@@ -73,10 +70,7 @@ export async function loadDraftView(draft: OnboardingDraft): Promise<OnboardingD
   return toDraftView({ draft, goalId: await findDraftGoalId(draft) });
 }
 
-/**
- * Turns what was understood into the card the learner sees and keeps it on the draft: the goals'
- * details carry the draft's id, and exam dates are read for the learner's own today.
- */
+/** Persists the card using the draft's learner-local today and carries its identity into each goal. */
 export async function completeDraft({
   allowDateSearch,
   draft,

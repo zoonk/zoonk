@@ -38,10 +38,7 @@ import { hasStudiedOn } from "./_utils/studied-on-day";
 type TodayGoal = {
   /** The date is the likely day of an exam edition whose notice isn't out yet. */
   dateEstimated: boolean;
-  /**
-   * Whole days until the goal's date, counted from the session's local day; null without a date
-   * and once it passed.
-   */
+  /** From the session's learner-local day; null without a date or after it passed. */
   daysLeft: number | null;
   id: string;
   kind: GoalKind;
@@ -49,22 +46,17 @@ type TodayGoal = {
   title: string;
 };
 
-/**
- * The learner's pace ("Keeping pace") and where the goal stands, in one measure per goal: an
- * exam's preparation, with what it gained this week; any other goal's lessons studied or skipped
- * as known, of its plan's (the Plan's subjects added up, so finishing every one reads 100%).
- */
+/** Exam goals use preparation; other planned goals use studied/known lesson share. */
 type TodayProgress =
   | { measure: "preparation"; status: PlanStatus | null; value: number; weekGain: number }
   | {
-      /** `today`: the plan's lessons today's session still holds (see `countLessonsLeftToday`). */
+      /** today counts unfinished plan items in the session, once each. */
       lessons: { done: number; today: number; total: number };
       measure: "lessons";
       status: PlanStatus | null;
       value: number;
     };
 
-/** The week's checkpoint under the week row: "Sunday: mock exam · 2h 30m, timed". */
 type TodayWeeklyChallenge = {
   access: "open" | "plusRequired";
   date: Date | null;
@@ -76,51 +68,28 @@ type TodayWeeklyChallenge = {
   title: string | null;
 };
 
-/**
- * Today, the screen learners open every day: the goal and its countdown, where the plan stands,
- * today's session (its blocks and missions), the week, the week's checkpoint, at most one insight
- * and the plan change to answer. The apps and the public API read this.
- */
 export type TodayView = {
   /** Earlier unfinished teaching, in saved order, without a promise that it fits one session. */
   earlierWork?: { id: string | null; title: string }[];
-  /** An exam goal's final stretch, day before, exam day or "How did it go?"; null otherwise. */
   exam: ExamMomentView | null;
-  /**
-   * One of the exam's choices the learner hasn't picked yet (ENEM's foreign language, after
-   * "Decide later"), asked on Today until they do: the plan studies none of its options before.
-   */
+  /** Unselected options are not studied until the learner chooses. */
   examChoice: ExamChoiceView | null;
   goal: TodayGoal;
   insight: MemoryInsightView | null;
-  /**
-   * Where each lesson of the day's learn blocks stands, so a stop still being written says so
-   * instead of opening to a wait. A block whose lesson isn't picked yet has no entry.
-   */
+  /** No entry until a block's lesson is selected. */
   lessonStatus: Record<string, LessonGenerationState["status"]>;
   /** Exact saved contribution explaining a lighter day, welcome backs included; null without one. */
   mockFunding: MockFundingView | null;
-  /**
-   * A language goal's pattern noticed in recent mistakes, offered beside the day; null when one of
-   * the day's missions is already its drill (`selectDayPattern`), and for any other goal.
-   */
+  /** Hidden when missions already provide the drill entry, unless their unfinished rows are hidden. */
   pattern: NoticedPattern | null;
-  /**
-   * The plan change to answer on Today, only when the learner has a say: the newest proposal
-   * waiting for an OK, or missed days that put the goal's date at risk until they choose.
-   * Proposals wait while the expired Free exam trial owns the suggestion slot.
-   */
+  /** Only actionable changes; proposals wait while the expired-trial notice owns the suggestion slot. */
   planChange: TodayPlanChangeView | null;
   progress: TodayProgress | null;
   session: DayView;
-  /**
-   * A test days away, planned day by day: "Day 1 of 3: map and gaps", and the day of its short
-   * mock. Null for any other plan.
-   */
+  /** Class-test day sequence; null for other plans. */
   shortPlan: ShortPlanToday | null;
   /** A learner who studied today never sees a napping buddy. */
   studiedToday: boolean;
-  /** A course the learner was taking before goals existed, offered as another goal to plan. */
   suggestedGoal: SuggestedGoalView | null;
   /** The authenticated viewer who produced this read, retained across delayed delivery. */
   userId: string;
@@ -136,17 +105,11 @@ export type TodayViewResult =
   | { status: "ready"; today: TodayView }
   | { status: "unauthorized" };
 
-/**
- * Whole days until the goal's date: 0 on the day itself, and null without one or once it passed,
- * when there's nothing left to count down to (Lucas's Today said "The day is here" every day after
- * his).
- */
 function getDaysLeft({ localDate, targetDate }: { localDate: Date; targetDate: Date | null }) {
   const days = targetDate ? daysBetween(localDate, targetDate) : -1;
   return days >= 0 ? days : null;
 }
 
-/** Where the goal stands, in its measure (see `TodayProgress`); null for a quick explanation. */
 function toTodayProgress({
   lessons,
   lessonsToday,
@@ -172,7 +135,6 @@ function toTodayProgress({
   };
 }
 
-/** The day's session for the screen, with what Today reads from the session's day. */
 async function loadSessionDay({
   day,
   goal,
@@ -214,7 +176,6 @@ async function loadSessionDay({
   return { exam, lessonStates, shortPlan, studied, studySession };
 }
 
-/** The first of an exam goal's choices the learner hasn't picked, if any (see `TodayView`). */
 async function loadOpenExamChoice(goal: Goal): Promise<ExamChoiceView | null> {
   if (goal.kind !== "exam" || !goal.examBlueprintId) {
     return null;
@@ -230,7 +191,6 @@ async function loadOpenExamChoice(goal: Goal): Promise<ExamChoiceView | null> {
   return choices.find((choice) => !choice.subject) ?? null;
 }
 
-/** The day Today shows for an admitted goal, with the read-only cards around it. */
 async function readAdmittedToday({
   admission: { owned },
   timeZone,
@@ -241,7 +201,6 @@ async function readAdmittedToday({
   const { userId } = owned;
   const { id, kind, targetDate, title } = owned.goal;
 
-  // Select the in-memory day once before projecting its surrounding read-only cards.
   const day = await readStudyDay({ goal: owned.goal, now: new Date(), timeZone, userId });
 
   if (!day) {
@@ -312,10 +271,7 @@ async function readAdmittedToday({
   };
 }
 
-/**
- * A read-only day preview, or its saved authoritative session. Unstarted work carries logical
- * references until the learner opens it with a POST; prefetch never creates or settles a day.
- */
+/** Read-only preview or saved session; logical references require Open's POST and prefetch never creates or settles a day. */
 export async function getTodayView(input: TodayStudySessionInput): Promise<TodayViewResult> {
   "use cache: private";
 

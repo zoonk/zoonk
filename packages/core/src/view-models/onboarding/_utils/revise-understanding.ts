@@ -31,7 +31,7 @@ function setDetail({
   return value === null ? withoutKey(details, key) : { ...details, [key]: value };
 }
 
-/** The learner's own deadline replaces the exam's dates on the card; null brings them back. */
+/** null restores exam dates; a learner deadline overrides them. */
 function reviseTargetDate({
   goal,
   today,
@@ -82,7 +82,6 @@ function reviseGoal({
   }
 }
 
-/** A time of their own replaces when the words said they study, on every goal of the card. */
 function reviseStudyTime({
   understanding,
   value,
@@ -100,10 +99,7 @@ function reviseStudyTime({
   };
 }
 
-/**
- * The card with one fix applied and every field that depends on it recomputed. Null when the fix
- * doesn't apply: no such goal, or a day already past.
- */
+/** Recomputes dependent fields; returns null for an inapplicable fix or past date. */
 export async function reviseUnderstanding({
   edit,
   today,
@@ -125,7 +121,6 @@ export async function reviseUnderstanding({
     return null;
   }
 
-  // Another course, institution or position has its own cut-off, when one is known.
   const cutoff = await loadTargetCutoff({
     details: revised.draft.details,
     examBlueprintId: revised.draft.examBlueprintId,

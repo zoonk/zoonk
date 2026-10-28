@@ -21,7 +21,6 @@ function lookupAnswers(data: Finding) {
   });
 }
 
-/** A stored notice for a new exam, with its exam days read from an official page. */
 async function storedExam({
   days,
   language = "en",
@@ -87,7 +86,6 @@ describe(findExamFacts, () => {
 
     const officialSource = { title: "Official notice", url: source.url };
 
-    // Their registration closed on May 20, the notice's deadline.
     const expected = {
       blueprintId: blueprint.id,
       dates: [
@@ -119,8 +117,6 @@ describe(findExamFacts, () => {
     expect(findExamDate).not.toHaveBeenCalled();
   });
 
-  // A Portuguese speaker's DELE B2: its notice is stored in Spanish, the language it certifies, so
-  // the card looked the date up on the web and offered the next sitting, whose registration closed.
   it("finds a language certificate's notice stored in the language it tests", async () => {
     const { blueprint, examName } = await storedExam({
       days: ["2026-11-14", "2027-04-02"],
@@ -140,11 +136,9 @@ describe(findExamFacts, () => {
   });
 
   it("finds the stored notice when the learner words the exam and its role another way", async () => {
-    // A legislature of its own, within the five words a search term keeps, so the notices earlier
-    // runs stored under the same role don't tie with this one for the search's few candidates.
+    // Keep a unique municipality within the search's five-word term limit to isolate stored notices.
     const town = randomUUID().slice(0, 8);
 
-    // In Portuguese, as the learner typed it: "da" is a word its search skips.
     const { blueprint } = await storedExam({
       days: ["2027-01-17"],
       language: "pt",
@@ -224,8 +218,6 @@ describe(findExamFacts, () => {
   });
 
   it("only offers a published day in another month than the one the learner named", async () => {
-    // Sofia said "March"; the search finds January's sitting. Her month stays the plan's, and the
-    // day comes with its source, for her to take or not.
     const source = { title: "Notice 1", url: NOTICE_URL };
 
     lookupAnswers({
@@ -334,7 +326,6 @@ describe(findExamFacts, () => {
   });
 
   it("estimates the days in the month the learner named, over the notice's usual month", async () => {
-    // The last notice tested on the 4th Sunday of July; the learner says the next one is in March.
     const { examName } = await storedExam({ days: ["2025-07-27"], year: 2025 });
 
     await expect(

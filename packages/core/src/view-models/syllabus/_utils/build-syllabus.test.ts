@@ -10,7 +10,6 @@ const CONSTITUTIONAL =
 
 const PROCESS = "Processo Legislativo e Regimento Interno da Câmara dos Deputados";
 
-/** A plan item of its own, as every row of the plan is: counts read each one once. */
 function lesson(
   attrs: Partial<SyllabusItem> & Pick<SyllabusItem, "chapterId" | "skillId">,
 ): SyllabusItem {
@@ -65,7 +64,6 @@ const notice: SyllabusInput["notice"] = {
   url: "https://example.com/edital.pdf",
 };
 
-/** Will's old graph: areas named by their courses, no topics, and a study-strategy area. */
 function oldGraphInput(): SyllabusInput {
   return {
     areaCourses: new Map([
@@ -125,7 +123,6 @@ function oldGraphInput(): SyllabusInput {
   };
 }
 
-/** Ethics' lessons done, known and in all, with one studied and a stand-in for 24 in `status`. */
 function ethicsProgress(status: SyllabusItem["status"]) {
   return buildSyllabus({
     areaCourses: new Map(),
@@ -205,7 +202,6 @@ describe(buildSyllabus, () => {
       })),
     );
 
-    // The chapter holding the plan's next lesson is the current one; its date is the next one.
     expect(portuguese?.chapters).toStrictEqual([
       {
         chapterId: "ch-ortho",
@@ -229,8 +225,6 @@ describe(buildSyllabus, () => {
       shortName: "Direito Constitucional",
     });
 
-    // Lessons still being written are named by their skill, not their course; not scheduled yet,
-    // they aren't ahead of anything to ask for early.
     expect(syllabus.subjects[3]?.chapters).toStrictEqual([
       {
         chapterId: null,
@@ -320,7 +314,6 @@ describe(buildSyllabus, () => {
     ).toStrictEqual([
       ["Ortografia", "studied", null, null],
       ["Coesão textual", "inProgress", null, "2026-10-09"],
-      // A skill teaches it, but none of its lessons fit before the exam.
       ["Tempos verbais", "notPlanned", "time", null],
     ]);
 
@@ -328,7 +321,6 @@ describe(buildSyllabus, () => {
       "ch-cohesion",
     ]);
 
-    // The same words in two subjects tick each subject's own skills.
     expect(
       constitutional?.topics.map((topic) => [topic.status, topic.chapters.length]),
     ).toStrictEqual([
@@ -338,7 +330,6 @@ describe(buildSyllabus, () => {
 
     expect(constitutional?.topics[1]?.chapters[0]?.chapterId).toBe("ch-rules");
 
-    // Each subject numbers its own chapters from 1, as its page lists them.
     expect(
       syllabus.subjects.map((subject) =>
         subject.chapters.map((chapter) => [chapter.chapterId, chapter.position]),
@@ -355,7 +346,6 @@ describe(buildSyllabus, () => {
       [["ch-house", 1]],
     ]);
 
-    // A subject the learner took out says so on the subject and on every topic.
     expect(process?.notPlannedReason).toBe("skipped");
 
     expect(process?.topics.map((topic) => topic.notPlannedReason)).toStrictEqual([
@@ -364,12 +354,6 @@ describe(buildSyllabus, () => {
     ]);
   });
 
-  // R25 (ENEM 2002): after "skip Linguagens", topics the learner had studied lessons of read "not
-  // in the plan" with nothing under them. What they studied stays, with the subject's note.
-  // Rafaela studied one lesson and was away for a month: the days she missed set the rest aside.
-  // Lessons set aside are neither studied nor known, on a topic, its chapter or its subject.
-  // Lessons set aside after missed days are out of the plan for time: a topic with nothing else
-  // left to do says so (R25: a topic shown to study has lessons to do), and keeps what was studied.
   it("never counts lessons set aside as studied or known", () => {
     const skills = [
       { area: PT, name: "Aplicar a ortografia", skillId: "s-ortho", topics: ["Ortografia"] },
@@ -431,7 +415,6 @@ describe(buildSyllabus, () => {
 
     expect(portuguese).toMatchObject({ lessonsDone: 1, lessonsKnown: 1, topicsStudied: 0 });
 
-    // A subject the learner took out keeps only what they studied of it, never what was set aside.
     const [takenOut] = buildSyllabus({
       ...oldGraphInput(),
       items: items.filter((item) => item.skillId === "s-cohesion"),
@@ -490,11 +473,6 @@ describe(buildSyllabus, () => {
   it("counts a chapter's own lessons, as its page lists them, and its skill's lessons still being written on their own row", () => {
     const input = oldGraphInput();
 
-    // Sofia's chapter said "4 of 10" with nine lessons: the tenth stood in for the skill's next
-    // chapter, not written yet. That row says the lessons the plan teaches in its place (4 of the
-    // 10 the graph has left fit) and that it starts after the weeks the plan writes ahead. It
-    // offers nothing to ask for early: the plan writes that next chapter as she gets close, and
-    // asking only read back the chapter above it.
     const withStandIn = {
       ...input,
       items: [
@@ -543,7 +521,6 @@ describe(buildSyllabus, () => {
       },
     ]);
 
-    // A skill its course doesn't teach yet names itself, to ask for its first chapter early.
     const untaught = buildSyllabus({
       ...withStandIn,
       outlinedUntil: "2026-10-08",
@@ -552,7 +529,6 @@ describe(buildSyllabus, () => {
 
     expect(untaught.subjects[0]?.chapters[1]).toMatchObject({ far: true, skillId: "s-ortho" });
 
-    // Within those weeks, its lessons are on the way: nothing to ask for.
     const near = buildSyllabus({ ...withStandIn, outlinedUntil: "2026-10-09" });
 
     expect(near.subjects[0]?.chapters[1]).toMatchObject({
@@ -561,7 +537,6 @@ describe(buildSyllabus, () => {
       writing: true,
     });
 
-    // A plan saved before it stored how many lessons a stand-in is says no count for it.
     const unsized = buildSyllabus({
       ...withStandIn,
       items: withStandIn.items.map((item) => (item.lessonId ? item : { ...item, lessons: null })),
@@ -622,7 +597,6 @@ describe(buildSyllabus, () => {
       status: "notPlanned",
     });
 
-    // A notice subject no area of the plan teaches.
     expect(syllabus.subjects[2]).toMatchObject({
       areas: [],
       lessonsTotal: 0,
@@ -669,14 +643,11 @@ describe(buildSyllabus, () => {
       return [topic?.status, topic?.notPlannedReason];
     };
 
-    // "1 Grafia" names no skill, but its "1.1 Ortografia" is in the plan: so is the heading.
     expect(statusOf("1 Grafia")).toStrictEqual(["inProgress", null]);
     expect(statusOf("1.2 Acentuação")).toStrictEqual(["notPlanned", "missing"]);
 
-    // Taught by the constitutional subject's skill, whose lesson is to do.
     expect(statusOf("2 Coesão textual")).toStrictEqual(["toStudy", null]);
 
-    // A heading nothing under it is in stays out.
     expect(statusOf("3 Tempos verbais")).toStrictEqual(["notPlanned", "missing"]);
   });
 
@@ -732,7 +703,6 @@ describe(buildSyllabus, () => {
       [PT, "plan", []],
     ]);
 
-    // A module the plan has skills for but no lessons in: they didn't fit.
     expect(syllabus.subjects[1]?.notPlannedReason).toBe("time");
   });
 
@@ -764,7 +734,6 @@ describe(buildSyllabus, () => {
       "Estratégia de prova",
     ]);
 
-    // Today labels each lesson with the same name.
     expect(getSkillSubjects(withShortNames)).toStrictEqual(
       new Map([
         ["s-ortho", "Português"],
@@ -775,8 +744,6 @@ describe(buildSyllabus, () => {
     );
   });
 
-  // Sofia's OAB plan named the ethics subject "Professional Ethics", the notice's short name: Plan
-  // showed the exam's heaviest subject as out of her plan and her ethics lessons beyond the notice.
   it("puts an area named by a subject's short name in that subject", () => {
     const ethics =
       "Estatuto da Advocacia e da OAB, seu Regulamento Geral e Código de Ética e Disciplina da OAB";
@@ -829,9 +796,6 @@ describe(buildSyllabus, () => {
     });
   });
 
-  // Pedro answered his notes' "Organelles" right once: his plan has no lessons on it, and the topics
-  // sheet said it didn't fit his time. One right answer frees a topic from its lessons, never from
-  // practice: it's in the plan, as practice.
   it("shows a topic the learner showed they know as known, never as left out", () => {
     const biology = {
       group: null,
@@ -885,7 +849,6 @@ describe(buildSyllabus, () => {
       ["Vírus", "notPlanned", "time"],
     ]);
 
-    // Known topics show apart from studied ones: none of them was studied.
     expect(subject).toMatchObject({ topicsKnown: 2, topicsStudied: 0 });
   });
 
@@ -949,14 +912,7 @@ describe(buildSyllabus, () => {
     });
   });
 
-  /*
-   * Carla's Plan read "User research · 3 of 169 lessons" next to "Prototyping and usability
-   * testing · 0 of 6 lessons": the second module's lessons weren't written yet, and each item
-   * standing in for a skill's lessons counted as one.
-   */
   it("counts an item standing in for a skill's unwritten lessons as the lessons it plans", () => {
-    // The plan, short on time, teaches 4 of the interviews' 11 lessons left and 9 of prototyping's
-    // 30. A module's size is the lessons the plan teaches in it, so finishing them reads 100%.
     const syllabus = buildSyllabus({
       areaCourses: new Map(),
       chapterTitles: new Map(),
@@ -993,11 +949,6 @@ describe(buildSyllabus, () => {
     ]);
   });
 
-  /*
-   * A plan that cut depth to fit its date read "Finished" at 19 of its graph's 28 lessons. A
-   * subject's size is the lessons the plan teaches in it, so the plan's cuts and restores change
-   * its size, never what the learner did, and finishing the plan reads 100%.
-   */
   it("sizes a subject by the lessons the plan teaches, never moving what the learner did", () => {
     const skills = [
       { area: "Matemática", name: "Usar porcentagens", skillId: "s-pct", topics: [] },
@@ -1035,8 +986,6 @@ describe(buildSyllabus, () => {
       ]),
     ).toStrictEqual([[1, 10]]);
 
-    // Less time: the plan cut three of the percentages' lessons and half the charts' stand-in, and
-    // set one aside, which stays the learner's to study.
     const cut = [
       done,
       pct(2),
@@ -1046,15 +995,9 @@ describe(buildSyllabus, () => {
 
     expect(progress(cut)).toStrictEqual([[1, 5]]);
 
-    // A plan without a date only sets aside a lesson the Library couldn't write: not one to study.
     expect(progress(cut, false)).toStrictEqual([[1, 4]]);
   });
 
-  /*
-   * A tested-out lesson also stands for each other skill its chapter teaches (the same plan item),
-   * so those skills' topics read as known: counted twice, a subject read 2 of 3 lessons for 1 of 2
-   * (code review). Each subject it covers shows it; the goal counts it once.
-   */
   it("counts a tested-out lesson that stands for two skills once", () => {
     const known = lesson({
       chapterId: "ch-pct",
@@ -1096,8 +1039,6 @@ describe(buildSyllabus, () => {
 
     const apart = read("Gráficos");
 
-    // Each subject shows it as known, but the goal's known lessons count it once, so a card that
-    // draws studied and known apart never takes one studied lesson for a second known one.
     expect(apart.lessons).toStrictEqual({ done: 1, known: 1, total: 2 });
 
     expect(
@@ -1108,15 +1049,9 @@ describe(buildSyllabus, () => {
     ]);
   });
 
-  /*
-   * Sofia's Plan read "25 of 255 lessons" in Ethics, then "0 of 255" after her first full mock:
-   * a miss there took back her placement's test-out credit. What she studied counts as done; what
-   * she tested out of shows apart, so taking it back never lowers what she did.
-   */
   it("counts tested-out lessons apart from studied ones, so taking them back never lowers what was done", () => {
     expect(ethicsProgress("testedOut")).toStrictEqual([[1, 24, 25]]);
     expect(ethicsProgress("todo")).toStrictEqual([[1, 0, 25]]);
-    // Set aside, they're neither studied nor known.
     expect(ethicsProgress("skipped")).toStrictEqual([[1, 0, 25]]);
   });
 
@@ -1169,11 +1104,6 @@ describe(buildSyllabus, () => {
     ]);
   });
 
-  /*
-   * ENEM's notice was read again with its contents as topics ("Hereditariedade e diversidade da
-   * vida") instead of the matrix's habilidades, which an earlier plan's skills name: its topics
-   * show without a status, not all "not in the plan".
-   */
   it("shows the topics of a subject planned from an earlier reading without a status", () => {
     const nature = "Ciências da Natureza e suas Tecnologias";
 
@@ -1275,8 +1205,6 @@ describe(buildSyllabus, () => {
     ]);
   });
 
-  // Ana takes English: the notice counts its 5 questions inside the languages area's 45, and her
-  // plan studies it in an area of its own. The Plan listed it as a sixth subject.
   it("shows the option a learner picked inside the subject the notice counts it in, never as a subject of its own", () => {
     const languages = "Linguagens, Códigos e suas Tecnologias";
     const english = "Língua Inglesa";
@@ -1363,12 +1291,10 @@ describe(buildSyllabus, () => {
       [english, "Vocábulos e expressões de textos em inglês e seu tema"],
     ]);
 
-    // Today labels its lessons with the subject it's part of.
     expect(getSkillSubjects(input).get("s-english")).toBe("Linguagens");
   });
 });
 
-/** What the syllabus says of the law subject, among ethics's and its sections. */
 function readLaw({
   items,
   lawWeight,
@@ -1405,7 +1331,6 @@ function readLaw({
   return { mastery: law?.mastery, preparation: law?.preparation, reason: law?.notPlannedReason };
 }
 
-/** A notice subject of five questions, part of another when `partOf` names it. */
 function noticeSubjectOf(name: string, partOf: string | null, share: number) {
   return {
     group: null,
@@ -1419,12 +1344,6 @@ function noticeSubjectOf(name: string, partOf: string | null, share: number) {
   };
 }
 
-/*
- * An exam subject the plan leaves out shows its preparation only while the goal's number counts
- * it, so the number explains the whole (code review of plan-polish): a subject the learner took
- * out, kept in the goal's sections by the lessons they finished before, showed a score beside
- * "Not in your plan"; and one whose sections weigh nothing in the goal showed one too.
- */
 describe("an exam subject out of the plan", () => {
   const ethics = lesson({ chapterId: "ch-ethics", skillId: "s-ethics" });
   const lawDone = lesson({ chapterId: "ch-law", skillId: "s-law", status: "done" });
@@ -1445,8 +1364,6 @@ describe("an exam subject out of the plan", () => {
     });
   });
 
-  // Ana's languages area left out for time gathers English, which weighs nothing in her goal:
-  // its answers showed as the left-out subject's "6 of 8 right" (code review, round 2).
   it("reads its preparation and mastery only from the sections the goal counts", () => {
     const languages = "Linguagens, Códigos e suas Tecnologias";
     const english = "Língua Inglesa";

@@ -50,7 +50,6 @@ function toSkills(graph: PlanGraph): SyllabusSkill[] {
   }));
 }
 
-/** The syllabus's lessons and chapters of a saved plan, in plan order. */
 function fromSavedPlan(goal: Partial<Pick<Goal, "primaryCourseId">>, saved: SavedPlan | null) {
   return saved
     ? {
@@ -62,7 +61,6 @@ function fromSavedPlan(goal: Partial<Pick<Goal, "primaryCourseId">>, saved: Save
     : null;
 }
 
-/** The plan the syllabus reads: a GET's saved plan, a selection being shown, or a fresh read. */
 function readSyllabusPlan(
   goal: Pick<Goal, "id"> & Partial<Pick<Goal, "primaryCourseId">>,
   {
@@ -100,12 +98,7 @@ function readSyllabusPlan(
   });
 }
 
-/**
- * Everything a goal's syllabus is built from: the notice (exams), the plan's graph and settings,
- * its lessons in plan order, their chapters' titles and each area's course. Null without a plan.
- * A GET passes the exam's blueprint and the saved plan it already read (see `loadNotice`,
- * `readSavedPlan`).
- */
+/** Returns null without a plan; GET callers should share their already-read blueprint and saved plan. */
 export async function loadSyllabusInput(
   goal: Pick<
     Goal,
@@ -133,9 +126,7 @@ export async function loadSyllabusInput(
 
   const graph = parsePlanGraph(plan.graph);
   const graphSkillIds = new Set(graph.skills.map((skill) => skill.skillId));
-  // A GET passes the saved plan it read; its Library rows come from the shared caches.
   const from: LibrarySource = savedPlan === undefined ? prisma : "shared";
-  // Already read for the notice above, when a GET passed it.
   const knownBlueprint = blueprint === undefined ? undefined : await blueprint;
 
   const [items, areaCourses, chapterTitles, claimEvents, prerequisites, taughtSkillIds] =
@@ -168,8 +159,7 @@ export async function loadSyllabusInput(
     settings.baseChoices.flatMap((entry) => (entry.choice === "skip" ? [entry.skillId] : [])),
   );
 
-  // A basic the learner passed over by choice is still to confirm, not known: the page says they
-  // chose to skip it until practice confirms it.
+  // Choosing to skip basics is not proof of knowledge until practice confirms it.
   const passedOver = (skillId: string) =>
     skippedBaseIds.has(skillId) || pastBasicsSkillIds.has(skillId);
 
@@ -200,12 +190,7 @@ export async function loadSyllabusInput(
   };
 }
 
-/**
- * Each of the goal's skills by its subject's short name ("Portuguese Language"), for labels on
- * Today's lessons; empty for goals with fewer than two subjects. Reads only the graph, the notice
- * and the areas' courses, so a session doesn't load the whole plan for it. A GET passes the exam's
- * blueprint and the saved plan it already read (see `loadNotice`, `readSavedPlan`).
- */
+/** Returns no labels with fewer than two subjects; GET callers should share their blueprint and saved plan. */
 export async function loadSkillSubjects(
   goal: Pick<Goal, "examBlueprintId" | "id" | "kind"> | null,
   blueprint?: ExamBlueprint | null,

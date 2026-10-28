@@ -6,11 +6,7 @@ import { getRequestInstant } from "../../learner/facts/request-instant";
 import { type TodayLearnBlock } from "../../plans/_utils/up-next-item";
 import { readBlockPayload } from "../../sessions/block-payload";
 
-/**
- * Today's session's lessons not done yet, in the order Today opens them: the one started first,
- * then those not started. Read without building the session, so a page never builds the day; empty
- * before the day's session exists. Every screen's "Up next" reads it (`findUpNextItem`).
- */
+/** Read-only, active lesson first; empty until the day exists and shared by every screen's Up next. */
 export async function loadTodayLearnBlocks(
   goal: Pick<Goal, "id" | "timezone" | "userId">,
 ): Promise<TodayLearnBlock[]> {

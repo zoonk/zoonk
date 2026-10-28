@@ -12,7 +12,7 @@ export type LanguageGoalContextResult =
   | { context: LanguageGoalContext; status: "ready" }
   | Exclude<LanguageViewGoalResult, { status: "ready" }>;
 
-/** The owned language goal and its course's units, for screens that draw those units. */
+/** Requires an owned language goal, defaulting to the active goal. */
 export async function loadLanguageGoalContext(goalId?: string): Promise<LanguageGoalContextResult> {
   const loaded = await resolveLanguageViewGoal(goalId);
 

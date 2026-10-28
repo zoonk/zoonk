@@ -10,7 +10,6 @@ import { type SyllabusChapter } from "../syllabus-contract";
 import { uniquePlanItems } from "./subject-progress";
 import { type SyllabusItem, type SyllabusSkill } from "./syllabus-input";
 
-/** A chapter with the key its lessons are grouped by, so topics can point at it. */
 export type KeyedChapter = SyllabusChapter & { key: string };
 
 export function getEarliestTodoDate(items: readonly SyllabusItem[]): string | null {
@@ -21,12 +20,7 @@ export function getEarliestTodoDate(items: readonly SyllabusItem[]): string | nu
   return dates.toSorted()[0] ?? null;
 }
 
-/**
- * A row per chapter, counting the lessons its page lists. Lessons still being written (or settled
- * before they were) are their skill's own row: they become its next chapter once outlined, so
- * counting them in the chapter that teaches the skill first said "4 of 10" over Sofia's chapter
- * of nine lessons.
- */
+/** Unwritten lessons get their own skill row instead of inflating the first chapter that teaches the skill. */
 export function chapterKeyOf(item: SyllabusItem): string {
   return item.chapterId ?? `skill:${item.skillId ?? item.titleSnapshot}`;
 }
@@ -47,10 +41,8 @@ function getChapterState({
   return key === nextKey ? "current" : "upcoming";
 }
 
-/** A chapter before the subject's order gives it its number. */
 type UnnumberedChapter = Omit<KeyedChapter, "position">;
 
-/** The ones done first, then in the order the plan gets to them; ones not scheduled last. */
 function compareChapters(first: UnnumberedChapter, second: UnnumberedChapter): number {
   const rank = (chapter: UnnumberedChapter) => {
     if (chapter.state === "done") {
@@ -63,14 +55,7 @@ function compareChapters(first: UnnumberedChapter, second: UnnumberedChapter): n
   return rank(first).localeCompare(rank(second));
 }
 
-/**
- * A subject's chapters: the ones done, then in the order the plan studies them next, each numbered
- * in that order (the number every screen gives it), with lessons done of the total, whether the
- * learner only showed they know it (`known`), and the one holding the plan's next lesson. Skills without a chapter yet are named by the skill, with the
- * lessons the plan expects for them (`lessonsOf`), whether they start after the weeks the plan
- * writes ahead (`outlinedUntil`), and then the skill to ask for them by, unless chapters already
- * teach it (`taughtSkillIds`).
- */
+/** Order completed chapters first, then scheduled work; unwritten skills can be requested early only beyond outlinedUntil and when untaught. */
 export function buildChapters({
   chapterTitles,
   items,
@@ -139,7 +124,6 @@ export function withoutKey({ key: _key, ...chapter }: KeyedChapter): SyllabusCha
   return chapter;
 }
 
-/** Each lesson's area: its skill's, or, for a lesson without one, its chapter's. */
 export function getItemAreas({
   items,
   skills,

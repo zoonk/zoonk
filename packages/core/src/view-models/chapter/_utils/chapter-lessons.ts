@@ -16,7 +16,6 @@ type ChapterLessonRow = {
   title: string;
 };
 
-/** The chapter's lessons in order, each with its skills and summary card. */
 export async function loadChapterLessons(chapterId: string): Promise<ChapterLessonRow[]> {
   const rows = await prisma.chapterLesson.findMany({
     orderBy: { position: "asc" },
@@ -41,11 +40,7 @@ export async function loadChapterLessons(chapterId: string): Promise<ChapterLess
   }));
 }
 
-/**
- * Whether a lesson is behind the learner: its own plan item is finished, or its chapter's is, or,
- * while the chapter is still ahead, the learner has studied every skill it teaches (how sessions
- * pick a chapter's next lesson).
- */
+/** Counts studied skills while a chapter is ahead, consistent with session lesson selection. */
 function isLessonDone({
   chapterItem,
   lesson,
@@ -76,11 +71,7 @@ function getLessonState({ isDone, isNext }: { isDone: boolean; isNext: boolean }
   return isNext ? ("next" as const) : ("upcoming" as const);
 }
 
-/**
- * The plan's lessons in the chapter with their state. A chapter item brings every lesson of the
- * chapter; otherwise only the lessons the plan picked. The next lesson is the one Today opens
- * next (see `findUpNextLessonId`). One still ahead that the plan holds for Plus is marked so.
- */
+/** Chapter items include all chapter lessons; otherwise only selected lessons, with next selection shared with Today. */
 export function buildChapterLessons({
   chapterId,
   items,
@@ -130,7 +121,6 @@ export function buildChapterLessons({
   }));
 }
 
-/** Every finished lesson leaves its summary card: each idea in one sentence. */
 export function buildChapterSummaries({
   lessons,
   states,

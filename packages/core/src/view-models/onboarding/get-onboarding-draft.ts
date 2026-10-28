@@ -7,10 +7,7 @@ export type OnboardingDraftResult =
   | { draft: OnboardingDraftView; status: "ready" }
   | { status: "notFound" | "unauthorized" };
 
-/**
- * A goal the learner typed, as it stands: still being read (with the run to follow), understood
- * with their fixes, or failed. Only its learner can read it. Uncached: it changes while it's read.
- */
+/** Requires draft ownership; uncached because generation and learner edits change it. */
 export async function getOnboardingDraft({
   draftId,
 }: {

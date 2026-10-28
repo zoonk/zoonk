@@ -78,7 +78,6 @@ const unitMistakeSchema = z.object({
   skill: z.enum(LANGUAGE_MISTAKE_SKILLS),
 });
 
-/** A pattern noticed in the learner's mistakes; its page explains it and has a short drill. */
 export const noticedPatternSchema = z.object({
   id: z.uuid(),
   kind: z.enum(["pattern", "typos"]),
@@ -87,13 +86,11 @@ export const noticedPatternSchema = z.object({
 
 export type NoticedPattern = z.infer<typeof noticedPatternSchema>;
 
-/** Mispronounced words due to be said again today, named by the first few. */
 const duePronunciationSchema = z.object({
   count: z.int().min(1),
   words: z.array(z.string()).meta({ description: "The first few, to name on the row" }),
 });
 
-/** A unit's practice call as it's offered: who the learner talks to and the lengths to pick. */
 export const practiceCallSchema = z
   .object({
     character: z

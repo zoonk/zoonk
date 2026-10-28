@@ -22,7 +22,6 @@ async function setup() {
   return { ...fixture, user };
 }
 
-/** A skill studied long ago and not reviewed since: its memory has faded. */
 function fadedSkill({ days, skillId, userId }: { days: number; skillId: string; userId: string }) {
   return Promise.all([
     learnerSkillFixture({
@@ -40,7 +39,6 @@ function fadedSkill({ days, skillId, userId }: { days: number; skillId: string; 
   ]);
 }
 
-/** A skill remembered a week out: Solid. */
 function solidSkill({ skillId, userId }: { skillId: string; userId: string }) {
   return learnerSkillFixture({
     lastReviewedAt: daysAgo(1),
@@ -111,7 +109,6 @@ describe(getProgressView, () => {
       [chapters[1]?.id, ["Skill 3", "Skill 4"], 2],
     ]);
 
-    // Without a planned graph yet, each remaining item gets the plan's average time.
     expect(needed?.areas.map((area) => area.minutes)).toStrictEqual([4, 8]);
   });
 

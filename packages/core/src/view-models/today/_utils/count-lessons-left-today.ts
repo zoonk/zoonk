@@ -6,11 +6,7 @@ import {
 } from "../../../sessions/_utils/session-plan-item";
 import { type DayView } from "../../../sessions/day-view";
 
-/**
- * The plan's lessons today's session still holds, as they add to its progress: each plan item once
- * (a bonus copy of a lesson is the same lesson), and only while it's still to do, so a lesson
- * finished elsewhere (another goal's session sharing it, a copy already done) no longer counts.
- */
+/** Counts unfinished plan items once even when bonus blocks duplicate them or another session completes them. */
 export async function countLessonsLeftToday({
   selectedItems,
   session,
@@ -34,7 +30,7 @@ export async function countLessonsLeftToday({
         .map((item) => getSessionItemIdentity(item)),
     );
 
-    // Unsaved first-layout lessons have real logical keys; alphabet/reinforcement are not plan work.
+    // Unsaved work uses logical keys; alphabet and reinforcement blocks do not count as plan lessons.
     return new Set(
       blocks.flatMap((block) => {
         const key = block.planItemId ?? block.planItemKey;

@@ -11,11 +11,7 @@ export type PlanTabViewResult =
   | { status: "noGoal" | "notFound" | "preparing" | "unauthorized" }
   | { status: "ready"; view: PlanTabView };
 
-/**
- * The Plan tab for a goal (the active goal by default): the goal's header and its plan at every
- * zoom level. One cached read, so the tab prefetches whole. A course start whose questions are left
- * is `preparing`, as on Today: its default plan isn't the learner's yet (see `isCourseSetupLeft`).
- */
+/** Requires goal ownership; unfinished course setup returns preparing because its default plan is not yet the learner's choice. */
 export async function getPlanTabView(input: { goalId?: string } = {}): Promise<PlanTabViewResult> {
   "use cache: private";
 

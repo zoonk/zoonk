@@ -4,13 +4,7 @@ import { getFoundationSkillIds, getSkillArea } from "../../../plans/planner/grap
 import { type PlanGraph, type PlanSettings } from "../../../plans/planner/plan-state";
 import { type SyllabusItem } from "./syllabus-input";
 
-/**
- * A lesson tested out covers every skill it teaches: the ones its lesson names and, for a chapter
- * an outline tagged with several skills, all of them (the planner settles them all; see
- * `getSettledSkillIds`). A covered skill with no lesson of its own in the plan gets the tested-out
- * lesson as its own too (the same plan item), so its topics read as known, never as out of the
- * plan; the goal's lessons count the item once (see `getSubjectProgress`).
- */
+/** Propagate test-out credit to every covered skill while retaining the same item id for once-only lesson counts. */
 export async function withTestedOutSkills({
   graphSkillIds,
   items,
@@ -53,13 +47,7 @@ export async function withTestedOutSkills({
   return [...items, ...unique];
 }
 
-/**
- * The subjects' basics the plan starts past: the first-phase skills of a subject the learner said
- * they know the basics of, or, with harder lessons, of one they do well in. Either way the plan
- * holds none of their lessons. Harder lessons skip all of a subject's basics at once, while a plan
- * short on time drops its last skills first, so a subject whose later skills the plan teaches and
- * whose basics it holds none of is one it started past.
- */
+/** Harder starts skip all subject basics; time cuts remove later skills first, so missing basics with later teaching indicate a skipped base. */
 export function getPastBasicsSkillIds({
   graph,
   items,

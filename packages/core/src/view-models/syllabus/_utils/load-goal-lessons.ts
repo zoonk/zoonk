@@ -5,11 +5,7 @@ import { type SyllabusView } from "../syllabus-contract";
 import { buildSyllabus } from "./build-syllabus";
 import { loadSyllabusInput } from "./load-syllabus";
 
-/**
- * A goal's lessons studied or known of its plan's, as its syllabus adds them up, for a goal
- * measured in lessons; null for an exam (measured by preparation), a quick explanation or a goal
- * without a plan. The caller has checked the goal is the learner's.
- */
+/** Caller must verify goal ownership; returns null for exams, explanations, or missing plans. */
 export async function loadGoalLessons(
   goalId: string,
   selectedPlan?: Pick<PlanReadContext, "items" | "state">,

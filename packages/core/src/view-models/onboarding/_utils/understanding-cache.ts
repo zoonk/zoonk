@@ -27,7 +27,6 @@ const understoodGoalSchema = z.object({
   title: z.string(),
 });
 
-/** Stored results are read back through the same shape the task returns, so old rows can't leak in. */
 const storedUnderstandingSchema = z.discriminatedUnion("route", [
   z.object({ question: z.string(), route: z.literal("explain") }),
   z.object({ instrument: z.string(), route: z.literal("instrument") }),
@@ -43,14 +42,9 @@ const storedUnderstandingSchema = z.discriminatedUnion("route", [
   }),
 ]) satisfies z.ZodType<GoalUnderstanding>;
 
-/** The learner who typed the words: their words and what they say are theirs alone. */
 type CacheKey = { language: string; normalizedPrompt: string; userId: string };
 
-/**
- * The learner's understanding of these exact words from the last day, when there is one, whatever
- * prompt version wrote it: a prompt change never reads stored words again on its own. Another
- * learner's reading of the same words is never theirs.
- */
+/** Learner-private reuse lasts one day regardless of prompt version; deployments must not reread stored words automatically. */
 export async function findCachedUnderstanding({
   language,
   now,
@@ -70,7 +64,6 @@ export async function findCachedUnderstanding({
   return parsed.success ? parsed.data : null;
 }
 
-/** Stores what the task understood for the learner with the run that wrote it, fresh from now. */
 export async function saveUnderstanding({
   language,
   normalizedPrompt,

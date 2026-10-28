@@ -8,10 +8,6 @@ type GroupableSkill = {
   state: "learning" | "mastered" | "new" | "solid";
 };
 
-/**
- * One area (a chapter, or a phase before its chapters exist) with its skills and their counts, and
- * the section it sits in: the course or exam subject the goal's graph put its skills in.
- */
 export type SkillGroup<TSkill> = {
   areaId: string;
   counts: SkillStateCounts;
@@ -27,13 +23,9 @@ type RecallSkill = {
   skillId: string;
 };
 
-/** Skills outside any plan area (started elsewhere) share one group. */
 const OTHER_AREA_ID = "other";
 
-/**
- * Groups skills by area in the order the areas first appear, which is plan order for a goal's
- * skills. Each group carries the counts the apps show: gold, fading and the rest.
- */
+/** Preserves first-seen area order. */
 function groupSkillsByArea<TSkill extends GroupableSkill>(
   skills: readonly TSkill[],
 ): SkillGroup<TSkill>[] {
@@ -48,11 +40,7 @@ function groupSkillsByArea<TSkill extends GroupableSkill>(
   }));
 }
 
-/**
- * Groups skills by section (course or exam subject), then by area inside it: sections in the order
- * they first appear, areas in plan order within each. An exam plan interleaves subjects by
- * priority, so without this the same subject would come back several times.
- */
+/** Preserves first-seen sections and plan-order areas within them, keeping interleaved exam subjects together. */
 export function groupSkillsBySection<TSkill extends GroupableSkill>(
   skills: readonly TSkill[],
 ): SkillGroup<TSkill>[] {
@@ -64,7 +52,6 @@ function byRecall(a: Pick<RecallSkill, "retrievability">, b: Pick<RecallSkill, "
   return (a.retrievability ?? 1) - (b.retrievability ?? 1);
 }
 
-/** The fading skills, most faded first. */
 export function listFadingSkills(skills: readonly RecallSkill[]) {
   return skills
     .filter((skill) => skill.fading)

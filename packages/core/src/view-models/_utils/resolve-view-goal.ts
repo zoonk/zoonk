@@ -12,7 +12,6 @@ import { readActiveGoal, readLearningProfile } from "../../learner/facts/learnin
 import { getOwnedGoal } from "../../learner/get-owned-goal";
 import { getSession } from "../../users/get-session";
 
-/** Everything a tab reads (the active goal, the plan, the learner model and finished lessons). */
 export function tagViewGoalReads(userId: string) {
   cacheTag(
     getGoalsCacheTag(userId),
@@ -27,13 +26,7 @@ export type ViewGoalResult =
   | { goal: Goal; status: "ready" }
   | { status: "noGoal" | "notFound" | "unauthorized" };
 
-/**
- * The goal a tab shows: the one asked for, or the learner's active goal (the one picked in the
- * goal switcher, else their first active goal). A learner without one gets `noGoal`, which the
- * apps turn into "start a goal". Call it from a `"use cache: private"`
- * view model: it tags the cache with everything a tab reads (the active goal, the plan, the
- * learner model and finished lessons), so any of them changing refreshes the tab.
- */
+/** Call inside use cache: private; resolves an owned goal or active default and tags its dependent reads. */
 export async function resolveViewGoal(goalId?: string): Promise<ViewGoalResult> {
   const session = await getSession();
 

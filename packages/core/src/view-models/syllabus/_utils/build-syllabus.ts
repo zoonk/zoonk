@@ -25,12 +25,7 @@ import {
   withHeadingStatuses,
 } from "./syllabus-topics";
 
-/**
- * The lessons of the subjects in the plan, together: what a goal that isn't an exam reads as its
- * progress, so the whole reads as its subjects' bars and 100% once the plan is finished (both count
- * the plan's lessons, see `isInLessonScope`). Each plan item counts once, though a tested-out
- * lesson shows in every subject whose skills it covers.
- */
+/** Count each plan item once across subjects, including tested-out items covering multiple skills. */
 function sumPlannedLessons({
   itemArea,
   items,
@@ -54,15 +49,7 @@ function sumPlannedLessons({
 /** Why a subject can be out of the plan while the exam still tests it, so the goal counts it. */
 const COUNTED_OUT = new Set<NotPlannedReason>(["pastBasics", "skippedBase", "time"]);
 
-/**
- * An exam subject's preparation by its sections, and the answers that back it (other goals read
- * lessons; nothing without sections). One in the plan the goal measures none of reads as nothing
- * prepared yet, not as unmeasured. One out of the plan keeps its number only while the goal's
- * counts it (left out for time, its basics passed, its bases skipped), read from its sections that
- * weigh in the goal, so the goal's number reads as the subjects it lists: Ana's 14% sat under
- * every subject she saw. One the learner took out, nothing teaches yet, or that weighs nothing has
- * none, whatever they studied of it before.
- */
+/** Excluded subjects show preparation only while their weighted sections still contribute to the goal. */
 function measureSubject({
   areas,
   notPlannedReason,
@@ -97,13 +84,7 @@ function measureSubject({
   };
 }
 
-/**
- * A goal's structure in the learner's terms: an exam's notice subjects with their topics in its
- * own words and order (grouped as the notice groups them), each with progress from the plan's
- * lessons and when the plan studies it next; or the plan's modules with their chapters. Topics get
- * a status only when the plan's skills say which topics they teach; otherwise they're listed as
- * the notice has them, so nothing is claimed that the plan can't back.
- */
+/** Topic status requires evidence from mapped plan skills; otherwise display notice topics without claiming coverage. */
 export function buildSyllabus(
   input: SyllabusInput,
 ): Omit<SyllabusView, "examDocument" | "goal" | "knownTopicsReturn"> {
@@ -123,7 +104,6 @@ export function buildSyllabus(
     todayBlocks = [],
   } = input;
 
-  // Everything here counts the lessons the plan's number and "finished" count.
   const items = withinLessonScope({ deadline, items: input.items });
 
   const areas = listAreas(skills);
@@ -155,8 +135,7 @@ export function buildSyllabus(
 
     const ownSkills = skills.filter((skill) => draft.areas.includes(skill.area));
 
-    // A subject the plan teaches whose current topics its skills don't name was planned from an
-    // earlier reading of the notice: its topics show without a status, never all "not in the plan".
+    // A plan built from an older notice may teach the subject without mapping its current topic names.
     const subjectMapped =
       mapped && (ownSkills.length === 0 || namesAnyTopic({ skills, topics: draft.topics }));
 

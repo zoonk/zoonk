@@ -19,7 +19,6 @@ const A2 = 1;
 const B1 = 2;
 const DAYS_AGO_2 = 2 * MS_PER_DAY;
 
-/** The arriving unit's lessons done a couple of days ago: that unit is finished. */
 async function finishArriving({ items }: { items: { id: string }[] }) {
   const completedAt = new Date(Date.now() - DAYS_AGO_2);
 
@@ -62,7 +61,6 @@ describe("language view models", () => {
     });
 
     expect(progress.target).toStrictEqual({ label: "B1+", score: 2.5 });
-    // Listening at B1 and the rest at A2 average below A2+, so the level across skills is A2.
     expect(progress.level).toBe("A2");
 
     expect(progress.canDo).toStrictEqual([
@@ -77,7 +75,6 @@ describe("language view models", () => {
     const { goal, user } = await languageGoalFixture();
     mockSession(user.id);
 
-    // Onboarding writes a language goal's target as the CEFR level in `targetScore`.
     await prisma.goal.update({
       data: { details: { level: "B1+", reason: "Entrevista de emprego", targetScore: "B2" } },
       where: { id: goal.id },
@@ -112,7 +109,6 @@ describe("language view models", () => {
 
     await expect(skillsShown()).resolves.toStrictEqual(["reading", "listening", "writing"]);
 
-    // One sentence spoken says little about speaking.
     const speaking = await prisma.languageSkillLevel.create({
       data: {
         language: "en",
@@ -163,7 +159,6 @@ describe("language view models", () => {
     expect(forIelts.status === "ready" && forIelts.progress.speakingMock).toBe("ielts");
     expect(forToefl.status === "ready" && forToefl.progress.speakingMock).toBe("toefl");
 
-    // A goal naming its exam practices that exam, never another certificate's paper.
     expect(forIelts.status === "ready" && forIelts.progress.speaking).toBeNull();
   });
 
@@ -248,7 +243,6 @@ describe("language view models", () => {
     expect(result).toMatchObject({
       status: "ready",
       unit: {
-        // A free learner picks the lengths their day holds; Plus's longer ones show locked.
         conversation: {
           character: { name: "Linda" },
           defaultMinutes: 2,
@@ -375,8 +369,6 @@ describe("language view models", () => {
     ]);
   });
 
-  // The noticed pattern is Today's own card (`TodayView.pattern`), which steps aside for the day's
-  // missions: the language cards leave it out.
   it("adds the level across skills to Today, and leaves the noticed pattern to Today's own read", async () => {
     const setup = await languageGoalFixture();
     const { goal, user } = setup;
@@ -403,13 +395,11 @@ describe("language view models", () => {
 
     const result = await getLanguageTodayView({ goalId: goal.id });
 
-    // Listening went up to B1 and the rest stay at A2: the average rounds down to A2.
     expect(result).toStrictEqual({
       status: "ready",
       today: {
         level: { label: "A2", target: "B1+" },
         pronunciation: null,
-        // The goal names no exam: it practices English's certificate at its B1+ target.
         speaking: { access: "plusRequired", title: "B1 Preliminary" },
       },
     });

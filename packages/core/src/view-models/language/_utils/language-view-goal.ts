@@ -8,7 +8,7 @@ export type LanguageViewGoalResult =
   | { context: LanguageViewGoal; status: "ready" }
   | { status: "noGoal" | "notFound" | "notLanguage" | "unauthorized" };
 
-/** Resolves the owned language goal without loading its course or another screen's fields. */
+/** Requires ownership and language-goal kind. */
 export async function resolveLanguageViewGoal(goalId?: string): Promise<LanguageViewGoalResult> {
   const resolved = await resolveViewGoal(goalId);
 

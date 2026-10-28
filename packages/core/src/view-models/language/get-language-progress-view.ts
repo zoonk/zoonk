@@ -16,7 +16,6 @@ import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { loadLanguageGoalContext } from "./_utils/language-goal-context";
 import { type LanguageProgressView } from "./language-view-contract";
 
-/** Finished units shown in "I can already", newest last, beside the current unit's checks. */
 const DONE_UNITS_SHOWN = 2;
 
 export type LanguageProgressViewResult =
@@ -38,11 +37,7 @@ function getCanDo({ doneIds, units }: UnitProgress) {
   ];
 }
 
-/**
- * Progress for a language goal: the level across skills and of each skill with how it moved since
- * the level test, the target, "I can already" checks from the units, and the exam's speaking mock
- * or speaking paper when it has one.
- */
+/** Requires an owned language goal, defaulting to the active goal. */
 export async function getLanguageProgressView(
   input: { goalId?: string } = {},
 ): Promise<LanguageProgressViewResult> {

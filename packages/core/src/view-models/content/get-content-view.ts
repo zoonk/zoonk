@@ -6,11 +6,6 @@ import { type SkillStateCounts } from "../../learner/mastery-state";
 import { groupSkillsBySection } from "../_utils/group-skills";
 import { resolveViewGoal } from "../_utils/resolve-view-goal";
 
-/**
- * A skill as a study card: the idea on the front, an example on the back, and its memory. Mastered
- * means remembered on three different days; a fading skill is due back soon, and `dueToday` puts it
- * in today's reviews.
- */
 type ContentCard = {
   description: string | null;
   dueToday: boolean;
@@ -23,10 +18,7 @@ type ContentCard = {
   state: MasteryState;
 };
 
-/**
- * One chapter (or plan phase) of cards. `section` is the course or exam subject above it, so the
- * apps can show areas, then chapters; groups of one section always come together.
- */
+/** Section groups remain contiguous and areas retain plan order. */
 type ContentGroup = {
   areaId: string;
   cards: ContentCard[];
@@ -35,11 +27,6 @@ type ContentGroup = {
   title: string;
 };
 
-/**
- * Content for one goal: every skill as a card grouped by section (the course or exam subject) and
- * area (chapters, in plan order) with its state counts, and today's reviews. Lesson summaries live
- * on each chapter's page.
- */
 export type ContentView = {
   capsules: { dueToday: number };
   counts: SkillStateCounts;
@@ -51,7 +38,7 @@ export type ContentViewResult =
   | { content: ContentView; status: "ready" }
   | { status: "noGoal" | "notFound" | "unauthorized" };
 
-/** Content for a goal (the active goal by default). */
+/** Requires ownership of the requested or default active goal. */
 export async function getContentView(input: { goalId?: string } = {}): Promise<ContentViewResult> {
   "use cache: private";
 

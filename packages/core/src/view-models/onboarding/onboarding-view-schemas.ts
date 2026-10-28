@@ -55,7 +55,6 @@ const understoodGoalSchema = z
   })
   .meta({ id: "UnderstoodGoal" }) satisfies z.ZodType<UnderstoodGoalView>;
 
-/** What a typed goal turned out to be, as the API returns it and drafts store it. */
 export const goalUnderstandingViewSchema = z
   .discriminatedUnion("status", [
     z.object({

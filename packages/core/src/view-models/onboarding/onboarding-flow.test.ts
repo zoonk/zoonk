@@ -31,7 +31,6 @@ const MEMORY_PROVENANCE = {
   runId: "run-memory-test",
 };
 
-/** Memory finds one fact about the learner's work and keeps it as new. */
 function mockWorkFact(statement: string) {
   vi.mocked(extractMemoryFacts).mockResolvedValue({
     data: {
@@ -183,10 +182,6 @@ describe("onboarding a new goal", () => {
     });
   });
 
-  /*
-   * The notice also lists its written tests among its subjects (a discursive test grouped under
-   * its own test, an essay): those aren't bodies of knowledge a learner already knows well.
-   */
   it("lists an exam's knowledge subjects from its stored notice, not its written tests", async () => {
     const user = await useLearner();
     const citation = { passage: "notice", sourceId: randomUUID() };
@@ -473,7 +468,6 @@ describe("onboarding a new goal", () => {
       userId: user.id,
     });
 
-    // Three hours a day: a public exam three weeks away isn't a 15-minute habit.
     await expect(getOnboarding({ goalId: goal.id })).resolves.toMatchObject({
       onboarding: { recommendedMinutes: 180 },
     });
@@ -484,7 +478,6 @@ describe("onboarding a new goal", () => {
     const inThreeDays = new Date(Date.now() + 3 * MS_PER_DAY);
     const inTenDays = new Date(Date.now() + 10 * MS_PER_DAY);
 
-    // The learner's notes, read into a notice only they see: no public exam's three hours a day.
     const material = await examBlueprintFixture({ ownerId: user.id, visibility: "private" });
 
     const [fromMaterial, attached] = await Promise.all([
@@ -580,8 +573,6 @@ describe("onboarding a new goal", () => {
     expect(saved.details).not.toHaveProperty("level");
   });
 
-  // An IELTS learner went Back to the subjects question and chose "None of them yet": the plan
-  // still skipped the Listening and Reading basics they had ticked before.
   it("replaces the subjects the learner knows when they go back and answer again", async () => {
     await useLearner();
     const [goal] = await createGoal([draft({ kind: "exam", title: "Pass IELTS" })]);

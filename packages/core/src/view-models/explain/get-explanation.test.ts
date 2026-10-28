@@ -121,7 +121,6 @@ describe(getExplanation, () => {
     const only = await getExplanation({ goalId: goal.id });
     expect(only.status === "ready" && only.explanation.hasStudyGoal).toBe(false);
 
-    // A paused goal is still the learner's plan; an archived one isn't.
     const study = await goalFixture({ status: "paused", title: "ENEM 2026", userId: user.id });
     const withPlan = await getExplanation({ goalId: goal.id });
     expect(withPlan.status === "ready" && withPlan.explanation.hasStudyGoal).toBe(true);
@@ -197,7 +196,6 @@ describe("asking a quick question", () => {
       followed.status === "created" ? followed.goals[0]?.id : null,
     );
 
-    // Every question asks a model (to classify and find it, if not to write it), so it costs AI.
     expect(usage).toStrictEqual([
       {
         costMicros: getEstimatedCostMicros({ generated: true, kind: "explanation" }),

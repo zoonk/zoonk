@@ -4,14 +4,7 @@ import { type GoalCreateInput } from "../../goals/goal-contract";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { getSession } from "../../users/get-session";
 
-/**
- * Creates the goals the learner confirmed on the "Here's what I understood" card and links the
- * material they attached to the main goal before its research and curriculum start. Goal limits,
- * the shared daily time and the active goal work as in `createGoals`. Only the learner's own
- * sources not yet tied to a goal are linked. Memory learns from onboarding once its questions are
- * answered (`answerOnboardingQuestion`): a new learner's age, which decides whether memory is on,
- * isn't known yet.
- */
+/** Requires sign-in; links only owned unattached sources and defers memory until age and onboarding answers are known. */
 export async function createOnboardingGoals(input: GoalCreateInput): Promise<GoalCreateResult> {
   const result = await createGoals(input);
   const [main] = result.status === "created" ? result.goals : [];

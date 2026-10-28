@@ -24,7 +24,6 @@ import { getTodayView } from "./get-today-view";
 
 const DAYS_TO_EXAM = 32;
 
-/** A learner whose active goal is an exam 32 days away, with a weekly mock in the plan. */
 async function setup() {
   const user = await userFixture();
 
@@ -51,7 +50,6 @@ async function setup() {
   return { ...fixture, mock, user };
 }
 
-/** Today for the signed-in learner's active goal, when it's ready. */
 async function readReadyToday() {
   const result = await getTodayView({});
   return result.status === "ready" ? result.today : null;
@@ -109,7 +107,7 @@ describe(getTodayView, () => {
     const first = await setup();
     const firstToday = await readReadyToday();
     const delivery = Promise.withResolvers<boolean>();
-    // Hold network delivery after A's real read; each request keeps its own auth boundary.
+    // Delay delivery after the authenticated read to test cross-account response retention.
     const pendingFirst = delivery.promise.then(() => firstToday);
 
     const second = await setup();
@@ -240,7 +238,6 @@ describe(getTodayView, () => {
     });
   });
 
-  // Lucas's Today said "The day is here" every day after his date, beside a rest day.
   it("counts no days once the goal's date passed, and says it came with lessons left", async () => {
     const user = await userFixture();
 
@@ -266,8 +263,6 @@ describe(getTodayView, () => {
     expect(today?.progress?.status).toMatchObject({ kind: "pastDate" });
   });
 
-  // Pedro's Plan read "Progress 4%" after he finished every lesson: a goal without an exam reads
-  // its progress as the Plan's lessons, not as preparation.
   it("measures a goal that isn't an exam by its plan's lessons studied or known", async () => {
     const user = await userFixture();
     const fixture = await sessionGoalFixture({ goal: { kind: "learn" }, userId: user.id });
@@ -306,8 +301,6 @@ describe(getTodayView, () => {
     });
   });
 
-  // Today's card outlined a lesson as still to do after the learner finished it through another
-  // goal sharing it: today's lessons are the session's plan lessons still to do, each once.
   it("counts today's plan lessons still to do, each once", async () => {
     const user = await userFixture();
     const fixture = await sessionGoalFixture({ goal: { kind: "learn" }, userId: user.id });
@@ -326,7 +319,6 @@ describe(getTodayView, () => {
     expect(planItemIds.length).toBeGreaterThan(0);
     expect(today?.progress).toMatchObject({ lessons: { today: planItemIds.length } });
 
-    // A bonus copy of one of them is the same lesson.
     const copied = await prisma.studySessionBlock.findUniqueOrThrow({ where: { id: first?.id } });
 
     await prisma.studySessionBlock.create({
@@ -342,7 +334,6 @@ describe(getTodayView, () => {
     const withCopy = await readReadyToday();
     expect(withCopy?.progress).toMatchObject({ lessons: { today: planItemIds.length } });
 
-    // Finished elsewhere, its plan item is done, so it no longer counts.
     await prisma.planItem.update({
       data: { completedAt: new Date(), status: "done" },
       where: { id: first?.planItemId ?? "" },
@@ -371,7 +362,6 @@ describe(getTodayView, () => {
   it("carries the insight waiting for this goal", async () => {
     const { goal, user } = await setup();
 
-    // Insights come from memory, which a learner without an age answer turns on themselves.
     await learningProfileFixture({ memoryEnabled: true, userId: user.id });
 
     const insight = await memoryInsightFixture({

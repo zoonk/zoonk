@@ -5,19 +5,14 @@ import { hasSubjectPages } from "../subject-pages";
 import { buildSyllabus } from "./build-syllabus";
 import { readSyllabusInput } from "./read-syllabus-input";
 
-/** A chapter's number as every screen gives it, and the subject (or module) whose page numbers it. */
 type ChapterNumber = { position: number; subject: { key: string; name: string } | null };
 
-/** A chapter's number, given its number in the plan for when no subject's page numbers it. */
+/** Falls back to planPosition when no subject or course numbers the chapter. */
 export type ChapterNumbering = (chapter: {
   chapterId: string;
   planPosition: number;
 }) => ChapterNumber;
 
-/**
- * A course's chapters by their number in it, in the order its page lists them (level band, then
- * position). Empty without a course.
- */
 async function loadCourseNumbers(goal: Goal): Promise<Map<string, number>> {
   if (!goal.primaryCourseId) {
     return new Map();
@@ -32,13 +27,7 @@ async function loadCourseNumbers(goal: Goal): Promise<Map<string, number>> {
   return new Map(placements.map((placement, index) => [placement.chapterId, index + 1]));
 }
 
-/**
- * How the goal's chapters are numbered wherever a learner sees them. When its subjects have pages
- * (an exam's notice, or two or more modules), a chapter's number is its number in its subject as
- * that page lists it, with the subject (the first one that lists it). Otherwise it's its number in
- * the course the plan follows, as the course's page lists it, whatever order the plan teaches it
- * in; for a chapter of neither, its number in the plan.
- */
+/** Prefer subject-page numbering, then course-page numbering, then plan order so every screen uses the same chapter number. */
 export async function loadChapterNumbering(goal: Goal): Promise<ChapterNumbering> {
   const [input, courseNumbers] = await Promise.all([
     readSyllabusInput(goal.userId, goal.id),

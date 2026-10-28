@@ -9,7 +9,6 @@ import { GUEST_OUT_OF_HELP, useGuestOutOfHelp } from "../../_test-utils/guest-ou
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { prepareGoalUnderstandingRun } from "./prepare-goal-understanding-run";
 
-/** Small AI calls the learner claimed: reading a goal again takes one. */
 function countAssists(userId: string) {
   return prisma.usageRecord.count({ where: { kind: "assist", userId } });
 }

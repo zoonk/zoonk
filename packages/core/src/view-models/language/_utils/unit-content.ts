@@ -9,7 +9,6 @@ import { type LanguageMistakeSkill, type LanguageUnitView } from "../language-vi
 const MAX_GRAMMAR_TIPS = 6;
 const WORD_SAMPLE_SIZE = 6;
 
-/** The filters for answers the learner heard, said or wrote, by the screen or question format. */
 const MISTAKE_SKILLS: Partial<Record<string, LanguageMistakeSkill>> = {
   essay: "writing",
   listening: "listening",
@@ -19,18 +18,14 @@ const MISTAKE_SKILLS: Partial<Record<string, LanguageMistakeSkill>> = {
   typedAnswer: "writing",
 };
 
-/**
- * Every other mistake (vocabulary, translation, reading, a gap, a match, a review's multiple
- * choice) was about what words mean, so it's under Words: each mistake has a filter and the
- * filters add up to the unit's count.
- */
+/** Assign every remaining format to Words so the filters partition the unit's full mistake count. */
 const DEFAULT_MISTAKE_SKILL: LanguageMistakeSkill = "words";
 
 function getMistakeSkill(format: string | undefined): LanguageMistakeSkill {
   return (format && MISTAKE_SKILLS[format]) || DEFAULT_MISTAKE_SKILL;
 }
 
-/** The unit's grammar tips: each lesson's tip screen, in lesson order. */
+/** Returns grammar tips in lesson order. */
 export async function loadGrammarTips(
   lessonIds: string[],
 ): Promise<LanguageUnitView["grammarTips"]> {
@@ -52,7 +47,6 @@ export async function loadGrammarTips(
     .slice(0, MAX_GRAMMAR_TIPS);
 }
 
-/** How many words the unit teaches, with the first few to show. */
 export async function loadUnitWords(lessonIds: string[]): Promise<LanguageUnitView["words"]> {
   const links = await prisma.lessonWord.findMany({
     include: { word: { select: { word: true } } },
@@ -64,11 +58,7 @@ export async function loadUnitWords(lessonIds: string[]): Promise<LanguageUnitVi
   return { count: words.length, sample: words.slice(0, WORD_SAMPLE_SIZE) };
 }
 
-/**
- * The learner's open mistakes on the unit, newest first, each under one skill filter: every one on
- * its lessons' screens or on the skills its lessons teach, wherever it was made (a lesson, a
- * review, practice), as the chapter page and Progress count them.
- */
+/** Includes open mistakes across all contexts on the unit's screens or taught skills. */
 export async function loadUnitMistakes({
   lessonIds,
   userId,

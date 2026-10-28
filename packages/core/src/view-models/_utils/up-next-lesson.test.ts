@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { findUpNextLessonId } from "./up-next-lesson";
 
-/** Marcos's unit 1, in teaching order: he did "Questions" and "Requests" first. */
 const UNIT = [
   { done: false, lessonId: "apresentacao" },
   { done: true, lessonId: "perguntas" },

@@ -9,11 +9,7 @@ import { completeDraft, parseStoredUnderstanding } from "./_utils/onboarding-dra
 import { saveUnderstanding } from "./_utils/understanding-cache";
 import { getLearnerToday } from "./_utils/understanding-view";
 
-/**
- * The run's side of a draft: system work for the workflow that reads a learner's typed goal, after
- * `prepareGoalUnderstandingRun` checked who asked. None of it reads a session.
- */
-
+/** System-workflow input only, after prepareGoalUnderstandingRun authorized the learner; does not read a session. */
 export type UnderstandingRunDraft = {
   id: string;
   language: string;
@@ -35,7 +31,7 @@ export async function loadUnderstandingDraft(
   });
 }
 
-/** Keeps the run on its draft, so a refresh follows it instead of starting another. */
+/** Retain the run identity so refreshes follow it without starting another. */
 export async function recordUnderstandingRun({
   draftId,
   runId,
@@ -63,15 +59,11 @@ export async function recordUnderstandingRun({
   });
 }
 
-/**
- * Reads the words with the model. Today's unsafe-intent classifier runs beside it, so a goal it
- * declines at routing today is declined here too, whatever route the understanding picked.
- */
+/** A declined unsafe intent overrides the understanding route. */
 export async function readGoalWords(
   draft: Pick<UnderstandingRunDraft, "language" | "prompt" | "timeZone" | "userId">,
 ): Promise<{ provenance: Provenance; result: GoalUnderstanding }> {
   const analytics = { contentScope: "personal" as const, distinctId: draft.userId };
-  // The learner watches their words being read: two small one-off calls worth the premium.
   const serviceTier = chooseServiceTier({ reuse: "personal", small: true, wait: "learner" });
 
   const [understood, intent] = await Promise.all([
@@ -93,14 +85,9 @@ export async function readGoalWords(
   };
 }
 
-/** A language the learner will take a level test in: the language they learn it from and it. */
 export type UnderstoodLanguagePair = { language: string; targetLanguage: string };
 
-/**
- * Keeps what was understood for the learner's same words today, then puts the card on the draft, with the
- * named exam's dates. Returns the language goals it found, so their level tests can be written
- * before the learner gets there.
- */
+/** Saves today's learner-private reading and draft card; returns language pairs needing level-test preparation. */
 export async function completeUnderstandingDraft({
   draft,
   provenance,
@@ -132,7 +119,6 @@ export async function completeUnderstandingDraft({
   );
 }
 
-/** The words couldn't be read: the learner sees it and can try again. */
 export async function failUnderstandingDraft(draftId: string): Promise<void> {
   const draft = await prisma.onboardingDraft.findUnique({ where: { id: draftId } });
 

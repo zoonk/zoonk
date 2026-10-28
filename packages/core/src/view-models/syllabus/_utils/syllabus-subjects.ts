@@ -11,19 +11,14 @@ import {
   type SyllabusSkill,
 } from "./syllabus-input";
 
-/** A subject before the plan's lessons are read into it. */
 export type SubjectDraft = Pick<
   SyllabusSubject,
   "areas" | "group" | "name" | "questions" | "share" | "source"
 > & {
-  /** Where how often the exam asks its topics comes from (see `NoticeSubject`). */
   frequencySource?: TopicFrequencySource | null;
   matrix?: readonly string[];
   noticeShortName: string | null;
-  /**
-   * Areas that don't name the subject: one part of its written test (a legal brief), or an option
-   * counted inside it (ENEM's foreign language).
-   */
+  /** Written-task and selected-option areas counted inside this subject. */
   partAreas?: readonly string[];
   partOf?: NoticeSubject["partOf"];
   topicFrequency?: NoticeSubject["topicFrequency"];
@@ -48,11 +43,7 @@ function toModule(area: string): SubjectDraft {
   };
 }
 
-/**
- * An area the names don't place that teaches one part of a subject's written test (the plan's
- * "Legal brief" for the notice's "Discursive test", whose test asks a legal brief) belongs to
- * that subject, when only one subject's test asks it.
- */
+/** Assign a written-task area only when exactly one subject's test asks it. */
 function matchWrittenTasks({
   areas,
   matches,
@@ -81,7 +72,6 @@ function addCounts(first: number | null, second: number | null): number | null {
   return first === null || second === null ? first : first + second;
 }
 
-/** A subject with the options counted inside it (see `foldPartsIntoSubjects`). */
 function addParts({ parts, whole }: { parts: readonly SubjectDraft[]; whole: SubjectDraft }) {
   if (parts.length === 0) {
     return whole;
@@ -110,12 +100,7 @@ function addParts({ parts, whole }: { parts: readonly SubjectDraft[]; whole: Sub
   };
 }
 
-/**
- * A picked option the notice counts inside another subject (the foreign language a candidate
- * takes, inside ENEM's languages area) is part of that subject, never one of its own: its areas,
- * questions and topics join the subject's, its topics under its name. The plan still studies it in
- * its own area.
- */
+/** Selected options remain separate teaching areas but count within their parent notice subject. */
 function foldPartsIntoSubjects(drafts: readonly SubjectDraft[]): SubjectDraft[] {
   const names = new Set(drafts.map((draft) => draft.name));
   const isPart = (draft: SubjectDraft) => Boolean(draft.partOf && names.has(draft.partOf));
@@ -130,11 +115,7 @@ function foldPartsIntoSubjects(drafts: readonly SubjectDraft[]): SubjectDraft[] 
     );
 }
 
-/**
- * The subjects to show: the notice's, in its order, with the plan's areas each gathers and the
- * areas the plan adds outside it after them; or, without a notice the plan follows, its areas. A
- * picked option counted inside another subject shows inside it (`foldPartsIntoSubjects`).
- */
+/** Preserves notice order and appends outside areas; selected options stay within their parent subject. */
 export function draftSubjects({
   areas,
   notice,
@@ -179,12 +160,7 @@ export function draftSubjects({
   return { drafts: [...fromNotice, ...extras], kind: "notice" };
 }
 
-/**
- * The name labels use for the subject: the notice's own short name when it gives one, else the
- * shortest name it goes by (the notice's, its areas' or their courses'). A course counts only when
- * it names the same subject: a study-strategy area whose first skill sits in a logic course is
- * still study strategy.
- */
+/** Prefer the notice's short name; course names qualify only when they name the same subject. */
 export function getShortName({
   areaCourses,
   draft,
@@ -210,7 +186,6 @@ export function getShortName({
   );
 }
 
-/** Long official names make long addresses: a key keeps the whole words that fit. */
 const KEY_MAX_LENGTH = 48;
 
 function toKey(name: string): string {
@@ -230,10 +205,7 @@ export function toKeys(names: readonly string[]): string[] {
   });
 }
 
-/**
- * Each skill's subject by its short name, for labels like a lesson's subject on Today. Empty when
- * the goal has fewer than two subjects (a language, one course), where a label says nothing.
- */
+/** Returns no labels when fewer than two subjects make them useful. */
 export function getSkillSubjects(
   input: Pick<SyllabusInput, "areaCourses" | "notice" | "skills">,
 ): Map<string, string> {

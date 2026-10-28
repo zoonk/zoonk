@@ -7,7 +7,6 @@ import { isWorkFinished } from "../../plans/_utils/work-progress";
 import { type PlanPhase } from "../../plans/planner/plan-state";
 import { type MapArea, type MapPhase, type MapSkill } from "../map/map-contract";
 
-/** Lessons and chapters are what a plan teaches; checkpoints and reviews come around them. */
 const LEARN_KINDS = new Set<PlanItem["kind"]>(["chapter", "lesson"]);
 
 export type MapItem = Pick<
@@ -19,17 +18,12 @@ export type MapNode = { areaId: string; phase: number; skill: MapSkill; title: s
 
 type AreaDetails = { courseId: string | null; title: string };
 
-/**
- * What each phase's state is read from, as the Plan reads it (see `getPhaseStates`): the phase the
- * learner is in (`findPlanPhase`) and the plan's date.
- */
 export type MapPhaseProgress = Omit<Parameters<typeof getPhaseStates>[0], "items" | "phases">;
 
 function getPhaseAreaId(phase: number) {
   return `phase:${phase}`;
 }
 
-/** An item's area: where its first skill sits, else its chapter, else its phase. */
 function getItemArea({ item, nodes }: { item: MapItem; nodes: ReadonlyMap<string, MapNode> }) {
   const skillArea = item.skillIds.map((skillId) => nodes.get(skillId)?.areaId).find(Boolean);
   return skillArea ?? item.chapterId ?? getPhaseAreaId(item.phase);
@@ -54,13 +48,7 @@ function getAreaState({
   return isDone ? "done" : "upcoming";
 }
 
-/**
- * Groups a goal's skills into areas in plan order: each chapter (or a phase's skills before its
- * chapters exist) with its state and whether the learner is there now, then the phases with their
- * state and counts. A chapter with no skills yet still shows, so the map never hides a chapter.
- * Each phase's state is the Plan's (see `getPhaseStates`), and the learner is in the area of the
- * lesson up next (`findUpNextItem`), in whichever phase, as on Today.
- */
+/** Preserve chapters with no skills; use Plan phase states and Today's next lesson to locate the learner. */
 export function buildGoalMapAreas({
   areaDetails,
   items,
@@ -95,7 +83,7 @@ export function buildGoalMapAreas({
 
   const phaseCount = Math.max(planPhases.length, ...grouped.map((area) => area.phase + 1));
 
-  // A skill's phase the plan's phases don't list yet reads as one more of its learn phases.
+  // Skills whose phases are not listed yet still need a visible learn phase.
   const phases = Array.from(
     { length: phaseCount },
     (_, index) => planPhases[index] ?? { kind: "learn" as const, name: "" },

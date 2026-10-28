@@ -15,18 +15,7 @@ export type StartGoalUnderstandingResult =
   | { status: "unauthorized" }
   | { draft: OnboardingDraftView; status: "understanding" | "understood" };
 
-/**
- * Saves a goal the learner typed on the first onboarding screen as a draft, so a refresh shows the
- * same screen. Words the learner had read today are understood again at once and cost nothing
- * (another learner's reading of the same words is never theirs); other words come back `understanding`,
- * for the caller to start the run that reads them (`POST /v1/goal-understandings/{id}/generations`).
- * Anyone with a session can ask, guests included; reading new words is one of the learner's small
- * AI calls (`claimAssist`), so asking often is slowed down and a guest's day has a cap. A reused
- * understanding of an exam whose day no stored notice gives searches the web for it only as one
- * more small AI call (`allowDateSearch`); past the cap, its card says the day is to be confirmed. A guest
- * whose one goal is taken is refused before anything is read (`limitReached` on `goal`), since
- * only an account can add another.
- */
+/** Requires a session, including guests; reuses only this learner's recent words, otherwise claims AI allowance and returns a draft to start. */
 export async function startGoalUnderstanding(
   input: GoalUnderstandingInput,
 ): Promise<StartGoalUnderstandingResult> {

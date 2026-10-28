@@ -12,10 +12,6 @@ import { loadGoalLessons } from "../../syllabus/_utils/load-goal-lessons";
 import { getSyllabusView } from "../../syllabus/get-syllabus-view";
 import { readTodayWeeklyChallenge } from "./weekly-challenge-view";
 
-/**
- * The plan's lessons studied or known, for a goal measured in lessons (see `TodayProgress`): not an
- * exam, nor a quick explanation, which has no plan.
- */
 async function loadLessons({
   goalId,
   kind,
@@ -44,7 +40,7 @@ async function loadLessons({
   return { done, total };
 }
 
-/** Everything around the session reads the goal the session belongs to. */
+/** All surrounding cards must use the session's goal. */
 export async function loadAroundSession({
   owned,
   timeZone,

@@ -6,7 +6,6 @@ import { type MapArea, type MapSkill } from "../../map/map-contract";
 
 const LEARN_KINDS = new Set<PlanItem["kind"]>(["chapter", "lesson"]);
 
-/** What a chapter's page needs from the goal's map: its number, state and skills. */
 export type ChapterArea = Pick<MapArea, "counts" | "skills" | "state"> & { position: number };
 
 function uniqueSkills(skills: readonly MapSkill[]): MapSkill[] {
@@ -15,10 +14,6 @@ function uniqueSkills(skills: readonly MapSkill[]): MapSkill[] {
   );
 }
 
-/**
- * A chapter's state from its own lessons: done once they all are, else current when it holds the
- * lesson up next (`GoalMap.upNextItemId`, the one Today opens), else upcoming.
- */
 function getItemAreaState({
   chapterId,
   map,
@@ -37,13 +32,7 @@ function getItemAreaState({
   return upNext?.chapterId === chapterId ? "current" : "upcoming";
 }
 
-/**
- * A chapter's state from its own lessons, not its area's: the map files a skill under the chapter
- * that teaches it first, so a chapter whose skill goes on in a later chapter has that chapter's
- * lessons in its area. Its area wasn't done while the learner had finished every lesson it has
- * (Lucas's first chapter offered no mind map), and was current while the lesson Today opens sat in
- * the later chapter. A chapter without lessons of its own keeps its area's state.
- */
+/** Use the chapter's own lessons: a shared skill's map area may include later chapters; only empty chapters inherit area state. */
 function getChapterState({
   area,
   chapterId,
@@ -60,11 +49,7 @@ function getChapterState({
   return own.length === 0 ? area.state : getItemAreaState({ chapterId, map });
 }
 
-/**
- * A chapter the map files no skills under: every skill it teaches was met first in an earlier
- * chapter (an exam plan teaches one skill across chapters). It's still the plan's chapter, so it
- * gets its skills from its own items and its state from them.
- */
+/** Shared skills may all belong to earlier map areas; the later chapter still needs an area from its own items. */
 function buildItemArea({ chapterId, map }: { chapterId: string; map: GoalMap }) {
   const learnItems = map.items.filter((item) => LEARN_KINDS.has(item.kind));
   const inChapter = learnItems.filter((item) => item.chapterId === chapterId);
@@ -77,11 +62,7 @@ function buildItemArea({ chapterId, map }: { chapterId: string; map: GoalMap }) 
   return { counts: countSkillStates(skills), skills, state: getItemAreaState({ chapterId, map }) };
 }
 
-/**
- * A chapter of the goal's plan as its page shows it, numbered in plan order, or null when the plan
- * doesn't have it. Every chapter a plan item points at has a page, so each row of the Plan opens
- * one.
- */
+/** Returns null outside the plan; every chapter referenced by a plan item must still have a page. */
 export function findChapterArea({
   chapterId,
   map,

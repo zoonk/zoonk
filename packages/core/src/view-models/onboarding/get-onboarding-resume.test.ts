@@ -7,7 +7,6 @@ import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { choiceBlueprintFixture } from "../../exams/choices/_test-utils/choice-blueprint";
 import { getOnboardingResume } from "./get-onboarding-resume";
 
-/** Every question, the profile screens and placement already behind it: only the plan is left. */
 const FINISHED_DETAILS = {
   answered: ["targetDate", "schedule", "age", "memory", "buddy"],
   level: "none",
@@ -20,7 +19,6 @@ async function signedInGuest() {
   return user;
 }
 
-/** Makes a row older, since rows created in one test land within the same moment. */
 async function age({ id, model }: { id: string; model: "draft" | "goal" }) {
   const past = new Date(Date.now() - 60_000);
 

@@ -20,7 +20,6 @@ import { parsePlanSettings } from "../../plans/planner/plan-state";
 import { answerOnboardingQuestion } from "./answer-onboarding-question";
 import { getOnboarding } from "./get-onboarding";
 
-/** A new ENEM goal whose plan the planner hasn't built yet, as onboarding finds it. */
 async function setup() {
   const user = await userFixture();
   const blueprint = await choiceBlueprintFixture();

@@ -8,13 +8,7 @@ import {
   getLibraryLessonCacheTag,
 } from "../../cache/tags";
 
-/**
- * Where a lesson fits, for the end of a guest's lesson: "Part of Quantum physics · Overview",
- * its chapter and position, and the course's size. The course is also what "Build my plan"
- * starts, from `startChapterId`: the lesson's own chapter, where the guest already began, or the
- * course's beginning (null) when that's the first chapter anyway, so the level and placement
- * find where they start.
- */
+/** startChapterId begins Build my plan at the played chapter; null lets normal level/placement choose from the course beginning. */
 export type LessonFit = {
   chapter: { id: string; lessonCount: number; lessonNumber: number; title: string };
   course: {
@@ -55,7 +49,6 @@ async function findHomeCourse({
     prisma.courseChapter.count({ where: { chapterId, courseId } }),
   ]);
 
-  // A chapter its course doesn't place (or its first one) starts the course from the beginning.
   const startsAtChapter = placed > 0 && first?.chapterId !== chapterId;
 
   return course
@@ -69,7 +62,7 @@ async function findHomeCourse({
     : null;
 }
 
-/** The same for everyone: only public content from the lesson's home chapter and course. */
+/** Shared cached read of public content only. */
 export async function getLessonFit({ lessonId }: { lessonId: string }): Promise<LessonFit | null> {
   "use cache";
 

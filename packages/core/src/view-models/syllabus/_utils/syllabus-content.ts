@@ -10,7 +10,6 @@ import { getSkillArea } from "../../../plans/planner/graph-areas";
 import { type PlanGraph } from "../../../plans/planner/plan-state";
 import { type AreaCourse, type SyllabusItem } from "./syllabus-input";
 
-/** Each area's Library course, from the first of its skills that names one. */
 export async function loadAreaCourses(
   graph: PlanGraph,
   from: LibrarySource = prisma,
@@ -55,10 +54,6 @@ function groupSkills(rows: readonly ContentSkill[]): Map<string, string[]> {
   );
 }
 
-/**
- * The skills these lessons teach, oldest first. A GET reads the shared rows of every lesson in the
- * plan, the same entry the skill projection reads, and keeps these.
- */
 async function loadLessonSkills({
   from,
   lessonIds,
@@ -83,10 +78,7 @@ async function loadLessonSkills({
     : [];
 }
 
-/**
- * The skills a lesson or a chapter teaches, by lesson or chapter, oldest first. A chapter's skills
- * change under its id (an outline links them later), so they're always read fresh.
- */
+/** Chapter skills must stay fresh because later outlines change links under the same chapter id. */
 async function loadContentSkills(items: readonly SyllabusItem[], from: LibrarySource) {
   const unknown = items.filter((item) => !item.skillId);
   const lessonIds = unknown.flatMap((item) => item.lessonId ?? []);
@@ -124,10 +116,7 @@ function getCandidates({
   return item.chapterId ? (skills.chapters.get(item.chapterId) ?? []) : [];
 }
 
-/**
- * Lessons and chapters saved without their skill take the one they teach that the plan's graph
- * has (else their first), so they still count for a subject.
- */
+/** Missing item skills prefer a taught skill in the plan graph, falling back to the content's first skill. */
 export async function withSkills({
   from,
   graphSkillIds,

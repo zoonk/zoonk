@@ -24,10 +24,7 @@ async function saveProfileAnswer(input: OnboardingAnswerInput): Promise<"invalid
   return result.status === "updated" ? "saved" : "invalid";
 }
 
-/**
- * The options the learner takes of their exam's choices go with their plan, which studies only
- * those; "decide later" (no picks) leaves the choice for the plan.
- */
+/** No picks means decide later; selected options restrict what the plan studies. */
 async function saveExamChoices({
   goal,
   input,
@@ -51,14 +48,9 @@ async function saveExamChoices({
 
 type Details = Record<string, unknown>;
 
-/** What the level question stores: the level the learner gave, or the subjects they know well. */
 const LEVEL_ANSWER_KEYS = new Set(["knownSubjects", "level"]);
 
-/**
- * The details an answer builds on. A new level answer replaces the last one whole: an IELTS learner
- * who went back to "None of them yet" kept the Listening and Reading they had ticked, and the plan
- * skipped their basics.
- */
+/** Replacing a level answer must clear old known subjects, including a return to None of them yet. */
 function withoutReplacedAnswer({
   details,
   input,
@@ -71,16 +63,10 @@ function withoutReplacedAnswer({
     : details;
 }
 
-/** Only the answers the learner gave: skipped fields add nothing. */
 function compactAnswers(answers: Record<string, string | null | undefined>): Details {
   return Object.fromEntries(Object.entries(answers).filter(([, value]) => value));
 }
 
-/**
- * Where the target answer goes: the position a civil service exam ranks for and the score a test reports
- * are the goal's own fields, which research and the plan read; a course and score together stay
- * in the learner's words.
- */
 function getTargetField(details: Details): "targetNote" | "targetPosition" | "targetScore" {
   switch (readExamTarget(details)) {
     case "position":
@@ -95,7 +81,6 @@ function getTargetField(details: Details): "targetNote" | "targetPosition" | "ta
   }
 }
 
-/** What each answer adds to the goal's understood details. Skipped answers add nothing. */
 function getDetailChanges({
   details,
   input,
@@ -156,7 +141,7 @@ function getScheduleChanges(input: OnboardingAnswerInput): Omit<GoalUpdateInput,
   return {};
 }
 
-/** Goals typed together share the day's time: the main one gets the bigger share. */
+/** Goals from one onboarding share daily time, with the main goal receiving the larger share. */
 async function shareDailyMinutes({
   dailyMinutes,
   goal,
@@ -182,10 +167,7 @@ async function shareDailyMinutes({
 
 type ScheduleAnswer = Extract<OnboardingAnswerInput, { question: "schedule" }>;
 
-/**
- * Other goals of the same onboarding take their share of the day's time (and of the weekend's)
- * and the same days. Returns this goal's share of both.
- */
+/** Applies shared weekday/weekend schedules and returns this goal's allocation. */
 async function updateSharedGoals({ goal, input }: { goal: Goal; input: ScheduleAnswer }) {
   const [shares, weekendShares] = await Promise.all([
     shareDailyMinutes({ dailyMinutes: input.dailyMinutes, goal }),
@@ -215,12 +197,7 @@ async function updateSharedGoals({ goal, input }: { goal: Goal; input: ScheduleA
   };
 }
 
-/**
- * Saves one onboarding answer for the learner's new goal: understood details, the goal's date,
- * its schedule (which re-plans, splits the day's time between goals typed together and lets
- * memory learn from the onboarding), or the learner's buddy. Every question answered or skipped is
- * remembered on the goal, so onboarding never asks it twice.
- */
+/** Requires an owned goal; remembers skipped answers too, and schedule answers settle its plan and shared time. */
 export async function answerOnboardingQuestion({
   goalId,
   input,
@@ -268,10 +245,7 @@ export async function answerOnboardingQuestion({
     return result.status === "limitReached" ? { status: "invalid" } : { status: result.status };
   }
 
-  // The daily time is onboarding's last question: the new plan settles (studying everything after
-  // the exam when the learner chose it, its bases on the recommendation for their time), and
-  // everything the learner said about themselves is on the goal, so what they said can
-  // personalize their first lessons (unless memory is off).
+  // Schedule is last: personalization can read all answers and the age-based memory choice before first lessons.
   if (input.question === "schedule") {
     await settleNewPlan({ fullCourse: input.fullCourse, goalId });
 

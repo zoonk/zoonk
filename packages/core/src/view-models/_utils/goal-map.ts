@@ -15,29 +15,22 @@ import { type MapArea, type MapPhase } from "../map/map-contract";
 import { type MapItem, type MapNode, buildGoalMapAreas } from "./goal-map-areas";
 import { loadTodayLearnBlocks } from "./today-lesson-order";
 
-/** The goal's skills as the maps draw them, grouped by chapter and phase, in plan order. */
 export type GoalMap = {
   phaseChallengesRequired: boolean;
   areas: MapArea[];
-  /** Every course the plan's chapters sit in, the one each chapter shows under first. */
+  /** Each chapter's displayed course comes first. */
   courseIds: string[];
-  /** The plan studies everything, an exam's going on after it (see `PlanSettings.fullCourse`). */
+  /** Studies the full course beyond the exam. */
   fullCourse: boolean;
-  /** The loaded skill projection, shared with chapter test-out eligibility. */
   plan: GoalPlan;
-  /** The plan's items with the skills each teaches, for chapter pages. */
   items: MapItem[];
   phases: MapPhase[];
   /** Today's lessons not done yet, as Today opens them (`loadTodayLearnBlocks`). */
   todayBlocks: TodayLearnBlock[];
-  /** The plan item of the lesson up next on every screen (`findUpNextItem`). */
+  /** Shared next-item identity across screens. */
   upNextItemId: string | null;
 };
 
-/**
- * A chapter's course on the map: the goal's main course when the chapter is in it, otherwise the
- * chapter's home course, otherwise any course it sits in.
- */
 function pickCourseId({
   chapter,
   primaryCourseId,
@@ -106,12 +99,7 @@ async function loadAreaDetails({
   );
 }
 
-/**
- * Loads a goal's skills with the learner's state on each (New, Learning, Solid, Mastered and
- * fading), their prerequisites inside the goal and the chapter and phase each sits in, plus where
- * the learner is now: the lesson up next, as Today opens it. The field map and the chapter pages
- * read it, so both draw the same nodes.
- */
+/** Caller supplies an owned goal; shares mastery, grouping, and Today's next lesson across map and chapter views. */
 export async function loadGoalMap({
   goal,
 }: {

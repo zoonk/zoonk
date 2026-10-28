@@ -53,12 +53,7 @@ function getLessonState({ done, next }: { done: boolean; next: boolean }) {
   return next ? ("next" as const) : ("upcoming" as const);
 }
 
-/**
- * A language unit's page: its "I can" objectives and lessons with the summaries the finished ones
- * left, the grammar tips pinned from its lessons, the words it teaches, the learner's open mistakes
- * on it by skill with a pattern noticed in them, the words to say again today, and the
- * conversation to practice, with the lengths the learner's call time holds now.
- */
+/** Requires an owned language goal and a unit in its plan. */
 export async function getLanguageUnitView({
   chapterId,
   goalId,

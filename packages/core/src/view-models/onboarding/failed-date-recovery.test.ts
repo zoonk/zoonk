@@ -9,8 +9,7 @@ import { openStudyDay } from "../../sessions/open-study-day";
 import { getTodayView } from "../today/get-today-view";
 import { getOnboarding } from "./get-onboarding";
 
-/** The transient planner bug was repaired by its owner. Inject only its read failure; goal,
- * plan, answers, resume and session persistence use the real database. */
+/** Inject only the planner read failure; goal, answers, resume, and session persistence remain real. */
 vi.mock("../../plans/get-goal-plan", () => ({
   getGoalPlan: vi.fn().mockRejectedValue(new Error("The plan's bosses didn't settle in 5 passes.")),
 }));
@@ -34,7 +33,6 @@ describe("recovering a guest's failed date screen", () => {
     await prisma.goal.update({ data: { details }, where: { id: goal.id } });
     mockGuestSession(user.id);
 
-    // The old route read the planner alongside the unanswered date and showed its error boundary.
     await expect(getGoalPlan(goal.id)).rejects.toThrow(
       "The plan's bosses didn't settle in 5 passes.",
     );
@@ -55,7 +53,6 @@ describe("recovering a guest's failed date screen", () => {
       targetDate: goal.targetDate,
     });
 
-    // Once the remaining questions were answered, the same guest can begin the day.
     await prisma.goal.update({
       data: {
         details: {
@@ -66,7 +63,6 @@ describe("recovering a guest's failed date screen", () => {
       where: { id: goal.id },
     });
 
-    // The ready read remains write-free; beginning the day is the learner's explicit POST.
     const ready = await getTodayView({});
     expect(ready.status).toBe("ready");
     await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(0);

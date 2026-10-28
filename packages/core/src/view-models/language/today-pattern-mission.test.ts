@@ -36,7 +36,6 @@ async function readTodayPattern(goalId: string) {
   return result.today.pattern;
 }
 
-/** A saved day whose one mission is a pattern's drill, as Open writes it. */
 async function setup(missionPattern: "same" | "other", done = false) {
   const { goal, user } = await languageGoalFixture();
   mockSession(user.id);

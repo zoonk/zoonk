@@ -23,14 +23,12 @@ function splitRecap(lesson: PlayableLibraryLesson) {
   };
 }
 
-/** The story screens' titles, in order: the outline shown when the explanation is ready. */
 function getOutline(lesson: PlayableLibraryLesson): string[] {
   return lesson.steps.flatMap((step) =>
     step.kind === "explanation" && step.content.title ? [step.content.title] : [],
   );
 }
 
-/** The Overview course the question belongs to, for "Want to go further?". */
 async function findGoFurtherCourse({
   courseId,
   userId,
@@ -78,13 +76,7 @@ async function findExplanationLessonId(goalId: string): Promise<string | null> {
   return item?.lessonId ?? null;
 }
 
-/**
- * A quick explanation for one of the learner's questions: about five short screens and one
- * check, then the "Now you know" recap and "Want to go further?" into the subject's Overview
- * course and related questions. While the explanation is being written, it says so. Private
- * cached, so Today's link that prefetches it opens it at once; the page reads itself again when it
- * shows an old copy, and asks again until it's ready.
- */
+/** Requires ownership; read-only preparing state must not start generation. */
 export async function getExplanation({ goalId }: { goalId: string }): Promise<ExplanationResult> {
   "use cache: private";
 

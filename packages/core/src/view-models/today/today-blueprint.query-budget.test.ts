@@ -18,9 +18,7 @@ import { openStudyDay } from "../../sessions/open-study-day";
 import { getSyllabusView } from "../syllabus/get-syllabus-view";
 import { getTodayView } from "./get-today-view";
 
-// Only observe the shared blueprint read; its read is unchanged. Vitest has no Next request,
-// so the fact's one read per request is the production harness's to prove: here, every other read
-// of the blueprint's full row has to go through it.
+// Vitest lacks Next's request cache; this observes bypassing reads, while the production harness proves one shared read per request.
 vi.mock("../../library/exams/read-exam-blueprint", async (importOriginal) => {
   const actual = await importOriginal<{ readExamBlueprint: typeof readExamBlueprint }>();
   return { ...actual, readExamBlueprint: vi.fn(actual.readExamBlueprint) };
@@ -28,7 +26,6 @@ vi.mock("../../library/exams/read-exam-blueprint", async (importOriginal) => {
 
 const citation = { passage: "", sourceId: "notice" };
 
-/** An exam goal with a mock this week, so Today's weekly card reads the exam too. */
 async function setup() {
   const user = await userFixture();
 
@@ -66,7 +63,6 @@ async function setup() {
   return { blueprint, goal };
 }
 
-/** Today's API for an exam goal (`loadTodayScreen` in main): the day, then the cards beside it. */
 async function loadToday(goalId: string) {
   const today = await getTodayView({});
 
@@ -81,7 +77,6 @@ async function loadToday(goalId: string) {
   return today;
 }
 
-/** Full-row blueprint reads that skip the request fact, and the blueprints the fact read. */
 async function countBlueprintReads(goalId: string) {
   vi.mocked(readExamBlueprint).mockClear();
   const findUnique = vi.spyOn(prisma.examBlueprint, "findUnique");

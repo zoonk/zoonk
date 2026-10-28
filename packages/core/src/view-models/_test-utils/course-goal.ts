@@ -18,14 +18,9 @@ import { mockSession } from "../../_test-utils/mock-session";
 
 const LESSONS_PER_CHAPTER = 2;
 
-/** Each lesson a minute longer than the one before, so tests can tell them apart. */
 const FIRST_LESSON_MINUTES = 5;
 
-/**
- * A learn goal built from a public course's Overview: two chapters of two one-skill lessons, one
- * per phase, each skill building on the one before. The course also has a Beginner chapter the
- * plan doesn't use. `statuses` sets each lesson's plan item, in order.
- */
+/** statuses applies to the used lessons in plan order; the extra Beginner chapter is outside the plan. */
 export async function courseGoalFixture({
   details = {},
   statuses = ["todo", "todo", "todo", "todo"],
@@ -129,7 +124,6 @@ export async function courseGoalFixture({
   return { beginner, chapters, course, goal, items, lessons, organization, plan, skills };
 }
 
-/** A signed-in learner whose active goal is the course goal above. */
 export async function signedInCourseGoal(
   options: Omit<Parameters<typeof courseGoalFixture>[0], "userId"> = {},
 ) {

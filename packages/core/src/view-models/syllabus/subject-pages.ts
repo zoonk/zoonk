@@ -1,11 +1,7 @@
 import { type GoalKind } from "@zoonk/db";
 import { type SyllabusView } from "./syllabus-contract";
 
-/**
- * Whether a goal's subjects have pages of their own, which number its chapters: an exam's notice,
- * or at least two modules. A language's units and a plan from one course already read as its
- * path, so their chapters go by the plan.
- */
+/** Language units and single-course paths keep plan numbering; exams and multi-module plans use subject pages. */
 export function hasSubjectPages({
   goalKind,
   syllabus,

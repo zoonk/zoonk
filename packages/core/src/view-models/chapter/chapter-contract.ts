@@ -29,11 +29,6 @@ const chapterLessonSchema = z
   })
   .meta({ id: "ChapterLesson" });
 
-/**
- * A chapter of the learner's plan: its map (the chapter's
- * skills linked by prerequisites, each with its mastery), its lessons with the next one to open,
- * open mistakes on its skills to practice and the summary cards its finished lessons left.
- */
 export const chapterViewSchema = z
   .object({
     chapter: z.object({

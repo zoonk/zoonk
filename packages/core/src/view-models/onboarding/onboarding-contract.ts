@@ -12,9 +12,7 @@ import { learningProfileUpdateSchema } from "../../profile/learning-profile-cont
 
 const MAX_GOAL_TEXT_LENGTH = 2000;
 const MAX_ANSWER_LENGTH = 200;
-/** A notice lists a few dozen subjects at most. */
 const MAX_KNOWN_SUBJECTS = 40;
-/** An exam has a few choices at most (a foreign language, an elective or two). */
 const MAX_EXAM_CHOICES = 5;
 const MIN_LANGUAGE_LENGTH = 2;
 const MAX_LANGUAGE_LENGTH = 10;
@@ -46,7 +44,6 @@ export const goalUnderstandingInputSchema = z
 
 export type GoalUnderstandingInput = z.infer<typeof goalUnderstandingInputSchema>;
 
-/** Where onboarding starts placement: the learner's own level (nothing yet to advanced). */
 const ownLevelSchema = z.enum(["none", "basic", "intermediate", "advanced"]);
 
 export type OnboardingOwnLevel = z.infer<typeof ownLevelSchema>;
@@ -62,40 +59,25 @@ export const ONBOARDING_PURPOSES = [
 
 export type OnboardingPurpose = (typeof ONBOARDING_PURPOSES)[number];
 
-/**
- * An exam date read from the stored notice, with where it came from, or estimated from the
- * exam's usual timing when no notice for that year is stored yet.
- */
 export type OnboardingExamDate = {
   date: string;
   /** No notice for that year yet: the day the exam usually falls on, labeled as an estimate. */
   estimated: boolean;
   label: string;
-  /** The notice gives its sitting's last day to register, and that day has passed. */
   registrationClosed: boolean;
   /** The page it was read from, so the learner can check it; null for an estimate. */
   source: { title: string | null; url: string } | null;
 };
 
-/**
- * One goal as onboarding understood it: a draft ready for `POST /v1/goals` once the learner
- * confirms or edits it on the "Here's what I understood" card, with the exam's next dates from
- * its stored notice beside it. Targets are the learner's own: onboarding never promises them.
- * `details` holds what the words said (exam, target score, course or position, level, reason,
- * purpose, role), the questions they already answered and the onboarding the goals share.
- */
+/** Confirmed drafts can create goals; targets remain learner choices rather than promises. */
 export type UnderstoodGoalView = {
-  /**
-   * The last published cut-off of the target the words named (a course at an institution, a
-   * position), when another learner's research already found it; null otherwise.
-   */
+  /** Stored public cutoff only; null when prior research has not found it. */
   cutoff: TargetCutoff | null;
   draft: GoalDraft;
-  /** The exam's next dates from its stored notice; empty until research has read one. */
+  /** Empty until research has stored notice dates. */
   examDates: OnboardingExamDate[];
 };
 
-/** The day's time for every goal, as the words said it or a gentle default. */
 export type UnderstoodSchedule = {
   dailyMinutes: number;
   studyDays: number[] | null;
@@ -104,28 +86,17 @@ export type UnderstoodSchedule = {
   studyTimeNote: string | null;
 };
 
-/**
- * What a typed goal turned out to be: goals to plan (with every fact the text already gave), a
- * quick question for an explanation, an instrument (the waitlist, with musicianship offered as a
- * learn goal), something unsafe the app declines, or too vague to plan.
- */
 export type GoalUnderstandingView =
   | { goals: UnderstoodGoalView[]; schedule: UnderstoodSchedule; status: "goals" }
   | { question: string; status: "explain" }
   | { instrument: string; status: "instrument" }
   | { status: "unclear" | "unsafe" };
 
-/** Where a typed goal stands: being read, read (the card), or it couldn't be read. */
 export const ONBOARDING_DRAFT_STATUSES = ["understanding", "understood", "failed"] as const;
 
 type OnboardingDraftStatus = (typeof ONBOARDING_DRAFT_STATUSES)[number];
 
-/**
- * A goal the learner typed, kept while they look at what was understood, so a refresh shows the
- * same screen (`/start?draft=`). `understanding` is null until the run reads the words (follow it
- * live at `GET /v1/generations/{generationId}/events`) and holds the learner's edits once it's
- * there. `goalId` is the main goal created from it once they confirmed.
- */
+/** understanding retains learner edits; goalId identifies the main confirmed goal and generationId follows live progress. */
 export type OnboardingDraftView = {
   /** The run reading the words; null when none is needed (a cached understanding) or none started. */
   generationId: string | null;
@@ -136,7 +107,6 @@ export type OnboardingDraftView = {
   understanding: GoalUnderstandingView | null;
 };
 
-/** Details the learner can fix in place, each on its own row of the card. */
 const ONBOARDING_DRAFT_TEXT_FIELDS = [
   "institution",
   "reason",
@@ -146,7 +116,6 @@ const ONBOARDING_DRAFT_TEXT_FIELDS = [
   "targetScore",
 ] as const;
 
-/** A sanity bound: understandings name a few goals at most. */
 const MAX_DRAFT_GOAL_INDEX = 9;
 
 const draftGoalSchema = z
@@ -157,11 +126,7 @@ const draftGoalSchema = z
 
 const draftTextSchema = z.string().trim().min(1).max(MAX_ANSWER_LENGTH);
 
-/**
- * One fix on the "Here's what I understood" card. Fields that depend on it follow: the learner's
- * own date (any full date) replaces the exam's dates on the card, and null brings them back; a
- * study time replaces the time the words gave. Fixing the words themselves is a new understanding.
- */
+/** Dependent fields follow edits; null dates restore exam dates, while changing the original words needs a new understanding. */
 export const onboardingDraftEditSchema = z
   .discriminatedUnion("field", [
     z
@@ -205,10 +170,6 @@ export const onboardingDraftEditSchema = z
 
 export type OnboardingDraftEdit = z.infer<typeof onboardingDraftEditSchema>;
 
-/**
- * What a returning visitor, guest or learner should continue: a goal they typed but didn't
- * confirm yet (`/start?draft=`), a goal still in onboarding (`/start/{goalId}`), or their day.
- */
 export type OnboardingResumeView =
   | { draftId: string; kind: "draft"; prompt: string }
   | { goalId: string; kind: "goal"; title: string }
@@ -229,10 +190,9 @@ export const ONBOARDING_QUESTIONS = [
 
 export type OnboardingQuestion = (typeof ONBOARDING_QUESTIONS)[number];
 
-/** `buddy` comes after the questions: it's about the learner, not the goal. */
+/** Buddy choice follows goal questions because it belongs to the learner profile. */
 export type OnboardingStep = OnboardingQuestion | "buddy" | "placement" | "plan";
 
-/** A Library course that already teaches the goal, offered once the questions are answered. */
 export type OnboardingLibraryCourse = {
   brandSlug: string;
   chapterCount: number;
@@ -240,47 +200,22 @@ export type OnboardingLibraryCourse = {
   title: string;
 };
 
-/** The rest of onboarding for one new goal. */
 export type OnboardingView = {
-  /**
-   * The exam's choices, such as ENEM's foreign language (English or Spanish), each with its options
-   * and the learner's pick (null until they make it), for the `examChoice` question. The plan
-   * studies only the picked options. Empty for other goals and exams without choices.
-   */
+  /** Studies only selected options; empty when the exam offers no choices. */
   examChoices: ExamChoiceView[];
-  /**
-   * The days of the exam's next sitting for a goal started from a public exam course, the first
-   * being the date its plan aims for unless the learner gives another, and whether they're
-   * estimated before the notice is out; null for other goals.
-   */
+  /** First day defaults the plan date unless overridden; null outside public course exam starts. */
   examDays: { days: string[]; estimated: boolean } | null;
-  /**
-   * An exam's subjects from its stored notice, for the level question and before placement: the
-   * notice's name (what `knownSubjects` sends back) and what learners call it when that's long.
-   * Empty for other goals.
-   */
+  /** knownSubjects must send notice names, not display short names. */
   examSubjects: { name: string; shortName: string | null }[];
-  /** Questions the AI asked for this goal, answered on the `followUps` screen. */
   followUps: string[];
-  /**
-   * The run writing the goal's curriculum, to follow live at `GET /v1/generations/{id}/events`;
-   * null until it starts, a few seconds after the goal is created.
-   */
+  /** Follow via GET /v1/generations/{id}/events; null until the run starts. */
   generationId: string | null;
   goal: GoalView;
   /** Goals created in the same onboarding, which share the day's time. */
   goalIds: string[];
-  /**
-   * A published Library course that teaches the goal's subject, searched again once every
-   * question is answered; null before that and when none fits.
-   */
+  /** Searched again after all questions; null before then or when no public course fits. */
   libraryCourse: OnboardingLibraryCourse | null;
-  /**
-   * The daily minutes the time question starts on: the time a day a course's page had picked when
-   * the goal started there, otherwise from how big the goal is (a public exam asks for more than a
-   * subject) and how soon its (or its exam's) date is. Only a starting pick: the plan says what
-   * the time covers once it's built, and the question never moves the pick by itself.
-   */
+  /** Initial choice only; preserve course-page selections and never imply the recommendation guarantees plan coverage. */
   recommendedMinutes: number;
   /** Onboarding screens still ahead, in order, ending with the plan. */
   steps: OnboardingStep[];
@@ -288,10 +223,7 @@ export type OnboardingView = {
 
 const nullableAnswer = z.string().trim().min(1).max(MAX_ANSWER_LENGTH).nullable();
 
-/**
- * A skipped answer is null, and leaving the field out says the same: generated clients (the iOS
- * app's) drop a property whose value is nil instead of sending null.
- */
+/** Generated iOS clients omit nil fields, so omission must equal an explicit null skipped answer. */
 const skippableAnswer = nullableAnswer.default(null);
 
 const scheduleAnswerSchema = z
@@ -328,11 +260,7 @@ const scheduleAnswerSchema = z
   })
   .strict();
 
-/**
- * One onboarding answer. Skippable questions take null. "Placement" marks placement done, after
- * the learner finished it, stopped it or chose to start from scratch. The buddy is saved on the
- * learner's profile.
- */
+/** Null skips skippable questions; placement marks completion after finishing, stopping, or opting out. */
 export const onboardingAnswerInputSchema = z
   .discriminatedUnion("question", [
     z.object({ purpose: z.enum(ONBOARDING_PURPOSES), question: z.literal("purpose") }).strict(),

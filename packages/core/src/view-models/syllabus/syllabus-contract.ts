@@ -10,10 +10,6 @@ const countSchema = z.int().min(0);
 const shareSchema = z.number().min(0).max(1);
 const isoDateSchema = z.iso.date();
 
-/**
- * Why a topic or a subject isn't in the plan: the learner took it out, they start past it, they
- * chose to skip it as a base, time, or nothing teaches it yet.
- */
 const notPlannedReasonSchema = z
   .enum(["skipped", "pastBasics", "skippedBase", "time", "missing"])
   .nullable()
@@ -223,11 +219,6 @@ const syllabusSubjectSchema = z
   })
   .meta({ id: "SyllabusSubject" });
 
-/**
- * The structure of a goal, in the learner's terms: for an exam with a notice, its subjects and
- * topics in the notice's own words and order, each with progress and when the plan reaches it;
- * for other goals, the plan's modules with their chapters.
- */
 export const syllabusViewSchema = z
   .object({
     courseWeights: z

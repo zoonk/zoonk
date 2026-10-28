@@ -14,7 +14,6 @@ import { type SessionPlanItem } from "../../../sessions/_utils/session-plan-item
 import { type DayView } from "../../../sessions/day-view";
 import { type TodayView } from "../get-today-view";
 
-/** The actual weekly checkpoint's card, without exposing its preparation payload. */
 function toWeeklyChallenge(result: WeeklyChallengeResult): TodayView["weeklyChallenge"] {
   if (result.status !== "ready" || !result.challenge) {
     return null;
@@ -33,7 +32,7 @@ function toWeeklyChallenge(result: WeeklyChallengeResult): TodayView["weeklyChal
   };
 }
 
-/** The same authorized in-memory selection supplies the card's date, identity and funding. */
+/** Use the same authorized selection for the card's date, identity, and funding. */
 async function readSelectedCard({
   item,
   selection,

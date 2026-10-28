@@ -10,10 +10,6 @@ import { examEditionSchema } from "../../../library/exams/blueprint-contract";
 import { findSameExam } from "../../../library/exams/find-same-exam";
 import { type OnboardingExamDate } from "../onboarding-contract";
 
-/**
- * What the world knows about an exam the learner named: its stored blueprint, its days still
- * ahead, and the day to plan for when only a quick lookup found it (no stored notice gives it).
- */
 export type ExamFacts = {
   blueprintId: string | null;
   dates: OnboardingExamDate[];
@@ -21,20 +17,15 @@ export type ExamFacts = {
   targetDate: string | null;
 };
 
-/** The exam as the learner's words named it. */
 export type NamedExam = {
   examName: string;
   /** The month the learner named with the year (1 to 12), such as 3 in "in March". */
   examMonth?: number | null;
-  /** The year the learner named, such as 2028 in "Enem 2028". */
   examYear?: number | null;
   institution?: string | null;
   /** The position for a public-service exam, in the learner's words. */
   role?: string | null;
-  /**
-   * The language a language certificate tests (Spanish for DELE), whose notice is often written,
-   * and stored, in it. Null for other exams.
-   */
+  /** Certificate language, which may also be the stored notice language; null for other exams. */
   targetLanguage?: string | null;
   /** What the learner typed, which may name the edition they mean ("in March"). */
   words?: string | null;
@@ -45,7 +36,6 @@ type AiGenerationContext = FindExamDateParams["analytics"];
 /** The learner reads the card while this runs: past it, the date reads as not known yet. */
 const LOOKUP_TIMEOUT_MS = 30_000;
 
-/** Each day with the public page it was read from, so the learner can check it. */
 async function withSources(days: EditionExamDay[]): Promise<OnboardingExamDate[]> {
   const sources = await prisma.source.findMany({
     select: { id: true, title: true, url: true },
@@ -65,12 +55,7 @@ async function withSources(days: EditionExamDay[]): Promise<OnboardingExamDate[]
   });
 }
 
-/**
- * The stored notice's days for the edition the learner means: the year they named, or the
- * notice's own while its days are ahead. A year the notice isn't for (ENEM 2028 while the stored
- * notice is 2026's), or the next edition once every day has passed, gets the days it most likely
- * has from the notice's timing, marked as estimated, in the month the learner named when they did.
- */
+/** Reuses official dates only for the matching edition; otherwise estimates timing within the learner's requested month. */
 async function findStoredDates({
   edition,
   examMonth,
@@ -102,11 +87,7 @@ async function findStoredDates({
     : withSources(ahead);
 }
 
-/**
- * The exam's official days from a quick search, with the page they came from; none when the
- * notice isn't out, the search can't tell, or it takes too long. Research still reads the whole
- * notice once the goal exists.
- */
+/** Returns no dates on failure or timeout; full notice research still runs after goal creation. */
 async function lookUpExamDays({
   analytics,
   exam,
@@ -118,8 +99,6 @@ async function lookUpExamDays({
   language: string;
   today: string;
 }): Promise<OnboardingExamDate[]> {
-  // A search that fails leaves the date to be confirmed, like one that finds nothing: the card
-  // never waits on it, and research reads the notice later anyway.
   const { data: lookup, error } = await safeAsync(() =>
     settleWithin({
       ms: LOOKUP_TIMEOUT_MS,
@@ -149,10 +128,7 @@ async function lookUpExamDays({
   return dates.map((day) => ({ ...day, estimated: false, registrationClosed: false, source }));
 }
 
-/** The shared blueprint of the exam the learner named, stored in `language`. */
 async function findStoredExamIn({ exam, language }: { exam: NamedExam; language: string }) {
-  // A match the evaluation model couldn't confirm reads as no stored notice: the card still shows,
-  // and research finds the notice once the goal exists.
   const { data: blueprint, error } = await safeAsync(() =>
     findSameExam({
       request: {
@@ -163,7 +139,6 @@ async function findStoredExamIn({ exam, language }: { exam: NamedExam; language:
         ownerId: null,
         role: exam.role ?? null,
       },
-      // The role ranks the right one of a notice's many roles among the candidates.
       searchTerms: [exam.institution, exam.role].filter((term) => typeof term === "string"),
     }),
   );
@@ -175,10 +150,7 @@ async function findStoredExamIn({ exam, language }: { exam: NamedExam; language:
   return blueprint ?? null;
 }
 
-/**
- * The stored blueprint of the exam the learner named: in their language, else, for a language
- * certificate, in the language it tests, which research stores its notice in (DELE's in Spanish).
- */
+/** Search learner language first, then certificate language because research may store the notice there. */
 async function findStoredExam({ exam, language }: { exam: NamedExam; language: string }) {
   const own = await findStoredExamIn({ exam, language });
   const tested = exam.targetLanguage;
@@ -190,15 +162,7 @@ async function findStoredExam({ exam, language }: { exam: NamedExam; language: s
   return findStoredExamIn({ exam, language: tested });
 }
 
-/**
- * What an exam the learner named has for their card: its stored blueprint (the same exam under
- * another name or a role written another way counts) and its days still ahead, official with
- * their source or estimated from its usual timing. When no stored notice gives an official day, a
- * quick search looks for the published one; the day it finds becomes the goal's date, with its
- * source, unless it's in another month than the one the learner named, which the plan keeps. An
- * exam nobody has published a day for yet has no dates: the card says it's to be confirmed, and
- * research fills it in once the goal exists.
- */
+/** May search when no stored official date exists; a conflicting discovered month is offered without replacing the learner's month. */
 export async function findExamFacts({
   analytics,
   exam,
@@ -212,10 +176,7 @@ export async function findExamFacts({
   language: string;
   /** False when the learner gave their own day: then only the stored notice is read. */
   lookUpDate?: boolean;
-  /**
-   * Asked right before the web search for the exam's day, which costs: false skips it (a reused
-   * understanding past the learner's small AI calls). Unset, the search always runs.
-   */
+  /** Called before paid search; false skips it, while omission permits it. */
   allowSearch?: () => Promise<boolean>;
   today: string;
 }): Promise<ExamFacts> {
@@ -247,8 +208,7 @@ export async function findExamFacts({
     return { blueprintId, dates: stored, targetDate: null };
   }
 
-  // A day in another month than the one the learner named is only offered: they may mean another
-  // sitting, so the plan keeps their month (see `getKeptMonthStart`).
+  // A conflicting month may be another sitting; preserve the month the learner chose.
   const keptMonth = getKeptMonthStart({
     details: { examMonth: exam.examMonth, examYear: exam.examYear },
     noticeDay: first.date,

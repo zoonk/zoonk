@@ -32,7 +32,6 @@ describe(findCachedUnderstanding, () => {
     });
   });
 
-  // A learner's words, and what they say about them, are theirs: never another learner's cache.
   it("never gives another learner a reading of the same words, and goes away with its learner", async () => {
     const [user, other] = await Promise.all([userFixture(), userFixture()]);
     const goal = `pass the enem for medicine at ufmg ${randomUUID()}`;
@@ -47,7 +46,6 @@ describe(findCachedUnderstanding, () => {
     ).resolves.toBeNull();
   });
 
-  // A prompt change never reads stored words again: that's a person's call, not a deploy's.
   it("reuses today's reading whatever prompt version wrote it", async () => {
     const user = await userFixture();
     const goal = `pass the enem ${randomUUID()}`;

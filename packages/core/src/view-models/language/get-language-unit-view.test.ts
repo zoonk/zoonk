@@ -19,7 +19,6 @@ import { mockSession } from "../../_test-utils/mock-session";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { getLanguageUnitView } from "./get-language-unit-view";
 
-/** A pattern noticed in some of the learner's mistakes, as the pattern check saves it. */
 function patternFixture({
   mistakeIds,
   title,
@@ -50,7 +49,6 @@ describe("a language unit's page", () => {
     const { goal, lessons, renting, user } = await languageGoalFixture();
     mockSession(user.id);
 
-    // The unit test needs a skill its planned lessons can actually skip.
     const skill = await skillFixture();
 
     await Promise.all(
@@ -59,7 +57,7 @@ describe("a language unit's page", () => {
         .map((lesson) => lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id })),
     );
 
-    // It failed just now: a minute earlier is yesterday when the test runs just after midnight.
+    // Subtracting a minute could cross the learner's midnight and invalidate the failed-today setup.
     await learningEventFixture({
       contentIds: { chapterId: renting.id, testOutPassed: "false" },
       correctAnswers: 1,
@@ -75,7 +73,6 @@ describe("a language unit's page", () => {
       unit: { canTestOut: false },
     });
 
-    // A minute later, a lesson in the unit is studied.
     vi.setSystemTime(Date.now() + 60_000);
     await learningEventFixture({ contentIds: { lessonId: lessons[2]?.id }, userId: user.id });
 
@@ -136,7 +133,6 @@ describe("a language unit's page", () => {
     ]);
   });
 
-  // Marcos's unit page marked "Introducing yourself" next while Today opened "Summary".
   it("marks next the lesson today's session opens next, not the first one not done", async () => {
     freezeClock();
 
@@ -171,7 +167,7 @@ describe("a language unit's page", () => {
     mockSession(user.id);
     const [arrivingLesson, , rentingLesson] = lessons;
 
-    // Words are shared by everyone in the organization: this one is the test's own.
+    // Organization-wide words need a unique identity to isolate this test.
     const spoken = `rent-${crypto.randomUUID()}`;
 
     const [rentingStep, arrivingStep, org] = await Promise.all([
@@ -192,7 +188,6 @@ describe("a language unit's page", () => {
       userId: user.id,
     });
 
-    // Newer, but shown by another unit's mistake: not this unit's.
     await Promise.all([
       patternFixture({ mistakeIds: [arrivingMistake.id], title: "in e at", userId: user.id }),
       pronunciationReviewFixture({ userId: user.id, wordId: word.id }),

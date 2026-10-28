@@ -12,10 +12,9 @@ import { getTargetDateBounds } from "../../../plans/target-date-range";
 import { type GoalUnderstandingView, type UnderstoodGoalView } from "../onboarding-contract";
 import { findExamFacts } from "./exam-facts";
 
-/** A gentle start when the words don't say: "Even 15 minutes makes a difference". */
+/** Start with a sustainable short habit when the learner gave no daily time. */
 const DEFAULT_DAILY_MINUTES = 15;
 
-/** The words a draft holds, with the draft's id for the goals created from it. */
 export type UnderstandingContext = {
   goal: string;
   language: string;
@@ -34,7 +33,6 @@ export function getLearnerToday(timeZone: string): string {
   return toIsoDate(getDateInTimeZone({ date: new Date(), timeZone }));
 }
 
-/** Facts the words didn't give are left out of the goal's details instead of stored as null. */
 function compactDetails(details: Record<string, DetailValue | undefined>) {
   return Object.fromEntries(
     Object.entries(details).filter(
@@ -43,16 +41,11 @@ function compactDetails(details: Record<string, DetailValue | undefined>) {
   );
 }
 
-/** What the words already answered, so onboarding doesn't ask it again. */
 function getAnsweredByWords(understanding: Extract<GoalUnderstanding, { route: "goals" }>) {
   return understanding.dailyMinutes === undefined ? [] : ["schedule"];
 }
 
-/**
- * The notice's day the card offers next to the month the learner named, when it's in another month
- * (see `getKeptMonthStart`): confirming the card without taking it keeps their month, an answer the
- * goal remembers (`readOfferedNoticeDay`). Estimated days aren't offered.
- */
+/** Offer conflicting official notice dates without replacing the learner's month; never offer estimates. */
 function getOfferedNoticeDay({
   dates,
   goal,
@@ -102,7 +95,6 @@ async function toGoalView({
             words: context.goal,
           },
           language,
-          // A day the learner gave is theirs: nothing to look up.
           lookUpDate: !goal.targetDate,
           today,
         })
@@ -131,7 +123,6 @@ async function toGoalView({
     targetScore: goal.targetScore,
   });
 
-  // Another learner's research may already know the target's last cut-off: a read, never a lookup.
   const cutoff = await loadTargetCutoff({ details, examBlueprintId: exam?.blueprintId });
 
   const understoodDate = goal.targetDate ?? exam?.targetDate ?? undefined;
@@ -144,8 +135,7 @@ async function toGoalView({
       kind: goal.kind,
       language,
       prompt: context.goal,
-      // A date past what a plan reaches can't be the plan's: the card leaves it out, and onboarding
-      // asks for one.
+      // Dates beyond the planner's supported range require another onboarding answer.
       targetDate:
         understoodDate && understoodDate <= getTargetDateBounds(today).max
           ? understoodDate
@@ -168,7 +158,7 @@ async function toGoalsView({
   const { studyTimeNote } = understanding;
   const [main, ...others] = understanding.goals;
 
-  /** Follow-ups are about the main goal, the one onboarding continues with. */
+  // Follow-ups apply only to the main goal that onboarding continues with.
   const goals = await Promise.all([
     ...(main
       ? [
@@ -196,11 +186,7 @@ async function toGoalsView({
   };
 }
 
-/**
- * What the learner sees of an understanding: goals to plan with every fact the words already give
- * (an exam's dates for the year they named come from its stored notice, with their source, or
- * are estimated), a quick question, an instrument, or something unsafe or too vague.
- */
+/** May read exam dates for the learner's local today; preserve learner-supplied targets. */
 export async function toUnderstandingView({
   context,
   understanding,

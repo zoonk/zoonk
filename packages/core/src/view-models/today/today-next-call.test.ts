@@ -19,7 +19,6 @@ const PHASE_CHECKPOINT = {
   timeLimitMinutes: null,
 } as const;
 
-/** Today as the signed-in learner reads it, with the step its Start opens as a link, if any. */
 async function readNextCall(goalId: string) {
   const result = await getTodayView({ goalId });
 
@@ -31,10 +30,6 @@ async function readNextCall(goalId: string) {
   return findNextCall({ goalKind: goal.kind, session });
 }
 
-/**
- * Marcos's language goal on Plus, its day saved, with its renting unit's call in today's session
- * (`callPosition`), after a lesson when `lessonFirst`.
- */
 async function languageDayFixture({
   checkpoint = PHASE_CHECKPOINT,
   lessonFirst = false,

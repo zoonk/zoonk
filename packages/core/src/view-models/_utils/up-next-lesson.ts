@@ -1,9 +1,4 @@
-/**
- * The lesson a chapter's or a unit's page marks "Up next" and opens with Continue: the one today's
- * session opens next when it's on the page, as Today shows it; else the next one the plan teaches;
- * else the first not done in the page's order. Pages that took the first lesson not done in
- * teaching order sent Marcos to "Introducing yourself" while Today opened "Career summary".
- */
+/** Prioritizes Today's next lesson, then plan order, then page order; each must still be unfinished on this page. */
 export function findUpNextLessonId({
   lessons,
   planLessonIds,

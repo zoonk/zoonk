@@ -18,7 +18,7 @@ export type ReviseOnboardingDraftResult =
   | { draft: OnboardingDraftView; status: "revised" }
   | { status: "conflict" | "invalid" | "notFound" | "unauthorized" };
 
-/** Two fixes saved at the same moment: the later one is applied again over the earlier one. */
+/** Retry a concurrent edit against the newly saved card so quick fixes cannot overwrite each other. */
 const MAX_ATTEMPTS = 2;
 
 async function applyEdit({
@@ -39,8 +39,6 @@ async function applyEdit({
 
   const today = getLearnerToday(draft.timeZone);
 
-  // A deadline past what a plan reaches is refused before the card is saved; a past one is
-  // `invalid`, as it always was.
   if (edit.field === "targetDate") {
     assertTargetDates({
       latestOnly: true,
@@ -61,7 +59,7 @@ async function applyEdit({
     return { status: "invalid" };
   }
 
-  // Saved only over the version it was computed from, so two quick fixes can't undo each other.
+  // Save against the version read so concurrent fixes cannot undo each other.
   const saved = await writeLearnerChange({ userId: draft.userId }, async (tx) => {
     const current = await tx.onboardingDraft.findUniqueOrThrow({ where: { id: draft.id } });
 
@@ -114,12 +112,7 @@ async function applyEdit({
     : { status: "conflict" };
 }
 
-/**
- * Saves one fix the learner made on the "Here's what I understood" card and recomputes every
- * field that depends on it (another target's cut-off). Only goals still being confirmed can be
- * fixed: `conflict` while the words are being read or once goals were created from the draft;
- * `invalid` when the fix doesn't apply to that goal.
- */
+/** Requires ownership; returns conflict during generation or after goal creation, and invalid for an inapplicable edit. */
 export async function reviseOnboardingDraft({
   draftId,
   edit,

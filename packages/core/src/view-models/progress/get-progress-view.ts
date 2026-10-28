@@ -13,18 +13,12 @@ import { resolveViewGoal } from "../_utils/resolve-view-goal";
 
 type Preparation = Extract<GoalPreparationResult, { status: "ready" }>["preparation"];
 
-/**
- * Progress for one goal: preparation with the evidence behind each part (its skill counts say
- * what's fading), what's still needed to reach the goal and the mistakes notebook's count. The
- * estimated score exists only after a mock.
- */
+/** Estimated exam scores require a completed mock. */
 export type ProgressView = {
   goal: Pick<Goal, "id" | "kind" | "title"> & { targetDate: string | null };
-  /** Open entries in the mistakes notebook, which Progress links to. */
   mistakes: { open: number };
   /** Null for a quick explanation: one answer, not a goal to prepare for. */
   preparation: Preparation | null;
-  /** "Still needed to reach your goal": the skills below their bar by area, with the plan's time. */
   stillNeeded: StillNeeded;
 };
 
@@ -32,7 +26,7 @@ export type ProgressViewResult =
   | { progress: ProgressView; status: "ready" }
   | { status: "noGoal" | "notFound" | "unauthorized" };
 
-/** Progress for a goal (the active goal by default). */
+/** Requires ownership of the requested or default active goal. */
 export async function getProgressView(
   input: { goalId?: string } = {},
 ): Promise<ProgressViewResult> {

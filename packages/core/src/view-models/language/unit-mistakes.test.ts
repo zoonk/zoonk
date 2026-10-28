@@ -38,7 +38,6 @@ describe("a language unit's mistakes", () => {
         stepId: reading.id,
         userId: user.id,
       }),
-      // A review question on the unit's skill: no lesson screen behind it.
       mistakeFixture({
         itemId: review.id,
         skillId: rentingSkill.id,

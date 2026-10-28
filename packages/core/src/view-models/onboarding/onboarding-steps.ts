@@ -13,17 +13,14 @@ type GoalKind = "exam" | "explain" | "language" | "learn";
 
 type StepGoal = {
   details: Record<string, unknown>;
-  /**
-   * The exam has a choice the learner hasn't picked an option of (ENEM's foreign language), read
-   * from its notice and plan by callers that load them; others leave it out and never ask.
-   */
+  /** Omit unless the caller loaded notice/plan choices; omission never asks an exam-choice question. */
   hasUnpickedChoice?: boolean;
   kind: GoalKind;
   targetDate: string | null;
 };
 
 type StepProfile = {
-  /** The buddy is offered once, in the learner's first onboarding; Appearance changes it later. */
+  /** Buddy is offered only in the first onboarding; later changes belong to Appearance. */
   hasEarlierGoals: boolean;
   hasBuddy: boolean;
 };
@@ -32,12 +29,11 @@ function hasText(value: unknown): boolean {
   return typeof value === "string" && value.trim().length > 0;
 }
 
-/** Work and career-change plans are built around the learner's role, so they ask for it. */
 function isRolePurpose(purpose: unknown): boolean {
   return purpose === "work" || purpose === "careerChange";
 }
 
-/** A career change needs the role they're aiming for; work needs the role they have. */
+/** Career changes ask for the target role; work goals ask for the current role. */
 function hasRoleAnswer(details: Record<string, unknown>): boolean {
   return details.purpose === "careerChange"
     ? hasText(details.targetPosition)
@@ -46,18 +42,13 @@ function hasRoleAnswer(details: Record<string, unknown>): boolean {
 
 const EXAM_TARGETS = ["admission", "position", "score"] as const;
 
-/**
- * What an exam's learner aims for beyond passing, as onboarding understood it: a course or school
- * (`admission`, ENEM), a score (`score`, IELTS) or a position (`position`, a civil service exam). Null for
- * an exam that is only passed or failed (the OAB, a license, a class test).
- */
+/** null means pass/fail only; admission, score, and position describe targets beyond passing. */
 export type ExamTarget = (typeof EXAM_TARGETS)[number];
 
 export function readExamTarget(details: Record<string, unknown>): ExamTarget | null {
   return EXAM_TARGETS.find((target) => target === details.examTarget) ?? null;
 }
 
-/** Whether the words already gave what the exam's target question would ask. */
 function hasExamTarget(details: Record<string, unknown>): boolean {
   switch (readExamTarget(details)) {
     case "admission":
@@ -73,15 +64,11 @@ function hasExamTarget(details: Record<string, unknown>): boolean {
   }
 }
 
-/**
- * An exam the learner prepares from their own material (a class test from the teacher's slides):
- * no notice gives its date, so onboarding asks for it.
- */
 export function isClassTest(details: Record<string, unknown>): boolean {
   return details.materialIntent === "exam";
 }
 
-/** Questions answered on an earlier screen, including the ones skipped. */
+/** Includes explicitly skipped questions. */
 export function getAnsweredQuestions(details: Record<string, unknown>): string[] {
   const answered = details.answered;
 
@@ -99,17 +86,10 @@ export function isCourseDateSkipped(goal: Pick<StepGoal, "details" | "targetDate
   );
 }
 
-/**
- * Whether the learner still has placement ahead: they haven't ended it, and they'll take it (see
- * `isPlacementSkipped`: a learner starting from nothing has nothing to place, and one who started
- * at a chapter begins where they chose). Until then, placement may test out what the plan starts
- * with.
- */
 export function isPlacementAhead(details: Record<string, unknown>): boolean {
   return !getAnsweredQuestions(details).includes("placement") && !isPlacementSkipped({ details });
 }
 
-/** The AI's follow-up questions for an unusual goal, as stored on the goal. */
 export function getFollowUpQuestions(details: Record<string, unknown>): string[] {
   const followUps = details.followUps;
 
@@ -122,11 +102,7 @@ export function getFollowUpQuestions(details: Record<string, unknown>): string[]
   );
 }
 
-/**
- * A course the learner started from its page already says what they'll learn, how deep and in
- * what order, so only their level, optional date and time are left to ask, plus any exam choices;
- * a chapter start also said where they begin, so it skips their level.
- */
+/** Course starts already choose subject/depth/order; chapter starts also choose the starting level. */
 function isAskedAtCourseStart({
   courseStart,
   question,
@@ -142,7 +118,6 @@ function isAskedAtCourseStart({
   );
 }
 
-/** Whether each question applies to this goal and the goal doesn't already answer it. */
 function isQuestionMissing({ goal, question }: { goal: StepGoal; question: OnboardingQuestion }) {
   const { details, kind } = goal;
   const courseStart = readCourseStart(details);
@@ -187,10 +162,7 @@ function picksBuddy({ answered, profile }: { answered: Set<string>; profile: Ste
   return !profile.hasEarlierGoals && !profile.hasBuddy && !answered.has("buddy");
 }
 
-/**
- * The questions still ahead for a goal, in the order they're asked: those that apply to it and
- * that neither its words nor an earlier screen answered (skipped ones count as answered).
- */
+/** Preserves question order and treats skipped questions as answered. */
 export function getMissingQuestions(goal: StepGoal): OnboardingQuestion[] {
   const answered = new Set(getAnsweredQuestions(goal.details));
 
@@ -199,15 +171,7 @@ export function getMissingQuestions(goal: StepGoal): OnboardingQuestion[] {
   );
 }
 
-/**
- * The onboarding screens still ahead for a new goal, in order: only the questions the typed goal
- * and earlier screens didn't answer, then the buddy in the learner's first onboarding, placement,
- * the daily time, and the plan. A learner starting from
- * nothing skips placement: there's nothing to place, and every phase starts at its beginning. So
- * does one who started at a chapter: the plan begins where they chose. The daily time comes last,
- * once placement said what the learner already knows: it recommends the time the plan needs to
- * cover the whole goal by its date, the same number the plan then shows.
- */
+/** Skips known answers and unnecessary placement; daily time comes last so its recommendation reflects placement results. */
 export function getOnboardingSteps({
   goal,
   profile,
@@ -219,8 +183,7 @@ export function getOnboardingSteps({
     return [];
   }
 
-  // The next level of a finished plan keeps the learner's time and what onboarding understood, so
-  // its curriculum and plan are written without asking again.
+  // Continuing a completed plan retains its understood details and time without repeating onboarding.
   if (typeof goal.details.continuesFromGoalId === "string") {
     return ["plan"];
   }
@@ -237,13 +200,7 @@ export function getOnboardingSteps({
   ];
 }
 
-/**
- * Whether a course start still has questions before its plan. A course's start builds its default
- * plan right away, so a learner who left the questions halfway has a plan on defaults they never
- * chose (10 minutes a day, every day): Today and the Plan lead back to the questions instead, for a
- * guest and for the account they sign up for. Read from the goal alone: the buddy and an exam choice
- * a later notice adds don't hold back a plan the learner already set up.
- */
+/** A default course plan is not configured until learner questions finish; later buddy/notice choices must not reopen setup. */
 export function isCourseSetupLeft(goal: Pick<Goal, "details" | "kind" | "targetDate">): boolean {
   const details = isJsonObject(goal.details) ? goal.details : {};
 

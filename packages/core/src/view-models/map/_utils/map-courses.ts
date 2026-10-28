@@ -5,10 +5,7 @@ import { type StudyNextView } from "../map-contract";
 
 type MapCourse = { brandSlug: string | null; courseId: string; courseSlug: string; title: string };
 
-/**
- * The courses a goal's chapters come from, in plan order. Another learner's private course never
- * shows; a private course has no public page, so it has no brand.
- */
+/** Preserves plan order, excludes other learners' private courses, and omits public-page branding for private courses. */
 export async function loadMapCourses({
   courseIds,
   userId,
@@ -45,10 +42,7 @@ export async function loadMapCourses({
   });
 }
 
-/**
- * What to study next once the plan is done: the next level of the plan's course, which the
- * learner continues with one tap, and the other public courses the plan drew from.
- */
+/** Only completed learn plans climb course levels; related suggestions must have public pages. */
 export function buildStudyNext({
   course,
   courses,

@@ -15,18 +15,11 @@ export type FieldMapViewResult =
   | { map: FieldMapView; status: "ready" }
   | { status: "noGoal" | "notFound" | "unauthorized" };
 
-/** A refresh goal is about what the learner knew before: the map leads with what's fading. */
 function isRefreshGoal(details: unknown): boolean {
   return isJsonObject(details) && details.purpose === "refresh";
 }
 
-/**
- * The map of the field for a goal (the active goal by default): every skill of the plan as a node
- * with its mastery and prerequisites, grouped by chapter,
- * phase and course, with where the learner is now. It leads with what's fading for refresh goals,
- * shows the course and its levels, and, once the plan is finished, what to study next. Drawn by code
- * from the skill graph, never as a picture.
- */
+/** Requires an owned goal (active by default); completed plans may offer next study, refresh goals lead with fading skills. */
 export async function getFieldMapView(
   input: { goalId?: string } = {},
 ): Promise<FieldMapViewResult> {

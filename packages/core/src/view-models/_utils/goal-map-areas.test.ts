@@ -25,7 +25,6 @@ function node({ areaId, phase }: { areaId: string; phase: number }): MapNode {
   };
 }
 
-/** A lesson of the phase's chapter, or a stand-in still waiting for its lessons. */
 function lesson({
   phase,
   status = "todo",
@@ -74,8 +73,6 @@ function build(
 }
 
 describe(buildGoalMapAreas, () => {
-  // A phase isn't done while a stand-in in it still waits for its lessons, though the learner does
-  // a later phase's written lessons meanwhile: those are up next, as on Today.
   it("is in the plan's current phase, the earliest with a lesson left", () => {
     const items = [lesson({ phase: 0, written: false }), lesson({ phase: 1 })];
     const map = build(items);
@@ -85,7 +82,6 @@ describe(buildGoalMapAreas, () => {
     expect(map.areas.filter((area) => area.current).map((area) => area.phase)).toStrictEqual([1]);
   });
 
-  // Pedro's Today opened a lesson of his second phase while the map put him in the first.
   it("puts the learner where the lesson Today opens next is, even in the next phase", () => {
     const ahead = lesson({ phase: 1 });
     const items = [lesson({ phase: 0 }), ahead];
@@ -96,8 +92,6 @@ describe(buildGoalMapAreas, () => {
     expect(map.areas.filter((area) => area.current).map((area) => area.phase)).toStrictEqual([1]);
   });
 
-  // Missed days set the first phase's last lesson aside: the plan moves on, but neither the phase
-  // nor its chapter reads as done. Only a plan with a date sets lessons aside for missed days.
   it("never reads a phase or chapter whose lessons were set aside as done", () => {
     const map = build(
       [
@@ -112,7 +106,6 @@ describe(buildGoalMapAreas, () => {
     expect(map.areas.find((area) => area.phase === 0)?.state).toBe("upcoming");
   });
 
-  // Pedro's finished plan kept its last phase "current" on the map while his Plan read it done.
   it("reads every phase done once everything is done, as Plan does", () => {
     const map = build([lesson({ phase: 0, status: "done" }), lesson({ phase: 1, status: "done" })]);
 
@@ -120,7 +113,6 @@ describe(buildGoalMapAreas, () => {
     expect(map.areas.some((area) => area.current)).toBe(false);
   });
 
-  // Lucas's date left his second phase out of the plan: the map read it as ahead of him.
   it("says a phase the plan holds nothing of is left out", () => {
     const map = build([lesson({ phase: 0 })]);
 
