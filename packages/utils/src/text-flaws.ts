@@ -3,8 +3,8 @@ import { isJsonObject } from "./json";
 import { findMarkdownTableLines } from "./markdown-table";
 
 /**
- * How a field shows its text: `blocks` keeps lines, lists and tables of data (a screen's body, a
- * question's context); `inline` shows one line, whatever its line breaks (an option, a title).
+ * `blocks` keeps lines, lists and tables (a screen's body); `inline` shows one line, whatever its
+ * line breaks (an option, a title).
  */
 export type TextLayout = "blocks" | "inline";
 
@@ -19,7 +19,6 @@ const BLOCK_MARKS: readonly { pattern: RegExp; problem: string }[] = [
   { pattern: /^\s*```/u, problem: "a code fence" },
 ];
 
-/** A link or a picture in Markdown: its text in brackets, then its URL. */
 export const MARKDOWN_LINK = /!?\[(?<text>[^\]\n]+)\]\([^)\s]+\)/u;
 
 const INLINE_MARKS: readonly { pattern: RegExp; problem: string }[] = [
@@ -47,15 +46,11 @@ function quote(text: string): string {
   return `"${text.trim()}"`;
 }
 
-/** Math hidden behind spaces of its own length, so positions in the result point into the line. */
+/** Spaces of the math's own length keep positions in the result pointing into the line. */
 function hideMath(line: string): string {
   return line.replaceAll(MATH, (math) => " ".repeat(math.length));
 }
 
-/**
- * Where the emphasis marks parsing leaves as text are in one line (each mark's characters), after
- * a list mark and outside math, code, bold and italics: the marks learners would see.
- */
 export function findStrayEmphasis(line: string): Set<number> {
   const list = LIST_MARK.exec(line)?.[0].length ?? 0;
   const hidden = hideMath(line);
@@ -91,7 +86,6 @@ function findLineProblems(line: string): string[] {
   ];
 }
 
-/** A row-like line ("| A | 49,8 |") outside a table the renderer reads. */
 function isStrayRow(line: string): boolean {
   const trimmed = line.trim();
   return trimmed.startsWith("|") && (trimmed.match(/\|/gu)?.length ?? 0) >= 2;
@@ -118,7 +112,6 @@ function findBlockProblems(text: string): string[] {
   });
 }
 
-/** Whether a text has a table or a row of one, which a field that shows one line can't show. */
 export function hasTableRows(text: string): boolean {
   const lines = text.split(/\r?\n/u);
   return findMarkdownTableLines(lines).size > 0 || lines.some((line) => isStrayRow(line));
@@ -137,10 +130,8 @@ function findInlineProblems(text: string): string[] {
 }
 
 /**
- * Markdown a learner would see as raw marks: the player renders emphasis, inline code, `$...$`
- * math, short lists and GFM tables of data in block text, and a single line of emphasis, code and
- * math in inline text; anything else (headings, links, HTML, quote marks, pipes outside a table,
- * emphasis split across lines or left unpaired) shows as written. One line per problem.
+ * Must match what the player renders: emphasis, inline code, `$...$` math, short lists and GFM
+ * tables in block text, and one line of emphasis, code and math in inline text.
  */
 export function findUnrenderedMarkdown({
   layout,
@@ -152,7 +143,6 @@ export function findUnrenderedMarkdown({
   return layout === "blocks" ? findBlockProblems(text) : findInlineProblems(text);
 }
 
-/** Every string in a text or a JSON value (an item, a screen), in order. */
 function collectStrings(value: unknown): string[] {
   if (typeof value === "string") {
     return [value];
@@ -165,11 +155,7 @@ function collectStrings(value: unknown): string[] {
   return isJsonObject(value) ? Object.values(value).flatMap((entry) => collectStrings(entry)) : [];
 }
 
-/**
- * Em dashes in our own wording, which the app never shows (`replaceEmDashes` rewrites them before
- * learners see them): one line per text that has one, in a string or anywhere in a JSON value.
- * Quoted source text keeps its punctuation, so callers leave it out.
- */
+/** Quoted source text keeps its punctuation, so callers leave it out. */
 export function findEmDashes(value: unknown): string[] {
   return collectStrings(value).flatMap((text) =>
     text.includes("—") ? [`Uses an em dash: ${quote(text)}. Write it without one.`] : [],
@@ -178,10 +164,6 @@ export function findEmDashes(value: unknown): string[] {
 
 export type WritingFlaw = { kind: "emDash" | "markdown" | "placeholder"; problem: string };
 
-/**
- * What code finds wrong in a text learners read in our own words: an em dash, Markdown they'd see
- * as marks, or a slot or note a writer left unfinished.
- */
 export function findWritingFlaws({
   layout,
   text,
@@ -199,7 +181,6 @@ export function findWritingFlaws({
   ];
 }
 
-/** Only dots, dashes or marks: nothing a learner can read. */
 const EMPTY = /^[\s.…\-–—_*?!]*$/u;
 
 const PLACEHOLDERS: readonly RegExp[] = [
@@ -210,11 +191,7 @@ const PLACEHOLDERS: readonly RegExp[] = [
   /<\s*(?:insert|inserir|insira|placeholder|nome|name)\b[^>]*>/iu,
 ];
 
-/**
- * Text a writer left unfinished: nothing to read, or a slot or note meant for someone to fill in
- * ("{{name}}", "[Insert example]", "TODO", "lorem ipsum"). An elision in a quote ("[...]") is
- * real text.
- */
+/** An elision in a quote ("[...]") is real text. */
 export function findPlaceholderText(text: string): string[] {
   if (EMPTY.test(text)) {
     return ["The text is empty."];

@@ -12,10 +12,6 @@ const DATE_TIME_PARTS = {
 
 const HOUR_PARTS = { hour: "numeric", hourCycle: "h23" } as const;
 
-/**
- * Making a formatter costs far more than formatting with one, and a page's planner asks a
- * learner's zone for hundreds of dates, so each shape keeps one formatter per zone.
- */
 function formatterCache(options: Intl.DateTimeFormatOptions) {
   const formatters = new Map<string, Intl.DateTimeFormat>();
 
@@ -36,10 +32,6 @@ const dateFormatter = formatterCache(DATE_PARTS);
 const dateTimeFormatter = formatterCache(DATE_TIME_PARTS);
 const hourFormatter = formatterCache(HOUR_PARTS);
 
-/**
- * DateTimeFormat returns multiple part kinds, so this helper makes the required
- * calendar fields explicit before they become a UTC date-only value.
- */
 function getNumericDatePart({
   dateParts,
   type,
@@ -50,11 +42,7 @@ function getNumericDatePart({
   return Number(dateParts.find((part) => part.type === type)?.value);
 }
 
-/**
- * Converts an instant into the UTC-midnight label for its calendar date in one
- * IANA timezone. Domain code can then compare Postgres date values without
- * introducing the server's timezone.
- */
+/** The zone's calendar date as a UTC-midnight Date, the way Postgres date columns read. */
 export function getDateInTimeZone({ date, timeZone }: { date: Date; timeZone: string }): Date {
   const dateParts = dateFormatter(timeZone).formatToParts(date);
 
@@ -67,10 +55,7 @@ export function getDateInTimeZone({ date, timeZone }: { date: Date; timeZone: st
   );
 }
 
-/**
- * Returns the 0-23 hour an instant falls in for one IANA timezone, so learner-local time-of-day
- * stats never depend on the server's timezone. `hourCycle: "h23"` keeps midnight at 0, not 24.
- */
+/** `hourCycle: "h23"` keeps midnight at 0, not 24. */
 export function getHourInTimeZone({ date, timeZone }: { date: Date; timeZone: string }): number {
   const hour = hourFormatter(timeZone)
     .formatToParts(date)
@@ -79,7 +64,6 @@ export function getHourInTimeZone({ date, timeZone }: { date: Date; timeZone: st
   return Number(hour);
 }
 
-/** How far a timezone's wall clock is ahead of UTC at one instant, in milliseconds. */
 export function getTimeZoneOffsetMs({ date, timeZone }: { date: Date; timeZone: string }): number {
   const dateParts = dateTimeFormatter(timeZone).formatToParts(date);
 
@@ -95,11 +79,6 @@ export function getTimeZoneOffsetMs({ date, timeZone }: { date: Date; timeZone: 
   return wallClock - Math.floor(date.getTime() / MS_PER_SECOND) * MS_PER_SECOND;
 }
 
-/**
- * Intl uses the runtime's timezone database as the source of truth. Constructing
- * a formatter is a small, deterministic way to reject forged or unsupported
- * timezone names before they reach calendar calculations.
- */
 export function isValidTimeZone(timeZone: string): boolean {
   try {
     new Intl.DateTimeFormat("en", { timeZone }).format();
@@ -109,11 +88,6 @@ export function isValidTimeZone(timeZone: string): boolean {
   }
 }
 
-/**
- * Reads the browser or host process timezone once at the point where a local
- * calendar event is created. UTC is a deterministic fallback for runtimes that
- * do not expose an IANA name.
- */
 export function getLocalTimeZone(): string {
   return new Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 }

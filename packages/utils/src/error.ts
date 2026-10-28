@@ -1,4 +1,3 @@
-/** Preserves thrown errors and normalizes non-Error values for safe return objects. */
 export function toError(error: unknown): Error {
   if (error instanceof Error) {
     return error;
@@ -9,16 +8,6 @@ export function toError(error: unknown): Error {
 
 export type SafeReturn<T> = { data: T; error: null } | { data: null; error: Error };
 
-/**
- * Helper function to safely execute an async function and capture any errors.
- *
- * ### Example
- *
- * ```ts
- * const { data, error } = await safeAsync(async () => {
- *   // Your async code here
- * });
- */
 export async function safeAsync<T>(fn: () => Promise<T>): Promise<SafeReturn<T>> {
   try {
     const data = await fn();

@@ -21,7 +21,6 @@ const COURSE_CATEGORY_SET: ReadonlySet<string> = new Set(COURSE_CATEGORIES);
 
 export type CourseCategory = (typeof COURSE_CATEGORIES)[number];
 
-/** Checks whether an unknown value belongs to the complete course taxonomy. */
 export function isValidCategory(category: unknown): category is CourseCategory {
   return typeof category === "string" && COURSE_CATEGORY_SET.has(category);
 }

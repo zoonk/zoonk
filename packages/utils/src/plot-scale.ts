@@ -7,7 +7,7 @@ export type LinearScale = {
   range: NumericDomain;
 };
 
-/** Maps a data range onto pixels. A flat domain maps everything to the middle of the range. */
+/** A flat domain maps everything to the middle of the range. */
 export function createLinearScale({
   domain,
   range,
@@ -31,7 +31,6 @@ export function createLinearScale({
 const NICE_STEPS = [1, 2, 2.5, 5, 10] as const;
 const DEFAULT_TICK_COUNT = 4;
 
-/** A round step (1, 2, 2.5 or 5 times a power of ten) that splits the range into about `count`. */
 function niceStep(span: number, count: number): number {
   if (span <= 0 || count <= 0) {
     return 1;
@@ -44,12 +43,10 @@ function niceStep(span: number, count: number): number {
   return nice * magnitude;
 }
 
-/** Rounds away float noise such as 0.30000000000000004 so tick labels stay clean. */
 function cleanFloat(value: number): number {
   return Number(value.toPrecision(12));
 }
 
-/** Round tick values inside the domain, both ends snapped outward to the step. */
 export function niceTicks(domain: NumericDomain, count = DEFAULT_TICK_COUNT): number[] {
   const [min, max] = domain;
   const step = niceStep(max - min, count);
@@ -62,9 +59,8 @@ export function niceTicks(domain: NumericDomain, count = DEFAULT_TICK_COUNT): nu
 }
 
 /**
- * A domain that holds every value with round ends. By default it starts at zero when every value
- * sits on one side of it, so bars and areas aren't exaggerated by a cropped axis; line charts of
- * data far from zero (like CO₂ in ppm) pass `includeZero: false` to show the trend.
+ * Starts at zero by default so bars and areas aren't exaggerated by a cropped axis; line charts of
+ * data far from zero pass `includeZero: false`.
  */
 export function niceDomain(
   values: readonly number[],

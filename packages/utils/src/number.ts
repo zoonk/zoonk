@@ -28,10 +28,6 @@ const GOAL_PROGRESS_OPTIONS = {
   style: "percent",
 } satisfies LocalizedNumberOptions;
 
-/**
- * Formats count-style values through the app formatter so grouping and digits
- * follow the active locale instead of the runtime default locale.
- */
 export function formatWholeNumber({
   format,
   value,
@@ -42,10 +38,7 @@ export function formatWholeNumber({
   return format.number(value);
 }
 
-/**
- * Formats progress percentages stored as 0-100 values. Intl percent formatting
- * expects a ratio, so this helper keeps the conversion in one place.
- */
+/** Takes 0–100; Intl's percent style expects a ratio. */
 export function formatMetricPercent({
   format,
   value,
@@ -56,12 +49,7 @@ export function formatMetricPercent({
   return format.number(value / 100, METRIC_PERCENT_OPTIONS);
 }
 
-/**
- * A goal's progress in its plan's lessons (a share from 0 to 1) to the hundredth of a percent:
- * "0.16%", "35.29%", "25%". Each lesson of a long plan moves it, where a whole percentage would sit
- * at "0%" for weeks. Every screen that shows it (the Plan, Today, a session's end) writes it here,
- * so they all read the same; a phase's, chapter's or subject's share stays in whole percentages.
- */
+/** To the hundredth of a percent, since a whole percentage would sit at "0%" for weeks. */
 export function formatGoalProgress({
   format,
   share,

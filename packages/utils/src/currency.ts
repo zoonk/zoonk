@@ -1,4 +1,3 @@
-/** The currency Plus is billed in for each country (ISO 3166-1 alpha-2); any other country pays in `DEFAULT_CURRENCY`. */
 const COUNTRY_CURRENCY: Readonly<Record<string, string>> = {
   AD: "eur",
   AT: "eur",
@@ -56,7 +55,6 @@ export type PriceInfo = { amount: number; currency: string };
 
 export const DEFAULT_CURRENCY = "usd";
 
-/** Every currency a country can be billed in, each once. */
 export const BILLING_CURRENCIES: readonly string[] = [
   ...new Set([DEFAULT_CURRENCY, ...Object.values(COUNTRY_CURRENCY)]),
 ];

@@ -1,9 +1,4 @@
-/**
- * Sets a browser cookie through the Cookie Store API when the browser supports
- * it, and falls back to `document.cookie` for older browsers or insecure HTTP
- * contexts. Await this when the next step depends on the cookie being stored
- * before navigation or reload.
- */
+/** Await this when the next step depends on the cookie being stored before navigation or reload. */
 export async function setCookie(
   name: string,
   value: string,
@@ -16,7 +11,6 @@ export async function setCookie(
 ): Promise<void> {
   const { expires, maxAge, path = "/", sameSite = "lax" } = options;
 
-  // Cookie Store API is available and we're in a secure context
   if ("cookieStore" in globalThis && globalThis.isSecureContext) {
     const cookieOptions: CookieInit = { name, path, sameSite, value };
 
@@ -30,7 +24,6 @@ export async function setCookie(
     return;
   }
 
-  // Fallback to document.cookie for older browsers or non-HTTPS
   const parts = [`${encodeURIComponent(name)}=${encodeURIComponent(value)}`];
 
   if (maxAge !== undefined) {
@@ -53,10 +46,7 @@ function decodeCookieValue(value: string): string {
   }
 }
 
-/**
- * A cookie's value in the browser, from `document.cookie` (so never an httpOnly one), such as a
- * hint the proxy leaves for static pages; null when it isn't set.
- */
+/** Reads `document.cookie`, so never an httpOnly cookie. */
 export function readCookie(name: string): string | null {
   const prefix = `${encodeURIComponent(name)}=`;
   const entry = document.cookie.split(/;\s*/u).find((cookie) => cookie.startsWith(prefix));

@@ -11,7 +11,6 @@ function sanitize(markdown: string) {
   return keepAllowedMarkdownLinks({ isAllowed: (href) => ALLOWED.has(href), markdown });
 }
 
-/** Every destination GFM reads as a link (or an image) in a text. */
 function readLinks(markdown: string): string[] {
   const tree = fromMarkdown(markdown, {
     extensions: [gfm()],

@@ -1,6 +1,6 @@
 /**
- * Shares `total` whole units among `weights` in proportion, by the largest remainder (ties to the
- * earlier one), so the counts always add up to `total`. Equal shares when every weight is zero.
+ * Largest remainder (ties to the earlier weight), so the counts add up to `total`; equal shares
+ * when every weight is zero.
  */
 export function apportion({
   total,

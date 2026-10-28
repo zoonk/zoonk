@@ -8,18 +8,10 @@ const PREVIOUS_CALENDAR_WEEKS = 52;
 
 export type ContributionCalendarDateRange = { endDate: Date; startDate: Date };
 
-/**
- * Date-only keys preserve a contribution day's UTC identity when callers map
- * sparse stored values onto a complete calendar range.
- */
 export function getContributionCalendarDateKey(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
 
-/**
- * Produces every date in an inclusive UTC range so sparse metric rows can be
- * rendered alongside zero-value dates that have no stored record.
- */
 export function getContributionCalendarDates({
   endDate,
   startDate,
@@ -38,10 +30,6 @@ export function getContributionCalendarDates({
   );
 }
 
-/**
- * Contribution calendars read vertically within each week. Fixed seven-day
- * slices keep every consumer's visual columns aligned to calendar order.
- */
 export function groupContributionCalendarDaysByWeek<Day>(days: Day[]): Day[][] {
   return Array.from(
     { length: Math.ceil(days.length / CONTRIBUTION_CALENDAR_DAYS_PER_WEEK) },
@@ -53,28 +41,16 @@ export function groupContributionCalendarDaysByWeek<Day>(days: Day[]): Day[][] {
   );
 }
 
-/**
- * Month labels belong to the week containing the month's first day. A partial
- * opening month remains unlabeled when its first day is outside the range.
- */
 export function getContributionCalendarMonthDate<Day extends { date: Date }>(
   week: Day[],
 ): Date | null {
   return week.find((day) => day.date.getUTCDate() === FIRST_DAY_OF_MONTH)?.date ?? null;
 }
 
-/**
- * The first date provides a stable identity for a non-empty week without
- * coupling reusable calendar shaping to a particular rendering framework.
- */
 export function getContributionCalendarWeekKey<Day extends { date: Date }>(week: Day[]): string {
   return week.at(0)?.date.toISOString() ?? "empty-week";
 }
 
-/**
- * Keyboard navigation starts on the newest meaningful date supplied by the
- * metric, or on the newest visible date when the calendar has no activity.
- */
 export function getContributionCalendarKeyboardStartDate<Day extends { date: Date }>({
   days,
   hasActivity,
@@ -85,10 +61,6 @@ export function getContributionCalendarKeyboardStartDate<Day extends { date: Dat
   return days.findLast((day) => hasActivity(day))?.date ?? days.at(-1)?.date ?? null;
 }
 
-/**
- * Starts on Sunday so every seven-date slice becomes one complete contribution
- * calendar column, regardless of the weekday at the visible range's end.
- */
 function getContributionCalendarStartDate(visibleEndDate: Date): Date {
   const daysBeforeCurrentWeek =
     visibleEndDate.getUTCDay() + PREVIOUS_CALENDAR_WEEKS * CONTRIBUTION_CALENDAR_DAYS_PER_WEEK;
@@ -96,22 +68,12 @@ function getContributionCalendarStartDate(visibleEndDate: Date): Date {
   return new Date(visibleEndDate.getTime() - daysBeforeCurrentWeek * MS_PER_DAY);
 }
 
-/**
- * Builds a contribution window from an already-resolved date-only endpoint.
- * Callers that already captured a request-local date can reuse it without
- * consulting another clock or timezone.
- */
 export function getContributionCalendarDateRangeFromEndDate(
   endDate: Date,
 ): ContributionCalendarDateRange {
   return { endDate, startDate: getContributionCalendarStartDate(endDate) };
 }
 
-/**
- * Builds the stable 53-week window used to query and render a contribution
- * calendar. The timezone makes the final square the learner's current calendar
- * day instead of whichever date happens to be current on the server.
- */
 export function getContributionCalendarDateRange({
   now,
   timeZone = "UTC",

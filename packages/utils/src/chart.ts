@@ -26,7 +26,6 @@ export function formatLabel(date: Date, period: HistoryPeriod, locale: string): 
     }).format(date);
   }
 
-  // Year - show month name
   return new Intl.DateTimeFormat(locale, { month: "short", timeZone: "UTC" }).format(date);
 }
 

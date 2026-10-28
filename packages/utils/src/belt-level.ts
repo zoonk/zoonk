@@ -34,7 +34,6 @@ export type BeltLevelResult = {
 
 type BeltConfig = { bpPerLevel: number; color: BeltColor; startBp: number };
 
-// Non-empty tuple guarantees BELT_CONFIGS[0] is always defined
 const BELT_CONFIGS: readonly [BeltConfig, ...BeltConfig[]] = [
   { bpPerLevel: 250, color: "white", startBp: 0 },
   { bpPerLevel: 500, color: "yellow", startBp: 2500 },
@@ -48,7 +47,6 @@ const BELT_CONFIGS: readonly [BeltConfig, ...BeltConfig[]] = [
   { bpPerLevel: 100_000, color: "black", startBp: 2_167_500 },
 ];
 
-/** Every belt has ten levels: the stripes on its rank bar. */
 export const LEVELS_PER_COLOR = 10;
 
 function findCurrentBelt(bp: number): BeltConfig {
@@ -93,14 +91,13 @@ export function calculateBeltLevel(totalBrainPower: number): BeltLevelResult {
   };
 }
 
-/** The Brain Power where a belt color starts: level 1 of that color. */
 export function getBeltStartBrainPower(color: BeltColor): number {
   return BELT_CONFIGS.find((belt) => belt.color === color)?.startBp ?? 0;
 }
 
 export type NextBelt = { brainPowerToGo: number; color: BeltColor; startBrainPower: number };
 
-/** The belt after the one this Brain Power is on: where it starts and how far that is. None past Black. */
+/** Null on Black, the last belt. */
 export function getNextBelt(totalBrainPower: number): NextBelt | null {
   const bp = Math.max(0, totalBrainPower);
   const next = BELT_CONFIGS.find((belt) => belt.startBp > bp);

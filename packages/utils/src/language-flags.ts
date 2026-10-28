@@ -1,11 +1,8 @@
 import { getBaseLanguage } from "./languages";
 
 /**
- * The flag a language course shows, keyed by the ISO 639-1 code of the language it teaches. Each
- * language gets the country whose variety courses teach: US English, Brazilian Portuguese and
- * Spain Spanish, then the country most learners picture for the rest. Languages of a region use
- * its flag (Catalan, Basque, Galician, Welsh) and Arabic uses the Arab League's, since courses
- * teach Modern Standard Arabic. Codes are `flag-icons` file names.
+ * Each language shows the country whose variety courses teach, and Arabic the Arab League's since
+ * courses teach Modern Standard Arabic. Codes are `flag-icons` file names.
  */
 const LANGUAGE_FLAGS = {
   af: "za",
@@ -93,24 +90,17 @@ const LANGUAGE_FLAGS = {
 
 export type LanguageFlagCode = (typeof LANGUAGE_FLAGS)[keyof typeof LANGUAGE_FLAGS];
 
-/** Country flags are two letters; region flags ("es-ct") and "arab" have no country to name. */
 const COUNTRY_CODE = /^[a-z]{2}$/u;
 
 function isFlagLanguage(language: string): language is keyof typeof LANGUAGE_FLAGS {
   return Object.hasOwn(LANGUAGE_FLAGS, language);
 }
 
-/** The flag of a language course's language ("en" and "en-US" both show the US flag), or null. */
 export function getLanguageFlagCode(language: string): LanguageFlagCode | null {
   const base = getBaseLanguage(language);
   return isFlagLanguage(base) ? LANGUAGE_FLAGS[base] : null;
 }
 
-/**
- * What a flag stands for, in the viewer's language: the variety it marks ("American English",
- * "português do Brasil") or the language alone when its flag isn't a country's. Null without a
- * flag.
- */
 export function getLanguageFlagLabel({
   language,
   userLanguage,

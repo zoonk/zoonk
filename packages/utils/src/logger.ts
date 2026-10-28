@@ -5,9 +5,8 @@ function isTestEnvironment(): boolean {
 }
 
 /**
- * Reports a failure, except in Vitest, where tests assert what failed, and except a model call the
- * test kill switch stopped: E2E has no model, so every such call fails by design, and reporting it
- * would bury the failures that matter.
+ * Skips Vitest, whose tests assert what failed, and model calls the test kill switch stopped, which
+ * fail by design in E2E.
  */
 export function logError(...args: unknown[]): void {
   if (!isTestEnvironment() && !args.some((arg) => isBlockedTestCall(arg))) {

@@ -1,16 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { readCookie, setCookie } from "./cookies";
 
-/**
- * Provides the initial resolver value before the Promise constructor replaces
- * it with the actual resolver for the controlled write promise.
- */
 function noop(): void {}
 
-/**
- * Creates a document-like object that records cookie assignments so the
- * fallback branch can be tested without a browser environment.
- */
 function createDocumentCookieStub(writtenCookies: string[]): { cookie: string } {
   const documentStub = {};
 
@@ -23,10 +15,6 @@ function createDocumentCookieStub(writtenCookies: string[]): { cookie: string } 
   return documentStub as { cookie: string };
 }
 
-/**
- * Creates a promise whose resolution is controlled by the test so we can prove
- * `setCookie` waits for Cookie Store API writes before it resolves.
- */
 function createDeferredWrite(): { promise: Promise<void>; resolve: () => void } {
   let resolveWrite = noop;
 

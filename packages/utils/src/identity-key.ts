@@ -12,10 +12,6 @@ function hashText(value: string): string {
   return createHash("sha256").update(value).digest("hex").slice(0, HASH_LENGTH);
 }
 
-/**
- * Keeps unique indexes valid for long URLs and prompts. A hashed key still
- * identifies one item exactly, which is all the unique constraint needs.
- */
 function boundIdentityKey(key: string): string {
   if (key.length <= MAX_IDENTITY_KEY_LENGTH) {
     return key;
@@ -24,15 +20,10 @@ function boundIdentityKey(key: string): string {
   return `sha256:${hashText(key)}`;
 }
 
-/**
- * Reduces text to its words so casing, accents, spacing and punctuation never
- * turn one identity into two ("Café Society" and "cafe society!" match).
- */
 export function normalizeIdentityText(value: string): string {
   return (removeAccents(value).toLowerCase().match(WORD_PATTERN) ?? []).join("-");
 }
 
-/** Positional parts keep keys readable and unambiguous: an empty target language stays empty. */
 function joinKeyParts(parts: (string | null | undefined)[]): string {
   return boundIdentityKey(parts.map((part) => part ?? "").join(":"));
 }
@@ -48,12 +39,11 @@ export function buildSkillIdentityKey({
   return joinKeyParts([targetLanguage, normalizeIdentityText(name)]);
 }
 
-/** Every public setup skill's key starts with this, so shared plans can leave them out. */
 export const SETUP_SKILL_KEY_PREFIX = ":setup:";
 
 /**
- * A setup lesson's skill ("Set up Python on Windows") is the tool and the device, however a model
- * words its name, so everyone who sets up the same tool on the same device shares its lesson.
+ * A setup skill is its tool and device, however a model words its name, so everyone who sets up the
+ * same tool on the same device shares its lesson.
  */
 export function buildSetupSkillIdentityKey({
   system,
@@ -65,24 +55,15 @@ export function buildSetupSkillIdentityKey({
   return boundIdentityKey(`${SETUP_SKILL_KEY_PREFIX}${normalizeIdentityText(tool)}:${system}`);
 }
 
-/**
- * Whether a skill sets up a tool on a device, shared or owner-scoped, from its key alone: the
- * lesson pipeline plans and writes its lesson with the setup rules.
- */
+/** Owner-scoped keys put the owner first, so the prefix can sit anywhere in the key. */
 export function isSetupSkillIdentityKey(identityKey: string): boolean {
   return identityKey.includes(SETUP_SKILL_KEY_PREFIX);
 }
 
 /**
- * A lesson is the set of skills it teaches at one level of one course. Skills are shared across
- * courses, but the same skills teach different content in another subject ("find the main idea"
- * in an English-reading course and in a Portuguese one), so only lessons of the same course match
- * exactly; another course's lesson is reused only when the reuse decision sees both courses.
- * Lessons outside any course (quick explanations, setup lessons) have an empty course part.
- *
- * An outline sometimes splits one skill set into several lessons ("Ex officio assessment", "by
- * declaration" and "by approval", all on "Classify assessment types"). Those lessons pass their
- * `title`, which tells them apart, so each keeps its own row instead of all becoming the first.
+ * The same skills teach different content in another subject, so only lessons of the same course
+ * match exactly. An outline can split one skill set into several lessons; their `title` keeps each
+ * in its own row.
  */
 export function buildLessonIdentityKey({
   courseId,
@@ -108,11 +89,7 @@ export function buildLessonIdentityKey({
   return joinKeyParts(title === null ? parts : [...parts, normalizeIdentityText(title)]);
 }
 
-/**
- * A chapter is its scope at one level of one course; the title is the scope's most stable name.
- * The same title names different content in another subject, so only the same course matches
- * exactly.
- */
+/** The same title names different content in another subject, so only the same course matches. */
 export function buildChapterIdentityKey({
   courseId,
   level,
@@ -131,11 +108,6 @@ function isTrackingParam(name: string): boolean {
   return TRACKING_PARAM_PATTERN.test(name.toLowerCase());
 }
 
-/**
- * The same document is often linked with and without `www`, `https`, a
- * trailing slash, a fragment or tracking parameters. None of those change the
- * document, so none of them are part of its identity.
- */
 function canonicalizeUrl(url: string): string {
   const parsed = new URL(url.trim());
   const host = parsed.host.replace(/^www\./u, "");
@@ -150,7 +122,6 @@ function canonicalizeUrl(url: string): string {
   return `${host}${path}${search}`;
 }
 
-/** A web source is its canonical URL; an upload is its content hash. */
 export function buildSourceIdentityKey({
   contentHash,
   url,
@@ -170,10 +141,8 @@ export function buildSourceIdentityKey({
 }
 
 /**
- * The same scene makes the same picture, whatever style drew it: a style change draws new scenes
- * only, and redrawing stored pictures is a person's call. An image with labels is made per
- * language; one without text (`language` null) serves every language. Scenes are long, so the key
- * keeps only their hash.
+ * The style isn't part of the key: a style change draws new scenes only, and redrawing stored
+ * pictures is a person's call.
  */
 export function buildImageReuseKey({
   language,
@@ -185,10 +154,7 @@ export function buildImageReuseKey({
   return `image:${language ?? "any"}:${hashText(normalizeIdentityText(prompt))}`;
 }
 
-/**
- * Private content (a learner's too-specific goal) lives in its owner's own key
- * space, so an exact match never crosses owners and public search can exclude it.
- */
+/** An exact match never crosses owners, and public search can exclude private keys. */
 export function scopeIdentityKey({
   key,
   ownerId,
@@ -208,9 +174,8 @@ function isKeyScopedTo({ key, ownerId }: { key: string; ownerId: string | null }
 }
 
 /**
- * A private row under a public key would be found by other learners' exact
- * matches, and a public row under a private key would hide shared content, so
- * writes refuse a key from the wrong key space.
+ * Throws for a key from the wrong key space: a private row under a public key would reach other
+ * learners' exact matches, and a public row under a private key would hide shared content.
  */
 export function assertIdentityKeyScope({
   key,

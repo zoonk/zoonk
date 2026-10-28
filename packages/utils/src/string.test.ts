@@ -302,7 +302,6 @@ describe(segmentWords, () => {
 });
 
 describe(replaceEmDashes, () => {
-  // Real lessons (Oct 2026): an OAB worked example and a Civil law lesson.
   it.each([
     [
       "Na contestação — a defesa escrita de quem responde — o advogado assina.",
@@ -324,14 +323,12 @@ describe(replaceEmDashes, () => {
   });
 });
 
-/** The text sent in the pieces a stream would cut it into, joined back. */
 function stream(pieces: string[]): string {
   const replacer = createEmDashReplacer();
   return pieces.map((piece) => replacer.push(piece)).join("") + replacer.end();
 }
 
 describe(createEmDashReplacer, () => {
-  // A buddy reply (persona pass 9) and the cases `replaceEmDashes` covers, as a stream sends them.
   const TEXTS = [
     "Dá para começar cedo, sim — e o sistema de matrícula é um bom caso.",
     "Na contestação — a defesa escrita de quem responde — o advogado assina.",

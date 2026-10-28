@@ -1,6 +1,5 @@
 import { getNumberFormatter } from "./localized-number";
 
-/** Answers read best with up to two decimals, like money; tiny values keep two significant digits. */
 const MAX_FRACTION_DIGITS = 2;
 const SMALL_VALUE_SIGNIFICANT_DIGITS = 2;
 const SMALL_VALUE = 0.01;
@@ -9,7 +8,6 @@ const MINUS_SIGN = "−";
 const MONEY_FRACTION_DIGITS = 2;
 const WHOLE_MONEY_FROM = 1000;
 
-/** Currency symbols writers use, and the currency each one means. */
 const CURRENCY_SYMBOLS: ReadonlyMap<string, string> = new Map([
   ["$", "USD"],
   ["A$", "AUD"],
@@ -24,16 +22,10 @@ const CURRENCY_SYMBOLS: ReadonlyMap<string, string> = new Map([
 
 const ISO_CODE = /^[A-Z]{3}$/u;
 
-/** Units that sit right after the number, like "7%" or "45°". */
 const ATTACHED_UNITS: ReadonlySet<string> = new Set(["%", "°", "‰"]);
 
 const NO_BREAK_SPACE = " ";
 
-/**
- * The currency a unit stands for, like "USD" for "$", so money is written the way the learner's
- * language writes it ("$1,000" in English, "US$ 1.000" in Portuguese). Anything that isn't money
- * returns null.
- */
 export function currencyFor(unit?: string | null): string | null {
   if (!unit) {
     return null;
@@ -47,10 +39,7 @@ function isWhole(value: number, digits: number): boolean {
   return Math.round(value * scale) % scale === 0;
 }
 
-/**
- * Formats an amount of money in the learner's language. Cents show only when there are some and
- * the amount is small ($3.50, $200, $103,449), unless the caller asks for exact digits.
- */
+/** Cents show only when there are some and the amount is small ($3.50, $200, $103,449). */
 export function formatMoney({
   compact = false,
   currency,
@@ -82,11 +71,6 @@ export function formatMoney({
   return formatted.replace("-", MINUS_SIGN);
 }
 
-/**
- * Writes a formatted number with a unit that isn't money (see `currencyFor`): percent and degree
- * signs attach, and everything else follows after a non-breaking space, so "130 m" never wraps
- * between the number and its unit.
- */
 export function withUnit(formatted: string, unit?: string | null): string {
   if (!unit) {
     return formatted;
@@ -95,10 +79,6 @@ export function withUnit(formatted: string, unit?: string | null): string {
   return ATTACHED_UNITS.has(unit) ? `${formatted}${unit}` : `${formatted}${NO_BREAK_SPACE}${unit}`;
 }
 
-/**
- * Where a unit goes next to an answer field: money where the learner's language writes its
- * currency ("R$ 45", but "45 €" in German), every other unit after the number.
- */
 export function getUnitPosition({
   language,
   unit,
@@ -110,13 +90,7 @@ export function getUnitPosition({
   return currency ? currencyLayout({ currency, language }).position : "suffix";
 }
 
-/**
- * What goes between a money sign and the amount after it in the learner's language, as
- * `formatMoney` writes it: nothing in English ("R$80"), a no-break space in Portuguese ("R$ 80").
- * Lesson text spaces its money with it, so a prompt's "R$ 80" reads like the readouts, chart axes
- * and answers beside it. Null for a sign that isn't money, or a language that writes money after
- * the amount ("80 €" in German).
- */
+/** Null for a sign that isn't money, or a language that writes money after the amount ("80 €"). */
 export function moneySignGap({
   language,
   sign,
@@ -134,10 +108,6 @@ export function moneySignGap({
   return layout.position === "prefix" ? layout.gap : null;
 }
 
-/**
- * Where a language's money format puts a currency's sign: before the amount, with what sits between
- * them, or after it.
- */
 function currencyLayout({
   currency,
   language,
@@ -173,10 +143,8 @@ function formatNumber({ language, value }: { language: string; value: number }):
 }
 
 /**
- * Shows a math answer the way people write it in their language: "R$ 45,50", "12.5%" or "3 km".
- * Lesson checks, session questions, the notebook and the activities write units this way.
- * `maximumFractionDigits` keeps a finer answer exact where two decimals would make a near miss
- * read like the answer (`exactFractionDigitsFor`).
+ * `maximumFractionDigits` keeps a finer answer exact where two decimals would make a near miss read
+ * like the answer (`exactFractionDigitsFor`).
  */
 export function formatMathAnswer({
   language,

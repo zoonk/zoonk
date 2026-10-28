@@ -1,11 +1,6 @@
 /**
- * ISO 639-1 codes for languages supported by Gemini TTS (gemini-3.8-flash-tts and its Lite model).
- * Source: https://ai.google.dev/gemini-api/docs/speech-generation
- *
- * Some Gemini codes differ from ISO 639-1 (e.g., `cmn` for Mandarin, `fil` for Filipino,
- * `nb`/`nn` for Norwegian). We use standard ISO 639-1 codes here (`zh`, `tl`, `no`)
- * since that's what the rest of our app uses. Gemini auto-detects language from
- * text, so the exact code doesn't need to match their internal identifiers.
+ * From https://ai.google.dev/gemini-api/docs/speech-generation. Gemini detects the language from
+ * the text, so we keep ISO 639-1 codes (`zh`, `tl`, `no`) where Gemini's differ.
  */
 export const TTS_SUPPORTED_LANGUAGE_CODES = [
   "af",
@@ -81,8 +76,7 @@ export const TTS_SUPPORTED_LANGUAGE_CODES = [
 ] as const;
 
 /**
- * The locale MAI-Voice speaks each of its 23 languages in, by ISO 639-1 code (Microsoft Learn,
- * "MAI-Voice-2.1 and MAI-Voice-2.1-Flash", checked 11 Oct 2026). Portuguese and Spanish are
+ * From Microsoft Learn's "MAI-Voice-2.1 and MAI-Voice-2.1-Flash". Portuguese and Spanish are
  * Brazilian and Mexican, the regions its every-language voice speaks.
  */
 const MAI_VOICE_LOCALES: Readonly<Record<string, string>> = {
@@ -111,7 +105,6 @@ const MAI_VOICE_LOCALES: Readonly<Record<string, string>> = {
   zh: "zh-CN",
 };
 
-/** The locale MAI-Voice speaks a language in ("pt-BR" for "pt"), or null when it doesn't. */
 export function getMaiVoiceLocale(code: string): string | null {
   return MAI_VOICE_LOCALES[code] ?? null;
 }
@@ -124,10 +117,7 @@ export function isTTSSupportedLanguage(
   return typeof code === "string" && TTS_SUPPORTED_LANGUAGE_SET.has(code);
 }
 
-/**
- * Get localized language name from an ISO 639-1 code.
- * When `userLanguage` is omitted, returns the native name (e.g., "Español", "日本語").
- */
+/** Without `userLanguage`, returns the native name ("Español", "日本語"). */
 export function getLanguageName(params: { targetLanguage: string; userLanguage?: string }): string {
   const locale = params.userLanguage ?? params.targetLanguage;
   const displayNames = new Intl.DisplayNames([locale], { type: "language" });
@@ -135,11 +125,6 @@ export function getLanguageName(params: { targetLanguage: string; userLanguage?:
   return name.charAt(0).toUpperCase() + name.slice(1);
 }
 
-/**
- * ISO 639-1 codes for languages whose primary writing system isn't the Latin one. Learners have to
- * learn the script before reading them, so their courses start with the alphabet and their text
- * gets a romanized version ("konnichiwa" next to "こんにちは").
- */
 const NON_LATIN_SCRIPT_LANGUAGES = new Set([
   "am",
   "ar",
@@ -182,22 +167,13 @@ const NON_LATIN_SCRIPT_LANGUAGES = new Set([
   "zh",
 ]);
 
-/**
- * A language code as goals store it: a language, then an optional script and region ("pt",
- * "pt-BR", "zh-Hant", "es-419"). `Intl` reads every code it matches, so a language's name can be
- * shown for any stored code; a made-up or underscored one ("x1a2b3c4d", "pt_BR") would throw there.
- */
+/** `Intl` reads every code this matches; a made-up or underscored one ("pt_BR") would throw. */
 export const LANGUAGE_CODE_PATTERN = /^[a-zA-Z]{2,3}(?:-[a-zA-Z]{4})?(?:-(?:[a-zA-Z]{2}|\d{3}))?$/u;
 
-/** The language of a tag without its region: "pt" for "pt-BR" or "PT_br". */
 export function getBaseLanguage(language: string): string {
   return language.toLowerCase().split(/[-_]/u)[0] ?? "";
 }
 
-/**
- * Whether the learner reads the app in the language they're learning, such as an IELTS candidate
- * reading it in English: nothing can be translated, so a word's meaning is a definition.
- */
 export function isSameLanguage({
   learnerLanguage,
   targetLanguage,
@@ -208,7 +184,6 @@ export function isSameLanguage({
   return getBaseLanguage(learnerLanguage) === getBaseLanguage(targetLanguage);
 }
 
-/** Whether a language (an ISO code like "ja" or "pt-BR") uses a script other than the Latin one. */
 export function usesNonLatinScript(language: string): boolean {
   return NON_LATIN_SCRIPT_LANGUAGES.has(getBaseLanguage(language));
 }

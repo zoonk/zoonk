@@ -24,12 +24,6 @@ export function toSlug(str: string): string {
     .replaceAll(/^-|-$/gu, "");
 }
 
-/**
- * Different parts of the app can send the same text with tiny formatting differences,
- * such as extra spaces, accents, or a space before punctuation.
- * Return one stable copy of each text so we do not compare or save duplicates like
- * "Bonjour !" and "Bonjour!".
- */
 export function deduplicateNormalizedTexts(texts: string[]): string[] {
   return [
     ...new Map(
@@ -61,10 +55,8 @@ export function normalizePunctuation(text: string): string {
 }
 
 /**
- * Takes em dashes out of generated copy, which the app never shows: one that opens a line (a
- * dialogue or list mark) or closes a clause before punctuation goes away, any other becomes a
- * comma ("statement of defense — the written defense" reads "statement of defense, the written defense"). En dashes
- * stay: they join ranges ("B1–B2").
+ * The app never shows em dashes: one that opens a line or closes a clause before punctuation goes,
+ * any other becomes a comma. En dashes stay: they join ranges ("B1–B2").
  */
 export function replaceEmDashes(text: string): string {
   if (!text.includes("—")) {
@@ -77,13 +69,10 @@ export function replaceEmDashes(text: string): string {
     .replaceAll(/[ \t]*—[ \t]*/gu, ", ");
 }
 
-/** What a dash still waiting for the text after it could change: trailing spaces, tabs and dashes. */
 const OPEN_DASH_TAIL = /[ \t—]*$/u;
 
 /**
- * `replaceEmDashes` for text that arrives in pieces, such as a streamed answer: `push` returns a
- * piece's text as soon as nothing after it can change it, holding back a trailing dash and the
- * spaces around it until the next piece says what follows, and `end` returns what's left. Joined,
+ * `push` holds back a trailing dash and its spaces until the next piece says what follows. Joined,
  * the returned pieces read as `replaceEmDashes` reads the whole text.
  */
 export function createEmDashReplacer(): { end: () => string; push: (piece: string) => string } {
@@ -115,22 +104,12 @@ export function stripPunctuation(text: string): string {
   return text.replaceAll(/[^\p{L}\p{N}\s]/gu, "");
 }
 
-/**
- * Check whether the last character of a token is a word connector
- * (hyphen, apostrophe, or similar). Used to decide if the next
- * word-like segment should merge into the current token.
- */
 function endsWithConnector(token: string): boolean {
   const lastChar = token.at(-1);
   return lastChar !== undefined && WORD_CONNECTOR_PATTERN.test(lastChar);
 }
 
-/**
- * Intl.Segmenter is good at finding word boundaries in scripts like Japanese or Chinese,
- * but it also splits connector-linked tokens such as "gato-123", "l'heure", or
- * "allez-vous?" into pieces. Rebuild those runs into one token so the player, answer
- * checker, and other consumers keep one shared tokenization rule.
- */
+/** Intl.Segmenter splits connector-linked runs like "gato-123" and "l'heure"; this rejoins them. */
 function segmentNonSpaceText(text: string): string[] {
   const tokens: string[] = [];
   let prefix = "";
@@ -155,11 +134,6 @@ function segmentNonSpaceText(text: string): string[] {
   return tokens;
 }
 
-/**
- * Segments text into display tokens for word-based lessons. Space-delimited text
- * keeps punctuation attached to the preceding word, while non-space text uses
- * `Intl.Segmenter` and then merges connector-linked runs back together.
- */
 export function segmentWords(text: string): string[] {
   const normalizedText = normalizePunctuation(text);
 
@@ -170,18 +144,12 @@ export function segmentWords(text: string): string[] {
   return segmentNonSpaceText(normalizedText);
 }
 
-/**
- * The first sentence of a text, whole: a summary that never stops mid-thought the way a line clamp
- * does. Sentence breaks follow the text's language (`Intl.Segmenter`), so languages without spaces
- * work too. Text without a sentence end comes back trimmed.
- */
 export function getFirstSentence(text: string, locale: string): string {
   const [first] = new Intl.Segmenter(locale, { granularity: "sentence" }).segment(text.trim());
 
   return first?.segment.trim() ?? "";
 }
 
-/** Repeated titles get the first free numbered suffix inside their owner, course or chapter. */
 export function pickAvailableSlug({
   base,
   taken,

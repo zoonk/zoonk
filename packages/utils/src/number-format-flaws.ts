@@ -1,13 +1,11 @@
 import { isJsonObject } from "./json";
 
 /**
- * A whole number of five digits or more written without grouping ("40000000"), not part of a
- * decimal, a code, a date or a word, and not starting with 0 (a postal code or an ID). Shorter
- * numbers stay ungrouped in every language, so a year reads 2026.
+ * Five or more ungrouped digits outside a decimal, code, date or word. A leading 0 is a postal code
+ * or an ID, and shorter numbers stay ungrouped in every language, so a year reads 2026.
  */
 const LONG_NUMBER = /(?<![\d.,\p{L}/-])[1-9]\d{4,}(?![\d\p{L}/-]|[.,]\d)/gu;
 
-/** Inline code and fenced code, whose numbers are code. */
 const CODE = /```[\s\S]*?```|`[^`\n]+`/gu;
 
 /**
@@ -20,16 +18,12 @@ const MATH = /\$\$(?<display>[^$]+)\$\$|(?<![\p{L}\\$])\$(?=\S)(?<inline>[^$\n]*
 /** A comma between digits, which KaTeX sets as a list ("0, 5") unless it's braced ("0{,}5"). */
 const BARE_COMMA = /\d,\d/u;
 
-/** A pair or list of whole numbers, such as a point (3,4) or an interval [0,1], whose commas separate. */
 const NUMBER_LIST = /[([]\s*-?\d+(?:\s*,\s*-?\d+)+\s*[)\]]/gu;
 
-/** The spaces some languages group digits with ("40 000 000" in French), a thin space in LaTeX. */
-const GROUPING_SPACE = /[   ]/gu;
+const GROUPING_SPACE = /[\u00A0\u202F ]/gu;
 
-/** Any number with a fraction, formatted to find the language's decimal separator. */
 const DECIMAL_SAMPLE = 1.5;
 
-/** Fields that hold data, code, answers to match or a picture's request, never words to read. */
 const NOT_TEXT_FIELDS = new Set([
   "acceptedAnswers",
   "code",
@@ -40,10 +34,8 @@ const NOT_TEXT_FIELDS = new Set([
   "solution",
 ]);
 
-/** A worked step's `math`: LaTeX without dollar signs. */
 const LATEX_FIELD = "math";
 
-/** One text's prose and the LaTeX math in it, with code left out. */
 type TextParts = { math: string[]; prose: string };
 
 function splitText({ latex, text }: { latex: boolean; text: string }): TextParts {
@@ -84,7 +76,6 @@ function usesDecimalComma(language: string): boolean {
   return parts.some((part) => part.type === "decimal" && part.value === ",");
 }
 
-/** How LaTeX writes a grouped number: a braced comma ("40{,}000") and a thin space ("40\,000"). */
 function toLatexNumber(grouped: string): string {
   return grouped.replaceAll(",", "{,}").replaceAll(GROUPING_SPACE, String.raw`\,`);
 }
@@ -112,13 +103,6 @@ function findBareCommas(math: string): string[] {
     : [];
 }
 
-/**
- * Numbers a learner would read wrong in written text: a long number without its digits grouped
- * the way `language` groups them ("40000000" for 40.000.000 in Portuguese), and, where the
- * language writes a decimal comma, a bare comma in LaTeX math, which shows as a list ("0, 5")
- * instead of a number ("0{,}5"). Code, data fields, answers to match and picture requests are
- * left out. Returns one problem per flaw, or none.
- */
 export function findNumberFormatFlaws({
   language,
   value,

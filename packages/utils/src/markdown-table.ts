@@ -1,8 +1,4 @@
-/**
- * GFM pipe tables, the way AI writers put data in learner text: a header row, a delimiter row
- * (`|---|:---:|`) and one row per line. Cells stay raw text, so each renderer parses its own
- * inline markup (emphasis, code, math) inside them.
- */
+/** Cells stay raw text, so each renderer parses its own inline markup in them. */
 export type MarkdownTableAlign = "center" | "left" | "right" | null;
 
 export type MarkdownTable = { align: MarkdownTableAlign[]; header: string[]; rows: string[][] };
@@ -16,7 +12,6 @@ function isRow(line: string | undefined): line is string {
   return line?.includes("|") ?? false;
 }
 
-/** A row's cells: pipes at either edge are optional, and `\|` is a pipe inside a cell. */
 function splitRow(line: string): string[] {
   return line
     .trim()
@@ -40,7 +35,6 @@ function toAlign(cell: string): MarkdownTableAlign {
   return left ? "left" : null;
 }
 
-/** The `|---|:---:|` row under a table's header, read as each column's alignment. */
 function readDelimiter(line: string | undefined): MarkdownTableAlign[] | null {
   if (!isRow(line)) {
     return null;
@@ -53,7 +47,6 @@ function readDelimiter(line: string | undefined): MarkdownTableAlign[] | null {
     : null;
 }
 
-/** A table starts where a row is followed by a delimiter row with as many cells (GFM). */
 function readTableStart(lines: readonly string[], index: number): MarkdownTableAlign[] | null {
   const header = lines[index];
   const align = readDelimiter(lines[index + 1]);
@@ -69,21 +62,16 @@ function findRowsEnd(lines: readonly string[], index: number): number {
   return isRow(lines[index]) ? findRowsEnd(lines, index + 1) : index;
 }
 
-/** Every row has the header's cells: missing ones are empty and extra ones are dropped (GFM). */
 function toCells(line: string, count: number): string[] {
   const cells = splitRow(line);
   return Array.from({ length: count }, (_, index) => cells[index] ?? "");
 }
 
-/** Whether a table starts at line `index`: a header row right above its delimiter row. */
 export function isMarkdownTableStart(lines: readonly string[], index: number): boolean {
   return readTableStart(lines, index) !== null;
 }
 
-/**
- * The table that starts at line `index`, with the line after its last row (`end`), or null when
- * no table starts there.
- */
+/** `end` is the line after the table's last row. */
 export function readMarkdownTable(
   lines: readonly string[],
   index: number,
@@ -106,7 +94,6 @@ export function readMarkdownTable(
   };
 }
 
-/** The tables in a text, for checks that need its data (a screen that refers to "the table"). */
 export function findMarkdownTables(text: string): MarkdownTable[] {
   const lines = text.split(/\r?\n/u);
 
@@ -116,10 +103,6 @@ export function findMarkdownTables(text: string): MarkdownTable[] {
   });
 }
 
-/**
- * Rows of a table whose cell count differs from its header's, as written: GFM pads or drops
- * cells, so a row written with the wrong count shows misplaced data.
- */
 export function findRaggedTableRows(text: string): string[] {
   const lines = text.split(/\r?\n/u);
 
@@ -135,7 +118,6 @@ export function findRaggedTableRows(text: string): string[] {
   });
 }
 
-/** The indexes of the lines that belong to a table, from its header row to its last row. */
 export function findMarkdownTableLines(lines: readonly string[]): ReadonlySet<number> {
   return new Set(
     lines.flatMap((_, index) => {
@@ -145,7 +127,6 @@ export function findMarkdownTableLines(lines: readonly string[]): ReadonlySet<nu
   );
 }
 
-/** The text without its tables, for rules about prose: sentence length, screen length. */
 export function removeMarkdownTables(text: string): string {
   const lines = text.split(/\r?\n/u);
   const tableLines = findMarkdownTableLines(lines);

@@ -3,11 +3,7 @@ import { getNumberFormatter } from "./localized-number";
 const SECONDS_PER_MINUTE = 60;
 const MINUTES_PER_HOUR = 60;
 
-/**
- * One number with its unit, kept on one line: the locale's plain space becomes a no-break space,
- * so a narrow chip wraps "1 h 30 min" between its units, never as "1 h 30" over "min". The narrow
- * no-break spaces some locales already use (French "2 h") stay as they are.
- */
+/** A no-break space keeps each number with its unit, so "1 h 30 min" wraps only between units. */
 function formatUnit({
   locale,
   unit,
@@ -27,10 +23,6 @@ function formatUnit({
     .replaceAll(" ", "\u00A0");
 }
 
-/**
- * Compact learning time, rounded to seconds below a minute and minutes above it. Hours and minutes
- * are joined by a plain space, the one place a line may break.
- */
 export function formatDuration({
   locale,
   totalSeconds,

@@ -1,9 +1,4 @@
-/**
- * The inline Markdown AI writers use in learner text: `inline code`, **bold** and *italics* (or
- * _italics_). Words a writer quoted in angle quotes («caption» or <<caption>>) read as italics, the
- * way the app shows quoted words, instead of showing the marks. Anything else stays text, so a
- * stray marker never changes a screen's layout.
- */
+/** Words in angle quotes («caption» or <<caption>>) read as italics, as the app shows quotes. */
 export type InlineMarkup =
   | { kind: "bold"; text: string }
   | { kind: "code"; text: string }
@@ -26,13 +21,11 @@ function findCode(text: string): Span | null {
   return end > start + 1 ? { content: text.slice(start + 1, end), end: end + 1, start } : null;
 }
 
-/** Angle quotes AI writers use around a quoted word or sentence, each with its closing mark. */
 const ANGLE_QUOTES = [
   { close: "»", open: "«" },
   { close: ">>", open: "<<" },
 ] as const;
 
-/** The first «quoted» or <<quoted>> words on one line, with text inside the marks. */
 function findAngleQuote(text: string): Span | null {
   const spans = ANGLE_QUOTES.flatMap(({ close, open }) => {
     const start = text.indexOf(open);
@@ -108,10 +101,7 @@ function findItalic(text: string, from = 0): Span | null {
 
 type MarkedSpan = Span & { kind: "bold" | "italic" };
 
-/**
- * The first marked span on the line: bold, italics or angle quotes. On a tie, bold wins over the
- * italics inside its markers.
- */
+/** On a tie, bold wins over the italics inside its markers. */
 function findFirstMark(text: string): MarkedSpan | null {
   const bold = findBold(text);
   const italic = findItalic(text);
@@ -126,10 +116,9 @@ function findFirstMark(text: string): MarkedSpan | null {
   return marks.toSorted((left, right) => left.start - right.start)[0] ?? null;
 }
 
-/** A segment of a line with where it is: `start` to `end` (exclusive) cover its marks too. */
+/** `start` to `end` (exclusive) include the marks. */
 export type InlineMarkupRange = InlineMarkup & { end: number; start: number };
 
-/** A marked span with what's around it, each side read again by `rest` from where it starts. */
 function rangesAround({
   kind,
   offset,
@@ -168,15 +157,10 @@ function parseMarkup(text: string, offset: number): InlineMarkupRange[] {
     : parseEmphasis(text, offset);
 }
 
-/**
- * `parseInlineMarkup` with where each segment is in the line, so a caller can change the marks
- * left as text, or take marks out, without touching anything else.
- */
 export function parseInlineMarkupRanges(text: string): InlineMarkupRange[] {
   return parseMarkup(text, 0);
 }
 
-/** Parses one line: inline code first, so its punctuation stays literal, then bold and italics. */
 export function parseInlineMarkup(text: string): InlineMarkup[] {
   return parseInlineMarkupRanges(text).map(({ kind, text: segment }) => ({ kind, text: segment }));
 }

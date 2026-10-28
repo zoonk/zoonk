@@ -1,6 +1,3 @@
-/**
- * Fisher-Yates shuffle. Returns a new array without mutating the input.
- */
 export function shuffle<T>(array: readonly T[]): T[] {
   const result = [...array];
 

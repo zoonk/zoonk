@@ -1,9 +1,7 @@
 /**
- * Where the code runs, which `NODE_ENV` doesn't say: Next.js builds for production wherever the
- * build runs. Vercel names the environment in `VERCEL_ENV`: production, preview (custom
- * environments too) or development, its name for a run on a developer's machine, which `pnpm dev`
- * and `pnpm start` set. Without it, a production build fails closed as a preview, so a deployment
- * missing Vercel's variables never gets local sign-in.
+ * Next.js builds for production wherever it runs, so `VERCEL_ENV` names the environment; `pnpm dev`
+ * and `pnpm start` set it to development. Without it a production build fails closed as a preview,
+ * so a deployment missing Vercel's variables never gets local sign-in.
  */
 export function getEnvironment(): "development" | "e2e" | "preview" | "production" {
   if (process.env.E2E_TESTING === "true") {

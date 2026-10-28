@@ -2,25 +2,11 @@ import { getEnvironment, isLocalhostSupported } from "./environment";
 import { type SupportedLocale } from "./locale";
 import { API_URL } from "./url";
 
-/**
- * Determines the appropriate scheme (http/https) for a domain.
- * Uses http for localhost, https for everything else.
- */
 function getScheme(domain: string): "http" | "https" {
   return domain.startsWith("localhost") ? "http" : "https";
 }
 
-/**
- * Gets the base URL for the current app based on the environment.
- *
- * Uses the following logic:
- * 1. Uses `PORTLESS_URL` during local development
- * 2. Uses `NEXT_PUBLIC_APP_DOMAIN` when set (with `http://` for localhost, `https://` otherwise)
- * 3. Falls back to `VERCEL_URL` in Vercel preview environments
- * 4. Throws if none is available
- *
- * @returns The full base URL including scheme (e.g., "https://zoonk.com" or "http://localhost:3000")
- */
+/** Throws when no base URL is configured. */
 export function getBaseUrl(): string {
   if (isLocalhostSupported() && process.env.PORTLESS_URL) {
     return process.env.PORTLESS_URL;
@@ -42,15 +28,8 @@ export function getBaseUrl(): string {
   );
 }
 
-/** Says on central auth's login page that the last sign-in couldn't finish. */
 export const AUTH_LOGIN_EXPIRED_ERROR = "expired";
 
-/**
- * Builds the centralized auth URL with the originating app's locale so login
- * does not fall back to a different API-host cookie or browser preference.
- * `expired` is a sign-in the app's callback couldn't finish, which the login
- * page says above the form.
- */
 export function buildAuthLoginUrl({
   callbackUrl,
   expired = false,
@@ -81,10 +60,6 @@ const LOCAL_DEVELOPMENT_HOSTS = [
   "*.local:*",
 ];
 
-/**
- * Builds the allowed hosts list for Better Auth's dynamic base URL.
- * Includes zoonk domains, localhost (dev/e2e), and Vercel previews (non-production).
- */
 export function getAllowedHosts(): string[] {
   return [
     ...ZOONK_DOMAINS.flatMap((domain) => [domain, `*.${domain}`]),
@@ -93,7 +68,6 @@ export function getAllowedHosts(): string[] {
   ];
 }
 
-/** Rejects paths, credentials, and malformed values before any hostname allowlist is considered. */
 function getExactOrigin(origin: string): URL | null {
   try {
     const url = new URL(origin);
@@ -104,17 +78,14 @@ function getExactOrigin(origin: string): URL | null {
   }
 }
 
-/** Checks a parsed hostname without allowing suffix lookalikes such as `zoonk.com.evil.com`. */
 function isDomainOrSubdomain(hostname: string, domain: string): boolean {
   return hostname === domain || hostname.endsWith(`.${domain}`);
 }
 
-/** Recognizes the loopback and mDNS hostnames that Portless uses only during local development. */
 function isLocalDevelopmentHostname(hostname: string): boolean {
   return hostname === "localhost" || hostname.endsWith(".localhost") || hostname.endsWith(".local");
 }
 
-/** Gives Better Auth the same protocol-qualified local patterns used by the shared host allowlist. */
 export function getDevelopmentTrustedOrigins(): string[] {
   if (!isLocalhostSupported()) {
     return [];
@@ -123,9 +94,6 @@ export function getDevelopmentTrustedOrigins(): string[] {
   return LOCAL_DEVELOPMENT_HOSTS.flatMap((host) => [`http://${host}`, `https://${host}`]);
 }
 
-/**
- * Allows HTTPS Zoonk domains, local Portless or localhost origins during development and E2E, and non-production Vercel previews. Parsing the complete origin prevents suffix and credential lookalikes from bypassing the hostname checks.
- */
 export function isCorsAllowedOrigin(origin: string): boolean {
   const url = getExactOrigin(origin);
 

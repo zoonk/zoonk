@@ -3,8 +3,8 @@ import Negotiator from "negotiator";
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES, type SupportedLocale, isValidLocale } from "./locale";
 
 /**
- * Reading a request's language and country needs a header parser and a locale matcher, which only
- * servers and the proxy need, so they live apart from the locale list browsers import.
+ * Only servers and the proxy need a header parser and a locale matcher, so this lives apart from
+ * the locale list browsers import.
  */
 
 const DEFAULT_COUNTRY = "US";
@@ -30,11 +30,6 @@ export function getCountryFromAcceptLanguage(acceptLanguage: string | null): str
   return region ?? DEFAULT_COUNTRY;
 }
 
-/**
- * Treat persisted locale values as manual choices only when they are still
- * supported by the app. Bad or legacy cookie values should not block browser
- * language detection, especially after we add support for another language.
- */
 function getManualLocale(value?: string | null): SupportedLocale | null {
   if (!value) {
     return null;
@@ -43,9 +38,6 @@ function getManualLocale(value?: string | null): SupportedLocale | null {
   return isValidLocale(value) ? value : null;
 }
 
-/**
- * Detect the best locale from an Accept-Language header.
- */
 function getLocaleFromHeaders(acceptLanguage: string | null): SupportedLocale {
   if (!acceptLanguage) {
     return DEFAULT_LOCALE;
@@ -62,12 +54,6 @@ function getLocaleFromHeaders(acceptLanguage: string | null): SupportedLocale {
   }
 }
 
-/**
- * Resolve the app locale from an explicit user choice before browser detection.
- * The locale cookie is only written when the user manually changes language, so
- * adding a new supported language later can immediately help users whose
- * browser already prefers that language.
- */
 export function getLocaleFromRequest({
   acceptLanguage,
   cookieLocale,

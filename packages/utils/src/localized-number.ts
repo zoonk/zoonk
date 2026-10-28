@@ -4,12 +4,10 @@ const TEN = 10;
 const THOUSAND = 1000;
 const MAX_FRACTION_DIGITS = 20;
 
-/** Any number with a fraction, formatted to find the locale's decimal separator. */
 const DECIMAL_SAMPLE = 1.5;
 
 const formatters = new Map<string, Intl.NumberFormat>();
 
-/** One cached `Intl.NumberFormat` per locale and options, since building one is slow. */
 export function getNumberFormatter(
   locale: string,
   options: Intl.NumberFormatOptions,
@@ -26,10 +24,7 @@ export function getNumberFormatter(
   return formatter;
 }
 
-/**
- * Formats a number the way people read it in their language. Computed values often carry float
- * noise (3869.684462...), so they're rounded for display only; grading always uses the full value.
- */
+/** Rounded for display only; grading always uses the full value. */
 export function formatLocalizedNumber({
   compact = false,
   grouping = true,
@@ -58,14 +53,8 @@ export function formatLocalizedNumber({
   return formatted.replace(/^-/u, MINUS_SIGN);
 }
 
-/** Significant digits a value below one keeps, so 0.000075 m never reads as 0 m. */
 const SMALL_SIGNIFICANT_DIGITS = 3;
 
-/**
- * Decimals worth showing for a value's size: none for thousands ($3,870), one for tens (130.5 m),
- * two for ones (5.25) and three significant digits below one (0.125, 0.0000752), so a readout never
- * shows float noise and a tiny value never rounds to 0.
- */
 export function fractionDigitsFor(value: number): number {
   const size = Math.abs(value);
 
@@ -89,15 +78,13 @@ export function fractionDigitsFor(value: number): number {
   return Math.min(MAX_FRACTION_DIGITS, leadingZeros + SMALL_SIGNIFICANT_DIGITS);
 }
 
-/** Decimals needed to keep rounding smaller than a positive resolution. */
 function digitsForResolution(resolution: number): number {
   return Math.max(0, Math.ceil(-Math.log10(resolution)));
 }
 
 /**
- * One precision for an expected answer and the learner's value. The tolerance sets the smallest
- * meaningful decimal; a wrong answer also keeps a digit beyond their difference, so rounding
- * cannot make both read the same. Zero tolerance keeps all supported decimals.
+ * A wrong answer keeps a digit beyond its difference from the expected one, so rounding never makes
+ * both read the same.
  */
 export function exactFractionDigitsFor({
   expected,
@@ -138,21 +125,19 @@ function decimalSeparator(locale: string): string {
   );
 }
 
-/** Spaces, including the narrow ones some locales group digits with. */
 const SPACES = /[\s\u00A0\u202F]/gu;
 
 const GROUPED_DIGITS = /^[+-]?\d{1,3}(?:[.,]\d{3})+$/u;
 
 /**
- * When only one kind of separator appears, it's a decimal point ("3,5" or "3.5" in any language)
- * unless it groups thousands the locale's way, like "1,000" in English or "1.000" in Portuguese.
+ * A lone separator is a decimal point unless it groups thousands the locale's way, like "1,000" in
+ * English or "1.000" in Portuguese.
  */
 function normalizeOneSeparator(text: string, separator: string, locale: string): string {
   const groupsThousands = decimalSeparator(locale) !== separator && GROUPED_DIGITS.test(text);
   return groupsThousands ? text.replaceAll(separator, "") : text.replace(separator, ".");
 }
 
-/** When both appear, the learner's locale decides which one groups digits. */
 function normalizeSeparators(text: string, locale: string): string {
   const [hasDot, hasComma] = [text.includes("."), text.includes(",")];
 
@@ -169,10 +154,6 @@ function normalizeSeparators(text: string, locale: string): string {
   return hasDot ? normalizeOneSeparator(text, ".", locale) : text;
 }
 
-/**
- * Reads a number the learner typed, accepting their locale's decimal comma, the typographic minus
- * and surrounding spaces. Returns null for anything that isn't one plain number.
- */
 export function parseLocalizedNumber({
   locale,
   text,
