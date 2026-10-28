@@ -16,8 +16,8 @@ private struct AccountDeletionDestination: Hashable {
 }
 
 struct AccountSheet: View {
-  /// Opened to log in or create an account (`.signIn`): a guest gets sign-in instead of the hub,
-  /// and the sheet closes once they're signed in, after the profile an account needs.
+  /// Opened to log in or create an account (`.signIn`): a guest gets sign-in instead of the hub.
+  /// Any sign-in made in the sheet closes it, after the profile an account needs.
   var signsIn = false
 
   @Environment(\.dismiss) private var dismiss
@@ -90,8 +90,10 @@ struct AccountSheet: View {
     .task {
       await session.reconcileSynchronizedCredential()
     }
-    .onChange(of: isSignedInForGood) {
-      if signsIn, isSignedInForGood {
+    // Signing in here (opened to sign in, a guest's "Create an account", or after logging out
+    // here) lands on the app once the account is set up, as main's sign-in does.
+    .onChange(of: isSignedInForGood) { wasSignedIn, isSignedIn in
+      if !wasSignedIn, isSignedIn {
         dismiss()
       }
     }
