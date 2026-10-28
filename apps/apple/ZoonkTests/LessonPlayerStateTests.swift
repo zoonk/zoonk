@@ -169,6 +169,25 @@ final class LessonPlayerStateTests: XCTestCase {
     XCTAssertEqual(state.completion?.status, .failed)
   }
 
+  func testResyncMissingOnlyAScreenLeftOutHereMarksTheCompletionFailed() throws {
+    var state = LessonPlayerState(
+      lessonId: "lesson",
+      steps: [
+        try step(textHook), try step(explanation), try step(check(id: "check")), try step(summary),
+      ])
+    state.startRun(runId: "run", answers: [])
+    state.skipSteps(["check"])
+    state.continueLesson()
+    state.continueLesson()
+    state.continueLesson()
+    XCTAssertEqual(state.phase, .completed)
+
+    state.resync(answers: [])
+
+    XCTAssertEqual(state.phase, .completed, "going back can't answer a screen it can't show")
+    XCTAssertEqual(state.completion?.status, .failed)
+  }
+
   func testLateConfirmationOfAnEarlierAttemptChangesNothing() throws {
     var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
     state.continueLesson()

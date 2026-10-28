@@ -576,15 +576,23 @@ struct LessonPlayerState: Hashable, Sendable {
     }
 
     skipSteps(optionalStepIds)
+    let known = runAnswers.filter { steps[$0.stepId] != nil }
+    let answered = Set(known.map(\.stepId))
     var resumed = self
     resumed.resetForResume()
-    resumed.resume(from: runAnswers.filter { steps[$0.stepId] != nil })
+    resumed.resume(from: known)
 
-    if resumed.phase == .completed {
-      completion?.status = .failed
-    } else {
+    // Going back helps only if a screen here is still to answer; when the one the server misses
+    // was left out on this device, the learner would replay the lesson without end.
+    let isOpen = resumed.queue.contains {
+      steps[$0]?.isAnswerable == true && !answered.contains($0)
+    }
+
+    if isOpen {
       self = resumed
       notice = .answerNotSaved
+    } else {
+      completion?.status = .failed
     }
   }
 
