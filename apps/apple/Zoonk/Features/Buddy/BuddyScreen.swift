@@ -94,9 +94,25 @@ private struct BuddyContent: View {
   @State private var isEditing = false
   @State private var isWearing = false
   @State private var goalDraft = ""
+  @State private var faceCue: ActCue<BuddyAct>?
 
   private var name: String {
     buddyName(kind: status.buddy.kind, name: status.buddy.name)
+  }
+
+  private var look: BuddyLook {
+    BuddyLook(
+      kind: status.buddy.kind, glasses: status.buddy.glasses,
+      belt: ProgressBelt(rawValue: status.belt.color) ?? .white, energy: status.energy.current,
+      studiedToday: status.energy.studiedToday)
+  }
+
+  /// The buddy's face reacts to the conversation (main's `useChatFace`): it glances at what the
+  /// learner sends and smiles when its answer comes in. Only while it's awake: asleep it naps on,
+  /// and glowing it's already beaming with its eyes shut, so a smile would swap its face away.
+  private func react(_ act: BuddyAct) {
+    guard look.energyState == .awake else { return }
+    faceCue = ActCue(id: (faceCue?.id ?? 0) + 1, act: act)
   }
 
   var body: some View {
@@ -159,6 +175,19 @@ private struct BuddyContent: View {
         }
 
         didPlaceDay = true
+      }
+      .onChange(of: goalId.map { tutor.conversation(.plan(goalId: $0)).isAsking } ?? false) {
+        _, isAsking in
+        if isAsking {
+          react(.glance)
+        }
+      }
+      .onChange(of: goalId.map { tutor.conversation(.plan(goalId: $0)).answeringID } ?? nil) {
+        answered, answering in
+        let turn = goalId.flatMap { tutor.conversation(.plan(goalId: $0)).turns.last }
+        if let answered, answering == nil, turn?.id == answered, turn?.status == .completed {
+          react(.smile)
+        }
       }
       .onChange(of: store.broughtQuestion, initial: true) { _, question in
         guard let question else {
@@ -291,6 +320,10 @@ private struct BuddyContent: View {
       isDayShown.toggle()
     } label: {
       HStack(spacing: 16) {
+        // Its face, so a glance or a smile reads at this size whatever its stage.
+        BuddyCharacter(look: look, crop: .face, cue: faceCue)
+          .frame(width: 32, height: 32)
+
         // At accessibility sizes the two values stack, so neither breaks across lines.
         let values =
           typeSize.isAccessibilitySize
