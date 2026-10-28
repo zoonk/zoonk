@@ -1,13 +1,5 @@
 import { type SpeakingTaskFormat, speakingTask } from "../speaking-format";
 
-/**
- * Cambridge English's paired Speaking parts, from each exam's format page and handbook (A2 Key and
- * B1 Preliminary © 2024; B2 First, C1 Advanced and C2 Proficiency © 2026; round7/speaking/formats.md
- * has the quotes). The interlocutor runs Parts 1, 2 and 4; in the collaborative part the AI plays
- * the other candidate. A long turn's times are one candidate's; in the exam the partner then speaks
- * about their own photos too.
- */
-
 const INTERVIEW_BRIEF =
   "The examiner asks the candidate about themself: where they live, work or studies, free time, likes and plans.";
 
@@ -201,4 +193,5 @@ const C2: SpeakingTaskFormat[] = [
   }),
 ];
 
+/** In paired Cambridge parts, the AI takes the other candidate's role; long-turn timings are per candidate. */
 export const CAMBRIDGE_TASKS = { A2, B1, B2, C1, C2 } as const;

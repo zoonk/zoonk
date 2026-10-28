@@ -51,7 +51,6 @@ function modelAnswer<T>(data: T) {
   };
 }
 
-/** A learner's practice call, connected once; `connectionId` is that connection. */
 async function connectedCall() {
   const { renting, user } = await languageGoalFixture();
   mockSession(user.id);
@@ -89,10 +88,6 @@ function claim(input: { connectionId: string; conversationId: string; userId: st
     claimConversationReview({ ...input, replaces, runId });
 }
 
-/**
- * The call's ledger row can't be written the first `failures` times: settling fails after its
- * review, as a transaction past its time limit would.
- */
 async function failSettling({ failures, userId }: { failures: number; userId: string }) {
   const suffix = randomUUID().replaceAll("-", "");
   const sequence = `settle_fault_seq_${suffix}`;

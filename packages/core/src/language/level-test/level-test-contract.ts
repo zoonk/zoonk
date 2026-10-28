@@ -7,7 +7,6 @@ const OPTIONS = 4;
 
 const questionSkillSchema = z.enum(["reading", "listening"]);
 
-/** One stored question of a pair's level test, with its right answer. */
 const levelTestQuestionSchema = z.object({
   answerIndex: z
     .int()
@@ -31,29 +30,19 @@ export const levelTestBankSchema = z.object({
 export type LevelTestQuestion = z.infer<typeof levelTestQuestionSchema>;
 export type LevelTestBank = z.infer<typeof levelTestBankSchema>;
 
-/** One answer given in the test; null means "I don't know". */
 const levelTestAnswerSchema = z.object({
   answerIndex: z
     .int()
     .min(0)
     .max(OPTIONS - 1)
     .nullable(),
-  /** How long it took, for study time; 0 on answers kept before durations were. */
   durationMs: z.int().min(0).default(0),
   id: z.string(),
 });
 
-/** What the goal keeps while the learner takes the test. */
 export const levelTestProgressSchema = z.object({
   answers: z.array(levelTestAnswerSchema).default([]),
-  /** The answers already counted toward the learner's study time, when the test ended. */
   counted: z.int().min(0).default(0),
-  /**
-   * Placing the result the test last set on the plan (see `placeLevelTestResult`): whether it's
-   * placed, and what placing tested out that the plan hasn't announced yet, with the listening
-   * areas the announcement starts past their basics. A finish that stopped partway leaves the rest
-   * to the next one. Absent before the test ends.
-   */
   placement: z
     .object({
       pastBasicsAreas: z.array(z.string()).default([]),
@@ -65,14 +54,9 @@ export const levelTestProgressSchema = z.object({
     .object({ level: z.enum(CEFR_LEVELS), score: z.number().min(0).max(1) })
     .nullable()
     .default(null),
-  /**
-   * The level the test started from, in half steps: the one the learner gave, kept with the
-   * answers because finishing replaces the goal's level with the test's.
-   */
   start: z.number().min(0).max(MAX_CEFR_SCORE).optional(),
 });
 
-/** The test so far, with the level it started from. */
 export type LevelTestProgress = z.infer<typeof levelTestProgressSchema> & { start: number };
 
 export const levelTestAnswerInputSchema = z
@@ -119,7 +103,6 @@ const levelResultSchema = z.object({
   skill: z.enum(LANGUAGE_SKILLS),
 });
 
-/** Writing a pair's questions takes about 80 seconds, a hundred at the slowest (eval, 28 Sep). */
 export const LEVEL_TEST_PREPARING_SECONDS = 120;
 
 export const languageLevelTestViewSchema = z
@@ -140,7 +123,6 @@ export const languageLevelTestViewSchema = z
     }),
     z.object({
       answered: z.int().min(0),
-      /** Right after an answer: whether it was right; null before the first. */
       lastCorrect: z.boolean().nullable(),
       levels: z
         .array(levelResultSchema)

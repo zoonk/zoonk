@@ -1,15 +1,6 @@
 import { type CefrLevel } from "@zoonk/utils/cefr";
 import { type SpeakingTaskFormat, speakingTask } from "../speaking-format";
 
-/**
- * DELE's speaking tasks by level, as the "Guía del examen" and Modelo 0 of each level describe them.
- * Preparation several tasks share is split between the ones with a card of their own, and the
- * learner is told the exam's whole time: at B2 the guide gives 20 minutes before the test for
- * Tasks 1 and 2 together, and the Modelo 0 candidate sheet says the same
- * (examenes.cervantes.es/sites/default/files/guia_examen_dele_b2_0.pdf, checked 10 Oct 2026). A
- * task that continues another's topic gets none of its own.
- */
-
 const SILENT_EXAMINER = "The examiner gives the instruction, then listens without intervening.";
 
 const A1: SpeakingTaskFormat[] = [
@@ -143,6 +134,7 @@ const B1: SpeakingTaskFormat[] = [
   }),
 ];
 
+/** DELE B2 shares 20 preparation minutes between Tasks 1 and 2: https://examenes.cervantes.es/sites/default/files/guia_examen_dele_b2_0.pdf. */
 const B2: SpeakingTaskFormat[] = [
   speakingTask({
     brief:

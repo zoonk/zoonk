@@ -7,18 +7,7 @@ import {
 } from "../speaking-format";
 import { DELF_TASKS } from "./delf-tasks";
 
-/**
- * DELF and DALF's individual speaking paper, marked on the official grid in use since September
- * 2022 (grille-po-*, the performance descriptors): one "Réalisation de la tâche" line per part,
- * then Lexique, Morphosyntaxe and "Maîtrise du système phonologique" for the whole paper. Each line
- * has four columns: insufficient, below the level, at the level, above it. The paper is out of 25
- * (DALF C2's speaking is out of 50), and under 5 of 25 in any paper fails the whole exam, which
- * needs 50 of 100. The phonology descriptors judge intelligibility; the B2+ column even says a
- * foreign accent doesn't affect understanding.
- */
-
 const MAX_BAND = 3;
-/** At the level: the third of the four columns. */
 const LEVEL_BAND = 2;
 
 const criterion = speakingCriteria({
@@ -44,10 +33,6 @@ const GRID_LINES = {
 
 type GridLine = keyof typeof GRID_LINES;
 
-/**
- * The grid's lines: each part's task line, then the three language lines. DALF C2 counts its grid
- * twice (out of 50).
- */
 function gridRows({
   others,
   scale = 1,

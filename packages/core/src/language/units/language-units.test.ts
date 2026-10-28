@@ -14,7 +14,6 @@ import { getLanguageProgressView } from "../../view-models/language/get-language
 import { getLanguageUnitView } from "../../view-models/language/get-language-unit-view";
 import { getLanguageUnitsView } from "../../view-models/language/get-language-units-view";
 
-/** A unit the course gained while it was being written, which the learner's plan doesn't hold. */
 async function addUnplannedUnit(courseId: string) {
   const chapter = await libraryChapterFixture({
     language: "pt",
@@ -50,8 +49,6 @@ describe("language units", () => {
       getLanguageUnitView({ chapterId: unplanned.id, goalId: goal.id }),
     ]);
 
-    // Progress's "I can already" reads the same units: the unplanned one's objectives never show.
-
     expect(units.status === "ready" && units.units.units.map((unit) => unit.title)).toStrictEqual([
       "Chegando",
       "Alugando um apartamento",
@@ -71,7 +68,6 @@ describe("language units", () => {
     const { goal, items, user } = await languageGoalFixture();
     mockSession(user.id);
 
-    // The plan moved the arriving unit's lessons after the renting unit's.
     await Promise.all(
       items
         .slice(0, 2)

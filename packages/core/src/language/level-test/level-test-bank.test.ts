@@ -48,19 +48,16 @@ function bankFrom(passage: string): Written {
   };
 }
 
-/** A writer run the test finishes when it chooses, as `resolve` with a bank from `passage`. */
 function pendingWriter() {
   const { promise, resolve } = Promise.withResolvers<Written>();
   vi.mocked(generateLevelTestBank).mockReturnValueOnce(promise);
   return { finish: (passage: string) => resolve(bankFrom(passage)) };
 }
 
-/** A language pair no other test uses: the learner language is a made-up code. */
 function freshPair() {
   return { language: `x${crypto.randomUUID().slice(0, 8)}`, targetLanguage: "ja" };
 }
 
-/** A signed-in learner whose language goal is for a pair no other test writes. */
 async function learnerOfFreshPair() {
   const pair = freshPair();
   const setup = await languageGoalFixture();
@@ -139,7 +136,6 @@ describe("the level test's question bank", () => {
     await expect.poll(() => vi.mocked(generateLevelTestBank).mock.calls.length).toBe(2);
 
     await prisma.languageLevelTest.updateMany({
-      // Longer ago than any run that writes it may take.
       data: { generatedAt: new Date(Date.now() - 3_600_000) },
       where: pair,
     });
@@ -214,7 +210,6 @@ describe("writing a pair's question bank ahead", () => {
     await expect.poll(() => vi.mocked(generateLevelTestBank).mock.calls.length).toBe(1);
 
     await prisma.languageLevelTest.updateMany({
-      // Longer ago than any run that writes it may take.
       data: { generatedAt: new Date(Date.now() - 3_600_000) },
       where: pair,
     });

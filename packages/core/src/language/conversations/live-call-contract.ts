@@ -19,7 +19,6 @@ export type LiveCallReservationResult =
   | LiveCallRefusal
   | { connection: LiveCallConnection; endsAtLimit: "day" | "month" | null; status: "reserved" };
 
-/** Starts the durable run that ends the connection at its deadline. */
 export type LiveCallDeadlineScheduler = (input: {
   connectionId: string;
   deadlineAt: Date;

@@ -4,7 +4,6 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { onTestFinished, vi } from "vitest";
 import { getSession } from "../../../users/get-session";
 
-/** Minimal owned call: no generated scenario, plan, or provider work is needed to reserve it. */
 export async function liveCallFixture({
   kind = "practice",
   minutes = 2,
@@ -25,7 +24,6 @@ export async function liveCallFixture({
     });
   }
 
-  /** Open test calls must not stay in later cases' free-day budget decisions. */
   onTestFinished(async () => {
     await prisma.liveCallConnection.deleteMany({ where: { userId: user.id } });
   });
@@ -74,7 +72,6 @@ export function anotherLiveConversation({
   });
 }
 
-/** A persisted earlier connection, for admission limits without spending at the provider. */
 export function liveCallHistoryFixture({
   conversationId,
   userId,
@@ -95,7 +92,6 @@ export function liveCallHistoryFixture({
   });
 }
 
-/** Uses the existing authenticated-request harness with the test-owned admin's database role. */
 export function mockLiveCallAdminSession(user: { id: string; role: string | null }): void {
   vi.mocked(getSession).mockResolvedValue(
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- The existing core auth boundary reads identity and role; the fixture avoids duplicating Better Auth's session internals.

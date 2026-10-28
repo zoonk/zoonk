@@ -5,11 +5,7 @@ import { logError } from "@zoonk/utils/logger";
 import { type ConversationTurn } from "../conversation-contract";
 import { type SavedScenario } from "./conversation-view";
 
-/**
- * The objectives a call's transcript shows the learner has now achieved, among those not met yet.
- * A separate text model reads it, since GPT-Live has no tools on AI Gateway. A failed model call
- * finds none: the next check reads the same turns again.
- */
+/** Model failures leave objectives unmet so the next check can retry the same turns. */
 export async function findNewlyMetObjectives({
   row,
   scenario,

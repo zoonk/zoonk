@@ -6,10 +6,7 @@ export function readGoalDetails(goal: Pick<Goal, "details"> | null): Record<stri
   return goal && isJsonObject(goal.details) ? goal.details : {};
 }
 
-/**
- * The learner's goal for a language: the one asked for when it's theirs, else their active goal
- * for that language, else their latest. Null when they have none, which is fine for practice.
- */
+/** A supplied goal must belong to the learner; otherwise falls back to their active or latest goal for the language. */
 export async function findLearnerLanguageGoal({
   goalId,
   targetLanguage,

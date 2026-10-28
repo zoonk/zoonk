@@ -86,7 +86,6 @@ describe(recordLanguageStepEvidence, () => {
 
     await expect(prisma.learnerWord.count({ where: { userId: user.id } })).resolves.toBe(1);
     expect(after).toHaveBeenCalledOnce();
-    // One level change per answer; the word list has no screen, so it adds none.
   });
 
   it("counts every answer given at the same moment, even before the skill has a level", async () => {

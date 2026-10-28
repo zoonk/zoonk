@@ -20,7 +20,6 @@ import {
 } from "../level-test-rules";
 import { type LevelTestBankState, loadLevelTestBank } from "./level-test-bank";
 
-/** A learner who didn't say their level starts the test at A2, where most beginners with some study are. */
 const DEFAULT_START = 1;
 
 export type LevelTestGoal = { goal: Goal & { targetLanguage: string }; userId: string };
@@ -28,7 +27,6 @@ export type LevelTestGoal = { goal: Goal & { targetLanguage: string }; userId: s
 export type LevelTestContext =
   | {
       bank: LevelTestBank | null;
-      /** When the run writing the pair's questions started, while they're being written. */
       bankStartedAt: Date | null;
       owned: LevelTestGoal;
       progress: LevelTestProgress;
@@ -36,11 +34,7 @@ export type LevelTestContext =
     }
   | { status: "notFound" | "notLanguage" | "unauthorized" };
 
-/**
- * The test so far. It starts from the level the learner gave, until it keeps its own start: the
- * level a finish sets must never become where the same test starts, or finishing it again would
- * move the learner's level.
- */
+/** The starting level must not follow a level previously set by this same test. */
 export function readLevelTestProgress(goal: Pick<Goal, "details">): LevelTestProgress {
   const details = readGoalDetails(goal);
   const parsed = levelTestProgressSchema.safeParse(details.levelTest);
@@ -49,11 +43,7 @@ export function readLevelTestProgress(goal: Pick<Goal, "details">): LevelTestPro
   return { ...stored, start: stored.start ?? parseCefrScore(details.level) ?? DEFAULT_START };
 }
 
-/**
- * Keeps the test's answers on the goal, next to what onboarding already stored. `from` is the
- * progress the change was made from: when another submission saved first (a double tap, another
- * tab), the change no longer applies and nothing is saved. Returns whether it saved.
- */
+/** Returns false if progress changed since `from`; callers must reload rather than overwrite it. */
 export async function saveLevelTestProgress({
   from,
   goal,
@@ -79,10 +69,6 @@ export async function saveLevelTestProgress({
   });
 }
 
-/**
- * One of the learner's language goals with its test so far and the pair's questions, or since
- * when they're being written. Read-only: the questions are written by a workflow.
- */
 export async function loadLevelTestContext(
   goalId: string,
   knownOwned?: OwnedGoal,
@@ -114,7 +100,6 @@ export async function loadLevelTestContext(
   };
 }
 
-/** What the test screen shows next: a question without its answer, the sentence to say, or done. */
 export function toLevelTestView({
   bank,
   bankStartedAt = null,

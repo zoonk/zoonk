@@ -22,10 +22,6 @@ import { skipAlphabetIntro } from "./skip-alphabet-intro";
 
 const TIME_ZONE = "UTC";
 
-/**
- * The shared alphabet lesson of a script for Portuguese speakers, found or created: tests share
- * it, as learners do, and other files use other language pairs.
- */
 async function alphabetLesson({
   contentStatus = "completed",
   targetLanguage,
@@ -39,7 +35,6 @@ async function alphabetLesson({
     where: { languageIdentity: { identityKey, language: "pt" } },
   });
 
-  // A lesson left by an earlier run keeps the state this test asks for.
   if (existing && existing.contentStatus !== contentStatus) {
     return prisma.lesson.update({ data: { contentStatus }, where: { id: existing.id } });
   }
@@ -60,7 +55,6 @@ async function alphabetLesson({
 
 const hiraganaLesson = () => alphabetLesson({ targetLanguage: "ja" });
 
-/** A Portuguese speaker's Japanese goal with a plan, signed in. */
 async function japaneseGoal() {
   const setup = await languageGoalFixture();
 
@@ -125,7 +119,6 @@ describe("alphabet intro", () => {
     expect(skippedBlock.status).toBe("skipped");
     await expect(unitsAlphabet(goal.id)).resolves.toMatchObject({ pending: false });
 
-    // Skipping again changes nothing.
     await expect(skipAlphabetIntro(goal.id)).resolves.toStrictEqual({ status: "skipped" });
   });
 

@@ -34,11 +34,6 @@ export type GradeLevelTestSpeechResult =
         | "unauthorized";
     };
 
-/**
- * The level test's one sentence out loud: an audio model checks word by word whether a listener
- * would understand it (an accent never counts against it), and the result sets the speaking level.
- * The audio only goes to the model and is never kept.
- */
 export async function gradeLevelTestSpeech({
   audio,
   goalId,
@@ -96,7 +91,7 @@ export async function gradeLevelTestSpeech({
   }
 
   const next = { ...progress, speaking: { level: step.speaking.level, score: match.score } };
-  // Another submission of the sentence saved first: the test has moved on from it.
+
   if (!(await saveLevelTestProgress({ from: progress, goal: owned.goal, progress: next }))) {
     return { status: "invalid" };
   }

@@ -11,10 +11,6 @@ import { getLevelMark, getLevelStanding } from "../speaking-standing";
 
 type LastTry = NonNullable<SpeakingPaperTaskView["lastTry"]>;
 
-/**
- * How a finished try's estimates stand against the exam's level: how many reach it, how many only
- * at the top of their range, out of those it has.
- */
 function summarizeTry({
   feedback,
   format,
@@ -40,10 +36,6 @@ function summarizeTry({
   };
 }
 
-/**
- * The learner's last finished try of each task of the goal's paper, by task key, so its row can
- * say how it went and open its result again. A whole paper's tasks count too.
- */
 export async function loadLastTries({
   format,
   goal,

@@ -40,7 +40,6 @@ const speakingTaskViewSchema = z
 
 export type SpeakingTaskView = z.infer<typeof speakingTaskViewSchema>;
 
-/** A task as the goal's paper lists it: what it's rated on, and the learner's last try at it. */
 const speakingPaperTaskSchema = speakingTaskViewSchema
   .extend({
     criteria: z
@@ -84,7 +83,6 @@ const paperFields = {
   title: z.string().meta({ description: "The exam and level: DELE B2, B2 First" }),
 };
 
-/** A certificate's speaking paper as a goal shows it: its tasks, to practice one at a time. */
 export const speakingPaperViewSchema = z
   .object({
     ...paperFields,
@@ -102,7 +100,6 @@ export const speakingPaperViewSchema = z
 
 export type SpeakingPaperView = z.infer<typeof speakingPaperViewSchema>;
 
-/** A task card as the candidate gets it, in the exam's language, and what to do in theirs. */
 const speakingCardSchema = z
   .object({
     instructions: z.array(z.string()).meta({ description: "In the exam's language" }),
@@ -126,7 +123,6 @@ const speakingCardSchema = z
 
 export type SpeakingCard = z.infer<typeof speakingCardSchema>;
 
-/** What an exam task's call keeps of its paper: the exam, the level, the task and its card. */
 export const examTaskSnapshotSchema = z.object({
   card: speakingCardSchema,
   exam: speakingExamSchema,
@@ -172,7 +168,6 @@ const speakingCriterionViewSchema = z
 
 export type SpeakingCriterionView = z.infer<typeof speakingCriterionViewSchema>;
 
-/** One exam task's call: its paper, the task with its card, its criteria and its timing cues. */
 export const examTaskViewSchema = z
   .object({
     ...paperFields,
@@ -210,7 +205,6 @@ const criterionGradeSchema = z.object({
   tip: z.string(),
 });
 
-/** An exam task's estimated bands on its official criteria, never an official score. */
 export const examSpeakingFeedbackSchema = z
   .object({
     brief: z
@@ -232,7 +226,6 @@ export const examSpeakingFeedbackSchema = z
 
 export type ExamSpeakingFeedback = z.infer<typeof examSpeakingFeedbackSchema>;
 
-/** A whole speaking paper taken task by task, as a mock's speaking section. */
 export const speakingSectionViewSchema = z
   .object({
     ...paperFields,

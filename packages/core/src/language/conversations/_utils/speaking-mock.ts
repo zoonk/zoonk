@@ -9,13 +9,8 @@ import { getSpeakingLevel } from "./conversation-goal";
 import { getSpeakingMockScenario } from "./conversation-scenario";
 import { createConversation } from "./create-conversation";
 
-/** A goal's speaking mock: the exam it follows and the level its examiner speaks at. */
 export type SpeakingMockSetup = { exam: SpeakingMockExam; goal: Goal; level: CefrLevel };
 
-/**
- * The speaking mock of the learner's own English goal: a language goal, or the exam goal a language
- * goal moved to, preparing for IELTS or TOEFL iBT. Null for any other goal.
- */
 export async function findSpeakingMockSetup({
   goalId,
   userId,
@@ -46,10 +41,6 @@ function isMockFor({ exam, scenario }: { exam: SpeakingMockExam; scenario: unkno
   return isJsonObject(scenario) && scenario.exam === exam;
 }
 
-/**
- * A mock written ahead that the learner hasn't opened: its call never connected, and it's for the
- * same exam at the level they speak at now. Starting a mock takes it instead of waiting for one.
- */
 export async function findWaitingSpeakingMock({
   exam,
   goal,
@@ -71,7 +62,6 @@ export async function findWaitingSpeakingMock({
   return waiting.find((row) => isMockFor({ exam, scenario: row.scenario })) ?? null;
 }
 
-/** A new mock: its examiner and script are written by a model now, which takes a while. */
 export async function writeSpeakingMock({ exam, goal, level }: SpeakingMockSetup) {
   const scenario = await getSpeakingMockScenario({
     exam,

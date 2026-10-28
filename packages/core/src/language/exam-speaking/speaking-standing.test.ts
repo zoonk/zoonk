@@ -22,7 +22,6 @@ describe(getLevelStanding, () => {
   it("reads Cambridge's half bands and Goethe's letters against their marks", () => {
     expect(getLevelStanding({ bandHigh: 3, bandLow: 2.5, levelMark: 3 })).toBe("near");
     expect(getLevelStanding({ bandHigh: 3.5, bandLow: 3, levelMark: 3 })).toBe("at");
-    // C to B on Goethe's E to A (2 to 3 of 4) reaches 60% of the scale.
     expect(getLevelStanding({ bandHigh: 3, bandLow: 2, levelMark: 2.4 })).toBe("at");
     expect(getLevelStanding({ bandHigh: 2, bandLow: 2, levelMark: 2.4 })).toBe("below");
   });

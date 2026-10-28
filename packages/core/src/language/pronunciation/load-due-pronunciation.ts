@@ -1,10 +1,8 @@
 import "server-only";
 import { findDuePronunciationReviews } from "./get-pronunciation-reviews";
 
-/** Words named on a row of words to say again; the count covers the rest. */
 const NAMED_WORDS = 3;
 
-/** Mispronounced words in one language due to be said again, named by the first few. */
 export async function loadDuePronunciation({
   language,
   userId,

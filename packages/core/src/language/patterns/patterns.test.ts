@@ -100,7 +100,6 @@ function mockPatternFound() {
   });
 }
 
-/** A "since e for" pattern found for the learner, with its two-question drill. */
 function createDrillPattern({ goalId, userId }: { goalId: string; userId: string }) {
   return prisma.mistakePattern.create({
     data: {
@@ -145,7 +144,6 @@ describe("mistake patterns", () => {
     expect(findMistakePattern).toHaveBeenCalledWith(
       expect.objectContaining({ learnerLanguage: "pt" }),
     );
-    // Today shows the new pattern's card.
   });
 
   it("waits for a few new mistakes before checking", async () => {
@@ -223,8 +221,6 @@ describe("mistake patterns", () => {
     expect(result).toMatchObject({ result: { correct: 1, total: 2 }, status: "ready" });
     expect(result.status === "ready" && result.result.brainPower).toBeGreaterThan(0);
 
-    // The drill counts once; sending it again changes nothing.
-
     await practiceMistakePattern({
       input: { answers: ["since", "since"], requestId, timeZone: "America/Sao_Paulo" },
       patternId: pattern.id,
@@ -240,7 +236,6 @@ describe("mistake patterns", () => {
     mockSession(user.id);
     const pattern = await createDrillPattern({ goalId: goal.id, userId: user.id });
 
-    // Just short of the yellow belt and of 80% Energy.
     await prisma.userProgress.upsert({
       create: {
         currentEnergy: 79.95,
@@ -265,7 +260,6 @@ describe("mistake patterns", () => {
       },
     });
 
-    // Sent again, it reaches nothing new; the belt's moment waits until it's shown.
     await expect(practiceMistakePattern({ input, patternId: pattern.id })).resolves.toMatchObject({
       result: { ceremony: { key: "yellow" }, reached: { energy: null, level: null } },
     });

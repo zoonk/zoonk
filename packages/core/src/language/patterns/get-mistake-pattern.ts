@@ -8,7 +8,6 @@ export type MistakePatternResult =
   | { pattern: MistakePatternView; status: "ready" }
   | { status: "notFound" | "unauthorized" };
 
-/** One of the learner's own patterns, with the rule, the mistakes that showed it and the drill. */
 export async function findOwnedPattern({
   patternId,
   userId,
@@ -26,10 +25,6 @@ export async function findOwnedPattern({
   return row && content.success ? { content: content.data, row } : null;
 }
 
-/**
- * "We noticed a pattern": a rule behind several of the learner's recent mistakes, the mistakes
- * that show it, and a three-minute drill. Or the kind note that they were only typos.
- */
 export async function getMistakePattern(patternId: string): Promise<MistakePatternResult> {
   const session = await getSession();
 

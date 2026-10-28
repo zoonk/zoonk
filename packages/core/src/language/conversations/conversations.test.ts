@@ -72,13 +72,11 @@ const COMPLETION = {
   usedHelp: false,
 };
 
-/** The free plan's call time a day, in seconds. */
 const FREE_CALL_SECONDS = 120;
 const PRACTICE_SECONDS = 120;
 const TEN_MINUTES_MS = 600_000;
 const DAY_MS = 86_400_000;
 
-/** The objective model's answer: these labels met, each with the learner's words. */
 function objectivesAnswer(labels: string[]) {
   return {
     data: { met: labels.map((label) => ({ label, learnerWords: "It is available?" })) },
@@ -99,7 +97,6 @@ async function startPractice(chapterId: string) {
   return started.conversationId;
 }
 
-/** A practice call the learner started and connected, as the app does before talking. */
 async function connectPractice(chapterId: string) {
   const conversationId = await startPractice(chapterId);
   await connectTestCall(conversationId);
@@ -150,7 +147,6 @@ describe("language conversations", () => {
       status: "ready",
     });
 
-    // The voice model's prompt stays on the server, which sends it when it creates the session.
     expect(result.status === "ready" && "instructions" in result.conversation).toBe(false);
   });
 
@@ -241,7 +237,7 @@ describe("language conversations", () => {
 
     const { renting, user } = await languageGoalFixture();
     mockSession(user.id);
-    // A one-minute call, so what's left of the day's call time holds it again.
+
     const started = await startLanguageConversation({
       chapterId: renting.id,
       kind: "practice",
@@ -251,7 +247,6 @@ describe("language conversations", () => {
     const conversationId = started.status === "ready" ? started.conversationId : "";
     const first = await connectTestCall(conversationId);
 
-    // The first connection ran for half a minute before the learner connected again.
     vi.setSystemTime(new Date(Date.now() + 30_000));
 
     const second = await reserveTestCall(conversationId);
@@ -350,7 +345,6 @@ describe("language conversations", () => {
       where: { targetId: connection.id },
     });
 
-    // 45 seconds at $0.05 a minute, and $0.01 for the call's checks.
     expect(record).toMatchObject({ costMicros: 47_500, seconds: 45 });
 
     expect(connection).toMatchObject({
@@ -391,8 +385,6 @@ describe("language conversations", () => {
       checkLanguageConversationObjectives({ conversationId, input: { turns } }),
     ).resolves.toStrictEqual({ objectivesMet: ["Is it available?"], status: "ready" });
 
-    // The call screen shows each goal met as it's met: one change per check that met one.
-
     vi.mocked(checkConversationObjectives).mockResolvedValueOnce(
       objectivesAnswer(["Book a viewing"]),
     );
@@ -404,7 +396,6 @@ describe("language conversations", () => {
       status: "ready",
     });
 
-    // The second check only asked about the goals still open.
     expect(vi.mocked(checkConversationObjectives).mock.calls[1]?.[0]).toMatchObject({
       learnerLanguage: "pt",
       objectives: [{ label: "Book a viewing" }, { label: "Ask about the deposit" }],
@@ -444,8 +435,6 @@ describe("language conversations", () => {
     await expect(
       prisma.languageConversation.findUniqueOrThrow({ where: { id: conversationId } }),
     ).resolves.toMatchObject({ objectivesMet: ["Is it available?"] });
-
-    // The held writer's change and the goal met once.
   });
 
   it("keeps the goals already met when a check fails", async () => {
@@ -462,8 +451,6 @@ describe("language conversations", () => {
       objectivesMet: ["Is it available?", "Book a viewing"],
       status: "ready",
     });
-
-    // A check that met nothing new changes nothing.
   });
 
   it("checks goals only for the learner's connected call while it runs", async () => {
@@ -578,7 +565,6 @@ describe("language conversations", () => {
     mockSession(user.id);
     const conversationId = await connectPractice(renting.id);
 
-    // Its 20 Brain Power cross into the yellow belt; its two goals met and one missed, 80% Energy.
     const progress = { currentEnergy: 79.95, lastActiveAt: new Date(), totalBrainPower: 2490n };
 
     await prisma.userProgress.upsert({
@@ -597,7 +583,6 @@ describe("language conversations", () => {
       status: "completed",
     });
 
-    // Completing it again reaches nothing new.
     await expect(
       completeLanguageConversation({ conversationId, input, runs: reviewRunsInline }),
     ).resolves.toMatchObject({ reached: { energy: null, level: null } });
@@ -722,7 +707,7 @@ describe("language conversations", () => {
     });
 
     await prisma.planItem.updateMany({ data: { status: "done" }, where: { planId: plan.id } });
-    // C2 reaches a boss only on its saved day, even when its lessons were completed ahead.
+
     const boss = await planItemFixture({
       kind: "boss",
       phase: 1,

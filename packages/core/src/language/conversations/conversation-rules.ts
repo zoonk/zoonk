@@ -2,10 +2,6 @@ import { type CefrLevel } from "@zoonk/utils/cefr";
 import { getPassMark, hasPassedCheckpoint } from "../../checkpoints/checkpoint-rules";
 import { EMPTY_OUTCOME, getOutcomeBonus } from "../../sessions/brain-power";
 
-/**
- * A unit's conversation is short at first and grows with the learner: a minute at A1 and A2, two
- * at B1 and B2, three at C1 and four at C2.
- */
 const CHECKPOINT_MINUTES: Readonly<Record<CefrLevel, number>> = {
   A1: 1,
   A2: 1,
@@ -15,20 +11,14 @@ const CHECKPOINT_MINUTES: Readonly<Record<CefrLevel, number>> = {
   C2: 4,
 };
 
-/** A unit's call in today's session: up to four minutes of talk, the intro and the feedback. */
 export const CHECKPOINT_CALL_BLOCK_MINUTES = 6;
 
-/** Each goal of the call met earns what finishing a lesson does. */
 const POINTS_PER_OBJECTIVE = 10;
 
 export function getCheckpointMinutes(level: CefrLevel): number {
   return CHECKPOINT_MINUTES[level];
 }
 
-/**
- * A checkpoint call is won like any checkpoint: most of what the call asked for (seven in ten,
- * rounded up), since getting the point across matters, not every word.
- */
 export function hasPassedConversation({
   objectives,
   objectivesMet,
@@ -42,10 +32,6 @@ export function hasPassedConversation({
   );
 }
 
-/**
- * Three stars: one for finishing the call, one for every objective, one for doing it without Help.
- * Nothing is random.
- */
 export function getConversationStars({
   objectives,
   objectivesMet,
@@ -59,7 +45,6 @@ export function getConversationStars({
   return 1 + (allMet ? 1 : 0) + (usedHelp ? 0 : 1);
 }
 
-/** The scenario's objectives among the labels, once each and in the scenario's order. */
 export function getMetObjectives({
   labels,
   objectives,
@@ -72,10 +57,6 @@ export function getMetObjectives({
   return objectives.map((objective) => objective.label).filter((label) => met.has(label));
 }
 
-/**
- * Brain Power for a finished call: each objective met, plus the boss bonus when a checkpoint call
- * is won. Losing a checkpoint call costs nothing.
- */
 export function getConversationBrainPower({
   checkpoint,
   objectivesMet,

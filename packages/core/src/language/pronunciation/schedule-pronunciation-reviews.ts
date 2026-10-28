@@ -10,7 +10,6 @@ import { schedulePronunciationMiss, toReviewWord } from "./pronunciation-rules";
 
 type ReviewWord = { audioUrl: string | null; id: string; word: string };
 
-/** Every organization's copy of a word counts, since a word sounds the same whoever taught it. */
 function findWords({
   targetLanguage,
   texts,
@@ -28,16 +27,11 @@ function findWords({
   });
 }
 
-/** The row to review for one word: a voiced copy first, then the oldest. */
 function pickWord({ rows, text }: { rows: readonly ReviewWord[]; text: string }) {
   const copies = rows.filter((row) => row.word.toLowerCase() === text.toLowerCase());
   return copies.find((row) => row.audioUrl) ?? copies[0] ?? null;
 }
 
-/**
- * The `Word` row of each word, created in the shared vocabulary when no lesson taught it yet, so
- * its native audio can be voiced once for everyone.
- */
 async function findOrCreateWords({
   targetLanguage,
   texts,
@@ -63,13 +57,7 @@ async function findOrCreateWords({
   return { orgSlug: organization?.slug ?? null, words };
 }
 
-/**
- * Words the learner didn't say as expected come back as pronunciation reviews: each one is due at
- * the start of the learner's next day, and a word already under review starts its ladder over. A
- * word nobody voiced yet gets its native audio after the response.
- *
- * This is a bridge for graders: the caller already checked the session and the answer.
- */
+/** Internal grader bridge: the caller must already have authorized the session and answer. */
 export async function schedulePronunciationReviews({
   targetLanguage,
   timeZone,
@@ -81,7 +69,6 @@ export async function schedulePronunciationReviews({
   timeZone: string;
   userId: string;
   userLanguage: string;
-  /** The words as the sentence wrote them. */
   words: readonly string[];
 }): Promise<string[]> {
   const texts = [...new Set(words.map((word) => toReviewWord(word)).filter(Boolean))];
@@ -94,8 +81,6 @@ export async function schedulePronunciationReviews({
 
   const schedule = schedulePronunciationMiss({ now: new Date(), timeZone });
 
-  // The words land on the learner's review list together, as one change; words already coming
-  // back on that day from the first rung change nothing.
   const reviews = await writeLearnerChange({ userId }, async (tx) => {
     const existing = await tx.pronunciationReview.findMany({
       where: { userId, wordId: { in: rows.map((row) => row.id) } },

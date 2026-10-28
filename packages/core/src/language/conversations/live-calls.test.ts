@@ -30,7 +30,6 @@ const DAY_MS = 86_400_000;
 const SECOND_MS = 1000;
 const BIG_BUDGET = 150_000_000;
 const TWO_MINUTES = 120;
-/** OpenAI's longest Live session (about 2 hours) and a creation's minute. */
 const LONGEST_SESSION_SECONDS = 2 * 60 * 60 + 60;
 
 /** Each test runs on a day of its own, so the free day's shared bucket is the test's alone. */
@@ -107,7 +106,6 @@ async function freeDaySpent(day: Date) {
   return bucket?.spentMicros ?? 0;
 }
 
-/** A creation request that answers only when the test says so. */
 function pendingCreation() {
   const creation = Promise.withResolvers<LiveCallSession>();
   vi.mocked(createLiveCallSession).mockReturnValueOnce(creation.promise);
@@ -393,7 +391,6 @@ describe("live calls", () => {
 
     const unanswered = await reserved(conversation.id);
 
-    // The creation times out after midnight: nothing names its session.
     vi.mocked(createLiveCallSession).mockImplementationOnce(async () => {
       advance(90);
       throw new Error("The creation request timed out");
@@ -449,7 +446,6 @@ describe("live calls", () => {
 
     await expect(connection(setup.connectionId)).resolves.toMatchObject({ state: "live" });
 
-    // Right at the deadline another learner's call still fits beside it, and ends unused.
     const other = await learner();
     const fits = await reserved(other.conversation.id);
 
@@ -458,7 +454,6 @@ describe("live calls", () => {
       conversationId: other.conversation.id,
     });
 
-    // A minute later the stuck call's clock leaves no room for it.
     advance(60);
 
     await expect(reserve(other.conversation.id)).resolves.toMatchObject({
@@ -524,8 +519,6 @@ describe("live calls", () => {
     const first = await learner();
     const setup = await reserved(first.conversation.id);
 
-    // Another transaction holds the reservation's row, so its offer, accepted just inside the
-    // window, can't commit `starting` until after the window ended.
     const holder = Promise.withResolvers<number>();
     const release = Promise.withResolvers<null>();
 
@@ -542,13 +535,11 @@ describe("live calls", () => {
 
     await waitForBlockedStatement(pid, /UPDATE.*live_call_connections/u);
 
-    // Just past the window, another free learner reserves while the offer waits.
     vi.setSystemTime(reservedAt + 60_100);
     const second = await learner();
     const other = reserve(second.conversation.id);
 
     const waiting = waitForBlockedStatement(pid, /free_call_spend_days/u);
-    // Settled either way; only one of the two finishes before the release.
     waiting.catch(() => null);
     await Promise.race([other, waiting]);
 
@@ -577,7 +568,6 @@ describe("live calls", () => {
 
     advance(61);
 
-    // Its posted cost no longer holds the free day's room: another learner's call fits, then ends.
     const other = await learner();
     const fits = await reserved(other.conversation.id);
 
@@ -592,7 +582,6 @@ describe("live calls", () => {
       status: "connectionExpired",
     });
 
-    // The next start ends it before reading the learner's call time: the day's two minutes are back.
     await expect(reserve(conversation.id)).resolves.toMatchObject({
       setup: { seconds: TWO_MINUTES },
       status: "ready",
@@ -612,7 +601,6 @@ describe("live calls", () => {
     const { conversation } = await learner({ plus: true });
     const setup = await live(conversation.id);
 
-    // Its deadline run gave up; OpenAI ended the session hours later, and the learner is back now.
     advance(31 * 24 * 60 * 60);
 
     await expect(
@@ -650,7 +638,6 @@ describe("live calls", () => {
   it("[1][2] settles a creation the server never finished, by estimate, at its deadline", async () => {
     const { conversation } = await learner();
     const setup = await reserved(conversation.id);
-    // The server stops mid-creation: nothing will answer it.
     pendingCreation();
     void offer(setup, conversation.id);
 

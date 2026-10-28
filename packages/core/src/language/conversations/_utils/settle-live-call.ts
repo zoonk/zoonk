@@ -1,12 +1,6 @@
 import { type LiveCallConnection, type LiveCallEndReason, type TransactionClient } from "@zoonk/db";
 
-/**
- * Ends an open connection once, under the learner's lock: the move from its current state to
- * `ended` is conditional, so of two enders racing only one changes anything. The row keeps the
- * authoritative cost; the free day moves by the difference from what it posted, and the learner's
- * usage record (gone with a deleted account, so the write then matches nothing) keeps the call
- * time and cost. Returns whether this call ended it.
- */
+/** Requires the learner's lock; returns whether this caller changed the connection to ended. */
 export async function settleLiveCall({
   connection,
   costMicros,

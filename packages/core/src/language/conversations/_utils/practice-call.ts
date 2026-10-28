@@ -8,13 +8,11 @@ import { type PracticeCallLengths, toPracticeCallLengths } from "./call-lengths"
 import { findUnitScenario } from "./conversation-scenario";
 import { readLiveCallAdmission } from "./live-call-policy";
 
-/** Who the learner talks to in the unit's call, once a call at their level was written. */
 async function findCharacter(where: { chapterId: string; level: CefrLevel }) {
   const scenario = await findUnitScenario(where);
   return scenario ? { name: scenario.character.name, role: scenario.character.role } : null;
 }
 
-/** The lengths the signed-in learner can pick now, from their plan and the call time they used. */
 async function loadCallLengths(): Promise<PracticeCallLengths & { paused: boolean }> {
   const viewer = await getEntitlementViewer();
   const tier = viewer?.tier ?? "guest";
@@ -38,11 +36,6 @@ async function loadCallLengths(): Promise<PracticeCallLengths & { paused: boolea
   return { ...toPracticeCallLengths({ left, tier }), paused: admission === null };
 }
 
-/**
- * A unit's practice call as it's offered to the signed-in learner, on the unit's page or by the
- * buddy: who they talk to (once a call at their speaking level was written) and the lengths they
- * can pick now (`toPracticeCallLengths`).
- */
 export async function loadPracticeCall({
   chapterId,
   level,

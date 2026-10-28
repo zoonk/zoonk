@@ -5,7 +5,6 @@ import {
   toReviewWord,
 } from "./pronunciation-rules";
 
-// 21:30 in São Paulo (UTC-3) on September 27.
 const EVENING = new Date("2026-09-28T00:30:00.000Z");
 const TIME_ZONE = "America/Sao_Paulo";
 

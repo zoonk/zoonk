@@ -21,15 +21,12 @@ import {
 
 const MAX_EVIDENCE_ATTEMPTS = 3;
 
-/** A changed admission classification must release its marks before taking different plan locks. */
 class EvidenceAdmissionChangedError extends Error {
   override name = "EvidenceAdmissionChangedError";
 }
 
-/** Screens that teach a word: a right answer means the learner knows it. */
 const WORD_STEP_KINDS = new Set<StepKind>(["translation", "vocabulary"]);
 
-/** Evidence for one language skill's level, with the score a level that doesn't exist yet starts at. */
 type SkillEvidence = {
   evidence: LevelEvidence;
   language: string;
@@ -38,7 +35,6 @@ type SkillEvidence = {
   userId: string;
 };
 
-/** The score a skill's level starts at: the learner's level test for the language, when they took it. */
 async function loadStartScore({
   language,
   skill,
@@ -52,11 +48,6 @@ async function loadStartScore({
   return getStartScore({ details: readGoalDetails(goal), skill });
 }
 
-/**
- * Adds evidence to one skill's level in the caller's transaction. The row is created without
- * failing when another answer creates it first, then locked while it's read and written, so
- * answers given at the same moment each count once.
- */
 async function addSkillEvidence(
   tx: TransactionClient,
   { evidence, language, skill, startScore, userId }: SkillEvidence,
@@ -86,7 +77,6 @@ async function addSkillEvidence(
   });
 }
 
-/** Only the non-Latin reading score is consumed by the session builder's alphabet selection. */
 async function changesSelection(tx: TransactionClient, input: SkillEvidence): Promise<boolean> {
   if (input.skill !== "reading" || !usesNonLatinScript(input.language)) {
     return false;
@@ -109,7 +99,6 @@ async function changesSelection(tx: TransactionClient, input: SkillEvidence): Pr
   return applyLevelEvidence(state, input.evidence).score !== (current?.score ?? 0);
 }
 
-/** Match profile admission: reread after the first marker and roll back before changing lock scope. */
 async function writeEvidence({
   attempt = 1,
   skill,
@@ -141,7 +130,7 @@ async function writeEvidence({
   }
 }
 
-/** Adds evidence to one skill's level, in its own transaction (see `addSkillEvidence`). */
+/** Internal: the caller must derive `userId` from the authenticated session. */
 export async function recordLanguageSkillEvidence({
   evidence,
   language,
@@ -159,22 +148,13 @@ export async function recordLanguageSkillEvidence({
   await writeEvidence({ skill: input, write: (tx) => addSkillEvidence(tx, input) });
 }
 
-/**
- * What one answer in a language lesson says about the learner: evidence for the level of the skill
- * the screen trains, and a word learned when a word screen was right. Read before the answer is
- * recorded, so `writeLanguageStepEvidence` only writes.
- */
 export type LanguageStepEvidence = {
   isCorrect: boolean;
   skill: SkillEvidence;
   word: { language: string; text: string; userId: string; wordId: string } | null;
 };
 
-/**
- * What one answer in a language lesson says about the learner (`LanguageStepEvidence`); null for
- * lessons of other subjects, which change nothing. Callers pass the user id their public capability
- * derived from the session.
- */
+/** Callers must derive `userId` from the authenticated session. */
 export async function loadLanguageStepEvidence({
   isCorrect,
   lesson,
@@ -215,11 +195,6 @@ export async function loadLanguageStepEvidence({
   };
 }
 
-/**
- * Writes an answer's language evidence in the transaction that records the answer, so the two
- * commit together. The word is remembered conflict-safe, so the same word answered right twice at
- * once is remembered once.
- */
 export async function writeLanguageStepEvidence(
   tx: TransactionClient,
   { skill, word }: LanguageStepEvidence,
@@ -231,19 +206,13 @@ export async function writeLanguageStepEvidence(
   }
 }
 
-/** After a wrong answer's evidence is saved: a look for a pattern in recent mistakes. */
 export function afterLanguageStepEvidence({ isCorrect, skill }: LanguageStepEvidence): void {
   if (!isCorrect) {
     scheduleMistakePatternCheck({ language: skill.language, userId: skill.userId });
   }
 }
 
-/**
- * Records what one answer in a language lesson says about the learner (`LanguageStepEvidence`)
- * in its own transaction, and after a wrong one, a look for a pattern in recent mistakes. Lessons of
- * other subjects change nothing. Callers pass the user id their public capability derived from the
- * session.
- */
+/** Callers must derive `userId` from the authenticated session. */
 export async function recordLanguageStepEvidence(
   input: Parameters<typeof loadLanguageStepEvidence>[0],
 ): Promise<void> {

@@ -13,7 +13,6 @@ import { settleLiveCall } from "./_utils/settle-live-call";
 
 const MS_PER_SECOND = 1000;
 
-/** Twice the adapter's abort: past it, no creation request is still waiting on the provider. */
 const CREATION_SETTLED_MS = 2 * LIVE_CALL_CREATE_TIMEOUT_MS;
 
 export type EndLiveCallResult = { status: "ended" | "closing" | "notFound" };
@@ -29,12 +28,6 @@ function isCreationInFlight({ connection, now }: { connection: LiveCallConnectio
   );
 }
 
-/**
- * Settles what can end without the provider, under the learner's lock: a reservation, or a
- * creation that never named its session once it can't anymore. A creation still in flight only
- * records why it should end, which the SDP step honors the moment the session exists. A session
- * goes on to the hangup.
- */
 async function endWithoutProvider({
   connectionId,
   reason,
@@ -86,10 +79,6 @@ async function endWithoutProvider({
   });
 }
 
-/**
- * After OpenAI answered that the session is over: its clock up to now settles it, once, and the
- * seconds OpenAI bills (at least initialization's) are recorded beside every other model call.
- */
 async function settleHungUp({
   connection,
   reason,
@@ -132,13 +121,7 @@ async function settleHungUp({
   }
 }
 
-/**
- * The only way a connection ends; trusted callers only (the learner's End, Connect, the deadline
- * run and the review run), never with a connection a learner chose for someone else. A session is
- * hung up first, outside any transaction: only once OpenAI answered that it's over does the
- * connection settle, by the clock. A hangup that fails leaves it open and answers `closing`; its
- * cost keeps growing in budget decisions until a later End, start or the deadline ends it.
- */
+/** Trusted callers only: ownership of the connection must already be checked. */
 export async function endLiveCall({
   connectionId,
   reason,

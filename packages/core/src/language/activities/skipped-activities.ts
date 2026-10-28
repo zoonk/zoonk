@@ -9,7 +9,6 @@ async function readSkippedActivities(goalId: string): Promise<LanguageActivityTy
   return plan ? parsePlanSettings(plan.settings).skippedActivities : [];
 }
 
-/** What the learner's plan for a language leaves out; nothing without a plan. */
 export async function loadSkippedActivities({
   targetLanguage,
   userId,

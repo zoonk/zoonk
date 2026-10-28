@@ -11,7 +11,6 @@ import { getBlockElapsedMs } from "../../../sessions/_utils/block-timing";
 import { readBlockPayload } from "../../../sessions/block-payload";
 import { settleConversation } from "./settle-conversation";
 
-/** The review run that claimed each test's call: only it settles the call. */
 const REVIEW_RUN_ID = "wrun_settlement";
 
 async function settlementFixture() {

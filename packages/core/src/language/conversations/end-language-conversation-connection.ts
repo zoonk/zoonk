@@ -7,12 +7,6 @@ export type EndLanguageConversationConnectionResult =
   | { endReason: LiveCallEndReason | null; status: "closed" }
   | { status: "previousConnectionClosing" | "unauthorized" | "notFound" };
 
-/**
- * The learner ends their call's connection: its session is hung up and the call settles at that
- * moment. A hangup OpenAI didn't confirm, or a session still being created, answers
- * `previousConnectionClosing`; asking again, a later start or the deadline finishes it. Ended, it
- * says why: `deadline` when the server had already hung it up at the call's deadline.
- */
 export async function endLanguageConversationConnection({
   connectionId,
   conversationId,

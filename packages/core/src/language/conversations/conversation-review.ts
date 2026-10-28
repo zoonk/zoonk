@@ -26,14 +26,8 @@ import { type ConversationTurn, conversationFeedbackSchema } from "./conversatio
 import { getMetObjectives, hasPassedConversation } from "./conversation-rules";
 import { type OwnedConversation, findOwnedConversation } from "./get-language-conversation";
 
-/** What the review found: the goals met and the feedback, null when there's none to give. */
 export type ConversationReview = { feedback: WrittenFeedback | null; objectivesMet: string[] };
 
-/**
- * A completed call's review run: what the learner's completion sent, already capped to what the
- * call ran, and the failed run it replaces when the learner tried again after one. The transcript
- * travels here and is never stored.
- */
 export type ConversationReviewInput = {
   connectionId: string;
   conversationId: string;
@@ -45,10 +39,6 @@ export type ConversationReviewInput = {
   userId: string;
 };
 
-/**
- * How a review run ended: the call completed (with this run's Brain Power and Energy, or none when
- * another write had settled it), another run had the claim, or the claim was refused.
- */
 export type ConversationReviewOutcome =
   | Exclude<ReviewClaim, { status: "owner" | "settled" }>
   | {
@@ -76,7 +66,6 @@ async function loadReviewedCall({
   return { level: owned.row.level, owned, scenario };
 }
 
-/** A review this call already kept, so writing it again repeats no model call. */
 function readKeptReview(row: ConversationRow): ConversationReview | null {
   const feedback = conversationFeedbackSchema.safeParse(row.feedback);
 
@@ -98,10 +87,6 @@ function readKeptReview(row: ConversationRow): ConversationReview | null {
   };
 }
 
-/**
- * Keeps the review on the call, still unsettled, for the run that claims it, so settling it again
- * (a step retry, or a new run after a failed one) never grades it twice.
- */
 async function keepReview({
   conversationId,
   review,
@@ -131,12 +116,7 @@ async function keepReview({
   });
 }
 
-/**
- * Reads the call's transcript with a separate text model: the goals met (those marked during the
- * call plus any the full transcript shows) and the feedback. A grade takes seconds, so it runs
- * outside any transaction and is kept on the call before it settles; a review kept earlier is
- * used again. The transcript isn't stored. A model failure throws.
- */
+/** Does not store the transcript; model failures throw so the workflow can retry. */
 export async function reviewConversationCall({
   conversationId,
   runId,
@@ -166,10 +146,6 @@ export async function reviewConversationCall({
   return review;
 }
 
-/**
- * What the call says about the learner's speaking: its goals met at the level it ran at, or an exam
- * task's criteria rated at the exam's level. A call where the learner said nothing says nothing.
- */
 function getSpeakingEvidence({
   feedback,
   level,
@@ -247,12 +223,7 @@ async function trackCall({
   });
 }
 
-/**
- * Writes the reviewed call once, for the run that claimed it (`settleConversation`): its feedback,
- * Brain Power and Energy, the ledger and a checkpoint's block, then the speaking level's evidence
- * and analytics. With no review (the model kept failing), the call completes without feedback,
- * with the goals code can tell: those marked during it, or an exam task's once the candidate spoke.
- */
+/** Only the run holding the call's review claim may settle it. */
 export async function settleConversationReview({
   conversationId,
   review,

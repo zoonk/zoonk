@@ -8,17 +8,6 @@ import {
 } from "../speaking-format";
 import { CAMBRIDGE_TASKS } from "./cambridge-tasks";
 
-/**
- * Cambridge English's Speaking paper: the assessor marks the analytic scales and the interlocutor
- * Global Achievement, all from 0 to 5 with half marks, across the whole test. Global Achievement
- * is a third of the raw marks and the analytic scales share the rest equally ("Converting practice
- * test scores", Nov 2023): A2 Key out of 45, B1 Preliminary 30, B2 First 60, C1 Advanced and C2
- * Proficiency 75. Band 3 describes the exam's own level and band 5 the next. There's no minimum
- * per paper: the overall score decides, and Cambridge publishes no conversion of live Speaking
- * marks to its scale. Pronunciation is graded for intelligibility: "even if the speaker has a
- * strong or unfamiliar accent".
- */
-
 const MAX_BAND = 5;
 const LEVEL_BAND = 3;
 
@@ -44,7 +33,7 @@ const INTERACTION = criterion({
 
 const GLOBAL = criterion({ key: "global", name: "Global Achievement" });
 
-/** Each analytic scale's raw marks are its band times `analytic`, Global Achievement's `global`. */
+/** Cambridge gives Global Achievement one third of the raw marks; analytic scales share the rest. */
 function cambridgeFormat({
   analytic,
   criteria,

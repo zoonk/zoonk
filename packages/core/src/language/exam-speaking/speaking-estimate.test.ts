@@ -12,7 +12,6 @@ function format(exam: "cambridge" | "dele" | "goethe", level: "B1" | "B2") {
   return found;
 }
 
-/** Every criterion a task rates, at one band. */
 function gradeAll({
   band,
   format: paper,
@@ -85,7 +84,6 @@ describe(estimateSpeakingSection, () => {
       };
     });
 
-    // Four analytic scales at band 3 (x2) and Global Achievement at 3.5 to 4 (x4), out of 60.
     expect(estimateSpeakingSection({ format: cambridge, grades })).toMatchObject({
       complete: true,
       high: 40,
@@ -106,7 +104,6 @@ describe(estimateSpeakingSection, () => {
     const estimate = estimateSpeakingSection({ format: dele, grades });
     const holistic = estimate.criteria.find((item) => item.criterion === "holistic");
 
-    // (2 x 300 + 2 x 300 + 0 x 60) / 660 is about 1.8, which the exam's whole bands round to 2.
     expect(holistic).toMatchObject({ bandHigh: 2, bandLow: 2, task: null });
   });
 });

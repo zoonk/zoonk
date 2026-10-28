@@ -11,10 +11,6 @@ export type AnswerLanguageLevelTestResult =
   | { status: "invalid" | "notFound" | "notLanguage" | "notReady" | "unauthorized" }
   | { status: "ready"; test: LanguageLevelTestView };
 
-/**
- * Records one answer of the level test ("I don't know" included, which the test welcomes) and
- * returns what comes next. Only the question the test is asking can be answered, once.
- */
 export async function answerLanguageLevelTest({
   goalId,
   input,
@@ -48,8 +44,6 @@ export async function answerLanguageLevelTest({
     ],
   };
 
-  // Only the question the test is asking can be answered: a submission that lost a race to
-  // another answering it is no longer for the current one.
   if (!(await saveLevelTestProgress({ from: progress, goal: owned.goal, progress: next }))) {
     return { status: "invalid" };
   }

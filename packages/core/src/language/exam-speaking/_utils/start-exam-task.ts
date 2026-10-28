@@ -40,10 +40,6 @@ function isCardFor({
   );
 }
 
-/**
- * A card of the same task the learner opened and never called: starting the task again takes it
- * instead of paying for another. A section's tasks stay with their section.
- */
 async function findWaitingExamTask({
   format,
   goal,
@@ -65,12 +61,6 @@ async function findWaitingExamTask({
   return waiting.find((row) => isCardFor({ format, scenario: row.scenario, task })) ?? null;
 }
 
-/**
- * One task of the goal's speaking paper, practiced on its own: a waiting card of it, else a new one
- * written now. A task that continues an earlier one gets a topic of its own when practiced alone.
- * Plus only, like every mock exam: the free plan writes nothing. A task whose shortest official
- * length doesn't fit the call time left today or this month waits (`limitReached`), unwritten.
- */
 export async function startExamTask({
   goalId,
   task,
@@ -86,7 +76,6 @@ export async function startExamTask({
     return { status: "notLanguage" };
   }
 
-  // A finished task counts for the day's call mission too, as any finished call does.
   await saveDayBeforeActivity({ goalId, language: setup.goal.targetLanguage, userId });
 
   const taskFormat = getSpeakingTask({ format: setup.format, task });

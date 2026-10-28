@@ -15,11 +15,7 @@ import { findOwnedConversation } from "../get-language-conversation";
 import { withConversationAccess } from "./conversation-access";
 import { toConversationView } from "./conversation-view";
 
-/**
- * The call is committed before any mission or session reward can fail. Its
- * end also says what it did to the day's missions, the same on a retry, and what it reached (the
- * level, the tenth of Energy and the milestone not shown yet) when this request settled it.
- */
+/** The call commits before mission or session rewards; retrying can repair those rewards. */
 export async function finishConversationDay({
   conversationId,
   input,
@@ -28,7 +24,6 @@ export async function finishConversationDay({
 }: {
   conversationId: string;
   input: LanguageConversationCompletionInput;
-  /** The Brain Power and Energy before and after the call, when this request settled it. */
   progress?: { brainPower: ProgressChange; energy: ProgressChange } | null;
   userId: string;
 }) {
@@ -55,8 +50,6 @@ export async function finishConversationDay({
     const celebration = await celebrateProgress({
       progress,
       settleDay: async () => {
-        // A committed linked call can be retried after carry-over expires. Repair that owned day
-        // with its durable source before source-less session finalization can pay its missions.
         const zone = block?.session.goal?.timezone ?? timeZone;
 
         const blockDay = block

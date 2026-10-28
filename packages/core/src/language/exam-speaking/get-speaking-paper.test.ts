@@ -128,7 +128,6 @@ describe("the speaking paper read", () => {
     });
 
     mockSession(user.id);
-    // Provider availability is external; the goal and its past try remain real database rows.
     vi.mocked(isLiveCallAvailable).mockReturnValue(available);
 
     const full = await getLanguageProgressView({ goalId: goal.id });

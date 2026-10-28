@@ -39,7 +39,6 @@ const PROVENANCE = {
 
 const PHOTO_URL = "https://blob.test/library/speaking/photo.webp";
 
-/** What the card writer returns, with the material a task asks for. */
 function writtenCard({ photos = 0 }: { photos?: number } = {}) {
   return {
     character: { name: "Lucía", place: "Sala de examen", role: "examinadora" },
@@ -70,7 +69,6 @@ const COMPLETION = {
   usedHelp: false,
 };
 
-/** Every criterion it's asked for, at one band. */
 function gradeAt(band: number) {
   return vi
     .mocked(scoreSpeaking)
@@ -94,7 +92,6 @@ function gradeAt(band: number) {
     }));
 }
 
-/** A Portuguese speaker preparing for DELE B2, on Plus unless `plus` is false. */
 async function deleLearner({ plus = true, title = "DELE B2" } = {}) {
   const user = await userFixture();
 
@@ -129,7 +126,6 @@ async function startTask({ goalId, task }: { goalId: string; task: string }) {
   return started.conversationId;
 }
 
-/** Starts an actual provider session through the public reserve and SDP boundaries. */
 async function connect(conversationId: string) {
   await connectTestCall(conversationId);
 }
@@ -187,12 +183,7 @@ describe("exam speaking tasks", () => {
     const conversationId = await startTask({ goalId: goal.id, task: "t1" });
     const view = await readView(conversationId);
 
-    expect(view).toMatchObject({
-      kind: "examSpeaking",
-      // The call runs to the task's official 7 minutes.
-      minutes: 7,
-      targetLanguage: "es",
-    });
+    expect(view).toMatchObject({ kind: "examSpeaking", minutes: 7, targetLanguage: "es" });
 
     expect(view.examTask).toMatchObject({
       card: { instructions: ["Lea las propuestas y valore al menos cuatro."], photos: [] },
@@ -205,7 +196,6 @@ describe("exam speaking tasks", () => {
         minutes: { max: 7, min: 6 },
         name: "Tarea 1: Valorar propuestas y conversar sobre ellas",
         options: 2,
-        // The exam's 20 minutes prepare Tasks 1 and 2 together (B2 guide and Modelo 0): half each.
         prepMinutes: 10,
         prepShared: { minutes: 20, tasks: [1, 2] },
         role: "examiner",
@@ -222,11 +212,9 @@ describe("exam speaking tasks", () => {
       "holistic",
     ]);
 
-    // The examiner keeps time like a real one: the conversation starts after the monologue.
     expect(view.examTask?.cues.map((cue) => cue.atSeconds)).toStrictEqual([240]);
     await connect(conversationId);
 
-    // Only the server tells the voice model its role, when it creates the session.
     expect(createLiveCallSession).toHaveBeenCalledWith(
       expect.objectContaining({
         instructions: expect.stringContaining("one task of the DELE B2 speaking paper"),
@@ -292,7 +280,6 @@ describe("exam speaking tasks", () => {
 
     const { goal, user } = await deleLearner();
 
-    // 15 of Plus's 20 minutes today are used: DELE B2's Task 1 needs at least 6.
     await usageRecordsFixture({ count: 1, kind: "conversation", seconds: 900, userId: user.id });
 
     await expect(
@@ -301,7 +288,6 @@ describe("exam speaking tasks", () => {
 
     expect(generateExamSpeakingCard).not.toHaveBeenCalled();
 
-    // Task 3 takes 3 to 4 minutes, which still fit.
     await expect(startTask({ goalId: goal.id, task: "t3" })).resolves.toStrictEqual(
       expect.any(String),
     );
@@ -374,7 +360,6 @@ describe("exam speaking tasks", () => {
       status: "completed",
     });
 
-    // The ledger counts it as a mock, like the IELTS and TOEFL speaking mock.
     await expect(
       prisma.learningEvent.findFirst({ where: { userId: user.id } }),
     ).resolves.toMatchObject({ kind: "mock", seconds: 200 });
@@ -392,7 +377,6 @@ describe("exam speaking tasks", () => {
       runs: reviewRunsInline,
     });
 
-    // The first try ended earlier; the second one, below the level on every criterion, is the last.
     await prisma.languageConversation.update({
       data: { endedAt: new Date(Date.now() - 60_000) },
       where: { id: first },
@@ -432,7 +416,6 @@ describe("exam speaking tasks", () => {
     await expect(startTask({ goalId: goal.id, task: "t1" })).resolves.toBe(first);
     expect(generateExamSpeakingCard).toHaveBeenCalledOnce();
 
-    // Once called, the next try gets a fresh card, and another task never takes this one.
     await connect(first);
 
     const [again, other] = await Promise.all([
@@ -445,7 +428,7 @@ describe("exam speaking tasks", () => {
 
   it("counts a graded task as speaking evidence at the exam's level, by its criteria", async () => {
     const { goal, user } = await deleLearner();
-    // Band 2 is DELE's level: four criteria at it, the holistic one below.
+
     vi.mocked(scoreSpeaking).mockImplementation(async ({ criteria }) => ({
       data: {
         brief: false,
@@ -520,7 +503,6 @@ describe("exam speaking tasks", () => {
 
     const finished = await getSpeakingSection(section.id);
 
-    // Band 2 everywhere is two thirds of 25.
     expect(finished).toMatchObject({
       section: { estimate: { complete: true, total: 25, typed: false } },
       status: "ready",
@@ -540,7 +522,6 @@ describe("exam speaking tasks", () => {
       throw new Error(`Couldn't start: ${started.status}`);
     }
 
-    // Typed replies are graded only on what words show (as the grader does with no speech).
     vi.mocked(scoreSpeaking).mockImplementation(async ({ criteria }) => ({
       data: {
         brief: false,
@@ -586,7 +567,6 @@ describe("exam speaking tasks", () => {
 
     expect(started.status).toBe("ready");
 
-    // Task 2 talks about Task 1's topic and Task 4 role-plays Task 3's photo.
     expect(generateExamSpeakingCard).toHaveBeenCalledWith(
       expect.objectContaining({
         previous: expect.objectContaining({ task: "Tarea 1: Realizar una presentación breve" }),

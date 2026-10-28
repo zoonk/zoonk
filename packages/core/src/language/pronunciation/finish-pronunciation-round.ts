@@ -26,7 +26,6 @@ export type FinishPronunciationRoundResult =
 
 type RoundAnswer = { answeredAt: Date; durationMs: number; isCorrect: boolean };
 
-/** From the first answer to the end of the last one: listening and trying again count too. */
 function getRoundSeconds(answers: readonly RoundAnswer[]): number {
   const first = answers[0];
   const last = answers.at(-1);
@@ -51,11 +50,7 @@ function toRoundResult(
   };
 }
 
-/**
- * Counts a finished pronunciation round like any practice: its answers pay Brain Power as due
- * material, its time and answers go to today's totals and Energy, and one ledger row keeps it.
- * Finishing the same round again returns what it already counted.
- */
+/** Retrying the same round returns its already-counted result. */
 export async function finishPronunciationRound({
   input,
   roundId,
@@ -108,8 +103,6 @@ export async function finishPronunciationRound({
   const settled = await writeLearnerChange({ userId }, async (tx) => {
     const lock = await getCompletionEnergyContext({ timeZone, transaction: tx, userId });
 
-    // The progress lock serializes a double submit: the second one finds the first's row, and
-    // changes nothing.
     const counted = await tx.learningEvent.findFirst({
       where: { contentIds: { equals: roundId, path: ["pronunciationRoundId"] }, userId },
     });

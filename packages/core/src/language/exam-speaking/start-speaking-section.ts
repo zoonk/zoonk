@@ -13,14 +13,6 @@ export type StartSpeakingSectionResult =
   | { section: SpeakingSectionView; status: "ready" }
   | { status: "callsPaused" | "notLanguage" | "plusRequired" | "unauthorized" };
 
-/**
- * Starts a whole speaking paper for the learner's goal, as a mock exam's speaking section: every
- * task's call written now under one section, in the paper's order, each with its own card. A task
- * that continues an earlier one waits for that card and stays on its topic (DELE B1's conversation
- * about the presentation); the others are written at the same time. The calls connect one at a
- * time, each claiming its own call time, so a paper longer than what's left today waits for
- * tomorrow's. Plus only, like every mock exam.
- */
 export async function startSpeakingSection({
   goalId,
 }: {

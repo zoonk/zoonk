@@ -27,7 +27,6 @@ export function getSpeakingFormat({
   return FORMATS.find((format) => format.exam === exam && format.level === level) ?? null;
 }
 
-/** The exam's levels with a speaking paper, lowest first: Cambridge starts at A2. */
 export function listSpeakingLevels(exam: SpeakingExam): CefrLevel[] {
   return CEFR_LEVELS.filter((level) => getSpeakingFormat({ exam, level }));
 }
@@ -42,11 +41,6 @@ export function getSpeakingTask({
   return format.tasks.find((item) => item.key === task) ?? null;
 }
 
-/**
- * The criteria a task is rated on: its own lines on the mark sheet, and the ones rated once for the
- * whole paper that the task gives evidence for: all of them, except one about taking part in an
- * exchange in a task the candidate speaks through alone (Cambridge's long turn).
- */
 export function listTaskCriteria({
   format,
   task,

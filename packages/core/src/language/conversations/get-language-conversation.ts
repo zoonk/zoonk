@@ -9,7 +9,6 @@ import { type LanguageConversationView } from "./conversation-contract";
 
 export type OwnedConversation = { bossKind: "boss" | "finalBoss"; row: ConversationRow };
 
-/** One of the learner's calls, with the boss kind its checkpoint block holds. */
 export async function findOwnedConversation({
   conversationId,
   userId,
@@ -40,10 +39,6 @@ export type LanguageConversationResult =
   | { conversation: LanguageConversationView; status: "ready" }
   | { status: "notFound" | "unauthorized" };
 
-/**
- * One of the learner's live conversations: before the call, what it's about and what the voice
- * model is told; after it, the result and feedback. Another learner's call is "not found".
- */
 export async function getLanguageConversation(
   conversationId: string,
 ): Promise<LanguageConversationResult> {

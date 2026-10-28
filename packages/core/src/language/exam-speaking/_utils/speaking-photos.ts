@@ -5,10 +5,6 @@ import { optimizeImage } from "../../../images/optimize-image";
 import { uploadImage } from "../../../images/upload-image";
 import { type SpeakingCard } from "../speaking-contract";
 
-/**
- * Task photos hold nothing about the learner (a model's everyday scene), so they go to the public
- * store with the Library's pictures; the store adds a random suffix to the name.
- */
 const PHOTO_FILE_NAME = "library/speaking/photo.webp";
 
 async function drawPhoto({
@@ -36,10 +32,6 @@ async function drawPhoto({
   return { alt, url: upload.data };
 }
 
-/**
- * Draws a card's photos at once and stores them. A photo task can't run without its photo, so a
- * failure fails the card, which the learner can start again.
- */
 export function drawSpeakingPhotos({
   analytics,
   photos,

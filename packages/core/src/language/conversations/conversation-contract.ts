@@ -16,17 +16,13 @@ import { SPEAKING_MOCK_CRITERIA, SPEAKING_MOCK_SCALES } from "./speaking-mock-fo
 const MAX_SDP_LENGTH = 100_000;
 const MAX_PRACTICE_MINUTES = 5;
 
-/** The longest call: an exam task's official time, up to DALF C1's 20-minute interview. */
 const MAX_CALL_MINUTES = 20;
 
-/** Practice calls last from 1 to 5 minutes, as the unit page offers them. */
 export const PRACTICE_CONVERSATION_MINUTES = [1, 2, 3, MAX_PRACTICE_MINUTES] as const;
-/** The longest call and the minute it may run over while the character says goodbye. */
 const MAX_SPOKEN_SECONDS = 1260;
 
 const speakerSchema = z.enum(["learner", "character"]);
 
-/** The exams whose speaking test a live call runs as a mock: IELTS and TOEFL iBT, in English. */
 export const speakingMockExamSchema = z.enum(SPEAKING_MOCK_EXAMS).meta({ id: "SpeakingMockExam" });
 
 export type SpeakingMockExam = z.infer<typeof speakingMockExamSchema>;
@@ -40,7 +36,6 @@ const conversationTurnSchema = z
 
 export type ConversationTurn = z.infer<typeof conversationTurnSchema>;
 
-/** The role-play a call follows, as a model wrote it for a unit and level. */
 export const conversationScenarioSchema = z.object({
   character: z.object({ name: z.string(), place: z.string(), role: z.string() }),
   characterBrief: z.string(),
@@ -53,15 +48,10 @@ export const conversationScenarioSchema = z.object({
 
 export type ConversationScenario = z.infer<typeof conversationScenarioSchema>;
 
-/**
- * A speaking mock's scenario also names the exam it follows, which sets the examiner's script and
- * the criteria its feedback uses.
- */
 export const speakingMockScenarioSchema = conversationScenarioSchema.extend({
   exam: speakingMockExamSchema,
 });
 
-/** An exam task's call also keeps its paper's exam, level, task and the card the learner saw. */
 export const examSpeakingScenarioSchema = conversationScenarioSchema.extend({
   examTask: examTaskSnapshotSchema,
 });
@@ -83,7 +73,6 @@ const callFeedbackSchema = z
 
 const HALF_BAND = 0.5;
 
-/** A speaking mock's feedback, by its exam's own criteria and on its band scale. */
 function speakingMockFeedbackFor<const TExam extends SpeakingMockExam>(exam: TExam) {
   const { halfBands, maxBand, minBand } = SPEAKING_MOCK_SCALES[exam];
   const step = halfBands ? HALF_BAND : 1;
@@ -259,17 +248,12 @@ export const languageConversationViewSchema = z
 
 export type LanguageConversationView = z.infer<typeof languageConversationViewSchema>;
 
-/**
- * A call just finished: the call with its result, what it did to the day's missions (a call can be
- * one of them) and what it reached (`ProgressCelebration`), so its end can say so.
- */
 export const completedLanguageConversationSchema = languageConversationViewSchema
   .extend({ ...progressCelebrationShape, missionMoment: missionMomentSchema.nullable() })
   .meta({ id: "CompletedLanguageConversation" });
 
 export type CompletedLanguageConversation = z.infer<typeof completedLanguageConversationSchema>;
 
-/** A reserved connection: post the browser's offer to `sessionUrl` within a minute. */
 export const languageConversationSetupSchema = z
   .object({
     connectionId: z.uuid(),

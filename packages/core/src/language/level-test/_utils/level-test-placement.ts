@@ -17,22 +17,14 @@ import { readGoalDetails } from "../../_utils/language-goal";
 import { type LevelTestProgress } from "../level-test-contract";
 import { readLevelTestProgress } from "./level-test-state";
 
-/** Where placing the test's result on the plan stands (see `levelTestProgressSchema`). */
 type ResultPlacement = NonNullable<LevelTestProgress["placement"]>;
 
-/** Where a finish left placing the result; null once the goal is gone. */
 type PlaceOutcome = { placedNow: boolean; placement: ResultPlacement } | null;
 
-/** Another finish announced it first: thrown in the announcement's transaction, which rolls back. */
 class PlacementAnnouncedError extends Error {
   override name = "PlacementAnnouncedError";
 }
 
-/**
- * Locks the goal and reads it. Every step of a finish, every announcement and every undo holds the
- * learner's lock first, so each one sees where placing the test's result stands as the last one
- * left it, and changes it with its own effects.
- */
 async function lockGoal(tx: TransactionClient, goalId: string): Promise<Goal | null> {
   await tx.$queryRaw`SELECT id FROM goals WHERE id = ${goalId}::uuid FOR UPDATE`;
   return tx.goal.findUnique({ where: { id: goalId } });
@@ -50,14 +42,6 @@ async function savePlacement(
   });
 }
 
-/**
- * Places the test's result on the plan as `applyPlacement` does, in one transaction: skills it's
- * sure the learner knows become known, and the plan's items teaching only those are tested out,
- * with stand-ins for the ones its time leaves out. Only a finish that finds the result unplaced
- * places it, so no other finish places it again, even one that stalled until the learner undid
- * it. It reads placement under those same locks and keeps what the plan must announce, with what
- * an earlier result left unannounced.
- */
 export async function placeLevelTestResult({
   goalId,
   timeZone,
@@ -104,7 +88,6 @@ export async function placeLevelTestResult({
 
     const unannounced = [...new Set([...current.unannounced, ...itemIds, ...standInIds])];
 
-    // The listening areas land with the announcement; with nothing to announce, nothing does.
     const placement = {
       pastBasicsAreas:
         unannounced.length > 0
@@ -125,11 +108,6 @@ export async function placeLevelTestResult({
   return outcome;
 }
 
-/**
- * Clears what the plan announced from the result's placement, when it's still what `announced`
- * says: else another finish announced it first, or placed a newer result whose announcement
- * carries it. Returns whether it cleared it.
- */
 async function clearAnnounced(
   tx: TransactionClient,
   { announced, goalId }: { announced: ResultPlacement; goalId: string },
@@ -156,12 +134,6 @@ async function clearAnnounced(
   return true;
 }
 
-/**
- * Says on the plan what placing the result skipped ("Skipped 12 lessons you already know", with an
- * undo) and re-plans from today, once: the announcement clears it from the placement in its own
- * transaction, and rolls back when another finish announced it first. A plan that isn't the
- * planner's yet announces nothing, so nothing is left to announce.
- */
 export async function announceLevelTestPlacement({
   goalId,
   placement,

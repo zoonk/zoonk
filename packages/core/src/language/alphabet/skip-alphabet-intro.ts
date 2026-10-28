@@ -12,11 +12,6 @@ export type SkipAlphabetIntroResult = {
   status: "notFound" | "notLanguage" | "skipped" | "unauthorized";
 };
 
-/**
- * The learner already reads the script: their sessions stop opening with the alphabet lesson,
- * starting with today's if it hasn't begun. The lesson stays open as practice. Skipping again
- * changes nothing.
- */
 export async function skipAlphabetIntro(goalId: string): Promise<SkipAlphabetIntroResult> {
   const owned = await findOwnedGoal(goalId);
 
@@ -55,7 +50,7 @@ export async function skipAlphabetIntro(goalId: string): Promise<SkipAlphabetInt
           })
         : null;
 
-      /** Queue changes lock blocks before goals, in id order, after plans and the learner. */
+      /** Lock blocks before goals to match queue writers and avoid deadlocks. */
       const blocks = lesson
         ? await tx.$queryRaw<{ id: string }[]>`
           SELECT block.id FROM study_session_blocks AS block

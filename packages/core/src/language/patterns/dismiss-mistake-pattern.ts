@@ -7,10 +7,6 @@ import { getSession } from "../../users/get-session";
 
 export type DismissMistakePatternResult = { status: "dismissed" | "notFound" | "unauthorized" };
 
-/**
- * Takes a pattern off Today without practicing it, such as a note that the mistakes were only
- * typos, which has nothing to drill. Dismissing it again changes nothing.
- */
 export async function dismissMistakePattern(
   patternId: string,
 ): Promise<DismissMistakePatternResult> {

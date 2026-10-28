@@ -24,7 +24,6 @@ function findSavedScenario({ chapterId, level }: { chapterId: string; level: Cef
   return prisma.conversationScenario.findUnique({ where: { chapterLevel: { chapterId, level } } });
 }
 
-/** A unit's call at a level when it's written, without writing it. */
 export async function findUnitScenario(where: {
   chapterId: string;
   level: CefrLevel;
@@ -34,10 +33,6 @@ export async function findUnitScenario(where: {
   return parsed.success ? parsed.data : null;
 }
 
-/**
- * A unit's call at a level, written once and shared by every learner of the unit. Two learners
- * starting at the same moment may both write one; the first saved wins.
- */
 export async function getUnitScenario({
   level,
   unit,
@@ -79,11 +74,6 @@ export async function getUnitScenario({
   }
 }
 
-/**
- * The examiner and script of one speaking mock for its exam: IELTS's cue card and questions, or
- * TOEFL's sentences to repeat and interview questions. Each mock gets its own, so a learner who
- * tries again meets a new topic.
- */
 export async function getSpeakingMockScenario({
   exam,
   goalId,

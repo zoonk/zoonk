@@ -7,12 +7,7 @@ export type LanguageLevelTestResult =
   | { status: "notFound" | "notLanguage" | "unauthorized" }
   | { status: "ready"; test: LanguageLevelTestView };
 
-/**
- * The three-minute level test of a language goal: the next reading or listening question near the
- * learner's level, then one sentence to say out loud, and the levels so far. While the pair's
- * questions are written, it says since when (null when nothing is writing them, so the app starts
- * their workflow) and how long it usually takes, and the app asks again. Read-only.
- */
+/** Read-only: returns `preparing` until a separately started workflow writes the questions. */
 export async function getLanguageLevelTest(goalId: string): Promise<LanguageLevelTestResult> {
   const context = await loadLevelTestContext(goalId, await getOwnedGoal(goalId));
 

@@ -4,16 +4,11 @@ import { readBlockPayload } from "../../../sessions/block-payload";
 import { loadDoneUnitIds } from "../../units/can-do-events";
 import { type LanguageUnit, findCurrentUnit, loadLanguageUnits } from "../../units/language-units";
 
-/** The unit the learner is in, as Today and Progress show it. */
 async function findLearnerUnit({ goal, units }: { goal: Goal; units: LanguageUnit[] }) {
   const doneIds = await loadDoneUnitIds({ units, userId: goal.userId });
   return findCurrentUnit({ doneIds, units });
 }
 
-/**
- * The unit a checkpoint closes: the one holding the lessons planned in the checkpoint's phase, or
- * the learner's current unit when the phase has none of the course's lessons.
- */
 export async function findCheckpointUnit({
   goal,
   planItemId,
@@ -45,10 +40,6 @@ export async function findCheckpointUnit({
   return planned.at(-1) ?? findLearnerUnit({ goal, units });
 }
 
-/**
- * The language goal of one of the learner's checkpoint blocks and the unit it closes: a language
- * goal's boss is a conversation that closes a unit, not a duel of questions. Null for anything else.
- */
 export async function findLanguageCheckpointBlock({
   blockId,
   userId,
@@ -77,7 +68,6 @@ export async function findLanguageCheckpointBlock({
   return unit ? { goal, unit } : null;
 }
 
-/** What a checkpoint's call is written from: the unit it closes, in the goal's two languages. */
 export function toCheckpointScenarioUnit({
   goal,
   targetLanguage,

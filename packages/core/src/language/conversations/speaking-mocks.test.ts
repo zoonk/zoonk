@@ -64,7 +64,6 @@ const IELTS_SCORE = {
   overall: { bandHigh: 6.5, bandLow: 6 },
 };
 
-/** The grader's grade of a mock, which core turns into the feedback with its overall band. */
 function gradeOf(score: typeof IELTS_SCORE | typeof TOEFL_SCORE) {
   const data = { brief: false, criteria: score.criteria, focus: score.focus, heard: true };
   return { ...GENERATED, data, userPrompt: "" };
@@ -84,7 +83,6 @@ const COMPLETION = {
   usedHelp: false,
 };
 
-/** Marcos's English goal, preparing for the exam his reason names. */
 async function examGoalFixture(reason: string) {
   const setup = await languageGoalFixture();
 
@@ -107,7 +105,6 @@ function sleep(ms: number) {
   });
 }
 
-/** A speaking mock the learner started and connected, which the call's end then scores. */
 async function startMock(goalId: string) {
   const started = await startLanguageConversation({ goalId, kind: "speakingMock" });
 
@@ -269,7 +266,6 @@ describe("speaking mocks", () => {
       return gradeOf(IELTS_SCORE);
     });
 
-    // The check waits for the score to start, or gives up when the score only starts after it.
     vi.mocked(checkConversationObjectives).mockImplementation(async () => {
       await Promise.race([scoring.promise, sleep(300)]);
       order.push("goals checked");
@@ -373,7 +369,6 @@ describe("speaking mocks", () => {
 
     await prepareSpeakingMock({ goalId: goal.id, userId: user.id });
 
-    // The learner's speaking moved up to B1: the A2 mock waiting for them no longer fits.
     await prisma.languageSkillLevel.create({
       data: { language: "en", score: 2, skill: "speaking", startScore: 1, userId: user.id },
     });

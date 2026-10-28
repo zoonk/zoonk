@@ -8,7 +8,6 @@ export type PronunciationReviewsResult =
   | { reviews: PronunciationReviewsView; status: "ready" }
   | { status: "noGoal" | "notFound" | "notLanguage" | "unauthorized" };
 
-/** Reviews due by now in one language, the longest-waiting first. */
 export function findDuePronunciationReviews({
   language,
   now,
@@ -28,11 +27,6 @@ export function findDuePronunciationReviews({
   });
 }
 
-/**
- * The words a language goal's learner mispronounced that are due to come back today, with what
- * helps say them: the native recording, the respelling and tip for the learner's language, and
- * the romanization. A round asks a few at a time; the others wait for the next one.
- */
 export async function getPronunciationReviews(
   input: { goalId?: string } = {},
 ): Promise<PronunciationReviewsResult> {

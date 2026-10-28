@@ -4,7 +4,6 @@ import { type CefrLevel, toCefrLevel } from "@zoonk/utils/cefr";
 import { readGoalDetails } from "../../_utils/language-goal";
 import { getStartScore } from "../../levels/skill-level-rules";
 
-/** The band the character speaks at: the learner's speaking level, rounded down to its band. */
 export async function getSpeakingLevel({
   goal,
   targetLanguage,
@@ -22,7 +21,6 @@ export async function getSpeakingLevel({
   return toSpeakingLevel({ goal, score: row?.score ?? null });
 }
 
-/** The speaking band from the learner's saved speaking score, or the goal's starting one without it. */
 export function toSpeakingLevel({
   goal,
   score,

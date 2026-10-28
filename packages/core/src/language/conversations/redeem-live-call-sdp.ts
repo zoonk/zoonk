@@ -44,7 +44,6 @@ type Prepared =
   | Refusal
   | { connection: LiveCallConnection; instructions: string; status: "prepared"; voice: string };
 
-/** A reservation the SDP step can't use: one ended or past its window expired, others were used. */
 function unusableReservation({
   connection,
   now,
@@ -63,10 +62,6 @@ function unusableReservation({
     : { status: "connectionUsed" };
 }
 
-/**
- * Under the learner's lock, with admission, Plus and the conversation read fresh: the reservation
- * moves to `starting` once, so a second offer for it never creates a second session.
- */
 async function prepareCreation({
   connectionId,
   conversationId,
@@ -112,8 +107,6 @@ async function prepareCreation({
       return unchanged({ status: "callsPaused" as const });
     }
 
-    // A free reservation's window is read under the free day's lock, with the clock read after it:
-    // a reservation reading this one as expired meanwhile can't also give away its room.
     if (connection.freeSpendDay && connection.state === "reserved") {
       await lockFreeCallDay({ day: connection.freeSpendDay, transaction });
     }
@@ -139,11 +132,6 @@ async function prepareCreation({
   });
 }
 
-/**
- * Creation failed without naming a session. OpenAI's own refusal means no session started, so
- * only initialization is kept; anything else (a timeout, a server error) may have started one we
- * can't hang up, so the larger of the reservation and the clock is kept.
- */
 async function settleFailedCreation({
   connection,
   refused,
@@ -180,10 +168,6 @@ async function settleFailedCreation({
 
 type Created = { status: "live" } | { settled: boolean; status: "unwanted" };
 
-/**
- * The session exists: it goes live only while the connection is still `starting`, no end was asked
- * for and no review has claimed the call. Otherwise its id is kept so the session is hung up.
- */
 async function recordCreatedSession({
   connection,
   providerSessionId,
@@ -223,12 +207,6 @@ async function recordCreatedSession({
   });
 }
 
-/**
- * Creates the GPT-Live session for the browser's offer, once per reservation, with the server's
- * model, instructions, voice and event permissions. The call's time already runs from its
- * reservation. A session that's no longer wanted when it exists (the call was ended, replaced or
- * claimed for review meanwhile) is hung up at once.
- */
 export async function redeemLiveCallSdp({
   connectionId,
   conversationId,
@@ -281,13 +259,11 @@ export async function redeemLiveCallSdp({
   );
 
   if (recorded.error) {
-    // The connection stays `starting` without the id: it settles by estimate when it ends.
     await safeAsync(() => hangUpLiveCallSession(sessionId));
     throw recorded.error;
   }
 
   if (recorded.data.status === "unwanted") {
-    // A connection already settled by estimate only needs its session gone.
     await (recorded.data.settled
       ? safeAsync(() => hangUpLiveCallSession(sessionId))
       : endLiveCall({ connectionId, reason: "completion" }));

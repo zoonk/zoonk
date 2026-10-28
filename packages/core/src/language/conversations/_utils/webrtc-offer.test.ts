@@ -2,7 +2,6 @@ import { LIVE_CALL_SDP_OFFER } from "@zoonk/testing/fixtures/language";
 import { describe, expect, it } from "vitest";
 import { isWebRtcAudioOffer } from "./webrtc-offer";
 
-/** Firefox's shape: the DTLS fingerprint at session level, lowercase attributes and a trailing CRLF. */
 const FIREFOX_OFFER = [
   "v=0",
   "o=mozilla...THIS_IS_SDPARTA-99.0 7214155180196400358 0 IN IP4 0.0.0.0",

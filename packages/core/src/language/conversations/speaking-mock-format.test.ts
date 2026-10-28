@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { getSpeakingMockOverall } from "./speaking-mock-format";
 
-/** TOEFL's four interview criteria at one range. */
 function interviewAt(bandLow: number, bandHigh: number) {
   return ["elaboration", "grammar", "vocabulary", "delivery"].map((criterion) => ({
     bandHigh,
@@ -28,7 +27,6 @@ describe(getSpeakingMockOverall, () => {
   it("weighs TOEFL's Listen and Repeat by its 7 of 11 items, to the nearest half band", () => {
     const repetition = { bandHigh: 5.5, bandLow: 5, criterion: "repetition" };
 
-    // (7 × 5.5 + 4 × 5) / 11 = 5.32, nearer 5.5 than 5
     expect(
       getSpeakingMockOverall({ criteria: [repetition, ...interviewAt(5, 5)], exam: "toefl" }),
     ).toStrictEqual({ bandHigh: 5.5, bandLow: 5 });
@@ -38,7 +36,6 @@ describe(getSpeakingMockOverall, () => {
     const repetition = { bandHigh: 4, bandLow: 4, criterion: "repetition" };
     const typed = interviewAt(3, 3).filter((item) => item.criterion !== "delivery");
 
-    // (7 × 4 + 3 × 3) / 10 = 3.7, nearer 3.5 than 4
     expect(
       getSpeakingMockOverall({ criteria: [repetition, ...typed], exam: "toefl" }),
     ).toStrictEqual({ bandHigh: 3.5, bandLow: 3.5 });

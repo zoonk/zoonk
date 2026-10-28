@@ -67,7 +67,6 @@ describe("the notebook's pattern read", () => {
       const pattern = await createPattern({ goalId: goal.id, userId: user.id });
       mockSession(user.id);
 
-      // The day's one mission is the pattern's drill, as Open writes it.
       if (covered) {
         await studySessionFixture({
           goalId: goal.id,

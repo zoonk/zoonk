@@ -42,7 +42,6 @@ async function createAnsweredTest(targetLanguage = "fr") {
     speaking: levels.map((level) => ({ level, sentence: `Say ${level}`, translation: "Say it" })),
   };
 
-  /** This test owns a different language pair from the other level-test suites. */
   await prisma.languageLevelTest.create({
     data: {
       content: bank,
@@ -108,7 +107,6 @@ async function finishWhileLinking({
   const release = Promise.withResolvers<null>();
   const loadContext = levelState.loadLevelTestContext;
 
-  /** Pause after the real owned-goal read; the spy never substitutes context or query results. */
   const observed = vi.spyOn(levelState, "loadLevelTestContext").mockImplementation(async (id) => {
     const context = await loadContext(id);
     seen.resolve(null);
@@ -119,7 +117,6 @@ async function finishWhileLinking({
   const finished = Promise.allSettled([finishLanguageLevelTest(goal.id)]);
   await seen.promise;
 
-  /** Hold linking after it owns the guest but before it can finish merging account progress. */
   const held = prisma.$transaction(
     async (transaction) => {
       await transaction.$queryRaw`
@@ -164,7 +161,6 @@ async function finishWhileLinking({
     observed.mockRestore();
   }
 
-  /** The learner's lock now rejects the linked-away guest before a progress insert can fail its FK. */
   await expect(Promise.all([linking, finished])).resolves.toMatchObject([
     [{ status: "fulfilled" }],
     [{ reason: { message: "Cannot lock a missing learner" }, status: "rejected" }],

@@ -9,7 +9,6 @@ import {
   getStepLanguageSkill,
 } from "./skill-level-rules";
 
-/** Answers a window holds before it moves a level. */
 const WINDOW_ANSWERS = 20;
 const A2 = 1;
 const B1 = 2;

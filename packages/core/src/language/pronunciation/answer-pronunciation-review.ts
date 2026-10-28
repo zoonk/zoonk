@@ -27,12 +27,6 @@ export type AnswerPronunciationReviewResult =
   | { status: "notFound" }
   | { status: "unauthorized" };
 
-/**
- * Grades the learner saying one review word: what we heard is compared with the word, the answer
- * is recorded (it counts as time spoken in the language), and the word climbs a rung when it was
- * said right or starts over when it wasn't. Every answer calls a paid model, so each is claimed as
- * small AI help (`claimAssist`) first. The audio is only held in memory for grading.
- */
 export async function answerPronunciationReview({
   audio,
   fields,
@@ -67,8 +61,6 @@ export async function answerPronunciationReview({
     return { status: "notFound" };
   }
 
-  // The help each answer uses and the word's next rung change what the day offers: the round's
-  // day is saved before its first answer records either.
   await saveDayBeforeActivity({
     goalId: fields.goalId,
     language: review.language,
@@ -82,8 +74,6 @@ export async function answerPronunciationReview({
     return usage;
   }
 
-  // A word said on its own has no sentence to help a listener, so an audio model judges whether it
-  // would be recognized alone, falling back to transcription if it fails.
   const { match, transcript } = await hearSpokenSentence({
     audio,
     check: "thorough",

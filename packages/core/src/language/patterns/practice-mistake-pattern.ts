@@ -19,19 +19,13 @@ import {
   type MistakePatternPracticeResult,
 } from "./pattern-contract";
 
-/** A three-minute drill, counted as its answers' time in today's totals. */
 const DRILL_SECONDS = 180;
 
 export type PracticeMistakePatternResult =
   | { result: MistakePatternPracticeResult; status: "ready" }
   | { status: "invalid" | "notFound" | "unauthorized" };
 
-/**
- * Finishes the three-minute drill of a pattern: each answer is checked against the drill, the drill
- * pays Brain Power like any practice (less when repeated) and counts toward today, and the pattern
- * leaves Today once practiced. The same drill sent again (`requestId`, a retry after a lost
- * response) returns what it already counted.
- */
+/** Reusing a `requestId` replays the already-counted drill. */
 export async function practiceMistakePattern({
   input,
   patternId,
@@ -73,7 +67,6 @@ export async function practiceMistakePattern({
     })),
   });
 
-  // Once the drill counts, a day planned after it no longer offers it: today's is saved first.
   await saveDayBeforeActivity({ language: row.language, timeZone: input.timeZone, userId });
 
   const timeZone = await getLearnerTimeZone({ timeZone: input.timeZone, userId });
@@ -82,8 +75,6 @@ export async function practiceMistakePattern({
   const counted = await writeLearnerChange({ userId }, async (tx) => {
     const lock = await getCompletionEnergyContext({ timeZone, transaction: tx, userId });
 
-    // The progress lock serializes a double submit: the second one finds the first's row. The id
-    // names this pattern's drill; another pattern sent with it is its own drill.
     const earlier = await tx.learningEvent.findFirst({
       where: {
         AND: [

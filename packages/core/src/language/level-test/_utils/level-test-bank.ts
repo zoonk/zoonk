@@ -7,23 +7,15 @@ import { type LanguageLevelTest, isPrismaUniqueConstraintError, prisma } from "@
 import { toProvenanceData } from "../../../library/_utils/library-rows";
 import { type LevelTestBank, levelTestBankSchema } from "../level-test-contract";
 
-/**
- * A bank still empty after this long was lost with its run, so another one may write it. The
- * writer's slowest runs have taken about three minutes, and the workflow step writing it retries
- * a failed attempt at once (a failed writer also gives its claim up), so a live run is never
- * taken over.
- */
 const STALE_CLAIM_MS = 660_000;
 
 export type LanguagePair = { language: string; targetLanguage: string };
 
-/** Who the bank's calls ran for; the bank itself is always shared by the pair's learners. */
 export type LevelTestBankAnalytics = Omit<
   NonNullable<GenerateLevelTestBankParams["analytics"]>,
   "contentScope"
 >;
 
-/** The pair's bank, or when the run writing it started (null when nothing is writing it yet). */
 export type LevelTestBankState =
   | { bank: LevelTestBank; status: "ready" }
   | { startedAt: Date | null; status: "preparing" };
@@ -37,10 +29,6 @@ export function findBankRow(pair: LanguagePair) {
   return prisma.languageLevelTest.findUnique({ where: { languagePair: pair } });
 }
 
-/**
- * Writes the bank under the run's claim; false when a newer run took the claim over, so a late
- * run never overwrites it.
- */
 async function writeBank({
   analytics,
   claimId,
@@ -73,7 +61,6 @@ async function writeBank({
   return count > 0;
 }
 
-/** A run that failed gives its claim up at once, so the next request writes the bank again. */
 async function releaseClaim({ claimId, pair }: { claimId: string; pair: LanguagePair }) {
   await prisma.languageLevelTest.updateMany({
     data: { generatedAt: new Date(0) },
@@ -81,7 +68,6 @@ async function releaseClaim({ claimId, pair }: { claimId: string; pair: Language
   });
 }
 
-/** Writes the bank under the claim, giving the claim up when the writer fails. */
 export async function writeClaimedBank({
   analytics,
   claimId,
@@ -99,11 +85,7 @@ export async function writeClaimedBank({
   }
 }
 
-/**
- * Claims writing the pair's bank: the first run creates the row, and a row whose run went quiet
- * for `STALE_CLAIM_MS` (or gave its claim up) is taken over. Null when another run holds a live
- * claim.
- */
+/** A null claim means another run owns the bank; do not start a second writer. */
 export async function claimBank({
   pair,
   row,
@@ -145,12 +127,6 @@ export async function claimBank({
   }
 }
 
-/**
- * The level test of a language pair, written once and shared, or since when a run has been
- * writing it (`startedAt` null when nothing is: a claim that went quiet or was given up). Only
- * workflows write it (`writeLevelTestBank`), started when a language goal's pair is known or when
- * the learner asks the level test to start it; showing the test never does.
- */
 export async function loadLevelTestBank(pair: LanguagePair): Promise<LevelTestBankState> {
   const row = await findBankRow(pair);
   const bank = readBank(row);

@@ -35,7 +35,6 @@ export type WrittenFeedback = {
   provenance: ReturnType<typeof toProvenanceData>;
 };
 
-/** A mock's estimated bands on its exam's criteria, and the overall band the exam's way. */
 async function writeMockFeedback({
   exam,
   input,
@@ -63,7 +62,6 @@ async function writeMockFeedback({
   return { feedback, provenance: toProvenanceData(provenance) };
 }
 
-/** An exam task's estimated bands on the criteria its paper rates it on, never a score. */
 async function writeExamTaskFeedback({
   examTask,
   input,
@@ -114,10 +112,6 @@ async function writeCallFeedback(
   return { feedback: { ...data, kind: "call" }, provenance: toProvenanceData(provenance) };
 }
 
-/**
- * A call where the learner said nothing gets no feedback, since there's nothing to comment on. A
- * failed model call throws, so the review is tried again.
- */
 async function writeFeedback({
   turns,
   write,
@@ -132,7 +126,6 @@ async function writeFeedback({
   return write();
 }
 
-/** An exam task's one goal is doing the task: met once the candidate spoke in it. */
 export function getExamTaskObjectives({
   scenario,
   turns,
@@ -144,7 +137,6 @@ export function getExamTaskObjectives({
   return spoke ? scenario.objectives.map((objective) => objective.label) : [];
 }
 
-/** The goals marked during the call plus any the full transcript shows. */
 async function findObjectivesMet(input: ReviewInput): Promise<string[]> {
   const newlyMet = await findNewlyMetObjectives(input);
 
@@ -154,13 +146,6 @@ async function findObjectivesMet(input: ReviewInput): Promise<string[]> {
   });
 }
 
-/**
- * After a call, the goals it met and a separate text model's feedback from the transcript: what
- * went well and one thing to improve, or a speaking mock's or exam task's estimated bands by its
- * exam's criteria. A mock's score doesn't read the goals, so it's written while they're checked; a
- * call's feedback names the goals met, so it waits for them. An exam task's one goal is doing the
- * task, met once the candidate spoke in it: its grade says how well.
- */
 export async function reviewConversation(
   input: ReviewInput,
 ): Promise<{ feedback: WrittenFeedback | null; objectivesMet: string[] }> {

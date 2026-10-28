@@ -47,13 +47,7 @@ async function startCheckpointBlock(
   return started.status === "ready" ? null : started;
 }
 
-/**
- * Reserves one connection of the learner's call: its time and cost are held, and its deadline run
- * starts before the answer, so the server hangs it up on time. A learner's open connection ends
- * first (`endPreviousLiveCall`). A deadline run that can't start ends the reservation at once.
- * `seconds` is the time left until the deadline when the server answered, so the browser's timer
- * doesn't depend on its clock.
- */
+/** The deadline scheduler must start before returning the reservation; failure ends the reservation. */
 export async function connectLanguageConversation({
   conversationId,
   input = {},
@@ -83,7 +77,6 @@ export async function connectLanguageConversation({
     return { status: "plusRequired" };
   }
 
-  // Read again under the lock when reserving; checked here so a paused call never ends another.
   if ((await readLiveCallAdmission({ transaction: prisma, userId: viewer.userId })) === null) {
     return { status: "callsPaused" };
   }

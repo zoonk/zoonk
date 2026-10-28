@@ -3,7 +3,6 @@ import { answerTimeZoneSchema } from "../../learner/contract";
 import { activityBrainPowerSchema, missionMomentSchema } from "../../sessions/completion-contract";
 import { progressCelebrationShape } from "../../sessions/progress-celebration";
 
-/** A spoken word is a second or two; a longer recording is a microphone left on. */
 const MAX_WORD_RECORDING_MS = 30_000;
 
 const pronunciationWordSchema = z
@@ -35,7 +34,6 @@ export const pronunciationReviewsViewSchema = z
 
 export type PronunciationReviewsView = z.infer<typeof pronunciationReviewsViewSchema>;
 
-/** The fields sent next to a recording of one review word. */
 export const pronunciationAnswerFieldsSchema = z
   .object({
     durationMs: z.coerce

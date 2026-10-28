@@ -12,19 +12,15 @@ type NewConversation = {
   kind: LanguageConversationKind;
   language: string;
   level: CefrLevel;
-  /** Every conversation is created by an explicit start command. */
   markChanged: true;
   minutes: number;
-  /** A speaking mock's scenario also names its exam, and an exam task's its paper and card. */
   scenario: ConversationScenario & { exam?: SpeakingMockExam; examTask?: ExamTaskSnapshot };
-  /** The whole speaking paper an exam task belongs to. */
   sectionId?: string;
   studyBlockId?: string;
   targetLanguage: string;
   userId: string;
 };
 
-/** A new call, ready to connect: nothing is charged until it does. */
 export function createConversation(input: NewConversation) {
   const create = (client: Pick<typeof prisma, "languageConversation">) =>
     client.languageConversation.create({

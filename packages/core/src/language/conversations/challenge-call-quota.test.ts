@@ -28,7 +28,6 @@ import {
   startLanguageConversation,
 } from "./start-language-conversation";
 
-/** A Plus learner has reached the renting unit's C1 challenge (three minutes of talk). */
 async function reachedChallenge() {
   const setup = await languageGoalFixture();
   const { goal, plan, renting, user } = setup;
@@ -86,7 +85,7 @@ describe("Plus challenge call quota", () => {
     await setupTestCalls();
     freezeClock();
     vi.setSystemTime(new Date("2026-10-13T12:00:00Z"));
-    // Only the call provider and objective model are replaced; all plan and usage rows are real.
+
     vi.mocked(checkConversationObjectives).mockResolvedValue({
       data: {
         met: RENTING_SCENARIO.objectives.map(({ label }) => ({
@@ -186,7 +185,6 @@ describe("Plus challenge call quota", () => {
       status: "ready",
     });
 
-    // A passed challenge keeps its completed status while access to another call needs Plus.
     await prisma.planItem.update({ data: { status: "done" }, where: { id: item.id } });
 
     await expect(getChallenge({ input: {}, planItemId: item.id })).resolves.toMatchObject({

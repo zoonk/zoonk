@@ -13,7 +13,6 @@ export type WrittenExamTask = {
   task: SpeakingTaskFormat;
 };
 
-/** The earlier task's card a task continues, as the card writer reads it. */
 function toPreviousCard(previous: WrittenExamTask | null) {
   if (!previous) {
     return null;
@@ -23,12 +22,6 @@ function toPreviousCard(previous: WrittenExamTask | null) {
   return { instructions, prompts, table, task: previous.task.name, text };
 }
 
-/**
- * Writes one task of a speaking paper for the learner's goal and makes its call, ready to connect:
- * a card like the exam's own sheet (a model writes it now, with its photos drawn), the AI as the
- * task's examiner or partner, and the task's official time as the call's length. A task that
- * continues an earlier one (`previous`) stays on that card's topic.
- */
 export async function writeExamTask({
   format,
   goal,

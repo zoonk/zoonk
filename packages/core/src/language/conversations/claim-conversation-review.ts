@@ -7,14 +7,6 @@ export type ReviewClaim =
   | { status: "settled" }
   | { status: "conversationEnded" | "notFound" | "takenOver" };
 
-/**
- * Claims the call's review for one run, under the learner's lock, so no connection starts or
- * changes meanwhile: the call's latest connection must be the one the learner completes (a newer
- * one means another tab took the call over), and it must not have ended by a takeover. The claim
- * moves `reviewRunId` from none, or from the failed run it `replaces`, to this run; once set, the
- * call takes no new connections. Run again with the same id (a replayed step), it's still this
- * run's; another run's claim is joined instead, and a call already completed is `settled`.
- */
 export async function claimConversationReview({
   connectionId,
   conversationId,

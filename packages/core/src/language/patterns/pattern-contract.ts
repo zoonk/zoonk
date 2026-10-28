@@ -6,7 +6,6 @@ import { progressCelebrationShape } from "../../sessions/progress-celebration";
 const MAX_DRILL_QUESTIONS = 10;
 const MAX_DRILL_ANSWER_LENGTH = 200;
 
-/** What a stored pattern keeps as text: the rule, contrasts, the mistakes it read and the drill. */
 export const mistakePatternContentSchema = z.object({
   contrast: z.array(z.object({ example: z.string(), label: z.string() })),
   drill: z.array(

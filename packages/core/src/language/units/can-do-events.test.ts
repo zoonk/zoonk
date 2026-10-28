@@ -8,7 +8,6 @@ import { trackCallCanDos } from "./can-do-events";
 
 type Setup = Awaited<ReturnType<typeof languageGoalFixture>>;
 
-/** Checks the lesson off as the lesson player does: analytics is scheduled once it commits. */
 async function finishLesson({ lessonId, userId }: { lessonId: string; userId: string }) {
   const goals = await prisma.$transaction((tx) =>
     completeLessonPlanItems(tx, { lessonId, now: new Date(), userId }),
@@ -17,7 +16,6 @@ async function finishLesson({ lessonId, userId }: { lessonId: string; userId: st
   scheduleLessonCanDos({ goals, lessonId, userId });
 }
 
-/** A finished call on the renting unit, won when it met every objective. */
 function renting({ renting: unit, user }: Setup, { won }: { won: boolean }) {
   const objectives = RENTING_SCENARIO.objectives.map((objective) => objective.label);
 

@@ -11,7 +11,6 @@ import { type SpeakingFormat, type SpeakingTaskFormat } from "./speaking-format"
 import { getSpeakingFormat, listTaskCriteria } from "./speaking-formats";
 import { getLevelMark } from "./speaking-standing";
 
-/** The exam's preparation when this task shares it with others, with their numbers. */
 function getSharedPrep({
   format,
   task,
@@ -52,10 +51,6 @@ export function toSpeakingTaskView({
   };
 }
 
-/**
- * A goal's paper as its page lists it: each task with the criteria it's rated on and the learner's
- * last finished try (`lastTries`, by task key).
- */
 export function toSpeakingPaperView({
   access,
   format,
@@ -87,7 +82,6 @@ export function toSpeakingPaperView({
   };
 }
 
-/** A criterion as a task shows it, with the points its line on the mark sheet gives each band. */
 function toCriterionView({
   criterion,
   format,
@@ -115,7 +109,6 @@ function toCriterionView({
   };
 }
 
-/** An exam task's call as its screen shows it; null when its paper or task no longer exists. */
 export function toExamTaskView({
   sectionId,
   snapshot,

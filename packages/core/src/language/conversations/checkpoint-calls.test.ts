@@ -43,10 +43,6 @@ const PROVENANCE = {
 
 const B1_SCENARIO = { ...RENTING_SCENARIO, title: "Negociar o aluguel" };
 
-/**
- * Marcos's language goal with the renting unit's boss reached today: a checkpoint block of today's
- * session closes it. `speaking` sets his speaking level; the renting unit's call is written at A2.
- */
 async function reachedCheckpointFixture({ speaking }: { speaking: number }) {
   const setup = await languageGoalFixture();
   const { checkpoints, goal, items, user } = setup;
@@ -62,7 +58,6 @@ async function reachedCheckpointFixture({ speaking }: { speaking: number }) {
 
   const [session] = await Promise.all([
     studySessionFixture({ goalId: goal.id, userId: user.id }),
-    // The arriving unit is done, its call too, so the renting unit's is the next.
     prisma.planItem.updateMany({
       data: { status: "done" },
       where: { id: { in: [...items.slice(0, 2).map((item) => item.id), arrived.id] } },
@@ -334,7 +329,6 @@ describe("language checkpoint calls", () => {
   it("says a pending checkpoint opened past today's study time can't start today, as its Start does", async () => {
     const { block, user } = await reachedCheckpointFixture({ speaking: 1 });
 
-    // Without a limit the intro reads no day's progress; the limit comes with the learner's profile.
     const unlimited = await countDatabaseStatements(() => openLanguageCheckpointCall(block.id));
     expect(unlimited.result).toMatchObject({ dailyLimitReached: false, status: "notStarted" });
 
@@ -364,7 +358,6 @@ describe("language checkpoint calls", () => {
       prisma.languageConversation.count({ where: { studyBlockId: block.id } }),
     ).resolves.toBe(0);
 
-    // A started block goes on past the limit, as its Start resumes it.
     await prisma.studySessionBlock.update({ data: { status: "active" }, where: { id: block.id } });
 
     await expect(openLanguageCheckpointCall(block.id)).resolves.toMatchObject({
@@ -477,7 +470,6 @@ describe("language checkpoint calls", () => {
   });
 });
 
-/** Marcos's goal with the renting unit's boss ahead: its lessons aren't done, so it's upcoming. */
 async function upcomingCallFixture({ speaking }: { speaking: number }) {
   const setup = await languageGoalFixture();
   const { checkpoints, user } = setup;
@@ -521,7 +513,6 @@ describe("a language checkpoint's challenge intro", () => {
     const { boss } = await upcomingCallFixture({ speaking: 1 });
     const intro = await introOf(boss.id);
 
-    // The renting unit's call is written at A2: a minute of talk and three goals, all three to win.
     expect(intro).toMatchObject({
       call: {
         goals: RENTING_SCENARIO.objectives,
@@ -547,7 +538,6 @@ describe("a language checkpoint's challenge intro", () => {
       startLanguageConversation({ blockId: block.id, kind: "checkpoint" }),
     ).resolves.toMatchObject({ status: "ready" });
 
-    // A placement test since then puts the learner at B1, where the unit's call isn't written.
     await prisma.languageSkillLevel.updateMany({
       data: { score: 2 },
       where: { skill: "speaking", userId: user.id },

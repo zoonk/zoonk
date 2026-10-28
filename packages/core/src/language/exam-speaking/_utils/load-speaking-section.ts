@@ -33,16 +33,11 @@ function toGrade({ row, task }: { row: SectionRow; task: string }): SpeakingTask
     : [];
 }
 
-/** A task answered by typing: its grade leaves out what only the voice shows. */
 function isTyped(row: SectionRow): boolean {
   const feedback = examSpeakingFeedbackSchema.safeParse(row.feedback);
   return feedback.success && !feedback.data.heard;
 }
 
-/**
- * A learner's speaking section: its paper, each task's call in the paper's order, and the paper's
- * estimated points once every task is graded. Null when the section isn't theirs.
- */
 export async function loadSpeakingSection({
   sectionId,
   userId,

@@ -7,16 +7,6 @@ import {
 } from "../speaking-format";
 import { GOETHE_TASKS } from "./goethe-tasks";
 
-/**
- * The Goethe-Zertifikat's "Sprechen" mark sheets ("Sprechen – Bewertung" in each Modellsatz): from
- * A2 every criterion has five bands, A the best to E, worth 100, 75, 50, 25 and 0% of its line
- * (A2's Aussprache 5, 3.5, 2, 0.5 and 0), and only those values may be given. A1 gives each part
- * full, half or no points. The scales judge pronunciation by whether deviations impair
- * understanding; C2's also names strong native-language influence, which this estimate doesn't
- * apply: it grades intelligibility only. B1 to C2 are passed from 60 of 100, A2 needs 15 of 25 in
- * speaking, and A1's speaking counts toward 60 of 100 overall with no minimum of its own.
- */
-
 const LETTER_BANDS = 4;
 const A1_BANDS = 2;
 
@@ -42,7 +32,6 @@ const PRONUNCIATION = criterion({
   sound: true,
 });
 
-/** Each part's lines with their maximum, then the lines rated once for the whole paper. */
 function sheetRows({
   paper = {},
   parts,
@@ -84,6 +73,7 @@ function goetheFormat(
   return { ...format, exam: "goethe", paper: PAPER, tasks: GOETHE_TASKS[format.level] };
 }
 
+/** Goethe permits only the mark sheet's fixed band values; A1 uses full, half or no credit. */
 export const GOETHE_FORMATS: readonly SpeakingFormat[] = [
   goetheFormat({
     criteria: [
@@ -239,7 +229,6 @@ export const GOETHE_FORMATS: readonly SpeakingFormat[] = [
     pass: MODULE_PASS,
     prepMinutes: 15,
     prepTasks: ["t1", "t2"],
-    // Each line is worth 4 points and the 40 are multiplied by 2.5.
     rows: sheetRows({
       parts: {
         t1: { coherence: 10, grammar: 10, pronunciation: 10, taskCompletion: 10, vocabulary: 10 },

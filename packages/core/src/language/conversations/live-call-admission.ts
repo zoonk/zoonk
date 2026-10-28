@@ -12,14 +12,8 @@ import {
 
 const ADMIN_CONNECTIONS = 100;
 
-/** A hangup takes a second; a connection open this long past its deadline isn't ending. */
 const OVERDUE_AFTER_MS = 60_000;
 
-/**
- * Admission (Off, Staff or All), the free day's budget and whether the OpenAI key is set, with the
- * connections still open, oldest deadline first: their cost so far by the clock, and `overdue`
- * when one is past its deadline by more than a minute, which shows a hangup failing.
- */
 export async function getLiveCallAdmission() {
   const access = await getAdminAccess();
 

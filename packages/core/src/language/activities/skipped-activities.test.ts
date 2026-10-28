@@ -11,7 +11,6 @@ import { parsePlanSettings } from "../../plans/planner/plan-state";
 
 const TIME_ZONE = "UTC";
 
-/** A written English lesson for a Portuguese speaker with a plan for English. */
 async function languageLessonSetup() {
   const setup = await setupPlayableLesson({ steps: ["explanation", "typedAnswer", "summary"] });
 

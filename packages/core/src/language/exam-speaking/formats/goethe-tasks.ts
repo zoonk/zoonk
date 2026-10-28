@@ -1,14 +1,6 @@
 import { type CefrLevel } from "@zoonk/utils/cefr";
 import { type SpeakingTaskFormat, speakingTask } from "../speaking-format";
 
-/**
- * The Goethe-Zertifikat's "Sprechen" parts by level, from the Durchführungsbestimmungen (Stand 1
- * September 2025) and the current Modellsätze (goethe.de; round7/speaking/formats.md has the
- * quotes). Most parts are paired: the AI plays the other candidate there, as an examiner does in an
- * individual exam. Times are each candidate's share where the regulations give a pair's or a
- * group's.
- */
-
 const A1: SpeakingTaskFormat[] = [
   speakingTask({
     brief:
@@ -198,6 +190,7 @@ const C2: SpeakingTaskFormat[] = [
   }),
 ];
 
+/** Goethe paired-task timings are each candidate's share of the official pair or group time. */
 export const GOETHE_TASKS: Readonly<Record<CefrLevel, readonly SpeakingTaskFormat[]>> = {
   A1,
   A2,

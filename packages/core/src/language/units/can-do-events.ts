@@ -8,7 +8,6 @@ import { type LanguageUnit, isUnitFinished, loadLanguageUnits } from "./language
 
 type UnitGoal = Pick<Goal, "id">;
 
-/** Units whose call the learner won, from their finished calls; `exceptId` leaves one call out. */
 async function loadWonCallUnitIds({
   chapterIds,
   exceptId,
@@ -39,10 +38,6 @@ async function loadWonCallUnitIds({
   );
 }
 
-/**
- * Units the learner can already do: every lesson done, or a call for the unit won. A real
- * situation handled out loud counts as much as the lessons.
- */
 export async function loadDoneUnitIds({
   units,
   userId,
@@ -68,7 +63,6 @@ function toCanDoEvent(unit: LanguageUnit): AnalyticsEvent {
   };
 }
 
-/** The unit a won call closes before its lessons did, and no earlier call won. */
 async function findUnitReachedByCall({
   chapterId,
   conversationId,
@@ -96,7 +90,6 @@ async function findUnitReachedByCall({
   return won.has(chapterId) ? null : unit;
 }
 
-/** The unit a lesson just checked off finished, unless a won call reached its checks first. */
 async function findUnitReachedByLesson({
   goal,
   lessonId,
@@ -117,10 +110,6 @@ async function findUnitReachedByLesson({
   return won.has(unit.chapterId) ? null : unit;
 }
 
-/**
- * "Can-do Reached" for each language goal whose unit the lesson just checked off completed. Called
- * once per lesson item that moved from todo to done, so a unit is reached once.
- */
 export async function trackLessonCanDos({
   goals,
   lessonId,
@@ -141,7 +130,6 @@ export async function trackLessonCanDos({
   );
 }
 
-/** "Can-do Reached" when a won checkpoint call is what reaches its unit's "I can" checks. */
 export async function trackCallCanDos({
   chapterId,
   conversationId,

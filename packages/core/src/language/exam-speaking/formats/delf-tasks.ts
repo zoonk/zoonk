@@ -1,12 +1,6 @@
 import { type CefrLevel } from "@zoonk/utils/cefr";
 import { type SpeakingTaskFormat, speakingTask } from "../speaking-format";
 
-/**
- * DELF and DALF's individual speaking parts by level, from the July 2026 "Manuel du candidat", the
- * official sample papers and the level pages (france-education-international.fr, checked 10 Oct
- * 2026; round7/speaking/formats.md has the quotes). The parts run back to back in the exam.
- */
-
 const SILENT_JURY = "The examiner does not intervene.";
 
 const A1: SpeakingTaskFormat[] = [
@@ -211,6 +205,7 @@ const C2: SpeakingTaskFormat[] = [
   }),
 ];
 
+/** DELF/DALF parts run consecutively; source: https://www.france-education-international.fr/diplome/delf-tout-public. */
 export const DELF_TASKS: Readonly<Record<CefrLevel, readonly SpeakingTaskFormat[]>> = {
   A1,
   A2,

@@ -7,28 +7,21 @@ import {
   type LevelTestQuestion,
 } from "./level-test-contract";
 
-/** What the rules read of the test so far: which option each answer chose, and the sentence. */
 type TestAnswers = {
   answers: readonly Pick<LevelTestProgress["answers"][number], "answerIndex" | "id">[];
   speaking: LevelTestProgress["speaking"];
 };
 
-/** Three questions a skill, alternating reading and listening, then one sentence out loud. */
 const QUESTIONS_PER_SKILL = 3;
 const QUESTION_SKILLS = ["reading", "listening"] as const;
 export const LEVEL_TEST_TOTAL = QUESTIONS_PER_SKILL * QUESTION_SKILLS.length + 1;
 
-/** Four options: a guess is right a quarter of the time. */
 const GUESS_CHANCE = 0.25;
-/** How sharply a question separates learners below and above its level. */
 const SLOPE = 2.5;
-/** A learner at a question's level gets it right most of the time. */
 const AT_LEVEL_OFFSET = 0.5;
-/** How far from the level they gave a learner may turn out to be. */
 const PRIOR_SPREAD = 1.5;
 const HALF_STEP = 0.5;
 
-/** A1 to C1+ in half steps: the test doesn't place C2. */
 const GRID_POINTS = 10;
 const GRID = Array.from({ length: GRID_POINTS }, (_, index) => index * HALF_STEP);
 const HIGHEST_BAND = 4;
@@ -38,10 +31,6 @@ const SPOKEN_MOSTLY = 0.6;
 
 type QuestionSkill = (typeof QUESTION_SKILLS)[number];
 
-/**
- * The levels the test gives, in half steps: speaking only once a sentence was said out loud, and
- * never writing, which no question of the test asks.
- */
 export type LevelTestScores = Record<QuestionSkill, number> & { speaking?: number };
 
 function getBand(level: CefrLevel): number {
@@ -56,7 +45,6 @@ function knows(theta: number, band: number): number {
   return logistic(SLOPE * (theta - band + AT_LEVEL_OFFSET));
 }
 
-/** How likely an answer is for a learner at `theta`: guesses help, "I don't know" doesn't. */
 function getLikelihood({
   band,
   correct,
@@ -84,9 +72,7 @@ function getPosterior({ answers, start }: { answers: ScoredAnswer[]; start: numb
   });
 }
 
-/** The expected level after the answers, starting near the level the learner gave. */
 function estimateSkillScore({ answers, start }: { answers: ScoredAnswer[]; start: number }) {
-  // Without answers the level stays where the learner put it.
   if (answers.length === 0) {
     return start;
   }
@@ -96,10 +82,6 @@ function estimateSkillScore({ answers, start }: { answers: ScoredAnswer[]; start
   return GRID.reduce((sum, theta, index) => sum + theta * (weights[index] ?? 0), 0) / total;
 }
 
-/**
- * The band the next question aims at: the single most likely level, rounded up after a right
- * answer and down after a wrong one, so the test climbs or steps back like a staircase.
- */
 function getTargetBand({ answers, start }: { answers: ScoredAnswer[]; start: number }) {
   const weights = getPosterior({ answers, start });
   const likely = GRID[weights.indexOf(Math.max(...weights))] ?? start;
@@ -149,7 +131,6 @@ function getSkillScore({
   return estimateSkillScore({ answers: scoreAnswers({ bank, progress, skill }), start });
 }
 
-/** The next question for a skill: the unused one closest to where the learner seems to be. */
 function pickQuestion({
   bank,
   progress,
@@ -179,7 +160,6 @@ export type LevelTestStep =
   | { kind: "question"; question: LevelTestQuestion }
   | { kind: "speaking"; speaking: LevelTestBank["speaking"][number] };
 
-/** The sentence to say: at the lower of the reading and listening levels, as a band. */
 function pickSentence({
   bank,
   scores,
@@ -191,10 +171,6 @@ function pickSentence({
   return bank.speaking.find((item) => getBand(item.level) === band) ?? bank.speaking[0] ?? null;
 }
 
-/**
- * What the test asks next: reading and listening take turns until each had its questions, each
- * question chosen near the learner's estimated level, then one sentence out loud, then it's done.
- */
 export function getNextLevelTestStep({
   bank,
   progress,
@@ -253,12 +229,6 @@ function getSpeakingScore(progress: TestAnswers): number | null {
   return score >= SPOKEN_MOSTLY ? band : band - HALF_STEP;
 }
 
-/**
- * Levels from the answers so far, in half steps. Speaking comes only from the sentence said out
- * loud: a learner who skips it gets no speaking level until they speak in lessons. Writing, which
- * three minutes can't test, gets none: it shows once lessons' typed answers give it one, starting
- * from the goal's level. Activity refines every one of them from then on.
- */
 export function getLevelTestScores({
   bank,
   progress,
@@ -277,7 +247,6 @@ export function getLevelTestScores({
   return speaking === null ? scores : { ...scores, speaking: clampCefrScore(speaking) };
 }
 
-/** Each skill the test gives a level, in the usual order, with the label learners see. */
 export function listLevelTestLevels(
   scores: LevelTestScores,
 ): { label: string; score: number; skill: LanguageSkill }[] {
@@ -289,12 +258,10 @@ export function listLevelTestLevels(
   });
 }
 
-/** The labels the goal keeps as the learner's levels ("B1", "A2+"). */
 export function toLevelLabels(scores: LevelTestScores): Partial<Record<LanguageSkill, string>> {
   return Object.fromEntries(listLevelTestLevels(scores).map((level) => [level.skill, level.label]));
 }
 
-/** One overall level for the goal: the middle of the skills the test gave a level. */
 export function getOverallScore(scores: LevelTestScores): number {
   const values = listLevelTestLevels(scores).map((level) => level.score);
   return clampCefrScore(values.reduce((sum, value) => sum + value, 0) / values.length);

@@ -92,7 +92,6 @@ describe(schedulePronunciationReviews, () => {
     );
 
     expect(reviews).toHaveLength(2);
-    // Both words land on the learner's review list in one change.
   });
 });
 
@@ -114,7 +113,6 @@ describe("pronunciation review writes", () => {
     try {
       const [first] = await schedule();
 
-      // Same rung, same day back and same language: the review list doesn't change.
       await expect(schedule()).resolves.toStrictEqual([first]);
     } finally {
       vi.useRealTimers();
@@ -244,7 +242,6 @@ describe(answerPronunciationReview, () => {
       isCorrect: true,
       targetLanguage: "en",
     });
-    // The help it used, the answer and the word's new rung each commit one change.
   });
 
   it("starts the word over when it still sounds different", async () => {
@@ -270,7 +267,6 @@ describe(answerPronunciationReview, () => {
       prisma.pronunciationReview.findUniqueOrThrow({ where: { id: review.id } }),
     ).resolves.toMatchObject({ stage: 0 });
 
-    // A miss isn't a mistake for the notebook: the word already comes back as a review.
     await expect(prisma.mistake.count({ where: { userId: user.id } })).resolves.toBe(0);
   });
 
@@ -361,8 +357,6 @@ describe(finishPronunciationRound, () => {
     expect(finished).toStrictEqual(again);
     expect(finished).toMatchObject({ result: { correct: 1, total: 2 }, status: "ready" });
 
-    // The round counts once: its double submit finds the first one's row and changes nothing.
-
     const events = await prisma.learningEvent.findMany({ where: { userId: user.id } });
 
     expect(events).toHaveLength(1);
@@ -388,7 +382,6 @@ describe(finishPronunciationRound, () => {
     const review = await pronunciationReviewFixture({ userId: user.id, wordId: word.id });
     const roundId = crypto.randomUUID();
 
-    // Just short of the yellow belt and of 80% Energy.
     await prisma.userProgress.upsert({
       create: {
         currentEnergy: 79.95,

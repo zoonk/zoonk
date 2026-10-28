@@ -10,7 +10,6 @@ type SpeakingPaperResult =
   | Exclude<LanguageViewGoalResult, { status: "ready" }>
   | { goalId: string; paper: SpeakingPaperView | null; status: "ready" };
 
-/** The learner's speaking tasks and past tries, retaining the paper's Plus and call admission. */
 export async function getSpeakingPaper(
   input: { goalId?: string } = {},
 ): Promise<SpeakingPaperResult> {

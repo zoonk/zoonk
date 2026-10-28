@@ -29,10 +29,6 @@ export type SavedScenario = ConversationScenario & {
   examTask: ExamTaskSnapshot | null;
 };
 
-/**
- * The scenario saved with a call. A speaking mock's also names the exam it follows, and an exam
- * task's its paper, task and card. Null when it doesn't parse.
- */
 export function readSavedScenario(
   row: Pick<LanguageConversation, "kind" | "scenario">,
 ): SavedScenario | null {
@@ -50,7 +46,6 @@ export function readSavedScenario(
   return scenario.success ? { ...scenario.data, exam: null, examTask: null } : null;
 }
 
-/** Whom the voice model plays: an exam task's examiner or partner, a mock's examiner, or a role. */
 function toLiveRole(data: SavedScenario) {
   if (data.examTask) {
     const format = getSpeakingFormat(data.examTask);
@@ -72,7 +67,6 @@ function toLiveRole(data: SavedScenario) {
   return data.exam ? { exam: data.exam, kind: "speakingMock" as const } : { kind: "unit" as const };
 }
 
-/** A checkpoint call pays the boss bonus; the block's own kind tells a final boss apart. */
 export function getCheckpointOutcome({
   bossKind,
   row,
@@ -122,10 +116,6 @@ function toResult({
   };
 }
 
-/**
- * What the voice model is told for a call that can still be made; null once it ended or when its
- * scenario can't be read. Only the server reads it, when it creates the session.
- */
 export function buildConversationInstructions(row: ConversationRow): string | null {
   const data = readSavedScenario(row);
   const role = data ? toLiveRole(data) : null;
@@ -144,10 +134,6 @@ export function buildConversationInstructions(row: ConversationRow): string | nu
   });
 }
 
-/**
- * What a call screen shows: the character, the goals of the call with the ones met, hints, and
- * once it ends, the result with the feedback.
- */
 export function toConversationView({
   bossKind = "boss",
   row,

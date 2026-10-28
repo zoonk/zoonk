@@ -37,7 +37,6 @@ const liveCallAdminConnectionSchema = z
   })
   .meta({ id: "LiveCallAdminConnection" });
 
-/** JSON transport: the API serializes Date values before validation/response, Admin parses here. */
 export const liveCallAdmissionResponseSchema = z
   .object({
     connections: z.array(liveCallAdminConnectionSchema),

@@ -17,7 +17,6 @@ import { getConversationBrainPower } from "../conversation-rules";
 import { type WrittenFeedback } from "./conversation-feedback";
 import { type ConversationRow, getCheckpointOutcome } from "./conversation-view";
 
-/** The ledger row of each kind of call; a speaking mock and an exam's speaking task count as mocks. */
 const LEDGER_KINDS = {
   checkpoint: "checkpoint",
   examSpeaking: "mock",
@@ -34,7 +33,6 @@ type ConversationSettlement = {
   objectivesMet: string[];
   row: ConversationRow;
   spokenSeconds: number;
-  /** The review run that claimed the call: only it settles it. */
   reviewRunId: string;
   timeZone: string;
   usedHelp: boolean;
@@ -67,13 +65,7 @@ function readPlanItemId(payload: unknown): string | null {
   return typeof planItemId === "string" ? planItemId : null;
 }
 
-/**
- * Writes a finished call once: its feedback (the transcript itself isn't kept), Brain Power and
- * Energy with today's totals, the ledger row and, for a checkpoint call, its session block and
- * plan item. A won checkpoint checks the unit's checkpoint off; a lost one costs nothing. Returns
- * the Brain Power and Energy before and after it, or null when the call was already finished, so
- * a second tab never counts it twice.
- */
+/** Settles once; returns no progress when another request already completed the call. */
 export async function settleConversation(
   input: ConversationSettlement,
 ): Promise<{ brainPower: ProgressChange; energy: ProgressChange } | null> {

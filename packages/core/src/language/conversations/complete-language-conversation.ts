@@ -19,7 +19,6 @@ import {
 import { type OwnedConversation, findOwnedConversation } from "./get-language-conversation";
 import { prepareSpeakingMock } from "./prepare-language-calls";
 
-/** A call can run a little past its length while the character says goodbye. */
 const OVERTIME_SECONDS = 60;
 const SECONDS_PER_MINUTE = 60;
 
@@ -39,21 +38,13 @@ export type CompleteLanguageConversationResult =
         | "takenOver";
     };
 
-/** The durable runs that review completed calls: the API's Workflow runs. */
 export type ConversationReviewRuns = {
-  /** Whether the run ended without an outcome, so a new one may replace its claim. */
   failed: (runId: string) => Promise<boolean>;
-  /** The run's outcome once it ends; rejects when the run failed. */
+  /** Rejects when the review run failed. */
   outcome: (runId: string) => Promise<ConversationReviewOutcome>;
-  /** Starts a run and returns its id. */
   start: (input: ConversationReviewInput) => Promise<string>;
 };
 
-/**
- * What the call ran: the learner's spoken time, capped at the call's length, and the turns to
- * review. A call that never connected held no call time, so nobody spoke in it: whatever turns a
- * client sends get no review, which would be model calls for a call that never happened.
- */
 function readCallRun({
   input,
   row,
@@ -74,11 +65,6 @@ function readCallRun({
   };
 }
 
-/**
- * What a finished call starts afterwards, once the learner has the result: a speaking mock that
- * was really taken gets the next one written ahead, at the level the call left, and a won
- * checkpoint records the unit's can-dos.
- */
 function startFollowUps({
   connected,
   owned,
@@ -101,10 +87,6 @@ function startFollowUps({
   }
 }
 
-/**
- * The run reviewing this call: the one already claiming it, unless it failed, which a new run with
- * this request's transcript replaces. `started` is the run this request started, if any.
- */
 async function findReviewRun({
   input,
   reviewRunId,
@@ -122,7 +104,6 @@ async function findReviewRun({
   return { runId, started: true };
 }
 
-/** A run that found another run's claim waits for that one instead. */
 async function waitForReview({
   runId,
   runs,
@@ -137,16 +118,6 @@ async function waitForReview({
     : { outcome, runId };
 }
 
-/**
- * Ends a live call with what the app heard: the transcript, whether Help was used, and the time
- * spoken. A durable run reviews it (`ConversationReviewRuns`): it claims the call, so no new
- * connection starts, hangs it up, has a separate text model read the transcript (the goals met and
- * the feedback; the transcript isn't stored) and settles the call: Brain Power, today's progress
- * and, as a language goal's checkpoint, the unit when won. A review that keeps failing completes
- * the call without feedback; a run that fails anyway answers `retryable`, and trying again starts
- * a new run with the transcript sent again. Its end says what it did to the day's missions. Ending
- * it again returns the same result. A call that never connected ends without a review.
- */
 export async function completeLanguageConversation({
   conversationId,
   input,
@@ -205,7 +176,6 @@ export async function completeLanguageConversation({
     return { status: outcome.status };
   }
 
-  // Only the request whose run settled the call starts what follows it.
   if (started && reviewed.data.runId === runId && outcome.progress) {
     startFollowUps({ connected, owned, userId, won: outcome.won });
   }

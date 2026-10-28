@@ -12,11 +12,8 @@ import { toProvenanceData } from "../../library/_utils/library-rows";
 import { readMistakeSnapshot } from "../../mistakes/mistake-snapshot";
 import { findLearnerLanguageGoal } from "../_utils/language-goal";
 
-/** Mistakes a check reads at most, newest first. */
 const MAX_MISTAKES = 20;
-/** A pattern needs a few new mistakes to look at; a check runs at every few new ones. */
 const MISTAKES_PER_CHECK = 3;
-/** Only recent mistakes: a pattern from months ago says little about today. */
 const RECENT_DAYS = 14;
 
 async function loadNewMistakes({ language, userId }: { language: string; userId: string }) {
@@ -52,7 +49,6 @@ async function loadNewMistakes({ language, userId }: { language: string; userId:
 async function checkForPattern({ language, userId }: { language: string; userId: string }) {
   const { count, mistakes } = await loadNewMistakes({ language, userId });
 
-  // Every third new mistake, so a learner is checked at most once per few mistakes.
   if (count < MISTAKES_PER_CHECK || count % MISTAKES_PER_CHECK !== 0) {
     return;
   }
@@ -104,7 +100,6 @@ async function checkForPattern({ language, userId }: { language: string; userId:
 
   await writeLearnerChange({ userId }, (tx) => tx.mistakePattern.create({ data: pattern }));
 
-  // Today shows the new pattern.
   revalidateCacheTags([getUserProgressCacheTag(userId)]);
 
   await trackLearnerEvents({
@@ -119,11 +114,6 @@ async function checkForPattern({ language, userId }: { language: string; userId:
   });
 }
 
-/**
- * After a wrong answer in a language lesson, looks for a pattern in the learner's recent mistakes
- * ("since" where English needs "for") once there are a few new ones, after the response. It may
- * also find they were only typos, which the card says kindly. Nothing is shown when there's none.
- */
 export function scheduleMistakePatternCheck({
   language,
   userId,

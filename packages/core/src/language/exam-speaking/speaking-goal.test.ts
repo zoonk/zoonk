@@ -153,7 +153,6 @@ describe(getSpeakingExamGoal, () => {
   });
 
   it("practices a language goal with no target at the learner's own level, without reading levels into its words", () => {
-    // "i think i'm A2" is where the learner was at onboarding; the speaking level is where they are now.
     expect(
       getSpeakingExamGoal({
         fallbackLevel: "B1",
@@ -217,7 +216,6 @@ describe(getSpeakingExamGoal, () => {
       }),
     ).toStrictEqual({ exam: "dele", level: "B1" });
 
-    // Cambridge has no A1 exam.
     expect(
       getSpeakingExamGoal({
         fallbackLevel: "A1",

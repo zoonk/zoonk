@@ -8,11 +8,6 @@ export type SpeakingSectionResult =
   | { section: SpeakingSectionView; status: "ready" }
   | { status: "notFound" | "unauthorized" };
 
-/**
- * One of the learner's speaking sections: each task's call and whether it's done, and the paper's
- * estimated points on its own total once every task is graded, with the paper's official rule.
- * Another learner's section is "not found".
- */
 export async function getSpeakingSection(sectionId: string): Promise<SpeakingSectionResult> {
   const session = await getSession();
 

@@ -7,18 +7,6 @@ import {
 } from "../speaking-format";
 import { DELE_TASKS } from "./dele-tasks";
 
-/**
- * DELE's "Prueba de expresión e interacción orales" (C1 and C2 since 2024: "Expresión, mediación e
- * interacción orales"), from the level pages, the "Guía del examen" and the Modelo 0 of each level
- * (examenes.cervantes.es, checked 10 Oct 2026). Two examiners: the interviewer talks with the
- * candidate and gives one holistic band for the whole paper (40%), the rater stays silent and gives
- * each task its bands (60%). Every scale runs 0 to 3, and band 2 is the level (the guide says the
- * band worth 2 points is equivalent to the level's description). Points are the weighted band
- * times 25 over 3 (33.34 at C2). A1 to C1 pass with 30 of 50 in the group of listening and speaking;
- * C2 needs 20 of 33.34 in the oral itself. Pronunciation is part of "Uso de la lengua" (A1, A2) and
- * "Fluidez" (B1 to C2), judged by how easily it's understood: a foreign accent is fine at band 2.
- */
-
 const MAX_BAND = 3;
 const LEVEL_BAND = 2;
 const RATER_SHARE = 0.6;
@@ -36,7 +24,6 @@ const criterion = speakingCriteria({
   scope: "task",
 });
 
-/** The rater's task bands (each task and criterion its share of 60%) and the interviewer's 40%. */
 function deleRows({
   criteria,
   holistic,
@@ -70,7 +57,6 @@ function deleRows({
 }
 
 const BASIC_CRITERIA = [
-  // Words and how easily they're understood: typed replies still show the words.
   criterion({ key: "languageUse", name: "Uso de la lengua", sound: true, voiceOnly: false }),
   criterion({ key: "taskCompletion", name: "Cumplimiento de la tarea" }),
   criterion({ key: "interviewer", name: "Escala del interviewer", scope: "test" }),
@@ -100,7 +86,6 @@ const ADVANCED_CRITERIA = [
 
 const ADVANCED_SHARES = { accuracy: 0.22, fluency: 0.22, range: 0.22, taskCompletion: 0.34 };
 
-/** C1 and C2 weigh their three tasks the same. */
 const THIRD = 1 / 3;
 
 function source(level: CefrLevel): string {
@@ -160,7 +145,6 @@ export const DELE_FORMATS: readonly SpeakingFormat[] = [
     pass: GROUP_PASS,
     prepMinutes: 15,
     prepTasks: ["t1", "t2"],
-    // Tasks 1 and 2 share one band and Tasks 3 and 4 another, half each: a quarter per task.
     rows: deleRows({
       criteria: INTERMEDIATE_SHARES,
       holistic: "holistic",

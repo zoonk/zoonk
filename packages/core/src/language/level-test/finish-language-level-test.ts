@@ -26,7 +26,6 @@ export type FinishLanguageLevelTestResult =
   | { levels: { label: string; score: number; skill: LanguageSkill }[]; status: "ready" }
   | { status: "notFound" | "notLanguage" | "notReady" | "unauthorized" };
 
-/** Whether a skill starts at the test's level, with nothing lessons showed since. */
 function isFreshStart({ row, score }: { row?: LanguageSkillLevel; score: number }) {
   return (
     row?.score === score &&
@@ -37,13 +36,6 @@ function isFreshStart({ row, score }: { row?: LanguageSkillLevel; score: number 
   );
 }
 
-/**
- * The test's levels become where each skill starts: a new result starts them over, in the
- * transaction that settles it, so no finish ever saves them apart from their result. A skill the
- * test gave no level (speaking, when the sentence was skipped) keeps what lessons showed, or starts
- * from the goal's level once the learner speaks. Linking and lessons lock the learner before these
- * rows too, so they wait behind this finish's mark.
- */
 async function saveSkillLevels(
   transaction: TransactionClient,
   { language, scores, userId }: { language: string; scores: LevelTestScores; userId: string },
@@ -70,11 +62,6 @@ async function saveSkillLevels(
   );
 }
 
-/**
- * The test's answers not counted yet, as the learner's study time: their answering time, how many
- * they got right, in Activity and Statistics like a chapter's test-out. Ending the test again
- * counts only what they answered since.
- */
 async function recordTestActivity({
   bank,
   goalId,
@@ -116,16 +103,7 @@ async function recordTestActivity({
   });
 }
 
-/**
- * Ends the level test whenever the learner wants: the answers so far set a level for reading and
- * listening, for speaking only when the learner said the sentence out loud (writing waits for
- * lessons' typed answers), and one
- * for the goal, which the plan and every call use: the plan's units below it are tested out.
- * Activity keeps refining them. The time it took counts as study time. Finishing the same test
- * again (a retry, a double tap) changes nothing and returns the same levels, and finishes what a
- * finish that stopped partway left; answering more after a finish and finishing again sets the
- * levels from all the answers.
- */
+/** Retrying the same answers preserves levels and completes any unfinished placement. */
 export async function finishLanguageLevelTest(
   goalId: string,
 ): Promise<FinishLanguageLevelTestResult> {
@@ -188,7 +166,6 @@ export async function finishLanguageLevelTest(
         userId,
       });
 
-      // A new result is placed anew; what an earlier one left unannounced is announced with it.
       const placement = {
         pastBasicsAreas: [],
         unannounced: [],
@@ -215,11 +192,8 @@ export async function finishLanguageLevelTest(
     revalidateCacheTags([getGoalsCacheTag(userId), getUserProgressCacheTag(userId)]);
   }
 
-  // The plan starts at the level: units of a band below it are tested out with an undo. A plan
-  // built after the test gets the same once it exists (`applyPlacementToNewPlan`).
   const placing = await placeLevelTestResult({ goalId: goal.id, timeZone, userId });
 
-  // Once a result: the finish that places it tells, even a retry of one that failed partway.
   if (placing?.placedNow) {
     await trackLearnerEvents({
       events: [
