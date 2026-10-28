@@ -20,7 +20,10 @@ const SHOWN_STREAK = 3;
 
 type SummaryBelt = NonNullable<StudySessionSummary["belt"]>;
 
-/** The bonus is once a day across goals, so another goal's earning it never says this goal's missions are done. */
+/**
+ * The bonus is once a day across goals, so another goal's earning it never says this goal's
+ * missions are done.
+ */
 function hasMissionsDone(summary: StudySessionSummary): boolean {
   return summary.fullMeal && isFullMeal(summary.missions);
 }

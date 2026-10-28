@@ -23,7 +23,9 @@ export type RowFold = { hidden: boolean; phone: boolean; wide: boolean };
 
 const NO_FOLD: RowFold = { hidden: false, phone: false, wide: false };
 
-/** Its `::after` stretches over the whole row, so the row is one target with its focus ring there. */
+/**
+ * Its `::after` stretches over the whole row, so the row is one target with its focus ring there.
+ */
 const ROW_OPEN_CLASS =
   "flex min-w-0 text-left outline-none after:absolute after:top-1/2 after:h-full after:min-h-11 after:-translate-y-1/2 after:rounded-[0.625rem] focus-visible:after:ring-[3px] focus-visible:after:ring-ring/50 disabled:cursor-default";
 
@@ -208,7 +210,10 @@ export function useCountsTowardMission() {
     );
 }
 
-/** A finished row shows no minutes: they were the plan's estimate, and "✓ Reviews 8 min" above "2 min studied" read as time studied. */
+/**
+ * A finished row shows no minutes: they were the plan's estimate, and "✓ Reviews 8 min" above "2
+ * min studied" read as time studied.
+ */
 export function BlockRow({
   block,
   fold = NO_FOLD,
@@ -313,7 +318,10 @@ export function PlanLessonRow({
   );
 }
 
-/** Not part of the session: never the next block, no mission mark, and the day's segments, time and action leave it out. */
+/**
+ * Not part of the session: never the next block, no mission mark, and the day's segments, time and
+ * action leave it out.
+ */
 export function PlusLessonRow({ fold = NO_FOLD, title }: { fold?: RowFold; title: string }) {
   const { actions } = useTodayScreen();
 

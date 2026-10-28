@@ -89,7 +89,9 @@ function WaitingStatus({ className }: { className?: string }) {
   );
 }
 
-/** Never a rest day or "nothing new" past the goal's date: the lessons left are still the plan's. */
+/**
+ * Never a rest day or "nothing new" past the goal's date: the lessons left are still the plan's.
+ */
 function PastDateStatus({ className, lessons }: { className?: string; lessons: number }) {
   const t = useExtracted();
   const pastDateText = usePastDateText();
@@ -105,7 +107,10 @@ function PastDateStatus({ className, lessons }: { className?: string; lessons: n
   );
 }
 
-/** "See you tomorrow!" only when tomorrow is a study day; else the plan's next day by name, or the next session. */
+/**
+ * "See you tomorrow!" only when tomorrow is a study day; else the plan's next day by name, or the
+ * next session.
+ */
 function SeeYouClause() {
   const t = useExtracted();
   const format = useFormatter();

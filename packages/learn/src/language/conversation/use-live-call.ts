@@ -135,7 +135,10 @@ function useCallProblem({
   return { error: shown?.error ?? null, fail, limit: shown?.limit ?? null };
 }
 
-/** `release` resolves true once OpenAI confirmed the session is over; only then does the browser drop its peer. */
+/**
+ * `release` resolves true once OpenAI confirmed the session is over; only then does the browser
+ * drop its peer.
+ */
 function useCallEnding({
   endConnection,
   sessionRef,
@@ -308,7 +311,8 @@ export function useLiveCall({
 
       sessionRef.current = created;
       setSession(created);
-      // Failures come through the session's state (`watchConnection`); connect only rejects when called twice.
+      // Failures come through the session's state (`watchConnection`); connect only rejects when
+      // called twice.
       void created.connect({ stream: audio.stream }).catch(() => null);
     },
     [endedByServer, fail, handleEvent, hangUp, keepAudio, phaseRef, reserve, setPhase, tappedAudio],
@@ -319,8 +323,8 @@ export function useLiveCall({
   // Leaving ends the call; a screen kept hidden in an Activity shows it dropped when it's back.
   useEffect(
     () => () => {
-      // Cancels a start still waiting; Strict Mode's first setup and cleanup run before any start, so they
-      // cancel nothing.
+      // Cancels a start still waiting; Strict Mode's first setup and cleanup run before any start,
+      // so they cancel nothing.
       attempt.current += 1;
 
       if (phaseRef.current === "connecting" || phaseRef.current === "live") {

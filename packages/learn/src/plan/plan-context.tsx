@@ -24,7 +24,10 @@ export type PlanActions = {
   change: (operations: LearnerPlanOperation[]) => Promise<PlanChangeOutcome | null>;
   /** Nothing is saved. */
   preview: (operations: LearnerPlanOperation[]) => Promise<PlanChangePreview | null>;
-  /** Nothing is saved and the plan isn't read again, so the page and its prefetched links stay as they are. */
+  /**
+   * Nothing is saved and the plan isn't read again, so the page and its prefetched links stay as
+   * they are.
+   */
   findTimeToCover: () => Promise<PlanTimeToCover | null>;
   adviseOnBases: () => Promise<PlanBasesAdvice | null>;
   decide: (input: {
@@ -87,7 +90,10 @@ type PlanScreenContextValue = PlanScreenValue & {
   today: string;
   changes: PlanChanges;
   timeToCover: TimeToCoverStore;
-  /** Call as a save starts: if the save takes the focused control away, focus moves to `target` or the plan's title. */
+  /**
+   * Call as a save starts: if the save takes the focused control away, focus moves to `target` or
+   * the plan's title.
+   */
   keepFocus: (target?: FocusTarget) => void;
 };
 
@@ -179,7 +185,10 @@ function useTimeToCoverStore(plan: PlanView): TimeToCoverStore {
   return { find, state };
 }
 
-/** A ref, not state: a save starts inside its transition, where a state update would only show once it's done. */
+/**
+ * A ref, not state: a save starts inside its transition, where a state update would only show once
+ * it's done.
+ */
 function useCountedChanges(actions: PlanActions): { actions: PlanActions; changes: PlanChanges } {
   const saving = useRef(0);
 

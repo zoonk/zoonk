@@ -35,7 +35,10 @@ import { getOfferedMinutes, useTimeToCoverTexts } from "./use-time-to-cover";
 
 const DAYS_PER_WEEK = 7;
 
-/** While the schedule's change saves, its place says the new coverage is being worked out: the old one would describe a time no longer picked. */
+/**
+ * While the schedule's change saves, its place says the new coverage is being worked out: the old
+ * one would describe a time no longer picked.
+ */
 function DailyCoverage({
   canFind,
   onAsk,
@@ -71,7 +74,8 @@ function DailyCoverage({
         {coverage ? (
           <>
             <div className="text-muted-foreground">
-              {/* Planned again, the learner's own time covers it all (set-aside lessons come back), so it says so. */}
+              {/* Planned again, the learner's own time covers it all (set-aside lessons come
+                  back), so it says so. */}
               {plan.fitOffer?.fits && plan.schedule.targetDate ? (
                 <p>
                   {t("Your time covers everything by {date}", {

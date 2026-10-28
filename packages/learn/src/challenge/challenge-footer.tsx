@@ -124,7 +124,10 @@ function StartButton() {
   );
 }
 
-/** A refusal is a fact about the plan this screen can't change, so the move isn't offered again; a failed move keeps it for the retry. */
+/**
+ * A refusal is a fact about the plan this screen can't change, so the move isn't offered again; a
+ * failed move keeps it for the retry.
+ */
 function useMovable(): boolean {
   const { challenge, move } = useChallengeScreen();
   return challenge.canMove && !move.refusal;
@@ -223,7 +226,10 @@ function WaitReasonLine({ reason }: { reason: "challenge" | "lessons" }) {
   );
 }
 
-/** Past today's study time the week's challenge doesn't come back on its own: the next study day re-plans without it (RULES R24). */
+/**
+ * Past today's study time the week's challenge doesn't come back on its own: the next study day
+ * re-plans without it (RULES R24).
+ */
 function WeeklyUsedUpLine({ movable }: { movable: boolean }) {
   const t = useExtracted();
 
@@ -306,7 +312,10 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
   }
 }
 
-/** Where it stands is one polite region that stays in the bar while empty, so the line that replaces a refused Start is read out. */
+/**
+ * Where it stands is one polite region that stays in the bar while empty, so the line that replaces
+ * a refused Start is read out.
+ */
 export function ChallengeFooter() {
   const { challenge } = useChallengeScreen();
   const movable = useMovable();

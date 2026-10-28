@@ -24,7 +24,10 @@ type CallIntroFooterState = CheckpointStart | "dailyLimitReached";
 
 type CheckpointStartResult = "cancelled" | "changed" | "failed" | "plusRequired" | "ready";
 
-/** The tap opens the microphone, since Safari on iOS asks for it only during a tap; the host hands it to the call. */
+/**
+ * The tap opens the microphone, since Safari on iOS asks for it only during a tap; the host hands
+ * it to the call.
+ */
 export function CheckpointCallIntro({
   conversation,
   dailyLimitReached,
@@ -125,7 +128,9 @@ function preloadLiveCall() {
   void loadLiveCallSession();
 }
 
-/** Its status region is mounted from the start, so a line that replaces a refused Start is read out. */
+/**
+ * Its status region is mounted from the start, so a line that replaces a refused Start is read out.
+ */
 function CallIntroFooter({ onStart, start }: { onStart: () => void; start: CallIntroFooterState }) {
   return (
     <>

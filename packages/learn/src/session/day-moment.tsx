@@ -7,7 +7,10 @@ import { type CeremonyMilestone } from "../ceremonies/use-ceremony-copy";
 import { MissionMoment, getAfterMissionsDelay } from "../missions/mission-moment";
 import { ReachedMoment } from "./reached-moment";
 
-/** `ceremony` only keeps a new belt's level from being said twice: the ceremony itself shows before the result. */
+/**
+ * `ceremony` only keeps a new belt's level from being said twice: the ceremony itself shows before
+ * the result.
+ */
 export function DayMoment({
   buddy,
   ceremony,

@@ -2,7 +2,10 @@ import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { useExtracted } from "next-intl";
 import { useShortList } from "./use-short-list";
 
-/** `added: false` leaves out the topics it brings in, for a change whose own sentence names them; `named` caps the names said. */
+/**
+ * `added: false` leaves out the topics it brings in, for a change whose own sentence names them;
+ * `named` caps the names said.
+ */
 export function useTopicsMovedSentence() {
   const t = useExtracted();
   const shortList = useShortList();

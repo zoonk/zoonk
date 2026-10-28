@@ -18,8 +18,8 @@ export async function learnMessages(locale: string): Promise<LearnMessages> {
 }
 
 /**
- * Only the namespaces that render outside learn screens, such as on public pages and in the top bar.
- * Apps ship these everywhere and the rest of the catalog only where learn screens render.
+ * Only the namespaces that render outside learn screens, such as on public pages and in the top
+ * bar. Apps ship these everywhere and the rest of the catalog only where learn screens render.
  */
 export async function learnSiteMessages(locale: string): Promise<LearnMessages> {
   const { belts, buddyNames, feedback, goalErrors, goalSwitcher, planPhases } =

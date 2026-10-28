@@ -1,6 +1,9 @@
 import { type DiffTone } from "../_components/diff-lines";
 
-/** Against a date, lessons left out are bad news; without one, fewer lessons is good news and more is a plain change. */
+/**
+ * Against a date, lessons left out are bad news; without one, fewer lessons is good news and more
+ * is a plain change.
+ */
 export function getLessonLineTone({
   byDate,
   kind,

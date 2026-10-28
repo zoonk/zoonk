@@ -126,7 +126,8 @@ function ChaptersPhase({
 
   return (
     <li aria-current={phase.state === "current" ? "step" : undefined} data-state={phase.state}>
-      {/* The key remounts the phase when the plan goes on elsewhere, so one opened or shut by hand keeps it until then. */}
+      {/* The key remounts the phase when the plan goes on elsewhere, so one opened or shut by
+          hand keeps it until then. */}
       <Collapsible defaultOpen={open} key={open ? "open" : "shut"}>
         <CollapsibleTrigger className={cn(PHASE_ROW_CLASS, "hover:bg-muted/70 group/phase")}>
           {header}

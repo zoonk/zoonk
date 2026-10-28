@@ -7,7 +7,9 @@ function getFirstLetter(title: string): string {
   return first?.segment ?? "";
 }
 
-/** Neutral, not a color per goal: every hue already means something. Server components draw it too. */
+/**
+ * Neutral, not a color per goal: every hue already means something. Server components draw it too.
+ */
 export function GoalMark({ goal }: { goal: GoalMarkGoal }) {
   if (goal.kind === "language" && hasLanguageFlag(goal.targetLanguage)) {
     return <LanguageFlag className="w-4.5 shrink-0" language={goal.targetLanguage} />;

@@ -65,7 +65,10 @@ export function showsFreshStart(today: Pick<NoticeTodayView, "session" | "studie
   return today.session.freshStart !== null && !today.studiedToday && !started;
 }
 
-/** One notice at most, the most pressing first. A free exam plan's ended week goes before anything that asks more of the plan, and a fresh start is the session's own words, never a notice. */
+/**
+ * One notice at most, the most pressing first. A free exam plan's ended week goes before anything
+ * that asks more of the plan, and a fresh start is the session's own words, never a notice.
+ */
 export function pickTodayNotice({
   host,
   today,

@@ -145,7 +145,10 @@ export function LearnSkipLink({ children }: { children: React.ReactNode }) {
   );
 }
 
-/** Its padding never depends on the page inside: pages the router keeps hidden stay in the document, so a page with an aside reaches past the padding itself. */
+/**
+ * Its padding never depends on the page inside: pages the router keeps hidden stay in the document,
+ * so a page with an aside reaches past the padding itself.
+ */
 export function LearnShellMain({ children, className, ...props }: React.ComponentProps<"main">) {
   return (
     <main

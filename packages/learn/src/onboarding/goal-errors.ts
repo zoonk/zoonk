@@ -4,7 +4,10 @@ import { type EntitlementTier } from "@zoonk/core/entitlements/contract";
 import { useExtracted } from "next-intl";
 import { type GoalLimitReason, type StartUnderstandingOutcome } from "./onboarding-actions";
 
-/** Its own namespace (`goalErrors`), which apps ship on every page, since a goal starts from public pages too. */
+/**
+ * Its own namespace (`goalErrors`), which apps ship on every page, since a goal starts from public
+ * pages too.
+ */
 export type GoalError = { limit?: GoalLimitReason; message: string; needsAccount: boolean };
 
 export function useGoalLimitMessage() {

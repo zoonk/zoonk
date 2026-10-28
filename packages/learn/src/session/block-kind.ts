@@ -9,7 +9,10 @@ const KIND_BY_BLOCK: Readonly<Record<StudyBlock["kind"], LearnKind>> = {
   review: "review",
 };
 
-/** Practice that only fixes mistakes is the notebook's kind, as the "Fix a mistake" mission it counts for is. */
+/**
+ * Practice that only fixes mistakes is the notebook's kind, as the "Fix a mistake" mission it
+ * counts for is.
+ */
 export function getBlockKind(
   block: Pick<StudyBlock, "checkpoint" | "kind" | "mistakesOnly">,
 ): LearnKind {

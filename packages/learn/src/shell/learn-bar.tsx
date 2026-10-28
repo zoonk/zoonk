@@ -182,7 +182,8 @@ export function LearnPageBar({
 
   return (
     <PageBarSurface className={cn(root && !children && "lg:hidden")} ref={ref}>
-      {/* As tall as an action's button even without one, so every page's bar, and its skeleton, share one height. */}
+      {/* As tall as an action's button even without one, so every page's bar, and its skeleton,
+          share one height. */}
       {/* `data-title-away` lets an action give way to the page's name on a phone (a visitor's
           Pricing, `group-data-title-away/page-bar`). */}
       <div

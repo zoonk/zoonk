@@ -1,4 +1,7 @@
-/** Web Storage can be blocked (a private window) or missing (the server's render); then nothing is found or kept. */
+/**
+ * Web Storage can be blocked (a private window) or missing (the server's render); then nothing is
+ * found or kept.
+ */
 function createDeviceStorage(name: "localStorage" | "sessionStorage") {
   return {
     get(key: string): string | null {

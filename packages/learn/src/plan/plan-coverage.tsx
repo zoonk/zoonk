@@ -101,7 +101,10 @@ export function useCanMoveDate(): boolean {
 
 type MoveOutcome = "building" | "failed" | "noDate" | null;
 
-/** Until the date is known, a tap finds it and the control names it; once named, one tap moves it. Saved as any change (S1). */
+/**
+ * Until the date is known, a tap finds it and the control names it; once named, one tap moves it.
+ * Saved as any change (S1).
+ */
 export function useMoveDate({
   onMoved,
   onMoving,
@@ -253,7 +256,10 @@ export function MoveDateSwitch({
 
 export type FindStatus = "answered" | "building" | "failed" | "idle" | "pending";
 
-/** A polite live region of its own (`live`) unless it sits in one already; Try again takes the button's own element, so focus stays on it. */
+/**
+ * A polite live region of its own (`live`) unless it sits in one already; Try again takes the
+ * button's own element, so focus stays on it.
+ */
 export function FindTimeLine({
   answer,
   canFind,

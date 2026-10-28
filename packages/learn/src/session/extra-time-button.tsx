@@ -6,7 +6,10 @@ import { useExtracted } from "next-intl";
 import { ChangeSaveError } from "../_components/save-error";
 import { useSessionAction } from "./use-session-action";
 
-/** Core offers it only while something is left to practice or learn, so a failure here is a connection problem worth retrying. */
+/**
+ * Core offers it only while something is left to practice or learn, so a failure here is a
+ * connection problem worth retrying.
+ */
 export function ExtraTimeButton({
   action,
   className,

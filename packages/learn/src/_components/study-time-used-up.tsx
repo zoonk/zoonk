@@ -26,7 +26,9 @@ function BackOn({ nextStudyDate, today }: NextStudyDay) {
   });
 }
 
-/** Not an alert: its footer's status region reads it out, and Next.js announces a new page itself. */
+/**
+ * Not an alert: its footer's status region reads it out, and Next.js announces a new page itself.
+ */
 export function StudyTimeUsedUpNote({ children }: { children: React.ReactNode }) {
   return <p className="text-muted-foreground text-sm text-pretty">{children}</p>;
 }

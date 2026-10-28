@@ -8,7 +8,10 @@ import { isIdeaFirst, isReadFirst } from "./drill/drill-types";
 
 export type PracticeEntry = Extract<MistakePracticeResult, { status: "ready" }>["practice"][number];
 
-/** `attemptId` stays the same when an answer is sent again, so the server records one answer per question. */
+/**
+ * `attemptId` stays the same when an answer is sent again, so the server records one answer per
+ * question.
+ */
 export type MistakePracticeAnswer = {
   answer: ChoiceAnswer;
   attemptId: string;
@@ -53,7 +56,10 @@ type PracticePhase =
   | { kind: "ending" }
   | { kind: "ended"; summary: MistakePracticeSummary | null };
 
-/** Keeps the questions it started with: an answer refreshes the page, and a fixed mistake leaves the server's practice, not the run. */
+/**
+ * Keeps the questions it started with: an answer refreshes the page, and a fixed mistake leaves the
+ * server's practice, not the run.
+ */
 type PracticeState = {
   answerIds: string[];
   fixedIds: string[];
@@ -220,7 +226,10 @@ function squashSpaces(text: string): string {
   return text.replaceAll(/\s+/gu, " ").trim();
 }
 
-/** The notebook saves a lesson's question with its context before it, and a bank question as it's asked. */
+/**
+ * The notebook saves a lesson's question with its context before it, and a bank question as it's
+ * asked.
+ */
 export function isMistakeQuestion(step: PracticeStep): boolean {
   const saved = squashSpaces(step.entry.snapshot.question);
   const { context, question } = step.question;

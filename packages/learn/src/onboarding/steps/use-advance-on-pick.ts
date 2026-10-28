@@ -2,7 +2,10 @@ import { useEffect, useRef } from "react";
 
 const ADVANCE_DELAY_MS = 180;
 
-/** Every way of answering goes through here, so they never save twice: `submit` answers at once and drops the queued pick, `cancel` drops it, and a pick while `pending` is ignored. */
+/**
+ * Every way of answering goes through here, so they never save twice: `submit` answers at once and
+ * drops the queued pick, `cancel` drops it, and a pick while `pending` is ignored.
+ */
 export function useAdvanceOnPick<Value>({
   answer,
   pending,

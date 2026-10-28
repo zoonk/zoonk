@@ -147,7 +147,10 @@ function MistakeNote({
   );
 }
 
-/** A blank is neither right nor wrong, never red, and the learner's own "I don't know yet" is never called "Not quite". */
+/**
+ * A blank is neither right nor wrong, never red, and the learner's own "I don't know yet" is never
+ * called "Not quite".
+ */
 export function useVerdict({
   blank = false,
   isCorrect,

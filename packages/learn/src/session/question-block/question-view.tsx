@@ -79,7 +79,10 @@ export function isNetScoredQuestion({
   return capsule ? capsule.format === "swipe" : detail.block.netScored;
 }
 
-/** `onChange` gets the answer as it's made, null until complete; `onSubmit` gets a typed answer Enter sends from its field. */
+/**
+ * `onChange` gets the answer as it's made, null until complete; `onSubmit` gets a typed answer
+ * Enter sends from its field.
+ */
 export function QuestionView({
   detail,
   onChange,

@@ -229,7 +229,10 @@ function useResultAside({
   };
 }
 
-/** CSS picks between the phone's steps and the wide page, so the server already draws the one for the screen's width. */
+/**
+ * CSS picks between the phone's steps and the wide page, so the server already draws the one for
+ * the screen's width.
+ */
 function useResultSteps(result: MockResult) {
   const { renderCeremony, runner } = useMockScreen();
   const { ceremony } = runner.view;

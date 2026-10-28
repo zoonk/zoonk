@@ -14,7 +14,10 @@ import { useMockScreen } from "./mock-context";
 import { getOptionMarks } from "./mock-keys";
 import { ResultSection } from "./mock-result-section";
 
-/** The review has a pick's words but not its number, so answers other than a statement's are marked by how they went. */
+/**
+ * The review has a pick's words but not its number, so answers other than a statement's are marked
+ * by how they went.
+ */
 function AnswerMark({
   answer,
   entry,

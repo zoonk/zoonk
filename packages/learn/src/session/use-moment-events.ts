@@ -4,7 +4,9 @@ import { useEffect, useRef } from "react";
 import { useLearnAnalytics } from "../learn-context";
 import { type StudyMomentView } from "./session-types";
 
-/** The first three keep the event names they always had, so a mission's history reads as one line. */
+/**
+ * The first three keep the event names they always had, so a mission's history reads as one line.
+ */
 const MISSION_EVENT_NAMES = {
   askBuddy: "askBuddy",
   call: "call",

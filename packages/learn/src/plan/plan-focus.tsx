@@ -214,7 +214,10 @@ function FocusChoices({ onSaved }: { onSaved: () => void }) {
 
 const ChooseFocusContext = createContext<(() => void) | null>(null);
 
-/** Held by the plan screen, so the sheet stays on what the choice did (with Undo) after what opened it leaves. */
+/**
+ * Held by the plan screen, so the sheet stays on what the choice did (with Undo) after what opened
+ * it leaves.
+ */
 export function ChooseFocusHost({ children }: { children: React.ReactNode }) {
   const t = useExtracted();
   const { openFocus = false } = usePlanScreen();

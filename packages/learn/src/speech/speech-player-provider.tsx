@@ -7,7 +7,10 @@ export type SpeechClipOutcome =
   | { status: "ready"; url: string }
   | { limit: HelpLimit | null; status: "failed" };
 
-/** Called only from the learner's tap, never on render or page load. `personal` words get a clip of the learner's own. */
+/**
+ * Called only from the learner's tap, never on render or page load. `personal` words get a clip of
+ * the learner's own.
+ */
 export type VoiceText = (input: {
   language: string;
   personal?: boolean;
@@ -31,7 +34,9 @@ type SpeechPlayer = {
   unlock: () => void;
 };
 
-/** Mobile Safari only lets an element play sound it started inside a tap, so this plays there first. */
+/**
+ * Mobile Safari only lets an element play sound it started inside a tap, so this plays there first.
+ */
 const SILENT_WAV =
   "data:audio/wav;base64,UklGRnQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YVAAAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgA==";
 

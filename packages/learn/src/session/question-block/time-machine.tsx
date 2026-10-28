@@ -18,7 +18,10 @@ function trimEndPeriod(text: string): string {
   return text.replace(/\.+$/u, "");
 }
 
-/** Before the answer, only that the learner saw the question: their earlier answer could give today's away. */
+/**
+ * Before the answer, only that the learner saw the question: their earlier answer could give
+ * today's away.
+ */
 function useTimeMachineText({
   format,
   trueFalseLabels,

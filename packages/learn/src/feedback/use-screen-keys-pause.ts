@@ -23,7 +23,10 @@ const POPUP_SELECTOR = "[role='dialog'], [role='alertdialog'], [role='menu'], [r
 
 const CAPTURE = { capture: true } as const;
 
-/** Screen shortcuts skip keys already handled, so keys pressed outside the popup are handled here first and answer nothing. */
+/**
+ * Screen shortcuts skip keys already handled, so keys pressed outside the popup are handled here
+ * first and answer nothing.
+ */
 export function useScreenKeysPause(paused: boolean) {
   useEffect(() => {
     if (!paused) {

@@ -4,7 +4,10 @@ const BAND_COUNT = CEFR_LEVELS.length;
 
 const HALF_BAND = 0.5;
 
-/** Scores are half steps from A1 (0) to C2 (5): "B1" fills half of the B1 band, "B1+" all of it, and C2 the bar. */
+/**
+ * Scores are half steps from A1 (0) to C2 (5): "B1" fills half of the B1 band, "B1+" all of it, and
+ * C2 the bar.
+ */
 export function getLevelShare(score: number): number {
   if (score >= MAX_CEFR_SCORE) {
     return 1;

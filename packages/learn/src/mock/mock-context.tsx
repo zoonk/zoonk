@@ -57,7 +57,10 @@ export type MockRunner = {
   go: (position: number) => void;
   moves: SectionMoves;
   pending: boolean;
-  /** Resolves false when the mock had no play left, which stops the recording; one the server couldn't count keeps going. */
+  /**
+   * Resolves false when the mock had no play left, which stops the recording; one the server
+   * couldn't count keeps going.
+   */
   play: (setId: string) => Promise<boolean>;
   position: number;
   retrySaves: () => void;

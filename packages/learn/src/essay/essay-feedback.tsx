@@ -45,7 +45,10 @@ function renderNumber(chunks: React.ReactNode) {
   return <span className="tabular-nums">{chunks}</span>;
 }
 
-/** A custom rubric's criteria each show on the total's scale, so three read "10 of 10", never "3.34 · 3.33 · 3.33". */
+/**
+ * A custom rubric's criteria each show on the total's scale, so three read "10 of 10", never "3.34
+ * · 3.33 · 3.33".
+ */
 function toShownScore({
   criterion,
   rubric,

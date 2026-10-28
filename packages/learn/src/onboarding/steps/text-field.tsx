@@ -7,7 +7,10 @@ import { useKeptTyping } from "../../use-kept-typing";
 
 const MAX_ANSWER_LENGTH = 200;
 
-/** Only a screen's first field takes focus. Its text stays 16px on phones, where iOS Safari zooms into smaller fields. */
+/**
+ * Only a screen's first field takes focus. Its text stays 16px on phones, where iOS Safari zooms
+ * into smaller fields.
+ */
 export function TextField({
   autoFocus = true,
   label,

@@ -103,7 +103,10 @@ export function TypedGoal({ goal }: { goal: string }) {
   return <p className={BUBBLE_CLASS}>{goal}</p>;
 }
 
-/** Right after sending it opens by itself (`isStarting`); coming back later it waits for a tap, since writing it is new work. */
+/**
+ * Right after sending it opens by itself (`isStarting`); coming back later it waits for a tap,
+ * since writing it is new work.
+ */
 export function ExplainGoal({
   error,
   goal,

@@ -128,7 +128,8 @@ function InsightActions({
 
   return (
     <SuggestionActions>
-      {/* A tip's only answer is outline, so Today's own action stays the screen's one filled button. */}
+      {/* A tip's only answer is outline, so Today's own action stays the screen's one filled
+          button. */}
       {(insight.kind !== "planChange" ||
         insight.planChange?.status === "applied" ||
         insight.planChange?.canApply) && (
@@ -194,7 +195,10 @@ function InsightNotice({ insight }: { insight: MemoryInsightView }) {
   );
 }
 
-/** Answering refreshes Today, which no longer carries the insight; the card stays until the learner leaves, to show what the answer did. */
+/**
+ * Answering refreshes Today, which no longer carries the insight; the card stays until the learner
+ * leaves, to show what the answer did.
+ */
 function useShownInsight(insight: MemoryInsightView | null): MemoryInsightView | null {
   const [shown, setShown] = useState(insight);
 

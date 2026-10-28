@@ -207,7 +207,10 @@ function findMeantSitting({
   return findLearnerSitting({ days: examDates, from, goalDate }) ?? examDates;
 }
 
-/** Offered with one tap, never put in place of the learner's date; an estimated day is never offered. */
+/**
+ * Offered with one tap, never put in place of the learner's date; an estimated day is never
+ * offered.
+ */
 function findSuggestedDay({
   draft,
   examDates,

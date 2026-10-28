@@ -9,7 +9,10 @@ export type FlowState = {
   view: OnboardingView;
 };
 
-/** A response for a screen no longer shown (the learner went Back while it saved) keeps the learner where they are. */
+/**
+ * A response for a screen no longer shown (the learner went Back while it saved) keeps the learner
+ * where they are.
+ */
 export function applyAnswer({
   state,
   step,

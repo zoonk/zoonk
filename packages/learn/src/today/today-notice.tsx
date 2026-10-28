@@ -23,7 +23,10 @@ function toHostState(notices: TodayHostNotices): TodayHostNoticeState {
   };
 }
 
-/** The notice picked when Today opened stays while the learner is here, so answering it shows what the answer did; the next waits for the next visit. */
+/**
+ * The notice picked when Today opened stays while the learner is here, so answering it shows what
+ * the answer did; the next waits for the next visit.
+ */
 function useShownNotice(picked: TodayNoticeKind | null): TodayNoticeKind | null {
   const [shown, setShown] = useState(picked);
 

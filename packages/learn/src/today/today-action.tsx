@@ -31,7 +31,10 @@ type TodayContinue = ReturnType<typeof useContinueSession> & {
 
 const TodayContinueContext = createContext<TodayContinue | null>(null);
 
-/** One action for the button, Enter and the status line, and one for "Keep learning" and the up-next list's first row, so a tap on either is one request. */
+/**
+ * One action for the button, Enter and the status line, and one for "Keep learning" and the up-next
+ * list's first row, so a tap on either is one request.
+ */
 export function TodayContinueProvider({ children }: { children: React.ReactNode }) {
   const { actions } = useTodayScreen();
   const underway = useDayState() === "underway";

@@ -96,8 +96,8 @@ function NoToolsPath({ tools }: { tools: PlanToolView[] }) {
   const { choose, failed, isPending } = useToolChoice();
   const withoutTools = tools.every((tool) => tool.choice === "none");
 
-  // The button leaves with the saved plan, and the sheet would take its focus, so focus waits on this
-  // card while saving, then goes to the note (or back to the button on failure).
+  // The button leaves with the saved plan, and the sheet would take its focus, so focus waits on
+  // this card while saving, then goes to the note (or back to the button on failure).
   useEffect(() => {
     if (!chose.current) {
       return;

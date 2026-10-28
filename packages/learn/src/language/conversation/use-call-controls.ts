@@ -101,7 +101,10 @@ export function useCallMute(liveSession: LiveCallSession | null) {
 
 type LiveCallSummary = Omit<LanguageConversationCompletionInput, "timeZone" | "usedHelp">;
 
-/** Returns what it saves whether or not the hangup went through: completing hangs the call up itself, and the deadline does if that fails too. */
+/**
+ * Returns what it saves whether or not the hangup went through: completing hangs the call up
+ * itself, and the deadline does if that fails too.
+ */
 export function useCallFinish({
   getConnectionId,
   release,

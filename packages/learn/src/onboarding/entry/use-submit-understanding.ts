@@ -51,7 +51,10 @@ export function useSubmitUnderstanding({
     setIsSubmitting(false);
   }
 
-  /** One goal on its way at a time: taps replayed once the page's code arrived would otherwise save a second draft. */
+  /**
+   * One goal on its way at a time: taps replayed once the page's code arrived would otherwise save
+   * a second draft.
+   */
   async function send(goal: string) {
     if (submitted.current) {
       return;

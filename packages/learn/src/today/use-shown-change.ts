@@ -5,7 +5,10 @@ import { useState } from "react";
 
 type Change = NonNullable<TodayView["planChange"]>;
 
-/** Follows Today's latest read until the learner answers here, so a proposal answered elsewhere leaves the screen; an answered one stays to show what the answer did. */
+/**
+ * Follows Today's latest read until the learner answers here, so a proposal answered elsewhere
+ * leaves the screen; an answered one stays to show what the answer did.
+ */
 export function useShownChange(change: Change | null) {
   const [shown, setShown] = useState<{ change: Change; swapped: boolean } | null>(
     change ? { change, swapped: false } : null,

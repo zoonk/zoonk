@@ -9,7 +9,10 @@ import { type PlanPreviewState, isSamePreviewPlan, resolvePlanPreview } from "./
 
 const PREVIEW_TIMEOUT_MS = 45_000;
 
-/** The same object while refreshes deliver an unchanged view, so a wait for a preview carries on through them. */
+/**
+ * The same object while refreshes deliver an unchanged view, so a wait for a preview carries on
+ * through them.
+ */
 export function usePreviewBase(): object {
   const { plan } = usePlanScreen();
   const [base, setBase] = useState<object>(plan);

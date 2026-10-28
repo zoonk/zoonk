@@ -146,7 +146,9 @@ export function TaskFrame({
   progress,
 }: {
   aside?: TaskFrameAside | null;
-  /** A promise for work still being saved, which leaving waits for; null when nothing is in flight. */
+  /**
+   * A promise for work still being saved, which leaving waits for; null when nothing is in flight.
+   */
   beforeExit?: () => Promise<unknown> | null;
   children: React.ReactNode;
   /** Only for a screen with nothing to lose (a result), never mid-task. */

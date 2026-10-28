@@ -20,7 +20,10 @@ import {
   hasLearned,
 } from "./logbook-sections";
 
-/** Node's ICU puts thin spaces around the dash and browsers plain ones, so the spaces are normalized to hydrate cleanly. */
+/**
+ * Node's ICU puts thin spaces around the dash and browsers plain ones, so the spaces are normalized
+ * to hydrate cleanly.
+ */
 function useWeekRange(): string {
   const format = useFormatter();
   const { recap } = useLogbook();

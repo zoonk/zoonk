@@ -182,7 +182,10 @@ function SpeakingScreen({ deadline, section: index }: { deadline: string; sectio
   );
 }
 
-/** Its cards are written when the learner starts the section, so a mock handed in before it never pays for them. */
+/**
+ * Its cards are written when the learner starts the section, so a mock handed in before it never
+ * pays for them.
+ */
 export function MockSpeakingView() {
   const { runner } = useMockScreen();
   const { current } = runner.view;

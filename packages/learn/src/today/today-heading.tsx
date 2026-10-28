@@ -17,7 +17,10 @@ import { useTodayScreen } from "./today-context";
 import { DayTime } from "./today-day-progress";
 import { isWelcomeBackDay, useDayState, useTodayDate } from "./use-today-copy";
 
-/** Drawn in the gap before a part: a part that wraps starts a new line, whose clipped edge hides its dot. */
+/**
+ * Drawn in the gap before a part: a part that wraps starts a new line, whose clipped edge hides its
+ * dot.
+ */
 const SEPARATOR_CLASS = "relative before:absolute before:-left-3.5 before:content-['·']";
 
 export function TodayEyebrowPart({
@@ -58,7 +61,10 @@ function DaysLeft() {
   );
 }
 
-/** Behind says so in a word before what to catch up; a return after a break says only "Behind", since a big count above "Welcome back" read as a backlog. */
+/**
+ * Behind says so in a word before what to catch up; a return after a break says only "Behind",
+ * since a big count above "Welcome back" read as a backlog.
+ */
 function TodayPace() {
   const t = useExtracted();
   const statusText = usePlanStatusText();
@@ -129,7 +135,10 @@ function ExamDayPart() {
   return null;
 }
 
-/** A mock the learner's plan doesn't include wears the Plus mark, so the line never reads as a mock they can take. */
+/**
+ * A mock the learner's plan doesn't include wears the Plus mark, so the line never reads as a mock
+ * they can take.
+ */
 function MockFundingLine() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();

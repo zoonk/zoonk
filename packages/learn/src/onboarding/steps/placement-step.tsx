@@ -42,7 +42,10 @@ type Phase =
       trueFalseLabels: TrueFalseLabels;
     };
 
-/** The server's counts can shrink while the plan is still being written, and neither a question's number nor the bar goes back. */
+/**
+ * The server's counts can shrink while the plan is still being written, and neither a question's
+ * number nor the bar goes back.
+ */
 type Shown = { answered: number; spent: number };
 
 const NOTHING_SHOWN: Shown = { answered: 0, spent: 0 };

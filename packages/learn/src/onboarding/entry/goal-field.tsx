@@ -11,7 +11,10 @@ export const GOAL_FIELD_TEXT_CLASS = "py-2.5 text-[17px] leading-6";
 
 const GOAL_FIELD = "goal";
 
-/** The box is uncontrolled (`defaultValue`, with `field` spread on it), so a tap before the form's code arrived is sent once it has, with what was typed. */
+/**
+ * The box is uncontrolled (`defaultValue`, with `field` spread on it), so a tap before the form's
+ * code arrived is sent once it has, with what was typed.
+ */
 export function useGoalFieldAction({
   canSendEmpty = false,
   onSend,
@@ -49,7 +52,10 @@ export function useGoalFieldAction({
   return { action, field: { name: GOAL_FIELD, ref }, fill, send };
 }
 
-/** Words focused on their own as the page opened (`data-autofocused`) only darken the line until they're left, so the page's first sight isn't a ring. */
+/**
+ * Words focused on their own as the page opened (`data-autofocused`) only darken the line until
+ * they're left, so the page's first sight isn't a ring.
+ */
 export const GOAL_PANEL_CLASS =
   "bg-card inset-ring-input has-[textarea[data-autofocused]:focus]:inset-ring-foreground/35 contrast-more:has-[textarea[data-autofocused]:focus]:inset-ring-ring contrast-more:has-[textarea:focus-visible]:ring-ring/50 contrast-more:has-[textarea:focus-visible]:ring-[3px] has-[textarea:focus-visible:not([data-autofocused])]:inset-ring-ring has-[textarea:focus-visible:not([data-autofocused])]:ring-ring/50 rounded-xl inset-ring transition-shadow has-[textarea:focus-visible:not([data-autofocused])]:ring-[3px] motion-reduce:transition-none";
 
@@ -90,7 +96,10 @@ export function GoalFieldLabel({
   );
 }
 
-/** Takes focus as it shows only with a fine pointer, and not from a control the keyboard is on: on a phone, focus would raise the keyboard. */
+/**
+ * Takes focus as it shows only with a fine pointer, and not from a control the keyboard is on: on a
+ * phone, focus would raise the keyboard.
+ */
 export function GoalFieldText({
   autoFocusOnPointer = false,
   className,

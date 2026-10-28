@@ -64,7 +64,10 @@ export function useGoalSwitchTransition() {
   return [isPending, startTransition] as const;
 }
 
-/** While a switch is on its way the page still shows the previous goal, so it dims: a tap on its Continue would open that goal's session. */
+/**
+ * While a switch is on its way the page still shows the previous goal, so it dims: a tap on its
+ * Continue would open that goal's session.
+ */
 export function useGoalSwitchPending(): boolean {
   return useSyncExternalStore(
     subscribeToGoalSwitches,

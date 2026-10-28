@@ -15,7 +15,10 @@ export function useIsCatchingUp() {
   return (step: DayStep) => positions.has(step.position);
 }
 
-/** Offered only while the lessons left take about one more day's time (`offered`), so nobody is offered "+11 hr 52 min". */
+/**
+ * Offered only while the lessons left take about one more day's time (`offered`), so nobody is
+ * offered "+11 hr 52 min".
+ */
 export function CatchUpLater() {
   const t = useExtracted();
   const formatDuration = useFormatDuration();

@@ -24,7 +24,10 @@ export function findOwnChapter<Chapter extends PathChapter>({
   return { ...only, chapterId: only.chapterId };
 }
 
-/** Old plans keep phase names their skill graph's checks now prevent, and Library chapters are named after the graph, so a phase can share a chapter's name. */
+/**
+ * Old plans keep phase names their skill graph's checks now prevent, and Library chapters are named
+ * after the graph, so a phase can share a chapter's name.
+ */
 export function isNamedLikeAChapter({
   name,
   phase,

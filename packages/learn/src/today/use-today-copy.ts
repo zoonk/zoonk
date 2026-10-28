@@ -24,7 +24,10 @@ export function isWelcomeBackDay(session: Pick<TodayView["session"], "freshStart
   return session.freshStart === "welcomeBack";
 }
 
-/** A return after a break says how long the day takes, since "lighter" beside 12 activities said nothing. */
+/**
+ * A return after a break says how long the day takes, since "lighter" beside 12 activities said
+ * nothing.
+ */
 export function useFreshStartText(): string | null {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
@@ -38,7 +41,8 @@ export function useFreshStartText(): string | null {
 
   switch (freshStart) {
     case "welcomeBack":
-      // A free exam plan past its first week is shorter for what Plus holds, not lighter for the break.
+      // A free exam plan past its first week is shorter for what Plus holds, not lighter for the
+      // break.
       return today.session.examAccess.trialEnded
         ? t("Welcome back! Today takes about {time}, so it's easy to pick up again.", { time })
         : t("Welcome back! Today is lighter, about {time}, so it's easy to pick up again.", {
@@ -80,7 +84,10 @@ export function useTodayPastDate(): PastDate | null {
 
 type StopLesson = { kind: string; lessonId: string | null };
 
-/** A lesson nobody has started writing is written when the learner opens it, so it never claims to be in progress. */
+/**
+ * A lesson nobody has started writing is written when the learner opens it, so it never claims to
+ * be in progress.
+ */
 export function isStopBeingWritten({
   block,
   lessonStatus,

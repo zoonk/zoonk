@@ -117,7 +117,10 @@ function LevelReached({
   );
 }
 
-/** Its bar shows where Energy is now, never filling from empty: the moment doesn't know where it came from. */
+/**
+ * Its bar shows where Energy is now, never filling from empty: the moment doesn't know where it
+ * came from.
+ */
 function EnergyReached({
   buddy,
   energy,

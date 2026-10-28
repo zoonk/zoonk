@@ -5,7 +5,10 @@ import {
   readMarkdownTable,
 } from "@zoonk/utils/markdown-table";
 
-/** Paragraphs, GFM pipe tables and inline code, bold and italics, as item writers are told; anything else stays text. */
+/**
+ * Paragraphs, GFM pipe tables and inline code, bold and italics, as item writers are told; anything
+ * else stays text.
+ */
 export type ItemTextBlock =
   | { kind: "paragraph"; lines: InlineMarkup[][] }
   | {

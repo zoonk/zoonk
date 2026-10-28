@@ -273,7 +273,10 @@ function PlanChangeNotice({
   );
 }
 
-/** Only when the learner has a say: what the plan does on its own isn't news on Today (`asksAboutAutomaticChange`). */
+/**
+ * Only when the learner has a say: what the plan does on its own isn't news on Today
+ * (`asksAboutAutomaticChange`).
+ */
 export function TodayPlanChange() {
   const { today } = useTodayScreen();
   const { current: change, hold, showNext, swapped } = useShownChange(today.planChange);

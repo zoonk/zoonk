@@ -33,7 +33,9 @@ export type GoalStatusChange = "active" | "archived" | "paused";
 
 export type GoalStatusOutcome = "failed" | "limitReached" | "saved";
 
-/** The host reads the page again once a change is saved, and leaves it once the goal is archived. */
+/**
+ * The host reads the page again once a change is saved, and leaves it once the goal is archived.
+ */
 export type GoalStatusControl = {
   onSetStatus: (status: GoalStatusChange) => Promise<GoalStatusOutcome>;
   resume: boolean;

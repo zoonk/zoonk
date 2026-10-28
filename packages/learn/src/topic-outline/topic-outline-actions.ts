@@ -8,7 +8,10 @@ export type TopicOutlineRequestOutcome =
   | { limit: OutlineLimit; status: "refused" }
   | { status: "failed" | "ready" | "unavailable" | "writing" };
 
-/** `request` is a POST from the learner's tap, never a page load; `read` resolves to null when the server couldn't be reached. */
+/**
+ * `request` is a POST from the learner's tap, never a page load; `read` resolves to null when the
+ * server couldn't be reached.
+ */
 export type TopicOutlineActions = {
   read: (skillId: string) => Promise<SkillOutline | null>;
   refresh: () => void;

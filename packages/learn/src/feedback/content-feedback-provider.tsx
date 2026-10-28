@@ -35,7 +35,10 @@ function useOpenMenus() {
   return { anyMenuOpen: openMenus.length > 0, setMenuOpen };
 }
 
-/** Keep `adapters` stable. The form lives here, outside any menu, so it stays open after the menu that opened it closes. */
+/**
+ * Keep `adapters` stable. The form lives here, outside any menu, so it stays open after the menu
+ * that opened it closes.
+ */
 export function ContentFeedbackProvider({
   adapters,
   children,

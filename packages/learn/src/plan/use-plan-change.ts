@@ -16,7 +16,10 @@ export function usePlanChange() {
   const [isPending, startTransition] = useTransition();
   const [failed, setFailed] = useState(false);
 
-  /** `answer` runs in the change's transition, so what it shows arrives with the re-planned page, never over the old plan. */
+  /**
+   * `answer` runs in the change's transition, so what it shows arrives with the re-planned page,
+   * never over the old plan.
+   */
   const change = (
     operations: LearnerPlanOperation[],
     answer?: PlanChangeAnswer,

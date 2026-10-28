@@ -8,7 +8,10 @@ function hasId(block: DayStep, id: string | null): boolean {
   return id !== null && "id" in block && block.id === id;
 }
 
-/** `finishedId` is a block that just ended on this screen, which the session's copy may still have running. */
+/**
+ * `finishedId` is a block that just ended on this screen, which the session's copy may still have
+ * running.
+ */
 export function getSessionQueue({
   blocks,
   finishedId = null,

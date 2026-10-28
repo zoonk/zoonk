@@ -2,7 +2,10 @@ import { parseInlineMarkup } from "@zoonk/utils/inline-markup";
 import { type MarkdownTableAlign, readMarkdownTable } from "@zoonk/utils/markdown-table";
 import { type RichInlineSegment } from "./rich-inline-segments";
 
-/** Emphasis, short lists, GFM tables, inline code and `$...$` math only, so generated headings or links can never change the player's layout. */
+/**
+ * Emphasis, short lists, GFM tables, inline code and `$...$` math only, so generated headings or
+ * links can never change the player's layout.
+ */
 export type RichBlock =
   | { kind: "list"; items: RichInlineSegment[][]; ordered: boolean }
   | { kind: "paragraph"; lines: RichInlineSegment[][] }
@@ -40,7 +43,10 @@ function isDelimiter(text: string, index: number): boolean {
   return !isEscaped(text, index) && !isCurrencySign(text, index);
 }
 
-/** Pandoc's rule: a closing `$` has text right before it and no digit right after, so "$5 and $10" stay text. */
+/**
+ * Pandoc's rule: a closing `$` has text right before it and no digit right after, so "$5 and $10"
+ * stay text.
+ */
 function findInlineMathClose(text: string, from: number): number | null {
   const index = text.indexOf("$", from);
 
@@ -130,7 +136,10 @@ export function toOneLine(text: string): string {
   return text.replaceAll(/\s*\n\s*/gu, " ");
 }
 
-/** Math first, so emphasis markers never touch LaTeX, then inline code, so its punctuation stays literal. */
+/**
+ * Math first, so emphasis markers never touch LaTeX, then inline code, so its punctuation stays
+ * literal.
+ */
 export function parseRichInline(text: string): RichInlineSegment[] {
   const math = findMath(text);
 

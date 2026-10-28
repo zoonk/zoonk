@@ -6,7 +6,10 @@ import { createContext, use } from "react";
 export type EssayActions = {
   /** False when it didn't go through. */
   finish: () => Promise<boolean>;
-  /** Null when it couldn't be graded. A draft sent again keeps its `attemptId`, so the server grades it once. */
+  /**
+   * Null when it couldn't be graded. A draft sent again keeps its `attemptId`, so the server grades
+   * it once.
+   */
   submit: (input: {
     attemptId: string;
     durationMs: number;

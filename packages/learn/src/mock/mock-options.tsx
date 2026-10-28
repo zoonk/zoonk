@@ -19,7 +19,10 @@ function isSame(first: MockAnswer | null, second: MockAnswer | null): boolean {
   return JSON.stringify(first) === JSON.stringify(second);
 }
 
-/** A statement can be left blank only where a wrong answer cancels a right one (Cebraspe), and never in a section that asks for an answer before moving on. */
+/**
+ * A statement can be left blank only where a wrong answer cancels a right one (Cebraspe), and never
+ * in a section that asks for an answer before moving on.
+ */
 function useOptions(question: MockQuestion): Option[] {
   const t = useExtracted();
   const { runner } = useMockScreen();

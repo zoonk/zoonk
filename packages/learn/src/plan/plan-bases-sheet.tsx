@@ -42,7 +42,10 @@ function toChoices(items: readonly PlanBaseView[]): Map<string, BaseChoice> {
   return new Map(items.map((item) => [item.skillId, item.choice]));
 }
 
-/** Keyed by the choices and the plan's content, so a refresh with the same plan neither cancels the preview nor starts it over. */
+/**
+ * Keyed by the choices and the plan's content, so a refresh with the same plan neither cancels the
+ * preview nor starts it over.
+ */
 function usePreview(changed: { choice: BaseChoice; skillId: string }[]) {
   const { plan } = usePlanScreen();
   const base = usePreviewBase();

@@ -4,7 +4,10 @@ export type SessionDay = Pick<StudyDay, "dailyLimit" | "emptyDay" | "minutes" | 
   blocks: readonly Pick<StudyDay["blocks"][number], "position" | "status">[];
 };
 
-/** A day with no blocks is a rest day, one still being outlined (`waiting`), or one with nothing new (`ahead`): never a finished session. */
+/**
+ * A day with no blocks is a rest day, one still being outlined (`waiting`), or one with nothing new
+ * (`ahead`): never a finished session.
+ */
 export function getSessionState(session: SessionDay) {
   const empty = session.blocks.length === 0;
   const limitReached = session.dailyLimit?.reached === true;

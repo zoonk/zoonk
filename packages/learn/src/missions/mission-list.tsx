@@ -28,7 +28,10 @@ export function ProgressCount({ done, total }: { done: number; total: number }) 
   );
 }
 
-/** Named by its words on screen, which voice control users say to press it; a label of its own would leave them out. */
+/**
+ * Named by its words on screen, which voice control users say to press it; a label of its own would
+ * leave them out.
+ */
 export function MissionListRow({
   detail,
   mark,

@@ -29,7 +29,10 @@ const SATURDAY = 6;
 
 const WEEKDAYS = EVERY_DAY.filter((day) => day >= MONDAY && day < SATURDAY);
 
-/** A new goal's every-day week was never chosen, so the question opens on Monday to Friday unless someone chose fewer days. */
+/**
+ * A new goal's every-day week was never chosen, so the question opens on Monday to Friday unless
+ * someone chose fewer days.
+ */
 export function getStartingDays(goalDays: number[]): number[] {
   return goalDays.length > 0 && goalDays.length < DAYS_PER_WEEK ? goalDays : WEEKDAYS;
 }

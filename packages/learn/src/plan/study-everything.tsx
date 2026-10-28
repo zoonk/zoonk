@@ -138,7 +138,10 @@ function StudyEverythingSheet({
 
 const StudyEverythingContext = createContext<((course: FullCourse) => void) | null>(null);
 
-/** Held by the plan screen, so the sheet stays on what the choice did (with Undo) after what opened it leaves. */
+/**
+ * Held by the plan screen, so the sheet stays on what the choice did (with Undo) after what opened
+ * it leaves.
+ */
 export function StudyEverythingHost({
   children,
   openOnArrival = false,

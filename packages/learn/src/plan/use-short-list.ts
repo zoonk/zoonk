@@ -5,7 +5,10 @@ import { toTopicWords } from "../syllabus/topic-number";
 
 const NAMED = 3;
 
-/** Topics drop the notice's numbering ("12 Noções…" read as a count), and a lesson list counts the rest without a unit, since a name can stand for many unwritten lessons. */
+/**
+ * Topics drop the notice's numbering ("12 Noções…" read as a count), and a lesson list counts the
+ * rest without a unit, since a name can stand for many unwritten lessons.
+ */
 export function useShortList() {
   const t = useExtracted();
   const format = useFormatter();

@@ -19,7 +19,10 @@ export function PlanStartNoticeProvider({
   return <PlanRunContext value={run}>{children}</PlanRunContext>;
 }
 
-/** In the footer, so a notice never moves the choices under the learner's finger; the live region stays while empty, so it's heard when it comes. */
+/**
+ * In the footer, so a notice never moves the choices under the learner's finger; the live region
+ * stays while empty, so it's heard when it comes.
+ */
 export function PlanStartNoticeSlot() {
   const run = use(PlanRunContext);
 

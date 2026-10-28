@@ -35,7 +35,10 @@ export type CallConnectionActions = {
 
 const FAILED = { status: "failed" } as const;
 
-/** `end` resolves true once the server confirmed, which stays true, and false while it hasn't, so asking again sends a new request. */
+/**
+ * `end` resolves true once the server confirmed, which stays true, and false while it hasn't, so
+ * asking again sends a new request.
+ */
 export function useCallConnection(actions: CallConnectionActions) {
   const [reconnecting, setReconnecting] = useState(false);
   const actionsRef = useRef(actions);

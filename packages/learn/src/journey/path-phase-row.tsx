@@ -191,7 +191,10 @@ function usePhaseState() {
   };
 }
 
-/** One run of words: a browser reads hidden text as its own block, so a band named from its parts read "Phase 3 , you are here". */
+/**
+ * One run of words: a browser reads hidden text as its own block, so a band named from its parts
+ * read "Phase 3 , you are here".
+ */
 export function usePhaseLabel() {
   const phaseName = usePhaseName();
   const phaseState = usePhaseState();

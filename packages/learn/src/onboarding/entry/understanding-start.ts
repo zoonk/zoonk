@@ -10,7 +10,10 @@ import { type StartUnderstandingOutcome, type UnderstandingActions } from "../on
 
 const EXPLANATION_MINUTES = 5;
 
-/** Drafts this tab's click sent, by id. A reload forgets them, so a draft opened later waits for the learner's own tap. */
+/**
+ * Drafts this tab's click sent, by id. A reload forgets them, so a draft opened later waits for the
+ * learner's own tap.
+ */
 type SentGoal = { pending: boolean; prompt: string; sentAt: number; owner?: symbol };
 
 const sentGoals = new Map<string, SentGoal>();
@@ -20,7 +23,10 @@ export function getSentGoal(draftId: string): Omit<SentGoal, "owner"> | null {
   return sent ? { pending: sent.pending, prompt: sent.prompt, sentAt: sent.sentAt } : null;
 }
 
-/** A cleanup replay can reclaim it in the same turn; leaving or replacing the draft revokes it before the next task. */
+/**
+ * A cleanup replay can reclaim it in the same turn; leaving or replacing the draft revokes it
+ * before the next task.
+ */
 export function holdSentGoal(draftId: string): () => void {
   const sent = sentGoals.get(draftId);
 

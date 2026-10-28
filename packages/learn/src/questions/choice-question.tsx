@@ -135,7 +135,10 @@ function ChoiceGrade({ feedback }: { feedback: ChoiceFeedback }) {
   );
 }
 
-/** For several picks (`select`), the host gets an answer only once as many as it asks are picked, null before. */
+/**
+ * For several picks (`select`), the host gets an answer only once as many as it asks are picked,
+ * null before.
+ */
 export function ChoiceQuestion({
   disabled = false,
   feedback = null,

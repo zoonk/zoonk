@@ -42,7 +42,10 @@ function roundStudyMinutes(minutes: number): number {
     : Math.round(minutes / MINUTES_STEP) * MINUTES_STEP;
 }
 
-/** Today is prefetched only once the learner reaches for it, when the plan is final: opening it builds the day once. */
+/**
+ * Today is prefetched only once the learner reaches for it, when the plan is final: opening it
+ * builds the day once.
+ */
 function StartButton({ href }: { href: string }) {
   const t = useExtracted();
   const ref = useEnterClick<HTMLAnchorElement>();

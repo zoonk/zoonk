@@ -72,7 +72,10 @@ function SubjectPreparation({
   );
 }
 
-/** An exam subject out of the plan keeps its preparation, since the exam still tests it; any other subject out of it has nothing. */
+/**
+ * An exam subject out of the plan keeps its preparation, since the exam still tests it; any other
+ * subject out of it has nothing.
+ */
 export function SubjectCoverage({
   className,
   labelled = false,

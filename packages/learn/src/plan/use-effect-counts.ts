@@ -28,7 +28,9 @@ function sayLessons(texts: LessonTexts, counts: Counted & Added): string | null 
   return counts.removed > 0 ? texts.removedText(counts) : null;
 }
 
-/** Without a date the plan keeps every lesson, so it has fewer or more of them, never "left out". */
+/**
+ * Without a date the plan keeps every lesson, so it has fewer or more of them, never "left out".
+ */
 function useFewerLessonsText(): LessonTexts {
   const t = useExtracted();
 
@@ -94,7 +96,10 @@ function useFewerLessonsText(): LessonTexts {
   return { addedText, bothText, removedText };
 }
 
-/** When names aren't one per lesson, a few are examples ("such as A, B and C"), never a count of names beside a count of lessons. */
+/**
+ * When names aren't one per lesson, a few are examples ("such as A, B and C"), never a count of
+ * names beside a count of lessons.
+ */
 export function useLessonsEffectText() {
   const t = useExtracted();
   const format = useFormatter();
@@ -179,7 +184,10 @@ export function useLessonsEffectText() {
       named = false,
     }: {
       byDate?: boolean;
-      /** Beside a diff, which counts them first: only a sentence that names the lessons left out says more. Null otherwise. */
+      /**
+       * Beside a diff, which counts them first: only a sentence that names the lessons left out
+       * says more. Null otherwise.
+       */
       named?: boolean;
     } = {},
   ): string | null {
@@ -205,8 +213,8 @@ export function useLessonsEffectText() {
       ...added,
     });
 
-    // Counts net skill by skill, so a lesson swapped within its skill still needs its name; it's "leaves
-    // out" either way, since "fewer" would be untrue.
+    // Counts net skill by skill, so a lesson swapped within its skill still needs its name; it's
+    // "leaves out" either way, since "fewer" would be untrue.
     const netted =
       removed === 0 && leftOut.length > 0
         ? removedText({

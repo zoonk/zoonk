@@ -28,7 +28,10 @@ import { useBlockTitle } from "./use-block-copy";
 import { type MomentKind, useMomentTitle } from "./use-moment-title";
 import { useSessionAction } from "./use-session-action";
 
-/** The day a lesson comes back reads as a date, never a weekday that could be this week's or the next. */
+/**
+ * The day a lesson comes back reads as a date, never a weekday that could be this week's or the
+ * next.
+ */
 function MomentEarned({ moment }: { moment: StudyMomentView }) {
   const t = useExtracted();
   const format = useFormatter();
@@ -79,7 +82,10 @@ function ActionFailed({ children }: { children: React.ReactNode }) {
   );
 }
 
-/** On a phone Continue keeps the bar's bottom row, where the last answer's Continue was, so a quick second tap never stops the session. */
+/**
+ * On a phone Continue keeps the bar's bottom row, where the last answer's Continue was, so a quick
+ * second tap never stops the session.
+ */
 function MomentActions({
   onContinue,
   onStop,

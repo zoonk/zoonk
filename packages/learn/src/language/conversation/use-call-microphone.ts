@@ -8,7 +8,9 @@ function stopTracks(stream: MediaStream) {
   }
 }
 
-/** Silence when the microphone is blocked: a GPT-Live session only moves on while audio streams in. */
+/**
+ * Silence when the microphone is blocked: a GPT-Live session only moves on while audio streams in.
+ */
 export async function openCallAudio(): Promise<{
   blocked: boolean;
   stop: () => void;
@@ -42,7 +44,10 @@ export async function openCallAudio(): Promise<{
 
 export type CallAudio = Awaited<ReturnType<typeof openCallAudio>>;
 
-/** Safari on iOS asks for the microphone only while a tap is active, so the tap opens it before the call's screen exists. It's taken once. */
+/**
+ * Safari on iOS asks for the microphone only while a tap is active, so the tap opens it before the
+ * call's screen exists. It's taken once.
+ */
 export function openCallAudioInTap() {
   const held: { audio: Promise<CallAudio> | null } = { audio: openCallAudio() };
 
@@ -76,8 +81,8 @@ export function useCallMicrophone() {
 
   const stop = useCallback(() => stopAudio.current?.(), []);
 
-  // React reruns this cleanup and setup without unmounting (Strict Mode, Activity), so setup reopens
-  // the screen, or every later call would drop its audio.
+  // React reruns this cleanup and setup without unmounting (Strict Mode, Activity), so setup
+  // reopens the screen, or every later call would drop its audio.
   useEffect(() => {
     screenClosed.current = false;
 

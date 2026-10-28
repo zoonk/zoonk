@@ -14,7 +14,10 @@ import {
 const MS_PER_SECOND = 1000;
 const NOT_SURE: ChoiceAnswer = { dontKnow: true };
 
-/** Each answer carries the run's earlier ones, so a run left halfway still counts; `finish` counts it once more at the end. */
+/**
+ * Each answer carries the run's earlier ones, so a run left halfway still counts; `finish` counts
+ * it once more at the end.
+ */
 export type MistakePracticeActions = {
   answer: (answer: MistakePracticeAnswer) => Promise<MistakePracticeFeedback>;
   finish: (run: { answerIds: string[] }) => Promise<MistakePracticeSummary | null>;

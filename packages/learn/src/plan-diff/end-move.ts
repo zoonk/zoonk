@@ -8,7 +8,10 @@ type EndMoveEffect = Pick<
 
 const ROUNDING_DAYS = 1;
 
-/** Not by a day or less while the change adds or leaves out lessons: an end a day earlier beside lessons left out reads backwards. */
+/**
+ * Not by a day or less while the change adds or leaves out lessons: an end a day earlier beside
+ * lessons left out reads backwards.
+ */
 export function getShownEndMove(
   effect: EndMoveEffect | null | undefined,
 ): { after: string; before: string } | null {

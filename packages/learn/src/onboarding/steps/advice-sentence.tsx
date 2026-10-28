@@ -30,7 +30,10 @@ function FoundWords({ found }: { found: PlanTimeToCover }) {
   );
 }
 
-/** One live region (`FindTimeLine`); Find plans the goal at each daily time only when the learner asks. */
+/**
+ * One live region (`FindTimeLine`); Find plans the goal at each daily time only when the learner
+ * asks.
+ */
 export function AdviceSentence({
   dated,
   find,

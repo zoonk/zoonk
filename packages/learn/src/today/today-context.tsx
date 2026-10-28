@@ -11,7 +11,10 @@ import { type MissionLinks } from "../missions/mission-links";
 import { type MissionsDay } from "../missions/missions-card";
 import { type DayStep } from "../session/session-types";
 
-/** `continueSession` resolves to false when it didn't work; every other action to whether it was saved, or what it saved. */
+/**
+ * `continueSession` resolves to false when it didn't work; every other action to whether it was
+ * saved, or what it saved.
+ */
 export type TodayActions = {
   addExtraTime: () => Promise<boolean>;
   answerInsight: (input: {
@@ -30,10 +33,16 @@ export type TodayActions = {
   adjustTimeHref: string;
   chooseFocusHref: string;
   studyEverythingHref: string;
-  /** A link for a step whose page opens it without writing (a language call); null for every other step, and while opening the day would update it. */
+  /**
+   * A link for a step whose page opens it without writing (a language call); null for every other
+   * step, and while opening the day would update it.
+   */
   continueHref: string | null;
   continueSession: () => Promise<boolean>;
-  /** Resolves to the change as it stands after the answer, `stale` when it was out of date (Today reads itself again), or null when it wasn't saved. */
+  /**
+   * Resolves to the change as it stands after the answer, `stale` when it was out of date (Today
+   * reads itself again), or null when it wasn't saved.
+   */
   decidePlanChange: (input: {
     changeId: NonNullable<TodayView["planChange"]>["id"];
     status: PlanChangeDecisionInput["status"];

@@ -13,7 +13,10 @@ import {
 } from "../_components/list-group";
 import { getSourceHost } from "../_utils/source-host";
 
-/** Names stand side by side, since the preposition an institution's name takes ("na USP") varies by name. */
+/**
+ * Names stand side by side, since the preposition an institution's name takes ("na USP") varies by
+ * name.
+ */
 export function useCutoffWords() {
   const t = useExtracted();
   const format = useFormatter();

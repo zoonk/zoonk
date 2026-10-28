@@ -53,8 +53,8 @@ function toRun({
 export function useCallStart({ onStart, step }: { onStart: () => Promise<boolean>; step: string }) {
   const [state, setState] = useState<CallStartState>("idle");
 
-  // The router keeps the card's page while its call runs, so back on it that start is over; one still
-  // waiting keeps its wait.
+  // The router keeps the card's page while its call runs, so back on it that start is over; one
+  // still waiting keeps its wait.
   useLayoutEffect(
     () => () =>
       setState((current) => (current === "opened" || current === "ready" ? "idle" : current)),

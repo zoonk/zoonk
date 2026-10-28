@@ -32,7 +32,10 @@ function getRequestIdKey(key: string): string {
   return `${key}:requestId`;
 }
 
-/** Kept until the draft is cleared, so a reload after a send whose response never came sends the same id and the run counts once. `fallback` is used when none is kept, and without storage. */
+/**
+ * Kept until the draft is cleared, so a reload after a send whose response never came sends the
+ * same id and the run counts once. `fallback` is used when none is kept, and without storage.
+ */
 export function keepDraftRequestId({ fallback, key }: { fallback: string; key: string }): string {
   const kept = deviceStorage.get(getRequestIdKey(key));
 
@@ -49,7 +52,10 @@ export function clearAnswerDraft(key: string) {
   deviceStorage.remove(getRequestIdKey(key));
 }
 
-/** Stops short of the last question, so a reload while the answers were graded asks it again instead of finishing on its own. */
+/**
+ * Stops short of the last question, so a reload while the answers were graded asks it again instead
+ * of finishing on its own.
+ */
 export function getResumableAnswers<TAnswer extends { itemId: string }>({
   answers,
   questionIds,

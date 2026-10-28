@@ -50,7 +50,10 @@ function getUpcomingFold({
   return { hidden: !open, phone: index >= rows.phone, wide: index >= rows.wide };
 }
 
-/** The fold never hides a block a mission opens: where the missions card leaves its rows to the queue, that block is the mission's one place. */
+/**
+ * The fold never hides a block a mission opens: where the missions card leaves its rows to the
+ * queue, that block is the mission's one place.
+ */
 function SessionQueue({ next }: { next: DayStep }) {
   const t = useExtracted();
   const { today } = useTodayScreen();

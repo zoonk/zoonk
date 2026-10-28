@@ -31,8 +31,8 @@ function useSectionCount(syllabus: SyllabusSectionView): string {
   const t = useExtracted();
   const subjects = syllabus.subjects.filter((subject) => subject.source === "notice").length;
 
-  // The learner's material is never a notice: its topics (or headings) are counted as the reveal counts
-  // them.
+  // The learner's material is never a notice: its topics (or headings) are counted as the reveal
+  // counts them.
   if (syllabus.fromMaterial) {
     return t(
       "{count, plural, one {# topic from your material} other {# topics from your material}}",

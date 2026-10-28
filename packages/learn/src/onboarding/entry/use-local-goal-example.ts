@@ -2,7 +2,10 @@
 
 import { useLocale } from "next-intl";
 
-/** Messages name it in a `select`, so each language writes it with its own article ("o ENEM", "le bac"). */
+/**
+ * Messages name it in a `select`, so each language writes it with its own article ("o ENEM", "le
+ * bac").
+ */
 type LocalExam = "abitur" | "bac" | "enem" | "pau" | "sat";
 
 const LOCAL_EXAMS: Record<string, LocalExam> = {

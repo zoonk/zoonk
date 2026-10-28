@@ -97,7 +97,8 @@ function LiveCallRun({
     }
   }, [call.phase, save]);
 
-  // The start waits a microtask the cleanup cancels, so Strict Mode's replayed effect starts the call only once.
+  // The start waits a microtask the cleanup cancels, so Strict Mode's replayed effect starts the
+  // call only once.
   const autoStarted = useRef(false);
 
   useEffect(() => {

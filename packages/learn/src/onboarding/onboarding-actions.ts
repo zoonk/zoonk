@@ -177,7 +177,10 @@ export type OnboardingRoutes = {
 export type OnboardingNavigation = {
   /** Replaces the page, so the archived goal's isn't kept in history. */
   replaceSteps: (goalId: string) => void;
-  /** Only changes the address, not the screen, so a refresh shows the same draft; null when back to writing. */
+  /**
+   * Only changes the address, not the screen, so a refresh shows the same draft; null when back to
+   * writing.
+   */
   showDraft: (draftId: string | null) => void;
   toExplanation: (goalId: string) => void;
   toStart: () => void;

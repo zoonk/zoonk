@@ -13,7 +13,9 @@ import { LevelBar } from "../level-bar";
 
 type LanguageSkillLevel = LanguageProgressView["levels"][number];
 
-/** `BAR_START` and `BAR_WIDTH` repeat these columns and gaps, so the target line sits over the bars. */
+/**
+ * `BAR_START` and `BAR_WIDTH` repeat these columns and gaps, so the target line sits over the bars.
+ */
 const ROW_GRID = "grid grid-cols-[8rem_1fr_3.5rem] items-center gap-x-3";
 const BAR_START = "8rem + 0.75rem";
 const BAR_WIDTH = "100% - 8rem - 3.5rem - 1.5rem";

@@ -17,7 +17,10 @@ export type TopicOutlineShown =
 
 type TopicOutlineFailure = { limit?: OutlineLimit; shown: TopicOutlineShown };
 
-/** Read once on opening (a GET, never AI), then again every few seconds while it's written after the learner's tap. */
+/**
+ * Read once on opening (a GET, never AI), then again every few seconds while it's written after the
+ * learner's tap.
+ */
 export function useTopicOutline({
   actions,
   onLanded,

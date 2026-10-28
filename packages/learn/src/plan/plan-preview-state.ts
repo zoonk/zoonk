@@ -8,7 +8,10 @@ export type PlanPreviewState =
   | (PreviewInput & { status: "failed" | "loading" })
   | (PreviewInput & { preview: PlanChangePreview; status: "ready" });
 
-/** A refresh deserializes an unchanged server view into a new object, which keeps the preview's base. */
+/**
+ * A refresh deserializes an unchanged server view into a new object, which keeps the preview's
+ * base.
+ */
 export function isSamePreviewPlan({
   current,
   previous,

@@ -80,7 +80,10 @@ function interruptPlay({
   return { ...state, playing: false };
 }
 
-/** Exam fidelity, not security: the file is public. A play under way as the recording mounts was cut off. */
+/**
+ * Exam fidelity, not security: the file is public. A play under way as the recording mounts was cut
+ * off.
+ */
 export function useListeningPlays({
   playsKey,
   restartOnce,

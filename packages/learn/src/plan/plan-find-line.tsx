@@ -52,7 +52,10 @@ function findFocusTarget({
   return studyEverything ?? document.querySelector<HTMLElement>(`#${FIND_ACTIONS_ID} button`);
 }
 
-/** The returned `ask` marks that this editor asked, so an answer found elsewhere (the Plan's card) moves nothing. */
+/**
+ * The returned `ask` marks that this editor asked, so an answer found elsewhere (the Plan's card)
+ * moves nothing.
+ */
 export function useFocusFindAnswer(choices: number[]) {
   const { goal } = usePlanScreen();
   const { answered, state } = useTimeToCover();

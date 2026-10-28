@@ -1,6 +1,9 @@
 import { tabStorage } from "../_utils/device-storage";
 
-/* "Back" uses the Navigation API, so the page returns as the learner left it; browsers without it follow the back link's address. */
+/*
+ * "Back" uses the Navigation API, so the page returns as the learner left it; browsers without it
+ * follow the back link's address.
+ */
 
 /** Tab-scoped marks survive the router's history.replaceState and a reload. */
 const APP_ENTRIES_KEY = "zoonk-app-entries";

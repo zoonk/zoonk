@@ -12,7 +12,9 @@ type AdviceState =
   | { status: "building" | "failed" | "idle" | "pending" }
   | { advice: RecommendedBases; status: "answered" };
 
-/** Only when the learner asks, never for the page. Nothing is saved, so the plan isn't read again. */
+/**
+ * Only when the learner asks, never for the page. Nothing is saved, so the plan isn't read again.
+ */
 export function useBasesAdvice() {
   const { actions } = usePlanScreen();
   const [state, setState] = useState<AdviceState>({ status: "idle" });

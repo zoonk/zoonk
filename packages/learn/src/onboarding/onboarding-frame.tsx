@@ -157,7 +157,10 @@ export function OnboardingDescription({
   );
 }
 
-/** Named apart, since an exam's name inside a sentence would need an article that depends on the name ("sobre o ENEM", "über den SAT"). */
+/**
+ * Named apart, since an exam's name inside a sentence would need an article that depends on the
+ * name ("sobre o ENEM", "über den SAT").
+ */
 export function OnboardingSubject({
   children,
   className,

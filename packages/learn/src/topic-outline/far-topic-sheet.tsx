@@ -131,7 +131,10 @@ function FarTopicBody({
   );
 }
 
-/** The page is read again only when the sheet closes after the lessons landed: read while open, the plan could take away the row the sheet opened from. */
+/**
+ * The page is read again only when the sheet closes after the lessons landed: read while open, the
+ * plan could take away the row the sheet opened from.
+ */
 export function FarTopicSheet({
   actions,
   chapterHref,

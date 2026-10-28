@@ -36,7 +36,10 @@ function hasLessonChanged({
   );
 }
 
-/** Reads the whole session only when the lesson changed; a failed wait always does, since the readiness contract can't tell a retryable failure from a lesson set aside. */
+/**
+ * Reads the whole session only when the lesson changed; a failed wait always does, since the
+ * readiness contract can't tell a retryable failure from a lesson set aside.
+ */
 function useWaitingCheck({
   actions,
   block,
@@ -168,7 +171,10 @@ export function NotWritten({
   );
 }
 
-/** The block's name follows a label: inside a sentence, "Do What you already know" read wrong in every language. */
+/**
+ * The block's name follows a label: inside a sentence, "Do What you already know" read wrong in
+ * every language.
+ */
 export function AlternativeButton({
   actions,
   alternative,

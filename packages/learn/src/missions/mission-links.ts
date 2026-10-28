@@ -21,7 +21,9 @@ export type MissionLinks = {
     pronunciation: string;
   };
   openBlock: (blockId: string) => Promise<boolean>;
-  /** Runs on the learner's tap, never on a render, hover or prefetch, so the host can save the day. */
+  /**
+   * Runs on the learner's tap, never on a render, hover or prefetch, so the host can save the day.
+   */
   openPage?: () => void;
   openStep?: (ref: DayBlockRef) => Promise<boolean>;
 };

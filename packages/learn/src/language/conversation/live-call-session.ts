@@ -11,7 +11,10 @@ type Listener = () => void;
 /** GPT-Live usually starts a session within a second or two. */
 const CONNECT_TIMEOUT_MS = 15_000;
 
-/** Only encodes and decodes the call's events: the offer goes to our own route, so the browser never reaches OpenAI. */
+/**
+ * Only encodes and decodes the call's events: the offer goes to our own route, so the browser never
+ * reaches OpenAI.
+ */
 const LIVE_EVENTS = new OpenAIRealtimeModelLive("gpt-live-1", {
   baseURL: "",
   headers: () => ({}),
@@ -77,7 +80,10 @@ export function createLiveCallSession({
   });
 }
 
-/** A hangup at the call's deadline closes the channel without `session.closed`, so a lost connection asks our server how it ended. */
+/**
+ * A hangup at the call's deadline closes the channel without `session.closed`, so a lost connection
+ * asks our server how it ended.
+ */
 export function watchConnection({
   endedByServer,
   isOpen,

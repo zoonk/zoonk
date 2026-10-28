@@ -26,7 +26,10 @@ export type ChoiceQuestionAnswer = { answer: ChoiceAnswer; durationMs: number; i
 
 type UpcomingQuestions = { ended: boolean; total: number; waiting: React.ReactNode };
 
-/** The host clears the draft once the answers are graded (`clearAnswerDraft`); until then, a reload goes on from the next question. */
+/**
+ * The host clears the draft once the answers are graded (`clearAnswerDraft`); until then, a reload
+ * goes on from the next question.
+ */
 function useAnswerDraft({
   answers,
   draftKey,
@@ -76,7 +79,10 @@ function useAnswerDraft({
   };
 }
 
-/** Focuses each new question's title, so Enter sends the pick instead of pressing the button the last one was answered with. */
+/**
+ * Focuses each new question's title, so Enter sends the pick instead of pressing the button the
+ * last one was answered with.
+ */
 function useFocusNewQuestion({
   container,
   itemId,

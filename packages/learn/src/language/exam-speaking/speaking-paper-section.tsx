@@ -105,7 +105,8 @@ export function SpeakingPaperSection({
       )}
 
       <ListGroup>
-        {/* The router keeps the page, so the key remounts the list for a link asking for another task. */}
+        {/* The router keeps the page, so the key remounts the list for a link asking for
+            another task. */}
         <ol key={openTask}>
           {paper.tasks.map((task, index) => (
             <li key={task.key}>

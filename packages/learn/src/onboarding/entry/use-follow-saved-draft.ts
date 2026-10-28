@@ -8,7 +8,9 @@ function isSameDraft(
   return JSON.stringify(next ?? null) === JSON.stringify(previous ?? null);
 }
 
-/** Never over a copy this screen saved or read itself (`markOwn`): no version says which is newer. */
+/**
+ * Never over a copy this screen saved or read itself (`markOwn`): no version says which is newer.
+ */
 export function useFollowSavedDraft({
   follow,
   initialDraft,

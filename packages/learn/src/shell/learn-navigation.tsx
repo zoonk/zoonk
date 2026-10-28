@@ -14,7 +14,10 @@ import { LEARN_TABS, type LearnTab } from "./learn-tabs";
 
 export type { LearnTab } from "./learn-tabs";
 
-/** Undefined while it loads: the default buddy stays invisible on a page marked signed in, so another buddy never shows before the learner's own. */
+/**
+ * Undefined while it loads: the default buddy stays invisible on a page marked signed in, so
+ * another buddy never shows before the learner's own.
+ */
 type TabBuddy = LearnBuddy | null | undefined;
 
 const LOADING_BUDDY_CLASS = "signed-in:invisible";
@@ -123,7 +126,10 @@ function NavigationRoot({ ...props }: React.ComponentProps<"nav">) {
   return <nav aria-label={t("Learning tabs")} {...props} />;
 }
 
-/** A tapped tab whose page is still on its way (its link marked `data-link-pending`) takes the mark at once. */
+/**
+ * A tapped tab whose page is still on its way (its link marked `data-link-pending`) takes the mark
+ * at once.
+ */
 const TAB_ITEM_CLASS =
   "focus-visible:ring-ring/50 text-muted-foreground hover:bg-foreground/5 hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:text-foreground has-data-link-pending:bg-muted has-data-link-pending:text-foreground press font-medium outline-none focus-visible:ring-[3px]";
 
@@ -170,7 +176,10 @@ export function LearnSideNavigation({
   );
 }
 
-/** The bar's hairline, its padding around its 52px tabs, and the home indicator's inset: change it with the bar. */
+/**
+ * The bar's hairline, its padding around its 52px tabs, and the home indicator's inset: change it
+ * with the bar.
+ */
 export const ABOVE_BOTTOM_TABS_CLASS = "bottom-[calc(4rem+1px+env(safe-area-inset-bottom))]";
 
 /** Place it after `LearnShellMain`; toasts rise above it (`data-bottom-bar`). */

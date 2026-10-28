@@ -7,7 +7,10 @@ import { SURFACE_CLASS } from "./surface";
 /** Rows are direct children, or the items of one `ol`/`ul` directly inside. */
 export const LIST_GROUP_CLASS = "divided-rows flex flex-col";
 
-/** `overflow-clip`, not `overflow-hidden`: a scroll container would shrink to a line in a sheet's flex column. */
+/**
+ * `overflow-clip`, not `overflow-hidden`: a scroll container would shrink to a line in a sheet's
+ * flex column.
+ */
 const LIST_GROUP_PANEL_CLASS = cn(SURFACE_CLASS, LIST_GROUP_CLASS, "overflow-clip");
 
 export function ListGroup({

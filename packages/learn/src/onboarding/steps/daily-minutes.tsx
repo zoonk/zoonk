@@ -72,7 +72,10 @@ export function TimeSelect({
   );
 }
 
-/** Shows the time last picked in it until a chip is picked: a phone's picker reports each time it scrolls past, so it never jumps back mid-choice. */
+/**
+ * Shows the time last picked in it until a chip is picked: a phone's picker reports each time it
+ * scrolls past, so it never jumps back mid-choice.
+ */
 export function OtherTimeSelect({
   disabled,
   label,

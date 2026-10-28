@@ -55,7 +55,10 @@ const CHIP_CLASS = cn(
 
 type ChoiceListVariant = "chips" | "rows";
 
-/** `onPick` hears only a deliberate pick (a tap, a click or a number key), never the arrow keys, so a one-answer question can move on with it. */
+/**
+ * `onPick` hears only a deliberate pick (a tap, a click or a number key), never the arrow keys, so
+ * a one-answer question can move on with it.
+ */
 export function ChoiceList<Value extends string>({
   choices,
   label,

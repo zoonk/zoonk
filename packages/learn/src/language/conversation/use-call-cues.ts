@@ -18,7 +18,10 @@ const SILENCE_END_SECONDS = 45;
 const TICK_MS = 500;
 const OPENING_RETRY_MS = 5000;
 
-/** GPT-Live only speaks first when told to, so the call opens with a cue, sent once more if the character stays silent. */
+/**
+ * GPT-Live only speaks first when told to, so the call opens with a cue, sent once more if the
+ * character stays silent.
+ */
 export function useOpeningCue(openingLine: string) {
   const retry = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -47,14 +50,20 @@ export function useOpeningCue(openingLine: string) {
   return useMemo(() => ({ cancel, open }), [cancel, open]);
 }
 
-/** `endsAt` is on this device's clock: the time the server said was left, from when its answer arrived. */
+/**
+ * `endsAt` is on this device's clock: the time the server said was left, from when its answer
+ * arrived.
+ */
 export type CallLength = { endsAt: number } & Pick<LanguageConversationSetup, "endsAtLimit">;
 
 type TimedCue = { atSeconds: number; say: string };
 
 const NO_CUES: readonly TimedCue[] = [];
 
-/** A quiet learner is asked once whether they're there, then the call ends: the voice session is paid by the second, silence included. */
+/**
+ * A quiet learner is asked once whether they're there, then the call ends: the voice session is
+ * paid by the second, silence included.
+ */
 export function useCallClock({
   cues = NO_CUES,
   hangUp,

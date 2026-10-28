@@ -265,7 +265,10 @@ export function TestOutRun({
   closeHref: string;
   draftKey?: string;
   lessonsLeft?: number | null;
-  /** `requestId` is kept with the answers until graded, so a retry, even after a reload, counts the test once. */
+  /**
+   * `requestId` is kept with the answers until graded, so a retry, even after a reload, counts the
+   * test once.
+   */
   onSubmit: (input: {
     answers: ChoiceQuestionAnswer[];
     requestId: string;
@@ -286,7 +289,8 @@ export function TestOutRun({
       const requestId = draftKey ? keepDraftRequestId({ fallback: ownId, key: draftKey }) : ownId;
       const graded = await onSubmit({ answers, requestId }).catch(() => null);
 
-      // Only graded answers clear the draft and the test's id, so a failed send is retried as the same test.
+      // Only graded answers clear the draft and the test's id, so a failed send is retried as the
+      // same test.
       if (graded && draftKey) {
         clearAnswerDraft(draftKey);
       }

@@ -8,7 +8,10 @@ import {
 import { useExtracted } from "next-intl";
 import { createContext, use } from "react";
 
-/** A free exam plan past its first week has no practice, so its quick review asks known topics instead. */
+/**
+ * A free exam plan past its first week has no practice, so its quick review asks known topics
+ * instead.
+ */
 export const KnownTopicsReturnContext =
   createContext<SyllabusView["knownTopicsReturn"]>("practice");
 

@@ -5,7 +5,10 @@ type SearchedPlan = Pick<
   "areas" | "bases" | "examChoices" | "feasibility" | "planId" | "schedule" | "steering"
 >;
 
-/** The plan's id is in it, since another goal's plan can look the same and need another time; refreshes that change none of these keep the answer. */
+/**
+ * The plan's id is in it, since another goal's plan can look the same and need another time;
+ * refreshes that change none of these keep the answer.
+ */
 export function getTimeToCoverRevision(plan: SearchedPlan): string {
   return JSON.stringify([
     plan.planId,

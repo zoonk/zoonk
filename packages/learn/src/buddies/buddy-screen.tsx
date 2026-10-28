@@ -195,7 +195,10 @@ function PickBuddyButton({ onPick }: { onPick: () => void }) {
   );
 }
 
-/** Only while awake: asleep it naps on, and glowing it's already beaming, so a smile would swap its face away. */
+/**
+ * Only while awake: asleep it naps on, and glowing it's already beaming, so a smile would swap its
+ * face away.
+ */
 function useChatFace(buddy: LearnBuddy) {
   const face = useRef<ActorHandle<BuddyActName>>(null);
   const awake = getBuddyEnergyState(buddy.energy, { studiedToday: buddy.studiedToday }) === "awake";

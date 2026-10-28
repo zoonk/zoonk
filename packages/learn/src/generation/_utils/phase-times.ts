@@ -62,7 +62,10 @@ function toPhaseTime({
   return { endedAt: own?.finished ?? next?.started ?? null, startedAt };
 }
 
-/** Runs don't report every step, so a phase begins when the one before it ended and ends as the next one begins. */
+/**
+ * Runs don't report every step, so a phase begins when the one before it ended and ends as the next
+ * one begins.
+ */
 export function getPhaseTimes<TPhase extends string>({
   definition,
   phases,

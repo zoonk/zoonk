@@ -37,7 +37,10 @@ function useChangeEffectText() {
 
 type CurrentEnd = Pick<PlanView["estimate"], "endDate"> & Pick<PlanView["schedule"], "targetDate">;
 
-/** Only a plan without a date says its new end, and only while the change starts from the end the plan shows now. */
+/**
+ * Only a plan without a date says its new end, and only while the change starts from the end the
+ * plan shows now.
+ */
 function usePlanEndEffectText() {
   const t = useExtracted();
   const formatPlanDate = useFormatPlanDate();
@@ -76,7 +79,10 @@ function removesDate(operations: readonly PlanOperation[]): boolean {
   );
 }
 
-/** A plan the change took the date off says its end by month: "instead of" the last lesson's day misread as the deadline. */
+/**
+ * A plan the change took the date off says its end by month: "instead of" the last lesson's day
+ * misread as the deadline.
+ */
 function useAppliedEndText() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();

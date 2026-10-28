@@ -10,7 +10,10 @@ import { useTodayScreen } from "./today-context";
 
 const PRACTICE_TITLE_ID = "today-practice-title";
 
-/** Under 72rem only: from there the sidebar's study links and the command palette hold the same ways in. */
+/**
+ * Under 72rem only: from there the sidebar's study links and the command palette hold the same ways
+ * in.
+ */
 export function TodayPractice({
   className,
   mistakes,

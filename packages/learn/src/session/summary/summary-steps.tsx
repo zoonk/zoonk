@@ -108,7 +108,8 @@ export function SummarySteps() {
   const keepGoing = useKeepGoing();
   const firstVisit = useFirstSummaryVisit(summary);
 
-  // The tapped "Stop for today" left with the screen before, so a screen reader starts at the title.
+  // The tapped "Stop for today" left with the screen before, so a screen reader starts at the
+  // title.
   const shown = stopped || summary.finished;
 
   useEffect(() => {

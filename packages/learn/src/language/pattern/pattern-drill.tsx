@@ -15,7 +15,10 @@ import { type PatternPracticeResult } from "./use-pattern-drill";
 
 type DrillQuestion = MistakePatternView["drill"][number];
 
-/** Not a bank item: the question reads only its format, options and text, so the ids just name the sentence. */
+/**
+ * Not a bank item: the question reads only its format, options and text, so the ids just name the
+ * sentence.
+ */
 function toChoiceQuestion({
   index,
   question,

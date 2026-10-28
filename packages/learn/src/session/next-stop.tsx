@@ -82,7 +82,10 @@ function StartButton({
   );
 }
 
-/** A written lesson the learner waited for opens on its own, since they already asked; one ready when the screen opened waits for Start. */
+/**
+ * A written lesson the learner waited for opens on its own, since they already asked; one ready
+ * when the screen opened waits for Start.
+ */
 function useOpenWhenWritten({
   actions,
   asked,
@@ -144,8 +147,8 @@ function useStartState({
   const failed =
     start.failed || ((tap?.state === "failed" || written.failed) && !start.isPending && !opening);
 
-  // The tap's wait goes on through what opens the step after it, so its line neither starts over nor
-  // blinks when the tap hands over.
+  // The tap's wait goes on through what opens the step after it, so its line neither starts over
+  // nor blinks when the tap hands over.
   const [tappedAt, setTappedAt] = useState<number>();
 
   if (tapOpening && tappedAt !== tap.tappedAt) {

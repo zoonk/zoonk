@@ -12,7 +12,10 @@ export type SyllabusSectionView = Omit<SyllabusView, "subjects"> & {
   subjects: SyllabusSectionSubject[];
 };
 
-/** Drops the chapters, which for a big exam (ENEM's run to ~60 KB) would ride in the page and every prefetch of it. */
+/**
+ * Drops the chapters, which for a big exam (ENEM's run to ~60 KB) would ride in the page and every
+ * prefetch of it.
+ */
 export function toSyllabusSection(syllabus: SyllabusView): SyllabusSectionView {
   return {
     ...syllabus,

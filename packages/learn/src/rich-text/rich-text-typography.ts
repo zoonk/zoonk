@@ -3,7 +3,10 @@ import { moneySignGap } from "@zoonk/utils/math-answer";
 
 const NBSP = " ";
 
-/** Five digits or more without grouping ("350000"), not part of a decimal, code, date or word, and not starting with 0 (a postal code or an ID). */
+/**
+ * Five digits or more without grouping ("350000"), not part of a decimal, code, date or word, and
+ * not starting with 0 (a postal code or an ID).
+ */
 const LONG_NUMBER = /(?<![\d.,\p{L}/-])[1-9]\d{4,}(?![\d\p{L}/-]|[.,]\d)/gu;
 
 /** In their own case: "A" is amperes, "a" is a word. */

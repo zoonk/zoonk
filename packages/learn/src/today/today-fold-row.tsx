@@ -6,7 +6,10 @@ import { DoneMark } from "../_components/status-mark";
 import { useFormatDuration } from "../_utils/time-format";
 import { SESSION_LIST_ID } from "./today-ids";
 
-/** Only time still ahead says its minutes: a done row's are the plan's estimate, not the time it took. */
+/**
+ * Only time still ahead says its minutes: a done row's are the plan's estimate, not the time it
+ * took.
+ */
 export function FoldRow({
   className,
   done,

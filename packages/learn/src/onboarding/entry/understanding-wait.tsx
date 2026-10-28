@@ -61,7 +61,10 @@ export function SendingGoal({ goal }: { goal: string }) {
   return <UnderstandingWaitScreen goal={goal} run={WAITING_RUN} />;
 }
 
-/** Only follows the read: one that failed or never started waits for the learner's "Try again", since starting it is new work. */
+/**
+ * Only follows the read: one that failed or never started waits for the learner's "Try again",
+ * since starting it is new work.
+ */
 export function UnderstandingWait({
   draft,
   isRetrying,

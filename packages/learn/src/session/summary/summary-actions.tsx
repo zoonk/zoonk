@@ -81,7 +81,10 @@ export function KeepGoingFailed({ keepGoing }: { keepGoing: ReturnType<typeof us
   );
 }
 
-/** On a phone, only beside Finish (`lastStep`): two "Continue" buttons would leave the learner guessing which one keeps them studying. */
+/**
+ * On a phone, only beside Finish (`lastStep`): two "Continue" buttons would leave the learner
+ * guessing which one keeps them studying.
+ */
 export function SummaryOptions({ lastStep }: { lastStep: boolean }) {
   const t = useExtracted();
   const stopped = useIsStopped();

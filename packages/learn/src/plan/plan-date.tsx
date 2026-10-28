@@ -55,7 +55,10 @@ function useFieldDate({
   return [value, setValue];
 }
 
-/** A month the learner named stays a month until they pick its day, so the field starts empty instead of showing a day they never chose. */
+/**
+ * A month the learner named stays a month until they pick its day, so the field starts empty
+ * instead of showing a day they never chose.
+ */
 export function PlanDate() {
   const t = useExtracted();
   const inputId = useId();

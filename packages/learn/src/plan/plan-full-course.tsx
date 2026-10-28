@@ -10,7 +10,10 @@ import { useFormatDuration } from "../_utils/time-format";
 import { usePlanScreen } from "./plan-context";
 import { usePlanChange } from "./use-plan-change";
 
-/** `endDate` only when it's the plan's own end: working it out otherwise would plan the goal again, which a page never does. Null when there's nothing to choose. */
+/**
+ * `endDate` only when it's the plan's own end: working it out otherwise would plan the goal again,
+ * which a page never does. Null when there's nothing to choose.
+ */
 export function useFullCourse() {
   const { goal, plan } = usePlanScreen();
   const { feasibility, schedule } = plan;

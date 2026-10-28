@@ -16,7 +16,10 @@ export function Route({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-/** `overflow-y: clip` ends its mark's long lines at its edges without breaking `sticky` inside, as `hidden` would. */
+/**
+ * `overflow-y: clip` ends its mark's long lines at its edges without breaking `sticky` inside, as
+ * `hidden` would.
+ */
 export function RouteStop({ className, ...props }: React.ComponentProps<"section">) {
   return (
     <section
@@ -94,7 +97,9 @@ export function RouteTitle({
   );
 }
 
-/** A native `<details>`, so its rows are in the page's HTML and it opens before any script loads. */
+/**
+ * A native `<details>`, so its rows are in the page's HTML and it opens before any script loads.
+ */
 export function RouteZone({
   aside,
   children,

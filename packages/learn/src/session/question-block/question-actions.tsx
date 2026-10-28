@@ -38,7 +38,10 @@ export function ContinueButton({ onContinue }: { onContinue: () => void }) {
   return <EnterButton onClick={onContinue}>{t("Continue")}</EnterButton>;
 }
 
-/** On a control that keeps its own Enter (a checkbox, a step, a pair), completing the answer moves focus to Check, so Enter checks instead of undoing the last pick. */
+/**
+ * On a control that keeps its own Enter (a checkbox, a step, a pair), completing the answer moves
+ * focus to Check, so Enter checks instead of undoing the last pick.
+ */
 export function useFocusCheckWhenComplete({
   complete,
   containerRef,

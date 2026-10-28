@@ -53,7 +53,10 @@ export function useSessionSummary(): SessionSummaryValue {
   return value;
 }
 
-/** From the host: an unfinished session alone doesn't mean stopped, since "10 more minutes" adds a block too. */
+/**
+ * From the host: an unfinished session alone doesn't mean stopped, since "10 more minutes" adds a
+ * block too.
+ */
 export function useIsStopped(): boolean {
   return useSessionSummary().stopped;
 }

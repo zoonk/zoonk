@@ -61,7 +61,10 @@ export function Suggestion({
   mark,
   ...props
 }: Omit<React.ComponentProps<"section">, "aria-label" | "ref"> & {
-  /** Pass the answer's name ("applied", then "undone"), so a second answer such as Undo moves focus too. */
+  /**
+   * Pass the answer's name ("applied", then "undone"), so a second answer such as Undo moves focus
+   * too.
+   */
   answered?: Answered;
   focusOnMount?: boolean;
   label: string;
@@ -190,7 +193,8 @@ export function SuggestionContent({
         </div>
       </PresentationContext>
 
-      {/* Closed by an answer, the sheet hands focus to the suggestion, since "View" is gone by then. */}
+      {/* Closed by an answer, the sheet hands focus to the suggestion, since "View" is gone by
+          then. */}
       <DrawerPopup aria-label={label} finalFocus={answered ? section : true}>
         <PresentationContext value="sheet">
           <DrawerContent

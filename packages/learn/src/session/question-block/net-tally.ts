@@ -3,7 +3,10 @@ import { type QuestionBlockState } from "./question-block-state";
 
 type NetTally = { blank: number; right: number; wrong: number };
 
-/** This visit's answers, else the block's record of an earlier visit, so after a reload a blank still counts as neither. */
+/**
+ * This visit's answers, else the block's record of an earlier visit, so after a reload a blank
+ * still counts as neither.
+ */
 export function getNetTally({
   answers,
   questions,

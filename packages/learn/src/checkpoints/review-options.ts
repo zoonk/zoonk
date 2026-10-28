@@ -18,7 +18,10 @@ function toOptionIndexes(answer: QuestionAnswer): number[] | null {
   return null;
 }
 
-/** An answer given before the screen was opened again isn't known, so a wrong one shows only the right option. */
+/**
+ * An answer given before the screen was opened again isn't known, so a wrong one shows only the
+ * right option.
+ */
 export function getReviewedOptions({
   correctAnswer,
   given,

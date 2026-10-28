@@ -5,7 +5,10 @@ import { useExtracted } from "next-intl";
 
 export type PlanStatus = NonNullable<PlanView["status"]>;
 
-/** The learner's pace against their plan, never whether the plan reaches the goal: "On track" beside a plan covering 49% of the goal misled. */
+/**
+ * The learner's pace against their plan, never whether the plan reaches the goal: "On track" beside
+ * a plan covering 49% of the goal misled.
+ */
 export function usePlanStatusText() {
   const t = useExtracted();
 

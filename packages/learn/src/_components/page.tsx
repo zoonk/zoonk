@@ -2,7 +2,10 @@ import { cn } from "@zoonk/ui/lib/utils";
 
 export const PAGE_COLUMN_CLASS = "w-full min-w-0";
 
-/** The list (20rem), the gap and the pane's inset (4rem), its hairline (1px), then an entry at the column's measure. */
+/**
+ * The list (20rem), the gap and the pane's inset (4rem), its hairline (1px), then an entry at the
+ * column's measure.
+ */
 export const INBOX_PAGE_CLASS = "lg:max-w-[calc(24rem+1px+var(--container-column))]";
 
 export function Page({ className, ...props }: React.ComponentProps<"div">) {

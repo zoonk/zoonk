@@ -6,7 +6,10 @@ import { useTodayScreen } from "./today-context";
 import { showsFreshStart } from "./today-notice-order";
 import { useFreshStartText, useSessionState } from "./use-today-copy";
 
-/** It belongs to the session it explains, so no notice ever hides it, and it goes once the learner starts. */
+/**
+ * It belongs to the session it explains, so no notice ever hides it, and it goes once the learner
+ * starts.
+ */
 export function TodayFreshStart({ className }: { className?: string }) {
   const text = useFreshStartText();
   const { today } = useTodayScreen();

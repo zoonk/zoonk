@@ -67,7 +67,10 @@ export function useOnboardingScreen(): OnboardingScreen {
   return use(OnboardingScreenContext);
 }
 
-/** A test's answer is final, so its bar has no way back and no "⋯", whose Start over would read as starting the test over. `progress` is 0 to 1. */
+/**
+ * A test's answer is final, so its bar has no way back and no "⋯", whose Start over would read as
+ * starting the test over. `progress` is 0 to 1.
+ */
 export function OnboardingTestQuestion({
   children,
   progress,

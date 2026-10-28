@@ -22,7 +22,10 @@ import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { MemoryFactSource } from "./memory-labels";
 
-/** Core's `MAX_MEMORY_STATEMENT_LENGTH`, repeated: its module loads database enums, which can't ship to the browser. */
+/**
+ * Core's `MAX_MEMORY_STATEMENT_LENGTH`, repeated: its module loads database enums, which can't ship
+ * to the browser.
+ */
 const MAX_STATEMENT_LENGTH = 160;
 
 function EditFactDialog({
