@@ -29,7 +29,10 @@ data class StoredSession(
 sealed interface SessionState {
     data object Restoring : SessionState
 
-    data object SignedOut : SessionState
+    /** [sessionEnded] when the API refused the session rather than the learner signing out. */
+    data class SignedOut(
+        val sessionEnded: Boolean = false,
+    ) : SessionState
 
     data class SignedIn(
         val session: AuthenticatedSession,
@@ -117,7 +120,11 @@ class SessionStore(
         var installed = false
         drafts.follow {
             if (current != started?.session) return@follow null
-            credentials.write(StoredSession(token, asGuest))
+            try {
+                credentials.write(StoredSession(token, asGuest))
+            } catch (e: IOException) {
+                // Signed in until the app restarts.
+            }
             val session = AuthenticatedSession(account.user.id.toString(), token, newLocalId())
             publish(SessionState.SignedIn(session, account, asGuest))
             installed = true
@@ -129,13 +136,9 @@ class SessionStore(
         return SignInResult.Obsolete
     }
 
-    /** Only if [session] is still current; also for after the account was deleted. */
-    override suspend fun expire(session: AuthenticatedSession) {
-        drafts.follow {
-            if (current != session) return@follow null
-            signOutLocally()
-        }
-    }
+    override suspend fun expire(session: AuthenticatedSession) = leave(session, sessionEnded = true)
+
+    suspend fun forgetDeletedAccount(session: AuthenticatedSession) = leave(session, sessionEnded = false)
 
     /** Keeps the session when the server can't end it, unless the server refused its token. */
     suspend fun signOut(): SignOutResult {
@@ -148,8 +151,18 @@ class SessionStore(
             val error = e.toApiError()
             if (error != ApiError.Unauthorized) return SignOutResult.Failed(error)
         }
-        expire(session)
+        leave(session, sessionEnded = false)
         return SignOutResult.SignedOut
+    }
+
+    private suspend fun leave(
+        session: AuthenticatedSession,
+        sessionEnded: Boolean,
+    ) {
+        drafts.follow {
+            if (current != session) return@follow null
+            signOutLocally(sessionEnded)
+        }
     }
 
     private suspend fun validateStoredSession() {
@@ -160,7 +173,7 @@ class SessionStore(
                 null
             }
         if (stored == null) {
-            drafts.follow { signOutLocally() }
+            drafts.follow { signOutLocally(sessionEnded = false) }
             return
         }
         val account =
@@ -170,7 +183,7 @@ class SessionStore(
                 throw e
             } catch (e: Exception) {
                 if (e.toApiError() == ApiError.Unauthorized) {
-                    drafts.follow { signOutLocally() }
+                    drafts.follow { signOutLocally(sessionEnded = true) }
                 } else {
                     mutableState.value = SessionState.Unavailable
                 }
@@ -184,14 +197,14 @@ class SessionStore(
         }
     }
 
-    private suspend fun signOutLocally(): DraftsChange {
+    private suspend fun signOutLocally(sessionEnded: Boolean): DraftsChange {
         try {
             credentials.write(null)
         } catch (e: IOException) {
             // The next launch's restore finds the token refused and clears it.
         }
         val hadSession = current != null
-        publish(SessionState.SignedOut)
+        publish(SessionState.SignedOut(sessionEnded))
         if (hadSession) clearCredentialState()
         return DraftsChange(next = null)
     }

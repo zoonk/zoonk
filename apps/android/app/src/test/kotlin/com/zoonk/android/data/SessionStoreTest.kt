@@ -81,7 +81,7 @@ class SessionStoreTest {
     fun aRefusedStoredTokenIsClearedAndAnUnreachableOneIsKept() =
         runTest {
             credentials.stored = StoredSession("expired")
-            store().apply { restore() }.also { assertEquals(SessionState.SignedOut, it.state.value) }
+            store().apply { restore() }.also { assertEquals(SessionState.SignedOut(sessionEnded = true), it.state.value) }
             assertNull(credentials.stored)
 
             credentials.stored = StoredSession("token-a")
@@ -136,7 +136,7 @@ class SessionStoreTest {
             assertEquals(BIA, sessions.current?.accountId)
 
             sessions.expire(sessions.current!!)
-            assertEquals(SessionState.SignedOut, sessions.state.value)
+            assertEquals(SessionState.SignedOut(sessionEnded = true), sessions.state.value)
             assertNull(credentials.stored)
         }
 
@@ -165,7 +165,7 @@ class SessionStoreTest {
             sessions.signIn { "token-a" }
             api.failure = ApiError.Unauthorized
             assertEquals(SignOutResult.SignedOut, sessions.signOut())
-            assertEquals(SessionState.SignedOut, sessions.state.value)
+            assertEquals(SessionState.SignedOut(), sessions.state.value)
             advanceUntilIdle()
         }
 }

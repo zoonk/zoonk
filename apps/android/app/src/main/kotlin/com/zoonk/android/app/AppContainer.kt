@@ -82,7 +82,7 @@ class AppContainer private constructor(
     }
 }
 
-private fun learnerAccess(
+internal fun learnerAccess(
     session: SessionState,
     summary: LoadState<LearnerSummary>,
 ): LearnerAccess =
@@ -92,8 +92,8 @@ private fun learnerAccess(
             LearnerAccess.Restoring
         }
 
-        SessionState.SignedOut -> {
-            LearnerAccess.Visitor
+        is SessionState.SignedOut -> {
+            if (session.sessionEnded) LearnerAccess.SessionEnded else LearnerAccess.Visitor
         }
 
         is SessionState.SignedIn -> {

@@ -42,7 +42,7 @@ Every read the app shows goes through one pattern in `data/`, so screens are ins
 ## Sessions
 
 - `SessionStore` is the only writer of the session. It shows or stores a token only after `getCurrentUser` accepts it, restores the stored one at launch, and on each change lets the cache, drafts and private pictures follow before anything else runs.
-- Sign-in flows call `sessions.signIn(asGuest) { current -> … }` with the API call that returns the token, sending `current`'s bearer so a guest's progress moves to the account. A result of `Obsolete` means another sign-in finished first. Sign out with `signOut()`; after an account is deleted, call `expire(session)`.
+- Sign-in flows call `sessions.signIn(asGuest) { current -> … }` with the API call that returns the token, sending `current`'s bearer so a guest's progress moves to the account. A result of `Obsolete` means another sign-in finished first. Sign out with `signOut()`; after an account is deleted, call `forgetDeletedAccount(session)`. `learnerAccess` in the container turns the session and the summary into what the shell's gates read.
 - The token is in DataStore encrypted with Tink under an Android Keystore key, excluded from backup. Don't store credentials anywhere else.
 
 ## Generated API client

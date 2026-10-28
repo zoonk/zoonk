@@ -19,10 +19,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
+import com.zoonk.android.data.summary
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.RoutePlaceholder
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.api.models.LearnerSummary
+import com.zoonk.api.models.LearnerSummaryPlaces
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.Shadows.shadowOf
 
@@ -48,15 +51,22 @@ object ShellTest {
     }
 }
 
+/** A goal with every Study place. */
+val everyPlace: LearnerSummary =
+    summary(
+        readAt = 0,
+        nextChangeAt = 0,
+    ).copy(places = LearnerSummaryPlaces(exam = true, mindMaps = true, readyMistakes = 0, speaking = true))
+
 @Composable
-fun ShellTestHost() {
+fun ShellTestHost(summary: LearnerSummary = everyPlace) {
     val navigator = rememberAppNavigator()
     val context = LocalContext.current
     val app = remember { AppContainer.preview(context) }
     val entries = remember(navigator) { testEntries(app, navigator) }
 
     ShellTest.navigator = navigator
-    AppShell(navigator, entries)
+    AppShell(navigator, entries, summary = summary)
 }
 
 class ShellTestActivity : ComponentActivity() {

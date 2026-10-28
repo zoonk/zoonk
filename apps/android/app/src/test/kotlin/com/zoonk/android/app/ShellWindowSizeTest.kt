@@ -1,6 +1,9 @@
 package com.zoonk.android.app
 
 import androidx.activity.ComponentActivity
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
@@ -12,6 +15,8 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.api.models.LearnerSummaryPlaces
+import com.zoonk.api.models.LearnerSummaryToday
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -25,9 +30,11 @@ class ShellWindowSizeTest {
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()
 
+    private var summary by mutableStateOf(everyPlace)
+
     @Before
     fun show() {
-        rule.setContent { ShellTestHost() }
+        rule.setContent { ShellTestHost(summary) }
     }
 
     private fun tab(label: String) = rule.onNode(hasText(label) and hasClickAction())
@@ -88,5 +95,23 @@ class ShellWindowSizeTest {
 
         rule.onNodeWithText("Lesson(lessonId=lesson-1, sessionId=null, firstAnswer=null)").assertIsDisplayed()
         rule.onNodeWithText("Study").assertDoesNotExist()
+    }
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land")
+    fun theDrawerListsOnlyThePlacesTheGoalHasAndCountsWhatIsLeft() {
+        val learner =
+            everyPlace.copy(
+                buddy = everyPlace.buddy.copy(name = "Pipoca"),
+                places = LearnerSummaryPlaces(exam = false, mindMaps = true, readyMistakes = 3, speaking = false),
+                today = LearnerSummaryToday(blocksLeft = 2, next = null),
+            )
+        summary = learner
+
+        listOf("Mistakes notebook", "Mind maps", "Statistics").forEach { tab(it).assertIsDisplayed() }
+        listOf("Exam", "Speaking").forEach { rule.onNodeWithText(it).assertDoesNotExist() }
+        tab("Pipoca").assertIsDisplayed()
+        rule.onNodeWithText("2").assertIsDisplayed()
+        rule.onNodeWithText("3").assertIsDisplayed()
     }
 }

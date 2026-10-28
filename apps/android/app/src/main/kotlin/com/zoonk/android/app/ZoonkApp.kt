@@ -1,7 +1,6 @@
 package com.zoonk.android.app
 
 import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -42,6 +41,7 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
@@ -60,6 +60,7 @@ import androidx.navigation3.ui.defaultTransitionSpec
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.data.collectShown
+import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppSection
@@ -71,6 +72,10 @@ import com.zoonk.android.navigation.gatedEntries
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.navigation.rememberEntries
 import com.zoonk.android.navigation.section
+import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.api.models.LearnerSummary
+import com.zoonk.api.models.LearnerSummaryPlaces
 
 /**
  * The window's snackbars (main's toasts), shown by the shell or, over a task, by its scaffold.
@@ -86,7 +91,7 @@ fun ZoonkApp(
     navigator: AppNavigator = rememberAppNavigator(),
 ) {
     val access = app.learnerAccess.collectAsStateWithLifecycle()
-    app.learnerSummary.summary.collectShown()
+    val summary by app.learnerSummary.summary.collectShown()
     val entryProvider = remember(app, navigator) { gatedEntries(appEntries(app, navigator), access, app, navigator) }
 
     LaunchedEffect(link) {
@@ -96,7 +101,7 @@ fun ZoonkApp(
         }
     }
 
-    AppShell(navigator, entryProvider)
+    AppShell(navigator, entryProvider, summary = summary.value)
 }
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
@@ -105,6 +110,7 @@ fun AppShell(
     navigator: AppNavigator,
     entryProvider: (NavKey) -> NavEntry<NavKey>,
     modifier: Modifier = Modifier,
+    summary: LearnerSummary? = null,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val entries = navigator.rememberEntries(entryProvider)
@@ -113,7 +119,7 @@ fun AppShell(
     CompositionLocalProvider(LocalSnackbarHostState provides snackbarHostState) {
         Surface(modifier = modifier) {
             NavigationSuiteScaffoldLayout(
-                navigationSuite = { AppNavigationSuite(navigator, navigationSuiteType) },
+                navigationSuite = { AppNavigationSuite(navigator, navigationSuiteType, summary) },
                 navigationSuiteType = navigationSuiteType,
             ) {
                 Box(Modifier.consumeWindowInsets(navigationSuiteInsets(navigationSuiteType))) {
@@ -193,6 +199,7 @@ private fun navigationSuiteInsets(navigationSuiteType: NavigationSuiteType): Win
 private fun AppNavigationSuite(
     navigator: AppNavigator,
     navigationSuiteType: NavigationSuiteType,
+    summary: LearnerSummary?,
 ) {
     val route = navigator.currentRoute
 
@@ -206,7 +213,7 @@ private fun AppNavigationSuite(
                         selected = isSelected,
                         onClick = { navigator.select(tab) },
                         icon = { NavigationIcon(tab.icon.drawable(isSelected)) },
-                        label = { Text(stringResource(tab.label)) },
+                        label = { Text(tab.title(summary)) },
                     )
                 }
             }
@@ -221,7 +228,7 @@ private fun AppNavigationSuite(
                         selected = isSelected,
                         onClick = { navigator.select(tab) },
                         icon = { NavigationIcon(tab.icon.drawable(isSelected)) },
-                        label = { Text(stringResource(tab.label)) },
+                        label = { Text(tab.title(summary)) },
                     )
                 }
             }
@@ -239,8 +246,10 @@ private fun AppNavigationSuite(
                 ) {
                     AppTab.entries.forEach { tab ->
                         val isSelected = tab == navigator.selectedTab && shownPlace == null
+                        // Main counts the day's activities left in its sidebar only; a bar would show it as an alert.
+                        val badge = if (tab == AppTab.Today) summary?.today?.blocksLeft else null
 
-                        DrawerItem(tab.label, tab.icon.drawable(isSelected), isSelected) { navigator.select(tab) }
+                        DrawerItem(tab.title(summary), tab.icon.drawable(isSelected), isSelected, badge) { navigator.select(tab) }
                     }
 
                     Text(
@@ -253,10 +262,11 @@ private fun AppNavigationSuite(
                                 .semantics { heading() },
                     )
 
-                    StudyPlace.entries.forEach { place ->
+                    StudyPlace.entries.filter { it.isListed(summary?.places) }.forEach { place ->
                         val isSelected = place == shownPlace
+                        val badge = if (place == StudyPlace.Mistakes) summary?.places?.readyMistakes else null
 
-                        DrawerItem(place.label, place.icon.drawable(isSelected), isSelected) {
+                        DrawerItem(stringResource(place.label), place.icon.drawable(isSelected), isSelected, badge) {
                             navigator.open(place.route)
                         }
                     }
@@ -270,19 +280,34 @@ private fun AppNavigationSuite(
 
 @Composable
 private fun DrawerItem(
-    @StringRes label: Int,
+    label: String,
     @DrawableRes icon: Int,
     selected: Boolean,
+    badge: Long?,
     onClick: () -> Unit,
 ) {
     NavigationDrawerItem(
-        label = { Text(stringResource(label)) },
+        label = { Text(label) },
         selected = selected,
         onClick = onClick,
         icon = { NavigationIcon(icon) },
+        badge = badge?.takeIf { it > 0 }?.let { count -> { Text(formatNumber(count.toDouble(), currentLocale())) } },
         modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
     )
 }
+
+/** The buddy's tab carries the name the learner gave it. */
+@Composable
+private fun AppTab.title(summary: LearnerSummary?): String = summary?.buddy?.name?.takeIf { this == AppTab.Buddy } ?: stringResource(label)
+
+/** Exam, Speaking and Mind maps are listed only for a goal that has them. */
+private fun StudyPlace.isListed(places: LearnerSummaryPlaces?): Boolean =
+    when (this) {
+        StudyPlace.Exam -> places?.exam == true
+        StudyPlace.Speaking -> places?.speaking == true
+        StudyPlace.MindMaps -> places?.mindMaps == true
+        StudyPlace.Mistakes, StudyPlace.Statistics -> true
+    }
 
 private fun PlaceIcon.drawable(selected: Boolean) = if (selected) selectedIcon else icon
 

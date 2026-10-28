@@ -24,6 +24,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import java.security.GeneralSecurityException
+import java.security.ProviderException
 
 @Serializable
 data class SessionFile(
@@ -44,11 +45,21 @@ class EncryptedSessionCredentials(
         )
     }
 
-    override suspend fun read(): StoredSession? = withContext(Dispatchers.IO) { store.data.first().session }
+    override suspend fun read(): StoredSession? = withContext(Dispatchers.IO) { keystoreFailuresAsIO { store.data.first().session } }
 
     override suspend fun write(session: StoredSession?) {
-        withContext(Dispatchers.IO) { store.updateData { it.copy(session = session) } }
+        withContext(Dispatchers.IO) { keystoreFailuresAsIO { store.updateData { it.copy(session = session) } } }
     }
+
+    // Some devices' Keystore fails outright; the session then can't be kept, which callers handle.
+    private inline fun <T> keystoreFailuresAsIO(block: () -> T): T =
+        try {
+            block()
+        } catch (e: GeneralSecurityException) {
+            throw IOException(e)
+        } catch (e: ProviderException) {
+            throw IOException(e)
+        }
 
     private fun aead(): Aead {
         AeadConfig.register()
