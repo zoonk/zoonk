@@ -21,10 +21,7 @@ export const BUDGETS = {
   serverCpuMs: { fail: 1000, warn: 250 },
 };
 
-/** CLS in four decimals, since a small element's visible jump scores under 0.001. */
 export const CLS_DIGITS = 4;
-
-type Level = "fail" | "warn";
 
 /**
  * One problem. `message` stays the same wherever it happens, so the report lists it once with
@@ -32,7 +29,7 @@ type Level = "fail" | "warn";
  */
 export type Finding = {
   check: string;
-  level: Level;
+  level: "fail" | "warn";
   message: string;
   unit?: string;
   value?: number;
@@ -43,6 +40,9 @@ export type LayoutShift = { at: number; sources: string[]; value: number };
 /** What one page load measured, at one screen size and color scheme. */
 export type LoadMeasurement = {
   accessibility: string[];
+  blankSeenMs: number | null;
+  /** Last DOM update, a conservative proxy for complete content. */
+  contentMs: number | null;
   /** Total Blocking Time: each long task's time past 50 ms, after the first contentful paint. */
   blockingMs: number | null;
   console: { text: string; type: "error" | "warning" }[];
@@ -152,14 +152,15 @@ export function shiftFindings(cls: number, shifts: LayoutShift[]): Finding[] {
   ];
 }
 
-export function skeletonFindings(seenMs: number | null, when: string): Finding[] {
+/** A painted viewport without text, graphics or skeletons after its first paint. */
+export function blankFindings(seenMs: number | null): Finding[] {
   return seenMs === null
     ? []
     : [
         {
-          check: "skeleton",
+          check: "blank frame",
           level: "fail",
-          message: `a loading skeleton showed ${when}`,
+          message: "the viewport was blank",
           unit: "ms",
           value: seenMs,
         },
@@ -253,6 +254,16 @@ function speedFindings(load: LoadMeasurement): Finding[] {
     load.lastPaintMs === null || load.lcpMs === null ? null : load.lastPaintMs - load.lcpMs;
 
   return [
+    ...(load.fcpMs === null
+      ? [
+          {
+            check: "blank frame",
+            level: "fail" as const,
+            message: "no first contentful paint recorded",
+          },
+        ]
+      : blankFindings(load.blankSeenMs)),
+    ...budgetFinding({ budget: BUDGETS.lcpMs, check: "complete content", value: load.contentMs }),
     ...budgetFinding({ budget: BUDGETS.lcpMs, check: "LCP", value: load.lcpMs }),
     ...budgetFinding({ budget: BUDGETS.fcpMs, check: "FCP", value: load.fcpMs }),
     ...budgetFinding({
@@ -261,7 +272,6 @@ function speedFindings(load: LoadMeasurement): Finding[] {
       value: load.blockingMs,
     }),
     ...budgetFinding({ budget: BUDGETS.serverCpuMs, check: "server CPU", value: load.serverCpuMs }),
-    ...skeletonFindings(load.skeletonSeenMs, "while the page loaded"),
     ...(lateChangeMs !== null && lateChangeMs > BUDGETS.lateChangeMs.warn
       ? [
           {
@@ -352,6 +362,7 @@ const TIMING_CHECKS = new Set([
   "FCP",
   "LCP",
   "blocking time",
+  "complete content",
   "late change",
   "memory",
   "navigation",

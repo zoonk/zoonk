@@ -1,4 +1,3 @@
-import { FirstPaintContent } from "@/components/first-paint-content";
 import { getTutorViewer } from "@/lib/learn/tutor-viewer";
 import { STUDY_SESSION_PARAM } from "@/lib/lessons/lesson-player-params";
 import { readLessonWritingRequest } from "@/lib/lessons/lesson-writing-href";
@@ -26,6 +25,7 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { GuestLessonPlayer } from "./guest-lesson-player";
 import { LessonGuestGate } from "./lesson-guest-gate";
 import { LessonPlayerClient, type LessonRouting } from "./lesson-player-client";
@@ -169,7 +169,7 @@ async function getRouting({
  * drawing the task's frame on the server too makes this page's scripts carry the frame's code
  * twice, about 11 KB more on every visit.
  */
-async function renderLessonPlayer({ params, searchParams }: Props) {
+async function LessonPlayerContent({ params, searchParams }: Props) {
   const [{ lessonId }, query] = await Promise.all([params, searchParams]);
   const { firstAnswer, origin, studySessionId } = readPlayerQuery(query);
 
@@ -267,10 +267,8 @@ async function renderLessonPlayer({ params, searchParams }: Props) {
 /** Plays a Library lesson full screen, with no navigation bar. */
 export default function LearnLessonPage(props: Props) {
   return (
-    <FirstPaintContent
-      content={() => renderLessonPlayer(props)}
-      fallback={<LessonPlayerSkeleton />}
-      id="lesson-ready"
-    />
+    <Suspense fallback={<LessonPlayerSkeleton />}>
+      <LessonPlayerContent {...props} />
+    </Suspense>
   );
 }

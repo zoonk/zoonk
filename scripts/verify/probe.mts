@@ -5,6 +5,7 @@
  * document's navigation started (`performance.now()`).
  */
 export type ProbeState = {
+  blankFrames: number[];
   clicks: number[];
   fcp: number | null;
   lastMutationAt: number;
@@ -28,6 +29,7 @@ export function installProbe() {
   const TEXT_LENGTH = 30;
 
   const state: ProbeState = {
+    blankFrames: [],
     clicks: [],
     fcp: null,
     lastMutationAt: 0,
@@ -93,6 +95,21 @@ export function installProbe() {
 
   document.addEventListener("click", () => state.clicks.push(performance.now()), true);
 
+  // oxlint-disable-next-line unicorn/consistent-function-scoping -- The probe is sent as one function.
+  function visible(element: Element) {
+    const box = element.getBoundingClientRect();
+
+    return (
+      element.checkVisibility({ opacityProperty: true, visibilityProperty: true }) &&
+      box.width > 1 &&
+      box.height > 1 &&
+      box.bottom > 0 &&
+      box.right > 0 &&
+      box.top < innerHeight &&
+      box.left < innerWidth
+    );
+  }
+
   function readFrame(now: number) {
     const skeletons = [...document.querySelectorAll('[data-slot="skeleton"]')];
 
@@ -101,6 +118,31 @@ export function installProbe() {
       skeletons.some((element) => element.checkVisibility() && element.getClientRects().length > 0)
     ) {
       state.skeletonFrames.push(now);
+    }
+
+    // Initial blank time is measured by FCP. After that, a painted empty viewport is a bug.
+    if (state.fcp !== null && state.blankFrames.length < MAX_FRAMES) {
+      const graphic = [
+        ...document.querySelectorAll('img, svg, canvas, [data-slot="skeleton"]'),
+      ].some((element) => visible(element));
+
+      const text = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+      let meaningful = graphic;
+
+      while (!meaningful && text.nextNode()) {
+        const parent = text.currentNode.parentElement;
+
+        meaningful = Boolean(
+          text.currentNode.textContent?.trim() &&
+          parent &&
+          !parent.closest("script, style, template") &&
+          visible(parent),
+        );
+      }
+
+      if (!meaningful) {
+        state.blankFrames.push(now);
+      }
     }
 
     if (state.urls.at(-1)?.href !== location.href) {

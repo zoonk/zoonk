@@ -56,3 +56,5 @@ For each persona, report:
 - what remains unverified
 
 Passing tests are not a walkthrough. Simulated personas uncover friction, but they don't prove usability for real people, so say so where it matters.
+
+For loads and navigation, use a production build on a phone with CPU and network throttling. Walk hard loads, prefetched taps, an early tap before prefetch settles and an unprefetched link. Skeletons are valid; judge whether meaningful shell UI responds immediately, the content arrives promptly, and anything blanks, freezes, flashes or shifts. Save before/after filmstrips and report response and content times separately, with your own read of how each feels. Keep private cached prefetches and never hide loading by holding paint.

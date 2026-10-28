@@ -1,5 +1,4 @@
 import { AuthGatePage } from "@/components/auth-gate";
-import { FirstPaintContent } from "@/components/first-paint-content";
 import { getReadAt } from "@/lib/learn/read-at";
 import { getActiveGoalId } from "@zoonk/core/goals/active-goal";
 import { getOwnedGoal } from "@zoonk/core/goals/owned-goal";
@@ -14,6 +13,7 @@ import { PageWithAside } from "@zoonk/learn/shell";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
+import { Suspense } from "react";
 import { BuddyGoalStartClient } from "./buddy-goal-start-client";
 import { BuddyPageClient } from "./buddy-page-client";
 
@@ -161,10 +161,8 @@ export default async function BuddyPage() {
   const t = await getExtracted();
 
   return (
-    <FirstPaintContent
-      content={BuddyContent}
-      fallback={<BuddySkeleton dayLabel={t("Your day")} />}
-      id="buddy-ready"
-    />
+    <Suspense fallback={<BuddySkeleton dayLabel={t("Your day")} />}>
+      <BuddyContent />
+    </Suspense>
   );
 }

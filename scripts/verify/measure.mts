@@ -112,8 +112,10 @@ async function readLoadedPage(page: Page, traffic: Traffic) {
   const shifts = probe?.shifts ?? [];
 
   return {
+    blankSeenMs: probe?.blankFrames[0] ?? null,
     blockingMs: probe ? totalBlockingTime(probe.longTasks, probe.fcp) : null,
     bytes: await page.evaluate(transferredBytes),
+    contentMs: probe?.lastMutationAt ?? null,
     fcpMs: probe?.fcp ?? null,
     lcpMs: probe?.lcp ?? null,
     overflow: await page.evaluate(findOverflow),
@@ -231,6 +233,7 @@ function timeTap({ after, before, tapAt }: { after: Probe; before: Probe; tapAt:
   const url = after.urls.find((entry) => after.timeOrigin + entry.at >= clickAt);
 
   return {
+    blankSeenMs: since(after.blankFrames.find((at) => after.timeOrigin + at >= clickAt)),
     commitMs: since(fullLoad ? after.fcp : url?.at),
     fullLoad,
     settleMs: since(after.lastMutationAt),
@@ -280,8 +283,10 @@ async function measureTap(
 
   const measurement: NavigationMeasurement = {
     arrived: pathOf(page.url()) === pathOf(new URL(to, target.baseUrl)),
+    blankSeenMs: timed?.blankSeenMs ?? null,
     commitMs: timed?.commitMs ?? null,
     console: traffic.console.slice(seen.console),
+    contentMs: timed?.settleMs ?? null,
     fullLoad: timed?.fullLoad ?? false,
     linkFound,
     pageErrors: traffic.pageErrors.slice(seen.errors),

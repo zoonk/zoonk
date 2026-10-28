@@ -80,8 +80,8 @@ function list(title: string, groups: Group[], screensPerPage: Map<string, number
 
 function loadRows(loads: LoadReport[], out: string): string[] {
   return [
-    "| Page | Screen | TTFB | FCP | LCP | Blocking | CLS | Main thread | Server CPU | SQL (ms) | KB (HTML/JS/all) | Skeleton shown | Paints (last) | Screenshots |",
-    "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+    "| Page | Screen | TTFB | FCP | Content (last DOM update) | Blank at | LCP | Blocking | CLS | Main thread | Server CPU | SQL (ms) | KB (HTML/JS/all) | Skeleton shown | Paints (last) | Screenshots |",
+    "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ...loads.map((load) => {
       const kilobytes = [load.bytes.html, load.bytes.scripts, load.bytes.total].map((bytes) =>
         Math.round(bytes / KILOBYTE),
@@ -92,6 +92,8 @@ function loadRows(loads: LoadReport[], out: string): string[] {
         load.viewport,
         format(load.ttfbMs),
         format(load.fcpMs),
+        format(load.contentMs),
+        format(load.blankSeenMs),
         format(load.lcpMs),
         format(load.blockingMs),
         cumulativeLayoutShift(load.shifts).toFixed(CLS_DIGITS),
@@ -123,11 +125,11 @@ function navigationRows(navigations: NavigationReport[]): string[] {
   return [
     "## Navigations",
     "",
-    "| From → to | Screen | URL changed | Settled | Skeleton at | Requests after the tap |",
-    "| --- | --- | --- | --- | --- | --- |",
+    "| From → to | Screen | Destination frame | Content (last DOM update) | Blank at | Skeleton at | Requests after the tap |",
+    "| --- | --- | --- | --- | --- | --- | --- |",
     ...navigations.map(
       (navigation) =>
-        `| ${navigation.from} → ${navigation.to} | ${navigation.viewport} | ${format(navigation.commitMs)} | ${format(navigation.settleMs)} | ${format(navigation.skeletonSeenMs)} | ${countKinds(navigation)} |`,
+        `| ${navigation.from} → ${navigation.to} | ${navigation.viewport} | ${format(navigation.commitMs)} | ${format(navigation.settleMs)} | ${format(navigation.blankSeenMs)} | ${format(navigation.skeletonSeenMs)} | ${countKinds(navigation)} |`,
     ),
     "",
   ];

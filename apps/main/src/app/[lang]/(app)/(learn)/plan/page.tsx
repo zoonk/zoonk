@@ -1,4 +1,3 @@
-import { FirstPaintContent } from "@/components/first-paint-content";
 import { getPathname } from "@/i18n/navigation";
 import { skipAlphabetAction } from "@/lib/language/skip-alphabet-action";
 import { getLearnerBuddy } from "@/lib/learn/learner-buddy";
@@ -20,6 +19,7 @@ import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { cacheTag } from "next/cache";
 import { lang } from "next/root-params";
+import { Suspense } from "react";
 import {
   changePlanAction,
   chooseExamOptionAction,
@@ -201,5 +201,9 @@ async function JourneyContent() {
  * missing page.
  */
 export default function JourneyPage() {
-  return <FirstPaintContent content={JourneyContent} fallback={<PlanSkeleton />} id="plan-ready" />;
+  return (
+    <Suspense fallback={<PlanSkeleton />}>
+      <JourneyContent />
+    </Suspense>
+  );
 }

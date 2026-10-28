@@ -24,8 +24,10 @@ function requestTo(path: string, overrides: Partial<RequestRecord> = {}): Reques
 function load(overrides: Partial<LoadMeasurement> = {}): LoadMeasurement {
   return {
     accessibility: [],
+    blankSeenMs: null,
     blockingMs: 120,
     console: [],
+    contentMs: null,
     fcpMs: 300,
     lastPaintMs: 400,
     lcpMs: 400,
@@ -117,7 +119,7 @@ describe("judging a page load", () => {
     assert.equal(scored.toFixed(2), cls);
   });
 
-  it("judges speed, skeletons and prefetching only on a production build", () => {
+  it("allows hard-load skeletons and judges speed and prefetching only in production", () => {
     const slow = {
       lcpMs: 4000,
       serverCpuMs: 1500,
@@ -127,12 +129,7 @@ describe("judging a page load", () => {
 
     assert.deepEqual(checks(load({ ...slow, production: false })), []);
 
-    assert.deepEqual(checks(load(slow)), [
-      "fail LCP",
-      "fail server CPU",
-      "fail skeleton",
-      "warn not prefetched",
-    ]);
+    assert.deepEqual(checks(load(slow)), ["fail LCP", "fail server CPU", "warn not prefetched"]);
   });
 
   it("says when it can't vouch for a load: still changing, or no largest paint", () => {
@@ -184,12 +181,18 @@ describe("judging a page load", () => {
 describe("judging on a busy machine", () => {
   it("keeps timing to look at, marked inconclusive, and everything else as it was", () => {
     const findings = markBusy([
-      { check: "LCP", level: "fail", message: "over 2500 ms", unit: "ms", value: 3000 },
+      {
+        check: "complete content",
+        level: "fail",
+        message: "over 2500 ms",
+        unit: "ms",
+        value: 3000,
+      },
       { check: "navigation", level: "fail", message: "the tap didn't reach the page" },
       {
-        check: "skeleton",
+        check: "blank frame",
         level: "fail",
-        message: "a loading skeleton showed",
+        message: "the viewport was blank",
         unit: "ms",
         value: 40,
       },
@@ -197,7 +200,7 @@ describe("judging on a busy machine", () => {
 
     assert.deepEqual(
       findings.map((finding) => `${finding.level} ${finding.check}`),
-      ["warn LCP", "fail navigation", "fail skeleton"],
+      ["warn complete content", "fail navigation", "fail blank frame"],
     );
 
     assert.match(findings[0]?.message ?? "", /inconclusive: the machine was busy/u);
@@ -232,8 +235,10 @@ describe("main-thread blocking and cut-off text", () => {
 describe("judging a navigation", () => {
   const navigation: NavigationMeasurement = {
     arrived: true,
+    blankSeenMs: null,
     commitMs: 40,
     console: [],
+    contentMs: null,
     fullLoad: false,
     linkFound: true,
     pageErrors: [],
@@ -248,12 +253,12 @@ describe("judging a navigation", () => {
     assert.deepEqual(judgeNavigation(navigation), []);
   });
 
-  it("fails a skeleton and a slow switch, and asks about a missing link", () => {
+  it("allows skeletons, fails a slow switch, and asks about a missing link", () => {
     const slow = judgeNavigation({ ...navigation, commitMs: 1500, skeletonSeenMs: 30 });
 
     assert.deepEqual(
       slow.map((finding) => `${finding.level} ${finding.check}`),
-      ["fail skeleton", "fail navigation"],
+      ["fail navigation"],
     );
 
     assert.equal(judgeNavigation({ ...navigation, linkFound: false })[0]?.level, "warn");
@@ -276,6 +281,16 @@ describe("judging a navigation", () => {
       broken.map((finding) => `${finding.level} ${finding.check}`),
       ["fail failed response"],
     );
+  });
+
+  it("fails missing first paints and destination frames", () => {
+    assert.ok(checks(load({ fcpMs: null })).includes("fail blank frame"));
+    assert.equal(judgeNavigation({ ...navigation, commitMs: null })[0]?.check, "navigation");
+  });
+
+  it("fails blank painted frames on loads and taps", () => {
+    assert.deepEqual(checks(load({ blankSeenMs: 40 })), ["fail blank frame"]);
+    assert.equal(judgeNavigation({ ...navigation, blankSeenMs: 40 })[0]?.check, "blank frame");
   });
 
   it("asks about a tap that loaded a whole new document", () => {

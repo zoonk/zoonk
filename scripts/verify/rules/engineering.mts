@@ -72,7 +72,7 @@ export const ENGINEERING_RULES: Rule[] = [
     line: /<Suspense\b|fallback=/u,
     name: "Loading state",
     question:
-      "Will learners see this fallback on an everyday page? The bar is no visible skeleton: make that content part of the static shell or cached data.",
+      "Does the static shell paint immediately while content streams behind this fallback? Skeletons are valid on loads and taps; never delay paint to hide them.",
     role: "engineering",
   },
   {
