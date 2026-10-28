@@ -131,6 +131,7 @@
     "./subject-icon": "./src/syllabus/subject-icon.tsx",
     "./route-line": "./src/_components/route-line.tsx",
     "./subject-label": "./src/_components/subject-label.tsx",
+    "./syllabus-section-view": "./src/syllabus/syllabus-section-view.ts",
     "./suggestion": "./src/_components/suggestion.tsx",
     "./surface": "./src/_components/surface.tsx",
     "./task-foot-height": "./src/_components/task-foot-height.tsx",

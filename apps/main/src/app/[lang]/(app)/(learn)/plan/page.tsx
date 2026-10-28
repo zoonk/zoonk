@@ -14,6 +14,7 @@ import { getOnboarding } from "@zoonk/core/view-models/onboarding/get";
 import { getPlanTabView } from "@zoonk/core/view-models/plan/get";
 import { getProgressView } from "@zoonk/core/view-models/progress/get";
 import { getSyllabusView } from "@zoonk/core/view-models/syllabus/get";
+import { toSyllabusSection } from "@zoonk/learn/syllabus-section-view";
 import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -190,7 +191,7 @@ async function JourneyContent() {
         href: `/plan-link/${plan.planId}`,
         locale: getSupportedLocaleFromLanguage(locale),
       })}
-      syllabus={syllabus.status === "ready" ? syllabus.syllabus : null}
+      syllabus={syllabus.status === "ready" ? toSyllabusSection(syllabus.syllabus) : null}
     />
   );
 }

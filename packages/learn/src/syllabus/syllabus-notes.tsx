@@ -8,6 +8,7 @@ import { getSourceHost } from "../_utils/source-host";
 import { usePassMarksNote } from "../_utils/use-pass-marks-note";
 import { FrequencyChip, setsApart } from "./frequency-chip";
 import { type SubjectGroup } from "./group-subjects";
+import { type SyllabusSectionSubject, type SyllabusSectionView } from "./syllabus-section-view";
 
 /**
  * A group's heading: the notice's own ("Basic knowledge (P1)"), "Beyond the notice" for the
@@ -21,7 +22,7 @@ export function useGroupName({
 }: {
   document: SyllabusView["examDocument"];
   fromMaterial: boolean;
-  group: SubjectGroup;
+  group: SubjectGroup<SyllabusSectionSubject>;
 }): string | null {
   const t = useExtracted();
 
@@ -178,7 +179,7 @@ function getHeavierParts({
   subjects,
   weights,
 }: {
-  subjects: SyllabusView["subjects"];
+  subjects: SyllabusSectionView["subjects"];
   weights: NonNullable<SyllabusView["courseWeights"]>;
 }): string[] {
   const lightest = Math.min(...weights.subjects.map((subject) => subject.weight));
@@ -197,7 +198,7 @@ export function CourseWeightsNote({
   subjects,
   weights,
 }: {
-  subjects: SyllabusView["subjects"];
+  subjects: SyllabusSectionView["subjects"];
   weights: SyllabusView["courseWeights"];
 }) {
   const t = useExtracted();

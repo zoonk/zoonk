@@ -2,6 +2,7 @@
 
 import { type SyllabusSubject } from "@zoonk/core/view-models/syllabus/contract";
 import { useExtracted } from "next-intl";
+import { type SyllabusSectionSubject } from "./syllabus-section-view";
 
 /**
  * A subject's bar, in its goal's one measure: an exam subject's preparation (`studied`, nothing
@@ -52,7 +53,7 @@ export function getSubjectShare(bar: SubjectBar): number {
 export function useKnownLine() {
   const t = useExtracted();
 
-  return function knownLine(subject: SyllabusSubject): string | null {
+  return function knownLine(subject: SyllabusSectionSubject): string | null {
     if (subject.topicsKnown !== null && subject.topics.length > 0) {
       return subject.topicsKnown > 0
         ? t(
@@ -80,7 +81,7 @@ export function useSubjectProgress() {
   const t = useExtracted();
   const knownLine = useKnownLine();
 
-  return (subject: SyllabusSubject): SubjectProgress => {
+  return (subject: SyllabusSectionSubject): SubjectProgress => {
     const total = subject.topics.length;
 
     if (subject.notPlannedReason) {

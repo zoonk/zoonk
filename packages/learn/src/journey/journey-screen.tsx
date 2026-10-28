@@ -2,7 +2,6 @@
 
 import { type PlanView } from "@zoonk/core/plans/view-contract";
 import { type StudyNextView } from "@zoonk/core/view-models/map/contract";
-import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { GenerationTimelineDescription } from "@zoonk/ui/components/generation-timeline";
 import { useExtracted } from "next-intl";
 import { useLayoutEffect, useState } from "react";
@@ -26,6 +25,7 @@ import { PlanSheetHosts } from "../plan/plan-sheet-hosts";
 import { PlanSuggestionProvider, PlanSuggestionSlot } from "../plan/plan-suggestion";
 import { PageWithAside } from "../shell/learn-shell";
 import { SyllabusSection, hasSyllabusSection } from "../syllabus/syllabus-section";
+import { type SyllabusSectionView } from "../syllabus/syllabus-section-view";
 import {
   ArchiveGoalDialog,
   type GoalStatusChange,
@@ -199,7 +199,7 @@ function JourneyBody({
   next: JourneyNext | null;
   openAdjust: boolean | PlanEditorSection;
   standing: JourneyStanding | null;
-  syllabus: SyllabusView | null;
+  syllabus: SyllabusSectionView | null;
 }) {
   const t = useExtracted();
   const { goal, plan } = usePlanScreen();
@@ -352,7 +352,7 @@ export function JourneyScreen({
   /** Null for a goal without a number to stand on yet. */
   standing: JourneyStanding | null;
   /** The goal's subjects or modules; its path then shows on the roadmap and in "Next on your path". */
-  syllabus?: SyllabusView | null;
+  syllabus?: SyllabusSectionView | null;
   /** The buddy's conversation, for questions about the plan and changes in the learner's words. */
   tutor?: PlanTutor;
 }) {

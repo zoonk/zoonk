@@ -1,6 +1,6 @@
 "use client";
 
-import { type SyllabusSubject, type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
+import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { hasSubjectPages } from "@zoonk/core/view-models/syllabus/subject-pages";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
@@ -11,6 +11,7 @@ import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components
 import { useFormatProgressShare } from "../_utils/percent";
 import { type SubjectGroup, groupSubjects } from "./group-subjects";
 import { CourseWeightsNote, QuestionsSourceNote, useGroupName } from "./syllabus-notes";
+import { type SyllabusSectionSubject, type SyllabusSectionView } from "./syllabus-section-view";
 import { getSubjectShare, useSubjectProgress } from "./use-subject-progress";
 
 const SECTION_TITLE_ID = "journey-syllabus-title";
@@ -19,18 +20,20 @@ const SECTION_TITLE_ID = "journey-syllabus-title";
  * Whether a goal's structure is worth its own section: when its subjects have pages of their own
  * (an exam's notice, or at least two modules).
  */
-export function hasSyllabusSection(syllabus: SyllabusView | null): syllabus is SyllabusView {
+export function hasSyllabusSection<Syllabus extends SyllabusSectionView>(
+  syllabus: Syllabus | null,
+): syllabus is Syllabus {
   return syllabus !== null && hasSubjectPages({ goalKind: syllabus.goal.kind, syllabus });
 }
 
 /** "Subjects" for an exam, "Modules" for a plan's own areas. */
-function useSectionTitle(syllabus: SyllabusView): string {
+function useSectionTitle(syllabus: SyllabusSectionView): string {
   const t = useExtracted();
   return syllabus.goal.kind === "exam" ? t("Subjects") : t("Modules");
 }
 
 /** "5 subjects · 46 topics": what the list holds, in the note under it. */
-function useSectionCount(syllabus: SyllabusView): string {
+function useSectionCount(syllabus: SyllabusSectionView): string {
   const t = useExtracted();
   const subjects = syllabus.subjects.filter((subject) => subject.source === "notice").length;
 
@@ -78,7 +81,7 @@ const ROW_GRID_CLASS = cn(
  * preparation, as the number above them does; another goal's modules, their lessons studied, known
  * and still new.
  */
-function BarsMeaning({ syllabus }: { syllabus: SyllabusView }) {
+function BarsMeaning({ syllabus }: { syllabus: SyllabusSectionView }) {
   const t = useExtracted();
 
   if (syllabus.goal.kind !== "exam") {
@@ -103,7 +106,7 @@ const SHARE_CLASS = "w-10 justify-end";
  * exam tests it): the goal's number is its subjects together, and read beside fewer of them it
  * sat under every one.
  */
-function SubjectRow({ href, subject }: { href: string; subject: SyllabusSubject }) {
+function SubjectRow({ href, subject }: { href: string; subject: SyllabusSectionSubject }) {
   const t = useExtracted();
   const formatShare = useFormatProgressShare();
   const progress = useSubjectProgress()(subject);
@@ -161,7 +164,7 @@ function GroupHeading({
 }: {
   document: SyllabusView["examDocument"];
   fromMaterial: boolean;
-  group: SubjectGroup;
+  group: SubjectGroup<SyllabusSectionSubject>;
   id: string;
 }) {
   const name = useGroupName({ document, fromMaterial, group });
@@ -192,7 +195,7 @@ export function SyllabusSection({
   syllabus,
 }: {
   subjectHref: (key: string) => string;
-  syllabus: SyllabusView;
+  syllabus: SyllabusSectionView;
 }) {
   const title = useSectionTitle(syllabus);
   const count = useSectionCount(syllabus);
