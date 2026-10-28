@@ -3,7 +3,6 @@ import { PageWithAside } from "@zoonk/learn/shell";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { getExtracted } from "next-intl/server";
 
-/** A list's rows while the Plan loads: one row's height each, hairlines between them. */
 function RowsSkeleton({ count, rowClassName }: { count: number; rowClassName: string }) {
   return (
     <div className="flex flex-col [&>*+*]:border-t">
@@ -16,7 +15,6 @@ function RowsSkeleton({ count, rowClassName }: { count: number; rowClassName: st
   );
 }
 
-/** A section's label over its rows. */
 function SectionSkeleton({
   className,
   count,
@@ -36,12 +34,6 @@ function SectionSkeleton({
   );
 }
 
-/**
- * The Plan's shape while it loads, the page's own: the header (its title, "Plan", as the page has
- * it; the goal's line and the actions as bars), the roadmap (a thin bar on a phone), the two
- * numbers and the suggestion's line under 72rem, the subjects' rows, and the aside's blocks where
- * the aside draws them. Nothing moves when the Plan arrives.
- */
 export async function PlanSkeleton() {
   const t = await getExtracted();
 
@@ -67,7 +59,6 @@ export async function PlanSkeleton() {
     >
       <Page aria-busy="true">
         <PageHeaderContent>
-          {/* The goal's line, in its line's height (`PageEyebrow`). */}
           <div className="flex h-4 items-center" data-slot="page-eyebrow">
             <Skeleton className="h-3 w-48 rounded-sm" />
           </div>

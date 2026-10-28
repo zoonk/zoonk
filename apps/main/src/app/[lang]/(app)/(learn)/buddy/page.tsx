@@ -23,7 +23,6 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("Your buddy") };
 }
 
-/** The selected, non-archived goal the buddy tutors, unless it's a quick explanation. */
 async function findTutoredGoal() {
   const goalId = await getActiveGoalId();
 
@@ -41,13 +40,8 @@ async function findTutoredGoal() {
   return goal.status !== "archived" && goal.kind !== "explain" ? goal : null;
 }
 
-/** A conversation not started yet: the tab opens to the greeting and the suggestions. */
 const NO_MESSAGES = { hasMore: false, nextCursor: null, questions: [] };
 
-/**
- * The conversation as it stands, so the tab opens with it instead of a wait. Guests and visitors
- * can't talk to the buddy, so there's none to read; one that can't be read loads on screen.
- */
 async function loadThread({ canAsk, goalId }: { canAsk: boolean; goalId: string }) {
   if (!canAsk) {
     return null;
@@ -62,14 +56,12 @@ async function loadThread({ canAsk, goalId }: { canAsk: boolean; goalId: string 
   return result.thread ?? NO_MESSAGES;
 }
 
-/** Whether the learner has an open mistake in the goal, for a first suggestion. */
 async function hasOpenMistake(goalId: string): Promise<boolean> {
   const result = await countOpenGoalMistakes({ goalId });
   return result.status === "ready" && result.open > 0;
 }
 
 async function BuddyContent() {
-  // The memory count doesn't need the goal, so it's read with the rest of the first batch.
   const [readAt, result, goal, session, earlierQuestions, memoryCount] = await Promise.all([
     getReadAt(),
     getBuddyStatus({}),
@@ -79,7 +71,6 @@ async function BuddyContent() {
     countCurrentUserMemory(),
   ]);
 
-  // Someone without a session may have goals in their account: they log in and come back here.
   if (result.status !== "ready" || !session) {
     const t = await getExtracted();
 
@@ -92,7 +83,6 @@ async function BuddyContent() {
     );
   }
 
-  // The buddy tutors a goal: without one, it takes the learner's goal right here.
   if (!goal) {
     return <BuddyGoalStartClient hasEarlierQuestions={earlierQuestions} status={result.buddy} />;
   }
@@ -119,10 +109,6 @@ async function BuddyContent() {
   );
 }
 
-/**
- * The buddy's row, the start of its conversation and, on a wide screen, its day beside them, at
- * their size and place while the tab loads.
- */
 function BuddySkeleton({ dayLabel }: { dayLabel: string }) {
   return (
     <PageWithAside
@@ -153,12 +139,6 @@ function BuddySkeleton({ dayLabel }: { dayLabel: string }) {
   );
 }
 
-/**
- * The buddy tab: the learner's conversation with their buddy, their tutor for the goal (doubts,
- * the plan, and changes to it by talking), with the buddy's day (Energy and missions) a tap away
- * on a phone and beside the conversation on a wide screen. Before there's a goal, the buddy takes
- * one.
- */
 export default async function BuddyPage() {
   const t = await getExtracted();
 

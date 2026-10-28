@@ -41,11 +41,6 @@ function FrameStudyLinks() {
   return <StudyLinksView places={learner.status === "ready" ? learner.summary.places : null} />;
 }
 
-/**
- * The goal's places in its order: the mistakes notebook with how many are ready to practice, an
- * exam's page, a language goal's speaking paper and the mind maps when there are some, then the
- * learner's statistics. Until the learner is read (and for a visitor), the two every learner has.
- */
 export function StudyLinks() {
   return (
     <Suspense fallback={<StudyLinksView places={null} />}>
@@ -54,17 +49,9 @@ export function StudyLinks() {
   );
 }
 
-/**
- * The account row: the sidebar wide and 44px tall, so the whole row is one target, on the
- * sidebar's soft fill while hovered or open.
- */
 const ACCOUNT_ROW_CLASS =
   "hover:bg-sidebar-accent/70 aria-expanded:bg-sidebar-accent focus-visible:ring-ring/50 flex h-11 w-full min-w-0 items-center gap-2.5 rounded-md px-1 text-left text-[0.84375rem] font-medium transition-colors outline-none focus-visible:ring-[3px]";
 
-/**
- * The account row's place while the learner is unread: a visitor's Pricing and way in, or on a page
- * marked signed in the row's quiet avatar, its name filled in with the rest once read.
- */
 function PendingSidebarAccount({ visitor }: { visitor: React.ReactNode }) {
   return (
     <>
@@ -76,10 +63,7 @@ function PendingSidebarAccount({ visitor }: { visitor: React.ReactNode }) {
   );
 }
 
-/**
- * The row is named by its words: the learner's name on screen, then what only screen readers hear
- * (`said`), so voice control users press it by the name they see.
- */
+/** Named by its visible words first, so voice control users press it by the name they see. */
 function AccountTrigger({
   children,
   name,
@@ -101,7 +85,6 @@ function AccountTrigger({
   );
 }
 
-/** The row of a learner with a level: their belt and level after the name, said in its name. */
 function AccountTriggerWithLevel({
   level,
   name,
@@ -161,12 +144,6 @@ function FrameAccount({ visitor }: { visitor: React.ReactNode }) {
   return <AccountRow summary={learner.summary} />;
 }
 
-/**
- * The sidebar's end: one row that opens the account's menu, with whose it is (the 24px avatar and
- * the learner's name, or "Guest" for someone studying without an account yet) and their belt and
- * level, which Statistics above it opens. Its name says all three, the visible name first. A
- * visitor's Pricing and way in instead (`visitor`).
- */
 export function SidebarAccount({ visitor }: { visitor: React.ReactNode }) {
   return (
     <Suspense fallback={<PendingSidebarAccount visitor={visitor} />}>

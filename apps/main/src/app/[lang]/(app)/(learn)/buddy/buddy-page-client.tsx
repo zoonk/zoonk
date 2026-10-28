@@ -30,13 +30,9 @@ const WITH_EARLIER_QUESTIONS: BuddyScreenHrefs = {
   earlierQuestions: "/buddy/earlier-questions",
 };
 
-/** What the conversation shows at once: the newest messages and where the earlier ones continue. */
 type ThreadPage = Pick<LessonQuestionThreadResource, "hasMore" | "nextCursor" | "questions">;
 
-/**
- * The goal's conversation with the buddy, as the buddy screen describes it. A question asked from
- * search (`?ask=`) waits in its composer: only the learner's own send asks it.
- */
+/** A question from search (`?ask=`) waits in the composer: only the learner's own send asks it. */
 function BuddyConversation({
   canAsk,
   goalId,
@@ -50,7 +46,6 @@ function BuddyConversation({
   const router = useRouter();
   const appLinks = useTutorAppLinks(goalId);
 
-  // The conversation names the buddy from the screen's own identity, which follows edits live.
   const tutor = useMemo(
     () => getTutorConfig({ appLinks, buddy: null, canAsk }),
     [appLinks, canAsk],
@@ -63,7 +58,6 @@ function BuddyConversation({
       draft={question}
       goalId={goalId}
       initialThread={initialThread}
-      // A question that completed a mission moves the buddy's day: read it again.
       onMissionMoment={() => router.refresh()}
       tutor={tutor}
       {...content}
@@ -71,12 +65,6 @@ function BuddyConversation({
   );
 }
 
-/**
- * The buddy saves as Appearance does, so both stay in step; a saved change refreshes the page, so
- * the tab bar's face and name follow it. The conversation is the goal's tutor thread over the
- * public API, and a plan change it proposes is answered as the Plan answers one, then the page
- * reads the buddy's day again.
- */
 export function BuddyPageClient({
   canAsk,
   goalId,
@@ -89,18 +77,13 @@ export function BuddyPageClient({
   viewerId,
 }: {
   canAsk: boolean;
-  /** The goal the buddy tutors. */
   goalId: string;
-  /** Whether the learner asked questions in an earlier version of their courses, to reread. */
   hasEarlierQuestions: boolean;
-  /** The conversation as the page read it, shown at once and read again in the background. */
   initialThread: ThreadPage | null;
   memoryCount: number;
-  /** When the page read the buddy's day (`getReadAt`). */
   readAt: number;
   situation: TutorSituation;
   status: BuddyStatusView;
-  /** The learner the page read the buddy's day for, whose missions the tab may show. */
   viewerId: string;
 }) {
   const router = useRouter();

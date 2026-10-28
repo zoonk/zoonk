@@ -16,10 +16,6 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("Speaking practice") };
 }
 
-/**
- * The page's bar while it loads or has no goal to show, as the practice draws it: back to the page
- * the learner came from (Today without one), none from `lg`, where the sidebar lists it.
- */
 async function SpeakingBar() {
   const t = await getExtracted();
   return <LearnPageBar back={{ href: "/today" }} root title={t("Speaking practice")} />;
@@ -43,7 +39,6 @@ async function SpeakingContent() {
     );
   }
 
-  // An exam goal practices its speaking paper on its exam page.
   if (result.status === "notLanguage") {
     redirect({ href: "/exam", locale: language });
   }
@@ -72,10 +67,6 @@ function SpeakingSkeleton() {
   );
 }
 
-/**
- * A language goal's speaking practice in an exam's format at the level it aims for, from Today's
- * "Practice anytime" and the level sheet: its tasks, one at a time, and their last results.
- */
 export default function SpeakingPage() {
   return (
     <Suspense fallback={<SpeakingSkeleton />}>

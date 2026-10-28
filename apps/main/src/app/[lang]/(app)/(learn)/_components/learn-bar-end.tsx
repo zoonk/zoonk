@@ -13,10 +13,7 @@ import { type BeltColor } from "@zoonk/utils/belt-level";
 import { useExtracted } from "next-intl";
 import { Suspense } from "react";
 
-/**
- * The learner's belt as a dot and their level in mono, as the top bar's level link and the
- * sidebar's account row show them. Both say it in words for screen readers, so it's hidden here.
- */
+/** Hidden from screen readers: the level link and the account row say it in words. */
 export function BeltLevel({
   belt,
   color,
@@ -34,10 +31,6 @@ export function BeltLevel({
   );
 }
 
-/**
- * The learner's belt and level, opening their statistics: the one number of theirs that only
- * grows, in sight on every tab, and the shortest way to the rest.
- */
 function LevelLink({ level }: { level: { color: BeltColor; level: number } }) {
   const t = useExtracted();
   const belt = useBeltLabel(level.color);
@@ -58,10 +51,6 @@ function LevelLink({ level }: { level: { color: BeltColor; level: number } }) {
   );
 }
 
-/**
- * The bar's end while the learner is unread: a visitor's Pricing and way in, or on a page marked
- * signed in the account's quiet avatar at its size in the bar (28px).
- */
 function PendingBarEnd({ visitor }: { visitor: React.ReactNode }) {
   return (
     <LearnShellEnd>
@@ -92,13 +81,6 @@ function BarEnd({ visitor }: { visitor: React.ReactNode }) {
   );
 }
 
-/**
- * The right of the learner's top bar: their belt and level opening Statistics, and the account
- * avatar. A visitor has no account to open, so Pricing and the way in (`visitor`) stand there, as
- * in the sidebar and the catalog's bar; the search field's palette holds what the menu would.
- * Nothing of a level before the learner has one. Energy lives on the buddy's tab, and search opens
- * with Cmd/Ctrl+K or from the field under the bar.
- */
 export function LearnBarEnd({ visitor }: { visitor: React.ReactNode }) {
   return (
     <Suspense fallback={<PendingBarEnd visitor={visitor} />}>

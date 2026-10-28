@@ -39,7 +39,6 @@ function readQuery(query: Awaited<Props["searchParams"]>) {
     : mistakeListInputSchema.parse({ limit: NOTEBOOK_PAGE_SIZE, status: "open" });
 }
 
-/** The notebook's bar while it loads or has no goal to show, as the notebook draws it. */
 async function NotebookBar() {
   const t = await getExtracted();
 
@@ -64,7 +63,6 @@ async function MistakesBody({ searchParams }: Pick<Props, "searchParams">) {
 
   const input = readQuery(query);
 
-  // A language goal's pattern noticed in these mistakes is one tap away from the notebook.
   const [result, language] = await Promise.all([
     listCurrentUserMistakes({ ...input, goalId: goal.id }),
     getTodayPattern({ goalId: goal.id }),
@@ -98,7 +96,6 @@ async function MistakesBody({ searchParams }: Pick<Props, "searchParams">) {
   );
 }
 
-/** The notebook's shape while it loads, with its own name. */
 async function NotebookSkeleton() {
   const t = await getExtracted();
 
@@ -114,7 +111,6 @@ async function NotebookSkeleton() {
   );
 }
 
-/** The mistakes notebook for the goal in the switcher: how many to fix, practice, then by skill. */
 export default function MistakesPage({ searchParams }: Props) {
   return (
     <Suspense fallback={<NotebookSkeleton />}>

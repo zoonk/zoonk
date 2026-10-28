@@ -8,11 +8,6 @@ import { LanguageUnitScreen } from "@zoonk/learn/language/unit";
 import { RichTextBlocks } from "@zoonk/learn/rich-text";
 import { useMemo } from "react";
 
-/**
- * The unit page with "Practice a conversation" wired to core and the call screen, "Take the test"
- * opening its test-out, "Ask" for questions about it as a chapter's page has, and grammar tips and
- * summaries drawn with the lesson player's text.
- */
 export function UnitScreenClient({
   tutor,
   unit,
@@ -20,7 +15,6 @@ export function UnitScreenClient({
 }: {
   tutor: TutorViewer;
   unit: LanguageUnitView;
-  /** The unit holds the plan's next lesson. */
   upNext: boolean;
 }) {
   const startConversation = useStartLanguageConversation();

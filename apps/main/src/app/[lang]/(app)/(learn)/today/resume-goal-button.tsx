@@ -7,7 +7,6 @@ import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 
-/** Why resuming didn't go through, said under the button. */
 function ResumeError({ outcome }: { outcome: GoalStatusOutcome | null }) {
   const t = useExtracted();
 
@@ -28,14 +27,12 @@ function ResumeError({ outcome }: { outcome: GoalStatusOutcome | null }) {
   );
 }
 
-/** Resumes a paused goal: its plan starts again from today, and Today shows its day. */
 export function ResumeGoalButton({ goalId, goalTitle }: { goalId: string; goalTitle: string }) {
   const t = useExtracted();
   const [outcome, setOutcome] = useState<GoalStatusOutcome | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  // Saved, the resume expires the learner's goals, so Today renders again with the day. The button
-  // stays busy until the day replaces it.
+  // The resume expires the learner's goals, so Today renders again; the button stays busy until then.
   const resume = () => {
     startTransition(async () => {
       setOutcome(await setGoalStatusAction(goalId, "active"));

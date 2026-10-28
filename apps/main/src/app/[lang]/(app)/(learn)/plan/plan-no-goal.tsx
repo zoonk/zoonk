@@ -10,12 +10,6 @@ import { LearnNoGoal } from "../_components/learn-no-goal";
 
 const PLAN_GOAL_ID = "plan-goal";
 
-/**
- * The Plan without a goal to plan (none yet, or only quick explanations, which have no plan): the
- * page keeps its title, says what it holds, and the goal is written right here, as on the home
- * page, so the one next step is in place instead of behind another "Start a goal". Someone without
- * a session may have a goal in their account: they're asked to log in first.
- */
 export async function PlanNoGoal() {
   const t = await getExtracted();
   const session = await getSession();

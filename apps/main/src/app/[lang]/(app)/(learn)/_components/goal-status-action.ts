@@ -4,11 +4,6 @@ import { goalUpdateInputSchema } from "@zoonk/core/goals/contract";
 import { updateGoal } from "@zoonk/core/goals/update";
 import { type GoalStatusOutcome } from "@zoonk/learn/journey";
 
-/**
- * Pauses, resumes or archives a goal from its Plan or a paused Today. The status is
- * untrusted input, so it's parsed with the API's schema; core owns the goal's ownership and the
- * free plan's limit on active goals, which resuming can hit.
- */
 export async function setGoalStatusAction(
   goalId: string,
   status: unknown,

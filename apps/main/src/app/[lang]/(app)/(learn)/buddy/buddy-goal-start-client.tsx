@@ -4,15 +4,11 @@ import { useRouter } from "@/i18n/navigation";
 import { BuddyGoalStart, type BuddyStatusView } from "@zoonk/learn/buddy";
 import { useSearchParams } from "next/navigation";
 
-/**
- * A first goal opens onboarding with the learner's words filled in. Reading it waits for the
- * learner's confirmation there, and a search question stays a draft here too.
- */
+/** Reading the goal waits for the learner's confirmation in onboarding. */
 export function BuddyGoalStartClient({
   hasEarlierQuestions,
   status,
 }: {
-  /** Whether the learner asked questions in an earlier version of their courses, to reread. */
   hasEarlierQuestions: boolean;
   status: BuddyStatusView;
 }) {

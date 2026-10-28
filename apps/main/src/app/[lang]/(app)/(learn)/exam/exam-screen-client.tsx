@@ -15,11 +15,6 @@ import { useMemo } from "react";
 import { changePlanAction } from "../plan/journey-actions";
 import { reportExamResultAction } from "./exam-actions";
 
-/**
- * The exam screen with main's actions for "How did it go?", taking the notice's day, the exam's
- * speaking (a task of its paper, or the IELTS or TOEFL speaking mock), and its main action: taking
- * a mock any time.
- */
 export function ExamScreenClient({
   exam,
   mocks,

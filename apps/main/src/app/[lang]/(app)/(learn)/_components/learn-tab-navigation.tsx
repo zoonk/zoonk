@@ -19,12 +19,6 @@ import { useExtracted } from "next-intl";
 import { useSelectedLayoutSegments } from "next/navigation";
 import { Suspense, useLayoutEffect } from "react";
 
-/**
- * The tab each page belongs to, by the first part of its path. Chapter and unit pages (under
- * `content`), subjects, the exam page with its mock chooser (`mock`) and the mind maps open from
- * the Plan; the mistakes notebook and a language goal's speaking practice from Today's "Practice
- * anytime" (and from the sidebar's own links).
- */
 const TAB_PATHS: Record<string, LearnTab> = {
   buddy: "buddy",
   content: "journey",
@@ -37,26 +31,15 @@ const TAB_PATHS: Record<string, LearnTab> = {
   today: "today",
 };
 
-/** The tabs' own pages, where the app bar (goal, tabs, account) is the page's bar. */
 const TAB_ROOTS = new Set<string>(["buddy", "plan", "today"]);
 
-/**
- * Pages with their own link in the sidebar, which marks that link instead of a tab: the mock
- * chooser marks the exam's.
- */
 const SIDEBAR_PATHS = new Set<string>(["exam", "mind-maps", "mistakes", "mock", "speaking"]);
 
-/** Onboarding's screens: a new goal's questions, a course's start and the placement mock's chooser. */
 function useIsOnboarding(): boolean {
   return useSelectedLayoutSegments().includes("(onboarding)");
 }
 
-/**
- * By the path, not the layout's segment: a pushed page belongs to the tab it opens from. In the
- * sidebar, a page with its own link there marks that link, not its tab. Onboarding (a new goal's
- * screens, a course's start, the placement mock's chooser) is none of the tabs' pages: it marks
- * none, as the catalog and settings don't.
- */
+/** By the path, not the layout's segment: a pushed page belongs to the tab it opens from. */
 function useActiveTab({ sidebar = false }: { sidebar?: boolean } = {}): LearnTab | null {
   const [, first = ""] = usePathname().split("/");
   const onboarding = useIsOnboarding();
@@ -68,14 +51,8 @@ function useActiveTab({ sidebar = false }: { sidebar?: boolean } = {}): LearnTab
   return TAB_PATHS[first] ?? null;
 }
 
-/** The buddy's tab as the frame draws it: its face and name, and today's missions as a ring. */
 type TabsProps = { buddy?: LearnBuddy | null; missions?: LearnTabMissions };
 
-/**
- * The frame's read of the buddy's tab (the learner summary), and when it ran: a page's newer read
- * of today's missions wins (`useTabMissions`). A visitor has the default buddy and no missions;
- * until the learner is read, the buddy's face and name wait.
- */
 function getSummaryTabs(learner: LearnerSummaryState) {
   if (learner.status === "ready") {
     const { buddy, missions, readAt } = learner.summary;
@@ -94,10 +71,8 @@ function useFrameTabs(learner: LearnerSummaryState): TabsProps {
   return { buddy, missions: useTabMissions(read) };
 }
 
-/** The learner as unread, for the tabs' look until the frame's learner arrives. */
 const UNREAD: LearnerSummaryState = { status: "not-loaded" };
 
-/** What's left of today's session, in mono at the end of the sidebar's Today; nothing once done. */
 function TodayCount({ learner }: { learner: LearnerSummaryState }) {
   const t = useExtracted();
   const blocksLeft = learner.status === "ready" ? (learner.summary.today?.blocksLeft ?? 0) : 0;
@@ -131,10 +106,7 @@ function CurrentSideTabs({ buddy, missions, todayCount }: SideTabsProps) {
   );
 }
 
-/**
- * Onboarding has no tab bar: until the plan exists the tabs would only lead to a half-made one, and
- * the screen's bar has its way back and out. From `lg` the sidebar stays, as every page's.
- */
+/** Onboarding has no tab bar: until the plan exists the tabs would only lead to a half-made one. */
 function CurrentBottomTabs({ buddy, missions }: TabsProps) {
   const activeTab = useActiveTab();
 
@@ -145,17 +117,11 @@ function CurrentBottomTabs({ buddy, missions }: TabsProps) {
   return <LearnBottomNavigation activeTab={activeTab} buddy={buddy} missions={missions} />;
 }
 
-/**
- * An onboarding screen hides the first paint's copy of the tab bar, the way a page with its own
- * bar hides the top bar's (see `TabRootOnly`). `contents` keeps the bar sticky to the frame.
- */
+/** `contents` keeps the bar sticky to the frame. */
 const ONBOARDING_FIRST_PAINT_CLASS =
   "contents [[data-slot=learn-shell-content]:has([data-onboarding-bar])_&]:hidden";
 
-/**
- * The path of a page with its own id (a subject, a chapter) is only known once the page is open,
- * so until then the tabs are drawn without the mark, in the same place.
- */
+/** A page with its own id has a path only known once it's open, so the tabs are unmarked until then. */
 function SideTabs({ learner }: { learner: LearnerSummaryState }) {
   const { buddy, missions } = useFrameTabs(learner);
   const todayCount = <TodayCount learner={learner} />;
@@ -180,7 +146,6 @@ function FrameSideTabs() {
   return <SideTabs learner={useFrameLearner()} />;
 }
 
-/** The tabs in the sidebar from `lg` up, with the current page's tab marked. */
 export function LearnSideTabs() {
   return (
     <Suspense fallback={<SideTabs learner={UNREAD} />}>
@@ -209,10 +174,6 @@ function FrameBottomTabs() {
   return <BottomTabs learner={useFrameLearner()} />;
 }
 
-/**
- * The tab bar at the bottom of the screen under `lg`, with the current page's tab marked; none on
- * onboarding's screens.
- */
 export function LearnBottomTabs() {
   return (
     <Suspense fallback={<BottomTabs learner={UNREAD} />}>
@@ -221,7 +182,6 @@ export function LearnBottomTabs() {
   );
 }
 
-/** Whether the page is one of the tabs' own (Today, the Plan, the buddy), by its path. */
 export function useIsTabRoot(): boolean {
   const [, first = "", ...rest] = usePathname().split("/");
   return rest.length === 0 && TAB_ROOTS.has(first);
@@ -231,23 +191,13 @@ function TabRootContent({ children }: { children: React.ReactNode }) {
   return useIsTabRoot() ? children : null;
 }
 
-/**
- * A page with a bar of its own (a page's or a section's), which hides the first paint's copy of
- * the top bar (see `TabRootOnly`).
- */
 const OWN_BAR_FIRST_PAINT_CLASS =
   "[[data-slot=learn-shell-content]:has([data-slot=learn-page-bar],[data-slot=learn-section-bar])_&]:hidden";
 
 /**
- * The top bar belongs to the tabs' own pages under `lg`. A page opened from a tab (a chapter, a
- * subject, the exam) has its own bar in its place, with the way back and its actions. A page whose
- * path is only known once it's open has its own id, so it's never a tab's own page.
- *
- * The path is read after the page's first paint (its static shell), so until then the bar is
- * drawn anyway: a tab's own page then never moves down when the bar comes, as it did by 110px on
- * every load on a phone. A page with its own bar hides that copy. The first paint's copies (this
- * one and the tab bar's) are the only places the frame reads the page with `:has()`: only the
- * first paint has them, before the router keeps any other page hidden in the document.
+ * The path is read after the first paint, so the bar is drawn until then and a tab's own page never
+ * moves down when it comes. Only the first paint's copy reads the page with `:has()`: before it, the
+ * router keeps no other page hidden in the document.
  */
 export function TabRootOnly({ children }: { children: React.ReactNode }) {
   return (
@@ -257,11 +207,7 @@ export function TabRootOnly({ children }: { children: React.ReactNode }) {
   );
 }
 
-/**
- * Sections leave as a whole; the learning tabs and their pages keep their own history. Onboarding
- * is one too: its way out skips its own screens (`/start`, a goal's questions), which would only
- * lead back into it.
- */
+/** Sections leave as a whole; onboarding's way out skips its own screens, which would only lead back into it. */
 const APP_SECTIONS = new Set(["(settings)", "(stats)", "(catalog)", "(onboarding)"]);
 
 function MarkAppEntry() {
@@ -277,10 +223,6 @@ function MarkAppEntry() {
   return null;
 }
 
-/**
- * Marks each of the app's pages in the browser's history, so leaving a section (settings,
- * statistics, the catalog) returns to the page the learner left for it.
- */
 export function AppPageHistory() {
   return (
     <Suspense fallback={null}>
@@ -289,10 +231,6 @@ export function AppPageHistory() {
   );
 }
 
-/**
- * The page's frame, which dims and stays out of reach while a goal switch is on its way: the page
- * still shows the previous goal's day until the new one's renders.
- */
 export function LearnFrameMain({ children }: { children: React.ReactNode }) {
   const switching = useGoalSwitchPending();
 

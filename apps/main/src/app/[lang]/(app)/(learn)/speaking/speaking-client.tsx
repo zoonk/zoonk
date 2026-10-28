@@ -5,7 +5,6 @@ import { type SpeakingPaperView } from "@zoonk/core/language/exam-speaking/contr
 import { SpeakingPracticeScreen } from "@zoonk/learn/language/speaking";
 import { useSearchParams } from "next/navigation";
 
-/** The speaking practice page with main's way to start a task; `?task=` opens one. */
 export function SpeakingClient({ goalId, paper }: { goalId: string; paper: SpeakingPaperView }) {
   const openConversation = useOpenLanguageConversation();
   const searchParams = useSearchParams();

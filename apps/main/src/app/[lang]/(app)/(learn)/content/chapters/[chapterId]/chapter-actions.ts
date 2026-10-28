@@ -4,10 +4,6 @@ import { type PracticeBlockResult, openPracticeBlock } from "@/lib/session/open-
 import { addAreaPracticeBlock } from "@zoonk/core/sessions/area-practice";
 import { areaPracticeInputSchema } from "@zoonk/core/sessions/contract";
 
-/**
- * A chapter's "Practice": core adds a bonus block on the chapter's skills to today's session, then
- * it starts where it's played. The same capability as `POST /v1/goals/{goalId}/area-practice`.
- */
 export async function practiceAreaAction(
   goalId: string,
   input: { areaId: string; timeZone: string },

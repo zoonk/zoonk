@@ -15,13 +15,8 @@ import { practiceAreaAction } from "./chapter-actions";
 
 const CHAPTER_HREFS: ChapterHrefs = { back: "/plan", lessonBasePath: "/learn" };
 
-/** Back to the subject the chapter was opened from, by its name, instead of the Plan. */
 type ChapterBack = { href: string; label: string };
 
-/**
- * A chapter's page with "Practice" wired to today's session in the learner's timezone, "Take the
- * test" asking for the test-out's questions and opening it, and "Ask" for questions about it.
- */
 export function ChapterScreenClient({
   back,
   chapter,
@@ -31,11 +26,8 @@ export function ChapterScreenClient({
 }: {
   back: ChapterBack | null;
   chapter: ChapterView;
-  /** The chapter's mind map (`getChapterMindMap`), made from its summary once it's finished. */
   mindMap: ChapterMindMapView | null;
-  /** The cap of the learner's plan their maps already reached (`getReachedCap`), or null. */
   mindMapCap: MindMapLimit | null;
-  /** Who asks and the buddy who answers (`getTutorViewer`). */
   tutor: TutorViewer;
 }) {
   const go = useGoToStudyDestination();

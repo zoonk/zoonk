@@ -27,10 +27,6 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("Chapter") };
 }
 
-/**
- * The way back from a chapter opened on a subject's page (`?from=` its key): to that subject, by
- * its name. Anything else goes back to the Plan.
- */
 async function loadBack(from: string | string[] | undefined) {
   if (typeof from !== "string" || from.length === 0) {
     return null;
@@ -44,10 +40,7 @@ async function loadBack(from: string | string[] | undefined) {
   return subject ? { href: `/plan/${subject.key}`, label: subject.shortName } : null;
 }
 
-/**
- * A language goal's chapter is a unit, with one page: the unit's, drawn here too, so a link to it
- * as a chapter never redirects.
- */
+/** Drawn here too, so a link to a unit as a chapter never redirects. */
 async function UnitInPlace({ chapterId, tutor }: { chapterId: string; tutor: TutorViewer }) {
   const [unit, plan] = await Promise.all([getLanguageUnitView({ chapterId }), getPlanTabView()]);
 
@@ -111,11 +104,6 @@ async function ChapterBody({ params, searchParams }: Props) {
   );
 }
 
-/**
- * A chapter of the learner's plan: its lessons with the next one to open, its mistakes and skills,
- * the summaries its lessons left and its test-out. A chapter outside the active goal's plan isn't
- * found; a language goal's chapter opens as its unit.
- */
 export default function ChapterPage(props: Props) {
   return (
     <Suspense fallback={<DetailSkeleton rows={4} />}>

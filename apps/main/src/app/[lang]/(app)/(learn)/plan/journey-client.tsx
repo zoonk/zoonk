@@ -24,10 +24,7 @@ import {
 import { TopicOutlineProvider } from "@zoonk/learn/topic-outline";
 import { useSyncExternalStore } from "react";
 
-/**
- * The Plan while the goal's run builds its plan: it follows the run live and reads the plan
- * again once it's saved. "Try again" starts the run again only when the learner taps it.
- */
+/** "Try again" starts the run only on the learner's tap. */
 export function JourneyBuildingClient({
   goalId,
   goalTitle,
@@ -50,10 +47,6 @@ export function JourneyBuildingClient({
 
 type JourneyScreenProps = React.ComponentProps<typeof JourneyScreen>;
 
-/**
- * Where every goal's Plan leads; a language goal's chapters are its units. The mind maps are
- * there once a finished chapter has one or can get one.
- */
 function getJourneyLinks({
   goalKind,
   hasMindMaps,
@@ -74,10 +67,6 @@ function getJourneyLinks({
   };
 }
 
-/**
- * The buddy's "Choose where to focus" and Today's "Study everything" lead to the Plan with
- * this, which opens their sheet; Today's "more time" opens the plan editor at the time a day.
- */
 const FOCUS_PARAM = "focus";
 const CHOOSE_FOCUS = "choose";
 const STUDY_EVERYTHING = "everything";
@@ -91,10 +80,6 @@ function subscribeToArrival(): () => void {
   };
 }
 
-/**
- * Which sheet the Plan was opened to choose in (where to focus, or studying everything); read
- * in the browser, after the shell.
- */
 function useArrivalChoice(): string | null {
   return useSyncExternalStore(
     subscribeToArrival,
@@ -103,10 +88,6 @@ function useArrivalChoice(): string | null {
   );
 }
 
-/**
- * A language goal's level, with its exam-style speaking tasks on their own page or its speaking
- * mock opening the call screen.
- */
 function useLanguageStanding(language: LanguageProgressView | null): JourneyStanding | null {
   const startConversation = useStartLanguageConversation();
 
@@ -126,24 +107,16 @@ type JourneyClientProps = Omit<
   JourneyScreenProps,
   "actions" | "goalStatus" | "links" | "refresh" | "standing" | "tutor"
 > & {
-  /** The plan's Server Actions; the advice the learner asks for is read from the API here. */
   actions: Omit<PlanActions, "adviseOnBases" | "findTimeToCover">;
   goalId: string;
   goalStatus: GoalStatusControl["status"];
-  /** Whether the goal's mind maps page lists a chapter (`listGoalMindMaps`). */
   hasMindMaps: boolean;
   language: LanguageProgressView | null;
   preparation: Extract<JourneyStanding, { kind: "preparation" }> | null;
-  /** When the page read the Plan (`getReadAt`). */
   readAt: number;
-  /** What resuming the paused goal would do to its plan (`getGoalResumePreview`). */
   resume: GoalStatusControl["resume"];
 };
 
-/**
- * The goal's pause, resume and archive from its "…": a saved change reads the Plan again, and
- * an archived goal leaves it for Today, which moves on to the learner's next goal.
- */
 function useGoalStatus({
   goalId,
   resume,
@@ -172,10 +145,6 @@ function useGoalStatus({
   };
 }
 
-/**
- * The Plan, read again while lessons in it are still being written. Its "…" leads to the buddy's
- * conversation for questions about the plan, as the plan editor's last row does.
- */
 export function JourneyClient({
   actions,
   buddy,
@@ -196,7 +165,6 @@ export function JourneyClient({
   const arrival = useArrivalChoice();
   const outlineActions = useTopicOutlineActions(goalId);
 
-  // The next level replaces the finished goal, so the Plan reads it (its plan building) next.
   const continueNextLevel = async (onContinue: () => Promise<boolean>) => {
     const started = await onContinue();
 

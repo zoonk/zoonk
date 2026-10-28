@@ -3,10 +3,6 @@ import { Page, PageEyebrow, PageHeaderContent, PageSection, PageTitle } from "@z
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { getExtracted } from "next-intl/server";
 
-/**
- * A goal still in onboarding has no plan to show yet: the page keeps its title, and its few
- * questions are the one way there, picked up where the learner left them.
- */
 export async function JourneySetup({ goalId, goalTitle }: { goalId: string; goalTitle: string }) {
   const t = await getExtracted();
 

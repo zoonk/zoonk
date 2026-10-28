@@ -60,10 +60,6 @@ async function MindMapsBody() {
   );
 }
 
-/**
- * The mind maps' shape while they load: the bar, the header (its title as the page has it, the
- * goal and the count as bars) and the gallery's first tiles.
- */
 async function MindMapsSkeleton() {
   const t = await getExtracted();
 
@@ -90,10 +86,6 @@ async function MindMapsSkeleton() {
   );
 }
 
-/**
- * The mind maps of the goal in the switcher: every chapter the learner finished under its subject,
- * each map opening full screen, and a tap to make the ones that don't exist yet.
- */
 export default function MindMapsPage() {
   return (
     <Suspense fallback={<MindMapsSkeleton />}>

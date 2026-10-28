@@ -31,12 +31,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { type TodayScreenData } from "./today-view";
 import { useDecidePlanChange } from "./use-decide-plan-change";
 
-/**
- * Prefetches the session screen's frame for this day's taps, so a step that plays there opens at
- * once, and again each time the router drops that prefetch (a write that expired the page, or the
- * copy grown stale). Today mounting anew asks again; the router fetches nothing for a copy it
- * still holds fresh.
- */
+/** Again each time the router drops the prefetch; it fetches nothing for a copy it still holds fresh. */
 function usePrefetchSessionFrame(href: string) {
   const router = useRouter();
 
@@ -57,13 +52,7 @@ function usePrefetchSessionFrame(href: string) {
   }, [href, router]);
 }
 
-/**
- * Today's notices that need main's components, drawn from what Today read: a language goal's due
- * practice, the newest change to a source the goal is built on, and an upload research asks for.
- * An upload ask the learner answered here (`answeredUpload`) shows its thanks while they stay,
- * whatever Today read since, even when a read dropped it before the answer arrived; another tab
- * drops it.
- */
+/** An upload ask answered here shows its thanks while the learner stays, whatever Today read since. */
 function toHostNotices({
   answeredUpload,
   data,
@@ -101,7 +90,6 @@ function toHostNotices({
   };
 }
 
-/** The day's steps with where each plays and the work it is, as Today read them. */
 function toTapSteps(data: TodayScreenData): TapStep[] {
   return data.today.session.blocks.flatMap((block, index) => {
     const step = data.steps[index];
@@ -112,12 +100,7 @@ function toTapSteps(data: TodayScreenData): TapStep[] {
   });
 }
 
-/**
- * The day on Today with main's actions: each one opens where the step is played, opening a day
- * the learner hasn't opened yet with the tap that names its step. The page keys it by its goal and
- * day, so a new day (midnight, a goal switch) draws fresh. Writes that expire the learner's tags
- * render Today again on their own; a tap that reads the day again refreshes it.
- */
+/** The page keys it by goal and day, so a new day (midnight, a goal switch) draws fresh. */
 export function TodayClient({
   data,
   readAt,
@@ -175,7 +158,6 @@ export function TodayClient({
     watch: "today",
   });
 
-  // The session screen's frame is static: with it at hand, a step that plays there opens at once.
   usePrefetchSessionFrame(sessionHref);
 
   return (
@@ -241,7 +223,6 @@ export function TodayClient({
   );
 }
 
-/** A learner without a goal who was taking a course before goals existed: it's offered first. */
 export function SuggestedGoalClient({ suggestion }: { suggestion: SuggestedGoalView }) {
   const answer = useAnswerSuggestedGoal({ hasGoal: false });
 

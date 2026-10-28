@@ -23,7 +23,6 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 async function ExamContent() {
-  // Both read the active goal; they start together so the page prefetches in one pass.
   const [result, mocks] = await Promise.all([getExamView({}), getMockOptions()]);
 
   if (result.status === "noGoal" || result.status === "unauthorized") {
@@ -52,7 +51,6 @@ async function ExamContent() {
   );
 }
 
-/** A number's tile while the page loads, as `StatTile` draws it: its label, the number and its line. */
 function StatTileSkeleton() {
   return (
     <div className="ring-border rounded-option flex flex-col gap-2.5 p-3 ring-1 ring-inset">
@@ -63,7 +61,6 @@ function StatTileSkeleton() {
   );
 }
 
-/** A subject's score while the page loads: its name, its bar and its percent. */
 function SubjectRowSkeleton() {
   return (
     <div className="flex h-11 items-center gap-3">
@@ -76,7 +73,6 @@ function SubjectRowSkeleton() {
   );
 }
 
-/** How the mocks went while the page loads: the two numbers' tiles over each subject's score. */
 function MockProgressSkeleton() {
   return (
     <div className="flex flex-col gap-3">
@@ -93,7 +89,6 @@ function MockProgressSkeleton() {
   );
 }
 
-/** The aside while the page loads, from 72rem: the exam's days, then how the score works. */
 function ExamAsideSkeleton() {
   return (
     <div className="hidden flex-col gap-8 min-[72rem]:flex">
@@ -110,11 +105,6 @@ function ExamAsideSkeleton() {
   );
 }
 
-/**
- * The exam's shape while it loads: its header, its mocks as rows, how they went (the two numbers'
- * tiles over each subject's bar) and, from 72rem, the aside's exam days and the score's panel, so
- * nothing moves when the page arrives.
- */
 function ExamSkeleton() {
   return (
     <DetailSkeleton aside={<ExamAsideSkeleton />} bar={<JourneyPageBar root />}>
@@ -124,10 +114,6 @@ function ExamSkeleton() {
   );
 }
 
-/**
- * "About the exam" for the active exam goal: its days, the next mock exam, what's on it, how it's
- * scored, the mocks so far and the result after.
- */
 export default function ExamPage() {
   return (
     <Suspense fallback={<ExamSkeleton />}>

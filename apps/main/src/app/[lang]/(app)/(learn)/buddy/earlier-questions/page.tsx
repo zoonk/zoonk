@@ -16,10 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("Earlier questions") };
 }
 
-/**
- * One question as the learner asked it, under the course it came from. The lesson it was about is
- * gone, so nothing links anywhere: it's history to read.
- */
+/** The lesson it was about is gone, so nothing links anywhere. */
 async function EarlierQuestionEntry({ question }: { question: EarlierQuestion }) {
   const t = await getExtracted();
 
@@ -121,10 +118,7 @@ function EarlierQuestionsSkeleton() {
   );
 }
 
-/**
- * The questions a learner asked about lessons from an earlier version of their courses, reached
- * from the buddy's menu: kept, so a rewrite never reads as their history deleted.
- */
+/** Kept, so a course rewrite never reads as the learner's history deleted. */
 export default function EarlierQuestionsPage({ searchParams }: Props) {
   return (
     <Suspense fallback={<EarlierQuestionsSkeleton />}>

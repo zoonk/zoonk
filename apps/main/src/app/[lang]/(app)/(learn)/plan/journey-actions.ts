@@ -20,11 +20,6 @@ import { type PlanChangeOutcome } from "@zoonk/learn/journey";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 
-/**
- * Server Actions take untrusted input, so each one parses it with the same schema the API uses.
- * Core owns ownership checks and revalidates the plan, so the Plan re-renders with the change.
- * A change that moves the plan starts writing what it has soon, as the API's plan routes do.
- */
 export async function changePlanAction(
   goalId: string,
   operations: unknown,
@@ -49,10 +44,7 @@ export async function changePlanAction(
   return { change: result.change, status: "applied" };
 }
 
-/**
- * What a change would do before the learner makes it, planned as the change would be: nothing is
- * saved, so it's safe to ask while they weigh their choice. Null when it can't be planned.
- */
+/** Nothing is saved, so it's safe to ask while the learner weighs their choice. */
 export async function previewPlanChangeAction(
   goalId: string,
   operations: unknown,
@@ -67,7 +59,6 @@ export async function previewPlanChangeAction(
   return result.status === "ready" ? result.preview : null;
 }
 
-/** The learner's answer to a change, with the change as it stands after it; null when not saved. */
 export async function answerPlanChangeAction(
   goalId: string,
   { changeId, status }: { changeId: string; status: unknown },
@@ -99,10 +90,7 @@ export async function decidePlanChangeAction(
   return (await answerPlanChangeAction(goalId, answer)) !== null;
 }
 
-/**
- * Setting a tool up can write its setup lesson's outline with a model first, so a failed call
- * comes back as "didn't work" for the card to say, instead of an error screen.
- */
+/** A tool's setup can call a model first, so a failed call comes back as "didn't work", not an error screen. */
 export async function choosePlanToolsAction(goalId: string, input: unknown): Promise<boolean> {
   const parsed = planToolChoiceInputSchema.safeParse(input);
 
@@ -117,11 +105,6 @@ export async function choosePlanToolsAction(goalId: string, input: unknown): Pro
   return !error && result.status === "applied";
 }
 
-/**
- * The option the learner takes of one of their exam's choices (ENEM's foreign language), from the
- * plan editor, with the change it made for the editor to show. The picked option's topics come
- * in, so their lessons start being written.
- */
 export async function chooseExamOptionAction(
   goalId: string,
   input: unknown,
@@ -145,11 +128,6 @@ export async function chooseExamOptionAction(
   return { change: result.change };
 }
 
-/**
- * "Continue at Beginner" once the plan is done: core completes the finished goal and creates the
- * next level's goal in its place, then its research and curriculum start on the API, as
- * `POST /v1/goals/{goalId}/next-level` does.
- */
 export async function continueNextLevelAction(goalId: string): Promise<boolean> {
   const { data, error } = await safeAsync(() => continueGoalAtNextLevel(goalId));
 

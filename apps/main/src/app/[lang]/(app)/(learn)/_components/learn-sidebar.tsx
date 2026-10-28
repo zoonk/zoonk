@@ -13,7 +13,6 @@ import { LearnGoalMenu } from "./learn-goal-menu";
 import { SidebarAccount, StudyLinks } from "./learn-sidebar-learner";
 import { LearnSidebarSearch } from "./learn-sidebar-links";
 
-/** What the learner reaches from anywhere besides the tabs. */
 async function StudyShortcuts() {
   const t = await getExtracted();
 
@@ -24,10 +23,6 @@ async function StudyShortcuts() {
   );
 }
 
-/**
- * A visitor's foot of the sidebar: what Zoonk costs, as one of its rows (the public pricing page,
- * outside the frame, so never marked), then the way in.
- */
 async function VisitorAccount() {
   const t = await getExtracted();
   const { icon: PricingIcon, url } = getMenu("pricing");
@@ -43,11 +38,7 @@ async function VisitorAccount() {
   );
 }
 
-/**
- * The learning app's navigation from `lg`: the goal switcher and search on top, the three tabs
- * (`tabs`), the study shortcuts, and the account at the end. Everything about the learner comes
- * from the learner summary (`useFrameLearner`), so the sidebar itself is the same for everyone.
- */
+/** Everything about the learner comes from the learner summary, so the sidebar itself is the same for everyone. */
 export async function LearnAppSidebar({ tabs }: { tabs: React.ReactNode }) {
   const t = await getExtracted();
 

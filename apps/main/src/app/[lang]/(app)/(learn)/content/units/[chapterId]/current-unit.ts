@@ -1,9 +1,5 @@
 import { type getPlanTabView } from "@zoonk/core/view-models/plan/get";
 
-/**
- * Whether a unit holds the plan's next lesson: only then does its list mark its next one, as the
- * Plan marks the unit itself.
- */
 export function isCurrentUnit({
   chapterId,
   plan,

@@ -9,7 +9,6 @@ import { getExtracted, getLocale } from "next-intl/server";
 import { ResumeGoalButton } from "./resume-goal-button";
 import { getLocalDay } from "./today-local-day";
 
-/** What resuming the paused goal would do to its plan, read only for a paused goal. */
 async function loadResumePreview(goal: { id: string; status: string } | undefined) {
   if (goal?.status !== "paused") {
     return false;
@@ -19,11 +18,6 @@ async function loadResumePreview(goal: { id: string; status: string } | undefine
   return result.status === "ready" ? result.preview : false;
 }
 
-/**
- * The goal the tabs show is paused (or finished): nothing is planned for it today. Today keeps its
- * frame and says so in one line; a paused goal comes back with one tap, a new goal is the other
- * way on. When the pause left lessons behind, what resuming moves shows before the tap.
- */
 export async function TodayGoalPaused() {
   const t = await getExtracted();
   const locale = await getLocale();

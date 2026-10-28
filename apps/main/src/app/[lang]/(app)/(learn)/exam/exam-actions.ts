@@ -9,7 +9,6 @@ import { z } from "zod";
 const goalIdSchema = z.uuid();
 const timeZoneSchema = z.string().refine(isValidTimeZone);
 
-/** "How did it go?": saves the official result. Inputs are untrusted and parsed first. */
 export async function reportExamResultAction(
   goalId: unknown,
   input: unknown,

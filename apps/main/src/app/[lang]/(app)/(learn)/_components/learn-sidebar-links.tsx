@@ -11,7 +11,7 @@ import { SearchIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Suspense } from "react";
 
-/** "⌘K" on Apple devices, "Ctrl K" elsewhere; Apple's until mounted, so the server's matches. */
+/** Apple's label until mounted, so it matches the server's. */
 function useShortcutLabel() {
   const isMounted = useIsMounted();
   const isApple = !isMounted || /Mac|iPhone|iPad|iPod/u.test(navigator.userAgent);
@@ -19,17 +19,11 @@ function useShortcutLabel() {
   return isApple ? "⌘K" : "Ctrl K";
 }
 
-/** The field's look in the sidebar (one of its 32px rows) and under the phone's top bar (40px). */
 const SEARCH_CLASS = {
   bar: "h-10 rounded-[0.625rem] px-3 text-sm hover:bg-muted/60",
   sidebar: "h-8 rounded-lg px-2.5 text-[0.8125rem] hover:bg-sidebar-accent/70",
 } as const;
 
-/**
- * The way into search, commands and questions, the same palette Cmd/Ctrl+K opens from anywhere: a
- * quiet field-like button, at the top of the sidebar as Linear has it, and under the top bar on
- * phones and tablets, where there's no keyboard shortcut to find it by.
- */
 export function LearnSidebarSearch({
   className,
   placement = "sidebar",
@@ -62,10 +56,6 @@ export function LearnSidebarSearch({
 
 type SidebarMenu = "exam" | "mindMaps" | "mistakes" | "speaking" | "stats";
 
-/**
- * Pages a shortcut also stands for, at their own addresses: the exam's mock chooser and each
- * statistic's page.
- */
 const ALSO_CURRENT: Partial<Record<SidebarMenu, string[]>> = {
   exam: ["/mock/new"],
   stats: [
@@ -77,18 +67,11 @@ const ALSO_CURRENT: Partial<Record<SidebarMenu, string[]>> = {
   ],
 };
 
-/** Whether the page open is the shortcut's, or one under it. */
 function isUnder(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-type SidebarLinkProps = {
-  /** A quiet number at its end (mistakes ready to practice); hidden at zero. */
-  count?: number;
-  label: string;
-  /** The place it opens, with its icon (`getMenu`). */
-  menu: SidebarMenu;
-};
+type SidebarLinkProps = { count?: number; label: string; menu: SidebarMenu };
 
 function SidebarLinkView({ count, current, label, menu }: SidebarLinkProps & { current: boolean }) {
   const { icon: Icon, url: href } = getMenu(menu);
@@ -120,10 +103,7 @@ function CurrentSidebarLink(props: SidebarLinkProps) {
   return <SidebarLinkView {...props} current={current} />;
 }
 
-/**
- * One of the sidebar's study shortcuts, marked while its page (or one it stands for) is open. A
- * page whose path is only known once it's open shows the link unmarked until then.
- */
+/** A page whose path is only known once it's open shows the link unmarked until then. */
 export function LearnSidebarLink(props: SidebarLinkProps) {
   return (
     <Suspense fallback={<SidebarLinkView {...props} current={false} />}>

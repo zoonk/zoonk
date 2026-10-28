@@ -14,7 +14,6 @@ import { SubjectScreenClient } from "./subject-screen-client";
 
 type Props = PageProps<"/[lang]/plan/[subject]">;
 
-/** The subject on this page, from the active goal's syllabus; null when it has no such subject. */
 async function findSubject(key: string) {
   const result = await getSyllabusView();
 
@@ -36,7 +35,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: subject?.shortName ?? t("Plan") };
 }
 
-/** Whether one of the subject's chapters is on the goal's mind maps page (it has or can get one). */
 function hasSubjectMindMaps({
   mindMaps,
   subject,
@@ -100,11 +98,6 @@ async function SubjectBody({ params }: Props) {
   );
 }
 
-/**
- * A subject of the active goal (an exam's notice subject or a module of the plan): its topics in
- * the notice's own words with progress and when the plan studies each, and its chapters. A key the
- * goal doesn't have isn't found.
- */
 export default function SubjectPage(props: Props) {
   return (
     <Suspense fallback={<DetailSkeleton />}>

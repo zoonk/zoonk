@@ -31,10 +31,6 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("Today") };
 }
 
-/**
- * A learner back from before goals existed, with no goal yet: their last course comes first, and
- * either answer moves them on to onboarding.
- */
 async function WelcomeBack({ suggestion }: { suggestion: SuggestedGoalView }) {
   const t = await getExtracted();
 
@@ -48,10 +44,6 @@ async function WelcomeBack({ suggestion }: { suggestion: SuggestedGoalView }) {
 
 type Explanation = { id: string; title: string };
 
-/**
- * A quick explanation the learner hasn't finished, first on a Today without a goal: Sam came for
- * "What does 'the market is up 2%' mean?", and only search found it again.
- */
 async function ExplanationContinue({ explanation }: { explanation: Explanation }) {
   const t = await getExtracted();
 
@@ -65,7 +57,6 @@ async function ExplanationContinue({ explanation }: { explanation: Explanation }
         </span>
       </div>
 
-      {/* Prefetched with its explanation, its player preloaded, so it opens at once. */}
       <LessonPlayerPreload />
       <Link
         className={cn(buttonVariants({ size: "lg" }), "w-full sm:w-auto sm:self-start")}
@@ -78,10 +69,6 @@ async function ExplanationContinue({ explanation }: { explanation: Explanation }
   );
 }
 
-/**
- * The learner's newest quick explanation not read to the end, and their day's date in its time
- * zone; nothing for a visitor.
- */
 async function loadNoGoalContext(locale: string) {
   const list = await listCurrentUserGoals();
   const goals = list?.goals ?? [];
@@ -114,13 +101,6 @@ async function loadFirstGoalView(locale: string) {
   return { context, start };
 }
 
-/**
- * A learner without a goal, or a visitor, starts one right here, under Today's own title: an
- * unfinished quick explanation first, then "Start a goal" with the start form (or the goal they
- * typed and haven't confirmed yet) on the page's edges, and from 72rem the examples and how it
- * works in Today's aside. The flow lays out the page (`header` is Today's top), since its aside
- * follows the screen. Confirming it goes on to the goal's own questions.
- */
 async function TodayFirstGoal() {
   const t = await getExtracted();
   const locale = await getLocale();
@@ -146,11 +126,7 @@ async function TodayFirstGoal() {
   );
 }
 
-/**
- * A browser that still carries a session cookie with no session behind it (it expired, or ended
- * on another tab): its plan is still in its account, so Today says so and leads back to it,
- * instead of offering a first goal as to someone new, who'd build the plan again as a guest.
- */
+/** The plan is still in the account, so this leads back to it instead of a first goal built again as a guest. */
 async function TodaySessionEnded() {
   const t = await getExtracted();
 
@@ -180,8 +156,6 @@ async function TodayContent() {
     return <TodaySessionEnded />;
   }
 
-  // Someone without a session hasn't started anything here either: they start right away, or log
-  // in from the frame.
   if (result.status === "unauthorized") {
     return <TodayFirstGoal />;
   }
@@ -194,7 +168,6 @@ async function TodayContent() {
     return <TodayPreparingState goal={result.goal} />;
   }
 
-  // A goal Today can't find says so in Today's place; the app's bar stays Today's own.
   if (result.status !== "ready") {
     return (
       <NotFoundPage>
@@ -213,7 +186,6 @@ async function TodayContent() {
   );
 }
 
-/** A goal whose plan is being built, or one left halfway through its questions. */
 async function TodayPreparingState({ goal }: { goal: { id: string; title: string } }) {
   // A goal left halfway through its questions has no plan coming until they're answered.
   if (await isOnboardingLeft(goal.id)) {
@@ -223,7 +195,6 @@ async function TodayPreparingState({ goal }: { goal: { id: string; title: string
   return <TodayPreparingClient goalId={goal.id} goalTitle={goal.title} />;
 }
 
-/** Today streams its learner content behind the prerendered frame on an unprefetched visit. */
 export default function TodayPage() {
   return (
     <Suspense fallback={<TodayShell />}>

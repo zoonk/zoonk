@@ -56,10 +56,6 @@ async function UnitBody({ params }: Props) {
   );
 }
 
-/**
- * A language unit's page, one real situation: its grammar tips, words, the learner's mistakes on
- * it and a conversation to practice. Any other chapter isn't a unit, so it's not found.
- */
 export default function LanguageUnitPage(props: Props) {
   return (
     <Suspense fallback={<DetailSkeleton rows={4} />}>

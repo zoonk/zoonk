@@ -4,11 +4,7 @@ import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
 import { LearnPageBar } from "@zoonk/learn/bar";
 import { useBuddyName } from "@zoonk/learn/buddy-name";
 
-/**
- * The page's bar, its way back named by the buddy it leads to ("‹ Zu / Earlier questions"), as the
- * buddy's tab is named: from the learner summary the frame already reads, so the page reads nothing
- * more for it. Until the summary arrives, the way back waits for its name.
- */
+/** The buddy's name comes from the learner summary the frame already reads, so the page reads nothing more. */
 export function EarlierQuestionsBar({ title }: { title: string }) {
   const learner = useLearnerSummary();
   const ready = learner.status === "ready";

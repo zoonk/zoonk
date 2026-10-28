@@ -39,7 +39,6 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("Plan") };
 }
 
-/** What to study next once nothing of the plan is left (finished or ended); read only then. */
 async function loadStudyNext({ goalId, over }: { goalId: string; over: boolean }) {
   if (!over) {
     return null;
@@ -49,12 +48,10 @@ async function loadStudyNext({ goalId, over }: { goalId: string; over: boolean }
   return result.status === "ready" ? result.map.next : null;
 }
 
-/** The goal's status for its "…": the goal on the Plan is never an archived one. */
 function getGoalStatus(goal: { status: string } | null) {
   return goal?.status === "paused" || goal?.status === "completed" ? goal.status : "active";
 }
 
-/** What resuming a paused goal would do to its plan; read only then. */
 async function loadResumePreview({ goalId, paused }: { goalId: string; paused: boolean }) {
   if (!paused) {
     return false;
@@ -64,17 +61,11 @@ async function loadResumePreview({ goalId, paused }: { goalId: string; paused: b
   return result.status === "ready" ? result.preview : false;
 }
 
-/** The goal in the switcher, as the goal list has it. */
 function findActiveGoal(list: Awaited<ReturnType<typeof listCurrentUserGoals>>) {
   return list?.goals.find((candidate) => candidate.id === list.activeGoalId) ?? null;
 }
 
-/**
- * Where a goal without a plan stands: questions still ahead in onboarding, or its plan being built
- * (or its run needing another try); null without a session. Kept with the page's prefetch, so the
- * tab opens on the right screen; onboarding answers and the building client's polling still read
- * fresh state, and goal or profile writes expire it.
- */
+/** Kept with the page's prefetch, so the tab opens on the right screen; goal and profile writes expire it. */
 async function loadPlanlessStage(goalId: string): Promise<"building" | "setup" | null> {
   "use cache: private";
 
@@ -92,10 +83,6 @@ async function loadPlanlessStage(goalId: string): Promise<"building" | "setup" |
   return steps.some((step) => step !== "plan") ? "setup" : "building";
 }
 
-/**
- * A goal without a plan yet: still in onboarding, its questions are the one way forward; past
- * them, its plan is being built (or its run needs another try), which the Plan follows.
- */
 async function JourneyWithoutPlan({ goalId, goalTitle }: { goalId: string; goalTitle: string }) {
   const stage = await loadPlanlessStage(goalId);
 
@@ -111,9 +98,7 @@ async function JourneyWithoutPlan({ goalId, goalTitle }: { goalId: string; goalT
 }
 
 async function JourneyContent() {
-  // Independent cached reads start together, so the tab prefetches in one pass. They all read the
-  // active goal. The locale comes from the root param: a prefetch warms its caches with `params`
-  // still pending, so reads after `await params` would miss the cache.
+  // The locale comes from the root param: a prefetch warms its caches with `params` still pending.
   const [readAt, result, progress, language, units, syllabus, mindMaps, buddy, locale, goals] =
     await Promise.all([
       getReadAt(),
@@ -130,8 +115,7 @@ async function JourneyContent() {
 
   const activeGoal = findActiveGoal(goals);
 
-  // A quick explanation is one answer, not a way to a goal: it has no plan, so the Plan offers to
-  // start a goal as it does to a learner without one (Today holds the explanation).
+  // A quick explanation has no plan, so the Plan offers to start a goal.
   if (
     result.status === "noGoal" ||
     result.status === "unauthorized" ||
@@ -210,11 +194,6 @@ async function JourneyContent() {
   );
 }
 
-/**
- * The Plan for the goal in the switcher: where the learner stands, the road of phases to the goal,
- * and the goal's structure. A goal without its plan yet shows its way there instead: never a
- * missing page.
- */
 export default function JourneyPage() {
   return (
     <Suspense fallback={<PlanSkeleton />}>
