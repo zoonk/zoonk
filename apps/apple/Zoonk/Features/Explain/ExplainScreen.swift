@@ -47,8 +47,27 @@ private struct ExplanationView: View {
   @State private var hasPlayed = false
   @State private var isRetrying = false
   @State private var retryFailed = false
+  /// A learner who waited sees the finished outline first; one opening a written explanation
+  /// reads it at once, as on main.
+  @State private var readsAtOnce: Bool
+
+  init(explanation: Explanation, reload: @escaping () async -> Void) {
+    self.explanation = explanation
+    self.reload = reload
+    _readsAtOnce = State(initialValue: explanation.lesson != nil)
+  }
 
   var body: some View {
+    content
+      .task {
+        if readsAtOnce, !hasPlayed, let lesson = explanation.lesson {
+          hasPlayed = true
+          router.open(.lesson(lessonId: lesson.id))
+        }
+      }
+  }
+
+  private var content: some View {
     List {
       Section {
         VStack(alignment: .leading, spacing: 6) {
