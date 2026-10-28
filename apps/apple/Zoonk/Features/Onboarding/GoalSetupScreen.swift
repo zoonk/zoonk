@@ -92,6 +92,30 @@ private struct GoalSteps: View {
     revisiting ?? view.steps.first ?? .plan
   }
 
+  /// Leaving to finish later and starting over, in the toolbar's menu.
+  @ViewBuilder private var moreActions: some View {
+    Group {
+      Button {
+        router.dismissTask()
+      } label: {
+        Text(
+          "Finish later", tableName: "Onboarding",
+          comment: "Leaves onboarding, keeping the answers")
+        Text("Your answers are kept", tableName: "Onboarding", comment: "Under Finish later")
+      }
+
+      Button(role: .destructive) {
+        confirmingStartOver = true
+      } label: {
+        Text(
+          "Start over", tableName: "Onboarding",
+          comment: "Clears this goal's answers and starts again")
+        Text("Clears your answers", tableName: "Onboarding", comment: "Under Start over")
+      }
+    }
+    .disabled(isSaving)
+  }
+
   var body: some View {
     StepScreen(
       step: step, view: view, isSaving: isSaving, failed: failed, onAnswer: answer,
@@ -126,33 +150,21 @@ private struct GoalSteps: View {
       }
 
       if step != .plan {
-        ToolbarItem(placement: .primaryAction) {
-          Menu {
-            Button {
-              router.dismissTask()
+        // The system's overflow menu on iOS 27, which also takes what a short bar can't fit.
+        if #available(iOS 27, *) {
+          ToolbarOverflowMenu { moreActions }
+        } else {
+          ToolbarItem(placement: .primaryAction) {
+            Menu {
+              moreActions
             } label: {
-              Text(
-                "Finish later", tableName: "Onboarding",
-                comment: "Leaves onboarding, keeping the answers")
-              Text("Your answers are kept", tableName: "Onboarding", comment: "Under Finish later")
-            }
-
-            Button(role: .destructive) {
-              confirmingStartOver = true
-            } label: {
-              Text(
-                "Start over", tableName: "Onboarding",
-                comment: "Clears this goal's answers and starts again")
-              Text("Clears your answers", tableName: "Onboarding", comment: "Under Start over")
-            }
-          } label: {
-            Label {
-              Text("More", tableName: "Onboarding", comment: "Opens onboarding's menu")
-            } icon: {
-              Image(systemName: "ellipsis")
+              Label {
+                Text("More", tableName: "Onboarding", comment: "Opens onboarding's menu")
+              } icon: {
+                Image(systemName: "ellipsis")
+              }
             }
           }
-          .disabled(isSaving)
         }
       }
 

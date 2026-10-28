@@ -44,7 +44,7 @@ private struct MockStage: View {
             }
           }
           .disabled(run.pending)
-        }
+        }.keepsVisibleInBar()
       }
       .onChange(of: run.view, initial: true) {
         if let view = run.view {

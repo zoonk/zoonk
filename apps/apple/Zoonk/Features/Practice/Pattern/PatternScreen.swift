@@ -44,7 +44,7 @@ struct PatternScreen: View {
       .toolbar {
         ToolbarItem(placement: .cancellationAction) {
           PracticeCloseButton { dismiss() }
-        }
+        }.keepsVisibleInBar()
       }
     }
     // Loads once the session (and the active goal) is known, and again if it changes: a screen

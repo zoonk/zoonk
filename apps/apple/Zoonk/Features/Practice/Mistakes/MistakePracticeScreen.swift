@@ -47,7 +47,7 @@ struct MistakePracticeScreen: View {
       )
       .navigationBarTitleDisplayMode(.inline)
       .toolbar {
-        ToolbarItem(placement: .cancellationAction) { closeButton }
+        ToolbarItem(placement: .cancellationAction) { closeButton }.keepsVisibleInBar()
       }
     }
     // Practice picks a fresh set of mistakes when it opens.

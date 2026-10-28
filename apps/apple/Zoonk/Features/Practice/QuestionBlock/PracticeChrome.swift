@@ -337,6 +337,19 @@ struct PracticeCloseButton: View {
   }
 }
 
+extension ToolbarContent {
+  /// Keeps a task's close in its toolbar when the bar runs out of room, as iPhone Duo's short
+  /// vertical bar can, so leaving never hides in the overflow menu.
+  @ToolbarContentBuilder
+  func keepsVisibleInBar() -> some ToolbarContent {
+    if #available(iOS 27, *) {
+      visibilityPriority(.high)
+    } else {
+      self
+    }
+  }
+}
+
 /// The end of a run, as every task's end says it: its title, a quiet line under it, its numbers
 /// as readouts (never "+0"), and what it reached.
 struct PracticeResultHeader: View {

@@ -43,7 +43,7 @@ struct QuestionBlockScreen: View {
       .toolbar {
         ToolbarItem(placement: .cancellationAction) {
           PracticeCloseButton { dismiss() }
-        }
+        }.keepsVisibleInBar()
       }
       .navigationBarTitleDisplayMode(.inline)
     }

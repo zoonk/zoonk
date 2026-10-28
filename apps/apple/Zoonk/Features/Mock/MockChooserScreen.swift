@@ -96,7 +96,7 @@ struct PlacementMockScreen: View {
             .toolbar {
               ToolbarItem(placement: .cancellationAction) {
                 Button(role: .close) { dismiss() }
-              }
+              }.keepsVisibleInBar()
             }
         }
         .loads(options, refreshable: false)

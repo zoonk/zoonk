@@ -180,23 +180,19 @@ private struct PronunciationRoundView: View {
         }
         .toolbar {
           if case .ready = state, !recorder.isDenied {
-            ToolbarItem(placement: .primaryAction) {
-              Menu {
-                Button {
-                  Task { await round.next() }
+            // The system's overflow menu on iOS 27, which also takes what a short bar can't fit.
+            if #available(iOS 27, *) {
+              ToolbarOverflowMenu { skipButton(round) }
+            } else {
+              ToolbarItem(placement: .primaryAction) {
+                Menu {
+                  skipButton(round)
                 } label: {
                   Label {
-                    Text("Skip this word", tableName: "Voice", comment: "Skips a word in the round")
+                    Text("Screen options", tableName: "Voice", comment: "The round's options menu")
                   } icon: {
-                    Image(systemName: "forward.end")
+                    Image(systemName: "ellipsis")
                   }
-                }
-                .disabled(round.isPending || recorder.isRecording)
-              } label: {
-                Label {
-                  Text("Screen options", tableName: "Voice", comment: "The round's options menu")
-                } icon: {
-                  Image(systemName: "ellipsis")
                 }
               }
             }
@@ -211,6 +207,19 @@ private struct PronunciationRoundView: View {
         }
       }
     }
+  }
+
+  private func skipButton(_ round: PronunciationRound) -> some View {
+    Button {
+      Task { await round.next() }
+    } label: {
+      Label {
+        Text("Skip this word", tableName: "Voice", comment: "Skips a word in the round")
+      } icon: {
+        Image(systemName: "forward.end")
+      }
+    }
+    .disabled(round.isPending || recorder.isRecording)
   }
 
   @ViewBuilder
