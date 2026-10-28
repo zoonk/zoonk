@@ -69,6 +69,13 @@ struct Milestone: Decodable, Equatable, Identifiable, Sendable {
   let kind: String
 }
 
+extension Milestone {
+  /// A milestone another feature read through the generated client, such as a practice run's.
+  init(_ milestone: Components.Schemas.Milestone) {
+    self.init(id: milestone.id, key: milestone.key, kind: milestone.kind.rawValue)
+  }
+}
+
 /// A belt color's name, as main says it.
 func beltName(_ color: String) -> String? {
   switch color {
