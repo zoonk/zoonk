@@ -41,13 +41,11 @@ struct CourseOutlineSections: View {
         }
       }
     } header: {
-      HStack(alignment: .firstTextBaseline) {
+      CatalogSectionHeader {
         Text("Course outline", tableName: "Courses", comment: "Header of a course's outline")
-        Spacer()
-
+      } detail: {
         if let size = sizeText(chapters) {
           Text(size)
-            .monospacedDigit()
         }
       }
     }
@@ -142,6 +140,7 @@ private struct CourseLevelOutline: View {
               .foregroundStyle(.secondary)
           }
         }
+        .accessibilityElement(children: .combine)
       }
     }
   }
@@ -218,6 +217,7 @@ private struct CourseAreaOutline: View {
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
             }
+            .accessibilityElement(children: .combine)
           }
         }
       }

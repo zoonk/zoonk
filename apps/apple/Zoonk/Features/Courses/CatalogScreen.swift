@@ -18,7 +18,7 @@ struct CatalogScreen: View {
           comment: "Searches the public catalog, including chapters.")
       )
       .navigationTitle(title)
-      .toolbarTitleDisplayMode(.inlineLarge)
+      .navigationBarTitleDisplayMode(.large)
       .navigationSubtitle(
         Text(
           "Start from a course, or tell Zoonk what you're getting ready for.",

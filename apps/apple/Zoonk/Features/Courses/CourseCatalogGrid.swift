@@ -111,8 +111,11 @@ private struct CourseCell: View {
       }
 
       VStack(alignment: .leading, spacing: 4) {
-        if isColumn || dynamicTypeSize.isAccessibilitySize {
+        if isColumn {
           title
+        } else if dynamicTypeSize.isAccessibilitySize {
+          title
+          subjectLabel
         } else {
           HStack(alignment: .firstTextBaseline, spacing: 8) {
             title

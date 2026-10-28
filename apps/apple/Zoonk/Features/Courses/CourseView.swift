@@ -93,6 +93,8 @@ extension LearnerSummary {
 /// The course: its mark, its subject (and an exam course's next sitting) over its name, what it
 /// makes someone able to do, what Zoonk does with it in one line and the ways in.
 private struct CourseHeroSection: View {
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
   let detail: CourseDetail
   let exam: CoursePlanExample.Exam?
   let follows: Bool
@@ -103,7 +105,12 @@ private struct CourseHeroSection: View {
         CourseMark(detail.course)
 
         if detail.course.subject != nil || exam != nil {
-          HStack(spacing: 8) {
+          let layout =
+            dynamicTypeSize.isAccessibilitySize
+            ? AnyLayout(VStackLayout(alignment: .leading, spacing: 6))
+            : AnyLayout(HStackLayout(spacing: 8))
+
+          layout {
             if let subject = detail.course.subject {
               CourseSubjectLabel(subject: subject)
             }
@@ -116,6 +123,7 @@ private struct CourseHeroSection: View {
 
         Text(detail.course.title)
           .font(.largeTitle.bold())
+          .fixedSize(horizontal: false, vertical: true)
           .accessibilityAddTraits(.isHeader)
 
         if let promise {

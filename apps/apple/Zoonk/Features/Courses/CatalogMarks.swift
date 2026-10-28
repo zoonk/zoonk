@@ -152,3 +152,31 @@ func firstSentence(_ text: String?) -> String? {
   }
   return sentence ?? text
 }
+
+/// A section's title with its numbers beside it ("Course outline · 12 chapters · 80 lessons"),
+/// the numbers under the title when both don't fit on one line.
+struct CatalogSectionHeader<Title: View, Detail: View>: View {
+  @ViewBuilder let title: Title
+  @ViewBuilder let detail: Detail
+
+  var body: some View {
+    ViewThatFits(in: .horizontal) {
+      HStack(alignment: .firstTextBaseline) {
+        title
+        Spacer(minLength: 12)
+        detailText
+      }
+
+      VStack(alignment: .leading, spacing: 2) {
+        title
+        detailText
+      }
+    }
+  }
+
+  private var detailText: some View {
+    detail
+      .font(.footnote.monospacedDigit())
+      .lineLimit(1)
+  }
+}

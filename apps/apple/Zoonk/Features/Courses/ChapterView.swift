@@ -76,6 +76,7 @@ private struct ChapterLandingList: View {
 
           Text(chapter.title)
             .font(.largeTitle.bold())
+            .fixedSize(horizontal: false, vertical: true)
             .accessibilityAddTraits(.isHeader)
 
           if let description = catalogText(detail.chapter?.description ?? chapter.description) {
@@ -258,11 +259,10 @@ private struct ChapterLessonsSection: View {
         }
       }
     } header: {
-      HStack(alignment: .firstTextBaseline) {
+      CatalogSectionHeader {
         Text("Lessons", tableName: "Courses", comment: "Header of a chapter's lessons")
-        Spacer()
+      } detail: {
         Text(facts)
-          .monospacedDigit()
       }
     }
   }

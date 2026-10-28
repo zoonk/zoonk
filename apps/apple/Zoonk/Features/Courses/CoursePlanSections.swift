@@ -25,12 +25,39 @@ struct CoursePlanSections: View {
       Text("Example plan", tableName: "Courses", comment: "Header of a course's example plan")
     }
 
+    // What fills the time follows the headline; the first day, when there's one, comes after it
+    // with the caption, as main's one column reads.
     if case .toEnd(_, _, let firstDay) = estimate.reach, !firstDay.isEmpty {
+      PlanWorkloadSection(estimate: estimate, isExam: isExam, showsCaption: false)
       PlanFirstDay(chapters: chapters, lessons: firstDay)
+    } else {
+      PlanWorkloadSection(estimate: estimate, isExam: isExam, showsCaption: true)
     }
-
-    PlanWorkloadSection(estimate: estimate, isExam: isExam)
   }
+}
+
+/// The caption under the example plan.
+private struct PlanCaption: View {
+  var body: some View {
+    Text(
+      "An example. Your plan follows your answers, so it can start later and end sooner.",
+      tableName: "Courses", comment: "Caption of a course's example plan")
+  }
+}
+
+/// A readout over a plan: its number large, the words around it smaller and muted, as main's
+/// `BigQuantity` draws a public page's number.
+private func planReadout(_ text: AttributedString, number: String) -> AttributedString {
+  var readout = text
+  readout.font = .title3.weight(.medium)
+  readout.foregroundColor = .secondary
+
+  if let range = readout.range(of: number) {
+    readout[range].font = .largeTitle.weight(.semibold).monospacedDigit()
+    readout[range].foregroundColor = .primary
+  }
+
+  return readout
 }
 
 /// The course to its end: the weeks it takes from scratch, and the month it ends for someone
@@ -47,10 +74,11 @@ private struct UndatedHeadline: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
       Text(
-        "~\(weeks) weeks", tableName: "Courses",
-        comment: "How many weeks a course's example plan takes"
-      )
-      .font(.largeTitle.weight(.semibold).monospacedDigit())
+        planReadout(
+          AttributedString(
+            localized: "~\(weeks) weeks", table: "Courses",
+            comment: "How many weeks a course's example plan takes"),
+          number: "~\(weeks.formatted())"))
 
       Text(
         "to finish the whole course at \(minutes) minutes a day, Monday to Friday, from scratch.",
@@ -102,12 +130,14 @@ private struct DatedHeadline: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
+      let studyTime = catalogDurationText(minutes: Int(estimate.studyMinutes.rounded()))
+
       Text(
-        "\(catalogDurationText(minutes: Int(estimate.studyMinutes.rounded()))) of study",
-        tableName: "Courses",
-        comment: "The study time an exam course's example plan has by the exam"
-      )
-      .font(.largeTitle.weight(.semibold).monospacedDigit())
+        planReadout(
+          AttributedString(
+            localized: "\(studyTime) of study", table: "Courses",
+            comment: "The study time an exam course's example plan has by the exam"),
+          number: studyTime))
 
       holds
         .foregroundStyle(.secondary)
@@ -200,16 +230,16 @@ private struct PlanFirstDay: View {
         .foregroundStyle(.secondary)
       }
     } header: {
-      HStack(alignment: .firstTextBaseline) {
+      CatalogSectionHeader {
         Text("Today", tableName: "Courses", comment: "Header of an example plan's first day")
-        Spacer()
+      } detail: {
         Text(
           "\(lessons.count) lessons · \(studyDuration(minutes: Int(minutes(of: lessons[...]).rounded())))",
           tableName: "Courses",
-          comment: "How many lessons an example plan's first day has, and how long"
-        )
-        .monospacedDigit()
+          comment: "How many lessons an example plan's first day has, and how long")
       }
+    } footer: {
+      PlanCaption()
     }
   }
 
@@ -224,6 +254,7 @@ private struct PlanFirstDay: View {
 private struct PlanWorkloadSection: View {
   let estimate: CoursePlanEstimate
   let isExam: Bool
+  let showsCaption: Bool
 
   var body: some View {
     let parts = self.parts
@@ -242,28 +273,25 @@ private struct PlanWorkloadSection: View {
             Text(catalogDurationText(minutes: Int(part.minutes.rounded())))
               .monospacedDigit()
           } label: {
-            Label {
-              Text(part.label)
-            } icon: {
+            HStack(spacing: 8) {
               HStack(spacing: 2) {
                 ForEach(part.kinds, id: \.systemImage) { KindMark(kind: $0) }
               }
+
+              Text(part.label)
             }
           }
         }
       } header: {
-        HStack(alignment: .firstTextBaseline) {
+        CatalogSectionHeader {
           Text(
             "What fills the time", tableName: "Courses",
             comment: "Header of an example plan's workload")
-          Spacer()
-
+        } detail: {
           if parts.count > 1 {
             Text(
               "\(catalogDurationText(minutes: Int(estimate.scheduledMinutes.rounded()))) in all",
-              tableName: "Courses", comment: "An example plan's whole time"
-            )
-            .monospacedDigit()
+              tableName: "Courses", comment: "An example plan's whole time")
           }
         }
       } footer: {
@@ -286,9 +314,9 @@ private struct PlanWorkloadSection: View {
               comment: "Under an example plan with lessons still to be written")
           }
 
-          Text(
-            "An example. Your plan follows your answers, so it can start later and end sooner.",
-            tableName: "Courses", comment: "Caption of a course's example plan")
+          if showsCaption {
+            PlanCaption()
+          }
         }
       }
     }
