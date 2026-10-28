@@ -1,5 +1,6 @@
 import { safeAsync } from "@zoonk/utils/error";
 import { z } from "zod";
+import { resolveAudioMediaType } from "./audio-media-type";
 
 /**
  * A request whose path, query or body doesn't match its schema. `withApiErrorBoundary` answers it
@@ -86,8 +87,10 @@ export async function readAudioForm<T>(
     Object.fromEntries([...form.entries()].filter(([name]) => name !== "audio")),
   );
 
+  const bytes = new Uint8Array(await audio.arrayBuffer());
+
   return {
-    audio: { bytes: new Uint8Array(await audio.arrayBuffer()), mediaType: audio.type },
+    audio: { bytes, mediaType: resolveAudioMediaType({ bytes, declared: audio.type }) },
     fields,
   };
 }
