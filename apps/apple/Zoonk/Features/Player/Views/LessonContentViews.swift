@@ -14,50 +14,39 @@ struct LessonRichText: View {
     Text(Self.attributed(text))
   }
 
+  /// Markdown for the words, typeset math for what's between dollar signs.
   static func attributed(_ text: String) -> AttributedString {
     // An escaped dollar is a price, never the edge of a formula.
     let escaped = text.replacingOccurrences(of: "\\$", with: dollarPlaceholder)
-    let withMath = escaped.replacing(/\$\$(.+?)\$\$|\$([^$\s][^$]*?[^$\s]|[^$\s])\$(?!\d)/) {
-      match in
+    var result = AttributedString()
+    var rest = Substring(escaped)
+
+    while let match = rest.firstMatch(of: /\$\$(.+?)\$\$|\$([^$\s][^$]*?[^$\s]|[^$\s])\$(?!\d)/) {
+      result += markdown(rest[..<match.range.lowerBound])
       let formula = String(match.output.1 ?? match.output.2 ?? "")
-      return isFormula(formula) ? "`\(readable(formula))`" : String(match.output.0)
+      result +=
+        isFormula(formula)
+        ? LessonMath.attributed(formula.replacingOccurrences(of: dollarPlaceholder, with: "\\$"))
+        : markdown(match.output.0)
+      rest = rest[match.range.upperBound...]
     }
 
-    let options = AttributedString.MarkdownParsingOptions(
-      interpretedSyntax: .inlineOnlyPreservingWhitespace)
-    let markdown = withMath.replacingOccurrences(of: dollarPlaceholder, with: "$")
-    return (try? AttributedString(markdown: markdown, options: options)) ?? AttributedString(text)
+    return result + markdown(rest)
   }
 
   private static let dollarPlaceholder = "\u{FFFC}"
 
+  private static func markdown(_ text: Substring) -> AttributedString {
+    let options = AttributedString.MarkdownParsingOptions(
+      interpretedSyntax: .inlineOnlyPreservingWhitespace)
+    let restored = text.replacingOccurrences(of: dollarPlaceholder, with: "$")
+    return (try? AttributedString(markdown: restored, options: options))
+      ?? AttributedString(restored)
+  }
+
   /// Prices ("$5 and $10") stay text: a formula has math in it.
   private static func isFormula(_ text: String) -> Bool {
     text.contains { "\\^_={}+-*/<>()".contains($0) } || text.allSatisfy(\.isLetter)
-  }
-
-  /// A formula as plain symbols: "R$ 50.000.000 ÷ 10.000.000 = R$ 5".
-  static func readable(_ formula: String) -> String {
-    let symbols: [(String, String)] = [
-      ("\\left", ""), ("\\right", ""), ("\\times", "×"), ("\\cdot", "·"), ("\\div", "÷"),
-      ("\\leq", "≤"), ("\\le", "≤"),
-      ("\\geq", "≥"), ("\\ge", "≥"), ("\\neq", "≠"), ("\\approx", "≈"), ("\\pm", "±"),
-      ("\\pi", "π"), ("\\infty", "∞"), ("\\sqrt", "√"), ("\\%", "%"), ("\\$", "$"), ("\\,", " "),
-      ("\\;", " "), ("\\ ", " "),
-    ]
-    var readable = formula.replacing(/\\frac\{([^}]*)\}\{([^}]*)\}/) {
-      "(\($0.output.1))/(\($0.output.2))"
-    }
-    readable = readable.replacing(/\\(?:text|mathrm|mathbf|operatorname)\{([^}]*)\}/) {
-      String($0.output.1)
-    }
-
-    for (command, symbol) in symbols {
-      readable = readable.replacingOccurrences(of: command, with: symbol)
-    }
-
-    return readable.replacingOccurrences(of: "{", with: "").replacingOccurrences(of: "}", with: "")
-      .replacingOccurrences(of: dollarPlaceholder, with: "$")
   }
 }
 

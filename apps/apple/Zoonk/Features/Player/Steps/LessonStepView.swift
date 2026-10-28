@@ -143,8 +143,7 @@ private struct WorkedExampleStepView: View {
           VStack(alignment: .leading, spacing: 4) {
             LessonRichText(part.text)
             if let math = part.math {
-              Text(LessonRichText.readable(math))
-                .font(.body.monospaced())
+              Text(LessonMath.attributed(math))
             }
           }
         }

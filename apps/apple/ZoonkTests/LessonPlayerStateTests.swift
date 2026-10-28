@@ -405,3 +405,35 @@ private let challenge = teaching(
         "effects": [{"meter": "trust", "change": -20}], "replies": [], "notes": []}]}],
      "endings": [{"id": "end", "outcome": "Shipped."}]}
     """#)
+
+final class LessonMathTests: XCTestCase {
+  func testExponentsRiseAndIndicesDropAsText() {
+    let typeset = LessonMath.attributed("x^{2} + a_1")
+    let runs = typeset.runs.map {
+      (
+        String(typeset[$0.range].characters),
+        $0[AttributeScopes.SwiftUIAttributes.BaselineOffsetAttribute.self] ?? 0
+      )
+    }
+
+    XCTAssertEqual(String(typeset.characters), "x2+a1")
+    XCTAssertGreaterThan(runs.first { $0.0 == "2" }?.1 ?? 0, 0)
+    XCTAssertLessThan(runs.first { $0.0 == "1" }?.1 ?? 0, 0)
+  }
+
+  func testFractionsSymbolsAndUprightText() {
+    XCTAssertEqual(String(LessonMath.attributed(#"\frac{1}{2}"#).characters), "1\u{2044}2")
+    XCTAssertEqual(
+      String(LessonMath.attributed(#"\text{R\$}\ 50 \div 10 = \text{R\$}\ 5"#).characters),
+      "R$ 50÷10=R$ 5")
+    XCTAssertEqual(String(LessonMath.attributed(#"\sqrt{x+1} \leq \pi"#).characters), "√(x+1)≤π")
+  }
+
+  func testRichTextKeepsPricesAndTypesetsFormulas() {
+    XCTAssertEqual(
+      String(LessonRichText.attributed("It costs $5 and $10.").characters), "It costs $5 and $10.")
+    XCTAssertEqual(
+      String(LessonRichText.attributed(#"So $0.75 \times 80 = 60$ **now**"#).characters),
+      "So 0.75×80=60 now")
+  }
+}
