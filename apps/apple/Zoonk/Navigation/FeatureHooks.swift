@@ -96,14 +96,14 @@ extension TutorPlaces {
 }
 
 extension LessonPlayerRoutes {
-  /// The player's Plus lock and sign-up refusals open the shell's sheets over the lesson, which
-  /// stays where the learner was.
+  /// The player's sign-up refusals open the shell's sheet over the lesson, which stays where the
+  /// learner was; a guest's "Build my plan" opens the course or goal start with its subject.
   static func routed(by router: AppRouter) -> LessonPlayerRoutes {
     LessonPlayerRoutes(
       signIn: { router.present(.account) },
       startCourse: { courseId, chapterId in
         router.open(.courseStart(courseId: courseId, chapterId: chapterId))
       },
-      startGoal: { _ in router.open(.startGoal) })
+      startGoal: { goal in router.open(.startGoal(goal: goal)) })
   }
 }
