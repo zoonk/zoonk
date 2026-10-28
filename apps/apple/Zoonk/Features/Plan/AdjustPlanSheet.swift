@@ -19,6 +19,9 @@ struct AdjustPlanSheet: View {
   }
 
   @State private var editor: PlanEditor
+  /// The weekend switch answers at once, while the plan it changed is read again; until it's
+  /// touched, it shows whether the plan's weekend has its own time.
+  @State private var weekendChoice: Bool?
 
   let goal: LearnerGoal
   let plan: GoalPlan
@@ -40,11 +43,15 @@ struct AdjustPlanSheet: View {
           PlanDateSection(editor: editor, goal: goal, plan: plan)
             .id(Section.date)
 
-          PlanTimeSection(editor: editor, goal: goal, plan: plan)
+          PlanTimeSection(editor: editor, goal: goal, plan: plan, weekendOn: weekendOn)
             .id(Section.time)
 
           daysSection
             .id(Section.days)
+
+          if plan.schedule.shape.canDiffer {
+            weekendSection
+          }
 
           AdjustPlanSections(editor: editor, goal: goal, plan: plan)
         }
@@ -99,7 +106,7 @@ struct AdjustPlanSheet: View {
           isOn: Binding(
             get: { studies },
             set: { on in
-              let minutes = on ? plan.schedule.dailyMinutes : 0
+              let minutes = on ? plan.schedule.shape.minutes(for: weekday) : 0
 
               Task {
                 await editor.change(
@@ -122,6 +129,65 @@ struct AdjustPlanSheet: View {
       Text("Study days", tableName: "Plan", comment: "Setting: the days of the week to study")
     }
     .tint(.success)
+  }
+
+  private var weekendOn: Bool {
+    weekendChoice ?? (plan.schedule.shape.weekend != nil)
+  }
+
+  /// Saturday and Sunday's own time: switched on, the weekend picks its time; switched off, it goes
+  /// back to the weekdays' time. Only for a week studied on weekdays and on the weekend.
+  private var weekendSection: some View {
+    let shape = plan.schedule.shape
+    let current = shape.weekend ?? shape.weekdays
+
+    return SwiftUI.Section {
+      Toggle(
+        isOn: Binding(
+          get: { weekendOn },
+          set: { on in
+            weekendChoice = on
+
+            if !on, shape.weekend != nil {
+              Task { await setWeekend(shape.weekdays) }
+            }
+          })
+      ) {
+        Text(
+          "Different time on weekends", tableName: "Plan",
+          comment: "Setting: Saturday and Sunday get their own study time")
+      }
+
+      if weekendOn {
+        Picker(
+          selection: Binding(
+            get: { current },
+            set: { minutes in
+              guard minutes != current else {
+                return
+              }
+
+              Task { await setWeekend(minutes) }
+            })
+        ) {
+          ForEach(Set(PlanTimeSection.timeChoices + [current]).sorted(), id: \.self) { minutes in
+            Text(planDurationText(minutes: Double(minutes)))
+              .tag(minutes)
+          }
+        } label: {
+          Text("Time on weekends", tableName: "Plan", comment: "Setting: study time on Saturday and Sunday")
+        }
+      }
+    }
+    .tint(.success)
+  }
+
+  private func setWeekend(_ minutes: Int) async {
+    await editor.change(
+      [.weekdayMinutes(minutes, weekdays: plan.schedule.shape.weekendDays)],
+      sentence: String(
+        localized: "Weekend time changed to \(planDurationText(minutes: Double(minutes))).",
+        table: "Plan", comment: "Says the plan's time on Saturday and Sunday changed"))
   }
 
   private static let mondayFirst = [1, 2, 3, 4, 5, 6, 0]

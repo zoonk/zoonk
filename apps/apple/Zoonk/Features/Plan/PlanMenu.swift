@@ -1,13 +1,14 @@
 import SwiftUI
 
 /// The Plan's "…": what the learner does now and then. The exam's page (exam goals), sharing,
-/// talking to the buddy; last, what acts on the goal itself (pause or resume, archive), here on its
+/// talking to the buddy ("Talk to Zu"), reporting; last, what acts on the goal itself (pause or resume, archive), here on its
 /// own page so it's clear which goal changes. Archiving asks first, and so does resuming a goal
 /// whose plan it changes.
 struct PlanMenu: View {
   @Environment(AppRouter.self) private var router
   @Environment(SessionStore.self) private var session
   @Environment(PlanStore.self) private var store
+  @Environment(LearnerSummaryStore.self) private var learner
   @State private var isReporting = false
   @State private var confirming: Confirmation?
   @State private var failure: GoalStatusOutcome?
@@ -49,7 +50,7 @@ struct PlanMenu: View {
       } label: {
         Label {
           Text(
-            "Ask about your plan", tableName: "Plan",
+            "Talk to \(learner.buddyDisplayName)", tableName: "Plan",
             comment: "Opens the buddy's conversation, where questions about the plan go")
         } icon: {
           Image(systemName: "questionmark.bubble")

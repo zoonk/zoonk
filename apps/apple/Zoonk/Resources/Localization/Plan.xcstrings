@@ -1559,6 +1559,101 @@
         }
       }
     },
+    "%lld lessons were left out" : {
+      "comment" : "A phase moved past with lessons set aside",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Lektion wurde ausgelassen"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Lektionen wurden ausgelassen"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lesson was left out"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lessons were left out"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Se ha omitido %lld lección"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Se han omitido %lld lecciones"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld leçon a été laissée de côté"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld leçons ont été laissées de côté"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld aula ficou de fora"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld aulas ficaram de fora"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld modules" : {
       "comment" : "How many modules the plan has",
       "localizations" : {
@@ -3567,35 +3662,6 @@
         }
       }
     },
-    "Ask about your plan" : {
-      "comment" : "Opens the buddy's conversation, where questions about the plan go",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Frag deinen Kumpel zu deinem Plan"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pregunta sobre tu plan"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Poser une question sur ton plan"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Perguntar sobre seu plano"
-          }
-        }
-      }
-    },
     "At %@ a day, your plan covers everything by %@." : {
       "comment" : "The time a day Find found, which a tap applies",
       "localizations" : {
@@ -3830,6 +3896,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cancelar"
+          }
+        }
+      }
+    },
+    "Challenge left out" : {
+      "comment" : "A phase moved past with only its challenge set aside",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Herausforderung ausgelassen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desafío omitido"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Défi laissé de côté"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desafio ficou de fora"
           }
         }
       }
@@ -4269,6 +4364,64 @@
         }
       }
     },
+    "Continues %@" : {
+      "comment" : "When the current phase's lessons continue",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geht weiter am %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continúa %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se poursuit %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continua %@"
+          }
+        }
+      }
+    },
+    "Continues today" : {
+      "comment" : "When the current phase's lessons continue",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geht heute weiter"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continúa hoy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se poursuit aujourd’hui"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continua hoje"
+          }
+        }
+      }
+    },
     "Couldn't load this chapter" : {
       "comment" : "Title shown when a chapter failed to load",
       "localizations" : {
@@ -4613,6 +4766,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Escolhas diferentes"
+          }
+        }
+      }
+    },
+    "Different time on weekends" : {
+      "comment" : "Setting: Saturday and Sunday get their own study time",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Am Wochenende andere Lernzeit"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otro horario los fines de semana"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Durée différente le week-end"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo diferente nos fins de semana"
           }
         }
       }
@@ -5789,6 +5971,35 @@
         }
       }
     },
+    "In your own words, like “less on weekends”. You'll see the change before it applies." : {
+      "comment" : "Explains changing the plan by talking to the buddy",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beschreib es in deinen eigenen Worten, zum Beispiel „am Wochenende weniger“. Du siehst die Änderung, bevor sie übernommen wird."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explícalo con tus palabras, por ejemplo, «menos tiempo los fines de semana». Verás el cambio antes de que se aplique."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avec tes mots, par exemple « moins le week-end ». Tu verras le changement avant qu’il s’applique."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Com suas palavras, como “menos nos fins de semana”. Você vai ver a mudança antes que ela seja aplicada."
+          }
+        }
+      }
+    },
     "Intermediate" : {
       "comment" : "A course level",
       "localizations" : {
@@ -6220,6 +6431,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "As aulas vão equilibrar prática e explicação daqui pra frente."
+          }
+        }
+      }
+    },
+    "Lessons done · challenge %@" : {
+      "comment" : "The current phase's lessons are done; its challenge's date",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lektionen abgeschlossen · Herausforderung %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lecciones completadas · desafío %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leçons terminées · défi %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aulas concluídas · desafio %@"
           }
         }
       }
@@ -6920,6 +7160,64 @@
         }
       }
     },
+    "More lessons on the way" : {
+      "comment" : "The current phase's lessons are being written",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weitere Lektionen werden erstellt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparando más lecciones"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "D’autres leçons arrivent"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mais aulas a caminho"
+          }
+        }
+      }
+    },
+    "More lessons on the way · challenge %@" : {
+      "comment" : "The current phase's lessons are being written; its challenge's date",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weitere Lektionen werden erstellt · Herausforderung %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparando más lecciones · desafío %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "D’autres leçons arrivent · défi %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mais aulas a caminho · desafio %@"
+          }
+        }
+      }
+    },
     "More practice" : {
       "comment" : "Steering: more practice",
       "localizations" : {
@@ -7443,7 +7741,7 @@
       }
     },
     "Not in your plan" : {
-      "comment" : "A subject the plan leaves out",
+      "comment" : "A phase the plan holds nothing of\nA subject the plan leaves out",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -9443,6 +9741,35 @@
         }
       }
     },
+    "Talk to %@" : {
+      "comment" : "Opens the buddy's conversation, where questions about the plan go",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit %@ sprechen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Habla con %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parler à %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Converse com %@"
+          }
+        }
+      }
+    },
     "That change doesn't fit your plan." : {
       "comment" : "Says the API refused a plan change",
       "localizations" : {
@@ -9932,6 +10259,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tempo diário"
+          }
+        }
+      }
+    },
+    "Time on weekends" : {
+      "comment" : "Setting: study time on Saturday and Sunday",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lernzeit am Wochenende"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tiempo los fines de semana"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Durée le week-end"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo nos fins de semana"
           }
         }
       }
@@ -10489,6 +10845,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Recomendamos o essencial para que os tópicos que dependem dessas bases façam sentido."
+          }
+        }
+      }
+    },
+    "Weekend time changed to %@." : {
+      "comment" : "Says the plan's time on Saturday and Sunday changed",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Lernzeit am Wochenende wurde auf %@ geändert."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El tiempo de estudio del fin de semana ha cambiado a %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La durée du week-end est passée à %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O tempo nos fins de semana mudou para %@."
           }
         }
       }
@@ -11075,35 +11460,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Suas respostas escolhem por você"
-          }
-        }
-      }
-    },
-    "your buddy" : {
-      "comment" : "The buddy, when it has no name yet",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "dein Kumpel"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "tu compañero"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ton Compagnon"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "seu parceiro"
           }
         }
       }

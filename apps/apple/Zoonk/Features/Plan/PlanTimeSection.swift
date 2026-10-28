@@ -13,6 +13,8 @@ struct PlanTimeSection: View {
   let editor: PlanEditor
   let goal: LearnerGoal
   let plan: GoalPlan
+  /// The weekend has its own time: the time a day changes the weekdays alone.
+  let weekendOn: Bool
 
   /// What Find answered.
   private enum Found: Equatable {
@@ -22,7 +24,7 @@ struct PlanTimeSection: View {
   }
 
   var body: some View {
-    let current = plan.schedule.dailyMinutes
+    let current = plan.schedule.shape.weekdays
     var choices = Set(Self.timeChoices + [current])
 
     if case .time(let time) = found, let minutes = time.recommendedMinutes {
@@ -193,8 +195,13 @@ struct PlanTimeSection: View {
   }
 
   private func setMinutes(_ minutes: Int) async {
+    let shape = plan.schedule.shape
+
     await editor.change(
-      [.dailyMinutes(minutes)],
+      [
+        weekendOn && shape.canDiffer
+          ? .weekdayMinutes(minutes, weekdays: shape.weekdayDays) : .dailyMinutes(minutes)
+      ],
       sentence: String(
         localized: "Daily time changed to \(planDurationText(minutes: Double(minutes))).",
         table: "Plan", comment: "Says the plan's time a day changed"))
@@ -228,7 +235,7 @@ struct PlanTimeSection: View {
   }
 
   /// The times onboarding offers, with the learner's own among them.
-  private static let timeChoices = [10, 15, 20, 30, 45, 60, 90, 120, 180]
+  static let timeChoices = [10, 15, 20, 30, 45, 60, 90, 120, 180]
 }
 
 /// What the learner's own time covers by the date, exactly as their plan has it; nil when it

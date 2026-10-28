@@ -55,9 +55,13 @@ struct AdjustPlanSections: View {
         router.select(.buddy)
       } label: {
         Text(
-          "Something else? Tell \(learner.summary.value?.buddyName ?? String(localized: "your buddy", table: "Plan", comment: "The buddy, when it has no name yet"))",
-          tableName: "Plan", comment: "Opens the buddy's conversation to change the plan in words")
+          "Something else? Tell \(learner.buddyDisplayName)", tableName: "Plan",
+          comment: "Opens the buddy's conversation to change the plan in words")
       }
+    } footer: {
+      Text(
+        "In your own words, like “less on weekends”. You'll see the change before it applies.",
+        tableName: "Plan", comment: "Explains changing the plan by talking to the buddy")
     }
   }
 }

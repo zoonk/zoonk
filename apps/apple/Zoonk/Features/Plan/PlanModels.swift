@@ -164,6 +164,48 @@ struct GoalPlan: Decodable, Equatable, Sendable {
     let targetDateNamedMonth: Bool
     /// Minutes for each weekday, Sunday first; 0 is a rest day.
     let weekdayMinutes: [Int]
+
+    /// The week as the editor asks it (core's `getWeekShape`): a study weekday's time (the most
+    /// common, so one shorter day doesn't count as the week's), and the weekend's own time when
+    /// the week studies on both and the weekend's differs.
+    var shape: WeekShape {
+      let minutes = { (day: Int) in weekdayMinutes.indices.contains(day) ? weekdayMinutes[day] : 0 }
+      let weekdayDays = [1, 2, 3, 4, 5].filter { minutes($0) > 0 }
+      let weekendDays = [0, 6].filter { minutes($0) > 0 }
+      let weekdays = Self.common(weekdayDays.map(minutes)) ?? dailyMinutes
+      let weekend = Self.common(weekendDays.map(minutes))
+      let canDiffer = !weekdayDays.isEmpty && !weekendDays.isEmpty
+
+      return WeekShape(
+        canDiffer: canDiffer, weekdayDays: weekdayDays, weekdays: weekdays,
+        weekend: canDiffer && weekend != weekdays ? weekend : nil, weekendDays: weekendDays)
+    }
+
+    /// The most common of these times, the longer one on a tie.
+    private static func common(_ minutes: [Int]) -> Int? {
+      minutes.max { first, second in
+        let firstCount = minutes.count { $0 == first }
+        let secondCount = minutes.count { $0 == second }
+        return firstCount == secondCount ? first < second : firstCount < secondCount
+      }
+    }
+  }
+
+  /// The plan's week split into weekdays (Monday to Friday) and the weekend, Sunday counted 0.
+  struct WeekShape: Equatable {
+    /// The week studies on weekdays and on the weekend, so the weekend can take its own time.
+    let canDiffer: Bool
+    let weekdayDays: [Int]
+    /// A study weekday's time.
+    let weekdays: Int
+    /// The weekend's own time, or nil when it takes the weekdays' time.
+    let weekend: Int?
+    let weekendDays: [Int]
+
+    /// The time a day back on the plan takes: its part of the week's.
+    func minutes(for weekday: Int) -> Int {
+      [0, 6].contains(weekday) ? weekend ?? weekdays : weekdays
+    }
   }
 
   /// The learner's pace against the plan.
@@ -321,6 +363,8 @@ struct PlanChapter: Decodable, Equatable, Identifiable, Sendable {
   let far: Bool
   let lessonsDone: Int
   let lessonsTotal: Int
+  /// The day the chapter's next lesson is planned for.
+  let nextDate: String?
   let skillId: String?
   let state: State
   let testedOut: Bool
@@ -595,6 +639,16 @@ enum PlanDate {
     }
 
     return date.formatted(style)
+  }
+
+  /// "Nov", with the year when it isn't `today`'s: an estimate known to the month.
+  static func monthText(_ isoDate: String, today: String) -> String {
+    guard let date = date(isoDate) else {
+      return isoDate
+    }
+
+    let style = Date.FormatStyle(timeZone: .gmt).month(.abbreviated)
+    return date.formatted(isoDate.prefix(4) == today.prefix(4) ? style : style.year())
   }
 
   /// A day picked in a GMT calendar as "2027-11-14".
