@@ -1,3 +1,4 @@
+import { languageCheckpointCallSchema } from "@zoonk/core/language/conversations/checkpoint-call-contract";
 import {
   studyBlockStartInputSchema,
   studySessionTimeZoneInputSchema,
@@ -189,6 +190,26 @@ export const checkpointPaths = {
       security: AUTHENTICATED_SECURITY,
       summary: "Get a checkpoint",
       tags: ["Study sessions"],
+    },
+  },
+  "/checkpoints/{blockId}/language-call": {
+    get: {
+      description:
+        "Where a language goal's checkpoint call stands as its screen opens, read without making or writing anything: the call already made (finished or not), its intro (title, character, situation and goals, and whether today's study time already refuses Start), the unit's call not written yet, earlier work of the session first, Plus required, or `notLanguage` for a checkpoint of another goal. The learner's Start (`POST /v1/language-conversations` with `kind: \"checkpoint\"`) makes the call.",
+      operationId: "getLanguageCheckpointCall",
+      requestParams: { path: checkpointPathParamsSchema },
+      responses: {
+        "200": {
+          content: { "application/json": { schema: languageCheckpointCallSchema } },
+          description: "Where the call stands",
+        },
+        "400": validationErrorResponse,
+        "401": unauthorizedResponse,
+        "404": notFoundResponse,
+      },
+      security: AUTHENTICATED_SECURITY,
+      summary: "Get a language checkpoint's call",
+      tags: ["Language"],
     },
   },
   "/checkpoints/{blockId}/moves": {

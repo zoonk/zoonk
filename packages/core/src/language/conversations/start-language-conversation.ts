@@ -22,24 +22,11 @@ import {
   writeSpeakingMock,
 } from "./_utils/speaking-mock";
 import {
-  type LanguageConversationStartInput,
-  type LanguageConversationView,
-} from "./conversation-contract";
+  type LanguageCheckpointCall,
+  type LanguageConversationIntro,
+} from "./checkpoint-call-contract";
+import { type LanguageConversationStartInput } from "./conversation-contract";
 import { getCheckpointMinutes } from "./conversation-rules";
-
-export type LanguageConversationIntro = Pick<
-  LanguageConversationView,
-  | "character"
-  | "exam"
-  | "examTask"
-  | "kind"
-  | "level"
-  | "minutes"
-  | "objectives"
-  | "situation"
-  | "targetLanguage"
-  | "title"
->;
 
 type StartedCall =
   | { conversationId: string; sessionId?: string; status: "ready" }
@@ -57,11 +44,8 @@ export type StartLanguageConversationResult =
   | { status: "callsPaused" | "plusRequired" };
 
 export type OpenLanguageCheckpointCallResult =
-  | StartedCall
-  | CheckpointRefusal
-  | { status: "plusRequired" }
-  | { dailyLimitReached: boolean; intro: LanguageConversationIntro; status: "notStarted" }
-  | { status: "preparing"; unitTitle: string };
+  | LanguageCheckpointCall
+  | { status: "notFound" | "unauthorized" };
 
 async function startPractice({
   input,
@@ -139,22 +123,12 @@ async function introWithDailyLimit({
   return { dailyLimitReached, intro, status: "notStarted" };
 }
 
-async function startCheckpoint({
-  blockId,
-  userId,
-  write,
-}: {
-  blockId: string;
-  userId: string;
-  write: boolean;
-}): Promise<OpenLanguageCheckpointCallResult> {
+async function findCheckpointBlock({ blockId, userId }: { blockId: string; userId: string }) {
   const checkpoint = await loadAccessibleCheckpoint({ blockId, userId });
 
   if (checkpoint.status !== "ready") {
     return checkpoint;
   }
-
-  const { goal, targetLanguage, unit } = checkpoint;
 
   const session = await prisma.studySession.findFirst({
     include: { blocks: true },
@@ -163,65 +137,54 @@ async function startCheckpoint({
 
   const block = session?.blocks.find((candidate) => candidate.id === blockId);
 
-  if (!session || !block) {
-    return { status: "notFound" };
-  }
+  return session && block
+    ? { block, checkpoint, session, status: "ready" as const }
+    : { status: "notFound" as const };
+}
 
-  if (write) {
-    const started = await startStudyBlock({ blockId, input: {}, sessionId: session.id });
-
-    if (started.status !== "ready") {
-      return started;
-    }
-  } else {
-    const reason = getStoredBlockWait({ block, blocks: session.blocks });
-
-    if (reason) {
-      return { reason, status: "earlierFirst" };
-    }
-  }
-
-  const existing = await prisma.languageConversation.findUnique({
+function findBlockConversation(blockId: string) {
+  return prisma.languageConversation.findUnique({
     select: { id: true, userId: true },
     where: { studyBlockId: blockId },
   });
+}
+
+async function startCheckpoint({
+  blockId,
+  userId,
+}: {
+  blockId: string;
+  userId: string;
+}): Promise<StartLanguageConversationResult> {
+  const found = await findCheckpointBlock({ blockId, userId });
+
+  if (found.status !== "ready") {
+    return found;
+  }
+
+  const { goal, targetLanguage, unit } = found.checkpoint;
+  const sessionId = found.session.id;
+  const started = await startStudyBlock({ blockId, input: {}, sessionId });
+
+  if (started.status !== "ready") {
+    return started;
+  }
+
+  const existing = await findBlockConversation(blockId);
 
   if (existing) {
     return existing.userId === userId
-      ? { conversationId: existing.id, sessionId: session.id, status: "ready" }
+      ? { conversationId: existing.id, sessionId, status: "ready" }
       : { status: "notFound" };
   }
 
   const level = await getSpeakingLevel({ goal, targetLanguage, userId });
 
-  const scenario = write
-    ? await getUnitScenario({
-        level,
-        unit: toCheckpointScenarioUnit({ goal, targetLanguage, unit }),
-        userId,
-      })
-    : await findUnitScenario({ chapterId: unit.chapterId, level });
-
-  if (!scenario || !write) {
-    return scenario
-      ? introWithDailyLimit({
-          intro: {
-            character: scenario.character,
-            exam: null,
-            examTask: null,
-            kind: "checkpoint",
-            level,
-            minutes: getCheckpointMinutes(level),
-            objectives: scenario.objectives.map((objective) => ({ ...objective, met: false })),
-            situation: scenario.situation,
-            targetLanguage,
-            title: scenario.title,
-          },
-          pending: block.status === "pending",
-          userId,
-        })
-      : { status: "preparing", unitTitle: unit.title };
-  }
+  const scenario = await getUnitScenario({
+    level,
+    unit: toCheckpointScenarioUnit({ goal, targetLanguage, unit }),
+    userId,
+  });
 
   try {
     const conversation = await createConversation({
@@ -238,7 +201,7 @@ async function startCheckpoint({
       userId,
     });
 
-    return { conversationId: conversation.id, sessionId: session.id, status: "ready" };
+    return { conversationId: conversation.id, sessionId, status: "ready" };
   } catch (error) {
     if (!isPrismaUniqueConstraintError(error)) {
       throw error;
@@ -248,8 +211,62 @@ async function startCheckpoint({
       where: { studyBlockId: blockId },
     });
 
-    return { conversationId: winner.id, sessionId: session.id, status: "ready" };
+    return { conversationId: winner.id, sessionId, status: "ready" };
   }
+}
+
+async function readCheckpointCall({
+  blockId,
+  userId,
+}: {
+  blockId: string;
+  userId: string;
+}): Promise<OpenLanguageCheckpointCallResult> {
+  const found = await findCheckpointBlock({ blockId, userId });
+
+  if (found.status !== "ready") {
+    return found;
+  }
+
+  const { block, session } = found;
+  const { goal, targetLanguage, unit } = found.checkpoint;
+  const reason = getStoredBlockWait({ block, blocks: session.blocks });
+
+  if (reason) {
+    return { reason, status: "earlierFirst" };
+  }
+
+  const existing = await findBlockConversation(blockId);
+
+  if (existing) {
+    return existing.userId === userId
+      ? { conversationId: existing.id, status: "ready" }
+      : { status: "notFound" };
+  }
+
+  const level = await getSpeakingLevel({ goal, targetLanguage, userId });
+  const scenario = await findUnitScenario({ chapterId: unit.chapterId, level });
+
+  if (!scenario) {
+    return { status: "preparing", unitTitle: unit.title };
+  }
+
+  return introWithDailyLimit({
+    intro: {
+      character: scenario.character,
+      exam: null,
+      examTask: null,
+      kind: "checkpoint",
+      level,
+      minutes: getCheckpointMinutes(level),
+      objectives: scenario.objectives.map((objective) => ({ ...objective, met: false })),
+      situation: scenario.situation,
+      targetLanguage,
+      title: scenario.title,
+    },
+    pending: block.status === "pending",
+    userId,
+  });
 }
 
 async function startSpeakingMock({
@@ -287,11 +304,7 @@ export async function startLanguageConversation(
   const userId = session.user.id;
 
   if (input.kind === "checkpoint") {
-    const started = await startCheckpoint({ blockId: input.blockId, userId, write: true });
-
-    return started.status === "preparing" || started.status === "notStarted"
-      ? { status: "notFound" }
-      : started;
+    return startCheckpoint({ blockId: input.blockId, userId });
   }
 
   if (input.kind === "speakingMock") {
@@ -330,5 +343,5 @@ export async function openLanguageCheckpointCall(
     return { conversationId: completed.id, status: "ready" };
   }
 
-  return startCheckpoint({ blockId, userId: session.user.id, write: false });
+  return readCheckpointCall({ blockId, userId: session.user.id });
 }

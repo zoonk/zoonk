@@ -389,7 +389,15 @@ describe("language checkpoint calls", () => {
     ).resolves.toMatchObject({ startSnapshot: null, startedAt: null, status: "planned" });
 
     const started = await startLanguageConversation({ blockId: block.id, kind: "checkpoint" });
-    await expect(openLanguageCheckpointCall(block.id)).resolves.toStrictEqual(started);
+
+    if (started.status !== "ready") {
+      throw new Error(`Expected the call to start, got ${started.status}`);
+    }
+
+    await expect(openLanguageCheckpointCall(block.id)).resolves.toStrictEqual({
+      conversationId: started.conversationId,
+      status: "ready",
+    });
 
     await expect(
       startLanguageConversation({ blockId: block.id, kind: "checkpoint" }),
@@ -416,9 +424,16 @@ describe("language checkpoint calls", () => {
 
     const started = await startLanguageConversation({ blockId: block.id, kind: "checkpoint" });
 
-    expect(started.status).toBe("ready");
+    if (started.status !== "ready") {
+      throw new Error(`Expected the call to start, got ${started.status}`);
+    }
+
     expect(generateConversationScenario).toHaveBeenCalledOnce();
-    await expect(openLanguageCheckpointCall(block.id)).resolves.toStrictEqual(started);
+
+    await expect(openLanguageCheckpointCall(block.id)).resolves.toStrictEqual({
+      conversationId: started.conversationId,
+      status: "ready",
+    });
   });
 
   it("writes the next checkpoint's call ahead at the learner's level, once", async () => {

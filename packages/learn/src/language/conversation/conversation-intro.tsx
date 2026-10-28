@@ -1,7 +1,7 @@
 "use client";
 
+import { type LanguageConversationIntro } from "@zoonk/core/language/conversations/checkpoint-call-contract";
 import { type LanguageConversationView } from "@zoonk/core/language/conversations/contract";
-import { type LanguageConversationIntro } from "@zoonk/core/language/conversations/start";
 import { PhoneIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactNode, useEffect, useRef, useState } from "react";

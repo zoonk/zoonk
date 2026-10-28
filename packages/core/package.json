@@ -139,6 +139,7 @@
     "./language/conversations/admission-contract": "./src/language/conversations/live-call-admission-contract.ts",
     "./language/conversations/claim-review": "./src/language/conversations/claim-conversation-review.ts",
     "./language/conversations/check-objectives": "./src/language/conversations/check-language-conversation-objectives.ts",
+    "./language/conversations/checkpoint-call-contract": "./src/language/conversations/checkpoint-call-contract.ts",
     "./language/conversations/complete": "./src/language/conversations/complete-language-conversation.ts",
     "./language/conversations/connect": "./src/language/conversations/connect-language-conversation.ts",
     "./language/conversations/contract": "./src/language/conversations/conversation-contract.ts",
