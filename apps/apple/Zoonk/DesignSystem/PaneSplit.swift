@@ -116,6 +116,38 @@ struct PaneSpace: Equatable {
   }
 }
 
+extension PaneSpace {
+  /// A grid column: its width and the space after it.
+  struct Column: Equatable {
+    var width: CGFloat
+    var spacing: CGFloat
+  }
+
+  /// A grid's columns while the fold crosses it: as many on each side as fit at `minimum`, the
+  /// same number on both so the grid stays even, with the fold as the gap between the halves. Nil
+  /// without a fold.
+  func columnsAroundFold(minimum: CGFloat, spacing: CGFloat) -> [Column]? {
+    guard let fold else {
+      return nil
+    }
+
+    let leading = fold.lowerBound
+    let trailing = width - fold.upperBound
+    let perSide = max(
+      Int(((min(leading, trailing) + spacing) / (minimum + spacing)).rounded(.down)), 1)
+
+    func side(_ room: CGFloat, spacingAfter: CGFloat) -> [Column] {
+      let column = (room - CGFloat(perSide - 1) * spacing) / CGFloat(perSide)
+      return (0..<perSide).map {
+        Column(width: column, spacing: $0 == perSide - 1 ? spacingAfter : spacing)
+      }
+    }
+
+    return side(leading, spacingAfter: fold.upperBound - fold.lowerBound)
+      + side(trailing, spacingAfter: 0)
+  }
+}
+
 extension EnvironmentValues {
   /// Whether the view sits in one pane of a `PaneSplit`, so a pane can drop what the other shows.
   @Entry var isPaneSplit = false

@@ -40,4 +40,30 @@ final class PaneSpaceTests: XCTestCase {
 
     XCTAssertEqual(panes, PaneSpace.Panes(primary: 390, gap: 40))
   }
+
+  func testAGridHasNoFoldColumnsWithoutAFold() {
+    XCTAssertNil(PaneSpace(width: 828).columnsAroundFold(minimum: 240, spacing: 24))
+  }
+
+  func testAGridAcrossTheFoldGetsOneColumnOnEachSideWithTheFoldBetween() {
+    let columns = PaneSpace(width: 828, fold: 435...475).columnsAroundFold(
+      minimum: 240, spacing: 24)
+
+    XCTAssertEqual(
+      columns,
+      [PaneSpace.Column(width: 435, spacing: 40), PaneSpace.Column(width: 353, spacing: 0)])
+  }
+
+  func testAWideGridAcrossTheFoldGetsTheSameNumberOfColumnsOnEachSide() {
+    // The narrower side fits two columns, so the wider one gets two as well.
+    let columns = PaneSpace(width: 1100, fold: 560...600).columnsAroundFold(
+      minimum: 200, spacing: 20)
+
+    XCTAssertEqual(
+      columns,
+      [
+        PaneSpace.Column(width: 270, spacing: 20), PaneSpace.Column(width: 270, spacing: 40),
+        PaneSpace.Column(width: 240, spacing: 20), PaneSpace.Column(width: 240, spacing: 0),
+      ])
+  }
 }
