@@ -1,5 +1,5 @@
+import { GOOGLE_PLAY_PACKAGE_NAME } from "@zoonk/auth/google-service-account";
 import { z } from "zod";
-import { GOOGLE_PLAY_PACKAGE_NAME } from "./google-play-api";
 import { verifyGooglePlayPush } from "./google-play-push";
 import {
   type ScheduleRenewalCheck,

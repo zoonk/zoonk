@@ -14,6 +14,7 @@
     "./email-deletion-contract": "./src/email-deletion-contract.ts",
     "./email-signup-contract": "./src/email-signup-contract.ts",
     "./errors": "./src/errors.ts",
+    "./google-service-account": "./src/google/service-account.ts",
     "./human-check": "./src/request-guards/human-check.ts",
     "./next": "./src/next.ts",
     "./native-apple": "./src/native-apple.ts",
