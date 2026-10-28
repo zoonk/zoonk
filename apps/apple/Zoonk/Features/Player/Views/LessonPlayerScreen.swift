@@ -181,8 +181,35 @@ private struct LessonPlayerContent: View {
     }
   }
 
+  /// Close and Ask stay in a crowded bar (iPhone Duo's vertical one); the menu's items go to the
+  /// system's overflow menu.
   @ToolbarContentBuilder
   private func toolbar(hasVerticalBar: Bool) -> some ToolbarContent {
+    if #available(iOS 27, *) {
+      closeItem.visibilityPriority(.high)
+    } else {
+      closeItem
+    }
+
+    if !hasVerticalBar, let progress {
+      ToolbarItem(placement: .principal) {
+        progressBar(progress)
+          .frame(minWidth: 120, idealWidth: 240)
+      }
+    }
+
+    screenMenu
+
+    if tutor.panel != nil, store.screen == .playing, store.state?.phase != .completed {
+      if #available(iOS 27, *) {
+        askItem.visibilityPriority(.high)
+      } else {
+        askItem
+      }
+    }
+  }
+
+  private var closeItem: some ToolbarContent {
     ToolbarItem(placement: .cancellationAction) {
       Button {
         if hasUnsentAnswer {
@@ -199,26 +226,17 @@ private struct LessonPlayerContent: View {
       }
       .keyboardShortcut(.cancelAction)
     }
+  }
 
-    if !hasVerticalBar, let progress {
-      ToolbarItem(placement: .principal) {
-        progressBar(progress)
-          .frame(minWidth: 120, idealWidth: 240)
-      }
-    }
-
-    screenMenu
-
-    if tutor.panel != nil, store.screen == .playing, store.state?.phase != .completed {
-      ToolbarItem(placement: .primaryAction) {
-        Button {
-          store.ask()
-        } label: {
-          Label {
-            Text("Ask", tableName: "Player", comment: "Opens the panel to ask about the lesson")
-          } icon: {
-            Image(systemName: "bubble.left.and.text.bubble.right")
-          }
+  private var askItem: some ToolbarContent {
+    ToolbarItem(placement: .primaryAction) {
+      Button {
+        store.ask()
+      } label: {
+        Label {
+          Text("Ask", tableName: "Player", comment: "Opens the panel to ask about the lesson")
+        } icon: {
+          Image(systemName: "bubble.left.and.text.bubble.right")
         }
       }
     }
@@ -233,53 +251,65 @@ private struct LessonPlayerContent: View {
     return LessonGuestEnding(lessonTitle: lesson.title, fit: store.fit)
   }
 
+  /// The lesson's menu: the system's overflow menu on iOS 27, its own "…" menu before.
   @ToolbarContentBuilder
   private var screenMenu: some ToolbarContent {
     if store.screen == .playing, let state = store.state {
-      ToolbarItem(placement: .primaryAction) {
-        Menu {
-          Section {
+      if #available(iOS 27, *) {
+        ToolbarOverflowMenu {
+          screenMenuItems(state)
+        }
+      } else {
+        ToolbarItem(placement: .primaryAction) {
+          Menu {
+            screenMenuItems(state)
+          } label: {
             Label {
-              Text(
-                "Made with AI. It may contain mistakes.", tableName: "Player",
-                comment: "In the lesson's menu")
+              Text("Screen options", tableName: "Player", comment: "The lesson's menu")
             } icon: {
-              Image(systemName: "sparkles")
+              Image(systemName: "ellipsis")
             }
           }
+        }
+      }
+    }
+  }
 
-          if state.canKnowThis {
-            Button {
-              store.knowThis()
-            } label: {
-              Label {
-                Text(
-                  "I already know this", tableName: "Player",
-                  comment: "Asks the lesson's checks to skip it")
-              } icon: {
-                Image(systemName: "bolt")
-              }
-            }
-          }
+  @ViewBuilder
+  private func screenMenuItems(_ state: LessonPlayerState) -> some View {
+    Section {
+      Label {
+        Text(
+          "Made with AI. It may contain mistakes.", tableName: "Player",
+          comment: "In the lesson's menu")
+      } icon: {
+        Image(systemName: "sparkles")
+      }
+    }
 
-          if state.phase == .completed, !(store.lesson?.summaryIdeas ?? []).isEmpty {
-            Button {
-              isShowingSummary = true
-            } label: {
-              Label {
-                Text(
-                  "Lesson summary", tableName: "Player", comment: "Opens the lesson's summary card")
-              } icon: {
-                Image(systemName: "list.bullet.rectangle")
-              }
-            }
-          }
-        } label: {
-          Label {
-            Text("Screen options", tableName: "Player", comment: "The lesson's menu")
-          } icon: {
-            Image(systemName: "ellipsis")
-          }
+    if state.canKnowThis {
+      Button {
+        store.knowThis()
+      } label: {
+        Label {
+          Text(
+            "I already know this", tableName: "Player",
+            comment: "Asks the lesson's checks to skip it")
+        } icon: {
+          Image(systemName: "bolt")
+        }
+      }
+    }
+
+    if state.phase == .completed, !(store.lesson?.summaryIdeas ?? []).isEmpty {
+      Button {
+        isShowingSummary = true
+      } label: {
+        Label {
+          Text(
+            "Lesson summary", tableName: "Player", comment: "Opens the lesson's summary card")
+        } icon: {
+          Image(systemName: "list.bullet.rectangle")
         }
       }
     }
