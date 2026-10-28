@@ -3583,41 +3583,6 @@
         }
       }
     },
-    "Task %lld · %@" : {
-      "comment" : "A speaking task's number and official name",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aufgabe %1$lld · %2$@"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Task %1$lld · %2$@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tarea %1$lld · %2$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tâche %1$lld · %2$@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tarefa %1$lld · %2$@"
-          }
-        }
-      }
-    },
     "Task %lld of %lld" : {
       "comment" : "Which task of the exam's speaking paper this is",
       "localizations" : {

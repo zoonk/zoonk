@@ -218,35 +218,6 @@
         }
       }
     },
-    "Courses" : {
-      "comment" : "Navigation title for browsing the public course catalog.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kurse"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cursos"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cours"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cursos"
-          }
-        }
-      }
-    },
     "Current goal. Switch goal" : {
       "comment" : "Spoken hint of the goal switcher, after the current goal's title",
       "localizations" : {
@@ -562,6 +533,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Plano"
+          }
+        }
+      }
+    },
+    "Progress" : {
+      "comment" : "Navigation title for the learner's progress overview.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fortschritt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Progreso"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Progrès"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Progresso"
           }
         }
       }

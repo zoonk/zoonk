@@ -504,8 +504,43 @@
         }
       }
     },
+    "%lld of %lld goals" : {
+      "comment" : "How a passed challenge call went, as in “2 of 3 goals”.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld von %2$lld Zielen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld of %2$lld goals"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld de %2$lld objetivos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld objectif(s) sur %2$lld"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld de %2$lld metas"
+          }
+        }
+      }
+    },
     "%lld of %lld right" : {
-      "comment" : "A test-out's right answers out of its questions.",
+      "comment" : "A test-out's right answers out of its questions.\nHow a won challenge went, as in “8 of 10 right”.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1376,6 +1411,35 @@
         }
       }
     },
+    "+%lld" : {
+      "comment" : "Brain Power a challenge added.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+%lld"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+%lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+%lld"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+%lld"
+          }
+        }
+      }
+    },
     "+%lld Brain Power" : {
       "comment" : "A challenge's Brain Power reward.",
       "localizations" : {
@@ -1957,7 +2021,7 @@
       }
     },
     "Brain Power" : {
-      "comment" : "Readout label: Brain Power earned.",
+      "comment" : "A challenge's Brain Power reward.\nReadout label: Brain Power earned.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3072,35 +3136,6 @@
         }
       }
     },
-    "His shield is broken. You won!" : {
-      "comment" : "A won phase challenge's line.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sein Schild ist zerbrochen. Du hast gewonnen!"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Su escudo está roto. ¡Has ganado!"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Son bouclier est brisé. Tu as gagné !"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O escudo dele foi quebrado. Você venceu!"
-          }
-        }
-      }
-    },
     "How to solve it" : {
       "comment" : "VoiceOver name of a math problem's worked steps.",
       "localizations" : {
@@ -4072,6 +4107,35 @@
         }
       }
     },
+    "New try · %@" : {
+      "comment" : "Eyebrow of a lost checkpoint's rematch; the argument names the checkpoint.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neuer Versuch · %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nuevo intento · %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nouvel essai · %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nova tentativa · %@"
+          }
+        }
+      }
+    },
     "New try tomorrow, after %lld short lessons. Nothing is lost." : {
       "comment" : "A lost phase challenge comes back after short lessons.",
       "localizations" : {
@@ -4227,6 +4291,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Avançar"
+          }
+        }
+      }
+    },
+    "Next phase" : {
+      "comment" : "Heading over the phase that comes next.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nächste Phase"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siguiente fase"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Phase suivante"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Próxima fase"
           }
         }
       }
@@ -4701,6 +4794,64 @@
         }
       }
     },
+    "Phase %lld challenge" : {
+      "comment" : "Eyebrow naming a phase's checkpoint, as in “Phase 2 challenge”.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Herausforderung in Phase %lld"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desafío de la fase %lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Défi de la phase %lld"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desafio da fase %lld"
+          }
+        }
+      }
+    },
+    "Phase %lld complete" : {
+      "comment" : "Reward of a won phase challenge: its phase is done.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Phase %lld abgeschlossen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fase %lld completada"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Phase %lld terminée"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fase %lld concluída"
+          }
+        }
+      }
+    },
     "Phase challenge" : {
       "comment" : "Title of a phase challenge block.",
       "localizations" : {
@@ -4726,6 +4877,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Desafio da fase"
+          }
+        }
+      }
+    },
+    "Phase complete" : {
+      "comment" : "Reward of a won phase challenge: its phase is done.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Phase abgeschlossen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fase completada"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Phase terminée"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fase concluída"
           }
         }
       }
@@ -5557,6 +5737,35 @@
         }
       }
     },
+    "Rewards" : {
+      "comment" : "Heading over what a won challenge earned.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Belohnungen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recompensas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Récompenses"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recompensas"
+          }
+        }
+      }
+    },
     "Right" : {
       "comment" : "Judging an exam statement as right (Cebraspe style).\nReadout label: right answers out of the total.",
       "localizations" : {
@@ -6384,7 +6593,7 @@
       }
     },
     "The next phase, %@, is already open." : {
-      "comment" : "After a won phase challenge.",
+      "comment" : "After a phase challenge not won: the plan goes on.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6557,6 +6766,35 @@
         }
       }
     },
+    "The Trickster" : {
+      "comment" : "Title of a phase or final checkpoint duel.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Trickser"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El Tramposo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le Farceur"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O Pegadinha"
+          }
+        }
+      }
+    },
     "The Trickster's shield" : {
       "comment" : "Label of the phase challenge's shield gauge.",
       "localizations" : {
@@ -6582,6 +6820,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Escudo do Pegadinha"
+          }
+        }
+      }
+    },
+    "The unit's call" : {
+      "comment" : "Title of a language goal's challenge call before it's written.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Gespräch der Einheit"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La prueba de la unidad"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le défi de l’unité"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A conversa da unidade"
           }
         }
       }

@@ -784,6 +784,35 @@
         }
       }
     },
+    "Explore courses" : {
+      "comment" : "Title of the public course catalog, as the goal switcher's Explore opens it.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kurse entdecken"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explorar cursos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explorer les cours"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explorar cursos"
+          }
+        }
+      }
+    },
     "Geography" : {
       "comment" : "Course category for geography.",
       "localizations" : {
