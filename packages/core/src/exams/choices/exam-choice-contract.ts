@@ -3,7 +3,6 @@ import { answerTimeZoneSchema } from "../../learner/contract";
 
 const MAX_NAME_LENGTH = 300;
 
-/** The option a learner takes for one of their exam's choices, as their plan keeps it. */
 export const examChoicePickSchema = z
   .object({
     group: z
@@ -22,7 +21,6 @@ export const examChoicePickSchema = z
   .strict()
   .meta({ id: "ExamChoicePick" });
 
-/** A pick from the plan, which re-plans from today in the learner's time zone. */
 export const examChoiceInputSchema = examChoicePickSchema
   .extend({ timeZone: answerTimeZoneSchema })
   .strict()
@@ -30,10 +28,6 @@ export const examChoiceInputSchema = examChoicePickSchema
 
 export type ExamChoiceInput = z.infer<typeof examChoiceInputSchema>;
 
-/**
- * One of the exam's choices as the learner sees it: its options (each a subject of the notice, by
- * its name and what learners call it) and the one they take, null until they pick.
- */
 export const examChoiceViewSchema = z
   .object({
     group: z.string(),

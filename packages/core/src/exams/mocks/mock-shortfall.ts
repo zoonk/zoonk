@@ -8,23 +8,13 @@ import {
   getPlannedItemIds,
 } from "./mock-plan";
 
-/**
- * A bank this close to a mock's size starts it as it is: writing two questions isn't worth the
- * learner's wait. The mock says its real size.
- */
+/** Avoid making learners wait for generation when only a few questions are missing. */
 const NEAR_FULL_SHARE = 0.9;
 
-/** However few skills a mock asks about, each gets at most this many new questions written. */
 const MAX_QUESTIONS_PER_SKILL = 15;
 
-/**
- * Questions in a format the item writer writes stay a few per skill: when few skills take it (a
- * number typed in), one skill's questions would otherwise fill the format's whole share, and the
- * mock asks the exam's other formats for the rest.
- */
 const MAX_ITEM_QUESTIONS_PER_SKILL = 5;
 
-/** Whether the bank's questions fall short of the option's (see `NEAR_FULL_SHARE`). */
 export function isMockShort({
   option,
   planned,
@@ -35,14 +25,8 @@ export function isMockShort({
   return planned < Math.ceil(option.questions * NEAR_FULL_SHARE);
 }
 
-/** A skill a mock may get questions written for, and the area that puts it in a section. */
 export type MockWritingSkill = { area: string | null; id: string };
 
-/**
- * Questions to write in one of the exam's formats before a mock starts: `questionsPerSkill` more
- * for each of `skillIds`, what they lack of the `target` each should hold, shared with every later
- * learner of the exam.
- */
 export type MockFormatShortfall = {
   format: MockFormat;
   questionsPerSkill: number;
@@ -50,11 +34,6 @@ export type MockFormatShortfall = {
   target: number;
 };
 
-/**
- * Whether the format's questions can be written for a skill: never typed words (`bankOnly`), and
- * a number typed in only for a skill the bank already asks numbers about (a calculation), as
- * `pickExamFormatSkills` writes them. Without `skillId`, for any skill.
- */
 function canWrite({
   candidates,
   format,
@@ -77,17 +56,8 @@ function canWrite({
   );
 }
 
-type FormatCount = {
-  format: MockFormat;
-  /** Its share of the option's questions, the size questions are written to. */
-  needed: number;
-  /** The questions the plan asks in it that the learner never answered. */
-  planned: number;
-  /** The questions the plan's sections want in it (`MockPlan.formatsWanted`). */
-  wanted: number;
-};
+type FormatCount = { format: MockFormat; needed: number; planned: number; wanted: number };
 
-/** Each format of the mix with what the mock asks in it and has for it. */
 function countFormats({
   candidates,
   mix,
@@ -109,20 +79,12 @@ function countFormats({
   return mix.map((format, index) => ({
     format,
     needed: needed[index] ?? 0,
-    // An exam of one format asks every question it may in it.
     planned: fresh.filter((candidate) => mix.length === 1 || candidate.format === format.key)
       .length,
     wanted: plan.formatsWanted?.[format.key] ?? 0,
   }));
 }
 
-/**
- * The mix's formats a mock is short of: the questions it plans in each that the learner never
- * answered fall short of what its sections want in it (`isMockShort`), and some skill can take
- * questions written in it (`canWrite`); and the first one that can be written when the whole
- * mock is short of new questions (an adaptive exam's routed modules). Empty when the bank holds
- * them all.
- */
 export function listShortFormats(input: {
   candidates: readonly MockCandidate[];
   mix: readonly MockFormat[];
@@ -144,14 +106,6 @@ export function listShortFormats(input: {
     .filter((format) => writable.includes(format));
 }
 
-/**
- * What to write before a mock can start, format by format (see `listShortFormats`): each format's
- * share of the mock spread over the skills that can take it, a few each (`target`), so it takes
- * as many skills holding that many questions the learner never answered as the share needs.
- * Skills that already hold theirs count; the ones short of it get what they lack written, spread
- * over the mock's areas so every section gets its share. Empty when the bank holds the mock's
- * questions.
- */
 export function getMockQuestionsShortfall({
   candidates,
   mix,
@@ -163,7 +117,6 @@ export function getMockQuestionsShortfall({
   mix: readonly MockFormat[];
   option: { questions: number };
   plan: MockPlan;
-  /** The plan's skills the mock asks about, which questions are written for. */
   skills: readonly MockWritingSkill[];
 }): MockFormatShortfall[] {
   const shortFormats = new Set(listShortFormats({ candidates, mix, option, plan }));
@@ -198,7 +151,6 @@ export function getMockQuestionsShortfall({
 
     const written = interleave([...byArea.values()]).slice(0, Math.max(0, room));
 
-    // Only what each skill lacks is written: skills lacking as many share one write.
     const byLack = Map.groupBy(written, (skill) => target - holds(skill));
 
     return [...byLack].map(([questionsPerSkill, lacking]) => ({

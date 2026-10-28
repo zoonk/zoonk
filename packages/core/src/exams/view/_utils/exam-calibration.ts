@@ -11,7 +11,6 @@ type CalibrationTotals = {
   unsureRight: number;
 };
 
-/** Lifetime calibration needs only these totals, never older question or result snapshots. */
 export async function loadExamCalibration({
   goalId,
   transaction,

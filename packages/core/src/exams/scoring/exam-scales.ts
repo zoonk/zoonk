@@ -1,45 +1,21 @@
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { detectLanguageExam } from "../language-exam";
 
-/**
- * Exams that report scores on their own scale instead of points or percent:
- *
- * - SAT: each of its two sections is scored from 200 to 800 in steps of 10, and the total, their
- *   sum, from 400 to 1600. https://satsuite.collegeboard.org/scores/what-scores-mean
- * - AP: a 1 to 5 score, converted from a composite of the multiple-choice and free-response
- *   sections with cutoffs College Board sets for each exam every year.
- *   https://apstudents.collegeboard.org/about-ap-scores
- * - TOEFL iBT: since January 2026, each section and the overall score on a 1 to 6 band in
- *   half-band steps, aligned with the CEFR; the overall is the sections' average rounded to the
- *   nearest half band. https://www.ets.org/toefl/test-takers/ibt/scores/understand-scores.html
- *
- * Mocks measure the share of right answers, and these turn it into the exam's scale so an estimate
- * reads the way the official score will. Official conversions use each test form's own tables, so
- * these are approximations: the result is always a labeled range, and once learners report their
- * official scores, calibration corrects it (`estimates/score-estimate.ts`).
- */
 export const EXAM_SCALES = ["ap", "sat", "toefl"] as const;
 
 export type ExamScale = (typeof EXAM_SCALES)[number];
 
 type ScaleRule = {
-  /** From the percent of right answers (0 to 100) to the exam's scale, before rounding. */
   fromPercent: (percent: number) => number;
   max: number;
   min: number;
-  /** Tells the exam from its name, key or the goal's title. */
   matches: (text: string) => boolean;
   step: number;
 };
 
-/**
- * Rough composite cutoffs for AP scores 2 to 5, in percent of the composite. College Board
- * doesn't publish the real ones, which differ by subject and year, so AP estimates lean on
- * calibration more than the others.
- */
+/** Approximate cutoffs; official AP conversions vary by subject and year. */
 const AP_CUTOFFS = { five: 70, four: 55, three: 40, two: 25 } as const;
 
-/** "AP Biology", "AP® Calculus AB", "ap-us-history" or "Advanced Placement", never "TJ-AP". */
 const AP_PATTERNS = [/(?:^|[\s(])AP®?\s+\p{Lu}/u, /^ap-/u, /\badvanced placement\b/iu];
 
 const SAT_MIN = 400;
@@ -65,7 +41,6 @@ const SCALE_RULES: Record<ExamScale, ScaleRule> = {
   },
   toefl: {
     fromPercent: (percent) => TOEFL_MIN + percent / TOEFL_PERCENT_PER_BAND,
-    // The TOEFL iBT, which language certificates tell from ITP, Essentials, Junior and Primary.
     matches: (text) => detectLanguageExam(text) === "TOEFL",
     max: 6,
     min: TOEFL_MIN,
@@ -73,7 +48,6 @@ const SCALE_RULES: Record<ExamScale, ScaleRule> = {
   },
 };
 
-/** The scale an exam reports on, from its blueprint's name or key or the goal's title. */
 export function getExamScale({
   blueprint,
   goal,
@@ -90,10 +64,8 @@ export function getExamScale({
   );
 }
 
-/** ENEM, whose own scale (and item response theory scoring on it) only it uses. */
 const ENEM_PATTERN = /\benem\b/iu;
 
-/** Whether the exam is ENEM, from its blueprint's name or key or the goal's title. */
 export function isEnemExam({
   blueprint,
   goal,
@@ -110,13 +82,12 @@ export function isExamScale(value: string | null): value is ExamScale {
   return EXAM_SCALES.some((scale) => scale === value);
 }
 
-/** A value on the exam's scale, rounded to its step and kept within its bounds. */
 export function roundToExamScale({ scale, value }: { scale: ExamScale; value: number }): number {
   const { max, min, step } = SCALE_RULES[scale];
   return Math.min(max, Math.max(min, Math.round(value / step) * step));
 }
 
-/** A percent-correct range on the exam's own scale. */
+/** Official conversions use test-specific tables; these estimates are approximations. See https://apstudents.collegeboard.org/about-ap-scores and https://satsuite.collegeboard.org/scores/what-scores-mean. */
 export function percentToExamScale({
   range,
   scale,
@@ -132,12 +103,6 @@ export function percentToExamScale({
   };
 }
 
-/**
- * A scale an exam's score shows on, beside a mock's right answers: the notice's own (its `scale`,
- * such as EXANI-II's 700 to 1300), else the exam's preset (SAT, AP, TOEFL). `fromPercent` turns a
- * share of right answers into it only where the map is known: the notice's linear one, or the
- * preset's approximation.
- */
 export type ScoreScale = {
   fromPercent: ((percent: number) => number) | null;
   max: number;
@@ -181,7 +146,6 @@ export function getScoreScale({
   return { fromPercent, max, min, name: null, passScore: null, step };
 }
 
-/** A share of right answers (0 to 1) on the scale, to its step and within it; null without a map. */
 export function toScaleScore({
   scale,
   share,
@@ -200,7 +164,6 @@ export function toScaleScore({
   return Math.min(scale.max, Math.max(scale.min, stepped));
 }
 
-/** Whether a reported score fits the exam's scale: 1350 for the SAT, 4 for AP, 4.5 for TOEFL. */
 export function isOnExamScale({ scale, score }: { scale: ExamScale; score: number }): boolean {
   const { max, min, step } = SCALE_RULES[scale];
   return score >= min && score <= max && Number.isInteger(score / step);

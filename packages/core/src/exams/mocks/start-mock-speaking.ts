@@ -10,7 +10,6 @@ export type StartMockSpeakingResult =
   | { section: SpeakingSectionView; status: "ready" }
   | { status: "callsPaused" | "notFound" | "notSpeaking" | "plusRequired" | "unauthorized" };
 
-/** The paper another tap kept on the mock first; the one just written if none is there. */
 async function loadKeptPaper({
   blockId,
   fallback,
@@ -25,12 +24,6 @@ async function loadKeptPaper({
   return sectionId ? getSpeakingSection(sectionId) : fallback;
 }
 
-/**
- * Starts the running mock's speaking section once the learner reaches it: the exam's speaking
- * paper, every task's card written now (`startSpeakingSection`), each task a live call with the
- * examiner. The paper is kept on the mock, so a reload or a second tap opens the same one instead
- * of writing another. Only the section the mock is on, while it runs.
- */
 export async function startMockSpeaking({
   blockId,
 }: {
@@ -60,8 +53,6 @@ export async function startMockSpeaking({
     return { status: started.status === "notLanguage" ? "notSpeaking" : started.status };
   }
 
-  // Only the paper's id changes, and only while the section has none: two taps at once keep the
-  // first paper, and the second learns of it.
   const index = String(mock.sectionIndex);
 
   const kept = await writeLearnerChange({ userId: found.owned.userId }, async (tx) => {

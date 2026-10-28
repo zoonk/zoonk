@@ -27,14 +27,8 @@ import {
 import { type IrtItem, toIrtItem } from "../../scoring/irt";
 import { type MockQuestion } from "../mock-view-contract";
 
-/** A question a mock asks in the exam's own format: a pick, a typed number or a typed word. */
 type MockQuestionItem = ChoiceItem | MathItem | TypedItem;
 
-/**
- * A mock question with what grading and the review need: how hard it is for item response theory,
- * the passage it quotes (an article of law, a past exam) with a link to the official text, and the
- * text it shares with its set's other questions, when it's one of a set.
- */
 export type MockItem = MockQuestionItem & {
   citation: ItemCitation | null;
   irt: IrtItem;
@@ -43,7 +37,6 @@ export type MockItem = MockQuestionItem & {
 
 const TRUE_FALSE_OPTIONS = 2;
 
-/** The options a learner could guess from: none for a typed answer. */
 function getOptionCount(item: MockQuestionItem): number {
   if (item.format === "trueFalse") {
     return TRUE_FALSE_OPTIONS;
@@ -73,10 +66,8 @@ function parseMockQuestionItem(
   }
 }
 
-/** The mock's questions by id. Items that no longer parse are left out and read as blank. */
 export async function loadMockItems(
   itemIds: readonly string[],
-  /** A finished mock's review shows what a recording said (its transcript). */
   { reveal = false }: { reveal?: boolean } = {},
 ): Promise<Map<string, MockItem>> {
   const rows = await prisma.item.findMany({
@@ -108,15 +99,10 @@ export async function loadMockItems(
   );
 }
 
-/**
- * A numeric question's numbers in one mock: drawn from the mock and the question, so showing and
- * grading it agree on every visit, and the next mock asks it with new ones.
- */
 export function serveMockMath({ item, mockId }: { item: MathItem; mockId: string }) {
   return serveMath({ item, seed: `${mockId}:${item.id}` });
 }
 
-/** What a question shows only in other formats. */
 const NO_EXTRAS = { entry: null, select: null, unit: null };
 
 function toFormatView({ item, mockId }: { item: MockItem; mockId: string }) {
@@ -135,10 +121,7 @@ function toFormatView({ item, mockId }: { item: MockItem; mockId: string }) {
   }
 }
 
-/**
- * A question as the running mock shows it, with the text its set's questions share: never its
- * answer or why.
- */
+/** Safe for a running mock: excludes answers and explanations. */
 export function toMockQuestionView({
   item,
   mockId,

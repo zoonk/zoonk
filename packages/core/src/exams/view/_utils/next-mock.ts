@@ -5,11 +5,6 @@ import { loadMockCard } from "../../../checkpoints/_utils/mock-card";
 import { toIsoDate } from "../../../plans/planner/plan-calendar";
 import { type ExamNextMock } from "../exam-view-contract";
 
-/**
- * The plan's next mock exam, with the size its card says (see `loadMockCard`). Null when the
- * plan's next weekly checkpoint isn't a mock, or there's none left. One dated before today (missed
- * while the learner was away, until their next open settles the plan) is never the next one.
- */
 export async function loadNextMock({
   blueprint,
   goal,
@@ -17,7 +12,6 @@ export async function loadNextMock({
 }: {
   blueprint: ExamBlueprint | null;
   goal: Goal;
-  /** The learner-local date, as a UTC-midnight label. */
   today: Date;
 }): Promise<ExamNextMock | null> {
   const item = await prisma.planItem.findFirst({

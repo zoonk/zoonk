@@ -12,20 +12,13 @@ import { loadExamCalibration } from "./exam-calibration";
 import { loadExamWork } from "./exam-work";
 import { MOCK_PROGRESS_SIZE, getMockProgress } from "./mock-progress";
 
-/** The history shows the latest mocks; calibration adds up every one of them. */
 const HISTORY_SIZE = 10;
 
-/**
- * The goal's finished mocks, newest first, in the exam's own terms, Cebraspe calibration added up
- * across all of them (how often the learner is right when sure and when not), how they went over
- * time (see `getMockProgress`), and the work behind them (see `loadExamWork`).
- */
 export async function loadExamHistory({
   goalId,
   today,
 }: {
   goalId: string;
-  /** The learner-local date, as a UTC-midnight label. */
   today: Date;
 }): Promise<{
   calibration: MockResult["calibration"];
@@ -39,7 +32,6 @@ export async function loadExamHistory({
     prisma.$transaction(
       (transaction) =>
         Promise.all([
-          // The chart needs twenty snapshots; numbering still counts every finished mock.
           transaction.mockExam.findMany({
             orderBy: [{ createdAt: "desc" }, { id: "desc" }],
             select: FINISHED_MOCK_SELECT,
@@ -65,7 +57,6 @@ export async function loadExamHistory({
     .toReversed()
     .slice(0, HISTORY_SIZE);
 
-  // The exam's latest penalty sets the break-even the advice reads against.
   const penalty = finished.at(-1)?.result.net?.penalty ?? 1;
 
   return {

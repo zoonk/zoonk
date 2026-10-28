@@ -2,7 +2,6 @@ import { type ExamStructure, type SectionNavigation } from "../../library/exams/
 import { listListeningParts } from "../listening/listening-parts";
 import { isObjectiveSection } from "./written-subject";
 
-/** Without a stated size, a mock is a morning's worth of questions. */
 export const DEFAULT_SECTION_QUESTIONS = 45;
 
 export type BlueprintSection = {
@@ -17,7 +16,6 @@ export type BlueprintSection = {
 
 type StructureSection = NonNullable<ExamStructure["mock"]>["sections"][number];
 
-/** A section's tools, how it's moved through and the break after it, as the notice states them. */
 export function toSectionRules(section: BlueprintSection) {
   return {
     breakAfterMinutes: section.breakAfterMinutes ?? null,
@@ -26,17 +24,10 @@ export function toSectionRules(section: BlueprintSection) {
   };
 }
 
-/** The objective sections of the exam: the ones a mock fills with questions. */
 export function getObjectiveSections(structure: ExamStructure | null): StructureSection[] {
   return (structure?.mock?.sections ?? []).filter((section) => isObjectiveSection(section));
 }
 
-/**
- * One exam day's sections that ask questions, in the blueprint's order: its objective ones, its
- * listening ones that have recordings to play (`listening`, by name), and its speaking ones when
- * the mock sits the speaking paper (`speaking`); the whole mock as one section when the notice
- * doesn't split it.
- */
 export function getDaySections({
   day,
   listening = new Set(),
@@ -50,7 +41,6 @@ export function getDaySections({
 }): BlueprintSection[] {
   const sections = (structure?.mock?.sections ?? []).filter((section) => section.day === day);
 
-  // A day of only a written test has no questions to pick.
   if (sections.length > 0) {
     return sections
       .filter(
@@ -71,10 +61,6 @@ export function getDaySections({
   ];
 }
 
-/**
- * A listening section the notice doesn't count asks the questions of its recordings, one per
- * part (`listListeningParts`), as its mock plays them.
- */
 function withPartQuestions<Section extends StructureSection>({
   section,
   structure,
@@ -93,11 +79,6 @@ function withPartQuestions<Section extends StructureSection>({
   return questions > 0 ? { ...section, questions } : section;
 }
 
-/**
- * A section's minutes for the questions it asks: its share of the notice's time for the section
- * (the questions it would ask in full standing in for a count the notice doesn't give), else at
- * the exam's pace.
- */
 export function sectionMinutes({
   pace,
   picked,

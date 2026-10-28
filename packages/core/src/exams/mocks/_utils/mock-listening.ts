@@ -5,21 +5,8 @@ import { pickListeningSets } from "../../listening/pick-listening-sets";
 import { type MockFormat, getItemFormatKey } from "../mock-format-mix";
 import { type MockCandidate } from "../mock-plan";
 
-/**
- * An exam's listening sections as a mock sits them: the recordings each plays, by the section's
- * name (`recordings`), and the sections a part of which has no voiced recording yet
- * (`unvoiced`), which starting a mock writes (see `listMissingRecordings`).
- */
 export type MockListening = { recordings: Map<string, MockCandidate[]>; unvoiced: Set<string> };
 
-/**
- * The recordings each of the exam's listening sections plays in a mock, by the section's name,
- * as candidates: for each of its parts, the voiced set the learner hears next
- * (`pickListeningSets`: one they never heard, else the one heard longest ago), its questions in
- * the order they're heard. A section is sat only when every one of its parts has a voiced set;
- * the others are `unvoiced`, and a mock without them says it leaves them out. Empty for an exam
- * without listening.
- */
 export async function loadListeningCandidates({
   goalId,
   mix,

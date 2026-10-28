@@ -38,7 +38,6 @@ function firstPart(exam: ListeningExam) {
   return part;
 }
 
-/** A stored set of the exam's first part with one question; voiced unless said otherwise. */
 async function partSet({
   createdAt,
   exam,

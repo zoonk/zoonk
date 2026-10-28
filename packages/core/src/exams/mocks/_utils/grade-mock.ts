@@ -24,7 +24,6 @@ type AskedQuestion = {
 
 type GradedQuestion = AskedQuestion & { grade: MockItemGrade };
 
-/** The exam's pace for a section, so a slow answer reads as the time the exam allows. */
 function getPaceMs({ mock, section }: { mock: MockSitting; section: number }): number | null {
   const conditions = mock.conditions.sections[section];
 
@@ -33,10 +32,6 @@ function getPaceMs({ mock, section }: { mock: MockSitting; section: number }): n
     : null;
 }
 
-/**
- * A mock taken as placement measures what the learner already knows, like placement's own
- * questions: nothing it asks goes to the mistakes notebook.
- */
 function isDiagnostic({ grade, mock }: { grade: MockItemGrade; mock: MockSitting }) {
   return !grade.answered || mock.conditions.purpose === "placement";
 }
@@ -66,7 +61,6 @@ async function recordAnswer({
         ? { questionText: grade.snapshot.question, snapshot: grade.snapshot, timeLimitMs: paceMs }
         : null,
     mockExamId: mock.id,
-    // A question left blank says the learner didn't know it; it isn't a mistake in the notebook.
     purpose: diagnostic ? "diagnostic" : "learning",
     skillId: item.skillId,
     studySessionId: sessionId,
@@ -77,11 +71,6 @@ async function recordAnswer({
   scheduleMistakeCause(recorded.causeRequest);
 }
 
-/**
- * Grades a question: by code, and a typed answer code doesn't accept by a model too, since it
- * may be right in other words (capped per question and day). One recorded already (a finish that
- * stopped halfway) keeps the verdict it was recorded with.
- */
 async function gradeAsked({
   asked,
   mock,
@@ -118,11 +107,6 @@ async function gradeAsked({
   };
 }
 
-/**
- * The questions a mock grades: every one it asked, or for a mock taken as placement, only the
- * ones the learner answered. Stopping it midway keeps what they answered, and questions they never
- * got to say nothing about what they know.
- */
 function getGradedQuestions({
   asked,
   mock,
@@ -135,13 +119,7 @@ function getGradedQuestions({
     : asked;
 }
 
-/**
- * Grades every question the mock asked and records it in the learner model, one after another so
- * two answers on the same skill update its memory in order. Questions left blank count as not
- * known, except in a mock taken as placement, which grades only the answered ones. Answers
- * already recorded (a finish that stopped halfway) aren't recorded again, and the database keeps
- * one attempt per mock question.
- */
+/** Records answers sequentially so two answers on one skill update its memory in order. */
 export async function gradeMock({
   areas,
   mock,
@@ -152,7 +130,6 @@ export async function gradeMock({
   areas: Map<string, string>;
   mock: MockSitting;
   practicedLanguage: string | null;
-  /** The session a scheduled mock was played in; null for a mock taken any time. */
   sessionId: string | null;
   timeZone: string;
 }): Promise<GradedMockAnswer[]> {
@@ -160,7 +137,6 @@ export async function gradeMock({
   const itemIds = askedIds.map((entry) => entry.itemId);
 
   const [items, attempts] = await Promise.all([
-    /** Handed-in questions become notebook entries: recordings keep their revealed review support. */
     loadMockItems(itemIds, { reveal: true }),
     prisma.attempt.findMany({
       select: { isCorrect: true, itemId: true },
@@ -191,7 +167,6 @@ export async function gradeMock({
       : [];
   });
 
-  // Typed answers a model grades are independent of each other, so they're graded at once.
   const graded = await Promise.all(
     getGradedQuestions({ asked: allAsked, mock }).map((asked) =>
       gradeAsked({ asked, mock, practicedLanguage, recorded }),
@@ -211,7 +186,6 @@ export async function gradeMock({
   return graded.map((question) => toGraded({ areas, mock, question, skillNames }));
 }
 
-/** Each topic's name, so the result can say how each went. */
 async function loadSkillNames(skillIds: readonly string[]): Promise<Map<string, string>> {
   const skills = await prisma.skill.findMany({
     select: { id: true, name: true },

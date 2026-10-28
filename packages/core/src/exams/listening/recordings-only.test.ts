@@ -22,15 +22,6 @@ import {
 } from "../../sessions/_test-utils/session-goal";
 import { getBlockItemIds, readBlockPayload } from "../../sessions/block-payload";
 
-/**
- * An exam's listening skills are practiced only with recordings: a text question about a
- * conversation tests reading. Practice asks their recordings whole (sessions/item-set-practice);
- * everything else that asks single bank questions (reviews, drills, challenges, Practice mistakes,
- * test-outs, focus tests) leaves their text questions out, the ones another goal's writers left on
- * a shared skill included.
- */
-
-/** Gives the plan's skills these areas, so the exam's "Listening" section claims its own. */
 function setGraphAreas({
   phases = 1,
   planId,
@@ -63,12 +54,6 @@ function setGraphAreas({
 
 const LISTENING_GOAL = { kind: "exam", targetLanguage: "en" } as const;
 
-/**
- * An IELTS-like learner whose plan teaches a Listening skill (`heard`) and three Reading ones, six
- * text questions each, with the first two lessons done. Ten minutes a day spread the other two
- * over the next days, so the phase's challenge doesn't take today and the day has room for
- * reviews, a drill and practice.
- */
 async function listeningLearnerFixture() {
   const user = await userFixture();
   const { blueprint } = await listeningExamFixture();
@@ -109,7 +94,6 @@ async function listeningLearnerFixture() {
   };
 }
 
-/** A typed gap fill, as a recording's form completion asks it. */
 const TYPED_GAP = {
   acceptedAnswers: ["Thursday"],
   context: null,
@@ -118,7 +102,6 @@ const TYPED_GAP = {
   sampleAnswer: "Thursday",
 };
 
-/** A question that asks for two options, which a duel never asks. */
 const PICK_TWO = {
   ...choiceItemContent(),
   options: [
@@ -129,10 +112,6 @@ const PICK_TWO = {
   select: 2,
 };
 
-/**
- * A recording on the skill with its questions in the order they're heard: two choices by default;
- * voiced unless `voiced` is false.
- */
 async function recordingFixture(
   skillId: string,
   {
@@ -156,10 +135,6 @@ async function recordingFixture(
   );
 }
 
-/**
- * Puts the plan's first lesson (the Listening skill's, done) alone in its phase, with a boss after
- * it, and the rest in a second phase: today's boss is a listening phase's.
- */
 async function listeningPhaseFixture() {
   const fixture = await listeningLearnerFixture();
   const { plan, planItems, skills } = fixture;
@@ -187,7 +162,6 @@ async function listeningPhaseFixture() {
   return fixture;
 }
 
-/** Today's blocks for the learner, each with what it asks. */
 async function openToday({ goalId, userId }: { goalId: string; userId: string }) {
   mockSession(userId);
   const today = await getTodayStudySession({ goalId, timeZone: "UTC" });
@@ -251,7 +225,6 @@ describe("an exam's listening skills outside practice", () => {
       recordingFixture(heardId, { voiced: false }),
     ]);
 
-    // The first recording was heard a week ago; the review plays the one not heard yet.
     await Promise.all([
       dueSkillFixture({ skillId: heardId, userId: user.id }),
       ...first.map((item) =>
@@ -292,7 +265,6 @@ describe("an exam's listening skills outside practice", () => {
     const drills = blocks.flatMap((block) => block.payload.drills);
     const capsules = blocks.flatMap((block) => block.payload.capsules);
 
-    // Nothing more on its skill: the drill is the missed question alone.
     expect(drills.map((drill) => drill.itemIds)).toStrictEqual([[missed?.id]]);
     expect(capsules.flatMap((capsule) => capsule.itemIds)).not.toContain(heard?.id);
   });
@@ -327,7 +299,6 @@ describe("an exam's listening skills outside practice", () => {
     const { goal, heardId, heardItemIds, plan, planItems, readIds, skills, user } =
       await listeningLearnerFixture();
 
-    // The lessons not done move to a second phase, so the first phase's boss is reached today.
     await Promise.all([
       ...planItems
         .slice(2)
@@ -363,7 +334,6 @@ describe("an exam's listening skills outside practice", () => {
     const { goal, heardId, heardItemIds, user } = await listeningPhaseFixture();
     const choices = Array.from({ length: 4 }, () => choiceItemContent());
 
-    // A recording the duel can't ask whole (one question takes two picks) and one not voiced yet.
     await Promise.all([
       recordingFixture(heardId, { questions: [...choices, PICK_TWO] }),
       recordingFixture(heardId, { questions: [...choices, TYPED_GAP], voiced: false }),
@@ -397,7 +367,6 @@ describe("an exam's listening skills outside practice", () => {
     const { goal, heardId, heardItemIds, items, plan, readIds, user } =
       await listeningLearnerFixture();
 
-    // The learner answered on every skill this week, the Listening one through a recording.
     const [recorded] = await recordingFixture(heardId);
     const answered = [recorded, ...readIds.map((id) => items.find((item) => item.skillId === id))];
 
@@ -430,7 +399,6 @@ describe("an exam's listening skills outside practice", () => {
 
   it.each([
     { scope: "for its goal", scoped: true },
-    // The notebook without a goal: a skill any of the learner's goals hears counts.
     { scope: "without a goal", scoped: false },
   ])(
     "brings back only its missed recording questions in Practice mistakes $scope",

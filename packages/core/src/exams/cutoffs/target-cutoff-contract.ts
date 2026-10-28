@@ -1,11 +1,5 @@
 import { z } from "zod";
 
-/**
- * The last published cut-off of the learner's target, for the general list, with the page it came
- * from: where the bar was in the latest selection, never a promise. The target is a course at an
- * institution (`course`, `institution`) or a position (`position`). It always comes with its scale
- * (`maxScore`): a number nobody says is out of what is never shown.
- */
 export const targetCutoffSchema = z
   .object({
     course: z.string().nullable(),

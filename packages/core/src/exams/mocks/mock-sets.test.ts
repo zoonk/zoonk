@@ -6,12 +6,10 @@ function single(itemId: string): MockCandidate {
   return { answered: false, area: null, difficulty: null, itemId, skillId: "skill" };
 }
 
-/** A question in one of the exam's formats. */
 function of(format: string, itemId: string): MockCandidate {
   return { ...single(itemId), format };
 }
 
-/** A set's questions, each with its place in the set. */
 function setOf(setId: string, itemIds: string[]): MockCandidate[] {
   return itemIds.map((itemId, position) => ({
     ...single(itemId),
@@ -52,8 +50,6 @@ describe(takeQuestions, () => {
       ["numeric", 2],
     ]);
 
-    // Picks and numeric have one question each for their two places, so the next choice question
-    // takes the room left.
     expect(takeQuestions({ pool, quotas, wanted: 5 })).toStrictEqual([
       "c1",
       "c2",

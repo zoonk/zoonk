@@ -11,18 +11,12 @@ import { getEssayRubric } from "../essay-rubric";
 import { type EssayContent } from "./essay-content";
 import { endEssayGradeClaim } from "./essay-grade-claims";
 
-/** A draft at 60% of the rubric's points reads as a good answer, like ENEM's 600. */
 const GOOD_SHARE = 0.6;
 
 function joinPrompt({ context, question }: { context: string | null; question: string }) {
   return context ? `${context}\n\n${question}` : question;
 }
 
-/**
- * Grades an essay with the official rubric (ENEM's five competencies, OAB's brief section by
- * section, or the item's criteria): every criterion with a comment on the learner's own words, an
- * estimated range and one next step. A model call: it runs only from a learner's POST.
- */
 export async function gradeEssayText({
   blueprint,
   content,
@@ -50,7 +44,6 @@ export async function gradeEssayText({
   return data;
 }
 
-/** Locks the writing block against its settlement and says whether it's no longer being written. */
 async function refuseClosedBlock(
   transaction: TransactionClient,
   blockId: string,
@@ -64,12 +57,7 @@ async function refuseClosedBlock(
   return active.length > 0 ? null : "blockNotActive";
 }
 
-/**
- * Records a graded essay as learning, written in a session's writing block (`studySessionId`,
- * while `activeBlockId` is still being written) or in a full mock's written part (`mockExamId`):
- * good from 60% of the rubric's points. It's recorded once under its claimed `attemptId`, which
- * the same transaction releases (`claimEssayGrades`).
- */
+/** Records once per claimed `attemptId` and releases the claim in the same transaction. */
 export function recordEssayGrade({
   activeBlockId,
   attemptId,

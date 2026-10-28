@@ -3,33 +3,14 @@ import { namesMatch } from "../_utils/name-match";
 import { type MockSectionPlan } from "./mock-plan";
 import { isWrittenSubject } from "./written-subject";
 
-/** What a written part asks, as the notice states it; `count` is null when it's in the words. */
 type MockWrittenTask = { count: number | null; description: string };
 
-/**
- * A part of the exam day answered in writing (a discursive test, an essay, a legal brief), as
- * the notice states it: its own time (`minutes`), or null when it shares the clock of the day's
- * objective questions, as ENEM's essay shares the first day's five and a half hours.
- */
 export type MockWrittenPart = { minutes: number | null; name: string; tasks: MockWrittenTask[] };
 
-/**
- * A full mock's written part and whether the mock asks it (`asked`, with the exam's own essays,
- * graded at hand-in), or leaves it out because the bank has no essay for it yet.
- */
 export type MockDayWrittenPart = MockWrittenPart & { asked: boolean };
 
-/**
- * An essay question of the exam's own (`format: essay`) a full mock's written part can ask, under
- * the plan area its skill belongs to. Candidates come the learner's least recently written first.
- */
 export type MockEssayCandidate = { area: string | null; itemId: string };
 
-/**
- * A written part a full mock asks: the essays it asks and the objective section whose clock it
- * shares (`joins`, its index among the day's objective sections), or null for a part with a clock
- * of its own (the Câmara's afternoon discursive test).
- */
 type WrittenPlacement = { essays: string[]; joins: number | null; part: MockWrittenPart };
 
 type StructureSection = NonNullable<ExamStructure["mock"]>["sections"][number];
@@ -51,11 +32,6 @@ function toWrittenPart({
   return { minutes: section.minutes, name: section.name, tasks };
 }
 
-/**
- * The exam day's written parts: its written sections, or, for a notice that lists one only as a
- * subject, the written subjects its objective sections name, as ENEM's first day names its essay
- * in its section's title.
- */
 export function getDayWrittenParts({
   day,
   structure,
@@ -82,10 +58,6 @@ export function getDayWrittenParts({
     .map((subject) => ({ minutes: null, name: subject.name, tasks: toEssayTasks(structure) }));
 }
 
-/**
- * How many essays a written part asks: one per task the notice counts (two discursive questions
- * and a legal brief ask three), or one when the notice doesn't count them.
- */
 function countPartEssays(part: MockWrittenPart): number {
   const counts = part.tasks.map((task) => task.count);
 
@@ -94,10 +66,6 @@ function countPartEssays(part: MockWrittenPart): number {
     : 1;
 }
 
-/**
- * Where a written part sits: its own section when the notice gives it its own time, else beside
- * the objective section that names it (or the day's last one). Null when it can't sit anywhere.
- */
 function findJoinedSection({
   objectiveNames,
   part,
@@ -115,10 +83,6 @@ function findJoinedSection({
   return joins < 0 ? null : { joins };
 }
 
-/**
- * Each written part's essays, in the day's order: the ones whose area names the part first, then
- * any of the exam's left, never one twice.
- */
 function assignEssays({
   essays,
   parts,
@@ -142,12 +106,6 @@ function assignEssays({
   return [{ essays: picked, part }, ...assignEssays({ essays: left, parts: rest })];
 }
 
-/**
- * The day's written parts in a full mock, in the day's order, each asked with the exam's own
- * essays (the ones whose area names the part first) or left out because the bank has none for it
- * yet (`parts`), and where each asked one sits (`placed`). A short mock sits half the objective
- * part and lists none.
- */
 function placeWrittenParts({
   day,
   essays,
@@ -181,12 +139,6 @@ function placeWrittenParts({
   };
 }
 
-/**
- * A full-length mock asks the day's written parts it has essays for: an essay sharing an
- * objective section's clock joins that section (ENEM's essay beside the day's questions), and a
- * part with a time of its own is a section after the questions (a discursive test in the
- * afternoon). `written` lists the day's written parts, each asked or left out, for the mock to say.
- */
 export function withWrittenParts({
   day,
   essays,
@@ -197,7 +149,6 @@ export function withWrittenParts({
   day: number | null;
   essays: readonly MockEssayCandidate[];
   fullLength: boolean;
-  /** The day's objective sections as planned, which a part without a time of its own joins. */
   sections: MockSectionPlan[];
   structure: ExamStructure | null;
 }): { sections: MockSectionPlan[]; written: MockDayWrittenPart[] } {
@@ -216,7 +167,6 @@ export function withWrittenParts({
       .flatMap((placement) => placement.essays),
   }));
 
-  // A written test with its own time keeps its tools and the break after it, as the notice says.
   const sourceOf = (name: string) =>
     (structure?.mock?.sections ?? []).find(
       (section) => section.day === day && section.name === name,

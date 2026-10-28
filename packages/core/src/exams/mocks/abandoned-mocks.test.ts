@@ -18,7 +18,6 @@ import { submitMockSection } from "./submit-mock-section";
 
 const UTC = "UTC";
 
-/** A moment `minutes` after the running section's clock ran out. */
 function afterTheClock({ minutes, running }: { minutes: number; running: { minutes: number } }) {
   return new Date(SESSION_NOW.getTime() + (running.minutes + minutes) * MINUTE_MS);
 }
@@ -32,7 +31,6 @@ async function startAnytime(goalId: string) {
   }
 
   const shape = { area: option.area, day: option.day, kind: option.kind };
-  // The bank holds fewer questions than the exam asks: the mock asks the ones there are.
   const started = await startAnytimeMock({ goalId, input: { acceptFewer: true, shape } });
 
   if (started.status !== "started") {
@@ -56,7 +54,6 @@ describe("a mock whose time ran out while the learner was away", () => {
     const { blockId, goal, user } = await scheduledMockSetup();
     await startMock({ blockId, input: {} });
 
-    // One answer of the section's questions, then three days away.
     const running = await answerRight({ blockId, count: 1 });
     expect(running.current?.questions.length).toBeGreaterThan(1);
 
@@ -67,7 +64,6 @@ describe("a mock whose time ran out while the learner was away", () => {
       status: "ready",
     });
 
-    // The screen's clock hands the section in as the learner comes back, or they finish it.
     await expect(submitMockSection({ blockId, input: {}, section: 0 })).resolves.toStrictEqual({
       status: "expired",
     });
@@ -143,7 +139,6 @@ describe("a mock whose time ran out while the learner was away", () => {
 
     const again = await runningMock(blockId);
 
-    // Its number comes after the goal's finished mocks only: the one that ran out isn't one.
     expect({ number: again.number, status: again.status }).toStrictEqual({
       number: 1,
       status: "running",
@@ -178,7 +173,6 @@ describe("a mock whose time ran out while the learner was away", () => {
     const { goal } = await scheduledMockSetup();
     const { id } = await startAnytime(goal.id);
 
-    // This goal's plan has no skill graph to build a placement mock from: the sitting says it is one.
     const sitting = await prisma.mockExam.findUniqueOrThrow({ where: { id } });
     const conditions = { ...mockConditionsSchema.parse(sitting.conditions), purpose: "placement" };
     await prisma.mockExam.update({ data: { conditions }, where: { id } });

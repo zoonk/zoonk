@@ -17,15 +17,10 @@ import { parsePlanGraph } from "../../../plans/planner/plan-state";
 import { type MockFormat, getItemFormatKey, getMockFormatMix } from "../mock-format-mix";
 import { type MockCandidate } from "../mock-plan";
 
-/** Fewer exam questions than this and the goal's own questions stand in for the exam's. */
 const MIN_EXAM_ITEMS = 5;
 
 type AreaPlanItem = Pick<PlanItem, "chapterId" | "lessonId" | "skillId">;
 
-/**
- * Each lesson's area: the area of the graph skill its plan item teaches, or, for a lesson item
- * without one, the area its chapter's other lessons have.
- */
 function getLessonAreas({
   graphAreas,
   items,
@@ -50,10 +45,6 @@ function getLessonAreas({
   );
 }
 
-/**
- * The skills these lessons teach, oldest first. A GET (which passes its saved plan) reads the
- * shared rows of every lesson in the plan, the entry its other reads share, and keeps these.
- */
 async function loadAreaLessonSkills({
   known,
   lessonIds,
@@ -74,14 +65,8 @@ async function loadAreaLessonSkills({
   });
 }
 
-/**
- * Each goal skill's exam area, as the plan's graph names it ("Math", "Natural Sciences"). The
- * graph lists the plan's skills; the skills its lessons teach take the area of the plan item
- * that schedules the lesson, so a mock knows the area of every question it may ask.
- */
 export async function loadSkillAreas(
   goalId: string,
-  /** The saved plan a GET already read (`readSavedPlan`), so it isn't read again. */
   known?: Pick<Plan, "graph"> & { items: Pick<PlanItem, "chapterId" | "lessonId" | "skillId">[] },
 ): Promise<Map<string, string>> {
   const plan =
@@ -109,15 +94,9 @@ export async function loadSkillAreas(
     return area ? [[row.skillId, area] as const] : [];
   });
 
-  // A graph skill keeps its own area; a skill several lessons teach takes the first one's.
   return new Map([...taughtAreas.toReversed(), ...graphAreas]);
 }
 
-/**
- * The formats a mock asks besides picks, as the exam's notice lists them: a number typed into an
- * answer box (`numeric`), a word or a short answer typed in (`typed`, only questions with the
- * wordings code accepts, so a model grades just the misses).
- */
 function listTypedFormats(structure: ExamStructure | null): ItemFormat[] {
   const kinds = new Set(structure?.formats.map((format) => format.kind));
 
@@ -127,7 +106,6 @@ function listTypedFormats(structure: ExamStructure | null): ItemFormat[] {
   ];
 }
 
-/** Bank questions in the formats a mock asks: picks, and the exam's typed formats. */
 export function getFormatFilter(typed: readonly ItemFormat[]) {
   return {
     OR: [
@@ -157,8 +135,6 @@ async function loadItems({
   skillIds: readonly string[];
   typed: readonly ItemFormat[];
 }) {
-  // A recording's questions are its listening section's (`loadListeningCandidates`), never
-  // another section's, a mock picked before it had its recordings included.
   const where = {
     ...getFormatFilter(typed),
     ...(itemIds
@@ -179,10 +155,6 @@ async function loadItems({
 
 type LastAnswer = Omit<Attempt, "answer">;
 
-/**
- * The order a mock asks answered questions again: the ones the learner got wrong last time first,
- * then the ones answered longest ago, so a repeat is worth the most and remembered the least.
- */
 function byReuseOrder(first: LastAnswer, second: LastAnswer): number {
   if (first.isCorrect !== second.isCorrect) {
     return first.isCorrect ? 1 : -1;
@@ -191,7 +163,6 @@ function byReuseOrder(first: LastAnswer, second: LastAnswer): number {
   return first.answeredAt.getTime() - second.answeredAt.getTime();
 }
 
-/** The learner's latest answer to each of these questions they ever answered, in reuse order. */
 async function loadLastAnswers({
   itemIds,
   userId,
@@ -213,7 +184,6 @@ type BankItem = Awaited<ReturnType<typeof loadItems>>[number];
 
 type CandidateUnit = { answered: boolean; candidates: MockCandidate[]; key: string };
 
-/** A question's place in its set, for a mock rebuilt from the questions it picked (whole sets). */
 function toPickedSet({ item, items }: { item: BankItem; items: readonly BankItem[] }) {
   const { setId } = item;
 
@@ -226,12 +196,6 @@ function toPickedSet({ item, items }: { item: BankItem; items: readonly BankItem
     : undefined;
 }
 
-/**
- * The sets on the mock's skills a mock may ask (a text, a case or a chart several questions read;
- * recordings belong to listening sections), whole: each only when all of its questions are in the
- * exam's formats, its questions in the set's order, all in the area of its first skill that has
- * one, so a set stays in one section.
- */
 async function loadSetUnits({
   areas,
   fits,
@@ -292,17 +256,6 @@ async function loadSetUnits({
   });
 }
 
-/**
- * Questions a mock may ask: questions on the goal's skills (the exam's own when it has enough),
- * in the exam's own formats: its choice format with its number of options (ENEM never asks four
- * options), and the numbers and words typed in that its notice lists, and the sets of questions
- * that read one text whole (see `loadSetUnits`). The ones the learner has never answered come
- * first, sets among them in the order they were written; the ones they answered follow, marked
- * `answered`, the missed ones first and then the ones answered longest ago, then the sets answered
- * longest ago, for a mock to ask again only once it has no new ones left, since repeats inflate
- * the score. With `itemIds`, only those questions, to rebuild the sections of a mock already
- * picked.
- */
 export async function loadMockCandidates({
   goal,
   itemIds,
@@ -313,10 +266,8 @@ export async function loadMockCandidates({
 }: {
   goal: Pick<Goal, "examBlueprintId"> & { id: string | null };
   itemIds: readonly string[] | null;
-  /** The saved plan a GET already read, so its areas aren't read again. */
   plan?: Parameters<typeof loadSkillAreas>[1];
   skillIds: readonly string[];
-  /** The exam the mock copies, whose choice format its questions follow. */
   structure?: ExamStructure | null;
   userId: string;
 }): Promise<MockCandidate[]> {

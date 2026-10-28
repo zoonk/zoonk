@@ -20,23 +20,12 @@ import { planMockWrites } from "./_utils/mock-writes";
 import { type AnytimeMockChoice } from "./mock-contract";
 import { type MockFormatShortfall } from "./mock-shortfall";
 
-/**
- * `ready`: the mock can start now: the bank holds its questions, or the learner's fair use for new
- * ones is used for now, so it asks what the bank has (start it with `acceptFewer`). `preparing`:
- * the goal's skill map is still being drawn (a goal in onboarding), so there's nothing to write for
- * yet: ask again soon. `start`: the caller starts a run writing each of the exam's formats the bank
- * is short of (`writes`: the exam's one-pick format in `quickFormat`, the others with the item
- * writer) and the recordings its listening sections lack (`listening`), shared by every later
- * learner of the exam,
- * whose analytics name the learner, their goal and the client that asked. `refused`: the
- * learner's AI help allowance doesn't cover it now.
- */
+/** On `start`, the caller must dispatch generation; `preparing` requires polling until the skill map exists. */
 export type MockQuestionsRequest =
   | { status: "preparing" }
   | { status: "ready" }
   | {
       analytics: { distinctId: string; goalId: string; platform: AnalyticsPlatform | null };
-      /** The mock's listening sections lack recordings: the run writes and voices them too. */
       listening: boolean;
       quickFormat: PlacementQuickFormat;
       status: "start";
@@ -45,25 +34,12 @@ export type MockQuestionsRequest =
   | { decision: RefusedUsage; status: "refused" }
   | { status: "invalidOption" | "notExam" | "notFound" | "plusRequired" | "unauthorized" };
 
-/**
- * Claims writing a mock's questions: a diagnostic mock's few as small AI help; any other mock's
- * from the plan's fair use for mocks (see `limits.ts`), which a mock taken any time, as often as
- * the learner wants, never waits on.
- */
 function claimMockQuestions(pick: AnytimeMockPick): Promise<UsageDecision> {
   return pick.purpose === "placement"
     ? claimAssist()
     : claimUsage({ kind: "mockQuestions", targetId: randomUUID() });
 }
 
-/**
- * Decides what asking for a mock's questions does, when the learner taps to start one: when the
- * shared bank holds fewer questions they haven't answered than the mock asks, the mock's skills
- * that are short of their share get some written (in the exam's own format, shared with every
- * later learner of the exam), claimed first; for a diagnostic mock, only the topics its questions
- * are spread over that have none. Nothing is written when the bank already holds them, or past
- * the learner's fair use for new questions: the mock asks ones they answered before instead.
- */
 export async function requestMockQuestions({
   goalId,
   input,
@@ -116,7 +92,6 @@ export async function requestMockQuestions({
     return decision;
   }
 
-  // Past fair use, the mock starts at once with questions the learner answered before.
   if (decision.status === "limitReached" && pick.purpose === "practice") {
     return { status: "ready" };
   }

@@ -8,7 +8,6 @@ import { findSkippableItems, findWeakestArea, getAcedSkillIds } from "../mock-ad
 import { type MockPurpose, type MockResult } from "../mock-contract";
 import { type MockAdaptView } from "../mock-view-contract";
 
-/** What a finished mock can change in its goal's plan, with the plan as it is now. */
 export type MockPlanOffers = {
   aced: Set<string>;
   focusAreas: string[];
@@ -16,12 +15,6 @@ export type MockPlanOffers = {
   view: MockAdaptView;
 };
 
-/**
- * The plan changes a finished mock offers (see `MockAdaptView`), worked out from the plan as it is
- * now, so a change already made, or a lesson done since, is never offered again. A mock taken as
- * placement offers none: its answers set where the plan starts. Null without an active goal with a
- * plan, or when the mock offers nothing.
- */
 export async function loadMockPlanOffers({
   goal,
   purpose,
@@ -59,7 +52,6 @@ export async function loadMockPlanOffers({
     return null;
   }
 
-  // Counted as the plan change that skips them will be, a stand-in as the lessons it plans.
   const skippedItems = await prisma.planItem.findMany({
     where: { id: { in: skippable.map((item) => item.id) } },
   });

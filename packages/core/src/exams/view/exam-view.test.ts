@@ -28,7 +28,6 @@ async function examSetup({
   rules = [],
 }: {
   examDay: string;
-  /** The language the notice was read in, when it isn't the learner's. */
   language?: string;
   mock?: ExamStructure["mock"];
   rules?: ExamStructure["rules"];
@@ -188,7 +187,6 @@ describe("exam screen", () => {
     expect(result.status === "ready" && result.today.exam).toMatchObject({
       checklist: ["documents", "blackPen", "route", "examTime", "sleep"],
       day: { date: "2026-10-01", startTime: "13:30" },
-      // A plan that starts the day before the exam spends it on the topics that come up most.
       dayBefore: "light",
       examName: "ENEM",
       resultReported: false,
@@ -224,8 +222,6 @@ describe("exam screen", () => {
     await expect(stages()).resolves.toStrictEqual(["finalStretch", "finalStretch"]);
   });
 
-  // DELE's pass mark showed in Spanish in a Portuguese screen, with nothing saying it was the
-  // notice's own words.
   it("says the pass mark in the notice's words with their language, unless the scale says it", async () => {
     const passMark = {
       citation,
@@ -242,7 +238,6 @@ describe("exam screen", () => {
       status: "ready",
     });
 
-    // A scale with its passing score says it in the learner's own language instead.
     const scaled = await examSetup({
       examDay: "2026-11-08",
       language: "es",
@@ -283,7 +278,6 @@ describe("exam screen", () => {
     });
   });
 
-  // DELE's pages called its official guide a notice ("edital" in Portuguese).
   it("names a language certificate's documents its official guide, any other exam's its notice", async () => {
     const certificate = await examSetup({ examDay: "2026-11-08", language: "es" });
 
@@ -296,7 +290,6 @@ describe("exam screen", () => {
       exam: { examDocument: "guide" },
     });
 
-    // Each setup signs its own learner in.
     const notice = await examSetup({ examDay: "2026-11-08" });
 
     await expect(getExamView({ goalId: notice.goal.id })).resolves.toMatchObject({
@@ -304,8 +297,6 @@ describe("exam screen", () => {
     });
   });
 
-  // Back after days away, the exam page named the mock the learner missed as their next one, while
-  // Today, which reads the plan as it is now, said another day.
   it("never names a mock dated before today as the next one", async () => {
     const { goal, plan } = await examSetup({ examDay: "2026-11-08" });
 

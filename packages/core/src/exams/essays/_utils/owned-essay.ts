@@ -17,7 +17,6 @@ type OwnedEssay = {
   content: EssayContent;
   goal: Goal | null;
   item: Item;
-  /** The learner-local day of the block's session (UTC midnight). */
   sessionDate: Date;
   sessionId: string;
   userId: string;
@@ -28,10 +27,6 @@ export type OwnedEssayResult =
   | { status: "notFound" }
   | { status: "unauthorized" };
 
-/**
- * One of the signed-in learner's writing blocks (produce), by its block id, with the essay it
- * asks for and the exam it's graded for. Another learner's block is "not found".
- */
 export async function findOwnedEssay(blockId: string): Promise<OwnedEssayResult> {
   const session = await getSession();
 

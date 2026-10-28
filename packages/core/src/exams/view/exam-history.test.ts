@@ -13,7 +13,6 @@ import { getExamView } from "./get-exam-view";
 const MOCKS = 12;
 const QUESTIONS = 20;
 
-/** Observe actual reads on both the root client and interactive transactions. */
 function observeHistoryQueries(observe: (client: TransactionClient) => () => void) {
   const restoreRoot = observe(prisma);
   const transaction = prisma.$transaction.bind(prisma);
@@ -40,7 +39,6 @@ function observeHistoryQueries(observe: (client: TransactionClient) => () => voi
   };
 }
 
-/** A Cebraspe-style mock where the learner was right on every sure answer and no unsure one. */
 function netResult(correct: number): MockResult {
   return {
     areas: [],
@@ -74,7 +72,6 @@ function netResult(correct: number): MockResult {
   };
 }
 
-/** An exam goal with twelve finished weekly mocks (the first without calibration) and one left. */
 async function historySetup(mocks = MOCKS) {
   const [user, blueprint] = await Promise.all([userFixture(), examBlueprintFixture()]);
 
@@ -83,7 +80,6 @@ async function historySetup(mocks = MOCKS) {
     goalFixture({ examBlueprintId: blueprint.id, kind: "exam", timezone: "UTC", userId: user.id }),
   ]);
 
-  /** The `index`-th weekly mock, finished the day after it started. */
   const finished = ({ goalId, index }: { goalId: string; index: number }) => {
     const createdAt = daysAgo((mocks - index) * 7);
 
@@ -155,7 +151,6 @@ describe("exam screen history", () => {
     expect(exam?.mocks[0]).toMatchObject({ correct: 16, measure: 12, scoring: "net", total: 20 });
     expect(exam?.sessionsDone).toBe(2);
 
-    // Every calibrated mock counts, not only the ones listed.
     expect(exam?.calibration).toMatchObject({
       blankingGain: 11,
       sure: { answered: 22, right: 22 },
@@ -166,7 +161,6 @@ describe("exam screen history", () => {
   it("bounds snapshot reads while keeping lifetime numbering, calibration and recent progress", async () => {
     const { goal } = await historySetup(32);
 
-    /** Observe the real query's rows without replacing Prisma or persistence. */
     const snapshots: unknown[][] = [];
 
     const restore = observeHistoryQueries((client) => {
@@ -216,7 +210,6 @@ describe("exam screen history", () => {
 
     const completed = Promise.withResolvers<null>();
 
-    /** Only schedule real SQL: completion commits after snapshots, before count/calibration. */
     const restore = observeHistoryQueries((client) => {
       const findMany = client.mockExam.findMany.bind(client.mockExam);
       const count = client.mockExam.count.bind(client.mockExam);
@@ -348,7 +341,6 @@ describe("exam screen history", () => {
   });
 });
 
-/** A mock that asked eight questions of each subject, with these right in each. */
 function subjectResult(rightBySubject: Record<string, number>, perSubject = 16): MockResult {
   const subjects = Object.entries(rightBySubject);
   const correct = subjects.reduce((sum, [, right]) => sum + right, 0);
@@ -370,7 +362,6 @@ function subjectResult(rightBySubject: Record<string, number>, perSubject = 16):
   };
 }
 
-/** What a mock fixed when it started, as the history reads it. */
 function sat(
   attrs: Pick<MockConditions, "purpose" | "shape"> & { reused?: number },
 ): MockConditions {
@@ -390,10 +381,6 @@ function sat(
   };
 }
 
-/**
- * A Plus learner's four mocks, oldest first: the diagnostic one in onboarding, a Mathematics one
- * taken any time, the plan's weekly half, and the whole exam day taken any time.
- */
 async function progressSetup({ plus }: { plus: boolean }) {
   const [user, blueprint] = await Promise.all([userFixture(), examBlueprintFixture()]);
 
@@ -492,8 +479,6 @@ describe("progress across mocks", () => {
     const ethics = { area: "Ética", day: null, kind: "area" } as const;
     const law = { area: "Civil Law", day: null, kind: "area" } as const;
 
-    // Eight questions of ethics twice, the second mostly repeated; then a long Civil Law mock that
-    // repeated most of the first's questions.
     const later = [
       {
         conditions: sat({ purpose: "practice", shape: ethics }),
@@ -528,7 +513,6 @@ describe("progress across mocks", () => {
     const result = await getExamView({ goalId: goal.id });
     const progress = result.status === "ready" ? result.exam.progress : null;
 
-    // Every mock stays on the chart; neither subject has a trend, so neither reads as better.
     expect(progress?.mocks).toHaveLength(8);
     expect(progress?.subjects.find((trend) => trend.name === "Ética")).toBeUndefined();
 

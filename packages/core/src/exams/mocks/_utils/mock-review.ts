@@ -7,11 +7,6 @@ import { gradeMockItem, readRecordedMockAnswer } from "./mock-item-grading";
 import { type MockItem, loadMockItems, toMockQuestionView } from "./mock-items";
 import { getAskedItemIds } from "./mock-sections";
 
-/**
- * A question's review entry, or null when it was right. Its attempt's verdict decides (a model may
- * have graded a typed answer right that code doesn't accept); grading it again by code gives the
- * answers to show and the share of points several picks earned.
- */
 function toEntry({
   area,
   attempt,
@@ -62,7 +57,6 @@ type FinishedMockAnswers = {
   items: Map<string, MockItem>;
 };
 
-/** The mock's graded answers, as they were recorded when it finished. */
 async function loadFinishedAnswers({
   conditions,
   mockExamId,
@@ -85,10 +79,6 @@ async function loadFinishedAnswers({
   return { attempts, items };
 }
 
-/**
- * After a mock: every question missed or left blank with the right answer and why, in the mock's
- * order, and the notebook's causes for the mistakes (filled in as the classifier gets to them).
- */
 export async function loadMockReview({
   areas,
   conditions,

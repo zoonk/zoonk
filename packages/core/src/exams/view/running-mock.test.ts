@@ -18,7 +18,6 @@ async function examOf(goalId: string) {
   return result.exam;
 }
 
-/** Starts the goal's first mock to take any time, on the questions its bank has. */
 async function startAnytime(goalId: string) {
   const options = await getMockOptions({ goalId });
   const option = options.status === "ready" ? options.view.options[0] : undefined;
@@ -38,7 +37,6 @@ async function startAnytime(goalId: string) {
   return { id: started.id, shape };
 }
 
-// Ana's mock (4 of 45 answered) showed on the exam's page only as "Continue your mock exam".
 describe("the exam's running mock", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
@@ -91,11 +89,9 @@ describe("the exam's running mock", () => {
     const { blockId, goal } = await scheduledMockSetup();
     const { id } = await startAnytime(goal.id);
 
-    // The weekly mock starts later, so it's the newer one.
     vi.setSystemTime(new Date(SESSION_NOW.getTime() + MINUTE_MS));
     await expect(startMock({ blockId, input: {} })).resolves.toStrictEqual({ status: "ready" });
 
-    // The weekly one opens its own sitting, wherever its day's block is now.
     await expect(examOf(goal.id)).resolves.toMatchObject({
       nextMock: null,
       runningMocks: [

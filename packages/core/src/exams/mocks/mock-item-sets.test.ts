@@ -21,10 +21,6 @@ const QUESTIONS = 6;
 const SINGLES = 4;
 const PASSAGE = "The town's library opened on Sundays last year. Visits rose by a third.";
 
-/**
- * An exam whose one section asks six questions, and a bank with a text three questions read
- * beside four questions on their own: the mock has room for the text and three of the others.
- */
 async function setsSetup() {
   const [user, blueprint, skill] = await Promise.all([
     userFixture(),
@@ -146,7 +142,6 @@ describe("a mock with questions that share a text", () => {
 
     expect(questions[first + 2]?.set).toMatchObject({ position: 2 });
 
-    // Left blank, every question comes back in the review with its text.
     await submitMockSection({ blockId: id, input: { timeZone: "UTC" }, section: 0 });
     const finished = await readMock(id);
     const reviewed = finished.review.find((entry) => entry.itemId === setItemIds[1]);

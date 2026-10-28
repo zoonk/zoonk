@@ -27,7 +27,6 @@ const VISUAL = {
   title: "Shadow measurements",
 };
 
-/** Only the external model verdict is supplied; authentication, grading policy and writes are real. */
 function supplyWrongTypedVerdict() {
   vi.mocked(gradeTypedAnswer).mockResolvedValue({
     data: {

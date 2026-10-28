@@ -18,21 +18,12 @@ export type SubmitEssayResult =
   | { grade: EssayGradeView; status: "graded" }
   | { status: "blockNotActive" | "limitReached" | "notFound" | "unauthorized" };
 
-/** A draft saved already, with the grade it was saved with. */
 function replaySaved(saved: Pick<Attempt, "answer">): SubmitEssayResult {
   const grade = essayAnswerSchema.safeParse(saved.answer).data?.grade;
   return grade ? { grade, status: "graded" } : { status: "notFound" };
 }
 
-/**
- * Grades a draft of the block's essay with the official rubric (ENEM's five competencies, OAB's
- * brief section by section, or the item's criteria) and records it as learning: every criterion
- * with a comment on the learner's own words, an estimated range and one next step. Rewriting
- * grades a new draft; a day has a fair number of grades. A draft sent with its `attemptId` is
- * graded and recorded once: sent again, even while the first is still being graded, it gets the
- * grade it was saved with. The grade is claimed before the model is called (`claimEssayGrades`),
- * so drafts sent at once never grade past the day's limit.
- */
+/** Reusing an `attemptId` replays its saved grade, including concurrent submissions. */
 export async function submitEssay({
   blockId,
   input,
@@ -62,8 +53,6 @@ export async function submitEssay({
   const localDate = getDateInTimeZone({ date: new Date(), timeZone });
   const isTodays = sessionDate.getTime() === localDate.getTime();
 
-  // Sending a draft takes today's block on, as opening it from the session does (a writing page
-  // opened from a link hasn't started it yet). Another day's block waits for its own session.
   const started =
     block.status === "pending" && isTodays
       ? await startStudyBlock({ blockId, input: { timeZone: input.timeZone }, sessionId })
@@ -109,11 +98,8 @@ export async function submitEssay({
       return { status: recorded.refusal };
     }
 
-    // A claim that outlived its time was taken over, and the other request recorded first.
     return recorded.status === "saved" ? replaySaved(recorded.saved) : { grade, status: "graded" };
   } finally {
-    // A grade that wasn't recorded (the grader failed, or the block was settled meanwhile) frees
-    // its claim, so the draft can be graded again; recording it ended the claim already.
     await releaseEssayGradeClaims({ attemptIds: [attemptId], userId });
   }
 }

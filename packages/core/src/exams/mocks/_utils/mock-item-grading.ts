@@ -11,14 +11,7 @@ import { type MockItem, serveMockMath, toMockQuestionView } from "./mock-items";
 
 const BLANK = { dontKnow: true } as const;
 
-/**
- * How a mock question went, graded by code: the share of its points it earned (`credit`, partial
- * only for several picks where the notice gives partial credit), whether it was right, what its
- * attempt keeps (a numeric answer with the numbers it was asked with), and what the notebook and
- * the review show.
- */
 export type MockItemGrade = {
-  /** Something was given: a pick, a number or a word, not a blank. */
   answered: boolean;
   credit: number;
   isCorrect: boolean;
@@ -58,13 +51,6 @@ function gradeChoice({
   };
 }
 
-/**
- * Grades a mock question by code: a pick against the right options (several picks by the notice's
- * partial credit), a number against the numbers this mock showed, a typed word against the
- * wordings code accepts. A typed answer code doesn't accept may still be right in other words,
- * which only grading with a model can tell (see `gradeMock`). An answer of another format's shape
- * is wrong, like any wrong pick.
- */
 function gradeMockAnswer({
   answer,
   item,
@@ -106,7 +92,6 @@ function gradeMockAnswer({
   return gradeChoice({ answer, item, partialCredit });
 }
 
-/** Every mock format saves the complete served question, including a number's drawn context. */
 export function gradeMockItem(input: Parameters<typeof gradeMockAnswer>[0]): MockItemGrade {
   const graded = gradeMockAnswer(input);
   const question = toMockQuestionView({ item: input.item, mockId: input.mockId });
@@ -120,10 +105,6 @@ export function gradeMockItem(input: Parameters<typeof gradeMockAnswer>[0]): Moc
   };
 }
 
-/**
- * An answer as its attempt stored it, in the shape the learner gave it: a numeric one also kept
- * the numbers it was asked with, which the answer's shape doesn't carry. Blank otherwise.
- */
 export function readRecordedMockAnswer(value: unknown): MockAnswer | null {
   const parsed = mockAnswerSchema.safeParse(value);
 

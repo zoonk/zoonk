@@ -13,14 +13,6 @@ import { type MockSitting } from "./owned-mock";
 
 const MS_PER_SECOND = 1000;
 
-/**
- * A mock taken any time counts like the rest of the learner's study, once: its right answers earn
- * Brain Power (each question is new to them, Hyperdrive building as in a session) and the belts
- * and buddy stages it crosses, its answers move Energy, its time counts for the day, and one
- * ledger row of kind `mock` lets preparation read it like the plan's mocks. It has no session
- * block, so no checkpoint bonus: taking mocks again and again earns what their answers earn.
- * Returns the Brain Power and Energy before and after it, or null when it was settled before.
- */
 export async function settleAnytimeMock({
   graded,
   mock,
@@ -54,7 +46,6 @@ export async function settleAnytimeMock({
       userId: mock.userId,
     });
 
-    // A finish that stopped after its ledger row was written grades the rest without a second one.
     const settled = await tx.learningEvent.findFirst({
       select: { id: true },
       where: {

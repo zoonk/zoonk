@@ -1,10 +1,7 @@
 import { type MockConditions } from "../mock-contract";
 import { type MockSectionView } from "../mock-view-contract";
 
-/**
- * Every question the mock asks, in order. A routed module that was never reached asks its easier
- * set, so ending a mock early counts its questions as blank instead of dropping them.
- */
+/** Includes the easier set of unreached routed modules so early completion still grades those questions as blank. */
 export function getAskedItemIds(conditions: MockConditions): { itemId: string; section: number }[] {
   return conditions.sections.flatMap((section, index) => {
     const ids =
@@ -16,12 +13,10 @@ export function getAskedItemIds(conditions: MockConditions): { itemId: string; s
   });
 }
 
-/** Every essay the mock asks (a full mock's written parts), in order. */
 export function getEssayItemIds(conditions: MockConditions): string[] {
   return conditions.sections.flatMap((section) => section.essays);
 }
 
-/** Where each section's questions start in the mock's numbering (1-based). */
 export function getFirstNumber({
   conditions,
   section,

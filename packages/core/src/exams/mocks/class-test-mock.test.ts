@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import { examStructureSchema } from "../../library/exams/blueprint-contract";
 import { withClassTestMock } from "./class-test-mock";
 
-/** A class test read from the learner's slides: subjects, no mock conditions of its own. */
 const STRUCTURE = examStructureSchema.parse({ formats: [], mock: null, rules: [], subjects: [] });
 
 function mockOf(dayMinutes?: number | null) {

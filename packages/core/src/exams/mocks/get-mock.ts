@@ -47,7 +47,6 @@ import { type MockTypedPart, listSatMockLeftOut } from "./mock-left-out";
 import { getMockDays } from "./mock-plan";
 import { type MockQuestion } from "./mock-view-contract";
 
-/** The level and the tenth of Energy a finished mock reached, kept with its result. */
 const keptReachedSchema = z.object({ reached: reachedSchema });
 
 export type MockViewResult =
@@ -55,7 +54,6 @@ export type MockViewResult =
   | { status: "notFound" }
   | { status: "unauthorized" };
 
-/** This mock's place among the goal's mocks: "Mock exam 3". */
 async function getMockNumber(owned: OwnedMock): Promise<number> {
   const earlier = await countFinishedMocksBefore({
     createdAt: owned.mock?.createdAt,
@@ -99,7 +97,6 @@ async function loadCurrentSection({
       : [];
   });
 
-  // The written part comes after the section's questions, as on the exam's answer sheet.
   const written = section.essays.flatMap((itemId, index): MockQuestion[] => {
     const essay = essays.get(itemId);
 
@@ -147,7 +144,6 @@ async function loadCurrentSection({
   };
 }
 
-/** "Move to Monday" before the mock starts, from its own day or a later one. */
 async function canMoveMock(owned: OwnedMock): Promise<boolean> {
   const { block, goal, mock, payload } = owned;
 
@@ -195,7 +191,6 @@ async function loadFinished({
   }
 
   const result = mockResultSchema.safeParse(owned.mock.result).data ?? null;
-  // What it reached is kept beside what it showed (see `completeMock`); older mocks kept none.
   const reached = keptReachedSchema.safeParse(owned.mock.result).data?.reached ?? NOTHING_REACHED;
 
   const [review, offers, essays] = await Promise.all([
@@ -207,10 +202,6 @@ async function loadFinished({
   return { ...review, adapt: offers?.view ?? null, essays, reached, result };
 }
 
-/**
- * The notice's pass marks, for a mock of the whole exam: a full mock of an exam held on one day.
- * A part of the exam (half of it, a subject, one of ENEM's two days) says nothing about passing.
- */
 function getMockPassMarks({
   conditions,
   owned,
@@ -225,10 +216,6 @@ function getMockPassMarks({
     : null;
 }
 
-/**
- * Where the mock belongs (its goal and exam, the session it was played in, if any) and what the
- * exam's notice says about it: how it's scored and passed, and where its size comes from.
- */
 function describeOwner({
   conditions,
   owned,
@@ -266,12 +253,7 @@ function describeOwner({
   };
 }
 
-/**
- * One of the learner's mock exams, by the id it opens by (its session block's, or its own for a
- * mock taken any time): the exam's conditions before it starts, the running section with its
- * deadline and drafts (never the answers), and after it, what it showed with the questions to
- * review. One whose time ran out while the learner was away is `expired`, with nothing to show.
- */
+/** Accepts a scheduled mock's block id or an anytime mock's own id; running questions contain no answers. */
 export async function getMock(blockId: string): Promise<MockViewResult> {
   const found = await findOwnedMock(blockId);
 
@@ -284,7 +266,7 @@ export async function getMock(blockId: string): Promise<MockViewResult> {
   const conditions = mock?.conditions ?? (await buildMockConditions(owned));
   const areas = owned.goal ? await loadSkillAreas(owned.goal.id) : new Map<string, string>();
   const running = mock?.status === "active" ? mock : null;
-  // Between two sections, the next one's clock starts once the break ends.
+
   const breakUntil =
     running && running.sectionStartedAt.getTime() > Date.now() ? running.sectionStartedAt : null;
 
@@ -297,7 +279,6 @@ export async function getMock(blockId: string): Promise<MockViewResult> {
       loadAskedTypedParts(getAskedItemIds(conditions).map((entry) => entry.itemId)),
       loadMockSpeaking(conditions),
       loadMockMissionMoment({ mock, timeZone: getAnswerTimeZone({ goal: owned.goal }) }),
-      // Once it's over, a milestone it earned (or one still waiting) opens over its result.
       mock?.status === "finished" ? loadCeremony(owned.userId) : null,
     ]);
 

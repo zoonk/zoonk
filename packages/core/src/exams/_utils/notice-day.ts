@@ -11,10 +11,6 @@ import { findClosestSittings, findLearnerSitting, groupSittings } from "./exam-s
 
 type NoticeDayBlueprint = Pick<ExamBlueprint, "edition" | "ownerId">;
 
-/**
- * What a goal's notice says about its date: the day it offers, or that its month has none, and
- * the first day of the sitting after the goal's (see `getNextSitting`).
- */
 export type NoticeDates = {
   day: NoticeDay | null;
   nextSitting: string | null;
@@ -27,7 +23,6 @@ function getTomorrow(today: string): string {
   return toIsoDate(addDays(fromIsoDate(today), 1));
 }
 
-/** The exam days of the edition the goal prepares for, from its notice (see `getExamEditionDays`). */
 function readNoticeDays({
   blueprint,
   details,
@@ -45,17 +40,6 @@ function readNoticeDays({
   });
 }
 
-/**
- * The exam day the goal's notice gives, after the learner's today, when it isn't the goal's date:
- * the first day of the sitting the learner means (see `findLearnerSitting`), so an exam held
- * several times a year offers the sitting in their month, or none. The official day, for any goal;
- * the estimated one (`estimated`), only for a goal whose date is the notice's (`noticeDate`), that
- * has none or whose date passed, never over a date the learner set that's still ahead. A day they
- * kept their own date over (`kept`, or the understanding card's offer they didn't take) stays
- * theirs. A class test's day is the learner's or their own material's, never a notice's. The day
- * is only ever offered: Today proposes it, the screens that show the date offer it with one tap,
- * and the goal's date changes only when the learner takes it.
- */
 function getNoticeDay({
   blueprint,
   details,
@@ -66,13 +50,9 @@ function getNoticeDay({
 }: {
   blueprint: NoticeDayBlueprint | null;
   details: unknown;
-  /** The date the plan counts down to, as an ISO date. */
   goalDate: string | null;
-  /** The notice's days the learner answered "Keep mine" to (see `loadKeptNoticeDays`). */
   kept?: readonly string[];
-  /** The day the plan took from the notice (`PlanSettings.noticeDate`). */
   noticeDate: string | null;
-  /** The learner's today, as an ISO date. */
   today: string;
 }): NoticeDay | null {
   if (!blueprint || blueprint.ownerId !== null) {
@@ -81,7 +61,6 @@ function getNoticeDay({
 
   const { days, estimated } = readNoticeDays({ blueprint, details, today });
 
-  // Once the goal's date passed, the learner's own date says nothing about the next sitting.
   const isPassed = goalDate !== null && goalDate < today;
   const isNoticeDated = goalDate === null || goalDate === noticeDate || isPassed;
   const tomorrow = getTomorrow(today);
@@ -102,13 +81,6 @@ function getNoticeDay({
   return { date: next, estimated };
 }
 
-/**
- * For an exam held several times a year whose notice has no sitting in the month of the learner's
- * date (DELE B2 in February): that month, with the closest sittings still open for registration
- * (see `findClosestSittings`), so the screens say so and offer them. The learner's date stays
- * theirs until they pick one. Null for a date with a sitting in its month, an exam of one sitting,
- * estimated days, a class test, or a date that passed.
- */
 function getNoSitting({
   blueprint,
   details,
@@ -117,9 +89,7 @@ function getNoSitting({
 }: {
   blueprint: NoticeDayBlueprint | null;
   details: unknown;
-  /** The date the plan counts down to, as an ISO date. */
   goalDate: string | null;
-  /** The learner's today, as an ISO date. */
   today: string;
 }): NoSitting | null {
   const tomorrow = getTomorrow(today);
@@ -144,21 +114,13 @@ function getNoSitting({
     : null;
 }
 
-/**
- * The first day of the exam's sitting after the goal's, from today on, when the notice lists it:
- * a plan that goes on after its exam (`PlanSettings.fullCourse`) has its mocks there for it. None
- * while that edition's days are only estimated, so a screen never gives a guess as its date, and
- * none for a class test or a goal without a date.
- */
 function getNextSitting({
   blueprint,
   goalDate,
   today,
 }: {
   blueprint: NoticeDayBlueprint | null;
-  /** The date the plan counts down to, as an ISO date. */
   goalDate: string | null;
-  /** The learner's today, as an ISO date. */
   today: string;
 }): string | null {
   if (!blueprint || blueprint.ownerId !== null || goalDate === null) {
@@ -173,16 +135,11 @@ function getNextSitting({
     from,
   });
 
-  // A sitting the goal's date falls in started before `from`: the next one starts after it.
   const next = groupSittings(days).find((sitting) => (sitting[0]?.date ?? "") >= from);
 
   return estimated ? null : (next?.[0]?.date ?? null);
 }
 
-/**
- * The notice's days the learner kept their own date over with "Keep mine" on Today: the screens
- * don't offer them again, until the notice says another day.
- */
 async function loadKeptNoticeDays(goalId: string): Promise<string[]> {
   const declined = await prisma.planChange.findMany({
     select: { payload: true },
@@ -208,10 +165,6 @@ type NoticeDatesRequest = {
   today: string;
 };
 
-/**
- * `getNoticeDay` and `getNoSitting` for an exam goal, reading its stored notice and the days the
- * learner kept their date over, so the plan and the exam page say the same; none for other goals.
- */
 export async function loadNoticeDates({
   blueprint: knownBlueprint,
   goal,
@@ -242,7 +195,6 @@ export async function loadNoticeDates({
   };
 }
 
-/** The notice's day for an exam goal (see `loadNoticeDates`), so Today offers what the screens do. */
 export async function loadNoticeDay(request: NoticeDatesRequest): Promise<NoticeDay | null> {
   const { day } = await loadNoticeDates(request);
   return day;

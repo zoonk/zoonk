@@ -390,7 +390,6 @@ describe("a mock of an exam with a written test", () => {
   it("never fills the written test with objective questions: it lists what the notice asks", () => {
     const outline = outlineMock({ fullLength: true, structure: camara });
 
-    // The objective tests keep the notice's one time for both: 5 hours, not a pace per question.
     expect(
       outline.sections.map((section) => [section.name, section.questions, section.minutes]),
     ).toStrictEqual([["Provas objetivas (P1 e P2)", 180, 300]]);
@@ -431,7 +430,6 @@ describe("a mock of an exam with a written test", () => {
       structure: camara,
     });
 
-    // Two discursive questions and a legal brief: three essays, in the afternoon's 180 minutes.
     expect(
       full.sections.map((section) => [
         section.name,
@@ -510,7 +508,6 @@ describe("a mock of an exam with a written test", () => {
       { asked: true, name: "Redação" },
     ]);
 
-    // Without an essay for it, the essay part is left out and listed, and the clock stays the day's.
     const without = planMock({
       adaptive: false,
       candidates: candidates("Languages", 120),

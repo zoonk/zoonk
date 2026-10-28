@@ -21,11 +21,6 @@ export type SaveMockAnswerResult = {
     | "unauthorized";
 };
 
-/**
- * Whether the answer fits what the running section asks: an answer (or a blank) for one of its
- * questions, text only for a question typed in words, and an essay's text (or a blank) for one of
- * its essays.
- */
 async function fitsSection({
   input,
   section,
@@ -55,10 +50,6 @@ async function fitsSection({
   return item?.format === "typed";
 }
 
-/**
- * Whether the section's rules let this answer change (see `judgeForwardOnlySave`): any answer in a
- * section that moves freely.
- */
 async function judgeMove({
   input,
   mockId,
@@ -86,14 +77,6 @@ async function judgeMove({
   });
 }
 
-/**
- * Saves a draft answer in the running section, like marking an answer sheet: a pick, a number, a
- * typed word or a blank (an essay's text so far), whether it's flagged to come back to, and the
- * time spent on it.
- * Nothing is graded and nothing says whether it's right until the mock ends. Once a section's time
- * runs out, it takes no more; a section that never goes back keeps the answers left behind
- * ("locked"), but for the changes its end review allows.
- */
 export async function saveMockAnswer({
   blockId,
   input,
@@ -113,7 +96,6 @@ export async function saveMockAnswer({
     return { status: "notRunning" };
   }
 
-  // On the break between sections, the next one hasn't started: its answers wait.
   if (mock.sectionStartedAt.getTime() > Date.now()) {
     return { status: "notRunning" };
   }
@@ -140,8 +122,6 @@ export async function saveMockAnswer({
     flagged: input.flagged,
   };
 
-  // The answer sheet shows it on a reload or another device, so a save that changes it is a
-  // learner change; the same draft again (a retry whose response was lost) changes nothing.
   await writeLearnerChange({ userId: found.owned.userId }, async (tx) => {
     const where = { mockItem: { itemId: input.itemId, mockExamId: mock.id } };
     const saved = await tx.mockExamAnswer.findUnique({ where });

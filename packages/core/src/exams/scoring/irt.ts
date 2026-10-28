@@ -1,29 +1,17 @@
-/**
- * Item response theory as ENEM scores it: a three-parameter logistic model where each question has
- * a discrimination, a difficulty and a chance of a lucky guess. A learner's ability is
- * the expected value of the posterior over a grid (EAP) with a standard normal prior, which stays
- * finite when every answer is right or wrong. Scores are estimates and are always shown as such.
- */
 export type IrtItem = { difficulty: number; discrimination: number; guessing: number };
 
 type IrtResponse = { correct: boolean; item: IrtItem };
 
 export type AbilityEstimate = { se: number; theta: number };
 
-/** The scaling constant that makes the logistic curve match the normal ogive. */
 const SCALING = 1.7;
 const GRID_MIN = -4;
 const GRID_MAX = 4;
 const GRID_STEP = 0.05;
 const DEFAULT_DISCRIMINATION = 1;
 
-/**
- * ENEM's scale: ability 0 is 500 and one standard deviation is 100 points, anchored on the 2009
- * graduating class. Scores outside 0 to 1000 are clamped for display.
- */
 const ENEM_SCALE = { max: 1000, mean: 500, min: 0, sd: 100 } as const;
 
-/** A 90% interval: wide enough to be honest about a short mock. */
 export const Z_90 = 1.645;
 
 /** Scores round to tens, so they never read as more precise than they are. */
@@ -34,7 +22,6 @@ const GRID: readonly number[] = Array.from(
   (_, index) => GRID_MIN + index * GRID_STEP,
 );
 
-/** The chance of a right answer at an ability. */
 function probabilityCorrect({ item, theta }: { item: IrtItem; theta: number }): number {
   return (
     item.guessing +
@@ -53,10 +40,6 @@ function likelihood({ responses, theta }: { responses: readonly IrtResponse[]; t
   }, 1);
 }
 
-/**
- * The learner's ability from their answers, with its standard error. Without answers it's the
- * prior: ability 0 with a standard error of 1.
- */
 export function estimateAbility(responses: readonly IrtResponse[]): AbilityEstimate {
   const weights = GRID.map((theta) => likelihood({ responses, theta }) * standardNormal(theta));
 
@@ -83,14 +66,12 @@ function roundScore(score: number): number {
   return Math.round(clampScore(score) / SCORE_STEP) * SCORE_STEP;
 }
 
-/** An ability on ENEM's scale, rounded to the nearest point. */
 function toScaleScore(theta: number): number {
   return Math.round(clampScore(ENEM_SCALE.mean + ENEM_SCALE.sd * theta));
 }
 
 type ScaleScore = { high: number; low: number; score: number };
 
-/** The score with its 90% range, rounded to tens so it never reads as more precise than it is. */
 export function toScaleRange(estimate: AbilityEstimate): ScaleScore {
   const margin = Z_90 * estimate.se;
 
@@ -101,10 +82,6 @@ export function toScaleRange(estimate: AbilityEstimate): ScaleScore {
   };
 }
 
-/**
- * Pools several mocks' abilities, each weighed by its precision, into one estimate: more mocks
- * narrow the range, as a longer test would.
- */
 export function poolAbilities(estimates: readonly AbilityEstimate[]): AbilityEstimate | null {
   const usable = estimates.filter((estimate) => estimate.se > 0);
 
@@ -120,10 +97,6 @@ export function poolAbilities(estimates: readonly AbilityEstimate[]): AbilityEst
   return { se: 1 / Math.sqrt(precision), theta };
 }
 
-/**
- * A bank item as the model reads it: its calibrated difficulty and discrimination when real
- * answers have set them, and the chance of guessing among its options.
- */
 export function toIrtItem({
   difficulty,
   discrimination,
@@ -131,7 +104,6 @@ export function toIrtItem({
 }: {
   difficulty: number | null;
   discrimination: number | null;
-  /** Options to pick from: 5 for ENEM, 2 for a true or false statement. */
   options: number;
 }): IrtItem {
   return {
@@ -141,21 +113,11 @@ export function toIrtItem({
   };
 }
 
-/** Difficulty past these points reads as an easy or a hard question. */
 const EASY_BELOW = -0.5;
 const HARD_ABOVE = 0.5;
 
-type IrtCoherence = {
-  easyWrong: number;
-  hardRight: number;
-  /** Missing easy questions while getting hard ones right looks like guessing, and IRT weighs it. */
-  isCoherent: boolean;
-};
+type IrtCoherence = { easyWrong: number; hardRight: number; isCoherent: boolean };
 
-/**
- * ENEM's coherence: a right answer counts for more when the pattern makes sense. Easy questions
- * missed next to hard ones answered right lower the score, so those easy ones come first.
- */
 export function getIrtCoherence(responses: readonly IrtResponse[]): IrtCoherence {
   const easyWrong = responses.filter(
     (response) => response.item.difficulty <= EASY_BELOW && !response.correct,

@@ -10,7 +10,6 @@ import { MAX_SETS_PER_PART, getPartSetsFilter, pickListeningSets } from "./pick-
 
 type PartInput = { exam: ListeningExam; part: ListeningPart };
 
-/** The goal's exam and the parts of it a run makes a set ready for. */
 export type PartsToPrepare = { exam: ListeningExam; parts: ListeningPart[] };
 
 function getFilter({ exam, part }: PartInput) {
@@ -21,10 +20,6 @@ function getFilter({ exam, part }: PartInput) {
   });
 }
 
-/**
- * A set of the part that was written but never voiced (its voicing failed), the oldest first:
- * voicing it is cheaper than writing another.
- */
 export async function findUnvoicedPartSet(input: PartInput): Promise<string | null> {
   const set = await prisma.itemSet.findFirst({
     orderBy: { createdAt: "asc" },
@@ -35,11 +30,7 @@ export async function findUnvoicedPartSet(input: PartInput): Promise<string | nu
   return set?.id ?? null;
 }
 
-/**
- * Writes and stores one more set for the part (`createListeningSet`), on the skills of the exam's
- * listening section, unless the part already has its most sets (`MAX_SETS_PER_PART`). Returns the
- * stored set's id, to voice next. An internal workflow bridge: shared content, no learner data.
- */
+/** Internal workflow bridge for shared content; callers must supply a trusted exam. */
 export async function writePartSet({
   analytics,
   exam,
@@ -68,7 +59,6 @@ export async function writePartSet({
   });
 }
 
-/** Whether each part has a voiced set: a part without one can't be played to anyone yet. */
 async function listUnvoicedParts(exam: ListeningExam): Promise<ListeningPart[]> {
   const voiced = await Promise.all(
     exam.parts.map((part) =>
@@ -81,14 +71,7 @@ async function listUnvoicedParts(exam: ListeningExam): Promise<ListeningPart[]> 
   return exam.parts.filter((_, index) => voiced[index] === 0);
 }
 
-/**
- * The parts of the goal's exam a run makes a set ready for (`listeningSetsWorkflow`). For the
- * goal's setup, those with no voiced set yet: the first learner of an exam pays for one recording
- * per part, and every later one finds them made. For a learner (`userId`, derived from their
- * session by the caller), also those where they heard every set and the part can have more
- * (`pickListeningSets`), so their next practice plays a new one. Null when the goal has no
- * listening.
- */
+/** Internal: the caller must derive an optional `userId` from the authenticated session. */
 export async function listListeningPartsToPrepare({
   goalId,
   userId,

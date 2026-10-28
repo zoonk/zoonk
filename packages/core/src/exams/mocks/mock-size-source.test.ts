@@ -22,7 +22,6 @@ const MOCK = {
   totalQuestions: 80,
 };
 
-/** An exam whose notice states its size, time and each subject's questions. */
 const STATED: ExamStructure = {
   formats: [],
   mock: MOCK,

@@ -13,7 +13,6 @@ export type EssayViewResult =
   | { status: "notFound" }
   | { status: "unauthorized" };
 
-/** A writing block of the learner's session: the prompt, its rubric and the drafts so far. */
 export async function getEssay({
   blockId,
   timeZone,
@@ -29,7 +28,6 @@ export async function getEssay({
 
   const { block, blueprint, content, goal, item, sessionId, userId } = found.owned;
   const zone = getAnswerTimeZone({ goal, timeZone });
-  // The request's own instant, read after its headers, so a prerender never samples the clock.
   const { currentInstant } = await getRequestProgressDateContext();
 
   const [drafts, gradesLeft] = await Promise.all([

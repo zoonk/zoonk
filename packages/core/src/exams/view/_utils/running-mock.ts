@@ -10,7 +10,6 @@ import { type ExamNextMock, type ExamRunningMock } from "../exam-view-contract";
 
 type RunningMock = { mock: ExamRunningMock; planItemId: string | null };
 
-/** The goal's mocks still marked active, newest first, with their drafts and session block. */
 function findActiveMocks({ goalId, userId }: { goalId: string; userId: string }) {
   return prisma.mockExam.findMany({
     include: {
@@ -44,7 +43,6 @@ async function toRunningMock({
     mock: {
       answered: row.answers.filter((draft) => isMockAnswerPresent(readMockAnswer(draft.answer)))
         .length,
-      // Past its last section it was handed in, and only waits to be graded.
       deadline:
         row.sectionIndex < sections.length
           ? getSectionDeadline({ ...row, conditions }).toISOString()
@@ -62,12 +60,6 @@ async function toRunningMock({
   };
 }
 
-/**
- * The goal's mocks the learner started and hasn't finished, skipping any whose time ran out while
- * they were away, which aren't running anymore: the one taken any time (or as placement) first, as
- * the exam page's main action continues it (`getMockOptions`), then the plan's weekly one, which
- * can run beside it. Each with the plan item a weekly one plays, which it stands for.
- */
 export async function loadRunningMocks({
   goalId,
   userId,
@@ -89,10 +81,6 @@ export async function loadRunningMocks({
   return mocks.filter((mock) => mock !== null);
 }
 
-/**
- * The page's running and next mocks: the plan's weekly mock, once started, is a running one, so
- * it's listed once, as running, opening its own sitting.
- */
 export function pickExamMocks({
   next,
   running,

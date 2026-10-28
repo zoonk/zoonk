@@ -25,14 +25,7 @@ import { getExamStartTime } from "./mock-conditions";
 export type CreateAnytimeMockResult =
   | { id: string; status: "running" | "started" }
   | { status: "notEnoughQuestions" }
-  /** The bank holds fewer questions the learner hasn't seen than the option asks. */
   | { status: "needsQuestions" }
-  /**
-   * The bank holds too few of the option's questions (`isMockShort`) and none can be written now:
-   * what the mock can ask and in how long, for the learner to start it knowingly (`acceptFewer`).
-   * `limit` is the fair-use period that stops new ones being written; null when nothing more can
-   * be written for it.
-   */
   | {
       examQuestions: number;
       limit: UsagePeriod | null;
@@ -41,11 +34,6 @@ export type CreateAnytimeMockResult =
       status: "short";
     };
 
-/**
- * Whether a mock asks too few new questions, the rest being ones the learner answered, or too few
- * in one of the exam's formats (`listShortFormats`), or misses a listening section's recordings
- * (`listMissingRecordings`): they can be written for it first.
- */
 function isShortOfNew({
   candidates,
   pick,
@@ -69,12 +57,6 @@ function isShortOfNew({
   );
 }
 
-/**
- * The picked mock, planned from the bank: one of the goal's options from the questions the learner
- * never answered, then the ones they answered for the rest (see `loadMockCandidates`), or a
- * diagnostic one spread over the plan's topics from new questions only, since it places the
- * learner.
- */
 export async function planFromBank({
   goal,
   pick,
@@ -94,8 +76,6 @@ export async function planFromBank({
   ]);
 
   if (pick.purpose === "placement") {
-    // Placement spreads its few questions over the plan's topics, one or two each: a set's several
-    // questions on one text would crowd them out.
     const fresh = candidates.filter((candidate) => !candidate.answered && !candidate.set);
 
     return {
@@ -156,16 +136,7 @@ function toConditions({
   };
 }
 
-/**
- * Starts a mock taken any time: the picked mock's questions from the shared bank at the exam's
- * pace, its first section's clock running, the ones the learner never answered first. One at a
- * time per goal: a learner with one running continues it (two taps at once find the same one).
- * Unless the caller takes what there is (`acceptFewer`): a bank short of new questions answers
- * `needsQuestions` so a run can write them first, while the learner may have them written (no
- * `writesCap`); a mock still short of its questions answers `short`. Otherwise a mock of a subject
- * or half a day asks questions the learner answered before for the rest, and a full mock asks
- * fewer, saying how many of the exam's it asks (`examQuestions`).
- */
+/** Reuse a running mock; `needsQuestions` requires preparing questions before retrying without `acceptFewer`. */
 export async function createAnytimeMock({
   acceptFewer,
   goal,
@@ -179,7 +150,6 @@ export async function createAnytimeMock({
   pick: AnytimeMockPick;
   setup: AnytimeMockSetup;
   userId: string;
-  /** What stops new questions being written for the learner's mocks now (`findMockQuestionsCap`). */
   writesCap: UsagePeriod | null;
 }): Promise<CreateAnytimeMockResult> {
   const { candidates, plan } = await planFromBank({ goal, pick, setup, userId });
@@ -216,7 +186,6 @@ export async function createAnytimeMock({
       });
     }
 
-    // A day that is all written asks its essays and no questions.
     if (planned < MIN_CHECKPOINT_QUESTIONS && !(planned === 0 && asksEssays)) {
       return unchanged({ status: "notEnoughQuestions" });
     }

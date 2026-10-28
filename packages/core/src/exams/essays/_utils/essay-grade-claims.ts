@@ -2,39 +2,24 @@ import "server-only";
 import { setTimeout as wait } from "node:timers/promises";
 import { type Attempt, type TransactionClient, prisma, sql } from "@zoonk/db";
 
-/** Essays a learner can have graded in a day: plenty to write and rewrite, bounded for cost. */
 const DAILY_ESSAY_GRADES = 6;
 
-/** Namespaces the per-learner claim lock so it never collides with other advisory locks. */
 const CLAIM_LOCK_NAMESPACE = 51_883;
 
-/**
- * Longer than any grade takes (a request's own time limit): a claim this old was left by a request
- * that crashed, so it no longer counts and its draft can be claimed again.
- */
 const CLAIM_TTL_MS = 360_000;
 
-/** How often a request waiting for another one's grade of the same draft looks again. */
 const CLAIM_POLL_MS = 500;
 
 function getLiveSince(now: Date): Date {
   return new Date(now.getTime() - CLAIM_TTL_MS);
 }
 
-/**
- * Claiming a learner's grades and ending a claim with its recorded grade take this lock, so a claim
- * round sees each draft either claimed or graded, never between the two.
- */
 async function lockClaims(transaction: TransactionClient, userId: string): Promise<void> {
   await transaction.$queryRaw(
     sql`SELECT pg_advisory_xact_lock(${CLAIM_LOCK_NAMESPACE}::int, hashtext(${userId}))::text`,
   );
 }
 
-/**
- * Essay grades the learner has left on their local day: the day's graded essays and the grades
- * still being made count, so drafts sent at once can't grade past the limit.
- */
 export async function countGradesLeft({
   localDate,
   now,
@@ -46,7 +31,6 @@ export async function countGradesLeft({
   transaction?: TransactionClient;
   userId: string;
 }): Promise<number> {
-  // One query, so a grade being recorded (its claim ending as its attempt is saved) is counted once.
   const counts = await transaction.user.findUnique({
     select: {
       _count: {
@@ -63,7 +47,6 @@ export async function countGradesLeft({
   return Math.max(0, DAILY_ESSAY_GRADES - used);
 }
 
-/** What a request may do with one draft: grade it, replay its grade, or neither today. */
 export type EssayGradeClaim =
   | { attemptId: string; status: "claimed" | "limitReached" }
   | { attemptId: string; saved: Attempt; status: "saved" };
@@ -74,11 +57,6 @@ function isSettled(claim: ClaimRound): claim is EssayGradeClaim {
   return claim.status !== "taken";
 }
 
-/**
- * One short transaction under the learner's lock, with no model call in it: each draft already
- * graded is `saved`; one another request is grading (a live claim) is `taken`; the others are
- * claimed in order while the day has grades left, and `limitReached` after that.
- */
 function claimRound({
   attemptIds,
   localDate,
@@ -128,7 +106,6 @@ function claimRound({
       round.status === "claimed" ? [round.attemptId] : [],
     );
 
-    // A claim a crashed request left behind is taken over.
     await tx.essayGradeClaim.deleteMany({ where: { id: { in: claimedIds } } });
 
     await tx.essayGradeClaim.createMany({
@@ -139,7 +116,6 @@ function claimRound({
   });
 }
 
-/** Frees drafts this request claimed and didn't record (a failed grade), so a retry can grade. */
 export async function releaseEssayGradeClaims({
   attemptIds,
   userId,
@@ -152,7 +128,6 @@ export async function releaseEssayGradeClaims({
   }
 }
 
-/** Recording a draft's grade ends its claim, in the transaction that records it. */
 export async function endEssayGradeClaim(
   transaction: TransactionClient,
   { attemptId, userId }: { attemptId: string; userId: string },
@@ -161,14 +136,7 @@ export async function endEssayGradeClaim(
   await transaction.essayGradeClaim.deleteMany({ where: { id: attemptId } });
 }
 
-/**
- * Claims the drafts' grades before any model is called (see `claimRound`), so the same draft sent
- * twice at once is graded once: while another request grades one of them, this one frees what it
- * claimed and waits, holding no connection, until that grade is recorded (`saved`, replayed), fails
- * (the draft is claimed again) or its claim expires. A claimed draft is graded and recorded by the
- * caller, whose recording ends the claim (`endEssayGradeClaim`); one it doesn't record must be
- * released (`releaseEssayGradeClaims`).
- */
+/** The caller must record each claimed grade or release its claim with `releaseEssayGradeClaims`. */
 export async function claimEssayGrades(input: {
   attemptIds: readonly string[];
   localDate: Date;

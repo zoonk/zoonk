@@ -9,7 +9,6 @@ export type RecordMockPlayResult =
   | { played: number; status: "counted" | "usedUp" }
   | { status: "invalidSet" | "notFound" | "notRunning" | "unauthorized" };
 
-/** How many times the exam plays one of the running section's recordings; null for another set. */
 async function findPlayLimit({
   itemIds,
   setId,
@@ -26,13 +25,6 @@ async function findPlayLimit({
   return content?.success ? content.data.plays : null;
 }
 
-/**
- * Counts a play of a recording in the mock's running listening section, as it starts: the exam
- * plays each one a set number of times (once or twice) and gives none back, so the count lives on
- * the mock. A reload, another tab or another device opens the recording with the plays it has
- * left, and a play started on a page that didn't know of the last one is `usedUp`: the page stops
- * it. Counted one at a time, so two pages starting it at once can't both get the last play.
- */
 export async function recordMockPlay({
   blockId,
   setId,
@@ -49,7 +41,6 @@ export async function recordMockPlay({
   const { mock } = found.owned;
   const now = Date.now();
 
-  // On the break between sections the next one hasn't started; after its time, it's over.
   if (
     mock?.status !== "active" ||
     mock.sectionStartedAt.getTime() > now ||
@@ -67,8 +58,6 @@ export async function recordMockPlay({
     return { status: "invalidSet" };
   }
 
-  // A play left is on the recording's screen, so a counted one is a learner change; a refused one
-  // (used up, or the section moved on) changes nothing.
   const counted = await writeLearnerChange({ userId: found.owned.userId }, async (tx) => {
     const rows = await tx.$queryRaw<{ played: number }[]>`
     UPDATE mock_exams

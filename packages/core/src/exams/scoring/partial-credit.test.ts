@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { getPickCredit, getPickOutcome } from "./partial-credit";
 
-/** A four-option question with three right options, as JEE Advanced's "one or more correct". */
 const THREE_OF_FOUR = { correct: 3, options: 4 };
 
 describe(getPickCredit, () => {
@@ -26,7 +25,6 @@ describe(getPickCredit, () => {
   });
 
   it("gives each right pick one option's share, and all of them the whole question, as JEE Advanced", () => {
-    // +2 of +4 for two of three right options, +4 for all three.
     expect(
       getPickCredit({ picks: { ...THREE_OF_FOUR, right: 2, wrong: 0 }, rule: "perOption" }),
     ).toBe(0.5);

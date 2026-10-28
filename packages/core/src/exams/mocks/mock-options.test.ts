@@ -12,7 +12,6 @@ function subject(name: string, questions: number | null, shortName: string | nul
   return { citation: CITATION, name, questions, shortName, topics: [], weight: null };
 }
 
-/** ENEM's shape: two days of 90 questions, the first with the essay as a written part. */
 const TWO_DAYS: ExamStructure = {
   formats: [],
   mock: {
@@ -52,7 +51,6 @@ const TWO_DAYS: ExamStructure = {
 
 const GOAL_AREAS = ["Linguagens", "Ciências Humanas", "Ciências da Natureza", "Matemática"];
 
-/** The OAB's first phase: one test of 80 questions, whose notice counts none of its subjects. */
 const OAB: ExamStructure = {
   formats: [],
   mock: {
@@ -79,7 +77,6 @@ const OAB: ExamStructure = {
   ],
 };
 
-/** Sofia's plan, built before the notice was read: its areas go by the names learners use. */
 const OAB_AREAS = [
   "Direito Civil",
   "Direito Processual Civil",
@@ -163,7 +160,6 @@ describe(listMockOptions, () => {
   });
 
   it("places each subject on the day whose section names part of its official name", () => {
-    // A notice read without short names: ENEM's sections name its areas only in part.
     const official = {
       ...TWO_DAYS,
       subjects: TWO_DAYS.subjects.map((entry) => ({ ...entry, shortName: null })),
@@ -187,7 +183,6 @@ describe(listMockOptions, () => {
       "Matemática e suas Tecnologias",
     ]);
 
-    // Each subject at its own day's pace: 330 minutes for 90 questions, then 300 for 90.
     expect(
       options.filter((option) => option.kind === "area").map((option) => option.minutes),
     ).toStrictEqual([165, 165, 150, 150]);
@@ -203,14 +198,12 @@ describe(listMockOptions, () => {
       structure: TWO_DAYS,
     });
 
-    // ENEM's essay shares the first day's 330 minutes.
     expect(first).toMatchObject({ minutes: 330, objectiveOnly: false, written: ["Redação"] });
     expect(second).toMatchObject({ objectiveOnly: false, written: [] });
     expect(half).toMatchObject({ day: 1, kind: "half", objectiveOnly: true, written: [] });
   });
 
   it("offers a day that is all written as a full mock when the exam has its essays", () => {
-    // The OAB's second phase: one written test of five hours, a legal brief and four discursive questions.
     const writtenOnly: ExamStructure = {
       ...OAB,
       mock: OAB.mock && {
@@ -252,7 +245,6 @@ describe(listMockOptions, () => {
       },
     ]);
 
-    // Without its essays yet, there's nothing to sit.
     expect(
       listMockOptions({ dayInTurn: null, goalAreas: ["Direito Civil"], structure: writtenOnly }),
     ).toStrictEqual([]);
@@ -293,7 +285,6 @@ describe(listMockOptions, () => {
   it("offers every subject the plan studies, whatever name the plan gives it", () => {
     const options = listMockOptions({ dayInTurn: null, goalAreas: OAB_AREAS, structure: OAB });
 
-    // Named as the notice (and the Plan) names them, never by their short names.
     expect(
       options.filter((option) => option.kind === "area").map((option) => option.areas),
     ).toStrictEqual([
@@ -307,7 +298,6 @@ describe(listMockOptions, () => {
   });
 
   it("sizes a subject's mock at its even share of the exam when nothing counts the subjects", () => {
-    // The OAB's 80 questions over its four subjects here, when no edition counts them: 20 each.
     const options = listMockOptions({ dayInTurn: null, goalAreas: OAB_AREAS, structure: OAB });
 
     expect(
@@ -321,7 +311,6 @@ describe(listMockOptions, () => {
   });
 
   it("offers a subject the exam asks little of, at the fewest questions a subject's mock asks", () => {
-    // The latest edition's counts: ethics 8 of 80, human rights 2.
     const counted: ExamStructure = {
       ...OAB,
       pastQuestions: {
@@ -383,7 +372,6 @@ describe(listMockOptions, () => {
 });
 
 describe("an exam with listening and speaking papers", () => {
-  // IELTS as a notice reading can come back: each paper's time, no counts and no listening parts.
   const ielts: ExamStructure = {
     formats: [],
     mock: {
@@ -434,8 +422,6 @@ describe("an exam with listening and speaking papers", () => {
       structure: ielts,
     });
 
-    // One recording of six questions in the Listening paper's 30 minutes, and the default 45
-    // Reading questions in its 60.
     expect(full).toMatchObject({ kind: "full", minutes: 90, questions: 51 });
   });
 
@@ -447,12 +433,9 @@ describe("an exam with listening and speaking papers", () => {
       structure: ielts,
     });
 
-    // Speaking isn't sat, and Writing has no essay yet: Listening and Reading are what it covers,
-    // in full or in half.
     expect(full?.covers).toStrictEqual(["Listening", "Reading"]);
     expect(half?.covers).toStrictEqual(["Listening", "Reading"]);
 
-    // Without recordings yet, Reading alone.
     const [unvoiced] = listMockOptions({ dayInTurn: null, goalAreas, structure: ielts });
     expect(unvoiced?.covers).toStrictEqual(["Reading"]);
   });
@@ -479,7 +462,6 @@ describe("an exam with listening and speaking papers", () => {
 
 describe(planOptionMock, () => {
   it("asks each subject as its own block, in the notice's order and evenly, when the notice gives no counts", () => {
-    // The Câmara's notice gives 180 items over its subjects without saying how many each.
     const subjects = ["Língua Portuguesa", "Direito Constitucional", "Processo Legislativo"];
 
     const camara: ExamStructure = {
@@ -513,7 +495,6 @@ describe(planOptionMock, () => {
 
     const asked = (plan?.sections[0]?.itemIds ?? []).map((id) => id.split("#")[0]);
 
-    // Ten of each, one subject after the other, never mixed.
     expect(asked).toStrictEqual(subjects.flatMap((name) => Array.from({ length: 10 }, () => name)));
   });
 
@@ -600,7 +581,6 @@ describe(planOptionMock, () => {
   });
 
   it("keeps a full mock in the exam's proportions with new questions only, short of what the bank lacks", () => {
-    // The OAB's shape: one test whose subjects the past edition counts, ethics 8 of 20.
     const oab: ExamStructure = {
       ...OAB,
       mock: OAB.mock && {
@@ -625,7 +605,6 @@ describe(planOptionMock, () => {
         itemId: `${candidate.itemId}-answered`,
       }));
 
-    // Ethics has many questions the learner answered in its own mocks; the others have few new ones.
     const oabBank = [
       ...candidates("Ética Profissional", 3),
       ...answered("Ética Profissional", 20),
@@ -647,7 +626,6 @@ describe(planOptionMock, () => {
     const asked = plan.sections.flatMap((section) => section.itemIds);
     const count = (prefix: string) => asked.filter((id) => id.startsWith(prefix)).length;
 
-    // Each subject asks at most its count, from new questions: what one lacks stays empty.
     expect({
       civil: count("Direito Civil"),
       criminal: count("Direito Penal"),
@@ -656,7 +634,6 @@ describe(planOptionMock, () => {
 
     expect(asked.some((id) => id.endsWith("-answered"))).toBe(false);
     expect(plan.reused).toBe(0);
-    // At the exam's pace: 10 of its 20 questions in half its time.
     expect(plan.minutes).toBe(38);
   });
 
@@ -705,7 +682,6 @@ describe(getMockQuestionsShortfall, () => {
     expect(shortfall(candidates("Matemática", 9))).toStrictEqual([
       {
         format: { key: "choice", share: 1, writer: { kind: "quick" } },
-        // Each skill holds three of the fifteen its share asks.
         questionsPerSkill: 12,
         skillIds,
         target: 15,

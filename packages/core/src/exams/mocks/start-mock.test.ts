@@ -94,7 +94,6 @@ describe("scheduled mock focus", () => {
       throw new Error("Expected the running scheduled mock");
     }
 
-    // Completion holds an older owned snapshot while a later switch pauses the block's clock.
     vi.setSystemTime(new Date(SESSION_NOW.getTime() + 2 * MINUTE_MS));
     await openOtherBlock(blockId);
     vi.setSystemTime(new Date(SESSION_NOW.getTime() + 6 * MINUTE_MS));

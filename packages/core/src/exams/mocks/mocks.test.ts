@@ -137,8 +137,6 @@ describe("mock exams", () => {
       input: { answer: null, durationMs: 10_000, flagged: false, itemId: third?.itemId ?? "" },
     });
 
-    // Each saved answer is on the sheet a reload or another device opens: one change each.
-
     await Promise.all(
       rest.map((question) =>
         saveMockAnswer({
@@ -183,7 +181,6 @@ describe("mock exams", () => {
     expect(event).toMatchObject({ correctAnswers: 6, incorrectAnswers: 3 });
     expect(planItem?.status).toBe("done");
 
-    // Handing it in again changes nothing.
     await expect(submitMockSection({ blockId, input: {}, section: 0 })).resolves.toStrictEqual({
       status: "finished",
     });
@@ -308,7 +305,6 @@ describe("mock exams", () => {
 
     await saveMockAnswer({ blockId, input: draft });
 
-    // A retry whose first response was lost sends the same draft.
     await expect(saveMockAnswer({ blockId, input: draft })).resolves.toStrictEqual({
       status: "saved",
     });
@@ -412,7 +408,6 @@ describe(finishMock, () => {
     await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(9);
   });
 
-  // Together, the second finish races the hand-in; a moment later, it arrives while the first grades.
   it.each([0, 10])(
     "grades once when a second finish comes %i ms after the first",
     async (gapMs) => {
@@ -459,7 +454,6 @@ describe(finishMock, () => {
       prisma.mockExam.findUniqueOrThrow({ where: { blockId } }),
     ]);
 
-    // Every section was handed in and the first answer recorded, then the finish failed.
     await Promise.all([
       prisma.mockExam.update({ data: { sectionIndex: 1 }, where: { id: mock.id } }),
       attemptFixture({

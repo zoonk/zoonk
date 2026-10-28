@@ -9,7 +9,6 @@ import { planWeeklyMock } from "./_utils/plan-weekly-mock";
 
 const QUESTIONS_PER_SKILL = 4;
 
-/** One exam day of two sections, each named after one of the plan's areas. */
 const TWO_SECTIONS: ExamStructure = {
   formats: [],
   mock: {
@@ -28,16 +27,10 @@ const TWO_SECTIONS: ExamStructure = {
   subjects: [],
 };
 
-/** A skill of the plan's graph, in an area. */
 function graphSkill(skillId: string, area: string) {
   return { area, lessons: 1, name: area, phase: 0, skillId, weight: null };
 }
 
-/**
- * A plan whose graph names the areas of its own skills, while the questions belong to the skills
- * its lessons teach (not in the graph): the lesson's plan item says which graph skill, so which
- * area, it teaches. A third skill no plan item teaches has no known area.
- */
 async function areaSetup() {
   const user = await userFixture();
   const goal = await goalFixture({ timezone: "UTC", userId: user.id });

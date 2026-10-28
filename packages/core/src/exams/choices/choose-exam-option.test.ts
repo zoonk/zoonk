@@ -23,11 +23,9 @@ import {
 } from "./_test-utils/choice-blueprint";
 import { chooseExamOption } from "./choose-exam-option";
 
-/** A Monday in 2020, before other tests' learning events, so pace estimates stay out of it. */
 const NOW = new Date("2020-09-28T12:00:00Z");
 const TIME_ZONE = "America/Sao_Paulo";
 
-/** An exam learner whose plan is built (or, with `built: false`, still waiting for the planner). */
 async function setup({ built = true }: { built?: boolean } = {}) {
   const user = await userFixture();
   const blueprint = await choiceBlueprintFixture();
@@ -95,7 +93,6 @@ describe(chooseExamOption, () => {
       source: "learner",
     });
 
-    // Switching replaces the pick for that choice; undoing brings the earlier one back.
     const english = await chooseExamOption({
       goalId: goal.id,
       input: { ...spanish, subject: ENGLISH },
@@ -117,9 +114,6 @@ describe(chooseExamOption, () => {
   });
 
   it("keeps the rest of the subject a picked option is part of, as the plan's areas name it, with the option inside it", async () => {
-    // Graphs name ENEM's languages area "Linguagens", which begins like "Língua Espanhola" too:
-    // picking Spanish must not take the area out of its subject (Lucas M., persona pass 11). The
-    // notice counts the language inside that subject, so it's no subject of its own.
     const user = await userFixture();
     const blueprint = await choiceBlueprintFixture();
 

@@ -92,7 +92,6 @@ const AP_ROWS = [
   { criterion: "Evidence", description: "Supports the claim with specific evidence", points: 2 },
 ];
 
-/** An AP exam lists no essays, but free-response questions with pointed rows were written for it. */
 async function apSetup() {
   const user = await userFixture();
 
@@ -118,7 +117,6 @@ async function apSetup() {
   return fixture;
 }
 
-/** Today's writing block of a new ENEM goal, started. */
 async function startedWritingBlock() {
   const { goal, user } = await essaySetup();
   const today = await getTodayStudySession({ goalId: goal.id });
@@ -136,7 +134,6 @@ async function startedWritingBlock() {
   return { blockId, otherBlockId, sessionId, user };
 }
 
-/** The grader's answer, once `release` lets it go: a grade that takes a while. */
 function holdGrader() {
   const release = Promise.withResolvers<null>();
   const entered = Promise.withResolvers<null>();
@@ -150,7 +147,6 @@ function holdGrader() {
   return { entered: entered.promise, release: () => release.resolve(null) };
 }
 
-/** The writing block's day, and `count` of its essay grades already used on it. */
 async function useGrades({ count, userId }: { count: number; userId: string }) {
   const essay = await prisma.item.findFirstOrThrow({ where: { format: "essay" } });
 
@@ -175,10 +171,6 @@ async function useGrades({ count, userId }: { count: number; userId: string }) {
   return localDate;
 }
 
-/**
- * Another request recording a draft's grade, paused inside its transaction after ending the draft's
- * claim and saving its attempt, until `commit`. `blocked` resolves once another backend waits on it.
- */
 async function recordingGrade({
   attemptId,
   localDate,
@@ -275,7 +267,6 @@ describe("essays in sessions", () => {
     const blockId = block?.id ?? "";
     const sessionId = today.status === "ready" ? today.session.id : "";
 
-    // Sending the first draft takes the block on, even from a writing page opened from a link.
     await expect(
       submitEssay({ blockId, input: { durationMs: 600_000, text: "My essay about it." } }),
     ).resolves.toMatchObject({ grade: { total: { score: 720 } }, status: "graded" });
@@ -308,7 +299,6 @@ describe("essays in sessions", () => {
 
     expect(finished.status).toBe("ready");
 
-    // A finished block takes no more drafts.
     await expect(
       submitEssay({ blockId, input: { durationMs: 1000, text: "Another draft" } }),
     ).resolves.toStrictEqual({ status: "blockNotActive" });
@@ -350,7 +340,6 @@ describe("essays in sessions", () => {
       }),
     ]);
 
-    // The day's six grades, already used on the learner's day.
     await prisma.attempt.createMany({
       data: Array.from({ length: 6 }, () => ({
         answer: {},
@@ -415,7 +404,6 @@ describe("essay drafts and access", () => {
     await grader.entered;
     const second = submitEssay({ blockId, input });
 
-    // The second request waits for the first one's grade instead of grading the draft again.
     await wait(300);
     grader.release();
 
@@ -468,7 +456,6 @@ describe("essay drafts and access", () => {
       input: { attemptId: key, durationMs: 1000, text: "My essay about it." },
     });
 
-    // The claim waits for the recording instead of reading between its two halves.
     await recording.blocked;
     await recording.commit();
 
@@ -521,7 +508,6 @@ describe("essay drafts and access", () => {
     const key = crypto.randomUUID();
     const localDate = await useGrades({ count: 0, userId: user.id });
 
-    // A request that crashed while grading left its claim, long enough ago to have expired.
     await prisma.essayGradeClaim.create({
       data: {
         createdAt: new Date(Date.now() - 400_000),
@@ -664,7 +650,6 @@ describe("essay drafts and access", () => {
   });
 });
 
-/** Whether today's session (Wednesday 30 Sep) has a writing block under the plan's cadence. */
 async function writesToday({
   cadence,
   startDate,
@@ -676,7 +661,6 @@ async function writesToday({
 }) {
   const { goal, plan } = await essaySetup();
 
-  // Studied yesterday: a day after a break would be a lighter welcome back, too short to write.
   await Promise.all([
     dailyProgressFixtureMany([
       { date: new Date("2026-09-29T00:00:00Z"), timeSpentSeconds: 600, userId: goal.userId },
@@ -706,7 +690,6 @@ describe("essays on the learner's written cadence", () => {
   });
 
   it("writes in the plan's first, third… week when the learner practices every other week", async () => {
-    // One learner at a time: each signs in as theirs.
     await expect(
       writesToday({ cadence: "biweekly", startDate: "2026-09-30", targetDate: "2026-12-20" }),
     ).resolves.toBe(true);

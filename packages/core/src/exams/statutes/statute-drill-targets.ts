@@ -14,21 +14,15 @@ import {
   toStatuteShortName,
 } from "./statute-articles";
 
-/** A goal drills the first articles of up to two laws; more come as the plan reaches them. */
 const MAX_LAWS = 2;
 const ARTICLES_PER_LAW = 8;
 const FGV_PATTERN = /\bfgv\b/iu;
 
 type StatuteDrillStyle = "cebraspe" | "fgv" | "generic";
 
-/** One law to drill for a goal: its articles, the skill it belongs to and the board's style. */
 export type StatuteDrillTarget = {
   articles: StatuteArticleText[];
   examBlueprintId: string;
-  /**
-   * The exam asks short written answers (`asksShortAnswers`), so its generic drills mix in
-   * fill-in-the-blank passages; any other exam's would never be asked.
-   */
   fillInTheBlank: boolean;
   language: string;
   law: { shortName: string; title: string; url: string | null };
@@ -37,7 +31,6 @@ export type StatuteDrillTarget = {
   style: StatuteDrillStyle;
 };
 
-/** How the board asks about the letter of the law: Cebraspe's right or wrong, FGV's options. */
 function getStyle({
   board,
   method,
@@ -52,7 +45,6 @@ function getStyle({
   return board && FGV_PATTERN.test(board) ? "fgv" : "generic";
 }
 
-/** The goal skill a law belongs to: one whose name or area names the law. */
 function findLawSkill({
   skills,
   title,
@@ -71,12 +63,7 @@ function findLawSkill({
   return skill?.skillId ?? null;
 }
 
-/**
- * The laws a public-service exam goal should drill word for word: statutes among the goal's
- * public sources (by title or the official site), each matched to the goal skill that names it.
- * Laws no skill names are left for the lessons. Internal workflow bridge: the goal id comes from the
- * public boundary that created the goal.
- */
+/** Internal workflow bridge: the goal must come from the public boundary that created it. */
 export async function loadStatuteDrillTargets(goalId: string): Promise<StatuteDrillTarget[]> {
   const goal = await prisma.goal.findUnique({
     include: { examBlueprint: true, plan: { select: { graph: true } } },
@@ -89,8 +76,6 @@ export async function loadStatuteDrillTargets(goalId: string): Promise<StatuteDr
     return [];
   }
 
-  // Drills are shared by every learner of the exam: only a law's public text, never a learner's
-  // own upload ("Lei 8.112 anotada.pdf" reads as a law too).
   const sources = await prisma.learnerSource.findMany({
     select: { source: true },
     where: {
@@ -138,10 +123,6 @@ export async function loadStatuteDrillTargets(goalId: string): Promise<StatuteDr
     .slice(0, MAX_LAWS);
 }
 
-/**
- * Stores a law's drills as items on its skill, each citing its article ("Lei nº 8.112, Art. 13")
- * and linked to the law's source, so practice can show the reference and open the official text.
- */
 export async function writeStatuteDrills({
   drills,
   optionCount,

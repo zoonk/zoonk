@@ -6,11 +6,6 @@ import {
   toScaleRange,
 } from "../scoring/irt";
 
-/**
- * Calibration from official results: once enough learners of an exam report theirs, estimates for
- * that exam shift by how far off they were on average and widen by how much they varied. Until
- * then, estimates are shown uncalibrated, and always as a labeled range.
- */
 const MIN_CALIBRATION_REPORTS = 5;
 
 export type ReportedResult = { estimateHigh: number; estimateLow: number; official: number };
@@ -36,7 +31,6 @@ export function getEstimateCalibration(
 
 type ScoreRange = { high: number; low: number };
 
-/** Shifts a range by the exam's calibration and widens it by how much the errors varied. */
 export function calibrateRange({
   calibration,
   range,
@@ -60,10 +54,6 @@ function toTens(value: number): number {
   return Math.round(value / SCORE_STEP) * SCORE_STEP;
 }
 
-/**
- * The estimated score on an item response theory scale (ENEM's) from the last mocks' abilities,
- * pooled so more mocks narrow the range. Null before a first mock.
- */
 export function estimateIrtRange({
   abilities,
   calibration,

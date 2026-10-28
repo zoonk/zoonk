@@ -57,7 +57,6 @@ async function examGoal(name = "ENEM") {
   return { blueprint, goal, user };
 }
 
-/** A finished mock scored with item response theory, as the result stores it. */
 function irtMock({ goalId, theta, userId }: { goalId: string; theta: number; userId: string }) {
   return prisma.mockExam.create({
     data: {
@@ -146,7 +145,6 @@ describe("how did it go", () => {
     const others = await Promise.all(Array.from({ length: 3 }, () => userFixture()));
     const report = { estimateHigh: 640, estimateLow: 600, scale: "irt", score: 680 };
 
-    // Three learners still here and two who left: five reports, enough to calibrate.
     await Promise.all([
       prisma.examResult.createMany({
         data: others.map((other) => ({
@@ -177,7 +175,6 @@ describe("how did it go", () => {
     const { blueprint, goal, user } = await examGoal();
     vi.setSystemTime(new Date("2026-11-20T12:00:00Z"));
 
-    // A whole exam day's mock: its answers in the ledger, and its sitting.
     await Promise.all([
       learningEventFixture({
         correctAnswers: 30,
@@ -205,7 +202,6 @@ describe("how did it go", () => {
 
     const stored = await prisma.examResult.findUniqueOrThrow({ where: { goalId: goal.id } });
 
-    // 75% right in the mock is 60 of 80 points, give or take the range.
     expect(stored).toMatchObject({ maxScore: 80, scale: "points", score: 64 });
     expect(stored.estimateLow).toBeLessThan(60);
     expect(stored.estimateHigh).toBeGreaterThan(60);
@@ -234,7 +230,6 @@ describe("how did it go", () => {
   });
 
   it("estimates the SAT on its own scale and keeps a reported SAT score with it", async () => {
-    // The SAT scores with item response theory too, but on its own scale, not ENEM's.
     const { goal, user } = await examGoal("SAT");
     vi.setSystemTime(new Date("2026-11-20T12:00:00Z"));
 
@@ -253,7 +248,6 @@ describe("how did it go", () => {
     const view = await getExamView({ goalId: goal.id });
     const exam = view.status === "ready" ? view.exam : null;
 
-    // 75% right, give or take, is 1170 to 1430 on the 400 to 1600 scale.
     expect(exam?.estimate).toMatchObject({ high: 1430, low: 1170, scale: "sat" });
     expect(exam?.scoring).toMatchObject({ method: "raw", scale: "sat" });
 

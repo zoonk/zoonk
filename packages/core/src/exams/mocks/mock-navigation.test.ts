@@ -14,10 +14,6 @@ import { startAnytimeMock } from "./start-anytime-mock";
 const CITATION = { passage: "From the notice.", sourceId: "source" };
 const QUESTIONS = 6;
 
-/**
- * A GMAT-like section of six questions: never back to a question once left, each one answered
- * before the next, and a review at its end that may change two answers.
- */
 const GMAT_LIKE: SectionNavigation = {
   answerChanges: 2,
   forwardOnly: true,
@@ -146,7 +142,6 @@ describe("a mock section that moves like the real exam's", () => {
     await pick({ id, index: 0, itemId: first ?? "" });
     await pick({ id, index: 0, itemId: second ?? "" });
 
-    // The question on screen may still change; one left behind can't.
     await expect(pick({ id, index: 1, itemId: second ?? "" })).resolves.toStrictEqual({
       status: "saved",
     });
@@ -155,7 +150,6 @@ describe("a mock section that moves like the real exam's", () => {
       status: "locked",
     });
 
-    // Its time and flag still save with the same answer.
     await expect(
       saveMockAnswer({
         blockId: id,
@@ -168,7 +162,6 @@ describe("a mock section that moves like the real exam's", () => {
       }),
     ).resolves.toStrictEqual({ status: "saved" });
 
-    // A reload opens where the learner got to.
     const reloaded = await readMock(id);
 
     expect(reloaded.current).toMatchObject({ changesLeft: 2, resume: 1 });
@@ -178,7 +171,6 @@ describe("a mock section that moves like the real exam's", () => {
       await pick({ id, index: 0, itemId });
     }
 
-    // At the end, the review changes two answers, and no more.
     await expect(pick({ id, index: 1, itemId: first ?? "" })).resolves.toStrictEqual({
       status: "saved",
     });
@@ -187,7 +179,6 @@ describe("a mock section that moves like the real exam's", () => {
       status: "saved",
     });
 
-    // An answer changed already changes again without using another change.
     await expect(pick({ id, index: 0, itemId: first ?? "" })).resolves.toStrictEqual({
       status: "saved",
     });

@@ -9,12 +9,6 @@ type ExamNames = {
   goal: { title: string } | null;
 };
 
-/**
- * How a mock is scored, from the exam's notice; plain right answers when it doesn't say. Item
- * response theory scores land on ENEM's scale, which only ENEM uses: every other exam scored that
- * way (Saber 11, the SAT) counts right answers, its result shows the notice's own sentence on how
- * it's scored, and a scale of its own (the SAT's) turns the share into it.
- */
 export function getMockScoring({
   blueprint,
   goal,
@@ -30,11 +24,6 @@ export function getMockScoring({
   return method === "wrongCancelsRight" ? "net" : "raw";
 }
 
-/**
- * The share of a right answer each wrong one takes away, as the notice states it: its ratio, or a
- * whole one where a wrong answer cancels a right one without saying more; 0 where wrong answers
- * cost nothing.
- */
 export function getWrongPenalty(structure: ExamStructure | null): number {
   const scoring = structure?.mock?.scoring;
 
@@ -45,10 +34,6 @@ export function getWrongPenalty(structure: ExamStructure | null): number {
   return scoring.wrongPenalty ?? 1;
 }
 
-/**
- * How a question with several picks scores when answered partly right, as the notice states it for
- * the exam's multi-pick format; only every right option earns it where the notice doesn't say.
- */
 export function getPartialCredit(structure: ExamStructure | null): PartialCreditRule {
   const stated = structure?.formats.find(
     (format) => format.kind === "multipleChoice" && format.partialCredit,
@@ -57,17 +42,8 @@ export function getPartialCredit(structure: ExamStructure | null): PartialCredit
   return stated?.partialCredit ?? "allOrNothing";
 }
 
-/** Notice methods a mock's right answers don't reproduce: the result says the notice's own words. */
 const OWN_WAY_METHODS = new Set(["itemResponseTheory", "other", "scaled"]);
 
-/**
- * What a mock's result says about the real score: the exam's own scale with the mock's right
- * answers on it where the map is known (`share`, right answers over questions, once it's over),
- * the notice's own sentence on how the exam is scored where the mock only counts right answers (an
- * exam scored with item response theory that isn't ENEM, a scaled or another method) and the
- * scale doesn't say it already, and that the real result depends on everyone in the sitting (a
- * percentile, a standardized score, a curve).
- */
 export function getScoreNotes({
   blueprint,
   goal,

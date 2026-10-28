@@ -34,33 +34,20 @@ import { loadBankTypedParts } from "./mock-typed-parts";
 import { hasStoredTimeRunOutAway } from "./owned-mock";
 import { readMockSizeSource, readMockStructure } from "./read-mock-structure";
 
-/** An exam goal's mocks as they can be taken any time: the exam they copy and their options. */
 export type AnytimeMockSetup = {
   blueprint: ExamBlueprint | null;
-  /** The exam's essays, which a full mock's written parts ask. */
   essays: MockEssayCandidate[];
   examName: string;
-  /** The plan's areas, which a mock's questions come from. */
   goalAreas: string[];
-  /** The recordings each listening section plays, by its name (`loadListeningCandidates`). */
   listening: ReadonlyMap<string, readonly MockCandidate[]>;
-  /** The listening sections a part of which has no recording yet, which a mock's start writes. */
   unvoiced: ReadonlySet<string>;
   options: MockOption[];
-  /** A diagnostic mock's lengths, for placement in onboarding. */
   placement: PlacementMockOption[];
-  /** Where the options' size comes from, to say beside them. */
   sizeSource: MockSizeSource;
-  /** The goal's exam has a speaking paper, which its full mocks sit (`findExamSpeakingSetup`). */
   speaking: boolean;
   structure: ExamStructure | null;
 };
 
-/**
- * Whether a mock can be built: the exam's notice or the learner's material gives its format (the
- * bank's missing questions are written in it), or, without either (a class test with no material
- * yet), the shared bank already holds enough questions on the goal's skills.
- */
 async function canBuildMock({
   blueprint,
   skillIds,
@@ -83,23 +70,15 @@ async function canBuildMock({
   return questions >= MIN_CHECKPOINT_QUESTIONS;
 }
 
-/** What a page already read for the mocks any time (see `getMockOptions`). */
 type AnytimeMockPage = {
   essays: Promise<MockEssayCandidate[]>;
   plan: Promise<SavedPlan | null>;
   typed: Promise<MockTypedPart[]>;
 };
 
-/**
- * What an exam goal's mocks taken any time copy: its blueprint's structure (a class test's short
- * test included) and the options it gives, on the plan's areas, each with about how long it takes
- * at learners' real pace on the exam's mocks. The half mock copies the exam day whose turn it is,
- * as the weekly mocks take turns. None while no mock can be built (see `canBuildMock`).
- */
 export async function loadAnytimeMockSetup(
   goal: Goal,
   knownBlueprint?: ExamBlueprint | null | Promise<ExamBlueprint | null>,
-  /** A page's request facts, so what the weekly mock's card also reads is read once. */
   page?: AnytimeMockPage,
 ): Promise<AnytimeMockSetup> {
   const plan = page ? await page.plan : undefined;
@@ -136,7 +115,6 @@ export async function loadAnytimeMockSetup(
     examName: blueprint?.name ?? goal.title,
     goalAreas,
     listening: recordings,
-    // A listening section without its recordings yet is still sat: the mock's start writes them.
     options: buildable
       ? listMockOptions({
           dayInTurn: days[finished % days.length] ?? null,
@@ -157,11 +135,6 @@ export async function loadAnytimeMockSetup(
   };
 }
 
-/**
- * The listening sections a picked exam day (in full or half) sits whose recordings aren't voiced
- * yet: starting the mock writes them first (see `requestMockQuestions`). None for a subject's mock
- * or placement, which ask no recordings.
- */
 export function listMissingRecordings({
   pick,
   setup,
@@ -182,16 +155,10 @@ export function listMissingRecordings({
     .flatMap((section) => section.name ?? []);
 }
 
-/** The mock a learner asked for: one of the goal's options, or a diagnostic one as placement. */
 export type AnytimeMockPick =
   | { option: MockOption; purpose: "practice" }
   | { option: PlacementMockOption; purpose: "placement" };
 
-/**
- * The mock a learner asked for: a diagnostic one as placement, in the length picked (the
- * recommended one without), or one of the goal's options by its shape. Null when it isn't one of
- * them (the options moved on, or it was never one).
- */
 export function resolveAnytimeOption({
   choice,
   setup,
@@ -213,17 +180,12 @@ export function resolveAnytimeOption({
   return option ? { option, purpose: "practice" } : null;
 }
 
-/** Mocks taken any time, by their stored purpose (a scheduled mock whose session is gone isn't one). */
 const ANYTIME_MOCK_FILTER = {
   OR: (["practice", "placement"] as const).map((purpose) => ({
     conditions: { equals: purpose, path: ["purpose"] },
   })),
 };
 
-/**
- * The goal's mock taken any time that's still running: one at a time. One whose time ran out while
- * the learner was away isn't running anymore (see `hasTimeRunOutAway`).
- */
 export async function findRunningAnytimeMock({
   client = prisma,
   goalId,
@@ -246,7 +208,6 @@ export async function findRunningAnytimeMock({
   return active.find((mock) => !hasStoredTimeRunOutAway({ mock, now })) ?? null;
 }
 
-/** The goal's mock taken as placement in onboarding, the latest one when there are several. */
 export function findPlacementMock({ goalId, userId }: { goalId: string; userId: string }) {
   return prisma.mockExam.findFirst({
     orderBy: { startedAt: "desc" },
@@ -259,10 +220,6 @@ export function findPlacementMock({ goalId, userId }: { goalId: string; userId: 
   });
 }
 
-/**
- * The skills a mock taken any time asks about: the plan's graph's, which a goal in onboarding has
- * before its plan's lessons, and the finer ones its lessons teach.
- */
 export async function loadMockSkillIds(goalId: string): Promise<string[]> {
   const [plan, lessonSkillIds] = await Promise.all([
     prisma.plan.findUnique({ select: { graph: true }, where: { goalId } }),
@@ -273,10 +230,6 @@ export async function loadMockSkillIds(goalId: string): Promise<string[]> {
   return [...new Set([...graphSkillIds, ...lessonSkillIds])];
 }
 
-/**
- * The plan's graph skills in its order (the basics first), each with its area: the topics a
- * diagnostic mock spreads its questions over. Empty while the plan is still being drawn.
- */
 export async function loadPlacementSkills(goalId: string): Promise<PlacementSkill[]> {
   const plan = await prisma.plan.findUnique({ select: { graph: true }, where: { goalId } });
   const graph = parsePlanGraph(plan?.graph);

@@ -8,7 +8,6 @@ import { loadMockPace } from "./mock-pace";
 const ANSWERS_PER_MOCK = 25;
 const SECONDS = 1000;
 
-/** Learners who each finished one mock of the exam, answering every question in `seconds`. */
 async function finishedMocks({
   blueprintId,
   learners,
@@ -71,7 +70,6 @@ describe(loadMockPace, () => {
       })),
     });
 
-    // Four learners still here aren't enough; with the one who left, 125 answers average 72s.
     await expect(loadMockPace(blueprint.id)).resolves.toBeCloseTo(1.2, 5);
   });
 });

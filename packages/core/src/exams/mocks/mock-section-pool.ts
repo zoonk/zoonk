@@ -6,12 +6,6 @@ import { orderNewFirst } from "./mock-reuse";
 import { type AreaSections, isSectionArea } from "./mock-section-areas";
 import { type SubjectShare, isSubjectArea } from "./mock-subject-shares";
 
-/**
- * The questions a section may ask. When areas line up with sections, only the section's own area:
- * "Natural Sciences and Math" never asks an English reading question, and a question whose area
- * no section names stays out. When they don't line up, any question may fill any section. New
- * questions come first (see `orderNewFirst`).
- */
 export function sectionPool({
   areaSections,
   candidates,
@@ -28,10 +22,6 @@ export function sectionPool({
   );
 }
 
-/**
- * A section's name says which area it asks. Questions that couldn't be sorted by area fill an
- * exam's several sections without their names, so none claims an area it may not ask.
- */
 export function getSectionName({
   allSections,
   byArea,
@@ -44,11 +34,6 @@ export function getSectionName({
   return byArea || allSections.length <= 1 ? section.name : null;
 }
 
-/**
- * The subject a question counts toward: the one named as its area, else the first whose name
- * matches it, so a subject named inside another's ("Civil Law", "Civil Procedure Law") never
- * takes the other's questions.
- */
 function findShare({
   candidate,
   shares,
@@ -64,14 +49,6 @@ function findShare({
   );
 }
 
-/**
- * A section that asks several of the notice's subjects asks each its share, in the notice's order,
- * as ENEM's first day asks 45 questions of Languages, then 45 of Humanities. When the notice (or a
- * past edition) counts them, each asks at most its count in the part of the exam the mock sits
- * (`portion`), so the mock keeps the exam's proportions: a subject short of questions leaves its
- * place empty. When they're split evenly for want of counts, a subject short of questions leaves
- * its place to the others. Questions whose areas aren't those subjects fill what's left.
- */
 export function orderBySubjectShares({
   pool,
   portion,
@@ -79,7 +56,6 @@ export function orderBySubjectShares({
   wanted,
 }: {
   pool: readonly MockCandidate[];
-  /** The part of the exam the mock sits: 1 in full, 0.5 for half. */
   portion: number;
   subjectShares: readonly SubjectShare[];
   wanted: number;
@@ -108,7 +84,6 @@ export function orderBySubjectShares({
   const picked = new Set(first.map((candidate) => candidate.itemId));
   const others = bySubject.get(null) ?? [];
 
-  // Counted subjects never ask past their count; uncounted questions fill what's left.
   return [
     ...first,
     ...(counted ? others : pool.filter((candidate) => !picked.has(candidate.itemId))),

@@ -23,14 +23,9 @@ import {
 } from "./_test-utils/choice-blueprint";
 import { chooseExamOption } from "./choose-exam-option";
 
-/** A Monday in 2020, before other tests' learning events, so pace estimates stay out of it. */
 const NOW = new Date("2020-09-28T12:00:00Z");
 const TIME_ZONE = "America/Sao_Paulo";
 
-/**
- * An ENEM learner who takes English, the language the notice counts inside the languages area,
- * with the plan's areas in `areas`' order, `lessons` each.
- */
 async function setup({
   areas = [LANGUAGES, ENGLISH, MATH],
   lessons = 2,
@@ -60,12 +55,9 @@ async function setup({
   return goal;
 }
 
-/** The buddy, answering the learner's question, proposes a focus on `areas`: the proposal's card. */
 async function proposeFocusInAnswer({ areas, goalId }: { areas: string[]; goalId: string }) {
   const question = "More of the languages area, please";
 
-  // Reading the learner's words is the one model call in the buddy's proposal: here it understood
-  // a focus on `areas`.
   vi.mocked(interpretPlanEdit).mockResolvedValue({
     data: {
       leftOut: [],
@@ -173,7 +165,6 @@ describe("the language an ENEM learner takes, in their plan's areas", () => {
   });
 
   it("is focused with the languages area when the buddy proposes it, whose card names that area only", async () => {
-    // Math comes first and takes days of a lesson each, so a focus on the languages area moves it ahead.
     const goal = await setup({ areas: [MATH, LANGUAGES, ENGLISH], lessons: 8 });
     const change = await proposeFocusInAnswer({ areas: [LANGUAGES], goalId: goal.id });
 

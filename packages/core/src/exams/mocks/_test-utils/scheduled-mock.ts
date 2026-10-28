@@ -34,10 +34,6 @@ function mockStructure(
   };
 }
 
-/**
- * A Plus learner's exam goal with today's weekly mock in the session. Item response theory scores
- * on ENEM's scale, so that exam is ENEM.
- */
 export async function scheduledMockSetup(
   method: Parameters<typeof mockStructure>[0] = "raw",
   minutes = 30,
@@ -95,7 +91,6 @@ export async function runningMock(blockId: string) {
   return result.mock;
 }
 
-/** Answers the running section's first `count` questions right, and returns the running mock. */
 export async function answerRight({ blockId, count }: { blockId: string; count: number }) {
   const running = await runningMock(blockId);
   const answered = (running.current?.questions ?? []).slice(0, count);

@@ -3,11 +3,6 @@ import { getSpeakingSection } from "../../../language/exam-speaking/get-speaking
 import { type SpeakingSectionView } from "../../../language/exam-speaking/speaking-contract";
 import { type MockConditions } from "../mock-contract";
 
-/**
- * The mock's speaking paper once the learner started its speaking section: each task's call and
- * whether it's done, and the paper's estimate once every task is graded. Null before, and for a
- * mock without one.
- */
 export async function loadMockSpeaking(
   conditions: Pick<MockConditions, "sections">,
 ): Promise<SpeakingSectionView | null> {

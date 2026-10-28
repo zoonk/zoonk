@@ -184,7 +184,6 @@ describe(findPartAreas, () => {
       new Map([["Língua Inglesa", "Linguagens"]]),
     );
 
-    // Without an area for the subject, the option's area is a whole of its own.
     expect(
       findPartAreas({ areas: ["Língua Inglesa", "Matemática"], structure: enem }),
     ).toStrictEqual(new Map());

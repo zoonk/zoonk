@@ -47,7 +47,6 @@ const TWO_OBJECTIVE = examStructureSchema.parse({
   subjects: [],
 });
 
-/** A real funded plan, with enough written work to retain its first mock. */
 async function setup({
   blueprint,
   fullLength = false,
@@ -100,8 +99,6 @@ async function setup({
   });
 
   if (fullLength) {
-    // This fixture isolates playback of an already scheduled full sitting. Its identity and
-    // ledger are real saved rows; no planner, session, recording or persistence call is mocked.
     await prisma.plan.update({
       data: {
         graph: library.graph,
@@ -176,7 +173,6 @@ async function setup({
   return { date, fromPlanner: !fullLength, goal, library, plan, planItemId };
 }
 
-/** Intro, Plan, Today, playback and persisted section timers must describe the same sitting. */
 async function assertScheduledClock({
   date,
   fromPlanner,
@@ -204,8 +200,6 @@ async function assertScheduledClock({
     .find((item) => item.id === planItemId);
 
   expect(row).toMatchObject({ scheduledFor: date });
-  // A saved sitting kept as it was laid out has no computed per-item estimate; its saved day still
-  // funds the sitting, while planner-created plans must publish the same item clock as well.
   expect(row?.minutes).toBe(fromPlanner ? minutes : null);
   expect(view.plan.week.days.find((day) => day.date === date)?.minutes).toBe(minutes);
   const block = today.today.session.blocks.find((entry) => entry.checkpoint?.mock);

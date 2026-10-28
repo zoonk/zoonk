@@ -9,7 +9,6 @@ import {
   readExamYear,
 } from "./exam-edition-days";
 
-/** Unknown or invalid notice zones keep the UTC convention used before zones were stored. */
 export function getExamCalendarDay({ edition, now }: { edition: unknown; now: Date }): {
   today: string;
   timeZone: string;
@@ -20,10 +19,6 @@ export function getExamCalendarDay({ edition, now }: { edition: unknown; now: Da
   return { timeZone, today: toIsoDate(getDateInTimeZone({ date: now, timeZone })) };
 }
 
-/**
- * The upcoming days the plan's default targets, including the next open sitting and estimated
- * editions. The course page and a course start share the exam-zone day cutoff; today is already too late.
- */
 export function getPlanExamDays({
   edition,
   details,
@@ -33,7 +28,6 @@ export function getPlanExamDays({
   edition: unknown;
   details: unknown;
   goalDate: string | null;
-  /** Today's calendar date in the exam's zone, from getExamCalendarDay. */
   today: string;
 }): EditionExamDays {
   const from = toIsoDate(addDays(fromIsoDate(today), 1));

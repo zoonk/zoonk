@@ -8,11 +8,6 @@ export type FinishMockResult = {
   status: "expired" | "finished" | "notFound" | "notRunning" | "unauthorized";
 };
 
-/**
- * Ends the mock now, like leaving the exam room early: every question not answered counts as
- * blank, and it's graded as it stands. The running section counts as timed out when its clock
- * already ran out; one whose time ran out while the learner was away is `expired`, never graded.
- */
 export async function finishMock({
   blockId,
   input,

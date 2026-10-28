@@ -9,10 +9,8 @@ import {
 import { namesMatch } from "../_utils/name-match";
 import { type ListeningExam, toListeningExam } from "./listening-exam";
 
-/** A skill a listening set's questions test, as the set's writer reads it. */
 export type ListeningSkill = { description: string; name: string; skillId: string };
 
-/** Whether the skill's area is one of these listening sections' ("Listening"). */
 function isInListeningArea({
   graph,
   sectionNames,
@@ -26,14 +24,6 @@ function isInListeningArea({
   return sectionNames.some((sectionName) => namesMatch(area, sectionName));
 }
 
-/**
- * The skills of a goal's graph that are practiced only with its exam's listening recordings: those
- * in a listening section's area. A text question about a conversation tests reading, not
- * listening, so item writers write these skills none, practice asks them only a recording's
- * questions (and leaves them waiting while none is voiced), and placement never picks them. Empty
- * for a goal without listening (`exam` null, see `toListeningExam`), whose skills keep text
- * questions.
- */
 export function getListeningSkillIds({
   exam,
   graph,
@@ -54,11 +44,6 @@ export function getListeningSkillIds({
   );
 }
 
-/**
- * The open mistakes a drill can bring back: on a skill practiced only with recordings, only a
- * missed recording question, which comes back with its recording. A text question there tests
- * reading, so an old text mistake on it stays in the notebook and never takes a drill's place.
- */
 export async function listDrillableMistakes<
   T extends { itemId: string | null; skillId: string | null },
 >({
@@ -89,11 +74,6 @@ export async function listDrillableMistakes<
   );
 }
 
-/**
- * Whether a mistake's drill may ask this question: any on a skill with text questions; on one
- * practiced only with recordings, just the missed recording question itself
- * (`listDrillableMistakes`), never more on its skill.
- */
 export function isDrillQuestion({
   item,
   listeningSkillIds,
@@ -106,7 +86,6 @@ export function isDrillQuestion({
   return !listeningSkillIds.has(item.skillId) || item.id === mistakeItemId;
 }
 
-/** What `getListeningSkillIds` reads of a goal. */
 const LISTENING_GOAL_SELECT = {
   examBlueprint: true,
   kind: true,
@@ -114,11 +93,6 @@ const LISTENING_GOAL_SELECT = {
   targetLanguage: true,
 } as const;
 
-/**
- * The skills a learner's goals practice only with recordings, across every goal they have: for
- * what isn't asked for one goal (the mistakes notebook without a goal), a skill that is a
- * listening skill in any of them counts as one.
- */
 export async function loadLearnerListeningSkillIds(userId: string): Promise<Set<string>> {
   const goals = await prisma.goal.findMany({
     select: LISTENING_GOAL_SELECT,
@@ -135,10 +109,6 @@ export async function loadLearnerListeningSkillIds(userId: string): Promise<Set<
   );
 }
 
-/**
- * `loadListeningSkillIds` for a goal row the caller already read, on its plan's raw graph: only
- * an exam goal that names its blueprint reads it (only exams practice with recordings).
- */
 export async function loadGoalListeningSkillIds({
   blueprint,
   goal,
@@ -163,10 +133,7 @@ export async function loadGoalListeningSkillIds({
   });
 }
 
-/**
- * `getListeningSkillIds` for a goal by its id, on its plan's graph; empty while it has no plan.
- * Internal: the caller passes a goal it already resolved.
- */
+/** Internal: the caller must already have resolved the goal for the learner. */
 export async function loadListeningSkillIds(
   goalId: string,
   tx: TransactionClient = prisma,
@@ -183,11 +150,6 @@ export async function loadListeningSkillIds(
   });
 }
 
-/**
- * The skills a listening section tests: those of the exam's shared skill graph whose area the
- * section names ("Listening"), in the graph's order. Shared, so every learner of the exam gets the
- * same sets. Empty when the exam has no graph yet or none of its areas is the section's.
- */
 export async function loadListeningSkills({
   examBlueprintId,
   sectionName,

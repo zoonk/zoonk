@@ -5,7 +5,6 @@ import { getExamCalendar, getGoalDateKind } from "./exam-calendar";
 
 const citation = { passage: "", sourceId: "notice" };
 
-/** A notice's edition with its exam days, all at 13:30 in Brasília; `ownerId` makes it a learner's own. */
 function examBlueprint({
   days,
   ownerId = null,
@@ -95,7 +94,6 @@ describe(getExamCalendar, () => {
       timeZone: "America/Sao_Paulo",
     });
 
-    // The plan counts down to the estimated day itself, so the screen keeps the estimated days.
     const planned = { ...goal, targetDate: new Date("2028-11-12T00:00:00Z") };
 
     expect(getExamCalendar({ blueprint, goal: planned })).toMatchObject({
@@ -105,7 +103,6 @@ describe(getExamCalendar, () => {
   });
 
   it("moves the estimated days to the learner's date near them, keeping every day and start time", () => {
-    // She knows the first day is a week earlier than past editions suggest: day 2 follows it.
     const blueprint = examBlueprint({ days: ["2026-11-08", "2026-11-15"], year: 2026 });
     const goal = { ...GOAL, details: { examName: "ENEM", examYear: 2028 } };
     const earlier = { ...goal, targetDate: new Date("2028-11-05T00:00:00Z") };
@@ -120,7 +117,6 @@ describe(getExamCalendar, () => {
       timeZone: "America/Sao_Paulo",
     });
 
-    // A date far from them is a day of her own.
     const far = { ...goal, targetDate: new Date("2028-06-04T00:00:00Z") };
 
     expect(getExamCalendar({ blueprint, goal: far })).toMatchObject({
@@ -142,8 +138,6 @@ describe(getExamCalendar, () => {
   });
 
   it("marks the start of the month the learner named as her month when the notice gives another month", () => {
-    // She said "March"; the notice's official day is in January: the plan keeps her month until
-    // she takes the notice's day, and every screen says the month, not a day in it.
     const blueprint = examBlueprint({ days: ["2027-01-10"], year: 2026 });
 
     const goal = {
@@ -170,7 +164,6 @@ describe(getExamCalendar, () => {
   });
 
   it("never estimates a class test's day from the learner's old material: its own date counts", () => {
-    // Last year's slides name last year's test day: no edition comes after it.
     const material = examBlueprint({ days: ["2025-10-09"], ownerId: randomUUID(), year: 2025 });
 
     const dated = { ...GOAL, targetDate: new Date("2026-10-09T00:00:00Z") };
@@ -216,7 +209,6 @@ describe(getExamCalendar, () => {
   });
 });
 
-/** The goal counting down to `date`, with what the learner said about it. */
 function goalOn(date: string, details: object = {}) {
   return { ...GOAL, details, targetDate: new Date(`${date}T00:00:00Z`) };
 }
@@ -226,12 +218,10 @@ describe(getGoalDateKind, () => {
     const notice = examBlueprint({ days: ["2026-11-08", "2026-11-15"], year: 2026 });
     const january = examBlueprint({ days: ["2027-01-10"], year: 2026 });
 
-    // ENEM 2028: the plan counts down to the day the notice's timing gives.
     expect(
       getGoalDateKind({ blueprint: notice, goal: goalOn("2028-11-12", { examYear: 2028 }) }),
     ).toStrictEqual({ estimated: true, namedMonth: false });
 
-    // "In March": her month kept over the notice's January day.
     expect(
       getGoalDateKind({
         blueprint: january,
@@ -239,7 +229,6 @@ describe(getGoalDateKind, () => {
       }),
     ).toStrictEqual({ estimated: true, namedMonth: true });
 
-    // The notice's own day, and a day of her own.
     expect(getGoalDateKind({ blueprint: notice, goal: goalOn("2026-11-08") })).toStrictEqual({
       estimated: false,
       namedMonth: false,

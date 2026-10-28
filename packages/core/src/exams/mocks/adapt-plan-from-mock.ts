@@ -11,19 +11,9 @@ import { type MockPlanOfferInput, mockResultSchema } from "./mock-contract";
 
 export type AdaptPlanFromMockResult =
   | { changeId: string | null; lessonsSkipped: number; status: "applied" }
-  /**
-   * Nothing moved: what it offered is no longer there, or for a focus, why the plan stays as it
-   * is (see `UnchangedFocusReason`).
-   */
   | { reason: UnchangedFocusReason | null; status: "unchanged" }
   | { status: "notFound" | "unauthorized" };
 
-/**
- * The learner's yes to what a finished mock offered (see `MockAdaptView`), through the plan's own
- * paths: `skip` tests out the plan items that teach only topics the mock showed they know, with
- * the change's undo, and `focus` gives the area that went worst more of the plan's time, as a
- * focus they chose. The offer is worked out again from the plan as it is now.
- */
 export async function adaptPlanFromMock({
   blockId,
   input,

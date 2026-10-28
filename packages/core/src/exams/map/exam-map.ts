@@ -10,41 +10,22 @@ import { listCountedSubjects } from "../choices/exam-choices";
 
 type FrequencyLevel = TopicFrequency[number]["level"];
 
-type ExamMapTopic = {
-  /** Questions on it in the past papers read, such as "4 times" on last year's class exam. */
-  appearances: number | null;
-  /** How often the board asks it: "high" is "appears a lot". Null without past papers. */
-  frequency: FrequencyLevel | null;
-  name: string;
-};
+type ExamMapTopic = { appearances: number | null; frequency: FrequencyLevel | null; name: string };
 
-/** How far the learner is in a subject's skills: studied, then solid, then mastered. */
 type ExamMapLevel = { mastered: number; solid: number; studied: number; total: number };
 
 type ExamMapSubject = {
-  /** The subject's most frequent topic level, so "appears a lot" can mark the subject. */
   frequency: FrequencyLevel | null;
-  /** The notice's group for it, such as "Basic knowledge (P1)". Null when it has none. */
   group: string | null;
   level: ExamMapLevel | null;
   name: string;
   questions: number | null;
-  /** Its share of the exam, from 0 to 1: the notice's weight, or its share of the questions. */
   share: number | null;
   topics: ExamMapTopic[];
 };
 
-/**
- * The exam map ("what's on the exam"): the notice's subjects in order with their weight, each
- * topic with how often the board asks it, and where the learner stands in each subject. The plan's
- * priority already uses the same weights and frequency.
- */
 export type ExamMap = {
   hasFrequency: boolean;
-  /**
-   * Where the subjects' counts come from when the notice gives none: the exam's latest edition,
-   * as one source counted it. Null when the notice gives them, or nobody does.
-   */
   questionsSource: { edition: string | null; title: string | null; url: string } | null;
   subjects: ExamMapSubject[];
   topicCount: number;
@@ -59,11 +40,6 @@ function rank(topic: Pick<ExamMapTopic, "frequency">): number {
   return topic.frequency ? FREQUENCY_RANK[topic.frequency] : NO_FREQUENCY_RANK;
 }
 
-/**
- * A subject's share of the exam, from 0 to 1: the notice's weight, or its share of the questions
- * (the notice's counts, or the latest edition's when the notice gives none), each question counted
- * once: a choice's options as one, an option inside another subject in that one.
- */
 export function getSubjectShare({
   structure,
   subject,

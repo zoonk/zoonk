@@ -15,45 +15,16 @@ import { isMockShort } from "./mock-shortfall";
 import { getSubjectPace } from "./subject-sections";
 import { isWrittenSubject } from "./written-subject";
 
-/**
- * A diagnostic mock taken as placement: a few of the exam's questions on every subject, spread
- * over each subject's topics from the basics to the hardest, so its answers say where the plan
- * starts in each. The learner picks how long: about a quarter of an hour, half an hour or an hour,
- * at learners' real pace. A longer one asks more of each subject and sets a finer starting point.
- */
 const LENGTH_MINUTES: Record<PlacementMockLength, number> = { long: 60, medium: 30, short: 15 };
 
-/**
- * The fewest questions each length asks of every subject: a quick check may leave the subjects
- * worth least to the first days' questions when its time doesn't reach them, half an hour asks
- * each at least once, and an hour at least twice, however many subjects the notice has.
- */
 const MIN_PER_AREA: Record<PlacementMockLength, number> = { long: 2, medium: 1, short: 0 };
 
-/**
- * A part of the exam the mock places the learner in: one of the notice's subjects, or for a plan
- * whose areas aren't the notice's, one of its areas.
- */
-type PlacementArea = {
-  /**
-   * The name its questions and every screen go by, the notice's ("Mathematics and its
-   * Technologies"); null for the whole.
-   */
-  name: string | null;
-  /** The notice's short name for it ("Mathematics"), which a plan's area may go by. */
-  shortName: string | null;
-  /** Minutes per question at the exam's pace, which the mock's clock gives. */
-  pace: number;
-  /** Its share of the exam: its questions on the notice, or one each when the notice doesn't say. */
-  worth: number;
-};
+type PlacementArea = { name: string | null; shortName: string | null; pace: number; worth: number };
 
 type AreaQuestions = { area: PlacementArea; questions: number };
 
-/** A diagnostic mock's length, with how many questions it asks of each subject (some none). */
 export type PlacementMockOption = PlacementMockOptionView & { counts: AreaQuestions[] };
 
-/** The notice's objective subjects the plan studies; all of them before the plan has areas. */
 function getPlacedSubjects({
   goalAreas,
   structure,
@@ -87,13 +58,11 @@ function getAreas({
     }));
   }
 
-  // A plan of its own areas places each one; before the plan has any, the whole exam is one part.
   return goalAreas.length > 0
     ? goalAreas.map((area) => ({ name: area, pace, shortName: null, worth: 1 }))
     : [{ name: null, pace, shortName: null, worth: 1 }];
 }
 
-/** The most a diagnostic mock asks: the whole exam's objective questions. */
 function getWholeExamQuestions(structure: ExamStructure | null): number {
   return getMockDays(structure).reduce<number>(
     (sum, day) =>
@@ -106,11 +75,6 @@ function getWholeExamQuestions(structure: ExamStructure | null): number {
   );
 }
 
-/**
- * Shares the mock's questions among the subjects: every subject the same few first (at most
- * `minPerArea`), the rest by what each is worth, largest remainders first. With fewer questions
- * than subjects, the ones worth most get one each.
- */
 function allocate({
   areas,
   minPerArea,
@@ -174,7 +138,6 @@ function toOption({
   const counts = allocate({ areas, minPerArea: MIN_PER_AREA[length], questions });
   const asked = counts.filter((entry) => entry.questions > 0);
 
-  // Subjects of one exam section share its pace, and its clock rounds once, as the mock's does.
   const minutes = [...Map.groupBy(asked, (entry) => entry.area.pace)].reduce(
     (sum, [pace, group]) =>
       sum +
@@ -193,20 +156,12 @@ function toOption({
   };
 }
 
-/**
- * The lengths a diagnostic mock comes in for this exam, shortest first, each with its questions
- * and time: sized by learners' real pace on the exam's mocks (`pace`), or the exam's own until
- * that's known, never more than the whole exam. Two lengths that would ask as many questions are
- * one, under the longer one's name.
- */
 export function listPlacementMockOptions({
   goalAreas,
   pace,
   structure,
 }: {
-  /** The plan's areas; empty while the plan is still being drawn. */
   goalAreas: readonly string[];
-  /** Learners' minutes per question on the exam's mocks (see `loadMockPace`), when known. */
   pace: number | null;
   structure: ExamStructure | null;
 }): PlacementMockOption[] {
@@ -224,7 +179,6 @@ export function listPlacementMockOptions({
   );
 }
 
-/** A length as the learner picks it, without its per-subject counts. */
 export function toPlacementOptionView(option: PlacementMockOption): PlacementMockOptionView {
   return {
     areas: option.areas,
@@ -236,27 +190,16 @@ export function toPlacementOptionView(option: PlacementMockOption): PlacementMoc
   };
 }
 
-/**
- * The length suggested first: the quick check (about a quarter of an hour), or the shortest the
- * exam has. It's enough to start the plan, whose first days keep placing the learner; every length
- * shows its time, and the learner picks.
- */
 export function getRecommendedPlacementLength(
   options: readonly PlacementMockOption[],
 ): PlacementMockLength | null {
   return options[0]?.length ?? null;
 }
 
-/** A skill of the plan's graph, in the graph's order (its basics first), with its area. */
 export type PlacementSkill = { area: string; skillId: string };
 
 type Picked = { missing: string[]; picks: MockCandidate[]; taken: ReadonlySet<string> };
 
-/**
- * One subject's questions, one on each of its spread topics (see `spreadAreaQuestions`): the
- * topic's own question when the bank has one the learner hasn't answered, else the nearest topic's,
- * so the mock keeps its size while the topic is `missing`.
- */
 function pickArea({
   candidates,
   entry,
@@ -266,7 +209,6 @@ function pickArea({
   candidates: readonly MockCandidate[];
   entry: AreaQuestions;
   picked: Picked;
-  /** The subject's topics in the plan's order. */
   skillIds: readonly string[];
 }): Picked {
   const { name } = entry.area;
@@ -298,12 +240,6 @@ function pickArea({
   }, picked);
 }
 
-/**
- * Plans a diagnostic mock from the questions the learner never answered on the plan's skills: each
- * subject's share spread over its topics in the plan's order, then sat as the exam sits them, day
- * by day and section by section, at the exam's pace. `missingSkillIds`: the topic of each place
- * that had no question of its own (a topic twice for two such places), which writing some fills.
- */
 export function planPlacementMock({
   candidates,
   option,
@@ -317,8 +253,6 @@ export function planPlacementMock({
 }): { missingSkillIds: string[]; plan: MockPlan } {
   const subjects = option.counts.map((entry) => entry.area.name);
 
-  // Each plan area belongs to its best-matching subject alone: "Civil Law" never to
-  // "Civil Procedure Law".
   const owners = matchAreasToSubjects({
     areas: [...new Set(skills.map((skill) => skill.area))],
     subjects: option.counts.map(({ area }) => ({
@@ -343,11 +277,6 @@ export function planPlacementMock({
   return { missingSkillIds: picked.missing, plan: { ...plan, fullLength: false } };
 }
 
-/**
- * What to write before a diagnostic mock can start when the bank is short of its questions (see
- * `isMockShort`): for each topic with places the bank had no question for, that many. Null when
- * the bank holds enough, or nothing would fill it (the mock starts with what there is).
- */
 export function getPlacementQuestionsShortfall({
   missingSkillIds,
   option,

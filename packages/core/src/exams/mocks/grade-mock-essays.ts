@@ -15,10 +15,6 @@ export type GradeMockEssaysResult = {
   status: "graded" | "limitReached" | "notFinished" | "notFound" | "unauthorized";
 };
 
-/**
- * The essays written and not graded yet, with what grading them needs and the id each grade is
- * recorded under: the same for every request that grades this mock, so they claim it once.
- */
 async function listUngradedEssays({ mock, userId }: { mock: MockSitting; userId: string }) {
   const itemIds = getEssayItemIds(mock.conditions);
 
@@ -44,12 +40,6 @@ async function listUngradedEssays({ mock, userId }: { mock: MockSitting; userId:
   });
 }
 
-/**
- * Grades the essays at once (independent model calls), then records them one after another, so
- * two essays on the same skill update its memory in order. Every grade settles before any is
- * recorded or fails the request: one that failed doesn't drop the others, nor free their claims
- * while they're still being graded.
- */
 async function gradeEssays({
   essays,
   mock,
@@ -103,13 +93,6 @@ async function gradeEssays({
   }
 }
 
-/**
- * Grades a finished full mock's essays with the exam's official rubric, the model call its
- * hand-in leaves for right after, so the objective result shows at once: each essay written and
- * not graded yet, within the day's essay grades (`limitReached` keeps the rest for another day).
- * Each grade is claimed before the model is called (`claimEssayGrades`), so grading the same mock
- * twice at once grades it once: the second request waits and finds the grades.
- */
 export async function gradeMockEssays({
   blockId,
   input,
@@ -148,7 +131,6 @@ export async function gradeMockEssays({
   try {
     await gradeEssays({ essays: claimed, mock, owned, timeZone });
   } finally {
-    // A grade that wasn't recorded frees its claim, so the essay can be graded again.
     await releaseEssayGradeClaims({ attemptIds: claimed.map((essay) => essay.attemptId), userId });
   }
 

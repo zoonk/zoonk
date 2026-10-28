@@ -2,10 +2,8 @@ import { type StudySessionBlock } from "@zoonk/db";
 import { z } from "zod";
 import { answerTimeZoneSchema } from "../../learner/contract";
 
-/** About two thousand words: longer than any exam essay, short enough to grade in one call. */
 export const MAX_ESSAY_CHARACTERS = 12_000;
 
-/** An hour and a half covers the longest exam essay; anything more is a tab left open. */
 const MAX_WRITING_MS = 5_400_000;
 
 export const essaySubmissionInputSchema = z
@@ -25,18 +23,12 @@ export const essaySubmissionInputSchema = z
 
 export type EssaySubmissionInput = z.infer<typeof essaySubmissionInputSchema>;
 
-/** One graded draft: the text as written and its grade by the official rubric. */
 export type EssayDraft = { grade: EssayGradeView; submittedAt: string; text: string };
 
-/**
- * The writing screen for a produce block: the prompt, the rubric it's graded with, and the
- * drafts so far with their grades (latest first), so the learner can rewrite only what needs it.
- */
 export type EssayView = {
   blockId: string;
   context: string | null;
   drafts: EssayDraft[];
-  /** Grades left today; essays are graded by a model, so a day has a fair limit. */
   gradesLeft: number;
   question: string;
   rubric: "ap" | "custom" | "enem" | "oab";
@@ -86,8 +78,6 @@ export const essayGradeSchema = z
   })
   .meta({ id: "EssayGrade" });
 
-/** A grade by the official rubric, as the writing screen shows it. */
 export type EssayGradeView = z.infer<typeof essayGradeSchema>;
 
-/** A stored draft on its attempt: the text and the grade it got. */
 export const essayAnswerSchema = z.object({ grade: essayGradeSchema, text: z.string() });

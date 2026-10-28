@@ -17,7 +17,6 @@ export type StartMockResult = {
     | "unauthorized";
 };
 
-/** A scheduled mock shares session focus, but never a phase challenge's prerequisites or bank. */
 async function startScheduledBlock({
   block,
   input,
@@ -38,13 +37,6 @@ async function startScheduledBlock({
   return { status: started.status };
 }
 
-/**
- * Starts a scheduled mock when the learner takes it on: its session block starts (the learner's
- * daily limit is checked there), the sections are fixed and the first one's clock starts. Starting
- * a running mock again resumes it, a mock taken any time included. A scheduled one whose time ran
- * out while the learner was away starts again in a new sitting, its block freed from the old one;
- * one taken any time stays `expired` (the learner takes a new one).
- */
 export async function startMock({
   blockId,
   input,
@@ -79,7 +71,6 @@ export async function startMock({
     return { status: owned.mock.status === "active" ? "ready" : owned.mock.status };
   }
 
-  // A mock taken any time starts as it's made; only a scheduled one waits for its start.
   if (!owned.block) {
     return { status: "notFound" };
   }
@@ -116,7 +107,6 @@ export async function startMock({
       return null;
     });
   } catch (error) {
-    // Two taps on "Start" race to create the sitting; the one that lost resumes the other's.
     if (!isPrismaUniqueConstraintError(error)) {
       throw error;
     }

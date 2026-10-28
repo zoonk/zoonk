@@ -57,7 +57,6 @@ describe(getNetScore, () => {
   });
 });
 
-/** Sure answers 9 of 10 right; unsure ones 2 of 6, and two left blank. */
 const UNSURE_TWO_OF_SIX = answers([
   ["right", false, 9],
   ["wrong", false, 1],
@@ -81,7 +80,6 @@ describe(getNetCalibration, () => {
   it("sets the break-even from the penalty: a fifth of answers right pays where a wrong costs a quarter", () => {
     const calibration = getNetCalibration({ answers: UNSURE_TWO_OF_SIX, penalty: 0.25 });
 
-    // 2 of 6 right beats 20%: a quarter point lost for each of 4 wrong is less than 2 gained.
     expect(calibration).toMatchObject({ advice: "keepAnswering", blankingGain: -1 });
   });
 

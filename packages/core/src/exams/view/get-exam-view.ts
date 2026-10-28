@@ -79,15 +79,10 @@ async function loadMap({
   return buildExamMap({
     frequency: content.topicFrequency,
     skills: [...areas].map(([skillId, area]) => ({ area, state: states.get(skillId) ?? "new" })),
-    // The exam as the learner takes it: only the options of its choices they picked.
     structure: toChosenStructure({ choices, structure: content.structure }),
   });
 }
 
-/**
- * The notice's exam day when the plan counts down to another, read against the day the plan took
- * from the notice, so the page offers it as Today does, or that the learner's month has no sitting.
- */
 function loadExamNoticeDates({
   blueprint,
   goal,
@@ -108,11 +103,6 @@ function loadExamNoticeDates({
   });
 }
 
-/**
- * What it takes to pass, as the notice says it (see `getPassMarks`). When it's in another language
- * than the learner's (a notice read before translations) and the notice's scale states the passing
- * score, the scale's row says it in theirs, so the notice's own words are left out.
- */
 function getExamPassMarks({
   blueprint,
   goal,
@@ -134,7 +124,6 @@ function getExamPassMarks({
   return isForeign && typeof scaled === "number" ? null : passMarks;
 }
 
-/** The score the learner said they aim for, in their words. */
 function readTargetScore(details: unknown): string | null {
   const target = isJsonObject(details) ? details.targetScore : null;
 
@@ -145,24 +134,17 @@ function readTargetScore(details: unknown): string | null {
   return typeof target === "string" && target.trim() ? target.trim() : null;
 }
 
-/** The scoring methods a notice states that change how to answer. */
 const STATED_SCORINGS: ReadonlySet<string> = new Set([
   "itemResponseTheory",
   "raw",
   "wrongCancelsRight",
 ]);
 
-/**
- * Whether the notice itself says how the exam is scored: its reading found the mock conditions and
- * a scoring method. A class test read from the learner's material rarely says, and the mocks'
- * default (each answer a point) is no rule to give advice from.
- */
 function isScoringStated(structure: ExamStructure | null): boolean {
   const method = structure?.mock?.scoring.method;
   return method !== undefined && STATED_SCORINGS.has(method);
 }
 
-/** The notice's scoring rule that changes how to answer (see `ExamView["scoring"]["rule"]`). */
 function getScoringRule(structure: ExamStructure | null): ExamView["scoring"]["rule"] {
   if (!isScoringStated(structure)) {
     return null;
@@ -177,7 +159,6 @@ function getScoringRule(structure: ExamStructure | null): ExamView["scoring"]["r
   return getWrongPenalty(structure) > 0 ? "net" : "raw";
 }
 
-/** The scale the notice says the exam reports on, for the page's scoring section. */
 function toNoticeScale(structure: ExamStructure | null): ExamView["scoring"]["noticeScale"] {
   const scale = structure?.mock?.scoring.scale;
 
@@ -186,13 +167,6 @@ function toNoticeScale(structure: ExamStructure | null): ExamView["scoring"]["no
     : null;
 }
 
-/**
- * The learner's exam screen for one exam goal (the active goal by default): its days (with the
- * notice's day when the plan counts down to another) and where the learner stands against them,
- * the exam map with their level per subject, how it's scored and the strategy that follows, the
- * mocks running and the ones so far, the estimated score after a mock, and the official result
- * once reported.
- */
 export async function getExamView({
   goalId: requestedGoalId,
   timeZone: requestTimeZone,
@@ -241,7 +215,6 @@ export async function getExamView({
     getAllowance(),
   ]);
 
-  // The plan's weekly mocks come with Plus: without it, the page shows them locked.
   const { includesMockExams } = getExamPrepAccess({
     examPrep: allowance?.examPrep ?? null,
     goal,
@@ -292,7 +265,6 @@ export async function getExamView({
       estimate,
       examDocument: getExamDocument(goal),
       examName: blueprint?.name ?? goal.title,
-      // The month the learner named gives no sitting a day yet.
       format: getExamFormat({ days: calendar.namedMonth ? [] : calendar.days, structure }),
       goalId,
       map,
@@ -304,7 +276,6 @@ export async function getExamView({
       noticeDay: noticeDates.day,
       passMarks: getExamPassMarks({ blueprint, goal, structure }),
       prepared: history.prepared,
-      // How mocks went over time comes with Plus, like the mocks: the page shows it locked.
       progress: includesMockExams ? history.progress : null,
       result: result ? toExamResultView(result) : null,
       scoring: {

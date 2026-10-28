@@ -17,12 +17,6 @@ import { getPlacementQuestionsShortfall } from "../placement-mock";
 import { type AnytimeMockPick, type AnytimeMockSetup } from "./anytime-mock-setup";
 import { planFromBank } from "./create-anytime-mock";
 
-/**
- * The plan's skills a mock asks about, with their areas: its graph's, in the areas the mock asks,
- * or all of them for an exam day whose notice names no subjects. A listening skill is asked only
- * on recordings, never on written questions, so none are written for it. Null while the graph has
- * no skills yet.
- */
 async function loadOptionSkills({
   goalId,
   option,
@@ -53,12 +47,6 @@ async function loadOptionSkills({
   });
 }
 
-/**
- * What to write before the mock starts: for a diagnostic mock, the exam's one-pick questions on
- * the topics its questions are spread over that have none (new questions only count: answered
- * ones are what a mock falls back on); for any other, each of the exam's formats the bank is
- * short of (`getMockQuestionsShortfall`).
- */
 function listWrites({
   mix,
   optionSkills,
@@ -86,16 +74,11 @@ function listWrites({
     planned: countPlannedQuestions(planned.plan) - planned.plan.reused,
   });
 
-  // A diagnostic mock's topics have none of its questions: they lack all they're asked.
   return shortfall
     ? ONE_PICK_MIX.map((format) => ({ ...shortfall, format, target: shortfall.questionsPerSkill }))
     : [];
 }
 
-/**
- * What to write before a picked mock starts (see `listWrites`), from the bank as it is for the
- * learner. Null while the goal's skill map is still being drawn: there's nothing to write for yet.
- */
 export async function planMockWrites({
   goal,
   pick,

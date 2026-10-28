@@ -46,7 +46,6 @@ function exam(date: string) {
   return { citation, date, kind: "exam" as const, label: "Exam", startTime: null };
 }
 
-/** ENEM 2026: the second and third Sundays of November. */
 const ENEM_2026 = edition({
   days: [
     { date: "2026-11-15", label: "Enem 2026, day 2", startTime: "13:30" },
@@ -83,7 +82,6 @@ describe(getExamEditionDays, () => {
   });
 
   it("takes a year the learner named as the exam's own year, when the notice came out the year before", () => {
-    // A notice published in October 2026 for an exam on 17 January 2027: "the exam is in 2027".
     const camara = edition({ days: [{ date: "2027-01-17", label: "Provas" }], year: 2026 });
 
     expect(
@@ -94,7 +92,6 @@ describe(getExamEditionDays, () => {
       getExamEditionDays({ edition: camara, examYear: 2026, from: "2026-10-05" }),
     ).toMatchObject({ days: [{ date: "2027-01-17" }], estimated: false });
 
-    // The next one is a year after its exam, not after its notice.
     expect(
       datesOf(getExamEditionDays({ edition: camara, examYear: 2028, from: "2026-10-05" })),
     ).toStrictEqual(["2028-01-16"]);
@@ -113,7 +110,6 @@ describe(getExamEditionDays, () => {
   });
 
   it("keeps the days of one sitting together, even across a month's weeks", () => {
-    // A Saturday and Sunday exam: the Sunday is the first of March, but it moves with its Saturday.
     const weekend = edition({ days: [{ date: "2026-02-28" }, { date: "2026-03-01" }], year: 2026 });
 
     expect(
@@ -122,7 +118,6 @@ describe(getExamEditionDays, () => {
   });
 
   it("moves each sitting of a multi-sitting exam on its own", () => {
-    // The SAT's August and October dates: the fourth Saturday of August, the first of October.
     const sat = edition({ days: [{ date: "2026-08-22" }, { date: "2026-10-03" }], year: 2026 });
 
     expect(
@@ -160,7 +155,6 @@ describe(getExamEditionDays, () => {
     expect(afterExam.estimated).toBe(true);
     expect(datesOf(afterExam)).toStrictEqual(["2027-11-14", "2027-11-21"]);
 
-    // A notice from two years back skips the edition that has passed as well.
     const enem2024 = edition({
       days: [{ date: "2024-11-03" }, { date: "2024-11-10" }],
       year: 2024,
@@ -172,7 +166,6 @@ describe(getExamEditionDays, () => {
   });
 
   it("puts an estimate in the month the learner named, on the same week and weekday", () => {
-    // PF 2025 tested on the 4th Sunday of July; the learner says the next one is in March 2027.
     const pf = edition({ days: [{ date: "2025-07-27", label: "Prova objetiva" }], year: 2025 });
 
     const result = getExamEditionDays({
@@ -187,7 +180,6 @@ describe(getExamEditionDays, () => {
       estimated: true,
     });
 
-    // ENEM's two Sundays keep their week apart.
     expect(
       datesOf(
         getExamEditionDays({
@@ -212,8 +204,6 @@ describe(getExamEditionDays, () => {
     expect(datesOf(result)).toStrictEqual(["2026-11-08", "2026-11-15"]);
   });
 
-  // DELE's calendar gives each sitting's last day to register, and a deadline can fall after an
-  // earlier sitting (May's closes after April's exam).
   it("marks the sittings whose registration closed, when the notice gives their deadline", () => {
     const dele: ExamEdition = {
       ...edition({ days: [], year: 2026 }),
@@ -235,7 +225,6 @@ describe(getExamEditionDays, () => {
     const result = getExamEditionDays({ edition: dele, examYear: null, from: "2026-10-10" });
 
     expect(result.days.map((day) => [day.date, day.registrationClosed])).toStrictEqual([
-      // No deadline given for May's: never marked closed.
       ["2026-05-23", false],
       ["2026-10-16", true],
       ["2026-11-14", true],
@@ -244,7 +233,6 @@ describe(getExamEditionDays, () => {
       ["2027-07-09", false],
     ]);
 
-    // Estimated days have no deadline of their own.
     const estimated = getExamEditionDays({ edition: dele, examYear: 2029, from: "2026-10-10" });
 
     expect(estimated.estimated).toBe(true);

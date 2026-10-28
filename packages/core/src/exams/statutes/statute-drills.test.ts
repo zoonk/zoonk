@@ -22,7 +22,6 @@ const PROVENANCE = {
   runId: `run-${crypto.randomUUID()}`,
 };
 
-/** A goal whose exam's notice links a law; a Cebraspe exam unless the board says otherwise. */
 async function lawGoal({
   board = "Cebraspe",
   formats = [],
@@ -108,7 +107,6 @@ describe("statute drills", () => {
     ]);
   });
 
-  // Fill-in-the-blank drills are typed: practice asks them only of an exam that asks short answers.
   it("fills blanks in a generic board's drills only when its exam asks short written answers", async () => {
     const [choices, shortAnswers] = await Promise.all([
       lawGoal({ board: "Vunesp", formats: [examFormat("multipleChoice")], method: "raw" }),
@@ -129,7 +127,6 @@ describe("statute drills", () => {
     ]);
   });
 
-  // Drills are shared by every learner of the exam: an upload titled like a law is the learner's.
   it("never drills a law from the learner's own upload", async () => {
     const { goal } = await lawGoal();
 

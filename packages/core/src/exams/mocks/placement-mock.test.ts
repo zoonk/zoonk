@@ -14,7 +14,6 @@ function subject(name: string, questions: number | null, shortName: string | nul
   return { citation: CITATION, name, questions, shortName, topics: [], weight: null };
 }
 
-/** ENEM's shape: two days of 90 questions, the first with the essay as a written part. */
 const ENEM: ExamStructure = {
   formats: [],
   mock: {
@@ -60,7 +59,6 @@ const ENEM_AREAS = [
   "Redação",
 ];
 
-/** The OAB's shape: one test of 80 questions in five hours over many subjects of unequal size. */
 const SUBJECT_SIZES = [8, 7, 6, 6, 6, 6, 6, 6, 5, 5, 3, 2, 2, 2, 2, 2, 2, 2, 1, 1];
 const SUBJECTS = SUBJECT_SIZES.map((questions, index) => subject(`Direito ${index}`, questions));
 
@@ -81,7 +79,6 @@ const OAB: ExamStructure = {
   subjects: SUBJECTS,
 };
 
-/** A class test of ten questions in half an hour. */
 const CLASS_TEST: ExamStructure = {
   ...OAB,
   mock: {
@@ -120,7 +117,6 @@ describe(listPlacementMockOptions, () => {
       { coversAllAreas: true, estimatedMinutes: 60, length: "long", minutes: 60, questions: 17 },
     ]);
 
-    // The written test has no questions to ask.
     expect(options[0]?.areas).toStrictEqual([
       "Linguagens, Códigos e suas Tecnologias",
       "Ciências Humanas e suas Tecnologias",
@@ -154,7 +150,6 @@ describe(listPlacementMockOptions, () => {
       { coversAllAreas: true, estimatedMinutes: 150, length: "long", minutes: 150, questions: 40 },
     ]);
 
-    // A quick check asks the subjects worth most and leaves the rest to the first days.
     expect(options[0]?.areas).toStrictEqual([
       "Direito 0",
       "Direito 1",
@@ -188,7 +183,6 @@ describe(listPlacementMockOptions, () => {
   });
 });
 
-/** Four topics per ENEM area in the plan's order, each with two questions in the bank. */
 const SKILLS: PlacementSkill[] = ENEM_AREAS.slice(0, 4).flatMap((area) =>
   Array.from({ length: 4 }, (_, index) => ({ area, skillId: `${area}#${index}` })),
 );
@@ -228,7 +222,6 @@ describe(planPlacementMock, () => {
     expect(new Set(asked).size).toBe(asked.length);
     expect(missingSkillIds).toStrictEqual([]);
 
-    // Day one's section asks its two areas, day two's the other two, at each day's pace.
     expect(
       plan.sections.map(({ minutes, name, questions }) => ({ minutes, name, questions })),
     ).toStrictEqual([
@@ -236,7 +229,6 @@ describe(planPlacementMock, () => {
       { minutes: 13, name: "Ciências da Natureza e Matemática", questions: 4 },
     ]);
 
-    // Two questions on an area of four topics: its basics and its second half, not two basics.
     const math = asked.filter((id) => id.startsWith("Matemática"));
 
     expect(math.map((id) => id.split("/")[0])).toStrictEqual([

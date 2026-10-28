@@ -2,14 +2,12 @@ import { type EssayRubric } from "@zoonk/ai/tasks/v2/grading/grade-essay";
 import { type ExamBlueprint } from "@zoonk/db";
 import { getExamScale, isEnemExam } from "../scoring/exam-scales";
 
-/** Custom rubrics (Cebraspe discursive answers, school essays) are scored out of ten. */
 const CUSTOM_MAX_SCORE = 10;
 
 const OAB_PATTERN = /\boab\b/iu;
 
 type RubricRow = { criterion: string; description: string; points: number | null };
 
-/** An AP question's rows, when every one carries its points as its scoring guidelines do. */
 function toApRows(criteria: readonly RubricRow[]) {
   const rows = criteria.flatMap(({ criterion, description, points }) =>
     points === null ? [] : [{ criterion, description, points }],
@@ -18,11 +16,6 @@ function toApRows(criteria: readonly RubricRow[]) {
   return rows.length > 0 && rows.length === criteria.length ? rows : null;
 }
 
-/**
- * The official rubric an essay is graded with: ENEM's five competencies, OAB's brief section by
- * section, an AP free-response question's rows with their own points, or the item's own criteria
- * for any other exam.
- */
 export function getEssayRubric({
   blueprint,
   criteria,

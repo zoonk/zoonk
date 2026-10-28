@@ -49,7 +49,6 @@ describe(listListeningParts, () => {
         sectionName: "Listening",
         task: "Part 1: a conversation; form completion",
       },
-      // Unknown plays are twice; a part longer than one recording's questions asks as many.
       {
         count: 10,
         plays: 2,
@@ -89,7 +88,6 @@ describe(listListeningParts, () => {
       ]),
     );
 
-    // Each part keeps a name of its own, which its stored recordings are found by.
     expect(parts.map((part) => part.task)).toStrictEqual([
       "Listening, part 1 of 2",
       "Part 2: a monologue",

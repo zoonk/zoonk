@@ -22,11 +22,6 @@ import { submitMockSection } from "./submit-mock-section";
 const FULL = { area: null, day: null, kind: "full" } as const;
 const READING_QUESTIONS = 5;
 
-/**
- * An IELTS-like learner on Plus: a Reading section with a few questions in the bank and a
- * Listening section of two parts, each with a voiced recording of two questions unless `voiced`
- * says which parts have one; `readingQuestions` in the bank for Reading's 40.
- */
 async function listeningSetup({
   readingQuestions = READING_QUESTIONS,
   voiced = [true, true],
@@ -131,14 +126,12 @@ describe("a mock's listening section", () => {
         ? options.view.options.find((option) => option.kind === "full")
         : null;
 
-    // The full mock sits the listening paper: starting it writes the recording it lacks.
     expect(full?.leftOut).not.toContainEqual({ name: "Listening", part: "listening" });
 
     await expect(
       requestMockQuestions({ goalId: goal.id, input: { shape: FULL } }),
     ).resolves.toMatchObject({ listening: true, status: "start" });
 
-    // When the recording couldn't be written, the mock sits the rest and says what it leaves out.
     const started = await startAnytimeMock({
       goalId: goal.id,
       input: { acceptFewer: true, shape: FULL },
@@ -162,7 +155,6 @@ describe("a mock's listening section", () => {
   });
 
   it("asks for a full mock's missing recording even when the bank holds its written questions", async () => {
-    // The Reading paper's 40 questions are all in the bank.
     const { goal } = await listeningSetup({ readingQuestions: 40, voiced: [false, false] });
 
     await expect(
@@ -201,7 +193,6 @@ describe("a mock's listening section", () => {
 
     const blockId = started.id;
 
-    // Reading runs first: its recordings wait for the listening section.
     await expect(recordMockPlay({ blockId, setId: first })).resolves.toStrictEqual({
       status: "invalidSet",
     });
@@ -213,13 +204,11 @@ describe("a mock's listening section", () => {
       status: "counted",
     });
 
-    // The exam plays it once: another page that didn't know gets no second play.
     await expect(recordMockPlay({ blockId, setId: first })).resolves.toStrictEqual({
       played: 1,
       status: "usedUp",
     });
 
-    // Two pages starting the same recording at once: only one gets the play.
     const both = await Promise.all([
       recordMockPlay({ blockId, setId: second }),
       recordMockPlay({ blockId, setId: second }),
@@ -227,9 +216,6 @@ describe("a mock's listening section", () => {
 
     expect(both.map((result) => result.status).toSorted()).toStrictEqual(["counted", "usedUp"]);
 
-    // Only the two counted plays changed what the recordings' screens show.
-
-    // Any tab or device opens the section with the plays already used.
     const result = await getMock(blockId);
 
     expect(
@@ -242,7 +228,6 @@ describe("a mock's listening section", () => {
       ].toSorted((a, b) => a.setId.localeCompare(b.setId)),
     );
 
-    // A recording the mock doesn't ask is never counted on it.
     const other = await listeningSetFixture({ content: listeningContent() });
 
     await expect(recordMockPlay({ blockId, setId: other.id })).resolves.toStrictEqual({

@@ -17,7 +17,6 @@ import { submitMockSection } from "./submit-mock-section";
 const CITATION = { passage: "From the notice.", sourceId: "source" };
 const SUBJECT = "Paper 1";
 
-/** "One or more options correct", two of its four right, as JEE Advanced asks. */
 const SELECT_ALL = {
   context: "A patient takes 1 g of paracetamol every 6 hours.",
   fixedOrder: true,
@@ -31,7 +30,6 @@ const SELECT_ALL = {
   select: "all",
 };
 
-/** One right option of four, left blank in the mock: no penalty. */
 function onePick(question: string) {
   return {
     ...SELECT_ALL,
@@ -41,7 +39,6 @@ function onePick(question: string) {
   };
 }
 
-/** A number typed into the answer box: a fraction or a decimal, like the SAT's grid-ins. */
 const FRACTION = {
   context: null,
   entry: { kind: "fraction", places: null },
@@ -67,11 +64,6 @@ const ITEMS = [
   { content: onePick("Which dose is the limit?"), format: "multipleChoice" },
 ] as const;
 
-/**
- * An exam like JEE Advanced: questions with one or more right options scored +1 per right option
- * picked (`perOption`), numbers typed into a box, words typed in, and half a question lost for a
- * wrong answer; one section of six questions.
- */
 async function formatsSetup() {
   const [user, blueprint, skill] = await Promise.all([
     userFixture(),
@@ -148,8 +140,6 @@ async function formatsSetup() {
 
   mockSession(user.id);
 
-  // The bank holds one question of several picks where the notice's mix wants two: the mock
-  // starts with what there is instead of having one written.
   const started = await startAnytimeMock({
     goalId: goal.id,
     input: { acceptFewer: true, shape: { area: null, day: null, kind: "full" } },
@@ -182,8 +172,6 @@ function answer({ id, itemId, value }: { id: string; itemId?: string; value: Moc
 
 describe("a mock in the exam's own answer formats", () => {
   it("asks several picks, a typed number and a typed word, and scores them as the notice does", async () => {
-    // A model grades a typed answer code doesn't accept. Here it says "goed" is wrong, so the mock
-    // counts what the model says.
     vi.mocked(gradeTypedAnswer).mockResolvedValue({
       data: {
         corrections: [],
@@ -217,15 +205,12 @@ describe("a mock in the exam's own answer formats", () => {
 
     expect(questions.get(itemIds.word ?? "")).toMatchObject({ format: "typed", options: null });
 
-    // It asks the exam's typed number and word as the exam does, so it says it leaves out neither.
     expect(started.leftOut).toStrictEqual([]);
 
-    // Words only go to a question typed in words.
     await expect(
       answer({ id, itemId: itemIds.pick, value: { text: "4 g a day" } }),
     ).resolves.toStrictEqual({ status: "invalidItem" });
 
-    // One of the two right options, no wrong one: +1 of +4. Two thirds typed as a number.
     await answer({ id, itemId: itemIds.pick, value: { selectedIndexes: [0] } });
     await answer({ id, itemId: itemIds.number, value: { number: 2 / 3 } });
     await answer({ id, itemId: itemIds.word, value: { text: " Went " } });
@@ -235,13 +220,11 @@ describe("a mock in the exam's own answer formats", () => {
 
     const finished = await readMock(id);
 
-    // A quarter of the pick, the number and the word; the miss loses half a question, blanks none.
     expect(finished.result).toMatchObject({
       correct: 2.25,
       net: { blank: 2, net: 1.75, partial: 1, penalty: 0.5, right: 2, wrong: 1 },
     });
 
-    // Only the word code doesn't accept went to the model.
     expect(gradeTypedAnswer).toHaveBeenCalledOnce();
     expect(vi.mocked(gradeTypedAnswer).mock.calls[0]?.[0]).toMatchObject({ answer: "goed" });
 
@@ -259,7 +242,6 @@ describe("a mock in the exam's own answer formats", () => {
     const attempts = await prisma.attempt.findMany({ where: { mockExamId: id } });
     const numberAttempt = attempts.find((attempt) => attempt.itemId === itemIds.number);
 
-    // The number keeps the values it was asked with, so its review reads the same question.
     expect(numberAttempt).toMatchObject({ answer: { number: 2 / 3 }, isCorrect: true });
   });
 });

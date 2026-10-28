@@ -4,11 +4,6 @@ import { type MockIdentity, findScheduledMock } from "../../../plans/planner/moc
 import { toIsoDate } from "../../../plans/planner/plan-calendar";
 import { parsePlanSettings } from "../../../plans/planner/plan-state";
 
-/**
- * The exam day and length of the goal's mock scheduled on `date`, as its plan saved it (see
- * `MockIdentity`): what its card and session sit. Null for a goal without one there, or a plan
- * saved before its mocks had an identity.
- */
 export async function loadScheduledMock({
   date,
   goalId,
@@ -16,7 +11,6 @@ export async function loadScheduledMock({
 }: {
   date: Date;
   goalId: string | null;
-  /** The owned scheduled event, including when its session is built after its original day. */
   planItemId?: string | null;
 }): Promise<MockIdentity | null> {
   const item =

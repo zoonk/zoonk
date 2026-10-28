@@ -22,7 +22,6 @@ import { type ExamMomentView } from "./exam-view-contract";
 
 const CHECKLIST_STAGES = new Set<ExamMomentView["stage"]>(["dayBefore", "examDay"]);
 
-/** The exam day Today talks about: the next one ahead, or the last one once they're over. */
 function pickDay({
   days,
   today,
@@ -34,11 +33,6 @@ function pickDay({
   return days.find((day) => day.date >= todayIso) ?? days.at(-1) ?? null;
 }
 
-/**
- * The exam's moment on Today for an exam goal, when there's one to show: the final stretch, the
- * light day before, the exam day, and after the exam, "How did it go?" until the official result
- * is in. Internal: Today's view model reads it for the learner's own goal.
- */
 export async function loadExamMoment({
   goal,
   includesMockExams,
@@ -58,9 +52,7 @@ export async function loadExamMoment({
     | "title"
     | "userId"
   >;
-  /** The learner's plan includes mock exams (Plus), such as a class test's short mock. */
   includesMockExams: boolean;
-  /** The session's learner-local date, as a UTC-midnight label. */
   today: Date;
 }): Promise<ExamMomentView | null> {
   if (goal.kind !== "exam") {

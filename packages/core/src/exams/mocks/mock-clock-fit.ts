@@ -1,10 +1,5 @@
 import { type MockSectionPlan } from "./mock-plan";
 
-/**
- * A scheduled mock's sections on its whole clock: the time of a section it can't sit (an area or a
- * written part the bank has nothing for yet, a listening section without recordings) goes to the
- * ones it sits, each in proportion to its own, so the mock runs as long as its plan funded.
- */
 export function fitToClock({
   clock,
   sections,

@@ -6,11 +6,6 @@ import { type TargetCutoff } from "./target-cutoff-contract";
 
 type NoticeScale = { max: number; min: number } | null;
 
-/**
- * The top of the scale a cut-off is on: the one its source stated, else the scale the notice
- * reports the result on, when the score fits it. Null when neither says: "7" alone could be out of
- * 10 or 100, so it isn't shown.
- */
 function findMaxScore({
   maxScore,
   noticeScale,
@@ -29,11 +24,6 @@ function findMaxScore({
     : null;
 }
 
-/**
- * The latest cut-off a lookup found for the goal's target in this exam (a year's lookup that found
- * none leaves the one before, which names its own edition), with the scale it's on. Null without a
- * target, a shared exam, a found cut-off or its scale: nothing is guessed.
- */
 export async function loadTargetCutoff({
   blueprint: knownBlueprint,
   details,

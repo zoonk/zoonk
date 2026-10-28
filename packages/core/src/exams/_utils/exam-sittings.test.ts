@@ -19,7 +19,6 @@ describe(findLearnerSitting, () => {
 
   it("picks none when the learner's month has no sitting, rather than another month's", () => {
     expect(sittingOf("2027-02-10")).toBeNull();
-    // May 2026's sitting is before `from`.
     expect(sittingOf("2026-05-30")).toBeNull();
   });
 
@@ -33,11 +32,9 @@ describe(findLearnerSitting, () => {
 
     expect(sittingOf(null, days)).toStrictEqual(["2027-04-02"]);
 
-    // Every sitting ahead closed: the next one all the same.
     const allClosed = dele.map((day) => ({ ...day, registrationClosed: true }));
     expect(sittingOf(null, allClosed)).toStrictEqual(["2026-10-16"]);
 
-    // An exam's one sitting stays the learner's after its registration closed.
     const enemClosed = enem.map((day) => ({ ...day, registrationClosed: true }));
     expect(sittingOf(null, enemClosed)).toStrictEqual(["2026-11-08", "2026-11-15"]);
   });
@@ -45,7 +42,6 @@ describe(findLearnerSitting, () => {
   it("picks an exam's one sitting, its every day, whatever date the learner gave", () => {
     expect(sittingOf("2027-02-10", enem, "2026-10-11")).toStrictEqual(["2026-11-08", "2026-11-15"]);
 
-    // Between its two Sundays the sitting is still the exam's.
     expect(sittingOf(null, enem, "2026-11-10")).toStrictEqual(["2026-11-08", "2026-11-15"]);
     expect(sittingOf(null, enem, "2026-11-16")).toBeNull();
   });

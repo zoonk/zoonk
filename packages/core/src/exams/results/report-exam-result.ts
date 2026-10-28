@@ -29,11 +29,6 @@ export type ReportExamResultResult =
   | { status: "tooEarly" }
   | { status: "unauthorized" };
 
-/**
- * The estimate the learner saw before the exam, on the scale they reported: as it was, or, for a
- * score in points, the percent estimate turned into points of the same maximum. Null when the two
- * can't be compared.
- */
 async function loadEstimateBefore({
   goal,
   input,
@@ -66,7 +61,6 @@ async function loadEstimateBefore({
   return null;
 }
 
-/** The exam's last day has come: the learner reports the whole of it. */
 function isExamOver({
   days,
   stage,
@@ -80,11 +74,6 @@ function isExamOver({
   return stage === "afterExam" || (stage === "examDay" && last?.getTime() === today.getTime());
 }
 
-/**
- * A goal that studies everything after its exam (see `PlanSettings.fullCourse`) goes on: Today
- * proposes the next sitting's date (see `proposeNoticeChange`), which the learner applies or
- * keeps their plan over. Reporting the result never fails for it.
- */
 async function offerNextSitting(goalId: string): Promise<void> {
   const plan = await prisma.plan.findUnique({ select: { settings: true }, where: { goalId } });
 
@@ -93,12 +82,6 @@ async function offerNextSitting(goalId: string): Promise<void> {
   }
 }
 
-/**
- * "How did it go?": stores the official result a learner reports after their exam, next to the
- * estimate they saw before it, so estimates for the exam can be calibrated and outcomes measured.
- * Reporting again replaces the earlier report. It opens on the first exam day. Once the exam is
- * over, a goal that studies everything gets the next sitting's date proposed.
- */
 export async function reportExamResult({
   goalId,
   input,

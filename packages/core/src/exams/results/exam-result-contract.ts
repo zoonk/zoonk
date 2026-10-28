@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { EXAM_SCALES, isExamScale, isOnExamScale } from "../scoring/exam-scales";
 
-/** A score beyond this is a typo on any exam scale the app knows. */
 const MAX_SCORE = 10_000;
 
 export const examResultScaleSchema = z
@@ -11,10 +10,6 @@ export const examResultScaleSchema = z
       "irt for item response theory scales like ENEM's; ap, sat and toefl for those exams' own scales (1 to 5, 400 to 1600, bands 1 to 6)",
   });
 
-/**
- * "How did it go?": the official result after the exam, in the exam's own terms. A learner may
- * only know whether they passed, or only their score; either is enough.
- */
 export const examResultInputSchema = z
   .object({
     maxScore: z
@@ -43,7 +38,6 @@ export const examResultInputSchema = z
 
 export type ExamResultInput = z.infer<typeof examResultInputSchema>;
 
-/** The official result as the learner reported it. */
 export type ExamResultView = {
   maxScore: number | null;
   passed: boolean | null;
@@ -52,7 +46,6 @@ export type ExamResultView = {
   score: number | null;
 };
 
-/** A stored report as the apps show it; an unknown stored scale reads as none. */
 export function toExamResultView(row: {
   maxScore: number | null;
   passed: boolean | null;
@@ -71,10 +64,6 @@ export function toExamResultView(row: {
 
 const PERCENT = 100;
 
-/**
- * Estimates without item response theory are percent correct, while learners report points out
- * of the exam's maximum; these convert between the two so a report and its estimate compare.
- */
 export function percentToPoints({ maxScore, percent }: { maxScore: number; percent: number }) {
   return (percent / PERCENT) * maxScore;
 }

@@ -24,7 +24,6 @@ import { loadMockEssays } from "./mock-essays";
 import { loadListeningCandidates } from "./mock-listening";
 import { countFinishedMocksBefore } from "./mock-number";
 
-/** The exam's essays a weekly mock may ask; none for a goal deleted since. */
 function loadWeeklyMockEssays({
   goal,
   userId,
@@ -39,10 +38,6 @@ function loadWeeklyMockEssays({
     : Promise.resolve([]);
 }
 
-/**
- * The recordings each listening section plays (`loadListeningCandidates`), the ones a mock whose
- * questions were picked already holds when it's rebuilt; none for a goal deleted since.
- */
 async function loadWeeklyMockListening({
   goalId,
   itemIds,
@@ -78,14 +73,6 @@ async function loadWeeklyMockListening({
   );
 }
 
-/**
- * Plans the goal's weekly mock: one exam day in real conditions, half of it on regular weeks and
- * all of it in the final stretch, its written part included (the exam's own essays), from
- * questions the learner has never seen. With `itemIds`, it rebuilds the sections of a mock whose
- * questions were already picked. A scheduled mock (`identity`, as its plan saved it) sits its own
- * exam day and length, the ones its plan funded and shows: never another day by the bank or the
- * mocks finished, nor another length by the phase.
- */
 export async function planWeeklyMock({
   essays,
   goal,
@@ -97,18 +84,13 @@ export async function planWeeklyMock({
   today,
   userId,
 }: {
-  /** The exam's essays for a full mock's written part, when the caller loaded them already. */
   essays?: readonly MockEssayCandidate[];
-  /** A goal deleted since keeps its mock, without areas or a date. */
   goal: Pick<Goal, "examBlueprintId" | "targetDate"> & { id: string | null };
-  /** The scheduled mock's exam day and length, as its plan saved it (see `findScheduledMock`). */
   identity?: MockIdentity | null;
   itemIds?: readonly string[] | null;
-  /** The saved plan a GET already read (`readSavedPlan`), so it isn't read again. */
   savedPlan?: SavedPlan;
   skillIds: readonly string[];
   structure: ExamStructure | null;
-  /** The learner-local date, as a UTC-midnight label. */
   today: Date;
   userId: string;
 }): Promise<MockPlan> {
@@ -128,7 +110,6 @@ export async function planWeeklyMock({
     identity?.fullLength ??
     isInFinalStretch({ finalStretchStart, targetDate: goal.targetDate, today });
 
-  // A scheduled mock runs its real time limit, the one its plan funded, however few questions it has.
   const clock = identity ? getMockClock({ ...identity, structure }) : undefined;
 
   const plan = (offset: number) =>
@@ -144,7 +125,6 @@ export async function planWeeklyMock({
       subjectShares: getSubjectShares(structure),
     });
 
-  // A scheduled mock sits its own exam day: the turn that's that day's.
   if (identity) {
     return plan(Math.max(0, getMockDays(structure).indexOf(identity.day)) - mockNumber);
   }
@@ -156,13 +136,10 @@ export async function planWeeklyMock({
     countPlannedQuestions(candidate) > countPlannedQuestions(best) ? candidate : best,
   );
 
-  // Rebuilding a mock whose questions were picked: the exam day whose sections hold the most of
-  // them, which is the day it was planned for unless the goal's mocks moved on since.
   if (itemIds) {
     return fullest;
   }
 
-  // The days take turns; a day whose areas the learner has no questions for yet waits its turn.
   return (
     plans.find((candidate) => countPlannedQuestions(candidate) >= MIN_CHECKPOINT_QUESTIONS) ??
     fullest

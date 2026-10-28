@@ -37,7 +37,6 @@ const STRUCTURE = examStructureSchema.parse({
   subjects: [],
 });
 
-/** Already taught curriculum, a skipped first sitting, and the announced second sitting missed. */
 async function overduePlan() {
   const [user, blueprint, languages, math] = await Promise.all([
     userFixture(),
@@ -200,7 +199,6 @@ describe("an overdue scheduled mock's canonical identity", () => {
 
     const after = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
 
-    // A POST may reconcile the uncredited skipped mock; the played mock keeps its whole identity.
     expect(
       parsePlanSettings(after.settings).mockFunding.filter((entry) => entry.date === EVENT_DATE),
     ).toStrictEqual(

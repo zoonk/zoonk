@@ -12,7 +12,6 @@ import { loadExamChoices } from "../choices/load-exam-choices";
 import { getExamEditionDays, readExamMonth, readExamYear } from "./exam-edition-days";
 import { findLearnerSitting } from "./exam-sittings";
 
-/** Rules beyond these are the exam room's (pens, gates); the ones that decide the result come first. */
 const MAX_RULES = 8;
 const MAX_FORMATS = 4;
 const MAX_TEXT = 240;
@@ -26,7 +25,6 @@ function shorten(text: string): string {
   return text.length > MAX_TEXT ? `${text.slice(0, MAX_TEXT - 1)}…` : text;
 }
 
-/** The notice's dates that aren't exam days: registration, results, a later phase. */
 function getOtherDates(content: BlueprintContent): ExamFactsContext["otherDates"] {
   return content.edition.dates
     .filter((date) => date.kind !== "exam")
@@ -36,10 +34,6 @@ function getOtherDates(content: BlueprintContent): ExamFactsContext["otherDates"
 
 type Structure = BlueprintContent["structure"];
 
-/**
- * A subject with the questions the plan weighs it by and every screen shows (`getSubjectQuestions`):
- * the notice's count, or, when it gives none, the latest edition's, marked so.
- */
 function toSubject({
   structure,
   subject,
@@ -58,7 +52,6 @@ function toSubject({
   };
 }
 
-/** Where the latest edition's counts come from, when a subject's count is one. */
 function toQuestionsSource(structure: Structure): Pick<ExamFactsContext, "questionsSource"> {
   const source = getPastQuestionsSource(structure);
   return { questionsSource: source };
@@ -88,7 +81,6 @@ function toFacts({
     from: today,
   });
 
-  // A class test read from the learner's own material has no notice: its day is never official.
   const fromMaterial = blueprint.ownerId !== null;
 
   return {
@@ -107,14 +99,6 @@ function toFacts({
   };
 }
 
-/**
- * What an exam goal's stored notice says: its exam days (official, or the likely ones until the
- * notice for the learner's edition is out) with the notice's address, its other dates, how it's
- * scored, the rules that decide the result and its subjects (only the options of its choices the
- * learner takes), counted as the plan and every screen count them. For a class test read from the
- * learner's own material (`fromMaterial`), what that material says, with no official day. Null
- * for other goals and exams without a stored notice.
- */
 export async function loadExamNoticeFacts(goal: FactsGoal): Promise<ExamFactsContext | null> {
   if (goal.kind !== "exam" || !goal.examBlueprintId) {
     return null;
@@ -128,16 +112,8 @@ export async function loadExamNoticeFacts(goal: FactsGoal): Promise<ExamFactsCon
   return blueprint ? toFacts({ blueprint, choices, goal }) : null;
 }
 
-/** The official exam day a new goal date moves away from, with where it's set. */
 export type OfficialExamDate = { date: string; source: string | null };
 
-/**
- * The exam day the notice officially sets, when `targetDate` isn't one of its days: moving the
- * goal there contradicts the notice, so the learner is told the official day and keeps their own
- * only on purpose. For an exam held several times a year, the sitting in that date's month (see
- * `findLearnerSitting`): a month without one contradicts nothing. Null when the date is one of
- * them, the days are only estimated, or there's no notice.
- */
 export function findOfficialDateConflict({
   facts,
   targetDate,
@@ -145,7 +121,6 @@ export function findOfficialDateConflict({
 }: {
   facts: ExamFactsContext | null;
   targetDate: string | null;
-  /** The learner's today, as an ISO date. */
   today: string;
 }): OfficialExamDate | null {
   if (!facts?.official || !targetDate || facts.days.some((day) => day.date === targetDate)) {

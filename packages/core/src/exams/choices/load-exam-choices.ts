@@ -9,7 +9,6 @@ import {
   readExamChoices,
 } from "./exam-choices";
 
-/** The learner's picks for their exam's choices, kept with their goal's plan (`examChoices`). */
 export async function loadExamChoices(goalId: string): Promise<ExamChoice[]> {
   const plan = await prisma.plan.findUnique({ select: { settings: true }, where: { goalId } });
   return readExamChoices(plan?.settings);
@@ -34,10 +33,6 @@ async function loadStructure(
   return examStructureSchema.safeParse(blueprint?.structure).data ?? null;
 }
 
-/**
- * The exam's choices with their options and the learner's picks, for the screens that ask or
- * change them; none for a goal without an exam notice or one without choices.
- */
 export async function loadExamChoiceViews({
   blueprint,
   choices,
@@ -51,10 +46,6 @@ export async function loadExamChoiceViews({
   return structure ? listExamChoiceViews({ choices, structure }) : [];
 }
 
-/**
- * The plan's areas that teach an option the exam counts inside another subject, each with that
- * subject's area (see `findPartAreas`); none for a goal without an exam notice.
- */
 export async function loadPartAreas({
   areas,
   examBlueprintId,

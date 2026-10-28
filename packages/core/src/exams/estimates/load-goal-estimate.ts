@@ -25,7 +25,6 @@ import {
   getEstimateCalibration,
 } from "./score-estimate";
 
-/** Calibration reads the exam's most recent official results. */
 const CALIBRATION_REPORTS = 200;
 const MAX_PERCENT = 100;
 
@@ -41,7 +40,6 @@ type ReportRow = {
   score: number | null;
 };
 
-/** A report on the estimate's scale: points out of a maximum read as percent, like the estimate. */
 function toReportedResult(row: ReportRow): ReportedResult[] {
   if (row.score === null || row.estimateLow === null || row.estimateHigh === null) {
     return [];
@@ -66,11 +64,6 @@ function toReportedResult(row: ReportRow): ReportedResult[] {
   ];
 }
 
-/**
- * Official results reported for the exam on the estimate's scale, with the estimate shown before,
- * deleted learners' included. Percent estimates also learn from scores reported in points out of a
- * known maximum.
- */
 async function loadReports({
   examBlueprintId,
   scale,
@@ -95,7 +88,6 @@ async function loadReports({
   return rows.flatMap((row) => toReportedResult(row));
 }
 
-/** The scale the goal's exam reports on (SAT, AP, TOEFL), from its blueprint or title. */
 async function loadExamScale(
   goal: Pick<Goal, "examBlueprintId" | "title">,
   knownBlueprint: Pick<ExamBlueprint, "identityKey" | "name"> | null | undefined,
@@ -111,7 +103,6 @@ async function loadExamScale(
   return getExamScale({ blueprint, goal });
 }
 
-/** The goal's latest finished mocks: what they asked and how they were sat. */
 function loadRecentMocks(goalId: string) {
   return prisma.mockExam.findMany({
     orderBy: { finishedAt: "desc" },
@@ -123,7 +114,6 @@ function loadRecentMocks(goalId: string) {
 
 type RecentMock = Awaited<ReturnType<typeof loadRecentMocks>>[number];
 
-/** Abilities from the goal's latest mocks scored with item response theory. */
 function getIrtAbilities(mocks: readonly RecentMock[]) {
   return mocks.flatMap((mock) => {
     const irt = mockResultSchema.safeParse(mock.result).data?.irt;
@@ -131,21 +121,14 @@ function getIrtAbilities(mocks: readonly RecentMock[]) {
   });
 }
 
-/** The questions a finished mock asked, as its result counts them. */
 function countMockQuestions(result: unknown): number {
   return isJsonObject(result) && typeof result.total === "number" ? result.total : 0;
 }
 
-/** What a mock sat: a subject, half of an exam day, all of it; null for the plan's own. */
 function readMockShape(conditions: unknown) {
   return mockShapeSchema.safeParse(isJsonObject(conditions) ? conditions.shape : null).data ?? null;
 }
 
-/**
- * What the goal's latest mocks hold between them (see `canEstimateScore`): their questions, as
- * their results or the ledger's answers count them (a mock from before its sitting was kept has
- * only the ledger's), and whether each sat one subject.
- */
 function getRecentMockEvidence({
   ledgerMocks,
   mocks,
@@ -162,13 +145,6 @@ function getRecentMockEvidence({
   };
 }
 
-/**
- * The goal's estimated score, only once its recent mocks hold enough of the exam (see
- * `canEstimateScore`): on the exam's own scale for exams that report on one (SAT, AP, TOEFL), on
- * its item response theory scale when its mocks are scored that way (ENEM), otherwise as percent
- * correct. Once enough learners report official results for the exam, the range is calibrated
- * against them.
- */
 export async function loadGoalScoreEstimate({
   blueprint,
   goal,
@@ -176,7 +152,6 @@ export async function loadGoalScoreEstimate({
 }: {
   blueprint?: Pick<ExamBlueprint, "identityKey" | "name"> | null;
   goal: Pick<Goal, "examBlueprintId" | "id" | "title">;
-  /** Finished mocks from the ledger: right and wrong answers, for the percent estimate. */
   ledgerMocks: readonly LedgerMock[];
 }): Promise<EstimatedScore | null> {
   const mocks = await loadRecentMocks(goal.id);

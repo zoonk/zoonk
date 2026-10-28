@@ -5,11 +5,6 @@ import { isObjectiveSection } from "./written-subject";
 
 type Subject = ExamStructure["subjects"][number];
 
-/**
- * The exam's sections a subject belongs to (see `findNamingSections`): by its short name first,
- * the one an exam day's section title uses (ENEM's "Math" in "Natural Sciences and Math"), else
- * by its name. Mocks name the subject by the notice's name everywhere, as the Plan does.
- */
 export function findSubjectSections({
   sections,
   subject,
@@ -26,17 +21,12 @@ export function findSubjectSections({
     : findNamingSections({ name: subject.name, sections });
 }
 
-/** The names of the exam's objective sections, every day's: what a subject's section is told by. */
 export function getObjectiveSectionNames(structure: ExamStructure | null): string[] {
   return (structure?.mock?.sections ?? [])
     .filter((section) => isObjectiveSection(section) && section.name.trim())
     .map((section) => section.name);
 }
 
-/**
- * Minutes per question in a subject: its exam day's pace when a day's section names it, else the
- * exam's pace across its objective sections.
- */
 export function getSubjectPace({
   subject,
   structure,

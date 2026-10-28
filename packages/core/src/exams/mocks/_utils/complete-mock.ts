@@ -43,7 +43,6 @@ async function measureGoalPreparation({
   return measurePreparation({ ...inputs, asOf: now }).value;
 }
 
-/** The topics the mock asks that the learner was taken to know without studying them. */
 async function loadMockSkillsToRelearn(mock: MockSitting): Promise<Set<string>> {
   if (!mock.goalId) {
     return new Set();
@@ -61,10 +60,8 @@ async function loadMockSkillsToRelearn(mock: MockSitting): Promise<Set<string>> 
   });
 }
 
-/** How many of the goal's latest mocks are looked through for one like this. */
 const PREVIOUS_MOCKS_READ = 10;
 
-/** Two mocks that measure the same thing: the same part of the exam, never a placement one. */
 function isLike(mock: MockConditions, other: MockConditions): boolean {
   return (
     other.purpose !== "placement" &&
@@ -73,12 +70,6 @@ function isLike(mock: MockConditions, other: MockConditions): boolean {
   );
 }
 
-/**
- * The goal's previous mock like this one in the same terms, for "+16 since the last one": the
- * plan's weekly mocks among themselves, a mock taken any time against the last of the same part of
- * the exam (a subject against that subject). A placement mock, stopped wherever the learner
- * wanted, is never the measure.
- */
 async function loadPreviousMeasure(mock: MockSitting): Promise<number | null> {
   if (!mock.goalId || mock.conditions.purpose === "placement") {
     return null;
@@ -100,10 +91,6 @@ async function loadPreviousMeasure(mock: MockSitting): Promise<number | null> {
   return result ? getMockMeasure(result) : null;
 }
 
-/**
- * The block keeps every question it reserved; an adaptive exam asks only one of a module's two
- * sets, so the block's questions become the ones asked before the session settles it.
- */
 async function keepAskedQuestions({ blockId, mock }: { blockId: string; mock: MockSitting }) {
   const asked = getAskedItemIds(mock.conditions).map((entry) => entry.itemId);
 
@@ -128,11 +115,6 @@ async function keepAskedQuestions({ blockId, mock }: { blockId: string; mock: Mo
   });
 }
 
-/**
- * Settles what the mock earned: a scheduled mock's session block (Brain Power, the ledger row that
- * feeds preparation, the plan item checked off), or a mock taken any time on its own. Returns the
- * belt level and the tenth of Energy it took the learner to, for its result to celebrate.
- */
 async function settleMock({
   graded,
   mock,
@@ -186,10 +168,6 @@ async function trackCompletion({
   });
 }
 
-/**
- * Ends a mock: grades and records every answer, settles what it earned (see `settleMock`), then
- * keeps what it showed.
- */
 export async function completeMock({
   mock,
   owned,
@@ -217,7 +195,6 @@ export async function completeMock({
 
   const reached = await settleMock({ graded, mock, owned, timeZone });
 
-  // A miss on a topic the learner was taken to know brings its lessons back (see `SkillClaim`).
   if (mock.goalId) {
     await bringBackMissedLessons({
       goalId: mock.goalId,
@@ -242,7 +219,6 @@ export async function completeMock({
 
   const finished = await writeLearnerChange({ userId: mock.userId }, async (tx) => {
     const { count } = await tx.mockExam.updateMany({
-      // What it reached is kept beside what it showed, so every read of the result celebrates it.
       data: { finishedAt: new Date(), result: { ...result, reached }, status: "finished" },
       where: { id: mock.id, status: "active" },
     });

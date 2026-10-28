@@ -45,10 +45,6 @@ const GRADE = {
   zeroReason: null,
 };
 
-/**
- * A Cebraspe-style exam day: an objective test in the morning and a discursive test with its own
- * three hours in the afternoon, whose notice states a pass mark.
- */
 const STRUCTURE = {
   formats: [
     {
@@ -79,8 +75,6 @@ const STRUCTURE = {
 
 const FULL = { area: null, day: null, kind: "full" } as const;
 
-/** A Plus learner's exam goal on two Mathematics skills, with the exam's own essay question. */
-/** A day that is all written, like the OAB's second phase: one discursive test of three hours. */
 const WRITTEN_ONLY = {
   ...STRUCTURE,
   mock: {
@@ -181,7 +175,6 @@ async function startFull(goalId: string) {
   return started.id;
 }
 
-/** Hands in the objective test, then writes the essay of the afternoon's written test. */
 async function writeEssay({ id, text }: { id: string; text: string }) {
   await submitMockSection({ blockId: id, input: { timeZone: UTC }, section: 0 });
 
@@ -238,7 +231,6 @@ describe("a full mock of an exam with a written test", () => {
     const id = await startFull(goal.id);
     const started = await readMock(id);
 
-    // A mock of the whole exam shows the notice's pass mark.
     expect(started.passMarks).toMatchObject({ texts: [PASS_MARK] });
 
     expect(
@@ -250,7 +242,6 @@ describe("a full mock of an exam with a written test", () => {
 
     const choice = started.current?.questions[0]?.itemId ?? "";
 
-    // A pick never lands on the essay, and text never lands on a question.
     await expect(
       saveMockAnswer({
         blockId: id,
@@ -279,7 +270,6 @@ describe("a full mock of an exam with a written test", () => {
 
     await submitMockSection({ blockId: id, input: { timeZone: UTC }, section: 1 });
 
-    // Handing in grades the questions right away; the essay waits for its own grading.
     const finished = await readMock(id);
 
     expect(finished.status).toBe("finished");
@@ -300,7 +290,6 @@ describe("a full mock of an exam with a written test", () => {
     expect(graded.essays).toMatchObject([{ grade: GRADE, status: "graded", text }]);
     expect(graded.essayRubric).toBe("custom");
 
-    // Asking again grades nothing twice: the grade is kept on the mock's attempt.
     await gradeMockEssays({ blockId: id, input: { timeZone: UTC } });
 
     expect(gradeEssay).toHaveBeenCalledExactlyOnceWith(
@@ -319,7 +308,6 @@ describe("a full mock of an exam with a written test", () => {
   it("asks the written test in the plan's full mock of the final stretch, as the real exam does", async () => {
     const { plan } = await writtenExamSetup();
 
-    // The final stretch started yesterday: the week's mock sits the whole exam day.
     await prisma.plan.update({
       data: {
         phases: [

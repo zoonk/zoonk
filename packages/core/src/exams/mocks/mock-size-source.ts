@@ -23,7 +23,6 @@ function getSubjectsSource(structure: ExamStructure): MockSizeSource["subjects"]
     : "even";
 }
 
-/** Whether the notice states the exam's time: its total, or every section's. */
 function isTimeStated(structure: ExamStructure): boolean {
   const sections = structure.mock?.sections ?? [];
 
@@ -33,7 +32,6 @@ function isTimeStated(structure: ExamStructure): boolean {
   );
 }
 
-/** Where the mocks of an exam take their size from (see `MockSizeSource`). */
 export function getMockSizeSource({
   noticeQuestions,
   ownerId,

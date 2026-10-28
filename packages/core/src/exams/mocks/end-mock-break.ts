@@ -4,10 +4,6 @@ import { findOwnedMock } from "./_utils/owned-mock";
 
 export type EndMockBreakResult = { status: "notFound" | "notOnBreak" | "started" | "unauthorized" };
 
-/**
- * Ends the break between two sections now, like walking back into the room early: the next
- * section's clock starts. Once the break has run out, its clock started on its own.
- */
 export async function endMockBreak({ blockId }: { blockId: string }): Promise<EndMockBreakResult> {
   const found = await findOwnedMock(blockId);
 

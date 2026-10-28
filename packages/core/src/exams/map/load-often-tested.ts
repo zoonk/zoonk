@@ -5,10 +5,6 @@ import { topicFrequencySchema } from "../../library/exams/blueprint-contract";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { getOftenTestedSkillIds } from "./often-tested";
 
-/**
- * An exam goal's "often tested" skills, from its board's past papers; empty for other goals. Read
- * for the learner's screens, from the request's plan.
- */
 export async function loadOftenTestedSkillIds(
   goal: Pick<Goal, "examBlueprintId" | "id" | "kind" | "userId"> | null,
 ): Promise<Set<string>> {

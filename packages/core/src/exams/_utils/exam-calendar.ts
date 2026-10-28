@@ -12,12 +12,6 @@ import {
 } from "./exam-edition-days";
 import { findLearnerSitting, moveSittingToDate } from "./exam-sittings";
 
-/**
- * The exam's days, from its notice, or the goal's own date when the notice has none. `estimated`
- * days are the ones the edition most likely has, until its notice is stored. `namedMonth`: the one
- * day is the start of the month the learner named ("in March"), which stands for that month, so
- * screens say the month instead of a day.
- */
 type ExamCalendar = {
   days: ExamDay[];
   estimated: boolean;
@@ -25,17 +19,6 @@ type ExamCalendar = {
   timeZone: string | null;
 };
 
-/**
- * When the learner's exam is: every exam day of the edition they prepare for with its start time
- * (of their sitting, when it's held several times a year), or the date the plan counts down to
- * when the notice doesn't give it, so every screen shows the plan's one date. The edition is the
- * year the learner named (ENEM 2028), or the notice's own while its days are ahead of the goal's
- * start; without a notice for it, its days are estimated from the notice's timing, as the next
- * edition's are once a notice's days all passed before the goal started. A goal date that isn't
- * one of those days is the learner's own (a school test on Friday, a sitting the notice doesn't
- * list), or one they kept when the notice gave another; estimated days near it move to it, since
- * the learner knows their day better than past editions' timing.
- */
 export function getExamCalendar({
   blueprint,
   goal,
@@ -54,18 +37,15 @@ export function getExamCalendar({
     from: startedOn,
   });
 
-  // An exam held several times a year is the learner's sitting only (see `findLearnerSitting`).
   const found = findLearnerSitting({ days, from: startedOn, goalDate }) ?? [];
   const isOnFound = goalDate === null || found.some((day) => day.date === goalDate);
 
-  // Estimated days follow the learner's date near them (`moveSittingToDate`).
   const sitting =
     estimated && !isOnFound && goalDate
       ? (moveSittingToDate({ date: goalDate, sitting: found }) ?? found)
       : found;
 
   const isPlanned = goalDate === null || sitting.some((day) => day.date === goalDate);
-  // A class test read from the learner's own material has no past editions to estimate from.
   const isEstimatedClassTest = estimated && Boolean(blueprint?.ownerId);
 
   if (sitting.length > 0 && isPlanned && !isEstimatedClassTest) {
@@ -77,8 +57,6 @@ export function getExamCalendar({
     };
   }
 
-  // A date that's the start of the month the learner named is that guess: there's no notice day
-  // yet, or the notice's is in another month and waits for their answer.
   const isNamedMonth =
     goalDate !== null &&
     goalDate === getNamedMonthStart({ details: goal.details, from: startedOn });
@@ -91,12 +69,7 @@ export function getExamCalendar({
   };
 }
 
-/**
- * How the date the plan counts down to is known: `estimated`, the likely day of an edition whose
- * notice isn't out yet, or the start of the month the learner named; `namedMonth`, that start of
- * the month, which stands for the month, so screens say the month ("December 2026") instead of a
- * day in it. Every screen that shows the date says so.
- */
+/** `namedMonth` represents a whole month; display the month instead of its first day. */
 export type GoalDateKind = { estimated: boolean; namedMonth: boolean };
 
 export function getGoalDateKind(input: Parameters<typeof getExamCalendar>[0]): GoalDateKind {
@@ -121,7 +94,6 @@ export function toExamDates(calendar: ExamCalendar): Date[] {
   return calendar.days.map((day) => fromIsoDate(day.date));
 }
 
-/** The learner-local day the goal started, as a UTC-midnight label like the exam's days. */
 function getGoalStartDate(goal: Pick<Goal, "createdAt" | "timezone">): Date {
   return getDateInTimeZone({ date: goal.createdAt, timeZone: getAnswerTimeZone({ goal }) });
 }

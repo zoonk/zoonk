@@ -26,7 +26,6 @@ const ENEM: ExamStructure = {
   subjects: [],
 };
 
-/** A bank with only `count` questions for day two's areas, fewer than its half day asks. */
 function thinBank(count: number): MockCandidate[] {
   return Array.from({ length: count }, (_, index) => ({
     answered: false,
@@ -37,8 +36,6 @@ function thinBank(count: number): MockCandidate[] {
   }));
 }
 
-// A scheduled mock runs the time its plan funded and shows: a thin bank asks fewer questions in
-// that time, and the learner may finish early, but the clock is the exam day's.
 describe("a scheduled mock's clock", () => {
   it("is its exam day's real time limit, however few questions the bank has", () => {
     const clock = getMockClock({ day: 2, fullLength: false, structure: ENEM });
@@ -56,7 +53,6 @@ describe("a scheduled mock's clock", () => {
     expect(plan.minutes).toBe(150);
     expect(plan.sections.map((section) => section.minutes)).toStrictEqual([150]);
 
-    // It asks the questions it has, no more.
     expect(getPlannedItemIds(plan)).toHaveLength(8);
     expect(plan.sections.map((section) => section.questions)).toStrictEqual([8]);
   });
@@ -74,7 +70,6 @@ describe("a scheduled mock's clock", () => {
   });
 });
 
-/** An exam day of a reading section and a listening one, as English proficiency tests sit them. */
 const LISTENING_EXAM: ExamStructure = {
   formats: [],
   mock: {
@@ -104,7 +99,6 @@ function bank(area: string, count: number): MockCandidate[] {
 }
 
 describe("a scheduled mock's listening", () => {
-  // The bank has recordings for only 5 of its 40 questions: they're what it plays, in its time.
   const recordings = new Map([["Listening", bank("Listening", 5)]]);
 
   it("runs its section's share of the real exam day, whatever recordings the bank has", () => {
@@ -145,12 +139,10 @@ describe("a scheduled mock's listening", () => {
   });
 });
 
-/** The minutes a mock's sections add up to: what its sitting stores and its timers run. */
 function sumSections(plan: ReturnType<typeof planMock>): number {
   return plan.sections.reduce((total, section) => total + section.minutes, 0);
 }
 
-/** An exam day of two objective sections and a written test with a time of its own. */
 const TWO_SECTIONS: ExamStructure = {
   formats: [],
   mock: {
@@ -170,9 +162,6 @@ const TWO_SECTIONS: ExamStructure = {
   subjects: [],
 };
 
-// The sections a scheduled mock plays hold its whole clock between them, however the bank and the
-// exam's essays fill them: an empty section's time and a written test with no essay to ask go to
-// the sections it plays, so the sitting runs the time the plan funded and the learner saw.
 describe("a scheduled mock's sections", () => {
   it("hold its whole clock when the bank fills only one of them", () => {
     const clock = getMockClock({ day: 1, fullLength: false, structure: TWO_SECTIONS });

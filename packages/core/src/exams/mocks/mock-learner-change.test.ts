@@ -94,7 +94,6 @@ describe("mock writes under the learner's lock", () => {
     }
 
     await starts;
-    // Only one contender creates the sitting.
     await startMock({ blockId, input: {} });
     const sitting = await prisma.mockExam.findUniqueOrThrow({ where: { blockId } });
 
@@ -237,8 +236,6 @@ describe("mock writes under the learner's lock", () => {
     }
 
     const result = await request;
-
-    // The lock holder, the changed payload, and the finished result each commit one mark.
 
     await expect(
       prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),

@@ -3,24 +3,14 @@ import { type ExamStructure } from "../../library/exams/blueprint-contract";
 
 type StructureSection = NonNullable<ExamStructure["mock"]>["sections"][number];
 
-/** Whether a section asks objective questions a mock fills from the bank. */
 export function isObjectiveSection(section: StructureSection): boolean {
   return section.kind === undefined || section.kind === "objective";
 }
 
 const WRITTEN_TEST = String.raw`(?:prova\s+)?(?:discursiva|reda[cç][aã]o|essay|pe[cç]a t[eé]cnica)`;
 
-/**
- * A subject that is itself a written test (a discursive test, an essay or a legal brief), not one
- * that teaches official writing, named alone or with another name for it ("Discursiva (redação)").
- */
 const WRITTEN_SUBJECT_NAME = new RegExp(`^${WRITTEN_TEST}(?:\\s*\\(${WRITTEN_TEST}\\))?$`, "iu");
 
-/**
- * Whether a notice subject is one of its written tests (a discursive test, an essay) rather than
- * a body of knowledge: named or grouped as a written section of the exam, or, with no questions of
- * its own, named like a written test.
- */
 export function isWrittenSubject({
   structure,
   subject,
@@ -40,14 +30,8 @@ export function isWrittenSubject({
   );
 }
 
-/** Section kinds sat some other way than written questions: recordings, talks, a practical test. */
 const PAPER_KINDS = new Set<StructureSection["kind"]>(["listening", "practical", "speaking"]);
 
-/**
- * Whether a notice subject is asked with the bank's written questions: not one of its written tests
- * (`isWrittenSubject`), and not a paper sat another way, named like a listening, speaking or
- * practical section of the exam (IELTS's "Listening" plays recordings; "Speaking" is a talk).
- */
 export function isQuestionSubject({
   structure,
   subject,

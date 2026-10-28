@@ -20,13 +20,6 @@ export type MockOptionsResult =
   | { status: "ready"; view: MockOptionsView }
   | { status: "noGoal" | "notExam" | "notFound" | "unauthorized" };
 
-/**
- * The mocks the learner can take whenever they want for one exam goal (the active goal by
- * default), beside the plan's weekly ones: each exam day in full, half of one, each subject, with
- * their questions and time, the diagnostic one onboarding offers instead of the quick placement in
- * its lengths, whether their plan includes mock exams (Plus), the one they started and haven't
- * finished, and how the last one went.
- */
 export async function getMockOptions({
   goalId,
 }: { goalId?: string } = {}): Promise<MockOptionsResult> {

@@ -6,7 +6,6 @@ export type EssayContent = Extract<
   { format: "essay" }
 >["content"];
 
-/** An essay question's prompt and rubric; null for any other item, or one that no longer parses. */
 export function readEssayContent(item: Item | null): EssayContent | null {
   if (item?.format !== "essay") {
     return null;

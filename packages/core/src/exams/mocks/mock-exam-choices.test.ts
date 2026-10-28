@@ -10,11 +10,6 @@ const LANGUAGES = "Languages, Codes and their Technologies";
 const GROUP = "Foreign language";
 const SPANISH: ExamChoice = { group: GROUP, subject: "Spanish" };
 
-/**
- * An ENEM-like first day: one section of ten questions over Languages and Humanities, whose
- * Languages count includes the foreign language the learner takes (English or Spanish).
- * `optionQuestions`: the count the notice gives each language, null when it gives none.
- */
 function enemDay(optionQuestions: number | null): ExamStructure {
   const option = (name: string) => ({
     choiceGroup: GROUP,
@@ -49,7 +44,6 @@ function enemDay(optionQuestions: number | null): ExamStructure {
   };
 }
 
-/** The exam's bank on the plan's areas: `skills` topics in each, a few questions per topic. */
 function bank(area: string, { count, skills }: { count: number; skills: number }) {
   return Array.from({ length: count }, (_, index): MockCandidate => ({
     answered: false,
@@ -67,7 +61,6 @@ const CANDIDATES = [
   ...bank("Humanities", { count: 12, skills: 4 }),
 ];
 
-/** How many questions of each area the full mock of the day asks, for the learner's picks. */
 function askedByArea({
   choices,
   structure,
@@ -118,7 +111,6 @@ describe("a mock of an exam with a choice of subject", () => {
   });
 
   it("gives an option the notice doesn't count its part of its subject by topics", () => {
-    // Languages has four topics in the bank and Spanish one: a fifth of Languages' five questions.
     expect(askedByArea({ choices: [SPANISH], structure: enemDay(null) })).toStrictEqual({
       English: 0,
       Humanities: 5,
@@ -127,8 +119,6 @@ describe("a mock of an exam with a choice of subject", () => {
     });
   });
 
-  // Ana takes English: the chooser offered "Língua Inglesa, 5 questions" as a subject of its own
-  // and named it beside Languages on the first day, while her Plan counts it in Languages' 45.
   it("offers the option the learner picked inside its subject, never as a subject of its own", () => {
     const chosen = toChosenStructure({ choices: [SPANISH], structure: enemDay(1) });
 
@@ -150,7 +140,6 @@ describe("a mock of an exam with a choice of subject", () => {
       ["Humanities", 5],
     ]);
 
-    // Languages' own mock asks the language she takes, as its share of the subject.
     const languages = subjects.find((option) => option.area === LANGUAGES);
 
     if (!languages) {

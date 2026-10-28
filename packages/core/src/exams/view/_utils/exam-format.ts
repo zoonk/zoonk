@@ -1,12 +1,6 @@
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
 import { type ExamDay, type ExamFormatDay } from "../exam-view-contract";
 
-/**
- * The exam as its notice sets it out, day by day: each sitting's date (from the exam's calendar),
- * its time and its parts (ENEM's day 1: "Languages, Human Sciences and essay", 90 questions,
- * 5 h 30). A section the notice doesn't place on a day sits on the first. Empty when the notice
- * doesn't state its sections, so the page says nothing it can't source.
- */
 export function getExamFormat({
   days,
   structure,

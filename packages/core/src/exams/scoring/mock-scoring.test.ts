@@ -31,7 +31,6 @@ describe(getMockScoring, () => {
   });
 
   it("counts right answers for every other exam scored with item response theory", () => {
-    // Saber 11 and the SAT score with item response theory on scales that aren't ENEM's.
     for (const name of ["Saber 11", "SAT"]) {
       expect(getMockScoring({ ...exam(name), structure: scoredBy("itemResponseTheory") })).toBe(
         "raw",
@@ -99,7 +98,6 @@ describe(getScoreNotes, () => {
       scale: null,
     });
 
-    // ENEM's mocks score it its own way, and a net score is the exam's.
     expect(
       getScoreNotes({
         ...NAMES,
@@ -120,7 +118,6 @@ describe(getScoreNotes, () => {
   });
 
   it("puts the right answers on the notice's scale where it publishes the map, else says the range", () => {
-    // EXANI-II's Ceneval index: 700 plus 6 per percent of right answers, up to 1300.
     const exani = scoredBy("scaled");
 
     const scaled = (fromPercent: { base: number; perPercent: number } | null) => ({
@@ -144,7 +141,6 @@ describe(getScoreNotes, () => {
 
     const scale = { max: 1300, min: 700, name: "Índice Ceneval", passScore: 1000 };
 
-    // 62 of 100 right is 700 + 6 x 62.
     expect(
       getScoreNotes({
         ...NAMES,
@@ -158,7 +154,6 @@ describe(getScoreNotes, () => {
       getScoreNotes({ ...NAMES, scoring: "raw", share: 0.62, structure: scaled(null) }),
     ).toStrictEqual({ noticeScoring: null, relative: false, scale: { ...scale, score: null } });
 
-    // An exam with a preset scale and no notice one shows on the preset's: the SAT's 400 + 12 x 75.
     expect(
       getScoreNotes({
         blueprint: { identityKey: "sat", name: "SAT" },

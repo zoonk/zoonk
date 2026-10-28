@@ -9,7 +9,6 @@ function format(kind: ExamStructure["formats"][number]["kind"]) {
   return { citation: CITATION, description: kind, kind, options: null };
 }
 
-/** A language certificate's day: reading, listening, writing and speaking. */
 const CERTIFICATE: ExamStructure = {
   formats: [format("multipleChoice"), format("essay"), format("oral")],
   mock: {
@@ -39,13 +38,11 @@ describe(listMockLeftOut, () => {
       structure: CERTIFICATE,
     });
 
-    // Listening and speaking aren't asked; the writing part is, with the exam's essay.
     expect(full?.leftOut).toStrictEqual([
       { name: "Listening", part: "listening" },
       { name: "Speaking", part: "speaking" },
     ]);
 
-    // Listening's 40 questions are never filled with reading ones: the mock asks the reading part.
     expect(full).toMatchObject({ questions: 40, written: ["Writing"] });
   });
 
@@ -70,14 +67,12 @@ describe(listMockLeftOut, () => {
       ),
     ).toStrictEqual(["speaking", "written", "numeric", "shortAnswer", "practical"]);
 
-    // A subject's mock sits none of the day's sections: only what the whole exam asks differently.
     expect(
       listMockLeftOut({ asked: [], day: null, kind: "area", structure, typed: [] }).map(
         (part) => part.part,
       ),
     ).toStrictEqual(["numeric", "shortAnswer", "practical"]);
 
-    // Once the bank has numbers to type in, the mock asks them as the exam does.
     expect(
       listMockLeftOut({ asked: [], day: null, kind: "area", structure, typed: ["numeric"] }).map(
         (part) => part.part,

@@ -13,10 +13,6 @@ export type SubmitMockSectionResult = {
   status: "expired" | "finished" | "next" | "notFound" | "notRunning" | "unauthorized";
 };
 
-/**
- * How the submitted module went, graded in memory by code alone: the drafts stay drafts until the
- * end, when a model also grades the typed answers code doesn't accept.
- */
 async function countRight({ itemIds, mock }: { itemIds: readonly string[]; mock: MockSitting }) {
   const items = await loadMockItems(itemIds);
 
@@ -35,7 +31,6 @@ async function countRight({ itemIds, mock }: { itemIds: readonly string[]; mock:
   }).length;
 }
 
-/** The conditions once a section is submitted: the time-out noted and the next module routed. */
 async function advanceConditions({
   mock,
   section,
@@ -75,13 +70,6 @@ async function advanceConditions({
 
 const MS_PER_MINUTE = 60_000;
 
-/**
- * Hands in the running section, by the learner or when its time runs out: the next section's
- * clock starts (an adaptive exam's next module is picked here), after the break the notice gives
- * between them, which the learner may end early (`endMockBreak`); handing in the last one ends the
- * mock. A section handed in twice, from two tabs, moves the mock on once. One whose time ran out
- * while the learner was away is `expired`: nothing is handed in or graded.
- */
 export async function submitMockSection({
   blockId,
   input,

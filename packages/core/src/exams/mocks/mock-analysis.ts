@@ -5,25 +5,17 @@ import { type MockConditions, type MockResult, type MockScoring } from "./mock-c
 const MS_PER_SECOND = 1000;
 const SECONDS_PER_MINUTE = 60;
 const PERCENT = 100;
-/** Partial credit keeps two decimals: two thirds of a question reads 0.67. */
 const POINT_DECIMALS = 100;
 
-/** One asked question after grading, with where it sat and how long it took. */
 export type GradedMockAnswer = {
   area: string | null;
-  /**
-   * The share of the question's points it earned: 1 right, 0 wrong or blank, and in between for a
-   * question with several picks answered partly right where the notice gives partial credit.
-   */
   credit: number;
   durationMs: number;
   flagged: boolean;
   irtItem: IrtItem;
   outcome: NetOutcome;
   section: number;
-  /** The skill it asks, by id and name: the mock's topics. */
   skill: { id: string; name: string };
-  /** Left blank without ever being answered in a section that ran out of time. */
   timedOut: boolean;
 };
 
@@ -43,7 +35,6 @@ function groupByArea({
   return names.map((name) => ({ answers: answers.filter((item) => nameOf(item) === name), name }));
 }
 
-/** The exam's pace for a section: its minutes over its questions. */
 function getTargetSeconds({
   conditions,
   sections,
@@ -62,7 +53,6 @@ function getTargetSeconds({
   return paces.length > 0 ? paces.reduce((sum, pace) => sum + pace, 0) / paces.length : null;
 }
 
-/** Right answers, each partly right one adding the share of its points it earned. */
 function countPoints(answers: readonly GradedMockAnswer[]): number {
   const points = answers.reduce((sum, answer) => sum + answer.credit, 0);
   return Math.round(points * POINT_DECIMALS) / POINT_DECIMALS;
@@ -101,10 +91,6 @@ function toAreaResult({
   };
 }
 
-/**
- * ENEM reports one score per area; the mock's overall score is their average, and its range
- * combines the areas' uncertainty.
- */
 function getOverallIrt(groups: readonly AreaGroup[]): MockResult["irt"] {
   const estimates = groups.map((group) => estimateAbility(toResponses(group.answers)));
 
@@ -120,7 +106,6 @@ function getOverallIrt(groups: readonly AreaGroup[]): MockResult["irt"] {
   return { ...toScaleRange({ se, theta }), se, theta };
 }
 
-/** How each topic went, in the order the mock first asked it. */
 function toTopicResults(answers: readonly GradedMockAnswer[]): MockResult["topics"] {
   return [...Map.groupBy(answers, (answer) => answer.skill.id).values()].flatMap((group) => {
     const [first] = group;
@@ -139,7 +124,6 @@ function toTopicResults(answers: readonly GradedMockAnswer[]): MockResult["topic
   });
 }
 
-/** The number a mock is compared on: the exam's own measure. */
 export function getMockMeasure(result: Pick<MockResult, "correct" | "irt" | "net" | "total">) {
   if (result.irt) {
     return result.irt.score;
@@ -152,12 +136,6 @@ export function getMockMeasure(result: Pick<MockResult, "correct" | "irt" | "net
   return result.total > 0 ? Math.round((result.correct / result.total) * PERCENT) : 0;
 }
 
-/**
- * Turns a finished mock's graded answers into what it showed: the score in the exam's own terms
- * (estimated item response theory scores by area, Cebraspe's net score with calibration, or right
- * answers), each area and topic, time per question against the exam's pace, and ENEM's
- * coherence.
- */
 export function analyzeMock({
   answers,
   conditions,

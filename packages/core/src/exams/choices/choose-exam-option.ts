@@ -17,13 +17,8 @@ export type ExamChoiceResult =
   | { error: PlanOperationError | "unknownOption"; status: "invalid" }
   | { status: "notFound" | "unauthorized" };
 
-/** Not shown to the learner: the app says which option they take from the change's operations. */
 const EXAM_CHOICE_NOTE = "The learner picked the option they take of one of the exam's choices.";
 
-/**
- * The picks as the exam's notice names them, or null when one isn't an option of a choice it has
- * (or the goal has no notice): a plan never studies a subject the exam doesn't offer as an option.
- */
 async function findOfferedChoices({
   choices,
   goal,
@@ -49,7 +44,6 @@ async function findOfferedChoices({
   return offered.length === choices.length ? offered : null;
 }
 
-/** The picks that change what the plan has, as one change the learner can undo. */
 async function applyChoices({
   choices,
   context,
@@ -86,11 +80,7 @@ async function applyChoices({
   return { change, status: "applied" };
 }
 
-/**
- * Keeps the options a learner takes of their exam's choices with their plan, for a goal whose
- * owner a public capability already checked: from onboarding's question or the plan. Each pick
- * must be an option the exam offers.
- */
+/** The caller must already have authorized ownership of the goal. */
 export async function pickExamOptions({
   choices,
   followToday,
@@ -121,12 +111,6 @@ export async function pickExamOptions({
   });
 }
 
-/**
- * The option the learner takes of one of their exam's choices (ENEM's foreign language: English
- * or Spanish), from the plan. The plan, practice and mocks then study that option and no other of
- * the choice; picking it again changes nothing. Like any change the learner makes, it re-plans from
- * today and shows in the plan's changes with an undo.
- */
 export async function chooseExamOption({
   goalId,
   input,

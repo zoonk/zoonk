@@ -6,7 +6,6 @@ import { mockSession } from "../../_test-utils/mock-session";
 import { getMockOptions } from "./get-mock-options";
 import { type MockResult } from "./mock-contract";
 
-/** Schedule real reads on either implementation, without substituting persisted results. */
 function observeLatestMockReads(observe: (client: TransactionClient) => () => void) {
   const restoreRoot = observe(prisma);
   const transaction = prisma.$transaction.bind(prisma);
@@ -96,7 +95,6 @@ describe(getMockOptions, () => {
 
         if (args?.where?.goalId === goal.id && args.where.status === "finished") {
           try {
-            /** Commit on a separate connection after the row read, before the number read. */
             await prisma.mockExam.update({
               data: {
                 finishedAt: secondDate,

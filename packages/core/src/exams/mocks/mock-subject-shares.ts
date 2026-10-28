@@ -1,13 +1,6 @@
 import { namesMatch } from "../_utils/name-match";
 import { type MockCandidate } from "./mock-plan";
 
-/**
- * A notice subject's share of an exam day's questions, under the name its questions' areas carry.
- * `partOf` names the subject whose count includes this one's, as ENEM's 45 Languages questions
- * include the foreign language the learner picked: its questions sit in that subject's sections.
- * `questions` is null for such an option the notice gives no count of its own (see
- * `splitPartShares`). `even` marks an even split standing in for counts the notice doesn't give.
- */
 export type SubjectShare = {
   even?: boolean;
   name: string;
@@ -17,7 +10,6 @@ export type SubjectShare = {
 
 type CountedShare = Omit<SubjectShare, "questions"> & { questions: number };
 
-/** Whether a question's area is the subject's, as sections and shares match them. */
 export function isSubjectArea({ candidate, name }: { candidate: MockCandidate; name: string }) {
   return candidate.area !== null && namesMatch(candidate.area, name);
 }
@@ -33,11 +25,6 @@ function countSkills({
   return new Set(own.map((candidate) => candidate.skillId)).size;
 }
 
-/**
- * Every share with its questions. An option counted inside another subject that the notice gives
- * no count of its own takes its part of that subject's questions by topics: as many as its topics
- * are of both in the questions the mock may ask, and that subject keeps the rest.
- */
 export function splitPartShares({
   candidates,
   shares,
@@ -71,7 +58,6 @@ export function splitPartShares({
   });
 }
 
-/** The subject whose sections ask each option's questions, by the option's area (`partOf`). */
 export function getPartOfAreas(shares: readonly SubjectShare[]): ReadonlyMap<string, string> {
   return new Map(
     shares.flatMap((share): [string, string][] =>

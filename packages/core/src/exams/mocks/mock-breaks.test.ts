@@ -19,10 +19,6 @@ const UTC = "UTC";
 const MINUTE_MS = 60_000;
 const AREAS = ["Physics", "Mathematics"] as const;
 
-/**
- * A JEE-like paper: two sections of six questions, a 10-minute break between them, each with
- * the notice's tools, and a wrong answer costing a quarter of a right one (+4, -1).
- */
 const STRUCTURE = {
   formats: [],
   mock: {
@@ -133,10 +129,6 @@ async function readMock(id: string): Promise<MockView> {
   return result.mock;
 }
 
-/**
- * Answers the running section: right on the first `right` questions, wrong on the rest; with a
- * negative `right`, wrong only on the first one.
- */
 async function answer({ id, right }: { id: string; right: number }) {
   const running = await readMock(id);
 
@@ -179,7 +171,6 @@ describe("a mock with the notice's breaks, tools and penalty", () => {
     await answer({ id, right: 4 });
     await submitMockSection({ blockId: id, input: { timeZone: UTC }, section: 0 });
 
-    // On the break: the next section's questions wait, and so do its answers.
     const onBreak = await readMock(id);
 
     expect(onBreak).toMatchObject({
@@ -203,7 +194,6 @@ describe("a mock with the notice's breaks, tools and penalty", () => {
       }),
     ).resolves.toStrictEqual({ status: "notRunning" });
 
-    // Back early: the next section's clock starts now, with all of its time.
     vi.setSystemTime(SESSION_NOW.getTime() + 3 * MINUTE_MS);
 
     await expect(endMockBreak({ blockId: id })).resolves.toStrictEqual({ status: "started" });
@@ -235,7 +225,6 @@ describe("a mock with the notice's breaks, tools and penalty", () => {
   it("takes a quarter point for each wrong answer, as the notice's +4 and -1 do", async () => {
     const { id } = await breakSetup();
 
-    // One wrong answer in each section, every other one right.
     await answer({ id, right: -1 });
     await submitMockSection({ blockId: id, input: { timeZone: UTC }, section: 0 });
     await endMockBreak({ blockId: id });

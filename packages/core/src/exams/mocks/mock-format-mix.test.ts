@@ -24,7 +24,6 @@ function structureOf(formats: Partial<Format>[]) {
   };
 }
 
-/** JEE Advanced's brochure: one right option, one or more, an integer typed in; no counts. */
 const JEE_ADVANCED = structureOf([
   {},
   { select: "all" },

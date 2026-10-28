@@ -3,17 +3,10 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { type GoalDraft } from "../goals/goal-contract";
 import { type SpeakingMockExam } from "../language/conversations/conversation-contract";
 
-/** Both exams with a speaking mock are English exams. */
 export const SPEAKING_MOCK_LANGUAGE = "en";
 
-/**
- * Language certificates learners name when they say why they're learning ("I'm taking the IELTS"),
- * with the language each one tests. A language goal for one of them becomes an exam goal with the
- * same language engine: speaking and writing graded by the official criteria, and timed mocks.
- */
 const LANGUAGE_EXAMS: readonly { language: string; name: string; pattern: RegExp }[] = [
   { language: "en", name: "IELTS", pattern: /\bielts\b/iu },
-  // Other TOEFL tests with their own formats and scales, before "TOEFL", which means the iBT.
   { language: "en", name: "TOEFL ITP", pattern: /\btoefl[\s-]*itp\b/iu },
   { language: "en", name: "TOEFL Essentials", pattern: /\btoefl[\s-]*essentials\b/iu },
   { language: "en", name: "TOEFL Junior", pattern: /\btoefl[\s-]*junior\b/iu },
@@ -52,16 +45,10 @@ function findLanguageExam(text: string) {
   return LANGUAGE_EXAMS.find((exam) => exam.pattern.test(text)) ?? null;
 }
 
-/** The language certificate a reason names, or null when it names none. */
 export function detectLanguageExam(reason: string): string | null {
   return findLanguageExam(reason)?.name ?? null;
 }
 
-/**
- * The language an exam goal for a language certificate tests, from the exam's name onboarding read
- * (`examName`), else its title: "DELE B2" is Spanish. The certificate's speaking, listening and
- * mocks need it, and onboarding's reading doesn't always give it. Null for other goals.
- */
 export function getCertificateLanguage(
   goal: Pick<GoalDraft, "details" | "kind" | "title">,
 ): string | null {
@@ -75,19 +62,11 @@ export function getCertificateLanguage(
   return findLanguageExam(name)?.language ?? null;
 }
 
-/** The certificates whose speaking test the live call runs as a mock, by the name detection gives. */
 const SPEAKING_MOCK_EXAMS: Readonly<Record<string, SpeakingMockExam>> = {
   IELTS: "ielts",
   TOEFL: "toefl",
 };
 
-/**
- * The exam whose speaking test the live call runs as a mock for a goal, graded by that exam's
- * criteria: IELTS, or TOEFL iBT (not ITP, Essentials, Junior or Primary, whose formats differ).
- * Read from what the learner said about the goal, its title first, so a language goal and the
- * exam goal it moved to get the same mock; the first certificate named decides, so a "TOEFL ITP"
- * goal gets none. Null for other goals and languages.
- */
 export function getSpeakingMockExam(
   goal: Pick<Goal, "details" | "prompt" | "targetLanguage" | "title">,
 ): SpeakingMockExam | null {

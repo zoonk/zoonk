@@ -10,16 +10,11 @@ import { loadAnytimeMockSetup } from "./_utils/anytime-mock-setup";
 import { planMockWrites } from "./_utils/mock-writes";
 import { type MockFormatShortfall } from "./mock-shortfall";
 
-/** What a mock needs written: each format's shortfall, the exam's one-pick one in `quickFormat`. */
 export type MockQuestionWrites = {
   quickFormat: PlacementQuickFormat;
   writes: MockFormatShortfall[];
 };
 
-/**
- * The days' writes as one: each skill of a format gets the most any day asks of it, and skills
- * lacking as many in a format share one write.
- */
 function mergeWrites(writes: readonly MockFormatShortfall[]): MockFormatShortfall[] {
   const bySkill = new Map(
     writes
@@ -39,11 +34,6 @@ function mergeWrites(writes: readonly MockFormatShortfall[]): MockFormatShortfal
   });
 }
 
-/**
- * Whether another learner set up a goal for the exam before this one: its full mocks were
- * prepared then, so the exam pays for them once, and a later learner's mock writes only what's
- * still missing when it starts. Guests never prepare them, so theirs don't count.
- */
 async function hasEarlierLearner({
   createdAt,
   examBlueprintId,
@@ -70,15 +60,7 @@ async function hasEarlierLearner({
   return earlier !== null;
 }
 
-/**
- * What an exam goal's full mocks still need written when the exam's first learner sets up their
- * goal, format by format in the notice's mix: each exam day's full mock from the shared bank as it
- * is (`planMockWrites`), so the learner's first full mock, of any day, starts without waiting, and
- * every later learner of the exam finds them made. Nothing for other goals, for the exam's later
- * learners (`hasEarlierLearner`) or once the bank holds them.
- *
- * This is a workflow bridge: the goal id comes from the goal the public boundary created.
- */
+/** Internal workflow bridge: the goal must come from the public boundary that created it. */
 export async function listMockPrepWrites({
   goalId,
 }: {
@@ -105,12 +87,7 @@ export async function listMockPrepWrites({
   };
 }
 
-/**
- * The goal's skills as the item writer writes a mock's questions on them, in the exam's style
- * with a few of its quoted past questions to match. Skills that no longer exist are left out.
- *
- * This is a workflow bridge: the goal id comes from the goal the public boundary created.
- */
+/** Internal workflow bridge: the goal must come from the public boundary that created it. */
 export async function loadMockWritingSkills({
   goalId,
   skillIds,

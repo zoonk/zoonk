@@ -1,10 +1,8 @@
 import { isDeepStrictEqual } from "node:util";
 import { type SectionNavigation } from "../../../library/exams/blueprint-contract";
 
-/** A saved answer of the running section, as forward-only rules read it. */
 type SectionRow = { answer: unknown; changes: number; itemId: string };
 
-/** The furthest question of the section with a saved answer (or blank), -1 before the first. */
 function getReached({
   itemIds,
   rows,
@@ -19,13 +17,6 @@ function countChanges(rows: readonly SectionRow[]): number {
   return rows.reduce((sum, row) => sum + row.changes, 0);
 }
 
-/**
- * Whether a forward-only section takes an answer, as the real exam does: the question on screen
- * and the ones after it, freely; one already left behind keeps its answer (its time and flag
- * still save), except in the review at the section's end, which changes as many answers as the
- * notice allows (`changed`: this save uses one). An answer the review changed already may change
- * again for free, so a typed one counts once, not once per save.
- */
 export function judgeForwardOnlySave({
   answer,
   itemId,
@@ -63,10 +54,6 @@ export function judgeForwardOnlySave({
     : { changed: false, status: "locked" };
 }
 
-/**
- * Where a section that moves freely opens again: where the learner stopped, at the furthest
- * question they got to or the one after their furthest answer, whichever is later.
- */
 function getFreePlace({
   itemIds,
   rows,
@@ -80,11 +67,6 @@ function getFreePlace({
   return Math.max(0, next, getReached({ itemIds, rows }));
 }
 
-/**
- * Where a section opens again after a reload, with no limit on changes where it moves freely. A
- * forward-only one opens at the furthest question the learner got to, since the ones before it
- * are behind them, with the answers its end review may still change.
- */
 export function getSectionPlace({
   itemIds,
   navigation,

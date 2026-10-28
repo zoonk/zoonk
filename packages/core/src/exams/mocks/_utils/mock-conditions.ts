@@ -6,10 +6,6 @@ import { type MockConditions } from "../mock-contract";
 import { type OwnedMock } from "./owned-mock";
 import { planWeeklyMock } from "./plan-weekly-mock";
 
-/**
- * When the real exam starts on the day a mock copies: the start time of that exam day, or of the
- * first one when the exam has a single day.
- */
 export function getExamStartTime({
   day,
   edition,
@@ -25,17 +21,12 @@ export function getExamStartTime({
   return (examDays[index] ?? examDays[0])?.startTime ?? null;
 }
 
-/**
- * The conditions of a scheduled mock: its questions (picked when the session was built) split
- * into the exam day's sections at the real pace, the scoring, and when the real exam starts.
- */
 export async function buildMockConditions(
   owned: Pick<OwnedMock, "blueprint" | "goal" | "payload" | "sessionDate" | "structure" | "userId">,
 ): Promise<MockConditions> {
   const { blueprint, goal, payload, sessionDate, structure, userId } = owned;
   const edition = blueprint ? readBlueprintContent(blueprint).edition : null;
 
-  // The mock sits the exam day and length its plan saved for it (see `MockIdentity`).
   const identity = payload.checkpoint?.mockIdentity;
 
   if (!identity) {

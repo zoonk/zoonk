@@ -20,8 +20,6 @@ import { startAnytimeMock } from "./start-anytime-mock";
 import { startMockSpeaking } from "./start-mock-speaking";
 import { submitMockSection } from "./submit-mock-section";
 
-// Writing a paper's cards is a paid model call per task (its storing is tested with
-// exam-speaking): here the paper comes back as written.
 vi.mock("../../language/exam-speaking/start-speaking-section", () => ({
   startSpeakingSection: vi.fn(),
 }));
@@ -33,7 +31,6 @@ vi.mock("../../language/exam-speaking/get-speaking-section", () => ({
 const SPEAKING = "Expresión e interacción orales";
 const READING_QUESTIONS = 6;
 
-/** A task of the paper as `startSpeakingSection` writes it, its call still to do. */
 function taskFixture(key: string, name: string) {
   return {
     conversationId: randomUUID(),
@@ -50,7 +47,6 @@ function taskFixture(key: string, name: string) {
   };
 }
 
-/** A DELE B2 paper of two tasks as `startSpeakingSection` writes it, every call still to do. */
 function paperFixture(): SpeakingSectionView {
   return {
     estimate: { complete: false, high: null, low: null, total: 25, typed: false },
@@ -68,7 +64,6 @@ function paperFixture(): SpeakingSectionView {
   };
 }
 
-/** A DELE B2 learner on Plus: a reading section the bank holds, then the speaking paper. */
 async function speakingSetup() {
   const [user, blueprint, reading] = await Promise.all([
     userFixture(),
@@ -216,7 +211,6 @@ describe(startMockSpeaking, () => {
     const drained = Promise.allSettled(requests);
 
     for (const request of requests) {
-      // An early refusal or error must still release the holder and drain the other contender.
       void request.then(
         () => papersReady.resolve(null),
         (error: unknown) => papersReady.reject(error),
@@ -224,7 +218,6 @@ describe(startMockSpeaking, () => {
     }
 
     try {
-      // Ownership reads and paper generation finish before timing the marker-lock observation.
       await papersReady.promise;
       await waitForBlockedStatement(pid, LEARNER_LOCK, 2);
     } finally {
@@ -252,7 +245,6 @@ describe(startMockSpeaking, () => {
 
     expect(full?.leftOut.map((part) => part.part)).not.toContain("speaking");
 
-    // Half of the exam leaves the paper to full mocks, and says so.
     expect(half?.leftOut).toContainEqual({ name: SPEAKING, part: "speaking" });
 
     const started = await startAnytimeMock({
@@ -264,7 +256,6 @@ describe(startMockSpeaking, () => {
       throw new Error(`Expected a started mock, got ${started.status}`);
     }
 
-    // The paper isn't written before the learner gets to it.
     await expect(startMockSpeaking({ blockId: started.id })).resolves.toStrictEqual({
       status: "notSpeaking",
     });

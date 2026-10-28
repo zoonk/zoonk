@@ -9,18 +9,12 @@ import { loadSkillAreas } from "./mock-candidates";
 import { getEssayItemIds } from "./mock-sections";
 import { type MockSitting } from "./owned-mock";
 
-/**
- * The exam's own essay questions (`format: essay`), which a full mock's written parts ask, each
- * under its plan area: the ones the learner never wrote first, then the one they wrote longest
- * ago. None for a goal without an exam.
- */
 export async function loadMockEssays({
   goal,
   plan,
   userId,
 }: {
   goal: Pick<Goal, "examBlueprintId" | "id">;
-  /** The saved plan a GET already read, so its areas aren't read again. */
   plan?: Parameters<typeof loadSkillAreas>[1];
   userId: string;
 }): Promise<MockEssayCandidate[]> {
@@ -58,10 +52,8 @@ export async function loadMockEssays({
     .map((item) => ({ area: areas.get(item.skillId) ?? null, itemId: item.id }));
 }
 
-/** A full mock's essay question with its prompt and rubric. */
 export type MockEssayItem = { content: EssayContent; item: Item };
 
-/** The mock's essay questions by id; an item that is no longer an essay is left out. */
 export async function loadMockEssayItems(
   itemIds: readonly string[],
 ): Promise<Map<string, MockEssayItem>> {
@@ -79,10 +71,6 @@ export async function loadMockEssayItems(
   );
 }
 
-/**
- * A finished mock's essays: each one's text from its draft and its grade from the attempt grading
- * recorded, `pending` while a written one has none yet.
- */
 export async function loadMockEssayViews({
   areas,
   mock,

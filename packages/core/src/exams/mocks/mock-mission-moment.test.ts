@@ -15,7 +15,6 @@ import { startMock } from "./start-mock";
 
 const DAY_MS = 86_400_000;
 
-/** Today's missions as the session stores them: the mock's, anchored to its plan item, and `others`. */
 async function setDayMissions({
   others = [],
   planItemId,
@@ -39,7 +38,6 @@ async function setDayMissions({
   });
 }
 
-/** Starts today's mock, answers some of it and hands it in. */
 async function sitMock(blockId: string) {
   await startMock({ blockId, input: {} });
   await answerRight({ blockId, count: 3 });
@@ -78,7 +76,6 @@ describe("a mock's mission moment", () => {
       missions: [{ kind: "mock", status: "done" }],
     });
 
-    // A reload reads the same moment from what settlement recorded.
     await expect(readMoment(blockId)).resolves.toStrictEqual(moment);
 
     const session = await prisma.studySession.findUniqueOrThrow({ where: { id: block.sessionId } });
@@ -88,14 +85,12 @@ describe("a mock's mission moment", () => {
 
     const progress = await prisma.userProgress.findUniqueOrThrow({ where: { userId: user.id } });
 
-    // Handing it in again pays nothing more.
     await expect(finishMock({ blockId, input: {} })).resolves.toStrictEqual({ status: "finished" });
 
     await expect(
       prisma.userProgress.findUniqueOrThrow({ where: { userId: user.id } }),
     ).resolves.toMatchObject({ totalBrainPower: progress.totalBrainPower });
 
-    // The next day it's no longer today's: the result stays, its moment doesn't.
     vi.setSystemTime(new Date(SESSION_NOW.getTime() + 2 * DAY_MS));
     await expect(readMoment(blockId)).resolves.toBeNull();
   });
@@ -136,7 +131,6 @@ describe("a mock's mission moment", () => {
       await startMock({ blockId, input: {} });
       await answerRight({ blockId, count: 3 });
 
-      // After more than an hour away, Today can start a new session while the long mock's clock runs.
       vi.setSystemTime(afterMidnight);
 
       if (todayStarted) {
@@ -170,7 +164,6 @@ describe("a mock's mission moment", () => {
   it("keeps the level its Brain Power reached for every read of its result", async () => {
     const { blockId, user } = await scheduledMockSetup();
 
-    // One point short of the white belt's level 2.
     await prisma.userProgress.upsert({
       create: { lastActiveAt: SESSION_NOW, totalBrainPower: 249n, userId: user.id },
       update: { totalBrainPower: 249n },
@@ -184,7 +177,6 @@ describe("a mock's mission moment", () => {
       return result.status === "ready" ? result.mock.reached : "notReady";
     };
 
-    // The level its points (the challenge's bonus included) took the learner to.
     const progress = await prisma.userProgress.findUniqueOrThrow({ where: { userId: user.id } });
     const { color, level } = calculateBeltLevel(Number(progress.totalBrainPower));
 
@@ -241,7 +233,6 @@ describe("a mock's mission moment", () => {
       }),
     ]);
 
-    // The call's end settles the day's missions with its own source, as its completion does.
     await settleLearnerMissions({
       source: { id: call.id, kind: "conversation" },
       timeZone: "UTC",

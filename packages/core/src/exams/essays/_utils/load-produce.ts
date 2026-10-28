@@ -11,7 +11,6 @@ import {
 } from "../../../plans/planner/written-cadence";
 import { type PlannedProduce, getEssayMinutes } from "../produce-block";
 
-/** When the learner practices writing, from their plan's cadence (see `WRITTEN_CADENCES`). */
 function getWrittenSchedule({
   planSettings,
   targetDate,
@@ -61,14 +60,6 @@ async function wroteRecently({
   return { recent: since !== null && since < getDaysBetweenEssays(schedule), written };
 }
 
-/**
- * The day's essay for an exam that has written answers: an essay question on the goal's skills
- * (the exam's own first), the one written longest ago or never, every few days on the days the
- * learner's cadence practices writing (every week, every other week, the final weeks; see
- * `isWrittenDay`). An exam has them when its blueprint lists essays or free-response questions
- * were written for it (AP). Null for other goals, exams without written answers, days the cadence
- * leaves writing out, and days too close to the last essay.
- */
 export async function loadSessionProduce({
   goal,
   planSettings,
@@ -78,7 +69,6 @@ export async function loadSessionProduce({
   userId,
 }: {
   goal: Pick<Goal, "examBlueprintId" | "kind" | "targetDate">;
-  /** The plan's stored settings, which hold the learner's cadence for written practice. */
   planSettings: unknown;
   skillIds: readonly string[];
   structure: ExamStructure | null;
@@ -133,7 +123,6 @@ export async function loadSessionProduce({
       (written.get(first.id)?.getTime() ?? 0) - (written.get(second.id)?.getTime() ?? 0),
   );
 
-  // A class test read from the learner's own material (a private blueprint) asks short answers.
   const minutes = getEssayMinutes({ classTest: Boolean(blueprint?.ownerId) });
 
   return item ? { itemId: item.id, minutes, skillId: item.skillId, title: item.skill.name } : null;

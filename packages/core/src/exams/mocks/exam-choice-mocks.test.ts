@@ -12,10 +12,6 @@ const CITATION = { passage: "From the notice.", sourceId: "source" };
 const LANGUAGES = "Languages, Codes and their Technologies";
 const GROUP = "Foreign language";
 
-/**
- * An ENEM-like first day: ten questions over Languages and Humanities, where Languages' five
- * include one of the foreign language the learner takes, English or Spanish.
- */
 const STRUCTURE = {
   formats: [],
   mock: {
@@ -52,7 +48,6 @@ const STRUCTURE = {
   ],
 };
 
-/** The plan's areas, each with its topics, as the plan studies them once Spanish is picked. */
 const AREAS = [
   { name: LANGUAGES, skills: 4 },
   { name: "Spanish", skills: 1 },

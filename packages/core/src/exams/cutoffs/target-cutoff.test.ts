@@ -35,7 +35,6 @@ const FOUND = {
   status: "found",
 } as const;
 
-/** A learner's exam goal on a shared exam, aiming at what `details` says. */
 async function examGoal({
   blueprintId,
   details,
@@ -82,7 +81,6 @@ describe("a target's cut-off", () => {
       year: 2026,
     });
 
-    // Found nothing this year: nothing shows, nothing is guessed, and no one looks it up again.
     await recordTargetCutoff({ finding: UNKNOWN, lookup: lookup!, provenance: PROVENANCE });
 
     await expect(
@@ -93,7 +91,6 @@ describe("a target's cut-off", () => {
       findTargetCutoffLookup({ goalId: second.goal.id, year: 2026 }),
     ).resolves.toBeNull();
 
-    // Next year it's looked up again, for the other learner too.
     const nextYear = await findTargetCutoffLookup({ goalId: second.goal.id, year: 2027 });
     await recordTargetCutoff({ finding: FOUND, lookup: nextYear!, provenance: PROVENANCE });
 
@@ -118,10 +115,6 @@ describe("a target's cut-off", () => {
     });
   });
 
-  /*
-   * Juliana's TJ-SP page said "Last cut-off: 7", with no scale: the source gave "7.0" and the
-   * notice scores the objective test from 0 to 10.
-   */
   it("shows only on a scale the learner can read: the source's, else the notice's", async () => {
     const role = "Escrevente Técnico Judiciário";
     const position = { targetPosition: role };
@@ -155,7 +148,6 @@ describe("a target's cut-off", () => {
       record({ blueprintId: other.id, score: 70 }),
     ]);
 
-    // Neither the source nor the notice says what 7 is out of: no number at all.
     await expect(
       loadTargetCutoff({ details: position, examBlueprintId: unscaled.id }),
     ).resolves.toBeNull();
@@ -164,7 +156,6 @@ describe("a target's cut-off", () => {
       loadTargetCutoff({ details: position, examBlueprintId: scaled.id }),
     ).resolves.toMatchObject({ maxScore: 10, score: 7 });
 
-    // A score off the notice's scale is on another one, which nothing names.
     await expect(
       loadTargetCutoff({ details: position, examBlueprintId: other.id }),
     ).resolves.toBeNull();
@@ -202,7 +193,6 @@ describe(getCutoffTarget, () => {
       position: null,
     });
 
-    // Two learners who write the position differently share the exam's own name for it.
     expect(
       getCutoffTarget({
         details: { institution: "Câmara dos Deputados", targetPosition: "analista legislativo" },
@@ -212,7 +202,6 @@ describe(getCutoffTarget, () => {
 
     expect(getCutoffTarget({ details: { targetScore: "40 pontos" }, role: null })).toBeNull();
 
-    // An exam's role alone can be a phase that passes everyone above a mark, not a target.
     expect(getCutoffTarget({ details: {}, role: "1ª fase" })).toBeNull();
   });
 });

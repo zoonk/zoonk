@@ -2,7 +2,6 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { type EssayDraft, essayAnswerSchema } from "../essay-contract";
 
-/** The block's graded drafts, latest first. */
 export async function loadEssayDrafts({
   itemId,
   sessionId,
