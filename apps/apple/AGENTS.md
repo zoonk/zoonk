@@ -78,3 +78,13 @@ Every read the app shows goes through one pattern in `Zoonk/Data`, so screens ar
 - Prefer UI tests for user flows and unit tests for non-trivial pure domain logic. Do not test SwiftUI implementation details or static catalog contents.
 - When changing asynchronous observable stores, cover the affected success, authentication-expiry, transient-failure, and request-order transitions directly; UI tests alone may miss state-machine races.
 - Never call Apple UI work complete based only on builds or automated tests. Inspect the rendered result on relevant iPhone and iPad simulators in light, dark and Increase Contrast and at a large Dynamic Type size, compare it with the matching `main` screen, compare neighboring controls for alignment and visual consistency, and verify accessibility, localization, focus, window sizing, and input behavior in proportion to the change.
+
+## Simulators
+
+Agents share one Mac with the owner. Each simulator boot starts a full iOS system, and when boots pile up while builds saturate the CPU, Apple's simulator services miss their timeouts and crash. PosterBoard (the wallpaper service) can then lose its Clock poster descriptors and crash on every launch until the simulator is erased. Each of its crashes, and each crash of Zoonk, opens a "quit unexpectedly" alert on the owner's screen.
+
+- Reuse a simulator from `xcrun simctl list devices available` instead of creating one per task. Boot it once and keep it booted while you work; shut it down when your task ends, and delete any simulator you created.
+- Keep at most three simulators booted on the Mac (check `xcrun simctl list devices booted` before booting one, and wait for a slot) and at most two Xcode builds or test runs at a time. A lead running several Apple lanes gives each lane its simulator and runs no more lanes at once than those limits allow.
+- Run `xcodebuild test` with `-parallel-testing-enabled NO` so it doesn't boot extra clones of your simulator.
+- When Zoonk crashes on a simulator (a new `~/Library/Logs/DiagnosticReports/Zoonk-*.ips`), stop and fix the cause before running more tests. When a system service crashes on the same simulator again after a reboot, shut it down and run `xcrun simctl erase <udid>` before using it again.
+- Before ending a task that used a simulator, run `pnpm simulator:close-crash-alerts`. It closes the crash alerts simulators opened and leaves alerts for Mac apps open.
