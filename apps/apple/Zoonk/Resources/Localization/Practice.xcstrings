@@ -39,13 +39,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Morgen verfügbar: %lld"
+                  "value" : "%lld morgen verfügbar"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Morgen verfügbar: %lld"
+                  "value" : "%lld morgen verfügbar"
                 }
               }
             }
@@ -72,6 +72,12 @@
         "es" : {
           "variations" : {
             "plural" : {
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld disponibles mañana"
+                }
+              },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
@@ -134,13 +140,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Behoben: %lld"
+                  "value" : "%lld korrigiert"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Behoben: %lld"
+                  "value" : "%lld korrigiert"
                 }
               }
             }
@@ -167,6 +173,12 @@
         "es" : {
           "variations" : {
             "plural" : {
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld corregidos"
+                }
+              },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
@@ -262,6 +274,12 @@
         "es" : {
           "variations" : {
             "plural" : {
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lecciones se han omitido de tu plan."
+                }
+              },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
@@ -283,13 +301,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld leçon ne fait pas partie de ton plan."
+                  "value" : "%lld leçon est écartée de ton plan."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld leçons ne font pas partie de ton plan."
+                  "value" : "%lld leçons sont écartées de ton plan."
                 }
               }
             }
@@ -357,6 +375,12 @@
         "es" : {
           "variations" : {
             "plural" : {
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld errores corregidos"
+                }
+              },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
@@ -557,6 +581,12 @@
         "es" : {
           "variations" : {
             "plural" : {
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld preguntas"
+                }
+              },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
@@ -619,13 +649,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Bereit zum Üben: %lld"
+                  "value" : "%lld bereit zum Üben"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Bereit zum Üben: %lld"
+                  "value" : "%lld bereit zum Üben"
                 }
               }
             }
@@ -652,6 +682,12 @@
         "es" : {
           "variations" : {
             "plural" : {
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld listos para practicar"
+                }
+              },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
@@ -747,6 +783,12 @@
         "es" : {
           "variations" : {
             "plural" : {
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld correctas"
+                }
+              },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
@@ -842,6 +884,12 @@
         "es" : {
           "variations" : {
             "plural" : {
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld correctas seguidas"
+                }
+              },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
@@ -904,13 +952,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld richtige Antwort zum Sieg"
+                  "value" : "%lld richtige Antwort zum Gewinnen"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld richtige Antworten zum Sieg"
+                  "value" : "%lld richtige Antworten zum Gewinnen"
                 }
               }
             }
@@ -937,16 +985,22 @@
         "es" : {
           "variations" : {
             "plural" : {
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Necesitas %lld respuestas correctas para ganar"
+                }
+              },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld correcta para ganar"
+                  "value" : "Necesitas %lld respuesta correcta para ganar"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld correctas para ganar"
+                  "value" : "Necesitas %lld respuestas correctas para ganar"
                 }
               }
             }
@@ -1032,6 +1086,12 @@
         "es" : {
           "variations" : {
             "plural" : {
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld segundos por pregunta, como el día del examen."
+                }
+              },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
@@ -1127,6 +1187,12 @@
         "es" : {
           "variations" : {
             "plural" : {
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld asignaturas"
+                }
+              },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
@@ -1222,6 +1288,12 @@
         "es" : {
           "variations" : {
             "plural" : {
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld incorrectas"
+                }
+              },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
@@ -1329,6 +1401,122 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "+%lld Poder Mental"
+          }
+        }
+      }
+    },
+    "0 fixed" : {
+      "comment" : "Notebook count when no mistake is fixed yet.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0 korrigiert"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0 corregidos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0 corrigée"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0 corrigidos"
+          }
+        }
+      }
+    },
+    "0 ready to practice" : {
+      "comment" : "Notebook count when no mistake is ready now.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0 bereit zum Üben"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0 por practicar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0 à réviser"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0 prontos para praticar"
+          }
+        }
+      }
+    },
+    "0 right" : {
+      "comment" : "A net-scored block with no right answers yet.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0 richtig"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0 correctas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0 bonne réponse"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0 certos"
+          }
+        }
+      }
+    },
+    "0 wrong" : {
+      "comment" : "A net-scored block with no wrong answers yet.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0 falsch"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0 incorrectas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0 mauvaise réponse"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0 errados"
           }
         }
       }
@@ -2013,6 +2201,12 @@
         "es" : {
           "variations" : {
             "plural" : {
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Elige %lld opciones."
+                }
+              },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
@@ -3094,6 +3288,12 @@
         "es" : {
           "variations" : {
             "plural" : {
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Ha aparecido %lld veces en tus respuestas recientes."
+                }
+              },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
@@ -3133,13 +3333,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Isso apareceu uma vez nas suas respostas recentes."
+                  "value" : "Esse padrão apareceu uma vez nas suas respostas recentes."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Isso apareceu %lld vezes nas suas respostas recentes."
+                  "value" : "Esse padrão apareceu %lld vezes nas suas respostas recentes."
                 }
               }
             }
@@ -3881,13 +4081,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Morgen kannst du es nach %lld kurzen Lektion erneut versuchen. Nichts ist verloren."
+                  "value" : "Morgen kannst du es nach %lld kurzen Lektion erneut versuchen. Nichts geht verloren."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Morgen kannst du es nach %lld kurzen Lektionen erneut versuchen. Nichts ist verloren."
+                  "value" : "Morgen kannst du es nach %lld kurzen Lektionen erneut versuchen. Nichts geht verloren."
                 }
               }
             }
@@ -3914,16 +4114,22 @@
         "es" : {
           "variations" : {
             "plural" : {
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Mañana podrás intentarlo de nuevo, después de %lld lecciones cortas. No has perdido nada."
+                }
+              },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Mañana tendrás otra oportunidad, después de %lld lección corta. No has perdido nada."
+                  "value" : "Mañana podrás intentarlo de nuevo, después de %lld lección corta. No has perdido nada."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Mañana tendrás otra oportunidad, después de %lld lecciones cortas. No has perdido nada."
+                  "value" : "Mañana podrás intentarlo de nuevo, después de %lld lecciones cortas. No has perdido nada."
                 }
               }
             }
@@ -3953,13 +4159,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Você pode tentar de novo amanhã, depois de %lld aula rápida. Nada foi perdido."
+                  "value" : "Tente de novo amanhã, depois de %lld aula rápida. Nada foi perdido."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Você pode tentar de novo amanhã, depois de %lld aulas rápidas. Nada foi perdido."
+                  "value" : "Tente de novo amanhã, depois de %lld aulas rápidas. Nada foi perdido."
                 }
               }
             }
@@ -5089,6 +5295,12 @@
         "es" : {
           "variations" : {
             "plural" : {
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Preguntas sobre esta grabación (%lld)"
+                }
+              },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
@@ -5128,13 +5340,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Pergunta sobre esta gravação (%lld)"
+                  "value" : "Pergunta nesta gravação (%lld)"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Perguntas sobre esta gravação (%lld)"
+                  "value" : "Perguntas nesta gravação (%lld)"
                 }
               }
             }
@@ -5474,6 +5686,12 @@
         "es" : {
           "variations" : {
             "plural" : {
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Redondea a %lld decimales."
+                }
+              },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
@@ -5495,13 +5713,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Arrondis à %lld chiffre après la virgule."
+                  "value" : "Arrondis à %lld décimale."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Arrondis à %lld chiffres après la virgule."
+                  "value" : "Arrondis à %lld décimales."
                 }
               }
             }

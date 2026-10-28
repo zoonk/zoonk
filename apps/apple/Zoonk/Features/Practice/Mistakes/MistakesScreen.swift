@@ -218,15 +218,21 @@ private struct NotebookHeader: View {
     .frame(maxWidth: .infinity, alignment: .leading)
   }
 
-  /// "3 ready to practice · 3 available tomorrow · 1 fixed": tomorrow's only when there are some.
+  /// "3 ready to practice · 3 available tomorrow · 1 fixed": tomorrow's only when there are some. A
+  /// count of 0 has its own string, since Portuguese's "one" case covers 0.
   private func countsLine(ready: Int, tomorrow: Int, fixed: Int) -> String {
     var parts: [String] = []
 
-    if ready > 0 || tomorrow == 0 {
+    if ready > 0 {
       parts.append(
         String(
           localized: "\(ready) ready to practice", table: "Practice",
           comment: "Notebook count of mistakes ready now."))
+    } else if tomorrow == 0 {
+      parts.append(
+        String(
+          localized: "0 ready to practice", table: "Practice",
+          comment: "Notebook count when no mistake is ready now."))
     }
 
     if tomorrow > 0 {
@@ -237,9 +243,13 @@ private struct NotebookHeader: View {
     }
 
     parts.append(
-      String(
-        localized: "\(fixed) fixed", table: "Practice", comment: "Notebook count of fixed mistakes."
-      ))
+      fixed == 0
+        ? String(
+          localized: "0 fixed", table: "Practice",
+          comment: "Notebook count when no mistake is fixed yet.")
+        : String(
+          localized: "\(fixed) fixed", table: "Practice",
+          comment: "Notebook count of fixed mistakes."))
     return parts.joined(separator: " · ")
   }
 }

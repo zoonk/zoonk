@@ -380,12 +380,20 @@ private struct NetScoreLine: View {
     VStack(alignment: .leading, spacing: 4) {
       Text(
         [
-          String(
-            localized: "\(tally.right) right", table: "Practice",
-            comment: "A net-scored block's right answers so far."),
-          String(
-            localized: "\(tally.wrong) wrong", table: "Practice",
-            comment: "A net-scored block's wrong answers so far."),
+          tally.right == 0
+            ? String(
+              localized: "0 right", table: "Practice",
+              comment: "A net-scored block with no right answers yet.")
+            : String(
+              localized: "\(tally.right) right", table: "Practice",
+              comment: "A net-scored block's right answers so far."),
+          tally.wrong == 0
+            ? String(
+              localized: "0 wrong", table: "Practice",
+              comment: "A net-scored block with no wrong answers yet.")
+            : String(
+              localized: "\(tally.wrong) wrong", table: "Practice",
+              comment: "A net-scored block's wrong answers so far."),
           String(
             localized: "net \(tally.net)", table: "Practice",
             comment: "A net-scored block's score: right answers minus wrong ones."),
