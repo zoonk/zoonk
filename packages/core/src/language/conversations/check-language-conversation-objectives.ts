@@ -1,4 +1,5 @@
 import "server-only";
+import { prisma } from "@zoonk/db";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { getSession } from "../../users/get-session";
 import { readSavedScenario } from "./_utils/conversation-view";
@@ -49,6 +50,12 @@ export async function checkLanguageConversationObjectives({
   if (Date.now() > row.startedAt.getTime() + row.minutes * MS_PER_MINUTE + LATE_CHECK_MS) {
     return { status: "conversationEnded" };
   }
+
+  // Should the app die from here, the call keeps the learner's time only up to this check.
+  await prisma.liveCallConnection.updateMany({
+    data: { lastActiveAt: new Date() },
+    where: { conversationId: row.id, state: "live", userId },
+  });
 
   const newlyMet = scenario.examTask
     ? []

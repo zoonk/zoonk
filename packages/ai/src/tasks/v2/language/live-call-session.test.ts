@@ -109,7 +109,7 @@ describe(hangUpLiveCallSession, () => {
   it("posts to the session's hangup path and resolves once it ended", async () => {
     respond(200, "");
 
-    await expect(hangUpLiveCallSession("live_123")).resolves.toBeUndefined();
+    await expect(hangUpLiveCallSession("live_123")).resolves.toBe("hungUp");
 
     const [url, init] = vi.mocked(blockTestProviderFetch).mock.calls[0] ?? [];
 
@@ -117,7 +117,7 @@ describe(hangUpLiveCallSession, () => {
     expect(init?.method).toBe("POST");
   });
 
-  it("resolves for a session that already ended", async () => {
+  it("says a session that already ended was already over", async () => {
     respond(
       404,
       JSON.stringify({
@@ -125,7 +125,7 @@ describe(hangUpLiveCallSession, () => {
       }),
     );
 
-    await expect(hangUpLiveCallSession("live_123")).resolves.toBeUndefined();
+    await expect(hangUpLiveCallSession("live_123")).resolves.toBe("alreadyEnded");
   });
 
   it.each([

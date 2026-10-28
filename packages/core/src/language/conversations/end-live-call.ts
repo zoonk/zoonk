@@ -80,9 +80,11 @@ async function endWithoutProvider({
 }
 
 async function settleHungUp({
+  alreadyEnded,
   connection,
   reason,
 }: {
+  alreadyEnded: boolean;
   connection: LiveCallConnection;
   reason: LiveCallEndReason;
 }): Promise<void> {
@@ -94,7 +96,10 @@ async function settleHungUp({
     });
 
     const now = new Date();
-    const charge = getEndingCharge({ connection: current, now });
+    // OpenAI already ended it, so the app or browser left without ending the call: a crash keeps
+    // only the time the call was seen in use, never the rest of the learner's day.
+    const liveUntil = alreadyEnded ? (current.lastActiveAt ?? current.startedAt ?? now) : now;
+    const charge = getEndingCharge({ connection: current, liveUntil, now });
 
     const ended = await settleLiveCall({
       connection: current,
@@ -149,7 +154,7 @@ export async function endLiveCall({
     return { status: "closing" };
   }
 
-  await settleHungUp({ connection, reason });
+  await settleHungUp({ alreadyEnded: hungUp.data === "alreadyEnded", connection, reason });
   revalidateCacheTags([getAllowanceCacheTag(connection.userId)]);
 
   return { status: "ended" };

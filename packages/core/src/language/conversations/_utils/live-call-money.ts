@@ -58,16 +58,19 @@ export function getCallExposureMicros({
 
 export function getEndingCharge({
   connection,
+  liveUntil,
   now,
 }: {
   connection: LiveCallConnection;
+  /** The learner's time stops here instead of `now`: the call was last seen in use then. */
+  liveUntil?: Date;
   now: Date;
 }): { costMicros: number; learnerSeconds: number } {
   if (connection.state === "reserved" || !connection.startedAt) {
     return { costMicros: 0, learnerSeconds: 0 };
   }
 
-  const elapsed = secondsBetween(connection.startedAt, now);
+  const used = secondsBetween(connection.startedAt, liveUntil ?? now);
   const clockMicros = getLiveCallCostMicros(billedSeconds(connection.startedAt, now));
 
   if (!connection.providerSessionId) {
@@ -76,6 +79,6 @@ export function getEndingCharge({
 
   return {
     costMicros: clockMicros,
-    learnerSeconds: connection.state === "live" ? Math.min(connection.heldSeconds, elapsed) : 0,
+    learnerSeconds: connection.state === "live" ? Math.min(connection.heldSeconds, used) : 0,
   };
 }

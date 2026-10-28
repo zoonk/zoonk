@@ -77,12 +77,12 @@ async function isAlreadyEnded(response: Response): Promise<boolean> {
 }
 
 /** @public Next E2E resolveAlias implements this compiler-owned provider interface. */
-export async function hangUpLiveCallSession(sessionId: string) {
+export async function hangUpLiveCallSession(sessionId: string): Promise<"alreadyEnded" | "hungUp"> {
   assertTestEnvironment();
   const bridge = bridgeUrl();
 
   if (!bridge) {
-    return;
+    return "hungUp";
   }
 
   const response = await fetch(`${bridge}/sessions/${encodeURIComponent(sessionId)}/hangup`, {
@@ -90,7 +90,13 @@ export async function hangUpLiveCallSession(sessionId: string) {
     signal: AbortSignal.timeout(HANGUP_TIMEOUT_MS),
   });
 
-  if (!response.ok && !(await isAlreadyEnded(response))) {
-    throw new Error("The lane-owned Live peer didn't hang up.");
+  if (response.ok) {
+    return "hungUp";
   }
+
+  if (await isAlreadyEnded(response)) {
+    return "alreadyEnded";
+  }
+
+  throw new Error("The lane-owned Live peer didn't hang up.");
 }

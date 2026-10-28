@@ -1,3 +1,4 @@
+import { checkConversationObjectives } from "@zoonk/ai/tasks/v2/language/conversation-objectives";
 import { LiveCallCreationRefusedError } from "@zoonk/ai/tasks/v2/language/live-call-creation";
 import {
   type LiveCallSession,
@@ -19,6 +20,7 @@ import {
   mockLiveCallAdminSession,
 } from "./_test-utils/live-call-fixture";
 import { getCallExposureMicros } from "./_utils/live-call-money";
+import { checkLanguageConversationObjectives } from "./check-language-conversation-objectives";
 import { connectLanguageConversation } from "./connect-language-conversation";
 import { type LanguageConversationSetup } from "./conversation-contract";
 import { endLanguageConversationConnection } from "./end-language-conversation-connection";
@@ -106,6 +108,25 @@ async function freeDaySpent(day: Date) {
   return bucket?.spentMicros ?? 0;
 }
 
+function noObjectivesMet() {
+  vi.mocked(checkConversationObjectives).mockResolvedValueOnce({
+    data: { met: [] },
+    provenance: {
+      generatedAt: new Date().toISOString(),
+      latencyMs: 1,
+      model: "openai/gpt-6-luna",
+      promptVersion: "v-test",
+      provider: "openai",
+      requestedModel: "openai/gpt-6-luna",
+      runId: "run-test",
+      usage: {},
+    },
+    systemPrompt: "",
+    usage: undefined as never,
+    userPrompt: "",
+  });
+}
+
 function pendingCreation() {
   const creation = Promise.withResolvers<LiveCallSession>();
   vi.mocked(createLiveCallSession).mockReturnValueOnce(creation.promise);
@@ -186,6 +207,7 @@ describe("live calls", () => {
 
     vi.mocked(hangUpLiveCallSession).mockImplementationOnce(async () => {
       advance(20);
+      return "hungUp";
     });
 
     await expect(
@@ -206,6 +228,53 @@ describe("live calls", () => {
       costMicros: getLiveCallCostMicros(TWO_MINUTES + 20),
       seconds: TWO_MINUTES,
     });
+  });
+
+  it("[1] keeps none of the learner's time when the app left before the call was used and OpenAI already ended its session", async () => {
+    const { conversation, user } = await learner();
+    const setup = await live(conversation.id);
+
+    advance(TWO_MINUTES);
+    vi.mocked(hangUpLiveCallSession).mockResolvedValueOnce("alreadyEnded");
+
+    await expect(
+      endLiveCall({ connectionId: setup.connectionId, reason: "deadline" }),
+    ).resolves.toStrictEqual({ status: "ended" });
+
+    // Its cost still counts the clock: nothing says when OpenAI stopped billing.
+    await expect(
+      usage({ connectionId: setup.connectionId, userId: user.id }),
+    ).resolves.toMatchObject({ costMicros: getLiveCallCostMicros(TWO_MINUTES), seconds: 0 });
+  });
+
+  it("[1] keeps the learner's time up to the call's last check when its session ended on its own", async () => {
+    const { conversation, user } = await learner();
+    const setup = await live(conversation.id);
+
+    advance(30);
+    noObjectivesMet();
+
+    await expect(
+      checkLanguageConversationObjectives({
+        conversationId: conversation.id,
+        input: { turns: [{ speaker: "learner", text: "Is it available?" }] },
+      }),
+    ).resolves.toMatchObject({ status: "ready" });
+
+    // The app died after that turn; the learner calls again a minute later.
+    advance(60);
+    vi.mocked(hangUpLiveCallSession).mockResolvedValueOnce("alreadyEnded");
+    await reserved(conversation.id);
+
+    await expect(connection(setup.connectionId)).resolves.toMatchObject({
+      costMicros: getLiveCallCostMicros(90),
+      endReason: "reconnect",
+      state: "ended",
+    });
+
+    await expect(
+      usage({ connectionId: setup.connectionId, userId: user.id }),
+    ).resolves.toMatchObject({ seconds: 30 });
   });
 
   it("[2] gives two tabs reserving at once one open connection and one hold", async () => {
