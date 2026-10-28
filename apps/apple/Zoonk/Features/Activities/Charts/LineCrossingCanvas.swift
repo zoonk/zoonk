@@ -1,9 +1,7 @@
 import Charts
 import SwiftUI
 
-/// Two lines and where they cross (main's `LineCrossingActivity`): the learner drags one to explain
-/// a change (a supply shock, a rent rise) and watches the crossing move. The end state is the
-/// answer (which line, which way); a numeric check reads the new crossing.
+/// The end state is the answer (which line, which way); a numeric check reads the new crossing.
 struct LineCrossingCanvas: View {
   let context: ActivityCanvasContext
   let fields: LineCrossingFields
@@ -41,7 +39,6 @@ struct LineCrossingCanvas: View {
 
   private var isMoved: Bool { offsets.values.contains { $0 != 0 } }
 
-  /// After the check, when the learner's move wasn't what happened.
   private var showsAnswer: Bool {
     let ids = Set(offsets.keys).union([fields.shift.line])
     let real = [fields.shift.line: realOffset]

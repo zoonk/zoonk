@@ -28,7 +28,6 @@ struct BalanceFields: Decodable, Hashable, Sendable {
   let steps: [Step]
   let variable: String
 
-  /// What a bag stands for and what a block stands for.
   var unknown: Object {
     objects.first { $0.symbol == variable } ?? Object(label: variable, symbol: variable)
   }
@@ -38,7 +37,7 @@ struct BalanceFields: Decodable, Hashable, Sendable {
   }
 }
 
-/// Main's `balance-model.ts`: an equation as two pans of unknowns (bags) and units (blocks).
+/// Mirrors main's `balance-model.ts`.
 enum BalanceModel {
   struct Pan: Hashable {
     var units: Double
@@ -85,7 +84,6 @@ enum BalanceModel {
     return State(left: left, right: right)
   }
 
-  /// The value of the unknown that keeps both pans level.
   static func solve(_ state: State) -> Double? {
     let slope = state.left.x - state.right.x
     return abs(slope) < slack ? nil : (state.right.units - state.left.units) / slope
@@ -121,7 +119,6 @@ enum BalanceModel {
     return (right - left) / heavier * 9
   }
 
-  /// Split is possible when bags sit alone on one pan and only blocks on the other.
   static func splitGroups(_ state: State) -> Int? {
     let (bags, blocks) = state.left.x > 0 ? (state.left, state.right) : (state.right, state.left)
     return bags.x > 1 && bags.units == 0 && blocks.x == 0 ? Int(bags.x) : nil
@@ -190,7 +187,6 @@ enum BalanceModel {
     }
   }
 
-  /// A pan in symbols, like "2x + 1", "x" or "7".
   static func text(_ pan: Pan, symbol: String, format: (Double) -> String) -> String {
     let unknown = pan.x == 0 ? "" : "\(pan.x == 1 ? "" : format(pan.x))\(symbol)"
     let units = pan.units == 0 && !unknown.isEmpty ? "" : format(pan.units)

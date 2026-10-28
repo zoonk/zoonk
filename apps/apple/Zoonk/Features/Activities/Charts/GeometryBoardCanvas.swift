@@ -1,9 +1,7 @@
 import SwiftUI
 
-/// Drag the corners of a shape and watch what always stays true (main's `GeometryBoardActivity`):
-/// the angles' sum, a² + b² = c² on a right triangle, or an area. Measures are rounded so the parts
-/// on screen add up to the total on screen. With a numeric check the total stays hidden until
-/// checked: the learner works it out from the parts.
+/// Measures are rounded so the parts on screen add up to the total on screen. With a numeric check
+/// the total stays hidden until checked: the learner works it out from the parts.
 struct GeometryBoardCanvas: View {
   let context: ActivityCanvasContext
   let fields: GeometryBoardFields
@@ -369,7 +367,6 @@ struct GeometryBoardCanvas: View {
     }
   }
 
-  /// "45° + 72° + 63° = 180°", each part in its mark's color.
   private func sumText(_ reading: GeometryBoardModel.Reading, total: String, isAnswer: Bool)
     -> AttributedString
   {
@@ -385,7 +382,6 @@ struct GeometryBoardCanvas: View {
     return sum
   }
 
-  /// What the board measures now, in words, for VoiceOver.
   private func describe(_ reading: GeometryBoardModel.Reading) -> String {
     let parts = reading.parts.map { ActivityNumberFormat.format($0, unit: unit) }.joined(
       separator: ", ")
@@ -454,8 +450,7 @@ private struct BoardTransform {
   }
 }
 
-/// The corners torn off and laid side by side around one point (main's `AngleFan`): a triangle's
-/// angles fill a straight line, a quadrilateral's a full turn. It shows why the sum never changes.
+/// It shows why the angles' sum never changes.
 private struct AngleFan: View {
   let angles: [Double]
   let colors: [Color]

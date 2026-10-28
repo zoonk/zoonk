@@ -1,7 +1,5 @@
 import Foundation
 
-/// The two modes of `randomSimulation`: one random model run many times (how often a hit comes
-/// up), or many samples of each size from a population (how their results spread).
 enum RandomSimulationFields: Decodable, Hashable, Sendable {
   struct Hit: Decodable, Hashable, Sendable {
     enum Comparison: String, Decodable, Sendable {
@@ -118,7 +116,7 @@ enum RandomSimulationFields: Decodable, Hashable, Sendable {
   }
 }
 
-/// Main's `chance.ts`: runs a model with the seeded generator and counts the hits.
+/// Mirrors main's `chance.ts`.
 enum ChanceModel {
   static func isHit(_ model: RandomSimulationFields.Model, _ outcome: Int) -> Bool {
     switch model {
@@ -155,7 +153,6 @@ enum ChanceModel {
     }
   }
 
-  /// Counts per outcome between the smallest and largest seen, for the histogram.
   static func outcomeCounts(_ outcomes: [Int]) -> [(outcome: Int, count: Int)] {
     guard let low = outcomes.min(), let high = outcomes.max() else {
       return []
@@ -169,7 +166,6 @@ enum ChanceModel {
     return (low...high).map { ($0, counts[$0] ?? 0) }
   }
 
-  /// The share of hits after each run, thinned to at most `points` points for drawing.
   static func runningShare(_ hits: [Bool], points: Int) -> [(x: Int, y: Double)] {
     let every = max(Int((Double(hits.count) / Double(points)).rounded(.up)), 1)
     var total = 0
@@ -182,7 +178,7 @@ enum ChanceModel {
   }
 }
 
-/// Main's `sampling.ts`: samples of a size from a population, their spread and histogram.
+/// Mirrors main's `sampling.ts`.
 enum SamplingModel {
   static func truth(_ population: RandomSimulationFields.Population) -> Double {
     switch population {

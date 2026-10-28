@@ -39,7 +39,6 @@ struct FormulaModelFields: Decodable, Hashable, Sendable {
     Dictionary(uniqueKeysWithValues: variables.map { ($0.name, $0.initial) })
   }
 
-  /// Every what-if switched off, as the model starts.
   var eventsOff: [String: Double] {
     Dictionary(uniqueKeysWithValues: (events ?? []).map { ($0.name, 0) })
   }
@@ -49,9 +48,7 @@ struct FormulaModelFields: Decodable, Hashable, Sendable {
     variables.first { $0.name == plot?.x } ?? variables.first
   }
 
-  /// Core's `computeOutput`: the named output (or the plotted one) with the sliders at `inputs`,
-  /// every other slider where it starts and the what-ifs off unless set. Nil when an input isn't a
-  /// slider within its range.
+  /// Mirrors core's `computeOutput`. Nil when an input isn't a slider within its range.
   func value(output id: String?, inputs: [String: Double]) -> Double? {
     let outputId = id ?? plot?.y ?? outputs.first?.id
 
@@ -82,8 +79,7 @@ struct FormulaModelFields: Decodable, Hashable, Sendable {
   }
 }
 
-/// Main's `formula-model-view.ts`: what the chart and readouts draw for the sliders and what-ifs
-/// where they are now, and what they compare with.
+/// Mirrors main's `formula-model-view.ts`.
 struct FormulaModelView {
   enum BaselineKind {
     case start, whatIf
@@ -115,7 +111,6 @@ struct FormulaModelView {
     fields.value(output: output.id, inputs: values)
   }
 
-  /// The charted output across the axis slider's range, everything else at `values`.
   func curve(_ values: [String: Double]) -> [(x: Double, y: Double)] {
     let samples = 64
 
@@ -165,7 +160,6 @@ struct FormulaModelView {
     }
   }
 
-  /// How much the what-ifs changed the charted output at the slider.
   var delta: Double {
     guard baseline?.kind == .whatIf, let now = chartedNow, let before = chartedBefore else {
       return 0

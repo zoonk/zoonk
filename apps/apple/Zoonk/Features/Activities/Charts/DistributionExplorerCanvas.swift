@@ -37,8 +37,7 @@ struct DistributionExplorerFields: Decodable, Hashable, Sendable {
   let valueLabel: String
 }
 
-/// Main's `distribution.ts`: the share between two values (core's grading math), the axis, the
-/// step handles snap to and the curve's outline.
+/// Mirrors main's `distribution.ts`.
 enum DistributionModel {
   private static let normalReach = 3.5
   private static let uniformMargin = 0.25
@@ -149,9 +148,7 @@ enum DistributionModel {
   }
 }
 
-/// Drag two handles along a distribution and read the percent of values between them, with the
-/// tails outside (main's `DistributionExplorerActivity`). With a numeric check the percent between
-/// the handles is the answer; after the check the asked range is outlined.
+/// With a numeric check the percent between the handles is the answer.
 struct DistributionExplorerCanvas: View {
   let context: ActivityCanvasContext
   let fields: DistributionExplorerFields
@@ -261,7 +258,6 @@ struct DistributionExplorerCanvas: View {
       .chartOverlay { proxy in
         GeometryReader { geometry in
           if let plot = proxy.plotFrame.map({ geometry[$0] }) {
-            // The shares outside each handle, the tails.
             tail(below)
               .frame(width: 72, alignment: .trailing)
               .position(

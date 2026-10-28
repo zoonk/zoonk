@@ -51,9 +51,8 @@ struct ChartReaderFields: Decodable, Hashable, Sendable {
   }
 }
 
-/// A real dataset to measure (main's `ChartReaderActivity`): the learner taps spans to see how much
-/// the line changed in each, so a trend is read from the data instead of stated. With a numeric
-/// check the last measured span is the answer; after the check the asked span is marked.
+/// A trend is read from the data instead of stated. With a numeric check the last measured span is
+/// the answer.
 struct ChartReaderCanvas: View {
   let context: ActivityCanvasContext
   let fields: ChartReaderFields

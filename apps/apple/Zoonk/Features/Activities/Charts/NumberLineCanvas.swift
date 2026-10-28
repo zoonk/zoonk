@@ -15,7 +15,6 @@ struct NumberLineFields: Decodable, Hashable, Sendable {
   let step: Double
   let unit: String?
 
-  /// Every stop of the writer's jumps, starting point first.
   var stops: [Double] {
     moves.reduce(into: [start]) { stops, move in stops.append((stops.last ?? start) + move.by) }
   }
@@ -34,14 +33,11 @@ struct NumberLineFields: Decodable, Hashable, Sendable {
   }
 }
 
-/// The learner drags a dot to where a change lands (main's `NumberLineActivity`). Before the check
-/// an arc shows the jump they made; after it, the writer's jumps show why, crossing zero step by
-/// step. The dot's position is the numeric answer, and typing a number moves the dot.
+/// The dot's position is the numeric answer, and typing a number moves the dot.
 struct NumberLineCanvas: View {
   let context: ActivityCanvasContext
   let fields: NumberLineFields
 
-  /// Where the dot is while exploring, when nothing is answered.
   @State private var explored: Double?
 
   private var isChecked: Bool {
@@ -222,7 +218,6 @@ struct NumberLineCanvas: View {
     context.setAnswer(.numeric(value))
   }
 
-  /// "−3 + 3 + 5 = 5": the start, each jump with its sign, and where it lands.
   private var equation: String {
     let values =
       isChecked

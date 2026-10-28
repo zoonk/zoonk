@@ -20,7 +20,7 @@ struct AreaModelFields: Decodable, Hashable, Sendable {
   }
 }
 
-/// Main's `area-model-cuts.ts`: split lines on a side and the parts between them.
+/// Mirrors main's `area-model-cuts.ts`.
 struct AreaModelSide: Hashable {
   var cuts: [Double]
   let step: Double
@@ -58,9 +58,7 @@ struct AreaModelSide: Hashable {
   }
 }
 
-/// Splits a rectangle (or a bar) into easy parts by dragging split lines, with each part's size
-/// worked out live (main's `AreaModelActivity`). The parts always add up to the same total, which
-/// is the idea. The canvas never answers a numeric check: the learner adds the parts and types it.
+/// The canvas never answers a numeric check: the learner adds the parts and types it.
 struct AreaModelCanvas: View {
   let context: ActivityCanvasContext
   let fields: AreaModelFields
@@ -79,7 +77,6 @@ struct AreaModelCanvas: View {
     return false
   }
 
-  /// Each cell's product (area model) or each part (bar model), row by row.
   private var pieces: [Double] {
     guard let first = sides.first else {
       return []
@@ -127,7 +124,6 @@ struct AreaModelCanvas: View {
     .accessibilityLabel(Text(verbatim: summary(total: total)))
   }
 
-  /// The rectangle keeps its proportions within a readable height.
   private var gridHeight: CGFloat {
     guard sides.count > 1, sides[0].total > 0 else {
       return 180
@@ -156,7 +152,6 @@ struct AreaModelCanvas: View {
   }
 }
 
-/// A rectangle split across its width and height, each cell labelled with its product.
 private struct AreaGrid: View {
   @Binding var sides: [AreaModelSide]
   let isEnabled: Bool
@@ -243,7 +238,6 @@ private struct AreaGrid: View {
   }
 }
 
-/// A bar split into parts, its total over it.
 private struct AreaBar: View {
   @Binding var sides: [AreaModelSide]
   let isEnabled: Bool
@@ -299,7 +293,6 @@ private func edges(_ side: AreaModelSide) -> [Double] {
   [0] + side.cuts + [side.total]
 }
 
-/// A split line's handle: dragged by touch, adjusted by VoiceOver and the arrow keys.
 private struct SplitHandle: View {
   let label: Text
   let value: String

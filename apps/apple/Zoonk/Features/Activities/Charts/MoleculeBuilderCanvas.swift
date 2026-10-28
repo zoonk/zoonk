@@ -1,9 +1,6 @@
 import SwiftUI
 
-/// Atoms joined until every bond is filled, like carbon dioxide (main's `MoleculeBuilderActivity`).
-/// The learner adds atoms from the palette (bonded to the selected atom, if any) and taps two atoms
-/// to step the bond between them. Dots show each atom's open bonds; any complete structure with the
-/// formula's atoms is right. Explored, it shows one complete build.
+/// Any complete structure with the formula's atoms is right.
 struct MoleculeBuilderCanvas: View {
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -100,7 +97,6 @@ struct MoleculeBuilderCanvas: View {
     .animation(reduceMotion ? nil : .snappy, value: state.layout)
   }
 
-  /// After an interaction check that was right there's nothing more to show.
   private var isRightInteraction: Bool {
     guard case .interaction = context.check else { return false }
     return MoleculeModel.isComplete(state.build, target)
@@ -157,7 +153,6 @@ struct MoleculeBuilderCanvas: View {
     }
   }
 
-  /// An atom's spoken name, like "Oxygen 2".
   private func name(_ atom: MoleculeBuild.Atom) -> String {
     let number = String(atom.id.drop { !$0.isNumber })
     return String(
@@ -292,8 +287,6 @@ struct MoleculeBuilderCanvas: View {
     }
   }
 
-  // MARK: - Editing
-
   private func commit(_ next: Snapshot, announce: String) {
     history.append(state)
     state = next
@@ -412,7 +405,6 @@ struct MoleculeBuilderCanvas: View {
       String(localized: "Undone.", table: "ActivitiesCharts", comment: "Announced after undo"))
   }
 
-  /// A build in words: each bond with its order, then any atom with no bonds at all.
   private func describe(_ build: MoleculeBuild) -> String {
     let named = { (id: String) in build.atoms.first { $0.id == id }.map(name) ?? id }
     let bonds = build.bonds.map { bondText(named($0.from), named($0.to), $0.order) }
@@ -429,8 +421,6 @@ struct MoleculeBuilderCanvas: View {
   }
 }
 
-/// The build drawn: bonds as one, two or three lines, atoms in their element's color with a dot
-/// for each open bond. Each atom is a button when the build can change.
 private struct MoleculeDrawing: View {
   let build: MoleculeBuild
   let layout: [String: MoleculeModel.Point]

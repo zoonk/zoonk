@@ -1,8 +1,7 @@
 import Foundation
 
-/// The small numeric rules main's chart activities share (`_utils/snap-value.ts`, core's
-/// `template-helpers.ts`, `pattern-checks.ts` and `probability.ts`), so a handle lands where main's
-/// would and a readout agrees with grading.
+/// Mirrors main's `_utils/snap-value.ts` and core's `template-helpers.ts`, `pattern-checks.ts` and
+/// `probability.ts`, so a handle lands where main's would and a readout agrees with grading.
 enum ChartsMath {
   /// JavaScript's `Math.round`: halves round up, so -2.5 is -2.
   static func jsRound(_ value: Double) -> Double {
@@ -82,8 +81,6 @@ enum ChartsMath {
     let step = niceStep(high - low)
     return clean((low / step).rounded(.down) * step)...clean((high / step).rounded(.up) * step)
   }
-
-  // MARK: - Probability
 
   /// Abramowitz and Stegun 7.1.26, as core computes it, so a readout matches grading to the digit.
   static func erf(_ value: Double) -> Double {

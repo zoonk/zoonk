@@ -36,7 +36,7 @@ struct UnitCircleFields: Decodable, Hashable, Sendable {
   }
 }
 
-/// Main's `unit-circle-angle.ts`: the step the point moves in and how angles are written.
+/// Mirrors main's `unit-circle-angle.ts`.
 enum UnitCircleAngle {
   /// 5° when every angle the lesson names sits on it (so the check's angle can be reached), else 1°
   /// or half a degree.
@@ -73,9 +73,7 @@ enum UnitCircleAngle {
   }
 }
 
-/// Turn a point around a circle of radius 1 (main's `UnitCircleActivity`): its height is the sine,
-/// its sideways distance the cosine, and the waves they trace draw themselves as it turns. With a
-/// numeric check, the value the check reads at the point's angle is the answer.
+/// With a numeric check, the value the check reads at the point's angle is the answer.
 struct UnitCircleCanvas: View {
   let context: ActivityCanvasContext
   let fields: UnitCircleFields
@@ -91,7 +89,6 @@ struct UnitCircleCanvas: View {
     _degrees = State(initialValue: UnitCircleAngle.snap(start, step: step))
   }
 
-  /// The angle a numeric check asks about, in degrees, and the value it reads there.
   private static func target(_ check: ActivityCheck?, fields: UnitCircleFields)
     -> (degrees: Double, output: UnitCircleFields.Trig)?
   {
@@ -286,7 +283,6 @@ struct UnitCircleCanvas: View {
           x: center.x - radius, y: center.y - radius, width: radius * 2, height: radius * 2)),
       with: .style(.secondary), lineWidth: 1.5)
 
-    // The angle swept from zero, as a small arc.
     canvas.stroke(
       Path { path in
         path.addArc(

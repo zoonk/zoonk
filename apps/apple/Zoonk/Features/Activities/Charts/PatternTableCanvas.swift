@@ -28,12 +28,10 @@ struct PatternTableFields: Decodable, Hashable, Sendable {
     Dictionary(uniqueKeysWithValues: blanks.map { (String($0), ending(of: rows[$0].answer) ?? "") })
   }
 
-  /// A blank's stem: its answer without the ending the learner picks.
   func stem(_ row: Row) -> String {
     String(row.answer.dropLast(ending(of: row.answer)?.count ?? 0))
   }
 
-  /// The start every form shares, like "habl" in hablo, hablas, habla.
   static func commonStem(_ words: [String]) -> String {
     guard let first = words.first else {
       return ""
@@ -51,7 +49,6 @@ struct PatternTableFields: Decodable, Hashable, Sendable {
     return String(characters.prefix(length))
   }
 
-  /// The next blank after `current`, wrapping around, or nil when all are filled.
   func nextOpenBlank(after current: Int?, filled: [String: String]) -> Int? {
     let start = current.flatMap { blanks.firstIndex(of: $0).map { $0 + 1 } } ?? 0
     let ordered =
@@ -77,9 +74,6 @@ struct PatternTableAnswer: Codable, Hashable, Sendable {
   let pairs: [String: String]
 }
 
-/// A full pattern for a model word, then the same pattern for a new word with cells left blank
-/// (main's `PatternTableActivity`): pick a blank, then its ending. After the check each blank shows
-/// the learner's ending and the right one.
 struct PatternTableCanvas: View {
   let context: ActivityCanvasContext
   let fields: PatternTableFields
@@ -178,7 +172,6 @@ struct PatternTableCanvas: View {
     }
   }
 
-  /// A form with its ending in color, the part the pattern is about.
   private func form(_ word: String, stem: String) -> some View {
     let parts =
       !stem.isEmpty && word.hasPrefix(stem) && word.count > stem.count

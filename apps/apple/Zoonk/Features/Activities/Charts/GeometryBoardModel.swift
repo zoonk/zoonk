@@ -24,13 +24,11 @@ struct GeometryBoardFields: Decodable, Hashable, Sendable {
   let points: [Point]
 }
 
-/// Main's `board-geometry.ts` and `board-measure.ts`: what a shape measures, the grid its corners
-/// snap to, and the moves that keep it a shape the board can measure honestly.
+/// Mirrors main's `board-geometry.ts` and `board-measure.ts`.
 enum GeometryBoardModel {
   typealias Point = GeometryBoardFields.Point
 
-  /// Main's board tones (`board-tones.ts`): what the learner moves, a target, a second series, or
-  /// neutral.
+  /// Mirrors main's `board-tones.ts`.
   enum Tone: CaseIterable {
     case accent, highlight, secondary, neutral
   }
@@ -43,7 +41,6 @@ enum GeometryBoardModel {
     return wrapsOntoFirst ? .secondary : tone
   }
 
-  /// Pythagoras: the two legs' squares in two tones, the square on the longest side in a third.
   static func squareTone(_ index: Int, totalIndex: Int?) -> Tone {
     if index == totalIndex {
       return .highlight
@@ -183,7 +180,6 @@ enum GeometryBoardModel {
     }
   }
 
-  /// The four corners of the square standing outward on each side, for the Pythagoras board.
   static func sideSquares(_ points: [Point]) -> [[(x: Double, y: Double)]] {
     let area = signedArea(points)
     let winding: Double = area > 0 ? 1 : area < 0 ? -1 : 1
@@ -213,7 +209,6 @@ enum GeometryBoardModel {
     } ?? span / 16
   }
 
-  /// Room to drag around the starting shape (and its squares, for Pythagoras), on the grid.
   static func bounds(_ points: [Point], measure: GeometryBoardFields.Measure, step: Double)
     -> Bounds
   {

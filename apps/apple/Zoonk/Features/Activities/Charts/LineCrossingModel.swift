@@ -38,8 +38,7 @@ struct LineShiftAnswer: Codable, Hashable, Sendable {
   let direction: LineCrossingFields.Direction
 }
 
-/// Main's `line-crossing-model.ts` and core's `shiftLine`/`crossing`: lines y = a + b·x, moved
-/// sideways or up and down, and where they cross.
+/// Mirrors main's `line-crossing-model.ts` and core's `shiftLine`/`crossing`: lines y = a + b·x.
 enum LineCrossingModel {
   struct Line: Hashable {
     var intercept: Double
@@ -101,7 +100,6 @@ enum LineCrossingModel {
     (-amount * 2, amount * 2, amount / 4)
   }
 
-  /// Axes that fit the crossing for every position either line can be dragged to, with room.
   static func domain(_ fields: LineCrossingFields) -> Point {
     let axis = axis(of: fields.shift.direction)
     let reach = range(fields.shift.amount).max
@@ -124,7 +122,6 @@ enum LineCrossingModel {
     return Point(x: x * 1.25, y: y * 1.25)
   }
 
-  /// The line's stretch inside the box from zero to the domain on both axes.
   static func segment(_ line: Line, domain: Point) -> (from: Point, to: Point) {
     guard line.slope != 0 else {
       return (Point(x: 0, y: line.intercept), Point(x: domain.x, y: line.intercept))

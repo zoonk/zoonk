@@ -1,10 +1,7 @@
 import Charts
 import SwiftUI
 
-/// A model of formulas to play with (main's `FormulaModelActivity`): sliders drive the outputs, and
-/// one output is drawn across one slider's range. What-ifs switch on and off over the sliders, and
-/// a dashed curve keeps how things were before them, or where the sliders started. Values come
-/// from the same formulas core grades with, so the readouts and a numeric check agree.
+/// Values come from the same formulas core grades with, so the readouts and a numeric check agree.
 struct FormulaModelCanvas: View {
   let context: ActivityCanvasContext
   let fields: FormulaModelFields
@@ -196,7 +193,6 @@ struct FormulaModelCanvas: View {
     .accessibilityHidden(true)
   }
 
-  /// Where the check's answer sits on the chart once checked: its slider position and value.
   private func expectedPoint(_ view: FormulaModelView) -> (x: Double, y: Double)? {
     guard isChecked, case .numeric(_, let answer, _, _, _, let inputs, _) = context.check else {
       return nil

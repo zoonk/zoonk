@@ -1,9 +1,6 @@
 import SwiftUI
 
-/// Write a regular expression or a spreadsheet formula and watch it tested against every example
-/// as you type, the same way grading tests it (main's `PatternTesterActivity`). Symbol buttons
-/// save hunting on a phone keyboard, and hints come one at a time on request. After the check, a
-/// pattern that works is shown; explored, it starts with one to read and change.
+/// Examples are tested as the learner types, the same way grading tests them.
 struct PatternTesterCanvas: View {
   let context: ActivityCanvasContext
   let fields: PatternTesterFields
@@ -452,7 +449,6 @@ struct PatternTesterCanvas: View {
       trimmed.isEmpty ? nil : try? ActivityAnswer(encoding: PatternTesterAnswer(pattern: next)))
   }
 
-  /// Types a symbol at the cursor (around the selection for pairs), leaving the cursor inside.
   private func insert(_ snippet: Snippet) {
     var range = pattern.endIndex..<pattern.endIndex
 

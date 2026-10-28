@@ -110,7 +110,6 @@ struct PatternTesterAnswer: Codable, Hashable, Sendable {
   let pattern: String
 }
 
-/// A sample's result: where the pattern matched (for highlighting) and whether that's right.
 struct PatternSampleResult: Hashable, Sendable {
   let sample: String
   let match: Range<Int>?

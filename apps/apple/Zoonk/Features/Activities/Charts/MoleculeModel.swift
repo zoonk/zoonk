@@ -25,8 +25,7 @@ struct MoleculeBuild: Codable, Hashable, Sendable {
   static let empty = MoleculeBuild()
 }
 
-/// Core's `chemistry.ts` and `molecule-structure.ts` with main's `molecule-model.ts`: how many bonds
-/// each element makes, when a build is complete, and one correct build to show after the check.
+/// Mirrors core's `chemistry.ts` and `molecule-structure.ts` and main's `molecule-model.ts`.
 enum MoleculeModel {
   static let maxBondOrder = 3
 
@@ -114,7 +113,6 @@ enum MoleculeModel {
     return filled && reached.count == build.atoms.count
   }
 
-  /// "CO₂" from counts, elements in the target's order and then the rest.
   static func formulaText(_ counts: [(element: String, count: Int)]) -> String {
     let subscripts = Array("₀₁₂₃₄₅₆₇₈₉")
 
@@ -135,8 +133,6 @@ enum MoleculeModel {
     }
     return elements.map { element in (element, build.atoms.filter { $0.element == element }.count) }
   }
-
-  // MARK: - Editing
 
   /// Adds an atom, bonded once to `bondTo` when an atom is selected, which is how builds grow.
   static func add(_ element: String, to build: MoleculeBuild, bondTo: String?) -> (
@@ -177,8 +173,6 @@ enum MoleculeModel {
 
     return next
   }
-
-  // MARK: - One correct build
 
   /// One complete structure for the formula, found by a bounded search that grows a backbone from
   /// the atoms with the most bonds; nil past the search budget.
@@ -273,8 +267,6 @@ enum MoleculeModel {
       })
   }
 
-  // MARK: - Layout
-
   struct Point: Hashable {
     var x: Double
     var y: Double
@@ -302,7 +294,6 @@ enum MoleculeModel {
     }
   }
 
-  /// Next to the atom it's bonded to on its roomiest side, or anywhere free.
   static func place(anchor: String?, layout: [String: Point]) -> Point {
     let center = Point(x: size.width / 2, y: size.height / 2)
     let others = layout.filter { $0.key != anchor }.sorted { $0.key < $1.key }.map(\.value)
@@ -338,7 +329,6 @@ enum MoleculeModel {
     return roomiest(around, others: others.isEmpty ? [center] : others)
   }
 
-  /// Settles a build so bonds keep about the same length and nothing overlaps.
   static func relax(_ layout: [String: Point], bonds: [MoleculeBuild.Bond]) -> [String: Point] {
     let ids = layout.keys.sorted()
     let pairs = Set(bonds.map { [$0.from, $0.to].sorted().joined(separator: "|") })
@@ -375,7 +365,6 @@ enum MoleculeModel {
     return current
   }
 
-  /// A whole build laid out from scratch: each atom beside the first placed atom it bonds to.
   static func layout(_ build: MoleculeBuild) -> [String: Point] {
     var layout: [String: Point] = [:]
 

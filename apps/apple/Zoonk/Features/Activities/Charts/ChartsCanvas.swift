@@ -1,8 +1,6 @@
 import Charts
 import SwiftUI
 
-/// The surface a chart activity draws on (main's `ActivityCanvas`): a quiet panel under the prompt
-/// that holds the figure, its readouts and its controls.
 struct ChartsCanvas<Content: View>: View {
   @ViewBuilder let content: Content
 
@@ -17,7 +15,6 @@ struct ChartsCanvas<Content: View>: View {
   }
 }
 
-/// The value the learner is changing, big enough to read at a glance (main's `ActivityReadout`).
 struct ChartsReadout: View {
   let text: String
   var style: Color = .primary
@@ -30,8 +27,6 @@ struct ChartsReadout: View {
   }
 }
 
-/// A thing to tap on a canvas (a span, an ending, a next move), with main's select-grid states:
-/// ink when picked, soft blue when it's the answer, soft pink when it was a wrong pick.
 struct ChartsChoiceStyle: ButtonStyle {
   enum State {
     case plain, selected, right, wrong
@@ -83,9 +78,8 @@ struct ChartsChoiceStyle: ButtonStyle {
 }
 
 extension View {
-  /// Something the learner moves along one line (a dot, a handle, a split line): VoiceOver adjusts
-  /// it by swiping up and down, and with a hardware keyboard it takes focus and moves with the
-  /// arrows (a step) and Page Up/Down (ten), like main's place handles and sliders.
+  /// VoiceOver adjusts it by swiping up and down; with a hardware keyboard it takes focus and moves
+  /// with the arrows (a step) and Page Up/Down (ten).
   func chartsAdjustable(
     label: Text,
     value: String,
@@ -139,13 +133,12 @@ private struct ChartsAdjustable: ViewModifier {
   }
 }
 
-/// The coordinate space of a chart's overlay, where handles read their drags.
 enum ChartsPlot {
   static let space = "chartsPlot"
 }
 
-/// A round handle the learner drags: a visible dot inside a 44-point target, so a finger can grab
-/// it without covering the mark and a swipe elsewhere still scrolls the lesson.
+/// A dot inside a 44-point target, so a finger can grab it without covering the mark and a swipe
+/// elsewhere still scrolls the lesson.
 struct ChartsHandle: View {
   var tint: Color = .primary
   var isEnabled = true
@@ -161,7 +154,6 @@ struct ChartsHandle: View {
   }
 }
 
-/// A line of small print on a canvas, like an axis name or a hint.
 struct ChartsCaption: View {
   let text: String
 
@@ -176,8 +168,7 @@ struct ChartsCaption: View {
   }
 }
 
-/// Marks under a chart the learner moves by its handles: VoiceOver reads the chart's summary and
-/// the handles, not each mark.
+/// VoiceOver reads the chart's summary and the handles, not each mark.
 struct ChartsHiddenMarks<Content: ChartContent>: ChartContent {
   @ChartContentBuilder let content: Content
 

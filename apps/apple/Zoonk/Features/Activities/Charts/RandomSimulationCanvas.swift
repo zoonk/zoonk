@@ -1,10 +1,7 @@
 import Charts
 import SwiftUI
 
-/// Something random run hundreds of times (main's `RandomSimulationActivity`): how often a hit comes
-/// up (guess first, then watch the runs settle near the exact chance), or how the results of
-/// samples spread less as samples grow. The first run is seeded by the lesson, so everyone sees the
-/// same one; "Run again" draws anew.
+/// The first run is seeded by the lesson, so everyone sees the same one; "Run again" draws anew.
 struct RandomSimulationCanvas: View {
   let context: ActivityCanvasContext
   let fields: RandomSimulationFields
@@ -21,7 +18,6 @@ struct RandomSimulationCanvas: View {
   }
 }
 
-/// Fills a simulation in over about a second, or at once with Reduce Motion.
 private struct RevealCount: ViewModifier {
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -535,7 +531,6 @@ private struct SamplingSimulationView: View {
     .disabled(!isDone)
   }
 
-  /// After the check, the margin each size should give (core's standard error), next to the runs.
   private var expectedSpread: some View {
     let largest = fields.sampleSizes.last ?? smallest
     let ratio =

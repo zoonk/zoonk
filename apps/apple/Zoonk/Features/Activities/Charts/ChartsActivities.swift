@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// The chart, slider and plot templates (main's `activity-registry*.ts` entries for them), part of
-/// `ActivityRendererRegistry.app`.
 enum ChartsActivities {
   static let renderers: [ActivityRenderer] = [
     ActivityRenderer(template: "chartReader") { context in
@@ -87,8 +85,8 @@ enum ChartsActivities {
   ]
 }
 
-/// Decodes a template's fields once and draws its canvas; content that doesn't decode (a template
-/// changed on the server before the app) leaves the canvas out and the check still works.
+/// Content that doesn't decode (a template changed on the server before the app) leaves the canvas
+/// out, and the check still works.
 struct ChartsFields<Fields: Decodable, Canvas: View>: View {
   let context: ActivityCanvasContext
   @ViewBuilder let canvas: (Fields) -> Canvas

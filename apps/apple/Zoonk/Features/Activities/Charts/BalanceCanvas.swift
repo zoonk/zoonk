@@ -1,9 +1,6 @@
 import SwiftUI
 
-/// An equation as a balance (main's `BalanceActivity`): the learner takes the same thing off both
-/// pans and watches it stay level, until one unknown stands alone and its weight is the answer.
-/// Taking from one side only tips the beam and shows the writer's hint. Equations bags and blocks
-/// can't draw are solved one move at a time in symbols instead.
+/// Equations bags and blocks can't draw are solved one move at a time in symbols instead.
 struct BalanceCanvas: View {
   let context: ActivityCanvasContext
   let fields: BalanceFields
@@ -241,7 +238,6 @@ private struct BlockBalance: View {
   }
 }
 
-/// The beam on its stand with a pan of bags and blocks at each end; it tips toward the heavier pan.
 private struct BalanceScale: View {
   let state: BalanceModel.State
   let tilt: Double
@@ -323,9 +319,7 @@ private struct Triangle: Shape {
   }
 }
 
-/// For equations bags and blocks can't show (negatives, fractions, big counts): the learner picks
-/// each next move in symbols. A wrong move shows the writer's hint, and the equation only changes
-/// on a right move, so the balance stays true.
+/// The equation only changes on a right move, so the balance stays true.
 private struct SymbolicBalance: View {
   let context: ActivityCanvasContext
   let fields: BalanceFields
@@ -418,8 +412,6 @@ private struct SymbolicBalance: View {
   }
 }
 
-/// The written solution as a checklist: reached steps ticked with their equation, the next one
-/// dimmed as a nudge; after the check every step shows.
 private struct BalanceSteps: View {
   let steps: [(move: String, equation: String)]
   let reached: Int
