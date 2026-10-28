@@ -178,7 +178,6 @@ describe("language challenges are Plus only", () => {
       expect(intro.blockId).toBeNull();
       await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(0);
 
-      // Intro is read-only; the day-opening POST creates the pending call, or Start activates it.
       const opened = started
         ? await startChallenge({ input: {}, planItemId: boss.id })
         : await getTodayStudySession({ goalId: goal.id });
@@ -221,7 +220,6 @@ describe("language challenges are Plus only", () => {
           after.session.blocks.some((block) => block.id === scheduled.blockId),
       ).toBe(false);
 
-      // The frame's "Continue" goes on with the day without the locked call.
       mockAccountSession({ user });
 
       await expect(getLearnerSummary()).resolves.toMatchObject({

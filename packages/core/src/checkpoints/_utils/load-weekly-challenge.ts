@@ -22,7 +22,6 @@ import { loadCheckpointCandidates } from "./checkpoint-candidates";
 
 const WEEK_DAYS = 7;
 
-/** The plan's weekly checkpoints: an exam's mock, or a mixed challenge for other goals. */
 export const WEEKLY_CHALLENGE_KINDS = ["checkpoint", "mock"] as const satisfies PlanItem["kind"][];
 
 const WEEKLY_KINDS = new Set<PlanItem["kind"]>(WEEKLY_CHALLENGE_KINDS);
@@ -31,17 +30,12 @@ export function isWeeklyChallengeItem(item: Pick<PlanItem, "kind">): boolean {
   return WEEKLY_KINDS.has(item.kind);
 }
 
-/** The plan's next weekly checkpoint that isn't done yet. */
 export function findNextWeeklyItem<Item extends Pick<PlanItem, "kind" | "status">>(
   items: readonly Item[],
 ): Item | undefined {
   return items.find((item) => isWeeklyChallengeItem(item) && item.status === "todo");
 }
 
-/**
- * The week's mock in real conditions, planned by the exam module: one exam day's sections at the
- * real pace, from questions the learner has never seen, so its score says something new.
- */
 async function loadMockItems({
   goal,
   identity: selectedIdentity,
@@ -59,7 +53,6 @@ async function loadMockItems({
   today: Date;
   userId: string;
 }) {
-  // The mock sits the exam day and length its plan saved for it (see `MockIdentity`).
   const identity =
     selectedIdentity === undefined
       ? await loadScheduledMock({ date: today, goalId: goal.id, planItemId })
@@ -75,7 +68,7 @@ async function loadMockItems({
   };
 }
 
-/** Skills answered on in the last week, in plan order so rebuilding keeps the same questions. */
+/** Returns skills in plan order so rebuilding keeps the same questions. */
 export async function loadWeekSkillIds({
   now,
   skillIds,
@@ -99,11 +92,6 @@ export async function loadWeekSkillIds({
   return skillIds.filter((skillId) => answered.has(skillId));
 }
 
-/**
- * A mixed challenge's questions on the week's skills (`loadWeekSkillIds`), planned at its full
- * size while the bank holds too few (see `getPlannedQuestions`); none to write without a week's
- * skills.
- */
 export async function loadMixedItems({
   examBlueprintId,
   now,
@@ -135,15 +123,9 @@ export async function loadMixedItems({
 
 export type SessionWeeklyChallenge = {
   checkpoint: PlannedCheckpoint | null;
-  /** An exam's Big Challenge is a mock, which the free plan doesn't include: offer Plus. */
   plusRequired: boolean;
 };
 
-/**
- * Today's weekly checkpoint when the plan scheduled one: a mock in the exam's conditions (when the
- * learner's plan includes mocks) on every topic of the test, or a mixed challenge on the week's
- * skills outside exams.
- */
 export async function loadSessionWeeklyChallenge({
   goal,
   includesMockExams,
@@ -160,13 +142,9 @@ export async function loadSessionWeeklyChallenge({
   includesMockExams: boolean;
   items: readonly SessionPlanItem[];
   mockFunding?: PlanSettings["mockFunding"];
-  /**
-   * The skills a mock asks: every topic of the test, the ones the plan's days left out too, as the
-   * real test does and as the full review a free plan gets in its place does.
-   */
+  /** Include every exam topic, even those omitted from the plan's teaching days. */
   mockSkillIds: readonly string[];
   now: Date;
-  /** The plan's skills, which a mixed challenge brings together. */
   skillIds: readonly string[];
   structure: ExamStructure | null;
   today: Date;
@@ -178,7 +156,6 @@ export async function loadSessionWeeklyChallenge({
     return { checkpoint: null, plusRequired: false };
   }
 
-  // The plan's `mock` items are an exam's weekly mock; `checkpoint` items a mixed challenge.
   const isMock = item.kind === "mock";
 
   if (isMock && !includesMockExams) {
@@ -187,7 +164,6 @@ export async function loadSessionWeeklyChallenge({
 
   const asked = isMock ? mockSkillIds : skillIds;
 
-  // A mock's missing questions are written by its own start (`requestMockQuestions`).
   const { writable, ...picked } = isMock
     ? {
         ...(await loadMockItems({
@@ -205,7 +181,6 @@ export async function loadSessionWeeklyChallenge({
       }
     : await loadMixedItems({ examBlueprintId: goal.examBlueprintId, now, skillIds, userId });
 
-  // A mixed challenge short of questions keeps its day: they're written when it starts.
   if (picked.itemIds.length < MIN_CHECKPOINT_QUESTIONS && !writable) {
     return { checkpoint: null, plusRequired: false };
   }

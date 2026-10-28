@@ -21,7 +21,6 @@ import { isWeeklyChallengeItem } from "./load-weekly-challenge";
 const MONDAY = 1;
 const DAYS_PER_WEEK = 7;
 
-/** Where the week's challenge went: its new day, its plan item there and the change to undo. */
 export type ChallengeMove = { changeId: string | null; date: string; planItemId: string | null };
 
 export type ApplyChallengeMoveResult =
@@ -29,18 +28,11 @@ export type ApplyChallengeMoveResult =
   | PlanChangeRefusal
   | { status: "notFound" | "unauthorized" };
 
-/** The first Monday after a day: a Sunday's challenge moves to the next day. */
 function getNextMonday(date: Date): Date {
   const days = (MONDAY - date.getUTCDay() + DAYS_PER_WEEK) % DAYS_PER_WEEK || DAYS_PER_WEEK;
   return addDays(date, days);
 }
 
-/**
- * What decides whether the week's challenge can move: only the planner's own plans (with a skill
- * graph) can move it, since the planner places it again, a challenge it already moved stays on
- * its new day (its undo brings it back), nothing moves onto or past the goal's date, and Monday
- * must be a study day with no weekly event of its own (`heldDays`) and no other move's (`movedTo`).
- */
 export type ChallengeMoveRules = {
   heldDays: string[];
   mondayOpen: boolean;
@@ -87,12 +79,6 @@ export async function loadChallengeMoveRules(goalId: string): Promise<ChallengeM
   };
 }
 
-/**
- * The day the week's challenge can move from, or null when it can't move: it's waiting, its day is
- * today or later (a past day can't move), the planner owns the plan, it hasn't moved already and
- * the Monday it would move to comes before the goal's date (a mock after a Friday test is no
- * practice for it).
- */
 export function getMovableDay({
   item,
   rules,
@@ -111,11 +97,6 @@ export function getMovableDay({
   return waiting && day && day >= today && !moved && beforeDate(getNextMonday(day)) ? day : null;
 }
 
-/**
- * Whether a view offers "Move to Monday": the challenge can move (see `getMovableDay`) and its
- * Monday is a study day free of weekly events, as the move itself requires (R43): offered there,
- * the learner learned only after the tap that the day already had one.
- */
 export function canMoveToMonday(input: Parameters<typeof getMovableDay>[0]): boolean {
   const day = getMovableDay(input);
   const monday = day && toIsoDate(getNextMonday(day));
@@ -130,17 +111,12 @@ export function canMoveToMonday(input: Parameters<typeof getMovableDay>[0]): boo
   );
 }
 
-/** The week's challenge on a day: a dated item is a new row once it moves. */
 export function findChallengeOn({ date, planId }: { date: Date; planId: string }) {
   return prisma.planItem.findFirst({
     where: { kind: { in: ["checkpoint", "mock"] }, planId, scheduledFor: date, status: "todo" },
   });
 }
 
-/**
- * "Move to Monday" through the planner, so the plan and its undo stay in one place: the item
- * moves to the next Monday and a block of today's session for it steps aside.
- */
 export async function applyChallengeMove({
   block,
   from,
@@ -150,7 +126,6 @@ export async function applyChallengeMove({
   userId,
 }: {
   block: Pick<StudySessionBlock, "id"> | null;
-  /** The day it's planned for now. */
   from: Date;
   goalId: string;
   input: StudySessionTimeZoneInput;
@@ -167,7 +142,6 @@ export async function applyChallengeMove({
     },
   });
 
-  // Only choosing where to focus comes back unchanged; a move always changes the week.
   if (result.status === "unchanged") {
     return { status: "notFound" };
   }
@@ -200,7 +174,6 @@ export async function applyChallengeMove({
   };
 }
 
-/** The day a move took the challenge from, read from its plan change. */
 export async function findMovedFrom(changeId: string): Promise<Date | null> {
   const change = await prisma.planChange.findUnique({ where: { id: changeId } });
   const payload = change ? parsePlanChangePayload(change.payload) : null;
@@ -209,7 +182,6 @@ export async function findMovedFrom(changeId: string): Promise<Date | null> {
   return operation?.kind === "moveWeeklyEvent" ? fromIsoDate(operation.from) : null;
 }
 
-/** After an undo on the challenge's own day, its block comes back into today's session. */
 export async function restoreChallengeBlock({
   block,
   challenge,
@@ -232,7 +204,6 @@ export async function restoreChallengeBlock({
   });
 }
 
-/** The effect of the learner's move of this plan's week event (see `getChallenge`'s `moved`). */
 export async function loadMoveEffect({
   changeId,
   planId,

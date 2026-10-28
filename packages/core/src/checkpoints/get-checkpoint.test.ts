@@ -18,7 +18,6 @@ import { startStudyBlock } from "../sessions/start-study-block";
 import { getSession } from "../users/get-session";
 import { getCheckpoint } from "./get-checkpoint";
 
-/** A learner whose first phase (two lessons) is done, so today's session is the phase's boss. */
 async function reachedBoss() {
   const user = await userFixture();
   const fixture = await sessionGoalFixture({ lessons: 3, userId: user.id });
@@ -119,7 +118,6 @@ describe(getCheckpoint, () => {
     await prisma.item.deleteMany({ where: { id: { in: getBlockItemIds(readBlockPayload(row)) } } });
     const identity = await getSession();
 
-    /** The detail read resolves auth again after the checkpoint row was read. Finish at that boundary. */
     vi.mocked(getSession)
       .mockResolvedValueOnce(identity)
       .mockImplementationOnce(async () => {

@@ -51,11 +51,7 @@ async function findWeeklyBlock(blockId: string) {
   return { block, goal, planItemId: payload.planItemId, status: "ready" as const };
 }
 
-/**
- * "Move to Monday" from today's session: the week's Big Challenge (a mock or a mixed challenge)
- * moves from its day to the next Monday, through the planner, and today's block steps aside. It
- * moves only before it starts, from its own day or a later one.
- */
+/** Only unstarted challenges on today or later can move; today's block steps aside. */
 export async function moveWeeklyChallenge({
   blockId,
   input,
@@ -100,10 +96,7 @@ export async function moveWeeklyChallenge({
   return { move: { changeId: result.move.changeId, date: result.move.date }, status: "moved" };
 }
 
-/**
- * Undoes a move while the plan is as the move left it: the challenge goes back to its day and,
- * when that's the session's day, back into today's session.
- */
+/** Requires the plan to match the move's result; restores the challenge's session block when applicable. */
 export async function undoWeeklyChallengeMove({
   blockId,
   changeId,

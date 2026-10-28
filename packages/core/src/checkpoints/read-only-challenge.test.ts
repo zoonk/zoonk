@@ -23,10 +23,8 @@ import { getPassMark } from "./checkpoint-rules";
 import { getChallenge } from "./get-challenge";
 import { startChallenge } from "./start-challenge";
 
-// Call through: the intro must not build the day it isn't allowed to create.
 vi.mock("../sessions/session-builder", { spy: true });
 
-/** A learner whose phase's lessons are done, so its checkpoint is due before they open the day. */
 async function dueBossFixture(
   bossFor?: (skillIds: string[]) => NonNullable<SavedItemFacts["boss"]>,
 ) {
@@ -74,10 +72,6 @@ function readPlan(planId: string) {
   });
 }
 
-/**
- * Today's saved session with the checkpoint's block after other unfinished work: a lesson, or
- * another phase's checkpoint.
- */
 async function savedDayFixture({
   before,
   bossId,
@@ -153,7 +147,6 @@ describe("a challenge intro is a read", () => {
     const before = await readPlan(plan.id);
     const challenge = await readIntro(boss.id);
 
-    // A plan item saved before its facts were kept promises no size or topics, only Start.
     expect(challenge).toMatchObject({
       blockId: null,
       estimatedMinutes: null,
@@ -320,7 +313,6 @@ describe("a challenge intro is a read", () => {
       status: "ready",
     });
 
-    // The topics are the saved facts' skills, in their order, not a rebuilt queue's.
     expect(challenge.topics.map((topic) => topic.name)).toStrictEqual([
       skills[1]?.name,
       skills[0]?.name,

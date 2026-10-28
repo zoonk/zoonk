@@ -29,11 +29,6 @@ async function findCheckpointBlock({ blockId, userId }: { blockId: string; userI
   });
 }
 
-/**
- * A phase checkpoint that didn't pass, as things stand now rather than when it finished: its new
- * try is tomorrow on the day it was played, back in the plan after that, and behind the learner
- * once a later try passed.
- */
 function getRetry({
   goal,
   item,
@@ -67,10 +62,6 @@ async function loadPhases(goalId: string | null): Promise<CheckpointPhase[]> {
   return parsePlanPhases(plan?.phases).map((phase, index) => ({ index, name: phase.name }));
 }
 
-/**
- * A finished checkpoint's ledger keeps its score after content is removed. A boss is won or lost
- * as settlement decided (`milestoneReward`); older blocks without saved evidence use their answers.
- */
 function getResult({
   detail,
   payload,
@@ -103,7 +94,7 @@ function getResult({
   };
 }
 
-/** One of the signed-in learner's checkpoint blocks, by its id, with its questions but no answers. */
+/** Requires ownership of the block; returns questions without their answers. */
 export async function getCheckpoint(blockId: string): Promise<CheckpointResult> {
   const session = await getSession();
 

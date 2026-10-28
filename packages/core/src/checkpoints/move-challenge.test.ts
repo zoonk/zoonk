@@ -7,7 +7,6 @@ import { createGoalPlan } from "../plans/create-goal-plan";
 import { getChallenge } from "./get-challenge";
 import { moveChallenge, undoChallengeMove } from "./move-challenge";
 
-/** A real planner plan whose learner finished work early, as Lucas did before moving a future week. */
 async function setup({ mondayRests = false }: { mondayRests?: boolean } = {}) {
   const user = await userFixture();
 
@@ -32,7 +31,6 @@ async function setup({ mondayRests = false }: { mondayRests?: boolean } = {}) {
     where: { kind: "checkpoint", planId: plan.id, scheduledFor: { gte: new Date("2020-10-18") } },
   });
 
-  // Completion can get ahead of the saved dates between automatic refreshes. This is not a seed.
   await prisma.planItem.updateMany({
     data: { completedAt: new Date("2020-10-05T10:00:00Z"), status: "done" },
     where: { kind: "lesson", phase: { lte: 1 }, planId: plan.id },
@@ -130,7 +128,6 @@ describe(moveChallenge, () => {
   it("keeps the requested challenge when its Monday is beyond the remaining work", async () => {
     const { plan, weekly } = await setup();
 
-    // A learner can finish ahead: their weekly challenge still has the date they saw on its intro.
     await prisma.planItem.updateMany({
       data: { completedAt: new Date("2020-10-05T10:00:00Z"), status: "done" },
       where: { kind: { in: ["lesson", "boss"] }, planId: plan.id },
@@ -151,13 +148,11 @@ describe(moveChallenge, () => {
   it("rejects an inconsistent source day without changing the plan or losing the challenge", async () => {
     const { plan, weekly } = await setup();
 
-    // A malformed/stale plan has a weekly event on a day the calendar never gives it.
     await prisma.planItem.update({
       data: { scheduledFor: new Date("2020-10-20") },
       where: { id: weekly.id },
     });
 
-    // Rows come back in no particular order: both reads order them, to compare the same plan.
     const before = await prisma.plan.findUniqueOrThrow({
       include: { items: { orderBy: { id: "asc" } } },
       where: { id: plan.id },

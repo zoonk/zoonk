@@ -15,10 +15,6 @@ import { getOfferQuestions, readBossOffer } from "./challenge-offer";
 import { loadMockCard } from "./mock-card";
 import { type ChallengeBlock, type OwnedChallenge, isLanguageCall } from "./owned-challenge";
 
-/**
- * What a challenge asks and how long it takes, as its intro says it. Unknown before its block
- * exists when its saved item doesn't say (see `getOfferQuestions`).
- */
 type ChallengeSize = {
   estimatedMinutes: number | null;
   fullLength: boolean;
@@ -33,10 +29,6 @@ type ChallengeSize = {
   timeZone: string | null;
 };
 
-/**
- * A mock as its block fixed it, or, before its block exists, as its card plans it (`loadMockCard`):
- * the exam's conditions, or on its day what the bank holds now.
- */
 async function loadMockSize({
   block,
   challenge,
@@ -104,11 +96,6 @@ async function loadMockSize({
   };
 }
 
-/**
- * A checkpoint's questions: its block's, including the questions a pending block starts by
- * writing (`getPlannedQuestions`). A started one asks what the bank still holds of them
- * (`countAskableQuestions`), as its duel does.
- */
 async function loadCheckpointSize(block: ChallengeBlock): Promise<ChallengeSize> {
   const payload = readBlockPayload(block);
   const itemIds = payload.itemIds;
@@ -143,7 +130,6 @@ function getCheckpointSize(questions: number | null): ChallengeSize {
   };
 }
 
-/** A unit's call asks no questions: its block is the call with its intro and feedback. */
 const CALL_SIZE: ChallengeSize = {
   ...getCheckpointSize(CHECKPOINT_QUESTIONS),
   estimatedMinutes: CHECKPOINT_CALL_BLOCK_MINUTES,
@@ -169,10 +155,6 @@ export function loadChallengeSize({
   return block ? loadCheckpointSize(block) : getOfferSize(challenge);
 }
 
-/**
- * A checkpoint before its block exists, as its saved plan item keeps it (`readBossOffer`): zero
- * while it can't be asked yet, and null while its size is unknown, which promises nothing.
- */
 function getOfferSize(challenge: OwnedChallenge): ChallengeSize {
   const offer = readBossOffer(challenge);
   const questions = getOfferQuestions(offer);

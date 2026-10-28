@@ -4,12 +4,6 @@ import { type MockLeftOut } from "../exams/mocks/mock-view-contract";
 import { type MockDayWrittenPart } from "../exams/mocks/written-parts";
 import { type ExamStructure } from "../library/exams/blueprint-contract";
 
-/**
- * The weekly checkpoint, the Big Challenge. For an exam it's a mock in the real exam's
- * conditions (questions, sections, time and scoring from the blueprint) with this checklist to
- * rehearse the day: fixed keys the apps translate, checked off on the device. For other goals it's
- * a mixed challenge on the week's skills, asked like a phase checkpoint.
- */
 export const EXAM_DAY_CHECKLIST = [
   "waterAndSnack",
   "phoneOnSilent",
@@ -20,14 +14,9 @@ export const EXAM_DAY_CHECKLIST = [
 export type ExamDayChecklistItem = (typeof EXAM_DAY_CHECKLIST)[number];
 
 export type MockConditions = {
-  /**
-   * The whole exam day, as in the final stretch; otherwise a short mock, half of it, which is
-   * what regular weeks hold.
-   */
+  /** False means half an exam day; true means the whole day. */
   fullLength: boolean;
-  /** What it leaves out of the real exam, each with why (see `MockLeftOut`). */
   leftOut: MockLeftOut[];
-  /** Wrong answers cancel right ones, as in Cebraspe exams: scored as a net score. */
   netScoring: boolean;
   questions: number;
   sections: {
@@ -37,17 +26,10 @@ export type MockConditions = {
     tools: string | null;
   }[];
   timeLimitMinutes: number;
-  /**
-   * A full-length mock's written parts, as the notice states them, each asked in the mock or left
-   * for essay practice (see `MockDayWrittenPart`).
-   */
+  /** Written tasks are included only in full-length mocks. */
   written: MockDayWrittenPart[];
 };
 
-/**
- * What the card before a mock says about it: its questions, sections and time from the planned
- * mock (one exam day at the real pace), and whether wrong answers cancel right ones.
- */
 export function toMockConditions({
   plan,
   structure,
@@ -55,7 +37,6 @@ export function toMockConditions({
 }: {
   plan: MockPlan;
   structure: ExamStructure | null;
-  /** The exam's typed formats its bank asks (see `loadBankTypedParts`). */
   typed: readonly MockTypedPart[];
 }): MockConditions {
   return {
@@ -69,7 +50,6 @@ export function toMockConditions({
     }),
     netScoring: isNetScored(structure),
     questions: countPlannedQuestions(plan),
-    // A written test with its own time is listed with the written parts, not as questions.
     sections: plan.sections.flatMap(({ minutes, name, questions, tools }) =>
       questions > 0 ? [{ minutes, name, questions, tools: tools ?? null }] : [],
     ),
@@ -78,7 +58,6 @@ export function toMockConditions({
   };
 }
 
-/** Whether the exam's own scoring cancels right answers with wrong ones. */
 export function isNetScored(structure: Partial<Pick<ExamStructure, "mock">> | null): boolean {
   return structure?.mock?.scoring.method === "wrongCancelsRight";
 }

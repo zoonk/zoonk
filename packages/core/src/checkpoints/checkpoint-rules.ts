@@ -2,37 +2,21 @@ import { type PlanItemKind, type PlanItemStatus } from "@zoonk/db";
 import { interleave } from "@zoonk/utils/interleave";
 import { listCoreLessonItems } from "../plans/_utils/core-lessons";
 
-/**
- * Phase checkpoints (the Trickster boss): about ten mixed questions from the whole phase in the exam's
- * format, with no hints, favoring classic traps. Seven of ten wins. Losing costs nothing: up to two short
- * reinforcement lessons and a rematch the next day, and the next phase is never locked. A final
- * boss closes the plan. Weekly challenges use the same questions and pass mark rules.
- */
 export const CHECKPOINT_QUESTIONS = 10;
 
-/**
- * Fewer questions than this can't fairly judge a phase: a checkpoint short of them keeps its day
- * and gets its questions written when it starts (`getPlannedQuestions`).
- */
 export const MIN_CHECKPOINT_QUESTIONS = 5;
 
-/** Seven of ten: most of the phase, not perfection. Admin stats count passes with it too. */
 export const PASS_SHARE = 0.7;
 
-/** Maximum reinforcement before a rematch; distinct available lessons on the most-missed skills. */
 export const REINFORCEMENT_LESSONS = 2;
 
-/** A duel of ten questions takes about fifteen minutes, like any exam-format practice. */
 export const CHECKPOINT_MINUTES_PER_QUESTION = 1.5;
 
 export function getPassMark(questions: number): number {
   return Math.ceil(questions * PASS_SHARE);
 }
 
-/**
- * The questions a checkpoint is planned with: the ones the bank has for it, or its full ten while
- * the bank holds too few to judge it (they're written when it starts, so it asks ten then).
- */
+/** Reserves the full size when missing questions will be written on Start. */
 export function getPlannedQuestions(available: number): number {
   return available < MIN_CHECKPOINT_QUESTIONS ? CHECKPOINT_QUESTIONS : available;
 }
@@ -54,7 +38,6 @@ export type CheckpointItemCandidate = {
   skillId: string;
 };
 
-/** Classic traps first (wrong options with a misconception), then questions never seen. */
 function rankCandidate(candidate: CheckpointItemCandidate): number {
   const trapRank = candidate.hasMisconceptions ? 0 : 2;
   const seenRank = candidate.seen ? 1 : 0;
@@ -62,10 +45,6 @@ function rankCandidate(candidate: CheckpointItemCandidate): number {
   return trapRank + seenRank;
 }
 
-/**
- * Picks a checkpoint's questions: mixed across the phase's skills, one skill after another in
- * turn, and within each skill the trap questions the learner hasn't seen first.
- */
 export function selectCheckpointItems({
   candidates,
   skillIds,
@@ -84,13 +63,11 @@ export function selectCheckpointItems({
     .map((candidate) => candidate.id);
 }
 
-/** What a plan item is to a phase's checkpoint: its kind, place and day, and what it teaches. */
 type BossPlanItem = {
   id: string | null;
   key?: string;
   chapterId: string | null;
   kind: PlanItemKind;
-  /** A Library lesson is one lesson; without one, a stand-in for `lessons` of them. */
   lessonId: string | null;
   lessons?: number | null;
   phase: number;
@@ -103,37 +80,24 @@ type BossPlanItem = {
 type BossItem = Pick<BossPlanItem, "phase" | "position" | "scheduledFor">;
 
 type BossPlan = {
-  /**
-   * The plan graph's skills, with the lessons the plan's last build counted for each
-   * (`plannedLessons`), which size its core; a plan saved before it counted them has the graph's
-   * estimate (`lessons`).
-   */
+  /** plannedLessons sizes the core when available; lessons is the graph's fallback estimate. */
   graphSkills: readonly { lessons: number; plannedLessons?: number; skillId: string }[];
-  /** Each plan item's skills, by its id. */
   itemSkillIds: ReadonlyMap<string, readonly string[]>;
   items: readonly BossPlanItem[];
-  /** The plan's skills to ask, in plan order (without the areas the learner took out). */
+  /** Requires plan order, with excluded areas removed. */
   skills: readonly { id: string }[];
-  /** The goal's date: a challenge by it asks what the plan teaches by then (see `getBossSkillIds`). */
   targetDate: Date | null;
 };
 
-/** A skill's core lesson items (see `listCoreLessonItems`). */
 type CoreLessons = ReadonlyMap<string, readonly BossPlanItem[]>;
 
 const LEARN_KINDS = new Set<PlanItemKind>(["chapter", "lesson"]);
 
-/** Actual teaching, including finished lessons, excluding work set aside or tested out. */
 export function isBossTeachingItem(item: Pick<BossPlanItem, "kind" | "status">): boolean {
   return LEARN_KINDS.has(item.kind) && item.status !== "skipped" && item.status !== "testedOut";
 }
 
-/**
- * Whether the plan has an item by a checkpoint: before its day, or on it before it in plan order
- * (a checkpoint that leads its day tests none of the lessons after it that day), by date when both
- * have one and by plan order otherwise. The plan's days, not what's done, so a plan always gives a
- * checkpoint the same skills, however far the learner got, and its checks read it the same way.
- */
+/** Use scheduled days rather than completion dates so early finishes do not change the skills tested. */
 function comesBy({ boss, item }: { boss: BossItem; item: BossPlanItem }): boolean {
   if (item.scheduledFor && boss.scheduledFor) {
     const order = item.scheduledFor.getTime() - boss.scheduledFor.getTime();
@@ -143,7 +107,6 @@ function comesBy({ boss, item }: { boss: BossItem; item: BossPlanItem }): boolea
   return item.position < boss.position;
 }
 
-/** The skills of the learn items by a checkpoint's day, of its phase only with `phase`, in plan order. */
 function listStudiedSkillIds({
   boss,
   phase,
@@ -167,19 +130,10 @@ function listStudiedSkillIds({
   return plan.skills.flatMap((skill) => (studied.has(skill.id) ? [skill.id] : []));
 }
 
-/** The first list with skills in it, else the last one. */
 function firstWithSkills(lists: readonly (readonly string[])[]): string[] {
   return [...(lists.find((list) => list.length > 0) ?? lists.at(-1) ?? [])];
 }
 
-/**
- * What one checkpoint asks, after the ones before it asked `asked`: the skills whose core lessons
- * are all in by its day that its own phase's lessons study, though an earlier checkpoint asked them
- * (a subject taught in every phase is tested in every phase). With none, those no earlier one asked,
- * then every finished one (an exam's window of practice and mocks, or a phase whose own skills
- * begin late in it): a skill with core lessons after its day is never asked while one is finished.
- * Only when none is finished yet, what its phase studied, else what it studied.
- */
 function pickBossSkillIds({
   asked,
   boss,
@@ -208,22 +162,13 @@ function pickBossSkillIds({
   ]);
 }
 
-/**
- * The skills a phase's checkpoint asks: the ones whose core lessons the plan has in by its day that
- * its own phase teaches, else any no earlier checkpoint asked (`pickBossSkillIds`). A skill begun
- * late in an exam's window, its core in the next one, isn't asked before it's studied, and the next
- * window's challenge asks it (R40). Checking again what earlier phases taught is review's work, not
- * a phase's challenge's. A challenge by the goal's date sizes those cores from the lessons dated by
- * then: an exam plan studying everything goes on after the exam, which changes no duel before it.
- * The session's duel and the questions written ahead for it ask the same.
- */
+/** Challenges before the goal's date must ignore teaching scheduled after it when sizing each skill's core. */
 export function getBossSkillIds({ boss, ...plan }: BossPlan & { boss: BossItem }): string[] {
   const { graphSkills, targetDate } = plan;
   const items = plan.items.toSorted((a, b) => a.position - b.position);
   const byDate = (date: Date | null) => targetDate !== null && date !== null && date <= targetDate;
   const core = listCoreLessonItems({ graphSkills, items });
 
-  // Lessons between a challenge and the date still count toward its cores: it waits for them.
   const coreByDate = listCoreLessonItems({
     graphSkills,
     items: items.filter((item) => !item.scheduledFor || byDate(item.scheduledFor)),
@@ -245,21 +190,14 @@ export function getBossSkillIds({ boss, ...plan }: BossPlan & { boss: BossItem }
   return pickBossSkillIds({ asked, boss, core: coreFor(boss), plan });
 }
 
-/**
- * Questions to write for a checkpoint short of its ten: `questionsPerSkill` more for each of
- * `skillIds`, which should then hold `target` (a skill holding as many by then is skipped).
- */
+/** Write questionsPerSkill for each skillId until it holds target; skip skills already at target. */
 export type ChallengeQuestionWrite = {
   questionsPerSkill: number;
   skillIds: string[];
   target: number;
 };
 
-/**
- * What a checkpoint's skills lack of its ten questions, one question at a time to the skill with
- * the fewest (the earlier one on a tie), so its duel stays mixed across the phase and nothing
- * past its size is written. Skills that get as many new questions share one write.
- */
+/** Input order breaks ties between equally short skills. */
 export function planChallengeWrites(
   counts: readonly { questions: number; skillId: string }[],
 ): ChallengeQuestionWrite[] {
@@ -284,7 +222,6 @@ export function planChallengeWrites(
   }));
 }
 
-/** The skills a lost duel missed, the most missed first, for the reinforcement lessons. */
 export function getMissedSkills(
   answers: readonly { isCorrect: boolean; skillId: string | null }[],
 ): string[] {

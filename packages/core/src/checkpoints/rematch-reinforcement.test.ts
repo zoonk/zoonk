@@ -90,7 +90,6 @@ describe("a lost duel's actual reinforcement lessons", () => {
       });
     }, Promise.resolve(null));
 
-    // The deciding answer, a reload before finishing, and the finished intro must agree.
     await expect(getCheckpoint(block.id)).resolves.toMatchObject({
       checkpoint: { reinforcementLessons: count },
       status: "ready",
@@ -111,7 +110,6 @@ describe("a lost duel's actual reinforcement lessons", () => {
       status: "ready",
     });
 
-    // The lost duel's new try is tomorrow, in the saved plan as well.
     await expect(
       prisma.planItem.findUniqueOrThrow({ select: { scheduledFor: true }, where: { id: boss.id } }),
     ).resolves.toStrictEqual({ scheduledFor: new Date(SESSION_TODAY.getTime() + DAY_MS) });

@@ -14,12 +14,10 @@ import { getChallenge } from "./get-challenge";
 const DAY_MS = 86_400_000;
 const LEARN_KINDS: PlanItem["kind"][] = ["chapter", "lesson"];
 
-/** Noon on a learner-local date, so the clock reads that day in UTC. */
 function noonOn(date: Date): Date {
   return new Date(date.getTime() + DAY_MS / 2);
 }
 
-/** Questions on a skill, so its phase's challenge can be asked. */
 function questionBankFixture(skillId: string) {
   return Promise.all(
     Array.from({ length: MIN_CHECKPOINT_QUESTIONS + 1 }, () =>
@@ -28,7 +26,6 @@ function questionBankFixture(skillId: string) {
   );
 }
 
-/** Today's study time under a 30-minute daily limit, all of it used on `date`. */
 async function useUpStudyTime({ date, userId }: { date: Date; userId: string }) {
   await Promise.all([
     prisma.userLearningProfile.upsert({
@@ -50,7 +47,6 @@ async function challengeOf(planItemId: string) {
   return result.challenge;
 }
 
-/** A phase's challenge still to win, on the day the plan saved it. */
 async function findPhaseChallenge({ phase, planId }: { phase: number; planId: string }) {
   const boss = await prisma.planItem.findFirst({
     where: { kind: "boss", phase, planId, status: "todo" },
@@ -63,10 +59,6 @@ async function findPhaseChallenge({ phase, planId }: { phase: number; planId: st
   return { ...boss, scheduledFor: boss.scheduledFor };
 }
 
-/**
- * The day after its day, Today's first open re-plans the challenge the daily limit held back (it's
- * overdue, see `hasOverduePlanWork`): that run's day is the one the challenge's screen promised.
- */
 async function openTheNextDay({ date, goalId }: { date: Date; goalId: string }) {
   vi.setSystemTime(noonOn(date));
 
@@ -85,7 +77,6 @@ describe("a learn plan's phase challenge past today's study time names the day i
   });
 
   it("past a weekly checkpoint day its 15 minutes leave no lesson time on", async () => {
-    // A Monday in 2020, before other tests' learning events, so the planner's pace is its own.
     vi.setSystemTime(new Date("2020-10-05T12:00:00Z"));
 
     const friday = new Date("2020-10-09T12:00:00Z");
@@ -105,8 +96,6 @@ describe("a learn plan's phase challenge past today's study time names the day i
 
     await questionBankFixture(library.skills[0]?.id ?? "");
 
-    // 15 minutes every day, the shortest onboarding preset, since the week before: from its second
-    // week on, each Sunday holds the week's checkpoint, which takes those 15 minutes.
     const { goal, plan } = await unplannedGoalFixture({
       dailyMinutes: 15,
       details: { placementDeclined: true },
@@ -120,7 +109,6 @@ describe("a learn plan's phase challenge past today's study time names the day i
 
     const boss = await findPhaseChallenge({ phase: 0, planId: plan.id });
 
-    // The first phase's lessons done by Friday, its challenge on Saturday, the next study day.
     await Promise.all([
       prisma.planItem.updateMany({
         data: { completedAt: friday, status: "done" },
@@ -129,8 +117,6 @@ describe("a learn plan's phase challenge past today's study time names the day i
       prisma.planItem.update({ data: { scheduledFor: saturday }, where: { id: boss.id } }),
     ]);
 
-    // No lesson is left from before Sunday, so Sunday's run carries none in ahead of the challenge,
-    // and Sunday holds the week's checkpoint.
     await expect(
       prisma.planItem.count({
         where: {
@@ -157,7 +143,6 @@ describe("a learn plan's phase challenge past today's study time names the day i
     await openTheNextDay({ date: sunday, goalId: goal.id });
     const replanned = await findPhaseChallenge({ phase: 0, planId: plan.id });
 
-    // Sunday has study time, but the week's checkpoint takes all of it: the challenge isn't there.
     expect(toIsoDate(replanned.scheduledFor)).not.toBe(toIsoDate(sunday));
     expect(held.nextStudyDate).toBe(toIsoDate(replanned.scheduledFor));
   });

@@ -51,10 +51,6 @@ function getKind(challenge: OwnedChallenge): CheckpointKind {
   return isFinalBoss({ boss: challenge.item, items: challenge.items }) ? "finalBoss" : "boss";
 }
 
-/**
- * When the challenge comes: a phase's as sessions offer them, as the Plan says it (see
- * `getBossTimings`); the week's and a mock in the next session once their day came.
- */
 function getTiming(challenge: OwnedChallenge): BossTiming {
   const { item, items, today } = challenge;
 
@@ -65,7 +61,6 @@ function getTiming(challenge: OwnedChallenge): BossTiming {
   return item.scheduledFor !== null && item.scheduledFor <= today ? "nextSession" : "date";
 }
 
-/** The week's challenge moves before it starts, from today or a later day. */
 async function canMove({
   challenge,
   todayBlock,
@@ -89,7 +84,6 @@ function findPhase(challenge: OwnedChallenge) {
   return phase ? { index: challenge.item.phase, name: phase.name } : null;
 }
 
-/** The block it's played in that the intro opens: today's, or the last one, once finished. */
 function getOpenBlockId({
   block,
   todayBlock,
@@ -104,11 +98,6 @@ function getOpenBlockId({
   return block?.status === "completed" ? block.id : null;
 }
 
-/**
- * What wins a phase checkpoint: right answers (its block's pass mark on the questions it can still
- * ask, `getAskablePassMark`, or the share of its known saved offer). Null while its size is unknown,
- * or for a unit's call until its goals are written.
- */
 function getChallengePassMark({
   block,
   call,
@@ -138,10 +127,7 @@ function getChallengePassMark({
   return payload?.checkpoint ? getAskablePassMark({ payload, questions }) : getPassMark(questions);
 }
 
-/**
- * Today's block as the intro reads it. A mock's block holds no running sitting once its time ran out
- * while the learner was away (see `hasTimeRunOutAway`), so it starts again, like one never started.
- */
+/** A mock that expired while away starts again as an unstarted block. */
 async function readTodayBlockStatus({
   isMock,
   todayBlock,
@@ -168,12 +154,6 @@ async function readTodayBlockStatus({
   return isOver ? "pending" : "active";
 }
 
-/**
- * Whether Start can open it before the learner opens the day: a due one on a day not saved yet,
- * unless its saved plan item says it can't be asked yet (`readBossOffer`). Once the day exists its
- * saved blocks are authoritative, just as they are for Start. Only the Start POST may create the
- * session and its blocks, so nothing here builds the day.
- */
 function isOfferedBeforeOpen({
   challenge,
   due,
@@ -191,11 +171,6 @@ function isOfferedBeforeOpen({
 
 type SavedDayBlock = Pick<ChallengeBlock, "id" | "kind" | "payload" | "position" | "status">;
 
-/**
- * Why today's block waits in the saved day's order, by the rule Start applies to the same saved
- * blocks, so the intro says so instead of offering a Start that refuses. Before the day is saved
- * there's no order to wait in.
- */
 function getSavedWaitReason({
   savedBlocks,
   todayBlock,
@@ -271,18 +246,12 @@ function loadRecordings({
   return readBossOffer(challenge)?.kind === "recording" ? null : 0;
 }
 
-/**
- * One of the learner's challenges by its plan item, before its day and on it: a phase checkpoint
- * (the Trickster) or the week's challenge (an exam's mock). It says when it is, what it asks, what
- * it's worth and where it stands, so the learner can see it coming and, on its day, start it.
- */
 export async function getChallenge({
   input,
   movedBy,
   planItemId,
 }: {
   input: Partial<StudySessionTimeZoneInput>;
-  /** The plan change that just moved it, whose effect the moved screen says (`moved`, R43). */
   movedBy?: string | null;
   planItemId: string;
 }): Promise<ChallengeResult> {
@@ -305,14 +274,12 @@ export async function getChallenge({
   const [size, canMoveIt, lastResult, counts, recordings, topics, call, limitReached, moved] =
     await Promise.all([
       loadChallengeSize({ block: previewBlock, challenge }),
-      // A mock the plan doesn't include has no day of its own to move.
       status !== "plusRequired" && canMove({ challenge, todayBlock }),
       kind === "weekly" ? null : findLastCheckpointResult({ planItemId: item.id, userId }),
       loadMilestoneCounts(userId),
       loadRecordings({ block: previewBlock, challenge }),
       loadChallengeTopics({ block: previewBlock, challenge }),
       loadChallengeCall({ blockId, challenge }),
-      // Start refuses a challenge once today's study time is used up: a ready one says so first.
       status === "ready" && !waitReason && readDailyLimitReachedToday(userId),
       movedBy ? loadMoveEffect({ changeId: movedBy, planId: item.planId }) : null,
     ]);
@@ -346,14 +313,12 @@ export async function getChallenge({
       questions: size.questions,
       recordings,
       reinforcementLessons: reinforcement.length,
-      // A new try is one after a day that didn't pass; today's is "tried" until tomorrow.
       rematch: Boolean(lastResult && !lastResult.passed && lastResult.localDate < today),
       result: lastResult
         ? { correct: lastResult.correct, passed: lastResult.passed, total: lastResult.total }
         : null,
       reward: getCheckpointReward({ counts, kind }),
       sections: size.sections,
-      // The exam's real start time when it has one, else the time the learner's own words gave.
       startTime: size.startTime ?? goal.studyTime,
       status: shown,
       timeZone: size.startTime ? size.timeZone : null,

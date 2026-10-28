@@ -16,10 +16,7 @@ function toGoals(scenario: ConversationScenario | null): ChallengeCall["goals"] 
   return scenario?.objectives.map(({ description, label }) => ({ description, label })) ?? null;
 }
 
-/**
- * The call the intro's block already opened, as it was opened: Continue reopens that call, at the
- * level and with the goals it was written with, whatever the learner's level is now.
- */
+/** Resume with the call's original level and goals, even if the learner's level changed. */
 async function findOpenedCall(blockId: string | null): Promise<ChallengeCall | null> {
   const opened = blockId
     ? await prisma.languageConversation.findUnique({
@@ -49,13 +46,7 @@ async function findOpenedCall(blockId: string | null): Promise<ChallengeCall | n
   };
 }
 
-/**
- * A language goal's phase checkpoint as the unit's call it is. Once its block (`blockId`, the one
- * the intro opens) opened a call, that call. Before, its talk time at the level the learner speaks
- * at now (the call opens at that level), and, once the unit's call is written at that level (ahead
- * of its day, `prepareCheckpointCall`), its name and the goals to get across. Reading it never
- * writes the call. Null for any other challenge.
- */
+/** Read-only; returns null for non-language challenges. */
 export async function loadChallengeCall({
   blockId,
   challenge,

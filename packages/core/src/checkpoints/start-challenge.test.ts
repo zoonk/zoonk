@@ -24,7 +24,6 @@ async function challengeSetup({
 }) {
   const user = await userFixture();
 
-  // The phase's lesson is done, so its challenge closes it.
   const { goal, plan, planItems } = await sessionGoalFixture({
     goal: { kind: language ? "language" : "learn" },
     itemsPerSkill: 0,

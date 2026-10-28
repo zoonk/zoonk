@@ -29,12 +29,7 @@ export type UndoChallengeMoveResult =
   | { planItemId: string | null; status: "undone" }
   | { status: "conflict" | "notFound" | "unauthorized" };
 
-/**
- * "Move to Monday" from the week's challenge's own page, before its day or on it: it moves to the
- * next Monday through the planner (a past day can't move, and a started one stays), and a block
- * of today's session for it steps aside. The move says the challenge's new plan item, since a
- * dated item is a new row once it moves.
- */
+/** Moves create a new dated plan item; use the returned id for subsequent requests. */
 export async function moveChallenge({
   input,
   planItemId,
@@ -72,7 +67,6 @@ export async function moveChallenge({
   });
 }
 
-/** Today's block that stepped aside for the move, so it comes back with the challenge. */
 async function findSkippedWeeklyBlock(challenge: OwnedChallenge) {
   const blocks = await prisma.studySessionBlock.findMany({
     where: {
@@ -85,11 +79,7 @@ async function findSkippedWeeklyBlock(challenge: OwnedChallenge) {
   return blocks.find((block) => readBlockPayload(block).checkpoint?.kind === "weekly") ?? null;
 }
 
-/**
- * Undoes a move while the plan is as the move left it, from the challenge's new plan item: it
- * goes back to its day and, when that's today, back into today's session. The undo says the
- * challenge's plan item on its day again.
- */
+/** Requires the moved challenge's new plan item and an unchanged plan; returns its restored item. */
 export async function undoChallengeMove({
   changeId,
   input,

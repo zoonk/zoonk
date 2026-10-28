@@ -17,14 +17,11 @@ import { applyChallengeMove, restoreChallengeBlock } from "./_utils/challenge-mo
 import { moveChallenge, undoChallengeMove } from "./move-challenge";
 import { moveWeeklyChallenge, undoWeeklyChallengeMove } from "./move-weekly-challenge";
 
-/** A Monday in 2020, before other tests' learning events, so the planner's pace is its own. */
 const MONDAY = new Date("2020-09-28T12:00:00Z");
 
-/** The plan's first weekly challenge falls on this Sunday, the day the learner opens it. */
 const CHALLENGE_DAY = new Date("2020-10-11T12:00:00Z");
 const LESSONS_PER_SKILL = 30;
 
-/** A planned goal long enough for a weekly checkpoint, with today's session holding it. */
 async function setup() {
   const user = await userFixture();
 
@@ -72,7 +69,6 @@ async function setup() {
   return { block, challenge, plan, session, user };
 }
 
-/** The saved plan, including the identities today's block payloads refer to. */
 async function readPlan(planId: string) {
   const { coveredShare, estimateHours, graph, inputsKey, items, phases, settings } =
     await prisma.plan.findUniqueOrThrow({
@@ -91,7 +87,6 @@ async function readPlan(planId: string) {
   };
 }
 
-/** Today's exact work and progress, without persistence timestamps or the plan's version. */
 async function readToday(sessionId: string) {
   const { blocks, id, localDate, plannedMinutes, status } =
     await prisma.studySession.findUniqueOrThrow({
@@ -267,7 +262,6 @@ describe(moveWeeklyChallenge, () => {
 
     mockSession(user.id);
 
-    // A test on the Monday the challenge would move to: moving the mock there no longer prepares.
     await prisma.goal.update({
       data: { targetDate: new Date("2020-10-12") },
       where: { id: plan.goalId },
@@ -280,7 +274,6 @@ describe(moveWeeklyChallenge, () => {
     await expect(challengeDates(plan.id)).resolves.toContain("2020-10-11");
     await expect(statusOf(block.id)).resolves.toBe("pending");
 
-    // Without the date, a started challenge stays where it is.
     await Promise.all([
       prisma.goal.update({ data: { targetDate: null }, where: { id: plan.goalId } }),
       prisma.studySessionBlock.update({ data: { status: "active" }, where: { id: block.id } }),

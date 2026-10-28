@@ -22,12 +22,10 @@ import { arePhaseChallengesRequired } from "./phase-challenge-access";
 
 type SessionBoss = { checkpoint: PlannedCheckpoint | null; reinforcement: PlannedLesson[] };
 
-/** Today's bosses, the earlier phase's first, and the lessons before a rematch among them. */
 type SessionBosses = { checkpoints: PlannedCheckpoint[]; reinforcement: PlannedLesson[] };
 
 const NO_BOSS: SessionBoss = { checkpoint: null, reinforcement: [] };
 
-/** The last boss of the plan, in its last phase, is the final boss that closes the plan. */
 export function isFinalBoss({
   boss,
   items,
@@ -41,11 +39,6 @@ export function isFinalBoss({
   return boss.phase === lastPhase && !laterBoss;
 }
 
-/**
- * What a boss asks on its phase's skills: ten mixed questions, traps first, on the ones text
- * questions can ask. A phase of skills practiced only with recordings (an exam's Listening) gets
- * whole recordings instead, played as strictly as a mock.
- */
 export async function loadBossQuestions({
   examBlueprintId,
   listeningSkillIds,
@@ -82,27 +75,17 @@ export async function loadBossQuestions({
 }
 
 type BossInput = {
-  /** The goal's exam: its questions and general ones make the checkpoint, never another exam's. */
   examBlueprintId: string | null;
   goal: Pick<Goal, "kind" | "targetDate">;
-  /** The plan graph's skills, whose lessons size each skill's core (see `getBossSkillIds`). */
   graphSkills: readonly { lessons: number; skillId: string }[];
-  /** Each plan item's skills, by its id, for a phase with no skills of its own. */
   itemSkillIds: ReadonlyMap<string, readonly string[]>;
   items: readonly SessionPlanItem[];
-  /** The goal's skills practiced only with recordings (`getListeningSkillIds`). */
   listeningSkillIds?: ReadonlySet<string>;
   skills: readonly GoalSkillNode[];
   today: Date;
   userId: string;
 };
 
-/**
- * Today's bosses (see `findSessionBosses`): each ten mixed questions from its phase, traps first,
- * or its recordings for a phase heard only through them (see `loadBossQuestions`). A duel lost on
- * an earlier day comes back as a rematch after up to two available lessons on what it missed; a duel lost
- * today waits for tomorrow, and so do the later phases' challenges.
- */
 export async function loadSessionBosses(input: BossInput): Promise<SessionBosses> {
   if (!(await arePhaseChallengesRequired({ goalKind: input.goal.kind, userId: input.userId }))) {
     return { checkpoints: [], reinforcement: [] };
@@ -124,10 +107,6 @@ export async function loadSessionBosses(input: BossInput): Promise<SessionBosses
   };
 }
 
-/**
- * Whether a boss's questions can't be written when it starts: a phase with no skills to ask, or
- * one heard only through recordings, which its listening sets make.
- */
 function isUnwritable({
   listeningSkillIds,
   skillIds,
@@ -138,11 +117,6 @@ function isUnwritable({
   return skillIds.every((skillId) => listeningSkillIds.has(skillId));
 }
 
-/**
- * One of today's bosses as the session asks it, or none when it can't be asked today. A boss the
- * bank holds too few questions for keeps its place, planned at its full size: its questions are
- * written when it starts (`fillCheckpointQuestions`).
- */
 async function loadBoss({
   boss,
   examBlueprintId,
@@ -170,7 +144,6 @@ async function loadBoss({
     targetDate: goal.targetDate,
   });
 
-  // A language goal's boss is the unit's live call: it has goals to get across, not questions.
   if (goal.kind === "language") {
     return {
       checkpoint: {

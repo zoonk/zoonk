@@ -2,11 +2,7 @@ import { type BuddyGlasses } from "@zoonk/db";
 import { type MilestoneCounts } from "../milestones/milestone-rules";
 import { BRAIN_POWER_BONUS, type CheckpointKind } from "../sessions/brain-power";
 
-/**
- * What a checkpoint says upfront it's worth, so nothing is a surprise: the Brain Power bonus, the
- * "Trap hunter" badge a won boss puts in the logbook, the phase it checks off and the glasses it
- * would earn the first time. A boss pays when won; a Big Challenge pays for finishing it.
- */
+/** Bosses pay on a win; weekly challenges pay on completion. */
 export type CheckpointReward = {
   badge: boolean;
   brainPower: number;

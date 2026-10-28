@@ -8,11 +8,7 @@ import { needsPlus } from "./_utils/challenge-plus";
 import { findOwnedChallenge } from "./_utils/owned-challenge";
 import { type ChallengeDestination } from "./challenge-contract";
 
-/**
- * `questionsNeeded`: the bank still holds too few questions for it; once they're written
- * (`requestChallengeQuestions`), starting it again asks them. `plusRequired`: the learner's plan
- * leaves it to Plus (a mock, or a phase challenge past a free exam plan's first week).
- */
+/** On questionsNeeded, request question generation before starting again; plusRequired requires upgrading. */
 export type StartChallengeResult =
   | { destination: ChallengeDestination; status: "ready" }
   | Extract<StartStudyBlockResult, { status: "earlierFirst" }>
@@ -29,7 +25,6 @@ export type StartChallengeResult =
 
 type StartedBlock = { id: string; isMock: boolean; sessionId: string };
 
-/** Starts the block: a mock fixes its sections and starts its clock, a duel its first question. */
 async function startBlock({
   block,
   input,
@@ -40,7 +35,6 @@ async function startBlock({
   if (block.isMock) {
     const started = await startMock({ blockId: block.id, input });
 
-    // A session's mock whose time ran out while the learner was away starts again in a new sitting.
     if (started.status === "expired") {
       throw new Error(`Mock block ${block.id} didn't start again after its time ran out.`);
     }
@@ -55,12 +49,7 @@ async function startBlock({
   return startStudyBlock({ blockId: block.id, input, sessionId: block.sessionId });
 }
 
-/**
- * "Start" on a challenge's intro, on its day: today's session is planned if it isn't yet, the
- * challenge's block in it starts (or resumes) and the result says where it's played. A
- * challenge today's session doesn't hold, such as one whose day hasn't come, can't start, and
- * one the bank holds too few questions for needs them written first (see `startStudyBlock`).
- */
+/** Creates today's session if absent, then starts or resumes the challenge; refuses challenges outside it. */
 export async function startChallenge({
   input,
   planItemId,
@@ -76,7 +65,6 @@ export async function startChallenge({
 
   const { goal, item, timeZone, today, userId } = owned.challenge;
 
-  // A paused, completed or archived goal has no day to plan.
   if (goal.status !== "active") {
     return { status: "notToday" };
   }

@@ -7,34 +7,17 @@ import {
   getPlannedQuestions,
 } from "./checkpoint-rules";
 
-/**
- * How long a checkpoint of `questions` runs, the whole minutes its card shows, its session block
- * bills and the plan reserves for it: one clock, rounded once.
- */
 export function getCheckpointMinutes(questions: number): number {
   return Math.round(questions * CHECKPOINT_MINUTES_PER_QUESTION);
 }
 
-/**
- * A voiced recording a boss can play (see `listRecordingSets`): its questions in the order they're
- * heard, the skills they're on, and whether a duel can ask every one of them.
- */
 export type RecordingSet = { itemIds: string[]; skillIds: string[]; whole: boolean };
 
-/**
- * What the question bank holds for a goal's bosses, as the learner meets it: each skill's questions
- * a duel can ask (`textCounts`), and the voiced recordings in the order the learner hears them
- * next (`recordingSets`). What a boss asks follows from these (see `getBossSize`).
- */
 export type BossBankFacts = {
   recordingSets: readonly RecordingSet[];
   textCounts: ReadonlyMap<string, number>;
 };
 
-/**
- * The skills a boss's questions are on: its phase's skills that text questions can ask, or, for a
- * phase practiced only with recordings (an exam's Listening), every one of them, on recordings.
- */
 export function getBossQuestionSkills({
   listeningSkillIds,
   skillIds,
@@ -49,11 +32,6 @@ export function getBossQuestionSkills({
     : { recordings: true, skillIds: [...skillIds] };
 }
 
-/**
- * The questions of the recordings a boss plays: whole recordings in the order the learner hears
- * them next, each only when the duel can ask every one of its questions, until the duel has
- * enough. Empty while none can make one: the boss waits.
- */
 export function pickWholeRecordingSets(sets: readonly RecordingSet[]): string[] {
   const whole = sets.filter((set) => set.whole);
 
@@ -65,13 +43,7 @@ export function pickWholeRecordingSets(sets: readonly RecordingSet[]): string[] 
   return enough === -1 ? [] : whole.slice(0, enough + 1).flatMap((set) => set.itemIds);
 }
 
-/**
- * What a boss asks and how long it runs, as its session plays it: a language goal's live call; a
- * phase's text questions, ten at most and its full ten while the bank holds too few (they're
- * written when it starts); or a listening phase's whole recordings, as many questions as they
- * hold. Null for a boss that can't be asked yet: a listening phase with too few voiced recordings,
- * or a phase with no skills to ask.
- */
+/** Null means no playable boss; text bosses retain their planned size while missing questions are written. */
 export function getBossSize({
   facts,
   goalKind,

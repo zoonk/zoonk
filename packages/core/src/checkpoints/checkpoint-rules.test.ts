@@ -67,12 +67,10 @@ describe(getMissedSkills, () => {
   });
 });
 
-/** A day in October 2026. */
 function day(offset: number): Date {
   return new Date(Date.UTC(2026, 9, 1 + offset));
 }
 
-/** A plan item; undated ones come in plan order. */
 function planItem({
   id,
   kind = "lesson",
@@ -132,22 +130,16 @@ describe(getBossSkillIds, () => {
     expect(askedBy("boss-2")).toStrictEqual(["spin"]);
   });
 
-  // A skill belongs to the phase of its first lesson, so a phase whose lessons go on with earlier
-  // skills had none of its own, and its challenge could never be asked.
   it("asks what a phase's lessons study when it finished no skill of its own", () => {
     expect(askedBy("boss-1")).toStrictEqual(["atoms"]);
   });
 
-  // An exam window of practice and mocks only, such as Ana's practice phase before her lessons
-  // reached it: its days practice everything studied so far.
   it("asks everything studied up to a phase that has no lessons", () => {
     expect(askedBy("boss-3")).toStrictEqual(["atoms", "light", "spin"]);
   });
 });
 
 describe("an exam window's challenge", () => {
-  // Time-boxed windows: geometry begins late in the first, and the second of its core lessons (a
-  // third of six) comes in the next one, after the first window's challenge (R40).
   const examWindows = [
     planItem({ id: "a1", phase: 0, position: 0, scheduledFor: day(1), skillId: "algebra" }),
     planItem({ id: "g1", phase: 0, position: 1, scheduledFor: day(3), skillId: "geometry" }),
@@ -198,14 +190,11 @@ describe("an exam window's challenge", () => {
     expect(askedBy("w0")).toStrictEqual(["algebra"]);
   });
 
-  // Asked by no challenge, a skill finished just after its window's challenge was never checked;
-  // algebra's second lesson is the next window's teaching, which its own challenge tests.
   it("asks the next window's challenge a skill finished after the last one, and what it teaches", () => {
     expect(askedBy("w1")).toStrictEqual(["algebra", "geometry", "trig"]);
     expect(askedBy("w2")).toStrictEqual(["stats"]);
   });
 
-  // The plan's days, which the plan's checks read too: a lesson done ahead keeps its day.
   it("goes by the plan's days, not the lessons done ahead of them", () => {
     const ahead = examWindows.map((item) =>
       item.id === "g2" ? { ...item, completedAt: day(4), status: "done" as const } : item,
@@ -225,8 +214,6 @@ describe("an exam window's challenge", () => {
     },
   );
 
-  // Class test seed 3: the phase's only skill of its own begins on its challenge's day, two of its
-  // three core lessons after it, so the phase finished nothing new.
   it("asks what's finished, never a late skill, when the phase finished nothing new", () => {
     const items = [
       planItem({ id: "a1", phase: 0, position: 0, scheduledFor: day(1), skillId: "algebra" }),

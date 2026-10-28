@@ -3,11 +3,6 @@ import { loadExamPrepAccess } from "../../sessions/_utils/plus-only-lessons";
 import { type OwnedChallenge } from "./owned-challenge";
 import { arePhaseChallengesRequired } from "./phase-challenge-access";
 
-/**
- * Whether a challenge needs Plus: a language phase's call, including another try after its
- * completed result, an exam's unfinished mock when mocks aren't in the plan, or an unfinished
- * phase challenge once a free exam plan's first week is over. Content and results stay visible.
- */
 export async function needsPlus({
   goal,
   item,

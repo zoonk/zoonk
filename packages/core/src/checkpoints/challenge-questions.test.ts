@@ -16,10 +16,6 @@ import {
   requestUpcomingChallengeQuestions,
 } from "./challenge-questions";
 
-/**
- * A goal whose first phase teaches two skills holding one question each, with its challenge
- * next on the saved study day after them. A third lesson opens phase 1.
- */
 async function thinChallengeSetup({
   done = true,
   scheduledFor = SESSION_TODAY,
@@ -189,8 +185,6 @@ describe(requestUpcomingChallengeQuestions, () => {
     ).toStrictEqual([skills[0]?.id ?? "", skills[1]?.id ?? ""].toSorted());
   });
 
-  // The session's preparation and the learner's Start (or two tabs) asking at once: they name the
-  // same run, which the later one joins, and the challenge's help is counted once.
   it("counts a challenge's writing once, however many ask for it at once", async () => {
     const { boss, goal, user } = await thinChallengeSetup();
 

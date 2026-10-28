@@ -12,14 +12,8 @@ import { readBlockPayload } from "../sessions/block-payload";
 import { loadSessionBosses } from "./_utils/load-boss";
 import { requestChallengeQuestions } from "./challenge-questions";
 
-/** A Monday in 2020, before the learning events other tests write, which estimates read. */
 const NOW = new Date("2020-09-28T12:00:00Z");
 
-// Câmara seed 1's first plan: a challenge asked skills begun late before it, whose core lessons
-// came after its day (R40). A skill's core is a third of the lessons the plan counted for it
-// (`plannedLessons`), not of the graph's estimate: one the graph guessed 26 lessons for has 34 in
-// the Library, so its core is 12, not 9. Here the graph guesses 3 lessons for a skill with 9: its
-// core is 3, and the challenge comes after its first lesson only.
 describe("a challenge before a skill's core is in", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
@@ -135,7 +129,6 @@ describe("a challenge before a skill's core is in", () => {
 
     expect(counted).toMatchObject({ lessons: 3, plannedLessons: 9 });
 
-    // The window's time box ends today: after the first skill's lessons and the second's first.
     const items = await prisma.planItem.findMany({
       orderBy: { position: "asc" },
       where: { planId: plan.id },
@@ -157,7 +150,6 @@ describe("a challenge before a skill's core is in", () => {
 
     expect(readBlockPayload(row).skillIds).toStrictEqual([finished]);
 
-    // Its questions are written ahead on the same skill.
     const writing = await requestChallengeQuestions({ planItemId: boss?.id ?? "" });
 
     const written =

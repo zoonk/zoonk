@@ -18,12 +18,6 @@ import {
   type MockConditions,
 } from "./weekly-challenge-rules";
 
-/**
- * The goal's next weekly checkpoint, the Big Challenge: when it is, what it asks (the exam's
- * mock conditions, or the mixed questions its bank holds on the week's skills), what it's worth
- * and the checklist to rehearse exam day. An exam's Big Challenge is a mock, which the free plan
- * doesn't include: it then says Plus is required instead of disappearing.
- */
 type WeeklyChallenge = {
   access: "open" | "plusRequired";
   brainPower: number;
@@ -40,10 +34,7 @@ type WeeklyChallenge = {
   title: string | null;
 };
 
-/**
- * What a weekly challenge asks, as its intro says it: the mock's conditions, or the questions its
- * saved bank holds; null while its size is unknown.
- */
+/** Returns null while the saved question count is unknown. */
 export function getWeeklyQuestions({
   conditions,
   item,

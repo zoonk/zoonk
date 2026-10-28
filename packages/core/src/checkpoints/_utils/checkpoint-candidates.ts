@@ -10,12 +10,6 @@ import {
 } from "../../sessions/_utils/session-items";
 import { type CheckpointItemCandidate } from "../checkpoint-rules";
 
-/**
- * The questions on a set of skills a checkpoint can ask (choice questions and math problems), as
- * the bank holds them for everyone: another exam's never count, general ones and the goal's
- * exam's do. A duel is answered with one tap, so a question that asks for several options never
- * comes up.
- */
 export async function listCheckpointQuestions({
   examBlueprintId,
   publicOnly = false,
@@ -44,17 +38,11 @@ export async function listCheckpointQuestions({
     .filter((item) => item.format !== "multipleChoice" || isSinglePick(item));
 }
 
-/**
- * Questions on a set of skills as checkpoint candidates (see `listCheckpointQuestions`): whether a
- * wrong answer carries a misconception (a classic trap) and whether the learner has seen the
- * question.
- */
 export async function loadCheckpointCandidates({
   examBlueprintId,
   skillIds,
   userId,
 }: {
-  /** The goal's exam, if any. */
   examBlueprintId: string | null;
   skillIds: readonly string[];
   userId: string;

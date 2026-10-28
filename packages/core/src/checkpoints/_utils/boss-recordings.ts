@@ -5,7 +5,6 @@ import { listItemSetsForSkills } from "../../library/items/item-sets";
 import { type SessionItem, parseSessionItem } from "../../sessions/_utils/session-items";
 import { type RecordingSet, pickWholeRecordingSets } from "../checkpoint-minutes";
 
-/** What a duel asks: one tap, a number, or a few typed words, never several options. */
 function isDuelQuestion(item: SessionItem): boolean {
   if (item.format === "multipleChoice") {
     return isSinglePick(item);
@@ -14,11 +13,7 @@ function isDuelQuestion(item: SessionItem): boolean {
   return item.format === "trueFalse" || item.format === "numeric" || item.format === "typed";
 }
 
-/**
- * A goal's voiced recordings on `skills`, as a boss can play them (see `RecordingSet`), in the order
- * the learner hears them next: never heard first, then the ones heard longest ago; for no learner
- * (`userId` null), in the order they were written.
- */
+/** Unheard recordings first, then least recently heard; null userId uses creation order without reading answers. */
 export async function listRecordingSets({
   examBlueprintId,
   skillIds,
@@ -49,11 +44,7 @@ export async function listRecordingSets({
   }));
 }
 
-/**
- * The questions of the recordings a boss plays for a phase of skills practiced only with
- * recordings (an exam's Listening): whole voiced recordings on them (see `pickWholeRecordingSets`).
- * Empty while no recording can make one (none is voiced yet): the boss waits.
- */
+/** Returns no items until whole voiced recordings can make a boss. */
 export async function loadBossRecordingItems({
   examBlueprintId,
   skillIds,
@@ -66,10 +57,6 @@ export async function loadBossRecordingItems({
   return pickWholeRecordingSets(await listRecordingSets({ examBlueprintId, skillIds, userId }));
 }
 
-/**
- * How many recordings a checkpoint's questions are on: a listening phase's boss plays them
- * (`loadBossRecordingItems`), so its intro says so; 0 for text questions.
- */
 export function countBlockRecordings(itemIds: readonly string[]): Promise<number> {
   return prisma.itemSet.count({
     where: { items: { some: { id: { in: [...itemIds] } } }, kind: "audio" },

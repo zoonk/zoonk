@@ -22,21 +22,12 @@ import { readDailyTimeLimitReached } from "../../sessions/_utils/daily-time-limi
 import { type CheckpointKind } from "../../sessions/brain-power";
 import { type OwnedChallenge } from "./owned-challenge";
 
-/**
- * Whether today's study time is used up on the day Start counts it: the learner's day, in their
- * active goal's zone as Today reads it, which can be another date than the challenge's own goal's.
- */
+/** Uses the active goal's learner-local day, which can differ from the challenge goal's day. */
 export async function readDailyLimitReachedToday(userId: string): Promise<boolean> {
   const { currentDate } = await getRequestProgressDateContext();
   return readDailyTimeLimitReached({ date: currentDate, userId });
 }
 
-/**
- * The input tomorrow's run lays its days out from (see `createDays`), from what the challenge
- * loaded with its plan, as a run reads it (see `computePlan`): nothing more is read. Its goal isn't
- * an exam (see `getNextStudyDay`), so its mock minutes are the ones a run gives such a goal (see
- * `loadExamFacts`).
- */
 function getTomorrowRunInput({
   challenge,
   settings,
@@ -58,16 +49,7 @@ function getTomorrowRunInput({
   };
 }
 
-/**
- * When a phase challenge today's study time holds back is here again, YYYY-MM-DD: the first day,
- * within a week, that the plan's next run can put it on, a day with lesson time (see
- * `canHoldPhaseChallenge`), on the days as tomorrow's run lays them out (see `describeRunDays`),
- * since a boss left to do carries into that day's session. None for the week's challenge: left
- * unstarted, it leaves the plan once a later day re-plans (RULES R24), and Move to Monday keeps it
- * (see `ChallengeView.nextStudyDate`). None for an exam's either: its runs keep phase challenges
- * off the exam's eve and the days its mocks take, as the plan funds them from earlier days (see
- * `placeExamBosses`), which no day's study time tells, so its copy names no day.
- */
+/** Returns a learner-local YYYY-MM-DD within a week, or null for weekly challenges and exams. */
 export function getNextStudyDay({
   challenge,
   dailyLimitReached,

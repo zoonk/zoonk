@@ -5,7 +5,6 @@ import { getBlockItemIds, readBlockPayload } from "../../sessions/block-payload"
 import { REINFORCEMENT_LESSONS, getMissedSkills } from "../checkpoint-rules";
 import { type CheckpointResult } from "./checkpoint-results";
 
-/** The same available lessons drive tomorrow's rematch and the count promised on a loss. */
 export async function loadCheckpointReinforcement({
   block,
   userId,
@@ -30,7 +29,6 @@ export async function loadCheckpointReinforcement({
     where: { itemId: { in: getBlockItemIds(payload) }, studySessionId: block.sessionId, userId },
   });
 
-  // One latest verdict per question, including duplicate attempts already stored.
   const latest = new Map(answers.map((answer) => [answer.itemId, answer]));
   const skillIds = getMissedSkills([...latest.values()]);
 
@@ -39,7 +37,6 @@ export async function loadCheckpointReinforcement({
     : [];
 }
 
-/** A finished loss's lessons, also used when the next day's session schedules its rematch. */
 export async function loadResultReinforcement({
   result,
   userId,

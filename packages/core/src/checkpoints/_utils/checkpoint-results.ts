@@ -4,11 +4,6 @@ import { z } from "zod";
 import { type CheckpointKind } from "../../sessions/brain-power";
 import { getPassMark, hasPassedCheckpoint } from "../checkpoint-rules";
 
-/**
- * Checkpoints land in the ledger as `checkpoint` rows (bosses and non-exam weekly challenges) or
- * `mock` rows (an exam's weekly Big Challenge), with the checkpoint's kind as the row's
- * `lessonKind` text, so milestones can tell a boss from a Big Challenge without reading content.
- */
 export const CHECKPOINT_LEDGER_KINDS: Readonly<Record<CheckpointKind, string>> = {
   boss: "boss",
   finalBoss: "finalBoss",
@@ -30,7 +25,6 @@ export type CheckpointResult = {
   total: number;
 };
 
-/** The learner's latest finished attempt at a plan's checkpoint, or null before the first. */
 export async function findLastCheckpointResult({
   planItemId,
   userId,

@@ -18,7 +18,7 @@ const CHALLENGE_KINDS: PlanItem["kind"][] = ["boss", "checkpoint", "mock"];
 export type OwnedChallenge = {
   goal: Goal & { examBlueprint: ExamBlueprint | null };
   item: PlanItem;
-  /** The plan's items in order, to tell whether a phase's checkpoint is reached. */
+  /** Requires plan order. */
   items: PlanItem[];
   plan: Plan;
   timeZone: string;
@@ -32,10 +32,7 @@ export type OwnedChallengeResult =
   | { status: "notFound" }
   | { status: "unauthorized" };
 
-/**
- * One of the signed-in learner's challenges, by its plan item: a phase checkpoint or the week's
- * challenge. Another learner's item, or one that isn't a challenge, is "not found".
- */
+/** Requires a session; another learner's item and non-challenge items both return notFound. */
 export async function findOwnedChallenge({
   planItemId,
   timeZone: requestTimeZone,
@@ -87,14 +84,13 @@ export async function findOwnedChallenge({
   };
 }
 
-/** A language goal's phase checkpoint is the unit's call, which has goals to get across. */
 export function isLanguageCall({ goal, item }: Pick<OwnedChallenge, "goal" | "item">): boolean {
   return goal.kind === "language" && item.kind === "boss";
 }
 
 export type ChallengeBlock = StudySessionBlock & { session: StudySession };
 
-/** The latest session block that plays a challenge: today's, or the last day it was played. */
+/** Returns the latest block, which may belong to an earlier day's session. */
 export function findChallengeBlock({
   challenge,
 }: {
@@ -111,7 +107,6 @@ export function findChallengeBlock({
   });
 }
 
-/** The block when it's of the learner's session on their today; null otherwise. */
 export function getTodayBlock({
   block,
   today,

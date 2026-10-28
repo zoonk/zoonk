@@ -19,13 +19,7 @@ import { getTestSkillIds } from "../../sessions/_utils/review-skills";
 import { MIN_CHECKPOINT_QUESTIONS } from "../checkpoint-rules";
 import { toMockConditions } from "../weekly-challenge-rules";
 
-/**
- * A mock's card: the planned mock's size and time, and when the real exam starts. A mock still
- * days away says what the exam's conditions set for it (half the exam day on regular weeks, all
- * of it in the final stretch): its questions are picked on its day from what the bank has then,
- * so today's bank, which grows with every study day, would make it read like a broken mock of six
- * questions.
- */
+/** Future mocks show exam conditions, since the bank will grow before their questions are selected. */
 export async function loadMockCard({
   blueprint,
   date,
@@ -37,15 +31,12 @@ export async function loadMockCard({
   /** The mock's day, as a UTC-midnight label. */
   date: Date;
   goal: Goal;
-  /** A stale read renders the same selected allocation as its day and notice. */
   source?: Pick<GoalPlanSource, "graph" | "settings">;
   /** The learner-local date, as a UTC-midnight label. */
   today: Date;
 }) {
   const content = blueprint ? readBlueprintContent(blueprint) : null;
 
-  // Only reads render a card, so the goal's plan, skills and essays come from the request's one
-  // load of them, the ones the mocks any time read too.
   const [saved, { skills }, essays, typed] = await Promise.all([
     readSavedPlan(goal.userId, goal.id),
     readGoalPlan(goal.id),
@@ -57,13 +48,10 @@ export async function loadMockCard({
 
   const dayMinutes = getGoalDayMinutes({ date, goal, planSettings: goalPlan?.settings });
 
-  // A class test's short mock fits the time the learner gives its day, as its session does.
   const structure = blueprint
     ? readMockStructure({ blueprint, choices: readExamChoices(goalPlan?.settings), dayMinutes })
     : null;
 
-  // The mock asks every topic of the test, as its session does (see `loadSessionWeeklyChallenge`).
-  // The mock sits the exam day and length its plan saved for it (see `MockIdentity`).
   const identity = findScheduledMock({
     date: toIsoDate(date),
     funding: parsePlanSettings(goalPlan?.settings).mockFunding,
@@ -84,15 +72,12 @@ export async function loadMockCard({
     userId: goal.userId,
   });
 
-  // On its day, or while the bank has too few unseen questions, the card says what the exam's
-  // conditions set.
   const isAhead = date.getTime() > today.getTime();
 
   const plan =
     !isAhead && countPlannedQuestions(planned) >= MIN_CHECKPOINT_QUESTIONS
       ? planned
       : outlineMock({
-          // A scheduled mock keeps its real time limit on its card too (see `getMockClock`).
           clock: identity ? planned.minutes : undefined,
           day: planned.day,
           essays,

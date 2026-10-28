@@ -28,8 +28,6 @@ describe(getChallengeStatus, () => {
     expect(getChallengeStatus({ ...DUE, due: false, plusRequired: true })).toBe("plusRequired");
   });
 
-  // Starting it refuses whatever today's session holds, so its page never offers Start: a session
-  // planned before the learner's plan changed can still hold its block.
   it("says Plus is needed even when today's session holds its block", () => {
     expect(getChallengeStatus({ ...DUE, plusRequired: true, todayBlockStatus: "pending" })).toBe(
       "plusRequired",

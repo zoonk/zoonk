@@ -1,12 +1,6 @@
 import { type PlanItem, type StudySessionBlock } from "@zoonk/db";
 import { type ChallengeStatus } from "../challenge-contract";
 
-/**
- * Where a challenge stands today, from its plan item and today's block for it. On its day, today's
- * session is planned before this is asked, so a due challenge without a block waits for the next
- * session. One the plan leaves to Plus (a mock, or a phase challenge past a free exam plan's first
- * week) says so, before its day too and whatever today's session holds, since starting it refuses.
- */
 export function getChallengeStatus({
   due,
   itemStatus,
@@ -14,11 +8,9 @@ export function getChallengeStatus({
   queued = false,
   todayBlockStatus,
 }: {
-  /** The learner's next session has it: its day came, or a phase checkpoint was reached first. */
   due: boolean;
   itemStatus: PlanItem["status"];
   plusRequired: boolean;
-  /** A phase checkpoint whose lessons are done waits for the one before it (`BossTiming`). */
   queued?: boolean;
   todayBlockStatus: StudySessionBlock["status"] | null;
 }): ChallengeStatus {
@@ -38,7 +30,6 @@ export function getChallengeStatus({
     return "ready";
   }
 
-  // Finished today and still to do: a phase checkpoint that didn't pass tries again tomorrow.
   if (todayBlockStatus === "completed") {
     return "tried";
   }

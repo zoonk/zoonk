@@ -31,7 +31,6 @@ import { getChallenge } from "./get-challenge";
 import { getCheckpoint } from "./get-checkpoint";
 import { getWeeklyChallenge } from "./get-weekly-challenge";
 
-/** A goal whose first phase (two lessons) is done, with its boss next and a lesson after it. */
 async function bossSetup({ itemsPerSkill }: { itemsPerSkill?: number } = {}) {
   const user = await userFixture();
   const fixture = await sessionGoalFixture({ itemsPerSkill, lessons: 3, userId: user.id });
@@ -56,7 +55,6 @@ async function playCheckpoint({
   goalId,
   optionIndex,
 }: {
-  /** Answers only the first ones, every question without it. */
   count?: number;
   goalId: string;
   optionIndex: number;
@@ -153,7 +151,6 @@ describe("phase checkpoint (boss)", () => {
     ).resolves.toMatchObject({ correctAnswers: 6, lessonKind: "boss" });
   });
 
-  // Pedro's won challenge kept asking: the shield broke at question 7 with 3 questions left.
   it("ends once the shield breaks: won with questions left, it finishes at the duel's pass mark", async () => {
     const { boss, goal } = await bossSetup();
     const { block, result } = await playCheckpoint({ count: 5, goalId: goal.id, optionIndex: 0 });
@@ -171,7 +168,6 @@ describe("phase checkpoint (boss)", () => {
     ).resolves.toMatchObject({ status: "done" });
   });
 
-  // Two submissions of one answer at once can both be saved: each question breaks one piece.
   it("counts each question once toward breaking the shield", async () => {
     const { boss, goal, user } = await bossSetup();
     const today = await getTodayStudySession({ goalId: goal.id });
@@ -201,7 +197,6 @@ describe("phase checkpoint (boss)", () => {
       status: "unanswered",
     });
 
-    // The last two missed: four of six right, the duplicate counted once, is a loss.
     await Promise.all(
       questions
         .slice(4)
@@ -234,11 +229,9 @@ describe("phase checkpoint (boss)", () => {
     ).resolves.toMatchObject({ status: "todo" });
   });
 
-  // The mirror of a won duel: Pedro's lost challenge kept asking, still promising its prize.
   it("ends once the shield can't break anymore: lost with questions left, it settles as a loss", async () => {
     const { boss, goal, lessons, user } = await bossSetup();
 
-    // Five right of six win it: one miss leaves them all to get, the second decides it.
     const { block, detail, result, session } = await playCheckpoint({
       count: 1,
       goalId: goal.id,
@@ -278,7 +271,6 @@ describe("phase checkpoint (boss)", () => {
       prisma.learningEvent.findFirst({ where: { kind: "checkpoint", userId: user.id } }),
     ).resolves.toMatchObject({ correctAnswers: 0, incorrectAnswers: 2, lessonKind: "boss" });
 
-    // As any loss: tomorrow, two short lessons on what it missed, then the rematch.
     vi.setSystemTime(new Date(SESSION_NOW.getTime() + DAY_MS));
     const tomorrow = await getTodayStudySession({ goalId: goal.id });
 
@@ -299,9 +291,6 @@ describe("phase checkpoint (boss)", () => {
     });
   });
 
-  // A question the bank removed mid-duel (a picture that failed its checks) is never asked: the duel
-  // is judged on the five left, seven of ten of them to win, so the screen, settlement and every
-  // reader that judges a duel by its answers (the challenge's last result, milestones) agree.
   it("judges a duel on the questions it can still ask when one was removed", async () => {
     const { boss, goal, user } = await bossSetup();
     const today = await getTodayStudySession({ goalId: goal.id });
@@ -318,7 +307,6 @@ describe("phase checkpoint (boss)", () => {
 
     await prisma.item.delete({ where: { id: asked.at(-1)?.itemId } });
 
-    // The duel, its block and its challenge's intro all say four right of five.
     const shortened = await getCheckpoint(block.id);
     const view = shortened.status === "ready" ? shortened.checkpoint : null;
     expect([view?.passMark, view?.questions.length]).toStrictEqual([4, 5]);
@@ -337,7 +325,6 @@ describe("phase checkpoint (boss)", () => {
         input: { answer: { selectedIndex }, durationMs: 4000, itemId: itemId ?? "" },
       });
 
-    // Three right and a miss leave the fifth to reach four.
     await answerBlockInOrder({ ...ref, count: 3 });
     await answer(asked[3]?.itemId, 1);
 
@@ -366,7 +353,6 @@ describe("phase checkpoint (boss)", () => {
     await expect(loadMilestoneCounts(user.id)).resolves.toMatchObject({ bossesWon: 0 });
   });
 
-  // Reopened later, a finished duel says what settlement decided, whatever the bank removed since.
   it("keeps a lost duel lost when one of its answered questions is removed", async () => {
     const { goal } = await bossSetup();
     const today = await getTodayStudySession({ goalId: goal.id });
@@ -382,7 +368,6 @@ describe("phase checkpoint (boss)", () => {
     const questions = started.status === "ready" ? started.detail.questions : [];
     await answerBlockInOrder({ ...ref, count: 3 });
 
-    // Three right, then two misses: the one left can't reach five.
     await Promise.all(
       questions
         .slice(3, 5)
@@ -430,7 +415,6 @@ describe("phase checkpoint (boss)", () => {
 
     const learn = tomorrow.session.blocks.filter((block) => block.kind === "learn");
 
-    // The duel's missed skills come back first, then the rematch closes the phase.
     expect(learn.map((block) => [block.lessonId, block.reinforcement])).toStrictEqual([
       [lessons[0]?.id, true],
       [lessons[1]?.id, true],
@@ -443,14 +427,11 @@ describe("phase checkpoint (boss)", () => {
 
     expect(tomorrow.session.localDate).toStrictEqual(new Date(SESSION_TODAY.getTime() + DAY_MS));
 
-    // The next phase keeps going after it, never locked: its lesson stays planned after the rematch.
     const next = await prisma.planItem.findFirstOrThrow({ where: { lessonId: lessons[2]?.id } });
     expect(next.status).toBe("todo");
     expect(next.scheduledFor?.getTime()).toBeGreaterThan(SESSION_TODAY.getTime() + DAY_MS);
   });
 
-  // r16-seed's thin bank: a phase whose skills held fewer than five questions lost its challenge
-  // from the session without a word, while its page promised it for the next session, forever.
   it("holds a challenge whose questions aren't written yet, sized for the ten it asks", async () => {
     const { goal } = await bossSetup({ itemsPerSkill: 1 });
     const today = await getTodayStudySession({ goalId: goal.id });
@@ -459,7 +440,6 @@ describe("phase checkpoint (boss)", () => {
       throw new Error("Expected today's session");
     }
 
-    // Today's row says what it will ask, never "1 question" from the bank as it is (a walk saw "0").
     expect(today.session.blocks.find((block) => block.kind === "checkpoint")).toMatchObject({
       checkpoint: { kind: "boss", passMark: 7, phase: 0 },
       estimatedMinutes: 15,
@@ -467,9 +447,6 @@ describe("phase checkpoint (boss)", () => {
     });
   });
 
-  // A skill belongs to the phase of its first lesson, so a phase whose lessons go on with an
-  // earlier skill had none of its own, and its challenge was never asked. The first phase's
-  // challenge asked both skills, so it has none new to ask either.
   it("asks a phase that only goes on with earlier skills about what its lessons study", async () => {
     const user = await userFixture();
 
@@ -523,8 +500,6 @@ describe("phase checkpoint (boss)", () => {
     expect(getBlockItemIds(payload)).toHaveLength(5);
   });
 
-  // An exam's window of reviews and mocks has no lessons to finish, so its challenge counted as
-  // reached from the plan's first day: held while its questions were written, it filled day 3.
   it("asks a phase with no lessons of its own on its day, not before", async () => {
     const user = await userFixture();
     const { goal, plan } = await sessionGoalFixture({ lessons: 2, userId: user.id });
@@ -562,9 +537,6 @@ describe("phase checkpoint (boss)", () => {
     });
   });
 
-  // Career seed 1016: a half-studied day left the first phase's challenge, and the second phase
-  // still ends today, as the learner saw it (R6), so the plan put both challenges on today. Asking
-  // only the first quietly pushed the second and moved that phase's end.
   it("asks both challenges due today, the earlier phase's first", async () => {
     const user = await userFixture();
 
@@ -607,7 +579,6 @@ describe("phase checkpoint (boss)", () => {
       }),
     ]);
 
-    // Each challenge is named after its phase, as the planner names it: Today's rows tell them apart.
     await Promise.all(
       bosses.map((boss, phase) =>
         prisma.planItem.update({
@@ -678,8 +649,6 @@ describe(getWeeklyChallenge, () => {
     ).toBe(false);
   });
 
-  // The player sends a mock to the mock screen: an answer to it as a checkpoint would check the
-  // plan's mock off with no sitting, which preparation never counts.
   it("puts the mock in the day's session for Plus learners, taking no study answer on it", async () => {
     const user = await userFixture();
     const { goal, plan } = await sessionGoalFixture({ goal: { kind: "exam" }, userId: user.id });
@@ -781,7 +750,6 @@ describe(getWeeklyChallenge, () => {
     const user = await userFixture();
     const citation = { passage: "Marking scheme", sourceId: "notice" };
 
-    // Like JEE Advanced's brochure: its answer formats, but no sections, size or time.
     const blueprint = await examBlueprintFixture({
       structure: {
         formats: [
@@ -834,7 +802,6 @@ describe(getWeeklyChallenge, () => {
     });
   });
 
-  // Today's week row said "10 questions" for a mixed challenge whose intro said 7, or no size.
   it("says the size its intro says for a mixed challenge, and none while that's unknown", async () => {
     const user = await userFixture();
     const { goal, plan, skills } = await sessionGoalFixture({ userId: user.id });

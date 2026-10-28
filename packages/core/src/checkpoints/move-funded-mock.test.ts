@@ -9,11 +9,9 @@ import { parsePlanSettings } from "../plans/planner/plan-state";
 import { seedV2PersonaCopy } from "../seed/seed-v2";
 import { moveChallenge, undoChallengeMove } from "./move-challenge";
 
-/** Ana's Friday: her next mock, a long one the plan saves time for, sits Sunday Nov 8. */
 const FRIDAY = new Date("2026-10-16T20:52:12Z");
 const SUNDAY = "2026-11-08";
 const MONDAY = "2026-11-09";
-/** The end of the week Ana moves it in: an automatic run keeps that week as saved. */
 const THIS_SUNDAY = "2026-10-18";
 
 function toDay(item: PlanItem): string {
@@ -24,7 +22,6 @@ function thisWeek(date: string): boolean {
   return date <= THIS_SUNDAY;
 }
 
-/** What this week holds still to do, by item and day. */
 function week(items: PlanItem[]): string[] {
   return items
     .filter((item) => item.status === "todo" && item.scheduledFor && thisWeek(toDay(item)))
@@ -32,14 +29,12 @@ function week(items: PlanItem[]): string[] {
     .toSorted();
 }
 
-/** Every item with its day and status. */
 function layout(items: PlanItem[]): string[] {
   return items
     .map((item) => `${getItemKey(item)}@${item.scheduledFor ? toDay(item) : ""}:${item.status}`)
     .toSorted();
 }
 
-/** The days a todo lesson's time sits on, as the plan saved it. */
 function teachingDays(item: PlanItem): string[] {
   const days = readSelectedItemFacts(item.facts)?.days?.map(([date]) => date);
   return days ?? (item.scheduledFor ? [item.scheduledFor.toISOString().slice(0, 10)] : []);
@@ -61,9 +56,6 @@ describe("moving a funded mock to Monday", () => {
     vi.useRealTimers();
   });
 
-  // A move re-plans as the system does (R43): this week stays as Ana saw it, the mock keeps its
-  // saved credits, Monday holds the mock alone, every lesson that leaves is named on the card (R3),
-  // and Undo gives back the plan she had (R38).
   it("moves Ana's Sunday mock with its saved credits, names what leaves, and undoes exactly", async () => {
     const copyKey = randomUUID().slice(0, 8);
 
@@ -82,7 +74,6 @@ describe("moving a funded mock to Monday", () => {
         item.scheduledFor?.toISOString().slice(0, 10) === SUNDAY,
     );
 
-    // Monday holds lessons the mock needs the day for.
     expect(before.lessons.some((item) => teachingDays(item).includes(MONDAY))).toBe(true);
 
     mockSession(copy.userId);
@@ -106,7 +97,6 @@ describe("moving a funded mock to Monday", () => {
       status: "todo",
     });
 
-    // It keeps its exam day and the time this week and earlier days set aside for it.
     const saved = before.funding.find((entry) => entry.date === SUNDAY);
     const funded = after.funding.find((entry) => entry.date === MONDAY);
 
@@ -117,13 +107,10 @@ describe("moving a funded mock to Monday", () => {
       saved?.contributions.filter((part) => thisWeek(part.date)),
     );
 
-    // This week stays as she saw it.
     expect(week(after.plan.items)).toStrictEqual(week(before.plan.items));
 
-    // Monday is the mock's: no lesson's time sits on it.
     expect(after.lessons.filter((item) => teachingDays(item).includes(MONDAY))).toStrictEqual([]);
 
-    // Every lesson the plan held is still in it, or the card names it.
     const change = await prisma.planChange.findUniqueOrThrow({
       where: { id: moved.move.changeId },
     });
@@ -151,8 +138,6 @@ describe("moving a funded mock to Monday", () => {
     expect(restored.funding).toStrictEqual(before.funding);
   });
 
-  // With her exam on the Tuesday, Monday's lessons had no later day before it to go to, and the
-  // screen said "Try again in a moment" for a move the plan can only refuse again.
   it("refuses Ana's mock when no day before her exam has room for Monday's lessons, saying why", async () => {
     const copyKey = randomUUID().slice(0, 8);
 

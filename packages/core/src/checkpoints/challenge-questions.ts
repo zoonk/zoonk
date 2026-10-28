@@ -29,13 +29,8 @@ import {
   planChallengeWrites,
 } from "./checkpoint-rules";
 
-/**
- * A phase's challenge this close gets its missing questions written ahead: the learner usually
- * studies a few of these days, so they're in the bank before it opens.
- */
 const BOSS_AHEAD_DAYS = 7;
 
-/** A mixed weekly challenge asks the week's skills, so its questions are written the day before. */
 const WEEKLY_AHEAD_DAYS = 1;
 
 type ChallengeAnalytics = {
@@ -44,12 +39,6 @@ type ChallengeAnalytics = {
   platform: AnalyticsPlatform | null;
 };
 
-/**
- * One challenge's missing questions (see `planChallengeWrites`). `key` names the skills it asks,
- * so runs writing for them join, however far the first one got (the session's preparation and
- * the learner's Start, or two learners of a course reaching the same phase); `later` when nobody
- * opens it today, so they're written at the background tier.
- */
 type ChallengeQuestionsWrite = {
   key: string;
   later: boolean;
@@ -60,10 +49,7 @@ type ChallengeQuestionsWrite = {
 type Refused = { decision: RefusedUsage; status: "refused" };
 type NotOwned = { status: "notFound" } | { status: "unauthorized" };
 
-/**
- * `ready`: the bank holds the challenge's questions. `start`: the caller writes `writes` in
- * `quickFormat` (shared Library questions, no learner data), and starting it again asks them.
- */
+/** On start, the caller must write writes in quickFormat, then start the challenge again. */
 export type ChallengeQuestionsRequest =
   | NotOwned
   | Refused
@@ -75,7 +61,6 @@ export type ChallengeQuestionsRequest =
       status: "start";
     });
 
-/** The challenges coming up soon that the bank is short of, for the session's preparation. */
 export type UpcomingChallengeQuestionsRequest =
   | NotOwned
   | Refused
@@ -89,12 +74,6 @@ export type UpcomingChallengeQuestionsRequest =
 
 type ChallengeContext = Awaited<ReturnType<typeof loadChallengeContext>>;
 
-/**
- * What a goal's challenges ask about, as the session reads it: the plan's items, its skills
- * without areas the learner took out, the graph's (whose lessons size each skill's core), each
- * item's skills, the exam's listening skills (asked with recordings, never written questions) and
- * the goal's quick format, which its questions are written in.
- */
 async function loadChallengeContext({ goal, items }: { goal: Goal; items: PlanItem[] }) {
   const [plan, goalPlan, listeningSkillIds, structure] = await Promise.all([
     prisma.plan.findUnique({ select: { graph: true, settings: true }, where: { goalId: goal.id } }),
@@ -117,7 +96,6 @@ async function loadChallengeContext({ goal, items }: { goal: Goal; items: PlanIt
   };
 }
 
-/** The skills a challenge asks with written questions: a boss's phase, a mixed challenge's week. */
 async function loadAskedSkillIds({
   context,
   item,
@@ -149,10 +127,8 @@ async function loadAskedSkillIds({
   }).filter((skillId) => !listeningSkillIds.has(skillId));
 }
 
-/** A run token's share of the hash: plenty to tell skill sets apart. */
 const KEY_LENGTH = 32;
 
-/** Names the skills a challenge asks, whichever learner's request writes for them. */
 function toSkillsKey(skillIds: readonly string[]): string {
   return createHash("sha256")
     .update(skillIds.toSorted().join(","))
@@ -160,7 +136,6 @@ function toSkillsKey(skillIds: readonly string[]): string {
     .slice(0, KEY_LENGTH);
 }
 
-/** What a challenge lacks of its ten questions, counted the way the challenge picks them. */
 async function planWrites({
   context,
   goal,
@@ -197,11 +172,6 @@ async function planWrites({
   return { key, writes };
 }
 
-/**
- * Small AI help for the learner or guest asking, once per challenge: a second request for its
- * questions (Start while the session's preparation writes them, or a retry) is free. Refused when
- * their allowance doesn't cover it.
- */
 async function claimWriting(planItemId: string): Promise<NotOwned | Refused | null> {
   const decision = await claimUsage({ kind: "assist", targetId: planItemId });
 
@@ -212,23 +182,11 @@ async function claimWriting(planItemId: string): Promise<NotOwned | Refused | nu
   return decision.status === "allowed" ? null : { decision, status: "refused" };
 }
 
-/**
- * A challenge whose questions aren't written here: a mock writes its own
- * (`requestMockQuestions`), a language goal's checkpoint is a call, and a finished one asks
- * nothing more.
- */
 function needsNoWriting({ goal, item }: { goal: Goal; item: PlanItem }): boolean {
   return goal.kind === "language" || item.kind === "mock" || item.status !== "todo";
 }
 
-/**
- * Gets a challenge's questions ready when the learner starts it and the bank still holds too few
- * (`startChallenge` says `questionsNeeded`): what it lacks of its ten, on the skills it asks with
- * the fewest (`planChallengeWrites`). They join the shared bank, so every learner of those skills
- * reuses them. It counts as small AI help once per challenge (`claimWriting`), so a guest's or
- * free learner's allowance applies, and one their plan leaves to Plus writes nothing. Only a
- * learner's tap asks for it, never a page view.
- */
+/** Learner POSTs only; claims AI help once per challenge and refuses challenges gated by Plus. */
 export async function requestChallengeQuestions({
   planItemId,
 }: {
@@ -276,11 +234,6 @@ function addDays(date: Date, days: number): Date {
   return new Date(date.getTime() + days * MS_PER_DAY);
 }
 
-/**
- * The challenges a session's preparation writes ahead: each phase's challenge the learner reached
- * or that's due within `BOSS_AHEAD_DAYS`, and the week's mixed challenge from the day before. Due
- * today, nobody waits for long, so they're written at once; later, in the background.
- */
 function findUpcomingChallenges({ items, today }: { items: readonly PlanItem[]; today: Date }) {
   const isDueBy = (item: PlanItem, days: number) =>
     item.scheduledFor !== null && item.scheduledFor <= addDays(today, days);
@@ -302,14 +255,7 @@ function findUpcomingChallenges({ items, today }: { items: readonly PlanItem[]; 
   return [...bosses, ...mixed];
 }
 
-/**
- * Decides whether getting a learner's session ready also writes the questions of challenges
- * coming up soon (`findUpcomingChallenges`) that the bank is short of, so they open without a
- * wait: exactly what each lacks of its ten, joining the shared bank. Each counts as small AI help
- * once (`claimWriting`). Only the POSTs that build or move a session along ask for it, never a
- * page view; a guest's challenge gets its questions when they start it
- * (`requestChallengeQuestions`).
- */
+/** Session POSTs only; each challenge claims AI help once, and guests request writing on Start instead. */
 export async function requestUpcomingChallengeQuestions({
   goalId,
 }: {
@@ -333,7 +279,6 @@ export async function requestUpcomingChallengeQuestions({
 
   const access = await loadExamPrepAccess({ goal, timeZone, today });
 
-  // Past a free exam plan's first week, its days hold no challenges: nothing to write ahead.
   if (access.trialEnded) {
     return { status: "ready" };
   }
@@ -343,7 +288,6 @@ export async function requestUpcomingChallengeQuestions({
     where: { plan: { goalId } },
   });
 
-  // Most preparations have no challenge coming up: they read nothing more.
   const upcoming = findUpcomingChallenges({ items, today });
 
   if (upcoming.length === 0) {

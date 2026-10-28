@@ -14,11 +14,6 @@ export type CheckpointOutcome = {
 
 type DuelAnswer = Pick<Attempt, "isCorrect" | "itemId">;
 
-/**
- * Each question's verdict once, by its latest answer (answers oldest first): two submissions of one
- * answer at once count as one, so they never break two pieces of the shield, win a lost duel or
- * lose one still open.
- */
 function getQuestionVerdicts(answers: readonly DuelAnswer[]): boolean[] {
   const latest = new Map(
     answers.flatMap((answer) =>
@@ -29,14 +24,7 @@ function getQuestionVerdicts(answers: readonly DuelAnswer[]): boolean[] {
   return [...latest.values()];
 }
 
-/**
- * A checkpoint's pass mark on the questions it can still ask (`questions`, `countAskableQuestions`):
- * its own, or, once the bank removed some since it started (a picture that failed its checks),
- * seven of ten of the ones left. A shortened duel stays winnable on what's left, and every reader
- * that judges a duel by its answers (seven of ten answered: the challenge's last result,
- * milestones) agrees with it. Only a duel whose mark is its own questions' shortens: one still
- * waiting for its questions keeps its planned mark (`getPlannedQuestions`), and a call's 0 stays 0.
- */
+/** Shortened duels must stay winnable; only a pass mark based on the original questions shrinks. */
 export function getAskablePassMark({
   payload,
   questions,
@@ -51,12 +39,7 @@ export function getAskablePassMark({
   return shortened ? getPassMark(questions) : passMark;
 }
 
-/**
- * How a checkpoint block went: seven of ten wins, whatever the number of questions, each question
- * counted once. The pass mark is the duel's, asked or not: a boss's duel decided early, won or
- * lost, ends with questions left. A duel the bank shortened is judged on the questions it could
- * still ask (`getAskablePassMark`).
- */
+/** Requires answers oldest first; duplicate submissions count once and removed questions can shorten the pass mark. */
 export function getCheckpointOutcome({
   answers,
   payload,
@@ -84,10 +67,6 @@ export function getCheckpointOutcome({
   };
 }
 
-/**
- * Whether a block's answers already decided its boss's duel, won or lost (`getDuelDecision`), each
- * question counted once. False for any block that isn't a checkpoint.
- */
 export function isBlockDuelDecided({
   answers,
   payload,
