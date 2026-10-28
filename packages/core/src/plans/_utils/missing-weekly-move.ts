@@ -28,9 +28,11 @@ export function hasMissingWeeklyMove({
 }
 
 /**
- * Whether a learner's move takes the week's checkpoint or mock to a day that already holds one the
- * plan keeps: a day holds one (see `findMoveTo`), so the move is refused rather than dropping
- * either. The event's own earlier move to that day isn't one.
+ * Whether a learner's moves would put two weekly events on one day, which is refused before
+ * planning (R43): a move onto a day that holds a checkpoint or mock the plan keeps (the event's own
+ * earlier move there aside), onto a day another move takes an event to (one in this change or one
+ * saved), or of an event a move already brought (a chain: its first move stays its only one).
+ * Allowed, the planner kept one event per day and silently dropped the others with their credits.
  */
 export function hasWeeklyEventCollision({
   items,
@@ -41,6 +43,10 @@ export function hasWeeklyEventCollision({
   moves: readonly MovedEvent[];
   operations: readonly PlanOperation[];
 }): boolean {
+  const requested = operations.flatMap((operation) =>
+    operation.kind === "moveWeeklyEvent" ? [operation] : [],
+  );
+
   const held = new Set(
     items.flatMap((item) =>
       (item.kind === "checkpoint" || item.kind === "mock") &&
@@ -51,11 +57,19 @@ export function hasWeeklyEventCollision({
     ),
   );
 
-  return operations.some(
-    (operation) =>
-      operation.kind === "moveWeeklyEvent" &&
-      held.has(operation.to) &&
-      !moves.some((move) => move.from === operation.from && move.to === operation.to),
+  const isSaved = (move: MovedEvent) =>
+    moves.some((saved) => saved.from === move.from && saved.to === move.to);
+
+  // Saved moves this change doesn't replace (moving the same day again replaces its move).
+  const kept = moves.filter((saved) => !requested.some((move) => move.from === saved.from));
+  const destinations = [...kept, ...requested].map((move) => move.to);
+
+  return requested.some(
+    (move) =>
+      !isSaved(move) &&
+      (held.has(move.to) ||
+        destinations.filter((to) => to === move.to).length > 1 ||
+        destinations.includes(move.from)),
   );
 }
 

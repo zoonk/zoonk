@@ -11,7 +11,7 @@ const planChangeInvalidErrorSchema = errorSchema
         reason: z
           .string()
           .describe(
-            "Why the change was refused. mockCollision means the requested day already holds a retained mock: preserve the prior plan and pick another day. Preserve unknown reasons.",
+            "Why the change was refused. mockCollision means two weekly events would share a day: the requested day already holds a weekly challenge or mock, another move in the plan or the request takes an event there, or the event already moved once. Preserve the prior plan and pick another day. Preserve unknown reasons.",
           ),
         unfundedMove: unfundedMoveSchema
           .optional()
@@ -26,7 +26,7 @@ const planChangeInvalidErrorSchema = errorSchema
 export const planChangeInvalidResponse = {
   content: { "application/json": { schema: planChangeInvalidErrorSchema } },
   description:
-    "The change cannot apply and the prior plan is unchanged. For mockCollision, the day already holds a retained mock: pick another day. For unfundedMove, details.unfundedMove gives the requested day and real mock duration it cannot fund: pick a later day.",
+    "The change cannot apply and the prior plan is unchanged. For mockCollision, two weekly events would share the day: pick another day. For unfundedMove, details.unfundedMove gives the requested day and real mock duration it cannot fund: pick a later day.",
 } as const;
 
 /** One refused date: where it was sent, and its nearest accepted calendar bound. */

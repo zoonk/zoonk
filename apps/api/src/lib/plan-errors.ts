@@ -17,7 +17,7 @@ export const planErrorCodes = {
 
 const OPERATION_MESSAGES = {
   badMove: "A weekly challenge can move to a later day within a week",
-  mockCollision: "That day already has a mock exam. Pick another day.",
+  mockCollision: "That day already has a weekly challenge or mock exam. Pick another day.",
   noStudyDays: "A plan needs at least one study day",
   notExam: "Only an exam's plan goes on after its date: other goals study everything without one",
   nothingLeft: "A plan can't skip every area",

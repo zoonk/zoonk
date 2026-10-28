@@ -713,6 +713,25 @@ describe("the week's challenge before its day", () => {
     });
   });
 
+  // Two weekly events never share a day (R43): Monday's own leaves no room to move this one there.
+  it("isn't offered to move onto a Monday that has a weekly event, and the move is refused", async () => {
+    const { challenge } = await weeklyChallengeFixture();
+
+    await checkpointItemFixture({
+      kind: "mock",
+      planId: challenge.planId,
+      position: 1,
+      scheduledFor: new Date("2020-10-12"),
+    });
+
+    await expect(challengeOf(challenge.id)).resolves.toMatchObject({ canMove: false });
+
+    await expect(moveChallenge({ input: {}, planItemId: challenge.id })).resolves.toStrictEqual({
+      error: "mockCollision",
+      status: "invalid",
+    });
+  });
+
   it("never moves from a day that's past", async () => {
     const { challenge } = await weeklyChallengeFixture();
 

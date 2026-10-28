@@ -1,4 +1,3 @@
-import { findMoveTo } from "./moved-events";
 import { addDays, fromIsoDate, toIsoDate } from "./plan-calendar";
 import { type MovedEvent, type PlanSettings } from "./plan-state";
 
@@ -76,7 +75,7 @@ export function getMockCursor({
 
 /**
  * The saved mock each of a run's mocks (`dates`, in order) continues, each saved one at most once:
- * the one the learner moved to it, as saved on the day it left (see `findMoveTo`), else the one
+ * the one the learner moved to it, as saved on the day it left, else the one
  * saved on its date (a move the plan already saved there), else, one for one in date
  * order, an upcoming saved mock no other matched (the calendar moved it: a new study day changed
  * the week's event day). What its days already set aside carries over with it, once.
@@ -104,33 +103,20 @@ export function matchSavedMocks({
 
   const findSaved = (date: string) => saved.find((entry) => entry.date === date);
 
-  // The mock the learner moved continues as itself. Another move to the same day loses it (see
-  // `findMoveTo`), so the mock it held is set aside, its credits with it.
-  const setAside = (date: string) => {
-    const entry = findSaved(date);
-
-    if (entry) {
-      consumed.add(entry);
-    }
-  };
-
+  // The mock the learner moved continues as itself, and the day's own saved mock gives way to it.
   dates.forEach((date) => {
-    const move = findMoveTo({ date, moves });
-
-    if (!move) {
-      return;
-    }
-
-    const source = findSaved(move.from);
+    const move = moves.find((entry) => entry.to === date);
+    const source = move && findSaved(move.from);
 
     if (source && !consumed.has(source)) {
       take(date, source);
-      setAside(date);
-    }
 
-    moves
-      .filter((other) => other.to === date && other !== move)
-      .forEach((other) => setAside(other.from));
+      const own = findSaved(date);
+
+      if (own) {
+        consumed.add(own);
+      }
+    }
   });
 
   dates.forEach((date) => {

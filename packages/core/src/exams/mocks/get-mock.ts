@@ -3,7 +3,7 @@ import { prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { isUuid } from "@zoonk/utils/uuid";
 import { z } from "zod";
-import { getMovableDay, loadChallengeMoveRules } from "../../checkpoints/_utils/challenge-move";
+import { canMoveToMonday, loadChallengeMoveRules } from "../../checkpoints/_utils/challenge-move";
 import { EXAM_DAY_CHECKLIST } from "../../checkpoints/weekly-challenge-rules";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { type PassMarks, getPassMarks } from "../../library/exams/pass-marks";
@@ -163,7 +163,7 @@ async function canMoveMock(owned: OwnedMock): Promise<boolean> {
   ]);
 
   const today = getDateInTimeZone({ date: new Date(), timeZone: getAnswerTimeZone({ goal }) });
-  return rules.mondayOpen && getMovableDay({ item, rules, today }) !== null;
+  return canMoveToMonday({ item, rules, today });
 }
 
 function getStatus(mock: MockSitting | null): MockView["status"] {

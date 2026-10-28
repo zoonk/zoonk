@@ -16,7 +16,7 @@ import { countBlockRecordings } from "./_utils/boss-recordings";
 import { getAvailableChallengeStatus } from "./_utils/challenge-availability";
 import { loadChallengeCall } from "./_utils/challenge-call";
 import { getNextStudyDay, readDailyLimitReachedToday } from "./_utils/challenge-daily-limit";
-import { getMovableDay, loadChallengeMoveRules, loadMoveEffect } from "./_utils/challenge-move";
+import { canMoveToMonday, loadChallengeMoveRules, loadMoveEffect } from "./_utils/challenge-move";
 import { readBossOffer } from "./_utils/challenge-offer";
 import { needsPlus } from "./_utils/challenge-plus";
 import { loadChallengeSize } from "./_utils/challenge-size";
@@ -79,10 +79,7 @@ async function canMove({
 
   const rules = await loadChallengeMoveRules(challenge.goal.id);
 
-  return (
-    rules.mondayOpen &&
-    getMovableDay({ item: challenge.item, rules, today: challenge.today }) !== null
-  );
+  return canMoveToMonday({ item: challenge.item, rules, today: challenge.today });
 }
 
 function findPhase(challenge: OwnedChallenge) {

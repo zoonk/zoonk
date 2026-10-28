@@ -1485,9 +1485,9 @@ msgid "{day} · {time}"
 msgstr "{day} · {time}"
 
 #: src/challenge/challenge-move-failed.tsx
-msgctxt "FgE3EB"
-msgid "That day already has a mock exam, so this one stays where it is."
-msgstr "Ese día ya tiene un simulacro, así que este se queda donde está."
+msgctxt "UAOKVX"
+msgid "That day already has a weekly challenge or mock exam, so this one stays where it is."
+msgstr "Ese día ya tiene un desafío semanal o un simulacro, así que este se queda donde está."
 
 #: src/challenge/challenge-move-failed.tsx
 msgctxt "sAYOjY"

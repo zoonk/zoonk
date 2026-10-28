@@ -350,24 +350,6 @@ describe(matchSavedMocks, () => {
     expect(matches.get("2020-10-12")).toBe(source);
     expect(matches.has("2020-10-19")).toBe(false);
   });
-
-  it("continues one of two mocks moved to the same day, the earliest, and credits the other to none", () => {
-    const first = savedMock("2020-10-08", 1, 20);
-    const second = savedMock("2020-10-09", 2, 30);
-
-    const matches = matchSavedMocks({
-      dates: ["2020-10-12", "2020-10-19"],
-      moves: [
-        { from: "2020-10-09", to: "2020-10-12" },
-        { from: "2020-10-08", to: "2020-10-12" },
-      ],
-      saved: [first, second],
-      start: "2020-10-05",
-    });
-
-    expect(matches.get("2020-10-12")).toBe(first);
-    expect(matches.has("2020-10-19")).toBe(false);
-  });
 });
 
 /** A day whose weekly mock replaces its review: the 12th sits exam day 2, the others day 1. */
@@ -390,15 +372,12 @@ function weeklyMockDay(date: string) {
   };
 }
 
-// A day holds one weekly event: the learner's moved one, the earliest when two came to it.
+// A day holds one weekly event: the learner's moved one.
 describe("a weekly event moved onto a day that has one", () => {
   it("leaves the day one weekly event, the one the learner moved", () => {
     const describeDay = withMovedEvents({
       describeDay: (date) => weeklyMockDay(toIsoDate(date)),
-      moves: [
-        { from: "2020-10-09", to: "2020-10-12" },
-        { from: "2020-10-08", to: "2020-10-12" },
-      ],
+      moves: [{ from: "2020-10-09", to: "2020-10-12" }],
     });
 
     const events = describeDay(fromIsoDate("2020-10-12")).events;

@@ -37,9 +37,11 @@ function getNextMonday(date: Date): Date {
 /**
  * What decides whether the week's challenge can move: only the planner's own plans (with a skill
  * graph) can move it, since the planner places it again, a challenge it already moved stays on
- * its new day (its undo brings it back), and nothing moves onto or past the goal's date.
+ * its new day (its undo brings it back), nothing moves onto or past the goal's date, and Monday
+ * must be a study day with no weekly event of its own (`heldDays`) and no other move's (`movedTo`).
  */
 export type ChallengeMoveRules = {
+  heldDays: string[];
   mondayOpen: boolean;
   movedTo: string[];
   planned: boolean;
@@ -51,6 +53,14 @@ export async function loadChallengeMoveRules(goalId: string): Promise<ChallengeM
     select: {
       goal: { select: { dailyMinutes: true, targetDate: true } },
       graph: true,
+      items: {
+        select: { scheduledFor: true },
+        where: {
+          kind: { in: ["checkpoint", "mock"] },
+          scheduledFor: { not: null },
+          status: "todo",
+        },
+      },
       settings: true,
     },
     where: { goalId },
@@ -59,6 +69,9 @@ export async function loadChallengeMoveRules(goalId: string): Promise<ChallengeM
   const settings = parsePlanSettings(plan?.settings);
 
   return {
+    heldDays: (plan?.items ?? []).flatMap((item) =>
+      item.scheduledFor ? [toIsoDate(item.scheduledFor)] : [],
+    ),
     mondayOpen:
       getWeekdayMinutes({
         calendar: {
@@ -95,6 +108,24 @@ export function getMovableDay({
   const beforeDate = (date: Date) => !rules.targetDate || date < rules.targetDate;
 
   return waiting && day && day >= today && !moved && beforeDate(getNextMonday(day)) ? day : null;
+}
+
+/**
+ * Whether a view offers "Move to Monday": the challenge can move (see `getMovableDay`) and its
+ * Monday is a study day free of weekly events, as the move itself requires (R43): offered there,
+ * the learner learned only after the tap that the day already had one.
+ */
+export function canMoveToMonday(input: Parameters<typeof getMovableDay>[0]): boolean {
+  const day = getMovableDay(input);
+  const monday = day && toIsoDate(getNextMonday(day));
+  const { rules } = input;
+
+  return (
+    monday !== null &&
+    rules.mondayOpen &&
+    !rules.heldDays.includes(monday) &&
+    !rules.movedTo.includes(monday)
+  );
 }
 
 /** The week's challenge on a day: a dated item is a new row once it moves. */

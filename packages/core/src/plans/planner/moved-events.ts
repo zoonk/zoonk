@@ -10,23 +10,6 @@ function isMovable(event: FixedEvent): boolean {
 }
 
 /**
- * The move that brings a day its week's event: a day holds one, so of moves to the same day (one
- * change can make two), the one from the earliest day, the others' events dropped.
- */
-export function findMoveTo({
-  date,
-  moves,
-}: {
-  date: string;
-  moves: readonly MovedEvent[];
-}): MovedEvent | undefined {
-  return moves
-    .filter((move) => move.to === date)
-    .toSorted((a, b) => a.from.localeCompare(b.from))
-    .at(0);
-}
-
-/**
  * Days with the learner's moves applied ("Move to Monday"): the week's checkpoint or mock leaves
  * its day, which gets its lessons back, and lands on the later day. It's keyed by its new day, the
  * way a dated item is known across planning runs, so later runs keep it as the same item. A moved
@@ -54,7 +37,8 @@ export function withMovedEvents({
     const shape = describeDay(date);
     const movedOut = moves.some((move) => move.from === day);
 
-    const moveIn = findMoveTo({ date: day, moves });
+    // A day takes one move: moves that would share a day are refused (see `hasWeeklyEventCollision`).
+    const moveIn = moves.find((move) => move.to === day);
 
     const movedIn = moveIn
       ? describeDay(fromIsoDate(moveIn.from))

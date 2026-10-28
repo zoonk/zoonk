@@ -117,16 +117,6 @@ function getHorizonDays({ input, start }: { input: BuildPlanInput; start: Date }
   return targetDate ? Math.min(MAX_PLAN_DAYS, daysBetween(start, targetDate)) : MAX_PLAN_DAYS;
 }
 
-/** Each move reads the previous layout: a second move starts where the first put its event. */
-function replayMoves({ moves, ...options }: Parameters<typeof withMovedEvents>[0]) {
-  // Moves sharing a destination (one change can make two) keep the winner `findMoveTo` picks and
-  // remove every source.
-  return [...Map.groupBy(moves, (move) => move.to).values()].reduce(
-    (describeDay, group) => withMovedEvents({ ...options, describeDay, moves: group }),
-    options.describeDay,
-  );
-}
-
 /**
  * What each day of a run holds before its mocks are funded (see `createDays`), with the events the
  * learner moved onto their new days, in the order they moved them.
@@ -151,7 +141,7 @@ export function describeRunDays({
       : event;
 
   return {
-    describeDay: replayMoves({
+    describeDay: withMovedEvents({
       describeDay: days.describeDay,
       moves: settings.movedEvents,
       resolveMoved,
