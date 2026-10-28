@@ -6,7 +6,6 @@ import { fromIsoDate, toIsoDate } from "./plan-calendar";
 import { type PlannedItem } from "./plan-items";
 import { type PlanPhase, type PlanSettings } from "./plan-state";
 
-/** What placing an exam's challenges needs of a built plan, and gives back (see `settleExamBosses`). */
 export type SettlingPlan = {
   estimate: { endDate: Date | null; remainingMinutes: number; totalMinutes: number };
   items: PlannedItem[];
@@ -23,11 +22,6 @@ function sumMinutes(items: readonly PlannedItem[]): number {
   return items.reduce((total, item) => total + item.minutes, 0);
 }
 
-/**
- * The plan's items with each of `bosses` moved to its day: leading the day, after the work already
- * done and before the day's new lessons, or beside them, after the day's items. Bosses on one day
- * keep their order, as the challenges' projection reads them (see `projectBossPlan`).
- */
 function putBosses({
   bosses,
   items,
@@ -60,7 +54,6 @@ function putBosses({
   return placed;
 }
 
-/** The day's time each of `bosses` takes past it, with what the rest of the day's checkpoints take. */
 function addOnTop({
   base,
   bosses,
@@ -83,19 +76,6 @@ function addOnTop({
     .toSorted((a, b) => (a.date < b.date ? -1 : 1));
 }
 
-/**
- * A dated exam's plan with its challenges inside their days, as every goal's (R45): built once
- * with none on any day, each goes on the first study day after its own phase's teaching ends (see
- * `placeExamBosses`), and the plan is built once more with each taking its time there, the time its
- * session played as the plan last saved it (`input.bossMinutes`), leading its day, the day's lessons
- * after it; one longer than its day makes the day as long (`checkpointOverflow`). That time can end
- * a later phase's teaching past its challenge's day: that challenge then goes on the first study
- * day after it, or beside it on its last day when none is left, its time on top of that day, never
- * before what it tests (R40). Each challenge's
- * time is then what its session plays (`size`), which the next run starts from. Placed by the time
- * it took on every pass instead, its lessons ended after it, then before it, and the plan was built
- * a dozen times.
- */
 export function settleExamBosses<T extends SettlingPlan>({
   build,
   input,
@@ -104,9 +84,7 @@ export function settleExamBosses<T extends SettlingPlan>({
 }: {
   build: (input: BuildPlanInput) => T;
   input: BuildPlanInput;
-  /** Where an exam's bosses go on a plan's teaching (see `placeExamBosses`). */
   place: (built: T) => ExamBossDays;
-  /** What each boss runs, read from the plan's items (see `sizeBosses`). */
   size: (built: T, items: readonly PlannedItem[]) => BossMinutes;
 }): T & { checkpointOverflow: PlanSettings["checkpointOverflow"] } {
   const bossDays = place(build({ ...input, bossDays: new Map() }));
@@ -117,7 +95,6 @@ export function settleExamBosses<T extends SettlingPlan>({
     const day = item.kind === "boss" ? days.get(item.key) : undefined;
     const given = bossDays.get(item.key);
 
-    // Later, or now beside the lessons it tests on their last day (no study day left after them).
     return day && given && (day.date > given.date || (day.beside && !given.beside))
       ? [{ ...item, beside: day.beside, scheduledFor: fromIsoDate(day.date) }]
       : [];

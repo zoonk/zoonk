@@ -5,7 +5,6 @@ import { addDays, fromIsoDate, toIsoDate } from "./plan-calendar";
 import { type PlanGraphSkill, parsePlanSettings } from "./plan-state";
 import { weighGraphByTopicFrequency } from "./topic-weights";
 
-/** A Wednesday, a few weeks before an ENEM-like exam: too little time for every topic's core. */
 const TODAY = fromIsoDate("2026-10-07");
 
 function skill(
@@ -15,11 +14,6 @@ function skill(
   return { lessons: 30, name: skillId, ...attrs, skillId };
 }
 
-/**
- * Natural sciences' skills run over four phases, the ones the exam asks most (genetics, organic chemistry,
- * circuits) in later phases than ones it asks little (units of measure past what circuits need,
- * gravitation); human sciences share the days.
- */
 function examInput(): BuildPlanInput {
   const natureza = [
     skill("units", { area: "Natureza", phase: 0, weight: 2 }),
@@ -58,7 +52,6 @@ function examInput(): BuildPlanInput {
   };
 }
 
-/** Natural sciences' skills all weighed alike by the graph, each teaching one of the notice's topics. */
 function evenInput(): BuildPlanInput {
   const input = examInput();
 
@@ -75,7 +68,6 @@ function evenInput(): BuildPlanInput {
   };
 }
 
-/** Every skill weighed alike, so only the focus tells natural sciences' apart. */
 function focusInput(settings: Record<string, unknown>): BuildPlanInput {
   const input = examInput();
 
@@ -90,7 +82,6 @@ function focusInput(settings: Record<string, unknown>): BuildPlanInput {
   };
 }
 
-/** An area's weight in all: its skills' weights by their size. */
 function areaMass(skills: readonly PlanGraphSkill[], area: string): number {
   return skills
     .filter((item) => item.area === area)
@@ -105,7 +96,6 @@ describe("an exam plan whose time doesn't fit every topic's core", () => {
 
     expect(plan.mockFunding.some((entry) => entry.contributions.length > 0)).toBe(true);
 
-    // Some of natural sciences waits: the least asked of it, never what's asked most or what that needs.
     expect(["heat", "optics", "gravitation"].some((id) => waiting.has(id))).toBe(true);
 
     expect(
@@ -116,8 +106,6 @@ describe("an exam plan whose time doesn't fit every topic's core", () => {
 
 describe("an exam plan short on time with a chapter in progress", () => {
   it("never leaves out the rest of the chapter the learner is in, even of a topic asked least", () => {
-    // Gravitation is the topic the time leaves out first; the learner finished the first lesson
-    // of its chapter (a focus took them there), so its next lessons still come.
     const chapter = Array.from({ length: 6 }, (_, index) => ({
       chapterId: "gravity",
       lessonId: `gravity-${index}`,
@@ -170,7 +158,6 @@ describe("an exam's subject whose topics past papers rate", () => {
     expect(weightOf("heat")).toBeGreaterThan(weightOf("gravitation") ?? 0);
     expect(areaMass(weighed.skills, "Natureza")).toBeCloseTo(areaMass(graph.skills, "Natureza"), 6);
 
-    // Nothing rates human sciences' topics: its weights stay as the graph gave them.
     expect(weighed.skills.filter((item) => item.area === "Humanas")).toStrictEqual(
       graph.skills.filter((item) => item.area === "Humanas"),
     );
@@ -212,18 +199,11 @@ describe("an exam's subject with several skills on one topic", () => {
     const plan = buildPlan({ ...input, graph, topicLevels: levels });
     const waiting = new Set(plan.waitingSkillIds);
 
-    // Ecology, asked most, stays in with one of its two skills; the second waits before any
-    // other topic does.
     expect(waiting.has("cells") && waiting.has("genetics")).toBe(false);
     expect(waiting.has("cells") || waiting.has("genetics")).toBe(true);
   });
 });
 
-/**
- * Natural sciences with three big topics the exam asks often and four it asks less or that no ranking
- * names, small ones unless `lessons` says otherwise: they cost little, the frequent ones a lot.
- * The default time reaches every frequent topic, not every core.
- */
 function frequencyInput({
   dailyMinutes = 27,
   lessons = {},
@@ -262,12 +242,10 @@ function frequencyInput({
   };
 }
 
-/** The skills with any of their lessons in the plan, so the topics they teach are in it. */
 function plannedSkills(plan: ReturnType<typeof buildPlan>): Set<string> {
   return new Set(plan.skillMinutes.filter((item) => item.covered > 0).map((item) => item.skillId));
 }
 
-/** The minutes the plan gives these skills. */
 function plannedMinutes(plan: ReturnType<typeof buildPlan>, skillIds: readonly string[]): number {
   return plan.skillMinutes
     .filter((item) => skillIds.includes(item.skillId))
@@ -278,7 +256,6 @@ describe("an exam's subject whose time doesn't fit every topic's core", () => {
   it("never leaves out a topic asked often while one asked less, or unranked, stays", () => {
     const planned = plannedSkills(buildPlan(frequencyInput()));
 
-    // Each frequent topic is in (one may fit in part); none asked less is while one waits.
     expect(["mechanics", "heat", "electricity"].filter((id) => !planned.has(id))).toStrictEqual([]);
 
     expect(
@@ -301,7 +278,6 @@ describe("an exam's subject whose time doesn't fit every topic's core", () => {
 
     const planned = plannedSkills(focused);
 
-    // "More biology, less physics": physics keeps its frequent topics, biology gets the time.
     expect(["mechanics", "heat", "electricity"].filter((id) => !planned.has(id))).toStrictEqual([]);
 
     expect(plannedMinutes(focused, biology)).toBeGreaterThan(
@@ -312,7 +288,6 @@ describe("an exam's subject whose time doesn't fit every topic's core", () => {
 
 describe("an exam's subject whose time fits every core and some depth", () => {
   it("cuts the depth of the topics asked least first", () => {
-    // Every topic the same size: the time fits every core and part of the depth.
     const input = frequencyInput({
       dailyMinutes: 75,
       lessons: { evolution: 30, optics: 30, taxonomy: 30, water: 30 },
@@ -328,14 +303,12 @@ describe("an exam's subject whose time fits every core and some depth", () => {
     const frequent = ["mechanics", "heat", "electricity"].map((id) => share(id));
     const least = share("optics");
 
-    // Optics, asked least, keeps its core and no more while a topic asked most misses depth.
     expect(least).toBeGreaterThan(0);
     expect(Math.min(...frequent)).toBeGreaterThan(least);
     expect(least < 0.5 || frequent.every((value) => value === 1)).toBe(true);
   });
 });
 
-/** Placement: a solid answer on mechanics, a wrong one on taxonomy. */
 function placedInput(dailyMinutes: number): BuildPlanInput {
   return {
     ...frequencyInput({ dailyMinutes }),
@@ -363,7 +336,6 @@ describe("an exam's subject the learner already knows part of", () => {
     expect(planned.has("heat") && planned.has("electricity")).toBe(true);
   });
 
-  // The test above covers 27 minutes.
   it("never keeps what they know while a gap waits, whatever their time", () => {
     for (const dailyMinutes of [15, 20, 25, 30]) {
       const planned = plannedSkills(buildPlan(placedInput(dailyMinutes)));
@@ -372,17 +344,9 @@ describe("an exam's subject the learner already knows part of", () => {
   });
 });
 
-/**
- * ENEM's natural sciences as its notice groups them (physics, chemistry, biology): physics and chemistry with
- * big topics asked most, and biology whose most asked topic, ecology, builds on cells, so bringing
- * it in costs the most. The time fits a few of their cores, not every one.
- */
 function partsInput({
   asked: levelsOf = { cells: "low", genetics: "low" },
-}: {
-  /** How often the exam asks each skill's topic; the rest are asked most. */
-  asked?: Record<string, TopicLevel["level"]>;
-} = {}): BuildPlanInput {
+}: { asked?: Record<string, TopicLevel["level"]> } = {}): BuildPlanInput {
   const input = examInput();
 
   const parts = {
@@ -416,12 +380,6 @@ function partsInput({
 }
 
 describe("an exam's subject whose notice groups its topics in parts", () => {
-  /*
-   * The owner's rule for a plan short on time: every topic's core before any depth, topics in the
-   * order the exam asks them, and cuts from the end of that order. Lucas's 3 hours kept physics'
-   * and chemistry's basics, one per part of the subject, and left out ecology, a topic ENEM asks
-   * most.
-   */
   it("never keeps a topic asked less while one asked most is out, whatever part it's in", () => {
     const input = partsInput({
       asked: { energy: "low", materials: "low", mechanics: "low", reactions: "low" },
@@ -439,8 +397,6 @@ describe("an exam's subject whose notice groups its topics in parts", () => {
   });
 
   it("keeps a topic asked less only as the base a frequent topic builds on", () => {
-    // Cells and genetics are asked least: cells comes in only with ecology, which builds on it, and
-    // genetics waits while any topic asked more does.
     const planned = plannedSkills(buildPlan(partsInput()));
     const frequent = ["ecology", "mechanics", "electricity", "energy", "reactions", "materials"];
     const waits = frequent.some((id) => !planned.has(id));
@@ -457,10 +413,8 @@ describe("a focus on part of an exam's subject", () => {
     const whole = buildPlan(focusInput({ focusAreas: ["Natureza"] }));
     const part = buildPlan(focusInput({ focusAreas: ["Natureza"], focusParts: [biology] }));
 
-    // Focused whole, natural sciences' skills are all alike: genetics waits like the rest of the area.
     expect(whole.waitingSkillIds).toContain("genetics");
 
-    // Focused on biology, its skills keep their cores and the rest of natural sciences waits first.
     expect(part.waitingSkillIds).not.toContain("genetics");
     expect(part.waitingSkillIds).not.toContain("cells");
     expect(part.waitingSkillIds).toContain("circuits");

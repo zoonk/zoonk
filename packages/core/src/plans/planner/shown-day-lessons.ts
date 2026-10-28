@@ -2,10 +2,6 @@ import { readSelectedItemFacts } from "../_utils/selected-item-contract";
 import { type BuildPlanInput } from "./build-plan";
 import { type PlannerLesson } from "./plan-units";
 
-/**
- * The queue before new lessons landed, including the occupied time of unavailable shown work.
- * Those unavailable entries only reconstruct intervals; the shown-day layout never delivers them.
- */
 export function getShownReferenceLessons({
   fresh,
   input,

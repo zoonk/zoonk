@@ -4,13 +4,6 @@ import { isStandInItem } from "./kept-items";
 import { type LandedUnits } from "./landed-lessons";
 import { type ScheduledUnit } from "./schedule-units";
 
-/**
- * The first day each landed skill's lessons may go on: the day the first lesson still to do of a
- * skill it builds on is due, in the plan as the run keeps it (`keeps`: as saved) or lays it out.
- * Put where its stand-in's time began, a career plan's usability lessons came two days before the
- * interface hierarchy they build on (R16). A base the learner began holds nothing back: a Câmara
- * skill's lessons waited a month for the next lesson of a base with 9 lessons done.
- */
 export function getBaseDays({
   input,
   keeps,
@@ -49,7 +42,6 @@ export function getBaseDays({
   );
 }
 
-/** The day each stand-in of the plan is saved for, today at the earliest. */
 export function getStandInDays(input: BuildPlanInput): Map<string, Date> {
   return new Map(
     input.items.flatMap((item) =>

@@ -85,12 +85,10 @@ describe(applyPlanOperations, () => {
     const part = { area: "Biology", name: "Cells only", skillIds: ["bio", "math", "unknown"] };
     const focused = apply([{ areas: ["Biology", "Math"], kind: "focusAreas", parts: [part] }]);
 
-    // Only the area's own skills make its part.
     expect("state" in focused && focused.state.settings.focusParts).toStrictEqual([
       { area: "Biology", name: "Cells only", skillIds: ["bio"] },
     ]);
 
-    // A focus that names no part (the subjects sheet) keeps the parts its areas had.
     const kept =
       "state" in focused
         ? apply([{ areas: ["Biology"], kind: "focusAreas" }], focused.state)
@@ -100,7 +98,6 @@ describe(applyPlanOperations, () => {
       { area: "Biology", name: "Cells only", skillIds: ["bio"] },
     ]);
 
-    // Focusing the whole area again, or leaving it out, drops its part.
     const whole =
       "state" in kept
         ? apply([{ areas: ["Biology"], kind: "focusAreas", parts: [] }], kept.state)

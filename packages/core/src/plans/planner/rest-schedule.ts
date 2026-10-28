@@ -24,30 +24,18 @@ import { type CadencedArea } from "./study-cycle-lanes";
 import { type ScoredTopic, getAskedScore } from "./topic-weights";
 
 type RestInput = {
-  /** What a class test's material announces (see `BuildPlanInput.announcements`). */
   announcements?: readonly string[];
-  /** The skills any of the learner's answers missed (see `BuildPlanInput.answeredWrongSkillIds`). */
   answeredWrongSkillIds?: ReadonlySet<string>;
-  /**
-   * The work earlier days left, laid out before `units` (see `placeCarriedWork`): short on time,
-   * what of it the cut ranks out gives way (see `scheduleCoresFirst`).
-   */
   carried?: readonly QueueUnit[];
   days: readonly PlanDay[];
   goal: { kind: GoalKind; targetDate: Date | null };
   graph: PlanGraph;
-  /** Each skill's lessons the plan already holds outside `units` (see `putCoresFirst`). */
   kept: ReadonlyMap<string, number>;
-  /** The skills the learner showed they know (see `BuildPlanInput.knownSkillIds`). */
   knownSkillIds?: ReadonlySet<string>;
-  /** The skills the learner's last test missed: an exam's study cycle opens with their subjects. */
   missedSkillIds: ReadonlySet<string>;
-  /** What an exam's study cycle opens with after the gaps (see `arrangeStudyCycle`). */
   opening: { knownAreas: ReadonlySet<string>; noticeAreas: ReadonlySet<string> | null };
-  /** The learn phases' end dates a system refresh keeps (see `keepPhaseEnds`); empty otherwise. */
   phaseEnds: ReadonlyMap<number, Date>;
   planStart: Date;
-  /** What `buildPlanQueue` says about the planned skills. */
   queue: {
     focused: ReadonlySet<string>;
     prerequisites: ReadonlyMap<string, readonly string[]>;
@@ -56,26 +44,14 @@ type RestInput = {
     values: ReadonlyMap<string, number>;
   };
   settings: PlanSettings;
-  /** The notice topics each skill teaches, with how often the exam asks them. */
   topics: ReadonlyMap<string, readonly ScoredTopic[]>;
   units: readonly QueueUnit[];
 };
 
-/** Whether a schedule leaves out an outcome lesson the plan keeps (a career's job search). */
 function dropsOutcome(schedule: { dropped: readonly QueueUnit[] }): boolean {
   return schedule.dropped.some((unit) => unit.outcome && !unit.depth);
 }
 
-/**
- * A plan's units laid out with the phase ends a system run keeps (see `keepPhaseEnds`). A plan
- * short on time leaves lessons out to make room for its outcome work (see `makeRoomForOutcomes`),
- * which kept ends can't do once they hold the phases' challenges on their days: the ends are kept
- * on what that room leaves. A career cut to 15 minutes a day kept its job search, and the next
- * morning's settle left networking and interviews out to keep the phase ends the learner saw;
- * moving them instead moved every end a studied day had shown. When the outcome work still doesn't
- * fit, the ends stay all the same: a shown end never moves without the learner, and Today offers
- * to move the dates, which fits it again (see `updatePhaseDatesProposal`).
- */
 function scheduleKeepingEnds({
   days,
   ends,
@@ -104,7 +80,6 @@ function scheduleKeepingEnds({
   };
 }
 
-/** The topics of the skills a class test's announced questions ask about (see `Worth`). */
 function listAnnouncedTopics({
   announcements = [],
   graph,
@@ -117,14 +92,6 @@ function listAnnouncedTopics({
   );
 }
 
-/**
- * The units laid on the days: an exam's as its study cycle (see `arrangeStudyCycle`), with its
- * written tests on days of their own when `cadenced` says so; other goals' in queue order, with
- * the phase ends a system refresh keeps (see `keepPhaseEnds`). Short
- * on time, the plan keeps every skill in with its core and leaves out depth instead; its stand-ins
- * go in parts about a lesson long (as an exam's study cycle takes them), so the part of a skill's
- * core that fits is in the plan, as it will be once its lessons are outlined.
- */
 function scheduleWith({
   cadenced,
   input,
@@ -155,11 +122,6 @@ function scheduleWith({
 
   const whole = schedulePending(input.units);
 
-  // Kept phase ends can fit every lesson of a plan short on time by leaving its last challenge out,
-  // which the run that made the plan never did: that isn't whole either (see `keepPhaseEnds`). Nor
-  // can they make it fit: they hold each challenge on its day whatever the day's time, so a plan
-  // whose lessons don't fit without them read as fitting, skipped the cut its ends were made with,
-  // and a career plan's first landing after a new date gained lessons and moved 209 items.
   const keptEnds = input.phaseEnds.size > 0;
   const plain = keptEnds ? scheduleUnits({ days: input.days, units: input.units }) : whole;
 
@@ -171,7 +133,6 @@ function scheduleWith({
     return { ...whole, yielded: [] };
   }
 
-  // A miss anywhere, even one a later right answer claimed again, is missed (R11).
   const missed = new Set([...input.missedSkillIds, ...(input.answeredWrongSkillIds ?? [])]);
 
   return scheduleCoresFirst({
@@ -197,10 +158,6 @@ function scheduleWith({
   });
 }
 
-/**
- * An exam's units with the skills beyond its notice that nothing planned builds on after
- * everything it asks (see `putBeyondNoticeLast`).
- */
 function putBeyondNoticeUnitsLast(input: RestInput): readonly QueueUnit[] {
   if (input.goal.kind !== "exam" || input.queue.rates === null) {
     return input.units;
@@ -215,14 +172,6 @@ function putBeyondNoticeUnitsLast(input: RestInput): readonly QueueUnit[] {
   });
 }
 
-/**
- * Schedules what the plan has left to place after this week and the work earlier days left (see
- * `scheduleWith`), an exam's skills beyond its notice after everything it asks (see
- * `putBeyondNoticeUnitsLast`). An exam's written tests come on days of their own where the
- * learner's cadence puts them (every day with lessons, every other week, the final weeks), with the
- * lesson time they get in the study cycle's rotation, so their practice moves without shrinking or
- * growing.
- */
 export function scheduleRest(rest: RestInput) {
   const input = { ...rest, units: putBeyondNoticeUnitsLast(rest) };
   const spread = scheduleWith({ cadenced: null, input });

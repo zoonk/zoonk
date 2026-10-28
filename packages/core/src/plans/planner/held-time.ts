@@ -1,12 +1,9 @@
 import { type PlanDay, type ScheduledUnit } from "./schedule-units";
 
-/** Floating-point sums of lesson minutes must not move a lesson to another day. */
 export const EPSILON = 1e-6;
 
-/** Time a landed skill's stand-in held on a day, and the part of it (by its place) that held it. */
 export type Held = { date: Date; index: number; minutes: number };
 
-/** Each day's lesson minutes among units. */
 export function sumByDay(units: readonly { date: Date; minutes: number }[]): Map<number, number> {
   return units.reduce(
     (sums, unit) =>
@@ -15,16 +12,10 @@ export function sumByDay(units: readonly { date: Date; minutes: number }[]): Map
   );
 }
 
-/** The minutes of a skill's held pieces, all together. */
 export function sumMinutes(held: readonly Held[]): number {
   return held.reduce((sum, piece) => sum + piece.minutes, 0);
 }
 
-/**
- * The time each part of a landed skill's stand-in held: its day's free time, then the free time of
- * the days before it, back to the day of the unit laid before it. A stand-in laid whole is due on
- * the day its time ends: a learn plan's ran from Wednesday to the next Monday, its item on Monday.
- */
 export function listHeldTime({
   claimed,
   days,
@@ -32,7 +23,6 @@ export function listHeldTime({
   laid,
   parts,
 }: {
-  /** The free time days already gave parts, which no other part takes. */
   claimed: Map<number, number>;
   days: readonly PlanDay[];
   free: (date: Date) => number;
@@ -69,7 +59,6 @@ export function listHeldTime({
       { held: [], left: part.minutes },
     );
 
-    // What no day before it had free for it stays on its own day, as the run laid it.
     return taken.left > EPSILON
       ? [...taken.held, { date: part.date, index, minutes: taken.left }]
       : taken.held;
@@ -78,7 +67,6 @@ export function listHeldTime({
   return held.toSorted((a, b) => a.date.getTime() - b.date.getTime() || a.index - b.index);
 }
 
-/** The held time from `from` on, `minutes` of it, as pieces on its days. */
 export function listHeldFrom({
   from,
   held,
@@ -100,7 +88,6 @@ export function listHeldFrom({
   ).pieces;
 }
 
-/** The held piece a point of a skill's held time falls in. */
 export function findHeld(held: readonly Held[], at: number): Held | undefined {
   return held.find((_, index) => sumMinutes(held.slice(0, index + 1)) > at + EPSILON);
 }

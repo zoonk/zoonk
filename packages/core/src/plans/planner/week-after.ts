@@ -11,14 +11,8 @@ type LaidOut = {
   restSchedule: { units: readonly ScheduledUnit[] };
 };
 
-/** Where a piece of this week's kept work runs in the plan's lesson minutes, and whose it is. */
 type KeptInterval = { end: number; key: string; kind: QueueUnit["kind"]; start: number };
 
-/**
- * This week's kept work as the run that saved it laid it out: each piece from the start of the day
- * it's saved for, after the ones before it, for its share of its unit's time. A phase's challenge
- * takes no more than its day, past its time (see `placeBoss`).
- */
 function listKeptIntervals({
   cumulative,
   days,
@@ -55,7 +49,6 @@ function listKeptIntervals({
     }, []);
 }
 
-/** The time this week's kept work takes past it, as the run that saved it laid it out. */
 function getTimePastThisWeek({
   days,
   kept,
@@ -74,11 +67,6 @@ function getTimePastThisWeek({
   return Math.max(0, used - weekEnd);
 }
 
-/**
- * Each lesson of this week's kept work, by its key, with the time it takes on each of its days, as
- * the run that saved it laid it out (see `listKeptIntervals`): the plan's days hold it whether a run
- * lays it out again or keeps it. A challenge holds no lesson time.
- */
 function listKeptPortions({
   days,
   kept,
@@ -115,7 +103,6 @@ function listKeptPortions({
   }, new Map<string, StudyPortion[]>());
 }
 
-/** This week's kept lessons' time day by day, as the run lays them out with the rest. */
 function listLaidPortions(own: readonly ScheduledUnit[]): Map<string, StudyPortion[]> {
   return own.reduce(
     (portions, unit) =>
@@ -126,7 +113,6 @@ function listLaidPortions(own: readonly ScheduledUnit[]): Map<string, StudyPorti
   );
 }
 
-/** The day the time this week's kept work takes past it ends, from the week after's first day. */
 function getSpillEnd({ days, minutes }: { days: readonly PlanDay[]; minutes: number }) {
   if (minutes <= 0) {
     return null;
@@ -136,27 +122,10 @@ function getSpillEnd({ days, minutes }: { days: readonly PlanDay[]; minutes: num
   return (days[index] ?? days.at(-1))?.date ?? null;
 }
 
-/** Whether a unit is a stand-in, a skill not outlined yet planned as one unit or in parts. */
 function isStandIn(unit: QueueUnit): boolean {
   return unit.kind === "lesson" && unit.lessonId === null && unit.skillId !== null;
 }
 
-/**
- * An automatic run lays this week's kept work out with the rest, from today, as the run that saved
- * it did, and nothing new comes into this week (see `keepThisWeek`). When the run would date new
- * work this week (the rest takes less time than planned, as at a session's pace), it lays the rest
- * out again from the week after, after the time this week's work takes past it as the plan has it,
- * so no day gets more than it holds. Moved to the week's first day as it was, six new lessons of a
- * class test filled the day before the test, a review. Read from the run's own layout, which put
- * this week's work in another order, that time held an IELTS plan's next stand-ins a day later. A
- * run does that too when it would begin work the plan saved for this week past it: laid again
- * from today, a class test's two lessons saved for Thursday, which used time earlier days left,
- * ran into Monday and cut Monday's lesson on a refresh. `keptUntil` is the day a stand-in this
- * week began ends past its day, where the plan's lessons end at the latest (see
- * `getLastLessonDate`), `spill` the time this week's kept work takes past it (none when the run
- * keeps this week as it lays it out), and `keptParts` this week's kept work as the first layout
- * laid it when the run lays the rest out again (see `putLandedLessons`).
- */
 export function layOutAfterThisWeek<T extends LaidOut>({
   days,
   kept,
@@ -165,15 +134,12 @@ export function layOutAfterThisWeek<T extends LaidOut>({
   units,
 }: {
   days: readonly PlanDay[];
-  /** This week's kept work and the days it's saved for (see `listThisWeekWork`). */
   kept: readonly KeptPiece[];
   layOut: (laid: { days: readonly PlanDay[]; units: readonly QueueUnit[] }) => T;
-  /** The first day new work can come in (see `keepThisWeek`). */
   start: Date;
   units: readonly QueueUnit[];
 }): T & {
   keptParts: ScheduledUnit[];
-  /** This week's kept lessons' time day by day (see `listKeptPortions`). */
   keptPortions: Map<string, StudyPortion[]>;
   keptUntil: Date | null;
   spill: number;
@@ -184,9 +150,6 @@ export function layOutAfterThisWeek<T extends LaidOut>({
   const scheduled = [...first.carriedSchedule.units, ...first.restSchedule.units];
   const own = scheduled.filter((unit) => thisWeek.has(unit.key));
 
-  // New work comes only after this week, and what the plan saved for it begins in it: only a
-  // stand-in's later parts run on past it. Lessons that landed in a stand-in's place since keep
-  // the stand-in's time whatever the run's copies of them do (see `putLandedLessons`).
   const begins = own.filter(
     (unit, index) =>
       saved.has(unit.key) && own.findIndex((part) => part.key === unit.key) === index,
@@ -196,7 +159,6 @@ export function layOutAfterThisWeek<T extends LaidOut>({
     scheduled.every((unit) => thisWeek.has(unit.key) || unit.date >= start) &&
     begins.every((unit) => unit.date < start);
 
-  /** A skill's unwritten continuation cannot run before its first kept lesson. */
   const invertsSkill = scheduled.some((unit) => {
     if (!isStandIn(unit)) {
       return false;

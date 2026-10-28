@@ -4,18 +4,12 @@ import { addDays, fromIsoDate, toIsoDate } from "./plan-calendar";
 import { type PlanGraphSkill, parsePlanSettings } from "./plan-state";
 import { type PlannerLesson } from "./plan-units";
 
-/** A Thursday, a month before an ENEM-like exam, as Lucas's first day was. */
 const TODAY = fromIsoDate("2026-10-08");
 const SKILLS_PER_AREA = 4;
 const LESSONS_PER_SKILL = 6;
 
 type AreaSpec = { area: string; outcome?: boolean; phase?: number; weight?: number };
 
-/**
- * ENEM's four parts and its essay, each skill building on the one before it in its part, and
- * exam strategy outside the notice. Languages and mathematics weigh a little more on their own, as
- * they did for Lucas once the basics he said he knows were skipped.
- */
 const NOTICE_AREAS: AreaSpec[] = [
   { area: "Linguagens", weight: 3.3 },
   { area: "Matemática", weight: 3.3 },
@@ -87,7 +81,6 @@ function enemPlan({
   };
 }
 
-/** The areas the plan's first day studies, in the order it gets to them. */
 function dayOneAreas(input: BuildPlanInput): string[] {
   const areaOf = new Map(input.graph.skills.map((skill) => [skill.skillId, skill.area ?? ""]));
 
@@ -101,20 +94,15 @@ function dayOneAreas(input: BuildPlanInput): string[] {
 }
 
 describe("an exam plan's first day", () => {
-  // Lucas said he knows languages and mathematics: his first day was those two, the essay and nine
-  // exam-strategy lessons, with no natural or human sciences until days later.
   it("opens with the parts the learner didn't say they know, then theirs, then what's beyond the notice", () => {
     const areas = dayOneAreas(enemPlan({ knownAreas: new Set(["Linguagens", "Matemática"]) }));
 
-    // The essay comes on the days of its own cadence, apart from this order.
     const parts = areas.filter((area) => area !== "Redação");
 
     expect(parts.slice(0, 2).toSorted()).toStrictEqual(["Humanas", "Natureza"]);
     expect(parts).not.toContain("Estratégia de prova");
   });
 
-  // Rafaela answered English "I don't know yet" in placement, and English, a later phase of her
-  // graph, only joined her study cycle days later.
   it("opens with a part placement found a gap in, whatever its phase", () => {
     const english: AreaSpec = { area: "Inglês", phase: 1 };
 

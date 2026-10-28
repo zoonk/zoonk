@@ -11,7 +11,6 @@ import { type MovedEvent, type PlanGraph, parsePlanSettings } from "./plan-state
 import { type PlannedMocks, resolvePlannedMocks } from "./planned-mocks";
 import { type PlanDay } from "./schedule-units";
 
-/** A Monday. */
 const MONDAY = fromIsoDate("2020-09-28");
 const WEEKDAYS = [0, 30, 30, 30, 30, 30, 0];
 
@@ -70,7 +69,6 @@ function examInput({
   };
 }
 
-/** A built plan's items on a date, and the minutes Today and the Plan give that date. */
 function readDay({
   built,
   date,
@@ -97,12 +95,8 @@ function readDay({
   return { budget, items, minutes: items.reduce((total, item) => total + item.minutes, 0) };
 }
 
-/** A phase's checkpoint as it's played: its ten questions (see `getCheckpointMinutes`). */
 const BOSS = getCheckpointMinutes(CHECKPOINT_QUESTIONS);
 
-// "Move to Monday" puts the week's mock on a day that already holds something: the mock takes the
-// whole day (`replacesDay`), so a review there gives way, and a phase's checkpoint there keeps its
-// own time beside the mock. Either way the day's time is what the day asks for.
 describe("a mock moved onto a day that holds something", () => {
   it("replaces the review of a day in the final stretch", () => {
     const input = examInput({
@@ -114,14 +108,11 @@ describe("a mock moved onto a day that holds something", () => {
     const built = buildPlan(input);
     const day = readDay({ built, date: "2020-10-12", input });
 
-    // The phase's challenge the day after its lessons shares the day (see `placeExamBosses`).
     expect(day.items.map((item) => item.kind)).toContain("mock");
     expect(day.items.map((item) => item.kind)).not.toContain("review");
     expect(day.minutes).toBeCloseTo(day.budget);
   });
 
-  // A phase's challenge stays on the study day after its lessons (see `placeExamBosses`): a mock
-  // the learner moves onto it shares the day, which asks for both, the challenge's time on top.
   it("keeps a phase checkpoint's time beside it", () => {
     const plain = buildPlan(examInput({ lessons: 200, targetDate: fromIsoDate("2020-11-04") }));
 
@@ -160,8 +151,6 @@ describe("a mock moved onto a day that holds something", () => {
   });
 });
 
-// A plan with no date lays out only what it has: its mocks after its last lesson aren't in it, so
-// no day sets time aside for them, in the plan or in what it saves for Today.
 describe("an undated exam plan whose lessons end before its first mock", () => {
   it("saves no funding for a mock it doesn't plan", () => {
     const input = examInput({ lessons: 3, targetDate: null });
@@ -177,14 +166,10 @@ describe("an undated exam plan whose lessons end before its first mock", () => {
       built.mockFunding.map((entry) => entry.date).filter((date) => !mocks.has(date)),
     ).toStrictEqual([]);
 
-    // Each day keeps the learner's time unless a mock in the plan takes part of it.
     expect(readDay({ built, date: "2020-10-05", input }).budget).toBe(30);
   });
 });
 
-// A plan that goes on after its exam ends its lessons before the next weekly mock after it: that
-// mock isn't in the plan, so its days keep all their time for the lessons left (Today shows them
-// whole), instead of quietly setting part of it aside.
 describe("the lessons after an exam that end before the next mock", () => {
   it("fill each day's time up to the last lesson", () => {
     const targetDate = fromIsoDate("2020-10-14");
@@ -215,7 +200,6 @@ describe("the lessons after an exam that end before the next mock", () => {
 
     expect(dates.length).toBeGreaterThan(2);
 
-    // Every day but the last holds less than one lesson's time unscheduled: lessons don't split.
     expect(
       dates.slice(0, -1).filter((date) => {
         const day = readDay({ built, date, input });
@@ -225,7 +209,6 @@ describe("the lessons after an exam that end before the next mock", () => {
   });
 });
 
-/** Two weeks of a plan with 30 minutes on weekdays and Sundays, and its mocks. */
 const listDays = (start: string, length: number, mocks: Record<string, number>): PlanDay[] =>
   Array.from({ length }, (_, offset) => {
     const date = addDays(fromIsoDate(start), offset);
@@ -256,9 +239,6 @@ const listDays = (start: string, length: number, mocks: Record<string, number>):
     };
   });
 
-// The calendar moved the plan's next mock (a new study day changed the week's event day): what the
-// days before it set aside for it, as they saved it, is credited once to the mock that took its
-// place, not twice, nor to two mocks.
 describe("banked time when the calendar moves the next mock", () => {
   const past = ["2020-09-28", "2020-09-29", "2020-09-30", "2020-10-01", "2020-10-02"].map(
     (date) => ({ date, minutes: 15 }),
@@ -279,8 +259,6 @@ describe("banked time when the calendar moves the next mock", () => {
   });
 });
 
-// A plan is saved only once its mocks hold (see `resolvePlannedMocks`): never a pass that still
-// sets time aside for a mock it doesn't hold.
 describe(resolvePlannedMocks, () => {
   const settled: PlannedMocks = { horizon: 2, mockFunding: [], next: null, unfundedMocks: [] };
 
@@ -308,7 +286,6 @@ describe(resolvePlannedMocks, () => {
   });
 });
 
-/** A saved mock: its exam day and what past days set aside for it. */
 function savedMock(date: string, day: number, given: number) {
   return {
     contributions: [{ date: "2020-10-01", minutes: given }],
@@ -319,9 +296,6 @@ function savedMock(date: string, day: number, given: number) {
   };
 }
 
-// Which saved mock a run's mock continues follows where it came from: a learner's move keeps the
-// mock it moved, never the one that was on its new day, and a saved mock no run's mock continues
-// gives its credits to no other.
 describe(matchSavedMocks, () => {
   it("continues a moved mock as its plan saved it on its new day", () => {
     const moved = savedMock("2020-10-12", 2, 20);
@@ -352,7 +326,6 @@ describe(matchSavedMocks, () => {
   });
 });
 
-/** A day whose weekly mock replaces its review: the 12th sits exam day 2, the others day 1. */
 function weeklyMockDay(date: string) {
   return {
     events: [
@@ -372,7 +345,6 @@ function weeklyMockDay(date: string) {
   };
 }
 
-// A day holds one weekly event: the learner's moved one.
 describe("a weekly event moved onto a day that has one", () => {
   it("leaves the day one weekly event, the one the learner moved", () => {
     const describeDay = withMovedEvents({

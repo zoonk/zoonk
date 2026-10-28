@@ -21,7 +21,6 @@ import { toIsoDate } from "./plan-calendar";
 import { type MovedEvent, type PlanSettings } from "./plan-state";
 import { type DayShape, type PlanDay } from "./schedule-units";
 
-/** One mock's funding, as the plan saved it (see `PlanSettings.mockFunding`). */
 export type MockFunding = PlanSettings["mockFunding"][number];
 
 type Contribution = MockFunding["contributions"][number];
@@ -30,7 +29,6 @@ export function sumContributions(contributions: readonly Contribution[]): number
   return contributions.reduce((total, contribution) => total + contribution.minutes, 0);
 }
 
-/** The mock a date holds, or the mock it sets time aside for, with how much. */
 function findFunding({
   date,
   funding,
@@ -56,11 +54,7 @@ function findFunding({
   return null;
 }
 
-/**
- * A date's study minutes once the plan's mocks are funded: a mock's day holds the mock's whole
- * length (see `getMockDayMinutes`), a day that sets time aside for one keeps the rest of its planned minutes (`base`), any
- * other day its planned minutes. The planner and Today both read a day's time from here.
- */
+/** The planner and Today both read a day's time from here. */
 export function getFundedMinutes({
   base,
   date,
@@ -83,10 +77,6 @@ export function getFundedMinutes({
   return own ? getMockDayMinutes({ base: available, entry: own }) : available;
 }
 
-/**
- * The mock a day sets time aside for, its length, and the minutes this day gives it, so the plan
- * and Today can say why the day is lighter. Null on a mock's own day and on days that fund none.
- */
 export function findMockFundingOn({
   date,
   funding,
@@ -107,17 +97,14 @@ export function findMockFundingOn({
   };
 }
 
-/** The first day a mock's funding sets time aside, or its own day when none does. */
 export function getMockFundingStart(entry: MockFunding): string {
   return entry.contributions[0]?.date ?? entry.date;
 }
 
-/** What days before the run's first set aside for a mock, as they did: they're never planned again. */
 export function listPast({ saved, start }: { saved: MockFunding | undefined; start: string }) {
   return (saved?.contributions ?? []).filter((contribution) => contribution.date < start);
 }
 
-/** A scheduled mock's identity on this pass (see `MockResolution`, `matchSavedMocks`). */
 export function resolveIdentity({
   after,
   clocks,
@@ -144,12 +131,6 @@ export function resolveIdentity({
   return { day, fullLength };
 }
 
-/**
- * What funding a mock on day `at` takes (see `fundMocks`): the days of its window since the last
- * mock as funding left them (`shapes`: a left-out mock's day is an ordinary day again), what they
- * must give besides its own day's time and what earlier days already set aside (`past`), and its
- * day's shape. Null when they can't give it.
- */
 function fundMockOn({
   at,
   days,
@@ -184,10 +165,6 @@ function fundMockOn({
   return needed > spendable + EPSILON ? null : { needed, spendable, window };
 }
 
-/**
- * The days of a mock's window giving `needed` minutes, each the same share of the time it can
- * give (see `getSpendable`): their shapes lighter (in `shapes`), and what each gave.
- */
 function fundWindow({
   needed,
   shapes,
@@ -215,30 +192,14 @@ function fundWindow({
   });
 }
 
-/** What `fundMocks` settles for a run's days. */
 export type FundedMocks = {
   days: PlanDay[];
   funding: MockFunding[];
-  /** The saved mocks the run's mocks continue (see `matchSavedMocks`): each counts once. */
   matched: MockFunding[];
-  /** The mocks whose identity continues a saved one's. */
   sourced: Set<string>;
-  /** The mocks the days before them can't fund, at their real length: not planned. */
   unfunded: UnfundedMove[];
 };
 
-/**
- * The plan's days with their mocks funded. Each scheduled mock is one exam day's (see
- * `MockIdentity`): the one it continues keeps its day, a new one takes the day after the mock
- * before it, and its real length is that day's clock, half of it or, in the final stretch, all of
- * it. Its own day's time counts toward it, and the study days before it since the last mock set
- * the rest aside, each the same share of the time it can give (see `getSpendable`), after what past
- * days already set aside for the mock it continues, as they saved it. A mock whose window can't
- * fund it isn't planned: no day is squeezed to fit it, and its days (and what they already set
- * aside) fund the next one. A mock a run doesn't keep (`resolution.released`) gives its day back.
- * Returns the funding the plan saves (see `PlanSettings.mockFunding`), so Today reads the same
- * days (see `getFundedMinutes`).
- */
 export function fundMocks({
   clocks = [],
   cursor,
@@ -249,26 +210,15 @@ export function fundMocks({
   promised = new Map(),
   resolution = null,
 }: {
-  /** Each exam day's mock clock (see `MockClock`); none: mocks keep the length their day gave. */
   clocks?: readonly MockClock[];
-  /** The exam day of the mock before these days; absent: the latest the plan saved before them. */
   cursor?: number | null;
   days: readonly PlanDay[];
-  /**
-   * The first day whose time funding may take (an ISO date): a run that keeps this week as saved
-   * starts after it, so this week's days give a mock what they set aside before and no more.
-   * Funded again, a mock moved to a longer day took this week's whole time on top of the lessons
-   * the run kept there. Absent: from the first of `days`.
-   */
   from?: string;
-  /** The funding the plan saved last (see `PlanSettings.mockFunding`). */
   funding: readonly MockFunding[];
   moves: readonly MovedEvent[];
-  /** The promised lesson's teaching, which funding never takes; none: every day's time can give. */
   promised?: LessonDays;
   resolution?: MockResolution | null;
 }): FundedMocks {
-  // Each day's ISO date, read once for the whole pass.
   const labels = days.map((day) => toIsoDate(day.date));
   const start = labels[0] ?? null;
 
@@ -290,7 +240,6 @@ export function fundMocks({
   const firstFunding = Math.max(0, fromIndex);
   const matches = matchSavedMocks({ dates, moves, saved: funding, start });
 
-  // The days before `from` keep what they set aside before.
   const shapes = days.map((day, index) =>
     index < firstFunding
       ? fundDay({ minutes: sumSavedOn(funding, labels[index]), shape: day.shape })
@@ -342,7 +291,6 @@ export function fundMocks({
 
     const past = [...carried, ...listPast({ saved: source, start: fundFrom })];
 
-    // Each window keeps the promised lesson's teaching, from where it really starts.
     keepWindowTeaching({ days, index, labels, promised, shapes, windowStart });
 
     shapes[index] = ownDay;

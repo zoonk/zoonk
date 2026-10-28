@@ -15,7 +15,6 @@ type LayoutInput = {
   units: readonly QueueUnit[];
 };
 
-/** A shown written lesson stays whole, including the time its consumed interval takes tomorrow. */
 function heldUnits({ layout, today }: { layout: DayLayout; today: Date }): ScheduledUnit[] {
   const label = toIsoDate(today);
 
@@ -35,7 +34,7 @@ function heldUnits({ layout, today }: { layout: DayLayout; today: Date }): Sched
     if (unit.lessonId !== null) {
       return [unit];
     }
-    // A stand-in may span months. Hold only today's consumed part, never all its future depth.
+
     const minutes = portions.reduce((total, portion) => total + portion.lessonMinutes, 0);
 
     return [
@@ -88,7 +87,6 @@ function remainingUnits({
   });
 }
 
-/** The held units' future portions keep their original per-day cost; they aren't charged twice. */
 function futureDays({
   days,
   held,
@@ -117,12 +115,6 @@ function futureDays({
     }));
 }
 
-/**
- * A forced stale render can carry missed work without its old queue order. Once shown, newly
- * published lessons must not displace that day's selection. Read that selection from one layout
- * without the new lessons, keep its exact units/portions, and schedule the rest after today.
- * This is a layout within the same producer call, never another plan or an acceptance shortcut.
- */
 export function layOutShownDay({
   days,
   input,
@@ -142,8 +134,6 @@ export function layOutShownDay({
     units.flatMap((unit) => (unit.lessonId && !known.has(unit.key) ? [unit.key] : [])),
   );
 
-  // A closed mock/review day has no shown teaching allocation to freeze. Preserve the normal
-  // carried-work metadata there: it remains catch-up, even though the day's blocks only review.
   const teachesToday = days.some(
     (day) => day.date.getTime() === input.today.getTime() && day.shape.open,
   );

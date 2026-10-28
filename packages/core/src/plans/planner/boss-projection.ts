@@ -14,15 +14,12 @@ import {
 } from "./plan-items";
 import { getBossKey } from "./plan-units";
 
-/** Where a run tries an exam's phase challenge (see `placeExamBosses`): its day, beside or leading it. */
 export type BossCandidate = { beside: boolean; date: string; key: string; phase: number };
 
 const LEARN_KINDS = new Set<PlannedItem["kind"]>(["chapter", "lesson"]);
 
-/** A place between two items in plan order, so a challenge sits right before the next one. */
 const BETWEEN_ITEMS = 0.5;
 
-/** An item's rank on its day as `mergePlanItems` gave it (kept work, lessons, then events). */
 function rankItem({ item, kept }: { item: PlannedItem; kept: ReadonlySet<string> }): number {
   if (kept.has(item.key)) {
     return KEPT_RANK;
@@ -31,7 +28,6 @@ function rankItem({ item, kept }: { item: PlannedItem; kept: ReadonlySet<string>
   return LEARN_KINDS.has(item.kind) ? UNIT_RANK : EVENT_RANK;
 }
 
-/** A challenge as a plan item on its candidate day, the one the plan holds when it has it. */
 function toBossItem({
   candidate,
   saved,
@@ -56,12 +52,6 @@ function toBossItem({
   };
 }
 
-/**
- * A built plan's items with the challenges a run still places (`candidates`) on their candidate
- * days, in the order the saved plan gives them (see `mergePlanItems`): each one the plan holds
- * moved there, each it doesn't hold yet added, the ones it keeps (finished, skipped, kept this
- * week) where they are. With each item's rank on its day.
- */
 function projectBossItems({
   built,
   candidates,
@@ -87,14 +77,6 @@ function projectBossItems({
   ].toSorted(compareItems);
 }
 
-/**
- * The challenges of a built plan a run places (see `placeExamBosses`): every phase's but the final
- * stretch's and what follows the exam, which have none, unless the plan keeps it as it is
- * (finished, skipped, or kept this week). Each is placed from its window's end (`anchor`, the
- * phase end the learner was shown when the run keeps it), never from where an earlier pass or the
- * saved plan had it. While a run places the others, each reads as where its layout has it (`date`),
- * else at its anchor.
- */
 export function listBossCandidates({
   built,
 }: {
@@ -124,7 +106,6 @@ export function listBossCandidates({
   });
 }
 
-/** Whether a challenge the plan holds comes after a lesson of its own day: beside them. */
 function isBesideItsDay({
   boss,
   items,
@@ -142,12 +123,6 @@ function isBesideItsDay({
     );
 }
 
-/**
- * A built plan as its challenges read it (see `toBossPlan`), with the ones a run places on their
- * candidate days (see `projectBossItems`): the same projection and rule (`getBossSkillIds`)
- * sizing and the session read, so what a challenge tests here is what it asks once saved. `at`
- * gives where a challenge would go on another day: leading it, or beside its lessons.
- */
 export function projectBossPlan({
   built,
   candidates,
@@ -175,7 +150,6 @@ export function projectBossPlan({
     survivors,
   });
 
-  // The plan without one challenge, which another day of its own is tried for.
   const without = new Map(
     candidates.map((candidate) => [
       candidate.key,

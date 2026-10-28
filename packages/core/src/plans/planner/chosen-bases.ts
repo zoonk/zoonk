@@ -15,11 +15,6 @@ type ChoiceInput = Pick<
   "bases" | "graph" | "items" | "lessons" | "missedSkillIds" | "settings"
 >;
 
-/**
- * The learner's base choices but a skip of a base they then missed a question on: it comes back
- * to its core, as a base without a choice (R19). Which choices a base still takes is the bases
- * list's to say (see `getBaseChoices`).
- */
 export function getKeptBaseChoices(
   input: Pick<ChoiceInput, "missedSkillIds" | "settings">,
 ): StoredBaseChoice[] {
@@ -30,19 +25,11 @@ export function getKeptBaseChoices(
   );
 }
 
-/** Whether the learner chose another way than its core for any of the plan's bases. */
 export function hasBaseChoices(input: ChoiceInput): boolean {
   const chosen = getBaseChoices({ bases: input.bases ?? [], choices: getKeptBaseChoices(input) });
   return [...chosen.values()].some((choice) => choice !== "essential");
 }
 
-/**
- * Each base's lessons as its choice leaves them: its core (the first third, outlined first, see
- * `getCoreLessons`) with the rest of the chapter the learner is in the middle of (`inProgress`), as
- * a plan short on time keeps it (see `putCoresFirst`), its quick lesson, or none; a base studied in
- * depth keeps them all. Skipping a career's portfolio made the skill whose chapter the learner was
- * in a base, and its core cut that chapter's last lessons and its challenge.
- */
 function sizeBases({
   chosen,
   inProgress,
@@ -85,13 +72,6 @@ function sizeBases({
   );
 }
 
-/**
- * The planner's graph and lessons with the learner's base choices (see `BaseChoice`): a base keeps
- * its core unless chosen otherwise, every lesson studied in depth, only its quick lesson (from
- * `quickLessons`, or a stand-in of one while it isn't written), or leaves the plan when skipped, so
- * what builds on it no longer waits for it. A choice for a skill that is no longer a base changes
- * nothing. The stored graph never changes: only the planner reads this copy.
- */
 function applyBaseChoices({
   bases,
   choices,
@@ -103,10 +83,8 @@ function applyBaseChoices({
   bases: readonly PlanBase[];
   choices: readonly StoredBaseChoice[];
   graph: PlanGraph;
-  /** The plan's items, which tell the chapter the learner is in the middle of (see `sizeBases`). */
   items?: Parameters<typeof findChapterInProgress>[0];
   lessons: readonly PlannerLesson[];
-  /** Each skill's quick lesson the Library has (see `BaseChoice`). */
   quickLessons?: ReadonlyMap<string, PlannerLesson>;
 }): { graph: PlanGraph; lessons: PlannerLesson[] } {
   const chosen = getBaseChoices({ bases, choices });
@@ -163,12 +141,10 @@ function applyBaseChoices({
   };
 }
 
-/** What applying base choices reads of the planner's input (see `applyBaseChoices`). */
 type BaseInput = Pick<BuildPlanInput, "bases" | "graph" | "lessons" | "quickLessons"> & {
   items: Parameters<typeof findChapterInProgress>[0];
 };
 
-/** The planner's input with each base studied as `choices` say (see `applyBaseChoices`). */
 export function withBaseChoices<TInput extends BaseInput>({
   choices,
   input,
@@ -189,13 +165,11 @@ export function withBaseChoices<TInput extends BaseInput>({
   };
 }
 
-/** The bases the learner chose to study with a quick lesson instead of their core. */
 export function listQuickBaseIds(input: ChoiceInput): Set<string> {
   const chosen = getBaseChoices({ bases: input.bases ?? [], choices: getKeptBaseChoices(input) });
   return new Set([...chosen].flatMap(([skillId, choice]) => (choice === "quick" ? [skillId] : [])));
 }
 
-/** Each stand-in as the plan has it: a base's core, or the one lesson of its quick lesson. */
 export function getChosenStandInLessons(input: BuildPlanInput): Map<string, number> {
   const studied = withBaseChoices({ choices: getKeptBaseChoices(input), input });
 

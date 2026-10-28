@@ -270,8 +270,6 @@ describe("shown-day membership", () => {
     expect(opened.lessonRawMinutes.get("skill:D")?.get(toIsoDate(TODAY))).toBeUndefined();
   });
 
-  // An opened day said more lessons were on the way: once they land they take the time its
-  // stand-in held there, after what the day showed, and never more than the day held.
   it("lands new written lessons in the time a shown stand-in held, keeping what the day showed", () => {
     const base = input("2026-09-30");
 
@@ -314,7 +312,6 @@ describe("shown-day membership", () => {
 
     expect(opened.items.find((item) => item.lessonId === "a1")?.scheduledFor).toStrictEqual(TODAY);
 
-    // The day's lessons take no more time than it held: the stand-in they replaced holds none.
     const held = new Set(opened.items.map((item) => item.key));
     const lessonsToday = onToday(opened).filter((entry) => held.has(entry.key));
     expect(totalMinutes(lessonsToday)).toBeLessThanOrEqual(totalMinutes(onToday(first)));

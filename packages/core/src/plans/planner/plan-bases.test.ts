@@ -29,10 +29,6 @@ function level(topic: string, value: TopicLevel["level"]): TopicLevel {
   return { level: value, subject: AREA, topic };
 }
 
-/**
- * ENEM's ecology builds on how living things work, which builds on cells; a separate topic on
- * water builds on nothing. Ecology and cells come up a lot, living things and water less.
- */
 const GRAPH: PlanGraph = {
   phases: [{ milestone: null, name: "Fundamentos" }],
   skills: [
@@ -87,15 +83,12 @@ function findBases(attrs: Partial<Parameters<typeof findPlanBases>[0]> = {}) {
 }
 
 describe(findPlanBases, () => {
-  // Never cells, which the exam asks most, nor water, which nothing builds on.
   it("lists the skills a more asked topic builds on, with what each way of studying them takes", () => {
     expect(findBases()).toStrictEqual([
       {
         area: AREA,
         choices: ["deep", "essential", "quick", "skip"],
         known: false,
-        // Three lessons outlined and six still to write: its core is the first three, and a quick
-        // lesson takes one lesson's time.
         minutes: { deep: 37, essential: 13, quick: 4 },
         name: "Skill living",
         neededFor: ["Ecologia"],
@@ -105,8 +98,6 @@ describe(findPlanBases, () => {
     ]);
   });
 
-  // A quick lesson or a skip keeps no more than a studied core: only deep study changes anything,
-  // so it's the one way left (R15, class test seed 1255).
   it("opens a base whose core the learner studied to deep study only", () => {
     const items = ["living-1", "living-2", "living-3"].map((lessonId) => doneLesson(lessonId));
 
@@ -119,8 +110,6 @@ describe(findPlanBases, () => {
     expect(findBases({ topicLevels: [] })).toStrictEqual([]);
   });
 
-  // Rafaela's IT topic on data concepts was planned after all 26 lessons of digital-records formats,
-  // a skill her notice doesn't name: the learner chooses how to study one, like any base.
   it("offers a skill beyond the notice that a topic builds on, whether or not the topics are rated", () => {
     const beyond = skill("formats", "", { topics: [] });
     const graph = { ...GRAPH, skills: [beyond, ...GRAPH.skills] };
@@ -135,11 +124,6 @@ describe(findPlanBases, () => {
   });
 
   describe("a goal with outcome skills (a career change)", () => {
-    /**
-     * A UX career: research and wireframes build up to the first portfolio project, all at the
-     * beginner band, the way a career graph makes its course the path; basic statistics, from an
-     * easier band, is what the metrics a later project needs build on.
-     */
     const career: PlanGraph = {
       phases: [{ milestone: null, name: "UX" }],
       skills: [
@@ -178,7 +162,6 @@ describe(findPlanBases, () => {
     }
 
     it("keeps the course its path: only a foundation from an easier band than the work built on it is a base", () => {
-      // Research and wireframes are the first project's own band: they're the course, not bases.
       expect(careerBases()).toStrictEqual([["statistics", ["Skill product"]]]);
     });
 
@@ -245,9 +228,6 @@ describe(findPlanBases, () => {
     expect(bases).toStrictEqual([]);
   });
 
-  // A base studied for its core has nothing left in the plan once the core is done. Read as
-  // finished, the next run planned it whole and the one after for its core again, so every open
-  // of Today moved its last lessons in and out of a career plan.
   it("keeps a base whose core the learner finished while it has lessons past it", () => {
     const bases = findBases({
       items: ["living-1", "living-2", "living-3"].map((lessonId) => doneLesson(lessonId)),
@@ -257,7 +237,6 @@ describe(findPlanBases, () => {
   });
 });
 
-/** The planner's graph and lessons with base choices, as `withBaseChoices` gives them the plan. */
 function applyBaseChoices({
   choices,
   items = [],
@@ -269,7 +248,6 @@ function applyBaseChoices({
   return withBaseChoices({ choices, input: { ...input, items } });
 }
 
-/** What the planner gets of the base: its graph size and the lessons planned under it. */
 function livingLessons(chosen: ReturnType<typeof applyBaseChoices>) {
   return {
     graph: chosen.graph.skills.find((entry) => entry.skillId === "living")?.lessons,
@@ -291,8 +269,6 @@ describe(withBaseChoices, () => {
     });
   });
 
-  // Skipping a career's portfolio made the problem-definition skill the learner was in the middle
-  // of a base, and its core cut the rest of that chapter and its challenge (career 1254).
   it("keeps the rest of the chapter the learner is in the middle of with a base's core", () => {
     const lessons = [
       ...["living-1", "living-2", "living-3", "living-4"].map((lessonId) =>

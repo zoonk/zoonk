@@ -5,7 +5,6 @@ import { type ExistingPlanItem } from "./plan-items";
 import { type PlanGraphSkill, parsePlanSettings } from "./plan-state";
 import { type PlannerLesson } from "./plan-units";
 
-/** A Monday. */
 const TODAY = fromIsoDate("2026-10-12");
 
 function skill(skillId: string, area: string): PlanGraphSkill {
@@ -16,7 +15,6 @@ function lesson(lessonId: string, skillId: string): PlannerLesson {
   return { chapterId: skillId, lessonId, minutes: 4, skillIds: [skillId], title: lessonId };
 }
 
-/** A lesson of the plan Today showed, still to do, due `day` days from today. */
 function todo({
   day,
   lessonId,
@@ -44,9 +42,6 @@ function todo({
 }
 
 describe("a focus while today is shown", () => {
-  // A focus gives what's left of today to the focused area's next lessons. A career's content
-  // structure for interfaces came today, two days before the information architecture it builds
-  // on, which isn't focused (R16).
   it("gives today's time left to a focused lesson only after what its skill builds on", () => {
     const plan = buildPlan({
       carryOver: { lessonIds: [], todayExceptAreas: [] },

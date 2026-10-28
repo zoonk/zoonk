@@ -1,12 +1,7 @@
 import { type PlannedItem } from "./plan-items";
 
-/** The items a phase studies: its challenge closes them. */
 const LEARN_KINDS = new Set<PlannedItem["kind"]>(["boss", "chapter", "lesson"]);
 
-/**
- * The phases whose challenge the learner won while some of their lessons are still to do: the
- * challenge holds its phase's end all the same (see `getShownPhaseEnds`).
- */
 export function listWonPhases(
   items: readonly Pick<PlannedItem, "kind" | "phase" | "status">[],
 ): Set<number> {
@@ -27,12 +22,6 @@ export function listWonPhases(
   );
 }
 
-/**
- * When each learn phase but the last ends: the day of its challenge, which closes its main work,
- * or the end the learner saw (`kept`) of one they won early, whose lessons are still the phase's
- * own (a run from today dates a challenge won ahead today). A phase without a dated challenge has
- * no end of its own.
- */
 function getPhaseEnds({
   items,
   kept,
@@ -55,10 +44,6 @@ function getPhaseEnds({
   );
 }
 
-/**
- * The phases with work of their own still to do: a phase a test-out finished has none, and its
- * dates stay those of its finished items.
- */
 function listPhasesToStudy(items: readonly PlannedItem[]): Set<number> {
   return new Set(
     items.flatMap((item) =>
@@ -67,10 +52,6 @@ function listPhasesToStudy(items: readonly PlannedItem[]): Set<number> {
   );
 }
 
-/**
- * The phase whose time a day falls in, from `phase` on: the first still to study that hasn't ended
- * by then.
- */
 function findPhaseOfDay({
   ends,
   lastPhase,
@@ -94,23 +75,11 @@ function findPhaseOfDay({
   );
 }
 
-/**
- * A learn phase spans its main work: its lessons up to its challenge, which closes it. What's due
- * after that challenge (the depth a plan short on time studies once every phase's core is in, and
- * the weekly challenges among it) belongs to the phase whose time it falls in, as an exam's
- * lessons belong to the phase of the day they're due. So a phase's dates say when its work
- * happens, the phase the learner is in follows the calendar, and a few late lessons never stretch
- * a phase over the ones after it. Finished items and challenges keep their phase, and a phase with
- * nothing of its own left to study takes none of it: a career's portfolio phase a test-out
- * finished took every lesson a slower pace left after the UX process challenge, and its end moved
- * ten days.
- */
 export function placeItemsInPhaseTime({
   items,
   kept = new Map(),
 }: {
   items: readonly PlannedItem[];
-  /** The phase ends the run keeps, the ones the learner saw (see `getShownPhaseEnds`). */
   kept?: ReadonlyMap<number, Date>;
 }): PlannedItem[] {
   const ends = getPhaseEnds({ items, kept });

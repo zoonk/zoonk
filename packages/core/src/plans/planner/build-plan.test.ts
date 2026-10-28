@@ -7,7 +7,6 @@ import { type ExistingPlanItem, type PlannedItem } from "./plan-items";
 import { type PlanGraphSkill, parsePlanSettings } from "./plan-state";
 import { DEFAULT_LESSON_MINUTES, type PlannerLesson } from "./plan-units";
 
-/** A Monday. */
 const TODAY = fromIsoDate("2026-09-28");
 
 function skill(skillId: string, attrs: Partial<PlanGraphSkill> = {}): PlanGraphSkill {
@@ -95,7 +94,6 @@ describe(buildPlan, () => {
       titleSnapshot: "Skill s2",
     });
 
-    /** Each text boss runs for 15 minutes, five more than the former scheduler allowance. */
     expect(plan.phases).toStrictEqual([
       {
         endDate: "2026-10-01",
@@ -139,8 +137,6 @@ describe(buildPlan, () => {
     ).toBe(false);
   });
 
-  // Pedro's Sunday: his only lesson done, a refresh found the day free and put the week's
-  // checkpoint on top of it, 30 minutes on his 15-minute day.
   it("puts nothing more on a day the learner already studied, pinned to a Sunday", () => {
     const sunday = fromIsoDate("2026-10-11");
     const lessons = Array.from({ length: 30 }, (_, index) => lesson(`l${index}`, ["s1"]));
@@ -288,8 +284,6 @@ describe(buildPlan, () => {
     );
   });
 
-  // A stand-in that began this week runs on for months, its depth last. Read as ending on its first
-  // day, the next open of Today gave its last weeks to practice days instead.
   it("keeps practice days after the lessons of a stand-in this week begins", () => {
     const input = planInput({
       goal: { dailyMinutes: 12, kind: "learn", targetDate: fromIsoDate("2026-10-28") },
@@ -308,9 +302,6 @@ describe(buildPlan, () => {
     );
   });
 
-  // A plan short on time puts each phase's challenge right after its lessons and leaves the rest of
-  // that day free. Kept on its day, the challenge of the first open of Today left that time to the
-  // phase's depth, and a career plan gained six lessons and moved its last weeks with nothing new.
   it("keeps a plan short on time as it was made on the first automatic run", () => {
     const input = planInput({
       goal: { dailyMinutes: 10, kind: "learn", targetDate: addDays(TODAY, 10) },
@@ -344,9 +335,6 @@ describe(buildPlan, () => {
     );
   });
 
-  // Pedro switched to the time the Plan recommended, and its next read planned the rest of his
-  // week as he saw it with the last day before his date left: each skill's lessons beyond the one
-  // the graph sizes counted as cores again, came first that day, and left his last phase out.
   it("keeps every skill the plan just made holds when the next run keeps this week", () => {
     const today = addDays(TODAY, 1);
 
@@ -362,14 +350,12 @@ describe(buildPlan, () => {
       today,
     });
 
-    // He finished every lesson his 10 minutes a day held, ahead of their days, then switched.
     const short = buildPlan({ ...input, goal: { ...input.goal, dailyMinutes: 10 } });
 
     const studied = store(short).map((item) =>
       item.kind === "lesson" ? { ...item, completedAt: today, status: "done" as const } : item,
     );
 
-    // As the planning run dates them (see `listFinishedDays`): the day he finished them.
     const finishedOn = new Map(
       studied.flatMap((item) => (item.status === "done" ? [[item.id, today] as const] : [])),
     );
@@ -388,9 +374,6 @@ describe(buildPlan, () => {
     expect(skillsOf(next.items)).toStrictEqual(skillsOf(first.items));
   });
 
-  // Career seed 2110: the learner won a phase's challenge weeks early, its last lessons still to
-  // do. The next run let that end go, so the phase ended on its last lesson left, two days sooner,
-  // and Today then offered to move it back.
   it("keeps the end the learner saw of a phase whose challenge they won early", () => {
     const input = planInput({
       graph: {
@@ -417,7 +400,6 @@ describe(buildPlan, () => {
 
     const phaseEnds = getShownPhaseEnds({ items, phases: first.phases });
 
-    // The last phase ends with the plan, which may finish sooner.
     const keptAfter = (mode: BuildPlanInput["mode"]) => {
       const next = buildPlan({ ...input, items, mode, phaseEnds, today });
 
@@ -454,8 +436,6 @@ describe(buildPlan, () => {
   });
 
   it("finishes the chapter the learner is in before anything a change moves ahead, short on time too", () => {
-    // Carla: a 2-lesson skill whose chapter has 7 lessons, 3 done today. Its core was done, so a
-    // change sent the other 4 after every other skill's core, to the end of the plan.
     const started = Array.from({ length: 7 }, (_, index) => ({
       ...lesson(`cognition-${index}`, ["s1"]),
       chapterId: "cognition",
@@ -503,9 +483,6 @@ describe(buildPlan, () => {
   });
 
   it("keeps the lessons of the chapter in progress the learner saw when a change is short on time", () => {
-    // A class test's plan had the organelles chapter's last two lessons left (what its test
-    // announces), after the first three; a change short on time swapped them for the chapter's
-    // next ones, which the plan never had.
     const lessons = Array.from({ length: 9 }, (_, index) => ({
       ...lesson(`o${index + 1}`, ["s1"]),
       chapterId: "organelles",
@@ -542,8 +519,6 @@ describe(buildPlan, () => {
   });
 
   it("leaves a lesson of the chapter in progress after what its own skill builds on", () => {
-    // A language unit's apartment chapter: the learner finished its rent lesson, and its next one
-    // teaches booking a visit, which builds on asking about the rent, not outlined yet.
     const apartment = [
       { ...lesson("rent-1", ["rent"]), chapterId: "apartment" },
       { ...lesson("visit-1", ["visit"]), chapterId: "apartment" },
@@ -587,8 +562,6 @@ describe(buildPlan, () => {
   });
 
   it("keeps a later phase's chapter in progress in its phase, each phase closed once", () => {
-    // The learner finished a lesson of the advanced chapter (a test-out or a focus took them
-    // there) while basics are still to do: the chapter comes first among its phase's lessons.
     const advanced = ["a1", "a2", "a3"].map((id) => ({ ...lesson(id, ["s3"]), chapterId: "adv" }));
 
     const items = advanced.map((row, index) =>
@@ -683,7 +656,6 @@ describe("exam plans", () => {
         ],
       },
       lessons: [],
-      // A mock the learner's study day holds, so one comes every week (see `getMockWeeks`).
       mockMinutes: 45,
       prerequisites: new Map([["s3", ["s2"]]]),
       settings: parsePlanSettings({
@@ -726,10 +698,6 @@ describe("exam plans", () => {
     expect(plan.phases[1]?.minutes).toBeGreaterThan(0);
   });
 
-  // A class test 10 days away at 20 minutes a day, after three missed days (simulated life
-  // class-test 20/10): the run on the final stretch's first day dated the chapter in progress's
-  // next lesson there, at its own minutes, as a day with no share of new learning gives a lesson.
-  // The next run kept it at its minutes over that share of none: Infinity, which no save takes.
   it("keeps this week's lesson in the final stretch at the minutes it was given", () => {
     const day = fromIsoDate("2026-11-02");
 
@@ -755,12 +723,9 @@ describe("exam plans", () => {
   }
 
   it("plans weekly mocks from the second week in every phase, review days at the end and a light day before", () => {
-    // Enough lessons to fill every day before the final stretch: no spare week for more mocks.
     const lessons = Array.from({ length: 400 }, (_, index) => lesson(`l${index}`, ["s1"]));
     const plan = buildPlan(examInput({ lessons }));
 
-    // Sunday is the learner's rest day, though the exam is on a Sunday: Saturdays take the mocks,
-    // the foundations' first one included.
     expect(datesOf({ kind: "mock", plan })).toStrictEqual([
       "2026-10-03",
       "2026-10-10",
@@ -783,9 +748,6 @@ describe("exam plans", () => {
 
     expect(plan.items.find((item) => item.key === "review:2026-11-07")?.minutes).toBe(15);
 
-    // A phase's challenge tests its own phase's teaching and goes on the first study day after it
-    // ends, past the Saturday mock and the Sunday rest day (see `placeExamBosses`): the gaps
-    // phase's last lessons are on 10-20, so its challenge leads 10-21, before the next phase's.
     expect(datesOf({ kind: "boss", plan })).toStrictEqual([
       "2026-10-05",
       "2026-10-21",
@@ -811,8 +773,6 @@ describe("exam plans", () => {
   });
 
   it("keeps the weekly mock days away from the exam when the learner's last study day is near it", () => {
-    // Saturday and Sunday rest: Fridays take the mocks, and the Friday two days before the
-    // Sunday exam is review, as a spare mock would be.
     const lessons = Array.from({ length: 400 }, (_, index) => lesson(`l${index}`, ["s1"]));
 
     const plan = buildPlan(
@@ -833,7 +793,6 @@ describe("exam plans", () => {
   });
 
   it("spends spare weeks on more mocks in the final stretch, days apart from the others", () => {
-    // Six lessons end in the first days: weeks of practice days before the final stretch.
     const plan = buildPlan(
       examInput({
         goal: { dailyMinutes: 45, kind: "exam", targetDate: fromIsoDate("2026-12-20") },
@@ -844,8 +803,6 @@ describe("exam plans", () => {
     const finalStretch = plan.phases.find((phase) => phase.kind === "finalStretch");
     const inFinalStretch = mocks.filter((date) => date >= (finalStretch?.startDate ?? ""));
 
-    // The week's mock (Saturday: Sunday is the rest day), and one more in each final-stretch week,
-    // three days from any other mock (the last practice week's on 5 December) and from the exam.
     expect(finalStretch?.startDate).toBe("2026-12-07");
     expect(inFinalStretch).toStrictEqual(["2026-12-08", "2026-12-12", "2026-12-15"]);
 
@@ -890,7 +847,6 @@ describe("exam plans", () => {
 
     expect(feasibility.fits).toBe(false);
 
-    // Every skill keeps its core; the one worth more gets more of its depth.
     const covered = new Map(
       built.skillMinutes.map((entry) => [entry.skillId, entry.covered / entry.total]),
     );
@@ -931,10 +887,6 @@ describe("exam plans", () => {
 
 type DatedPhase = { endDate: string | null; startDate: string | null };
 
-/**
- * Where phases break their order: a phase without dates or ending before it starts, and one that
- * doesn't start after the one before it ends. Empty when they run one after another.
- */
 function findPhaseOverlaps(phases: readonly DatedPhase[]): string[] {
   return phases.flatMap((phase, index) => {
     const before = phases[index - 1];
@@ -958,7 +910,6 @@ describe("learn phases", () => {
   ];
 
   it("keeps phases in order when a prerequisite points back against the graph's order", () => {
-    // Skills are shared, so another goal's edges can close a cycle: "a" needs "c", listed after it.
     const plan = buildPlan(
       planInput({
         graph: {
@@ -981,8 +932,6 @@ describe("learn phases", () => {
     expect(findPhaseOverlaps(plan.phases)).toStrictEqual([]);
   });
 
-  // Superseded by C2: a phase's checkpoint leads the first study day after its lessons, and the
-  // next phase goes on that day after it, instead of the checkpoint closing its day.
   it("starts the next phase on its checkpoint's day, after the checkpoint", () => {
     const plan = buildPlan(
       planInput({ goal: { dailyMinutes: 30, kind: "learn", targetDate: null } }),
@@ -1034,7 +983,6 @@ describe("learn phases", () => {
       plan.items.filter((item) => item.kind === "boss").map((item) => item.minutes),
     ).toStrictEqual([15, 15]);
 
-    /** The whole 15-minute final boss uses Sunday once, beyond its 12-minute base time. */
     expect(plan.phases.map((phase) => [phase.startDate, phase.endDate])).toStrictEqual([
       ["2026-09-28", "2026-09-29"],
       ["2026-09-30", "2026-10-04"],
@@ -1067,10 +1015,6 @@ describe("learn phases", () => {
   });
 });
 
-/**
- * The course outlines one short unit for each situation, a slice of what the graph says reaching
- * its level takes: six lessons teach greeting and introducing yourself, five the interview.
- */
 function languageInput(attrs: Partial<BuildPlanInput> = {}): BuildPlanInput {
   return planInput({
     goal: { dailyMinutes: 30, kind: "language", targetDate: null },
@@ -1114,8 +1058,6 @@ describe("language plans", () => {
 
     expect(keys.indexOf("skill:greet")).toBe(keys.indexOf("lesson:arrival-5") + 1);
 
-    // 6 outlined lessons (3 minutes each) teach the two arrival skills, three each, and 5 the
-    // interview: 15 + 17 + 25 lessons left, as stand-ins.
     const outlined = (6 + 5) * 3;
     const standInMinutes = (15 + 17 + 25) * DEFAULT_LESSON_MINUTES;
     expect(lessonMinutes(input)).toBeCloseTo((outlined + standInMinutes) / 0.5);
@@ -1133,13 +1075,11 @@ describe("language plans", () => {
     const lastLesson = lessons.at(-1)?.scheduledFor ?? TODAY;
     const end = built.estimate.endDate ?? TODAY;
 
-    // The lessons fit in weeks; the weekly challenges go on until the interview's week.
     expect(lastLesson.getTime()).toBeLessThan(fromIsoDate("2026-11-30").getTime());
     expect(end.getTime()).toBeGreaterThan(fromIsoDate("2026-12-27").getTime());
     expect(end.getTime()).toBeLessThan(interview.getTime());
     expect(getPlanFeasibility({ input }).endDate?.getTime()).toBe(end.getTime());
 
-    // No empty weeks: every day after the last lesson practices or holds the week's challenge.
     const busy = new Set(built.items.map((item) => toIsoDate(item.scheduledFor ?? TODAY)));
 
     const spare = Array.from({ length: daysBetween(lastLesson, interview) - 1 }, (_, index) =>
@@ -1160,7 +1100,6 @@ function lessonsFor(skillId: string, count: number): PlannerLesson[] {
   return Array.from({ length: count }, (_, index) => lesson(`${skillId}-${index}`, [skillId]));
 }
 
-/** Each stand-in's skill and the lessons it plans, at half the day's time. */
 function standIns(plan: ReturnType<typeof buildPlan>) {
   return plan.items
     .filter((item) => item.kind === "lesson" && !item.lessonId)
@@ -1170,10 +1109,6 @@ function standIns(plan: ReturnType<typeof buildPlan>) {
 describe("studying everything", () => {
   const EXAM_DAY = "2026-10-23";
 
-  /**
-   * An exam three and a half weeks away whose time doesn't cover its six skills: the first three
-   * outlined, the others still stand-ins.
-   */
   const dated = planInput({
     goal: { dailyMinutes: 40, kind: "exam", targetDate: fromIsoDate(EXAM_DAY) },
     graph: {
@@ -1193,8 +1128,6 @@ describe("studying everything", () => {
     const plan = buildPlan(studyingEverything);
     const after = plan.items.filter((item) => toIsoDate(item.scheduledFor ?? TODAY) > EXAM_DAY);
 
-    // A joined stand-in's total includes its continuation after the exam. Compare its actual
-    // teaching before the exam, rather than assigning that total to the day its first part is due.
     const teachingBeforeExam = (built: typeof plan) =>
       [...built.lessonDayMinutes]
         .map(([key, days]) => ({
@@ -1230,7 +1163,6 @@ describe("studying everything", () => {
 
     expect(eventsBeforeExam(plan)).toStrictEqual(eventsBeforeExam(byExam));
 
-    // The continuation changes neither lesson-day portions nor challenges before the exam.
     expect(teachingBeforeExam(plan)).toStrictEqual(teachingBeforeExam(byExam));
 
     expect(
@@ -1246,7 +1178,6 @@ describe("studying everything", () => {
     expect(byExam.droppedSkillIds.length).toBeGreaterThan(0);
     expect(plan.droppedSkillIds).toStrictEqual([]);
 
-    // Weekly mocks go on after the exam as before it, from its second week; no review days there.
     const mocks = after.filter((item) => item.kind === "mock");
 
     expect(after.some((item) => item.kind === "lesson")).toBe(true);
@@ -1254,7 +1185,7 @@ describe("studying everything", () => {
     expect(toIsoDate(mocks[0]?.scheduledFor ?? TODAY) >= "2026-10-31").toBe(true);
     expect(mocks.every((item) => item.minutes === 150)).toBe(true);
     expect(after.some((item) => item.kind === "review" || item.kind === "checkpoint")).toBe(false);
-    // After-exam teaching and mocks form phase 4; each challenge still closes its own phase.
+
     expect(after.filter((item) => item.kind !== "boss").every((item) => item.phase === 4)).toBe(
       true,
     );
@@ -1295,7 +1226,6 @@ describe("studying everything", () => {
       recommendedMinutes: byExam.recommendedMinutes,
     });
 
-    // Each is measured by the exam on the plan it builds, so the shares differ by a lesson at most.
     expect(feasibility.coveredShare).toBeCloseTo(byExam.coveredShare, 2);
 
     expect(byExam.fullCourseEndDate?.getTime()).toBeGreaterThan(fromIsoDate(EXAM_DAY).getTime());
@@ -1323,7 +1253,6 @@ describe("studying everything", () => {
 
 describe("big goals of any kind", () => {
   it("sizes a big learn skill from the graph, and a skill a few lessons short from its outline", () => {
-    // Quantum-like: skills of 30 and 40 lessons with 5 and 6 outlined, and one only 3 lessons short.
     const plan = buildPlan(
       planInput({
         goal: { dailyMinutes: 30, kind: "learn", targetDate: null },
@@ -1377,7 +1306,7 @@ describe("big goals of any kind", () => {
 
     expect(feasibility).toMatchObject({ deadline: fromIsoDate(finalStretch ?? ""), fits: false });
     expect(feasibility.coveredShare).toBeLessThan(1);
-    // Coverage reads the graph's sizes: a graph that asks only the outlined lessons fits.
+
     const smallerGraph = {
       ...input,
       graph: { ...input.graph, skills: skills.map((item) => ({ ...item, lessons: 5 })) },
@@ -1389,7 +1318,6 @@ describe("big goals of any kind", () => {
 
 describe("a plan's first day", () => {
   it("has study time even when the learner rests on that weekday, and rests from the next week on", () => {
-    // Monday off, and the plan starts on a Monday: day one still studies.
     const restsOnMonday = [12, 0, 12, 12, 12, 12, 12];
     const lessons = Array.from({ length: 12 }, (_, index) => lesson(`l${index}`, ["s1"]));
 
@@ -1407,12 +1335,10 @@ describe("a plan's first day", () => {
     );
 
     expect(lessonDays.has("2026-09-28")).toBe(true);
-    // The next Monday rests again: only the weekly checkpoint, which goes on a rest day, is there.
     expect(lessonDays.has("2026-10-05")).toBe(false);
   });
 });
 
-/** 4,800 minutes of lessons two days before the date: more than both whole days hold. */
 const MORE_THAN_A_DAY_HOLDS = Array.from({ length: 40 }, (_, index) =>
   skill(`s${index}`, { lessons: 40 }),
 );
@@ -1428,7 +1354,6 @@ describe("a plan no daily time can cover", () => {
     const feasibility = getPlanFeasibility({ input });
 
     expect(feasibility).toMatchObject({ fits: false, recommendedMinutes: null });
-    // An exam's date doesn't move: no date to name either.
     expect(feasibility.fittingDate).toBeNull();
   });
 
@@ -1451,7 +1376,6 @@ describe("a plan no daily time can cover", () => {
   });
 });
 
-/** Research, design and testing, then the portfolio and the job search, which get the job. */
 function careerInput(dailyMinutes: number) {
   return planInput({
     goal: { dailyMinutes, kind: "learn", targetDate: fromIsoDate("2026-10-12") },
@@ -1498,7 +1422,6 @@ describe("a career goal short on time", () => {
     expect(planned.filter((id) => id.startsWith("portfolio"))).toHaveLength(4);
     expect(planned.filter((id) => id.startsWith("job-search"))).toHaveLength(3);
 
-    // Every module is in the plan with at least its core (a third), the depth where time allows.
     expect(plan.waitingSkillIds).toStrictEqual([]);
 
     expect(
@@ -1534,17 +1457,13 @@ describe("a career goal short on time", () => {
     const plan = buildPlan(careerInput(16));
     const bosses = plan.items.filter((item) => item.kind === "boss");
 
-    // Every phase keeps its challenge, the last one too: it closes what the plan's time fits.
     expect(bosses.map((item) => item.phase)).toStrictEqual([0, 1, 2, 3]);
 
-    // A phase ends with its challenge; the last runs to the plan's end.
     expect(plan.phases.map((phase) => phase.endDate)).toStrictEqual([
       ...bosses.slice(0, -1).map((item) => dateOf(item)),
       dateOf(plan.items.at(-1) ?? { scheduledFor: null }),
     ]);
 
-    // The depth studied once every core is in belongs to the time it's due in, not to its first
-    // phase: each phase's work falls between its dates.
     expect(plan.items.find((item) => item.lessonId === "research-3")?.phase).toBe(3);
 
     expect(
@@ -1562,7 +1481,6 @@ describe("a career goal short on time", () => {
   });
 });
 
-/** The plan as stored: each item with its id (its key) and position. */
 function store(
   plan: ReturnType<typeof buildPlan>,
   done: ReadonlySet<string> = new Set(),
@@ -1575,7 +1493,6 @@ function store(
   }));
 }
 
-/** The skills a plan's lessons teach. */
 function skillsOf(planned: readonly PlannedItem[]): Set<string> {
   return new Set(
     planned.flatMap((item) => (item.kind === "lesson" && item.skillId ? [item.skillId] : [])),
@@ -1596,9 +1513,6 @@ function todoLessons(plan: { items: readonly Pick<PlannedItem, "key" | "kind" | 
 }
 
 describe("a run after a session that went faster than planned", () => {
-  // A class test 8 days out, planned at the time its lessons should take. The session's pace says
-  // they take half that: what this week holds stays, and nothing new comes into it. Pushed to the
-  // first day after this week as it was, six new lessons filled the day before the test, a review.
   it("keeps new lessons off a day with no time for lessons", () => {
     const today = fromIsoDate("2026-10-12");
     const testDay = fromIsoDate("2026-10-20");
@@ -1637,7 +1551,6 @@ describe("work an earlier day left", () => {
   const tuesday = fromIsoDate("2026-09-29");
   const wednesday = fromIsoDate("2026-09-30");
 
-  /** An exam with three subjects in a study cycle, 30 minutes a day, every day. */
   function cycleInput(attrs: Partial<BuildPlanInput> = {}): BuildPlanInput {
     const skills = [
       skill("math", { area: "Math", lessons: 30, weight: 5 }),
@@ -1670,9 +1583,7 @@ describe("work an earlier day left", () => {
 
     expect(left.length).toBeGreaterThan(0);
     expect(tuesdayLessons.slice(0, left.length)).toStrictEqual(left);
-    // The day keeps its size: what's carried takes the place of the day's own first lessons.
     expect(tuesdayLessons.length).toBeLessThanOrEqual(mondayLessons.length + 1);
-    // Nothing is skipped.
     expect(todoLessons(next)).toStrictEqual(todoLessons({ items }));
   });
 
@@ -1702,7 +1613,6 @@ describe("work an earlier day left", () => {
     const next = buildPlan(
       cycleInput({
         carryOver: { lessonIds: [lessonId] },
-        // Monday was studied in full, but the day's session also gave this later lesson.
         items: store(first, new Set(lessonsOn(first, monday))),
         mode: "forced",
         today: tuesday,
@@ -1716,12 +1626,8 @@ describe("work an earlier day left", () => {
     );
   });
 
-  // A day's session gives lessons due later once its own are done. Left for the next day, they
-  // filled the day a phase the learner saw ends on, and its challenge moved a day later though the
-  // learner had studied.
   it("keeps a shown phase end on its day when what the day before left fills it", () => {
     const input = planInput({
-      /** A whole 15-minute text boss closes Tuesday after Monday's two lessons. */
       goal: { dailyMinutes: 15, kind: "learn", targetDate: null },
       graph: {
         phases: [
@@ -1731,7 +1637,6 @@ describe("work an earlier day left", () => {
         skills: [skill("s1"), skill("s2", { lessons: 4, phase: 1 })],
       },
       lessons: [lesson("l1", ["s1"]), lesson("l2", ["s1"]), ...lessonsFor("s2", 4)],
-      /** Tuesday holds its real 15-minute boss plus one six-minute carried lesson. */
       settings: parsePlanSettings({ weekdayMinutes: [15, 15, 21, 15, 15, 15, 15] }),
     });
 
@@ -1776,10 +1681,6 @@ describe("work an earlier day left", () => {
     expect(todoLessons(withoutRoom)).toStrictEqual(todoLessons({ items }));
   });
 
-  // A language plan's session gave a lesson of a phase weeks ahead (a subject it holds reached
-  // that far), and the learner missed the day: carried first, the lesson dated its phase before
-  // the one before, which hadn't begun (R39, language 2010). It stays where its phase has it, and
-  // a session gives it again while one reaches it.
   it("leaves a lesson given ahead where its phase has it while an earlier phase has days of work left", () => {
     const input = planInput({
       graph: {
@@ -1812,8 +1713,6 @@ describe("work an earlier day left", () => {
     expect(findPhaseOverlaps(next.phases)).toStrictEqual([]);
   });
 
-  // Laid out in the queue's order instead, the first open of Today after the day's settling moved
-  // lessons a day later and left the last ones out by the goal's date.
   it("lays the plan out as the day's settling did on a later run that day", () => {
     const input = planInput({
       goal: { dailyMinutes: 12, kind: "learn", targetDate: fromIsoDate("2026-10-16") },
@@ -1853,8 +1752,6 @@ describe("work an earlier day left", () => {
     );
   });
 
-  // A class test four days after two missed days left no time for a topic whose lessons weren't
-  // written yet: the settling deleted it, and the plan lost work the learner never got to.
   it("sets aside work an earlier day left that no longer fits by the date, never deleting it", () => {
     const input = planInput({
       goal: { dailyMinutes: 12, kind: "learn", targetDate: fromIsoDate("2026-10-01") },
@@ -1885,7 +1782,6 @@ describe("work an earlier day left", () => {
       status: "skipped",
     });
 
-    // Every lesson the missed days left is still there, to do or set aside.
     const left = items.filter(
       (item) => item.kind === "lesson" && (item.scheduledFor ?? wednesday) < wednesday,
     );
@@ -1895,8 +1791,6 @@ describe("work an earlier day left", () => {
     ).not.toContain(undefined);
   });
 
-  // Outlines landed for a stand-in missed days left: its lessons take its place. Set aside as well,
-  // the stand-in read as the skill being done, and the next open of Today left its lessons out.
   it("plans the lessons written for a stand-in an earlier day left in its place, never setting it aside", () => {
     const input = planInput({
       graph: {
@@ -1940,12 +1834,6 @@ describe("work an earlier day left", () => {
   });
 });
 
-/*
- * Practice missed a topic the learner tested out of: it's a gap again, and its lessons come back.
- * Its tested-out lessons don't count toward its core: counted, the lessons that came back were
- * depth a plan short on time cut, and the relearn named the topic with none of its lessons back
- * (career seed 2049).
- */
 describe("a gap whose lessons a test-out skipped", () => {
   it("studies its lessons that came back as its core when time is short", () => {
     const gap = Array.from({ length: 6 }, (_, index) => lesson(`g${index}`, ["g"]));
@@ -1984,12 +1872,6 @@ describe("a gap whose lessons a test-out skipped", () => {
   });
 });
 
-/*
- * A skill's core is the first third of the lessons the plan teaches it, the same for the plan's
- * cuts, its challenges and its checks. A lesson whose title another lesson of the plan holds isn't
- * taught twice: counted all the same, a career skill's challenge asked for a third lesson the plan
- * had put with the depth, months after it (career seed 2082).
- */
 describe("the lessons the plan counts for a skill", () => {
   it("leaves out a lesson whose title another skill's lesson holds", () => {
     const repeated = { ...lesson("r1", ["needs"]), title: "Lesson o1" };

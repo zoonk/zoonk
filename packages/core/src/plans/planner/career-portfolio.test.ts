@@ -4,7 +4,6 @@ import { fromIsoDate } from "./plan-calendar";
 import { type PlanGraphSkill, parsePlanSettings } from "./plan-state";
 import { type PlannerLesson } from "./plan-units";
 
-/** A Monday, half a year before the learner wants the new job. */
 const TODAY = fromIsoDate("2026-09-28");
 
 function skill(
@@ -24,11 +23,6 @@ function lessonsFor(skillId: string, count: number): PlannerLesson[] {
   }));
 }
 
-/**
- * A career change into UX: research, design and testing modules, then a portfolio project whose
- * steps each apply one module, then the job search, which needs the finished case study. The
- * skill graph puts the portfolio and the job search last, as their own phases.
- */
 function careerInput({ outcome }: { outcome: boolean }): BuildPlanInput {
   const skills = [
     skill("research", { area: "Research", phase: 0 }),
@@ -70,7 +64,6 @@ function careerInput({ outcome }: { outcome: boolean }): BuildPlanInput {
   };
 }
 
-/** Each skill's first lesson's place among the plan's lessons. */
 function firstPlaces(plan: ReturnType<typeof buildPlan>): Map<string, number> {
   const lessons = plan.items.filter((item) => item.kind === "lesson");
 
@@ -87,14 +80,11 @@ describe("a career change whose goal needs a portfolio", () => {
     const place = firstPlaces(plan);
     const at = (skillId: string) => place.get(skillId) ?? -1;
 
-    // The project starts right after research, its design right after flows, its case study once
-    // testing is done: never only after every module.
     expect(at("case-scope")).toBeLessThan(at("interviews"));
     expect(at("case-design")).toBeLessThan(at("screens"));
     expect(at("case-study")).toBeGreaterThan(at("testing"));
     expect(at("resume")).toBeGreaterThan(at("case-study"));
 
-    // Phases still come one after another, each closed by its own challenge.
     const bosses = plan.items.filter((item) => item.kind === "boss").map((item) => item.phase);
     expect(bosses).toStrictEqual([...new Set(bosses)].toSorted((a, b) => a - b));
   });

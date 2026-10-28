@@ -7,7 +7,6 @@ import { getSubjectsPerDay } from "./study-cycle-lanes";
 
 const START = fromIsoDate("2026-10-05");
 
-/** Study days of `minutes` each, half of it new lessons, like an exam's days before its mocks. */
 function studyDays({ count, minutes }: { count: number; minutes: number }): PlanDay[] {
   return Array.from({ length: count }, (_, offset) => ({
     date: addDays(START, offset),
@@ -39,7 +38,6 @@ function lessons({
   }));
 }
 
-/** The challenge that closes a phase of an exam without a date. */
 function checkpoint(phase: number): QueueUnit {
   return {
     area: "Português",
@@ -54,7 +52,6 @@ function checkpoint(phase: number): QueueUnit {
   };
 }
 
-/** Each day's subjects in the order of their blocks, by the day `scheduleUnits` puts them on. */
 function blocksByDay({ days, units }: { days: PlanDay[]; units: QueueUnit[] }): string[][] {
   const scheduled = scheduleUnits({ days, units }).units;
 
@@ -117,12 +114,10 @@ describe(arrangeStudyCycle, () => {
     const arranged = arrangeStudyCycle({ days, prerequisites: new Map(), rates: EVEN, units });
     const blocks = blocksByDay({ days, units: arranged });
 
-    // Day one opens with the first subjects of the teaching order: its foundations.
     expect(blocks[0]).toStrictEqual(["Português", "Constitucional"]);
     expect(blocks[1]).toStrictEqual(["Inglês", "Informática"]);
     expect(blocks.slice(0, 10).every((day) => day.length === 2)).toBe(true);
 
-    // Every subject comes back at least every other day.
     const gaps = ["Português", "Constitucional", "Inglês", "Informática"].map((area) => {
       const studied = blocks.flatMap((day, index) => (day.includes(area) ? [index] : []));
       return Math.max(...studied.slice(1).map((day, index) => day - (studied[index] ?? 0)));
@@ -130,7 +125,6 @@ describe(arrangeStudyCycle, () => {
 
     expect(Math.max(...gaps)).toBeLessThanOrEqual(2);
 
-    // Each subject keeps its teaching order.
     const portuguese = arranged.filter((unit) => unit.area === "Português").map((unit) => unit.key);
 
     expect(portuguese).toStrictEqual(
@@ -153,14 +147,10 @@ describe(arrangeStudyCycle, () => {
     const arranged = arrangeStudyCycle({ days, prerequisites: new Map(), rates: EVEN, units });
     const blocks = blocksByDay({ days, units: arranged });
 
-    // Without it, day one opens with Portuguese and constitutional law (see the test above).
     expect(blocks[0]).toStrictEqual(["Português", "Inglês"]);
     expect(blocks.slice(0, 10).every((day) => day.length === 2)).toBe(true);
   });
 
-  // Câmara 1163: political science's chapter in progress had its next lesson on Oct 18, the tenth
-  // of the subject's block that day. A focus on constitutional law gave that subject a bigger share,
-  // political science's block lost a lesson, and the chapter's next lesson went to Oct 19 (R10).
   it("gives the chapter in progress's subject time for its next lesson by the day the learner saw it on", () => {
     const [ahead, english] = [
       lessons({ area: "Inglês", count: 6, skillId: "reading" }),
@@ -193,8 +183,6 @@ describe(arrangeStudyCycle, () => {
     expect(placed.find((unit) => unit.key === next?.key)?.date).toStrictEqual(START);
   });
 
-  // Câmara 1163 again: the day's last minutes went to the focused subject, chosen first, whose
-  // lesson always gets its turn when it fits, and none were left for political science's.
   it("keeps the day's minutes the chapter in progress's next lesson needs from the subjects before it", () => {
     const [next, ...english] = lessons({ area: "Inglês", count: 40 });
 
@@ -229,7 +217,6 @@ describe(arrangeStudyCycle, () => {
 
     const days = studyDays({ count: 30, minutes: 30 });
 
-    // Half an hour a day studies both subjects every day, law in a block three times as long.
     const arranged = arrangeStudyCycle({
       days,
       prerequisites: new Map(),
@@ -273,16 +260,12 @@ describe(arrangeStudyCycle, () => {
 
     const keys = arranged.map((unit) => unit.key);
 
-    // Official writing, and the sign theory it builds on in its own subject, come before the rest
-    // of linguistics, since the discursive test builds on them.
     expect(keys.indexOf("lesson:signo-9")).toBeLessThan(keys.indexOf("lesson:redacao-oficial-0"));
 
     expect(keys.indexOf("lesson:redacao-oficial-9")).toBeLessThan(
       keys.indexOf("lesson:variacao-0"),
     );
 
-    // The discursive practice itself starts in the first days, beside them, once official writing
-    // has started: Câmara's new plans put a skill days before its base in another subject (R16).
     expect(keys.indexOf("lesson:peca-tecnica-0")).toBeLessThan(
       keys.indexOf("lesson:redacao-oficial-9"),
     );
@@ -317,8 +300,6 @@ describe(arrangeStudyCycle, () => {
 
     const keys = arranged.map((unit) => unit.key);
 
-    // Fundamental rights, which the cut keeps, come first in their subject; the principles that
-    // political science builds on wait for them, and political science waits for its base.
     expect(keys.indexOf("lesson:direitos-9")).toBeLessThan(keys.indexOf("lesson:principios-0"));
 
     expect(keys.indexOf("lesson:organizacao-politica-0")).toBeGreaterThan(
@@ -403,8 +384,6 @@ describe(arrangeStudyCycle, () => {
       units,
     });
 
-    // Portuguese runs out after its two lessons, law's next lesson doesn't fit what's left of
-    // the day, and English waits for the next day instead of taking those minutes.
     expect(blocksByDay({ days, units: arranged })[0]).toStrictEqual(["Português", "Direito"]);
     expect(scheduleUnits({ days, units: arranged }).dropped).toStrictEqual([]);
   });
@@ -423,10 +402,6 @@ describe(arrangeStudyCycle, () => {
     expect(arranged.map((unit) => unit.key).indexOf("boss:0")).toBe(6);
   });
 
-  // A skill whose base, in another subject, the plan studies in a later phase waits for it there.
-  // Left in its own phase, it went in at that phase's end, before its base started (R16, Câmara
-  // seed 1101: "past basics" on the discursive test brought its essays ahead of the political
-  // science they build on).
   it("moves a skill whose base comes in a later phase to that phase, after its base starts", () => {
     const essays = lessons({ area: "Discursiva", count: 2, skillId: "essays" });
     const politics = lessons({ area: "Política", count: 2, skillId: "politics" });
@@ -476,8 +451,6 @@ describe(arrangeStudyCycle, () => {
     expect(keys.indexOf("lesson:essays-1")).toBeLessThan(keys.indexOf("boss:1"));
   });
 
-  // Câmara seed 1101 at 15 minutes a day: the discursive test, practiced on days of its own, fell
-  // behind its spread and took an essay before the political science it builds on had started.
   it("keeps an area practiced on days of its own from starting a skill before its base", () => {
     const days = studyDays({ count: 20, minutes: 10 });
 
@@ -504,8 +477,6 @@ describe(arrangeStudyCycle, () => {
     expect(keys.indexOf("lesson:politics-0")).toBeLessThan(keys.indexOf("lesson:essays-0"));
   });
 
-  // Câmara seed 1121: what didn't fit the cycle's days went after them one subject at a time, and a
-  // later layout dated a skill a day before the base it builds on.
   it("keeps what doesn't fit before the last day after the skills it builds on", () => {
     const arranged = arrangeStudyCycle({
       days: studyDays({ count: 1, minutes: 0 }),
@@ -538,7 +509,6 @@ describe("a study cycle of many subjects", () => {
     const placed = scheduleUnits({ days, units: arranged }).units;
     const blocks = blocksByDay({ days, units: arranged });
 
-    // Until the heavy subjects run out of lessons, near the end, when the others fill the days.
     expect(blocks.slice(0, 20).every((day) => day.length === 3)).toBe(true);
 
     const firstWeeks = placed.filter((unit) => unit.date < addDays(START, 18));
@@ -559,7 +529,6 @@ describe("a study cycle of many subjects", () => {
   });
 
   it("starts a subject whose foundations the learner skipped right away, past them, not at its later phase's turn", () => {
-    // Portuguese's foundations (phase 0) are known, so only its phase-1 lessons are left.
     const units = [
       ...["Constitucional", "Inglês", "Informática"].flatMap((area) =>
         lessons({ area, count: 40 }),
@@ -587,12 +556,10 @@ describe("a study cycle of many subjects", () => {
     const blocks = blocksByDay({ days, units: arranged });
 
     expect(blocks.slice(0, 2).flat()).toContain("Português");
-    // A subject that sits in a later phase of the graph still waits for its turn.
     expect(blocks.slice(0, 2).flat()).not.toContain("Processo");
   });
 });
 
-/** Minutes each area gets on the first `count` days `scheduleUnits` lays the units on. */
 function minutesByArea({
   count,
   days,
@@ -613,12 +580,6 @@ function minutesByArea({
 }
 
 describe("a subject whose lessons come out of their skills' order", () => {
-  /*
-   * A chapter shared by two skills is planned where the first is taught, but its later lessons
-   * count for the second, which builds on a skill taught after it in the same subject (Lucas's
-   * natural sciences and mathematics: "Counting by cases" needed skills 78 and 107 places later). The
-   * subject must never wait on its own later lessons while an always-ready one takes its days.
-   */
   it("studies its prerequisites first instead of waiting while other subjects take its days", () => {
     const units = [
       ...lessons({ area: "Natureza", count: 2, skillId: "genetica" }),
@@ -652,11 +613,9 @@ describe("a subject whose lessons come out of their skills' order", () => {
     const firstWeek = minutesByArea({ count: 5, days, units: arranged });
     const total = [...firstWeek.values()].reduce((sum, minutes) => sum + minutes, 0);
 
-    // Each subject gets about a third of the first days, as their equal worth says.
     expect((firstWeek.get("Natureza") ?? 0) / total).toBeGreaterThan(0.25);
     expect((firstWeek.get("Redação") ?? 0) / total).toBeLessThan(0.42);
 
-    // A skill still comes after the ones it builds on.
     const keys = arranged.map((unit) => unit.key);
 
     expect(keys.indexOf("lesson:genetica-0")).toBeGreaterThan(
@@ -676,7 +635,6 @@ describe("a subject whose lessons come out of their skills' order", () => {
 
     const days = studyDays({ count: 10, minutes: 60 });
 
-    // A cycle the graph normalizer missed: each skill names the other as its prerequisite.
     const arranged = arrangeStudyCycle({
       days,
       prerequisites: new Map([
@@ -687,7 +645,6 @@ describe("a subject whose lessons come out of their skills' order", () => {
       units,
     });
 
-    // Half an hour of new lessons a day: ten 3-minute lessons, not one.
     expect(minutesByArea({ count: 1, days, units: arranged }).get("Linguística")).toBe(30);
   });
 });

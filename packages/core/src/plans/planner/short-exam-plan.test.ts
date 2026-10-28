@@ -8,18 +8,12 @@ import { type PlanGraphSkill, parsePlanSettings } from "./plan-state";
 import { type PlannerLesson } from "./plan-units";
 import { type SkillReadiness } from "./skill-order";
 
-/** A Wednesday: Bia's plan starts the day she uploads her slides. */
 const TODAY = fromIsoDate("2026-09-30");
 
-/** A class test's own mock: ten questions in about half an hour. */
 const SHORT_MOCK_MINUTES = 30;
 
 const DAILY_MINUTES = 60;
 
-/**
- * Bia's biochemistry exam map, from last year's exam: enzymes came up four times, glycolysis
- * three, the Krebs cycle and the respiratory chain twice.
- */
 const SKILLS: PlanGraphSkill[] = [
   { area: "Biochemistry", lessons: 3, name: "Enzymes", phase: 0, skillId: "enzymes", weight: 4 },
   {
@@ -51,7 +45,6 @@ const LESSONS: PlannerLesson[] = SKILLS.flatMap((skill) =>
   })),
 );
 
-/** Placement found glycolysis solid: the plan starts with what she doesn't know yet. */
 const READINESS = new Map<string, SkillReadiness>([
   ["glycolysis", { reps: 3, retrievabilityAtTarget: 0.95, stability: 30, state: "solid" }],
 ]);
@@ -150,7 +143,6 @@ describe("a class test days away", () => {
   it("fits the short mock to a day the learner gives less time, without a review after it", () => {
     const input = classTest({ days: 2 });
 
-    // Fifteen minutes on Thursday, the day before the test.
     const plan = buildPlan({
       ...input,
       settings: parsePlanSettings({

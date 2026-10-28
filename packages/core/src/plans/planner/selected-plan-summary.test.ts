@@ -9,7 +9,6 @@ import { DEFAULT_LESSON_MINUTES, type PlannerLesson } from "./plan-units";
 import { type DayShape, type FixedEvent } from "./schedule-units";
 import { summarizeSelectedPlan } from "./selected-plan-summary";
 
-/** A Monday. */
 const TODAY = fromIsoDate("2026-09-28");
 
 function skill(skillId: string, attrs: Partial<PlanGraphSkill> = {}): PlanGraphSkill {
@@ -103,7 +102,6 @@ describe(estimateDailyNeed, () => {
       mocks: [],
     };
 
-    // (n - 15) * 0.5 >= 2
     expect(estimateDailyNeed({ fixed, remaining: 2 })).toStrictEqual({
       basis: "estimated",
       minutes: 19,
@@ -124,15 +122,12 @@ describe(estimateDailyNeed, () => {
   });
 
   it("asks the days before a mock only what past days and its own day don't give", () => {
-    // The mock's 10-minute day gives it nothing past its leading 15-minute boss, and 154 of its
-    // 165 minutes were set aside before today: the day before still gives 11.
     const fixed: FixedDays = {
       days: [day([], 1), day([event("boss", 15, { leads: true }), event("mock", 165)], 1)],
       minutesAt: (minutes) => [minutes, 10],
       mocks: [{ at: 1, clock: 165, past: 154 }],
     };
 
-    // n - 11 >= 5
     expect(estimateDailyNeed({ fixed, remaining: 5 })).toStrictEqual({
       basis: "estimated",
       minutes: 16,
@@ -186,7 +181,6 @@ describe(estimateDailyNeed, () => {
   });
 });
 
-/** An exam whose topic builds on a 26-lesson base the Library hasn't written yet. */
 function baseExamInput(choice: "deep" | null): BuildPlanInput {
   return {
     goal: { dailyMinutes: 30, kind: "exam", targetDate: fromIsoDate("2026-12-21") },
@@ -216,7 +210,6 @@ function baseExamInput(choice: "deep" | null): BuildPlanInput {
   };
 }
 
-/** The base's required raw minutes when the learner studies it as `choice` says. */
 function requiredOf(choice: "deep" | null) {
   const { input } = chooseBases(baseExamInput(choice));
 
@@ -235,7 +228,6 @@ describe(summarizeSelectedPlan, () => {
     const built = buildPlan(input);
     const summary = summarizeSelectedPlan({ built, examSubjects: null, input });
 
-    // The last lesson's day, or its phase's checkpoint after it.
     const last = built.items
       .filter((item) => item.kind === "lesson" || item.kind === "boss")
       .map((item) => toIsoDate(built.teachingEnds.get(item.key) ?? item.scheduledFor ?? TODAY))
@@ -296,7 +288,6 @@ describe(summarizeSelectedPlan, () => {
   });
 
   it("never counts a skill with no requirement data as covered", () => {
-    // s3 has neither written lessons nor a stand-in size: it's in the goal, with nothing to plan.
     const input = learnInput({
       graph: {
         phases: [{ milestone: null, name: "Basics" }],
@@ -385,8 +376,6 @@ describe(summarizeSelectedPlan, () => {
     expect(requiredOf("deep")).toBe(26 * DEFAULT_LESSON_MINUTES);
   });
 
-  // An exam the learner studies whole: what doesn't fit before the exam goes on after it, held but
-  // counted none by the deadline. Finishing one of those early is what changes what the plan covers.
   it("posts the goal's date it measured and the held lessons it counts short", () => {
     const input = learnInput({
       fullMockMinutes: 60,
@@ -483,7 +472,6 @@ describe(summarizeSelectedPlan, () => {
     ).toStrictEqual(phaseDates);
   });
 
-  // The Plan shows each base as the layout studied it, without reading the Library again.
   it("keeps what each base is, beside how the layout studied it", () => {
     const { input } = chooseBases(baseExamInput("deep"));
     const summary = summarizeSelectedPlan({ built: buildPlan(input), examSubjects: null, input });

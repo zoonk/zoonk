@@ -6,7 +6,6 @@ function skill(skillId: string, attrs: Partial<PlanGraphSkill>): PlanGraphSkill 
   return { area: null, lessons: 10, name: skillId, phase: 0, skillId, weight: 3, ...attrs };
 }
 
-/** A subject of many small topics, one of a few big ones, and an area outside the notice. */
 const graph: PlanGraph = {
   phases: [{ milestone: null, name: "Everything" }],
   skills: [
@@ -24,7 +23,6 @@ function averageWeight(weighed: PlanGraph, area: string): number {
   return own.reduce((sum, item) => sum + (item.weight ?? 0), 0) / own.length;
 }
 
-/** The notice subjects' weight in all: their skills' weights by their size. */
 function sharedMass(from: PlanGraph): number {
   return from.skills
     .filter((item) => item.area !== "Estratégia")
@@ -42,11 +40,9 @@ describe(weighGraphByAreaShares, () => {
 
     expect(averageWeight(weighed, "Natureza")).toBeCloseTo(averageWeight(weighed, "Humanas"), 6);
 
-    // Inside a subject, skills keep their weights relative to each other.
     const [first, second] = weighed.skills;
     expect((first?.weight ?? 0) / (second?.weight ?? 1)).toBeCloseTo(2, 6);
 
-    // The shared subjects keep their weight in all; an area outside the notice keeps its own.
     expect(sharedMass(weighed)).toBeCloseTo(sharedMass(graph), 6);
     expect(weighed.skills.at(-1)).toStrictEqual(graph.skills.at(-1));
   });

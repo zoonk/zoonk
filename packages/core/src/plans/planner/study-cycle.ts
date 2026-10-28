@@ -32,15 +32,6 @@ import {
 } from "./study-cycle-lanes";
 import { listStartingParts, splitIntoParts, splitWaiting } from "./study-cycle-parts";
 
-/**
- * The subjects of one day: among the ready ones that have joined, those that have had the least
- * time for what they're worth, the cycle's order breaking ties; a subject joins early only when
- * too few have. The skills of other subjects that a joined subject builds on are brought forward
- * in theirs (`pullPrerequisites`). A subject that waited (for a prerequisite or to join)
- * starts at the pass of the first subject chosen, so it doesn't save up time while it waits. The
- * subject of the chapter in progress takes the last place by the day the learner saw its next
- * lesson on, so a change never pushes that chapter back (R10).
- */
 function chooseLanes({
   context,
   count,
@@ -81,13 +72,11 @@ function chooseLanes({
   return chosen.length > 0 ? chosen : open.slice(0, 1);
 }
 
-/** A unit's place in the day, by its subject's place among the day's subjects. */
 function toLaneRank({ lanes, unit }: { lanes: readonly Lane[]; unit: QueueUnit }): number {
   const rank = lanes.findIndex((lane) => lane.area === unit.area);
   return rank === -1 ? lanes.length : rank;
 }
 
-/** Whether every unit comes after the units of the same day that teach its prerequisites. */
 function keepsPrerequisites({
   context,
   units,
@@ -101,11 +90,6 @@ function keepsPrerequisites({
   });
 }
 
-/**
- * The day's lessons as blocks, one subject after another: what a subject got after the others'
- * blocks (lessons don't split, so a day's last minutes go back to its subjects) joins its block,
- * unless a lesson would come before one it builds on.
- */
 function groupDayBySubject({
   context,
   from,
@@ -138,13 +122,6 @@ function groupDayBySubject({
   }
 }
 
-/**
- * Fills one day: an area practiced on days of its own takes its part first (see
- * `takeCadencedBlocks`), then each chosen subject gets a share of the day's lesson time in
- * proportion to what it's worth, in one block each, in the order they were chosen; what the blocks
- * leave (lessons don't split) goes to the same subjects again, then to the next ones due. A first
- * lesson longer than what's left of the day still goes, and runs into the days after.
- */
 function fillDay({
   context,
   dayIndex,
@@ -171,15 +148,9 @@ function fillDay({
       isUnitReady({ context, left: state.left, unit: lane.units[0] }),
   );
 
-  // The subject holding the chapter in progress's next lesson, due by this day, goes first (R10).
   const lead = behind ?? chosen.find((lane) => isDue({ date: dateOf(lane), lane })) ?? first;
   const head = lead?.units[0];
 
-  // A lesson longer than the day goes when its subject is the most due, and takes the days it
-  // spans; waiting for a day it fits would keep it out of the plan for good. An area practiced on
-  // days of its own is the most due once it's behind: at 5 minutes a day, every lesson is longer
-  // than the day, and ENEM's essay never had a turn. Only once what its next lesson builds on has
-  // started, as in the rotation: Câmara's essays went before the political science they build on.
   if (lead && head && head.minutes > room + EPSILON) {
     placeUnit({ lane: lead, state });
 
@@ -223,11 +194,6 @@ function fillDay({
   closeDay({ dayEnd, empty: state.placed.length === from, state });
 }
 
-/**
- * Ends a filled day: minutes no lesson fitted in stay unused, so the next day's first subject
- * starts on that day instead of slipping a lesson into this one. A day with no lessons at all (one
- * an area practiced on days of its own waits through) is skipped whole.
- */
 function closeDay({
   dayEnd,
   empty,
@@ -246,11 +212,6 @@ function closeDay({
   }
 }
 
-/**
- * Fills the days in order, each one that still has lesson time while there are lessons to place.
- * A lesson that runs past its day uses up the days it spans. The areas practiced on days of their
- * own (`cadenced`) keep the days going after the others' lessons only in the last part.
- */
 function arrangeDays({
   cadenced,
   context,
@@ -271,18 +232,6 @@ function arrangeDays({
   });
 }
 
-/**
- * Arranges an exam's lessons as a study cycle a teacher would write: each day covers a few
- * subjects (one to four, by the day's minutes; see `getSubjectsPerDay`) in a block each, and the
- * subjects rotate so every one comes back within days, the ones worth more (`rates`: the exam's
- * weight and the learner's gaps) in longer blocks. Each subject keeps its teaching order, a skill
- * starts only once its prerequisites are placed, the first days open with the subjects placement
- * found gaps in and the ones worth most, and subjects that start in later phases join over the
- * first two weeks (`MAX_JOIN_DAYS`). A skill not outlined yet takes its turns like the others, in
- * parts about a lesson long (`splitStandIns`; `joinStandIns` makes them one item again once
- * they're scheduled). Days come from the same capacities `scheduleUnits` lays units on, so each
- * day's lessons land on it.
- */
 export function arrangeStudyCycle({
   areaPhases,
   cadenced = new Map(),
@@ -294,19 +243,13 @@ export function arrangeStudyCycle({
   rates,
   units,
 }: {
-  /** The phase each area starts in the skill graph (`toLanes`). */
   areaPhases?: ReadonlyMap<string, number>;
-  /** Areas practiced on days of their own instead of in the rotation (see `CadencedArea`). */
   cadenced?: ReadonlyMap<string, CadencedArea>;
   days: readonly PlanDay[];
-  /** The subjects placement found gaps in, which open the cycle (`toLanes`). */
   firstAreas?: ReadonlySet<string>;
-  /** The notice's parts the learner said they know, which open it after the others (`toLanes`). */
   knownAreas?: ReadonlySet<string>;
-  /** The notice's parts, which open it before areas beyond it; null without a notice. */
   noticeAreas?: ReadonlySet<string> | null;
   prerequisites: ReadonlyMap<string, readonly string[]>;
-  /** What each area is worth per minute of study, relative to the others. */
   rates: ReadonlyMap<string, number>;
   units: readonly QueueUnit[];
 }): QueueUnit[] {
@@ -378,7 +321,6 @@ export function arrangeStudyCycle({
       state,
     });
 
-    // A checkpoint closes its day, as `scheduleUnits` lays it: the next phase starts the day after.
     if (checkpoint) {
       const needed = state.used + checkpoint.minutes;
       const dayIndex = findDayIndex({ cumulative: context.cumulative, needed });

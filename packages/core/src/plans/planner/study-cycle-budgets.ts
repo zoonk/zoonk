@@ -1,13 +1,7 @@
 import { type CycleContext, type CycleState, type Lane, isUnitReady } from "./study-cycle-lanes";
 
-/** Floating-point sums of minutes must not make a lesson look due a day early. */
 const EPSILON = 1e-6;
 
-/**
- * The minutes a subject needs on this day to reach the next lesson of the chapter the learner is in
- * the middle of, which the plan they see has on this day or before (see `QueueUnit.dueBy`): that
- * lesson and the subject's lessons before it. 0 when the subject holds no such lesson.
- */
 export function getDueMinutes({ date, lane }: { date: Date | undefined; lane: Lane }): number {
   if (!date || lane.dueUnits.length === 0) {
     return 0;
@@ -27,18 +21,10 @@ export function getDueMinutes({ date, lane }: { date: Date | undefined; lane: La
   return lane.units.slice(0, index + 1).reduce((total, unit) => total + unit.minutes, 0);
 }
 
-/** Whether the subject holds the chapter in progress's next lesson, due by this day. */
 export function isDue({ date, lane }: { date: Date | undefined; lane: Lane }): boolean {
   return getDueMinutes({ date, lane }) > 0;
 }
 
-/**
- * Each chosen subject's share of the day's lesson time (`left`), in proportion to what it's worth;
- * the subject of the chapter in progress gets at least the time to reach its next lesson by the day
- * the learner saw it on (`getDueMinutes`), and the others share the rest. Câmara's focus on
- * constitutional law shrank political science's block by a lesson, and its chapter's next lesson
- * went a day later (R10).
- */
 export function getBudgets({
   chosen,
   date,
@@ -47,7 +33,6 @@ export function getBudgets({
 }: {
   chosen: readonly Lane[];
   date: Date | undefined;
-  /** The day a subject's due lessons count by, when not `date` (see `getDueDate`). */
   dateOf?: (lane: Lane) => Date | undefined;
   left: number;
 }): Map<Lane, number> {
@@ -68,12 +53,6 @@ export function getBudgets({
   );
 }
 
-/**
- * The minutes each chosen subject leaves of the day for the subjects after it that hold the
- * chapter in progress's next lesson (`getDueMinutes`): a subject before them takes at least one
- * lesson when it fits, and Câmara's focused constitutional law took the day's last minutes that
- * political science's next lesson needed.
- */
 export function getReserves({
   chosen,
   date,
@@ -81,7 +60,6 @@ export function getReserves({
 }: {
   chosen: readonly Lane[];
   date: Date | undefined;
-  /** The day a subject's due lessons count by, when not `date` (see `getDueDate`). */
   dateOf?: (lane: Lane) => Date | undefined;
 }): Map<Lane, number> {
   return new Map(
@@ -97,14 +75,6 @@ export function getReserves({
   );
 }
 
-/**
- * The day a subject's due lessons count by on this day (see `getDueMinutes`): this day, or the day
- * the learner saw the chapter in progress's next lesson on when, after one lesson of another
- * subject (`others`, the longest next one), the time until that day can't hold the minutes to
- * reach it. Then it starts now: on light days a lesson spans several, and the other subjects'
- * lessons begun first left "less Linguagens" two days late for its chapter (R10). It only ever
- * starts it sooner, in the plan's own time.
- */
 function getDueDate({
   context,
   dayIndex,
@@ -115,9 +85,7 @@ function getDueDate({
   context: CycleContext;
   dayIndex: number;
   lane: Lane;
-  /** The longest next lesson of the other subjects ready now. */
   others: number;
-  /** The lesson minutes the cycle placed so far. */
   used: number;
 }): Date | undefined {
   const date = context.days[dayIndex]?.date;
@@ -140,10 +108,6 @@ function getDueDate({
   return left + EPSILON < needed ? dueBy : date;
 }
 
-/**
- * Each subject's due date on this day (see `getDueDate`), after the longest next lesson of the
- * other subjects ready now, which one due later may wait behind.
- */
 export function toDueDates({
   context,
   dayIndex,

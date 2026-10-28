@@ -5,7 +5,6 @@ import { getPlanFeasibility } from "./plan-feasibility";
 import { parsePlanSettings } from "./plan-state";
 import { summarizeSelectedPlan } from "./selected-plan-summary";
 
-/** Two courses each wrote "Lei de Ohm", one for each skill: the plan teaches it once. */
 function repeatedTitleInput(): BuildPlanInput {
   return {
     courseStart: true,

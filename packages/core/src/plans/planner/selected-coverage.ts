@@ -7,24 +7,14 @@ import { getBaseChoices } from "./plan-bases";
 import { type PlannedItem } from "./plan-items";
 import { type SkillRequirement, isCompleted } from "./selected-requirement";
 
-/** Floating-point sums of minutes must not read a covered skill as short. */
 const EPSILON = 1e-6;
 
-/**
- * A notice subject the plan teaches: the plan's areas it gathers and its share of the exam, so an
- * exam's coverage counts what its questions are worth.
- */
 export type ExamSubjectShare = { areas: readonly string[]; share: number };
 
 type ScopedSkill = { area: string; skillId: string; weight: number };
 
 type SelectedSkill = SelectedCoverage["skills"][number];
 
-/**
- * What each skill is worth to an exam: its subject's share of the exam, shared among the subject's
- * skills by their exam weight. Skills outside the notice's subjects (study strategy, say) aren't
- * questions of the exam. Null when no subject has a share.
- */
 function getExamWorth({
   examSubjects,
   skills,
@@ -44,12 +34,6 @@ function getExamWorth({
   return worth.some(([, value]) => value > 0) ? new Map(worth) : null;
 }
 
-/**
- * The skills the plan measures: the graph's, without the ones the learner took out on purpose (an
- * area they skip, a base they chose to skip, the foundations of an area they said they're past the
- * basics of, unless they then missed one), each with what it's worth: its subject's share of the
- * exam (see `getExamWorth`), else its weight.
- */
 function listScope({
   examSubjects,
   input,
@@ -92,12 +76,6 @@ function listScope({
   };
 }
 
-/**
- * The raw lesson minutes an item's time takes on days before the deadline (see `lessonRawMinutes`).
- * An item the plan dates without time of its own takes none: work earlier days left that the days
- * before the deadline can't hold is due with the last of it (see `placeCarriedWork`), and counting
- * it there told a learner back from weeks away that everything still fit.
- */
 function sumRawBefore({
   built,
   deadline,
@@ -111,11 +89,6 @@ function sumRawBefore({
   return [...days].reduce((sum, [day, minutes]) => (day < deadline ? sum + minutes : sum), 0);
 }
 
-/**
- * The raw minutes each of the plan's written lessons covers by the deadline: whole when completed,
- * else its time's portions on days before it, so a long lesson that runs past the deadline counts
- * only what comes before. A lesson the plan doesn't hold, or dates without time, covers nothing.
- */
 function listCoveredLessons({
   built,
   deadline,
@@ -144,7 +117,6 @@ function listCoveredLessons({
   );
 }
 
-/** What of each skill's stand-in the plan lays out before the deadline, by skill. */
 function listCoveredStandIns({
   built,
   deadline,
@@ -162,12 +134,6 @@ function listCoveredStandIns({
   }, new Map<string, number>());
 }
 
-/**
- * The lessons still to do the plan counts less than whole by the deadline (one running past it, or
- * after it), each once with the measured skills it counts for (see `SelectedCoverage.shortLessons`):
- * finishing one is the only completion that changes what the plan covers. A lesson the plan doesn't
- * hold has no item to finish, so it isn't listed.
- */
 function listShortLessons({
   built,
   covered,
@@ -209,7 +175,6 @@ function listShortLessons({
     .toSorted((a, b) => a.lessonId.localeCompare(b.lessonId));
 }
 
-/** How much of a skill counts as covered: all of a settled one, none of an unknown one. */
 export function getSkillValue(skill: SelectedSkill): number {
   if (skill.state === "settled") {
     return 1;
@@ -218,14 +183,6 @@ export function getSkillValue(skill: SelectedSkill): number {
   return skill.state === "unknown" ? 0 : Math.min(1, skill.coveredRaw / skill.requiredRaw);
 }
 
-/**
- * How much of the chosen requirement the selected plan covers by its deadline (see
- * `SelectedSummary.coverage`): each in-scope skill's covered raw minutes over its required ones,
- * weighted by what it's worth, a settled skill counted whole and one with no requirement data
- * counted as none (never as covered). `fits` holds only when every topic is in, every in-scope
- * skill is covered whole and none is unknown. It keeps the goal's date it measured against, and the
- * lessons it counts less than whole (see `listShortLessons`).
- */
 export function getCoverage({
   built,
   deadline,
@@ -275,9 +232,6 @@ export function getCoverage({
   const total = skills.reduce((sum, skill) => sum + skill.worth, 0);
   const covered = skills.reduce((sum, skill) => sum + skill.worth * getSkillValue(skill), 0);
 
-  // A topic is in with completed or tested-out teaching, never lessons set aside (`hasEveryTopic`).
-  // A lesson still to do brings its topic in only with time before the deadline, so one taught
-  // after the exam, or dated without time, leaves its topic out by then.
   const coreFits = hasEveryTopic({
     built: {
       ...built,

@@ -3,12 +3,6 @@ import { getSkippedSkillIds } from "../../sessions/_utils/review-skills";
 import { type BuildPlanInput } from "./build-plan";
 import { type PlannedItem } from "./plan-items";
 
-/**
- * A built plan as its bosses read it once saved (see `getBossSkillIds`): its items in plan order
- * (their key for an id), each item's skills as `loadGoalPlan` reads them (`rows`, `survivors`; the
- * items' own skills without them), the graph's skills with the lessons this build counted, and the
- * plan's skills without the areas the learner took out.
- */
 export function toBossPlan({
   input,
   items,

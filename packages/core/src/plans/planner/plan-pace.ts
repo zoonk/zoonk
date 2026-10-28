@@ -1,22 +1,15 @@
 import { type PaceSource } from "./plan-state";
 
-/** How long learners took against the lessons' estimates: 1.2 means 20% longer. */
+/** `ratio` is time taken over the estimate: 1.2 means 20% longer. */
 export type PaceSample = { count: number; ratio: number };
 
 export type Pace = { factor: number; source: PaceSource };
 
-/** Enough lessons for each source to be trusted over the next one. */
 const MIN_LESSONS: Record<PaceSource, number> = { course: 20, own: 5, typical: 50 };
 
-/** Estimates never shrink below half or grow past two and a half times what lessons expect. */
 const MIN_FACTOR = 0.5;
 const MAX_FACTOR = 2.5;
 
-/**
- * How many lessons the pace learners had before counts as, against the learner's own: their own
- * pace takes over as they finish more, so a few quick (or slow) lessons nudge every estimate
- * instead of halving or doubling it.
- */
 const PRIOR_LESSONS = 20;
 
 function isTrusted({ sample, source }: { sample: PaceSample | null; source: PaceSource }) {
@@ -30,16 +23,10 @@ function findTrusted(
   return found?.[1] ? [found[0], found[1]] : null;
 }
 
-/** The learner's own pace, weighed against what others' pace said by how many lessons it rests on. */
 function blendOwn({ own, prior }: { own: PaceSample; prior: number }): number {
   return (own.count * own.ratio + PRIOR_LESSONS * prior) / (own.count + PRIOR_LESSONS);
 }
 
-/**
- * Picks the pace estimates use: the learner's own once they finished enough lessons (blended with
- * what others' pace said until it rests on many), then other learners' pace on the goal's lessons,
- * then the average across all lessons, and the lessons' own estimates when there's no data yet.
- */
 export function choosePace({ course, own, typical }: Record<PaceSource, PaceSample | null>): Pace {
   const others = findTrusted([
     ["course", course],

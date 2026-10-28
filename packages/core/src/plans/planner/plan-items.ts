@@ -3,19 +3,13 @@ import { toIsoDate } from "./plan-calendar";
 import { getBossKey, getLessonKey, getSkillKey } from "./plan-units";
 import { type ScheduledEvent, type ScheduledUnit } from "./schedule-units";
 
-/** A plan item as stored, before this planning run. */
 export type ExistingPlanItem = {
   chapterId: string | null;
   completedAt: Date | null;
   id: string;
-  /** Saved allocation facts reserve an unavailable shown lesson's interval without delivering it. */
   facts?: PlanItem["facts"];
   kind: PlanItemKind;
   lessonId: string | null;
-  /**
-   * A stand-in's lessons: how many of its skill's lessons the plan teaches in its place, after
-   * cuts and base choices, as the plan saved it. Null or absent for every other item.
-   */
   lessons?: number | null;
   phase: number;
   position: number;
@@ -25,15 +19,12 @@ export type ExistingPlanItem = {
   titleSnapshot: string;
 };
 
-/** A plan item after this run: `id` is kept for items that were already in the plan. */
 export type PlannedItem = Omit<ExistingPlanItem, "id" | "position"> & {
   id: string | null;
   key: string;
-  /** Study time it takes, reviews and practice around a lesson included. */
   minutes: number;
 };
 
-/** Identifies an item across planning runs, so ids and finished work carry over. */
 export function getItemKey(
   item: Pick<
     ExistingPlanItem,
@@ -61,10 +52,6 @@ export function getItemKey(
     : `item:${item.id}`;
 }
 
-/**
- * On one date: work already kept first, then a challenge that leads the day (`FixedEvent.leads`),
- * then lessons in queue order, then fixed events.
- */
 export type RankedItem = { item: PlannedItem; rank: number };
 
 export const KEPT_RANK = 0;
@@ -81,7 +68,6 @@ export function compareItems(a: RankedItem, b: RankedItem): number {
   return getSortDate(a.item) - getSortDate(b.item) || a.rank - b.rank;
 }
 
-/** A scheduled unit as a new plan item. */
 export function fromUnit(unit: ScheduledUnit): PlannedItem {
   return {
     chapterId: unit.chapterId,
@@ -116,15 +102,9 @@ function fromEvent(event: ScheduledEvent): PlannedItem {
   };
 }
 
-/**
- * Events of learn plans belong to the phase of the lessons before them, never one after the phase
- * the work still to do after them studies: a lesson of a later phase done ahead dated that phase's
- * weekly challenge, which then read as running before the phases still to study (R39).
- */
 function fillEventPhases(items: readonly PlannedItem[]): PlannedItem[] {
   const firstPhase = items.find((item) => item.phase >= 0)?.phase ?? 0;
 
-  // The phase of the first item still to do from each index on, events aside.
   const nextTodo = items.reduceRight<(number | undefined)[]>((next, item, index) => {
     next[index] = item.phase >= 0 && item.status === "todo" ? item.phase : next[index + 1];
     return next;
@@ -139,16 +119,6 @@ function fillEventPhases(items: readonly PlannedItem[]): PlannedItem[] {
   }, []);
 }
 
-/**
- * Puts finished work, items kept from this week, and newly scheduled lessons and events in one
- * order: by date, then finished first, a challenge that leads its day (the day's lessons come
- * after it: Today showed the chapter's next lesson a learner was promised for that day before the
- * challenge, and the plan read the challenge as beside it, asking 15 minutes more), lessons in
- * queue order, fixed events last. New items reuse
- * the id of the todo item they replace, so an item keeps its identity while its date moves, and
- * the chapter it teaches from: a skill's item linked to a chapter (whose next lesson the session
- * picks) stays that chapter's instead of turning into a stand-in waiting for lessons.
- */
 export function mergePlanItems({
   events,
   kept,
@@ -156,9 +126,7 @@ export function mergePlanItems({
   units,
 }: {
   events: readonly ScheduledEvent[];
-  /** Finished items and this week's items an automatic run keeps, with their minutes. */
   kept: readonly PlannedItem[];
-  /** Todo items this run replaces, whose ids new items reuse. */
   replaced: readonly ExistingPlanItem[];
   units: readonly ScheduledUnit[];
 }): PlannedItem[] {

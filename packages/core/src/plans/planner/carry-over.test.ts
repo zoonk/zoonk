@@ -7,10 +7,8 @@ import { type PlannedItem } from "./plan-items";
 import { applyPlanOperations } from "./plan-operations";
 import { type PlanGraph, parsePlanSettings } from "./plan-state";
 
-/** A Monday. */
 const TODAY = new Date("2026-10-12T00:00:00Z");
 
-/** An exam of three subjects, one skill each. */
 const graph: PlanGraph = {
   phases: [{ milestone: null, name: "Base" }],
   skills: ["Civil", "Penal", "Ética"].map((area) => ({
@@ -43,10 +41,6 @@ function listTodayLessons(items: readonly PlannedItem[]): string[] {
   );
 }
 
-/**
- * "Less ethics" while today's session is shown, planned at the pace the learner's sessions set
- * since the plan was laid out: slower, so today's time no longer holds all of today's lessons.
- */
 function reduceAtSlowerPace() {
   const targetDate = addDays(TODAY, 40);
   const settings = parsePlanSettings({ startDate: toIsoDate(TODAY) });
@@ -107,8 +101,6 @@ function reduceAtSlowerPace() {
   };
 }
 
-// OAB seeds 1003 and 1004, career seed 1025: a change of focus planned today's lessons again by
-// the day's time, and the last lesson the learner saw on today's session moved to tomorrow.
 describe("a change of focus when today's time no longer holds today's lessons", () => {
   it("keeps every lesson of today the change doesn't reduce on today, in order", () => {
     const { after, context, shown } = reduceAtSlowerPace();

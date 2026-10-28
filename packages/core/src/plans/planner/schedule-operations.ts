@@ -10,10 +10,6 @@ type ScheduleInput = Pick<GoalUpdateInput, "dailyMinutes" | "targetDate" | "week
 const SATURDAY = 6;
 const SUNDAY = 0;
 
-/**
- * Study days become rest days at 0 minutes, and new study days get the daily time. A weekend time
- * goes to Saturday and Sunday when they're study days.
- */
 function getStudyDayOperations({ state, input }: { state: PlanState; input: ScheduleInput }) {
   const { studyDays, weekendMinutes } = input;
 
@@ -51,7 +47,6 @@ function getStudyDayOperations({ state, input }: { state: PlanState; input: Sche
   ].filter((operation) => operation !== false);
 }
 
-/** What the update changes about the learner's time and date, as plan operations. */
 export function getScheduleOperations({
   state,
   input,

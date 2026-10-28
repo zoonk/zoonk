@@ -1,11 +1,6 @@
 import { getToolKey } from "../../library/chapters/chapter-tools";
 import { type PlanState, type PlanToolChoice } from "./plan-state";
 
-/**
- * Replaces the learner's choices for these tools. A setup lesson a replaced choice added leaves
- * the graph unless the new choice keeps it, so switching devices or saying "I have it" takes the
- * old setup lesson out; lessons already done stay done.
- */
 export function setTools({
   state,
   tools,

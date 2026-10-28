@@ -2,7 +2,6 @@ import { toIsoDate } from "./plan-calendar";
 import { type QueueUnit } from "./plan-units";
 import { type PlanDay } from "./schedule-units";
 
-/** First capacity boundary strictly past a point, skipping empty days and an exact day end. */
 function firstAfter(cumulative: readonly number[], point: number): number {
   const search = (low: number, high: number): number => {
     if (low >= high) {
@@ -16,18 +15,10 @@ function firstAfter(cumulative: readonly number[], point: number): number {
   return search(0, cumulative.length);
 }
 
-/**
- * The day minutes lesson minutes take at a day's learning share: the one rule every lesson's day
- * time follows (see `listIntervalPortions`).
- */
 export function toDayMinutes({ lessonMinutes, share }: { lessonMinutes: number; share: number }) {
   return lessonMinutes / (share || 1);
 }
 
-/**
- * A unit's time when a run lays it whole on one day: its lesson minutes at that day's share (see
- * `toDayMinutes`), as the one portion what the plan covers counts it by.
- */
 export function getOneDayStudy({
   date,
   lessonMinutes,
@@ -45,14 +36,8 @@ export function getOneDayStudy({
   };
 }
 
-/** A day's part of a learning interval: the lesson minutes it gives it, and the day minutes they take. */
 export type IntervalPortion = { index: number; lessonMinutes: number; studyMinutes: number };
 
-/**
- * The days a learning interval of the plan's lesson minutes (`start` to `end`, as
- * `getCumulativeCapacity` adds them up) covers, each with the lesson minutes it gives it and the
- * day minutes they take at its own learning share.
- */
 export function listIntervalPortions({
   cumulative,
   days,
@@ -85,20 +70,8 @@ export function listIntervalPortions({
   });
 }
 
-/**
- * The day minutes a lesson takes on one of its days (see `getUnitStudy`), and the lesson minutes
- * they are (`lessonMinutes`).
- */
 export type StudyPortion = { date: string; lessonMinutes: number; minutes: number };
 
-/**
- * Study time for a learning interval, using only the capacity each day actually contributes, day
- * by day (`studyPortions`) and in all (`studyMinutes`, their sum). Its due date may precede its
- * consumption end (the first course lesson). A first lesson the horizon cannot cover still stays
- * whole: its uncovered time is its due day's (`dueDate`), at that day's share, rather than
- * disappearing. A boss closes or is held on its own day, even beyond that day's capacity: its
- * time is its own, and no lesson's.
- */
 export function getUnitStudy({
   cumulative,
   days,
@@ -151,13 +124,6 @@ export function getUnitStudy({
   };
 }
 
-/**
- * The day minutes each lesson item of a plan takes on each of its days, by its key and the day:
- * what its scheduled units (a stand-in's parts, joined) say (`studyPortions`), and this week's kept
- * work, as the run that saved it laid it out (`kept`, see `listKeptPortions`). A lesson the run both
- * keeps and lays out again counts on each day once: kept days it doesn't lay out stay its own. A
- * boss has none. With `lessonMinutes`, the lesson minutes those are instead.
- */
 function listLessonDayMinutes({
   field,
   kept,
@@ -193,10 +159,6 @@ function listLessonDayMinutes({
   );
 }
 
-/**
- * Each lesson item's day minutes and the lesson minutes they are, by its key and day (see
- * `BuiltPlan`), this week's kept work's included (`kept`, see `listLessonDayMinutes`).
- */
 export function listLessonDays(
   units: Parameters<typeof listLessonDayMinutes>[0]["units"],
   kept: ReadonlyMap<string, readonly StudyPortion[]> = new Map(),

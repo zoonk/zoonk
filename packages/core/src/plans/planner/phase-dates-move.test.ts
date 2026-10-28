@@ -39,10 +39,6 @@ const graph = {
 
 const shown = [phase("Research", "2026-10-17"), phase("Job search", "2026-11-30")];
 
-/*
- * "Keep mine" is an informed choice only when the card says what the learner keeps their dates
- * over: the job search lessons left out by their date, or a challenge on a day they rest.
- */
 describe(getPhaseDatesEffect, () => {
   it("names the job search lessons keeping the dates leaves out and moving them fits in", () => {
     const effect = getPhaseDatesEffect({
@@ -86,11 +82,6 @@ describe(getPhaseDatesEffect, () => {
   });
 });
 
-/*
- * Moving the phase dates is the smallest move (lead, 10 Oct): only an end whose challenge has no
- * room moves, to the first later day with room, and a later end it would pass comes along. Planned
- * again as the lessons fell, a phase's end slipped five weeks.
- */
 describe(moveStrainedEnds, () => {
   const ends = new Map([
     [0, "2026-10-17"],
@@ -110,9 +101,6 @@ describe(moveStrainedEnds, () => {
     );
   });
 
-  // Maya's card moved "Calculus and linear algebra" from Dec 14 to Dec 25 although Nov 14 didn't
-  // pass it, and her first end skipped Nov 10 to 13: planned again as their lessons fell, each
-  // released end took the time a rest day cost every phase before it.
   it("moves an end to the next day with room and leaves an end a month later where it was", () => {
     const far = new Map([
       [0, "2026-11-09"],
@@ -162,10 +150,6 @@ describe(moveStrainedEnds, () => {
   });
 });
 
-/*
- * "Keep mine" is an informed choice over what the card said: kept over a challenge on a rest day,
- * the dates later left the job search out, and Today never asked again (R13, career 2014).
- */
 describe(isKeptOver, () => {
   const move = { after: "2026-10-19", before: "2026-10-17", name: "Research" };
 
@@ -198,11 +182,6 @@ describe(isKeptOver, () => {
   });
 });
 
-/*
- * Job search work keeping the dates leaves out is worth moving them for, though the plan then
- * covers a few minutes less in all: a career's session end trimmed interviews and no card offered
- * them back (R13, career 2014).
- */
 function movePlan({ covered, dropped }: { covered: number; dropped: string[] }) {
   return {
     droppedSkillIds: dropped,
@@ -235,10 +214,6 @@ describe(isPhaseDatesMoveWorth, () => {
   });
 });
 
-/*
- * Lessons that take longer than planned would come after their phase's challenge on the end the
- * learner saw (R40): a studied day never moves it (R6), so Today offers to move it, and says why.
- */
 describe("a kept end whose challenge would come before its lessons", () => {
   it("costs something to keep, and the move says why", () => {
     const kept = { droppedSkillIds: [], endsBeforeLessons: [0], strainedEnds: [] };
@@ -274,9 +249,6 @@ describe("a kept end whose challenge would come before its lessons", () => {
   });
 });
 
-// A move that only gains minutes inside lessons (planned from today, this week took a little
-// less) moves no end and adds no lesson: Today proposed it with nothing to say (language seed
-// 1006, a session's end).
 describe(showsPhaseDatesMove, () => {
   const effect = { endDateAfter: null, endDateBefore: null, lessonsAdded: 0, lessonsRemoved: 0 };
 

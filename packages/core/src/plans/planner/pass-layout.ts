@@ -9,24 +9,15 @@ import { getShownReferenceLessons } from "./shown-day-lessons";
 import { layOutAfterThisWeek } from "./week-after";
 import { markKeptLessons } from "./whole-boss";
 
-/** What a pass lays its work out from (see `createLayOut`). */
 type LayOutInput = Omit<
   Parameters<typeof scheduleCarriedAndRest>[0],
   "carried" | "days" | "units" | "yielded"
 > & {
-  /** Where the run's new work starts (see `getOpenStart`). */
   start: Date;
-  /** This week's kept work, as the run that saved it laid it out (see `listThisWeekWork`). */
   thisWeek: Parameters<typeof layOutAfterThisWeek>[0]["kept"];
-  /** The units left to place. */
   units: readonly QueueUnit[];
 };
 
-/**
- * How a pass lays its work out on any of its days, this week's kept work included, as the run that
- * saved it laid it out: what comes after this week starts where it did (see `keepThisWeek`), and
- * what earlier days left comes first, as it was planned (see `scheduleCarriedAndRest`).
- */
 export function createLayOut({ start, thisWeek, units, ...rest }: LayOutInput) {
   const layOut = ({
     context = rest,
@@ -54,8 +45,8 @@ export function createLayOut({ start, thisWeek, units, ...rest }: LayOutInput) {
       input: rest.input,
       layOut,
       layOutBefore: ({ days, fresh }) => {
-        // A new lesson can remove its stand-in entirely: reconstruct the queue before it landed,
-        // rather than filtering a queue in which that old topic has already disappeared.
+        // A new lesson can remove its stand-in entirely, so the queue is rebuilt from before it
+        // landed.
         const input = {
           ...rest.input,
           lessons: getShownReferenceLessons({ fresh, input: rest.input }),

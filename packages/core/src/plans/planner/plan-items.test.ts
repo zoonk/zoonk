@@ -21,8 +21,6 @@ function lessonItem(attrs: Partial<PlannedItem> & Pick<PlannedItem, "key" | "pha
 }
 
 describe(mergePlanItems, () => {
-  // Language seed 1049: a lesson of the fourth phase the learner did ahead dated that phase's
-  // weekly challenge, which then read as running before the phases still to study (R39).
   it("files a weekly challenge under the phase the learner studies, not one done ahead", () => {
     const merged = mergePlanItems({
       events: [

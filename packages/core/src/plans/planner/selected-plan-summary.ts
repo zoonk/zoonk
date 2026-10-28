@@ -9,10 +9,6 @@ import { daysBetween, toIsoDate } from "./plan-calendar";
 import { type ExamSubjectShare, getCoverage } from "./selected-coverage";
 import { listSettled, readRequirement, sumRequirement } from "./selected-requirement";
 
-/**
- * The last day new lessons count by: an exam's final stretch start as this build laid it out, else
- * the target date; days before it count, the day itself doesn't. Null without a date.
- */
 function getDeadline({ built, input }: { built: BuiltPlan; input: BuildPlanInput }) {
   const { targetDate } = input.goal;
 
@@ -24,11 +20,6 @@ function getDeadline({ built, input }: { built: BuiltPlan; input: BuildPlanInput
   return finalStretch?.startDate ?? toIsoDate(targetDate);
 }
 
-/**
- * What a build covers of the chosen requirement by its deadline (see `getCoverage`): the plan's one
- * coverage measure, which it saves (`Plan.coveredShare`) and every read of what fits says, so the
- * Plan, its suggestions and Find agree. Null without a date.
- */
 export function getSelectedCoverage({
   built,
   examSubjects,
@@ -54,7 +45,6 @@ export function getSelectedCoverage({
     : null;
 }
 
-/** The plan's bases with the choice this build studied each with (see `SelectedSummary.bases`). */
 function summarizeBases(input: BuildPlanInput): SelectedSummary["bases"] {
   const bases = input.bases ?? [];
 
@@ -86,7 +76,6 @@ function summarizeBases(input: BuildPlanInput): SelectedSummary["bases"] {
   };
 }
 
-/** When the selected schedule's work still to do ends: its last teaching's time, or its last challenge. */
 function getEndDate(built: BuiltPlan): string | null {
   return built.items.reduce<string | null>((latest, item) => {
     const counts =
@@ -103,11 +92,6 @@ function getEndDate(built: BuiltPlan): string | null {
   }, null);
 }
 
-/**
- * Every skill the build read, before any cut or choice: the graph's and what they build on, each
- * lesson's (the quick ones too), the saved items', the bosses' projection, recordings and merged
- * skills' survivors, and the bases'. A change to the content of any of them changes the plan.
- */
 function listSourceSkillIds({
   built,
   input,
@@ -140,12 +124,6 @@ function listSourceSkillIds({
   return [...new Set(ids)].toSorted();
 }
 
-/**
- * Whether keeping the phase dates this build kept may cost the learner something (see
- * `mayCostToKeepPhaseDates`), with what says so, as a key: a card the learner resolved stays
- * resolved until it changes (see `SelectedSummary.phaseDates`). A build that planned its phase
- * dates again kept none, so nothing to say.
- */
 function readPhaseDates({
   built,
   input,
@@ -173,20 +151,12 @@ function readPhaseDates({
   };
 }
 
-/**
- * The facts a saved plan keeps of its one selected build (see `SelectedSummary`): what it covers
- * of the chosen requirement by the deadline, about how much daily time that requirement needs and
- * when it would all be done, the requirement's size, the bases' choices, when the schedule ends,
- * whether keeping its phase dates may cost something and what it read. Reads only this build and
- * its input: no other plan is built.
- */
 export function summarizeSelectedPlan({
   built,
   examSubjects,
   input,
 }: {
   built: BuiltPlan;
-  /** The notice subjects with their exam share; null for goals that aren't exams. */
   examSubjects: readonly ExamSubjectShare[] | null;
   input: BuildPlanInput;
 }): SelectedSummary {

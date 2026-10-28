@@ -94,7 +94,6 @@ function examStateAt({
   return result.state;
 }
 
-/** An independent oracle builds every candidate, without reading a recommendation. */
 function exhaustiveMinimum(inputFor: (minutes: number) => BuildPlanInput): number | null {
   const candidates = Array.from({ length: 48 }, (_, index) => (index + 1) * 5);
 
@@ -152,7 +151,6 @@ describe("accepted daily-time candidates", () => {
       const advice = getPlanFeasibility({ input: examInputAt(60), studyScheduleAt });
       expect(advice.recommendedMinutes).toBe(expected);
 
-      /** A saved non-fitting higher time must still consider lower times before a new mock. */
       const saved = examInputAt(70);
       const savedExpected = exhaustiveMinimum((minutes) => withDailyMinutes(saved, minutes));
       expect(getPlanFeasibility({ input: saved }).recommendedMinutes).toBe(savedExpected);
@@ -176,7 +174,6 @@ describe("accepted daily-time candidates", () => {
   });
 });
 
-/** 300 minutes fit, 305 to 395 don't (a mock takes the day), and 400 on do. */
 const fitsAroundAMock = (minutes: number) => minutes === 300 || minutes >= 400;
 
 describe(findFittingMinutes, () => {

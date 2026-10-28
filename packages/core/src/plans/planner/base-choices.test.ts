@@ -10,11 +10,6 @@ function skill(skillId: string, lessons: number): PlanGraphSkill {
   return { area: AREA, lessons, name: skillId, phase: 0, skillId, topics: [skillId], weight: null };
 }
 
-/**
- * Three topics the exam asks most (a, c, d) and a big base it asks less (b, 24 lessons) that c
- * builds on, all still to be written. With the base's core (8 lessons), c is the dearest frequent
- * topic to keep; with a quick lesson for it (one lesson), c turns as cheap as d.
- */
 function examInput({
   choice,
   dailyMinutes,
@@ -30,7 +25,6 @@ function examInput({
     },
     items: [],
     lessons: [],
-    // A mock every study day here holds: one each week takes that day, as the times below assume.
     mockMinutes: 5,
     mode: "forced",
     paceFactor: 1,
@@ -54,7 +48,6 @@ function build(input: BuildPlanInput) {
   return buildPlan(chooseBases(input).input);
 }
 
-/** The topics whose core the plan keeps by its date. */
 function keptTopics(input: BuildPlanInput): string[] {
   const built = build(input);
   const waiting = new Set(built.waitingSkillIds);
@@ -65,7 +58,6 @@ function keptTopics(input: BuildPlanInput): string[] {
     .toSorted();
 }
 
-/** The minutes of the base the plan holds by its date. */
 function baseMinutes(input: BuildPlanInput): number {
   return build(input).skillMinutes.find((entry) => entry.skillId === "b")?.covered ?? 0;
 }
@@ -90,7 +82,6 @@ describe(chooseBases, () => {
     expect(keptTopics(examInput({ choice: null, dailyMinutes: 4 }))).toStrictEqual(["a", "d"]);
     expect(keptTopics(examInput({ choice: null, dailyMinutes: 7 }))).toStrictEqual(["a", "b", "d"]);
 
-    // The first topic cut fits in part, from its base on.
     expect(keptTopics(examInput({ choice: "quick", dailyMinutes: 4 }))).toStrictEqual([
       "a",
       "b",
@@ -104,7 +95,6 @@ describe(chooseBases, () => {
       "d",
     ]);
 
-    // Six minutes covers only part of the selected eight-lesson base, not another third of it.
     const partial = examInput({ choice: null, dailyMinutes: 6 });
     expect(baseMinutes(partial)).toBeLessThan(32);
     expect(keptTopics(partial)).toStrictEqual(["a", "d"]);
@@ -114,17 +104,14 @@ describe(chooseBases, () => {
     const core = baseMinutes(examInput({ choice: null, dailyMinutes: 60 }));
     const deep = baseMinutes(examInput({ choice: "deep", dailyMinutes: 60 }));
 
-    // Its core is the first third of its 24 lessons; in depth, all 24 fit.
     expect(core).toBe(32);
     expect(deep).toBe(96);
 
-    // Short on time, the depth waits for what the plan keeps with the base's core.
     expect(baseMinutes(examInput({ choice: "deep", dailyMinutes: 5 }))).toBe(
       baseMinutes(examInput({ choice: null, dailyMinutes: 5 })),
     );
   });
 
-  // "Pular" frees a base from its lessons, never from practice: a miss on it brings its core back.
   it("brings a skipped base's core back once the learner missed a question on it", () => {
     const skipped = examInput({ choice: "skip", dailyMinutes: 60 });
 

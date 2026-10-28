@@ -1,16 +1,10 @@
 import { type StudyPortion } from "./interval-study-minutes";
 import { DEFAULT_LESSON_MINUTES, type QueueUnit } from "./plan-units";
 
-/** A stand-in: the lessons of a skill the Library hasn't outlined yet, planned as one unit. */
 function isStandIn(unit: QueueUnit): boolean {
   return unit.kind === "lesson" && unit.lessonId === null && unit.skillId !== null;
 }
 
-/**
- * Splits each stand-in into parts about a lesson long, all under the stand-in's key, so a study
- * cycle shares a day between a skill not outlined yet and the other subjects: whole, a stand-in
- * rarely fits a subject's share of a day, so the day's first subject would take it all.
- */
 export function splitStandIns(units: readonly QueueUnit[]): QueueUnit[] {
   return units.flatMap((unit) => {
     if (!isStandIn(unit)) {
@@ -19,7 +13,6 @@ export function splitStandIns(units: readonly QueueUnit[]): QueueUnit[] {
 
     const parts = Math.max(1, Math.round(unit.minutes / DEFAULT_LESSON_MINUTES));
 
-    // A part split again (a study cycle splits what the cut already split) stays one: as it is.
     if (parts === 1) {
       return [unit];
     }
@@ -28,11 +21,6 @@ export function splitStandIns(units: readonly QueueUnit[]): QueueUnit[] {
   });
 }
 
-/**
- * Joins a stand-in's scheduled parts back into one unit (one plan item per stand-in): on the day
- * its first part is due, when the learner needs its lessons, with the time of every part that fit,
- * and each part's day by day (`studyPortions`).
- */
 export function joinStandIns<
   TUnit extends QueueUnit & {
     date?: Date;
@@ -56,7 +44,6 @@ export function joinStandIns<
     new Map<string, number>(),
   );
 
-  // Joined, a stand-in teaches until its last part's time ends (see `teachingEnd`).
   const ends = units.reduce((latest, unit) => {
     const end = unit.teachingEnd ?? unit.date;
     const before = latest.get(unit.key);

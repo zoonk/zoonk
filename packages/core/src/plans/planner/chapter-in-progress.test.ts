@@ -7,11 +7,9 @@ import { addDays, toIsoDate } from "./plan-calendar";
 import { applyPlanOperations } from "./plan-operations";
 import { type PlanGraph, parsePlanSettings } from "./plan-state";
 
-/** A Monday. */
 const TODAY = new Date("2026-10-12T00:00:00Z");
 const HOUR_MS = 3_600_000;
 
-/** An ENEM-like exam: three subjects of two phases and the essay. */
 const graph: PlanGraph = {
   phases: [
     { milestone: null, name: "Base" },
@@ -40,7 +38,6 @@ const graph: PlanGraph = {
   ],
 };
 
-/** An exam of four subjects of two phases, each subject's skills a lesson bigger than the last's. */
 const cycleGraph: PlanGraph = {
   phases: [
     { milestone: null, name: "Base" },
@@ -58,7 +55,6 @@ const cycleGraph: PlanGraph = {
   ),
 };
 
-/** The Library's lessons for a graph: each skill's own chapter, 4 minutes each. */
 function toLessons(plan: PlanGraph) {
   return plan.skills.flatMap((skill) =>
     Array.from({ length: skill.lessons }, (_, index) => ({
@@ -71,12 +67,6 @@ function toLessons(plan: PlanGraph) {
   );
 }
 
-/**
- * A change of where to focus today on a plan laid out from `start`, whose lessons before today the
- * learner finished, one of `chapterSkillId` the last: its chapter is the one in progress. Returns
- * the day of that chapter's next lesson in the plan the learner saw and with the change, and the
- * step as the rule checks read it.
- */
 function steerMidChapter({
   chapterSkillId,
   dailyMinutes,
@@ -91,7 +81,6 @@ function steerMidChapter({
   graph: PlanGraph;
   operations: PlanOperation[];
   prerequisites?: ReadonlyMap<string, readonly string[]>;
-  /** The exam's weekly mock: longer than the day, the days before it fund it (see `fundMocks`). */
   mockMinutes?: number;
   start: Date;
 }) {
@@ -132,7 +121,6 @@ function steerMidChapter({
     state: {
       goal: { dailyMinutes, targetDate: toIsoDate(targetDate) },
       graph: planGraph,
-      // Saved with the plan the learner saw (see `commitPlan`), with its mocks' funding.
       settings: { ...settings, mockFunding: seen.mockFunding },
     },
     today: TODAY,
@@ -180,12 +168,8 @@ function steerMidChapter({
   };
 }
 
-// ENEM 2083: "less essay" the day after an essay lesson took the chapter's next lesson out of
-// today's session and put it two days later, behind physics (R10). The chapter finishes first.
 describe("less of the subject of the chapter in progress while today is shown", () => {
   it("keeps the chapter's next lesson today", () => {
-    // Two days in: the 180-minute weekly mock takes part of each 45-minute day (see `fundMocks`),
-    // so the essay's first lesson is among the ones done before today.
     const { after, context, inProgress, shown } = steerMidChapter({
       chapterSkillId: "Redação-0",
       dailyMinutes: 45,
@@ -202,8 +186,6 @@ describe("less of the subject of the chapter in progress while today is shown", 
   });
 });
 
-// Four days into a plan whose 180-minute weekly mock the 45-minute days fund (see `fundMocks`):
-// "less essay" put the essay chapter's next lesson a day after the one the learner saw (R10).
 describe("less of the subject of the chapter in progress on funded days", () => {
   it("keeps the chapter's next lesson on the day the learner saw", () => {
     const { after, context, inProgress, shown } = steerMidChapter({
@@ -222,9 +204,6 @@ describe("less of the subject of the chapter in progress on funded days", () => 
   });
 });
 
-// Light days: a lesson spans several, so a chapter's next lesson has to start before its day.
-// Without the mock's funding at 25 to 31 minutes a day, and with it on 25-minute days, a change
-// put that lesson one or two days after the one the learner saw (R10).
 describe("the chapter in progress on light days", () => {
   it.each([
     { back: 3, chapter: "Redação-0", minutes: 25, mock: 15 },
@@ -260,17 +239,12 @@ describe("the chapter in progress on light days", () => {
     });
 
     expect(inProgress).toBe("chapter-Linguagens-0");
-    // Each 15-minute boss leads the study day after its lessons (see `placeBoss`), so they no
-    // longer push this funded 25-minute schedule's chapter later.
     expect(shown).toBe("2026-10-15");
     expect(after && shown && after <= shown).toBe(true);
     expect(checkChapterInProgressKept(context)).toStrictEqual([]);
   });
 });
 
-// Câmara: a focus on constitutional law, or less English, shrank political science's turn in the
-// study cycle, and the next lesson of the chapter the learner was in went a day later (R10). The
-// subject of the chapter in progress keeps the time to reach it by the day the learner saw.
 describe("a change of focus on another subject of a study cycle", () => {
   it.each([
     [[{ areas: ["Matemática"], kind: "focusAreas" }]],
@@ -278,8 +252,6 @@ describe("a change of focus on another subject of a study cycle", () => {
   ] satisfies [PlanOperation[]][])(
     "keeps the chapter in progress's next lesson on its day: %j",
     (operations) => {
-      // Three days in, in the middle of humanities' chapter: the weekly mock's funding makes each
-      // day lighter (see `fundMocks`), so the cycle reaches it later than natural sciences' once did.
       const { after, context, inProgress, shown } = steerMidChapter({
         chapterSkillId: "Humanas-0",
         dailyMinutes: 30,
@@ -290,7 +262,6 @@ describe("a change of focus on another subject of a study cycle", () => {
 
       expect(inProgress).toBe("chapter-Humanas-0");
       expect(shown).toBe("2026-10-15");
-      // No later than the day the learner saw (R10): less of another subject may bring it sooner.
       expect(after && shown && after <= shown).toBe(true);
       expect(checkChapterInProgressKept(context)).toStrictEqual([]);
     },

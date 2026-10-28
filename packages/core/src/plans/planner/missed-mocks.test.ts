@@ -7,7 +7,6 @@ import { toExamWindows } from "./plan-phases";
 import { type PlanGraph, type PlanPhase, parsePlanSettings } from "./plan-state";
 import { type PlannerLesson } from "./plan-units";
 
-/** A Monday. */
 const TODAY = new Date("2026-10-12T00:00:00Z");
 
 function listLessons(graph: PlanGraph, minutes: number): PlannerLesson[] {
@@ -22,7 +21,6 @@ function listLessons(graph: PlanGraph, minutes: number): PlannerLesson[] {
   );
 }
 
-/** An ENEM-like exam: three subjects of two phases. */
 const examGraph: PlanGraph = {
   phases: [
     { milestone: null, name: "Base" },
@@ -40,7 +38,6 @@ const examGraph: PlanGraph = {
   ),
 };
 
-/** A biology class test from the learner's slides: one subject, a few short topics. */
 const classTestGraph: PlanGraph = {
   phases: [
     { milestone: null, name: "Células" },
@@ -58,14 +55,12 @@ const classTestGraph: PlanGraph = {
   ),
 };
 
-/** The plan's items as saved, with their ids and places, as the next run reads them. */
 function toSaved(items: readonly PlannedItem[]): ExistingPlanItem[] {
   return items.map((item, position) => ({ ...item, id: `item-${position}`, position }));
 }
 
 type SavedPlan = { input: BuildPlanInput; items: ExistingPlanItem[]; phases: PlanPhase[] };
 
-/** An exam plan as made on its first day (`TODAY`). */
 function makePlan({
   dailyMinutes,
   daysAway,
@@ -79,7 +74,6 @@ function makePlan({
   graph: PlanGraph;
   lessonMinutes: number;
   mockMinutes: number;
-  /** A class test's own short mock; null for a public exam. */
   shortMockMinutes?: number | null;
 }): SavedPlan {
   const input: BuildPlanInput = {
@@ -100,10 +94,6 @@ function makePlan({
   return { input, items: toSaved(built.items), phases: built.phases };
 }
 
-/**
- * The first run on the day the learner comes back after missing days, with nothing studied since
- * the plan was made: it carries the lessons the days before left and keeps the phases they see.
- */
 function settleOn({ plan, today }: { plan: SavedPlan; today: Date }): BuiltPlan {
   const left = plan.items.filter(
     (item) =>
@@ -123,7 +113,6 @@ function settleOn({ plan, today }: { plan: SavedPlan; today: Date }): BuiltPlan 
   });
 }
 
-/** What the check of a mock in every phase (R24) finds in a settled plan. */
 function checkMocks({
   plan,
   settled,
@@ -147,7 +136,6 @@ function checkMocks({
   });
 }
 
-/** The days of the plan's mocks still to come, from `today` on. */
 function listMockDays({
   items,
   today,
@@ -163,8 +151,6 @@ function listMockDays({
 }
 
 describe("a phase whose weekly mocks the learner missed", () => {
-  // OAB at 170 minutes and Câmara at 15 missed every weekly mock of their foundations; the next
-  // morning's settling left the phase's last days with no mock.
   it("gets a mock of its own on its last day", () => {
     const plan = makePlan({
       dailyMinutes: 180,
@@ -188,7 +174,6 @@ describe("a phase whose weekly mocks the learner missed", () => {
       throw new Error("Expected the foundations' weekly mocks");
     }
 
-    // Back the day after the last of them, with the phase's last days still ahead.
     const today = addDays(fromIsoDate(lastWeekly), 1);
     const settled = settleOn({ plan, today });
 
@@ -203,11 +188,6 @@ describe("a phase whose weekly mocks the learner missed", () => {
 });
 
 describe("a class test whose one mock the learner missed", () => {
-  // Class test seed 1016: 12 days away, the learner missed the days around the plan's one mock and
-  // came back two days before the test; the settling dropped the mock. Class test seed 1030: 14
-  // days away at 15 minutes, the missed mock came back on the last lesson day, where its 30
-  // minutes pushed the rest of the chapter in progress out. It goes on the day before, with the
-  // review.
   it.each([
     { back: 9, dailyMinutes: 20, daysAway: 12 },
     { back: 7, dailyMinutes: 15, daysAway: 14 },
@@ -225,7 +205,6 @@ describe("a class test whose one mock the learner missed", () => {
 
       const today = addDays(TODAY, back);
 
-      // The plan's one mock was on a day the learner missed.
       expect(
         plan.items.filter((item) => item.kind === "mock").map((item) => item.scheduledFor),
       ).toStrictEqual([expect.any(Date)]);

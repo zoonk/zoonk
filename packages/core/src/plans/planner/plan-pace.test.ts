@@ -5,7 +5,6 @@ describe(choosePace, () => {
   it("uses the learner's own pace once they finished enough lessons, more of it as they finish more", () => {
     const others = { course: { count: 100, ratio: 1.1 }, typical: { count: 900, ratio: 1 } };
 
-    // Five lessons are a hint: the pace moves toward theirs from the course's.
     expect(choosePace({ ...others, own: { count: 5, ratio: 1.3 } })).toStrictEqual({
       factor: 1.14,
       source: "own",
@@ -15,7 +14,6 @@ describe(choosePace, () => {
   });
 
   it("doesn't halve a plan on a few quick lessons", () => {
-    // A learner who breezed through five easy lessons at half the estimate.
     const pace = choosePace({
       course: null,
       own: { count: 5, ratio: 0.5 },

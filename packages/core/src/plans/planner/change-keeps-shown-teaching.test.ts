@@ -8,15 +8,12 @@ import { toExamWindows } from "./plan-phases";
 import { type PlanGraph, parsePlanSettings } from "./plan-state";
 import { withBuiltSettings } from "./run-outcome";
 
-/** A Saturday: the plan is made, and its first lesson studied. */
 const START = fromIsoDate("2026-10-10");
 
-/** The Monday the learner asks for less Linguagens. */
 const CHANGE_DAY = fromIsoDate("2026-10-12");
 
 const TARGET = "2026-11-16";
 
-/** An ENEM-like exam: four areas of two phases, each a lesson longer and weightier than the last. */
 const graph: PlanGraph = {
   phases: [
     { milestone: null, name: "Base" },
@@ -44,10 +41,6 @@ const lessons = graph.skills.flatMap((skill) =>
   })),
 );
 
-/**
- * At 25 minutes a day, a half-day 180-minute mock is funded by every day before it, so each of
- * those days keeps time for about one lesson.
- */
 const input: BuildPlanInput = {
   fullMockMinutes: 360,
   goal: { dailyMinutes: 25, kind: "exam", targetDate: fromIsoDate(TARGET) },
@@ -68,7 +61,6 @@ function dateOf(item: Pick<PlannedItem, "scheduledFor">): string {
   return item.scheduledFor ? toIsoDate(item.scheduledFor) : "";
 }
 
-/** The plan made on the first day, saved with that day's lesson studied, and its first mock. */
 function makeShownPlan() {
   const built = buildPlan(input);
 
@@ -90,7 +82,6 @@ function makeShownPlan() {
   return { built, items, mock };
 }
 
-/** Less of an area, asked on the change day, as a learner's change plans it. */
 function reduce({ area, shown }: { area: string; shown: ReturnType<typeof makeShownPlan> }) {
   const settings = withBuiltSettings({ built: shown.built, settings: input.settings });
   const operations: PlanOperation[] = [{ areas: [area], kind: "reduceAreas" }];
@@ -120,7 +111,6 @@ function reduce({ area, shown }: { area: string; shown: ReturnType<typeof makeSh
   });
 }
 
-/** The lessons dated from the change day through the mock: the days the learner was shown. */
 function listShownDays({ items, mockDate }: { items: readonly PlannedItem[]; mockDate: string }) {
   const lessonDays = items.filter(
     (item) =>
@@ -148,7 +138,6 @@ function getChallengeDay(items: readonly PlannedItem[]): string {
   return dateOf(boss);
 }
 
-/** The next lesson of the chapter the learner studied on the first day, as the plan showed it. */
 function findShownNext(items: readonly PlannedItem[]) {
   const studied = items.find((item) => item.status === "done");
 
@@ -159,20 +148,12 @@ function findShownNext(items: readonly PlannedItem[]) {
 }
 
 describe("a learner's change keeps the teaching the learner was shown", () => {
-  /**
-   * Less Linguagens leaves the other areas' phase-0 lessons on the days before the mock, so phase
-   * 0's challenge stays after them and the mock stays on its funded day. The days before the mock
-   * keep the lessons they showed: one may take another's day, but none comes from a later day and
-   * no day crowds, as a mock moved later would allow by freeing their funded time. Each lesson
-   * keeping its exact day is replanning's own promise to keep this week, so it isn't asserted here.
-   */
   it("keeps the challenge, the funded mock and the shown days' lessons when an area is reduced", () => {
     const shown = makeShownPlan();
     const after = reduce({ area: "Linguagens", shown });
     const before = listShownDays({ items: shown.items, mockDate: shown.mock.date });
     const next = findShownNext(shown.items);
 
-    // The premise: phase 0's challenge comes after the mock its days fund, a lesson a day before it.
     expect(fromIsoDate(getChallengeDay(shown.items)).getTime()).toBeGreaterThan(
       fromIsoDate(shown.mock.date).getTime(),
     );

@@ -16,12 +16,6 @@ import { type PlannedItem } from "./plan-items";
 import { type PlanSettings } from "./plan-state";
 import { type SettlingPlan, settleExamBosses } from "./teaching-first";
 
-/**
- * What a plan's bosses ask, read once for a planning run, so the plan keeps for each the time its
- * session plays it (see `settlePlannedBosses`): the question bank as the learner meets it, the
- * goal's skills heard only through recordings, the skills the Library says the run's lessons and
- * chapters teach, and each merged skill's survivor.
- */
 export type BossPlanFacts = {
   bank: BossBankFacts;
   listeningSkillIds: ReadonlySet<string>;
@@ -29,7 +23,6 @@ export type BossPlanFacts = {
   survivors: ReadonlyMap<string, string>;
 };
 
-/** Why a plan's bosses kept a size their session doesn't play, for the warning it logs. */
 type BossFallback = { iterations: number; reason: "unsettled" };
 
 function isSameMinutes(first: BossMinutes, second: BossMinutes): boolean {
@@ -43,26 +36,16 @@ function listBossKeys(items: readonly PlannedItem[]): string[] {
   return items.flatMap((item) => (item.kind === "boss" ? [item.key] : []));
 }
 
-/** Passes beyond one per boss: one to settle what they ask, one to see it hold. */
 const SETTLING_PASSES = 2;
 
 /**
- * Plans with each boss inside its day (R45), at the time its session plays it (see `BossMinutes`):
- * read from the plan's items with the facts (`bossFacts`), or, without them, its size before the
- * bank is read (see `getPlannedBossMinutes`). A run starts from what the plan last saved
- * (`input.bossMinutes`), so it plans once unless what a boss asks changed.
- *
- * A dated exam's challenges go where its teaching puts them (see `settleExamBosses`). Any other
- * goal's bosses are units of its queue, after their phase's lessons: what a boss asks depends on
- * the lessons before it, which depend on the time the plan keeps for it, so the plan is built again
- * with what its bosses run until that holds. Past one pass per boss and the two that settle it,
- * the last build stays, its bosses at what they run (`bossFallback`): a Plan never fails to open.
+ * Builds again until each boss's time holds; past one pass per boss and two more, the last build
+ * stays (`bossFallback`), so a Plan always opens.
  */
 export function settlePlannedBosses<T extends SettlingPlan>({
   build,
   input,
 }: {
-  /** The plan built with what each boss runs (`bossMinutes`). */
   build: (input: BuildPlanInput) => T;
   input: BuildPlanInput;
 }): T & {
@@ -94,7 +77,6 @@ export function settlePlannedBosses<T extends SettlingPlan>({
 
     if (settled || pass > listBossKeys(built.items).length + SETTLING_PASSES) {
       if (!settled) {
-        // For the team, never a learner: the plan opens all the same.
         logError("Plan bosses kept a size after unsettled passes", {
           goalId: input.goalId ?? null,
           iterations: pass,
@@ -105,7 +87,6 @@ export function settlePlannedBosses<T extends SettlingPlan>({
       return {
         bossSizes: sizes,
         ...built,
-        // What the plan saves of its checkpoints' days, so each asks for the time they take past it.
         checkpointOverflow: listCheckpointOverflow({ bossMinutes: minutes, built, input }),
         ...(!settled && { bossFallback: { iterations: pass, reason: "unsettled" as const } }),
       };

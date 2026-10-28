@@ -6,7 +6,6 @@ import { type PlanGraphSkill, type WrittenCadence, parsePlanSettings } from "./p
 import { type PlannerLesson } from "./plan-units";
 import { getFinalWeeksStart, isWrittenDay } from "./written-cadence";
 
-/** A Wednesday, as on Lucas's first day. */
 const TODAY = fromIsoDate("2026-10-07");
 const SKILLS_PER_AREA = 10;
 const WRITTEN_SKILLS = 5;
@@ -44,10 +43,6 @@ function lessonsOf(skill: PlanGraphSkill): PlannerLesson[] {
   }));
 }
 
-/**
- * An exam with objective areas of chained skills and written tests made of outcome skills (the
- * parts answered in writing), every part worth the same.
- */
 function examPlan({
   areas,
   cadence = "weekly",
@@ -60,7 +55,6 @@ function examPlan({
   cadence?: WrittenCadence;
   dailyMinutes: number;
   days: number;
-  /** Lessons per objective skill: enough to leave the plan short on time, or not. */
   lessons: number;
   written: readonly string[];
 }): BuildPlanInput {
@@ -91,7 +85,6 @@ function examPlan({
   };
 }
 
-/** Lucas: ENEM's four areas and its essay a month away, three hours a day: short on time. */
 function lucas(cadence?: WrittenCadence) {
   return examPlan({
     areas: ["Linguagens", "Humanas", "Natureza", "Matemática"],
@@ -103,10 +96,6 @@ function lucas(cadence?: WrittenCadence) {
   });
 }
 
-/**
- * Rafaela: a civil service exam's knowledge subjects, a discursive test and a drafted document three months away, two
- * hours a day: short on time.
- */
 function rafaela(cadence?: WrittenCadence) {
   return examPlan({
     areas: ["Português", "Direito", "Processo Legislativo", "Ciência Política", "Inglês", "TI"],
@@ -118,7 +107,6 @@ function rafaela(cadence?: WrittenCadence) {
   });
 }
 
-/** The plan's scheduled lessons, and those of its written tests among them. */
 function planLessons(input: BuildPlanInput) {
   const writtenSkills = new Set(
     input.graph.skills.filter((skill) => skill.outcome).map((skill) => skill.skillId),
@@ -131,15 +119,12 @@ function planLessons(input: BuildPlanInput) {
   return { lessons, written: lessons.filter((item) => writtenSkills.has(item.skillId ?? "")) };
 }
 
-/** The scheduled lessons of the plan's written tests. */
 function writtenLessons(input: BuildPlanInput) {
   return planLessons(input).written;
 }
 
-/** Lucas's plan at the default cadence, every week, which several tests compare with: built once. */
 const lucasWeekly = once(() => planLessons(lucas()));
 
-/** The calendar weeks (Monday to Sunday, from the plan's first) the lessons fall in. */
 function weeksOf(items: readonly { scheduledFor: Date | null }[]): Set<number> {
   const firstMonday = getStartOfWeek(TODAY);
 
@@ -148,7 +133,6 @@ function weeksOf(items: readonly { scheduledFor: Date | null }[]): Set<number> {
   );
 }
 
-/** The first day any of the lessons is due, as a timestamp. */
 function firstDay(items: readonly { scheduledFor: Date | null }[]): number {
   return Math.min(...items.map((item) => (item.scheduledFor ?? TODAY).getTime()));
 }
@@ -190,14 +174,11 @@ describe("when an exam's written tests are practiced", () => {
     expect(final).toHaveLength(weekly.length);
     expect(biweekly).toHaveLength(weekly.length);
 
-    // Too much practice for the last five weeks at half of each day: it starts a little earlier,
-    // never in the plan's first two months.
     expect(firstDay(final)).toBeGreaterThanOrEqual(addDays(TODAY, 60).getTime());
     expect([...weeksOf(biweekly)].every((week) => week % 2 === 0)).toBe(true);
   });
 
   it("waits for the final weeks when the other subjects end early", () => {
-    // Four months at three hours a day: every other lesson is done well before the final weeks.
     const input = examPlan({
       areas: ["Linguagens", "Humanas"],
       cadence: "finalWeeks",
@@ -230,8 +211,6 @@ describe(isWrittenDay, () => {
       isWrittenDay({ ...schedule, cadence: "biweekly", date: addDays(TODAY, offset) }),
     );
 
-    // Wednesday 7 Oct starts week one (5 Oct to 11 Oct); 12 Oct opens week two; the final stretch
-    // before the exam is always practiced.
     expect(days).toStrictEqual([true, false, false, true, true, true]);
   });
 

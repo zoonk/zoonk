@@ -21,7 +21,6 @@ function minutesOn(date: string, isExam = true) {
   });
 }
 
-/** The minutes on a date for an exam whose plan studies everything, going on after the exam. */
 function studyingEverything(date: string) {
   return getPlannedMinutes({
     calendar,

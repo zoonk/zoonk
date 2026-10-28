@@ -12,10 +12,6 @@ const STUDY_KINDS: ReadonlySet<PlanOperation["kind"]> = new Set([
   "setWrittenCadence",
 ]);
 
-/**
- * The learner's choices for some bases: each named base takes its new choice, and studying it for
- * its core (the default) leaves no choice stored.
- */
 function setBaseChoices({
   choices,
   state,
@@ -45,10 +41,6 @@ export type StudyOperation = Extract<
   }
 >;
 
-/**
- * How the learner studies what the plan holds: practice or explanation, difficulty, when written
- * tests are practiced, studying everything after an exam (exams only), and the bases' choices.
- */
 export function applyStudyOperation({
   goalKind,
   operation,
@@ -80,7 +72,6 @@ export function applyStudyOperation({
   }
 }
 
-/** Whether an operation is about how the learner studies (see `applyStudyOperation`). */
 export function isStudyOperation(operation: PlanOperation): operation is StudyOperation {
   return STUDY_KINDS.has(operation.kind);
 }

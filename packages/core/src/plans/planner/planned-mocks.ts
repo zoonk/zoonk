@@ -10,24 +10,13 @@ import {
 import { toIsoDate } from "./plan-calendar";
 import { type PlannedItem } from "./plan-items";
 
-/** What a planning pass settled about its mocks (see `settlePlannedMocks`). */
 export type PlannedMocks = {
-  /** How many mocks the pass considered, funded or not: what bounds the passes that settle them. */
   horizon: number;
-  /** The funding the plan saves: its retained mocks', and the past days a page still shows. */
   mockFunding: MockFunding[];
-  /** The resolution to plan again with, or null when this pass's mocks hold. */
   next: MockResolution | null;
-  /** The mocks the days before them can't fund, at their real length: not in the plan. */
   unfundedMocks: UnfundedMove[];
 };
 
-/**
- * A pass's mocks, reconciled with what the plan keeps: the plan saves funding only for the mocks it
- * holds (its items), so no day sets time aside for one it doesn't, and the funded mocks it left out
- * give their days back on the next pass (see `resolveRetainedMocks`), as do new mocks whose exam
- * day the final order changes. A spare mock and a mock after the exam take their turn like any.
- */
 export function settlePlannedMocks({
   afterExam,
   clocks = [],
@@ -84,16 +73,11 @@ export function settlePlannedMocks({
   };
 }
 
-/** Passes beyond the horizon's releases: one to settle the identities, one to see them hold. */
 const SETTLING_PASSES = 2;
 
 /**
- * Plans until its mocks hold (see `settlePlannedMocks`): every retained mock has the exam day its
- * order gives it, and every mock the plan funds is one it holds, so the funding it saves is all the
- * time its days set aside. A pass that doesn't hold releases more of the first pass's mocks (never
- * more than it considered, `horizon`) or names them anew, which the next pass, with the same mocks,
- * keeps; past that bound the plan is refused rather than saved with time set aside for mocks it
- * doesn't hold.
+ * Throws when its mocks don't settle within `horizon` releases, rather than save time set aside for
+ * mocks it doesn't hold.
  */
 export function resolvePlannedMocks<T extends { mocks: PlannedMocks }>(
   plan: (resolution: MockResolution | null) => T,

@@ -9,7 +9,6 @@ function queueUnit(
   return { area: "Math", chapterId: null, lessonId: null, skillId: null, title: "", ...attrs };
 }
 
-/** A day's lesson minutes, from where in the plan's lesson minutes each day ends. */
 function getDayCapacity({
   cumulative,
   dayIndex,
@@ -22,13 +21,11 @@ function getDayCapacity({
 
 describe("a phase's challenge goes on a day with lesson time", () => {
   it("skips a day without any when nothing before it used lesson time yet", () => {
-    // Lesson time on the first and third days; the second's minutes all go to a fixed event.
     const cumulative = [10, 10, 20];
 
     expect(getDayCapacity({ cumulative, dayIndex: 1 })).toBe(0);
     expect(getDayCapacity({ cumulative, dayIndex: 2 })).toBeGreaterThan(0);
 
-    // The unit before it is due on the second day, and no unit before it used lesson time.
     const placed = placeBoss({
       cumulative,
       from: 1,
@@ -43,13 +40,11 @@ describe("a phase's challenge goes on a day with lesson time", () => {
   });
 
   it("skips a kept phase end's day without any, when a lesson came after that end's challenge", () => {
-    // Lesson time on the first three days and the fifth; the fourth's minutes all go to a fixed event.
     const cumulative = [10, 20, 30, 30, 40];
 
     expect(getDayCapacity({ cumulative, dayIndex: 3 })).toBe(0);
     expect(getDayCapacity({ cumulative, dayIndex: 4 })).toBeGreaterThan(0);
 
-    // The first phase's end is kept on the fourth day, after its lessons ended on the first day.
     const placed = placeUnits({
       cumulative,
       units: [
@@ -77,7 +72,6 @@ describe("a phase's challenge goes on a day with lesson time", () => {
   });
 
   it("comes beside its lessons when they run past the plan's last day", () => {
-    // 30 lesson minutes over three days; its lessons take 35.
     const placed = placeUnits({
       cumulative: [10, 20, 30],
       units: [
@@ -101,7 +95,6 @@ describe("a phase's challenge goes on a day with lesson time", () => {
       ],
     });
 
-    // No study day is left after them, though the first days have lesson time: it takes none.
     expect(placed[2]).toMatchObject({ beside: true, start: 35 });
   });
 });

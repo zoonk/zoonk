@@ -65,7 +65,6 @@ describe(weighGraphByCourse, () => {
     const details = { courseWeights: found, institution: "UFMG", targetCourse: "Medicina" };
     const weighted = weighGraphByCourse({ graph, weights: readCourseWeights(details) });
 
-    // The average weight is 2: natural sciences keep their weight, human sciences halve, the essay is 1.5 times.
     expect(weighted.skills.map((item) => item.weight)).toStrictEqual([3, 1.5, 1.5, 2]);
   });
 

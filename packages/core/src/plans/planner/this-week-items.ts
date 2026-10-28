@@ -5,10 +5,6 @@ import { type MovedEvent } from "./plan-state";
 import { type QueueUnit } from "./plan-units";
 import { withoutRepeatedTitles } from "./repeated-titles";
 
-/**
- * The source rows an automatic run releases from the saved week when the learner moves them.
- * Keeping a source row would put it back beside its new Monday and make Undo ambiguous.
- */
 function listMovedWeeklyItemIds({
   items,
   moves,
@@ -29,7 +25,6 @@ function listMovedWeeklyItemIds({
   );
 }
 
-/** An automatic run keeps the saved week, except a weekly event explicitly moved out of it. */
 export function listThisWeekItems({
   input,
   keepsRest,
@@ -52,7 +47,6 @@ export function listThisWeekItems({
   );
 }
 
-/** Pending work keeps its teaching order after completed work and repeated titles are removed. */
 export function getPendingOrder({
   finished,
   queue,
@@ -72,7 +66,6 @@ export function getPendingOrder({
   };
 }
 
-/** Work already set aside stays out unless this run actually placed it. */
 export function listStillSetAside({
   items,
   placed,

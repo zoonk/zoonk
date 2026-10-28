@@ -13,18 +13,11 @@ const courseWeightsSchema = z.object({
   institution: z.string(),
   source: z.object({ title: z.string().nullable(), url: z.string() }).nullable().default(null),
   status: z.enum(["found", "unknown"]),
-  /** Each part of the exam (a notice subject) and its weight, when found. */
   subjects: courseWeightSubjectsSchema.default([]),
 });
 
-/**
- * What research found about how the learner's course weighs the exam's parts at their institution
- * (SISU's weights for Medicina at UFMG), stored on the goal's details as `courseWeights`, with the
- * course and institution it's for, so a learner who changes either gets it looked up again.
- */
 export type CourseWeights = z.infer<typeof courseWeightsSchema>;
 
-/** Each exam part's weight as the Library stores them; none when they don't read as weights. */
 export function readCourseWeightSubjects(value: unknown): CourseWeights["subjects"] {
   return courseWeightSubjectsSchema.safeParse(value).data ?? [];
 }
@@ -33,10 +26,6 @@ function readText(value: unknown): string | null {
   return typeof value === "string" && value.trim() ? value.trim() : null;
 }
 
-/**
- * The course weights stored on a goal's details when they were found for the course and
- * institution the goal names now; null otherwise.
- */
 export function readCourseWeights(details: unknown): CourseWeights | null {
   const record = isJsonObject(details) ? details : {};
   const parsed = courseWeightsSchema.safeParse(record.courseWeights).data;
@@ -54,13 +43,6 @@ export function readCourseWeights(details: unknown): CourseWeights | null {
   return isCurrent ? parsed : null;
 }
 
-/**
- * The graph with each skill's exam weight scaled by how much the learner's course weighs its part
- * of the exam, relative to the parts' average: a medicine candidate's natural sciences and essay count
- * double where the institution counts them double, so they get more of the plan's time. Skills in
- * an area the course doesn't weigh (exam strategy) keep theirs. The stored graph never changes:
- * only the planner reads the weighted copy.
- */
 export function weighGraphByCourse({
   graph,
   weights,

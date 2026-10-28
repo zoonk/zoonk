@@ -9,7 +9,6 @@ function skill(skillId: string, area: string, phase = 0) {
   return { area, lessons: 2, name: skillId, phase, skillId, weight: null };
 }
 
-/** A Spanish university entrance exam's graph: one foreign language of two, between two subjects. */
 const GRAPH: PlanGraph = {
   phases: [
     { milestone: null, name: "Bases" },

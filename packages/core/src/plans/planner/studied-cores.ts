@@ -4,10 +4,6 @@ import { type PlanGraph, type PlanGraphSkill } from "./plan-state";
 import { type PlannerLesson, assignLessonSkills } from "./plan-units";
 import { countStandInLessons } from "./stand-in-size";
 
-/**
- * How many lessons a skill's core has (see `getCoreLessons`), from its lessons the plan has,
- * outlined and still to write (as `findPlanBases` counts them).
- */
 export function countCoreLessons({
   outlined,
   skill,
@@ -21,13 +17,6 @@ export function countCoreLessons({
   );
 }
 
-/**
- * The skills whose core the learner studied, none of their lessons still to do in the plan: a
- * choice that keeps no more than a base's core changes nothing for them. Kept, a quick lesson for
- * prokaryotes, whose core a class test's learner had studied, planned the plan the way a plan
- * with choices goes, and cell theory left it. The planner (`getKeptBaseChoices`) and the plan
- * rules (R15) both read a finished base with it.
- */
 export function listStudiedCores(input: {
   graph: Pick<PlanGraph, "skills">;
   items: readonly Pick<ExistingPlanItem, "kind" | "skillId" | "status">[];

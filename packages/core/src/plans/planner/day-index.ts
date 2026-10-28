@@ -1,7 +1,5 @@
-/** Floating-point sums of lesson minutes must not push a lesson to the next day. */
 export const EPSILON = 1e-6;
 
-/** The first day whose cumulative capacity reaches `needed`, or -1 when none does. */
 export function findDayIndex({
   cumulative,
   needed,
@@ -25,10 +23,8 @@ export function findDayIndex({
 }
 
 /**
- * `findDayIndex` for a unit placed after the one that landed on day `from`: what it needs only
- * grows, so no day before `from` reaches it. The search gallops from there (a step, then twice as
- * many) instead of searching every day for each unit: a real-size exam places thousands of units,
- * many times per plan, and each lands on or near the day before it.
+ * Gallops from `from` (a step, then twice as many): a real-size exam places thousands of units per
+ * plan, each near the one before it.
  */
 export function findDayIndexFrom({
   cumulative,
@@ -45,7 +41,6 @@ export function findDayIndexFrom({
     return -1;
   }
 
-  /** Most units fit this day or the next; neither needs the galloping search's closures. */
   if ((cumulative[from] ?? 0) + EPSILON >= needed) {
     return from;
   }
@@ -82,19 +77,10 @@ export function findDayIndexFrom({
   return gallop(from + 1, 2);
 }
 
-/**
- * Whether a day's lesson minutes leave room for new work. A day whose minutes all go to fixed
- * events (a mock, the week's checkpoint on a day as short as it) has none, though the plan's study
- * time reaches it: a phase challenge never leads it (see `canHoldPhaseChallenge`).
- */
 export function isLessonRoom(capacity: number): boolean {
   return capacity > EPSILON;
 }
 
-/**
- * The first day from `from` with lesson minutes of its own (see `isLessonRoom`), or -1 when none
- * is left.
- */
 export function findLessonDayFrom({
   cumulative,
   from,

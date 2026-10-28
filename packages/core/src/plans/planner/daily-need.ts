@@ -6,38 +6,22 @@ import { addDays, getStudyMinutes, toIsoDate } from "./plan-calendar";
 import { createDays, getCalendar, getPlanStart } from "./plan-run-days";
 import { type DayShape, type PlanDay, getLessonCapacity } from "./schedule-units";
 
-/** Floating-point sums of minutes must not read a capacity that holds the work as short. */
 const EPSILON = 1e-6;
 
-/** The most a day has: the about-N search never asks for more (see `estimateDailyNeed`). */
 const DAY_MINUTES = 1440;
 
-/** How far the finish forecast looks: about three years of study days (see `estimateFinish`). */
 const FINISH_HORIZON_DAYS = 1100;
 
 type Finish = SelectedSummary["forecast"]["finish"];
 
-/** A mock among the fixed days (see `FixedDays`): its day, length, and what past days set aside for it. */
 type FixedMock = { at: number; clock: number; past: number };
 
-/**
- * The days before the deadline as one build fixed them: each day's events, share and whether new
- * lessons may go on it, its minutes at any daily time (`minutesAt`, in the days' order), and its
- * mocks.
- */
 export type FixedDays = {
   days: readonly Pick<PlanDay, "shape">[];
   minutesAt: (dailyMinutes: number) => readonly number[];
   mocks: readonly FixedMock[];
 };
 
-/**
- * The lesson minutes the fixed days give at `dailyMinutes` a day (see `getLessonCapacity`: a
- * leading checkpoint takes its day's time, one beside its lessons none, a mock's day gives none),
- * less what each mock still needs from the days before it since the mock before (its length, less
- * what past days set aside and what its own day can give, see `getSpendable`), at the lowest share
- * of those days: an optimistic bound, never a plan.
- */
 function getCapacityAt({ dailyMinutes, fixed }: { dailyMinutes: number; fixed: FixedDays }): {
   lessons: number;
   value: number;
@@ -70,10 +54,8 @@ function getCapacityAt({ dailyMinutes, fixed }: { dailyMinutes: number; fixed: F
 }
 
 /**
- * About how many minutes a day `remaining` raw lesson minutes need on the fixed days: the fewest
- * whose capacity (see `getCapacityAt`) holds them. Capacity never falls as the daily time grows, so
- * the least such time is found by halving. An estimate: another daily time can place its events and
- * mocks otherwise, so it never says the plan fits there.
+ * Capacity never falls as the daily time grows, so halving finds the fewest minutes that hold the
+ * work.
  */
 export function estimateDailyNeed({
   fixed,
@@ -112,11 +94,6 @@ export function estimateDailyNeed({
   return { basis: "estimated", minutes: search(1, DAY_MINUTES) };
 }
 
-/**
- * The fixed events a day keeps whatever the daily time: its checkpoints and mocks as this build
- * placed them, a mock the plan holds there included and one it doesn't hold left out. Reviews fill
- * what a day has left, so they take none of its lesson time.
- */
 function toFixedShape({
   day,
   mockDays,
@@ -155,11 +132,6 @@ function toFixedShape({
   };
 }
 
-/**
- * The days before the deadline as this build fixed them (see `FixedDays`): from today, each with
- * its checkpoints and mocks where the build placed them (see `toFixedShape`), its minutes at
- * another daily time read from the plan's own calendar, and what past days set aside for each mock.
- */
 export function readFixedDays({
   built,
   deadline,
@@ -212,13 +184,6 @@ export function readFixedDays({
   return { days, minutesAt, mocks };
 }
 
-/**
- * About when `remaining` raw lesson minutes are all done, from the layout's study day: on each of
- * the layout's days the lesson time it gives new work (see `getLessonCapacity`), and on a day it
- * doesn't lay out or closes to new lessons (an exam's final stretch, past a deadline) the learner's
- * own study time at the share of its last lesson day. An estimate as of the layout: the plan's
- * reviews, events and cuts can place the work otherwise.
- */
 export function estimateFinish({
   built,
   input,

@@ -5,7 +5,6 @@ import { type ExistingPlanItem } from "./plan-items";
 import { type PlanGraphSkill, parsePlanSettings } from "./plan-state";
 import { type PlannerLesson } from "./plan-units";
 
-/** A Monday. */
 const TODAY = fromIsoDate("2026-10-12");
 
 function skill(skillId: string): PlanGraphSkill {
@@ -16,7 +15,6 @@ function lesson(lessonId: string, skillId: string): PlannerLesson {
   return { chapterId: skillId, lessonId, minutes: 4, skillIds: [skillId], title: lessonId };
 }
 
-/** A lesson of the saved plan, still to do, due `day` days from today. */
 function todo({
   day,
   lessonId,
@@ -44,8 +42,6 @@ function todo({
 }
 
 describe("a new day's settling of a lesson whose base the learner hasn't begun", () => {
-  // ENEM: a lesson Linguagens shares with the skill it teaches, given on a day the learner didn't
-  // study, came back first, before the quick lesson of the base that skill builds on (R16).
   it("carries the lesson in after the base's first lesson instead of first", () => {
     const plan = buildPlan({
       carryOver: { lessonIds: [] },

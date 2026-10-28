@@ -6,7 +6,6 @@ import { addDays, fromIsoDate, toIsoDate } from "./plan-calendar";
 import { type PlanGraphSkill, parsePlanSettings } from "./plan-state";
 import { type PlannerLesson } from "./plan-units";
 
-/** A Wednesday, about two weeks before an ENEM-like exam: too little time for everything. */
 const TODAY = fromIsoDate("2026-10-07");
 const AREAS = ["Linguagens", "Humanas", "Natureza", "Matemática"] as const;
 const SKILLS_PER_AREA = 12;
@@ -36,12 +35,6 @@ function lessonsOf({
   }));
 }
 
-/**
- * Four areas of chained skills, each skill building on the one before it, and an essay of five
- * outcome skills, all worth the same. In each area a chapter shared by its second and sixth skills
- * is planned where the second is taught while its later lessons count for the sixth, which builds
- * on the third to fifth: the order that left Lucas's areas waiting on their own later lessons.
- */
 function enemPlan(focusAreas: string[] = []): BuildPlanInput {
   const areaSkills = AREAS.flatMap((area) =>
     Array.from({ length: SKILLS_PER_AREA }, (_, index): PlanGraphSkill => ({
@@ -117,13 +110,11 @@ function enemPlan(focusAreas: string[] = []): BuildPlanInput {
   };
 }
 
-/** The plan without a focus, which several tests read: built once. */
 const unfocused = once(() => {
   const input = enemPlan();
   return { input, plan: buildPlan(input) };
 });
 
-/** Each area's share of the lesson minutes on the plan's first `days` days. */
 function sharesOfFirstDays({
   days,
   input,
@@ -131,7 +122,6 @@ function sharesOfFirstDays({
 }: {
   days: number;
   input: BuildPlanInput;
-  /** The plan built from `input`, when a test already has it. */
   plan?: ReturnType<typeof buildPlan>;
 }) {
   const last = addDays(TODAY, days - 1).getTime();
@@ -159,7 +149,6 @@ describe("an ENEM-like plan short on time", () => {
   it("studies every area in its first week, each in proportion to what it's worth", () => {
     const shares = sharesOfFirstDays({ days: 7, ...unfocused() });
 
-    // Five parts worth the same: each gets about a fifth, the essay included, never most of it.
     [...AREAS, "Redação"].forEach((area) => {
       expect(shares.get(area) ?? 0).toBeGreaterThan(0.12);
       expect(shares.get(area) ?? 0).toBeLessThan(0.3);
@@ -167,7 +156,6 @@ describe("an ENEM-like plan short on time", () => {
   });
 
   it("gives an area the learner focuses on a bigger share of the plan", () => {
-    // Every core comes first, so the focus shows once the cores are placed: in the depth after them.
     const even = sharesOfFirstDays({ days: 16, ...unfocused() });
     const focused = sharesOfFirstDays({ days: 16, input: enemPlan(["Natureza"]) });
 
@@ -184,7 +172,6 @@ describe("an ENEM-like plan short on time", () => {
       (item) => item.kind === "lesson" && item.skillId?.startsWith("Redação"),
     );
 
-    // Each essay skill keeps at least its first third; not all 100 of its lessons crowd the rest out.
     expect(essayLessons.length).toBeGreaterThanOrEqual(5 * 7);
     expect(essayLessons.length).toBeLessThan(100);
   });
@@ -192,7 +179,6 @@ describe("an ENEM-like plan short on time", () => {
   it("gives the parts the learner's course counts more a bigger share of the plan", () => {
     const { input } = unfocused();
 
-    // Medicine at a university that counts natural sciences and the essay twice.
     const weights = {
       course: "Medicina",
       edition: null,
@@ -221,7 +207,6 @@ describe("an ENEM-like plan short on time", () => {
   });
 });
 
-/** Each study day's share of lesson minutes on the written test, in the plan's order. */
 function writtenShareByDay(input: BuildPlanInput): number[] {
   const areaOf = new Map(input.graph.skills.map((skill) => [skill.skillId, skill.area ?? ""]));
 
@@ -248,7 +233,6 @@ describe("an exam's written test", () => {
   it("shares the last days with the other parts instead of taking them alone", () => {
     const input = enemPlan();
 
-    /** At 67 minutes the whole 15-minute boss still leaves the last three lesson days mixed. */
     const fundedInput = { ...input, goal: { ...input.goal, dailyMinutes: 67 } };
     const plan = buildPlan(fundedInput);
 
@@ -272,10 +256,8 @@ describe("an exam's written test", () => {
   });
 
   it("keeps a written test in the first week at a protected share when the learner writes well", () => {
-    // Time for everything: nothing is cut, so only what each part is worth orders the weeks.
     const input = enemPlan();
 
-    // The learner writes well already: little gap on the essay, so little worth on its own.
     const strong = {
       reps: 6,
       retrievabilityAtTarget: 0.97,
@@ -294,8 +276,6 @@ describe("an exam's written test", () => {
       input: { ...input, goal: { ...input.goal, targetDate: addDays(TODAY, 45) }, readiness },
     });
 
-    // Graded writing improves only with practice spread over the weeks: at least half an
-    // average part's time, never left for the end.
     expect(shares.get("Redação") ?? 0).toBeGreaterThan(0.08);
   });
 

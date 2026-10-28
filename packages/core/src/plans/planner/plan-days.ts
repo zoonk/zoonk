@@ -18,34 +18,19 @@ import { getBossKey } from "./plan-units";
 import { type DayShape, type FixedEvent } from "./schedule-units";
 import { getShortExamEvents, isLightDayBefore, isShortExam, mockEvent } from "./short-exam-plan";
 
-/** A weekly checkpoint outside exams: a short mixed challenge on the week's skills. */
-/** The week's mixed checkpoint, before its questions are picked: its full ten. */
 export const WEEKLY_CHECKPOINT_MINUTES = getCheckpointMinutes(CHECKPOINT_QUESTIONS);
 
-/** The day before an exam is light: a short review, then rest. */
 export const DAY_BEFORE_EXAM_MINUTES = 15;
 
-/**
- * What an exam's days depend on besides the calendar: the plan's first day, which tells a test
- * days away, a class test's short mock, which rehearses it on the day before, and whether the plan
- * studies everything (`PlanSettings.fullCourse`), so its days go on after the exam.
- */
 export type ExamDayRules = {
-  /**
-   * The first day the run plans (today) and the days of the plan's mocks the learner took: a plan,
-   * or a phase two weeks long or more, whose weekly mock days are all past, and none taken, gets a
-   * mock of its own (see `getMockDays`). Absent: a plan made today, no mock taken.
-   */
   from?: Date;
   fullCourse?: boolean;
-  /** The mocks the plan funds (see `PlanSettings.mockFunding`), which set days' time aside. */
   mockFunding?: readonly MockFunding[];
   planStart: Date | null;
   shortMockMinutes: number | null;
   takenMocks?: readonly Date[];
 };
 
-/** An exam's day rules from its plan's settings; null for goals that aren't exams. */
 export function getExamDayRules({
   isExam,
   settings,
@@ -65,7 +50,6 @@ export function getExamDayRules({
   };
 }
 
-/** Weekly checkpoints start once the learner has a week of skills to mix. */
 const DAY_OF_SECOND_WEEK = 7;
 
 type CalendarInput = { calendar: StudyCalendar; practiceBias: PracticeBias };
@@ -76,10 +60,6 @@ function fixedEvent(
   return { replacesDay: false, ...event };
 }
 
-/**
- * The week's event outside exam phases: a short mixed challenge, or an exam's weekly mock
- * (`mockMinutes`) in place of that day's lessons.
- */
 function getWeeklyEvent({ date, mockMinutes }: { date: Date; mockMinutes: number | null }) {
   if (mockMinutes !== null) {
     return mockEvent({ date, fullLength: false, minutes: mockMinutes, replacesDay: true });
@@ -93,13 +73,6 @@ function getWeeklyEvent({ date, mockMinutes }: { date: Date; mockMinutes: number
   });
 }
 
-/**
- * Days of a plan without exam phases: the learner's minutes, a weekly checkpoint from the second
- * week on, and nothing on or after the target date, when there is one. An exam's days without
- * phases (no date yet, or after an exam the plan goes on past) keep its weekly mock instead
- * (`mockMinutes`), every few weeks when it's longer than the learner's study day (see
- * `getMockWeeks`): every exam plan has mocks.
- */
 export function createLearnDays({
   calendar,
   courseStart = false,
@@ -111,7 +84,6 @@ export function createLearnDays({
 }: CalendarInput & {
   courseStart?: boolean;
   eventWeekday: number;
-  /** An exam's weekly mock, in place of the weekly checkpoint; null for other goals. */
   mockMinutes?: number | null;
   start: Date;
   targetDate: Date | null;
@@ -133,16 +105,11 @@ export function createLearnDays({
       minutes: open ? getStudyMinutes({ calendar, date }) : 0,
       open,
       phase: null,
-      // A new plan has no earlier lessons to review; its first day uses the learner's time.
       share: courseStart && date.getTime() === start.getTime() && mockMinutes === null ? 1 : share,
     };
   };
 }
 
-/**
- * A phase closes with its checkpoint on its last study day that isn't a mock day: a rest day the
- * phase ends on never takes it. A phase without such a day keeps its last day.
- */
 function getPhaseCheckpointDay({
   calendar,
   mockDays,
@@ -186,14 +153,9 @@ function getExamEvents({
   phase,
   window,
 }: {
-  /** A phase's boss's minutes (see `getPlannedBossMinutes`). */
   bossMinutes: (phase: number) => number;
   date: Date;
   fullMockMinutes: number;
-  /**
-   * Each phase's checkpoint day (see `getPhaseCheckpointDay`), found once per phase; null when the
-   * run's settled days place them (see `listBossEvents`).
-   */
   getCheckpointDay: ((window: ExamWindow) => Date) | null;
   isDayBefore: boolean;
   minutes: number;
@@ -209,7 +171,6 @@ function getExamEvents({
     return minutes > 0 ? [review] : [];
   }
 
-  // The final stretch's mock is the whole exam day, as the mock itself asks it.
   if (isMockDay({ date, mockDays, window })) {
     const fullLength = window.kind === "finalStretch";
     const mock = fullLength ? fullMockMinutes : mockMinutes;
@@ -225,10 +186,6 @@ function getExamEvents({
     : [];
 }
 
-/**
- * An exam day's minutes: the learner's time, and a light review on the day before the exam unless
- * a short plan needs that day (see `isLightDayBefore`).
- */
 function getExamDayMinutes({
   calendar,
   date,
@@ -248,14 +205,6 @@ function getExamDayMinutes({
     : minutes;
 }
 
-/**
- * Days of an exam plan: each phase's share of new learning, weekly mocks from the plan's second
- * week in every phase, every few weeks when a mock is longer than the learner's study day (see
- * `getMockWeeks`; in place of that day's lessons; the whole exam day in the final stretch),
- * a checkpoint closing each phase before the final stretch, the final stretch as review days, and
- * a light day before the exam. A test days away keeps only its short plan's events: no phase
- * checkpoints or weekly mocks, its one mock, and a last day with nothing new.
- */
 export function createExamDays({
   bossDays,
   bossMinutes = (phase) => getPlannedBossMinutes({ goalKind: "exam", phase }),
@@ -268,14 +217,10 @@ export function createExamDays({
   targetDate,
   windows,
 }: CalendarInput & {
-  /** Where the phase challenges go, as a run settles them (see `placeExamBosses`). */
   bossDays?: ExamBossDays;
-  /** A phase's boss's minutes (see `getPlannedBossMinutes`); its size before the bank is read. */
   bossMinutes?: (phase: number) => number;
   eventWeekday: number;
-  /** The final stretch's mocks: the real exam day's time, its written test included. */
   fullMockMinutes: number;
-  /** The regular weeks' mocks: half the exam's first day. */
   mockMinutes: number;
   rules: ExamDayRules;
   targetDate: Date;
@@ -297,7 +242,6 @@ export function createExamDays({
     windows,
   });
 
-  // Every date of a phase asks for its checkpoint day: a plan a year long asked hundreds of times.
   const checkpointDays = new Map<ExamWindow, Date>();
 
   const getCheckpointDay = (window: ExamWindow): Date => {
@@ -317,8 +261,6 @@ export function createExamDays({
     const isDayBefore = date.getTime() === dayBefore.getTime();
     const minutes = getExamDayMinutes({ calendar, date, rules, targetDate });
 
-    // A class test's own mock on the day before (see `getMockDays`) goes as on a short plan's
-    // last day: the short mock, then a review with the time left.
     const events =
       isShortPlan || (isDayBefore && isMockDay({ date, mockDays, window }))
         ? getShortExamEvents({
@@ -344,7 +286,6 @@ export function createExamDays({
             window,
           });
 
-    // A short plan's days are its own (see `getShortExamEvents`): no phase challenges.
     const bosses = bossDays && !isShortPlan ? listBossEvents({ bossDays, bossMinutes, date }) : [];
 
     return {
@@ -357,13 +298,7 @@ export function createExamDays({
   };
 }
 
-/**
- * The minutes a learner has planned for one date: their weekday's time, halved in a light week,
- * none from the target date on (except the days after an exam whose plan studies everything), a
- * short review the day before an exam (unless a short plan needs that day), and the time the plan's
- * mocks set aside (see `getFundedMinutes`). Sessions build the day from it, so the plan and Today
- * agree.
- */
+/** Sessions build the day from it, so the plan and Today agree. */
 export function getPlannedMinutes({
   calendar,
   date,
@@ -373,16 +308,13 @@ export function getPlannedMinutes({
 }: {
   calendar: StudyCalendar;
   date: Date;
-  /** The exam's day rules; null for goals that aren't exams. */
   exam: ExamDayRules | null;
-  /** The time the days' checkpoints take past it (`PlanSettings.checkpointOverflow`). */
   overflow?: PlanSettings["checkpointOverflow"];
   targetDate: Date | null;
 }): number {
   const funding = exam?.mockFunding ?? [];
   const day = toIsoDate(date);
 
-  // A checkpoint runs whole on its day: the day asks for the time it takes past it too.
   const extra = overflow
     .filter((entry) => entry.date === day)
     .reduce((sum, entry) => sum + entry.minutes, 0);

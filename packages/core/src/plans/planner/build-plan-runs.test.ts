@@ -6,12 +6,6 @@ import { type ExistingPlanItem, type PlannedItem } from "./plan-items";
 import { type PlanGraphSkill, parsePlanSettings } from "./plan-state";
 import { type PlannerLesson } from "./plan-units";
 
-/*
- * A run on the plan an earlier run saved: what it keeps, carries and brings back, on a plan of a few
- * skills.
- */
-
-/** A Monday. */
 const TODAY = fromIsoDate("2026-10-12");
 
 function skill(skillId: string, attrs: Partial<PlanGraphSkill> = {}): PlanGraphSkill {
@@ -30,7 +24,6 @@ function lesson(lessonId: string, skillIds: string[], chapterId = "chapter"): Pl
   return { chapterId, lessonId, minutes: 3, skillIds, title: `Lesson ${lessonId}` };
 }
 
-/** A skill's lessons in a chapter of its own. */
 function lessonsOf(skillId: string, count: number): PlannerLesson[] {
   return Array.from({ length: count }, (_, index) =>
     lesson(`${skillId}${index}`, [skillId], skillId),
@@ -57,12 +50,10 @@ function planInput(attrs: Partial<BuildPlanInput> = {}): BuildPlanInput {
 type StoredItem = ExistingPlanItem & Pick<PlannedItem, "key">;
 type Items = { items: readonly Pick<StoredItem, "key" | "kind" | "scheduledFor" | "status">[] };
 
-/** The plan as stored: each item with its id (its key) and position. */
 function store(plan: { items: readonly PlannedItem[] }): StoredItem[] {
   return plan.items.map((item, position) => ({ ...item, id: item.id ?? item.key, position }));
 }
 
-/** Each item's key, status and day. */
 function layout(plan: Items) {
   return plan.items.map((item) => [
     item.key,
@@ -80,9 +71,6 @@ function listLessonKeys(plan: Items): string[] {
 }
 
 describe("an automatic run with a stand-in this week", () => {
-  // ENEM: a lesson the Library wrote for two skills counts for the first, whose other lessons the
-  // plan holds. Read as written for the stand-in's skill too, an automatic run took the stand-in
-  // out of this week (see `splitExistingItems`).
   it("keeps it on its day when its skill shares a lesson the plan counts for another", () => {
     const input = planInput({
       graph: {
@@ -110,9 +98,6 @@ describe("an automatic run with a stand-in this week", () => {
     );
   });
 
-  // A language plan short on time cut a stand-in to 32 of its 96 lessons. Counted whole, it took
-  // the time of 96 past this week, and a refresh at the learner's pace moved everything after it
-  // past the goal's date (see `getKeptShare`).
   it("counts only the part of it the plan keeps", () => {
     const input = planInput({
       goal: { dailyMinutes: 12, kind: "learn", targetDate: fromIsoDate("2026-11-01") },
@@ -129,7 +114,6 @@ describe("an automatic run with a stand-in this week", () => {
 
     const built = buildPlan(input);
 
-    // The stand-in is saved with the lessons of it that fit, as `commitPlan` saves it.
     const fitted = getFittedStandInLessons({
       skillMinutes: built.skillMinutes,
       standInLessons: new Map([["s1", 60]]),
@@ -139,7 +123,6 @@ describe("an automatic run with a stand-in this week", () => {
       item.key === "skill:s1" ? { ...item, lessons: fitted ?? null } : item,
     );
 
-    // A session at a faster pace re-plans what comes after this week.
     const next = buildPlan({ ...input, items: saved, mode: "automatic", paceFactor: 0.5 });
 
     expect(fitted).toBeLessThan(30);
@@ -151,9 +134,6 @@ describe("an automatic run with a stand-in this week", () => {
 });
 
 describe("an automatic run on a plan that studies a base with its quick lesson", () => {
-  // The plan follows the order of the one with the base's core (see `followLearnedOrder`). Laid
-  // out as an automatic run, that plan read the core as new work this week, laid itself out from
-  // the week after, and the refresh right after a class test's new date lost six lessons.
   it("keeps the plan as it is", () => {
     const input = planInput({
       bases: [
@@ -200,8 +180,6 @@ describe("an automatic run on a plan that studies a base with its quick lesson",
 });
 
 describe("a later run on the day a settling carried earlier days' work", () => {
-  // The items the settling carried are carried again (`CarryOver.itemIds`): laid out in the
-  // queue's order instead, the first open of Today after an OAB plan's settling moved its lessons.
   it("lays the work out as the settling did", () => {
     const skills = [
       skill("math", { area: "Math", lessons: 30, weight: 5 }),
@@ -215,7 +193,6 @@ describe("a later run on the day a settling carried earlier days' work", () => {
       lessons: skills.flatMap((entry) => lessonsOf(entry.skillId, 30)),
     });
 
-    // The learner missed the week: Sunday's settling carries it, past this week.
     const sunday = fromIsoDate("2026-10-18");
     const first = store(buildPlan(input));
 
@@ -245,8 +222,6 @@ describe("a later run on the day a settling carried earlier days' work", () => {
 });
 
 describe("work missed days set aside", () => {
-  // Two missed days before a class test set organelles aside. The learner then chose to study
-  // everything, and organelles stayed out though the plan now had time for them.
   it("comes back on the learner's change that gives the plan time for it", () => {
     const input = planInput({
       goal: { dailyMinutes: 12, kind: "learn", targetDate: fromIsoDate("2026-10-16") },
@@ -281,10 +256,6 @@ describe("work missed days set aside", () => {
 });
 
 describe("an automatic run on the plan a forced one laid out the same day", () => {
-  // The lessons a stand-in this week has on each day, before and after the week's end, as funding
-  // a mock and placing the challenges read them (see `layOutAfterThisWeek`): kept as this week's
-  // work, an automatic run packed its time from its first day, and its challenge read that day as
-  // its end, a fortnight before the forced run's.
   it("gives a long stand-in across the week's end the same lesson minutes on each day", () => {
     const wednesday = fromIsoDate("2026-10-14");
 
@@ -321,8 +292,7 @@ describe("an automatic run on the plan a forced one laid out the same day", () =
     expect(standIn.some((date) => date > "2026-10-18")).toBe(true);
     expect(automatic.lessonRawMinutes).toStrictEqual(forced.lessonRawMinutes);
     expect(automatic.lessonDayMinutes).toStrictEqual(forced.lessonDayMinutes);
-    // This week's days give what the forced run set aside; the rest is summed again, so compare
-    // the minutes past float noise.
+
     const rounded = (funding: typeof forced.mockFunding) =>
       funding.map((entry) => ({
         ...entry,

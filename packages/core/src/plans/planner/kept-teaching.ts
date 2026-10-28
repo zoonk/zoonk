@@ -2,16 +2,10 @@ import { toDayMinutes } from "./interval-study-minutes";
 import { findDayMock } from "./mock-day";
 import { type DayShape, type PlanDay } from "./schedule-units";
 
-/** The minutes a day's kept time is rounded to (see `getKeptMinutes`). */
 const KEPT_PRECISION = 1e-9;
 
-/** Lesson minutes by a lesson's key and then a day (ISO date). */
 export type LessonDays = ReadonlyMap<string, ReadonlyMap<string, number>>;
 
-/**
- * The promised lesson's minutes on each day from `from` to `to` (see `listPromisedLessonMinutes`).
- * Only the days that keep any.
- */
 function listKeptLessonDays({
   from,
   promised,
@@ -37,10 +31,8 @@ function listKeptLessonDays({
 }
 
 /**
- * The day minutes a day keeps from a mock's funding (see `getSpendable`), after its fixed events:
- * its kept lesson minutes (see `listKeptLessonDays`) at the day's own share now. Equal layouts can
- * sum a day's lesson minutes in a different order: rounded, the same plan funds its mocks with the
- * same minutes, so a run on it saves nothing new.
+ * Rounded: equal layouts can sum a day's minutes in another order, and the same plan must fund its
+ * mocks with the same minutes.
  */
 function getKeptMinutes({
   lessons,
@@ -57,10 +49,6 @@ function getKeptMinutes({
   return Math.round(toDayMinutes({ lessonMinutes, share }) / KEPT_PRECISION) * KEPT_PRECISION;
 }
 
-/**
- * Where a mock's funding stops reading what days keep: before the next mock the plan lays (that
- * mock's funding keeps its own days again).
- */
 function findReadEnd({ days, index }: { days: readonly PlanDay[]; index: number }): number {
   for (let at = Math.max(0, index + 1); at < days.length; at += 1) {
     const day = days[at];
@@ -73,12 +61,6 @@ function findReadEnd({ days, index }: { days: readonly PlanDay[]; index: number 
   return days.length;
 }
 
-/**
- * The days a mock's funding reads, from its window's start (`windowStart`, an index of `days`) to
- * the day before the next mock (see `findReadEnd`), each keeping the promised lesson's teaching at
- * its share now (see `getKeptMinutes`; a mock's own day keeps none, its funding decides; one keeping
- * nothing keeps nothing an earlier mock's funding left it). `labels` are the days' ISO dates.
- */
 export function keepWindowTeaching({
   days,
   index,

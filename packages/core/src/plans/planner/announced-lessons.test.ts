@@ -8,7 +8,6 @@ const ANNOUNCEMENT =
 
 const citation = { passage: ANNOUNCEMENT, sourceId: "notes" };
 
-/** Pass 9's reading of Pedro's notes: each format, without what it asks about. */
 const FORMATS = [
   { citation, description: "Questão de completar tabela.", kind: "shortAnswer", options: null },
   { citation, description: "Questão dissertativa.", kind: "essay", options: null },
@@ -27,7 +26,6 @@ const LESSONS = [
   { lessonId: "map", skillIds: ["table"], title: "Mapeamento de organelas e funções" },
 ].map((lesson) => ({ ...lesson, chapterId: null, minutes: 4 }));
 
-/** One unit per lesson, and the essay skill's lessons not written yet. */
 const UNITS: QueueUnit[] = [
   ...LESSONS.map((lesson) => ({
     area: "Biologia",
@@ -93,7 +91,6 @@ describe("what a class test's material announces", () => {
     ]);
   });
 
-  // "Organelles" names lessons of two skills: it says nothing about which one the question asks.
   it("marks no lesson by a word in the titles of several skills' lessons", () => {
     const marked = markAnnouncedUnits({
       announcements: ["Vai cair organelas"],

@@ -6,17 +6,11 @@ import { getShownPhaseEnds } from "./kept-phase-ends";
 import { addDays, fromIsoDate } from "./plan-calendar";
 import { parsePlanSettings } from "./plan-state";
 
-/** A Monday. */
 const TODAY = fromIsoDate("2026-09-28");
 
-/** A learn plan of four phases, one skill each, due in 9 days at 19 minutes a day. */
 const SIZES = [8, 8, 8, 4];
 
 const input: BuildPlanInput = {
-  /**
-   * The smallest integer day preserving 19 lessons with whole 15-minute text bosses, each the study
-   * day after its lessons and overflowing a shorter day (see `placeBoss`).
-   */
   goal: { dailyMinutes: 19, kind: "learn", targetDate: addDays(TODAY, 9) },
   graph: {
     phases: SIZES.map((_, index) => ({ milestone: null, name: `Phase ${index + 1}` })),
@@ -52,10 +46,6 @@ function listLessonIds(plan: ReturnType<typeof buildPlan>) {
   return plan.items.flatMap((item) => (item.lessonId ? [item.lessonId] : []));
 }
 
-// A learner's new date re-plans the phase ends with the cut a plan short on time makes, and the
-// next runs keep those ends. Kept ends hold each challenge on its day whatever the day's time, so
-// judged on them the plan read as fitting and skipped the cut: a career plan's first landing after
-// a new date gained lessons and moved 209 items.
 describe("a plan short on time whose phase ends a run keeps", () => {
   const made = buildPlan(input);
   const items = made.items.map((item, position) => ({ ...item, id: item.key, position }));
@@ -73,8 +63,6 @@ describe("a plan short on time whose phase ends a run keeps", () => {
   );
 });
 
-// The review's reproduction: this plan fits 19 of the graph's 28 lessons by its date. Every item
-// done, it read "Finished" while its number counted the graph's full depth, 19 of 28 (68%).
 describe("a plan short on time, finished", () => {
   const made = buildPlan(input);
 

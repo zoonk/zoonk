@@ -8,7 +8,6 @@ import { getExamWindows } from "./plan-phases";
 import { type PlanGraphSkill, parsePlanSettings } from "./plan-state";
 import { type PlannerLesson } from "./plan-units";
 
-/** A Monday. */
 const TODAY = fromIsoDate("2026-09-28");
 
 function skill(skillId: string, attrs: Partial<PlanGraphSkill> = {}): PlanGraphSkill {
@@ -67,12 +66,6 @@ function plannedLesson(lessonId: string, skillId: string): ExistingPlanItem {
 }
 
 describe(getPlanFeasibility, () => {
-  // Ana moved her exam from 400 days away to 36, two weeks into her foundations: the plan keeps the
-  // phase she's in open, so its final stretch starts November 10, where a calendar from the plan's
-  // start puts it on November 7 (see `getKeptExamWindows`). What the plan covers is counted up to
-  // its own final stretch, so that's the deadline it says.
-  // A plan that studies everything goes on after the exam with what doesn't fit before it: those
-  // topics come after the exam, so it says, as without it, that not every topic is in by then.
   it("counts a topic in only when it gets lesson time before the deadline", () => {
     const ids = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"];
 
@@ -118,7 +111,6 @@ describe(getPlanFeasibility, () => {
   });
 
   it("counts an exam's coverage by what its subjects are worth, and other skills for nothing", () => {
-    // 60 minutes of lessons in all, 36 of them before the deadline (two days at 30).
     const input = planInput({
       goal: { dailyMinutes: 30, kind: "exam", targetDate: fromIsoDate("2026-09-30") },
       graph: {
@@ -141,13 +133,11 @@ describe(getPlanFeasibility, () => {
     const fits = exam.skillFits;
     const mathFit = (3 * (fits.get("math-1") ?? 0) + (fits.get("math-2") ?? 0)) / 4;
 
-    // Math is 75% of the exam, shared 3 to 1 by weight; Law's 25% counts what of it fits.
     expect(exam.measure).toBe("exam");
     expect(exam.coveredShare).toBeCloseTo(0.75 * mathFit + 0.25 * (fits.get("law") ?? 0), 5);
     expect(exam.coveredShare).toBeGreaterThan(0);
     expect(exam.coveredShare).toBeLessThan(1);
 
-    // Without the notice's subjects, each skill counts its weight.
     const goal = getPlanFeasibility({ input });
 
     const byWeight = [...goal.skillFits].reduce(
@@ -167,7 +157,6 @@ describe(getPlanFeasibility, () => {
 
     const placeholders = planInput({ graph });
 
-    // The outline wrote fewer, longer lessons than the graph's estimate, in a different order.
     const written = planInput({
       graph,
       lessons: [...lessonsFor("s2", 30, 5), ...lessonsFor("s1", 25, 4)],
@@ -176,7 +165,6 @@ describe(getPlanFeasibility, () => {
     const before = getPlanFeasibility({ input: placeholders });
     const after = getPlanFeasibility({ input: written });
 
-    // Each measures the lessons it plans: the share moves as estimates become written lessons.
     for (const feasibility of [before, after]) {
       expect(feasibility.coveredShare).toBeGreaterThan(0);
       expect(feasibility.coveredShare).toBeLessThan(1);
@@ -216,7 +204,6 @@ describe(getPlanFeasibility, () => {
   });
 
   it("counts lessons the plan set aside for time as left, and ones the Library held back as gone", () => {
-    // The Library outlined s1's 40 lessons: what it holds back from them leaves the skill.
     const graph = {
       phases: [{ milestone: null, name: "Everything" }],
       skills: [skill("s1", { lessons: 40, outlined: true }), skill("s2", { lessons: 40 })],
@@ -231,11 +218,8 @@ describe(getPlanFeasibility, () => {
 
     const fresh = getPlanFeasibility({ input: planInput({ graph, lessons }) });
 
-    // A new day's settling set 30 lessons aside: they're still left, and the plan as it stands
-    // covers none of them (a change brings them back).
     const setAside = getPlanFeasibility({ input: planInput({ graph, items: aside, lessons }) });
 
-    // The Library couldn't write them: they left the plan's lessons, and nothing will teach them.
     const heldBack = getPlanFeasibility({
       input: planInput({ graph, items: aside, lessons: lessons.slice(30) }),
     });
@@ -246,7 +230,6 @@ describe(getPlanFeasibility, () => {
   });
 
   it("weighs another daily time as switching plans it, from today, this week included", () => {
-    // A test on Thursday, this week's lessons already planned: re-planning at more time fits all.
     const input = planInput({
       goal: { dailyMinutes: 6, kind: "learn", targetDate: fromIsoDate("2026-10-01") },
       graph: {
@@ -273,7 +256,6 @@ describe(getPlanFeasibility, () => {
   });
 
   it("offers no switch to more time when more time covers nothing more", () => {
-    // The deadline is today: no daily time adds a study day.
     const input = planInput({
       goal: { dailyMinutes: 30, kind: "learn", targetDate: TODAY },
       graph: {
@@ -289,8 +271,6 @@ describe(getPlanFeasibility, () => {
   });
 
   it("recommends a time that covers everything, never one that only reads as everything", () => {
-    // At 4 h a day, all but a lesson or two of the light skill fits before the deadline (the final
-    // challenge takes their place): that reads as 100%, and still isn't everything.
     const input = planInput({
       goal: { dailyMinutes: 30, kind: "learn", targetDate: fromIsoDate("2026-10-03") },
       graph: {
@@ -306,7 +286,6 @@ describe(getPlanFeasibility, () => {
       input: { ...input, goal: { ...input.goal, dailyMinutes: 240 } },
     });
 
-    // Only a sliver doesn't fit at 4 hours a day.
     expect(atMost.fits).toBe(false);
     expect(Math.round(atMost.coveredShare * 100)).toBe(100);
 

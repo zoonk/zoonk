@@ -5,16 +5,10 @@ import { getExamDayRules, getPlannedMinutes } from "./plan-days";
 import { type PlannedItem } from "./plan-items";
 import { type PlanSettings } from "./plan-state";
 
-/** A checkpoint that runs whole on its day, past the day's time: a phase's, or the week's mixed one. */
 function isOverflowCheckpoint(item: PlannedItem): boolean {
   return (item.kind === "boss" || item.kind === "checkpoint") && item.scheduledFor !== null;
 }
 
-/**
- * Whether a phase's challenge sits beside the lessons it tests on their last day (see `placeBoss`):
- * one of its phase, or an earlier one, comes before it on its day. A challenge leads its day
- * otherwise, the next phase's lessons after it. The plan says it, kept or laid out again.
- */
 function isBeside({ boss, items }: { boss: PlannedItem; items: readonly PlannedItem[] }): boolean {
   const day = boss.scheduledFor?.getTime();
   const position = items.indexOf(boss);
@@ -31,13 +25,6 @@ function isBeside({ boss, items }: { boss: PlannedItem; items: readonly PlannedI
   );
 }
 
-/**
- * The time each day's checkpoints take past the learner's time, which the plan saves
- * (`PlanSettings.checkpointOverflow`) so the day asks for it too: checkpoints that lead their day,
- * with a mock that shares it, take what the day has and the rest past it; a phase's beside its
- * lessons on their last day (no study day left after them, see `placeBoss`) takes all of its time
- * past them. The regular day is the one Today reads (`getPlannedMinutes`).
- */
 export function listCheckpointOverflow({
   bossMinutes,
   built,
@@ -62,7 +49,6 @@ export function listCheckpointOverflow({
     toIsoDate(item.scheduledFor ?? new Date(0)),
   );
 
-  // A mock sharing a challenge's day (one the learner moved there) holds the day's own time.
   const mocksOn = Map.groupBy(
     built.items.filter((item) => item.kind === "mock" && item.scheduledFor !== null),
     (item) => toIsoDate(item.scheduledFor ?? new Date(0)),

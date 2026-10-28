@@ -1,6 +1,5 @@
 import { type PlannerLesson, type QueueUnit } from "./plan-units";
 
-/** Course position controls sequence; the skill a lesson counts for stays unchanged. */
 export function followCourseLessonOrder({
   lessons,
   units,
@@ -37,7 +36,6 @@ export function followCourseLessonOrder({
     };
   });
 
-  /** An added foundation stays before every course lesson that followed it in teaching order. */
   return positioned
     .toSorted(
       (a, b) =>

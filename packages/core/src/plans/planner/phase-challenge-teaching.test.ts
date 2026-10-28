@@ -7,11 +7,6 @@ import { addDays, fromIsoDate, toIsoDate } from "./plan-calendar";
 import { parsePlanSettings } from "./plan-state";
 import { DEFAULT_LESSON_MINUTES } from "./plan-units";
 
-/**
- * An exam whose one subject (s1) has lessons in every phase, with two skills (s2, s3) planned as
- * stand-ins in the second: the first phase's challenge asks s1, and the second's used to ask only
- * s2 and s3, in the middle of its phase, while four of its days of s1 lessons came after it.
- */
 function examInput(): BuildPlanInput {
   return {
     goal: { dailyMinutes: 45, kind: "exam", targetDate: fromIsoDate("2026-11-08") },
@@ -221,10 +216,6 @@ describe("overlapping phase teaching", () => {
 });
 
 describe("a challenge near a mock", () => {
-  // Core's challenge on Nov 4, inside the Nov 6 mock's funding window, moved Core's last lessons
-  // past it; on Nov 9, outside it, they came back: the plan was built again and again, fell back
-  // and logged an error on every Plan view. It goes where its teaching puts it, its time inside
-  // that day (R45): the day's lessons take what it leaves.
   it("goes on the first study day after its teaching, its time inside that day", () => {
     const input: BuildPlanInput = {
       ...examInput(),
@@ -277,9 +268,6 @@ describe("a challenge near a mock", () => {
 });
 
 describe("a finished challenge on a short day", () => {
-  // The run after it priced it once at its full time and again inside the day it left: a learner
-  // studying 5 minutes a day saw 25 more minutes asked of that day instead of 10. Longer than the
-  // day, it makes the day as long as it (R45).
   it("asks its day for its time once, the day as long as the challenge", () => {
     const input: BuildPlanInput = {
       ...examInput(),

@@ -4,14 +4,8 @@ import { getShortExamPhaseDays, isShortExam } from "./short-exam-plan";
 
 type ExamPhaseKind = Exclude<PlanPhaseKind, "afterExam" | "learn">;
 
-/** A time-boxed exam phase: the first and last study day it covers. */
 export type ExamWindow = { endDate: Date; kind: ExamPhaseKind; startDate: Date };
 
-/**
- * The share of each day's time that goes to new lessons; the rest is reviews and practice: a lesson
- * at half the time takes twice its minutes of study. Exam phases shrink new learning as the date
- * nears, and the final stretch has none.
- */
 const LEARNING_SHARE: Record<PlanPhaseKind, number> = {
   afterExam: 0.5,
   finalStretch: 0,
@@ -29,12 +23,10 @@ const PRACTICE_BIAS_FACTOR: Record<PracticeBias, number> = {
 
 const MAX_LEARNING_SHARE = 0.8;
 
-/** The final stretch is the last two weeks, or about a sixth of a shorter plan. */
 const FINAL_STRETCH_MAX_DAYS = 14;
 const FINAL_STRETCH_MIN_DAYS = 2;
 const FINAL_STRETCH_SHARE = 0.15;
 
-/** Before the final stretch: foundations 30%, gaps 40% and practice the rest. */
 const FOUNDATIONS_SHARE = 0.3;
 const GAPS_SHARE = 0.4;
 
@@ -58,7 +50,6 @@ function getFinalStretchDays(studyDays: number): number {
   );
 }
 
-/** A plan of more than a week: foundations, gaps, practice and the final stretch. */
 function getLongExamPhaseDays(studyDays: number): [ExamPhaseKind, number][] {
   const finalDays = getFinalStretchDays(studyDays);
   const before = studyDays - finalDays;
@@ -73,11 +64,6 @@ function getLongExamPhaseDays(studyDays: number): [ExamPhaseKind, number][] {
   ];
 }
 
-/**
- * Splits the days from the plan's start to the exam into its phases: foundations, gaps, practice
- * and the final stretch, or a short plan's days for a test a few days away. Phases too short to get
- * a day are left out. The exam day itself belongs to none.
- */
 export function getExamWindows({
   planStart,
   targetDate,
@@ -105,7 +91,6 @@ export function getExamWindows({
     });
 }
 
-/** An exam's phases as the learner sees them, with their dates (see `getKeptExamWindows`). */
 export function toExamWindows(phases: readonly PlanPhase[]): ExamWindow[] {
   return phases.flatMap(({ endDate, kind, startDate }) =>
     kind !== "afterExam" && kind !== "learn" && startDate && endDate
@@ -114,14 +99,6 @@ export function toExamWindows(phases: readonly PlanPhase[]): ExamWindow[] {
   );
 }
 
-/**
- * An exam's phases for its date (see `getExamWindows`), keeping the one the learner is in open: a
- * new date that would end it before today lays it and the phases after it out again from today,
- * as a plan starting today would, the phase still starting where it did, and the phases behind
- * keep their dates. Ana moved ENEM from 400 days away to 36, two weeks into her foundations: laid
- * out from the plan's start, they ended two days earlier with 4 of their lessons done, and read as
- * finished. Once laid out for this date they're the ones shown, so the next day's plan keeps them.
- */
 export function getKeptExamWindows({
   planStart,
   shown,
@@ -129,7 +106,6 @@ export function getKeptExamWindows({
   today,
 }: {
   planStart: Date;
-  /** The exam phases the learner sees, with their dates; empty for a new plan. */
   shown: readonly ExamWindow[];
   targetDate: Date;
   today: Date;
@@ -161,7 +137,6 @@ export function getKeptExamWindows({
   ];
 }
 
-/** The exam phase a date falls in, or null outside the plan's days. */
 export function findExamWindow({
   date,
   windows,

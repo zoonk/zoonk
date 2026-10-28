@@ -6,20 +6,11 @@ import { type BuildPlanInput } from "./build-plan";
 import { type PlannedItem } from "./plan-items";
 import { type BossPlanFacts } from "./planned-bosses";
 
-/**
- * What each of a plan's bosses runs, by its key: the skills its session asks and its size, null
- * for one that can't be asked yet (see `getBossSize`).
- */
 export type BossSizes = ReadonlyMap<
   string,
   { size: { minutes: number; questions: number } | null; skillIds: string[] }
 >;
 
-/**
- * What each of a built plan's bosses runs (see `BossSizes`): the skills its session asks, read from
- * the plan as it would be saved (`getBossSkillIds` over the items' skills as `loadGoalPlan` reads
- * them, without the areas the learner took out), and what the bank holds for them (`getBossSize`).
- */
 export function sizeBosses({
   facts,
   input,
@@ -57,12 +48,10 @@ export function sizeBosses({
   );
 }
 
-/** Each boss's minutes (see `BossMinutes`), null for one that can't be asked yet. */
 export function toBossMinutes(sizes: BossSizes): BossMinutes {
   return new Map([...sizes].map(([key, { size }]) => [key, size?.minutes ?? null]));
 }
 
-/** The same canonical bank read, exposing its size facts alongside the minutes used by a pass. */
 export function readBossSizes({
   built,
   facts,
@@ -78,7 +67,6 @@ export function readBossSizes({
   return { minutes: facts ? toBossMinutes(sizes) : minutes, sizes };
 }
 
-/** Adds observational facts to the emergency result without changing its allocation or acceptance. */
 export function withBossSizes<
   T extends { items: readonly PlannedItem[]; skillLessons: ReadonlyMap<string, number> },
 >({

@@ -20,12 +20,6 @@ export type PlanOperationError =
   | "unfundedMove"
   | "unknownArea";
 
-/**
- * A change the plan refuses, and why. A mock moved to a day whose study days before it can't set
- * aside its time (`unfundedMove`) says that day and the mock's real length there, so the learner
- * can pick a later day; one moved to a day that already has the week's event (`mockCollision`)
- * asks for another day. The plan stays as it was.
- */
 export type PlanChangeRefusal = {
   error: PlanOperationError;
   status: "invalid";
@@ -36,7 +30,6 @@ type OperationResult = { error: PlanOperationError } | { state: PlanState };
 
 const LIGHT_WEEK_LAST_DAY = DAYS_PER_WEEK - 1;
 
-/** The daily time a week shows as "45 min a day": its most common study-day time. */
 function getTypicalMinutes(weekdayMinutes: readonly number[]): number {
   const studyDays = weekdayMinutes.filter((minutes) => minutes > 0);
 
@@ -99,7 +92,6 @@ function addLightWeek({
   return { state: { ...state, settings: { ...state.settings, lightWeeks } } };
 }
 
-/** New skills go right before the skill that needs them, in its phase and area. */
 function addSkills({
   skills,
   state,
@@ -134,11 +126,6 @@ function addSkills({
   return { ...state, graph: { ...state.graph, skills: graphSkills } };
 }
 
-/**
- * The plan follows the graph the exam's notice gave it: its skills in its order, with the notice's
- * areas, topics and weights. A skill only this plan has (a tool's setup lesson, foundations for
- * the learner's level) keeps its place: right before the skill it came before.
- */
 function followNotice({ graph, state }: { graph: PlanGraph | null; state: PlanState }): PlanState {
   if (!graph) {
     return state;
@@ -161,19 +148,12 @@ function followNotice({ graph, state }: { graph: PlanGraph | null; state: PlanSt
   return { ...state, graph: { phases: graph.phases, skills } };
 }
 
-/** The plan counts down to the notice's exam day, which stays the notice's (`noticeDate`). */
-/**
- * The plan counting down to a new date (null for none). Once the date it had passed (the exam is
- * behind the learner), the new one starts a new preparation from today: its phases are measured
- * from today, not from the first plan's day.
- */
 function withTargetDate({
   noticeDate,
   state,
   targetDate,
   today,
 }: {
-  /** The day taken from the exam's notice (see `PlanSettings.noticeDate`), when it is one. */
   noticeDate?: string;
   state: PlanState;
   targetDate: string | null;
@@ -198,7 +178,6 @@ function withTargetDate({
   };
 }
 
-/** The learner's option for one of the exam's choices, in place of any earlier one for it. */
 function setExamChoice({
   operation,
   state,
@@ -210,7 +189,6 @@ function setExamChoice({
   const current = state.settings.examChoices;
   const isPicked = current.some((item) => item.group === operation.group);
 
-  // A changed pick keeps its place, so the picks stay in the order the learner first made them.
   const examChoices = isPicked
     ? current.map((item) => (item.group === operation.group ? choice : item))
     : [...current, choice];
@@ -303,10 +281,8 @@ function applyOperation({
         today,
       });
     case "fitPhaseDates":
-      // Nothing the learner set changes: applying it re-plans, which moves the phase dates.
       return { state };
     case "fitLessons":
-      // Nothing the learner set changes: applying it re-plans at their time, which brings lessons in.
       return { state };
     case "setExamChoice":
       return { state: setExamChoice({ operation, state }) };
@@ -315,11 +291,7 @@ function applyOperation({
   }
 }
 
-/**
- * Applies a change to what the learner set: time, days, light weeks, the date, areas, steering,
- * tools, missing skills or the exam's notice. The first operation that can't apply stops the
- * change, so none of it applies.
- */
+/** The first operation that can't apply stops the change, so none of it applies. */
 export function applyPlanOperations({
   goalKind,
   noticeGraph = null,
@@ -327,9 +299,7 @@ export function applyPlanOperations({
   state,
   today,
 }: {
-  /** The goal's kind: studying everything after the date is for exams only. */
   goalKind: GoalKind;
-  /** The graph a `followNotice` operation follows, kept with its change. */
   noticeGraph?: PlanGraph | null;
   operations: readonly PlanOperation[];
   state: PlanState;

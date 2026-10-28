@@ -1,10 +1,6 @@
 import { getWrittenTestAreas } from "./graph-areas";
 import { type PlanGraph } from "./plan-state";
 
-/**
- * A planned skill as its area's rate reads it: its area, the minutes it takes, what it's worth with
- * the learner's steering (`value`) and without it (`baseValue`), and whether they steered it.
- */
 type RatedSkill = {
   area: string;
   baseValue: number;
@@ -14,13 +10,9 @@ type RatedSkill = {
   value: number;
 };
 
-/** An area that is worth nothing right now still gets its turn in the study cycle, last. */
+/** Above zero, so an area worth nothing now still gets its turn in the study cycle, last. */
 const MIN_AREA_RATE = 1e-6;
 
-/**
- * A written test's protected share of the study cycle, as a part of what an average subject gets:
- * however well the learner already writes, graded writing keeps coming back every week.
- */
 const WRITTEN_TEST_MIN_SHARE = 0.5;
 
 function sumChange({
@@ -38,23 +30,13 @@ function sumChange({
   );
 }
 
-/**
- * Each area's rate once the learner gives some areas more time and others less in one change: the
- * time the areas they want less of give up goes to the ones they want more of, up to what more of
- * them alone would give, so every area they didn't name keeps its share of the days. Steered on
- * their own, more of one area took its time from every other one: Rafaela's "more Legislative
- * Process, less Linguistics" left political science and administrative law 43 lessons short. A
- * change that only gives more, or only less, keeps the steered rates (`steered`).
- */
 function balanceSteeredRates({
   base,
   skills,
   steered,
 }: {
-  /** Each area's rate without the learner's steering. */
   base: ReadonlyMap<string, number>;
   skills: readonly RatedSkill[];
-  /** Each area's rate with it: more of an area doubles what its skills are worth, less halves it. */
   steered: ReadonlyMap<string, number>;
 }): Map<string, number> {
   const focused = new Set(skills.filter((skill) => skill.focused).map((skill) => skill.area));
@@ -77,13 +59,6 @@ function balanceSteeredRates({
   );
 }
 
-/**
- * Each area's share of an exam's study days: what its skills are worth on average, minute for
- * minute (the exam's weight on them, the learner's gaps and focus), so time goes where it pays,
- * with a written test kept at no less than its protected share (see `withWrittenTestFloor`), and
- * the time the learner takes from some areas going to the ones they want more of (see
- * `balanceSteeredRates`).
- */
 export function getAreaRates({
   graph,
   skills,
@@ -103,11 +78,6 @@ export function getAreaRates({
   });
 }
 
-/**
- * A written test's rate raised to `WRITTEN_TEST_MIN_SHARE` of the other subjects' average: the
- * exam's weight on it times the learner's gap there says how much time it gets, and a learner
- * who already writes well still practices it every week instead of only once the others are done.
- */
 function withWrittenTestFloor({
   rates,
   written,
@@ -129,7 +99,6 @@ function withWrittenTestFloor({
   );
 }
 
-/** Each area's rate from what its skills are worth on average (`valueOf`), minute for minute. */
 function getWorthRates({
   skills,
   valueOf,

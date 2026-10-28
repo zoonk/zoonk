@@ -4,7 +4,6 @@ import { getPlanFeasibility } from "./plan-feasibility";
 import { parsePlanSettings } from "./plan-state";
 import { type SkillReadiness } from "./skill-order";
 
-/** A skill the learner answered right in practice: memory, but not shown known (R17). */
 const PRACTICED: SkillReadiness = {
   reps: 1,
   retrievabilityAtTarget: 0.8,
@@ -13,8 +12,6 @@ const PRACTICED: SkillReadiness = {
 };
 
 describe(getPlanFeasibility, () => {
-  // R25 (class test seed 1002): read as known, a skill answered right only in practice counted as
-  // in while the syllabus showed its topics out for time, and the plan said every topic fits.
   it("counts a skill out for time as out though the learner practiced it", () => {
     const skills = Array.from({ length: 8 }, (_, index) => ({
       area: null,

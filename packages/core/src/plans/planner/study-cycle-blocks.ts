@@ -1,14 +1,8 @@
 import { type QueueUnit } from "./plan-units";
 import { type CycleContext, type CycleState, type Lane, isUnitReady } from "./study-cycle-lanes";
 
-/** Floating-point sums of lesson minutes must not move a lesson to another day. */
 export const EPSILON = 1e-6;
 
-/**
- * Places the lane's next units that fit both its share of the day and what's left of the day,
- * and at least one when it fits the day, so a subject chosen for the day always gets its turn.
- * Returns the minutes placed.
- */
 export function takeBlock({
   budget,
   context,
@@ -54,8 +48,6 @@ export function placeUnit({
     return undefined;
   }
 
-  // After whole days without lessons, the unit says where it starts: opening a day only skips
-  // what's left of the day before.
   const opening = { opensDay: true, ...(state.skippedDay && { startsAt: state.used }) };
 
   state.placed.push(state.closedDay ? { ...unit, ...opening } : unit);
@@ -70,11 +62,6 @@ export function placeUnit({
   return unit;
 }
 
-/**
- * What the day's blocks left: the day's own subjects take it, and other subjects only when none
- * of the day's can go on (out of lessons, or waiting for a prerequisite). Returns the other
- * subjects that took part, the most due first.
- */
 export function fillRest({
   chosen,
   context,
@@ -111,12 +98,6 @@ export function fillRest({
   return others;
 }
 
-/**
- * When no subject can go on (each one's next lesson waits for a lesson another subject queues
- * later), the most due subject's next lesson goes anyway, and the day keeps filling around it instead of ending: a
- * cycle must not stall the plan, nor leave its days nearly empty. On a day nothing else went on,
- * that lesson goes even when it's longer than what's left of the day.
- */
 export function forceStuckLessons({
   chosen,
   context,
@@ -140,13 +121,10 @@ export function forceStuckLessons({
   const canGoOn = state.lanes.some((open) => isReady(open));
   const lanes = [...chosen, ...others, ...state.lanes];
 
-  // A subject that can go on goes first: given anyway, the first subject's next lesson was a
-  // skill whose base, in another subject, hadn't started (R16, Câmara).
   const lane = lanes.find((open) => isReady(open)) ?? lanes.find((open) => open.units.length > 0);
   const unit = lane?.units[0];
   const fits = state.used === start || state.used + (unit?.minutes ?? 0) <= dayEnd + EPSILON;
 
-  // A day nothing went on still gets a lesson, as it always did; a day with lessons only fills up.
   if (
     (canGoOn && state.used !== start) ||
     !lane ||
@@ -166,12 +144,6 @@ export function forceStuckLessons({
   forceStuckLessons({ chosen, context, dayEnd, others, start, state, taken });
 }
 
-/**
- * What doesn't fit before the plan's last day keeps each subject's order, the subjects in turn, and
- * a skill still comes after what it builds on in other subjects (`isUnitReady`): a later layout
- * with more days dates these lessons, and Câmara's transcription ethics came a day before the
- * access-to-information law it builds on.
- */
 export function appendRest({
   context,
   lanes,

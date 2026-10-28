@@ -30,8 +30,6 @@ function lesson({
 }
 
 describe(summarizePlan, () => {
-  // Career seed 1013: in-session questions tested out the portfolio phase on 10-14, and the job
-  // search phase after it started 10-15, before the UX process phase that runs to 10-31.
   it("starts a phase after the ones before it, not after one a test-out finished early", () => {
     const graph = parsePlanGraph({
       phases: [

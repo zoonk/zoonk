@@ -7,20 +7,11 @@ import { type ExamWindow } from "./plan-phases";
 import { type PlanGraph, type PlanPhase } from "./plan-state";
 import { type QueueUnit } from "./plan-units";
 
-type PlanEstimate = {
-  /** The day the last planned item is due. */
-  endDate: Date | null;
-  remainingMinutes: number;
-  totalMinutes: number;
-};
+type PlanEstimate = { endDate: Date | null; remainingMinutes: number; totalMinutes: number };
 
 export type PlanOutline = {
   estimate: PlanEstimate;
   phases: PlanPhase[];
-  /**
-   * Each planned skill's lessons, its stand-ins counted as the lessons they plan, before any cut
-   * (`countSkillLessons`): the plan saves them as `plannedLessons`, which size the skill's core.
-   */
   skillLessons: Map<string, number>;
 };
 
@@ -38,12 +29,6 @@ function toIsoOrNull(date: Date | undefined): string | null {
   return date ? toIsoDate(date) : null;
 }
 
-/**
- * The day after the phases so far end: a phase starts once the ones before it end. A phase a
- * test-out finished keeps the day it was finished on, which can come before the phases ahead of
- * it end: started the day after it, the job search phase of a career plan came before its UX
- * process phase.
- */
 function getDayAfterPrevious(phases: readonly PlanPhase[]): Date | null {
   const end = phases
     .flatMap((phase) => (phase.endDate ? [phase.endDate] : []))
@@ -53,10 +38,6 @@ function getDayAfterPrevious(phases: readonly PlanPhase[]): Date | null {
   return end ? addDays(fromIsoDate(end), 1) : null;
 }
 
-/**
- * Where a phase with work left starts: the day after the one before it ends, or, for the plan's
- * first phase, the day its first item was done or this run's schedule starts, whichever is earlier.
- */
 function getPhaseStart({
   inPhase,
   scheduleStart,
@@ -73,13 +54,6 @@ function getPhaseStart({
   return [scheduleStart, ...getDates(inPhase)].toSorted((a, b) => a.getTime() - b.getTime())[0];
 }
 
-/**
- * Learn phases run one after another: a phase with work left starts the day after the one before
- * it ends (its first lessons can take several days before they're due; the first phase starts
- * when the plan does) and ends when its last item is due, or on the end the learner saw (`kept`)
- * when they won its challenge early. Lessons a test-out finished early don't date it, and a
- * finished phase keeps the dates of its items.
- */
 function summarizeLearnPhases({
   graph,
   items,
@@ -106,9 +80,6 @@ function summarizeLearnPhases({
 
     const last = dates.at(-1);
 
-    // A phase whose work all comes on the day the one before it ends (that one's challenge, which a
-    // half-studied day left, right before its own) starts and ends that day: dated the day after,
-    // a career's second phase read as ending a day later than its challenge.
     const first = start && last && last < start ? last : start;
 
     summarized.push({
@@ -124,12 +95,6 @@ function summarizeLearnPhases({
   }, []);
 }
 
-/**
- * The phase after the exam of a plan that studies everything (see `continueAfterExam`): the days
- * its work there spans and the time it takes, the rest of a stand-in started before the exam
- * included, whose lessons become items of the phase once the Library outlines them. Null when
- * nothing goes on after the exam.
- */
 function summarizeAfterExam(span: AfterExamSpan | null): PlanPhase | null {
   if (!span) {
     return null;
@@ -145,7 +110,6 @@ function summarizeAfterExam(span: AfterExamSpan | null): PlanPhase | null {
   };
 }
 
-/** Exam phases keep their windows, named by kind in the apps, and any phase after the exam. */
 function summarizeExamPhases({
   afterExam,
   items,
@@ -170,11 +134,6 @@ function summarizeExamPhases({
   ];
 }
 
-/**
- * The phases with their dates and size, the whole plan's estimate (it ends on its last item's day,
- * or the last day its work after the exam takes, `afterExam`, whichever comes later) and each
- * skill's lessons.
- */
 export function summarizePlan({
   afterExam = null,
   graph,
@@ -187,15 +146,8 @@ export function summarizePlan({
   afterExam?: AfterExamSpan | null;
   graph: PlanGraph;
   items: readonly PlannedItem[];
-  /** The phase ends the run keeps, the ones the learner saw (see `getShownPhaseEnds`). */
   kept?: ReadonlyMap<number, Date>;
-  /**
-   * Every unit the run planned from, before any cut (`buildPlanQueue`), less the lessons whose
-   * title another lesson of the plan holds (see `withoutRepeatedTitles`): the plan teaches them
-   * once, so they aren't the skill's.
-   */
   queue?: readonly QueueUnit[];
-  /** The first day this run schedules new work on. */
   scheduleStart: Date;
   windows: readonly ExamWindow[];
 }): PlanOutline {

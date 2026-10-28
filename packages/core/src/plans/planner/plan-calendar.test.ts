@@ -63,7 +63,6 @@ describe(getWeeklyEventWeekday, () => {
   it("is the week's last study day, never a rest day", () => {
     expect(getWeeklyEventWeekday({ dailyMinutes: 30, weekdayMinutes: null })).toBe(0);
 
-    // Sunday rests: Saturday, the nearest study day, ends the week.
     expect(
       getWeeklyEventWeekday({ dailyMinutes: 30, weekdayMinutes: [0, 30, 30, 30, 30, 30, 30] }),
     ).toBe(6);

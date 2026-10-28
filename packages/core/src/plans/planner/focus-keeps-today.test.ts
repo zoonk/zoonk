@@ -8,11 +8,9 @@ import { type PlannedItem } from "./plan-items";
 import { applyPlanOperations } from "./plan-operations";
 import { type PlanGraph, parsePlanSettings } from "./plan-state";
 
-/** A Monday. */
 const TODAY = new Date("2026-10-12T00:00:00Z");
 const DAY_MS = 86_400_000;
 
-/** An ENEM-like exam: three subjects of two phases and the essay. */
 const graph: PlanGraph = {
   phases: [
     { milestone: null, name: "Base" },
@@ -51,12 +49,10 @@ const lessons = graph.skills.flatMap((skill) =>
   })),
 );
 
-/** The plan's items as saved, with their ids and places, as a change reads them. */
 function toSaved(items: readonly PlannedItem[]) {
   return items.map((item, position) => ({ ...item, id: `item-${position}`, position }));
 }
 
-/** A steering change made while today's session is shown, as the rule checks read it. */
 function steer({
   minutes,
   operations,
@@ -64,7 +60,6 @@ function steer({
 }: {
   minutes: number;
   operations: PlanOperation[];
-  /** Skills whose lessons the Library hasn't written yet: the plan holds a stand-in for each. */
   unwritten?: string[];
 }) {
   const targetDate = new Date(TODAY.getTime() + 35 * DAY_MS);
@@ -123,7 +118,6 @@ function steer({
 }
 
 describe("a change of focus while today is shown", () => {
-  // Less natural sciences freed today's time, and human sciences, which the learner didn't name, took it.
   it.each([
     [15, [{ areas: ["Natureza"], kind: "reduceAreas" }]],
     [15, [{ areas: ["Redação"], kind: "reduceAreas" }]],
@@ -143,7 +137,6 @@ describe("a change of focus while today is shown", () => {
     },
   );
 
-  // Human sciences aren't written yet: its stand-in on today's list stays there, as the learner saw it.
   it("keeps a stand-in due today in its place", () => {
     expect(
       steer({
@@ -155,10 +148,6 @@ describe("a change of focus while today is shown", () => {
   });
 });
 
-/**
- * "Less essay" the day after the learner started an essay chapter: yesterday's lessons are done,
- * and today has the chapter's next lesson. The rule checks read the change as R10 does.
- */
 function reduceMidChapter() {
   const yesterday = new Date(TODAY.getTime() - DAY_MS);
   const targetDate = new Date(TODAY.getTime() + 35 * DAY_MS);
@@ -220,8 +209,6 @@ function reduceMidChapter() {
 }
 
 describe("less of the subject of the chapter in progress while today is shown", () => {
-  // ENEM 2083: "less essay" the day after an essay lesson moved the chapter's next lesson from
-  // today to two days later, with physics before it (R10). The chapter finishes first.
   it("keeps the chapter's next lesson today", () => {
     const { context, shown } = reduceMidChapter();
 

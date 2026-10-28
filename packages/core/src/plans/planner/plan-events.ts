@@ -18,12 +18,6 @@ import { isShortExam } from "./short-exam-plan";
 import { fundSpareMocks } from "./spare-mock-funding";
 import { addSpareMocks } from "./spare-mocks";
 
-/**
- * The plan's last lesson day: what this run scheduled (`units`), what this week keeps, and where a
- * stand-in this week began ends past its day (`keptUntil`, see `layOutAfterThisWeek`). The run's
- * copies of this week's other work don't count: a career's last lessons, kept on Sunday, ended on
- * Monday in them, and the refresh took Monday's practice day out of the plan.
- */
 export function getLastLessonDate({
   kept,
   keptUntil,
@@ -44,12 +38,6 @@ export function getLastLessonDate({
   return dates.length > 0 ? new Date(Math.max(...dates)) : null;
 }
 
-/**
- * The plan's dated events: with a date, every one until then and practice days after the last
- * lesson (see `addPracticeDays`), and for an exam a mock more for each spare week (see
- * `addSpareMocks`); without a date, only those up to the last unit, plus a weekly challenge the
- * learner explicitly moved beyond it. A move never cancels a challenge the learner was shown.
- */
 function getPlanEvents({
   days,
   events,
@@ -63,17 +51,15 @@ function getPlanEvents({
   events: readonly ScheduledEvent[];
   input: BuildPlanInput;
   lastLessonDate: Date | null;
-  /** The last thing the run scheduled, a phase checkpoint included. */
   lastUnitDate: Date | null;
   planStart: Date;
-  /** What the run scheduled: a phase's challenge after the last lesson takes its day's time. */
   units?: readonly ScheduledUnit[];
 }): ScheduledEvent[] {
   const { targetDate } = input.goal;
 
   if (!targetDate) {
-    // An explicit move is kept even when its Monday is after the plan's last lesson or challenge.
-    // Moving it never cancels it just because the learner completed the remaining lessons early.
+    // A move the learner made is kept even past the plan's last lesson: it never cancels the
+    // challenge they were shown.
     const movedTo = new Set(input.settings.movedEvents.map((move) => move.to));
 
     return events.filter(
@@ -110,12 +96,6 @@ function getPlanEvents({
     : practice;
 }
 
-/**
- * A plan with a date keeps its weekly checkpoints until then, and the days after its last lesson
- * are practice days, so lessons that end weeks early never leave empty weeks before the date. A
- * test days away keeps its own short plan. A landing-only run keeps the plan's own (see
- * `landedOnly`).
- */
 function listRunEvents({
   afterExam,
   funded,
@@ -126,11 +106,9 @@ function listRunEvents({
   ...planned
 }: Parameters<typeof getPlanEvents>[0] & {
   afterExam: ReturnType<typeof continueAfterExam>;
-  /** The mocks the days fund (see `fundMocks`): the ones added once lessons end early are too. */
   funded: readonly MockFunding[];
   keepsRest: boolean;
   resolution: MockResolution | null;
-  /** The saved mocks no earlier pass continued (see `matchSavedMocks`). */
   saved: readonly MockFunding[];
   start: Date;
 }): { events: ScheduledEvent[]; funding: MockFunding[]; sourced: Set<string> } {
@@ -152,11 +130,6 @@ function listRunEvents({
   });
 }
 
-/**
- * What a run schedules beside its lessons: the plan's days after its exam when it goes on past it
- * (see `continueAfterExam`), and its dated events (see `listRunEvents`), each mock with its exam
- * day in turn after the one before it, and only the saved mocks no earlier one continued.
- */
 export function scheduleRunEvents({
   days,
   funded,
@@ -170,7 +143,6 @@ export function scheduleRunEvents({
   windows,
 }: {
   days: readonly PlanDay[];
-  /** The days' funded mocks (see `fundMocks`). */
   funded: FundedMocks;
   input: BuildPlanInput;
   keepsRest: boolean;

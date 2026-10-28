@@ -3,19 +3,10 @@ import { addDays, toIsoDate } from "./plan-calendar";
 import { type PlanSettings } from "./plan-state";
 import { type PlanDay, getLessonCapacity } from "./schedule-units";
 
-/**
- * What decides the days a phase challenge no kept day holds can go on: a learn plan's, or an
- * undated exam's, leads the first later day with lesson time (see `placeBoss`); a dated exam's
- * goes on a study day away from the exam's eve and its mocks' own days (see `placeExamBosses`).
- */
 type PhaseChallengeDayRules =
   | { kind: "lessons" }
   | { kind: "examDays"; eve: number | null; movedTo: ReadonlySet<string> };
 
-/**
- * A dated exam's rules: its eve, and the days the learner moved a mock onto (`movedTo`), which a
- * challenge can still go on.
- */
 export function getExamChallengeDayRules({
   settings,
   targetDate,
@@ -30,12 +21,6 @@ export function getExamChallengeDayRules({
   };
 }
 
-/**
- * Whether a run's day can hold a phase challenge no kept day holds: a day with lesson time, which
- * it leads, or a dated exam's study day: with study time, before the exam's eve, and not a weekly
- * mock's own day, though a day the learner moved a mock onto still is, for the challenge they moved
- * it onto (see `placeExamBosses`): the two share it, the challenge on top of the mock's time.
- */
 export function canHoldPhaseChallenge({
   day,
   rules,
@@ -55,7 +40,6 @@ export function canHoldPhaseChallenge({
   return !ownMock || rules.movedTo.has(toIsoDate(day.date));
 }
 
-/** The ISO days among `days` that can hold one (see `canHoldPhaseChallenge`), in order. */
 export function listPhaseChallengeDays({
   days,
   rules,

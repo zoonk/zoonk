@@ -2,12 +2,6 @@ import { type QueueUnit } from "./plan-units";
 
 type OutcomeRoom = { kept: QueueUnit[]; leftOut: QueueUnit[] };
 
-/**
- * The units with only the first `count` of the other lessons: the rest are left out, and so is a
- * phase checkpoint whose phase has no lesson left. Units are told apart as they are, not by key:
- * a stand-in's parts share its key (its core early, its depth after every core), and leaving out
- * its depth took its core out of the plan too.
- */
 function keepFirstOthers({
   count,
   others,
@@ -30,7 +24,10 @@ function keepFirstOthers({
   return { kept, leftOut: units.filter((unit) => !keptUnits.has(unit)) };
 }
 
-/** The largest count in [low, high] that `works`, or null when none does (it shrinks as `count` grows). */
+/**
+ * The largest count in [low, high] that `works`, or null; `works` must only shrink as `count`
+ * grows.
+ */
 export function findLargestCount({
   high,
   low,
@@ -51,19 +48,10 @@ export function findLargestCount({
     : findLargestCount({ high: middle - 1, low, works });
 }
 
-/** An outcome lesson the plan keeps: a skill's depth (an exam's written test past its core) isn't one. */
 function isKeptOutcome(unit: QueueUnit): boolean {
   return unit.outcome === true && !unit.depth;
 }
 
-/**
- * A plan that can't fit everything before its end keeps the goal's outcome skills whole (a career
- * change's portfolio and job search, which get the learner the job; an exam's written test, its
- * core) and leaves out other lessons instead: the ones the path reaches last, its deepest
- * material, as many as it takes to make room. `dropsOutcome` says whether laying the units on the
- * plan's days leaves a kept outcome lesson out. When the outcomes alone don't fit, nothing
- * changes: the plan is cut at its end as usual.
- */
 export function makeRoomForOutcomes({
   dropsOutcome,
   units,

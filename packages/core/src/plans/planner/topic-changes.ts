@@ -2,11 +2,6 @@ import { getSkillArea } from "./graph-areas";
 import { type AreaTopics, type EffectItem } from "./plan-effect";
 import { type PlanGraph } from "./plan-state";
 
-/**
- * Each area's topics the plan teaches: a topic is in when any of its skills has an item. A graph
- * that maps no topics (a career's, a language's) names its skills instead, so what leaves or comes
- * into its plan is said too.
- */
 function listPlannedTopics({
   graph,
   items,
@@ -14,7 +9,6 @@ function listPlannedTopics({
   graph: PlanGraph;
   items: readonly Pick<EffectItem, "skillId" | "status">[];
 }): Map<string, Set<string>> {
-  // An item set aside for time (`skipped`) is out of the plan.
   const planned = new Set(
     items.flatMap((item) => (item.skillId && item.status !== "skipped" ? [item.skillId] : [])),
   );
@@ -31,7 +25,6 @@ function listPlannedTopics({
     }, new Map<string, Set<string>>());
 }
 
-/** Each area's topics in `from` and not in `to`, in the graph's order. */
 function listMissingTopics({
   from,
   graph,
@@ -49,12 +42,6 @@ function listMissingTopics({
   });
 }
 
-/**
- * The notice topics a change brings into the plan and the ones it leaves out, by subject, so what
- * a learner is told about it ("physics keeps its basics") is read from what it does: a topic is in
- * the plan while any skill that teaches it has a lesson there. A graph that doesn't map topics
- * names its skills (see `listPlannedTopics`).
- */
 export function getTopicChanges({
   after,
   before,

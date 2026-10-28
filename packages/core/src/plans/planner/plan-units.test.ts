@@ -11,7 +11,6 @@ function lessonsOf(chapterId: string, count: number, skillIds: string[]) {
   }));
 }
 
-/** Skills of the given graph sizes, taught in `order` (their place in the graph). */
 function skillsOf(sizes: Record<string, number>, order = Object.keys(sizes)) {
   return Object.entries(sizes).map(([skillId, lessons]) => ({
     area: "Biology",
@@ -23,7 +22,6 @@ function skillsOf(sizes: Record<string, number>, order = Object.keys(sizes)) {
   }));
 }
 
-/** Each planned lesson and the skill it counts for, in the plan's order. */
 function plannedLessons(input: Omit<Parameters<typeof buildLessonUnits>[0], "paceFactor">) {
   return buildLessonUnits({ ...input, paceFactor: 1 })
     .filter((unit) => unit.lessonId)
@@ -117,7 +115,6 @@ describe(buildLessonUnits, () => {
     expect(
       plannedLessons({
         lessons: lessonsOf("cells", 6, ["organelles", "theory", "types"]),
-        // The graph teaches the theory first, whatever order the plan ranks them in.
         skills: skillsOf({ organelles: 2, theory: 1, types: 3 }, ["theory", "organelles", "types"]),
       }),
     ).toStrictEqual([
@@ -163,8 +160,6 @@ describe(buildLessonUnits, () => {
   });
 
   it("plans a shared chapter's lesson at its own skill's place when that skill builds on one taught after the chapter", () => {
-    // Wireframes build on content structure, which a "less" sent after the flows chapter the two
-    // share: the wireframe lessons of that chapter wait for it instead of coming first.
     expect(
       plannedLessons({
         lessons: [
@@ -188,8 +183,6 @@ describe(buildLessonUnits, () => {
   });
 
   it("counts a lesson a chapter shares among several skills once, so each keeps a stand-in for the rest", () => {
-    // A unit's first chapter of five lessons tagged with five situations of eight lessons each:
-    // one lesson of each, not five of each.
     const sizes = { closing: 8, greeting: 8, motivation: 8, questions: 8, story: 8 };
     const lessons = lessonsOf("opening", 5, Object.keys(sizes));
     const skills = skillsOf(sizes);

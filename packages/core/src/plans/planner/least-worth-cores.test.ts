@@ -17,7 +17,6 @@ function core(skillId: string, attrs: Partial<QueueUnit> = {}): QueueUnit {
   };
 }
 
-/** Lays units out in order until `minutes` are taken, as a deadline does. */
 function scheduleWithin(minutes: number) {
   return (units: readonly QueueUnit[]) => {
     const ends = units.map((_, index) =>
@@ -31,7 +30,6 @@ function scheduleWithin(minutes: number) {
   };
 }
 
-/** Every skill's topics asked most ("high"), one per skill unless `topics` says more. */
 function worthOf({
   announced = [],
   gaps = [],
@@ -75,10 +73,6 @@ function placedSkills(schedule: { units: readonly QueueUnit[] }) {
 }
 
 describe(scheduleCoresFirst, () => {
-  // Rewriting texts builds on word meaning, which the learner missed, and on reading. All three
-  // didn't fit, and skipped whole, word meaning left with them while a topic the learner didn't
-  // miss kept the time it would have fit in. Reading, asked as often as spelling, keeps the time
-  // left for its own topic: it comes first in teaching order.
   it("keeps a missed topic whose own way fits when a topic built on it doesn't", () => {
     const units = [core("meaning"), core("reading"), core("rewriting"), core("spelling")];
 
@@ -96,9 +90,6 @@ describe(scheduleCoresFirst, () => {
     expect(placedSkills(schedule)).toStrictEqual(["meaning", "reading"]);
   });
 
-  // A topic the teacher announced ranks above any other, but one it's only a base of doesn't: an
-  // unannounced topic built on the announced cell membrane took the time of the announced osmosis
-  // essay.
   it("ranks a topic by its own announcement, not by that of a base it builds on", () => {
     const units = [
       core("membrane", { announced: true, minutes: 10 }),
@@ -120,10 +111,6 @@ describe(scheduleCoresFirst, () => {
     expect(placedSkills(schedule)).toStrictEqual(["osmosis"]);
   });
 
-  // Câmara at 180 minutes a day (seed 2070): official correspondence, which the
-  // learner showed they know, kept 11 lessons while word meaning, which they didn't, stayed out.
-  // It builds on text genres, which they didn't know either, and with its four topics, the two
-  // together were the cheapest way per topic.
   it("never keeps a known topic for riding on a base the learner doesn't know", () => {
     const units = [core("genres"), core("correspondence", { minutes: 30 }), core("meaning")];
 
@@ -142,9 +129,6 @@ describe(scheduleCoresFirst, () => {
     expect(placedSkills(schedule)).toStrictEqual(["genres", "meaning"]);
   });
 
-  // A class test three days away at 30 minutes a day (seed 2059): the 4 minutes left
-  // went to prokaryotes, the base of the announced organelles, which needed 36 more and never came
-  // in, while the cell membrane, which the learner missed, would have fit whole.
   it("never holds the time for a way in whose bases alone take it", () => {
     const units = [
       core("prokaryotes", { minutes: 4 }),
@@ -167,8 +151,6 @@ describe(scheduleCoresFirst, () => {
     expect(placedSkills(schedule)).toStrictEqual(["membrane"]);
   });
 
-  // Câmara's learner came back after three days at 180 minutes and cut their time to 15: the
-  // missed days' lessons, on a topic asked less, went first and pushed out one asked more.
   it("lets work earlier days left give way to a topic asked more", () => {
     const carried = [core("syntax")];
     const units = [core("meaning")];
@@ -183,7 +165,6 @@ describe(scheduleCoresFirst, () => {
     expect(schedule.yielded).toStrictEqual(["lesson:syntax"]);
   });
 
-  // The chapter the learner is in keeps its lessons whatever its topic's rank.
   it("never lets the chapter in progress give way", () => {
     const carried = [core("syntax", { inProgress: true })];
     const units = [core("meaning")];

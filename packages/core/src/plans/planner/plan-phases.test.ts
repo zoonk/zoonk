@@ -54,11 +54,6 @@ describe(getKeptExamWindows, () => {
   const planStart = fromIsoDate("2026-09-26");
   const shown = getExamWindows({ planStart, targetDate: fromIsoDate("2027-11-14") });
 
-  /*
-   * Walk: Ana moved ENEM from 400 days away to 36, two weeks into her foundations. Laid out from
-   * the plan's start, the foundations ended two days earlier with 4 of its lessons done, and
-   * Plan showed it finished.
-   */
   it("keeps the phase the learner is in open when a new date would end it before today", () => {
     const windows = getKeptExamWindows({
       planStart,
@@ -74,7 +69,6 @@ describe(getKeptExamWindows, () => {
       { endDate: "2026-11-14", kind: "finalStretch", startDate: "2026-11-10" },
     ]);
 
-    // The next day, those are the dates for this exam day: nothing moves.
     expect(
       getKeptExamWindows({
         planStart,

@@ -6,7 +6,6 @@ import { parsePlanSettings } from "./plan-state";
 import type * as MockDay from "./mock-day";
 import type * as Calendar from "./plan-calendar";
 
-/** How many days a build labeled (every read of a day's ISO date), and looked for a mock on. */
 const labels = vi.hoisted(() => ({ count: 0 }));
 const visits = vi.hoisted(() => ({ count: 0 }));
 
@@ -34,7 +33,6 @@ vi.mock("./plan-calendar", async (importOriginal) => {
   };
 });
 
-/** An exam without a date: its plan runs `MAX_PLAN_DAYS`, a weekly mock in each of its weeks. */
 function undatedExam(): BuildPlanInput {
   return {
     goal: { dailyMinutes: 45, kind: "exam", targetDate: null },
@@ -66,8 +64,6 @@ function undatedExam(): BuildPlanInput {
   };
 }
 
-// An undated exam's plan has a weekly mock for ten years of days: funding each mock read every day
-// after its window, and a Today read spent four seconds on it.
 describe("funding an undated exam's weekly mocks", () => {
   it("reads each day a number of times that doesn't grow with its mocks", () => {
     buildPlan(undatedExam());
@@ -76,7 +72,6 @@ describe("funding an undated exam's weekly mocks", () => {
 
     buildPlan(undatedExam());
 
-    // About seven reads a day; funding each mock to the plan's end read over a million.
     expect(labels.count).toBeLessThan(MAX_PLAN_DAYS * 15);
     expect(visits.count).toBeLessThan(MAX_PLAN_DAYS * 15);
   });

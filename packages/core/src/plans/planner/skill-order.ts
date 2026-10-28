@@ -1,6 +1,5 @@
 import { type MasteryState } from "@zoonk/db";
 
-/** How much is still missing once the learner has recalled the skill, from their state on it. */
 const GAP_BY_STATE: Record<Exclude<MasteryState, "new">, number> = {
   learning: 0.6,
   mastered: 0.1,
@@ -8,35 +7,23 @@ const GAP_BY_STATE: Record<Exclude<MasteryState, "new">, number> = {
 };
 
 /**
- * FSRS starts a skill whose first answer was wrong or "I don't know yet" at about a fifth of a day
- * and one answered right at a day or more: under a day, the learner hasn't recalled it yet.
+ * FSRS starts a wrong or "I don't know yet" first answer near a fifth of a day and a right one at a
+ * day or more.
  */
 const RECALLED_STABILITY_DAYS = 1;
 
-/** A focused area counts double, so "focus on math" moves it up without dropping the rest. */
 export const FOCUS_WEIGHT_FACTOR = 2;
 
-/**
- * How much more a skill counts when the learner model is unsure about it: up to half again for a
- * state that rests on no reviews, such as one inferred from placement.
- */
 const UNCERTAINTY_WEIGHT = 0.5;
 
-/** What the learner model says about one skill, for exam priority. */
 export type SkillReadiness = {
-  /** The chance of recalling it on the exam day, or null when never studied. */
   retrievabilityAtTarget: number | null;
-  /** Reviews behind the state: the fewer, the less sure the estimate. Missing counts as none. */
   reps?: number;
-  /** Days the memory holds (FSRS stability). */
+  /** FSRS stability, in days. */
   stability: number;
   state: MasteryState;
 };
 
-/**
- * Whether the learner has recalled the skill: studied it, or answered it right in a test, so their
- * memory of it holds a day or more. A skill never studied, or one placement found missing, hasn't.
- */
 function isRecalled(
   readiness: SkillReadiness | undefined,
 ): readiness is SkillReadiness & { state: Exclude<MasteryState, "new"> } {
@@ -47,17 +34,10 @@ function isRecalled(
   );
 }
 
-/** From 1 with no evidence toward 0 as reviews confirm the state. */
 function getUncertainty(readiness: SkillReadiness): number {
   return 1 / (1 + (readiness.reps ?? 0));
 }
 
-/**
- * What a skill is worth to the exam now: weight × gap × risk of forgetting. A skill the learner
- * hasn't recalled yet (never studied, or placement found it missing) has the whole gap and the
- * whole risk, so a gap placement confirmed ranks with the skills nobody asked about, not below
- * them. A recalled state that rests on few reviews counts more, since it may hide a gap.
- */
 export function getExamValue({
   readiness,
   weight,
@@ -109,11 +89,6 @@ function findInheritedValue({
   return value;
 }
 
-/**
- * A prerequisite is worth as much as the most valuable skill it opens: the exam may never ask it
- * on its own, but the skills it holds back are what the time is for. Prerequisites outside the
- * list don't count.
- */
 export function inheritValues({
   prerequisites,
   values,
@@ -139,18 +114,12 @@ export function inheritValues({
   );
 }
 
-/**
- * The prerequisites that agree with the graph's teaching order: those listed before the skill
- * they prepare for. Skills are shared, so an edge another goal's graph stored can point the other
- * way and close a cycle; followed, it would hold its skill, and every skill after it, back until
- * nothing else was left, behind later phases.
- */
+/** Skills are shared, so another goal's graph can store an edge the other way and close a cycle. */
 export function keepTeachingOrder({
   prerequisites,
   skillIds,
 }: {
   prerequisites: ReadonlyMap<string, readonly string[]>;
-  /** The graph's skills in teaching order. */
   skillIds: readonly string[];
 }): Map<string, string[]> {
   const positions = new Map(skillIds.map((skillId, index) => [skillId, index]));
@@ -196,17 +165,12 @@ function pickNext<TSkill extends { skillId: string }>({
   /** A cycle the graph normalizer missed must not stall the plan: fall back to the best left. */
   const pool = available.length > 0 ? available : remaining;
 
-  // The first of the best, as sorting would put it, in one pass: it's picked once per skill.
   return pool.reduce<TSkill | null>(
     (best, skill) => (best === null || compare(skill, best) < 0 ? skill : best),
     null,
   );
 }
 
-/**
- * Orders skills so every prerequisite comes first, choosing among the skills that are ready by
- * `compare`. Prerequisites outside the list (skipped or already known) don't hold anything back.
- */
 export function orderSkills<TSkill extends { skillId: string }>({
   compare,
   prerequisites,
@@ -225,8 +189,7 @@ export function orderSkills<TSkill extends { skillId: string }>({
     ]),
   );
 
-  // One list and one set, grown as skills are placed: copying both for each skill took a
-  // real-size exam's 141 skills a twentieth of every plan built.
+  // Grown in place: copying both per skill cost a real-size exam a twentieth of each build.
   const placed = new Set<string>();
   const ordered: TSkill[] = [];
 

@@ -3,13 +3,8 @@ import { type PlanDay, type ScheduledUnit, getLessonCapacity } from "./schedule-
 import { type CadencedArea } from "./study-cycle-lanes";
 import { type WrittenSchedule, getEffectiveCadence, isWrittenDay } from "./written-cadence";
 
-/**
- * Concentrated, the written tests take no more than about half of a day's lessons: when their
- * practice wouldn't fit their days at that, more days join (see `getOpenDays`).
- */
 const MAX_CONCENTRATED_SHARE = 0.5;
 
-/** The written tests' lesson minutes a schedule holds, by area. */
 function sumWrittenMinutes({
   scheduled,
   written,
@@ -25,7 +20,6 @@ function sumWrittenMinutes({
     );
 }
 
-/** How many extra days join: none when the days fit, else up to the first that covers it all. */
 function getExtraCount({
   extra,
   needed,
@@ -42,15 +36,8 @@ function getExtraCount({
   return reached === -1 ? extra : reached + 1;
 }
 
-/** A day with lesson time, and whether the learner's cadence practices writing on it. */
 type LessonDay = { capacity: number; index: number; written: boolean };
 
-/**
- * The days with lesson time the written tests are practiced on (see `isWrittenDay`): the final
- * weeks, or every week or every other week while the plan has lessons. When their minutes
- * wouldn't fit those days at `MAX_CONCENTRATED_SHARE`, the days next to them join, as few as it
- * takes: the latest before the final weeks, or the next other weeks.
- */
 function getOpenDays({
   days,
   lastLesson,
@@ -58,7 +45,6 @@ function getOpenDays({
   total,
 }: {
   days: readonly PlanDay[];
-  /** The plan's last day with lessons when practiced every week. */
   lastLesson: number;
   schedule: WrittenSchedule;
   total: number;
@@ -91,14 +77,6 @@ function getOpenDays({
   return new Set([...base, ...extra.slice(0, count)].map((day) => day.index));
 }
 
-/**
- * The written tests as areas practiced on days of their own, by the learner's cadence: each gets
- * the lesson minutes it gets in the study cycle's rotation (`scheduled`: the plan laid out that
- * way), spread evenly over its days, so its practice moves without shrinking or growing. Every
- * week, its days are every day the plan has lessons: in the rotation, ENEM's essay, a few
- * dozen lessons, was done in the plan's first two weeks and never came back. Null when the plan
- * has no time for them.
- */
 export function getCadencedAreas({
   days,
   schedule,

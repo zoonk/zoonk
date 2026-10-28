@@ -31,8 +31,6 @@ function item({
 }
 
 describe(placeItemsInPhaseTime, () => {
-  // Career seed 1001: a test-out finished the portfolio phase, and the UX process lessons a slower
-  // pace left after its challenge all went to it, so its end moved ten days with every late lesson.
   it("gives a phase whose work is finished none of the lessons an earlier phase leaves late", () => {
     const items = [
       item({ day: "2026-10-14", phase: 1, status: "testedOut" }),

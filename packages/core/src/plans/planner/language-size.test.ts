@@ -20,7 +20,6 @@ function total(graph: PlanGraph): number {
   return graph.skills.reduce((sum, skill) => sum + skill.lessons, 0);
 }
 
-/** The lessons a three-situation graph holds, sized from one level to another. */
 function sizeFrom(level: string, targetScore: string): number {
   return total(
     sizeLanguageGraph({
@@ -42,9 +41,7 @@ describe(sizeLanguageGraph, () => {
   });
 
   it("counts the guided hours between the levels, half of each hour in new lessons", () => {
-    // From zero to A2: 190 hours, 95 of them in 4-minute lessons.
     expect(sizeFrom("none", "A2")).toBe(1425);
-    // The level onboarding stored before the level test reads as its band's lowest level.
     expect(sizeFrom("intermediate", "B2")).toBe(sizeFrom("B1", "B2"));
   });
 

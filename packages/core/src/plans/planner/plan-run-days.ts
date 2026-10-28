@@ -20,10 +20,6 @@ import { type QueueUnit } from "./plan-units";
 import { findPromisedLesson, listPromisedLessonMinutes } from "./promised-minutes";
 import { type FixedEvent, listPlanDays } from "./schedule-units";
 
-/**
- * What a run's days read of its input (see `createDays`): all a challenge's screen needs to lay
- * out the days of the plan's next run from what it loaded.
- */
 export type RunDayInput = Pick<
   BuildPlanInput,
   | "bossDays"
@@ -38,12 +34,10 @@ export type RunDayInput = Pick<
   | "today"
 >;
 
-/** The plan's first day: the day it was started, or today for a plan not saved yet. */
 export function getPlanStart(input: Pick<RunDayInput, "settings" | "today">): Date {
   return input.settings.startDate ? fromIsoDate(input.settings.startDate) : input.today;
 }
 
-/** The learner's study time as the plan's calendar reads it. */
 export function getCalendar(
   input: Pick<RunDayInput, "goal" | "settings" | "today">,
 ): StudyCalendar {
@@ -55,10 +49,6 @@ export function getCalendar(
   };
 }
 
-/**
- * The plan's days, each with what it holds (see `createExamDays`, `createLearnDays`), and an exam's
- * windows (see `getKeptExamWindows`).
- */
 export function createDays({ input, planStart }: { input: RunDayInput; planStart: Date }) {
   const calendar = getCalendar(input);
   const eventWeekday = getWeeklyEventWeekday(calendar);
@@ -96,7 +86,6 @@ export function createDays({ input, planStart }: { input: RunDayInput; planStart
     };
   }
 
-  // An exam without a date yet has no phases, but its weekly mock all the same.
   return {
     describeDay: createLearnDays({
       calendar,
@@ -111,16 +100,11 @@ export function createDays({ input, planStart }: { input: RunDayInput; planStart
   };
 }
 
-/** How many days from `start` a run lays the plan out over: until its date, at most `MAX_PLAN_DAYS`. */
 function getHorizonDays({ input, start }: { input: BuildPlanInput; start: Date }): number {
   const { targetDate } = input.goal;
   return targetDate ? Math.min(MAX_PLAN_DAYS, daysBetween(start, targetDate)) : MAX_PLAN_DAYS;
 }
 
-/**
- * What each day of a run holds before its mocks are funded (see `createDays`), with the events the
- * learner moved onto their new days, in the order they moved them.
- */
 export function describeRunDays({
   days,
   settings,
@@ -128,7 +112,6 @@ export function describeRunDays({
   days: Pick<ReturnType<typeof createDays>, "describeDay" | "windows">;
   settings: Pick<PlanSettings, "movedEvents">;
 }) {
-  // A moved mock sits its exam day as its new day's phase has it: all of it in the final stretch.
   const resolveMoved = (event: FixedEvent, date: Date): FixedEvent =>
     event.mock
       ? {
@@ -149,12 +132,6 @@ export function describeRunDays({
   };
 }
 
-/**
- * The days a run lays the plan out over, from today: what each holds, with the events moved onto
- * their new days (see `describeRunDays`), and the plan's mocks funded by the days before them
- * (see `fundMocks`), after the time those days keep for the lesson the learner was promised (see
- * `keepWindowTeaching`). Returns the funding the plan saves.
- */
 export function listFundedPlanDays({
   days,
   input,
@@ -164,11 +141,8 @@ export function listFundedPlanDays({
 }: {
   days: Pick<ReturnType<typeof createDays>, "describeDay" | "windows">;
   input: BuildPlanInput;
-  /** What earlier passes settled about the run's mocks (see `resolvePlannedMocks`). */
   resolution?: MockResolution | null;
-  /** Where the run's new work starts (see `getOpenStart`). */
   start?: Date;
-  /** The plan's queue, which holds the lesson the learner was promised (see `findPromisedLesson`). */
   units?: readonly QueueUnit[];
 }) {
   const { describeDay } = describeRunDays({ days, settings: input.settings });
@@ -193,12 +167,6 @@ export function listFundedPlanDays({
   });
 }
 
-/**
- * Where new work starts when the run keeps nothing of this week: today, or tomorrow once an
- * automatic run finds today's work studied. A day the learner finished gets nothing on top, as a
- * session's new pace re-plans from tomorrow (see `refreshGoalPlan`): Pedro's only lesson done on a
- * Sunday, a refresh found the day free and added the week's checkpoint, 30 minutes on his 15.
- */
 export function getOpenStart(input: BuildPlanInput): Date {
   const today = input.today.getTime();
 

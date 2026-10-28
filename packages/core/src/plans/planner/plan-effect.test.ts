@@ -11,7 +11,6 @@ import {
 import { type PlanGraph } from "./plan-state";
 import { getTopicChanges } from "./topic-changes";
 
-/** A graph without topics: changes name its skills. */
 const noTopics: PlanGraph = { skills: [] } as unknown as PlanGraph;
 
 function item(attrs: { date: string; lessonId?: string; skillId?: string }) {
@@ -28,14 +27,12 @@ function item(attrs: { date: string; lessonId?: string; skillId?: string }) {
   };
 }
 
-/** One for a lesson; a stand-in as `sizes` says. */
 function sizedBy(sizes: Record<string, number>) {
   return ({ lessonId, skillId }: { lessonId: string | null; skillId: string | null }) =>
     lessonId ? 1 : (sizes[skillId ?? ""] ?? 1);
 }
 
 describe(getSeenChange, () => {
-  // Fractions has a stand-in of 8 lessons the Library hasn't outlined yet: it counts under its skill.
   it("counts lessons added and removed skill by skill, stand-ins by their size, and the end date move", () => {
     const before = [
       item({ date: "2026-10-01", lessonId: "a", skillId: "fractions" }),
@@ -61,8 +58,6 @@ describe(getSeenChange, () => {
     });
   });
 
-  // A stand-in's lessons are the plan's estimate until the Library writes them: Pedro's card said
-  // 8 lessons for a topic the Library wrote 5 for. Written lessons are no estimate.
   it("says the lessons it adds are an estimate only when some aren't written yet", () => {
     const before = [item({ date: "2026-10-01", lessonId: "a" })];
     const written = [...before, item({ date: "2026-10-02", lessonId: "b" })];
@@ -79,7 +74,6 @@ describe(getSeenChange, () => {
     ).not.toHaveProperty("lessonsAddedEstimated");
   });
 
-  // A stand-in that only shrinks has no title to name: the card says its skill and about how many.
   it("counts a stand-in that shrinks as the lessons it leaves out, by its skill", () => {
     const stays = [item({ date: "2026-10-05", skillId: "fractions" })];
 
@@ -103,7 +97,6 @@ describe(getSeenChange, () => {
     });
   });
 
-  // Counted by item, the lessons written for a saved stand-in of 8 added themselves again.
   it("counts lessons written since the save as the stand-in's own", () => {
     const before = [item({ date: "2026-10-05", skillId: "x" })];
 
@@ -126,7 +119,6 @@ describe(getSeenChange, () => {
 
 describe(getFittedStandInLessons, () => {
   it("counts a stand-in by the part of it that fits, so a change never claims a whole skill", () => {
-    // 32 lessons not outlined yet, of which an eighth fits before the deadline after the change.
     const fitted = getFittedStandInLessons({
       skillMinutes: [{ covered: 12, skillId: "fractions", total: 96 }],
       standInLessons: new Map([["fractions", 32]]),
@@ -136,7 +128,6 @@ describe(getFittedStandInLessons, () => {
   });
 
   it("counts a stand-in by its own part that fits, not its skill's: written lessons take the core first", () => {
-    // 21 lessons, 4 written and 17 not: the plan covers the written ones and an eighth of the rest.
     const fitted = getFittedStandInLessons({
       skillMinutes: [
         { covered: 25, skillId: "media", standIn: { covered: 8, total: 64 }, total: 81 },
@@ -148,7 +139,6 @@ describe(getFittedStandInLessons, () => {
   });
 });
 
-/** A lesson item as the learner sees it in their plan. */
 function seen({ lessonId, skillId }: { lessonId: string | null; skillId: string }) {
   return {
     chapterId: null,
@@ -161,7 +151,6 @@ function seen({ lessonId, skillId }: { lessonId: string | null; skillId: string 
   };
 }
 
-/** The lessons a change adds and removes (see `getSeenChange`). */
 function countLessons(
   input: Omit<Parameters<typeof getSeenChange>[0], "graph">,
 ): Pick<PlanEffect, "lessonsAdded" | "lessonsAddedEstimated" | "lessonsRemoved"> {
@@ -173,14 +162,11 @@ function countLessons(
   return { lessonsAdded, ...(lessonsAddedEstimated && { lessonsAddedEstimated }), lessonsRemoved };
 }
 
-/** One lesson for a lesson; a stand-in plans 8. */
 function countEight({ lessonId }: { lessonId: string | null }) {
   return lessonId ? 1 : 8;
 }
 
 describe("lessons counted skill by skill", () => {
-  // Maya's "Study everything" said it left out 1 lesson: a lesson two skills share was filed under
-  // the other one by the new plan, and its first skill counted it as gone.
   it("counts a lesson the new plan files under another skill as the same lesson", () => {
     const before = [
       seen({ lessonId: "a", skillId: "notation" }),
@@ -293,8 +279,6 @@ describe(getTopicChanges, () => {
     });
   });
 
-  // Missed days left no time for a topic whose lessons weren't written yet: set aside, it's out of
-  // the plan, and the change names it.
   it("reads a topic whose only item is set aside as left out", () => {
     const before = [
       item({ date: "2026-10-01", skillId: "cells" }),
@@ -312,7 +296,6 @@ describe(getTopicChanges, () => {
     });
   });
 
-  // A language plan's refresh at the learner's own pace left a situation out, and nothing said so.
   it("names the skills of a graph that maps no topics", () => {
     const untopiced: PlanGraph = {
       phases: [{ milestone: null, name: "Arriving" }],
@@ -351,7 +334,6 @@ describe("topics a change adds", () => {
 
   const added = item({ date: "2026-10-09", skillId: "project" });
 
-  // A woodworking learner asked to start a nightstand of their own right away.
   it("says the topics asked for now start on their first day, before the basics", () => {
     const items = [added, ...basics, later];
 

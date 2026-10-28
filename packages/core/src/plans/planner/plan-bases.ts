@@ -19,25 +19,8 @@ import { keepTeachingOrder } from "./skill-order";
 import { countStandInLessons } from "./stand-in-size";
 import { listStudiedCores } from "./studied-cores";
 
-/**
- * A goal this close (in days) whose time doesn't cover everything in depth gets a quick lesson for
- * each base recommended, so the time goes to what matters most: about two months, the last stretch
- * where breadth on what an exam asks most pays more than building every base.
- */
 const CLOSE_TO_DATE_DAYS = 60;
 
-/**
- * A base of the plan (see `findPlanBases`): a skill the goal's topics or final work build on, worth
- * less to the goal than what builds on it, so the learner decides how to study it (see
- * `BaseChoice`). `minutes` is what each choice takes at the learner's pace: every lesson, its core
- * (the first third, at least one), or its quick lesson. `neededFor` are what's built on it and worth
- * more (an exam's notice topics, or a goal's outcome skills), the most valuable first. `known`
- * when placement or a test-out found the learner knows it: it's out of the plan already, with
- * nothing to choose. `studied` when the learner studied its core, none of its lessons still to do
- * (see `listStudiedCores`): only deep study, when it has depth, can change anything for it.
- * `choices` are the ways it can still be studied (see `getOpenChoices`), the one place that
- * decides it for the planner, the bases sheet and the API.
- */
 export type PlanBase = {
   area: string;
   choices: BaseChoice[];
@@ -51,12 +34,6 @@ export type PlanBase = {
 
 const ALL_CHOICES: BaseChoice[] = ["deep", "essential", "quick", "skip"];
 
-/**
- * The ways a base can still be studied: none for one the learner knows, only in depth for one
- * whose core they studied and that has more than its core (any other choice keeps no more than the
- * studied core, so it changes nothing: a quick lesson for prokaryotes' studied core let cell theory
- * go), and every way otherwise. A quick lesson done is no studied core, so its choices stay open.
- */
 function getOpenChoices({
   depth,
   known,
@@ -78,7 +55,6 @@ function getOpenChoices({
 }
 
 type BaseInput = {
-  /** The Library band of each skill, which tells a goal that isn't an exam its foundations. */
   bands?: ReadonlyMap<string, CourseLevel>;
   graph: PlanGraph;
   items: readonly Pick<
@@ -86,23 +62,15 @@ type BaseInput = {
     "chapterId" | "completedAt" | "kind" | "lessonId" | "skillId" | "status"
   >[];
   lessons: readonly PlannerLesson[];
-  /** The band the learner's own level starts at (see `getLevelFloor`). */
   levelFloor?: CourseLevel | null;
-  /** The skills the learner missed, which their tested-out lessons don't settle. */
   missedSkillIds?: ReadonlySet<string>;
   paceFactor: number;
   prerequisites: ReadonlyMap<string, readonly string[]>;
-  /** Each base's quick lesson the Library has (see `applyBaseChoices`); its estimate otherwise. */
   quickLessons?: ReadonlyMap<string, PlannerLesson>;
   settings: Pick<PlanSettings, "skippedAreas">;
-  /** How often the exam asks its notice's topics; empty for goals that don't weigh them. */
   topicLevels: readonly TopicLevel[];
 };
 
-/**
- * Each skill's skills built on it, directly or not, in teaching order. A skill the learner knows
- * (`settled`) needs nothing more of what it builds on, so the chain stops there.
- */
 function listBuiltOn({
   prerequisites,
   settled,
@@ -142,7 +110,6 @@ function listBuiltOn({
   );
 }
 
-/** The minutes each of a skill's lessons takes, outlined first, then its stand-in's. */
 function listLessonMinutes({
   lessons,
   skill,
@@ -170,13 +137,6 @@ function sum(values: readonly number[]): number {
   return values.reduce((total, value) => total + value, 0);
 }
 
-/**
- * Skills the learner finished every lesson of: whatever they choose, the plan has nothing more of
- * them. Read from what they finished, never from what the plan has left of them: a base studied
- * for its core has nothing left once its core is done, so read that way the next run planned it
- * whole and the one after it for its core again, and every open of Today moved its last lessons in
- * and out of the plan.
- */
 function listFinished({
   input,
   teaching,
@@ -202,17 +162,6 @@ function listFinished({
   );
 }
 
-/**
- * The plan's bases (see `PlanBase`), in teaching order: skills of areas the plan keeps that other
- * skills it teaches build on and that are worth less to the goal than the most valuable of them
- * (see `getWorth`): what an exam asks less often than a topic built on it, or what a goal's
- * outcome (its portfolio, its job search) builds on when it's one of the goal's foundations (see
- * `isFoundation`). The topics the exam asks most are never bases, and neither is an outcome skill;
- * a skill beyond the notice that a topic builds on always is, whether or not the notice says how
- * often the exam asks its topics. A goal without outcome skills, and an exam whose skills list
- * none of its notice's topics, has none: its path is its course, and what the learner knows
- * already leaves it through placement and their level.
- */
 export function findPlanBases(input: BaseInput): PlanBase[] {
   const { graph } = input;
   const skipped = new Set(input.settings.skippedAreas);
@@ -292,10 +241,6 @@ export function findPlanBases(input: BaseInput): PlanBase[] {
   });
 }
 
-/**
- * The learner's choice for each base still to choose for, while that choice is open (see
- * `getOpenChoices`); a base without one is studied for its core.
- */
 export function getBaseChoices({
   bases,
   choices,
@@ -315,26 +260,16 @@ export function getBaseChoices({
   );
 }
 
-/** The plan's bases with what the app recommends for them. */
 export type PlanBases = {
   bases: PlanBase[];
-  /** Days until the goal's date; null without one. */
   daysLeft: number | null;
   recommended: Exclude<BaseChoice, "skip">;
 };
 
-/** The date-only default; exact effects of another base choice belong to its preview POST. */
 export function getDefaultBaseChoice(daysLeft: number | null): "essential" | "quick" {
   return daysLeft !== null && daysLeft <= CLOSE_TO_DATE_DAYS ? "quick" : "essential";
 }
 
-/**
- * What the app recommends for the plan's bases: every lesson when the learner's time covers
- * everything with every base in depth (`fits`); otherwise a quick lesson for each when the date is
- * close (`CLOSE_TO_DATE_DAYS`), so the time goes to what matters most, and their core further away.
- * Never skipping: only a test tells what the learner knows. It reads the plan with every base in
- * depth, so following it never turns it around.
- */
 export function adviseOnBases({
   bases,
   fits,
@@ -343,7 +278,6 @@ export function adviseOnBases({
 }: {
   bases: PlanBase[];
   fits: () => boolean;
-  /** The goal's date; null without one. */
   targetDate: Date | null;
   today: Date;
 }): PlanBases {

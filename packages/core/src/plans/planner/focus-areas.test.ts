@@ -4,7 +4,6 @@ import { fromIsoDate, toIsoDate } from "./plan-calendar";
 import { type PlanGraphSkill, parsePlanSettings } from "./plan-state";
 import { type PlannerLesson } from "./plan-units";
 
-/** A Monday. */
 const TODAY = fromIsoDate("2026-09-28");
 
 function skill(skillId: string, attrs: Partial<PlanGraphSkill>): PlanGraphSkill {
@@ -21,7 +20,6 @@ function lessonsFor(skillId: string, count: number): PlannerLesson[] {
   }));
 }
 
-/** Three areas in phase order, and too little time before the date for all of them. */
 function shortPlan(focusAreas: string[]): BuildPlanInput {
   return {
     goal: { dailyMinutes: 12, kind: "learn", targetDate: fromIsoDate("2026-10-08") },
@@ -57,7 +55,6 @@ function plannedLessons(input: BuildPlanInput): string[] {
   return buildPlan(input).items.flatMap((item) => (item.lessonId ? [item.lessonId] : []));
 }
 
-/** The lessons of the two areas the second test focuses on. */
 function countPicked(lessons: readonly string[]): number {
   return lessons.filter((id) => id.startsWith("research") || id.startsWith("design")).length;
 }
@@ -67,31 +64,23 @@ describe("focusing on an area of a plan short on time", () => {
     const unfocused = plannedLessons(shortPlan([]));
     const focused = plannedLessons(shortPlan(["Projects"]));
 
-    // Short on time, every area keeps its core and some of its depth (Projects, last in the path,
-    // isn't the one left without any); the focus brings the rest of Projects in.
     expect(unfocused.filter((id) => id.startsWith("projects"))).toHaveLength(3);
     expect(focused.filter((id) => id.startsWith("projects"))).toHaveLength(4);
     expect(focused.length).toBeLessThanOrEqual(unfocused.length + 1);
   });
 
-  /*
-   * The focus sheet and the focus test promise every other topic stays in the plan. A focused area
-   * used to count as all core, so a big one pushed the other areas' cores out of a short plan.
-   */
   it("keeps every other area's core when a big area gets the focus", () => {
     const focused = plannedLessons(shortPlan(["Research", "Design"]));
     const areas = ["research", "design", "projects"];
 
     expect(areas.filter((area) => focused.some((id) => id.startsWith(area)))).toStrictEqual(areas);
 
-    // The focus still goes deeper in the areas picked than the plan without it.
     const unfocused = plannedLessons(shortPlan([]));
 
     expect(countPicked(focused)).toBeGreaterThanOrEqual(countPicked(unfocused));
   });
 });
 
-/** An exam whose subjects start in phases: Portuguese and Math first, Law in the last phase. */
 function examPlan(settings: object): BuildPlanInput {
   return {
     goal: { dailyMinutes: 30, kind: "exam", targetDate: fromIsoDate("2026-12-20") },
@@ -118,7 +107,6 @@ function examPlan(settings: object): BuildPlanInput {
     mockMinutes: 60,
     mode: "forced",
     paceFactor: 1,
-    // Reading texts builds on Portuguese's basics.
     prerequisites: new Map([["pt-texts", ["pt-basics"]]]),
     readiness: new Map(),
     settings: parsePlanSettings({ startDate: "2026-09-28", ...settings }),
@@ -126,7 +114,6 @@ function examPlan(settings: object): BuildPlanInput {
   };
 }
 
-/** The day a skill's first lesson is planned, or null when the plan leaves it out. */
 function firstDay(input: BuildPlanInput, skillId: string): string | null {
   const days = buildPlan(input)
     .items.filter((item) => item.lessonId?.startsWith(skillId) && item.scheduledFor)
@@ -141,7 +128,6 @@ describe("an exam's subject the learner focused on", () => {
     const unfocused = firstDay(examPlan({}), "law") ?? "";
     const focused = firstDay(examPlan({ focusAreas: ["Law"] }), "law") ?? "";
 
-    // Two subjects a day: the focused one, worth most to the learner now, opens the cycle.
     expect(focused).toBe("2026-09-28");
     expect(fromIsoDate(unfocused).getTime()).toBeGreaterThan(fromIsoDate(focused).getTime());
   });
@@ -157,7 +143,6 @@ describe("a subject the learner is past the basics of", () => {
   });
 });
 
-/** The lessons of one area a plan keeps. */
 function countArea(lessons: readonly string[], skillId: string): number {
   return lessons.filter((id) => id.startsWith(skillId)).length;
 }
@@ -179,8 +164,6 @@ describe("an area the learner wants less of", () => {
     );
   });
 
-  // 12 minutes a day fit 15 lessons by the exam. At 10, funding the mock without the teaching its
-  // phase challenge tests leaves room for 14, and both plans keep the same seven of Math there.
   it("gives an exam's subject fewer of its lessons when time is short", () => {
     const short = {
       dailyMinutes: 12,

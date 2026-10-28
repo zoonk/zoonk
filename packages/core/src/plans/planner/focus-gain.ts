@@ -4,13 +4,10 @@ import { type PlannedItem } from "./plan-items";
 
 type FocusItem = Pick<PlannedItem, "kind" | "minutes" | "scheduledFor" | "skillId" | "status">;
 
-/** A plan item with its day, as saved or as a planning run lays it. */
 type DatedItem = Omit<FocusItem, "minutes">;
 
-/** Planned lesson minutes past this many are a lesson's worth: less is rounding, not depth. */
 const MIN_MINUTES_GAINED = 1;
 
-/** An area's lessons still to do in a plan. */
 function listAreaLessons<TItem extends DatedItem>({
   areaOf,
   area,
@@ -29,7 +26,6 @@ function listAreaLessons<TItem extends DatedItem>({
   );
 }
 
-/** When the first of these lessons is due; null when none has a day. */
 function findFirstDue(items: readonly DatedItem[]): number | null {
   return items.reduce<number | null>((earliest, item) => {
     const time = item.scheduledFor?.getTime() ?? null;
@@ -37,7 +33,6 @@ function findFirstDue(items: readonly DatedItem[]): number | null {
   }, null);
 }
 
-/** When the last of these lessons is due; null when none has a day. */
 function findLastDue(items: readonly DatedItem[]): number | null {
   return items.reduce<number | null>((latest, item) => {
     const time = item.scheduledFor?.getTime() ?? null;
@@ -45,10 +40,6 @@ function findLastDue(items: readonly DatedItem[]): number | null {
   }, null);
 }
 
-/**
- * An area's lessons still to do in a plan: when the first and the last are due and the minutes
- * they take.
- */
 function readArea(input: {
   area: string;
   areaOf: (skillId: string) => string | null;
@@ -63,13 +54,6 @@ function readArea(input: {
   };
 }
 
-/**
- * Whether focusing these areas does what a learner asks it for: one of them starts earlier, gets
- * more of its lessons in a plan short on time, or, with every lesson in, is done sooner (Sofia's
- * "more Civil Law" ended it two months earlier). An area that already comes as early as what
- * it builds on allows and ends as soon as it can only shuffles the days around it, which isn't
- * worth offering as a change.
- */
 export function hasFocusGain({
   after,
   areaOf,
@@ -91,11 +75,6 @@ export function hasFocusGain({
   });
 }
 
-/**
- * Whether less of these areas does what a learner asks it for: one of them loses lessons in a plan
- * short on time, or, with every lesson in, is done later. Less of an area that keeps every lesson
- * and ends when it did only shuffles the days around it, which isn't worth offering as a change.
- */
 export function hasReduceEffect({
   after,
   areaOf,
@@ -120,12 +99,6 @@ function toDay(time: number | null): string | null {
   return time === null ? null : toIsoDate(new Date(time));
 }
 
-/**
- * When each focused area's first lesson still to do is due: in the plan the learner sees now
- * (`before`, as saved) and with the change. "Instead of" names the day their plan shows: Lucas was
- * told he "still" started biology on Oct 8, the day planning his plan again from today put it,
- * while his plan showed Oct 10.
- */
 export function getAreaStarts({
   after,
   areaOf,
@@ -144,11 +117,6 @@ export function getAreaStarts({
   }));
 }
 
-/**
- * When each of these areas' last lesson still to do is due, in the plan the learner sees now
- * (`before`) and with the change, for the areas whose end moves: with every lesson in, more of an
- * area brings its end forward and less of one pushes it back, and the card says so.
- */
 export function getAreaEnds({
   after,
   areaOf,
@@ -168,21 +136,12 @@ export function getAreaEnds({
   });
 }
 
-/** A dated item with the lesson it teaches; null for a stand-in. */
 type LessonItem = DatedItem & { lessonId: string | null };
 
-/** A lesson item as a learner's plan holds it: the lesson, or the skill a stand-in stands for. */
 function getLessonKey(item: LessonItem): string {
   return item.lessonId ?? `skill:${item.skillId ?? ""}`;
 }
 
-/**
- * When each area a change gives less time to has its last lesson still to do, before and after
- * it (see `getAreaEnds`), and for one that keeps every lesson and ends when it did, since
- * everything still fits by the date, that same day on both sides: the card says it keeps all of
- * it, so "less natural sciences" never reads as doing something it didn't, while the plan keeps the
- * learner's wish for when time gets short.
- */
 export function getReducedEnds({
   after,
   areaOf,

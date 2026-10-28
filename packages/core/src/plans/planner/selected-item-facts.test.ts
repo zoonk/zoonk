@@ -6,7 +6,6 @@ import { listSelectedItemFacts } from "./selected-item-facts";
 
 const EPSILON = 1e-9;
 
-/** An exam of three skills, the first taught across every phase, a mock a week. */
 function examInput(attrs: Partial<BuildPlanInput> = {}): BuildPlanInput {
   return {
     goal: { dailyMinutes: 45, kind: "exam", targetDate: fromIsoDate("2026-11-08") },
@@ -81,7 +80,6 @@ describe(listSelectedItemFacts, () => {
 
       expect(days.reduce((sum, day) => sum + day[2], 0)).toBeCloseTo(fact?.parts.written ?? 0, 9);
 
-      // A lesson is dated by the day it's due; its time runs later only when it can't end by then.
       expect(fact?.teachingEnd ?? toIsoDate(item.scheduledFor ?? new Date(0))).toBe(
         days.at(-1)?.[0],
       );
@@ -96,7 +94,6 @@ describe(listSelectedItemFacts, () => {
         rows: { chapterLessons: [], lessonSkills: [] },
         survivors: new Map(),
       },
-      // Keep the bank/recording contract independent of the later multi-phase ownership rule.
       lessons: input.lessons.slice(1, 5),
     });
 
@@ -104,7 +101,6 @@ describe(listSelectedItemFacts, () => {
     const bosses = listSelectedItemFacts({ built: sized, input: withBank });
     const first = sized.items.find((item) => item.kind === "boss");
 
-    // Its phase teaches s1's lessons and s2's and s3's stand-ins; only s1 has text questions.
     expect(bosses.get(first?.key ?? "")?.boss).toMatchObject({
       kind: "text",
       questions: 10,

@@ -39,7 +39,6 @@ function boss(phase: number): QueueUnit {
   };
 }
 
-/** The lessons a skill of `lessons` plans in its core. */
 function coreOf(lessons: number) {
   return putCoresFirst([standIn("a", lessons)]).find((unit) => !unit.depth)?.lessons;
 }
@@ -55,8 +54,6 @@ describe(putCoresFirst, () => {
 
     const arranged = putCoresFirst(units);
 
-    // A phase's checkpoint follows its cores; the last one still closes the plan. The depth takes
-    // each area in turn, at the same pace through its own, so a plan cut short keeps some of each.
     expect(arranged.map((unit) => [unit.key, unit.depth ?? false])).toStrictEqual([
       ["lesson:a-0", false],
       ["lesson:a-1", false],
@@ -76,7 +73,6 @@ describe(putCoresFirst, () => {
     const [core, ...rest] = putCoresFirst([lesson("a", 0), standIn("a", 8)]);
     const depth = rest.at(-1);
 
-    // Nine lessons in all: three in the core, the outlined one and two of the stand-in's.
     expect(core).toMatchObject({ key: "lesson:a-0" });
     expect(core?.depth).toBeUndefined();
     expect(rest[0]).toMatchObject({ key: "skill:a", lessons: 2, minutes: 6 });
@@ -92,7 +88,6 @@ describe(putCoresFirst, () => {
   });
 
   it("counts the lessons a skill already has in the plan toward its core", () => {
-    // Skill a has two of its six lessons done or kept this week: its core is in already.
     const units = [
       ...Array.from({ length: 4 }, (_, index) => lesson("a", index + 2)),
       ...Array.from({ length: 6 }, (_, index) => lesson("b", index)),

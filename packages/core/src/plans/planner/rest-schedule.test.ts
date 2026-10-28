@@ -5,7 +5,6 @@ import { addDays, fromIsoDate, toIsoDate } from "./plan-calendar";
 import { type PlanGraphSkill, parsePlanSettings } from "./plan-state";
 import { type PlannerLesson } from "./plan-units";
 
-/** A Monday. */
 const TODAY = fromIsoDate("2026-10-12");
 
 function skill(
@@ -27,7 +26,6 @@ function lessonsOf(skills: readonly PlanGraphSkill[], minutes: number): PlannerL
   );
 }
 
-/** The skills with any lesson in the plan. */
 function listPlannedSkills(plan: ReturnType<typeof buildPlan>): string[] {
   return [
     ...new Set(
@@ -46,7 +44,6 @@ describe("a learn plan short on time keeping the phase ends the learner saw", ()
 
   const outcomes = new Set(["portfolio", "network", "interviews"]);
 
-  /** A career change 17 days away at 10 minutes a day: research gives way to the outcome work. */
   const input: BuildPlanInput = {
     goal: { dailyMinutes: 10, kind: "learn", targetDate: addDays(TODAY, 17) },
     graph: {
@@ -70,10 +67,6 @@ describe("a learn plan short on time keeping the phase ends the learner saw", ()
         item.kind === "lesson" && item.status === "todo" && outcomes.has(item.skillId ?? ""),
     ).length;
 
-  // A career plan cut to 15 minutes a day kept its job search, and the next morning's settle left
-  // networking and interviews out to keep the phase ends the learner saw: each kept end holds its
-  // challenge on its day, so the lessons that no longer fit before one ran into the next phase's
-  // time, and leaving lessons out after that couldn't bring the outcome work back.
   it("keeps its outcome work through the next day's settle", () => {
     const made = buildPlan(input);
     const items = made.items.map((item, position) => ({ ...item, id: `${position}`, position }));
@@ -82,7 +75,6 @@ describe("a learn plan short on time keeping the phase ends the learner saw", ()
     expect(countOutcomeLessons(made)).toBe(14);
     expect(phaseEnds.size).toBeGreaterThan(0);
 
-    // The learner missed the first day: the next morning settles it, keeping the phase ends.
     const settled = buildPlan({
       ...input,
       carryOver: { lessonIds: [] },
@@ -95,8 +87,6 @@ describe("a learn plan short on time keeping the phase ends the learner saw", ()
 
     expect(countOutcomeLessons(settled)).toBe(14);
 
-    // Each kept end holds its challenge unless the missed day pushed a lesson it tests onto that day
-    // or later: then the challenge comes the study day after it (see `keepPhaseEnd`), never before.
     for (const [phase, end] of phaseEnds) {
       const boss = settled.items.find((item) => item.kind === "boss" && item.phase === phase);
 
@@ -113,17 +103,12 @@ describe("a learn plan short on time keeping the phase ends the learner saw", ()
 });
 
 describe("a class test short on time", () => {
-  /** Three topics the notes stress alike, each with a lesson of core. */
   const skills = ["theory", "prokaryotes", "virus"].map((skillId) =>
     skill(skillId, { area: "Biologia", lessons: 2, phase: 0, topics: [skillId], weight: 3 }),
   );
 
-  // Class test seed 1002: cell theory, missed in a placement the learner undid, and prokaryotes,
-  // missed in a session, left the plan while a topic asked as often kept its lesson. A miss
-  // anywhere is a gap, even after a later right answer, and never known (D2).
   it("keeps a topic the learner missed, though they answered it right since, before one asked as often", () => {
     const plan = buildPlan({
-      // Virus missed once, then right twice: the learner model reads it as known.
       answeredWrongSkillIds: new Set(["virus"]),
       goal: { dailyMinutes: 20, kind: "exam", targetDate: addDays(TODAY, 3) },
       graph: { phases: [{ milestone: null, name: "Células" }], skills },

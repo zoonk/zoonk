@@ -8,37 +8,24 @@ import { placeExamBosses } from "./exam-boss-days";
 import { toIsoDate } from "./plan-calendar";
 import { type PlannedItem } from "./plan-items";
 
-/** What a saved plan keeps of each item of its one build (see `listSelectedItemFacts`). */
 export type SelectedItemFacts = {
-  /** Its study minutes, exact (a display rounds them). */
   minutes: number;
-  /**
-   * What those minutes are, adding up to them: written and unwritten lesson work at the learner's
-   * pace (raw), the practice around it, and a checkpoint's, mock's or challenge's own time.
-   */
   parts: { checkpoint: number; practice: number; unwritten: number; written: number };
-  /** The skills it counts for as the plan reads them (shared lessons, quick lessons, merged skills). */
   skillIds: string[];
-  /** The day its time ends, when later than its own day. */
   teachingEnd?: string;
-  /** A lesson taking more than one day: each day's study and raw lesson minutes, by date. */
   days?: [string, number, number][];
-  /** A phase's challenge: what it tests (its phase's own taught items) and what it runs. */
   boss?: {
     kind: "call" | "recording" | "text";
     minutes: number;
-    /** Null when the plan was built without its question bank (an estimate). */
     questions: number | null;
     testedKeys: string[];
     testedSkillIds: string[];
-    /** It can't be asked yet (a listening phase with too few voiced recordings): no time, still to do. */
     waiting: boolean;
   };
 };
 
 const LEARN_KINDS = new Set<PlannedItem["kind"]>(["chapter", "lesson"]);
 
-/** Each written lesson's raw minutes at the learner's pace, its quick lessons included. */
 function listLessonRaw(input: BuildPlanInput): Map<string, number> {
   return new Map(
     [...input.lessons, ...(input.quickLessons?.values() ?? [])].map((lesson) => [
@@ -52,7 +39,6 @@ function sumValues(values: Iterable<number>): number {
   return [...values].reduce((sum, value) => sum + value, 0);
 }
 
-/** What an item's minutes are (see `SelectedItemFacts.parts`), adding up to them exactly. */
 function splitMinutes({
   built,
   item,
@@ -85,7 +71,6 @@ function splitMinutes({
   };
 }
 
-/** How a challenge is played: a language's call, a listening phase's recordings, else text questions. */
 function getBossKind({
   goalKind,
   listeningSkillIds,
@@ -102,7 +87,6 @@ function getBossKind({
   return getBossQuestionSkills({ listeningSkillIds, skillIds }).recordings ? "recording" : "text";
 }
 
-/** A lesson's days when it takes more than one: each day's study and raw minutes, by date. */
 function listDays({
   built,
   key,
@@ -122,10 +106,6 @@ function listDays({
     .map(([date, minutes]) => [date, minutes, raw?.get(date) ?? 0]);
 }
 
-/**
- * The facts a saved plan keeps of each item of its one build, by its key (see
- * `SelectedItemFacts`): read from that build and its input, nothing built again.
- */
 export function listSelectedItemFacts({
   built,
   input,
@@ -146,7 +126,6 @@ export function listSelectedItemFacts({
 
   const placed = placeExamBosses({ built, input, rows: facts?.rows, survivors: facts?.survivors });
 
-  // A finished challenge keeps what it tested: no run places it again (see `placeExamBosses`).
   const listTested = (boss: (typeof plan.items)[number]) =>
     placed.get(boss.key)?.tested ??
     (boss.status === "todo" ? [] : (readSelectedItemFacts(boss.facts)?.boss?.testedKeys ?? []));

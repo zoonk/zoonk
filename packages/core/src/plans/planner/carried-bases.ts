@@ -1,7 +1,6 @@
 import { type ExistingPlanItem } from "./plan-items";
 import { type QueueUnit } from "./plan-units";
 
-/** The skills the learner began (a lesson of theirs isn't to do) or whose lessons today keeps. */
 export function listBegunSkillIds({
   carried,
   items,
@@ -17,10 +16,8 @@ export function listBegunSkillIds({
   ]);
 }
 
-/** The carried keys kept so far, and the skills begun by then. */
 type CarriedKeeping = { kept: string[]; started: Set<string> };
 
-/** A carried key stays first when its skill's bases are begun, carried before it, or all placed. */
 function keepIfReady({
   key,
   prerequisites,
@@ -51,13 +48,6 @@ function keepIfReady({
   return state;
 }
 
-/**
- * The carried work that stays first: a lesson whose skill builds on a skill the learner hasn't
- * begun, which the rest of the plan still teaches, waits for it among the rest (R16), unless that
- * one comes first in the carried work too or today keeps the lesson (R4). A lesson ENEM's
- * Linguagens shares with the skill it teaches, given on a day the learner didn't study, came back
- * before the quick lesson of the base that skill builds on.
- */
 export function keepCarriedAfterBases({
   begun,
   keys,

@@ -2,10 +2,6 @@ import { type PlanOperation } from "../plan-contract";
 import { getSkillArea } from "./graph-areas";
 import { type FocusPart, type PlanSettings, type PlanState } from "./plan-state";
 
-/**
- * The changes that name some of the plan's areas: focus, less time, skip, bring back, start past
- * basics.
- */
 export type AreaOperation = Extract<
   PlanOperation,
   { kind: "focusAreas" | "reduceAreas" | "restoreAreas" | "setAreaStart" | "skipAreas" }
@@ -31,11 +27,6 @@ function without(list: readonly string[], areas: readonly string[]): string[] {
   return list.filter((area) => !areas.includes(area));
 }
 
-/**
- * The parts a focus narrows its areas to: the ones it names, each one's skills of its own area
- * only (a part left with none focuses its area whole), one per area; without any named, the ones
- * its areas already had.
- */
 function toFocusParts({
   operation,
   state,
@@ -63,7 +54,6 @@ function toFocusParts({
   );
 }
 
-/** What the change sets for its areas, the rest of the settings as they were. */
 function updateSettings({
   operation,
   state,
@@ -112,10 +102,6 @@ function updateSettings({
   }
 }
 
-/**
- * Applies a change to some of the plan's areas: only areas the plan has, and never one that
- * leaves every area out.
- */
 export function applyAreaOperation({
   operation,
   state,

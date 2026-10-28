@@ -6,11 +6,9 @@ import { type BuildPlanInput, buildPlan } from "./build-plan";
 import { toIsoDate } from "./plan-calendar";
 import { type PlanGraph, parsePlanSettings } from "./plan-state";
 
-/** A Monday. */
 const TODAY = new Date("2026-10-12T00:00:00Z");
 const DAY_MS = 86_400_000;
 
-/** An ENEM-like exam: three objective areas and the essay, a written test of outcome skills. */
 const graph: PlanGraph = {
   phases: [
     { milestone: null, name: "Base" },
@@ -49,7 +47,6 @@ const lessons = graph.skills.flatMap((skill) =>
   })),
 );
 
-/** A new plan for an exam days or weeks away, at a few minutes a day, as the rule checks read it. */
 function newPlan({
   daysAway,
   from = 0,
@@ -57,7 +54,6 @@ function newPlan({
   minutes,
 }: {
   daysAway: number;
-  /** The plan starts this many days after `TODAY`. */
   from?: number;
   gaps?: string[];
   minutes: number;
@@ -107,8 +103,6 @@ describe("an exam plan at a few minutes a day", () => {
     expect([...checkWrittenTestsKept(plan), ...checkDayOneHasSession(plan)]).toStrictEqual([]);
   });
 
-  // Days away, a plan fits a lesson or two: the essay still gets one, and day one opens with
-  // the learner's gap. From a Thursday, 8 days away at 8 minutes has lesson time on two days.
   it.each([
     [5, 2, 0],
     [5, 3, 0],

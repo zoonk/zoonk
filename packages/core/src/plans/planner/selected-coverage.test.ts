@@ -9,7 +9,6 @@ import { summarizeSelectedPlan } from "./selected-plan-summary";
 const SKILLS = ["a", "b", "c"];
 const TODAY = fromIsoDate("2020-09-28");
 
-/** A dated plan whose shared lessons have no study time before the deadline unless supplied. */
 function input({
   minutes = [3],
   weekdayMinutes = [0, 0, 0, 0, 0, 15, 0],
@@ -140,7 +139,6 @@ describe("selected coverage of shared lessons", () => {
   });
 });
 
-/** A skill's lessons the Library wrote, each 3 minutes long. */
 function writeLessons(skillId: string, count: number): PlannerLesson[] {
   return Array.from({ length: count }, (_, index) => ({
     chapterId: `${skillId}-chapter`,
@@ -151,7 +149,6 @@ function writeLessons(skillId: string, count: number): PlannerLesson[] {
   }));
 }
 
-/** A learn plan due in two months: four lessons, a skill not outlined yet, then four more. */
 const LANDING: BuildPlanInput = {
   goal: { dailyMinutes: 12, kind: "learn", targetDate: fromIsoDate("2020-11-30") },
   graph: {
@@ -174,9 +171,6 @@ const LANDING: BuildPlanInput = {
 };
 
 describe("selected coverage of lessons that land in a stand-in's place", () => {
-  // The Library writing a skill's lessons changes nothing the plan covers when they take its
-  // stand-in's time: a landing run places them by that time, so they count by it, as does what's
-  // left of the stand-in when it wrote only some.
   it.each([8, 4])("counts %i written lessons as covered, as their stand-in was", (written) => {
     const before = measure(LANDING);
 
@@ -198,7 +192,6 @@ describe("selected coverage of lessons that land in a stand-in's place", () => {
   });
 });
 
-/** A learn plan due in two months: less of one area, more of the other, six lessons each. */
 const FOCUS: BuildPlanInput = {
   ...LANDING,
   graph: {
@@ -216,8 +209,6 @@ function isToday(item: { scheduledFor: Date | null }): boolean {
 }
 
 describe("selected coverage of the focused lessons today takes", () => {
-  // "More of one, less of the other" while today is shown: today gives the time the other area
-  // freed to the focused area's next lessons that fit (see `takeFocusedToday`), so they count by it.
   it("counts them as covered by today's time", () => {
     const before = measure(FOCUS);
     const shown = before.built.items.map((item, position) => ({ ...item, id: item.key, position }));

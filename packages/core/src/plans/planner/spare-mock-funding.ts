@@ -9,7 +9,6 @@ import {
 import { toIsoDate } from "./plan-calendar";
 import { type PlanDay, type ScheduledEvent } from "./schedule-units";
 
-/** The review days since the last mock before `date` that fund no mock yet, and their time. */
 function listReviewWindow({
   date,
   fundedDays,
@@ -32,10 +31,6 @@ function listReviewWindow({
   return { spendable: window.reduce((total, entry) => total + entry.item.minutes, 0), window };
 }
 
-/**
- * The review days of a spare mock's window giving `needed` minutes, each the same share of its
- * review (in `result`), and what each gave; they fund no other mock after.
- */
 function fundReviews({
   fundedDays,
   needed,
@@ -64,14 +59,6 @@ function fundReviews({
   });
 }
 
-/**
- * The plan's events with the mocks added once its lessons end early funded too (see
- * `addSpareMocks`): each takes a review day's place, so it holds that day's time and the rest of its
- * real length (its exam day's whole clock, the day after the mock before it, or the one it
- * continues) comes from the review days since the last mock, never from a day with lessons. A spare
- * mock those days can't fund stays the review it was. Days already funding a mock (see
- * `fundMocks`) give nothing more. Returns the funding to save beside `fundMocks`'.
- */
 export function fundSpareMocks({
   clocks = [],
   days,
@@ -82,15 +69,11 @@ export function fundSpareMocks({
   start,
 }: {
   clocks?: readonly MockClock[];
-  /** The plan's funded days: a spare mock's day holds no mock of its own, only its review's time. */
   days: readonly PlanDay[];
   events: readonly ScheduledEvent[];
-  /** What `fundMocks` funded in this run. */
   funded: readonly MockFunding[];
   resolution?: MockResolution | null;
-  /** The saved mocks no earlier pass continued (see `matchSavedMocks`). */
   saved: readonly MockFunding[];
-  /** The run's first day. */
   start: Date;
 }): { events: ScheduledEvent[]; funding: MockFunding[]; sourced: Set<string> } {
   const fundedDays = new Set([
@@ -118,14 +101,12 @@ export function fundSpareMocks({
 
     const shape = spareDays.get(date);
 
-    // A mock the day pass placed (see `fundMocks`) closes the window.
     if (!shape) {
       after = event.mock?.day === undefined ? after : event.mock.day;
       windowStart = date;
       return;
     }
 
-    // The review it took the place of, which it gives back when it isn't planned.
     const { mock: _mock, ...review } = {
       ...event,
       key: `review:${date}`,
@@ -134,7 +115,6 @@ export function fundSpareMocks({
       replacesDay: false,
     };
 
-    // A day that funds another mock can't also hold one: it stays the review it was.
     if (fundedDays.has(date)) {
       result[index] = review;
       return;

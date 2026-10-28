@@ -14,7 +14,6 @@ function skill(
   return { name: skillId, phase: 0, ...attrs, skillId };
 }
 
-/** A skill's lessons as the Library outlined them, one chapter, in order. */
 function outline(skillId: string, count: number): PlannerLesson[] {
   return Array.from({ length: count }, (_, index) => ({
     chapterId: `chapter-${skillId}`,
@@ -25,11 +24,6 @@ function outline(skillId: string, count: number): PlannerLesson[] {
   }));
 }
 
-/**
- * Rafaela's IT subject: for her role (records area), the graph gave it a skill the notice
- * doesn't name ("formats", 26 lessons, outlined) as the base of one that teaches a notice topic
- * ("metadata"), next to the notice's other topics, two lessons each; Portuguese shares the days.
- */
 function tiInput({ days, minutes }: { days: number; minutes: number }): BuildPlanInput {
   const ti = [
     skill("formats", { area: "TI", lessons: 26, topics: [], weight: 2 }),
@@ -63,15 +57,12 @@ function tiInput({ days, minutes }: { days: number; minutes: number }): BuildPla
   };
 }
 
-/** Time for everything: 100 days at an hour a day. */
 const ROOMY = { days: 100, minutes: 60 };
 
-/** The plan as a re-plan builds it, with each of its bases studied as the learner chose. */
 function plan(input: BuildPlanInput) {
   return buildPlan(chooseBases(input).input);
 }
 
-/** The plan's lesson items of these skills, in the order the plan studies them. */
 function lessonsOf(input: BuildPlanInput, skillIds: readonly string[]) {
   return plan(input).items.filter(
     (item) => item.kind === "lesson" && skillIds.includes(item.skillId ?? ""),
@@ -86,8 +77,6 @@ function positionOf(items: ReturnType<typeof lessonsOf>, skillId: string, which:
 const NOTICE_TI = ["metadata", "office", "internet", "security"];
 
 describe("an exam subject with a skill beyond the notice", () => {
-  // Rafaela's IT day one taught digital-preservation formats, 26 lessons the notice doesn't name,
-  // while the topics it names got two lessons each from 12 and 22 Oct.
   it("opens the subject with the notice's topics", () => {
     const items = lessonsOf(tiInput(ROOMY), ["formats", ...NOTICE_TI]);
 
@@ -104,7 +93,6 @@ describe("an exam subject with a skill beyond the notice", () => {
     const essential = lessonsOf(tiInput(ROOMY), ["formats", ...NOTICE_TI]);
     const firstMetadata = positionOf(essential, "metadata", "first");
 
-    // Unless the learner chooses otherwise, its core: the first third, as "metadata" needs.
     expect(
       essential.filter((item) => item.skillId === "formats").map((item) => item.lessonId),
     ).toStrictEqual(outline("formats", 9).map((lesson) => lesson.lessonId));
@@ -145,8 +133,6 @@ describe("an exam subject with a skill beyond the notice", () => {
     const planned = plan(input).items.filter((item) => item.kind === "lesson");
     const count = (skillId: string) => planned.filter((item) => item.skillId === skillId).length;
 
-    // Short on time, the plan keeps the core "metadata" needs and cuts the rest of "formats" before
-    // any of "metadata", a topic the exam asks little.
     expect(count("formats")).toBeLessThan(26);
     expect(count("formats")).toBeGreaterThanOrEqual(9);
     expect(count("metadata")).toBe(9);

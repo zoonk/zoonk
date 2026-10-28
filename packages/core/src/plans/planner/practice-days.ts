@@ -1,27 +1,17 @@
 import { toIsoDate } from "./plan-calendar";
 import { type PlanDay, type ScheduledEvent, type ScheduledUnit } from "./schedule-units";
 
-/** A day lessons could use that comes after the plan's last lesson. */
 export function isSpareDay({
   day,
   lastLessonDate,
 }: {
   day: PlanDay;
-  /** The plan's last lesson; null when none is left. */
   lastLessonDate: Date | null;
 }): boolean {
   const { minutes, open } = day.shape;
   return open && minutes > 0 && (lastLessonDate === null || day.date > lastLessonDate);
 }
 
-/**
- * The days a plan with a date has after its last lesson, before its deadline, as practice days:
- * what gets a learner closest to the goal once everything is learned is retrieving it, spaced, on
- * the weakest skills first and at the exam's level and above, with the week's checkpoint or mock
- * in real conditions, not days with nothing in them. Sessions build these days as reviews and
- * mixed practice (a plan's `review` days), harder once nothing new is left. Days that already hold
- * something (a checkpoint, a mock, the final stretch's own reviews) keep it.
- */
 export function addPracticeDays({
   days,
   events,
@@ -30,14 +20,11 @@ export function addPracticeDays({
 }: {
   days: readonly PlanDay[];
   events: readonly ScheduledEvent[];
-  /** The plan's last lesson; null when none is left, so every open day practices. */
   lastLessonDate: Date | null;
-  /** What the run scheduled: a phase's challenge after the last lesson takes its day's time. */
   units?: readonly ScheduledUnit[];
 }): ScheduledEvent[] {
   const taken = new Set(events.map((event) => event.date.getTime()));
 
-  // A phase's challenge leading a day after the last lesson leaves practice only what's left of it.
   const used = units.reduce(
     (sums, unit) =>
       sums.set(unit.date.getTime(), (sums.get(unit.date.getTime()) ?? 0) + unit.studyMinutes),

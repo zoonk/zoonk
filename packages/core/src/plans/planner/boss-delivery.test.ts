@@ -10,10 +10,6 @@ import { parsePlanSettings } from "./plan-state";
 
 const TODAY = fromIsoDate("2026-09-28");
 
-/**
- * An exam plan that studies everything (`fullCourse`) and goes on after its date: a skill of
- * written lessons in its first phase, and one of `standIn` lessons the Library hasn't written yet.
- */
 function examPlan({
   lessons,
   standIn,
@@ -57,12 +53,10 @@ function dayOf(item: Pick<PlannedItem, "scheduledFor"> | undefined): string {
   return item?.scheduledFor ? toIsoDate(item.scheduledFor) : "";
 }
 
-/** Each challenge with its day. */
 function listBossDays(plan: ReturnType<typeof buildPlan>): [string, string][] {
   return plan.items.filter((item) => item.kind === "boss").map((item) => [item.key, dayOf(item)]);
 }
 
-/** Each challenge with the day the lessons its session asks (`getBossSkillIds`) end. */
 function listBossTeaching(input: BuildPlanInput, plan: ReturnType<typeof buildPlan>) {
   const saved = toBossPlan({ input, items: plan.items, skillLessons: plan.skillLessons });
 
@@ -86,9 +80,6 @@ function listBossTeaching(input: BuildPlanInput, plan: ReturnType<typeof buildPl
     });
 }
 
-// A plan that studies everything goes on past its exam. Each phase's challenge goes on the first
-// study day after what its session asks there, its own phase's, once: those lessons end before
-// the exam; a stand-in's later continuation must not postpone the challenge.
 describe("a phase's challenge in a plan that goes on after its exam", () => {
   it.each([
     { lessons: 80, standIn: 30, targetDate: "2026-11-01" },
@@ -107,10 +98,6 @@ describe("a phase's challenge in a plan that goes on after its exam", () => {
     expect(teaching.every(({ boss, end }) => end === null || end < dayOf(boss))).toBe(true);
   });
 
-  // Studying on weekdays for a Tuesday exam, the practice phase's lessons end on the Thursday
-  // before it, and no day after them can hold a challenge before the exam (Friday's mock, the
-  // weekend off, Monday its eve): as in the plan the date shapes, its challenge goes beside those
-  // lessons, never past the exam.
   it("keeps a challenge with no study day left before the exam beside its lessons", () => {
     const input = examPlan({ lessons: 80, standIn: 30, targetDate: "2026-10-27" });
     const settings = { ...input.settings, weekdayMinutes: [0, 30, 30, 30, 30, 30, 0] };
@@ -121,8 +108,6 @@ describe("a phase's challenge in a plan that goes on after its exam", () => {
     expect(listBossDays(plan)).toStrictEqual(listBossDays(dated));
   });
 
-  // One placed past the exam (a run with its days, see `placeExamBosses`) goes on that day there,
-  // its own phase's, though no lesson is left there: the plan's days after the exam held none.
   it("goes on its day after the exam when one is placed there", () => {
     const targetDate = fromIsoDate("2026-10-25");
 
@@ -149,19 +134,14 @@ describe("a phase's challenge in a plan that goes on after its exam", () => {
   });
 });
 
-/** The plan's items as the challenges' projection orders them, with each where the plan has it. */
 function project(input: BuildPlanInput, plan: ReturnType<typeof buildPlan>): string[] {
   const candidates = listBossCandidates({ built: plan });
   return projectBossPlan({ built: plan, candidates, input }).plan.items.map((item) => item.id);
 }
 
-// What a challenge tests while a run places it is read off this projection: in another order than
-// the saved plan's, it would ask other skills than its session does.
 describe("the challenges' projection of a plan", () => {
   it.each([
-    // Three challenges on one day.
     { lessons: 40, standIn: 60, targetDate: "2026-11-08" },
-    // The first phase's after the second's, past the exam.
     { lessons: 60, standIn: 120, targetDate: "2026-11-01" },
   ])("orders its items as the saved plan does", (attrs) => {
     const input = examPlan(attrs);
@@ -188,9 +168,6 @@ describe("the challenges' projection of a plan", () => {
   });
 });
 
-// A learner who studied every lesson but left the first phase's challenge: Today played it beside
-// a day the plan held for a mock, and asked more of the day than the plan gave it. Settled again,
-// the plan dates it on a day it holds from now on, after what it tests.
 describe("a phase's challenge the learner left on an earlier day", () => {
   it.each([
     { day: "2026-10-31", movedEvents: [] },

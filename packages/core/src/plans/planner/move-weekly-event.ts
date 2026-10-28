@@ -3,11 +3,6 @@ import { DAYS_PER_WEEK, type PlanState } from "./plan-state";
 
 type OperationResult = { error: "badMove" | "pastDate" } | { state: PlanState };
 
-/**
- * "Move to Monday": the week's checkpoint or mock goes to a later day, at most a week later and
- * before the goal's date (a mock moved onto or past the test day no longer prepares for it).
- * Moving the same day again replaces the earlier move, and undo brings it back.
- */
 export function moveWeeklyEvent({
   from,
   state,

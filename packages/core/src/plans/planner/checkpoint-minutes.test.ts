@@ -9,13 +9,10 @@ import { addDays, fromIsoDate } from "./plan-calendar";
 import { type PlanDay, type ScheduledUnit, placeUnits, scheduleUnits } from "./schedule-units";
 import { markKeptLessons } from "./whole-boss";
 
-/** What a checkpoint takes when it's played: its questions, at an exam question's pace. */
 const PLAYED_CHECKPOINT = CHECKPOINT_QUESTIONS * CHECKPOINT_MINUTES_PER_QUESTION;
 
-/** A Monday. */
 const MONDAY = fromIsoDate("2020-10-12");
 
-/** The time the planner keeps for a phase's checkpoint. */
 function getPlannedCheckpoint(): number {
   const units = addPhaseCheckpoints({
     getMinutes: (phase) => getPlannedBossMinutes({ goalKind: "exam", phase }),
@@ -38,14 +35,12 @@ function getPlannedCheckpoint(): number {
   return units.find((unit) => unit.kind === "boss")?.minutes ?? 0;
 }
 
-// A checkpoint is planned for the time it takes when played.
 describe("a phase's checkpoint", () => {
   it("plans a checkpoint for the time it takes when played", () => {
     expect(getPlannedCheckpoint()).toBe(PLAYED_CHECKPOINT);
   });
 });
 
-/** A queue unit of `minutes`, a lesson or a phase's checkpoint. */
 function queueUnit(key: string, kind: "boss" | "lesson", minutes: number) {
   return {
     area: "Area",
@@ -60,9 +55,7 @@ function queueUnit(key: string, kind: "boss" | "lesson", minutes: number) {
   };
 }
 
-// A phase's checkpoint runs whole on one day, past a short day's time, never over two.
 describe(placeUnits, () => {
-  // Three days of 10 minutes each: ends 10, 20, 30.
   const cumulative = [10, 20, 30];
 
   it("keeps a checkpoint longer than a day on the day it starts", () => {
@@ -84,7 +77,6 @@ describe(placeUnits, () => {
   });
 });
 
-/** `count` days from Monday with `minutes` of lesson time each. */
 function lessonDays(count: number, minutes = 10): PlanDay[] {
   return Array.from({ length: count }, (_, offset) => ({
     date: addDays(MONDAY, offset),
@@ -92,12 +84,10 @@ function lessonDays(count: number, minutes = 10): PlanDay[] {
   }));
 }
 
-/** A date's place in days from Monday. */
 function dayOf(date: Date): number {
   return Math.round((date.getTime() - MONDAY.getTime()) / 86_400_000);
 }
 
-/** Each scheduled unit's key, day (from Monday) and, when later, the day its time ends. */
 function readSchedule(units: readonly ScheduledUnit[]) {
   return units.map((unit) => [
     unit.key,
@@ -107,8 +97,6 @@ function readSchedule(units: readonly ScheduledUnit[]) {
   ]);
 }
 
-// A phase's challenge goes on the first study day after the lessons it tests, so a day passes
-// between learning and being tested; it leads that day, and the day's time left goes on.
 describe("a phase challenge after its lessons", () => {
   it("leads the next study day, the next lesson after it there", () => {
     const { units } = scheduleUnits({
@@ -187,7 +175,6 @@ describe("a phase challenge after its lessons", () => {
   });
 });
 
-/** A lesson the plan saved for `saved` (days from Monday), done, finished on `finished` if known. */
 function doneLesson({ finished, saved }: { finished: number | null; saved: number }) {
   return {
     completedAt: finished === null ? null : addDays(MONDAY, finished),
@@ -199,7 +186,6 @@ function doneLesson({ finished, saved }: { finished: number | null; saved: numbe
   };
 }
 
-/** Where a run on day `today` (from Monday) puts the phase's challenge after `lesson`. */
 function placeAfter({
   finishedOn,
   lesson,
@@ -221,8 +207,6 @@ function placeAfter({
   return readSchedule(units).map(([key, day]) => [key, day]);
 }
 
-// Pedro finished Friday's lesson on Monday: its challenge came the day after the run's day, and
-// each day's run moved it a day later until Friday, with nothing new taught.
 describe("a phase challenge after a lesson finished on another day than its own", () => {
   const finishedOn = new Map([["done", MONDAY]]);
 
@@ -240,7 +224,6 @@ describe("a phase challenge after a lesson finished on another day than its own"
     expect(placeAfter({ finishedOn: late, lesson, today: 2 })).toStrictEqual([["boss:0", 3]]);
   });
 
-  // Done before lessons saved when: taught by the run's day at the latest.
   it("counts a lesson finished before its time was saved by the run's day at the latest", () => {
     const lesson = doneLesson({ finished: null, saved: 4 });
 

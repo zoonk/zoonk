@@ -6,14 +6,9 @@ import { type PlanGraphSkill, parsePlanSettings } from "./plan-state";
 import { type PlannerLesson } from "./plan-units";
 import { type SkillReadiness } from "./skill-order";
 
-/** A Monday, six weeks before the exam. */
 const TODAY = fromIsoDate("2026-09-28");
 const EXAM_DAY = fromIsoDate("2026-11-08");
 
-/**
- * An adult's public-service exam: Portuguese (a school foundation the exam doesn't ask on its own,
- * then reading and rewriting at the exam's depth), logic, law and a small fitness area.
- */
 const SKILLS: PlanGraphSkill[] = [
   {
     area: "Portuguese",
@@ -44,7 +39,6 @@ const SKILLS: PlanGraphSkill[] = [
   { area: "Fitness", lessons: 12, name: "Plan training", phase: 0, skillId: "fitness", weight: 1 },
 ];
 
-/** Every skill is outlined by now: its chapter's lessons, six to a chapter. */
 const LESSONS: PlannerLesson[] = SKILLS.flatMap((skill) =>
   Array.from({ length: skill.lessons }, (_, index) => ({
     chapterId: `${skill.skillId}-${Math.floor(index / 6)}`,
@@ -55,11 +49,6 @@ const LESSONS: PlannerLesson[] = SKILLS.flatMap((skill) =>
   })),
 );
 
-/**
- * Placement answered while the plan still had one stand-in per skill: word classes are known (their
- * stand-in was tested out before the chapter was outlined), rewriting is a gap (a wrong first
- * answer), and reading was answered right once.
- */
 const TESTED_OUT_STAND_IN: ExistingPlanItem = {
   chapterId: null,
   completedAt: TODAY,
@@ -111,7 +100,6 @@ function areaOf(item: PlannedItem): string | undefined {
   return SKILLS.find((skill) => skill.skillId === item.skillId)?.area ?? undefined;
 }
 
-/** The subjects of a day in the order its blocks come, one entry per block. */
 function runsOf(items: readonly PlannedItem[]): string[] {
   const areas = items.map((item) => areaOf(item) ?? "");
   return areas.filter((area, index) => index === 0 || areas[index - 1] !== area);
@@ -140,8 +128,6 @@ describe("an adult's exam plan after placement", () => {
   });
 
   it("keeps a skill placement found known out of the plan when more of its lessons are outlined", () => {
-    // Placement found law known while only its first chapter was outlined: those lessons were
-    // tested out. The chapters outlined since teach the same skill.
     const testedOutLaw = Array.from({ length: 6 }, (_, index) => ({
       ...TESTED_OUT_STAND_IN,
       id: `law-item-${index}`,
@@ -188,7 +174,6 @@ describe("an adult's exam plan after placement", () => {
     const plan = buildPlan(examInput());
     const dayOne = lessonsOn({ date: "2026-09-28", items: plan.items });
 
-    // An hour a day studies two subjects, in a block each, starting with the gap placement found.
     expect(dayOne[0]?.skillId).toBe("rewrite");
     expect(runsOf(dayOne)).toStrictEqual(["Portuguese", "Logic"]);
 
@@ -206,8 +191,6 @@ describe("an adult's exam plan after placement", () => {
       lessonsOn({ date: toIsoDate(new Date(time ?? 0)), items: plan.items }),
     );
 
-    // Two subjects a day, in a block each; a subject that runs out of lessons gives the rest of its
-    // day to the next one due (see `fillRest`), so a third block only follows subjects that end.
     const lessonDays = plan.items.flatMap((item) =>
       item.kind === "lesson" && item.status === "todo" && item.scheduledFor
         ? [{ area: areaOf(item), date: toIsoDate(item.scheduledFor) }]
@@ -231,7 +214,6 @@ describe("an adult's exam plan after placement", () => {
       firstWeek.flatMap((date) => lessonsOn({ date, items: plan.items })),
     );
 
-    // Fitness is worth the least, so it comes back least often.
     expect(Math.min(byArea.Portuguese ?? 0, byArea.Logic ?? 0, byArea.Law ?? 0)).toBeGreaterThan(
       byArea.Fitness ?? 0,
     );
@@ -250,8 +232,6 @@ describe("an adult's exam plan after placement", () => {
     const plan = buildPlan(examInput({ lessons: portuguese }));
     const dayOne = lessonsOn({ date: "2026-09-28", items: plan.items });
 
-    // The other subjects' stand-ins share the day with Portuguese instead of waiting for a day
-    // they fit whole, so the cycle doesn't open with Portuguese alone.
     expect(runsOf(dayOne)).toStrictEqual(["Portuguese", "Logic"]);
 
     const twoDays = ["2026-09-28", "2026-09-29"].flatMap((date) =>
@@ -262,7 +242,6 @@ describe("an adult's exam plan after placement", () => {
       new Set(["Portuguese", "Logic", "Law", "Fitness"]),
     );
 
-    // Each stand-in stays one item, on the day its skill starts, with its whole skill's time.
     const logic = plan.items.filter((item) => item.skillId === "logic");
 
     expect(logic).toHaveLength(1);

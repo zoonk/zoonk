@@ -2,8 +2,6 @@ import { describe, expect, it } from "vitest";
 import { getSettledSkillIds } from "./settled-skills";
 
 describe(getSettledSkillIds, () => {
-  // Work missed days left no time for is set aside, not known: read as tested out, its topic would
-  // never come back to the plan.
   it("settles a stand-in's skill a test-out found known, not one set aside for time", () => {
     const settled = getSettledSkillIds({
       items: [
@@ -17,8 +15,6 @@ describe(getSettledSkillIds, () => {
     expect([...settled]).toStrictEqual(["known"]);
   });
 
-  // Practice missed it after the test-out: its lessons came back, and read as settled by the ones
-  // still tested out, they left the plan again (career seed 2049).
   it("never settles a skill the learner missed since its test-out", () => {
     const settled = getSettledSkillIds({
       items: [

@@ -16,7 +16,6 @@ import { type PlanDay } from "./schedule-units";
 import { listSelectedItemFacts } from "./selected-item-facts";
 import { layOutAfterThisWeek } from "./week-after";
 
-/** A Friday plan whose earlier topic puts Functions' first lesson on Sunday. */
 function initialInput(): BuildPlanInput {
   return {
     goal: { dailyMinutes: 45, kind: "learn", targetDate: null },
@@ -110,7 +109,7 @@ describe("this week's saved teaching", () => {
     vi.stubGlobal("fetch", async () => {
       throw new Error("No network in the planner regression");
     });
-    // Other parallel learners do not change this learner's fixture pace; own samples still use SQL.
+
     await keepPaceOwn();
 
     const [user, library] = await Promise.all([

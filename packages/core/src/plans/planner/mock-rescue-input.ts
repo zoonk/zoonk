@@ -4,7 +4,6 @@ import { getWeeklyEventWeekday, toIsoDate } from "./plan-calendar";
 import { getKeptExamWindows } from "./plan-phases";
 import { getCalendar, getPlanStart } from "./plan-run-days";
 
-/** Actual rescue eligibility is a clock input; an ordinary day rollover is not planning news. */
 export function getMissedMockRescueDays(input: BuildPlanInput): string[] {
   const targetDate = input.goal?.targetDate;
 
