@@ -13,11 +13,13 @@ extension EnvironmentValues {
 }
 
 /// A milestone's full-screen moment, shown once over the result that earned it: its art, a title
-/// and one line on what earned it, and one button. It marks itself as shown when it appears, so it
-/// never repeats; its one motion is the art landing, and none with Reduce Motion.
+/// and one line on what earned it, and one button; new glasses can go on the buddy right away, or
+/// not now. It marks itself as shown when it appears, so it never repeats; its one motion is the
+/// art landing, and none with Reduce Motion.
 struct MilestoneCeremony: View {
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
   @Environment(\.milestoneArtwork) private var artwork
+  @Environment(BuddyStore.self) private var buddyStore
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(StudySessionStore.self) private var sessions
 
@@ -57,12 +59,40 @@ struct MilestoneCeremony: View {
 
       Spacer()
 
-      Button(action: onClose) {
-        Text("Continue", tableName: "Session", comment: "Closes a milestone's ceremony")
+      if let glasses = newGlasses, let summary = learner.summary.value {
+        Button {
+          // The buddy wears them at once; the save finishes after the ceremony closes.
+          Task {
+            await buddyStore.save(
+              BuddyChoice(kind: summary.buddyKind, name: summary.buddyName, glasses: glasses))
+          }
+          onClose()
+        } label: {
+          Text(
+            "Wear them", tableName: "Session", comment: "Puts the glasses just earned on the buddy"
+          )
           .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.mainAction)
+        .controlSize(.large)
+
+        Button(action: onClose) {
+          Text(
+            "Not now", tableName: "Session",
+            comment: "Closes a glasses ceremony without wearing them"
+          )
+          .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.bordered)
+        .controlSize(.large)
+      } else {
+        Button(action: onClose) {
+          Text("Continue", tableName: "Session", comment: "Closes a milestone's ceremony")
+            .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.mainAction)
+        .controlSize(.large)
       }
-      .buttonStyle(.mainAction)
-      .controlSize(.large)
     }
     .scenePadding()
     .task(id: milestone.id) {
@@ -76,6 +106,11 @@ struct MilestoneCeremony: View {
 
   private var buddy: String {
     learner.buddyDisplayName
+  }
+
+  /// The glasses a glasses milestone earned, which the learner can put on the buddy right away.
+  private var newGlasses: BuddyGlasses? {
+    milestone.kind == "glasses" ? BuddyGlasses(rawValue: milestone.key) : nil
   }
 
   private var symbol: String {

@@ -1752,6 +1752,35 @@
         }
       }
     },
+    "Not now" : {
+      "comment" : "Closes a glasses ceremony without wearing them",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jetzt nicht"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ahora no"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas maintenant"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agora não"
+          }
+        }
+      }
+    },
     "Not studied" : {
       "comment" : "A day not studied",
       "localizations" : {
@@ -2806,6 +2835,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Não foi possível criar esta aula."
+          }
+        }
+      }
+    },
+    "Wear them" : {
+      "comment" : "Puts the glasses just earned on the buddy",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aufsetzen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pónselas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les lui mettre"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Colocar"
           }
         }
       }
