@@ -1,6 +1,8 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { readDayProgress } from "../../learner/facts/day-progress";
 import { readLearningProfile } from "../../learner/facts/learning-profile";
+import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { type DailyTimeLimitStatus } from "../get-daily-time-limit";
 
 const SECONDS_PER_MINUTE = 60;
@@ -76,11 +78,33 @@ export async function readDailyTimeLimitReached({
     return false;
   }
 
-  const progress = await prisma.dailyProgress.findUnique({
-    select: { timeSpentSeconds: true },
-    where: { userDate: { date, userId } },
-  });
+  const progress = await readDayProgress(userId, toIsoDate(date));
 
   return toDailyTimeLimitStatus({ limitMinutes, timeSpentSeconds: progress?.timeSpentSeconds ?? 0 })
     .reached;
+}
+
+/**
+ * The day's time under the learner's limit as a page shows it, from the request's profile and day
+ * facts. Starting something new reads both afresh (`loadDailyTimeLimitStatus`).
+ *
+ * Internal GET fact: public capabilities derive `userId` from the signed-in learner.
+ */
+export async function readDailyTimeLimitStatus({
+  date,
+  userId,
+}: {
+  /** The learner-local date, as a UTC-midnight label. */
+  date: Date;
+  userId: string;
+}): Promise<DailyTimeLimitStatus> {
+  const [profile, progress] = await Promise.all([
+    readLearningProfile(userId),
+    readDayProgress(userId, toIsoDate(date)),
+  ]);
+
+  return toDailyTimeLimitStatus({
+    limitMinutes: profile?.dailyLimitMinutes ?? null,
+    timeSpentSeconds: progress?.timeSpentSeconds ?? 0,
+  });
 }

@@ -2,19 +2,20 @@ import { type ExamBlueprint, prisma } from "@zoonk/db";
 import "server-only";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { withoutLockedPhaseChallenges } from "../../checkpoints/_utils/phase-challenge-access";
-import { getEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
+import { readEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
 import { getExamPrepAccess as getTierExamPrep } from "../../entitlements/limits";
 import { loadOftenTestedSkillIds } from "../../exams/map/load-often-tested";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
 import { DEFAULT_LESSON_MINUTES } from "../../plans/planner/plan-units";
 import { loadStudyWeek } from "../../progress/_utils/load-study-week";
+import { getRequestProgressDateContext } from "../../progress/get-request-date-context";
 import { readBlockPayload } from "../block-payload";
-import { getDailyTimeLimitStatus } from "../get-daily-time-limit";
 import { getDayMissions, hasDayMissionBonus } from "../missions/get-day-missions";
 import { loadBlockSubjects } from "./block-subjects";
 import { loadCatchUpView } from "./catch-up";
 import { getCarryOverEnd, isCurrentSession } from "./current-session";
+import { readDailyTimeLimitStatus } from "./daily-time-limit";
 import { getGoalDayMinutes } from "./day-minutes";
 import { getExamPrepAccess } from "./exam-access";
 import { withExtraStudyCheck } from "./extra-blocks";
@@ -103,8 +104,10 @@ async function loadSessionBasics({
 
   const [answers, dailyLimit, viewer, plan] = await Promise.all([
     fresh ? [] : loadSessionAnswers({ blocks: session.blocks, sessionId: session.id, userId }),
-    getDailyTimeLimitStatus(),
-    fresh ? { tier: fresh.plan.tier } : getEntitlementViewer(),
+    getRequestProgressDateContext().then(({ currentDate }) =>
+      readDailyTimeLimitStatus({ date: currentDate, userId }),
+    ),
+    fresh ? { tier: fresh.plan.tier } : readEntitlementViewer(),
     loadViewPlan({ fresh, session }),
   ]);
 

@@ -1,5 +1,6 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { readDayProgress } from "../learner/facts/day-progress";
+import { toIsoDate } from "../plans/planner/plan-calendar";
 import { getProgressSession } from "./_utils/progress-cache";
 import { getRequestProgressDateContext } from "./get-request-date-context";
 
@@ -20,10 +21,7 @@ export async function getStudiedToday(): Promise<boolean> {
     return false;
   }
 
-  const today = await prisma.dailyProgress.findUnique({
-    select: { timeSpentSeconds: true },
-    where: { userDate: { date: dateContext.currentDate, userId: session.user.id } },
-  });
+  const today = await readDayProgress(session.user.id, toIsoDate(dateContext.currentDate));
 
   return (today?.timeSpentSeconds ?? 0) > 0;
 }

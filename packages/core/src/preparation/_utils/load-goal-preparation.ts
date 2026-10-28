@@ -6,10 +6,11 @@ import { getLearnerModelCacheTag, getUserSubscriptionCacheTag } from "../../cach
 import { arePhaseChallengesRequired } from "../../checkpoints/_utils/phase-challenge-access";
 import { loadGoalScoreEstimate } from "../../exams/estimates/load-goal-estimate";
 import { getStartOfLocalDay } from "../../learner/_utils/local-time";
-import { type OwnedGoal, findOwnedGoal } from "../../learner/_utils/owned-goal";
+import { type OwnedGoal } from "../../learner/_utils/owned-goal";
 import { readGoalPlan } from "../../learner/_utils/read-goal-plan";
 import { type SavedPlan, readSavedPlan } from "../../learner/facts/saved-plan";
 import { readActiveSubscription } from "../../learner/facts/subscription";
+import { getOwnedGoal } from "../../learner/get-owned-goal";
 import { countSkillStates } from "../../learner/mastery-state";
 import { type PlanReadContext } from "../../plans/_utils/plan-read-projection";
 import { getStartOfWeek } from "../../plans/planner/plan-calendar";
@@ -53,7 +54,7 @@ export async function loadGoalPreparation({
 }): Promise<GoalPreparationResult> {
   // The request's date doesn't depend on the goal: it's read alongside it.
   const [owned, dateContext] = await Promise.all([
-    findOwnedGoal(goalId),
+    getOwnedGoal(goalId),
     getRequestProgressDateContext(),
   ]);
 

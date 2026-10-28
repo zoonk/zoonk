@@ -3,7 +3,7 @@ import { type UsageKind, prisma } from "@zoonk/db";
 import { cacheTag } from "next/cache";
 import { getAllowanceCacheTag, getUserSubscriptionCacheTag } from "../cache/tags";
 import { type AllowanceCounts, toAllowance } from "./_utils/allowance-view";
-import { getEntitlementViewer } from "./_utils/entitlement-viewer";
+import { readEntitlementViewer } from "./_utils/entitlement-viewer";
 import { sumCallSeconds } from "./_utils/usage-counts";
 import { getUsagePeriodStarts } from "./_utils/usage-periods";
 import { type Allowance } from "./contract";
@@ -55,7 +55,7 @@ async function countAllowanceUsage({
 export async function getAllowance(): Promise<Allowance | null> {
   "use cache: private";
 
-  const viewer = await getEntitlementViewer();
+  const viewer = await readEntitlementViewer();
 
   if (!viewer) {
     return null;

@@ -1,10 +1,12 @@
 import "server-only";
-import { type PlanItem, prisma } from "@zoonk/db";
+import { type PlanItem } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { getEntitlementViewer } from "../entitlements/_utils/entitlement-viewer";
+import { readEntitlementViewer } from "../entitlements/_utils/entitlement-viewer";
 import { getExamPrepAccess as getTierExamPrep } from "../entitlements/limits";
-import { findOwnedGoal, getAnswerTimeZone } from "../learner/_utils/owned-goal";
+import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { readExamBlueprint } from "../learner/facts/exam-blueprint";
+import { readSavedPlan } from "../learner/facts/saved-plan";
+import { getOwnedGoal } from "../learner/get-owned-goal";
 import { getExamPrepAccess } from "../sessions/_utils/exam-access";
 import { BRAIN_POWER_BONUS } from "../sessions/brain-power";
 import { getOfferQuestions, readBossOffer } from "./_utils/challenge-offer";
@@ -64,7 +66,7 @@ export async function getWeeklyChallenge({
   goalId: string;
   timeZone?: string;
 }): Promise<WeeklyChallengeResult> {
-  const owned = await findOwnedGoal(goalId);
+  const owned = await getOwnedGoal(goalId);
 
   if (owned.status !== "ready") {
     return owned;
@@ -73,7 +75,7 @@ export async function getWeeklyChallenge({
   const { goal } = owned;
 
   const [items, blueprint] = await Promise.all([
-    prisma.planItem.findMany({ orderBy: { position: "asc" }, where: { plan: { goalId } } }),
+    readSavedPlan(owned.userId, goalId).then((plan) => plan?.items ?? []),
     goal.examBlueprintId ? readExamBlueprint(goal.examBlueprintId) : null,
   ]);
 
@@ -87,7 +89,7 @@ export async function getWeeklyChallenge({
   const today = getDateInTimeZone({ date: new Date(), timeZone });
   const isMock = item.kind === "mock";
 
-  const viewer = isMock ? await getEntitlementViewer() : null;
+  const viewer = isMock ? await readEntitlementViewer() : null;
 
   const access = getExamPrepAccess({
     examPrep: viewer ? getTierExamPrep(viewer.tier) : null,
