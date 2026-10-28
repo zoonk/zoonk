@@ -17,9 +17,8 @@ const UNPROCESSABLE_CONTENT = 422;
 const TOO_MANY_REQUESTS = 429;
 
 /**
- * Refusals of the request itself: a bad request, credentials, a missing model, an oversized or
- * unreadable body, or a rate limit. Timeouts, conflicts, server errors, dropped connections and
- * unreadable successes stay ambiguous, since a session may exist that we can't name.
+ * Refusals of the request itself. Timeouts, conflicts, server errors and dropped connections stay
+ * ambiguous, since a session may exist that we can't name.
  */
 const NO_SESSION_STATUSES = new Set<number>([
   BAD_REQUEST,
@@ -120,9 +119,8 @@ async function isAlreadyEnded(response: Response): Promise<boolean> {
 }
 
 /**
- * Ends the session at once: OpenAI closes it with `close_requested` and stops billing. Resolves
- * once the session is over, including when it had already ended (on its own, or because the
- * browser left); rejects when that isn't known, so the caller keeps the call open and tries again.
+ * Resolves once the session is over, including when it had already ended; rejects when that isn't
+ * known, so the caller keeps the call open and tries again.
  */
 export async function hangUpLiveCallSession(providerSessionId: string): Promise<void> {
   // The SDK has no hangup helper: the session's REST path sits beside its WebSocket one.

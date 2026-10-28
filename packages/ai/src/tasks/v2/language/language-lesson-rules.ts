@@ -15,10 +15,8 @@ function containsRun({ keys, run }: { keys: readonly string[]; run: readonly str
 }
 
 /**
- * Whether a definition names the word it defines, itself or a form of it ("need" for "need",
- * "growing" for "grow"). When the learner reads the app in the language they're learning, a word's
- * meaning is a definition, and its screens ask which word it means: one that names the word gives
- * the answer away, and a word card reading "need: need" teaches nothing.
+ * When the learner reads the app in the language they're learning, a word's meaning is a
+ * definition, and one that names the word gives the answer away.
  */
 export function definitionNamesWord({
   definition,

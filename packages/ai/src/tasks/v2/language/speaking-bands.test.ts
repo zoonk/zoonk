@@ -12,7 +12,6 @@ const DELE_FLUENCY: SpeakingCriterion = {
   voiceOnly: true,
 };
 
-/** A1 and A2's "Uso de la lengua": language and how easily it's understood, so text shows part. */
 const DELE_LANGUAGE_USE: SpeakingCriterion = {
   ...DELE_FLUENCY,
   key: "languageUse",
@@ -39,7 +38,6 @@ const CAMBRIDGE_GLOBAL: SpeakingCriterion = {
   voiceOnly: false,
 };
 
-/** TOEFL's delivery: 1 to 6 in half bands, and about how the candidate sounds. */
 const TOEFL_DELIVERY: SpeakingCriterion = {
   halfBands: true,
   key: "delivery",
@@ -52,7 +50,6 @@ const TOEFL_DELIVERY: SpeakingCriterion = {
   voiceOnly: true,
 };
 
-/** The range one criterion keeps from what the model wrote. */
 function normalizeBandRange({
   bandHigh,
   bandLow,
@@ -144,7 +141,6 @@ const OUTPUT = {
   focus: "accuracy",
 };
 
-/** The candidate's turns with this many words in all. */
 function said(words: number) {
   return [
     { speaker: "character" as const, text: "Puede empezar." },
@@ -152,7 +148,6 @@ function said(words: number) {
   ];
 }
 
-/** DELE B2 Task 3's grade (3 minutes at least) after this many seconds and words. */
 function gradeTaskThree({ spokenSeconds, words }: { spokenSeconds: number; words: number }) {
   return toSpeakingGrade({
     criteria: [DELE_GRAMMAR],

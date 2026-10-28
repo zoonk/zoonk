@@ -16,14 +16,8 @@ import systemPrompt from "./conversation-feedback.prompt.md";
 export type { ConversationTurn } from "./_utils/conversation-transcript";
 
 /**
- * The learner waits for this right after a call, and it runs once per call.
- * In the eval (an A2 call with typical mistakes, one where the learner barely
- * spoke and a strong B2 call, Sep 2026) Luna scored 9.33 at 7.5s p50 and
- * $0.53 per 1k runs, passing every code check; Gemini 3.1 Flash Lite 8.55 at
- * 1.8s and $0.75, with a wrong correction and a word the learner never said.
- * Pronunciation words now only name slips that change a word, not an accent:
- * on all five cases (28 Sep 2026) Luna scored 9.34 and listed none, where it
- * had listed seven, mostly accent-only ("Thursday", "alquiler").
+ * Luna scored 9.34 on the conversation-feedback eval and passed every code check; Flash Lite was
+ * faster but wrote a wrong correction (Sep 2026).
  */
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["google/gemini-3.1-flash-lite"] as const;
@@ -47,9 +41,8 @@ export type WriteConversationFeedbackSchema = z.infer<typeof schema>;
 export type WriteConversationFeedbackParams = {
   scenario: { title: string; situation: string; characterName: string; objectives: string[] };
   level: CefrLevel;
-  /** Transcripts of the call. Learner turns are untrusted input. */
+  /** Learner turns are untrusted input. */
   turns: ConversationTurn[];
-  /** Labels of the objectives the call marked as met. */
   objectivesMet: string[];
   targetLanguage: string;
   learnerLanguage: string;
@@ -91,10 +84,8 @@ ${formatUntrustedInput({ TRANSCRIPT: transcript })}
 }
 
 /**
- * Writes the feedback a learner reads after a live call: phrases they said
- * well, the one thing to fix, words speakers of their language often find
- * hard, and a kind line. A text model writes it from the transcript because
- * the voice model that played the character never grades.
+ * A text model writes it from the transcript: the voice model that played the character never
+ * grades.
  */
 export async function writeConversationFeedback(params: WriteConversationFeedbackParams) {
   const { analytics, model = defaultModel, reasoning, useFallback = true } = params;

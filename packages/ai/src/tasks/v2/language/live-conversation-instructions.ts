@@ -15,8 +15,7 @@ import toeflMockTemplate from "./live-conversation-speaking-mock-toefl.prompt.md
 import speakingMockTemplate from "./live-conversation-speaking-mock.prompt.md";
 
 /**
- * How the character talks at each level: the same limits the scenario's
- * opening line and hints follow, so the call sounds like the unit.
+ * The same limits the scenario's opening line and hints follow, so the call sounds like the unit.
  */
 const LEVEL_RULES: Record<CefrLevel, string> = {
   A1: "The learner is a beginner (A1). Use very short sentences of about 3 to 6 words, the most common everyday words and the present tense. Speak slowly and clearly. When a question is hard, offer a choice.",
@@ -43,20 +42,13 @@ const SPEAKING_MOCK_TEMPLATES: Record<SpeakingMockExam, string> = {
   toefl: toeflMockTemplate,
 };
 
-/** One task of a certificate's speaking paper, as the voice model needs it. */
 type ExamTaskRole = {
   exam: SpeakingExam;
-  /** The exam and level as learners name it: "DELE B2", "B2 First". */
   title: string;
   task: { brief: string; name: string; role: "examiner" | "partner" };
-  /** What the candidate's card says, so the voice model talks about what they see. */
   card: { instructions: readonly string[]; prompts: readonly string[] };
 };
 
-/**
- * A unit's role play, an exam's speaking mock with an examiner, or one task of a certificate's
- * speaking paper with the AI as its examiner or the other candidate.
- */
 type LiveConversationRole =
   | { kind: "unit" }
   | { exam: SpeakingMockExam; kind: "speakingMock" }
@@ -65,7 +57,7 @@ type LiveConversationRole =
 export type LiveConversationInstructionsParams = LiveConversationRole & {
   scenario: GenerateConversationScenarioSchema;
   level: CefrLevel;
-  /** How long the conversation lasts, from 1 to 5 minutes. */
+  /** 1 to 5. */
   minutes: number;
   targetLanguage: string;
   learnerLanguage: string;
@@ -113,9 +105,7 @@ function getRoleRules(params: LiveConversationRole & { level: CefrLevel }) {
 }
 
 /**
- * The instructions change with the templates and the level rules, never with
- * a scenario, so conversations group by this version like generations group by
- * their system prompt.
+ * Changes with the templates and level rules, never with a scenario, so conversations group by it.
  */
 export const LIVE_CONVERSATION_PROMPT_VERSION = getPromptVersion({
   systemPrompt: [
@@ -152,7 +142,6 @@ function formatCard(card: ExamTaskRole["card"]): string {
     .join("\n");
 }
 
-/** What only an exam task's role fills; other roles have no such placeholders. */
 function getExamTaskValues(params: LiveConversationRole): Record<string, string> {
   if (params.kind !== "examTask") {
     return {};
@@ -181,11 +170,6 @@ function getTargetLanguageName(params: LiveConversationInstructionsParams): stri
   }).targetLanguageName;
 }
 
-/**
- * Writes the voice model's instructions for one live conversation: its role
- * and the scenario, how to talk at the learner's level, the objectives the
- * learner is after, and when to wrap up.
- */
 export function buildLiveConversationInstructions(
   params: LiveConversationInstructionsParams,
 ): string {

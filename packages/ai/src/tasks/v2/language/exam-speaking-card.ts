@@ -17,11 +17,7 @@ import {
   type SpeakingExam,
 } from "./exam-speaking-exams";
 
-/**
- * One card per try, written while the learner waits, like a speaking mock's scenario; the same
- * model as the IELTS and TOEFL mock's (`speaking-mock-scenario`), whose eval chose it for exam-like
- * scripts in the target language.
- */
+/** Same model as `speaking-mock-scenario`, whose eval chose it for exam-like scripts. */
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["google/gemini-3.8-flash"] as const;
 
@@ -48,14 +44,12 @@ const cardOutputSchema = z.object({
 
 export type ExamSpeakingCardOutput = z.infer<typeof cardOutputSchema>;
 
-/** The card of the earlier task a task continues, as the learner saw it. */
 type PreviousCard = Pick<ExamSpeakingCardOutput, "instructions" | "prompts" | "table" | "text"> & {
   task: string;
 };
 
 export type GenerateExamSpeakingCardParams = {
   exam: SpeakingExam;
-  /** The exam and level as learners name it: "DELE B2", "B2 First". */
   title: string;
   paper: string;
   task: {
@@ -111,10 +105,7 @@ function buildUserPrompt(params: GenerateExamSpeakingCardParams): string {
   `;
 }
 
-/**
- * Generated text never shows em dashes, and only the material the task uses stays: a task without
- * photos gets none drawn, whatever the model wrote.
- */
+/** Only the material the task uses stays: a task without photos gets none drawn. */
 function repairCard({
   card,
   stimulus,
@@ -132,12 +123,7 @@ function repairCard({
   };
 }
 
-/**
- * Writes one task card of a certificate's speaking paper, like the exam's own sheet: instructions
- * and prompts in the exam's language, the material the task works from (a text, figures or photo
- * scenes to draw), and the script of the examiner or partner the voice model plays. Personal to one
- * try: it holds nothing about the learner.
- */
+/** Personal to one try, yet it holds nothing about the learner. */
 export async function generateExamSpeakingCard(params: GenerateExamSpeakingCardParams) {
   const { analytics, model = defaultModel, reasoning, useFallback = true } = params;
   const systemPrompt = buildSystemPrompt(params);

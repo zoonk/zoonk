@@ -6,7 +6,6 @@ import type * as Ai from "ai";
 vi.mock("server-only", () => ({}));
 vi.mock("./level-test-bank.prompt.md", () => ({ default: "Write one level of the bank." }));
 
-// Each level is a paid model call; the test answers them itself to check how the bank is put together.
 vi.mock("ai", async (importOriginal) => ({
   ...(await importOriginal<typeof Ai>()),
   generateText: vi.fn(),
@@ -56,7 +55,6 @@ function writeLevel(level: string) {
   };
 }
 
-/** Holds every level's answer until the test releases them, and names the level each call asked for. */
 function answerLevelsLater(): LevelCall[] {
   const calls: LevelCall[] = [];
 

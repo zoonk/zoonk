@@ -25,11 +25,7 @@ const NO_PATTERN: MistakePattern = {
   title: "",
 };
 
-/**
- * A drill question a learner can answer: one blank, the answer among the
- * options, and options they can tell apart. Accents and case count, since
- * "esta" and "está" are different answers.
- */
+/** Accents and case count, since "esta" and "está" are different answers. */
 export function isWellFormedDrillQuestion(question: DrillQuestion): boolean {
   const options = question.options.map((option) => option.trim());
 
@@ -54,12 +50,7 @@ function toValidMistakeNumbers({
   return [...new Set(valid)].toSorted((first, second) => first - second);
 }
 
-/**
- * Keeps only what the screen can show honestly: mistake numbers that exist,
- * drill questions a learner can answer (with the blank written the same way
- * everywhere), no drill unless there is a pattern, and "none" for a pattern
- * that fewer than two mistakes show.
- */
+/** No drill without a pattern, and "none" for a pattern fewer than two mistakes show. */
 export function normalizeMistakePattern({
   mistakeCount,
   pattern,

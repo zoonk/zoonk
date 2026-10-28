@@ -1,4 +1,3 @@
-/** The adapter stops waiting for a creation request after this. */
 export const LIVE_CALL_CREATE_TIMEOUT_MS = 30_000;
 
 /**

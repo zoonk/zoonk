@@ -6,10 +6,8 @@ import { LIVE_CONVERSATION_PROMPT_VERSION } from "./live-conversation-instructio
 import { LIVE_CONVERSATION_MODEL } from "./live-conversation-models";
 
 /**
- * Records a finished call's voice session as an AI generation, so its cost sits next to every
- * other model call's. Core supplies settled billable seconds from its server-observed terminal
- * receipt, including the initialization floor. GPT-Live bills the session per second, silence
- * included; direct calls retain the canonical openai/gpt-live-1 pricing key.
+ * GPT-Live bills the session per second, silence included; core supplies the settled seconds,
+ * initialization floor included.
  */
 export async function recordLiveConversationUsage({
   analytics,
@@ -17,7 +15,6 @@ export async function recordLiveConversationUsage({
   seconds,
 }: {
   analytics?: AiGenerationContext;
-  /** The conversation's id, so the call's feedback and checks can be traced with it. */
   runId: string;
   seconds: number;
 }): Promise<void> {

@@ -4,10 +4,7 @@ import { runImageTaskGeneration } from "../../../provenance/run-image-generation
 import { type ImageGenerationQuality, buildImageProviderOptions } from "../../../provider-options";
 import { generateImageWithSafetyRetry } from "../../_utils/generate-image-with-safety-retry";
 
-/**
- * Lesson pictures' model (`lesson-image`) at low quality, about $0.008 a picture: a speaking
- * task's photo only needs a clear everyday scene to describe and speculate about.
- */
+/** Low quality is enough: a speaking task's photo only needs a clear everyday scene. */
 const defaultModel = "openai/gpt-image-2.5-flare";
 const DEFAULT_QUALITY: ImageGenerationQuality = "low";
 
@@ -21,7 +18,7 @@ const PHOTO_TEMPLATE =
   "A realistic documentary-style photograph with natural light and natural colors, of this everyday moment: {{SCENE}}. Real people with natural expressions, nobody famous. Nothing to read anywhere in the picture: no text, letters, numbers, signs, labels, logos or watermarks.";
 
 export type DrawExamSpeakingPhotoParams = {
-  /** The card writer's scene, in English. */
+  /** In English. */
   scene: string;
   analytics?: AiGenerationContext;
   model?: string;
@@ -33,10 +30,7 @@ function buildPrompt({ input }: { input: string }): string {
   return PHOTO_TEMPLATE.replace("{{SCENE}}", () => input.trim().replace(/\.+$/u, ""));
 }
 
-/**
- * Draws one photo of a speaking task's card from the scene its writer described. Storing it is
- * core's: the picture holds nothing about the learner.
- */
+/** The picture holds nothing about the learner. */
 export async function drawExamSpeakingPhoto({
   analytics,
   model = defaultModel,

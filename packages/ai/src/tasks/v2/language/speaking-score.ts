@@ -34,17 +34,12 @@ import toeflRubric from "./speaking-score-toefl.prompt.md";
 import basePrompt from "./speaking-score.prompt.md";
 
 /**
- * Runs once per mock or exam task, and the learner waits for it on the results screen. Merged from
- * the IELTS and TOEFL mock grader and the certificate task grader (27 Oct 2026), and judged with
- * one rubric against the old graders' saved outputs, Luna scored 8.69 on six IELTS (old 8.08), 8.50
- * on four TOEFL (8.48), 9.08 on Cambridge (8.62), 9.23 on Goethe (8.92) and 7.77 on DELE (8.46;
- * 8.2 over four runs, and 8.35 with the certificate prompt it replaced), at 23s p50 and $1.04 per 1k
- * runs. Gemini 3.1 Flash Lite scored 7.12 on IELTS at 3.2s, still overrating and misquoting.
+ * Graded with one rubric after the IELTS, TOEFL and certificate graders merged, Luna scored 7.8 to
+ * 9.2 per exam (27 Oct 2026); Flash Lite still overrated and misquoted.
  */
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["google/gemini-3.8-flash"] as const;
 
-/** The rules every rating shares, with English examples for English exams, then the exam's scale and criteria. */
 function withRubric({ english, rubric }: { english: boolean; rubric: string }): string {
   return `${selectPromptVariants({ template: basePrompt, variants: { english } })}\n${rubric}`;
 }
@@ -69,25 +64,19 @@ const criterionSchema = z.object({
 
 export type ScoreSpeakingParams = {
   exam: SpeakingExam | SpeakingMockExam;
-  /** The exam as learners name it: "IELTS Speaking", "DELE B2", "B2 First". */
   title: string;
-  /** The level a certificate tests; IELTS and TOEFL rate every level on one scale. */
+  /** IELTS and TOEFL rate every level on one scale. */
   level?: CefrLevel;
-  /** The task practiced (a mock practices the whole test), with its official speaking time in minutes. */
   task: {
     brief: string;
     minutes: { max: number; min: number };
     name: string;
     role: "examiner" | "partner";
   };
-  /**
-   * The criteria this task is rated on, in the order the result lists them. Typed replies aren't
-   * rated on the ones only the voice shows.
-   */
+  /** In the order the result lists them. Typed replies aren't rated on the voice-only ones. */
   criteria: readonly SpeakingCriterion[];
   /** The voice model is the "character" and the candidate the "learner". Candidate turns are untrusted. */
   turns: ConversationTurn[];
-  /** How long the candidate spoke in total. */
   spokenSeconds: number;
   learnerLanguage: string;
   model?: string;
@@ -96,7 +85,7 @@ export type ScoreSpeakingParams = {
   analytics?: AiGenerationContext;
 };
 
-/** One key per criterion, in order, so the model can't skip or repeat one, then the focus. */
+/** One key per criterion, so the model can't skip or repeat one. */
 function buildSchema(criteria: readonly SpeakingCriterion[]) {
   const keys = criteria.map((criterion) => criterion.key);
   const [first = "", ...rest] = keys;
@@ -157,12 +146,8 @@ function buildUserPrompt(
 }
 
 /**
- * Estimates a speaking mock (IELTS, TOEFL) or one task of a certificate's speaking paper (DELE,
- * DELF, Goethe, Cambridge) on the exam's own criteria: a band range for each with the candidate's
- * words as evidence, one concrete tip each, and the criterion to practice next. Pronunciation is
- * rated for intelligibility only, as a wider range: a transcript can't show sound, and typed
- * replies aren't rated on what only the voice shows. Code keeps every range on its scale whatever
- * the model wrote; it's an estimate, never an official score.
+ * Pronunciation is rated for intelligibility only, as a wider range: a transcript can't show sound.
+ * It's an estimate, never an official score.
  */
 export async function scoreSpeaking(params: ScoreSpeakingParams) {
   const { analytics, model = defaultModel, reasoning, useFallback = true } = params;

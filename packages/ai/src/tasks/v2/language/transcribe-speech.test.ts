@@ -18,7 +18,6 @@ function heard(text: string) {
   return { text } as Awaited<ReturnType<typeof transcribe>>;
 }
 
-/** Each call's model as `provider:modelId`, in the order they were tried. */
 function triedModels(): string[] {
   return vi
     .mocked(transcribe)

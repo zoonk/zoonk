@@ -10,11 +10,7 @@ import { type AiGenerationContext } from "../../../provenance/ai-generation-even
 import { captureAiGeneration } from "../../../provenance/ai-generation-sink";
 import { type TaskProvenance } from "../../../provenance/task-provenance";
 
-/**
- * Transcription models compared for spoken answers. gpt-transcribe goes to
- * OpenAI directly because AI Gateway doesn't list it; the rest go through the
- * gateway.
- */
+/** gpt-transcribe goes to OpenAI directly because AI Gateway doesn't list it. */
 export const TRANSCRIPTION_MODELS = [
   "openai/gpt-transcribe",
   "google/gemini-3.5-transcribe",
@@ -26,35 +22,16 @@ export const TRANSCRIPTION_MODELS = [
 export type TranscriptionModelId = (typeof TRANSCRIPTION_MODELS)[number];
 
 /**
- * Spoken answers use gpt-transcribe, OpenAI's latest transcription model, at
- * $0.0045 a minute. Speech checks flag what a listener wouldn't understand, not
- * an accent, and it hears slips the way a listener would: "I sink it's cheap"
- * became "I think it's cheap" and "mas café" became "mais café". In the speech
- * eval (13 labeled text-to-speech clips in English, Portuguese and Spanish, 7
- * with a mistake by that rule; 28 Sep 2026) it matched 12 at 1.0s p50. The
- * trade-off: it also normalizes a wrong form ("estar" became "está"), so that
- * sentence passes. It kept a wrong word, a wrong tense and missing words
- * ("hent", "live", a dropped "the"), and it never flagged a sentence said
- * right. It gets the language hint and the prompt as context, never the
- * expected words: as `keywords` they hid three more mistakes.
- *
- * The fallback is Gemini 3.5 Transcribe through AI Gateway, on another
- * provider. Across that eval and the pronunciation one's 24 clips (11 Oct
- * 2026) it matched 34 of 37 like gpt-transcribe, at 1.5s to 2.2s p50. OpenAI
- * shuts gpt-4o-transcribe, the fallback before it, down on 26 Feb 2027; it
- * matched 30. MAI-Transcribe-2 (preview) matched 36 but took 4.6s p50 and up
- * to 21s p95, and Fish Audio's Transcribe 1 and Grok STT matched 32 at 0.5s.
+ * gpt-transcribe hears slips the way a listener would and matched 12 of 13 labeled clips at 1.0s
+ * p50 (28 Sep 2026). It never gets the expected words: as `keywords` they hid three more mistakes.
+ * Gemini 3.5 Transcribe, the fallback on another provider, matched 34 of 37 (11 Oct 2026).
  */
 const defaultModel: TranscriptionModelId = "openai/gpt-transcribe";
 const fallbackModels = ["google/gemini-3.5-transcribe"] as const;
 
 const DIRECT_MODEL = "openai/gpt-transcribe";
 
-/**
- * The instructions sent with every request. They ask for what was said, not
- * what was meant, and never include the expected answer, which would bias the
- * model toward "hearing" it.
- */
+/** Never includes the expected answer, which would bias the model toward "hearing" it. */
 const TRANSCRIPTION_PROMPT =
   "A language learner is practicing. Write exactly the words you hear, including mispronounced words, wrong grammar and wrong words. Never correct them.";
 
@@ -63,7 +40,6 @@ const TRANSCRIPTION_VERSION = "2";
 
 export type TranscribeSpeechParams = {
   audio: Uint8Array;
-  /** The language the learner is speaking: the target language of the step. */
   language: string;
   model?: TranscriptionModelId;
   useFallback?: boolean;
@@ -81,12 +57,8 @@ function getTranscriptionModel(model: TranscriptionModelId) {
 }
 
 /**
- * OpenAI's models take a language hint and free-text context; Gemini detects
- * the language on its own. OpenAI documents a `languages` list for
- * gpt-transcribe, which the AI SDK (4.0.78) can't send yet, but gpt-transcribe
- * honors the single `language` it does send (checked 28 Sep 2026). The SDK
- * asks models it doesn't know for `verbose_json`, which gpt-transcribe
- * rejects, so every OpenAI call asks for plain JSON.
+ * The AI SDK (4.0.78) can't send gpt-transcribe's `languages` list, but it honors `language` (28
+ * Sep 2026). The SDK asks unknown models for `verbose_json`, which gpt-transcribe rejects.
  */
 function getOpenAIOptions(language: string): OpenAITranscriptionModelOptions {
   return {
@@ -116,11 +88,7 @@ async function transcribeWithModel({
   return { audioSeconds: result.durationInSeconds, text: result.text.trim() };
 }
 
-/**
- * Provenance for a call that has no tokens: transcription is billed by audio
- * length, priced from the duration the model reports; a model that doesn't
- * report one leaves the cost unknown.
- */
+/** Billed by audio length: a model that doesn't report a duration leaves the cost unknown. */
 function buildTranscriptionProvenance({
   audioSeconds,
   latencyMs,
@@ -176,11 +144,7 @@ async function transcribeInOrder({
   }
 }
 
-/**
- * Transcribes a learner's spoken answer as said, mistakes included, so code
- * can compare it with the expected sentence word by word. The audio is only
- * sent to the model; nothing here stores it.
- */
+/** The audio is only sent to the model; nothing here stores it. */
 export async function transcribeSpeech({
   analytics,
   audio,

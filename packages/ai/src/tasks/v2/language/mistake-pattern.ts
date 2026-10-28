@@ -10,13 +10,8 @@ import { normalizeMistakePattern } from "./mistake-pattern-rules";
 import systemPrompt from "./mistake-pattern.prompt.md";
 
 /**
- * Runs in the background after a few language mistakes, per learner. In the
- * eval (since/for, typos and unrelated mistakes, Sep 2026) Luna scored 9.29
- * at 3.2s p50 and $0.29 per 1k runs, with the right kind every time; Gemini
- * 3.1 Flash Lite 8.60 at 1.3s and $0.62, with a false rule about Portuguese.
- * With drill options limited to the forms the learner confuses and every
- * explanation in the learner's language (27 Sep), Luna scored 8.44 on two
- * English and 9.85 on four Portuguese cases.
+ * Luna scored 9.29 on the mistake-pattern eval with the right kind every time; Flash Lite stated a
+ * false rule about Portuguese (Sep 2026).
  */
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["google/gemini-3.1-flash-lite"] as const;
@@ -24,7 +19,7 @@ const fallbackModels = ["google/gemini-3.1-flash-lite"] as const;
 const MAX_CONTRAST_ROWS = 3;
 const DRILL_QUESTIONS = 5;
 
-/** The forms the pattern confuses and nothing else: two for "since" and "for", three at most. */
+/** Only the forms the pattern confuses: two for "since" and "for", three at most. */
 const MIN_DRILL_OPTIONS = 2;
 const MAX_DRILL_OPTIONS = 3;
 
@@ -50,7 +45,6 @@ const schema = z.object({
 
 export type FindMistakePatternSchema = z.infer<typeof schema>;
 
-/** A wrong answer to a language question: the format is "spoken", "typed", "fillBlank"... */
 type LanguageMistake = { question: string; answer: string; correctAnswer: string; format: string };
 
 export type FindMistakePatternParams = {
@@ -88,11 +82,6 @@ ${formatUntrustedInput({ MISTAKES: mistakes.join("\n") })}
   `;
 }
 
-/**
- * Looks at a learner's recent language mistakes and names one repeated
- * pattern with a short rule, a contrast and a five-question drill, or says
- * they were spelling slips, or that there is no pattern.
- */
 export async function findMistakePattern(params: FindMistakePatternParams) {
   const { analytics, model = defaultModel, reasoning, useFallback = true } = params;
   const userPrompt = buildUserPrompt(params);

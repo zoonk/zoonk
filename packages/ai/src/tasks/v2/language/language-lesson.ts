@@ -14,14 +14,8 @@ import respellingForPortuguese from "./language-lesson-respelling-pt.prompt.md";
 import basePrompt from "./language-lesson.prompt.md";
 
 /**
- * Written once per language pair and shared by every learner of that pair, so
- * quality wins over cost. In the per-pair eval (5 cases: pt-en at A2 and B1,
- * en-pt, en-es and es-en, Sep 2026) Sol scored 8.16 at 47s p50 and about
- * $0.04 a lesson; Gemini 3.8 Flash scored 7.40 at 9s and $0.01, with more
- * false pronunciation rules and wrong options that were also right. GPT-6.1
- * Sol replaced GPT-6 Sol (7 Oct 2026, 3 cases, same prompt and hour): 8.83
- * against 7.30 at 48s against 50s p50 and $0.028 against $0.042 a lesson; GPT-6
- * Sol stated a false grammar rule in all three lessons, 6.1 in none.
+ * Written once per pair and shared, so quality wins: GPT-6.1 Sol scored 8.83 against GPT-6 Sol's
+ * 7.30, which stated a false grammar rule in every lesson (7 Oct 2026).
  */
 const defaultModel = "openai/gpt-6.1-sol";
 const fallbackModels = ["google/gemini-3.8-flash"] as const;
@@ -43,10 +37,6 @@ const MAX_KEY_POINTS = 3;
 const MIN_SUMMARY_LINES = 2;
 const MAX_SUMMARY_LINES = 4;
 
-/**
- * What each reader's alphabet can spell, by the learner's language. It takes its place among the
- * respelling rules every reader shares; a reader with no rules here gets the shared ones alone.
- */
 const RESPELLING_RULES: Partial<Record<string, string>> = {
   en: respellingForEnglish,
   es: respellingForSpanish,
@@ -54,8 +44,8 @@ const RESPELLING_RULES: Partial<Record<string, string>> = {
 };
 
 /**
- * The rules for this pair: a learner who reads the app in the language they're learning gets
- * definitions instead of translations, and nothing compared with another language.
+ * A learner who reads the app in the language they're learning gets definitions instead of
+ * translations, and nothing compared with another language.
  */
 function getSystemPrompt({
   learnerLanguage,
@@ -140,7 +130,6 @@ const schema = z.object({
 export type LanguageLessonContent = z.infer<typeof schema>;
 
 export type LanguageLessonParams = {
-  /** The learner's language: translations, explanations and tips are written in it. */
   learnerLanguage: string;
   targetLanguage: string;
   /** A CEFR level ("A2") or band ("A1–A2"). */
@@ -153,7 +142,6 @@ export type LanguageLessonParams = {
   /** Words taught earlier in the course: reused in sentences, never taught again. */
   knownWords?: string[];
   model?: string;
-  /** The gateway tier it answers at (see `ServiceTier`); the standard one when unset. */
   serviceTier?: ServiceTier;
   useFallback?: boolean;
   reasoning?: Reasoning;
@@ -188,11 +176,8 @@ ${formatList(params.knownWords)}
 }
 
 /**
- * Writes one language lesson for a language pair: the new words with their
- * meanings, respellings and tips for speakers of the learner's language, the
- * sentences, a pattern tip with practice, one sentence to write and the
- * summary. Target-language words and sentences are stored once per target
- * language and reused by every pair; everything else belongs to the pair.
+ * Target-language words and sentences are stored once per target language and reused by every
+ * pair; everything else belongs to the pair.
  */
 export async function generateLanguageLesson(params: LanguageLessonParams) {
   const { analytics, model = defaultModel, reasoning, serviceTier, useFallback = true } = params;

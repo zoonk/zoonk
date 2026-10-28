@@ -8,12 +8,8 @@ import { getLanguagePromptContext } from "../../_utils/prompt-language";
 import systemPrompt from "./alphabet-lesson.prompt.md";
 
 /**
- * Written once per script and learner language, and shared by every learner of that pair. In the
- * `alphabet-lesson` eval (hiragana and Hangul for English speakers, Cyrillic and Arabic for
- * Portuguese speakers, 27 Sep 2026) Luna scored 8.87 (9.31 English, 8.42 Portuguese) at 17.8s p50
- * and $1.50 per 1k runs, and Sol 8.68 at $20.68. Both voiced Russian consonants as syllables
- * without saying so (7.38 on that case); with the cue now saying so, Luna's Cyrillic case scored
- * 8.77 and its overall 9.21 (9.31 English, 9.12 Portuguese).
+ * Written once per script and learner language and shared: Luna scored 9.21 on the alphabet-lesson
+ * eval, ahead of Sol at a fraction of the cost (27 Sep 2026).
  */
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["openai/gpt-6-sol"] as const;
@@ -59,12 +55,6 @@ export type GenerateAlphabetLessonParams = {
   analytics?: AiGenerationContext;
 };
 
-/**
- * Writes the first alphabet lesson for a language whose script isn't Latin: a short intro on how
- * the script is read, 6 to 10 letters with romanization, a sound cue for the learner's language,
- * the text a voice says and real positional forms, and a summary. Code turns it into alphabet
- * cards and recognition checks, and the lesson opens a new learner's first session.
- */
 export async function generateAlphabetLesson(params: GenerateAlphabetLessonParams) {
   const { analytics, model = defaultModel, reasoning, useFallback = true } = params;
 

@@ -13,39 +13,10 @@ import {
 import systemPrompt from "./assess-pronunciation.prompt.md";
 
 /**
- * Only models that take audio in can run this, and on AI Gateway those are
- * Gemini's. The check flags what a native listener wouldn't understand as the
- * word written (another word or form, or a word they couldn't make out), never
- * an accent. In the eval (24 labeled text-to-speech clips in English,
- * Portuguese and Spanish, sentences and single words, 11 with such a mistake;
- * 28 Sep 2026) Gemini 3.8 Flash matched 23 with no false flags, missing only
- * "hent" for "rent" inside a sentence, at 3.9s p50 and $3.51 per 1,000
- * answers. Gemini 3.5 Flash caught all 11 but flagged 3 stress slips a
- * listener would understand ("Can we order desert?"), at 4.7s and $8.05. The
- * earlier prompt, which flagged every audible slip, matched 13 of the first 21
- * with 3.5 Flash. Transcription with a word diff (gpt-transcribe, the fallback
- * when this task fails) matched 22 at 0.8s: it lets through a wrong form
- * ("estar" for "está") and flags an extra vowel ("bookie" for "book"). The
- * clips test clear slips, not real accents, so real recordings should confirm
- * this.
- *
- * No other model backs 3.8 Flash up (checked 11 Oct 2026): AI Gateway already
- * tries it on Vertex when Google fails, and no other Gemini model is both
- * different and lasting. Google routes 3.5 Flash to 3.6 Flash and 3.7 Flash to
- * 3.8 Flash. 3.6 Flash matched 23 (one stress slip flagged) but Vertex stops
- * serving it on 19 Nov 2026, and 3.5 Flash-Lite matched 6 of 20.
- *
- * Azure Pronunciation Assessment is the specialist option, not measured here
- * (no credentials). Its short-audio REST endpoint
- * (`https://<resource>.cognitiveservices.azure.com/stt/speech/recognition/conversation/cognitiveservices/v1?language=<locale>`)
- * takes up to 30 seconds of 16 kHz WAV or OGG Opus (so browser WebM or MP4 needs
- * converting) with a base64 JSON `Pronunciation-Assessment` header
- * (`ReferenceText`, `Granularity`, `Dimension: "Comprehensive"`, `EnableMiscue`)
- * and returns accuracy scores and an `ErrorType` per word (Mispronunciation,
- * Omission, Insertion); prosody, which covers stress, is en-US only. Its locales
- * include en-US, pt-BR and es-ES. It costs the same as speech to text, and
- * Microsoft would become a new processor of learners' voices. It scores how
- * native a word sounds, so it would need thresholds to judge being understood.
+ * Only models that take audio in can run this, and on AI Gateway those are Gemini's: 3.8 Flash
+ * matched 23 of 24 labeled clips with no false flags (28 Sep 2026). No other model backs it up (11
+ * Oct 2026): the gateway already tries it on Vertex, and no other Gemini model is both different
+ * and lasting.
  */
 const defaultModel = "google/gemini-3.8-flash";
 
@@ -64,18 +35,15 @@ const schema = z.object({
 /* oxlint-enable eslint/sort-keys */
 
 export type AssessPronunciationSchema = {
-  /** What the model heard, mistakes included; "" when nobody spoke. */
+  /** "" when nobody spoke. */
   transcript: string;
-  /** Every word of the expected sentence, in order, as written. */
   words: PronouncedWord[];
 };
 
 export type AssessPronunciationParams = {
   audio: Uint8Array;
-  /** "audio/webm", "audio/mp4", "audio/mpeg"... */
   mediaType: string;
   expectedText: string;
-  /** The language spoken: the step's target language. */
   language: string;
   learnerLanguage?: string;
   model?: string;
@@ -105,12 +73,8 @@ ${expectedWords.map((word, index) => `${index + 1}. ${word}`).join("\n")}`;
 }
 
 /**
- * Listens to a learner saying a sentence and judges each word against it:
- * understood as written, understood as another word or form (with what it
- * sounded like and whether a sound or the stress made the difference) or not
- * said. An accent a listener would understand passes. The audio goes to the
- * model with the expected sentence, so it can hear stress, which a transcript
- * can't show. Nothing here stores the audio.
+ * An accent a listener would understand passes. The model hears the audio itself, so it can judge
+ * stress, which a transcript can't show. Nothing here stores the audio.
  */
 export async function assessPronunciation({
   analytics,

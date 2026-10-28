@@ -10,9 +10,8 @@ import { isCloserToNative } from "./_utils/ipa-similarity";
 import systemPrompt from "./check-word-pronunciation.prompt.md";
 
 /**
- * Only models that take audio in can listen, and on AI Gateway those are Gemini's. In the
- * check-word-pronunciation eval (8 words English spells the same, each voiced as English and in
- * its language; 11 Oct 2026) it got all 16 right at 2.9s p50; one call took 43s.
+ * Only models that take audio in can listen, and on AI Gateway those are Gemini's. It got all 16
+ * clips right on its eval at 2.9s p50 (11 Oct 2026).
  */
 const defaultModel = "google/gemini-3.8-flash";
 
@@ -30,14 +29,10 @@ export type WordPronunciationCheck = z.infer<typeof schema> & {
 
 export type CheckWordPronunciationParams = {
   audio: Uint8Array;
-  /** "audio/mpeg", "audio/wav"... */
   mediaType: string;
   word: string;
-  /** The word's language: the lesson's target language. */
   language: string;
-  /** How the word sounds in its language, in IPA. */
   ipa: string;
-  /** How English reads the same spelling, in IPA. */
   englishIpa: string;
   analytics?: AiGenerationContext;
   abortSignal?: AbortSignal;
@@ -58,12 +53,8 @@ ${formatUntrustedInput({ WORD: word })}`;
 }
 
 /**
- * Listens to a clip of a word English spells the same and tells whether it was read with the
- * sounds of its language or the English ones, given both in IPA: a transcript writes the same
- * spelling either way. A voice that reads "Name" in a German lesson as the English "name" teaches
- * the wrong word, so such a clip is voiced again. The model let a half-English reading through as
- * native with an accent ("time" heard as ˈtaɪmi in Brazilian Portuguese), so a clip only sounds
- * native when what it heard is also closer to the word's IPA than to the English one.
+ * A transcript writes the same spelling either way, so the model listens. It let a half-English
+ * "time" through as native, so a clip only passes when what it heard is closer to the word's IPA.
  */
 export async function checkWordPronunciation({
   abortSignal,

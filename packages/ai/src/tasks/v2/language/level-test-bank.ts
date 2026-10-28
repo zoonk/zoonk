@@ -11,22 +11,9 @@ import { getLanguagePromptContext } from "../../_utils/prompt-language";
 import systemPrompt from "./level-test-bank.prompt.md";
 
 /**
- * Written once per language pair and stored for every learner of that pair, so quality wins over
- * cost and speed. Written as one call for the whole bank, Opus 5.5 scored 7.92 in English and 7.54
- * in Portuguese (one bank each, 27 Sep) at 119s p50 and $0.34 a bank, Sol 8.00 and 6.85 at 82s,
- * and Luna 7.37 and 7.40; the judge capped every one for a B2 or C1 question that read a level
- * below or an A2 question that read like A1. A Luna version that also wrote each level apart and
- * had a second call review B2 and C1 scored 7.54 in both (within noise) at 85s instead of 27s, so
- * it was reverted, and a review pass isn't tried again without an eval showing it helps.
- *
- * Each level is now written in its own call, all at once, from level descriptions with their own
- * text lengths, situations that move from concrete to abstract, and what a learner one level below
- * would misread. Opus 5.5 then scored 9.00 for English speakers learning Portuguese, 7.54 for
- * Brazilians learning English and 7.65 for English speakers learning German (one bank each, 28
- * Sep), at 80s p50 and 98s p95 and $0.62 to $0.69 a bank. Two banks were still capped for one C1
- * question: an idiom its text explained or any reader of the idiom could answer, and an
- * understatement whose answer overstated it. The prompt now rules both out; that last change
- * hasn't been through the eval.
+ * Written once per pair and shared, so quality wins. With each level in its own call, Opus 5.5
+ * scored 7.5 to 9.0 per bank at 80s p50 (28 Sep 2026); a second review call didn't help, so don't
+ * add one without an eval showing it does.
  */
 const defaultModel = "anthropic/claude-opus-5.5";
 const fallbackModels = ["openai/gpt-6-luna"] as const;
@@ -43,9 +30,8 @@ type TestSkill = (typeof TEST_SKILLS)[number];
 type WordRange = { max: number; min: number };
 
 /**
- * What a question may check at each level, as the prompt's level descriptions name them. The model
- * picks one before writing the text, so a B2 question is planned as an implication instead of
- * drifting into a stated detail.
+ * The model picks one before writing the text, so a B2 question is planned as an implication
+ * instead of drifting into a stated detail.
  */
 const QUESTION_TESTS = {
   A1: ["one stated fact"],
@@ -56,10 +42,8 @@ const QUESTION_TESTS = {
 } as const satisfies Record<TestLevel, readonly [string, ...string[]]>;
 
 /**
- * How long each level's texts are, in words: a sentence or two at A1, a paragraph at B1, and longer
- * texts at B2 and C1, whose answers rest on clues spread across them. Voice messages play at
- * speaking pace, so they're shorter, and an advanced learner's six questions still take only a few
- * minutes. The eval's code checks read the same limits.
+ * Voice messages play at speaking pace, so they're shorter, and an advanced learner's six questions
+ * still take a few minutes. The eval's code checks read the same limits.
  */
 export const LEVEL_TEST_PASSAGE_WORDS = {
   A1: { listening: { max: 25, min: 10 }, reading: { max: 25, min: 8 } },
@@ -78,9 +62,8 @@ const SPEAKING_WORDS = {
 } as const satisfies Record<TestLevel, string>;
 
 /**
- * Each question's situation. The levels are written at the same time, so this keeps them from
- * reusing one, and the topics move from concrete and personal at A1 to abstract and professional
- * at C1, as CEFR's descriptors do.
+ * The levels are written at the same time, so this keeps them from reusing a situation; topics move
+ * from concrete at A1 to abstract at C1, as CEFR's descriptors do.
  */
 const SITUATIONS = {
   A1: {
@@ -270,11 +253,6 @@ async function writeLevel({
   return { level, output: result.output, provenance, usage: result.usage, userPrompt };
 }
 
-/**
- * Writes the question bank for the three-minute level test of one language pair: two reading and
- * two listening questions per level from A1 to C1, and one sentence per level to say out loud.
- * Stored once and shared by every learner of that pair.
- */
 export async function generateLevelTestBank(params: GenerateLevelTestBankParams) {
   const languages = getLanguagePromptContext({
     targetLanguage: params.targetLanguage,
