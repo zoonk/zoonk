@@ -41,7 +41,7 @@
     "@zoonk/utils": "workspace:*",
     "better-auth": "1.7.7",
     "botid": "catalog:",
-    "jose": "6.2.12",
+    "jose": "catalog:",
     "mailchecker": "6.0.21",
     "node-app-attest": "1.0.1",
     "stripe": "22.6.2",

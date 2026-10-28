@@ -64,10 +64,16 @@ const CANONICAL_OPERATIONS = [
     path: "/me/progress/score/patterns",
   },
   { method: "post", operationId: "createAppleSubscription", path: "/me/subscriptions/apple" },
+  { method: "post", operationId: "createGooglePlaySubscription", path: "/me/subscriptions/google" },
   {
     method: "post",
     operationId: "createAppleSubscriptionNotification",
     path: "/subscriptions/apple/notifications",
+  },
+  {
+    method: "post",
+    operationId: "createGooglePlayNotification",
+    path: "/subscriptions/google/notifications",
   },
   {
     method: "get",
@@ -303,6 +309,8 @@ describe("OpenAPI document", () => {
     expect(document.paths["/me"]?.patch?.security).toStrictEqual(authenticated);
     expect(document.paths["/me/subscriptions/apple"]?.post?.security).toStrictEqual(authenticated);
     expect(document.paths["/subscriptions/apple/notifications"]?.post?.security).toStrictEqual([]);
+    expect(document.paths["/me/subscriptions/google"]?.post?.security).toStrictEqual(authenticated);
+    expect(document.paths["/subscriptions/google/notifications"]?.post?.security).toStrictEqual([]);
   });
 
   it("documents native session endpoint security", () => {

@@ -11877,7 +11877,87 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AppleSubscriptionResponse"
+                  "$ref": "#/components/schemas/StoreSubscriptionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/subscriptions/google": {
+      "post": {
+        "description": "The app sets the learner's user id as the purchase's obfuscatedAccountId; a purchase made for another account is refused. Zoonk acknowledges the purchase, so the app doesn't.",
+        "operationId": "createGooglePlaySubscription",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Reconcile a Google Play subscription",
+        "tags": [
+          "Subscriptions"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GooglePlaySubscriptionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Current account state after durable Google Play reconciliation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreSubscriptionResponse"
                 }
               }
             }
@@ -11949,6 +12029,62 @@
           },
           "400": {
             "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscriptions/google/notifications": {
+      "post": {
+        "description": "Pub/Sub push endpoint, authenticated by the Google-signed OIDC token in the Authorization header.",
+        "operationId": "createGooglePlayNotification",
+        "security": [],
+        "summary": "Receive a Google Play Real-time Developer Notification",
+        "tags": [
+          "Subscriptions"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GooglePlayNotification"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Notification reconciled or acknowledged"
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
             "content": {
               "application/json": {
                 "schema": {
@@ -25054,6 +25190,21 @@
         ],
         "additionalProperties": false
       },
+      "GooglePlaySubscriptionRequest": {
+        "type": "object",
+        "properties": {
+          "purchaseToken": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096,
+            "description": "The purchase token Play Billing returned for the subscription"
+          }
+        },
+        "required": [
+          "purchaseToken"
+        ],
+        "additionalProperties": false
+      },
       "AppleSubscriptionNotification": {
         "type": "object",
         "properties": {
@@ -25067,6 +25218,34 @@
           "signedPayload"
         ],
         "additionalProperties": false
+      },
+      "GooglePlayNotification": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100000,
+                "description": "Base64-encoded Real-time Developer Notification"
+              },
+              "messageId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              }
+            },
+            "required": [
+              "data",
+              "messageId"
+            ]
+          }
+        },
+        "required": [
+          "message"
+        ]
       },
       "AreaPracticeInput": {
         "type": "object",
@@ -70614,7 +70793,7 @@
         ],
         "additionalProperties": false
       },
-      "AppleSubscriptionResponse": {
+      "StoreSubscriptionResponse": {
         "type": "object",
         "properties": {
           "currentAccount": {
@@ -70622,7 +70801,7 @@
           },
           "isActive": {
             "type": "boolean",
-            "description": "Whether the reconciled App Store subscription currently grants access"
+            "description": "Whether the reconciled store subscription currently grants access"
           }
         },
         "required": [

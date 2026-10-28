@@ -1,13 +1,11 @@
 import { z } from "zod";
 import { meResponseSchema } from "./me";
 
-export const appleSubscriptionResponseSchema = z
+export const storeSubscriptionResponseSchema = z
   .object({
     currentAccount: meResponseSchema,
     isActive: z
       .boolean()
-      .meta({
-        description: "Whether the reconciled App Store subscription currently grants access",
-      }),
+      .meta({ description: "Whether the reconciled store subscription currently grants access" }),
   })
-  .meta({ id: "AppleSubscriptionResponse" });
+  .meta({ id: "StoreSubscriptionResponse" });

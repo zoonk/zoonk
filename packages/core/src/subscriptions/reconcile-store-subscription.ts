@@ -1,4 +1,9 @@
-import { type Subscription, isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
+import {
+  type Subscription,
+  type TransactionClient,
+  isPrismaUniqueConstraintError,
+  prisma,
+} from "@zoonk/db";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getUserSubscriptionCacheTag } from "../cache/tags";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
@@ -54,8 +59,41 @@ function isStaleSnapshot({
   );
 }
 
+type ReconcileOptions = {
+  /** The chain this one replaced (an upgrade, downgrade or resubscription); it ends as this starts. */
+  replacedSubscriptionId?: string | null;
+};
+
+function endReplacedSubscription({
+  replacedSubscriptionId,
+  snapshot,
+  tx,
+}: {
+  replacedSubscriptionId: string;
+  snapshot: StoreSubscriptionSnapshot;
+  tx: TransactionClient;
+}) {
+  return tx.subscription.updateMany({
+    data: {
+      cancelAt: null,
+      cancelAtPeriodEnd: false,
+      endedAt: snapshot.periodStart,
+      status: "canceled",
+    },
+    where: {
+      endedAt: null,
+      provider: snapshot.provider,
+      providerSubscriptionId: replacedSubscriptionId,
+      referenceId: snapshot.referenceId,
+    },
+  });
+}
+
 /** A snapshot and its entitlement/input markers commit together, including first delivery. */
-function writeSnapshot(snapshot: StoreSubscriptionSnapshot) {
+function writeSnapshot(
+  snapshot: StoreSubscriptionSnapshot,
+  { replacedSubscriptionId }: ReconcileOptions,
+) {
   const data = { ...snapshot, userId: snapshot.referenceId };
 
   return writeLearnerChange({ planInputs: true, userId: snapshot.referenceId }, async (tx) => {
@@ -69,6 +107,10 @@ function writeSnapshot(snapshot: StoreSubscriptionSnapshot) {
     });
 
     if (!existing) {
+      if (replacedSubscriptionId) {
+        await endReplacedSubscription({ replacedSubscriptionId, snapshot, tx });
+      }
+
       return tx.subscription.create({ data });
     }
 
@@ -107,14 +149,17 @@ export function findStoreSubscription({
 }
 
 /** Persists one ordered store snapshot and expires every cached entitlement derived from it. */
-export async function reconcileStoreSubscription(snapshot: StoreSubscriptionSnapshot) {
-  const subscription = await writeSnapshot(snapshot).catch((error: unknown) => {
+export async function reconcileStoreSubscription(
+  snapshot: StoreSubscriptionSnapshot,
+  options: ReconcileOptions = {},
+) {
+  const subscription = await writeSnapshot(snapshot, options).catch((error: unknown) => {
     if (!isPrismaUniqueConstraintError(error)) {
       throw error;
     }
 
     /** A different account can race the provider-chain key: retry after the losing tx rolled back. */
-    return writeSnapshot(snapshot);
+    return writeSnapshot(snapshot, options);
   });
 
   revalidateCacheTags([getUserSubscriptionCacheTag(snapshot.referenceId)]);
